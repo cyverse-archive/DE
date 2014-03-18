@@ -1,0 +1,22 @@
+#Organize Import Order
+#Tue Mar 30 18:34:33 EDT 2010
+0=\#org.iplantc
+1=org.iplantc
+2=\#com.google
+3=com.google
+4=\#com.sencha
+5=com.sencha
+6=\#com
+7=com
+8=\#junit
+9=junit
+10=\#net
+11=net
+12=\#org
+13=org
+14=\#java
+15=java
+16=\#javax
+17=javax
+18=\#
+19=

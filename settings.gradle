@@ -1,0 +1,39 @@
+rootProject.name='DE-UI' // TEMPLATE: Change this
+include ':de-webapp'
+project( ':de-webapp').projectDir = new File( rootProject.projectDir, deWebappSubtreePrefix) 
+include ':belphegor'
+project( ':belphegor').projectDir = new File( rootProject.projectDir, belphegorSubtreePrefix)
+
+include ':clavin-java'
+project( ':clavin-java').projectDir = new File( rootProject.projectDir, clavinJavaSubtreePrefix)
+
+include ':confluence-client'
+project( ':confluence-client').projectDir = new File( rootProject.projectDir, confluenceClientSubtreePrefix)
+
+include ':de-common-module'
+project( ':de-common-module').projectDir = new File( rootProject.projectDir, deCommonModuleSubtreePrefix)
+
+include ':ui-resources-module'
+project( ':ui-resources-module').projectDir = new File( rootProject.projectDir, uiResourcesModuleSubtreePrefix)
+
+include ':ui-commons-module'
+project( ':ui-commons-module').projectDir = new File( rootProject.projectDir, uiCommonsModuleSubtreePrefix)
+
+include ':ui-applications-module'
+project( ':ui-applications-module').projectDir = new File( rootProject.projectDir, uiApplicationsModuleSubtreePrefix)
+
+include ':ui-apps-widgets-module'
+project( ':ui-apps-widgets-module').projectDir = new File( rootProject.projectDir, uiAppsWidgetsModuleSubtreePrefix)
+
+include ':ui-apps-integration'
+project( ':ui-apps-integration').projectDir = new File( rootProject.projectDir, uiAppsIntegrationSubtreePrefix)
+
+include ':ui-disk-resource-module'
+project( ':ui-disk-resource-module').projectDir = new File( rootProject.projectDir, uiDiskResourceModuleSubtreePrefix)
+
+include ':ui-pipeline-builder-module'
+project( ':ui-pipeline-builder-module').projectDir = new File( rootProject.projectDir, uiPipelineBuilderModuleSubtreePrefix)
+
+include ':ui-pipelines-module'
+project( ':ui-pipelines-module').projectDir = new File( rootProject.projectDir, uiPipelinesModuleSubtreePrefix)
+

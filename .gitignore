@@ -1,0 +1,13 @@
+.gradle
+.metadata
+build
+ucdetector_reports
+
+# the Mac .DS_Store directory
+.DS_Store
+
+# ignore intellij files
+*.ipr
+*.iws
+*.ids
+out/
