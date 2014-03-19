@@ -1,0 +1,32 @@
+
+.deleteBtn {
+	font-weight: bold;
+	color: red;
+    cursor: pointer;
+	float: right;
+}
+
+.deleteBtn:hover {
+    text-decoration: underline; 
+}
+
+.treeCell {
+	float: left;
+}
+/* Removed image for time being. We may used the delete button as below at a later date */
+/*@sprite .deleteBtn{ 
+	gwt-image: "deleteButton";
+	display: none;
+	cursor: pointer;
+	float: right;
+}
+.treeCell .deleteBtn {
+	display: none;
+}
+
+.treeCell:hover + .deleteBtn {
+	display: inline;
+}
+.deleteBtn:hover {
+	display: inline;	
+}*/

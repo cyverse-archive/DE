@@ -1,0 +1,20 @@
+*~
+# files to be excluded from tracking by Git
+# eclipse-related files
+.classpath
+.options
+.project
+.settings
+bin
+# the Mac .DS_Store directory
+.DS_Store
+# maven working directory for `mvn install` and `mvn package`
+target
+# ignore war directory
+war
+# ignore directories related to GWT Unit Tests
+tomcat
+.gwt
+
+# ignore gradle build directory
+build/

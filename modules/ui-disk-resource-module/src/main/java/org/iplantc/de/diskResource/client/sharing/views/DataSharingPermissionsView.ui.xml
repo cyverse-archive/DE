@@ -1,0 +1,39 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
+	xmlns:container="urn:import:com.sencha.gxt.widget.core.client.container"
+	xmlns:gxt="urn:import:com.sencha.gxt.widget.core.client" xmlns:g="urn:import:com.google.gwt.user.client.ui"
+	xmlns:grid="urn:import:com.sencha.gxt.widget.core.client.grid"
+	xmlns:button="urn:import:com.sencha.gxt.widget.core.client.button"
+	xmlns:toolbar="urn:import:com.sencha.gxt.widget.core.client.toolbar"
+	xmlns:form="urn:import:com.sencha.gxt.widget.core.client.form">
+
+
+	<ui:with type="org.iplantc.de.resources.client.messages.IplantDisplayStrings" field="strings" />
+
+	<ui:with field="listStore" type="com.sencha.gxt.data.shared.ListStore" />
+	<ui:with field="cm"
+		type="com.sencha.gxt.widget.core.client.grid.ColumnModel" />
+	<ui:with field="view"
+		type="com.sencha.gxt.widget.core.client.grid.GridView">
+		<ui:attributes forceFit="true" autoFill="true" />
+	</ui:with>
+
+
+	<container:VerticalLayoutContainer ui:field="container">
+
+		<container:child>
+					<gxt:FramedPanel ui:field="permPanel"
+						collapsible="false" headerVisible="true" headingText="{strings.whoHasAccess}" height="200px">
+						<grid:Grid ui:field="grid" cm="{cm}" store="{listStore}"
+									view="{view}" loadMask="true" columnReordering="true"
+									borders="false">
+								</grid:Grid>
+					</gxt:FramedPanel>
+		</container:child>
+		<container:child>
+	        <toolbar:ToolBar ui:field="toolbar" height="30">
+	        </toolbar:ToolBar>
+	    </container:child>
+
+	</container:VerticalLayoutContainer>
+</ui:UiBinder>
