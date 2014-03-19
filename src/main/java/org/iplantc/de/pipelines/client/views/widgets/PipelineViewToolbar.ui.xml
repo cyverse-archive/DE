@@ -1,0 +1,28 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder
+    xmlns:ui="urn:ui:com.google.gwt.uibinder"
+    xmlns:g="urn:import:com.google.gwt.user.client.ui"
+    xmlns:toolbar="urn:import:com.sencha.gxt.widget.core.client.toolbar"
+    xmlns:button="urn:import:com.sencha.gxt.widget.core.client.button">
+
+    <ui:with
+        field="icons"
+        type="org.iplantc.de.resources.client.IplantResources" />
+    <ui:with
+        field="strings"
+        type="org.iplantc.de.resources.client.messages.IplantDisplayStrings" />
+
+    <toolbar:ToolBar ui:field="toolBar">
+        <button:TextButton
+            ui:field="publishBtn"
+            debugId="idBtnPublish"
+            text="{strings.save}"
+            icon="{icons.save}" />
+        <toolbar:FillToolItem />
+        <button:TextButton
+            ui:field="swapViewBtn"
+            debugId="idBtnSwitchView"
+            text="{strings.swapView}"
+            icon="{icons.copy}" />
+    </toolbar:ToolBar>
+</ui:UiBinder>
