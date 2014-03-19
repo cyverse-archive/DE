@@ -1,0 +1,87 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+             xmlns:form="urn:import:com.sencha.gxt.widget.core.client.form"
+	         xmlns:container="urn:import:com.sencha.gxt.widget.core.client.container"
+	         xmlns:g="urn:import:com.google.gwt.user.client.ui">
+	         
+	<ui:with field="margins"
+             type="com.sencha.gxt.core.client.util.Margins">
+      <ui:attributes top="0" right="5" bottom="10" left="5" />
+    </ui:with>
+    <ui:with field="layoutData"
+             type="com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer.VerticalLayoutData">
+      <ui:attributes width="1" height="-1" margins="{margins}" />
+    </ui:with>
+             
+    <ui:with type="java.util.Date" field="minTime" />
+    <ui:with type="java.util.Date" field="maxTime" />
+    <container:VerticalLayoutContainer ui:field="vlc">
+        <container:child layoutData="{layoutData}">
+            <form:FieldLabel text="Type">
+                <form:widget>
+                    <form:SimpleComboBox ui:field="typeCombo"
+                                         allowBlank="false"
+                                         triggerAction="ALL"/>
+                </form:widget>
+            </form:FieldLabel>
+        </container:child>
+        <container:child layoutData="{layoutData}">
+            <form:FieldLabel text="Message">
+                <form:widget>
+                    <form:TextArea ui:field="messageField"
+                                   allowBlank="false"/>
+                </form:widget>
+            </form:FieldLabel>
+        </container:child>
+        <container:child layoutData="{layoutData}">
+            <form:FieldLabel text="Activation Date">
+                <form:widget>
+                    <form:DateField ui:field="activationDateField"/>
+                </form:widget>
+            </form:FieldLabel>
+        </container:child>
+        <container:child layoutData="{layoutData}">
+            <form:FieldLabel text="Activation Time">
+                <form:widget>
+                    <form:TimeField ui:field="activationTimeField"
+                                    minValue="{minTime}"
+                                    maxValue="{maxTime}"
+                                    triggerAction="ALL"/>
+                </form:widget>
+            </form:FieldLabel>
+        </container:child> 
+        <container:child layoutData="{layoutData}">
+            <form:FieldLabel text="De-Activation Date">
+                <form:widget>
+                    <form:DateField ui:field="deActivationDateField"
+                                    allowBlank="false" />
+                </form:widget>
+            </form:FieldLabel>
+        </container:child>
+        <container:child layoutData="{layoutData}">
+            <form:FieldLabel text="De-Activation Time">
+                <form:widget>
+                    <form:TimeField ui:field="deActivationTimeField"
+                                    minValue="{minTime}"
+                                    maxValue="{maxTime}"
+                                    triggerAction="ALL"/>
+                </form:widget>
+            </form:FieldLabel>
+        </container:child>
+        <container:child layoutData="{layoutData}">
+            <form:FieldLabel text="Allow user to delete">
+                <form:widget>
+                    <form:CheckBox ui:field="dismissibleField"/>
+                </form:widget>
+            </form:FieldLabel>
+        </container:child>
+        <container:child layoutData="{layoutData}">
+            <form:FieldLabel text="Logins Disabled">
+                <form:widget>
+                    <form:CheckBox ui:field="loginsDisabledField"
+                                   enabled="false"/>
+                </form:widget>
+            </form:FieldLabel>
+        </container:child>
+    </container:VerticalLayoutContainer>	         
+</ui:UiBinder> 
