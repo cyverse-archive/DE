@@ -24,9 +24,16 @@
         </container:child>
         <container:child layoutData="{layoutData}">
             <form:FieldLabel text="Set status">
-                <form:child>
+                <form:widget>
                     <form:SimpleComboBox ui:field="statusCombo"/>
-                </form:child>
+                </form:widget>
+            </form:FieldLabel>
+        </container:child>
+         <container:child layoutData="{layoutData}">
+            <form:FieldLabel text="(OR) Set arbitrary status">
+                <form:widget>
+                    <form:TextField ui:field="statusField"/>
+                </form:widget>
             </form:FieldLabel>
         </container:child>
         <container:child layoutData="{layoutData}">

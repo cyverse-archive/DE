@@ -4,7 +4,6 @@ import org.iplantc.admin.belphegor.client.toolRequest.ToolRequestView;
 import org.iplantc.de.client.models.toolRequest.ToolRequest;
 import org.iplantc.de.client.models.toolRequest.ToolRequestAutoBeanFactory;
 import org.iplantc.de.client.models.toolRequest.ToolRequestDetails;
-import org.iplantc.de.client.models.toolRequest.ToolRequestStatus;
 import org.iplantc.de.client.models.toolRequest.ToolRequestUpdate;
 
 import com.google.common.collect.Lists;
@@ -79,7 +78,7 @@ public class ToolRequestViewImpl extends Composite implements ToolRequestView, S
     ColumnModel<ToolRequest> createColumnModel() {
         List<ColumnConfig<ToolRequest, ?>> list = Lists.newArrayList();
         ColumnConfig<ToolRequest, String> nameCol = new ColumnConfig<ToolRequest, String>(trProps.name(), 90, "Name");
-        ColumnConfig<ToolRequest, ToolRequestStatus> statusCol = new ColumnConfig<ToolRequest, ToolRequestStatus>(trProps.status(), 90, "Status");
+        ColumnConfig<ToolRequest, String> statusCol = new ColumnConfig<ToolRequest, String>(trProps.status(), 90, "Status");
         ColumnConfig<ToolRequest, Date> dateSubmittedCol = new ColumnConfig<ToolRequest, Date>(trProps.dateSubmitted(), 90, "Date Submitted");
         ColumnConfig<ToolRequest, Date> dateUpdatedCol = new ColumnConfig<ToolRequest, Date>(trProps.dateUpdated(), 90, "Date Updated");
         ColumnConfig<ToolRequest, String> updatedByCol = new ColumnConfig<ToolRequest, String>(trProps.updatedBy(), 90, "Updated By");
@@ -105,6 +104,7 @@ public class ToolRequestViewImpl extends Composite implements ToolRequestView, S
                 presenter.updateToolRequest(tru);
             }
         });
+        updateToolRequestDialog.setSize("350px", "400px");
         updateToolRequestDialog.show();
     }
 

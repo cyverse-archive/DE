@@ -118,7 +118,7 @@ class EditCreateSystemMessageDialog extends Composite implements ValueAwareEdito
             this.announcementTypes.addAll(announcementTypes);
         }
         initWidget(uiBinder.createAndBindUi(this));
-        
+        messageField.setHeight(200);
         editorDriver.initialize(this);
         editorDriver.edit(message);
     }

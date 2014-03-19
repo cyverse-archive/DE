@@ -1,7 +1,6 @@
 package org.iplantc.admin.belphegor.client.toolRequest.view;
 
 import org.iplantc.de.client.models.toolRequest.ToolRequest;
-import org.iplantc.de.client.models.toolRequest.ToolRequestStatus;
 
 import com.sencha.gxt.core.client.ValueProvider;
 import com.sencha.gxt.data.shared.ModelKeyProvider;
@@ -15,7 +14,7 @@ public interface ToolRequestProperties extends PropertyAccess<ToolRequest> {
 
     ValueProvider<ToolRequest, String> name();
 
-    ValueProvider<ToolRequest, ToolRequestStatus> status();
+    ValueProvider<ToolRequest, String> status();
 
     ValueProvider<ToolRequest, Date> dateSubmitted();
 
