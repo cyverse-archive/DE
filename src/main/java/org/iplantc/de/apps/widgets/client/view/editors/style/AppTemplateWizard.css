@@ -1,0 +1,94 @@
+@def horOffset 40px;
+@def blur 10px;
+@def spread 5px;
+@def selectionColor #AADDDD;
+
+.appHeaderSelect {
+    background-image: linear-gradient(bottom, rgb(220, 220, 220) 7%,
+        selectionColor 78%) !important;
+    background-image: -o-linear-gradient(bottom, rgb(220, 220, 220) 7%,
+        selectionColor 78%) !important;
+    background-image: -moz-linear-gradient(bottom, rgb(220, 220, 220) 7%,
+        selectionColor 78%) !important;
+    background-image: -webkit-linear-gradient(bottom, rgb(220, 220, 220) 7%,
+        selectionColor 78%) !important;
+    background-image: -ms-linear-gradient(bottom, rgb(220, 220, 220) 7%,
+        selectionColor 78%) !important;
+    background-image: -webkit-gradient(linear, left bottom, left top, color-stop(0.07, rgb(220
+        , 220, 220)), color-stop(0.78, selectionColor)) !important;
+}
+
+.argument {
+    /*Transition*/
+    -webkit-transition: all 0.25s ease;
+    -moz-transition: all 0.25s ease;
+    -o-transition: all 0.25s ease;
+}
+
+.argument:hover {
+    -webkit-box-shadow: 0 0 blur spread selectionColor;
+    -moz-box-shadow: 0 0 blur spread selectionColor;
+    box-shadow: 0 0 blur spread selectionColor;
+}
+.argumentSelect {
+    -webkit-box-shadow: horOffset 0 blur spread selectionColor !important;
+    -moz-box-shadow: horOffset 0 blur spread selectionColor !important;
+    box-shadow: horOffset 0 blur spread selectionColor !important;
+}
+
+.deleteBtn {
+    position: absolute !important;
+}
+
+@sprite .delete {
+    gwt-image: "deleteRating";   
+    cursor: pointer; 
+}
+
+@sprite .deleteHover {
+    gwt-image: "deleteRatingHover";
+    cursor: pointer;
+}
+
+.emptyGroupBgText {
+	color: #ccc;
+	text-align: center;
+}
+
+.grab {}
+.grabbing{}
+
+@if user.agent gecko1_8 {
+	 .grab:hover {
+		cursor: -moz-grab;
+	}
+	
+    .grab:active {
+		cursor: -moz-grabbing !important;
+	}
+	
+	.grabbing {
+		cursor: -moz-grabbing !important;
+	}
+	
+} @elif user.agent safari {
+    .grab:hover {
+        cursor: -webkit-grab;
+    }
+    
+    .grab:active {
+        cursor: -webkit-grabbing;
+    }
+  
+} @else {
+    .grab:hover {
+        cursor: url(images/openhand.cur), move;
+    }
+    
+    .grab:active {
+        cursor: url(images/closedhand.cur), move;
+    }
+	
+}
+
+
