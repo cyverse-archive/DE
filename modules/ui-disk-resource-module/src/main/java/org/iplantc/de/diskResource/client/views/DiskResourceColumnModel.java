@@ -1,11 +1,13 @@
 package org.iplantc.de.diskResource.client.views;
 
+import static org.iplantc.de.diskResource.client.views.cells.DiskResourceNameCell.CALLER_TAG.DATA;
+
 import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.client.models.diskResources.File;
-import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.client.util.DiskResourceUtil;
 import org.iplantc.de.diskResource.client.views.cells.DiskResourceActionsCell;
 import org.iplantc.de.diskResource.client.views.cells.DiskResourceNameCell;
+import org.iplantc.de.diskResource.client.views.cells.DiskResourceNameCell.CALLER_TAG;
 import org.iplantc.de.resources.client.messages.I18N;
 
 import com.google.gwt.cell.client.AbstractCell;
@@ -13,6 +15,7 @@ import com.google.gwt.cell.client.DateCell;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
+import com.google.gwt.user.client.ui.IsWidget;
 
 import com.sencha.gxt.core.client.IdentityValueProvider;
 import com.sencha.gxt.core.client.ValueProvider;
@@ -36,10 +39,7 @@ public class DiskResourceColumnModel extends ColumnModel<DiskResource> {
 
         DiskResourceProperties props = GWT.create(DiskResourceProperties.class);
 
-        ColumnConfig<DiskResource, DiskResource> name = new ColumnConfig<DiskResource, DiskResource>(
-                new IdentityValueProvider<DiskResource>("name"), 100, I18N.DISPLAY.name());
-        name.setCell(new DiskResourceNameCell(view, DiskResourceNameCell.CALLER_TAG.DATA));
-        name.setComparator(new DiskResourceNameComparator());
+        ColumnConfig<DiskResource, DiskResource> name = createDiskResourceNameColumnConfig(view, DATA);
 
         ColumnConfig<DiskResource, Date> lastModified = new ColumnConfig<DiskResource, Date>(
                 props.lastModified(), 120, I18N.DISPLAY.lastModified());
@@ -62,7 +62,7 @@ public class DiskResourceColumnModel extends ColumnModel<DiskResource> {
         
         ColumnConfig<DiskResource, DiskResource> actions = new ColumnConfig<DiskResource, DiskResource>(
                 new IdentityValueProvider<DiskResource>("actions"), 75, "");
-        actions.setCell(new DiskResourceActionsCell(view, DiskResourceNameCell.CALLER_TAG.DATA));
+        actions.setCell(new DiskResourceActionsCell(view, DATA));
         actions.setHidden(false);
         actions.setMenuDisabled(true);
         actions.setSortable(false);
@@ -78,6 +78,16 @@ public class DiskResourceColumnModel extends ColumnModel<DiskResource> {
         return list;
     }
 
+    public static ColumnConfig<DiskResource, DiskResource> createDiskResourceNameColumnConfig(
+            IsWidget caller, CALLER_TAG tag) {
+        ColumnConfig<DiskResource, DiskResource> name = new ColumnConfig<DiskResource, DiskResource>(
+                new IdentityValueProvider<DiskResource>("name"), 100, I18N.DISPLAY.name());
+        name.setCell(new DiskResourceNameCell(caller, tag));
+        name.setComparator(new DiskResourceNameComparator());
+
+        return name;
+    }
+
     public void setCheckboxColumnHidden(boolean hidden) {
         setHidden(0, hidden);
     }
@@ -87,8 +97,7 @@ public class DiskResourceColumnModel extends ColumnModel<DiskResource> {
     }
 
     /**
-     * A <code>DiskResource</code> <code>Comparator</code> that sorts <code>Folder</code> names before
-     * <code>File</code> names (case-insensitive).
+     * A {@link Comparator} that sorts {@link DiskResource} names, case-insensitive.
      * 
      * @author psarando
      * 
@@ -97,13 +106,6 @@ public class DiskResourceColumnModel extends ColumnModel<DiskResource> {
 
         @Override
         public int compare(DiskResource dr1, DiskResource dr2) {
-            if (dr1 instanceof Folder && dr2 instanceof File) {
-                return -1;
-            }
-            if (dr1 instanceof File && dr2 instanceof Folder) {
-                return 1;
-            }
-
             return dr1.getName().compareToIgnoreCase(dr2.getName());
         }
     }

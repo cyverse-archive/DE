@@ -7,13 +7,13 @@ package org.iplantc.de.diskResource.client.sharing.views;
 import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.commons.client.views.gxt3.dialogs.IPlantDialog;
 import org.iplantc.de.diskResource.client.sharing.presenter.DataSharingPresenter;
+import org.iplantc.de.diskResource.client.views.DiskResourceColumnModel;
 import org.iplantc.de.diskResource.client.views.DiskResourceModelKeyProvider;
 import org.iplantc.de.diskResource.client.views.cells.DiskResourceNameCell;
 import org.iplantc.de.resources.client.messages.I18N;
 
 import com.google.gwt.user.client.ui.HTML;
 
-import com.sencha.gxt.core.client.IdentityValueProvider;
 import com.sencha.gxt.data.shared.ListStore;
 import com.sencha.gxt.widget.core.client.event.SelectEvent;
 import com.sencha.gxt.widget.core.client.event.SelectEvent.SelectHandler;
@@ -60,9 +60,9 @@ public class DataSharingDialog extends IPlantDialog {
     private ColumnModel<DiskResource> buildDiskResourceColumnModel() {
         List<ColumnConfig<DiskResource, ?>> list = new ArrayList<ColumnConfig<DiskResource, ?>>();
 
-        ColumnConfig<DiskResource, DiskResource> name = new ColumnConfig<DiskResource, DiskResource>(
-                new IdentityValueProvider<DiskResource>(), 130, I18N.DISPLAY.name());
-        name.setCell(new DiskResourceNameCell(this, DiskResourceNameCell.CALLER_TAG.SHARING));
+        ColumnConfig<DiskResource, DiskResource> name = DiskResourceColumnModel
+                .createDiskResourceNameColumnConfig(this, DiskResourceNameCell.CALLER_TAG.SHARING);
+        name.setWidth(130);
 
         list.add(name);
 
