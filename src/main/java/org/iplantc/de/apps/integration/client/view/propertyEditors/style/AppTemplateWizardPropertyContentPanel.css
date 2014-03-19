@@ -1,0 +1,9 @@
+.panel {
+  border-color: #d0d0d0;
+}
+
+.body {
+  background-color: #AADDDD;
+  border-color: #d0d0d0;
+  border-left: none;
+}

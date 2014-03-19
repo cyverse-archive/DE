@@ -1,0 +1,102 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	         xmlns:gxt="urn:import:com.sencha.gxt.widget.core.client"
+	         xmlns:con="urn:import:com.sencha.gxt.widget.core.client.container"
+	         xmlns:form="urn:import:com.sencha.gxt.widget.core.client.form"
+	         xmlns:validation="urn:import:org.iplantc.de.apps.integration.client.view.propertyEditors.widgets"
+	         xmlns:fields="urn:import:org.iplantc.de.apps.widgets.client.view.editors.widgets"
+             xmlns:converter="urn:import:org.iplantc.de.apps.widgets.client.view.editors.arguments.converters">
+	<ui:with field="appLabels"
+             type="org.iplantc.de.resources.client.uiapps.widgets.AppsWidgetsPropertyPanelLabels" />
+	<ui:with field="integerInputLabels"
+             type="org.iplantc.de.resources.client.uiapps.widgets.argumentTypes.IntegerInputLabels" />
+    <ui:with field="margins"
+             type="com.sencha.gxt.core.client.util.Margins">
+      <ui:attributes top="10"
+                     right="5"
+                     bottom="10"
+                     left="5" />
+    </ui:with>
+    <ui:with field="marginsBottom"
+             type="com.sencha.gxt.core.client.util.Margins">
+      <ui:attributes top="0"
+                     right="5"
+                     bottom="0"
+                     left="5" />
+    </ui:with>
+    <ui:with field="fieldLayoutData"
+             type="com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer.VerticalLayoutData" >
+        <ui:attributes width="1" 
+                       height="-1" 
+                       margins="{margins}"/>
+    </ui:with>
+    <ui:with field="fieldLayoutData_END"
+             type="com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer.VerticalLayoutData">
+        <ui:attributes width="1" 
+                       height="1"
+                       margins="{marginsBottom}"/>
+    </ui:with>
+ 
+    <gxt:ContentPanel ui:field="cp">
+	    <con:VerticalLayoutContainer ui:field="con" 
+	                                 scrollMode="AUTOY"
+	                                 adjustForScroll="true">
+	        <con:child layoutData="{fieldLayoutData}">
+	            <form:FieldLabel ui:field="argLabelLabel" 
+	                             labelAlign="TOP"
+	                             text="{integerInputLabels.integerInputLabel}">
+	                <form:widget>
+	                    <form:TextField ui:field="label"
+	                    				text="{integerInputLabels.integerInputEmptyText}"/>
+	                </form:widget>
+	            </form:FieldLabel>
+	        </con:child>
+	        <con:child layoutData="{fieldLayoutData}">
+	            <form:FieldLabel ui:field="argumentOptionLabel"
+	                             labelAlign="TOP">
+	                <form:widget>
+	                    <form:TextField ui:field="argumentOption"
+	                                    emptyText="{appLabels.argumentOptionEmptyText}"/>
+	                </form:widget>
+	            </form:FieldLabel>
+	        </con:child>
+
+            <!-- DefaultValue Editors -->
+            <con:child layoutData="{fieldLayoutData}">
+                <form:FieldLabel ui:field="defaultValueLabel"
+                                 labelAlign="TOP">
+                    <form:widget>
+                        <converter:ArgumentEditorConverter ui:field="defaultValueEditor"/>
+                    </form:widget>
+                </form:FieldLabel>
+            </con:child>
+
+	        <con:child layoutData="{fieldLayoutData}">
+	            <fields:CheckBoxAdapter ui:field="doNotDisplay"
+	                                    negated="true"/>
+	        </con:child>
+	        <con:child layoutData="{fieldLayoutData}">
+	            <fields:CheckBoxAdapter ui:field="requiredEditor"/>
+	        </con:child>
+	        <con:child layoutData="{fieldLayoutData}">
+	            <fields:CheckBoxAdapter ui:field="omitIfBlank" />
+	        </con:child>
+	        <con:child layoutData="{fieldLayoutData}">
+	            <form:FieldLabel ui:field="toolTipLabel"
+	                             labelAlign="TOP">
+	                <form:widget>
+	                    <form:TextField ui:field="toolTipEditor"
+	                                    emptyText="{appLabels.toolTipEmptyText}"/>
+	                </form:widget>
+	            </form:FieldLabel>
+	        </con:child>
+	        
+	        <!-- Argument Validator Editor -->
+	        <con:child layoutData="{fieldLayoutData_END}">
+	           <validation:ArgumentValidatorEditor ui:field="validatorsEditor"/>
+	        </con:child>
+
+	    </con:VerticalLayoutContainer>
+	 </gxt:ContentPanel>
+
+</ui:UiBinder> 
