@@ -12,7 +12,7 @@ import java.util.Date;
  */
 public interface ToolRequestHistory {
 
-    ToolRequestStatus getStatus();
+    String getStatus();
 
     @PropertyName("updated_by")
     String getUpdatedBy();

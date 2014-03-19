@@ -2,6 +2,7 @@ package org.iplantc.de.client.models.toolRequest;
 
 import org.iplantc.de.resources.client.messages.I18N;
 
+import com.google.common.base.Strings;
 
 /**
  * Tool Request Status values with associated help text.
@@ -10,21 +11,32 @@ import org.iplantc.de.resources.client.messages.I18N;
  * 
  */
 public enum ToolRequestStatus {
-    Submitted(I18N.HELP.toolRequestStatusSubmittedHelp()),
-    Pending(I18N.HELP.toolRequestStatusPendingHelp()),
-    Evaluation(I18N.HELP.toolRequestStatusEvaluationHelp()),
-    Installation(I18N.HELP.toolRequestStatusInstallationHelp()),
-    Validation(I18N.HELP.toolRequestStatusValidationHelp()),
-    Completion(I18N.HELP.toolRequestStatusCompleteHelp()),
-    Failed(I18N.HELP.toolRequestStatusFailedHelp());
+    Submitted("Submitted", I18N.HELP.toolRequestStatusSubmittedHelp()), Pending("Pending", I18N.HELP.toolRequestStatusPendingHelp()), Evaluation("Evaluation", I18N.HELP
+            .toolRequestStatusEvaluationHelp()), Installation("Installation", I18N.HELP.toolRequestStatusInstallationHelp()), Validation("Validation", I18N.HELP.toolRequestStatusValidationHelp()), Completion(
+            "Completion", I18N.HELP.toolRequestStatusCompleteHelp()), Failed("Failed", I18N.HELP.toolRequestStatusFailedHelp());
 
     private String helpText;
+    private String displayText;
 
-    ToolRequestStatus(String helpText) {
+    ToolRequestStatus(String displayText, String helpText) {
+        this.displayText = displayText;
         this.helpText = helpText;
     }
 
+    public static ToolRequestStatus fromTypeString(String typeString) {
+        if (typeString == null || typeString.isEmpty()) {
+            return null;
+        }
+        String temp = typeString.replaceAll("\\s", "");
+        return valueOf(temp);
+    }
+
     public String getHelpText() {
-        return helpText;
+        return (Strings.isNullOrEmpty(helpText) ? "" : helpText);
+    }
+
+    @Override
+    public String toString() {
+        return displayText;
     }
 }
