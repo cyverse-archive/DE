@@ -23,9 +23,9 @@ public interface ToolRequestUpdate extends HasId {
     @PropertyName("uuid")
     void setId(String id);
 
-    ToolRequestStatus getStatus();
+    String getStatus();
 
-    void setStatus(ToolRequestStatus status);
+    void setStatus(String status);
 
     @PropertyName("username")
     String getUserName();

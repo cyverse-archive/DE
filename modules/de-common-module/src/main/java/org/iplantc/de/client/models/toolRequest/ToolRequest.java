@@ -31,9 +31,9 @@ public interface ToolRequest extends HasName, HasId {
     @PropertyName("date_updated")
     void setDateUpdated(Date dateUpdated);
 
-    ToolRequestStatus getStatus();
+    String getStatus();
 
-    void setStatus(ToolRequestStatus status);
+    void setStatus(String status);
 
     @PropertyName("updated_by")
     String getUpdatedBy();
