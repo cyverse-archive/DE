@@ -1,0 +1,104 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:cp="urn:import:com.sencha.gxt.widget.core.client"
+	xmlns:con="urn:import:com.sencha.gxt.widget.core.client.container"
+	xmlns:c="urn:import:com.sencha.gxt.widget.core.client.button"
+	xmlns:form="urn:import:com.sencha.gxt.widget.core.client.form"
+	xmlns:tree="urn:import:com.sencha.gxt.widget.core.client.tree"
+	xmlns:grid="urn:import:com.sencha.gxt.widget.core.client.grid"
+	xmlns:gwt="urn:import:com.google.gwt.widget.client" xmlns:button="urn:import:com.sencha.gxt.widget.core.client.button"
+	xmlns:toolbar="urn:import:com.sencha.gxt.widget.core.client.toolbar">
+
+	<ui:with field="icons"
+		type="org.iplantc.de.resources.client.IplantResources" />
+	<ui:with field="strings"
+		type="org.iplantc.de.resources.client.messages.IplantDisplayStrings" />
+
+
+	<ui:with type="com.sencha.gxt.core.client.util.Margins" field="centerMargins">
+		<ui:attributes top="4" right="4" bottom="0" left="4" />
+	</ui:with>
+
+	<ui:with field="layoutData"
+		type="com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer.VerticalLayoutData">
+		<ui:attributes height="-1" width=".90" margins="{centerMargins}" />
+
+	</ui:with>
+	<form:FormPanel ui:field="formPanel" method="POST"  action="discoveryenvironment/feedback">
+	<con:VerticalLayoutContainer ui:field="container">
+		<con:child layoutData="{layoutData}">
+			<form:FieldLabel ui:field="reasonField" labelAlign="TOP" labelSeparator=""
+				text="What is your primary reason for coming to the Discovery Environment today ?">
+				<form:widget>
+					<g:VerticalPanel>
+						<form:CheckBox ui:field="expField" boxLabel="I'm just exploring." />
+						<form:CheckBox ui:field="mngField" boxLabel="Manage my data." />
+						<form:CheckBox ui:field="runField" boxLabel="Run an analysis." />
+						<form:CheckBox ui:field="chkField"
+							boxLabel="Check status on my analysis." />
+						<form:CheckBox ui:field="appField" boxLabel="Create an app." />
+						<g:HorizontalPanel>
+							<form:CheckBox ui:field="otrField" boxLabel="Other:" />
+							<form:TextField ui:field="otherField">
+							</form:TextField>
+						</g:HorizontalPanel>
+					</g:VerticalPanel>
+				</form:widget>
+			</form:FieldLabel>
+		</con:child>
+		<con:child layoutData="{layoutData}">
+			<form:FieldLabel ui:field="compelteField" labelAlign="TOP" labelSeparator=""
+				text="Were you able to complete your task today ?">
+				<form:widget>
+					<g:VerticalPanel>
+						<form:CheckBox ui:field="yesField" boxLabel="Yes!" />
+						<form:CheckBox ui:field="swField" boxLabel="Somewhat." />
+						<form:CheckBox ui:field="noField" boxLabel="No specific task in mind." />
+						<form:CheckBox ui:field="notField" boxLabel="Not at all." />
+						<g:HorizontalPanel>
+							<form:CheckBox ui:field="tskOtrField" boxLabel="Other:" />
+							<form:TextField ui:field="otherCompField">
+							</form:TextField>
+						</g:HorizontalPanel>
+					</g:VerticalPanel>
+				</form:widget>
+			</form:FieldLabel>
+		</con:child>
+		<con:child layoutData="{layoutData}">
+			<form:FieldLabel ui:field="satisfyField" labelAlign="TOP" labelSeparator=""
+				text="How satisfied are you with the Discovery Environment ?">
+				<form:widget>
+					<g:VerticalPanel>
+						<form:Radio ui:field="vastField" boxLabel="Very satisfied!" />
+						<form:Radio ui:field="swsatField" boxLabel="Somewhat satisfied." />
+						<form:Radio ui:field="okField" boxLabel="It's okay." />
+						<form:Radio ui:field="swdField" boxLabel="Somewhat dissatisfied." />
+						<form:Radio ui:field="nsField" boxLabel="Not satisfied." />
+						<g:HorizontalPanel>
+							<form:Radio ui:field="otsatField" boxLabel="Other:" />
+							<form:TextField ui:field="otherSatisfiedField">
+							</form:TextField>
+						</g:HorizontalPanel>
+					</g:VerticalPanel>
+				</form:widget>
+			</form:FieldLabel>
+		</con:child>
+		<con:child layoutData="{layoutData}">
+			<form:FieldLabel ui:field="featureField" labelAlign="TOP" labelSeparator=""
+				text="What features or improvements would you like to see ?">
+				<form:widget>
+					<form:TextArea ui:field="featureTextArea" height="100"></form:TextArea>
+				</form:widget>
+			</form:FieldLabel>
+		</con:child>
+		<con:child layoutData="{layoutData}">
+			<form:FieldLabel ui:field="anythingField" labelAlign="TOP" labelSeparator=""
+				text="Is there anything else we should know?">
+				<form:widget>
+					<form:TextArea ui:field="otherTextArea" height="100"></form:TextArea>
+				</form:widget>
+			</form:FieldLabel>
+		</con:child>
+	</con:VerticalLayoutContainer>
+	</form:FormPanel>
+</ui:UiBinder> 
