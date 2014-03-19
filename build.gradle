@@ -320,4 +320,4 @@ project(':clavin-java') {
 
 apply from: file('iplant/eclipse.gradle')
 apply from: file('iplant/webappBootstrap.gradle')
-apply from: file('iplant/ADMIN.gradle')
+
