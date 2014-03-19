@@ -170,6 +170,7 @@ project(':belphegor') {
 }
 
 project(':confluence-client') {
+   apply plugin: 'eclipse'
    /* The following configurations and sourceSets declarations are necessary
     *  to mimic the 'provided' scope of maven builds
     */
