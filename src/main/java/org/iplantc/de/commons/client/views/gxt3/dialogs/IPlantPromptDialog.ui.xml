@@ -1,0 +1,16 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+             xmlns:g="urn:import:com.google.gwt.user.client.ui"
+             xmlns:gxtForm="urn:import:com.sencha.gxt.widget.core.client.form">
+
+   <gxtForm:FieldLabel ui:field="fieldLabel">
+      <gxtForm:widget>
+         <gxtForm:TextField ui:field="textField"
+                            allowBlank="false"
+                            autoValidate="true"
+                            selectOnFocus="true"/>
+      </gxtForm:widget>
+   </gxtForm:FieldLabel>
+             
+             
+</ui:UiBinder> 
