@@ -1,7 +1,6 @@
 package org.iplantc.de.client.notifications.views;
 
 import org.iplantc.de.client.models.toolRequest.ToolRequestHistory;
-import org.iplantc.de.client.models.toolRequest.ToolRequestStatus;
 
 import com.sencha.gxt.core.client.ValueProvider;
 import com.sencha.gxt.data.shared.PropertyAccess;
@@ -16,7 +15,7 @@ import java.util.Date;
  */
 public interface ToolRequestHistoryProperties extends PropertyAccess<ToolRequestHistory> {
 
-    ValueProvider<ToolRequestHistory, ToolRequestStatus> status();
+    ValueProvider<ToolRequestHistory, String> status();
 
     ValueProvider<ToolRequestHistory, String> updatedBy();
 

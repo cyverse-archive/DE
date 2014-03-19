@@ -82,7 +82,7 @@ public class ToolRequestHistoryDialog extends Dialog {
     ColumnModel<ToolRequestHistory> createColumnModel() {
         List<ColumnConfig<ToolRequestHistory, ?>> list = Lists.newArrayList();
 
-        ColumnConfig<ToolRequestHistory, ToolRequestStatus> status = new ColumnConfig<ToolRequestHistory, ToolRequestStatus>(
+        ColumnConfig<ToolRequestHistory, String> status = new ColumnConfig<ToolRequestHistory, String>(
                 historyProperties.status(), 50, I18N.DISPLAY.status());
         status.setCell(new ToolRequestStatusCell());
 
