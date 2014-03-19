@@ -58,6 +58,7 @@ import com.sencha.gxt.widget.core.client.toolbar.LabelToolItem;
 import com.sencha.gxt.widget.core.client.toolbar.ToolBar;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -87,6 +88,27 @@ public class DataSharingPermissionsPanel implements IsWidget {
     private ComboBoxCell<String> permCombo;
     private FastMap<List<DataSharing>> sharingMap;
     private HorizontalPanel explainPanel;
+
+    private final class PermissionComparator implements Comparator<String> {
+        @Override
+        public int compare(String s1, String s2) {
+            if (!s1.equals(s2)) {
+                if (s1.equals(DataSharing.OWN)) {
+                    return 1;
+                }
+                if (s2.equals(DataSharing.OWN)) {
+                    return -1;
+                }
+                if (s1.equals(DataSharing.WRITE)) {
+                    return 1;
+                }
+                if (s2.equals(DataSharing.WRITE)) {
+                    return -1;
+                }
+            }
+            return 0;
+        }
+    }
 
     final Widget widget;
     private static MyUiBinder uiBinder = GWT.create(MyUiBinder.class);
@@ -291,26 +313,30 @@ public class DataSharingPermissionsPanel implements IsWidget {
     private ColumnModel<DataSharing> buildColumnModel() {
         List<ColumnConfig<DataSharing, ?>> configs = new ArrayList<ColumnConfig<DataSharing, ?>>();
         DataSharingProperties props = GWT.create(DataSharingProperties.class);
-        ColumnConfig<DataSharing, String> name = new ColumnConfig<DataSharing, String>(
-               props.name());
 
-        name.setHeader(I18N.DISPLAY.name());
-        name.setWidth(200);
-        ColumnConfig<DataSharing, String> permission = new ColumnConfig<DataSharing, String>(
-                props.displayPermission());
-
-        permission.setHeader(I18N.DISPLAY.permissions());
-        permission.setWidth(170);
-        SafeStyles permTextStyles = SafeStylesUtils.fromTrustedString("padding: 2px 3px;color:#0098AA;cursor:pointer;");
-        permission.setColumnTextStyle(permTextStyles);
-        permission.setSortable(false);
-        permission.setFixed(true);
-        permission.setCell(buildPermissionsCombo());
+        ColumnConfig<DataSharing, String> name = new ColumnConfig<DataSharing, String>(props.name(),
+                200, I18N.DISPLAY.name());
+        ColumnConfig<DataSharing, String> permission = buildPermissionColumn();
         ColumnConfig<DataSharing, String> remove = buildRemoveColumn();
+
         configs.add(name);
         configs.add(permission);
         configs.add(remove);
+
         return new ColumnModel<DataSharing>(configs);
+    }
+
+    private ColumnConfig<DataSharing, String> buildPermissionColumn() {
+        DataSharingProperties props = GWT.create(DataSharingProperties.class);
+        ColumnConfig<DataSharing, String> permission = new ColumnConfig<DataSharing, String>(
+                props.displayPermission(), 170, I18N.DISPLAY.permissions());
+        SafeStyles permTextStyles = SafeStylesUtils.fromTrustedString("padding: 2px 3px;color:#0098AA;cursor:pointer;");
+        permission.setColumnTextStyle(permTextStyles);
+        permission.setFixed(true);
+        permission.setCell(buildPermissionsCombo());
+        permission.setComparator(new PermissionComparator());
+
+        return permission;
     }
 
     private ColumnConfig<DataSharing, String> buildRemoveColumn() {
