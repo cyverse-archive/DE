@@ -1,0 +1,122 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder
+    xmlns:ui="urn:ui:com.google.gwt.uibinder"
+    xmlns:g="urn:import:com.google.gwt.user.client.ui"
+    xmlns:gxt="urn:import:com.sencha.gxt.widget.core.client"
+    xmlns:container="urn:import:com.sencha.gxt.widget.core.client.container"
+    xmlns:button="urn:import:com.sencha.gxt.widget.core.client.button"
+    xmlns:views="urn:import:org.iplantc.de.pipelines.client.views"
+    xmlns:builder="urn:import:org.iplantc.de.pipelineBuilder.client.builder">
+
+    <ui:with
+        field="strings"
+        type="org.iplantc.de.resources.client.messages.IplantDisplayStrings" />
+    <ui:with
+        field="northData"
+        type="com.sencha.gxt.widget.core.client.container.BorderLayoutContainer.BorderLayoutData">
+        <ui:attributes
+            size="30"
+            maxSize="30" />
+    </ui:with>
+    <ui:with
+        field="actionsPanelData"
+        type="com.sencha.gxt.widget.core.client.container.BorderLayoutContainer.BorderLayoutData">
+        <ui:attributes
+            size="175"
+            collapsible="false"
+            split="false" />
+    </ui:with>
+    <ui:with
+        field="stepActionMargins"
+        type="com.sencha.gxt.core.client.util.Margins">
+        <ui:attributes
+            top="20"
+            right="5"
+            bottom="5"
+            left="5" />
+    </ui:with>
+    <ui:with
+        field="stepActionData"
+        type="com.sencha.gxt.widget.core.client.container.MarginData">
+        <ui:attributes margins="{stepActionMargins}" />
+    </ui:with>
+    <ui:with
+        field="builderPanelData"
+        type="com.sencha.gxt.widget.core.client.container.BorderLayoutContainer.BorderLayoutData">
+        <ui:attributes
+            size="400"
+            collapsible="false"
+            split="true" />
+    </ui:with>
+
+    <container:SimpleContainer>
+        <container:BorderLayoutContainer
+            ui:field="borders"
+            borders="true">
+            <!-- This is the tool bar -->
+            <container:north layoutData="{northData}" />
+            <!-- This is the main panel -->
+            <container:center>
+                <container:CardLayoutContainer ui:field="centerPanel">
+                    <!-- This is the old-style Step Editor panel -->
+                    <container:BorderLayoutContainer ui:field="stepEditorPanel">
+                        <container:west layoutData="{actionsPanelData}">
+                            <container:VerticalLayoutContainer ui:field="actionsPanel">
+                                <button:ToggleButton
+                                    ui:field="infoBtn"
+                                    debugId="BtnWorkflowInfo"
+                                    text="{strings.workflowInfo}"
+                                    width="150"
+                                    height="30"
+                                    layoutData="{stepActionData}"
+                                    value="true" />
+                                <button:ToggleButton
+                                    ui:field="appOrderBtn"
+                                    debugId="BtnWorkflowAppOrder"
+                                    text="{strings.selectAndOrderApps}"
+                                    width="150"
+                                    height="30"
+                                    layoutData="{stepActionData}" />
+                                <button:ToggleButton
+                                    ui:field="mappingBtn"
+                                    debugId="BtnWorkflowMapping"
+                                    text="{strings.mapOutputsToInputs}"
+                                    width="150"
+                                    height="30"
+                                    layoutData="{stepActionData}" />
+                                <gxt:ContentPanel
+                                    headingText="{strings.quickTipsHeading}"
+                                    width="150"
+                                    height="150"
+                                    collapsible="true"
+                                    layoutData="{stepActionData}" >
+                                    <container:HtmlLayoutContainer
+                                        ui:field="helpContainer"
+                                        layoutData="{stepActionData}" />
+                                </gxt:ContentPanel>
+                            </container:VerticalLayoutContainer>
+                        </container:west>
+                        <container:center>
+                            <container:CardLayoutContainer ui:field="stepPanel">
+                                <views:PipelineInfoEditor ui:field="infoPanel" />
+                                <views:PipelineAppOrderViewImpl ui:field="appOrderPanel" />
+                                <views:PipelineAppMappingForm ui:field="mappingPanel"/>
+                            </container:CardLayoutContainer>
+                        </container:center>
+                    </container:BorderLayoutContainer>
+                    <!-- This is the new Pipeline Builder panel -->
+                    <container:BorderLayoutContainer ui:field="builderPanel">
+                        <container:center>
+                            <container:SimpleContainer ui:field="appsContainer" />
+                        </container:center>
+                        <container:east layoutData="{builderPanelData}">
+                            <container:SimpleContainer ui:field="builderDropWrapper">
+                                <builder:PipelineCreator ui:field="builder" />
+                            </container:SimpleContainer>
+                        </container:east>
+                    </container:BorderLayoutContainer>
+                </container:CardLayoutContainer>
+            </container:center>
+        </container:BorderLayoutContainer>
+    </container:SimpleContainer>
+</ui:UiBinder>

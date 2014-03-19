@@ -1,0 +1,46 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder
+    xmlns:ui="urn:ui:com.google.gwt.uibinder"
+    xmlns:g="urn:import:com.google.gwt.user.client.ui"
+    xmlns:container="urn:import:com.sencha.gxt.widget.core.client.container"
+    xmlns:form="urn:import:com.sencha.gxt.widget.core.client.form">
+
+    <ui:with
+        field="strings"
+        type="org.iplantc.de.resources.client.messages.IplantDisplayStrings" />
+    <ui:with
+        type="com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer.VerticalLayoutData"
+        field="nameLayout">
+        <ui:attributes
+            width="1"
+            height="-1" />
+    </ui:with>
+    <ui:with
+        type="com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer.VerticalLayoutData"
+        field="descLayout">
+        <ui:attributes
+            width="1"
+            height="0.9" />
+    </ui:with>
+
+    <container:VerticalLayoutContainer>
+        <container:child layoutData="{nameLayout}">
+            <form:FieldLabel text="{strings.name}">
+                <form:widget>
+                    <form:TextField
+                        ui:field="name"
+                        allowBlank="false" />
+                </form:widget>
+            </form:FieldLabel>
+        </container:child>
+        <container:child layoutData="{descLayout}">
+            <form:FieldLabel text="{strings.description}">
+                <form:widget>
+                    <form:TextArea
+                        ui:field="description"
+                        allowBlank="false" />
+                </form:widget>
+            </form:FieldLabel>
+        </container:child>
+    </container:VerticalLayoutContainer>
+</ui:UiBinder>
