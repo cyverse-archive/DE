@@ -1,0 +1,57 @@
+.summaryItem {
+	margin-bottom: 1px;
+	padding: 0.2em;
+	outline: rgb(208,208,208) solid 1px;	
+	white-space: nowrap;
+}
+
+.summaryItem:hover {
+	background-color: rgb(238,238,238);
+	cursor: pointer;	
+	outline: rgb(208,208,208) solid 2px;	
+}
+
+.selected {
+	background-color: #DFE8F6 !important;
+}
+
+.summary {
+}
+
+@sprite .dismiss {
+	gwt-image: "dismissImg";
+	float: right;
+}
+
+@sprite .dismiss:hover {
+	gwt-image: "dismissOnHoverImg";
+	cursor: pointer;
+}
+
+.activationTime {
+	color: rgb(127,127,127);
+}
+
+.unseen {
+	font-weight: bold;
+}
+
+.messageView {
+	background-color: rgb(255,255,255);
+	border: 1px solid rgb(208,208,208);
+	padding: 0.5em;
+}
+
+.expiry {
+	border-top: thin solid rgb(208,208,208); 
+	color: rgb(127,127,127);
+	font-size: smaller;
+	font-style: italic;
+	padding-top: 0.2em;
+	text-align: center;
+}
+
+.statusPanel {
+	background-color: rgb(255,255,255);
+	color: rgb(127,127,127);
+}

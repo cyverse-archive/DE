@@ -1,0 +1,10 @@
+.status-list-item {
+    list-style-position: inside;
+    font-weight: bold;
+    padding: 0.5em;
+}
+
+.status-help-text {
+	font-weight: normal;
+	padding: 0 1em;
+}

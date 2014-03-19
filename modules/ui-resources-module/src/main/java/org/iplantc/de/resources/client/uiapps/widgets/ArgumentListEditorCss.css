@@ -1,0 +1,9 @@
+@sprite .delete {
+    gwt-image: "deleteRating";   
+    cursor: pointer; 
+}
+
+@sprite .deleteHover {
+	gwt-image: "deleteRatingHover";
+	cursor: pointer;
+}

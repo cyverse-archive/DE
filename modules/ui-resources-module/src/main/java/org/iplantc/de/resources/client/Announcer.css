@@ -1,0 +1,58 @@
+@CHARSET "UTF-8";
+
+/* The Announcer widget styling */
+
+/* This is the style for an active close button when the mouse cursor is not over it. */
+@sprite .closeButton {
+	gwt-image: "close";
+}
+
+/* This is the style for an active close button when the mouse cursor is over it. */
+@sprite .closeButtonOver {
+	cursor: pointer;
+	gwt-image: "closeHover";
+}
+
+/* Makes the subject solidify and push off the desktop a bit*/
+@keyframes materialize {
+	from {
+		opacity: 0;
+ 		box-shadow: 0mm 0mm 2px rgba(0, 0, 0, 0);
+	}
+	to {
+		opacity: 1;
+		box-shadow: 1mm 1mm 2px rgba(0, 0, 0, 0.3);
+	}	
+}
+
+/* This is the styling applied to the main announcer panel */
+.panel {
+	animation: materialize 2s;
+ 	background: white;
+ 	border: 1px outset #DB6619;
+ 	box-shadow: 1mm 1mm 0.7mm rgba(0, 0, 0, 0.3);
+	padding: 1mm;
+}
+
+/* This is the styling applied to error announcements */
+.panelError {
+    animation: materialize 1s;
+	background: white;
+	border: 1px outset #DB6619;
+    box-shadow: 1mm 1mm 0.7mm rgba(0, 0, 0, 0.3);
+    color: #DB6619;
+    font-weight: bold;
+    padding: 1mm;
+}
+
+/* This is the additive styling applied to the main announcer panel when there are multiple messages
+ * to be announced
+ */
+.panelMultiple {
+	box-shadow: 1mm 1mm 0mm rgb(237, 237, 237) !important;
+}
+
+/* This is the styling applied to the content */
+.content {
+	padding-right: 1mm !important;
+}

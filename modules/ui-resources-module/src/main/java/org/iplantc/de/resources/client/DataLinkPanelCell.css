@@ -1,0 +1,21 @@
+@sprite .dataLinkDelete {
+	gwt-image: "linkDelete";
+	cursor: pointer;
+	float: left;
+}
+
+@sprite .dataLinkFileIcon {
+	gwt-image: "file";
+	float: left;
+}
+
+@sprite .pasteIcon {
+	gwt-image: "paste";
+	display: block;
+	float: left;
+}
+
+.dataLinkImfoImg {
+	float: left;
+	vertical-align: text-bottom;
+} 

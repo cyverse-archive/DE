@@ -1,0 +1,40 @@
+@sprite .drFile {
+	gwt-image: "file";	
+	cursor: pointer; 
+	float: left;
+}
+
+@sprite .drFolder {
+	gwt-image: "folder";	
+	cursor: pointer;
+	float: left; 
+}
+
+.nameStyle {
+	cursor: pointer;
+	text-decoration: none;
+	font-size: 12px;
+	height: 15px;
+	padding-top: 2px;
+	padding-bottom: 2px;
+	color: black;
+}
+
+.nameDisabledStyle {
+	color:red;	
+	font-style: italic;
+	text-decoration: none;
+	cursor: default;
+}
+.nameStyle:hover {
+	text-decoration: underline;
+}
+
+.nameStyleNoPointer {
+	text-decoration: none;
+	font-size: 12px;
+	height: 15px;
+	padding-top: 2px;
+	padding-bottom: 2px;
+	color: black;
+}
