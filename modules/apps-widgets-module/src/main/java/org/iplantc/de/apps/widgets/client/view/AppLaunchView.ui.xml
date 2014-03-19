@@ -1,0 +1,33 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+			 xmlns:g="urn:import:com.google.gwt.user.client.ui"
+             xmlns:container="urn:import:com.sencha.gxt.widget.core.client.container"
+             xmlns:appTemplate="urn:import:org.iplantc.de.apps.widgets.client.view"
+             xmlns:button="urn:import:com.sencha.gxt.widget.core.client.button">
+
+    <ui:with type="org.iplantc.de.resources.client.messages.IplantDisplayStrings"
+             field="display" />
+
+    <ui:with type="com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer.VerticalLayoutData" 
+             field="appTemplateFormLayoutData">
+        <ui:attributes width="1" height="1" />
+    </ui:with>
+    <ui:with type="com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer.VerticalLayoutData" 
+             field="buttonBarLayoutData">
+        <ui:attributes width="1" height="-1" />
+	</ui:with>
+
+    <container:VerticalLayoutContainer>
+    	<container:child layoutData="{appTemplateFormLayoutData}">
+			<appTemplate:AppTemplateForm ui:field="wizard"/>
+    	</container:child>
+    	<container:child layoutData="{buttonBarLayoutData}">
+            <button:ButtonBar pack="END">
+                <button:child>
+                    <button:TextButton ui:field="launchButton"
+                                       text="{display.launchAnalysis}"/>
+                </button:child>
+            </button:ButtonBar>
+    	</container:child>
+    </container:VerticalLayoutContainer>
+</ui:UiBinder>
