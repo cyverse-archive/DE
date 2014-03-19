@@ -37,6 +37,8 @@ import com.google.web.bindery.autobean.shared.AutoBeanCodex;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * helps with notifications for the user.
@@ -107,6 +109,9 @@ public class NotificationHelper {
                         PayloadToolRequest.class, context).as();
 
                 List<ToolRequestHistory> history = toolRequest.getHistory();
+
+                Logger logger = Logger.getLogger("NameOfYourLogger");
+                logger.log(Level.SEVERE, "history size==>" + history.size());
 
                 ToolRequestHistoryDialog dlg = new ToolRequestHistoryDialog(toolRequest.getName(),
                         history);

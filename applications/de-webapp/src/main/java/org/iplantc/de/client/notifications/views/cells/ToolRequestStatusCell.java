@@ -13,17 +13,23 @@ import com.sencha.gxt.core.client.util.Format;
  * @author psarando
  * 
  */
-public class ToolRequestStatusCell extends AbstractCell<ToolRequestStatus> {
+public class ToolRequestStatusCell extends AbstractCell<String> {
 
     @Override
-    public void render(Context context, ToolRequestStatus value, SafeHtmlBuilder sb) {
+    public void render(Context context, String value, SafeHtmlBuilder sb) {
         String qtip = ""; //$NON-NLS-1$
 
-        if (value != null) {
-            qtip = Format.substitute("qtip=\"{0}\"", value.getHelpText()); //$NON-NLS-1$
+        if (value != null &&  (value.equalsIgnoreCase(ToolRequestStatus.Completion.toString()) || value.equalsIgnoreCase(ToolRequestStatus.Evaluation.toString())
+                || value.equalsIgnoreCase(ToolRequestStatus.Failed.toString()) || value.equalsIgnoreCase(ToolRequestStatus.Installation.toString())
+                || value.equalsIgnoreCase(ToolRequestStatus.Pending.toString()) || value.equalsIgnoreCase(ToolRequestStatus.Submitted.toString())
+                || value.equalsIgnoreCase(ToolRequestStatus.Validation.toString())) ) {
+            qtip = Format.substitute("qtip=\"{0}\"", ToolRequestStatus.valueOf(value).getHelpText()); //$NON-NLS-1$
+            sb.appendHtmlConstant(Format.substitute("<div {0}>{1}</div>", qtip, value));
+        } else {
+            sb.appendHtmlConstant(Format.substitute("<div>{0}</div>", value));
         }
 
-        sb.appendHtmlConstant(Format.substitute("<div {0}>{1}</div>", qtip, value)); //$NON-NLS-1$
+        //$NON-NLS-1$
     }
 
 }
