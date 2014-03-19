@@ -1,0 +1,182 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>org.iplantc.de</groupId>
+	<artifactId>ui-diskresource</artifactId>
+	<packaging>jar</packaging>
+	<version>1.8.6-SNAPSHOT</version>
+	<name>The iPlant Collaborative disk resource models</name>
+	<url>http://project.iplantcollaborative.org</url>
+	<!-- convenience to define GWT version in one place -->
+	<properties>
+		<gwt.module>org.iplantc.de.diskResource.diskresource</gwt.module>
+		<!-- Target Java Version -->
+		<jdk.version>1.6</jdk.version>
+		<!-- Current GXT Version -->
+		<gxt.version>3.0.6</gxt.version>
+		<!-- Current GWT Version -->
+		<gwt.version>2.5.0</gwt.version>
+		<!-- Define OS/Platform Independent Character Encoding -->
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
+	<dependencies>
+		<!-- GWT deps (from central repo) -->
+		<dependency>
+			<groupId>com.google.gwt</groupId>
+			<artifactId>gwt-servlet</artifactId>
+			<version>${gwt.version}</version>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.google.gwt</groupId>
+			<artifactId>gwt-user</artifactId>
+			<version>${gwt.version}</version>
+            <scope>provided</scope>
+		</dependency>
+        <dependency>
+            <groupId>com.google.gwt.inject</groupId>
+            <artifactId>gin</artifactId>
+            <version>2.0.0</version>
+            <classifier/>
+        </dependency>
+      
+		<!-- GXT Dependencies -->
+		<dependency>
+            <groupId>com.sencha.gxt</groupId>
+            <artifactId>gxt</artifactId>
+            <version>${gxt.version}</version>
+        </dependency>
+        
+        <!-- Testing Dependencies -->
+		<dependency>
+            <groupId>com.google.gwt.gwtmockito</groupId>
+            <artifactId>gwtmockito</artifactId>
+            <version>1.1.2</version>
+            <scope>test</scope>
+        </dependency>
+		
+        <!-- iPlant Dependencies -->
+        <dependency>
+            <groupId>org.iplantc.de</groupId>
+            <artifactId>ui-commons</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        
+	</dependencies>
+	<build>
+		<finalName>ui-diskresource</finalName>
+		<outputDirectory>${basedir}/war/WEB-INF/classes</outputDirectory>
+		<plugins>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>gwt-maven-plugin</artifactId>
+				<version>${gwt.version}</version>
+				<executions>
+					<execution>
+                        <!-- No GwtTestCases should be run from sub modules -->
+						<goals>
+							<goal>compile</goal>
+						</goals>
+						<configuration>
+							<module>${gwt.module}</module>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+                <version>2.5.1</version>
+				<configuration>
+					<source>${jdk.version}</source>
+					<target>${jdk.version}</target>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<configuration>
+					<archive>
+						<manifest>
+							<addClasspath>true</addClasspath>
+						</manifest>
+					</archive>
+					<configuration>
+						<useDefaultManifestFile>true</useDefaultManifestFile>
+					</configuration>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-clean-plugin</artifactId>
+				<configuration>
+					<filesets>
+						<fileset>
+							<directory>${basedir}/bin</directory>
+						</fileset>
+					</filesets>
+				</configuration>
+			</plugin>
+            <plugin>
+               <groupId>org.apache.maven.plugins</groupId>
+               <artifactId>maven-surefire-plugin</artifactId>
+               <version>2.12.4</version>
+               <configuration>
+                 <!--  <excludes> -->
+                     <!-- Exclude GWT tests from regular JUnit tests. -->
+                     <!-- <exclude>**/GwtTest*.java</exclude>
+                     <exclude>**/GwtTestSuite*.java</exclude>
+                  </excludes> -->
+               </configuration>
+               <dependencies>
+                  <dependency>
+                     <!-- Specify Junit Provider -->
+                     <groupId>org.apache.maven.surefire</groupId>
+                     <artifactId>surefire-junit47</artifactId>
+                     <version>2.12.4</version>
+                  </dependency>
+               </dependencies>
+            </plugin>
+            <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-jar-plugin</artifactId>
+              <version>2.2</version>
+              <executions>
+                <execution>
+                  <goals>
+                    <goal>test-jar</goal>
+                  </goals>
+                </execution>
+              </executions>
+            </plugin>
+		</plugins>
+		<resources>
+			<resource>
+				<directory>src/main/java</directory>
+				<includes>
+					<include>**/client/**</include>
+					<include>**/shared/**</include>
+					<!-- only include the GWT Module definition -->
+					<include>**/*.gwt.xml</include>
+				</includes>
+			</resource>
+		</resources>
+	</build>
+	<repositories>
+		<repository>
+			<id>iplantCollaborative</id>
+			<name>The iPlant Collaborative local repository</name>
+			<url>http://projects.iplantcollaborative.org/archiva/repository/internal/</url>
+		</repository>
+        <repository>
+            <id>codehaus-maven-repo</id>
+            <name>Codehaus repo</name>
+            <url>http://repository.codehaus.org/org/codehaus/mojo/</url>
+        </repository>
+        <repository>
+            <id>sencha-commercial-release</id>
+            <name>Commercially licensed Sencha artifacts</name>
+            <url>https://maven.sencha.com/repo/support-commercial-release/</url>
+        </repository>
+	</repositories>
+</project>

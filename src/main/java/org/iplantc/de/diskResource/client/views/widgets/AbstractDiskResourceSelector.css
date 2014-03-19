@@ -1,0 +1,29 @@
+.wrap {
+  height: 30px;
+  position: relative;
+  width: 100%;
+}
+
+.buttonWrap {
+  position: absolute;
+  right: 0;
+  z-index: 1;
+  top: 0;
+  padding-left: 2px;
+}
+
+.inputWrap {
+  right: 0;
+  top: 0;
+  padding-right: 2px;
+  width:80%
+}
+
+.errorText {
+    font-size: 8px;
+    font-style: italic;
+    color: red;
+    margin-left: auto;
+    margin-right: auto;
+    width: 50%;
+}

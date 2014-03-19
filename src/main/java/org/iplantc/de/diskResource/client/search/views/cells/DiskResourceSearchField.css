@@ -1,0 +1,23 @@
+.trigger {
+  height: 20px !important; 
+  border-bottom: 1px solid;  
+  border-top: 1px solid;
+  border-right: 1px solid;
+  border-top-color: #b5b8c8;
+  border-right-color: #b5b8c8;
+}
+
+.focus .trigger {
+  border-top-color: #7EADD9;
+  border-right-color: #7EADD9;
+}
+
+.over .trigger {
+  border-top-color: #7EADD9;
+  border-right-color: #7EADD9;
+}
+
+.click .trigger {
+  border-top-color: #7EADD9;
+  border-right-color: #7EADD9;
+}

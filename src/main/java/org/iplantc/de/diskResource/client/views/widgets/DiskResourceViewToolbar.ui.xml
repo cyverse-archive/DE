@@ -1,0 +1,152 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+             xmlns:g="urn:import:com.google.gwt.user.client.ui"
+             xmlns:toolbar="urn:import:com.sencha.gxt.widget.core.client.toolbar"
+             xmlns:button="urn:import:com.sencha.gxt.widget.core.client.button"
+             xmlns:menu="urn:import:com.sencha.gxt.widget.core.client.menu"
+             xmlns:form="urn:import:com.sencha.gxt.widget.core.client.form"
+             xmlns:search="urn:import:org.iplantc.de.diskResource.client.search.views">
+
+   <ui:with field="res"
+            type="org.iplantc.de.resources.client.IplantResources"/>
+   <ui:with field="display"
+            type="org.iplantc.de.resources.client.messages.IplantDisplayStrings"/>
+    <ui:with
+        field="flexBoxData"
+        type="com.sencha.gxt.widget.core.client.container.BoxLayoutContainer.BoxLayoutData">
+        <ui:attributes flex="3" />
+    </ui:with>
+
+
+	<toolbar:ToolBar>
+		<!-- Upload Menu -->
+		<toolbar:child>
+			<button:TextButton debugId="idfileUploadBtn"
+				ui:field="uploads" text="{display.upload}" icon="{res.importData}">
+				<button:menu>
+					<menu:Menu>
+						<menu:MenuItem debugId="idBlkUplodBtn" ui:field="bulkUploadButton"
+							text="{display.bulkUploadFromDesktop}">
+						</menu:MenuItem>
+						<menu:MenuItem debugId="idSimpleUpldBtn" ui:field="simpleUploadButton"
+							text="{display.simpleUploadFromDesktop}">
+						</menu:MenuItem>
+						<menu:MenuItem debugId="idUrlImportBtn" ui:field="importButton"
+							text="{display.urlImport}">
+						</menu:MenuItem>
+					</menu:Menu>
+				</button:menu>
+			</button:TextButton>
+		</toolbar:child>
+
+		<!-- New Folder button -->
+		<toolbar:child>
+			<button:TextButton debugId="idNewBtn"
+				ui:field="newButton" text="New" icon="{res.add}">
+					<button:menu>
+					<menu:Menu>
+			    	<menu:MenuItem debugId="idNewFolderBtn" ui:field="newFolderButton"
+							 text="{display.newFolder}" icon="{res.folderAdd}">
+						</menu:MenuItem>
+						
+						<menu:MenuItem debugId="idNewFile" ui:field="newFileButton"
+							text="New File" icon="{res.fileRename}">
+						</menu:MenuItem>
+						</menu:Menu>
+						</button:menu>
+			</button:TextButton>
+		</toolbar:child>
+
+		<!-- Refresh button -->
+		<toolbar:child>
+			<button:TextButton debugId="idRefresnBtn" ui:field="refreshButton"
+				text="{display.refresh}" icon="{res.refresh}">
+			</button:TextButton>
+		</toolbar:child>
+
+		<!-- Download menu -->
+		<toolbar:child>
+			<button:TextButton debugId="idDownloadBtn"
+				ui:field="downloads" text="{display.download}" icon="{res.download}">
+				<button:menu>
+					<menu:Menu>
+						<menu:MenuItem debugId="idSimpleDownloadBtn"
+							ui:field="simpleDownloadButton" text="{display.simpleDownload}">
+						</menu:MenuItem>
+						<menu:MenuItem debugId="idBulkDownloadBtn" ui:field="bulkDownloadButton"
+							text="{display.bulkDownload}">
+						</menu:MenuItem>
+					</menu:Menu>
+				</button:menu>
+			</button:TextButton>
+		</toolbar:child>
+
+		<!-- Rename button -->
+		<toolbar:child>
+			<button:TextButton debugId="idEditBtn" ui:field="edit"
+				text="{display.edit}" icon="{res.edit}">
+				<button:menu>
+					<menu:Menu>
+						<menu:MenuItem debugId="idRenameBtn" ui:field="renameButton"
+							text="{display.rename}" icon="{res.fileRename}">
+						</menu:MenuItem>
+						<menu:MenuItem debugId="idMoveBtn" ui:field="moveButton"
+							text="{display.move}" icon="{res.edit}">
+						</menu:MenuItem>
+						<menu:MenuItem debugId="idDeleteBtn" ui:field="deleteButton"
+							text="{display.delete}" icon="{res.fileDelete}">
+						</menu:MenuItem>
+						<menu:MenuItem debugId="idMetadataBtn" ui:field="metadataButton"
+							text="{display.metadata}" icon="{res.metadata}">
+						</menu:MenuItem>
+					</menu:Menu>
+				</button:menu>
+			</button:TextButton>
+		</toolbar:child>
+
+
+		<!-- Share button -->
+		<toolbar:child>
+			<button:TextButton debugId="idShareBtn" ui:field="shareButton"
+				text="{display.share}" icon="{res.share}">
+
+				<button:menu>
+					<menu:Menu>
+						<menu:MenuItem debugId="idLinkShare" ui:field="dataLink"
+							text="{display.viaPublicLink}">
+						</menu:MenuItem>
+						<menu:MenuItem debugId="idUserShare" ui:field="share"
+							text="{display.viaDiscoveryEnvironment}">
+						</menu:MenuItem>
+					</menu:Menu>
+				</button:menu>
+			</button:TextButton>
+		</toolbar:child>
+
+        <!-- Data Search box -->
+        <toolbar:child layoutData="{flexBoxData}">
+            <search:DiskResourceSearchField ui:field="searchField"
+                                            debugId="idSearchTxt"/>
+        </toolbar:child>
+		<toolbar:child>
+			<button:TextButton debugId="idTrashBtn" ui:field="trash"
+				icon="{res.trash}" text="Trash">
+				<button:menu>
+					<menu:Menu>
+						<menu:MenuItem debugId="idRestoreBtn" ui:field="restore"
+							text="{display.restore}">
+						</menu:MenuItem>
+						<menu:SeparatorMenuItem></menu:SeparatorMenuItem>
+						<menu:MenuItem debugId="idEmptyTrashBtn" ui:field="emptyTrash"
+							text="{display.emptyTrash}">
+						</menu:MenuItem>
+					</menu:Menu>
+				</button:menu>
+			</button:TextButton>
+		</toolbar:child>
+
+
+
+
+	</toolbar:ToolBar>
+</ui:UiBinder>
