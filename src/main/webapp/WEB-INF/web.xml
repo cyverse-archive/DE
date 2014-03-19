@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<web-app version='2.5' xmlns='http://java.sun.com/xml/ns/javaee'
+	xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
+	xsi:schemaLocation='http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd'>
+
+	<context-param>
+		<param-name>contextConfigLocation</param-name>
+		<param-value>
+            /WEB-INF/classes/de-base.xml
+            /WEB-INF/classes/de-security.xml
+        </param-value>
+    </context-param>
+	<!-- Servlets -->
+	<servlet>
+		<servlet-name>sessionInitializationServlet</servlet-name>
+		<servlet-class>org.iplantc.de.server.CasSessionInitializationServlet</servlet-class>
+		<init-param>
+			<param-name>initialPage</param-name>
+			<param-value>Discoveryenvironment.jsp#workspace</param-value>
+		</init-param>
+	</servlet>
+	<servlet>
+		<servlet-name>logoutSuccessServlet</servlet-name>
+		<servlet-class>org.iplantc.de.server.CasLogoutServlet</servlet-class>
+		<init-param>
+			<param-name>propertyNamePrefix</param-name>
+			<param-value>org.iplantc.discoveryenvironment</param-value>
+		</init-param>
+	</servlet>
+	<servlet>
+		<servlet-name>loggedOutServlet</servlet-name>
+		<servlet-class>org.iplantc.de.server.CasLoggedOutServlet</servlet-class>
+		<init-param>
+			<param-name>propertyNamePrefix</param-name>
+			<param-value>org.iplantc.discoveryenvironment</param-value>
+		</init-param>
+	</servlet>
+	<servlet>
+		<servlet-name>fileDownloadServlet</servlet-name>
+		<servlet-class>org.iplantc.de.server.FileDownloadServlet</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>deServiceDispatcher</servlet-name>
+		<servlet-class>org.iplantc.de.server.CasServiceDispatcher</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>authenticationValidatingServiceDispatcher</servlet-name>
+		<servlet-class>org.iplantc.de.server.AuthenticationValidatingServiceDispatcher</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>sessionManagementServlet</servlet-name>
+		<servlet-class>org.iplantc.de.server.SessionManagementServlet</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>propertyServlet</servlet-name>
+		<servlet-class>org.iplantc.de.server.PropertyServlet</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>aboutAppServlet</servlet-name>
+		<servlet-class>org.iplantc.de.server.AboutApplicationServlet</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>confluenceServlet</servlet-name>
+		<servlet-class>org.iplantc.de.server.ConfluenceServlet</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>emailServlet</servlet-name>
+		<servlet-class>org.iplantc.de.server.EmailServlet</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>emptyResponseServlet</servlet-name>
+		<servlet-class>org.iplantc.de.server.EmptyResponseServlet</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>proxyServlet</servlet-name>
+		<servlet-class>org.iplantc.de.server.service.ProxyServlet</servlet-class>
+	</servlet>
+    <servlet>
+        <servlet-name>remoteLogging</servlet-name>
+        <servlet-class>com.google.gwt.logging.server.RemoteLoggingServiceImpl</servlet-class>
+    </servlet>
+   <servlet>
+        <servlet-name>uuidService</servlet-name>
+        <servlet-class>org.iplantc.de.server.service.UUIDServiceImpl</servlet-class>
+    </servlet>
+
+	<!-- Servlet Mappings -->
+	<servlet-mapping>
+		<servlet-name>sessionInitializationServlet</servlet-name>
+		<url-pattern>/discoveryenvironment/login</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>logoutSuccessServlet</servlet-name>
+		<url-pattern>/discoveryenvironment/logout</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>loggedOutServlet</servlet-name>
+		<url-pattern>/discoveryenvironment/logged-out</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>fileDownloadServlet</servlet-name>
+		<url-pattern>*.gdwnld</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>deServiceDispatcher</servlet-name>
+		<url-pattern>/discoveryenvironment/deservice</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>authenticationValidatingServiceDispatcher</servlet-name>
+		<url-pattern>/discoveryenvironment/auth-de-service</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>sessionManagementServlet</servlet-name>
+		<url-pattern>/discoveryenvironment/sessionmanagement</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>propertyServlet</servlet-name>
+		<url-pattern>/discoveryenvironment/properties</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>aboutAppServlet</servlet-name>
+		<url-pattern>/discoveryenvironment/about</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>confluenceServlet</servlet-name>
+		<url-pattern>/discoveryenvironment/confluence</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>emailServlet</servlet-name>
+		<url-pattern>/discoveryenvironment/email</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>emptyResponseServlet</servlet-name>
+		<url-pattern>/discoveryenvironment/empty</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>proxyServlet</servlet-name>
+		<url-pattern>/proxy/*</url-pattern>
+	</servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>remoteLogging</servlet-name>
+        <url-pattern>/discoveryenvironment/remote_logging</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+         <servlet-name>uuidService</servlet-name>
+         <url-pattern>/discoveryenvironment/uuidService</url-pattern>
+    </servlet-mapping>
+
+	<!-- Filters -->
+	<filter>
+		<filter-name>springSecurityFilterChain</filter-name>
+		<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+	</filter>
+	<filter>
+		<filter-name>gwtCacheControlFilter</filter-name>
+		<filter-class>org.iplantc.de.server.CacheControlFilter</filter-class>
+	</filter>
+
+	<!-- Filter Mapping Definitions -->
+	<filter-mapping>
+		<filter-name>springSecurityFilterChain</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+
+	<filter-mapping>
+		<filter-name>gwtCacheControlFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+
+	<session-config>
+		<session-timeout>60</session-timeout>
+	</session-config>
+
+	<listener>
+		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+	</listener>
+
+	<!-- Default page to serve -->
+	<welcome-file-list>
+		<welcome-file>Discoveryenvironment.jsp</welcome-file>
+	</welcome-file-list>
+</web-app>

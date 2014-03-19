@@ -1,0 +1,8 @@
+<!-- This is the XTemplates template used to render a message summary. -->
+
+<tpl if="dismissible"><span class="{style.dismiss}"></span></tpl>
+<tpl if="seen"><span class="{style.summary}"></tpl>
+<tpl if="!seen"><span class="{style.summary} {style.unseen}"></tpl>
+  <div>{type}</div>
+  <div class="{style.activationTime}">{activationTimeMsg}</div>
+</span>

@@ -1,0 +1,19 @@
+.hasResultFolder {
+	cursor:pointer;
+	white-space:pre-wrap;
+}
+
+.noResultFolder {
+	white-space:pre-wrap;
+}
+
+.disabledApp {
+	color:red;
+	cursor: default;
+	text-decoration: none;
+}
+
+.enabledApp {
+	color:black;
+	cursor:pointer;
+}

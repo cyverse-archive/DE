@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  When updating your version of GWT, you should also update this DTD reference,
+  so that your app can take advantage of the latest GWT module capabilities.
+-->
+<!DOCTYPE module PUBLIC "-//Google Inc.//DTD Google Web Toolkit 2.5.0//EN"
+  "http://google-web-toolkit.googlecode.com/svn/tags/2.5.0/distro-source/core/src/gwt-module.dtd">
+<module rename-to='discoveryenvironment'>
+	<!-- Inherit the core Web Toolkit stuff.                        -->
+	<inherits name='com.google.gwt.user.User' />
+	<inherits name="com.google.gwt.json.JSON" />
+    <inherits name="com.google.gwt.http.HTTP"/>
+    <inherits name="com.google.gwt.logging.Logging"/>
+    <inherits name="com.google.common.collect.Collect"/>
+    
+    <!-- Configure logging. -->
+    <set-property name="gwt.logging.logLevel" value="INFO"/>
+    <set-property name="gwt.logging.enabled" value="TRUE"/>
+    <set-property name="gwt.logging.simpleRemoteHandler" value="ENABLED"/>
+    <set-property name="gwt.logging.popupHandler" value="DISABLED"/>
+
+    <set-configuration-property name="CssResource.style" value="pretty"/>
+    
+    <inherits name="com.google.gwt.user.Debug"/>
+
+
+	<!-- Other module inherits                                      -->
+	<inherits name='com.sencha.gxt.ui.GXT' />
+	<stylesheet src="reset.css" />
+	<inherits name='com.sencha.gxt.theme.gray.Gray'/>
+
+	<extend-property name="user.agent.os" values="unknown" />
+		
+    <!-- UIBinder -->
+    <inherits name="com.google.web.bindery.autobean.AutoBean"/>
+    <inherits name="com.google.gwt.uibinder.UiBinder" />
+
+	<!-- I18N -->
+	<inherits name="com.google.gwt.i18n.I18N"/>
+	<inherits name="com.google.gwt.resources.Resources" />
+        <!-- Common Service Interfaces -->
+	<inherits name='org.iplantc.de.DiscoveryEnvironmentCommon' />
+	<inherits name="org.iplantc.de.apps.Apps"/>
+	<inherits name="org.iplantc.de.apps.widgets.Widgets"/>
+	<inherits name="org.iplantc.de.apps.integration.AppsIntegration"/>
+	<inherits name="org.iplantc.de.diskResource.diskresource"/>
+	<inherits name="org.iplantc.de.pipelines.pipelines"/>
+	<!-- for server push -->
+	<inherits name="com.google.gwt.rpc.RPC" />
+
+    <replace-with class="org.iplantc.de.client.desktop.theme.shortcut.ShortcutCellDefaultAppearance">
+       <when-type-is class="org.iplantc.de.client.desktop.widget.ShortcutCell.ShortcutCellAppearance" />
+    </replace-with>
+    <replace-with class="org.iplantc.de.client.desktop.theme.taskbutton.TaskButtonCellDefaultAppearance">
+       <when-type-is class="org.iplantc.de.client.desktop.widget.TaskButtonCell.TaskButtonCellAppearance" />
+    </replace-with>
+    
+   <replace-with 
+         class="org.iplantc.de.commons.client.appearance.widgets.IPlantAnchorDefaultAppearance">
+      <when-type-is class="org.iplantc.de.commons.client.widgets.IPlantAnchorAppearance"/>
+   </replace-with>
+
+    <replace-with class="org.iplantc.de.client.views.windows.AboutApplicationDefaultAppearance">
+        <when-type-is class="org.iplantc.de.client.views.windows.AboutApplicationAppearance" />
+    </replace-with>
+
+   <!--  system messages deferred binding rules -->
+   <replace-with class="org.iplantc.de.client.sysmsgs.services.RemoteServices">
+      <when-type-is class="org.iplantc.de.client.sysmsgs.services.Services"/>
+   </replace-with>
+   <replace-with class="org.iplantc.de.client.sysmsgs.view.DefaultFactory">
+   	  <when-type-is class="org.iplantc.de.client.sysmsgs.view.Factory"/>
+   </replace-with>
+   
+	<!-- Specify the app entry point class.                         -->
+	<entry-point class='org.iplantc.de.client.DiscoveryEnvironment' />
+	
+	
+	<source path="client"/>
+    <source path="de"/>
+</module>

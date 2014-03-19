@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:task="http://www.springframework.org/schema/task"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+           http://www.springframework.org/schema/context
+           http://www.springframework.org/schema/context/spring-context-3.0.xsd http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task.xsd">
+
+    <bean id="propertyPlaceholderConfigurer" class="org.iplantc.clavin.spring.ClavinPropertyPlaceholderConfigurer">
+        <property name="serviceName" value="discoveryenvironment" />
+        <property name="configNames">
+            <list>
+                <value>confluence</value>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="configAliasResolver" class="org.iplantc.clavin.spring.ConfigAliasResolver">
+        <property name="configurer" ref="propertyPlaceholderConfigurer" />
+        <property name="aliases">
+            <map>
+                <entry key="webapp" value="discoveryenvironment" />
+                <entry key="confluence" value="confluence" />
+            </map>
+        </property>
+    </bean>
+
+    <bean id="serviceCallResolver" class="org.iplantc.de.server.DefaultServiceCallResolver">
+        <constructor-arg index="0" ref="configAliasResolver" />
+    </bean>
+
+    <bean id="deProps" class="org.iplantc.de.server.DiscoveryEnvironmentProperties">
+        <constructor-arg index="0" ref="propertyPlaceholderConfigurer" />
+    </bean>
+
+    <bean id="casService" class="org.springframework.security.cas.ServiceProperties">
+        <property name="service" value="${org.iplantc.discoveryenvironment.cas.server-name}${org.iplantc.discoveryenvironment.cas.validation}" />
+    </bean>
+
+    <bean id="deLandingPage" class="org.iplantc.de.server.DeLandingPage">
+        <property name="deMaintenanceFile" value="${org.iplantc.discoveryenvironment.maintenance-file}" />
+        <property name="loginUrl" value="${org.iplantc.discoveryenvironment.cas.base-url}/login" />
+        <property name="casService" ref="casService" />
+    </bean>
+
+    <bean id="casAuthEntryPoint" class="org.iplantc.de.server.DeCasAuthenticationEntryPoint">
+        <property name="landingPage" ref="deLandingPage" />
+    </bean>
+
+    <bean id="casAuthenticationFilter" class="org.springframework.security.cas.web.CasAuthenticationFilter">
+        <property name="authenticationManager" ref="authenticationManager" />
+        <property name="filterProcessesUrl" value="${org.iplantc.discoveryenvironment.cas.validation}" />
+        <property name="proxyGrantingTicketStorage" ref="proxyGrantingTicketStorage" />
+        <property name="proxyReceptorUrl" value="${org.iplantc.discoveryenvironment.cas.proxy-receptor}" />
+        <property name="authenticationSuccessHandler" ref="authenticationSuccessHandler" />
+    </bean>
+
+    <bean id="authenticationSuccessHandler" class="org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler">
+        <property name="defaultTargetUrl" value="${org.iplantc.discoveryenvironment.cas.server-name}/discoveryenvironment/login"/>
+    </bean>
+
+    <bean id="singleLogoutFilter" class="org.jasig.cas.client.session.SingleSignOutFilter" />
+
+    <bean id="logoutHandler" class="org.iplantc.de.server.CasLogoutSuccessHandler">
+        <property name="logoutUrl" value="${org.iplantc.discoveryenvironment.cas.base-url}/logout" />
+        <property name="defaultRedirectUrl" value="${org.iplantc.discoveryenvironment.cas.server-name}/discoveryenvironment/logged-out" />
+    </bean>
+
+    <bean id="requestSingleLogoutFilter" class="org.springframework.security.web.authentication.logout.LogoutFilter">
+        <constructor-arg index="0" ref="logoutHandler" />
+        <constructor-arg index="1">
+            <bean class="org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler" />
+        </constructor-arg>
+        <property name="filterProcessesUrl" value="${org.iplantc.discoveryenvironment.cas.logout-url}" />
+    </bean>
+
+    <bean id="casAuthenticationProvider" class="org.springframework.security.cas.authentication.CasAuthenticationProvider">
+        <property name="ticketValidator" ref="casTicketValidator" />
+        <property name="serviceProperties" ref="casService" />
+        <property name="key" value="discovery_environment_web_application" />
+        <property name="authenticationUserDetailsService" ref="authenticationUserDetailsService" />
+    </bean>
+
+    <bean id="casTicketValidator" class="org.jasig.cas.client.validation.Cas20ProxyTicketValidator">
+        <constructor-arg index="0" value="${org.iplantc.discoveryenvironment.cas.base-url}" />
+        <property name="proxyGrantingTicketStorage" ref="proxyGrantingTicketStorage" />
+        <property name="proxyCallbackUrl" value="${org.iplantc.discoveryenvironment.cas.server-name}${org.iplantc.discoveryenvironment.cas.proxy-receptor}" />
+        <property name="acceptAnyProxy" value="true" />
+    </bean>
+
+    <bean id="proxyGrantingTicketStorage" class="org.jasig.cas.client.proxy.ProxyGrantingTicketStorageImpl" />
+    <task:scheduled-tasks>
+        <task:scheduled ref="proxyGrantingTicketStorage" method="cleanUp" fixed-delay="300000"/>
+    </task:scheduled-tasks>
+
+    <bean id="authenticationUserDetailsService" class="org.springframework.security.cas.userdetails.GrantedAuthorityFromAssertionAttributesUserDetailsService">
+        <constructor-arg index="0">
+            <array>
+                <value>entitlement</value>
+            </array>
+        </constructor-arg>
+    </bean>
+</beans>
