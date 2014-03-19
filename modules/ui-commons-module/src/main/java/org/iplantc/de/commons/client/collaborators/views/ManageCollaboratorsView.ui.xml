@@ -1,0 +1,83 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
+	xmlns:container="urn:import:com.sencha.gxt.widget.core.client.container"
+	xmlns:gxt="urn:import:com.sencha.gxt.widget.core.client"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui"
+	xmlns:tree="urn:import:com.sencha.gxt.widget.core.client.tree"
+	xmlns:grid="urn:import:com.sencha.gxt.widget.core.client.grid"
+	xmlns:button="urn:import:com.sencha.gxt.widget.core.client.button"
+	xmlns:toolbar="urn:import:com.sencha.gxt.widget.core.client.toolbar"
+	xmlns:userSearch = "urn:import:org.iplantc.de.commons.client.collaborators.util"
+	xmlns:form="urn:import:com.sencha.gxt.widget.core.client.form">
+
+   <ui:with type="org.iplantc.de.resources.client.IplantResources" field="icons"/>
+   <ui:with type="org.iplantc.de.resources.client.messages.IplantDisplayStrings" field="strings" />
+ 	<!-- Main Panel -->
+	<ui:with field="listStore" type="com.sencha.gxt.data.shared.ListStore" />
+	<ui:with field="cm"
+		type="com.sencha.gxt.widget.core.client.grid.ColumnModel" />
+	<ui:with field="gridView"
+		type="com.sencha.gxt.widget.core.client.grid.GridView">
+		<ui:attributes forceFit="true" autoFill="true" />
+	</ui:with>
+
+	<ui:with field="centerMargins" type="com.sencha.gxt.core.client.util.Margins">
+		<ui:attributes top="0" right="0" bottom="0" left="0" />
+	</ui:with>
+
+	<ui:with field="northMargins" type="com.sencha.gxt.core.client.util.Margins">
+		<ui:attributes top="30" right="0" bottom="0" left="30" />
+	</ui:with>
+
+	<ui:with field="northData"
+		type="com.sencha.gxt.widget.core.client.container.BorderLayoutContainer.BorderLayoutData">
+		  <ui:attributes size="50"
+                     maxSize="50"
+                     hidden="false" margins="{northMargins}"/>
+	</ui:with>
+
+	<ui:with
+		type="com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer.VerticalLayoutData"
+		field="middleData">
+		<ui:attributes width="1" height="1" />
+	</ui:with>
+
+
+	<ui:with field="centerData"
+		type="com.sencha.gxt.widget.core.client.container.MarginData">
+		<ui:attributes margins="{centerMargins}" />
+	</ui:with>
+	<container:SimpleContainer>
+		<container:child>
+			<container:BorderLayoutContainer
+				ui:field="con" borders="true">
+				<!-- This is the tool bar -->
+				<container:north layoutData="{northData}">
+				    <container:HorizontalLayoutContainer ui:field="searchPanel">
+							<userSearch:UserSearchField  ui:field="searchField"/>
+				    </container:HorizontalLayoutContainer>
+				</container:north>
+				<!-- This is the main panel -->
+				<container:center layoutData="{centerData}">
+					<gxt:FramedPanel ui:field="collaboratorListPnl"
+						pixelSize="445,175" collapsible="false" headerVisible="true">
+						<container:VerticalLayoutContainer pixelSize="445,150">
+						<container:child >
+							<toolbar:ToolBar height="30" ui:field="toolbar">
+				    			<button:TextButton debugId="idDeleteBtn" ui:field="deleteBtn" text="{strings.delete}" icon="{icons.delete}" enabled="false"></button:TextButton>
+								<button:TextButton debugId="idManage" ui:field="manageBtn" text="Manage Collaborators"  visible="false" icon="{icons.share}"></button:TextButton>
+							</toolbar:ToolBar>
+							</container:child>
+							<container:child layoutData="{middleData}">
+								<grid:Grid ui:field="grid" cm="{cm}" store="{listStore}"
+									view="{gridView}" loadMask="true" columnReordering="true"
+									borders="false">
+								</grid:Grid>
+								</container:child>
+					</container:VerticalLayoutContainer>
+					</gxt:FramedPanel>
+				</container:center>
+			</container:BorderLayoutContainer>
+		</container:child>
+	</container:SimpleContainer>
+</ui:UiBinder>

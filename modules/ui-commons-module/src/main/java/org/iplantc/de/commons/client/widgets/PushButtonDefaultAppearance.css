@@ -1,0 +1,13 @@
+.pushButton {
+  font-size: 12px;
+  padding: 4px;
+  cursor: pointer;
+}
+ 
+.pushButton .pushButtonImage {
+  float: right;
+}
+ 
+.pushButton .pushButtonText {
+  text-align: left;
+}
