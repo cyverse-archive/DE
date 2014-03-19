@@ -1,0 +1,44 @@
+@def selectionColor #AADDDD;
+.header {
+    padding: 4px 3px 2px 5px;
+    position: relative;
+    color: #3C3C3C;
+    font-weight: bold;
+    font-size: 11px;
+    font-family: tahoma, arial, verdana, sans-serif;
+    border-color: #d0d0d0;
+    background-image: linear-gradient(bottom, rgb(218, 218, 218) 7%,
+        rgb(250, 250, 250) 78%);
+    background-image: -o-linear-gradient(bottom, rgb(218, 218, 218) 7%,
+        rgb(250, 250, 250) 78%);
+    background-image: -moz-linear-gradient(bottom, rgb(218, 218, 218) 7%,
+        rgb(250, 250, 250) 78%);
+    background-image: -webkit-linear-gradient(bottom, rgb(218, 218, 218) 7%,
+        rgb(250, 250, 250) 78%);
+    background-image: -ms-linear-gradient(bottom, rgb(218, 218, 218) 7%,
+        rgb(250, 250, 250) 78%);
+    background-image: -webkit-gradient(linear, left bottom, left top, color-stop(0.07, rgb(218
+        , 218, 218)), color-stop(0.78, rgb(250, 250, 250))); 
+    height: auto;
+    line-height: 15px;
+/*  border: 1px solid #d0d0d0; */
+    /*Transition*/
+    -webkit-transition: all 0.25s ease;
+    -moz-transition: all 0.25s ease;
+    -o-transition: all 0.25s ease;
+}
+
+.header:hover, .headerSelect {
+    background-image: linear-gradient(bottom, rgb(220, 220, 220) 7%,
+        selectionColor 78%);
+    background-image: -o-linear-gradient(bottom, rgb(220, 220, 220) 7%,
+        selectionColor 78%);
+    background-image: -moz-linear-gradient(bottom, rgb(220, 220, 220) 7%,
+        selectionColor 78%);
+    background-image: -webkit-linear-gradient(bottom, rgb(220, 220, 220) 7%,
+        selectionColor 78%);
+    background-image: -ms-linear-gradient(bottom, rgb(220, 220, 220) 7%,
+        selectionColor 78%);
+    background-image: -webkit-gradient(linear, left bottom, left top, color-stop(0.07, rgb(220
+        , 220, 220)), color-stop(0.78, selectionColor));
+}

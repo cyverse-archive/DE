@@ -1,0 +1,49 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:gxt="urn:import:com.sencha.gxt.widget.core.client"
+	xmlns:con="urn:import:com.sencha.gxt.widget.core.client.container"
+	xmlns:form="urn:import:com.sencha.gxt.widget.core.client.form"
+	xmlns:toolbar="urn:import:com.sencha.gxt.widget.core.client.toolbar"
+	xmlns:grid="urn:import:com.sencha.gxt.widget.core.client.grid"
+	xmlns:button="urn:import:com.sencha.gxt.widget.core.client.button">
+
+	<ui:with field="display"
+		type="org.iplantc.de.resources.client.messages.IplantDisplayStrings" />
+	<ui:with field="res"
+		type="org.iplantc.de.resources.client.IplantResources" />
+	<ui:with type="com.sencha.gxt.widget.core.client.grid.ColumnModel"
+		field="cm" />
+	<ui:with type="com.sencha.gxt.data.shared.ListStore" field="validatorStore" />
+	<ui:with type="com.sencha.gxt.widget.core.client.grid.GridView"
+		field="view">
+		<ui:attributes stripeRows="true" forceFit="true" />
+	</ui:with>
+	<form:FieldLabel ui:field="validatorEditorLabel"
+	                 labelAlign="TOP">
+        <form:widget>
+			<con:NorthSouthContainer>
+				<con:north>
+					<toolbar:ToolBar>
+						<toolbar:child>
+							<button:TextButton ui:field="add" text="{display.add}" icon="{res.add}" />
+						</toolbar:child>
+						<toolbar:child>
+							<button:TextButton ui:field="edit" text="{display.edit}"
+								enabled="false"  icon="{res.edit}"/>
+						</toolbar:child>
+						<toolbar:child>
+							<button:TextButton ui:field="delete" text="{display.delete}"
+								enabled="false" icon="{res.delete}"/>
+						</toolbar:child>
+		
+					</toolbar:ToolBar>
+				</con:north>
+		
+				<con:south>
+					<grid:Grid ui:field="grid" cm="{cm}" store="{validatorStore}"
+						view="{view}" />
+				</con:south>
+			</con:NorthSouthContainer>
+        </form:widget>	                 
+	</form:FieldLabel>
+</ui:UiBinder> 
