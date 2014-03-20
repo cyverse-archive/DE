@@ -29,7 +29,7 @@ ext {
 }
 
 dependencies {
-   compile project(':de-webapp')
+   compile project(':de')
    compile project(':belphegor')
 }
 
@@ -69,7 +69,7 @@ task testReport(type: TestReport) {
 
 
 // Configure individual subprojects
-project(':de-webapp') {
+project(':de') {
    apply plugin: 'war'
    apply plugin: 'gwt'
    apply plugin: 'jetty'
@@ -228,6 +228,7 @@ project(':ui-disk-resource-module') {
       compile project(':ui-commons-module')
 
       testCompile 'com.google.gwt.gwtmockito:gwtmockito:1.1.2'
+      testCompile project(':de-common-module').sourceSets.test.output
    }
 } 
 project(':ui-pipelines-module') {
@@ -267,6 +268,7 @@ project(':ui-commons-module') {
               project(':de-common-module')
 
       testCompile 'com.google.gwt.gwtmockito:gwtmockito:1.1.2'
+      testCompile project(':de-common-module').sourceSets.test.output
    }
 } 
 project(':de-common-module') {

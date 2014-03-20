@@ -1,7 +1,7 @@
 import org.gradle.logging.StyledTextOutputFactory;
 import static org.gradle.logging.StyledTextOutput.Style;
 
-configure(subprojects.findAll{it.name == "de-webapp" || it.name == "belphegor"}) {
+configure(subprojects.findAll{it.name == "de" || it.name == "belphegor"}) {
     def out = services.get(StyledTextOutputFactory).create("org.iplantc.gradle.git.logger")
 
     tasks.addRule('Pattern: configBootstrap[Deployment]: Performs a \'bootstrap-config.py [-d <Deployment>]\' in each application to generate config files.') { String taskName ->

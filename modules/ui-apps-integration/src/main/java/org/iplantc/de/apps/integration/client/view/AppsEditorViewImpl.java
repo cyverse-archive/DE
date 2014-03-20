@@ -116,7 +116,7 @@ public class AppsEditorViewImpl extends Composite implements AppsEditorView {
     Provider<MultiFileOutputPropertyEditor> multiFileOutputProvider;
     @Inject
     Provider<MultiLineTextInputPropertyEditor> multiLineInputProvider;
-    @UiField
+    @UiField(provided = true)
     AppIntegrationPalette palette;
     @Inject
     Provider<ReferenceAnnotationPropertyEditor> refAnnotationProvider;
@@ -154,11 +154,12 @@ public class AppsEditorViewImpl extends Composite implements AppsEditorView {
     private final IplantContextualHelpAccessStyle style = IplantResources.RESOURCES.getContxtualHelpStyle();
 
     @Inject
-    public AppsEditorViewImpl(AppTemplateForm wizard, AppEditorToolbar toolbar, AppTemplatePropertyEditor appTemplatePropertyEditor) {
+    public AppsEditorViewImpl(AppTemplateForm wizard, AppEditorToolbar toolbar, AppTemplatePropertyEditor appTemplatePropertyEditor, final AppIntegrationPalette palette) {
         this.wizard = wizard;
         this.toolbar = toolbar;
         wizard.setAdjustForScroll(false);
         this.appTemplatePropertyEditor = appTemplatePropertyEditor;
+        this.palette = palette;
         style.ensureInjected();
         defaultDetailsPanel = new ContentPanel(new AppTemplateWizardPropertyContentPanelAppearance());
         defaultDetailsPanel.setHeadingText(I18N.APPS_LABELS.detailsPanelHeader("")); //$NON-NLS-1$
