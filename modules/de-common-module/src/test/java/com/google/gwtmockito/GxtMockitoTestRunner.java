@@ -3,12 +3,15 @@ package com.google.gwtmockito;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.web.bindery.autobean.shared.AutoBean;
 
+import com.sencha.gxt.cell.core.client.form.TriggerFieldCell;
+import com.sencha.gxt.cell.core.client.form.ValueBaseInputCell;
 import com.sencha.gxt.core.client.dom.XDOM;
 import com.sencha.gxt.core.client.dom.XElement;
 import com.sencha.gxt.core.client.resources.StyleInjectorHelper;
 import com.sencha.gxt.dnd.core.client.GridDragSource;
 import com.sencha.gxt.fx.client.Draggable;
 import com.sencha.gxt.widget.core.client.Component;
+import com.sencha.gxt.widget.core.client.Composite;
 import com.sencha.gxt.widget.core.client.ListView;
 import com.sencha.gxt.widget.core.client.container.Container;
 import com.sencha.gxt.widget.core.client.container.NorthSouthContainer;
@@ -41,6 +44,10 @@ public class GxtMockitoTestRunner extends GwtMockitoTestRunner {
         classes.add(ListView.class);
         classes.add(AutoBean.class);
         classes.add(SimpleBeanEditorDriver.class);
+        classes.add(Composite.class);
+        classes.add(ValueBaseInputCell.class);
+        classes.add(TriggerFieldCell.class);
+        classes.add(Draggable.class);
         return classes;
     }
 
