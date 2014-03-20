@@ -29,7 +29,7 @@ ext {
 }
 
 dependencies {
-   compile project(':de-webapp')
+   compile project(':de')
    compile project(':belphegor')
 }
 
@@ -69,7 +69,7 @@ task testReport(type: TestReport) {
 
 
 // Configure individual subprojects
-project(':de-webapp') {
+project(':de') {
    apply plugin: 'war'
    apply plugin: 'gwt'
    apply plugin: 'jetty'
