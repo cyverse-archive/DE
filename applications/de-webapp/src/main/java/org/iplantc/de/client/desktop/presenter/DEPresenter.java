@@ -109,38 +109,34 @@ public class DEPresenter implements DEView.Presenter {
 
     private void initializeEventHandlers() {
 
-        eventHandlers.add(eventBus.addHandler(PreferencesUpdatedEvent.TYPE,
-                new PreferencesUpdatedEventHandler() {
+        eventHandlers.add(eventBus.addHandler(PreferencesUpdatedEvent.TYPE, new PreferencesUpdatedEventHandler() {
 
-                    @Override
-                    public void onUpdate(final PreferencesUpdatedEvent event) {
-                        keyboardShortCuts.clear();
-                        setUpKBShortCuts();
-                        doPeriodicSessionSave();
-                    }
-                }));
-        eventHandlers.add(eventBus.addHandler(SystemMessageCountUpdateEvent.TYPE,
-                new SystemMessageCountUpdateEvent.Handler() {
-                    @Override
-                    public void onCountUpdate(final SystemMessageCountUpdateEvent event) {
-                        view.updateUnseenSystemMessageCount(event.getCount());
-                    }
-                }));
-        eventHandlers.add(eventBus.addHandler(UserSettingsUpdatedEvent.TYPE,
-                new UserSettingsUpdatedEventHandler() {
+            @Override
+            public void onUpdate(final PreferencesUpdatedEvent event) {
+                keyboardShortCuts.clear();
+                setUpKBShortCuts();
+                doPeriodicSessionSave();
+            }
+        }));
+        eventHandlers.add(eventBus.addHandler(SystemMessageCountUpdateEvent.TYPE, new SystemMessageCountUpdateEvent.Handler() {
+            @Override
+            public void onCountUpdate(final SystemMessageCountUpdateEvent event) {
+                view.updateUnseenSystemMessageCount(event.getCount());
+            }
+        }));
+        eventHandlers.add(eventBus.addHandler(UserSettingsUpdatedEvent.TYPE, new UserSettingsUpdatedEventHandler() {
 
-                    @Override
-                    public void onUpdate(UserSettingsUpdatedEvent usue) {
-                        saveSettings();
+            @Override
+            public void onUpdate(UserSettingsUpdatedEvent usue) {
+                saveSettings();
 
-                    }
-                }));
+            }
+        }));
 
         eventHandlers.add(eventBus.addHandler(FileUploadedEvent.TYPE, new FileUploadedEventHandler() {
             @Override
             public void onFileUploaded(FileUploadedEvent event) {
-                DefaultUploadCompleteHandler duc = new DefaultUploadCompleteHandler(event
-                        .getUploadDestFolderFolder().toString());
+                DefaultUploadCompleteHandler duc = new DefaultUploadCompleteHandler(event.getUploadDestFolderFolder().toString());
                 JSONObject obj = JsonUtil.getObject(event.getResponse());
                 String fileJson = JsonUtil.getObject(obj, "file").toString();
                 duc.onCompletion(event.getFilepath(), fileJson);
@@ -278,8 +274,7 @@ public class DEPresenter implements DEView.Presenter {
         positionFButton(getViewPortSize());
         feedbackBtn.getElement().updateZIndex(0);
         RootPanel.get().add(feedbackBtn);
-        feedbackBtn.getElement().setAttribute("data-intro",
- I18N.TOUR.introFeedback());
+        feedbackBtn.getElement().setAttribute("data-intro", I18N.TOUR.introFeedback());
         feedbackBtn.getElement().setAttribute("data-position", "top");
         feedbackBtn.getElement().setAttribute("data-step", "6");
     }
@@ -321,22 +316,22 @@ public class DEPresenter implements DEView.Presenter {
             if (key.equalsIgnoreCase("type")) {
                 String val = params.get(key).get(0);
                 if (val.equalsIgnoreCase("data")) {
-                    String selectedFolder = URL.decode(Window.Location.getParameter("folder"));
-                    DiskResourceWindowConfig diskResourceWindowConfig = ConfigFactory
-                            .diskResourceWindowConfig();
+                    DiskResourceWindowConfig diskResourceWindowConfig = ConfigFactory.diskResourceWindowConfig();
                     diskResourceWindowConfig.setMaximized(true);
-                    if (!Strings.isNullOrEmpty(selectedFolder)) {
-                        final DiskResourceAutoBeanFactory drFactory = GWT
-                                .create(DiskResourceAutoBeanFactory.class);
-                        AutoBean<Folder> fAb = AutoBeanCodex.decode(drFactory, Folder.class,
-                                "{\"id\":\"" + selectedFolder + "\"}");
-                        ArrayList<HasId> newArrayList = Lists.newArrayList();
-                        Folder folder = fAb.as();
-                        newArrayList.add(folder);
-                        diskResourceWindowConfig.setSelectedFolder(folder);
-                        diskResourceWindowConfig.setSelectedDiskResources(newArrayList);
-                        EventBus.getInstance().fireEvent(
-                                new WindowShowRequestEvent(diskResourceWindowConfig, true));
+                    if (!Strings.isNullOrEmpty(Window.Location.getParameter("folder"))) {
+                        String selectedFolder = URL.decode(Window.Location.getParameter("folder"));
+                        if (!Strings.isNullOrEmpty(selectedFolder)) {
+                            final DiskResourceAutoBeanFactory drFactory = GWT.create(DiskResourceAutoBeanFactory.class);
+                            AutoBean<Folder> fAb = AutoBeanCodex.decode(drFactory, Folder.class, "{\"id\":\"" + selectedFolder + "\"}");
+                            ArrayList<HasId> newArrayList = Lists.newArrayList();
+                            Folder folder = fAb.as();
+                            newArrayList.add(folder);
+                            diskResourceWindowConfig.setSelectedFolder(folder);
+                            diskResourceWindowConfig.setSelectedDiskResources(newArrayList);
+                            EventBus.getInstance().fireEvent(new WindowShowRequestEvent(diskResourceWindowConfig, true));
+                        } else {
+                            eventBus.fireEvent(new WindowShowRequestEvent(diskResourceWindowConfig));
+                        }
                     } else {
                         eventBus.fireEvent(new WindowShowRequestEvent(diskResourceWindowConfig));
                     }
@@ -377,8 +372,7 @@ public class DEPresenter implements DEView.Presenter {
             @Override
             public void execute() {
                 if (UserInfo.getInstance().isNewUser()) {
-                    MessageBox box = new MessageBox(I18N.DISPLAY.welcome(),
- I18N.TOUR.introWelcome());
+                    MessageBox box = new MessageBox(I18N.DISPLAY.welcome(), I18N.TOUR.introWelcome());
                     box.setPredefinedButtons(PredefinedButton.YES, PredefinedButton.NO);
                     box.setIcon(MessageBox.ICONS.question());
                     box.addHideHandler(new HideHandler() {
@@ -455,8 +449,7 @@ public class DEPresenter implements DEView.Presenter {
         MessagePoller.getInstance().stop();
         cleanUp();
 
-        String address = DEProperties.getInstance().getMuleServiceBaseUrl()
-                + "logout?login-time=" + UserInfo.getInstance().getLoginTime(); //$NON-NLS-1$
+        String address = DEProperties.getInstance().getMuleServiceBaseUrl() + "logout?login-time=" + UserInfo.getInstance().getLoginTime(); //$NON-NLS-1$
         ServiceCallWrapper wrapper = new ServiceCallWrapper(address);
 
         DEServiceFacade.getInstance().getServiceData(wrapper, new AsyncCallback<String>() {
@@ -475,11 +468,9 @@ public class DEPresenter implements DEView.Presenter {
             }
 
             private void logout() {
-                String redirectUrl = com.google.gwt.core.client.GWT.getHostPageBaseURL()
-                        + Constants.CLIENT.logoutUrl();
+                String redirectUrl = com.google.gwt.core.client.GWT.getHostPageBaseURL() + Constants.CLIENT.logoutUrl();
                 if (UserSettings.getInstance().isSaveSession()) {
-                    UserSessionProgressMessageBox uspmb = UserSessionProgressMessageBox.saveSession(
-                            DEPresenter.this, redirectUrl);
+                    UserSessionProgressMessageBox uspmb = UserSessionProgressMessageBox.saveSession(DEPresenter.this, redirectUrl);
                     uspmb.show();
                 } else {
                     Window.Location.assign(redirectUrl);
