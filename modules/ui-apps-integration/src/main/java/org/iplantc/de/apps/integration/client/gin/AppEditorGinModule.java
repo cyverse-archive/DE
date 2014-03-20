@@ -3,6 +3,7 @@ package org.iplantc.de.apps.integration.client.gin;
 import org.iplantc.de.apps.integration.client.presenter.AppsEditorPresenterImpl;
 import org.iplantc.de.apps.integration.client.view.AppEditorToolbar;
 import org.iplantc.de.apps.integration.client.view.AppEditorToolbarImpl;
+import org.iplantc.de.apps.integration.client.view.AppIntegrationPalette;
 import org.iplantc.de.apps.integration.client.view.AppsEditorView;
 import org.iplantc.de.apps.integration.client.view.AppsEditorViewImpl;
 import org.iplantc.de.apps.integration.client.view.ArgumentGroupEditorAppEditorImpl;
@@ -44,6 +45,8 @@ import org.iplantc.de.client.models.UserSettings;
 import org.iplantc.de.client.services.AppMetadataServiceFacade;
 import org.iplantc.de.client.services.AppTemplateServices;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
+import org.iplantc.de.resources.client.IplantContextualHelpAccessStyle;
+import org.iplantc.de.resources.client.IplantResources;
 import org.iplantc.de.resources.client.messages.IplantErrorStrings;
 import org.iplantc.de.resources.client.uiapps.integration.AppIntegrationErrorMessages;
 
@@ -90,6 +93,11 @@ public class AppEditorGinModule extends AbstractGinModule {
     public AppTemplateServices createAppTemplateServices() {
         return ServicesInjector.INSTANCE.getAppTemplateServices();
     }
+    
+    @Provides
+    public IplantContextualHelpAccessStyle createContextualHelpAccessStyle() {
+    	return IplantResources.RESOURCES.getContxtualHelpStyle();
+    }
 
     @Provides
     public IplantAnnouncer createAnnouncer() {
@@ -101,6 +109,7 @@ public class AppEditorGinModule extends AbstractGinModule {
         bind(AppsEditorView.class).to(AppsEditorViewImpl.class);
         bind(AppEditorToolbar.class).to(AppEditorToolbarImpl.class);
         bind(AppsEditorView.Presenter.class).to(AppsEditorPresenterImpl.class);
+        bind(AppIntegrationPalette.class);
 
         // Bind the appearance for the ArgumentGroupEditors
         bind(AppIntegrationErrorMessages.class).to(IplantErrorStrings.class);
