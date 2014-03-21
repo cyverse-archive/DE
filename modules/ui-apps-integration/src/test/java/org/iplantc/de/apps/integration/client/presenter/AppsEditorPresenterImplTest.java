@@ -1,9 +1,12 @@
 package org.iplantc.de.apps.integration.client.presenter;
 
 import org.iplantc.de.apps.integration.client.events.DeleteArgumentGroupEvent;
+import org.iplantc.de.apps.integration.client.presenter.AppsEditorPresenterImpl.DoSaveCallback;
 import org.iplantc.de.apps.integration.client.view.AppsEditorView;
+import org.iplantc.de.apps.widgets.client.view.AppLaunchView.RenameWindowHeaderCommand;
 import org.iplantc.de.apps.widgets.client.view.editors.style.AppTemplateWizardAppearance;
 import org.iplantc.de.client.events.EventBus;
+import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.models.apps.integration.AppTemplate;
 import org.iplantc.de.client.models.apps.integration.ArgumentGroup;
 import org.iplantc.de.client.services.AppTemplateServices;
@@ -14,9 +17,11 @@ import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 import org.iplantc.de.resources.client.uiapps.integration.AppIntegrationErrorMessages;
 
 import com.google.common.collect.Lists;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwtmockito.GxtMockitoTestRunner;
 
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -40,6 +45,8 @@ public class AppsEditorPresenterImplTest {
     @Mock private AppTemplateWizardAppearance mockAppearance;
     @Mock private IplantAnnouncer mockAnnouncer;
 
+    @Mock private AsyncCallback<Void> mockVoidCallback;
+
     private AppsEditorPresenterImpl uut;
 
     @Before public void setUp() {
@@ -58,6 +65,28 @@ public class AppsEditorPresenterImplTest {
 
         verifyZeroInteractions(mockEventBus, mockAppTemplateService, mockUuidService, mockAppearance);
         verifyNoMoreInteractions(mockAnnouncer);
+    }
+    
+    /**
+     * CORE-5314
+     */
+    @Test public void testDoSave() {
+        AppTemplate mockAppTemplate = mock(AppTemplate.class);
+        RenameWindowHeaderCommand mockCmd = mock(RenameWindowHeaderCommand.class);
+        AppsEditorPresenterImpl mockPresenter = mock(AppsEditorPresenterImpl.class);
+        DoSaveCallback doSaveCallback = uut.new DoSaveCallback(mockVoidCallback, mockAppTemplate, mockAnnouncer, mockEventBus, mockCmd, mockPresenter, "Success", "FAIL") {
+
+            @Override
+            AppTemplate copyAppTemplate(AppTemplate templateToCopy) {
+                return mock(AppTemplate.class);
+            }
+        };
+
+        when(mockAppTemplate.getId()).thenReturn(App.NEW_APP_ID);
+
+        String successResult = "sampleId";
+        doSaveCallback.onSuccess(successResult);
+        verify(mockAppTemplate).setId(eq(successResult));
     }
 
 }

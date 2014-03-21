@@ -80,6 +80,65 @@ import java.util.List;
  */
 public class AppsEditorPresenterImpl implements AppsEditorView.Presenter, DeleteArgumentEventHandler, ArgumentAddedEventHandler, ArgumentGroupAddedEventHandler {
 
+    class DoSaveCallback implements AsyncCallback<String> {
+        private final AsyncCallback<Void> onSaveCallback;
+        private final IplantAnnouncer announcer1;
+        private final EventBus eventBus1;
+        private final AppTemplate at;
+        private final RenameWindowHeaderCommand renameCommand;
+        private final AppsEditorPresenterImpl presenterImpl;
+        private final String successfullSaveMsg;
+        private final String failedSaveMsg;
+
+        DoSaveCallback(AsyncCallback<Void> onSaveCallback, final AppTemplate appTemplate, final IplantAnnouncer announcer, final EventBus eventBus, final RenameWindowHeaderCommand renameCmd,
+                final AppsEditorPresenterImpl presenterImpl, final String successfullSaveMsg, final String failedSaveMsg) {
+            this.onSaveCallback = onSaveCallback;
+            this.at = appTemplate;
+            this.announcer1 = announcer;
+            this.eventBus1 = eventBus;
+            this.renameCommand = renameCmd;
+            this.presenterImpl = presenterImpl;
+            this.successfullSaveMsg = successfullSaveMsg;
+            this.failedSaveMsg = failedSaveMsg;
+
+        }
+
+        @Override
+        public void onFailure(Throwable caught) {
+            announcer.schedule(new ErrorAnnouncementConfig(failedSaveMsg));
+            if (onSaveCallback != null) {
+                onSaveCallback.onFailure(caught);
+            }
+        }
+
+        @Override
+        public void onSuccess(String result) {
+            String atId = at.getId();
+            if (Strings.isNullOrEmpty(atId) || NEW_APP_ID.equals(atId)) {
+                at.setId(result);
+            } else if (atId.equalsIgnoreCase(result)) {
+                // JDS There was an app ID, but now we are changing it. This is undesired.
+                GWT.log("Attempt to change app ID from \"" + atId + "\" to \"" + result + "\"");
+            }
+            presenterImpl.lastSave = copyAppTemplate(presenterImpl.flushViewAndClean());
+
+            if (renameCommand != null) {
+                renameCommand.setAppTemplate(presenterImpl.lastSave);
+                renameCommand.execute();
+            }
+            eventBus1.fireEvent(new AppUpdatedEvent(presenterImpl.lastSave));
+
+            announcer1.schedule(new SuccessAnnouncementConfig(successfullSaveMsg));
+            if (onSaveCallback != null) {
+                onSaveCallback.onSuccess(null);
+            }
+        }
+
+        AppTemplate copyAppTemplate(AppTemplate templateToCopy) {
+            AppTemplate copy = AppTemplateUtils.copyAppTemplate(templateToCopy);
+            return copy;
+        }
+    }
     /**
      * This dialog is used when the user attempts to close the view when the current AppTemplate contains
      * errors
@@ -604,37 +663,7 @@ public class AppsEditorPresenterImpl implements AppsEditorView.Presenter, Delete
         if (NEW_APP_ID.equals(lastSave.getId())) {
             lastSave.setId("");
         }
-        AsyncCallback<String> saveCallback = new AsyncCallback<String>() {
-    
-            @Override
-            public void onFailure(Throwable caught) {
-                IplantAnnouncer.getInstance().schedule(new ErrorAnnouncementConfig(errorMessages.unableToSave()));
-                if (onSaveCallback != null) {
-                    onSaveCallback.onFailure(caught);
-                }
-            }
-    
-            @Override
-            public void onSuccess(String result) {
-                if (Strings.isNullOrEmpty(appTemplate.getId()) || NEW_APP_ID.equals(appTemplate.getId())) {
-                    appTemplate.setId(result);
-                } else if (appTemplate.getId().equalsIgnoreCase(result)) {
-                    // JDS There was an app ID, but now we are changing it. This is undesired.
-                    GWT.log("Attempt to change app ID from \"" + appTemplate.getId() + "\" to \"" + result + "\"");
-                }
-                lastSave = AppTemplateUtils.copyAppTemplate(flushViewAndClean());
-                if (renameCmd != null) {
-                    renameCmd.setAppTemplate(lastSave);
-                    renameCmd.execute();
-                }
-                eventBus.fireEvent(new AppUpdatedEvent(lastSave));
-
-                IplantAnnouncer.getInstance().schedule(new SuccessAnnouncementConfig(appIntMessages.saveSuccessful()));
-                if (onSaveCallback != null) {
-                    onSaveCallback.onSuccess(null);
-                }
-            }
-        };
+        DoSaveCallback saveCallback = new DoSaveCallback(onSaveCallback, appTemplate, announcer, eventBus, renameCmd, this, appIntMessages.saveSuccessful(), errorMessages.unableToSave());
 
         if (isLabelOnlyEditMode()) {
             atService.updateAppLabels(lastSave, saveCallback);
@@ -644,7 +673,7 @@ public class AppsEditorPresenterImpl implements AppsEditorView.Presenter, Delete
     
     }
 
-    private AppTemplate flushViewAndClean() {
+    AppTemplate flushViewAndClean() {
         return AppTemplateUtils.removeEmptyGroupArguments(view.flush());
     }
 
