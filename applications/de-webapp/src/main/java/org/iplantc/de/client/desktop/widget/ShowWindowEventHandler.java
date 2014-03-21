@@ -9,12 +9,12 @@ import org.iplantc.de.apps.client.events.EditWorkflowEvent.EditWorkflowEventHand
 import org.iplantc.de.apps.client.events.RunAppEvent;
 import org.iplantc.de.apps.client.events.RunAppEvent.RunAppEventHandler;
 import org.iplantc.de.apps.client.events.handlers.CreateNewWorkflowEventHandler;
-import org.iplantc.de.client.Constants;
 import org.iplantc.de.client.events.ShowAboutWindowEvent;
 import org.iplantc.de.client.events.ShowAboutWindowEvent.ShowAboutWindowEventHandler;
 import org.iplantc.de.client.events.ShowSystemMessagesEvent;
 import org.iplantc.de.client.events.WindowShowRequestEvent;
 import org.iplantc.de.client.events.WindowShowRequestEvent.WindowShowRequestEventHandler;
+import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.views.windows.configs.AppWizardConfig;
 import org.iplantc.de.client.views.windows.configs.AppsIntegrationWindowConfig;
 import org.iplantc.de.client.views.windows.configs.ConfigFactory;
@@ -64,7 +64,7 @@ final class ShowWindowEventHandler implements ShowAboutWindowEventHandler, ShowF
 
     @Override
     public void createNewApp(CreateNewAppEvent event) {
-        desktop.showWindow(ConfigFactory.appsIntegrationWindowConfig(Constants.CLIENT.newAppTemplate()),
+        desktop.showWindow(ConfigFactory.appsIntegrationWindowConfig(App.NEW_APP_ID),
                 true);
     }
 

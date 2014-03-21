@@ -1,5 +1,7 @@
 package org.iplantc.de.apps.integration.client.presenter;
 
+import static org.iplantc.de.client.models.apps.App.NEW_APP_ID;
+
 import org.iplantc.de.apps.client.events.AppUpdatedEvent;
 import org.iplantc.de.apps.integration.client.dialogs.CommandLineOrderingPanel;
 import org.iplantc.de.apps.integration.client.events.DeleteArgumentEvent;
@@ -599,7 +601,7 @@ public class AppsEditorPresenterImpl implements AppsEditorView.Presenter, Delete
         lastSave = AppTemplateUtils.copyAppTemplate(toBeSaved);
 
         // Remove id if it is a new app.
-        if (lastSave.getId().equals("NEW_APP_TEMPLATE")) {
+        if (NEW_APP_ID.equals(lastSave.getId())) {
             lastSave.setId("");
         }
         AsyncCallback<String> saveCallback = new AsyncCallback<String>() {
@@ -614,7 +616,7 @@ public class AppsEditorPresenterImpl implements AppsEditorView.Presenter, Delete
     
             @Override
             public void onSuccess(String result) {
-                if (Strings.isNullOrEmpty(appTemplate.getId())) {
+                if (Strings.isNullOrEmpty(appTemplate.getId()) || NEW_APP_ID.equals(appTemplate.getId())) {
                     appTemplate.setId(result);
                 } else if (appTemplate.getId().equalsIgnoreCase(result)) {
                     // JDS There was an app ID, but now we are changing it. This is undesired.

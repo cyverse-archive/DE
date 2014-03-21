@@ -1,11 +1,12 @@
 package org.iplantc.de.client.views.windows;
 
+import static org.iplantc.de.client.models.apps.App.NEW_APP_ID;
+
 import org.iplantc.de.apps.client.events.AppPublishedEvent;
 import org.iplantc.de.apps.client.events.AppPublishedEvent.AppPublishedEventHandler;
 import org.iplantc.de.apps.integration.client.gin.AppsEditorInjector;
 import org.iplantc.de.apps.integration.client.view.AppsEditorView;
 import org.iplantc.de.apps.widgets.client.view.AppLaunchView.RenameWindowHeaderCommand;
-import org.iplantc.de.client.Constants;
 import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.events.WindowHeadingUpdatedEvent;
 import org.iplantc.de.client.gin.ServicesInjector;
@@ -148,7 +149,7 @@ public class AppEditorWindow extends IplantWindowBase implements AppPublishedEve
                         }
                     });
             at.onSuccess(config.getAppTemplate().getPayload());
-        } else if (Strings.isNullOrEmpty(config.getAppId()) || config.getAppId().equalsIgnoreCase(Constants.CLIENT.newAppTemplate())) {
+        } else if (Strings.isNullOrEmpty(config.getAppId()) || config.getAppId().equalsIgnoreCase(NEW_APP_ID)) {
             setTitle(org.iplantc.de.resources.client.messages.I18N.DISPLAY.createApps());
             // Create empty AppTemplate
             AppTemplateAutoBeanFactory factory = GWT.create(AppTemplateAutoBeanFactory.class);
@@ -160,7 +161,7 @@ public class AppEditorWindow extends IplantWindowBase implements AppPublishedEve
             argGrp.setLabel(labels.groupDefaultLabel(1));
             argGrp.setArguments(Lists.<Argument> newArrayList());
             newAppTemplate.setArgumentGroups(Lists.<ArgumentGroup> newArrayList(argGrp));
-            newAppTemplate.setId(Constants.CLIENT.newAppTemplate());
+            newAppTemplate.setId(NEW_APP_ID);
 
             /*
              * JDS Set the id of the AppTemplate passed to the rename command to newAppTemplate. This is
@@ -291,7 +292,7 @@ public class AppEditorWindow extends IplantWindowBase implements AppPublishedEve
         @Override
         public void execute() {
             // JDS Don't update window title for new, un-saved apps.
-            if (Strings.nullToEmpty(appTemplate.getId()).equalsIgnoreCase(Constants.CLIENT.newAppTemplate())) {
+            if (NEW_APP_ID.equalsIgnoreCase(appTemplate.getId())) {
                 return;
             }
             final String name = !Strings.isNullOrEmpty(appTemplate.getName()) ? appTemplate.getName() : org.iplantc.de.resources.client.messages.I18N.DISPLAY.createApps();

@@ -127,13 +127,6 @@ public interface DEClientConstants extends Constants {
     String simpleDownloadTag();
     
     /**
-     * A constant to represent a request to create a new AppTemplate
-     * 
-     * @return
-     */
-    String newAppTemplate();
-    
-    /**
      * A constant for DE header height
      * 
      * @return

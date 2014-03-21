@@ -12,6 +12,8 @@ import java.util.List;
 
 public interface App extends HasId, HasName, HasDescription {
     
+    static final String NEW_APP_ID = "NEW_APP_TEMPLATE";
+
     @PropertyName("is_favorite")
     boolean isFavorite();
 
