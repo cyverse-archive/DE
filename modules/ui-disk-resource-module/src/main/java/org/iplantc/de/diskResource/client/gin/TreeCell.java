@@ -1,6 +1,7 @@
 package org.iplantc.de.diskResource.client.gin;
 
 import org.iplantc.de.client.models.diskResources.Folder;
+import org.iplantc.de.client.models.search.DiskResourceQueryTemplate;
 
 import static com.google.gwt.dom.client.BrowserEvents.CLICK;
 
@@ -13,11 +14,14 @@ import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.shared.HasHandlers;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 
+import com.sencha.gxt.widget.core.client.tree.Tree;
+import com.sencha.gxt.widget.core.client.tree.Tree.TreeNode;
 import com.sencha.gxt.widget.core.client.tree.TreeSelectionModel;
 
 public final class TreeCell extends AbstractCell<Folder> {
 
     private final TreeCellAppearance appearance;
+    private final Tree<Folder, Folder> tree;
 
     public interface TreeCellAppearance {
 
@@ -30,13 +34,14 @@ public final class TreeCell extends AbstractCell<Folder> {
         void setSelectionModel(TreeSelectionModel<Folder> selectionModel);
     }
 
-    public TreeCell(TreeCellAppearance appearance) {
+    public TreeCell(TreeCellAppearance appearance, final Tree<Folder, Folder> tree) {
         super(CLICK);
         this.appearance = appearance;
+        this.tree = tree;
     }
 
-    public TreeCell() {
-        this(GWT.<TreeCellAppearance> create(TreeCellAppearance.class));
+    public TreeCell(Tree<Folder, Folder> tree) {
+        this(GWT.<TreeCellAppearance> create(TreeCellAppearance.class), tree);
     }
 
     @Override
@@ -51,6 +56,11 @@ public final class TreeCell extends AbstractCell<Folder> {
     @Override
     public void onBrowserEvent(Context context, Element parent, Folder value, NativeEvent event, ValueUpdater<Folder> valueUpdater) {
         super.onBrowserEvent(context, parent, value, event, valueUpdater);
+
+        TreeNode<Folder> node = tree.findNode(event.getEventTarget().<Element> cast());
+        if (!(value instanceof DiskResourceQueryTemplate) && !node.isLoaded()) {
+            return;
+        }
         appearance.onBrowserEvent(context, parent, value, event, valueUpdater);
     }
 

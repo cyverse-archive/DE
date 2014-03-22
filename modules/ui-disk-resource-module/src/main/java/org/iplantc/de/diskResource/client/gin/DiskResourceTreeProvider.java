@@ -55,7 +55,7 @@ public class DiskResourceTreeProvider implements Provider<Tree<Folder, Folder>> 
 
         };
 
-        final TreeCell treeCell = new TreeCell();
+        final TreeCell treeCell = new TreeCell(tree);
         treeCell.setHasHandlers(tree);
         treeCell.setSelectionModel(tree.getSelectionModel());
 
