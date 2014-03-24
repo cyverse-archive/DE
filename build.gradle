@@ -115,6 +115,16 @@ project(':de') {
       webApp=draftWar.archivePath
    }
 
+   
+   task createDraftWar(type: Copy) {
+      dependsOn draftWar
+      into 'build/libs/draftWar'
+      from('build/libs') {
+         include '**/*draft*.war'
+      }
+      rename '.*draft.*.war', project.name + '.war'
+   }
+
    clean {
       delete "./war"
       delete "./bin"
@@ -161,6 +171,15 @@ project(':belphegor') {
         dependsOn.remove('war')
         webApp=draftWar.archivePath
     }
+
+   task createDraftWar(type: Copy) {
+      dependsOn draftWar
+      into 'build/libs/draftWar'
+      from('build/libs') {
+         include '**/*draft*.war'
+      }
+      rename '.*draft.*.war', project.name + '.war'
+   }
 
     clean {
         delete "./war"
