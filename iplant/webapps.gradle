@@ -52,11 +52,20 @@ configure(subprojects.findAll{it.name == "de" || it.name == "belphegor"}) {
 
    task createDraftWar(type: Copy) {
       dependsOn draftWar
-      into 'build/libs/draftWar'
+      into 'build/libs/wars'
       from('build/libs') {
          include '**/*draft*.war'
       }
-      rename '.*draft.*.war', project.name + '.war'
+      rename project.tasks.draftWar.archiveName, project.name + '-dev.war'
+   }
+
+   task createProdWar(type: Copy) {
+      dependsOn war
+      into 'build/libs/wars'
+      from('build/libs') {
+         exclude '**/*draft*.war'
+      }
+      rename project.tasks.war.archiveName, project.name + '.war'
    }
 
    clean {
