@@ -68,16 +68,22 @@ task testReport(type: TestReport) {
 }
 
 
+
 // Configure individual subprojects
 project(':de') {
    apply plugin: 'war'
    apply plugin: 'gwt'
    apply plugin: 'jetty'
 
+   configurations {
+      applet 
+   }
+   
    dependencies {
       compile "log4j:log4j:$log4jVersion"
       testCompile "junit:junit:$jUnitVersion"
       compile "com.sencha.gxt:gxt:$gxtVersion"
+      applet "org.irods.idrop:idrop-lite:2.0.1-SNAPSHOT@jar"
       compile project(':ui-commons-module'), 
               project(':ui-applications-module'),
               project(':ui-apps-widgets-module'), 
@@ -115,6 +121,36 @@ project(':de') {
       webApp=draftWar.archivePath
    }
 
+   war {
+      from(configurations.applet) {
+         into 'applets'
+      }
+   }
+   
+   draftWar {
+      from(configurations.applet) {
+         into 'applets'
+      }
+   }
+
+   task createDraftWar(type: Copy) {
+      dependsOn draftWar
+      into 'build/libs/draftWar'
+      from('build/libs') {
+         include '**/*draft*.war'
+      }
+      rename '.*draft.*.war', project.name + '.war'
+   }
+
+   draftWar {
+      manifest { 
+         attributes "Jenkins-Build-Version": "${BUILD_TAG}",
+                    "Jenkins-Build-ID": "${BUILD_ID}", 
+                    "Jenkins-Build-Number": "${BUILD_NUMBER}",
+                    "Git-Branch": "${GIT_BRANCH}",
+                    "Git-Commit": "${GIT_COMMIT}" 
+      }
+   }
    clean {
       delete "./war"
       delete "./bin"
@@ -161,6 +197,25 @@ project(':belphegor') {
         dependsOn.remove('war')
         webApp=draftWar.archivePath
     }
+
+   task createDraftWar(type: Copy) {
+      dependsOn draftWar
+      into 'build/libs/draftWar'
+      from('build/libs') {
+         include '**/*draft*.war'
+      }
+      rename '.*draft.*.war', project.name + '.war'
+   }
+
+   draftWar {
+      manifest { 
+         attributes "Jenkins-Build-Version": "\${BUILD_TAG}",
+                    "Jenkins-Build-ID": "\${BUILD_ID}", 
+                    "Jenkins-Build-Number": "\${BUILD_NUMBER}",
+                    "Git-Branch": "\${GIT_BRANCH}",
+                    "Git-Commit": "\${GIT_COMMIT}" 
+      }
+   }
 
     clean {
         delete "./war"
