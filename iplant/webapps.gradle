@@ -1,4 +1,7 @@
 // Build file for configuring the Webapp projects
+
+
+
 configure(subprojects.findAll{it.name == "de" || it.name == "belphegor"}) {
    apply plugin: 'war'
    apply plugin: 'gwt'
@@ -64,7 +67,6 @@ configure(subprojects.findAll{it.name == "de" || it.name == "belphegor"}) {
 
 
 
-// Configure individual subprojects
 project(':de') {
    configurations {
       applet 
