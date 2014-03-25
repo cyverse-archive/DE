@@ -1,0 +1,111 @@
+
+configure(subprojects.findAll{it.name == "de" || it.name == "belphegor"}) {
+   apply plugin: 'war'
+   apply plugin: 'gwt'
+   apply plugin: 'jetty'
+
+   dependencies {
+       
+      compile "log4j:log4j:$log4jVersion"
+      compile "com.sencha.gxt:gxt:$gxtVersion"
+      compile project(':ui-commons-module'), 
+              project(':ui-applications-module'),
+              project(':ui-resources-module'),
+              project(':confluence-client'),
+              project(':de-common-module')
+
+      testCompile "junit:junit:$jUnitVersion"
+   }
+
+   gwt { 
+      gwtVersion="$gwtVer"
+      src += files(project(':ui-resources-module').sourceSets.main.allJava.srcDirs) + files(project(':ui-resources-module').sourceSets.main.output.resourcesDir)
+      src += files(project(':de-common-module').sourceSets.main.allJava.srcDirs) + files(project(':de-common-module').sourceSets.main.output.resourcesDir)
+      src += files(project(':ui-commons-module').sourceSets.main.allJava.srcDirs) + files(project(':ui-commons-module').sourceSets.main.output.resourcesDir)
+      src += files(project(':confluence-client').sourceSets.main.allJava.srcDirs) + files(project(':confluence-client').sourceSets.main.output.resourcesDir)
+      src += files(project(':ui-applications-module').sourceSets.main.allJava.srcDirs) + files(project(':ui-applications-module').sourceSets.main.output.resourcesDir)
+
+      superDev { noPrecompile=true }
+      maxHeapSize = '1024M'
+   }
+
+   task runDraftJetty(type: JettyRunWar) {
+      group 'Web application'
+      description 'Runs Jetty with an exploded draft war'
+      //port = 8888
+      dependsOn draftWar
+      dependsOn.remove('war')
+      webApp=draftWar.archivePath
+   }
+
+   draftWar {
+      manifest { 
+         attributes "Jenkins-Build-Version": "${BUILD_TAG}",
+                    "Jenkins-Build-ID": "${BUILD_ID}", 
+                    "Jenkins-Build-Number": "${BUILD_NUMBER}",
+                    "Git-Branch": "${GIT_BRANCH}",
+                    "Git-Commit": "${GIT_COMMIT}" 
+      }
+   }
+
+   task createDraftWar(type: Copy) {
+      dependsOn draftWar
+      into 'build/libs/draftWar'
+      from('build/libs') {
+         include '**/*draft*.war'
+      }
+      rename '.*draft.*.war', project.name + '.war'
+   }
+
+   clean {
+      delete "./war"
+      delete "./bin"
+   }
+}
+
+
+
+// Configure individual subprojects
+project(':de') {
+   configurations {
+      applet 
+   }
+   
+   dependencies {
+      applet "org.irods.idrop:idrop-lite:2.0.1-SNAPSHOT@jar"
+      compile project(':ui-apps-widgets-module'), 
+              project(':ui-pipelines-module'),
+              project(':ui-apps-integration')
+   }
+
+   gwt {
+      modules 'org.iplantc.de.discoveryenvironment'
+      devModules 'org.iplantc.de.discoveryenvironmentDev'
+      src += files(project(':ui-apps-widgets-module').sourceSets.main.allJava.srcDirs) + files(project(':ui-apps-widgets-module').sourceSets.main.output.resourcesDir)
+      src += files(project(':ui-apps-integration').sourceSets.main.allJava.srcDirs) + files(project(':ui-apps-integration').sourceSets.main.output.resourcesDir)
+      src += files(project(':ui-pipelines-module').sourceSets.main.allJava.srcDirs) + files(project(':ui-pipelines-module').sourceSets.main.output.resourcesDir)
+   }
+
+   // Put idrop lite jar into war
+   war {
+      from(configurations.applet) {
+         into 'applets'
+      }
+   }
+   
+   // Put idrop lite jar into draft war
+   draftWar {
+      from(configurations.applet) {
+         into 'applets'
+      }
+   }
+}
+
+project(':belphegor') {
+   gwt {
+        modules 'org.iplantc.admin.belphegor.belphegor'
+        devModules 'org.iplantc.admin.belphegor.belphegorDev'
+   }
+}
+
+
