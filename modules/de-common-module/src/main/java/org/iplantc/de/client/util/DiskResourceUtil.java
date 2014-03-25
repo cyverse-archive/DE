@@ -95,11 +95,11 @@ public class DiskResourceUtil {
     }
 
     public static boolean isOwner(DiskResource resource) {
-        return resource.getPermissions().isOwner();
+        return resource.checkOwner();
     }
 
     public static boolean isWritable(DiskResource resource) {
-        return resource.getPermissions().isWritable();
+        return resource.checkWritable();
     }
     
     public static boolean isOwner(Iterable<DiskResource> resources) {
@@ -109,7 +109,7 @@ public class DiskResourceUtil {
 
         // Use predicate to determine if user is owner of all disk resources
         for (DiskResource dr : resources) {
-            if (!dr.getPermissions().isOwner()) {
+            if (!dr.checkOwner()) {
                 return false;
             }
         }
@@ -129,7 +129,7 @@ public class DiskResourceUtil {
         }
 
         for (DiskResource dr : resources) {
-            if (dr.getPermissions().isOwner()) {
+            if (dr.checkOwner()) {
                 return true;
             }
         }
@@ -162,7 +162,7 @@ public class DiskResourceUtil {
     }
 
     public static boolean isMovable(Folder targetFolder, Iterable<DiskResource> dropData) {
-        return isOwner(dropData) && targetFolder.getPermissions().isWritable();
+        return isOwner(dropData) && targetFolder.checkWritable();
     }
 
     public static boolean canUploadTo(DiskResource resource) {

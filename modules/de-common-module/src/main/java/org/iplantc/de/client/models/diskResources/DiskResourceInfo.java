@@ -4,6 +4,8 @@
 package org.iplantc.de.client.models.diskResources;
 
 
+import org.iplantc.de.client.models.diskResources.DiskResource.PermissionValue;
+
 import com.google.web.bindery.autobean.shared.AutoBean.PropertyName;
 
 import java.util.Date;
@@ -32,11 +34,8 @@ public interface DiskResourceInfo {
     @PropertyName("share-count")
     void setShareCount(int count);
 
-    @PropertyName("permissions")
-    void setPermissions(Permissions p);
-
-    @PropertyName("permissions")
-    Permissions getPermissions();
+    @PropertyName("permission")
+    PermissionValue getPermission();
 
     @PropertyName("type")
     String getType();

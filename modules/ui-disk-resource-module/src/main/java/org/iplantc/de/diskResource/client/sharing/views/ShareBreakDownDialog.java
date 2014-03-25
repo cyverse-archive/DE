@@ -136,7 +136,24 @@ public class ShareBreakDownDialog extends Dialog {
         diskRsc.setHeader(I18N.DISPLAY.name());
         diskRsc.setWidth(120);
         ColumnConfig<DataSharing, String> permission = new ColumnConfig<DataSharing, String>(
-                props.displayPermission());
+new ValueProvider<DataSharing, String>() {
+
+            @Override
+            public String getValue(DataSharing object) {
+                return object.getDisplayPermission().toString();
+            }
+
+            @Override
+            public void setValue(DataSharing object, String value) {
+                object.setDisplayPermission(value);
+
+            }
+
+            @Override
+            public String getPath() {
+                return "displayPermission";
+            }
+        });
 
         permission.setHeader(I18N.DISPLAY.permissions());
         permission.setWidth(80);

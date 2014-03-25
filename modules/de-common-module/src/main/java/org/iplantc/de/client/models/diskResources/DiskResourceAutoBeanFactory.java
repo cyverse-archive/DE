@@ -10,7 +10,7 @@ import com.google.web.bindery.autobean.shared.AutoBean;
 import com.google.web.bindery.autobean.shared.AutoBeanFactory;
 import com.google.web.bindery.autobean.shared.AutoBeanFactory.Category;
 
-@Category({DiskResourceExistMap.Category.class, DiskResourceStatMap.Category.class})
+@Category({DiskResourcePermissionCategory.class, DiskResourceExistMap.Category.class, DiskResourceStatMap.Category.class})
 public interface DiskResourceAutoBeanFactory extends AutoBeanFactory {
 
     AutoBean<Folder> folder();
@@ -20,8 +20,6 @@ public interface DiskResourceAutoBeanFactory extends AutoBeanFactory {
     AutoBean<DiskResource> diskResource();
 
     AutoBean<File> file();
-
-    AutoBean<Permissions> permissions();
 
     AutoBean<RootFolders> rootFolders();
 

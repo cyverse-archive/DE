@@ -7,8 +7,7 @@ import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.client.models.collaborators.Collaborator;
 import org.iplantc.de.client.models.diskResources.DiskResource;
-import org.iplantc.de.client.models.diskResources.DiskResourceAutoBeanFactory;
-import org.iplantc.de.client.models.diskResources.Permissions;
+import org.iplantc.de.client.models.diskResources.DiskResource.PermissionValue;
 import org.iplantc.de.client.models.sharing.DataSharing;
 import org.iplantc.de.commons.client.collaborators.events.UserSearchResultSelected;
 import org.iplantc.de.commons.client.collaborators.events.UserSearchResultSelected.USER_SEARCH_EVENT_TAG;
@@ -32,8 +31,6 @@ import com.google.gwt.uibinder.client.UiTemplate;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
-import com.google.web.bindery.autobean.shared.AutoBean;
-import com.google.web.bindery.autobean.shared.AutoBeanCodex;
 
 import com.sencha.gxt.cell.core.client.TextButtonCell;
 import com.sencha.gxt.cell.core.client.form.ComboBoxCell;
@@ -85,7 +82,7 @@ public class DataSharingPermissionsPanel implements IsWidget {
     private FastMap<List<DataSharing>> originalList;
     private final FastMap<DiskResource> resources;
     private final Presenter presenter;
-    private ComboBoxCell<String> permCombo;
+    private ComboBoxCell<PermissionValue> permCombo;
     private FastMap<List<DataSharing>> sharingMap;
     private HorizontalPanel explainPanel;
 
@@ -99,16 +96,16 @@ public class DataSharingPermissionsPanel implements IsWidget {
                 if (s2.equals(I18N.DISPLAY.varies())) {
                     return -1;
                 }
-                if (s1.equals(DataSharing.OWN)) {
+                if (s1.equals(PermissionValue.own.toString())) {
                     return 1;
                 }
-                if (s2.equals(DataSharing.OWN)) {
+                if (s2.equals(PermissionValue.own.toString())) {
                     return -1;
                 }
-                if (s1.equals(DataSharing.WRITE)) {
+                if (s1.equals(PermissionValue.write.toString())) {
                     return 1;
                 }
-                if (s2.equals(DataSharing.WRITE)) {
+                if (s2.equals(PermissionValue.write.toString())) {
                     return -1;
                 }
             }
@@ -193,27 +190,33 @@ public class DataSharingPermissionsPanel implements IsWidget {
         return button;
     }
 
-    private ComboBoxCell<String> buildPermissionsCombo() {
-        ListStore<String> perms = new ListStore<String>(new ModelKeyProvider<String>() {
+    private ComboBoxCell<PermissionValue> buildPermissionsCombo() {
+        ListStore<PermissionValue> perms = new ListStore<PermissionValue>(new ModelKeyProvider<PermissionValue>() {
 
             @Override
-            public String getKey(String item) {
-                return item;
+            public String getKey(PermissionValue item) {
+                return item.toString();
             }
         });
-        perms.add(DataSharing.READ);
-        perms.add(DataSharing.WRITE);
-        perms.add(DataSharing.OWN);
+        perms.add(PermissionValue.read);
+        perms.add(PermissionValue.write);
+        perms.add(PermissionValue.own);
     
-        permCombo = new ComboBoxCell<String>(perms,new StringLabelProvider<Object>());
+        permCombo = new ComboBoxCell<PermissionValue>(perms,new StringLabelProvider<PermissionValue>() {
+            @Override
+            public String getLabel(PermissionValue value) {
+                return value.toString();
+            }
+        });
+
         permCombo.setForceSelection(true);
 
         permCombo.setTriggerAction(TriggerAction.ALL);
-        permCombo.addSelectionHandler(new SelectionHandler<String>() {
+        permCombo.addSelectionHandler(new SelectionHandler<PermissionValue>() {
             
             @Override
-            public void onSelection(SelectionEvent<String> event) {
-                CellSelectionEvent<String> sel = (CellSelectionEvent<String>) event;
+            public void onSelection(SelectionEvent<PermissionValue> event) {
+                CellSelectionEvent<PermissionValue> sel = (CellSelectionEvent<PermissionValue>)event;
                 DataSharing ds = listStore.get(sel.getContext().getIndex());
                 updatePermissions(event.getSelectedItem(), ds.getUserName());
                 
@@ -322,7 +325,7 @@ public class DataSharingPermissionsPanel implements IsWidget {
 
         ColumnConfig<DataSharing, String> name = new ColumnConfig<DataSharing, String>(props.name(),
                 200, I18N.DISPLAY.name());
-        ColumnConfig<DataSharing, String> permission = buildPermissionColumn();
+        ColumnConfig<DataSharing, PermissionValue> permission = buildPermissionColumn();
         ColumnConfig<DataSharing, String> remove = buildRemoveColumn();
 
         configs.add(name);
@@ -332,15 +335,32 @@ public class DataSharingPermissionsPanel implements IsWidget {
         return new ColumnModel<DataSharing>(configs);
     }
 
-    private ColumnConfig<DataSharing, String> buildPermissionColumn() {
-        DataSharingProperties props = GWT.create(DataSharingProperties.class);
-        ColumnConfig<DataSharing, String> permission = new ColumnConfig<DataSharing, String>(
-                props.displayPermission(), 170, I18N.DISPLAY.permissions());
+    private ColumnConfig<DataSharing, PermissionValue> buildPermissionColumn() {
+        ColumnConfig<DataSharing, PermissionValue> permission = new ColumnConfig<DataSharing, PermissionValue>(
+new ValueProvider<DataSharing, PermissionValue>() {
+
+            @Override
+            public PermissionValue getValue(DataSharing object) {
+                return PermissionValue.valueOf(object.getDisplayPermission().toUpperCase());
+            }
+
+            @Override
+            public void setValue(DataSharing object, PermissionValue value) {
+                object.setDisplayPermission(value.toString());
+                ;
+
+            }
+
+            @Override
+            public String getPath() {
+                return "permissionValue";
+            }
+        }, 170, I18N.DISPLAY.permissions());
         SafeStyles permTextStyles = SafeStylesUtils.fromTrustedString("padding: 2px 3px;color:#0098AA;cursor:pointer;");
         permission.setColumnTextStyle(permTextStyles);
         permission.setFixed(true);
         permission.setCell(buildPermissionsCombo());
-        permission.setComparator(new PermissionComparator());
+        // permission.setComparator(new PermissionComparator());
 
         return permission;
     }
@@ -437,28 +457,11 @@ public class DataSharingPermissionsPanel implements IsWidget {
         return updateList;
     }
 
-    private void updatePermissions(String perm, String username) {
+    private void updatePermissions(PermissionValue perm, String username) {
         List<DataSharing> models = sharingMap.get(username);
         if (models != null) {
-            boolean own = perm.equals(DataSharing.OWN);
-            boolean write = own || perm.equals(DataSharing.WRITE);
-            boolean read = true;
-
-            for (DataSharing share : models) {
-                if (own) {
-                    share.setOwner(true);
-                } else if (write) {
-                    share.setWritable(true);
-                } else {
-                    share.setReadable(true);
-                }
-            }
-
             if (resources.size() != models.size()) {
                 Collaborator user = models.get(0).getCollaborator();
-                DiskResourceAutoBeanFactory factory = GWT.create(DiskResourceAutoBeanFactory.class);
-                AutoBean<Permissions> autoBean = AutoBeanCodex.decode(factory, Permissions.class,
-                        buildSharingPermissions(read, write, own));
                 for (String path : resources.keySet()) {
                     boolean shared = false;
                     for (DataSharing existingShare : models) {
@@ -469,7 +472,7 @@ public class DataSharingPermissionsPanel implements IsWidget {
                     }
 
                     if (!shared) {
-                        models.add(new DataSharing(user, autoBean.as(), path));
+                        models.add(new DataSharing(user, perm, path));
                     }
                 }
             }

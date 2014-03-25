@@ -25,7 +25,7 @@ import java.util.List;
 
 /**
  * This proxy is responsible for retrieving directory listings and search requests from the server.
- *
+ * 
  */
 public class FolderContentsRpcProxy extends RpcProxy<FolderContentsLoadConfig, PagingLoadResult<DiskResource>> {
 
@@ -92,13 +92,14 @@ public class FolderContentsRpcProxy extends RpcProxy<FolderContentsLoadConfig, P
         }
 
     }
-	/**
-	 * Constructs a valid {@link PagingLoadResultBean} from the given {@link Folder} result.
-	 * 
-	 * @author jstroot
-	 *
-	 */
-	class FolderContentsCallback implements AsyncCallback<Folder> {
+
+    /**
+     * Constructs a valid {@link PagingLoadResultBean} from the given {@link Folder} result.
+     * 
+     * @author jstroot
+     * 
+     */
+    class FolderContentsCallback implements AsyncCallback<Folder> {
         private final FolderContentsLoadConfig loadConfig;
         private final AsyncCallback<PagingLoadResult<DiskResource>> callback;
         private final IplantAnnouncer announcer;
@@ -120,6 +121,7 @@ public class FolderContentsRpcProxy extends RpcProxy<FolderContentsLoadConfig, P
             // Create list of all items within the result folder
             List<DiskResource> list = Lists.newArrayList(Iterables.concat(result.getFolders(), result.getFiles()));
             // Update the loadConfig folder with the totalFiltered count.
+
             loadConfig.getFolder().setTotalFiltered(result.getTotalFiltered());
 
             callback.onSuccess(new PagingLoadResultBean<DiskResource>(list, result.getTotal(), loadConfig.getOffset()));
@@ -159,19 +161,17 @@ public class FolderContentsRpcProxy extends RpcProxy<FolderContentsLoadConfig, P
         this.announcer = announcer;
         this.displayStrings = displayStrings;
     }
-    
+
     @Override
-    public void load(final FolderContentsLoadConfig loadConfig,
-                     final AsyncCallback<PagingLoadResult<DiskResource>> callback) {
+    public void load(final FolderContentsLoadConfig loadConfig, final AsyncCallback<PagingLoadResult<DiskResource>> callback) {
         final Folder folder = loadConfig.getFolder();
         if (folder.isFilter()) {
-        	if (callback != null) {
-        		List<DiskResource> emptyResult = Lists.newArrayList();
-        		callback.onSuccess(new PagingLoadResultBean<DiskResource>(
-        				emptyResult, 0, 0));
-        	}
-        	return;
-        } else if(folder instanceof DiskResourceQueryTemplate){
+            if (callback != null) {
+                List<DiskResource> emptyResult = Lists.newArrayList();
+                callback.onSuccess(new PagingLoadResultBean<DiskResource>(emptyResult, 0, 0));
+            }
+            return;
+        } else if (folder instanceof DiskResourceQueryTemplate) {
             searchService.submitSearchFromQueryTemplate((DiskResourceQueryTemplate)folder, loadConfig, null, new SearchResultsCallback(announcer, loadConfig, callback, displayStrings, hasSafeHtml));
         } else {
             drService.getFolderContents(folder, loadConfig, new FolderContentsCallback(announcer, loadConfig, callback, hasSafeHtml));
