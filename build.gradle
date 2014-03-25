@@ -67,7 +67,7 @@ task testReport(type: TestReport) {
 }
 
 apply from: 'iplant/webapps.gradle'
-apply from: 'modules.gradle'
+apply from: 'iplant/modules.gradle'
 
 apply from: 'iplant/eclipse.gradle'
 apply from: 'iplant/webappBootstrap.gradle'
