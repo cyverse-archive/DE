@@ -40,6 +40,16 @@ configure(subprojects.findAll{it.name == "de" || it.name == "belphegor"}) {
       webApp=draftWar.archivePath
    }
 
+   war {
+      manifest { 
+         attributes "Jenkins-Build-Version": "${BUILD_TAG}",
+                    "Jenkins-Build-ID": "${BUILD_ID}", 
+                    "Jenkins-Build-Number": "${BUILD_NUMBER}",
+                    "Git-Branch": "${GIT_BRANCH}",
+                    "Git-Commit": "${GIT_COMMIT}" 
+      }
+   }
+
    draftWar {
       manifest { 
          attributes "Jenkins-Build-Version": "${BUILD_TAG}",
