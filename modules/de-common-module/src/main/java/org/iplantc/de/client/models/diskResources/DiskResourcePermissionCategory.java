@@ -1,7 +1,5 @@
 package org.iplantc.de.client.models.diskResources;
 
-import org.iplantc.de.client.models.diskResources.DiskResource.PermissionValue;
-
 import com.google.web.bindery.autobean.shared.AutoBean;
 
 public class DiskResourcePermissionCategory {

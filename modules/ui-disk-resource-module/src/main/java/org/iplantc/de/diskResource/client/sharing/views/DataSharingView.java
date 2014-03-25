@@ -4,7 +4,7 @@
 package org.iplantc.de.diskResource.client.sharing.views;
 
 import org.iplantc.de.client.models.diskResources.DiskResource;
-import org.iplantc.de.client.models.diskResources.DiskResource.PermissionValue;
+import org.iplantc.de.client.models.diskResources.PermissionValue;
 import org.iplantc.de.client.models.sharing.DataSharing.TYPE;
 
 import com.google.gwt.user.client.ui.IsWidget;

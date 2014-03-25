@@ -12,4 +12,13 @@ public interface File extends DiskResource {
     @PropertyName("file-size")
     void setSize(long size);
 
+    @Override
+    boolean owner();
+
+    @Override
+    boolean readable();
+
+    @Override
+    boolean writable();
+
 }

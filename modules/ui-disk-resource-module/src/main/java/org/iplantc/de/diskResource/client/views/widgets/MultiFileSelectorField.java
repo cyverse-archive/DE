@@ -400,7 +400,7 @@ public class MultiFileSelectorField extends Composite implements IsField<List<Ha
                             permissionErrors.add(permError);
                             errors.add(permError);
                             errorSupport.markInvalid(errors);
-                        } else if (!(entryValue.checkWritable() || entryValue.checkOwner())) {
+                        } else if (!(entryValue.writable() || entryValue.owner())) {
                             permissionErrors.add(permError);
                             errors.add(permError);
                             errorSupport.markInvalid(errors);

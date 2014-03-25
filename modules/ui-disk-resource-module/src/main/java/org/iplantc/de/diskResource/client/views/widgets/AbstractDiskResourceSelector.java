@@ -491,7 +491,7 @@ public abstract class AbstractDiskResourceSelector<R extends DiskResource> exten
                     errors.add(permissionEditorError);
                     input.showErrors(Lists.<EditorError> newArrayList(permissionEditorError));
                     setInfoErrorText(I18N.DISPLAY.permissionSelectErrorMessage());
-                } else if (!(diskResource.checkWritable() || diskResource.checkOwner())) {
+                } else if (!(diskResource.writable() || diskResource.owner())) {
                     permissionEditorError = new DefaultEditorError(input, I18N.DISPLAY.permissionSelectErrorMessage(), diskResourceId);
                     errors.add(permissionEditorError);
                     input.showErrors(Lists.<EditorError> newArrayList(permissionEditorError));

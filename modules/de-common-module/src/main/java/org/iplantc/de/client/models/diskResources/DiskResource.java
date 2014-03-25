@@ -10,12 +10,6 @@ import java.util.Date;
 
 public interface DiskResource extends HasId, HasName, HasPath {
 
-    public enum PermissionValue {
-        read,
-        write,
-        own;
-    }
-
     void setId(String id);
 
     void setPath(String path);
@@ -43,9 +37,9 @@ public interface DiskResource extends HasId, HasName, HasPath {
     @PropertyName("filter")
     void setFilter(boolean filter);
 
-    public boolean checkOwner();
+    boolean owner();
 
-    public boolean checkReadable();
+    boolean readable();
 
-    public boolean checkWritable();
+    boolean writable();
 }

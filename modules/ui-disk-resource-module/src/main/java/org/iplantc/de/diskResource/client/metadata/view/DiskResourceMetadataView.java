@@ -263,7 +263,7 @@ public class DiskResourceMetadataView implements IsWidget {
     public DiskResourceMetadataView(DiskResource dr) {
         widget = uiBinder.createAndBindUi(this);
         selectedResource = dr;
-        writable = selectedResource.checkWritable();
+        writable = selectedResource.writable();
         alc = new AccordionLayoutContainer();
         centerPanel = new VerticalLayoutContainer();
         con.setCenterWidget(centerPanel);

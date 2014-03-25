@@ -7,7 +7,7 @@ import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.client.models.collaborators.Collaborator;
 import org.iplantc.de.client.models.diskResources.DiskResource;
-import org.iplantc.de.client.models.diskResources.DiskResource.PermissionValue;
+import org.iplantc.de.client.models.diskResources.PermissionValue;
 import org.iplantc.de.client.models.sharing.DataSharing;
 import org.iplantc.de.commons.client.collaborators.events.UserSearchResultSelected;
 import org.iplantc.de.commons.client.collaborators.events.UserSearchResultSelected.USER_SEARCH_EVENT_TAG;

@@ -85,12 +85,12 @@ public class DiskResourceActionsCell extends AbstractCell<DiskResource> {
                 sb.append(templates.imgCell(I18N.DISPLAY.share() + " " + I18N.DISPLAY.path(), I18N.DISPLAY.share() + " " + I18N.DISPLAY.path(), resources.css().actionIcon(), IplantResources.RESOURCES
                         .dataLink().getSafeUri()));
             } else {
-                if (value.checkOwner()) {
+                if (value.owner()) {
                     sb.append(templates.imgCell(I18N.DISPLAY.share() + " " + I18N.DISPLAY.viaPublicLink(), I18N.DISPLAY.share() + " " + I18N.DISPLAY.viaPublicLink(), resources.css().actionIcon(),
                             IplantResources.RESOURCES.linkAdd().getSafeUri()));
                 }
             }
-            if (value.checkOwner()) {
+            if (value.owner()) {
                 sb.append(templates.imgCell(I18N.DISPLAY.share(), I18N.DISPLAY.share() + " " + I18N.DISPLAY.viaDiscoveryEnvironment(), resources.css().actionIcon(), IplantResources.RESOURCES.share()
                         .getSafeUri()));
             }
