@@ -5,6 +5,7 @@ import org.iplantc.de.apps.client.views.widgets.proxy.AppSearchRpcProxy;
 import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.models.apps.proxy.AppLoadConfig;
 import org.iplantc.de.client.models.apps.proxy.AppSearchAutoBeanFactory;
+import org.iplantc.de.client.services.AppServiceFacade;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -13,6 +14,7 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.uibinder.client.UiTemplate;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.inject.Inject;
 
 import com.sencha.gxt.data.shared.loader.FilterPagingLoadConfig;
 import com.sencha.gxt.data.shared.loader.PagingLoadResult;
@@ -62,10 +64,11 @@ public class BelphegorAppsToolbarImpl implements BelphegorAppsToolbar {
 
     @UiField
     PagingLoader<FilterPagingLoadConfig, PagingLoadResult<App>> loader;
+    private final AppServiceFacade appService;
 
     @UiFactory
     PagingLoader<FilterPagingLoadConfig, PagingLoadResult<App>> createPagingLoader() {
-        proxy = new AppSearchRpcProxy();
+        proxy = new AppSearchRpcProxy(appService);
         PagingLoader<FilterPagingLoadConfig, PagingLoadResult<App>> loader = new PagingLoader<FilterPagingLoadConfig, PagingLoadResult<App>>(
                 proxy);
 
@@ -85,7 +88,9 @@ public class BelphegorAppsToolbarImpl implements BelphegorAppsToolbar {
         return new ToolBar(new GrayToolBarAppearance());
     }
 
-    public BelphegorAppsToolbarImpl() {
+    @Inject
+    public BelphegorAppsToolbarImpl(final AppServiceFacade appService) {
+        this.appService = appService;
         widget = uiBinder.createAndBindUi(this);
     }
 

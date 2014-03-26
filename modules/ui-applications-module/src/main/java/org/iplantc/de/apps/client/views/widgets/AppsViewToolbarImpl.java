@@ -5,6 +5,7 @@ import org.iplantc.de.apps.client.views.widgets.proxy.AppSearchRpcProxy;
 import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.models.apps.proxy.AppLoadConfig;
 import org.iplantc.de.client.models.apps.proxy.AppSearchAutoBeanFactory;
+import org.iplantc.de.client.services.AppServiceFacade;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.logical.shared.SelectionEvent;
@@ -14,6 +15,7 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.uibinder.client.UiTemplate;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.inject.Inject;
 
 import com.sencha.gxt.data.shared.loader.FilterPagingLoadConfig;
 import com.sencha.gxt.data.shared.loader.PagingLoadResult;
@@ -74,8 +76,9 @@ public class AppsViewToolbarImpl implements AppsViewToolbar {
         return new AppSearchField(loader);
     }
 
-    public AppsViewToolbarImpl() {
-        proxy = new AppSearchRpcProxy();
+    @Inject
+    public AppsViewToolbarImpl(final AppServiceFacade appService) {
+        proxy = new AppSearchRpcProxy(appService);
         loader = createPagingLoader();
         widget = uiBinder.createAndBindUi(this);
     }
