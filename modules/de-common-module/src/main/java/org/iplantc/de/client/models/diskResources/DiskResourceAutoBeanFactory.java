@@ -5,12 +5,13 @@ import org.iplantc.de.client.models.diskResources.RestoreResponse.RestoredResour
 import org.iplantc.de.client.models.errorHandling.SimpleServiceError;
 import org.iplantc.de.client.models.services.DiskResourceMove;
 import org.iplantc.de.client.models.services.DiskResourceRename;
+import org.iplantc.de.client.services.impl.models.DiskResourceMetadataBatchRequest;
 
 import com.google.web.bindery.autobean.shared.AutoBean;
 import com.google.web.bindery.autobean.shared.AutoBeanFactory;
 import com.google.web.bindery.autobean.shared.AutoBeanFactory.Category;
 
-@Category({DiskResourcePermissionCategory.class, FolderPermissionCategory.class, FilePermissionCategory.class, DiskResourceExistMap.Category.class, DiskResourceStatMap.Category.class})
+@Category({FilePermissionCategory.class, FolderPermissionCategory.class, DiskResourcePermissionCategory.class, DiskResourceExistMap.Category.class, DiskResourceStatMap.Category.class})
 public interface DiskResourceAutoBeanFactory extends AutoBeanFactory {
 
     AutoBean<Folder> folder();
@@ -50,5 +51,7 @@ public interface DiskResourceAutoBeanFactory extends AutoBeanFactory {
     AutoBean<MetadataTemplateInfoList> getTemplateListing();
 
     AutoBean<MetadataTemplate> getTemplate();
+
+    AutoBean<DiskResourceMetadataBatchRequest> metadataBatchRequest();
 
 }

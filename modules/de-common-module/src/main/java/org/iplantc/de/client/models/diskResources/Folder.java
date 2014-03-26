@@ -27,13 +27,4 @@ public interface Folder extends DiskResource {
 
     @PropertyName("total_filtered")
     int getTotalFiltered();
-
-    @Override
-    boolean owner();
-
-    @Override
-    boolean readable();
-
-    @Override
-    boolean writable();
 }
