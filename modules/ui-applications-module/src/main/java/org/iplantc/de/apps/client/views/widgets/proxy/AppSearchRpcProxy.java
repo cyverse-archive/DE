@@ -2,12 +2,12 @@ package org.iplantc.de.apps.client.views.widgets.proxy;
 
 import org.iplantc.de.apps.client.views.widgets.events.AppSearchResultLoadEvent;
 import org.iplantc.de.client.events.EventBus;
-import org.iplantc.de.client.gin.ServicesInjector;
 import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.models.apps.AppAutoBeanFactory;
 import org.iplantc.de.client.models.apps.AppList;
 import org.iplantc.de.client.models.apps.proxy.AppListLoadResult;
 import org.iplantc.de.client.models.apps.proxy.AppSearchAutoBeanFactory;
+import org.iplantc.de.client.services.AppServiceFacade;
 import org.iplantc.de.commons.client.ErrorHandler;
 
 import com.google.common.base.Strings;
@@ -33,6 +33,11 @@ import java.util.List;
  */
 public class AppSearchRpcProxy extends RpcProxy<FilterPagingLoadConfig, PagingLoadResult<App>> {
     private String lastQueryText = ""; //$NON-NLS-1$
+    private final AppServiceFacade appService;
+
+    public AppSearchRpcProxy(final AppServiceFacade appService) {
+        this.appService = appService;
+    }
 
     public String getLastQueryText() {
         return lastQueryText;
@@ -60,7 +65,7 @@ public class AppSearchRpcProxy extends RpcProxy<FilterPagingLoadConfig, PagingLo
         final AppSearchRpcProxy source = this;
 
         // Call the searchApp service with this proxy's query.
-        ServicesInjector.INSTANCE.getAppServiceFacade().searchApp(lastQueryText, new AsyncCallback<String>() {
+        appService.searchApp(lastQueryText, new AsyncCallback<String>() {
             @Override
             public void onSuccess(String result) {
                 AppAutoBeanFactory factory = GWT.create(AppAutoBeanFactory.class);
