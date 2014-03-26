@@ -82,6 +82,9 @@ import java.util.Map;
  */
 public class DEPresenter implements DEView.Presenter {
 
+    private static final String FOLDER_PARAMETER = "folder";
+    private static final String DATA_TYPE_VAL = "data";
+    private static final String TYPE_PARAMETER = "type";
     private final DEView view;
     private final DeResources res;
     private final EventBus eventBus;
@@ -147,7 +150,6 @@ public class DEPresenter implements DEView.Presenter {
 
     @Override
     public void cleanUp() {
-        EventBus eventBus = EventBus.getInstance();
         for (HandlerRegistration hr : eventHandlers) {
             eventBus.removeHandler(hr);
         }
@@ -237,10 +239,13 @@ public class DEPresenter implements DEView.Presenter {
     }
 
     private void getUserSession() {
-        if (UserSettings.getInstance().isSaveSession()) {
+        boolean urlHasDataTypeParameter = urlHasDataTypeParameter(Window.Location.getParameterMap());
+        if (UserSettings.getInstance().isSaveSession() && !urlHasDataTypeParameter) {
             // This restoreSession's callback will also init periodic session saving.
             UserSessionProgressMessageBox uspmb = UserSessionProgressMessageBox.restoreSession(this);
             uspmb.show();
+        } else if (urlHasDataTypeParameter) {
+            doPeriodicSessionSave();
         }
     }
 
@@ -309,34 +314,35 @@ public class DEPresenter implements DEView.Presenter {
         addKeyBoardEvents();
     }
 
+    private boolean urlHasDataTypeParameter(Map<String, List<String>> params) {
+        for (String key : params.keySet()) {
+            if (TYPE_PARAMETER.equalsIgnoreCase(key) && DATA_TYPE_VAL.equalsIgnoreCase(params.get(key).get(0))) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     // Sriram : We need a generic way to process query strings. This is temp. solution for CORE-4694
     private void processQueryStrings() {
         Map<String, List<String>> params = Window.Location.getParameterMap();
-        for (String key : params.keySet()) {
-            if (key.equalsIgnoreCase("type")) {
-                String val = params.get(key).get(0);
-                if (val.equalsIgnoreCase("data")) {
-                    DiskResourceWindowConfig diskResourceWindowConfig = ConfigFactory.diskResourceWindowConfig();
-                    diskResourceWindowConfig.setMaximized(true);
-                    if (!Strings.isNullOrEmpty(Window.Location.getParameter("folder"))) {
-                        String selectedFolder = URL.decode(Window.Location.getParameter("folder"));
-                        if (!Strings.isNullOrEmpty(selectedFolder)) {
-                            final DiskResourceAutoBeanFactory drFactory = GWT.create(DiskResourceAutoBeanFactory.class);
-                            AutoBean<Folder> fAb = AutoBeanCodex.decode(drFactory, Folder.class, "{\"id\":\"" + selectedFolder + "\"}");
-                            ArrayList<HasId> newArrayList = Lists.newArrayList();
-                            Folder folder = fAb.as();
-                            newArrayList.add(folder);
-                            diskResourceWindowConfig.setSelectedFolder(folder);
-                            diskResourceWindowConfig.setSelectedDiskResources(newArrayList);
-                            EventBus.getInstance().fireEvent(new WindowShowRequestEvent(diskResourceWindowConfig, true));
-                        } else {
-                            eventBus.fireEvent(new WindowShowRequestEvent(diskResourceWindowConfig));
-                        }
-                    } else {
-                        eventBus.fireEvent(new WindowShowRequestEvent(diskResourceWindowConfig));
-                    }
-                }
+        if(urlHasDataTypeParameter(params)){
+            DiskResourceWindowConfig diskResourceWindowConfig = ConfigFactory.diskResourceWindowConfig();
+            diskResourceWindowConfig.setMaximized(true);
+            String folderParameter = Window.Location.getParameter(FOLDER_PARAMETER);
+            String selectedFolder = URL.decode(Strings.nullToEmpty(folderParameter));
+
+            if (!Strings.isNullOrEmpty(selectedFolder)) {
+                final DiskResourceAutoBeanFactory drFactory = GWT.create(DiskResourceAutoBeanFactory.class);
+                AutoBean<Folder> fAb = AutoBeanCodex.decode(drFactory, Folder.class, "{\"id\":\"" + selectedFolder + "\"}");
+                ArrayList<HasId> newArrayList = Lists.newArrayList();
+                Folder folder = fAb.as();
+                newArrayList.add(folder);
+                diskResourceWindowConfig.setSelectedFolder(folder);
+                diskResourceWindowConfig.setSelectedDiskResources(newArrayList);
             }
+            eventBus.fireEvent(new WindowShowRequestEvent(diskResourceWindowConfig));
         }
     }
 
