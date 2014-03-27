@@ -7,9 +7,13 @@
   "http://google-web-toolkit.googlecode.com/svn/tags/2.5.0/distro-source/core/src/gwt-module.dtd">
 <module rename-to='discoveryenvironment'>
 	<inherits name="org.iplantc.de.discoveryenvironment" />
+	 <inherits name="com.google.gwt.logging.Logging"/>
 	<add-linker name="xsiframe" />
 	<set-configuration-property name="devModeRedirectEnabled" value="true" /><!-- Set to false for production -->
 	<set-property name="compiler.useSourceMaps" value="true" /><!-- Set to false for production -->
+	<set-property name="gwt.logging.logLevel" value="INFO"/>          # To change the default logLevel
+    <set-property name="gwt.logging.enabled" value="TRUE"/>            # To disable logging
+    <set-property name="gwt.logging.consoleHandler" value="ENABLED"/>  # To disable a default Handler
 
     <replace-with class="org.iplantc.de.client.views.windows.AboutApplicationDevAppearance">
         <when-type-is class="org.iplantc.de.client.views.windows.AboutApplicationAppearance" />
