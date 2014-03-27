@@ -47,7 +47,7 @@ final class ShowWindowEventHandler implements ShowAboutWindowEventHandler, ShowF
     public void showFilePreview(ShowFilePreviewEvent event) {
         FileViewerWindowConfig fileViewerWindowConfig = ConfigFactory.fileViewerWindowConfig(
                 event.getFile(), false);
-        fileViewerWindowConfig.setEditing(event.getFile().getPermissions().isWritable());
+        fileViewerWindowConfig.setEditing(event.getFile().writable());
         desktop.showWindow(fileViewerWindowConfig);
     }
 

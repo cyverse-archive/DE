@@ -32,11 +32,8 @@ public interface DiskResourceInfo {
     @PropertyName("share-count")
     void setShareCount(int count);
 
-    @PropertyName("permissions")
-    void setPermissions(Permissions p);
-
-    @PropertyName("permissions")
-    Permissions getPermissions();
+    @PropertyName("permission")
+    PermissionValue getPermission();
 
     @PropertyName("type")
     String getType();

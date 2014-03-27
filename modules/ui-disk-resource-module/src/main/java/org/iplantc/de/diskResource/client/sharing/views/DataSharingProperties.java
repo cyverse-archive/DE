@@ -10,11 +10,10 @@ import com.sencha.gxt.data.shared.PropertyAccess;
 
 /**
  * @author sriram
- *
+ * 
  */
 public interface DataSharingProperties extends PropertyAccess<DataSharing> {
-	
-	ValueProvider<DataSharing, String> name();
-	
-	ValueProvider<DataSharing, String> displayPermission();
+
+    ValueProvider<DataSharing, String> name();
+
 }

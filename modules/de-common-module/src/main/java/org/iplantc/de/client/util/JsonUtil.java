@@ -509,7 +509,7 @@ public class JsonUtil {
      * @return the pretty print version of json
      */
     public native static String prettyPrint(String json, String replacer, int space) /*-{
-        return $wnd.JSON.stringify($wnd.JSON.parse(json), replacer, space);
+		return $wnd.JSON.stringify($wnd.JSON.parse(json), replacer, space);
     }-*/;
 
 }

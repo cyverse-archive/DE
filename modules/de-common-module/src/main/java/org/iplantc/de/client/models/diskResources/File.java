@@ -11,5 +11,4 @@ public interface File extends DiskResource {
 
     @PropertyName("file-size")
     void setSize(long size);
-
 }

@@ -6,7 +6,6 @@ import org.iplantc.de.client.models.dataLink.DataLinkFactory;
 import org.iplantc.de.client.models.dataLink.DataLinkList;
 import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.client.models.diskResources.Folder;
-import org.iplantc.de.client.models.diskResources.Permissions;
 import org.iplantc.de.client.services.DiskResourceServiceFacade;
 import org.iplantc.de.client.util.DiskResourceUtil;
 import org.iplantc.de.commons.client.ErrorHandler;
@@ -82,17 +81,16 @@ public class DiskResourceActionsCell extends AbstractCell<DiskResource> {
     public void render(com.google.gwt.cell.client.Cell.Context context, DiskResource value, SafeHtmlBuilder sb) {
 
         if (!value.isFilter() && !DiskResourceUtil.inTrash(value)) {
-            Permissions permissions = value.getPermissions();
             if (value instanceof Folder) {
                 sb.append(templates.imgCell(I18N.DISPLAY.share() + " " + I18N.DISPLAY.path(), I18N.DISPLAY.share() + " " + I18N.DISPLAY.path(), resources.css().actionIcon(), IplantResources.RESOURCES
                         .dataLink().getSafeUri()));
             } else {
-                if (permissions != null && permissions.isOwner()) {
+                if (value.owner()) {
                     sb.append(templates.imgCell(I18N.DISPLAY.share() + " " + I18N.DISPLAY.viaPublicLink(), I18N.DISPLAY.share() + " " + I18N.DISPLAY.viaPublicLink(), resources.css().actionIcon(),
                             IplantResources.RESOURCES.linkAdd().getSafeUri()));
                 }
             }
-            if (permissions != null && permissions.isOwner()) {
+            if (value.owner()) {
                 sb.append(templates.imgCell(I18N.DISPLAY.share(), I18N.DISPLAY.share() + " " + I18N.DISPLAY.viaDiscoveryEnvironment(), resources.css().actionIcon(), IplantResources.RESOURCES.share()
                         .getSafeUri()));
             }

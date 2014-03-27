@@ -6,9 +6,8 @@ package org.iplantc.de.diskResource.client.sharing.presenter;
 import org.iplantc.de.client.gin.ServicesInjector;
 import org.iplantc.de.client.models.collaborators.Collaborator;
 import org.iplantc.de.client.models.diskResources.DiskResource;
-import org.iplantc.de.client.models.diskResources.DiskResourceAutoBeanFactory;
 import org.iplantc.de.client.models.diskResources.Folder;
-import org.iplantc.de.client.models.diskResources.Permissions;
+import org.iplantc.de.client.models.diskResources.PermissionValue;
 import org.iplantc.de.client.models.sharing.DataSharing;
 import org.iplantc.de.client.models.sharing.Sharing;
 import org.iplantc.de.client.services.DiskResourceServiceFacade;
@@ -20,15 +19,12 @@ import org.iplantc.de.diskResource.client.sharing.views.DataSharingPermissionsPa
 import org.iplantc.de.diskResource.client.sharing.views.DataSharingView;
 import org.iplantc.de.resources.client.messages.I18N;
 
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONBoolean;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONString;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HasOneWidget;
-import com.google.web.bindery.autobean.shared.AutoBean;
-import com.google.web.bindery.autobean.shared.AutoBeanCodex;
 
 import com.sencha.gxt.core.shared.FastMap;
 
@@ -49,7 +45,6 @@ public class DataSharingPresenter implements DataSharingView.Presenter {
     private FastMap<List<DataSharing>> dataSharingMap;
     private final DiskResourceServiceFacade facade;
     private final DataSharingPermissionsPanel permissionsPanel;
-    private static DiskResourceAutoBeanFactory factory = GWT.create(DiskResourceAutoBeanFactory.class);
 
     public DataSharingPresenter(List<DiskResource> selectedResources, DataSharingView view) {
         facade = ServicesInjector.INSTANCE.getDiskResourceServiceFacade();
@@ -308,9 +303,14 @@ public class DataSharingPresenter implements DataSharingView.Presenter {
         return permission;
     }
 
-    private Permissions buildPermissionFromJson(JSONObject perm) {
-        AutoBean<Permissions> bean = AutoBeanCodex.decode(factory, Permissions.class, perm.toString());
-        return bean.as();
+    private PermissionValue buildPermissionFromJson(JSONObject perm) {
+        if (perm.get("own").isBoolean().booleanValue()) {
+            return PermissionValue.own;
+        } else if (perm.get("own").isBoolean().booleanValue() == false && perm.get("write").isBoolean().booleanValue()) {
+            return PermissionValue.write;
+        } else {
+            return PermissionValue.read;
+        }
     }
 
     private JSONObject buildUnSharingJson() {
@@ -352,13 +352,8 @@ public class DataSharingPresenter implements DataSharingView.Presenter {
 
 
     @Override
-    public Permissions getDefaultPermissions() {
-        JSONObject obj = new JSONObject();
-        obj.put(DataSharing.READ, JSONBoolean.getInstance(true));
-        obj.put(DataSharing.WRITE, JSONBoolean.getInstance(false));
-        obj.put(DataSharing.OWN, JSONBoolean.getInstance(false));
-        AutoBean<Permissions> bean = AutoBeanCodex.decode(factory, Permissions.class, obj.toString());
-        return bean.as();
+    public PermissionValue getDefaultPermissions() {
+        return PermissionValue.read;
     }
 
 

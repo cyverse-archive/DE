@@ -75,8 +75,7 @@ import java.util.Set;
  * @author jstroot
  * 
  */
-public abstract class AbstractDiskResourceSelector<R extends DiskResource> extends Component implements
-        IsField<R>, ValueAwareEditor<R>, HasValueChangeHandlers<R>, HasEditorErrors<R>,
+public abstract class AbstractDiskResourceSelector<R extends DiskResource> extends Component implements IsField<R>, ValueAwareEditor<R>, HasValueChangeHandlers<R>, HasEditorErrors<R>,
         DndDragEnterHandler, DndDragMoveHandler, DndDropHandler, HasInvalidHandlers, DiskResourceSelector, DiskResourceSelector.HasDisableBrowseButtons {
 
     public interface FileUploadTemplate extends XTemplates {
@@ -90,7 +89,7 @@ public abstract class AbstractDiskResourceSelector<R extends DiskResource> exten
         String errorText();
 
         String inputWrap();
-        
+
         String wrap();
     }
 
@@ -186,7 +185,7 @@ public abstract class AbstractDiskResourceSelector<R extends DiskResource> exten
                 onBrowseSelected();
             }
         });
-        
+
         drServiceFacade = ServicesInjector.INSTANCE.getDiskResourceServiceFacade();
 
         infoText = DOM.createDiv();
@@ -194,19 +193,17 @@ public abstract class AbstractDiskResourceSelector<R extends DiskResource> exten
         getElement().appendChild(infoText);
 
         initDragAndDrop();
-        
+
         errorHandler = new DrSideErrorHandler(input, this, button);
         errorHandler.setAdjustTargetWidth(false);
         input.setErrorSupport(errorHandler);
     }
 
-    
     @Override
     public HandlerRegistration addInvalidHandler(InvalidHandler handler) {
         return input.addInvalidHandler(handler);
     }
-    
-    
+
     public void addValidator(Validator<String> validator) {
         if (validator != null) {
             input.addValidator(validator);
@@ -233,7 +230,6 @@ public abstract class AbstractDiskResourceSelector<R extends DiskResource> exten
     public void disableBrowseButtons() {
         browseButtonEnabled = false;
     }
-    
 
     @Override
     public void flush() {
@@ -393,7 +389,7 @@ public abstract class AbstractDiskResourceSelector<R extends DiskResource> exten
         } else if (existsEditorError != null) {
             errors.add(existsEditorError);
         }
-        if(!preventMark) {
+        if (!preventMark) {
             input.showErrors(errors);
         }
         if (errors.size() < 0) {
@@ -471,7 +467,7 @@ public abstract class AbstractDiskResourceSelector<R extends DiskResource> exten
 
             @Override
             public void onFailure(Throwable caught) {
-                
+
                 SimpleServiceError serviceError = AutoBeanCodex.decode(drServiceFacade.getDiskResourceFactory(), SimpleServiceError.class, caught.getMessage()).as();
                 if (serviceError.getErrorCode().equals(ServiceErrorCode.ERR_DOES_NOT_EXIST.toString())) {
                     existsEditorError = new DefaultEditorError(input, errorStrings.diskResourceDoesNotExist(diskResourceId), diskResourceId);
@@ -495,16 +491,16 @@ public abstract class AbstractDiskResourceSelector<R extends DiskResource> exten
                     errors.add(permissionEditorError);
                     input.showErrors(Lists.<EditorError> newArrayList(permissionEditorError));
                     setInfoErrorText(I18N.DISPLAY.permissionSelectErrorMessage());
-                } else if (!(diskResource.getPermissions().isWritable() || diskResource.getPermissions().isOwner())) {
+                } else if (!(diskResource.writable() || diskResource.owner())) {
                     permissionEditorError = new DefaultEditorError(input, I18N.DISPLAY.permissionSelectErrorMessage(), diskResourceId);
                     errors.add(permissionEditorError);
                     input.showErrors(Lists.<EditorError> newArrayList(permissionEditorError));
                     setInfoErrorText(I18N.DISPLAY.permissionSelectErrorMessage());
-                } else if(!Strings.isNullOrEmpty(infoText) && (!infoText.equalsIgnoreCase(I18N.APPS_MESSAGES.nonDefaultFolderWarning()))){
-						//clear only permission related errors on success
-					    setInfoErrorText(null);
-					}
-				}
+                } else if (!Strings.isNullOrEmpty(infoText) && (!infoText.equalsIgnoreCase(I18N.APPS_MESSAGES.nonDefaultFolderWarning()))) {
+                    // clear only permission related errors on success
+                    setInfoErrorText(null);
+                }
+            }
         });
 
     }

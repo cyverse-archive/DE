@@ -25,7 +25,6 @@ import org.iplantc.de.client.services.DEServiceFacade;
 import org.iplantc.de.client.services.DiskResourceServiceFacade;
 import org.iplantc.de.client.services.converters.AsyncCallbackConverter;
 import org.iplantc.de.client.services.impl.models.DiskResourceMetadataBatchRequest;
-import org.iplantc.de.client.services.impl.models.DiskResourceServiceAutoBeanFactory;
 import org.iplantc.de.client.util.DiskResourceUtil;
 import org.iplantc.de.shared.services.ServiceCallWrapper;
 
@@ -60,7 +59,7 @@ import java.util.Set;
  */
 public class DiskResourceServiceFacadeImpl extends TreeStore<Folder> implements DiskResourceServiceFacade, FolderRefreshEventHandler {
 
-    private static final DiskResourceServiceAutoBeanFactory FACTORY = GWT.create(DiskResourceServiceAutoBeanFactory.class);
+    private static final DiskResourceAutoBeanFactory FACTORY = GWT.create(DiskResourceAutoBeanFactory.class);
 
     private final DEProperties deProperties;
     private final DEServiceFacade deServiceFacade;

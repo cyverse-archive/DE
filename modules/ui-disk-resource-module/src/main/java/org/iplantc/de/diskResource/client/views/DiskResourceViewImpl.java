@@ -4,7 +4,7 @@ import org.iplantc.de.client.models.HasId;
 import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.client.models.diskResources.DiskResourceInfo;
 import org.iplantc.de.client.models.diskResources.Folder;
-import org.iplantc.de.client.models.diskResources.Permissions;
+import org.iplantc.de.client.models.diskResources.PermissionValue;
 import org.iplantc.de.client.util.DiskResourceUtil;
 import org.iplantc.de.commons.client.widgets.IPlantAnchor;
 import org.iplantc.de.diskResource.client.events.FolderSelectedEvent;
@@ -781,17 +781,8 @@ public class DiskResourceViewImpl implements DiskResourceView {
      * Add permissions detail
      * 
      */
-    private HorizontalPanel getPermissionsLabel(String label, Permissions p) {
-        String value;
-        if (p.isOwner()) {
-            value = I18N.DISPLAY.owner();
-        } else if (!p.isWritable()) {
-            value = I18N.DISPLAY.readOnly();
-        } else {
-            value = I18N.DISPLAY.readWrite();
-        }
-
-        return getStringLabel(label, value);
+    private HorizontalPanel getPermissionsLabel(String label, PermissionValue p) {
+        return getStringLabel(label, p.toString());
     }
 
     private HorizontalPanel buildRow() {
@@ -830,9 +821,9 @@ public class DiskResourceViewImpl implements DiskResourceView {
             if (next.getId().equals(path)) {
                 detailsPanel.add(getDateLabel(I18N.DISPLAY.lastModified(), info.getModified()));
                 detailsPanel.add(getDateLabel(I18N.DISPLAY.createdDate(), info.getCreated()));
-                detailsPanel.add(getPermissionsLabel(I18N.DISPLAY.permissions(), info.getPermissions()));
+                detailsPanel.add(getPermissionsLabel(I18N.DISPLAY.permissions(), info.getPermission()));
                 if (!DiskResourceUtil.inTrash(next)) {
-                    detailsPanel.add(getSharingLabel(I18N.DISPLAY.share(), info.getShareCount(), info.getPermissions()));
+                    detailsPanel.add(getSharingLabel(I18N.DISPLAY.share(), info.getShareCount(), info.getPermission()));
                 }
                 if (info.getType().equalsIgnoreCase("file")) {
                     addFileDetails(info);
@@ -856,14 +847,14 @@ public class DiskResourceViewImpl implements DiskResourceView {
         detailsPanel.add(getInfoTypeLabel("Info-Type", info));
     }
 
-    private HorizontalPanel getSharingLabel(String label, int shareCount, Permissions permissions) {
+    private HorizontalPanel getSharingLabel(String label, int shareCount, PermissionValue permissions) {
         IPlantAnchor link = null;
         HorizontalPanel panel = buildRow();
         FieldLabel fl = new FieldLabel();
         fl.setWidth(100);
         fl.setHTML(getDetailAsHtml(label, true));
         panel.add(fl);
-        if (permissions.isOwner()) {
+        if (permissions.equals(PermissionValue.own)) {
             if (shareCount == 0) {
                 link = new IPlantAnchor(I18N.DISPLAY.nosharing(), 100, new SharingLabelClickHandler());
             } else {
@@ -887,7 +878,7 @@ public class DiskResourceViewImpl implements DiskResourceView {
         String infoType = info.getInfoType();
 
         if (infoType != null && !infoType.isEmpty()) {
-            if (info.getPermissions().isOwner() || info.getPermissions().isWritable()) {
+            if (info.getPermission().equals(PermissionValue.own) || info.getPermission().equals(PermissionValue.write)) {
                 link = new IPlantAnchor(infoType, 60, new InfoTypeClickHandler(infoType));
                 panel.add(link);
                 Image rmImg = new Image(IplantResources.RESOURCES.deleteIcon());
@@ -902,7 +893,7 @@ public class DiskResourceViewImpl implements DiskResourceView {
                 panel.add(infoLbl);
             }
         } else {
-            if (info.getPermissions().isOwner() || info.getPermissions().isWritable()) {
+            if (info.getPermission().equals(PermissionValue.own) || info.getPermission().equals(PermissionValue.write)) {
                 link = new IPlantAnchor("Select", 100, new InfoTypeClickHandler(""));
                 panel.add(link);
             } else {

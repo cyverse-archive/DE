@@ -4,7 +4,7 @@
 package org.iplantc.de.diskResource.client.sharing.views;
 
 import org.iplantc.de.client.models.diskResources.DiskResource;
-import org.iplantc.de.client.models.diskResources.Permissions;
+import org.iplantc.de.client.models.diskResources.PermissionValue;
 import org.iplantc.de.client.models.sharing.DataSharing.TYPE;
 
 import com.google.gwt.user.client.ui.IsWidget;
@@ -26,7 +26,7 @@ public interface DataSharingView extends IsWidget {
 
         TYPE getSharingResourceType(String path);
 
-        Permissions getDefaultPermissions();
+        PermissionValue getDefaultPermissions();
 
         void processRequest();
 

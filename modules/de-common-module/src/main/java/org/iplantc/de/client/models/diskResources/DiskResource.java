@@ -28,11 +28,18 @@ public interface DiskResource extends HasId, HasName, HasPath {
     @PropertyName("date-modified")
     Date getLastModified();
 
-    Permissions getPermissions();
-    
+    @PropertyName("permission")
+    PermissionValue getPermission();
+
     @PropertyName("filter")
     boolean isFilter();
-    
+
     @PropertyName("filter")
     void setFilter(boolean filter);
+
+    boolean owner();
+
+    boolean readable();
+
+    boolean writable();
 }
