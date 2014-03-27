@@ -7,6 +7,7 @@ import org.iplantc.de.client.models.diskResources.DiskResourceStatMap;
 import org.iplantc.de.client.models.errorHandling.ServiceErrorCode;
 import org.iplantc.de.client.models.errorHandling.SimpleServiceError;
 import org.iplantc.de.client.services.DiskResourceServiceFacade;
+import org.iplantc.de.client.util.DiskResourceUtil;
 import org.iplantc.de.commons.client.widgets.IPlantSideErrorHandler;
 import org.iplantc.de.resources.client.messages.I18N;
 import org.iplantc.de.resources.client.messages.IplantErrorStrings;
@@ -491,7 +492,7 @@ public abstract class AbstractDiskResourceSelector<R extends DiskResource> exten
                     errors.add(permissionEditorError);
                     input.showErrors(Lists.<EditorError> newArrayList(permissionEditorError));
                     setInfoErrorText(I18N.DISPLAY.permissionSelectErrorMessage());
-                } else if (!(diskResource.writable() || diskResource.owner())) {
+                } else if (!(DiskResourceUtil.isWritable(diskResource) || DiskResourceUtil.isOwner(diskResource))) {
                     permissionEditorError = new DefaultEditorError(input, I18N.DISPLAY.permissionSelectErrorMessage(), diskResourceId);
                     errors.add(permissionEditorError);
                     input.showErrors(Lists.<EditorError> newArrayList(permissionEditorError));

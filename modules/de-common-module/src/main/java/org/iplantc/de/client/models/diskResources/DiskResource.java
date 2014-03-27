@@ -36,10 +36,4 @@ public interface DiskResource extends HasId, HasName, HasPath {
 
     @PropertyName("filter")
     void setFilter(boolean filter);
-
-    boolean owner();
-
-    boolean readable();
-
-    boolean writable();
 }

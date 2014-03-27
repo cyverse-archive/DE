@@ -60,7 +60,7 @@ import java.util.List;
 
 /**
  * @author sriram
- *
+ * 
  */
 public class DataSharingPermissionsPanel implements IsWidget {
 
@@ -126,7 +126,7 @@ public class DataSharingPermissionsPanel implements IsWidget {
         init();
         widget = uiBinder.createAndBindUi(this);
         initToolbar();
-    //    initGrid();
+        // initGrid();
     }
 
     @Override
@@ -137,19 +137,16 @@ public class DataSharingPermissionsPanel implements IsWidget {
     private void init() {
         listStore = new ListStore<DataSharing>(new DataSharingKeyProvider());
         cm = buildColumnModel();
-        EventBus.getInstance().addHandler(UserSearchResultSelected.TYPE,
-                new UserSearchResultSelected.UserSearchResultSelectedEventHandler() {
+        EventBus.getInstance().addHandler(UserSearchResultSelected.TYPE, new UserSearchResultSelected.UserSearchResultSelectedEventHandler() {
 
-                    @Override
-                    public void onUserSearchResultSelected(
-                            UserSearchResultSelected userSearchResultSelected) {
-                        if (userSearchResultSelected.getTag().equals(
-                                UserSearchResultSelected.USER_SEARCH_EVENT_TAG.SHARING.toString())) {
-                            addCollaborator(userSearchResultSelected.getCollaborator());
-                        }
+            @Override
+            public void onUserSearchResultSelected(UserSearchResultSelected userSearchResultSelected) {
+                if (userSearchResultSelected.getTag().equals(UserSearchResultSelected.USER_SEARCH_EVENT_TAG.SHARING.toString())) {
+                    addCollaborator(userSearchResultSelected.getCollaborator());
+                }
 
-                    }
-                });
+            }
+        });
     }
 
     private void initToolbar() {
@@ -201,8 +198,8 @@ public class DataSharingPermissionsPanel implements IsWidget {
         perms.add(PermissionValue.read);
         perms.add(PermissionValue.write);
         perms.add(PermissionValue.own);
-    
-        permCombo = new ComboBoxCell<PermissionValue>(perms,new StringLabelProvider<PermissionValue>() {
+
+        permCombo = new ComboBoxCell<PermissionValue>(perms, new StringLabelProvider<PermissionValue>() {
             @Override
             public String getLabel(PermissionValue value) {
                 return value.toString();
@@ -213,13 +210,13 @@ public class DataSharingPermissionsPanel implements IsWidget {
 
         permCombo.setTriggerAction(TriggerAction.ALL);
         permCombo.addSelectionHandler(new SelectionHandler<PermissionValue>() {
-            
+
             @Override
             public void onSelection(SelectionEvent<PermissionValue> event) {
                 CellSelectionEvent<PermissionValue> sel = (CellSelectionEvent<PermissionValue>)event;
                 DataSharing ds = listStore.get(sel.getContext().getIndex());
                 updatePermissions(event.getSelectedItem(), ds.getUserName());
-                
+
             }
         });
         return permCombo;
@@ -249,8 +246,7 @@ public class DataSharingPermissionsPanel implements IsWidget {
     private void addCollaborator(Collaborator user) {
         String userName = user.getUserName();
         if (userName != null && userName.equalsIgnoreCase(UserInfo.getInstance().getUsername())) {
-            AlertMessageBox amb = new AlertMessageBox(I18N.DISPLAY.warning(),
-            		I18N.DISPLAY.selfShareWarning());
+            AlertMessageBox amb = new AlertMessageBox(I18N.DISPLAY.warning(), I18N.DISPLAY.selfShareWarning());
             amb.show();
             return;
         }
@@ -273,7 +269,6 @@ public class DataSharingPermissionsPanel implements IsWidget {
             sharingMap.put(userName, shareList);
         }
     }
-    
 
     private void removeModels(DataSharing model) {
         ListStore<DataSharing> store = grid.getStore();
@@ -323,8 +318,7 @@ public class DataSharingPermissionsPanel implements IsWidget {
         List<ColumnConfig<DataSharing, ?>> configs = new ArrayList<ColumnConfig<DataSharing, ?>>();
         DataSharingProperties props = GWT.create(DataSharingProperties.class);
 
-        ColumnConfig<DataSharing, String> name = new ColumnConfig<DataSharing, String>(props.name(),
-                200, I18N.DISPLAY.name());
+        ColumnConfig<DataSharing, String> name = new ColumnConfig<DataSharing, String>(props.name(), 200, I18N.DISPLAY.name());
         ColumnConfig<DataSharing, PermissionValue> permission = buildPermissionColumn();
         ColumnConfig<DataSharing, String> remove = buildRemoveColumn();
 
@@ -336,19 +330,16 @@ public class DataSharingPermissionsPanel implements IsWidget {
     }
 
     private ColumnConfig<DataSharing, PermissionValue> buildPermissionColumn() {
-        ColumnConfig<DataSharing, PermissionValue> permission = new ColumnConfig<DataSharing, PermissionValue>(
-new ValueProvider<DataSharing, PermissionValue>() {
+        ColumnConfig<DataSharing, PermissionValue> permission = new ColumnConfig<DataSharing, PermissionValue>(new ValueProvider<DataSharing, PermissionValue>() {
 
             @Override
             public PermissionValue getValue(DataSharing object) {
-                return PermissionValue.valueOf(object.getDisplayPermission().toUpperCase());
+                return PermissionValue.valueOf(object.getDisplayPermission());
             }
 
             @Override
             public void setValue(DataSharing object, PermissionValue value) {
                 object.setDisplayPermission(value.toString());
-                ;
-
             }
 
             @Override
@@ -366,25 +357,24 @@ new ValueProvider<DataSharing, PermissionValue>() {
     }
 
     private ColumnConfig<DataSharing, String> buildRemoveColumn() {
-        ColumnConfig<DataSharing, String> remove = new ColumnConfig<DataSharing, String>(
-                new ValueProvider<DataSharing, String>() {
+        ColumnConfig<DataSharing, String> remove = new ColumnConfig<DataSharing, String>(new ValueProvider<DataSharing, String>() {
 
-                    @Override
-                    public String getValue(DataSharing object) {
-                        return "";
-                    }
+            @Override
+            public String getValue(DataSharing object) {
+                return "";
+            }
 
-                    @Override
-                    public void setValue(DataSharing object, String value) {
-                        // do nothing
+            @Override
+            public void setValue(DataSharing object, String value) {
+                // do nothing
 
-                    }
+            }
 
-                    @Override
-                    public String getPath() {
-                        return "";
-                    }
-                });
+            @Override
+            public String getPath() {
+                return "";
+            }
+        });
 
         remove.setColumnTextClassName(CommonStyles.get().inlineBlock());
         remove.setSortable(false);
@@ -413,8 +403,8 @@ new ValueProvider<DataSharing, PermissionValue>() {
     }
 
     /**
-     *
-     *
+     * 
+     * 
      * @return the sharing list
      */
     public FastMap<List<DataSharing>> getSharingMap() {
@@ -433,7 +423,7 @@ new ValueProvider<DataSharing, PermissionValue>() {
 
     /**
      * check the list with original to see if things have changed. ignore unchanged records
-     *
+     * 
      * @param userName
      * @param list
      * @return

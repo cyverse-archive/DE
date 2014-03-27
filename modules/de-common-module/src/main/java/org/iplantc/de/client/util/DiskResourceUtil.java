@@ -9,6 +9,7 @@ import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.client.models.diskResources.File;
 import org.iplantc.de.client.models.diskResources.Folder;
+import org.iplantc.de.client.models.diskResources.PermissionValue;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
@@ -94,14 +95,7 @@ public class DiskResourceUtil {
         return Joiner.on(", ").join(parseNamesFromIdList(idList));
     }
 
-    public static boolean isOwner(DiskResource resource) {
-        return resource.owner();
-    }
 
-    public static boolean isWritable(DiskResource resource) {
-        return resource.writable();
-    }
-    
     public static boolean isOwner(Iterable<DiskResource> resources) {
         if (resources == null) {
             return false;
@@ -109,7 +103,7 @@ public class DiskResourceUtil {
 
         // Use predicate to determine if user is owner of all disk resources
         for (DiskResource dr : resources) {
-            if (!dr.owner()) {
+            if (isOwner(dr)) {
                 return false;
             }
         }
@@ -129,7 +123,7 @@ public class DiskResourceUtil {
         }
 
         for (DiskResource dr : resources) {
-            if (dr.owner()) {
+            if (isOwner(dr)) {
                 return true;
             }
         }
@@ -162,7 +156,7 @@ public class DiskResourceUtil {
     }
 
     public static boolean isMovable(Folder targetFolder, Iterable<DiskResource> dropData) {
-        return isOwner(dropData) && targetFolder.writable();
+        return isOwner(dropData) && isWritable(targetFolder);
     }
 
     public static boolean canUploadTo(DiskResource resource) {
@@ -308,5 +302,30 @@ public class DiskResourceUtil {
         }
 
         return folders;
+    }
+
+    public static boolean isOwner(DiskResource dr) {
+        if (dr == null) {
+            return false;
+        }
+
+        return dr.getPermission().equals(PermissionValue.own);
+    }
+
+    public static boolean isReadable(DiskResource dr) {
+        if (dr == null) {
+            return false;
+        }
+
+        // by defualt things are readable if it shows up in UI
+        return true;
+    }
+
+    public static boolean isWritable(DiskResource dr) {
+        if (dr == null) {
+            return false;
+        }
+
+        return dr.getPermission().equals(PermissionValue.own) || dr.getPermission().equals(PermissionValue.write);
     }
 }

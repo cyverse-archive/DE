@@ -20,9 +20,9 @@ import org.iplantc.de.diskResource.client.sharing.views.DataSharingView;
 import org.iplantc.de.resources.client.messages.I18N;
 
 import com.google.gwt.json.client.JSONArray;
-import com.google.gwt.json.client.JSONBoolean;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONString;
+import com.google.gwt.json.client.JSONValue;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HasOneWidget;
 
@@ -278,7 +278,7 @@ public class DataSharingPresenter implements DataSharingView.Presenter {
             DataSharing ds = (DataSharing)s;
             obj = new JSONObject();
             obj.put("path", new JSONString(ds.getPath()));
-            obj.put("permissions", buildSharingPermissionsAsJson(ds));
+            obj.put("permission", buildSharingPermissionsAsJson(ds));
             pathArr.set(index++, obj);
         }
 
@@ -295,12 +295,14 @@ public class DataSharingPresenter implements DataSharingView.Presenter {
         return pathArr;
     }
 
-    private JSONObject buildSharingPermissionsAsJson(DataSharing sh) {
-        JSONObject permission = new JSONObject();
-        permission.put("read", JSONBoolean.getInstance(sh.isReadable()));
-        permission.put("write", JSONBoolean.getInstance(sh.isWritable()));
-        permission.put("own", JSONBoolean.getInstance(sh.isOwner()));
-        return permission;
+    private JSONValue buildSharingPermissionsAsJson(DataSharing sh) {
+        if (sh.isOwner()) {
+           return new JSONString(PermissionValue.own.toString());
+        } else if (sh.isWritable()) {
+            return new  JSONString(PermissionValue.write.toString());
+        } else {
+            return new JSONString(PermissionValue.read.toString());
+        }
     }
 
     private PermissionValue buildPermissionFromJson(JSONObject perm) {

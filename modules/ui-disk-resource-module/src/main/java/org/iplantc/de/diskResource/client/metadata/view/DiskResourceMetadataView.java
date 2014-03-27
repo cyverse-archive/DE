@@ -6,6 +6,7 @@ import org.iplantc.de.client.models.diskResources.DiskResourceMetadata;
 import org.iplantc.de.client.models.diskResources.DiskResourceMetadataList;
 import org.iplantc.de.client.models.diskResources.MetadataTemplateAttribute;
 import org.iplantc.de.client.models.diskResources.MetadataTemplateInfo;
+import org.iplantc.de.client.util.DiskResourceUtil;
 import org.iplantc.de.commons.client.validators.UrlValidator;
 import org.iplantc.de.commons.client.widgets.IPlantAnchor;
 import org.iplantc.de.diskResource.client.metadata.presenter.DiskResourceMetadataUpdateCallback;
@@ -263,7 +264,7 @@ public class DiskResourceMetadataView implements IsWidget {
     public DiskResourceMetadataView(DiskResource dr) {
         widget = uiBinder.createAndBindUi(this);
         selectedResource = dr;
-        writable = selectedResource.writable();
+        writable = DiskResourceUtil.isWritable(selectedResource);
         alc = new AccordionLayoutContainer();
         centerPanel = new VerticalLayoutContainer();
         con.setCenterWidget(centerPanel);

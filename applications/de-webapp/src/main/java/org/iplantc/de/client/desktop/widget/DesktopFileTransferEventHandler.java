@@ -149,7 +149,7 @@ class DesktopFileTransferEventHandler implements RequestBulkDownloadEventHandler
         }
 
         for (DiskResource dr : resources) {
-            if (!dr.readable()) {
+            if (!DiskResourceUtil.isReadable(dr)) {
                 return false;
             }
         }

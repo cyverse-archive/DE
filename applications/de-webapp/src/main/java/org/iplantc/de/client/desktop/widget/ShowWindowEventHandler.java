@@ -15,6 +15,7 @@ import org.iplantc.de.client.events.ShowSystemMessagesEvent;
 import org.iplantc.de.client.events.WindowShowRequestEvent;
 import org.iplantc.de.client.events.WindowShowRequestEvent.WindowShowRequestEventHandler;
 import org.iplantc.de.client.models.apps.App;
+import org.iplantc.de.client.util.DiskResourceUtil;
 import org.iplantc.de.client.views.windows.configs.AppWizardConfig;
 import org.iplantc.de.client.views.windows.configs.AppsIntegrationWindowConfig;
 import org.iplantc.de.client.views.windows.configs.ConfigFactory;
@@ -47,7 +48,7 @@ final class ShowWindowEventHandler implements ShowAboutWindowEventHandler, ShowF
     public void showFilePreview(ShowFilePreviewEvent event) {
         FileViewerWindowConfig fileViewerWindowConfig = ConfigFactory.fileViewerWindowConfig(
                 event.getFile(), false);
-        fileViewerWindowConfig.setEditing(event.getFile().writable());
+        fileViewerWindowConfig.setEditing(DiskResourceUtil.isWritable(event.getFile()));
         desktop.showWindow(fileViewerWindowConfig);
     }
 

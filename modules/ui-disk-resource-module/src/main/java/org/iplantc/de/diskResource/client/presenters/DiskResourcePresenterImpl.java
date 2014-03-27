@@ -477,7 +477,7 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter {
         ipd.setResizable(true);
         ipd.addHelp(new HTML(I18N.HELP.metadataHelp()));
         p.go(ipd);
-        if (selected.writable()) {
+        if (DiskResourceUtil.isWritable(selected)) {
             ipd.setHideOnButtonClick(false);
 
             ipd.addOkButtonSelectHandler(new SelectHandler() {
