@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
+import java.net.URLEncoder;
 
 import static org.iplantc.de.server.util.ServletUtils.loadResource;
 
@@ -16,6 +17,8 @@ import static org.iplantc.de.server.util.ServletUtils.loadResource;
  * Used to present a landing page to an unauthenticated DE user.
  */
 public class DeLandingPage implements LandingPage, InitializingBean {
+
+    private static final String ENCODING = "UTF-8";
 
     private enum Templates {
         BOUNDED_MAINTENANCE_DIV(loadResource("bounded-maintenance-div-template.html")),
@@ -62,7 +65,7 @@ public class DeLandingPage implements LandingPage, InitializingBean {
 
     public void display(HttpServletRequest req, HttpServletResponse res) throws IOException {
         String contextPath = req.getContextPath();
-        String loginDiv = buildLoginDiv();
+        String loginDiv = buildLoginDiv(req);
         ST st = new ST(Templates.LANDING_PAGE.toString(), '$', '$');
         st.add("context_path", contextPath);
         st.add("login_div", loginDiv);
@@ -74,14 +77,14 @@ public class DeLandingPage implements LandingPage, InitializingBean {
         return new DiscoveryEnvironmentMaintenance(deMaintenanceFile);
     }
 
-    private String buildLoginDiv() {
+    private String buildLoginDiv(HttpServletRequest req) throws IOException {
         DiscoveryEnvironmentMaintenance deMaintenance = getDeMaintenance();
         if (deMaintenance.hasMaintenanceTimes()) {
             return buildBoundedMaintenanceDiv(deMaintenance);
         } else if (deMaintenance.isUnderMaintenance()) {
             return buildUnboundedMaintenanceDiv();
         } else {
-            return buildLoginButtonDiv();
+            return buildLoginButtonDiv(req);
         }
     }
 
@@ -96,10 +99,24 @@ public class DeLandingPage implements LandingPage, InitializingBean {
         return Templates.UNBOUNDED_MAINTENANCE_DIV.toString();
     }
 
-    private String buildLoginButtonDiv() {
+    private String buildLoginButtonDiv(HttpServletRequest req) throws IOException {
         ST st = new ST(Templates.LOGIN_DIV.toString(), '$', '$');
+        st.add("extra_params", buildExtraParams(req));
         st.add("login_url", loginUrl);
         st.add("service_url", casService.getService());
         return st.render();
+    }
+
+    private String buildExtraParams(HttpServletRequest req) throws IOException {
+        StringBuilder extraParams = new StringBuilder();
+        for (Object paramName : req.getParameterMap().keySet()) {
+            Object paramValue = req.getParameterMap().get(paramName);
+            extraParams.append("        <input type=\"hidden\" name=\"")
+                    .append(URLEncoder.encode(paramName.toString(), ENCODING))
+                    .append("\" value=\"")
+                    .append(URLEncoder.encode(paramValue.toString(), ENCODING))
+                    .append("\" />\n");
+        }
+        return extraParams.toString();
     }
 }
