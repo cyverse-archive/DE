@@ -40,6 +40,11 @@ configure(subprojects.findAll{it.name == "de" || it.name == "belphegor"}) {
       webApp=draftWar.archivePath
    }
 
+   // Create convenience task for launching sdm
+   task sdm(dependsOn: 'gwtSuperDev') {
+      description 'Short hand task for launching GWT Super Dev Mode'
+   }
+
    war {
       manifest { 
          attributes "Jenkins-Build-Version": "${BUILD_TAG}",
