@@ -42,6 +42,7 @@ public class SelectFolderByIdLoadHandler implements LoadHandler<Folder, List<Fol
     private final DiskResourceView.Presenter presenter;
     private final HasHandlerRegistrationMgmt regMgr;
     private final IplantAnnouncer announcer;
+    private boolean rootFolderDetected;
 
     public SelectFolderByIdLoadHandler(final HasId folderToSelect,
             final DiskResourceView.Presenter presenter, final IplantAnnouncer announcer) {
@@ -133,8 +134,10 @@ public class SelectFolderByIdLoadHandler implements LoadHandler<Folder, List<Fol
 
         if (folder == null) {
             // If no folders could be found in view
+            this.rootFolderDetected = false;
             unmaskView();
         } else {
+            this.rootFolderDetected = true;
             // A folder along the path to load has been found.
             if (folder.getPath().equals(folderToSelect.getId())) {
                 // Exit condition: The target folder has already been loaded, so just select it.
@@ -172,5 +175,12 @@ public class SelectFolderByIdLoadHandler implements LoadHandler<Folder, List<Fol
     void unmaskView() {
         regMgr.unregisterHandler(this);
         presenter.unmask();
+    }
+
+    /**
+     * @return true if this handler's path contains a root which may be found in the view.
+     */
+    public boolean isRootFolderDetected() {
+        return rootFolderDetected;
     }
 }

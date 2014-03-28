@@ -265,8 +265,9 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter {
         } else {
             // Create and add the SelectFolderByIdLoadHandler to the treeLoader.
             final SelectFolderByIdLoadHandler handler = new SelectFolderByIdLoadHandler(folderToSelect, this, IplantAnnouncer.getInstance());
-            HandlerRegistration reg = treeLoader.addLoadHandler(handler);
-            addEventHandlerRegistration(handler, reg);
+            if (handler.isRootFolderDetected()) {
+                addEventHandlerRegistration(handler, treeLoader.addLoadHandler(handler));
+            }
         }
     }
 
