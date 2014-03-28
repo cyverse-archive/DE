@@ -40,9 +40,15 @@ public class DiskResourceUtil {
      * @return the parent folder.
      */
     public static String parseParent(String path) {
+        if (Strings.isNullOrEmpty(path)) {
+            return path;
+        }
+
         LinkedList<String> split = Lists.newLinkedList(Splitter.on("/").trimResults().omitEmptyStrings()
                 .split(path));
-        split.removeLast();
+        if (split.size() > 0) {
+            split.removeLast();
+        }
         return "/".concat(Joiner.on("/").join(split));
     }
 
@@ -84,6 +90,9 @@ public class DiskResourceUtil {
      * @return the member folder or file path
      */
     public static final String appendNameToPath(final String basePath, final String name) {
+        if (Strings.isNullOrEmpty(name) || Strings.isNullOrEmpty(basePath)) {
+            return null;
+        }
         return basePath + "/" + name;
     }
 
@@ -103,7 +112,7 @@ public class DiskResourceUtil {
 
         // Use predicate to determine if user is owner of all disk resources
         for (DiskResource dr : resources) {
-            if (isOwner(dr)) {
+            if (!isOwner(dr)) {
                 return false;
             }
         }
@@ -317,8 +326,7 @@ public class DiskResourceUtil {
             return false;
         }
 
-        // by defualt things are readable if it shows up in UI
-        return true;
+        return dr.getPermission().equals(PermissionValue.own) || dr.getPermission().equals(PermissionValue.write) || dr.getPermission().equals(PermissionValue.read);
     }
 
     public static boolean isWritable(DiskResource dr) {
