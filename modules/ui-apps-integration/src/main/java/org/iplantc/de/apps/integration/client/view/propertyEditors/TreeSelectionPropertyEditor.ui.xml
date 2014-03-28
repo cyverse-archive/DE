@@ -52,10 +52,6 @@
 	        </con:child>
 
 	        <con:child layoutData="{fieldLayoutData}">
-	            <fields:CheckBoxAdapter ui:field="doNotDisplay"
-	                                    negated="true"/>
-	        </con:child>
-	        <con:child layoutData="{fieldLayoutData}">
 	            <fields:CheckBoxAdapter ui:field="requiredEditor"/>
 	        </con:child>
 	        <con:child layoutData="{fieldLayoutData}">
