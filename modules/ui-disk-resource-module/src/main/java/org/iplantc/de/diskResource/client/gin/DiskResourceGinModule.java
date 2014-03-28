@@ -1,5 +1,6 @@
 package org.iplantc.de.diskResource.client.gin;
 
+import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.gin.ServicesInjector;
 import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.client.services.DiskResourceServiceFacade;
@@ -46,5 +47,10 @@ public class DiskResourceGinModule extends AbstractGinModule {
     @Singleton
     public IplantAnnouncer createIplantAnnouncer() {
         return IplantAnnouncer.getInstance();
+    }
+
+    @Provides
+    public EventBus createEventBus() {
+        return EventBus.getInstance();
     }
 }

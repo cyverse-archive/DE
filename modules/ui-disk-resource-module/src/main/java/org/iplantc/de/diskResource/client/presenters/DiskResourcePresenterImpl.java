@@ -116,11 +116,12 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter {
     private final Builder builder;
     private FolderContentsRpcProxy rpc_proxy;
     private PagingLoader<FolderContentsLoadConfig, PagingLoadResult<DiskResource>> gridLoader;
-    private DataSearchPresenter dataSearchPresenter;
+    private final DataSearchPresenter dataSearchPresenter;
+    private final EventBus eventBus;
 
     @Inject
     public DiskResourcePresenterImpl(final DiskResourceView view, final DiskResourceView.Proxy proxy, final FolderContentsRpcProxy folderRpcProxy, final DiskResourceServiceFacade diskResourceService,
-            final IplantDisplayStrings display, final DiskResourceAutoBeanFactory factory, final DataSearchPresenter dataSearchPresenter) {
+            final IplantDisplayStrings display, final DiskResourceAutoBeanFactory factory, final DataSearchPresenter dataSearchPresenter, final EventBus eventBus) {
         this.view = view;
         this.proxy = proxy;
         this.rpc_proxy = folderRpcProxy;
@@ -128,6 +129,7 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter {
         this.DISPLAY = display;
         this.drFactory = factory;
         this.dataSearchPresenter = dataSearchPresenter;
+        this.eventBus = eventBus;
 
         builder = new MyBuilder(this);
 
@@ -174,7 +176,6 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter {
 
         treeLoader.addLoadHandler(new CachedFolderTreeStoreBinding(view.getTreeStore()));
 
-        EventBus eventBus = EventBus.getInstance();
         DiskResourcesEventHandler diskResourcesEventHandler = new DiskResourcesEventHandler(this);
         dreventHandlers.add(eventBus.addHandler(FolderRefreshEvent.TYPE, diskResourcesEventHandler));
         dreventHandlers.add(eventBus.addHandler(DiskResourcesDeletedEvent.TYPE, diskResourcesEventHandler));
@@ -203,7 +204,6 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter {
 
     @Override
     public void cleanUp() {
-        EventBus eventBus = EventBus.getInstance();
         for (HandlerRegistration hr : dreventHandlers) {
             eventBus.removeHandler(hr);
         }
@@ -333,17 +333,17 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter {
 
     @Override
     public void doBulkUpload() {
-        EventBus.getInstance().fireEvent(new RequestBulkUploadEvent(this, getSelectedUploadFolder()));
+        eventBus.fireEvent(new RequestBulkUploadEvent(this, getSelectedUploadFolder()));
     }
 
     @Override
     public void doSimpleUpload() {
-        EventBus.getInstance().fireEvent(new RequestSimpleUploadEvent(this, getSelectedUploadFolder()));
+        eventBus.fireEvent(new RequestSimpleUploadEvent(this, getSelectedUploadFolder()));
     }
 
     @Override
     public void doImport() {
-        EventBus.getInstance().fireEvent(new RequestImportFromUrlEvent(this, getSelectedUploadFolder()));
+        eventBus.fireEvent(new RequestImportFromUrlEvent(this, getSelectedUploadFolder()));
     }
 
     private Folder getSelectedUploadFolder() {
@@ -373,7 +373,7 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter {
             return;
         }
 
-        EventBus.getInstance().fireEvent(new FolderRefreshEvent(folder));
+        eventBus.fireEvent(new FolderRefreshEvent(folder));
     }
 
     @Override
@@ -395,12 +395,12 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter {
 
     @Override
     public void doSimpleDownload() {
-        EventBus.getInstance().fireEvent(new RequestSimpleDownloadEvent(this, getSelectedDiskResources(), getSelectedFolder()));
+        eventBus.fireEvent(new RequestSimpleDownloadEvent(this, getSelectedDiskResources(), getSelectedFolder()));
     }
 
     @Override
     public void doBulkDownload() {
-        EventBus.getInstance().fireEvent(new RequestBulkDownloadEvent(this, view.isSelectAll(), getSelectedDiskResources(), getSelectedFolder()));
+        eventBus.fireEvent(new RequestBulkDownloadEvent(this, view.isSelectAll(), getSelectedDiskResources(), getSelectedFolder()));
     }
 
     @Override
@@ -817,7 +817,7 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter {
     @Override
     public void onNewFile() {
         CreateNewFileEvent event = new CreateNewFileEvent(getSelectedUploadFolder().getPath());
-        EventBus.getInstance().fireEvent(event);
+        eventBus.fireEvent(event);
     }
 
     @Override
