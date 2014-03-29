@@ -329,7 +329,7 @@ public class AppUserServiceFacadeImpl implements AppUserServiceFacade {
 
     @Override
     public void deleteAppFromWorkspace(String user, String fullUsername, List<String> analysisIds, AsyncCallback<String> callback) {
-        String address = deProperties.getUnproctedMuleServiceBaseUrl() + "delete-workflow"; //$NON-NLS-1$
+        String address = deProperties.getMuleServiceBaseUrl() + "delete-workflow"; //$NON-NLS-1$
 
         JSONObject body = new JSONObject();
         body.put("analysis_ids", JsonUtil.buildArrayFromStrings(analysisIds)); //$NON-NLS-1$
