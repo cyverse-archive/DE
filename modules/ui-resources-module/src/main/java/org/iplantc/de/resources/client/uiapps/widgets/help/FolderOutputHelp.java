@@ -6,4 +6,5 @@ public interface FolderOutputHelp {
 
     String folderOutputExcludeArgument();
 
+    String folderOutputDefaultValue();
 }

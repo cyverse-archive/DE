@@ -5,7 +5,7 @@ import com.google.gwt.i18n.client.LocalizableResource.Key;
 public interface FolderOutputLabels {
     String folderOutputDefaultLabel();
 
-    String folderOutputEmptyText();
+    String folderOutputLabelEmptyText();
 
     @Key("fileInputFileInfoType")
     String folderOutputFileInfoTypeLabel();
@@ -13,5 +13,7 @@ public interface FolderOutputLabels {
     String folderOutputLabel();
 
     String folderOutputSourceLabel();
+
+    String folderOutputEmptyText();
 
 }

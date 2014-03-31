@@ -5,7 +5,7 @@ import com.google.gwt.i18n.client.LocalizableResource.Key;
 public interface FileOutputLabels {
     String fileOutputDefaultLabel();
 
-    String fileOutputEmptyText();
+    String fileOutputLabelEmptyText();
 
     @Key("fileInputFileInfoType")
     String fileOutputFileInfoTypeLabel();
@@ -20,4 +20,5 @@ public interface FileOutputLabels {
 
     String fileOutputSrcStdoutLabel();
 
+    String fileOutputEmptyText();
 }

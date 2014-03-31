@@ -70,7 +70,7 @@ public class FolderOutputPropertyEditor extends AbstractArgumentPropertyEditor {
     TextField toolTipEditor;
 
     @UiField
-    FieldLabel toolTipLabel, argumentOptionLabel;
+    FieldLabel toolTipLabel, argumentOptionLabel, defaultValueLabel;
 
     private final EditorDriver editorDriver = GWT.create(EditorDriver.class);
 
@@ -83,6 +83,7 @@ public class FolderOutputPropertyEditor extends AbstractArgumentPropertyEditor {
 
         TextField textField = new TextField();
         textField.addValidator(new DiskResourceNameValidator());
+        textField.setEmptyText(folderOutputLabels.folderOutputEmptyText());
         defaultValueEditor = new ArgumentEditorConverter<String>(textField, new SplittableToStringConverter());
         fileInfoTypeComboBox = createFileInfoTypeComboBox(appMetadataService);
 
@@ -91,6 +92,7 @@ public class FolderOutputPropertyEditor extends AbstractArgumentPropertyEditor {
         argumentOption.addValidator(new CmdLineArgCharacterValidator(I18N.V_CONSTANTS
                 .restrictedCmdLineChars()));
 
+        defaultValueLabel.setHTML(appearance.createContextualHelpLabel(folderOutputLabels.folderOutputDefaultLabel(), help.folderOutputDefaultValue()));
         toolTipLabel.setHTML(appearance.createContextualHelpLabel(appLabels.toolTipText(), help.toolTip()));
         argumentOptionLabel.setHTML(appearance.createContextualHelpLabel(appLabels.argumentOption(), help.argumentOption()));
         doNotDisplay.setHTML(new SafeHtmlBuilder().appendHtmlConstant("&nbsp;").append(appLabels.doNotDisplay()).toSafeHtml());

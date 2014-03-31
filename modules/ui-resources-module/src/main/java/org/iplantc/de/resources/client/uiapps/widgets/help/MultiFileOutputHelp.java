@@ -4,4 +4,6 @@ public interface MultiFileOutputHelp {
 
     String multiFileOutputExcludeArgument();
 
+    String multiFileOutputDefaultValue();
+
 }
