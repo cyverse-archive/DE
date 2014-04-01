@@ -73,52 +73,52 @@ public class UpdateToolRequestDialog extends IPlantDialog {
                 return item.name();
             }
         });
-        if (toolRequest.getStatus().equalsIgnoreCase(ToolRequestStatus.Completion.toString()) || toolRequest.getStatus().equalsIgnoreCase(ToolRequestStatus.Evaluation.toString())
-                || toolRequest.getStatus().equalsIgnoreCase(ToolRequestStatus.Failed.toString()) || toolRequest.getStatus().equalsIgnoreCase(ToolRequestStatus.Installation.toString())
-                || toolRequest.getStatus().equalsIgnoreCase(ToolRequestStatus.Pending.toString()) || toolRequest.getStatus().equalsIgnoreCase(ToolRequestStatus.Submitted.toString())
-                || toolRequest.getStatus().equalsIgnoreCase(ToolRequestStatus.Validation.toString())) {
-
-            ToolRequestStatus status = ToolRequestStatus.fromTypeString(toolRequest.getStatus());
-            if (status != null) {
-                switch (status) {
-                    case Submitted:
-                        cb.add(ToolRequestStatus.Pending);
-                        cb.add(ToolRequestStatus.Evaluation);
-                        cb.add(ToolRequestStatus.Failed);
-                        break;
-                    case Pending:
-                        cb.add(ToolRequestStatus.Submitted);
-                        cb.add(ToolRequestStatus.Evaluation);
-                        cb.add(ToolRequestStatus.Installation);
-                        cb.add(ToolRequestStatus.Validation);
-                        break;
-                    case Evaluation:
-                        cb.add(ToolRequestStatus.Pending);
-                        cb.add(ToolRequestStatus.Installation);
-                        cb.add(ToolRequestStatus.Failed);
-                        break;
-                    case Installation:
-                        cb.add(ToolRequestStatus.Pending);
-                        cb.add(ToolRequestStatus.Installation);
-                        cb.add(ToolRequestStatus.Validation);
-                        cb.add(ToolRequestStatus.Failed);
-                        break;
-                    case Validation:
-                        cb.add(ToolRequestStatus.Pending);
-                        cb.add(ToolRequestStatus.Completion);
-                        cb.add(ToolRequestStatus.Failed);
-                        break;
-                    case Completion:
-                        cb.add(ToolRequestStatus.Validation);
-                        break;
-                    case Failed:
-                        break;
-
-                    default:
-                        break;
-                }
-            }
-        } else {
+//        if (toolRequest.getStatus().equalsIgnoreCase(ToolRequestStatus.Completion.toString()) || toolRequest.getStatus().equalsIgnoreCase(ToolRequestStatus.Evaluation.toString())
+//                || toolRequest.getStatus().equalsIgnoreCase(ToolRequestStatus.Failed.toString()) || toolRequest.getStatus().equalsIgnoreCase(ToolRequestStatus.Installation.toString())
+//                || toolRequest.getStatus().equalsIgnoreCase(ToolRequestStatus.Pending.toString()) || toolRequest.getStatus().equalsIgnoreCase(ToolRequestStatus.Submitted.toString())
+//                || toolRequest.getStatus().equalsIgnoreCase(ToolRequestStatus.Validation.toString())) {
+//
+//            ToolRequestStatus status = ToolRequestStatus.fromTypeString(toolRequest.getStatus());
+//            if (status != null) {
+//                switch (status) {
+//                    case Submitted:
+//                        cb.add(ToolRequestStatus.Pending);
+//                        cb.add(ToolRequestStatus.Evaluation);
+//                        cb.add(ToolRequestStatus.Failed);
+//                        break;
+//                    case Pending:
+//                        cb.add(ToolRequestStatus.Submitted);
+//                        cb.add(ToolRequestStatus.Evaluation);
+//                        cb.add(ToolRequestStatus.Installation);
+//                        cb.add(ToolRequestStatus.Validation);
+//                        break;
+//                    case Evaluation:
+//                        cb.add(ToolRequestStatus.Pending);
+//                        cb.add(ToolRequestStatus.Installation);
+//                        cb.add(ToolRequestStatus.Failed);
+//                        break;
+//                    case Installation:
+//                        cb.add(ToolRequestStatus.Pending);
+//                        cb.add(ToolRequestStatus.Installation);
+//                        cb.add(ToolRequestStatus.Validation);
+//                        cb.add(ToolRequestStatus.Failed);
+//                        break;
+//                    case Validation:
+//                        cb.add(ToolRequestStatus.Pending);
+//                        cb.add(ToolRequestStatus.Completion);
+//                        cb.add(ToolRequestStatus.Failed);
+//                        break;
+//                    case Completion:
+//                        cb.add(ToolRequestStatus.Validation);
+//                        break;
+//                    case Failed:
+//                        break;
+//
+//                    default:
+//                        break;
+//                }
+//            }
+//        } else {
             cb.add(ToolRequestStatus.Submitted);
             cb.add(ToolRequestStatus.Pending);
             cb.add(ToolRequestStatus.Evaluation);
@@ -126,7 +126,7 @@ public class UpdateToolRequestDialog extends IPlantDialog {
             cb.add(ToolRequestStatus.Validation);
             cb.add(ToolRequestStatus.Completion);
             cb.add(ToolRequestStatus.Failed);
-        }
+        // }
 
         cb.addSelectionHandler(new SelectionHandler<ToolRequestStatus>() {
 
