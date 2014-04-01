@@ -162,6 +162,7 @@ public class AppInfoView implements IsWidget {
                     }
                 }
 
+                // gets immediate parent only
                 addGroups(appDetails.getGroups());
 
                 addInfoTabs();
@@ -205,18 +206,18 @@ public class AppInfoView implements IsWidget {
     }
 
     private void addGroups(List<AppGroup> groups) {
-        if (groups == null) {
+        if (groups == null || groups.size() <= 0) {
             return;
         }
 
         List<String> groupNames = Lists.newArrayList();
-        for (AppGroup group : groups) {
+        for (AppGroup group : presenter.getGroupHierarchy(groups.get(0))) {
             groupNames.add(group.getName());
         }
-        Collections.sort(groupNames);
 
+        Collections.reverse(groupNames);
         appDetailsHtmlContainer.add(new Label(I18N.DISPLAY.category() + ": "), new HtmlData(".cell11"));
-        appDetailsHtmlContainer.add(new HTML(Joiner.on(", ").join(groupNames)), new HtmlData(".cell12"));
+        appDetailsHtmlContainer.add(new HTML(Joiner.on(" >> ").join(groupNames)), new HtmlData(".cell12"));
     }
 
     private void addPubDate(final App app, HtmlLayoutContainer hlc) {

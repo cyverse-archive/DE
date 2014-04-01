@@ -1,5 +1,6 @@
 package org.iplantc.de.apps.client.views;
 
+import org.iplantc.de.client.models.DEProperties;
 import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.models.apps.AppGroup;
 import org.iplantc.de.resources.client.IplantResources;
@@ -40,8 +41,11 @@ import com.sencha.gxt.widget.core.client.tree.Tree;
 import com.sencha.gxt.widget.core.client.tree.Tree.TreeAppearance;
 import com.sencha.gxt.widget.core.client.tree.Tree.TreeNode;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -95,6 +99,10 @@ public class AppsViewImpl implements AppsView {
     BorderLayoutData eastData;
 
     private final Widget widget;
+    
+    DEProperties properties = DEProperties.getInstance();
+
+    Logger logger = Logger.getLogger("App View");
 
     @Inject
     public AppsViewImpl(final Tree<AppGroup, String> tree) {
@@ -451,5 +459,19 @@ public class AppsViewImpl implements AppsView {
     @Override
     public AppGroup getParent(AppGroup child) {
         return treeStore.getParent(child);
+    }
+
+    @Override
+    public List<AppGroup> getGroupHierarchy(AppGroup grp, List<AppGroup> groups) {
+        if (groups == null) {
+            groups = new ArrayList<AppGroup>();
+        }
+        groups.add(grp);
+        if (treeStore.getRootItems().contains(grp)) {
+            logger.log(Level.SEVERE, "<-- root -->" + grp.getName());
+            return groups;
+        } else {
+            return getGroupHierarchy(treeStore.getParent(grp), groups);
+        }
     }
 }

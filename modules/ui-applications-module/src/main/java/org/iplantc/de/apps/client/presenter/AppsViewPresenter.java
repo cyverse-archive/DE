@@ -715,6 +715,11 @@ public class AppsViewPresenter implements AppsView.Presenter {
         return text;
     }
 
+    @Override
+    public List<AppGroup> getGroupHierarchy(AppGroup grp) {
+        return view.getGroupHierarchy(grp, null);
+    }
+
     private void updateSearchRegex(final String searchText) {
         if (Strings.isNullOrEmpty(searchText)) {
             searchRegex = null;

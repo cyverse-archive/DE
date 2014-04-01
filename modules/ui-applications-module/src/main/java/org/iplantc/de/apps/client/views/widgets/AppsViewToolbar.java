@@ -7,6 +7,8 @@ import org.iplantc.de.client.models.apps.AppGroup;
 import com.google.gwt.user.client.ui.HasOneWidget;
 import com.google.gwt.user.client.ui.IsWidget;
 
+import java.util.List;
+
 /**
  * FIXME JDS Ensure that all buttons have the appropriate debug ids.
  * 
@@ -57,6 +59,8 @@ public interface AppsViewToolbar extends IsWidget {
         public void onAppRunClick();
 
         AppSearchRpcProxy getAppSearchRpcProxy();
+
+        List<AppGroup> getGroupHierarchy(AppGroup grp);
     }
 
     void setPresenter(Presenter presenter);

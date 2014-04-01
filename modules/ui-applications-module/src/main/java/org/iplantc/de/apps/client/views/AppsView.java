@@ -126,4 +126,6 @@ public interface AppsView extends IsWidget {
     List<AppGroup> getAppGroupRoots();
 
     AppGroup getParent(AppGroup child);
+
+    List<AppGroup> getGroupHierarchy(AppGroup grp, List<AppGroup> groups);
 }
