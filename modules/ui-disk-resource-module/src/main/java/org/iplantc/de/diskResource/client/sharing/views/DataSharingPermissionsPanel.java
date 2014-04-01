@@ -21,8 +21,6 @@ import org.iplantc.de.resources.client.messages.I18N;
 import com.google.gwt.core.shared.GWT;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
-import com.google.gwt.json.client.JSONBoolean;
-import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.safecss.shared.SafeStyles;
 import com.google.gwt.safecss.shared.SafeStylesUtils;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -86,9 +84,9 @@ public class DataSharingPermissionsPanel implements IsWidget {
     private FastMap<List<DataSharing>> sharingMap;
     private HorizontalPanel explainPanel;
 
-    private final class PermissionComparator implements Comparator<String> {
+    private final class PermissionComparator implements Comparator<PermissionValue> {
         @Override
-        public int compare(String s1, String s2) {
+        public int compare(PermissionValue s1, PermissionValue s2) {
             if (!s1.equals(s2)) {
                 if (s1.equals(I18N.DISPLAY.varies())) {
                     return 1;
@@ -96,16 +94,16 @@ public class DataSharingPermissionsPanel implements IsWidget {
                 if (s2.equals(I18N.DISPLAY.varies())) {
                     return -1;
                 }
-                if (s1.equals(PermissionValue.own.toString())) {
+                if (s1.equals(PermissionValue.own)) {
                     return 1;
                 }
-                if (s2.equals(PermissionValue.own.toString())) {
+                if (s2.equals(PermissionValue.own)) {
                     return -1;
                 }
-                if (s1.equals(PermissionValue.write.toString())) {
+                if (s1.equals(PermissionValue.write)) {
                     return 1;
                 }
-                if (s2.equals(PermissionValue.write.toString())) {
+                if (s2.equals(PermissionValue.write)) {
                     return -1;
                 }
             }
@@ -351,7 +349,7 @@ public class DataSharingPermissionsPanel implements IsWidget {
         permission.setColumnTextStyle(permTextStyles);
         permission.setFixed(true);
         permission.setCell(buildPermissionsCombo());
-        // permission.setComparator(new PermissionComparator());
+        permission.setComparator(new PermissionComparator());
 
         return permission;
     }
@@ -512,14 +510,6 @@ public class DataSharingPermissionsPanel implements IsWidget {
         }
 
         return false;
-    }
-
-    private String buildSharingPermissions(boolean read, boolean write, boolean own) {
-        JSONObject permission = new JSONObject();
-        permission.put("read", JSONBoolean.getInstance(read));
-        permission.put("write", JSONBoolean.getInstance(write));
-        permission.put("own", JSONBoolean.getInstance(own));
-        return permission.toString();
     }
 
     /**
