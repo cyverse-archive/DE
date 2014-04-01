@@ -102,7 +102,8 @@ public class DataSharingPresenter implements DataSharingView.Presenter {
     private void loadPermissions(String path, JSONArray user_arr) {
         for (int i = 0; i < user_arr.size(); i++) {
             JSONObject userPermission = JsonUtil.getObjectAt(user_arr, i);
-            JSONObject perm = JsonUtil.getObject(userPermission, "permissions"); //$NON-NLS-1$
+            JSONObject perm = new JSONObject();
+            String permVal = JsonUtil.getString(userPermission, "permission"); //$NON-NLS-1$
             String userName = JsonUtil.getString(userPermission, "user"); //$NON-NLS-1$
 
             List<JSONObject> shareList = sharingList.get(userName);
@@ -110,6 +111,7 @@ public class DataSharingPresenter implements DataSharingView.Presenter {
                 shareList = new ArrayList<JSONObject>();
                 sharingList.put(userName, shareList);
             }
+            perm.put("permission", new JSONString(permVal));
             perm.put("path", new JSONString(path)); //$NON-NLS-1$
             shareList.add(perm);
         }
@@ -306,13 +308,7 @@ public class DataSharingPresenter implements DataSharingView.Presenter {
     }
 
     private PermissionValue buildPermissionFromJson(JSONObject perm) {
-        if (perm.get("own").isBoolean().booleanValue()) {
-            return PermissionValue.own;
-        } else if (perm.get("own").isBoolean().booleanValue() == false && perm.get("write").isBoolean().booleanValue()) {
-            return PermissionValue.write;
-        } else {
-            return PermissionValue.read;
-        }
+        return PermissionValue.valueOf(JsonUtil.getString(perm, "permission"));
     }
 
     private JSONObject buildUnSharingJson() {
