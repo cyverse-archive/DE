@@ -164,13 +164,13 @@ public class ArgumentEditorFactoryImpl implements AppTemplateForm.ArgumentEditor
                 subEditor = new TreeSelectionEditor(appearance, selectionItemProps);
                 break;
             case FileOutput:
-                subEditor = new FileOutputEditor(appearance);
+                subEditor = new FileOutputEditor(appearance, appsWidgetsLabels);
                 break;
             case FolderOutput:
-                subEditor = new FolderOutputEditor(appearance);
+                subEditor = new FolderOutputEditor(appearance, appsWidgetsLabels);
                 break;
             case MultiFileOutput:
-                subEditor = new MultiFileOutputEditor(appearance);
+                subEditor = new MultiFileOutputEditor(appearance, appsWidgetsLabels);
                 break;
             case ReferenceGenome:
                 subEditor = new ReferenceGenomeEditor(appearance, getReferenceGenomeStore(), refGenomeProps);

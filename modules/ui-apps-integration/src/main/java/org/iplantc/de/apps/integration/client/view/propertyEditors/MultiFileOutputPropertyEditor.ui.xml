@@ -46,7 +46,7 @@
 	                             text="{multiFileOutputLabels.multiFileOutputLabel}">
 	                <form:widget>
 	                    <form:TextField ui:field="label"
-	                    				emptyText="{multiFileOutputLabels.multiFileOutputEmptyText}"/>
+	                    				emptyText="{multiFileOutputLabels.multiFileOutputLabelEmptyText}"/>
 	                </form:widget>
 	            </form:FieldLabel>
 	        </con:child>
@@ -67,8 +67,7 @@
             <!-- DefaultValue Editors -->
             <con:child layoutData="{fieldLayoutData}">
                 <form:FieldLabel ui:field="defaultValueLabel"
-                                 labelAlign="TOP"
-                                 text="{multiFileOutputLabels.multiFileOutputDefaultLabel}">
+                                 labelAlign="TOP">
                     <form:widget>
                         <converter:ArgumentEditorConverter ui:field="defaultValueEditor"/>
                     </form:widget>

@@ -50,7 +50,7 @@ public class FileOutputPropertyEditor extends AbstractArgumentPropertyEditor {
     @Path("dataObject.dataSource")
     ComboBox<DataSource> dataSourceComboBox;
     @UiField
-    FieldLabel dataSourceLabel, toolTipLabel, argumentOptionLabel;
+    FieldLabel dataSourceLabel, toolTipLabel, argumentOptionLabel, defaultValueLabel;
 
     @UiField(provided = true)
     ArgumentEditorConverter<String> defaultValueEditor;
@@ -90,6 +90,7 @@ public class FileOutputPropertyEditor extends AbstractArgumentPropertyEditor {
 
         TextField textField = new TextField();
         textField.addValidator(new DiskResourceNameValidator());
+        textField.setEmptyText(fileOutputLabels.fileOutputEmptyText());
         defaultValueEditor = new ArgumentEditorConverter<String>(textField, new SplittableToStringConverter());
         fileInfoTypeComboBox = createFileInfoTypeComboBox(appMetadataService);
         dataSourceComboBox = createDataSourceComboBox(appMetadataService);
@@ -99,6 +100,7 @@ public class FileOutputPropertyEditor extends AbstractArgumentPropertyEditor {
         argumentOption.addValidator(new CmdLineArgCharacterValidator(I18N.V_CONSTANTS
                 .restrictedCmdLineChars()));
 
+        defaultValueLabel.setHTML(appearance.createContextualHelpLabel(fileOutputLabels.fileOutputDefaultLabel(), help.fileOutputDefaultValue()));
         toolTipLabel.setHTML(appearance.createContextualHelpLabel(appLabels.toolTipText(), help.toolTip()));
         argumentOptionLabel.setHTML(appearance.createContextualHelpLabel(appLabels.argumentOption(), help.argumentOption()));
         doNotDisplay.setHTML(new SafeHtmlBuilder().appendHtmlConstant("&nbsp;").append(appLabels.doNotDisplay()).toSafeHtml());

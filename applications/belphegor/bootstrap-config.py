@@ -11,7 +11,7 @@ import urllib
 from optparse import OptionParser
 
 # The base URLs for Jenkins and the last successful Clavin build.
-jenkins_base = 'http://projects.iplantcollaborative.org/hudson'
+jenkins_base = 'http://watson.iplantcollaborative.org/hudson'
 clavin_build = '{0}/job/Clavin/lastSuccessfulBuild'.format(jenkins_base)
 
 def validate(f, value, msg):

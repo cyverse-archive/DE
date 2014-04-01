@@ -55,7 +55,7 @@ public class MultiFileOutputPropertyEditor extends AbstractArgumentPropertyEdito
     @Path("dataObject.fileInfoType")
     ComboBox<FileInfoType> fileInfoTypeComboBox;
     @UiField
-    FieldLabel fileInfoTypeLabel, toolTipLabel, argumentOptionLabel, argLabelLabel;
+    FieldLabel fileInfoTypeLabel, toolTipLabel, argumentOptionLabel, argLabelLabel, defaultValueLabel;
     @UiField
     @Path("dataObject.implicit")
     CheckBoxAdapter isImplicit;
@@ -82,6 +82,7 @@ public class MultiFileOutputPropertyEditor extends AbstractArgumentPropertyEdito
 
         TextField textField = new TextField();
         textField.addValidator(new DiskResourceUnixGlobValidator());
+        textField.setEmptyText(multiFileOutputLabels.multiFileOutputEmptyText());
         defaultValueEditor = new ArgumentEditorConverter<String>(textField, new SplittableToStringConverter());
         fileInfoTypeComboBox = createFileInfoTypeComboBox(appMetadataService);
 
@@ -90,6 +91,7 @@ public class MultiFileOutputPropertyEditor extends AbstractArgumentPropertyEdito
         argumentOption.addValidator(new CmdLineArgCharacterValidator(I18N.V_CONSTANTS
                 .restrictedCmdLineChars()));
 
+        defaultValueLabel.setHTML(appearance.createContextualHelpLabel(multiFileOutputLabels.multiFileOutputDefaultLabel(), help.multiFileOutputDefaultValue()));
         toolTipLabel.setHTML(appearance.createContextualHelpLabel(appLabels.toolTipText(), help.toolTip()));
         argumentOptionLabel.setHTML(appearance.createContextualHelpLabel(appLabels.argumentOption(), help.argumentOption()));
         doNotDisplay.setHTML(new SafeHtmlBuilder().appendHtmlConstant("&nbsp;").append(appLabels.doNotDisplay()).toSafeHtml());

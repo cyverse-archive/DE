@@ -5,4 +5,6 @@ public interface FileOutputHelp {
 
     String fileOutputExcludeArgument();
 
+    String fileOutputDefaultValue();
+
 }

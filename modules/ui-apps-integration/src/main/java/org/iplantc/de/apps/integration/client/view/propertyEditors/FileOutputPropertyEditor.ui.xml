@@ -46,7 +46,7 @@
 	                             text="{fileOutputLabels.fileOutputLabel}">
 	                <form:widget>
 	                    <form:TextField ui:field="label"
-	                    				emptyText="{fileOutputLabels.fileOutputEmptyText}"/>
+	                    				emptyText="{fileOutputLabels.fileOutputLabelEmptyText}"/>
 	                </form:widget>
 	            </form:FieldLabel>
 	        </con:child>
@@ -67,8 +67,7 @@
 		    <!-- DefaultValue Editors -->
 	        <con:child layoutData="{fieldLayoutData}">
                 <form:FieldLabel ui:field="defaultValueLabel"
-                                 labelAlign="TOP"
-                                 text="{fileOutputLabels.fileOutputDefaultLabel}">
+                                 labelAlign="TOP">
                     <form:widget>
                         <converter:ArgumentEditorConverter ui:field="defaultValueEditor"/>
                     </form:widget>

@@ -5,7 +5,7 @@ import com.google.gwt.i18n.client.LocalizableResource.Key;
 public interface MultiFileOutputLabels {
     String multiFileOutputDefaultLabel();
 
-    String multiFileOutputEmptyText();
+    String multiFileOutputLabelEmptyText();
 
     @Key("multiFileInputFileInfoType")
     String multiFileOutputFileInfoTypeLabel();
@@ -13,4 +13,6 @@ public interface MultiFileOutputLabels {
     String multiFileOutputLabel();
 
     String multiFileOutputSourceLabel();
+
+    String multiFileOutputEmptyText();
 }
