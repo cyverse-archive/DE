@@ -30,6 +30,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.google.web.bindery.autobean.shared.AutoBeanCodex;
 
 import com.sencha.gxt.core.client.XTemplates;
+import com.sencha.gxt.core.client.dom.ScrollSupport.ScrollMode;
 import com.sencha.gxt.widget.core.client.ContentPanel;
 import com.sencha.gxt.widget.core.client.TabPanel;
 import com.sencha.gxt.widget.core.client.container.AbstractHtmlLayoutContainer.HtmlData;
@@ -39,6 +40,7 @@ import com.sencha.gxt.widget.core.client.container.AccordionLayoutContainer.Expa
 import com.sencha.gxt.widget.core.client.container.HtmlLayoutContainer;
 import com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -82,7 +84,7 @@ public class AppInfoView implements IsWidget {
     private final Presenter presenter;
 
     public AppInfoView(final App app, final Presenter presenter) {
-		this.app = app;
+        this.app = app;
         this.presenter = presenter;
 
         BINDER.createAndBindUi(this);
@@ -91,6 +93,7 @@ public class AppInfoView implements IsWidget {
         initDCPanel();
         loadDCinfo();
         tabs = new TabPanel();
+        info_container.setScrollMode(ScrollMode.AUTOY);
     }
 
     private void addInfoTabs() {
@@ -210,14 +213,20 @@ public class AppInfoView implements IsWidget {
             return;
         }
 
-        List<String> groupNames = Lists.newArrayList();
-        for (AppGroup group : presenter.getGroupHierarchy(groups.get(0))) {
-            groupNames.add(group.getName());
-        }
-
-        Collections.reverse(groupNames);
         appDetailsHtmlContainer.add(new Label(I18N.DISPLAY.category() + ": "), new HtmlData(".cell11"));
-        appDetailsHtmlContainer.add(new HTML(Joiner.on(" >> ").join(groupNames)), new HtmlData(".cell12"));
+        List<String> builder = new ArrayList<String>();
+        List<String> groupNames = Lists.newArrayList();
+        for (AppGroup ag : groups) {
+            for (AppGroup group : presenter.getGroupHierarchy(ag)) {
+                groupNames.add(group.getName());
+            }
+            Collections.reverse(groupNames);
+            builder.add(Joiner.on(" >> ").join(groupNames));
+            groupNames.clear();
+        }
+        Collections.sort(builder);
+        appDetailsHtmlContainer.add(new HTML(Joiner.on("<br/>").join(builder)), new HtmlData(".cell12"));
+
     }
 
     private void addPubDate(final App app, HtmlLayoutContainer hlc) {
@@ -236,4 +245,3 @@ public class AppInfoView implements IsWidget {
     }
 
 }
-
