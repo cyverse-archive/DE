@@ -23,6 +23,7 @@ import com.google.gwt.uibinder.client.UiTemplate;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.sencha.gxt.core.client.IdentityValueProvider;
+import com.sencha.gxt.core.client.dom.ScrollSupport.ScrollMode;
 import com.sencha.gxt.data.shared.ListStore;
 import com.sencha.gxt.data.shared.ModelKeyProvider;
 import com.sencha.gxt.widget.core.client.button.TextButton;
@@ -74,6 +75,7 @@ public class ExternalVizualizationURLViwerImpl extends AbstractFileViewer implem
         this.cm = buildColumnModel();
         this.listStore = new ListStore<VizUrl>(new TreeUrlKeyProvider());
         this.widget = uiBinder.createAndBindUi(this);
+        con.setScrollMode(ScrollMode.AUTOY);
         gridView.setAutoExpandColumn(cm.getColumn(1));
         buildToolBar(infoType);
     }
