@@ -88,10 +88,10 @@ public class DataSharingPermissionsPanel implements IsWidget {
         @Override
         public int compare(PermissionValue s1, PermissionValue s2) {
             if (!s1.equals(s2)) {
-                if (s1.equals(I18N.DISPLAY.varies())) {
+                if (s1.equals(PermissionValue.varies)) {
                     return 1;
                 }
-                if (s2.equals(I18N.DISPLAY.varies())) {
+                if (s2.equals(PermissionValue.varies)) {
                     return -1;
                 }
                 if (s1.equals(PermissionValue.own)) {
