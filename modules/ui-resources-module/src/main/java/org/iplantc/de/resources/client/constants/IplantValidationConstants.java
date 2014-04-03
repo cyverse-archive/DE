@@ -20,6 +20,8 @@ public interface IplantValidationConstants extends Constants {
     
     String restrictedDiskResourceNameChars();
 
+    String warnedDiskResourceNameChars();
+
     int maxToolNameLength();
 
 }

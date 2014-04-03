@@ -362,7 +362,6 @@ public abstract class AbstractDiskResourceSelector<R extends DiskResource> exten
         model = value;
         input.setValue(value == null ? null : value.getPath());
         validate(false);
-
         doGetStat(value);
     }
 
@@ -482,28 +481,54 @@ public abstract class AbstractDiskResourceSelector<R extends DiskResource> exten
             public void onSuccess(DiskResourceStatMap result) {
                 if (!validatePermissions) {
                     setInfoErrorText("");
-                    return;
+                } else {
+                    ValueChangeEvent.fire(AbstractDiskResourceSelector.this, value);
+                    DiskResource diskResource = result.get(diskResourceId);
+                    String infoText = getInfoText();
+                    if (diskResource == null) {
+                        permissionEditorError = new DefaultEditorError(input, I18N.DISPLAY.permissionSelectErrorMessage(), diskResourceId);
+                        errors.add(permissionEditorError);
+                        input.showErrors(Lists.<EditorError> newArrayList(permissionEditorError));
+                        setInfoErrorText(I18N.DISPLAY.permissionSelectErrorMessage());
+                    } else if (!(DiskResourceUtil.isWritable(diskResource) || DiskResourceUtil.isOwner(diskResource))) {
+                        permissionEditorError = new DefaultEditorError(input, I18N.DISPLAY.permissionSelectErrorMessage(), diskResourceId);
+                        errors.add(permissionEditorError);
+                        input.showErrors(Lists.<EditorError> newArrayList(permissionEditorError));
+                        setInfoErrorText(I18N.DISPLAY.permissionSelectErrorMessage());
+                    } else if (!Strings.isNullOrEmpty(infoText) && (!infoText.equalsIgnoreCase(I18N.APPS_MESSAGES.nonDefaultFolderWarning()))) {
+                        // clear only permission related errors on success
+                        setInfoErrorText(null);
+                    }
                 }
-                ValueChangeEvent.fire(AbstractDiskResourceSelector.this, value);
-                DiskResource diskResource = result.get(diskResourceId);
-                String infoText = getInfoText();
-                if (diskResource == null) {
-                    permissionEditorError = new DefaultEditorError(input, I18N.DISPLAY.permissionSelectErrorMessage(), diskResourceId);
-                    errors.add(permissionEditorError);
-                    input.showErrors(Lists.<EditorError> newArrayList(permissionEditorError));
-                    setInfoErrorText(I18N.DISPLAY.permissionSelectErrorMessage());
-                } else if (!(DiskResourceUtil.isWritable(diskResource) || DiskResourceUtil.isOwner(diskResource))) {
-                    permissionEditorError = new DefaultEditorError(input, I18N.DISPLAY.permissionSelectErrorMessage(), diskResourceId);
-                    errors.add(permissionEditorError);
-                    input.showErrors(Lists.<EditorError> newArrayList(permissionEditorError));
-                    setInfoErrorText(I18N.DISPLAY.permissionSelectErrorMessage());
-                } else if (!Strings.isNullOrEmpty(infoText) && (!infoText.equalsIgnoreCase(I18N.APPS_MESSAGES.nonDefaultFolderWarning()))) {
-                    // clear only permission related errors on success
-                    setInfoErrorText(null);
+
+                if (checkForSplChar(input.getValue()).length() > 0) {
+                    setInfoErrorText(I18N.DISPLAY.analysisFailureWarning(I18N.V_CONSTANTS.warnedDiskResourceNameChars()));
                 }
             }
         });
 
+    }
+
+    private StringBuilder checkForSplChar(String diskResourceId) {
+        char[] restrictedChars = (I18N.V_CONSTANTS.warnedDiskResourceNameChars()).toCharArray(); //$NON-NLS-1$
+        StringBuilder restrictedFound = new StringBuilder();
+
+        for (char restricted : restrictedChars) {
+            for (char next : diskResourceId.toCharArray()) {
+                if (next == restricted && next != '/') {
+                    restrictedFound.append(restricted);
+                }
+            }
+        }
+
+        // validate '/' only on label
+        for (char next : DiskResourceUtil.parseNameFromPath(diskResourceId).toCharArray()) {
+            if (next == '/') {
+                restrictedFound.append('/');
+            }
+        }
+
+        return restrictedFound;
     }
 
     private void initDragAndDrop() {

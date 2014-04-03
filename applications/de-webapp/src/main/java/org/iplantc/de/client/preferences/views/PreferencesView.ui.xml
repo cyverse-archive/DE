@@ -10,12 +10,15 @@
 		background-color: #fff;
 		}
 	</ui:style>
+	<ui:with type="com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer.VerticalLayoutData" field="verticalLayoutData">
+    <ui:attributes width=".9" height="-1" />
+  </ui:with>
 	<container:VerticalLayoutContainer
 		ui:field="container" adjustForScroll="true" styleName="{style.user_pref}">
 		<form:FieldSet headingText="{strings.preferences}"
 			collapsible="true">
 			<container:VerticalLayoutContainer
-				ui:field="prefContainer">
+				ui:field="prefContainer" height="140">
 				<g:HorizontalPanel spacing="3">
 					<form:CheckBox debugId="idCboNotifyEmail" ui:field="cboNotifyEmail"
 						boxLabel="{strings.notifyemail}">

@@ -156,8 +156,7 @@ public class PreferencesViewImpl implements PreferencesView {
             }
         });
 
-        prefContainer.add(new HTML(org.iplantc.de.resources.client.messages.I18N.DISPLAY.defaultOutputFolder()), new VerticalLayoutData(.9, -1,
-                new Margins(5)));
+        prefContainer.add(new HTML(org.iplantc.de.resources.client.messages.I18N.DISPLAY.defaultOutputFolder()), new VerticalLayoutData(1, -1, new Margins(3)));
         prefContainer.add(defaultOpFolder.asWidget(), new VerticalLayoutData(.9, -1, new Margins(5)));
     }
 

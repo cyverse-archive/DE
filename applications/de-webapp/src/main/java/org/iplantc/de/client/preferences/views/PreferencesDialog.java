@@ -33,7 +33,7 @@ import com.sencha.gxt.widget.core.client.event.SelectEvent.SelectHandler;
  */
 public class PreferencesDialog extends IPlantDialog {
 
-    private Presenter presenter;
+    private final Presenter presenter;
 
     public interface HtmlLayoutContainerTemplate extends XTemplates {
         @XTemplate(source = "PreferencesHelpTemplate.html")
@@ -43,7 +43,7 @@ public class PreferencesDialog extends IPlantDialog {
     public PreferencesDialog() {
         super(true);
         setHeadingText(org.iplantc.de.resources.client.messages.I18N.DISPLAY.preferences());
-        setPixelSize(450, 400);
+        setPixelSize(450, 425);
         setButtons();
         addHelp(contructHelpView());
         PreferencesView view = new PreferencesViewImpl();

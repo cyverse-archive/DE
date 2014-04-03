@@ -179,6 +179,14 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     @DefaultMessage("Enter a description for your application")
     @Key("analysisDesc")
     String analysisDesc();
+    
+    /**
+     * Waring that analysis may fail if input with spl chars is used
+     * 
+     * @param splChars
+     * @return
+     */
+    String analysisFailureWarning(String splChars);
 
     /**
      * Translated "Overview".
