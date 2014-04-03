@@ -118,7 +118,7 @@ public class SystemMessageViewImpl extends Composite implements SystemMessageVie
         createSystemMessageDlg.setHeadingText("Create System Message");
         createSystemMessageDlg.setHideOnButtonClick(false);
         createSystemMessageDlg.getOkButton().setText("Submit");
-        createSystemMessageDlg.setSize("500", "400");
+        createSystemMessageDlg.setWidth("500");
         createSystemMessageDlg.addCancelButtonSelectHandler(new SelectHandler() {
             @Override
             public void onSelect(SelectEvent event) {
@@ -177,7 +177,7 @@ public class SystemMessageViewImpl extends Composite implements SystemMessageVie
         editSystemMessageDlg.setHeadingText("Edit System Message");
         editSystemMessageDlg.setHideOnButtonClick(false);
         editSystemMessageDlg.getOkButton().setText("Submit");
-        editSystemMessageDlg.setSize("500", "400");
+        editSystemMessageDlg.setWidth("500");
         editSystemMessageDlg.addCancelButtonSelectHandler(new SelectHandler() {
             @Override
             public void onSelect(SelectEvent event) {
