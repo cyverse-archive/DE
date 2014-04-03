@@ -107,15 +107,22 @@ public class DeLandingPage implements LandingPage, InitializingBean {
         return st.render();
     }
 
+    private String objectToString(Object object) {
+        if (object instanceof String[]) {
+            return ((String[]) object)[0];
+        }
+        else return object.toString();
+    }
+
     private String buildExtraParams(HttpServletRequest req) throws IOException {
         StringBuilder extraParams = new StringBuilder();
         for (Object paramName : req.getParameterMap().keySet()) {
             Object paramValue = req.getParameterMap().get(paramName);
-            extraParams.append("        <input type=\"hidden\" name=\"")
-                    .append(URLEncoder.encode(paramName.toString(), ENCODING))
+            extraParams.append("\n        <input type=\"hidden\" name=\"")
+                    .append(URLEncoder.encode(objectToString(paramName), ENCODING))
                     .append("\" value=\"")
-                    .append(URLEncoder.encode(paramValue.toString(), ENCODING))
-                    .append("\" />\n");
+                    .append(URLEncoder.encode(objectToString(paramValue), ENCODING))
+                    .append("\" />");
         }
         return extraParams.toString();
     }
