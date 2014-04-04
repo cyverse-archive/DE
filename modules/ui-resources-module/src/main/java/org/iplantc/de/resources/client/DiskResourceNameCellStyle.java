@@ -14,4 +14,7 @@ public interface DiskResourceNameCellStyle extends CssResource {
     
     String nameDisabledStyle();
 
+    String drFileTrash();
+
+    String drFolderTrash();
 }

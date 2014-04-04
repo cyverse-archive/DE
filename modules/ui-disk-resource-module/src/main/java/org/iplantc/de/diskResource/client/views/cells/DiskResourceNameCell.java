@@ -1,6 +1,7 @@
 package org.iplantc.de.diskResource.client.views.cells;
 
 import org.iplantc.de.client.events.EventBus;
+import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.client.models.diskResources.File;
 import org.iplantc.de.client.models.diskResources.Folder;
@@ -77,16 +78,28 @@ public class DiskResourceNameCell extends AbstractCell<DiskResource> {
         if (value == null) {
             return;
         }
+
+        boolean inTrash = value.getPath().startsWith(UserInfo.getInstance().getBaseTrashPath());
+
         SafeHtml name = SafeHtmlUtils.fromString(value.getName());
+        String nameStyle = CSS.nameStyle();
+        String imgClassName = ""; //$NON-NLS-1$
+
         if (value instanceof File) {
-            String nameStyle = previewEnabled ? CSS.nameStyle() : CSS.nameStyleNoPointer();
-            nameStyle = value.isFilter() ? nameStyle + " " + CSS.nameDisabledStyle() : nameStyle;
-            sb.append(templates.cell(CSS.drFile(), nameStyle, name));
+            if (!previewEnabled) {
+                nameStyle = CSS.nameStyleNoPointer();
+            }
+
+            imgClassName = inTrash ? CSS.drFileTrash() : CSS.drFile();
         } else if (value instanceof Folder) {
-            String nameStyle = CSS.nameStyle() + (value.isFilter() ? " " + CSS.nameDisabledStyle() : "");
-            sb.append(templates.cell(CSS.drFolder(), nameStyle, name));
+            imgClassName = inTrash ? CSS.drFolderTrash() : CSS.drFolder();
         }
 
+        if (value.isFilter()) {
+            nameStyle += " " + CSS.nameDisabledStyle(); //$NON-NLS-1$
+        }
+
+        sb.append(templates.cell(imgClassName, nameStyle, name));
     }
 
     @Override

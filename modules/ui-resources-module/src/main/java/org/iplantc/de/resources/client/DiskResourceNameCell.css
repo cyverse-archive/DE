@@ -10,6 +10,18 @@
 	float: left; 
 }
 
+@sprite .drFileTrash {
+    gwt-image: "fileDelete";
+    cursor: pointer;
+    float: left;
+ }
+
+@sprite .drFolderTrash {
+    gwt-image: "folderDelete";
+    cursor: pointer;
+    float: left;
+}
+
 .nameStyle {
 	cursor: pointer;
 	text-decoration: none;
