@@ -3,6 +3,7 @@
  */
 package org.iplantc.de.diskResource.client.sharing.views;
 
+import org.iplantc.de.client.models.diskResources.PermissionValue;
 import org.iplantc.de.client.models.sharing.DataSharing;
 import org.iplantc.de.client.util.DiskResourceUtil;
 import org.iplantc.de.resources.client.IplantResources;
@@ -29,11 +30,12 @@ import java.util.List;
 
 /**
  * @author sriram
- *
+ * 
  */
 public class ShareBreakDownDialog extends Dialog {
 
     private Grid<DataSharing> grid;
+
     public ShareBreakDownDialog(List<DataSharing> shares) {
         init();
 
@@ -49,7 +51,7 @@ public class ShareBreakDownDialog extends Dialog {
         loadGrid(shares);
     }
 
-	private void init() {
+    private void init() {
         setPixelSize(400, 375);
         setHideOnButtonClick(true);
         setModal(true);
@@ -57,17 +59,17 @@ public class ShareBreakDownDialog extends Dialog {
         buildGrid();
     }
 
-	private Grid<DataSharing> buildGrid() {
-		ListStore<DataSharing> store = new ListStore<DataSharing>(new DataSharingKeyProvider());
-		ColumnModel<DataSharing> cm = buildColumnModel();
-		GroupingView<DataSharing> view = new GroupingView<DataSharing>();
-		view.groupBy(cm.getColumn(0));
+    private Grid<DataSharing> buildGrid() {
+        ListStore<DataSharing> store = new ListStore<DataSharing>(new DataSharingKeyProvider());
+        ColumnModel<DataSharing> cm = buildColumnModel();
+        GroupingView<DataSharing> view = new GroupingView<DataSharing>();
+        view.groupBy(cm.getColumn(0));
         view.setAutoExpandColumn(cm.getColumn(0));
         view.setShowGroupedColumn(false);
         grid = new Grid<DataSharing>(store, cm);
-		grid.setView(view);
-		return grid;
-	}
+        grid.setView(view);
+        return grid;
+    }
 
     private void loadGrid(List<DataSharing> shares) {
         grid.getStore().clear();
@@ -89,7 +91,7 @@ public class ShareBreakDownDialog extends Dialog {
         return button;
     }
 
-	private TextButton buildGroupByDataButton() {
+    private TextButton buildGroupByDataButton() {
         TextButton button = new TextButton(I18N.DISPLAY.groupByData());
         button.addSelectHandler(new SelectHandler() {
 
@@ -104,47 +106,44 @@ public class ShareBreakDownDialog extends Dialog {
         return button;
     }
 
-	private ColumnModel<DataSharing> buildColumnModel() {
-		List<ColumnConfig<DataSharing, ?>> configs = new ArrayList<ColumnConfig<DataSharing, ?>>();
-		  DataSharingProperties props = GWT.create(DataSharingProperties.class);
-		ColumnConfig<DataSharing, String> name = new ColumnConfig<DataSharing, String>(
-               props.name());
+    private ColumnModel<DataSharing> buildColumnModel() {
+        List<ColumnConfig<DataSharing, ?>> configs = new ArrayList<ColumnConfig<DataSharing, ?>>();
+        DataSharingProperties props = GWT.create(DataSharingProperties.class);
+        ColumnConfig<DataSharing, String> name = new ColumnConfig<DataSharing, String>(props.name());
 
         name.setHeader(I18N.DISPLAY.name());
         name.setWidth(120);
 
-        ColumnConfig<DataSharing, String> diskRsc = new ColumnConfig<DataSharing, String>(
-                new ValueProvider<DataSharing, String>() {
-
-                    @Override
-                    public String getValue(DataSharing object) {
-                            return DiskResourceUtil.parseNameFromPath((object.getPath()));
-                    }
-
-                    @Override
-                    public void setValue(DataSharing object, String value) {
-                        // do nothing intentionally
-
-                    }
-
-                    @Override
-                    public String getPath() {
-                        return "path";
-                    }
-                });
-
-        diskRsc.setHeader(I18N.DISPLAY.name());
-        diskRsc.setWidth(120);
-        ColumnConfig<DataSharing, String> permission = new ColumnConfig<DataSharing, String>(
-new ValueProvider<DataSharing, String>() {
+        ColumnConfig<DataSharing, String> diskRsc = new ColumnConfig<DataSharing, String>(new ValueProvider<DataSharing, String>() {
 
             @Override
             public String getValue(DataSharing object) {
-                return object.getDisplayPermission().toString();
+                return DiskResourceUtil.parseNameFromPath((object.getPath()));
             }
 
             @Override
             public void setValue(DataSharing object, String value) {
+                // do nothing intentionally
+
+            }
+
+            @Override
+            public String getPath() {
+                return "path";
+            }
+        });
+
+        diskRsc.setHeader(I18N.DISPLAY.name());
+        diskRsc.setWidth(120);
+        ColumnConfig<DataSharing, PermissionValue> permission = new ColumnConfig<DataSharing, PermissionValue>(new ValueProvider<DataSharing, PermissionValue>() {
+
+            @Override
+            public PermissionValue getValue(DataSharing object) {
+                return object.getDisplayPermission();
+            }
+
+            @Override
+            public void setValue(DataSharing object, PermissionValue value) {
                 object.setDisplayPermission(value);
 
             }
@@ -162,8 +161,6 @@ new ValueProvider<DataSharing, String>() {
         configs.add(permission);
         return new ColumnModel<DataSharing>(configs);
 
-	}
-
-
+    }
 
 }

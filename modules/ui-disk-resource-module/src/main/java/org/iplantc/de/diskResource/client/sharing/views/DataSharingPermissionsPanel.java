@@ -49,7 +49,6 @@ import com.sencha.gxt.widget.core.client.grid.ColumnConfig;
 import com.sencha.gxt.widget.core.client.grid.ColumnModel;
 import com.sencha.gxt.widget.core.client.grid.Grid;
 import com.sencha.gxt.widget.core.client.toolbar.FillToolItem;
-import com.sencha.gxt.widget.core.client.toolbar.LabelToolItem;
 import com.sencha.gxt.widget.core.client.toolbar.ToolBar;
 
 import java.util.ArrayList;
@@ -148,6 +147,7 @@ public class DataSharingPermissionsPanel implements IsWidget {
     }
 
     private void initToolbar() {
+        toolbar.setHorizontalSpacing(5);
         addExplainPanel();
         toolbar.add(new UserSearchField(USER_SEARCH_EVENT_TAG.SHARING).asWidget());
         toolbar.add(new FillToolItem());
@@ -211,10 +211,10 @@ public class DataSharingPermissionsPanel implements IsWidget {
 
             @Override
             public void onSelection(SelectionEvent<PermissionValue> event) {
+                PermissionValue perm = event.getSelectedItem();
                 CellSelectionEvent<PermissionValue> sel = (CellSelectionEvent<PermissionValue>)event;
                 DataSharing ds = listStore.get(sel.getContext().getIndex());
-                updatePermissions(event.getSelectedItem(), ds.getUserName());
-
+                updatePermissions(perm, ds.getUserName());
             }
         });
         return permCombo;
@@ -222,8 +222,7 @@ public class DataSharingPermissionsPanel implements IsWidget {
 
     private void addExplainPanel() {
         explainPanel = new HorizontalPanel();
-        explainPanel.add(new LabelToolItem(I18N.DISPLAY.variablePermissionsNotice() + ":"));
-        TextButton explainBtn = new TextButton(I18N.DISPLAY.explain(), new SelectHandler() {
+        TextButton explainBtn = new TextButton(I18N.DISPLAY.variablePermissionsNotice() + ":" + I18N.DISPLAY.explain(), new SelectHandler() {
 
             @Override
             public void onSelect(SelectEvent event) {
@@ -237,6 +236,7 @@ public class DataSharingPermissionsPanel implements IsWidget {
                 explainDlg.show();
             }
         });
+        explainBtn.setIcon(IplantResources.RESOURCES.help());
         explainPanel.add(explainBtn);
         toolbar.add(explainPanel);
     }
@@ -303,7 +303,7 @@ public class DataSharingPermissionsPanel implements IsWidget {
                 if (hasVaryingPermissions(dataShares)) {
                     // Set the display permission to "varies" if this user's share list has varying
                     // permissions.
-                    displayShare.setDisplayPermission(I18N.DISPLAY.varies());
+                    displayShare.setDisplayPermission(PermissionValue.varies);
                     explainPanel.setVisible(true);
                 }
 
@@ -317,7 +317,7 @@ public class DataSharingPermissionsPanel implements IsWidget {
         DataSharingProperties props = GWT.create(DataSharingProperties.class);
 
         ColumnConfig<DataSharing, String> name = new ColumnConfig<DataSharing, String>(props.name(), 200, I18N.DISPLAY.name());
-        ColumnConfig<DataSharing, PermissionValue> permission = buildPermissionColumn();
+        ColumnConfig<DataSharing, PermissionValue> permission = buildPermissionColumn(props);
         ColumnConfig<DataSharing, String> remove = buildRemoveColumn();
 
         configs.add(name);
@@ -327,24 +327,8 @@ public class DataSharingPermissionsPanel implements IsWidget {
         return new ColumnModel<DataSharing>(configs);
     }
 
-    private ColumnConfig<DataSharing, PermissionValue> buildPermissionColumn() {
-        ColumnConfig<DataSharing, PermissionValue> permission = new ColumnConfig<DataSharing, PermissionValue>(new ValueProvider<DataSharing, PermissionValue>() {
-
-            @Override
-            public PermissionValue getValue(DataSharing object) {
-                return PermissionValue.valueOf(object.getDisplayPermission());
-            }
-
-            @Override
-            public void setValue(DataSharing object, PermissionValue value) {
-                object.setDisplayPermission(value.toString());
-            }
-
-            @Override
-            public String getPath() {
-                return "permissionValue";
-            }
-        }, 170, I18N.DISPLAY.permissions());
+    private ColumnConfig<DataSharing, PermissionValue> buildPermissionColumn(DataSharingProperties props) {
+        ColumnConfig<DataSharing, PermissionValue> permission = new ColumnConfig<DataSharing, PermissionValue>(props.displayPermission(), 170, I18N.DISPLAY.permissions());
         SafeStyles permTextStyles = SafeStylesUtils.fromTrustedString("padding: 2px 3px;color:#0098AA;cursor:pointer;");
         permission.setColumnTextStyle(permTextStyles);
         permission.setFixed(true);
@@ -448,6 +432,10 @@ public class DataSharingPermissionsPanel implements IsWidget {
     private void updatePermissions(PermissionValue perm, String username) {
         List<DataSharing> models = sharingMap.get(username);
         if (models != null) {
+            for (DataSharing share : models) {
+                share.setPermission(perm);
+                share.setDisplayPermission(perm);
+            }
             if (resources.size() != models.size()) {
                 Collaborator user = models.get(0).getCollaborator();
                 for (String path : resources.keySet()) {
@@ -500,7 +488,7 @@ public class DataSharingPermissionsPanel implements IsWidget {
         if (dataShares == null || dataShares.size() != resources.size()) {
             return true;
         } else {
-            String displayPermission = dataShares.get(0).getDisplayPermission();
+            PermissionValue displayPermission = dataShares.get(0).getDisplayPermission();
 
             for (DataSharing share : dataShares) {
                 if (!displayPermission.equals(share.getDisplayPermission())) {

@@ -17,7 +17,7 @@ import org.iplantc.de.client.util.DiskResourceUtil;
 public class DataSharing extends Sharing {
 
     private String path;
-    private String displayPermission;
+    private PermissionValue displayPermission;
     private PermissionValue permission;
 
     public static enum TYPE {
@@ -29,13 +29,7 @@ public class DataSharing extends Sharing {
         setPath(path);
         if (p != null) {
             permission = p;
-            if (isOwner()) {
-                setDisplayPermission(PermissionValue.own.toString());
-            } else if (isWritable()) {
-                setDisplayPermission(PermissionValue.write.toString());
-            } else {
-                setDisplayPermission(PermissionValue.read.toString());
-            }
+            displayPermission = permission;
         }
 
     }
@@ -69,11 +63,19 @@ public class DataSharing extends Sharing {
         return super.getKey() + getPath();
     }
 
-    public void setDisplayPermission(String perm) {
+    public void setPermission(PermissionValue perm) {
+        this.permission = perm;
+    }
+
+    public PermissionValue getPermission() {
+        return permission;
+    }
+
+    public void setDisplayPermission(PermissionValue perm) {
         displayPermission = perm;
     }
 
-    public String getDisplayPermission() {
+    public PermissionValue getDisplayPermission() {
         return displayPermission;
     }
 

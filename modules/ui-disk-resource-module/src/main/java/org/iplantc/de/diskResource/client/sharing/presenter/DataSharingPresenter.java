@@ -298,13 +298,7 @@ public class DataSharingPresenter implements DataSharingView.Presenter {
     }
 
     private JSONValue buildSharingPermissionsAsJson(DataSharing sh) {
-        if (sh.isOwner()) {
-           return new JSONString(PermissionValue.own.toString());
-        } else if (sh.isWritable()) {
-            return new  JSONString(PermissionValue.write.toString());
-        } else {
-            return new JSONString(PermissionValue.read.toString());
-        }
+        return new JSONString(sh.getPermission().toString());
     }
 
     private PermissionValue buildPermissionFromJson(JSONObject perm) {
