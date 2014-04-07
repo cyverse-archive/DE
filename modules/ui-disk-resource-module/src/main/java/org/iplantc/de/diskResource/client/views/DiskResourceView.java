@@ -26,6 +26,7 @@ import com.sencha.gxt.data.shared.loader.DataProxy;
 import com.sencha.gxt.data.shared.loader.PagingLoadResult;
 import com.sencha.gxt.data.shared.loader.PagingLoader;
 import com.sencha.gxt.data.shared.loader.TreeLoader;
+import com.sencha.gxt.widget.core.client.form.TextField;
 import com.sencha.gxt.widget.core.client.selection.SelectionChangedEvent.SelectionChangedHandler;
 import com.sencha.gxt.widget.core.client.tree.Tree.TreeNode;
 
@@ -272,8 +273,10 @@ public interface DiskResourceView extends IsWidget, IsMaskable, IsDiskResourceRo
 
     int getTotalSelectionCount();
 
+    void setAllowSelectAll(boolean allowSelectAll);
+
     HasSafeHtml getCenterPanelHeader();
 
-    void setAllowSelectAll(boolean allowSelectAll);
+    TextField getPathWidget();
 
 }

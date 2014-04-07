@@ -23,8 +23,16 @@ import com.sencha.gxt.data.shared.loader.PagingLoadResultBean;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.*;
-import static org.mockito.Mockito.*;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyDouble;
+import static org.mockito.Matchers.anyInt;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.when;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -157,10 +165,12 @@ public class FolderContentsRpcProxyTest {
         verify(diskResourceService).getFolderContents(any(Folder.class), eq(loadConfigMock), callBackCaptor.capture());
 
         // Call method under test
-        callBackCaptor.getValue().onSuccess(mock(Folder.class));
+        Folder f = mock(Folder.class);
+        f.setName("test");
+        callBackCaptor.getValue().onSuccess(f);
         verify(mockFolder).setTotalFiltered(anyInt());
 		verify(pagingAsyncMock).onSuccess(any(PagingLoadResultBean.class));
-        verify(hasSafeHtmlMock).setHTML(SafeHtmlUtils.fromSafeConstant("&nbsp;"));
+        verify(hasSafeHtmlMock).setHTML(SafeHtmlUtils.fromString((f.getName() != null) ? f.getName() : ""));
 
         verifyNoMoreInteractions(hasSafeHtmlMock, diskResourceService, pagingAsyncMock);
         verifyZeroInteractions(searchServiceMock);

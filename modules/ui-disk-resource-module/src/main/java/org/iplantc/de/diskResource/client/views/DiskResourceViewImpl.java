@@ -5,6 +5,7 @@ import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.client.models.diskResources.DiskResourceInfo;
 import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.client.models.diskResources.PermissionValue;
+import org.iplantc.de.client.util.CommonModelUtils;
 import org.iplantc.de.client.util.DiskResourceUtil;
 import org.iplantc.de.commons.client.widgets.IPlantAnchor;
 import org.iplantc.de.diskResource.client.events.FolderSelectedEvent;
@@ -16,6 +17,7 @@ import org.iplantc.de.resources.client.DataCollapseStyle;
 import org.iplantc.de.resources.client.IplantResources;
 import org.iplantc.de.resources.client.messages.I18N;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.google.gwt.cell.client.Cell;
@@ -26,6 +28,8 @@ import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Style.Cursor;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.KeyPressEvent;
+import com.google.gwt.event.dom.client.KeyPressHandler;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
@@ -72,6 +76,7 @@ import com.sencha.gxt.widget.core.client.event.LiveGridViewUpdateEvent.LiveGridV
 import com.sencha.gxt.widget.core.client.event.SelectEvent;
 import com.sencha.gxt.widget.core.client.event.SelectEvent.SelectHandler;
 import com.sencha.gxt.widget.core.client.form.FieldLabel;
+import com.sencha.gxt.widget.core.client.form.TextField;
 import com.sencha.gxt.widget.core.client.grid.ColumnModel;
 import com.sencha.gxt.widget.core.client.grid.Grid;
 import com.sencha.gxt.widget.core.client.grid.GridSelectionModel;
@@ -179,10 +184,18 @@ public class DiskResourceViewImpl implements DiskResourceView {
     private final class TreeSelectionHandler implements SelectionHandler<Folder> {
         @Override
         public void onSelection(SelectionEvent<Folder> event) {
-            Folder selectedItem = event.getSelectedItem();
+            final Folder selectedItem = event.getSelectedItem();
             if (DiskResourceViewImpl.this.widget.isAttached() && (selectedItem != null)) {
                 if (!selectedItem.isFilter()) {
                     DiskResourceViewImpl.this.asWidget().fireEvent(new FolderSelectedEvent(selectedItem));
+                    Scheduler.get().scheduleFinally(new ScheduledCommand() {
+
+                        @Override
+                        public void execute() {
+                            pathField.setValue(selectedItem.getPath());
+                        }
+                    });
+
                 } else {
                     tree.getSelectionModel().deselect(selectedItem);
                 }
@@ -251,6 +264,9 @@ public class DiskResourceViewImpl implements DiskResourceView {
     @UiField
     ContentPanel centerCp;
 
+    @UiField
+    TextField pathField;
+
     private final Widget widget;
 
     private TreeLoader<Folder> treeLoader;
@@ -276,6 +292,15 @@ public class DiskResourceViewImpl implements DiskResourceView {
         // setLeafIcon(tree);
         tree.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
         tree.getSelectionModel().addSelectionHandler(new TreeSelectionHandler());
+        tree.getSelectionModel().addSelectionChangedHandler(new SelectionChangedHandler<Folder>() {
+
+            @Override
+            public void onSelectionChanged(SelectionChangedEvent<Folder> event) {
+                if (event.getSelection() == null || event.getSelection().size() == 0) {
+                    getPathWidget().clear();
+                }
+            }
+        });
 
         GridSelectionModel<DiskResource> selectionModel = grid.getSelectionModel();
         selectionModel.addSelectionChangedHandler(new GridSelectionHandler());
@@ -288,6 +313,17 @@ public class DiskResourceViewImpl implements DiskResourceView {
         resetDetailsPanel();
         setGridEmptyText();
         addTreeCollapseButton();
+        pathField.addKeyPressHandler(new KeyPressHandler() {
+            
+            @Override
+            public void onKeyPress(KeyPressEvent event) {
+                if (event.getCharCode() == 13 && !Strings.isNullOrEmpty(pathField.getCurrentValue())) {
+                    HasId folderToSelect = CommonModelUtils.createHasIdFromString(pathField.getCurrentValue());
+                    presenter.setSelectedFolderById(folderToSelect);
+                }
+                
+            }
+        });
 
     }
 
@@ -958,11 +994,6 @@ public class DiskResourceViewImpl implements DiskResourceView {
     }
 
     @Override
-    public HasSafeHtml getCenterPanelHeader() {
-        return centerCp.getHeader();
-    }
-
-    @Override
     public HandlerRegistration addDeleteSavedSearchEventHandler(DeleteSavedSearchEvent.DeleteSavedSearchEventHandler handler) {
         return tree.addHandler(handler, DeleteSavedSearchEvent.TYPE);
     }
@@ -970,6 +1001,16 @@ public class DiskResourceViewImpl implements DiskResourceView {
     @Override
     public Presenter getPresenter() {
         return presenter;
+    }
+
+    @Override
+    public TextField getPathWidget() {
+        return pathField;
+    }
+
+    @Override
+    public HasSafeHtml getCenterPanelHeader() {
+        return centerCp.getHeader();
     }
 
 }

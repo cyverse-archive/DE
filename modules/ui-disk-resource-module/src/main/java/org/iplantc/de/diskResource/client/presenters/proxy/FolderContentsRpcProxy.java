@@ -127,7 +127,7 @@ public class FolderContentsRpcProxy extends RpcProxy<FolderContentsLoadConfig, P
             callback.onSuccess(new PagingLoadResultBean<DiskResource>(list, result.getTotal(), loadConfig.getOffset()));
 
             /* Set search results header to a non-breaking space to ensure it retains its height. */
-            hasSafeHtml1.setHTML(SafeHtmlUtils.fromSafeConstant("&nbsp;"));
+            hasSafeHtml1.setHTML(SafeHtmlUtils.fromString((result.getName() != null) ? result.getName() : ""));
         }
 
         @Override
