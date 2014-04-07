@@ -17,12 +17,17 @@ project(':confluence-client') {
    dependencies {
       provided 'javax:javaee-web-api:6.0'
       compile "log4j:log4j:$log4jVersion"
+      compile 'org.slf4j:slf4j-simple:1.6.1'
       compile 'org.swift.common:cli:2.4.0'
       compile 'org.swift.common:cli-soap:2.4.0'
       compile 'org.swift.confluence:confluence-cli:2.4.0'
       compile 'org.swift.confluence:confluence-soap:4.0.0'
+      compile 'com.googlecode.json-simple:json-simple:1.1.1'
       compile 'com.martiansoftware:jsap:2.1'
       compile 'org.apache.axis:axis:1.4'
+      compile 'org.apache.axis:axis-jaxrpc:1.4'
+      compile 'axis:axis-wsdl4j:1.5.1'
+      compile 'commons-discovery:commons-discovery:0.2'
       compile project(':clavin-java')
       compile project(':de-common-module')
    }
