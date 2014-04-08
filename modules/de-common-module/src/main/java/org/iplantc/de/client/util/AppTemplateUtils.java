@@ -63,7 +63,7 @@ public class AppTemplateUtils {
 
         final String payload = AutoBeanCodex.encode(argAb).getPayload();
         return new AppTemplateCallbackConverter(factory, ServicesInjector.INSTANCE.getDeployedComponentServices(), null)
-                .convertFrom(payload);
+                .convertFrom(payload, false);
     }
 
     public static Argument copyArgument(Argument value) {

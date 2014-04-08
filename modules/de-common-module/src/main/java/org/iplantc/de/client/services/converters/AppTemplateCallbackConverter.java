@@ -61,10 +61,12 @@ public class AppTemplateCallbackConverter extends AsyncCallbackConverter<String,
 
     @Override
     public AppTemplate convertFrom(String object) {
+        return convertFrom(object, true);
+    }
 
+    public AppTemplate convertFrom(String object, boolean forwardDefaults) {
         Splittable split = StringQuoter.split(object);
         AutoBean<AppTemplate> atAb = AutoBeanCodex.decode(factory, AppTemplate.class, split);
-
 
         /*
          * JDS Grab TreeSelection argument type's original selectionItems, decode them as
@@ -84,24 +86,25 @@ public class AppTemplateCallbackConverter extends AsyncCallbackConverter<String,
                     Splittable arguments = arg.get("arguments");
                     if ((arguments != null) && (arguments.isIndexed()) && (arguments.size() > 0)) {
                         SelectionItemGroup sig = AutoBeanCodex.decode(factory, SelectionItemGroup.class, arguments.get(0)).as();
-                        atAb.as().getArgumentGroups().get(i).getArguments().get(j).setSelectionItems(Lists.<SelectionItem> newArrayList(sig));
+                        atAb.as().getArgumentGroups().get(i).getArguments().get(j).setSelectionItems(Lists.<SelectionItem>newArrayList(sig));
                     }
                 }
             }
         }
 
-        /*
-         * JDS If any argument has a "defaultValue", forward it to the "value" field
-         */
-        for (ArgumentGroup ag : atAb.as().getArgumentGroups()) {
-            for (Argument arg : ag.getArguments()) {
-                if (arg.getDefaultValue() != null) {
-                    arg.setValue(arg.getDefaultValue());
+
+        if (forwardDefaults) {
+            /*
+             * JDS If any argument has a "defaultValue", forward it to the "value" field
+             */
+            for (ArgumentGroup ag : atAb.as().getArgumentGroups()) {
+                for (Argument arg : ag.getArguments()) {
+                    if (arg.getDefaultValue() != null) {
+                        arg.setValue(arg.getDefaultValue());
+                    }
                 }
             }
         }
-
         return atAb.as();
     }
-
 }
