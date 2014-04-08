@@ -5,6 +5,7 @@ import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.client.models.diskResources.DiskResourceInfo;
 import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.client.models.diskResources.PermissionValue;
+import org.iplantc.de.client.models.search.DiskResourceQueryTemplate;
 import org.iplantc.de.client.util.CommonModelUtils;
 import org.iplantc.de.client.util.DiskResourceUtil;
 import org.iplantc.de.commons.client.widgets.IPlantAnchor;
@@ -97,6 +98,26 @@ import java.util.List;
 import java.util.Set;
 
 public class DiskResourceViewImpl implements DiskResourceView {
+
+    private final class TreeSelectionChangeHandlerImpl implements SelectionChangedHandler<Folder> {
+        @Override
+        public void onSelectionChanged(SelectionChangedEvent<Folder> event) {
+            if (event.getSelection() == null || event.getSelection().size() == 0) {
+                getPathWidget().clear();
+            }
+        }
+    }
+
+    private final class PathFieldKeyPressHandlerImpl implements KeyPressHandler {
+        @Override
+        public void onKeyPress(KeyPressEvent event) {
+            if (event.getCharCode() == 13 && !Strings.isNullOrEmpty(pathField.getCurrentValue())) {
+                HasId folderToSelect = CommonModelUtils.createHasIdFromString(pathField.getCurrentValue());
+                presenter.setSelectedFolderById(folderToSelect);
+            }
+            
+        }
+    }
 
     private final class RemoveInfoTypeClikcHandler implements ClickHandler {
         @Override
@@ -192,7 +213,11 @@ public class DiskResourceViewImpl implements DiskResourceView {
 
                         @Override
                         public void execute() {
-                            pathField.setValue(selectedItem.getPath());
+                            if (selectedItem instanceof DiskResourceQueryTemplate) {
+                                pathField.clear();
+                            } else {
+                                pathField.setValue(selectedItem.getPath());
+                            }
                         }
                     });
 
@@ -292,15 +317,7 @@ public class DiskResourceViewImpl implements DiskResourceView {
         // setLeafIcon(tree);
         tree.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
         tree.getSelectionModel().addSelectionHandler(new TreeSelectionHandler());
-        tree.getSelectionModel().addSelectionChangedHandler(new SelectionChangedHandler<Folder>() {
-
-            @Override
-            public void onSelectionChanged(SelectionChangedEvent<Folder> event) {
-                if (event.getSelection() == null || event.getSelection().size() == 0) {
-                    getPathWidget().clear();
-                }
-            }
-        });
+        tree.getSelectionModel().addSelectionChangedHandler(new TreeSelectionChangeHandlerImpl());
 
         GridSelectionModel<DiskResource> selectionModel = grid.getSelectionModel();
         selectionModel.addSelectionChangedHandler(new GridSelectionHandler());
@@ -313,17 +330,7 @@ public class DiskResourceViewImpl implements DiskResourceView {
         resetDetailsPanel();
         setGridEmptyText();
         addTreeCollapseButton();
-        pathField.addKeyPressHandler(new KeyPressHandler() {
-            
-            @Override
-            public void onKeyPress(KeyPressEvent event) {
-                if (event.getCharCode() == 13 && !Strings.isNullOrEmpty(pathField.getCurrentValue())) {
-                    HasId folderToSelect = CommonModelUtils.createHasIdFromString(pathField.getCurrentValue());
-                    presenter.setSelectedFolderById(folderToSelect);
-                }
-                
-            }
-        });
+        pathField.addKeyPressHandler(new PathFieldKeyPressHandlerImpl());
 
     }
 
