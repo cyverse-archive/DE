@@ -29,6 +29,7 @@ import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Style.Cursor;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyPressEvent;
 import com.google.gwt.event.dom.client.KeyPressHandler;
 import com.google.gwt.event.logical.shared.SelectionEvent;
@@ -111,7 +112,7 @@ public class DiskResourceViewImpl implements DiskResourceView {
     private final class PathFieldKeyPressHandlerImpl implements KeyPressHandler {
         @Override
         public void onKeyPress(KeyPressEvent event) {
-            if (event.getCharCode() == 13 && !Strings.isNullOrEmpty(pathField.getCurrentValue())) {
+            if (event.getNativeEvent().getKeyCode() == KeyCodes.KEY_ENTER && !Strings.isNullOrEmpty(pathField.getCurrentValue())) {
                 HasId folderToSelect = CommonModelUtils.createHasIdFromString(pathField.getCurrentValue());
                 presenter.setSelectedFolderById(folderToSelect);
             }
