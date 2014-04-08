@@ -13,7 +13,6 @@ import org.iplantc.de.commons.client.widgets.IPlantAnchor;
 import org.iplantc.de.resources.client.messages.I18N;
 
 import com.google.common.base.Joiner;
-import com.google.common.collect.Lists;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -93,7 +92,7 @@ public class AppInfoView implements IsWidget {
         initDCPanel();
         loadDCinfo();
         tabs = new TabPanel();
-        info_container.setScrollMode(ScrollMode.AUTOY);
+        info_container.setScrollMode(ScrollMode.AUTO);
     }
 
     private void addInfoTabs() {
@@ -215,14 +214,8 @@ public class AppInfoView implements IsWidget {
 
         appDetailsHtmlContainer.add(new Label(I18N.DISPLAY.category() + ": "), new HtmlData(".cell11"));
         List<String> builder = new ArrayList<String>();
-        List<String> groupNames = Lists.newArrayList();
         for (AppGroup ag : groups) {
-            for (AppGroup group : presenter.getGroupHierarchy(ag)) {
-                groupNames.add(group.getName());
-            }
-            Collections.reverse(groupNames);
-            builder.add(Joiner.on(" >> ").join(groupNames));
-            groupNames.clear();
+            builder.add(Joiner.on(" >> ").join(presenter.computeGroupHirarchy(ag)));
         }
         Collections.sort(builder);
         appDetailsHtmlContainer.add(new HTML(Joiner.on("<br/>").join(builder)), new HtmlData(".cell12"));

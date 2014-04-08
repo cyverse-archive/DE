@@ -37,6 +37,7 @@ import org.iplantc.de.commons.client.info.ErrorAnnouncementConfig;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
 import org.iplantc.de.resources.client.messages.I18N;
 
+import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.gwt.core.client.GWT;
@@ -63,6 +64,7 @@ import com.sencha.gxt.widget.core.client.event.HideEvent.HideHandler;
 import com.sencha.gxt.widget.core.client.grid.Grid;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -224,8 +226,20 @@ public class AppsViewPresenter implements AppsView.Presenter {
         }
 
         searchRegex = null;
-        view.setCenterPanelHeading(ag.getName());
+        List<String> groupNames = computeGroupHirarchy(ag);
+        view.setCenterPanelHeading(Joiner.on(" >> ").join(groupNames));
         fetchApps(ag);
+    }
+
+    @Override
+    public List<String> computeGroupHirarchy(final AppGroup ag) {
+        List<String> groupNames = Lists.newArrayList();
+
+        for (AppGroup group : getGroupHierarchy(ag)) {
+            groupNames.add(group.getName());
+        }
+        Collections.reverse(groupNames);
+        return groupNames;
     }
 
     @Override

@@ -61,6 +61,8 @@ public interface AppsViewToolbar extends IsWidget {
         AppSearchRpcProxy getAppSearchRpcProxy();
 
         List<AppGroup> getGroupHierarchy(AppGroup grp);
+
+        List<String> computeGroupHirarchy(AppGroup ag);
     }
 
     void setPresenter(Presenter presenter);

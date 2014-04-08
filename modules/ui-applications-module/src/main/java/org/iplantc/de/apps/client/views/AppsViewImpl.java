@@ -5,6 +5,7 @@ import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.models.apps.AppGroup;
 import org.iplantc.de.resources.client.IplantResources;
 
+import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
@@ -263,7 +264,12 @@ public class AppsViewImpl implements AppsView {
                 tree.getSelectionModel().select(ag, false);
                 tree.scrollIntoView(ag);
                 // Set heading
+                if(presenter != null) {
+                    List<String> hierarchy = presenter.computeGroupHirarchy(ag);
+                    setCenterPanelHeading(Joiner.on(" >> ").join(hierarchy));
+                } else {
                 setCenterPanelHeading(ag.getName());
+                }
             }
         }
     }
