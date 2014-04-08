@@ -60,7 +60,7 @@ public class AppTemplateCallbackConverter extends AsyncCallbackConverter<String,
     }
 
     @Override
-    protected AppTemplate convertFrom(String object) {
+    public AppTemplate convertFrom(String object) {
 
         Splittable split = StringQuoter.split(object);
         AutoBean<AppTemplate> atAb = AutoBeanCodex.decode(factory, AppTemplate.class, split);

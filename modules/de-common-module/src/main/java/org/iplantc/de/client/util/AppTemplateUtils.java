@@ -1,5 +1,6 @@
 package org.iplantc.de.client.util;
 
+import org.iplantc.de.client.gin.ServicesInjector;
 import org.iplantc.de.client.models.apps.integration.AppTemplate;
 import org.iplantc.de.client.models.apps.integration.AppTemplateAutoBeanFactory;
 import org.iplantc.de.client.models.apps.integration.Argument;
@@ -7,6 +8,7 @@ import org.iplantc.de.client.models.apps.integration.ArgumentGroup;
 import org.iplantc.de.client.models.apps.integration.ArgumentType;
 import org.iplantc.de.client.models.apps.integration.SelectionItem;
 import org.iplantc.de.client.models.apps.integration.SelectionItemGroup;
+import org.iplantc.de.client.services.converters.AppTemplateCallbackConverter;
 import org.iplantc.de.resources.client.messages.I18N;
 import org.iplantc.de.resources.client.uiapps.widgets.AppsWidgetsDisplayMessages;
 
@@ -58,22 +60,10 @@ public class AppTemplateUtils {
 
     public static AppTemplate copyAppTemplate(AppTemplate value) {
         AutoBean<AppTemplate> argAb = AutoBeanUtils.getAutoBean(value);
-        Splittable splitCopy = AutoBeanCodex.encode(argAb);
 
-        AppTemplate ret = AutoBeanCodex.decode(factory, AppTemplate.class, splitCopy.getPayload()).as();
-
-        // Copy the arguments lists back in.
-        for (int i = 0; i < value.getArgumentGroups().size(); i++) {
-            ArgumentGroup agOrig = value.getArgumentGroups().get(i);
-            ArgumentGroup agNew = ret.getArgumentGroups().get(i);
-            for (int j = 0; j < agOrig.getArguments().size(); j++) {
-                Argument argOrig = agOrig.getArguments().get(j);
-                Argument argNew = agNew.getArguments().get(j);
-                argNew.setSelectionItems(argOrig.getSelectionItems());
-            }
-        }
-
-        return ret;
+        final String payload = AutoBeanCodex.encode(argAb).getPayload();
+        return new AppTemplateCallbackConverter(factory, ServicesInjector.INSTANCE.getDeployedComponentServices(), null)
+                .convertFrom(payload);
     }
 
     public static Argument copyArgument(Argument value) {

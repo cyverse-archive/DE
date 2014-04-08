@@ -70,9 +70,7 @@ import com.sencha.gxt.widget.core.client.box.MessageBox;
 import com.sencha.gxt.widget.core.client.button.TextButton;
 import com.sencha.gxt.widget.core.client.event.BeforeHideEvent;
 
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * @author jstroot
@@ -411,13 +409,10 @@ public class AppsEditorPresenterImpl implements AppsEditorView.Presenter, Delete
     @Override
     public void go(HasOneWidget container) {
         setLabelOnlyEditMode(appTemplate.isPublic());
-        /*
-         * JDS Make a copy so we can check for differences on exit.
-         */
-        this.lastSave = AppTemplateUtils.copyAppTemplate(appTemplate);
 
         view.getEditorDriver().edit(appTemplate);
         view.onArgumentSelected(new ArgumentSelectedEvent(null));
+
         /*
          * JDS Set postEdit to true to enable handling of ArgumentGroupAddedEvents and
          * ArgumentAddedEvents
@@ -429,6 +424,11 @@ public class AppsEditorPresenterImpl implements AppsEditorView.Presenter, Delete
         GatherAllEventProviders gatherAllEventProviders = new GatherAllEventProviders(appearance, this, this);
         view.getEditorDriver().accept(gatherAllEventProviders);
         view.getEditorDriver().accept(new RegisterEventHandlers(this, this, this, gatherAllEventProviders));
+
+        /*
+         * JDS Make a copy so we can check for differences on exit.
+         */
+        lastSave = AppTemplateUtils.copyAppTemplate(view.flush());
 
         updateCommandLinePreview(lastSave);
         if (container.getWidget() == null) {
@@ -477,11 +477,10 @@ public class AppsEditorPresenterImpl implements AppsEditorView.Presenter, Delete
         try {
             // Determine if there are any changes, variables are broken out for readability
             AutoBean<AppTemplate> lastSaveAb = AutoBeanUtils.getAutoBean(lastSave);
-            AutoBean<AppTemplate> currentAb = AutoBeanUtils.getAutoBean(AppTemplateUtils.copyAppTemplate(flushViewAndClean()));
+            AutoBean<AppTemplate> currentAb = AutoBeanUtils.getAutoBean(AppTemplateUtils.copyAppTemplate(view.flush()));
             String lastSavePayload = AutoBeanCodex.encode(lastSaveAb).getPayload();
             String currentPayload = AutoBeanCodex.encode(currentAb).getPayload();
-            boolean areEqual = lastSavePayload.equals(currentPayload);
-            return !areEqual;
+            return !lastSavePayload.equals(currentPayload);
         } catch (IllegalStateException e) {
             /*
              * JDS This is expected to occur when 'flush()' is called when 'edit()' was not called first.

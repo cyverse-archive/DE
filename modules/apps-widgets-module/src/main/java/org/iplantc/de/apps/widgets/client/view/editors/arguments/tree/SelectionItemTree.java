@@ -31,9 +31,8 @@ import java.util.List;
 
 /**
  * A Checkable Tree for displaying SelectionItem in a wizard.
- * 
+ *
  * @author psarando, jstroot
- * 
  */
 class SelectionItemTree extends Tree<SelectionItem, String> implements HasValueChangeHandlers<List<SelectionItem>> {
     private ToolTip CORE_4653 = null;
@@ -44,58 +43,17 @@ class SelectionItemTree extends Tree<SelectionItem, String> implements HasValueC
     SelectionItemTree(TreeStore<SelectionItem> store, ValueProvider<SelectionItem, String> valueProvider) {
         super(store, valueProvider);
 
-
         setBorders(true);
         setAutoLoad(true);
 
         setCheckable(true);
         setCheckStyle(CheckCascade.TRI);
 
-        addBeforeCheckChangeHandler(new BeforeCheckChangeHandler<SelectionItem>() {
-            @Override
-            public void onBeforeCheckChange(BeforeCheckChangeEvent<SelectionItem> event) {
-                if (!forceSingleSelection) {
-                    return;
-                }
-
-                if (event.getChecked() == CheckState.UNCHECKED) {
-                    boolean isGroup = event.getItem() instanceof SelectionItemGroup;
-                    boolean cascadeToChildren = getCheckStyle() == CheckCascade.TRI || getCheckStyle() == CheckCascade.CHILDREN;
-
-                    if (isGroup && cascadeToChildren) {
-                        // Do not allow groups to be checked if SingleSelection is enabled and
-                        // selections cascade to children.
-                        event.setCancelled(true);
-                        return;
-                    }
-
-                    List<SelectionItem> checked = getCheckedSelection();
-
-                    if (checked != null && !checked.isEmpty()) {
-                        // uncheck all other selections first.
-                        setCheckedSelection(null);
-                    }
-                }
-
-            }
-        });
+        final SelectionItemCheckChangeHandler checkChangeHandler = new SelectionItemCheckChangeHandler();
+        addBeforeCheckChangeHandler(checkChangeHandler);
 
         // Store the tree's Checked state in each item's isDefault field.
-        addCheckChangeHandler(new CheckChangeHandler<SelectionItem>() {
-
-            @Override
-            public void onCheckChange(CheckChangeEvent<SelectionItem> event) {
-                SelectionItem ruleArg = event.getItem();
-                boolean checked = event.getChecked() == CheckState.CHECKED;
-                boolean isGroup = ruleArg instanceof SelectionItemGroup;
-
-                // Don't set the checked value for Groups if the store is filtered, since a check cascade
-                // can check a group when its filtered-out children are not checked.
-                if (!(checked && isGroup && getStore().isFiltered())) {
-                    ruleArg.setDefault(checked);
-                }
-            }
-        });
+        addCheckChangeHandler(checkChangeHandler);
     }
 
     @Override
@@ -341,6 +299,49 @@ class SelectionItemTree extends Tree<SelectionItem, String> implements HasValueC
             store.update(child);
         } else {
             store.add(parent, child);
+        }
+    }
+
+    private class SelectionItemCheckChangeHandler implements BeforeCheckChangeHandler<SelectionItem>, CheckChangeHandler<SelectionItem> {
+        @Override
+        public void onBeforeCheckChange(BeforeCheckChangeEvent<SelectionItem> event) {
+            if (!forceSingleSelection) {
+                return;
+            }
+
+            if (event.getChecked() == CheckState.UNCHECKED) {
+                boolean isGroup = event.getItem() instanceof SelectionItemGroup;
+                boolean cascadeToChildren = getCheckStyle() == CheckCascade.TRI || getCheckStyle() == CheckCascade.CHILDREN;
+
+                if (isGroup && cascadeToChildren) {
+                    // Do not allow groups to be checked if SingleSelection is enabled and
+                    // selections cascade to children.
+                    event.setCancelled(true);
+                    return;
+                }
+
+                List<SelectionItem> checked = getCheckedSelection();
+
+                if (checked != null && !checked.isEmpty()) {
+                    // uncheck all other selections first.
+                    setCheckedSelection(null);
+                }
+            }
+
+        }
+
+        @Override
+        public void onCheckChange(CheckChangeEvent<SelectionItem> event) {
+            SelectionItem ruleArg = event.getItem();
+            boolean checked = event.getChecked() == CheckState.CHECKED;
+            boolean isGroup = ruleArg instanceof SelectionItemGroup;
+
+            // Don't set the checked value for Groups if the store is filtered, since a check cascade
+            // can check a group when its filtered-out children are not checked.
+            if (!(checked && isGroup && getStore().isFiltered())) {
+                ruleArg.setDefault(checked);
+            }
+            ValueChangeEvent.fire(SelectionItemTree.this, SelectionItemTree.this.getCheckedSelection());
         }
     }
 }

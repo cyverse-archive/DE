@@ -8,15 +8,10 @@ import org.iplantc.de.apps.widgets.client.view.editors.SelectionItemProperties;
 import org.iplantc.de.apps.widgets.client.view.editors.arguments.LabelLeafEditor;
 import org.iplantc.de.apps.widgets.client.view.editors.arguments.VisibilityEditor;
 import org.iplantc.de.apps.widgets.client.view.editors.arguments.converters.ArgumentEditorConverter;
+import org.iplantc.de.apps.widgets.client.view.editors.arguments.converters.SplittableToSelectionArgListConverter;
 import org.iplantc.de.apps.widgets.client.view.editors.style.AppTemplateWizardAppearance;
 import org.iplantc.de.apps.widgets.client.view.util.SelectionItemTreeStoreEditor;
-import org.iplantc.de.client.models.apps.integration.AppTemplateAutoBeanFactory;
-import org.iplantc.de.client.models.apps.integration.Argument;
-import org.iplantc.de.client.models.apps.integration.ArgumentType;
-import org.iplantc.de.client.models.apps.integration.ArgumentValidator;
-import org.iplantc.de.client.models.apps.integration.SelectionItem;
-import org.iplantc.de.client.models.apps.integration.SelectionItemGroup;
-import org.iplantc.de.client.models.apps.integration.SelectionItemList;
+import org.iplantc.de.client.models.apps.integration.*;
 import org.iplantc.de.resources.client.messages.I18N;
 
 import com.google.common.collect.Lists;
@@ -37,7 +32,6 @@ import com.google.web.bindery.autobean.shared.AutoBeanUtils;
 import com.google.web.bindery.autobean.shared.Splittable;
 
 import static com.sencha.gxt.widget.core.client.form.FormPanel.LabelAlign.TOP;
-
 import com.sencha.gxt.core.client.Style.SelectionMode;
 import com.sencha.gxt.data.shared.Store;
 import com.sencha.gxt.data.shared.TreeStore;
@@ -46,6 +40,7 @@ import com.sencha.gxt.data.shared.event.StoreFilterEvent.StoreFilterHandler;
 import com.sencha.gxt.widget.core.client.Composite;
 import com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer;
 import com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer.VerticalLayoutData;
+import com.sencha.gxt.widget.core.client.form.AdapterField;
 import com.sencha.gxt.widget.core.client.form.FieldLabel;
 import com.sencha.gxt.widget.core.client.form.StoreFilterField;
 import com.sencha.gxt.widget.core.client.tree.Tree.CheckCascade;
@@ -142,6 +137,25 @@ public class TreeSelectionEditor extends Composite implements AppTemplateForm.Ar
         }
     }
 
+    private class TreeAdapterField extends AdapterField<List<SelectionItem>> {
+
+        private SelectionItemTree treeField;
+
+        public TreeAdapterField(SelectionItemTree tree) {
+            super(tree);
+            treeField = tree;
+        }
+
+        @Override
+        public void setValue(List<SelectionItem> value) {
+        }
+
+        @Override
+        public List<SelectionItem> getValue() {
+            return treeField.getCheckedSelection();
+        }
+    }
+
     private final class TreeValueChangeHandler implements ValueChangeHandler<List<SelectionItem>> {
         @Override
         public void onValueChange(ValueChangeEvent<List<SelectionItem>> event) {
@@ -179,6 +193,8 @@ public class TreeSelectionEditor extends Composite implements AppTemplateForm.Ar
 
     private final VisibilityEditor visibilityEditor;
 
+    private ArgumentEditorConverter<List<SelectionItem>> valueEditor;
+
     public TreeSelectionEditor(AppTemplateWizardAppearance appearance, SelectionItemProperties props) {
         TreeStore<SelectionItem> store = new TreeStore<SelectionItem>(props.id());
 
@@ -195,6 +211,7 @@ public class TreeSelectionEditor extends Composite implements AppTemplateForm.Ar
 
         tree.addValueChangeHandler(new TreeValueChangeHandler());
         selectionItemsEditor = new MyTreeStoreEditor(store, this);
+        valueEditor = new ArgumentEditorConverter<List<SelectionItem>>(new TreeAdapterField(tree), new SplittableToSelectionArgListConverter());
 
         // This handler must be added after the store is added to the tree, since the tree adds its own
         // handlers that must trigger before this one.
@@ -378,7 +395,7 @@ public class TreeSelectionEditor extends Composite implements AppTemplateForm.Ar
 
     @Override
     public ArgumentEditorConverter<?> valueEditor() {
-        return null;
+        return valueEditor;
     }
 
     @Override
