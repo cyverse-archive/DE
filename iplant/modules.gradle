@@ -1,23 +1,13 @@
 // This build file configures all of the project module builds
 project(':confluence-client') {
-   apply plugin: 'eclipse'
-   /* The following configurations and sourceSets declarations are necessary
-    *  to mimic the 'provided' scope of maven builds
-    */
-   configurations {
-      provided
-      compile.extendsFrom provided
-                runtime.exclude module: 'javaee-api'
-                runtime.exclude module: 'javaee-web-api'
-   }
-   sourceSets {
-      main { compileClasspath += configurations.provided }
-   }
-   
+   apply plugin: 'gwt-base'
+   gwt { gwtVersion="$gwtVer" }
+
    dependencies {
-      provided 'javax:javaee-web-api:6.0'
-      compile "log4j:log4j:$log4jVersion"
-      compile 'org.slf4j:slf4j-simple:1.6.1'
+      compile project(':de-common-module')
+      compile project(':clavin-java')
+       compile "org.slf4j:jcl-over-slf4j:$slf4jVersion"
+       compile "log4j:log4j:$log4jVersion"
       compile 'org.swift.common:cli:2.4.0'
       compile 'org.swift.common:cli-soap:2.4.0'
       compile 'org.swift.confluence:confluence-cli:2.4.0'
@@ -28,8 +18,6 @@ project(':confluence-client') {
       compile 'org.apache.axis:axis-jaxrpc:1.4'
       compile 'axis:axis-wsdl4j:1.5.1'
       compile 'commons-discovery:commons-discovery:0.2'
-      compile project(':clavin-java')
-      compile project(':de-common-module')
    }
 } 
 project(':ui-apps-integration') {
@@ -111,6 +99,9 @@ project(':de-common-module') {
    gwt { gwtVersion="$gwtVer" }
 
    dependencies {
+      compile project(':clavin-java')
+      compile project(':ui-resources-module')
+      compile "log4j:log4j:$log4jVersion"
       compile 'com.google.gwt.inject:gin:2.0.0'
       compile 'org.apache.httpcomponents:httpclient:4.2.1'
       compile 'org.apache.httpcomponents:httpmime:4.2.1'
@@ -118,7 +109,6 @@ project(':de-common-module') {
           exclude group: 'javax.servlet', module: 'servlet-api'
       }
       compile 'org.antlr:stringtemplate:4.0.2'
-      compile "log4j:log4j:$log4jVersion"
       compile 'org.springframework.security:spring-security-cas:3.1.4.RELEASE'
       compile 'org.springframework.security:spring-security-web:3.1.2.RELEASE'
       compile 'org.springframework.security:spring-security-core:3.1.2.RELEASE'
@@ -128,8 +118,6 @@ project(':de-common-module') {
       compile 'net.sf.json-lib:json-lib:2.4:jdk15'
       compile 'commons-fileupload:commons-fileupload:1.2.1'
       compile "com.sencha.gxt:gxt:$gxtVersion"
-      compile project(':clavin-java')
-      compile project(':ui-resources-module')
 
       testCompile 'com.google.gwt.gwtmockito:gwtmockito:1.1.2'
    }
@@ -143,11 +131,21 @@ project(':ui-resources-module') {
    }
 }
 project(':clavin-java') {
-   apply plugin: 'gwt-base'
-   gwt { gwtVersion="$gwtVer" }
+
+    configurations {
+        provided
+        compile.extendsFrom provided
+        runtime.exclude module: 'javaee-api'
+        runtime.exclude module: 'javaee-web-api'
+    }
+    sourceSets {
+        main { compileClasspath += configurations.provided }
+    }
    
    dependencies {
       compile 'com.netflix.curator:curator-framework:1.1.16'
+       compile 'com.google.guava:guava:13.0'
+       provided 'javax:javaee-web-api:6.0'
       compile 'org.springframework:spring-web:3.0.7.RELEASE'
       compile 'org.springframework:spring-beans:3.0.7.RELEASE'
 

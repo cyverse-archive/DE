@@ -8,7 +8,6 @@ configure(subprojects.findAll{it.name == "de" || it.name == "belphegor"}) {
    apply plugin: 'jetty'
 
    dependencies {
-      compile "log4j:log4j:$log4jVersion"
       compile "com.sencha.gxt:gxt:$gxtVersion"
       compile project(':ui-commons-module'), 
               project(':ui-applications-module'),
