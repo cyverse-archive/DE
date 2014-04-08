@@ -238,7 +238,7 @@ public class DiskResourceQueryForm extends Composite implements Editor<DiskResou
     }
 
     public void edit(DiskResourceQueryTemplate queryTemplate) {
-        editorDriver.edit(queryTemplate);
+        editorDriver.edit(SearchModelUtils.copyDiskResourceQueryTemplate(queryTemplate));
     }
 
     @Override

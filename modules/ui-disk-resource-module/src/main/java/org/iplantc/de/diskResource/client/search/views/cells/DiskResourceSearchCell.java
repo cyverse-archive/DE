@@ -1,6 +1,5 @@
 package org.iplantc.de.diskResource.client.search.views.cells;
 
-import org.iplantc.de.client.models.search.DiskResourceQueryTemplate;
 import org.iplantc.de.diskResource.client.search.events.SaveDiskResourceQueryEvent;
 import org.iplantc.de.diskResource.client.search.events.SubmitDiskResourceQueryEvent;
 import org.iplantc.de.diskResource.client.search.events.SubmitDiskResourceQueryEvent.HasSubmitDiskResourceQueryEventHandlers;
@@ -100,13 +99,8 @@ public class DiskResourceSearchCell extends TriggerFieldCell<String> implements 
 
     @Override
     public void doSubmitDiskResourceQuery(SubmitDiskResourceQueryEvent event) {
-        final DiskResourceQueryTemplate queryTemplate = event.getQueryTemplate();
-        if (queryTemplate.isSaved()) {
-            fireEvent(new SaveDiskResourceQueryEvent(queryTemplate, queryTemplate.getName()));
-        } else {
-            // Refire
-            fireEvent(event);
-        }
+        // Refire
+        fireEvent(event);
     }
 
     public void expand(final Context context, final XElement parent, String value, ValueUpdater<String> valueUpdater) {

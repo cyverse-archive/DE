@@ -319,10 +319,11 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter {
 
     @Override
     public void onFolderSelected(FolderSelectedEvent event) {
-        if (event.getSelectedFolder() instanceof DiskResourceQueryTemplate) {
-            // If the given query has not been saved, we need to deselect
-            // everything
-            if (!((DiskResourceQueryTemplate)event.getSelectedFolder()).isSaved()) {
+        Folder selectedFolder = event.getSelectedFolder();
+        if (selectedFolder instanceof DiskResourceQueryTemplate) {
+            // If the given query has not been saved, we need to deselect everything
+            DiskResourceQueryTemplate searchQuery = (DiskResourceQueryTemplate)selectedFolder;
+            if (!searchQuery.isSaved()) {
                 deSelectDiskResources();
                 getView().deSelectNavigationFolder();
             }
@@ -330,7 +331,7 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter {
         } else {
             view.setAllowSelectAll(true);
         }
-        onFolderSelected(event.getSelectedFolder());
+        onFolderSelected(selectedFolder);
     }
 
     @Override

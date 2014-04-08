@@ -6,15 +6,17 @@ import org.iplantc.de.diskResource.client.search.events.SubmitDiskResourceQueryE
 
 import com.google.gwtmockito.GxtMockitoTestRunner;
 
-import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
 
 /**
  * @author jstroot
@@ -30,32 +32,6 @@ public class DiskResourceSearchCellTest {
 
     }
 
-    @Test public void testDoSubmitDiskResourceQuery_Case1() {
-        SubmitDiskResourceQueryEvent mockEvent = mock(SubmitDiskResourceQueryEvent.class);
-        final DiskResourceQueryTemplate mockTemplate = mock(DiskResourceQueryTemplate.class);
-        final String expectedName = "original name";
-        when(mockEvent.getQueryTemplate()).thenReturn(mockTemplate);
-        when(mockTemplate.isSaved()).thenReturn(true);
-        when(mockTemplate.getName()).thenReturn(expectedName);
-
-        DiskResourceSearchCell spy = spy(unitUnderTest);
-
-        spy.doSubmitDiskResourceQuery(mockEvent);
-        // Verify for record keeping
-        verify(spy).doSubmitDiskResourceQuery(any(SubmitDiskResourceQueryEvent.class));
-
-        verify(mockEvent).getQueryTemplate();
-        verify(mockTemplate).isSaved();
-        verify(mockTemplate).getName();
-        ArgumentCaptor<SaveDiskResourceQueryEvent> sdrqCaptor = ArgumentCaptor.forClass(SaveDiskResourceQueryEvent.class);
-        verify(spy).fireEvent(sdrqCaptor.capture());
-
-        assertEquals("Verify the query template passed to the Save event", mockTemplate, sdrqCaptor.getValue().getQueryTemplate());
-        assertEquals("Verify the original name passed to the Save event", expectedName, sdrqCaptor.getValue().getOriginalName());
-
-        verifyNoMoreInteractions(spy, mockEvent, mockTemplate);
-    }
-
     @Test public void testDoSubmitDiskResourceQuery_Case2() {
         SubmitDiskResourceQueryEvent mockEvent = mock(SubmitDiskResourceQueryEvent.class);
         final DiskResourceQueryTemplate mockTemplate = mock(DiskResourceQueryTemplate.class);
@@ -68,8 +44,6 @@ public class DiskResourceSearchCellTest {
         // Verify for record keeping
         verify(spy).doSubmitDiskResourceQuery(any(SubmitDiskResourceQueryEvent.class));
 
-        verify(mockEvent).getQueryTemplate();
-        verify(mockTemplate).isSaved();
         verify(spy).fireEvent(eq(mockEvent));
 
         verifyNoMoreInteractions(spy, mockEvent, mockTemplate);

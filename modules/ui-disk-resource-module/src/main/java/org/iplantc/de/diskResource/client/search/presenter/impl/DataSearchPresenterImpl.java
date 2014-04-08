@@ -49,7 +49,7 @@ public class DataSearchPresenterImpl implements DataSearchPresenter {
     private HandlerManager handlerManager;
     private final SearchServiceFacade searchService;
     private final SearchAutoBeanFactory factory;
-    
+
     @Inject
     public DataSearchPresenterImpl(final SearchServiceFacade searchService, final IplantAnnouncer announcer, final SearchAutoBeanFactory factory) {
         this.searchService = searchService;
@@ -130,6 +130,27 @@ public class DataSearchPresenterImpl implements DataSearchPresenter {
                 // Create immutable copy of saved templates
                 setCleanCopyQueryTemplates(searchService.createFrozenList(toBeSaved));
 
+                List<DiskResourceQueryTemplate> toUpdate = Lists.newArrayList();
+                // If it is an existing query, determine if it is dirty. If so, set dirty flag
+                if (templateHasChanged(queryTemplate, cleanCopyQueryTemplates)) {
+                    queryTemplate.setDirty(true);
+                    // Replace existing object in current template list
+                    for (DiskResourceQueryTemplate qt : getQueryTemplates()) {
+                        if (qt.getName().equalsIgnoreCase(queryTemplate.getName())) {
+                            toUpdate.add(queryTemplate);
+                        } else {
+                            toUpdate.add(qt);
+                        }
+                    }
+                    getQueryTemplates().clear();
+                    getQueryTemplates().addAll(toUpdate);
+                } else {
+                    toUpdate = Lists.newArrayList(getQueryTemplates());
+                }
+
+                // Performing a search has the effect of setting the given query as the current active query.
+                updateDataNavigationWindow(toUpdate, treeStore);
+
                 // Call our method to perform search with saved template
                 doSubmitDiskResourceQuery(new SubmitDiskResourceQueryEvent(queryTemplate));
             }
@@ -148,37 +169,8 @@ public class DataSearchPresenterImpl implements DataSearchPresenter {
     public void doSubmitDiskResourceQuery(final SubmitDiskResourceQueryEvent event) {
         DiskResourceQueryTemplate toSubmit = event.getQueryTemplate();
 
-        List<DiskResourceQueryTemplate> toUpdate;
-        // If we don't have the query in our collection
-        final boolean isNewQuery = Strings.isNullOrEmpty(toSubmit.getName());
-        if (isNewQuery) {
-            toUpdate = Lists.newArrayList(getQueryTemplates());
-        } else {
-            toUpdate = Lists.newArrayList();
-            // If it is an existing query, determine if it is dirty. If so, set dirty flag
-            if (templateHasChanged(toSubmit, cleanCopyQueryTemplates)) {
-                toSubmit.setDirty(true);
-                // Replace existing object in current template list
-                for (DiskResourceQueryTemplate qt : getQueryTemplates()) {
-                    if (qt.getName().equalsIgnoreCase(toSubmit.getName())) {
-                        toUpdate.add(toSubmit);
-                    } else {
-                        toUpdate.add(qt);
-                    }
-                }
-                getQueryTemplates().clear();
-                getQueryTemplates().addAll(toUpdate);
-            } else {
-                toUpdate = Lists.newArrayList(getQueryTemplates());
-            }
-        }
-
-        // Performing a search has the effect of setting the given query as the current active query.
-        updateDataNavigationWindow(toUpdate, treeStore);
-
         activeQuery = toSubmit;
         fireEvent(new FolderSelectedEvent(activeQuery));
-     
     }
 
     @Override

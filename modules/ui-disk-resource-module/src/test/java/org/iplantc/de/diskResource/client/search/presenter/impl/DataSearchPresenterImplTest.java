@@ -25,8 +25,18 @@ import com.sencha.gxt.data.shared.TreeStore;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.*;
-import static org.mockito.Mockito.*;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyListOf;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.when;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -278,9 +288,6 @@ public class DataSearchPresenterImplTest {
         // Call method under test
         spy.doSubmitDiskResourceQuery(mockEvent);
 
-        /* Verify that the updateDataNavigationWindow method has been called */
-        verify(spy).updateDataNavigationWindow(anyListOf(DiskResourceQueryTemplate.class), eq(treeStoreMock));
-
         assertEquals("Verify that the active query has been set", mockedTemplate, spy.getActiveQuery());
 
         ArgumentCaptor<FolderSelectedEvent> fseCaptor = ArgumentCaptor.forClass(FolderSelectedEvent.class);
@@ -313,67 +320,7 @@ public class DataSearchPresenterImplTest {
         // Call method under test
         spy.doSubmitDiskResourceQuery(mockEvent);
 
-        /* Verify that the given list only contains the existing template */
-        verify(spy).updateDataNavigationWindow(drqtListCaptor.capture(), eq(treeStoreMock));
-        assertEquals("verify that the given list only has one item", 1, drqtListCaptor.getValue().size());
-        assertTrue("verify that the initial query template was not removed from the given list", drqtListCaptor.getValue().contains(existingMock));
-        assertFalse("verify that the query template from the event is not in the given list", drqtListCaptor.getValue().contains(eventMockTemplate));
-
         verify(eventMockTemplate, never()).setDirty(eq(true));
-    }
-
-    /**
-     * Verifies the list passed to the updateNavigationWindow method when the given query template is not
-     * new, and has been changed.
-     * 
-     * The list should be equivalent to what was returned by getQueryTemplates() prior to the method
-     * call, but with the changed item in place of the non-changed item.
-     * 
-     * @see org.iplantc.de.diskResource.client.search.presenter.DataSearchPresenter#doSubmitDiskResourceQuery(SubmitDiskResourceQueryEvent)
-     */
-    @Test public void testDoSubmitDiskResourceQuery_Case3() {
-        // Create presenter with overridden method to control test execution.
-        dsPresenter = new DataSearchPresenterImpl(searchService, announcer, factoryMock) {
-            @Override
-            boolean areTemplatesEqual(DiskResourceQueryTemplate lhs, DiskResourceQueryTemplate rhs) {
-                if (lhs.getName().equals("qtMockId1") && rhs.getName().equals("qtMockId1")) {
-                    return false;
-                }
-                return true;
-            }
-        };
-        dsPresenter.searchField = viewMock;
-        dsPresenter.treeStore = treeStoreMock;
-        DataSearchPresenterImpl spy = spy(dsPresenter);
-        DiskResourceQueryTemplate eventMockTemplate = mock(DiskResourceQueryTemplate.class);
-        // Return empty string to indicate that the template is new
-        when(eventMockTemplate.getName()).thenReturn("qtMockId1");
-        SubmitDiskResourceQueryEvent mockEvent = mock(SubmitDiskResourceQueryEvent.class);
-        when(mockEvent.getQueryTemplate()).thenReturn(eventMockTemplate);
-
-        // Add an existing mock to the classes template list
-        DiskResourceQueryTemplate existingMock1 = mock(DiskResourceQueryTemplate.class);
-        DiskResourceQueryTemplate existingMock2 = mock(DiskResourceQueryTemplate.class);
-        when(existingMock1.getName()).thenReturn("qtMockId1");
-        when(existingMock2.getName()).thenReturn("qtMockId2");
-        spy.getQueryTemplates().clear();
-        spy.getQueryTemplates().addAll(Lists.<DiskResourceQueryTemplate> newArrayList(existingMock1, existingMock2));
-        int initialSize = spy.getQueryTemplates().size();
-
-        spy.setCleanCopyQueryTemplates(Lists.<DiskResourceQueryTemplate> newArrayList(existingMock1, existingMock2));
-
-        // Call method under test
-        spy.doSubmitDiskResourceQuery(mockEvent);
-
-        /* Verify that the setDirty flag of the changed template has been set */
-        verify(eventMockTemplate).setDirty(eq(true));
-
-        /* Verify that the given list only contains the existing and event mock templates */
-        verify(spy).updateDataNavigationWindow(drqtListCaptor.capture(), eq(treeStoreMock));
-        assertEquals("verify that the size of the list has not changed", initialSize, drqtListCaptor.getValue().size());
-        assertTrue("verify that the list contains the updated query template", drqtListCaptor.getValue().contains(eventMockTemplate));
-        assertTrue("verify that the list contains the unmodified starting original template", drqtListCaptor.getValue().contains(existingMock2));
-
     }
 
     /**
