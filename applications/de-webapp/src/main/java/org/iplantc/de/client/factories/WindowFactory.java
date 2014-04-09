@@ -52,7 +52,7 @@ public class WindowFactory {
                 ret = new AboutApplicationWindow((AboutWindowConfig)config);
                 break;
             case ANALYSES:
-                ret = new MyAnalysesWindow((AnalysisWindowConfig)config, eventBus);
+                ret = new MyAnalysesWindow((AnalysisWindowConfig)config);
                 break;
             case APP_INTEGRATION:
                 // ret = new AppEditorWindow((AppsIntegrationWindowConfig)config, eventBus, uuidService,

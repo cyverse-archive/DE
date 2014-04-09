@@ -1,4 +1,4 @@
-package org.iplantc.de.client.analysis.widget;
+package org.iplantc.de.analysis.client.widget;
 
 import org.iplantc.de.client.models.analysis.Analysis;
 import org.iplantc.de.commons.client.widgets.SearchField;

@@ -1,17 +1,13 @@
-package org.iplantc.de.client.analysis.views.cells;
+package org.iplantc.de.analysis.client.views.cells;
 
-import org.iplantc.de.client.events.EventBus;
-import org.iplantc.de.client.events.WindowShowRequestEvent;
+import org.iplantc.de.analysis.client.events.AnalysisNameSelectedEvent;
 import org.iplantc.de.client.models.CommonModelAutoBeanFactory;
 import org.iplantc.de.client.models.HasId;
 import org.iplantc.de.client.models.analysis.Analysis;
 import org.iplantc.de.client.views.windows.configs.ConfigFactory;
 import org.iplantc.de.client.views.windows.configs.DiskResourceWindowConfig;
 
-import static com.google.gwt.dom.client.BrowserEvents.CLICK;
-import static com.google.gwt.dom.client.BrowserEvents.MOUSEOUT;
-import static com.google.gwt.dom.client.BrowserEvents.MOUSEOVER;
-
+import static com.google.gwt.dom.client.BrowserEvents.*;
 import com.google.common.base.Strings;
 import com.google.gwt.cell.client.AbstractCell;
 import com.google.gwt.cell.client.Cell;
@@ -20,6 +16,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.dom.client.Style.TextDecoration;
+import com.google.gwt.event.shared.HasHandlers;
 import com.google.gwt.resources.client.ClientBundle;
 import com.google.gwt.safehtml.client.SafeHtmlTemplates;
 import com.google.gwt.safehtml.shared.SafeHtml;
@@ -46,15 +43,20 @@ public class AnalysisNameCell extends AbstractCell<Analysis> {
         SafeHtml cell(String elementName, String className, SafeHtml analysisName);
     }
 
+    private HasHandlers hasHandlers = null;
+
     private final Resources res = GWT.create(Resources.class);
     private final Templates templates = GWT.create(Templates.class);
-    private final EventBus eventBus;
+    //private final EventBus eventBus;
     private static final String ELEMENT_NAME = "analysisName";
 
-    public AnalysisNameCell(EventBus eventBus) {
+    public AnalysisNameCell() {
         super(CLICK, MOUSEOVER, MOUSEOUT);
         res.css().ensureInjected();
-        this.eventBus = eventBus;
+    }
+
+    public void setHasHandlers(HasHandlers hasHandlers){
+        this.hasHandlers = hasHandlers;
     }
 
     @Override
@@ -119,7 +121,11 @@ public class AnalysisNameCell extends AbstractCell<Analysis> {
 
             DiskResourceWindowConfig config = ConfigFactory.diskResourceWindowConfig();
             config.setSelectedFolder(folderAb);
-            eventBus.fireEvent(new WindowShowRequestEvent(config, true));
+//            eventBus.fireEvent(new WindowShowRequestEvent(config, true));
+            if(hasHandlers != null){
+                hasHandlers.fireEvent(new AnalysisNameSelectedEvent(value));
+            }
+
         }
     }
 

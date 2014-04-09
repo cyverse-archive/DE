@@ -1,4 +1,4 @@
-package org.iplantc.de.client.analysis.views.cells;
+package org.iplantc.de.analysis.client.views.cells;
 
 import org.iplantc.de.client.models.analysis.Analysis;
 

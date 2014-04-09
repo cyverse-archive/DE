@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.iplantc.de.client.analysis.presenter;
+package org.iplantc.de.analysis.client.presenter;
 
 import org.iplantc.de.client.models.analysis.AnalysisParameter;
 import org.iplantc.de.client.models.apps.integration.ArgumentType;

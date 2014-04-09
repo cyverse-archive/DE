@@ -1,4 +1,4 @@
-package org.iplantc.de.client.analysis.views;
+package org.iplantc.de.analysis.client.views;
 
 import org.iplantc.de.client.models.analysis.Analysis;
 
@@ -10,8 +10,7 @@ import com.sencha.gxt.data.shared.ListStore;
 import com.sencha.gxt.data.shared.loader.FilterPagingLoadConfig;
 import com.sencha.gxt.data.shared.loader.LoadHandler;
 import com.sencha.gxt.data.shared.loader.PagingLoadResult;
-import com.sencha.gxt.data.shared.loader.PagingLoader;
-import com.sencha.gxt.widget.core.client.button.TextButton;
+import com.sencha.gxt.widget.core.client.selection.SelectionChangedEvent;
 
 import java.util.List;
 
@@ -22,21 +21,29 @@ import java.util.List;
  * @author sriram
  * 
  */
-public interface AnalysesView extends IsWidget {
-    public interface Presenter extends org.iplantc.de.commons.client.presenter.Presenter {
+public interface AnalysesView extends IsWidget, SelectionChangedEvent.HasSelectionChangedHandlers {
+    public interface Presenter extends org.iplantc.de.commons.client.presenter.Presenter, SelectionChangedEvent.SelectionChangedHandler<Analysis> {
 
         void go(final HasOneWidget container, List<Analysis> selectedAnalyses);
 
-        void onAnalysesSelection(List<Analysis> selectedItems);
-        
         List<Analysis> getSelectedAnalyses();
 
         void setSelectedAnalyses(List<Analysis> selectedAnalyses);
+
+        void setViewDebugId(String baseId);
     }
 
-    public void setPresenter(final Presenter presenter);
+    public interface ViewMenu extends IsWidget {
+        void setDeleteButtonEnabled(boolean enabled);
 
-    void setNorthWidget(IsWidget widget);
+        void setViewParamButtonEnabled(boolean enabled);
+
+        void setCancelButtonEnabled(boolean enabled);
+
+        void setRelaunchAnalysisEnabled(boolean enabled);
+    }
+
+    ViewMenu getViewMenu();
 
     public void loadAnalyses();
 
@@ -47,10 +54,6 @@ public interface AnalysesView extends IsWidget {
     public void removeFromStore(List<Analysis> items);
 
     public ListStore<Analysis> getListStore();
-
-    public void setLoader(PagingLoader<FilterPagingLoadConfig, PagingLoadResult<Analysis>> loader);
-
-    public TextButton getRefreshButton();
 
     public HandlerRegistration addLoadHandler(
             LoadHandler<FilterPagingLoadConfig, PagingLoadResult<Analysis>> handler);

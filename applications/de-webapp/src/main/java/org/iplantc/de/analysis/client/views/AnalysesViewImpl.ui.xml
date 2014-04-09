@@ -1,13 +1,10 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
-	xmlns:container="urn:import:com.sencha.gxt.widget.core.client.container"
-	xmlns:gxt="urn:import:com.sencha.gxt.widget.core.client"
-	xmlns:tree="urn:import:com.sencha.gxt.widget.core.client.tree"
-	xmlns:grid="urn:import:com.sencha.gxt.widget.core.client.grid"
-	xmlns:button="urn:import:com.sencha.gxt.widget.core.client.button"
-	xmlns:toolbar="urn:import:com.sencha.gxt.widget.core.client.toolbar"
-	xmlns:form="urn:import:com.sencha.gxt.widget.core.client.form"
-	xmlns:paging="urn:import:org.iplantc.de.client.desktop.widget">
+	         xmlns:container="urn:import:com.sencha.gxt.widget.core.client.container"
+    	     xmlns:gxt="urn:import:com.sencha.gxt.widget.core.client"
+	         xmlns:grid="urn:import:com.sencha.gxt.widget.core.client.grid"
+             xmlns:toolbar="urn:import:org.iplantc.de.analysis.client.views"
+	         xmlns:paging="urn:import:org.iplantc.de.client.desktop.widget">
 
    <ui:with type="org.iplantc.de.resources.client.IplantResources" field="icons"/>
    <ui:with type="org.iplantc.de.resources.client.messages.IplantDisplayStrings" field="strings" />
@@ -54,7 +51,6 @@
 		<container:child layoutData="{outerData}">
 			<container:BorderLayoutContainer
 				ui:field="con" borders="true">
-				<!-- This is the tool bar -->
 				<container:north layoutData="{northData}">
 				</container:north>
 				<!-- This is the main panel -->

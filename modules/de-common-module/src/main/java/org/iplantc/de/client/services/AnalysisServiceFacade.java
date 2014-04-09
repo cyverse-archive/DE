@@ -1,10 +1,12 @@
 package org.iplantc.de.client.services;
 
 import org.iplantc.de.client.models.HasId;
+import org.iplantc.de.client.models.analysis.Analysis;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import com.sencha.gxt.data.shared.loader.FilterPagingLoadConfig;
+import com.sencha.gxt.data.shared.loader.PagingLoadResultBean;
 
 public interface AnalysisServiceFacade {
 
@@ -16,6 +18,14 @@ public interface AnalysisServiceFacade {
      * @param callback executed when RPC call completes.
      */
     void getAnalyses(String workspaceId, FilterPagingLoadConfig loadConfig, AsyncCallback<String> callback);
+
+
+    /**
+     * Get all the analyses for the current user's workspace
+     * @param loadConfig
+     * @param callback
+     */
+    void getAnalyses(FilterPagingLoadConfig loadConfig, AsyncCallback<PagingLoadResultBean<Analysis>> callback);
 
     /**
      * Delete an analysis execution

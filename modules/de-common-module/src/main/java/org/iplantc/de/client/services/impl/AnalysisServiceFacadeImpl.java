@@ -1,13 +1,15 @@
 package org.iplantc.de.client.services.impl;
 
-import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.DELETE;
-import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.GET;
-import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.PUT;
-
+import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.*;
 import org.iplantc.de.client.models.DEProperties;
 import org.iplantc.de.client.models.HasId;
+import org.iplantc.de.client.models.UserInfo;
+import org.iplantc.de.client.models.analysis.AnalysesAutoBeanFactory;
+import org.iplantc.de.client.models.analysis.AnalysesList;
+import org.iplantc.de.client.models.analysis.Analysis;
 import org.iplantc.de.client.services.AnalysisServiceFacade;
 import org.iplantc.de.client.services.DEServiceFacade;
+import org.iplantc.de.client.services.converters.AsyncCallbackConverter;
 import org.iplantc.de.shared.services.ServiceCallWrapper;
 
 import com.google.common.base.Strings;
@@ -17,11 +19,13 @@ import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONString;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.inject.Inject;
+import com.google.web.bindery.autobean.shared.AutoBeanCodex;
 
 import com.sencha.gxt.data.shared.SortDir;
 import com.sencha.gxt.data.shared.SortInfo;
 import com.sencha.gxt.data.shared.loader.FilterConfig;
 import com.sencha.gxt.data.shared.loader.FilterPagingLoadConfig;
+import com.sencha.gxt.data.shared.loader.PagingLoadResultBean;
 
 import java.util.List;
 
@@ -31,17 +35,32 @@ import java.util.List;
 public class AnalysisServiceFacadeImpl implements AnalysisServiceFacade {
 
     private final DEProperties deProperties;
+    private final UserInfo userInfo;
+    private final AnalysesAutoBeanFactory factory;
     private final DEServiceFacade deServiceFacade;
 
     @Inject
-    public AnalysisServiceFacadeImpl(final DEServiceFacade deServiceFacade, final DEProperties deProperties) {
+    public AnalysisServiceFacadeImpl(final DEServiceFacade deServiceFacade, final DEProperties deProperties, final UserInfo userInfo, final AnalysesAutoBeanFactory factory) {
         this.deServiceFacade = deServiceFacade;
         this.deProperties = deProperties;
+        this.userInfo = userInfo;
+        this.factory = factory;
     }
 
-    /* (non-Javadoc)
-     * @see org.iplantc.de.client.services.impl.AnalysisServiceFacade#getAnalyses(java.lang.String, com.sencha.gxt.data.shared.loader.FilterPagingLoadConfig, com.google.gwt.user.client.rpc.AsyncCallback)
-     */
+    @Override
+    public void getAnalyses(final FilterPagingLoadConfig loadConfig, AsyncCallback<PagingLoadResultBean<Analysis>> callback) {
+        getAnalyses(userInfo.getWorkspaceId(), loadConfig, new AsyncCallbackConverter<String, PagingLoadResultBean<Analysis>>(callback) {
+
+            @Override
+            protected PagingLoadResultBean<Analysis> convertFrom(String object) {
+                AnalysesList ret = AutoBeanCodex.decode(factory, AnalysesList.class, object).as();
+                PagingLoadResultBean<Analysis> loadResult = new PagingLoadResultBean<Analysis>(ret.getAnalysisList(), ret.getTotal(), loadConfig.getOffset());
+                return loadResult;
+            }
+
+        });
+    }
+
     @Override
     public void getAnalyses(String workspaceId, FilterPagingLoadConfig loadConfig,
             AsyncCallback<String> callback) {

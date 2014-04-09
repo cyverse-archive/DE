@@ -1,4 +1,4 @@
-package org.iplantc.de.client.analysis.util;
+package org.iplantc.de.analysis.client.util;
 
 import org.iplantc.de.client.models.analysis.AnalysesAutoBeanFactory;
 import org.iplantc.de.client.models.analysis.AnalysisParameter;

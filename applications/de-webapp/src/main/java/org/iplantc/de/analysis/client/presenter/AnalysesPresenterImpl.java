@@ -1,23 +1,16 @@
-package org.iplantc.de.client.analysis.presenter;
+package org.iplantc.de.analysis.client.presenter;
 
-import org.iplantc.de.client.analysis.util.AnalysisParameterValueParser;
-import org.iplantc.de.client.analysis.views.AnalysesToolbarView;
-import org.iplantc.de.client.analysis.views.AnalysesToolbarViewImpl;
-import org.iplantc.de.client.analysis.views.AnalysesView;
-import org.iplantc.de.client.analysis.views.AnalysisParamView;
-import org.iplantc.de.client.analysis.views.cells.AnalysisParamNameCell;
-import org.iplantc.de.client.analysis.views.cells.AnalysisParamValueCell;
-import org.iplantc.de.client.analysis.widget.AnalysisSearchField;
+import org.iplantc.de.analysis.client.util.AnalysisParameterValueParser;
+import org.iplantc.de.analysis.client.views.AnalysesView;
+import org.iplantc.de.analysis.client.views.AnalysisParamView;
+import org.iplantc.de.analysis.client.views.cells.AnalysisParamNameCell;
+import org.iplantc.de.analysis.client.views.cells.AnalysisParamValueCell;
 import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.events.WindowShowRequestEvent;
-import org.iplantc.de.client.gin.ServicesInjector;
 import org.iplantc.de.client.models.UserInfo;
-import org.iplantc.de.client.models.analysis.AnalysesAutoBeanFactory;
-import org.iplantc.de.client.models.analysis.Analysis;
-import org.iplantc.de.client.models.analysis.AnalysisExecutionStatus;
-import org.iplantc.de.client.models.analysis.AnalysisParameter;
-import org.iplantc.de.client.models.analysis.AnalysisParametersList;
+import org.iplantc.de.client.models.analysis.*;
 import org.iplantc.de.client.models.apps.integration.ArgumentType;
+import org.iplantc.de.client.services.AnalysisServiceFacade;
 import org.iplantc.de.client.utils.NotifyInfo;
 import org.iplantc.de.client.views.windows.configs.AppWizardConfig;
 import org.iplantc.de.client.views.windows.configs.ConfigFactory;
@@ -32,27 +25,22 @@ import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONString;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HasOneWidget;
+import com.google.inject.Inject;
 import com.google.web.bindery.autobean.shared.AutoBean;
 import com.google.web.bindery.autobean.shared.AutoBeanCodex;
 
 import com.sencha.gxt.core.client.IdentityValueProvider;
 import com.sencha.gxt.data.shared.ListStore;
 import com.sencha.gxt.data.shared.ModelKeyProvider;
-import com.sencha.gxt.data.shared.loader.FilterPagingLoadConfig;
-import com.sencha.gxt.data.shared.loader.FilterPagingLoadConfigBean;
-import com.sencha.gxt.data.shared.loader.LoadEvent;
-import com.sencha.gxt.data.shared.loader.LoadHandler;
-import com.sencha.gxt.data.shared.loader.LoadResultListStoreBinding;
-import com.sencha.gxt.data.shared.loader.PagingLoadResult;
-import com.sencha.gxt.data.shared.loader.PagingLoader;
+import com.sencha.gxt.data.shared.loader.*;
 import com.sencha.gxt.widget.core.client.Dialog.PredefinedButton;
 import com.sencha.gxt.widget.core.client.box.AlertMessageBox;
 import com.sencha.gxt.widget.core.client.box.ConfirmMessageBox;
-import com.sencha.gxt.widget.core.client.button.TextButton;
 import com.sencha.gxt.widget.core.client.event.HideEvent;
 import com.sencha.gxt.widget.core.client.event.HideEvent.HideHandler;
 import com.sencha.gxt.widget.core.client.grid.ColumnConfig;
 import com.sencha.gxt.widget.core.client.grid.ColumnModel;
+import com.sencha.gxt.widget.core.client.selection.SelectionChangedEvent;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -65,23 +53,29 @@ import java.util.List;
  * @author sriram
  * 
  */
-public class AnalysesPresenter implements AnalysesView.Presenter, AnalysesToolbarView.Presenter {
+public class AnalysesPresenterImpl implements AnalysesView.Presenter {
 
     private final AnalysesView view;
-    private final AnalysesToolbarView toolbar;
-    private final AnalysesAutoBeanFactory factory = GWT.create(AnalysesAutoBeanFactory.class);
+    //private final AnalysesToolbarView toolbar;
+    private final AnalysesAutoBeanFactory factory;
+    private final AnalysisServiceFacade analysisService;
+    private final UserInfo userInfo;
     private HandlerRegistration handlerFirstLoad;
     private final EventBus eventBus;
 
-    public AnalysesPresenter(final AnalysesView view, final EventBus eventBus) {
+    @Inject
+    public AnalysesPresenterImpl(final AnalysesView view, final EventBus eventBus, final AnalysesAutoBeanFactory factory, final AnalysisServiceFacade analysisService, final UserInfo userInfo) {
         this.view = view;
         this.eventBus = eventBus;
-        this.view.setPresenter(this);
-        toolbar = new AnalysesToolbarViewImpl();
-        toolbar.setPresenter(this);
-        view.setNorthWidget(toolbar);
-        setRefreshButton(view.getRefreshButton());
-        view.setLoader(initRemoteLoader());
+        this.factory = factory;
+        this.analysisService = analysisService;
+        this.userInfo = userInfo;
+        this.view.addSelectionChangedHandler(this);
+        //this.view.setPresenter(this);
+        //toolbar = new AnalysesViewMenuImpl();
+        //toolbar.setPresenter(this);
+        //view.setNorthWidget(toolbar);
+        //setRefreshButton(view.getRefreshButton());
     }
 
     @Override
@@ -99,7 +93,6 @@ public class AnalysesPresenter implements AnalysesView.Presenter, AnalysesToolba
         view.loadAnalyses();
     }
 
-    @Override
     public void onDeleteClicked() {
         if (view.getSelectedAnalyses().size() > 0) {
             final List<Analysis> execs = view.getSelectedAnalyses();
@@ -114,6 +107,11 @@ public class AnalysesPresenter implements AnalysesView.Presenter, AnalysesToolba
     }
 
     @Override
+    public void onSelectionChanged(SelectionChangedEvent<Analysis> event) {
+
+        setButtonState(view.getViewMenu());
+    }
+
     public void onViewParamClicked() {
         for (Analysis ana : view.getSelectedAnalyses()) {
             ListStore<AnalysisParameter> listStore = new ListStore<AnalysisParameter>(
@@ -142,7 +140,6 @@ public class AnalysesPresenter implements AnalysesView.Presenter, AnalysesToolba
         }
     }
 
-    @Override
     public void onAnalysisRelaunchClicked() {
         if (view.getSelectedAnalyses().size() != 1) {
             return;
@@ -166,40 +163,40 @@ public class AnalysesPresenter implements AnalysesView.Presenter, AnalysesToolba
 
     }
 
-    private void setButtonState() {
+    private void setButtonState(AnalysesView.ViewMenu viewMenu) {
         int selectionSize = 0;
 
         selectionSize = view.getSelectedAnalyses().size();
 
         switch (selectionSize) {
             case 0:
-                toolbar.setCancelButtonEnabled(false);
-                toolbar.setDeleteButtonEnabled(false);
-                toolbar.setViewParamButtonEnabled(false);
-                toolbar.setRelaunchAnalysisEnabled(false);
+                viewMenu.setCancelButtonEnabled(false);
+                viewMenu.setDeleteButtonEnabled(false);
+                viewMenu.setViewParamButtonEnabled(false);
+                viewMenu.setRelaunchAnalysisEnabled(false);
                 break;
 
             case 1:
-                enableCancelAnalysisButtonByStatus();
-                toolbar.setDeleteButtonEnabled(true);
-                toolbar.setViewParamButtonEnabled(true);
+                enableCancelAnalysisButtonByStatus(viewMenu);
+                viewMenu.setDeleteButtonEnabled(true);
+                viewMenu.setViewParamButtonEnabled(true);
                 Analysis selectedAnalysis = view.getSelectedAnalyses().get(0);
                 if (selectedAnalysis.isAppDisabled()) {
-                    toolbar.setRelaunchAnalysisEnabled(false);
+                    viewMenu.setRelaunchAnalysisEnabled(false);
                 } else {
-                    toolbar.setRelaunchAnalysisEnabled(true);
+                    viewMenu.setRelaunchAnalysisEnabled(true);
                 }
                 break;
 
             default:
-                toolbar.setDeleteButtonEnabled(true);
-                toolbar.setViewParamButtonEnabled(false);
-                toolbar.setRelaunchAnalysisEnabled(false);
-                enableCancelAnalysisButtonByStatus();
+                viewMenu.setDeleteButtonEnabled(true);
+                viewMenu.setViewParamButtonEnabled(false);
+                viewMenu.setRelaunchAnalysisEnabled(false);
+                enableCancelAnalysisButtonByStatus(viewMenu);
         }
     }
 
-    private void enableCancelAnalysisButtonByStatus() {
+    private void enableCancelAnalysisButtonByStatus(AnalysesView.ViewMenu viewMenu) {
         List<Analysis> aes = view.getSelectedAnalyses();
         boolean enable = false;
         for (Analysis ae : aes) {
@@ -212,14 +209,13 @@ public class AnalysesPresenter implements AnalysesView.Presenter, AnalysesToolba
                 }
             }
         }
-        toolbar.setCancelButtonEnabled(enable);
+        viewMenu.setCancelButtonEnabled(enable);
     }
 
     private void retrieveParameterData(final String analysisId, final AsyncCallback<String> callback) {
-        ServicesInjector.INSTANCE.getAnalysisServiceFacade().getAnalysisParams(analysisId, callback);
+        analysisService.getAnalysisParams(analysisId, callback);
     }
 
-    @Override
     public void onCancelClicked() {
         if (view.getSelectedAnalyses().size() > 0) {
             final List<Analysis> execs = view.getSelectedAnalyses();
@@ -227,25 +223,12 @@ public class AnalysesPresenter implements AnalysesView.Presenter, AnalysesToolba
                 if (ae.getStatus().equalsIgnoreCase((AnalysisExecutionStatus.SUBMITTED.toString()))
                         || ae.getStatus().equalsIgnoreCase((AnalysisExecutionStatus.IDLE.toString()))
                         || ae.getStatus().equalsIgnoreCase((AnalysisExecutionStatus.RUNNING.toString()))) {
-                    ServicesInjector.INSTANCE.getAnalysisServiceFacade().stopAnalysis(ae.getId(),
-                            new CancelAnalysisServiceCallback(ae));
+                    analysisService.stopAnalysis(ae.getId(),
+                                                        new CancelAnalysisServiceCallback(ae));
                 }
             }
         }
 
-    }
-
-    @Override
-    public void onAnalysesSelection(List<Analysis> selectedItems) {
-        setButtonState();
-    }
-
-    @Override
-    public void setRefreshButton(TextButton refreshBtn) {
-        if (refreshBtn != null) {
-            refreshBtn.setText(org.iplantc.de.resources.client.messages.I18N.DISPLAY.refresh());
-            toolbar.setRefreshButton(refreshBtn);
-        }
     }
 
     @SuppressWarnings("unchecked")
@@ -271,29 +254,11 @@ public class AnalysesPresenter implements AnalysesView.Presenter, AnalysesToolba
         return new ColumnModel<AnalysisParameter>(columns);
     }
 
-    /**
-     * Initializes the toolbar's PagingLoader for use in the AnalysesGrid with paging and filtering
-     * support.
-     */
-    private PagingLoader<FilterPagingLoadConfig, PagingLoadResult<Analysis>> initRemoteLoader() {
-        PagingLoader<FilterPagingLoadConfig, PagingLoadResult<Analysis>> loader = toolbar.getLoader();
-
-        // KLUDGE PagingLoader uses a PagingLoadConfigBean by default, which causes an exception when it
-        // tries to cast it to a FilterPagingLoadConfig on the initial load.
-        loader.useLoadConfig(new FilterPagingLoadConfigBean());
-        loader.setRemoteSort(true);
-        loader.addLoadHandler(new LoadResultListStoreBinding<FilterPagingLoadConfig, Analysis, PagingLoadResult<Analysis>>(
-                view.getListStore()));
-
-        return loader;
-
-    }
-
-    private final class DeleteSeviceCallback implements AsyncCallback<String> {
+    private final class DeleteServiceCallback implements AsyncCallback<String> {
         private final List<Analysis> execs;
         private final List<Analysis> items_to_delete;
 
-        private DeleteSeviceCallback(List<Analysis> items_to_delete, List<Analysis> execs) {
+        private DeleteServiceCallback(List<Analysis> items_to_delete, List<Analysis> execs) {
             this.execs = execs;
             this.items_to_delete = items_to_delete;
         }
@@ -374,8 +339,8 @@ public class AnalysesPresenter implements AnalysesView.Presenter, AnalysesToolba
             ConfirmMessageBox cmb = (ConfirmMessageBox)event.getSource();
             if (cmb.getHideButton() == cmb.getButtonById(PredefinedButton.OK.name())) {
                 String body = buildDeleteRequestBody(execs);
-                ServicesInjector.INSTANCE.getAnalysisServiceFacade().deleteAnalysis(UserInfo.getInstance().getWorkspaceId(), body,
-                        new DeleteSeviceCallback(items_to_delete, execs));
+                analysisService.deleteAnalysis(userInfo.getWorkspaceId(), body,
+                                                      new DeleteServiceCallback(items_to_delete, execs));
             }
 
         }
@@ -410,11 +375,16 @@ public class AnalysesPresenter implements AnalysesView.Presenter, AnalysesToolba
         }
     }
 
+    @Override
+    public void setViewDebugId(String baseId) {
+        view.asWidget().ensureDebugId(baseId);
+    }
+
     /**
      * A LoadHandler needed to set selected analyses after the initial view load, since settings like
      * page size are only set in the reused config by the loader after an initial grid load, which may be
-     * by-passed by the {@link AnalysisSearchField#filterByAnalysisId} call in
-     * {@link AnalysesPresenter#setSelectedAnalyses}.
+     * by-passed by the {@link org.iplantc.de.analysis.client.widget.AnalysisSearchField#filterByAnalysisId} call in
+     * {@link AnalysesPresenterImpl#setSelectedAnalyses}.
      * 
      * A benefit of selecting analyses with this LoadHandler is if the analysis to select has already
      * loaded when this handler is called, then it can be selected immediately without filtering.

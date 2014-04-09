@@ -1,16 +1,12 @@
-package org.iplantc.de.client.analysis.views.cells;
+package org.iplantc.de.analysis.client.views.cells;
 
-import org.iplantc.de.client.events.EventBus;
-import org.iplantc.de.client.events.WindowShowRequestEvent;
+import org.iplantc.de.analysis.client.events.AnalysisAppSelectedEvent;
 import org.iplantc.de.client.models.analysis.Analysis;
 import org.iplantc.de.client.views.windows.configs.AppWizardConfig;
 import org.iplantc.de.client.views.windows.configs.ConfigFactory;
 import org.iplantc.de.resources.client.messages.I18N;
 
-import static com.google.gwt.dom.client.BrowserEvents.CLICK;
-import static com.google.gwt.dom.client.BrowserEvents.MOUSEOUT;
-import static com.google.gwt.dom.client.BrowserEvents.MOUSEOVER;
-
+import static com.google.gwt.dom.client.BrowserEvents.*;
 import com.google.common.base.Strings;
 import com.google.gwt.cell.client.AbstractCell;
 import com.google.gwt.cell.client.Cell;
@@ -19,6 +15,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.dom.client.Style.TextDecoration;
+import com.google.gwt.event.shared.HandlerManager;
 import com.google.gwt.resources.client.ClientBundle;
 import com.google.gwt.safehtml.client.SafeHtmlTemplates;
 import com.google.gwt.safehtml.shared.SafeHtml;
@@ -46,13 +43,12 @@ public class AnalysisAppNameCell extends AbstractCell<Analysis> {
 
     private final Resources res = GWT.create(Resources.class);
     private final Templates templates = GWT.create(Templates.class);
-    private final EventBus eventBus;
     private static final String ELEMENT_NAME = "analysisAppName";
+    private HandlerManager hasHandlers;
 
-    public AnalysisAppNameCell(EventBus eventBus) {
+    public AnalysisAppNameCell() {
         super(CLICK, MOUSEOVER, MOUSEOUT);
         res.css().ensureInjected();
-        this.eventBus = eventBus;
     }
 
     @Override
@@ -103,6 +99,10 @@ public class AnalysisAppNameCell extends AbstractCell<Analysis> {
 
     }
 
+    public void setHasHandlers(HandlerManager hasHandlers) {
+        this.hasHandlers = hasHandlers;
+    }
+
     private void doOnMouseOut(Element eventTarget, Analysis value) {
         if (eventTarget.getAttribute("name").equalsIgnoreCase(ELEMENT_NAME)
                 && !Strings.isNullOrEmpty(value.getResultFolderId())) {
@@ -123,7 +123,10 @@ public class AnalysisAppNameCell extends AbstractCell<Analysis> {
             AppWizardConfig config = ConfigFactory.appWizardConfig(value.getAppId());
             config.setAnalysisId(value);
             config.setRelaunchAnalysis(true);
-            eventBus.fireEvent(new WindowShowRequestEvent(config));
+            //eventBus.fireEvent(new WindowShowRequestEvent(config));
+            if(hasHandlers != null){
+                hasHandlers.fireEvent(new AnalysisAppSelectedEvent(value.getAppId()));
+            }
         }
     }
 
