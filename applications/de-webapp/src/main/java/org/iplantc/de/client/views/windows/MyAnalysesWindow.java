@@ -4,6 +4,7 @@ import org.iplantc.de.client.analysis.presenter.AnalysesPresenter;
 import org.iplantc.de.client.analysis.views.AnalysesView;
 import org.iplantc.de.client.analysis.views.AnalysesViewImpl;
 import org.iplantc.de.client.analysis.views.cells.AnalysisAppNameCell;
+import org.iplantc.de.client.analysis.views.cells.AnalysisCommentCell;
 import org.iplantc.de.client.analysis.views.cells.AnalysisNameCell;
 import org.iplantc.de.client.analysis.views.cells.EndDateTimeCell;
 import org.iplantc.de.client.analysis.views.cells.StartDateTimeCell;
@@ -15,9 +16,7 @@ import org.iplantc.de.client.views.windows.configs.ConfigFactory;
 import org.iplantc.de.client.views.windows.configs.WindowConfig;
 
 import com.google.common.collect.Lists;
-import com.google.gwt.cell.client.AbstractCell;
 import com.google.gwt.core.shared.GWT;
-import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 
 import com.sencha.gxt.core.client.IdentityValueProvider;
 import com.sencha.gxt.data.shared.ListStore;
@@ -25,7 +24,6 @@ import com.sencha.gxt.data.shared.ModelKeyProvider;
 import com.sencha.gxt.widget.core.client.grid.CheckBoxSelectionModel;
 import com.sencha.gxt.widget.core.client.grid.ColumnConfig;
 import com.sencha.gxt.widget.core.client.grid.ColumnModel;
-import com.sencha.gxt.widget.core.client.grid.RowExpander;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -37,7 +35,6 @@ import java.util.List;
 public class MyAnalysesWindow extends IplantWindowBase {
 
     private CheckBoxSelectionModel<Analysis> checkBoxModel;
-    private RowExpander<Analysis> expander;
     private final EventBus eventBus;
     private final AnalysesView.Presenter presenter;
 
@@ -51,7 +48,7 @@ public class MyAnalysesWindow extends IplantWindowBase {
 
         AnalysisKeyProvider provider = new AnalysisKeyProvider();
         ListStore<Analysis> listStore = new ListStore<Analysis>(provider);
-        AnalysesView view = new AnalysesViewImpl(listStore, buildColumnModel(), checkBoxModel, expander);
+        AnalysesView view = new AnalysesViewImpl(listStore, buildColumnModel(), checkBoxModel);
         presenter = new AnalysesPresenter(view, eventBus);
 
         presenter.go(this, config.getSelectedAnalyses());
@@ -69,24 +66,16 @@ public class MyAnalysesWindow extends IplantWindowBase {
         ColumnConfig colCheckBox = checkBoxModel.getColumn();
         configs.add(colCheckBox);
 
-        expander = new RowExpander<Analysis>(valueProvider, new AbstractCell<Analysis>() {
-
-            @Override
-            public void render(com.google.gwt.cell.client.Cell.Context context, Analysis value,
-                    SafeHtmlBuilder sb) {
-                sb.appendHtmlConstant("<p style='margin: 5px 5px 10px'><b>Description:</b>"
-                        + value.getDescription() + "</p>");
-
-            }
-        });
-
-        configs.add(expander);
-
         ColumnConfig<Analysis, Analysis> name = new ColumnConfig<Analysis, Analysis>(valueProvider, 100);
         name.setHeader(org.iplantc.de.resources.client.messages.I18N.DISPLAY.name());
         configs.add(name);
         name.setMenuDisabled(true);
         name.setCell(new AnalysisNameCell(eventBus));
+
+        ColumnConfig<Analysis, Analysis> comment = new ColumnConfig<Analysis, Analysis>(valueProvider, 30);
+        configs.add(comment);
+        comment.setMenuDisabled(true);
+        comment.setCell(new AnalysisCommentCell());
 
         ColumnConfig<Analysis, Analysis> app = new ColumnConfig<Analysis, Analysis>(valueProvider, 100);
         app.setHeader(org.iplantc.de.resources.client.messages.I18N.DISPLAY.appName());

@@ -29,7 +29,6 @@ import com.sencha.gxt.widget.core.client.grid.ColumnModel;
 import com.sencha.gxt.widget.core.client.grid.Grid;
 import com.sencha.gxt.widget.core.client.grid.GridSelectionModel;
 import com.sencha.gxt.widget.core.client.grid.GridView;
-import com.sencha.gxt.widget.core.client.grid.RowExpander;
 import com.sencha.gxt.widget.core.client.selection.SelectionChangedEvent;
 import com.sencha.gxt.widget.core.client.selection.SelectionChangedEvent.SelectionChangedHandler;
 
@@ -75,8 +74,7 @@ public class AnalysesViewImpl implements AnalysesView {
 
     private Presenter presenter;
 
-    public AnalysesViewImpl(ListStore<Analysis> listStore, ColumnModel<Analysis> cm,
-            GridSelectionModel<Analysis> checkBoxModel, RowExpander<Analysis> expander) {
+    public AnalysesViewImpl(ListStore<Analysis> listStore, ColumnModel<Analysis> cm, GridSelectionModel<Analysis> checkBoxModel) {
         this.listStore = listStore;
         this.cm = cm;
         widget = uiBinder.createAndBindUi(this);
@@ -90,7 +88,6 @@ public class AnalysesViewImpl implements AnalysesView {
             }
         });
         gridView.setEmptyText(I18N.DISPLAY.noAnalyses());
-        expander.initPlugin(grid);
     }
 
     /*
@@ -174,11 +171,9 @@ public class AnalysesViewImpl implements AnalysesView {
     }
 
     @Override
-    public HandlerRegistration addLoadHandler(
-            LoadHandler<FilterPagingLoadConfig, PagingLoadResult<Analysis>> handler) {
+    public HandlerRegistration addLoadHandler(LoadHandler<FilterPagingLoadConfig, PagingLoadResult<Analysis>> handler) {
         @SuppressWarnings("unchecked")
-        PagingLoader<FilterPagingLoadConfig, PagingLoadResult<Analysis>> loader = (PagingLoader<FilterPagingLoadConfig, PagingLoadResult<Analysis>>)grid
-                .getLoader();
+        PagingLoader<FilterPagingLoadConfig, PagingLoadResult<Analysis>> loader = (PagingLoader<FilterPagingLoadConfig, PagingLoadResult<Analysis>>)grid.getLoader();
 
         return loader.addLoadHandler(handler);
     }

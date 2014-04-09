@@ -695,4 +695,7 @@ public interface IplantResources extends ClientBundle, AppResources, DiskResourc
     
     @Source("IplantContextualHelpAccess.css")
     IplantContextualHelpAccessStyle getContxtualHelpStyle();
+
+    @Source("user_comment.png")
+    ImageResource userComment();
 }

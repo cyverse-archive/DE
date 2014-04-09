@@ -37,7 +37,7 @@
 		        </form:FieldLabel> 
 		    </con:child>                    
 		    <con:child layoutData="{fieldLayoutData}">
-		        <form:FieldLabel text="{strings.description}"
+		        <form:FieldLabel text="{strings.comments}"
 		                         labelAlign="TOP">
 		            <form:widget>
 		                <form:TextArea ui:field="description"/>
