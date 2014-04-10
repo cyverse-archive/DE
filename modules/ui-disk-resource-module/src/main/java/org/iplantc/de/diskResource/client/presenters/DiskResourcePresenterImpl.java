@@ -51,6 +51,7 @@ import org.iplantc.de.diskResource.client.search.events.SubmitDiskResourceQueryE
 import org.iplantc.de.diskResource.client.search.presenter.DataSearchPresenter;
 import org.iplantc.de.diskResource.client.sharing.views.DataSharingDialog;
 import org.iplantc.de.diskResource.client.views.DiskResourceView;
+import org.iplantc.de.diskResource.client.views.dialogs.CreateFolderDialog;
 import org.iplantc.de.diskResource.client.views.dialogs.FolderSelectDialog;
 import org.iplantc.de.diskResource.client.views.dialogs.InfoTypeEditorDialog;
 import org.iplantc.de.diskResource.client.views.widgets.DiskResourceViewToolbar;
@@ -188,10 +189,10 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter {
     }
 
     private void initToolbar(DiskResourceViewToolbar toolbar) {
-        // Disable all buttons, except for Uploads.
-        toolbar.setNewFolderButtonEnabled(false);
-        toolbar.setNewFileButtonEnabled(false);
-        toolbar.setNewButtonEnabled(false);
+        // Disable all buttons, except for Uploads and New file/folder creation.
+        toolbar.setNewFolderButtonEnabled(true);
+        toolbar.setNewFileButtonEnabled(true);
+        toolbar.setNewButtonEnabled(true);
         toolbar.setRefreshButtonEnabled(false);
         toolbar.setDownloadsEnabled(false);
         toolbar.setBulkDownloadButtonEnabled(false);
@@ -373,18 +374,20 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter {
         Folder selectedFolder = getSelectedFolder();
 
         if (selectedFolder == null) {
-            for (Folder root : view.getTreeStore().getRootItems()) {
-                if (root.getName().equals(UserInfo.getInstance().getUsername())) {
-                    return root;
-                }
-            }
+            return view.getFolderById(UserInfo.getInstance().getHomePath());
         }
 
         return selectedFolder;
     }
 
     @Override
-    public void doCreateNewFolder(final Folder parentFolder, final String newFolderName) {
+    public void onNewFolder() {
+        CreateFolderDialog dlg = new CreateFolderDialog(getSelectedUploadFolder(), this);
+        dlg.show();
+    }
+
+    @Override
+    public void doCreateNewFolder(Folder parentFolder, final String newFolderName) {
         view.mask(DISPLAY.loadingMask());
         diskResourceService.createFolder(parentFolder, newFolderName, new CreateFolderCallback(parentFolder, view));
     }
