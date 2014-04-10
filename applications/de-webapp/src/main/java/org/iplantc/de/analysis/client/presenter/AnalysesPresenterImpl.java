@@ -7,22 +7,22 @@ import org.iplantc.de.client.events.WindowShowRequestEvent;
 import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.client.models.analysis.AnalysesAutoBeanFactory;
 import org.iplantc.de.client.models.analysis.Analysis;
-import org.iplantc.de.client.models.analysis.AnalysisExecutionStatus;
 import org.iplantc.de.client.models.analysis.AnalysisParameter;
 import org.iplantc.de.client.services.AnalysisServiceFacade;
-import org.iplantc.de.client.utils.NotifyInfo;
 import org.iplantc.de.client.views.windows.configs.AppWizardConfig;
 import org.iplantc.de.client.views.windows.configs.ConfigFactory;
 import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.commons.client.info.ErrorAnnouncementConfig;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
-import org.iplantc.de.resources.client.messages.I18N;
+import org.iplantc.de.commons.client.info.SuccessAnnouncementConfig;
+import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
+import org.iplantc.de.resources.client.messages.IplantErrorStrings;
 
 import com.google.common.collect.Lists;
 import com.google.gwt.event.shared.HandlerRegistration;
-import com.google.gwt.json.client.JSONArray;
-import com.google.gwt.json.client.JSONObject;
-import com.google.gwt.json.client.JSONString;
+import com.google.gwt.event.shared.HasHandlers;
+import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HasOneWidget;
 import com.google.inject.Inject;
@@ -33,7 +33,6 @@ import com.sencha.gxt.data.shared.loader.LoadEvent;
 import com.sencha.gxt.data.shared.loader.LoadHandler;
 import com.sencha.gxt.data.shared.loader.PagingLoadResult;
 import com.sencha.gxt.widget.core.client.Dialog.PredefinedButton;
-import com.sencha.gxt.widget.core.client.box.AlertMessageBox;
 import com.sencha.gxt.widget.core.client.box.ConfirmMessageBox;
 import com.sencha.gxt.widget.core.client.event.HideEvent;
 import com.sencha.gxt.widget.core.client.event.HideEvent.HideHandler;
@@ -51,10 +50,7 @@ import java.util.List;
  */
 public class AnalysesPresenterImpl implements AnalysesView.Presenter {
 
-
-
     private final class CancelAnalysisServiceCallback implements AsyncCallback<String> {
-
         private final Analysis ae;
 
         public CancelAnalysisServiceCallback(final Analysis ae) {
@@ -67,81 +63,43 @@ public class AnalysesPresenterImpl implements AnalysesView.Presenter {
              * JDS Send generic error message. In the future, the "error_code" string should be parsed
              * from the JSON to provide more detailed user feedback.
              */
-            ErrorHandler.post(org.iplantc.de.resources.client.messages.I18N.ERROR.stopAnalysisError(ae.getName()), caught);
+            SafeHtml msg = SafeHtmlUtils.fromString(errorStrings.stopAnalysisError(ae.getName()));
+            announcer.schedule(new ErrorAnnouncementConfig(msg, true, 3000));
         }
 
         @Override
         public void onSuccess(String result) {
-            NotifyInfo.displayWarning(org.iplantc.de.resources.client.messages.I18N.DISPLAY.analysisStopSuccess(ae.getName()));
+            SafeHtml msg = SafeHtmlUtils.fromString(displayStrings.analysisStopSuccess(ae.getName()));
+            announcer.schedule(new SuccessAnnouncementConfig(msg, true, 3000));
         }
 
     }
 
     private final class DeleteMessageBoxHandler implements HideHandler {
-        private final List<Analysis> execs;
-        private final List<Analysis> items_to_delete;
+        private final List<Analysis> analysesToBeDeleted;
 
-        private DeleteMessageBoxHandler(List<Analysis> execs) {
-            this.execs = execs;
-            items_to_delete = new ArrayList<Analysis>();
+        private DeleteMessageBoxHandler(List<Analysis> analysesToBeDeleted) {
+            this.analysesToBeDeleted = analysesToBeDeleted;
         }
 
         @Override
         public void onHide(HideEvent event) {
             ConfirmMessageBox cmb = (ConfirmMessageBox)event.getSource();
             if (cmb.getHideButton() == cmb.getButtonById(PredefinedButton.OK.name())) {
-                String body = buildDeleteRequestBody(execs);
-                analysisService.deleteAnalysis(userInfo.getWorkspaceId(), body,
-                                                      new DeleteServiceCallback(items_to_delete, execs));
+                analysisService.deleteAnalyses(analysesToBeDeleted, new AsyncCallback<String>() {
+
+                    @Override
+                    public void onFailure(Throwable caught) {
+                        ErrorHandler.post(errorStrings.deleteAnalysisError(), caught);
+                    }
+
+                    @Override
+                    public void onSuccess(String arg0) {
+                        view.removeFromStore(analysesToBeDeleted);
+                    }
+                });
             }
 
-        }
-
-        private String buildDeleteRequestBody(List<Analysis> execs) {
-            JSONObject obj = new JSONObject();
-            JSONArray items = new JSONArray();
-            int count = 0;
-            for (Analysis ae : execs) {
-                if (ae.getStatus().equalsIgnoreCase((AnalysisExecutionStatus.COMPLETED.toString()))
-                        || ae.getStatus().equalsIgnoreCase((AnalysisExecutionStatus.FAILED.toString()))) {
-                    items.set(count++, new JSONString(ae.getId()));
-                    items_to_delete.add(ae);
-                }
-
-            }
-            obj.put("executions", items); //$NON-NLS-1$
-            return obj.toString();
-        }
-    }
-
-    private final class DeleteServiceCallback implements AsyncCallback<String> {
-        private final List<Analysis> execs;
-        private final List<Analysis> items_to_delete;
-
-        private DeleteServiceCallback(List<Analysis> items_to_delete, List<Analysis> execs) {
-            this.execs = execs;
-            this.items_to_delete = items_to_delete;
-        }
-
-        @Override
-        public void onFailure(Throwable caught) {
-            ErrorHandler.post(org.iplantc.de.resources.client.messages.I18N.ERROR.deleteAnalysisError(), caught);
-        }
-
-        @Override
-        public void onSuccess(String arg0) {
-            updateGrid();
-
-        }
-
-        private void updateGrid() {
-            view.removeFromStore(items_to_delete);
-
-            if (items_to_delete == null || execs.size() != items_to_delete.size()) {
-                AlertMessageBox amb = new AlertMessageBox(org.iplantc.de.resources.client.messages.I18N.DISPLAY.warning(),
-                        org.iplantc.de.resources.client.messages.I18N.DISPLAY.analysesNotDeleted());
-                amb.show();
-            }
         }
     }
 
@@ -172,54 +130,54 @@ public class AnalysesPresenterImpl implements AnalysesView.Presenter {
             setSelectedAnalyses(selectedAnalyses);
         }
     }
+
     private final AnalysisServiceFacade analysisService;
-    private final EventBus eventBus;
-    //private final AnalysesToolbarView toolbar;
+    private final HasHandlers eventBus;
     private final AnalysesAutoBeanFactory factory;
     private final UserInfo userInfo;
     private final IplantAnnouncer announcer;
+    private final IplantDisplayStrings displayStrings;
+    private final IplantErrorStrings errorStrings;
     private final AnalysesView view;
     private HandlerRegistration handlerFirstLoad;
 
     @Inject
-    public AnalysesPresenterImpl(final AnalysesView view, final EventBus eventBus, final AnalysesAutoBeanFactory factory, final AnalysisServiceFacade analysisService, final UserInfo userInfo, final IplantAnnouncer announcer) {
+    public AnalysesPresenterImpl(final AnalysesView view, final EventBus eventBus, final AnalysesAutoBeanFactory factory, final AnalysisServiceFacade analysisService, final UserInfo userInfo, final IplantAnnouncer announcer, final IplantDisplayStrings displayStrings, final IplantErrorStrings errorStrings) {
         this.view = view;
         this.eventBus = eventBus;
         this.factory = factory;
         this.analysisService = analysisService;
         this.userInfo = userInfo;
         this.announcer = announcer;
+        this.displayStrings = displayStrings;
+        this.errorStrings = errorStrings;
         this.view.addSelectionChangedHandler(this);
         this.view.setPresenter(this);
     }
 
     @Override
     public void cancelSelectedAnalyses() {
-        if (view.getSelectedAnalyses().size() > 0) {
-            final List<Analysis> execs = view.getSelectedAnalyses();
-            for (Analysis ae : execs) {
-                if (ae.getStatus().equalsIgnoreCase((AnalysisExecutionStatus.SUBMITTED.toString()))
-                            || ae.getStatus().equalsIgnoreCase((AnalysisExecutionStatus.IDLE.toString()))
-                            || ae.getStatus().equalsIgnoreCase((AnalysisExecutionStatus.RUNNING.toString()))) {
-                    analysisService.stopAnalysis(ae.getId(),
-                                                        new CancelAnalysisServiceCallback(ae));
-                }
-            }
+        if (view.getSelectedAnalyses().size() <= 0) {
+            return;
+        }
+        final List<Analysis> execs = view.getSelectedAnalyses();
+        for (Analysis ae : execs) {
+                analysisService.stopAnalysis(ae, new CancelAnalysisServiceCallback(ae));
         }
     }
 
     @Override
     public void deleteSelectedAnalyses() {
 
-        if (view.getSelectedAnalyses().size() > 0) {
-            final List<Analysis> execs = view.getSelectedAnalyses();
-
-            ConfirmMessageBox cmb = new ConfirmMessageBox(org.iplantc.de.resources.client.messages.I18N.DISPLAY.warning(),
-                                                                 I18N.DISPLAY.analysesExecDeleteWarning());
-            cmb.setPredefinedButtons(PredefinedButton.OK, PredefinedButton.CANCEL);
-            cmb.addHideHandler(new DeleteMessageBoxHandler(execs));
-            cmb.show();
+        if (view.getSelectedAnalyses().size() <= 0) {
+            return;
         }
+        final List<Analysis> analysesToBeDeleted = view.getSelectedAnalyses();
+
+        ConfirmMessageBox cmb = new ConfirmMessageBox(displayStrings.warning(), displayStrings.analysesExecDeleteWarning());
+        cmb.setPredefinedButtons(PredefinedButton.OK, PredefinedButton.CANCEL);
+        cmb.addHideHandler(new DeleteMessageBoxHandler(analysesToBeDeleted));
+        cmb.show();
     }
 
     @Override
@@ -301,7 +259,9 @@ public class AnalysesPresenterImpl implements AnalysesView.Presenter {
         analysisService.renameAnalysis(selectedAnalyses.get(0), newName, new AsyncCallback<Void>() {
             @Override
             public void onFailure(Throwable caught) {
-                announcer.schedule(new ErrorAnnouncementConfig(caught.getMessage()));
+                final String message = caught.getMessage();
+                SafeHtml msg = SafeHtmlUtils.fromString(message);
+                announcer.schedule(new ErrorAnnouncementConfig(msg, true, 3000));
             }
 
             @Override
@@ -314,6 +274,26 @@ public class AnalysesPresenterImpl implements AnalysesView.Presenter {
     @Override
     public void setViewDebugId(String baseId) {
         view.asWidget().ensureDebugId(baseId);
+    }
+
+    @Override
+    public void updateComments() {
+        final List<Analysis> selectedAnalyses = getSelectedAnalyses();
+        assert selectedAnalyses.size() == 1;
+
+        analysisService.updateAnalysisComments(selectedAnalyses.get(0), new AsyncCallback<Void>() {
+            @Override
+            public void onFailure(Throwable caught) {
+                final String message = caught.getMessage();
+                SafeHtml msg = SafeHtmlUtils.fromString(message);
+                announcer.schedule(new ErrorAnnouncementConfig(msg, true, 3000));
+            }
+
+            @Override
+            public void onSuccess(Void result) {
+
+            }
+        });
     }
 
     public void retrieveParameterData(final Analysis analysis, final AnalysisParamView apv){

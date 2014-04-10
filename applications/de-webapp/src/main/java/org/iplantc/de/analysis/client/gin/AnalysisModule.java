@@ -9,25 +9,18 @@ import org.iplantc.de.client.models.analysis.Analysis;
 import com.google.gwt.inject.client.AbstractGinModule;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
+import com.google.inject.TypeLiteral;
 
 import com.sencha.gxt.core.client.IdentityValueProvider;
 import com.sencha.gxt.data.shared.ListStore;
-import com.sencha.gxt.data.shared.ModelKeyProvider;
 import com.sencha.gxt.widget.core.client.grid.CheckBoxSelectionModel;
 
 public class AnalysisModule extends AbstractGinModule {
 
-    private static class AnalysisModelKeyProvider implements ModelKeyProvider<Analysis> {
-        @Override
-        public String getKey(Analysis item) {
-            return item.getId();
-        }
-    }
-
-    private CheckBoxSelectionModel<Analysis> analysisCheckBoxSelectionModel = new CheckBoxSelectionModel<>(new IdentityValueProvider<Analysis>());
 
     @Override
     protected void configure() {
+        bind(new TypeLiteral<ListStore<Analysis>>() {}).toProvider(AnalysisModuleListStoreProvider.class);
         bind(AnalysesView.class).to(AnalysesViewImpl.class);
         bind(AnalysesView.ViewMenu.class).to(AnalysesViewMenuImpl.class);
         bind(AnalysisColumnModel.class);
@@ -39,11 +32,7 @@ public class AnalysisModule extends AbstractGinModule {
     @Provides
     @Singleton
     public CheckBoxSelectionModel<Analysis> createCheckboxSelectionModel(){
-        return analysisCheckBoxSelectionModel;
+        return new CheckBoxSelectionModel<Analysis>(new IdentityValueProvider<Analysis>());
     }
 
-    @Provides
-    public ListStore<Analysis> createAnalysisListStore(){
-        return new ListStore<>(new AnalysisModelKeyProvider());
-    }
 }

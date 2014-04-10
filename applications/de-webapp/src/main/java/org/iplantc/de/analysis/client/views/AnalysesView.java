@@ -43,6 +43,8 @@ public interface AnalysesView extends IsWidget, SelectionChangedEvent.HasSelecti
         void setSelectedAnalyses(List<Analysis> selectedAnalyses);
 
         void setViewDebugId(String baseId);
+
+        void updateComments();
     }
 
     public interface ViewMenu extends IsWidget, SelectionChangedEvent.SelectionChangedHandler<Analysis> {
@@ -63,8 +65,6 @@ public interface AnalysesView extends IsWidget, SelectionChangedEvent.HasSelecti
 
     public HandlerRegistration addLoadHandler(
             LoadHandler<FilterPagingLoadConfig, PagingLoadResult<Analysis>> handler);
-
-    void updateComments();
 
     void viewParams();
 }

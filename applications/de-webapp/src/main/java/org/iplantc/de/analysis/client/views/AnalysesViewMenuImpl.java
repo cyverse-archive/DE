@@ -50,11 +50,17 @@ public class AnalysesViewMenuImpl extends Composite implements AnalysesView.View
     @UiField
     MenuItem viewParamsMI;
     private static AnalysesToolbarUiBinder uiBinder = GWT.create(AnalysesToolbarUiBinder.class);
-    private AnalysesView.Presenter presenter;
     private AnalysesView parent;
+    private AnalysesView.Presenter presenter;
 
     public AnalysesViewMenuImpl() {
        initWidget(uiBinder.createAndBindUi(this));
+    }
+
+    @Override
+    public void init(AnalysesView.Presenter presenter, AnalysesView parent) {
+        this.presenter = presenter;
+        this.parent = parent;
     }
 
     @Override
@@ -62,6 +68,8 @@ public class AnalysesViewMenuImpl extends Composite implements AnalysesView.View
         final List<Analysis> selection = event.getSelection();
 
         int size = selection.size();
+        final boolean canCancelSelection = canCancelSelection(selection);
+        final boolean canDeleteSelection = canDeleteSelection(selection);
         switch (size) {
             case 0:
                 goToFolderMI.setEnabled(false);
@@ -77,11 +85,11 @@ public class AnalysesViewMenuImpl extends Composite implements AnalysesView.View
                 goToFolderMI.setEnabled(true);
                 viewParamsMI.setEnabled(true);
                 relaunchMI.setEnabled(!selection.get(0).isAppDisabled());
-                cancelMI.setEnabled(canCancelSelection(selection));
-                deleteMI.setEnabled(true);
+                cancelMI.setEnabled(canCancelSelection);
+                deleteMI.setEnabled(canDeleteSelection);
 
-                renameMI.setEnabled(false);
-                updateCommentsMI.setEnabled(false);
+                renameMI.setEnabled(true);
+                updateCommentsMI.setEnabled(true);
                 break;
 
             default:
@@ -89,47 +97,29 @@ public class AnalysesViewMenuImpl extends Composite implements AnalysesView.View
                 goToFolderMI.setEnabled(false);
                 viewParamsMI.setEnabled(false);
                 relaunchMI.setEnabled(false);
-                cancelMI.setEnabled(canCancelSelection(selection));
-                deleteMI.setEnabled(true);
+
+                cancelMI.setEnabled(canCancelSelection);
+                deleteMI.setEnabled(canDeleteSelection);
 
                 renameMI.setEnabled(false);
                 updateCommentsMI.setEnabled(false);
         }
-    }
 
-    @Override
-    public void init(AnalysesView.Presenter presenter, AnalysesView parent) {
-        this.presenter = presenter;
-        this.parent = parent;
-    }
+        if(canCancelSelection){
+           // If we can cancel selection, clear tooltip
+            cancelMI.setToolTip("");
+        } else {
+            // Tell them why they can't cancel
+            cancelMI.setToolTip("Can only cancel analyses whose status is either " + SUBMITTED + ", " + IDLE + ", or " + RUNNING);
+        }
 
-    @UiHandler("goToFolderMI")
-    void onGoToFolderSelected(SelectionEvent<Item> event){
-        presenter.goToSelectedAnalysisFolder();
-    }
-    @UiHandler("viewParamsMI")
-    void onViewParamsSelected(SelectionEvent<Item> event){
-        parent.viewParams();
-    }
-    @UiHandler("relaunchMI")
-    void onRelaunchSelected(SelectionEvent<Item> event){
-        presenter.relaunchSelectedAnalysis();
-    }
-    @UiHandler("cancelMI")
-    void onCancelSelected(SelectionEvent<Item> event){
-        presenter.cancelSelectedAnalyses();
-    }
-    @UiHandler("deleteMI")
-    void onDeleteSelected(SelectionEvent<Item> event){
-        presenter.deleteSelectedAnalyses();
-    }
-    @UiHandler("renameMI")
-    void onRenameSelected(SelectionEvent<Item> event){
-        presenter.renameSelectedAnalysis();
-    }
-    @UiHandler("updateCommentsMI")
-    void onUpdateCommentsSelected(SelectionEvent<Item> event){
-        parent.updateComments();
+        if(canDeleteSelection){
+            // If we can delete selection, clear tooltip
+            deleteMI.setToolTip("");
+        } else {
+            // Tell them why they can't delete
+            deleteMI.setToolTip("Can only delete analyses whose status is either " + FAILED + " or " + COMPLETED);
+        }
     }
 
     @Override
@@ -150,18 +140,82 @@ public class AnalysesViewMenuImpl extends Composite implements AnalysesView.View
 
     }
 
+    /**
+     * Determines if the cancel button should be enable for the given selection.
+     *
+     *
+     * @param selection
+     * @return true if the selection contains ANY status which is SUBMITTED, IDLE, or RUNNING; false otherwise.
+     */
     boolean canCancelSelection(final List<Analysis> selection){
         for(Analysis ae : selection){
             if(ae == null)
                 continue;
 
-            if(SUBMITTED.toString().equalsIgnoreCase(ae.getStatus())
-                    || IDLE.toString().equalsIgnoreCase(ae.getStatus())
-                    || RUNNING.toString().equalsIgnoreCase(ae.getStatus())){
+            final String status = ae.getStatus();
+            if(SUBMITTED.toString().equalsIgnoreCase(status)
+                    || IDLE.toString().equalsIgnoreCase(status)
+                    || RUNNING.toString().equalsIgnoreCase(status)){
                 return true;
             }
         }
         return false;
+    }
+
+    /**
+     * Determines if the delete button should be enabled for the given selection.
+     *
+     * @param selection
+     * @return true if the selection ONLY contains FAILED or COMPLETED status, false otherwise.
+     */
+    boolean canDeleteSelection(List<Analysis> selection) {
+        for(Analysis ae : selection){
+            if(ae == null)
+                continue;
+
+            final String status = ae.getStatus();
+            if(!(FAILED.toString().equalsIgnoreCase(status)
+                    || COMPLETED.toString().equalsIgnoreCase(status))){
+                return false;
+            }
+
+        }
+        return true;
+    }
+
+    @UiHandler("cancelMI")
+    void onCancelSelected(SelectionEvent<Item> event){
+        presenter.cancelSelectedAnalyses();
+    }
+
+    @UiHandler("deleteMI")
+    void onDeleteSelected(SelectionEvent<Item> event){
+        presenter.deleteSelectedAnalyses();
+    }
+
+    @UiHandler("goToFolderMI")
+    void onGoToFolderSelected(SelectionEvent<Item> event){
+        presenter.goToSelectedAnalysisFolder();
+    }
+
+    @UiHandler("relaunchMI")
+    void onRelaunchSelected(SelectionEvent<Item> event){
+        presenter.relaunchSelectedAnalysis();
+    }
+
+    @UiHandler("renameMI")
+    void onRenameSelected(SelectionEvent<Item> event){
+        presenter.renameSelectedAnalysis();
+    }
+
+    @UiHandler("updateCommentsMI")
+    void onUpdateCommentsSelected(SelectionEvent<Item> event){
+        presenter.updateComments();
+    }
+
+    @UiHandler("viewParamsMI")
+    void onViewParamsSelected(SelectionEvent<Item> event){
+        parent.viewParams();
     }
 
 }

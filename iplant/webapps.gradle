@@ -5,18 +5,18 @@
 configure(subprojects.findAll{it.name == "de" || it.name == "belphegor"}) {
    apply plugin: 'war'
    apply plugin: 'gwt'
-   apply plugin: 'jetty'
+    apply plugin: 'jetty'
 
-   dependencies {
-      compile "com.sencha.gxt:gxt:$gxtVersion"
-      compile project(':ui-commons-module'), 
-              project(':ui-applications-module'),
-              project(':ui-resources-module'),
-              project(':confluence-client'),
-              project(':de-common-module')
-
-      testCompile "junit:junit:$jUnitVersion"
-   }
+    dependencies {
+        compile "com.sencha.gxt:gxt:$gxtVersion"
+        compile project(':ui-commons-module'),
+                project(':ui-applications-module'),
+                project(':ui-resources-module'),
+                project(':confluence-client'),
+                project(':de-common-module')
+        testCompile 'com.google.gwt.gwtmockito:gwtmockito:1.1.2'
+        testCompile project(':de-common-module').sourceSets.test.output
+    }
 
    gwt { 
       gwtVersion="$gwtVer"

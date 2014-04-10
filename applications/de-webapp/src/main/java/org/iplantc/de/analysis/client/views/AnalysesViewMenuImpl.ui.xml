@@ -16,15 +16,20 @@
                 <menu:menu>
                     <menu:Menu>
                         <menu:MenuItem ui:field="goToFolderMI"
-                                       text="Go to Output Folder"/>
+                                       text="Go to Output Folder"
+                                       enabled="false"/>
                         <menu:MenuItem ui:field="viewParamsMI"
-                                       text="View Parameters"/>
+                                       text="View Parameters"
+                                       enabled="false"/>
                         <menu:MenuItem ui:field="relaunchMI"
-                                       text="Relaunch"/>
+                                       text="Relaunch"
+                                       enabled="false"/>
                         <menu:MenuItem ui:field="cancelMI"
-                                       text="Cancel"/>
+                                       text="Cancel"
+                                       enabled="false"/>
                         <menu:MenuItem ui:field="deleteMI"
-                                       text="Delete"/>
+                                       text="Delete"
+                                       enabled="false"/>
                     </menu:Menu>
 
                 </menu:menu>
@@ -35,9 +40,11 @@
                 <menu:menu>
                     <menu:Menu>
                         <menu:MenuItem ui:field="renameMI"
-                                       text="Rename"/>
+                                       text="Rename"
+                                       enabled="false"/>
                         <menu:MenuItem ui:field="updateCommentsMI"
-                                       text="Update Comments..."/>
+                                       text="Update Comments..."
+                                       enabled="false"/>
                     </menu:Menu>
                 </menu:menu>
 

@@ -2,7 +2,6 @@ package org.iplantc.de.client.services.impl;
 
 import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.*;
 import org.iplantc.de.client.models.DEProperties;
-import org.iplantc.de.client.models.HasId;
 import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.client.models.analysis.*;
 import org.iplantc.de.client.models.apps.integration.ArgumentType;
@@ -10,6 +9,7 @@ import org.iplantc.de.client.services.AnalysisServiceFacade;
 import org.iplantc.de.client.services.DEServiceFacade;
 import org.iplantc.de.client.services.converters.AsyncCallbackConverter;
 import org.iplantc.de.client.util.AppTemplateUtils;
+import org.iplantc.de.client.util.DiskResourceUtil;
 import org.iplantc.de.shared.services.ServiceCallWrapper;
 
 import com.google.common.base.Strings;
@@ -24,6 +24,7 @@ import com.google.inject.Inject;
 import com.google.web.bindery.autobean.shared.AutoBean;
 import com.google.web.bindery.autobean.shared.AutoBeanCodex;
 import com.google.web.bindery.autobean.shared.Splittable;
+import com.google.web.bindery.autobean.shared.impl.StringQuoter;
 
 import com.sencha.gxt.data.shared.SortDir;
 import com.sencha.gxt.data.shared.SortInfo;
@@ -83,7 +84,7 @@ public class AnalysisServiceFacadeImpl implements AnalysisServiceFacade {
             return REFERENCE_GENOME_TYPES.contains(typeName.toLowerCase());
         }
 
-        final Set<ArgumentType> INPUT_TYPES = Sets.immutableEnumSet( ArgumentType.Input, ArgumentType.FileInput, ArgumentType.FolderInput,
+        final Set<ArgumentType> INPUT_TYPES = Sets.immutableEnumSet(ArgumentType.Input, ArgumentType.FileInput, ArgumentType.FolderInput,
                                                                            ArgumentType.MultiFileSelector);
 
         boolean isInputType(ArgumentType type) {
@@ -98,7 +99,7 @@ public class AnalysisServiceFacadeImpl implements AnalysisServiceFacade {
             }
             AutoBean<SelectionValue> ab = AutoBeanCodex.decode(factory, SelectionValue.class, val);
             ap.setDisplayValue(ab.as().getDisplay());
-            return Lists.<AnalysisParameter> newArrayList(ap);
+            return Lists.<AnalysisParameter>newArrayList(ap);
         }
 
         List<AnalysisParameter> parseStringValue(final AnalysisParameter ap) {
@@ -127,21 +128,7 @@ public class AnalysisServiceFacadeImpl implements AnalysisServiceFacade {
 
     @Override
     public void getAnalyses(final FilterPagingLoadConfig loadConfig, AsyncCallback<PagingLoadResultBean<Analysis>> callback) {
-        getAnalyses(userInfo.getWorkspaceId(), loadConfig, new AsyncCallbackConverter<String, PagingLoadResultBean<Analysis>>(callback) {
-
-            @Override
-            protected PagingLoadResultBean<Analysis> convertFrom(String object) {
-                AnalysesList ret = AutoBeanCodex.decode(factory, AnalysesList.class, object).as();
-                PagingLoadResultBean<Analysis> loadResult = new PagingLoadResultBean<Analysis>(ret.getAnalysisList(), ret.getTotal(), loadConfig.getOffset());
-                return loadResult;
-            }
-
-        });
-    }
-
-    @Override
-    public void getAnalyses(String workspaceId, FilterPagingLoadConfig loadConfig,
-            AsyncCallback<String> callback) {
+        final String workspaceId = userInfo.getWorkspaceId();
         StringBuilder address = new StringBuilder(deProperties.getMuleServiceBaseUrl());
 
         address.append("workspaces/"); //$NON-NLS-1$
@@ -199,17 +186,26 @@ public class AnalysisServiceFacadeImpl implements AnalysisServiceFacade {
         }
 
         ServiceCallWrapper wrapper = new ServiceCallWrapper(address.toString());
-        deServiceFacade.getServiceData(wrapper, callback);
+        deServiceFacade.getServiceData(wrapper, new AsyncCallbackConverter<String, PagingLoadResultBean<Analysis>>(callback) {
+
+            @Override
+            protected PagingLoadResultBean<Analysis> convertFrom(String object) {
+                AnalysesList ret = AutoBeanCodex.decode(factory, AnalysesList.class, object).as();
+                PagingLoadResultBean<Analysis> loadResult = new PagingLoadResultBean<Analysis>(ret.getAnalysisList(), ret.getTotal(), loadConfig.getOffset());
+                return loadResult;
+            }
+
+        });
     }
 
-    /* (non-Javadoc)
-     * @see org.iplantc.de.client.services.impl.AnalysisServiceFacade#deleteAnalysis(java.lang.String, java.lang.String, com.google.gwt.user.client.rpc.AsyncCallback)
-     */
     @Override
-    public void deleteAnalysis(String workspaceId, String json, AsyncCallback<String> callback) {
+    public void deleteAnalyses(List<Analysis> analysesToBeDeleted, AsyncCallback<String> callback) {
         String address = deProperties.getMuleServiceBaseUrl() + "workspaces/" //$NON-NLS-1$
-                + workspaceId + "/executions" + "/delete"; //$NON-NLS-1$ //$NON-NLS-2$
-        ServiceCallWrapper wrapper = new ServiceCallWrapper(PUT, address, json);
+                                 + userInfo.getWorkspaceId() + "/executions" + "/delete"; //$NON-NLS-1$ //$NON-NLS-2$
+        final Splittable stringIdListSplittable = DiskResourceUtil.createStringIdListSplittable(analysesToBeDeleted);
+        final Splittable payload = StringQuoter.createSplittable();
+        stringIdListSplittable.assign(payload, "executions");
+        ServiceCallWrapper wrapper = new ServiceCallWrapper(PUT, address, payload.getPayload());
 
         deServiceFacade.getServiceData(wrapper, callback);
     }
@@ -217,36 +213,21 @@ public class AnalysisServiceFacadeImpl implements AnalysisServiceFacade {
     @Override
     public void renameAnalysis(Analysis analysis, String newName, AsyncCallback<Void> callback) {
         // TODO CORE-5307 implement when new service is created.
-        throw new UnsupportedOperationException("Not yet implemented");
+        callback.onFailure(new UnsupportedOperationException("Not yet implemented"));
 
     }
 
-    /* (non-Javadoc)
-     * @see org.iplantc.de.client.services.impl.AnalysisServiceFacade#stopAnalysis(java.lang.String, com.google.gwt.user.client.rpc.AsyncCallback)
-     */
     @Override
-    public void stopAnalysis(String analysisId, AsyncCallback<String> callback) {
+    public void stopAnalysis(Analysis analysis, AsyncCallback<String> callback) {
         String address = deProperties.getMuleServiceBaseUrl() + "stop-analysis/"
-                + analysisId;
+                                 + analysis.getId();
         ServiceCallWrapper wrapper = new ServiceCallWrapper(DELETE, address);
 
         deServiceFacade.getServiceData(wrapper, callback);
     }
 
-    /* (non-Javadoc)
-     * @see org.iplantc.de.client.services.impl.AnalysisServiceFacade#getAnalysisParams(java.lang.String, com.google.gwt.user.client.rpc.AsyncCallback)
-     */
     @Override
-    public void getAnalysisParams(String analysisId, AsyncCallback<String> callback) {
-        String address = deProperties.getMuleServiceBaseUrl()
-                + "get-property-values/" + analysisId;
-        ServiceCallWrapper wrapper = new ServiceCallWrapper(GET, address);
-
-        deServiceFacade.getServiceData(wrapper, callback);
-    }
-
-    @Override
-    public void getAnalysisParams(Analysis analysis, AsyncCallback<List<AnalysisParameter>> callback){
+    public void getAnalysisParams(Analysis analysis, AsyncCallback<List<AnalysisParameter>> callback) {
         String address = deProperties.getMuleServiceBaseUrl()
                                  + "get-property-values/" + analysis.getId();
         ServiceCallWrapper wrapper = new ServiceCallWrapper(GET, address);
@@ -254,31 +235,10 @@ public class AnalysisServiceFacadeImpl implements AnalysisServiceFacade {
         deServiceFacade.getServiceData(wrapper, new StringListAsyncCallbackConverter(callback, factory));
     }
 
-
-
-    /* (non-Javadoc)
-     * @see org.iplantc.de.client.services.impl.AnalysisServiceFacade#launchAnalysis(java.lang.String, java.lang.String, com.google.gwt.user.client.rpc.AsyncCallback)
-     */
     @Override
-    public void launchAnalysis(String workspaceId, String json, AsyncCallback<String> callback) {
-        String address = deProperties.getMuleServiceBaseUrl() + "workspaces/" //$NON-NLS-1$
-                + workspaceId + "/newexperiment"; //$NON-NLS-1$
-
-        ServiceCallWrapper wrapper = new ServiceCallWrapper(PUT, address, json);
-
-        deServiceFacade.getServiceData(wrapper, callback);
+    public void updateAnalysisComments(Analysis analysis, AsyncCallback<Void> callback) {
+        // TODO CORE-5307 implement when new service is created.
+        callback.onFailure(new UnsupportedOperationException("Not yet implemented"));
     }
-
-    /* (non-Javadoc)
-     * @see org.iplantc.de.client.services.impl.AnalysisServiceFacade#relaunchAnalysis(org.iplantc.de.client.models.HasId, com.google.gwt.user.client.rpc.AsyncCallback)
-     */
-    @Override
-    public void relaunchAnalysis(HasId analyisId, AsyncCallback<String> callback) {
-        String address = deProperties.getUnproctedMuleServiceBaseUrl() + "analysis-rerun-info/" + analyisId.getId();
-
-        ServiceCallWrapper wrapper = new ServiceCallWrapper(GET, address);
-
-        deServiceFacade.getServiceData(wrapper, callback);
-    }
-
 }
+

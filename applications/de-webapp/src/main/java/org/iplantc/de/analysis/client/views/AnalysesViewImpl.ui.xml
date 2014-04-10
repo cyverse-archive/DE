@@ -3,7 +3,6 @@
 	         xmlns:container="urn:import:com.sencha.gxt.widget.core.client.container"
     	     xmlns:gxt="urn:import:com.sencha.gxt.widget.core.client"
 	         xmlns:grid="urn:import:com.sencha.gxt.widget.core.client.grid"
-             xmlns:toolbar="urn:import:org.iplantc.de.analysis.client.views"
 	         xmlns:paging="urn:import:org.iplantc.de.client.desktop.widget">
 
    <ui:with type="org.iplantc.de.resources.client.IplantResources" field="icons"/>
@@ -27,7 +26,7 @@
 	</ui:with>
 	<ui:with field="northData"
 		type="com.sencha.gxt.widget.core.client.container.BorderLayoutContainer.BorderLayoutData">
-		  <ui:attributes size="30"
+		  <ui:attributes size="20"
                      maxSize="30"
                      hidden="false"/>
 	</ui:with>
@@ -55,8 +54,9 @@
 				</container:north>
 				<!-- This is the main panel -->
 				<container:center layoutData="{centerData}">
-					<gxt:FramedPanel ui:field="mainPanel"
-						pixelSize="600, 300" collapsible="false" headerVisible="false">
+					<!--<gxt:FramedPanel pixelSize="600, 300" -->
+                                     <!--collapsible="false" -->
+                                     <!--headerVisible="false">-->
 						<container:VerticalLayoutContainer borders="true">
 							<container:child layoutData="{middleData}">
 								<grid:Grid ui:field="grid" cm="{cm}" store="{listStore}"
@@ -69,7 +69,7 @@
 									ui:field="toolBar"></paging:DEPagingToolbar>
 							</container:child>
 						</container:VerticalLayoutContainer>
-					</gxt:FramedPanel>
+					<!--</gxt:FramedPanel>-->
 				</container:center>
 			</container:BorderLayoutContainer>
 		</container:child>

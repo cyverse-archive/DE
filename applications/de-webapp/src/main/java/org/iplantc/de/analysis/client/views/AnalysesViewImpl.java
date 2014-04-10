@@ -24,7 +24,6 @@ import com.sencha.gxt.data.shared.ListStore;
 import com.sencha.gxt.data.shared.ModelKeyProvider;
 import com.sencha.gxt.data.shared.loader.*;
 import com.sencha.gxt.widget.core.client.Composite;
-import com.sencha.gxt.widget.core.client.FramedPanel;
 import com.sencha.gxt.widget.core.client.container.BorderLayoutContainer;
 import com.sencha.gxt.widget.core.client.container.BorderLayoutContainer.BorderLayoutData;
 import com.sencha.gxt.widget.core.client.grid.CheckBoxSelectionModel;
@@ -65,8 +64,6 @@ public class AnalysesViewImpl extends Composite implements AnalysesView {
     @UiField
     GridView<Analysis> gridView;
     @UiField
-    FramedPanel mainPanel;
-    @UiField
     BorderLayoutData northData;
 
     @UiField
@@ -88,7 +85,7 @@ public class AnalysesViewImpl extends Composite implements AnalysesView {
         this.viewMenu = menuBar;
         this.displayStrings = displayStrings;
         initWidget(uiBinder.createAndBindUi(this));
-        con.setNorthWidget(menuBar);
+        con.setNorthWidget(menuBar, northData);
 
         PagingLoader<FilterPagingLoadConfig, PagingLoadResult<Analysis>> loader = new PagingLoader<FilterPagingLoadConfig, PagingLoadResult<Analysis>>(proxy);
         loader.useLoadConfig(new FilterPagingLoadConfigBean());
@@ -158,11 +155,6 @@ public class AnalysesViewImpl extends Composite implements AnalysesView {
     public void setPresenter(Presenter presenter) {
         this.presenter = presenter;
         viewMenu.init(presenter, this);
-    }
-
-    @Override
-    public void updateComments() {
-
     }
 
     @Override
