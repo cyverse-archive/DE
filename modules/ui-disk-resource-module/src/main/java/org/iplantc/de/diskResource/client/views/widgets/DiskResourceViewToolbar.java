@@ -59,8 +59,10 @@ public interface DiskResourceViewToolbar extends IsWidget {
         void doDataLinks();
 
         void onMove();
-        
+
         void onNewFile();
+
+        void onNewFolder();
 
         /**
          * Reloads the given folder in the view's navigation tree, and if it's the currently selected

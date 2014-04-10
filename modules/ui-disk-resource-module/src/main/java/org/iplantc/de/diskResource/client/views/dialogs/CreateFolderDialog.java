@@ -21,7 +21,7 @@ public class CreateFolderDialog extends IPlantPromptDialog {
         super(I18N.DISPLAY.folderName(), -1, "", new DiskResourceNameValidator());
 
         setHeadingText(I18N.DISPLAY.newFolder());
-        initDestPathLabel(parentFolder.getId());
+        initDestPathLabel(parentFolder.getPath());
 
         addOkButtonSelectHandler(new SelectHandler() {
 

@@ -4,7 +4,6 @@ import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.client.models.diskResources.File;
 import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.diskResource.client.search.views.DiskResourceSearchField;
-import org.iplantc.de.diskResource.client.views.dialogs.CreateFolderDialog;
 import org.iplantc.de.diskResource.client.views.dialogs.RenameFileDialog;
 import org.iplantc.de.diskResource.client.views.dialogs.RenameFolderDialog;
 import org.iplantc.de.resources.client.messages.I18N;
@@ -135,8 +134,7 @@ public class DiskResourceViewToolbarImpl implements DiskResourceViewToolbar {
 
     @UiHandler("newFolderButton")
     void onNewFolderClicked(SelectionEvent<Item> event) {
-        CreateFolderDialog dlg = new CreateFolderDialog(presenter.getSelectedFolder(), presenter);
-        dlg.show();
+        presenter.onNewFolder();
     }
 
     @UiHandler("refreshButton")
