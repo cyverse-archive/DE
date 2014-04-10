@@ -24,30 +24,36 @@ import java.util.List;
 public interface AnalysesView extends IsWidget, SelectionChangedEvent.HasSelectionChangedHandlers {
     public interface Presenter extends org.iplantc.de.commons.client.presenter.Presenter, SelectionChangedEvent.SelectionChangedHandler<Analysis> {
 
+        void cancelSelectedAnalyses();
+
+        void deleteSelectedAnalyses();
+
         void go(final HasOneWidget container, List<Analysis> selectedAnalyses);
 
         List<Analysis> getSelectedAnalyses();
+
+        void goToSelectedAnalysisFolder();
+
+        void relaunchSelectedAnalysis();
+
+        void renameSelectedAnalysis();
+
+        void retrieveParameterData(Analysis analysis, AnalysisParamView apv);
 
         void setSelectedAnalyses(List<Analysis> selectedAnalyses);
 
         void setViewDebugId(String baseId);
     }
 
-    public interface ViewMenu extends IsWidget {
-        void setDeleteButtonEnabled(boolean enabled);
-
-        void setViewParamButtonEnabled(boolean enabled);
-
-        void setCancelButtonEnabled(boolean enabled);
-
-        void setRelaunchAnalysisEnabled(boolean enabled);
+    public interface ViewMenu extends IsWidget, SelectionChangedEvent.SelectionChangedHandler<Analysis> {
+        void init(Presenter presenter, AnalysesView parent);
     }
-
-    ViewMenu getViewMenu();
 
     public void loadAnalyses();
 
     public List<Analysis> getSelectedAnalyses();
+
+    void setPresenter(Presenter presenter);
 
     public void setSelectedAnalyses(List<Analysis> selectedAnalyses);
 
@@ -57,4 +63,8 @@ public interface AnalysesView extends IsWidget, SelectionChangedEvent.HasSelecti
 
     public HandlerRegistration addLoadHandler(
             LoadHandler<FilterPagingLoadConfig, PagingLoadResult<Analysis>> handler);
+
+    void updateComments();
+
+    void viewParams();
 }

@@ -31,6 +31,7 @@ public class AnalysisModule extends AbstractGinModule {
         bind(AnalysesView.class).to(AnalysesViewImpl.class);
         bind(AnalysesView.ViewMenu.class).to(AnalysesViewMenuImpl.class);
         bind(AnalysisColumnModel.class);
+        bind(AnalysisParamViewColumnModel.class);
         bind(AnalysesView.Presenter.class).to(AnalysesPresenterImpl.class);
         bind(AnalysisRpcProxy.class);
     }

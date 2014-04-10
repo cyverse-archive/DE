@@ -2,11 +2,14 @@ package org.iplantc.de.client.services;
 
 import org.iplantc.de.client.models.HasId;
 import org.iplantc.de.client.models.analysis.Analysis;
+import org.iplantc.de.client.models.analysis.AnalysisParameter;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import com.sencha.gxt.data.shared.loader.FilterPagingLoadConfig;
 import com.sencha.gxt.data.shared.loader.PagingLoadResultBean;
+
+import java.util.List;
 
 public interface AnalysisServiceFacade {
 
@@ -36,6 +39,8 @@ public interface AnalysisServiceFacade {
      */
     void deleteAnalysis(String workspaceId, String json, AsyncCallback<String> callback);
 
+    void renameAnalysis(Analysis analysis, String newName, AsyncCallback<Void> callback);
+
     /**
      * Stop a currently running analysis
      * 
@@ -45,6 +50,8 @@ public interface AnalysisServiceFacade {
     void stopAnalysis(String analysisId, AsyncCallback<String> callback);
 
     void getAnalysisParams(String analysisId, AsyncCallback<String> callback);
+
+    void getAnalysisParams(Analysis analysis, AsyncCallback<List<AnalysisParameter>> callback);
 
     /**
      * Launch a wizard analysis

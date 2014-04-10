@@ -3,11 +3,13 @@
  */
 package org.iplantc.de.analysis.client.views;
 
-import org.iplantc.de.analysis.shared.AnalysisModule;
 import org.iplantc.de.analysis.client.presenter.proxy.AnalysisRpcProxy;
+import org.iplantc.de.analysis.shared.AnalysisModule;
 import org.iplantc.de.client.desktop.widget.DEPagingToolbar;
 import org.iplantc.de.client.models.analysis.Analysis;
+import org.iplantc.de.client.models.analysis.AnalysisParameter;
 import org.iplantc.de.resources.client.messages.I18N;
+import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.HandlerRegistration;
@@ -19,6 +21,7 @@ import com.google.inject.Inject;
 
 import com.sencha.gxt.core.client.Style.SelectionMode;
 import com.sencha.gxt.data.shared.ListStore;
+import com.sencha.gxt.data.shared.ModelKeyProvider;
 import com.sencha.gxt.data.shared.loader.*;
 import com.sencha.gxt.widget.core.client.Composite;
 import com.sencha.gxt.widget.core.client.FramedPanel;
@@ -39,30 +42,30 @@ import java.util.List;
  */
 public class AnalysesViewImpl extends Composite implements AnalysesView {
 
-    private static MyUiBinder uiBinder = GWT.create(MyUiBinder.class);
+    private class AnalysisParameterKeyProvider implements ModelKeyProvider<AnalysisParameter> {
+
+        @Override
+        public String getKey(AnalysisParameter item) {
+            return item.getId();
+        }
+
+    }
 
     @UiTemplate("AnalysesViewImpl.ui.xml")
     interface MyUiBinder extends UiBinder<Widget, AnalysesViewImpl> {
     }
-
-    @UiField(provided = true)
-    final ListStore<Analysis> listStore;
-
     @UiField(provided = true)
     final ColumnModel<Analysis> cm;
-
-    @UiField
-    GridView<Analysis> gridView;
-
-    @UiField
-    Grid<Analysis> grid;
-
-    @UiField
-    FramedPanel mainPanel;
-
+    @UiField(provided = true)
+    final ListStore<Analysis> listStore;
     @UiField
     BorderLayoutContainer con;
-
+    @UiField
+    Grid<Analysis> grid;
+    @UiField
+    GridView<Analysis> gridView;
+    @UiField
+    FramedPanel mainPanel;
     @UiField
     BorderLayoutData northData;
 
@@ -70,15 +73,20 @@ public class AnalysesViewImpl extends Composite implements AnalysesView {
     DEPagingToolbar toolBar;
 
     ViewMenu viewMenu;
+    private static MyUiBinder uiBinder = GWT.create(MyUiBinder.class);
+    private final IplantDisplayStrings displayStrings;
+    private final AnalysisParamViewColumnModel paramViewColumnModel;
 
     private Presenter presenter;
 
     @Inject
-    public AnalysesViewImpl(final ListStore<Analysis> listStore, final AnalysisColumnModel cm,
-                            final CheckBoxSelectionModel<Analysis> checkBoxModel, final ViewMenu menuBar, final AnalysisRpcProxy proxy) {
+    public AnalysesViewImpl(final ListStore<Analysis> listStore, final AnalysisColumnModel cm, final AnalysisParamViewColumnModel paramViewColumnModel,
+                            final CheckBoxSelectionModel<Analysis> checkBoxModel, final ViewMenu menuBar, final AnalysisRpcProxy proxy, final IplantDisplayStrings displayStrings) {
         this.listStore = listStore;
         this.cm = cm;
+        this.paramViewColumnModel = paramViewColumnModel;
         this.viewMenu = menuBar;
+        this.displayStrings = displayStrings;
         initWidget(uiBinder.createAndBindUi(this));
         con.setNorthWidget(menuBar);
 
@@ -92,6 +100,17 @@ public class AnalysesViewImpl extends Composite implements AnalysesView {
         grid.setSelectionModel(checkBoxModel);
         grid.getSelectionModel().setSelectionMode(SelectionMode.MULTI);
         gridView.setEmptyText(I18N.DISPLAY.noAnalyses());
+        addSelectionChangedHandler(viewMenu);
+    }
+
+    @Override
+    public HandlerRegistration addLoadHandler(
+            LoadHandler<FilterPagingLoadConfig, PagingLoadResult<Analysis>> handler) {
+        @SuppressWarnings("unchecked")
+        PagingLoader<FilterPagingLoadConfig, PagingLoadResult<Analysis>> loader = (PagingLoader<FilterPagingLoadConfig, PagingLoadResult<Analysis>>)grid
+                .getLoader();
+
+        return loader.addLoadHandler(handler);
     }
 
     @Override
@@ -100,20 +119,8 @@ public class AnalysesViewImpl extends Composite implements AnalysesView {
     }
 
     @Override
-    protected void onEnsureDebugId(String baseID) {
-        super.onEnsureDebugId(baseID);
-        viewMenu.asWidget().ensureDebugId(baseID + AnalysisModule.Ids.MENUBAR);
-
-    }
-
-    @Override
-    public AnalysesView.ViewMenu getViewMenu() {
-        return viewMenu;
-    }
-
-    @Override
-    public void loadAnalyses() {
-        grid.getLoader().load();
+    public ListStore<Analysis> getListStore() {
+        return listStore;
     }
 
     @Override
@@ -133,6 +140,11 @@ public class AnalysesViewImpl extends Composite implements AnalysesView {
     }
 
     @Override
+    public void loadAnalyses() {
+        grid.getLoader().load();
+    }
+
+    @Override
     public void removeFromStore(List<Analysis> items) {
         if (items != null & items.size() > 0) {
             for (Analysis a : items) {
@@ -143,16 +155,32 @@ public class AnalysesViewImpl extends Composite implements AnalysesView {
     }
 
     @Override
-    public ListStore<Analysis> getListStore() {
-        return listStore;
+    public void setPresenter(Presenter presenter) {
+        this.presenter = presenter;
+        viewMenu.init(presenter, this);
     }
 
     @Override
-    public HandlerRegistration addLoadHandler(
-            LoadHandler<FilterPagingLoadConfig, PagingLoadResult<Analysis>> handler) {
-        @SuppressWarnings("unchecked")
-        PagingLoader<FilterPagingLoadConfig, PagingLoadResult<Analysis>> loader = (PagingLoader<FilterPagingLoadConfig, PagingLoadResult<Analysis>>)grid.getLoader();
+    public void updateComments() {
 
-        return loader.addLoadHandler(handler);
+    }
+
+    @Override
+    public void viewParams() {
+        for (Analysis ana : getSelectedAnalyses()) {
+            ListStore<AnalysisParameter> listStore = new ListStore<AnalysisParameter>( new AnalysisParameterKeyProvider());
+            final AnalysisParamView apv = new AnalysisParamView(listStore, paramViewColumnModel);
+            apv.setHeading(displayStrings.viewParameters(ana.getName()));
+            apv.show();
+
+            presenter.retrieveParameterData(ana, apv);
+        }
+    }
+
+    @Override
+    protected void onEnsureDebugId(String baseID) {
+        super.onEnsureDebugId(baseID);
+        viewMenu.asWidget().ensureDebugId(baseID + AnalysisModule.Ids.MENUBAR);
+
     }
 }
