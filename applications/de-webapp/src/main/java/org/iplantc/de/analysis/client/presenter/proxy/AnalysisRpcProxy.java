@@ -15,7 +15,7 @@ import com.sencha.gxt.data.shared.loader.PagingLoadResult;
 import com.sencha.gxt.data.shared.loader.PagingLoadResultBean;
 
 /**
- * An RpcProxy for the loader used by the {@link org.iplantc.de.analysis.client.widget.AnalysisSearchField} and {@link AnalysesView} grid.
+ * An RpcProxy for the loader used by the {@link org.iplantc.de.analysis.client.views.widget.AnalysisSearchField} and {@link AnalysesView} grid.
  * 
  * @author psarando
  * 

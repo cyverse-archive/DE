@@ -1,5 +1,10 @@
 package org.iplantc.de.analysis.client.views;
 
+import org.iplantc.de.analysis.client.events.AnalysisAppSelectedEvent;
+import org.iplantc.de.analysis.client.events.AnalysisCommentSelectedEvent;
+import org.iplantc.de.analysis.client.events.AnalysisNameSelectedEvent;
+import org.iplantc.de.analysis.client.events.AnalysisParamValueSelectedEvent;
+import org.iplantc.de.analysis.client.views.widget.AnalysisParamView;
 import org.iplantc.de.client.models.analysis.Analysis;
 
 import com.google.gwt.event.shared.HandlerRegistration;
@@ -21,7 +26,7 @@ import java.util.List;
  * @author sriram
  * 
  */
-public interface AnalysesView extends IsWidget, SelectionChangedEvent.HasSelectionChangedHandlers {
+public interface AnalysesView extends IsWidget, SelectionChangedEvent.HasSelectionChangedHandlers, AnalysisParamValueSelectedEvent.HasAnalysisParamValueSelectedEventHandlers, AnalysisAppSelectedEvent.HasAnalysisAppSelectedEventHandlers, AnalysisCommentSelectedEvent.HasAnalysisCommentSelectedEventHandlers, AnalysisNameSelectedEvent.HasAnalysisNameSelectedEventHandlers {
     public interface Presenter extends org.iplantc.de.commons.client.presenter.Presenter, SelectionChangedEvent.SelectionChangedHandler<Analysis> {
 
         void cancelSelectedAnalyses();

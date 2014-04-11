@@ -1,11 +1,9 @@
 package org.iplantc.de.analysis.client.views;
 
 import org.iplantc.de.analysis.client.events.AnalysisAppSelectedEvent;
+import org.iplantc.de.analysis.client.events.AnalysisCommentSelectedEvent;
 import org.iplantc.de.analysis.client.events.AnalysisNameSelectedEvent;
-import org.iplantc.de.analysis.client.views.cells.AnalysisAppNameCell;
-import org.iplantc.de.analysis.client.views.cells.AnalysisNameCell;
-import org.iplantc.de.analysis.client.views.cells.EndDateTimeCell;
-import org.iplantc.de.analysis.client.views.cells.StartDateTimeCell;
+import org.iplantc.de.analysis.client.views.cells.*;
 import org.iplantc.de.client.models.analysis.Analysis;
 import org.iplantc.de.client.views.windows.AnalysisProperties;
 
@@ -20,7 +18,7 @@ import com.sencha.gxt.widget.core.client.grid.ColumnModel;
 
 import java.util.List;
 
-public class AnalysisColumnModel extends ColumnModel<Analysis> implements AnalysisNameSelectedEvent.HasAnalysisNameSelectedEventHandlers, AnalysisAppSelectedEvent.HasAnalysisAppSelectedEventHandlers {
+public class AnalysisColumnModel extends ColumnModel<Analysis> implements AnalysisNameSelectedEvent.HasAnalysisNameSelectedEventHandlers, AnalysisAppSelectedEvent.HasAnalysisAppSelectedEventHandlers, AnalysisCommentSelectedEvent.HasAnalysisCommentSelectedEventHandlers {
 
     @Inject
     public AnalysisColumnModel(final AnalysisProperties props, final CheckBoxSelectionModel<Analysis> checkBoxSelectionModel) {
@@ -32,6 +30,8 @@ public class AnalysisColumnModel extends ColumnModel<Analysis> implements Analys
                 ((AnalysisNameCell)cc.getCell()).setHasHandlers(ensureHandlers());
             } else if(cc.getCell() instanceof AnalysisAppNameCell){
                 ((AnalysisAppNameCell)cc.getCell()).setHasHandlers(ensureHandlers());
+            } else if(cc.getCell() instanceof AnalysisCommentCell){
+                ((AnalysisCommentCell)cc.getCell()).setHasHandlers(ensureHandlers());
             }
         }
     }
@@ -42,6 +42,7 @@ public class AnalysisColumnModel extends ColumnModel<Analysis> implements Analys
 
         ColumnConfig<Analysis, Analysis> colCheckBox = checkBoxSelectionModel.getColumn();
         ColumnConfig<Analysis, Analysis> name = new ColumnConfig<Analysis, Analysis>(valueProvider, 100);
+        ColumnConfig<Analysis, Analysis> comment = new ColumnConfig<Analysis, Analysis>(valueProvider, 30);
         ColumnConfig<Analysis, Analysis> app = new ColumnConfig<Analysis, Analysis>(valueProvider, 100);
         ColumnConfig<Analysis, Analysis> startDate = new ColumnConfig<Analysis, Analysis>(valueProvider, 150);
         ColumnConfig<Analysis, Analysis> endDate = new ColumnConfig<Analysis, Analysis>(valueProvider, 150);
@@ -51,6 +52,9 @@ public class AnalysisColumnModel extends ColumnModel<Analysis> implements Analys
         name.setHeader(org.iplantc.de.resources.client.messages.I18N.DISPLAY.name());
         name.setMenuDisabled(true);
         name.setCell(new AnalysisNameCell());
+
+        comment.setMenuDisabled(true);
+        comment.setCell(new AnalysisCommentCell());
 
         app.setHeader(org.iplantc.de.resources.client.messages.I18N.DISPLAY.appName());
         app.setMenuDisabled(true);
@@ -68,6 +72,7 @@ public class AnalysisColumnModel extends ColumnModel<Analysis> implements Analys
         List<ColumnConfig<Analysis, ?>> ret = Lists.newArrayList();
         ret.add(colCheckBox);
         ret.add(name);
+        ret.add(comment);
         ret.add(app);
         ret.add(startDate);
         ret.add(endDate);
@@ -76,8 +81,13 @@ public class AnalysisColumnModel extends ColumnModel<Analysis> implements Analys
     }
 
     @Override
-    public HandlerRegistration addAnalysisAppSelectedEventHandlers(AnalysisAppSelectedEvent.AnalysisAppSelectedEventHandler handler) {
+    public HandlerRegistration addAnalysisAppSelectedEventHandler(AnalysisAppSelectedEvent.AnalysisAppSelectedEventHandler handler) {
         return ensureHandlers().addHandler(AnalysisAppSelectedEvent.TYPE, handler);
+    }
+
+    @Override
+    public HandlerRegistration addAnalysisCommentSelectedEventHandler(AnalysisCommentSelectedEvent.AnalysisCommentSelectedEventHandler handler) {
+        return ensureHandlers().addHandler(AnalysisCommentSelectedEvent.TYPE, handler);
     }
 
     @Override

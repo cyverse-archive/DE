@@ -1,4 +1,4 @@
-package org.iplantc.de.analysis.client.views;
+package org.iplantc.de.analysis.client.views.widget;
 
 import org.iplantc.de.client.callbacks.FileSaveCallback;
 import org.iplantc.de.client.gin.ServicesInjector;

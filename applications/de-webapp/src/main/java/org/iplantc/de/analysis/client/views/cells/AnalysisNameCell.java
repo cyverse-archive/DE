@@ -17,11 +17,7 @@ import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.dom.client.Style.TextDecoration;
 import com.google.gwt.event.shared.HasHandlers;
-import com.google.gwt.resources.client.ClientBundle;
-import com.google.gwt.safehtml.client.SafeHtmlTemplates;
-import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
-import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.user.client.Event;
 import com.google.web.bindery.autobean.shared.AutoBeanCodex;
 
@@ -31,28 +27,23 @@ import com.google.web.bindery.autobean.shared.AutoBeanCodex;
  */
 public class AnalysisNameCell extends AbstractCell<Analysis> {
 
-    interface Resources extends ClientBundle {
-        @Source("AnalysisNameCell.css")
-        AnalysisCellStyle css();
+    public interface AnalysisNameCellAppearance {
+        String ELEMENT_NAME = "analysisName";
 
+        void render(Cell.Context context, Analysis model, SafeHtmlBuilder sb);
     }
 
-    interface Templates extends SafeHtmlTemplates {
-
-        @SafeHtmlTemplates.Template("<span name=\"{0}\" title=\" Click here to view results of this analysis.\" class=\"{1}\">{2}</span>")
-        SafeHtml cell(String elementName, String className, SafeHtml analysisName);
-    }
-
+    private final AnalysisNameCellAppearance appearance;
     private HasHandlers hasHandlers = null;
-
-    private final Resources res = GWT.create(Resources.class);
-    private final Templates templates = GWT.create(Templates.class);
     //private final EventBus eventBus;
-    private static final String ELEMENT_NAME = "analysisName";
 
     public AnalysisNameCell() {
+        this(GWT.<AnalysisNameCellAppearance> create(AnalysisNameCellAppearance.class));
+    }
+
+    public AnalysisNameCell(AnalysisNameCellAppearance appearance){
         super(CLICK, MOUSEOVER, MOUSEOUT);
-        res.css().ensureInjected();
+        this.appearance = appearance;
     }
 
     public void setHasHandlers(HasHandlers hasHandlers){
@@ -61,12 +52,7 @@ public class AnalysisNameCell extends AbstractCell<Analysis> {
 
     @Override
     public void render(Cell.Context context, Analysis model, SafeHtmlBuilder sb) {
-        if (model == null)
-            return;
-
-        String style = Strings.isNullOrEmpty(model.getResultFolderId()) ? res.css().noResultFolder()
-                : res.css().hasResultFolder();
-        sb.append(templates.cell(ELEMENT_NAME, style, SafeHtmlUtils.fromString(model.getName())));
+        appearance.render(context, model, sb);
     }
 
     @Override
@@ -99,21 +85,21 @@ public class AnalysisNameCell extends AbstractCell<Analysis> {
     }
 
     private void doOnMouseOut(Element eventTarget, Analysis value) {
-        if (eventTarget.getAttribute("name").equalsIgnoreCase(ELEMENT_NAME)
+        if (eventTarget.getAttribute("name").equalsIgnoreCase(appearance.ELEMENT_NAME)
                 && !Strings.isNullOrEmpty(value.getResultFolderId())) {
             eventTarget.getStyle().setTextDecoration(TextDecoration.NONE);
         }
     }
 
     private void doOnMouseOver(Element eventTarget, Analysis value) {
-        if (eventTarget.getAttribute("name").equalsIgnoreCase(ELEMENT_NAME)
+        if (eventTarget.getAttribute("name").equalsIgnoreCase(appearance.ELEMENT_NAME)
                 && !Strings.isNullOrEmpty(value.getResultFolderId())) {
             eventTarget.getStyle().setTextDecoration(TextDecoration.UNDERLINE);
         }
     }
 
     private void doOnClick(Element eventTarget, Analysis value, ValueUpdater<Analysis> valueUpdater) {
-        if (eventTarget.getAttribute("name").equalsIgnoreCase(ELEMENT_NAME)
+        if (eventTarget.getAttribute("name").equalsIgnoreCase(appearance.ELEMENT_NAME)
                 && !Strings.isNullOrEmpty(value.getResultFolderId())) {
             CommonModelAutoBeanFactory factory = GWT.create(CommonModelAutoBeanFactory.class);
             HasId folderAb = AutoBeanCodex.decode(factory, HasId.class,

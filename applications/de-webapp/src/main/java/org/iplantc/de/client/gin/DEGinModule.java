@@ -3,6 +3,7 @@ package org.iplantc.de.client.gin;
 import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.client.services.AnalysisServiceFacade;
+import org.iplantc.de.client.services.DiskResourceServiceFacade;
 
 import com.google.gwt.inject.client.AbstractGinModule;
 import com.google.inject.Provides;
@@ -30,5 +31,10 @@ public class DEGinModule extends AbstractGinModule {
     @Provides
     public AnalysisServiceFacade createAnalysisService() {
         return ServicesInjector.INSTANCE.getAnalysisServiceFacade();
+    }
+
+    @Provides
+    public DiskResourceServiceFacade createDiskResourceService() {
+        return ServicesInjector.INSTANCE.getDiskResourceServiceFacade();
     }
 }

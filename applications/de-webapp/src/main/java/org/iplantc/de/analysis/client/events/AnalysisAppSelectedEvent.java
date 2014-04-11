@@ -15,7 +15,7 @@ public class AnalysisAppSelectedEvent extends GwtEvent<AnalysisAppSelectedEvent.
     }
 
     public static interface HasAnalysisAppSelectedEventHandlers {
-        HandlerRegistration addAnalysisAppSelectedEventHandlers(AnalysisAppSelectedEventHandler handler);
+        HandlerRegistration addAnalysisAppSelectedEventHandler(AnalysisAppSelectedEventHandler handler);
     }
 
     private final String appId;

@@ -1,0 +1,9 @@
+.inputType {
+    cursor: pointer;
+    text-decoration: underline;
+    white-space: pre-wrap;
+}
+
+.other {
+    white-space: pre-wrap;
+}

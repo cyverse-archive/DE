@@ -4,7 +4,6 @@ import org.iplantc.de.analysis.client.events.AnalysisAppSelectedEvent;
 import org.iplantc.de.client.models.analysis.Analysis;
 import org.iplantc.de.client.views.windows.configs.AppWizardConfig;
 import org.iplantc.de.client.views.windows.configs.ConfigFactory;
-import org.iplantc.de.resources.client.messages.I18N;
 
 import static com.google.gwt.dom.client.BrowserEvents.*;
 import com.google.common.base.Strings;
@@ -16,11 +15,7 @@ import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.dom.client.Style.TextDecoration;
 import com.google.gwt.event.shared.HandlerManager;
-import com.google.gwt.resources.client.ClientBundle;
-import com.google.gwt.safehtml.client.SafeHtmlTemplates;
-import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
-import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.user.client.Event;
 
 /**
@@ -29,45 +24,26 @@ import com.google.gwt.user.client.Event;
  */
 public class AnalysisAppNameCell extends AbstractCell<Analysis> {
 
-    interface Resources extends ClientBundle {
-
-        @Source("AnalysisNameCell.css")
-        AnalysisCellStyle css();
+    public interface AnalysisAppNameCellAppearance {
+        String ELEMENT_NAME = "analysisAppName";
+        void render(Cell.Context context, Analysis model, SafeHtmlBuilder sb);
     }
 
-    interface Templates extends SafeHtmlTemplates {
-
-        @SafeHtmlTemplates.Template("<span name=\"{0}\" title=\"{3}\" class=\"{1}\">{2}</span>")
-        SafeHtml cell(String elementName, String className, SafeHtml analysisAppName, String tooltip);
-    }
-
-    private final Resources res = GWT.create(Resources.class);
-    private final Templates templates = GWT.create(Templates.class);
-    private static final String ELEMENT_NAME = "analysisAppName";
+    private final AnalysisAppNameCellAppearance appearance;
     private HandlerManager hasHandlers;
 
     public AnalysisAppNameCell() {
+        this(GWT.<AnalysisAppNameCellAppearance> create(AnalysisAppNameCellAppearance.class));
+    }
+
+    public AnalysisAppNameCell(AnalysisAppNameCellAppearance appearance){
         super(CLICK, MOUSEOVER, MOUSEOUT);
-        res.css().ensureInjected();
+        this.appearance = appearance;
     }
 
     @Override
     public void render(Cell.Context context, Analysis model, SafeHtmlBuilder sb) {
-        if (model == null)
-            return;
-
-        String style = Strings.isNullOrEmpty(model.getResultFolderId()) ? res.css().noResultFolder()
-                : res.css().hasResultFolder() + " "
-                        + ((model.isAppDisabled()) ? res.css().disabledApp() : res.css().enabledApp());
-        String tooltip = null;
-        if (model.isAppDisabled()) {
-            tooltip = I18N.DISPLAY.appDisabled();
-        } else {
-            tooltip = I18N.DISPLAY.relaunchAnalysis();
-        }
-        sb.append(templates.cell(ELEMENT_NAME, style, SafeHtmlUtils.fromString(model.getAppName()),
-                tooltip));
-        ;
+        appearance.render(context, model, sb);
     }
 
     @Override
@@ -104,21 +80,21 @@ public class AnalysisAppNameCell extends AbstractCell<Analysis> {
     }
 
     private void doOnMouseOut(Element eventTarget, Analysis value) {
-        if (eventTarget.getAttribute("name").equalsIgnoreCase(ELEMENT_NAME)
+        if (eventTarget.getAttribute("name").equalsIgnoreCase(appearance.ELEMENT_NAME)
                 && !Strings.isNullOrEmpty(value.getResultFolderId())) {
             eventTarget.getStyle().setTextDecoration(TextDecoration.NONE);
         }
     }
 
     private void doOnMouseOver(Element eventTarget, Analysis value) {
-        if (eventTarget.getAttribute("name").equalsIgnoreCase(ELEMENT_NAME)
+        if (eventTarget.getAttribute("name").equalsIgnoreCase(appearance.ELEMENT_NAME)
                 && !Strings.isNullOrEmpty(value.getResultFolderId())) {
             eventTarget.getStyle().setTextDecoration(TextDecoration.UNDERLINE);
         }
     }
 
     private void doOnClick(Element eventTarget, Analysis value, ValueUpdater<Analysis> valueUpdater) {
-        if (eventTarget.getAttribute("name").equalsIgnoreCase(ELEMENT_NAME)
+        if (eventTarget.getAttribute("name").equalsIgnoreCase(appearance.ELEMENT_NAME)
                 && !Strings.isNullOrEmpty(value.getResultFolderId()) && !value.isAppDisabled()) {
             AppWizardConfig config = ConfigFactory.appWizardConfig(value.getAppId());
             config.setAnalysisId(value);

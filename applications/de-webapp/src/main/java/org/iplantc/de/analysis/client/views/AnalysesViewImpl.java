@@ -3,7 +3,13 @@
  */
 package org.iplantc.de.analysis.client.views;
 
+import org.iplantc.de.analysis.client.events.AnalysisAppSelectedEvent;
+import org.iplantc.de.analysis.client.events.AnalysisCommentSelectedEvent;
+import org.iplantc.de.analysis.client.events.AnalysisNameSelectedEvent;
+import org.iplantc.de.analysis.client.events.AnalysisParamValueSelectedEvent;
 import org.iplantc.de.analysis.client.presenter.proxy.AnalysisRpcProxy;
+import org.iplantc.de.analysis.client.views.widget.AnalysisParamView;
+import org.iplantc.de.analysis.client.views.widget.AnalysisParamViewColumnModel;
 import org.iplantc.de.analysis.shared.AnalysisModule;
 import org.iplantc.de.client.desktop.widget.DEPagingToolbar;
 import org.iplantc.de.client.models.analysis.Analysis;
@@ -30,7 +36,6 @@ import com.sencha.gxt.widget.core.client.grid.CheckBoxSelectionModel;
 import com.sencha.gxt.widget.core.client.grid.ColumnModel;
 import com.sencha.gxt.widget.core.client.grid.Grid;
 import com.sencha.gxt.widget.core.client.grid.GridView;
-import com.sencha.gxt.widget.core.client.selection.SelectionChangedEvent;
 import com.sencha.gxt.widget.core.client.selection.SelectionChangedEvent.SelectionChangedHandler;
 
 import java.util.List;
@@ -98,6 +103,26 @@ public class AnalysesViewImpl extends Composite implements AnalysesView {
         grid.getSelectionModel().setSelectionMode(SelectionMode.MULTI);
         gridView.setEmptyText(I18N.DISPLAY.noAnalyses());
         addSelectionChangedHandler(viewMenu);
+    }
+
+    @Override
+    public HandlerRegistration addAnalysisAppSelectedEventHandler(AnalysisAppSelectedEvent.AnalysisAppSelectedEventHandler handler) {
+        return ((AnalysisColumnModel)cm).addAnalysisAppSelectedEventHandler(handler);
+    }
+
+    @Override
+    public HandlerRegistration addAnalysisCommentSelectedEventHandler(AnalysisCommentSelectedEvent.AnalysisCommentSelectedEventHandler handler) {
+        return ((AnalysisColumnModel)cm).addAnalysisCommentSelectedEventHandler(handler);
+    }
+
+    @Override
+    public HandlerRegistration addAnalysisNameSelectedEventHandler(AnalysisNameSelectedEvent.AnalysisNameSelectedEventHandler handler) {
+        return ((AnalysisColumnModel)cm).addAnalysisNameSelectedEventHandler(handler);
+    }
+
+    @Override
+    public HandlerRegistration addAnalysisParamValueSelectedEventHandler(AnalysisParamValueSelectedEvent.AnalysisParamValueSelectedEventHandler handler) {
+        return paramViewColumnModel.addAnalysisParamValueSelectedEventHandler(handler);
     }
 
     @Override
