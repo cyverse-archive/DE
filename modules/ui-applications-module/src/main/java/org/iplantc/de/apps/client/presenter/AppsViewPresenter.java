@@ -95,9 +95,8 @@ public class AppsViewPresenter implements AppsView.Presenter {
 
     private final AppGroupProxy appGroupProxy;
     private AppsViewToolbar toolbar;
-    
+
     private final List<HandlerRegistration> eventHandlers = new ArrayList<HandlerRegistration>();
-    
 
     private HasId desiredSelectedAppId;
     private final AppServiceFacade appService;
@@ -106,8 +105,7 @@ public class AppsViewPresenter implements AppsView.Presenter {
     private RegExp searchRegex;
 
     @Inject
-    public AppsViewPresenter(final AppsView view, final AppGroupProxy proxy, AppsViewToolbar toolbar,
-            AppServiceFacade appService, AppUserServiceFacade appUserService) {
+    public AppsViewPresenter(final AppsView view, final AppGroupProxy proxy, AppsViewToolbar toolbar, AppServiceFacade appService, AppUserServiceFacade appUserService) {
         this.view = view;
         this.appService = appService;
         this.appUserService = appUserService;
@@ -131,7 +129,7 @@ public class AppsViewPresenter implements AppsView.Presenter {
     }
 
     protected void initHandlers() {
-        eventHandlers.add( eventBus.addHandler(AppSearchResultLoadEvent.TYPE, new AppSearchResultLoadEventHandler() {
+        eventHandlers.add(eventBus.addHandler(AppSearchResultLoadEvent.TYPE, new AppSearchResultLoadEventHandler() {
             @Override
             public void onLoad(AppSearchResultLoadEvent event) {
                 if (event.getSource() == getAppSearchRpcProxy()) {
@@ -158,8 +156,7 @@ public class AppsViewPresenter implements AppsView.Presenter {
                     view.updateAppGroupAppCount(favAppGrp, favAppGrp.getAppCount() + tmp);
                 }
                 // If the current app group is Workspace or Favorites, remove the app from the list.
-                if (getSelectedAppGroup().getName().equalsIgnoreCase(WORKSPACE)
-                        || getSelectedAppGroup().getName().equalsIgnoreCase(FAVORITES)) {
+                if (getSelectedAppGroup().getName().equalsIgnoreCase(WORKSPACE) || getSelectedAppGroup().getName().equalsIgnoreCase(FAVORITES)) {
                     view.removeApp(view.findApp(event.getAppId()));
                 }
             }
@@ -179,12 +176,12 @@ public class AppsViewPresenter implements AppsView.Presenter {
         }));
 
     }
-    
+
     @Override
     public void cleanUp() {
         EventBus eventBus = EventBus.getInstance();
         for (HandlerRegistration hr : eventHandlers) {
-           eventBus.removeHandler(hr);
+            eventBus.removeHandler(hr);
         }
     }
 
@@ -217,12 +214,8 @@ public class AppsViewPresenter implements AppsView.Presenter {
     @Override
     public void onAppGroupSelected(final AppGroup ag) {
         if (toolbar != null) {
-            toolbar.setEditButtonEnabled(false);
-            toolbar.setDeleteButtonEnabled(false);
-            toolbar.setSubmitButtonEnabled(false);
-            toolbar.setCopyButtonEnabled(false);
-            toolbar.setAppRunButtonEnabled(false);
-            toolbar.setEditMenuEnabled(false);
+            toolbar.setAppMenuEnabled(false);
+            toolbar.setWorkflowMenuEnabled(false);
         }
 
         searchRegex = null;
@@ -245,37 +238,71 @@ public class AppsViewPresenter implements AppsView.Presenter {
     @Override
     public void onAppSelected(final App app) {
         if (app == null && toolbar != null) {
-            toolbar.setEditButtonEnabled(false);
-            toolbar.setDeleteButtonEnabled(false);
-            toolbar.setSubmitButtonEnabled(false);
-            toolbar.setCopyButtonEnabled(false);
-            toolbar.setAppRunButtonEnabled(false);
-            toolbar.setEditMenuEnabled(false);
-        } else if (app.isPublic()) {
-            toolbar.setEditMenuEnabled(true);
-            toolbar.setDeleteButtonEnabled(false);
-            toolbar.setSubmitButtonEnabled(false);
-            toolbar.setCopyButtonEnabled(true);
+            toolbar.setAppMenuEnabled(false);
+            toolbar.setWorkflowMenuEnabled(false);
+        } else {
+            toolbar.setAppMenuEnabled(true);
+            toolbar.setWorkflowMenuEnabled(true);
+            if (app.isPublic()) {
+                if (app.getStepCount() == 1) {
+                    toolbar.setDeleteAppMenuItemEnabled(false);
+                    toolbar.setSubmitAppMenuItemEnabled(false);
+                    toolbar.setCopyAppMenuItemEnabled(true);
 
-            if (userInfo.getEmail().equals(app.getIntegratorEmail())) {
-                // JDS If the current user is the integrator
-                toolbar.setEditButtonEnabled(true);
+                    if (userInfo.getEmail().equals(app.getIntegratorEmail())) {
+                        // JDS If the current user is the integrator
+                        toolbar.setEditAppMenuItemEnabled(true);
+                    } else {
+                        toolbar.setEditAppMenuItemEnabled(false);
+                    }
+                    toolbar.setDeleteWorkflowMenuItemEnabled(false);
+                    toolbar.setSubmitWorkflowMenuItemEnabled(false);
+                    toolbar.setCopyWorkflowMenuItemEnabled(false);
+                    toolbar.setEditWorkflowMenuItemEnabled(false);
+                } else {
+                    toolbar.setDeleteWorkflowMenuItemEnabled(false);
+                    toolbar.setSubmitWorkflowMenuItemEnabled(false);
+                    toolbar.setCopyWorkflowMenuItemEnabled(true);
+                    toolbar.setEditWorkflowMenuItemEnabled(false);
+                    toolbar.setDeleteAppMenuItemEnabled(false);
+                    toolbar.setSubmitAppMenuItemEnabled(false);
+                    toolbar.setCopyAppMenuItemEnabled(false);
+                    toolbar.setEditAppMenuItemEnabled(false);
+                }
             } else {
-                toolbar.setEditButtonEnabled(false);
+                if (app.getStepCount() == 1) {
+                    toolbar.setEditAppMenuItemEnabled(true);
+                    toolbar.setDeleteAppMenuItemEnabled(true);
+                    toolbar.setSubmitAppMenuItemEnabled(true);
+                    toolbar.setCopyAppMenuItemEnabled(true);
+                    toolbar.setEditWorkflowMenuItemEnabled(false);
+                    toolbar.setDeleteWorkflowMenuItemEnabled(false);
+                    toolbar.setSubmitWorkflowMenuItemEnabled(false);
+                    toolbar.setCopyWorkflowMenuItemEnabled(false);
+                } else {
+                    toolbar.setEditWorkflowMenuItemEnabled(true);
+                    toolbar.setDeleteWorkflowMenuItemEnabled(true);
+                    toolbar.setSubmitWorkflowMenuItemEnabled(true);
+                    toolbar.setCopyWorkflowMenuItemEnabled(true);
+                    toolbar.setEditAppMenuItemEnabled(false);
+                    toolbar.setDeleteAppMenuItemEnabled(false);
+                    toolbar.setSubmitAppMenuItemEnabled(false);
+                    toolbar.setCopyAppMenuItemEnabled(false);
+                }
             }
 
-        } else {
-            toolbar.setEditMenuEnabled(true);
-            toolbar.setEditButtonEnabled(true);
-            toolbar.setDeleteButtonEnabled(true);
-            toolbar.setSubmitButtonEnabled(true);
-            toolbar.setCopyButtonEnabled(true);
-        }
-
-        if (app != null && toolbar != null && !app.isDisabled()) {
-            toolbar.setAppRunButtonEnabled(true);
-        } else {
-            toolbar.setAppRunButtonEnabled(false);
+            if (!app.isDisabled()) {
+                if (app.getStepCount() == 1) {
+                    toolbar.setAppRunMenuItemEnabled(true);
+                    toolbar.setWorkflowRunMenuItemEnabled(false);
+                } else {
+                    toolbar.setWorkflowRunMenuItemEnabled(true);
+                    toolbar.setAppRunMenuItemEnabled(false);
+                }
+            } else {
+                toolbar.setAppRunMenuItemEnabled(false);
+                toolbar.setWorkflowRunMenuItemEnabled(false);
+            }
         }
     }
 
@@ -447,8 +474,7 @@ public class AppsViewPresenter implements AppsView.Presenter {
                 if (selectedAppGroup != null) {
                     String selectedGroupName = selectedAppGroup.getName();
 
-                    if (selectedGroupName.equalsIgnoreCase(WORKSPACE)
-                            || selectedGroupName.equalsIgnoreCase(USER_APPS_GROUP)) {
+                    if (selectedGroupName.equalsIgnoreCase(WORKSPACE) || selectedGroupName.equalsIgnoreCase(USER_APPS_GROUP)) {
                         fetchApps(selectedAppGroup);
                     }
                 }
@@ -475,8 +501,7 @@ public class AppsViewPresenter implements AppsView.Presenter {
                 if (usersAppsGrp != null) {
                     view.updateAppGroupAppCount(usersAppsGrp, usersAppsGrp.getAppCount() + 1);
                 }
-                HasId hasId = CommonModelUtils.createHasIdFromString(StringQuoter.split(result)
-                        .get("analysis_id").asString());
+                HasId hasId = CommonModelUtils.createHasIdFromString(StringQuoter.split(result).get("analysis_id").asString());
                 if (!hasId.getId().isEmpty()) {
                     AppGroup selectedAppGroup = getSelectedAppGroup();
                     if (selectedAppGroup != null) {
@@ -517,8 +542,7 @@ public class AppsViewPresenter implements AppsView.Presenter {
             return;
         }
 
-        ConfirmMessageBox msgBox = new ConfirmMessageBox(I18N.DISPLAY.warning(),
-                I18N.DISPLAY.appDeleteWarning());
+        ConfirmMessageBox msgBox = new ConfirmMessageBox(I18N.DISPLAY.warning(), I18N.DISPLAY.appDeleteWarning());
 
         msgBox.addHideHandler(new HideHandler() {
 
@@ -532,32 +556,30 @@ public class AppsViewPresenter implements AppsView.Presenter {
                         appIds.add(app.getId());
                     }
 
-                    appUserService.deleteAppFromWorkspace(userInfo.getUsername(),
-                            userInfo.getFullUsername(), appIds, new AsyncCallback<String>() {
+                    appUserService.deleteAppFromWorkspace(userInfo.getUsername(), userInfo.getFullUsername(), appIds, new AsyncCallback<String>() {
 
-                                @Override
-                                public void onFailure(Throwable caught) {
-                                    ErrorHandler.post(I18N.ERROR.appRemoveFailure(), caught);
+                        @Override
+                        public void onFailure(Throwable caught) {
+                            ErrorHandler.post(I18N.ERROR.appRemoveFailure(), caught);
+                        }
+
+                        @Override
+                        public void onSuccess(String result) {
+                            for (App app : apps) {
+                                // Remove from visible list and update AppGroup app counts
+                                view.removeApp(app);
+
+                                // PSAR Always assume that the app is in the
+                                // "Apps Under Development" group
+                                AppGroup userAppGrp = view.findAppGroupByName(USER_APPS_GROUP);
+                                if (userAppGrp != null) {
+                                    view.updateAppGroupAppCount(userAppGrp, userAppGrp.getAppCount() - 1);
                                 }
 
-                                @Override
-                                public void onSuccess(String result) {
-                                    for (App app : apps) {
-                                        // Remove from visible list and update AppGroup app counts
-                                        view.removeApp(app);
-
-                                        // PSAR Always assume that the app is in the
-                                        // "Apps Under Development" group
-                                        AppGroup userAppGrp = view.findAppGroupByName(USER_APPS_GROUP);
-                                        if (userAppGrp != null) {
-                                            view.updateAppGroupAppCount(userAppGrp,
-                                                    userAppGrp.getAppCount() - 1);
-                                        }
-
-                                        eventBus.fireEvent(new AppDeleteEvent(app.getId()));
-                                    }
-                                }
-                            });
+                                eventBus.fireEvent(new AppDeleteEvent(app.getId()));
+                            }
+                        }
+                    });
                 }
 
             }
@@ -632,47 +654,16 @@ public class AppsViewPresenter implements AppsView.Presenter {
         }
 
         @Override
-        public Builder hideToolbarButtonCreate() {
-            presenter.getToolbar().setCreateButtonVisible(false);
+        public Builder hideToolbarAppButton() {
+            presenter.getToolbar().hideAppMenu();
             return this;
         }
 
         @Override
-        public Builder hideToolbarButtonCopy() {
-            presenter.getToolbar().setCopyButtonVisible(false);
+        public Builder hideToolbarWorkFlowButton() {
+            presenter.getToolbar().hideWorkflowMenu();
             return this;
         }
-
-        @Override
-        public Builder hideToolbarButtonEdit() {
-            presenter.getToolbar().setEditMenuVisible(false);
-            return this;
-        }
-
-        @Override
-        public Builder hideToolbarButtonDelete() {
-            presenter.getToolbar().setDeleteButtonVisible(false);
-            return this;
-        }
-
-        @Override
-        public Builder hideToolbarButtonSubmit() {
-            presenter.getToolbar().setSubmitButtonVisible(false);
-            return this;
-        }
-
-        @Override
-        public Builder hideToolbarButtonRequestTool() {
-            presenter.getToolbar().setRequestToolButtonVisible(false);
-            return this;
-        }
-
-        @Override
-        public Builder hideToolbarMenuEdit() {
-            presenter.getToolbar().setEditMenuVisible(false);
-            return this;
-        }
-
     }
 
     @Override
@@ -701,7 +692,7 @@ public class AppsViewPresenter implements AppsView.Presenter {
     }
 
     private void fireRunAppEvent(final App app) {
-        if (app!= null && !app.isDisabled()) {
+        if (app != null && !app.isDisabled()) {
             EventBus.getInstance().fireEvent(new RunAppEvent(app));
         }
     }

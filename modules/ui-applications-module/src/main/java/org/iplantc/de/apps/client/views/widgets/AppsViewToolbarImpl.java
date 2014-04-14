@@ -21,7 +21,6 @@ import com.sencha.gxt.data.shared.loader.FilterPagingLoadConfig;
 import com.sencha.gxt.data.shared.loader.PagingLoadResult;
 import com.sencha.gxt.data.shared.loader.PagingLoader;
 import com.sencha.gxt.widget.core.client.button.TextButton;
-import com.sencha.gxt.widget.core.client.event.SelectEvent;
 import com.sencha.gxt.widget.core.client.menu.Item;
 import com.sencha.gxt.widget.core.client.menu.MenuItem;
 
@@ -39,10 +38,13 @@ public class AppsViewToolbarImpl implements AppsViewToolbar {
     private final PagingLoader<FilterPagingLoadConfig, PagingLoadResult<App>> loader;
 
     @UiField
-    TextButton create;
+    TextButton app_menu;
     
     @UiField
-    TextButton edit;
+    TextButton wf_menu;
+
+    @UiField
+    MenuItem editApp;
 
     @UiField
     MenuItem createNewApp;
@@ -51,22 +53,34 @@ public class AppsViewToolbarImpl implements AppsViewToolbar {
     MenuItem createWorkflow;
 
     @UiField
-    TextButton appRun;
+    MenuItem appRun;
 
     @UiField
-    TextButton requestTool;
+    MenuItem requestTool;
 
     @UiField
-    MenuItem copy;
+    MenuItem copyApp;
 
     @UiField
-    MenuItem editApp;
+    MenuItem deleteApp;
 
     @UiField
-    MenuItem delete;
+    MenuItem submitApp;
 
     @UiField
-    TextButton submit;
+    MenuItem wfRun;
+
+    @UiField
+    MenuItem copyWf;
+
+    @UiField
+    MenuItem deleteWf;
+
+    @UiField
+    MenuItem editWf;
+
+    @UiField
+    MenuItem submitWf;
 
     @UiField
     AppSearchField appSearch;
@@ -103,33 +117,33 @@ public class AppsViewToolbarImpl implements AppsViewToolbar {
         this.presenter = presenter;
     }
 
-    @UiHandler("appRun")
-    public void appInfoClicked(SelectEvent event) {
+    @UiHandler({"appRun", "wfRun"})
+    public void appInfoClicked(SelectionEvent<Item> event) {
         presenter.onAppRunClick();
     }
 
     @UiHandler("requestTool")
-    public void requestToolClicked(SelectEvent event) {
+    public void requestToolClicked(SelectionEvent<Item> event) {
         presenter.onRequestToolClicked();
     }
 
-    @UiHandler("copy")
+    @UiHandler({"copyApp", "copyWf"})
     public void copyClicked(SelectionEvent<Item> event) {
         presenter.onCopyClicked();
     }
 
-    @UiHandler("editApp")
+    @UiHandler({"editApp", "editWf"})
     public void editClicked(SelectionEvent<Item> event) {
         presenter.onEditClicked();
     }
 
-    @UiHandler("delete")
+    @UiHandler({"deleteApp", "deleteWf"})
     public void deleteClicked(SelectionEvent<Item> event) {
         presenter.onDeleteClicked();
     }
 
-    @UiHandler("submit")
-    public void submitClicked(SelectEvent event) {
+    @UiHandler("submitApp")
+    public void submitClicked(SelectionEvent<Item> event) {
         presenter.submitClicked();
     }
 
@@ -143,73 +157,93 @@ public class AppsViewToolbarImpl implements AppsViewToolbar {
         presenter.createWorkflowClicked();
     }
     
-    @Override
-    public void setEditMenuEnabled(boolean enabled) {
-        edit.setEnabled(enabled);
-    }
 
-    @Override
-    public void setEditButtonEnabled(boolean enabled) {
-        editApp.setEnabled(enabled);
-    }
-
-    @Override
-    public void setSubmitButtonEnabled(boolean enabled) {
-        submit.setEnabled(enabled);
-    }
-
-    @Override
-    public void setDeleteButtonEnabled(boolean enabled) {
-        delete.setEnabled(enabled);
-    }
-
-    @Override
-    public void setCopyButtonEnabled(boolean enabled) {
-        copy.setEnabled(enabled);
-    }
-
-    @Override
-    public void setAppRunButtonEnabled(boolean enabled) {
-        appRun.setEnabled(enabled);
-    }
-
-    @Override
-    public void setCreateButtonVisible(boolean visible) {
-        create.setVisible(visible);
-    }
-
-    @Override
-    public void setCopyButtonVisible(boolean visible) {
-        copy.setVisible(visible);
-    }
-    
-    @Override
-    public void setEditMenuVisible(boolean visible) {
-        edit.setVisible(visible);
-    }
-
-    @Override
-    public void setEditButtonVisible(boolean visible) {
-        editApp.setVisible(visible);
-    }
-
-    @Override
-    public void setDeleteButtonVisible(boolean visible) {
-        delete.setVisible(visible);
-    }
-
-    @Override
-    public void setSubmitButtonVisible(boolean visible) {
-        submit.setVisible(visible);
-    }
-
-    @Override
-    public void setRequestToolButtonVisible(boolean visible) {
-        requestTool.setVisible(visible);
-    }
 
     @Override
     public AppSearchRpcProxy getAppSearchRpcProxy() {
         return proxy;
+    }
+
+    @Override
+    public void setEditAppMenuItemEnabled(boolean enabled) {
+        editApp.setEnabled(enabled);
+
+    }
+
+    @Override
+    public void setSubmitAppMenuItemEnabled(boolean enabled) {
+        submitApp.setEnabled(enabled);
+
+    }
+
+    @Override
+    public void setDeleteAppMenuItemEnabled(boolean enabled) {
+        deleteApp.setEnabled(enabled);
+
+    }
+
+    @Override
+    public void setCopyAppMenuItemEnabled(boolean enabled) {
+        copyApp.setEnabled(enabled);
+
+    }
+
+    @Override
+    public void setAppRunMenuItemEnabled(boolean enabled) {
+        appRun.setEnabled(enabled);
+
+    }
+
+    @Override
+    public void setAppMenuEnabled(boolean enabled) {
+        app_menu.setEnabled(enabled);
+
+    }
+
+    @Override
+    public void setWorkflowMenuEnabled(boolean enabled) {
+        wf_menu.setEnabled(enabled);
+
+    }
+
+    @Override
+    public void setEditWorkflowMenuItemEnabled(boolean enabled) {
+        editWf.setEnabled(enabled);
+
+    }
+
+    @Override
+    public void setSubmitWorkflowMenuItemEnabled(boolean enabled) {
+        submitWf.setEnabled(enabled);
+
+    }
+
+    @Override
+    public void setDeleteWorkflowMenuItemEnabled(boolean enabled) {
+        deleteWf.setEnabled(enabled);
+
+    }
+
+    @Override
+    public void setCopyWorkflowMenuItemEnabled(boolean enabled) {
+        copyWf.setEnabled(enabled);
+
+    }
+
+    @Override
+    public void setWorkflowRunMenuItemEnabled(boolean enabled) {
+        wfRun.setEnabled(enabled);
+
+    }
+
+    @Override
+    public void hideAppMenu() {
+        app_menu.setVisible(false);
+
+    }
+
+    @Override
+    public void hideWorkflowMenu() {
+        wf_menu.setVisible(false);
     }
 }

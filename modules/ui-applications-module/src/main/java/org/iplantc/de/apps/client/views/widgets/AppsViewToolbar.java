@@ -18,21 +18,11 @@ import java.util.List;
 public interface AppsViewToolbar extends IsWidget {
     public interface Presenter {
         interface Builder extends org.iplantc.de.commons.client.presenter.Presenter {
-            Builder hideToolbarButtonCreate();
+            Builder hideToolbarAppButton();
 
-            Builder hideToolbarButtonCopy();
+            Builder hideToolbarWorkFlowButton();
 
-            Builder hideToolbarButtonEdit();
-
-            Builder hideToolbarButtonDelete();
-
-            Builder hideToolbarButtonSubmit();
-
-            Builder hideToolbarButtonRequestTool();
-            
             void go(HasOneWidget container, final AppGroup selectedAppGroup, final App selectedApp);
-
-            Builder hideToolbarMenuEdit();
         }
 
         public Builder builder();
@@ -55,7 +45,6 @@ public interface AppsViewToolbar extends IsWidget {
 
         void onEditClicked();
 
-
         public void onAppRunClick();
 
         AppSearchRpcProxy getAppSearchRpcProxy();
@@ -67,31 +56,34 @@ public interface AppsViewToolbar extends IsWidget {
 
     void setPresenter(Presenter presenter);
 
-    void setEditButtonEnabled(boolean enabled);
+    void setEditAppMenuItemEnabled(boolean enabled);
 
-    void setSubmitButtonEnabled(boolean enabled);
+    void setSubmitAppMenuItemEnabled(boolean enabled);
 
-    void setDeleteButtonEnabled(boolean enabled);
+    void setDeleteAppMenuItemEnabled(boolean enabled);
 
-    void setCopyButtonEnabled(boolean enabled);
+    void setCopyAppMenuItemEnabled(boolean enabled);
 
-    void setAppRunButtonEnabled(boolean enabled);
+    void setAppRunMenuItemEnabled(boolean enabled);
 
-    void setCreateButtonVisible(boolean visible);
+    void setEditWorkflowMenuItemEnabled(boolean enabled);
 
-    void setCopyButtonVisible(boolean visible);
+    void setSubmitWorkflowMenuItemEnabled(boolean enabled);
 
-    void setEditButtonVisible(boolean visible);
+    void setDeleteWorkflowMenuItemEnabled(boolean enabled);
 
-    void setDeleteButtonVisible(boolean visible);
+    void setCopyWorkflowMenuItemEnabled(boolean enabled);
 
-    void setSubmitButtonVisible(boolean visible);
+    void setWorkflowRunMenuItemEnabled(boolean enabled);
 
-    void setRequestToolButtonVisible(boolean visible);
+    void setAppMenuEnabled(boolean enabled);
+
+    void setWorkflowMenuEnabled(boolean enabled);
+
+    void hideAppMenu();
+
+    void hideWorkflowMenu();
 
     AppSearchRpcProxy getAppSearchRpcProxy();
 
-    void setEditMenuEnabled(boolean enabled);
-
-    void setEditMenuVisible(boolean visible);
 }

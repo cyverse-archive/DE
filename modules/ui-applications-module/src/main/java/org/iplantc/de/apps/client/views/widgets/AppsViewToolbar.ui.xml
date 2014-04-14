@@ -30,51 +30,55 @@
 
 	<toolbar:ToolBar ui:field="toolBar">
 		<toolbar:child layoutData="{boxDataNoFlex}">
-			<button:TextButton ui:field="create" text="{strings.create}"
-				debugId="idCreateBtn" icon="{icons.add}">
+			<button:TextButton ui:field="app_menu"
+				text="{strings.applications}" debugId="idAppsBtn">
 				<button:menu>
 					<menu:Menu>
+						<menu:MenuItem ui:field="appRun" debugId="idAppRunBtn"
+							text="{strings.run}" icon="{icons.run}" />
 						<menu:MenuItem ui:field="createNewApp" debugId="idNewAppBtn"
 							text="{strings.newApp}" icon="{icons.add}" />
-						<menu:MenuItem ui:field="createWorkflow" debugId="idNewWorkflowBtn"
-							text="{strings.workflow}" icon="{icons.add}" />
+						<menu:MenuItem ui:field="requestTool" debugId="idBtnNewToolBtn"
+							text="{strings.requestTool}" icon="{icons.add}" />
+						<menu:MenuItem ui:field="copyApp" debugId="idCopyBtn"
+							text="{strings.copy}" icon="{icons.copy}" />
+						<menu:MenuItem ui:field="editApp" debugId="idEditAppBtn"
+							text="{strings.editApp}" icon="{icons.edit}" />
+						<menu:MenuItem ui:field="deleteApp" debugId="idDeleteBtn"
+							text="{strings.delete}" icon="{icons.delete}" />
+						<menu:MenuItem ui:field="submitApp" debugId="idMakePublic"
+							text="{strings.submit}" icon="{icons.submitForPublic}"
+							toolTipConfig="{submitToolTip}" />
 					</menu:Menu>
 				</button:menu>
 			</button:TextButton>
 		</toolbar:child>
 		<toolbar:child layoutData="{boxDataNoFlex}">
-			<button:TextButton ui:field="appRun" debugId="idAppRunBtn"
-				text="{strings.run}" icon="{icons.run}" />
-		</toolbar:child>
-		<toolbar:child layoutData="{boxDataNoFlex}">
-			<button:TextButton ui:field="requestTool" debugId="idBtnNewToolBtn"
-				text="{strings.requestTool}" icon="{icons.add}" />
-		</toolbar:child>
-		
-		<toolbar:child layoutData="{boxDataNoFlex}">
-			<button:TextButton ui:field="edit" debugId="idEditBtn"
-				text="{strings.edit}" icon="{icons.edit}">
+			<button:TextButton ui:field="wf_menu" text="{strings.workflow}"
+				debugId="idwfBtn">
 				<button:menu>
 					<menu:Menu>
-					<menu:MenuItem ui:field="copy" debugId="idCopyBtn"
-				text="{strings.copy}" icon="{icons.copy}" />
-				<menu:MenuItem ui:field="editApp" debugId="idEditAppBtn"
-				text="{strings.editApp}" icon="{icons.edit}" />
-				<menu:MenuItem ui:field="delete" debugId="idDeleteBtn"
-				text="{strings.delete}" icon="{icons.delete}" />
+						<menu:MenuItem ui:field="wfRun" debugId="idWfRunBtn"
+							text="Use Workflow" icon="{icons.run}" />
+						<menu:MenuItem ui:field="createWorkflow" debugId="idNewWorkflowBtn"
+							text="{strings.workflow}" icon="{icons.add}" />
+						<menu:MenuItem ui:field="copyWf" debugId="idWfCopyBtn"
+							text="{strings.copy}" icon="{icons.copy}" />
+						<menu:MenuItem ui:field="editWf" debugId="idWfEditAppBtn"
+							text="{strings.editApp}" icon="{icons.edit}" />
+						<menu:MenuItem ui:field="deleteWf" debugId="idWfDeleteBtn"
+							text="{strings.delete}" icon="{icons.delete}" />
+						<menu:MenuItem ui:field="submitWf" debugId="idwfMakePublic"
+							text="{strings.submit}" icon="{icons.submitForPublic}"
+							toolTipConfig="{submitToolTip}" />
 					</menu:Menu>
 				</button:menu>
 			</button:TextButton>
 		</toolbar:child>
 
-		<toolbar:child layoutData="{boxDataNoFlex}">
-			<button:TextButton ui:field="submit" debugId="idMakePublic"
-				text="{strings.submit}" icon="{icons.submitForPublic}"
-				toolTipConfig="{submitToolTip}" />
-		</toolbar:child>
 		<toolbar:child layoutData="{boxData}">
-			<MyWidgets:AppSearchField ui:field="appSearch" debugId="idAppsSrc"
-				emptyText="{strings.searchApps}" />
+			<MyWidgets:AppSearchField ui:field="appSearch"
+				debugId="idAppsSrc" emptyText="{strings.searchApps}" />
 		</toolbar:child>
 	</toolbar:ToolBar>
 </ui:UiBinder>
