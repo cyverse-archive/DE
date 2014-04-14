@@ -3,11 +3,14 @@ package org.iplantc.de.analysis.client.views;
 import com.google.gwtmockito.GxtMockitoTestRunner;
 
 import static org.junit.Assert.fail;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+@Ignore
 @RunWith(GxtMockitoTestRunner.class)
 public class AnalysesViewMenuImplTest {
+
 
     @Test public void testOnSelectionChanged_ZeroSelected() {
         fail("Not yet implemented");

@@ -4,8 +4,11 @@
 package org.iplantc.de.analysis.client.views;
 
 import static org.iplantc.de.client.models.analysis.AnalysisExecutionStatus.*;
+import org.iplantc.de.analysis.client.views.widget.AnalysisSearchField;
 import org.iplantc.de.analysis.shared.AnalysisModule;
 import org.iplantc.de.client.models.analysis.Analysis;
+import org.iplantc.de.resources.client.IplantResources;
+import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.logical.shared.SelectionEvent;
@@ -14,12 +17,17 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.uibinder.client.UiTemplate;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.inject.Inject;
 
+import com.sencha.gxt.data.shared.loader.FilterPagingLoadConfig;
+import com.sencha.gxt.data.shared.loader.PagingLoadResult;
+import com.sencha.gxt.data.shared.loader.PagingLoader;
 import com.sencha.gxt.widget.core.client.Composite;
+import com.sencha.gxt.widget.core.client.button.TextButton;
 import com.sencha.gxt.widget.core.client.menu.Item;
-import com.sencha.gxt.widget.core.client.menu.MenuBarItem;
 import com.sencha.gxt.widget.core.client.menu.MenuItem;
 import com.sencha.gxt.widget.core.client.selection.SelectionChangedEvent;
+import com.sencha.gxt.widget.core.client.toolbar.ToolBar;
 
 import java.util.List;
 
@@ -31,36 +39,60 @@ public class AnalysesViewMenuImpl extends Composite implements AnalysesView.View
 
     @UiTemplate("AnalysesViewMenuImpl.ui.xml")
     interface AnalysesToolbarUiBinder extends UiBinder<Widget, AnalysesViewMenuImpl> { }
+
+    @UiField(provided = true)
+    IplantResources icons;
+    @UiField(provided = true)
+    IplantDisplayStrings strings;
+
     @UiField
-    MenuBarItem analysesMI;
+    ToolBar menuBar;
+    @UiField
+    MenuItem goToFolderMI;
+    @UiField
+    MenuItem viewParamsMI;
+    @UiField
+    MenuItem relaunchMI;
     @UiField
     MenuItem cancelMI;
     @UiField
     MenuItem deleteMI;
     @UiField
-    MenuBarItem editMI;
-    @UiField
-    MenuItem goToFolderMI;
-    @UiField
-    MenuItem relaunchMI;
-    @UiField
-    MenuItem renameMI;
+    TextButton analysesTb;
     @UiField
     MenuItem updateCommentsMI;
     @UiField
-    MenuItem viewParamsMI;
+    MenuItem renameMI;
+    @UiField
+    TextButton editTb;
+
     private static AnalysesToolbarUiBinder uiBinder = GWT.create(AnalysesToolbarUiBinder.class);
     private AnalysesView parent;
+    private PagingLoader<FilterPagingLoadConfig, PagingLoadResult<Analysis>> loader;
     private AnalysesView.Presenter presenter;
+    private AnalysisSearchField searchField;
 
-    public AnalysesViewMenuImpl() {
-       initWidget(uiBinder.createAndBindUi(this));
+    @Inject
+    public AnalysesViewMenuImpl(final IplantDisplayStrings displayStrings, final IplantResources resources) {
+        this.strings = displayStrings;
+        this.icons = resources;
+
+        initWidget(uiBinder.createAndBindUi(this));
     }
 
     @Override
-    public void init(AnalysesView.Presenter presenter, AnalysesView parent) {
+    public void filterByAnalysisId(String analysisId, String name) {
+       searchField.filterByAnalysisId(analysisId, name);
+    }
+
+    @Override
+    public void init(AnalysesView.Presenter presenter, AnalysesView parent, PagingLoader<FilterPagingLoadConfig, PagingLoadResult<Analysis>> loader){
         this.presenter = presenter;
         this.parent = parent;
+        this.loader = loader;
+        searchField = new AnalysisSearchField(loader);
+        searchField.setEmptyText(strings.filterAnalysesList());
+        menuBar.add(searchField);
     }
 
     @Override
@@ -126,7 +158,7 @@ public class AnalysesViewMenuImpl extends Composite implements AnalysesView.View
     protected void onEnsureDebugId(String baseID) {
         super.onEnsureDebugId(baseID);
         // Analsis menu
-        analysesMI.ensureDebugId(baseID + AnalysisModule.Ids.MENUITEM_ANALYSES);
+        analysesTb.ensureDebugId(baseID + AnalysisModule.Ids.MENUITEM_ANALYSES);
         goToFolderMI.ensureDebugId(baseID + AnalysisModule.Ids.MENUITEM_ANALYSES + AnalysisModule.Ids.MENUITEM_GO_TO_FOLDER);
         viewParamsMI.ensureDebugId(baseID + AnalysisModule.Ids.MENUITEM_ANALYSES + AnalysisModule.Ids.MENUITEM_VIEW_PARAMS);
         relaunchMI.ensureDebugId(baseID + AnalysisModule.Ids.MENUITEM_ANALYSES + AnalysisModule.Ids.MENUITEM_RELAUNCH);
@@ -134,7 +166,7 @@ public class AnalysesViewMenuImpl extends Composite implements AnalysesView.View
         deleteMI.ensureDebugId(baseID + AnalysisModule.Ids.MENUITEM_ANALYSES + AnalysisModule.Ids.MENUITEM_DELETE);
 
         // Edit menu
-        editMI.ensureDebugId(baseID + AnalysisModule.Ids.MENUITEM_EDIT);
+        editTb.ensureDebugId(baseID + AnalysisModule.Ids.MENUITEM_EDIT);
         renameMI.ensureDebugId(baseID + AnalysisModule.Ids.MENUITEM_EDIT + AnalysisModule.Ids.MENUITEM_RENAME);
         updateCommentsMI.ensureDebugId(baseID + AnalysisModule.Ids.MENUITEM_EDIT + AnalysisModule.Ids.MENUITEM_UPDATE_COMMENTS);
 

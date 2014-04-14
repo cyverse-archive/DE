@@ -7,27 +7,8 @@
     <inherits name="com.google.gwt.inject.Inject"/>
     <inherits name='org.iplantc.de.DiscoveryEnvironmentCommon' />
     <inherits name="org.iplantc.de.diskResource.diskresource"/>
-
-    <!-- Them deferred binding -->
-    <replace-with class="org.iplantc.de.analysis.client.theme.AnalysisCommentCellDefaultAppearance">
-        <when-type-is class="org.iplantc.de.analysis.client.views.cells.AnalysisCommentCell.AnalysisCommentCellAppearance"/>
-    </replace-with>
-
-    <replace-with class="org.iplantc.de.analysis.client.theme.AnalysisAppNameCellDefaultAppearance">
-        <when-type-is class="org.iplantc.de.analysis.client.views.cells.AnalysisAppNameCell.AnalysisAppNameCellAppearance"/>
-    </replace-with>
-
-    <replace-with class="org.iplantc.de.analysis.client.theme.AnalysisNameCellDefaultAppearance">
-        <when-type-is class="org.iplantc.de.analysis.client.views.cells.AnalysisNameCell.AnalysisNameCellAppearance"/>
-    </replace-with>
-
-    <replace-with class="org.iplantc.de.analysis.client.theme.AnalysisParamNameCellDefaultAppearance">
-        <when-type-is class="org.iplantc.de.analysis.client.views.widget.cells.AnalysisParamNameCell.AnalysisParamNameCellAppearance"/>
-    </replace-with>
-
-    <replace-with class="org.iplantc.de.analysis.client.theme.AnalysisParamValueCellDefaultAppearance">
-        <when-type-is class="org.iplantc.de.analysis.client.views.widget.cells.AnalysisParamValueCell.AnalysisParamValueCellAppearance"/>
-    </replace-with>
+    <inherits name="org.iplantc.de.discoveryenvironment"/>
+    <inherits name="org.iplantc.de.analysis.client.theme.BaseTheme"/>
 
     <source path="client"/>
     <source path="shared"/>

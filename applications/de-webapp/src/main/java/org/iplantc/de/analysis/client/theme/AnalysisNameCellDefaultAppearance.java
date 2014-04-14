@@ -6,6 +6,8 @@ import org.iplantc.de.client.models.analysis.Analysis;
 import com.google.common.base.Strings;
 import com.google.gwt.cell.client.Cell;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Element;
+import com.google.gwt.dom.client.Style;
 import com.google.gwt.resources.client.ClientBundle;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.safehtml.client.SafeHtmlTemplates;
@@ -49,6 +51,22 @@ public class AnalysisNameCellDefaultAppearance implements AnalysisNameCell.Analy
         this.resources = resources;
         resources.styles().ensureInjected();
         this.template = GWT.create(Templates.class);
+    }
+
+    @Override
+    public void doOnMouseOut(Element eventTarget, Analysis value) {
+        if (eventTarget.getAttribute("name").equalsIgnoreCase(ELEMENT_NAME)
+                    && !Strings.isNullOrEmpty(value.getResultFolderId())) {
+            eventTarget.getStyle().setTextDecoration(Style.TextDecoration.NONE);
+        }
+    }
+
+    @Override
+    public void doOnMouseOver(Element eventTarget, Analysis value) {
+        if (eventTarget.getAttribute("name").equalsIgnoreCase(ELEMENT_NAME)
+                    && !Strings.isNullOrEmpty(value.getResultFolderId())) {
+            eventTarget.getStyle().setTextDecoration(Style.TextDecoration.UNDERLINE);
+        }
     }
 
     @Override

@@ -3,11 +3,7 @@ package org.iplantc.de.analysis.client.views.widget;
 import org.iplantc.de.client.models.analysis.Analysis;
 import org.iplantc.de.commons.client.widgets.SearchField;
 
-import com.sencha.gxt.data.shared.loader.FilterConfig;
-import com.sencha.gxt.data.shared.loader.FilterConfigBean;
-import com.sencha.gxt.data.shared.loader.FilterPagingLoadConfig;
-import com.sencha.gxt.data.shared.loader.PagingLoadResult;
-import com.sencha.gxt.data.shared.loader.PagingLoader;
+import com.sencha.gxt.data.shared.loader.*;
 
 import java.util.List;
 

@@ -1,6 +1,8 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
              xmlns:menu="urn:import:com.sencha.gxt.widget.core.client.menu"
+             xmlns:toolbar="urn:import:com.sencha.gxt.widget.core.client.toolbar"
+             xmlns:button="urn:import:com.sencha.gxt.widget.core.client.button"
              xmlns:container="urn:import:com.sencha.gxt.widget.core.client.container">
 
     <ui:with field="icons"
@@ -10,46 +12,51 @@
              type="org.iplantc.de.resources.client.messages.IplantDisplayStrings"/>
 
     <container:SimpleContainer>
-        <menu:MenuBar>
-            <menu:MenuBarItem ui:field="analysesMI"
-                              text="Analyses">
-                <menu:menu>
+        <toolbar:ToolBar ui:field="menuBar">
+            <button:TextButton ui:field="analysesTb"
+                               text="Analyses">
+                <button:menu>
                     <menu:Menu>
                         <menu:MenuItem ui:field="goToFolderMI"
-                                       text="Go to Output Folder"
+                                       text="{strings.goToOutputFolder}"
+                                       icon="{icons.folder}"
                                        enabled="false"/>
                         <menu:MenuItem ui:field="viewParamsMI"
-                                       text="View Parameters"
+                                       text="{strings.viewParamLbl}"
+                                       icon="{icons.fileView}"
                                        enabled="false"/>
                         <menu:MenuItem ui:field="relaunchMI"
-                                       text="Relaunch"
+                                       text="{strings.relaunchAnalysis}"
+                                       icon="{icons.run}"
                                        enabled="false"/>
                         <menu:MenuItem ui:field="cancelMI"
-                                       text="Cancel"
+                                       text="{strings.cancelAnalysis}"
+                                       icon="{icons.deleteIcon}"
                                        enabled="false"/>
                         <menu:MenuItem ui:field="deleteMI"
-                                       text="Delete"
+                                       text="{strings.delete}"
+                                       icon="{icons.cancel}"
                                        enabled="false"/>
                     </menu:Menu>
-
-                </menu:menu>
-
-            </menu:MenuBarItem>
-            <menu:MenuBarItem ui:field="editMI"
-                              text="Edit">
-                <menu:menu>
+                </button:menu>
+            </button:TextButton>
+            <button:TextButton ui:field="editTb"
+                               text="Edit">
+                <button:menu>
                     <menu:Menu>
                         <menu:MenuItem ui:field="renameMI"
-                                       text="Rename"
+                                       text="{strings.rename}"
+                                       icon="{icons.fileRename}"
                                        enabled="false"/>
                         <menu:MenuItem ui:field="updateCommentsMI"
-                                       text="Update Comments..."
+                                       text="{strings.comments}"
+                                       icon="{icons.userComment}"
                                        enabled="false"/>
                     </menu:Menu>
-                </menu:menu>
+                </button:menu>
+            </button:TextButton>
+            <toolbar:FillToolItem/>
 
-            </menu:MenuBarItem>
-
-        </menu:MenuBar>
+        </toolbar:ToolBar>
     </container:SimpleContainer>
 </ui:UiBinder>

@@ -15,6 +15,7 @@ import com.sencha.gxt.data.shared.ListStore;
 import com.sencha.gxt.data.shared.loader.FilterPagingLoadConfig;
 import com.sencha.gxt.data.shared.loader.LoadHandler;
 import com.sencha.gxt.data.shared.loader.PagingLoadResult;
+import com.sencha.gxt.data.shared.loader.PagingLoader;
 import com.sencha.gxt.widget.core.client.selection.SelectionChangedEvent;
 
 import java.util.List;
@@ -27,15 +28,16 @@ import java.util.List;
  * 
  */
 public interface AnalysesView extends IsWidget, SelectionChangedEvent.HasSelectionChangedHandlers, AnalysisParamValueSelectedEvent.HasAnalysisParamValueSelectedEventHandlers, AnalysisAppSelectedEvent.HasAnalysisAppSelectedEventHandlers, AnalysisCommentSelectedEvent.HasAnalysisCommentSelectedEventHandlers, AnalysisNameSelectedEvent.HasAnalysisNameSelectedEventHandlers {
-    public interface Presenter extends org.iplantc.de.commons.client.presenter.Presenter, SelectionChangedEvent.SelectionChangedHandler<Analysis> {
+
+    public interface Presenter {
 
         void cancelSelectedAnalyses();
 
         void deleteSelectedAnalyses();
 
-        void go(final HasOneWidget container, List<Analysis> selectedAnalyses);
-
         List<Analysis> getSelectedAnalyses();
+
+        void go(final HasOneWidget container, List<Analysis> selectedAnalyses);
 
         void goToSelectedAnalysisFolder();
 
@@ -53,8 +55,13 @@ public interface AnalysesView extends IsWidget, SelectionChangedEvent.HasSelecti
     }
 
     public interface ViewMenu extends IsWidget, SelectionChangedEvent.SelectionChangedHandler<Analysis> {
-        void init(Presenter presenter, AnalysesView parent);
+
+        void filterByAnalysisId(String analysisId, String name);
+
+        void init(Presenter presenter, AnalysesView parent, PagingLoader<FilterPagingLoadConfig, PagingLoadResult<Analysis>> loader);
     }
+
+    void filterByAnalysisId(String id, String name);
 
     public void loadAnalyses();
 

@@ -1,12 +1,7 @@
 package org.iplantc.de.analysis.shared;
 
-/**
- * Created by jstroot on 4/9/14.
- */
 public interface AnalysisModule {
-    /**
-     * Created by jstroot on 4/9/14.
-     */
+
     interface Ids {
         public static final String ANALYSES_VIEW = ".analyses";
         public static final String MENUBAR = ".menuBar";

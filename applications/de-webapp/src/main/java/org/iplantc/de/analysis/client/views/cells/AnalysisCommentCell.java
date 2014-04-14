@@ -2,8 +2,6 @@ package org.iplantc.de.analysis.client.views.cells;
 
 import org.iplantc.de.analysis.client.events.AnalysisCommentSelectedEvent;
 import org.iplantc.de.client.models.analysis.Analysis;
-import org.iplantc.de.commons.client.views.gxt3.dialogs.IPlantDialog;
-import org.iplantc.de.resources.client.messages.I18N;
 
 import static com.google.gwt.dom.client.BrowserEvents.*;
 import com.google.gwt.cell.client.AbstractCell;
@@ -15,9 +13,6 @@ import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.shared.HasHandlers;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.client.Event;
-
-import com.sencha.gxt.widget.core.client.Dialog;
-import com.sencha.gxt.widget.core.client.form.TextArea;
 
 public class AnalysisCommentCell extends AbstractCell<Analysis> {
 
@@ -66,14 +61,7 @@ public class AnalysisCommentCell extends AbstractCell<Analysis> {
     }
 
     private void doOnClick(Element eventTarget, Analysis value, ValueUpdater<Analysis> valueUpdater) {
-        Dialog d = new IPlantDialog();
-        d.setHeadingText(I18N.DISPLAY.comments());
-        d.setSize("350px", "300px");
-        TextArea ta = new TextArea();
-        ta.setSize("300px", "200px");
-        ta.setValue(value.getDescription());
-        d.add(ta);
-        d.show();
+
         if(hasHandlers != null){
             hasHandlers.fireEvent(new AnalysisCommentSelectedEvent(value));
         }

@@ -24,6 +24,7 @@ public class MyAnalysesWindow extends IplantWindowBase {
         super(null, null);
         setTitle(org.iplantc.de.resources.client.messages.I18N.DISPLAY.analyses());
         setSize("670", "375");
+        setMinWidth(400);
 
         presenter = DEInjector.INSTANCE.getAnalysesViewPresenter();
 

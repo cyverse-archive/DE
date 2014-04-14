@@ -12,14 +12,15 @@ import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 public class AnalysisParamNameCellDefaultAppearance implements AnalysisParamNameCell.AnalysisParamNameCellAppearance {
 
     interface Templates extends SafeHtmlTemplates {
-        @SafeHtmlTemplates.Template("<span title='{0}'>{0}</span>" )
-        SafeHtml cell(SafeHtml paramName);
+        @SafeHtmlTemplates.Template("<span title='{0}'>{1}</span>" )
+        SafeHtml cell(String title, SafeHtml paramName);
     }
 
     private final Templates template = GWT.create(Templates.class);
 
     @Override
     public void render(Cell.Context context, String value, SafeHtmlBuilder sb) {
-        sb.append(template.cell(SafeHtmlUtils.fromString(value)));
+        final SafeHtml title = SafeHtmlUtils.fromString(value);
+        sb.append(template.cell(title.asString(), title));
     }
 }

@@ -2,8 +2,6 @@ package org.iplantc.de.analysis.client.views.cells;
 
 import org.iplantc.de.analysis.client.events.AnalysisAppSelectedEvent;
 import org.iplantc.de.client.models.analysis.Analysis;
-import org.iplantc.de.client.views.windows.configs.AppWizardConfig;
-import org.iplantc.de.client.views.windows.configs.ConfigFactory;
 
 import static com.google.gwt.dom.client.BrowserEvents.*;
 import com.google.common.base.Strings;
@@ -13,7 +11,6 @@ import com.google.gwt.cell.client.ValueUpdater;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NativeEvent;
-import com.google.gwt.dom.client.Style.TextDecoration;
 import com.google.gwt.event.shared.HandlerManager;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.client.Event;
@@ -26,6 +23,11 @@ public class AnalysisAppNameCell extends AbstractCell<Analysis> {
 
     public interface AnalysisAppNameCellAppearance {
         String ELEMENT_NAME = "analysisAppName";
+
+        void doOnMouseOut(Element eventTarget, Analysis value);
+
+        void doOnMouseOver(Element eventTarget, Analysis value);
+
         void render(Cell.Context context, Analysis model, SafeHtmlBuilder sb);
     }
 
@@ -63,10 +65,10 @@ public class AnalysisAppNameCell extends AbstractCell<Analysis> {
                     doOnClick(eventTarget, value, valueUpdater);
                     break;
                 case Event.ONMOUSEOVER:
-                    doOnMouseOver(eventTarget, value);
+                    appearance.doOnMouseOver(eventTarget, value);
                     break;
                 case Event.ONMOUSEOUT:
-                    doOnMouseOut(eventTarget, value);
+                    appearance.doOnMouseOut(eventTarget, value);
                     break;
                 default:
                     break;
@@ -79,29 +81,11 @@ public class AnalysisAppNameCell extends AbstractCell<Analysis> {
         this.hasHandlers = hasHandlers;
     }
 
-    private void doOnMouseOut(Element eventTarget, Analysis value) {
-        if (eventTarget.getAttribute("name").equalsIgnoreCase(appearance.ELEMENT_NAME)
-                && !Strings.isNullOrEmpty(value.getResultFolderId())) {
-            eventTarget.getStyle().setTextDecoration(TextDecoration.NONE);
-        }
-    }
-
-    private void doOnMouseOver(Element eventTarget, Analysis value) {
-        if (eventTarget.getAttribute("name").equalsIgnoreCase(appearance.ELEMENT_NAME)
-                && !Strings.isNullOrEmpty(value.getResultFolderId())) {
-            eventTarget.getStyle().setTextDecoration(TextDecoration.UNDERLINE);
-        }
-    }
-
     private void doOnClick(Element eventTarget, Analysis value, ValueUpdater<Analysis> valueUpdater) {
-        if (eventTarget.getAttribute("name").equalsIgnoreCase(appearance.ELEMENT_NAME)
+        if (eventTarget.getAttribute("name").equalsIgnoreCase(AnalysisAppNameCellAppearance.ELEMENT_NAME)
                 && !Strings.isNullOrEmpty(value.getResultFolderId()) && !value.isAppDisabled()) {
-            AppWizardConfig config = ConfigFactory.appWizardConfig(value.getAppId());
-            config.setAnalysisId(value);
-            config.setRelaunchAnalysis(true);
-            //eventBus.fireEvent(new WindowShowRequestEvent(config));
             if(hasHandlers != null){
-                hasHandlers.fireEvent(new AnalysisAppSelectedEvent(value.getAppId()));
+                hasHandlers.fireEvent(new AnalysisAppSelectedEvent(value));
             }
         }
     }

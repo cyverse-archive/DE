@@ -41,7 +41,7 @@ public class AnalysisParamValueCellDefaultAppearance implements AnalysisParamVal
     protected AnalysisParamValueCellDefaultAppearance(AnalysisParamValueCellResources resources){
         this.resources = resources;
         resources.styles().ensureInjected();
-        this.template = GWT.<Template> create(Template.class);
+        this.template = GWT.create(Template.class);
     }
 
     @Override

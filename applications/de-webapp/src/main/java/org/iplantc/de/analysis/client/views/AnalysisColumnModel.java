@@ -6,6 +6,7 @@ import org.iplantc.de.analysis.client.events.AnalysisNameSelectedEvent;
 import org.iplantc.de.analysis.client.views.cells.*;
 import org.iplantc.de.client.models.analysis.Analysis;
 import org.iplantc.de.client.views.windows.AnalysisProperties;
+import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 
 import com.google.common.collect.Lists;
 import com.google.gwt.event.shared.HandlerRegistration;
@@ -21,8 +22,8 @@ import java.util.List;
 public class AnalysisColumnModel extends ColumnModel<Analysis> implements AnalysisNameSelectedEvent.HasAnalysisNameSelectedEventHandlers, AnalysisAppSelectedEvent.HasAnalysisAppSelectedEventHandlers, AnalysisCommentSelectedEvent.HasAnalysisCommentSelectedEventHandlers {
 
     @Inject
-    public AnalysisColumnModel(final AnalysisProperties props, final CheckBoxSelectionModel<Analysis> checkBoxSelectionModel) {
-        super(createColumnConfigList(props, checkBoxSelectionModel));
+    public AnalysisColumnModel(final AnalysisProperties props, final CheckBoxSelectionModel<Analysis> checkBoxSelectionModel, final IplantDisplayStrings displayStrings) {
+        super(createColumnConfigList(props, checkBoxSelectionModel, displayStrings));
 
         // Set handler managers on appropriate cells so they can fire events.
         for(ColumnConfig<Analysis,?> cc : configs){
@@ -36,7 +37,7 @@ public class AnalysisColumnModel extends ColumnModel<Analysis> implements Analys
         }
     }
 
-    public static List<ColumnConfig<Analysis, ?>> createColumnConfigList(AnalysisProperties props, CheckBoxSelectionModel<Analysis> checkBoxSelectionModel){
+    public static List<ColumnConfig<Analysis, ?>> createColumnConfigList(AnalysisProperties props, CheckBoxSelectionModel<Analysis> checkBoxSelectionModel, IplantDisplayStrings displayStrings){
 
         IdentityValueProvider<Analysis> valueProvider = new IdentityValueProvider<Analysis>();
 
@@ -49,24 +50,24 @@ public class AnalysisColumnModel extends ColumnModel<Analysis> implements Analys
         ColumnConfig<Analysis, String> status = new ColumnConfig<Analysis, String>(props.status(), 100);
 
 
-        name.setHeader(org.iplantc.de.resources.client.messages.I18N.DISPLAY.name());
+        name.setHeader(displayStrings.name());
         name.setMenuDisabled(true);
         name.setCell(new AnalysisNameCell());
 
         comment.setMenuDisabled(true);
         comment.setCell(new AnalysisCommentCell());
 
-        app.setHeader(org.iplantc.de.resources.client.messages.I18N.DISPLAY.appName());
+        app.setHeader(displayStrings.appName());
         app.setMenuDisabled(true);
         app.setCell(new AnalysisAppNameCell());
 
         startDate.setCell(new StartDateTimeCell());
-        startDate.setHeader(org.iplantc.de.resources.client.messages.I18N.DISPLAY.startDate());
+        startDate.setHeader(displayStrings.startDate());
 
         endDate.setCell(new EndDateTimeCell());
-        endDate.setHeader(org.iplantc.de.resources.client.messages.I18N.DISPLAY.endDate());
+        endDate.setHeader(displayStrings.endDate());
 
-        status.setHeader(org.iplantc.de.resources.client.messages.I18N.DISPLAY.status());
+        status.setHeader(displayStrings.status());
         status.setMenuDisabled(true);
 
         List<ColumnConfig<Analysis, ?>> ret = Lists.newArrayList();

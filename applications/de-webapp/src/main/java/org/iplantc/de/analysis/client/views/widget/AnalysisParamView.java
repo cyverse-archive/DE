@@ -1,11 +1,11 @@
 package org.iplantc.de.analysis.client.views.widget;
 
 import org.iplantc.de.client.callbacks.FileSaveCallback;
-import org.iplantc.de.client.gin.ServicesInjector;
 import org.iplantc.de.client.models.analysis.AnalysisParameter;
+import org.iplantc.de.client.services.FileEditorServiceFacade;
 import org.iplantc.de.commons.client.views.gxt3.dialogs.IPlantDialog;
 import org.iplantc.de.diskResource.client.views.dialogs.SaveAsDialog;
-import org.iplantc.de.resources.client.messages.I18N;
+import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -26,6 +26,9 @@ import com.sencha.gxt.widget.core.client.toolbar.ToolBar;
 
 import java.util.List;
 
+/**
+ * FIXME JDS Fix debug ids.
+ */
 public class AnalysisParamView implements IsWidget {
 
     private static AnalysisParamViewUiBinder uiBinder = GWT.create(AnalysisParamViewUiBinder.class);
@@ -35,6 +38,8 @@ public class AnalysisParamView implements IsWidget {
 
     @UiField(provided = true)
     final ListStore<AnalysisParameter> listStore;
+    private final IplantDisplayStrings displayStrings;
+    private final FileEditorServiceFacade fileEditorService;
 
     @UiField(provided = true)
     final ColumnModel<AnalysisParameter> cm;
@@ -59,11 +64,13 @@ public class AnalysisParamView implements IsWidget {
 
     private final Widget widget;
 
-    public AnalysisParamView(ListStore<AnalysisParameter> listStore, ColumnModel<AnalysisParameter> cm) {
+    public AnalysisParamView(ListStore<AnalysisParameter> listStore, ColumnModel<AnalysisParameter> cm, IplantDisplayStrings displayStrings, final FileEditorServiceFacade fileEditorService) {
         this.cm = cm;
         this.listStore = listStore;
+        this.displayStrings = displayStrings;
+        this.fileEditorService = fileEditorService;
         this.widget = uiBinder.createAndBindUi(this);
-        grid.getView().setEmptyText(I18N.DISPLAY.noParameters());
+        grid.getView().setEmptyText(displayStrings.noParameters());
     }
 
     @Override
@@ -111,7 +118,7 @@ public class AnalysisParamView implements IsWidget {
     }
 
     public void mask() {
-        con.mask(I18N.DISPLAY.loadingMask());
+        con.mask(displayStrings.loadingMask());
     }
 
     public void unmask() {
@@ -120,17 +127,16 @@ public class AnalysisParamView implements IsWidget {
 
     private void saveFile(final String path, String fileContents) {
         mask();
-        ServicesInjector.INSTANCE.getFileEditorServiceFacade().uploadTextAsFile(path, fileContents, true, new FileSaveCallback(
+        fileEditorService.uploadTextAsFile(path, fileContents, true, new FileSaveCallback(
                 path, true, con));
     }
 
     private String writeTabFile() {
         StringBuilder sw = new StringBuilder();
-        sw.append(I18N.DISPLAY.paramName() + "\t" + I18N.DISPLAY.paramType() + "\t"
-                + I18N.DISPLAY.paramValue() + "\n");
+        sw.append(displayStrings.paramName()).append("\t").append(displayStrings.paramType()).append("\t").append(displayStrings.paramValue()).append("\n");
         List<AnalysisParameter> params = grid.getStore().getAll();
         for (AnalysisParameter ap : params) {
-            sw.append(ap.getName() + "\t" + ap.getType() + "\t" + ap.getDisplayValue() + "\n");
+            sw.append(ap.getName()).append("\t").append(ap.getType()).append("\t").append(ap.getDisplayValue()).append("\n");
         }
 
         return sw.toString();

@@ -14,9 +14,12 @@ import org.iplantc.de.analysis.shared.AnalysisModule;
 import org.iplantc.de.client.desktop.widget.DEPagingToolbar;
 import org.iplantc.de.client.models.analysis.Analysis;
 import org.iplantc.de.client.models.analysis.AnalysisParameter;
+import org.iplantc.de.client.services.FileEditorServiceFacade;
 import org.iplantc.de.resources.client.messages.I18N;
 import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -77,22 +80,25 @@ public class AnalysesViewImpl extends Composite implements AnalysesView {
     ViewMenu viewMenu;
     private static MyUiBinder uiBinder = GWT.create(MyUiBinder.class);
     private final IplantDisplayStrings displayStrings;
+    private final FileEditorServiceFacade fileEditorService;
     private final AnalysisParamViewColumnModel paramViewColumnModel;
+    private final PagingLoader<FilterPagingLoadConfig, PagingLoadResult<Analysis>> loader;
 
     private Presenter presenter;
 
     @Inject
     public AnalysesViewImpl(final ListStore<Analysis> listStore, final AnalysisColumnModel cm, final AnalysisParamViewColumnModel paramViewColumnModel,
-                            final CheckBoxSelectionModel<Analysis> checkBoxModel, final ViewMenu menuBar, final AnalysisRpcProxy proxy, final IplantDisplayStrings displayStrings) {
+                            final CheckBoxSelectionModel<Analysis> checkBoxModel, final ViewMenu menuBar, final AnalysisRpcProxy proxy, final IplantDisplayStrings displayStrings, final FileEditorServiceFacade fileEditorService) {
         this.listStore = listStore;
         this.cm = cm;
         this.paramViewColumnModel = paramViewColumnModel;
         this.viewMenu = menuBar;
         this.displayStrings = displayStrings;
+        this.fileEditorService = fileEditorService;
         initWidget(uiBinder.createAndBindUi(this));
         con.setNorthWidget(menuBar, northData);
 
-        PagingLoader<FilterPagingLoadConfig, PagingLoadResult<Analysis>> loader = new PagingLoader<FilterPagingLoadConfig, PagingLoadResult<Analysis>>(proxy);
+        loader = new PagingLoader<FilterPagingLoadConfig, PagingLoadResult<Analysis>>(proxy);
         loader.useLoadConfig(new FilterPagingLoadConfigBean());
         loader.setRemoteSort(true);
         loader.addLoadHandler(new LoadResultListStoreBinding<FilterPagingLoadConfig, Analysis, PagingLoadResult<Analysis>>(listStore));
@@ -128,10 +134,6 @@ public class AnalysesViewImpl extends Composite implements AnalysesView {
     @Override
     public HandlerRegistration addLoadHandler(
             LoadHandler<FilterPagingLoadConfig, PagingLoadResult<Analysis>> handler) {
-        @SuppressWarnings("unchecked")
-        PagingLoader<FilterPagingLoadConfig, PagingLoadResult<Analysis>> loader = (PagingLoader<FilterPagingLoadConfig, PagingLoadResult<Analysis>>)grid
-                .getLoader();
-
         return loader.addLoadHandler(handler);
     }
 
@@ -162,16 +164,22 @@ public class AnalysesViewImpl extends Composite implements AnalysesView {
     }
 
     @Override
+    public void filterByAnalysisId(String analysisId, String name) {
+        viewMenu.filterByAnalysisId(analysisId, name);
+    }
+
+    @Override
     public void loadAnalyses() {
         grid.getLoader().load();
     }
 
     @Override
     public void removeFromStore(List<Analysis> items) {
-        if (items != null & items.size() > 0) {
-            for (Analysis a : items) {
-                grid.getStore().remove(a);
-            }
+        checkNotNull(items);
+        checkArgument(!items.isEmpty(), "Collection should not be empty");
+
+        for (Analysis a : items) {
+            grid.getStore().remove(a);
         }
 
     }
@@ -179,14 +187,14 @@ public class AnalysesViewImpl extends Composite implements AnalysesView {
     @Override
     public void setPresenter(Presenter presenter) {
         this.presenter = presenter;
-        viewMenu.init(presenter, this);
+        viewMenu.init(presenter, this, (PagingLoader<FilterPagingLoadConfig, PagingLoadResult<Analysis>>) grid.getLoader());
     }
 
     @Override
     public void viewParams() {
         for (Analysis ana : getSelectedAnalyses()) {
             ListStore<AnalysisParameter> listStore = new ListStore<AnalysisParameter>( new AnalysisParameterKeyProvider());
-            final AnalysisParamView apv = new AnalysisParamView(listStore, paramViewColumnModel);
+            final AnalysisParamView apv = new AnalysisParamView(listStore, paramViewColumnModel, displayStrings, fileEditorService);
             apv.setHeading(displayStrings.viewParameters(ana.getName()));
             apv.show();
 

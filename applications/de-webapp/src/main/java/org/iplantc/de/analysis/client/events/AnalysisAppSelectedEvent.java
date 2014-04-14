@@ -1,5 +1,7 @@
 package org.iplantc.de.analysis.client.events;
 
+import org.iplantc.de.client.models.analysis.Analysis;
+
 import com.google.gwt.event.shared.EventHandler;
 import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.event.shared.HandlerRegistration;
@@ -18,14 +20,14 @@ public class AnalysisAppSelectedEvent extends GwtEvent<AnalysisAppSelectedEvent.
         HandlerRegistration addAnalysisAppSelectedEventHandler(AnalysisAppSelectedEventHandler handler);
     }
 
-    private final String appId;
+    private final Analysis analysis;
     public static final GwtEvent.Type<AnalysisAppSelectedEventHandler> TYPE = new GwtEvent.Type<AnalysisAppSelectedEventHandler>();
-    public AnalysisAppSelectedEvent(final String appId){
-        this.appId = appId;
+    public AnalysisAppSelectedEvent(final Analysis analysis){
+        this.analysis = analysis;
     }
 
-    public String getAppId() {
-        return appId;
+    public Analysis getAnalysis() {
+        return analysis;
     }
 
     @Override

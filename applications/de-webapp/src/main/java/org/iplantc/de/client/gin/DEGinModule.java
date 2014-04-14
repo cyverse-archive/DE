@@ -4,6 +4,8 @@ import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.client.services.AnalysisServiceFacade;
 import org.iplantc.de.client.services.DiskResourceServiceFacade;
+import org.iplantc.de.client.services.FileEditorServiceFacade;
+import org.iplantc.de.resources.client.IplantResources;
 
 import com.google.gwt.inject.client.AbstractGinModule;
 import com.google.inject.Provides;
@@ -34,7 +36,17 @@ public class DEGinModule extends AbstractGinModule {
     }
 
     @Provides
+    public FileEditorServiceFacade createFileEditorService() {
+        return ServicesInjector.INSTANCE.getFileEditorServiceFacade();
+    }
+
+    @Provides
     public DiskResourceServiceFacade createDiskResourceService() {
         return ServicesInjector.INSTANCE.getDiskResourceServiceFacade();
+    }
+
+    @Provides
+    public IplantResources createIplantResources(){
+        return IplantResources.RESOURCES;
     }
 }
