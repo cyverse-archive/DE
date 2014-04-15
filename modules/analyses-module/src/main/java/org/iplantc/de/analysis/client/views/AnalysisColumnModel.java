@@ -5,7 +5,6 @@ import org.iplantc.de.analysis.client.events.AnalysisCommentSelectedEvent;
 import org.iplantc.de.analysis.client.events.AnalysisNameSelectedEvent;
 import org.iplantc.de.analysis.client.views.cells.*;
 import org.iplantc.de.client.models.analysis.Analysis;
-import org.iplantc.de.client.views.windows.AnalysisProperties;
 import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 
 import com.google.common.collect.Lists;

@@ -11,10 +11,10 @@ import org.iplantc.de.analysis.client.presenter.proxy.AnalysisRpcProxy;
 import org.iplantc.de.analysis.client.views.widget.AnalysisParamView;
 import org.iplantc.de.analysis.client.views.widget.AnalysisParamViewColumnModel;
 import org.iplantc.de.analysis.shared.AnalysisModule;
-import org.iplantc.de.client.desktop.widget.DEPagingToolbar;
 import org.iplantc.de.client.models.analysis.Analysis;
 import org.iplantc.de.client.models.analysis.AnalysisParameter;
 import org.iplantc.de.client.services.FileEditorServiceFacade;
+import org.iplantc.de.commons.client.widgets.DEPagingToolbar;
 import org.iplantc.de.resources.client.messages.I18N;
 import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 
@@ -196,6 +196,7 @@ public class AnalysesViewImpl extends Composite implements AnalysesView {
             ListStore<AnalysisParameter> listStore = new ListStore<AnalysisParameter>( new AnalysisParameterKeyProvider());
             final AnalysisParamView apv = new AnalysisParamView(listStore, paramViewColumnModel, displayStrings, fileEditorService);
             apv.setHeading(displayStrings.viewParameters(ana.getName()));
+            apv.addSaveAnalysisParametersEventHandler(presenter);
             apv.show();
 
             presenter.retrieveParameterData(ana, apv);

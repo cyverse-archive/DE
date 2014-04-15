@@ -1,6 +1,6 @@
 package org.iplantc.de.analysis.client.views.widget;
 
-import org.iplantc.de.client.callbacks.FileSaveCallback;
+import org.iplantc.de.analysis.client.events.SaveAnalysisParametersEvent;
 import org.iplantc.de.client.models.analysis.AnalysisParameter;
 import org.iplantc.de.client.services.FileEditorServiceFacade;
 import org.iplantc.de.commons.client.views.gxt3.dialogs.IPlantDialog;
@@ -8,6 +8,7 @@ import org.iplantc.de.diskResource.client.views.dialogs.SaveAsDialog;
 import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -29,7 +30,7 @@ import java.util.List;
 /**
  * FIXME JDS Fix debug ids.
  */
-public class AnalysisParamView implements IsWidget {
+public class AnalysisParamView implements IsWidget, SaveAnalysisParametersEvent.HasSaveAnalysisParametersEventHandlers {
 
     private static AnalysisParamViewUiBinder uiBinder = GWT.create(AnalysisParamViewUiBinder.class);
 
@@ -71,6 +72,11 @@ public class AnalysisParamView implements IsWidget {
         this.fileEditorService = fileEditorService;
         this.widget = uiBinder.createAndBindUi(this);
         grid.getView().setEmptyText(displayStrings.noParameters());
+    }
+
+    @Override
+    public HandlerRegistration addSaveAnalysisParametersEventHandler(SaveAnalysisParametersEvent.SaveAnalysisParametersEventHandler handler) {
+        return widget.addHandler(handler, SaveAnalysisParametersEvent.TYPE);
     }
 
     @Override
@@ -126,9 +132,7 @@ public class AnalysisParamView implements IsWidget {
     }
 
     private void saveFile(final String path, String fileContents) {
-        mask();
-        fileEditorService.uploadTextAsFile(path, fileContents, true, new FileSaveCallback(
-                path, true, con));
+        widget.fireEvent(new SaveAnalysisParametersEvent(path, fileContents));
     }
 
     private String writeTabFile() {

@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.iplantc.de.client.desktop.widget;
+package org.iplantc.de.commons.client.widgets;
 
 import com.google.gwt.uibinder.client.UiConstructor;
 

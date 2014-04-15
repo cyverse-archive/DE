@@ -3,7 +3,7 @@
  */
 package org.iplantc.de.client.notifications.views;
 
-import org.iplantc.de.client.desktop.widget.DEPagingToolbar;
+import org.iplantc.de.commons.client.widgets.DEPagingToolbar;
 import org.iplantc.de.client.models.notifications.NotificationMessage;
 import org.iplantc.de.resources.client.messages.I18N;
 

@@ -4,6 +4,7 @@ import org.iplantc.de.analysis.client.events.*;
 import org.iplantc.de.analysis.client.views.AnalysesView;
 import org.iplantc.de.analysis.client.views.widget.AnalysisParamView;
 import org.iplantc.de.client.events.EventBus;
+import org.iplantc.de.client.events.FileSavedEvent;
 import org.iplantc.de.client.models.HasPaths;
 import org.iplantc.de.client.models.analysis.Analysis;
 import org.iplantc.de.client.models.analysis.AnalysisParameter;
@@ -14,6 +15,10 @@ import org.iplantc.de.client.models.diskResources.DiskResourceStatMap;
 import org.iplantc.de.client.models.diskResources.File;
 import org.iplantc.de.client.services.AnalysisServiceFacade;
 import org.iplantc.de.client.services.DiskResourceServiceFacade;
+import org.iplantc.de.client.services.FileEditorServiceFacade;
+import org.iplantc.de.client.services.UserSessionServiceFacade;
+import org.iplantc.de.client.util.DiskResourceUtil;
+import org.iplantc.de.client.util.JsonUtil;
 import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.commons.client.info.ErrorAnnouncementConfig;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
@@ -40,6 +45,7 @@ import com.google.web.bindery.autobean.shared.AutoBean;
 import com.google.web.bindery.autobean.shared.AutoBeanCodex;
 import com.google.web.bindery.autobean.shared.AutoBeanUtils;
 import com.google.web.bindery.autobean.shared.Splittable;
+import com.google.web.bindery.autobean.shared.impl.StringQuoter;
 
 import com.sencha.gxt.data.shared.ListStore;
 import com.sencha.gxt.data.shared.loader.FilterPagingLoadConfig;
@@ -249,14 +255,25 @@ public class AnalysesPresenterImpl implements AnalysesView.Presenter, AnalysisNa
     private final AnalysisServiceFacade analysisService;
     private final IplantAnnouncer announcer;
     private final DiskResourceServiceFacade diskResourceService;
+    private final FileEditorServiceFacade fileEditorService;
     private final IplantDisplayStrings displayStrings;
     private final IplantErrorStrings errorStrings;
     private final HasHandlers eventBus;
     private final AnalysesView view;
+    private DiskResourceAutoBeanFactory drFactory;
+    private final UserSessionServiceFacade userSessionService;
     private HandlerRegistration handlerFirstLoad;
 
     @Inject
-    public AnalysesPresenterImpl(final AnalysesView view, final EventBus eventBus, final AnalysisServiceFacade analysisService, final IplantAnnouncer announcer, final IplantDisplayStrings displayStrings, final IplantErrorStrings errorStrings, final DiskResourceServiceFacade diskResourceService) {
+    public AnalysesPresenterImpl(final AnalysesView view, final EventBus eventBus,
+                                 final AnalysisServiceFacade analysisService,
+                                 final IplantAnnouncer announcer,
+                                 final IplantDisplayStrings displayStrings,
+                                 final IplantErrorStrings errorStrings,
+                                 final DiskResourceServiceFacade diskResourceService,
+                                 final FileEditorServiceFacade fileEditorService,
+                                 final DiskResourceAutoBeanFactory drFactory,
+                                 final UserSessionServiceFacade userSessionService) {
         this.view = view;
         this.eventBus = eventBus;
         this.analysisService = analysisService;
@@ -264,6 +281,9 @@ public class AnalysesPresenterImpl implements AnalysesView.Presenter, AnalysisNa
         this.displayStrings = displayStrings;
         this.errorStrings = errorStrings;
         this.diskResourceService = diskResourceService;
+        this.fileEditorService = fileEditorService;
+        this.drFactory = drFactory;
+        this.userSessionService = userSessionService;
         this.view.addAnalysisNameSelectedEventHandler(this);
         this.view.addAnalysisParamValueSelectedEventHandler(this);
         this.view.addAnalysisCommentSelectedEventHandler(this);
@@ -296,6 +316,54 @@ public class AnalysesPresenterImpl implements AnalysesView.Presenter, AnalysisNa
     @Override
     public List<Analysis> getSelectedAnalyses() {
         return view.getSelectedAnalyses();
+    }
+
+    @Override
+    public void onRequestSaveAnalysisParameters(final SaveAnalysisParametersEvent event) {
+
+        fileEditorService.uploadTextAsFile(event.getPath(), event.getFileContents(), true, new AsyncCallback<String>() {
+            @Override
+            public void onFailure(Throwable caught) {
+
+            }
+
+            @Override
+            public void onSuccess(String result) {
+                final Splittable split = StringQuoter.split(result);
+                final File file = AutoBeanCodex.decode(drFactory, File.class, split.get("file")).as();
+                eventBus.fireEvent(new FileSavedEvent(file));
+
+                final Splittable annotatedFile = split.get("file");
+                StringQuoter.create(DiskResourceUtil.parseParent(file.getPath())).assign(annotatedFile, "parentFolderId");
+                StringQuoter.create(event.getPath()).assign(annotatedFile, "sourceUrl");
+
+                final Splittable payload = StringQuoter.createSplittable();
+                StringQuoter.create("file_uploaded").assign(payload, "action");
+                annotatedFile.assign(payload, "data");
+
+                final Splittable notificationMsg = StringQuoter.createSplittable();
+                StringQuoter.create("data").assign(notificationMsg, "type");
+                String subject = file.getName().isEmpty() ? errorStrings.importFailed(event.getPath())
+                                                          : displayStrings.fileUploadSuccess(file.getName());
+                StringQuoter.create(subject).assign(notificationMsg, "subject");
+                payload.assign(notificationMsg, "payload");
+
+
+                final String notificationMsgPayload = notificationMsg.getPayload();
+                userSessionService.postClientNotification(JsonUtil.getObject(notificationMsgPayload), new AsyncCallback<String>(){
+                    @Override
+                    public void onFailure(Throwable caught) {
+
+                    }
+
+                    @Override
+                    public void onSuccess(String result) {
+
+                    }
+                });
+            }
+        });
+
     }
 
     @Override

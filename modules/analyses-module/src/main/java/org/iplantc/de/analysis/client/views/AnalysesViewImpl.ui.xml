@@ -2,7 +2,7 @@
 <ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
 	         xmlns:container="urn:import:com.sencha.gxt.widget.core.client.container"
 	         xmlns:grid="urn:import:com.sencha.gxt.widget.core.client.grid"
-	         xmlns:paging="urn:import:org.iplantc.de.client.desktop.widget">
+	         xmlns:paging="urn:import:org.iplantc.de.commons.client.widgets">
 
    <ui:with field="icons"
             type="org.iplantc.de.resources.client.IplantResources" />
