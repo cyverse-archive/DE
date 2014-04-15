@@ -20,6 +20,18 @@ project(':confluence-client') {
       compile 'commons-discovery:commons-discovery:0.2'
    }
 } 
+project(':analyses-module') {
+   apply plugin: 'gwt-base'
+   gwt { gwtVersion="$gwtVer" }
+   
+   dependencies {
+      compile project(':ui-disk-resource-module')
+
+      testCompile 'com.google.gwt.gwtmockito:gwtmockito:1.1.2'
+      testCompile project(':de-common-module').sourceSets.test.output
+   }
+}
+
 project(':ui-apps-integration') {
    apply plugin: 'gwt-base'
    gwt { gwtVersion="$gwtVer" }

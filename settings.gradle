@@ -4,6 +4,9 @@ project( ':de').projectDir = new File( rootProject.projectDir, deWebappSubtreePr
 include ':belphegor'
 project( ':belphegor').projectDir = new File( rootProject.projectDir, belphegorSubtreePrefix)
 
+include ':analyses-module'
+project( ':analyses-module').projectDir = new File( rootProject.projectDir, analysesSubtreePrefix )
+
 include ':clavin-java'
 project( ':clavin-java').projectDir = new File( rootProject.projectDir, clavinJavaSubtreePrefix)
 
