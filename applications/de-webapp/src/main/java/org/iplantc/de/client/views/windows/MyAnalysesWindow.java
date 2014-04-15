@@ -10,6 +10,8 @@ import org.iplantc.de.client.views.windows.configs.ConfigFactory;
 import org.iplantc.de.client.views.windows.configs.WindowConfig;
 
 import com.google.common.collect.Lists;
+import org.iplantc.de.shared.DeModule;
+
 import java.util.List;
 
 /**
@@ -28,6 +30,7 @@ public class MyAnalysesWindow extends IplantWindowBase {
 
         presenter = DEInjector.INSTANCE.getAnalysesViewPresenter();
 
+        ensureDebugId(DeModule.Ids.ANALYSES_WINDOW);
         presenter.go(this, config.getSelectedAnalyses());
     }
 
