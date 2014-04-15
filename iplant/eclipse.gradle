@@ -2,7 +2,6 @@
 configure(subprojects.findAll{it.name != "confluence-client"}) {
    apply plugin: 'eclipse'
 
-
    eclipse {
       project {
          natures 'com.google.gwt.eclipse.core.gwtNature'

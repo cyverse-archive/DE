@@ -71,5 +71,6 @@ apply from: 'iplant/webapps.gradle'
 apply from: 'iplant/modules.gradle'
 
 apply from: 'iplant/eclipse.gradle'
+apply from: 'iplant/idea.gradle'
 apply from: 'iplant/webappBootstrap.gradle'
 
