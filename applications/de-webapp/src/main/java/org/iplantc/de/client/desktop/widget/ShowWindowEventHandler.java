@@ -1,5 +1,7 @@
 package org.iplantc.de.client.desktop.widget;
 
+import org.iplantc.de.analysis.client.events.OpenAppForRelaunchEvent;
+import org.iplantc.de.analysis.client.events.OpenFolderEvent;
 import org.iplantc.de.apps.client.events.CreateNewAppEvent;
 import org.iplantc.de.apps.client.events.CreateNewAppEvent.CreateNewAppEventHandler;
 import org.iplantc.de.apps.client.events.EditAppEvent;
@@ -14,13 +16,12 @@ import org.iplantc.de.client.events.ShowAboutWindowEvent.ShowAboutWindowEventHan
 import org.iplantc.de.client.events.ShowSystemMessagesEvent;
 import org.iplantc.de.client.events.WindowShowRequestEvent;
 import org.iplantc.de.client.events.WindowShowRequestEvent.WindowShowRequestEventHandler;
+import org.iplantc.de.client.models.HasId;
+import org.iplantc.de.client.models.analysis.Analysis;
 import org.iplantc.de.client.models.apps.App;
+import org.iplantc.de.client.util.CommonModelUtils;
 import org.iplantc.de.client.util.DiskResourceUtil;
-import org.iplantc.de.client.views.windows.configs.AppWizardConfig;
-import org.iplantc.de.client.views.windows.configs.AppsIntegrationWindowConfig;
-import org.iplantc.de.client.views.windows.configs.ConfigFactory;
-import org.iplantc.de.client.views.windows.configs.FileViewerWindowConfig;
-import org.iplantc.de.client.views.windows.configs.PipelineEditorWindowConfig;
+import org.iplantc.de.client.views.windows.configs.*;
 import org.iplantc.de.diskResource.client.events.CreateNewFileEvent;
 import org.iplantc.de.diskResource.client.events.CreateNewFileEvent.CreateNewFileEventHandler;
 import org.iplantc.de.diskResource.client.events.ShowFilePreviewEvent;
@@ -31,12 +32,31 @@ import com.google.web.bindery.autobean.shared.Splittable;
 final class ShowWindowEventHandler implements ShowAboutWindowEventHandler, ShowFilePreviewEventHandler,
         CreateNewAppEventHandler, CreateNewWorkflowEventHandler, WindowShowRequestEventHandler,
         RunAppEventHandler, EditAppEventHandler, EditWorkflowEventHandler,
-        ShowSystemMessagesEvent.Handler, CreateNewFileEventHandler {
+        ShowSystemMessagesEvent.Handler, CreateNewFileEventHandler, OpenAppForRelaunchEvent.OpenAppForRelaunchEventHandler, OpenFolderEvent.OpenFolderEventHandler {
 
     private final Desktop desktop;
 
     ShowWindowEventHandler(Desktop desktop) {
         this.desktop = desktop;
+    }
+
+    @Override
+    public void onRequestOpenAppForRelaunch(OpenAppForRelaunchEvent event) {
+        final Analysis analysisForRelaunch = event.getAnalysisForRelaunch();
+        AppWizardConfig config = ConfigFactory.appWizardConfig(analysisForRelaunch.getAppId());
+        config.setAnalysisId(analysisForRelaunch);
+        config.setRelaunchAnalysis(true);
+
+        desktop.showWindow(config);
+    }
+
+    @Override
+    public void onRequestOpenFolder(OpenFolderEvent event) {
+        final HasId hasId = CommonModelUtils.createHasIdFromString(event.getFolderId());
+        DiskResourceWindowConfig config = ConfigFactory.diskResourceWindowConfig();
+        config.setSelectedFolder(hasId);
+
+        desktop.showWindow(config);
     }
 
     @Override

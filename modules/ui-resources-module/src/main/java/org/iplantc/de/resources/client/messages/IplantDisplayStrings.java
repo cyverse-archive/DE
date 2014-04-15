@@ -1033,6 +1033,16 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     @Key("defaultOutputFolder")
     String defaultOutputFolder();
 
+
+    /**
+     * Translated "Go to output folder".
+     *
+     * @return translated "Go to output folder"
+     */
+    @DefaultMessage("Go to output folder")
+    @Key("goToOutputFolder")
+    String goToOutputFolder();
+
     /**
      * Translated "
      * <p>

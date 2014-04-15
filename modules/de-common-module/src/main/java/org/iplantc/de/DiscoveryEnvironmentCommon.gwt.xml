@@ -11,6 +11,7 @@
 	<inherits name="com.google.gwt.rpc.RPC" />
 	<inherits name="com.google.gwt.resources.Resources" />
     <inherits name="com.google.web.bindery.autobean.AutoBean"/>
+    <inherits name="com.sencha.gxt.data.Data"/>
 
     <replace-with class="org.iplantc.de.shared.DefaultTimeSource">
 		<when-type-is class="org.iplantc.de.shared.ProvidesTime"/>

@@ -1,10 +1,7 @@
 package org.iplantc.de.client.events;
 
-import com.google.gwt.event.shared.EventHandler;
-import com.google.gwt.event.shared.GwtEvent;
+import com.google.gwt.event.shared.*;
 import com.google.gwt.event.shared.GwtEvent.Type;
-import com.google.gwt.event.shared.HandlerRegistration;
-import com.google.gwt.event.shared.SimpleEventBus;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,7 +14,7 @@ import java.util.List;
  * 
  * @author amuir
  */
-public class EventBus {
+public class EventBus implements HasHandlers {
     class HandlerWrapper {
         private GwtEvent.Type<EventHandler> type;
         private HandlerRegistration handler;
@@ -121,6 +118,7 @@ public class EventBus {
      * 
      * @param event the event to fire.
      */
+    @Override
     public void fireEvent(GwtEvent<?> event) {
         if (event != null) {
             eventbus.fireEvent(event);

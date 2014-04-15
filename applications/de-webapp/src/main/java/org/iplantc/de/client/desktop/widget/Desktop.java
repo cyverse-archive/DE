@@ -5,6 +5,8 @@
  */
 package org.iplantc.de.client.desktop.widget;
 
+import org.iplantc.de.analysis.client.events.OpenAppForRelaunchEvent;
+import org.iplantc.de.analysis.client.events.OpenFolderEvent;
 import org.iplantc.de.apps.client.events.CreateNewAppEvent;
 import org.iplantc.de.apps.client.events.CreateNewWorkflowEvent;
 import org.iplantc.de.apps.client.events.EditAppEvent;
@@ -155,6 +157,8 @@ public class Desktop implements IsWidget {
         eventHandlers.add(eventbus.addHandler(WindowCloseRequestEvent.TYPE, closeActiveWindowHandler));
         eventHandlers.add(eventbus.addHandler(WindowLayoutRequestEvent.TYPE,
                 new WindowLayoutRequestEventHandlerImpl()));
+        eventHandlers.add(eventBus.addHandler(OpenAppForRelaunchEvent.TYPE, showWindowHandler));
+        eventHandlers.add(eventBus.addHandler(OpenFolderEvent.TYPE, showWindowHandler));
     }
 
     private void initEventHandlers(final EventBus eventbus) {
