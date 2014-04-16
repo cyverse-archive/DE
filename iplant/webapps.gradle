@@ -1,15 +1,9 @@
 // Build file for configuring the Webapp projects
 
 
-// Perform 'de' only configuration
-project(':de') {
-   dependencies {
-      compile project(':analyses-module')
-   }
-}
-configure(subprojects.findAll{it.name == "de" || it.name == "belphegor"}) {
-   apply plugin: 'war'
-   apply plugin: 'gwt'
+configure(subprojects.findAll { it.name == "de" || it.name == "belphegor" }) {
+    apply plugin: 'war'
+    apply plugin: 'gwt'
     apply plugin: 'jetty'
 
     dependencies {
@@ -23,118 +17,120 @@ configure(subprojects.findAll{it.name == "de" || it.name == "belphegor"}) {
         testCompile project(':de-common-module').sourceSets.test.output
     }
 
-   gwt { 
-      gwtVersion="$gwtVer"
-      src += files(project(':ui-resources-module').sourceSets.main.allJava.srcDirs) + files(project(':ui-resources-module').sourceSets.main.output.resourcesDir)
-      src += files(project(':de-common-module').sourceSets.main.allJava.srcDirs) + files(project(':de-common-module').sourceSets.main.output.resourcesDir)
-      src += files(project(':ui-commons-module').sourceSets.main.allJava.srcDirs) + files(project(':ui-commons-module').sourceSets.main.output.resourcesDir)
-      src += files(project(':confluence-client').sourceSets.main.allJava.srcDirs) + files(project(':confluence-client').sourceSets.main.output.resourcesDir)
-      src += files(project(':ui-applications-module').sourceSets.main.allJava.srcDirs) + files(project(':ui-applications-module').sourceSets.main.output.resourcesDir)
+    gwt {
+        gwtVersion = "$gwtVer"
+        src += files(project(':ui-resources-module').sourceSets.main.allJava.srcDirs) + files(project(':ui-resources-module').sourceSets.main.output.resourcesDir)
+        src += files(project(':de-common-module').sourceSets.main.allJava.srcDirs) + files(project(':de-common-module').sourceSets.main.output.resourcesDir)
+        src += files(project(':ui-commons-module').sourceSets.main.allJava.srcDirs) + files(project(':ui-commons-module').sourceSets.main.output.resourcesDir)
+        src += files(project(':confluence-client').sourceSets.main.allJava.srcDirs) + files(project(':confluence-client').sourceSets.main.output.resourcesDir)
+        src += files(project(':ui-applications-module').sourceSets.main.allJava.srcDirs) + files(project(':ui-applications-module').sourceSets.main.output.resourcesDir)
 
-      superDev { noPrecompile=true }
-      maxHeapSize = '1024M'
-   }
+        superDev { noPrecompile = true }
+        maxHeapSize = '1024M'
+    }
 
-   task runDraftJetty(type: JettyRunWar) {
-      group 'Web application'
-      description 'Runs Jetty with an exploded draft war'
-      //port = 8888
-      dependsOn draftWar
-      dependsOn.remove('war')
-      webApp=draftWar.archivePath
-   }
+    task runDraftJetty(type: JettyRunWar) {
+        group 'Web application'
+        description 'Runs Jetty with an exploded draft war'
+        //port = 8888
+        dependsOn draftWar
+        dependsOn.remove('war')
+        webApp = draftWar.archivePath
+    }
 
-   // Create convenience task for launching sdm
-   task sdm(dependsOn: 'gwtSuperDev') {
-      description 'Short hand task for launching GWT Super Dev Mode'
-   }
+    // Create convenience task for launching sdm
+    task sdm(dependsOn: 'gwtSuperDev') {
+        description 'Short hand task for launching GWT Super Dev Mode'
+    }
 
-   war {
-      manifest { 
-         attributes "Jenkins-Build-Version": "${BUILD_TAG}",
-                    "Jenkins-Build-ID": "${BUILD_ID}", 
+    war {
+        manifest {
+            attributes "Jenkins-Build-Version": "${BUILD_TAG}",
+                    "Jenkins-Build-ID": "${BUILD_ID}",
                     "Jenkins-Build-Number": "${BUILD_NUMBER}",
                     "Git-Branch": "${GIT_BRANCH}",
-                    "Git-Commit": "${GIT_COMMIT}" 
-      }
-   }
+                    "Git-Commit": "${GIT_COMMIT}"
+        }
+    }
 
-   draftWar {
-      manifest { 
-         attributes "Jenkins-Build-Version": "${BUILD_TAG}",
-                    "Jenkins-Build-ID": "${BUILD_ID}", 
+    draftWar {
+        manifest {
+            attributes "Jenkins-Build-Version": "${BUILD_TAG}",
+                    "Jenkins-Build-ID": "${BUILD_ID}",
                     "Jenkins-Build-Number": "${BUILD_NUMBER}",
                     "Git-Branch": "${GIT_BRANCH}",
-                    "Git-Commit": "${GIT_COMMIT}" 
-      }
-   }
+                    "Git-Commit": "${GIT_COMMIT}"
+        }
+    }
 
-   task createDraftWar(type: Copy) {
-      dependsOn draftWar
-      into 'build/libs/wars'
-      from('build/libs') {
-         include '**/*draft*.war'
-      }
-      rename project.tasks.draftWar.archiveName, project.name + '-dev.war'
-   }
+    task createDraftWar(type: Copy) {
+        dependsOn draftWar
+        into 'build/libs/wars'
+        from('build/libs') {
+            include '**/*draft*.war'
+        }
+        rename project.tasks.draftWar.archiveName, project.name + '-dev.war'
+    }
 
-   task createProdWar(type: Copy) {
-      dependsOn war
-      into 'build/libs/wars'
-      from('build/libs') {
-         exclude '**/*draft*.war'
-      }
-      rename project.tasks.war.archiveName, project.name + '.war'
-   }
+    task createProdWar(type: Copy) {
+        dependsOn war
+        into 'build/libs/wars'
+        from('build/libs') {
+            exclude '**/*draft*.war'
+        }
+        rename project.tasks.war.archiveName, project.name + '.war'
+    }
 
-   clean {
-      delete "./war"
-      delete "./bin"
-   }
+    clean {
+        delete "./war"
+        delete "./bin"
+    }
 }
 
 
 
 project(':de') {
-   configurations {
-      applet 
-   }
-   
-   dependencies {
-      applet "org.irods.idrop:idrop-lite:2.0.1-SNAPSHOT@jar"
-      compile project(':ui-apps-widgets-module'), 
-              project(':ui-pipelines-module'),
-              project(':ui-apps-integration')
-   }
+    configurations {
+        applet
+    }
 
-   gwt {
-      modules 'org.iplantc.de.discoveryenvironment'
-      devModules 'org.iplantc.de.discoveryenvironmentDev'
-      src += files(project(':ui-apps-widgets-module').sourceSets.main.allJava.srcDirs) + files(project(':ui-apps-widgets-module').sourceSets.main.output.resourcesDir)
-      src += files(project(':ui-apps-integration').sourceSets.main.allJava.srcDirs) + files(project(':ui-apps-integration').sourceSets.main.output.resourcesDir)
-      src += files(project(':ui-pipelines-module').sourceSets.main.allJava.srcDirs) + files(project(':ui-pipelines-module').sourceSets.main.output.resourcesDir)
-   }
+    dependencies {
+        applet "org.irods.idrop:idrop-lite:2.0.1-SNAPSHOT@jar"
+        compile project(':ui-apps-widgets-module'),
+                project(':ui-pipelines-module'),
+                project(':ui-apps-integration'),
+                project(':analyses-module')
+    }
 
-   // Put idrop lite jar into war
-   war {
-      from(configurations.applet) {
-         into 'applets'
-      }
-   }
-   
-   // Put idrop lite jar into draft war
-   draftWar {
-      from(configurations.applet) {
-         into 'applets'
-      }
-   }
+    gwt {
+        modules 'org.iplantc.de.discoveryenvironment'
+        devModules 'org.iplantc.de.discoveryenvironmentDev'
+        src += files(project(':analyses-module').sourceSets.main.allJava.srcDirs) + files(project(':analyses-module').sourceSets.main.output.resourcesDir)
+        src += files(project(':ui-apps-widgets-module').sourceSets.main.allJava.srcDirs) + files(project(':ui-apps-widgets-module').sourceSets.main.output.resourcesDir)
+        src += files(project(':ui-apps-integration').sourceSets.main.allJava.srcDirs) + files(project(':ui-apps-integration').sourceSets.main.output.resourcesDir)
+        src += files(project(':ui-pipelines-module').sourceSets.main.allJava.srcDirs) + files(project(':ui-pipelines-module').sourceSets.main.output.resourcesDir)
+    }
+
+    // Put idrop lite jar into war
+    war {
+        from(configurations.applet) {
+            into 'applets'
+        }
+    }
+
+    // Put idrop lite jar into draft war
+    draftWar {
+        from(configurations.applet) {
+            into 'applets'
+        }
+    }
 }
 
 project(':belphegor') {
-   gwt {
+    gwt {
         modules 'org.iplantc.admin.belphegor.belphegor'
         devModules 'org.iplantc.admin.belphegor.belphegorDev'
-   }
+    }
 }
 
 
