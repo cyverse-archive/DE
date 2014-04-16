@@ -659,7 +659,9 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter {
         } else if (view.isViewGrid(target)) {
             Element targetRow = view.findGridRow(eventTargetElement).cast();
 
-            if (targetRow != null) {
+            if (targetRow == null) {
+                ret = getSelectedUploadFolder();
+            } else {
                 int dropIndex = view.findRowIndex(targetRow);
 
                 DiskResource selDiskResource = view.getListStore().get(dropIndex);
