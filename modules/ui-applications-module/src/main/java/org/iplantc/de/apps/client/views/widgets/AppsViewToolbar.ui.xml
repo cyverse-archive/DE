@@ -43,11 +43,11 @@
 						<menu:MenuItem ui:field="copyApp" debugId="idCopyBtn"
 							text="{strings.copy}" icon="{icons.copy}" />
 						<menu:MenuItem ui:field="editApp" debugId="idEditAppBtn"
-							text="{strings.editApp}" icon="{icons.edit}" />
+							text="{strings.edit}" icon="{icons.edit}" />
 						<menu:MenuItem ui:field="deleteApp" debugId="idDeleteBtn"
 							text="{strings.delete}" icon="{icons.delete}" />
 						<menu:MenuItem ui:field="submitApp" debugId="idMakePublic"
-							text="{strings.submit}" icon="{icons.submitForPublic}"
+							text="{strings.share}" icon="{icons.submitForPublic}"
 							toolTipConfig="{submitToolTip}" />
 					</menu:Menu>
 				</button:menu>
@@ -59,17 +59,17 @@
 				<button:menu>
 					<menu:Menu>
 						<menu:MenuItem ui:field="wfRun" debugId="idWfRunBtn"
-							text="Use Workflow" icon="{icons.run}" />
+							text="{strings.useWf}" icon="{icons.run}" />
 						<menu:MenuItem ui:field="createWorkflow" debugId="idNewWorkflowBtn"
-							text="{strings.workflow}" icon="{icons.add}" />
+							text="{strings.newApp}" icon="{icons.add}" />
 						<menu:MenuItem ui:field="copyWf" debugId="idWfCopyBtn"
 							text="{strings.copy}" icon="{icons.copy}" />
 						<menu:MenuItem ui:field="editWf" debugId="idWfEditAppBtn"
-							text="{strings.editApp}" icon="{icons.edit}" />
+							text="{strings.edit}" icon="{icons.edit}" />
 						<menu:MenuItem ui:field="deleteWf" debugId="idWfDeleteBtn"
 							text="{strings.delete}" icon="{icons.delete}" />
 						<menu:MenuItem ui:field="submitWf" debugId="idwfMakePublic"
-							text="{strings.submit}" icon="{icons.submitForPublic}"
+							text="{strings.share}" icon="{icons.submitForPublic}"
 							toolTipConfig="{submitToolTip}" />
 					</menu:Menu>
 				</button:menu>

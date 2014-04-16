@@ -1,9 +1,11 @@
 package org.iplantc.de.apps.client.views;
 
 import org.iplantc.de.client.models.DEProperties;
+import org.iplantc.de.client.models.IsMaskable;
 import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.models.apps.AppGroup;
 import org.iplantc.de.resources.client.IplantResources;
+import org.iplantc.de.resources.client.messages.I18N;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
@@ -53,7 +55,7 @@ import java.util.logging.Logger;
  * @author jstroot
  *
  */
-public class AppsViewImpl implements AppsView {
+public class AppsViewImpl implements AppsView, IsMaskable {
     /**
      * FIXME CORE-2992: Add an ID to the Categories panel collapse tool to assist QA.
      */
@@ -479,5 +481,17 @@ public class AppsViewImpl implements AppsView {
         } else {
             return getGroupHierarchy(treeStore.getParent(grp), groups);
         }
+    }
+
+    @Override
+    public void mask(String loadingMask) {
+        con.mask(I18N.DISPLAY.loadingMask());
+
+    }
+
+    @Override
+    public void unmask() {
+        con.unmask();
+
     }
 }

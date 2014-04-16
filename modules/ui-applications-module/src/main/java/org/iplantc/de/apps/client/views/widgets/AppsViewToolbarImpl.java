@@ -142,7 +142,7 @@ public class AppsViewToolbarImpl implements AppsViewToolbar {
         presenter.onDeleteClicked();
     }
 
-    @UiHandler("submitApp")
+    @UiHandler({"submitApp", "submitWf"})
     public void submitClicked(SelectionEvent<Item> event) {
         presenter.submitClicked();
     }

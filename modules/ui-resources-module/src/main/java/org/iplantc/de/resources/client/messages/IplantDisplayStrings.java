@@ -4331,6 +4331,9 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     @Key("upload")
     String upload();
 
+    @DefaultMessage("Use Workflow...")
+    String useWf();
+
     /**
      * Translated "New upload".
      *
