@@ -212,7 +212,7 @@ public class AnalysisServiceFacadeImpl implements AnalysisServiceFacade {
 
     @Override
     public void renameAnalysis(Analysis analysis, String newName, AsyncCallback<Void> callback) {
-        // TODO CORE-5307 implement when new service is created.
+        // TODO CORE-5409, CORE-5307 implement when new service is created.
         callback.onFailure(new UnsupportedOperationException("Not yet implemented"));
 
     }
@@ -237,7 +237,7 @@ public class AnalysisServiceFacadeImpl implements AnalysisServiceFacade {
 
     @Override
     public void updateAnalysisComments(Analysis analysis, AsyncCallback<Void> callback) {
-        // TODO CORE-5307 implement when new service is created.
+        // TODO CORE-5408, CORE-5307 implement when new service is created.
         callback.onFailure(new UnsupportedOperationException("Not yet implemented"));
     }
 }

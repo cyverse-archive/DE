@@ -3605,6 +3605,14 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     String savingMask();
 
     /**
+     * Translated "Saving file...".
+     *
+     * @return translated "Saving file..."
+     */
+    @DefaultMessage("Saving file...")
+    @Key("savingFileMask")
+    String savingFileMask();
+    /**
      * Translated "Saving Session".
      *
      * @return translated "Saving Session"
@@ -4653,6 +4661,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     @Key("addReferenceGenome")
     String addReferenceGenome();
 
-   
+
 
 }

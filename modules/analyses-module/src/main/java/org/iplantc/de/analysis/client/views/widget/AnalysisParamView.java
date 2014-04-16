@@ -1,6 +1,8 @@
 package org.iplantc.de.analysis.client.views.widget;
 
 import org.iplantc.de.analysis.client.events.SaveAnalysisParametersEvent;
+import org.iplantc.de.client.models.IsHideable;
+import org.iplantc.de.client.models.IsMaskable;
 import org.iplantc.de.client.models.analysis.AnalysisParameter;
 import org.iplantc.de.client.services.FileEditorServiceFacade;
 import org.iplantc.de.commons.client.views.gxt3.dialogs.IPlantDialog;
@@ -103,22 +105,21 @@ public class AnalysisParamView implements IsWidget, SaveAnalysisParametersEvent.
 
             @Override
             public void onSelect(SelectEvent event) {
-            	if(saveDialog.isVaild()) {
-                String fileContents = writeTabFile();
-                saveFile(saveDialog.getSelectedFolder().getPath() + "/" + saveDialog.getFileName(),
-                        fileContents);
-                saveDialog.hide();
-            	}
+                if(saveDialog.isVaild()) {
+                    String fileContents = writeTabFile();
+                    saveFile(saveDialog.getSelectedFolder().getPath() + "/" + saveDialog.getFileName(),
+                                    fileContents, saveDialog, saveDialog);
+                }
             }
         });
-        
+
         saveDialog.addCancelButtonSelectHandler(new SelectHandler() {
-			
-			@Override
-			public void onSelect(SelectEvent event) {
-				saveDialog.hide();
-			}
-		});
+
+            @Override
+            public void onSelect(SelectEvent event) {
+                saveDialog.hide();
+            }
+        });
         saveDialog.show();
         saveDialog.toFront();
     }
@@ -131,8 +132,8 @@ public class AnalysisParamView implements IsWidget, SaveAnalysisParametersEvent.
         con.unmask();
     }
 
-    private void saveFile(final String path, String fileContents) {
-        widget.fireEvent(new SaveAnalysisParametersEvent(path, fileContents));
+    private void saveFile(final String path, String fileContents, IsHideable hideable, IsMaskable maskable) {
+        widget.fireEvent(new SaveAnalysisParametersEvent(path, fileContents, hideable, maskable));
     }
 
     private String writeTabFile() {

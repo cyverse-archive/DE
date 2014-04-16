@@ -6,6 +6,8 @@ import org.iplantc.de.analysis.client.views.widget.AnalysisParamView;
 import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.events.FileSavedEvent;
 import org.iplantc.de.client.models.HasPaths;
+import org.iplantc.de.client.models.IsMaskable;
+import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.client.models.analysis.Analysis;
 import org.iplantc.de.client.models.analysis.AnalysisParameter;
 import org.iplantc.de.client.models.apps.integration.ArgumentType;
@@ -36,6 +38,7 @@ import com.google.gwt.editor.client.Editor;
 import com.google.gwt.editor.client.EditorError;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.event.shared.HasHandlers;
+import com.google.gwt.safehtml.client.SafeHtmlTemplates;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -83,18 +86,18 @@ public class AnalysesPresenterImpl implements AnalysesView.Presenter, AnalysisNa
 
             String comments = analysis.getDescription();
             setHeadingText(displayStrings.comments());
-           setSize("350px","300px");
+            setSize("350px","300px");
             ta = new TextArea();
-           ta.setValue(comments);
-           add(ta);
-       }
+            ta.setValue(comments);
+            add(ta);
+        }
 
         public String getComment() {
             return ta.getValue();
         }
 
         public boolean isCommentChanged(){
-           return !getComment().equals(analysis.getDescription());
+            return !getComment().equals(analysis.getDescription());
         }
     }
 
@@ -224,12 +227,19 @@ public class AnalysesPresenterImpl implements AnalysesView.Presenter, AnalysisNa
         }
     }
 
+    interface Template extends SafeHtmlTemplates{
+        @Template("Not yet implemented.<p>Waiting on completion of <a href='https://pods.iplantcollaborative.org/jira/browse/CORE-{0}' target=\"_blank\">CORE-{0}</a>")
+        SafeHtml failMsg(String issueNumber);
+    }
+
+    Template unimplementedFailMessages = GWT.create(Template.class);
+
     private class RenameAnalysisCallback implements AsyncCallback<Void> {
+
         @Override
         public void onFailure(Throwable caught) {
-            final String message = caught.getMessage();
-            SafeHtml msg = SafeHtmlUtils.fromString(message);
-            announcer.schedule(new ErrorAnnouncementConfig(msg, true, 3000));
+            final SafeHtml message = unimplementedFailMessages.failMsg("5409");
+            announcer.schedule(new ErrorAnnouncementConfig(message, true, 5000));
         }
 
         @Override
@@ -241,9 +251,8 @@ public class AnalysesPresenterImpl implements AnalysesView.Presenter, AnalysisNa
     private class UpdateCommentsCallback implements AsyncCallback<Void> {
         @Override
         public void onFailure(Throwable caught) {
-            final String message = caught.getMessage();
-            SafeHtml msg = SafeHtmlUtils.fromString(message);
-            announcer.schedule(new ErrorAnnouncementConfig(msg, true, 3000));
+            SafeHtml message = unimplementedFailMessages.failMsg("5408");
+            announcer.schedule(new ErrorAnnouncementConfig(message, true, 5000));
         }
 
         @Override
@@ -262,6 +271,7 @@ public class AnalysesPresenterImpl implements AnalysesView.Presenter, AnalysisNa
     private final AnalysesView view;
     private DiskResourceAutoBeanFactory drFactory;
     private final UserSessionServiceFacade userSessionService;
+    private final UserInfo userInfo;
     private HandlerRegistration handlerFirstLoad;
 
     @Inject
@@ -273,7 +283,8 @@ public class AnalysesPresenterImpl implements AnalysesView.Presenter, AnalysisNa
                                  final DiskResourceServiceFacade diskResourceService,
                                  final FileEditorServiceFacade fileEditorService,
                                  final DiskResourceAutoBeanFactory drFactory,
-                                 final UserSessionServiceFacade userSessionService) {
+                                 final UserSessionServiceFacade userSessionService,
+                                 final UserInfo userInfo) {
         this.view = view;
         this.eventBus = eventBus;
         this.analysisService = analysisService;
@@ -284,6 +295,7 @@ public class AnalysesPresenterImpl implements AnalysesView.Presenter, AnalysisNa
         this.fileEditorService = fileEditorService;
         this.drFactory = drFactory;
         this.userSessionService = userSessionService;
+        this.userInfo = userInfo;
         this.view.addAnalysisNameSelectedEventHandler(this);
         this.view.addAnalysisParamValueSelectedEventHandler(this);
         this.view.addAnalysisCommentSelectedEventHandler(this);
@@ -321,6 +333,8 @@ public class AnalysesPresenterImpl implements AnalysesView.Presenter, AnalysisNa
     @Override
     public void onRequestSaveAnalysisParameters(final SaveAnalysisParametersEvent event) {
 
+        final IsMaskable maskable = event.getMaskable();
+        maskable.mask(displayStrings.savingFileMask());
         fileEditorService.uploadTextAsFile(event.getPath(), event.getFileContents(), true, new AsyncCallback<String>() {
             @Override
             public void onFailure(Throwable caught) {
@@ -344,21 +358,24 @@ public class AnalysesPresenterImpl implements AnalysesView.Presenter, AnalysisNa
                 final Splittable notificationMsg = StringQuoter.createSplittable();
                 StringQuoter.create("data").assign(notificationMsg, "type");
                 String subject = file.getName().isEmpty() ? errorStrings.importFailed(event.getPath())
-                                                          : displayStrings.fileUploadSuccess(file.getName());
+                                         : displayStrings.fileUploadSuccess(file.getName());
                 StringQuoter.create(subject).assign(notificationMsg, "subject");
                 payload.assign(notificationMsg, "payload");
+                StringQuoter.create(userInfo.getUsername()).assign(notificationMsg, "user");
 
 
                 final String notificationMsgPayload = notificationMsg.getPayload();
                 userSessionService.postClientNotification(JsonUtil.getObject(notificationMsgPayload), new AsyncCallback<String>(){
                     @Override
                     public void onFailure(Throwable caught) {
-
+                        event.getHideable().hide();
+                        announcer.schedule(new ErrorAnnouncementConfig(caught.getMessage()));
                     }
 
                     @Override
                     public void onSuccess(String result) {
-
+                        event.getHideable().hide();
+                        announcer.schedule(new SuccessAnnouncementConfig(displayStrings.importRequestSubmit(file.getName())));
                     }
                 });
             }

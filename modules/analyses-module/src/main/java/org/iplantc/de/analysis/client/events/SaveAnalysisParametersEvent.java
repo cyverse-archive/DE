@@ -1,5 +1,8 @@
 package org.iplantc.de.analysis.client.events;
 
+import org.iplantc.de.client.models.IsHideable;
+import org.iplantc.de.client.models.IsMaskable;
+
 import com.google.gwt.event.shared.EventHandler;
 import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.event.shared.HandlerRegistration;
@@ -17,10 +20,14 @@ public class SaveAnalysisParametersEvent extends GwtEvent<SaveAnalysisParameters
     public static final Type<SaveAnalysisParametersEventHandler> TYPE = new Type<SaveAnalysisParametersEventHandler>();
     private final String path;
     private final String fileContents;
+    private final IsHideable hideable;
+    private final IsMaskable maskable;
 
-    public SaveAnalysisParametersEvent(String path, String fileContents) {
+    public SaveAnalysisParametersEvent(String path, String fileContents, IsHideable hideable, IsMaskable maskable) {
         this.path = path;
         this.fileContents = fileContents;
+        this.hideable = hideable;
+        this.maskable = maskable;
     }
 
     @Override
@@ -32,8 +39,16 @@ public class SaveAnalysisParametersEvent extends GwtEvent<SaveAnalysisParameters
         return fileContents;
     }
 
+    public IsMaskable getMaskable() {
+        return maskable;
+    }
+
     public String getPath() {
         return path;
+    }
+
+    public IsHideable getHideable() {
+        return hideable;
     }
 
     @Override
