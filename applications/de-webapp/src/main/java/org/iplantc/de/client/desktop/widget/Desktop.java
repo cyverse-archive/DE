@@ -6,7 +6,6 @@
 package org.iplantc.de.client.desktop.widget;
 
 import org.iplantc.de.analysis.client.events.OpenAppForRelaunchEvent;
-import org.iplantc.de.analysis.client.events.OpenFolderEvent;
 import org.iplantc.de.apps.client.events.CreateNewAppEvent;
 import org.iplantc.de.apps.client.events.CreateNewWorkflowEvent;
 import org.iplantc.de.apps.client.events.EditAppEvent;
@@ -25,6 +24,7 @@ import org.iplantc.de.client.events.ShowSystemMessagesEvent;
 import org.iplantc.de.client.events.WindowCloseRequestEvent;
 import org.iplantc.de.client.events.WindowLayoutRequestEvent;
 import org.iplantc.de.client.events.WindowLayoutRequestEvent.WindowLayoutRequestEventHandler;
+import org.iplantc.de.client.events.diskResources.OpenFolderEvent;
 import org.iplantc.de.client.events.WindowShowRequestEvent;
 import org.iplantc.de.client.models.WindowState;
 import org.iplantc.de.client.utils.DEWindowManager;

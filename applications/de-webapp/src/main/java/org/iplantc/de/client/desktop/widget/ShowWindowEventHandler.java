@@ -1,7 +1,6 @@
 package org.iplantc.de.client.desktop.widget;
 
 import org.iplantc.de.analysis.client.events.OpenAppForRelaunchEvent;
-import org.iplantc.de.analysis.client.events.OpenFolderEvent;
 import org.iplantc.de.apps.client.events.CreateNewAppEvent;
 import org.iplantc.de.apps.client.events.CreateNewAppEvent.CreateNewAppEventHandler;
 import org.iplantc.de.apps.client.events.EditAppEvent;
@@ -16,12 +15,18 @@ import org.iplantc.de.client.events.ShowAboutWindowEvent.ShowAboutWindowEventHan
 import org.iplantc.de.client.events.ShowSystemMessagesEvent;
 import org.iplantc.de.client.events.WindowShowRequestEvent;
 import org.iplantc.de.client.events.WindowShowRequestEvent.WindowShowRequestEventHandler;
+import org.iplantc.de.client.events.diskResources.OpenFolderEvent;
 import org.iplantc.de.client.models.HasId;
 import org.iplantc.de.client.models.analysis.Analysis;
 import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.util.CommonModelUtils;
 import org.iplantc.de.client.util.DiskResourceUtil;
-import org.iplantc.de.client.views.windows.configs.*;
+import org.iplantc.de.client.views.windows.configs.AppWizardConfig;
+import org.iplantc.de.client.views.windows.configs.AppsIntegrationWindowConfig;
+import org.iplantc.de.client.views.windows.configs.ConfigFactory;
+import org.iplantc.de.client.views.windows.configs.DiskResourceWindowConfig;
+import org.iplantc.de.client.views.windows.configs.FileViewerWindowConfig;
+import org.iplantc.de.client.views.windows.configs.PipelineEditorWindowConfig;
 import org.iplantc.de.diskResource.client.events.CreateNewFileEvent;
 import org.iplantc.de.diskResource.client.events.CreateNewFileEvent.CreateNewFileEventHandler;
 import org.iplantc.de.diskResource.client.events.ShowFilePreviewEvent;

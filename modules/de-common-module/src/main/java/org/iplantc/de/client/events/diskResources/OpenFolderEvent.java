@@ -1,4 +1,4 @@
-package org.iplantc.de.analysis.client.events;
+package org.iplantc.de.client.events.diskResources;
 
 import com.google.gwt.event.shared.EventHandler;
 import com.google.gwt.event.shared.GwtEvent;
