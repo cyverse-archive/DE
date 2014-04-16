@@ -986,7 +986,16 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
      * @return
      */
     String dataLinkWarning();
-    
+
+    /**
+     * Translated "Data: {0}".
+     * 
+     * @return translated "Data: {0}"
+     */
+    @DefaultMessage("Data: {0}")
+    @Key("dataWindowTitle")
+    String dataWindowTitle(String folderName);
+
     /**
      * 
      * @return

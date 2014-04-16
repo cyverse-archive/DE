@@ -1,13 +1,19 @@
 package org.iplantc.de.client.views.windows;
 
+import org.iplantc.de.client.events.WindowHeadingUpdatedEvent;
 import org.iplantc.de.client.models.HasId;
 import org.iplantc.de.client.models.WindowState;
+import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.client.views.windows.configs.DiskResourceWindowConfig;
 import org.iplantc.de.client.views.windows.configs.WindowConfig;
 import org.iplantc.de.diskResource.client.gin.DiskResourceInjector;
 import org.iplantc.de.diskResource.client.views.DiskResourceView;
+import org.iplantc.de.resources.client.messages.I18N;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
+import com.google.gwt.event.logical.shared.SelectionEvent;
+import com.google.gwt.event.logical.shared.SelectionHandler;
 
 import com.sencha.gxt.widget.core.client.event.MaximizeEvent;
 import com.sencha.gxt.widget.core.client.event.MaximizeEvent.MaximizeHandler;
@@ -18,7 +24,7 @@ import com.sencha.gxt.widget.core.client.event.ShowEvent.ShowHandler;
 
 import java.util.List;
 
-public class DeDiskResourceWindow extends IplantWindowBase {
+public class DeDiskResourceWindow extends IplantWindowBase implements SelectionHandler<Folder> {
 
     private final DiskResourceView.Presenter presenter;
 
@@ -26,7 +32,7 @@ public class DeDiskResourceWindow extends IplantWindowBase {
         super(config.getTag(), config);
         presenter = DiskResourceInjector.INSTANCE.getDiskResourceViewPresenter();
 
-        setHeadingText(org.iplantc.de.resources.client.messages.I18N.DISPLAY.data());
+        setHeadingText(I18N.DISPLAY.data());
         setSize("800", "480");
 
         // Create an empty
@@ -35,6 +41,12 @@ public class DeDiskResourceWindow extends IplantWindowBase {
             resourcesToSelect.addAll(config.getSelectedDiskResources());
         }
         presenter.go(this, config.getSelectedFolder(), resourcesToSelect);
+
+        initHandlers();
+    }
+
+    private void initHandlers() {
+        presenter.addFolderSelectionHandler(this);
 
         addRestoreHandler(new RestoreHandler() {
 
@@ -56,11 +68,24 @@ public class DeDiskResourceWindow extends IplantWindowBase {
 
             @Override
             public void onShow(ShowEvent event) {
-                if (config != null && config.isMaximized())
+                if (config != null && ((DiskResourceWindowConfig)config).isMaximized()) {
                     DeDiskResourceWindow.this.maximize();
+                }
             }
         });
+    }
 
+    @Override
+    public void onSelection(SelectionEvent<Folder> event) {
+        Folder selectedFolder = event.getSelectedItem();
+
+        if (selectedFolder == null || Strings.isNullOrEmpty(selectedFolder.getName())) {
+            setHeadingText(I18N.DISPLAY.data());
+        } else {
+            setHeadingText(I18N.DISPLAY.dataWindowTitle(selectedFolder.getName()));
+        }
+
+        fireEvent(new WindowHeadingUpdatedEvent());
     }
 
     @Override
