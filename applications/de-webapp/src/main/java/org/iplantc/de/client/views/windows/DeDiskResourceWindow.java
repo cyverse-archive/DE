@@ -2,7 +2,6 @@ package org.iplantc.de.client.views.windows;
 
 import org.iplantc.de.client.models.HasId;
 import org.iplantc.de.client.models.WindowState;
-import org.iplantc.de.client.views.windows.configs.ConfigFactory;
 import org.iplantc.de.client.views.windows.configs.DiskResourceWindowConfig;
 import org.iplantc.de.client.views.windows.configs.WindowConfig;
 import org.iplantc.de.diskResource.client.gin.DiskResourceInjector;
@@ -24,7 +23,7 @@ public class DeDiskResourceWindow extends IplantWindowBase {
     private final DiskResourceView.Presenter presenter;
 
     public DeDiskResourceWindow(final DiskResourceWindowConfig config) {
-        super(null, null);
+        super(config.getTag(), config);
         presenter = DiskResourceInjector.INSTANCE.getDiskResourceViewPresenter();
 
         setHeadingText(org.iplantc.de.resources.client.messages.I18N.DISPLAY.data());
@@ -74,7 +73,7 @@ public class DeDiskResourceWindow extends IplantWindowBase {
 
     @Override
     public WindowState getWindowState() {
-        DiskResourceWindowConfig config = ConfigFactory.diskResourceWindowConfig();
+        DiskResourceWindowConfig config = (DiskResourceWindowConfig)this.config;
         config.setSelectedFolder(presenter.getSelectedFolder());
         List<HasId> selectedResources = Lists.newArrayList();
         selectedResources.addAll(presenter.getSelectedDiskResources());

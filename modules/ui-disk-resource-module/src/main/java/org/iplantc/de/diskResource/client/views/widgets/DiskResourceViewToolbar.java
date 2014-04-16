@@ -60,6 +60,8 @@ public interface DiskResourceViewToolbar extends IsWidget {
 
         void onMove();
 
+        void onNewWindow();
+
         void onNewFile();
 
         void onNewFolder();
@@ -84,7 +86,13 @@ public interface DiskResourceViewToolbar extends IsWidget {
 
     void setImportButtonEnabled(boolean enabled);
 
+    void setNewButtonEnabled(boolean enabled);
+
+    void setNewWindowEnabled(boolean enabled);
+
     void setNewFolderButtonEnabled(boolean enabled);
+
+    void setNewFileButtonEnabled(boolean enabled);
 
     void setRefreshButtonEnabled(boolean enabled);
 
@@ -111,10 +119,6 @@ public interface DiskResourceViewToolbar extends IsWidget {
     void setEditEnabled(boolean canEdit);
 
     void setMoveButtonEnabled(boolean enabled);
-
-    void setNewFileButtonEnabled(boolean enabled);
-
-    void setNewButtonEnabled(boolean enabled);
 
     DiskResourceSearchField getSearchField();
 }

@@ -2503,6 +2503,15 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     String newToolRequestError();
 
     /**
+     * Translated "New Window".
+     * 
+     * @return translated "New Window"
+     */
+    @DefaultMessage("New Window")
+    @Key("newWindow")
+    String newWindow();
+
+    /**
      * Translated "No items to display".
      *
      * @return translated "No items to display"

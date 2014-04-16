@@ -87,7 +87,8 @@ public class NotificationHelper {
                 ArrayList<HasId> newArrayList = Lists.newArrayList();
                 newArrayList.add(fAb.as());
 
-                DiskResourceWindowConfig dataWindowConfig = ConfigFactory.diskResourceWindowConfig();
+                DiskResourceWindowConfig dataWindowConfig = ConfigFactory
+                        .diskResourceWindowConfig(false);
                 HasId folderId = DiskResourceUtil.getFolderIdFromFile(cFactory, fAb.as());
                 dataWindowConfig.setSelectedFolder(folderId);
                 dataWindowConfig.setSelectedDiskResources(newArrayList);

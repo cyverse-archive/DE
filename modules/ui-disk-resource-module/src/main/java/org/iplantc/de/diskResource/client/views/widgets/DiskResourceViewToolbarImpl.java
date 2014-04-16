@@ -50,7 +50,16 @@ public class DiskResourceViewToolbarImpl implements DiskResourceViewToolbar {
     MenuItem importButton;
 
     @UiField
+    TextButton newButton;
+
+    @UiField
+    MenuItem newWindowButton;
+
+    @UiField
     MenuItem newFolderButton;
+
+    @UiField
+    MenuItem newFileButton;
 
     @UiField
     TextButton refreshButton;
@@ -72,9 +81,6 @@ public class DiskResourceViewToolbarImpl implements DiskResourceViewToolbar {
 
     @UiField
     MenuItem deleteButton;
-    
-    @UiField
-    MenuItem newFileButton;
 
     @UiField
     MenuItem metadataButton;
@@ -99,9 +105,6 @@ public class DiskResourceViewToolbarImpl implements DiskResourceViewToolbar {
 
     @UiField
     TextButton edit;
-    
-    @UiField
-    TextButton newButton;
 
     public DiskResourceViewToolbarImpl() {
         widget = BINDER.createAndBindUi(this);
@@ -130,6 +133,11 @@ public class DiskResourceViewToolbarImpl implements DiskResourceViewToolbar {
     @UiHandler("importButton")
     void onImportClicked(SelectionEvent<Item> event) {
         presenter.doImport();
+    }
+
+    @UiHandler("newWindowButton")
+    void onNewWindowClicked(SelectionEvent<Item> event) {
+        presenter.onNewWindow();
     }
 
     @UiHandler("newFolderButton")
@@ -250,7 +258,12 @@ public class DiskResourceViewToolbarImpl implements DiskResourceViewToolbar {
     public void setNewButtonEnabled(boolean enabled) {
         newButton.setEnabled(enabled);
     }
-    
+
+    @Override
+    public void setNewWindowEnabled(boolean enabled) {
+        newWindowButton.setEnabled(enabled);
+    }
+
     @Override
     public void setNewFileButtonEnabled(boolean enabled) {
         newFileButton.setEnabled(enabled);

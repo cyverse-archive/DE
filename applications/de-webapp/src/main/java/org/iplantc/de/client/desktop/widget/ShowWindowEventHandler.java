@@ -58,7 +58,8 @@ final class ShowWindowEventHandler implements ShowAboutWindowEventHandler, ShowF
     @Override
     public void onRequestOpenFolder(OpenFolderEvent event) {
         final HasId hasId = CommonModelUtils.createHasIdFromString(event.getFolderId());
-        DiskResourceWindowConfig config = ConfigFactory.diskResourceWindowConfig();
+        DiskResourceWindowConfig config = ConfigFactory.diskResourceWindowConfig(event
+                .newViewRequested());
         config.setSelectedFolder(hasId);
 
         desktop.showWindow(config);

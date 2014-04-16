@@ -328,7 +328,8 @@ public class DEPresenter implements DEView.Presenter {
     private void processQueryStrings() {
         Map<String, List<String>> params = Window.Location.getParameterMap();
         if(urlHasDataTypeParameter(params)){
-            DiskResourceWindowConfig diskResourceWindowConfig = ConfigFactory.diskResourceWindowConfig();
+            DiskResourceWindowConfig diskResourceWindowConfig = ConfigFactory
+                    .diskResourceWindowConfig(false);
             diskResourceWindowConfig.setMaximized(true);
             String folderParameter = Window.Location.getParameter(FOLDER_PARAMETER);
             String selectedFolder = URL.decode(Strings.nullToEmpty(folderParameter));
@@ -500,7 +501,7 @@ public class DEPresenter implements DEView.Presenter {
 
         @Override
         public void execute() {
-            eventBus.fireEvent(new WindowShowRequestEvent(ConfigFactory.diskResourceWindowConfig()));
+            eventBus.fireEvent(new WindowShowRequestEvent(ConfigFactory.diskResourceWindowConfig(false)));
 
         }
 

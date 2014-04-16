@@ -2,6 +2,7 @@ package org.iplantc.de.diskResource.client.presenters;
 
 import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.events.diskResources.FolderRefreshEvent;
+import org.iplantc.de.client.events.diskResources.OpenFolderEvent;
 import org.iplantc.de.client.models.HasId;
 import org.iplantc.de.client.models.HasPaths;
 import org.iplantc.de.client.models.UserInfo;
@@ -378,6 +379,14 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter {
         }
 
         return selectedFolder;
+    }
+
+    @Override
+    public void onNewWindow() {
+        String folderId = getSelectedFolder() == null ? null : getSelectedFolder().getPath();
+        OpenFolderEvent openEvent = new OpenFolderEvent(folderId);
+        openEvent.requestNewView(true);
+        EventBus.getInstance().fireEvent(openEvent);
     }
 
     @Override

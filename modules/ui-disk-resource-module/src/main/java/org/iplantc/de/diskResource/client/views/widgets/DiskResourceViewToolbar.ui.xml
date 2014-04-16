@@ -39,23 +39,39 @@
 			</button:TextButton>
 		</toolbar:child>
 
-		<!-- New Folder button -->
-		<toolbar:child>
-			<button:TextButton debugId="idNewBtn"
-				ui:field="newButton" text="New" icon="{res.add}">
-					<button:menu>
-					<menu:Menu>
-			    	<menu:MenuItem debugId="idNewFolderBtn" ui:field="newFolderButton"
-							 text="{display.newFolder}" icon="{res.folderAdd}">
-						</menu:MenuItem>
-						
-						<menu:MenuItem debugId="idNewFile" ui:field="newFileButton"
-							text="New File" icon="{res.fileRename}">
-						</menu:MenuItem>
-						</menu:Menu>
-						</button:menu>
-			</button:TextButton>
-		</toolbar:child>
+        <!-- New Items menu -->
+        <toolbar:child>
+            <button:TextButton
+                debugId="idNewBtn"
+                ui:field="newButton"
+                text="New"
+                icon="{res.add}">
+                <button:menu>
+                    <menu:Menu>
+                        <menu:MenuItem
+                            debugId="idNewWindowBtn"
+                            ui:field="newWindowButton"
+                            text="{display.newWindow}"
+                            icon="{res.add}">
+                        </menu:MenuItem>
+
+                        <menu:MenuItem
+                            debugId="idNewFolderBtn"
+                            ui:field="newFolderButton"
+                            text="{display.newFolder}"
+                            icon="{res.folderAdd}">
+                        </menu:MenuItem>
+
+                        <menu:MenuItem
+                            debugId="idNewFile"
+                            ui:field="newFileButton"
+                            text="New File"
+                            icon="{res.fileRename}">
+                        </menu:MenuItem>
+                    </menu:Menu>
+                </button:menu>
+            </button:TextButton>
+        </toolbar:child>
 
 		<!-- Refresh button -->
 		<toolbar:child>

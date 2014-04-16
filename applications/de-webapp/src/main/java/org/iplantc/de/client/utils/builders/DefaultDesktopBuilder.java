@@ -21,8 +21,7 @@ public class DefaultDesktopBuilder extends DesktopBuilder {
         addShortcut(res.css().iplantcMydataShortcut(), "idMydataShortCut", res.css()
                 .iplantcMydataShortcutHover(), "1",
                 org.iplantc.de.resources.client.messages.I18N.HELP.iconHomepageDataTip(),
- uiConstants.windowTag(), //$NON-NLS-1$
-                ConfigFactory.diskResourceWindowConfig(),
+                uiConstants.windowTag(), ConfigFactory.diskResourceWindowConfig(false),
                 org.iplantc.de.resources.client.messages.I18N.TOUR.introDataWindow());
 
         addShortcut(res.css().iplantcCatalogShortcut(), "idAppsShortCut", res.css()

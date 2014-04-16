@@ -25,7 +25,8 @@ public class ToolbarButtonVisibilityNavigationHandler extends
     protected void updateToolbar(List<Folder> selection) {
         boolean oneSelected = selection.size() == 1;
         boolean canUpload = oneSelected && DiskResourceUtil.canUploadTo(selection.get(0));
-        boolean newButtonEnabled = canUpload || selection.size() == 0;
+        boolean newButtonEnabled = oneSelected || selection.size() == 0;
+        boolean newFolderEnabled = newButtonEnabled && canUpload;
 
         toolbar.setUploadsEnabled(canUpload);
         toolbar.setBulkUploadEnabled(canUpload);
@@ -33,8 +34,9 @@ public class ToolbarButtonVisibilityNavigationHandler extends
         toolbar.setImportButtonEnabled(canUpload);
 
         toolbar.setNewButtonEnabled(newButtonEnabled);
-        toolbar.setNewFileButtonEnabled(newButtonEnabled);
-        toolbar.setNewFolderButtonEnabled(newButtonEnabled);
+        toolbar.setNewWindowEnabled(newButtonEnabled);
+        toolbar.setNewFileButtonEnabled(newFolderEnabled);
+        toolbar.setNewFolderButtonEnabled(newFolderEnabled);
         toolbar.setRefreshButtonEnabled(oneSelected);
     }
 

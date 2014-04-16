@@ -13,6 +13,8 @@ import com.google.web.bindery.autobean.shared.AutoBeanCodex;
 import com.google.web.bindery.autobean.shared.Splittable;
 import com.google.web.bindery.autobean.shared.impl.StringQuoter;
 
+import com.sencha.gxt.core.client.dom.XDOM;
+
 import java.util.Date;
 
 public class ConfigFactory {
@@ -49,10 +51,15 @@ public class ConfigFactory {
         return awc.as();
     }
 
-    public static DiskResourceWindowConfig diskResourceWindowConfig() {
-        DiskResourceWindowConfig drwc = applyWindowType(WindowType.DATA,
-                factory.diskResourceWindowConfig()).as();
-        return drwc;
+    public static DiskResourceWindowConfig diskResourceWindowConfig(boolean newWindowRequested) {
+        AutoBean<DiskResourceWindowConfig> drwc = applyWindowType(WindowType.DATA,
+                factory.diskResourceWindowConfig());
+
+        if (newWindowRequested) {
+            applyTag(XDOM.getUniqueId(), drwc);
+        }
+
+        return drwc.as();
     }
 
     public static FileViewerWindowConfig fileViewerWindowConfig(File file, boolean b) {
