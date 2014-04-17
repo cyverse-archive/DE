@@ -86,7 +86,7 @@ public class AnalysesPresenterImpl implements AnalysesView.Presenter, AnalysisNa
         public AnalysisCommentsDialog(final Analysis analysis, final IplantDisplayStrings displayStrings){
             this.analysis = analysis;
 
-            String comments = analysis.getDescription();
+            String comments = analysis.getComments();
             setHeadingText(displayStrings.comments());
             setSize("350px","300px");
             ta = new TextArea();
@@ -99,7 +99,7 @@ public class AnalysesPresenterImpl implements AnalysesView.Presenter, AnalysisNa
         }
 
         public boolean isCommentChanged(){
-            return !getComment().equals(analysis.getDescription());
+            return !getComment().equals(analysis.getComments());
         }
     }
 

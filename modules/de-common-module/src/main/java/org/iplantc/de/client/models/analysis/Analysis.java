@@ -1,12 +1,17 @@
 package org.iplantc.de.client.models.analysis;
 
-import org.iplantc.de.client.models.HasDescription;
 import org.iplantc.de.client.models.HasId;
 
 import com.google.gwt.user.client.ui.HasName;
 import com.google.web.bindery.autobean.shared.AutoBean.PropertyName;
 
-public interface Analysis extends HasId, HasName, HasDescription {
+public interface Analysis extends HasId, HasName {
+
+    @PropertyName("description")
+    String getComments();
+
+    @PropertyName("description")
+    void setComments(String comments);
 
     @PropertyName("wiki_url")
     public void setWikiUrl(String url);
