@@ -8,6 +8,8 @@ import org.iplantc.de.client.models.errors.diskResources.DiskResourceErrorAutoBe
 import org.iplantc.de.client.models.errors.diskResources.ErrorDiskResourceMove;
 import org.iplantc.de.client.models.services.DiskResourceMove;
 import org.iplantc.de.commons.client.ErrorHandler;
+import org.iplantc.de.commons.client.info.IplantAnnouncer;
+import org.iplantc.de.commons.client.info.SuccessAnnouncementConfig;
 import org.iplantc.de.diskResource.client.events.DiskResourcesMovedEvent;
 import org.iplantc.de.resources.client.messages.I18N;
 
@@ -35,6 +37,10 @@ public class DiskResourceMoveCallback extends DiskResourceServiceCallback<DiskRe
     @Override
     public void onSuccess(DiskResourceMove result) {
         unmaskCaller();
+
+        String successMsg = I18N.DISPLAY.diskResourceMoveSuccess(result.getDest(), result.getSources());
+        IplantAnnouncer.getInstance().schedule(new SuccessAnnouncementConfig(successMsg));
+
         /*
          * JDS Result should have a "sources" key
          * and a "dest" key.

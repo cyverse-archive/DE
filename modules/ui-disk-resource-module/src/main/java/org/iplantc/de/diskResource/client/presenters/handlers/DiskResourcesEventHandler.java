@@ -7,8 +7,6 @@ import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.client.models.diskResources.File;
 import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.client.util.DiskResourceUtil;
-import org.iplantc.de.commons.client.info.IplantAnnouncer;
-import org.iplantc.de.commons.client.info.SuccessAnnouncementConfig;
 import org.iplantc.de.diskResource.client.events.DiskResourceRenamedEvent.DiskResourceRenamedEventHandler;
 import org.iplantc.de.diskResource.client.events.DiskResourceSelectedEvent;
 import org.iplantc.de.diskResource.client.events.DiskResourceSelectedEvent.DiskResourceSelectedEventHandler;
@@ -59,7 +57,6 @@ public final class DiskResourcesEventHandler implements DiskResourcesDeletedEven
 
     @Override
     public void onDiskResourcesMoved(DiskResourcesMovedEvent event) {
-        
         Set<DiskResource> resourcesToMove = event.getResourcesToMove();
         Folder destinationFolder = event.getDestinationFolder();
         Folder selectedFolder = presenter.getSelectedFolder();
@@ -75,8 +72,6 @@ public final class DiskResourcesEventHandler implements DiskResourcesDeletedEven
                 diskResourcesMovedFromGrid(resourcesToMove, selectedFolder, destinationFolder);
             }
         }
-        IplantAnnouncer.getInstance().schedule(
-                new SuccessAnnouncementConfig("Selected item(s) moved to " + destinationFolder.getId()));
     }
 
     private void selectedFolderMovedFromNavTree(Folder selectedFolder, Folder destinationFolder) {

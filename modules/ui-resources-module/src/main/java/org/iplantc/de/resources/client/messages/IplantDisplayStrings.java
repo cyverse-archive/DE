@@ -4652,7 +4652,18 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     @DefaultMessage("Pending verification that {0} exists.")
     @Key("diskResourceExistCheckPending")
     String diskResourceExistCheckPending(String path);
-    
+
+    /**
+     * A message indicating that one or more disk resources were moved to a destination folder.
+     * 
+     * @param app The name of the app that was categorized.
+     * @param categories The list of category names.
+     */
+    @DefaultMessage("Selected items moved to {0}.")
+    @AlternateMessage({"=1", "Selected item moved to {0}."})
+    @Key("diskResourceMoveSuccess")
+    String diskResourceMoveSuccess(String destPath, @Optional @PluralCount List<String> srcPaths);
+
     /**
      * Translated "Disk resource not available."
      * 
