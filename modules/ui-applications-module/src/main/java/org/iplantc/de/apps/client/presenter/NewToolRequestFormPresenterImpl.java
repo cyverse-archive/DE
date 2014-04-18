@@ -17,7 +17,7 @@ import org.iplantc.de.client.models.toolRequests.RequestedToolDetails;
 import org.iplantc.de.client.models.toolRequests.ToolRequestFactory;
 import org.iplantc.de.client.models.toolRequests.YesNoMaybe;
 import org.iplantc.de.client.services.DiskResourceServiceFacade;
-import org.iplantc.de.client.services.ToolRequestProvider;
+import org.iplantc.de.client.services.ToolRequestServiceFacade;
 import org.iplantc.de.client.util.DiskResourceUtil;
 import org.iplantc.de.resources.client.messages.I18N;
 
@@ -43,7 +43,7 @@ public class NewToolRequestFormPresenterImpl implements Presenter {
     private static final ToolRequestFactory REQ_FACTORY = GWT.create(ToolRequestFactory.class);
 
     private final DiskResourceServiceFacade fsServices = ServicesInjector.INSTANCE.getDiskResourceServiceFacade();
-    private final ToolRequestProvider reqServices = ServicesInjector.INSTANCE.getToolRequestServiceProvider();
+    private final ToolRequestServiceFacade reqServices = ServicesInjector.INSTANCE.getToolRequestServiceProvider();
 
     private final NewToolRequestFormView<Architecture, YesNoMaybe> view;
     private final Command callback;

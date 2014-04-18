@@ -14,5 +14,6 @@ public interface AnalysisModule {
         public static final String MENUITEM_CANCEL = ".cancel";
         public static final String MENUITEM_RENAME = ".rename";
         public static final String MENUITEM_UPDATE_COMMENTS = ".updateComments";
+        String VIEW_PARAMS = ".viewParamsView";
     }
 }

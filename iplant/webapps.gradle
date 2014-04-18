@@ -13,7 +13,7 @@ configure(subprojects.findAll { it.name == "de" || it.name == "belphegor" }) {
                 project(':ui-resources-module'),
                 project(':confluence-client'),
                 project(':de-common-module')
-        testCompile 'com.google.gwt.gwtmockito:gwtmockito:1.1.2'
+        testCompile "com.google.gwt.gwtmockito:gwtmockito:$gwtMockitoVer"
         testCompile project(':de-common-module').sourceSets.test.output
     }
 

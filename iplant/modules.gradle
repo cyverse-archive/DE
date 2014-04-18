@@ -28,7 +28,7 @@ project(':analyses-module') {
         compile project(':de-common-module')
         compile project(':ui-disk-resource-module')
 
-        testCompile 'com.google.gwt.gwtmockito:gwtmockito:1.1.2'
+        testCompile "com.google.gwt.gwtmockito:gwtmockito:$gwtMockitoVer"
         testCompile project(':de-common-module').sourceSets.test.output
     }
 }
@@ -40,7 +40,7 @@ project(':ui-apps-integration') {
     dependencies {
         compile project(':ui-apps-widgets-module')
 
-        testCompile 'com.google.gwt.gwtmockito:gwtmockito:1.1.2'
+        testCompile "com.google.gwt.gwtmockito:gwtmockito:$gwtMockitoVer"
         testCompile project(':de-common-module').sourceSets.test.output
     }
 }
@@ -52,7 +52,7 @@ project(':ui-apps-widgets-module') {
         compile project(':ui-commons-module'),
                 project(':ui-applications-module')
 
-        testCompile 'com.google.gwt.gwtmockito:gwtmockito:1.1.2'
+        testCompile "com.google.gwt.gwtmockito:gwtmockito:$gwtMockitoVer"
         testCompile project(':de-common-module').sourceSets.test.output
     }
 }
@@ -63,7 +63,7 @@ project(':ui-disk-resource-module') {
     dependencies {
         compile project(':ui-commons-module')
 
-        testCompile 'com.google.gwt.gwtmockito:gwtmockito:1.1.2'
+        testCompile "com.google.gwt.gwtmockito:gwtmockito:$gwtMockitoVer"
         testCompile project(':de-common-module').sourceSets.test.output
     }
 }
@@ -97,13 +97,13 @@ project(':ui-commons-module') {
     gwt { gwtVersion="$gwtVer" }
 
     dependencies {
-        compile 'com.google.gwt.inject:gin:2.0.0'
-        compile 'com.google.guava:guava-gwt:13.0.1'
+        compile "com.google.gwt.inject:gin:$gwtGinVer"
+        compile "com.google.guava:guava-gwt:$guavaGwtVer"
         compile 'com.google.code.findbugs:jsr305:1.3.9'
         compile project(':ui-resources-module'),
                 project(':de-common-module')
 
-        testCompile 'com.google.gwt.gwtmockito:gwtmockito:1.1.2'
+        testCompile "com.google.gwt.gwtmockito:gwtmockito:$gwtMockitoVer"
         testCompile project(':de-common-module').sourceSets.test.output
     }
 }
@@ -115,7 +115,7 @@ project(':de-common-module') {
         compile project(':clavin-java')
         compile project(':ui-resources-module')
         compile "log4j:log4j:$log4jVersion"
-        compile 'com.google.gwt.inject:gin:2.0.0'
+        compile "com.google.gwt.inject:gin:$gwtGinVer"
         compile 'org.apache.httpcomponents:httpclient:4.2.1'
         compile 'org.apache.httpcomponents:httpmime:4.2.1'
         compile ('org.jasig.cas.client:cas-client-core:3.2.0') {
@@ -132,7 +132,7 @@ project(':de-common-module') {
         compile 'commons-fileupload:commons-fileupload:1.2.1'
         compile "com.sencha.gxt:gxt:$gxtVersion"
 
-        testCompile 'com.google.gwt.gwtmockito:gwtmockito:1.1.2'
+        testCompile "com.google.gwt.gwtmockito:gwtmockito:$gwtMockitoVer"
     }
 }
 project(':ui-resources-module') {
@@ -157,7 +157,7 @@ project(':clavin-java') {
 
     dependencies {
         compile 'com.netflix.curator:curator-framework:1.1.16'
-        compile 'com.google.guava:guava:13.0'
+        compile "com.google.guava:guava:$guavaVer"
         provided 'javax:javaee-web-api:6.0'
         compile 'org.springframework:spring-web:3.0.7.RELEASE'
         compile 'org.springframework:spring-beans:3.0.7.RELEASE'

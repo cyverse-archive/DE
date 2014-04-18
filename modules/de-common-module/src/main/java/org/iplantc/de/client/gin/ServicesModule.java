@@ -3,35 +3,10 @@ package org.iplantc.de.client.gin;
 import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.models.DEProperties;
 import org.iplantc.de.client.models.UserInfo;
-import org.iplantc.de.client.services.AnalysisServiceFacade;
-import org.iplantc.de.client.services.AppMetadataServiceFacade;
-import org.iplantc.de.client.services.AppServiceFacade;
-import org.iplantc.de.client.services.AppTemplateServices;
-import org.iplantc.de.client.services.AppUserServiceFacade;
-import org.iplantc.de.client.services.CollaboratorsServiceFacade;
-import org.iplantc.de.client.services.DEFeedbackServiceFacade;
-import org.iplantc.de.client.services.DEServiceFacade;
-import org.iplantc.de.client.services.DefaultToolRequestProvider;
-import org.iplantc.de.client.services.DeployedComponentServices;
-import org.iplantc.de.client.services.DiskResourceServiceFacade;
-import org.iplantc.de.client.services.FileEditorServiceFacade;
-import org.iplantc.de.client.services.MessageServiceFacade;
-import org.iplantc.de.client.services.SearchServiceFacade;
-import org.iplantc.de.client.services.SystemMessageServiceFacade;
-import org.iplantc.de.client.services.ToolRequestProvider;
-import org.iplantc.de.client.services.UserSessionServiceFacade;
-import org.iplantc.de.client.services.impl.AnalysisServiceFacadeImpl;
-import org.iplantc.de.client.services.impl.AppTemplateServicesImpl;
-import org.iplantc.de.client.services.impl.AppUserServiceFacadeImpl;
-import org.iplantc.de.client.services.impl.CollaboratorsServiceFacadeImpl;
-import org.iplantc.de.client.services.impl.DEFeedbackServiceFacadeImpl;
-import org.iplantc.de.client.services.impl.DeployedComponentServicesImpl;
-import org.iplantc.de.client.services.impl.DiskResourceServiceFacadeImpl;
-import org.iplantc.de.client.services.impl.FileEditorServiceFacadeImpl;
-import org.iplantc.de.client.services.impl.MessageServiceFacadeImpl;
-import org.iplantc.de.client.services.impl.SearchServiceFacadeImpl;
-import org.iplantc.de.client.services.impl.SystemMessageServiceFacadeImpl;
-import org.iplantc.de.client.services.impl.UserSessionServiceFacadeImpl;
+import org.iplantc.de.client.services.*;
+import org.iplantc.de.client.services.ToolRequestServiceFacade;
+import org.iplantc.de.client.services.impl.*;
+import org.iplantc.de.client.services.stubs.*;
 import org.iplantc.de.shared.services.ConfluenceServiceFacade;
 import org.iplantc.de.shared.services.EmailServiceFacade;
 
@@ -44,10 +19,8 @@ final class ServicesModule extends AbstractGinModule {
     @Override
     protected void configure() {
         bind(DiskResourceServiceFacade.class).to(DiskResourceServiceFacadeImpl.class).in(Singleton.class);
-        bind(ToolRequestProvider.class).to(DefaultToolRequestProvider.class).in(Singleton.class);
-
+        bind(ToolRequestServiceFacade.class).to(ToolRequestServiceFacadeImpl.class).in(Singleton.class);
         bind(AnalysisServiceFacade.class).to(AnalysisServiceFacadeImpl.class);
-
         bind(AppTemplateServices.class).to(AppTemplateServicesImpl.class);
         bind(AppMetadataServiceFacade.class).to(AppTemplateServicesImpl.class);
         bind(AppUserServiceFacade.class).to(AppUserServiceFacadeImpl.class);
@@ -60,6 +33,22 @@ final class ServicesModule extends AbstractGinModule {
         bind(SearchServiceFacade.class).to(SearchServiceFacadeImpl.class);
         bind(SystemMessageServiceFacade.class).to(SystemMessageServiceFacadeImpl.class);
         bind(UserSessionServiceFacade.class).to(UserSessionServiceFacadeImpl.class);
+
+        bind(DiskResourceServiceFacade.class).annotatedWith(Stub.class).to(DiskResourceServiceFacadeStub.class);
+        bind(ToolRequestServiceFacade.class).annotatedWith(Stub.class).to(ToolRequestServiceFacadeStub.class);
+        bind(AnalysisServiceFacade.class).annotatedWith(Stub.class).to(AnalysisServiceFacadeStub.class);
+        bind(AppTemplateServices.class).annotatedWith(Stub.class).to(AppTemplateServicesStub.class);
+        bind(AppMetadataServiceFacade.class).annotatedWith(Stub.class).to(AppMetadataServiceStub.class);
+        bind(AppUserServiceFacade.class).annotatedWith(Stub.class).to(AppUserServiceFacadeStub.class);
+        bind(AppServiceFacade.class).annotatedWith(Stub.class).to(AppServiceFacadeStub.class);
+        bind(CollaboratorsServiceFacade.class).annotatedWith(Stub.class).to(CollaboratorsServiceFacadeStub.class);
+        bind(DEFeedbackServiceFacade.class).annotatedWith(Stub.class).to(DEFeedbackServiceFacadeStub.class);
+        bind(DeployedComponentServices.class).annotatedWith(Stub.class).to(DeployedComponentServicesStub.class);
+        bind(FileEditorServiceFacade.class).annotatedWith(Stub.class).to(FileEditorServiceFacadeStub.class);
+        bind(MessageServiceFacade.class).annotatedWith(Stub.class).to(MessageServiceFacadeStub.class);
+        bind(SearchServiceFacade.class).annotatedWith(Stub.class).to(SearchServiceFacadeStub.class);
+        bind(SystemMessageServiceFacade.class).annotatedWith(Stub.class).to(SystemMessageServiceFacadeStub.class);
+        bind(UserSessionServiceFacade.class).annotatedWith(Stub.class).to(UserSessionServiceFacadeStub.class);
     }
 
     @Provides

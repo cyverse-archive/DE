@@ -18,12 +18,8 @@ buildscript {
 }
 
 // Establish extended properties for all projects
+apply from: 'versions.gradle'
 ext {
-   gwtVer = "2.5.1"
-   gxtVersion = "3.0.6"
-   log4jVersion = "1.2.16"
-   slf4jVersion = "1.7.6"
-   jUnitVersion = "4.11"
    remoteUri = ""
    remoteRef = ""
    subtreePrefix = ""

@@ -16,7 +16,7 @@ import com.sencha.gxt.core.client.IdentityValueProvider;
 import com.sencha.gxt.data.shared.ListStore;
 import com.sencha.gxt.widget.core.client.grid.CheckBoxSelectionModel;
 
-public class AnalysisModule extends AbstractGinModule {
+public class AnalysisGinModule extends AbstractGinModule {
 
 
     @Override

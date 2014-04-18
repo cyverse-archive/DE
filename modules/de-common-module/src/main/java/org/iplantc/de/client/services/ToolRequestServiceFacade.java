@@ -8,7 +8,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 /**
  * Objects of this type can provide the tool request remote services.
  */
-public interface ToolRequestProvider {
+public interface ToolRequestServiceFacade {
 
     /**
      * Asynchronously requests the installation of a tool.
