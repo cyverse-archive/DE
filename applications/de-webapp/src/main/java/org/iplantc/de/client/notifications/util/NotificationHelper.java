@@ -19,10 +19,10 @@ import org.iplantc.de.client.notifications.events.DeleteNotificationsUpdateEvent
 import org.iplantc.de.client.notifications.views.dialogs.ToolRequestHistoryDialog;
 import org.iplantc.de.client.util.DiskResourceUtil;
 import org.iplantc.de.client.util.JsonUtil;
-import org.iplantc.de.client.views.windows.configs.AnalysisWindowConfig;
-import org.iplantc.de.client.views.windows.configs.ConfigFactory;
-import org.iplantc.de.client.views.windows.configs.DiskResourceWindowConfig;
 import org.iplantc.de.commons.client.ErrorHandler;
+import org.iplantc.de.commons.client.views.window.configs.AnalysisWindowConfig;
+import org.iplantc.de.commons.client.views.window.configs.ConfigFactory;
+import org.iplantc.de.commons.client.views.window.configs.DiskResourceWindowConfig;
 import org.iplantc.de.resources.client.messages.I18N;
 
 import com.google.common.collect.Lists;

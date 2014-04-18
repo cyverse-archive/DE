@@ -5,9 +5,9 @@ import org.iplantc.de.client.gin.ServicesInjector;
 import org.iplantc.de.client.models.WindowState;
 import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.client.util.DiskResourceUtil;
-import org.iplantc.de.client.views.windows.configs.ConfigFactory;
-import org.iplantc.de.client.views.windows.configs.SimpleDownloadWindowConfig;
 import org.iplantc.de.commons.client.util.WindowUtil;
+import org.iplantc.de.commons.client.views.window.configs.ConfigFactory;
+import org.iplantc.de.commons.client.views.window.configs.SimpleDownloadWindowConfig;
 import org.iplantc.de.commons.client.widgets.IPlantAnchor;
 
 import com.google.gwt.core.client.GWT;

@@ -14,8 +14,8 @@ import org.iplantc.de.client.events.FileSavedEvent.FileSavedEventHandler;
 import org.iplantc.de.client.viewer.events.SaveFileEvent;
 import org.iplantc.de.client.viewer.presenter.FileViewerPresenter;
 import org.iplantc.de.client.viewer.views.FileViewer;
-import org.iplantc.de.client.views.windows.configs.FileViewerWindowConfig;
 import org.iplantc.de.commons.client.ErrorHandler;
+import org.iplantc.de.commons.client.views.window.configs.FileViewerWindowConfig;
 import org.iplantc.de.resources.client.messages.I18N;
 
 import com.google.gwt.core.client.GWT;
@@ -150,7 +150,7 @@ public class FileViewerWindow extends IplantWindowBase implements IsMaskable {
                 public void onSuccess(String result) {
                     if (result != null) {
                         manifest = JsonUtil.getObject(result);
-                        p = new FileViewerPresenter(file, manifest, configAB.isEditing());
+                        p = new FileViewerPresenter(file, manifest, configAB.isEditing(), configAB.isVizTabFirst());
                         initWidget();
                         p.go(FileViewerWindow.this);
                         unmask();
@@ -180,7 +180,7 @@ public class FileViewerWindow extends IplantWindowBase implements IsMaskable {
             if (configAB.isEditing()) {
                 JSONObject manifest = new JSONObject();
                 manifest.put("content-type", new JSONString("plain"));
-                p = new FileViewerPresenter(file, manifest, configAB.isEditing());
+                p = new FileViewerPresenter(file, manifest, configAB.isEditing(), configAB.isVizTabFirst());
                 initWidget();
                 p.go(FileViewerWindow.this);
                 unmask();

@@ -11,8 +11,8 @@ import org.iplantc.de.client.notifications.views.NotificationMessageProperties;
 import org.iplantc.de.client.notifications.views.NotificationView;
 import org.iplantc.de.client.notifications.views.NotificationViewImpl;
 import org.iplantc.de.client.notifications.views.cells.NotificationMessageCell;
-import org.iplantc.de.client.views.windows.configs.ConfigFactory;
-import org.iplantc.de.client.views.windows.configs.NotifyWindowConfig;
+import org.iplantc.de.commons.client.views.window.configs.ConfigFactory;
+import org.iplantc.de.commons.client.views.window.configs.NotifyWindowConfig;
 
 import com.google.gwt.cell.client.DateCell;
 import com.google.gwt.core.shared.GWT;

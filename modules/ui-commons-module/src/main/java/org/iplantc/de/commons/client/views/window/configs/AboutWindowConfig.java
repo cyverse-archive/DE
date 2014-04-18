@@ -1,4 +1,4 @@
-package org.iplantc.de.client.views.windows.configs;
+package org.iplantc.de.commons.client.views.window.configs;
 
 public interface AboutWindowConfig extends WindowConfig {
 

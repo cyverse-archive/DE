@@ -1,7 +1,7 @@
 package org.iplantc.de.client.events;
 
 import org.iplantc.de.client.events.WindowShowRequestEvent.WindowShowRequestEventHandler;
-import org.iplantc.de.client.views.windows.configs.WindowConfig;
+import org.iplantc.de.commons.client.views.window.configs.WindowConfig;
 
 import com.google.gwt.event.shared.EventHandler;
 import com.google.gwt.event.shared.GwtEvent;

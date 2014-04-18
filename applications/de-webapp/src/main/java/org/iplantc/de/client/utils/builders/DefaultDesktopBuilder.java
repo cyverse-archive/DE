@@ -1,8 +1,8 @@
 package org.iplantc.de.client.utils.builders;
 
 import org.iplantc.de.client.DeResources;
-import org.iplantc.de.client.views.windows.configs.ConfigFactory;
 import org.iplantc.de.commons.client.CommonUiConstants;
+import org.iplantc.de.commons.client.views.window.configs.ConfigFactory;
 
 import com.google.gwt.core.client.GWT;
 

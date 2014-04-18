@@ -3,7 +3,7 @@ package org.iplantc.de.client.views.windows;
 import org.iplantc.de.client.models.IsMinimizable;
 import org.iplantc.de.client.models.WindowState;
 import org.iplantc.de.client.utils.DEWindowManager;
-import org.iplantc.de.client.views.windows.configs.WindowConfig;
+import org.iplantc.de.commons.client.views.window.configs.WindowConfig;
 
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.ui.IsWidget;

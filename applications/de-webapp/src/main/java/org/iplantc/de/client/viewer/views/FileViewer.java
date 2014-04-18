@@ -3,7 +3,6 @@
  */
 package org.iplantc.de.client.viewer.views;
 
-import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.user.client.ui.IsWidget;
 
 /**
@@ -17,7 +16,7 @@ public interface FileViewer extends IsWidget {
     public static final int PAGE_INCREMENT_SIZE_KB = 8;
 
     public interface Presenter extends org.iplantc.de.commons.client.presenter.Presenter {
-        void composeView(JSONObject manifest);
+        void composeView();
 
         void setVeiwDirtyState(boolean dirty);
 

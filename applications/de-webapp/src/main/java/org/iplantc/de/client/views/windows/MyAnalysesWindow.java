@@ -5,11 +5,12 @@ import org.iplantc.de.analysis.shared.AnalysisModule;
 import org.iplantc.de.client.gin.DEInjector;
 import org.iplantc.de.client.models.WindowState;
 import org.iplantc.de.client.models.analysis.Analysis;
-import org.iplantc.de.client.views.windows.configs.AnalysisWindowConfig;
-import org.iplantc.de.client.views.windows.configs.ConfigFactory;
-import org.iplantc.de.client.views.windows.configs.WindowConfig;
+import org.iplantc.de.commons.client.views.window.configs.AnalysisWindowConfig;
+import org.iplantc.de.commons.client.views.window.configs.ConfigFactory;
+import org.iplantc.de.commons.client.views.window.configs.WindowConfig;
 
 import com.google.common.collect.Lists;
+
 import org.iplantc.de.shared.DeModule;
 
 import java.util.List;

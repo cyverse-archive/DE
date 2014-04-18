@@ -2,7 +2,7 @@ package org.iplantc.de.client.models.viewer;
 
 public enum InfoType {
 
-    ACE("ace"), BASH("bash"), BLAST("blast"), BOWTIE("bowtie"), CLUSTALW("clustalw"), CODATA("codata"), CSH(
+    ACE("ace"), BAM("bam"), BASH("bash"), BLAST("blast"), BOWTIE("bowtie"), CLUSTALW("clustalw"), CODATA("codata"), CSH(
             "csh"), CSV("csv"), EMBL("embl"), FASTA("fasta"), FASTQ("fastq"), FASTXY("fastxy"), GAME(
             "game"), GCG("gcg"), GCGBLAST("gcgblast"), GCGFASTA("gcgfasta"), GDE("gde"), GENBANK(
             "genbank"), GENSCAN("genscan"), GFF("gff"), HMMER("hmmer"), MASE("mase"), MEGG("mega"), MSF(

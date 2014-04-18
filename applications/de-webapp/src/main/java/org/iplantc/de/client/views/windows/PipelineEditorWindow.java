@@ -2,11 +2,11 @@ package org.iplantc.de.client.views.windows;
 
 import org.iplantc.de.client.models.WindowState;
 import org.iplantc.de.client.models.pipelines.Pipeline;
-import org.iplantc.de.client.views.windows.configs.ConfigFactory;
-import org.iplantc.de.client.views.windows.configs.PipelineEditorWindowConfig;
-import org.iplantc.de.client.views.windows.configs.WindowConfig;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
 import org.iplantc.de.commons.client.info.SuccessAnnouncementConfig;
+import org.iplantc.de.commons.client.views.window.configs.ConfigFactory;
+import org.iplantc.de.commons.client.views.window.configs.PipelineEditorWindowConfig;
+import org.iplantc.de.commons.client.views.window.configs.WindowConfig;
 import org.iplantc.de.pipelines.client.presenter.PipelineViewPresenter;
 import org.iplantc.de.pipelines.client.views.PipelineView;
 import org.iplantc.de.pipelines.client.views.PipelineViewImpl;

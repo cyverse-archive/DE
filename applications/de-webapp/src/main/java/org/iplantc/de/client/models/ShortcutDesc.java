@@ -1,6 +1,6 @@
 package org.iplantc.de.client.models;
 
-import org.iplantc.de.client.views.windows.configs.WindowConfig;
+import org.iplantc.de.commons.client.views.window.configs.WindowConfig;
 
 /**
  * Models the data associated to a desktop shortcut.

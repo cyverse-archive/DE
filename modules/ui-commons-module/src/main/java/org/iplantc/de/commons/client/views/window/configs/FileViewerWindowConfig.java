@@ -1,4 +1,4 @@
-package org.iplantc.de.client.views.windows.configs;
+package org.iplantc.de.commons.client.views.window.configs;
 
 import org.iplantc.de.client.models.diskResources.File;
 
@@ -15,4 +15,9 @@ public interface FileViewerWindowConfig extends WindowConfig {
     boolean isShowTreeTab();
 
     void setShowTreeTab(boolean b);
+
+    void setVizTabFirst(boolean b);
+
+    boolean isVizTabFirst();
+
 }

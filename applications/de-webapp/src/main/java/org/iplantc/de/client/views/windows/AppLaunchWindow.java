@@ -13,11 +13,11 @@ import org.iplantc.de.client.services.AppTemplateServices;
 import org.iplantc.de.client.services.DeployedComponentServices;
 import org.iplantc.de.client.services.converters.AppTemplateCallbackConverter;
 import org.iplantc.de.client.util.CommonModelUtils;
-import org.iplantc.de.client.views.windows.configs.AppWizardConfig;
-import org.iplantc.de.client.views.windows.configs.ConfigFactory;
 import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.commons.client.info.ErrorAnnouncementConfig;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
+import org.iplantc.de.commons.client.views.window.configs.AppWizardConfig;
+import org.iplantc.de.commons.client.views.window.configs.ConfigFactory;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;

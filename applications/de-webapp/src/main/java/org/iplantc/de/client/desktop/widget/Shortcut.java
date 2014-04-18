@@ -7,7 +7,7 @@ package org.iplantc.de.client.desktop.widget;
 
 import org.iplantc.de.client.DeResources;
 import org.iplantc.de.client.models.ShortcutDesc;
-import org.iplantc.de.client.views.windows.configs.WindowConfig;
+import org.iplantc.de.commons.client.views.window.configs.WindowConfig;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.MouseOutEvent;

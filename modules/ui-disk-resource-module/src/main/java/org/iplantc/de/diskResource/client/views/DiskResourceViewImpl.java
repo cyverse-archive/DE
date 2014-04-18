@@ -1,15 +1,20 @@
 package org.iplantc.de.diskResource.client.views;
 
+import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.models.HasId;
 import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.client.models.diskResources.DiskResourceInfo;
+import org.iplantc.de.client.models.diskResources.File;
 import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.client.models.diskResources.PermissionValue;
 import org.iplantc.de.client.models.search.DiskResourceQueryTemplate;
 import org.iplantc.de.client.util.CommonModelUtils;
 import org.iplantc.de.client.util.DiskResourceUtil;
+import org.iplantc.de.commons.client.views.window.configs.ConfigFactory;
+import org.iplantc.de.commons.client.views.window.configs.FileViewerWindowConfig;
 import org.iplantc.de.commons.client.widgets.IPlantAnchor;
 import org.iplantc.de.diskResource.client.events.FolderSelectedEvent;
+import org.iplantc.de.diskResource.client.events.ShowFilePreviewEvent;
 import org.iplantc.de.diskResource.client.presenters.proxy.FolderContentsLoadConfig;
 import org.iplantc.de.diskResource.client.search.events.DeleteSavedSearchEvent;
 import org.iplantc.de.diskResource.client.views.cells.DiskResourceNameCell;
@@ -36,6 +41,8 @@ import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.i18n.client.DateTimeFormat;
+import com.google.gwt.json.client.JSONObject;
+import com.google.gwt.json.client.JSONString;
 import com.google.gwt.safehtml.client.HasSafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -116,7 +123,7 @@ public class DiskResourceViewImpl implements DiskResourceView {
                 HasId folderToSelect = CommonModelUtils.createHasIdFromString(pathField.getCurrentValue());
                 presenter.setSelectedFolderById(folderToSelect);
             }
-            
+
         }
     }
 
@@ -889,6 +896,30 @@ public class DiskResourceViewImpl implements DiskResourceView {
         detailsPanel.add(getStringLabel(I18N.DISPLAY.size(), DiskResourceUtil.formatFileSize(info.getSize() + ""))); //$NON-NLS-1$
         detailsPanel.add(getStringLabel("Type", info.getFileType()));
         detailsPanel.add(getInfoTypeLabel("Info-Type", info));
+        detailsPanel.add(getViewerInfo(info));
+    }
+
+    private HorizontalPanel getViewerInfo(DiskResourceInfo info) {
+        HorizontalPanel panel = buildRow();
+        String infoType = info.getInfoType();
+        if (infoType != null && !infoType.isEmpty()) {
+            JSONObject manifest = new JSONObject();
+            manifest.put("info-type", new JSONString(infoType));
+            FieldLabel fl = new FieldLabel();
+            fl.setWidth(100);
+            fl.setHTML(getDetailAsHtml("View in", true));
+            panel.add(fl);
+            IPlantAnchor link = null;
+            if (DiskResourceUtil.isTreeTab(manifest)) {
+                link = new IPlantAnchor("Tree Viewer", 100, new ViewerInfoClickHandler());
+            } else if (DiskResourceUtil.isGenomeVizTab(manifest)) {
+                link = new IPlantAnchor("CoGe ", 100, new ViewerInfoClickHandler());
+            } else if (DiskResourceUtil.isEnsemblVizTab(manifest)) {
+                link = new IPlantAnchor("Ensembl Genome Browser", 100, new ViewerInfoClickHandler());
+            }
+            panel.add(link);
+        }
+        return panel;
     }
 
     private HorizontalPanel getSharingLabel(String label, int shareCount, PermissionValue permissions) {
@@ -984,6 +1015,18 @@ public class DiskResourceViewImpl implements DiskResourceView {
             presenter.doShare();
 
         }
+    }
+
+    private class ViewerInfoClickHandler implements ClickHandler {
+        @Override
+        public void onClick(ClickEvent event) {
+            Set<DiskResource> selection = getSelectedDiskResources();
+            DiskResource dr = selection.iterator().next();
+            FileViewerWindowConfig fileViewerWindowConfig = ConfigFactory.fileViewerWindowConfig((File)dr, false);
+            fileViewerWindowConfig.setVizTabFirst(true);
+            EventBus.getInstance().fireEvent(new ShowFilePreviewEvent((File)dr, fileViewerWindowConfig, DiskResourceViewImpl.this));
+        }
+
     }
 
     @Override

@@ -1,7 +1,7 @@
 package org.iplantc.de.client.utils.builders;
 
 import org.iplantc.de.client.models.ShortcutDesc;
-import org.iplantc.de.client.views.windows.configs.WindowConfig;
+import org.iplantc.de.commons.client.views.window.configs.WindowConfig;
 
 import java.util.ArrayList;
 import java.util.List;

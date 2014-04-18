@@ -19,9 +19,9 @@ import org.iplantc.de.client.notifications.util.NotificationHelper;
 import org.iplantc.de.client.services.callbacks.NotificationCallback;
 import org.iplantc.de.client.util.JsonUtil;
 import org.iplantc.de.client.utils.NotifyInfo;
-import org.iplantc.de.client.views.windows.configs.ConfigFactory;
 import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
+import org.iplantc.de.commons.client.views.window.configs.ConfigFactory;
 import org.iplantc.de.commons.client.widgets.IPlantAnchor;
 import org.iplantc.de.resources.client.messages.I18N;
 

@@ -3,8 +3,8 @@ package org.iplantc.de.client.views.windows;
 import org.iplantc.de.apps.client.gin.AppsInjector;
 import org.iplantc.de.apps.client.views.AppsView;
 import org.iplantc.de.client.models.WindowState;
-import org.iplantc.de.client.views.windows.configs.AppsWindowConfig;
-import org.iplantc.de.client.views.windows.configs.ConfigFactory;
+import org.iplantc.de.commons.client.views.window.configs.AppsWindowConfig;
+import org.iplantc.de.commons.client.views.window.configs.ConfigFactory;
 
 public class DEAppsWindow extends IplantWindowBase {
 

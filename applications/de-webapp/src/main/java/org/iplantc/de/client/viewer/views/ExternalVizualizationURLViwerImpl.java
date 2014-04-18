@@ -4,15 +4,20 @@
 package org.iplantc.de.client.viewer.views;
 
 import org.iplantc.de.client.gin.ServicesInjector;
+import org.iplantc.de.client.models.HasPaths;
 import org.iplantc.de.client.models.IsMaskable;
+import org.iplantc.de.client.models.diskResources.DiskResourceStatMap;
 import org.iplantc.de.client.models.diskResources.File;
-import org.iplantc.de.client.models.viewer.InfoType;
 import org.iplantc.de.client.models.viewer.VizUrl;
+import org.iplantc.de.client.services.DiskResourceServiceFacade;
+import org.iplantc.de.client.util.DiskResourceUtil;
 import org.iplantc.de.client.viewer.callbacks.LoadGenomeInCoGeCallback;
 import org.iplantc.de.client.viewer.callbacks.TreeUrlCallback;
 import org.iplantc.de.client.viewer.views.cells.TreeUrlCell;
 import org.iplantc.de.resources.client.IplantResources;
+import org.iplantc.de.resources.client.messages.I18N;
 
+import com.google.common.collect.Lists;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONObject;
@@ -20,6 +25,7 @@ import com.google.gwt.json.client.JSONString;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiTemplate;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.sencha.gxt.core.client.IdentityValueProvider;
@@ -38,6 +44,8 @@ import com.sencha.gxt.widget.core.client.toolbar.ToolBar;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * @author sriram
@@ -70,6 +78,8 @@ public class ExternalVizualizationURLViwerImpl extends AbstractFileViewer implem
     @UiField
     VerticalLayoutContainer con;
 
+    Logger logger = Logger.getLogger("Viz");
+
     public ExternalVizualizationURLViwerImpl(File file, String infoType) {
         super(file, infoType);
         this.cm = buildColumnModel();
@@ -100,44 +110,86 @@ public class ExternalVizualizationURLViwerImpl extends AbstractFileViewer implem
     }
 
     private void buildToolBar(String infoType) {
-        if (infoType.equals(InfoType.NEXUS.toString()) || infoType.equals(InfoType.NEXML.toString())
-                || infoType.equals(InfoType.NEWICK.toString())
-                || infoType.equals(InfoType.PHYLOXML.toString())) {
-            TextButton button = new TextButton(org.iplantc.de.resources.client.messages.I18N.DISPLAY.refresh(),
-                    IplantResources.RESOURCES.refresh());
-            button.addSelectHandler(new SelectHandler() {
-
-                @Override
-                public void onSelect(SelectEvent event) {
-                    mask(org.iplantc.de.resources.client.messages.I18N.DISPLAY.loadingMask());
-                    ServicesInjector.INSTANCE.getFileEditorServiceFacade().getTreeUrl(file.getId(), true,
-                            new TreeUrlCallback(
-                            file, ExternalVizualizationURLViwerImpl.this,
-                            ExternalVizualizationURLViwerImpl.this));
-
-                }
-            });
+        JSONObject manifest = new JSONObject();
+        manifest.put("info-type", new JSONString(infoType));
+        if (DiskResourceUtil.isTreeTab(manifest)) {
+            TextButton button = buildTreeViewerButton();
             toolbar.add(button);
 
-        } else if (infoType.equals(InfoType.FASTA.toString())) {
-            TextButton button = new TextButton("Load Genome in CoGe",
-                    IplantResources.RESOURCES.arrowUp());
-            button.addSelectHandler(new SelectHandler() {
-
-                @Override
-                public void onSelect(SelectEvent event) {
-                    mask(org.iplantc.de.resources.client.messages.I18N.DISPLAY.loadingMask());
-                    JSONObject obj = new JSONObject();
-                    JSONArray pathArr = new JSONArray();
-                    pathArr.set(0, new JSONString(file.getPath()));
-                    obj.put("paths", pathArr);
-                    ServicesInjector.INSTANCE.getFileEditorServiceFacade().viewGenomes(obj, new LoadGenomeInCoGeCallback(
-                            ExternalVizualizationURLViwerImpl.this));
-
-                }
-            });
+        } else if (DiskResourceUtil.isGenomeVizTab(manifest)) {
+            TextButton button = buildCogeButton();
+            toolbar.add(button);
+        } else if (DiskResourceUtil.isEnsemblVizTab(manifest)) {
+            TextButton button = buildEnsemblButton();
             toolbar.add(button);
         }
+    }
+
+    private TextButton buildEnsemblButton() {
+        TextButton button = new TextButton("Load Genome in Ensemble", IplantResources.RESOURCES.arrowUp());
+        button.addSelectHandler(new SelectHandler() {
+
+            @Override
+            public void onSelect(SelectEvent event) {
+                mask(I18N.DISPLAY.loadingMask());
+                DiskResourceServiceFacade drServiceFacade = ServicesInjector.INSTANCE.getDiskResourceServiceFacade();
+                HasPaths diskResourcePaths = drServiceFacade.getDiskResourceFactory().pathsList().as();
+                final String path = file.getPath();
+                String filename = DiskResourceUtil.parseNameFromPath(path);
+                String parent = DiskResourceUtil.parseParent(path);
+                String indexFile = filename + ".bai";
+                final String indexFilePath = parent + "/" + indexFile;
+                diskResourcePaths.setPaths(Lists.newArrayList(path, indexFilePath));
+                drServiceFacade.getStat(diskResourcePaths, new AsyncCallback<DiskResourceStatMap>() {
+
+                    @Override
+                    public void onSuccess(DiskResourceStatMap result) {
+                        logger.log(Level.SEVERE, result.get(path) + "-->" + result.get(indexFilePath));
+                        unmask();
+                    }
+
+                    @Override
+                    public void onFailure(Throwable caught) {
+                        logger.log(Level.SEVERE, "Both .bam and .bai files must exist!");
+                        unmask();
+                    }
+                });
+            }
+        });
+        return button;
+    }
+
+    private TextButton buildCogeButton() {
+        TextButton button = new TextButton("Load Genome in CoGe", IplantResources.RESOURCES.arrowUp());
+        button.addSelectHandler(new SelectHandler() {
+
+            @Override
+            public void onSelect(SelectEvent event) {
+                mask(I18N.DISPLAY.loadingMask());
+                JSONObject obj = new JSONObject();
+                JSONArray pathArr = new JSONArray();
+                pathArr.set(0, new JSONString(file.getPath()));
+                obj.put("paths", pathArr);
+                ServicesInjector.INSTANCE.getFileEditorServiceFacade().viewGenomes(obj, new LoadGenomeInCoGeCallback(ExternalVizualizationURLViwerImpl.this));
+
+            }
+        });
+        return button;
+    }
+
+    private TextButton buildTreeViewerButton() {
+        TextButton button = new TextButton(org.iplantc.de.resources.client.messages.I18N.DISPLAY.refresh(), IplantResources.RESOURCES.refresh());
+        button.addSelectHandler(new SelectHandler() {
+
+            @Override
+            public void onSelect(SelectEvent event) {
+                mask(I18N.DISPLAY.loadingMask());
+                ServicesInjector.INSTANCE.getFileEditorServiceFacade().getTreeUrl(file.getId(), true,
+                        new TreeUrlCallback(file, ExternalVizualizationURLViwerImpl.this, ExternalVizualizationURLViwerImpl.this));
+
+            }
+        });
+        return button;
     }
 
     private ColumnModel<VizUrl> buildColumnModel() {

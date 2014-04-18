@@ -21,12 +21,12 @@ import org.iplantc.de.client.models.analysis.Analysis;
 import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.util.CommonModelUtils;
 import org.iplantc.de.client.util.DiskResourceUtil;
-import org.iplantc.de.client.views.windows.configs.AppWizardConfig;
-import org.iplantc.de.client.views.windows.configs.AppsIntegrationWindowConfig;
-import org.iplantc.de.client.views.windows.configs.ConfigFactory;
-import org.iplantc.de.client.views.windows.configs.DiskResourceWindowConfig;
-import org.iplantc.de.client.views.windows.configs.FileViewerWindowConfig;
-import org.iplantc.de.client.views.windows.configs.PipelineEditorWindowConfig;
+import org.iplantc.de.commons.client.views.window.configs.AppWizardConfig;
+import org.iplantc.de.commons.client.views.window.configs.AppsIntegrationWindowConfig;
+import org.iplantc.de.commons.client.views.window.configs.ConfigFactory;
+import org.iplantc.de.commons.client.views.window.configs.DiskResourceWindowConfig;
+import org.iplantc.de.commons.client.views.window.configs.FileViewerWindowConfig;
+import org.iplantc.de.commons.client.views.window.configs.PipelineEditorWindowConfig;
 import org.iplantc.de.diskResource.client.events.CreateNewFileEvent;
 import org.iplantc.de.diskResource.client.events.CreateNewFileEvent.CreateNewFileEventHandler;
 import org.iplantc.de.diskResource.client.events.ShowFilePreviewEvent;
@@ -72,8 +72,13 @@ final class ShowWindowEventHandler implements ShowAboutWindowEventHandler, ShowF
 
     @Override
     public void showFilePreview(ShowFilePreviewEvent event) {
-        FileViewerWindowConfig fileViewerWindowConfig = ConfigFactory.fileViewerWindowConfig(
+        FileViewerWindowConfig fileViewerWindowConfig = null;
+        if(event.getConfig() == null) {
+            fileViewerWindowConfig = ConfigFactory.fileViewerWindowConfig(
                 event.getFile(), false);
+        } else {
+            fileViewerWindowConfig = event.getConfig();
+        }
         fileViewerWindowConfig.setEditing(DiskResourceUtil.isWritable(event.getFile()));
         desktop.showWindow(fileViewerWindowConfig);
     }

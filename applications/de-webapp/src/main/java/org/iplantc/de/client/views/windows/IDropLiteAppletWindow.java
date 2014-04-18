@@ -9,7 +9,7 @@ import org.iplantc.de.client.idroplite.views.IDropLiteView.Presenter;
 import org.iplantc.de.client.idroplite.views.IDropLiteViewImpl;
 import org.iplantc.de.client.models.WindowState;
 import org.iplantc.de.client.models.diskResources.Folder;
-import org.iplantc.de.client.views.windows.configs.IDropLiteWindowConfig;
+import org.iplantc.de.commons.client.views.window.configs.IDropLiteWindowConfig;
 
 import com.google.gwt.user.client.Command;
 

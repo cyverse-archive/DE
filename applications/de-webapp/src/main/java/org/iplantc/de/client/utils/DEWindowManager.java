@@ -4,7 +4,7 @@ import org.iplantc.de.client.desktop.widget.TaskButton;
 import org.iplantc.de.client.factories.WindowFactory;
 import org.iplantc.de.client.models.WindowState;
 import org.iplantc.de.client.views.windows.IPlantWindowInterface;
-import org.iplantc.de.client.views.windows.configs.WindowConfig;
+import org.iplantc.de.commons.client.views.window.configs.WindowConfig;
 
 import com.google.common.collect.Lists;
 import com.google.gwt.user.client.ui.Widget;
@@ -74,7 +74,7 @@ public class DEWindowManager extends IplantWindowManager {
         return activeWindow;
     }
 
-    public <C extends org.iplantc.de.client.views.windows.configs.WindowConfig> IPlantWindowInterface add(
+    public <C extends org.iplantc.de.commons.client.views.window.configs.WindowConfig> IPlantWindowInterface add(
             C config) {
         IPlantWindowInterface window = WindowFactory.build(config);
 
@@ -114,7 +114,7 @@ public class DEWindowManager extends IplantWindowManager {
         return getDEWindows().get(tag);
     }
 
-    public <C extends org.iplantc.de.client.views.windows.configs.WindowConfig> IPlantWindowInterface getWindow(
+    public <C extends org.iplantc.de.commons.client.views.window.configs.WindowConfig> IPlantWindowInterface getWindow(
             C config) {
         String windowId = WindowFactory.constructWindowId(config);
         return getDEWindows().get(windowId);

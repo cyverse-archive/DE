@@ -10,6 +10,7 @@ import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.client.models.diskResources.File;
 import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.client.models.diskResources.PermissionValue;
+import org.iplantc.de.client.models.viewer.InfoType;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
@@ -18,6 +19,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.json.client.JSONArray;
+import com.google.gwt.json.client.JSONObject;
 import com.google.web.bindery.autobean.shared.AutoBean;
 import com.google.web.bindery.autobean.shared.AutoBeanCodex;
 import com.google.web.bindery.autobean.shared.Splittable;
@@ -335,5 +337,45 @@ public class DiskResourceUtil {
         }
 
         return dr.getPermission().equals(PermissionValue.own) || dr.getPermission().equals(PermissionValue.write);
+    }
+
+    public static boolean checkManifest(JSONObject obj) {
+        if (obj == null) {
+            return false;
+        }
+        String info_type = JsonUtil.getString(obj, "info-type");
+        if (info_type == null || info_type.isEmpty()) {
+            return false;
+        }
+
+        return true;
+    }
+
+    public static boolean isTreeTab(JSONObject obj) {
+        if (checkManifest(obj)) {
+            String infoType = JsonUtil.getString(obj, "info-type");
+            return (infoType.equals(InfoType.NEXUS.toString()) || infoType.equals(InfoType.NEXML.toString()) || infoType.equals(InfoType.NEWICK.toString()) || infoType.equals(InfoType.PHYLOXML
+                    .toString()));
+        }
+
+        return false;
+
+    }
+
+    public static boolean isGenomeVizTab(JSONObject obj) {
+        if (checkManifest(obj)) {
+            String info_type = JsonUtil.getString(obj, "info-type");
+            return (info_type.equals(InfoType.FASTA.toString()));
+        }
+
+        return false;
+    }
+
+    public static boolean isEnsemblVizTab(JSONObject obj) {
+        if (checkManifest(obj)) {
+            String info_type = JsonUtil.getString(obj, "info-type");
+            return (info_type.equals(InfoType.BAM.toString()));
+        }
+        return false;
     }
 }

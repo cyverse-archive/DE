@@ -15,19 +15,19 @@ import org.iplantc.de.client.views.windows.NotificationWindow;
 import org.iplantc.de.client.views.windows.PipelineEditorWindow;
 import org.iplantc.de.client.views.windows.SimpleDownloadWindow;
 import org.iplantc.de.client.views.windows.SystemMessagesWindow;
-import org.iplantc.de.client.views.windows.configs.AboutWindowConfig;
-import org.iplantc.de.client.views.windows.configs.AnalysisWindowConfig;
-import org.iplantc.de.client.views.windows.configs.AppWizardConfig;
-import org.iplantc.de.client.views.windows.configs.AppsIntegrationWindowConfig;
-import org.iplantc.de.client.views.windows.configs.AppsWindowConfig;
-import org.iplantc.de.client.views.windows.configs.DiskResourceWindowConfig;
-import org.iplantc.de.client.views.windows.configs.FileViewerWindowConfig;
-import org.iplantc.de.client.views.windows.configs.IDropLiteWindowConfig;
-import org.iplantc.de.client.views.windows.configs.NotifyWindowConfig;
-import org.iplantc.de.client.views.windows.configs.SimpleDownloadWindowConfig;
-import org.iplantc.de.client.views.windows.configs.SystemMessagesWindowConfig;
-import org.iplantc.de.client.views.windows.configs.WindowConfig;
 import org.iplantc.de.commons.client.util.WindowUtil;
+import org.iplantc.de.commons.client.views.window.configs.AboutWindowConfig;
+import org.iplantc.de.commons.client.views.window.configs.AnalysisWindowConfig;
+import org.iplantc.de.commons.client.views.window.configs.AppWizardConfig;
+import org.iplantc.de.commons.client.views.window.configs.AppsIntegrationWindowConfig;
+import org.iplantc.de.commons.client.views.window.configs.AppsWindowConfig;
+import org.iplantc.de.commons.client.views.window.configs.DiskResourceWindowConfig;
+import org.iplantc.de.commons.client.views.window.configs.FileViewerWindowConfig;
+import org.iplantc.de.commons.client.views.window.configs.IDropLiteWindowConfig;
+import org.iplantc.de.commons.client.views.window.configs.NotifyWindowConfig;
+import org.iplantc.de.commons.client.views.window.configs.SimpleDownloadWindowConfig;
+import org.iplantc.de.commons.client.views.window.configs.SystemMessagesWindowConfig;
+import org.iplantc.de.commons.client.views.window.configs.WindowConfig;
 
 import com.google.common.base.Strings;
 
@@ -96,7 +96,7 @@ public class WindowFactory {
         return ret;
     }
 
-    public static <C extends org.iplantc.de.client.views.windows.configs.WindowConfig> String constructWindowId(
+    public static <C extends org.iplantc.de.commons.client.views.window.configs.WindowConfig> String constructWindowId(
             C config) {
         String windowType = config.getWindowType().toString();
         String tag = config.getTag();

@@ -1,6 +1,7 @@
 package org.iplantc.de.diskResource.client.events;
 
 import org.iplantc.de.client.models.diskResources.File;
+import org.iplantc.de.commons.client.views.window.configs.FileViewerWindowConfig;
 import org.iplantc.de.diskResource.client.events.ShowFilePreviewEvent.ShowFilePreviewEventHandler;
 
 import com.google.gwt.event.shared.EventHandler;
@@ -16,10 +17,16 @@ public class ShowFilePreviewEvent extends GwtEvent<ShowFilePreviewEventHandler> 
 
     public static final GwtEvent.Type<ShowFilePreviewEventHandler> TYPE = new GwtEvent.Type<ShowFilePreviewEventHandler>();
     private final File file;
+    private final FileViewerWindowConfig config;
 
-    public ShowFilePreviewEvent(final File file, final Object source) {
+    public ShowFilePreviewEvent(final File file, final FileViewerWindowConfig config, final Object source) {
         setSource(source);
         this.file = file;
+        this.config = config;
+    }
+
+    public ShowFilePreviewEvent(final File file, final Object source) {
+        this(file, null, source);
 
     }
 
@@ -35,5 +42,9 @@ public class ShowFilePreviewEvent extends GwtEvent<ShowFilePreviewEventHandler> 
     @Override
     protected void dispatch(ShowFilePreviewEventHandler handler) {
         handler.showFilePreview(this);
+    }
+
+    public FileViewerWindowConfig getConfig() {
+        return config;
     }
 }
