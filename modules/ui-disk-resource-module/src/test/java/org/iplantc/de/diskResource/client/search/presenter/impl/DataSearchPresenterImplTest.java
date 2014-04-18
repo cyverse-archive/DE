@@ -1,8 +1,8 @@
 package org.iplantc.de.diskResource.client.search.presenter.impl;
 
+import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.client.models.search.DiskResourceQueryTemplate;
-import org.iplantc.de.client.models.search.SearchAutoBeanFactory;
 import org.iplantc.de.client.services.SearchServiceFacade;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
 import org.iplantc.de.diskResource.client.events.FolderSelectedEvent;
@@ -14,6 +14,7 @@ import org.iplantc.de.diskResource.client.search.events.SaveDiskResourceQueryEve
 import org.iplantc.de.diskResource.client.search.events.SaveDiskResourceQueryEvent.SaveDiskResourceQueryEventHandler;
 import org.iplantc.de.diskResource.client.search.events.SubmitDiskResourceQueryEvent;
 import org.iplantc.de.diskResource.client.search.events.SubmitDiskResourceQueryEvent.SubmitDiskResourceQueryEventHandler;
+import org.iplantc.de.diskResource.client.search.events.UpdateSavedSearchesEvent;
 import org.iplantc.de.diskResource.client.search.views.DiskResourceSearchField;
 
 import com.google.common.collect.Lists;
@@ -27,7 +28,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyListOf;
-import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -57,10 +57,9 @@ import java.util.List;
 public class DataSearchPresenterImplTest {
 
     @Mock DiskResourceSearchField viewMock;
-    @Mock TreeStore<Folder> treeStoreMock;
+    @Mock EventBus mockEventBus;
     @Mock SearchServiceFacade searchService;
     @Mock IplantAnnouncer announcer;
-    @Mock SearchAutoBeanFactory factoryMock;
 
     @Captor ArgumentCaptor<List<DiskResourceQueryTemplate>> drqtListCaptor;
     @Captor ArgumentCaptor<AsyncCallback<List<DiskResourceQueryTemplate>>> stringAsyncCbCaptor;
@@ -69,9 +68,8 @@ public class DataSearchPresenterImplTest {
     private DataSearchPresenterImpl dsPresenter;
 
     @Before public void setUp() {
-        dsPresenter = new DataSearchPresenterImpl(searchService, announcer, factoryMock);
+        dsPresenter = new DataSearchPresenterImpl(searchService, announcer, mockEventBus);
         dsPresenter.searchField = viewMock;
-        dsPresenter.treeStore = treeStoreMock;
     }
 
     /**
@@ -235,9 +233,13 @@ public class DataSearchPresenterImplTest {
         // Force service success
         drqtListAsyncCaptor.getValue().onSuccess(Collections.<DiskResourceQueryTemplate> emptyList());
 
-        ArgumentCaptor<Folder> folderCaptor = ArgumentCaptor.forClass(Folder.class);
-        verify(treeStoreMock).remove(folderCaptor.capture());
-        assertEquals("Verify that the intended template was passed to remove method", cleanMockTemplate, folderCaptor.getValue());
+        verify(spy).updateDataNavigationWindow(eq(Lists.<DiskResourceQueryTemplate> newArrayList()),
+                drqtListCaptor.capture());
+        verify(mockEventBus).fireEvent(any(UpdateSavedSearchesEvent.class));
+        assertEquals("Verify that the event's remove list only contains one item", 1, drqtListCaptor
+                .getValue().size());
+        assertEquals("Verify that the intended template was passed to event's remove list",
+                cleanMockTemplate, drqtListCaptor.getValue().get(0));
     }
     
     /**
@@ -313,87 +315,10 @@ public class DataSearchPresenterImplTest {
         DiskResourceQueryTemplate existingMock = mock(DiskResourceQueryTemplate.class);
         spy.getQueryTemplates().add(existingMock);
 
-        // Set up Folder root tree store items
-        List<Folder> toReturn = createTreeStoreRootFolderList();
-        when(treeStoreMock.getRootItems()).thenReturn(toReturn);
-
         // Call method under test
         spy.doSubmitDiskResourceQuery(mockEvent);
 
         verify(eventMockTemplate, never()).setDirty(eq(true));
-    }
-
-    /**
-     * Verifies that a template will be added to the tree store if it is not already there.
-     * 
-     * @see DataSearchPresenterImpl#updateDataNavigationWindow(List, TreeStore)
-     */
-    @Test public void testUpdateDataNavigationWindow_Case1() {
-        DiskResourceQueryTemplate mock1 = mock(DiskResourceQueryTemplate.class);
-        DiskResourceQueryTemplate mock2 = mock(DiskResourceQueryTemplate.class);
-        DiskResourceQueryTemplate mock3 = mock(DiskResourceQueryTemplate.class);
-        when(mock1.getId()).thenReturn("qtMock1Id");
-        when(mock2.getId()).thenReturn("qtMock2Id");
-        when(mock3.getId()).thenReturn("qtMock3Id");
-    
-        // Set up Folder root tree store items
-        List<Folder> toReturn = createTreeStoreRootFolderList();
-        // Add 2 mocks to tree store root items
-        toReturn.add(mock1);
-        toReturn.add(mock2);
-        when(treeStoreMock.getRootItems()).thenReturn(toReturn);
-        when(treeStoreMock.findModelWithKey("qtMock1Id")).thenReturn(mock1);
-        when(treeStoreMock.findModelWithKey("qtMock2Id")).thenReturn(mock2);
-
-        // Create list to pass which contains all 3 query template mocks
-        List<DiskResourceQueryTemplate> queryTemplates = Lists.newArrayList(mock1, mock2, mock3);
-        // Call method under test
-        dsPresenter.updateDataNavigationWindow(queryTemplates, treeStoreMock);
-
-        /* Verify that nothing is removed from the store */
-        verify(treeStoreMock, never()).remove(any(Folder.class));
-
-        /* Verify that no item is updated in the store */
-        verify(treeStoreMock, never()).update(any(Folder.class));
-
-        /* Verify that the mock not previously contained in the tree store is added */
-        verify(treeStoreMock).add(eq(mock3));
-    }
-
-    /**
-     * Verifies that an item which is dirty and already in the tree store will be updated.
-     * 
-     * @see DataSearchPresenterImpl#updateDataNavigationWindow(List, TreeStore)
-     */
-    @Test public void testUpdateDataNavigationWindow_Case2() {
-        DiskResourceQueryTemplate mock1 = mock(DiskResourceQueryTemplate.class);
-        DiskResourceQueryTemplate mock2 = mock(DiskResourceQueryTemplate.class);
-        when(mock1.getId()).thenReturn("qtMock1Id");
-        when(mock1.isDirty()).thenReturn(true);
-        when(mock2.getId()).thenReturn("qtMock2Id");
-
-        // Set up Folder root tree store items
-        List<Folder> toReturn = createTreeStoreRootFolderList();
-        // Add 2 mocks to tree store root items
-        toReturn.add(mock1);
-        toReturn.add(mock2);
-        when(treeStoreMock.getRootItems()).thenReturn(toReturn);
-        when(treeStoreMock.findModelWithKey("qtMock1Id")).thenReturn(mock1);
-        when(treeStoreMock.findModelWithKey("qtMock2Id")).thenReturn(mock2);
-
-        // Create list to pass which contains all 3 query template mocks
-        List<DiskResourceQueryTemplate> queryTemplates = Lists.newArrayList(mock1, mock2);
-        // Call method under test
-        dsPresenter.updateDataNavigationWindow(queryTemplates, treeStoreMock);
-
-        /* Verify that nothing is removed from the store */
-        verify(treeStoreMock, never()).remove(any(Folder.class));
-
-        /* Verify that the tree store is updated with the dirty query template */
-        verify(treeStoreMock).update(eq(mock1));
-
-        /* Verify that nothing is added to the store */
-        verify(treeStoreMock, never()).add(any(Folder.class));
     }
 
     /**
@@ -406,7 +331,8 @@ public class DataSearchPresenterImplTest {
         final HasDeleteSavedSearchEventHandlers hasDeleteSavedSearchEventHandlers = mock(HasDeleteSavedSearchEventHandlers.class);
         final FolderSelectedEventHandler folderSelectedEventHandlerMock = mock(FolderSelectedEventHandler.class);
         DataSearchPresenterImpl spy = spy(dsPresenter);
-        spy.searchInit(hasFolderSelectHandlersMock, hasDeleteSavedSearchEventHandlers, folderSelectedEventHandlerMock, treeStoreMock, viewMock);
+        spy.searchInit(hasFolderSelectHandlersMock, hasDeleteSavedSearchEventHandlers,
+                folderSelectedEventHandlerMock, viewMock);
 
         /* Verify that presenter adds itself as handler to hasHandlersMock */
         verify(hasFolderSelectHandlersMock).addFolderSelectedEventHandler(eq(spy));
@@ -415,7 +341,6 @@ public class DataSearchPresenterImplTest {
         verify(spy).addFolderSelectedEventHandler(eq(folderSelectedEventHandlerMock));
 
         assertEquals("Verify that view is saved", viewMock, dsPresenter.searchField);
-        assertEquals("Verify that the treeStore is saved", treeStoreMock, dsPresenter.treeStore);
 
         ArgumentCaptor<SaveDiskResourceQueryEvent.SaveDiskResourceQueryEventHandler> saveEventHandlerCaptor
                 = ArgumentCaptor.forClass(SaveDiskResourceQueryEvent.SaveDiskResourceQueryEventHandler.class);
@@ -427,15 +352,16 @@ public class DataSearchPresenterImplTest {
         assertEquals("Verify that the presenter registers itself to SubmitDiskResourceQueryEvents", submitEventHandlerCaptor.getValue(), spy);
 
         verifyNoMoreInteractions(viewMock, hasFolderSelectHandlersMock, folderSelectedEventHandlerMock, hasDeleteSavedSearchEventHandlers);
-        verifyZeroInteractions(searchService, treeStoreMock);
+        verifyZeroInteractions(searchService, mockEventBus);
     }
 
     @Test public void testOnFolderSelected_Case1() {
         final HasFolderSelectedEventHandlers hasFolderSelectHandlersMock = mock(HasFolderSelectedEventHandlers.class);
         final HasDeleteSavedSearchEventHandlers hasDeleteSavedSearchEventHandlersMock = mock(HasDeleteSavedSearchEventHandlers.class);
         final FolderSelectedEventHandler folderSelectedEventHandlerMock = mock(FolderSelectedEventHandler.class);
-        
-        dsPresenter.searchInit(hasFolderSelectHandlersMock, hasDeleteSavedSearchEventHandlersMock, folderSelectedEventHandlerMock, treeStoreMock, viewMock);
+
+        dsPresenter.searchInit(hasFolderSelectHandlersMock, hasDeleteSavedSearchEventHandlersMock,
+                folderSelectedEventHandlerMock, viewMock);
         verify(hasFolderSelectHandlersMock).addFolderSelectedEventHandler(eq(dsPresenter));
         verify(hasDeleteSavedSearchEventHandlersMock).addDeleteSavedSearchEventHandler(dsPresenter);
 
@@ -450,14 +376,15 @@ public class DataSearchPresenterImplTest {
         verify(viewMock).clearSearch();
 
         verifyNoMoreInteractions(viewMock, hasFolderSelectHandlersMock, folderSelectedEventHandlerMock, hasDeleteSavedSearchEventHandlersMock);
-        verifyZeroInteractions(searchService, treeStoreMock);
+        verifyZeroInteractions(searchService, mockEventBus);
     }
     
     @Test public void testOnFolderSelected_Case2() {
         final HasFolderSelectedEventHandlers hasFolderSelectHandlersMock = mock(HasFolderSelectedEventHandlers.class);
         final HasDeleteSavedSearchEventHandlers hasDeleteSavedSearchEventHandlersMock = mock(HasDeleteSavedSearchEventHandlers.class);
         final FolderSelectedEventHandler folderSelectedEventHandlerMock = mock(FolderSelectedEventHandler.class);
-        dsPresenter.searchInit(hasFolderSelectHandlersMock, hasDeleteSavedSearchEventHandlersMock, folderSelectedEventHandlerMock, treeStoreMock, viewMock);
+        dsPresenter.searchInit(hasFolderSelectHandlersMock, hasDeleteSavedSearchEventHandlersMock,
+                folderSelectedEventHandlerMock, viewMock);
         verify(hasFolderSelectHandlersMock).addFolderSelectedEventHandler(eq(dsPresenter));
 
         verify(viewMock).addSaveDiskResourceQueryEventHandler(any(SaveDiskResourceQueryEventHandler.class));
@@ -471,8 +398,7 @@ public class DataSearchPresenterImplTest {
         verify(viewMock).edit(eq(selectedFolderMock));
 
         verifyNoMoreInteractions(viewMock, hasFolderSelectHandlersMock, folderSelectedEventHandlerMock);
-        verifyZeroInteractions(searchService, treeStoreMock);
-
+        verifyZeroInteractions(searchService, mockEventBus);
     }
     
     @Test public void testLoadSavedQueries_Case1() {
@@ -490,53 +416,32 @@ public class DataSearchPresenterImplTest {
         verify(searchService).createFrozenList(eq(newArrayList));
         // Verify for record keeping
         verify(spy).getQueryTemplates();
-        verify(spy).updateDataNavigationWindow(drqtListCaptor.capture(), eq(treeStoreMock));
-        verify(treeStoreMock, times(newArrayList.size())).findModelWithKey(anyString());
-        verify(treeStoreMock).add(eq(newArrayList.get(0)));
-        verify(treeStoreMock).add(eq(newArrayList.get(1)));
-        assertEquals("Verify that list passed to updateDataNavigationWindow is same size as list passed to loadSavedQueries", newArrayList.size(), drqtListCaptor.getValue().size());
-        assertTrue("Verify that all items from each list match", drqtListCaptor.getValue().contains(newArrayList.get(0)));
-        assertTrue("Verify that all items from each list match", drqtListCaptor.getValue().contains(newArrayList.get(1)));
+        verify(spy).updateDataNavigationWindow(eq(newArrayList),
+                anyListOf(DiskResourceQueryTemplate.class));
+        verify(mockEventBus).fireEvent(any(UpdateSavedSearchesEvent.class));
 
-        verifyNoMoreInteractions(searchService, treeStoreMock, spy, viewMock);
+        verifyNoMoreInteractions(searchService, mockEventBus, spy, viewMock);
     }
     
     /**
      * 
      */
     @Test public void testOnDeleteSavedSearch_Case1() {
-        
+        DataSearchPresenterImpl spy = spy(dsPresenter);
+
         final DeleteSavedSearchEvent mockEvent = mock(DeleteSavedSearchEvent.class);
         final DiskResourceQueryTemplate mockSavedSearch = mock(DiskResourceQueryTemplate.class);
         when(mockEvent.getSavedSearch()).thenReturn(mockSavedSearch);
-        dsPresenter.getQueryTemplates().add(mockSavedSearch);
-        when(treeStoreMock.remove(eq(mockSavedSearch))).thenReturn(true);
+        spy.getQueryTemplates().add(mockSavedSearch);
 
         // Call method under test
-        dsPresenter.onDeleteSavedSearch(mockEvent);
+        spy.onDeleteSavedSearch(mockEvent);
 
         verify(viewMock).clearSearch();
         verify(mockEvent).getSavedSearch();
-        verify(treeStoreMock).remove(eq(mockSavedSearch));
 
         verify(searchService).saveQueryTemplates(eq(Collections.<DiskResourceQueryTemplate> emptyList()), drqtListAsyncCaptor.capture());
 
         verifyNoMoreInteractions(viewMock, searchService);
     }
-
-
-    List<Folder> createTreeStoreRootFolderList(){
-        // Set up Folder root tree store items
-        Folder root1 = mock(Folder.class);
-        Folder root2 = mock(Folder.class);
-        Folder root3 = mock(Folder.class);
-        Folder root4 = mock(Folder.class);
-        when(root1.getId()).thenReturn("root1Id");
-        when(root2.getId()).thenReturn("root2Id");
-        when(root3.getId()).thenReturn("root3Id");
-        when(root4.getId()).thenReturn("root4Id");
-        List<Folder> toReturn = Lists.newArrayList(root1, root2, root3, root4);
-        return toReturn;
-    }
-
 }

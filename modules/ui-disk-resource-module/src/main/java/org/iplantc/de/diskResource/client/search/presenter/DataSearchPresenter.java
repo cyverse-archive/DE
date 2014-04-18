@@ -1,15 +1,12 @@
 package org.iplantc.de.diskResource.client.search.presenter;
 
 
-import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.client.models.search.DiskResourceQueryTemplate;
 import org.iplantc.de.diskResource.client.events.FolderSelectedEvent;
 import org.iplantc.de.diskResource.client.search.events.DeleteSavedSearchEvent;
 import org.iplantc.de.diskResource.client.search.events.SaveDiskResourceQueryEvent;
 import org.iplantc.de.diskResource.client.search.events.SubmitDiskResourceQueryEvent;
 import org.iplantc.de.diskResource.client.search.views.DiskResourceSearchField;
-
-import com.sencha.gxt.data.shared.TreeStore;
 
 import java.util.List;
 
@@ -68,8 +65,10 @@ public interface DataSearchPresenter extends SaveDiskResourceQueryEvent.SaveDisk
      * @param treeStore
      * @param searchField
      */
-    void searchInit(FolderSelectedEvent.HasFolderSelectedEventHandlers hasFolderSelectedHandlers, DeleteSavedSearchEvent.HasDeleteSavedSearchEventHandlers hasDeleteSavedSearchEventHandlers, FolderSelectedEvent.FolderSelectedEventHandler folderSelectedHandler,
-            TreeStore<Folder> treeStore, DiskResourceSearchField searchField);
+    void searchInit(FolderSelectedEvent.HasFolderSelectedEventHandlers hasFolderSelectedHandlers,
+            DeleteSavedSearchEvent.HasDeleteSavedSearchEventHandlers hasDeleteSavedSearchEventHandlers,
+            FolderSelectedEvent.FolderSelectedEventHandler folderSelectedHandler,
+            DiskResourceSearchField searchField);
 
     /**
      * @return the current active query, or null if there is not active query.

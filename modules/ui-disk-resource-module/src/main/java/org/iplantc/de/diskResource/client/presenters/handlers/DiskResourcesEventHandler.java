@@ -6,6 +6,7 @@ import org.iplantc.de.client.events.diskResources.FolderRefreshEvent.FolderRefre
 import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.client.models.diskResources.File;
 import org.iplantc.de.client.models.diskResources.Folder;
+import org.iplantc.de.client.models.search.DiskResourceQueryTemplate;
 import org.iplantc.de.client.util.DiskResourceUtil;
 import org.iplantc.de.diskResource.client.events.DiskResourceRenamedEvent.DiskResourceRenamedEventHandler;
 import org.iplantc.de.diskResource.client.events.DiskResourceSelectedEvent;
@@ -15,14 +16,20 @@ import org.iplantc.de.diskResource.client.events.DiskResourcesMovedEvent;
 import org.iplantc.de.diskResource.client.events.DiskResourcesMovedEvent.DiskResourcesMovedEventHandler;
 import org.iplantc.de.diskResource.client.events.FolderCreatedEvent.FolderCreatedEventHandler;
 import org.iplantc.de.diskResource.client.events.ShowFilePreviewEvent;
+import org.iplantc.de.diskResource.client.search.events.UpdateSavedSearchesEvent;
+import org.iplantc.de.diskResource.client.search.events.UpdateSavedSearchesEvent.UpdateSavedSearchesHandler;
 import org.iplantc.de.diskResource.client.views.DiskResourceView;
 
+import com.sencha.gxt.data.shared.TreeStore;
+
 import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 
-public final class DiskResourcesEventHandler implements DiskResourcesDeletedEvent.DiskResourcesDeletedEventHandler,
-        DiskResourceSelectedEventHandler, DiskResourcesMovedEventHandler,
-        DiskResourceRenamedEventHandler, FolderCreatedEventHandler, FolderRefreshEventHandler {
+public final class DiskResourcesEventHandler implements
+        DiskResourcesDeletedEvent.DiskResourcesDeletedEventHandler, DiskResourceSelectedEventHandler,
+        DiskResourcesMovedEventHandler, DiskResourceRenamedEventHandler, FolderCreatedEventHandler,
+        FolderRefreshEventHandler, UpdateSavedSearchesHandler {
     private final DiskResourceView.Presenter presenter;
     private final DiskResourceView view;
 
@@ -129,6 +136,46 @@ public final class DiskResourcesEventHandler implements DiskResourcesDeletedEven
     @Override
     public void onFolderCreated(Folder parentFolder, Folder newFolder) {
         view.addFolder(parentFolder, newFolder);
+    }
+
+    /**
+     * Ensures that the navigation window shows the given templates. These show up in the navigation
+     * window as "magic folders".
+     * <p/>
+     * This method ensures that the only the given list of queryTemplates will be displayed in the
+     * navigation pane.
+     * 
+     * 
+     * Only objects which are instances of {@link DiskResourceQueryTemplate} will be operated on. Items
+     * which can't be found in the tree store will be added, and items which are already in the store and
+     * are marked as dirty will be updated.
+     * 
+     * @param event
+     */
+    @Override
+    public void onUpdateSavedSearches(UpdateSavedSearchesEvent event) {
+        TreeStore<Folder> treeStore = view.getTreeStore();
+
+        List<DiskResourceQueryTemplate> removedSearches = event.getRemovedSearches();
+        if (removedSearches != null) {
+            for (DiskResourceQueryTemplate qt : removedSearches) {
+                treeStore.remove(qt);
+            }
+        }
+
+        List<DiskResourceQueryTemplate> savedSearches = event.getSavedSearches();
+        if (savedSearches != null) {
+            for (DiskResourceQueryTemplate qt : savedSearches) {
+                // If the item already exists in the store and the template is dirty, update it
+                if (treeStore.findModelWithKey(qt.getId()) != null) {
+                    if (qt.isDirty()) {
+                        treeStore.update(qt);
+                    }
+                } else {
+                    treeStore.add(qt);
+                }
+            }
+        }
     }
 
 }

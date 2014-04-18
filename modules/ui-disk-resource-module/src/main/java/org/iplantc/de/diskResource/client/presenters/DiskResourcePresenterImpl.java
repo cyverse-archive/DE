@@ -49,6 +49,7 @@ import org.iplantc.de.diskResource.client.presenters.proxy.SelectDiskResourceByI
 import org.iplantc.de.diskResource.client.presenters.proxy.SelectFolderByIdLoadHandler;
 import org.iplantc.de.diskResource.client.search.events.SaveDiskResourceQueryEvent;
 import org.iplantc.de.diskResource.client.search.events.SubmitDiskResourceQueryEvent;
+import org.iplantc.de.diskResource.client.search.events.UpdateSavedSearchesEvent;
 import org.iplantc.de.diskResource.client.search.presenter.DataSearchPresenter;
 import org.iplantc.de.diskResource.client.sharing.views.DataSharingDialog;
 import org.iplantc.de.diskResource.client.views.DiskResourceView;
@@ -145,7 +146,7 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter {
         };
 
         this.proxy.init(dataSearchPresenter, this);
-        this.dataSearchPresenter.searchInit(getView(), getView(), this, getView().getTreeStore(), getView().getToolbar().getSearchField());
+        this.dataSearchPresenter.searchInit(view, view, this, view.getToolbar().getSearchField());
         this.rpc_proxy.init(view.getCenterPanelHeader());
 
         this.view.setTreeLoader(treeLoader);
@@ -187,6 +188,7 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter {
         dreventHandlers.add(eventBus.addHandler(DiskResourceRenamedEvent.TYPE, diskResourcesEventHandler));
         dreventHandlers.add(eventBus.addHandler(DiskResourceSelectedEvent.TYPE, diskResourcesEventHandler));
         dreventHandlers.add(eventBus.addHandler(DiskResourcesMovedEvent.TYPE, diskResourcesEventHandler));
+        dreventHandlers.add(eventBus.addHandler(UpdateSavedSearchesEvent.TYPE, diskResourcesEventHandler));
     }
 
     private void initToolbar(DiskResourceViewToolbar toolbar) {

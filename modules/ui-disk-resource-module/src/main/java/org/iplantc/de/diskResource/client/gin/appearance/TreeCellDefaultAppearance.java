@@ -1,10 +1,13 @@
 package org.iplantc.de.diskResource.client.gin.appearance;
 
+import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.client.models.search.DiskResourceQueryTemplate;
 import org.iplantc.de.diskResource.client.gin.TreeCell;
 import org.iplantc.de.diskResource.client.search.events.DeleteSavedSearchEvent;
+import org.iplantc.de.diskResource.client.search.events.UpdateSavedSearchesEvent;
 
+import com.google.common.collect.Lists;
 import com.google.gwt.cell.client.Cell.Context;
 import com.google.gwt.cell.client.ValueUpdater;
 import com.google.gwt.core.client.GWT;
@@ -22,6 +25,8 @@ import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 
 import com.sencha.gxt.core.client.XTemplates;
 import com.sencha.gxt.widget.core.client.tree.TreeSelectionModel;
+
+import java.util.List;
 
 public class TreeCellDefaultAppearance implements TreeCell.TreeCellAppearance, BeforeSelectionHandler<Folder> {
     interface TreeCellTempates extends XTemplates {
@@ -81,7 +86,10 @@ public class TreeCellDefaultAppearance implements TreeCell.TreeCellAppearance, B
             if ((hasHandlers != null) && (value instanceof DiskResourceQueryTemplate)) {
                 event.stopPropagation();
                 event.preventDefault();
-                hasHandlers.fireEvent(new DeleteSavedSearchEvent((DiskResourceQueryTemplate)value));
+                DiskResourceQueryTemplate qt = (DiskResourceQueryTemplate)value;
+                hasHandlers.fireEvent(new DeleteSavedSearchEvent(qt));
+                List<DiskResourceQueryTemplate> queriesToRemove = Lists.newArrayList(qt);
+                EventBus.getInstance().fireEvent(new UpdateSavedSearchesEvent(null, queriesToRemove));
             }
         } else {
             suppressSelectionCancel = true;
