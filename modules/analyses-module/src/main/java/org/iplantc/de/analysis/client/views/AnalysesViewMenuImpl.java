@@ -137,21 +137,6 @@ public class AnalysesViewMenuImpl extends Composite implements AnalysesView.View
                 updateCommentsMI.setEnabled(false);
         }
 
-        if(canCancelSelection){
-           // If we can cancel selection, clear tooltip
-            cancelMI.setToolTip("");
-        } else {
-            // Tell them why they can't cancel
-            cancelMI.setToolTip("Can only cancel analyses whose status is either " + SUBMITTED + ", " + IDLE + ", or " + RUNNING);
-        }
-
-        if(canDeleteSelection){
-            // If we can delete selection, clear tooltip
-            deleteMI.setToolTip("");
-        } else {
-            // Tell them why they can't delete
-            deleteMI.setToolTip("Can only delete analyses whose status is either " + FAILED + " or " + COMPLETED);
-        }
     }
 
     @Override

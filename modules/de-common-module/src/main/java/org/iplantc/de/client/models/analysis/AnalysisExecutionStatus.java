@@ -13,23 +13,23 @@ package org.iplantc.de.client.models.analysis;
  */
 public enum AnalysisExecutionStatus {
     /** analysis status unknown */
-    UNKNOWN(AnalysisExecutionStatusConstants.INSTANCE.unknown()),
+    UNKNOWN("Unexpanded"),
     /** analysis is ready */
-    SUBMITTED(AnalysisExecutionStatusConstants.INSTANCE.submitted()),
+    SUBMITTED("Submitted"),
     /** analysis is running */
-    RUNNING(AnalysisExecutionStatusConstants.INSTANCE.running()),
+    RUNNING("Running"),
     /** analysis is complete */
-    COMPLETED(AnalysisExecutionStatusConstants.INSTANCE.completed()),
+    COMPLETED("Completed"),
     /** analysis timed out */
-    HELD(AnalysisExecutionStatusConstants.INSTANCE.held()),
+    HELD("Held"),
     /** analysis failed */
-    FAILED(AnalysisExecutionStatusConstants.INSTANCE.failed()),
+    FAILED("Failed"),
     /** analysis was stopped */
-    SUBMISSION_ERR(AnalysisExecutionStatusConstants.INSTANCE.subErr()),
+    SUBMISSION_ERR("Submission_err"),
     /** analysis is idle */
-    IDLE(AnalysisExecutionStatusConstants.INSTANCE.idle()),
+    IDLE("Idle"),
     /** analysis is removed */
-    REMOVED(AnalysisExecutionStatusConstants.INSTANCE.removed());
+    REMOVED("Removed");
 
     private String displayText;
 
