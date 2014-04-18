@@ -298,30 +298,6 @@ public class DataSearchPresenterImplTest {
     }
 
     /**
-     * Verifies that the list passed to the updateNavigationWindow method is correct when the given query
-     * template has no name.
-     * 
-     * @see org.iplantc.de.diskResource.client.search.presenter.DataSearchPresenter#doSubmitDiskResourceQuery(SubmitDiskResourceQueryEvent)
-     */
-    @Test public void testDoSubmitDiskResourceQuery_Case2() {
-        DataSearchPresenterImpl spy = spy(dsPresenter);
-        DiskResourceQueryTemplate eventMockTemplate = mock(DiskResourceQueryTemplate.class);
-        // Return empty string to indicate that the template is new
-        when(eventMockTemplate.getName()).thenReturn("");
-        SubmitDiskResourceQueryEvent mockEvent = mock(SubmitDiskResourceQueryEvent.class);
-        when(mockEvent.getQueryTemplate()).thenReturn(eventMockTemplate);
-
-        // Add an existing mock to the classes template list
-        DiskResourceQueryTemplate existingMock = mock(DiskResourceQueryTemplate.class);
-        spy.getQueryTemplates().add(existingMock);
-
-        // Call method under test
-        spy.doSubmitDiskResourceQuery(mockEvent);
-
-        verify(eventMockTemplate, never()).setDirty(eq(true));
-    }
-
-    /**
      * Verify #searchInit functionality when the call to retrieve saved templates is successful and returns queries.
      *
      * @see org.iplantc.de.diskResource.client.search.presenter.DataSearchPresenter#searchInit(org.iplantc.de.diskResource.client.views.DiskResourceView)
