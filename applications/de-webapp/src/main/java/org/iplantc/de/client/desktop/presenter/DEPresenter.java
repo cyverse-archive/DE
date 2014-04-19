@@ -501,7 +501,7 @@ public class DEPresenter implements DEView.Presenter {
 
         @Override
         public void execute() {
-            eventBus.fireEvent(new WindowShowRequestEvent(ConfigFactory.diskResourceWindowConfig(false)));
+            eventBus.fireEvent(new WindowShowRequestEvent(ConfigFactory.diskResourceWindowConfig(true)));
 
         }
 
