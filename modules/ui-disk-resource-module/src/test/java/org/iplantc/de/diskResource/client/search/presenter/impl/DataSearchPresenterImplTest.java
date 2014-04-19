@@ -53,6 +53,7 @@ import java.util.List;
  * @author jstroot
  * 
  */
+@SuppressWarnings("nls")
 @RunWith(GxtMockitoTestRunner.class)
 public class DataSearchPresenterImplTest {
 
@@ -269,6 +270,74 @@ public class DataSearchPresenterImplTest {
         verifyNoMoreInteractions(searchService);
 
         assertEquals("Verify that the query has not been added to the presenter's list after failed persist", 0, spy.getQueryTemplates().size());
+    }
+
+    /**
+     * Verifies the list passed to the updateNavigationWindow method when the given query template is not
+     * new, and has been changed.
+     * 
+     * The list should be equivalent to what was returned by getQueryTemplates() prior to the method
+     * call, but with the changed item in place of the non-changed item.
+     * 
+     * @see org.iplantc.de.diskResource.client.search.presenter.DataSearchPresenter#doSaveDiskResourceQueryTemplate(org.iplantc.de.diskResource.client.search.events.SaveDiskResourceQueryEvent)
+     */
+    @Test
+    public void testDoSaveDiskResourceQueryTemplate_Case6() {
+        // Create presenter with overridden method to control test execution.
+        dsPresenter = new DataSearchPresenterImpl(searchService, announcer, mockEventBus) {
+            @Override
+            boolean areTemplatesEqual(DiskResourceQueryTemplate lhs, DiskResourceQueryTemplate rhs) {
+                if (lhs.getName().equals("qtMockId1") && rhs.getName().equals("qtMockId1")) {
+                    return false;
+                }
+                return true;
+            }
+        };
+        dsPresenter.searchField = viewMock;
+        DataSearchPresenterImpl spy = spy(dsPresenter);
+        DiskResourceQueryTemplate eventMockTemplate = mock(DiskResourceQueryTemplate.class);
+        // Return empty string to indicate that the template is new
+        when(eventMockTemplate.getName()).thenReturn("qtMockId1");
+        SaveDiskResourceQueryEvent mockEvent = mock(SaveDiskResourceQueryEvent.class);
+        when(mockEvent.getQueryTemplate()).thenReturn(eventMockTemplate);
+
+        // Add an existing mock to the classes template list
+        DiskResourceQueryTemplate existingMock1 = mock(DiskResourceQueryTemplate.class);
+        DiskResourceQueryTemplate existingMock2 = mock(DiskResourceQueryTemplate.class);
+        when(existingMock1.getName()).thenReturn("qtMockId1");
+        when(existingMock2.getName()).thenReturn("qtMockId2");
+        spy.getQueryTemplates().clear();
+        ArrayList<DiskResourceQueryTemplate> existingTemplates = Lists.newArrayList(existingMock1,
+                existingMock2);
+        spy.getQueryTemplates().addAll(existingTemplates);
+        int initialSize = spy.getQueryTemplates().size();
+
+        spy.setCleanCopyQueryTemplates(existingTemplates);
+
+        // Call method under test
+        spy.doSaveDiskResourceQueryTemplate(mockEvent);
+        verify(searchService)
+                .saveQueryTemplates(drqtListCaptor.capture(), drqtListAsyncCaptor.capture());
+
+        // Force service success
+        when(searchService.createFrozenList(anyListOf(DiskResourceQueryTemplate.class))).thenReturn(
+                drqtListCaptor.getValue());
+        drqtListAsyncCaptor.getValue().onSuccess(drqtListCaptor.getValue());
+
+        /* Verify that the setDirty flag of the changed template has been set */
+        verify(eventMockTemplate).setDirty(eq(true));
+
+        /* Verify that the given list only contains the existing and event mock templates */
+        verify(spy).updateDataNavigationWindow(drqtListCaptor.capture(),
+                anyListOf(DiskResourceQueryTemplate.class));
+        assertEquals("verify that the size of the list has not changed", initialSize, drqtListCaptor
+                .getValue().size());
+        assertTrue("verify that the list contains the updated query template", drqtListCaptor.getValue()
+                .contains(eventMockTemplate));
+        assertTrue("verify that the list contains the unmodified starting original template",
+                drqtListCaptor.getValue().contains(existingMock2));
+        assertFalse("verify that the list does not contain the modified starting original template",
+                drqtListCaptor.getValue().contains(existingMock1));
     }
 
     /**
