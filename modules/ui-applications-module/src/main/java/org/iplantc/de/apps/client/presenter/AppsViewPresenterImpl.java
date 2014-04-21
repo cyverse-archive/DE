@@ -1,16 +1,7 @@
 package org.iplantc.de.apps.client.presenter;
 
-import org.iplantc.de.apps.client.events.AppDeleteEvent;
-import org.iplantc.de.apps.client.events.AppFavoritedEvent;
-import org.iplantc.de.apps.client.events.AppFavoritedEventHander;
-import org.iplantc.de.apps.client.events.AppGroupCountUpdateEvent;
-import org.iplantc.de.apps.client.events.AppUpdatedEvent;
+import org.iplantc.de.apps.client.events.*;
 import org.iplantc.de.apps.client.events.AppUpdatedEvent.AppUpdatedEventHandler;
-import org.iplantc.de.apps.client.events.CreateNewAppEvent;
-import org.iplantc.de.apps.client.events.CreateNewWorkflowEvent;
-import org.iplantc.de.apps.client.events.EditAppEvent;
-import org.iplantc.de.apps.client.events.EditWorkflowEvent;
-import org.iplantc.de.apps.client.events.RunAppEvent;
 import org.iplantc.de.apps.client.presenter.proxy.AppGroupProxy;
 import org.iplantc.de.apps.client.views.AppInfoView;
 import org.iplantc.de.apps.client.views.AppsView;
@@ -35,7 +26,8 @@ import org.iplantc.de.client.util.JsonUtil;
 import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.commons.client.info.ErrorAnnouncementConfig;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
-import org.iplantc.de.resources.client.messages.I18N;
+import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
+import org.iplantc.de.resources.client.messages.IplantErrorStrings;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
@@ -70,7 +62,6 @@ import java.util.List;
 /**
  * The presenter for the AppsView.
  * 
- * TODO JDS Document responsibility and intent of presenter.
  * <p>
  * Events fired from this presenter:
  * <ul>
@@ -85,7 +76,7 @@ import java.util.List;
  */
 public class AppsViewPresenterImpl implements AppsView.Presenter {
 
-    private final EventBus eventBus = EventBus.getInstance();
+    private final EventBus eventBus;
     private static String WORKSPACE;
     private static String USER_APPS_GROUP;
     private static String FAVORITES;
@@ -102,13 +93,33 @@ public class AppsViewPresenterImpl implements AppsView.Presenter {
     private final AppServiceFacade appService;
     private final AppUserServiceFacade appUserService;
     private final UserInfo userInfo;
+    private final DEProperties props;
+    private final IplantAnnouncer announcer;
+    private final IplantDisplayStrings displayStrings;
+    private final IplantErrorStrings errorStrings;
     private RegExp searchRegex;
 
     @Inject
-    public AppsViewPresenterImpl(final AppsView view, final AppGroupProxy proxy, AppsViewToolbar toolbar, AppServiceFacade appService, AppUserServiceFacade appUserService) {
+    public AppsViewPresenterImpl(final AppsView view, final AppGroupProxy proxy,
+                                 final AppsViewToolbar toolbar,
+                                 final AppServiceFacade appService,
+                                 final AppUserServiceFacade appUserService,
+                                 final EventBus eventBus,
+                                 final UserInfo userInfo,
+                                 final DEProperties props,
+                                 final IplantAnnouncer announcer,
+                                 final IplantDisplayStrings displayStrings,
+                                 final IplantErrorStrings errorStrings) {
         this.view = view;
         this.appService = appService;
         this.appUserService = appUserService;
+        this.eventBus = eventBus;
+        this.userInfo = userInfo;
+        this.props = props;
+        this.announcer = announcer;
+        this.displayStrings = displayStrings;
+        this.errorStrings = errorStrings;
+
 
         builder = new MyBuilder(this);
 
@@ -125,7 +136,6 @@ public class AppsViewPresenterImpl implements AppsView.Presenter {
 
         initHandlers();
         initConstants();
-        userInfo = UserInfo.getInstance();
     }
 
     protected void initHandlers() {
@@ -140,7 +150,7 @@ public class AppsViewPresenterImpl implements AppsView.Presenter {
                     int total = results == null ? 0 : results.size();
 
                     view.selectAppGroup(null);
-                    view.setCenterPanelHeading(I18N.DISPLAY.searchAppResultsHeader(searchText, total));
+                    view.setCenterPanelHeading(displayStrings.searchAppResultsHeader(searchText, total));
                     view.setApps(results);
                     view.unMaskCenterPanel();
                 }
@@ -179,19 +189,17 @@ public class AppsViewPresenterImpl implements AppsView.Presenter {
 
     @Override
     public void cleanUp() {
-        EventBus eventBus = EventBus.getInstance();
         for (HandlerRegistration hr : eventHandlers) {
             eventBus.removeHandler(hr);
         }
     }
 
     private void initConstants() {
-        DEProperties properties = DEProperties.getInstance();
 
-        WORKSPACE = properties.getPrivateWorkspace();
+        WORKSPACE = props.getPrivateWorkspace();
 
-        if (properties.getPrivateWorkspaceItems() != null) {
-            JSONArray items = JSONParser.parseStrict(properties.getPrivateWorkspaceItems()).isArray();
+        if (props.getPrivateWorkspaceItems() != null) {
+            JSONArray items = JSONParser.parseStrict(props.getPrivateWorkspaceItems()).isArray();
             USER_APPS_GROUP = JsonUtil.getRawValueAsString(items.get(0));
             FAVORITES = JsonUtil.getRawValueAsString(items.get(1));
         }
@@ -322,7 +330,7 @@ public class AppsViewPresenterImpl implements AppsView.Presenter {
      * @param ag
      */
     protected void fetchApps(final AppGroup ag) {
-        view.maskCenterPanel(I18N.DISPLAY.loadingMask());
+        view.maskCenterPanel(displayStrings.loadingMask());
         appService.getApps(ag.getId(), new AsyncCallback<String>() {
 
             @Override
@@ -343,7 +351,7 @@ public class AppsViewPresenterImpl implements AppsView.Presenter {
 
             @Override
             public void onFailure(Throwable caught) {
-                ErrorHandler.post(I18N.ERROR.retrieveAppListingFailed(), caught);
+                ErrorHandler.post(errorStrings.retrieveAppListingFailed(), caught);
                 view.unMaskCenterPanel();
             }
         });
@@ -367,7 +375,7 @@ public class AppsViewPresenterImpl implements AppsView.Presenter {
     }
 
     protected void reloadAppGroups(final HasId selectedAppGroup, final HasId selectedApp) {
-        view.maskWestPanel(I18N.DISPLAY.loadingMask());
+        view.maskWestPanel(displayStrings.loadingMask());
         view.clearAppGroups();
         appGroupProxy.load(null, new AsyncCallback<List<AppGroup>>() {
             @Override
@@ -540,7 +548,8 @@ public class AppsViewPresenterImpl implements AppsView.Presenter {
 
             @Override
             public void onFailure(Throwable caught) {
-                ErrorHandler.post(I18N.ERROR.failToRetrieveApp(), caught);
+                ErrorHandler.post(errorStrings.failToRetrieveApp(), caught);
+                announcer.schedule(new ErrorAnnouncementConfig(errorStrings.failToRetrieveApp()));
             }
         });
     }
@@ -552,7 +561,7 @@ public class AppsViewPresenterImpl implements AppsView.Presenter {
             return;
         }
 
-        ConfirmMessageBox msgBox = new ConfirmMessageBox(I18N.DISPLAY.warning(), I18N.DISPLAY.appDeleteWarning());
+        ConfirmMessageBox msgBox = new ConfirmMessageBox(displayStrings.warning(), displayStrings.appDeleteWarning());
 
         msgBox.addHideHandler(new HideHandler() {
 
@@ -570,7 +579,7 @@ public class AppsViewPresenterImpl implements AppsView.Presenter {
 
                         @Override
                         public void onFailure(Throwable caught) {
-                            ErrorHandler.post(I18N.ERROR.appRemoveFailure(), caught);
+                            ErrorHandler.post(errorStrings.appRemoveFailure(), caught);
                         }
 
                         @Override
@@ -697,13 +706,13 @@ public class AppsViewPresenterImpl implements AppsView.Presenter {
         if (app.isRunnable()) {
             fireRunAppEvent(app);
         } else {
-            IplantAnnouncer.getInstance().schedule(new ErrorAnnouncementConfig(I18N.ERROR.appLaunchWithoutToolError()));
+            announcer.schedule(new ErrorAnnouncementConfig(errorStrings.appLaunchWithoutToolError()));
         }
     }
 
     private void fireRunAppEvent(final App app) {
         if (app != null && !app.isDisabled()) {
-            EventBus.getInstance().fireEvent(new RunAppEvent(app));
+            eventBus.fireEvent(new RunAppEvent(app));
         }
     }
 

@@ -5,7 +5,7 @@ import org.iplantc.de.client.models.IsMaskable;
 import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.models.apps.AppGroup;
 import org.iplantc.de.resources.client.IplantResources;
-import org.iplantc.de.resources.client.messages.I18N;
+import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
@@ -43,6 +43,7 @@ import com.sencha.gxt.widget.core.client.tips.QuickTip;
 import com.sencha.gxt.widget.core.client.tree.Tree;
 import com.sencha.gxt.widget.core.client.tree.Tree.TreeAppearance;
 import com.sencha.gxt.widget.core.client.tree.Tree.TreeNode;
+import com.sencha.gxt.widget.core.client.tree.TreeStyle;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -102,13 +103,21 @@ public class AppsViewImpl implements AppsView, IsMaskable {
 
     private final Widget widget;
     
-    DEProperties properties = DEProperties.getInstance();
+    final DEProperties properties;
+    private final IplantResources resources;
+    private final IplantDisplayStrings displayStrings;
 
     Logger logger = Logger.getLogger("App View");
 
     @Inject
-    public AppsViewImpl(final Tree<AppGroup, String> tree) {
+    public AppsViewImpl(final Tree<AppGroup, String> tree,
+                        final DEProperties properties,
+                        final IplantResources resources,
+                        final IplantDisplayStrings displayStrings) {
         this.tree = tree;
+        this.properties = properties;
+        this.resources = resources;
+        this.displayStrings = displayStrings;
         this.treeStore = tree.getStore();
         this.widget = uiBinder.createAndBindUi(this);
 
@@ -149,6 +158,7 @@ public class AppsViewImpl implements AppsView, IsMaskable {
     
     @UiFactory
     ContentPanel createContentPanel() {
+        // FIXME JDS This violates goal of theming. Implement proper theming/appearance.
         return new ContentPanel(new GrayContentPanelAppearance());
     }
 
@@ -172,10 +182,10 @@ public class AppsViewImpl implements AppsView, IsMaskable {
      * FIXME JDS This needs to be implemented in an {@link TreeAppearance}
      */
     private void setTreeIcons() {
-        com.sencha.gxt.widget.core.client.tree.TreeStyle style = tree.getStyle();
-        style.setNodeCloseIcon(IplantResources.RESOURCES.category());
-        style.setNodeOpenIcon(IplantResources.RESOURCES.category_open());
-        style.setLeafIcon(IplantResources.RESOURCES.subCategory());
+        TreeStyle style = tree.getStyle();
+        style.setNodeCloseIcon(resources.category());
+        style.setNodeOpenIcon(resources.category_open());
+        style.setLeafIcon(resources.subCategory());
     }
 
     private void initTreeStoreSorter() {
@@ -483,7 +493,7 @@ public class AppsViewImpl implements AppsView, IsMaskable {
 
     @Override
     public void mask(String loadingMask) {
-        con.mask(I18N.DISPLAY.loadingMask());
+        con.mask(displayStrings.loadingMask());
 
     }
 

@@ -9,8 +9,9 @@
 
    <inherits name="com.google.gwt.inject.Inject"/>
    <inherits name="org.iplantc.de.commons.ui-commons" />
-   
-   <source path="client" />
+    <inherits name="com.sencha.gxt.theme.gray.Gray"/>
+
+    <source path="client" />
    
    <replace-with class="org.iplantc.de.apps.client.presenter.DefaultFileUploader">
       <when-type-is class="org.iplantc.de.apps.client.presenter.FileUploader"/>

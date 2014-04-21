@@ -11,7 +11,6 @@ import org.iplantc.de.client.services.AppServiceFacade;
 import org.iplantc.de.commons.client.ErrorHandler;
 
 import com.google.common.base.Strings;
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.web.bindery.autobean.shared.AutoBeanCodex;
 
@@ -34,9 +33,15 @@ import java.util.List;
 public class AppSearchRpcProxy extends RpcProxy<FilterPagingLoadConfig, PagingLoadResult<App>> {
     private String lastQueryText = ""; //$NON-NLS-1$
     private final AppServiceFacade appService;
+    private final AppSearchAutoBeanFactory appSearchFactory;
+    private final AppAutoBeanFactory appFactory;
 
-    public AppSearchRpcProxy(final AppServiceFacade appService) {
+    public AppSearchRpcProxy(final AppServiceFacade appService,
+                             final AppSearchAutoBeanFactory appSearchFactory,
+                             final AppAutoBeanFactory appFactory) {
         this.appService = appService;
+        this.appSearchFactory = appSearchFactory;
+        this.appFactory = appFactory;
     }
 
     public String getLastQueryText() {
@@ -68,13 +73,12 @@ public class AppSearchRpcProxy extends RpcProxy<FilterPagingLoadConfig, PagingLo
         appService.searchApp(lastQueryText, new AsyncCallback<String>() {
             @Override
             public void onSuccess(String result) {
-                AppAutoBeanFactory factory = GWT.create(AppAutoBeanFactory.class);
-                List<App> apps = AutoBeanCodex.decode(factory, AppList.class, result).as().getApps();
+                List<App> apps = AutoBeanCodex.decode(appFactory, AppList.class, result).as().getApps();
 
                 Collections.sort(apps, new AppComparator(searchText));
 
                 // Pass the App list to this proxy's load callback.
-                AppListLoadResult searchResult = AppSearchAutoBeanFactory.instance.dataLoadResult().as();
+                AppListLoadResult searchResult = appSearchFactory.dataLoadResult().as();
                 searchResult.setData(apps);
                 callback.onSuccess(searchResult);
 

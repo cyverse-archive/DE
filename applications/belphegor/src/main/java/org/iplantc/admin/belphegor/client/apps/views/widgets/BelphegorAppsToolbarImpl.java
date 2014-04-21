@@ -3,6 +3,7 @@ package org.iplantc.admin.belphegor.client.apps.views.widgets;
 import org.iplantc.de.apps.client.views.widgets.AppSearchField;
 import org.iplantc.de.apps.client.views.widgets.proxy.AppSearchRpcProxy;
 import org.iplantc.de.client.models.apps.App;
+import org.iplantc.de.client.models.apps.AppAutoBeanFactory;
 import org.iplantc.de.client.models.apps.proxy.AppLoadConfig;
 import org.iplantc.de.client.models.apps.proxy.AppSearchAutoBeanFactory;
 import org.iplantc.de.client.services.AppServiceFacade;
@@ -65,14 +66,16 @@ public class BelphegorAppsToolbarImpl implements BelphegorAppsToolbar {
     @UiField
     PagingLoader<FilterPagingLoadConfig, PagingLoadResult<App>> loader;
     private final AppServiceFacade appService;
+    private final AppSearchAutoBeanFactory appSearchFactory;
+    private final AppAutoBeanFactory appFactory;
 
     @UiFactory
     PagingLoader<FilterPagingLoadConfig, PagingLoadResult<App>> createPagingLoader() {
-        proxy = new AppSearchRpcProxy(appService);
+        proxy = new AppSearchRpcProxy(appService, appSearchFactory, appFactory);
         PagingLoader<FilterPagingLoadConfig, PagingLoadResult<App>> loader = new PagingLoader<FilterPagingLoadConfig, PagingLoadResult<App>>(
                 proxy);
 
-        AppLoadConfig appLoadConfig = AppSearchAutoBeanFactory.instance.loadConfig().as();
+        AppLoadConfig appLoadConfig = appSearchFactory.loadConfig().as();
         loader.useLoadConfig(appLoadConfig);
 
         return loader;
@@ -89,8 +92,12 @@ public class BelphegorAppsToolbarImpl implements BelphegorAppsToolbar {
     }
 
     @Inject
-    public BelphegorAppsToolbarImpl(final AppServiceFacade appService) {
+    public BelphegorAppsToolbarImpl(final AppServiceFacade appService,
+                                    final AppSearchAutoBeanFactory appSearchFactory,
+                                    final AppAutoBeanFactory appFactory) {
         this.appService = appService;
+        this.appSearchFactory = appSearchFactory;
+        this.appFactory = appFactory;
         widget = uiBinder.createAndBindUi(this);
     }
 

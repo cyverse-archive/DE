@@ -3,6 +3,7 @@ package org.iplantc.de.apps.client.views.widgets;
 
 import org.iplantc.de.apps.client.views.widgets.proxy.AppSearchRpcProxy;
 import org.iplantc.de.client.models.apps.App;
+import org.iplantc.de.client.models.apps.AppAutoBeanFactory;
 import org.iplantc.de.client.models.apps.proxy.AppLoadConfig;
 import org.iplantc.de.client.models.apps.proxy.AppSearchAutoBeanFactory;
 import org.iplantc.de.client.services.AppServiceFacade;
@@ -29,8 +30,9 @@ public class AppsViewToolbarImpl implements AppsViewToolbar {
     private static AppsViewToolbarUiBinder uiBinder = GWT.create(AppsViewToolbarUiBinder.class);
 
     @UiTemplate("AppsViewToolbar.ui.xml")
-    interface AppsViewToolbarUiBinder extends UiBinder<Widget, AppsViewToolbarImpl> {
-    }
+    interface AppsViewToolbarUiBinder extends UiBinder<Widget, AppsViewToolbarImpl> { }
+
+    private final AppSearchAutoBeanFactory appSearchFactory;
 
     private final Widget widget;
     private Presenter presenter;
@@ -91,8 +93,11 @@ public class AppsViewToolbarImpl implements AppsViewToolbar {
     }
 
     @Inject
-    public AppsViewToolbarImpl(final AppServiceFacade appService) {
-        proxy = new AppSearchRpcProxy(appService);
+    public AppsViewToolbarImpl(final AppServiceFacade appService,
+                               final AppSearchAutoBeanFactory appSearchFactory,
+                               final AppAutoBeanFactory appFactory) {
+        this.appSearchFactory = appSearchFactory;
+        proxy = new AppSearchRpcProxy(appService, appSearchFactory, appFactory);
         loader = createPagingLoader();
         widget = uiBinder.createAndBindUi(this);
     }
@@ -101,7 +106,7 @@ public class AppsViewToolbarImpl implements AppsViewToolbar {
         PagingLoader<FilterPagingLoadConfig, PagingLoadResult<App>> loader = new PagingLoader<FilterPagingLoadConfig, PagingLoadResult<App>>(
                 proxy);
 
-        AppLoadConfig appLoadConfig = AppSearchAutoBeanFactory.instance.loadConfig().as();
+        AppLoadConfig appLoadConfig = appSearchFactory.loadConfig().as();
         loader.useLoadConfig(appLoadConfig);
 
         return loader;
