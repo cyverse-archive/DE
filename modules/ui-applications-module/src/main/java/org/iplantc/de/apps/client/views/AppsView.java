@@ -1,5 +1,9 @@
 package org.iplantc.de.apps.client.views;
 
+import org.iplantc.de.apps.client.events.AppGroupSelectionChangedEvent;
+import org.iplantc.de.apps.client.events.AppSelectionChangedEvent;
+import org.iplantc.de.apps.client.views.cells.AppHyperlinkCell;
+import org.iplantc.de.apps.client.views.cells.AppInfoCell;
 import org.iplantc.de.apps.client.views.widgets.AppsViewToolbar;
 import org.iplantc.de.client.models.HasId;
 import org.iplantc.de.client.models.apps.App;
@@ -21,20 +25,13 @@ import java.util.List;
 public interface AppsView extends IsWidget {
 
     public interface Presenter extends org.iplantc.de.commons.client.presenter.Presenter,
-            AppsViewToolbar.Presenter {
-        void onAppSelected(final App app);
+            AppsViewToolbar.Presenter, AppInfoCell.AppInfoClickedEventHandler, AppHyperlinkCell.AppNameSelectedEventHandler {
 
-        void onAppGroupSelected(final AppGroup ag);
+        void onAppGroupSelectionChanged(final List<AppGroup> appGroupSelection);
 
         App getSelectedApp();
 
-        List<App> getAllSelectedApps();
-
         AppGroup getSelectedAppGroup();
-
-        void onAppInfoClick(App app);
-        
-        void onAppNameSelected(App app);
 
         void go(HasOneWidget container, HasId selectedAppGroup, HasId selectedApp);
 
@@ -47,6 +44,11 @@ public interface AppsView extends IsWidget {
         String highlightSearchText(final String text);
         
         void cleanUp();
+    }
+
+    public interface ViewMenu extends IsWidget, AppSelectionChangedEvent.AppSelectionChangedEventHandler, AppGroupSelectionChangedEvent.AppGroupSelectionChangedEventHandler {
+
+        void init(Presenter presenter, AppSelectionChangedEvent.HasAppSelectionChangedEventHandlers hasAppSelectionChangedEventHandlers, AppGroupSelectionChangedEvent.HasAppGroupSelectionChangedEventHandlers hasAppGroupSelectionChangedEventHandlers);
     }
 
     void setPresenter(final Presenter presenter);
@@ -79,8 +81,6 @@ public interface AppsView extends IsWidget {
 
     void setNorthWidget(IsWidget widget);
 
-    void setEastWidget(IsWidget widget);
-
     void selectFirstApp();
 
     void selectFirstAppGroup();
@@ -95,15 +95,11 @@ public interface AppsView extends IsWidget {
 
     void updateAppGroup(AppGroup appGroup);
 
-    AppGroup findAppGroup(String id);
-
     AppGroup findAppGroupByName(String name);
 
     void updateAppGroupAppCount(AppGroup appGroup, int newCount);
 
     App findApp(String appId);
-
-    void onAppInfoClick(App app);
 
     void onAppNameSelected(final App app);
 

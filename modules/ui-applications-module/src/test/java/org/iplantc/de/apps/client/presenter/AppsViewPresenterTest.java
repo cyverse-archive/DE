@@ -115,7 +115,7 @@
 //
 // /**
 // * Test method for {@link
-// org.iplantc.core.uiapplications.client.presenter.AppsViewPresenterImpl#onCopyClicked()}.
+// org.iplantc.core.uiapplications.client.presenter.AppsViewPresenterImpl#copySelectedApp()}.
 // */
 // @Test
 // public void testOnCopyClicked() {
@@ -124,7 +124,7 @@
 //
 // /**
 // * Test method for {@link
-// org.iplantc.core.uiapplications.client.presenter.AppsViewPresenterImpl#onDeleteClicked()}.
+// org.iplantc.core.uiapplications.client.presenter.AppsViewPresenterImpl#deleteSelectedApps()}.
 // */
 // @Test
 // public void testOnDeleteClicked() {

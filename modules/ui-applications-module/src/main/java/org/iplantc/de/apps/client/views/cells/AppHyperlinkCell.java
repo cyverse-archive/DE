@@ -4,10 +4,7 @@ import org.iplantc.de.apps.client.views.AppsView;
 import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.resources.client.messages.I18N;
 
-import static com.google.gwt.dom.client.BrowserEvents.CLICK;
-import static com.google.gwt.dom.client.BrowserEvents.MOUSEOUT;
-import static com.google.gwt.dom.client.BrowserEvents.MOUSEOVER;
-
+import static com.google.gwt.dom.client.BrowserEvents.*;
 import com.google.gwt.cell.client.AbstractCell;
 import com.google.gwt.cell.client.Cell;
 import com.google.gwt.cell.client.ValueUpdater;
@@ -16,6 +13,10 @@ import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.dom.client.Node;
 import com.google.gwt.dom.client.Style.TextDecoration;
+import com.google.gwt.event.shared.EventHandler;
+import com.google.gwt.event.shared.GwtEvent;
+import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.event.shared.HasHandlers;
 import com.google.gwt.resources.client.ClientBundle;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.safehtml.client.SafeHtmlTemplates;
@@ -32,6 +33,38 @@ import com.google.gwt.user.client.Event;
  * 
  */
 public class AppHyperlinkCell extends AbstractCell<App> {
+
+    public static GwtEvent.Type<AppNameSelectedEventHandler> EVENT_TYPE = new GwtEvent.Type<AppNameSelectedEventHandler>();
+    public class AppNameSelectedEvent extends GwtEvent<AppNameSelectedEventHandler> {
+
+        private final App selectedApp;
+
+        public AppNameSelectedEvent(App selectedApp) {
+            this.selectedApp = selectedApp;
+        }
+
+        @Override
+        public Type<AppNameSelectedEventHandler> getAssociatedType() {
+            return EVENT_TYPE;
+        }
+
+        public App getSelectedApp() {
+            return selectedApp;
+        }
+
+        @Override
+        protected void dispatch(AppNameSelectedEventHandler handler) {
+            handler.onAppNameSelected(this);
+        }
+    }
+
+    public interface AppNameSelectedEventHandler extends EventHandler {
+        void onAppNameSelected(AppNameSelectedEvent event);
+    }
+
+    public static interface HasAppNameSelectedEventHandlers {
+        HandlerRegistration addAppNameSelectedEventHandler(AppNameSelectedEventHandler handler);
+    }
 
     public interface MyCss extends CssResource {
         String appName();
@@ -58,6 +91,7 @@ public class AppHyperlinkCell extends AbstractCell<App> {
     protected final AppFavoriteCell favoriteCell = new AppFavoriteCell();
     protected final AppsView view;
     public static final String ELEMENT_NAME = "appName";
+    private HasHandlers hasHandlers;
 
     public AppHyperlinkCell(AppsView view) {
         super(CLICK, MOUSEOVER, MOUSEOUT);
@@ -112,6 +146,10 @@ public class AppHyperlinkCell extends AbstractCell<App> {
         }
     }
 
+    public void setHasHandlers(HasHandlers hasHandlers) {
+        this.hasHandlers = hasHandlers;
+    }
+
     private Element findAppNameElement(Element parent) {
         for (int i = 0; i < parent.getChildCount(); i++) {
             Node childNode = parent.getChild(i);
@@ -137,5 +175,8 @@ public class AppHyperlinkCell extends AbstractCell<App> {
 
     private void doOnClick(final Element eventTarget, final App value) {
             view.onAppNameSelected(value);
+        if(hasHandlers != null){
+            hasHandlers.fireEvent(new AppNameSelectedEvent(value));
+        }
     }
 }

@@ -2,14 +2,12 @@
 <ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
              xmlns:container="urn:import:com.sencha.gxt.widget.core.client.container"
              xmlns:gxt="urn:import:com.sencha.gxt.widget.core.client"
-             xmlns:g="urn:import:com.google.gwt.user.client.ui"
              xmlns:tree="urn:import:com.sencha.gxt.widget.core.client.tree"
-             xmlns:grid="urn:import:com.sencha.gxt.widget.core.client.grid"
-             xmlns:toolbar="urn:import:com.sencha.gxt.widget.core.client.toolbar"
-             xmlns:MyToolbar="urn:import:org.iplantc.de.apps.client.views.widgets"
-             xmlns:button="urn:import:com.sencha.gxt.widget.core.client.button">
+             xmlns:grid="urn:import:com.sencha.gxt.widget.core.client.grid">
 
-   <ui:with type="org.iplantc.de.resources.client.messages.IplantDisplayStrings" field="strings" />
+   <ui:with field="strings"
+            type="org.iplantc.de.resources.client.messages.IplantDisplayStrings"/>
+
 
     <!-- Nav Panel -->
    <ui:with field="treeStore"
@@ -70,14 +68,17 @@
          <container:BorderLayoutContainer ui:field="con"
                                           borders="true">
                 <!-- This is the tool bar -->
-            <container:north layoutData="{northData}"/>
+            <container:north layoutData="{northData}">
+            </container:north>
                 <!-- This is the navigation panel -->
             <container:west layoutData="{westData}">
                <gxt:ContentPanel ui:field="westPanel"
                                  headingText="{strings.category}"
                                  bodyBorder="false">
                   <tree:Tree ui:field="tree"
-                             autoExpand="true"/>
+                             store="{treeStore}"
+                             valueProvider="{valueProvider}"
+                             autoExpand="true"  />
                </gxt:ContentPanel>
             </container:west>
 			    <!-- This is the main panel -->

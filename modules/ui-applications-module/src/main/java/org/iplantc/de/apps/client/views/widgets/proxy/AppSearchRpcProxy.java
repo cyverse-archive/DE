@@ -11,6 +11,7 @@ import org.iplantc.de.client.services.AppServiceFacade;
 import org.iplantc.de.commons.client.ErrorHandler;
 
 import com.google.common.base.Strings;
+import com.google.gwt.event.shared.HasHandlers;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.web.bindery.autobean.shared.AutoBeanCodex;
 
@@ -31,6 +32,7 @@ import java.util.List;
  * 
  */
 public class AppSearchRpcProxy extends RpcProxy<FilterPagingLoadConfig, PagingLoadResult<App>> {
+    private HasHandlers hasHandlers;
     private String lastQueryText = ""; //$NON-NLS-1$
     private final AppServiceFacade appService;
     private final AppSearchAutoBeanFactory appSearchFactory;
@@ -46,6 +48,10 @@ public class AppSearchRpcProxy extends RpcProxy<FilterPagingLoadConfig, PagingLo
 
     public String getLastQueryText() {
         return lastQueryText;
+    }
+
+    public void setHasHandlers(HasHandlers hasHandlers){
+        this.hasHandlers = hasHandlers;
     }
 
     @Override
@@ -84,6 +90,9 @@ public class AppSearchRpcProxy extends RpcProxy<FilterPagingLoadConfig, PagingLo
 
                 // Fire the search results load event.
                 EventBus eventBus = EventBus.getInstance();
+                if(hasHandlers != null){
+                    hasHandlers.fireEvent(new AppSearchResultLoadEvent(source, searchText, apps));
+                }
                 eventBus.fireEvent(new AppSearchResultLoadEvent(source, searchText, apps));
             }
 

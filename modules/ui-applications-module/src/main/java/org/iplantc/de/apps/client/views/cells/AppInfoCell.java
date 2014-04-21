@@ -6,15 +6,16 @@ import org.iplantc.de.resources.client.IplantResources;
 import org.iplantc.de.resources.client.messages.I18N;
 
 import static com.google.gwt.dom.client.BrowserEvents.CLICK;
-import static com.google.gwt.dom.client.BrowserEvents.MOUSEOUT;
-import static com.google.gwt.dom.client.BrowserEvents.MOUSEOVER;
-
 import com.google.gwt.cell.client.AbstractCell;
 import com.google.gwt.cell.client.Cell;
 import com.google.gwt.cell.client.ValueUpdater;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NativeEvent;
+import com.google.gwt.event.shared.EventHandler;
+import com.google.gwt.event.shared.GwtEvent;
+import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.event.shared.HasHandlers;
 import com.google.gwt.resources.client.ClientBundle;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.safehtml.client.SafeHtmlTemplates;
@@ -24,6 +25,37 @@ import com.google.gwt.safehtml.shared.SafeUri;
 import com.google.gwt.user.client.Event;
 
 public class AppInfoCell extends AbstractCell<App> {
+
+    public static final GwtEvent.Type<AppInfoClickedEventHandler> APP_INFO_CLICKED_EVENT_HANDLER_TYPE = new GwtEvent.Type<AppInfoClickedEventHandler>();
+    public class AppInfoClickedEvent extends GwtEvent<AppInfoClickedEventHandler> {
+
+        private final App app;
+
+        public AppInfoClickedEvent(App app) {
+            this.app = app;
+        }
+
+        public App getApp() {
+            return app;
+        }
+
+        @Override
+        public Type<AppInfoClickedEventHandler> getAssociatedType() {
+            return APP_INFO_CLICKED_EVENT_HANDLER_TYPE;
+        }
+
+        @Override
+        protected void dispatch(AppInfoClickedEventHandler handler) {
+            handler.onAppInfoClicked(this);
+        }
+    }
+
+    public interface AppInfoClickedEventHandler extends EventHandler {
+        void onAppInfoClicked(AppInfoClickedEvent event);
+    }
+    public interface HasAppInfoClickedEventHandlers {
+        HandlerRegistration addAppInfoClickedEventHandler(AppInfoClickedEventHandler handler);
+    }
 
     interface MyCss extends CssResource {
         @ClassName("app_info")
@@ -43,10 +75,11 @@ public class AppInfoCell extends AbstractCell<App> {
 
     private static final Resources resources = GWT.create(Resources.class);
     private static final Templates templates = GWT.create(Templates.class);
+    private HasHandlers hasHandlers;
     private AppsView view;
 
     public AppInfoCell(AppsView view) {
-        super(CLICK, MOUSEOVER, MOUSEOUT);
+        super(CLICK);
         this.view = view;
         resources.css().ensureInjected();
 
@@ -71,28 +104,21 @@ public class AppInfoCell extends AbstractCell<App> {
                 case Event.ONCLICK:
                     doOnClick(eventTarget, value);
                     break;
-                case Event.ONMOUSEOVER:
-                    doOnMouseOver(eventTarget, value);
-                    break;
-                case Event.ONMOUSEOUT:
-                    doOnMouseOut(eventTarget, value);
-                    break;
                 default:
                     break;
             }
         }
     }
 
-    private void doOnMouseOut(Element eventTarget, App value) {
-        // XXX JDS Place holder for switching images on hover
-    }
-
-    private void doOnMouseOver(Element eventTarget, App value) {
-        // XXX JDS Place holder for switching images on hover
+    public void setHasHandlers(HasHandlers hasHandlers) {
+        this.hasHandlers = hasHandlers;
     }
 
     private void doOnClick(Element eventTarget, App value) {
         view.onAppInfoClick(value);
+        if(hasHandlers != null){
+            hasHandlers.fireEvent(new AppInfoClickedEvent(value));
+        }
     }
 
 }

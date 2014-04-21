@@ -5,11 +5,12 @@ import org.iplantc.de.apps.client.events.AppUpdatedEvent.AppUpdatedEventHandler;
 import org.iplantc.de.apps.client.presenter.proxy.AppGroupProxy;
 import org.iplantc.de.apps.client.views.AppInfoView;
 import org.iplantc.de.apps.client.views.AppsView;
+import org.iplantc.de.apps.client.views.cells.AppHyperlinkCell;
+import org.iplantc.de.apps.client.views.cells.AppInfoCell;
 import org.iplantc.de.apps.client.views.dialogs.NewToolRequestDialog;
 import org.iplantc.de.apps.client.views.dialogs.SubmitAppForPublicDialog;
 import org.iplantc.de.apps.client.views.widgets.AppsViewToolbar;
 import org.iplantc.de.apps.client.views.widgets.events.AppSearchResultLoadEvent;
-import org.iplantc.de.apps.client.views.widgets.events.AppSearchResultLoadEventHandler;
 import org.iplantc.de.apps.client.views.widgets.proxy.AppSearchRpcProxy;
 import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.models.DEProperties;
@@ -82,10 +83,10 @@ public class AppsViewPresenterImpl implements AppsView.Presenter {
     private static String FAVORITES;
 
     protected final AppsView view;
-    protected Builder builder;
+    protected AppsViewToolbar.Presenter.Builder builder;
 
     private final AppGroupProxy appGroupProxy;
-    private AppsViewToolbar toolbar;
+//    private AppsViewToolbar toolbar;
 
     private final List<HandlerRegistration> eventHandlers = new ArrayList<HandlerRegistration>();
 
@@ -101,7 +102,6 @@ public class AppsViewPresenterImpl implements AppsView.Presenter {
 
     @Inject
     public AppsViewPresenterImpl(final AppsView view, final AppGroupProxy proxy,
-                                 final AppsViewToolbar toolbar,
                                  final AppServiceFacade appService,
                                  final AppUserServiceFacade appUserService,
                                  final EventBus eventBus,
@@ -126,20 +126,29 @@ public class AppsViewPresenterImpl implements AppsView.Presenter {
         // Initialize AppGroup TreeStore proxy and loader
         this.appGroupProxy = proxy;
 
-        if (toolbar != null) {
-            this.toolbar = toolbar;
-            this.view.setNorthWidget(this.toolbar);
-            this.toolbar.setPresenter(this);
-        }
-
         this.view.setPresenter(this);
 
         initHandlers();
         initConstants();
     }
 
+    @Override
+    public void onAppInfoClicked(AppInfoCell.AppInfoClickedEvent event) {
+       showAppInfoWindow(event.getApp());
+    }
+
+    @Override
+    public void onAppNameSelected(AppHyperlinkCell.AppNameSelectedEvent event) {
+        App app = event.getSelectedApp();
+        if (app.isRunnable()) {
+            fireRunAppEvent(app);
+        } else {
+            announcer.schedule(new ErrorAnnouncementConfig(errorStrings.appLaunchWithoutToolError()));
+        }
+    }
+
     protected void initHandlers() {
-        eventHandlers.add(eventBus.addHandler(AppSearchResultLoadEvent.TYPE, new AppSearchResultLoadEventHandler() {
+        eventHandlers.add(eventBus.addHandler(AppSearchResultLoadEvent.TYPE, new AppSearchResultLoadEvent.AppSearchResultLoadEventHandler() {
             @Override
             public void onLoad(AppSearchResultLoadEvent event) {
                 if (event.getSource() == getAppSearchRpcProxy()) {
@@ -220,13 +229,9 @@ public class AppsViewPresenterImpl implements AppsView.Presenter {
     }
 
     @Override
-    public void onAppGroupSelected(final AppGroup ag) {
-        if (toolbar != null) {
-            toolbar.setAppMenuEnabled(false);
-            toolbar.setWorkflowMenuEnabled(false);
-        }
-
+    public void onAppGroupSelectionChanged(final List<AppGroup> appGroupSelection) {
         searchRegex = null;
+        AppGroup ag = appGroupSelection.get(0);
         List<String> groupNames = computeGroupHirarchy(ag);
         view.setCenterPanelHeading(Joiner.on(" >> ").join(groupNames));
         fetchApps(ag);
@@ -243,86 +248,77 @@ public class AppsViewPresenterImpl implements AppsView.Presenter {
         return groupNames;
     }
 
-    @Override
-    public void onAppSelected(final App app) {
-        if (app != null) {
-            toolbar.setAppMenuEnabled(true);
-            toolbar.setWorkflowMenuEnabled(true);
-            if (app.isPublic()) {
-                if (app.getStepCount() == 1) {
-                    toolbar.setDeleteAppMenuItemEnabled(false);
-                    toolbar.setSubmitAppMenuItemEnabled(false);
-                    toolbar.setCopyAppMenuItemEnabled(true);
 
-                    if (userInfo.getEmail().equals(app.getIntegratorEmail())) {
-                        // JDS If the current user is the integrator
-                        toolbar.setEditAppMenuItemEnabled(true);
-                    } else {
-                        toolbar.setEditAppMenuItemEnabled(false);
-                    }
-                    toolbar.setDeleteWorkflowMenuItemEnabled(false);
-                    toolbar.setSubmitWorkflowMenuItemEnabled(false);
-                    toolbar.setCopyWorkflowMenuItemEnabled(false);
-                    toolbar.setEditWorkflowMenuItemEnabled(false);
-                } else {
-                    toolbar.setDeleteWorkflowMenuItemEnabled(false);
-                    toolbar.setSubmitWorkflowMenuItemEnabled(false);
-                    toolbar.setCopyWorkflowMenuItemEnabled(true);
-                    toolbar.setEditWorkflowMenuItemEnabled(false);
-                    toolbar.setDeleteAppMenuItemEnabled(false);
-                    toolbar.setSubmitAppMenuItemEnabled(false);
-                    toolbar.setCopyAppMenuItemEnabled(false);
-                    toolbar.setEditAppMenuItemEnabled(false);
-                }
-            } else {
-                if (app.getStepCount() == 1) {
-                    toolbar.setEditAppMenuItemEnabled(true);
-                    toolbar.setDeleteAppMenuItemEnabled(true);
-                    toolbar.setSubmitAppMenuItemEnabled(true);
-                    toolbar.setCopyAppMenuItemEnabled(true);
-                    toolbar.setEditWorkflowMenuItemEnabled(false);
-                    toolbar.setDeleteWorkflowMenuItemEnabled(false);
-                    toolbar.setSubmitWorkflowMenuItemEnabled(false);
-                    toolbar.setCopyWorkflowMenuItemEnabled(false);
-                } else {
-                    toolbar.setEditWorkflowMenuItemEnabled(true);
-                    toolbar.setDeleteWorkflowMenuItemEnabled(true);
-                    toolbar.setSubmitWorkflowMenuItemEnabled(true);
-                    toolbar.setCopyWorkflowMenuItemEnabled(true);
-                    toolbar.setEditAppMenuItemEnabled(false);
-                    toolbar.setDeleteAppMenuItemEnabled(false);
-                    toolbar.setSubmitAppMenuItemEnabled(false);
-                    toolbar.setCopyAppMenuItemEnabled(false);
-                }
-            }
-
-            if (!app.isDisabled()) {
-                if (app.getStepCount() == 1) {
-                    toolbar.setAppRunMenuItemEnabled(true);
-                    toolbar.setWorkflowRunMenuItemEnabled(false);
-                } else {
-                    toolbar.setWorkflowRunMenuItemEnabled(true);
-                    toolbar.setAppRunMenuItemEnabled(false);
-                }
-            } else {
-                toolbar.setAppRunMenuItemEnabled(false);
-                toolbar.setWorkflowRunMenuItemEnabled(false);
-            }
-        } else {
-            toolbar.setDeleteWorkflowMenuItemEnabled(false);
-            toolbar.setSubmitWorkflowMenuItemEnabled(false);
-            toolbar.setCopyWorkflowMenuItemEnabled(false);
-            toolbar.setEditWorkflowMenuItemEnabled(false);
-            toolbar.setDeleteAppMenuItemEnabled(false);
-            toolbar.setSubmitAppMenuItemEnabled(false);
-            toolbar.setCopyAppMenuItemEnabled(false);
-            toolbar.setEditAppMenuItemEnabled(false);
-            toolbar.setAppRunMenuItemEnabled(false);
-            toolbar.setWorkflowRunMenuItemEnabled(false);
-            toolbar.setAppMenuEnabled(true);
-            toolbar.setWorkflowMenuEnabled(true);
-        }
-    }
+//    @Override
+//    public void onAppSelected(final App app) {
+//        if (app == null && toolbar != null) {
+//            toolbar.setAppMenuEnabled(false);
+//            toolbar.setWorkflowMenuEnabled(false);
+//        } else {
+//            toolbar.setAppMenuEnabled(true);
+//            toolbar.setWorkflowMenuEnabled(true);
+//            if (app.isPublic()) {
+//                if (app.getStepCount() == 1) {
+//                    toolbar.setDeleteAppMenuItemEnabled(false);
+//                    toolbar.setSubmitAppMenuItemEnabled(false);
+//                    toolbar.setCopyAppMenuItemEnabled(true);
+//
+//                    if (userInfo.getEmail().equals(app.getIntegratorEmail())) {
+//                        // JDS If the current user is the integrator
+//                        toolbar.setEditAppMenuItemEnabled(true);
+//                    } else {
+//                        toolbar.setEditAppMenuItemEnabled(false);
+//                    }
+//                    toolbar.setDeleteWorkflowMenuItemEnabled(false);
+//                    toolbar.setSubmitWorkflowMenuItemEnabled(false);
+//                    toolbar.setCopyWorkflowMenuItemEnabled(false);
+//                    toolbar.setEditWorkflowMenuItemEnabled(false);
+//                } else {
+//                    toolbar.setDeleteWorkflowMenuItemEnabled(false);
+//                    toolbar.setSubmitWorkflowMenuItemEnabled(false);
+//                    toolbar.setCopyWorkflowMenuItemEnabled(true);
+//                    toolbar.setEditWorkflowMenuItemEnabled(false);
+//                    toolbar.setDeleteAppMenuItemEnabled(false);
+//                    toolbar.setSubmitAppMenuItemEnabled(false);
+//                    toolbar.setCopyAppMenuItemEnabled(false);
+//                    toolbar.setEditAppMenuItemEnabled(false);
+//                }
+//            } else {
+//                if (app.getStepCount() == 1) {
+//                    toolbar.setEditAppMenuItemEnabled(true);
+//                    toolbar.setDeleteAppMenuItemEnabled(true);
+//                    toolbar.setSubmitAppMenuItemEnabled(true);
+//                    toolbar.setCopyAppMenuItemEnabled(true);
+//                    toolbar.setEditWorkflowMenuItemEnabled(false);
+//                    toolbar.setDeleteWorkflowMenuItemEnabled(false);
+//                    toolbar.setSubmitWorkflowMenuItemEnabled(false);
+//                    toolbar.setCopyWorkflowMenuItemEnabled(false);
+//                } else {
+//                    toolbar.setEditWorkflowMenuItemEnabled(true);
+//                    toolbar.setDeleteWorkflowMenuItemEnabled(true);
+//                    toolbar.setSubmitWorkflowMenuItemEnabled(true);
+//                    toolbar.setCopyWorkflowMenuItemEnabled(true);
+//                    toolbar.setEditAppMenuItemEnabled(false);
+//                    toolbar.setDeleteAppMenuItemEnabled(false);
+//                    toolbar.setSubmitAppMenuItemEnabled(false);
+//                    toolbar.setCopyAppMenuItemEnabled(false);
+//                }
+//            }
+//
+//            if (!app.isDisabled()) {
+//                if (app.getStepCount() == 1) {
+//                    toolbar.setAppRunMenuItemEnabled(true);
+//                    toolbar.setWorkflowRunMenuItemEnabled(false);
+//                } else {
+//                    toolbar.setWorkflowRunMenuItemEnabled(true);
+//                    toolbar.setAppRunMenuItemEnabled(false);
+//                }
+//            } else {
+//                toolbar.setAppRunMenuItemEnabled(false);
+//                toolbar.setWorkflowRunMenuItemEnabled(false);
+//            }
+//        }
+//    }
 
     /**
      * Retrieves the apps for the given group by updating and executing the list loader
@@ -417,11 +413,6 @@ public class AppsViewPresenterImpl implements AppsView.Presenter {
     }
 
     @Override
-    public List<App> getAllSelectedApps() {
-        return view.getAllSelectedApps();
-    }
-
-    @Override
     public AppGroup getSelectedAppGroup() {
         return view.getSelectedAppGroup();
     }
@@ -448,7 +439,7 @@ public class AppsViewPresenterImpl implements AppsView.Presenter {
     }
 
     @Override
-    public void onCopyClicked() {
+    public void copySelectedApp() {
         final App selectedApp = getSelectedApp();
         appUserService.appExportable(selectedApp.getId(), new AsyncCallback<String>() {
 
@@ -555,8 +546,8 @@ public class AppsViewPresenterImpl implements AppsView.Presenter {
     }
 
     @Override
-    public void onDeleteClicked() {
-        final List<App> apps = getAllSelectedApps();
+    public void deleteSelectedApps() {
+        final List<App> apps = view.getAllSelectedApps();
         if (apps == null || apps.isEmpty()) {
             return;
         }
@@ -626,12 +617,7 @@ public class AppsViewPresenterImpl implements AppsView.Presenter {
     }
 
     @Override
-    public void onAppInfoClick(App app) {
-        showAppInfoWindow(app);
-    }
-
-    @Override
-    public void onEditClicked() {
+    public void editSelectedApp() {
         App selectedApp = getSelectedApp();
 
         if (selectedApp.getStepCount() > 1) {
@@ -645,16 +631,11 @@ public class AppsViewPresenterImpl implements AppsView.Presenter {
     }
 
     @Override
-    public AppsViewToolbar getToolbar() {
-        return toolbar;
-    }
-
-    @Override
     public Builder builder() {
         return builder;
     }
 
-    private class MyBuilder implements Builder {
+    private class MyBuilder implements AppsViewToolbar.Presenter.Builder {
 
         private final AppsViewPresenterImpl presenter;
 
@@ -691,7 +672,7 @@ public class AppsViewPresenterImpl implements AppsView.Presenter {
     }
 
     @Override
-    public void onAppRunClick() {
+    public void runSelectedApp() {
         fireRunAppEvent(getSelectedApp());
     }
 
@@ -699,15 +680,6 @@ public class AppsViewPresenterImpl implements AppsView.Presenter {
     public AppSearchRpcProxy getAppSearchRpcProxy() {
         return toolbar.getAppSearchRpcProxy();
 
-    }
-
-    @Override
-    public void onAppNameSelected(final App app) {
-        if (app.isRunnable()) {
-            fireRunAppEvent(app);
-        } else {
-            announcer.schedule(new ErrorAnnouncementConfig(errorStrings.appLaunchWithoutToolError()));
-        }
     }
 
     private void fireRunAppEvent(final App app) {

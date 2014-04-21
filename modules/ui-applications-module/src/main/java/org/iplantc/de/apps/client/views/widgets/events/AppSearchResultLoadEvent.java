@@ -3,7 +3,9 @@ package org.iplantc.de.apps.client.views.widgets.events;
 import org.iplantc.de.apps.client.views.widgets.proxy.AppSearchRpcProxy;
 import org.iplantc.de.client.models.apps.App;
 
+import com.google.gwt.event.shared.EventHandler;
 import com.google.gwt.event.shared.GwtEvent;
+import com.google.gwt.event.shared.HandlerRegistration;
 
 import java.util.List;
 
@@ -13,17 +15,32 @@ import java.util.List;
  * @author psarando
  * 
  */
-public class AppSearchResultLoadEvent extends GwtEvent<AppSearchResultLoadEventHandler> {
+public class AppSearchResultLoadEvent extends GwtEvent<AppSearchResultLoadEvent.AppSearchResultLoadEventHandler> {
+
+    /**
+     * An EventHandler interface for AppSearchResultLoadEvents.
+     *
+     * @author psarando
+     *
+     */
+    public interface AppSearchResultLoadEventHandler extends EventHandler {
+
+        void onLoad(AppSearchResultLoadEvent event);
+    }
+
+    public static interface HasAppSearchResultLoadEventHandlers {
+        HandlerRegistration addAppSearchResultLoadEventHandler(AppSearchResultLoadEventHandler handler);
+    }
+
 
     /**
      * Defines the GWT Event Type.
-     * 
+     *
      * @see org.iplantc.core.uiapplications.client.events.AppSearchResultSelectedEventHandler
      */
     public static final GwtEvent.Type<AppSearchResultLoadEventHandler> TYPE = new GwtEvent.Type<AppSearchResultLoadEventHandler>();
-
-    private String searchText;
     private List<App> results;
+    private String searchText;
 
     public AppSearchResultLoadEvent(AppSearchRpcProxy proxy, String searchText, List<App> results) {
         setSource(proxy);
@@ -36,9 +53,12 @@ public class AppSearchResultLoadEvent extends GwtEvent<AppSearchResultLoadEventH
         return TYPE;
     }
 
-    @Override
-    protected void dispatch(AppSearchResultLoadEventHandler handler) {
-        handler.onLoad(this);
+    public List<App> getResults() {
+        return results;
+    }
+
+    public void setResults(List<App> results) {
+        this.results = results;
     }
 
     public String getSearchText() {
@@ -49,11 +69,8 @@ public class AppSearchResultLoadEvent extends GwtEvent<AppSearchResultLoadEventH
         this.searchText = searchText;
     }
 
-    public List<App> getResults() {
-        return results;
-    }
-
-    public void setResults(List<App> results) {
-        this.results = results;
+    @Override
+    protected void dispatch(AppSearchResultLoadEventHandler handler) {
+        handler.onLoad(this);
     }
 }

@@ -250,7 +250,7 @@ public class BelphegorAppsViewPresenterImpl extends AppsViewPresenterImpl implem
     }
 
     @Override
-    public void onDeleteClicked() {
+    public void deleteSelectedApps() {
         // Determine if the current selection is an AnalysisGroup
         if (getSelectedAppGroup() != null) {
             final AppGroup selectedAppGroup = getSelectedAppGroup();

@@ -27,15 +27,13 @@ public interface AppsViewToolbar extends IsWidget {
 
         public Builder builder();
 
-        AppsViewToolbar getToolbar();
-
         void onAppInfoClicked();
 
         void onRequestToolClicked();
 
-        void onCopyClicked();
+        void copySelectedApp();
 
-        void onDeleteClicked();
+        void deleteSelectedApps();
 
         void submitClicked();
 
@@ -43,9 +41,9 @@ public interface AppsViewToolbar extends IsWidget {
 
         void createWorkflowClicked();
 
-        void onEditClicked();
+        void editSelectedApp();
 
-        public void onAppRunClick();
+        public void runSelectedApp();
 
         AppSearchRpcProxy getAppSearchRpcProxy();
 
@@ -53,6 +51,8 @@ public interface AppsViewToolbar extends IsWidget {
 
         List<String> computeGroupHirarchy(AppGroup ag);
     }
+
+    void init(Presenter presenter);
 
     void setPresenter(Presenter presenter);
 
