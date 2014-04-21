@@ -375,5 +375,13 @@ public interface DiskResourceServiceFacade {
      */
     void getMetadataTemplate(String templateId, AsyncCallback<String> callback);
 
+    /**
+     * share with ananymous user selected file(s)
+     * 
+     * @param diskResourcePaths the paths to query
+     * @param callback callback object
+     */
+    void shareWithAnonymous(final HasPaths diskResourcePaths, final AsyncCallback<String> callback);
+
 }
 

@@ -893,4 +893,12 @@ public class DiskResourceServiceFacadeImpl extends TreeStore<Folder> implements 
 
     }
 
+    @Override
+    public void shareWithAnonymous(HasPaths diskResourcePaths, AsyncCallback<String> callback) {
+        String address = deProperties.getDataMgmtBaseUrl() + "anon-files"; //$NON-NLS-1$
+        final String body = encode(diskResourcePaths);
+        ServiceCallWrapper wrapper = new ServiceCallWrapper(POST, address, body);
+        callService(wrapper, callback);
+    }
+
 }

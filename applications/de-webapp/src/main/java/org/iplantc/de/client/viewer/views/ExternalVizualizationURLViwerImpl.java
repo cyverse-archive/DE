@@ -8,12 +8,17 @@ import org.iplantc.de.client.models.HasPaths;
 import org.iplantc.de.client.models.IsMaskable;
 import org.iplantc.de.client.models.diskResources.DiskResourceStatMap;
 import org.iplantc.de.client.models.diskResources.File;
+import org.iplantc.de.client.models.viewer.InfoType;
 import org.iplantc.de.client.models.viewer.VizUrl;
 import org.iplantc.de.client.services.DiskResourceServiceFacade;
 import org.iplantc.de.client.util.DiskResourceUtil;
+import org.iplantc.de.client.util.JsonUtil;
 import org.iplantc.de.client.viewer.callbacks.LoadGenomeInCoGeCallback;
 import org.iplantc.de.client.viewer.callbacks.TreeUrlCallback;
 import org.iplantc.de.client.viewer.views.cells.TreeUrlCell;
+import org.iplantc.de.commons.client.ErrorHandler;
+import org.iplantc.de.commons.client.views.gxt3.dialogs.IPlantDialog;
+import org.iplantc.de.commons.client.views.gxt3.dialogs.IplantInfoBox;
 import org.iplantc.de.resources.client.IplantResources;
 import org.iplantc.de.resources.client.messages.I18N;
 
@@ -26,6 +31,7 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiTemplate;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.sencha.gxt.core.client.IdentityValueProvider;
@@ -36,6 +42,8 @@ import com.sencha.gxt.widget.core.client.button.TextButton;
 import com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer;
 import com.sencha.gxt.widget.core.client.event.SelectEvent;
 import com.sencha.gxt.widget.core.client.event.SelectEvent.SelectHandler;
+import com.sencha.gxt.widget.core.client.form.FieldLabel;
+import com.sencha.gxt.widget.core.client.form.TextField;
 import com.sencha.gxt.widget.core.client.grid.ColumnConfig;
 import com.sencha.gxt.widget.core.client.grid.ColumnModel;
 import com.sencha.gxt.widget.core.client.grid.Grid;
@@ -132,12 +140,17 @@ public class ExternalVizualizationURLViwerImpl extends AbstractFileViewer implem
             @Override
             public void onSelect(SelectEvent event) {
                 mask(I18N.DISPLAY.loadingMask());
-                DiskResourceServiceFacade drServiceFacade = ServicesInjector.INSTANCE.getDiskResourceServiceFacade();
-                HasPaths diskResourcePaths = drServiceFacade.getDiskResourceFactory().pathsList().as();
+                final DiskResourceServiceFacade drServiceFacade = ServicesInjector.INSTANCE.getDiskResourceServiceFacade();
+                final HasPaths diskResourcePaths = drServiceFacade.getDiskResourceFactory().pathsList().as();
                 final String path = file.getPath();
                 String filename = DiskResourceUtil.parseNameFromPath(path);
                 String parent = DiskResourceUtil.parseParent(path);
-                String indexFile = filename + ".bai";
+                String indexFile = null;
+                if (infoType.equals(InfoType.BAM.toString())) {
+                    indexFile = filename + ".bai";
+                } else if (infoType.equals(InfoType.VCF.toString())) {
+                    indexFile = filename + ".tbi";
+                }
                 final String indexFilePath = parent + "/" + indexFile;
                 diskResourcePaths.setPaths(Lists.newArrayList(path, indexFilePath));
                 drServiceFacade.getStat(diskResourcePaths, new AsyncCallback<DiskResourceStatMap>() {
@@ -145,11 +158,30 @@ public class ExternalVizualizationURLViwerImpl extends AbstractFileViewer implem
                     @Override
                     public void onSuccess(DiskResourceStatMap result) {
                         logger.log(Level.SEVERE, result.get(path) + "-->" + result.get(indexFilePath));
-                        unmask();
+                        drServiceFacade.shareWithAnonymous(diskResourcePaths, new AsyncCallback<String>() {
+
+                            @Override
+                            public void onFailure(Throwable caught) {
+                                unmask();
+                                ErrorHandler.post("Unable to retrieve URL's for Ensemble.", caught);
+                            }
+
+                            @Override
+                            public void onSuccess(String result) {
+                                unmask();
+                                JSONObject obj = JsonUtil.getObject(result);
+                                JSONObject paths = JsonUtil.getObject(obj, "paths");
+                                showShareLink(JsonUtil.getString(paths, path));
+                            }
+                        });
                     }
 
                     @Override
                     public void onFailure(Throwable caught) {
+                        IplantInfoBox info = new IplantInfoBox("Index file missing",
+                                "Index file (.bai (or) .vci) is missing. Please use Apps to generate your index file. <b>Note:</b> Both genome and index file must be present in the same directory.");
+
+                        info.show();
                         logger.log(Level.SEVERE, "Both .bam and .bai files must exist!");
                         unmask();
                     }
@@ -157,6 +189,29 @@ public class ExternalVizualizationURLViwerImpl extends AbstractFileViewer implem
             }
         });
         return button;
+    }
+
+    private void showShareLink(String linkId) {
+        // Open dialog window with text selected.
+        IPlantDialog dlg = new IPlantDialog();
+        dlg.setHeadingText("Ensemble URL");
+        dlg.setHideOnButtonClick(true);
+        dlg.setResizable(false);
+        dlg.setSize("535", "130");
+        FieldLabel fl = new FieldLabel();
+        fl.setHTML("Please vist <a href=''> </a> and use the following URL to import your bam / vcf files.");
+        TextField textBox = new TextField();
+        textBox.setWidth(500);
+        textBox.setReadOnly(true);
+        textBox.setValue(linkId);
+        fl.setWidget(textBox);
+        VerticalLayoutContainer container = new VerticalLayoutContainer();
+        dlg.setWidget(container);
+        container.add(textBox);
+        container.add(new Label(I18N.DISPLAY.copyPasteInstructions()));
+        dlg.setFocusWidget(textBox);
+        dlg.show();
+        textBox.selectAll();
     }
 
     private TextButton buildCogeButton() {
@@ -199,8 +254,7 @@ public class ExternalVizualizationURLViwerImpl extends AbstractFileViewer implem
         label.setHeader(org.iplantc.de.resources.client.messages.I18N.DISPLAY.label());
         configs.add(label);
 
-        ColumnConfig<VizUrl, VizUrl> url = new ColumnConfig<VizUrl, VizUrl>(
-                new IdentityValueProvider<VizUrl>(), 280);
+        ColumnConfig<VizUrl, VizUrl> url = new ColumnConfig<VizUrl, VizUrl>(new IdentityValueProvider<VizUrl>(), 280);
         url.setHeader("URL");
         url.setCell(new TreeUrlCell());
         configs.add(url);
