@@ -13,7 +13,7 @@ import org.iplantc.admin.belphegor.client.services.model.AppAdminServiceRequestA
 import org.iplantc.admin.belphegor.client.services.model.AppCategorizeRequest;
 import org.iplantc.admin.belphegor.client.services.model.AppCategorizeRequest.CategoryPath;
 import org.iplantc.admin.belphegor.client.services.model.AppCategorizeRequest.CategoryRequest;
-import org.iplantc.de.apps.client.presenter.AppsViewPresenter;
+import org.iplantc.de.apps.client.presenter.AppsViewPresenterImpl;
 import org.iplantc.de.apps.client.presenter.proxy.AppGroupProxy;
 import org.iplantc.de.apps.client.views.AppsView;
 import org.iplantc.de.apps.client.views.widgets.proxy.AppSearchRpcProxy;
@@ -67,14 +67,14 @@ import java.util.List;
  * Discovery Environment. Through the use of deferred binding, the different {@link AppServiceFacade}
  * implementations are resolved, enabling the ability to reuse code.
  * 
- * <b> There are two places in the {@link AppsViewPresenter} where this deferred binding takes place; in
+ * <b> There are two places in the {@link org.iplantc.de.apps.client.presenter.AppsViewPresenterImpl} where this deferred binding takes place; in
  * the {@link #go(com.google.gwt.user.client.ui.HasOneWidget)} method, and in the {@link AppGroupProxy}.
  * 
  * 
  * @author jstroot
  * 
  */
-public class BelphegorAppsViewPresenter extends AppsViewPresenter implements AdminAppsViewPresenter,
+public class BelphegorAppsViewPresenterImpl extends AppsViewPresenterImpl implements AdminAppsViewPresenter,
         BelphegorAppsToolbar.Presenter, AppEditor.Presenter {
 
     private final BelphegorAppsToolbar toolbar;
@@ -84,7 +84,7 @@ public class BelphegorAppsViewPresenter extends AppsViewPresenter implements Adm
     private final AppAdminServiceFacade adminAppService;
 
     @Inject
-    public BelphegorAppsViewPresenter(final AppsView view, final AppGroupProxy proxy, final BelphegorAppsToolbar toolbar, AppAdminServiceFacade appService, AppUserServiceFacade appUserService) {
+    public BelphegorAppsViewPresenterImpl(final AppsView view, final AppGroupProxy proxy, final BelphegorAppsToolbar toolbar, AppAdminServiceFacade appService, AppUserServiceFacade appUserService) {
         super(view, proxy, null, appService, appUserService);
         this.adminAppService = appService;
 

@@ -83,7 +83,7 @@ import java.util.List;
  * @author jstroot
  * 
  */
-public class AppsViewPresenter implements AppsView.Presenter {
+public class AppsViewPresenterImpl implements AppsView.Presenter {
 
     private final EventBus eventBus = EventBus.getInstance();
     private static String WORKSPACE;
@@ -105,7 +105,7 @@ public class AppsViewPresenter implements AppsView.Presenter {
     private RegExp searchRegex;
 
     @Inject
-    public AppsViewPresenter(final AppsView view, final AppGroupProxy proxy, AppsViewToolbar toolbar, AppServiceFacade appService, AppUserServiceFacade appUserService) {
+    public AppsViewPresenterImpl(final AppsView view, final AppGroupProxy proxy, AppsViewToolbar toolbar, AppServiceFacade appService, AppUserServiceFacade appUserService) {
         this.view = view;
         this.appService = appService;
         this.appUserService = appUserService;
@@ -647,9 +647,9 @@ public class AppsViewPresenter implements AppsView.Presenter {
 
     private class MyBuilder implements Builder {
 
-        private final AppsViewPresenter presenter;
+        private final AppsViewPresenterImpl presenter;
 
-        MyBuilder(AppsViewPresenter presenter) {
+        MyBuilder(AppsViewPresenterImpl presenter) {
             this.presenter = presenter;
         }
 

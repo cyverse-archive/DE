@@ -1,6 +1,6 @@
 package org.iplantc.de.apps.client.gin;
 
-import org.iplantc.de.apps.client.presenter.AppsViewPresenter;
+import org.iplantc.de.apps.client.presenter.AppsViewPresenterImpl;
 import org.iplantc.de.apps.client.presenter.SubmitAppForPublicPresenter;
 import org.iplantc.de.apps.client.views.AppsView;
 import org.iplantc.de.apps.client.views.AppsViewImpl;
@@ -30,7 +30,7 @@ public class AppsGinModule extends AbstractGinModule {
         }).toProvider(AppGroupTreeProvider.class);
 
         bind(AppsView.class).to(AppsViewImpl.class);
-        bind(AppsView.Presenter.class).to(AppsViewPresenter.class);
+        bind(AppsView.Presenter.class).to(AppsViewPresenterImpl.class);
         bind(AppsViewToolbar.class).to(AppsViewToolbarImpl.class);
         bind(SubmitAppForPublicUseView.class).to(SubmitAppForPublicUseViewImpl.class);
         bind(SubmitAppForPublicUseView.Presenter.class).to(SubmitAppForPublicPresenter.class);

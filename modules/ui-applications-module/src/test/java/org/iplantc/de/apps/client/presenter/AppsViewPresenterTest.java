@@ -42,7 +42,7 @@
 //
 // /**
 // * Test method for {@link
-// org.iplantc.core.uiapplications.client.presenter.AppsViewPresenter#AppsViewPresenter(org.iplantc.core.uiapplications.client.views.AppsView,
+// org.iplantc.core.uiapplications.client.presenter.AppsViewPresenterImpl#AppsViewPresenterImpl(org.iplantc.core.uiapplications.client.views.AppsView,
 // org.iplantc.core.uiapplications.client.models.CatalogWindowConfig)}.
 // */
 // @Test
@@ -52,7 +52,7 @@
 //
 // /**
 // * Test method for {@link
-// org.iplantc.core.uiapplications.client.presenter.AppsViewPresenter#onAppGroupSelected(org.iplantc.core.uiapplications.client.models.autobeans.AppGroup)}.
+// org.iplantc.core.uiapplications.client.presenter.AppsViewPresenterImpl#onAppGroupSelected(org.iplantc.core.uiapplications.client.models.autobeans.AppGroup)}.
 // */
 // @Test
 // public void testOnAppGroupSelected() {
@@ -61,7 +61,7 @@
 //
 // /**
 // * Test method for {@link
-// org.iplantc.core.uiapplications.client.presenter.AppsViewPresenter#onAppSelected(org.iplantc.core.uiapplications.client.models.autobeans.App)}.
+// org.iplantc.core.uiapplications.client.presenter.AppsViewPresenterImpl#onAppSelected(org.iplantc.core.uiapplications.client.models.autobeans.App)}.
 // */
 // @Test
 // public void testOnAppSelected() {
@@ -70,7 +70,7 @@
 //
 // /**
 // * Test method for {@link
-// org.iplantc.core.uiapplications.client.presenter.AppsViewPresenter#go(com.google.gwt.user.client.ui.HasOneWidget)}.
+// org.iplantc.core.uiapplications.client.presenter.AppsViewPresenterImpl#go(com.google.gwt.user.client.ui.HasOneWidget)}.
 // */
 // @Test
 // public void testGo() {
@@ -79,7 +79,7 @@
 //
 // /**
 // * Test method for {@link
-// org.iplantc.core.uiapplications.client.presenter.AppsViewPresenter#getSelectedApp()}.
+// org.iplantc.core.uiapplications.client.presenter.AppsViewPresenterImpl#getSelectedApp()}.
 // */
 // @Test
 // public void testGetSelectedApp() {
@@ -88,7 +88,7 @@
 //
 // /**
 // * Test method for {@link
-// org.iplantc.core.uiapplications.client.presenter.AppsViewPresenter#getSelectedAppGroup()}.
+// org.iplantc.core.uiapplications.client.presenter.AppsViewPresenterImpl#getSelectedAppGroup()}.
 // */
 // @Test
 // public void testGetSelectedAppGroup() {
@@ -97,7 +97,7 @@
 //
 // /**
 // * Test method for {@link
-// org.iplantc.core.uiapplications.client.presenter.AppsViewPresenter#onAppInfoClicked()}.
+// org.iplantc.core.uiapplications.client.presenter.AppsViewPresenterImpl#onAppInfoClicked()}.
 // */
 // @Test
 // public void testOnAppInfoClicked() {
@@ -106,7 +106,7 @@
 //
 // /**
 // * Test method for {@link
-// org.iplantc.core.uiapplications.client.presenter.AppsViewPresenter#onRequestToolClicked()}.
+// org.iplantc.core.uiapplications.client.presenter.AppsViewPresenterImpl#onRequestToolClicked()}.
 // */
 // @Test
 // public void testOnRequestToolClicked() {
@@ -115,7 +115,7 @@
 //
 // /**
 // * Test method for {@link
-// org.iplantc.core.uiapplications.client.presenter.AppsViewPresenter#onCopyClicked()}.
+// org.iplantc.core.uiapplications.client.presenter.AppsViewPresenterImpl#onCopyClicked()}.
 // */
 // @Test
 // public void testOnCopyClicked() {
@@ -124,7 +124,7 @@
 //
 // /**
 // * Test method for {@link
-// org.iplantc.core.uiapplications.client.presenter.AppsViewPresenter#onDeleteClicked()}.
+// org.iplantc.core.uiapplications.client.presenter.AppsViewPresenterImpl#onDeleteClicked()}.
 // */
 // @Test
 // public void testOnDeleteClicked() {
@@ -133,7 +133,7 @@
 //
 // /**
 // * Test method for {@link
-// org.iplantc.core.uiapplications.client.presenter.AppsViewPresenter#submitClicked()}.
+// org.iplantc.core.uiapplications.client.presenter.AppsViewPresenterImpl#submitClicked()}.
 // */
 // @Test
 // public void testSubmitClicked() {
@@ -142,7 +142,7 @@
 //
 // /**
 // * Test method for {@link
-// org.iplantc.core.uiapplications.client.presenter.AppsViewPresenter#createNewAppClicked()}.
+// org.iplantc.core.uiapplications.client.presenter.AppsViewPresenterImpl#createNewAppClicked()}.
 // */
 // @Test
 // public void testCreateNewAppClicked() {
@@ -151,7 +151,7 @@
 //
 // /**
 // * Test method for {@link
-// org.iplantc.core.uiapplications.client.presenter.AppsViewPresenter#createWorkflowClicked()}.
+// org.iplantc.core.uiapplications.client.presenter.AppsViewPresenterImpl#createWorkflowClicked()}.
 // */
 // @Test
 // public void testCreateWorkflowClicked() {
@@ -160,7 +160,7 @@
 //
 // /**
 // * Test method for {@link
-// org.iplantc.core.uiapplications.client.presenter.AppsViewPresenter#onAppNameSelected(org.iplantc.core.uiapplications.client.models.autobeans.App)}.
+// org.iplantc.core.uiapplications.client.presenter.AppsViewPresenterImpl#onAppNameSelected(org.iplantc.core.uiapplications.client.models.autobeans.App)}.
 // */
 // @Test
 // public void testOnAppNameSelected() {
