@@ -109,7 +109,7 @@ public class DeDiskResourceWindow extends IplantWindowBase implements SelectionH
     @Override
     public <C extends WindowConfig> void update(C config) {
         DiskResourceWindowConfig drConfig = (DiskResourceWindowConfig)config;
-        presenter.setSelectedFolderById(drConfig.getSelectedFolder());
+        presenter.setSelectedFolderByPath(drConfig.getSelectedFolder());
         presenter.setSelectedDiskResourcesById(drConfig.getSelectedDiskResources());
     }
 

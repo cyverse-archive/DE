@@ -1,6 +1,6 @@
 package org.iplantc.de.diskResource.client.presenters.proxy;
 
-import org.iplantc.de.client.models.HasId;
+import org.iplantc.de.client.models.HasPath;
 import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.commons.client.info.ErrorAnnouncementConfig;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
@@ -30,13 +30,13 @@ import java.util.Stack;
  * @author jstroot
  * 
  */
-public class SelectFolderByIdLoadHandler implements LoadHandler<Folder, List<Folder>> {
+public class SelectFolderByPathLoadHandler implements LoadHandler<Folder, List<Folder>> {
 
     private final Stack<String> pathsToLoad = new Stack<String>();
     private final LinkedList<String> path;
     private boolean rootsLoaded;
 
-    private final HasId folderToSelect;
+    private final HasPath folderToSelect;
 
     private final DiskResourceView view;
     private final DiskResourceView.Presenter presenter;
@@ -44,7 +44,7 @@ public class SelectFolderByIdLoadHandler implements LoadHandler<Folder, List<Fol
     private final IplantAnnouncer announcer;
     private boolean rootFolderDetected;
 
-    public SelectFolderByIdLoadHandler(final HasId folderToSelect,
+    public SelectFolderByPathLoadHandler(final HasPath folderToSelect,
             final DiskResourceView.Presenter presenter, final IplantAnnouncer announcer) {
         presenter.mask(""); //$NON-NLS-1$
         this.folderToSelect = folderToSelect;
@@ -54,9 +54,10 @@ public class SelectFolderByIdLoadHandler implements LoadHandler<Folder, List<Fol
         this.announcer = announcer;
 
         // Split the string on "/"
-        path = Lists.newLinkedList(Splitter.on("/").trimResults().omitEmptyStrings().split(folderToSelect.getId())); //$NON-NLS-1$
+        path = Lists.newLinkedList(Splitter
+                .on("/").trimResults().omitEmptyStrings().split(folderToSelect.getPath())); //$NON-NLS-1$
 
-        rootsLoaded = view.getTreeStore().getAllItemsCount() > 0;
+        rootsLoaded = view.getTreeStore().getRootCount() > 0;
         if (rootsLoaded) {
             initPathsToLoad();
         }
@@ -93,7 +94,7 @@ public class SelectFolderByIdLoadHandler implements LoadHandler<Folder, List<Fol
         }
 
         path.add(pathsToLoad.pop());
-        Folder folder = view.getFolderById(getNextPathToLoad());
+        Folder folder = view.getFolderByPath(getNextPathToLoad());
 
         if (folder != null) {
             if (pathsToLoad.isEmpty()) {
@@ -125,11 +126,11 @@ public class SelectFolderByIdLoadHandler implements LoadHandler<Folder, List<Fol
      * force a reload of its children, in order to start the {@link #onLoad(LoadEvent)} callbacks.
      */
     private void initPathsToLoad() {
-        Folder folder = view.getFolderById(folderToSelect.getId());
+        Folder folder = view.getFolderByPath(folderToSelect.getPath());
         // Find the paths which are not yet loaded, and push them onto the 'pathsToLoad' stack
         while ((folder == null) && !path.isEmpty()) {
             pathsToLoad.push(path.removeLast());
-            folder = view.getFolderById(getNextPathToLoad());
+            folder = view.getFolderByPath(getNextPathToLoad());
         }
 
         if (folder == null) {
@@ -139,7 +140,7 @@ public class SelectFolderByIdLoadHandler implements LoadHandler<Folder, List<Fol
         } else {
             this.rootFolderDetected = true;
             // A folder along the path to load has been found.
-            if (folder.getPath().equals(folderToSelect.getId())) {
+            if (folder.getPath().equals(folderToSelect.getPath())) {
                 // Exit condition: The target folder has already been loaded, so just select it.
                 if (!folder.equals(presenter.getSelectedFolder())) {
                     view.setSelectedFolder(folder);

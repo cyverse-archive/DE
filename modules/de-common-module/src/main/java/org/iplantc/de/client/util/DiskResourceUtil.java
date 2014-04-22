@@ -3,8 +3,8 @@
  */
 package org.iplantc.de.client.util;
 
-import org.iplantc.de.client.models.CommonModelAutoBeanFactory;
 import org.iplantc.de.client.models.HasId;
+import org.iplantc.de.client.models.HasPath;
 import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.client.models.diskResources.File;
@@ -20,8 +20,6 @@ import com.google.common.collect.Sets;
 import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONObject;
-import com.google.web.bindery.autobean.shared.AutoBean;
-import com.google.web.bindery.autobean.shared.AutoBeanCodex;
 import com.google.web.bindery.autobean.shared.Splittable;
 import com.google.web.bindery.autobean.shared.impl.StringQuoter;
 
@@ -247,10 +245,11 @@ public class DiskResourceUtil {
         return StringQuoter.split(JsonUtil.buildArrayFromStrings(strings).toString());
     }
 
-    public static HasId getFolderIdFromFile(CommonModelAutoBeanFactory cFactory, File file) {
-        AutoBean<HasId> hAb = AutoBeanCodex.decode(cFactory, HasId.class, "{\"id\": \""
-                + parseParent(file.getId()) + "\"}");
-        return hAb.as();
+    public static HasPath getFolderPathFromFile(File file) {
+        if (file != null) {
+            return CommonModelUtils.createHasPathFromString(parseParent(file.getPath()));
+        }
+        return null;
     }
 
     public static String formatFileSize(String strSize) {

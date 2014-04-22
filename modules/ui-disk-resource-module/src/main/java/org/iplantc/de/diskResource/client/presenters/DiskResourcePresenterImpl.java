@@ -4,6 +4,7 @@ import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.events.diskResources.FolderRefreshEvent;
 import org.iplantc.de.client.events.diskResources.OpenFolderEvent;
 import org.iplantc.de.client.models.HasId;
+import org.iplantc.de.client.models.HasPath;
 import org.iplantc.de.client.models.HasPaths;
 import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.client.models.diskResources.DiskResource;
@@ -46,7 +47,7 @@ import org.iplantc.de.diskResource.client.presenters.handlers.ToolbarButtonVisib
 import org.iplantc.de.diskResource.client.presenters.proxy.FolderContentsLoadConfig;
 import org.iplantc.de.diskResource.client.presenters.proxy.FolderContentsRpcProxy;
 import org.iplantc.de.diskResource.client.presenters.proxy.SelectDiskResourceByIdStoreAddHandler;
-import org.iplantc.de.diskResource.client.presenters.proxy.SelectFolderByIdLoadHandler;
+import org.iplantc.de.diskResource.client.presenters.proxy.SelectFolderByPathLoadHandler;
 import org.iplantc.de.diskResource.client.search.events.SaveDiskResourceQueryEvent;
 import org.iplantc.de.diskResource.client.search.events.SubmitDiskResourceQueryEvent;
 import org.iplantc.de.diskResource.client.search.events.UpdateSavedSearchesEvent;
@@ -69,7 +70,6 @@ import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONString;
-import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HTML;
@@ -123,10 +123,14 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter {
     private PagingLoader<FolderContentsLoadConfig, PagingLoadResult<DiskResource>> gridLoader;
     private final DataSearchPresenter dataSearchPresenter;
     private final EventBus eventBus;
+    private final IplantAnnouncer announcer;
 
     @Inject
-    public DiskResourcePresenterImpl(final DiskResourceView view, final DiskResourceView.Proxy proxy, final FolderContentsRpcProxy folderRpcProxy, final DiskResourceServiceFacade diskResourceService,
-            final IplantDisplayStrings display, final DiskResourceAutoBeanFactory factory, final DataSearchPresenter dataSearchPresenter, final EventBus eventBus) {
+    public DiskResourcePresenterImpl(final DiskResourceView view, final DiskResourceView.Proxy proxy,
+            final FolderContentsRpcProxy folderRpcProxy,
+            final DiskResourceServiceFacade diskResourceService, final IplantDisplayStrings display,
+            final DiskResourceAutoBeanFactory factory, final DataSearchPresenter dataSearchPresenter,
+            final EventBus eventBus, IplantAnnouncer announcer) {
         this.view = view;
         this.proxy = proxy;
         this.rpc_proxy = folderRpcProxy;
@@ -135,6 +139,7 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter {
         this.drFactory = factory;
         this.dataSearchPresenter = dataSearchPresenter;
         this.eventBus = eventBus;
+        this.announcer = announcer;
 
         builder = new MyBuilder(this);
 
@@ -225,17 +230,18 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter {
         container.setWidget(view);
         // JDS Re-select currently selected folder in order to load center
         // panel.
-        setSelectedFolderById(getSelectedFolder());
+        setSelectedFolderByPath(getSelectedFolder());
     }
 
     @Override
-    public void go(HasOneWidget container, HasId folderToSelect, final List<? extends HasId> diskResourcesToSelect) {
+    public void go(HasOneWidget container, HasPath folderToSelect,
+            final List<? extends HasId> diskResourcesToSelect) {
 
-        if ((folderToSelect == null) || Strings.isNullOrEmpty(folderToSelect.getId())) {
+        if ((folderToSelect == null) || Strings.isNullOrEmpty(folderToSelect.getPath())) {
             go(container);
         } else {
             container.setWidget(view);
-            setSelectedFolderById(folderToSelect);
+            setSelectedFolderByPath(folderToSelect);
             setSelectedDiskResourcesById(diskResourcesToSelect);
         }
     }
@@ -248,12 +254,12 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter {
     }
 
     @Override
-    public void setSelectedFolderById(final HasId folderToSelect) {
-        if ((folderToSelect == null) || Strings.isNullOrEmpty(folderToSelect.getId())) {
+    public void setSelectedFolderByPath(final HasPath folderToSelect) {
+        if ((folderToSelect == null) || Strings.isNullOrEmpty(folderToSelect.getPath())) {
             return;
         }
 
-        Folder folder = view.getFolderById(folderToSelect.getId());
+        Folder folder = view.getFolderByPath(folderToSelect.getPath());
         if (folder != null) {
             final Folder selectedFolder = view.getSelectedFolder();
             if (folder == selectedFolder) {
@@ -271,32 +277,32 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter {
         } else {
             /**
              * if root folders are already loaded check if the requested folder's id matches root-prefix
-             * 
              */
             boolean matched = false;
             if (view.getTreeStore().getRootCount() > 0) {
                 for (Folder f : view.getTreeStore().getRootItems()) {
-                    if (folderToSelect.getId().startsWith(f.getPath())) {
+                    if (folderToSelect.getPath().startsWith(f.getPath())) {
                         matched = true;
                         break;
                     }
                 }
 
                 if (!matched) {
-                    SafeHtml errMsg = SafeHtmlUtils.fromTrustedString(I18N.ERROR.diskResourceDoesNotExist(folderToSelect.getId()));
-                    IplantAnnouncer.getInstance().schedule(new ErrorAnnouncementConfig(errMsg));
+                    String errMsg = I18N.ERROR.diskResourceDoesNotExist(folderToSelect.getPath());
+                    announcer.schedule(new ErrorAnnouncementConfig(SafeHtmlUtils
+                            .fromTrustedString(errMsg)));
                     return;
                 }
             }
 
             // Create and add the SelectFolderByIdLoadHandler to the treeLoader.
-            final SelectFolderByIdLoadHandler handler = new SelectFolderByIdLoadHandler(folderToSelect, this, IplantAnnouncer.getInstance());
+            final SelectFolderByPathLoadHandler handler = new SelectFolderByPathLoadHandler(
+                    folderToSelect, this, announcer);
             /*
              * Only add handler if no root items have been loaded, or the folderToSelect has a common
              * root with the treestore.
              */
-            if ((view.getTreeStore().getAllItemsCount() == 0)
-                    || (view.getTreeStore().getAllItemsCount() > 0 && handler.isRootFolderDetected())) {
+            if (view.getTreeStore().getRootCount() < 1 || handler.isRootFolderDetected()) {
                 addEventHandlerRegistration(handler, treeLoader.addLoadHandler(handler));
             }
         }
@@ -377,7 +383,7 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter {
         Folder selectedFolder = getSelectedFolder();
 
         if (selectedFolder == null) {
-            return view.getFolderById(UserInfo.getInstance().getHomePath());
+            return view.getFolderByPath(UserInfo.getInstance().getHomePath());
         }
 
         return selectedFolder;
@@ -385,8 +391,8 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter {
 
     @Override
     public void onNewWindow() {
-        String folderId = getSelectedFolder() == null ? null : getSelectedFolder().getPath();
-        OpenFolderEvent openEvent = new OpenFolderEvent(folderId);
+        String folderPath = getSelectedFolder() == null ? null : getSelectedFolder().getPath();
+        OpenFolderEvent openEvent = new OpenFolderEvent(folderPath);
         openEvent.requestNewView(true);
         EventBus.getInstance().fireEvent(openEvent);
     }
@@ -531,7 +537,7 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter {
                         p.setDiskResourceMetaData(mview.getMetadataToAdd(), mview.getMetadataToDelete(), new DiskResourceMetadataUpdateCallback());
                         ipd.hide();
                     } else {
-                        IplantAnnouncer.getInstance().schedule(new ErrorAnnouncementConfig(I18N.ERROR.metadataFormInvalid()));
+                        announcer.schedule(new ErrorAnnouncementConfig(I18N.ERROR.metadataFormInvalid()));
                     }
                 }
             });
@@ -759,7 +765,7 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter {
 
             @Override
             public void onSuccess(String result) {
-                doRefresh(view.getFolderById(UserInfo.getInstance().getTrashPath()));
+                doRefresh(view.getFolderByPath(UserInfo.getInstance().getTrashPath()));
                 view.unmask();
             }
 
@@ -834,11 +840,12 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter {
                     if (canDragDataToTargetFolder(targetFolder, selectedResources)) {
                         doMoveDiskResources(targetFolder, selectedResources);
                     } else {
-                        IplantAnnouncer.getInstance().schedule(new ErrorAnnouncementConfig(I18N.ERROR.diskResourceIncompleteMove()));
+                        announcer.schedule(new ErrorAnnouncementConfig(I18N.ERROR
+                                .diskResourceIncompleteMove()));
                         view.unmask();
                     }
                 } else {
-                    IplantAnnouncer.getInstance().schedule(new ErrorAnnouncementConfig(I18N.ERROR.permissionErrorMessage()));
+                    announcer.schedule(new ErrorAnnouncementConfig(I18N.ERROR.permissionErrorMessage()));
                     view.unmask();
                 }
             }

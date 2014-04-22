@@ -33,7 +33,7 @@ public class UserSettings {
     private String notifyShortCut;
     private String closeShortCut;
     private Folder systemDefaultOutputFolder;
-    private String lastPathId;
+    private String lastPath;
     
     
     public static final String EMAIL_NOTIFCATOIN = "enableEmailNotification";
@@ -47,7 +47,7 @@ public class UserSettings {
     public static final String NOTIFICATION_KB_SHORTCUT = "notificationKBShortcut";
     public static final String CLOSE_KB_SHORTCUT_STRING = "closeKBShortcut";
     public static final String SYSTEM_DEFAULT_OUTPUT_DIR = "systemDefaultOutputDir";
-    public static final String LAST_PATH_ID = "lastPathId";
+    public static final String LAST_PATH = "lastPathId";
 
 
     private static UserSettings instance;
@@ -86,7 +86,7 @@ public class UserSettings {
         setSaveSession(split.get(SAVE_SESSION).asBoolean());
         setDefaultOutputFolder(buildFolder(split.get(DEFAULT_OUTPUT_FOLDER)));
         setSystemDefaultOutputFolder(buildFolder(split.get(SYSTEM_DEFAULT_OUTPUT_DIR)));
-        setLastPathId(split.get(LAST_PATH_ID).asString());
+        setLastPath(split.get(LAST_PATH).asString());
 
         parseKeyboardShortcuts(split);
     }
@@ -214,7 +214,7 @@ public class UserSettings {
         StringQuoter.create(getDataShortCut()).assign(ret, DATA_KB_SHORTCUT);
         StringQuoter.create(getNotifiShortCut()).assign(ret, NOTIFICATION_KB_SHORTCUT);
         StringQuoter.create(getCloseShortCut()).assign(ret, CLOSE_KB_SHORTCUT_STRING);
-        StringQuoter.create(getLastPathId()).assign(ret, LAST_PATH_ID);
+        StringQuoter.create(getLastPath()).assign(ret, LAST_PATH);
 
         return ret;
     }
@@ -298,16 +298,16 @@ public class UserSettings {
     }
 
     /**
-     * @return the lastPathId
+     * @return the lastPath
      */
-    public String getLastPathId() {
-        return lastPathId;
+    public String getLastPath() {
+        return lastPath;
     }
 
     /**
-     * @param lastPathId the lastPathId to set
+     * @param lastPath the lastPath to set
      */
-    public void setLastPathId(String lastPathId) {
-        this.lastPathId = lastPathId;
+    public void setLastPath(String lastPath) {
+        this.lastPath = lastPath;
     }
 }

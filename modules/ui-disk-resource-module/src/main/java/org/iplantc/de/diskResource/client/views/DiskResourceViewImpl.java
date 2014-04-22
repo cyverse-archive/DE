@@ -2,6 +2,7 @@ package org.iplantc.de.diskResource.client.views;
 
 import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.models.HasId;
+import org.iplantc.de.client.models.HasPath;
 import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.client.models.diskResources.DiskResourceInfo;
 import org.iplantc.de.client.models.diskResources.File;
@@ -120,10 +121,10 @@ public class DiskResourceViewImpl implements DiskResourceView {
         @Override
         public void onKeyPress(KeyPressEvent event) {
             if (event.getNativeEvent().getKeyCode() == KeyCodes.KEY_ENTER && !Strings.isNullOrEmpty(pathField.getCurrentValue())) {
-                HasId folderToSelect = CommonModelUtils.createHasIdFromString(pathField.getCurrentValue());
-                presenter.setSelectedFolderById(folderToSelect);
+                String path = pathField.getCurrentValue();
+                HasPath folderToSelect = CommonModelUtils.createHasPathFromString(path);
+                presenter.setSelectedFolderByPath(folderToSelect);
             }
-
         }
     }
 
@@ -610,6 +611,19 @@ public class DiskResourceViewImpl implements DiskResourceView {
         }
 
         return treeStore.findModelWithKey(folderId);
+    }
+
+    @Override
+    public Folder getFolderByPath(String path) {
+        if (treeStore.getRootItems() != null) {
+            for (Folder root : treeStore.getRootItems()) {
+                if (root.getPath().equals(path)) {
+                    return root;
+                }
+            }
+        }
+
+        return treeStore.findModelWithKey(path);
     }
 
     @Override

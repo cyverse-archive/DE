@@ -4,8 +4,8 @@ import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.events.NotificationCountUpdateEvent;
 import org.iplantc.de.client.events.WindowShowRequestEvent;
 import org.iplantc.de.client.gin.ServicesInjector;
-import org.iplantc.de.client.models.CommonModelAutoBeanFactory;
 import org.iplantc.de.client.models.HasId;
+import org.iplantc.de.client.models.HasPath;
 import org.iplantc.de.client.models.analysis.AnalysesAutoBeanFactory;
 import org.iplantc.de.client.models.analysis.Analysis;
 import org.iplantc.de.client.models.diskResources.DiskResourceAutoBeanFactory;
@@ -53,7 +53,6 @@ public class NotificationHelper {
     private int total;
 
     private final DiskResourceAutoBeanFactory drFactory = GWT.create(DiskResourceAutoBeanFactory.class);
-    private final CommonModelAutoBeanFactory cFactory = GWT.create(CommonModelAutoBeanFactory.class);
     private final AnalysesAutoBeanFactory analysesFactory = GWT.create(AnalysesAutoBeanFactory.class);
     private final NotificationAutoBeanFactory notificationFactory = GWT
             .create(NotificationAutoBeanFactory.class);
@@ -83,15 +82,15 @@ public class NotificationHelper {
         switch (category) {
             case DATA:
                 // execute data context
-                AutoBean<File> fAb = AutoBeanCodex.decode(drFactory, File.class, context);
-                ArrayList<HasId> newArrayList = Lists.newArrayList();
-                newArrayList.add(fAb.as());
+                File file = AutoBeanCodex.decode(drFactory, File.class, context).as();
+                ArrayList<HasId> selectedResources = Lists.newArrayList();
+                selectedResources.add(file);
 
                 DiskResourceWindowConfig dataWindowConfig = ConfigFactory
                         .diskResourceWindowConfig(false);
-                HasId folderId = DiskResourceUtil.getFolderIdFromFile(cFactory, fAb.as());
-                dataWindowConfig.setSelectedFolder(folderId);
-                dataWindowConfig.setSelectedDiskResources(newArrayList);
+                HasPath folder = DiskResourceUtil.getFolderPathFromFile(file);
+                dataWindowConfig.setSelectedFolder(folder);
+                dataWindowConfig.setSelectedDiskResources(selectedResources);
                 EventBus.getInstance().fireEvent(new WindowShowRequestEvent(dataWindowConfig, true));
 
                 break;

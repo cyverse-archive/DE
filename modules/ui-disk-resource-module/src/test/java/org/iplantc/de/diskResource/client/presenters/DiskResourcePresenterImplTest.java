@@ -1,18 +1,20 @@
 package org.iplantc.de.diskResource.client.presenters;
 
 import org.iplantc.de.client.events.EventBus;
-import org.iplantc.de.client.models.HasId;
+import org.iplantc.de.client.models.HasPath;
 import org.iplantc.de.client.models.diskResources.DiskResourceAutoBeanFactory;
 import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.client.services.DiskResourceServiceFacade;
+import org.iplantc.de.commons.client.info.IplantAnnouncer;
 import org.iplantc.de.diskResource.client.presenters.proxy.FolderContentsRpcProxy;
-import org.iplantc.de.diskResource.client.presenters.proxy.SelectFolderByIdLoadHandler;
+import org.iplantc.de.diskResource.client.presenters.proxy.SelectFolderByPathLoadHandler;
 import org.iplantc.de.diskResource.client.search.presenter.DataSearchPresenter;
 import org.iplantc.de.diskResource.client.search.views.DiskResourceSearchField;
 import org.iplantc.de.diskResource.client.views.DiskResourceView;
 import org.iplantc.de.diskResource.client.views.widgets.DiskResourceViewToolbar;
 import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 
+import com.google.common.collect.Lists;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.safehtml.client.HasSafeHtml;
 import com.google.gwtmockito.GxtMockitoTestRunner;
@@ -42,7 +44,8 @@ public class DiskResourcePresenterImplTest {
     @Mock DiskResourceAutoBeanFactory mockFactory;
     @Mock DataSearchPresenter mockDataSearchPresenter;
     @Mock EventBus mockEventBus;
-    
+    @Mock IplantAnnouncer mockAnnouncer;
+
     @Mock DiskResourceViewToolbar mockToolbar;
     @Mock DiskResourceSearchField mockSearchField;
 
@@ -52,7 +55,9 @@ public class DiskResourcePresenterImplTest {
 
     @Before public void setUp() {
         setupMocks();
-        uut = new DiskResourcePresenterImpl(mockView, mockProck, mockFolderRpcProxy, mockDiskResourceService, mockDisplayStrings, mockFactory, mockDataSearchPresenter, mockEventBus);
+        uut = new DiskResourcePresenterImpl(mockView, mockProck, mockFolderRpcProxy,
+                mockDiskResourceService, mockDisplayStrings, mockFactory, mockDataSearchPresenter,
+                mockEventBus, mockAnnouncer);
     }
 
     /**
@@ -62,21 +67,22 @@ public class DiskResourcePresenterImplTest {
      * Folder has not yet been loaded.
      * Folder has no common roots with tree store.
      */
-    @Test public void testSetSelectedFolderById_Case1() {
+    @Test
+    public void testSetSelectedFolderByPath_Case1() {
         DiskResourcePresenterImpl spy = spy(uut);
-        HasId mockHasId = mock(HasId.class);
-        final String TESTID = "/no/common/root";
-        when(mockHasId.getId()).thenReturn(TESTID);
+        HasPath mockHasPath = mock(HasPath.class);
+        final String TEST_PATH = "/no/common/root";
+        when(mockHasPath.getPath()).thenReturn(TEST_PATH);
 
         // Folder has not yet been loaded
-        when(mockView.getFolderById(TESTID)).thenReturn(null);
+        when(mockView.getFolderByPath(TEST_PATH)).thenReturn(null);
 
         // Roots have been loaded
-        when(mockTreeStore.getAllItemsCount()).thenReturn(4);
+        when(mockTreeStore.getRootCount()).thenReturn(4);
 
-        spy.setSelectedFolderById(mockHasId);
+        spy.setSelectedFolderByPath(mockHasPath);
 
-        verify(spy, never()).addEventHandlerRegistration(any(SelectFolderByIdLoadHandler.class), any(HandlerRegistration.class));
+        verify(spy, never()).addEventHandlerRegistration(any(SelectFolderByPathLoadHandler.class), any(HandlerRegistration.class));
     }
 
     /**
@@ -86,29 +92,31 @@ public class DiskResourcePresenterImplTest {
      * Folder has not yet been loaded.
      * Folder has common root with treeStore
      */
-    @Test public void testSetSelectedFolderById_Case2() {
+    @Test
+    public void testSetSelectedFolderByPath_Case2() {
         DiskResourcePresenterImpl spy = spy(uut);
-        HasId mockHasId = mock(HasId.class);
+        HasPath mockHasPath = mock(HasPath.class);
         final String COMMON_ROOT = "/home";
-        final String TESTID = COMMON_ROOT + "/common/root";
-        when(mockHasId.getId()).thenReturn(TESTID);
+        final String TEST_PATH = COMMON_ROOT + "/common/root";
+        when(mockHasPath.getPath()).thenReturn(TEST_PATH);
 
         // Folder has not yet been loaded
-        when(mockView.getFolderById(TESTID)).thenReturn(null);
+        when(mockView.getFolderByPath(TEST_PATH)).thenReturn(null);
 
         // Folder has common root
         Folder mockFolder = mock(Folder.class);
-        when(mockView.getFolderById(COMMON_ROOT)).thenReturn(mockFolder);
+        when(mockView.getFolderByPath(COMMON_ROOT)).thenReturn(mockFolder);
         // Set up mock to bypass id load handler init logic, we don't need to test that here.
-        when(mockFolder.getPath()).thenReturn("");
+        when(mockTreeStore.getRootItems()).thenReturn(Lists.newArrayList(mockFolder));
+        when(mockFolder.getPath()).thenReturn(COMMON_ROOT);
         when(mockView.isLoaded(mockFolder)).thenReturn(false);
 
         // Roots have been loaded
-        when(mockTreeStore.getAllItemsCount()).thenReturn(4);
+        when(mockTreeStore.getRootCount()).thenReturn(4);
 
-        spy.setSelectedFolderById(mockHasId);
+        spy.setSelectedFolderByPath(mockHasPath);
 
-        verify(spy).addEventHandlerRegistration(any(SelectFolderByIdLoadHandler.class), any(HandlerRegistration.class));
+        verify(spy).addEventHandlerRegistration(any(SelectFolderByPathLoadHandler.class), any(HandlerRegistration.class));
     }
 
     /**
@@ -117,22 +125,23 @@ public class DiskResourcePresenterImplTest {
      * Root folders have not been loaded.
      * Folder has not yet been loaded.
      */
-    @Test public void testSetSelectedFolderById_Case3() {
+    @Test
+    public void testSetSelectedFolderByPath_Case3() {
         DiskResourcePresenterImpl spy = spy(uut);
-        HasId mockHasId = mock(HasId.class);
+        HasPath mockHasPath = mock(HasPath.class);
         final String COMMON_ROOT = "/home";
-        final String TESTID = COMMON_ROOT + "/common/root";
-        when(mockHasId.getId()).thenReturn(TESTID);
+        final String TEST_PATH = COMMON_ROOT + "/common/root";
+        when(mockHasPath.getPath()).thenReturn(TEST_PATH);
 
         // Folder has not yet been loaded
-        when(mockView.getFolderById(TESTID)).thenReturn(null);
+        when(mockView.getFolderByPath(TEST_PATH)).thenReturn(null);
 
         // Roots have been loaded
-        when(mockTreeStore.getAllItemsCount()).thenReturn(0);
+        when(mockTreeStore.getRootCount()).thenReturn(0);
 
-        spy.setSelectedFolderById(mockHasId);
+        spy.setSelectedFolderByPath(mockHasPath);
 
-        verify(spy).addEventHandlerRegistration(any(SelectFolderByIdLoadHandler.class), any(HandlerRegistration.class));
+        verify(spy).addEventHandlerRegistration(any(SelectFolderByPathLoadHandler.class), any(HandlerRegistration.class));
     }
 
     private void setupMocks() {
