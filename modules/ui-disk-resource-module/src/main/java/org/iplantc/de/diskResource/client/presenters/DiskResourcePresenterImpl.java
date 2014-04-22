@@ -522,17 +522,21 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter {
         p.go(ipd);
         if (DiskResourceUtil.isWritable(selected)) {
             ipd.setHideOnButtonClick(false);
-
             ipd.addOkButtonSelectHandler(new SelectHandler() {
-
                 @Override
                 public void onSelect(SelectEvent event) {
-                    if (mview.isValid()) {
+                    if (mview.shouldValidate()) {
+                        if (mview.isValid()) {
+                            p.setDiskResourceMetaData(mview.getMetadataToAdd(), mview.getMetadataToDelete(), new DiskResourceMetadataUpdateCallback());
+                            ipd.hide();
+                        } else {
+                            IplantAnnouncer.getInstance().schedule(new ErrorAnnouncementConfig(I18N.ERROR.metadataFormInvalid()));
+                        }
+                    } else {
                         p.setDiskResourceMetaData(mview.getMetadataToAdd(), mview.getMetadataToDelete(), new DiskResourceMetadataUpdateCallback());
                         ipd.hide();
-                    } else {
-                        IplantAnnouncer.getInstance().schedule(new ErrorAnnouncementConfig(I18N.ERROR.metadataFormInvalid()));
                     }
+
                 }
             });
 

@@ -23,6 +23,8 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.safehtml.client.SafeHtmlTemplates;
 import com.google.gwt.safehtml.shared.SafeHtml;
@@ -171,6 +173,7 @@ public class DiskResourceMetadataView implements IsWidget {
 
     private static final String IPC_METADATA_TEMPLATE_ATTR = "ipc-metadata-template"; //$NON-NLS-1$
     private static final String USER_UNIT_TAG = "ipc_user_unit_tag"; //$NON-NLS-1$
+    private static final String IPC_METADATA_TEMPLATE_COMPELTE = "ipc-metadata-template-complete"; //$NON-NLS-1$
 
     @UiTemplate("DiskResourceMetadataEditorPanel.ui.xml")
     interface DiskResourceMetadataEditorPanelUiBinder extends UiBinder<Widget, DiskResourceMetadataView> {
@@ -258,6 +261,8 @@ public class DiskResourceMetadataView implements IsWidget {
     }
 
     MetadataHtmlTemplates htmlTemplates = GWT.create(MetadataHtmlTemplates.class);
+    private com.google.gwt.user.client.ui.CheckBox isCompleteCbx;
+    private boolean isTemplateComplete;
 
     public DiskResourceMetadataView(DiskResource dr) {
         widget = uiBinder.createAndBindUi(this);
@@ -323,12 +328,28 @@ public class DiskResourceMetadataView implements IsWidget {
                 listStore.remove(attrAvuMap.get(attribute.getName()));
             }
         }
+        templateContainer.add(buildTemplateCompleteCheckBoxField(), new VerticalLayoutData(.25, -1));
         alc.forceLayout();
         alc.unmask();
     }
 
     private IPlantAnchor buildRemoveTemplateLink() {
         return new IPlantAnchor(I18N.DISPLAY.metadataTemplateRemove(), 575, new RemoveTemplateHandlerImpl());
+    }
+
+    private com.google.gwt.user.client.ui.CheckBox buildTemplateCompleteCheckBoxField() {
+        isCompleteCbx = new com.google.gwt.user.client.ui.CheckBox(" Metadata complete (Check this only when you have entered all required fields).");
+        isCompleteCbx.setValue(isTemplateComplete);
+        isCompleteCbx.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
+            
+            @Override
+            public void onValueChange(ValueChangeEvent<Boolean> event) {
+                isTemplateComplete = event.getValue();
+                
+            }
+        });
+        listStore.remove(attrAvuMap.get(IPC_METADATA_TEMPLATE_COMPELTE));
+        return isCompleteCbx;
     }
 
     private void deleteTemplateAttrs() {
@@ -645,6 +666,9 @@ public class DiskResourceMetadataView implements IsWidget {
                     metaDataToAdd.add(newMetadata(attr, value, "")); //$NON-NLS-1$
                 }
             }
+            
+            metaDataToAdd.add(newMetadata(IPC_METADATA_TEMPLATE_COMPELTE, isCompleteCbx.getValue() + "", ""));
+            
         }
 
         return metaDataToAdd;
@@ -715,6 +739,9 @@ public class DiskResourceMetadataView implements IsWidget {
             if (attribute.equalsIgnoreCase(IPC_METADATA_TEMPLATE_ATTR)) {
                 templateAvu = avu;
             }
+            if(attribute.equalsIgnoreCase(IPC_METADATA_TEMPLATE_COMPELTE)) {
+                isTemplateComplete = Boolean.parseBoolean(avu.getValue());
+            }
         }
 
         listStore.clear();
@@ -742,6 +769,10 @@ public class DiskResourceMetadataView implements IsWidget {
 
         }
         return valid;
+    }
+
+    public boolean shouldValidate() {
+        return isTemplateComplete;
     }
 
     private void buildTemplateContainer() {

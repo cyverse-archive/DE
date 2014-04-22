@@ -25,78 +25,72 @@ import java.util.Set;
 
 public class MetadataPresenter implements Presenter {
 
-
-	private final DiskResource resource;
-	private final DiskResourceMetadataView view;
+    private final DiskResource resource;
+    private final DiskResourceMetadataView view;
     private final DiskResourceServiceFacade drService = ServicesInjector.INSTANCE.getDiskResourceServiceFacade();
-    private final DiskResourceAutoBeanFactory autoBeanFactory = GWT
-            .create(DiskResourceAutoBeanFactory.class);
+    private final DiskResourceAutoBeanFactory autoBeanFactory = GWT.create(DiskResourceAutoBeanFactory.class);
 
-	public MetadataPresenter(DiskResource selected, DiskResourceMetadataView view) {
-		this.resource = selected;
-		this.view = view;
-		view.setPresenter(this);
-		getDiskResourceMetadata(new RetrieveMetadataCallback());
-		getTemplates();
-	}
-
-	@Override
-	public void go(HasOneWidget container) {
-		container.setWidget(view.asWidget());
-	}
-
-    @Override
-    public void getDiskResourceMetadata(AsyncCallback<String> callback) {
-    	drService.getDiskResourceMetaData(resource, callback);
+    public MetadataPresenter(DiskResource selected, DiskResourceMetadataView view) {
+        this.resource = selected;
+        this.view = view;
+        view.setPresenter(this);
+        getDiskResourceMetadata(new RetrieveMetadataCallback());
+        getTemplates();
     }
 
     @Override
-    public void setDiskResourceMetaData(Set<DiskResourceMetadata> metadataToAdd,
-            Set<DiskResourceMetadata> metadataToDelete,
-            DiskResourceMetadataUpdateCallback diskResourceMetadataUpdateCallback) {
-    	drService.setDiskResourceMetaData(resource, metadataToAdd, metadataToDelete,
-                diskResourceMetadataUpdateCallback);
+    public void go(HasOneWidget container) {
+        container.setWidget(view.asWidget());
+    }
+
+    @Override
+    public void getDiskResourceMetadata(AsyncCallback<String> callback) {
+        drService.getDiskResourceMetaData(resource, callback);
+    }
+
+    @Override
+    public void setDiskResourceMetaData(Set<DiskResourceMetadata> metadataToAdd, Set<DiskResourceMetadata> metadataToDelete, DiskResourceMetadataUpdateCallback diskResourceMetadataUpdateCallback) {
+        drService.setDiskResourceMetaData(resource, metadataToAdd, metadataToDelete, diskResourceMetadataUpdateCallback);
     }
 
     @Override
     public void getTemplates() {
-    	drService.getMetadataTemplateListing(new AsyncCallback<String>() {
+        drService.getMetadataTemplateListing(new AsyncCallback<String>() {
 
-			@Override
-			public void onFailure(Throwable arg0) {
-				ErrorHandler.post("Unable to retrieve templates!", arg0);
+            @Override
+            public void onFailure(Throwable arg0) {
+                ErrorHandler.post("Unable to retrieve templates!", arg0);
 
-			}
+            }
 
-			@Override
-			public void onSuccess(String result) {
-				 AutoBean<MetadataTemplateInfoList> bean = AutoBeanCodex.decode(autoBeanFactory,
-						 MetadataTemplateInfoList.class, result);
-				 List<MetadataTemplateInfo> templates = bean.as().getTemplates();
-				 view.populateTemplates(templates);
+            @Override
+            public void onSuccess(String result) {
+                AutoBean<MetadataTemplateInfoList> bean = AutoBeanCodex.decode(autoBeanFactory, MetadataTemplateInfoList.class, result);
+                List<MetadataTemplateInfo> templates = bean.as().getTemplates();
+                view.populateTemplates(templates);
 
-			}
-		});
+            }
+        });
     }
 
     @Override
     public void onTemplateSelected(String templateId) {
-    	drService.getMetadataTemplate(templateId, new AsyncCallback<String>() {
+        drService.getMetadataTemplate(templateId, new AsyncCallback<String>() {
 
-			@Override
-			public void onFailure(Throwable arg0) {
-				ErrorHandler.post("Unable to retrieve template attributes!", arg0);
+            @Override
+            public void onFailure(Throwable arg0) {
+                ErrorHandler.post("Unable to retrieve template attributes!", arg0);
 
-			}
+            }
 
-			@Override
-			public void onSuccess(String result) {
-				AutoBean<MetadataTemplate> bean = AutoBeanCodex.decode(autoBeanFactory, MetadataTemplate.class, result);
-				MetadataTemplate template = bean.as();
-				List<MetadataTemplateAttribute> attributesList = template.getAttributes();
-				view.loadTemplateAttributes(attributesList);
-			}
-		});
+            @Override
+            public void onSuccess(String result) {
+                AutoBean<MetadataTemplate> bean = AutoBeanCodex.decode(autoBeanFactory, MetadataTemplate.class, result);
+                MetadataTemplate template = bean.as();
+                List<MetadataTemplateAttribute> attributesList = template.getAttributes();
+                view.loadTemplateAttributes(attributesList);
+            }
+        });
 
     }
 
@@ -108,8 +102,7 @@ public class MetadataPresenter implements Presenter {
 
         @Override
         public void onSuccess(String result) {
-            AutoBean<DiskResourceMetadataList> bean = AutoBeanCodex.decode(autoBeanFactory,
-                    DiskResourceMetadataList.class, result);
+            AutoBean<DiskResourceMetadataList> bean = AutoBeanCodex.decode(autoBeanFactory, DiskResourceMetadataList.class, result);
             view.loadMetadata(bean.as());
         }
 
@@ -119,13 +112,9 @@ public class MetadataPresenter implements Presenter {
         }
     }
 
-	@Override
-	public DiskResource getSelectedResource() {
-		return resource;
-	}
-
-
-
-
+    @Override
+    public DiskResource getSelectedResource() {
+        return resource;
+    }
 
 }
