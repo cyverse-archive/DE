@@ -1,6 +1,5 @@
 package org.iplantc.de.apps.client.views.cells;
 
-import org.iplantc.de.apps.client.views.AppsView;
 import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.resources.client.IplantResources;
 import org.iplantc.de.resources.client.messages.I18N;
@@ -76,11 +75,9 @@ public class AppInfoCell extends AbstractCell<App> {
     private static final Resources resources = GWT.create(Resources.class);
     private static final Templates templates = GWT.create(Templates.class);
     private HasHandlers hasHandlers;
-    private AppsView view;
 
-    public AppInfoCell(AppsView view) {
+    public AppInfoCell() {
         super(CLICK);
-        this.view = view;
         resources.css().ensureInjected();
 
     }
@@ -115,7 +112,6 @@ public class AppInfoCell extends AbstractCell<App> {
     }
 
     private void doOnClick(Element eventTarget, App value) {
-        view.onAppInfoClick(value);
         if(hasHandlers != null){
             hasHandlers.fireEvent(new AppInfoClickedEvent(value));
         }

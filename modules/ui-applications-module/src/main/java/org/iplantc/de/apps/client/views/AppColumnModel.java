@@ -1,5 +1,8 @@
 package org.iplantc.de.apps.client.views;
 
+import static org.iplantc.de.apps.client.events.AppFavoritedEvent.AppFavoritedEventHandler;
+import static org.iplantc.de.apps.client.events.AppFavoritedEvent.HasAppFavoritedEventHandlers;
+import org.iplantc.de.apps.client.events.AppFavoritedEvent;
 import org.iplantc.de.apps.client.views.cells.AppHyperlinkCell;
 import org.iplantc.de.apps.client.views.cells.AppInfoCell;
 import org.iplantc.de.apps.client.views.cells.AppRatingCell;
@@ -12,7 +15,6 @@ import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
-import com.google.inject.Inject;
 
 import com.sencha.gxt.core.client.IdentityValueProvider;
 import com.sencha.gxt.widget.core.client.grid.ColumnConfig;
@@ -22,10 +24,8 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-public class AppColumnModel extends ColumnModel<App> implements AppInfoCell.HasAppInfoClickedEventHandlers, AppHyperlinkCell.HasAppNameSelectedEventHandlers {
+public class AppColumnModel extends ColumnModel<App> implements AppInfoCell.HasAppInfoClickedEventHandlers, AppHyperlinkCell.HasAppNameSelectedEventHandlers, HasAppFavoritedEventHandlers {
 
-
-    @Inject
     public AppColumnModel(AppsView view, final IplantDisplayStrings displayStrings) {
         super(createColumnConfigList(view, displayStrings));
 
@@ -70,7 +70,7 @@ public class AppColumnModel extends ColumnModel<App> implements AppInfoCell.HasA
         info.setFixed(true);
         rating.setFixed(true);
 
-        info.setCell(new AppInfoCell(view));
+        info.setCell(new AppInfoCell());
         name.setCell(new AppHyperlinkCell(view));
         integrator.setCell(new AbstractCell<String>() {
 
@@ -89,6 +89,11 @@ public class AppColumnModel extends ColumnModel<App> implements AppInfoCell.HasA
         list.add(integrator);
         list.add(rating);
         return list;
+    }
+
+    @Override
+    public HandlerRegistration addAppFavoritedEventHandler(AppFavoritedEventHandler eventHandler) {
+        return ensureHandlers().addHandler(AppFavoritedEvent.TYPE, eventHandler);
     }
 
     @Override

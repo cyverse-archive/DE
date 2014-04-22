@@ -17,15 +17,9 @@ import java.util.List;
  */
 public class AppSearchResultLoadEvent extends GwtEvent<AppSearchResultLoadEvent.AppSearchResultLoadEventHandler> {
 
-    /**
-     * An EventHandler interface for AppSearchResultLoadEvents.
-     *
-     * @author psarando
-     *
-     */
     public interface AppSearchResultLoadEventHandler extends EventHandler {
 
-        void onLoad(AppSearchResultLoadEvent event);
+        void onAppSearchResultLoad(AppSearchResultLoadEvent event);
     }
 
     public static interface HasAppSearchResultLoadEventHandlers {
@@ -33,11 +27,6 @@ public class AppSearchResultLoadEvent extends GwtEvent<AppSearchResultLoadEvent.
     }
 
 
-    /**
-     * Defines the GWT Event Type.
-     *
-     * @see org.iplantc.core.uiapplications.client.events.AppSearchResultSelectedEventHandler
-     */
     public static final GwtEvent.Type<AppSearchResultLoadEventHandler> TYPE = new GwtEvent.Type<AppSearchResultLoadEventHandler>();
     private List<App> results;
     private String searchText;
@@ -71,6 +60,6 @@ public class AppSearchResultLoadEvent extends GwtEvent<AppSearchResultLoadEvent.
 
     @Override
     protected void dispatch(AppSearchResultLoadEventHandler handler) {
-        handler.onLoad(this);
+        handler.onAppSearchResultLoad(this);
     }
 }

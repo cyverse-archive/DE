@@ -1,9 +1,9 @@
 package org.iplantc.admin.belphegor.client.apps.presenter;
 
 import org.iplantc.admin.belphegor.client.I18N;
+import org.iplantc.admin.belphegor.client.apps.views.AdminAppsView;
 import org.iplantc.admin.belphegor.client.apps.views.AppCategorizeViewImpl;
 import org.iplantc.admin.belphegor.client.apps.views.editors.AppEditor;
-import org.iplantc.admin.belphegor.client.apps.views.widgets.BelphegorAppsToolbar;
 import org.iplantc.admin.belphegor.client.events.CatalogCategoryRefreshEvent;
 import org.iplantc.admin.belphegor.client.events.CatalogCategoryRefreshEventHandler;
 import org.iplantc.admin.belphegor.client.models.ToolIntegrationAdminProperties;
@@ -16,9 +16,11 @@ import org.iplantc.admin.belphegor.client.services.model.AppCategorizeRequest.Ca
 import org.iplantc.de.apps.client.presenter.AppsViewPresenterImpl;
 import org.iplantc.de.apps.client.presenter.proxy.AppGroupProxy;
 import org.iplantc.de.apps.client.views.AppsView;
-import org.iplantc.de.apps.client.views.widgets.proxy.AppSearchRpcProxy;
+import org.iplantc.de.apps.client.views.cells.AppHyperlinkCell;
 import org.iplantc.de.client.events.EventBus;
+import org.iplantc.de.client.models.DEProperties;
 import org.iplantc.de.client.models.HasId;
+import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.models.apps.AppAutoBeanFactory;
 import org.iplantc.de.client.models.apps.AppGroup;
@@ -32,10 +34,11 @@ import org.iplantc.de.commons.client.info.IplantAnnouncer;
 import org.iplantc.de.commons.client.info.SuccessAnnouncementConfig;
 import org.iplantc.de.commons.client.views.gxt3.dialogs.IPlantDialog;
 import org.iplantc.de.commons.client.views.gxt3.dialogs.IPlantPromptDialog;
+import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
+import org.iplantc.de.resources.client.messages.IplantErrorStrings;
 import org.iplantc.de.shared.services.ConfluenceServiceFacade;
 
 import com.google.common.collect.Lists;
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONParser;
@@ -74,23 +77,55 @@ import java.util.List;
  * @author jstroot
  * 
  */
-public class BelphegorAppsViewPresenterImpl extends AppsViewPresenterImpl implements AdminAppsViewPresenter,
-        BelphegorAppsToolbar.Presenter, AppEditor.Presenter {
+public class BelphegorAppsViewPresenterImpl extends AppsViewPresenterImpl implements AdminAppsView.AdminPresenter,
+                                                                                     AppEditor.Presenter {
 
-    private final BelphegorAppsToolbar toolbar;
-    private final AppAutoBeanFactory factory = GWT.create(AppAutoBeanFactory.class);
-    private final AppAdminServiceRequestAutoBeanFactory serviceFactory = GWT
-            .create(AppAdminServiceRequestAutoBeanFactory.class);
+    private final AppAutoBeanFactory factory;
+    private final AppAdminServiceRequestAutoBeanFactory serviceFactory;
+    private final AppsView view;
+    private final AppGroupProxy proxy;
     private final AppAdminServiceFacade adminAppService;
+    private final AppUserServiceFacade appUserService;
+    private final EventBus eventBus;
+    private final UserInfo userInfo;
+    private final DEProperties props;
+    private final IplantAnnouncer announcer;
+    private final IplantDisplayStrings displayStrings;
+    private final IplantErrorStrings errorStrings;
+
+    @Override
+    public void onAppNameSelected(AppHyperlinkCell.AppNameSelectedEvent event) {
+        new AppEditor(event.getSelectedApp(), this).show();
+    }
 
     @Inject
-    public BelphegorAppsViewPresenterImpl(final AppsView view, final AppGroupProxy proxy, final BelphegorAppsToolbar toolbar, AppAdminServiceFacade appService, AppUserServiceFacade appUserService) {
-        super(view, proxy, null, appService, appUserService);
+    public BelphegorAppsViewPresenterImpl(final AppsView view,
+                                          final AppGroupProxy proxy,
+                                          AppAdminServiceFacade appService,
+                                          AppUserServiceFacade appUserService,
+                                          final AppAutoBeanFactory factory,
+                                          final AppAdminServiceRequestAutoBeanFactory serviceFactory,
+                                          final EventBus eventBus,
+                                          final UserInfo userInfo,
+                                          final DEProperties props,
+                                          final IplantAnnouncer announcer,
+                                          final IplantDisplayStrings displayStrings,
+                                          final IplantErrorStrings errorStrings) {
+        super(view, proxy, appService, appUserService, eventBus, userInfo, props, announcer, displayStrings, errorStrings);
+        this.view = view;
+        this.proxy = proxy;
         this.adminAppService = appService;
+        this.appUserService = appUserService;
+        this.factory = factory;
+        this.serviceFactory = serviceFactory;
+        this.eventBus = eventBus;
+        this.userInfo = userInfo;
+        this.props = props;
+        this.announcer = announcer;
+        this.displayStrings = displayStrings;
+        this.errorStrings = errorStrings;
 
-        this.toolbar = toolbar;
-        view.setNorthWidget(this.toolbar);
-        this.toolbar.setPresenter(this);
+        this.view.setPresenter(this);
     }
 
     @Override
@@ -105,46 +140,6 @@ public class BelphegorAppsViewPresenterImpl extends AppsViewPresenterImpl implem
                         reloadAppGroups(getSelectedAppGroup(), getSelectedApp());
                     }
                 });
-    }
-
-    @Override
-    public AppSearchRpcProxy getAppSearchRpcProxy() {
-        return toolbar.getAppSearchRpcProxy();
-    }
-
-    @Override
-    protected void selectFirstApp() {
-        // Do nothing
-    }
-
-    @Override
-    public void onAppGroupSelected(final AppGroup ag) {
-        if (ag == null) {
-            return;
-        }
-
-        view.setCenterPanelHeading(ag.getName());
-        toolbar.setAddAppGroupButtonEnabled(true);
-        toolbar.setRenameAppGroupButtonEnabled(true);
-        toolbar.setDeleteButtonEnabled(true);
-        toolbar.setRestoreButtonEnabled(false);
-        toolbar.setCategorizeButtonEnabled(false);
-        fetchApps(ag);
-    }
-
-    @Override
-    public void onAppSelected(final App app) {
-        if (app == null) {
-            return;
-        }
-
-        view.deSelectAllAppGroups();
-
-        toolbar.setAddAppGroupButtonEnabled(false);
-        toolbar.setRenameAppGroupButtonEnabled(false);
-        toolbar.setDeleteButtonEnabled(true);
-        toolbar.setRestoreButtonEnabled(app.isDeleted());
-        toolbar.setCategorizeButtonEnabled(!app.isDeleted());
     }
 
     @Override
@@ -246,6 +241,11 @@ public class BelphegorAppsViewPresenterImpl extends AppsViewPresenterImpl implem
             }
         });
         msgBox.show();
+
+    }
+
+    @Override
+    public void onDeleteClicked() {
 
     }
 
@@ -492,11 +492,6 @@ public class BelphegorAppsViewPresenterImpl extends AppsViewPresenterImpl implem
         request.setCategories(categories);
 
         return request;
-    }
-
-    @Override
-    public void onAppNameSelected(final App app) {
-        new AppEditor(app, this).show();
     }
 
     @Override

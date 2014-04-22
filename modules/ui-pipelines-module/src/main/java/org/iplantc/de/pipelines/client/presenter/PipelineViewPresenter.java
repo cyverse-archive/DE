@@ -96,7 +96,7 @@ public class PipelineViewPresenter implements Presenter, PipelineView.Presenter,
         initAppsGridDragHandler(appsPresenter.getAppsGrid());
         initPipelineBuilderDropHandler(view.getBuilderDropContainer());
 
-        appsPresenter.builder().hideToolbarAppButton().hideToolbarWorkFlowButton().go(appSelectView);
+        appsPresenter.hideAppMenu().hideWorkflowMenu().go(appSelectView);
     }
 
     private void initAppsGridDragHandler(Grid<App> grid) {

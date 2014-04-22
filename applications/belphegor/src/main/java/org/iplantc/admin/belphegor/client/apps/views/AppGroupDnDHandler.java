@@ -1,6 +1,5 @@
 package org.iplantc.admin.belphegor.client.apps.views;
 
-import org.iplantc.admin.belphegor.client.apps.presenter.AdminAppsViewPresenter;
 import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.models.apps.AppGroup;
 
@@ -25,14 +24,16 @@ import com.sencha.gxt.dnd.core.client.DndDropEvent.DndDropHandler;
 public class AppGroupDnDHandler implements DndDragStartHandler, DndDragEnterHandler, DndDragMoveHandler,
         DndDropHandler {
 
-    private final AdminAppsViewPresenter presenter;
+    private final AdminAppsView adminAppView;
+    private final AdminAppsView.AdminPresenter presenter;
 
     /**
      * Guard against rapid clicks triggering drag+drop events.
      */
     private boolean moved;
 
-    public AppGroupDnDHandler(AdminAppsViewPresenter presenter) {
+    public AppGroupDnDHandler(AdminAppsView adminAppView, AdminAppsView.AdminPresenter presenter) {
+        this.adminAppView = adminAppView;
         this.presenter = presenter;
     }
 
@@ -50,11 +51,11 @@ public class AppGroupDnDHandler implements DndDragStartHandler, DndDragEnterHand
 
         Element dragStartEl = event.getDragStartEvent().getStartElement();
 
-        Object dragData = presenter.getAppGroupFromElement(dragStartEl);
+        Object dragData = adminAppView.getAppGroupFromElement(dragStartEl);
 
         if (dragData == null) {
             // If we don't have an AppGroup, check for an App.
-            dragData = presenter.getAppFromElement(dragStartEl);
+            dragData = adminAppView.getAppFromElement(dragStartEl);
         }
 
         if (dragData != null) {
@@ -85,7 +86,7 @@ public class AppGroupDnDHandler implements DndDragStartHandler, DndDragEnterHand
 
         // Get our destination category.
         EventTarget eventTarget = event.getDragMoveEvent().getNativeEvent().getEventTarget();
-        AppGroup targetGroup = presenter.getAppGroupFromElement(Element.as(eventTarget));
+        AppGroup targetGroup = adminAppView.getAppGroupFromElement(Element.as(eventTarget));
 
         // Check if the source may be dropped into the target.
         boolean isValid = validateMove(targetGroup, event.getData());
@@ -102,7 +103,7 @@ public class AppGroupDnDHandler implements DndDragStartHandler, DndDragEnterHand
 
         // Get our destination category.
         EventTarget eventTarget = event.getDragEndEvent().getNativeEvent().getEventTarget();
-        AppGroup targetGroup = presenter.getAppGroupFromElement(Element.as(eventTarget));
+        AppGroup targetGroup = adminAppView.getAppGroupFromElement(Element.as(eventTarget));
 
         if (validateMove(targetGroup, event.getData())) {
             if (event.getData() instanceof AppGroup) {

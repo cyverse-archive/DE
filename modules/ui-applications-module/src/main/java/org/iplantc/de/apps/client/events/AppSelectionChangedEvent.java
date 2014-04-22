@@ -22,7 +22,7 @@ public class AppSelectionChangedEvent extends GwtEvent<AppSelectionChangedEvent.
     }
 
     public static interface HasAppSelectionChangedEventHandlers {
-        HandlerRegistration addAppSelectedEventHandler(AppSelectionChangedEventHandler handler);
+        HandlerRegistration addAppSelectionChangedEventHandler(AppSelectionChangedEventHandler handler);
     }
 
     public static final GwtEvent.Type<AppSelectionChangedEventHandler> TYPE = new GwtEvent.Type<AppSelectionChangedEventHandler>();

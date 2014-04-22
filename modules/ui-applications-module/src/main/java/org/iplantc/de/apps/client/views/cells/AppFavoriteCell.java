@@ -1,7 +1,6 @@
 package org.iplantc.de.apps.client.views.cells;
 
 import org.iplantc.de.apps.client.events.AppFavoritedEvent;
-import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.gin.ServicesInjector;
 import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.client.models.apps.App;
@@ -10,16 +9,14 @@ import org.iplantc.de.resources.client.AppFavoriteCellStyle;
 import org.iplantc.de.resources.client.IplantResources;
 import org.iplantc.de.resources.client.messages.I18N;
 
-import static com.google.gwt.dom.client.BrowserEvents.CLICK;
-import static com.google.gwt.dom.client.BrowserEvents.MOUSEOUT;
-import static com.google.gwt.dom.client.BrowserEvents.MOUSEOVER;
-
+import static com.google.gwt.dom.client.BrowserEvents.*;
 import com.google.gwt.cell.client.AbstractCell;
 import com.google.gwt.cell.client.Cell;
 import com.google.gwt.cell.client.ValueUpdater;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NativeEvent;
+import com.google.gwt.event.shared.HasHandlers;
 import com.google.gwt.safehtml.client.SafeHtmlTemplates;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
@@ -40,6 +37,7 @@ public class AppFavoriteCell extends AbstractCell<App> {
 
     final Templates templates = GWT.create(Templates.class);
     final AppFavoriteCellStyle css = IplantResources.RESOURCES.appFavoriteCss();
+    private HasHandlers hasHandlers;
 
     public AppFavoriteCell() {
         super(CLICK, MOUSEOVER, MOUSEOUT);
@@ -88,6 +86,10 @@ public class AppFavoriteCell extends AbstractCell<App> {
         }
     }
 
+    public void setHasHandlers(HasHandlers hasHandlers) {
+        this.hasHandlers = hasHandlers;
+    }
+
     private void doOnMouseOut(Element eventTarget, App value) {
 
         if (value.isFavorite()) {
@@ -112,6 +114,7 @@ public class AppFavoriteCell extends AbstractCell<App> {
 
     private void doOnClick(final Element eventTarget, final App value, final ValueUpdater<App> valueUpdater) {
 
+        // FIXME This service call should not occur here.
         ServicesInjector.INSTANCE.getAppUserServiceFacade().favoriteApp(UserInfo.getInstance().getWorkspaceId(), value.getId(),
                 !value.isFavorite(), new AsyncCallback<String>() {
 
@@ -122,8 +125,9 @@ public class AppFavoriteCell extends AbstractCell<App> {
 
                 // Reset favorite icon
                 doOnMouseOut(eventTarget, value);
-                EventBus.getInstance().fireEvent(
-                        new AppFavoritedEvent(value.getId(), value.isFavorite()));
+                if(hasHandlers != null){
+                    hasHandlers.fireEvent(new AppFavoritedEvent(value.getId(), value.isFavorite()));
+                }
             }
 
             @Override

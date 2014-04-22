@@ -3,15 +3,11 @@ package org.iplantc.de.apps.client.presenter;
 import org.iplantc.de.apps.client.events.*;
 import org.iplantc.de.apps.client.events.AppUpdatedEvent.AppUpdatedEventHandler;
 import org.iplantc.de.apps.client.presenter.proxy.AppGroupProxy;
-import org.iplantc.de.apps.client.views.AppInfoView;
 import org.iplantc.de.apps.client.views.AppsView;
 import org.iplantc.de.apps.client.views.cells.AppHyperlinkCell;
-import org.iplantc.de.apps.client.views.cells.AppInfoCell;
 import org.iplantc.de.apps.client.views.dialogs.NewToolRequestDialog;
 import org.iplantc.de.apps.client.views.dialogs.SubmitAppForPublicDialog;
-import org.iplantc.de.apps.client.views.widgets.AppsViewToolbar;
 import org.iplantc.de.apps.client.views.widgets.events.AppSearchResultLoadEvent;
-import org.iplantc.de.apps.client.views.widgets.proxy.AppSearchRpcProxy;
 import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.models.DEProperties;
 import org.iplantc.de.client.models.HasId;
@@ -30,11 +26,9 @@ import org.iplantc.de.commons.client.info.IplantAnnouncer;
 import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 import org.iplantc.de.resources.client.messages.IplantErrorStrings;
 
-import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONObject;
@@ -57,20 +51,10 @@ import com.sencha.gxt.widget.core.client.event.HideEvent.HideHandler;
 import com.sencha.gxt.widget.core.client.grid.Grid;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
  * The presenter for the AppsView.
- * 
- * <p>
- * Events fired from this presenter:
- * <ul>
- * <li> {@link AppDeleteEvent}</li>
- * <li> {@link AppGroupCountUpdateEvent}</li>
- * <li> {@link CreateNewAppEvent}</li>
- * <li> {@link CreateNewWorkflowEvent}</li>
- * <ul>
  * 
  * @author jstroot
  * 
@@ -83,7 +67,6 @@ public class AppsViewPresenterImpl implements AppsView.Presenter {
     private static String FAVORITES;
 
     protected final AppsView view;
-    protected AppsViewToolbar.Presenter.Builder builder;
 
     private final AppGroupProxy appGroupProxy;
 //    private AppsViewToolbar toolbar;
@@ -101,7 +84,8 @@ public class AppsViewPresenterImpl implements AppsView.Presenter {
     private RegExp searchRegex;
 
     @Inject
-    public AppsViewPresenterImpl(final AppsView view, final AppGroupProxy proxy,
+    public AppsViewPresenterImpl(final AppsView view,
+                                 final AppGroupProxy proxy,
                                  final AppServiceFacade appService,
                                  final AppUserServiceFacade appUserService,
                                  final EventBus eventBus,
@@ -121,8 +105,6 @@ public class AppsViewPresenterImpl implements AppsView.Presenter {
         this.errorStrings = errorStrings;
 
 
-        builder = new MyBuilder(this);
-
         // Initialize AppGroup TreeStore proxy and loader
         this.appGroupProxy = proxy;
 
@@ -130,11 +112,6 @@ public class AppsViewPresenterImpl implements AppsView.Presenter {
 
         initHandlers();
         initConstants();
-    }
-
-    @Override
-    public void onAppInfoClicked(AppInfoCell.AppInfoClickedEvent event) {
-       showAppInfoWindow(event.getApp());
     }
 
     @Override
@@ -147,39 +124,37 @@ public class AppsViewPresenterImpl implements AppsView.Presenter {
         }
     }
 
+    @Override
+    public void onAppSearchResultLoad(AppSearchResultLoadEvent event) {
+        String searchText = event.getSearchText();
+        updateSearchRegex(searchText);
+
+        List<App> results = event.getResults();
+        int total = results == null ? 0 : results.size();
+
+        view.selectAppGroup(null);
+        view.setCenterPanelHeading(displayStrings.searchAppResultsHeader(searchText, total));
+        view.setApps(results);
+        view.unMaskCenterPanel();
+    }
+
     protected void initHandlers() {
-        eventHandlers.add(eventBus.addHandler(AppSearchResultLoadEvent.TYPE, new AppSearchResultLoadEvent.AppSearchResultLoadEventHandler() {
-            @Override
-            public void onLoad(AppSearchResultLoadEvent event) {
-                if (event.getSource() == getAppSearchRpcProxy()) {
-                    String searchText = event.getSearchText();
-                    updateSearchRegex(searchText);
 
-                    List<App> results = event.getResults();
-                    int total = results == null ? 0 : results.size();
-
-                    view.selectAppGroup(null);
-                    view.setCenterPanelHeading(displayStrings.searchAppResultsHeader(searchText, total));
-                    view.setApps(results);
-                    view.unMaskCenterPanel();
-                }
-            }
-        }));
-        eventHandlers.add(eventBus.addHandler(AppFavoritedEvent.TYPE, new AppFavoritedEventHander() {
-            @Override
-            public void onAppFavorited(AppFavoritedEvent event) {
-                AppGroup favAppGrp = view.findAppGroupByName(FAVORITES);
-                if (favAppGrp != null) {
-                    int tmp = event.isFavorite() ? 1 : -1;
-
-                    view.updateAppGroupAppCount(favAppGrp, favAppGrp.getAppCount() + tmp);
-                }
-                // If the current app group is Workspace or Favorites, remove the app from the list.
-                if (getSelectedAppGroup().getName().equalsIgnoreCase(WORKSPACE) || getSelectedAppGroup().getName().equalsIgnoreCase(FAVORITES)) {
-                    view.removeApp(view.findApp(event.getAppId()));
-                }
-            }
-        }));
+//        eventHandlers.add(eventBus.addHandler(AppFavoritedEvent.TYPE, new AppFavoritedEvent.AppFavoritedEventHandler() {
+//            @Override
+//            public void onAppFavorited(AppFavoritedEvent event) {
+//                AppGroup favAppGrp = view.findAppGroupByName(FAVORITES);
+//                if (favAppGrp != null) {
+//                    int tmp = event.isFavorite() ? 1 : -1;
+//
+//                    view.updateAppGroupAppCount(favAppGrp, favAppGrp.getAppCount() + tmp);
+//                }
+//                // If the current app group is Workspace or Favorites, remove the app from the list.
+//                if (getSelectedAppGroup().getName().equalsIgnoreCase(WORKSPACE) || getSelectedAppGroup().getName().equalsIgnoreCase(FAVORITES)) {
+//                    view.removeApp(view.findApp(event.getAppId()));
+//                }
+//            }
+//        }));
 
         eventHandlers.add(eventBus.addHandler(AppUpdatedEvent.TYPE, new AppUpdatedEventHandler() {
             @Override
@@ -204,7 +179,6 @@ public class AppsViewPresenterImpl implements AppsView.Presenter {
     }
 
     private void initConstants() {
-
         WORKSPACE = props.getPrivateWorkspace();
 
         if (props.getPrivateWorkspaceItems() != null) {
@@ -229,96 +203,11 @@ public class AppsViewPresenterImpl implements AppsView.Presenter {
     }
 
     @Override
-    public void onAppGroupSelectionChanged(final List<AppGroup> appGroupSelection) {
+    public void onAppGroupSelectionChanged(AppGroupSelectionChangedEvent event){
         searchRegex = null;
-        AppGroup ag = appGroupSelection.get(0);
-        List<String> groupNames = computeGroupHirarchy(ag);
-        view.setCenterPanelHeading(Joiner.on(" >> ").join(groupNames));
+        AppGroup ag = event.getAppGroupSelection().get(0);
         fetchApps(ag);
     }
-
-    @Override
-    public List<String> computeGroupHirarchy(final AppGroup ag) {
-        List<String> groupNames = Lists.newArrayList();
-
-        for (AppGroup group : getGroupHierarchy(ag)) {
-            groupNames.add(group.getName());
-        }
-        Collections.reverse(groupNames);
-        return groupNames;
-    }
-
-
-//    @Override
-//    public void onAppSelected(final App app) {
-//        if (app == null && toolbar != null) {
-//            toolbar.setAppMenuEnabled(false);
-//            toolbar.setWorkflowMenuEnabled(false);
-//        } else {
-//            toolbar.setAppMenuEnabled(true);
-//            toolbar.setWorkflowMenuEnabled(true);
-//            if (app.isPublic()) {
-//                if (app.getStepCount() == 1) {
-//                    toolbar.setDeleteAppMenuItemEnabled(false);
-//                    toolbar.setSubmitAppMenuItemEnabled(false);
-//                    toolbar.setCopyAppMenuItemEnabled(true);
-//
-//                    if (userInfo.getEmail().equals(app.getIntegratorEmail())) {
-//                        // JDS If the current user is the integrator
-//                        toolbar.setEditAppMenuItemEnabled(true);
-//                    } else {
-//                        toolbar.setEditAppMenuItemEnabled(false);
-//                    }
-//                    toolbar.setDeleteWorkflowMenuItemEnabled(false);
-//                    toolbar.setSubmitWorkflowMenuItemEnabled(false);
-//                    toolbar.setCopyWorkflowMenuItemEnabled(false);
-//                    toolbar.setEditWorkflowMenuItemEnabled(false);
-//                } else {
-//                    toolbar.setDeleteWorkflowMenuItemEnabled(false);
-//                    toolbar.setSubmitWorkflowMenuItemEnabled(false);
-//                    toolbar.setCopyWorkflowMenuItemEnabled(true);
-//                    toolbar.setEditWorkflowMenuItemEnabled(false);
-//                    toolbar.setDeleteAppMenuItemEnabled(false);
-//                    toolbar.setSubmitAppMenuItemEnabled(false);
-//                    toolbar.setCopyAppMenuItemEnabled(false);
-//                    toolbar.setEditAppMenuItemEnabled(false);
-//                }
-//            } else {
-//                if (app.getStepCount() == 1) {
-//                    toolbar.setEditAppMenuItemEnabled(true);
-//                    toolbar.setDeleteAppMenuItemEnabled(true);
-//                    toolbar.setSubmitAppMenuItemEnabled(true);
-//                    toolbar.setCopyAppMenuItemEnabled(true);
-//                    toolbar.setEditWorkflowMenuItemEnabled(false);
-//                    toolbar.setDeleteWorkflowMenuItemEnabled(false);
-//                    toolbar.setSubmitWorkflowMenuItemEnabled(false);
-//                    toolbar.setCopyWorkflowMenuItemEnabled(false);
-//                } else {
-//                    toolbar.setEditWorkflowMenuItemEnabled(true);
-//                    toolbar.setDeleteWorkflowMenuItemEnabled(true);
-//                    toolbar.setSubmitWorkflowMenuItemEnabled(true);
-//                    toolbar.setCopyWorkflowMenuItemEnabled(true);
-//                    toolbar.setEditAppMenuItemEnabled(false);
-//                    toolbar.setDeleteAppMenuItemEnabled(false);
-//                    toolbar.setSubmitAppMenuItemEnabled(false);
-//                    toolbar.setCopyAppMenuItemEnabled(false);
-//                }
-//            }
-//
-//            if (!app.isDisabled()) {
-//                if (app.getStepCount() == 1) {
-//                    toolbar.setAppRunMenuItemEnabled(true);
-//                    toolbar.setWorkflowRunMenuItemEnabled(false);
-//                } else {
-//                    toolbar.setWorkflowRunMenuItemEnabled(true);
-//                    toolbar.setAppRunMenuItemEnabled(false);
-//                }
-//            } else {
-//                toolbar.setAppRunMenuItemEnabled(false);
-//                toolbar.setWorkflowRunMenuItemEnabled(false);
-//            }
-//        }
-//    }
 
     /**
      * Retrieves the apps for the given group by updating and executing the list loader
@@ -415,22 +304,6 @@ public class AppsViewPresenterImpl implements AppsView.Presenter {
     @Override
     public AppGroup getSelectedAppGroup() {
         return view.getSelectedAppGroup();
-    }
-
-    @Override
-    public void onAppInfoClicked() {
-        showAppInfoWindow(getSelectedApp());
-    }
-
-    private void showAppInfoWindow(App app) {
-        Dialog appInfoWin = new Dialog();
-        appInfoWin.setModal(true);
-        appInfoWin.setResizable(false);
-        appInfoWin.setHeadingText(app.getName());
-        appInfoWin.setPixelSize(450, 300);
-        appInfoWin.add(new AppInfoView(app, this));
-        appInfoWin.getButtonBar().clear();
-        appInfoWin.show();
     }
 
     @Override
@@ -631,39 +504,15 @@ public class AppsViewPresenterImpl implements AppsView.Presenter {
     }
 
     @Override
-    public Builder builder() {
-        return builder;
+    public AppsView.Presenter hideAppMenu(){
+        view.hideAppMenu();
+        return this;
     }
 
-    private class MyBuilder implements AppsViewToolbar.Presenter.Builder {
-
-        private final AppsViewPresenterImpl presenter;
-
-        MyBuilder(AppsViewPresenterImpl presenter) {
-            this.presenter = presenter;
-        }
-
-        @Override
-        public void go(HasOneWidget container) {
-            presenter.go(container);
-        }
-
-        @Override
-        public void go(HasOneWidget container, AppGroup selectedAppGroup, App selectedApp) {
-            presenter.go(container, selectedAppGroup, selectedApp);
-        }
-
-        @Override
-        public Builder hideToolbarAppButton() {
-            presenter.getToolbar().hideAppMenu();
-            return this;
-        }
-
-        @Override
-        public Builder hideToolbarWorkFlowButton() {
-            presenter.getToolbar().hideWorkflowMenu();
-            return this;
-        }
+    @Override
+    public AppsView.Presenter hideWorkflowMenu(){
+        view.hideWorkflowMenu();
+        return this;
     }
 
     @Override
@@ -676,26 +525,10 @@ public class AppsViewPresenterImpl implements AppsView.Presenter {
         fireRunAppEvent(getSelectedApp());
     }
 
-    @Override
-    public AppSearchRpcProxy getAppSearchRpcProxy() {
-        return toolbar.getAppSearchRpcProxy();
-
-    }
-
     private void fireRunAppEvent(final App app) {
         if (app != null && !app.isDisabled()) {
             eventBus.fireEvent(new RunAppEvent(app));
         }
-    }
-
-    @Override
-    public AppGroup getAppGroupFromElement(Element el) {
-        return view.getAppGroupFromElement(el);
-    }
-
-    @Override
-    public App getAppFromElement(Element el) {
-        return view.getAppFromElement(el);
     }
 
     @Override
@@ -709,11 +542,6 @@ public class AppsViewPresenterImpl implements AppsView.Presenter {
         }
 
         return text;
-    }
-
-    @Override
-    public List<AppGroup> getGroupHierarchy(AppGroup grp) {
-        return view.getGroupHierarchy(grp, null);
     }
 
     private void updateSearchRegex(final String searchText) {

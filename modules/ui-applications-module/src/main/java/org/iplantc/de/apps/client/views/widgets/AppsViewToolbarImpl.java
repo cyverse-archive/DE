@@ -1,26 +1,24 @@
 package org.iplantc.de.apps.client.views.widgets;
 
 
+import static org.iplantc.de.apps.client.views.widgets.events.AppSearchResultLoadEvent.*;
 import org.iplantc.de.apps.client.events.AppGroupSelectionChangedEvent;
 import org.iplantc.de.apps.client.events.AppSelectionChangedEvent;
 import org.iplantc.de.apps.client.views.AppsView;
-import org.iplantc.de.apps.client.views.widgets.events.AppSearchResultLoadEvent;
 import org.iplantc.de.apps.client.views.widgets.proxy.AppSearchRpcProxy;
+import org.iplantc.de.client.models.IsMaskable;
 import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.models.apps.AppAutoBeanFactory;
 import org.iplantc.de.client.models.apps.proxy.AppLoadConfig;
 import org.iplantc.de.client.models.apps.proxy.AppSearchAutoBeanFactory;
 import org.iplantc.de.client.services.AppServiceFacade;
+import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.shared.HandlerRegistration;
-import com.google.gwt.uibinder.client.UiBinder;
-import com.google.gwt.uibinder.client.UiFactory;
-import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.uibinder.client.UiTemplate;
+import com.google.gwt.uibinder.client.*;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 
@@ -34,7 +32,7 @@ import com.sencha.gxt.widget.core.client.menu.MenuItem;
 
 import java.util.List;
 
-public class AppsViewToolbarImpl extends Composite implements AppsView.ViewMenu, AppSearchResultLoadEvent.HasAppSearchResultLoadEventHandlers {
+public class AppsViewToolbarImpl extends Composite implements AppsView.ViewMenu, HasAppSearchResultLoadEventHandlers {
 
     @UiTemplate("AppsViewToolbar.ui.xml")
     interface AppsViewToolbarUiBinder extends UiBinder<Widget, AppsViewToolbarImpl> { }
@@ -72,28 +70,28 @@ public class AppsViewToolbarImpl extends Composite implements AppsView.ViewMenu,
     TextButton wf_menu;
 
     private static AppsViewToolbarUiBinder uiBinder = GWT.create(AppsViewToolbarUiBinder.class);
-    private final AppSearchAutoBeanFactory appSearchFactory;
     private final UserInfo userInfo;
     private final PagingLoader<FilterPagingLoadConfig, PagingLoadResult<App>> loader;
     private final AppSearchRpcProxy proxy;
     private final Widget widget;
     private AppsView.Presenter presenter;
+    private AppsView appsView;
 
     @Inject
     public AppsViewToolbarImpl(final AppServiceFacade appService,
+                               final IplantDisplayStrings displayStrings,
                                final AppSearchAutoBeanFactory appSearchFactory,
                                final AppAutoBeanFactory appFactory,
                                final UserInfo userInfo) {
-        this.appSearchFactory = appSearchFactory;
         this.userInfo = userInfo;
-        proxy = new AppSearchRpcProxy(appService, appSearchFactory, appFactory);
+        proxy = new AppSearchRpcProxy(appService, appSearchFactory, appFactory, displayStrings);
         loader = createPagingLoader(proxy, appSearchFactory);
         widget = uiBinder.createAndBindUi(this);
     }
 
     @Override
-    public HandlerRegistration addAppSearchResultLoadEventHandler(AppSearchResultLoadEvent.AppSearchResultLoadEventHandler handler) {
-        return addHandler(handler, AppSearchResultLoadEvent.TYPE);
+    public HandlerRegistration addAppSearchResultLoadEventHandler(AppSearchResultLoadEventHandler handler) {
+        return addHandler(handler, TYPE);
     }
 
     @UiHandler({"appRun", "wfRun"})
@@ -132,13 +130,38 @@ public class AppsViewToolbarImpl extends Composite implements AppsView.ViewMenu,
     }
 
     @Override
+    public void hideAppMenu() {
+        app_menu.setVisible(false);
+    }
+
+    @Override
+    public void hideWorkflowMenu() {
+        wf_menu.setVisible(false);
+    }
+
+    @Override
     public void init(final AppsView.Presenter presenter,
+                     final AppsView appsView,
                      final AppSelectionChangedEvent.HasAppSelectionChangedEventHandlers hasAppSelectionChangedEventHandlers,
                      final AppGroupSelectionChangedEvent.HasAppGroupSelectionChangedEventHandlers hasAppGroupSelectionChangedEventHandlers) {
         this.presenter = presenter;
-        hasAppSelectionChangedEventHandlers.addAppSelectedEventHandler(this);
+        this.appsView = appsView;
+        addAppSearchResultLoadEventHandler(appsView);
+        hasAppSelectionChangedEventHandlers.addAppSelectionChangedEventHandler(this);
         hasAppGroupSelectionChangedEventHandlers.addAppGroupSelectedEventHandler(this);
         proxy.setHasHandlers(this);
+        proxy.setMaskable(new IsMaskable() {
+            @Override
+            public void mask(String loadingMask) {
+                appsView.maskCenterPanel(loadingMask);
+            }
+
+            @Override
+            public void unmask() {
+                appsView.unMaskCenterPanel();
+            }
+        });
+
     }
 
     @Override
@@ -172,11 +195,8 @@ public class AppsViewToolbarImpl extends Composite implements AppsView.ViewMenu,
                 final boolean isMultiStep = selectedApp.getStepCount() > 1;
                 final boolean isAppPublic = !selectedApp.isPublic();
                 final boolean isAppDisabled = selectedApp.isDisabled();
-                final boolean isCurrentUserAppIntegrator = userInfo.getEmail().equals(selectedApp.getIntegratorEmail());
-
 
                 deleteApp.setEnabled(isSingleStep && !isAppPublic);
-//                editApp.setEnabled(isSingleStep && ((isAppPublic && isCurrentUserAppIntegrator) || !isAppPublic));
                 editApp.setEnabled(isSingleStep && !isAppPublic);
                 submitApp.setEnabled(isSingleStep && !isAppPublic);
                 copyApp.setEnabled(isSingleStep);
@@ -216,6 +236,7 @@ public class AppsViewToolbarImpl extends Composite implements AppsView.ViewMenu,
     @UiHandler({"submitApp", "submitWf"})
     public void submitClicked(SelectionEvent<Item> event) {
         presenter.submitClicked();
+        appsView.submitSelectedApp();
     }
 
     @UiFactory

@@ -1,47 +1,58 @@
 package org.iplantc.admin.belphegor.client.apps.views;
 
-import org.iplantc.admin.belphegor.client.apps.presenter.AdminAppsViewPresenter;
+import org.iplantc.admin.belphegor.client.services.impl.AppAdminUserServiceFacade;
+import org.iplantc.de.apps.client.events.AppSelectionChangedEvent;
 import org.iplantc.de.apps.client.views.AppsViewImpl;
-import org.iplantc.de.client.models.apps.App;
+import org.iplantc.de.client.models.DEProperties;
 import org.iplantc.de.client.models.apps.AppGroup;
+import org.iplantc.de.resources.client.IplantResources;
+import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 
-import com.google.gwt.uibinder.client.UiFactory;
 import com.google.inject.Inject;
 
 import com.sencha.gxt.core.client.Style.SelectionMode;
 import com.sencha.gxt.dnd.core.client.DND.Operation;
 import com.sencha.gxt.dnd.core.client.DragSource;
 import com.sencha.gxt.dnd.core.client.DropTarget;
-import com.sencha.gxt.widget.core.client.grid.ColumnModel;
 import com.sencha.gxt.widget.core.client.tree.Tree;
 
-public class AdminAppViewImpl extends AppsViewImpl {
+public class AdminAppViewImpl extends AppsViewImpl implements AdminAppsView, AppSelectionChangedEvent.AppSelectionChangedEventHandler {
+
+    private final AdminAppsView.Toolbar toolbar;
 
     @Inject
-    public AdminAppViewImpl(Tree<AppGroup, String> tree) {
-        super(tree);
+    public AdminAppViewImpl(final Tree<AppGroup, String> tree,
+                            final AdminAppsView.Toolbar toolbar,
+                            final DEProperties props,
+                            final IplantResources resources,
+                            final IplantDisplayStrings displayStrings,
+                            final AppAdminUserServiceFacade appAdminUserService) {
+        super(tree, props, null, resources, displayStrings, appAdminUserService);
+        this.toolbar = toolbar;
 
         // Restrict Admin view to single select, since admin services only support one item at a time.
         grid.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
+        this.cm = new BelphegorAnalysisColumnModel(this);
+        setNorthWidget(toolbar);
     }
 
     @Override
-    @UiFactory
-    public ColumnModel<App> createColumnModel() {
-        return new BelphegorAnalysisColumnModel(this);
+    public void onAppSelectionChanged(AppSelectionChangedEvent event) {
+        deSelectAllAppGroups();
     }
 
     @Override
     public void setPresenter(Presenter presenter) {
         super.setPresenter(presenter);
-
-        if (presenter instanceof AdminAppsViewPresenter) {
-            initDragAndDrop((AdminAppsViewPresenter)presenter);
+        if(presenter instanceof AdminAppsView.AdminPresenter){
+            toolbar.init((AdminAppsView.AdminPresenter) presenter, this, this);
+            initDragAndDrop((AdminAppsView.AdminPresenter)presenter);
+            addAppSelectionChangedEventHandler(this);
         }
     }
 
-    private void initDragAndDrop(AdminAppsViewPresenter presenter) {
-        AppGroupDnDHandler dndHandler = new AppGroupDnDHandler(presenter);
+    private void initDragAndDrop(AdminAppsView.AdminPresenter presenter) {
+        AppGroupDnDHandler dndHandler = new AppGroupDnDHandler(this, presenter);
 
         DragSource gridDragSource = new DragSource(grid);
         gridDragSource.addDragStartHandler(dndHandler);

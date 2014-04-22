@@ -12,8 +12,6 @@
     <!-- Nav Panel -->
    <ui:with field="treeStore"
             type="com.sencha.gxt.data.shared.TreeStore" />
-   <ui:with field="valueProvider"
-            type="com.sencha.gxt.core.client.ValueProvider" />
 
     <!-- Main Panel -->
    <ui:with field="listStore"
@@ -76,8 +74,6 @@
                                  headingText="{strings.category}"
                                  bodyBorder="false">
                   <tree:Tree ui:field="tree"
-                             store="{treeStore}"
-                             valueProvider="{valueProvider}"
                              autoExpand="true"  />
                </gxt:ContentPanel>
             </container:west>

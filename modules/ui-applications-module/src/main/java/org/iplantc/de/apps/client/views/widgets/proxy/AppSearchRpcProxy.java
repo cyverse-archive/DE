@@ -1,7 +1,7 @@
 package org.iplantc.de.apps.client.views.widgets.proxy;
 
 import org.iplantc.de.apps.client.views.widgets.events.AppSearchResultLoadEvent;
-import org.iplantc.de.client.events.EventBus;
+import org.iplantc.de.client.models.IsMaskable;
 import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.models.apps.AppAutoBeanFactory;
 import org.iplantc.de.client.models.apps.AppList;
@@ -9,6 +9,7 @@ import org.iplantc.de.client.models.apps.proxy.AppListLoadResult;
 import org.iplantc.de.client.models.apps.proxy.AppSearchAutoBeanFactory;
 import org.iplantc.de.client.services.AppServiceFacade;
 import org.iplantc.de.commons.client.ErrorHandler;
+import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 
 import com.google.common.base.Strings;
 import com.google.gwt.event.shared.HasHandlers;
@@ -37,13 +38,16 @@ public class AppSearchRpcProxy extends RpcProxy<FilterPagingLoadConfig, PagingLo
     private final AppServiceFacade appService;
     private final AppSearchAutoBeanFactory appSearchFactory;
     private final AppAutoBeanFactory appFactory;
+    private final IplantDisplayStrings displayStrings;
+    private IsMaskable maskable;
 
     public AppSearchRpcProxy(final AppServiceFacade appService,
                              final AppSearchAutoBeanFactory appSearchFactory,
-                             final AppAutoBeanFactory appFactory) {
+                             final AppAutoBeanFactory appFactory, IplantDisplayStrings displayStrings) {
         this.appService = appService;
         this.appSearchFactory = appSearchFactory;
         this.appFactory = appFactory;
+        this.displayStrings = displayStrings;
     }
 
     public String getLastQueryText() {
@@ -54,9 +58,16 @@ public class AppSearchRpcProxy extends RpcProxy<FilterPagingLoadConfig, PagingLo
         this.hasHandlers = hasHandlers;
     }
 
+    public void setMaskable(IsMaskable maskable){
+        this.maskable = maskable;
+    }
+
     @Override
     public void load(FilterPagingLoadConfig loadConfig,
             final AsyncCallback<PagingLoadResult<App>> callback) {
+        if(maskable != null){
+           maskable.mask(displayStrings.loadingMask());
+        }
         // Cache the query text.
         lastQueryText = ""; //$NON-NLS-1$
 
@@ -87,13 +98,14 @@ public class AppSearchRpcProxy extends RpcProxy<FilterPagingLoadConfig, PagingLo
                 AppListLoadResult searchResult = appSearchFactory.dataLoadResult().as();
                 searchResult.setData(apps);
                 callback.onSuccess(searchResult);
+                if(maskable != null){
+                    maskable.unmask();
+                }
 
                 // Fire the search results load event.
-                EventBus eventBus = EventBus.getInstance();
                 if(hasHandlers != null){
                     hasHandlers.fireEvent(new AppSearchResultLoadEvent(source, searchText, apps));
                 }
-                eventBus.fireEvent(new AppSearchResultLoadEvent(source, searchText, apps));
             }
 
             @Override
@@ -101,6 +113,10 @@ public class AppSearchRpcProxy extends RpcProxy<FilterPagingLoadConfig, PagingLo
                 // TODO Add user error message or remove post here?
                 ErrorHandler.post(caught);
                 callback.onFailure(caught);
+
+                if(maskable != null){
+                    maskable.unmask();
+                }
             }
         });
     }

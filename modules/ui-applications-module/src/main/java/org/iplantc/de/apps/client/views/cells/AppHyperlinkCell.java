@@ -89,13 +89,13 @@ public class AppHyperlinkCell extends AbstractCell<App> {
     public final Resources resources = GWT.create(Resources.class);
     protected final Templates templates = GWT.create(Templates.class);
     protected final AppFavoriteCell favoriteCell = new AppFavoriteCell();
-    protected final AppsView view;
     public static final String ELEMENT_NAME = "appName";
+    private final AppsView appsView;
     private HasHandlers hasHandlers;
 
-    public AppHyperlinkCell(AppsView view) {
+    public AppHyperlinkCell(final AppsView appsView) {
         super(CLICK, MOUSEOVER, MOUSEOUT);
-        this.view = view;
+        this.appsView = appsView;
         resources.css().ensureInjected();
     }
 
@@ -107,7 +107,7 @@ public class AppHyperlinkCell extends AbstractCell<App> {
         favoriteCell.render(context, value, sb);
         sb.appendHtmlConstant("&nbsp;");
         SafeHtml safeHtmlName = SafeHtmlUtils
-                .fromTrustedString(view.highlightSearchText(value.getName()));
+                .fromTrustedString(appsView.highlightSearchText(value.getName()));
         if (!value.isDisabled()) {
             sb.append(templates.cell(resources.css().appName(), safeHtmlName, I18N.DISPLAY.run(),
                     ELEMENT_NAME));
@@ -148,6 +148,7 @@ public class AppHyperlinkCell extends AbstractCell<App> {
 
     public void setHasHandlers(HasHandlers hasHandlers) {
         this.hasHandlers = hasHandlers;
+        favoriteCell.setHasHandlers(hasHandlers);
     }
 
     private Element findAppNameElement(Element parent) {
@@ -174,7 +175,6 @@ public class AppHyperlinkCell extends AbstractCell<App> {
     }
 
     private void doOnClick(final Element eventTarget, final App value) {
-            view.onAppNameSelected(value);
         if(hasHandlers != null){
             hasHandlers.fireEvent(new AppNameSelectedEvent(value));
         }
