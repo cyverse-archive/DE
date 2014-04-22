@@ -126,6 +126,24 @@ public class SelectFolderByPathLoadHandler implements LoadHandler<Folder, List<F
      * force a reload of its children, in order to start the {@link #onLoad(LoadEvent)} callbacks.
      */
     private void initPathsToLoad() {
+        // Check if the requested folder's path is under a known root path.
+        boolean matched = false;
+        for (Folder root : view.getTreeStore().getRootItems()) {
+            if (folderToSelect.getPath().startsWith(root.getPath())) {
+                matched = true;
+                break;
+            }
+        }
+
+        if (!matched) {
+            String errMsg = I18N.ERROR.diskResourceDoesNotExist(folderToSelect.getPath());
+            announcer.schedule(new ErrorAnnouncementConfig(SafeHtmlUtils.fromTrustedString(errMsg)));
+
+            rootFolderDetected = false;
+            unmaskView();
+            return;
+        }
+
         Folder folder = view.getFolderByPath(folderToSelect.getPath());
         // Find the paths which are not yet loaded, and push them onto the 'pathsToLoad' stack
         while ((folder == null) && !path.isEmpty()) {

@@ -5,6 +5,7 @@ import org.iplantc.de.commons.client.info.ErrorAnnouncementConfig;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
 import org.iplantc.de.diskResource.client.views.DiskResourceView;
 
+import com.google.common.collect.Lists;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwtmockito.GxtMockitoTestRunner;
 
@@ -101,6 +102,7 @@ public class SelectFolderByPathLoadHandlerTest {
 
         // Start with only the rootPath loaded in the treeStoreMock, but no children loaded under it.
         when(treeStoreMock.getRootCount()).thenReturn(1);
+        when(treeStoreMock.getRootItems()).thenReturn(Lists.newArrayList(rootPathFolderMock));
 
 
         // The SelectFolderByPathLoadHandler constructor will search as far down the path to the target
@@ -154,6 +156,7 @@ public class SelectFolderByPathLoadHandlerTest {
 
         // Start with only the rootPath loaded in the treeStoreMock, but no children loaded under it.
         when(treeStoreMock.getRootCount()).thenReturn(1);
+        when(treeStoreMock.getRootItems()).thenReturn(Lists.newArrayList(rootPathFolderMock));
 
         // The SelectFolderByPathLoadHandler constructor will search as far down the path to the target
         // folder as possible for a folder already loaded in the viewMock.
@@ -203,6 +206,8 @@ public class SelectFolderByPathLoadHandlerTest {
      * but they have not yet been loaded into the view's TreeStore.
      */
     @Test public void testLoad_TargetCached() {
+        Folder rootPathFolderMock = initMockFolder(rootPath, "rootPathFolderMock");
+
         // Start with no roots loaded in the treeStoreMock. This causes the handler to wait until the
         // first onLoad callback, which means that the roots have just been loaded into the viewMock.
         when(treeStoreMock.getRootCount()).thenReturn(0);
@@ -210,6 +215,7 @@ public class SelectFolderByPathLoadHandlerTest {
         verifyPresenterInit();
 
         when(viewMock.getFolderByPath(targetFolderPath)).thenReturn(folderToSelectMock);
+        when(treeStoreMock.getRootItems()).thenReturn(Lists.newArrayList(rootPathFolderMock));
         loadHandlerUnderTest.onLoad(eventMock);
 
         verify(presenterMock).getSelectedFolder();
@@ -227,10 +233,12 @@ public class SelectFolderByPathLoadHandlerTest {
      */
     @Test public void testLoad_ParentCached_TargetNew() {
         Folder targetFolderParent = initMockFolder(targetFolderParentPath, "targetFolderParent");
+        Folder rootPathFolderMock = initMockFolder(rootPath, "rootPathFolderMock");
 
         // Start with the target's parent and its children already loaded in the treeStoreMock, but not
         // the target.
         when(treeStoreMock.getRootCount()).thenReturn(1);
+        when(treeStoreMock.getRootItems()).thenReturn(Lists.newArrayList(rootPathFolderMock));
         when(viewMock.getFolderByPath(targetFolderPath)).thenReturn(null);
         when(viewMock.getFolderByPath(targetFolderParentPath)).thenReturn(targetFolderParent);
         when(viewMock.isLoaded(targetFolderParent)).thenReturn(true);
@@ -265,10 +273,12 @@ public class SelectFolderByPathLoadHandlerTest {
      */
     @Test public void testLoad_ParentCached_TargetDeleted() {
         Folder targetFolderParent = initMockFolder(targetFolderParentPath, "targetFolderParent");
+        Folder rootPathFolderMock = initMockFolder(rootPath, "rootPathFolderMock");
 
         // Start with the target's parent and its children already loaded in the treeStoreMock, but not
         // the target.
         when(treeStoreMock.getRootCount()).thenReturn(1);
+        when(treeStoreMock.getRootItems()).thenReturn(Lists.newArrayList(rootPathFolderMock));
         when(viewMock.getFolderByPath(targetFolderPath)).thenReturn(null);
         when(viewMock.getFolderByPath(targetFolderParentPath)).thenReturn(targetFolderParent);
         when(viewMock.isLoaded(targetFolderParent)).thenReturn(true);

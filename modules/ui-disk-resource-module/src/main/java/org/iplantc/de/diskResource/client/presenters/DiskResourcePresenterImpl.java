@@ -70,7 +70,6 @@ import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONString;
-import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasOneWidget;
@@ -275,26 +274,6 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter {
                 view.setSelectedFolder(folder);
             }
         } else {
-            /**
-             * if root folders are already loaded check if the requested folder's id matches root-prefix
-             */
-            boolean matched = false;
-            if (view.getTreeStore().getRootCount() > 0) {
-                for (Folder f : view.getTreeStore().getRootItems()) {
-                    if (folderToSelect.getPath().startsWith(f.getPath())) {
-                        matched = true;
-                        break;
-                    }
-                }
-
-                if (!matched) {
-                    String errMsg = I18N.ERROR.diskResourceDoesNotExist(folderToSelect.getPath());
-                    announcer.schedule(new ErrorAnnouncementConfig(SafeHtmlUtils
-                            .fromTrustedString(errMsg)));
-                    return;
-                }
-            }
-
             // Create and add the SelectFolderByIdLoadHandler to the treeLoader.
             final SelectFolderByPathLoadHandler handler = new SelectFolderByPathLoadHandler(
                     folderToSelect, this, announcer);
