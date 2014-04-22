@@ -901,15 +901,15 @@ public class DiskResourceViewImpl implements DiskResourceView {
 
     private HorizontalPanel getViewerInfo(DiskResourceInfo info) {
         HorizontalPanel panel = buildRow();
+        FieldLabel fl = new FieldLabel();
+        fl.setWidth(100);
+        fl.setHTML(getDetailAsHtml("Send to", true));
+        panel.add(fl);
+        IPlantAnchor link = null;
         String infoType = info.getInfoType();
         if (infoType != null && !infoType.isEmpty()) {
             JSONObject manifest = new JSONObject();
             manifest.put("info-type", new JSONString(infoType));
-            FieldLabel fl = new FieldLabel();
-            fl.setWidth(100);
-            fl.setHTML(getDetailAsHtml("View in", true));
-            panel.add(fl);
-            IPlantAnchor link = null;
             if (DiskResourceUtil.isTreeTab(manifest)) {
                 link = new IPlantAnchor("Tree Viewer", 100, new ViewerInfoClickHandler());
             } else if (DiskResourceUtil.isGenomeVizTab(manifest)) {
@@ -917,6 +917,10 @@ public class DiskResourceViewImpl implements DiskResourceView {
             } else if (DiskResourceUtil.isEnsemblVizTab(manifest)) {
                 link = new IPlantAnchor("Ensembl Genome Browser", 100, new ViewerInfoClickHandler());
             }
+        }
+        if (link == null) {
+            panel.add(new HTML("-"));
+        } else {
             panel.add(link);
         }
         return panel;
