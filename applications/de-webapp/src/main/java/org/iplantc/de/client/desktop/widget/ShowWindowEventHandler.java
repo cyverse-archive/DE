@@ -16,7 +16,7 @@ import org.iplantc.de.client.events.ShowSystemMessagesEvent;
 import org.iplantc.de.client.events.WindowShowRequestEvent;
 import org.iplantc.de.client.events.WindowShowRequestEvent.WindowShowRequestEventHandler;
 import org.iplantc.de.client.events.diskResources.OpenFolderEvent;
-import org.iplantc.de.client.models.HasId;
+import org.iplantc.de.client.models.HasPath;
 import org.iplantc.de.client.models.analysis.Analysis;
 import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.util.CommonModelUtils;
@@ -57,10 +57,10 @@ final class ShowWindowEventHandler implements ShowAboutWindowEventHandler, ShowF
 
     @Override
     public void onRequestOpenFolder(OpenFolderEvent event) {
-        final HasId hasId = CommonModelUtils.createHasIdFromString(event.getFolderId());
+        final HasPath path = CommonModelUtils.createHasPathFromString(event.getFolderPath());
         DiskResourceWindowConfig config = ConfigFactory.diskResourceWindowConfig(event
                 .newViewRequested());
-        config.setSelectedFolder(hasId);
+        config.setSelectedFolder(path);
 
         desktop.showWindow(config);
     }

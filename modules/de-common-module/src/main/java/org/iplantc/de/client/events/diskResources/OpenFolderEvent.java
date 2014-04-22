@@ -9,11 +9,11 @@ public class OpenFolderEvent extends GwtEvent<OpenFolderEvent.OpenFolderEventHan
     }
 
     public static final Type<OpenFolderEventHandler> TYPE = new Type<OpenFolderEventHandler>();
-    private final String folderId;
+    private final String folderPath;
     private boolean newViewRequested = false;
 
-    public OpenFolderEvent(String folderId) {
-        this.folderId = folderId;
+    public OpenFolderEvent(String folderPath) {
+        this.folderPath = folderPath;
     }
 
     @Override
@@ -21,8 +21,8 @@ public class OpenFolderEvent extends GwtEvent<OpenFolderEvent.OpenFolderEventHan
         return TYPE;
     }
 
-    public String getFolderId() {
-        return folderId;
+    public String getFolderPath() {
+        return folderPath;
     }
 
     public boolean newViewRequested() {

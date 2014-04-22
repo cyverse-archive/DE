@@ -55,7 +55,7 @@ public final class DiskResourcesEventHandler implements
         }
 
         if (event.getSelectedItem() instanceof Folder) {
-            presenter.setSelectedFolderById(event.getSelectedItem());
+            presenter.setSelectedFolderByPath(event.getSelectedItem());
         } else if (event.getSelectedItem() instanceof File) {
             EventBus.getInstance().fireEvent(
                     new ShowFilePreviewEvent((File)event.getSelectedItem(), this));
@@ -102,7 +102,7 @@ public final class DiskResourcesEventHandler implements
         }
 
         // View the destination folder's contents.
-        presenter.setSelectedFolderById(destinationFolder);
+        presenter.setSelectedFolderByPath(destinationFolder);
     }
 
     private void diskResourcesMovedFromGrid(Set<DiskResource> resourcesToMove, Folder selectedFolder,
@@ -122,12 +122,12 @@ public final class DiskResourcesEventHandler implements
         }
 
         // Refresh the selected folder's contents.
-        presenter.setSelectedFolderById(selectedFolder);
+        presenter.setSelectedFolderByPath(selectedFolder);
     }
 
     @Override
     public void onRename(DiskResource originalDr, DiskResource newDr) {
-        Folder parent = view.getFolderById(DiskResourceUtil.parseParent(newDr.getPath()));
+        Folder parent = view.getFolderByPath(DiskResourceUtil.parseParent(newDr.getPath()));
         if (parent != null) {
             presenter.doRefresh(parent);
         }

@@ -1,6 +1,7 @@
 package org.iplantc.de.diskResource.client.views;
 
 import org.iplantc.de.client.models.HasId;
+import org.iplantc.de.client.models.HasPath;
 import org.iplantc.de.client.models.IsMaskable;
 import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.client.models.diskResources.DiskResourceInfo;
@@ -8,6 +9,7 @@ import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.client.services.DiskResourceServiceFacade;
 import org.iplantc.de.diskResource.client.events.FolderSelectedEvent;
 import org.iplantc.de.diskResource.client.presenters.proxy.FolderContentsLoadConfig;
+import org.iplantc.de.diskResource.client.presenters.proxy.SelectFolderByPathLoadHandler;
 import org.iplantc.de.diskResource.client.search.events.DeleteSavedSearchEvent;
 import org.iplantc.de.diskResource.client.search.events.SubmitDiskResourceQueryEvent.HasSubmitDiskResourceQueryEventHandlers;
 import org.iplantc.de.diskResource.client.search.presenter.DataSearchPresenter;
@@ -57,7 +59,8 @@ public interface DiskResourceView extends IsWidget, IsMaskable, IsDiskResourceRo
             Builder disableFilePreview();
         }
 
-        void go(HasOneWidget container, HasId folderToSelect, List<? extends HasId> diskResourcesToSelect);
+        void go(HasOneWidget container, HasPath folderToSelect,
+                List<? extends HasId> diskResourcesToSelect);
 
         /**
          * Method to clean up all the events when it is no longer required.
@@ -83,12 +86,13 @@ public interface DiskResourceView extends IsWidget, IsMaskable, IsDiskResourceRo
         void addFolderSelectionHandler(SelectionHandler<Folder> selectionHandler);
 
         /**
-         * Selects the folder with the given Id by adding a {@link org.iplantc.de.diskResource.client.presenters.proxy.SelectFolderByIdLoadHandler} to the
-         * view's corresponding {@link TreeLoader}, then triggering a remote load.
-         *
-         * @param folderId
+         * Selects the folder with the given path in the view. If the given path is not yet loaded in the
+         * view, a {@link SelectFolderByPathLoadHandler} is added to the view's corresponding
+         * {@link TreeLoader}, then a remote load is triggered.
+         * 
+         * @param folderToSelect
          */
-        void setSelectedFolderById(HasId folderToSelect);
+        void setSelectedFolderByPath(HasPath folderToSelect);
 
         /**
          * Sets the selected disk resource with the given ids.
@@ -205,6 +209,8 @@ public interface DiskResourceView extends IsWidget, IsMaskable, IsDiskResourceRo
     void addFolder(Folder parent, Folder newChild);
 
     Folder getFolderById(String folderId);
+
+    Folder getFolderByPath(String path);
 
     Folder getParentFolder(Folder selectedFolder);
 

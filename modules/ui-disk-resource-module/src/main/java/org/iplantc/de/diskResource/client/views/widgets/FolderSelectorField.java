@@ -1,7 +1,7 @@
 package org.iplantc.de.diskResource.client.views.widgets;
 
 import org.iplantc.de.client.events.EventBus;
-import org.iplantc.de.client.models.HasId;
+import org.iplantc.de.client.models.HasPath;
 import org.iplantc.de.client.models.UserSettings;
 import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.client.models.diskResources.DiskResourceAutoBeanFactory;
@@ -35,22 +35,15 @@ public class FolderSelectorField extends AbstractDiskResourceSelector<Folder> {
 
     @Override
     protected void onBrowseSelected() {
-        HasId value = getValue();
+        HasPath value = getValue();
         FolderSelectDialog folderSD = null;
-        if (value != null) {
-            folderSD = new FolderSelectDialog(value);
-        } else {
-            if (userSettings.isRememberLastPath()) {
-                String id = userSettings.getLastPathId();
-                if (id != null) {
-                    folderSD = new FolderSelectDialog(CommonModelUtils.createHasIdFromString(id));
-                } else {
-                    folderSD = new FolderSelectDialog(null);
-                }
-            } else {
-                folderSD = new FolderSelectDialog(null);
+        if (value == null && userSettings.isRememberLastPath()) {
+            String path = userSettings.getLastPath();
+            if (path != null) {
+                value = CommonModelUtils.createHasPathFromString(path);
             }
         }
+        folderSD = new FolderSelectDialog(value);
         folderSD.addHideHandler(new FolderDialogHideHandler(folderSD));
         folderSD.show();
     }
@@ -76,7 +69,7 @@ public class FolderSelectorField extends AbstractDiskResourceSelector<Folder> {
             setSelectedResource(value);
             // cache the last used path
             if (userSettings.isRememberLastPath()) {
-                userSettings.setLastPathId(value.getId());
+                userSettings.setLastPath(value.getPath());
                 UserSettingsUpdatedEvent usue = new UserSettingsUpdatedEvent();
                 EventBus.getInstance().fireEvent(usue);
             }

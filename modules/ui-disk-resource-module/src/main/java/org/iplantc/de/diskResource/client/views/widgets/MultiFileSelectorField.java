@@ -101,7 +101,7 @@ public class MultiFileSelectorField extends Composite implements IsField<List<Ha
             }
             store.addAll(files);
             if (userSettings.isRememberLastPath() && store.size() > 0) {
-                userSettings.setLastPathId(DiskResourceUtil.parseParent(store.get(0).getId()));
+                userSettings.setLastPath(DiskResourceUtil.parseParent(store.get(0).getPath()));
                 UserSettingsUpdatedEvent usue = new UserSettingsUpdatedEvent();
                 EventBus.getInstance().fireEvent(usue);
             }
@@ -338,14 +338,12 @@ public class MultiFileSelectorField extends Composite implements IsField<List<Ha
             return;
         }
         // Open a multiselect file selector
-        FileSelectDialog dlg = null;
-
+        String path = null;
         if (userSettings.isRememberLastPath()) {
-            String id = userSettings.getLastPathId();
-            dlg = FileSelectDialog.selectParentFolderById(id,false);
-        } else {
-            dlg = FileSelectDialog.selectParentFolderById(null,false);
+            path = userSettings.getLastPath();
         }
+
+        FileSelectDialog dlg = FileSelectDialog.selectParentFolderByPath(path, false);
         dlg.addHideHandler(new FileSelectDialogHideHandler(dlg, listStore));
         dlg.show();
     }

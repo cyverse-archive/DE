@@ -47,9 +47,9 @@ public class FileSelectorField extends AbstractDiskResourceSelector<File> {
             fileSD = FileSelectDialog.singleSelect(selected);
         } else {
             if (userSettings.isRememberLastPath()) {
-                String id = userSettings.getLastPathId();
-                if (id != null) {
-                    fileSD = FileSelectDialog.selectParentFolderById(id,true);
+                String path = userSettings.getLastPath();
+                if (path != null) {
+                    fileSD = FileSelectDialog.selectParentFolderByPath(path, true);
                 } else {
                     fileSD = FileSelectDialog.singleSelect(null);
                 }
@@ -78,7 +78,7 @@ public class FileSelectorField extends AbstractDiskResourceSelector<File> {
             setSelectedResource(selectedResource);
             // cache the last used path
             if (userSettings.isRememberLastPath()) {
-                userSettings.setLastPathId(DiskResourceUtil.parseParent(selectedResource.getId()));
+                userSettings.setLastPath(DiskResourceUtil.parseParent(selectedResource.getPath()));
                 UserSettingsUpdatedEvent usue = new UserSettingsUpdatedEvent();
                 EventBus.getInstance().fireEvent(usue);
             }

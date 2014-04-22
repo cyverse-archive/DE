@@ -1,6 +1,6 @@
 package org.iplantc.de.diskResource.client.views.dialogs;
 
-import org.iplantc.de.client.models.HasId;
+import org.iplantc.de.client.models.HasPath;
 import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.commons.client.views.gxt3.dialogs.IPlantDialog;
 import org.iplantc.de.diskResource.client.gin.DiskResourceInjector;
@@ -36,7 +36,7 @@ public class FolderSelectDialog extends IPlantDialog implements TakesValue<Folde
         this(null);
     }
 
-    public FolderSelectDialog(HasId folderToSelect) {
+    public FolderSelectDialog(HasPath folderToSelect) {
         // Disable Ok button by default.
         getOkButton().setEnabled(false);
 
@@ -53,7 +53,7 @@ public class FolderSelectDialog extends IPlantDialog implements TakesValue<Folde
 
         // Tell the presenter to add the view with the north, east, and center widgets hidden.
         presenter.builder().hideNorth().hideCenter().hideEast().singleSelect().go(this);
-        presenter.setSelectedFolderById(folderToSelect);
+        presenter.setSelectedFolderByPath(folderToSelect);
     }
 
     public void cleanUp() {

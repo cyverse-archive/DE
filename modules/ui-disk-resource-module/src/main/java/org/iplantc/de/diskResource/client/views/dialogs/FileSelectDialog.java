@@ -1,6 +1,6 @@
 package org.iplantc.de.diskResource.client.views.dialogs;
 
-import org.iplantc.de.client.models.HasId;
+import org.iplantc.de.client.models.HasPath;
 import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.client.models.diskResources.File;
 import org.iplantc.de.client.util.CommonModelUtils;
@@ -49,17 +49,17 @@ public class FileSelectDialog extends IPlantDialog implements TakesValue<List<Fi
         return new FileSelectDialog(diskResourcesToSelect, true);
     }
 
-    public static FileSelectDialog selectParentFolderById(String folderId, boolean singleSelect) {
-        return new FileSelectDialog(folderId,singleSelect);
+    public static FileSelectDialog selectParentFolderByPath(String folderPath, boolean singleSelect) {
+        return new FileSelectDialog(folderPath, singleSelect);
     }
 
-    protected FileSelectDialog(String folderId, boolean singleSelect) {
+    protected FileSelectDialog(String folderPath, boolean singleSelect) {
         presenter = DiskResourceInjector.INSTANCE.getDiskResourceViewPresenter();
         init(singleSelect);
 
-        HasId folderToSelect = null;
-        if(folderId!= null) {
-            folderToSelect = CommonModelUtils.createHasIdFromString(folderId);
+        HasPath folderToSelect = null;
+        if (folderPath != null) {
+            folderToSelect = CommonModelUtils.createHasPathFromString(folderPath);
         }
 
         presenter.go(this, folderToSelect, null);
@@ -70,10 +70,10 @@ public class FileSelectDialog extends IPlantDialog implements TakesValue<List<Fi
         presenter = DiskResourceInjector.INSTANCE.getDiskResourceViewPresenter();
         init(singleSelect);
 
-        HasId folderToSelect = null;
+        HasPath folderToSelect = null;
         if (diskResourcesToSelect != null && !diskResourcesToSelect.isEmpty()) {
-            String parentId = DiskResourceUtil.parseParent(diskResourcesToSelect.get(0).getPath());
-            folderToSelect = CommonModelUtils.createHasIdFromString(parentId);
+            String parentPath = DiskResourceUtil.parseParent(diskResourcesToSelect.get(0).getPath());
+            folderToSelect = CommonModelUtils.createHasPathFromString(parentPath);
         }
 
         presenter.go(this, folderToSelect, diskResourcesToSelect);

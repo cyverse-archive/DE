@@ -1,10 +1,10 @@
 package org.iplantc.de.diskResource.client.views.dialogs;
 
 
-import org.iplantc.de.client.models.CommonModelAutoBeanFactory;
-import org.iplantc.de.client.models.HasId;
+import org.iplantc.de.client.models.HasPath;
 import org.iplantc.de.client.models.UserSettings;
 import org.iplantc.de.client.models.diskResources.Folder;
+import org.iplantc.de.client.util.CommonModelUtils;
 import org.iplantc.de.commons.client.validators.DiskResourceNameValidator;
 import org.iplantc.de.commons.client.views.gxt3.dialogs.IPlantDialog;
 import org.iplantc.de.diskResource.client.gin.DiskResourceInjector;
@@ -12,13 +12,11 @@ import org.iplantc.de.diskResource.client.views.DiskResourceView;
 import org.iplantc.de.resources.client.messages.I18N;
 
 import com.google.common.base.Strings;
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyDownEvent;
 import com.google.gwt.event.dom.client.KeyDownHandler;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
-import com.google.web.bindery.autobean.shared.AutoBeanCodex;
 
 import com.sencha.gxt.widget.core.client.button.TextButton;
 import com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer;
@@ -67,14 +65,11 @@ public class SaveAsDialog extends IPlantDialog {
 		// is enabled, the go
 		// back to last selected folder
 		UserSettings instance = UserSettings.getInstance();
-		String id = instance.getDefaultFileSelectorPath();
+        String path = instance.getDefaultFileSelectorPath();
 		boolean remember = instance.isRememberLastPath();
-		if (remember && !Strings.isNullOrEmpty(id)) {
-			CommonModelAutoBeanFactory factory = GWT
-					.create(CommonModelAutoBeanFactory.class);
-			HasId folderAb = AutoBeanCodex.decode(factory, HasId.class,
-					"{\"id\": \"" + id + "\"}").as();
-			presenter.setSelectedFolderById(folderAb);
+		if (remember && !Strings.isNullOrEmpty(path)) {
+            HasPath folder = CommonModelUtils.createHasPathFromString(path);
+            presenter.setSelectedFolderByPath(folder);
 		}
 	}
 
