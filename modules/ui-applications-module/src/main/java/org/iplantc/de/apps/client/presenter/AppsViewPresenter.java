@@ -237,10 +237,7 @@ public class AppsViewPresenter implements AppsView.Presenter {
 
     @Override
     public void onAppSelected(final App app) {
-        if (app == null && toolbar != null) {
-            toolbar.setAppMenuEnabled(false);
-            toolbar.setWorkflowMenuEnabled(false);
-        } else {
+        if (app != null) {
             toolbar.setAppMenuEnabled(true);
             toolbar.setWorkflowMenuEnabled(true);
             if (app.isPublic()) {
@@ -303,6 +300,19 @@ public class AppsViewPresenter implements AppsView.Presenter {
                 toolbar.setAppRunMenuItemEnabled(false);
                 toolbar.setWorkflowRunMenuItemEnabled(false);
             }
+        } else {
+            toolbar.setDeleteWorkflowMenuItemEnabled(false);
+            toolbar.setSubmitWorkflowMenuItemEnabled(false);
+            toolbar.setCopyWorkflowMenuItemEnabled(false);
+            toolbar.setEditWorkflowMenuItemEnabled(false);
+            toolbar.setDeleteAppMenuItemEnabled(false);
+            toolbar.setSubmitAppMenuItemEnabled(false);
+            toolbar.setCopyAppMenuItemEnabled(false);
+            toolbar.setEditAppMenuItemEnabled(false);
+            toolbar.setAppRunMenuItemEnabled(false);
+            toolbar.setWorkflowRunMenuItemEnabled(false);
+            toolbar.setAppMenuEnabled(true);
+            toolbar.setWorkflowMenuEnabled(true);
         }
     }
 
