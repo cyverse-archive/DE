@@ -22,11 +22,11 @@ import org.iplantc.de.pipelineBuilder.client.json.Input;
 import org.iplantc.de.pipelineBuilder.client.json.Output;
 import org.iplantc.de.pipelineBuilder.client.json.PipeComponent;
 
-import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.dom.client.MouseOutEvent;
 import com.google.gwt.event.dom.client.MouseOutHandler;
 import com.google.gwt.event.dom.client.MouseOverEvent;
 import com.google.gwt.event.dom.client.MouseOverHandler;
+import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;

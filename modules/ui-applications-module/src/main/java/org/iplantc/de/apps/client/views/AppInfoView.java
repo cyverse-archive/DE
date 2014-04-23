@@ -1,13 +1,14 @@
 package org.iplantc.de.apps.client.views;
 
-import org.iplantc.de.apps.client.views.AppsView.Presenter;
+import org.iplantc.de.apps.client.events.AppFavoritedEvent;
+import org.iplantc.de.apps.client.views.cells.AppFavoriteCell;
 import org.iplantc.de.apps.client.views.widgets.AppFavoriteCellWidget;
 import org.iplantc.de.apps.client.views.widgets.AppRatingCellWidget;
-import org.iplantc.de.client.gin.ServicesInjector;
 import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.models.apps.AppAutoBeanFactory;
 import org.iplantc.de.client.models.apps.AppGroup;
 import org.iplantc.de.client.models.deployedComps.DeployedComponent;
+import org.iplantc.de.client.services.AppUserServiceFacade;
 import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.commons.client.widgets.IPlantAnchor;
 import org.iplantc.de.resources.client.messages.I18N;
@@ -16,16 +17,13 @@ import com.google.common.base.Joiner;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.IsWidget;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.user.client.ui.*;
 import com.google.web.bindery.autobean.shared.AutoBeanCodex;
 
 import com.sencha.gxt.core.client.XTemplates;
@@ -44,7 +42,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-public class AppInfoView implements IsWidget {
+public class AppInfoView implements IsWidget, AppFavoriteCell.RequestAppFavoriteEventHandler, AppFavoriteCell.HasRequestAppFavoriteEventHandlers, AppFavoritedEvent.AppFavoritedEventHandler {
 
     interface AppInfoViewUiBinder extends UiBinder<Widget, AppInfoView> {
     }
@@ -80,19 +78,38 @@ public class AppInfoView implements IsWidget {
 
     private final App app;
 
-    private final Presenter presenter;
+    private final AppsView appsView;
+    private final AppUserServiceFacade appUserService;
 
-    public AppInfoView(final App app, final Presenter presenter) {
+    public AppInfoView(final App app, final AppsView appsView, final AppUserServiceFacade appUserService) {
         this.app = app;
-        this.presenter = presenter;
+        this.appsView = appsView;
+        this.appUserService = appUserService;
 
         BINDER.createAndBindUi(this);
         favIcon.setValue(this.app);
+        favIcon.addRequestAppFavoriteEventHandlers(this);
         initDetailsPnl();
         initDCPanel();
         loadDCinfo();
         tabs = new TabPanel();
         info_container.setScrollMode(ScrollMode.AUTO);
+    }
+
+    @Override
+    public HandlerRegistration addRequestAppFavoriteEventHandlers(AppFavoriteCell.RequestAppFavoriteEventHandler handler) {
+        return asWidget().addHandler(handler, AppFavoriteCell.REQUEST_APP_FAV_EVNT_TYPE);
+    }
+
+    @Override
+    public void onAppFavoriteRequest(AppFavoriteCell.RequestAppFavoriteEvent event) {
+        // Forward event
+        asWidget().fireEvent(event);
+    }
+
+    @Override
+    public void onAppFavorited(AppFavoritedEvent appFavoritedEvent) {
+        favIcon.setValue(appFavoritedEvent.getApp());
     }
 
     private void addInfoTabs() {
@@ -101,7 +118,7 @@ public class AppInfoView implements IsWidget {
     }
 
     private void initDetailsPnl() {
-        String description = presenter.highlightSearchText(app.getDescription());
+        String description = appsView.highlightSearchText(app.getDescription());
 
         appDesc.setHTML("<i>" + I18N.DISPLAY.description() + ": " + "</i>" + description);
         AppDetailsRenderer templates = GWT.create(AppDetailsRenderer.class);
@@ -136,7 +153,7 @@ public class AppInfoView implements IsWidget {
     }
 
     private void addDCDetails(DeployedComponent dc, HtmlLayoutContainer hlc) {
-        String name = presenter.highlightSearchText(dc.getName());
+        String name = appsView.highlightSearchText(dc.getName());
 
         hlc.add(new Label(I18N.DISPLAY.name() + ": "), new HtmlData(".cell1"));
         hlc.add(new HTML(name), new HtmlData(".cell2"));
@@ -151,7 +168,7 @@ public class AppInfoView implements IsWidget {
     }
 
     private void loadDCinfo() {
-        ServicesInjector.INSTANCE.getAppUserServiceFacade().getAppDetails(app.getId(), new AsyncCallback<String>() {
+        appUserService.getAppDetails(app.getId(), new AsyncCallback<String>() {
 
             @Override
             public void onSuccess(String result) {
@@ -178,7 +195,7 @@ public class AppInfoView implements IsWidget {
     }
 
     private void addIntegratorsInfo(final App app, HtmlLayoutContainer hlc) {
-        String name = presenter.highlightSearchText(app.getIntegratorName());
+        String name = appsView.highlightSearchText(app.getIntegratorName());
 
         hlc.add(new Label(I18N.DISPLAY.integratorName() + ": "), new HtmlData(".cell3"));
         hlc.add(new HTML(name), new HtmlData(".cell4"));
@@ -215,7 +232,7 @@ public class AppInfoView implements IsWidget {
         appDetailsHtmlContainer.add(new Label(I18N.DISPLAY.category() + ": "), new HtmlData(".cell11"));
         List<String> builder = new ArrayList<String>();
         for (AppGroup ag : groups) {
-            builder.add(Joiner.on(" >> ").join(presenter.computeGroupHirarchy(ag)));
+            builder.add(Joiner.on(" >> ").join(appsView.computeGroupHierarchy(ag)));
         }
         Collections.sort(builder);
         appDetailsHtmlContainer.add(new HTML(Joiner.on("<br/>").join(builder)), new HtmlData(".cell12"));

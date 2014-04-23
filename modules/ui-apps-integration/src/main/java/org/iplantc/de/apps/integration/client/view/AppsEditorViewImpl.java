@@ -24,6 +24,7 @@ import org.iplantc.de.apps.integration.client.view.propertyEditors.TextSelection
 import org.iplantc.de.apps.integration.client.view.propertyEditors.TreeSelectionPropertyEditor;
 import org.iplantc.de.apps.integration.client.view.propertyEditors.style.AppTemplateWizardPropertyContentPanelAppearance;
 import org.iplantc.de.apps.integration.client.view.widgets.AppTemplatePropertyEditor;
+import org.iplantc.de.apps.integration.shared.AppIntegrationModule;
 import org.iplantc.de.apps.widgets.client.events.AppTemplateSelectedEvent;
 import org.iplantc.de.apps.widgets.client.events.ArgumentGroupSelectedEvent;
 import org.iplantc.de.apps.widgets.client.events.ArgumentSelectedEvent;
@@ -184,6 +185,12 @@ public class AppsEditorViewImpl extends Composite implements AppsEditorView {
                 }
             }
         });
+    }
+
+    @Override
+    protected void onEnsureDebugId(String baseID) {
+        super.onEnsureDebugId(baseID);
+        palette.ensureDebugId(baseID + AppIntegrationModule.Ids.PALETTE);
     }
 
     @Override

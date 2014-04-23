@@ -1,20 +1,23 @@
 package org.iplantc.de.apps.client.views.cells;
 
-import org.iplantc.de.apps.client.views.AppsView;
+import org.iplantc.de.apps.shared.AppsModule;
 import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.resources.client.IplantResources;
 import org.iplantc.de.resources.client.messages.I18N;
 
 import static com.google.gwt.dom.client.BrowserEvents.CLICK;
-import static com.google.gwt.dom.client.BrowserEvents.MOUSEOUT;
-import static com.google.gwt.dom.client.BrowserEvents.MOUSEOVER;
-
+import com.google.common.base.Strings;
 import com.google.gwt.cell.client.AbstractCell;
 import com.google.gwt.cell.client.Cell;
 import com.google.gwt.cell.client.ValueUpdater;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.debug.client.DebugInfo;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NativeEvent;
+import com.google.gwt.event.shared.EventHandler;
+import com.google.gwt.event.shared.GwtEvent;
+import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.event.shared.HasHandlers;
 import com.google.gwt.resources.client.ClientBundle;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.safehtml.client.SafeHtmlTemplates;
@@ -23,7 +26,41 @@ import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.safehtml.shared.SafeUri;
 import com.google.gwt.user.client.Event;
 
+/**
+ * FIXME Create appearance
+ */
 public class AppInfoCell extends AbstractCell<App> {
+
+    public static final GwtEvent.Type<AppInfoClickedEventHandler> APP_INFO_CLICKED_EVENT_HANDLER_TYPE = new GwtEvent.Type<AppInfoClickedEventHandler>();
+    public class AppInfoClickedEvent extends GwtEvent<AppInfoClickedEventHandler> {
+
+        private final App app;
+
+        public AppInfoClickedEvent(App app) {
+            this.app = app;
+        }
+
+        public App getApp() {
+            return app;
+        }
+
+        @Override
+        public Type<AppInfoClickedEventHandler> getAssociatedType() {
+            return APP_INFO_CLICKED_EVENT_HANDLER_TYPE;
+        }
+
+        @Override
+        protected void dispatch(AppInfoClickedEventHandler handler) {
+            handler.onAppInfoClicked(this);
+        }
+    }
+
+    public interface AppInfoClickedEventHandler extends EventHandler {
+        void onAppInfoClicked(AppInfoClickedEvent event);
+    }
+    public interface HasAppInfoClickedEventHandlers {
+        HandlerRegistration addAppInfoClickedEventHandler(AppInfoClickedEventHandler handler);
+    }
 
     interface MyCss extends CssResource {
         @ClassName("app_info")
@@ -37,25 +74,35 @@ public class AppInfoCell extends AbstractCell<App> {
 
     interface Templates extends SafeHtmlTemplates {
 
-        @SafeHtmlTemplates.Template("<img class=\"{0}\" qtip=\"{2}\" src=\"{1}\"/>")
+        @SafeHtmlTemplates.Template("<img class='{0}' qtip='{2}' src='{1}'/>")
         SafeHtml cell(String imgClassName, SafeUri img, String toolTip);
+
+        @SafeHtmlTemplates.Template("<img id='{3}' class='{0}' qtip='{2}' src='{1}'/>")
+        SafeHtml debugCell(String imgClassName, SafeUri img, String toolTip, String debugId);
     }
 
     private static final Resources resources = GWT.create(Resources.class);
     private static final Templates templates = GWT.create(Templates.class);
-    private AppsView view;
+    private String baseID;
+    private HasHandlers hasHandlers;
 
-    public AppInfoCell(AppsView view) {
-        super(CLICK, MOUSEOVER, MOUSEOUT);
-        this.view = view;
+    public AppInfoCell() {
+        super(CLICK);
         resources.css().ensureInjected();
-
     }
 
     @Override
     public void render(Cell.Context context, App value, SafeHtmlBuilder sb) {
-        sb.append(templates.cell(resources.css().appRun(),
-                IplantResources.RESOURCES.info().getSafeUri(), I18N.DISPLAY.clickAppInfo()));
+        String imgClassName, tooltip;
+        imgClassName = resources.css().appRun();
+        tooltip = I18N.DISPLAY.clickAppInfo();
+        final SafeUri safeUri = IplantResources.RESOURCES.info().getSafeUri();
+        if(DebugInfo.isDebugIdEnabled() && !Strings.isNullOrEmpty(baseID)){
+            String debugId = baseID + "." + value.getId() + AppsModule.Ids.APP_INFO_CELL;
+            sb.append(templates.debugCell(imgClassName, safeUri, tooltip, debugId));
+        }else {
+            sb.append(templates.cell(imgClassName, safeUri, tooltip));
+        }
     }
 
     @Override
@@ -71,28 +118,24 @@ public class AppInfoCell extends AbstractCell<App> {
                 case Event.ONCLICK:
                     doOnClick(eventTarget, value);
                     break;
-                case Event.ONMOUSEOVER:
-                    doOnMouseOver(eventTarget, value);
-                    break;
-                case Event.ONMOUSEOUT:
-                    doOnMouseOut(eventTarget, value);
-                    break;
                 default:
                     break;
             }
         }
     }
 
-    private void doOnMouseOut(Element eventTarget, App value) {
-        // XXX JDS Place holder for switching images on hover
+    public void setBaseDebugId(String baseID) {
+        this.baseID = baseID;
     }
 
-    private void doOnMouseOver(Element eventTarget, App value) {
-        // XXX JDS Place holder for switching images on hover
+    public void setHasHandlers(HasHandlers hasHandlers) {
+        this.hasHandlers = hasHandlers;
     }
 
     private void doOnClick(Element eventTarget, App value) {
-        view.onAppInfoClick(value);
+        if(hasHandlers != null){
+            hasHandlers.fireEvent(new AppInfoClickedEvent(value));
+        }
     }
 
 }

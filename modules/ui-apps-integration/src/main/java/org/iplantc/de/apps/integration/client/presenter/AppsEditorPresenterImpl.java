@@ -443,6 +443,11 @@ public class AppsEditorPresenterImpl implements AppsEditorView.Presenter, Delete
     }
 
     @Override
+    public void setViewDebugId(String baseID) {
+        view.asWidget().ensureDebugId(baseID);
+    }
+
+    @Override
     public void go(final HasOneWidget container, final AppTemplate appTemplate, final RenameWindowHeaderCommand renameCmd) {
         this.renameCmd = renameCmd;
         // If we are editing a new AppTemplate, and the current the current AppTemplate has unsaved changes

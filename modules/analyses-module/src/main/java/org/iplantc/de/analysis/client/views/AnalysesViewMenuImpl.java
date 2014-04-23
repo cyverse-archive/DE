@@ -102,41 +102,52 @@ public class AnalysesViewMenuImpl extends Composite implements AnalysesView.View
         int size = selection.size();
         final boolean canCancelSelection = canCancelSelection(selection);
         final boolean canDeleteSelection = canDeleteSelection(selection);
+
+        boolean goToFolderEnabled, viewParamsEnabled, relaunchEnabled, cancelEnabled, deleteEnabled;
+        boolean renameEnabled, updateCommentsEnabled;
         switch (size) {
             case 0:
-                goToFolderMI.setEnabled(false);
-                viewParamsMI.setEnabled(false);
-                relaunchMI.setEnabled(false);
-                cancelMI.setEnabled(false);
-                deleteMI.setEnabled(false);
+                goToFolderEnabled = false;
+                viewParamsEnabled = false;
+                relaunchEnabled = false;
+                cancelEnabled = false;
+                deleteEnabled = false;
 
-                renameMI.setEnabled(false);
-                updateCommentsMI.setEnabled(false);
+                renameEnabled = false;
+                updateCommentsEnabled = false;
+
                 break;
             case 1:
-                goToFolderMI.setEnabled(true);
-                viewParamsMI.setEnabled(true);
-                relaunchMI.setEnabled(!selection.get(0).isAppDisabled());
-                cancelMI.setEnabled(canCancelSelection);
-                deleteMI.setEnabled(canDeleteSelection);
+                goToFolderEnabled = true;
+                viewParamsEnabled = true;
+                relaunchEnabled = !selection.get(0).isAppDisabled();
+                cancelEnabled = canCancelSelection;
+                deleteEnabled = canDeleteSelection;
 
-                renameMI.setEnabled(true);
-                updateCommentsMI.setEnabled(true);
+                renameEnabled = true;
+                updateCommentsEnabled = true;
                 break;
 
             default:
                 // If more than 1 is selected
-                goToFolderMI.setEnabled(false);
-                viewParamsMI.setEnabled(false);
-                relaunchMI.setEnabled(false);
+                goToFolderEnabled = false;
+                viewParamsEnabled = false;
+                relaunchEnabled = false;
+                cancelEnabled = canCancelSelection;
+                deleteEnabled = canDeleteSelection;
 
-                cancelMI.setEnabled(canCancelSelection);
-                deleteMI.setEnabled(canDeleteSelection);
-
-                renameMI.setEnabled(false);
-                updateCommentsMI.setEnabled(false);
+                renameEnabled = false;
+                updateCommentsEnabled = false;
         }
 
+        goToFolderMI.setEnabled(goToFolderEnabled);
+        viewParamsMI.setEnabled(viewParamsEnabled);
+        relaunchMI.setEnabled(relaunchEnabled);
+        cancelMI.setEnabled(cancelEnabled);
+        deleteMI.setEnabled(deleteEnabled);
+
+        renameMI.setEnabled(renameEnabled);
+        updateCommentsMI.setEnabled(updateCommentsEnabled);
     }
 
     @Override

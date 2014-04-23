@@ -4,7 +4,7 @@ import org.iplantc.admin.belphegor.client.BelphegorResources;
 import org.iplantc.admin.belphegor.client.BelphegorStyle;
 import org.iplantc.admin.belphegor.client.Constants;
 import org.iplantc.admin.belphegor.client.I18N;
-import org.iplantc.admin.belphegor.client.apps.presenter.BelphegorAppsViewPresenter;
+import org.iplantc.admin.belphegor.client.apps.presenter.BelphegorAppsViewPresenterImpl;
 import org.iplantc.admin.belphegor.client.gin.BelphegorAppInjector;
 import org.iplantc.admin.belphegor.client.models.ToolIntegrationAdminProperties;
 import org.iplantc.admin.belphegor.client.refGenome.RefGenomeView;
@@ -83,7 +83,7 @@ public class BelphegorViewImpl extends Composite implements BelphegorView {
     private void init() {
         buildUserMenu();
 
-        BelphegorAppsViewPresenter presenter = BelphegorAppInjector.INSTANCE.getAppsViewPresenter();
+        BelphegorAppsViewPresenterImpl presenter = BelphegorAppInjector.INSTANCE.getAppsViewPresenter();
         String betaGroupId = ToolIntegrationAdminProperties.getInstance()
                 .getDefaultBetaAnalysisGroupId();
         HasId betaGroup = CommonModelUtils.createHasIdFromString(betaGroupId);

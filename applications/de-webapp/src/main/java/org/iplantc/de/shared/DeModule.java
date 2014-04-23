@@ -1,7 +1,9 @@
 package org.iplantc.de.shared;
 
 public interface DeModule {
-    public interface Ids {
-        public static final String ANALYSES_WINDOW = "analysesWindow";
+    interface Ids {
+        String ANALYSES_WINDOW = ".analysesWindow";
+        String APPS_WINDOW = ".appsWindow";
+        String APP_EDITOR_WINDOW = ".appEditorWindow";
     }
 }

@@ -1,5 +1,6 @@
 package org.iplantc.de.client.views.windows;
 
+import org.iplantc.de.apps.integration.shared.AppIntegrationModule;
 import org.iplantc.de.apps.widgets.client.events.AnalysisLaunchEvent;
 import org.iplantc.de.apps.widgets.client.events.AnalysisLaunchEvent.AnalysisLaunchEventHandler;
 import org.iplantc.de.apps.widgets.client.gin.AppLaunchInjector;
@@ -18,6 +19,7 @@ import org.iplantc.de.commons.client.info.ErrorAnnouncementConfig;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
 import org.iplantc.de.commons.client.views.window.configs.AppWizardConfig;
 import org.iplantc.de.commons.client.views.window.configs.ConfigFactory;
+import org.iplantc.de.shared.DeModule;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -74,6 +76,11 @@ public class AppLaunchWindow extends IplantWindowBase implements AnalysisLaunchE
         presenter.addAnalysisLaunchHandler(this);
         appId = config.getAppId();
         init(presenter, config);
+    }
+
+    @Override
+    protected void onEnsureDebugId(String baseID) {
+        super.onEnsureDebugId(baseID);
     }
 
     private void init(final AppLaunchView.Presenter presenter, AppWizardConfig config) {

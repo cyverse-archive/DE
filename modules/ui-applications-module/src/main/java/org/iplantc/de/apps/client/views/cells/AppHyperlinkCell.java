@@ -1,21 +1,25 @@
 package org.iplantc.de.apps.client.views.cells;
 
 import org.iplantc.de.apps.client.views.AppsView;
+import org.iplantc.de.apps.shared.AppsModule;
 import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.resources.client.messages.I18N;
 
-import static com.google.gwt.dom.client.BrowserEvents.CLICK;
-import static com.google.gwt.dom.client.BrowserEvents.MOUSEOUT;
-import static com.google.gwt.dom.client.BrowserEvents.MOUSEOVER;
-
+import static com.google.gwt.dom.client.BrowserEvents.*;
+import com.google.common.base.Strings;
 import com.google.gwt.cell.client.AbstractCell;
 import com.google.gwt.cell.client.Cell;
 import com.google.gwt.cell.client.ValueUpdater;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.debug.client.DebugInfo;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.dom.client.Node;
 import com.google.gwt.dom.client.Style.TextDecoration;
+import com.google.gwt.event.shared.EventHandler;
+import com.google.gwt.event.shared.GwtEvent;
+import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.event.shared.HasHandlers;
 import com.google.gwt.resources.client.ClientBundle;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.safehtml.client.SafeHtmlTemplates;
@@ -27,11 +31,44 @@ import com.google.gwt.user.client.Event;
 /**
  * This is a custom cell which combines the functionality of the {@link AppFavoriteCell} with a clickable
  * hyper-link of an app name.
- * 
+ *
+ * FIXME Create appearance
  * @author jstroot
  * 
  */
 public class AppHyperlinkCell extends AbstractCell<App> {
+
+    public static GwtEvent.Type<AppNameSelectedEventHandler> EVENT_TYPE = new GwtEvent.Type<AppNameSelectedEventHandler>();
+    public class AppNameSelectedEvent extends GwtEvent<AppNameSelectedEventHandler> {
+
+        private final App selectedApp;
+
+        public AppNameSelectedEvent(App selectedApp) {
+            this.selectedApp = selectedApp;
+        }
+
+        @Override
+        public Type<AppNameSelectedEventHandler> getAssociatedType() {
+            return EVENT_TYPE;
+        }
+
+        public App getSelectedApp() {
+            return selectedApp;
+        }
+
+        @Override
+        protected void dispatch(AppNameSelectedEventHandler handler) {
+            handler.onAppNameSelected(this);
+        }
+    }
+
+    public interface AppNameSelectedEventHandler extends EventHandler {
+        void onAppNameSelected(AppNameSelectedEvent event);
+    }
+
+    public static interface HasAppNameSelectedEventHandlers {
+        HandlerRegistration addAppNameSelectedEventHandler(AppNameSelectedEventHandler handler);
+    }
 
     public interface MyCss extends CssResource {
         String appName();
@@ -49,19 +86,24 @@ public class AppHyperlinkCell extends AbstractCell<App> {
      */
     public interface Templates extends SafeHtmlTemplates {
 
-        @SafeHtmlTemplates.Template("<span name=\"{3}\" class=\"{0}\" qtip=\"{2}\">{1}</span>")
+        @SafeHtmlTemplates.Template("<span name='{3}' class='{0}' qtip='{2}'>{1}</span>")
         SafeHtml cell(String textClassName, SafeHtml name, String textToolTip, String elementName);
+
+        @SafeHtmlTemplates.Template("<span id='{4}' name='{3}' class='{0}' qtip='{2}'>{1}</span>")
+        SafeHtml debugCell(String textClassName, SafeHtml name, String textToolTip, String elementName, String debugId);
     }
 
     public final Resources resources = GWT.create(Resources.class);
     protected final Templates templates = GWT.create(Templates.class);
     protected final AppFavoriteCell favoriteCell = new AppFavoriteCell();
-    protected final AppsView view;
     public static final String ELEMENT_NAME = "appName";
+    private final AppsView appsView;
+    private String baseID;
+    private HasHandlers hasHandlers;
 
-    public AppHyperlinkCell(AppsView view) {
+    public AppHyperlinkCell(final AppsView appsView) {
         super(CLICK, MOUSEOVER, MOUSEOUT);
-        this.view = view;
+        this.appsView = appsView;
         resources.css().ensureInjected();
     }
 
@@ -72,14 +114,24 @@ public class AppHyperlinkCell extends AbstractCell<App> {
         }
         favoriteCell.render(context, value, sb);
         sb.appendHtmlConstant("&nbsp;");
+        String textClassName, textToolTip, elementName;
         SafeHtml safeHtmlName = SafeHtmlUtils
-                .fromTrustedString(view.highlightSearchText(value.getName()));
+                .fromTrustedString(appsView.highlightSearchText(value.getName()));
         if (!value.isDisabled()) {
-            sb.append(templates.cell(resources.css().appName(), safeHtmlName, I18N.DISPLAY.run(),
-                    ELEMENT_NAME));
+            textClassName = resources.css().appName();
+            textToolTip = I18N.DISPLAY.run();
+            elementName = ELEMENT_NAME;
         } else {
-            sb.append(templates.cell(resources.css().appDisabled(), safeHtmlName,
-                    I18N.DISPLAY.appUnavailable(), ELEMENT_NAME));
+            textClassName = resources.css().appDisabled();
+            textToolTip = I18N.DISPLAY.appUnavailable();
+            elementName = ELEMENT_NAME;
+        }
+
+        if(DebugInfo.isDebugIdEnabled() && !Strings.isNullOrEmpty(baseID)){
+            String debugId = baseID + "." + value.getId() + AppsModule.Ids.APP_NAME_CELL;
+            sb.append(templates.debugCell(textClassName, safeHtmlName, textToolTip, elementName, debugId));
+        }else {
+            sb.append(templates.cell(textClassName, safeHtmlName, textToolTip, elementName));
         }
 
     }
@@ -98,7 +150,9 @@ public class AppHyperlinkCell extends AbstractCell<App> {
 
             switch (Event.as(event).getTypeInt()) {
                 case Event.ONCLICK:
-                    doOnClick(child, value);
+                    if(hasHandlers != null){
+                        hasHandlers.fireEvent(new AppNameSelectedEvent(value));
+                    }
                     break;
                 case Event.ONMOUSEOVER:
                     doOnMouseOver(child, value);
@@ -110,6 +164,17 @@ public class AppHyperlinkCell extends AbstractCell<App> {
                     break;
             }
         }
+    }
+
+    public void setBaseDebugId(String baseID) {
+        this.baseID = baseID;
+        favoriteCell.setBaseDebugId(baseID);
+
+    }
+
+    public void setHasHandlers(HasHandlers hasHandlers) {
+        this.hasHandlers = hasHandlers;
+        favoriteCell.setHasHandlers(hasHandlers);
     }
 
     private Element findAppNameElement(Element parent) {
@@ -135,7 +200,4 @@ public class AppHyperlinkCell extends AbstractCell<App> {
         eventTarget.getStyle().setTextDecoration(TextDecoration.UNDERLINE);
     }
 
-    private void doOnClick(final Element eventTarget, final App value) {
-            view.onAppNameSelected(value);
-    }
 }

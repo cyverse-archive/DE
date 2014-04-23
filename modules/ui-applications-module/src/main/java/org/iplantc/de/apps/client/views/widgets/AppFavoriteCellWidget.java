@@ -4,10 +4,11 @@ import org.iplantc.de.apps.client.views.cells.AppFavoriteCell;
 import org.iplantc.de.client.models.apps.App;
 
 import com.google.gwt.cell.client.Cell;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.cellview.client.CellWidget;
 import com.google.gwt.view.client.ProvidesKey;
 
-public class AppFavoriteCellWidget extends CellWidget<App> {
+public class AppFavoriteCellWidget extends CellWidget<App> implements AppFavoriteCell.HasRequestAppFavoriteEventHandlers {
 
     private final AppFavoriteCell cell;
 
@@ -31,6 +32,12 @@ public class AppFavoriteCellWidget extends CellWidget<App> {
     public AppFavoriteCellWidget(AppFavoriteCell cell, App app, ProvidesKey<App> keyProvider) {
         super(cell, app, keyProvider);
         this.cell = cell;
+        this.cell.setHasHandlers(this);
+    }
+
+    @Override
+    public HandlerRegistration addRequestAppFavoriteEventHandlers(AppFavoriteCell.RequestAppFavoriteEventHandler handler) {
+        return addHandler(handler, AppFavoriteCell.REQUEST_APP_FAV_EVNT_TYPE);
     }
 
     @Override

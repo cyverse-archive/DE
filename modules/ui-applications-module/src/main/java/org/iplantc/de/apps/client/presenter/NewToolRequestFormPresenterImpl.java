@@ -109,9 +109,6 @@ public class NewToolRequestFormPresenterImpl implements Presenter {
         otherDataSelectionMode = mode;
     }
     
-    /**
-     * @see Presenter#onToolByUpload(boolean)
-     */
     @Override
     public void onToolSelectionModeChange() {
         view.setToolSelectionMode();

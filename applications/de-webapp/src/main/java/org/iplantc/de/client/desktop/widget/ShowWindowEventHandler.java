@@ -1,15 +1,11 @@
 package org.iplantc.de.client.desktop.widget;
 
 import org.iplantc.de.analysis.client.events.OpenAppForRelaunchEvent;
-import org.iplantc.de.apps.client.events.CreateNewAppEvent;
+import org.iplantc.de.apps.client.events.*;
 import org.iplantc.de.apps.client.events.CreateNewAppEvent.CreateNewAppEventHandler;
-import org.iplantc.de.apps.client.events.EditAppEvent;
 import org.iplantc.de.apps.client.events.EditAppEvent.EditAppEventHandler;
-import org.iplantc.de.apps.client.events.EditWorkflowEvent;
 import org.iplantc.de.apps.client.events.EditWorkflowEvent.EditWorkflowEventHandler;
-import org.iplantc.de.apps.client.events.RunAppEvent;
 import org.iplantc.de.apps.client.events.RunAppEvent.RunAppEventHandler;
-import org.iplantc.de.apps.client.events.handlers.CreateNewWorkflowEventHandler;
 import org.iplantc.de.client.events.ShowAboutWindowEvent;
 import org.iplantc.de.client.events.ShowAboutWindowEvent.ShowAboutWindowEventHandler;
 import org.iplantc.de.client.events.ShowSystemMessagesEvent;
@@ -35,7 +31,7 @@ import org.iplantc.de.diskResource.client.events.ShowFilePreviewEvent.ShowFilePr
 import com.google.web.bindery.autobean.shared.Splittable;
 
 final class ShowWindowEventHandler implements ShowAboutWindowEventHandler, ShowFilePreviewEventHandler,
-        CreateNewAppEventHandler, CreateNewWorkflowEventHandler, WindowShowRequestEventHandler,
+        CreateNewAppEventHandler, CreateNewWorkflowEvent.CreateNewWorkflowEventHandler, WindowShowRequestEventHandler,
         RunAppEventHandler, EditAppEventHandler, EditWorkflowEventHandler,
         ShowSystemMessagesEvent.Handler, CreateNewFileEventHandler, OpenAppForRelaunchEvent.OpenAppForRelaunchEventHandler, OpenFolderEvent.OpenFolderEventHandler {
 

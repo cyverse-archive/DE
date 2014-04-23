@@ -45,11 +45,11 @@
                 <button:menu>
                     <menu:Menu>
                         <menu:MenuItem ui:field="renameMI"
-                                       text="{strings.rename}"
+                                       text="{strings.analysisRename}"
                                        icon="{icons.fileRename}"
                                        enabled="false"/>
                         <menu:MenuItem ui:field="updateCommentsMI"
-                                       text="{strings.comments}"
+                                       text="{strings.updateComments}"
                                        icon="{icons.userComment}"
                                        enabled="false"/>
                     </menu:Menu>

@@ -1,6 +1,13 @@
 package org.iplantc.de.apps.client.views;
 
-import org.iplantc.de.apps.client.views.widgets.AppsViewToolbar;
+import static org.iplantc.de.apps.client.events.AppGroupSelectionChangedEvent.AppGroupSelectionChangedEventHandler;
+import static org.iplantc.de.apps.client.events.AppGroupSelectionChangedEvent.HasAppGroupSelectionChangedEventHandlers;
+import static org.iplantc.de.apps.client.events.AppSelectionChangedEvent.AppSelectionChangedEventHandler;
+import static org.iplantc.de.apps.client.events.AppSelectionChangedEvent.HasAppSelectionChangedEventHandlers;
+import static org.iplantc.de.apps.client.views.widgets.events.AppSearchResultLoadEvent.AppSearchResultLoadEventHandler;
+import org.iplantc.de.apps.client.events.AppFavoritedEvent;
+import org.iplantc.de.apps.client.views.cells.AppFavoriteCell;
+import org.iplantc.de.apps.client.views.cells.AppHyperlinkCell;
 import org.iplantc.de.client.models.HasId;
 import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.models.apps.AppGroup;
@@ -9,57 +16,73 @@ import com.google.gwt.dom.client.Element;
 import com.google.gwt.user.client.ui.HasOneWidget;
 import com.google.gwt.user.client.ui.IsWidget;
 
-import com.sencha.gxt.data.shared.ListStore;
-import com.sencha.gxt.data.shared.loader.ListLoadConfig;
-import com.sencha.gxt.data.shared.loader.ListLoadResult;
-import com.sencha.gxt.data.shared.loader.ListLoader;
-import com.sencha.gxt.data.shared.loader.TreeLoader;
 import com.sencha.gxt.widget.core.client.grid.Grid;
 
 import java.util.List;
 
-public interface AppsView extends IsWidget {
+public interface AppsView extends IsWidget, AppSearchResultLoadEventHandler, AppFavoritedEvent.AppFavoritedEventHandler {
 
     public interface Presenter extends org.iplantc.de.commons.client.presenter.Presenter,
-            AppsViewToolbar.Presenter {
-        void onAppSelected(final App app);
+            AppHyperlinkCell.AppNameSelectedEventHandler,
+            AppSearchResultLoadEventHandler,
+            AppGroupSelectionChangedEventHandler,
+            AppFavoriteCell.RequestAppFavoriteEventHandler{
 
-        void onAppGroupSelected(final AppGroup ag);
+        void copySelectedApp();
+
+        void createNewAppClicked();
+
+        void createWorkflowClicked();
+
+        void deleteSelectedApps();
+
+        void editSelectedApp();
 
         App getSelectedApp();
 
-        List<App> getAllSelectedApps();
-
         AppGroup getSelectedAppGroup();
-
-        void onAppInfoClick(App app);
-        
-        void onAppNameSelected(App app);
 
         void go(HasOneWidget container, HasId selectedAppGroup, HasId selectedApp);
 
         Grid<App> getAppsGrid();
 
-        AppGroup getAppGroupFromElement(Element el);
-
-        App getAppFromElement(Element el);
-
         String highlightSearchText(final String text);
         
         void cleanUp();
+
+        Presenter hideAppMenu();
+
+        Presenter hideWorkflowMenu();
+
+        void onRequestToolClicked();
+
+        void runSelectedApp();
+
+        void submitClicked();
+
+        void setViewDebugId(String baseId);
     }
+
+    public interface ViewMenu extends IsWidget, AppSelectionChangedEventHandler, AppGroupSelectionChangedEventHandler {
+
+        void hideAppMenu();
+
+        void hideWorkflowMenu();
+
+        void init(Presenter presenter, AppsView view, HasAppSelectionChangedEventHandlers hasAppSelectionChangedEventHandlers, HasAppGroupSelectionChangedEventHandlers hasAppGroupSelectionChangedEventHandlers);
+    }
+
+    List<String> computeGroupHierarchy(AppGroup ag);
+
+    void hideAppMenu();
+
+    void hideWorkflowMenu();
 
     void setPresenter(final Presenter presenter);
 
-    ListStore<App> getListStore();
-
-    void setListLoader(final ListLoader<ListLoadConfig, ListLoadResult<App>> listLoader);
-
-    void setTreeLoader(final TreeLoader<AppGroup> treeLoader);
-
-    void setCenterPanelHeading(final String name);
-
     void maskCenterPanel(final String loadingMask);
+
+    void submitSelectedApp();
 
     void unMaskCenterPanel();
 
@@ -77,10 +100,6 @@ public interface AppsView extends IsWidget {
 
     void setApps(List<App> apps);
 
-    void setNorthWidget(IsWidget widget);
-
-    void setEastWidget(IsWidget widget);
-
     void selectFirstApp();
 
     void selectFirstAppGroup();
@@ -91,21 +110,11 @@ public interface AppsView extends IsWidget {
 
     void removeApp(App app);
 
-    void deSelectAllAppGroups();
-
     void updateAppGroup(AppGroup appGroup);
-
-    AppGroup findAppGroup(String id);
 
     AppGroup findAppGroupByName(String name);
 
     void updateAppGroupAppCount(AppGroup appGroup, int newCount);
-
-    App findApp(String appId);
-
-    void onAppInfoClick(App app);
-
-    void onAppNameSelected(final App app);
 
     Grid<App> getAppsGrid();
 
@@ -127,5 +136,4 @@ public interface AppsView extends IsWidget {
 
     AppGroup getParent(AppGroup child);
 
-    List<AppGroup> getGroupHierarchy(AppGroup grp, List<AppGroup> groups);
 }

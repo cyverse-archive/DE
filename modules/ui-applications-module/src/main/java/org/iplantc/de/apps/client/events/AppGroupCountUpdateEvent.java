@@ -1,15 +1,14 @@
 package org.iplantc.de.apps.client.events;
 
-import org.iplantc.de.apps.client.events.handlers.AppGroupCountUpdateEventHandler;
-
+import com.google.gwt.event.shared.EventHandler;
 import com.google.gwt.event.shared.GwtEvent;
 
-public class AppGroupCountUpdateEvent extends GwtEvent<AppGroupCountUpdateEventHandler> {
+public class AppGroupCountUpdateEvent extends GwtEvent<AppGroupCountUpdateEvent.AppGroupCountUpdateEventHandler> {
 
     /**
      * Defines the GWT Event Type.
      * 
-     * @see org.iplantc.de.apps.client.events.handlers.AppGroupCountUpdateEventHandler.AppGroupCountUpdateEventHandler
+     * @see org.iplantc.de.apps.client.events.AppGroupCountUpdateEvent.AppGroupCountUpdateEventHandler.AppGroupCountUpdateEventHandler
      */
     public static final GwtEvent.Type<AppGroupCountUpdateEventHandler> TYPE = new GwtEvent.Type<AppGroupCountUpdateEventHandler>();
 
@@ -85,4 +84,7 @@ public class AppGroupCountUpdateEvent extends GwtEvent<AppGroupCountUpdateEventH
         return groupType;
     }
 
+    public static interface AppGroupCountUpdateEventHandler extends EventHandler {
+        void onGroupCountUpdate(AppGroupCountUpdateEvent event);
+    }
 }

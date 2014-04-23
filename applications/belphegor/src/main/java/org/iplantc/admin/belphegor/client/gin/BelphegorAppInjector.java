@@ -1,7 +1,7 @@
 package org.iplantc.admin.belphegor.client.gin;
 
 import org.iplantc.admin.belphegor.client.BelphegorResources;
-import org.iplantc.admin.belphegor.client.apps.presenter.BelphegorAppsViewPresenter;
+import org.iplantc.admin.belphegor.client.apps.presenter.BelphegorAppsViewPresenterImpl;
 import org.iplantc.admin.belphegor.client.refGenome.RefGenomeView;
 import org.iplantc.admin.belphegor.client.systemMessage.SystemMessageView;
 import org.iplantc.admin.belphegor.client.toolRequest.ToolRequestView;
@@ -18,7 +18,7 @@ public interface BelphegorAppInjector extends Ginjector {
 
     BelphegorView.Presenter getBelphegorPresenter();
 
-    BelphegorAppsViewPresenter getAppsViewPresenter();
+    BelphegorAppsViewPresenterImpl getAppsViewPresenter();
 
     RefGenomeView.Presenter getReferenceGenomePresenter();
 

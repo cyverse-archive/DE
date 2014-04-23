@@ -1,8 +1,7 @@
 package org.iplantc.de.apps.client.events;
 
 
-import org.iplantc.de.apps.client.events.handlers.NewToolRequestSubmitEventHandler;
-
+import com.google.gwt.event.shared.EventHandler;
 import com.google.gwt.event.shared.GwtEvent;
 
 /**
@@ -11,7 +10,7 @@ import com.google.gwt.event.shared.GwtEvent;
  * @author sriram
  * 
  */
-public class NewToolRequestSubmitEvent extends GwtEvent<NewToolRequestSubmitEventHandler> {
+public class NewToolRequestSubmitEvent extends GwtEvent<NewToolRequestSubmitEvent.NewToolRequestSubmitEventHandler> {
 
     /**
      * Defines the GWT Event Type.
@@ -31,4 +30,17 @@ public class NewToolRequestSubmitEvent extends GwtEvent<NewToolRequestSubmitEven
 
     }
 
+    /**
+     *
+     * An event handler for NewToolRequestSubmitEvent
+     * @author sriram
+     *
+     */
+    public static interface NewToolRequestSubmitEventHandler extends EventHandler {
+        /**
+         * invoked when new tool request complete
+         * @param event
+         */
+        void onRequestComplete(NewToolRequestSubmitEvent event);
+    }
 }

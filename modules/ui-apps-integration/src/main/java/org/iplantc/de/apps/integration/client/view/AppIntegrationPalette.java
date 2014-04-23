@@ -1,15 +1,8 @@
 package org.iplantc.de.apps.integration.client.view;
 
+import static org.iplantc.de.apps.integration.shared.AppIntegrationModule.Ids;
 import org.iplantc.de.apps.widgets.client.view.editors.style.AppTemplateWizardAppearance;
-import org.iplantc.de.client.models.apps.integration.AppTemplateAutoBeanFactory;
-import org.iplantc.de.client.models.apps.integration.Argument;
-import org.iplantc.de.client.models.apps.integration.ArgumentGroup;
-import org.iplantc.de.client.models.apps.integration.ArgumentType;
-import org.iplantc.de.client.models.apps.integration.DataObject;
-import org.iplantc.de.client.models.apps.integration.DataSourceEnum;
-import org.iplantc.de.client.models.apps.integration.FileInfoTypeEnum;
-import org.iplantc.de.client.models.apps.integration.SelectionItem;
-import org.iplantc.de.client.models.apps.integration.SelectionItemGroup;
+import org.iplantc.de.client.models.apps.integration.*;
 import org.iplantc.de.client.util.AppTemplateUtils;
 import org.iplantc.de.commons.client.widgets.ContextualHelpPopup;
 import org.iplantc.de.resources.client.IplantContextualHelpAccessStyle;
@@ -114,6 +107,32 @@ public class AppIntegrationPalette extends Composite {
         createDragSource(referenceAnnotation, ArgumentType.ReferenceAnnotation);
         createDragSource(referenceSequence, ArgumentType.ReferenceSequence);
 
+    }
+
+    @Override
+    protected void onEnsureDebugId(String baseID) {
+        super.onEnsureDebugId(baseID);
+        group.ensureDebugId(baseID + Ids.GROUP);
+        environmentVariable.ensureDebugId(baseID + Ids.ENV_VARIABLE);
+        fileInput.ensureDebugId(baseID + Ids.FILE_INPUT);
+        flag.ensureDebugId(baseID + Ids.FLAG);
+        integerInput.ensureDebugId(baseID + Ids.INTEGER_INPUT);
+        multiFileSelector.ensureDebugId(baseID + Ids.MULTI_FILE_SELECTOR);
+        multiLineText.ensureDebugId(baseID + Ids.MULTI_LINE_TEXT);
+        text.ensureDebugId(baseID + Ids.TEXT);
+        singleSelect.ensureDebugId(baseID + Ids.SINGLE_SELECT);
+        treeSelection.ensureDebugId(baseID + Ids.TREE_SELECTION);
+        info.ensureDebugId(baseID + Ids.INFO);
+        folderInput.ensureDebugId(baseID + Ids.FOLDER_INPUT);
+        integerSelection.ensureDebugId(baseID + Ids.INTEGER_SELECTION);
+        doubleSelection.ensureDebugId(baseID + Ids.DOUBLE_SELECTION);
+        doubleInput.ensureDebugId(baseID + Ids.DOUBLE_INPUT);
+        fileOutput.ensureDebugId(baseID + Ids.FILE_OUTPUT);
+        folderOutput.ensureDebugId(baseID + Ids.FOLDER_OUTPUT);
+        multiFileOutput.ensureDebugId(baseID + Ids.MULTI_FILE_OUTPUT);
+        referenceGenome.ensureDebugId(baseID + Ids.REFERENCE_GENOME);
+        referenceSequence.ensureDebugId(baseID + Ids.REFERENCE_SEQUENCE);
+        referenceAnnotation.ensureDebugId(baseID + Ids.REFERENCE_ANNOTATION);
     }
 
     public void setOnlyLabelEditMode(boolean onlyLabelEditMode) {

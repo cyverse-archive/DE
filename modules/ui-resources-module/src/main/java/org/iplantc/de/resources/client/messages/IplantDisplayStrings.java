@@ -744,6 +744,15 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     String comments();
 
     /**
+     * Translated "Update Comments...".
+     *
+     * @return translated "Update Comments..."
+     */
+    @DefaultMessage("Update Comments...")
+    @Key("updateComments")
+    String updateComments();
+
+    /**
      * Translated "Confirm".
      *
      * @return translated "Confirm"
@@ -3320,11 +3329,11 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     String refresh();
 
     /**
-     * Translated "Relaunch".
+     * Translated "Relaunch...".
      * 
-     * @return translated "Relaunch"
+     * @return translated "Relaunch..."
      */
-    @DefaultMessage("Relaunch")
+    @DefaultMessage("Relaunch...")
     @Key("relaunchAnalysis")
     String relaunchAnalysis();
 
@@ -3407,6 +3416,15 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     @DefaultMessage("Rename")
     @Key("rename")
     String rename();
+
+    /**
+     * Translated "Rename...".
+     *
+     * @return translated "Rename..."
+     */
+    @DefaultMessage("Rename...")
+    @Key("analysisRename")
+    String analysisRename();
 
     /**
      * Translated "New Name".

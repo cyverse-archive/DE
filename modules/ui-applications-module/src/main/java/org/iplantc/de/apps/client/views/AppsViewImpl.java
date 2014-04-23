@@ -1,16 +1,34 @@
 package org.iplantc.de.apps.client.views;
 
+import static org.iplantc.de.apps.shared.AppsModule.Ids;
+import org.iplantc.de.apps.client.events.AppFavoritedEvent;
+import org.iplantc.de.apps.client.events.AppGroupSelectionChangedEvent;
+import org.iplantc.de.apps.client.events.AppSelectionChangedEvent;
+import org.iplantc.de.apps.client.views.cells.AppFavoriteCell;
+import org.iplantc.de.apps.client.views.cells.AppInfoCell;
+import org.iplantc.de.apps.client.views.dialogs.SubmitAppForPublicDialog;
+import org.iplantc.de.apps.client.views.widgets.events.AppSearchResultLoadEvent;
+import org.iplantc.de.apps.shared.AppsModule;
 import org.iplantc.de.client.models.DEProperties;
 import org.iplantc.de.client.models.IsMaskable;
+import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.models.apps.AppGroup;
+import org.iplantc.de.client.services.AppUserServiceFacade;
+import org.iplantc.de.client.util.JsonUtil;
 import org.iplantc.de.resources.client.IplantResources;
-import org.iplantc.de.resources.client.messages.I18N;
+import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
+import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.json.client.JSONArray;
+import com.google.gwt.json.client.JSONParser;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiFactory;
 import com.google.gwt.uibinder.client.UiField;
@@ -19,21 +37,18 @@ import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 
+import static com.sencha.gxt.core.client.Style.SelectionMode.SINGLE;
 import com.sencha.gxt.data.shared.ListStore;
 import com.sencha.gxt.data.shared.ModelKeyProvider;
 import com.sencha.gxt.data.shared.SortDir;
 import com.sencha.gxt.data.shared.Store.StoreSortInfo;
 import com.sencha.gxt.data.shared.TreeStore;
-import com.sencha.gxt.data.shared.loader.ListLoadConfig;
-import com.sencha.gxt.data.shared.loader.ListLoadResult;
-import com.sencha.gxt.data.shared.loader.ListLoader;
-import com.sencha.gxt.data.shared.loader.TreeLoader;
 import com.sencha.gxt.theme.gray.client.panel.GrayContentPanelAppearance;
+import com.sencha.gxt.widget.core.client.Composite;
 import com.sencha.gxt.widget.core.client.ContentPanel;
+import com.sencha.gxt.widget.core.client.Dialog;
 import com.sencha.gxt.widget.core.client.container.BorderLayoutContainer;
 import com.sencha.gxt.widget.core.client.container.BorderLayoutContainer.BorderLayoutData;
-import com.sencha.gxt.widget.core.client.event.CellClickEvent;
-import com.sencha.gxt.widget.core.client.event.CellClickEvent.CellClickHandler;
 import com.sencha.gxt.widget.core.client.grid.ColumnModel;
 import com.sencha.gxt.widget.core.client.grid.Grid;
 import com.sencha.gxt.widget.core.client.grid.GridView;
@@ -43,8 +58,10 @@ import com.sencha.gxt.widget.core.client.tips.QuickTip;
 import com.sencha.gxt.widget.core.client.tree.Tree;
 import com.sencha.gxt.widget.core.client.tree.Tree.TreeAppearance;
 import com.sencha.gxt.widget.core.client.tree.Tree.TreeNode;
+import com.sencha.gxt.widget.core.client.tree.TreeStyle;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.logging.Logger;
@@ -54,7 +71,13 @@ import java.util.logging.Logger;
  * @author jstroot
  *
  */
-public class AppsViewImpl implements AppsView, IsMaskable {
+public class AppsViewImpl extends Composite implements AppsView,
+                                                       IsMaskable,
+                                                       AppGroupSelectionChangedEvent.HasAppGroupSelectionChangedEventHandlers,
+                                                       AppSelectionChangedEvent.HasAppSelectionChangedEventHandlers,
+                                                       AppInfoCell.AppInfoClickedEventHandler,
+                                                       AppFavoritedEvent.HasAppFavoritedEventHandlers,
+                                                       AppFavoriteCell.RequestAppFavoriteEventHandler {
     /**
      * FIXME CORE-2992: Add an ID to the Categories panel collapse tool to assist QA.
      */
@@ -62,10 +85,13 @@ public class AppsViewImpl implements AppsView, IsMaskable {
     private static MyUiBinder uiBinder = GWT.create(MyUiBinder.class);
 
     @UiTemplate("AppsView.ui.xml")
-    interface MyUiBinder extends UiBinder<Widget, AppsViewImpl> {
-    }
+    interface MyUiBinder extends UiBinder<Widget, AppsViewImpl> { }
 
-    private Presenter presenter;
+    private String FAVORITES;
+    private String USER_APPS_GROUP;
+    private String WORKSPACE;
+
+    protected Presenter presenter;
 
     @UiField(provided = true)
     protected Tree<AppGroup, String> tree;
@@ -100,55 +126,174 @@ public class AppsViewImpl implements AppsView, IsMaskable {
     @UiField
     BorderLayoutData eastData;
 
-    private final Widget widget;
-    
-    DEProperties properties = DEProperties.getInstance();
+    final DEProperties properties;
+    private final AppsView.ViewMenu toolbar;
+    private final IplantResources resources;
+    private final UserInfo userInfo;
+    private final IplantDisplayStrings displayStrings;
+    private final AppUserServiceFacade appUserService;
 
     Logger logger = Logger.getLogger("App View");
 
     @Inject
-    public AppsViewImpl(final Tree<AppGroup, String> tree) {
+    public AppsViewImpl(final Tree<AppGroup, String> tree,
+                        final DEProperties properties,
+                        final AppsView.ViewMenu toolbar,
+                        final IplantResources resources,
+                        final UserInfo userInfo,
+                        final IplantDisplayStrings displayStrings,
+                        final AppUserServiceFacade appUserService) {
         this.tree = tree;
+        this.properties = properties;
+        this.toolbar = toolbar;
+        this.resources = resources;
+        this.userInfo = userInfo;
+        this.displayStrings = displayStrings;
+        this.appUserService = appUserService;
         this.treeStore = tree.getStore();
-        this.widget = uiBinder.createAndBindUi(this);
+        initWidget(uiBinder.createAndBindUi(this));
+        setNorthWidget(toolbar);
+        initConstants();
 
+        this.tree.getSelectionModel().setSelectionMode(SINGLE);
         initTreeStoreSorter();
 
-        grid.addCellClickHandler(new CellClickHandler() {
-
-            @Override
-            public void onCellClick(CellClickEvent arg0) {
-                // TODO Auto-generated method stub
-
-            }
-        });
 
         grid.getSelectionModel().addSelectionChangedHandler(new SelectionChangedHandler<App>() {
             @Override
             public void onSelectionChanged(SelectionChangedEvent<App> event) {
-                if ((event.getSelection() != null) && !event.getSelection().isEmpty()) {
-                    presenter.onAppSelected(event.getSelection().get(0));
-                }
+                asWidget().fireEvent(new AppSelectionChangedEvent(event.getSelection()));
             }
         });
 
-        tree.getSelectionModel().addSelectionChangedHandler(
-                new SelectionChangedHandler<AppGroup>() {
-                    @Override
-                    public void onSelectionChanged(SelectionChangedEvent<AppGroup> event) {
-                        if ((event.getSelection() != null) && !event.getSelection().isEmpty()) {
-                            presenter.onAppGroupSelected(event.getSelection().get(0));
-                    }
-                    }
-                });
+        tree.getSelectionModel().addSelectionChangedHandler(new SelectionChangedHandler<AppGroup>() {
+            @Override
+            public void onSelectionChanged(SelectionChangedEvent<AppGroup> event) {
+                updateCenterPanelHeading(event.getSelection());
+                asWidget().fireEvent(new AppGroupSelectionChangedEvent(event.getSelection()));
+            }
+        });
         setTreeIcons();
         new QuickTip(grid).getToolTipConfig().setTrackMouse(true);
         westPanel.getHeader().getTool(0).getElement().setId(WEST_COLLAPSE_BTN_ID);
+
     }
 
-    
+    @Override
+    protected void onEnsureDebugId(String baseID) {
+        super.onEnsureDebugId(baseID);
+        toolbar.asWidget().ensureDebugId(baseID + Ids.MENU_BAR);
+        tree.ensureDebugId(baseID + Ids.CATEGORIES);
+        grid.ensureDebugId(baseID + Ids.APP_GRID);
+        ((AppColumnModel)cm).ensureDebugId(baseID);
+    }
+
+    @Override
+    public HandlerRegistration addAppFavoritedEventHandler(AppFavoritedEvent.AppFavoritedEventHandler eventHandler) {
+        return asWidget().addHandler(eventHandler, AppFavoritedEvent.TYPE);
+    }
+
+    @Override
+    public void onAppFavoriteRequest(AppFavoriteCell.RequestAppFavoriteEvent event) {
+        presenter.onAppFavoriteRequest(event);
+    }
+
+    @UiFactory
+    protected ColumnModel<App> createColumnModel(){
+        return new AppColumnModel(this, displayStrings);
+    }
+
+    private void initConstants() {
+        WORKSPACE = properties.getPrivateWorkspace();
+
+        if (properties.getPrivateWorkspaceItems() != null) {
+            JSONArray items = JSONParser.parseStrict(properties.getPrivateWorkspaceItems()).isArray();
+            USER_APPS_GROUP = JsonUtil.getRawValueAsString(items.get(0));
+            FAVORITES = JsonUtil.getRawValueAsString(items.get(1));
+        }
+
+    }
+
+    @Override
+    public void onAppFavorited(AppFavoritedEvent event) {
+        final App app = event.getApp();
+        grid.getStore().update(app);
+        final AppGroup appGroupByName = findAppGroupByName(FAVORITES);
+        if(appGroupByName != null){
+            int tmp = app.isFavorite() ? 1 : -1;
+
+            updateAppGroupAppCount(appGroupByName, appGroupByName.getAppCount() + tmp);
+        }
+        final String selectedAppGrpName = getSelectedAppGroup().getName();
+
+        /* If the app is in favorites, remove it.
+         * OR If we don't own the app, and the app is no longer a favorite, then remove it
+         */
+        if(FAVORITES.equalsIgnoreCase(selectedAppGrpName)
+            || (WORKSPACE.equalsIgnoreCase(selectedAppGrpName)
+                   && !app.isFavorite()
+                   && app.isPublic()
+                   && !app.getIntegratorEmail().equals(userInfo.getEmail()))){
+            removeApp(app);
+        }else if(FAVORITES.equalsIgnoreCase(selectedAppGrpName)){
+            removeApp(app);
+        }
+        // Forward event so the App Info window can get it if it is open
+        asWidget().fireEvent(event);
+    }
+
+    @Override
+    public void onAppInfoClicked(AppInfoCell.AppInfoClickedEvent event) {
+        final App selectedApp = grid.getSelectionModel().getSelectedItem();
+        Dialog appInfoWin = new Dialog();
+        appInfoWin.setModal(true);
+        appInfoWin.setResizable(false);
+        appInfoWin.setHeadingText(selectedApp.getName());
+        appInfoWin.setPixelSize(450, 300);
+        // Get app favorite requests
+        final AppInfoView appInfoView = new AppInfoView(selectedApp, this, appUserService);
+        appInfoView.addRequestAppFavoriteEventHandlers(this);
+        addAppFavoritedEventHandler(appInfoView);
+        appInfoWin.add(appInfoView);
+        appInfoWin.getButtonBar().clear();
+        appInfoWin.show();
+    }
+
+    @Override
+    public void onAppSearchResultLoad(AppSearchResultLoadEvent event) {
+        selectAppGroup(null);
+        presenter.onAppSearchResultLoad(event);
+        String searchText = event.getSearchText();
+
+        List<App> results = event.getResults();
+        int total = results == null ?0 : results.size();
+
+        centerPanel.setHeadingText(displayStrings.searchAppResultsHeader(searchText, total));
+        setApps(results);
+        unMaskCenterPanel();
+    }
+
+    void updateCenterPanelHeading(List<AppGroup> selection) {
+        if(selection.isEmpty())
+            return;
+
+        checkArgument(selection.size() == 1, "Only one app group should be selected");
+        centerPanel.setHeadingText(Joiner.on(" >> ").join(computeGroupHierarchy(selection.get(0))));
+    }
+
+    @Override
+    public HandlerRegistration addAppGroupSelectedEventHandler(AppGroupSelectionChangedEvent.AppGroupSelectionChangedEventHandler handler) {
+        return asWidget().addHandler(handler, AppGroupSelectionChangedEvent.TYPE);
+    }
+
+    @Override
+    public HandlerRegistration addAppSelectionChangedEventHandler(AppSelectionChangedEvent.AppSelectionChangedEventHandler handler) {
+        return asWidget().addHandler(handler, AppSelectionChangedEvent.TYPE);
+    }
+
     @UiFactory
     ContentPanel createContentPanel() {
+        // FIXME JDS This violates goal of theming. Implement proper theming/appearance.
         return new ContentPanel(new GrayContentPanelAppearance());
     }
 
@@ -163,19 +308,14 @@ public class AppsViewImpl implements AppsView, IsMaskable {
         });
     }
 
-    @UiFactory
-    public ColumnModel<App> createColumnModel() {
-        return new AppColumnModel(this);
-    }
-
     /**
      * FIXME JDS This needs to be implemented in an {@link TreeAppearance}
      */
     private void setTreeIcons() {
-        com.sencha.gxt.widget.core.client.tree.TreeStyle style = tree.getStyle();
-        style.setNodeCloseIcon(IplantResources.RESOURCES.category());
-        style.setNodeOpenIcon(IplantResources.RESOURCES.category_open());
-        style.setLeafIcon(IplantResources.RESOURCES.subCategory());
+        TreeStyle style = tree.getStyle();
+        style.setNodeCloseIcon(resources.category());
+        style.setNodeOpenIcon(resources.category_open());
+        style.setLeafIcon(resources.subCategory());
     }
 
     private void initTreeStoreSorter() {
@@ -185,7 +325,7 @@ public class AppsViewImpl implements AppsView, IsMaskable {
             @Override
             public int compare(AppGroup group1, AppGroup group2) {
                 if (treeStore.getRootItems().contains(group1)
-                        || treeStore.getRootItems().contains(group2)) {
+                            || treeStore.getRootItems().contains(group2)) {
                     // Do not sort Root groups, since we want to keep the service's root order.
                     return 0;
                 }
@@ -198,33 +338,34 @@ public class AppsViewImpl implements AppsView, IsMaskable {
     }
 
     @Override
-    public Widget asWidget() {
-        return widget;
+    public void hideAppMenu() {
+        toolbar.hideAppMenu();
+    }
+
+    @Override
+    public void hideWorkflowMenu() {
+        toolbar.hideWorkflowMenu();
     }
 
     @Override
     public void setPresenter(Presenter presenter) {
         this.presenter = presenter;
-    }
-
-    @Override
-    public ListStore<App> getListStore() {
-        return listStore;
-    }
-
-    @Override
-    public void setTreeLoader(final TreeLoader<AppGroup> treeLoader) {
-        this.tree.setLoader(treeLoader);
-    }
-
-    @Override
-    public void setCenterPanelHeading(final String name) {
-        centerPanel.setHeadingText(name);
+        ((AppColumnModel)cm).addAppInfoClickedEventHandler(this);
+        ((AppColumnModel)cm).addAppNameSelectedEventHandler(presenter);
+        ((AppColumnModel)cm).addRequestAppFavoriteEventHandlers(this);
+        addAppGroupSelectedEventHandler(presenter);
+        this.toolbar.init(presenter, this, this, this);
     }
 
     @Override
     public void maskCenterPanel(final String loadingMask) {
         centerPanel.mask(loadingMask);
+    }
+
+    @Override
+    public void submitSelectedApp() {
+        App selectedApp = grid.getSelectionModel().getSelectedItem();
+        new SubmitAppForPublicDialog(selectedApp).show();
     }
 
     @Override
@@ -240,11 +381,6 @@ public class AppsViewImpl implements AppsView, IsMaskable {
     @Override
     public void unMaskWestPanel() {
         westPanel.unmask();
-    }
-
-    @Override
-    public void setListLoader(ListLoader<ListLoadConfig, ListLoadResult<App>> listLoader) {
-        grid.setLoader(listLoader);
     }
 
     @Override
@@ -264,15 +400,19 @@ public class AppsViewImpl implements AppsView, IsMaskable {
             if (ag != null) {
                 tree.getSelectionModel().select(ag, false);
                 tree.scrollIntoView(ag);
-                // Set heading
-                if(presenter != null) {
-                    List<String> hierarchy = presenter.computeGroupHirarchy(ag);
-                    setCenterPanelHeading(Joiner.on(" >> ").join(hierarchy));
-                } else {
-                setCenterPanelHeading(ag.getName());
-                }
             }
         }
+    }
+
+    @Override
+    public List<String> computeGroupHierarchy(final AppGroup ag) {
+        List<String> groupNames = Lists.newArrayList();
+
+        for (AppGroup group : getGroupHierarchy(ag, null)) {
+            groupNames.add(group.getName());
+        }
+        Collections.reverse(groupNames);
+        return groupNames;
     }
 
     @Override
@@ -281,11 +421,11 @@ public class AppsViewImpl implements AppsView, IsMaskable {
     }
 
     @Override
-    
+
     public List<App> getAllSelectedApps() {
         return grid.getSelectionModel().getSelectedItems();
     }
-    
+
     @Override
     public AppGroup getSelectedAppGroup() {
         return tree.getSelectionModel().getSelectedItem();
@@ -303,16 +443,9 @@ public class AppsViewImpl implements AppsView, IsMaskable {
     }
 
 
-	@Override
-    public void setNorthWidget(IsWidget widget) {
+    protected void setNorthWidget(IsWidget widget) {
         northData.setHidden(false);
         con.setNorthWidget(widget, northData);
-	}
-
-    @Override
-    public void setEastWidget(IsWidget widget) {
-        eastData.setHidden(false);
-        con.setEastWidget(widget, eastData);
     }
 
     @Override
@@ -359,23 +492,16 @@ public class AppsViewImpl implements AppsView, IsMaskable {
     @Override
     public void removeApp(App app) {
         grid.getSelectionModel().deselectAll();
-        presenter.onAppSelected(null);
         listStore.remove(app);
     }
 
-    @Override
-    public void deSelectAllAppGroups() {
+    protected void deSelectAllAppGroups() {
         tree.getSelectionModel().deselectAll();
     }
 
     @Override
     public void updateAppGroup(AppGroup appGroup) {
         treeStore.update(appGroup);
-    }
-
-    @Override
-    public AppGroup findAppGroup(String id) {
-        return treeStore.findModelWithKey(id);
     }
 
     @Override
@@ -401,14 +527,8 @@ public class AppsViewImpl implements AppsView, IsMaskable {
 
     }
 
-    @Override
-    public App findApp(String appId) {
+    protected App findApp(String appId) {
         return listStore.findModelWithKey(appId);
-    }
-
-    @Override
-    public void onAppInfoClick(App app) {
-        presenter.onAppInfoClick(app);
     }
 
     @Override
@@ -419,11 +539,6 @@ public class AppsViewImpl implements AppsView, IsMaskable {
     @Override
     public void expandAppGroups() {
         tree.expandAll();
-    }
-
-    @Override
-    public void onAppNameSelected(final App app) {
-        presenter.onAppNameSelected(app);
     }
 
     @Override
@@ -468,8 +583,7 @@ public class AppsViewImpl implements AppsView, IsMaskable {
         return treeStore.getParent(child);
     }
 
-    @Override
-    public List<AppGroup> getGroupHierarchy(AppGroup grp, List<AppGroup> groups) {
+    List<AppGroup> getGroupHierarchy(AppGroup grp, List<AppGroup> groups) {
         if (groups == null) {
             groups = new ArrayList<AppGroup>();
         }
@@ -483,13 +597,11 @@ public class AppsViewImpl implements AppsView, IsMaskable {
 
     @Override
     public void mask(String loadingMask) {
-        con.mask(I18N.DISPLAY.loadingMask());
-
+        con.mask(displayStrings.loadingMask());
     }
 
     @Override
     public void unmask() {
         con.unmask();
-
     }
 }
