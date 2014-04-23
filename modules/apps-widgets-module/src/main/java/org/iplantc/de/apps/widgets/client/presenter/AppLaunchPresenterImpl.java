@@ -9,6 +9,7 @@ import org.iplantc.de.client.models.UserSettings;
 import org.iplantc.de.client.models.apps.integration.AppTemplate;
 import org.iplantc.de.client.models.apps.integration.AppTemplateAutoBeanFactory;
 import org.iplantc.de.client.models.apps.integration.JobExecution;
+import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.client.services.AppTemplateServices;
 import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.commons.client.info.ErrorAnnouncementConfig;
@@ -80,7 +81,11 @@ public class AppLaunchPresenterImpl implements AppLaunchView.Presenter, RequestA
         String regex = Format.substitute("[{0}]", RegExp.escapeCharacterClassSet(valConstants.restrictedCmdLineChars()));
         String newName = appTemplate.getName().replaceAll(regex, "_");
         je.setName(newName + "_" + appsWidgetsDisplayMessages.defaultAnalysisName()); //$NON-NLS-1$
-        je.setOutputDirectory(userSettings.getDefaultOutputFolder().getPath());
+
+        final Folder defaultOutputFolder = userSettings.getDefaultOutputFolder();
+        if(defaultOutputFolder != null){
+//            je.setOutputDirectory(defaultOutputFolder.getPath());
+        }
 
         view.edit(appTemplate, je);
         container.setWidget(view);

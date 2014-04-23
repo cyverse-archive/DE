@@ -34,6 +34,7 @@ import com.sencha.gxt.widget.core.client.form.CheckBox;
 import com.sencha.gxt.widget.core.client.form.ConverterEditorAdapter;
 import com.sencha.gxt.widget.core.client.form.TextArea;
 import com.sencha.gxt.widget.core.client.form.TextField;
+import com.sencha.gxt.widget.core.client.form.validator.EmptyValidator;
 import com.sencha.gxt.widget.core.client.form.validator.MaxLengthValidator;
 
 import java.util.List;
@@ -117,6 +118,7 @@ public class LaunchAnalysisViewImpl implements LaunchAnalysisView {
                 });
         awFolderSel.setValidatePermissions(true);
         awFolderSel.addValidator(new AnalysisOutputValidator());
+        awFolderSel.addValidator(new EmptyValidator<String>());
         this.editorDriver.initialize(this);
     }
 
