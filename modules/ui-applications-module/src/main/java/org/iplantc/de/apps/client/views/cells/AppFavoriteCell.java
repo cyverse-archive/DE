@@ -127,11 +127,9 @@ public class AppFavoriteCell extends AbstractCell<App> {
         if (value.isFavorite()) {
             eventTarget.setClassName(css.appFavorite());
             eventTarget.setAttribute("qtip", I18N.DISPLAY.remAppFromFav());
-            eventTarget.setTitle(I18N.DISPLAY.remAppFromFav());
         } else {
             eventTarget.setClassName(css.appFavoriteDisabled());
             eventTarget.setAttribute("qtip", I18N.DISPLAY.addAppToFav());
-            eventTarget.setTitle(I18N.DISPLAY.addAppToFav());
         }
     }
 
