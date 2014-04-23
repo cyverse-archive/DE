@@ -156,8 +156,11 @@ public class LaunchAnalysisViewImpl implements LaunchAnalysisView {
 
     @UiHandler("awFolderSel")
     void onFolderChanged(ValueChangeEvent<Folder> event) {
+        final Folder defaultOutputFolder = userSettings.getDefaultOutputFolder();
+        final String path = (defaultOutputFolder != null) ? defaultOutputFolder.getPath() : "";
+
         if ((event.getValue() != null)
-                && !event.getValue().getPath().equals(userSettings.getDefaultOutputFolder().getPath())) {
+                && !event.getValue().getPath().equals(path)) {
             awFolderSel.setInfoErrorText(appWidgetStrings.nonDefaultFolderWarning());
         } else {
             awFolderSel.setInfoErrorText(null);
