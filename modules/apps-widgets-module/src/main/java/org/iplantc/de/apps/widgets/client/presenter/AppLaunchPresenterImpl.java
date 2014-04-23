@@ -84,7 +84,7 @@ public class AppLaunchPresenterImpl implements AppLaunchView.Presenter, RequestA
 
         final Folder defaultOutputFolder = userSettings.getDefaultOutputFolder();
         if(defaultOutputFolder != null){
-//            je.setOutputDirectory(defaultOutputFolder.getPath());
+            je.setOutputDirectory(defaultOutputFolder.getPath());
         }
 
         view.edit(appTemplate, je);
