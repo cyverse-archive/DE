@@ -203,7 +203,7 @@ public class AppsViewToolbarImpl extends Composite implements AppsView.ViewMenu,
                 final App selectedApp = appSelection.get(0);
                 final boolean isSingleStep = selectedApp.getStepCount() == 1;
                 final boolean isMultiStep = selectedApp.getStepCount() > 1;
-                final boolean isAppPublic = !selectedApp.isPublic();
+                final boolean isAppPublic = selectedApp.isPublic();
                 final boolean isAppDisabled = selectedApp.isDisabled();
 
                 deleteAppEnabled = isSingleStep && !isAppPublic;
