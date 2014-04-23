@@ -90,6 +90,9 @@ project(':ui-applications-module') {
 
     dependencies {
         compile project(':ui-disk-resource-module')
+
+        testCompile "com.google.gwt.gwtmockito:gwtmockito:$gwtMockitoVer"
+        testCompile project(':de-common-module').sourceSets.test.output
     }
 }
 project(':ui-commons-module') {

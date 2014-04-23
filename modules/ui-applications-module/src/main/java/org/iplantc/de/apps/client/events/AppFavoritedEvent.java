@@ -1,5 +1,7 @@
 package org.iplantc.de.apps.client.events;
 
+import org.iplantc.de.client.models.apps.App;
+
 import com.google.gwt.event.shared.EventHandler;
 import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.event.shared.HandlerRegistration;
@@ -15,25 +17,19 @@ public class AppFavoritedEvent extends GwtEvent<AppFavoritedEvent.AppFavoritedEv
     }
 
     public static final GwtEvent.Type<AppFavoritedEventHandler> TYPE = new GwtEvent.Type<AppFavoritedEventHandler>();
-    private final String appId;
-    private final boolean favorite;
+    private final App app;
 
-    public AppFavoritedEvent(String appId, boolean favorite) {
-        this.appId = appId;
-        this.favorite = favorite;
+    public AppFavoritedEvent(App app) {
+        this.app = app;
     }
 
-    public String getAppId() {
-        return appId;
+    public App getApp() {
+        return app;
     }
 
     @Override
     public GwtEvent.Type<AppFavoritedEventHandler> getAssociatedType() {
         return TYPE;
-    }
-
-    public boolean isFavorite() {
-        return favorite;
     }
 
     @Override

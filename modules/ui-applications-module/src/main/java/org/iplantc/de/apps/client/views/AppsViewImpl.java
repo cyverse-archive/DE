@@ -3,11 +3,13 @@ package org.iplantc.de.apps.client.views;
 import org.iplantc.de.apps.client.events.AppFavoritedEvent;
 import org.iplantc.de.apps.client.events.AppGroupSelectionChangedEvent;
 import org.iplantc.de.apps.client.events.AppSelectionChangedEvent;
+import org.iplantc.de.apps.client.views.cells.AppFavoriteCell;
 import org.iplantc.de.apps.client.views.cells.AppInfoCell;
 import org.iplantc.de.apps.client.views.dialogs.SubmitAppForPublicDialog;
 import org.iplantc.de.apps.client.views.widgets.events.AppSearchResultLoadEvent;
 import org.iplantc.de.client.models.DEProperties;
 import org.iplantc.de.client.models.IsMaskable;
+import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.models.apps.AppGroup;
 import org.iplantc.de.client.services.AppUserServiceFacade;
@@ -66,7 +68,13 @@ import java.util.logging.Logger;
  * @author jstroot
  *
  */
-public class AppsViewImpl implements AppsView, IsMaskable, AppGroupSelectionChangedEvent.HasAppGroupSelectionChangedEventHandlers, AppSelectionChangedEvent.HasAppSelectionChangedEventHandlers, AppInfoCell.AppInfoClickedEventHandler, AppFavoritedEvent.AppFavoritedEventHandler {
+public class AppsViewImpl implements AppsView,
+                                     IsMaskable,
+                                     AppGroupSelectionChangedEvent.HasAppGroupSelectionChangedEventHandlers,
+                                     AppSelectionChangedEvent.HasAppSelectionChangedEventHandlers,
+                                     AppInfoCell.AppInfoClickedEventHandler,
+                                     AppFavoritedEvent.HasAppFavoritedEventHandlers,
+                                     AppFavoriteCell.RequestAppFavoriteEventHandler {
     /**
      * FIXME CORE-2992: Add an ID to the Categories panel collapse tool to assist QA.
      */
@@ -74,8 +82,7 @@ public class AppsViewImpl implements AppsView, IsMaskable, AppGroupSelectionChan
     private static MyUiBinder uiBinder = GWT.create(MyUiBinder.class);
 
     @UiTemplate("AppsView.ui.xml")
-    interface MyUiBinder extends UiBinder<Widget, AppsViewImpl> {
-    }
+    interface MyUiBinder extends UiBinder<Widget, AppsViewImpl> { }
 
     private String FAVORITES;
     private String USER_APPS_GROUP;
@@ -98,8 +105,8 @@ public class AppsViewImpl implements AppsView, IsMaskable, AppGroupSelectionChan
     @UiField
     ListStore<App> listStore;
 
-    @UiField(provided = true)
-    protected ColumnModel<App> cm;
+    @UiField
+    ColumnModel<App> cm;
 
     @UiField
     BorderLayoutContainer con;
@@ -121,6 +128,7 @@ public class AppsViewImpl implements AppsView, IsMaskable, AppGroupSelectionChan
     final DEProperties properties;
     private final AppsView.ViewMenu toolbar;
     private final IplantResources resources;
+    private final UserInfo userInfo;
     private final IplantDisplayStrings displayStrings;
     private final AppUserServiceFacade appUserService;
 
@@ -131,14 +139,14 @@ public class AppsViewImpl implements AppsView, IsMaskable, AppGroupSelectionChan
                         final DEProperties properties,
                         final AppsView.ViewMenu toolbar,
                         final IplantResources resources,
+                        final UserInfo userInfo,
                         final IplantDisplayStrings displayStrings,
                         final AppUserServiceFacade appUserService) {
         this.tree = tree;
         this.properties = properties;
         this.toolbar = toolbar;
-        final AppColumnModel appColumnModel = new AppColumnModel(this, displayStrings);
-        this.cm = appColumnModel;
         this.resources = resources;
+        this.userInfo = userInfo;
         this.displayStrings = displayStrings;
         this.appUserService = appUserService;
         this.treeStore = tree.getStore();
@@ -169,6 +177,22 @@ public class AppsViewImpl implements AppsView, IsMaskable, AppGroupSelectionChan
         westPanel.getHeader().getTool(0).getElement().setId(WEST_COLLAPSE_BTN_ID);
 
     }
+
+    @Override
+    public HandlerRegistration addAppFavoritedEventHandler(AppFavoritedEvent.AppFavoritedEventHandler eventHandler) {
+        return asWidget().addHandler(eventHandler, AppFavoritedEvent.TYPE);
+    }
+
+    @Override
+    public void onAppFavoriteRequest(AppFavoriteCell.RequestAppFavoriteEvent event) {
+        presenter.onAppFavoriteRequest(event);
+    }
+
+    @UiFactory
+    protected ColumnModel<App> createColumnModel(){
+        return new AppColumnModel(this, displayStrings);
+    }
+
     private void initConstants() {
         WORKSPACE = properties.getPrivateWorkspace();
 
@@ -182,16 +206,30 @@ public class AppsViewImpl implements AppsView, IsMaskable, AppGroupSelectionChan
 
     @Override
     public void onAppFavorited(AppFavoritedEvent event) {
+        final App app = event.getApp();
+        grid.getStore().update(app);
         final AppGroup appGroupByName = findAppGroupByName(FAVORITES);
         if(appGroupByName != null){
-            int tmp = event.isFavorite() ? 1 : -1;
+            int tmp = app.isFavorite() ? 1 : -1;
 
             updateAppGroupAppCount(appGroupByName, appGroupByName.getAppCount() + tmp);
         }
-        final String name = getSelectedAppGroup().getName();
-        if(name.equalsIgnoreCase(WORKSPACE) || name.equalsIgnoreCase(FAVORITES)){
-            removeApp(findApp(event.getAppId()));
+        final String selectedAppGrpName = getSelectedAppGroup().getName();
+
+        /* If the app is in favorites, remove it.
+         * OR If we don't own the app, and the app is no longer a favorite, then remove it
+         */
+        if(FAVORITES.equalsIgnoreCase(selectedAppGrpName)
+            || (WORKSPACE.equalsIgnoreCase(selectedAppGrpName)
+                   && !app.isFavorite()
+                   && app.isPublic()
+                   && !app.getIntegratorEmail().equals(userInfo.getEmail()))){
+            removeApp(app);
+        }else if(FAVORITES.equalsIgnoreCase(selectedAppGrpName)){
+            removeApp(app);
         }
+        // Forward event so the App Info window can get it if it is open
+        asWidget().fireEvent(event);
     }
 
     @Override
@@ -202,7 +240,11 @@ public class AppsViewImpl implements AppsView, IsMaskable, AppGroupSelectionChan
         appInfoWin.setResizable(false);
         appInfoWin.setHeadingText(selectedApp.getName());
         appInfoWin.setPixelSize(450, 300);
-        appInfoWin.add(new AppInfoView(selectedApp, this, appUserService));
+        // Get app favorite requests
+        final AppInfoView appInfoView = new AppInfoView(selectedApp, this, appUserService);
+        appInfoView.addRequestAppFavoriteEventHandlers(this);
+        addAppFavoritedEventHandler(appInfoView);
+        appInfoWin.add(appInfoView);
         appInfoWin.getButtonBar().clear();
         appInfoWin.show();
     }
@@ -306,14 +348,9 @@ public class AppsViewImpl implements AppsView, IsMaskable, AppGroupSelectionChan
         this.presenter = presenter;
         ((AppColumnModel)cm).addAppInfoClickedEventHandler(this);
         ((AppColumnModel)cm).addAppNameSelectedEventHandler(presenter);
-        ((AppColumnModel)cm).addAppFavoritedEventHandler(this);
+        ((AppColumnModel)cm).addRequestAppFavoriteEventHandlers(this);
         addAppGroupSelectedEventHandler(presenter);
         this.toolbar.init(presenter, this, this, this);
-    }
-
-    @Override
-    public void setCenterPanelHeading(final String name) {
-        centerPanel.setHeadingText(name);
     }
 
     @Override
@@ -529,9 +566,6 @@ public class AppsViewImpl implements AppsView, IsMaskable, AppGroupSelectionChan
 
     @Override
     public String highlightSearchText(String text) {
-        // Sanitize
-        String ret = SafeHtmlUtils.fromString(Strings.nullToEmpty(text)).asString();
-
         return presenter.highlightSearchText(text);
     }
 
@@ -560,12 +594,10 @@ public class AppsViewImpl implements AppsView, IsMaskable, AppGroupSelectionChan
     @Override
     public void mask(String loadingMask) {
         con.mask(displayStrings.loadingMask());
-
     }
 
     @Override
     public void unmask() {
         con.unmask();
-
     }
 }

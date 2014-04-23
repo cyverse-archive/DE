@@ -28,7 +28,8 @@ import com.google.gwt.user.client.Event;
 /**
  * This is a custom cell which combines the functionality of the {@link AppFavoriteCell} with a clickable
  * hyper-link of an app name.
- * 
+ *
+ * FIXME Create appearance
  * @author jstroot
  * 
  */
@@ -132,7 +133,9 @@ public class AppHyperlinkCell extends AbstractCell<App> {
 
             switch (Event.as(event).getTypeInt()) {
                 case Event.ONCLICK:
-                    doOnClick(child, value);
+                    if(hasHandlers != null){
+                        hasHandlers.fireEvent(new AppNameSelectedEvent(value));
+                    }
                     break;
                 case Event.ONMOUSEOVER:
                     doOnMouseOver(child, value);
@@ -174,9 +177,4 @@ public class AppHyperlinkCell extends AbstractCell<App> {
         eventTarget.getStyle().setTextDecoration(TextDecoration.UNDERLINE);
     }
 
-    private void doOnClick(final Element eventTarget, final App value) {
-        if(hasHandlers != null){
-            hasHandlers.fireEvent(new AppNameSelectedEvent(value));
-        }
-    }
 }

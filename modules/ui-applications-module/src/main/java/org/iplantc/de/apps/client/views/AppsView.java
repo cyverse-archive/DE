@@ -5,6 +5,8 @@ import static org.iplantc.de.apps.client.events.AppGroupSelectionChangedEvent.Ha
 import static org.iplantc.de.apps.client.events.AppSelectionChangedEvent.AppSelectionChangedEventHandler;
 import static org.iplantc.de.apps.client.events.AppSelectionChangedEvent.HasAppSelectionChangedEventHandlers;
 import static org.iplantc.de.apps.client.views.widgets.events.AppSearchResultLoadEvent.AppSearchResultLoadEventHandler;
+import org.iplantc.de.apps.client.events.AppFavoritedEvent;
+import org.iplantc.de.apps.client.views.cells.AppFavoriteCell;
 import org.iplantc.de.apps.client.views.cells.AppHyperlinkCell;
 import org.iplantc.de.client.models.HasId;
 import org.iplantc.de.client.models.apps.App;
@@ -18,12 +20,13 @@ import com.sencha.gxt.widget.core.client.grid.Grid;
 
 import java.util.List;
 
-public interface AppsView extends IsWidget, AppSearchResultLoadEventHandler {
+public interface AppsView extends IsWidget, AppSearchResultLoadEventHandler, AppFavoritedEvent.AppFavoritedEventHandler {
 
     public interface Presenter extends org.iplantc.de.commons.client.presenter.Presenter,
             AppHyperlinkCell.AppNameSelectedEventHandler,
             AppSearchResultLoadEventHandler,
-            AppGroupSelectionChangedEventHandler {
+            AppGroupSelectionChangedEventHandler,
+            AppFavoriteCell.RequestAppFavoriteEventHandler{
 
         void copySelectedApp();
 
@@ -74,8 +77,6 @@ public interface AppsView extends IsWidget, AppSearchResultLoadEventHandler {
     void hideWorkflowMenu();
 
     void setPresenter(final Presenter presenter);
-
-    void setCenterPanelHeading(final String name);
 
     void maskCenterPanel(final String loadingMask);
 

@@ -3,6 +3,7 @@ package org.iplantc.de.apps.client.presenter;
 import org.iplantc.de.apps.client.events.*;
 import org.iplantc.de.apps.client.presenter.proxy.AppGroupProxy;
 import org.iplantc.de.apps.client.views.AppsView;
+import org.iplantc.de.apps.client.views.cells.AppFavoriteCell;
 import org.iplantc.de.apps.client.views.cells.AppHyperlinkCell;
 import org.iplantc.de.apps.client.views.dialogs.NewToolRequestDialog;
 import org.iplantc.de.apps.client.views.dialogs.SubmitAppForPublicDialog;
@@ -87,7 +88,6 @@ public class AppsViewPresenterImpl implements AppsView.Presenter {
     protected final AppsView view;
 
     private final AppGroupProxy appGroupProxy;
-//    private AppsViewToolbar toolbar;
 
     private final List<HandlerRegistration> eventHandlers = new ArrayList<HandlerRegistration>();
 
@@ -130,6 +130,23 @@ public class AppsViewPresenterImpl implements AppsView.Presenter {
         eventHandlers.add(eventBus.addHandler(AppUpdatedEvent.TYPE, new AppsViewAppUpdatedEventHandler(view)));
 
         initConstants();
+    }
+
+    @Override
+    public void onAppFavoriteRequest(final AppFavoriteCell.RequestAppFavoriteEvent event) {
+        final App app = event.getApp();
+        appUserService.favoriteApp(userInfo.getWorkspaceId(), app.getId(), !app.isFavorite(), new AsyncCallback<String>() {
+            @Override
+            public void onFailure(Throwable caught) {
+                 announcer.schedule(new ErrorAnnouncementConfig(errorStrings.favServiceFailure()));
+            }
+
+            @Override
+            public void onSuccess(String result) {
+                app.setFavorite(!app.isFavorite());
+                view.onAppFavorited(new AppFavoritedEvent(app));
+            }
+        });
     }
 
     @Override

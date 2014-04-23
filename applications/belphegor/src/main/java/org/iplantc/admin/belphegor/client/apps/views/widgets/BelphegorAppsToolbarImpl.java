@@ -9,6 +9,7 @@ import org.iplantc.de.apps.client.views.widgets.AppSearchField;
 import org.iplantc.de.apps.client.views.widgets.proxy.AppSearchRpcProxy;
 import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.models.apps.AppAutoBeanFactory;
+import org.iplantc.de.client.models.apps.AppGroup;
 import org.iplantc.de.client.models.apps.proxy.AppLoadConfig;
 import org.iplantc.de.client.models.apps.proxy.AppSearchAutoBeanFactory;
 import org.iplantc.de.client.services.AppServiceFacade;
@@ -31,15 +32,19 @@ import com.sencha.gxt.widget.core.client.button.TextButton;
 import com.sencha.gxt.widget.core.client.event.SelectEvent;
 import com.sencha.gxt.widget.core.client.toolbar.ToolBar;
 
+import java.util.List;
+
 /**
  * @author jstroot
  * 
  */
-public class BelphegorAppsToolbarImpl implements AdminAppsView.Toolbar, AppGroupSelectionChangedEventHandler, AppSelectionChangedEventHandler {
+public class BelphegorAppsToolbarImpl implements AdminAppsView.Toolbar,
+                                                 AppGroupSelectionChangedEventHandler,
+                                                 AppSelectionChangedEventHandler {
 
     @UiTemplate("BelphegorAppsViewToolbar.ui.xml")
-    interface BelphegorAppsViewToolbarUiBinder extends UiBinder<Widget, BelphegorAppsToolbarImpl> {
-    }
+    interface BelphegorAppsViewToolbarUiBinder extends UiBinder<Widget, BelphegorAppsToolbarImpl> { }
+
     @UiField
     TextButton addCategory;
     @UiField
@@ -56,8 +61,8 @@ public class BelphegorAppsToolbarImpl implements AdminAppsView.Toolbar, AppGroup
     TextButton restoreApp;
     @UiField
     ToolBar toolBar;
-    private static BelphegorAppsViewToolbarUiBinder uiBinder = GWT
-            .create(BelphegorAppsViewToolbarUiBinder.class);
+
+    private static BelphegorAppsViewToolbarUiBinder uiBinder = GWT.create(BelphegorAppsViewToolbarUiBinder.class);
     private final AppAutoBeanFactory appFactory;
     private final AppSearchAutoBeanFactory appSearchFactory;
     private final AppServiceFacade appService;
@@ -109,27 +114,49 @@ public class BelphegorAppsToolbarImpl implements AdminAppsView.Toolbar, AppGroup
 
     @Override
     public void onAppGroupSelectionChanged(AppGroupSelectionChangedEvent event) {
+        final List<AppGroup> appGroupSelection = event.getAppGroupSelection();
+
+        boolean renameCategoryEnabled, deleteEnabled;
+        switch (appGroupSelection.size()){
+            case 1:
+                renameCategoryEnabled = true;
+                deleteEnabled = true;
+                break;
+            default:
+                renameCategoryEnabled = false;
+                deleteEnabled = false;
+
+        }
         addCategory.setEnabled(true);
-        renameCategory.setEnabled(true);
-        delete.setEnabled(true);
+        renameCategory.setEnabled(renameCategoryEnabled);
+        delete.setEnabled(deleteEnabled);
         restoreApp.setEnabled(false);
         categorizeApp.setEnabled(false);
     }
 
     @Override
     public void onAppSelectionChanged(AppSelectionChangedEvent event) {
+        final List<App> appSelection = event.getAppSelection();
+
+        boolean deleteEnabled, restoreAppEnabled, categorizeAppEnabled;
+        switch (appSelection.size()){
+            case 1:
+                deleteEnabled = true;
+                final boolean isDeleted = appSelection.get(0).isDeleted();
+                restoreAppEnabled = isDeleted;
+                categorizeAppEnabled = !isDeleted;
+                break;
+            default:
+                deleteEnabled = false;
+                restoreAppEnabled = false;
+                categorizeAppEnabled = false;
+
+        }
         addCategory.setEnabled(false);
         renameCategory.setEnabled(false);
-        delete.setEnabled(true);
-
-        if (event.getAppSelection().isEmpty()) {
-            restoreApp.setEnabled(false);
-            categorizeApp.setEnabled(false);
-        } else {
-            final App app = event.getAppSelection().get(0);
-            restoreApp.setEnabled(app.isDeleted());
-            categorizeApp.setEnabled(!app.isDeleted());
-        }
+        delete.setEnabled(deleteEnabled);
+        restoreApp.setEnabled(restoreAppEnabled);
+        categorizeApp.setEnabled(categorizeAppEnabled);
     }
 
     @UiHandler("renameCategory")

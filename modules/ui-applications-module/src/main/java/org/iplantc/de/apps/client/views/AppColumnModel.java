@@ -1,8 +1,6 @@
 package org.iplantc.de.apps.client.views;
 
-import static org.iplantc.de.apps.client.events.AppFavoritedEvent.AppFavoritedEventHandler;
-import static org.iplantc.de.apps.client.events.AppFavoritedEvent.HasAppFavoritedEventHandlers;
-import org.iplantc.de.apps.client.events.AppFavoritedEvent;
+import org.iplantc.de.apps.client.views.cells.AppFavoriteCell;
 import org.iplantc.de.apps.client.views.cells.AppHyperlinkCell;
 import org.iplantc.de.apps.client.views.cells.AppInfoCell;
 import org.iplantc.de.apps.client.views.cells.AppRatingCell;
@@ -24,7 +22,9 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-public class AppColumnModel extends ColumnModel<App> implements AppInfoCell.HasAppInfoClickedEventHandlers, AppHyperlinkCell.HasAppNameSelectedEventHandlers, HasAppFavoritedEventHandlers {
+public class AppColumnModel extends ColumnModel<App> implements AppInfoCell.HasAppInfoClickedEventHandlers,
+                                                                AppHyperlinkCell.HasAppNameSelectedEventHandlers,
+                                                                AppFavoriteCell.HasRequestAppFavoriteEventHandlers {
 
     public AppColumnModel(AppsView view, final IplantDisplayStrings displayStrings) {
         super(createColumnConfigList(view, displayStrings));
@@ -35,6 +35,8 @@ public class AppColumnModel extends ColumnModel<App> implements AppInfoCell.HasA
                 ((AppInfoCell)cc.getCell()).setHasHandlers(ensureHandlers());
             }else if(cc.getCell() instanceof AppHyperlinkCell){
                 ((AppHyperlinkCell)cc.getCell()).setHasHandlers(ensureHandlers());
+            }else if(cc.getCell() instanceof AppFavoriteCell){
+                ((AppFavoriteCell)cc.getCell()).setHasHandlers(ensureHandlers());
             }
         }
     }
@@ -92,11 +94,6 @@ public class AppColumnModel extends ColumnModel<App> implements AppInfoCell.HasA
     }
 
     @Override
-    public HandlerRegistration addAppFavoritedEventHandler(AppFavoritedEventHandler eventHandler) {
-        return ensureHandlers().addHandler(AppFavoritedEvent.TYPE, eventHandler);
-    }
-
-    @Override
     public HandlerRegistration addAppInfoClickedEventHandler(AppInfoCell.AppInfoClickedEventHandler handler) {
         return ensureHandlers().addHandler(AppInfoCell.APP_INFO_CLICKED_EVENT_HANDLER_TYPE, handler);
     }
@@ -104,6 +101,11 @@ public class AppColumnModel extends ColumnModel<App> implements AppInfoCell.HasA
     @Override
     public HandlerRegistration addAppNameSelectedEventHandler(AppHyperlinkCell.AppNameSelectedEventHandler handler) {
         return ensureHandlers().addHandler(AppHyperlinkCell.EVENT_TYPE, handler);
+    }
+
+    @Override
+    public HandlerRegistration addRequestAppFavoriteEventHandlers(AppFavoriteCell.RequestAppFavoriteEventHandler handler) {
+        return ensureHandlers().addHandler(AppFavoriteCell.REQUEST_APP_FAV_EVNT_TYPE, handler);
     }
 }
 

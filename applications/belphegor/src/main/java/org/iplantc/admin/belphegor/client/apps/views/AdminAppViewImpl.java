@@ -4,16 +4,20 @@ import org.iplantc.admin.belphegor.client.services.impl.AppAdminUserServiceFacad
 import org.iplantc.de.apps.client.events.AppSelectionChangedEvent;
 import org.iplantc.de.apps.client.views.AppsViewImpl;
 import org.iplantc.de.client.models.DEProperties;
+import org.iplantc.de.client.models.UserInfo;
+import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.models.apps.AppGroup;
 import org.iplantc.de.resources.client.IplantResources;
 import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 
+import com.google.gwt.uibinder.client.UiFactory;
 import com.google.inject.Inject;
 
 import com.sencha.gxt.core.client.Style.SelectionMode;
 import com.sencha.gxt.dnd.core.client.DND.Operation;
 import com.sencha.gxt.dnd.core.client.DragSource;
 import com.sencha.gxt.dnd.core.client.DropTarget;
+import com.sencha.gxt.widget.core.client.grid.ColumnModel;
 import com.sencha.gxt.widget.core.client.tree.Tree;
 
 public class AdminAppViewImpl extends AppsViewImpl implements AdminAppsView, AppSelectionChangedEvent.AppSelectionChangedEventHandler {
@@ -25,15 +29,21 @@ public class AdminAppViewImpl extends AppsViewImpl implements AdminAppsView, App
                             final AdminAppsView.Toolbar toolbar,
                             final DEProperties props,
                             final IplantResources resources,
+                            final UserInfo userInfo,
                             final IplantDisplayStrings displayStrings,
                             final AppAdminUserServiceFacade appAdminUserService) {
-        super(tree, props, null, resources, displayStrings, appAdminUserService);
+        super(tree, props, null, resources, userInfo, displayStrings, appAdminUserService);
         this.toolbar = toolbar;
 
         // Restrict Admin view to single select, since admin services only support one item at a time.
         grid.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
-        this.cm = new BelphegorAnalysisColumnModel(this);
         setNorthWidget(toolbar);
+    }
+
+    @Override
+    @UiFactory
+    protected ColumnModel<App> createColumnModel(){
+        return new BelphegorAnalysisColumnModel(this);
     }
 
     @Override

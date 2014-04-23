@@ -1,5 +1,7 @@
 package org.iplantc.de.apps.client.views;
 
+import org.iplantc.de.apps.client.events.AppFavoritedEvent;
+import org.iplantc.de.apps.client.views.cells.AppFavoriteCell;
 import org.iplantc.de.apps.client.views.widgets.AppFavoriteCellWidget;
 import org.iplantc.de.apps.client.views.widgets.AppRatingCellWidget;
 import org.iplantc.de.client.models.apps.App;
@@ -15,6 +17,7 @@ import com.google.common.base.Joiner;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -39,7 +42,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-public class AppInfoView implements IsWidget {
+public class AppInfoView implements IsWidget, AppFavoriteCell.RequestAppFavoriteEventHandler, AppFavoriteCell.HasRequestAppFavoriteEventHandlers, AppFavoritedEvent.AppFavoritedEventHandler {
 
     interface AppInfoViewUiBinder extends UiBinder<Widget, AppInfoView> {
     }
@@ -85,11 +88,28 @@ public class AppInfoView implements IsWidget {
 
         BINDER.createAndBindUi(this);
         favIcon.setValue(this.app);
+        favIcon.addRequestAppFavoriteEventHandlers(this);
         initDetailsPnl();
         initDCPanel();
         loadDCinfo();
         tabs = new TabPanel();
         info_container.setScrollMode(ScrollMode.AUTO);
+    }
+
+    @Override
+    public HandlerRegistration addRequestAppFavoriteEventHandlers(AppFavoriteCell.RequestAppFavoriteEventHandler handler) {
+        return asWidget().addHandler(handler, AppFavoriteCell.REQUEST_APP_FAV_EVNT_TYPE);
+    }
+
+    @Override
+    public void onAppFavoriteRequest(AppFavoriteCell.RequestAppFavoriteEvent event) {
+        // Forward event
+        asWidget().fireEvent(event);
+    }
+
+    @Override
+    public void onAppFavorited(AppFavoritedEvent appFavoritedEvent) {
+        favIcon.setValue(appFavoritedEvent.getApp());
     }
 
     private void addInfoTabs() {

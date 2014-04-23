@@ -23,6 +23,9 @@ import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.safehtml.shared.SafeUri;
 import com.google.gwt.user.client.Event;
 
+/**
+ * FIXME Create appearance
+ */
 public class AppInfoCell extends AbstractCell<App> {
 
     public static final GwtEvent.Type<AppInfoClickedEventHandler> APP_INFO_CLICKED_EVENT_HANDLER_TYPE = new GwtEvent.Type<AppInfoClickedEventHandler>();
