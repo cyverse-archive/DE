@@ -104,7 +104,7 @@ public class AppSearchRpcProxy extends RpcProxy<FilterPagingLoadConfig, PagingLo
 
                 // Fire the search results load event.
                 if(hasHandlers != null){
-                    hasHandlers.fireEvent(new AppSearchResultLoadEvent(source, searchText, apps));
+                    hasHandlers.fireEvent(new AppSearchResultLoadEvent(searchText, apps));
                 }
             }
 

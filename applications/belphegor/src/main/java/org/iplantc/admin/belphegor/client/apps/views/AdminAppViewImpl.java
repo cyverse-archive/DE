@@ -43,11 +43,12 @@ public class AdminAppViewImpl extends AppsViewImpl implements AdminAppsView, App
 
     @Override
     public void setPresenter(Presenter presenter) {
-        super.setPresenter(presenter);
+        this.presenter = presenter;
         if(presenter instanceof AdminAppsView.AdminPresenter){
             toolbar.init((AdminAppsView.AdminPresenter) presenter, this, this);
             initDragAndDrop((AdminAppsView.AdminPresenter)presenter);
             addAppSelectionChangedEventHandler(this);
+            addAppGroupSelectedEventHandler(presenter);
         }
     }
 

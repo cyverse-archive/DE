@@ -1,7 +1,6 @@
 package org.iplantc.de.apps.client.presenter;
 
 import org.iplantc.de.apps.client.events.*;
-import org.iplantc.de.apps.client.events.AppUpdatedEvent.AppUpdatedEventHandler;
 import org.iplantc.de.apps.client.presenter.proxy.AppGroupProxy;
 import org.iplantc.de.apps.client.views.AppsView;
 import org.iplantc.de.apps.client.views.cells.AppHyperlinkCell;
@@ -61,6 +60,25 @@ import java.util.List;
  */
 public class AppsViewPresenterImpl implements AppsView.Presenter {
 
+    private class AppsViewAppUpdatedEventHandler implements AppUpdatedEvent.AppUpdatedEventHandler {
+        private final AppsView view;
+
+        public AppsViewAppUpdatedEventHandler(AppsView view) {
+            this.view = view;
+        }
+
+        @Override
+        public void onAppUpdated(AppUpdatedEvent event) {
+
+            // JDS Always assume that the app is in the "Apps Under Development" group
+            AppGroup userAppGrp = view.findAppGroupByName(USER_APPS_GROUP);
+            if (userAppGrp != null) {
+                view.selectAppGroup(userAppGrp.getId());
+            }
+
+        }
+    }
+
     private final EventBus eventBus;
     private static String WORKSPACE;
     private static String USER_APPS_GROUP;
@@ -104,13 +122,13 @@ public class AppsViewPresenterImpl implements AppsView.Presenter {
         this.displayStrings = displayStrings;
         this.errorStrings = errorStrings;
 
-
         // Initialize AppGroup TreeStore proxy and loader
         this.appGroupProxy = proxy;
 
         this.view.setPresenter(this);
 
-        initHandlers();
+        eventHandlers.add(eventBus.addHandler(AppUpdatedEvent.TYPE, new AppsViewAppUpdatedEventHandler(view)));
+
         initConstants();
     }
 
@@ -126,49 +144,7 @@ public class AppsViewPresenterImpl implements AppsView.Presenter {
 
     @Override
     public void onAppSearchResultLoad(AppSearchResultLoadEvent event) {
-        String searchText = event.getSearchText();
-        updateSearchRegex(searchText);
-
-        List<App> results = event.getResults();
-        int total = results == null ? 0 : results.size();
-
-        view.selectAppGroup(null);
-        view.setCenterPanelHeading(displayStrings.searchAppResultsHeader(searchText, total));
-        view.setApps(results);
-        view.unMaskCenterPanel();
-    }
-
-    protected void initHandlers() {
-
-//        eventHandlers.add(eventBus.addHandler(AppFavoritedEvent.TYPE, new AppFavoritedEvent.AppFavoritedEventHandler() {
-//            @Override
-//            public void onAppFavorited(AppFavoritedEvent event) {
-//                AppGroup favAppGrp = view.findAppGroupByName(FAVORITES);
-//                if (favAppGrp != null) {
-//                    int tmp = event.isFavorite() ? 1 : -1;
-//
-//                    view.updateAppGroupAppCount(favAppGrp, favAppGrp.getAppCount() + tmp);
-//                }
-//                // If the current app group is Workspace or Favorites, remove the app from the list.
-//                if (getSelectedAppGroup().getName().equalsIgnoreCase(WORKSPACE) || getSelectedAppGroup().getName().equalsIgnoreCase(FAVORITES)) {
-//                    view.removeApp(view.findApp(event.getAppId()));
-//                }
-//            }
-//        }));
-
-        eventHandlers.add(eventBus.addHandler(AppUpdatedEvent.TYPE, new AppUpdatedEventHandler() {
-            @Override
-            public void onAppUpdated(AppUpdatedEvent event) {
-
-                // JDS Always assume that the app is in the "Apps Under Development" group
-                AppGroup userAppGrp = view.findAppGroupByName(USER_APPS_GROUP);
-                if (userAppGrp != null) {
-                    view.selectAppGroup(userAppGrp.getId());
-                }
-
-            }
-        }));
-
+        updateSearchRegex(event.getSearchText());
     }
 
     @Override
@@ -186,7 +162,6 @@ public class AppsViewPresenterImpl implements AppsView.Presenter {
             USER_APPS_GROUP = JsonUtil.getRawValueAsString(items.get(0));
             FAVORITES = JsonUtil.getRawValueAsString(items.get(1));
         }
-
     }
 
     /**
@@ -203,8 +178,11 @@ public class AppsViewPresenterImpl implements AppsView.Presenter {
     }
 
     @Override
-    public void onAppGroupSelectionChanged(AppGroupSelectionChangedEvent event){
+    public void onAppGroupSelectionChanged(AppGroupSelectionChangedEvent event) {
         searchRegex = null;
+        if (event.getAppGroupSelection().isEmpty()){
+            return;
+        }
         AppGroup ag = event.getAppGroupSelection().get(0);
         fetchApps(ag);
     }

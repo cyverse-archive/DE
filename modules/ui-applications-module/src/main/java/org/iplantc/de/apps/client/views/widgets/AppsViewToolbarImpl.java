@@ -15,6 +15,9 @@ import org.iplantc.de.client.models.apps.proxy.AppSearchAutoBeanFactory;
 import org.iplantc.de.client.services.AppServiceFacade;
 import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 
+import com.google.common.base.Predicates;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.shared.HandlerRegistration;
@@ -30,7 +33,7 @@ import com.sencha.gxt.widget.core.client.button.TextButton;
 import com.sencha.gxt.widget.core.client.menu.Item;
 import com.sencha.gxt.widget.core.client.menu.MenuItem;
 
-import java.util.List;
+import java.util.ArrayList;
 
 public class AppsViewToolbarImpl extends Composite implements AppsView.ViewMenu, HasAppSearchResultLoadEventHandlers {
 
@@ -174,20 +177,27 @@ public class AppsViewToolbarImpl extends Composite implements AppsView.ViewMenu,
     public void onAppSelectionChanged(AppSelectionChangedEvent event) {
         app_menu.setEnabled(true);
         wf_menu.setEnabled(true);
-        final List<App> appSelection = event.getAppSelection();
+
+        // Filter out any null items
+        final ArrayList<App> appSelection = Lists.newArrayList(Iterables.filter(event.getAppSelection(), Predicates.notNull()));
+
+        boolean deleteAppEnabled, editAppEnabled, submitAppEnabled, copyAppEnabled, appRunEnabled;
+        boolean deleteWfEnabled, editWfEnabled, submitWfEnabled, copyWfEnabled, wfRunEnabled;
+
         switch (appSelection.size()){
             case 0:
-                deleteApp.setEnabled(false);
-                editApp.setEnabled(false);
-                submitApp.setEnabled(false);
-                copyApp.setEnabled(false);
-                appRun.setEnabled(false);
+                deleteAppEnabled = false;
+                editAppEnabled = false;
+                submitAppEnabled = false;
+                copyAppEnabled = false;
+                appRunEnabled = false;
 
-                deleteWf.setEnabled(false);
-                editWf.setEnabled(false);
-                submitWf.setEnabled(false);
-                copyWf.setEnabled(false);
-                wfRun.setEnabled(false);
+                deleteWfEnabled = false;
+                editWfEnabled = false;
+                submitWfEnabled = false;
+                copyWfEnabled = false;
+                wfRunEnabled = false;
+
                 break;
             case 1:
                 final App selectedApp = appSelection.get(0);
@@ -196,36 +206,47 @@ public class AppsViewToolbarImpl extends Composite implements AppsView.ViewMenu,
                 final boolean isAppPublic = !selectedApp.isPublic();
                 final boolean isAppDisabled = selectedApp.isDisabled();
 
-                deleteApp.setEnabled(isSingleStep && !isAppPublic);
-                editApp.setEnabled(isSingleStep && !isAppPublic);
-                submitApp.setEnabled(isSingleStep && !isAppPublic);
-                copyApp.setEnabled(isSingleStep);
-                appRun.setEnabled(isSingleStep && !isAppDisabled);
+                deleteAppEnabled = isSingleStep && !isAppPublic;
+                editAppEnabled = isSingleStep && !isAppPublic;
+                submitAppEnabled = isSingleStep && !isAppPublic;
+                copyAppEnabled = isSingleStep;
+                appRunEnabled = isSingleStep && !isAppDisabled;
 
-                deleteWf.setEnabled(isMultiStep && !isAppPublic);
-                editWf.setEnabled(isMultiStep && !isAppPublic);
-                submitWf.setEnabled(isMultiStep && !isAppPublic);
-                copyWf.setEnabled(isMultiStep);
-                wfRun.setEnabled(isMultiStep && !isAppDisabled);
+                deleteWfEnabled = isMultiStep && !isAppPublic;
+                editWfEnabled = isMultiStep && !isAppPublic;
+                submitWfEnabled = isMultiStep && !isAppPublic;
+                copyWfEnabled = isMultiStep;
+                wfRunEnabled = isMultiStep && !isAppDisabled;
                 break;
             default:
                 // How does deleting workflows work?
-                deleteApp.setEnabled(false);
-                editApp.setEnabled(false);
-                // TODO JDS Do we want to be able to do this?
-                submitApp.setEnabled(false);
-                // TODO JDS Do we want to be able to do this?
-                copyApp.setEnabled(false);
-                // TODO JDS Do we want to be able to do this?
-                appRun.setEnabled(false);
 
-                deleteWf.setEnabled(false);
-                editWf.setEnabled(false);
-                submitWf.setEnabled(false);
-                copyWf.setEnabled(false);
-                wfRun.setEnabled(false);
+                deleteAppEnabled = false;
+                editAppEnabled = false;
+                // TODO JDS Do we want to be able to do this?
+                submitAppEnabled = false;
+                // TODO JDS Do we want to be able to do this?
+                copyAppEnabled = false;
+                // TODO JDS Do we want to be able to do this?
+                appRunEnabled = false;
+
+                deleteWfEnabled = false;
+                editWfEnabled = false;
+                submitWfEnabled = false;
+                copyWfEnabled = false;
+                wfRunEnabled = false;
         }
+        deleteApp.setEnabled(deleteAppEnabled);
+        editApp.setEnabled(editAppEnabled);
+        submitApp.setEnabled(submitAppEnabled);
+        copyApp.setEnabled(copyAppEnabled);
+        appRun.setEnabled(appRunEnabled);
 
+        deleteWf.setEnabled(deleteWfEnabled);
+        editWf.setEnabled(editWfEnabled);
+        submitWf.setEnabled(submitWfEnabled);
+        copyWf.setEnabled(copyWfEnabled);
+        wfRun.setEnabled(wfRunEnabled);
     }
 
     @UiHandler("requestTool")

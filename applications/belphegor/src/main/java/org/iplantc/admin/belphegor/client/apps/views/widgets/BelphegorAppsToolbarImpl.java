@@ -121,9 +121,15 @@ public class BelphegorAppsToolbarImpl implements AdminAppsView.Toolbar, AppGroup
         addCategory.setEnabled(false);
         renameCategory.setEnabled(false);
         delete.setEnabled(true);
-        final App app = event.getAppSelection().get(0);
-        restoreApp.setEnabled(app.isDeleted());
-        categorizeApp.setEnabled(!app.isDeleted());
+
+        if (event.getAppSelection().isEmpty()) {
+            restoreApp.setEnabled(false);
+            categorizeApp.setEnabled(false);
+        } else {
+            final App app = event.getAppSelection().get(0);
+            restoreApp.setEnabled(app.isDeleted());
+            categorizeApp.setEnabled(!app.isDeleted());
+        }
     }
 
     @UiHandler("renameCategory")

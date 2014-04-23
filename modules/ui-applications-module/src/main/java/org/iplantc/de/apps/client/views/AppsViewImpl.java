@@ -81,7 +81,7 @@ public class AppsViewImpl implements AppsView, IsMaskable, AppGroupSelectionChan
     private String USER_APPS_GROUP;
     private String WORKSPACE;
 
-    private Presenter presenter;
+    protected Presenter presenter;
 
     @UiField(provided = true)
     protected Tree<AppGroup, String> tree;
@@ -101,7 +101,7 @@ public class AppsViewImpl implements AppsView, IsMaskable, AppGroupSelectionChan
     @UiField(provided = true)
     protected ColumnModel<App> cm;
 
-    @UiField(provided = true)
+    @UiField
     BorderLayoutContainer con;
 
     @UiField
@@ -143,6 +143,7 @@ public class AppsViewImpl implements AppsView, IsMaskable, AppGroupSelectionChan
         this.appUserService = appUserService;
         this.treeStore = tree.getStore();
         this.widget = uiBinder.createAndBindUi(this);
+        setNorthWidget(toolbar);
         initConstants();
 
         this.tree.getSelectionModel().setSelectionMode(SINGLE);
@@ -208,20 +209,22 @@ public class AppsViewImpl implements AppsView, IsMaskable, AppGroupSelectionChan
 
     @Override
     public void onAppSearchResultLoad(AppSearchResultLoadEvent event) {
+        selectAppGroup(null);
+        presenter.onAppSearchResultLoad(event);
         String searchText = event.getSearchText();
 
         List<App> results = event.getResults();
         int total = results == null ?0 : results.size();
 
-        selectAppGroup(null);
         centerPanel.setHeadingText(displayStrings.searchAppResultsHeader(searchText, total));
         setApps(results);
         unMaskCenterPanel();
-
-
     }
 
     void updateCenterPanelHeading(List<AppGroup> selection) {
+        if(selection.isEmpty())
+            return;
+
         checkArgument(selection.size() == 1, "Only one app group should be selected");
         centerPanel.setHeadingText(Joiner.on(" >> ").join(computeGroupHierarchy(selection.get(0))));
     }

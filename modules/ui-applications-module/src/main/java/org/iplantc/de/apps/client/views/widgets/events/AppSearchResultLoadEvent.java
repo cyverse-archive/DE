@@ -1,6 +1,5 @@
 package org.iplantc.de.apps.client.views.widgets.events;
 
-import org.iplantc.de.apps.client.views.widgets.proxy.AppSearchRpcProxy;
 import org.iplantc.de.client.models.apps.App;
 
 import com.google.gwt.event.shared.EventHandler;
@@ -31,10 +30,9 @@ public class AppSearchResultLoadEvent extends GwtEvent<AppSearchResultLoadEvent.
     private List<App> results;
     private String searchText;
 
-    public AppSearchResultLoadEvent(AppSearchRpcProxy proxy, String searchText, List<App> results) {
-        setSource(proxy);
-        setSearchText(searchText);
-        setResults(results);
+    public AppSearchResultLoadEvent(String searchText, List<App> results) {
+        this.searchText = searchText;
+        this.results = results;
     }
 
     @Override
@@ -46,17 +44,10 @@ public class AppSearchResultLoadEvent extends GwtEvent<AppSearchResultLoadEvent.
         return results;
     }
 
-    public void setResults(List<App> results) {
-        this.results = results;
-    }
-
     public String getSearchText() {
         return searchText;
     }
 
-    public void setSearchText(String searchText) {
-        this.searchText = searchText;
-    }
 
     @Override
     protected void dispatch(AppSearchResultLoadEventHandler handler) {

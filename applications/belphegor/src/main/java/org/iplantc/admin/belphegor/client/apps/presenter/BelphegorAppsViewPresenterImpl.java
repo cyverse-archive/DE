@@ -126,20 +126,14 @@ public class BelphegorAppsViewPresenterImpl extends AppsViewPresenterImpl implem
         this.errorStrings = errorStrings;
 
         this.view.setPresenter(this);
-    }
 
-    @Override
-    protected void initHandlers() {
-        super.initHandlers();
+        eventBus.addHandler(CatalogCategoryRefreshEvent.TYPE, new CatalogCategoryRefreshEventHandler() {
 
-        EventBus.getInstance().addHandler(CatalogCategoryRefreshEvent.TYPE,
-                new CatalogCategoryRefreshEventHandler() {
-
-                    @Override
-                    public void onRefresh(CatalogCategoryRefreshEvent event) {
-                        reloadAppGroups(getSelectedAppGroup(), getSelectedApp());
-                    }
-                });
+            @Override
+            public void onRefresh(CatalogCategoryRefreshEvent event) {
+                reloadAppGroups(getSelectedAppGroup(), getSelectedApp());
+            }
+        });
     }
 
     @Override
