@@ -1,11 +1,11 @@
 package org.iplantc.de.client.views.windows;
 
 import static org.iplantc.de.client.models.apps.App.NEW_APP_ID;
-
 import org.iplantc.de.apps.client.events.AppPublishedEvent;
 import org.iplantc.de.apps.client.events.AppPublishedEvent.AppPublishedEventHandler;
 import org.iplantc.de.apps.integration.client.gin.AppsEditorInjector;
 import org.iplantc.de.apps.integration.client.view.AppsEditorView;
+import org.iplantc.de.apps.integration.shared.AppIntegrationModule;
 import org.iplantc.de.apps.widgets.client.view.AppLaunchView.RenameWindowHeaderCommand;
 import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.events.WindowHeadingUpdatedEvent;
@@ -30,6 +30,7 @@ import org.iplantc.de.commons.client.views.window.configs.ConfigFactory;
 import org.iplantc.de.commons.client.views.window.configs.WindowConfig;
 import org.iplantc.de.commons.client.widgets.ContextualHelpToolButton;
 import org.iplantc.de.resources.client.uiapps.widgets.AppsWidgetsPropertyPanelLabels;
+import org.iplantc.de.shared.DeModule;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
@@ -99,11 +100,9 @@ public class AppEditorWindow extends IplantWindowBase implements AppPublishedEve
         super(null, config);
         res.titleStyles().ensureInjected();
 
-//        AppsEditorView view = new AppsEditorViewImpl(uuidService, appMetadataService);
         templateService = ServicesInjector.INSTANCE.getAppTemplateServices();
-//        presenter = new AppsEditorPresenterImpl(view, eventBus, templateService, I18N.ERROR,
-//                I18N.DISPLAY, uuidService);
         presenter = AppsEditorInjector.INSTANCE.getAppEditorPresenter();
+        ensureDebugId(DeModule.Ids.APP_EDITOR_WINDOW);
         setTitle(org.iplantc.de.resources.client.messages.I18N.DISPLAY.createApps());
         setSize("800", "480");
         setMinWidth(725);
@@ -121,6 +120,12 @@ public class AppEditorWindow extends IplantWindowBase implements AppPublishedEve
         HandlerRegistration hr = this.addBeforeHideHandler(presenter);
         presenter.setBeforeHideHandlerRegistration(hr);
         eventBus.addHandler(AppPublishedEvent.TYPE, this);
+    }
+
+    @Override
+    protected void onEnsureDebugId(String baseID) {
+        super.onEnsureDebugId(baseID);
+        presenter.setViewDebugId(baseID + AppIntegrationModule.Ids.APP_EDITOR_VIEW);
     }
 
     private void init(final AppsEditorView.Presenter presenter,

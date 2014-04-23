@@ -34,10 +34,12 @@ public interface AppLaunchView extends IsWidget, Editor<AppTemplate>, HasRequest
 
         void go(final HasOneWidget container, final AppTemplate appTemplate);
 
+        void setViewDebugId(String baseID);
     }
 
     public interface Presenter extends BasePresenter {
         void addAnalysisLaunchHandler(AnalysisLaunchEventHandler handler);
+
     }
 
     public interface RenameWindowHeaderCommand extends Command {

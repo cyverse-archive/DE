@@ -98,6 +98,11 @@ public class AppLaunchPresenterImpl implements AppLaunchView.Presenter, RequestA
     }
 
     @Override
+    public void setViewDebugId(String baseID) {
+        view.asWidget().ensureDebugId(baseID);
+    }
+
+    @Override
     public void onAnalysisLaunchRequest(final AppTemplate at, final JobExecution je) {
         launchAnalysis(at, je);
     }
