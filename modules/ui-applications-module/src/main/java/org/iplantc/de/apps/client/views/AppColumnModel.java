@@ -4,6 +4,7 @@ import org.iplantc.de.apps.client.views.cells.AppFavoriteCell;
 import org.iplantc.de.apps.client.views.cells.AppHyperlinkCell;
 import org.iplantc.de.apps.client.views.cells.AppInfoCell;
 import org.iplantc.de.apps.client.views.cells.AppRatingCell;
+import org.iplantc.de.apps.shared.AppsModule;
 import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 
@@ -106,6 +107,17 @@ public class AppColumnModel extends ColumnModel<App> implements AppInfoCell.HasA
     @Override
     public HandlerRegistration addRequestAppFavoriteEventHandlers(AppFavoriteCell.RequestAppFavoriteEventHandler handler) {
         return ensureHandlers().addHandler(AppFavoriteCell.REQUEST_APP_FAV_EVNT_TYPE, handler);
+    }
+
+    public void ensureDebugId(String baseID) {
+        for(ColumnConfig<App, ?> cc : configs){
+            if(cc.getCell() instanceof AppInfoCell){
+                ((AppInfoCell)cc.getCell()).setBaseDebugId(baseID + AppsModule.Ids.APP_GRID);
+            }else if(cc.getCell() instanceof AppHyperlinkCell){
+                ((AppHyperlinkCell)cc.getCell()).setBaseDebugId(baseID + AppsModule.Ids.APP_GRID);
+            }
+        }
+
     }
 }
 

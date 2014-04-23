@@ -475,6 +475,11 @@ public class AppsViewPresenterImpl implements AppsView.Presenter {
     }
 
     @Override
+    public void setViewDebugId(String baseId) {
+        view.asWidget().ensureDebugId(baseId);
+    }
+
+    @Override
     public void createNewAppClicked() {
         eventBus.fireEvent(new CreateNewAppEvent());
     }

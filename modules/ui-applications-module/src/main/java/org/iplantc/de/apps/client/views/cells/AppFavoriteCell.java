@@ -1,15 +1,18 @@
 package org.iplantc.de.apps.client.views.cells;
 
+import org.iplantc.de.apps.shared.AppsModule;
 import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.resources.client.AppFavoriteCellStyle;
 import org.iplantc.de.resources.client.IplantResources;
 import org.iplantc.de.resources.client.messages.I18N;
 
 import static com.google.gwt.dom.client.BrowserEvents.*;
+import com.google.common.base.Strings;
 import com.google.gwt.cell.client.AbstractCell;
 import com.google.gwt.cell.client.Cell;
 import com.google.gwt.cell.client.ValueUpdater;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.debug.client.DebugInfo;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.shared.EventHandler;
@@ -62,12 +65,16 @@ public class AppFavoriteCell extends AbstractCell<App> {
      */
     interface Templates extends SafeHtmlTemplates {
 
-        @SafeHtmlTemplates.Template("<span name=\"{0}\" class=\"{1}\" qtip=\"{2}\"> </span>")
+        @SafeHtmlTemplates.Template("<span name='{0}' class='{1}' qtip='{2}'> </span>")
         SafeHtml cell(String imgName, String imgClassName, String imgToolTip);
+
+        @SafeHtmlTemplates.Template("<span id='{3}' name='{0}' class='{1}' qtip='{2}'> </span>")
+        SafeHtml debugCell(String imgName, String imgClassName, String imgToolTip, String debugId);
     }
 
     final Templates templates = GWT.create(Templates.class);
     final AppFavoriteCellStyle css = IplantResources.RESOURCES.appFavoriteCss();
+    private String baseID;
     private HasHandlers hasHandlers;
 
     public AppFavoriteCell() {
@@ -81,12 +88,27 @@ public class AppFavoriteCell extends AbstractCell<App> {
             return;
         }
 
+        String imgName, imgClassName, imgToolTip;
+
         if (!value.isDisabled() && value.isFavorite()) {
-            sb.append(templates.cell("fav", css.appFavorite(), I18N.DISPLAY.remAppFromFav()));
+            imgName = "fav";
+            imgClassName = css.appFavorite();
+            imgToolTip = I18N.DISPLAY.remAppFromFav();
         } else if (!value.isDisabled() && !value.isFavorite()) {
-            sb.append(templates.cell("fav", css.appFavoriteDisabled(), I18N.DISPLAY.addAppToFav()));
+            imgName = "fav";
+            imgClassName = css.appFavoriteDisabled();
+            imgToolTip = I18N.DISPLAY.addAppToFav();
         } else{
-            sb.append(templates.cell("disabled", css.appFavoriteDisabled(), I18N.DISPLAY.appUnavailable()));
+            imgName = "disabled";
+            imgClassName = css.appFavoriteDisabled();
+            imgToolTip = I18N.DISPLAY.appUnavailable();
+        }
+
+        if(DebugInfo.isDebugIdEnabled() && !Strings.isNullOrEmpty(baseID)){
+            String debugId = baseID + "." + value.getId() + AppsModule.Ids.APP_FAVORITE_CELL;
+            sb.append(templates.debugCell(imgName, imgClassName, imgToolTip, debugId));
+        } else {
+            sb.append(templates.cell(imgName, imgClassName, imgToolTip));
         }
     }
 
@@ -117,6 +139,10 @@ public class AppFavoriteCell extends AbstractCell<App> {
                     break;
             }
         }
+    }
+
+    public void setBaseDebugId(String baseID) {
+        this.baseID = baseID;
     }
 
     public void setHasHandlers(HasHandlers hasHandlers) {

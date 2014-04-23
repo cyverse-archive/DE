@@ -1,5 +1,6 @@
 package org.iplantc.de.apps.client.views;
 
+import static org.iplantc.de.apps.shared.AppsModule.Ids;
 import org.iplantc.de.apps.client.events.AppFavoritedEvent;
 import org.iplantc.de.apps.client.events.AppGroupSelectionChangedEvent;
 import org.iplantc.de.apps.client.events.AppSelectionChangedEvent;
@@ -7,6 +8,7 @@ import org.iplantc.de.apps.client.views.cells.AppFavoriteCell;
 import org.iplantc.de.apps.client.views.cells.AppInfoCell;
 import org.iplantc.de.apps.client.views.dialogs.SubmitAppForPublicDialog;
 import org.iplantc.de.apps.client.views.widgets.events.AppSearchResultLoadEvent;
+import org.iplantc.de.apps.shared.AppsModule;
 import org.iplantc.de.client.models.DEProperties;
 import org.iplantc.de.client.models.IsMaskable;
 import org.iplantc.de.client.models.UserInfo;
@@ -42,6 +44,7 @@ import com.sencha.gxt.data.shared.SortDir;
 import com.sencha.gxt.data.shared.Store.StoreSortInfo;
 import com.sencha.gxt.data.shared.TreeStore;
 import com.sencha.gxt.theme.gray.client.panel.GrayContentPanelAppearance;
+import com.sencha.gxt.widget.core.client.Composite;
 import com.sencha.gxt.widget.core.client.ContentPanel;
 import com.sencha.gxt.widget.core.client.Dialog;
 import com.sencha.gxt.widget.core.client.container.BorderLayoutContainer;
@@ -68,13 +71,13 @@ import java.util.logging.Logger;
  * @author jstroot
  *
  */
-public class AppsViewImpl implements AppsView,
-                                     IsMaskable,
-                                     AppGroupSelectionChangedEvent.HasAppGroupSelectionChangedEventHandlers,
-                                     AppSelectionChangedEvent.HasAppSelectionChangedEventHandlers,
-                                     AppInfoCell.AppInfoClickedEventHandler,
-                                     AppFavoritedEvent.HasAppFavoritedEventHandlers,
-                                     AppFavoriteCell.RequestAppFavoriteEventHandler {
+public class AppsViewImpl extends Composite implements AppsView,
+                                                       IsMaskable,
+                                                       AppGroupSelectionChangedEvent.HasAppGroupSelectionChangedEventHandlers,
+                                                       AppSelectionChangedEvent.HasAppSelectionChangedEventHandlers,
+                                                       AppInfoCell.AppInfoClickedEventHandler,
+                                                       AppFavoritedEvent.HasAppFavoritedEventHandlers,
+                                                       AppFavoriteCell.RequestAppFavoriteEventHandler {
     /**
      * FIXME CORE-2992: Add an ID to the Categories panel collapse tool to assist QA.
      */
@@ -123,8 +126,6 @@ public class AppsViewImpl implements AppsView,
     @UiField
     BorderLayoutData eastData;
 
-    private final Widget widget;
-
     final DEProperties properties;
     private final AppsView.ViewMenu toolbar;
     private final IplantResources resources;
@@ -150,7 +151,7 @@ public class AppsViewImpl implements AppsView,
         this.displayStrings = displayStrings;
         this.appUserService = appUserService;
         this.treeStore = tree.getStore();
-        this.widget = uiBinder.createAndBindUi(this);
+        initWidget(uiBinder.createAndBindUi(this));
         setNorthWidget(toolbar);
         initConstants();
 
@@ -176,6 +177,15 @@ public class AppsViewImpl implements AppsView,
         new QuickTip(grid).getToolTipConfig().setTrackMouse(true);
         westPanel.getHeader().getTool(0).getElement().setId(WEST_COLLAPSE_BTN_ID);
 
+    }
+
+    @Override
+    protected void onEnsureDebugId(String baseID) {
+        super.onEnsureDebugId(baseID);
+        toolbar.asWidget().ensureDebugId(baseID + Ids.MENU_BAR);
+        tree.ensureDebugId(baseID + Ids.CATEGORIES);
+        grid.ensureDebugId(baseID + Ids.APP_GRID);
+        ((AppColumnModel)cm).ensureDebugId(baseID);
     }
 
     @Override
@@ -326,12 +336,6 @@ public class AppsViewImpl implements AppsView,
 
         treeStore.addSortInfo(new StoreSortInfo<AppGroup>(comparator, SortDir.ASC));
     }
-
-    @Override
-    public Widget asWidget() {
-        return widget;
-    }
-
 
     @Override
     public void hideAppMenu() {

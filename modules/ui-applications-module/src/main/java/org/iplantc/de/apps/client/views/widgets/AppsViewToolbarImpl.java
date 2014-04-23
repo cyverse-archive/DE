@@ -2,6 +2,7 @@ package org.iplantc.de.apps.client.views.widgets;
 
 
 import static org.iplantc.de.apps.client.views.widgets.events.AppSearchResultLoadEvent.*;
+import static org.iplantc.de.apps.shared.AppsModule.Ids;
 import org.iplantc.de.apps.client.events.AppGroupSelectionChangedEvent;
 import org.iplantc.de.apps.client.events.AppSelectionChangedEvent;
 import org.iplantc.de.apps.client.views.AppsView;
@@ -76,7 +77,6 @@ public class AppsViewToolbarImpl extends Composite implements AppsView.ViewMenu,
     private final UserInfo userInfo;
     private final PagingLoader<FilterPagingLoadConfig, PagingLoadResult<App>> loader;
     private final AppSearchRpcProxy proxy;
-    private final Widget widget;
     private AppsView.Presenter presenter;
     private AppsView appsView;
 
@@ -89,7 +89,31 @@ public class AppsViewToolbarImpl extends Composite implements AppsView.ViewMenu,
         this.userInfo = userInfo;
         proxy = new AppSearchRpcProxy(appService, appSearchFactory, appFactory, displayStrings);
         loader = createPagingLoader(proxy, appSearchFactory);
-        widget = uiBinder.createAndBindUi(this);
+        initWidget(uiBinder.createAndBindUi(this));
+    }
+
+    @Override
+    protected void onEnsureDebugId(String baseID) {
+        super.onEnsureDebugId(baseID);
+        app_menu.ensureDebugId(baseID + Ids.MENU_ITEM_APPS);
+        appRun.ensureDebugId(baseID + Ids.MENU_ITEM_APPS + Ids.MENU_ITEM_USE_APP);
+        createNewApp.ensureDebugId(baseID + Ids.MENU_ITEM_APPS + Ids.MENU_ITEM_CREATE_APP);
+        requestTool.ensureDebugId(baseID + Ids.MENU_ITEM_APPS + Ids.MENU_ITEM_REQUEST_TOOL);
+        copyApp.ensureDebugId(baseID + Ids.MENU_ITEM_APPS + Ids.MENU_ITEM_COPY_APP);
+        editApp.ensureDebugId(baseID + Ids.MENU_ITEM_APPS + Ids.MENU_ITEM_EDIT_APP);
+        deleteApp.ensureDebugId(baseID + Ids.MENU_ITEM_APPS + Ids.MENU_ITEM_DELETE_APP);
+        submitApp.ensureDebugId(baseID + Ids.MENU_ITEM_APPS + Ids.MENU_ITEM_SHARE_APP);
+
+        wf_menu.ensureDebugId(baseID + Ids.MENU_ITEM_WF);
+        wfRun.ensureDebugId(baseID + Ids.MENU_ITEM_WF + Ids.MENU_ITEM_USE_WF);
+        createWorkflow.ensureDebugId(baseID + Ids.MENU_ITEM_WF + Ids.MENU_ITEM_CREATE_WF);
+        copyWf.ensureDebugId(baseID + Ids.MENU_ITEM_WF + Ids.MENU_ITEM_COPY_WF);
+        editWf.ensureDebugId(baseID + Ids.MENU_ITEM_WF + Ids.MENU_ITEM_EDIT_WF);
+        deleteWf.ensureDebugId(baseID + Ids.MENU_ITEM_WF + Ids.MENU_ITEM_DELETE_WF);
+        submitWf.ensureDebugId(baseID + Ids.MENU_ITEM_WF + Ids.MENU_ITEM_SHARE_WF);
+
+        appSearch.ensureDebugId(baseID + Ids.MENU_ITEM_SEARCH);
+
     }
 
     @Override
@@ -100,11 +124,6 @@ public class AppsViewToolbarImpl extends Composite implements AppsView.ViewMenu,
     @UiHandler({"appRun", "wfRun"})
     public void appRunClicked(SelectionEvent<Item> event) {
         presenter.runSelectedApp();
-    }
-
-    @Override
-    public Widget asWidget() {
-        return widget;
     }
 
     @UiHandler({"copyApp", "copyWf"})

@@ -18,9 +18,7 @@ import com.sencha.gxt.widget.core.client.selection.SelectionChangedEvent;
 import java.util.List;
 
 /**
- * 
- * 
- * 
+ *
  * @author sriram
  * 
  */
@@ -49,6 +47,7 @@ public interface AnalysesView extends IsWidget, SelectionChangedEvent.HasSelecti
         void setViewDebugId(String baseId);
 
         void updateComments();
+
     }
 
     public interface ViewMenu extends IsWidget, SelectionChangedEvent.SelectionChangedHandler<Analysis> {

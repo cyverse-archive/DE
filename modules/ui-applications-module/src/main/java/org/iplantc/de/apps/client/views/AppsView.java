@@ -59,6 +59,8 @@ public interface AppsView extends IsWidget, AppSearchResultLoadEventHandler, App
         void runSelectedApp();
 
         void submitClicked();
+
+        void setViewDebugId(String baseId);
     }
 
     public interface ViewMenu extends IsWidget, AppSelectionChangedEventHandler, AppGroupSelectionChangedEventHandler {
