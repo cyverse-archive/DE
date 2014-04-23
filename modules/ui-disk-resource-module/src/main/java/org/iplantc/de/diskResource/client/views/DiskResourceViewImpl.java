@@ -3,7 +3,9 @@ package org.iplantc.de.diskResource.client.views;
 import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.models.HasId;
 import org.iplantc.de.client.models.HasPath;
+import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.client.models.diskResources.DiskResource;
+import org.iplantc.de.client.models.diskResources.DiskResourceAutoBeanFactory;
 import org.iplantc.de.client.models.diskResources.DiskResourceInfo;
 import org.iplantc.de.client.models.diskResources.File;
 import org.iplantc.de.client.models.diskResources.Folder;
@@ -309,10 +311,13 @@ public class DiskResourceViewImpl implements DiskResourceView {
 
     private Status selectionStatus;
 
+    private final DiskResourceAutoBeanFactory drFactory;
+
     @Inject
-    public DiskResourceViewImpl(final Tree<Folder, Folder> tree) {
+    public DiskResourceViewImpl(final Tree<Folder, Folder> tree, final DiskResourceAutoBeanFactory factory) {
         this.tree = tree;
         this.treeStore = tree.getStore();
+        this.drFactory = factory;
         tree.setView(new CustomTreeView());
 
         sm = new DiskResourceSelectionModel(new IdentityValueProvider<DiskResource>());
@@ -591,8 +596,15 @@ public class DiskResourceViewImpl implements DiskResourceView {
     @Override
     public void addFolder(Folder parent, Folder newChild) {
         treeStore.add(parent, newChild);
-        listStore.add(newChild);
-        gridView.refresh();
+        if (presenter.getSelectedFolder() != null) {
+            listStore.add(newChild);
+            gridView.refresh();
+        } else {
+            Folder request = drFactory.folder().as();
+            request.setPath(UserInfo.getInstance().getHomePath());
+            presenter.setSelectedFolderByPath(request);
+        }
+
     }
 
     @Override
