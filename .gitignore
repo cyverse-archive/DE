@@ -13,3 +13,7 @@ ucdetector_reports
 *.iml
 out/
 applications/config*
+modules/analyses-module/.classpath
+modules/analyses-module/.gitignore
+modules/analyses-module/.project
+modules/analyses-module/.settings/org.eclipse.jdt.core.prefs
