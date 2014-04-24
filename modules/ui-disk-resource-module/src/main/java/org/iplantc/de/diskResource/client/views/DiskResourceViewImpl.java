@@ -941,7 +941,7 @@ public class DiskResourceViewImpl implements DiskResourceView {
             } else if (DiskResourceUtil.isGenomeVizTab(manifest)) {
                 link = new IPlantAnchor("CoGe ", 100, new ViewerInfoClickHandler());
             } else if (DiskResourceUtil.isEnsemblVizTab(manifest)) {
-                link = new IPlantAnchor("Ensembl Genome Browser", 100, new ViewerInfoClickHandler());
+                link = new IPlantAnchor("Ensembl", 100, new ViewerInfoClickHandler());
             }
         }
         if (link == null) {

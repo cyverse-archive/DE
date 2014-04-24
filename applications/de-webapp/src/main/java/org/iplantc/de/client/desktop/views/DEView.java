@@ -71,4 +71,8 @@ public interface DEView extends IsWidget {
 
     void cleanUp();
 
+    void doLogout();
+
+    void doIntro();
+
 }

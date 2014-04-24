@@ -159,6 +159,7 @@ public class NotificationListView implements IsWidget {
         hyperlinkPanel = new HorizontalPanel();
         hyperlinkPanel.setSpacing(2);
         updateNotificationLink();
+
     }
 
     private void initListeners() {
@@ -399,7 +400,7 @@ public class NotificationListView implements IsWidget {
         store = new ListStore<NotificationMessage>(kp);
         view = new ListView<NotificationMessage, NotificationMessage>(store,
                 new IdentityValueProvider<NotificationMessage>(), appearance);
-
+        view.setShadow(false);
         view.getSelectionModel().addSelectionHandler(new SelectionHandler<NotificationMessage>() {
 
             @Override

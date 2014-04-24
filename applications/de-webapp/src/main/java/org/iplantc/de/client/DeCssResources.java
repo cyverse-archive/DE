@@ -10,10 +10,6 @@ public interface DeCssResources extends CssResource {
 
     String de_header_menu();
 
-    String de_notification_indicator();
-
-    String de_notification_indicator_highlight();
-
     String delete_button();
 
     String done_button();
@@ -109,5 +105,13 @@ public interface DeCssResources extends CssResource {
 
     @ClassName("x-tool-restorewindow-hover")
     String xToolRestorewindowHover();
+
+    String notifications();
+
+    @ClassName("ask_forums")
+    String askForums();
+
+    @ClassName("user_preferences")
+    String userPref();
 
 }

@@ -151,6 +151,31 @@ html,body {
 	padding-right: 2px;
 }
 
+.notifications {
+	background-image: url('./images/globe.png');
+    height: 24px;
+    width: 24px;
+    position: relative;
+    padding-right: 5px;
+}
+
+.ask_forums {
+	background-image: url('./images/forum.png');
+    height: 24px;
+    width: 24px;
+    position: relative;
+    padding-top: 5px;
+    padding-right: 5px;
+}
+
+.user_preferences {
+	background-image: url('./images/user.png');
+    height: 24px;
+    width: 24px;
+    position: relative;
+    padding-right: 5px;
+	
+}
 .x-tool-restorewindow-hover {
 	background-image: url('./images/button_restore_hover.png');
 }
@@ -165,18 +190,6 @@ html,body {
 	border-color: #0098AA #0098AA;
 	padding: 1px;
 	margin-top: 5px;
-}
-
-.de_notification_indicator {
-	font-size: 11px;
-	padding: 0px 4px;
-	position: relative;
-	top: -5px;
-}
-
-.de_notification_indicator_highlight {
-	background-color: #DB6619;
-	color: white;
 }
 
 .tag {

@@ -3,55 +3,33 @@
  */
 package org.iplantc.de.client.desktop.views;
 
-import org.iplantc.de.client.Constants;
 import org.iplantc.de.client.DeResources;
 import org.iplantc.de.client.desktop.widget.Desktop;
+import org.iplantc.de.client.desktop.widget.ForumsButton;
+import org.iplantc.de.client.desktop.widget.NotificationButton;
+import org.iplantc.de.client.desktop.widget.UserPreferencesButton;
 import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.events.NotificationCountUpdateEvent;
 import org.iplantc.de.client.events.NotificationCountUpdateEvent.NotificationCountUpdateEventHandler;
-import org.iplantc.de.client.events.ShowAboutWindowEvent;
-import org.iplantc.de.client.events.ShowSystemMessagesEvent;
 import org.iplantc.de.client.models.WindowState;
-import org.iplantc.de.client.notifications.views.ViewNotificationMenu;
-import org.iplantc.de.client.preferences.views.PreferencesDialog;
 import org.iplantc.de.commons.client.CommonUiConstants;
-import org.iplantc.de.commons.client.collaborators.presenter.ManageCollaboratorsPresenter.MODE;
-import org.iplantc.de.commons.client.collaborators.views.ManageCollaboratorsDailog;
-import org.iplantc.de.commons.client.util.WindowUtil;
-import org.iplantc.de.commons.client.widgets.IPlantAnchor;
 import org.iplantc.de.resources.client.DEHeaderStyle;
 import org.iplantc.de.resources.client.IplantResources;
-import org.iplantc.de.resources.client.messages.I18N;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.safehtml.shared.SafeHtml;
-import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiTemplate;
-import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.sencha.gxt.core.client.XTemplates;
-import com.sencha.gxt.widget.core.client.button.TextButton;
 import com.sencha.gxt.widget.core.client.container.AbstractHtmlLayoutContainer.HtmlData;
 import com.sencha.gxt.widget.core.client.container.BorderLayoutContainer;
 import com.sencha.gxt.widget.core.client.container.HtmlLayoutContainer;
 import com.sencha.gxt.widget.core.client.container.MarginData;
 import com.sencha.gxt.widget.core.client.container.SimpleContainer;
-import com.sencha.gxt.widget.core.client.event.HideEvent;
-import com.sencha.gxt.widget.core.client.event.HideEvent.HideHandler;
-import com.sencha.gxt.widget.core.client.event.SelectEvent;
-import com.sencha.gxt.widget.core.client.event.SelectEvent.SelectHandler;
-import com.sencha.gxt.widget.core.client.event.ShowEvent;
-import com.sencha.gxt.widget.core.client.event.ShowEvent.ShowHandler;
-import com.sencha.gxt.widget.core.client.menu.Menu;
-import com.sencha.gxt.widget.core.client.menu.SeparatorMenuItem;
-import com.sencha.gxt.widget.core.client.toolbar.ToolBar;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -79,9 +57,6 @@ public class DEViewImpl implements DEView {
     @UiField
     BorderLayoutContainer con;
 
-    private NotificationIndicator lblNotifications;
-    private ViewNotificationMenu notificationsView;
-
     private final Widget widget;
 
     private final DeResources resources;
@@ -91,10 +66,10 @@ public class DEViewImpl implements DEView {
     private final Desktop desktop;
     private final HeaderTemplate r;
     private final DEHeaderStyle headerResources;
-    private final IPlantAnchor sysMsgsMenuItem;
-    private Menu userMenu;
 
     private final List<HandlerRegistration> eventHandlers = new ArrayList<HandlerRegistration>();
+    private UserPreferencesButton userMenu;
+    private NotificationButton notify;
 
     @UiTemplate("DEView.ui.xml")
     interface DEViewUiBinder extends UiBinder<Widget, DEViewImpl> {
@@ -121,14 +96,6 @@ public class DEViewImpl implements DEView {
         headerResources = IplantResources.RESOURCES.getHeaderStyle();
         headerResources.ensureInjected();
         r = GWT.create(HeaderTemplate.class);
-
-        sysMsgsMenuItem = new IPlantAnchor(I18N.DISPLAY.systemMessagesLabel(), -1, new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                EventBus.getInstance().fireEvent(new ShowSystemMessagesEvent());
-                userMenu.hide();
-            }
-        });
     }
 
     @Override
@@ -137,23 +104,13 @@ public class DEViewImpl implements DEView {
     }
 
     private void initEventHandlers() {
-        EventBus eventbus = EventBus.getInstance();
-
         // handle data events
-        eventHandlers.add(eventbus.addHandler(NotificationCountUpdateEvent.TYPE,
+        eventHandlers.add(eventBus.addHandler(NotificationCountUpdateEvent.TYPE,
                 new NotificationCountUpdateEventHandler() {
 
                     @Override
                     public void onCountUpdate(NotificationCountUpdateEvent ncue) {
-                        int new_count = ncue.getTotal();
-                        if (new_count > 0 && new_count > lblNotifications.getCount()) {
-                            notificationsView.fetchUnseenNotifications();
-                        } else {
-                            notificationsView.setUnseenNotificationsFetchedOnce(true);
-                        }
-                        notificationsView.setUnseenCount(new_count);
-                        lblNotifications.setCount(new_count);
-
+                notify.setNotificationCount(ncue.getTotal());
                     }
                 }));
     }
@@ -169,238 +126,19 @@ public class DEViewImpl implements DEView {
         HtmlLayoutContainerTemplate templates = GWT.create(HtmlLayoutContainerTemplate.class);
 
         HtmlLayoutContainer c = new HtmlLayoutContainer(templates.getTemplate());
-        c.add(buildNotificationMenu(I18N.DISPLAY.notifications()), new HtmlData(".cell1"));
-        c.add(buildActionsMenu(), new HtmlData(".cell2"));
-        ToolBar helpbar = buildHelpMenu();
-        c.add(helpbar, new HtmlData(".cell5"));
-        c.add(new HTML("&nbsp;&nbsp;"), new HtmlData(".cell3"));
-        c.add(new HTML("&nbsp;&nbsp;"), new HtmlData(".cell4"));
+        notify = new NotificationButton(resources);
+        c.add(notify, new HtmlData(".cell1"));
+        userMenu = new UserPreferencesButton(this, resources, CONSTANTS);
+        c.add(userMenu, new HtmlData(".cell2"));
+        c.add(new ForumsButton(resources, CONSTANTS), new HtmlData(".cell5"));
         return c;
 
     }
 
-    private ToolBar buildHelpMenu() {
-        TextButton help = new TextButton();
-        help.setId("idForumMenuItem");
-        help.addSelectHandler(new SelectHandler() {
-
-            @Override
-            public void onSelect(SelectEvent event) {
-                WindowUtil.open(CONSTANTS.forumsUrl());
-            }
-        });
-        help.setToolTip(I18N.DISPLAY.forums());
-        help.setIcon(IplantResources.RESOURCES.forums());
-        help.getElement().setAttribute("data-intro",
- I18N.TOUR.introAsk());
-        help.getElement().setAttribute("data-position", "left");
-        help.getElement().setAttribute("data-step", "7");
-        ToolBar helpbar = new ToolBar();
-        helpbar.setPixelSize(45, 30);
-        helpbar.add(help);
-        return helpbar;
-    }
 
     public interface HtmlLayoutContainerTemplate extends XTemplates {
-        @XTemplate("<table width=\"100%\" height=\"100%\"><tbody><tr><td height=\"100%\" class=\"cell1\"/><td class=\"cell3\"/><td class=\"cell2\"/><td class=\"cell4\"/><td class=\"cell5\"/></tr></tbody></table>")
+        @XTemplate(source = "template_menu.html")
         SafeHtml getTemplate();
-    }
-
-    private ToolBar buildNotificationMenu(String menuHeaderText) {
-        buildNotificationMenu();
-
-        lblNotifications = new NotificationIndicator(0);
-        lblNotifications.ensureDebugId("lblNotifyCnt");
-
-        final TextButton button = new TextButton(menuHeaderText);
-        button.setHeight(18);
-        button.ensureDebugId("id" + menuHeaderText);
-        button.setMenu(notificationsView);
-        button.getElement().setAttribute("data-intro",
- I18N.TOUR.introNotifications());
-        button.getElement().setAttribute("data-position", "left");
-        button.getElement().setAttribute("data-step", "4");
-        ToolBar bar = new ToolBar();
-        bar.setPixelSize(120, 30);
-        bar.add(button);
-        bar.add(lblNotifications);
-        return bar;
-    }
-
-    private void buildNotificationMenu() {
-        notificationsView = new ViewNotificationMenu(eventBus);
-        notificationsView.setStyleName(resources.css().de_header_menu_body());
-        notificationsView.addShowHandler(new ShowHandler() {
-
-            @Override
-            public void onShow(ShowEvent event) {
-                notificationsView.addStyleName(resources.css().de_header_menu());
-            }
-        });
-        notificationsView.addHideHandler(new HideHandler() {
-            @Override
-            public void onHide(HideEvent event) {
-                notificationsView.removeStyleName(resources.css().de_header_menu());
-            }
-        });
-
-        // do an initial fetch of the last 10 messages.
-        notificationsView.fetchUnseenNotifications();
-    }
-
-    private ToolBar buildActionsMenu() {
-        final TextButton button = new TextButton();
-        button.setHeight(18);
-        button.setIcon(IplantResources.RESOURCES.userMenu());
-        button.ensureDebugId("id" + I18N.DISPLAY.settings());
-        final Menu menu = buildUserMenu();
-        button.setMenu(menu);
-        menu.addShowHandler(new ShowHandler() {
-
-            @Override
-            public void onShow(ShowEvent event) {
-                menu.addStyleName(resources.css().de_header_menu());
-
-            }
-        });
-        menu.addHideHandler(new HideHandler() {
-            @Override
-            public void onHide(HideEvent event) {
-                menu.removeStyleName(resources.css().de_header_menu());
-            }
-        });
-
-        button.getElement().setAttribute("data-intro",
- I18N.TOUR.introSettings());
-        button.getElement().setAttribute("data-position", "left");
-        button.getElement().setAttribute("data-step", "5");
-
-        ToolBar bar = new ToolBar();
-        bar.setPixelSize(55, 30);
-        bar.add(button);
-        return bar;
-    }
-
-    private Menu buildUserMenu() {
-        userMenu = buildMenu();
-
-        userMenu.add(buildPrefMenuItem());
-        userMenu.add(buildCollabMenuItem());
-
-        userMenu.add(sysMsgsMenuItem);
-
-        userMenu.add(new SeparatorMenuItem());
-
-        userMenu.add(buildHelpMenuItem());
-        userMenu.add(buildIntroMenuItem());
-        userMenu.add(buildContactMenuItem());
-        userMenu.add(buildAboutMenuItem());
-
-        userMenu.add(new SeparatorMenuItem());
-
-        userMenu.add(buildLogoutMenuItem());
-
-        return userMenu;
-    }
-
-    private IPlantAnchor buildLogoutMenuItem() {
-        IPlantAnchor anchor = new IPlantAnchor(I18N.DISPLAY.logout(), -1, new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                // doLogout();
-                presenter.doLogout();
-                userMenu.hide();
-            }
-        });
-
-        anchor.setId("idLogoutMenuItem");
-        return anchor;
-    }
-
-    private IPlantAnchor buildAboutMenuItem() {
-        IPlantAnchor anchor = new IPlantAnchor(I18N.DISPLAY.about(), -1, new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                // displayAboutDe();
-                EventBus.getInstance().fireEvent(new ShowAboutWindowEvent());
-                userMenu.hide();
-            }
-        });
-        anchor.setId("idAboutMenuItem");
-        return anchor;
-    }
-
-    private IPlantAnchor buildContactMenuItem() {
-        IPlantAnchor anchor = new IPlantAnchor(I18N.DISPLAY.contactSupport(), -1, new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                WindowUtil.open(CONSTANTS.supportUrl());
-                userMenu.hide();
-            }
-        });
-        anchor.setId("idSupportMenuItem");
-        return anchor;
-    }
-
-    private IPlantAnchor buildIntroMenuItem() {
-        IPlantAnchor anchor = new IPlantAnchor(I18N.DISPLAY.introduction(), -1, new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                presenter.doWelcomeIntro();
-                userMenu.hide();
-            }
-        });
-        anchor.setId("idIntroMenuItem");
-        return anchor;
-    }
-
-    private IPlantAnchor buildHelpMenuItem() {
-        IPlantAnchor anchor = new IPlantAnchor(I18N.DISPLAY.documentation(), -1, new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                WindowUtil.open(Constants.CLIENT.deHelpFile());
-                userMenu.hide();
-            }
-        });
-        anchor.setId("idDocMenuItem");
-        return anchor;
-    }
-
-    private IPlantAnchor buildCollabMenuItem() {
-        IPlantAnchor anchor = new IPlantAnchor(I18N.DISPLAY.collaborators(), -1, new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                ManageCollaboratorsDailog dialog = new ManageCollaboratorsDailog(MODE.MANAGE);
-                dialog.show();
-                userMenu.hide();
-            }
-        });
-        anchor.setId("idCollabMenuItem");
-        return anchor;
-    }
-
-    private IPlantAnchor buildPrefMenuItem() {
-        IPlantAnchor anchor = new IPlantAnchor(I18N.DISPLAY.preferences(), -1, new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                buildAndShowPreferencesDialog();
-                userMenu.hide();
-            }
-
-        });
-        anchor.setId("idPrefMenuItem");
-        return anchor;
-    }
-
-    private void buildAndShowPreferencesDialog() {
-        PreferencesDialog d = new PreferencesDialog();
-        d.show();
-    }
-
-    private Menu buildMenu() {
-        Menu d = new Menu();
-        d.setStyleName(resources.css().de_header_menu_body());
-        return d;
     }
 
     @Override
@@ -408,41 +146,6 @@ public class DEViewImpl implements DEView {
         this.presenter = presenter;
     }
 
-    /**
-     * A Label with a setCount method that can set the label's styled text to the count when it's greater
-     * than 0, or setting empty text and removing the style for a count of 0 or less.
-     * 
-     * @author psarando
-     * 
-     */
-    private class NotificationIndicator extends HTML {
-
-        int count;
-
-        public NotificationIndicator(int initialCount) {
-            super();
-            setWidth("18px");
-            setStyleName(resources.css().de_notification_indicator());
-            setCount(initialCount);
-        }
-
-        public int getCount() {
-            return count;
-        }
-
-        public void setCount(int count) {
-            this.count = count;
-            if (count > 0) {
-                setText(String.valueOf(count));
-                addStyleName(resources.css().de_notification_indicator_highlight());
-                Window.setTitle("(" + count + ") " + I18N.DISPLAY.rootApplicationTitle());
-            } else {
-                setHTML(SafeHtmlUtils.fromSafeConstant("&nbsp;&nbsp;"));
-                removeStyleName(resources.css().de_notification_indicator_highlight());
-                Window.setTitle(I18N.DISPLAY.rootApplicationTitle());
-            }
-        }
-    }
 
     @Override
     public List<WindowState> getOrderedWindowStates() {
@@ -461,11 +164,7 @@ public class DEViewImpl implements DEView {
      */
     @Override
     public void updateUnseenSystemMessageCount(final long numUnseenSysMsgs) {
-        String lbl = I18N.DISPLAY.systemMessagesLabel();
-        if (numUnseenSysMsgs > 0) {
-            lbl += " (" + numUnseenSysMsgs + ")";
-        }
-        sysMsgsMenuItem.setText(lbl);
+        userMenu.updateSystemMessageLabel(numUnseenSysMsgs);
     }
 
     @Override
@@ -481,6 +180,18 @@ public class DEViewImpl implements DEView {
         }
 
         desktop.cleanUp();
+
+    }
+
+    @Override
+    public void doLogout() {
+        presenter.doLogout();
+
+    }
+
+    @Override
+    public void doIntro() {
+        presenter.doWelcomeIntro();
 
     }
 
