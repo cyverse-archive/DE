@@ -76,7 +76,6 @@ import com.google.gwt.user.client.ui.HasOneWidget;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.inject.Inject;
 
-import com.sencha.gxt.data.shared.SortInfo;
 import com.sencha.gxt.data.shared.loader.LoadHandler;
 import com.sencha.gxt.data.shared.loader.PagingLoadResult;
 import com.sencha.gxt.data.shared.loader.PagingLoader;
@@ -93,7 +92,6 @@ import com.sencha.gxt.widget.core.client.selection.SelectionChangedEvent.Selecti
 import com.sencha.gxt.widget.core.client.tree.Tree.TreeNode;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -833,13 +831,6 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter {
             }
         });
 
-    }
-
-    @Override
-    public void updateSortInfo(SortInfo sortInfo) {
-        FolderContentsLoadConfig config = gridLoader.getLastLoadConfig();
-        config.setSortInfo(Arrays.asList(sortInfo));
-        gridLoader.load();
     }
 
     @Override
