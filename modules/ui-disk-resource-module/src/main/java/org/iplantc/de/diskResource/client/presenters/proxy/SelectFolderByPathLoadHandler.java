@@ -186,7 +186,7 @@ public class SelectFolderByPathLoadHandler implements LoadHandler<Folder, List<F
                 // handling other events (such as showing the Data window). This means the
                 // presenter's refresh handler will be deferred and will not handle this
                 // refresh event.
-                presenter.doRefresh(folder);
+                presenter.doRefreshFolder(folder);
             }
         });
     }

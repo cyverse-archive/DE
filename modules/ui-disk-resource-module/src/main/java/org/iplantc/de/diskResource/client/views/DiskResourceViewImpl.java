@@ -972,7 +972,7 @@ public class DiskResourceViewImpl implements DiskResourceView, SelectionHandler<
         public void onClick(ClickEvent arg0) {
             List<DiskResource> selection = grid.getSelectionModel().getSelectedItems();
             Iterator<DiskResource> it = selection.iterator();
-            presenter.OnInfoTypeClick(it.next().getId(), infoType);
+            presenter.onInfoTypeClick(it.next().getId(), infoType);
         }
 
     }
@@ -980,7 +980,7 @@ public class DiskResourceViewImpl implements DiskResourceView, SelectionHandler<
     private class SharingLabelClickHandler implements ClickHandler {
         @Override
         public void onClick(ClickEvent event) {
-            presenter.doShare();
+            presenter.manageSelectedResourceCollaboratorSharing();
 
         }
     }
@@ -1015,11 +1015,6 @@ public class DiskResourceViewImpl implements DiskResourceView, SelectionHandler<
     @Override
     public HandlerRegistration addDeleteSavedSearchEventHandler(DeleteSavedSearchEvent.DeleteSavedSearchEventHandler handler) {
         return tree.addHandler(handler, DeleteSavedSearchEvent.TYPE);
-    }
-
-    @Override
-    public Presenter getPresenter() {
-        return presenter;
     }
 
     @Override

@@ -49,16 +49,18 @@ public interface DiskResourceView extends IsWidget,
                                                   DeleteSavedSearchEvent.HasDeleteSavedSearchEventHandlers,
                                                   DiskResourceSelectionChangedEvent.HasDiskResourceSelectionChangedEventHandlers{
 
-    public interface Presenter extends org.iplantc.de.commons.client.presenter.Presenter,
-                                               IsMaskable,
-                                               DiskResourceViewToolbar.Presenter,
-                                               HasHandlerRegistrationMgmt,
-                                               FolderSelectionEvent.FolderSelectionEventHandler,
-                                               DiskResourceNameSelectedEvent.DiskResourceNameSelectedEventHandler,
-                                               ManageMetadataEvent.ManageMetadataEventHandler,
-                                               ManageSharingEvent.ManageSharingEventHandler,
-                                               DiskResourceSelectionChangedEvent.HasDiskResourceSelectionChangedEventHandlers,
-                                               FolderSelectionEvent.HasFolderSelectionEventHandlers, DiskResourceSelectionChangedEvent.DiskResourceSelectionChangedEventHandler {
+    interface Presenter extends org.iplantc.de.commons.client.presenter.Presenter,
+                                        IsMaskable,
+                                        HasHandlerRegistrationMgmt,
+                                        FolderSelectionEvent.FolderSelectionEventHandler,
+                                        DiskResourceNameSelectedEvent.DiskResourceNameSelectedEventHandler,
+                                        ManageMetadataEvent.ManageMetadataEventHandler,
+                                        ManageSharingEvent.ManageSharingEventHandler,
+                                        DiskResourceSelectionChangedEvent.HasDiskResourceSelectionChangedEventHandlers,
+                                        FolderSelectionEvent.HasFolderSelectionEventHandlers,
+                                        DiskResourceSelectionChangedEvent.DiskResourceSelectionChangedEventHandler,
+                                        SaveDiskResourceQueryEvent.SaveDiskResourceQueryEventHandler,
+                                        SubmitDiskResourceQueryEvent.SubmitDiskResourceQueryEventHandler{
         interface Builder extends org.iplantc.de.commons.client.presenter.Presenter {
             Builder hideNorth();
 
@@ -73,7 +75,50 @@ public interface DiskResourceView extends IsWidget,
             Builder disableFilePreview();
         }
 
+        /**
+         * QUESTION CORE-5300 Do we want to add files and folders? Or just folders?
+         */
+        void addSelectedFolderToSideBar();
+
+        void createNewFolder();
+
+        void createNewPlainTextFile();
+
+        void createNewTabularDataFile();
+
+        void deleteSelectedResources();
+
         void disableFilePreview();
+
+        void doBulkDownload();
+
+        void doBulkUpload();
+
+        void doCreateNewFolder(Folder parentFolder, String folderName);
+
+        void doImportFromUrl();
+
+        void doRefreshFolder(Folder folder);
+
+        void doRenameDiskResource(DiskResource diskResource, String newName);
+
+        void doSimpleDownload();
+
+        void doSimpleUpload();
+
+        void editSelectedFile();
+
+        void editSelectedResourceComments();
+
+        void editSelectedResourceInfoType();
+
+        void emptyTrash();
+
+        void duplicateSelectedResource();
+
+        Set<DiskResource> getSelectedDiskResources();
+
+        Folder getSelectedFolder();
 
         void go(HasOneWidget container, HasPath folderToSelect,
                 List<? extends HasId> diskResourcesToSelect);
@@ -85,11 +130,37 @@ public interface DiskResourceView extends IsWidget,
 
         Builder builder();
 
+        void manageSelectedResourceCollaboratorSharing();
+
+        void manageSelectedResourceDataLinks();
+
+        void manageSelectedResourceMetadata();
+
+        void moveSelectedDiskResources();
+
+        void moveSelectedDiskResourcesToTrash();
+
+        void openNewWindow(boolean atCurrentLocation);
+
+        void refreshSelectedFolder();
+
+        void renameSelectedResource();
+
+        void restoreSelectedResources();
+
+        void selectTrashFolder();
+
+        void sendSelectedResourceToEnsembl();
+
+        void sendSelectedResourcesToCoge();
+
+        void sendSelectedResourcesToTreeViewer();
+
         /**
          * Selects the folder with the given path in the view. If the given path is not yet loaded in the
          * view, a {@link SelectFolderByPathLoadHandler} is added to the view's corresponding
          * {@link TreeLoader}, then a remote load is triggered.
-         * 
+         *
          * @param folderToSelect
          */
         void setSelectedFolderByPath(HasPath folderToSelect);
@@ -112,13 +183,13 @@ public interface DiskResourceView extends IsWidget,
 
         void setSelectedDiskResourcesById(List<? extends HasId> selectedDiskResources);
 
-        void OnInfoTypeClick(String id, String infoType);
+        void onInfoTypeClick(String id, String infoType);
 
         Set<? extends DiskResource> getDragSources(IsWidget source, Element dragStartEl);
 
-		void resetInfoType();
-		
-		
+        void resetInfoType();
+
+
     }
 
     /**
@@ -136,8 +207,6 @@ public interface DiskResourceView extends IsWidget,
     }
 
     void setPresenter(Presenter presenter);
-    
-    Presenter getPresenter();
 
     void setTreeLoader(TreeLoader<Folder> treeLoader);
 
@@ -240,64 +309,6 @@ public interface DiskResourceView extends IsWidget,
     HasSafeHtml getCenterPanelHeader();
 
     interface DiskResourceViewToolbar extends IsWidget {
-
-        public interface Presenter extends org.iplantc.de.commons.client.presenter.Presenter, SaveDiskResourceQueryEvent.SaveDiskResourceQueryEventHandler, SubmitDiskResourceQueryEvent.SubmitDiskResourceQueryEventHandler {
-
-            void doBulkUpload();
-
-            void doSimpleUpload();
-
-            void doImport();
-
-            /**
-             * Fires a {@link org.iplantc.de.client.events.diskResources.FolderRefreshEvent} in order to reload the given folder in all available
-             * views and the folder cache. Or reloads the current search results if no valid folder is given.
-             *
-             * @param folder The folder to reload from the service, or null to refresh the current search
-             *            results.
-             */
-            void doRefresh(Folder folder);
-
-            void doSimpleDownload();
-
-            void doBulkDownload();
-
-            void doShare();
-
-            void requestDelete();
-
-            void doMetadata();
-
-            Set<DiskResource> getSelectedDiskResources();
-
-            Folder getSelectedFolder();
-
-            void doRename(DiskResource dr, String newName);
-
-            void doCreateNewFolder(Folder parentFolder, String folderName);
-
-            void emptyTrash();
-
-            void restore();
-
-            void doDataLinks();
-
-            void onMove();
-
-            void onNewWindow();
-
-            void onNewFile();
-
-            void onNewFolder();
-
-            /**
-             * Reloads the given folder in the view's navigation tree, and if it's the currently selected
-             * folder then the data grid is refreshed as well.
-             *
-             * @param folder
-             */
-            void onFolderRefresh(Folder folder);
-        }
 
         void init(DiskResourceView.Presenter presenter, DiskResourceView view);
 

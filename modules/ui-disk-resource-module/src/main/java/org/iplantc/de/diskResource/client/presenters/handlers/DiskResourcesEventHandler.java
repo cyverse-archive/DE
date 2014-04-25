@@ -36,13 +36,13 @@ public final class DiskResourcesEventHandler implements DiskResourcesDeletedEven
     }
 
     @Override
-    public void onRefresh(FolderRefreshEvent event) {
-        presenter.onFolderRefresh(event.getFolder());
+    public void onRequestFolderRefresh(FolderRefreshEvent event) {
+        presenter.doRefreshFolder(event.getFolder());
     }
 
     @Override
     public void onDiskResourcesDeleted(Collection<DiskResource> resources, Folder parentFolder) {
-        presenter.doRefresh(parentFolder);
+        presenter.doRefreshFolder(parentFolder);
     }
 
     @Override
@@ -52,8 +52,9 @@ public final class DiskResourcesEventHandler implements DiskResourcesDeletedEven
         Folder selectedFolder = presenter.getSelectedFolder();
         // moved contents only not the folder itself
         if (event.isMoveContents()) {
-            presenter.doRefresh(destinationFolder);
-            presenter.doRefresh(selectedFolder);
+            presenter.doRefreshFolder(destinationFolder);
+            presenter.doRefreshFolder(selectedFolder);
+            presenter.refreshSelectedFolder();
         } else {
 
             if (resourcesToMove.contains(selectedFolder)) {
@@ -76,12 +77,12 @@ public final class DiskResourcesEventHandler implements DiskResourcesDeletedEven
         } else if (DiskResourceUtil.isDescendantOfFolder(destinationFolder, parentFolder)) {
             // The parent is under the destination, so we only need to view the destination folder's
             // contents and refresh its children.
-            presenter.doRefresh(destinationFolder);
+            presenter.doRefreshFolder(destinationFolder);
         } else {
             // Refresh the parent folder since it has lost a child.
-            presenter.doRefresh(parentFolder);
+            presenter.doRefreshFolder(parentFolder);
             // Refresh the destination folder since it has gained a child.
-            presenter.doRefresh(destinationFolder);
+            presenter.doRefreshFolder(destinationFolder);
         }
 
         // View the destination folder's contents.
@@ -97,9 +98,9 @@ public final class DiskResourcesEventHandler implements DiskResourcesDeletedEven
             } else {
                 // Refresh the selected folder since it has lost a child. This will also reload the
                 // selected folder's contents in the grid.
-                presenter.doRefresh(selectedFolder);
+                presenter.doRefreshFolder(selectedFolder);
                 // Refresh the destination folder since it has gained a child.
-                presenter.doRefresh(destinationFolder);
+                presenter.doRefreshFolder(destinationFolder);
                 return;
             }
         }
@@ -112,7 +113,7 @@ public final class DiskResourcesEventHandler implements DiskResourcesDeletedEven
     public void onRename(DiskResource originalDr, DiskResource newDr) {
         Folder parent = view.getFolderByPath(DiskResourceUtil.parseParent(newDr.getPath()));
         if (parent != null) {
-            presenter.doRefresh(parent);
+            presenter.doRefreshFolder(parent);
         }
     }
 

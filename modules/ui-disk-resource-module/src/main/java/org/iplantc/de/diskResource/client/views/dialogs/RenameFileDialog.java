@@ -12,7 +12,7 @@ import com.sencha.gxt.widget.core.client.event.SelectEvent.SelectHandler;
 
 public class RenameFileDialog extends IPlantPromptDialog {
 
-    public RenameFileDialog(final File file, final DiskResourceView.DiskResourceViewToolbar.Presenter presenter) {
+    public RenameFileDialog(final File file, final DiskResourceView.Presenter presenter) {
         super(I18N.DISPLAY.fileName(), -1, file.getName(), new DiskResourceNameValidator());
 
         setHeadingText(I18N.DISPLAY.rename());
@@ -22,7 +22,7 @@ public class RenameFileDialog extends IPlantPromptDialog {
 
             @Override
             public void onSelect(SelectEvent event) {
-                presenter.doRename(file, getFieldText());
+                presenter.doRenameDiskResource(file, getFieldText());
             }
         });
     }

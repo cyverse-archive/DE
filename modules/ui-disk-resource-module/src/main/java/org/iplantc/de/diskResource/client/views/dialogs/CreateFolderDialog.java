@@ -15,7 +15,7 @@ import com.sencha.gxt.widget.core.client.event.SelectEvent.SelectHandler;
 public class CreateFolderDialog extends IPlantPromptDialog {
 
     public CreateFolderDialog(final Folder parentFolder,
-            final DiskResourceView.DiskResourceViewToolbar.Presenter presenter) {
+            final DiskResourceView.Presenter presenter) {
         super(I18N.DISPLAY.folderName(), -1, "", new DiskResourceNameValidator());
         setWidth("300px");
         setHeadingText(I18N.DISPLAY.newFolder());
