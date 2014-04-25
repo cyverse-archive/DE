@@ -21,6 +21,7 @@ import org.iplantc.de.client.util.JsonUtil;
 import org.iplantc.de.client.utils.NotifyInfo;
 import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
+import org.iplantc.de.commons.client.info.SuccessAnnouncementConfig;
 import org.iplantc.de.commons.client.views.window.configs.ConfigFactory;
 import org.iplantc.de.commons.client.widgets.IPlantAnchor;
 import org.iplantc.de.resources.client.messages.I18N;
@@ -342,7 +343,7 @@ public class NotificationListView implements IsWidget {
 
                     @Override
                     public void onSuccess(String result) {
-                        IplantAnnouncer.getInstance().schedule(I18N.DISPLAY.markAllasSeenSuccess());
+                        IplantAnnouncer.getInstance().schedule(new SuccessAnnouncementConfig(I18N.DISPLAY.markAllasSeenSuccess()));
                     }
                 });
 
