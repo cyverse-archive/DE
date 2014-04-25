@@ -22,7 +22,6 @@ import org.iplantc.de.diskResource.client.views.cells.events.ManageMetadataEvent
 import org.iplantc.de.diskResource.client.views.cells.events.ManageSharingEvent;
 
 import com.google.gwt.dom.client.Element;
-import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.safehtml.client.HasSafeHtml;
 import com.google.gwt.user.client.ui.HasOneWidget;
 import com.google.gwt.user.client.ui.IsWidget;
@@ -58,7 +57,8 @@ public interface DiskResourceView extends IsWidget,
                                                DiskResourceNameSelectedEvent.DiskResourceNameSelectedEventHandler,
                                                ManageMetadataEvent.ManageMetadataEventHandler,
                                                ManageSharingEvent.ManageSharingEventHandler,
-                                               DiskResourceSelectionChangedEvent.HasDiskResourceSelectionChangedEventHandlers {
+                                               DiskResourceSelectionChangedEvent.HasDiskResourceSelectionChangedEventHandlers,
+                                               FolderSelectionEvent.HasFolderSelectionEventHandlers, DiskResourceSelectionChangedEvent.DiskResourceSelectionChangedEventHandler {
         interface Builder extends org.iplantc.de.commons.client.presenter.Presenter {
             Builder hideNorth();
 
@@ -84,8 +84,6 @@ public interface DiskResourceView extends IsWidget,
         void cleanUp();
 
         Builder builder();
-
-        void onDiskResourceSelected(Set<DiskResource> selection);
 
         /**
          * Selects the folder with the given path in the view. If the given path is not yet loaded in the
@@ -164,8 +162,6 @@ public interface DiskResourceView extends IsWidget,
     void setSouthWidget(IsWidget fl);
 
     void setSouthWidget(IsWidget fl, double size);
-
-    void addFolderSelectionHandler(SelectionHandler<Folder> selectionHandler);
 
     /**
      * Selects the given Folder.

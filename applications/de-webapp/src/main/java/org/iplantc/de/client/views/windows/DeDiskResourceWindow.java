@@ -6,14 +6,13 @@ import org.iplantc.de.client.models.WindowState;
 import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.commons.client.views.window.configs.DiskResourceWindowConfig;
 import org.iplantc.de.commons.client.views.window.configs.WindowConfig;
+import org.iplantc.de.diskResource.client.events.FolderSelectionEvent;
 import org.iplantc.de.diskResource.client.gin.DiskResourceInjector;
 import org.iplantc.de.diskResource.client.views.DiskResourceView;
 import org.iplantc.de.resources.client.messages.I18N;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
-import com.google.gwt.event.logical.shared.SelectionEvent;
-import com.google.gwt.event.logical.shared.SelectionHandler;
 
 import com.sencha.gxt.widget.core.client.event.MaximizeEvent;
 import com.sencha.gxt.widget.core.client.event.MaximizeEvent.MaximizeHandler;
@@ -24,7 +23,7 @@ import com.sencha.gxt.widget.core.client.event.ShowEvent.ShowHandler;
 
 import java.util.List;
 
-public class DeDiskResourceWindow extends IplantWindowBase implements SelectionHandler<Folder> {
+public class DeDiskResourceWindow extends IplantWindowBase implements FolderSelectionEvent.FolderSelectionEventHandler {
 
     private final DiskResourceView.Presenter presenter;
 
@@ -45,8 +44,22 @@ public class DeDiskResourceWindow extends IplantWindowBase implements SelectionH
         initHandlers();
     }
 
+    @Override
+    public void onFolderSelected(FolderSelectionEvent event) {
+        Folder selectedFolder = event.getSelectedFolder();
+
+        if (selectedFolder == null || Strings.isNullOrEmpty(selectedFolder.getName())) {
+            setHeadingText(I18N.DISPLAY.data());
+        } else {
+            setHeadingText(I18N.DISPLAY.dataWindowTitle(selectedFolder.getName()));
+        }
+
+        fireEvent(new WindowHeadingUpdatedEvent());
+
+    }
+
     private void initHandlers() {
-        presenter.addFolderSelectionHandler(this);
+        presenter.addFolderSelectedEventHandler(this);
 
         addRestoreHandler(new RestoreHandler() {
 
@@ -73,19 +86,6 @@ public class DeDiskResourceWindow extends IplantWindowBase implements SelectionH
                 }
             }
         });
-    }
-
-    @Override
-    public void onSelection(SelectionEvent<Folder> event) {
-        Folder selectedFolder = event.getSelectedItem();
-
-        if (selectedFolder == null || Strings.isNullOrEmpty(selectedFolder.getName())) {
-            setHeadingText(I18N.DISPLAY.data());
-        } else {
-            setHeadingText(I18N.DISPLAY.dataWindowTitle(selectedFolder.getName()));
-        }
-
-        fireEvent(new WindowHeadingUpdatedEvent());
     }
 
     @Override

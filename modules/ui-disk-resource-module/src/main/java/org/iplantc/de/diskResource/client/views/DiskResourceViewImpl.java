@@ -287,7 +287,6 @@ public class DiskResourceViewImpl implements DiskResourceView, SelectionHandler<
         }
 
         if ((event.getSelection() != null) && !event.getSelection().isEmpty()) {
-            presenter.onDiskResourceSelected(Sets.newHashSet(event.getSelection()));
             asWidget().fireEvent(new DiskResourceSelectionChangedEvent(event.getSelection()));
         } else {
             resetDetailsPanel();
@@ -416,6 +415,9 @@ public class DiskResourceViewImpl implements DiskResourceView, SelectionHandler<
     @Override
     public void setPresenter(Presenter presenter) {
         this.presenter = presenter;
+        addFolderSelectedEventHandler(presenter);
+        addDiskResourceSelectionChangedEventHandler(presenter);
+
         ((DiskResourceColumnModel)cm).addDiskResourceNameSelectedEventHandler(presenter);
         ((DiskResourceColumnModel)cm).addManageSharingEventHandler(presenter);
         ((DiskResourceColumnModel)cm).addManageMetadataEventHandler(presenter);
@@ -527,16 +529,6 @@ public class DiskResourceViewImpl implements DiskResourceView, SelectionHandler<
         southData.setHidden(false);
         southData.setSize(size);
         con.setSouthWidget(widget, southData);
-    }
-
-    @Override
-    public void addDiskResourceSelectChangedHandler(SelectionChangedHandler<DiskResource> selectionChangedHandler) {
-        grid.getSelectionModel().addSelectionChangedHandler(selectionChangedHandler);
-    }
-
-    @Override
-    public void addFolderSelectionHandler(SelectionHandler<Folder> selectionHandler) {
-        tree.getSelectionModel().addSelectionHandler(selectionHandler);
     }
 
     @Override
@@ -836,7 +828,7 @@ public class DiskResourceViewImpl implements DiskResourceView, SelectionHandler<
     @Override
     public void updateDetails(String path, DiskResourceInfo info) {
         detailsPanel.clear();
-        Set<DiskResource> selection = getSelectedDiskResources();
+        List<DiskResource> selection = grid.getSelectionModel().getSelectedItems();
         // gaurd race condition
         if (selection != null && selection.size() == 1) {
             Iterator<DiskResource> it = selection.iterator();
@@ -978,7 +970,7 @@ public class DiskResourceViewImpl implements DiskResourceView, SelectionHandler<
 
         @Override
         public void onClick(ClickEvent arg0) {
-            Set<DiskResource> selection = getSelectedDiskResources();
+            List<DiskResource> selection = grid.getSelectionModel().getSelectedItems();
             Iterator<DiskResource> it = selection.iterator();
             presenter.OnInfoTypeClick(it.next().getId(), infoType);
         }
@@ -996,7 +988,7 @@ public class DiskResourceViewImpl implements DiskResourceView, SelectionHandler<
     private class ViewerInfoClickHandler implements ClickHandler {
         @Override
         public void onClick(ClickEvent event) {
-            Set<DiskResource> selection = getSelectedDiskResources();
+            List<DiskResource> selection = grid.getSelectionModel().getSelectedItems();
             DiskResource dr = selection.iterator().next();
             FileViewerWindowConfig fileViewerWindowConfig = ConfigFactory.fileViewerWindowConfig((File)dr, false);
             fileViewerWindowConfig.setVizTabFirst(true);

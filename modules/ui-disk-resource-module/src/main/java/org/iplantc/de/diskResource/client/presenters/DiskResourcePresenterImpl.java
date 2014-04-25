@@ -51,10 +51,10 @@ import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
-import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.shared.EventHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.json.client.JSONArray;
@@ -82,8 +82,6 @@ import com.sencha.gxt.widget.core.client.event.HideEvent.HideHandler;
 import com.sencha.gxt.widget.core.client.event.SelectEvent;
 import com.sencha.gxt.widget.core.client.event.SelectEvent.SelectHandler;
 import com.sencha.gxt.widget.core.client.form.TextField;
-import com.sencha.gxt.widget.core.client.selection.SelectionChangedEvent;
-import com.sencha.gxt.widget.core.client.selection.SelectionChangedEvent.SelectionChangedHandler;
 import com.sencha.gxt.widget.core.client.tree.Tree.TreeNode;
 
 
@@ -152,11 +150,23 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
 
         this.view.setTreeLoader(treeLoader);
         this.view.setPresenter(this);
-        this.view.addFolderSelectedEventHandler(this);
+
+        gridLoader = new PagingLoader<FolderContentsLoadConfig, PagingLoadResult<DiskResource>>(rpc_proxy);
+        gridLoader.useLoadConfig(new FolderContentsLoadConfig());
+        gridLoader.setReuseLoadConfig(true);
+        view.setViewLoader(gridLoader);
 
         initHandlers();
-        initDragAndDrop();
-        initFolderContentRpc();
+    }
+
+    @Override
+    public HandlerRegistration addDiskResourceSelectionChangedEventHandler(DiskResourceSelectionChangedEvent.DiskResourceSelectionChangedEventHandler handler) {
+        return view.addDiskResourceSelectionChangedEventHandler(handler);
+    }
+
+    @Override
+    public HandlerRegistration addFolderSelectedEventHandler(FolderSelectionEvent.FolderSelectionEventHandler handler) {
+        return view.addFolderSelectedEventHandler(handler);
     }
 
     @Override
@@ -172,7 +182,46 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
 
     @Override
     public void onDiskResourceSelectionChanged(DiskResourceSelectionChangedEvent event) {
+        final List<DiskResource> selection = event.getSelection();
+        if (selection != null && selection.size() == 1) {
+            Iterator<DiskResource> it = selection.iterator();
+            getDetails(it.next().getPath());
+        } else {
+            view.resetDetailsPanel();
+        }
+    }
 
+    /**
+     * Method called by the view when a folder is selected.
+     * Whenever this method is called with a non-null and non-empty list, the presenter will have the
+     * view de-select all disk resources
+     * in the center panel.
+     *
+     * @param folder the selected folder
+     */
+    public void onFolderSelected(final Folder folder) {
+        view.showDataListingWidget();
+        view.deSelectDiskResources();
+        FolderContentsLoadConfig config = gridLoader.getLastLoadConfig();
+        config.setFolder(folder);
+        gridLoader.load(0, 200);
+    }
+
+    @Override
+    public void onFolderSelected(FolderSelectionEvent event) {
+        Folder selectedFolder = event.getSelectedFolder();
+        if (selectedFolder instanceof DiskResourceQueryTemplate) {
+            // If the given query has not been saved, we need to deselect everything
+            DiskResourceQueryTemplate searchQuery = (DiskResourceQueryTemplate)selectedFolder;
+            if (!searchQuery.isSaved()) {
+                deSelectDiskResources();
+                getView().deSelectNavigationFolder();
+            }
+            view.setAllowSelectAll(false);
+        } else {
+            view.setAllowSelectAll(true);
+        }
+        onFolderSelected(selectedFolder);
     }
 
     @Override
@@ -264,17 +313,6 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
         textBox.selectAll();
     }
 
-    private void initFolderContentRpc() {
-        gridLoader = new PagingLoader<FolderContentsLoadConfig, PagingLoadResult<DiskResource>>(rpc_proxy);
-        gridLoader.useLoadConfig(new FolderContentsLoadConfig());
-        gridLoader.setReuseLoadConfig(true);
-        view.setViewLoader(gridLoader);
-    }
-
-    private void initDragAndDrop() {
-
-    }
-
     private void initHandlers() {
         // Add selection handlers which will control the visibility of the
         // toolbar buttons
@@ -295,8 +333,6 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
         dreventHandlers.add(eventBus.addHandler(DiskResourcesMovedEvent.TYPE, diskResourcesEventHandler));
         dreventHandlers.add(eventBus.addHandler(UpdateSavedSearchesEvent.TYPE, diskResourcesEventHandler));
     }
-
-
 
     @Override
     public void cleanUp() {
@@ -386,51 +422,6 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
     @Override
     public Set<DiskResource> getSelectedDiskResources() {
         return view.getSelectedDiskResources();
-    }
-
-    /**
-     * Method called by the view when a folder is selected.
-     * Whenever this method is called with a non-null and non-empty list, the presenter will have the
-     * view de-select all disk resources
-     * in the center panel.
-     *
-     * @param folder the selected folder
-     */
-    public void onFolderSelected(final Folder folder) {
-        view.showDataListingWidget();
-        view.deSelectDiskResources();
-        FolderContentsLoadConfig config = gridLoader.getLastLoadConfig();
-        config.setFolder(folder);
-        gridLoader.load(0, 200);
-    }
-
-    @Override
-    public void onFolderSelected(FolderSelectionEvent event) {
-        Folder selectedFolder = event.getSelectedFolder();
-        if (selectedFolder instanceof DiskResourceQueryTemplate) {
-            // If the given query has not been saved, we need to deselect everything
-            DiskResourceQueryTemplate searchQuery = (DiskResourceQueryTemplate)selectedFolder;
-            if (!searchQuery.isSaved()) {
-                deSelectDiskResources();
-                getView().deSelectNavigationFolder();
-            }
-            view.setAllowSelectAll(false);
-        } else {
-            view.setAllowSelectAll(true);
-        }
-        onFolderSelected(selectedFolder);
-    }
-
-    @Override
-    public void onDiskResourceSelected(Set<DiskResource> selection) {
-        if (selection != null && selection.size() == 1) {
-            Iterator<DiskResource> it = selection.iterator();
-            getDetails(it.next().getPath());
-        } else {
-            view.resetDetailsPanel();
-        }
-        view.addDiskResourceSelectionChangedHandler(this);
-
     }
 
     private void getDetails(String path) {
@@ -540,7 +531,8 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
 
             @Override
             public void onSelect(SelectEvent event) {
-                onDiskResourceSelected(getSelectedDiskResources());
+                // FIXME CORE-5300 We need to refresh details panel
+                onDiskResourceSelectionChanged(new DiskResourceSelectionChangedEvent(Lists.newArrayList(view.getSelectedDiskResources())));
             }
         });
     }
@@ -633,16 +625,6 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
 
         ipd.show();
 
-    }
-
-    @Override
-    public void addFileSelectChangedHandler(DiskResourceSelectionChangedEvent selectionChangedHandler) {
-        view.addDiskResourceSelectionChangedEventHandler(selectionChangedHandler);
-    }
-
-    @Override
-    public void addFolderSelectionHandler(SelectionHandler<Folder> selectionHandler) {
-        view.addFolderSelectionHandler(selectionHandler);
     }
 
     @Override
