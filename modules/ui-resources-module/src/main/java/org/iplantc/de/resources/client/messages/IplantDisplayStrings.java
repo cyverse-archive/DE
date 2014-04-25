@@ -3932,6 +3932,15 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
 
 
     /**
+     * Translated "Share...".
+     *
+     * @return translated "Share..."
+     */
+    @DefaultMessage("Share...")
+    @Key("shareMenuItem")
+    String shareMenuItem();
+
+    /**
      * Translated "Share promt".
      *
      * @return translated "Share promt"

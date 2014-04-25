@@ -1,76 +1,104 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
-	xmlns:container="urn:import:com.sencha.gxt.widget.core.client.container"
-	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:toolbar="urn:import:com.sencha.gxt.widget.core.client.toolbar"
-	xmlns:button="urn:import:com.sencha.gxt.widget.core.client.button"
-	xmlns:menu="urn:import:com.sencha.gxt.widget.core.client.menu"
-	xmlns:MyWidgets="urn:import:org.iplantc.de.apps.client.views.widgets">
+             xmlns:toolbar="urn:import:com.sencha.gxt.widget.core.client.toolbar"
+             xmlns:button="urn:import:com.sencha.gxt.widget.core.client.button"
+             xmlns:menu="urn:import:com.sencha.gxt.widget.core.client.menu"
+             xmlns:MyWidgets="urn:import:org.iplantc.de.apps.client.views.widgets">
 
 	<ui:with field="icons"
-		type="org.iplantc.de.resources.client.IplantResources" />
+		     type="org.iplantc.de.resources.client.IplantResources" />
 	<ui:with field="strings"
-		type="org.iplantc.de.resources.client.messages.IplantDisplayStrings" />
-	<ui:with field="margins0" type="com.sencha.gxt.core.client.util.Margins">
+		     type="org.iplantc.de.resources.client.messages.IplantDisplayStrings" />
+	<ui:with field="margins0"
+             type="com.sencha.gxt.core.client.util.Margins">
 		<ui:attributes top="0" right="0" bottom="0" left="0" />
 	</ui:with>
 	<ui:with field="boxData"
-		type="com.sencha.gxt.widget.core.client.container.BoxLayoutContainer.BoxLayoutData">
+             type="com.sencha.gxt.widget.core.client.container.BoxLayoutContainer.BoxLayoutData">
 		<ui:attributes margins="{margins0}" flex="3" />
 	</ui:with>
 	<ui:with field="boxDataNoFlex"
-		type="com.sencha.gxt.widget.core.client.container.BoxLayoutContainer.BoxLayoutData">
+             type="com.sencha.gxt.widget.core.client.container.BoxLayoutContainer.BoxLayoutData">
 		<ui:attributes margins="{margins0}" />
 	</ui:with>
 
-	<ui:with type="com.sencha.gxt.widget.core.client.tips.ToolTipConfig"
-		field="submitToolTip">
+	<ui:with field="submitToolTip"
+             type="com.sencha.gxt.widget.core.client.tips.ToolTipConfig">
 		<ui:attributes titleText="{strings.submitForPublicUse}"
-			trackMouse="true" />
+			           trackMouse="true" />
 	</ui:with>
 
 	<toolbar:ToolBar ui:field="toolBar">
 		<toolbar:child layoutData="{boxDataNoFlex}">
 			<button:TextButton ui:field="app_menu"
-				text="{strings.applications}" debugId="idAppsBtn">
+                               text="{strings.applications}"
+                               debugId="idAppsBtn">
 				<button:menu>
 					<menu:Menu>
-						<menu:MenuItem ui:field="appRun" debugId="idAppRunBtn"
-							text="{strings.run}" icon="{icons.run}" />
-						<menu:MenuItem ui:field="createNewApp" debugId="idNewAppBtn"
-							text="{strings.newApp}" icon="{icons.add}" />
-						<menu:MenuItem ui:field="requestTool" debugId="idBtnNewToolBtn"
-							text="{strings.requestTool}" icon="{icons.add}" />
-						<menu:MenuItem ui:field="copyApp" debugId="idCopyBtn"
-							text="{strings.copy}" icon="{icons.copy}" />
-						<menu:MenuItem ui:field="editApp" debugId="idEditAppBtn"
-							text="{strings.edit}" icon="{icons.edit}" />
-						<menu:MenuItem ui:field="deleteApp" debugId="idDeleteBtn"
-							text="{strings.delete}" icon="{icons.delete}" />
-						<menu:MenuItem ui:field="submitApp" debugId="idMakePublic"
-							text="{strings.share}" icon="{icons.submitForPublic}"
-							toolTipConfig="{submitToolTip}" />
+						<menu:MenuItem ui:field="appRun"
+                                       debugId="idAppRunBtn"
+                                       text="{strings.run}"
+                                       icon="{icons.run}" />
+						<menu:MenuItem ui:field="createNewApp"
+                                       debugId="idNewAppBtn"
+                                       text="{strings.newApp}"
+                                       icon="{icons.add}" />
+						<menu:MenuItem ui:field="requestTool"
+                                       debugId="idBtnNewToolBtn"
+                                       text="{strings.requestTool}"
+                                       icon="{icons.add}" />
+						<menu:MenuItem ui:field="copyApp"
+                                       debugId="idCopyBtn"
+                                       text="{strings.copy}"
+                                       icon="{icons.copy}" />
+						<menu:MenuItem ui:field="editApp"
+                                       debugId="idEditAppBtn"
+                                       text="{strings.edit}"
+                                       icon="{icons.edit}" />
+						<menu:MenuItem ui:field="deleteApp"
+                                       debugId="idDeleteBtn"
+                                       text="{strings.delete}"
+                                       icon="{icons.delete}" />
+						<menu:MenuItem ui:field="submitApp"
+                                       debugId="idMakePublic"
+                                       text="{strings.shareMenuItem}"
+                                       icon="{icons.submitForPublic}"
+                                       toolTipConfig="{submitToolTip}" />
 					</menu:Menu>
 				</button:menu>
 			</button:TextButton>
 		</toolbar:child>
 		<toolbar:child layoutData="{boxDataNoFlex}">
-			<button:TextButton ui:field="wf_menu" text="{strings.workflow}"
-				debugId="idwfBtn">
+			<button:TextButton ui:field="wf_menu"
+                               text="{strings.workflow}"
+				               debugId="idwfBtn">
 				<button:menu>
 					<menu:Menu>
-						<menu:MenuItem ui:field="wfRun" debugId="idWfRunBtn"
-							text="{strings.useWf}" icon="{icons.run}" />
-						<menu:MenuItem ui:field="createWorkflow" debugId="idNewWorkflowBtn"
-							text="{strings.newApp}" icon="{icons.add}" />
-						<menu:MenuItem ui:field="copyWf" debugId="idWfCopyBtn"
-							text="{strings.copy}" icon="{icons.copy}" />
-						<menu:MenuItem ui:field="editWf" debugId="idWfEditAppBtn"
-							text="{strings.edit}" icon="{icons.edit}" />
-						<menu:MenuItem ui:field="deleteWf" debugId="idWfDeleteBtn"
-							text="{strings.delete}" icon="{icons.delete}" />
-						<menu:MenuItem ui:field="submitWf" debugId="idwfMakePublic"
-							text="{strings.share}" icon="{icons.submitForPublic}"
-							toolTipConfig="{submitToolTip}" />
+						<menu:MenuItem ui:field="wfRun"
+                                       debugId="idWfRunBtn"
+                                       text="{strings.useWf}"
+                                       icon="{icons.run}" />
+						<menu:MenuItem ui:field="createWorkflow"
+                                       debugId="idNewWorkflowBtn"
+                                       text="{strings.newApp}"
+                                       icon="{icons.add}" />
+						<menu:MenuItem ui:field="copyWf"
+                                       debugId="idWfCopyBtn"
+                                       text="{strings.copy}"
+                                       icon="{icons.copy}" />
+						<menu:MenuItem ui:field="editWf"
+                                       debugId="idWfEditAppBtn"
+                                       text="{strings.edit}"
+                                       icon="{icons.edit}" />
+						<menu:MenuItem ui:field="deleteWf"
+                                       debugId="idWfDeleteBtn"
+                                       text="{strings.delete}"
+                                       icon="{icons.delete}" />
+						<menu:MenuItem ui:field="submitWf"
+                                       debugId="idwfMakePublic"
+                                       text="{strings.shareMenuItem}"
+                                       icon="{icons.submitForPublic}"
+                                       toolTipConfig="{submitToolTip}" />
 					</menu:Menu>
 				</button:menu>
 			</button:TextButton>
@@ -78,7 +106,8 @@
 
 		<toolbar:child layoutData="{boxData}">
 			<MyWidgets:AppSearchField ui:field="appSearch"
-				debugId="idAppsSrc" emptyText="{strings.searchApps}" />
+				                      debugId="idAppsSrc"
+                                      emptyText="{strings.searchApps}" />
 		</toolbar:child>
 	</toolbar:ToolBar>
 </ui:UiBinder>

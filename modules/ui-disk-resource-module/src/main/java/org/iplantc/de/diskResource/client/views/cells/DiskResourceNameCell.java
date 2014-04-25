@@ -1,6 +1,5 @@
 package org.iplantc.de.diskResource.client.views.cells;
 
-import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.client.models.diskResources.File;
@@ -10,10 +9,7 @@ import org.iplantc.de.resources.client.DiskResourceNameCellStyle;
 import org.iplantc.de.resources.client.IplantResources;
 import org.iplantc.de.resources.client.messages.I18N;
 
-import static com.google.gwt.dom.client.BrowserEvents.CLICK;
-import static com.google.gwt.dom.client.BrowserEvents.MOUSEOUT;
-import static com.google.gwt.dom.client.BrowserEvents.MOUSEOVER;
-
+import static com.google.gwt.dom.client.BrowserEvents.*;
 import com.google.gwt.cell.client.AbstractCell;
 import com.google.gwt.cell.client.Cell;
 import com.google.gwt.cell.client.ValueUpdater;
@@ -21,6 +17,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.dom.client.Style.TextDecoration;
+import com.google.gwt.event.shared.HasHandlers;
 import com.google.gwt.safehtml.client.SafeHtmlTemplates;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
@@ -28,7 +25,6 @@ import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.IsWidget;
 
 import com.sencha.gxt.widget.core.client.Popup;
 import com.sencha.gxt.widget.core.client.tips.Tip;
@@ -38,7 +34,8 @@ import com.sencha.gxt.widget.core.client.tips.Tip;
  * 
  * TODO JDS Implement preview tooltip. Tooltip will probably have to be {@link Tip}, since this is a cell
  * and not a widget.
- * 
+ *
+ * FIXME This cell needs an appearance
  * @author jstroot
  * 
  */
@@ -59,17 +56,19 @@ public class DiskResourceNameCell extends AbstractCell<DiskResource> {
     }
 
     final Templates templates = GWT.create(Templates.class);
-    private final IsWidget caller;
-    private boolean previewEnabled = true;
+    private final boolean previewEnabled;
+    private HasHandlers hasHandlers;
 
-    final CALLER_TAG tag;
     private Popup linkPopup;
 
-    public DiskResourceNameCell(IsWidget caller, CALLER_TAG tag) {
+    public DiskResourceNameCell() {
+        this(true);
+    }
+
+    public DiskResourceNameCell(boolean previewEnabled) {
         super(CLICK, MOUSEOVER, MOUSEOUT);
 
-        this.tag = tag;
-        this.caller = caller;
+        this.previewEnabled = previewEnabled;
         CSS.ensureInjected();
     }
 
@@ -128,6 +127,10 @@ public class DiskResourceNameCell extends AbstractCell<DiskResource> {
         }
     }
 
+    public void setHasHandlers(HasHandlers hasHandlers) {
+        this.hasHandlers = hasHandlers;
+    }
+
     private void doOnMouseOut(Element eventTarget, DiskResource value) {
         if (!isValidClickTarget(eventTarget, value)) {
             return;
@@ -184,22 +187,15 @@ public class DiskResourceNameCell extends AbstractCell<DiskResource> {
         if (!isValidClickTarget(eventTarget, value)) {
             return;
         }
-
-        if (tag.equals(CALLER_TAG.DATA)) {
-            EventBus.getInstance().fireEvent(new DiskResourceSelectedEvent(caller, value));
+        if(hasHandlers != null){
+            hasHandlers.fireEvent(new DiskResourceSelectedEvent(value));
         }
     }
 
     private boolean isValidClickTarget(Element eventTarget, DiskResource value) {
         return eventTarget.getAttribute("name").equalsIgnoreCase("drName") //$NON-NLS-1$ //$NON-NLS-2$
-                && tag != DiskResourceNameCell.CALLER_TAG.SHARING
-                && (previewEnabled || !(value instanceof File)) && (!value.isFilter());
+                && !(value instanceof File)
+                && (!value.isFilter());
     }
-
-    public void setPreviewEnabled(boolean previewEnabled) {
-        this.previewEnabled = previewEnabled;
-    }
-
-   
 
 }

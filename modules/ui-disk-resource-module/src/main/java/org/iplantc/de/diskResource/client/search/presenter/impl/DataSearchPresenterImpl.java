@@ -6,7 +6,7 @@ import org.iplantc.de.client.services.SearchServiceFacade;
 import org.iplantc.de.commons.client.info.ErrorAnnouncementConfig;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
 import org.iplantc.de.commons.client.info.SuccessAnnouncementConfig;
-import org.iplantc.de.diskResource.client.events.FolderSelectedEvent;
+import org.iplantc.de.diskResource.client.events.FolderSelectionEvent;
 import org.iplantc.de.diskResource.client.search.events.DeleteSavedSearchEvent;
 import org.iplantc.de.diskResource.client.search.events.DeleteSavedSearchEvent.HasDeleteSavedSearchEventHandlers;
 import org.iplantc.de.diskResource.client.search.events.SaveDiskResourceQueryEvent;
@@ -56,8 +56,8 @@ public class DataSearchPresenterImpl implements DataSearchPresenter {
     }
 
     @Override
-    public HandlerRegistration addFolderSelectedEventHandler(FolderSelectedEvent.FolderSelectedEventHandler handler) {
-        return ensureHandlers().addHandler(FolderSelectedEvent.TYPE, handler);
+    public HandlerRegistration addFolderSelectedEventHandler(FolderSelectionEvent.FolderSelectionEventHandler handler) {
+        return ensureHandlers().addHandler(FolderSelectionEvent.TYPE, handler);
     }
 
     /**
@@ -169,7 +169,7 @@ public class DataSearchPresenterImpl implements DataSearchPresenter {
         DiskResourceQueryTemplate toSubmit = event.getQueryTemplate();
 
         activeQuery = toSubmit;
-        fireEvent(new FolderSelectedEvent(activeQuery));
+        fireEvent(new FolderSelectionEvent(activeQuery));
     }
 
     @Override
@@ -217,7 +217,7 @@ public class DataSearchPresenterImpl implements DataSearchPresenter {
     }
 
     @Override
-    public void onFolderSelected(FolderSelectedEvent event) {
+    public void onFolderSelected(FolderSelectionEvent event) {
         if (event.getSelectedFolder() instanceof DiskResourceQueryTemplate) {
             final DiskResourceQueryTemplate selectedQuery = (DiskResourceQueryTemplate)event.getSelectedFolder();
             searchField.edit(selectedQuery);
@@ -229,14 +229,14 @@ public class DataSearchPresenterImpl implements DataSearchPresenter {
 
     @Override
     public void searchInit(
-            final FolderSelectedEvent.HasFolderSelectedEventHandlers hasFolderSelectedHandlers,
+            final FolderSelectionEvent.HasFolderSelectionEventHandlers hasFolderSelectedHandlers,
             final HasDeleteSavedSearchEventHandlers hasDeleteSavedSearchEventHandlers,
-            final FolderSelectedEvent.FolderSelectedEventHandler folderSelectedEventHandler,
+            final FolderSelectionEvent.FolderSelectionEventHandler folderSelectionEventHandler,
             final DiskResourceSearchField searchField) {
         hasFolderSelectedHandlers.addFolderSelectedEventHandler(this);
         hasDeleteSavedSearchEventHandlers.addDeleteSavedSearchEventHandler(this);
         // Add handler which will listen to our FolderSelectedEvents
-        addFolderSelectedEventHandler(folderSelectedEventHandler);
+        addFolderSelectedEventHandler(folderSelectionEventHandler);
         this.searchField = searchField;
         searchField.addSaveDiskResourceQueryEventHandler(this);
         searchField.addSubmitDiskResourceQueryEventHandler(this);

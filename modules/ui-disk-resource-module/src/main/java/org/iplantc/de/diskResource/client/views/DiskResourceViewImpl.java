@@ -4,42 +4,32 @@ import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.models.HasId;
 import org.iplantc.de.client.models.HasPath;
 import org.iplantc.de.client.models.UserInfo;
-import org.iplantc.de.client.models.diskResources.DiskResource;
-import org.iplantc.de.client.models.diskResources.DiskResourceAutoBeanFactory;
-import org.iplantc.de.client.models.diskResources.DiskResourceInfo;
-import org.iplantc.de.client.models.diskResources.File;
-import org.iplantc.de.client.models.diskResources.Folder;
-import org.iplantc.de.client.models.diskResources.PermissionValue;
+import org.iplantc.de.client.models.diskResources.*;
 import org.iplantc.de.client.models.search.DiskResourceQueryTemplate;
 import org.iplantc.de.client.util.CommonModelUtils;
 import org.iplantc.de.client.util.DiskResourceUtil;
 import org.iplantc.de.commons.client.views.window.configs.ConfigFactory;
 import org.iplantc.de.commons.client.views.window.configs.FileViewerWindowConfig;
 import org.iplantc.de.commons.client.widgets.IPlantAnchor;
-import org.iplantc.de.diskResource.client.events.FolderSelectedEvent;
+import org.iplantc.de.diskResource.client.events.DiskResourceSelectionChangedEvent;
+import org.iplantc.de.diskResource.client.events.FolderSelectionEvent;
 import org.iplantc.de.diskResource.client.events.ShowFilePreviewEvent;
 import org.iplantc.de.diskResource.client.presenters.proxy.FolderContentsLoadConfig;
 import org.iplantc.de.diskResource.client.search.events.DeleteSavedSearchEvent;
-import org.iplantc.de.diskResource.client.views.cells.DiskResourceNameCell;
-import org.iplantc.de.diskResource.client.views.widgets.DiskResourceViewToolbar;
 import org.iplantc.de.resources.client.DataCollapseStyle;
 import org.iplantc.de.resources.client.IplantResources;
 import org.iplantc.de.resources.client.messages.I18N;
+import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import com.google.gwt.cell.client.Cell;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Style.Cursor;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.dom.client.KeyCodes;
-import com.google.gwt.event.dom.client.KeyPressEvent;
-import com.google.gwt.event.dom.client.KeyPressHandler;
+import com.google.gwt.event.dom.client.*;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
@@ -52,11 +42,7 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiFactory;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiTemplate;
-import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.Image;
-import com.google.gwt.user.client.ui.IsWidget;
-import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.user.client.ui.*;
 import com.google.inject.Inject;
 
 import com.sencha.gxt.core.client.IdentityValueProvider;
@@ -89,11 +75,8 @@ import com.sencha.gxt.widget.core.client.event.SelectEvent;
 import com.sencha.gxt.widget.core.client.event.SelectEvent.SelectHandler;
 import com.sencha.gxt.widget.core.client.form.FieldLabel;
 import com.sencha.gxt.widget.core.client.form.TextField;
-import com.sencha.gxt.widget.core.client.grid.ColumnModel;
+import com.sencha.gxt.widget.core.client.grid.*;
 import com.sencha.gxt.widget.core.client.grid.Grid;
-import com.sencha.gxt.widget.core.client.grid.GridSelectionModel;
-import com.sencha.gxt.widget.core.client.grid.LiveGridView;
-import com.sencha.gxt.widget.core.client.grid.LiveToolItem;
 import com.sencha.gxt.widget.core.client.selection.SelectionChangedEvent;
 import com.sencha.gxt.widget.core.client.selection.SelectionChangedEvent.SelectionChangedHandler;
 import com.sencha.gxt.widget.core.client.toolbar.FillToolItem;
@@ -102,22 +85,9 @@ import com.sencha.gxt.widget.core.client.tree.Tree;
 import com.sencha.gxt.widget.core.client.tree.Tree.TreeNode;
 import com.sencha.gxt.widget.core.client.tree.TreeView;
 
-import java.util.Collection;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
-public class DiskResourceViewImpl implements DiskResourceView {
-
-    private final class TreeSelectionChangeHandlerImpl implements SelectionChangedHandler<Folder> {
-        @Override
-        public void onSelectionChanged(SelectionChangedEvent<Folder> event) {
-            if (event.getSelection() == null || event.getSelection().size() == 0) {
-                getPathWidget().clear();
-            }
-        }
-    }
+public class DiskResourceViewImpl implements DiskResourceView, SelectionHandler<Folder>, SelectionChangedHandler<DiskResource> {
 
     private final class PathFieldKeyPressHandlerImpl implements KeyPressHandler {
         @Override
@@ -174,16 +144,6 @@ public class DiskResourceViewImpl implements DiskResourceView {
         }
     }
 
-    private final class SelectionChangeHandlerImpl implements SelectionChangedHandler<DiskResource> {
-        @Override
-        public void onSelectionChanged(SelectionChangedEvent<DiskResource> event) {
-            if (!sm.isSelectAll()) {
-                updateSelectionCount(sm.getSelectedItemsCache().size());
-            } else {
-                updateSelectionCount(sm.getTotal());
-            }
-        }
-    }
 
     private final class LiveGridViewUpdateHandlerImpl implements LiveGridViewUpdateHandler {
         @Override
@@ -202,42 +162,9 @@ public class DiskResourceViewImpl implements DiskResourceView {
         }
     }
 
-    private final class GridSelectionHandler implements SelectionChangedHandler<DiskResource> {
-        @Override
-        public void onSelectionChanged(SelectionChangedEvent<DiskResource> event) {
-            if ((event.getSelection() != null) && !event.getSelection().isEmpty()) {
-                presenter.onDiskResourceSelected(Sets.newHashSet(event.getSelection()));
-            } else {
-                resetDetailsPanel();
-            }
-        }
-    }
 
-    private final class TreeSelectionHandler implements SelectionHandler<Folder> {
-        @Override
-        public void onSelection(SelectionEvent<Folder> event) {
-            final Folder selectedItem = event.getSelectedItem();
-            if (DiskResourceViewImpl.this.widget.isAttached() && (selectedItem != null)) {
-                if (!selectedItem.isFilter()) {
-                    DiskResourceViewImpl.this.asWidget().fireEvent(new FolderSelectedEvent(selectedItem));
-                    Scheduler.get().scheduleFinally(new ScheduledCommand() {
 
-                        @Override
-                        public void execute() {
-                            if (selectedItem instanceof DiskResourceQueryTemplate) {
-                                pathField.clear();
-                            } else {
-                                pathField.setValue(selectedItem.getPath());
-                            }
-                        }
-                    });
 
-                } else {
-                    tree.getSelectionModel().deselect(selectedItem);
-                }
-            }
-        }
-    }
 
     @UiTemplate("DiskResourceView.ui.xml")
     interface DiskResourceViewUiBinder extends UiBinder<Widget, DiskResourceViewImpl> {
@@ -258,6 +185,7 @@ public class DiskResourceViewImpl implements DiskResourceView {
 
     @UiField(provided = true)
     Tree<Folder, Folder> tree;
+    private final IplantDisplayStrings displayStrings;
 
     @UiField(provided = true)
     final TreeStore<Folder> treeStore;
@@ -314,8 +242,9 @@ public class DiskResourceViewImpl implements DiskResourceView {
     private final DiskResourceAutoBeanFactory drFactory;
 
     @Inject
-    public DiskResourceViewImpl(final Tree<Folder, Folder> tree, final DiskResourceAutoBeanFactory factory) {
+    public DiskResourceViewImpl(final Tree<Folder, Folder> tree, final DiskResourceAutoBeanFactory factory, final IplantDisplayStrings displayStrings) {
         this.tree = tree;
+        this.displayStrings = displayStrings;
         this.treeStore = tree.getStore();
         this.drFactory = factory;
         tree.setView(new CustomTreeView());
@@ -328,14 +257,10 @@ public class DiskResourceViewImpl implements DiskResourceView {
 
         grid.setSelectionModel(sm);
 
-        // setLeafIcon(tree);
         tree.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
-        tree.getSelectionModel().addSelectionHandler(new TreeSelectionHandler());
-        tree.getSelectionModel().addSelectionChangedHandler(new TreeSelectionChangeHandlerImpl());
+        tree.getSelectionModel().addSelectionHandler(this);
 
-        GridSelectionModel<DiskResource> selectionModel = grid.getSelectionModel();
-        selectionModel.addSelectionChangedHandler(new GridSelectionHandler());
-        selectionModel.addSelectionChangedHandler(new SelectionChangeHandlerImpl());
+        grid.getSelectionModel().addSelectionChangedHandler(this);
 
         gridView.addLiveGridViewUpdateHandler(new LiveGridViewUpdateHandlerImpl());
         treeStore.addStoreDataChangeHandler(new TreeStoreDataChangeHandlerImpl(tree));
@@ -346,6 +271,62 @@ public class DiskResourceViewImpl implements DiskResourceView {
         addTreeCollapseButton();
         pathField.addKeyPressHandler(new PathFieldKeyPressHandlerImpl());
 
+    }
+
+    @Override
+    public HandlerRegistration addDiskResourceSelectionChangedEventHandler(DiskResourceSelectionChangedEvent.DiskResourceSelectionChangedEventHandler handler) {
+        return asWidget().addHandler(handler, DiskResourceSelectionChangedEvent.TYPE);
+    }
+
+    @Override
+    public void onSelectionChanged(SelectionChangedEvent<DiskResource> event) {
+        if (!sm.isSelectAll()) {
+            updateSelectionCount(sm.getSelectedItemsCache().size());
+        } else {
+            updateSelectionCount(sm.getTotal());
+        }
+
+        if ((event.getSelection() != null) && !event.getSelection().isEmpty()) {
+            presenter.onDiskResourceSelected(Sets.newHashSet(event.getSelection()));
+            asWidget().fireEvent(new DiskResourceSelectionChangedEvent(event.getSelection()));
+        } else {
+            resetDetailsPanel();
+        }
+
+    }
+
+    @Override
+    public void onSelection(SelectionEvent<Folder> event) {
+        if(event.getSelectedItem() == null){
+            return;
+        }
+        // QUESTION CORE-5300 Why do we have this 'isAttached' check?
+        if (!asWidget().isAttached()) {
+            return;
+        }
+
+        final Folder selectedItem = event.getSelectedItem();
+        if (!selectedItem.isFilter()) {
+            asWidget().fireEvent(new FolderSelectionEvent(selectedItem));
+            // QUESTION CORE-5300 Is this deferment necessary?
+            Scheduler.get().scheduleFinally(new ScheduledCommand() {
+
+                @Override
+                public void execute() {
+                    if (selectedItem instanceof DiskResourceQueryTemplate) {
+                        pathField.clear();
+                    } else if(!selectedItem.getPath().equals(pathField.getCurrentValue())){
+                        // TODO CORE-5300 Verify that this still works as intended.
+                        // it used to be in a selection CHANGED handler instead of this one.
+                        pathField.setValue(selectedItem.getPath());
+                    }
+                }
+            });
+
+        } else {
+            // Do not allow user to select Filtered folders.
+            tree.getSelectionModel().deselect(selectedItem);
+        }
     }
 
     private void initLiveView() {
@@ -395,15 +376,6 @@ public class DiskResourceViewImpl implements DiskResourceView {
         westPanel.getHeader().addTool(tool);
     }
 
-    @Override
-    public void onDiskResourceSelected(Set<DiskResource> selection) {
-        onDiskResourceSelected(selection);
-    }
-
-    @Override
-    public void onFolderSelected(Folder folder) {
-        presenter.onFolderSelected(folder);
-    }
 
     @UiFactory
     ListStore<DiskResource> createListStore() {
@@ -434,7 +406,7 @@ public class DiskResourceViewImpl implements DiskResourceView {
 
     @UiFactory
     ColumnModel<DiskResource> createColumnModel() {
-        return new DiskResourceColumnModel(this, sm);
+        return new DiskResourceColumnModel(sm, displayStrings);
     }
 
     private DiskResourceColumnModel getDiskResourceColumnModel() {
@@ -444,7 +416,10 @@ public class DiskResourceViewImpl implements DiskResourceView {
     @Override
     public void setPresenter(Presenter presenter) {
         this.presenter = presenter;
-        toolbar.setPresenter(presenter);
+        ((DiskResourceColumnModel)cm).addDiskResourceNameSelectedEventHandler(presenter);
+        ((DiskResourceColumnModel)cm).addManageSharingEventHandler(presenter);
+        ((DiskResourceColumnModel)cm).addManageMetadataEventHandler(presenter);
+        toolbar.init(presenter, this);
         initDragAndDrop();
     }
 
@@ -698,21 +673,6 @@ public class DiskResourceViewImpl implements DiskResourceView {
         grid.unmask();
     }
 
-    @Override
-    @SuppressWarnings("unchecked")
-    public <D extends DiskResource> void removeDiskResources(Collection<D> resources) {
-        // De-select everything first, so the remove calls don't trigger extra
-        // SelectionChanged events.
-        grid.getSelectionModel().deselect((List<DiskResource>)Lists.newArrayList(resources));
-
-        for (DiskResource dr : resources) {
-            listStore.remove(dr);
-            if (dr instanceof Folder) {
-                treeStore.remove((Folder)dr);
-            }
-        }
-    }
-
     private void setGridEmptyText() {
         gridView.setEmptyText(I18N.DISPLAY.noItemsToDisplay());
     }
@@ -776,15 +736,6 @@ public class DiskResourceViewImpl implements DiskResourceView {
     @Override
     public void setAllowSelectAll(boolean allowSelectAll) {
         sm.setAllowSelectAll(allowSelectAll);
-    }
-
-    @Override
-    public void disableFilePreview() {
-        Cell<DiskResource> cell = getDiskResourceColumnModel().getNameColumn().getCell();
-        if (cell instanceof DiskResourceNameCell) {
-            ((DiskResourceNameCell)cell).setPreviewEnabled(false);
-        }
-
     }
 
     @Override
@@ -880,11 +831,6 @@ public class DiskResourceViewImpl implements DiskResourceView {
             }
         }
         return false;
-    }
-
-    @Override
-    public boolean isCenterHidden() {
-        return centerData.isHidden();
     }
 
     @Override
@@ -1070,8 +1016,8 @@ public class DiskResourceViewImpl implements DiskResourceView {
     }
 
     @Override
-    public HandlerRegistration addFolderSelectedEventHandler(FolderSelectedEvent.FolderSelectedEventHandler handler) {
-        return asWidget().addHandler(handler, FolderSelectedEvent.TYPE);
+    public HandlerRegistration addFolderSelectedEventHandler(FolderSelectionEvent.FolderSelectionEventHandler handler) {
+        return asWidget().addHandler(handler, FolderSelectionEvent.TYPE);
     }
 
     @Override
@@ -1082,11 +1028,6 @@ public class DiskResourceViewImpl implements DiskResourceView {
     @Override
     public Presenter getPresenter() {
         return presenter;
-    }
-
-    @Override
-    public TextField getPathWidget() {
-        return pathField;
     }
 
     @Override

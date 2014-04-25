@@ -2,7 +2,7 @@ package org.iplantc.de.diskResource.client.search.presenter;
 
 
 import org.iplantc.de.client.models.search.DiskResourceQueryTemplate;
-import org.iplantc.de.diskResource.client.events.FolderSelectedEvent;
+import org.iplantc.de.diskResource.client.events.FolderSelectionEvent;
 import org.iplantc.de.diskResource.client.search.events.DeleteSavedSearchEvent;
 import org.iplantc.de.diskResource.client.search.events.SaveDiskResourceQueryEvent;
 import org.iplantc.de.diskResource.client.search.events.SubmitDiskResourceQueryEvent;
@@ -49,7 +49,7 @@ import java.util.List;
  * @author jstroot
  * 
  */
-public interface DataSearchPresenter extends SaveDiskResourceQueryEvent.SaveDiskResourceQueryEventHandler, SubmitDiskResourceQueryEvent.SubmitDiskResourceQueryEventHandler, FolderSelectedEvent.HasFolderSelectedEventHandlers, FolderSelectedEvent.FolderSelectedEventHandler,
+public interface DataSearchPresenter extends SaveDiskResourceQueryEvent.SaveDiskResourceQueryEventHandler, SubmitDiskResourceQueryEvent.SubmitDiskResourceQueryEventHandler, FolderSelectionEvent.HasFolderSelectionEventHandlers, FolderSelectionEvent.FolderSelectionEventHandler,
         DeleteSavedSearchEvent.DeleteSavedSearchEventHandler {
 
     /**
@@ -65,9 +65,9 @@ public interface DataSearchPresenter extends SaveDiskResourceQueryEvent.SaveDisk
      * @param treeStore
      * @param searchField
      */
-    void searchInit(FolderSelectedEvent.HasFolderSelectedEventHandlers hasFolderSelectedHandlers,
+    void searchInit(FolderSelectionEvent.HasFolderSelectionEventHandlers hasFolderSelectedHandlers,
             DeleteSavedSearchEvent.HasDeleteSavedSearchEventHandlers hasDeleteSavedSearchEventHandlers,
-            FolderSelectedEvent.FolderSelectedEventHandler folderSelectedHandler,
+            FolderSelectionEvent.FolderSelectionEventHandler folderSelectedHandler,
             DiskResourceSearchField searchField);
 
     /**

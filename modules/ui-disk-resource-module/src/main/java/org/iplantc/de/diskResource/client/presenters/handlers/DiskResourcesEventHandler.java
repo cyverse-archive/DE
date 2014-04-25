@@ -1,21 +1,16 @@
 package org.iplantc.de.diskResource.client.presenters.handlers;
 
-import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.events.diskResources.FolderRefreshEvent;
 import org.iplantc.de.client.events.diskResources.FolderRefreshEvent.FolderRefreshEventHandler;
 import org.iplantc.de.client.models.diskResources.DiskResource;
-import org.iplantc.de.client.models.diskResources.File;
 import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.client.models.search.DiskResourceQueryTemplate;
 import org.iplantc.de.client.util.DiskResourceUtil;
 import org.iplantc.de.diskResource.client.events.DiskResourceRenamedEvent.DiskResourceRenamedEventHandler;
-import org.iplantc.de.diskResource.client.events.DiskResourceSelectedEvent;
-import org.iplantc.de.diskResource.client.events.DiskResourceSelectedEvent.DiskResourceSelectedEventHandler;
 import org.iplantc.de.diskResource.client.events.DiskResourcesDeletedEvent;
 import org.iplantc.de.diskResource.client.events.DiskResourcesMovedEvent;
 import org.iplantc.de.diskResource.client.events.DiskResourcesMovedEvent.DiskResourcesMovedEventHandler;
 import org.iplantc.de.diskResource.client.events.FolderCreatedEvent.FolderCreatedEventHandler;
-import org.iplantc.de.diskResource.client.events.ShowFilePreviewEvent;
 import org.iplantc.de.diskResource.client.search.events.UpdateSavedSearchesEvent;
 import org.iplantc.de.diskResource.client.search.events.UpdateSavedSearchesEvent.UpdateSavedSearchesHandler;
 import org.iplantc.de.diskResource.client.views.DiskResourceView;
@@ -26,10 +21,12 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
-public final class DiskResourcesEventHandler implements
-        DiskResourcesDeletedEvent.DiskResourcesDeletedEventHandler, DiskResourceSelectedEventHandler,
-        DiskResourcesMovedEventHandler, DiskResourceRenamedEventHandler, FolderCreatedEventHandler,
-        FolderRefreshEventHandler, UpdateSavedSearchesHandler {
+public final class DiskResourcesEventHandler implements DiskResourcesDeletedEvent.DiskResourcesDeletedEventHandler,
+                                                        DiskResourcesMovedEventHandler,
+                                                        DiskResourceRenamedEventHandler,
+                                                        FolderCreatedEventHandler,
+                                                        FolderRefreshEventHandler,
+                                                        UpdateSavedSearchesHandler {
     private final DiskResourceView.Presenter presenter;
     private final DiskResourceView view;
 
@@ -46,20 +43,6 @@ public final class DiskResourcesEventHandler implements
     @Override
     public void onDiskResourcesDeleted(Collection<DiskResource> resources, Folder parentFolder) {
         presenter.doRefresh(parentFolder);
-    }
-
-    @Override
-    public void onSelect(DiskResourceSelectedEvent event) {
-        if (event.getSource() != view) {
-            return;
-        }
-
-        if (event.getSelectedItem() instanceof Folder) {
-            presenter.setSelectedFolderByPath(event.getSelectedItem());
-        } else if (event.getSelectedItem() instanceof File) {
-            EventBus.getInstance().fireEvent(
-                    new ShowFilePreviewEvent((File)event.getSelectedItem(), this));
-        }
     }
 
     @Override

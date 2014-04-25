@@ -9,16 +9,13 @@ import com.google.gwt.event.shared.GwtEvent;
 public class DiskResourceSelectedEvent extends GwtEvent<DiskResourceSelectedEventHandler> {
 
     public interface DiskResourceSelectedEventHandler extends EventHandler {
-
         void onSelect(DiskResourceSelectedEvent event);
-
     }
 
     public static final GwtEvent.Type<DiskResourceSelectedEventHandler> TYPE = new GwtEvent.Type<DiskResourceSelectedEventHandler>();
     private final DiskResource selectedItem;
 
-    public DiskResourceSelectedEvent(final Object source, final DiskResource selectedItem) {
-        setSource(source);
+    public DiskResourceSelectedEvent(final DiskResource selectedItem) {
         this.selectedItem = selectedItem;
     }
 

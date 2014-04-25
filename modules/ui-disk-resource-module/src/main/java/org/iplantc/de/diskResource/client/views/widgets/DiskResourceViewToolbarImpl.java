@@ -4,6 +4,7 @@ import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.client.models.diskResources.File;
 import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.diskResource.client.search.views.DiskResourceSearchField;
+import org.iplantc.de.diskResource.client.views.DiskResourceView;
 import org.iplantc.de.diskResource.client.views.dialogs.RenameFileDialog;
 import org.iplantc.de.diskResource.client.views.dialogs.RenameFolderDialog;
 import org.iplantc.de.resources.client.messages.I18N;
@@ -25,16 +26,15 @@ import com.sencha.gxt.widget.core.client.event.SelectEvent;
 import com.sencha.gxt.widget.core.client.menu.Item;
 import com.sencha.gxt.widget.core.client.menu.MenuItem;
 
-public class DiskResourceViewToolbarImpl implements DiskResourceViewToolbar {
+public class DiskResourceViewToolbarImpl implements DiskResourceView.DiskResourceViewToolbar {
 
     @UiTemplate("DiskResourceViewToolbar.ui.xml")
-    interface DiskResourceViewToolbarUiBinder extends UiBinder<Widget, DiskResourceViewToolbarImpl> {
-    }
+    interface DiskResourceViewToolbarUiBinder extends UiBinder<Widget, DiskResourceViewToolbarImpl> { }
 
-    private static DiskResourceViewToolbarUiBinder BINDER = GWT
-            .create(DiskResourceViewToolbarUiBinder.class);
+    private static DiskResourceViewToolbarUiBinder BINDER = GWT.create(DiskResourceViewToolbarUiBinder.class);
 
-    private DiskResourceViewToolbar.Presenter presenter;
+    private DiskResourceView.Presenter presenter;
+    private DiskResourceView view;
     private final Widget widget;
 
     @UiField
@@ -116,10 +116,28 @@ public class DiskResourceViewToolbarImpl implements DiskResourceViewToolbar {
     }
 
     @Override
-    public void setPresenter(DiskResourceViewToolbar.Presenter presenter) {
+    public void init(DiskResourceView.Presenter presenter, DiskResourceView view) {
         this.presenter = presenter;
+        this.view = view;
     }
-    
+
+    private void initToolbar(DiskResourceView.DiskResourceViewToolbar toolbar) {
+        // Disable all buttons, except for Uploads and New file/folder creation.
+        /*toolbar.setNewFolderButtonEnabled(true);
+        toolbar.setNewFileButtonEnabled(true);
+        toolbar.setNewButtonEnabled(true);
+        toolbar.setRefreshButtonEnabled(false);
+        toolbar.setDownloadsEnabled(false);
+        toolbar.setBulkDownloadButtonEnabled(false);
+        toolbar.setSimpleDowloadButtonEnabled(false);
+        toolbar.setRenameButtonEnabled(false);
+        toolbar.setShareButtonEnabled(false);
+        toolbar.setDeleteButtonEnabled(false);
+        toolbar.setRestoreMenuItemEnabled(false);
+        toolbar.setEditEnabled(false);
+        toolbar.setMoveButtonEnabled(false);*/
+    }
+
     @UiHandler("bulkUploadButton")
     void onBulkUploadClicked(SelectionEvent<Item> event) {
         presenter.doBulkUpload();
@@ -167,6 +185,7 @@ public class DiskResourceViewToolbarImpl implements DiskResourceViewToolbar {
 
     @UiHandler("renameButton")
     void onRenameClicked(SelectionEvent<Item> event) {
+        // TODO CORE-5300 Move to presenter
         if (!presenter.getSelectedDiskResources().isEmpty()
                 && (presenter.getSelectedDiskResources().size() == 1)) {
             DiskResource dr = presenter.getSelectedDiskResources().iterator().next();
@@ -214,6 +233,7 @@ public class DiskResourceViewToolbarImpl implements DiskResourceViewToolbar {
 
     @UiHandler("emptyTrash")
     void onEmptyTrashClicked(SelectionEvent<Item> event) {
+        // TODO CORE-5300 Move confirmation box to view, which will call presenter
         final ConfirmMessageBox cmb = new ConfirmMessageBox(I18N.DISPLAY.emptyTrash(),
                 I18N.DISPLAY.emptyTrashWarning());
         cmb.addHideHandler(new HideHandler() {
@@ -235,112 +255,8 @@ public class DiskResourceViewToolbarImpl implements DiskResourceViewToolbar {
     }
 
     @Override
-    public void setUploadsEnabled(boolean enabled) {
-        uploads.setEnabled(enabled);
-    }
-
-    @Override
-    public void setBulkUploadEnabled(boolean enabled) {
-        bulkUploadButton.setEnabled(enabled);
-    }
-
-    @Override
-    public void setSimpleUploadEnabled(boolean enabled) {
-        simpleUploadButton.setEnabled(enabled);
-    }
-
-    @Override
-    public void setImportButtonEnabled(boolean enabled) {
-        importButton.setEnabled(enabled);
-    }
-    
-    @Override
-    public void setNewButtonEnabled(boolean enabled) {
-        newButton.setEnabled(enabled);
-    }
-
-    @Override
-    public void setNewWindowEnabled(boolean enabled) {
-        newWindowButton.setEnabled(enabled);
-    }
-
-    @Override
-    public void setNewFileButtonEnabled(boolean enabled) {
-        newFileButton.setEnabled(enabled);
-    }
-
-    @Override
-    public void setNewFolderButtonEnabled(boolean enabled) {
-        newFolderButton.setEnabled(enabled);
-    }
-
-    @Override
-    public void setRefreshButtonEnabled(boolean enabled) {
-        refreshButton.setEnabled(enabled);
-    }
-
-    @Override
-    public void setDownloadsEnabled(boolean enabled) {
-        downloads.setEnabled(enabled);
-    }
-
-    @Override
-    public void setSimpleDowloadButtonEnabled(boolean enabled) {
-        simpleDownloadButton.setEnabled(enabled);
-    }
-
-    @Override
-    public void setBulkDownloadButtonEnabled(boolean enabled) {
-        bulkDownloadButton.setEnabled(enabled);
-    }
-
-    @Override
-    public void setRenameButtonEnabled(boolean enabled) {
-        renameButton.setEnabled(enabled);
-    }
-    
-    @Override
-    public void setMoveButtonEnabled(boolean enabled) {
-        moveButton.setEnabled(enabled);
-    }
-
-    @Override
-    public void setDeleteButtonEnabled(boolean enabled) {
-        deleteButton.setEnabled(enabled);
-    }
-
-    @Override
-    public void setShareButtonEnabled(boolean enabled) {
-        shareButton.setEnabled(enabled);
-    }
-
-    @Override
-    public void setShareMenuItemEnabled(boolean enabled) {
-        share.setEnabled(enabled);
-    }
-
-    @Override
-    public void setDataLinkMenuItemEnabled(boolean enabled) {
-        dataLink.setEnabled(enabled);
-    }
-
-    @Override
-    public void setRestoreMenuItemEnabled(boolean enabled) {
-        restore.setEnabled(enabled);
-    }
-
-    @Override
-    public void setMetaDatMenuItemEnabled(boolean canEditMetadata) {
-        metadataButton.setEnabled(canEditMetadata);
-    }
-
-    @Override
-    public void setEditEnabled(boolean canEdit) {
-        edit.setEnabled(canEdit);
-    }
-
-    @Override
     public DiskResourceSearchField getSearchField() {
+        // TODO CORE-5300 This class will listen for events on this field, here.
         return searchField;
     }
 }

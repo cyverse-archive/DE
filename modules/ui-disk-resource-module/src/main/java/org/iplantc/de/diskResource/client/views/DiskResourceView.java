@@ -7,13 +7,19 @@ import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.client.models.diskResources.DiskResourceInfo;
 import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.client.services.DiskResourceServiceFacade;
-import org.iplantc.de.diskResource.client.events.FolderSelectedEvent;
+import org.iplantc.de.diskResource.client.events.DiskResourceSelectionChangedEvent;
+import org.iplantc.de.diskResource.client.events.FolderSelectionEvent;
 import org.iplantc.de.diskResource.client.presenters.proxy.FolderContentsLoadConfig;
 import org.iplantc.de.diskResource.client.presenters.proxy.SelectFolderByPathLoadHandler;
 import org.iplantc.de.diskResource.client.search.events.DeleteSavedSearchEvent;
+import org.iplantc.de.diskResource.client.search.events.SaveDiskResourceQueryEvent;
+import org.iplantc.de.diskResource.client.search.events.SubmitDiskResourceQueryEvent;
 import org.iplantc.de.diskResource.client.search.events.SubmitDiskResourceQueryEvent.HasSubmitDiskResourceQueryEventHandlers;
 import org.iplantc.de.diskResource.client.search.presenter.DataSearchPresenter;
-import org.iplantc.de.diskResource.client.views.widgets.DiskResourceViewToolbar;
+import org.iplantc.de.diskResource.client.search.views.DiskResourceSearchField;
+import org.iplantc.de.diskResource.client.views.cells.events.DiskResourceNameSelectedEvent;
+import org.iplantc.de.diskResource.client.views.cells.events.ManageMetadataEvent;
+import org.iplantc.de.diskResource.client.views.cells.events.ManageSharingEvent;
 
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.logical.shared.SelectionHandler;
@@ -27,11 +33,8 @@ import com.sencha.gxt.data.shared.loader.DataProxy;
 import com.sencha.gxt.data.shared.loader.PagingLoadResult;
 import com.sencha.gxt.data.shared.loader.PagingLoader;
 import com.sencha.gxt.data.shared.loader.TreeLoader;
-import com.sencha.gxt.widget.core.client.form.TextField;
-import com.sencha.gxt.widget.core.client.selection.SelectionChangedEvent.SelectionChangedHandler;
 import com.sencha.gxt.widget.core.client.tree.Tree.TreeNode;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
@@ -40,10 +43,22 @@ import java.util.Set;
  * @author jstroot
  *
  */
-public interface DiskResourceView extends IsWidget, IsMaskable, IsDiskResourceRoot, FolderSelectedEvent.HasFolderSelectedEventHandlers, DeleteSavedSearchEvent.HasDeleteSavedSearchEventHandlers {
+public interface DiskResourceView extends IsWidget,
+                                                  IsMaskable,
+                                                  IsDiskResourceRoot,
+                                                  FolderSelectionEvent.HasFolderSelectionEventHandlers,
+                                                  DeleteSavedSearchEvent.HasDeleteSavedSearchEventHandlers,
+                                                  DiskResourceSelectionChangedEvent.HasDiskResourceSelectionChangedEventHandlers{
 
     public interface Presenter extends org.iplantc.de.commons.client.presenter.Presenter,
-            DiskResourceViewToolbar.Presenter, HasHandlerRegistrationMgmt, FolderSelectedEvent.FolderSelectedEventHandler, IsMaskable {
+                                               IsMaskable,
+                                               DiskResourceViewToolbar.Presenter,
+                                               HasHandlerRegistrationMgmt,
+                                               FolderSelectionEvent.FolderSelectionEventHandler,
+                                               DiskResourceNameSelectedEvent.DiskResourceNameSelectedEventHandler,
+                                               ManageMetadataEvent.ManageMetadataEventHandler,
+                                               ManageSharingEvent.ManageSharingEventHandler,
+                                               DiskResourceSelectionChangedEvent.HasDiskResourceSelectionChangedEventHandlers {
         interface Builder extends org.iplantc.de.commons.client.presenter.Presenter {
             Builder hideNorth();
 
@@ -58,6 +73,8 @@ public interface DiskResourceView extends IsWidget, IsMaskable, IsDiskResourceRo
             Builder disableFilePreview();
         }
 
+        void disableFilePreview();
+
         void go(HasOneWidget container, HasPath folderToSelect,
                 List<? extends HasId> diskResourcesToSelect);
 
@@ -68,21 +85,7 @@ public interface DiskResourceView extends IsWidget, IsMaskable, IsDiskResourceRo
 
         Builder builder();
 
-        /**
-         * Method called by the view when a folder is selected.
-         * Whenever this method is called with a non-null and non-empty list, the presenter will have the
-         * view de-select all disk resources
-         * in the center panel.
-         *
-         * @param folders
-         */
-        void onFolderSelected(Folder folders);
-
         void onDiskResourceSelected(Set<DiskResource> selection);
-
-        void addFileSelectChangedHandler(SelectionChangedHandler<DiskResource> selectionChangedHandler);
-
-        void addFolderSelectionHandler(SelectionHandler<Folder> selectionHandler);
 
         /**
          * Selects the folder with the given path in the view. If the given path is not yet loaded in the
@@ -92,13 +95,6 @@ public interface DiskResourceView extends IsWidget, IsMaskable, IsDiskResourceRo
          * @param folderToSelect
          */
         void setSelectedFolderByPath(HasPath folderToSelect);
-
-        /**
-         * Sets the selected disk resource with the given ids.
-         *
-         * @param diskResourceIdList
-         */
-//        void setSelectedDiskResourcesById(Set<String> diskResourceIdList);
 
         DiskResourceView getView();
 
@@ -111,22 +107,6 @@ public interface DiskResourceView extends IsWidget, IsMaskable, IsDiskResourceRo
          * @return
          */
         Folder getDropTargetFolder(IsWidget widget, Element el);
-
-        /**
-         * Determines if the given widget is this view's <code>Tree</code> object.
-         *
-         * @param widget
-         * @return
-         */
-        boolean isViewTree(IsWidget widget);
-
-        /**
-         * Determines if the given widget is this view's <code>Grid</code> object.
-         *
-         * @param widget
-         * @return
-         */
-        boolean isViewGrid(IsWidget widget);
 
         boolean canDragDataToTargetFolder(Folder targetFolder, Collection<DiskResource> dropData);
 
@@ -147,7 +127,7 @@ public interface DiskResourceView extends IsWidget, IsMaskable, IsDiskResourceRo
      * A dataproxy used by the <code>Presenter</code> to fetch <code>DiskResource</code> data from the
      * {@link DiskResourceServiceFacade}.
      * When the proxy completes a load of a non-root folder, it is expected to call the
-     * {@link DiskResourceView.Presenter#onFolderLoad(Folder, ArrayList)} method with the
+     * link DiskResourceView.PresenteronFolderLoad(Folder, ArrayList)method with the
      * <code>Folder</code> and <code>File</code> contents of the loaded folder.
      *
      * @author jstroot
@@ -173,10 +153,6 @@ public interface DiskResourceView extends IsWidget, IsMaskable, IsDiskResourceRo
 
     void setDiskResources(Set<DiskResource> folderChildren);
 
-    void onFolderSelected(Folder folder);
-
-    void onDiskResourceSelected(Set<DiskResource> selection);
-
     void setWestWidgetHidden(boolean hideWestWidget);
 
     void setCenterWidgetHidden(boolean hideCenterWidget);
@@ -188,8 +164,6 @@ public interface DiskResourceView extends IsWidget, IsMaskable, IsDiskResourceRo
     void setSouthWidget(IsWidget fl);
 
     void setSouthWidget(IsWidget fl, double size);
-
-    void addDiskResourceSelectChangedHandler(SelectionChangedHandler<DiskResource> selectionChangedHandler);
 
     void addFolderSelectionHandler(SelectionHandler<Folder> selectionHandler);
 
@@ -222,13 +196,6 @@ public interface DiskResourceView extends IsWidget, IsMaskable, IsDiskResourceRo
     DiskResourceViewToolbar getToolbar();
 
     /**
-     * Removes the given <code>DiskResource</code>s from all of the view's stores.
-     *
-     * @param resources
-     */
-    <D extends DiskResource> void removeDiskResources(Collection<D> resources);
-
-    /**
      * Determines if the given widget is this view's <code>Tree</code> object.
      *
      * @param widget
@@ -254,8 +221,6 @@ public interface DiskResourceView extends IsWidget, IsMaskable, IsDiskResourceRo
 
     void setSingleSelect();
 
-    void disableFilePreview();
-
     void showDataListingWidget();
 
     void updateDetails(String path, DiskResourceInfo info);
@@ -263,8 +228,6 @@ public interface DiskResourceView extends IsWidget, IsMaskable, IsDiskResourceRo
     void resetDetailsPanel();
 
     void deSelectNavigationFolder();
-
-    boolean isCenterHidden();
 
     void unmaskDetailsPanel();
 
@@ -280,6 +243,68 @@ public interface DiskResourceView extends IsWidget, IsMaskable, IsDiskResourceRo
 
     HasSafeHtml getCenterPanelHeader();
 
-    TextField getPathWidget();
+    interface DiskResourceViewToolbar extends IsWidget {
 
+        public interface Presenter extends org.iplantc.de.commons.client.presenter.Presenter, SaveDiskResourceQueryEvent.SaveDiskResourceQueryEventHandler, SubmitDiskResourceQueryEvent.SubmitDiskResourceQueryEventHandler {
+
+            void doBulkUpload();
+
+            void doSimpleUpload();
+
+            void doImport();
+
+            /**
+             * Fires a {@link org.iplantc.de.client.events.diskResources.FolderRefreshEvent} in order to reload the given folder in all available
+             * views and the folder cache. Or reloads the current search results if no valid folder is given.
+             *
+             * @param folder The folder to reload from the service, or null to refresh the current search
+             *            results.
+             */
+            void doRefresh(Folder folder);
+
+            void doSimpleDownload();
+
+            void doBulkDownload();
+
+            void doShare();
+
+            void requestDelete();
+
+            void doMetadata();
+
+            Set<DiskResource> getSelectedDiskResources();
+
+            Folder getSelectedFolder();
+
+            void doRename(DiskResource dr, String newName);
+
+            void doCreateNewFolder(Folder parentFolder, String folderName);
+
+            void emptyTrash();
+
+            void restore();
+
+            void doDataLinks();
+
+            void onMove();
+
+            void onNewWindow();
+
+            void onNewFile();
+
+            void onNewFolder();
+
+            /**
+             * Reloads the given folder in the view's navigation tree, and if it's the currently selected
+             * folder then the data grid is refreshed as well.
+             *
+             * @param folder
+             */
+            void onFolderRefresh(Folder folder);
+        }
+
+        void init(DiskResourceView.Presenter presenter, DiskResourceView view);
+
+        DiskResourceSearchField getSearchField();
+    }
 }
