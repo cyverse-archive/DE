@@ -1,6 +1,11 @@
 package org.iplantc.de.analysis.client.presenter;
 
-import org.iplantc.de.analysis.client.events.*;
+import org.iplantc.de.analysis.client.events.AnalysisAppSelectedEvent;
+import org.iplantc.de.analysis.client.events.AnalysisCommentSelectedEvent;
+import org.iplantc.de.analysis.client.events.AnalysisNameSelectedEvent;
+import org.iplantc.de.analysis.client.events.AnalysisParamValueSelectedEvent;
+import org.iplantc.de.analysis.client.events.OpenAppForRelaunchEvent;
+import org.iplantc.de.analysis.client.events.SaveAnalysisParametersEvent;
 import org.iplantc.de.analysis.client.views.AnalysesView;
 import org.iplantc.de.analysis.client.views.widget.AnalysisParamView;
 import org.iplantc.de.client.events.EventBus;
@@ -41,6 +46,7 @@ import com.google.gwt.editor.client.EditorError;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.event.shared.HasHandlers;
 import com.google.gwt.safehtml.client.SafeHtmlTemplates;
+import com.google.gwt.safehtml.client.SafeHtmlTemplates.Template;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -271,7 +277,7 @@ public class AnalysesPresenterImpl implements AnalysesView.Presenter, AnalysisNa
     private final IplantErrorStrings errorStrings;
     private final HasHandlers eventBus;
     private final AnalysesView view;
-    private DiskResourceAutoBeanFactory drFactory;
+    private final DiskResourceAutoBeanFactory drFactory;
     private final UserSessionServiceFacade userSessionService;
     private final UserInfo userInfo;
     private HandlerRegistration handlerFirstLoad;
@@ -412,11 +418,16 @@ public class AnalysesPresenterImpl implements AnalysesView.Presenter, AnalysisNa
     @Override
     public void go(final HasOneWidget container, final List<Analysis> selectedAnalyses) {
         container.setWidget(view.asWidget());
-        view.loadAnalyses();
+        loadAnalyses();
 
         if (selectedAnalyses != null && !selectedAnalyses.isEmpty()) {
             handlerFirstLoad = view.addLoadHandler(new FirstLoadHandler(selectedAnalyses));
         }
+    }
+
+    @Override
+    public void loadAnalyses() {
+        view.loadAnalyses();
     }
 
     @Override
@@ -506,6 +517,7 @@ public class AnalysesPresenterImpl implements AnalysesView.Presenter, AnalysisNa
         dlg.show();
     }
 
+    @Override
     public void retrieveParameterData(final Analysis analysis, final AnalysisParamView apv){
         apv.mask();
         analysisService.getAnalysisParams(analysis, new GetAnalysisParametersCallback(apv));

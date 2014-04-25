@@ -1,6 +1,10 @@
 package org.iplantc.de.analysis.client.views;
 
-import org.iplantc.de.analysis.client.events.*;
+import org.iplantc.de.analysis.client.events.AnalysisAppSelectedEvent;
+import org.iplantc.de.analysis.client.events.AnalysisCommentSelectedEvent;
+import org.iplantc.de.analysis.client.events.AnalysisNameSelectedEvent;
+import org.iplantc.de.analysis.client.events.AnalysisParamValueSelectedEvent;
+import org.iplantc.de.analysis.client.events.SaveAnalysisParametersEvent;
 import org.iplantc.de.analysis.client.views.widget.AnalysisParamView;
 import org.iplantc.de.client.models.analysis.Analysis;
 
@@ -22,6 +26,7 @@ import java.util.List;
  * @author sriram
  * 
  */
+@SuppressWarnings("rawtypes")
 public interface AnalysesView extends IsWidget, SelectionChangedEvent.HasSelectionChangedHandlers, AnalysisParamValueSelectedEvent.HasAnalysisParamValueSelectedEventHandlers, AnalysisAppSelectedEvent.HasAnalysisAppSelectedEventHandlers, AnalysisCommentSelectedEvent.HasAnalysisCommentSelectedEventHandlers, AnalysisNameSelectedEvent.HasAnalysisNameSelectedEventHandlers {
 
     public interface Presenter extends SaveAnalysisParametersEvent.SaveAnalysisParametersEventHandler {
@@ -47,6 +52,8 @@ public interface AnalysesView extends IsWidget, SelectionChangedEvent.HasSelecti
         void setViewDebugId(String baseId);
 
         void updateComments();
+
+        void loadAnalyses();
 
     }
 

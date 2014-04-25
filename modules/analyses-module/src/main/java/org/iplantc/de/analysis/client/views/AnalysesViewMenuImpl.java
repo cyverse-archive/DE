@@ -3,7 +3,12 @@
  */
 package org.iplantc.de.analysis.client.views;
 
-import static org.iplantc.de.client.models.analysis.AnalysisExecutionStatus.*;
+import static org.iplantc.de.client.models.analysis.AnalysisExecutionStatus.COMPLETED;
+import static org.iplantc.de.client.models.analysis.AnalysisExecutionStatus.FAILED;
+import static org.iplantc.de.client.models.analysis.AnalysisExecutionStatus.IDLE;
+import static org.iplantc.de.client.models.analysis.AnalysisExecutionStatus.RUNNING;
+import static org.iplantc.de.client.models.analysis.AnalysisExecutionStatus.SUBMITTED;
+
 import org.iplantc.de.analysis.client.views.widget.AnalysisSearchField;
 import org.iplantc.de.analysis.shared.AnalysisModule;
 import org.iplantc.de.client.models.analysis.Analysis;
@@ -24,6 +29,7 @@ import com.sencha.gxt.data.shared.loader.PagingLoadResult;
 import com.sencha.gxt.data.shared.loader.PagingLoader;
 import com.sencha.gxt.widget.core.client.Composite;
 import com.sencha.gxt.widget.core.client.button.TextButton;
+import com.sencha.gxt.widget.core.client.event.SelectEvent;
 import com.sencha.gxt.widget.core.client.menu.Item;
 import com.sencha.gxt.widget.core.client.menu.MenuItem;
 import com.sencha.gxt.widget.core.client.selection.SelectionChangedEvent;
@@ -65,6 +71,8 @@ public class AnalysesViewMenuImpl extends Composite implements AnalysesView.View
     MenuItem renameMI;
     @UiField
     TextButton editTb;
+    @UiField
+    TextButton refreshTb;
 
     private static AnalysesToolbarUiBinder uiBinder = GWT.create(AnalysesToolbarUiBinder.class);
     private AnalysesView parent;
@@ -244,6 +252,11 @@ public class AnalysesViewMenuImpl extends Composite implements AnalysesView.View
     @UiHandler("viewParamsMI")
     void onViewParamsSelected(SelectionEvent<Item> event){
         parent.viewParams();
+    }
+
+    @UiHandler("refreshTb")
+    void onRefreshSelected(SelectEvent event) {
+        presenter.loadAnalyses();
     }
 
 }

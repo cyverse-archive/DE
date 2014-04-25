@@ -55,6 +55,7 @@
                     </menu:Menu>
                 </button:menu>
             </button:TextButton>
+            <button:TextButton ui:field="refreshTb" text="{strings.refresh}" icon="{icons.refresh}" />
             <toolbar:FillToolItem/>
 
         </toolbar:ToolBar>
