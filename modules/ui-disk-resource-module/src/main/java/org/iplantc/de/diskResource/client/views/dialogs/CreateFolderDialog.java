@@ -11,15 +11,13 @@ import com.google.gwt.user.client.ui.HTML;
 import com.sencha.gxt.core.client.util.Format;
 import com.sencha.gxt.widget.core.client.event.SelectEvent;
 import com.sencha.gxt.widget.core.client.event.SelectEvent.SelectHandler;
-import com.sencha.gxt.widget.core.client.tips.ToolTip;
-import com.sencha.gxt.widget.core.client.tips.ToolTipConfig;
 
 public class CreateFolderDialog extends IPlantPromptDialog {
 
     public CreateFolderDialog(final Folder parentFolder,
             final DiskResourceViewToolbar.Presenter presenter) {
         super(I18N.DISPLAY.folderName(), -1, "", new DiskResourceNameValidator());
-
+        setWidth("300px");
         setHeadingText(I18N.DISPLAY.newFolder());
         initDestPathLabel(parentFolder.getPath());
 
@@ -34,8 +32,7 @@ public class CreateFolderDialog extends IPlantPromptDialog {
     }
 
     private void initDestPathLabel(String destPath) {
-        HTML htmlDestText = new HTML(Format.ellipse(I18N.DISPLAY.createIn(destPath), 50));
+        HTML htmlDestText = new HTML("<div title='" + destPath + "' style='width:100%;padding:5px;text-overflow:ellipsis;'>" + Format.ellipse(I18N.DISPLAY.createIn(destPath), 50) + "</div>");
         insert(htmlDestText, 0);
-        new ToolTip(htmlDestText, new ToolTipConfig(destPath));
     }
 }
