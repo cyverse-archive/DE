@@ -21,5 +21,7 @@ public interface AnalysisModule {
         String MENUITEM_UPDATE_COMMENTS = ".updateComments";
 
         String VIEW_PARAMS = ".viewParamsView";
+        String BUTTON_REFRESH = ".refresh";
+
     }
 }

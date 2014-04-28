@@ -76,6 +76,7 @@ public class AnalysesViewMenuImpl extends Composite implements AnalysesView.View
 
     private static AnalysesToolbarUiBinder uiBinder = GWT.create(AnalysesToolbarUiBinder.class);
     private AnalysesView parent;
+    @SuppressWarnings("unused")
     private PagingLoader<FilterPagingLoadConfig, PagingLoadResult<Analysis>> loader;
     private AnalysesView.Presenter presenter;
     private AnalysisSearchField searchField;
@@ -173,6 +174,8 @@ public class AnalysesViewMenuImpl extends Composite implements AnalysesView.View
         editTb.ensureDebugId(baseID + AnalysisModule.Ids.MENUITEM_EDIT);
         renameMI.ensureDebugId(baseID + AnalysisModule.Ids.MENUITEM_EDIT + AnalysisModule.Ids.MENUITEM_RENAME);
         updateCommentsMI.ensureDebugId(baseID + AnalysisModule.Ids.MENUITEM_EDIT + AnalysisModule.Ids.MENUITEM_UPDATE_COMMENTS);
+
+        refreshTb.ensureDebugId(baseID + AnalysisModule.Ids.BUTTON_REFRESH);
 
     }
 
