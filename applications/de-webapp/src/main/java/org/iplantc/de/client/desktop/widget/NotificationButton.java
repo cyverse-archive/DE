@@ -7,8 +7,9 @@ import org.iplantc.de.resources.client.messages.I18N;
 
 import com.google.gwt.user.client.Window;
 
+import com.sencha.gxt.core.client.Style.Anchor;
+import com.sencha.gxt.core.client.Style.AnchorAlignment;
 import com.sencha.gxt.core.client.dom.XElement;
-import com.sencha.gxt.core.client.util.Point;
 import com.sencha.gxt.widget.core.client.button.IconButton;
 import com.sencha.gxt.widget.core.client.event.HideEvent;
 import com.sencha.gxt.widget.core.client.event.HideEvent.HideHandler;
@@ -34,8 +35,8 @@ public class NotificationButton extends IconButton {
 
             @Override
             public void onSelect(SelectEvent event) {
-                Point p = getElement().getPosition(false);
-                notificationsView.showAt(p.getX() - 50, p.getY() + 25);
+                AnchorAlignment menuAlign = new AnchorAlignment(Anchor.TOP_LEFT, Anchor.BOTTOM_LEFT, true);
+                notificationsView.show(getElement(), menuAlign);
             }
         });
         getElement().setAttribute("data-intro", I18N.TOUR.introNotifications());
