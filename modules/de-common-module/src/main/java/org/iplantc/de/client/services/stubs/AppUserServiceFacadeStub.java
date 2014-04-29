@@ -42,12 +42,18 @@ public class AppUserServiceFacadeStub implements AppUserServiceFacade {
     }
 
     @Override
-    public void rateApp(String appId, int rating, String appName, String comment, String authorEmail, AsyncCallback<String> callback) {
+    public void rateApp(String appWikiPageName, String appId, int rating, long commentId,
+            String authorEmail, AsyncCallback<String> callback) {
+    }
+
+    @Override
+    public void addAppComment(String appId, int rating, String appName, String comment,
+            String authorEmail, AsyncCallback<String> callback) {
 
     }
 
     @Override
-    public void updateRating(String appId, int rating, String appName, Long commentId, String comment, String authorEmail, AsyncCallback<String> callback) {
+    public void editAppComment(String appId, int rating, String appName, Long commentId, String comment, String authorEmail, AsyncCallback<String> callback) {
 
     }
 

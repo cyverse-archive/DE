@@ -10,6 +10,7 @@
     <inherits name="com.google.gwt.inject.Inject"/>
     <inherits name="org.iplantc.de.commons.ui-commons" />
     <inherits name="com.sencha.gxt.theme.gray.Gray"/>
+    <inherits name="org.iplantc.de.apps.client.theme.BaseTheme"/>
 
     <source path="client" />
     <source path="shared" />

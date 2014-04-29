@@ -1,19 +1,31 @@
 package org.iplantc.de.apps.client.presenter;
 
-import org.iplantc.de.apps.client.events.*;
+import org.iplantc.de.apps.client.events.AppCommentSelectedEvent;
+import org.iplantc.de.apps.client.events.AppDeleteEvent;
+import org.iplantc.de.apps.client.events.AppFavoritedEvent;
+import org.iplantc.de.apps.client.events.AppGroupSelectionChangedEvent;
+import org.iplantc.de.apps.client.events.AppUpdatedEvent;
+import org.iplantc.de.apps.client.events.CreateNewAppEvent;
+import org.iplantc.de.apps.client.events.CreateNewWorkflowEvent;
+import org.iplantc.de.apps.client.events.EditAppEvent;
+import org.iplantc.de.apps.client.events.EditWorkflowEvent;
+import org.iplantc.de.apps.client.events.RunAppEvent;
 import org.iplantc.de.apps.client.presenter.proxy.AppGroupProxy;
 import org.iplantc.de.apps.client.views.AppsView;
 import org.iplantc.de.apps.client.views.cells.AppFavoriteCell;
 import org.iplantc.de.apps.client.views.cells.AppHyperlinkCell;
+import org.iplantc.de.apps.client.views.dialogs.AppCommentDialog;
 import org.iplantc.de.apps.client.views.dialogs.NewToolRequestDialog;
 import org.iplantc.de.apps.client.views.dialogs.SubmitAppForPublicDialog;
 import org.iplantc.de.apps.client.views.widgets.events.AppSearchResultLoadEvent;
 import org.iplantc.de.client.events.EventBus;
+import org.iplantc.de.client.gin.ServicesInjector;
 import org.iplantc.de.client.models.DEProperties;
 import org.iplantc.de.client.models.HasId;
 import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.models.apps.AppAutoBeanFactory;
+import org.iplantc.de.client.models.apps.AppFeedback;
 import org.iplantc.de.client.models.apps.AppGroup;
 import org.iplantc.de.client.models.apps.AppList;
 import org.iplantc.de.client.services.AppServiceFacade;
@@ -23,8 +35,10 @@ import org.iplantc.de.client.util.JsonUtil;
 import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.commons.client.info.ErrorAnnouncementConfig;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
+import org.iplantc.de.resources.client.messages.I18N;
 import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 import org.iplantc.de.resources.client.messages.IplantErrorStrings;
+import org.iplantc.de.shared.services.ConfluenceServiceFacade;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
@@ -35,6 +49,7 @@ import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.regexp.shared.RegExp;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
+import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HasOneWidget;
 import com.google.inject.Inject;
@@ -147,6 +162,76 @@ public class AppsViewPresenterImpl implements AppsView.Presenter {
                 view.onAppFavorited(new AppFavoritedEvent(app));
             }
         });
+    }
+
+    @Override
+    public void onAppCommentSelectedEvent(AppCommentSelectedEvent event) {
+        final App app = event.getApp();
+        final AppFeedback userFeedback = app.getRating();
+        final Long commentId = userFeedback.getCommentId();
+
+        // populate dialog via an async call if previous comment ID exists, otherwise show blank dlg
+        final AppCommentDialog dlg = new AppCommentDialog(app.getName());
+        if ((commentId == null) || (commentId == 0)) {
+            dlg.unmaskDialog();
+        } else {
+            ConfluenceServiceFacade.getInstance().getComment(commentId, new AsyncCallback<String>() {
+                @Override
+                public void onSuccess(String comment) {
+                    dlg.setText(comment);
+                    dlg.unmaskDialog();
+                }
+
+                @Override
+                public void onFailure(Throwable e) {
+                    // ErrorHandler.post(e.getMessage(), e);
+                    dlg.unmaskDialog();
+                }
+            });
+        }
+
+        Command onConfirm = new Command() {
+            @Override
+            public void execute() {
+                putAppComment(app, dlg.getComment());
+            }
+        };
+        dlg.setCommand(onConfirm);
+        dlg.show();
+    }
+
+    private void putAppComment(App app, String comment) {
+        final AppFeedback userFeedback = app.getRating();
+
+        AsyncCallback<String> callback = new AsyncCallback<String>() {
+            @Override
+            public void onSuccess(String result) {
+                try {
+                    userFeedback.setCommentId(Long.valueOf(result));
+                } catch (NumberFormatException e) {
+                    // no comment id, do nothing
+                }
+            }
+
+            @Override
+            public void onFailure(Throwable caught) {
+                ErrorHandler.post(I18N.ERROR.confluenceError(), caught);
+            }
+        };
+
+        String appId = app.getId();
+        int rating = userFeedback.getUserRating();
+        String appWikiUrl = app.getWikiUrl();
+        String authorEmail = app.getIntegratorEmail();
+
+        Long commentId = userFeedback.getCommentId();
+        if ((commentId == null) || (commentId == 0)) {
+            ServicesInjector.INSTANCE.getAppUserServiceFacade().addAppComment(appId, rating, appWikiUrl,
+                    comment, authorEmail, callback);
+        } else {
+            ServicesInjector.INSTANCE.getAppUserServiceFacade().editAppComment(appId, rating,
+                    appWikiUrl, commentId, comment, authorEmail, callback);
+        }
     }
 
     @Override

@@ -1,6 +1,5 @@
 package org.iplantc.de.apps.client.views.cells;
 
-import org.iplantc.de.apps.client.views.dialogs.AppCommentDialog;
 import org.iplantc.de.client.gin.ServicesInjector;
 import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.models.apps.AppFeedback;
@@ -8,7 +7,6 @@ import org.iplantc.de.client.util.JsonUtil;
 import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.resources.client.IplantResources;
 import org.iplantc.de.resources.client.messages.I18N;
-import org.iplantc.de.shared.services.ConfluenceServiceFacade;
 
 import static com.google.gwt.dom.client.BrowserEvents.CLICK;
 import static com.google.gwt.dom.client.BrowserEvents.MOUSEOUT;
@@ -21,7 +19,6 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.dom.client.Style.Display;
-import com.google.gwt.http.client.URL;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.resources.client.ClientBundle;
 import com.google.gwt.resources.client.CssResource;
@@ -29,7 +26,6 @@ import com.google.gwt.safehtml.client.SafeHtmlTemplates;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.safehtml.shared.SafeUri;
-import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -252,35 +248,7 @@ public class AppRatingCell extends AbstractCell<App> {
         if (eventTarget.getAttribute("name").startsWith("Rating")) {
             String[] g = eventTarget.getAttribute("name").split("-");
             final int score = Integer.parseInt(g[1]) + 1;
-
-            // populate dialog via an async call if previous comment ID exists, otherwise show blank dlg
-            final AppCommentDialog dlg = new AppCommentDialog(value.getName());
-            Long commentId = value.getRating().getCommentId();
-            if ((commentId == null) || (commentId == 0)) {
-                dlg.unmaskDialog();
-            } else {
-                ConfluenceServiceFacade.getInstance().getComment(commentId, new AsyncCallback<String>() {
-                    @Override
-                    public void onSuccess(String comment) {
-                        dlg.setText(comment);
-                        dlg.unmaskDialog();
-                    }
-
-                    @Override
-                    public void onFailure(Throwable e) {
-                        // ErrorHandler.post(e.getMessage(), e);
-                        dlg.unmaskDialog();
-                    }
-                });
-            }
-            Command onConfirm = new Command() {
-                @Override
-                public void execute() {
-                    persistRating(value, score, dlg.getComment(), parent);
-                }
-            };
-            dlg.setCommand(onConfirm);
-            dlg.show();
+            persistRating(value, score, parent);
         } else if (eventTarget.getAttribute("name").equalsIgnoreCase("unrate")) {
             // Hide unrate button
             eventTarget.getStyle().setDisplay(Display.NONE);
@@ -300,9 +268,8 @@ public class AppRatingCell extends AbstractCell<App> {
             // comment id empty or not a number, leave it null and proceed
         }
 
-        ServicesInjector.INSTANCE.getAppUserServiceFacade().deleteRating(value.getId(), parsePageName(value.getWikiUrl()),
-                commentId,
-                new AsyncCallback<String>() {
+        ServicesInjector.INSTANCE.getAppUserServiceFacade().deleteRating(value.getId(),
+                value.getWikiUrl(), commentId, new AsyncCallback<String>() {
                     @Override
                     public void onSuccess(String result) {
                         value.getRating().setUserRating(0);
@@ -330,51 +297,24 @@ public class AppRatingCell extends AbstractCell<App> {
     }
 
     /** saves a rating to the database and the wiki page */
-    private void persistRating(final App value, final int score, String comment,
-            final Element parent) {
+    private void persistRating(final App app, final int score, final Element parent) {
 
         AsyncCallback<String> callback = new AsyncCallback<String>() {
             @Override
             public void onSuccess(String result) {
-                AppFeedback userFeedback = value.getRating();
-
-                try {
-                    userFeedback.setCommentId(Long.valueOf(result));
-                } catch (NumberFormatException e) {
-                    // no comment id, do nothing
-                }
-
-                userFeedback.setUserRating(score);
-
-                resetRatingStarColors(parent, value);
+                app.getRating().setUserRating(score);
+                resetRatingStarColors(parent, app);
             }
 
             @Override
             public void onFailure(Throwable caught) {
-                ErrorHandler.post(I18N.ERROR.confluenceError(), caught);
+                // TODO post user friendly error message.
+                ErrorHandler.post(caught);
             }
         };
 
-        Long commentId = value.getRating().getCommentId();
-        if ((commentId == null) || (commentId == 0)) {
-            ServicesInjector.INSTANCE.getAppUserServiceFacade().rateApp(value.getId(), score,
-                    parsePageName(value.getWikiUrl()),
-                    comment, value.getIntegratorEmail(), callback);
-        } else {
-            ServicesInjector.INSTANCE.getAppUserServiceFacade().updateRating(value.getId(), score,
-                    parsePageName(value.getWikiUrl()),
-                    commentId, comment, value.getIntegratorEmail(), callback);
-        }
-    }
-
-    private String parsePageName(String url) {
-        String name = null;
-        if (url != null && !url.isEmpty()) {
-            String[] tokens = url.split("/"); //$NON-NLS-1$
-            name = URL.decode(tokens[tokens.length - 1]);
-        }
-
-        return name;
+        ServicesInjector.INSTANCE.getAppUserServiceFacade().rateApp(app.getWikiUrl(), app.getId(),
+                score, app.getRating().getCommentId(), app.getIntegratorEmail(), callback);
     }
 
 }
