@@ -13,6 +13,7 @@ import org.iplantc.de.commons.client.collaborators.views.ManageCollaboratorsDail
 import org.iplantc.de.commons.client.util.WindowUtil;
 import org.iplantc.de.commons.client.widgets.IPlantAnchor;
 import org.iplantc.de.resources.client.messages.I18N;
+import org.iplantc.de.shared.DeModule;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -56,6 +57,7 @@ public class UserPreferencesButton extends IconButton {
         getElement().setAttribute("data-intro", I18N.TOUR.introSettings());
         getElement().setAttribute("data-position", "left");
         getElement().setAttribute("data-step", "5");
+        ensureDebugId(DeModule.Ids.DESKTOP + DeModule.Ids.USER_PREF_BUTTON);
     }
 
     public void updateSystemMessageLabel(final long numUnseenSysMsgs) {

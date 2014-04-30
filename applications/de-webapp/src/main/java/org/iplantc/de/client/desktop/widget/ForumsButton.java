@@ -4,6 +4,7 @@ import org.iplantc.de.client.DeResources;
 import org.iplantc.de.commons.client.CommonUiConstants;
 import org.iplantc.de.commons.client.util.WindowUtil;
 import org.iplantc.de.resources.client.messages.I18N;
+import org.iplantc.de.shared.DeModule;
 
 import com.sencha.gxt.widget.core.client.button.IconButton;
 import com.sencha.gxt.widget.core.client.event.SelectEvent;
@@ -25,7 +26,6 @@ public class ForumsButton extends IconButton {
         getElement().setAttribute("data-intro", I18N.TOUR.introAsk());
         getElement().setAttribute("data-position", "left");
         getElement().setAttribute("data-step", "7");
-        
+        ensureDebugId(DeModule.Ids.DESKTOP + DeModule.Ids.FORUMS_BUTTON);
     }
-
 }
