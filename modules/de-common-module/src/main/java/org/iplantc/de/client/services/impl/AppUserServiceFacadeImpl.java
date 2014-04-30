@@ -9,6 +9,7 @@ import org.iplantc.de.client.models.apps.AppGroup;
 import org.iplantc.de.client.services.AppUserServiceFacade;
 import org.iplantc.de.client.services.DEServiceFacade;
 import org.iplantc.de.client.services.converters.AppGroupListCallbackConverter;
+import org.iplantc.de.client.util.DiskResourceUtil;
 import org.iplantc.de.client.util.JsonUtil;
 import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 import org.iplantc.de.resources.client.messages.IplantErrorStrings;
@@ -17,6 +18,7 @@ import org.iplantc.de.shared.services.ConfluenceServiceFacade;
 import org.iplantc.de.shared.services.EmailServiceFacade;
 import org.iplantc.de.shared.services.ServiceCallWrapper;
 
+import com.google.common.base.Strings;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.json.client.JSONBoolean;
 import com.google.gwt.json.client.JSONNumber;
@@ -142,26 +144,35 @@ public class AppUserServiceFacadeImpl implements AppUserServiceFacade {
     }
 
     @Override
-    public void rateApp(final String analysisId, final int rating, final String appName, String comment, final String authorEmail, final AsyncCallback<String> callback) {
+    public void addAppComment(final String appId, final int rating, final String appWikiPageUrl,
+            final String comment, final String authorEmail, final AsyncCallback<String> callback) {
         // add comment to wiki page, then call rating service, then update avg
         // on wiki page
         String username = userInfo.getUsername();
+        String appName = parsePageName(appWikiPageUrl);
         confluenceService.addComment(appName, rating, username, comment, new AsyncCallback<String>() {
             @Override
-            public void onSuccess(final String commentId) {
-                // wrap the callback so it returns the comment id on
-                // success
-                rateAnalysis(appName, analysisId, rating, commentId, authorEmail, new AsyncCallback<String>() {
-                    @Override
-                    public void onSuccess(String result) {
-                        callback.onSuccess(commentId);
-                    }
+            public void onSuccess(final String commentIdString) {
 
-                    @Override
-                    public void onFailure(Throwable caught) {
-                        callback.onFailure(caught);
-                    }
-                });
+                try {
+                    long commentId = Long.valueOf(commentIdString);
+                    // wrap the callback so it returns the comment id on success
+                    rateApp(appWikiPageUrl, appId, rating, commentId, authorEmail,
+                            new AsyncCallback<String>() {
+                                @Override
+                                public void onSuccess(String result) {
+                                    callback.onSuccess(commentIdString);
+                                }
+
+                                @Override
+                                public void onFailure(Throwable caught) {
+                                    // TODO post user friendly error message.
+                                    callback.onFailure(caught);
+                                }
+                            });
+                } catch (NumberFormatException e) {
+                    // no comment id, do nothing
+                }
             }
 
             @Override
@@ -175,7 +186,9 @@ public class AppUserServiceFacadeImpl implements AppUserServiceFacade {
      * calls /rate-analysis and if that is successful, calls
      * updateDocumentationPage()
      */
-    private void rateAnalysis(final String appName, String analysisId, int rating, final String commentId, final String authorEmail, final AsyncCallback<String> callback) {
+    @Override
+    public void rateApp(final String appWikiPageUrl, String analysisId, int rating,
+            final long commentId, final String authorEmail, final AsyncCallback<String> callback) {
         JSONObject body = new JSONObject();
         body.put("analysis_id", new JSONString(analysisId)); //$NON-NLS-1$
         body.put("rating", new JSONNumber(rating)); //$NON-NLS-1$
@@ -186,8 +199,8 @@ public class AppUserServiceFacadeImpl implements AppUserServiceFacade {
         deServiceFacade.getServiceData(wrapper, new AsyncCallback<String>() {
             @Override
             public void onSuccess(String result) {
-                sendRatingEmail(appName, authorEmail);
-                updateDocumentationPage(appName, result, this);
+                sendRatingEmail(appWikiPageUrl, authorEmail);
+                updateDocumentationPage(appWikiPageUrl, result, this);
                 callback.onSuccess(result);
             }
 
@@ -198,7 +211,8 @@ public class AppUserServiceFacadeImpl implements AppUserServiceFacade {
         });
     }
 
-    private void sendRatingEmail(final String appName, final String emailAddress) {
+    private void sendRatingEmail(final String appWikiPageUrl, final String emailAddress) {
+        String appName = parsePageName(appWikiPageUrl);
         emailService.sendEmail(displayStrings.ratingEmailSubject(appName), displayStrings.ratingEmailText(appName), "noreply@iplantcollaborative.org", emailAddress, //$NON-NLS-1$
                 new AsyncCallback<Void>() {
                     @Override
@@ -211,11 +225,13 @@ public class AppUserServiceFacadeImpl implements AppUserServiceFacade {
                 });
     }
 
-    private void updateDocumentationPage(String appName, String avgJson, final AsyncCallback<?> callback) {
+    private void updateDocumentationPage(String appWikiPageUrl, String avgJson,
+            final AsyncCallback<?> callback) {
         JSONObject json = JSONParser.parseStrict(avgJson).isObject();
         if (json != null) {
             Number avg = JsonUtil.getNumber(json, "avg"); //$NON-NLS-1$
             int avgRounded = (int)Math.round(avg.doubleValue());
+            String appName = parsePageName(appWikiPageUrl);
             confluenceService.updateDocumentationPage(appName, avgRounded, new AsyncCallback<Void>() {
 
                 @Override
@@ -232,13 +248,15 @@ public class AppUserServiceFacadeImpl implements AppUserServiceFacade {
     }
 
     @Override
-    public void updateRating(final String analysisId, final int rating, final String appName, final Long commentId, final String comment, final String authorEmail, final AsyncCallback<String> callback) {
-        // update comment on wiki page, then call rating service, then update
-        // avg on wiki page
+    public void editAppComment(final String analysisId, final int rating, final String appWikiPageUrl,
+            final Long commentId, final String comment, final String authorEmail,
+            final AsyncCallback<String> callback) {
+        // update comment on wiki page, then call rating service, then update avg on wiki page
+        String appName = parsePageName(appWikiPageUrl);
         confluenceService.editComment(appName, rating, userInfo.getUsername(), commentId, comment, new AsyncCallback<Void>() {
             @Override
             public void onSuccess(Void result) {
-                rateAnalysis(appName, analysisId, rating, String.valueOf(commentId), authorEmail, callback);
+                callback.onSuccess(commentId.toString());
             }
 
             @Override
@@ -293,6 +311,13 @@ public class AppUserServiceFacadeImpl implements AppUserServiceFacade {
                 // Do nothing intentionally
             }
         });
+    }
+
+    private String parsePageName(String url) {
+        if (Strings.isNullOrEmpty(url)) {
+            return url;
+        }
+        return URL.decode(DiskResourceUtil.parseNameFromPath(url));
     }
 
     @Override

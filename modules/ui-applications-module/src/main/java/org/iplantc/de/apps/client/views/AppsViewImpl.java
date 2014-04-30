@@ -1,6 +1,5 @@
 package org.iplantc.de.apps.client.views;
 
-import static org.iplantc.de.apps.shared.AppsModule.Ids;
 import org.iplantc.de.apps.client.events.AppFavoritedEvent;
 import org.iplantc.de.apps.client.events.AppGroupSelectionChangedEvent;
 import org.iplantc.de.apps.client.events.AppSelectionChangedEvent;
@@ -8,7 +7,7 @@ import org.iplantc.de.apps.client.views.cells.AppFavoriteCell;
 import org.iplantc.de.apps.client.views.cells.AppInfoCell;
 import org.iplantc.de.apps.client.views.dialogs.SubmitAppForPublicDialog;
 import org.iplantc.de.apps.client.views.widgets.events.AppSearchResultLoadEvent;
-import org.iplantc.de.apps.shared.AppsModule;
+import org.iplantc.de.apps.shared.AppsModule.Ids;
 import org.iplantc.de.client.models.DEProperties;
 import org.iplantc.de.client.models.IsMaskable;
 import org.iplantc.de.client.models.UserInfo;
@@ -20,6 +19,7 @@ import org.iplantc.de.resources.client.IplantResources;
 import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 
 import static com.google.common.base.Preconditions.checkArgument;
+
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
@@ -28,7 +28,6 @@ import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONParser;
-import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiFactory;
 import com.google.gwt.uibinder.client.UiField;
@@ -38,6 +37,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 
 import static com.sencha.gxt.core.client.Style.SelectionMode.SINGLE;
+
 import com.sencha.gxt.data.shared.ListStore;
 import com.sencha.gxt.data.shared.ModelKeyProvider;
 import com.sencha.gxt.data.shared.SortDir;
@@ -350,9 +350,11 @@ public class AppsViewImpl extends Composite implements AppsView,
     @Override
     public void setPresenter(Presenter presenter) {
         this.presenter = presenter;
-        ((AppColumnModel)cm).addAppInfoClickedEventHandler(this);
-        ((AppColumnModel)cm).addAppNameSelectedEventHandler(presenter);
-        ((AppColumnModel)cm).addRequestAppFavoriteEventHandlers(this);
+        AppColumnModel appColModel = (AppColumnModel)cm;
+        appColModel.addAppInfoClickedEventHandler(this);
+        appColModel.addAppNameSelectedEventHandler(presenter);
+        appColModel.addRequestAppFavoriteEventHandlers(this);
+        appColModel.addAppCommentSelectedEventHandlers(presenter);
         addAppGroupSelectedEventHandler(presenter);
         this.toolbar.init(presenter, this, this, this);
     }

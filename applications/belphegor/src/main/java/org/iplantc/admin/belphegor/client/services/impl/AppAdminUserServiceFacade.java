@@ -52,13 +52,19 @@ public class AppAdminUserServiceFacade implements AppUserServiceFacade {
     }
 
     @Override
-    public void rateApp(String analysisId, int rating, String appName, String comment,
+    public void rateApp(String appWikiPageName, String appId, int rating, long commentId,
             String authorEmail, AsyncCallback<String> callback) {
         assert false : "Dummy Class to satisfy deferred-binding, this class not used in this module.";
     }
 
     @Override
-    public void updateRating(String analysisId, int rating, String appName, Long commentId,
+    public void addAppComment(String analysisId, int rating, String appName, String comment,
+            String authorEmail, AsyncCallback<String> callback) {
+        assert false : "Dummy Class to satisfy deferred-binding, this class not used in this module.";
+    }
+
+    @Override
+    public void editAppComment(String analysisId, int rating, String appName, Long commentId,
             String comment, String authorEmail, AsyncCallback<String> callback) {
         assert false : "Dummy Class to satisfy deferred-binding, this class not used in this module.";
     }
