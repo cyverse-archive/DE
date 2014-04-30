@@ -82,6 +82,7 @@ import java.util.List;
  * @author sriram
  *
  */
+@SuppressWarnings("unused")
 public class AnalysesPresenterImpl implements AnalysesView.Presenter, AnalysisNameSelectedEvent.AnalysisNameSelectedEventHandler, AnalysisParamValueSelectedEvent.AnalysisParamValueSelectedEventHandler, AnalysisCommentSelectedEvent.AnalysisCommentSelectedEventHandler, AnalysisAppSelectedEvent.AnalysisAppSelectedEventHandler {
 
     private static class AnalysisCommentsDialog extends IPlantDialog {
@@ -199,7 +200,7 @@ public class AnalysesPresenterImpl implements AnalysesView.Presenter, AnalysisNa
 
                     @Override
                     public void onSuccess(String arg0) {
-                        view.removeFromStore(analysesToBeDeleted);
+                        loadAnalyses();
                     }
                 });
             }
