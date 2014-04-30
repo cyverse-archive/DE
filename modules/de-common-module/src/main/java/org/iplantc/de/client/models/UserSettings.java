@@ -37,7 +37,7 @@ public class UserSettings {
     
     
     public static final String EMAIL_NOTIFCATOIN = "enableEmailNotification";
-    public static final String DEFAULT_FILE_SELECTOR_APTH = "defaultFileSelectorPath";
+    public static final String DEFAULT_FILE_SELECTOR_PATH = "defaultFileSelectorPath";
     public static final String REMEMBER_LAST_PATH = "rememberLastPath";
     public static final String SAVE_SESSION = "saveSession";
     public static final String DEFAULT_OUTPUT_FOLDER = "defaultOutputFolder";
@@ -80,13 +80,37 @@ public class UserSettings {
             return;
         }
 
-        setEnableEmailNotification(split.get(EMAIL_NOTIFCATOIN).asBoolean());
-        setDefaultFileSelectorPath(split.get(DEFAULT_FILE_SELECTOR_APTH).asString());
-        setRememberLastPath(split.get(REMEMBER_LAST_PATH).asBoolean());
-        setSaveSession(split.get(SAVE_SESSION).asBoolean());
-        setDefaultOutputFolder(buildFolder(split.get(DEFAULT_OUTPUT_FOLDER)));
-        setSystemDefaultOutputFolder(buildFolder(split.get(SYSTEM_DEFAULT_OUTPUT_DIR)));
-        setLastPath(split.get(LAST_PATH).asString());
+        if (split.get(EMAIL_NOTIFCATOIN) != null) {
+            setEnableEmailNotification(split.get(EMAIL_NOTIFCATOIN).asBoolean());
+        } else {
+            setEnableEmailNotification(true);
+        }
+        if (split.get(DEFAULT_FILE_SELECTOR_PATH) != null) {
+            setDefaultFileSelectorPath(split.get(DEFAULT_FILE_SELECTOR_PATH).asString());
+        }
+        if (split.get(REMEMBER_LAST_PATH) != null) {
+            setRememberLastPath(split.get(REMEMBER_LAST_PATH).asBoolean());
+        } else {
+            setRememberLastPath(true);
+        }
+
+        if (split.get(SAVE_SESSION) != null) {
+            setSaveSession(split.get(SAVE_SESSION).asBoolean());
+        } else {
+            setSaveSession(true);
+        }
+
+        if (split.get(DEFAULT_OUTPUT_FOLDER) != null) {
+            setDefaultOutputFolder(buildFolder(split.get(DEFAULT_OUTPUT_FOLDER)));
+        }
+
+        if (split.get(SYSTEM_DEFAULT_OUTPUT_DIR) != null) {
+            setSystemDefaultOutputFolder(buildFolder(split.get(SYSTEM_DEFAULT_OUTPUT_DIR)));
+        }
+
+        if (split.get(LAST_PATH) != null) {
+            setLastPath(split.get(LAST_PATH).asString());
+        }
 
         parseKeyboardShortcuts(split);
     }
@@ -205,7 +229,7 @@ public class UserSettings {
     public Splittable asSplittable() {
         Splittable ret = StringQuoter.createSplittable();
         StringQuoter.create(isEnableEmailNotification()).assign(ret, EMAIL_NOTIFCATOIN);
-        StringQuoter.create(getDefaultFileSelectorPath()).assign(ret, DEFAULT_FILE_SELECTOR_APTH);
+        StringQuoter.create(getDefaultFileSelectorPath()).assign(ret, DEFAULT_FILE_SELECTOR_PATH);
         StringQuoter.create(isRememberLastPath()).assign(ret, REMEMBER_LAST_PATH);
         StringQuoter.create(isSaveSession()).assign(ret, SAVE_SESSION);
         AutoBeanCodex.encode(AutoBeanUtils.getAutoBean(getDefaultOutputFolder())).assign(ret, DEFAULT_OUTPUT_FOLDER);
