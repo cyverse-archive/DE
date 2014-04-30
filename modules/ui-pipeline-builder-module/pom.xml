@@ -5,7 +5,7 @@
     <groupId>org.iplantc.de</groupId>
     <artifactId>ui-pipeline-builder</artifactId>
     <packaging>jar</packaging>
-    <version>1.8.6-SNAPSHOT</version>
+    <version>1.8.7-SNAPSHOT</version>
     <name>The iPlant Collaborative Pipeline Builder plugin.</name>
     <url>http://project.iplantcollaborative.org</url>
     <!-- convenience to define GWT version in one place -->

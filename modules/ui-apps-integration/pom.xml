@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.iplantc.de</groupId>
   <artifactId>ui-apps-integration</artifactId>
-  <version>1.8.6-SNAPSHOT</version>
+  <version>1.8.7-SNAPSHOT</version>
   <name>The iPlant Collaborative Discovery Environment Apps Integration module</name>
   <properties>
         <gwt.module>org.iplantc.de.apps.integration.AppsIntegration</gwt.module>

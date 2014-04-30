@@ -4,7 +4,7 @@
 	<groupId>org.iplantc.de</groupId>
 	<artifactId>ui-resources</artifactId>
 	<packaging>jar</packaging>
-	<version>1.8.6-SNAPSHOT</version>
+	<version>1.8.7-SNAPSHOT</version>
 	<name>The iPlant Collaborative Common UI Elements module</name>
 	<url>http://project.iplantcollaborative.org</url>
 	<!-- convenience to define GWT version in one place -->

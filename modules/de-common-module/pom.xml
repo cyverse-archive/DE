@@ -5,7 +5,7 @@
 	<groupId>org.iplantc.de</groupId>
 	<artifactId>de-common</artifactId>
 	<packaging>jar</packaging>
-	<version>1.8.6-SNAPSHOT</version>
+	<version>1.8.7-SNAPSHOT</version>
 	<name>Discovery Environment Common Service Facade</name>
 	<url>http://iplantcollaborative.org</url>
 	<!-- convenience to define GWT version in one place -->

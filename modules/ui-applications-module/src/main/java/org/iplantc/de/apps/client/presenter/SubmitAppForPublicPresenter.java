@@ -33,66 +33,62 @@ import java.util.List;
 
 public class SubmitAppForPublicPresenter implements SubmitAppForPublicUseView.Presenter {
 
-	private final SubmitAppForPublicUseView view;
+    private final SubmitAppForPublicUseView view;
     private AsyncCallback<String> callback;
     private final AppUserServiceFacade appService;
     private final PublicAppGroupProxy appGroupProxy;
 
-	@Inject
+    @Inject
     public SubmitAppForPublicPresenter(SubmitAppForPublicUseView view, AppUserServiceFacade appService, PublicAppGroupProxy appGroupProxy) {
-		this.view = view;
+        this.view = view;
         this.appService = appService;
         this.appGroupProxy = appGroupProxy;
-	}
+    }
 
-	@Override
-	public void go(HasOneWidget container) {
-		container.setWidget(view);
-		// Fetch AppGroups
-		appGroupProxy.load(null, new AsyncCallback<List<AppGroup>>() {
-			@Override
-			public void onSuccess(List<AppGroup> result) {
-				addAppGroup(null, result);
-				view.expandAppGroups();
-				// remove workspace node from store
-				view.getTreeStore().remove(
-						view.getTreeStore().findModelWithKey(
-								DEProperties.getInstance()
-										.getDefaultBetaCategoryId()));
-			}
+    @Override
+    public void go(HasOneWidget container) {
+        container.setWidget(view);
+        // Fetch AppGroups
+        appGroupProxy.load(null, new AsyncCallback<List<AppGroup>>() {
+            @Override
+            public void onSuccess(List<AppGroup> result) {
+                addAppGroup(null, result);
+                view.expandAppGroups();
+                // remove workspace node from store
+                view.getTreeStore().remove(view.getTreeStore().findModelWithKey(DEProperties.getInstance().getDefaultBetaCategoryId()));
+            }
 
-			private void addAppGroup(AppGroup parent, List<AppGroup> children) {
-				if ((children == null) || children.isEmpty()) {
-					return;
-				}
-				if (parent == null) {
-					view.getTreeStore().add(children);
-				} else {
-					view.getTreeStore().add(parent, children);
-				}
+            private void addAppGroup(AppGroup parent, List<AppGroup> children) {
+                if ((children == null) || children.isEmpty()) {
+                    return;
+                }
+                if (parent == null) {
+                    view.getTreeStore().add(children);
+                } else {
+                    view.getTreeStore().add(parent, children);
+                }
 
-				for (AppGroup ag : children) {
-					addAppGroup(ag, ag.getGroups());
-				}
-			}
+                for (AppGroup ag : children) {
+                    addAppGroup(ag, ag.getGroups());
+                }
+            }
 
-			@Override
-			public void onFailure(Throwable caught) {
-				ErrorHandler.post(I18N.ERROR.publishFailureDefaultMessage(),caught);
-			}
-		});
-	}
+            @Override
+            public void onFailure(Throwable caught) {
+                ErrorHandler.post(I18N.ERROR.publishFailureDefaultMessage(), caught);
+            }
+        });
+    }
 
-	@Override
-	public void onSubmit() {
-		if (view.validate()) {
-			createDocumentationPage(view.toJson());
-		} else {
-			AlertMessageBox amb = new AlertMessageBox(I18N.DISPLAY.warning(),
-					I18N.DISPLAY.publicSubmitTip());
-			amb.show();
-		}
-	}
+    @Override
+    public void onSubmit() {
+        if (view.validate()) {
+            createDocumentationPage(view.toJson());
+        } else {
+            AlertMessageBox amb = new AlertMessageBox(I18N.DISPLAY.warning(), I18N.DISPLAY.publicSubmitTip());
+            amb.show();
+        }
+    }
 
     private void getAppDetails() {
         appService.getAppDetails(view.getSelectedApp().getId(), new AsyncCallback<String>() {
@@ -113,63 +109,58 @@ public class SubmitAppForPublicPresenter implements SubmitAppForPublicUseView.Pr
         });
     }
 
-	private void createDocumentationPage(final JSONObject obj) {
-	    final AutoProgressMessageBox pmb = new AutoProgressMessageBox(I18N.DISPLAY.submitForPublicUse(), I18N.DISPLAY.submitRequest());
-	    pmb.setProgressText(I18N.DISPLAY.submitting());
-	    pmb.setClosable(false);
-	    pmb.getProgressBar().setInterval(100);
-	    pmb.auto();
-	    pmb.show();
-		ConfluenceServiceFacade.getInstance().createDocumentationPage(
-				JsonUtil.getString(obj, "name"),
-				JsonUtil.getString(obj, "desc"), new AsyncCallback<String>() {
-					@Override
-					public void onFailure(Throwable caught) {
-					    pmb.hide();
-						ErrorHandler.post(I18N.ERROR.cantCreateConfluencePage(JsonUtil.getString(obj, "name")), caught);
-						
-						//SS:uncomment this for testing purposes only...
-						//onSuccess("http://test.com/url");
-					}
+    private void createDocumentationPage(final JSONObject obj) {
+        final AutoProgressMessageBox pmb = new AutoProgressMessageBox(I18N.DISPLAY.submitForPublicUse(), I18N.DISPLAY.submitRequest());
+        pmb.setProgressText(I18N.DISPLAY.submitting());
+        pmb.setClosable(false);
+        pmb.getProgressBar().setInterval(100);
+        pmb.auto();
+        pmb.show();
+        ConfluenceServiceFacade.getInstance().createDocumentationPage(JsonUtil.getString(obj, "name"), JsonUtil.getString(obj, "desc"), new AsyncCallback<String>() {
+            @Override
+            public void onFailure(Throwable caught) {
+                pmb.hide();
+                ErrorHandler.post(I18N.ERROR.cantCreateConfluencePage(JsonUtil.getString(obj, "name")), caught);
 
-					@Override
-					public void onSuccess(final String url) {
-					    obj.put("wiki_url", new JSONString(url));
-					    appService.publishToWorld(obj, new AsyncCallback<String>() {
-					        @Override
-					        public void onSuccess(String result) {
-					            pmb.hide();
-					            EventBus.getInstance().fireEvent(new AppPublishedEvent(view.getSelectedApp()));
-					            callback.onSuccess(url);
-					        }
+                // SS:uncomment this for testing purposes only...
+                // onSuccess("http://test.com/url");
+            }
 
-					        @Override
-					        public void onFailure(Throwable caught) {
-					            pmb.hide();
-					            callback.onFailure(caught);
-					        }
-					    });
-					}
-				});
-	}
+            @Override
+            public void onSuccess(final String url) {
+                obj.put("wiki_url", new JSONString(url));
+                appService.publishToWorld(obj, new AsyncCallback<String>() {
+                    @Override
+                    public void onSuccess(String result) {
+                        pmb.hide();
+                        EventBus.getInstance().fireEvent(new AppPublishedEvent(view.getSelectedApp()));
+                        callback.onSuccess(url);
+                    }
 
-	private List<AppRefLink> parseRefLinks(JSONArray arr) {
-		AppAutoBeanFactory factory = GWT
-				.create(AppAutoBeanFactory.class);
-		List<AppRefLink> linksList = new ArrayList<AppRefLink>();
-		for (int i = 0; i < arr.size(); i++) {
-			AutoBean<AppRefLink> bean = AutoBeanCodex
-					.decode(factory, AppRefLink.class, "{}");
-			AppRefLink link = bean.as();
-			String stringValue = arr.get(i).isString()
-					.stringValue();
-			link.setId(stringValue);
-			link.setRefLink(stringValue);
-			linksList.add(link);
-		}
+                    @Override
+                    public void onFailure(Throwable caught) {
+                        pmb.hide();
+                        callback.onFailure(caught);
+                    }
+                });
+            }
+        });
+    }
 
-		return linksList;
-	}
+    private List<AppRefLink> parseRefLinks(JSONArray arr) {
+        AppAutoBeanFactory factory = GWT.create(AppAutoBeanFactory.class);
+        List<AppRefLink> linksList = new ArrayList<AppRefLink>();
+        for (int i = 0; i < arr.size(); i++) {
+            AutoBean<AppRefLink> bean = AutoBeanCodex.decode(factory, AppRefLink.class, "{}");
+            AppRefLink link = bean.as();
+            String stringValue = arr.get(i).isString().stringValue();
+            link.setId(stringValue);
+            link.setRefLink(stringValue);
+            linksList.add(link);
+        }
+
+        return linksList;
+    }
 
     @Override
     public void go(HasOneWidget container, App selectedApp, AsyncCallback<String> callback) {
