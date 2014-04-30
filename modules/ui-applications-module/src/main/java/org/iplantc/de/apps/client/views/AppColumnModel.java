@@ -96,7 +96,7 @@ public class AppColumnModel extends ColumnModel<App> implements
                 props.integratorName(), 130, displayStrings.integratedby());
 
         ColumnConfig<App, App> rating = new ColumnConfig<App, App>(new IdentityValueProvider<App>(
-                "rating"), 105, displayStrings.rating());
+                "rating"), 105, displayStrings.rating()); //$NON-NLS-1$
 
         ColumnConfig<App, App> comment = new ColumnConfig<App, App>(new IdentityValueProvider<App>(
                 "comment"), 30); //$NON-NLS-1$
