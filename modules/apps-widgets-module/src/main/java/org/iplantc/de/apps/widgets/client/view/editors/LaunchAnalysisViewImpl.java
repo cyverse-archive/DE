@@ -3,7 +3,6 @@ package org.iplantc.de.apps.widgets.client.view.editors;
 import org.iplantc.de.apps.widgets.client.view.LaunchAnalysisView;
 import org.iplantc.de.apps.widgets.client.view.editors.style.AppTemplateWizardAppearance;
 import org.iplantc.de.apps.widgets.client.view.editors.validation.AnalysisOutputValidator;
-import org.iplantc.de.client.models.UserSettings;
 import org.iplantc.de.client.models.apps.integration.JobExecution;
 import org.iplantc.de.client.models.diskResources.DiskResourceAutoBeanFactory;
 import org.iplantc.de.client.models.diskResources.Folder;
@@ -80,42 +79,36 @@ public class LaunchAnalysisViewImpl implements LaunchAnalysisView {
 
     private final EditorDriver editorDriver = GWT.create(EditorDriver.class);
 
-    private UserSettings userSettings;
-
     @Inject
-    public LaunchAnalysisViewImpl(LaunchAnalysisWidgetUiBinder binder,
-            AppsWidgetsDisplayMessages appWidgetStrings, final UserSettings userSettings) {
+    public LaunchAnalysisViewImpl(LaunchAnalysisWidgetUiBinder binder, AppsWidgetsDisplayMessages appWidgetStrings) {
         this.appWidgetStrings = appWidgetStrings;
-        this.userSettings = userSettings;
         binder.createAndBindUi(this);
         name.addValidator(new DiskResourceNameValidator());
         name.addKeyDownHandler(new PreventEntryAfterLimitHandler(name));
         name.addValidator(new MaxLengthValidator(PreventEntryAfterLimitHandler.DEFAULT_LIMIT));
         name.setAllowBlank(false);
-        outputDirectory = new ConverterEditorAdapter<String, Folder, FolderSelectorField>(awFolderSel,
-                new Converter<String, Folder>() {
-                    @Override
-                    public String convertFieldValue(Folder object) {
-                        if (object == null) {
-                            return null;
-                        }
-                        return object.getPath();
-                    }
+        outputDirectory = new ConverterEditorAdapter<String, Folder, FolderSelectorField>(awFolderSel, new Converter<String, Folder>() {
+            @Override
+            public String convertFieldValue(Folder object) {
+                if (object == null) {
+                    return null;
+                }
+                return object.getPath();
+            }
 
-                    @Override
-                    public Folder convertModelValue(String object) {
-                        if (!Strings.isNullOrEmpty(object)) {
-                            DiskResourceAutoBeanFactory factory = GWT
-                                    .create(DiskResourceAutoBeanFactory.class);
-                            AutoBean<Folder> FolderBean = factory.folder();
-                            Folder folder = FolderBean.as();
-                            folder.setPath(object);
-                            return folder;
-                        } else {
-                            return null;
-                        }
-                    }
-                });
+            @Override
+            public Folder convertModelValue(String object) {
+                if (!Strings.isNullOrEmpty(object)) {
+                    DiskResourceAutoBeanFactory factory = GWT.create(DiskResourceAutoBeanFactory.class);
+                    AutoBean<Folder> FolderBean = factory.folder();
+                    Folder folder = FolderBean.as();
+                    folder.setPath(object);
+                    return folder;
+                } else {
+                    return null;
+                }
+            }
+        });
         awFolderSel.setValidatePermissions(true);
         awFolderSel.addValidator(new AnalysisOutputValidator());
         awFolderSel.addValidator(new EmptyValidator<String>());
@@ -150,22 +143,13 @@ public class LaunchAnalysisViewImpl implements LaunchAnalysisView {
 
     @Override
     public boolean hasErrors() {
-        return ((editorDriver.getErrors() != null) && editorDriver.hasErrors())
-                || !awFolderSel.getErrors().isEmpty();
+        return ((editorDriver.getErrors() != null) && editorDriver.hasErrors()) || !awFolderSel.getErrors().isEmpty();
     }
 
     @UiHandler("awFolderSel")
     void onFolderChanged(ValueChangeEvent<Folder> event) {
-        final Folder defaultOutputFolder = userSettings.getDefaultOutputFolder();
-        final String path = (defaultOutputFolder != null) ? defaultOutputFolder.getPath() : "";
-
-        if ((event.getValue() != null)
-                && !event.getValue().getPath().equals(path)) {
-            awFolderSel.setInfoErrorText(appWidgetStrings.nonDefaultFolderWarning());
-        } else {
-            awFolderSel.setInfoErrorText(null);
-        }
-
+        // core-5450 remove warning message about contents being over written
+        awFolderSel.setInfoErrorText(null);
         flushJobExecution();
     }
 
