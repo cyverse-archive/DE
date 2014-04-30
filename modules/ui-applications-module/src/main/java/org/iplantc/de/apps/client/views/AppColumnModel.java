@@ -10,6 +10,7 @@ import org.iplantc.de.apps.client.views.cells.AppInfoCell;
 import org.iplantc.de.apps.client.views.cells.AppRatingCell;
 import org.iplantc.de.apps.shared.AppsModule;
 import org.iplantc.de.client.models.apps.App;
+import org.iplantc.de.client.models.apps.AppFeedback;
 import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 
 import com.google.gwt.cell.client.AbstractCell;
@@ -31,6 +32,37 @@ import java.util.List;
 public class AppColumnModel extends ColumnModel<App> implements
         AppInfoCell.HasAppInfoClickedEventHandlers, AppHyperlinkCell.HasAppNameSelectedEventHandlers,
         AppFavoriteCell.HasRequestAppFavoriteEventHandlers, HasAppCommentSelectedEventHandlers {
+
+    private static class RatingComparator implements Comparator<App> {
+
+        @Override
+        public int compare(App lhs, App rhs) {
+            AppFeedback lhsFeedback = lhs.getRating();
+            AppFeedback rhsFeedback = rhs.getRating();
+
+            if (lhsFeedback == null && rhsFeedback == null) {
+                return 0;
+            }
+            if (lhsFeedback == null) {
+                return -1;
+            }
+            if (rhsFeedback == null) {
+                return 1;
+            }
+
+            double lhsRating = lhsFeedback.getAverageRating();
+            double rhsRating = rhsFeedback.getAverageRating();
+
+            if (lhsFeedback.getUserRating() > 0) {
+                lhsRating = lhsFeedback.getUserRating();
+            }
+            if (rhsFeedback.getUserRating() > 0) {
+                rhsRating = rhsFeedback.getUserRating();
+            }
+
+            return Double.compare(lhsRating, rhsRating);
+        }
+    }
 
     public AppColumnModel(AppsView view, final IplantDisplayStrings displayStrings) {
         super(createColumnConfigList(view, displayStrings));
@@ -63,8 +95,8 @@ public class AppColumnModel extends ColumnModel<App> implements
         ColumnConfig<App, String> integrator = new ColumnConfig<App, String>(
                 props.integratorName(), 130, displayStrings.integratedby());
 
-        ColumnConfig<App, App> rating = new ColumnConfig<App, App>(new IdentityValueProvider<App>(),
-                105, displayStrings.rating());
+        ColumnConfig<App, App> rating = new ColumnConfig<App, App>(new IdentityValueProvider<App>(
+                "rating"), 105, displayStrings.rating());
 
         ColumnConfig<App, App> comment = new ColumnConfig<App, App>(new IdentityValueProvider<App>(
                 "comment"), 30); //$NON-NLS-1$
@@ -75,6 +107,7 @@ public class AppColumnModel extends ColumnModel<App> implements
                 return arg0.getName().compareTo(arg1.getName());
             }
         });
+        rating.setComparator(new RatingComparator());
         info.setSortable(false);
         comment.setSortable(false);
 
