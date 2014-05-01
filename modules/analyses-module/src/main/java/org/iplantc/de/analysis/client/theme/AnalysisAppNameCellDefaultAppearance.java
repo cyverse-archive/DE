@@ -44,7 +44,7 @@ public class AnalysisAppNameCellDefaultAppearance implements AnalysisAppNameCell
 
     private final AnalysisAppNameCellResources resources;
     private final Templates template;
-    private IplantDisplayStrings displayStrings = I18N.DISPLAY;
+    private final IplantDisplayStrings displayStrings = I18N.DISPLAY;
 
     public AnalysisAppNameCellDefaultAppearance() {
         this(GWT.<AnalysisAppNameCellResources> create(AnalysisAppNameCellResources.class));
@@ -81,11 +81,11 @@ public class AnalysisAppNameCellDefaultAppearance implements AnalysisAppNameCell
         String style = Strings.isNullOrEmpty(model.getResultFolderId()) ? styles.noResultFolder()
                                : styles.hasResultFolder() + " "
                                          + ((model.isAppDisabled()) ? styles.disabledApp() : styles.enabledApp());
-        String tooltip;
+        String tooltip = model.getAppName() + " ";
         if (model.isAppDisabled()) {
-            tooltip = displayStrings.appDisabled();
+            tooltip = tooltip + displayStrings.appDisabled();
         } else {
-            tooltip = displayStrings.relaunchAnalysis();
+            tooltip = tooltip + displayStrings.relaunchAnalysis();
         }
         sb.append(template.cell(ELEMENT_NAME, style, SafeHtmlUtils.fromString(model.getAppName()),
                                         tooltip));

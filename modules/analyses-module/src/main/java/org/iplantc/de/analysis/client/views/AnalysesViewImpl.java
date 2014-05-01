@@ -142,7 +142,7 @@ public class AnalysesViewImpl extends Composite implements AnalysesView {
 
     private void initGridView() {
         gridView.setEmptyText(I18N.DISPLAY.noAnalyses());
-        gridView.setRowHeight(25);
+        gridView.setRowHeight(28);
         gridView.setForceFit(true);
     }
 

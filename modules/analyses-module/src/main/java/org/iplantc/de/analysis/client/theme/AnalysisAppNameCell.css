@@ -1,19 +1,24 @@
 .hasResultFolder {
-	cursor:pointer;
-	white-space:pre-wrap;
+	cursor: pointer;
 }
 
 .noResultFolder {
-	white-space:pre-wrap;
+	cursor: default;
 }
 
 .disabledApp {
-	color:red;
+	color: red;
 	cursor: default;
 	text-decoration: none;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
 }
 
 .enabledApp {
-	color:black;
-	cursor:pointer;
+	color: black;
+	cursor: pointer;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
 }

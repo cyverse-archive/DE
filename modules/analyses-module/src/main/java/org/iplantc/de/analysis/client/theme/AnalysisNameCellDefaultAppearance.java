@@ -2,6 +2,7 @@ package org.iplantc.de.analysis.client.theme;
 
 import org.iplantc.de.analysis.client.views.cells.AnalysisNameCell;
 import org.iplantc.de.client.models.analysis.Analysis;
+import org.iplantc.de.resources.client.messages.I18N;
 
 import com.google.common.base.Strings;
 import com.google.gwt.cell.client.Cell;
@@ -36,8 +37,8 @@ public class AnalysisNameCellDefaultAppearance implements AnalysisNameCell.Analy
 
     interface Templates extends SafeHtmlTemplates {
 
-        @SafeHtmlTemplates.Template("<span name=\"{0}\" title=\" Click here to view results of this analysis.\" class=\"{1}\">{2}</span>")
-        SafeHtml cell(String elementName, String className, SafeHtml analysisName);
+        @SafeHtmlTemplates.Template("<span name=\"{0}\" title=\" {3}\" class=\"{1}\">{2}</span>")
+        SafeHtml cell(String elementName, String className, SafeHtml analysisName, String tooltip);
     }
 
     private final AnalysisNameCellResources resources;
@@ -77,7 +78,8 @@ public class AnalysisNameCellDefaultAppearance implements AnalysisNameCell.Analy
         final AnalysisNameCellStyles styles = resources.styles();
         String style = Strings.isNullOrEmpty(model.getResultFolderId()) ? styles.noResultFolder()
                                : styles.hasResultFolder();
-        sb.append(template.cell(ELEMENT_NAME, style, SafeHtmlUtils.fromString(model.getName())));
+        String tooltip = I18N.DISPLAY.goToOutputFolder() + " of " + model.getName();
+        sb.append(template.cell(ELEMENT_NAME, style, SafeHtmlUtils.fromString(model.getName()), tooltip));
 
     }
 }

@@ -23,25 +23,26 @@ import com.sencha.gxt.widget.core.client.grid.ColumnModel;
 
 import java.util.List;
 
-public class AnalysisColumnModel extends ColumnModel<Analysis> implements AnalysisNameSelectedEvent.HasAnalysisNameSelectedEventHandlers, AnalysisAppSelectedEvent.HasAnalysisAppSelectedEventHandlers, AnalysisCommentSelectedEvent.HasAnalysisCommentSelectedEventHandlers {
+public class AnalysisColumnModel extends ColumnModel<Analysis> implements AnalysisNameSelectedEvent.HasAnalysisNameSelectedEventHandlers, AnalysisAppSelectedEvent.HasAnalysisAppSelectedEventHandlers,
+        AnalysisCommentSelectedEvent.HasAnalysisCommentSelectedEventHandlers {
 
     @Inject
     public AnalysisColumnModel(final CheckBoxSelectionModel<Analysis> checkBoxSelectionModel, final IplantDisplayStrings displayStrings) {
         super(createColumnConfigList(checkBoxSelectionModel, displayStrings));
 
         // Set handler managers on appropriate cells so they can fire events.
-        for(ColumnConfig<Analysis,?> cc : configs){
-            if(cc.getCell() instanceof AnalysisNameCell){
+        for (ColumnConfig<Analysis, ?> cc : configs) {
+            if (cc.getCell() instanceof AnalysisNameCell) {
                 ((AnalysisNameCell)cc.getCell()).setHasHandlers(ensureHandlers());
-            } else if(cc.getCell() instanceof AnalysisAppNameCell){
+            } else if (cc.getCell() instanceof AnalysisAppNameCell) {
                 ((AnalysisAppNameCell)cc.getCell()).setHasHandlers(ensureHandlers());
-            } else if(cc.getCell() instanceof AnalysisCommentCell){
+            } else if (cc.getCell() instanceof AnalysisCommentCell) {
                 ((AnalysisCommentCell)cc.getCell()).setHasHandlers(ensureHandlers());
             }
         }
     }
 
-    public static List<ColumnConfig<Analysis, ?>> createColumnConfigList(CheckBoxSelectionModel<Analysis> checkBoxSelectionModel, IplantDisplayStrings displayStrings){
+    public static List<ColumnConfig<Analysis, ?>> createColumnConfigList(CheckBoxSelectionModel<Analysis> checkBoxSelectionModel, IplantDisplayStrings displayStrings) {
         ColumnConfig<Analysis, Analysis> colCheckBox = checkBoxSelectionModel.getColumn();
         ColumnConfig<Analysis, Analysis> name = new ColumnConfig<Analysis, Analysis>(new IdentityValueProvider<Analysis>("name"), 150);
         ColumnConfig<Analysis, Analysis> comment = new ColumnConfig<Analysis, Analysis>(new IdentityValueProvider<Analysis>("description"), 30);
@@ -66,7 +67,6 @@ public class AnalysisColumnModel extends ColumnModel<Analysis> implements Analys
                 return "status";
             }
         }, 75);
-
 
         name.setHeader(displayStrings.name());
         name.setMenuDisabled(true);
