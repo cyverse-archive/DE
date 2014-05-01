@@ -41,6 +41,10 @@ public class DiskResourceSearchField extends TriggerField<String> implements Has
         public String parse(CharSequence text) throws ParseException {
             clearInvalid();
 
+            if (text == null || text.length() < 3) {
+                return text.toString();
+            }
+
             DiskResourceQueryTemplate qt = factory.dataSearchFilter().as();
             qt.setFileQuery(text.toString());
             getCell().fireEvent(new SubmitDiskResourceQueryEvent(qt));
@@ -129,7 +133,7 @@ public class DiskResourceSearchField extends TriggerField<String> implements Has
     @Override
     public void doSubmitDiskResourceQuery(SubmitDiskResourceQueryEvent event) {
         DiskResourceQueryTemplate query = event.getQueryTemplate();
-        if (query == null || Strings.isNullOrEmpty(query.getFileQuery())) {
+        if (query == null || Strings.isNullOrEmpty(query.getFileQuery()) || query.getFileQuery().length() < 3) {
             clear();
             return;
         }

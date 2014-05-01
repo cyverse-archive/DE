@@ -66,6 +66,7 @@ public class DiskResourceColumnModel extends ColumnModel<DiskResource> {
         actions.setHidden(false);
         actions.setMenuDisabled(true);
         actions.setSortable(false);
+        actions.setFixed(true);
         
         list.add(sm.getColumn());
         list.add(name);
