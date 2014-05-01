@@ -43,200 +43,190 @@ import java.util.List;
  * @author sriram
  * 
  */
-public class TextViewerImpl extends AbstractFileViewer implements
-		EditingSupport {
+public class TextViewerImpl extends AbstractFileViewer implements EditingSupport {
 
-	private static TextViewerUiBinder uiBinder = GWT
-			.create(TextViewerUiBinder.class);
+    private static TextViewerUiBinder uiBinder = GWT.create(TextViewerUiBinder.class);
 
-	@UiTemplate("TextViewer.ui.xml")
-	interface TextViewerUiBinder extends UiBinder<Widget, TextViewerImpl> {
-	}
+    @UiTemplate("TextViewer.ui.xml")
+    interface TextViewerUiBinder extends UiBinder<Widget, TextViewerImpl> {
+    }
 
-	private final Widget widget;
+    private final Widget widget;
 
-	@UiField
-	SimpleContainer center;
+    @UiField
+    SimpleContainer center;
 
-	@UiField
-	BorderLayoutContainer con;
+    @UiField
+    BorderLayoutContainer con;
 
-	@UiField(provided = true)
-	TextViewPagingToolBar toolbar;
+    @UiField(provided = true)
+    TextViewPagingToolBar toolbar;
 
-	private long file_size;
+    private long file_size;
 
-	private int totalPages;
+    private int totalPages;
 
-	private String data;
+    private String data;
 
-	protected boolean editing;
+    protected boolean editing;
 
-	private Presenter presenter;
+    private Presenter presenter;
 
-	protected JavaScriptObject jso;
+    protected JavaScriptObject jso;
 
-	private final List<HandlerRegistration> eventHandlers = new ArrayList<HandlerRegistration>();
+    private final List<HandlerRegistration> eventHandlers = new ArrayList<HandlerRegistration>();
 
-	public TextViewerImpl(File file, String infoType, boolean editing) {
-		super(file, infoType);
-		this.editing = editing;
-		toolbar = initToolBar();
-		widget = uiBinder.createAndBindUi(this);
+    public TextViewerImpl(File file, String infoType, boolean editing) {
+        super(file, infoType);
+        this.editing = editing;
+        toolbar = initToolBar();
+        widget = uiBinder.createAndBindUi(this);
 
-		addWrapHandler();
+        addWrapHandler();
 
-		if (file != null) {
-			loadData();
-		} else {
-			// when u start editing a new file, data is empty but the new file
-			// is yet to be saved.
-			setData("");
-		}
+        if (file != null) {
+            loadData();
+        } else {
+            // when u start editing a new file, data is empty but the new file
+            // is yet to be saved.
+            setData("");
+        }
 
-		center.addResizeHandler(new ResizeHandler() {
+        center.addResizeHandler(new ResizeHandler() {
 
-			@Override
-			public void onResize(ResizeEvent event) {
-				if (jso != null) {
-					resizeDisplay(jso, center.getElement().getOffsetWidth(),
-							center.getElement().getOffsetHeight());
-				}
-			}
-		});
+            @Override
+            public void onResize(ResizeEvent event) {
+                if (jso != null) {
+                    resizeDisplay(jso, center.getElement().getOffsetWidth(), center.getElement().getOffsetHeight());
+                }
+            }
+        });
 
-		// handle data events
-		eventHandlers.add(EventBus.getInstance().addHandler(SaveFileEvent.TYPE,
-				new SaveFileEventHandler() {
+        // handle data events
+        eventHandlers.add(EventBus.getInstance().addHandler(SaveFileEvent.TYPE, new SaveFileEventHandler() {
 
-					@Override
-					public void onSave(SaveFileEvent event) {
-						save();
-					}
-				}
+            @Override
+            public void onSave(SaveFileEvent event) {
+                save();
+            }
+        }
 
-		));
+        ));
 
-	}
+    }
 
-	TextViewPagingToolBar initToolBar() {
-		TextViewPagingToolBar textViewPagingToolBar = new TextViewPagingToolBar(
-				this, editing);
-		textViewPagingToolBar.addHandler(new SaveFileEventHandler() {
+    TextViewPagingToolBar initToolBar() {
+        TextViewPagingToolBar textViewPagingToolBar = new TextViewPagingToolBar(this, editing);
+        textViewPagingToolBar.addHandler(new SaveFileEventHandler() {
 
-			@Override
-			public void onSave(SaveFileEvent event) {
-				save();
+            @Override
+            public void onSave(SaveFileEvent event) {
+                save();
 
-			}
+            }
 
-		}, SaveFileEvent.TYPE);
-		return textViewPagingToolBar;
-	}
+        }, SaveFileEvent.TYPE);
+        return textViewPagingToolBar;
+    }
 
-	@Override
-	public void cleanUp() {
-		EventBus eventBus = EventBus.getInstance();
-		for (HandlerRegistration hr : eventHandlers) {
-			eventBus.removeHandler(hr);
-		}
-		file = null;
-		jso = null;
-		toolbar = null;
-		data = null;
-	}
+    @Override
+    public void cleanUp() {
+        EventBus eventBus = EventBus.getInstance();
+        for (HandlerRegistration hr : eventHandlers) {
+            eventBus.removeHandler(hr);
+        }
+        file = null;
+        jso = null;
+        toolbar = null;
+        data = null;
+    }
 
-	private void addWrapHandler() {
-		toolbar.addWrapCbxChangeHandler(new ValueChangeHandler<Boolean>() {
+    private void addWrapHandler() {
+        toolbar.addWrapCbxChangeHandler(new ValueChangeHandler<Boolean>() {
 
-			@Override
-			public void onValueChange(ValueChangeEvent<Boolean> event) {
-				if (isDirty() || Strings.isNullOrEmpty(data)) {
-					setData(getEditorContent(jso));
-				} else {
-					setData(data);
-				}
-			}
-		});
-	}
+            @Override
+            public void onValueChange(ValueChangeEvent<Boolean> event) {
+                if (isDirty() || Strings.isNullOrEmpty(data)) {
+                    setData(getEditorContent(jso));
+                } else {
+                    setData(data);
+                }
+            }
+        });
+    }
 
-	private JSONObject getRequestBody() {
-		JSONObject obj = new JSONObject();
-		obj.put("path", new JSONString(file.getId()));
-		// position starts at 0
-		obj.put("position", new JSONString("" + toolbar.getPageSize()
-				* (toolbar.getPageNumber() - 1)));
-		obj.put("chunk-size", new JSONString("" + toolbar.getPageSize()));
-		return obj;
-	}
+    private JSONObject getRequestBody() {
+        if (file == null) {
+            return null;
+        }
+        JSONObject obj = new JSONObject();
+        obj.put("path", new JSONString(file.getId()));
+        // position starts at 0
+        obj.put("position", new JSONString("" + toolbar.getPageSize() * (toolbar.getPageNumber() - 1)));
+        obj.put("chunk-size", new JSONString("" + toolbar.getPageSize()));
+        return obj;
+    }
 
-	@Override
-	public void loadData() {
-		String url = "read-chunk";
-		con.mask(org.iplantc.de.resources.client.messages.I18N.DISPLAY
-				.loadingMask());
-		ServicesInjector.INSTANCE.getFileEditorServiceFacade().getDataChunk(
-				url, getRequestBody(), new AsyncCallback<String>() {
+    @Override
+    public void loadData() {
+        String url = "read-chunk";
+        JSONObject requestBody = getRequestBody();
+        if (requestBody != null) {
+            con.mask(org.iplantc.de.resources.client.messages.I18N.DISPLAY.loadingMask());
+            ServicesInjector.INSTANCE.getFileEditorServiceFacade().getDataChunk(url, requestBody, new AsyncCallback<String>() {
 
-					@Override
-					public void onSuccess(String result) {
-						data = JsonUtil.getString(JsonUtil.getObject(result),
-								"chunk");
-						setData(data);
-						con.unmask();
-					}
+                @Override
+                public void onSuccess(String result) {
+                    data = JsonUtil.getString(JsonUtil.getObject(result), "chunk");
+                    setData(data);
+                    con.unmask();
+                }
 
-					@Override
-					public void onFailure(Throwable caught) {
-						ErrorHandler
-								.post(org.iplantc.de.resources.client.messages.I18N.ERROR
-										.unableToRetrieveFileData(file
-												.getName()), caught);
-						con.unmask();
-					}
-				});
+                @Override
+                public void onFailure(Throwable caught) {
+                    ErrorHandler.post(org.iplantc.de.resources.client.messages.I18N.ERROR.unableToRetrieveFileData(file.getName()), caught);
+                    con.unmask();
+                }
+            });
+        }
 
-	}
+    }
 
-	@Override
-	public Widget asWidget() {
-		return widget;
-	}
+    @Override
+    public Widget asWidget() {
+        return widget;
+    }
 
-	@Override
-	public void setPresenter(Presenter p) {
-		this.presenter = p;
-	}
+    @Override
+    public void setPresenter(Presenter p) {
+        this.presenter = p;
+    }
 
-	@Override
-	public void setData(Object data) {
-		clearDisplay();
-		boolean allowEditing = toolbar.getToltalPages() == 1 && editing;
-		jso = displayData(this, center.getElement(), infoType, (String) data,
-				center.getElement().getOffsetWidth(), center.getElement()
-						.getOffsetHeight(), toolbar.isWrapText(), allowEditing);
-		toolbar.setEditing(allowEditing);
-		/**
-		 * XXX - SS - support editing for files with only one page
-		 */
-	}
+    @Override
+    public void setData(Object data) {
+        clearDisplay();
+        boolean allowEditing = toolbar.getToltalPages() == 1 && editing;
+        jso = displayData(this, center.getElement(), infoType, (String)data, center.getElement().getOffsetWidth(), center.getElement().getOffsetHeight(), toolbar.isWrapText(), allowEditing);
+        toolbar.setEditing(allowEditing);
+        /**
+         * XXX - SS - support editing for files with only one page
+         */
+    }
 
-	protected void clearDisplay() {
-		center.getElement().removeChildren();
-		center.forceLayout();
-	}
+    protected void clearDisplay() {
+        center.getElement().removeChildren();
+        center.forceLayout();
+    }
 
-	@Override
-	public void setDirty(Boolean dirty) {
-		if (presenter.isDirty() == dirty) {
-			return;
-		}
-		presenter.setVeiwDirtyState(dirty);
-	}
+    @Override
+    public void setDirty(Boolean dirty) {
+        if (presenter.isDirty() == dirty) {
+            return;
+        }
+        presenter.setVeiwDirtyState(dirty);
+    }
 
-	public static native JavaScriptObject displayData(
-			final TextViewerImpl instance, XElement textArea, String mode,
-			String val, int width, int height, boolean wrap, boolean editing) /*-{
+    public static native JavaScriptObject displayData(final TextViewerImpl instance, XElement textArea, String mode, String val, int width, int height, boolean wrap, boolean editing) /*-{
 		var myCodeMirror = $wnd.CodeMirror(textArea, {
 			value : val,
 			mode : mode
@@ -253,65 +243,54 @@ public class TextViewerImpl extends AbstractFileViewer implements
 							}));
 		}
 		return myCodeMirror;
-	}-*/;
+    }-*/;
 
-	public static native String getEditorContent(JavaScriptObject jso) /*-{
+    public static native String getEditorContent(JavaScriptObject jso) /*-{
 		return jso.getValue();
-	}-*/;
+    }-*/;
 
-	public static native boolean isClean(JavaScriptObject jso) /*-{
+    public static native boolean isClean(JavaScriptObject jso) /*-{
 		return jso.isClean();
-	}-*/;
+    }-*/;
 
-	public static native void resizeDisplay(JavaScriptObject jso, int width,
-			int height) /*-{
+    public static native void resizeDisplay(JavaScriptObject jso, int width, int height) /*-{
 		jso.setSize(width, height);
-	}-*/;
+    }-*/;
 
-	@Override
-	public void save() {
-		if (file == null) {
-			final SaveAsDialog saveDialog = new SaveAsDialog();
-			saveDialog.addOkButtonSelectHandler(new SelectHandler() {
+    @Override
+    public void save() {
+        if (file == null) {
+            final SaveAsDialog saveDialog = new SaveAsDialog();
+            saveDialog.addOkButtonSelectHandler(new SelectHandler() {
 
-				@Override
-				public void onSelect(SelectEvent event) {
-					if (saveDialog.isVaild()) {
-						con.mask(I18N.DISPLAY.savingMask());
-						String destination = saveDialog.getSelectedFolder()
-								.getPath() + "/" + saveDialog.getFileName();
-						ServicesInjector.INSTANCE.getFileEditorServiceFacade()
-								.uploadTextAsFile(
-										destination,
-										getEditorContent(jso),
-										true,
-										new FileSaveCallback(destination, true,
-												con));
-						saveDialog.hide();
-					}
-				}
-			});
-			saveDialog.addCancelButtonSelectHandler(new SelectHandler() {
+                @Override
+                public void onSelect(SelectEvent event) {
+                    if (saveDialog.isVaild()) {
+                        con.mask(I18N.DISPLAY.savingMask());
+                        String destination = saveDialog.getSelectedFolder().getPath() + "/" + saveDialog.getFileName();
+                        ServicesInjector.INSTANCE.getFileEditorServiceFacade().uploadTextAsFile(destination, getEditorContent(jso), true, new FileSaveCallback(destination, true, con));
+                        saveDialog.hide();
+                    }
+                }
+            });
+            saveDialog.addCancelButtonSelectHandler(new SelectHandler() {
 
-				@Override
-				public void onSelect(SelectEvent event) {
-					saveDialog.hide();
-					con.unmask();
-				}
-			});
-			saveDialog.show();
-			saveDialog.toFront();
-		} else {
-			con.mask(I18N.DISPLAY.savingMask());
-			ServicesInjector.INSTANCE.getFileEditorServiceFacade()
-					.uploadTextAsFile(file.getPath(), getEditorContent(jso),
-							false,
-							new FileSaveCallback(file.getPath(), false, con));
-		}
-	}
+                @Override
+                public void onSelect(SelectEvent event) {
+                    saveDialog.hide();
+                    con.unmask();
+                }
+            });
+            saveDialog.show();
+            saveDialog.toFront();
+        } else {
+            con.mask(I18N.DISPLAY.savingMask());
+            ServicesInjector.INSTANCE.getFileEditorServiceFacade().uploadTextAsFile(file.getPath(), getEditorContent(jso), false, new FileSaveCallback(file.getPath(), false, con));
+        }
+    }
 
-	@Override
-	public boolean isDirty() {
-		return isClean(jso);
-	}
+    @Override
+    public boolean isDirty() {
+        return isClean(jso);
+    }
 }
