@@ -11,7 +11,6 @@ import org.iplantc.de.diskResource.client.search.events.SubmitDiskResourceQueryE
 import org.iplantc.de.diskResource.client.search.events.SubmitDiskResourceQueryEvent.SubmitDiskResourceQueryEventHandler;
 import org.iplantc.de.diskResource.client.search.views.cells.DiskResourceSearchCell;
 
-import com.google.common.base.Strings;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.HandlerRegistration;
 
@@ -132,16 +131,19 @@ public class DiskResourceSearchField extends TriggerField<String> implements Has
 
     @Override
     public void doSubmitDiskResourceQuery(SubmitDiskResourceQueryEvent event) {
-        DiskResourceQueryTemplate query = event.getQueryTemplate();
-        if (query == null || Strings.isNullOrEmpty(query.getFileQuery()) || query.getFileQuery().length() < 3) {
-            clear();
-            return;
-        }
+        // SS: DO NOTHING - CORE- 5437
 
-        String fileQuery = query.getFileQuery();
-        if (!fileQuery.equals(getText())) {
-            setText(fileQuery);
-        }
+        // DiskResourceQueryTemplate query = event.getQueryTemplate();
+        // if (query == null || Strings.isNullOrEmpty(query.getFileQuery()) ||
+        // query.getFileQuery().length() < 3) {
+        // clear();
+        // return;
+        // }
+
+        // String fileQuery = query.getFileQuery();
+        // if (!fileQuery.equals(getText())) {
+        // setText(fileQuery);
+        // }
     }
 
     @Override
