@@ -8,11 +8,13 @@ import com.google.gwtmockito.GxtMockitoTestRunner;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 
 @RunWith(GxtMockitoTestRunner.class)
@@ -34,10 +36,8 @@ public class DiskResourceSearchFieldTest {
         // Call method under test
         spy.doSubmitDiskResourceQuery(submitQueryEventMock);
 
-        ArgumentCaptor<String> query = ArgumentCaptor.forClass(String.class);
-        verify(spy).setText(query.capture());
-        assertEquals("Expected FileQuery text set as DiskResourceSearchField text", testFileQuery,
-                query.getValue());
+        verify(spy).clear();
+        assertEquals(null, spy.getValue());
     }
 
     @Test

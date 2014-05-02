@@ -131,19 +131,8 @@ public class DiskResourceSearchField extends TriggerField<String> implements Has
 
     @Override
     public void doSubmitDiskResourceQuery(SubmitDiskResourceQueryEvent event) {
-        // SS: DO NOTHING - CORE- 5437
-
-        // DiskResourceQueryTemplate query = event.getQueryTemplate();
-        // if (query == null || Strings.isNullOrEmpty(query.getFileQuery()) ||
-        // query.getFileQuery().length() < 3) {
-        // clear();
-        // return;
-        // }
-
-        // String fileQuery = query.getFileQuery();
-        // if (!fileQuery.equals(getText())) {
-        // setText(fileQuery);
-        // }
+        // SS: CORE- 5437
+        clear();
     }
 
     @Override
