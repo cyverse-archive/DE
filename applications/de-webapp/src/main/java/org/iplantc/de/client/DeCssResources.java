@@ -114,4 +114,12 @@ public interface DeCssResources extends CssResource {
     @ClassName("user_preferences")
     String userPref();
 
+    @ClassName("notifications_hover")
+    String notificationsHover();
+
+    @ClassName("ask_forums_hover")
+    String askForumsHover();
+
+    @ClassName("user_preferences_hover")
+    String userPrefHover();
 }

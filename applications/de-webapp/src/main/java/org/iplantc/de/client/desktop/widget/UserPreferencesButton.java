@@ -17,6 +17,10 @@ import org.iplantc.de.shared.DeModule;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.MouseOutEvent;
+import com.google.gwt.event.dom.client.MouseOutHandler;
+import com.google.gwt.event.dom.client.MouseOverEvent;
+import com.google.gwt.event.dom.client.MouseOverHandler;
 
 import com.sencha.gxt.core.client.Style.Anchor;
 import com.sencha.gxt.core.client.Style.AnchorAlignment;
@@ -58,6 +62,21 @@ public class UserPreferencesButton extends IconButton {
         getElement().setAttribute("data-position", "left");
         getElement().setAttribute("data-step", "5");
         ensureDebugId(DeModule.Ids.DESKTOP + DeModule.Ids.USER_PREF_BUTTON);
+        addHandler(new MouseOverHandler() {
+
+            @Override
+            public void onMouseOver(MouseOverEvent event) {
+                changeStyle(resources.css().userPrefHover());
+            }
+        }, MouseOverEvent.getType());
+
+        addHandler(new MouseOutHandler() {
+
+            @Override
+            public void onMouseOut(MouseOutEvent event) {
+                changeStyle(resources.css().userPref());
+            }
+        }, MouseOutEvent.getType());
     }
 
     public void updateSystemMessageLabel(final long numUnseenSysMsgs) {

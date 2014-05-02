@@ -6,6 +6,10 @@ import org.iplantc.de.client.notifications.views.ViewNotificationMenu;
 import org.iplantc.de.resources.client.messages.I18N;
 import org.iplantc.de.shared.DeModule;
 
+import com.google.gwt.event.dom.client.MouseOutEvent;
+import com.google.gwt.event.dom.client.MouseOutHandler;
+import com.google.gwt.event.dom.client.MouseOverEvent;
+import com.google.gwt.event.dom.client.MouseOverHandler;
 import com.google.gwt.user.client.Window;
 
 import com.sencha.gxt.core.client.Style.Anchor;
@@ -26,7 +30,7 @@ public class NotificationButton extends IconButton {
     private XElement countElement;
     private int count;
 
-    public NotificationButton(DeResources resources) {
+    public NotificationButton(final DeResources resources) {
         super(resources.css().notifications());
         this.resources = resources;
         setSize("28", "28");
@@ -44,6 +48,22 @@ public class NotificationButton extends IconButton {
         getElement().setAttribute("data-position", "left");
         getElement().setAttribute("data-step", "4");
         ensureDebugId(DeModule.Ids.DESKTOP + DeModule.Ids.NOTIFICATION_BUTTON);
+        addHandler(new MouseOverHandler() {
+
+            @Override
+            public void onMouseOver(MouseOverEvent event) {
+                changeStyle(resources.css().notificationsHover());
+            }
+        }, MouseOverEvent.getType());
+
+        addHandler(new MouseOutHandler() {
+
+            @Override
+            public void onMouseOut(MouseOutEvent event) {
+                changeStyle(resources.css().notifications());
+            }
+        }, MouseOutEvent.getType());
+
     }
 
 

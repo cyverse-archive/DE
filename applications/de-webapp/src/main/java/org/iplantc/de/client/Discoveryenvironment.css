@@ -157,6 +157,17 @@ html,body {
     width: 24px;
     position: relative;
     padding-right: 5px;
+    opacity: 0.6;
+}
+
+
+.notifications_hover {
+	background-image: url('./images/globe.png');
+    height: 24px;
+    width: 24px;
+    position: relative;
+    padding-right: 5px;
+	 opacity: 1;
 }
 
 .ask_forums {
@@ -166,6 +177,17 @@ html,body {
     position: relative;
     padding-top: 5px;
     padding-right: 5px;
+    opacity: 0.6;
+}
+
+.ask_forums_hover {
+	background-image: url('./images/forum.png');
+    height: 24px;
+    width: 24px;
+    position: relative;
+    padding-top: 5px;
+    padding-right: 5px;
+	opacity: 1;
 }
 
 .user_preferences {
@@ -174,6 +196,16 @@ html,body {
     width: 24px;
     position: relative;
     padding-right: 5px;
+	 opacity: 0.6;
+}
+
+.user_preferences_hover {
+	background-image: url('./images/user.png');
+    height: 24px;
+    width: 24px;
+    position: relative;
+    padding-right: 5px;
+	opacity: 1;
 	
 }
 .x-tool-restorewindow-hover {
