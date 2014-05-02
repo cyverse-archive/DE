@@ -11,6 +11,8 @@ import org.iplantc.de.commons.client.views.gxt3.dialogs.IPlantDialog;
 
 import com.sencha.gxt.data.shared.ListStore;
 import com.sencha.gxt.data.shared.ModelKeyProvider;
+import com.sencha.gxt.widget.core.client.event.SelectEvent;
+import com.sencha.gxt.widget.core.client.event.SelectEvent.SelectHandler;
 import com.sencha.gxt.widget.core.client.selection.SelectionChangedEvent;
 import com.sencha.gxt.widget.core.client.selection.SelectionChangedEvent.SelectionChangedHandler;
 
@@ -31,7 +33,7 @@ public class DCListingDialog extends IPlantDialog {
         }
 
     }
-    
+
     class DCSelectionChangedHandler implements SelectionChangedHandler<DeployedComponent> {
 
         @Override
@@ -51,18 +53,31 @@ public class DCListingDialog extends IPlantDialog {
 
     private DeployedComponent selectedComponent = null;
 
-
     public DCListingDialog() {
-        setHideOnButtonClick(true);
         setPixelSize(600, 500);
         setResizable(false);
         setModal(true);
         setHeadingText("Installed Tools");
+        setHideOnButtonClick(false);
         getOkButton().setEnabled(false);
+        getButtonById(PredefinedButton.CANCEL.toString()).addSelectHandler(new SelectHandler() {
+
+            @Override
+            public void onSelect(SelectEvent event) {
+                selectedComponent = null;
+                hide();
+            }
+        });
+        getButtonById(PredefinedButton.OK.toString()).addSelectHandler(new SelectHandler() {
+
+            @Override
+            public void onSelect(SelectEvent event) {
+                hide();
+            }
+        });
 
         ListStore<DeployedComponent> listStore = new ListStore<DeployedComponent>(new DCKeyProvider());
-        DeployedComponentsListingView view = new DeployedComponentsListingViewImpl(listStore,
-                new DCSelectionChangedHandler());
+        DeployedComponentsListingView view = new DeployedComponentsListingViewImpl(listStore, new DCSelectionChangedHandler());
         DeployedComponentsListingView.Presenter p = new DeployedComponentPresenterImpl(view);
         p.go(this);
 
