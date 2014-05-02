@@ -35,6 +35,7 @@ import com.google.gwt.uibinder.client.UiFactory;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.web.bindery.autobean.shared.AutoBeanCodex;
 
@@ -70,15 +71,12 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
 
-
 /**
- *
+ * 
  * @author jstroot
- *
+ * 
  */
-public class MultiFileSelectorField extends Composite implements IsField<List<HasId>>,
-        ValueAwareEditor<List<HasId>>, HasValueChangeHandlers<List<HasId>>, DndDragEnterHandler,
- DndDragMoveHandler,
+public class MultiFileSelectorField extends Composite implements IsField<List<HasId>>, ValueAwareEditor<List<HasId>>, HasValueChangeHandlers<List<HasId>>, DndDragEnterHandler, DndDragMoveHandler,
         DndDropHandler, DiskResourceSelector, DiskResourceSelector.HasDisableBrowseButtons {
 
     interface MultiFileSelectorFieldUiBinder extends UiBinder<Widget, MultiFileSelectorField> {
@@ -106,6 +104,7 @@ public class MultiFileSelectorField extends Composite implements IsField<List<Ha
                 EventBus.getInstance().fireEvent(usue);
             }
             ValueChangeEvent.fire(MultiFileSelectorField.this, Lists.<HasId> newArrayList(store.getAll()));
+            setValue(Lists.<HasId> newArrayList(store.getAll()));
         }
     }
 
@@ -137,6 +136,9 @@ public class MultiFileSelectorField extends Composite implements IsField<List<Ha
 
     @UiField
     ToolBar toolbar;
+
+    @UiField
+    HTML warnInfo;
 
     UserSettings userSettings = UserSettings.getInstance();
     private boolean addDeleteButtonsEnabled = true;
@@ -248,8 +250,7 @@ public class MultiFileSelectorField extends Composite implements IsField<List<Ha
     public void onPropertyChange(String... paths) {/* Do Nothing */}
 
     @Override
-    public void reset() {
-    }
+    public void reset() {}
 
     @Override
     public void setDelegate(EditorDelegate<List<HasId>> delegate) {/* Do Nothing */}
@@ -356,8 +357,39 @@ public class MultiFileSelectorField extends Composite implements IsField<List<Ha
         for (DiskResource dr : grid.getSelectionModel().getSelectedItems()) {
             listStore.remove(dr);
         }
+
+        if (checkForSplChar(Lists.<HasId> newArrayList(grid.getStore().getAll())).length() > 0) {
+            setInfoErrorText("<span style='color:red;'>" + I18N.DISPLAY.analysisFailureWarning(I18N.V_CONSTANTS.warnedDiskResourceNameChars()) + "</span>");
+        } else {
+            setInfoErrorText("");
+        }
+     }
+
+    private StringBuilder checkForSplChar(List<HasId> idSet) {
+        char[] restrictedChars = (I18N.V_CONSTANTS.warnedDiskResourceNameChars()).toCharArray(); //$NON-NLS-1$
+        StringBuilder restrictedFound = new StringBuilder();
+
+        for (HasId id : idSet) {
+            String diskresourceId = id.getId();
+            for (char restricted : restrictedChars) {
+                for (char next : diskresourceId.toCharArray()) {
+                    if (next == restricted && next != '/') {
+                        restrictedFound.append(restricted);
+                    }
+                }
+            }
+            // validate '/' only on label
+            for (char next : DiskResourceUtil.parseNameFromPath(diskresourceId).toCharArray()) {
+                if (next == '/') {
+                    restrictedFound.append('/');
+                }
+            }
+
+        }
+        return restrictedFound;
     }
 
+    
     private void doGetStat(final List<HasId> value) {
         // JDS Clear permissions and existence errors since we are about to recheck
         permissionErrors.clear();
@@ -374,7 +406,7 @@ public class MultiFileSelectorField extends Composite implements IsField<List<Ha
                 if (serviceError.getErrorCode().equals(ServiceErrorCode.ERR_DOES_NOT_EXIST.toString())) {
                     String reason = serviceError.getReason();
                     GWT.log("The Reason: " + reason);
-                    List<String> errorMessageValues = Lists.newArrayList(); 
+                    List<String> errorMessageValues = Lists.newArrayList();
                     String drErrList = DiskResourceUtil.asCommaSeperatedNameList(errorMessageValues);
                     DefaultEditorError existsErr = new DefaultEditorError(MultiFileSelectorField.this, errorStrings.diskResourceDoesNotExist(drErrList), null);
                     existsErrors.add(existsErr);
@@ -410,8 +442,19 @@ public class MultiFileSelectorField extends Composite implements IsField<List<Ha
                         listStore.add(entryValue);
                     }
                 }
+                if (checkForSplChar(value).length() > 0) {
+                    setInfoErrorText("<span style='color:red;'>" + I18N.DISPLAY.analysisFailureWarning(I18N.V_CONSTANTS.warnedDiskResourceNameChars()) + "</span>");
+                } else {
+                    setInfoErrorText("");
+                }
             }
         });
+
+
+    }
+
+    protected void setInfoErrorText(String analysisFailureWarning) {
+        warnInfo.setHTML(analysisFailureWarning);
     }
 
     private void initDragAndDrop() {
