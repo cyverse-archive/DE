@@ -17,6 +17,7 @@ import org.iplantc.de.client.services.Endpoints;
 import org.iplantc.de.client.services.ReservedBuckets;
 import org.iplantc.de.client.services.SearchServiceFacade;
 import org.iplantc.de.client.services.converters.AsyncCallbackConverter;
+import org.iplantc.de.client.util.CommonModelUtils;
 import org.iplantc.de.shared.services.ServiceCallWrapper;
 
 import com.google.common.base.Splitter;
@@ -376,6 +377,8 @@ public class SearchServiceFacadeImpl implements SearchServiceFacade {
         int index = 0;
         for (DiskResourceQueryTemplate qt : queryTemplates) {
             final Splittable encode = AutoBeanCodex.encode(AutoBeanUtils.getAutoBean(qt));
+            StringQuoter.createIndexed().assign(encode, "files");
+            StringQuoter.createIndexed().assign(encode, "folders");
             encode.assign(indexedSplittable, index++);
         }
         return indexedSplittable.getPayload();
