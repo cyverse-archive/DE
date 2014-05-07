@@ -5,6 +5,7 @@ import org.iplantc.de.client.models.HasPaths;
 import org.iplantc.de.client.models.diskResources.DiskResourceAutoBeanFactory;
 import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.client.services.DiskResourceServiceFacade;
+import org.iplantc.de.client.util.DiskResourceUtil;
 import org.iplantc.de.commons.client.info.ErrorAnnouncementConfig;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
 import org.iplantc.de.commons.client.validators.DiskResourceNameValidator;
@@ -50,8 +51,6 @@ import com.sencha.gxt.widget.core.client.form.FormPanel.Encoding;
 import com.sencha.gxt.widget.core.client.form.FormPanel.Method;
 import com.sencha.gxt.widget.core.client.form.FormPanelHelper;
 import com.sencha.gxt.widget.core.client.form.TextField;
-import com.sencha.gxt.widget.core.client.tips.ToolTip;
-import com.sencha.gxt.widget.core.client.tips.ToolTipConfig;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -136,8 +135,8 @@ public class SimpleFileUploadDialog extends IPlantDialog {
     private void initDestPathLabel() {
         String destPath = uploadDest.getPath();
 
-        htmlDestText.setHTML(Format.ellipse(I18N.DISPLAY.uploadingToFolder(destPath), 80));
-        new ToolTip(htmlDestText, new ToolTipConfig(destPath));
+        htmlDestText.setHTML("<div title='" + destPath + "' style='color: #0098AA;width:100%;padding:5px;text-overflow:ellipsis;'>"
+                + Format.ellipse(I18N.DISPLAY.uploadingToFolder(DiskResourceUtil.parseNameFromPath(destPath)), 50) + "</div>");
     }
 
     @UiFactory

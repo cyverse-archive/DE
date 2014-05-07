@@ -1,6 +1,7 @@
 package org.iplantc.de.diskResource.client.views.dialogs;
 
 import org.iplantc.de.client.models.diskResources.Folder;
+import org.iplantc.de.client.util.DiskResourceUtil;
 import org.iplantc.de.commons.client.validators.DiskResourceNameValidator;
 import org.iplantc.de.commons.client.views.gxt3.dialogs.IPlantPromptDialog;
 import org.iplantc.de.diskResource.client.views.widgets.DiskResourceViewToolbar;
@@ -32,7 +33,8 @@ public class CreateFolderDialog extends IPlantPromptDialog {
     }
 
     private void initDestPathLabel(String destPath) {
-        HTML htmlDestText = new HTML("<div title='" + destPath + "' style='width:100%;padding:5px;text-overflow:ellipsis;'>" + Format.ellipse(I18N.DISPLAY.createIn(destPath), 50) + "</div>");
+        HTML htmlDestText = new HTML("<div title='" + destPath + "'style='color: #0098AA;width:100%;padding:5px;text-overflow:ellipsis;'>"
+                + Format.ellipse(I18N.DISPLAY.createIn(DiskResourceUtil.parseNameFromPath(destPath)), 50) + "</div>");
         insert(htmlDestText, 0);
     }
 }

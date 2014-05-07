@@ -35,8 +35,6 @@ import com.sencha.gxt.widget.core.client.form.Field;
 import com.sencha.gxt.widget.core.client.form.FormPanelHelper;
 import com.sencha.gxt.widget.core.client.form.TextArea;
 import com.sencha.gxt.widget.core.client.form.ValueBaseField;
-import com.sencha.gxt.widget.core.client.tips.ToolTip;
-import com.sencha.gxt.widget.core.client.tips.ToolTipConfig;
 
 import java.util.Collection;
 import java.util.Map;
@@ -92,8 +90,8 @@ public class FileUploadByUrlDialog extends IPlantDialog implements HasPending<En
     private void initDestPathLabel() {
         String destPath = uploadDest.getPath();
 
-        htmlDestText.setHTML(Format.ellipse(I18N.DISPLAY.uploadingToFolder(destPath), 80));
-        new ToolTip(htmlDestText, new ToolTipConfig(destPath));
+        htmlDestText.setHTML("<div title='" + destPath + "' style='color: #0098AA;width:100%;padding:5px;text-overflow:ellipsis;'>"
+                + Format.ellipse(I18N.DISPLAY.uploadingToFolder(DiskResourceUtil.parseNameFromPath(destPath)), 50) + "</div>");
     }
 
     @UiFactory
