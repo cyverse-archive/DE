@@ -109,7 +109,7 @@ public class AppsViewImpl extends Composite implements AppsView,
     ListStore<App> listStore;
 
     @UiField
-    ColumnModel<App> cm;
+    protected ColumnModel<App> cm;
 
     @UiField
     BorderLayoutContainer con;

@@ -20,7 +20,8 @@ import com.sencha.gxt.dnd.core.client.DropTarget;
 import com.sencha.gxt.widget.core.client.grid.ColumnModel;
 import com.sencha.gxt.widget.core.client.tree.Tree;
 
-public class AdminAppViewImpl extends AppsViewImpl implements AdminAppsView, AppSelectionChangedEvent.AppSelectionChangedEventHandler {
+public class AdminAppViewImpl extends AppsViewImpl implements AdminAppsView,
+                                                                      AppSelectionChangedEvent.AppSelectionChangedEventHandler {
 
     private final AdminAppsView.Toolbar toolbar;
 
@@ -56,6 +57,7 @@ public class AdminAppViewImpl extends AppsViewImpl implements AdminAppsView, App
         this.presenter = presenter;
         if(presenter instanceof AdminAppsView.AdminPresenter){
             toolbar.init((AdminAppsView.AdminPresenter) presenter, this, this);
+            ((BelphegorAnalysisColumnModel)cm).addAppNameSelectedEventHandler(presenter);
             initDragAndDrop((AdminAppsView.AdminPresenter)presenter);
             addAppSelectionChangedEventHandler(this);
             addAppGroupSelectedEventHandler(presenter);

@@ -5,11 +5,14 @@ import org.iplantc.admin.belphegor.client.apps.views.cells.AppNameCell;
 import org.iplantc.admin.belphegor.client.apps.views.cells.AvgAnalysisUserRatingCell;
 import org.iplantc.de.apps.client.views.AppProperties;
 import org.iplantc.de.apps.client.views.AppsView;
+import org.iplantc.de.apps.client.views.cells.AppHyperlinkCell;
 import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.models.apps.AppFeedback;
 
+import com.google.gwt.cell.client.Cell;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 
 import com.sencha.gxt.core.client.IdentityValueProvider;
@@ -19,10 +22,17 @@ import com.sencha.gxt.widget.core.client.grid.ColumnModel;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BelphegorAnalysisColumnModel extends ColumnModel<App> {
+public class BelphegorAnalysisColumnModel extends ColumnModel<App> implements AppHyperlinkCell.HasAppNameSelectedEventHandlers {
 
     public BelphegorAnalysisColumnModel(AppsView view) {
         super(createColumnConfigList(EventBus.getInstance(), view));
+
+        for(ColumnConfig<App, ?> colConfig : configs){
+            final Cell<?> cell = colConfig.getCell();
+            if(cell instanceof AppNameCell){
+                ((AppNameCell)cell).setHasHandlers(ensureHandlers());
+            }
+        }
     }
 
     public static List<ColumnConfig<App, ?>> createColumnConfigList(final EventBus eventBus,
@@ -51,4 +61,8 @@ public class BelphegorAnalysisColumnModel extends ColumnModel<App> {
         return list;
     }
 
+    @Override
+    public HandlerRegistration addAppNameSelectedEventHandler(AppHyperlinkCell.AppNameSelectedEventHandler handler) {
+        return ensureHandlers().addHandler(AppHyperlinkCell.EVENT_TYPE, handler);
+    }
 }
