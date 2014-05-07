@@ -2,7 +2,6 @@ package org.iplantc.de.client.services.impl;
 
 import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.GET;
 import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.POST;
-
 import org.iplantc.de.client.models.DEProperties;
 import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.client.models.diskResources.DiskResource;
@@ -17,7 +16,6 @@ import org.iplantc.de.client.services.Endpoints;
 import org.iplantc.de.client.services.ReservedBuckets;
 import org.iplantc.de.client.services.SearchServiceFacade;
 import org.iplantc.de.client.services.converters.AsyncCallbackConverter;
-import org.iplantc.de.client.util.CommonModelUtils;
 import org.iplantc.de.shared.services.ServiceCallWrapper;
 
 import com.google.common.base.Splitter;
@@ -294,15 +292,14 @@ public class SearchServiceFacadeImpl implements SearchServiceFacade {
 
     @Override
     public void getSavedQueryTemplates(AsyncCallback<List<DiskResourceQueryTemplate>> callback) {
-        //String address = endpoints.buckets() + "/" + userInfo.getUsername() + "/" + buckets.queryTemplates();
-        String address = deProperties.getMuleServiceBaseUrl() + "buckets/" + userInfo.getUsername() + "/reserved/" + buckets.queryTemplates();
+        String address = deProperties.getMuleServiceBaseUrl() + "saved-searches";
         ServiceCallWrapper wrapper = new ServiceCallWrapper(GET, address);
         deServiceFacade.getServiceData(wrapper, new QueryTemplateListCallbackConverter(callback, searchAbFactory));
     }
 
     @Override
     public void saveQueryTemplates(List<DiskResourceQueryTemplate> queryTemplates, AsyncCallback<List<DiskResourceQueryTemplate>> callback) {
-        String address = deProperties.getMuleServiceBaseUrl() + "buckets/" + userInfo.getUsername() + "/reserved/" + buckets.queryTemplates();
+        String address = deProperties.getMuleServiceBaseUrl() + "saved-searches";
 
         /*
          * TODO check to see if query templates all have names, and that they are unique.throw illegal
