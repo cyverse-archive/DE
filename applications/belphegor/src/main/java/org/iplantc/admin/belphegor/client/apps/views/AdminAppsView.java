@@ -36,7 +36,7 @@ public interface AdminAppsView extends AppsView {
 
     interface Toolbar extends IsWidget {
         void init(AdminPresenter presenter,
-                  final HasAppSelectionChangedEventHandlers hasAppSelectionChangedEventHandlers,
+                  AdminAppsView appView, final HasAppSelectionChangedEventHandlers hasAppSelectionChangedEventHandlers,
                   final HasAppGroupSelectionChangedEventHandlers hasAppGroupSelectionChangedEventHandlers);
     }
 }

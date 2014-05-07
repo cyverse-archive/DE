@@ -56,7 +56,7 @@ public class AdminAppViewImpl extends AppsViewImpl implements AdminAppsView,
     public void setPresenter(Presenter presenter) {
         this.presenter = presenter;
         if(presenter instanceof AdminAppsView.AdminPresenter){
-            toolbar.init((AdminAppsView.AdminPresenter) presenter, this, this);
+            toolbar.init((AdminAppsView.AdminPresenter) presenter, this, this, this);
             ((BelphegorAnalysisColumnModel)cm).addAppNameSelectedEventHandler(presenter);
             initDragAndDrop((AdminAppsView.AdminPresenter)presenter);
             addAppSelectionChangedEventHandler(this);
