@@ -12,8 +12,6 @@ import org.iplantc.de.client.models.search.DiskResourceQueryTemplate;
 import org.iplantc.de.client.models.search.DiskResourceQueryTemplateList;
 import org.iplantc.de.client.models.search.SearchAutoBeanFactory;
 import org.iplantc.de.client.services.DEServiceFacade;
-import org.iplantc.de.client.services.Endpoints;
-import org.iplantc.de.client.services.ReservedBuckets;
 import org.iplantc.de.client.services.SearchServiceFacade;
 import org.iplantc.de.client.services.converters.AsyncCallbackConverter;
 import org.iplantc.de.shared.services.ServiceCallWrapper;
@@ -259,24 +257,22 @@ public class SearchServiceFacadeImpl implements SearchServiceFacade {
         }
     }
 
-    private final ReservedBuckets buckets;
     private final DEServiceFacade deServiceFacade;
     private final DiskResourceAutoBeanFactory drFactory;
-    private final Endpoints endpoints;
     private final SearchAutoBeanFactory searchAbFactory;
     private final UserInfo userInfo;
     private final DEProperties deProperties;
 
     @Inject
-    public SearchServiceFacadeImpl(final DEServiceFacade deServiceFacade, final DEProperties deProperties, final SearchAutoBeanFactory searchAbFactory, final DiskResourceAutoBeanFactory drFactory,
-            final Endpoints endpoints,
-            final ReservedBuckets buckets, final UserInfo userInfo) {
+    public SearchServiceFacadeImpl(final DEServiceFacade deServiceFacade,
+                                   final DEProperties deProperties,
+                                   final SearchAutoBeanFactory searchAbFactory,
+                                   final DiskResourceAutoBeanFactory drFactory,
+                                   final UserInfo userInfo) {
         this.deServiceFacade = deServiceFacade;
         this.deProperties = deProperties;
         this.searchAbFactory = searchAbFactory;
         this.drFactory = drFactory;
-        this.endpoints = endpoints;
-        this.buckets = buckets;
         this.userInfo = userInfo;
     }
 
