@@ -349,6 +349,10 @@ public class MultiFileSelectorField extends Composite implements IsField<List<Ha
         dlg.show();
     }
 
+    private String getSplCharWarning() {
+        return "<span style='color:red;width:65%;font-size:9px;'>" + I18N.DISPLAY.analysisFailureWarning(I18N.V_CONSTANTS.warnedDiskResourceNameChars()) + "</span>";
+    }
+
     @UiHandler("deleteButton")
     void onDeleteButtonSelected(SelectEvent event) {
         if (!addDeleteButtonsEnabled) {
@@ -359,7 +363,7 @@ public class MultiFileSelectorField extends Composite implements IsField<List<Ha
         }
 
         if (checkForSplChar(Lists.<HasId> newArrayList(grid.getStore().getAll())).length() > 0) {
-            setInfoErrorText("<span style='color:red;'>" + I18N.DISPLAY.analysisFailureWarning(I18N.V_CONSTANTS.warnedDiskResourceNameChars()) + "</span>");
+            setInfoErrorText(getSplCharWarning());
         } else {
             setInfoErrorText("");
         }
@@ -443,7 +447,7 @@ public class MultiFileSelectorField extends Composite implements IsField<List<Ha
                     }
                 }
                 if (checkForSplChar(value).length() > 0) {
-                    setInfoErrorText("<span style='color:red;'>" + I18N.DISPLAY.analysisFailureWarning(I18N.V_CONSTANTS.warnedDiskResourceNameChars()) + "</span>");
+                    setInfoErrorText(getSplCharWarning());
                 } else {
                     setInfoErrorText("");
                 }

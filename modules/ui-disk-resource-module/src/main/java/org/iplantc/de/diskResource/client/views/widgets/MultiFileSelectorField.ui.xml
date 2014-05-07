@@ -26,15 +26,20 @@
         <ui:attributes width="1"
                        height="1" />
     </ui:with>
-       <ui:with type="com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer.VerticalLayoutData" field="bottominfoBarData">
+       <ui:with type="com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer.VerticalLayoutData" field="infoBarData">
         <ui:attributes width="1"
-                       height="30" />
+                       height="20" />
     </ui:with>
 
    <container:VerticalLayoutContainer height="300">
+       <container:child layoutData="{infoBarData}">
+             <g:HTML ui:field="warnInfo">
+             </g:HTML>
+       </container:child>
       <container:child layoutData="{toolBarData}">
 	      <toolbar:ToolBar ui:field="toolbar">
 	                       <!-- pack="END"> -->
+	          
 	           <toolbar:FillToolItem/>
 	            <button:TextButton ui:field="addButton"
 	                               text="{display.add}"
@@ -51,9 +56,5 @@
 	                 store="{listStore}"
 	                 view="{gridView}" />
       </container:child>
-      <container:child layoutData="{bottominfoBarData}">
-          <g:HTML ui:field="warnInfo">
-          </g:HTML>
-     </container:child>      
    </container:VerticalLayoutContainer>
 </ui:UiBinder>
