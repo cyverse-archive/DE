@@ -12,6 +12,7 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.uibinder.client.UiTemplate;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.inject.Inject;
 
 import com.sencha.gxt.widget.core.client.Composite;
 import com.sencha.gxt.widget.core.client.button.TextButton;
@@ -66,6 +67,7 @@ public class DiskResourceViewToolbarImpl extends Composite implements DiskResour
     @UiField
     MenuItem openTrashMi, restoreMi, emptyTrashMi;
 
+    @Inject
     public DiskResourceViewToolbarImpl() {
         initWidget(BINDER.createAndBindUi(this));
     }

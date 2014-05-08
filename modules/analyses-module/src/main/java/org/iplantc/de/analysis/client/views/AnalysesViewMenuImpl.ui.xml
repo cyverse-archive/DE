@@ -45,7 +45,7 @@
                 <button:menu>
                     <menu:Menu>
                         <menu:MenuItem ui:field="renameMI"
-                                       text="{strings.analysisRename}"
+                                       text="{strings.renameMenuItem}"
                                        icon="{icons.fileRename}"
                                        enabled="false"/>
                         <menu:MenuItem ui:field="updateCommentsMI"

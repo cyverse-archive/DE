@@ -5,8 +5,7 @@
              xmlns:gxt="urn:import:com.sencha.gxt.widget.core.client"
              xmlns:grid="urn:import:com.sencha.gxt.widget.core.client.grid"
              xmlns:paging="urn:import:com.sencha.gxt.widget.core.client.toolbar"
-             xmlns:form="urn:import:com.sencha.gxt.widget.core.client.form"
-             xmlns:toolbar="urn:import:org.iplantc.de.diskResource.client.views.DiskResourceView">
+             xmlns:form="urn:import:com.sencha.gxt.widget.core.client.form">
 
     <ui:with field="DISPLAY"
              type="org.iplantc.de.resources.client.messages.IplantDisplayStrings"/>
@@ -92,7 +91,6 @@
                                      borders="true">
         <!-- Tool Bar -->
         <container:north layoutData="{northData}">
-            <toolbar:DiskResourceViewToolbar ui:field="toolbar" />
         </container:north>
 
         <!-- Navigation Panel -->

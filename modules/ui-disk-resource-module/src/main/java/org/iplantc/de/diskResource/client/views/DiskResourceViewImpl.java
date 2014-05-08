@@ -75,8 +75,10 @@ import com.sencha.gxt.widget.core.client.event.SelectEvent;
 import com.sencha.gxt.widget.core.client.event.SelectEvent.SelectHandler;
 import com.sencha.gxt.widget.core.client.form.FieldLabel;
 import com.sencha.gxt.widget.core.client.form.TextField;
-import com.sencha.gxt.widget.core.client.grid.*;
+import com.sencha.gxt.widget.core.client.grid.ColumnModel;
 import com.sencha.gxt.widget.core.client.grid.Grid;
+import com.sencha.gxt.widget.core.client.grid.LiveGridView;
+import com.sencha.gxt.widget.core.client.grid.LiveToolItem;
 import com.sencha.gxt.widget.core.client.selection.SelectionChangedEvent;
 import com.sencha.gxt.widget.core.client.selection.SelectionChangedEvent.SelectionChangedHandler;
 import com.sencha.gxt.widget.core.client.toolbar.FillToolItem;
@@ -85,7 +87,10 @@ import com.sencha.gxt.widget.core.client.tree.Tree;
 import com.sencha.gxt.widget.core.client.tree.Tree.TreeNode;
 import com.sencha.gxt.widget.core.client.tree.TreeView;
 
-import java.util.*;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 
 public class DiskResourceViewImpl implements DiskResourceView, SelectionHandler<Folder>, SelectionChangedHandler<DiskResource> {
 
@@ -162,19 +167,14 @@ public class DiskResourceViewImpl implements DiskResourceView, SelectionHandler<
         }
     }
 
-
-
-
-
     @UiTemplate("DiskResourceView.ui.xml")
-    interface DiskResourceViewUiBinder extends UiBinder<Widget, DiskResourceViewImpl> {
-    }
+    interface DiskResourceViewUiBinder extends UiBinder<Widget, DiskResourceViewImpl> { }
 
     private static DiskResourceViewUiBinder BINDER = GWT.create(DiskResourceViewUiBinder.class);
 
     private Presenter presenter;
 
-    @UiField
+//    @UiField
     DiskResourceViewToolbar toolbar;
 
     @UiField
@@ -242,8 +242,12 @@ public class DiskResourceViewImpl implements DiskResourceView, SelectionHandler<
     private final DiskResourceAutoBeanFactory drFactory;
 
     @Inject
-    public DiskResourceViewImpl(final Tree<Folder, Folder> tree, final DiskResourceAutoBeanFactory factory, final IplantDisplayStrings displayStrings) {
+    public DiskResourceViewImpl(final Tree<Folder, Folder> tree,
+                                final DiskResourceViewToolbar viewToolbar,
+                                final DiskResourceAutoBeanFactory factory,
+                                final IplantDisplayStrings displayStrings) {
         this.tree = tree;
+        this.toolbar = viewToolbar;
         this.displayStrings = displayStrings;
         this.treeStore = tree.getStore();
         this.drFactory = factory;
@@ -271,6 +275,7 @@ public class DiskResourceViewImpl implements DiskResourceView, SelectionHandler<
         addTreeCollapseButton();
         pathField.addKeyPressHandler(new PathFieldKeyPressHandlerImpl());
 
+        con.setNorthWidget(toolbar, northData);
     }
 
     @Override

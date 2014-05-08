@@ -53,7 +53,7 @@
                                        icon="{icons.copy}" />
 						<menu:MenuItem ui:field="editApp"
                                        debugId="idEditAppBtn"
-                                       text="{strings.edit}"
+                                       text="{strings.editMenuItem}"
                                        icon="{icons.edit}" />
 						<menu:MenuItem ui:field="deleteApp"
                                        debugId="idDeleteBtn"
@@ -88,7 +88,7 @@
                                        icon="{icons.copy}" />
 						<menu:MenuItem ui:field="editWf"
                                        debugId="idWfEditAppBtn"
-                                       text="{strings.edit}"
+                                       text="{strings.editMenuItem}"
                                        icon="{icons.edit}" />
 						<menu:MenuItem ui:field="deleteWf"
                                        debugId="idWfDeleteBtn"

@@ -19,15 +19,17 @@
         <!-- Upload Menu -->
         <toolbar:child>
             <button:TextButton ui:field="uploadMenu"
-                               text="{display.upload}"
-                               icon="{res.importData}">
+                               text="{display.upload}">
                 <button:menu>
-                    <menu:MenuItem ui:field="simpleUploadMi"
-                                   text="{display.simpleUploadFromDesktop}"/>
-                    <menu:MenuItem ui:field="bulkUploadMi"
-                                   text="{display.bulkUploadFromDesktop}"/>
-                    <menu:MenuItem ui:field="importFromUrlMi"
-                                   text="Import From URL..."/>
+                    <menu:Menu>
+                        <menu:MenuItem ui:field="simpleUploadMi"
+                                       icon="{res.importData}"
+                                       text="{display.simpleUploadFromDesktop}"/>
+                        <menu:MenuItem ui:field="bulkUploadMi"
+                                       text="{display.bulkUploadFromDesktop}"/>
+                        <menu:MenuItem ui:field="importFromUrlMi"
+                                       text="{display.importFromUrlMenuItem}"/>
+                    </menu:Menu>
                 </button:menu>
             </button:TextButton>
         </toolbar:child>
@@ -37,24 +39,26 @@
             <button:TextButton ui:field="fileMenu"
                                text="File">
                 <button:menu>
-                    <menu:MenuItem ui:field="newWindowMi"
-                                   text="{display.newWindow}"
-                                   icon="{res.add}"/>
-                    <menu:MenuItem ui:field="newWindowAtLocMi"
-                                   text="New Data Window at this location"/>
-                    <menu:MenuItem ui:field="newFolderMi"
-                                   text="New Folder..."
-                                   icon="{res.folderAdd}"/>
-                    <menu:MenuItem ui:field="duplicateMi"
-                                   text="Duplicate"/>
-                    <menu:MenuItem ui:field="addToSideBarMi"
-                                   text="Add to Sidebar"/>
-                    <menu:MenuItem ui:field="newPlainTextFileMi"
-                                   text="New Plain Text File..."/>
-                    <menu:MenuItem ui:field="newTabularDataFileMi"
-                                   text="New Tabular Data File..."/>
-                    <menu:MenuItem ui:field="moveToTrashMi"
-                                   text="Move to Trash"/>
+                    <menu:Menu>
+                        <menu:MenuItem ui:field="newWindowMi"
+                                       text="{display.newWindow}"
+                                       icon="{res.add}"/>
+                        <menu:MenuItem ui:field="newWindowAtLocMi"
+                                       text="{display.newDataWindowAtLocMenuItem}"/>
+                        <menu:MenuItem ui:field="newFolderMi"
+                                       text="{display.newFolderMenuItem}"
+                                       icon="{res.folderAdd}"/>
+                        <menu:MenuItem ui:field="duplicateMi"
+                                       text="{display.duplicateMenuItem}"/>
+                        <menu:MenuItem ui:field="addToSideBarMi"
+                                       text="{display.addToSideBarMenuItem}"/>
+                        <menu:MenuItem ui:field="newPlainTextFileMi"
+                                       text="{display.newPlainTextFileMenuItem}"/>
+                        <menu:MenuItem ui:field="newTabularDataFileMi"
+                                       text="{display.newTabularDataFileMenuItem}"/>
+                        <menu:MenuItem ui:field="moveToTrashMi"
+                                       text="{display.moveToTrashMenuItem}"/>
+                    </menu:Menu>
                 </button:menu>
             </button:TextButton>
         </toolbar:child>
@@ -64,24 +68,26 @@
             <button:TextButton ui:field="editMenu"
                                text="{display.edit}">
                 <button:menu>
-                    <menu:MenuItem ui:field="renameMi"
-                                   text="Rename..."
-                                   icon="{res.fileRename}"/>
-                    <menu:MenuItem ui:field="editFileMi"
-                                   text="Edit File..."/>
-                    <menu:MenuItem ui:field="editCommentsMi"
-                                   text="Edit Comments..."/>
-                    <menu:MenuItem ui:field="editInfoTypeMi"
-                                   text="Edit Information Type..."/>
-                    <menu:MenuItem ui:field="metadataMi"
-                                   text="{display.metadata}"
-                                   icon="{res.metadata}"/>
-                    <menu:MenuItem ui:field="moveMi"
-                                   text="{display.move}"
-                                   icon="{res.edit}"/>
-                    <menu:MenuItem ui:field="deleteMi"
-                                   text="{display.delete}"
-                                   icon="{res.fileDelete}"/>
+                    <menu:Menu>
+                        <menu:MenuItem ui:field="renameMi"
+                                       text="{display.renameMenuItem}"
+                                       icon="{res.fileRename}"/>
+                        <menu:MenuItem ui:field="editFileMi"
+                                       text="{display.editMenuItem}"/>
+                        <menu:MenuItem ui:field="editCommentsMi"
+                                       text="{display.editCommentsMenuItem}"/>
+                        <menu:MenuItem ui:field="editInfoTypeMi"
+                                       text="{display.editInfoTypeMenuItem}"/>
+                        <menu:MenuItem ui:field="metadataMi"
+                                       text="{display.metadataMenuItem}"
+                                       icon="{res.metadata}"/>
+                        <menu:MenuItem ui:field="moveMi"
+                                       text="{display.moveMenuItem}"
+                                       icon="{res.edit}"/>
+                        <menu:MenuItem ui:field="deleteMi"
+                                       text="{display.delete}"
+                                       icon="{res.fileDelete}"/>
+                    </menu:Menu>
                 </button:menu>
             </button:TextButton>
         </toolbar:child>
@@ -91,10 +97,12 @@
             <button:TextButton ui:field="downloadMenu"
                                text="{display.download}">
                 <button:menu>
-                    <menu:MenuItem ui:field="simpleDownloadMi"
-                                   text="Simple Download..."/>
-                    <menu:MenuItem ui:field="bulkDownloadMi"
-                                   text="Bulk Download..."/>
+                    <menu:Menu>
+                        <menu:MenuItem ui:field="simpleDownloadMi"
+                                       text="{display.simpleDownloadMenuItem}"/>
+                        <menu:MenuItem ui:field="bulkDownloadMi"
+                                       text="{display.bulkDownloadMenuItem}"/>
+                    </menu:Menu>
                 </button:menu>
             </button:TextButton>
         </toolbar:child>
@@ -104,16 +112,18 @@
             <button:TextButton ui:field="shareMenu"
                                text="{display.share}">
                 <button:menu>
-                    <menu:MenuItem ui:field="shareWithCollaboratorsMi"
-                                   text="Share With Collaborators..."/>
-                    <menu:MenuItem ui:field="createPublicLinkMi"
-                                   text="Create a Public Link..."/>
-                    <menu:MenuItem ui:field="sendToCogeMi"
-                                   text="Send to CoGE"/>
-                    <menu:MenuItem ui:field="sendToEnsemblMi"
-                                   text="Send to Ensempl"/>
-                    <menu:MenuItem ui:field="sendToTreeViewerMi"
-                                   text="Send to Tree Viewer"/>
+                    <menu:Menu>
+                        <menu:MenuItem ui:field="shareWithCollaboratorsMi"
+                                       text="{display.shareWithCollaboratorsMenuItem}"/>
+                        <menu:MenuItem ui:field="createPublicLinkMi"
+                                       text="{display.createPublicLinkMenuItem}"/>
+                        <menu:MenuItem ui:field="sendToCogeMi"
+                                       text="{display.sendToCogeMenuItem}"/>
+                        <menu:MenuItem ui:field="sendToEnsemblMi"
+                                       text="{display.sendToEnsemblMenuItem}"/>
+                        <menu:MenuItem ui:field="sendToTreeViewerMi"
+                                       text="{display.sendToTreeViewerMenuItem}"/>
+                    </menu:Menu>
                 </button:menu>
             </button:TextButton>
         </toolbar:child>
@@ -135,13 +145,15 @@
             <button:TextButton ui:field="trashMenu"
                                text="Trash">
                 <button:menu>
-                    <menu:MenuItem ui:field="openTrashMi"
-                                   text="Open Trash"/>
-                    <menu:MenuItem ui:field="restoreMi"
-                                   text="{display.restore}"/>
-                    <menu:SeparatorMenuItem/>
-                    <menu:MenuItem ui:field="emptyTrashMi"
-                                   text="{display.emptyTrash}"/>
+                    <menu:Menu>
+                        <menu:MenuItem ui:field="openTrashMi"
+                                       text="{display.openTrashMenuItem}"/>
+                        <menu:MenuItem ui:field="restoreMi"
+                                       text="{display.restore}"/>
+                        <menu:SeparatorMenuItem/>
+                        <menu:MenuItem ui:field="emptyTrashMi"
+                                       text="{display.emptyTrash}"/>
+                    </menu:Menu>
                 </button:menu>
             </button:TextButton>
         </toolbar:child>
