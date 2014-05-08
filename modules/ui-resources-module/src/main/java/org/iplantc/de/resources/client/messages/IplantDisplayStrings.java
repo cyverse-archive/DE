@@ -106,6 +106,12 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     String advancedSharing();
 
     /**
+     * 
+     * @return
+     */
+    String advancedSearchToolTip();
+
+    /**
      * Translated "Yes".
      *
      * @return translated "Yes"

@@ -4,6 +4,7 @@ import org.iplantc.de.diskResource.client.search.events.SaveDiskResourceQueryEve
 import org.iplantc.de.diskResource.client.search.events.SubmitDiskResourceQueryEvent;
 import org.iplantc.de.diskResource.client.search.events.SubmitDiskResourceQueryEvent.HasSubmitDiskResourceQueryEventHandlers;
 import org.iplantc.de.diskResource.client.search.events.SubmitDiskResourceQueryEvent.SubmitDiskResourceQueryEventHandler;
+import org.iplantc.de.resources.client.messages.I18N;
 
 import com.google.gwt.cell.client.ValueUpdater;
 import com.google.gwt.core.client.GWT;
@@ -11,6 +12,7 @@ import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NativeEvent;
+import com.google.gwt.dom.client.Style.Cursor;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.shared.HandlerRegistration;
 
@@ -185,5 +187,18 @@ public class DiskResourceSearchCell extends TriggerFieldCell<String> implements 
             }
             expand(context, parent, value, updater);
         }
+    }
+
+    @Override
+    protected void onMouseOver(XElement parent, NativeEvent event) {
+        super.onMouseOver(parent, event);
+        parent.getStyle().setCursor(Cursor.POINTER);
+        parent.setTitle(I18N.DISPLAY.advancedSearchToolTip());
+    }
+
+    @Override
+    protected void onMouseOut(XElement parent, NativeEvent event) {
+        super.onMouseOut(parent, event);
+        parent.getStyle().setCursor(Cursor.AUTO);
     }
 }
