@@ -377,7 +377,7 @@ public class DiskResourceUtil {
     public static boolean isEnsemblVizTab(JSONObject obj) {
         if (checkManifest(obj)) {
             String info_type = JsonUtil.getString(obj, "info-type");
-            return (info_type.equals(InfoType.BAM.toString()) || info_type.equals(InfoType.VCF.toString()));
+            return (info_type.equals(InfoType.BAM.toString()) || info_type.equals(InfoType.VCF.toString()) || info_type.equals(InfoType.GFF.toString()));
         }
         return false;
     }

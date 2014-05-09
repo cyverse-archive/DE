@@ -26,7 +26,7 @@ public final class DiskResourcesEventHandler implements DiskResourcesDeletedEven
                                                         DiskResourceRenamedEventHandler,
                                                         FolderCreatedEventHandler,
                                                         FolderRefreshEventHandler,
-                                                        UpdateSavedSearchesHandler {
+ UpdateSavedSearchesHandler {
     private final DiskResourceView.Presenter presenter;
     private final DiskResourceView view;
 
@@ -161,5 +161,4 @@ public final class DiskResourcesEventHandler implements DiskResourcesDeletedEven
             }
         }
     }
-
 }

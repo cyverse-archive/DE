@@ -10,7 +10,12 @@ import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.client.models.dataLink.DataLink;
 import org.iplantc.de.client.models.dataLink.DataLinkFactory;
 import org.iplantc.de.client.models.dataLink.DataLinkList;
-import org.iplantc.de.client.models.diskResources.*;
+import org.iplantc.de.client.models.diskResources.DiskResource;
+import org.iplantc.de.client.models.diskResources.DiskResourceAutoBeanFactory;
+import org.iplantc.de.client.models.diskResources.DiskResourceInfo;
+import org.iplantc.de.client.models.diskResources.File;
+import org.iplantc.de.client.models.diskResources.Folder;
+import org.iplantc.de.client.models.diskResources.PermissionValue;
 import org.iplantc.de.client.models.search.DiskResourceQueryTemplate;
 import org.iplantc.de.client.services.DiskResourceServiceFacade;
 import org.iplantc.de.client.util.CommonModelUtils;
@@ -21,11 +26,31 @@ import org.iplantc.de.commons.client.info.IplantAnnouncer;
 import org.iplantc.de.commons.client.views.gxt3.dialogs.IPlantDialog;
 import org.iplantc.de.diskResource.client.dataLink.presenter.DataLinkPresenter;
 import org.iplantc.de.diskResource.client.dataLink.view.DataLinkPanel;
-import org.iplantc.de.diskResource.client.events.*;
+import org.iplantc.de.diskResource.client.events.CreateNewFileEvent;
+import org.iplantc.de.diskResource.client.events.DiskResourceRenamedEvent;
+import org.iplantc.de.diskResource.client.events.DiskResourceSelectionChangedEvent;
+import org.iplantc.de.diskResource.client.events.DiskResourcesDeletedEvent;
+import org.iplantc.de.diskResource.client.events.DiskResourcesMovedEvent;
+import org.iplantc.de.diskResource.client.events.FolderCreatedEvent;
+import org.iplantc.de.diskResource.client.events.FolderSelectionEvent;
+import org.iplantc.de.diskResource.client.events.RequestBulkDownloadEvent;
+import org.iplantc.de.diskResource.client.events.RequestBulkUploadEvent;
+import org.iplantc.de.diskResource.client.events.RequestImportFromUrlEvent;
+import org.iplantc.de.diskResource.client.events.RequestSendToCoGeEvent;
+import org.iplantc.de.diskResource.client.events.RequestSendToEnsemblEvent;
+import org.iplantc.de.diskResource.client.events.RequestSendToTreeViewerEvent;
+import org.iplantc.de.diskResource.client.events.RequestSimpleDownloadEvent;
+import org.iplantc.de.diskResource.client.events.RequestSimpleUploadEvent;
+import org.iplantc.de.diskResource.client.events.ShowFilePreviewEvent;
 import org.iplantc.de.diskResource.client.metadata.presenter.DiskResourceMetadataUpdateCallback;
 import org.iplantc.de.diskResource.client.metadata.presenter.MetadataPresenter;
 import org.iplantc.de.diskResource.client.metadata.view.DiskResourceMetadataView;
-import org.iplantc.de.diskResource.client.presenters.callbacks.*;
+import org.iplantc.de.diskResource.client.presenters.callbacks.CreateFolderCallback;
+import org.iplantc.de.diskResource.client.presenters.callbacks.DiskResourceDeleteCallback;
+import org.iplantc.de.diskResource.client.presenters.callbacks.DiskResourceMoveCallback;
+import org.iplantc.de.diskResource.client.presenters.callbacks.DiskResourceRestoreCallback;
+import org.iplantc.de.diskResource.client.presenters.callbacks.GetDiskResourceDetailsCallback;
+import org.iplantc.de.diskResource.client.presenters.callbacks.RenameDiskResourceCallback;
 import org.iplantc.de.diskResource.client.presenters.handlers.CachedFolderTreeStoreBinding;
 import org.iplantc.de.diskResource.client.presenters.handlers.DiskResourcesEventHandler;
 import org.iplantc.de.diskResource.client.presenters.proxy.FolderContentsLoadConfig;
@@ -41,14 +66,18 @@ import org.iplantc.de.diskResource.client.views.DiskResourceView;
 import org.iplantc.de.diskResource.client.views.cells.events.DiskResourceNameSelectedEvent;
 import org.iplantc.de.diskResource.client.views.cells.events.ManageMetadataEvent;
 import org.iplantc.de.diskResource.client.views.cells.events.ManageSharingEvent;
-import org.iplantc.de.diskResource.client.views.dialogs.*;
+import org.iplantc.de.diskResource.client.views.dialogs.CreateFolderDialog;
+import org.iplantc.de.diskResource.client.views.dialogs.FolderSelectDialog;
+import org.iplantc.de.diskResource.client.views.dialogs.InfoTypeEditorDialog;
+import org.iplantc.de.diskResource.client.views.dialogs.RenameFileDialog;
+import org.iplantc.de.diskResource.client.views.dialogs.RenameFolderDialog;
 import org.iplantc.de.resources.client.messages.I18N;
 import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
+
 import com.google.common.base.Strings;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
@@ -57,6 +86,7 @@ import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONString;
+import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasOneWidget;
@@ -81,16 +111,22 @@ import com.sencha.gxt.widget.core.client.event.SelectEvent.SelectHandler;
 import com.sencha.gxt.widget.core.client.form.TextField;
 import com.sencha.gxt.widget.core.client.tree.Tree.TreeNode;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map.Entry;
+import java.util.Set;
 
 /**
  * 
  * @author jstroot
  * 
  */
-public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
-                                                          DiskResourceSelectionChangedEvent.DiskResourceSelectionChangedEventHandler {
+public class DiskResourcePresenterImpl implements DiskResourceView.Presenter, DiskResourceSelectionChangedEvent.DiskResourceSelectionChangedEventHandler {
 
     final DiskResourceView view;
     private final DiskResourceView.Proxy proxy;
@@ -175,7 +211,7 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
         if (event.getSelectedItem() instanceof Folder) {
             setSelectedFolderByPath(event.getSelectedItem());
         } else if ((event.getSelectedItem() instanceof File) && isFilePreviewEnabled) {
-            eventBus.fireEvent(new ShowFilePreviewEvent((File) event.getSelectedItem(), this));
+            eventBus.fireEvent(new ShowFilePreviewEvent((File)event.getSelectedItem(), this));
         }
     }
 
@@ -184,7 +220,14 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
         final List<DiskResource> selection = event.getSelection();
         if (selection != null && selection.size() == 1) {
             Iterator<DiskResource> it = selection.iterator();
-            getDetails(it.next().getPath());
+            DiskResource next = it.next();
+            String path = next.getPath();
+            DiskResourceInfo diskResourceInfo = next.getDiskResourceInfo();
+            if (diskResourceInfo == null) {
+                getDetails(path);
+            } else {
+                view.updateDetails(path, diskResourceInfo);
+            }
         } else {
             view.resetDetailsPanel();
         }
@@ -195,7 +238,7 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
      * Whenever this method is called with a non-null and non-empty list, the presenter will have the
      * view de-select all disk resources
      * in the center panel.
-     *
+     * 
      * @param folder the selected folder
      */
     void onFolderSelected(final Folder folder) {
@@ -272,7 +315,7 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
         checkNotNull(event.getDiskResourceToShare());
 
         final DiskResource diskResourceToShare = event.getDiskResourceToShare();
-        if(diskResourceToShare instanceof Folder){
+        if (diskResourceToShare instanceof Folder) {
             showShareLink(GWT.getHostPageBaseURL() + "?type=data&folder=" + diskResourceToShare.getId());
         } else {
             diskResourceService.createDataLinks(Arrays.asList(diskResourceToShare.getPath()), new AsyncCallback<String>() {
@@ -350,8 +393,7 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
     }
 
     @Override
-    public void go(HasOneWidget container, HasPath folderToSelect,
-            final List<? extends HasId> diskResourcesToSelect) {
+    public void go(HasOneWidget container, HasPath folderToSelect, final List<? extends HasId> diskResourcesToSelect) {
 
         if ((folderToSelect == null) || Strings.isNullOrEmpty(folderToSelect.getPath())) {
             go(container);
@@ -392,8 +434,7 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
             }
         } else {
             // Create and add the SelectFolderByIdLoadHandler to the treeLoader.
-            final SelectFolderByPathLoadHandler handler = new SelectFolderByPathLoadHandler(
-                    folderToSelect, this, announcer);
+            final SelectFolderByPathLoadHandler handler = new SelectFolderByPathLoadHandler(folderToSelect, this, announcer);
             /*
              * Only add handler if no root items have been loaded, or the folderToSelect has a common
              * root with the treestore.
@@ -420,7 +461,9 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
         arr.set(0, new JSONString(path));
         obj.put("paths", arr); //$NON-NLS-1$
         diskResourceService.getStat(obj.toString(), new GetDiskResourceDetailsCallback(this, path, drFactory));
-
+        view.maskSendToCoGe();
+        view.maskSendToEnsembl();
+        view.maskSendToTreeViewer();
     }
 
     @Override
@@ -493,8 +536,7 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
 
     @Override
     public void renameSelectedResource() {
-        if (!getSelectedDiskResources().isEmpty()
-                    && (getSelectedDiskResources().size() == 1)) {
+        if (!getSelectedDiskResources().isEmpty() && (getSelectedDiskResources().size() == 1)) {
             DiskResource dr = getSelectedDiskResources().iterator().next();
             if (dr instanceof File) {
                 RenameFileDialog dlg = new RenameFileDialog((File)dr, this);
@@ -539,17 +581,68 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
 
     @Override
     public void sendSelectedResourceToEnsembl() {
-
+        final Set<DiskResource> selection = view.getSelectedDiskResources();
+        Iterator<DiskResource> it = selection.iterator();
+        DiskResource next = it.next();
+        String infoType = getInfoType(next);
+        if(Strings.isNullOrEmpty(infoType)) {
+            SafeHtmlBuilder builder = new SafeHtmlBuilder();
+            builder.appendEscaped("Cannot send this file to Ensembl. Unsupported Information type.");
+            IplantAnnouncer.getInstance().schedule(new ErrorAnnouncementConfig(builder.toSafeHtml(), true, 4000));
+            return;
+        }
+        JSONObject obj = new JSONObject();
+        obj.put("info-type", new JSONString(infoType));
+        if (DiskResourceUtil.isEnsemblVizTab(obj)) {
+            eventBus.fireEvent(new RequestSendToEnsemblEvent((File)next));
+        }
     }
 
     @Override
     public void sendSelectedResourcesToCoge() {
-
+        final Set<DiskResource> selection = view.getSelectedDiskResources();
+        Iterator<DiskResource> it = selection.iterator();
+        DiskResource next = it.next();
+        String infoType = getInfoType(next);
+        if (Strings.isNullOrEmpty(infoType)) {
+            SafeHtmlBuilder builder = new SafeHtmlBuilder();
+            builder.appendEscaped("Cannot send this file to CoGe. Unsupported Information type.");
+            IplantAnnouncer.getInstance().schedule(new ErrorAnnouncementConfig(builder.toSafeHtml(), true, 4000));
+            return;
+        }
+        JSONObject obj = new JSONObject();
+        obj.put("info-type", new JSONString(infoType));
+        if (DiskResourceUtil.isGenomeVizTab(obj)) {
+            eventBus.fireEvent(new RequestSendToCoGeEvent((File)next));
+        }
     }
 
     @Override
     public void sendSelectedResourcesToTreeViewer() {
+        final Set<DiskResource> selection = view.getSelectedDiskResources();
+        Iterator<DiskResource> it = selection.iterator();
+        DiskResource next = it.next();
+        String infoType = getInfoType(next);
+        if (Strings.isNullOrEmpty(infoType)) {
+            SafeHtmlBuilder builder = new SafeHtmlBuilder();
+            builder.appendEscaped("Cannot send this file to Tree viewer. Unsupported Information type.");
+            IplantAnnouncer.getInstance().schedule(new ErrorAnnouncementConfig(builder.toSafeHtml(), true, 4000));
+            return;
+        }
+        JSONObject obj = new JSONObject();
+        obj.put("info-type", new JSONString(infoType));
+        if (DiskResourceUtil.isEnsemblVizTab(obj)) {
+            eventBus.fireEvent(new RequestSendToTreeViewerEvent((File)next));
+        }
+    }
 
+
+    private String getInfoType(DiskResource dr) {
+        DiskResourceInfo diskResourceInfo = dr.getDiskResourceInfo();
+        if (diskResourceInfo == null) {
+            ErrorHandler.post("Unable to retrieve information type");
+        }
+        return diskResourceInfo.getInfoType();
     }
 
     @Override
@@ -586,7 +679,6 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
             onFolderSelected(folder);
         }
 
-
     }
 
     @Override
@@ -611,11 +703,16 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
     public void manageSelectedResourceCollaboratorSharing() {
         DataSharingDialog dlg = new DataSharingDialog(getSelectedDiskResources());
         dlg.show();
-        dlg.addOkButtonSelectHandler(new SelectHandler() {
-
+        dlg.addHideHandler(new HideHandler() {
             @Override
-            public void onSelect(SelectEvent event) {
-                onDiskResourceSelectionChanged(new DiskResourceSelectionChangedEvent(Lists.newArrayList(view.getSelectedDiskResources())));
+            public void onHide(HideEvent event) {
+                final Set<DiskResource> selection = view.getSelectedDiskResources();
+                if (selection != null && selection.size() == 1) {
+                    Iterator<DiskResource> it = selection.iterator();
+                    DiskResource next = it.next();
+                    String path = next.getPath();
+                    getDetails(path);
+                }
             }
         });
     }
@@ -904,8 +1001,9 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
 
     @Override
     public void emptyTrash() {
-        final ConfirmMessageBox cmb = new ConfirmMessageBox(displayStrings.emptyTrash(),
-                                                                   displayStrings.emptyTrashWarning());
+
+        // TODO CORE-5300 Move confirmation box to view, which will call presenter
+        final ConfirmMessageBox cmb = new ConfirmMessageBox(I18N.DISPLAY.emptyTrash(), I18N.DISPLAY.emptyTrashWarning());
         cmb.addHideHandler(new HideHandler() {
             @Override
             public void onHide(HideEvent event) {
@@ -961,8 +1059,7 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
                     if (canDragDataToTargetFolder(targetFolder, selectedResources)) {
                         doMoveDiskResources(targetFolder, selectedResources);
                     } else {
-                        announcer.schedule(new ErrorAnnouncementConfig(I18N.ERROR
-                                .diskResourceIncompleteMove()));
+                        announcer.schedule(new ErrorAnnouncementConfig(I18N.ERROR.diskResourceIncompleteMove()));
                         view.unmask();
                     }
                 } else {
@@ -1024,6 +1121,18 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
                 getDetails(id);
             }
         });
+    }
+
+    @Override
+    public void displayAndCacheDiskResourceInfo(String path, DiskResourceInfo info) {
+        if (info == null) {
+            return;
+        }
+
+        view.displayAndCacheDiskResourceInfo(path, info);
+        view.unmaskSendToCoGe();
+        view.unmaskSendToEnsembl();
+        view.unMaskSendToTreeViewer();
     }
 
 }

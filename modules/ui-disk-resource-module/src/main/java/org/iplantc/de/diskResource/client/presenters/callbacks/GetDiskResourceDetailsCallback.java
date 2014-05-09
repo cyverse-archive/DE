@@ -50,7 +50,7 @@ public final class GetDiskResourceDetailsCallback implements AsyncCallback<Strin
         JSONObject details = JsonUtil.getObject(pathsObj, path);
         AutoBean<DiskResourceInfo> bean = AutoBeanCodex.decode(factory, DiskResourceInfo.class,
                 details.toString());
-        presenter.getView().updateDetails(path, bean.as());
+        presenter.displayAndCacheDiskResourceInfo(path, bean.as());
         presenter.getView().unmaskDetailsPanel();
     }
 }

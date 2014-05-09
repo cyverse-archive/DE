@@ -178,7 +178,7 @@ public interface DiskResourceView extends IsWidget,
 
         void resetInfoType();
 
-
+        void displayAndCacheDiskResourceInfo(String path, DiskResourceInfo info);
     }
 
     /**
@@ -297,10 +297,36 @@ public interface DiskResourceView extends IsWidget,
 
     HasSafeHtml getCenterPanelHeader();
 
+    void maskSendToCoGe();
+
+    void unmaskSendToCoGe();
+
+    void maskSendToEnsembl();
+
+    void unmaskSendToEnsembl();
+
+    void maskSendToTreeViewer();
+
+    void unMaskSendToTreeViewer();
+
     interface DiskResourceViewToolbar extends IsWidget {
 
         void init(DiskResourceView.Presenter presenter, DiskResourceView view);
 
         DiskResourceSearchField getSearchField();
+
+        void maskSendToCoGe();
+
+        void unmaskSendToCoGe();
+
+        void maskSendToEnsembl();
+
+        void unmaskSendToEnsembl();
+
+        void maskSendToTreeViewer();
+
+        void unMaskSendToTreeViewer();
     }
+
+    void displayAndCacheDiskResourceInfo(String path, DiskResourceInfo info);
 }

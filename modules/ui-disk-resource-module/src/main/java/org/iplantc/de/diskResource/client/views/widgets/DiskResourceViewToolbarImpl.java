@@ -384,4 +384,40 @@ public class DiskResourceViewToolbarImpl extends Composite implements DiskResour
     void onSimpleUploadClicked(SelectionEvent<Item> event) {
         presenter.doSimpleUpload();
     }
+
+    @Override
+    public void maskSendToCoGe() {
+        sendToCogeMi.mask();
+
+    }
+
+    @Override
+    public void unmaskSendToCoGe() {
+        sendToCogeMi.unmask();
+
+    }
+
+    @Override
+    public void maskSendToEnsembl() {
+        sendToEnsemblMi.mask();
+
+    }
+
+    @Override
+    public void unmaskSendToEnsembl() {
+        sendToEnsemblMi.mask();
+
+    }
+
+    @Override
+    public void maskSendToTreeViewer() {
+        sendToTreeViewerMi.mask();
+
+    }
+
+    @Override
+    public void unMaskSendToTreeViewer() {
+        sendToTreeViewerMi.unmask();
+
+    }
 }

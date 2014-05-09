@@ -4,7 +4,12 @@ import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.models.HasId;
 import org.iplantc.de.client.models.HasPath;
 import org.iplantc.de.client.models.UserInfo;
-import org.iplantc.de.client.models.diskResources.*;
+import org.iplantc.de.client.models.diskResources.DiskResource;
+import org.iplantc.de.client.models.diskResources.DiskResourceAutoBeanFactory;
+import org.iplantc.de.client.models.diskResources.DiskResourceInfo;
+import org.iplantc.de.client.models.diskResources.File;
+import org.iplantc.de.client.models.diskResources.Folder;
+import org.iplantc.de.client.models.diskResources.PermissionValue;
 import org.iplantc.de.client.models.search.DiskResourceQueryTemplate;
 import org.iplantc.de.client.util.CommonModelUtils;
 import org.iplantc.de.client.util.DiskResourceUtil;
@@ -29,7 +34,11 @@ import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Style.Cursor;
-import com.google.gwt.event.dom.client.*;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.KeyCodes;
+import com.google.gwt.event.dom.client.KeyPressEvent;
+import com.google.gwt.event.dom.client.KeyPressHandler;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
@@ -42,7 +51,11 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiFactory;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiTemplate;
-import com.google.gwt.user.client.ui.*;
+import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.client.ui.IsWidget;
+import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 
 import com.sencha.gxt.core.client.IdentityValueProvider;
@@ -1025,6 +1038,55 @@ public class DiskResourceViewImpl implements DiskResourceView, SelectionHandler<
     @Override
     public HasSafeHtml getCenterPanelHeader() {
         return centerCp.getHeader();
+    }
+
+    @Override
+    public void displayAndCacheDiskResourceInfo(String path, DiskResourceInfo info) {
+        DiskResource dr = listStore.findModelWithKey(path);
+        if (dr == null) {
+            return;
+        } else {
+            dr.setDiskResourceInfo(info);
+            updateDetails(path, info);
+        }
+
+
+    }
+
+    @Override
+    public void maskSendToCoGe() {
+        toolbar.maskSendToCoGe();
+
+    }
+
+    @Override
+    public void unmaskSendToCoGe() {
+        toolbar.unmaskSendToCoGe();
+
+    }
+
+    @Override
+    public void maskSendToEnsembl() {
+        toolbar.maskSendToEnsembl();
+
+    }
+
+    @Override
+    public void unmaskSendToEnsembl() {
+        toolbar.unmaskSendToEnsembl();
+
+    }
+
+    @Override
+    public void maskSendToTreeViewer() {
+        toolbar.maskSendToTreeViewer();
+
+    }
+
+    @Override
+    public void unMaskSendToTreeViewer() {
+        toolbar.maskSendToTreeViewer();
+
     }
 
 }
