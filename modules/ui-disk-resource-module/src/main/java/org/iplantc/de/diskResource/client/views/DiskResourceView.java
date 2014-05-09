@@ -75,16 +75,9 @@ public interface DiskResourceView extends IsWidget,
             Builder disableFilePreview();
         }
 
-        /**
-         * QUESTION CORE-5300 Do we want to add files and folders? Or just folders?
-         */
-        void addSelectedFolderToSideBar();
-
         void createNewFolder();
 
         void createNewPlainTextFile();
-
-        void createNewTabularDataFile();
 
         void deleteSelectedResources();
 
@@ -108,13 +101,9 @@ public interface DiskResourceView extends IsWidget,
 
         void editSelectedFile();
 
-        void editSelectedResourceComments();
-
         void editSelectedResourceInfoType();
 
         void emptyTrash();
-
-        void duplicateSelectedResource();
 
         Set<DiskResource> getSelectedDiskResources();
 
@@ -183,7 +172,7 @@ public interface DiskResourceView extends IsWidget,
 
         void setSelectedDiskResourcesById(List<? extends HasId> selectedDiskResources);
 
-        void onInfoTypeClick(String id, String infoType);
+        void onInfoTypeClick(DiskResource dr, String infoType);
 
         Set<? extends DiskResource> getDragSources(IsWidget source, Element dragStartEl);
 

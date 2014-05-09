@@ -185,6 +185,7 @@ public class DiskResourceViewImpl implements DiskResourceView, SelectionHandler<
 
     @UiField(provided = true)
     Tree<Folder, Folder> tree;
+    private final UserInfo userInfo;
     private final IplantDisplayStrings displayStrings;
 
     @UiField(provided = true)
@@ -245,9 +246,11 @@ public class DiskResourceViewImpl implements DiskResourceView, SelectionHandler<
     public DiskResourceViewImpl(final Tree<Folder, Folder> tree,
                                 final DiskResourceViewToolbar viewToolbar,
                                 final DiskResourceAutoBeanFactory factory,
+                                final UserInfo userInfo,
                                 final IplantDisplayStrings displayStrings) {
         this.tree = tree;
         this.toolbar = viewToolbar;
+        this.userInfo = userInfo;
         this.displayStrings = displayStrings;
         this.treeStore = tree.getStore();
         this.drFactory = factory;
@@ -291,9 +294,8 @@ public class DiskResourceViewImpl implements DiskResourceView, SelectionHandler<
             updateSelectionCount(sm.getTotal());
         }
 
-        if ((event.getSelection() != null) && !event.getSelection().isEmpty()) {
-            asWidget().fireEvent(new DiskResourceSelectionChangedEvent(event.getSelection()));
-        } else {
+        asWidget().fireEvent(new DiskResourceSelectionChangedEvent(event.getSelection()));
+        if (event.getSelection().isEmpty()) {
             resetDetailsPanel();
         }
 
@@ -320,8 +322,6 @@ public class DiskResourceViewImpl implements DiskResourceView, SelectionHandler<
                     if (selectedItem instanceof DiskResourceQueryTemplate) {
                         pathField.clear();
                     } else if(!selectedItem.getPath().equals(pathField.getCurrentValue())){
-                        // TODO CORE-5300 Verify that this still works as intended.
-                        // it used to be in a selection CHANGED handler instead of this one.
                         pathField.setValue(selectedItem.getPath());
                     }
                 }
@@ -573,7 +573,7 @@ public class DiskResourceViewImpl implements DiskResourceView, SelectionHandler<
             gridView.refresh();
         } else {
             Folder request = drFactory.folder().as();
-            request.setPath(UserInfo.getInstance().getHomePath());
+            request.setPath(userInfo.getHomePath());
             presenter.setSelectedFolderByPath(request);
         }
 
@@ -977,7 +977,7 @@ public class DiskResourceViewImpl implements DiskResourceView, SelectionHandler<
         public void onClick(ClickEvent arg0) {
             List<DiskResource> selection = grid.getSelectionModel().getSelectedItems();
             Iterator<DiskResource> it = selection.iterator();
-            presenter.onInfoTypeClick(it.next().getId(), infoType);
+            presenter.onInfoTypeClick(it.next(), infoType);
         }
 
     }

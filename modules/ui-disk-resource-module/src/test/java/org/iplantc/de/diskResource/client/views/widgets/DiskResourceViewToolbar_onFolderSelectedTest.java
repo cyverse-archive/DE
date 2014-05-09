@@ -3,6 +3,7 @@ package org.iplantc.de.diskResource.client.views.widgets;
 import static org.iplantc.de.client.models.diskResources.PermissionValue.read;
 import static org.iplantc.de.client.models.diskResources.PermissionValue.write;
 import static org.iplantc.de.client.models.diskResources.PermissionValue.own;
+import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.client.models.search.DiskResourceQueryTemplate;
@@ -72,7 +73,7 @@ public class DiskResourceViewToolbar_onFolderSelectedTest {
     private DiskResourceViewToolbarImpl uut;
 
     @Before public void setup() {
-        uut = new DiskResourceViewToolbarImpl(){
+        uut = new DiskResourceViewToolbarImpl(mock(UserInfo.class)){
             boolean containsFile(List<DiskResource> selection) {
                 return containsFile;
             }
@@ -257,14 +258,14 @@ public class DiskResourceViewToolbar_onFolderSelectedTest {
         verifyOnFolderSelectedNeverUsedItems();
 
         // Upload Menu Items
-        verify(mockSimpleUpload).setEnabled(true);
-        verify(mockBulkUpload).setEnabled(true);
-        verify(mockImportFromUrl).setEnabled(true);
+        verify(mockSimpleUpload).setEnabled(false);
+        verify(mockBulkUpload).setEnabled(false);
+        verify(mockImportFromUrl).setEnabled(false);
 
         // File Menu Items
-        verify(mockNewFolder).setEnabled(true);
-        verify(mockNewPlainTextFile).setEnabled(true);
-        verify(mockNewTabularFile).setEnabled(true);
+        verify(mockNewFolder).setEnabled(false);
+        verify(mockNewPlainTextFile).setEnabled(false);
+        verify(mockNewTabularFile).setEnabled(false);
 
         verify(mockRefreshButton).setEnabled(true);
     }
@@ -285,14 +286,14 @@ public class DiskResourceViewToolbar_onFolderSelectedTest {
         verifyOnFolderSelectedNeverUsedItems();
 
         // Upload Menu Items
-        verify(mockSimpleUpload).setEnabled(true);
-        verify(mockBulkUpload).setEnabled(true);
-        verify(mockImportFromUrl).setEnabled(true);
+        verify(mockSimpleUpload).setEnabled(false);
+        verify(mockBulkUpload).setEnabled(false);
+        verify(mockImportFromUrl).setEnabled(false);
 
         // File Menu Items
-        verify(mockNewFolder).setEnabled(true);
-        verify(mockNewPlainTextFile).setEnabled(true);
-        verify(mockNewTabularFile).setEnabled(true);
+        verify(mockNewFolder).setEnabled(false);
+        verify(mockNewPlainTextFile).setEnabled(false);
+        verify(mockNewTabularFile).setEnabled(false);
 
         verify(mockRefreshButton).setEnabled(true);
     }

@@ -4,7 +4,7 @@ import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.client.models.diskResources.File;
 import org.iplantc.de.client.models.diskResources.Folder;
-import org.iplantc.de.diskResource.client.events.DiskResourceSelectedEvent;
+import org.iplantc.de.diskResource.client.views.cells.events.DiskResourceNameSelectedEvent;
 import org.iplantc.de.resources.client.DiskResourceNameCellStyle;
 import org.iplantc.de.resources.client.IplantResources;
 import org.iplantc.de.resources.client.messages.I18N;
@@ -42,9 +42,6 @@ import com.sencha.gxt.widget.core.client.tips.Tip;
 public class DiskResourceNameCell extends AbstractCell<DiskResource> {
 
     private static final DiskResourceNameCellStyle CSS = IplantResources.RESOURCES.diskResourceNameCss();
-    public static enum CALLER_TAG {
-        DATA, SHARING;
-    }
 
     /**
      * The HTML templates used to render the cell.
@@ -188,14 +185,13 @@ public class DiskResourceNameCell extends AbstractCell<DiskResource> {
             return;
         }
         if(hasHandlers != null){
-            hasHandlers.fireEvent(new DiskResourceSelectedEvent(value));
+            hasHandlers.fireEvent(new DiskResourceNameSelectedEvent(value));
         }
     }
 
     private boolean isValidClickTarget(Element eventTarget, DiskResource value) {
         return eventTarget.getAttribute("name").equalsIgnoreCase("drName") //$NON-NLS-1$ //$NON-NLS-2$
-                && !(value instanceof File)
-                && (!value.isFilter());
+                && !value.isFilter();
     }
 
 }

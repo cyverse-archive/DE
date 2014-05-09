@@ -1,5 +1,6 @@
 package org.iplantc.de.diskResource.client.views.widgets;
 
+import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.client.models.diskResources.File;
 import org.iplantc.de.client.models.diskResources.Folder;
@@ -9,6 +10,7 @@ import org.iplantc.de.diskResource.client.events.FolderSelectionEvent;
 import org.iplantc.de.diskResource.client.search.views.DiskResourceSearchField;
 import org.iplantc.de.diskResource.client.views.DiskResourceView;
 
+import com.google.common.collect.Lists;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -63,11 +65,13 @@ public class DiskResourceViewToolbarImpl extends Composite implements DiskResour
     @UiField
     TextButton uploadMenu;
     private static DiskResourceViewToolbarUiBinder BINDER = GWT.create(DiskResourceViewToolbarUiBinder.class);
+    private final UserInfo userInfo;
     private DiskResourceView.Presenter presenter;
     private DiskResourceView view;
 
     @Inject
-    public DiskResourceViewToolbarImpl() {
+    public DiskResourceViewToolbarImpl(final UserInfo userInfo) {
+        this.userInfo = userInfo;
         initWidget(BINDER.createAndBindUi(this));
     }
 
@@ -156,16 +160,17 @@ public class DiskResourceViewToolbarImpl extends Composite implements DiskResour
     public void onFolderSelected(FolderSelectionEvent event) {
         boolean simpleUploadMiEnabled, bulkUploadMiEnabled, importFromUrlMiEnabled;
 
-        boolean newFolderMiEnabled, newPlainTextFileMiEnabled, newTabularDataFileMiEnabled, moveToTrashMiEnabled;
+        boolean newFolderMiEnabled, newPlainTextFileMiEnabled, newTabularDataFileMiEnabled;
         boolean refreshButtonEnabled;
 
         final Folder selectedFolder = event.getSelectedFolder();
+        final boolean isFolderInTrash = isSelectionInTrash(Lists.<DiskResource>newArrayList(selectedFolder));
         final boolean isNull = selectedFolder == null;
         final boolean canUploadTo = canUploadTo(selectedFolder);
 
-        simpleUploadMiEnabled = isNull || canUploadTo;
-        bulkUploadMiEnabled = isNull || canUploadTo;
-        importFromUrlMiEnabled = isNull || canUploadTo;
+        simpleUploadMiEnabled = !isFolderInTrash && (isNull || canUploadTo);
+        bulkUploadMiEnabled = !isFolderInTrash && (isNull || canUploadTo);
+        importFromUrlMiEnabled = !isFolderInTrash && (isNull || canUploadTo);
 
         newFolderMiEnabled = isNull || canUploadTo;
         newPlainTextFileMiEnabled = isNull || canUploadTo;
@@ -214,12 +219,26 @@ public class DiskResourceViewToolbarImpl extends Composite implements DiskResour
     }
 
     boolean isSelectionInTrash(final List<DiskResource> selection){
-        return false;
+        if (selection.isEmpty()) {
+            return false;
+        }
+
+        String trashPath = userInfo.getTrashPath();
+        for (DiskResource dr : selection) {
+            if (dr.getId().equals(trashPath)) {
+                return false;
+            }
+
+            if (!dr.getId().startsWith(trashPath)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     @UiHandler("addToSideBarMi")
     void onAddToSideBarClicked(SelectionEvent<Item> event){
-        presenter.addSelectedFolderToSideBar();
     }
 
     @UiHandler("bulkDownloadMi")
@@ -244,12 +263,10 @@ public class DiskResourceViewToolbarImpl extends Composite implements DiskResour
 
     @UiHandler("duplicateMi")
     void onDuplicateClicked(SelectionEvent<Item> event){
-        presenter.duplicateSelectedResource();
     }
 
     @UiHandler("editCommentsMi")
     void onEditCommentClicked(SelectionEvent<Item> event){
-        presenter.editSelectedResourceComments();
     }
 
     @UiHandler("editFileMi")
@@ -299,7 +316,6 @@ public class DiskResourceViewToolbarImpl extends Composite implements DiskResour
 
     @UiHandler("newTabularDataFileMi")
     void onNewTabularDataFileClicked(SelectionEvent<Item> event){
-        presenter.createNewTabularDataFile();
     }
 
     @UiHandler("newWindowAtLocMi")
