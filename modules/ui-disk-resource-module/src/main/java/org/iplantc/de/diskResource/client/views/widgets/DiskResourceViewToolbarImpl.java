@@ -2,6 +2,7 @@ package org.iplantc.de.diskResource.client.views.widgets;
 
 import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.client.models.diskResources.File;
+import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.client.util.DiskResourceUtil;
 import org.iplantc.de.diskResource.client.events.DiskResourceSelectionChangedEvent;
 import org.iplantc.de.diskResource.client.events.FolderSelectionEvent;
@@ -29,54 +30,51 @@ public class DiskResourceViewToolbarImpl extends Composite implements DiskResour
 
     @UiTemplate("DiskResourceViewToolbar.ui.xml")
     interface DiskResourceViewToolbarUiBinder extends UiBinder<Widget, DiskResourceViewToolbarImpl> { }
-
-    private static DiskResourceViewToolbarUiBinder BINDER = GWT.create(DiskResourceViewToolbarUiBinder.class);
-
-    private DiskResourceView.Presenter presenter;
-    private DiskResourceView view;
-
     @UiField
-    DiskResourceSearchField searchField;
+    TextButton downloadMenu;
     @UiField
-    TextButton uploadMenu;
-    @UiField
-    MenuItem simpleUploadMi, bulkUploadMi, importFromUrlMi;
-
+    TextButton editMenu;
     @UiField
     TextButton fileMenu;
     @UiField
     MenuItem newWindowMi, newWindowAtLocMi, newFolderMi,
             duplicateMi, addToSideBarMi, newPlainTextFileMi,
             newTabularDataFileMi, moveToTrashMi;
-
     @UiField
-    TextButton editMenu;
+    MenuItem openTrashMi, restoreMi, emptyTrashMi;
+    @UiField
+    TextButton refreshButton;
     @UiField
     MenuItem renameMi, moveMi, deleteMi,
             editFileMi, editCommentsMi, editInfoTypeMi, metadataMi;
-
     @UiField
-    TextButton downloadMenu;
-    @UiField
-    MenuItem simpleDownloadMi, bulkDownloadMi;
-
+    DiskResourceSearchField searchField;
     @UiField
     TextButton shareMenu;
     @UiField
     MenuItem shareWithCollaboratorsMi, createPublicLinkMi, sendToCogeMi,
             sendToEnsemblMi, sendToTreeViewerMi;
-
     @UiField
-    TextButton refreshButton;
-
+    MenuItem simpleDownloadMi, bulkDownloadMi;
+    @UiField
+    MenuItem simpleUploadMi, bulkUploadMi, importFromUrlMi;
     @UiField
     TextButton trashMenu;
     @UiField
-    MenuItem openTrashMi, restoreMi, emptyTrashMi;
+    TextButton uploadMenu;
+    private static DiskResourceViewToolbarUiBinder BINDER = GWT.create(DiskResourceViewToolbarUiBinder.class);
+    private DiskResourceView.Presenter presenter;
+    private DiskResourceView view;
 
     @Inject
     public DiskResourceViewToolbarImpl() {
         initWidget(BINDER.createAndBindUi(this));
+    }
+
+    @Override
+    public DiskResourceSearchField getSearchField() {
+        // TODO CORE-5300 This class will listen for events on this field, here.
+        return searchField;
     }
 
     @Override
@@ -88,11 +86,6 @@ public class DiskResourceViewToolbarImpl extends Composite implements DiskResour
     }
 
     @Override
-    protected void onEnsureDebugId(String baseID) {
-        super.onEnsureDebugId(baseID);
-    }
-
-    @Override
     public void onDiskResourceSelectionChanged(DiskResourceSelectionChangedEvent event) {
 
         boolean duplicateMiEnabled, addToSideBarMiEnabled, moveToTrashMiEnabled;
@@ -100,6 +93,7 @@ public class DiskResourceViewToolbarImpl extends Composite implements DiskResour
         boolean renameMiEnabled, moveMiEnabled, deleteMiEnabled, editFileMiEnabled, editCommentsMiEnabled, editInfoTypeMiEnabled, metadataMiEnabled;
 
         boolean simpleDownloadMiEnabled, bulkDownloadMiEnabled;
+        boolean sendToCogeMiEnabled, sendToEnsemblMiEnabled, sendToTreeViewerMiEnabled;
 
         boolean shareWithCollaboratorsMiEnabled, createPublicLinkMiEnabled;
 
@@ -125,6 +119,9 @@ public class DiskResourceViewToolbarImpl extends Composite implements DiskResour
 
         simpleDownloadMiEnabled = !isSelectionEmpty;
         bulkDownloadMiEnabled = !isSelectionEmpty;
+        sendToCogeMiEnabled = !isSelectionEmpty && isSingleSelection && containsFile(selection) && !isSelectionInTrash;
+        sendToEnsemblMiEnabled = !isSelectionEmpty && isSingleSelection && containsFile(selection) && !isSelectionInTrash;
+        sendToTreeViewerMiEnabled = !isSelectionEmpty && isSingleSelection && containsFile(selection) && !isSelectionInTrash;
 
         shareWithCollaboratorsMiEnabled = !isSelectionEmpty && isOwner && !isSelectionInTrash;
         createPublicLinkMiEnabled = !isSelectionEmpty && isOwner && !isSelectionInTrash && containsFile(selection);
@@ -148,8 +145,56 @@ public class DiskResourceViewToolbarImpl extends Composite implements DiskResour
 
         shareWithCollaboratorsMi.setEnabled(shareWithCollaboratorsMiEnabled);
         createPublicLinkMi.setEnabled(createPublicLinkMiEnabled);
+        sendToCogeMi.setEnabled(sendToCogeMiEnabled);
+        sendToEnsemblMi.setEnabled(sendToEnsemblMiEnabled);
+        sendToTreeViewerMi.setEnabled(sendToTreeViewerMiEnabled);
 
         restoreMi.setEnabled(restoreMiEnabled);
+    }
+
+    @Override
+    public void onFolderSelected(FolderSelectionEvent event) {
+        boolean simpleUploadMiEnabled, bulkUploadMiEnabled, importFromUrlMiEnabled;
+
+        boolean newFolderMiEnabled, newPlainTextFileMiEnabled, newTabularDataFileMiEnabled, moveToTrashMiEnabled;
+        boolean refreshButtonEnabled;
+
+        final Folder selectedFolder = event.getSelectedFolder();
+        final boolean isNull = selectedFolder == null;
+        final boolean canUploadTo = canUploadTo(selectedFolder);
+
+        simpleUploadMiEnabled = isNull || canUploadTo;
+        bulkUploadMiEnabled = isNull || canUploadTo;
+        importFromUrlMiEnabled = isNull || canUploadTo;
+
+        newFolderMiEnabled = isNull || canUploadTo;
+        newPlainTextFileMiEnabled = isNull || canUploadTo;
+        newTabularDataFileMiEnabled = isNull || canUploadTo;
+
+        refreshButtonEnabled = !isNull;
+
+        simpleUploadMi.setEnabled(simpleUploadMiEnabled);
+        bulkUploadMi.setEnabled(bulkUploadMiEnabled);
+        importFromUrlMi.setEnabled(importFromUrlMiEnabled);
+
+        newFolderMi.setEnabled(newFolderMiEnabled);
+        newPlainTextFileMi.setEnabled(newPlainTextFileMiEnabled);
+        newTabularDataFileMi.setEnabled(newTabularDataFileMiEnabled);
+
+        refreshButton.setEnabled(refreshButtonEnabled);
+    }
+
+    @Override
+    protected void onEnsureDebugId(String baseID) {
+        super.onEnsureDebugId(baseID);
+    }
+
+    boolean canUploadTo(DiskResource folder){
+        return DiskResourceUtil.canUploadTo(folder);
+    }
+
+    boolean containsFile(final List<DiskResource> selection) {
+        return DiskResourceUtil.containsFile(selection);
     }
 
     boolean containsOnlyFolders(List<DiskResource> selection) {
@@ -160,155 +205,16 @@ public class DiskResourceViewToolbarImpl extends Composite implements DiskResour
        return true;
     }
 
-    @Override
-    public void onFolderSelected(FolderSelectionEvent event) {
-        boolean searchFieldEnabled;
-        boolean uploadMenuEnabled;
-        boolean simpleUploadMiEnabled, bulkUploadMiEnabled, importFromUrlMiEnabled;
-
-        boolean fileMenuEnabled;
-        boolean newWindowMiEnabled, newWindowAtLocMiEnabled, newFolderMiEnabled,
-                duplicateMiEnabled, addToSideBarMiEnabled, newPlainTextFileMiEnabled,
-                newTabularDataFileMiEnabled, moveToTrashMiEnabled;
-
-        boolean editMenuEnabled;
-        boolean renameMiEnabled, moveMiEnabled, deleteMiEnabled, editFileMiEnabled, editCommentsMiEnabled, editInfoTypeMiEnabled, metadataMiEnabled;
-
-        boolean downloadMenuEnabled;
-        boolean simpleDownloadMiEnabled, bulkDownloadMiEnabled;
-
-        boolean shareMenuEnabled;
-        boolean shareWithCollaboratorsMiEnabled, createPublicLinkMiEnabled, sendToCogeMiEnabled, sendToEnsemblMiEnabled, sendToTreeViewerMiEnabled;
-
-        boolean refreshButtonEnabled;
-
-        boolean trashMenuEnabled;
-        boolean openTrashMiEnabled, restoreMiEnabled, emptyTrashMiEnabled;
-
-        // Upper level menus
-        uploadMenuEnabled = true;
-        fileMenuEnabled = true;
-        editMenuEnabled = true;
-        downloadMenuEnabled = true;
-        shareMenuEnabled = true;
-        trashMenuEnabled = true;
-
-        searchFieldEnabled = false;
-        simpleUploadMiEnabled = false;
-        bulkUploadMiEnabled = false;
-        importFromUrlMiEnabled = false;
-
-        newWindowMiEnabled = false;
-        newWindowAtLocMiEnabled = false;
-        newFolderMiEnabled = false;
-        duplicateMiEnabled = false;
-        addToSideBarMiEnabled = false;
-        newPlainTextFileMiEnabled = false;
-        newTabularDataFileMiEnabled = false;
-        moveToTrashMiEnabled = false;
-
-        renameMiEnabled = false;
-        moveMiEnabled = false;
-        deleteMiEnabled = false;
-        editFileMiEnabled = false;
-        editCommentsMiEnabled = false;
-        editInfoTypeMiEnabled = false;
-        metadataMiEnabled = false;
-
-        simpleDownloadMiEnabled = false;
-        bulkDownloadMiEnabled = false;
-
-        shareWithCollaboratorsMiEnabled = false;
-        createPublicLinkMiEnabled = false;
-        sendToCogeMiEnabled = false;
-        sendToEnsemblMiEnabled = false;
-        sendToTreeViewerMiEnabled = false;
-
-        refreshButtonEnabled = false;
-
-        openTrashMiEnabled= false;
-        restoreMiEnabled = false;
-        emptyTrashMiEnabled = false;
-
-
-        searchField.setEnabled(searchFieldEnabled);
-        uploadMenu.setEnabled(uploadMenuEnabled);
-        simpleUploadMi.setEnabled(simpleUploadMiEnabled);
-        bulkUploadMi.setEnabled(bulkUploadMiEnabled);
-        importFromUrlMi.setEnabled(importFromUrlMiEnabled);
-
-        fileMenu.setEnabled(fileMenuEnabled);
-        newWindowMi.setEnabled(newWindowMiEnabled);
-        newWindowAtLocMi.setEnabled(newWindowAtLocMiEnabled);
-        newFolderMi.setEnabled(newFolderMiEnabled);
-        duplicateMi.setEnabled(duplicateMiEnabled);
-        addToSideBarMi.setEnabled(addToSideBarMiEnabled);
-        newPlainTextFileMi.setEnabled(newPlainTextFileMiEnabled);
-        newTabularDataFileMi.setEnabled(newTabularDataFileMiEnabled);
-        moveToTrashMi.setEnabled(moveToTrashMiEnabled);
-
-        editMenu.setEnabled(editMenuEnabled);
-        renameMi.setEnabled(renameMiEnabled);
-        moveMi.setEnabled(moveMiEnabled);
-        deleteMi.setEnabled(deleteMiEnabled);
-        editFileMi.setEnabled(editFileMiEnabled);
-        editCommentsMi.setEnabled(editCommentsMiEnabled);
-        editInfoTypeMi.setEnabled(editInfoTypeMiEnabled);
-        metadataMi.setEnabled(metadataMiEnabled);
-
-        downloadMenu.setEnabled(downloadMenuEnabled);
-        simpleDownloadMi.setEnabled(simpleDownloadMiEnabled);
-        bulkDownloadMi.setEnabled(bulkDownloadMiEnabled);
-
-        shareMenu.setEnabled(shareMenuEnabled);
-        shareWithCollaboratorsMi.setEnabled(shareWithCollaboratorsMiEnabled);
-        createPublicLinkMi.setEnabled(createPublicLinkMiEnabled);
-        sendToCogeMi.setEnabled(sendToCogeMiEnabled);
-        sendToEnsemblMi.setEnabled(sendToEnsemblMiEnabled);
-        sendToTreeViewerMi.setEnabled(sendToTreeViewerMiEnabled);
-
-        refreshButton.setEnabled(refreshButtonEnabled);
-
-        trashMenu.setEnabled(trashMenuEnabled);
-        openTrashMi.setEnabled(openTrashMiEnabled);
-        restoreMi.setEnabled(restoreMiEnabled);
-        emptyTrashMi.setEnabled(emptyTrashMiEnabled);
+    boolean isOwner(final List<DiskResource> selection){
+        return DiskResourceUtil.isOwner(selection);
     }
 
-    //-------- Upload ---------------
-    @UiHandler("simpleUploadMi")
-    void onSimpleUploadClicked(SelectionEvent<Item> event) {
-        presenter.doSimpleUpload();
+    boolean isReadable(final DiskResource item){
+        return DiskResourceUtil.isReadable(item);
     }
 
-    @UiHandler("bulkUploadMi")
-    void onBulkUploadClicked(SelectionEvent<Item> event) {
-        presenter.doBulkUpload();
-    }
-
-    @UiHandler("importFromUrlMi")
-    void onImportFromUrlClicked(SelectionEvent<Item> event) {
-        presenter.doImportFromUrl();
-    }
-
-    //---------- File ----------
-    @UiHandler("newWindowMi")
-    void onNewWindowClicked(SelectionEvent<Item> event) {
-        presenter.openNewWindow(false);
-    }
-    @UiHandler("newWindowAtLocMi")
-    void onNewWindowAtLocClicked(SelectionEvent<Item> event) {
-        presenter.openNewWindow(true);
-    }
-
-    @UiHandler("newFolderMi")
-    void onNewFolderClicked(SelectionEvent<Item> event) {
-        presenter.createNewFolder();
-    }
-
-    @UiHandler("duplicateMi")
-    void onDuplicateClicked(SelectionEvent<Item> event){
-        presenter.duplicateSelectedResource();
+    boolean isSelectionInTrash(final List<DiskResource> selection){
+        return false;
     }
 
     @UiHandler("addToSideBarMi")
@@ -316,35 +222,39 @@ public class DiskResourceViewToolbarImpl extends Composite implements DiskResour
         presenter.addSelectedFolderToSideBar();
     }
 
-    @UiHandler("newPlainTextFileMi")
-    void onNewPlainTextFileClicked(SelectionEvent<Item> event){
-        presenter.createNewPlainTextFile();
+    @UiHandler("bulkDownloadMi")
+    void onBulkDownloadClicked(SelectionEvent<Item> event) {
+        presenter.doBulkDownload();
     }
 
-    @UiHandler("newTabularDataFileMi")
-    void onNewTabularDataFileClicked(SelectionEvent<Item> event){
-        presenter.createNewTabularDataFile();
+    @UiHandler("bulkUploadMi")
+    void onBulkUploadClicked(SelectionEvent<Item> event) {
+        presenter.doBulkUpload();
     }
 
-    @UiHandler("moveToTrashMi")
-    void onMoveToTrashClicked(SelectionEvent<Item> event){
-        presenter.moveSelectedDiskResourcesToTrash();
+    @UiHandler("createPublicLinkMi")
+    void onCreatePublicLinkClicked(SelectionEvent<Item> event){
+        presenter.manageSelectedResourceDataLinks();
     }
 
-    //----------- Edit -----------
-    @UiHandler("renameMi")
-    void onRenameClicked(SelectionEvent<Item> event){
-        presenter.renameSelectedResource();
+    @UiHandler("deleteMi")
+    void onDeleteClicked(SelectionEvent<Item> event){
+        presenter.deleteSelectedResources();
     }
 
-    @UiHandler("editFileMi")
-    void onEditFileClicked(SelectionEvent<Item> event){
-        presenter.editSelectedFile();
+    @UiHandler("duplicateMi")
+    void onDuplicateClicked(SelectionEvent<Item> event){
+        presenter.duplicateSelectedResource();
     }
 
     @UiHandler("editCommentsMi")
     void onEditCommentClicked(SelectionEvent<Item> event){
         presenter.editSelectedResourceComments();
+    }
+
+    @UiHandler("editFileMi")
+    void onEditFileClicked(SelectionEvent<Item> event){
+        presenter.editSelectedFile();
     }
 
     @UiHandler("editInfoTypeMi")
@@ -357,36 +267,73 @@ public class DiskResourceViewToolbarImpl extends Composite implements DiskResour
         presenter.manageSelectedResourceMetadata();
     }
 
+    @UiHandler("emptyTrashMi")
+    void onEmptyTrashClicked(SelectionEvent<Item> event) {
+        presenter.emptyTrash();
+    }
+
+    @UiHandler("importFromUrlMi")
+    void onImportFromUrlClicked(SelectionEvent<Item> event) {
+        presenter.doImportFromUrl();
+    }
+
     @UiHandler("moveMi")
     void onMoveClicked(SelectionEvent<Item> event){
         presenter.moveSelectedDiskResources();
     }
 
-    @UiHandler("deleteMi")
-    void onDeleteClicked(SelectionEvent<Item> event){
-        presenter.deleteSelectedResources();
+    @UiHandler("moveToTrashMi")
+    void onMoveToTrashClicked(SelectionEvent<Item> event){
+        presenter.moveSelectedDiskResourcesToTrash();
     }
 
-    //---------- Download --------------
-    @UiHandler("simpleDownloadMi")
-    void onSimpleDownloadClicked(SelectionEvent<Item> event) {
-        presenter.doSimpleDownload();
+    @UiHandler("newFolderMi")
+    void onNewFolderClicked(SelectionEvent<Item> event) {
+        presenter.createNewFolder();
     }
 
-    @UiHandler("bulkDownloadMi")
-    void onBulkDownloadClicked(SelectionEvent<Item> event) {
-        presenter.doBulkDownload();
+    @UiHandler("newPlainTextFileMi")
+    void onNewPlainTextFileClicked(SelectionEvent<Item> event){
+        presenter.createNewPlainTextFile();
     }
 
-    //--------- Sharing -------------
-    @UiHandler("shareWithCollaboratorsMi")
-    void onShareWithCollaboratorsClicked(SelectionEvent<Item> event) {
-        presenter.manageSelectedResourceCollaboratorSharing();
+    @UiHandler("newTabularDataFileMi")
+    void onNewTabularDataFileClicked(SelectionEvent<Item> event){
+        presenter.createNewTabularDataFile();
     }
 
-    @UiHandler("createPublicLinkMi")
-    void onCreatePublicLinkClicked(SelectionEvent<Item> event){
-        presenter.manageSelectedResourceDataLinks();
+    @UiHandler("newWindowAtLocMi")
+    void onNewWindowAtLocClicked(SelectionEvent<Item> event) {
+        presenter.openNewWindow(true);
+    }
+
+    //---------- File ----------
+    @UiHandler("newWindowMi")
+    void onNewWindowClicked(SelectionEvent<Item> event) {
+        presenter.openNewWindow(false);
+    }
+
+    //------------- Trash ---------------
+    @UiHandler("openTrashMi")
+    void onOpenTrashClicked(SelectionEvent<Item> event) {
+        presenter.selectTrashFolder();
+    }
+
+    //------------ Refresh --------------
+    @UiHandler("refreshButton")
+    void onRefreshClicked(SelectEvent event) {
+        presenter.refreshSelectedFolder();
+    }
+
+    //----------- Edit -----------
+    @UiHandler("renameMi")
+    void onRenameClicked(SelectionEvent<Item> event){
+        presenter.renameSelectedResource();
+    }
+
+    @UiHandler("restoreMi")
+    void onRestoreClicked(SelectionEvent<Item> event){
+        presenter.restoreSelectedResources();
     }
 
     @UiHandler("sendToCogeMi")
@@ -404,48 +351,21 @@ public class DiskResourceViewToolbarImpl extends Composite implements DiskResour
         presenter.sendSelectedResourcesToTreeViewer();
     }
 
-    //------------ Refresh --------------
-    @UiHandler("refreshButton")
-    void onRefreshClicked(SelectEvent event) {
-        presenter.refreshSelectedFolder();
+    //--------- Sharing -------------
+    @UiHandler("shareWithCollaboratorsMi")
+    void onShareWithCollaboratorsClicked(SelectionEvent<Item> event) {
+        presenter.manageSelectedResourceCollaboratorSharing();
     }
 
-
-    //------------- Trash ---------------
-    @UiHandler("openTrashMi")
-    void onOpenTrashClicked(SelectionEvent<Item> event) {
-        presenter.selectTrashFolder();
+    //---------- Download --------------
+    @UiHandler("simpleDownloadMi")
+    void onSimpleDownloadClicked(SelectionEvent<Item> event) {
+        presenter.doSimpleDownload();
     }
 
-    @UiHandler("restoreMi")
-    void onRestoreClicked(SelectionEvent<Item> event){
-        presenter.restoreSelectedResources();
-    }
-
-    @UiHandler("emptyTrashMi")
-    void onEmptyTrashClicked(SelectionEvent<Item> event) {
-        presenter.emptyTrash();
-    }
-
-    @Override
-    public DiskResourceSearchField getSearchField() {
-        // TODO CORE-5300 This class will listen for events on this field, here.
-        return searchField;
-    }
-
-    boolean isOwner(final List<DiskResource> selection){
-        return DiskResourceUtil.isOwner(selection);
-    }
-
-    boolean isSelectionInTrash(final List<DiskResource> selection){
-        return false;
-    }
-
-    boolean isReadable(final DiskResource item){
-        return DiskResourceUtil.isReadable(item);
-    }
-
-    boolean containsFile(final List<DiskResource> selection) {
-        return DiskResourceUtil.containsFile(selection);
+    //-------- Upload ---------------
+    @UiHandler("simpleUploadMi")
+    void onSimpleUploadClicked(SelectionEvent<Item> event) {
+        presenter.doSimpleUpload();
     }
 }

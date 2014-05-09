@@ -10,6 +10,7 @@ import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.client.models.diskResources.File;
 import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.client.models.diskResources.PermissionValue;
+import org.iplantc.de.client.models.search.DiskResourceQueryTemplate;
 import org.iplantc.de.client.models.viewer.InfoType;
 
 import com.google.common.base.Joiner;
@@ -169,7 +170,10 @@ public class DiskResourceUtil {
     }
 
     public static boolean canUploadTo(DiskResource resource) {
-        return (isOwner(resource)|| isWritable(resource)) && (resource instanceof Folder) && !inTrash(resource);
+        return (isOwner(resource)|| isWritable(resource))
+                       && (resource instanceof Folder)
+                       && !(resource instanceof DiskResourceQueryTemplate)
+                       && !inTrash(resource);
     }
 
     public static boolean inTrash(DiskResource resource) {
