@@ -1,12 +1,16 @@
 package org.iplantc.admin.belphegor.client.apps.views.widgets;
 
-import static org.iplantc.de.apps.client.events.AppGroupSelectionChangedEvent.*;
-import static org.iplantc.de.apps.client.events.AppSelectionChangedEvent.*;
+import static org.iplantc.de.apps.client.events.AppGroupSelectionChangedEvent.AppGroupSelectionChangedEventHandler;
+import static org.iplantc.de.apps.client.events.AppGroupSelectionChangedEvent.HasAppGroupSelectionChangedEventHandlers;
+import static org.iplantc.de.apps.client.events.AppSelectionChangedEvent.AppSelectionChangedEventHandler;
+import static org.iplantc.de.apps.client.events.AppSelectionChangedEvent.HasAppSelectionChangedEventHandlers;
 import org.iplantc.admin.belphegor.client.apps.views.AdminAppsView;
 import org.iplantc.de.apps.client.events.AppGroupSelectionChangedEvent;
 import org.iplantc.de.apps.client.events.AppSelectionChangedEvent;
 import org.iplantc.de.apps.client.views.widgets.AppSearchField;
+import org.iplantc.de.apps.client.views.widgets.events.AppSearchResultLoadEvent;
 import org.iplantc.de.apps.client.views.widgets.proxy.AppSearchRpcProxy;
+import org.iplantc.de.client.models.IsMaskable;
 import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.models.apps.AppAutoBeanFactory;
 import org.iplantc.de.client.models.apps.AppGroup;
@@ -16,11 +20,8 @@ import org.iplantc.de.client.services.AppServiceFacade;
 import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.uibinder.client.UiBinder;
-import com.google.gwt.uibinder.client.UiFactory;
-import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.uibinder.client.UiTemplate;
+import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.uibinder.client.*;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 
@@ -40,7 +41,8 @@ import java.util.List;
  */
 public class BelphegorAppsToolbarImpl implements AdminAppsView.Toolbar,
                                                  AppGroupSelectionChangedEventHandler,
-                                                 AppSelectionChangedEventHandler {
+                                                 AppSelectionChangedEventHandler,
+                                                 AppSearchResultLoadEvent.HasAppSearchResultLoadEventHandlers {
 
     @UiTemplate("BelphegorAppsViewToolbar.ui.xml")
     interface BelphegorAppsViewToolbarUiBinder extends UiBinder<Widget, BelphegorAppsToolbarImpl> { }
@@ -83,6 +85,11 @@ public class BelphegorAppsToolbarImpl implements AdminAppsView.Toolbar,
         widget = uiBinder.createAndBindUi(this);
     }
 
+    @Override
+    public HandlerRegistration addAppSearchResultLoadEventHandler(AppSearchResultLoadEvent.AppSearchResultLoadEventHandler handler) {
+        return asWidget().addHandler(handler, AppSearchResultLoadEvent.TYPE);
+    }
+
     @UiHandler("addCategory")
     public void addCategoryClicked(SelectEvent event) {
         presenter.onAddAppGroupClicked();
@@ -105,11 +112,25 @@ public class BelphegorAppsToolbarImpl implements AdminAppsView.Toolbar,
 
     @Override
     public void init(final AdminAppsView.AdminPresenter presenter,
+                     final AdminAppsView appView,
                      final HasAppSelectionChangedEventHandlers hasAppSelectionChangedEventHandlers,
                      final HasAppGroupSelectionChangedEventHandlers hasAppGroupSelectionChangedEventHandlers) {
         this.presenter = presenter;
+        addAppSearchResultLoadEventHandler(appView);
         hasAppSelectionChangedEventHandlers.addAppSelectionChangedEventHandler(this);
         hasAppGroupSelectionChangedEventHandlers.addAppGroupSelectedEventHandler(this);
+        proxy.setHasHandlers(asWidget());
+        proxy.setMaskable(new IsMaskable() {
+            @Override
+            public void mask(String loadingMask) {
+                appView.maskCenterPanel(loadingMask);
+            }
+
+            @Override
+            public void unmask() {
+                appView.unMaskCenterPanel();
+            }
+        });
     }
 
     @Override

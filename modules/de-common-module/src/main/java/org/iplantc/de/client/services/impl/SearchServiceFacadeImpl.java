@@ -2,7 +2,6 @@ package org.iplantc.de.client.services.impl;
 
 import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.GET;
 import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.POST;
-
 import org.iplantc.de.client.models.DEProperties;
 import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.client.models.diskResources.DiskResource;
@@ -13,8 +12,6 @@ import org.iplantc.de.client.models.search.DiskResourceQueryTemplate;
 import org.iplantc.de.client.models.search.DiskResourceQueryTemplateList;
 import org.iplantc.de.client.models.search.SearchAutoBeanFactory;
 import org.iplantc.de.client.services.DEServiceFacade;
-import org.iplantc.de.client.services.Endpoints;
-import org.iplantc.de.client.services.ReservedBuckets;
 import org.iplantc.de.client.services.SearchServiceFacade;
 import org.iplantc.de.client.services.converters.AsyncCallbackConverter;
 import org.iplantc.de.shared.services.ServiceCallWrapper;
@@ -260,24 +257,22 @@ public class SearchServiceFacadeImpl implements SearchServiceFacade {
         }
     }
 
-    private final ReservedBuckets buckets;
     private final DEServiceFacade deServiceFacade;
     private final DiskResourceAutoBeanFactory drFactory;
-    private final Endpoints endpoints;
     private final SearchAutoBeanFactory searchAbFactory;
     private final UserInfo userInfo;
     private final DEProperties deProperties;
 
     @Inject
-    public SearchServiceFacadeImpl(final DEServiceFacade deServiceFacade, final DEProperties deProperties, final SearchAutoBeanFactory searchAbFactory, final DiskResourceAutoBeanFactory drFactory,
-            final Endpoints endpoints,
-            final ReservedBuckets buckets, final UserInfo userInfo) {
+    public SearchServiceFacadeImpl(final DEServiceFacade deServiceFacade,
+                                   final DEProperties deProperties,
+                                   final SearchAutoBeanFactory searchAbFactory,
+                                   final DiskResourceAutoBeanFactory drFactory,
+                                   final UserInfo userInfo) {
         this.deServiceFacade = deServiceFacade;
         this.deProperties = deProperties;
         this.searchAbFactory = searchAbFactory;
         this.drFactory = drFactory;
-        this.endpoints = endpoints;
-        this.buckets = buckets;
         this.userInfo = userInfo;
     }
 
@@ -293,15 +288,14 @@ public class SearchServiceFacadeImpl implements SearchServiceFacade {
 
     @Override
     public void getSavedQueryTemplates(AsyncCallback<List<DiskResourceQueryTemplate>> callback) {
-        //String address = endpoints.buckets() + "/" + userInfo.getUsername() + "/" + buckets.queryTemplates();
-        String address = deProperties.getMuleServiceBaseUrl() + "buckets/" + userInfo.getUsername() + "/reserved/" + buckets.queryTemplates();
+        String address = deProperties.getMuleServiceBaseUrl() + "saved-searches";
         ServiceCallWrapper wrapper = new ServiceCallWrapper(GET, address);
         deServiceFacade.getServiceData(wrapper, new QueryTemplateListCallbackConverter(callback, searchAbFactory));
     }
 
     @Override
     public void saveQueryTemplates(List<DiskResourceQueryTemplate> queryTemplates, AsyncCallback<List<DiskResourceQueryTemplate>> callback) {
-        String address = deProperties.getMuleServiceBaseUrl() + "buckets/" + userInfo.getUsername() + "/reserved/" + buckets.queryTemplates();
+        String address = deProperties.getMuleServiceBaseUrl() + "saved-searches";
 
         /*
          * TODO check to see if query templates all have names, and that they are unique.throw illegal
@@ -376,6 +370,8 @@ public class SearchServiceFacadeImpl implements SearchServiceFacade {
         int index = 0;
         for (DiskResourceQueryTemplate qt : queryTemplates) {
             final Splittable encode = AutoBeanCodex.encode(AutoBeanUtils.getAutoBean(qt));
+            StringQuoter.createIndexed().assign(encode, "files");
+            StringQuoter.createIndexed().assign(encode, "folders");
             encode.assign(indexedSplittable, index++);
         }
         return indexedSplittable.getPayload();

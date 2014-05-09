@@ -7,8 +7,6 @@ import org.iplantc.de.client.models.search.DiskResourceQueryTemplate;
 import org.iplantc.de.client.models.search.DiskResourceQueryTemplateList;
 import org.iplantc.de.client.models.search.SearchAutoBeanFactory;
 import org.iplantc.de.client.services.DEServiceFacade;
-import org.iplantc.de.client.services.Endpoints;
-import org.iplantc.de.client.services.ReservedBuckets;
 import org.iplantc.de.client.services.SearchServiceFacade;
 import org.iplantc.de.client.services.converters.AsyncCallbackConverter;
 import org.iplantc.de.shared.services.BaseServiceCallWrapper.Type;
@@ -23,10 +21,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
+import static org.mockito.Mockito.*;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -45,8 +40,6 @@ public class SearchServiceFacadeImplTest {
     @Mock DEProperties deProperties;
     @Mock SearchAutoBeanFactory searchAbFactoryMock;
     @Mock DiskResourceAutoBeanFactory drFactoryMock;
-    @Mock Endpoints endpointMock;
-    @Mock ReservedBuckets bucketsMock;
     @Mock UserInfo userInfoMock;
     @Mock AutoBean<DiskResourceQueryTemplateList> qtlistAbMock;
     
@@ -59,7 +52,7 @@ public class SearchServiceFacadeImplTest {
     private SearchServiceFacade unitUnderTest;
 
     @Before public void setUp() {
-        unitUnderTest = new SearchServiceFacadeImpl(deServiceFacadeMock, deProperties, searchAbFactoryMock, drFactoryMock, endpointMock, bucketsMock, userInfoMock);
+        unitUnderTest = new SearchServiceFacadeImpl(deServiceFacadeMock, deProperties, searchAbFactoryMock, drFactoryMock, userInfoMock);
     }
 
     /**
@@ -69,23 +62,14 @@ public class SearchServiceFacadeImplTest {
      */
     @Test public void testGetSavedQueryTemplates_Case1() {
         
-        final String bucketAddy = "buckets";
-        final String userName = "genericUser";
-        final String queryTemplateBucket = "savedQueryTemplatesBucket";
-        when(endpointMock.buckets()).thenReturn(bucketAddy);
-        when(userInfoMock.getUsername()).thenReturn(userName);
-        when(bucketsMock.queryTemplates()).thenReturn(queryTemplateBucket);
-
         // Call method under test
         unitUnderTest.getSavedQueryTemplates(asyncQtListMock);
 
         /* Verify proper construction of service call wrapper */
         ArgumentCaptor<ServiceCallWrapper> wrapperCaptor = ArgumentCaptor.forClass(ServiceCallWrapper.class);
         verify(deServiceFacadeMock).getServiceData(wrapperCaptor.capture(), asyncStringCaptor.capture());
-        verify(userInfoMock).getUsername();
-        verify(bucketsMock).queryTemplates();
 
-        final String expectedAddress = bucketAddy + "/" + userName + "/reserved/" + queryTemplateBucket;
+        final String expectedAddress = "saved-searches";
         /*
          * FIXME Fix this verify. Easiest way would be to inject DEProperties instead of statically
          * getting the instance.
@@ -101,23 +85,22 @@ public class SearchServiceFacadeImplTest {
      * @see SearchServiceFacade#saveQueryTemplates(List, AsyncCallback)
      */
     @Test public void testSaveQueryTemplates_Case1() {
-        final String bucketAddy = "buckets";
+        unitUnderTest = new SearchServiceFacadeImpl(deServiceFacadeMock, deProperties, searchAbFactoryMock, drFactoryMock, userInfoMock){
+            String templateListToIndexedSplittablePayload(List<DiskResourceQueryTemplate> queryTemplates){
+               return "stubPayload";
+            }
+        };
         final String userName = "testSaveUsername";
-        final String queryTemplatesBucket = "testSaveQuertyTemplatesBucket";
-        when(endpointMock.buckets()).thenReturn(bucketAddy);
         when(userInfoMock.getUsername()).thenReturn(userName);
-        when(bucketsMock.queryTemplates()).thenReturn(queryTemplatesBucket);
-        
+
         final ArrayList<DiskResourceQueryTemplate> newArrayList = Lists.newArrayList(mock(DiskResourceQueryTemplate.class));
         unitUnderTest.saveQueryTemplates(newArrayList, asyncQtListMock);
 
         /* Verify proper construction of service call wrapper */
         ArgumentCaptor<ServiceCallWrapper> wrapperCaptor = ArgumentCaptor.forClass(ServiceCallWrapper.class);
         verify(deServiceFacadeMock).getServiceData(wrapperCaptor.capture(), asyncStringCaptor.capture());
-        verify(userInfoMock).getUsername();
-        verify(bucketsMock).queryTemplates();
 
-        final String expectedAddress = bucketAddy + "/" + userName + "/reserved/" + queryTemplatesBucket;
+        final String expectedAddress = "saved-searches";
         assertTrue("Verify expected endpoint construction", wrapperCaptor.getValue().getAddress().endsWith(expectedAddress));
         /* Verify that it is a POST */
         assertEquals(Type.POST, wrapperCaptor.getValue().getType());
@@ -134,6 +117,11 @@ public class SearchServiceFacadeImplTest {
      */
     @Ignore("Unable to appropriately mock out Autobean factory")
     @Test public void testSaveQueryTemplates_Case2() {
+        unitUnderTest = new SearchServiceFacadeImpl(deServiceFacadeMock, deProperties, searchAbFactoryMock, drFactoryMock, userInfoMock){
+            String templateListToIndexedSplittablePayload(List<DiskResourceQueryTemplate> queryTemplates){
+                return "stubPayload";
+            }
+        };
 
         DiskResourceQueryTemplate mock1 = mock(DiskResourceQueryTemplate.class);
         DiskResourceQueryTemplate mock2 = mock(DiskResourceQueryTemplate.class);
