@@ -7,6 +7,7 @@ import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.client.util.CommonModelUtils;
 import org.iplantc.de.commons.client.validators.DiskResourceNameValidator;
 import org.iplantc.de.commons.client.views.gxt3.dialogs.IPlantDialog;
+import org.iplantc.de.diskResource.client.events.FolderSelectionEvent;
 import org.iplantc.de.diskResource.client.gin.DiskResourceInjector;
 import org.iplantc.de.diskResource.client.views.DiskResourceView;
 import org.iplantc.de.resources.client.messages.I18N;
@@ -15,8 +16,6 @@ import com.google.common.base.Strings;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyDownEvent;
 import com.google.gwt.event.dom.client.KeyDownHandler;
-import com.google.gwt.event.logical.shared.SelectionEvent;
-import com.google.gwt.event.logical.shared.SelectionHandler;
 
 import com.sencha.gxt.widget.core.client.button.TextButton;
 import com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer;
@@ -75,7 +74,7 @@ public class SaveAsDialog extends IPlantDialog {
 
 	private void initPresenter(TextButton okButton, VerticalLayoutContainer vlc) {
 		presenter.getView().setSouthWidget(vlc, 60);
-		presenter.addFolderSelectionHandler(new FolderSelectionChangedHandler());
+        presenter.addFolderSelectedEventHandler(new FolderSelectionChangedHandler());
 		presenter.builder().hideNorth().hideCenter().hideEast().singleSelect()
 				.go(this);
 	}
@@ -122,21 +121,22 @@ public class SaveAsDialog extends IPlantDialog {
 		return selectedFolderField.isValid() & fileNameField.isValid();
 	}
 
-	private final class FolderSelectionChangedHandler implements
-			SelectionHandler<Folder> {
+	private final class FolderSelectionChangedHandler implements FolderSelectionEvent.FolderSelectionEventHandler {
 
 		private FolderSelectionChangedHandler() {
 		}
 
-		@Override
-		public void onSelection(SelectionEvent<Folder> event) {
-			if (event.getSelectedItem() == null) {
+        @Override
+        public void onFolderSelected(FolderSelectionEvent event) {
+			if (event.getSelectedFolder() == null) {
 				return;
 			}
-			selectedFolder = event.getSelectedItem();
+			selectedFolder = event.getSelectedFolder();
 			selectedFolderField.setValue(selectedFolder.getPath(), true);
 			selectedFolderField.validate();
-		}
+
+        }
+
 	}
 
 	public String getFileName() {

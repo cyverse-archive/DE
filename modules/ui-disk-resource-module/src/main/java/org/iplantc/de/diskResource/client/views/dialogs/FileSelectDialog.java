@@ -6,6 +6,7 @@ import org.iplantc.de.client.models.diskResources.File;
 import org.iplantc.de.client.util.CommonModelUtils;
 import org.iplantc.de.client.util.DiskResourceUtil;
 import org.iplantc.de.commons.client.views.gxt3.dialogs.IPlantDialog;
+import org.iplantc.de.diskResource.client.events.DiskResourceSelectionChangedEvent;
 import org.iplantc.de.diskResource.client.gin.DiskResourceInjector;
 import org.iplantc.de.diskResource.client.views.DiskResourceView;
 import org.iplantc.de.diskResource.client.views.DiskResourceView.Presenter;
@@ -22,8 +23,6 @@ import com.google.gwt.user.client.ui.HasValue;
 
 import com.sencha.gxt.widget.core.client.form.FieldLabel;
 import com.sencha.gxt.widget.core.client.form.TextField;
-import com.sencha.gxt.widget.core.client.selection.SelectionChangedEvent;
-import com.sencha.gxt.widget.core.client.selection.SelectionChangedEvent.SelectionChangedHandler;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -105,8 +104,8 @@ public class FileSelectDialog extends IPlantDialog implements TakesValue<List<Fi
                 .addKeyUpHandler(new SelectedFileFieldKeyUpHandler(presenter, selectedFileField));
 
         presenter.getView().setSouthWidget(fl);
-        presenter.addFileSelectChangedHandler(new FileSelectionChangedHandler(this, selectedFileField,
-                getOkButton()));
+        presenter.addDiskResourceSelectionChangedEventHandler(new FileSelectionChangedHandler(this, selectedFileField,
+                                                                                                     getOkButton()));
 
         // Tell the presenter to add the view with the north and east widgets hidden.
         DiskResourceView.Presenter.Builder b = presenter.builder().hideNorth().hideEast()
@@ -153,7 +152,7 @@ public class FileSelectDialog extends IPlantDialog implements TakesValue<List<Fi
         }
     }
     
-    private final class FileSelectionChangedHandler implements SelectionChangedHandler<DiskResource> {
+    private final class FileSelectionChangedHandler implements DiskResourceSelectionChangedEvent.DiskResourceSelectionChangedEventHandler {
         private final HasValue<String> textbox;
         private final HasEnabled okButton;
         private final TakesValue<List<File>> dlg;
@@ -166,7 +165,7 @@ public class FileSelectDialog extends IPlantDialog implements TakesValue<List<Fi
         }
 
         @Override
-        public void onSelectionChanged(SelectionChangedEvent<DiskResource> event) {
+        public void onDiskResourceSelectionChanged(DiskResourceSelectionChangedEvent event) {
             // Disable the okButton
             okButton.setEnabled(false);
 
@@ -185,7 +184,9 @@ public class FileSelectDialog extends IPlantDialog implements TakesValue<List<Fi
                 // Enable the okButton
                 okButton.setEnabled(true);
             }
+
         }
+
     }
 
 }

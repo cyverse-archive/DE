@@ -480,13 +480,13 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     String browseClipperFiles();
 
     /**
-     * Translated "Bulk Download".
+     * Translated "Bulk Download...".
      *
-     * @return translated "Bulk Download"
+     * @return translated "Bulk Download..."
      */
-    @DefaultMessage("Bulk Download")
-    @Key("bulkDownload")
-    String bulkDownload();
+    @DefaultMessage("Bulk Download...")
+    @Key("bulkDownloadMenuItem")
+    String bulkDownloadMenuItem();
 
     /**
      * Translated "Bulk Upload from Desktop".
@@ -1287,6 +1287,16 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     @DefaultMessage("Edit")
     @Key("edit")
     String edit();
+
+    /**
+     * Translated "Edit...".
+     *
+     * @return translated "Edit..."
+     */
+    @DefaultMessage("Edit...")
+    @Key("editMenuItem")
+    String editMenuItem();
+
     
     /**
      * Translated "Modify".
@@ -2231,7 +2241,16 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     @DefaultMessage("Metadata")
     @Key("metadata")
     String metadata();
-    
+
+    /**
+     * Translated "Edit Metadata...".
+     *
+     * @return translated "Edit Metadata..."
+     */
+    @DefaultMessage("Edit Metadata...")
+    @Key("metadataMenuItem")
+    String metadataMenuItem();
+
     /**
      * Translated "metadataSuccess".
      *
@@ -2297,16 +2316,14 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     
     
     /**
-     * Translated "Move".
+     * Translated "Move...".
      *
-     * @return translated "Move"
+     * @return translated "Move..."
      */
-    @DefaultMessage("Move")
-    @Key("move")
-    String move();
+    @DefaultMessage("Move...")
+    @Key("moveMenuItem")
+    String moveMenuItem();
     
-    
-
     /**
      * Translated "Move down".
      *
@@ -3429,8 +3446,8 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
      * @return translated "Rename..."
      */
     @DefaultMessage("Rename...")
-    @Key("analysisRename")
-    String analysisRename();
+    @Key("renameMenuItem")
+    String renameMenuItem();
 
     /**
      * Translated "New Name".
@@ -3938,6 +3955,15 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
 
 
     /**
+     * Translated "Share...".
+     *
+     * @return translated "Share..."
+     */
+    @DefaultMessage("Share...")
+    @Key("shareMenuItem")
+    String shareMenuItem();
+
+    /**
      * Translated "Share promt".
      *
      * @return translated "Share promt"
@@ -3968,13 +3994,13 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     String show();
 
     /**
-     * Translated "Simple Download".
+     * Translated "Simple Download...".
      *
-     * @return translated "Simple Download"
+     * @return translated "Simple Download..."
      */
-    @DefaultMessage("Simple Download")
-    @Key("simpleDownload")
-    String simpleDownload();
+    @DefaultMessage("Simple Download...")
+    @Key("simpleDownloadMenuItem")
+    String simpleDownloadMenuItem();
 
     /**
      * Translated "Switch to Simple Download Links".
@@ -4714,6 +4740,160 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     @Key("addReferenceGenome")
     String addReferenceGenome();
 
+    /**
+     * Translated "Import From URL..."
+     *
+     * @return translated "Import From URL..."
+     */
+    @DefaultMessage("Import From URL...")
+    @Key("importFromUrlMenuItem")
+    String importFromUrlMenuItem();
 
+    /**
+     * Translated "New Data Window at this location"
+     *
+     * @return translated "New Data Window at this location"
+     */
+    @DefaultMessage("New Data Window at this location")
+    @Key("newDataWindowAtLocMenuItem")
+    String newDataWindowAtLocMenuItem();
+
+    /**
+     * Translated "New Folder..."
+     *
+     * @return translated "New Folder..."
+     */
+    @DefaultMessage("New Folder...")
+    @Key("newFolderMenuItem")
+    String newFolderMenuItem();
+
+    /**
+     * Translated "Duplicate"
+     *
+     * @return translated "Duplicate"
+     */
+    @DefaultMessage("Duplicate")
+    @Key("duplicateMenuItem")
+    String duplicateMenuItem();
+
+
+    /**
+     * Translated "Add to Sidebar"
+     *
+     * @return translated "Add to Sidebar"
+     */
+    @DefaultMessage("Add to Sidebar")
+    @Key("addToSideBarMenuItem")
+    String addToSideBarMenuItem();
+
+
+    /**
+     * Translated "New Plain Text File..."
+     *
+     * @return translated "New Plain Text File..."
+     */
+    @DefaultMessage("New Plain Text File...")
+    @Key("newPlainTextFileMenuItem")
+    String newPlainTextFileMenuItem();
+
+    /**
+     * Translated "New Tabular Data File..."
+     *
+     * @return translated "New Tabular Data File..."
+     */
+    @DefaultMessage("New Tabular Data File...")
+    @Key("newTabularDataFileMenuItem")
+    String newTabularDataFileMenuItem();
+
+
+    /**
+     * Translated "Move to Trash"
+     *
+     * @return translated "Move to Trash"
+     */
+    @DefaultMessage("New Tabular Data File...")
+    @Key("moveToTrashMenuItem")
+    String moveToTrashMenuItem();
+
+     /**
+     * Translated "Edit File..."
+     *
+     * @return translated "Edit File..."
+     */
+    @DefaultMessage("Edit File...")
+    @Key("editFileMenuItem")
+    String editFileMenuItem();
+
+    /**
+     * Translated "Edit Comments..."
+     *
+     * @return translated "Edit Comments..."
+     */
+    @DefaultMessage("Edit Comments...")
+    @Key("editCommentsMenuItem")
+    String editCommentsMenuItem();
+
+    /**
+     * Translated "Edit Information Type..."
+     *
+     * @return translated "Edit Information Type..."
+     */
+    @DefaultMessage("Edit Information Type...")
+    @Key("editInfoTypeMenuItem")
+    String editInfoTypeMenuItem();
+
+    /**
+     * Translated "Share With Collaborators..."
+     *
+     * @return translated "Share With Collaborators..."
+     */
+    @DefaultMessage("Share With Collaborators...")
+    @Key("shareWithCollaboratorsMenuItem")
+    String shareWithCollaboratorsMenuItem();
+
+    /**
+     * Translated "Create a Public Link..."
+     *
+     * @return translated "Create a Public Link..."
+     */
+    @DefaultMessage("Create a Public Link...")
+    @Key("createPublicLinkMenuItem")
+    String createPublicLinkMenuItem();
+
+    /**
+     * Translated "Send to CoGE"
+     *
+     * @return translated "Send to CoGE"
+     */
+    @DefaultMessage("Send to CoGE")
+    @Key("sendToCogeMenuItem")
+    String sendToCogeMenuItem();
+
+    /**
+     * Translated "Send to Ensembl"
+     *
+     * @return translated "Send to Ensembl"
+     */
+    @DefaultMessage("Send to Ensembl")
+    @Key("sendToEnsemblMenuItem")
+    String sendToEnsemblMenuItem();
+
+    /**
+     * Translated "Send to Tree Viewer"
+     *
+     * @return translated "Send to Tree Viewer"
+     */
+    @DefaultMessage("Send to Tree Viewer")
+    @Key("sendToTreeViewerMenuItem")
+    String sendToTreeViewerMenuItem();
+
+    /**
+     * Translated "Open Trash"
+     *
+     * @return translated "Open Trash"
+     */
+    @DefaultMessage("Open Trash")
+    @Key("openTrashMenuItem")
+    String openTrashMenuItem();
 
 }

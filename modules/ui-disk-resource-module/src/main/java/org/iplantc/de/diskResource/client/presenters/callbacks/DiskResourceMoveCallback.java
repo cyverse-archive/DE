@@ -37,6 +37,7 @@ public class DiskResourceMoveCallback extends DiskResourceServiceCallback<DiskRe
     @Override
     public void onSuccess(DiskResourceMove result) {
         unmaskCaller();
+        // FIXME CORE-5300 Round-robin. Fix
 
         String successMsg = I18N.DISPLAY.diskResourceMoveSuccess(result.getDest(), result.getSources());
         IplantAnnouncer.getInstance().schedule(new SuccessAnnouncementConfig(successMsg));

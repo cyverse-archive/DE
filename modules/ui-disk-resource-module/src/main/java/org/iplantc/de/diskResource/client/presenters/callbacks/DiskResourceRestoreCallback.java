@@ -49,7 +49,7 @@ public class DiskResourceRestoreCallback extends DiskResourceServiceCallback<Str
         super.onSuccess(result);
 
         checkForPartialRestore(result);
-        presenter.doRefresh(presenter.getSelectedFolder());
+        presenter.doRefreshFolder(presenter.getSelectedFolder());
     }
 
     @Override

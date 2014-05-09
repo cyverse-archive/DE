@@ -457,7 +457,7 @@ public class DiskResourceServiceFacadeImpl extends TreeStore<Folder> implements 
     }
 
     @Override
-    public void onRefresh(FolderRefreshEvent event) {
+    public void onRequestFolderRefresh(FolderRefreshEvent event) {
         Folder folder = findModel(event.getFolder());
         if (folder == null) {
             return;

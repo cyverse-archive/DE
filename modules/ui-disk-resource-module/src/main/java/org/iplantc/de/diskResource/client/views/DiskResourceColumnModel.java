@@ -1,21 +1,22 @@
 package org.iplantc.de.diskResource.client.views;
 
-import static org.iplantc.de.diskResource.client.views.cells.DiskResourceNameCell.CALLER_TAG.DATA;
-
 import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.client.models.diskResources.File;
 import org.iplantc.de.client.util.DiskResourceUtil;
 import org.iplantc.de.diskResource.client.views.cells.DiskResourceActionsCell;
 import org.iplantc.de.diskResource.client.views.cells.DiskResourceNameCell;
-import org.iplantc.de.diskResource.client.views.cells.DiskResourceNameCell.CALLER_TAG;
-import org.iplantc.de.resources.client.messages.I18N;
+import org.iplantc.de.diskResource.client.views.cells.events.DiskResourceNameSelectedEvent;
+import org.iplantc.de.diskResource.client.views.cells.events.ManageMetadataEvent;
+import org.iplantc.de.diskResource.client.views.cells.events.ManageSharingEvent;
+import org.iplantc.de.diskResource.client.views.cells.events.ShareByDataLinkEvent;
+import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 
 import com.google.gwt.cell.client.AbstractCell;
 import com.google.gwt.cell.client.DateCell;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
-import com.google.gwt.user.client.ui.IsWidget;
 
 import com.sencha.gxt.core.client.IdentityValueProvider;
 import com.sencha.gxt.core.client.ValueProvider;
@@ -23,47 +24,50 @@ import com.sencha.gxt.widget.core.client.grid.ColumnConfig;
 import com.sencha.gxt.widget.core.client.grid.ColumnModel;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
-public class DiskResourceColumnModel extends ColumnModel<DiskResource> {
+public class DiskResourceColumnModel extends ColumnModel<DiskResource> implements DiskResourceNameSelectedEvent.HasDiskResourceNameSelectedEventHandlers,
+                                                                                  ShareByDataLinkEvent.HasShareByDataLinkEventHandlers,
+                                                                                  ManageSharingEvent.HasManageSharingEventHandlers,
+                                                                                  ManageMetadataEvent.HasManageMetadataEventHandlers {
 
-    public DiskResourceColumnModel(DiskResourceView view, DiskResourceSelectionModel sm) {
-        super(createColumnConfigList(view, sm));
+    public DiskResourceColumnModel(DiskResourceSelectionModel sm, IplantDisplayStrings displayStrings) {
+        super(createColumnConfigList(sm, displayStrings));
+
+        for(ColumnConfig<DiskResource, ?> cc : configs){
+            if(cc.getCell() instanceof DiskResourceNameCell){
+                ((DiskResourceNameCell)cc.getCell()).setHasHandlers(this);
+            } else if(cc.getCell() instanceof DiskResourceActionsCell){
+                ((DiskResourceActionsCell)cc.getCell()).setHasHandlers(this);
+            }
+        }
     }
 
-    public static List<ColumnConfig<DiskResource, ?>> createColumnConfigList(DiskResourceView view,
-            DiskResourceSelectionModel sm) {
+    public static List<ColumnConfig<DiskResource, ?>> createColumnConfigList(DiskResourceSelectionModel sm, IplantDisplayStrings displayStrings) {
         List<ColumnConfig<DiskResource, ?>> list = new ArrayList<ColumnConfig<DiskResource, ?>>();
 
         DiskResourceProperties props = GWT.create(DiskResourceProperties.class);
 
-        ColumnConfig<DiskResource, DiskResource> name = createDiskResourceNameColumnConfig(view, DATA);
+        ColumnConfig<DiskResource, DiskResource> name = new ColumnConfig<DiskResource, DiskResource>(new IdentityValueProvider<DiskResource>("name"), 100, displayStrings.name());
+        ColumnConfig<DiskResource, Date> lastModified = new ColumnConfig<DiskResource, Date>(props.lastModified(), 120, displayStrings.lastModified());
+        ColumnConfig<DiskResource, Long> size = new ColumnConfig<DiskResource, Long>(new DiskResourceSizeValueProvider(), 50, displayStrings.size());
+        ColumnConfig<DiskResource, String> path = new ColumnConfig<DiskResource, String>(props.id(), 100, displayStrings.path());
+        ColumnConfig<DiskResource, Date> created = new ColumnConfig<DiskResource, Date>(props.dateSubmitted(), 120, displayStrings.dateSubmitted());
+        ColumnConfig<DiskResource, DiskResource> actions = new ColumnConfig<DiskResource, DiskResource>(new IdentityValueProvider<DiskResource>("actions"), 75, "");
 
-        ColumnConfig<DiskResource, Date> lastModified = new ColumnConfig<DiskResource, Date>(
-                props.lastModified(), 120, I18N.DISPLAY.lastModified());
-        lastModified.setCell(new DateCell(DateTimeFormat
-                .getFormat(DateTimeFormat.PredefinedFormat.DATE_TIME_MEDIUM)));
-        ColumnConfig<DiskResource, Long> size = new ColumnConfig<DiskResource, Long>(
-                new DiskResourceSizeValueProvider(),
-                50, I18N.DISPLAY.size());
+        name.setCell(new DiskResourceNameCell());
+        lastModified.setCell(new DateCell(DateTimeFormat.getFormat(DateTimeFormat.PredefinedFormat.DATE_TIME_MEDIUM)));
         size.setCell(new DiskResourceSizeCell());
-        
-        ColumnConfig<DiskResource, String> path = new ColumnConfig<DiskResource, String>(props.id(),
-                100, I18N.DISPLAY.path());
-        path.setHidden(true);
+        created.setCell(new DateCell(DateTimeFormat.getFormat(DateTimeFormat.PredefinedFormat.DATE_TIME_MEDIUM)));
+        actions.setCell(new DiskResourceActionsCell());
 
-        ColumnConfig<DiskResource, Date> created = new ColumnConfig<DiskResource, Date>(
-                props.dateSubmitted(), 120, I18N.DISPLAY.dateSubmitted());
-        created.setCell(new DateCell(DateTimeFormat
-                .getFormat(DateTimeFormat.PredefinedFormat.DATE_TIME_MEDIUM)));
+        name.setComparator(new DiskResourceNameComparator());
+
+        path.setHidden(true);
         created.setHidden(true);
-        
-        ColumnConfig<DiskResource, DiskResource> actions = new ColumnConfig<DiskResource, DiskResource>(
-                new IdentityValueProvider<DiskResource>("actions"), 75, "");
-        actions.setCell(new DiskResourceActionsCell(view, DATA));
         actions.setHidden(false);
+
         actions.setMenuDisabled(true);
         actions.setSortable(false);
         actions.setFixed(true);
@@ -79,36 +83,28 @@ public class DiskResourceColumnModel extends ColumnModel<DiskResource> {
         return list;
     }
 
-    public static ColumnConfig<DiskResource, DiskResource> createDiskResourceNameColumnConfig(
-            IsWidget caller, CALLER_TAG tag) {
-        ColumnConfig<DiskResource, DiskResource> name = new ColumnConfig<DiskResource, DiskResource>(
-                new IdentityValueProvider<DiskResource>("name"), 100, I18N.DISPLAY.name());
-        name.setCell(new DiskResourceNameCell(caller, tag));
-        name.setComparator(new DiskResourceNameComparator());
+    @Override
+    public HandlerRegistration addDiskResourceNameSelectedEventHandler(DiskResourceNameSelectedEvent.DiskResourceNameSelectedEventHandler handler) {
+        return ensureHandlers().addHandler(DiskResourceNameSelectedEvent.TYPE, handler);
+    }
 
-        return name;
+    @Override
+    public HandlerRegistration addManageMetadataEventHandler(ManageMetadataEvent.ManageMetadataEventHandler handler) {
+        return ensureHandlers().addHandler(ManageMetadataEvent.TYPE, handler);
+    }
+
+    @Override
+    public HandlerRegistration addManageSharingEventHandler(ManageSharingEvent.ManageSharingEventHandler handler) {
+        return ensureHandlers().addHandler(ManageSharingEvent.TYPE, handler);
+    }
+
+    @Override
+    public HandlerRegistration addShareByDataLinkEventHandler(ShareByDataLinkEvent.ShareByDataLinkEventHandler handler) {
+        return ensureHandlers().addHandler(ShareByDataLinkEvent.TYPE, handler);
     }
 
     public void setCheckboxColumnHidden(boolean hidden) {
         setHidden(0, hidden);
-    }
-
-    public ColumnConfig<DiskResource, DiskResource> getNameColumn() {
-        return getColumn(1);
-    }
-
-    /**
-     * A {@link Comparator} that sorts {@link DiskResource} names, case-insensitive.
-     * 
-     * @author psarando
-     * 
-     */
-    private static final class DiskResourceNameComparator implements Comparator<DiskResource> {
-
-        @Override
-        public int compare(DiskResource dr1, DiskResource dr2) {
-            return dr1.getName().compareToIgnoreCase(dr2.getName());
-        }
     }
 
     /**

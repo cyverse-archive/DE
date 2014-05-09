@@ -244,17 +244,17 @@ public class SelectFolderByPathLoadHandlerTest {
         when(viewMock.isLoaded(targetFolderParent)).thenReturn(true);
 
         // Since deferred commands can't be tested, the refreshFolder method will be overridden to ensure
-        // the DiskResourceView.Presenter#doRefresh method is called.
+        // the DiskResourceView.Presenter#onRequestFolderRefresh method is called.
         loadHandlerUnderTest = new SelectFolderByPathLoadHandler(folderToSelectMock, presenterMock, announcerMock) {
             @Override
             void refreshFolder(final Folder folder) {
-                presenterMock.doRefresh(folder);
+                presenterMock.doRefreshFolder(folder);
             }
         };
         verifyPresenterInit();
 
-        // The handler's constructor should call presenterMock#doRefresh on targetFolderParentPath.
-        verify(presenterMock).doRefresh(targetFolderParent);
+        // The handler's constructor should call presenterMock#onRequestFolderRefresh on targetFolderParentPath.
+        verify(presenterMock).doRefreshFolder(targetFolderParent);
 
         when(eventMock.getLoadConfig()).thenReturn(targetFolderParent);
         when(viewMock.getFolderByPath(targetFolderPath)).thenReturn(folderToSelectMock);
@@ -284,16 +284,16 @@ public class SelectFolderByPathLoadHandlerTest {
         when(viewMock.isLoaded(targetFolderParent)).thenReturn(true);
 
         // Since deferred commands can't be tested, the refreshFolder method will be overridden to ensure
-        // the DiskResourceView.Presenter#doRefresh method is called.
+        // the DiskResourceView.Presenter#onRequestFolderRefresh method is called.
         loadHandlerUnderTest = new SelectFolderByPathLoadHandler(folderToSelectMock, presenterMock, announcerMock) {
             @Override
             void refreshFolder(final Folder folder) {
-                presenterMock.doRefresh(folder);
+                presenterMock.doRefreshFolder(folder);
             }
         };
         verifyPresenterInit();
-        // The handler's constructor should call presenterMock#doRefresh on targetFolderParentPath.
-        verify(presenterMock).doRefresh(targetFolderParent);
+        // The handler's constructor should call presenterMock#onRequestFolderRefresh on targetFolderParentPath.
+        verify(presenterMock).doRefreshFolder(targetFolderParent);
 
         when(eventMock.getLoadConfig()).thenReturn(targetFolderParent);
         when(viewMock.getFolderByPath(targetFolderPath)).thenReturn(null);

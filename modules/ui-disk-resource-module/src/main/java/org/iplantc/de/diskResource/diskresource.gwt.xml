@@ -11,7 +11,7 @@
     
     <!-- Deferred binding rules -->
     <replace-with class="org.iplantc.de.diskResource.client.views.widgets.DiskResourceViewToolbarImpl">
-       <when-type-is class="org.iplantc.de.diskResource.client.views.widgets.DiskResourceViewToolbar"/>
+       <when-type-is class="org.iplantc.de.diskResource.client.views.DiskResourceView.DiskResourceViewToolbar"/>
     </replace-with>
      <!-- Deferred binding rules -->
     <replace-with class="org.iplantc.de.diskResource.client.views.CheckBoxColumnDefaultAppearance">

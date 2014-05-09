@@ -1,21 +1,16 @@
 package org.iplantc.de.diskResource.client.presenters.handlers;
 
-import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.events.diskResources.FolderRefreshEvent;
 import org.iplantc.de.client.events.diskResources.FolderRefreshEvent.FolderRefreshEventHandler;
 import org.iplantc.de.client.models.diskResources.DiskResource;
-import org.iplantc.de.client.models.diskResources.File;
 import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.client.models.search.DiskResourceQueryTemplate;
 import org.iplantc.de.client.util.DiskResourceUtil;
 import org.iplantc.de.diskResource.client.events.DiskResourceRenamedEvent.DiskResourceRenamedEventHandler;
-import org.iplantc.de.diskResource.client.events.DiskResourceSelectedEvent;
-import org.iplantc.de.diskResource.client.events.DiskResourceSelectedEvent.DiskResourceSelectedEventHandler;
 import org.iplantc.de.diskResource.client.events.DiskResourcesDeletedEvent;
 import org.iplantc.de.diskResource.client.events.DiskResourcesMovedEvent;
 import org.iplantc.de.diskResource.client.events.DiskResourcesMovedEvent.DiskResourcesMovedEventHandler;
 import org.iplantc.de.diskResource.client.events.FolderCreatedEvent.FolderCreatedEventHandler;
-import org.iplantc.de.diskResource.client.events.ShowFilePreviewEvent;
 import org.iplantc.de.diskResource.client.search.events.UpdateSavedSearchesEvent;
 import org.iplantc.de.diskResource.client.search.events.UpdateSavedSearchesEvent.UpdateSavedSearchesHandler;
 import org.iplantc.de.diskResource.client.views.DiskResourceView;
@@ -26,10 +21,12 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
-public final class DiskResourcesEventHandler implements
-        DiskResourcesDeletedEvent.DiskResourcesDeletedEventHandler, DiskResourceSelectedEventHandler,
-        DiskResourcesMovedEventHandler, DiskResourceRenamedEventHandler, FolderCreatedEventHandler,
-        FolderRefreshEventHandler, UpdateSavedSearchesHandler {
+public final class DiskResourcesEventHandler implements DiskResourcesDeletedEvent.DiskResourcesDeletedEventHandler,
+                                                        DiskResourcesMovedEventHandler,
+                                                        DiskResourceRenamedEventHandler,
+                                                        FolderCreatedEventHandler,
+                                                        FolderRefreshEventHandler,
+                                                        UpdateSavedSearchesHandler {
     private final DiskResourceView.Presenter presenter;
     private final DiskResourceView view;
 
@@ -39,27 +36,13 @@ public final class DiskResourcesEventHandler implements
     }
 
     @Override
-    public void onRefresh(FolderRefreshEvent event) {
-        presenter.onFolderRefresh(event.getFolder());
+    public void onRequestFolderRefresh(FolderRefreshEvent event) {
+        presenter.doRefreshFolder(event.getFolder());
     }
 
     @Override
     public void onDiskResourcesDeleted(Collection<DiskResource> resources, Folder parentFolder) {
-        presenter.doRefresh(parentFolder);
-    }
-
-    @Override
-    public void onSelect(DiskResourceSelectedEvent event) {
-        if (event.getSource() != view) {
-            return;
-        }
-
-        if (event.getSelectedItem() instanceof Folder) {
-            presenter.setSelectedFolderByPath(event.getSelectedItem());
-        } else if (event.getSelectedItem() instanceof File) {
-            EventBus.getInstance().fireEvent(
-                    new ShowFilePreviewEvent((File)event.getSelectedItem(), this));
-        }
+        presenter.doRefreshFolder(parentFolder);
     }
 
     @Override
@@ -69,8 +52,9 @@ public final class DiskResourcesEventHandler implements
         Folder selectedFolder = presenter.getSelectedFolder();
         // moved contents only not the folder itself
         if (event.isMoveContents()) {
-            presenter.doRefresh(destinationFolder);
-            presenter.doRefresh(selectedFolder);
+            presenter.doRefreshFolder(destinationFolder);
+            presenter.doRefreshFolder(selectedFolder);
+            presenter.refreshSelectedFolder();
         } else {
 
             if (resourcesToMove.contains(selectedFolder)) {
@@ -93,12 +77,12 @@ public final class DiskResourcesEventHandler implements
         } else if (DiskResourceUtil.isDescendantOfFolder(destinationFolder, parentFolder)) {
             // The parent is under the destination, so we only need to view the destination folder's
             // contents and refresh its children.
-            presenter.doRefresh(destinationFolder);
+            presenter.doRefreshFolder(destinationFolder);
         } else {
             // Refresh the parent folder since it has lost a child.
-            presenter.doRefresh(parentFolder);
+            presenter.doRefreshFolder(parentFolder);
             // Refresh the destination folder since it has gained a child.
-            presenter.doRefresh(destinationFolder);
+            presenter.doRefreshFolder(destinationFolder);
         }
 
         // View the destination folder's contents.
@@ -114,9 +98,9 @@ public final class DiskResourcesEventHandler implements
             } else {
                 // Refresh the selected folder since it has lost a child. This will also reload the
                 // selected folder's contents in the grid.
-                presenter.doRefresh(selectedFolder);
+                presenter.doRefreshFolder(selectedFolder);
                 // Refresh the destination folder since it has gained a child.
-                presenter.doRefresh(destinationFolder);
+                presenter.doRefreshFolder(destinationFolder);
                 return;
             }
         }
@@ -129,7 +113,7 @@ public final class DiskResourcesEventHandler implements
     public void onRename(DiskResource originalDr, DiskResource newDr) {
         Folder parent = view.getFolderByPath(DiskResourceUtil.parseParent(newDr.getPath()));
         if (parent != null) {
-            presenter.doRefresh(parent);
+            presenter.doRefreshFolder(parent);
         }
     }
 

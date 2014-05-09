@@ -2,6 +2,7 @@ package org.iplantc.de.diskResource.client.presenters;
 
 import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.models.HasPath;
+import org.iplantc.de.client.models.dataLink.DataLinkFactory;
 import org.iplantc.de.client.models.diskResources.DiskResourceAutoBeanFactory;
 import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.client.services.DiskResourceServiceFacade;
@@ -11,7 +12,6 @@ import org.iplantc.de.diskResource.client.presenters.proxy.SelectFolderByPathLoa
 import org.iplantc.de.diskResource.client.search.presenter.DataSearchPresenter;
 import org.iplantc.de.diskResource.client.search.views.DiskResourceSearchField;
 import org.iplantc.de.diskResource.client.views.DiskResourceView;
-import org.iplantc.de.diskResource.client.views.widgets.DiskResourceViewToolbar;
 import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 
 import com.google.common.collect.Lists;
@@ -42,13 +42,15 @@ public class DiskResourcePresenterImplTest {
     @Mock DiskResourceServiceFacade mockDiskResourceService;
     @Mock IplantDisplayStrings mockDisplayStrings;
     @Mock DiskResourceAutoBeanFactory mockFactory;
+    @Mock DataLinkFactory mockDlFactory;
     @Mock DataSearchPresenter mockDataSearchPresenter;
     @Mock EventBus mockEventBus;
+
     @Mock IplantAnnouncer mockAnnouncer;
+    @Mock
+    DiskResourceView.DiskResourceViewToolbar mockToolbar;
 
-    @Mock DiskResourceViewToolbar mockToolbar;
     @Mock DiskResourceSearchField mockSearchField;
-
     @Mock TreeStore<Folder> mockTreeStore;
 
     private DiskResourcePresenterImpl uut;
@@ -56,7 +58,7 @@ public class DiskResourcePresenterImplTest {
     @Before public void setUp() {
         setupMocks();
         uut = new DiskResourcePresenterImpl(mockView, mockProck, mockFolderRpcProxy,
-                mockDiskResourceService, mockDisplayStrings, mockFactory, mockDataSearchPresenter,
+                mockDiskResourceService, mockDisplayStrings, mockFactory, mockDlFactory, mockDataSearchPresenter,
                 mockEventBus, mockAnnouncer);
     }
 

@@ -3,12 +3,11 @@ package org.iplantc.de.diskResource.client.views.dialogs;
 import org.iplantc.de.client.models.HasPath;
 import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.commons.client.views.gxt3.dialogs.IPlantDialog;
+import org.iplantc.de.diskResource.client.events.FolderSelectionEvent;
 import org.iplantc.de.diskResource.client.gin.DiskResourceInjector;
 import org.iplantc.de.diskResource.client.views.DiskResourceView;
 import org.iplantc.de.resources.client.messages.I18N;
 
-import com.google.gwt.event.logical.shared.SelectionEvent;
-import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.user.client.TakesValue;
 import com.google.gwt.user.client.ui.HasEnabled;
 import com.google.gwt.user.client.ui.HasValue;
@@ -49,7 +48,7 @@ public class FolderSelectDialog extends IPlantDialog implements TakesValue<Folde
         final FieldLabel fl = new FieldLabel(selectedFolderField, I18N.DISPLAY.selectedFolder());
 
         presenter.getView().setSouthWidget(fl);
-        presenter.addFolderSelectionHandler(new FolderSelectionChangedHandler(this, selectedFolderField, getOkButton()));
+        presenter.addFolderSelectedEventHandler(new FolderSelectionChangedHandler(this, selectedFolderField, getOkButton()));
 
         // Tell the presenter to add the view with the north, east, and center widgets hidden.
         presenter.builder().hideNorth().hideCenter().hideEast().singleSelect().go(this);
@@ -60,7 +59,7 @@ public class FolderSelectDialog extends IPlantDialog implements TakesValue<Folde
         presenter.cleanUp();
     }
     
-    private final class FolderSelectionChangedHandler implements SelectionHandler<Folder> {
+    private final class FolderSelectionChangedHandler implements FolderSelectionEvent.FolderSelectionEventHandler {
         private final HasValue<String> textBox;
         private final HasEnabled okButton;
         private final TakesValue<Folder> dlg;
@@ -72,8 +71,8 @@ public class FolderSelectDialog extends IPlantDialog implements TakesValue<Folde
         }
 
         @Override
-        public void onSelection(SelectionEvent<Folder> event) {
-            Folder diskResource = event.getSelectedItem();
+        public void onFolderSelected(FolderSelectionEvent event) {
+            Folder diskResource = event.getSelectedFolder();
             if (diskResource == null) {
                 // Disable the okButton
                 okButton.setEnabled(false);
@@ -84,6 +83,7 @@ public class FolderSelectDialog extends IPlantDialog implements TakesValue<Folde
             textBox.setValue(diskResource.getName());
             // Enable the okButton
             okButton.setEnabled(true);
+
         }
     }
 
