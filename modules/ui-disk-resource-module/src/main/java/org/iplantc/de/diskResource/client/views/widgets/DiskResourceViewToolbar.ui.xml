@@ -49,15 +49,20 @@
                                        text="{display.newFolderMenuItem}"
                                        icon="{res.folderAdd}"/>
                         <menu:MenuItem ui:field="duplicateMi"
-                                       text="{display.duplicateMenuItem}"/>
+                                       text="{display.duplicateMenuItem}"
+                                       enabled="false"
+                                       visible="false"/>
                         <menu:MenuItem ui:field="addToSideBarMi"
-                                       text="{display.addToSideBarMenuItem}"/>
+                                       text="{display.addToSideBarMenuItem}"
+                                       enabled="false"
+                                       visible="false"/>
                         <menu:MenuItem ui:field="newPlainTextFileMi"
                                        text="{display.newPlainTextFileMenuItem}"/>
                         <menu:MenuItem ui:field="newTabularDataFileMi"
                                        text="{display.newTabularDataFileMenuItem}"/>
                         <menu:MenuItem ui:field="moveToTrashMi"
-                                       text="{display.moveToTrashMenuItem}"/>
+                                       text="{display.moveToTrashMenuItem}"
+                                       enabled="false"/>
                     </menu:Menu>
                 </button:menu>
             </button:TextButton>
@@ -71,22 +76,30 @@
                     <menu:Menu>
                         <menu:MenuItem ui:field="renameMi"
                                        text="{display.renameMenuItem}"
-                                       icon="{res.fileRename}"/>
+                                       icon="{res.fileRename}"
+                                       enabled="false"/>
                         <menu:MenuItem ui:field="editFileMi"
-                                       text="{display.editMenuItem}"/>
+                                       text="{display.editMenuItem}"
+                                       enabled="false"/>
                         <menu:MenuItem ui:field="editCommentsMi"
-                                       text="{display.editCommentsMenuItem}"/>
+                                       text="{display.editCommentsMenuItem}"
+                                       enabled="false"
+                                       visible="false"/>
                         <menu:MenuItem ui:field="editInfoTypeMi"
-                                       text="{display.editInfoTypeMenuItem}"/>
+                                       text="{display.editInfoTypeMenuItem}"
+                                       enabled="false"/>
                         <menu:MenuItem ui:field="metadataMi"
                                        text="{display.metadataMenuItem}"
-                                       icon="{res.metadata}"/>
+                                       icon="{res.metadata}"
+                                       enabled="false"/>
                         <menu:MenuItem ui:field="moveMi"
                                        text="{display.moveMenuItem}"
-                                       icon="{res.edit}"/>
+                                       icon="{res.edit}"
+                                       enabled="false"/>
                         <menu:MenuItem ui:field="deleteMi"
                                        text="{display.delete}"
-                                       icon="{res.fileDelete}"/>
+                                       icon="{res.fileDelete}"
+                                       enabled="false"/>
                     </menu:Menu>
                 </button:menu>
             </button:TextButton>
@@ -99,9 +112,11 @@
                 <button:menu>
                     <menu:Menu>
                         <menu:MenuItem ui:field="simpleDownloadMi"
-                                       text="{display.simpleDownloadMenuItem}"/>
+                                       text="{display.simpleDownloadMenuItem}"
+                                       enabled="false"/>
                         <menu:MenuItem ui:field="bulkDownloadMi"
-                                       text="{display.bulkDownloadMenuItem}"/>
+                                       text="{display.bulkDownloadMenuItem}"
+                                       enabled="false"/>
                     </menu:Menu>
                 </button:menu>
             </button:TextButton>
@@ -114,15 +129,20 @@
                 <button:menu>
                     <menu:Menu>
                         <menu:MenuItem ui:field="shareWithCollaboratorsMi"
-                                       text="{display.shareWithCollaboratorsMenuItem}"/>
+                                       text="{display.shareWithCollaboratorsMenuItem}"
+                                       enabled="false"/>
                         <menu:MenuItem ui:field="createPublicLinkMi"
-                                       text="{display.createPublicLinkMenuItem}"/>
+                                       text="{display.createPublicLinkMenuItem}"
+                                       enabled="false"/>
                         <menu:MenuItem ui:field="sendToCogeMi"
-                                       text="{display.sendToCogeMenuItem}"/>
+                                       text="{display.sendToCogeMenuItem}"
+                                       enabled="false"/>
                         <menu:MenuItem ui:field="sendToEnsemblMi"
-                                       text="{display.sendToEnsemblMenuItem}"/>
+                                       text="{display.sendToEnsemblMenuItem}"
+                                       enabled="false"/>
                         <menu:MenuItem ui:field="sendToTreeViewerMi"
-                                       text="{display.sendToTreeViewerMenuItem}"/>
+                                       text="{display.sendToTreeViewerMenuItem}"
+                                       enabled="false"/>
                     </menu:Menu>
                 </button:menu>
             </button:TextButton>
@@ -131,7 +151,9 @@
         <!-- Refresh button -->
         <toolbar:child>
             <button:TextButton ui:field="refreshButton"
-                               text="{display.refresh}"/>
+                               text="{display.refresh}"
+                               icon="{res.refresh}"
+                               enabled="false"/>
         </toolbar:child>
 
         <!-- Data Search box -->
@@ -149,7 +171,8 @@
                         <menu:MenuItem ui:field="openTrashMi"
                                        text="{display.openTrashMenuItem}"/>
                         <menu:MenuItem ui:field="restoreMi"
-                                       text="{display.restore}"/>
+                                       text="{display.restore}"
+                                       enabled="false"/>
                         <menu:SeparatorMenuItem/>
                         <menu:MenuItem ui:field="emptyTrashMi"
                                        text="{display.emptyTrash}"/>
