@@ -10,12 +10,10 @@ import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.client.models.dataLink.DataLink;
 import org.iplantc.de.client.models.dataLink.DataLinkFactory;
 import org.iplantc.de.client.models.dataLink.DataLinkList;
-import org.iplantc.de.client.models.diskResources.DiskResource;
-import org.iplantc.de.client.models.diskResources.DiskResourceAutoBeanFactory;
-import org.iplantc.de.client.models.diskResources.File;
-import org.iplantc.de.client.models.diskResources.Folder;
+import org.iplantc.de.client.models.diskResources.*;
 import org.iplantc.de.client.models.search.DiskResourceQueryTemplate;
 import org.iplantc.de.client.services.DiskResourceServiceFacade;
+import org.iplantc.de.client.util.CommonModelUtils;
 import org.iplantc.de.client.util.DiskResourceUtil;
 import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.commons.client.info.ErrorAnnouncementConfig;
@@ -83,7 +81,6 @@ import com.sencha.gxt.widget.core.client.event.SelectEvent.SelectHandler;
 import com.sencha.gxt.widget.core.client.form.TextField;
 import com.sencha.gxt.widget.core.client.tree.Tree.TreeNode;
 
-
 import java.util.*;
 import java.util.Map.Entry;
 
@@ -108,6 +105,7 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
     private FolderContentsRpcProxy rpc_proxy;
     private PagingLoader<FolderContentsLoadConfig, PagingLoadResult<DiskResource>> gridLoader;
     private final DataLinkFactory dlFactory;
+    private final UserInfo userInfo;
     private final DataSearchPresenter dataSearchPresenter;
     private final EventBus eventBus;
     private final IplantAnnouncer announcer;
@@ -120,6 +118,7 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
                                      final IplantDisplayStrings display,
                                      final DiskResourceAutoBeanFactory factory,
                                      final DataLinkFactory dlFactory,
+                                     final UserInfo userInfo,
                                      final DataSearchPresenter dataSearchPresenter,
                                      final EventBus eventBus,
                                      final IplantAnnouncer announcer) {
@@ -130,6 +129,7 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
         this.displayStrings = display;
         this.drFactory = factory;
         this.dlFactory = dlFactory;
+        this.userInfo = userInfo;
         this.dataSearchPresenter = dataSearchPresenter;
         this.eventBus = eventBus;
         this.announcer = announcer;
@@ -231,7 +231,7 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
         final IPlantDialog ipd = new IPlantDialog(true);
 
         ipd.setSize("600", "400"); //$NON-NLS-1$ //$NON-NLS-2$
-        ipd.setHeadingText(I18N.DISPLAY.metadata() + ":" + selected.getId()); //$NON-NLS-1$
+        ipd.setHeadingText(displayStrings.metadata() + ":" + selected.getId()); //$NON-NLS-1$
         ipd.setResizable(true);
         ipd.addHelp(new HTML(I18N.HELP.metadataHelp()));
         p.go(ipd);
@@ -436,16 +436,20 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
     @Override
     public void editSelectedFile() {
 
-    }
 
-    @Override
-    public void editSelectedResourceComments() {
+        checkState(getSelectedDiskResources().size() == 1, "Only one file should be selected, but there are %i", getSelectedDiskResources().size());
+        final DiskResource next = getSelectedDiskResources().iterator().next();
+        checkState(next instanceof File, "Selected item should be a file, but is not.");
+        checkState(PermissionValue.own.equals(next.getPermission())
+                          || PermissionValue.write.equals(next), "User should have either own or write permissions for the selected item");
 
+        eventBus.fireEvent(new ShowFilePreviewEvent((File) next, this));
     }
 
     @Override
     public void editSelectedResourceInfoType() {
-
+        checkState(getSelectedDiskResources().size() == 1, "Only one Disk Resource should be selected, but there are %i", getSelectedDiskResources().size());
+        onInfoTypeClick(getSelectedDiskResources().iterator().next(), "");
     }
 
     @Override
@@ -465,10 +469,11 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
 
     @Override
     public void openNewWindow(boolean atThisLocation) {
-        String folderPath = getSelectedFolder() == null ? null : getSelectedFolder().getPath();
+        // If current folder is null, or window SHOULD NOT be opened at current location, folderPath is null
+        String folderPath = (getSelectedFolder() == null) || !atThisLocation ? null : getSelectedFolder().getPath();
         OpenFolderEvent openEvent = new OpenFolderEvent(folderPath);
         openEvent.requestNewView(true);
-        EventBus.getInstance().fireEvent(openEvent);
+        eventBus.fireEvent(openEvent);
     }
 
     @Override
@@ -528,7 +533,8 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
 
     @Override
     public void selectTrashFolder() {
-
+        final HasPath hasPath = CommonModelUtils.createHasPathFromString(userInfo.getTrashPath());
+        setSelectedFolderByPath(hasPath);
     }
 
     @Override
@@ -547,11 +553,6 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
     }
 
     @Override
-    public void addSelectedFolderToSideBar() {
-
-    }
-
-    @Override
     public void createNewFolder() {
         CreateFolderDialog dlg = new CreateFolderDialog(getSelectedUploadFolder(), this);
         dlg.show();
@@ -561,11 +562,6 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
     public void createNewPlainTextFile() {
         CreateNewFileEvent event = new CreateNewFileEvent(getSelectedUploadFolder().getPath());
         eventBus.fireEvent(event);
-    }
-
-    @Override
-    public void createNewTabularDataFile() {
-
     }
 
     @Override
@@ -592,13 +588,6 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
 
 
     }
-
-    @Override
-    public void duplicateSelectedResource() {
-
-    }
-
-
 
     @Override
     public void doSimpleDownload() {
@@ -896,7 +885,7 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
     }
 
     void doEmptyTrash() {
-        view.mask(I18N.DISPLAY.loadingMask());
+        view.mask(displayStrings.loadingMask());
         diskResourceService.emptyTrash(UserInfo.getInstance().getUsername(), new AsyncCallback<String>() {
 
             @Override
@@ -915,9 +904,8 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
 
     @Override
     public void emptyTrash() {
-        // TODO CORE-5300 Move confirmation box to view, which will call presenter
-        final ConfirmMessageBox cmb = new ConfirmMessageBox(I18N.DISPLAY.emptyTrash(),
-                                                                   I18N.DISPLAY.emptyTrashWarning());
+        final ConfirmMessageBox cmb = new ConfirmMessageBox(displayStrings.emptyTrash(),
+                                                                   displayStrings.emptyTrashWarning());
         cmb.addHideHandler(new HideHandler() {
             @Override
             public void onHide(HideEvent event) {
@@ -945,7 +933,7 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
     }
 
     @Override
-    public void onInfoTypeClick(final String id, final String type) {
+    public void onInfoTypeClick(final DiskResource dr, final String type) {
         final InfoTypeEditorDialog dialog = new InfoTypeEditorDialog(type);
         dialog.show();
         dialog.addOkButtonSelectHandler(new SelectHandler() {
@@ -953,7 +941,7 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
             @Override
             public void onSelect(SelectEvent event) {
                 String newType = dialog.getSelectedValue();
-                setInfoType(id, newType);
+                setInfoType(dr.getId(), newType);
             }
         });
 
@@ -989,6 +977,8 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
     @Override
     public void moveSelectedDiskResourcesToTrash() {
 
+        checkState(!getSelectedDiskResources().isEmpty(), "Selected resources should not be empty");
+        delete(getSelectedDiskResources(), displayStrings.deleteMsg());
     }
 
     @Override

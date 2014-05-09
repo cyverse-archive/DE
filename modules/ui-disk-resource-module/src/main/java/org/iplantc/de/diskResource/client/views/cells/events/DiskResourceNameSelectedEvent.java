@@ -25,8 +25,7 @@ public class DiskResourceNameSelectedEvent extends GwtEvent<DiskResourceNameSele
     public static final Type<DiskResourceNameSelectedEventHandler> TYPE = new Type<DiskResourceNameSelectedEventHandler>();
     private final DiskResource selectedItem;
 
-    public DiskResourceNameSelectedEvent(final Object source, final DiskResource selectedItem) {
-        setSource(source);
+    public DiskResourceNameSelectedEvent(final DiskResource selectedItem) {
         this.selectedItem = selectedItem;
     }
 
