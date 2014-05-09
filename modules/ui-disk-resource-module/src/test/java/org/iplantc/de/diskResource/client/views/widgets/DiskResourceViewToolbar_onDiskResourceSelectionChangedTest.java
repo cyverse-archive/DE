@@ -1,6 +1,7 @@
 package org.iplantc.de.diskResource.client.views.widgets;
 
 import static org.iplantc.de.client.models.diskResources.PermissionValue.*;
+import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.client.models.diskResources.File;
 import org.iplantc.de.client.models.diskResources.Folder;
@@ -73,7 +74,7 @@ public class DiskResourceViewToolbar_onDiskResourceSelectionChangedTest {
     private DiskResourceViewToolbarImpl uut;
 
     @Before public void setup() {
-        uut = new DiskResourceViewToolbarImpl(){
+        uut = new DiskResourceViewToolbarImpl(mock(UserInfo.class)){
             boolean containsFile(List<DiskResource> selection) {
                 return containsFile;
             }

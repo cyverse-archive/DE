@@ -2,6 +2,7 @@ package org.iplantc.de.diskResource.client.presenters;
 
 import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.models.HasPath;
+import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.client.models.dataLink.DataLinkFactory;
 import org.iplantc.de.client.models.diskResources.DiskResourceAutoBeanFactory;
 import org.iplantc.de.client.models.diskResources.Folder;
@@ -45,10 +46,10 @@ public class DiskResourcePresenterImplTest {
     @Mock DataLinkFactory mockDlFactory;
     @Mock DataSearchPresenter mockDataSearchPresenter;
     @Mock EventBus mockEventBus;
+    @Mock UserInfo mockUserInfo;
 
     @Mock IplantAnnouncer mockAnnouncer;
-    @Mock
-    DiskResourceView.DiskResourceViewToolbar mockToolbar;
+    @Mock DiskResourceView.DiskResourceViewToolbar mockToolbar;
 
     @Mock DiskResourceSearchField mockSearchField;
     @Mock TreeStore<Folder> mockTreeStore;
@@ -58,7 +59,7 @@ public class DiskResourcePresenterImplTest {
     @Before public void setUp() {
         setupMocks();
         uut = new DiskResourcePresenterImpl(mockView, mockProck, mockFolderRpcProxy,
-                mockDiskResourceService, mockDisplayStrings, mockFactory, mockDlFactory, mockDataSearchPresenter,
+                mockDiskResourceService, mockDisplayStrings, mockFactory, mockDlFactory, mockUserInfo, mockDataSearchPresenter,
                 mockEventBus, mockAnnouncer);
     }
 

@@ -10,6 +10,7 @@ import org.iplantc.de.diskResource.client.events.FolderSelectionEvent;
 import org.iplantc.de.diskResource.client.search.views.DiskResourceSearchField;
 import org.iplantc.de.diskResource.client.views.DiskResourceView;
 
+import com.google.common.collect.Lists;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -159,16 +160,17 @@ public class DiskResourceViewToolbarImpl extends Composite implements DiskResour
     public void onFolderSelected(FolderSelectionEvent event) {
         boolean simpleUploadMiEnabled, bulkUploadMiEnabled, importFromUrlMiEnabled;
 
-        boolean newFolderMiEnabled, newPlainTextFileMiEnabled, newTabularDataFileMiEnabled, moveToTrashMiEnabled;
+        boolean newFolderMiEnabled, newPlainTextFileMiEnabled, newTabularDataFileMiEnabled;
         boolean refreshButtonEnabled;
 
         final Folder selectedFolder = event.getSelectedFolder();
+        final boolean isFolderInTrash = isSelectionInTrash(Lists.<DiskResource>newArrayList(selectedFolder));
         final boolean isNull = selectedFolder == null;
         final boolean canUploadTo = canUploadTo(selectedFolder);
 
-        simpleUploadMiEnabled = isNull || canUploadTo;
-        bulkUploadMiEnabled = isNull || canUploadTo;
-        importFromUrlMiEnabled = isNull || canUploadTo;
+        simpleUploadMiEnabled = !isFolderInTrash && (isNull || canUploadTo);
+        bulkUploadMiEnabled = !isFolderInTrash && (isNull || canUploadTo);
+        importFromUrlMiEnabled = !isFolderInTrash && (isNull || canUploadTo);
 
         newFolderMiEnabled = isNull || canUploadTo;
         newPlainTextFileMiEnabled = isNull || canUploadTo;
