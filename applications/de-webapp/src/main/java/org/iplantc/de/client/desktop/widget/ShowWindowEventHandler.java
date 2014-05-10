@@ -1,10 +1,14 @@
 package org.iplantc.de.client.desktop.widget;
 
 import org.iplantc.de.analysis.client.events.OpenAppForRelaunchEvent;
-import org.iplantc.de.apps.client.events.*;
+import org.iplantc.de.apps.client.events.CreateNewAppEvent;
 import org.iplantc.de.apps.client.events.CreateNewAppEvent.CreateNewAppEventHandler;
+import org.iplantc.de.apps.client.events.CreateNewWorkflowEvent;
+import org.iplantc.de.apps.client.events.EditAppEvent;
 import org.iplantc.de.apps.client.events.EditAppEvent.EditAppEventHandler;
+import org.iplantc.de.apps.client.events.EditWorkflowEvent;
 import org.iplantc.de.apps.client.events.EditWorkflowEvent.EditWorkflowEventHandler;
+import org.iplantc.de.apps.client.events.RunAppEvent;
 import org.iplantc.de.apps.client.events.RunAppEvent.RunAppEventHandler;
 import org.iplantc.de.client.events.ShowAboutWindowEvent;
 import org.iplantc.de.client.events.ShowAboutWindowEvent.ShowAboutWindowEventHandler;
@@ -58,7 +62,7 @@ final class ShowWindowEventHandler implements ShowAboutWindowEventHandler, ShowF
                 .newViewRequested());
         config.setSelectedFolder(path);
 
-        desktop.showWindow(config);
+        desktop.showWindow(config, !event.newViewRequested());
     }
 
     @Override

@@ -13,16 +13,15 @@ import org.iplantc.de.client.events.WindowCloseRequestEvent;
 import org.iplantc.de.client.events.WindowShowRequestEvent;
 import org.iplantc.de.client.gin.ServicesInjector;
 import org.iplantc.de.client.models.DEProperties;
-import org.iplantc.de.client.models.HasId;
+import org.iplantc.de.client.models.HasPath;
 import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.client.models.UserSettings;
 import org.iplantc.de.client.models.WindowState;
-import org.iplantc.de.client.models.diskResources.DiskResourceAutoBeanFactory;
-import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.client.models.notifications.NotificationCategory;
 import org.iplantc.de.client.periodic.MessagePoller;
 import org.iplantc.de.client.services.DEServiceFacade;
 import org.iplantc.de.client.sysmsgs.presenter.NewMessagePresenter;
+import org.iplantc.de.client.util.CommonModelUtils;
 import org.iplantc.de.client.util.JsonUtil;
 import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.commons.client.events.UserSettingsUpdatedEvent;
@@ -40,7 +39,6 @@ import org.iplantc.de.shared.services.PropertyServiceFacade;
 import org.iplantc.de.shared.services.ServiceCallWrapper;
 
 import com.google.common.base.Strings;
-import com.google.common.collect.Lists;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.shared.GWT;
 import com.google.gwt.dom.client.NativeEvent;
@@ -55,8 +53,6 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HasOneWidget;
 import com.google.gwt.user.client.ui.RootLayoutPanel;
 import com.google.gwt.user.client.ui.RootPanel;
-import com.google.web.bindery.autobean.shared.AutoBean;
-import com.google.web.bindery.autobean.shared.AutoBeanCodex;
 
 import com.sencha.gxt.core.client.dom.XDOM;
 import com.sencha.gxt.core.client.util.KeyNav;
@@ -335,13 +331,8 @@ public class DEPresenter implements DEView.Presenter {
             String selectedFolder = URL.decode(Strings.nullToEmpty(folderParameter));
 
             if (!Strings.isNullOrEmpty(selectedFolder)) {
-                final DiskResourceAutoBeanFactory drFactory = GWT.create(DiskResourceAutoBeanFactory.class);
-                AutoBean<Folder> fAb = AutoBeanCodex.decode(drFactory, Folder.class, "{\"id\":\"" + selectedFolder + "\"}");
-                ArrayList<HasId> newArrayList = Lists.newArrayList();
-                Folder folder = fAb.as();
-                newArrayList.add(folder);
+                HasPath folder = CommonModelUtils.createHasPathFromString(selectedFolder);
                 diskResourceWindowConfig.setSelectedFolder(folder);
-                diskResourceWindowConfig.setSelectedDiskResources(newArrayList);
             }
             eventBus.fireEvent(new WindowShowRequestEvent(diskResourceWindowConfig));
         }
