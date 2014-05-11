@@ -311,9 +311,9 @@ public class ArgumentGroupEditorImpl extends ContentPanel implements AppTemplate
 
         for (AppTemplateForm.ArgumentEditorFactory ae : editor.getEditors()) {
             if (ae.getSubEditor() == object) {
-                ae.asWidget().addStyleName(appAppearance.getStyle().argumentSelect());
+                ae.getSubEditor().asWidget().addStyleName(appAppearance.getStyle().argumentSelect());
             } else {
-                ae.asWidget().removeStyleName(appAppearance.getStyle().argumentSelect());
+                ae.getSubEditor().asWidget().removeStyleName(appAppearance.getStyle().argumentSelect());
             }
         }
     }
