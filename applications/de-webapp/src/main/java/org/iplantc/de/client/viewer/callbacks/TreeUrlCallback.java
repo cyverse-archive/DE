@@ -17,9 +17,9 @@ import java.util.List;
 
 public class TreeUrlCallback implements AsyncCallback<String> {
 
-    private IsMaskable container;
-    private FileViewer viewer;
-    private File file;
+    private final IsMaskable container;
+    private final FileViewer viewer;
+    private final File file;
 
     private final static TreeUrlAutoBeanFactory factory = GWT.create(TreeUrlAutoBeanFactory.class);
 
@@ -31,7 +31,9 @@ public class TreeUrlCallback implements AsyncCallback<String> {
 
     @Override
     public void onFailure(Throwable caught) {
-        container.unmask();
+        if (container != null) {
+            container.unmask();
+        }
 
         String errMsg = org.iplantc.de.resources.client.messages.I18N.ERROR.unableToRetrieveTreeUrls(file.getName());
         ErrorHandler.post(errMsg, caught);
@@ -44,16 +46,17 @@ public class TreeUrlCallback implements AsyncCallback<String> {
             List<VizUrl> urlsList = getTreeUrls(result);
             if (urlsList != null) {
                 viewer.setData(urlsList);
-                container.unmask();
+
             } else {
-                container.unmask();
                 // couldn't find any tree URLs in the response, so display an error.
                 onFailure(new Exception(result));
             }
-
         } else {
             // couldn't find any tree URLs in the response, so display an error.
             onFailure(new Exception(result));
+        }
+
+        if (container != null) {
             container.unmask();
         }
 

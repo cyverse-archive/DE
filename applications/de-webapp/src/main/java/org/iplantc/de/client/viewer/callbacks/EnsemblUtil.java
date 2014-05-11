@@ -9,6 +9,7 @@ import org.iplantc.de.client.models.viewer.InfoType;
 import org.iplantc.de.client.services.DiskResourceServiceFacade;
 import org.iplantc.de.client.util.DiskResourceUtil;
 import org.iplantc.de.commons.client.views.gxt3.dialogs.IplantInfoBox;
+import org.iplantc.de.resources.client.messages.I18N;
 
 import com.google.common.collect.Lists;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -24,7 +25,7 @@ public class EnsemblUtil {
         this.container = container;
         this.infoType = infoType;
     }
-    
+
     public void sendToEnsembl() {
         final DiskResourceServiceFacade diskResourceServiceFacade = ServicesInjector.INSTANCE.getDiskResourceServiceFacade();
         final HasPaths diskResourcePaths = diskResourceServiceFacade.getDiskResourceFactory().pathsList().as();
@@ -36,9 +37,13 @@ public class EnsemblUtil {
             indexFile = filename + ".bai";
         } else if (infoType.equals(InfoType.VCF.toString())) {
             indexFile = filename + ".tbi";
+        } else if (infoType.equals(InfoType.GFF.toString())) {
+            indexFile = null;
         }
-        final String indexFilePath = parent + "/" + indexFile;
-        diskResourcePaths.setPaths(Lists.newArrayList(path, indexFilePath));
+        if (indexFile != null) {
+            final String indexFilePath = parent + "/" + indexFile;
+            diskResourcePaths.setPaths(Lists.newArrayList(path, indexFilePath));
+        }
 
         diskResourceServiceFacade.getStat(diskResourcePaths, new AsyncCallback<DiskResourceStatMap>() {
 
@@ -46,13 +51,14 @@ public class EnsemblUtil {
             public void onSuccess(DiskResourceStatMap result) {
                 diskResourceServiceFacade.shareWithAnonymous(diskResourcePaths, new ShareAnonymousCallback(file, container));
             }
+
             @Override
             public void onFailure(Throwable caught) {
-                IplantInfoBox info = new IplantInfoBox("Index file missing",
-                        "Index file (.bai (or) .vci) is missing. <b>Note:</b> Both genome and index file must be present in the same folder.");
-
+                IplantInfoBox info = new IplantInfoBox(I18N.DISPLAY.indexFileMissing(), I18N.ERROR.indexFileMissing());
                 info.show();
-                container.unmask();
+                if (container != null) {
+                    container.unmask();
+                }
             }
         });
     }

@@ -32,7 +32,7 @@ public enum InfoType {
             return null;
         }
 
-        return valueOf(typeString);
+        return valueOf(typeString.toUpperCase());
     }
 
     @Override

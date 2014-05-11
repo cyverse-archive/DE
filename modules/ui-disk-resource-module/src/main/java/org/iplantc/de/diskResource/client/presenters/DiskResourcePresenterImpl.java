@@ -17,6 +17,7 @@ import org.iplantc.de.client.models.diskResources.File;
 import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.client.models.diskResources.PermissionValue;
 import org.iplantc.de.client.models.search.DiskResourceQueryTemplate;
+import org.iplantc.de.client.models.viewer.InfoType;
 import org.iplantc.de.client.services.DiskResourceServiceFacade;
 import org.iplantc.de.client.util.CommonModelUtils;
 import org.iplantc.de.client.util.DiskResourceUtil;
@@ -586,15 +587,15 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter, Di
         DiskResource next = it.next();
         String infoType = getInfoType(next);
         if(Strings.isNullOrEmpty(infoType)) {
-            SafeHtmlBuilder builder = new SafeHtmlBuilder();
-            builder.appendEscaped("Cannot send this file to Ensembl. Unsupported Information type.");
-            IplantAnnouncer.getInstance().schedule(new ErrorAnnouncementConfig(builder.toSafeHtml(), true, 4000));
+            showInfoTypeError(I18N.ERROR.unsupportedEnsemblInfoType());
             return;
         }
         JSONObject obj = new JSONObject();
         obj.put("info-type", new JSONString(infoType));
         if (DiskResourceUtil.isEnsemblVizTab(obj)) {
-            eventBus.fireEvent(new RequestSendToEnsemblEvent((File)next));
+            eventBus.fireEvent(new RequestSendToEnsemblEvent((File)next, InfoType.fromTypeString(infoType)));
+        } else {
+            showInfoTypeError(I18N.ERROR.unsupportedEnsemblInfoType());
         }
     }
 
@@ -605,15 +606,15 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter, Di
         DiskResource next = it.next();
         String infoType = getInfoType(next);
         if (Strings.isNullOrEmpty(infoType)) {
-            SafeHtmlBuilder builder = new SafeHtmlBuilder();
-            builder.appendEscaped("Cannot send this file to CoGe. Unsupported Information type.");
-            IplantAnnouncer.getInstance().schedule(new ErrorAnnouncementConfig(builder.toSafeHtml(), true, 4000));
+            showInfoTypeError(I18N.ERROR.unsupportedCogeInfoType());
             return;
         }
         JSONObject obj = new JSONObject();
         obj.put("info-type", new JSONString(infoType));
         if (DiskResourceUtil.isGenomeVizTab(obj)) {
             eventBus.fireEvent(new RequestSendToCoGeEvent((File)next));
+        } else {
+            showInfoTypeError(I18N.ERROR.unsupportedCogeInfoType());
         }
     }
 
@@ -624,16 +625,22 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter, Di
         DiskResource next = it.next();
         String infoType = getInfoType(next);
         if (Strings.isNullOrEmpty(infoType)) {
-            SafeHtmlBuilder builder = new SafeHtmlBuilder();
-            builder.appendEscaped("Cannot send this file to Tree viewer. Unsupported Information type.");
-            IplantAnnouncer.getInstance().schedule(new ErrorAnnouncementConfig(builder.toSafeHtml(), true, 4000));
+            showInfoTypeError(I18N.ERROR.unsupportedTreeInfoType());
             return;
         }
         JSONObject obj = new JSONObject();
         obj.put("info-type", new JSONString(infoType));
-        if (DiskResourceUtil.isEnsemblVizTab(obj)) {
+        if (DiskResourceUtil.isTreeTab(obj)) {
             eventBus.fireEvent(new RequestSendToTreeViewerEvent((File)next));
+        } else {
+            showInfoTypeError(I18N.ERROR.unsupportedTreeInfoType());
         }
+    }
+
+    private void showInfoTypeError(String msg) {
+        SafeHtmlBuilder builder = new SafeHtmlBuilder();
+        builder.appendEscaped(msg);
+        announcer.schedule(new ErrorAnnouncementConfig(builder.toSafeHtml(), true, 4000));
     }
 
 
@@ -1132,7 +1139,7 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter, Di
         view.displayAndCacheDiskResourceInfo(path, info);
         view.unmaskSendToCoGe();
         view.unmaskSendToEnsembl();
-        view.unMaskSendToTreeViewer();
+        view.unmaskSendToTreeViewer();
     }
 
 }

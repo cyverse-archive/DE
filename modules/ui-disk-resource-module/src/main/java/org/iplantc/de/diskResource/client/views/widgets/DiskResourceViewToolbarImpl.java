@@ -405,7 +405,7 @@ public class DiskResourceViewToolbarImpl extends Composite implements DiskResour
 
     @Override
     public void unmaskSendToEnsembl() {
-        sendToEnsemblMi.mask();
+        sendToEnsemblMi.unmask();
 
     }
 
@@ -416,7 +416,7 @@ public class DiskResourceViewToolbarImpl extends Composite implements DiskResour
     }
 
     @Override
-    public void unMaskSendToTreeViewer() {
+    public void unmaskSendToTreeViewer() {
         sendToTreeViewerMi.unmask();
 
     }

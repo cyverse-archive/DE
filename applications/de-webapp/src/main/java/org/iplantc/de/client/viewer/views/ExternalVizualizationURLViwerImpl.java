@@ -120,7 +120,7 @@ public class ExternalVizualizationURLViwerImpl extends AbstractFileViewer implem
     }
 
     private TextButton buildEnsemblButton() {
-        TextButton button = new TextButton("Load Genome in Ensemble", IplantResources.RESOURCES.arrowUp());
+        TextButton button = new TextButton(I18N.DISPLAY.sendToEnsemblMenuItem(), IplantResources.RESOURCES.arrowUp());
         button.addSelectHandler(new SelectHandler() {
 
             @Override
@@ -134,7 +134,7 @@ public class ExternalVizualizationURLViwerImpl extends AbstractFileViewer implem
     }
 
     private TextButton buildCogeButton() {
-        TextButton button = new TextButton("Load Genome in CoGe", IplantResources.RESOURCES.arrowUp());
+        TextButton button = new TextButton(I18N.DISPLAY.sendToCogeMenuItem(), IplantResources.RESOURCES.arrowUp());
         button.addSelectHandler(new SelectHandler() {
 
             @Override
@@ -152,7 +152,7 @@ public class ExternalVizualizationURLViwerImpl extends AbstractFileViewer implem
     }
 
     private TextButton buildTreeViewerButton() {
-        TextButton button = new TextButton(org.iplantc.de.resources.client.messages.I18N.DISPLAY.refresh(), IplantResources.RESOURCES.refresh());
+        TextButton button = new TextButton(I18N.DISPLAY.sendToTreeViewerMenuItem(), IplantResources.RESOURCES.arrowUp());
         button.addSelectHandler(new SelectHandler() {
 
             @Override

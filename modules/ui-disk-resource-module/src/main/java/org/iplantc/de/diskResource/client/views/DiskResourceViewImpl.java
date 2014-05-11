@@ -1,24 +1,19 @@
 package org.iplantc.de.diskResource.client.views;
 
-import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.models.HasId;
 import org.iplantc.de.client.models.HasPath;
 import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.client.models.diskResources.DiskResourceAutoBeanFactory;
 import org.iplantc.de.client.models.diskResources.DiskResourceInfo;
-import org.iplantc.de.client.models.diskResources.File;
 import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.client.models.diskResources.PermissionValue;
 import org.iplantc.de.client.models.search.DiskResourceQueryTemplate;
 import org.iplantc.de.client.util.CommonModelUtils;
 import org.iplantc.de.client.util.DiskResourceUtil;
-import org.iplantc.de.commons.client.views.window.configs.ConfigFactory;
-import org.iplantc.de.commons.client.views.window.configs.FileViewerWindowConfig;
 import org.iplantc.de.commons.client.widgets.IPlantAnchor;
 import org.iplantc.de.diskResource.client.events.DiskResourceSelectionChangedEvent;
 import org.iplantc.de.diskResource.client.events.FolderSelectionEvent;
-import org.iplantc.de.diskResource.client.events.ShowFilePreviewEvent;
 import org.iplantc.de.diskResource.client.presenters.proxy.FolderContentsLoadConfig;
 import org.iplantc.de.diskResource.client.search.events.DeleteSavedSearchEvent;
 import org.iplantc.de.resources.client.DataCollapseStyle;
@@ -859,7 +854,7 @@ public class DiskResourceViewImpl implements DiskResourceView, SelectionHandler<
                     detailsPanel.add(getSharingLabel(I18N.DISPLAY.share(), info.getShareCount(), info.getPermission()));
                 }
                 if (info.getType().equalsIgnoreCase("file")) {
-                    addFileDetails(info);
+                    addFileDetails(info, !DiskResourceUtil.inTrash(next));
 
                 } else {
                     addFolderDetails(info);
@@ -874,18 +869,20 @@ public class DiskResourceViewImpl implements DiskResourceView, SelectionHandler<
                 info.getFileCount(), info.getDirCount()));
     }
 
-    private void addFileDetails(DiskResourceInfo info) {
+    private void addFileDetails(DiskResourceInfo info, boolean addViiewerInfo) {
         detailsPanel.add(getStringLabel(I18N.DISPLAY.size(), DiskResourceUtil.formatFileSize(info.getSize() + ""))); //$NON-NLS-1$
         detailsPanel.add(getStringLabel("Type", info.getFileType()));
         detailsPanel.add(getInfoTypeLabel("Info-Type", info));
-        detailsPanel.add(getViewerInfo(info));
+        if (addViiewerInfo) {
+            detailsPanel.add(getViewerInfo(info));
+        }
     }
 
     private HorizontalPanel getViewerInfo(DiskResourceInfo info) {
         HorizontalPanel panel = buildRow();
         FieldLabel fl = new FieldLabel();
         fl.setWidth(100);
-        fl.setHTML(getDetailAsHtml("Send to", true));
+        fl.setHTML(getDetailAsHtml(displayStrings.sendTo(), true));
         panel.add(fl);
         IPlantAnchor link = null;
         String infoType = info.getInfoType();
@@ -893,11 +890,11 @@ public class DiskResourceViewImpl implements DiskResourceView, SelectionHandler<
             JSONObject manifest = new JSONObject();
             manifest.put("info-type", new JSONString(infoType));
             if (DiskResourceUtil.isTreeTab(manifest)) {
-                link = new IPlantAnchor("Tree Viewer", 100, new ViewerInfoClickHandler());
+                link = new IPlantAnchor(displayStrings.treeViewer(), 100, new TreeViewerInfoClickHandler());
             } else if (DiskResourceUtil.isGenomeVizTab(manifest)) {
-                link = new IPlantAnchor("CoGe ", 100, new ViewerInfoClickHandler());
+                link = new IPlantAnchor(displayStrings.coge(), 100, new CogeViewerInfoClickHandler());
             } else if (DiskResourceUtil.isEnsemblVizTab(manifest)) {
-                link = new IPlantAnchor("Ensembl", 100, new ViewerInfoClickHandler());
+                link = new IPlantAnchor(displayStrings.ensembl(), 100, new EnsemblViewerInfoClickHander());
             }
         }
         if (link == null) {
@@ -1003,14 +1000,30 @@ public class DiskResourceViewImpl implements DiskResourceView, SelectionHandler<
         }
     }
 
-    private class ViewerInfoClickHandler implements ClickHandler {
+    private class TreeViewerInfoClickHandler implements ClickHandler {
         @Override
         public void onClick(ClickEvent event) {
-            List<DiskResource> selection = grid.getSelectionModel().getSelectedItems();
-            DiskResource dr = selection.iterator().next();
-            FileViewerWindowConfig fileViewerWindowConfig = ConfigFactory.fileViewerWindowConfig((File)dr, false);
-            fileViewerWindowConfig.setVizTabFirst(true);
-            EventBus.getInstance().fireEvent(new ShowFilePreviewEvent((File)dr, fileViewerWindowConfig, DiskResourceViewImpl.this));
+            presenter.sendSelectedResourcesToTreeViewer();
+        }
+
+    }
+
+    private class CogeViewerInfoClickHandler implements ClickHandler {
+
+        @Override
+        public void onClick(ClickEvent event) {
+            presenter.sendSelectedResourcesToCoge();
+
+        }
+
+    }
+
+    private class EnsemblViewerInfoClickHander implements ClickHandler {
+
+        @Override
+        public void onClick(ClickEvent event) {
+            presenter.sendSelectedResourceToEnsembl();
+
         }
 
     }
@@ -1084,8 +1097,8 @@ public class DiskResourceViewImpl implements DiskResourceView, SelectionHandler<
     }
 
     @Override
-    public void unMaskSendToTreeViewer() {
-        toolbar.maskSendToTreeViewer();
+    public void unmaskSendToTreeViewer() {
+        toolbar.unmaskSendToTreeViewer();
 
     }
 

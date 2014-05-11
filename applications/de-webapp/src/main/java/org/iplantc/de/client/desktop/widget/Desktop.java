@@ -24,8 +24,8 @@ import org.iplantc.de.client.events.ShowSystemMessagesEvent;
 import org.iplantc.de.client.events.WindowCloseRequestEvent;
 import org.iplantc.de.client.events.WindowLayoutRequestEvent;
 import org.iplantc.de.client.events.WindowLayoutRequestEvent.WindowLayoutRequestEventHandler;
-import org.iplantc.de.client.events.diskResources.OpenFolderEvent;
 import org.iplantc.de.client.events.WindowShowRequestEvent;
+import org.iplantc.de.client.events.diskResources.OpenFolderEvent;
 import org.iplantc.de.client.models.WindowState;
 import org.iplantc.de.client.utils.DEWindowManager;
 import org.iplantc.de.client.utils.ShortcutManager;
@@ -37,6 +37,9 @@ import org.iplantc.de.diskResource.client.events.CreateNewFileEvent;
 import org.iplantc.de.diskResource.client.events.RequestBulkDownloadEvent;
 import org.iplantc.de.diskResource.client.events.RequestBulkUploadEvent;
 import org.iplantc.de.diskResource.client.events.RequestImportFromUrlEvent;
+import org.iplantc.de.diskResource.client.events.RequestSendToCoGeEvent;
+import org.iplantc.de.diskResource.client.events.RequestSendToEnsemblEvent;
+import org.iplantc.de.diskResource.client.events.RequestSendToTreeViewerEvent;
 import org.iplantc.de.diskResource.client.events.RequestSimpleDownloadEvent;
 import org.iplantc.de.diskResource.client.events.RequestSimpleUploadEvent;
 import org.iplantc.de.diskResource.client.events.ShowFilePreviewEvent;
@@ -94,7 +97,7 @@ public class Desktop implements IsWidget {
     private WindowHandler handler;
     private IPlantWindowInterface activeWindow;
 
-    private List<HandlerRegistration> eventHandlers = new ArrayList<HandlerRegistration>();
+    private final List<HandlerRegistration> eventHandlers = new ArrayList<HandlerRegistration>();
 
     /**
      * @return the activeWindow
@@ -141,6 +144,7 @@ public class Desktop implements IsWidget {
     private void initWindowEventHandlers(final EventBus eventbus) {
         // Launching Tito and App windows
         ShowWindowEventHandler showWindowHandler = new ShowWindowEventHandler(this);
+        ExternalVizURLRequestHandler vizRequestHandler = new ExternalVizURLRequestHandler(this);
         CloseActiveWindowEventHandler closeActiveWindowHandler = new CloseActiveWindowEventHandler(this);
         eventHandlers.add(eventbus.addHandler(EditAppEvent.TYPE, showWindowHandler));
         eventHandlers.add(eventbus.addHandler(CreateNewAppEvent.TYPE, showWindowHandler));
@@ -159,6 +163,9 @@ public class Desktop implements IsWidget {
                 new WindowLayoutRequestEventHandlerImpl()));
         eventHandlers.add(eventBus.addHandler(OpenAppForRelaunchEvent.TYPE, showWindowHandler));
         eventHandlers.add(eventBus.addHandler(OpenFolderEvent.TYPE, showWindowHandler));
+        eventHandlers.add(eventBus.addHandler(RequestSendToCoGeEvent.TYPE, vizRequestHandler));
+        eventHandlers.add(eventBus.addHandler(RequestSendToEnsemblEvent.TYPE, vizRequestHandler));
+        eventHandlers.add(eventBus.addHandler(RequestSendToTreeViewerEvent.TYPE, vizRequestHandler));
     }
 
     private void initEventHandlers(final EventBus eventbus) {

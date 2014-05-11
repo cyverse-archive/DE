@@ -307,7 +307,7 @@ public interface DiskResourceView extends IsWidget,
 
     void maskSendToTreeViewer();
 
-    void unMaskSendToTreeViewer();
+    void unmaskSendToTreeViewer();
 
     interface DiskResourceViewToolbar extends IsWidget {
 
@@ -325,7 +325,7 @@ public interface DiskResourceView extends IsWidget,
 
         void maskSendToTreeViewer();
 
-        void unMaskSendToTreeViewer();
+        void unmaskSendToTreeViewer();
     }
 
     void displayAndCacheDiskResourceInfo(String path, DiskResourceInfo info);

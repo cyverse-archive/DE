@@ -11,7 +11,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class LoadGenomeInCoGeCallback implements AsyncCallback<String> {
 
-    private IsMaskable container;
+    private final IsMaskable container;
 
     public LoadGenomeInCoGeCallback(IsMaskable container) {
         this.container = container;
@@ -19,7 +19,9 @@ public class LoadGenomeInCoGeCallback implements AsyncCallback<String> {
 
     @Override
     public void onFailure(Throwable caught) {
-        container.unmask();
+        if (container != null) {
+            container.unmask();
+        }
         ErrorHandler.post(org.iplantc.de.resources.client.messages.I18N.ERROR.cogeError(), caught);
     }
 
@@ -33,7 +35,9 @@ public class LoadGenomeInCoGeCallback implements AsyncCallback<String> {
         } else {
             onFailure(null);
         }
-        container.unmask();
+        if (container != null) {
+            container.unmask();
+        }
 
     }
 

@@ -435,6 +435,8 @@ public interface IplantErrorStrings extends com.google.gwt.i18n.client.Messages,
     @Key("duplicateUpload")
     String duplicateUpload();
 
+    String ensemblError();
+
     /**
      * Error msg to show when empty trash fails
      * 
@@ -1159,4 +1161,12 @@ public interface IplantErrorStrings extends com.google.gwt.i18n.client.Messages,
     @DefaultMessage("Selected App does not have a tool assigned, and cannot be opened for launch.")
     @Key("appLaunchWithoutToolError")
     String appLaunchWithoutToolError();
+
+    String unsupportedCogeInfoType();
+
+    String unsupportedEnsemblInfoType();
+
+    String unsupportedTreeInfoType();
+
+    String indexFileMissing();
 }

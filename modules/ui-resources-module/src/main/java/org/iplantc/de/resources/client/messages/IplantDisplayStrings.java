@@ -1335,6 +1335,10 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     @Key("emptyTrashWarning")
     String emptyTrashWarning();
 
+    String ensembl();
+
+    String ensemblUrl();
+
     /**
      * Translated "Enabled".
      *
@@ -1727,6 +1731,8 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     @DefaultMessage("{0} is uploading and will be available shortly.")
     @Key("importRequestSubmit")
     String importRequestSubmit(String arg0);
+
+    String indexFileMissing();
 
 
     /**
@@ -3935,6 +3941,8 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     @Key("selfShareWarning")
     String selfShareWarning();
 
+    String sendTo();
+
     /**
      * Translated "Settings".
      *
@@ -4352,6 +4360,8 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     @DefaultMessage("Tree URL")
     @Key("treeUrl")
     String treeUrl();
+
+    String treeViewer();
 
     /**
      * Translated "Delete a previous rating".
