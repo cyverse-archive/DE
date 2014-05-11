@@ -71,25 +71,31 @@ public class ArgumentEditorConverter<T> extends Composite implements IArgumentEd
         if (validators == null) {
             return;
         }
-        if (validators.isEmpty()) {
-            // JDS If validators are empty, we need to cleanup.
-            if (field instanceof Field<?>) {
-                Field<T> tmpField = (Field<T>)field;
-                List<Validator<T>> validatorsToRemove = Lists.newArrayList(tmpField.getValidators());
-                for (Validator<T> v : validatorsToRemove) {
-                    if (v instanceof IPlantDefaultValidator) {
-                        continue;
+
+        // FIXME This loop is very similar to the one proceeding it. Correct and verify operation.
+        // JDS If validators are empty, we need to cleanup.
+        if (validators.isEmpty() && (field instanceof Field<?>)) {
+            Field<T> tmpField = (Field<T>)field;
+            List<Validator<T>> validatorsToRemove = Lists.newArrayList(tmpField.getValidators());
+            for (Validator<T> v : validatorsToRemove) {
+                if (v instanceof IPlantDefaultValidator) {
+                    // Do not remove default iPlant validators (e.g. DiskResourceNameValidator)
+                    continue;
+                }
+                if (tmpField instanceof ValueBaseField<?> && !((ValueBaseField<T>) tmpField).isAllowBlank() && (v instanceof EmptyValidator<?>)) {
+                    // Do not remove EmptyValidators set via ValueBaseField.setAllowBlank(false)
+                    continue;
+                }
+                tmpField.removeValidator(v);
+                if ((v instanceof MaxLengthValidator)) {
+                    for (HandlerRegistration hr : preventEntryKeyDownHandlers) {
+                        hr.removeHandler();
                     }
-                    tmpField.removeValidator(v);
-                    if ((v instanceof MaxLengthValidator)) {
-                        for (HandlerRegistration hr : preventEntryKeyDownHandlers) {
-                            hr.removeHandler();
-                        }
-                        preventEntryKeyDownHandlers.clear();
-                    }
+                    preventEntryKeyDownHandlers.clear();
                 }
             }
         }
+
         if (field instanceof Field<?>) {
             Field<T> fieldObj = (Field<T>)field;
 
@@ -97,6 +103,11 @@ public class ArgumentEditorConverter<T> extends Composite implements IArgumentEd
             List<Validator<T>> validatorsToRemove = Lists.newArrayList(fieldObj.getValidators());
             for (Validator<T> v : validatorsToRemove) {
                 if (v instanceof IPlantDefaultValidator) {
+                    // Do not remove default iPlant validators (e.g. DiskResourceNameValidator)
+                    continue;
+                }
+                if (fieldObj instanceof ValueBaseField<?> && !((ValueBaseField<T>) fieldObj).isAllowBlank() && (v instanceof EmptyValidator<?>)) {
+                    // Do not remove EmptyValidators set via ValueBaseField.setAllowBlank(false)
                     continue;
                 }
                 fieldObj.removeValidator(v);
