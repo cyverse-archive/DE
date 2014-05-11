@@ -120,8 +120,11 @@ public final class ArgumentWYSIWYGDeleteHandler implements MouseOverHandler, Mou
 
             if (!listEditor.getList().isEmpty()) {
                 int index = (currentItemIndex > 0) ? currentItemIndex - 1 : 0;
-                AppTemplateForm.ArgumentEditor toBeSelected = listEditor.getEditors().get(index).getSubEditor();
-                ensureHandlers().fireEvent(new ArgumentSelectedEvent(arg));
+
+                final Argument nextArgument = listEditor.getList().get(index);
+                ensureHandlers().fireEvent(new ArgumentSelectedEvent(nextArgument));
+
+                final AppTemplateForm.ArgumentEditor toBeSelected = listEditor.getEditors().get(index).getSubEditor();
                 toBeSelected.asWidget().addStyleName(appearance.getStyle().argumentSelect());
             } else {
                 /*
