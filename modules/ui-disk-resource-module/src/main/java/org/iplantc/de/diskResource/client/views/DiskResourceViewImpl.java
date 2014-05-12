@@ -182,7 +182,6 @@ public class DiskResourceViewImpl implements DiskResourceView, SelectionHandler<
 
     private Presenter presenter;
 
-//    @UiField
     DiskResourceViewToolbar toolbar;
 
     @UiField
@@ -434,6 +433,7 @@ public class DiskResourceViewImpl implements DiskResourceView, SelectionHandler<
         ((DiskResourceColumnModel)cm).addDiskResourceNameSelectedEventHandler(presenter);
         ((DiskResourceColumnModel)cm).addManageSharingEventHandler(presenter);
         ((DiskResourceColumnModel)cm).addManageMetadataEventHandler(presenter);
+        ((DiskResourceColumnModel)cm).addShareByDataLinkEventHandler(presenter);
         toolbar.init(presenter, this);
         initDragAndDrop();
     }

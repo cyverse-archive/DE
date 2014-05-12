@@ -59,7 +59,9 @@
                         <menu:MenuItem ui:field="newPlainTextFileMi"
                                        text="{display.newPlainTextFileMenuItem}"/>
                         <menu:MenuItem ui:field="newTabularDataFileMi"
-                                       text="{display.newTabularDataFileMenuItem}"/>
+                                       text="{display.newTabularDataFileMenuItem}"
+                                       visible="false"
+                                       enabled="false"/>
                         <menu:MenuItem ui:field="moveToTrashMi"
                                        text="{display.moveToTrashMenuItem}"
                                        enabled="false"/>

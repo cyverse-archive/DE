@@ -35,6 +35,6 @@ public class ManageSharingEvent extends GwtEvent<ManageSharingEvent.ManageSharin
 
     @Override
     protected void dispatch(ManageSharingEventHandler handler) {
-
+        handler.onRequestManageSharing(this);
     }
 }
