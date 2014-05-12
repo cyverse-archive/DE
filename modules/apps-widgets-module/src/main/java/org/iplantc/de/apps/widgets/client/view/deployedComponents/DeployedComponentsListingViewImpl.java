@@ -22,6 +22,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.sencha.gxt.core.client.IdentityValueProvider;
 import com.sencha.gxt.core.client.XTemplates;
+import com.sencha.gxt.core.client.dom.ScrollSupport.ScrollMode;
 import com.sencha.gxt.data.shared.ListStore;
 import com.sencha.gxt.data.shared.loader.FilterPagingLoadConfig;
 import com.sencha.gxt.data.shared.loader.FilterPagingLoadConfigBean;
@@ -33,6 +34,7 @@ import com.sencha.gxt.widget.core.client.Dialog;
 import com.sencha.gxt.widget.core.client.container.AbstractHtmlLayoutContainer.HtmlData;
 import com.sencha.gxt.widget.core.client.container.HtmlLayoutContainer;
 import com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer;
+import com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer.VerticalLayoutData;
 import com.sencha.gxt.widget.core.client.event.SelectEvent;
 import com.sencha.gxt.widget.core.client.grid.ColumnConfig;
 import com.sencha.gxt.widget.core.client.grid.ColumnModel;
@@ -127,12 +129,15 @@ public class DeployedComponentsListingViewImpl extends Composite implements
     public void showInfo(DeployedComponent dc) {
         DCDetailsRenderer templates = GWT.create(DCDetailsRenderer.class);
         HtmlLayoutContainer c = new HtmlLayoutContainer(templates.render());
+        VerticalLayoutContainer vlc = new VerticalLayoutContainer();
         c.add(new Label(I18N.DISPLAY.attribution() + ": "), new HtmlData(".cell1"));
         c.add(new Label(dc.getAttribution()), new HtmlData(".cell3"));
         c.add(new Label(I18N.DISPLAY.description() + ": "), new HtmlData(".cell5"));
         c.add(new Label(dc.getDescription()), new HtmlData(".cell7"));
         Dialog d = buildDetailsDialog(dc.getName());
-        d.add(c);
+        vlc.add(c, new VerticalLayoutData(1, 1));
+        vlc.setScrollMode(ScrollMode.AUTO);
+        d.setWidget(vlc);
         d.show();
     }
 
@@ -185,25 +190,11 @@ public class DeployedComponentsListingViewImpl extends Composite implements
         dialog.show();
     }
 
-//    @UiHandler({"searchBtn"})
-//    void onSearchBtnClick(SelectEvent event) {
-//        String currentValue = searchField.getCurrentValue();
-//        if (currentValue == null || currentValue.isEmpty()) {
-//            presenter.loadDeployedComponents();
-//            return;
-//        }
-//        if (currentValue.length() >= 3) {
-//            presenter.searchDC(currentValue);
-//        } else {
-//            searchField.markInvalid(I18N.DISPLAY.searchEmptyText());
-//        }
-//    }
-
     private Dialog buildDetailsDialog(String heading) {
         Dialog d = new Dialog();
         d.getButtonBar().clear();
         d.setModal(true);
-        d.setSize("300px", "200px");
+        d.setSize("500px", "300px");
         d.setHeadingText(heading);
         return d;
     }
