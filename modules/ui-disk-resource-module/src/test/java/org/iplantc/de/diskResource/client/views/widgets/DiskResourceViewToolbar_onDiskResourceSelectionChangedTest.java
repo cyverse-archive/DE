@@ -467,10 +467,10 @@ public class DiskResourceViewToolbar_onDiskResourceSelectionChangedTest {
         verify(mockEditFile).setEnabled(false);
         verify(mockEditComments).setEnabled(false);
         verify(mockEditInfoType).setEnabled(false);
-        verify(mockMetadata).setEnabled(false);
+        verify(mockMetadata).setEnabled(true);
 
         // Download Menu Items
-        verify(mockSimpleDownload).setEnabled(true);
+        verify(mockSimpleDownload).setEnabled(false);
         verify(mockBulkDownload).setEnabled(true);
 
         // Share Menu Items
@@ -516,10 +516,10 @@ public class DiskResourceViewToolbar_onDiskResourceSelectionChangedTest {
         verify(mockEditFile).setEnabled(false);
         verify(mockEditComments).setEnabled(false);
         verify(mockEditInfoType).setEnabled(false);
-        verify(mockMetadata).setEnabled(false);
+        verify(mockMetadata).setEnabled(true);
 
         // Download Menu Items
-        verify(mockSimpleDownload).setEnabled(true);
+        verify(mockSimpleDownload).setEnabled(false);
         verify(mockBulkDownload).setEnabled(true);
 
         // Share Menu Items
@@ -565,10 +565,10 @@ public class DiskResourceViewToolbar_onDiskResourceSelectionChangedTest {
         verify(mockEditFile).setEnabled(false);
         verify(mockEditComments).setEnabled(false);
         verify(mockEditInfoType).setEnabled(false);
-        verify(mockMetadata).setEnabled(false);
+        verify(mockMetadata).setEnabled(true);
 
         // Download Menu Items
-        verify(mockSimpleDownload).setEnabled(true);
+        verify(mockSimpleDownload).setEnabled(false);
         verify(mockBulkDownload).setEnabled(true);
 
         // Share Menu Items
@@ -616,7 +616,7 @@ public class DiskResourceViewToolbar_onDiskResourceSelectionChangedTest {
         verify(mockMetadata).setEnabled(false);
 
         // Download Menu Items
-        verify(mockSimpleDownload).setEnabled(true);
+        verify(mockSimpleDownload).setEnabled(false);
         verify(mockBulkDownload).setEnabled(true);
 
         // Share Menu Items
@@ -665,7 +665,7 @@ public class DiskResourceViewToolbar_onDiskResourceSelectionChangedTest {
         verify(mockMetadata).setEnabled(false);
 
         // Download Menu Items
-        verify(mockSimpleDownload).setEnabled(true);
+        verify(mockSimpleDownload).setEnabled(false);
         verify(mockBulkDownload).setEnabled(true);
 
         // Share Menu Items
@@ -714,7 +714,7 @@ public class DiskResourceViewToolbar_onDiskResourceSelectionChangedTest {
         verify(mockMetadata).setEnabled(false);
 
         // Download Menu Items
-        verify(mockSimpleDownload).setEnabled(true);
+        verify(mockSimpleDownload).setEnabled(false);
         verify(mockBulkDownload).setEnabled(true);
 
         // Share Menu Items
@@ -866,9 +866,9 @@ public class DiskResourceViewToolbar_onDiskResourceSelectionChangedTest {
         verify(mockRename).setEnabled(false);
         verify(mockMove).setEnabled(true);
         verify(mockDelete).setEnabled(true);
-        verify(mockEditFile).setEnabled(true);
+        verify(mockEditFile).setEnabled(false);
         verify(mockEditComments).setEnabled(false);
-        verify(mockEditInfoType).setEnabled(true);
+        verify(mockEditInfoType).setEnabled(false);
         verify(mockMetadata).setEnabled(false);
 
         // Download Menu Items
@@ -1095,7 +1095,7 @@ public class DiskResourceViewToolbar_onDiskResourceSelectionChangedTest {
         verify(mockMetadata).setEnabled(false);
 
         // Download Menu Items
-        verify(mockSimpleDownload).setEnabled(true);
+        verify(mockSimpleDownload).setEnabled(false);
         verify(mockBulkDownload).setEnabled(true);
 
         // Share Menu Items
@@ -1147,7 +1147,7 @@ public class DiskResourceViewToolbar_onDiskResourceSelectionChangedTest {
         verify(mockMetadata).setEnabled(false);
 
         // Download Menu Items
-        verify(mockSimpleDownload).setEnabled(true);
+        verify(mockSimpleDownload).setEnabled(false);
         verify(mockBulkDownload).setEnabled(true);
 
         // Share Menu Items
@@ -1199,7 +1199,7 @@ public class DiskResourceViewToolbar_onDiskResourceSelectionChangedTest {
         verify(mockMetadata).setEnabled(false);
 
         // Download Menu Items
-        verify(mockSimpleDownload).setEnabled(true);
+        verify(mockSimpleDownload).setEnabled(false);
         verify(mockBulkDownload).setEnabled(true);
 
         // Share Menu Items
@@ -1257,7 +1257,7 @@ public class DiskResourceViewToolbar_onDiskResourceSelectionChangedTest {
         verify(mockMetadata).setEnabled(false);
 
         // Download Menu Items
-        verify(mockSimpleDownload).setEnabled(true);
+        verify(mockSimpleDownload).setEnabled(false);
         verify(mockBulkDownload).setEnabled(true);
         verify(mockSendToCoge).setEnabled(false);
         verify(mockSendToEnsembl).setEnabled(false);
@@ -1309,7 +1309,7 @@ public class DiskResourceViewToolbar_onDiskResourceSelectionChangedTest {
         verify(mockMetadata).setEnabled(false);
 
         // Download Menu Items
-        verify(mockSimpleDownload).setEnabled(true);
+        verify(mockSimpleDownload).setEnabled(false);
         verify(mockBulkDownload).setEnabled(true);
 
         // Share Menu Items
@@ -1361,7 +1361,7 @@ public class DiskResourceViewToolbar_onDiskResourceSelectionChangedTest {
         verify(mockMetadata).setEnabled(false);
 
         // Download Menu Items
-        verify(mockSimpleDownload).setEnabled(true);
+        verify(mockSimpleDownload).setEnabled(false);
         verify(mockBulkDownload).setEnabled(true);
 
         // Share Menu Items
@@ -1380,6 +1380,108 @@ public class DiskResourceViewToolbar_onDiskResourceSelectionChangedTest {
      * in trash with mixed perms,
      */
     @Test public void testOnDiskResourceSelectionChanged_multiFolders_inTrash_mixedPerms(){
+    }
+
+    /**
+     * Selection contains both files and folders;
+     * with read permissions
+     */
+    @Test public void testOnDiskResourceSelectionChanged_filesAndFolders_notInTrash_read() {
+        this.isSelectionInTrash = false;
+        Folder mockFolder1 = mock(Folder.class);
+        File mockFile1 = mock(File.class);
+        // Setup mock event
+        DiskResourceSelectionChangedEvent mockEvent = mock(DiskResourceSelectionChangedEvent.class);
+        final ArrayList<DiskResource> selection = Lists.newArrayList();
+        selection.add(mockFolder1);
+        selection.add(mockFile1);
+        when(mockEvent.getSelection()).thenReturn(selection);
+
+        /*=================== Read ====================*/
+        this.isSelectionOwner = false;
+        this.containsOnlyFolders = false;
+        this.containsFile = true;
+        when(mockFolder1.getPermission()).thenReturn(read);
+        when(mockFile1.getPermission()).thenReturn(read);
+        uut.onDiskResourceSelectionChanged(mockEvent);
+        verifyOnDiskResourceSelectionChangedNeverUsedItems();
+
+        // File Menu Items
+        verify(mockDuplicate).setEnabled(false);
+        verify(mockAddToSideBar).setEnabled(false);
+        verify(mockMoveToTrash).setEnabled(false);
+
+        // Edit Menu Items
+        verify(mockRename).setEnabled(false);
+        verify(mockMove).setEnabled(false);
+        verify(mockDelete).setEnabled(false);
+        verify(mockEditFile).setEnabled(false);
+        verify(mockEditComments).setEnabled(false);
+        verify(mockEditInfoType).setEnabled(false);
+        verify(mockMetadata).setEnabled(false);
+
+        // Download Menu Items
+        verify(mockSimpleDownload).setEnabled(true);
+        verify(mockBulkDownload).setEnabled(true);
+
+        // Share Menu Items
+        verify(mockShareWithCollabs).setEnabled(false);
+        verify(mockCreatePublicLink).setEnabled(false);
+        verify(mockSendToCoge).setEnabled(false);
+        verify(mockSendToEnsembl).setEnabled(false);
+        verify(mockSendToTreeViewer).setEnabled(false);
+
+        // Trash Menu Items
+        verify(mockRestore).setEnabled(false);
+    }
+
+    @Test public void testOnDiskResourceSelectionChanged_filesAndFolders_notInTrash_own() {
+                this.isSelectionInTrash = false;
+        Folder mockFolder1 = mock(Folder.class);
+        File mockFile1 = mock(File.class);
+        // Setup mock event
+        DiskResourceSelectionChangedEvent mockEvent = mock(DiskResourceSelectionChangedEvent.class);
+        final ArrayList<DiskResource> selection = Lists.newArrayList();
+        selection.add(mockFolder1);
+        selection.add(mockFile1);
+        when(mockEvent.getSelection()).thenReturn(selection);
+
+        /*=================== Read ====================*/
+        this.isSelectionOwner = false;
+        this.containsOnlyFolders = false;
+        this.containsFile = true;
+        when(mockFolder1.getPermission()).thenReturn(own);
+        when(mockFile1.getPermission()).thenReturn(own);
+        uut.onDiskResourceSelectionChanged(mockEvent);
+        verifyOnDiskResourceSelectionChangedNeverUsedItems();
+
+        // File Menu Items
+        verify(mockDuplicate).setEnabled(false);
+        verify(mockAddToSideBar).setEnabled(false);
+        verify(mockMoveToTrash).setEnabled(false);
+
+        // Edit Menu Items
+        verify(mockRename).setEnabled(false);
+        verify(mockMove).setEnabled(false);
+        verify(mockDelete).setEnabled(false);
+        verify(mockEditFile).setEnabled(false);
+        verify(mockEditComments).setEnabled(false);
+        verify(mockEditInfoType).setEnabled(false);
+        verify(mockMetadata).setEnabled(false);
+
+        // Download Menu Items
+        verify(mockSimpleDownload).setEnabled(true);
+        verify(mockBulkDownload).setEnabled(true);
+
+        // Share Menu Items
+        verify(mockShareWithCollabs).setEnabled(false);
+        verify(mockCreatePublicLink).setEnabled(false);
+        verify(mockSendToCoge).setEnabled(false);
+        verify(mockSendToEnsembl).setEnabled(false);
+        verify(mockSendToTreeViewer).setEnabled(false);
+
+        // Trash Menu Items
+        verify(mockRestore).setEnabled(false);
     }
 
     void verifyOnDiskResourceSelectionChangedNeverUsedItems(){

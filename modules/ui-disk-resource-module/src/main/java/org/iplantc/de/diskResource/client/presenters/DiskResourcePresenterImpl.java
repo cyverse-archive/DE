@@ -67,6 +67,7 @@ import org.iplantc.de.diskResource.client.views.DiskResourceView;
 import org.iplantc.de.diskResource.client.views.cells.events.DiskResourceNameSelectedEvent;
 import org.iplantc.de.diskResource.client.views.cells.events.ManageMetadataEvent;
 import org.iplantc.de.diskResource.client.views.cells.events.ManageSharingEvent;
+import org.iplantc.de.diskResource.client.views.cells.events.ShareByDataLinkEvent;
 import org.iplantc.de.diskResource.client.views.dialogs.CreateFolderDialog;
 import org.iplantc.de.diskResource.client.views.dialogs.FolderSelectDialog;
 import org.iplantc.de.diskResource.client.views.dialogs.InfoTypeEditorDialog;
@@ -79,6 +80,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
 import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
@@ -234,6 +236,31 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter, Di
         }
     }
 
+    @Override
+    public void onRequestShareByDataLink(ShareByDataLinkEvent event) {
+        checkNotNull(event.getDiskResourceToShare());
+
+        final DiskResource diskResourceToShare = event.getDiskResourceToShare();
+        if (diskResourceToShare instanceof Folder) {
+            showShareLink(GWT.getHostPageBaseURL() + "?type=data&folder=" + diskResourceToShare.getId());
+        } else {
+            diskResourceService.createDataLinks(Arrays.asList(diskResourceToShare.getPath()), new AsyncCallback<String>() {
+
+                @Override
+                public void onSuccess(String result) {
+                    AutoBean<DataLinkList> tickets = AutoBeanCodex.decode(dlFactory, DataLinkList.class, result);
+                    List<DataLink> dlList = tickets.as().getTickets();
+                    showShareLink(dlList.get(0).getDownloadUrl());
+                }
+
+                @Override
+                public void onFailure(Throwable caught) {
+                    ErrorHandler.post(I18N.ERROR.createDataLinksError(), caught);
+                }
+            });
+        }
+    }
+
     /**
      * Method called by the view when a folder is selected.
      * Whenever this method is called with a non-null and non-empty list, the presenter will have the
@@ -269,7 +296,7 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter, Di
 
     @Override
     public void onRequestManageMetadata(ManageMetadataEvent event) {
-        DiskResource selected = getSelectedDiskResources().iterator().next();
+        DiskResource selected = event.getDiskResource();
         final DiskResourceMetadataView mview = new DiskResourceMetadataView(selected);
         final DiskResourceMetadataView.Presenter p = new MetadataPresenter(selected, mview);
         final IPlantDialog ipd = new IPlantDialog(true);
@@ -314,26 +341,7 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter, Di
     @Override
     public void onRequestManageSharing(ManageSharingEvent event) {
         checkNotNull(event.getDiskResourceToShare());
-
-        final DiskResource diskResourceToShare = event.getDiskResourceToShare();
-        if (diskResourceToShare instanceof Folder) {
-            showShareLink(GWT.getHostPageBaseURL() + "?type=data&folder=" + diskResourceToShare.getId());
-        } else {
-            diskResourceService.createDataLinks(Arrays.asList(diskResourceToShare.getPath()), new AsyncCallback<String>() {
-
-                @Override
-                public void onSuccess(String result) {
-                    AutoBean<DataLinkList> tickets = AutoBeanCodex.decode(dlFactory, DataLinkList.class, result);
-                    List<DataLink> dlList = tickets.as().getTickets();
-                    showShareLink(dlList.get(0).getDownloadUrl());
-                }
-
-                @Override
-                public void onFailure(Throwable caught) {
-                    ErrorHandler.post(I18N.ERROR.createDataLinksError(), caught);
-                }
-            });
-        }
+        doShareWithCollaborators(Lists.newArrayList(event.getDiskResourceToShare()));
     }
 
     private void showShareLink(String linkId) {
@@ -708,7 +716,11 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter, Di
 
     @Override
     public void manageSelectedResourceCollaboratorSharing() {
-        DataSharingDialog dlg = new DataSharingDialog(getSelectedDiskResources());
+        doShareWithCollaborators(getSelectedDiskResources());
+    }
+
+    private void doShareWithCollaborators(final Iterable<DiskResource> resourcesToBeShared){
+        DataSharingDialog dlg = new DataSharingDialog(Sets.newHashSet(resourcesToBeShared));
         dlg.show();
         dlg.addHideHandler(new HideHandler() {
             @Override
@@ -722,7 +734,7 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter, Di
                 }
             }
         });
-    }
+   }
 
     @Override
     public void deleteSelectedResources() {

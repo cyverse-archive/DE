@@ -116,12 +116,12 @@ public class DiskResourceViewToolbarImpl extends Composite implements DiskResour
         renameMiEnabled = !isSelectionEmpty && isSingleSelection && isOwner && !isSelectionInTrash;
         moveMiEnabled = !isSelectionEmpty && isOwner && !isSelectionInTrash;
         deleteMiEnabled = !isSelectionEmpty && isOwner;
-        editFileMiEnabled = !isSelectionEmpty && containsFile(selection) && isOwner && !isSelectionInTrash;
+        editFileMiEnabled = !isSelectionEmpty && isSingleSelection && containsFile(selection) && isOwner && !isSelectionInTrash;
         editCommentsMiEnabled = false;
-        editInfoTypeMiEnabled = !isSelectionEmpty && !isSelectionInTrash && !containsOnlyFolders(selection) && isOwner;
-        metadataMiEnabled = !isSelectionEmpty && isSingleSelection && containsFile(selection) && !isSelectionInTrash && isReadable(selection.get(0));
+        editInfoTypeMiEnabled = !isSelectionEmpty && isSingleSelection && !isSelectionInTrash && containsFile(selection) && isOwner;
+        metadataMiEnabled = !isSelectionEmpty && isSingleSelection && !isSelectionInTrash && isReadable(selection.get(0));
 
-        simpleDownloadMiEnabled = !isSelectionEmpty;
+        simpleDownloadMiEnabled = !isSelectionEmpty && containsFile(selection);
         bulkDownloadMiEnabled = !isSelectionEmpty;
         sendToCogeMiEnabled = !isSelectionEmpty && isSingleSelection && containsFile(selection) && !isSelectionInTrash;
         sendToEnsemblMiEnabled = !isSelectionEmpty && isSingleSelection && containsFile(selection) && !isSelectionInTrash;

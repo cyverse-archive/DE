@@ -20,6 +20,7 @@ import org.iplantc.de.diskResource.client.search.views.DiskResourceSearchField;
 import org.iplantc.de.diskResource.client.views.cells.events.DiskResourceNameSelectedEvent;
 import org.iplantc.de.diskResource.client.views.cells.events.ManageMetadataEvent;
 import org.iplantc.de.diskResource.client.views.cells.events.ManageSharingEvent;
+import org.iplantc.de.diskResource.client.views.cells.events.ShareByDataLinkEvent;
 
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.safehtml.client.HasSafeHtml;
@@ -43,24 +44,25 @@ import java.util.Set;
  *
  */
 public interface DiskResourceView extends IsWidget,
-                                                  IsMaskable,
-                                                  IsDiskResourceRoot,
-                                                  FolderSelectionEvent.HasFolderSelectionEventHandlers,
-                                                  DeleteSavedSearchEvent.HasDeleteSavedSearchEventHandlers,
-                                                  DiskResourceSelectionChangedEvent.HasDiskResourceSelectionChangedEventHandlers{
+                                          IsMaskable,
+                                          IsDiskResourceRoot,
+                                          FolderSelectionEvent.HasFolderSelectionEventHandlers,
+                                          DeleteSavedSearchEvent.HasDeleteSavedSearchEventHandlers,
+                                          DiskResourceSelectionChangedEvent.HasDiskResourceSelectionChangedEventHandlers {
 
     interface Presenter extends org.iplantc.de.commons.client.presenter.Presenter,
-                                        IsMaskable,
-                                        HasHandlerRegistrationMgmt,
-                                        FolderSelectionEvent.FolderSelectionEventHandler,
-                                        DiskResourceNameSelectedEvent.DiskResourceNameSelectedEventHandler,
-                                        ManageMetadataEvent.ManageMetadataEventHandler,
-                                        ManageSharingEvent.ManageSharingEventHandler,
-                                        DiskResourceSelectionChangedEvent.HasDiskResourceSelectionChangedEventHandlers,
-                                        FolderSelectionEvent.HasFolderSelectionEventHandlers,
-                                        DiskResourceSelectionChangedEvent.DiskResourceSelectionChangedEventHandler,
-                                        SaveDiskResourceQueryEvent.SaveDiskResourceQueryEventHandler,
-                                        SubmitDiskResourceQueryEvent.SubmitDiskResourceQueryEventHandler{
+                                IsMaskable,
+                                HasHandlerRegistrationMgmt,
+                                FolderSelectionEvent.FolderSelectionEventHandler,
+                                DiskResourceNameSelectedEvent.DiskResourceNameSelectedEventHandler,
+                                ManageMetadataEvent.ManageMetadataEventHandler,
+                                ManageSharingEvent.ManageSharingEventHandler,
+                                DiskResourceSelectionChangedEvent.HasDiskResourceSelectionChangedEventHandlers,
+                                FolderSelectionEvent.HasFolderSelectionEventHandlers,
+                                DiskResourceSelectionChangedEvent.DiskResourceSelectionChangedEventHandler,
+                                SaveDiskResourceQueryEvent.SaveDiskResourceQueryEventHandler,
+                                SubmitDiskResourceQueryEvent.SubmitDiskResourceQueryEventHandler,
+                                ShareByDataLinkEvent.ShareByDataLinkEventHandler {
         interface Builder extends org.iplantc.de.commons.client.presenter.Presenter {
             Builder hideNorth();
 
