@@ -453,7 +453,7 @@ public class AnalysesPresenterImpl implements AnalysesView.Presenter, AnalysisNa
             public void onHide(HideEvent hideEvent) {
                 if (PredefinedButton.OK.name().equals(d.getHideButton().getItemId())) {
                     if (d.isCommentChanged()) {
-                        analysisService.updateAnalysisComments(event.getValue(), new UpdateCommentsCallback());
+                        analysisService.updateAnalysisComments(event.getValue(), d.getComment(), new UpdateCommentsCallback());
                     }
                 }
             }
@@ -541,7 +541,7 @@ public class AnalysesPresenterImpl implements AnalysesView.Presenter, AnalysisNa
             public void onHide(HideEvent event) {
                 if (PredefinedButton.OK.name().equals(d.getHideButton().getItemId())) {
                     if (d.isCommentChanged()){
-                        analysisService.updateAnalysisComments(selectedAnalyses.get(0), new UpdateCommentsCallback());
+                        analysisService.updateAnalysisComments(selectedAnalyses.get(0), d.getComment(), new UpdateCommentsCallback());
                     }
                 }
             }

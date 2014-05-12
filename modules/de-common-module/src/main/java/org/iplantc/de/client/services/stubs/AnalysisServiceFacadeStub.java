@@ -38,7 +38,7 @@ public class AnalysisServiceFacadeStub implements AnalysisServiceFacade {
     }
 
     @Override
-    public void updateAnalysisComments(Analysis analysis, AsyncCallback<Void> callback) {
+    public void updateAnalysisComments(Analysis analysis, String newComment, AsyncCallback<Void> callback) {
 
     }
 }

@@ -8,6 +8,7 @@ import org.iplantc.de.client.models.apps.integration.ArgumentType;
 import org.iplantc.de.client.services.AnalysisServiceFacade;
 import org.iplantc.de.client.services.DEServiceFacade;
 import org.iplantc.de.client.services.converters.AsyncCallbackConverter;
+import org.iplantc.de.client.services.converters.StringToVoidCallbackConverter;
 import org.iplantc.de.client.util.AppTemplateUtils;
 import org.iplantc.de.client.util.DiskResourceUtil;
 import org.iplantc.de.shared.services.ServiceCallWrapper;
@@ -212,9 +213,12 @@ public class AnalysisServiceFacadeImpl implements AnalysisServiceFacade {
 
     @Override
     public void renameAnalysis(Analysis analysis, String newName, AsyncCallback<Void> callback) {
-        // TODO CORE-5409, CORE-5307 implement when new service is created.
-        callback.onFailure(new UnsupportedOperationException("Not yet implemented"));
+        String address = deProperties.getMuleServiceBaseUrl() + "analysis/" + analysis.getId();
+        Splittable body = StringQuoter.createSplittable();
+        StringQuoter.create(newName).assign(body, "name");
 
+        ServiceCallWrapper wrapper = new ServiceCallWrapper(PATCH, address, body.getPayload());
+        deServiceFacade.getServiceData(wrapper, new StringToVoidCallbackConverter(callback));
     }
 
     @Override
@@ -236,9 +240,13 @@ public class AnalysisServiceFacadeImpl implements AnalysisServiceFacade {
     }
 
     @Override
-    public void updateAnalysisComments(Analysis analysis, AsyncCallback<Void> callback) {
-        // TODO CORE-5408, CORE-5307 implement when new service is created.
-        callback.onFailure(new UnsupportedOperationException("Not yet implemented"));
+    public void updateAnalysisComments(final Analysis analysis, final String newComment, AsyncCallback<Void> callback) {
+        String address = deProperties.getMuleServiceBaseUrl() + "analysis/" + analysis.getId();
+        Splittable body = StringQuoter.createSplittable();
+        StringQuoter.create(newComment).assign(body, "description");
+
+        ServiceCallWrapper wrapper = new ServiceCallWrapper(PATCH, address, body.getPayload());
+        deServiceFacade.getServiceData(wrapper, new StringToVoidCallbackConverter(callback));
     }
 }
 

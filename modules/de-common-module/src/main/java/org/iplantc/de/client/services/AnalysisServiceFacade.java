@@ -47,5 +47,5 @@ public interface AnalysisServiceFacade {
 
     void getAnalysisParams(Analysis analysis, AsyncCallback<List<AnalysisParameter>> callback);
 
-    void updateAnalysisComments(Analysis analysis, AsyncCallback<Void> callback);
+    void updateAnalysisComments(Analysis analysis, String newComment, AsyncCallback<Void> callback);
 }
