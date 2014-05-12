@@ -70,7 +70,7 @@ public class WindowFactory {
                 ret = new DeDiskResourceWindow((DiskResourceWindowConfig)config);
                 break;
             case DATA_VIEWER:
-                ret = new FileViewerWindow((FileViewerWindowConfig)config);
+                ret = new FileViewerWindow((FileViewerWindowConfig)config, eventBus);
                 break;
             case HELP:
                 WindowUtil.open(Constants.CLIENT.deHelpFile());

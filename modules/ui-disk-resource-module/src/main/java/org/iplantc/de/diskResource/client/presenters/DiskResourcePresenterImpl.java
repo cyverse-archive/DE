@@ -671,7 +671,7 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter, Di
 
     @Override
     public void createNewPlainTextFile() {
-        CreateNewFileEvent event = new CreateNewFileEvent(getSelectedUploadFolder().getPath());
+        CreateNewFileEvent event = new CreateNewFileEvent(getSelectedUploadFolder());
         eventBus.fireEvent(event);
     }
 

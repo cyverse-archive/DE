@@ -9,7 +9,7 @@ import com.sencha.gxt.core.client.dom.XElement;
 public class ShellScriptViewerImpl extends TextViewerImpl {
 
     public ShellScriptViewerImpl(File file, boolean editing) {
-        super(file, "", editing);
+        super(file, "", editing, null);
     }
 
     @Override

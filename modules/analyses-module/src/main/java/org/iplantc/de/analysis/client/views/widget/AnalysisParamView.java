@@ -100,7 +100,7 @@ public class AnalysisParamView implements IsWidget, SaveAnalysisParametersEvent.
 
     @UiHandler("btnSave")
     void onSaveClick(SelectEvent event) {
-        final SaveAsDialog saveDialog = new SaveAsDialog();
+        final SaveAsDialog saveDialog = new SaveAsDialog(null);
         saveDialog.addOkButtonSelectHandler(new SelectHandler() {
 
             @Override

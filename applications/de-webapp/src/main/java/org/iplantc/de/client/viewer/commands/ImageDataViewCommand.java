@@ -4,6 +4,7 @@
 package org.iplantc.de.client.viewer.commands;
 
 import org.iplantc.de.client.models.diskResources.File;
+import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.client.viewer.views.AbstractFileViewer;
 import org.iplantc.de.client.viewer.views.ImageViewerImpl;
 import org.iplantc.de.commons.client.info.ErrorAnnouncementConfig;
@@ -19,7 +20,7 @@ import java.util.List;
 public class ImageDataViewCommand implements ViewCommand {
 
     @Override
-    public List<AbstractFileViewer> execute(File file, String infoType, boolean editing) {
+    public List<AbstractFileViewer> execute(File file, String infoType, boolean editing, Folder parentFolder) {
 
         AbstractFileViewer view = null;
 
