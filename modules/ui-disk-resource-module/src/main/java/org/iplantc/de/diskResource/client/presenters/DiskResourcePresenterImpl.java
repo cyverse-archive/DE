@@ -80,6 +80,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
 import com.google.common.base.Strings;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.google.gwt.core.client.GWT;
@@ -239,12 +240,14 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter, Di
     @Override
     public void onRequestShareByDataLink(ShareByDataLinkEvent event) {
         checkNotNull(event.getDiskResourceToShare());
+        doShareByDataLink(event.getDiskResourceToShare());
+    }
 
-        final DiskResource diskResourceToShare = event.getDiskResourceToShare();
-        if (diskResourceToShare instanceof Folder) {
-            showShareLink(GWT.getHostPageBaseURL() + "?type=data&folder=" + diskResourceToShare.getId());
+    void doShareByDataLink(final DiskResource toBeShared) {
+        if (toBeShared instanceof Folder) {
+            showShareLink(GWT.getHostPageBaseURL() + "?type=data&folder=" + toBeShared.getId());
         } else {
-            diskResourceService.createDataLinks(Arrays.asList(diskResourceToShare.getPath()), new AsyncCallback<String>() {
+            diskResourceService.createDataLinks(Arrays.asList(toBeShared.getPath()), new AsyncCallback<String>() {
 
                 @Override
                 public void onSuccess(String result) {
@@ -1152,6 +1155,13 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter, Di
         view.unmaskSendToCoGe();
         view.unmaskSendToEnsembl();
         view.unmaskSendToTreeViewer();
+    }
+
+    @Override
+    public void shareSelectedFolderByDataLink() {
+        checkState(getSelectedDiskResources().size() == 1, "Selected resources should only contain 1 item, but contains %i", getSelectedDiskResources().size());
+
+        doShareByDataLink(Iterables.getFirst(getSelectedDiskResources(), null));
     }
 
 }
