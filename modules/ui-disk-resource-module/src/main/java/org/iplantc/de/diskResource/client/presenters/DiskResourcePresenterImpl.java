@@ -1137,6 +1137,10 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter, Di
         }
 
         view.displayAndCacheDiskResourceInfo(path, info);
+    }
+
+    @Override
+    public void unmaskVizMenuOptions() {
         view.unmaskSendToCoGe();
         view.unmaskSendToEnsembl();
         view.unmaskSendToTreeViewer();

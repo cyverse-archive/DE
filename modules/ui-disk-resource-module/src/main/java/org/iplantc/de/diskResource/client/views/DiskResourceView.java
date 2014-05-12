@@ -179,6 +179,8 @@ public interface DiskResourceView extends IsWidget,
         void resetInfoType();
 
         void displayAndCacheDiskResourceInfo(String path, DiskResourceInfo info);
+
+        void unmaskVizMenuOptions();
     }
 
     /**

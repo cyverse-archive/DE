@@ -41,6 +41,7 @@ public final class GetDiskResourceDetailsCallback implements AsyncCallback<Strin
         } else {
             ErrorHandler.post(I18N.ERROR.retrieveStatFailed(), caught);
         }
+        presenter.unmaskVizMenuOptions();
     }
 
     @Override
@@ -52,5 +53,6 @@ public final class GetDiskResourceDetailsCallback implements AsyncCallback<Strin
                 details.toString());
         presenter.displayAndCacheDiskResourceInfo(path, bean.as());
         presenter.getView().unmaskDetailsPanel();
+        presenter.unmaskVizMenuOptions();
     }
 }
