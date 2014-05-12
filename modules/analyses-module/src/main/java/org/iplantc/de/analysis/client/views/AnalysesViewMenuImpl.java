@@ -176,6 +176,7 @@ public class AnalysesViewMenuImpl extends Composite implements AnalysesView.View
         updateCommentsMI.ensureDebugId(baseID + AnalysisModule.Ids.MENUITEM_EDIT + AnalysisModule.Ids.MENUITEM_UPDATE_COMMENTS);
 
         refreshTb.ensureDebugId(baseID + AnalysisModule.Ids.BUTTON_REFRESH);
+        searchField.ensureDebugId(baseID + AnalysisModule.Ids.FIELD_SEARCH);
 
     }
 

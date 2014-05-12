@@ -23,5 +23,6 @@ public interface AnalysisModule {
         String VIEW_PARAMS = ".viewParamsView";
         String BUTTON_REFRESH = ".refresh";
 
+        String FIELD_SEARCH = ".search";
     }
 }
