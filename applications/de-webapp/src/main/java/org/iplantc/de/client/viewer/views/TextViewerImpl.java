@@ -7,6 +7,7 @@ import org.iplantc.de.client.callbacks.FileSaveCallback;
 import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.gin.ServicesInjector;
 import org.iplantc.de.client.models.diskResources.File;
+import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.client.util.JsonUtil;
 import org.iplantc.de.client.viewer.events.SaveFileEvent;
 import org.iplantc.de.client.viewer.events.SaveFileEvent.SaveFileEventHandler;
@@ -69,6 +70,7 @@ public class TextViewerImpl extends AbstractFileViewer implements EditingSupport
     private String data;
 
     protected boolean editing;
+    private final Folder parentFolder;
 
     private Presenter presenter;
 
@@ -76,9 +78,10 @@ public class TextViewerImpl extends AbstractFileViewer implements EditingSupport
 
     private final List<HandlerRegistration> eventHandlers = new ArrayList<HandlerRegistration>();
 
-    public TextViewerImpl(File file, String infoType, boolean editing) {
+    public TextViewerImpl(File file, String infoType, boolean editing, Folder parentFolder) {
         super(file, infoType);
         this.editing = editing;
+        this.parentFolder = parentFolder;
         toolbar = initToolBar();
         widget = uiBinder.createAndBindUi(this);
 
@@ -260,7 +263,7 @@ public class TextViewerImpl extends AbstractFileViewer implements EditingSupport
     @Override
     public void save() {
         if (file == null) {
-            final SaveAsDialog saveDialog = new SaveAsDialog();
+            final SaveAsDialog saveDialog = new SaveAsDialog(parentFolder);
             saveDialog.addOkButtonSelectHandler(new SelectHandler() {
 
                 @Override

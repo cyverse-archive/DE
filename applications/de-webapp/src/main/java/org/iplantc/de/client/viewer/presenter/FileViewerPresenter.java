@@ -2,6 +2,7 @@ package org.iplantc.de.client.viewer.presenter;
 
 import org.iplantc.de.client.gin.ServicesInjector;
 import org.iplantc.de.client.models.diskResources.File;
+import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.client.models.viewer.MimeType;
 import org.iplantc.de.client.models.viewer.VizUrl;
 import org.iplantc.de.client.util.DiskResourceUtil;
@@ -65,18 +66,18 @@ public class FileViewerPresenter implements FileViewer.Presenter {
      * .user.client.ui.HasOneWidget )
      */
     @Override
-    public void go(HasOneWidget container) {
+    public void go(HasOneWidget container, Folder parentFolder) {
         this.container = (FileViewerWindow)container;
-        composeView();
+        composeView(parentFolder);
     }
 
     @Override
-    public void composeView() {
+    public void composeView(Folder parentFolder) {
         container.mask(org.iplantc.de.resources.client.messages.I18N.DISPLAY.loadingMask());
         String mimeType = JsonUtil.getString(manifest, "content-type");
         ViewCommand cmd = MimeTypeViewerResolverFactory.getViewerCommand(MimeType.fromTypeString(mimeType));
         String infoType = JsonUtil.getString(manifest, "info-type");
-        List<? extends FileViewer> viewers_list = cmd.execute(file, infoType, editing);
+        List<? extends FileViewer> viewers_list = cmd.execute(file, infoType, editing, parentFolder);
 
         if (viewers_list != null && viewers_list.size() > 0) {
             viewers.addAll(viewers_list);
@@ -93,7 +94,7 @@ public class FileViewerPresenter implements FileViewer.Presenter {
 
         if (treeViewer || cogeViewer || ensembleViewer) {
             cmd = MimeTypeViewerResolverFactory.getViewerCommand(MimeType.fromTypeString("viz"));
-            List<? extends FileViewer> vizViewers = cmd.execute(file, infoType, editing);
+            List<? extends FileViewer> vizViewers = cmd.execute(file, infoType, editing, parentFolder);
             List<VizUrl> urls = getManifestVizUrls();
             if (urls != null && urls.size() > 0) {
                 vizViewers.get(0).setData(urls);

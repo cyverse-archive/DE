@@ -4906,4 +4906,11 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     @Key("openTrashMenuItem")
     String openTrashMenuItem();
 
+    /**
+     * Translated "Share Folder Location..."
+     * @return translated "Share Folder Location..."
+     */
+    @DefaultMessage("Share Folder Location...")
+    @Key("shareFolderLocationMenuItem")
+    String shareFolderLocationMenuItem();
 }

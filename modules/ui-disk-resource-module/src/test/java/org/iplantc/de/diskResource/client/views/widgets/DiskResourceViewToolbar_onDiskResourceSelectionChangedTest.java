@@ -49,6 +49,7 @@ public class DiskResourceViewToolbar_onDiskResourceSelectionChangedTest {
     // Share Menu
     @Mock public MenuItem mockShareWithCollabs,
             mockCreatePublicLink,
+            mockShareFolderLocation,
             mockSendToCoge,
             mockSendToEnsembl,
             mockSendToTreeViewer;
@@ -135,6 +136,7 @@ public class DiskResourceViewToolbar_onDiskResourceSelectionChangedTest {
         // Share Menu Items
         verify(mockShareWithCollabs).setEnabled(false);
         verify(mockCreatePublicLink).setEnabled(false);
+        verify(mockShareFolderLocation).setEnabled(false);
 
         // Trash Menu Items
         verify(mockRestore).setEnabled(false);
@@ -181,6 +183,7 @@ public class DiskResourceViewToolbar_onDiskResourceSelectionChangedTest {
         // Share Menu Items
         verify(mockShareWithCollabs).setEnabled(false);
         verify(mockCreatePublicLink).setEnabled(false);
+        verify(mockShareFolderLocation).setEnabled(false);
         verify(mockSendToCoge).setEnabled(true);
         verify(mockSendToEnsembl).setEnabled(true);
         verify(mockSendToTreeViewer).setEnabled(true);
@@ -231,6 +234,7 @@ public class DiskResourceViewToolbar_onDiskResourceSelectionChangedTest {
         // Share Menu Items
         verify(mockShareWithCollabs).setEnabled(false);
         verify(mockCreatePublicLink).setEnabled(false);
+        verify(mockShareFolderLocation).setEnabled(false);
         verify(mockSendToCoge).setEnabled(true);
         verify(mockSendToEnsembl).setEnabled(true);
         verify(mockSendToTreeViewer).setEnabled(true);
@@ -280,6 +284,7 @@ public class DiskResourceViewToolbar_onDiskResourceSelectionChangedTest {
         // Share Menu Items
         verify(mockShareWithCollabs).setEnabled(true);
         verify(mockCreatePublicLink).setEnabled(true);
+        verify(mockShareFolderLocation).setEnabled(false);
         verify(mockSendToCoge).setEnabled(true);
         verify(mockSendToEnsembl).setEnabled(true);
         verify(mockSendToTreeViewer).setEnabled(true);
@@ -329,6 +334,7 @@ public class DiskResourceViewToolbar_onDiskResourceSelectionChangedTest {
         // Share Menu Items
         verify(mockShareWithCollabs).setEnabled(false);
         verify(mockCreatePublicLink).setEnabled(false);
+        verify(mockShareFolderLocation).setEnabled(false);
         verify(mockSendToCoge).setEnabled(false);
         verify(mockSendToEnsembl).setEnabled(false);
         verify(mockSendToTreeViewer).setEnabled(false);
@@ -378,6 +384,7 @@ public class DiskResourceViewToolbar_onDiskResourceSelectionChangedTest {
         // Share Menu Items
         verify(mockShareWithCollabs).setEnabled(false);
         verify(mockCreatePublicLink).setEnabled(false);
+        verify(mockShareFolderLocation).setEnabled(false);
         verify(mockSendToCoge).setEnabled(false);
         verify(mockSendToEnsembl).setEnabled(false);
         verify(mockSendToTreeViewer).setEnabled(false);
@@ -427,6 +434,7 @@ public class DiskResourceViewToolbar_onDiskResourceSelectionChangedTest {
         // Share Menu Items
         verify(mockShareWithCollabs).setEnabled(false);
         verify(mockCreatePublicLink).setEnabled(false);
+        verify(mockShareFolderLocation).setEnabled(false);
         verify(mockSendToCoge).setEnabled(false);
         verify(mockSendToEnsembl).setEnabled(false);
         verify(mockSendToTreeViewer).setEnabled(false);
@@ -451,13 +459,14 @@ public class DiskResourceViewToolbar_onDiskResourceSelectionChangedTest {
 
         /*=================== Read ====================*/
         this.isSelectionOwner = false;
+        this.containsOnlyFolders = true;
         when(mockFolder.getPermission()).thenReturn(read);
         uut.onDiskResourceSelectionChanged(mockEvent);
         verifyOnDiskResourceSelectionChangedNeverUsedItems();
 
         // File Menu Items
         verify(mockDuplicate).setEnabled(false);
-        verify(mockAddToSideBar).setEnabled(false);
+        verify(mockAddToSideBar).setEnabled(true);
         verify(mockMoveToTrash).setEnabled(false);
 
         // Edit Menu Items
@@ -476,6 +485,7 @@ public class DiskResourceViewToolbar_onDiskResourceSelectionChangedTest {
         // Share Menu Items
         verify(mockShareWithCollabs).setEnabled(false);
         verify(mockCreatePublicLink).setEnabled(false);
+        verify(mockShareFolderLocation).setEnabled(true);
         verify(mockSendToCoge).setEnabled(false);
         verify(mockSendToEnsembl).setEnabled(false);
         verify(mockSendToTreeViewer).setEnabled(false);
@@ -525,6 +535,7 @@ public class DiskResourceViewToolbar_onDiskResourceSelectionChangedTest {
         // Share Menu Items
         verify(mockShareWithCollabs).setEnabled(false);
         verify(mockCreatePublicLink).setEnabled(false);
+        verify(mockShareFolderLocation).setEnabled(true);
         verify(mockSendToCoge).setEnabled(false);
         verify(mockSendToEnsembl).setEnabled(false);
         verify(mockSendToTreeViewer).setEnabled(false);
@@ -574,6 +585,7 @@ public class DiskResourceViewToolbar_onDiskResourceSelectionChangedTest {
         // Share Menu Items
         verify(mockShareWithCollabs).setEnabled(true);
         verify(mockCreatePublicLink).setEnabled(false);
+        verify(mockShareFolderLocation).setEnabled(true);
         verify(mockSendToCoge).setEnabled(false);
         verify(mockSendToEnsembl).setEnabled(false);
         verify(mockSendToTreeViewer).setEnabled(false);
@@ -622,6 +634,7 @@ public class DiskResourceViewToolbar_onDiskResourceSelectionChangedTest {
         // Share Menu Items
         verify(mockShareWithCollabs).setEnabled(false);
         verify(mockCreatePublicLink).setEnabled(false);
+        verify(mockShareFolderLocation).setEnabled(false);
         verify(mockSendToCoge).setEnabled(false);
         verify(mockSendToEnsembl).setEnabled(false);
         verify(mockSendToTreeViewer).setEnabled(false);
@@ -671,6 +684,7 @@ public class DiskResourceViewToolbar_onDiskResourceSelectionChangedTest {
         // Share Menu Items
         verify(mockShareWithCollabs).setEnabled(false);
         verify(mockCreatePublicLink).setEnabled(false);
+        verify(mockShareFolderLocation).setEnabled(false);
         verify(mockSendToCoge).setEnabled(false);
         verify(mockSendToEnsembl).setEnabled(false);
         verify(mockSendToTreeViewer).setEnabled(false);
@@ -720,6 +734,7 @@ public class DiskResourceViewToolbar_onDiskResourceSelectionChangedTest {
         // Share Menu Items
         verify(mockShareWithCollabs).setEnabled(false);
         verify(mockCreatePublicLink).setEnabled(false);
+        verify(mockShareFolderLocation).setEnabled(false);
         verify(mockSendToCoge).setEnabled(false);
         verify(mockSendToEnsembl).setEnabled(false);
         verify(mockSendToTreeViewer).setEnabled(false);
@@ -774,6 +789,7 @@ public class DiskResourceViewToolbar_onDiskResourceSelectionChangedTest {
         // Share Menu Items
         verify(mockShareWithCollabs).setEnabled(false);
         verify(mockCreatePublicLink).setEnabled(false);
+        verify(mockShareFolderLocation).setEnabled(false);
         verify(mockSendToCoge).setEnabled(false);
         verify(mockSendToEnsembl).setEnabled(false);
         verify(mockSendToTreeViewer).setEnabled(false);
@@ -826,6 +842,7 @@ public class DiskResourceViewToolbar_onDiskResourceSelectionChangedTest {
         // Share Menu Items
         verify(mockShareWithCollabs).setEnabled(false);
         verify(mockCreatePublicLink).setEnabled(false);
+        verify(mockShareFolderLocation).setEnabled(false);
         verify(mockSendToCoge).setEnabled(false);
         verify(mockSendToEnsembl).setEnabled(false);
         verify(mockSendToTreeViewer).setEnabled(false);
@@ -878,6 +895,7 @@ public class DiskResourceViewToolbar_onDiskResourceSelectionChangedTest {
         // Share Menu Items
         verify(mockShareWithCollabs).setEnabled(true);
         verify(mockCreatePublicLink).setEnabled(true);
+        verify(mockShareFolderLocation).setEnabled(false);
         verify(mockSendToCoge).setEnabled(false);
         verify(mockSendToEnsembl).setEnabled(false);
         verify(mockSendToTreeViewer).setEnabled(false);
@@ -938,6 +956,7 @@ public class DiskResourceViewToolbar_onDiskResourceSelectionChangedTest {
         // Share Menu Items
         verify(mockShareWithCollabs).setEnabled(false);
         verify(mockCreatePublicLink).setEnabled(false);
+        verify(mockShareFolderLocation).setEnabled(false);
         verify(mockSendToCoge).setEnabled(false);
         verify(mockSendToEnsembl).setEnabled(false);
         verify(mockSendToTreeViewer).setEnabled(false);
@@ -990,6 +1009,7 @@ public class DiskResourceViewToolbar_onDiskResourceSelectionChangedTest {
         // Share Menu Items
         verify(mockShareWithCollabs).setEnabled(false);
         verify(mockCreatePublicLink).setEnabled(false);
+        verify(mockShareFolderLocation).setEnabled(false);
         verify(mockSendToCoge).setEnabled(false);
         verify(mockSendToEnsembl).setEnabled(false);
         verify(mockSendToTreeViewer).setEnabled(false);
@@ -1042,6 +1062,7 @@ public class DiskResourceViewToolbar_onDiskResourceSelectionChangedTest {
         // Share Menu Items
         verify(mockShareWithCollabs).setEnabled(false);
         verify(mockCreatePublicLink).setEnabled(false);
+        verify(mockShareFolderLocation).setEnabled(false);
         verify(mockSendToCoge).setEnabled(false);
         verify(mockSendToEnsembl).setEnabled(false);
         verify(mockSendToTreeViewer).setEnabled(false);
@@ -1101,6 +1122,7 @@ public class DiskResourceViewToolbar_onDiskResourceSelectionChangedTest {
         // Share Menu Items
         verify(mockShareWithCollabs).setEnabled(false);
         verify(mockCreatePublicLink).setEnabled(false);
+        verify(mockShareFolderLocation).setEnabled(false);
         verify(mockSendToCoge).setEnabled(false);
         verify(mockSendToEnsembl).setEnabled(false);
         verify(mockSendToTreeViewer).setEnabled(false);
@@ -1153,6 +1175,7 @@ public class DiskResourceViewToolbar_onDiskResourceSelectionChangedTest {
         // Share Menu Items
         verify(mockShareWithCollabs).setEnabled(false);
         verify(mockCreatePublicLink).setEnabled(false);
+        verify(mockShareFolderLocation).setEnabled(false);
         verify(mockSendToCoge).setEnabled(false);
         verify(mockSendToEnsembl).setEnabled(false);
         verify(mockSendToTreeViewer).setEnabled(false);
@@ -1205,6 +1228,7 @@ public class DiskResourceViewToolbar_onDiskResourceSelectionChangedTest {
         // Share Menu Items
         verify(mockShareWithCollabs).setEnabled(true);
         verify(mockCreatePublicLink).setEnabled(false);
+        verify(mockShareFolderLocation).setEnabled(false);
         verify(mockSendToCoge).setEnabled(false);
         verify(mockSendToEnsembl).setEnabled(false);
         verify(mockSendToTreeViewer).setEnabled(false);
@@ -1266,6 +1290,7 @@ public class DiskResourceViewToolbar_onDiskResourceSelectionChangedTest {
         // Share Menu Items
         verify(mockShareWithCollabs).setEnabled(false);
         verify(mockCreatePublicLink).setEnabled(false);
+        verify(mockShareFolderLocation).setEnabled(false);
 
         // Trash Menu Items
         verify(mockRestore).setEnabled(false);
@@ -1315,6 +1340,7 @@ public class DiskResourceViewToolbar_onDiskResourceSelectionChangedTest {
         // Share Menu Items
         verify(mockShareWithCollabs).setEnabled(false);
         verify(mockCreatePublicLink).setEnabled(false);
+        verify(mockShareFolderLocation).setEnabled(false);
         verify(mockSendToCoge).setEnabled(false);
         verify(mockSendToEnsembl).setEnabled(false);
         verify(mockSendToTreeViewer).setEnabled(false);
@@ -1367,6 +1393,7 @@ public class DiskResourceViewToolbar_onDiskResourceSelectionChangedTest {
         // Share Menu Items
         verify(mockShareWithCollabs).setEnabled(false);
         verify(mockCreatePublicLink).setEnabled(false);
+        verify(mockShareFolderLocation).setEnabled(false);
         verify(mockSendToCoge).setEnabled(false);
         verify(mockSendToEnsembl).setEnabled(false);
         verify(mockSendToTreeViewer).setEnabled(false);
@@ -1427,6 +1454,7 @@ public class DiskResourceViewToolbar_onDiskResourceSelectionChangedTest {
         // Share Menu Items
         verify(mockShareWithCollabs).setEnabled(false);
         verify(mockCreatePublicLink).setEnabled(false);
+        verify(mockShareFolderLocation).setEnabled(false);
         verify(mockSendToCoge).setEnabled(false);
         verify(mockSendToEnsembl).setEnabled(false);
         verify(mockSendToTreeViewer).setEnabled(false);
@@ -1476,6 +1504,7 @@ public class DiskResourceViewToolbar_onDiskResourceSelectionChangedTest {
         // Share Menu Items
         verify(mockShareWithCollabs).setEnabled(false);
         verify(mockCreatePublicLink).setEnabled(false);
+        verify(mockShareFolderLocation).setEnabled(false);
         verify(mockSendToCoge).setEnabled(false);
         verify(mockSendToEnsembl).setEnabled(false);
         verify(mockSendToTreeViewer).setEnabled(false);
@@ -1549,6 +1578,7 @@ public class DiskResourceViewToolbar_onDiskResourceSelectionChangedTest {
         // Share Menu
         uut.shareMenu = mockShareMenu;
         uut.shareWithCollaboratorsMi = mockShareWithCollabs;
+        uut.shareFolderLocationMi = mockShareFolderLocation;
         uut.createPublicLinkMi = mockCreatePublicLink;
         uut.sendToCogeMi = mockSendToCoge;
         uut.sendToEnsemblMi = mockSendToEnsembl;

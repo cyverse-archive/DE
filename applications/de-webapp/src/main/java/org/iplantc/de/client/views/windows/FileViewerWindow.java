@@ -43,24 +43,26 @@ public class FileViewerWindow extends IplantWindowBase implements IsMaskable {
     protected JSONObject manifest;
     protected File file;
     private final FileViewerWindowConfig configAB;
-    private FileViewer.Presenter p;
+    private final EventBus eventBus;
+    private FileViewer.Presenter presenter;
 
-    public FileViewerWindow(FileViewerWindowConfig config) {
+    public FileViewerWindow(FileViewerWindowConfig config, EventBus eventBus) {
         super(null, null);
         this.configAB = config;
-        EventBus.getInstance().addHandler(FileSavedEvent.TYPE, new FileSavedEventHandler() {
+        this.eventBus = eventBus;
+        eventBus.addHandler(FileSavedEvent.TYPE, new FileSavedEventHandler() {
 
             @Override
             public void onFileSaved(FileSavedEvent event) {
                 if (file == null) {
                     file = event.getFile();
                     tabPanel = null;
-                    p.cleanUp();
+                    presenter.cleanUp();
                     getFileManifest();
                 }
                 setTitle(file.getName());
-                if (p != null) {
-                    p.setVeiwDirtyState(false);
+                if (presenter != null) {
+                    presenter.setVeiwDirtyState(false);
                 }
             }
 
@@ -99,7 +101,7 @@ public class FileViewerWindow extends IplantWindowBase implements IsMaskable {
 
     @Override
     public void doHide() {
-        if (p != null && p.isDirty() && configAB.isEditing()) {
+        if (presenter != null && presenter.isDirty() && configAB.isEditing()) {
             final MessageBox cmb = new MessageBox(I18N.DISPLAY.save(), I18N.DISPLAY.unsavedChanges());
             cmb.setPredefinedButtons(PredefinedButton.YES, PredefinedButton.NO, PredefinedButton.CANCEL);
             cmb.addHideHandler(new HideHandler() {
@@ -108,9 +110,9 @@ public class FileViewerWindow extends IplantWindowBase implements IsMaskable {
                 public void onHide(HideEvent event) {
                     if (cmb.getHideButton().getText().equalsIgnoreCase("yes")) {
                         SaveFileEvent sfe = new SaveFileEvent();
-                        EventBus.getInstance().fireEvent(sfe);
+                        eventBus.fireEvent(sfe);
                     } else if (cmb.getHideButton().getText().equalsIgnoreCase("no")) {
-                    	p.cleanUp();
+                    	presenter.cleanUp();
                         FileViewerWindow.super.doHide();
                         doClose();
                     }
@@ -118,7 +120,7 @@ public class FileViewerWindow extends IplantWindowBase implements IsMaskable {
             });
             cmb.show();
         } else {
-        	p.cleanUp();
+        	presenter.cleanUp();
             super.doHide();
             doClose();
         }
@@ -126,9 +128,8 @@ public class FileViewerWindow extends IplantWindowBase implements IsMaskable {
 
     private void doClose() {
         if (file != null) {
-            EventBus eventbus = EventBus.getInstance();
             FileEditorWindowClosedEvent event = new FileEditorWindowClosedEvent(file.getId());
-            eventbus.fireEvent(event);
+            eventBus.fireEvent(event);
         }
     }
 
@@ -150,9 +151,9 @@ public class FileViewerWindow extends IplantWindowBase implements IsMaskable {
                 public void onSuccess(String result) {
                     if (result != null) {
                         manifest = JsonUtil.getObject(result);
-                        p = new FileViewerPresenter(file, manifest, configAB.isEditing(), configAB.isVizTabFirst());
+                        presenter = new FileViewerPresenter(file, manifest, configAB.isEditing(), configAB.isVizTabFirst());
                         initWidget();
-                        p.go(FileViewerWindow.this);
+                        presenter.go(FileViewerWindow.this, configAB.getParentFolder());
                         unmask();
                     } else {
                         onFailure(null);
@@ -180,9 +181,9 @@ public class FileViewerWindow extends IplantWindowBase implements IsMaskable {
             if (configAB.isEditing()) {
                 JSONObject manifest = new JSONObject();
                 manifest.put("content-type", new JSONString("plain"));
-                p = new FileViewerPresenter(file, manifest, configAB.isEditing(), configAB.isVizTabFirst());
+                presenter = new FileViewerPresenter(file, manifest, configAB.isEditing(), configAB.isVizTabFirst());
                 initWidget();
-                p.go(FileViewerWindow.this);
+                presenter.go(FileViewerWindow.this, configAB.getParentFolder());
                 unmask();
             }
         }

@@ -64,6 +64,8 @@ public class DiskResourceViewToolbarImpl extends Composite implements DiskResour
     TextButton trashMenu;
     @UiField
     TextButton uploadMenu;
+    @UiField
+    MenuItem shareFolderLocationMi;
     private static DiskResourceViewToolbarUiBinder BINDER = GWT.create(DiskResourceViewToolbarUiBinder.class);
     private final UserInfo userInfo;
     private DiskResourceView.Presenter presenter;
@@ -99,7 +101,7 @@ public class DiskResourceViewToolbarImpl extends Composite implements DiskResour
         boolean simpleDownloadMiEnabled, bulkDownloadMiEnabled;
         boolean sendToCogeMiEnabled, sendToEnsemblMiEnabled, sendToTreeViewerMiEnabled;
 
-        boolean shareWithCollaboratorsMiEnabled, createPublicLinkMiEnabled;
+        boolean shareWithCollaboratorsMiEnabled, createPublicLinkMiEnabled, shareFolderLocationMiEnabled;
 
         boolean restoreMiEnabled;
 
@@ -129,6 +131,8 @@ public class DiskResourceViewToolbarImpl extends Composite implements DiskResour
 
         shareWithCollaboratorsMiEnabled = !isSelectionEmpty && isOwner && !isSelectionInTrash;
         createPublicLinkMiEnabled = !isSelectionEmpty && isOwner && !isSelectionInTrash && containsFile(selection);
+        shareFolderLocationMiEnabled = !isSelectionEmpty && isSingleSelection && !isSelectionInTrash && containsOnlyFolders(selection);
+
 
         restoreMiEnabled = !isSelectionEmpty && isSelectionInTrash && isOwner;
 
@@ -149,6 +153,7 @@ public class DiskResourceViewToolbarImpl extends Composite implements DiskResour
 
         shareWithCollaboratorsMi.setEnabled(shareWithCollaboratorsMiEnabled);
         createPublicLinkMi.setEnabled(createPublicLinkMiEnabled);
+        shareFolderLocationMi.setEnabled(shareFolderLocationMiEnabled);
         sendToCogeMi.setEnabled(sendToCogeMiEnabled);
         sendToEnsemblMi.setEnabled(sendToEnsemblMiEnabled);
         sendToTreeViewerMi.setEnabled(sendToTreeViewerMiEnabled);
@@ -371,6 +376,11 @@ public class DiskResourceViewToolbarImpl extends Composite implements DiskResour
     @UiHandler("shareWithCollaboratorsMi")
     void onShareWithCollaboratorsClicked(SelectionEvent<Item> event) {
         presenter.manageSelectedResourceCollaboratorSharing();
+    }
+
+    @UiHandler("shareFolderLocationMi")
+    void onShareFolderLocationClicked(SelectionEvent<Item> event){
+        presenter.shareSelectedFolderByDataLink();
     }
 
     //---------- Download --------------

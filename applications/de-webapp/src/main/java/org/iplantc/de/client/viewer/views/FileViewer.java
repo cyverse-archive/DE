@@ -3,6 +3,9 @@
  */
 package org.iplantc.de.client.viewer.views;
 
+import org.iplantc.de.client.models.diskResources.Folder;
+
+import com.google.gwt.user.client.ui.HasOneWidget;
 import com.google.gwt.user.client.ui.IsWidget;
 
 /**
@@ -15,8 +18,10 @@ public interface FileViewer extends IsWidget {
     public static final int MAX_PAGE_SIZE_KB = 64;
     public static final int PAGE_INCREMENT_SIZE_KB = 8;
 
-    public interface Presenter extends org.iplantc.de.commons.client.presenter.Presenter {
-        void composeView();
+    public interface Presenter {
+        void go(HasOneWidget container, Folder parentFolder);
+
+        void composeView(Folder parentFolder);
 
         void setVeiwDirtyState(boolean dirty);
 

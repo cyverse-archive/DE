@@ -30,7 +30,7 @@ public class SaveAsDialog extends IPlantDialog {
 	private final TextField fileNameField = new TextField();
 	private Folder selectedFolder = null;
 
-	public SaveAsDialog() {
+	public SaveAsDialog(Folder selectedFolder) {
 		selectedFolderField.setAllowBlank(false);
 		selectedFolderField.setReadOnly(true);
 		selectedFolderField.setAutoValidate(true);
@@ -55,18 +55,21 @@ public class SaveAsDialog extends IPlantDialog {
 
 		initPresenter(getOkButton(), vlc);
 
-		setDefaultSelectedFolder();
+		setDefaultSelectedFolder(selectedFolder);
 
 	}
 
-	private void setDefaultSelectedFolder() {
+	private void setDefaultSelectedFolder(Folder selectedFolder) {
 		// if not refresh and currently nothing was selected and remember path
 		// is enabled, the go
 		// back to last selected folder
 		UserSettings instance = UserSettings.getInstance();
-        String path = instance.getDefaultFileSelectorPath();
+//        String path = instance.getDefaultFileSelectorPath();
+        String path = instance.getLastPath();
 		boolean remember = instance.isRememberLastPath();
-		if (remember && !Strings.isNullOrEmpty(path)) {
+		if(selectedFolder != null) {
+            presenter.setSelectedFolderByPath(selectedFolder);
+        } else if (remember && !Strings.isNullOrEmpty(path)) {
             HasPath folder = CommonModelUtils.createHasPathFromString(path);
             presenter.setSelectedFolderByPath(folder);
 		}

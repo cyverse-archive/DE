@@ -1,6 +1,7 @@
 package org.iplantc.de.client.viewer.commands;
 
 import org.iplantc.de.client.models.diskResources.File;
+import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.client.models.viewer.InfoType;
 import org.iplantc.de.client.viewer.views.FileViewer;
 import org.iplantc.de.client.viewer.views.StrcturedTextViewerImpl;
@@ -16,8 +17,11 @@ import java.util.List;
  */
 public class TextDataViewCommand implements ViewCommand {
 
+    private Folder parentFolder;
+
     @Override
-    public List<FileViewer> execute(final File file, String infoType, boolean editing) {
+    public List<FileViewer> execute(final File file, String infoType, boolean editing, Folder parentFolder) {
+        this.parentFolder = parentFolder;
         List<FileViewer> viewers = null;
         viewers = getViewerByInfoType(file, infoType, editing);
         return viewers;
@@ -33,7 +37,7 @@ public class TextDataViewCommand implements ViewCommand {
 
             }
         }
-        viewers.add(new TextViewerImpl(file, infoType, editing));
+        viewers.add(new TextViewerImpl(file, infoType, editing, parentFolder));
         return viewers;
     }
 }

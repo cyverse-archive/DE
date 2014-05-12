@@ -1,5 +1,6 @@
 package org.iplantc.de.diskResource.client.events;
 
+import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.diskResource.client.events.CreateNewFileEvent.CreateNewFileEventHandler;
 
 import com.google.gwt.event.shared.EventHandler;
@@ -12,15 +13,20 @@ public class CreateNewFileEvent extends GwtEvent<CreateNewFileEventHandler> {
     }
 
     
-    private String path;
     public static final GwtEvent.Type<CreateNewFileEventHandler> TYPE = new GwtEvent.Type<CreateNewFileEventHandler>();
-    public CreateNewFileEvent(String path) {
-        this.path = path;
+    private final Folder parentFolder;
+
+    public CreateNewFileEvent(Folder parentFolder) {
+        this.parentFolder = parentFolder;
     }
     
     @Override
     public com.google.gwt.event.shared.GwtEvent.Type<CreateNewFileEventHandler> getAssociatedType() {
       return TYPE;
+    }
+
+    public Folder getParentFolder() {
+        return parentFolder;
     }
 
     @Override
@@ -29,8 +35,4 @@ public class CreateNewFileEvent extends GwtEvent<CreateNewFileEventHandler> {
         
     }
     
-    public String getPath() {
-        return path;
-    }
-
 }

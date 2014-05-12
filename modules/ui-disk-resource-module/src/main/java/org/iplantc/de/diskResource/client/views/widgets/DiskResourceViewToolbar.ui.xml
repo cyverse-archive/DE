@@ -26,8 +26,10 @@
                                        icon="{res.importData}"
                                        text="{display.simpleUploadFromDesktop}"/>
                         <menu:MenuItem ui:field="bulkUploadMi"
+                                       icon="{res.importData}"
                                        text="{display.bulkUploadFromDesktop}"/>
                         <menu:MenuItem ui:field="importFromUrlMi"
+                                       icon="{res.importData}"
                                        text="{display.importFromUrlMenuItem}"/>
                     </menu:Menu>
                 </button:menu>
@@ -44,7 +46,8 @@
                                        text="{display.newWindow}"
                                        icon="{res.add}"/>
                         <menu:MenuItem ui:field="newWindowAtLocMi"
-                                       text="{display.newDataWindowAtLocMenuItem}"/>
+                                       text="{display.newDataWindowAtLocMenuItem}"
+                                       icon="{res.add}"/>
                         <menu:MenuItem ui:field="newFolderMi"
                                        text="{display.newFolderMenuItem}"
                                        icon="{res.folderAdd}"/>
@@ -57,13 +60,15 @@
                                        enabled="false"
                                        visible="false"/>
                         <menu:MenuItem ui:field="newPlainTextFileMi"
-                                       text="{display.newPlainTextFileMenuItem}"/>
+                                       text="{display.newPlainTextFileMenuItem}"
+                                       icon="{res.fileRename}"/>
                         <menu:MenuItem ui:field="newTabularDataFileMi"
                                        text="{display.newTabularDataFileMenuItem}"
                                        visible="false"
                                        enabled="false"/>
                         <menu:MenuItem ui:field="moveToTrashMi"
                                        text="{display.moveToTrashMenuItem}"
+                                       icon="{res.trash}"
                                        enabled="false"/>
                     </menu:Menu>
                 </button:menu>
@@ -82,6 +87,7 @@
                                        enabled="false"/>
                         <menu:MenuItem ui:field="editFileMi"
                                        text="{display.editMenuItem}"
+                                       icon="{res.fileRename}"
                                        enabled="false"/>
                         <menu:MenuItem ui:field="editCommentsMi"
                                        text="{display.editCommentsMenuItem}"
@@ -89,6 +95,7 @@
                                        visible="false"/>
                         <menu:MenuItem ui:field="editInfoTypeMi"
                                        text="{display.editInfoTypeMenuItem}"
+                                       icon="{res.info}"
                                        enabled="false"/>
                         <menu:MenuItem ui:field="metadataMi"
                                        text="{display.metadataMenuItem}"
@@ -97,10 +104,6 @@
                         <menu:MenuItem ui:field="moveMi"
                                        text="{display.moveMenuItem}"
                                        icon="{res.edit}"
-                                       enabled="false"/>
-                        <menu:MenuItem ui:field="deleteMi"
-                                       text="{display.delete}"
-                                       icon="{res.fileDelete}"
                                        enabled="false"/>
                     </menu:Menu>
                 </button:menu>
@@ -115,9 +118,11 @@
                     <menu:Menu>
                         <menu:MenuItem ui:field="simpleDownloadMi"
                                        text="{display.simpleDownloadMenuItem}"
+                                       icon="{res.download}"
                                        enabled="false"/>
                         <menu:MenuItem ui:field="bulkDownloadMi"
                                        text="{display.bulkDownloadMenuItem}"
+                                       icon="{res.download}"
                                        enabled="false"/>
                     </menu:Menu>
                 </button:menu>
@@ -132,18 +137,27 @@
                     <menu:Menu>
                         <menu:MenuItem ui:field="shareWithCollaboratorsMi"
                                        text="{display.shareWithCollaboratorsMenuItem}"
+                                       icon="{res.share}"
                                        enabled="false"/>
                         <menu:MenuItem ui:field="createPublicLinkMi"
                                        text="{display.createPublicLinkMenuItem}"
+                                       icon="{res.linkAdd}"
+                                       enabled="false"/>
+                        <menu:MenuItem ui:field="shareFolderLocationMi"
+                                       text="{display.shareFolderLocationMenuItem}"
+                                       icon="{res.folder}"
                                        enabled="false"/>
                         <menu:MenuItem ui:field="sendToCogeMi"
                                        text="{display.sendToCogeMenuItem}"
+                                       icon="{res.arrowUp}"
                                        enabled="false"/>
                         <menu:MenuItem ui:field="sendToEnsemblMi"
                                        text="{display.sendToEnsemblMenuItem}"
+                                       icon="{res.arrowUp}"
                                        enabled="false"/>
                         <menu:MenuItem ui:field="sendToTreeViewerMi"
                                        text="{display.sendToTreeViewerMenuItem}"
+                                       icon="{res.arrowUp}"
                                        enabled="false"/>
                     </menu:Menu>
                 </button:menu>
@@ -171,13 +185,19 @@
                 <button:menu>
                     <menu:Menu>
                         <menu:MenuItem ui:field="openTrashMi"
-                                       text="{display.openTrashMenuItem}"/>
+                                       text="{display.openTrashMenuItem}"
+                                       icon="{res.trash}"/>
                         <menu:MenuItem ui:field="restoreMi"
                                        text="{display.restore}"
                                        enabled="false"/>
                         <menu:SeparatorMenuItem/>
                         <menu:MenuItem ui:field="emptyTrashMi"
-                                       text="{display.emptyTrash}"/>
+                                       text="{display.emptyTrash}"
+                                       icon="{res.trashEmpty}"/>
+                        <menu:MenuItem ui:field="deleteMi"
+                                       text="{display.delete}"
+                                       icon="{res.fileDelete}"
+                                       enabled="false"/>
                     </menu:Menu>
                 </button:menu>
             </button:TextButton>
