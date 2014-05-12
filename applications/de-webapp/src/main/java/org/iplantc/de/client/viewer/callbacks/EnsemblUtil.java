@@ -43,6 +43,8 @@ public class EnsemblUtil {
         if (indexFile != null) {
             final String indexFilePath = parent + "/" + indexFile;
             diskResourcePaths.setPaths(Lists.newArrayList(path, indexFilePath));
+        } else {
+            diskResourcePaths.setPaths(Lists.newArrayList(path));
         }
 
         diskResourceServiceFacade.getStat(diskResourcePaths, new AsyncCallback<DiskResourceStatMap>() {
