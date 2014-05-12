@@ -10,7 +10,8 @@ import org.iplantc.de.apps.client.views.cells.AppInfoCell;
 import org.iplantc.de.apps.client.views.cells.AppRatingCell;
 import org.iplantc.de.apps.shared.AppsModule;
 import org.iplantc.de.client.models.apps.App;
-import org.iplantc.de.client.models.apps.AppFeedback;
+import org.iplantc.de.client.models.apps.AppNameComparator;
+import org.iplantc.de.client.models.apps.AppRatingComparator;
 import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 
 import com.google.gwt.cell.client.AbstractCell;
@@ -26,43 +27,11 @@ import com.sencha.gxt.widget.core.client.grid.ColumnConfig;
 import com.sencha.gxt.widget.core.client.grid.ColumnModel;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 
 public class AppColumnModel extends ColumnModel<App> implements
         AppInfoCell.HasAppInfoClickedEventHandlers, AppHyperlinkCell.HasAppNameSelectedEventHandlers,
         AppFavoriteCell.HasRequestAppFavoriteEventHandlers, HasAppCommentSelectedEventHandlers {
-
-    private static class RatingComparator implements Comparator<App> {
-
-        @Override
-        public int compare(App lhs, App rhs) {
-            AppFeedback lhsFeedback = lhs.getRating();
-            AppFeedback rhsFeedback = rhs.getRating();
-
-            if (lhsFeedback == null && rhsFeedback == null) {
-                return 0;
-            }
-            if (lhsFeedback == null) {
-                return -1;
-            }
-            if (rhsFeedback == null) {
-                return 1;
-            }
-
-            double lhsRating = lhsFeedback.getAverageRating();
-            double rhsRating = rhsFeedback.getAverageRating();
-
-            if (lhsFeedback.getUserRating() > 0) {
-                lhsRating = lhsFeedback.getUserRating();
-            }
-            if (rhsFeedback.getUserRating() > 0) {
-                rhsRating = rhsFeedback.getUserRating();
-            }
-
-            return Double.compare(lhsRating, rhsRating);
-        }
-    }
 
     public AppColumnModel(AppsView view, final IplantDisplayStrings displayStrings) {
         super(createColumnConfigList(view, displayStrings));
@@ -101,13 +70,8 @@ public class AppColumnModel extends ColumnModel<App> implements
         ColumnConfig<App, App> comment = new ColumnConfig<App, App>(new IdentityValueProvider<App>(
                 "comment"), 30); //$NON-NLS-1$
 
-        name.setComparator(new Comparator<App>() {
-            @Override
-            public int compare(App arg0, App arg1) {
-                return arg0.getName().compareTo(arg1.getName());
-            }
-        });
-        rating.setComparator(new RatingComparator());
+        name.setComparator(new AppNameComparator());
+        rating.setComparator(new AppRatingComparator());
         info.setSortable(false);
         comment.setSortable(false);
 

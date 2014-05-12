@@ -44,7 +44,7 @@ public class AdminAppViewImpl extends AppsViewImpl implements AdminAppsView,
     @Override
     @UiFactory
     protected ColumnModel<App> createColumnModel(){
-        return new BelphegorAnalysisColumnModel(this);
+        return new BelphegorAppColumnModel(this);
     }
 
     @Override
@@ -57,7 +57,7 @@ public class AdminAppViewImpl extends AppsViewImpl implements AdminAppsView,
         this.presenter = presenter;
         if(presenter instanceof AdminAppsView.AdminPresenter){
             toolbar.init((AdminAppsView.AdminPresenter) presenter, this, this, this);
-            ((BelphegorAnalysisColumnModel)cm).addAppNameSelectedEventHandler(presenter);
+            ((BelphegorAppColumnModel)cm).addAppNameSelectedEventHandler(presenter);
             initDragAndDrop((AdminAppsView.AdminPresenter)presenter);
             addAppSelectionChangedEventHandler(this);
             addAppGroupSelectedEventHandler(presenter);
