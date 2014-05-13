@@ -4913,4 +4913,30 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     @DefaultMessage("Share Folder Location...")
     @Key("shareFolderLocationMenuItem")
     String shareFolderLocationMenuItem();
+
+    /**
+     * Translated "Successfully renamed analysis"
+     * @return translated "Successfully renamed analysis"
+     */
+    @DefaultMessage("Successfully renamed analysis")
+    @Key("analysisRenameSuccess")
+    SafeHtml analysisRenameSuccess();
+
+    /**
+     * Translated "Successfully updated analysis comments"
+     *
+     * @return translated "Successfully updated analysis comments"
+     */
+    @DefaultMessage("Successfully updated analysis comments")
+    @Key("analysisCommentUpdateSuccess")
+    SafeHtml analysisCommentUpdateSuccess();
+
+    /**
+     * Translated "Rename Analysis"
+     *
+     * @return translated "Rename Analysis"
+     */
+    @DefaultMessage("Rename Analysis")
+    @Key("renameAnalysis")
+    String renameAnalysis();
 }

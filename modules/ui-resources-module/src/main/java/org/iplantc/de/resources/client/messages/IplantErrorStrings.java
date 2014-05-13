@@ -1,5 +1,6 @@
 package org.iplantc.de.resources.client.messages;
 
+import com.google.gwt.safehtml.shared.SafeHtml;
 import org.iplantc.de.resources.client.uiapps.integration.AppIntegrationErrorMessages;
 
 import java.util.List;
@@ -1169,4 +1170,8 @@ public interface IplantErrorStrings extends com.google.gwt.i18n.client.Messages,
     String unsupportedTreeInfoType();
 
     String indexFileMissing();
+
+    SafeHtml analysisRenameFailed();
+
+    SafeHtml analysisCommentUpdateFailed();
 }

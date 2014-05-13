@@ -31,6 +31,7 @@ import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.commons.client.info.ErrorAnnouncementConfig;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
 import org.iplantc.de.commons.client.info.SuccessAnnouncementConfig;
+import org.iplantc.de.commons.client.validators.DiskResourceNameValidator;
 import org.iplantc.de.commons.client.views.gxt3.dialogs.IPlantDialog;
 import org.iplantc.de.commons.client.views.gxt3.dialogs.IPlantPromptDialog;
 import org.iplantc.de.diskResource.client.events.ShowFilePreviewEvent;
@@ -236,37 +237,56 @@ public class AnalysesPresenterImpl implements AnalysesView.Presenter, AnalysisNa
         }
     }
 
-    interface Template extends SafeHtmlTemplates{
-        @Template("Not yet implemented.<p>Waiting on completion of <a href='https://pods.iplantcollaborative.org/jira/browse/CORE-{0}' target=\"_blank\">CORE-{0}</a>")
-        SafeHtml failMsg(String issueNumber);
-    }
-
-    Template unimplementedFailMessages = GWT.create(Template.class);
-
     private class RenameAnalysisCallback implements AsyncCallback<Void> {
+
+        private Analysis selectedAnalysis;
+        private String newName;
+        private ListStore<Analysis> listStore;
+
+        public RenameAnalysisCallback(Analysis selectedAnalysis, String newName, ListStore<Analysis> listStore) {
+            this.selectedAnalysis = selectedAnalysis;
+            this.newName = newName;
+            this.listStore = listStore;
+        }
 
         @Override
         public void onFailure(Throwable caught) {
-            final SafeHtml message = unimplementedFailMessages.failMsg("5409");
+            final SafeHtml message = errorStrings.analysisRenameFailed();
             announcer.schedule(new ErrorAnnouncementConfig(message, true, 5000));
         }
 
         @Override
         public void onSuccess(Void result) {
-            // TODO CORE-5307 Perform analysis rename here.
+            selectedAnalysis.setName(newName);
+            listStore.update(selectedAnalysis);
+            SafeHtml message = displayStrings.analysisRenameSuccess();
+            announcer.schedule(new SuccessAnnouncementConfig(message, true, 5000));
         }
     }
 
     private class UpdateCommentsCallback implements AsyncCallback<Void> {
+        private final Analysis selectedAnalysis;
+        private final String newComment;
+        private final ListStore<Analysis> listStore;
+
+        public UpdateCommentsCallback(Analysis selectedAnalysis, String newComment, ListStore<Analysis> listStore) {
+            this.selectedAnalysis = selectedAnalysis;
+            this.newComment = newComment;
+            this.listStore = listStore;
+        }
+
         @Override
         public void onFailure(Throwable caught) {
-            SafeHtml message = unimplementedFailMessages.failMsg("5408");
+            SafeHtml message = errorStrings.analysisCommentUpdateFailed();
             announcer.schedule(new ErrorAnnouncementConfig(message, true, 5000));
         }
 
         @Override
         public void onSuccess(Void result) {
-
+            selectedAnalysis.setComments(newComment);
+            listStore.update(selectedAnalysis);
+            SafeHtml message = displayStrings.analysisCommentUpdateSuccess();
+            announcer.schedule(new SuccessAnnouncementConfig(message, true, 5000));
         }
     }
 
@@ -453,7 +473,7 @@ public class AnalysesPresenterImpl implements AnalysesView.Presenter, AnalysisNa
             public void onHide(HideEvent hideEvent) {
                 if (PredefinedButton.OK.name().equals(d.getHideButton().getItemId())) {
                     if (d.isCommentChanged()) {
-                        analysisService.updateAnalysisComments(event.getValue(), d.getComment(), new UpdateCommentsCallback());
+                        analysisService.updateAnalysisComments(event.getValue(), d.getComment(), new UpdateCommentsCallback(event.getValue(), d.getComment(), view.getListStore()));
                     }
                 }
             }
@@ -501,17 +521,13 @@ public class AnalysesPresenterImpl implements AnalysesView.Presenter, AnalysisNa
         assert view.getSelectedAnalyses().size() == 1 : "There should be 1 and only 1 selected analysis.";
         final Analysis selectedAnalysis = view.getSelectedAnalyses().get(0);
 
-        final IPlantPromptDialog dlg = new IPlantPromptDialog(displayStrings.rename(), -1, selectedAnalysis.getName(), new Validator<String>() {
-            @Override
-            public List<EditorError> validate(Editor<String> editor, String value) {
-                return Collections.emptyList();
-            }
-        });
+        final IPlantPromptDialog dlg = new IPlantPromptDialog(displayStrings.rename(), -1, selectedAnalysis.getName(), new DiskResourceNameValidator());
+        dlg.setHeadingText(displayStrings.renameAnalysis());
         dlg.addOkButtonSelectHandler(new SelectEvent.SelectHandler() {
             @Override
             public void onSelect(SelectEvent event) {
                 if(!selectedAnalysis.getName().equals(dlg.getFieldText())){
-                    analysisService.renameAnalysis(selectedAnalysis, dlg.getFieldText(), new RenameAnalysisCallback());
+                    analysisService.renameAnalysis(selectedAnalysis, dlg.getFieldText(), new RenameAnalysisCallback(selectedAnalysis, dlg.getFieldText(), view.getListStore()));
                 }
             }
         });
@@ -541,7 +557,7 @@ public class AnalysesPresenterImpl implements AnalysesView.Presenter, AnalysisNa
             public void onHide(HideEvent event) {
                 if (PredefinedButton.OK.name().equals(d.getHideButton().getItemId())) {
                     if (d.isCommentChanged()){
-                        analysisService.updateAnalysisComments(selectedAnalyses.get(0), d.getComment(), new UpdateCommentsCallback());
+                        analysisService.updateAnalysisComments(selectedAnalyses.get(0), d.getComment(), new UpdateCommentsCallback(selectedAnalyses.get(0), d.getComment(), view.getListStore()));
                     }
                 }
             }
