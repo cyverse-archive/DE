@@ -113,6 +113,11 @@ public class DiskResourceActionsCell extends AbstractCell<DiskResource> {
             toolTip = SHARE_BY_DE_ACTION;
             className = resources.css().actionIcon();
             imgSrc = iplantResources.share().getSafeUri();
+        } else {
+            name = null;
+            toolTip = null;
+            className = null;
+            imgSrc = null;
         }
 
         // Append Share action
