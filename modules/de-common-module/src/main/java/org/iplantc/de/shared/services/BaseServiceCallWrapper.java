@@ -16,7 +16,7 @@ public class BaseServiceCallWrapper implements Serializable {
      * Indicate the type of HTTP Method being used for a service call.
      */
     public enum Type {
-        GET, PUT, POST, DELETE
+        GET, PUT, POST, DELETE, PATCH
     }
 
     public BaseServiceCallWrapper() {

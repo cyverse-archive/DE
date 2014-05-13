@@ -1,5 +1,17 @@
 package org.iplantc.de.server;
 
+import com.google.gwt.user.client.rpc.SerializationException;
+import com.google.gwt.user.server.rpc.RemoteServiceServlet;
+import org.apache.commons.io.IOUtils;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.*;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.entity.mime.MultipartEntity;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.log4j.Logger;
 import org.iplantc.de.shared.AuthenticationException;
 import org.iplantc.de.shared.DEService;
 import org.iplantc.de.shared.services.BaseServiceCallWrapper;
@@ -7,26 +19,11 @@ import org.iplantc.de.shared.services.HTTPPart;
 import org.iplantc.de.shared.services.MultiPartServiceWrapper;
 import org.iplantc.de.shared.services.ServiceCallWrapper;
 
-import com.google.gwt.user.client.rpc.SerializationException;
-import com.google.gwt.user.server.rpc.RemoteServiceServlet;
-
-import org.apache.commons.io.IOUtils;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
-import org.apache.http.entity.mime.MultipartEntity;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.log4j.Logger;
-
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.net.HttpURLConnection;
-import java.net.URLConnection;
-import java.util.List;
-
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
+import java.util.List;
 
 /**
  * Dispatches HTTP requests to other services.
@@ -124,120 +121,193 @@ public abstract class BaseDEServiceDispatcher extends RemoteServiceServlet imple
     }
 
     /**
-     * Retrieves the result from a URL connection.
-     *
-     * @param urlc the URL connection.
-     * @return the URL result as a string.
-     * @throws IOException if an I/O error occurs.
+     * @return the content type to use for JSON request bodies.
      */
-    private String retrieveResult(URLConnection urlc) throws IOException {
-        return IOUtils.toString(urlc.getInputStream());
+    private ContentType jsonContentType() {
+        return ContentType.create("application/json", "UTF-8");
     }
 
     /**
-     * Obtains a URL connection.
+     * Checks the response for an error status.
      *
-     * @param address the address to connect to.
-     * @return the URL connection.
-     * @throws IOException if the connection can't be established.
+     * @param response the HTTP response.
+     * @throws IOException if an I/O error occurs or the server returns an error status.
      */
-    protected HttpURLConnection getUrlConnection(String address) throws IOException {
-        if (urlConnector == null) {
-            throw new IOException("No URL connector available.");
+    private void checkResponse(HttpResponse response) throws IOException {
+        int status = response.getStatusLine().getStatusCode();
+        if (status < 200 || status > 299) {
+            throw new HttpException(status, IOUtils.toString(response.getEntity().getContent()));
         }
-        return urlConnector.getUrlConnection(getRequest(), address);
+    }
+
+    /**
+     * Reads the response from the server and throws an exception if an error status is returned.
+     *
+     * @param response the HTTP response.
+     * @return the response body.
+     * @throws IOException if an I/O error occurs or the server returns an error status.
+     */
+    private String getResponseBody(HttpResponse response) throws IOException {
+        checkResponse(response);
+        String responseBody = IOUtils.toString(response.getEntity().getContent());
+        return responseBody;
+    }
+
+    /**
+     * Logs the start of an HTTP request.
+     *
+     * @param method the HTTP method name.
+     * @param address the request URI.
+     */
+    private void logRequestStart(String method, String address) {
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("sending a " + method + " request to " + address);
+        }
+    }
+
+    /**
+     * Logs the completion of an HTTP request.
+     *
+     * @param method the HTTP method name.
+     * @param address the request URI.
+     */
+    private void logRequestEnd(String method, String address) {
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("sent a " + method + " request to " + address);
+        }
+    }
+
+    /**
+     * Creates an HTTP request entity containing a string.
+     *
+     * @param body the request body.
+     * @return the request entity.
+     */
+    private HttpEntity createEntity(String body) {
+        return new StringEntity(body, jsonContentType());
     }
 
     /**
      * Sends an HTTP GET request to another service.
      *
+     * @param client the HTTP client to use.
      * @param address the address to connect to.
-     * @return the URL connection used to send the request.
+     * @return the response.
      * @throws IOException if an error occurs.
      */
-    private URLConnection get(String address) throws IOException {
-        if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("sending a GET request to " + address);
-        }
-
-        // make post mode connection
-        URLConnection urlc = getUrlConnection(address);
-        urlc.setDoOutput(true);
-
-        LOGGER.debug("GET request sent to " + address);
-
-        return urlc;
+    private HttpResponse get(HttpClient client, String address) throws IOException {
+        logRequestStart("GET", address);
+        HttpResponse response = client.execute(urlConnector.getRequest(getRequest(), address));
+        logRequestEnd("GET", address);
+        return response;
     }
 
     /**
-     * Sends an HTTP UPDATE request to another service.
+     * Sends an HTTP POST request to another service.
      *
+     * @param client the HTTP client to use.
      * @param address the address to connect to.
      * @param body the request body.
-     * @param requestMethod the request method.
-     * @return the URL connection used to send the request.
-     * @throws IOException if an I/O error occurs.
+     * @return the response.
+     * @throws IOException if an error occurs.
      */
-    private URLConnection update(String address, String body, String requestMethod) throws IOException {
-        if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("sending an UPDATE request to " + address);
-        }
-
-        // make post mode connection
-        HttpURLConnection urlc = getUrlConnection(address);
-        urlc.setRequestMethod(requestMethod);
-        urlc.setDoOutput(true);
-
-        // send post
-        OutputStreamWriter outRemote = null;
-        try {
-            outRemote = new OutputStreamWriter(urlc.getOutputStream());
-            outRemote.write(body);
-            outRemote.flush();
-        } finally {
-            if (outRemote != null) {
-                outRemote.close();
-            }
-        }
-
-        LOGGER.debug("UPDATE request sent");
-
-        return urlc;
+    private HttpResponse post(HttpClient client, String address, String body) throws IOException {
+        logRequestStart("POST", address);
+        HttpPost clientRequest = urlConnector.postRequest(getRequest(), address);
+        clientRequest.setEntity(createEntity(body));
+        HttpResponse response = client.execute(clientRequest);
+        logRequestEnd("POST", address);
+        return response;
     }
 
     /**
-     * Sends a multipart HTTP update request to another service.
+     * Sends an HTTP PUT request to another service.
      *
+     * @param client the HTTP client to use.
+     * @param address the address to connect to.
+     * @param body the request body.
+     * @return the response.
+     * @throws IOException if an error occurs.
+     */
+    private HttpResponse put(HttpClient client, String address, String body) throws IOException {
+        logRequestStart("PUT", address);
+        HttpPut clientRequest = urlConnector.putRequest(getRequest(), address);
+        clientRequest.setEntity(createEntity(body));
+        HttpResponse response = client.execute(clientRequest);
+        logRequestEnd("PUT", address);
+        return response;
+    }
+
+    /**
+     * Sends an HTTP PATCH request to another service.
+     *
+     * @param client the HTTP client to use.
      * @param address the address to send the request to.
-     * @param parts the components of the multipart request.
-     * @param requestMethod the request method.
-     * @return the URL connection used to send the request.
+     * @param body the request body.
+     * @return the response.
      * @throws IOException if an I/O error occurs.
      */
-    private String updateMultipart(String address, List<HTTPPart> parts, String requestMethod)
+    private HttpResponse patch(HttpClient client, String address, String body) throws IOException {
+        logRequestStart("PATCH", address);
+        HttpPatch clientRequest = urlConnector.patchRequest(getRequest(), address);
+        clientRequest.setEntity(createEntity(body));
+        HttpResponse response = client.execute(clientRequest);
+        logRequestEnd("PATCH", address);
+        return response;
+    }
+
+    /**
+     * Sends an HTTP DELETE request to another service.
+     *
+     * @param client the HTTP client to use.
+     * @param address the address to connect to.
+     * @return the response.
+     * @throws IOException if an error occurs.
+     */
+    private HttpResponse delete(HttpClient client, String address) throws IOException {
+        logRequestStart("DELETE", address);
+        HttpDelete clientRequest = urlConnector.deleteRequest(getRequest(), address);
+        HttpResponse response = client.execute(clientRequest);
+        logRequestEnd("DELETE", address);
+        return response;
+    }
+
+    /**
+     * Sends a multipart HTTP PUT request to another service.
+     *
+     * @param client the HTTP client to use.
+     * @param address the address to send the request to.
+     * @param parts the components of the multipart request.
+     * @return the response.
+     * @throws IOException if an I/O error occurs.
+     */
+    private HttpResponse putMultipart(HttpClient client, String address, List<HTTPPart> parts)
             throws IOException {
-        String result;
-        if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("sending a multipart UPDATE request to " + address);
-        }
-
-        // Build the multipart request.
-        HttpEntityEnclosingRequestBase clientRequest = urlConnector.getRequest(getRequest(), address,
-                requestMethod);
+        logRequestStart("multipart PUT", address);
+        HttpPut clientRequest = urlConnector.putRequest(getRequest(), address);
         buildMultipartRequest(clientRequest, parts);
+        HttpResponse response = client.execute(clientRequest);
+        logRequestEnd("multipart PUT", address);
+        return response;
+    }
 
-        // Execute the request.
-        HttpClient client = new DefaultHttpClient();
-        try {
-            HttpResponse response = client.execute(clientRequest);
-            result = IOUtils.toString(response.getEntity().getContent());
-        } finally {
-            client.getConnectionManager().shutdown();
-        }
-
-        LOGGER.debug("multipart UPDATE request sent");
-
-        return result;
+    /**
+     * Sends a multipart HTTP POST request to another service.
+     *
+     * @param client the HTTP client to use.
+     * @param address the address to send the request to.
+     * @param parts the components of the multipart request.
+     * @return the response body.
+     * @throws IOException if an I/O error occurs.
+     */
+    private HttpResponse postMultipart(HttpClient client, String address, List<HTTPPart> parts)
+            throws IOException {
+        logRequestStart("multipart POST", address);
+        HttpPost clientRequest = urlConnector.postRequest(getRequest(), address);
+        buildMultipartRequest(clientRequest, parts);
+        HttpResponse response = client.execute(clientRequest);
+        logRequestEnd("multipart POST", address);
+        return response;
     }
 
     private void buildMultipartRequest(HttpEntityEnclosingRequestBase clientRequest, List<HTTPPart> parts)
@@ -259,25 +329,6 @@ public abstract class BaseDEServiceDispatcher extends RemoteServiceServlet imple
      */
     protected void addAdditionalParts(MultipartEntity entity) throws IOException {
         // The base implementation of this method does nothing.
-    }
-
-    /**
-     * Sends an HTTP DELETE request to another service.
-     *
-     * @param address the address to send the request to.
-     * @return the URL connection used to send the request.
-     * @throws IOException if an I/O error occurs.
-     */
-    private URLConnection delete(String address) throws IOException {
-        // make post mode connection
-        HttpURLConnection urlc = getUrlConnection(address);
-
-        urlc.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-        urlc.setRequestMethod("DELETE");
-        urlc.setDoOutput(true);
-        urlc.connect();
-
-        return urlc;
     }
 
     /**
@@ -310,6 +361,7 @@ public abstract class BaseDEServiceDispatcher extends RemoteServiceServlet imple
 
                     case PUT:
                     case POST:
+                    case PATCH:
                         if (isValidString(wrapper.getBody())) {
                             ret = true;
                         }
@@ -356,7 +408,7 @@ public abstract class BaseDEServiceDispatcher extends RemoteServiceServlet imple
     /**
      * Retrieve the service address for the wrapper.
      *
-     * @param service call wrapper containing metadata for a call.
+     * @param wrapper service call wrapper containing metadata for a call.
      * @return a string representing a valid URL.
      */
     private String retrieveServiceAddress(BaseServiceCallWrapper wrapper) {
@@ -393,6 +445,42 @@ public abstract class BaseDEServiceDispatcher extends RemoteServiceServlet imple
     }
 
     /**
+     * Gets the response for an HTTP connection.
+     *
+     * @param client the HTTP client to use.
+     * @param wrapper the service call wrapper.
+     * @return the response.
+     * @throws IOException if an I/O error occurs.
+     */
+    private HttpResponse getResponse(HttpClient client, ServiceCallWrapper wrapper)
+            throws IOException {
+        String address = retrieveServiceAddress(wrapper);
+        String body = updateRequestBody(wrapper.getBody());
+        LOGGER.debug("request json==>" + body);
+
+        BaseServiceCallWrapper.Type type = wrapper.getType();
+        switch (type) {
+            case GET:
+                return get(client, address);
+
+            case PUT:
+                return put(client, address, body);
+
+            case POST:
+                return post(client, address, body);
+
+            case DELETE:
+                return delete(client, address);
+
+            case PATCH:
+                return patch(client, address, body);
+
+            default:
+                throw new UnsupportedOperationException("HTTP method " + type + " not supported");
+        }
+    }
+
+    /**
      * Implements entry point for service dispatcher.
      *
      * @param wrapper the service call wrapper.
@@ -403,57 +491,21 @@ public abstract class BaseDEServiceDispatcher extends RemoteServiceServlet imple
     @Override
     public String getServiceData(ServiceCallWrapper wrapper) throws SerializationException, AuthenticationException {
         String json = null;
-        URLConnection urlc = null;
 
         if (isValidServiceCall(wrapper)) {
-            String address = retrieveServiceAddress(wrapper);
-            String body = updateRequestBody(wrapper.getBody());
-            LOGGER.debug("request json==>" + body);
+            HttpClient client = new DefaultHttpClient();
             try {
-                switch (wrapper.getType()) {
-                    case GET:
-                        urlc = get(address);
-                        break;
-
-                    case PUT:
-                        urlc = update(address, body, "PUT");
-                        break;
-
-                    case POST:
-                        urlc = update(address, body, "POST");
-                        break;
-
-                    case DELETE:
-                        urlc = delete(address);
-                        break;
-
-                    default:
-                        break;
-                }
-
-                json = retrieveResult(urlc);
+                json = getResponseBody(getResponse(client, wrapper));
             } catch (AuthenticationException ex) {
                 throw ex;
+            } catch (HttpException ex) {
+                LOGGER.error(ex.getResponseBody(), ex);
+                throw new SerializationException(ex.getResponseBody(), ex);
             } catch (Exception ex) {
-                LOGGER.error(ex.toString(), ex);
-                // because the GWT compiler will issue a warning if we simply
-                // throw exception, we'll
-                // use SerializationException()
-                SerializationException exception;
-
-                try {
-                    HttpURLConnection httpConn = (HttpURLConnection)urlc;
-
-                    String errMsg = IOUtils.toString(httpConn.getErrorStream());
-
-                    LOGGER.error(errMsg);
-
-                    exception = new SerializationException(errMsg, ex);
-                } catch (Exception ignore) {
-                    exception = new SerializationException(ex);
-                }
-
-                throw exception;
+                LOGGER.error("unexpected exception", ex);
+                throw new SerializationException(ex);
+            } finally {
+                client.getConnectionManager().shutdown();
             }
         }
 
@@ -472,49 +524,40 @@ public abstract class BaseDEServiceDispatcher extends RemoteServiceServlet imple
      */
     public DEServiceInputStream getServiceStream(ServiceCallWrapper wrapper)
             throws SerializationException, IOException {
-        String json = null;
-        URLConnection urlc = null;
-
         if (isValidServiceCall(wrapper)) {
-            String address = retrieveServiceAddress(wrapper);
-            String body = updateRequestBody(wrapper.getBody());
-
+            HttpClient client = new DefaultHttpClient();
             try {
-                switch (wrapper.getType()) {
-                    case GET:
-                        urlc = get(address);
-                        break;
-
-                    case PUT:
-                        urlc = update(address, body, "PUT");
-                        break;
-
-                    case POST:
-                        urlc = update(address, body, "POST");
-                        break;
-
-                    case DELETE:
-                        urlc = delete(address);
-                        break;
-
-                    default:
-                        break;
-                }
+                HttpResponse response = getResponse(client, wrapper);
+                checkResponse(response);
+                return new DEServiceInputStream(client, response);
             } catch (AuthenticationException ex) {
+                client.getConnectionManager().shutdown();
                 throw ex;
             } catch (Exception ex) {
-                // because the GWT compiler will issue a warning if we simply
-                // throw exception, we'll
-                // use SerializationException()
+                client.getConnectionManager().shutdown();
                 throw new SerializationException(ex);
             }
         }
 
-        LOGGER.debug("json==>" + json);
-        System.out.println("json==>" + json);
-        return new DEServiceInputStream(urlc);
+        return null;
     }
 
+    public HttpResponse getResponse(HttpClient client, MultiPartServiceWrapper wrapper)
+            throws IOException {
+        String address = retrieveServiceAddress(wrapper);
+        List<HTTPPart> parts = wrapper.getParts();
+        BaseServiceCallWrapper.Type type = wrapper.getType();
+        switch (type) {
+            case PUT:
+                return putMultipart(client, address, parts);
+
+            case POST:
+                return postMultipart(client, address, parts);
+
+            default:
+                throw new UnsupportedOperationException("HTTP method " + type + " not supported");
+        }
+    }
     /**
      * Sends a multi-part HTTP PUT or POST request to another service and returns the response.
      *
@@ -528,29 +571,18 @@ public abstract class BaseDEServiceDispatcher extends RemoteServiceServlet imple
         String json = null;
 
         if (isValidServiceCall(wrapper)) {
-            String address = retrieveServiceAddress(wrapper);
-            List<HTTPPart> parts = wrapper.getParts();
-
+            HttpClient client = new DefaultHttpClient();
             try {
-                switch (wrapper.getType()) {
-                    case PUT:
-                        json = updateMultipart(address, parts, "PUT");
-                        break;
-
-                    case POST:
-                        json = updateMultipart(address, parts, "POST");
-                        break;
-
-                    default:
-                        break;
-                }
+                json = getResponseBody(getResponse(client, wrapper));
             } catch (AuthenticationException ex) {
                 throw ex;
+            } catch (HttpException ex) {
+                LOGGER.error(ex.getResponseBody(), ex);
+                throw new SerializationException(ex.getResponseBody(), ex);
             } catch (Exception ex) {
-                // because the GWT compiler will issue a warning if we simply
-                // throw exception, we'll
-                // use SerializationException()
                 throw new SerializationException(ex);
+            } finally {
+                client.getConnectionManager().shutdown();
             }
         }
 

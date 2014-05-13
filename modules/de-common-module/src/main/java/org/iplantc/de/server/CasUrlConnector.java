@@ -2,9 +2,9 @@ package org.iplantc.de.server;
 
 import static org.iplantc.de.server.util.CasUtils.attributePrincipalFromServletRequest;
 
+import org.apache.http.client.methods.*;
 import org.iplantc.de.shared.AuthenticationException;
 
-import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
 import org.jasig.cas.client.authentication.AttributePrincipal;
 
 import java.io.IOException;
@@ -22,22 +22,34 @@ import javax.servlet.http.HttpServletRequest;
  */
 public class CasUrlConnector extends BaseUrlConnector {
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    public HttpURLConnection getUrlConnection(HttpServletRequest request, String address) throws IOException {
-        return copyUserAgent(request, (HttpURLConnection) addProxyTokenToUrl(address, request).openConnection());
+    public HttpGet getRequest(HttpServletRequest request, String address) throws IOException {
+        String authenticatedUrl = addProxyTokenToUrl(address, request).toString();
+        return copyUserAgent(request, new HttpGet(authenticatedUrl));
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    public HttpEntityEnclosingRequestBase getRequest(HttpServletRequest request, String address, String method) throws
-            IOException {
+    public HttpPut putRequest(HttpServletRequest request, String address) throws IOException {
         String authenticatedUrl = addProxyTokenToUrl(address, request).toString();
-        return copyUserAgent(request, RequestFactory.buildRequest(method, authenticatedUrl));
+        return copyUserAgent(request, new HttpPut(authenticatedUrl));
+    }
+
+    @Override
+    public HttpPost postRequest(HttpServletRequest request, String address) throws IOException {
+        String authenticatedUrl = addProxyTokenToUrl(address, request).toString();
+        return copyUserAgent(request, new HttpPost(authenticatedUrl));
+    }
+
+    @Override
+    public HttpDelete deleteRequest(HttpServletRequest request, String address) throws IOException {
+        String authenticatedUrl = addProxyTokenToUrl(address, request).toString();
+        return copyUserAgent(request, new HttpDelete(authenticatedUrl));
+    }
+
+    @Override
+    public HttpPatch patchRequest(HttpServletRequest request, String address) throws IOException {
+        String authenticatedUrl = addProxyTokenToUrl(address, request).toString();
+        return copyUserAgent(request, new HttpPatch(authenticatedUrl));
     }
 
     /**

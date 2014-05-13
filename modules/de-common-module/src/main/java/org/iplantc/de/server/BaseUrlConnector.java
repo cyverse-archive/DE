@@ -1,6 +1,6 @@
 package org.iplantc.de.server;
 
-import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
+import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.utils.URIBuilder;
 
 import java.io.IOException;
@@ -49,26 +49,14 @@ public abstract class BaseUrlConnector implements UrlConnector {
     }
 
     /**
-     * Copies the User-Agent header from an incoming HTTP servlet request to an outgoing HTTP URL connection.
-     * 
-     * @param req the incoming servlet request.
-     * @param c the outgoing connection.
-     * @return the outgoing connection.
-     */
-    protected HttpURLConnection copyUserAgent(HttpServletRequest req, HttpURLConnection c) {
-        c.addRequestProperty("User-Agent", req.getHeader("User-Agent"));
-        return c;
-    }
-
-    /**
      * Copies the User-Agent header from the incoming HTTP servlet request to an outgoing
-     * HttpEntityEnclosingRequestBase.
+     * HttpRequestBase.
      * 
      * @param req the incoming servlet request.
      * @param c the outgoing HttpEntityEnclosingRequestBase.
      * @return the outgoing request.
      */
-    protected HttpEntityEnclosingRequestBase copyUserAgent(HttpServletRequest req, HttpEntityEnclosingRequestBase c) {
+    protected <T extends HttpRequestBase> T copyUserAgent(HttpServletRequest req, T c) {
         c.addHeader("User-Agent", req.getHeader("User-Agent"));
         return c;
     }

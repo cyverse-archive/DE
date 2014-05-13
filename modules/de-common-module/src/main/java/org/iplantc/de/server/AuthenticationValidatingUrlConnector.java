@@ -2,9 +2,9 @@ package org.iplantc.de.server;
 
 import static org.iplantc.de.server.util.CasUtils.attributePrincipalFromServletRequest;
 
+import org.apache.http.client.methods.*;
 import org.iplantc.de.shared.AuthenticationException;
 
-import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
 import org.jasig.cas.client.authentication.AttributePrincipal;
 
 import java.io.IOException;
@@ -22,16 +22,6 @@ import javax.servlet.http.HttpServletRequest;
 public class AuthenticationValidatingUrlConnector extends BaseUrlConnector {
 
     /**
-     * {@inheritDoc}
-     */
-    @Override
-    public HttpURLConnection getUrlConnection(HttpServletRequest request, String address)
-            throws IOException {
-        validateAuthentication(request);
-        return copyUserAgent(request, (HttpURLConnection) new URL(addIpAddress(address, request)).openConnection());
-    }
-
-    /**
      * Verifies that the user is authenticated.
      * 
      * @throws IOException if the user is not authenticated.
@@ -43,13 +33,33 @@ public class AuthenticationValidatingUrlConnector extends BaseUrlConnector {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    public HttpEntityEnclosingRequestBase getRequest(HttpServletRequest request, String address,
-            String method) throws IOException {
+    public HttpGet getRequest(HttpServletRequest request, String address) throws IOException {
         validateAuthentication(request);
-        return copyUserAgent(request, RequestFactory.buildRequest(method, address));
+        return copyUserAgent(request, new HttpGet(address));
+    }
+
+    @Override
+    public HttpPut putRequest(HttpServletRequest request, String address) throws IOException {
+        validateAuthentication(request);
+        return copyUserAgent(request, new HttpPut(address));
+    }
+
+    @Override
+    public HttpPost postRequest(HttpServletRequest request, String address) throws IOException {
+        validateAuthentication(request);
+        return copyUserAgent(request, new HttpPost(address));
+    }
+
+    @Override
+    public HttpDelete deleteRequest(HttpServletRequest request, String address) throws IOException {
+        validateAuthentication(request);
+        return copyUserAgent(request, new HttpDelete(address));
+    }
+
+    @Override
+    public HttpPatch patchRequest(HttpServletRequest request, String address) throws IOException {
+        validateAuthentication(request);
+        return copyUserAgent(request, new HttpPatch(address));
     }
 }
