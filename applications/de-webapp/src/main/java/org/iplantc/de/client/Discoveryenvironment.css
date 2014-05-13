@@ -157,14 +157,14 @@ html,body {
     width: 24px;
     position: relative;
     padding-right: 5px;
-    opacity: 0.6;
+    opacity: 0.8;
 }
 
 
 .notifications_hover {
 	background-image: url('./images/globe.png');
-    height: 24px;
-    width: 24px;
+    height: 28px;
+    width: 28px;
     position: relative;
     padding-right: 5px;
 	 opacity: 1;
@@ -177,7 +177,7 @@ html,body {
     position: relative;
     padding-top: 5px;
     padding-right: 5px;
-    opacity: 0.6;
+    opacity: 0.8;
 }
 
 .ask_forums_hover {
@@ -196,7 +196,7 @@ html,body {
     width: 24px;
     position: relative;
     padding-right: 5px;
-	 opacity: 0.6;
+	 opacity: 0.8;
 }
 
 .user_preferences_hover {
