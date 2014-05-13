@@ -9,6 +9,7 @@ import org.iplantc.de.diskResource.client.views.cells.events.DiskResourceNameSel
 import org.iplantc.de.diskResource.client.views.cells.events.ManageMetadataEvent;
 import org.iplantc.de.diskResource.client.views.cells.events.ManageSharingEvent;
 import org.iplantc.de.diskResource.client.views.cells.events.ShareByDataLinkEvent;
+import org.iplantc.de.diskResource.share.DiskResourceModule;
 import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 
 import com.google.gwt.cell.client.AbstractCell;
@@ -105,6 +106,16 @@ public class DiskResourceColumnModel extends ColumnModel<DiskResource> implement
 
     public void setCheckboxColumnHidden(boolean hidden) {
         setHidden(0, hidden);
+    }
+
+    public void ensureDebugId(String baseID) {
+        for(ColumnConfig<DiskResource, ?> cc : configs){
+            if(cc.getCell() instanceof DiskResourceNameCell){
+                ((DiskResourceNameCell)cc.getCell()).setBaseDebugId(baseID + DiskResourceModule.Ids.GRID);
+            } else if(cc.getCell() instanceof DiskResourceActionsCell){
+                ((DiskResourceActionsCell)cc.getCell()).setBaseDebugId(baseID + DiskResourceModule.Ids.GRID);
+            }
+        }
     }
 
     /**

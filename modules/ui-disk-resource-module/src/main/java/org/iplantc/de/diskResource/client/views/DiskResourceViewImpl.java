@@ -1,5 +1,6 @@
 package org.iplantc.de.diskResource.client.views;
 
+import com.sencha.gxt.widget.core.client.Composite;
 import org.iplantc.de.client.models.HasId;
 import org.iplantc.de.client.models.HasPath;
 import org.iplantc.de.client.models.UserInfo;
@@ -16,6 +17,7 @@ import org.iplantc.de.diskResource.client.events.DiskResourceSelectionChangedEve
 import org.iplantc.de.diskResource.client.events.FolderSelectionEvent;
 import org.iplantc.de.diskResource.client.presenters.proxy.FolderContentsLoadConfig;
 import org.iplantc.de.diskResource.client.search.events.DeleteSavedSearchEvent;
+import org.iplantc.de.diskResource.share.DiskResourceModule;
 import org.iplantc.de.resources.client.DataCollapseStyle;
 import org.iplantc.de.resources.client.IplantResources;
 import org.iplantc.de.resources.client.messages.I18N;
@@ -100,7 +102,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-public class DiskResourceViewImpl implements DiskResourceView, SelectionHandler<Folder>, SelectionChangedHandler<DiskResource> {
+public class DiskResourceViewImpl extends Composite implements DiskResourceView, SelectionHandler<Folder>, SelectionChangedHandler<DiskResource> {
 
     private final class PathFieldKeyPressHandlerImpl implements KeyPressHandler {
         @Override
@@ -239,8 +241,6 @@ public class DiskResourceViewImpl implements DiskResourceView, SelectionHandler<
     @UiField
     TextField pathField;
 
-    private final Widget widget;
-
     private TreeLoader<Folder> treeLoader;
 
     private final DiskResourceSelectionModel sm;
@@ -265,7 +265,7 @@ public class DiskResourceViewImpl implements DiskResourceView, SelectionHandler<
 
         sm = new DiskResourceSelectionModel(new IdentityValueProvider<DiskResource>());
 
-        widget = BINDER.createAndBindUi(this);
+        initWidget(BINDER.createAndBindUi(this));
 
         detailsPanel.setScrollMode(ScrollMode.AUTO);
 
@@ -464,8 +464,12 @@ public class DiskResourceViewImpl implements DiskResourceView, SelectionHandler<
     }
 
     @Override
-    public Widget asWidget() {
-        return widget;
+    protected void onEnsureDebugId(String baseID) {
+        super.onEnsureDebugId(baseID);
+        toolbar.asWidget().ensureDebugId(baseID + DiskResourceModule.Ids.MENU_BAR);
+        grid.ensureDebugId(baseID + DiskResourceModule.Ids.GRID);
+        tree.ensureDebugId(baseID + DiskResourceModule.Ids.NAVIGATION);
+        ((DiskResourceColumnModel)cm).ensureDebugId(baseID);
     }
 
     @Override

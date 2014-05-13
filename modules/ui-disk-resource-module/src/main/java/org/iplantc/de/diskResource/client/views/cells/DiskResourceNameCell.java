@@ -1,10 +1,13 @@
 package org.iplantc.de.diskResource.client.views.cells;
 
+import com.google.common.base.Strings;
+import com.google.gwt.debug.client.DebugInfo;
 import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.client.models.diskResources.File;
 import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.diskResource.client.views.cells.events.DiskResourceNameSelectedEvent;
+import org.iplantc.de.diskResource.share.DiskResourceModule;
 import org.iplantc.de.resources.client.DiskResourceNameCellStyle;
 import org.iplantc.de.resources.client.IplantResources;
 import org.iplantc.de.resources.client.messages.I18N;
@@ -42,14 +45,22 @@ import com.sencha.gxt.widget.core.client.tips.Tip;
 public class DiskResourceNameCell extends AbstractCell<DiskResource> {
 
     private static final DiskResourceNameCellStyle CSS = IplantResources.RESOURCES.diskResourceNameCss();
+    private String baseID;
+
+    public void setBaseDebugId(String baseID) {
+        this.baseID = baseID;
+    }
 
     /**
      * The HTML templates used to render the cell.
      */
     interface Templates extends SafeHtmlTemplates {
 
-        @SafeHtmlTemplates.Template("<span><span class=\"{0}\"> </span>&nbsp;<span name=\"drName\" class=\"{1}\" >{2}</span></span>")
+        @SafeHtmlTemplates.Template("<span><span class='{0}'> </span>&nbsp;<span name=\"drName\" class='{1}' >{2}</span></span>")
         SafeHtml cell(String imgClassName, String diskResourceClassName, SafeHtml diskResourceName);
+
+        @SafeHtmlTemplates.Template("<span><span class='{0}'> </span>&nbsp;<span id='{3}' name=\"drName\" class='{1}' >{2}</span></span>")
+        SafeHtml debugCell(String imgClassName, String diskResourceClassName, SafeHtml diskResourceName, String id);
     }
 
     final Templates templates = GWT.create(Templates.class);
@@ -95,7 +106,12 @@ public class DiskResourceNameCell extends AbstractCell<DiskResource> {
             nameStyle += " " + CSS.nameDisabledStyle(); //$NON-NLS-1$
         }
 
-        sb.append(templates.cell(imgClassName, nameStyle, name));
+        if(DebugInfo.isDebugIdEnabled() && !Strings.isNullOrEmpty(baseID)) {
+            final String debugId = baseID + "." + value.getId() + DiskResourceModule.Ids.NAME_CELL;
+            sb.append(templates.debugCell(imgClassName, nameStyle, name, debugId));
+        }else {
+            sb.append(templates.cell(imgClassName, nameStyle, name));
+        }
     }
 
     @Override

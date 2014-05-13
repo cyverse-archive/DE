@@ -25,8 +25,11 @@ import com.sencha.gxt.widget.core.client.button.TextButton;
 import com.sencha.gxt.widget.core.client.event.SelectEvent;
 import com.sencha.gxt.widget.core.client.menu.Item;
 import com.sencha.gxt.widget.core.client.menu.MenuItem;
+import org.iplantc.de.diskResource.share.DiskResourceModule;
 
 import java.util.List;
+
+import static org.iplantc.de.diskResource.share.DiskResourceModule.Ids;
 
 public class DiskResourceViewToolbarImpl extends Composite implements DiskResourceView.DiskResourceViewToolbar, DiskResourceSelectionChangedEvent.DiskResourceSelectionChangedEventHandler, FolderSelectionEvent.FolderSelectionEventHandler {
 
@@ -197,6 +200,53 @@ public class DiskResourceViewToolbarImpl extends Composite implements DiskResour
     @Override
     protected void onEnsureDebugId(String baseID) {
         super.onEnsureDebugId(baseID);
+        uploadMenu.ensureDebugId(baseID + Ids.UPLOAD_MENU);
+        fileMenu.ensureDebugId(baseID + Ids.FILE_MENU);
+        editMenu.ensureDebugId(baseID + Ids.EDIT_MENU);
+        downloadMenu.ensureDebugId(baseID + Ids.DOWNLOAD_MENU);
+        refreshButton.ensureDebugId(baseID + Ids.REFRESH_BUTTON);
+        shareMenu.ensureDebugId(baseID + Ids.SHARE_MENU);
+        trashMenu.ensureDebugId(baseID + Ids.TRASH_MENU);
+        searchField.ensureDebugId(baseID + Ids.SEARCH_FIELD);
+
+        // Upload menu
+        simpleUploadMi.ensureDebugId(baseID + Ids.UPLOAD_MENU + Ids.MENU_ITEM_SIMPLE_UPLOAD);
+        bulkUploadMi.ensureDebugId(baseID + Ids.UPLOAD_MENU + Ids.MENU_ITEM_BULK_UPLOAD);
+        importFromUrlMi.ensureDebugId(baseID + Ids.UPLOAD_MENU + Ids.MENU_ITEM_IMPORT_FROM_URL);
+
+        // File menu
+        newWindowMi.ensureDebugId(baseID + Ids.FILE_MENU + Ids.MENU_ITEM_NEW_WINDOW);
+        newWindowAtLocMi.ensureDebugId(baseID + Ids.FILE_MENU + Ids.MENU_ITEM_NEW_WINDOW_AT_LOC);
+        newFolderMi.ensureDebugId(baseID + Ids.FILE_MENU + Ids.MENU_ITEM_NEW_FOLDER);
+        duplicateMi.ensureDebugId(baseID + Ids.FILE_MENU + Ids.MENU_ITEM_DUPLICATE);
+        newPlainTextFileMi.ensureDebugId(baseID + Ids.FILE_MENU + Ids.MENU_ITEM_NEW_PLAIN_TEXT);
+        newTabularDataFileMi.ensureDebugId(baseID + Ids.FILE_MENU + Ids.MENU_ITEM_NEW_TABULAR_DATA);
+        moveToTrashMi.ensureDebugId(baseID + Ids.FILE_MENU + Ids.MENU_ITEM_MOVE_TO_TRASH);
+
+        // Edit menu
+        renameMi.ensureDebugId(baseID + Ids.EDIT_MENU + Ids.MENU_ITEM_RENAME);
+        moveMi.ensureDebugId(baseID + Ids.EDIT_MENU + Ids.MENU_ITEM_MOVE);
+        deleteMi.ensureDebugId(baseID + Ids.EDIT_MENU + Ids.MENU_ITEM_DELETE);
+        editFileMi.ensureDebugId(baseID + Ids.EDIT_MENU + Ids.MENU_ITEM_EDIT_FILE);
+        editInfoTypeMi.ensureDebugId(baseID + Ids.EDIT_MENU + Ids.MENU_ITEM_EDIT_INFO_TYPE);
+        metadataMi.ensureDebugId(baseID + Ids.EDIT_MENU + Ids.MENU_ITEM_METADATA);
+
+        // Download menu
+        simpleDownloadMi.ensureDebugId(baseID + Ids.DOWNLOAD_MENU + Ids.MENU_ITEM_SIMPLE_DOWNLOAD);
+        bulkDownloadMi.ensureDebugId(baseID + Ids.DOWNLOAD_MENU + Ids.MENU_ITEM_BULK_DOWNLOAD);
+
+        // Share menu
+        shareWithCollaboratorsMi.ensureDebugId(baseID + Ids.SHARE_MENU + Ids.MENU_ITEM_SHARE_WITH_COLLABORATORS);
+        createPublicLinkMi.ensureDebugId(baseID + Ids.SHARE_MENU + Ids.MENU_ITEM_CREATE_PUBLIC_LINK);
+        sendToCogeMi.ensureDebugId(baseID + Ids.SHARE_MENU + Ids.MENU_ITEM_SEND_TO_COGE);
+        sendToEnsemblMi.ensureDebugId(baseID + Ids.SHARE_MENU + Ids.MENU_ITEM_SEND_TO_ENSEMBL);
+        sendToTreeViewerMi.ensureDebugId(baseID + Ids.SHARE_MENU + Ids.MENU_ITEM_SEND_TO_TREE_VIEWER);
+
+        // Trash menu
+        openTrashMi.ensureDebugId(baseID + Ids.TRASH_MENU + Ids.MENU_ITEM_OPEN_TRASH);
+        restoreMi.ensureDebugId(baseID + Ids.TRASH_MENU + Ids.MENU_ITEM_RESTORE);
+        emptyTrashMi.ensureDebugId(baseID + Ids.TRASH_MENU + Ids.MENU_ITEM_EMPTY_TRASH);
+
     }
 
     boolean canUploadTo(DiskResource folder){

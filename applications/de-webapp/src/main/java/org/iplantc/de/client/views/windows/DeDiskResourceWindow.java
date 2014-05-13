@@ -9,6 +9,7 @@ import org.iplantc.de.commons.client.views.window.configs.WindowConfig;
 import org.iplantc.de.diskResource.client.events.FolderSelectionEvent;
 import org.iplantc.de.diskResource.client.gin.DiskResourceInjector;
 import org.iplantc.de.diskResource.client.views.DiskResourceView;
+import org.iplantc.de.diskResource.share.DiskResourceModule;
 import org.iplantc.de.resources.client.messages.I18N;
 
 import com.google.common.base.Strings;
@@ -20,6 +21,7 @@ import com.sencha.gxt.widget.core.client.event.RestoreEvent;
 import com.sencha.gxt.widget.core.client.event.RestoreEvent.RestoreHandler;
 import com.sencha.gxt.widget.core.client.event.ShowEvent;
 import com.sencha.gxt.widget.core.client.event.ShowEvent.ShowHandler;
+import org.iplantc.de.shared.DeModule;
 
 import java.util.List;
 
@@ -31,6 +33,7 @@ public class DeDiskResourceWindow extends IplantWindowBase implements FolderSele
         super(config.getTag(), config);
         presenter = DiskResourceInjector.INSTANCE.getDiskResourceViewPresenter();
 
+        ensureDebugId(DeModule.Ids.DISK_RESOURCE_WINDOW);
         setHeadingText(I18N.DISPLAY.data());
         setSize("800", "480");
 
@@ -42,6 +45,12 @@ public class DeDiskResourceWindow extends IplantWindowBase implements FolderSele
         presenter.go(this, config.getSelectedFolder(), resourcesToSelect);
 
         initHandlers();
+    }
+
+    @Override
+    protected void onEnsureDebugId(String baseID) {
+        super.onEnsureDebugId(baseID);
+        presenter.setViewDebugId(baseID + DiskResourceModule.Ids.DISK_RESOURCE_VIEW);
     }
 
     @Override

@@ -1,5 +1,7 @@
 package org.iplantc.de.diskResource.client.views.cells;
 
+import com.google.common.base.Strings;
+import com.google.gwt.debug.client.DebugInfo;
 import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.client.models.diskResources.File;
 import org.iplantc.de.client.models.diskResources.Folder;
@@ -7,6 +9,7 @@ import org.iplantc.de.client.util.DiskResourceUtil;
 import org.iplantc.de.diskResource.client.views.cells.events.ManageMetadataEvent;
 import org.iplantc.de.diskResource.client.views.cells.events.ManageSharingEvent;
 import org.iplantc.de.diskResource.client.views.cells.events.ShareByDataLinkEvent;
+import org.iplantc.de.diskResource.share.DiskResourceModule;
 import org.iplantc.de.resources.client.IplantResources;
 import org.iplantc.de.resources.client.messages.I18N;
 import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
@@ -32,6 +35,12 @@ import com.google.gwt.user.client.Event;
  */
 public class DiskResourceActionsCell extends AbstractCell<DiskResource> {
 
+    private String baseID;
+
+    public void setBaseDebugId(String baseID) {
+        this.baseID = baseID;
+    }
+
     interface MyCss extends CssResource {
         @ClassName("actions_icon")
         String actionIcon();
@@ -48,6 +57,9 @@ public class DiskResourceActionsCell extends AbstractCell<DiskResource> {
 
         @SafeHtmlTemplates.Template("<img name='{0}' title='{1}' class='{2}' src='{3}'></img>")
         SafeHtml imgCell(String name, String toolTip, String className, SafeUri imgSrc);
+
+        @SafeHtmlTemplates.Template("<img id='{4}' name='{0}' title='{1}' class='{2}' src='{3}'></img>")
+        SafeHtml debugImgCell(String name, String toolTip, String className, SafeUri imgSrc, String id);
     }
 
     private final IplantDisplayStrings displayStrings;
@@ -90,29 +102,39 @@ public class DiskResourceActionsCell extends AbstractCell<DiskResource> {
         String className = null;
         SafeUri imgSrc = null;
 
+        String debugId = null;
         if (value instanceof Folder) {
             name = SHARE_FOLDER_BY_LINK_ACTION;
             toolTip = SHARE_FOLDER_BY_LINK_ACTION;
             className = resources.css().actionIcon();
             imgSrc = iplantResources.dataLink().getSafeUri();
+            debugId = baseID + "." + value.getId() + DiskResourceModule.Ids.ACTION_CELL_DATA_LINK;
         }
         if ((value instanceof File) && DiskResourceUtil.isOwner(value)) {
             name = SHARE_FILE_BY_LINK_ACTION;
             toolTip = SHARE_FILE_BY_LINK_ACTION;
             className = resources.css().actionIcon();
             imgSrc = iplantResources.linkAdd().getSafeUri();
+            debugId = baseID + "." + value.getId() + DiskResourceModule.Ids.ACTION_CELL_DATA_LINK_ADD;
         }
+
 
         // Append link action
         if(name != null && className != null && imgSrc != null){
-            sb.append(templates.imgCell(name, toolTip, className, imgSrc));
+            if(DebugInfo.isDebugIdEnabled() && !Strings.isNullOrEmpty(baseID) && (debugId != null)){
+                sb.append(templates.debugImgCell(name, toolTip, className, imgSrc, debugId));
+            } else {
+                sb.append(templates.imgCell(name, toolTip, className, imgSrc));
+            }
         }
 
+        debugId = null;
         if (DiskResourceUtil.isOwner(value)) {
             name = SHARE_BY_DE_ACTION;
             toolTip = SHARE_BY_DE_ACTION;
             className = resources.css().actionIcon();
             imgSrc = iplantResources.share().getSafeUri();
+            debugId = baseID + "." + value.getId() + DiskResourceModule.Ids.ACTION_CELL_SHARE;
         } else {
             name = null;
             toolTip = null;
@@ -122,17 +144,26 @@ public class DiskResourceActionsCell extends AbstractCell<DiskResource> {
 
         // Append Share action
         if((name != null) && (className != null) && (imgSrc != null)){
-            sb.append(templates.imgCell(name, toolTip, className, imgSrc));
+            if(DebugInfo.isDebugIdEnabled() && !Strings.isNullOrEmpty(baseID) && (debugId != null)) {
+                sb.append(templates.debugImgCell(name, toolTip, className, imgSrc, debugId));
+            } else {
+                sb.append(templates.imgCell(name, toolTip, className, imgSrc));
+            }
         }
 
         name = MANAGE_METADATA_ACTION;
         toolTip = MANAGE_METADATA_ACTION;
         className = resources.css().actionIcon();
         imgSrc = iplantResources.metadata().getSafeUri();
+        debugId = baseID + "." + value.getId() + DiskResourceModule.Ids.ACTION_CELL_METADATA;
 
         // Append metadata action
         if(name != null && className != null && imgSrc != null){
-            sb.append(templates.imgCell(name, toolTip, className, imgSrc));
+            if(DebugInfo.isDebugIdEnabled() && !Strings.isNullOrEmpty(baseID) && (debugId != null)) {
+                sb.append(templates.debugImgCell(name, toolTip, className, imgSrc, debugId));
+            } else {
+                sb.append(templates.imgCell(name, toolTip, className, imgSrc));
+            }
         }
 
     }
@@ -159,7 +190,6 @@ public class DiskResourceActionsCell extends AbstractCell<DiskResource> {
     public void setHasHandlers(HasHandlers hasHandlers) {
         this.hasHandlers = hasHandlers;
     }
-
 
     private void doOnClick(Element eventTarget, DiskResource value) {
         if(hasHandlers == null){

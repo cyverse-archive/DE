@@ -24,5 +24,6 @@ public interface DeModule {
         String USER_PREF_BUTTON = ".userPrefButton";
         String FORUMS_BUTTON = ".forumsButton";
 
+        String DISK_RESOURCE_WINDOW = "diskResourceWindow";
     }
 }

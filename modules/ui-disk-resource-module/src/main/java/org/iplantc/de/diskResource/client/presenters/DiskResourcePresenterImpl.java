@@ -73,6 +73,7 @@ import org.iplantc.de.diskResource.client.views.dialogs.FolderSelectDialog;
 import org.iplantc.de.diskResource.client.views.dialogs.InfoTypeEditorDialog;
 import org.iplantc.de.diskResource.client.views.dialogs.RenameFileDialog;
 import org.iplantc.de.diskResource.client.views.dialogs.RenameFolderDialog;
+import org.iplantc.de.diskResource.share.DiskResourceModule;
 import org.iplantc.de.resources.client.messages.I18N;
 import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 
@@ -661,6 +662,11 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter, Di
             ErrorHandler.post("Unable to retrieve information type");
         }
         return diskResourceInfo.getInfoType();
+    }
+
+    @Override
+    public void setViewDebugId(String baseID) {
+        view.asWidget().ensureDebugId(baseID + DiskResourceModule.Ids.DISK_RESOURCE_VIEW);
     }
 
     @Override

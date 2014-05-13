@@ -63,6 +63,9 @@ public interface DiskResourceView extends IsWidget,
                                 SaveDiskResourceQueryEvent.SaveDiskResourceQueryEventHandler,
                                 SubmitDiskResourceQueryEvent.SubmitDiskResourceQueryEventHandler,
                                 ShareByDataLinkEvent.ShareByDataLinkEventHandler {
+
+        void setViewDebugId(String baseID);
+
         interface Builder extends org.iplantc.de.commons.client.presenter.Presenter {
             Builder hideNorth();
 

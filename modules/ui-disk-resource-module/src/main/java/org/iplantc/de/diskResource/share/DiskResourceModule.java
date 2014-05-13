@@ -6,5 +6,52 @@ package org.iplantc.de.diskResource.share;
 public interface DiskResourceModule {
     interface Ids {
 
+        String DISK_RESOURCE_VIEW = ".diskResourceView";
+
+
+        String MENU_BAR = ".menuBar";
+        String GRID = ".grid";
+        String NAVIGATION = ".navigation";
+        String FILE_MENU = ".fileMenu";
+        String UPLOAD_MENU = ".uploadMenu";
+        String EDIT_MENU = ".editMenu";
+        String DOWNLOAD_MENU = ".downloadMenu";
+        String REFRESH_BUTTON = ".refreshButton";
+        String SHARE_MENU = ".shareMenu";
+        String TRASH_MENU = ".trashMenu";
+        String SEARCH_FIELD = ".searchField";
+        String MENU_ITEM_SIMPLE_UPLOAD = ".simpleUpload";
+        String MENU_ITEM_BULK_UPLOAD = ".bulkUpload";
+        String MENU_ITEM_IMPORT_FROM_URL = ".importFromUrl";
+        String MENU_ITEM_NEW_WINDOW = ".newWindow";
+        String MENU_ITEM_NEW_WINDOW_AT_LOC = ".newWindowLoc";
+        String MENU_ITEM_NEW_FOLDER = ".newFolder";
+        String MENU_ITEM_DUPLICATE = ".duplicate";
+        String MENU_ITEM_NEW_PLAIN_TEXT = ".newPlainText";
+        String MENU_ITEM_NEW_TABULAR_DATA = ".newTabularData";
+        String MENU_ITEM_MOVE_TO_TRASH = ".moveToTrash";
+        String MENU_ITEM_RENAME = ".rename";
+        String MENU_ITEM_MOVE = ".move";
+        String MENU_ITEM_DELETE = ".delete";
+        String MENU_ITEM_EDIT_FILE = ".editFile";
+        String MENU_ITEM_EDIT_INFO_TYPE = ".editInfoType";
+        String MENU_ITEM_METADATA = ".metadata";
+        String MENU_ITEM_SIMPLE_DOWNLOAD = ".simpleDownload";
+        String MENU_ITEM_BULK_DOWNLOAD = ".bulkDownload";
+        String MENU_ITEM_SHARE_WITH_COLLABORATORS = ".shareWithCollaborators";
+        String MENU_ITEM_CREATE_PUBLIC_LINK = ".createPublicLink";
+        String MENU_ITEM_SEND_TO_COGE = ".sendToCoge";
+        String MENU_ITEM_SEND_TO_ENSEMBL = ".sendToEnsembl";
+        String MENU_ITEM_SEND_TO_TREE_VIEWER = ".sendToTreeViewer";
+        String MENU_ITEM_OPEN_TRASH = ".openTrash";
+        String MENU_ITEM_RESTORE = ".restore";
+        String MENU_ITEM_EMPTY_TRASH = ".emptyTrash";
+
+
+        String ACTION_CELL_DATA_LINK_ADD = ".actionCellDataLinkAdd";
+        String ACTION_CELL_DATA_LINK = ".actionCellDataLink";
+        String ACTION_CELL_SHARE = ".actionCellShare";
+        String ACTION_CELL_METADATA = ".actionCellMetadata";
+        String NAME_CELL = ".nameCell";
     }
 }
