@@ -52,7 +52,7 @@ public class ShareAnonymousCallback implements AsyncCallback<String> {
         dlg.setResizable(false);
         dlg.setSize("535", "130");
         FieldLabel fl = new FieldLabel();
-        fl.setHTML("Please vist <a href='http://www.ensembl.org/'>Ensembl</a> and use the following URL to import your bam / vcf / gff file");
+        fl.setHTML("Please vist <a target='_blank' href='http://www.ensembl.org/'>Ensembl</a> and use the following URL to import your bam / vcf / gff file");
         TextField textBox = new TextField();
         textBox.setWidth(500);
         textBox.setReadOnly(true);
