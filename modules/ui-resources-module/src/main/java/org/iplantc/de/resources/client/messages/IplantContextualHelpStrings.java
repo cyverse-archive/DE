@@ -193,4 +193,12 @@ public interface IplantContextualHelpStrings extends com.google.gwt.i18n.client.
   @DefaultMessage("The iPlant team is currently validating your requested tool. You will receive notifications in the Discovery Environment as the process proceeds. Please see the Status Comments for more information.")
   @Key("toolRequestStatusValidationHelp")
   String toolRequestStatusValidationHelp();
+
+    /**
+     * Translated "If you do not want this file to be public you can change its permissions as follows:<br/><b>1.</b> Navigate to the file in the data window<br/><b>2.</b> Select the file<br/><b>3.</b> Select <i>Share</i>-><i>Share with collaborators</i> from the menu.<br/><b>4.</b> In the <i>Manage Sharing</i> window in the <i>Who has access</i> section, change the permissions of the <i>anonymous</i> user using the permissions drop down menu."
+     * @return translated "If you do not want this file to be public you can change its permissions as follows:<br/><b>1.</b> Navigate to the file in the data window<br/><b>2.</b> Select the file<br/><b>3.</b> Select <i>Share</i>-><i>Share with collaborators</i> from the menu.<br/><b>4.</b> In the <i>Manage Sharing</i> window in the <i>Who has access</i> section, change the permissions of the <i>anonymous</i> user using the permissions drop down menu."
+     */
+    @DefaultMessage("If you do not want this file to be public you can change its permissions as follows:<br/><b>1.</b> Navigate to the file in the data window<br/><b>2.</b> Select the file<br/><b>3.</b> Select <i>Share</i>-><i>Share with collaborators</i> from the menu.<br/><b>4.</b> In the <i>Manage Sharing</i> window in the <i>Who has access</i> section, change the permissions of the <i>anonymous</i> user using the permissions drop down menu.")
+    @Key("sendToEnsemblUrlHelp")
+    String sendToEnsemblUrlHelp();
 }

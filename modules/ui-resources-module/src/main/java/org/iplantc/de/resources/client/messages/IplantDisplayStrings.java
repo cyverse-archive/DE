@@ -750,6 +750,14 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     String comments();
 
     /**
+     * Translated "Note: Anyone with access to this file''s URL can access the file."
+     * @return translated "Note: Anyone with access to this file''s URL can access the file."
+     */
+    @DefaultMessage("Note: Anyone with access to this file''s URL can access the file.")
+    @Key("sendToEnsemblePopupNote")
+    SafeHtml sendToEnsemblePopupNote();
+
+    /**
      * Translated "Update Comments...".
      *
      * @return translated "Update Comments..."
@@ -4939,4 +4947,13 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     @DefaultMessage("Rename Analysis")
     @Key("renameAnalysis")
     String renameAnalysis();
+
+    /**
+     * Translated "Learn more."
+     *
+     * @return translated "Learn more."
+     */
+    @DefaultMessage("Learn more.")
+    @Key("learnMore")
+    String learnMore();
 }
