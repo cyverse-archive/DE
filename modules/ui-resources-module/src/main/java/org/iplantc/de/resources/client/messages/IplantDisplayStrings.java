@@ -1307,11 +1307,11 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
 
     
     /**
-     * Translated "Modify".
+     * Translated "Edit app...".
      * 
-     * @return translated "Modify"
+     * @return translated "Edit app..."
      */
-    @DefaultMessage("Modify")
+    @DefaultMessage("Edit app...")
     @Key("editApp")
     String editApp();
     
