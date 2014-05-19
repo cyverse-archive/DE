@@ -116,8 +116,6 @@ public class BelphegorAppsViewPresenterImpl extends AppsViewPresenterImpl implem
         this.displayStrings = displayStrings;
         this.errorStrings = errorStrings;
 
-        this.view.setPresenter(this);
-
         eventBus.addHandler(CatalogCategoryRefreshEvent.TYPE, new CatalogCategoryRefreshEventHandler() {
 
             @Override
