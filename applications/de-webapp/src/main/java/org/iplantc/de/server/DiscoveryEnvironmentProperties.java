@@ -24,6 +24,7 @@ public class DiscoveryEnvironmentProperties {
     private static final String PREFIX = "org.iplantc.discoveryenvironment";                           // $NON-NLS$
     private static final String DE_DEFAULT_BUILD_NUMBER = PREFIX + ".about.defaultBuildNumber";        // $NON-NLS$
     private static final String DE_RELEASE_VERSION = PREFIX + ".about.releaseVersion";                 // $NON-NLS$
+    private static final String DE_BASE_URL = PREFIX + ".cas.server-name";                             // $NON-NLS$
     private static final String MULE_SERVICE_BASE_URL = PREFIX + ".muleServiceBaseUrl";                // $NON-NLS$
     private static final String PRODUCTION_DEPLOYMENT = PREFIX + ".environment.prod-deployment";       // $NON-NLS$
     private static final String MAINTENANCE_FILE = PREFIX + ".maintenance-file";                       // $NON-NLS$
@@ -33,7 +34,7 @@ public class DiscoveryEnvironmentProperties {
      */
     private static final String[] REQUIRED_PROPERTIES = {MULE_SERVICE_BASE_URL,
             DATA_MGMT_SERVICE_BASE_URL, FILE_IO_BASE_URL, UNPROTECTED_FILE_IO_BASE_URL,
-            PRODUCTION_DEPLOYMENT, MAINTENANCE_FILE};
+            PRODUCTION_DEPLOYMENT, MAINTENANCE_FILE, DE_BASE_URL};
 
     /**
      * The configuration properties.
@@ -117,6 +118,14 @@ public class DiscoveryEnvironmentProperties {
     public String getReleaseVersion() {
         return props.getProperty(DE_RELEASE_VERSION);
     }
+
+    /**
+     * Gets the base URL used to connect to the Discovery Environment. This is always the same as the CAS server
+     * name.
+     *
+     * @return the URL as a string.
+     */
+    public String getDeBaseUrl() { return props.getProperty(DE_BASE_URL); }
 
     /**
      * Gets the base data management URL.

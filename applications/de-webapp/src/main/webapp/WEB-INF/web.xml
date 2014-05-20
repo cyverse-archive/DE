@@ -84,6 +84,10 @@
         <servlet-name>uuidService</servlet-name>
         <servlet-class>org.iplantc.de.server.service.UUIDServiceImpl</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>oauthCallbackServlet</servlet-name>
+        <servlet-class>org.iplantc.de.server.CasOAuthCallbackServlet</servlet-class>
+    </servlet>
 
 	<!-- Servlet Mappings -->
 	<servlet-mapping>
@@ -143,8 +147,12 @@
         <url-pattern>/discoveryenvironment/remote_logging</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-         <servlet-name>uuidService</servlet-name>
-         <url-pattern>/discoveryenvironment/uuidService</url-pattern>
+        <servlet-name>uuidService</servlet-name>
+        <url-pattern>/discoveryenvironment/uuidService</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>oauthCallbackServlet</servlet-name>
+        <url-pattern>/oauth/callback/*</url-pattern>
     </servlet-mapping>
 
 	<!-- Filters -->

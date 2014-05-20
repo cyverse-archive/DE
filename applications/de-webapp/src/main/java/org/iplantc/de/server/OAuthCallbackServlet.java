@@ -1,8 +1,12 @@
 package org.iplantc.de.server;
 
 import com.google.common.base.Strings;
+import org.apache.commons.io.IOUtils;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.utils.URIBuilder;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.log4j.Logger;
 
 import javax.servlet.ServletException;
@@ -14,11 +18,13 @@ import java.net.URISyntaxException;
 
 public abstract class OAuthCallbackServlet extends HttpServlet {
 
-    private static final String CALLBACK_PATH = "/secured/oauth/access-code";
+    private static final String CALLBACK_PATH = "oauth/access-code";
 
     private static final String ERROR_PARAM = "error";
 
     private static final String AUTH_CODE_PARAM = "code";
+
+    private static final String REDIRECT_URI_PARAM = "redirect_uri";
 
     private static final Logger LOG = Logger.getLogger(OAuthCallbackServlet.class);
 
@@ -30,9 +36,12 @@ public abstract class OAuthCallbackServlet extends HttpServlet {
 
     public OAuthCallbackServlet() {}
 
-    public OAuthCallbackServlet(final DiscoveryEnvironmentProperties deProps, final UrlConnector urlConnector) {
-        this.deProps = deProps;
-        this.urlConnector = urlConnector;
+    @Override
+    public void init() throws ServletException {
+        super.init();
+        if (deProps == null) {
+            deProps = DiscoveryEnvironmentProperties.getDiscoveryEnvironmentProperties(getServletContext());
+        }
     }
 
     @Override
@@ -60,14 +69,28 @@ public abstract class OAuthCallbackServlet extends HttpServlet {
             return;
         }
 
-        final HttpGet request = urlConnector.getRequest(req, serviceCallbackUrl(apiName, authCode));
-        // TODO: submit the request then display a message to the user.
+        final String redirectUri = rebuildRedirectUri(req);
+        LOG.warn("Redirect URI: " + redirectUri);
+
+        final HttpGet request = urlConnector.getRequest(req, serviceCallbackUrl(apiName, authCode, redirectUri));
+        final HttpClient client = new DefaultHttpClient();
+        final HttpResponse response = client.execute(request);
+
+        resp.getWriter().append(IOUtils.toString(response.getEntity().getContent()));
+        resp.setStatus(response.getStatusLine().getStatusCode());
     }
 
-    private String serviceCallbackUrl(String apiName, String authCode) {
+    private String rebuildRedirectUri(HttpServletRequest req) {
+        final String replacementPattern = "\\Q" + req.getContextPath() + "\\E$";
+        final String baseUrl = deProps.getDeBaseUrl().replaceAll(replacementPattern, "");
+        return baseUrl + req.getRequestURI();
+    }
+
+    private String serviceCallbackUrl(String apiName, String authCode, String redirectUri) {
         try {
             return new URIBuilder(deProps.getProtectedDonkeyBaseUrl() + CALLBACK_PATH + "/" + apiName)
                     .addParameter(AUTH_CODE_PARAM, authCode)
+                    .addParameter(REDIRECT_URI_PARAM, redirectUri)
                     .toString();
         } catch (URISyntaxException e) {
             LOG.error("unable to build the auth code service callback URI", e);
