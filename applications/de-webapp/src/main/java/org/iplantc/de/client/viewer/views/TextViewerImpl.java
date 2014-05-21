@@ -296,4 +296,10 @@ public class TextViewerImpl extends AbstractFileViewer implements EditingSupport
     public boolean isDirty() {
         return isClean(jso);
     }
+
+    @Override
+    public void refresh() {
+        loadData();
+
+    }
 }

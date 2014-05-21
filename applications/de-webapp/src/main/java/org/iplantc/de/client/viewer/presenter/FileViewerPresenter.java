@@ -174,4 +174,13 @@ public class FileViewerPresenter implements FileViewer.Presenter {
 
     }
 
+    @Override
+    public void refreshViews() {
+        if (viewers != null) {
+        for (FileViewer fv : viewers) {
+            fv.refresh();
+            }
+        }
+    }
+
 }

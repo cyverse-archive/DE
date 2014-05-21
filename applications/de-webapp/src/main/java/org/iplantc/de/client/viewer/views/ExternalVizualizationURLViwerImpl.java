@@ -208,4 +208,10 @@ public class ExternalVizualizationURLViwerImpl extends AbstractFileViewer implem
         con.unmask();
 
     }
+
+    @Override
+    public void refresh() {
+        // do nothing intetionally
+
+    }
 }
