@@ -11,6 +11,7 @@ import org.iplantc.de.diskResource.client.gin.DiskResourceInjector;
 import org.iplantc.de.diskResource.client.views.DiskResourceView;
 import org.iplantc.de.diskResource.share.DiskResourceModule;
 import org.iplantc.de.resources.client.messages.I18N;
+import org.iplantc.de.shared.DeModule;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
@@ -21,7 +22,6 @@ import com.sencha.gxt.widget.core.client.event.RestoreEvent;
 import com.sencha.gxt.widget.core.client.event.RestoreEvent.RestoreHandler;
 import com.sencha.gxt.widget.core.client.event.ShowEvent;
 import com.sencha.gxt.widget.core.client.event.ShowEvent.ShowHandler;
-import org.iplantc.de.shared.DeModule;
 
 import java.util.List;
 
@@ -33,7 +33,8 @@ public class DeDiskResourceWindow extends IplantWindowBase implements FolderSele
         super(config.getTag(), config);
         presenter = DiskResourceInjector.INSTANCE.getDiskResourceViewPresenter();
 
-        ensureDebugId(DeModule.Ids.DISK_RESOURCE_WINDOW);
+        final String uniqueWindowTag = (config.getTag() == null) ? "" : "." + config.getTag();
+        ensureDebugId(DeModule.Ids.DISK_RESOURCE_WINDOW + uniqueWindowTag);
         setHeadingText(I18N.DISPLAY.data());
         setSize("800", "480");
 

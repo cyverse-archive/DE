@@ -25,7 +25,7 @@ public class AppNameCell extends AppHyperlinkCell {
         sb.appendHtmlConstant("&nbsp;");
         SafeHtml safeHtmlName = SafeHtmlUtils.fromString(value.getName());
         if (!value.isDisabled()) {
-            sb.append(templates.cell(resources.css().appName(), safeHtmlName, I18N.DISPLAY.run(),
+            sb.append(templates.cell(resources.css().appName(), safeHtmlName, I18N.DISPLAY.editApp(),
                     ELEMENT_NAME));
         } else {
             sb.append(templates.cell(resources.css().appDisabled(), safeHtmlName,
