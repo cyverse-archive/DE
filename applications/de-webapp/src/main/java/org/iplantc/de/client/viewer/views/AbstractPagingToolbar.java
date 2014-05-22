@@ -1,5 +1,7 @@
 package org.iplantc.de.client.viewer.views;
 
+import org.iplantc.de.resources.client.IplantResources;
+
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyDownEvent;
 import com.google.gwt.event.dom.client.KeyDownHandler;
@@ -24,13 +26,14 @@ public abstract class AbstractPagingToolbar extends ToolBar {
     protected LabelToolItem beforePage, afterText;
     protected NumberField<Integer> pageText;
     protected Slider pageSize;
-    private LabelToolItem sliderLabel;
     private int totalPages;
     long fileSize;
+    protected TextButton saveBtn;
+    protected boolean editing;
 
-    public AbstractPagingToolbar(long fileSize) {
+    public AbstractPagingToolbar(long fileSize, boolean editing) {
         this.fileSize = fileSize;
-        sliderLabel = new LabelToolItem(org.iplantc.de.resources.client.messages.I18N.DISPLAY.pageSize());
+        this.editing = editing;
         initPageSizeSlider();
 
         first = new TextButton();
@@ -63,10 +66,20 @@ public abstract class AbstractPagingToolbar extends ToolBar {
         addSelectPageKeyHandler();
         computeTotalPages();
 
+        saveBtn = new TextButton("", IplantResources.RESOURCES.save());
+        add(saveBtn);
+        // saveBtn.addSelectHandler(new SelectHandler() {
+        //
+        // @Override
+        // public void onSelect(SelectEvent event) {
+        // AbstractPagingToolbar.this.fireEvent(new SaveFileEvent());
+        //
+        // }
+        // });
+
     }
 
     private void addToolbarItems() {
-        add(sliderLabel);
         add(pageSize);
         add(first);
         add(prev);
@@ -87,6 +100,7 @@ public abstract class AbstractPagingToolbar extends ToolBar {
         pageSize.setIncrement(FileViewer.PAGE_INCREMENT_SIZE_KB);
         pageSize.setValue(FileViewer.MIN_PAGE_SIZE_KB);
         pageSize.setWidth(100);
+        pageSize.setToolTip(org.iplantc.de.resources.client.messages.I18N.DISPLAY.pageSize());
     }
 
     /**
@@ -310,6 +324,17 @@ public abstract class AbstractPagingToolbar extends ToolBar {
             setPrevEnabled(false);
             setLastEnabled(false);
         }
+    }
+
+    public void setEditing(boolean editing) {
+        saveBtn.setEnabled(editing);
+    }
+
+    /**
+     * @return the editing
+     */
+    public boolean isEditing() {
+        return editing;
     }
 
 }

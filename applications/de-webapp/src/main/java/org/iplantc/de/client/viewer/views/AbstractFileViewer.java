@@ -11,7 +11,7 @@ import com.google.gwt.user.client.ui.Widget;
  * @author sriram
  * 
  */
-public abstract class AbstractFileViewer implements FileViewer {
+public abstract class AbstractFileViewer implements FileViewer, EditingSupport {
 
     protected File file;
 

@@ -9,6 +9,7 @@ import org.iplantc.de.diskResource.client.events.DiskResourceSelectionChangedEve
 import org.iplantc.de.diskResource.client.events.FolderSelectionEvent;
 import org.iplantc.de.diskResource.client.search.views.DiskResourceSearchField;
 import org.iplantc.de.diskResource.client.views.DiskResourceView;
+import org.iplantc.de.diskResource.share.DiskResourceModule.Ids;
 
 import com.google.common.collect.Lists;
 import com.google.gwt.core.client.GWT;
@@ -25,11 +26,8 @@ import com.sencha.gxt.widget.core.client.button.TextButton;
 import com.sencha.gxt.widget.core.client.event.SelectEvent;
 import com.sencha.gxt.widget.core.client.menu.Item;
 import com.sencha.gxt.widget.core.client.menu.MenuItem;
-import org.iplantc.de.diskResource.share.DiskResourceModule;
 
 import java.util.List;
-
-import static org.iplantc.de.diskResource.share.DiskResourceModule.Ids;
 
 public class DiskResourceViewToolbarImpl extends Composite implements DiskResourceView.DiskResourceViewToolbar, DiskResourceSelectionChangedEvent.DiskResourceSelectionChangedEventHandler, FolderSelectionEvent.FolderSelectionEventHandler {
 

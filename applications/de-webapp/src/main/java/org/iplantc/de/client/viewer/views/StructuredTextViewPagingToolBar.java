@@ -1,10 +1,14 @@
 package org.iplantc.de.client.viewer.views;
 
+import org.iplantc.de.resources.client.IplantResources;
 import org.iplantc.de.resources.client.messages.I18N;
 
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 
+import com.sencha.gxt.widget.core.client.button.TextButton;
+import com.sencha.gxt.widget.core.client.event.SelectEvent;
+import com.sencha.gxt.widget.core.client.event.SelectEvent.SelectHandler;
 import com.sencha.gxt.widget.core.client.form.CheckBox;
 import com.sencha.gxt.widget.core.client.form.NumberField;
 import com.sencha.gxt.widget.core.client.form.NumberPropertyEditor;
@@ -13,7 +17,7 @@ import com.sencha.gxt.widget.core.client.toolbar.LabelToolItem;
 
 public class StructuredTextViewPagingToolBar extends AbstractPagingToolbar {
 
-    private AbstractTextViewer view;
+    private final StructuredTextViewer view;
 
     private CheckBox cbxHeaderRows;
     private NumberField<Integer> skipRowsCount;
@@ -21,11 +25,66 @@ public class StructuredTextViewPagingToolBar extends AbstractPagingToolbar {
     private LabelToolItem skipRowsLabel;
     private LabelToolItem cbxHeaderLabel;
 
-    public StructuredTextViewPagingToolBar(AbstractTextViewer view) {
-        super(view.getFileSize());
+    private TextButton addRowBtn;
+    private TextButton deleteRowBtn;
+
+    public StructuredTextViewPagingToolBar(StructuredTextViewer view, boolean editing) {
+        super(view.getFileSize(), editing);
         this.view = view;
+        this.editing = editing;
         addSkipRowsFields();
         addHeaderRowChkBox();
+        addAddRowBtn();
+        addDeleteRowBtn();
+        addSaveHandler();
+    }
+
+    private void addSaveHandler() {
+        saveBtn.addSelectHandler(new SelectHandler() {
+
+            @Override
+            public void onSelect(SelectEvent event) {
+                view.save();
+
+            }
+        });
+
+    }
+
+    private void addAddRowBtn() {
+        addRowBtn = new TextButton("Add", IplantResources.RESOURCES.add());
+        addRowBtn.addSelectHandler(new SelectHandler() {
+            
+            @Override
+            public void onSelect(SelectEvent event) {
+                view.addRow();
+            }
+        });
+        
+        add(addRowBtn);
+
+    }
+
+
+    private void addDeleteRowBtn() {
+        deleteRowBtn = new TextButton("Delete", IplantResources.RESOURCES.delete());
+        deleteRowBtn.addSelectHandler(new SelectHandler() {
+            
+            @Override
+            public void onSelect(SelectEvent event) {
+                view.deleteRow();
+                
+            }
+        });
+        add(deleteRowBtn);
+    }
+
+    public void disableAdd() {
+        addRowBtn.disable();
+    }
+
+    public void enableAdd() {
+        addRowBtn.enable();
     }
 
     private void addSkipRowsFields() {
@@ -107,6 +166,16 @@ public class StructuredTextViewPagingToolBar extends AbstractPagingToolbar {
     public void onPageSelect() {
         view.loadData();
 
+    }
+
+    @Override
+    public void setEditing(boolean editing) {
+        super.setEditing(editing);
+        if (editing) {
+            enableAdd();
+        } else {
+            disableAdd();
+        }
     }
 
 }

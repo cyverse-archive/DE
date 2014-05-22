@@ -70,6 +70,7 @@ public class TextViewerImpl extends AbstractFileViewer implements EditingSupport
     private String data;
 
     protected boolean editing;
+
     private final Folder parentFolder;
 
     private Presenter presenter;
@@ -106,15 +107,16 @@ public class TextViewerImpl extends AbstractFileViewer implements EditingSupport
         });
 
         // handle data events
-        eventHandlers.add(EventBus.getInstance().addHandler(SaveFileEvent.TYPE, new SaveFileEventHandler() {
-
-            @Override
-            public void onSave(SaveFileEvent event) {
-                save();
-            }
-        }
-
-        ));
+        // eventHandlers.add(EventBus.getInstance().addHandler(SaveFileEvent.TYPE, new
+        // SaveFileEventHandler() {
+        //
+        // @Override
+        // public void onSave(SaveFileEvent event) {
+        // save();
+        // }
+        // }
+        //
+        // ));
 
     }
 

@@ -40,8 +40,9 @@ import com.sencha.gxt.widget.core.client.form.TextField;
 import com.sencha.gxt.widget.core.client.grid.ColumnConfig;
 import com.sencha.gxt.widget.core.client.grid.ColumnModel;
 import com.sencha.gxt.widget.core.client.grid.Grid;
+import com.sencha.gxt.widget.core.client.grid.Grid.GridCell;
 import com.sencha.gxt.widget.core.client.grid.editing.GridEditing;
-import com.sencha.gxt.widget.core.client.grid.editing.GridRowEditing;
+import com.sencha.gxt.widget.core.client.grid.editing.GridInlineEditing;
 import com.sencha.gxt.widget.core.client.grid.filters.GridFilters;
 import com.sencha.gxt.widget.core.client.grid.filters.StringFilter;
 
@@ -50,7 +51,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class StrcturedTextViewerImpl extends AbstractTextViewer {
+public class StrcturedTextViewerImpl extends StructuredTextViewer {
 
     private final class StructuredTextValueProvider implements ValueProvider<JSONObject, String> {
         private final int index;
@@ -98,6 +99,7 @@ public class StrcturedTextViewerImpl extends AbstractTextViewer {
     private JSONObject headerRow;
     private GridEditing<JSONObject> rowEditing;
     Logger logger = Logger.getLogger("tabular view");
+    private int columns;
 
     public StrcturedTextViewerImpl(File file, String infoType) {
         super(file, infoType);
@@ -119,7 +121,7 @@ public class StrcturedTextViewerImpl extends AbstractTextViewer {
     }
 
     private void initToolbar() {
-        toolbar = new StructuredTextViewPagingToolBar(this);
+        toolbar = new StructuredTextViewPagingToolBar(this, false);
         north.add(toolbar);
     }
 
@@ -164,22 +166,22 @@ public class StrcturedTextViewerImpl extends AbstractTextViewer {
 
     @SuppressWarnings("unchecked")
     private void setEditing(boolean editing) {
+
         if (grid != null) {
             if (rowEditing == null && editing) {
-                rowEditing = new GridRowEditing<JSONObject>(grid);
+                rowEditing = new GridInlineEditing<JSONObject>(grid);
                 rowEditing.addCompleteEditHandler(new CompleteEditHandler<JSONObject>() {
 
                     @Override
                     public void onCompleteEdit(CompleteEditEvent<JSONObject> event) {
-                        logger.log(Level.SEVERE, "editing complete:");
-                        store.commitChanges();
-                        container.mask();
-                        ServicesInjector.INSTANCE.getFileEditorServiceFacade().uploadTextAsFile(file.getPath(), getEditorContent(), false, new FileSaveCallback(file.getPath(), false, container));
+
 
                     }
                 });
+                toolbar.enableAdd();
             } else {
                 rowEditing = null;
+                toolbar.disableAdd();
                 return;
             }
             List<ColumnConfig<JSONObject, ?>> cols = grid.getColumnModel().getColumns();
@@ -208,7 +210,7 @@ public class StrcturedTextViewerImpl extends AbstractTextViewer {
             joiner.appendTo(sw, jsonToStringList(headerRow));
             sw.append(NEW_LINE);
         }
-        for (JSONObject obj : grid.getStore().getAll()) {
+        for (JSONObject obj : getStore().getAll()) {
             joiner.appendTo(sw, jsonToStringList(obj));
             sw.append(NEW_LINE);
         }
@@ -232,6 +234,7 @@ public class StrcturedTextViewerImpl extends AbstractTextViewer {
         List<ColumnConfig<JSONObject, ?>> configs = new ArrayList<ColumnConfig<JSONObject, ?>>();
         GridFilters<JSONObject> filters = new GridFilters<JSONObject>();
         if (columns > 0) {
+            this.columns = columns;
             for (int i = 0; i < columns; i++) {
                 final int index = i;
                 StructuredTextValueProvider valueProvider = new StructuredTextValueProvider(index);
@@ -403,5 +406,51 @@ public class StrcturedTextViewerImpl extends AbstractTextViewer {
     public void refresh() {
         // do nothing intentionally
 
+    }
+
+    @Override
+    public void addRow() {
+        JSONObject obj = new JSONObject();
+        for (int i = 0; i < columns; i++) {
+            obj.put(i + "", new JSONString("col" + i));
+        }
+        if (rowEditing != null) {
+            rowEditing.cancelEditing();
+            getStore().add(obj);
+            int row = getStore().indexOf(obj);
+            rowEditing.startEditing(new GridCell(row, 0));
+        }
+
+    }
+
+    @Override
+    public void deleteRow() {
+        List<JSONObject> selectedRows = getStore().getAll();
+        if (selectedRows != null && selectedRows.size() > 0) {
+            for (JSONObject obj : selectedRows) {
+                getStore().remove(obj);
+            }
+        }
+    }
+
+    @Override
+    public void save() {
+        logger.log(Level.SEVERE, "editing complete: saving");
+        store.commitChanges();
+        container.mask();
+        ServicesInjector.INSTANCE.getFileEditorServiceFacade().uploadTextAsFile(file.getPath(), getEditorContent(), false, new FileSaveCallback(file.getPath(), false, container));
+    }
+
+    @Override
+    public void setDirty(Boolean dirty) {
+        if (presenter.isDirty() == dirty) {
+            return;
+        }
+        presenter.setVeiwDirtyState(dirty);
+    }
+
+    @Override
+    public boolean isDirty() {
+        return getStore().getModifiedRecords().size() > 0;
     }
 }
