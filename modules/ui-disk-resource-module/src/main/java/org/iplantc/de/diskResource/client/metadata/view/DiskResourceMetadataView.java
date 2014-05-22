@@ -41,6 +41,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.google.web.bindery.autobean.shared.AutoBean;
 import com.google.web.bindery.autobean.shared.AutoBeanCodex;
 
+import static com.sencha.gxt.widget.core.client.Dialog.PredefinedButton;
 import com.sencha.gxt.core.client.XTemplates;
 import com.sencha.gxt.core.client.dom.ScrollSupport.ScrollMode;
 import com.sencha.gxt.core.client.resources.ThemeStyles;
@@ -60,6 +61,7 @@ import com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer;
 import com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer.VerticalLayoutData;
 import com.sencha.gxt.widget.core.client.event.CompleteEditEvent;
 import com.sencha.gxt.widget.core.client.event.CompleteEditEvent.CompleteEditHandler;
+import com.sencha.gxt.widget.core.client.event.DialogHideEvent;
 import com.sencha.gxt.widget.core.client.event.HideEvent;
 import com.sencha.gxt.widget.core.client.event.HideEvent.HideHandler;
 import com.sencha.gxt.widget.core.client.event.InvalidEvent;
@@ -106,12 +108,10 @@ public class DiskResourceMetadataView implements IsWidget {
         @Override
         public void onClick(ClickEvent event) {
             ConfirmMessageBox cmb = new ConfirmMessageBox(I18N.DISPLAY.confirmAction(), I18N.DISPLAY.metadataTemplateConfirmRemove());
-            cmb.addHideHandler(new HideHandler() {
-
+            cmb.addDialogHideHandler(new DialogHideEvent.DialogHideHandler() {
                 @Override
-                public void onHide(HideEvent event) {
-                    Dialog d = (Dialog)event.getSource();
-                    if (d.getHideButton().getText().equalsIgnoreCase("yes")) { //$NON-NLS-1$
+                public void onDialogHide(DialogHideEvent event) {
+                    if(PredefinedButton.YES.equals(event.getHideButton())){
                         alc.remove(templateForm);
                         deleteTemplateAttrs();
                         templateCombo.setEnabled(true);
@@ -121,7 +121,6 @@ public class DiskResourceMetadataView implements IsWidget {
                     }
                 }
             });
-
             cmb.show();
         }
     }
@@ -153,7 +152,6 @@ public class DiskResourceMetadataView implements IsWidget {
         /**
          * Retrieves a collection of metadata for the given resource.
          * 
-         * @param resource
          * @param callback
          * @return a collection of the given resource's metadata.
          */

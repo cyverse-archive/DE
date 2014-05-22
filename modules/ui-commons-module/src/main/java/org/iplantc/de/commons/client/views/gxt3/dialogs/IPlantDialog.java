@@ -19,7 +19,8 @@ import java.util.ArrayList;
  * A base class for GXT 3.x IPlant dialogs. All IPlant dialogs will be modal windows.
  * 
  * @author jstroot
- * 
+ *
+ * KLUDGE CORE-5583 Needs to be refactored, changes made only to correct build errors
  */
 public class IPlantDialog extends Dialog implements IsHideable, IsMaskable {
 
@@ -61,7 +62,8 @@ public class IPlantDialog extends Dialog implements IsHideable, IsMaskable {
     @Override
     protected void onButtonPressed(TextButton button) {
         if (isHideOnButtonClick()) {
-            hide(button);
+//            hide(button);
+            hide();
         }
         if (button == getButtonBar().getItemByItemId(PredefinedButton.OK.name())) {
             onOkButtonClicked();

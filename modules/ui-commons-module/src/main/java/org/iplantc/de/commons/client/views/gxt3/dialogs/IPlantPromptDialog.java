@@ -35,7 +35,7 @@ public class IPlantPromptDialog extends IPlantDialog {
     public IPlantPromptDialog(String caption, int maxLength, String initialText,
             Validator<String> validator) {
         add(uiBinder.createAndBindUi(this));
-        okButton = getButtonById(PredefinedButton.OK.name());
+        okButton = getButton(PredefinedButton.OK);
         okButton.setEnabled(false);
         setInitialText(initialText);
         init(caption, maxLength, validator);
