@@ -1,6 +1,7 @@
 package org.iplantc.de.client.viewer.views;
 
 import org.iplantc.de.resources.client.IplantResources;
+import org.iplantc.de.resources.client.messages.I18N;
 
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyDownEvent;
@@ -66,17 +67,8 @@ public abstract class AbstractPagingToolbar extends ToolBar {
         addSelectPageKeyHandler();
         computeTotalPages();
 
-        saveBtn = new TextButton("", IplantResources.RESOURCES.save());
+        saveBtn = new TextButton(I18N.DISPLAY.save(), IplantResources.RESOURCES.save());
         add(saveBtn);
-        // saveBtn.addSelectHandler(new SelectHandler() {
-        //
-        // @Override
-        // public void onSelect(SelectEvent event) {
-        // AbstractPagingToolbar.this.fireEvent(new SaveFileEvent());
-        //
-        // }
-        // });
-
     }
 
     private void addToolbarItems() {

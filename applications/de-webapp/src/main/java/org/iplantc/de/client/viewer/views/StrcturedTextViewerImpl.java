@@ -41,7 +41,7 @@ import com.sencha.gxt.widget.core.client.grid.ColumnConfig;
 import com.sencha.gxt.widget.core.client.grid.ColumnModel;
 import com.sencha.gxt.widget.core.client.grid.Grid;
 import com.sencha.gxt.widget.core.client.grid.Grid.GridCell;
-import com.sencha.gxt.widget.core.client.grid.editing.GridEditing;
+import com.sencha.gxt.widget.core.client.grid.editing.ClicksToEdit;
 import com.sencha.gxt.widget.core.client.grid.editing.GridInlineEditing;
 import com.sencha.gxt.widget.core.client.grid.filters.GridFilters;
 import com.sencha.gxt.widget.core.client.grid.filters.StringFilter;
@@ -93,11 +93,12 @@ public class StrcturedTextViewerImpl extends StructuredTextViewer {
     private final String NEW_LINE = "\n";
     private StructuredText text_bean;
     private List<JSONObject> skippedRows;
+    private boolean dirty;
 
     private final StructuredTextAutoBeanFactory factory = GWT.create(StructuredTextAutoBeanFactory.class);
     private boolean hasHeader;
     private JSONObject headerRow;
-    private GridEditing<JSONObject> rowEditing;
+    private GridInlineEditing<JSONObject> rowEditing;
     Logger logger = Logger.getLogger("tabular view");
     private int columns;
 
@@ -166,15 +167,15 @@ public class StrcturedTextViewerImpl extends StructuredTextViewer {
 
     @SuppressWarnings("unchecked")
     private void setEditing(boolean editing) {
-
         if (grid != null) {
             if (rowEditing == null && editing) {
                 rowEditing = new GridInlineEditing<JSONObject>(grid);
+                rowEditing.setClicksToEdit(ClicksToEdit.TWO);
                 rowEditing.addCompleteEditHandler(new CompleteEditHandler<JSONObject>() {
 
                     @Override
                     public void onCompleteEdit(CompleteEditEvent<JSONObject> event) {
-
+                        dirty = true;
 
                     }
                 });
@@ -184,6 +185,7 @@ public class StrcturedTextViewerImpl extends StructuredTextViewer {
                 toolbar.disableAdd();
                 return;
             }
+
             List<ColumnConfig<JSONObject, ?>> cols = grid.getColumnModel().getColumns();
             for (ColumnConfig<JSONObject, ?> cc : cols) {
                 if (editing) {
@@ -419,17 +421,18 @@ public class StrcturedTextViewerImpl extends StructuredTextViewer {
             getStore().add(obj);
             int row = getStore().indexOf(obj);
             rowEditing.startEditing(new GridCell(row, 0));
+            dirty = true;
         }
-
     }
 
     @Override
     public void deleteRow() {
-        List<JSONObject> selectedRows = getStore().getAll();
+        List<JSONObject> selectedRows = grid.getSelectionModel().getSelectedItems();
         if (selectedRows != null && selectedRows.size() > 0) {
             for (JSONObject obj : selectedRows) {
                 getStore().remove(obj);
             }
+            dirty = true;
         }
     }
 
@@ -451,6 +454,6 @@ public class StrcturedTextViewerImpl extends StructuredTextViewer {
 
     @Override
     public boolean isDirty() {
-        return getStore().getModifiedRecords().size() > 0;
+        return dirty;
     }
 }

@@ -14,6 +14,7 @@ import com.sencha.gxt.widget.core.client.form.NumberField;
 import com.sencha.gxt.widget.core.client.form.NumberPropertyEditor;
 import com.sencha.gxt.widget.core.client.toolbar.FillToolItem;
 import com.sencha.gxt.widget.core.client.toolbar.LabelToolItem;
+import com.sencha.gxt.widget.core.client.toolbar.SeparatorToolItem;
 
 public class StructuredTextViewPagingToolBar extends AbstractPagingToolbar {
 
@@ -32,10 +33,11 @@ public class StructuredTextViewPagingToolBar extends AbstractPagingToolbar {
         super(view.getFileSize(), editing);
         this.view = view;
         this.editing = editing;
-        addSkipRowsFields();
-        addHeaderRowChkBox();
+        add(new SeparatorToolItem());
         addAddRowBtn();
         addDeleteRowBtn();
+        addSkipRowsFields();
+        addHeaderRowChkBox();
         addSaveHandler();
     }
 
@@ -52,7 +54,7 @@ public class StructuredTextViewPagingToolBar extends AbstractPagingToolbar {
     }
 
     private void addAddRowBtn() {
-        addRowBtn = new TextButton("Add", IplantResources.RESOURCES.add());
+        addRowBtn = new TextButton("", IplantResources.RESOURCES.add());
         addRowBtn.addSelectHandler(new SelectHandler() {
             
             @Override
@@ -60,22 +62,21 @@ public class StructuredTextViewPagingToolBar extends AbstractPagingToolbar {
                 view.addRow();
             }
         });
-        
+        addRowBtn.setToolTip("Add Row");
         add(addRowBtn);
 
     }
 
 
     private void addDeleteRowBtn() {
-        deleteRowBtn = new TextButton("Delete", IplantResources.RESOURCES.delete());
+        deleteRowBtn = new TextButton("", IplantResources.RESOURCES.delete());
         deleteRowBtn.addSelectHandler(new SelectHandler() {
-            
             @Override
             public void onSelect(SelectEvent event) {
                 view.deleteRow();
-                
             }
         });
+        deleteRowBtn.setToolTip("Delete Row");
         add(deleteRowBtn);
     }
 

@@ -106,18 +106,6 @@ public class TextViewerImpl extends AbstractFileViewer implements EditingSupport
             }
         });
 
-        // handle data events
-        // eventHandlers.add(EventBus.getInstance().addHandler(SaveFileEvent.TYPE, new
-        // SaveFileEventHandler() {
-        //
-        // @Override
-        // public void onSave(SaveFileEvent event) {
-        // save();
-        // }
-        // }
-        //
-        // ));
-
     }
 
     TextViewPagingToolBar initToolBar() {

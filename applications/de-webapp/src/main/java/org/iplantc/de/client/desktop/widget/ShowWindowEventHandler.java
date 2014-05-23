@@ -34,10 +34,9 @@ import org.iplantc.de.diskResource.client.events.ShowFilePreviewEvent.ShowFilePr
 
 import com.google.web.bindery.autobean.shared.Splittable;
 
-final class ShowWindowEventHandler implements ShowAboutWindowEventHandler, ShowFilePreviewEventHandler,
-        CreateNewAppEventHandler, CreateNewWorkflowEvent.CreateNewWorkflowEventHandler, WindowShowRequestEventHandler,
-        RunAppEventHandler, EditAppEventHandler, EditWorkflowEventHandler,
-        ShowSystemMessagesEvent.Handler, CreateNewFileEventHandler, OpenAppForRelaunchEvent.OpenAppForRelaunchEventHandler, OpenFolderEvent.OpenFolderEventHandler {
+final class ShowWindowEventHandler implements ShowAboutWindowEventHandler, ShowFilePreviewEventHandler, CreateNewAppEventHandler, CreateNewWorkflowEvent.CreateNewWorkflowEventHandler,
+        WindowShowRequestEventHandler, RunAppEventHandler, EditAppEventHandler, EditWorkflowEventHandler, ShowSystemMessagesEvent.Handler, CreateNewFileEventHandler,
+        OpenAppForRelaunchEvent.OpenAppForRelaunchEventHandler, OpenFolderEvent.OpenFolderEventHandler {
 
     private final Desktop desktop;
 
@@ -58,8 +57,7 @@ final class ShowWindowEventHandler implements ShowAboutWindowEventHandler, ShowF
     @Override
     public void onRequestOpenFolder(OpenFolderEvent event) {
         final HasPath path = CommonModelUtils.createHasPathFromString(event.getFolderPath());
-        DiskResourceWindowConfig config = ConfigFactory.diskResourceWindowConfig(event
-                .newViewRequested());
+        DiskResourceWindowConfig config = ConfigFactory.diskResourceWindowConfig(event.newViewRequested());
         config.setSelectedFolder(path);
 
         desktop.showWindow(config, !event.newViewRequested());
@@ -73,9 +71,8 @@ final class ShowWindowEventHandler implements ShowAboutWindowEventHandler, ShowF
     @Override
     public void showFilePreview(ShowFilePreviewEvent event) {
         FileViewerWindowConfig fileViewerWindowConfig = null;
-        if(event.getConfig() == null) {
-            fileViewerWindowConfig = ConfigFactory.fileViewerWindowConfig(
-                event.getFile(), false);
+        if (event.getConfig() == null) {
+            fileViewerWindowConfig = ConfigFactory.fileViewerWindowConfig(event.getFile());
         } else {
             fileViewerWindowConfig = event.getConfig();
         }
@@ -96,14 +93,12 @@ final class ShowWindowEventHandler implements ShowAboutWindowEventHandler, ShowF
 
     @Override
     public void createNewApp(CreateNewAppEvent event) {
-        desktop.showWindow(ConfigFactory.appsIntegrationWindowConfig(App.NEW_APP_ID),
-                true);
+        desktop.showWindow(ConfigFactory.appsIntegrationWindowConfig(App.NEW_APP_ID), true);
     }
 
     @Override
     public void onEditApp(EditAppEvent event) {
-        AppsIntegrationWindowConfig config = ConfigFactory.appsIntegrationWindowConfig(event
-                .getAppToEdit().getId());
+        AppsIntegrationWindowConfig config = ConfigFactory.appsIntegrationWindowConfig(event.getAppToEdit().getId());
         config.setOnlyLabelEditMode(event.isUserIntegratorAndAppPublic());
         desktop.showWindow(config, true);
     }
@@ -128,8 +123,7 @@ final class ShowWindowEventHandler implements ShowAboutWindowEventHandler, ShowF
 
     @Override
     public void onCreateNewFile(CreateNewFileEvent event) {
-        FileViewerWindowConfig fileViewerWindowConfig = ConfigFactory
-                .fileViewerWindowConfig(null, false);
+        FileViewerWindowConfig fileViewerWindowConfig = ConfigFactory.fileViewerWindowConfig(null);
         fileViewerWindowConfig.setEditing(true);
         fileViewerWindowConfig.setParentFolder(event.getParentFolder());
         desktop.showWindow(fileViewerWindowConfig);
