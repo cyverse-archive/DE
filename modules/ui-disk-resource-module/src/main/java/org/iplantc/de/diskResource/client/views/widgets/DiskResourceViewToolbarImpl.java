@@ -381,6 +381,7 @@ public class DiskResourceViewToolbarImpl extends Composite implements DiskResour
             public void onSelect(SelectEvent event) {
                 TabularFileViewerWindowConfig config = ConfigFactory.newTabularFileViewerWindowConfig();
                 config.setEditing(true);
+                config.setVizTabFirst(true);
                 config.setSeparator(d.getSeparator());
                 config.setColumns(d.getNumberOfColumns());
                 presenter.createNewTabFile(config);

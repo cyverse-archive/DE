@@ -6,7 +6,7 @@ import org.iplantc.de.client.models.diskResources.DiskResourceAutoBeanFactory;
 import org.iplantc.de.client.models.diskResources.File;
 import org.iplantc.de.client.util.DiskResourceUtil;
 import org.iplantc.de.client.util.JsonUtil;
-import org.iplantc.de.client.events.FileSavedEvent;
+import org.iplantc.de.client.viewer.events.FileSavedEvent;
 import org.iplantc.de.commons.client.ErrorHandler;
 
 import com.google.gwt.core.client.GWT;

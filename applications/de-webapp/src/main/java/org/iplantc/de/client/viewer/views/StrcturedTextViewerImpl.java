@@ -142,6 +142,7 @@ public class StrcturedTextViewerImpl extends StructuredTextViewer {
     public void loadData() {
         String url = "read-csv-chunk";
         container.mask(org.iplantc.de.resources.client.messages.I18N.DISPLAY.loadingMask());
+        if (file != null) {
         ServicesInjector.INSTANCE.getFileEditorServiceFacade().getDataChunk(url, getRequestBody(), new AsyncCallback<String>() {
 
             @Override
@@ -162,7 +163,8 @@ public class StrcturedTextViewerImpl extends StructuredTextViewer {
                 ErrorHandler.post(org.iplantc.de.resources.client.messages.I18N.ERROR.unableToRetrieveFileData(file.getName()), caught);
                 container.unmask();
             }
-        });
+            });
+        }
     }
 
     @SuppressWarnings("unchecked")

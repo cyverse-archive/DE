@@ -2,8 +2,6 @@ package org.iplantc.de.client.views.windows;
 
 import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.events.FileEditorWindowClosedEvent;
-import org.iplantc.de.client.events.FileSavedEvent;
-import org.iplantc.de.client.events.FileSavedEvent.FileSavedEventHandler;
 import org.iplantc.de.client.gin.ServicesInjector;
 import org.iplantc.de.client.models.IsMaskable;
 import org.iplantc.de.client.models.WindowState;
@@ -11,11 +9,14 @@ import org.iplantc.de.client.models.diskResources.File;
 import org.iplantc.de.client.models.errors.diskResources.DiskResourceErrorAutoBeanFactory;
 import org.iplantc.de.client.models.errors.diskResources.ErrorGetManifest;
 import org.iplantc.de.client.util.JsonUtil;
+import org.iplantc.de.client.viewer.events.FileSavedEvent;
 import org.iplantc.de.client.viewer.events.SaveFileEvent;
+import org.iplantc.de.client.viewer.events.FileSavedEvent.FileSavedEventHandler;
 import org.iplantc.de.client.viewer.presenter.FileViewerPresenter;
 import org.iplantc.de.client.viewer.views.FileViewer;
 import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.commons.client.views.window.configs.FileViewerWindowConfig;
+import org.iplantc.de.commons.client.views.window.configs.TabularFileViewerWindowConfig;
 import org.iplantc.de.resources.client.messages.I18N;
 
 import com.google.gwt.core.client.GWT;
@@ -114,7 +115,7 @@ public class FileViewerWindow extends IplantWindowBase implements IsMaskable {
                         SaveFileEvent sfe = new SaveFileEvent();
                         eventBus.fireEvent(sfe);
                     } else if (cmb.getHideButton().getText().equalsIgnoreCase("no")) {
-                    	presenter.cleanUp();
+                        presenter.cleanUp();
                         FileViewerWindow.super.doHide();
                         doClose();
                     }
@@ -122,7 +123,7 @@ public class FileViewerWindow extends IplantWindowBase implements IsMaskable {
             });
             cmb.show();
         } else {
-        	presenter.cleanUp();
+            presenter.cleanUp();
             super.doHide();
             doClose();
         }
@@ -165,14 +166,12 @@ public class FileViewerWindow extends IplantWindowBase implements IsMaskable {
                 @Override
                 public void onFailure(Throwable caught) {
                     unmask();
-                    DiskResourceErrorAutoBeanFactory factory = GWT
-                            .create(DiskResourceErrorAutoBeanFactory.class);
+                    DiskResourceErrorAutoBeanFactory factory = GWT.create(DiskResourceErrorAutoBeanFactory.class);
                     String message = caught.getMessage();
                     FileViewerWindow.this.hide();
 
                     if (JsonUtils.safeToEval(message)) {
-                        AutoBean<ErrorGetManifest> errorBean = AutoBeanCodex.decode(factory,
-                                ErrorGetManifest.class, message);
+                        AutoBean<ErrorGetManifest> errorBean = AutoBeanCodex.decode(factory, ErrorGetManifest.class, message);
                         ErrorHandler.post(errorBean.as(), caught);
                     } else {
                         ErrorHandler.post(I18N.ERROR.retrieveStatFailed(), caught);
@@ -183,6 +182,13 @@ public class FileViewerWindow extends IplantWindowBase implements IsMaskable {
             if (configAB.isEditing()) {
                 JSONObject manifest = new JSONObject();
                 manifest.put("content-type", new JSONString("plain"));
+                if (configAB instanceof TabularFileViewerWindowConfig) {
+                    if (((TabularFileViewerWindowConfig)configAB).getSeparator().equals(",")) {
+                        manifest.put("info-type", new JSONString("csv"));
+                    } else if (((TabularFileViewerWindowConfig)configAB).getSeparator().equals("\t")) {
+                        manifest.put("info-type", new JSONString("tsv"));
+                    }
+                }
                 presenter = new FileViewerPresenter(file, manifest, configAB.isEditing(), configAB.isVizTabFirst());
                 initWidget();
                 presenter.go(FileViewerWindow.this, configAB.getParentFolder());

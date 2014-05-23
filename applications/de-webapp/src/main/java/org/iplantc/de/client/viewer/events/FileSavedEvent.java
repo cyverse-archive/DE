@@ -1,7 +1,7 @@
-package org.iplantc.de.client.events;
+package org.iplantc.de.client.viewer.events;
 
 import org.iplantc.de.client.models.diskResources.File;
-import org.iplantc.de.client.events.FileSavedEvent.FileSavedEventHandler;
+import org.iplantc.de.client.viewer.events.FileSavedEvent.FileSavedEventHandler;
 
 import com.google.gwt.event.shared.EventHandler;
 import com.google.gwt.event.shared.GwtEvent;
