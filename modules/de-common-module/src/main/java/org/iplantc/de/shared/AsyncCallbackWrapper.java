@@ -57,10 +57,14 @@ public class AsyncCallbackWrapper<T> implements AsyncCallback<T> {
                 redirectToLandingPage();
             }
         }
+
+        // TODO: make this better.
         if (error instanceof HttpRedirectException) {
             HttpRedirectException e = (HttpRedirectException) error;
-            Window.alert("Boom! Redirected to " + e.getLocation());
+            Window.alert("Authorization is required to proceed.");
+            Window.Location.replace(e.getLocation());
         }
+
         callback.onFailure(error);
     }
 
