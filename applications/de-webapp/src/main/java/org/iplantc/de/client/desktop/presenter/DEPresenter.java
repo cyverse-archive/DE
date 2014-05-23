@@ -28,8 +28,10 @@ import org.iplantc.de.commons.client.events.UserSettingsUpdatedEvent;
 import org.iplantc.de.commons.client.events.UserSettingsUpdatedEventHandler;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
 import org.iplantc.de.commons.client.requests.KeepaliveTimer;
+import org.iplantc.de.commons.client.views.window.configs.AppsWindowConfig;
 import org.iplantc.de.commons.client.views.window.configs.ConfigFactory;
 import org.iplantc.de.commons.client.views.window.configs.DiskResourceWindowConfig;
+import org.iplantc.de.commons.client.views.window.configs.WindowConfig;
 import org.iplantc.de.diskResource.client.events.FileUploadedEvent;
 import org.iplantc.de.diskResource.client.events.FileUploadedEvent.FileUploadedEventHandler;
 import org.iplantc.de.resources.client.DEFeedbackStyle;
@@ -39,6 +41,7 @@ import org.iplantc.de.shared.services.PropertyServiceFacade;
 import org.iplantc.de.shared.services.ServiceCallWrapper;
 
 import com.google.common.base.Strings;
+import com.google.common.collect.Iterables;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.shared.GWT;
 import com.google.gwt.dom.client.NativeEvent;
@@ -78,9 +81,13 @@ import java.util.Map;
  */
 public class DEPresenter implements DEView.Presenter {
 
-    private static final String FOLDER_PARAMETER = "folder";
-    private static final String DATA_TYPE_VAL = "data";
-    private static final String TYPE_PARAMETER = "type";
+    private final String FOLDER_PARAMETER = "folder";
+    private final String DATA_TYPE_VAL = "data";
+    private final String TYPE_PARAMETER = "type";
+
+    private final String APP_TYPE_VAL = "apps";
+    private final String APP_CATEGORY_PARAMETER = "app-category";
+
     private final DEView view;
     private final DeResources res;
     private final EventBus eventBus;
@@ -310,31 +317,51 @@ public class DEPresenter implements DEView.Presenter {
         addKeyBoardEvents();
     }
 
+    /**
+     *
+     * @param params
+     * @return true if parameter has "type=data"
+     */
     private boolean urlHasDataTypeParameter(Map<String, List<String>> params) {
         for (String key : params.keySet()) {
-            if (TYPE_PARAMETER.equalsIgnoreCase(key) && DATA_TYPE_VAL.equalsIgnoreCase(params.get(key).get(0))) {
+            if (TYPE_PARAMETER.equalsIgnoreCase(key)
+                        && DATA_TYPE_VAL.equalsIgnoreCase(Iterables.getFirst(params.get(key), ""))) {
                 return true;
             }
         }
-
         return false;
     }
 
     // Sriram : We need a generic way to process query strings. This is temp. solution for CORE-4694
     private void processQueryStrings() {
         Map<String, List<String>> params = Window.Location.getParameterMap();
-        if(urlHasDataTypeParameter(params)){
-            DiskResourceWindowConfig diskResourceWindowConfig = ConfigFactory
-                    .diskResourceWindowConfig(false);
-            diskResourceWindowConfig.setMaximized(true);
-            String folderParameter = Window.Location.getParameter(FOLDER_PARAMETER);
-            String selectedFolder = URL.decode(Strings.nullToEmpty(folderParameter));
+        for(String key : params.keySet()){
+            for(String paramValue : params.get(key)){
+                WindowConfig windowConfig = null;
 
-            if (!Strings.isNullOrEmpty(selectedFolder)) {
-                HasPath folder = CommonModelUtils.createHasPathFromString(selectedFolder);
-                diskResourceWindowConfig.setSelectedFolder(folder);
+                if(APP_TYPE_VAL.equalsIgnoreCase(paramValue)){
+                    final AppsWindowConfig appsConfig = ConfigFactory.appsWindowConfig();
+                    final String appCategoryId = Window.Location.getParameter(APP_CATEGORY_PARAMETER);
+                    appsConfig.setSelectedAppGroup(CommonModelUtils.createHasIdFromString(appCategoryId));
+                    windowConfig = appsConfig;
+                } else if (DATA_TYPE_VAL.equalsIgnoreCase(paramValue)){
+                    DiskResourceWindowConfig drConfig = ConfigFactory.diskResourceWindowConfig(true);
+                    drConfig.setMaximized(true);
+                    // If user has multiple folder parameters, the last one will be used.
+                    String folderParameter = Window.Location.getParameter(FOLDER_PARAMETER);
+                    String selectedFolder = URL.decode(Strings.nullToEmpty(folderParameter));
+
+                    if (!Strings.isNullOrEmpty(selectedFolder)) {
+                        HasPath folder = CommonModelUtils.createHasPathFromString(selectedFolder);
+                        drConfig.setSelectedFolder(folder);
+                    }
+                    windowConfig = drConfig;
+                }
+
+                if(windowConfig != null){
+                    eventBus.fireEvent(new WindowShowRequestEvent(windowConfig));
+                }
             }
-            eventBus.fireEvent(new WindowShowRequestEvent(diskResourceWindowConfig));
         }
     }
 
