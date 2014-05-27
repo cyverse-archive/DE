@@ -169,6 +169,16 @@ public class ArgumentEditorConverter<T> extends Composite implements IArgumentEd
     }
 
     @Override
+    public void finishEditing() {
+        field.finishEditing();
+    }
+
+    @Override
+    public List<EditorError> getErrors() {
+        return field.getErrors();
+    }
+
+    @Override
     public void flush() {
         if (field instanceof Field<?>) {
             ((Field<T>)field).flush();

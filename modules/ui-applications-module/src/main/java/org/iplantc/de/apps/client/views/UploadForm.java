@@ -4,10 +4,12 @@ import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.commons.client.widgets.IPCFileUploadField;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.editor.client.EditorError;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.HasChangeHandlers;
 import com.google.gwt.event.dom.client.HasKeyUpHandlers;
 import com.google.gwt.event.dom.client.KeyUpHandler;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -24,6 +26,8 @@ import com.sencha.gxt.widget.core.client.event.ValidEvent.HasValidHandlers;
 import com.sencha.gxt.widget.core.client.event.ValidEvent.ValidHandler;
 import com.sencha.gxt.widget.core.client.form.FormPanel;
 import com.sencha.gxt.widget.core.client.form.validator.AbstractValidator;
+
+import java.util.List;
 
 /**
  * This class manages a single upload for the DE backend services. On submission, it posts a
@@ -62,6 +66,11 @@ public final class UploadForm extends Composite implements Uploader, HasChangeHa
         initWidget(BINDER.createAndBindUi(this));
         userField.setValue(UserInfo.getInstance().getUsername());
         destinationField.setValue(UserInfo.getInstance().getHomePath());
+    }
+
+    @Override
+    public HandlerRegistration addValueChangeHandler(ValueChangeHandler<String> handler) {
+        return fileField.addValueChangeHandler(handler);
     }
 
     @UiHandler("form")
@@ -127,6 +136,16 @@ public final class UploadForm extends Composite implements Uploader, HasChangeHa
         fileField.clearInvalid();
     }
 
+    @Override
+    public void finishEditing() {
+        fileField.finishEditing();
+    }
+
+    @Override
+    public List<EditorError> getErrors() {
+        return fileField.getErrors();
+    }
+
     /**
      * @see Uploader#getValue()
      */
@@ -135,9 +154,6 @@ public final class UploadForm extends Composite implements Uploader, HasChangeHa
         return fileField.getValue();
     }
 
-    /**
-     * @see Uploader#setValue(String)
-     */
     @Override
     public void setValue(final String value) {
         fileField.setValue(value);
@@ -159,9 +175,6 @@ public final class UploadForm extends Composite implements Uploader, HasChangeHa
         form.submit();
     }
 
-    /**
-     * @see HasChangeHandlers#addChangHandler(ChangeHandler)
-     */
     @Override
     public HandlerRegistration addChangeHandler(final ChangeHandler handler) {
         return fileField.addChangeHandler(handler);
@@ -183,9 +196,6 @@ public final class UploadForm extends Composite implements Uploader, HasChangeHa
         return fileField.addValidHandler(handler);
     }
 
-    /**
-     * @see HasValidHandlers#addInvalidHandler(InvalidHandler)
-     */
     @Override
     public HandlerRegistration addInvalidHandler(final InvalidHandler handler) {
         return fileField.addInvalidHandler(handler);

@@ -1,10 +1,3 @@
-/**
- * Sencha GXT 3.0.1 - Sencha for GWT
- * Copyright(c) 2007-2012, Sencha, Inc.
- * licensing@sencha.com
- * 
- * http://www.sencha.com/products/gxt/license/
- */
 package org.iplantc.de.commons.client.widgets;
 
 import com.google.common.base.Strings;
@@ -13,11 +6,13 @@ import com.google.gwt.dom.client.DivElement;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.InputElement;
+import com.google.gwt.editor.client.EditorError;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.HasChangeHandlers;
 import com.google.gwt.event.dom.client.HasKeyUpHandlers;
 import com.google.gwt.event.dom.client.KeyUpHandler;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.client.Event;
@@ -46,17 +41,21 @@ import com.sencha.gxt.widget.core.client.form.IsField;
 import com.sencha.gxt.widget.core.client.form.TextField;
 import com.sencha.gxt.widget.core.client.form.validator.AbstractValidator;
 
+import java.util.List;
+
 /**
  * This class is a clone-and-own of the GXT 3.0.1 {@link FileUploadField} in order to apply
  * a "markInvalid" method.
  * 
  * A file upload field. When using this field, the containing form panel's
- * encoding must be set to MULTIPART using {@link FormPanel#setEncoding(Encoding)}. In addition, the
+ * encoding must be set to MULTIPART using {@link com.sencha.gxt.widget.core.client.form.FormPanel#setEncoding(Encoding)}. In addition, the
  * method should be
- * set to POST using {@link FormPanel#setMethod(Method)}
+ * set to POST using {@link com.sencha.gxt.widget.core.client.form.FormPanel#setMethod(Method)}
  * 
  * <p />
  * You must set a name for uploads to work with Firefox.
+ *
+ * KLUDGE CORE-5583 Need to refactor, changes made to remove compile errors.
  */
 public class IPCFileUploadField extends Component implements IsField<String>, HasChangeHandlers, HasName, HasValidHandlers, HasInvalidHandlers, HasKeyUpHandlers {
 
@@ -127,6 +126,11 @@ public class IPCFileUploadField extends Component implements IsField<String>, Ha
     }
 
     @Override
+    public HandlerRegistration addValueChangeHandler(ValueChangeHandler<String> stringValueChangeHandler) {
+        return input.addValueChangeHandler(stringValueChangeHandler);
+    }
+
+    @Override
     public void clear() {
         input.reset();
         createFileInput();
@@ -135,6 +139,16 @@ public class IPCFileUploadField extends Component implements IsField<String>, Ha
     @Override
     public void clearInvalid() {
         // do nothing
+    }
+
+    @Override
+    public void finishEditing() {
+        input.finishEditing();
+    }
+
+    @Override
+    public List<EditorError> getErrors() {
+        return input.getErrors();
     }
 
     /**

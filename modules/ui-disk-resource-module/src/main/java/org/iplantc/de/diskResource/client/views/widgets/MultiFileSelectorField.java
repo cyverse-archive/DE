@@ -186,6 +186,10 @@ public class MultiFileSelectorField extends Composite implements IsField<List<Ha
     }
 
     @Override
+    public void finishEditing() {
+    }
+
+    @Override
     public void disableBrowseButtons() {
         addDeleteButtonsEnabled = false;
     }

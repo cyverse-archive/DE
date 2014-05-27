@@ -99,6 +99,7 @@ public abstract class AbstractDiskResourceSelector<R extends DiskResource> exten
         FileFolderSelectorStyle style();
     }
 
+
     /**
      * KLUDGE: CORE-4671,
      * 
@@ -209,6 +210,11 @@ public abstract class AbstractDiskResourceSelector<R extends DiskResource> exten
         if (validator != null) {
             input.addValidator(validator);
         }
+    }
+
+    @Override
+    public void finishEditing() {
+        input.finishEditing();
     }
 
     @Override
