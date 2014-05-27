@@ -58,14 +58,13 @@ public class AsyncCallbackWrapper<T> implements AsyncCallback<T> {
             }
         }
 
-        // TODO: make this better.
+        callback.onFailure(error);
+
         if (error instanceof HttpRedirectException) {
             HttpRedirectException e = (HttpRedirectException) error;
-            Window.alert("Authorization is required to proceed.");
             Window.Location.replace(e.getLocation());
         }
 
-        callback.onFailure(error);
     }
 
     /**
