@@ -61,7 +61,10 @@ public class TextViewerImpl extends AbstractFileViewer implements EditingSupport
     BorderLayoutContainer con;
 
     @UiField(provided = true)
-    TextViewPagingToolBar toolbar;
+    TextViewToolBar toolbar;
+
+    @UiField(provided = true)
+    ViewerPagingToolBar pagingToolbar;
 
     private long file_size;
 
@@ -84,6 +87,7 @@ public class TextViewerImpl extends AbstractFileViewer implements EditingSupport
         this.editing = editing;
         this.parentFolder = parentFolder;
         toolbar = initToolBar();
+        pagingToolbar = initPagingToolbar();
         widget = uiBinder.createAndBindUi(this);
 
         addWrapHandler();
@@ -108,8 +112,8 @@ public class TextViewerImpl extends AbstractFileViewer implements EditingSupport
 
     }
 
-    TextViewPagingToolBar initToolBar() {
-        TextViewPagingToolBar textViewPagingToolBar = new TextViewPagingToolBar(this, editing);
+    TextViewToolBar initToolBar() {
+        TextViewToolBar textViewPagingToolBar = new TextViewToolBar(this, editing);
         textViewPagingToolBar.addHandler(new SaveFileEventHandler() {
 
             @Override
@@ -120,6 +124,10 @@ public class TextViewerImpl extends AbstractFileViewer implements EditingSupport
 
         }, SaveFileEvent.TYPE);
         return textViewPagingToolBar;
+    }
+
+    ViewerPagingToolBar initPagingToolbar() {
+        return new ViewerPagingToolBar(this, getFileSize());
     }
 
     @Override
@@ -155,8 +163,8 @@ public class TextViewerImpl extends AbstractFileViewer implements EditingSupport
         JSONObject obj = new JSONObject();
         obj.put("path", new JSONString(file.getId()));
         // position starts at 0
-        obj.put("position", new JSONString("" + toolbar.getPageSize() * (toolbar.getPageNumber() - 1)));
-        obj.put("chunk-size", new JSONString("" + toolbar.getPageSize()));
+        obj.put("position", new JSONString("" + pagingToolbar.getPageSize() * (pagingToolbar.getPageNumber() - 1)));
+        obj.put("chunk-size", new JSONString("" + pagingToolbar.getPageSize()));
         return obj;
     }
 
@@ -198,7 +206,7 @@ public class TextViewerImpl extends AbstractFileViewer implements EditingSupport
     @Override
     public void setData(Object data) {
         clearDisplay();
-        boolean allowEditing = toolbar.getToltalPages() == 1 && editing;
+        boolean allowEditing = pagingToolbar.getToltalPages() == 1 && editing;
         jso = displayData(this, center.getElement(), infoType, (String)data, center.getElement().getOffsetWidth(), center.getElement().getOffsetHeight(), toolbar.isWrapText(), allowEditing);
         toolbar.setEditing(allowEditing);
         /**

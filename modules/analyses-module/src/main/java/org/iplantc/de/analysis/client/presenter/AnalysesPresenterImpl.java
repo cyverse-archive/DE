@@ -9,6 +9,7 @@ import org.iplantc.de.analysis.client.events.SaveAnalysisParametersEvent;
 import org.iplantc.de.analysis.client.views.AnalysesView;
 import org.iplantc.de.analysis.client.views.widget.AnalysisParamView;
 import org.iplantc.de.client.events.EventBus;
+import org.iplantc.de.client.events.FileSavedEvent;
 import org.iplantc.de.client.events.diskResources.OpenFolderEvent;
 import org.iplantc.de.client.models.HasPaths;
 import org.iplantc.de.client.models.IsMaskable;
@@ -26,7 +27,6 @@ import org.iplantc.de.client.services.FileEditorServiceFacade;
 import org.iplantc.de.client.services.UserSessionServiceFacade;
 import org.iplantc.de.client.util.DiskResourceUtil;
 import org.iplantc.de.client.util.JsonUtil;
-import org.iplantc.de.client.viewer.events.FileSavedEvent;
 import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.commons.client.info.ErrorAnnouncementConfig;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
@@ -42,12 +42,8 @@ import static com.google.common.base.Preconditions.checkState;
 
 import com.google.common.collect.Lists;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.editor.client.Editor;
-import com.google.gwt.editor.client.EditorError;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.event.shared.HasHandlers;
-import com.google.gwt.safehtml.client.SafeHtmlTemplates;
-import com.google.gwt.safehtml.client.SafeHtmlTemplates.Template;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -70,10 +66,8 @@ import com.sencha.gxt.widget.core.client.event.HideEvent;
 import com.sencha.gxt.widget.core.client.event.HideEvent.HideHandler;
 import com.sencha.gxt.widget.core.client.event.SelectEvent;
 import com.sencha.gxt.widget.core.client.form.TextArea;
-import com.sencha.gxt.widget.core.client.form.Validator;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -239,9 +233,9 @@ public class AnalysesPresenterImpl implements AnalysesView.Presenter, AnalysisNa
 
     private class RenameAnalysisCallback implements AsyncCallback<Void> {
 
-        private Analysis selectedAnalysis;
-        private String newName;
-        private ListStore<Analysis> listStore;
+        private final Analysis selectedAnalysis;
+        private final String newName;
+        private final ListStore<Analysis> listStore;
 
         public RenameAnalysisCallback(Analysis selectedAnalysis, String newName, ListStore<Analysis> listStore) {
             this.selectedAnalysis = selectedAnalysis;

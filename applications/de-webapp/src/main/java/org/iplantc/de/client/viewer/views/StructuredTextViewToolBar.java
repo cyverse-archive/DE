@@ -16,7 +16,7 @@ import com.sencha.gxt.widget.core.client.toolbar.FillToolItem;
 import com.sencha.gxt.widget.core.client.toolbar.LabelToolItem;
 import com.sencha.gxt.widget.core.client.toolbar.SeparatorToolItem;
 
-public class StructuredTextViewPagingToolBar extends AbstractPagingToolbar {
+public class StructuredTextViewToolBar extends AbstractToolBar {
 
     private final StructuredTextViewer view;
 
@@ -29,16 +29,20 @@ public class StructuredTextViewPagingToolBar extends AbstractPagingToolbar {
     private TextButton addRowBtn;
     private TextButton deleteRowBtn;
 
-    public StructuredTextViewPagingToolBar(StructuredTextViewer view, boolean editing) {
-        super(view.getFileSize(), editing);
+    public StructuredTextViewToolBar(StructuredTextViewer view, boolean editing) {
+        super(editing);
         this.view = view;
         this.editing = editing;
         add(new SeparatorToolItem());
         addAddRowBtn();
         addDeleteRowBtn();
+        add(new SeparatorToolItem());
         addSkipRowsFields();
         addHeaderRowChkBox();
         addSaveHandler();
+        add(new FillToolItem());
+        add(editStatus);
+        setEditingStatus(editing);
     }
 
     private void addSaveHandler() {
@@ -78,6 +82,14 @@ public class StructuredTextViewPagingToolBar extends AbstractPagingToolbar {
         });
         deleteRowBtn.setToolTip("Delete Row");
         add(deleteRowBtn);
+    }
+
+    protected void setEditingStatus(boolean editing) {
+        if (editing) {
+            editStatus.setText("Editable");
+        } else {
+            editStatus.setText("Not Editable");
+        }
     }
 
     public void disableAdd() {
@@ -129,46 +141,9 @@ public class StructuredTextViewPagingToolBar extends AbstractPagingToolbar {
                 skipRowsCount.setEnabled(!hasHeader);
             }
         });
-        add(new FillToolItem());
         add(cbxHeaderLabel);
         add(cbxHeaderRows);
     }
-
-    @Override
-    public void onFirst() {
-        view.loadData();
-    }
-
-    @Override
-    public void onLast() {
-        view.loadData();
-
-    }
-
-    @Override
-    public void onPrev() {
-        view.loadData();
-
-    }
-
-    @Override
-    public void onNext() {
-        view.loadData();
-
-    }
-
-    @Override
-    public void onPageSizeChange() {
-        view.loadData();
-
-    }
-
-    @Override
-    public void onPageSelect() {
-        view.loadData();
-
-    }
-
     @Override
     public void setEditing(boolean editing) {
         super.setEditing(editing);
@@ -177,6 +152,7 @@ public class StructuredTextViewPagingToolBar extends AbstractPagingToolbar {
         } else {
             disableAdd();
         }
+        setEditingStatus(editing);
     }
 
 }

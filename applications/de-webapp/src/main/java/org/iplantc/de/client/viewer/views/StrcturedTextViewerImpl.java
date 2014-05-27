@@ -1,16 +1,21 @@
 package org.iplantc.de.client.viewer.views;
 
 import org.iplantc.de.client.callbacks.FileSaveCallback;
+import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.gin.ServicesInjector;
 import org.iplantc.de.client.models.diskResources.File;
+import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.client.models.viewer.StructuredText;
 import org.iplantc.de.client.models.viewer.StructuredTextAutoBeanFactory;
 import org.iplantc.de.client.util.JsonUtil;
+import org.iplantc.de.client.viewer.events.EditNewTabFileEvent;
+import org.iplantc.de.client.viewer.events.EditNewTabFileEvent.EditNewTabFileEventHandeler;
 import org.iplantc.de.commons.client.ErrorHandler;
+import org.iplantc.de.diskResource.client.views.dialogs.SaveAsDialog;
+import org.iplantc.de.resources.client.messages.I18N;
 
 import com.google.common.base.Joiner;
 import com.google.gwt.core.shared.GWT;
-import com.google.gwt.http.client.URL;
 import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONString;
@@ -36,6 +41,8 @@ import com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer;
 import com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer.VerticalLayoutData;
 import com.sencha.gxt.widget.core.client.event.CompleteEditEvent;
 import com.sencha.gxt.widget.core.client.event.CompleteEditEvent.CompleteEditHandler;
+import com.sencha.gxt.widget.core.client.event.SelectEvent;
+import com.sencha.gxt.widget.core.client.event.SelectEvent.SelectHandler;
 import com.sencha.gxt.widget.core.client.form.TextField;
 import com.sencha.gxt.widget.core.client.grid.ColumnConfig;
 import com.sencha.gxt.widget.core.client.grid.ColumnModel;
@@ -83,7 +90,8 @@ public class StrcturedTextViewerImpl extends StructuredTextViewer {
     }
 
     private Grid<JSONObject> grid;
-    private StructuredTextViewPagingToolBar toolbar;
+    private StructuredTextViewToolBar toolbar;
+    private ViewerPagingToolBar pagingToolbar;
     private ListStore<JSONObject> store;
     private BorderLayoutContainer container;
     private ContentPanel north;
@@ -101,12 +109,26 @@ public class StrcturedTextViewerImpl extends StructuredTextViewer {
     private GridInlineEditing<JSONObject> rowEditing;
     Logger logger = Logger.getLogger("tabular view");
     private int columns;
+    private final Folder parentFolder;
+    private ContentPanel south;
 
-    public StrcturedTextViewerImpl(File file, String infoType) {
+    public StrcturedTextViewerImpl(File file, String infoType, Folder parentFolder) {
         super(file, infoType);
+        this.parentFolder = parentFolder;
         initLayout();
         initToolbar();
+        initPagingToolbar();
         loadData();
+        EventBus.getInstance().addHandler(EditNewTabFileEvent.TYPE, new EditNewTabFileEventHandeler() {
+
+            @Override
+            public void onNewTabFile(EditNewTabFileEvent event) {
+                initGrid(event.getColumns());
+                setEditing(true);
+                addRow();
+            }
+
+        });
     }
 
     private void initLayout() {
@@ -115,15 +137,26 @@ public class StrcturedTextViewerImpl extends StructuredTextViewer {
         north.setCollapsible(false);
         north.setHeaderVisible(false);
 
+        south = new ContentPanel();
+        south.setCollapsible(false);
+        south.setHeaderVisible(false);
+
         center = new VerticalLayoutContainer();
         center.setScrollMode(ScrollMode.AUTO);
+
         container.setNorthWidget(north, getNorthData());
         container.setCenterWidget(center, getCenterData());
+        container.setSouthWidget(south, getSouthData());
     }
 
     private void initToolbar() {
-        toolbar = new StructuredTextViewPagingToolBar(this, false);
+        toolbar = new StructuredTextViewToolBar(this, false);
         north.add(toolbar);
+    }
+
+    private void initPagingToolbar() {
+        pagingToolbar = new ViewerPagingToolBar(this, getFileSize());
+        south.add(pagingToolbar);
     }
 
     private BorderLayoutData getNorthData() {
@@ -134,6 +167,14 @@ public class StrcturedTextViewerImpl extends StructuredTextViewer {
         return northData;
     }
 
+    private BorderLayoutData getSouthData() {
+        BorderLayoutData southData = new BorderLayoutData(30);
+        southData.setMargins(new Margins(5));
+        southData.setCollapsible(false);
+        southData.setSplit(false);
+        return southData;
+    }
+
     private MarginData getCenterData() {
         return new MarginData();
     }
@@ -141,28 +182,28 @@ public class StrcturedTextViewerImpl extends StructuredTextViewer {
     @Override
     public void loadData() {
         String url = "read-csv-chunk";
-        container.mask(org.iplantc.de.resources.client.messages.I18N.DISPLAY.loadingMask());
         if (file != null) {
-        ServicesInjector.INSTANCE.getFileEditorServiceFacade().getDataChunk(url, getRequestBody(), new AsyncCallback<String>() {
+            container.mask(org.iplantc.de.resources.client.messages.I18N.DISPLAY.loadingMask());
+            ServicesInjector.INSTANCE.getFileEditorServiceFacade().getDataChunk(url, getRequestBody(), new AsyncCallback<String>() {
 
-            @Override
-            public void onSuccess(String result) {
-                AutoBean<StructuredText> bean = AutoBeanCodex.decode(factory, StructuredText.class, result);
-                text_bean = bean.as();
-                if (grid == null) {
-                    initGrid(Integer.parseInt(text_bean.getMaxColumns()));
+                @Override
+                public void onSuccess(String result) {
+                    AutoBean<StructuredText> bean = AutoBeanCodex.decode(factory, StructuredText.class, result);
+                    text_bean = bean.as();
+                    if (grid == null) {
+                        initGrid(Integer.parseInt(text_bean.getMaxColumns()));
+                    }
+                    Splittable sp = StringQuoter.split(result);
+                    setData(sp);
+                    setEditing(pagingToolbar.getToltalPages() == 1);
+                    container.unmask();
                 }
-                Splittable sp = StringQuoter.split(result);
-                setData(sp);
-                setEditing(toolbar.getToltalPages() == 1);
-                container.unmask();
-            }
 
-            @Override
-            public void onFailure(Throwable caught) {
-                ErrorHandler.post(org.iplantc.de.resources.client.messages.I18N.ERROR.unableToRetrieveFileData(file.getName()), caught);
-                container.unmask();
-            }
+                @Override
+                public void onFailure(Throwable caught) {
+                    ErrorHandler.post(org.iplantc.de.resources.client.messages.I18N.ERROR.unableToRetrieveFileData(file.getName()), caught);
+                    container.unmask();
+                }
             });
         }
     }
@@ -181,10 +222,10 @@ public class StrcturedTextViewerImpl extends StructuredTextViewer {
 
                     }
                 });
-                toolbar.enableAdd();
+                toolbar.setEditing(true);
             } else {
                 rowEditing = null;
-                toolbar.disableAdd();
+                toolbar.setEditing(false);
                 return;
             }
 
@@ -279,8 +320,8 @@ public class StrcturedTextViewerImpl extends StructuredTextViewer {
         JSONObject obj = new JSONObject();
         obj.put("path", new JSONString(file.getId()));
         obj.put("separator", new JSONString(getSeparator()));
-        obj.put("page", new JSONString(toolbar.getPageNumber() + ""));
-        obj.put("chunk-size", new JSONString("" + toolbar.getPageSize()));
+        obj.put("page", new JSONString(pagingToolbar.getPageNumber() + ""));
+        obj.put("chunk-size", new JSONString("" + pagingToolbar.getPageSize()));
         return obj;
     }
 
@@ -288,7 +329,7 @@ public class StrcturedTextViewerImpl extends StructuredTextViewer {
         if (infoType.equalsIgnoreCase("csv")) {
             return COMMA_SEPARATOR;
         } else if (infoType.equalsIgnoreCase("tsv") || infoType.equalsIgnoreCase("vcf") || infoType.equalsIgnoreCase("gff")) {
-            return URL.encode(TAB_SEPARATOR);
+            return TAB_SEPARATOR;
         } else {
             return " ";
         }
@@ -307,7 +348,7 @@ public class StrcturedTextViewerImpl extends StructuredTextViewer {
             }
         }
 
-        if (toolbar.getPageNumber() == 1) {
+        if (pagingToolbar.getPageNumber() == 1) {
             skipRows(toolbar.getSkipRowCount());
             if (hasHeader) {
                 if (headerRow == null) {
@@ -367,7 +408,11 @@ public class StrcturedTextViewerImpl extends StructuredTextViewer {
 
     @Override
     public String getViewName() {
-        return "Tabular View: " + file.getName();
+        if (file != null) {
+            return "Tabular View: " + file.getName();
+        } else {
+            return "Tabular View";
+        }
     }
 
     @Override
@@ -442,8 +487,33 @@ public class StrcturedTextViewerImpl extends StructuredTextViewer {
     public void save() {
         logger.log(Level.SEVERE, "editing complete: saving");
         store.commitChanges();
-        container.mask();
+        if (file == null) {
+            final SaveAsDialog saveDialog = new SaveAsDialog(parentFolder);
+            saveDialog.addOkButtonSelectHandler(new SelectHandler() {
+
+                @Override
+                public void onSelect(SelectEvent event) {
+                    if (saveDialog.isVaild()) {
+                        container.mask(I18N.DISPLAY.savingMask());
+                        String destination = saveDialog.getSelectedFolder().getPath() + "/" + saveDialog.getFileName();
+                        ServicesInjector.INSTANCE.getFileEditorServiceFacade().uploadTextAsFile(destination, getEditorContent(), true, new FileSaveCallback(destination, true, container));
+                        saveDialog.hide();
+                    }
+                }
+            });
+            saveDialog.addCancelButtonSelectHandler(new SelectHandler() {
+
+                @Override
+                public void onSelect(SelectEvent event) {
+                    saveDialog.hide();
+                    container.unmask();
+                }
+            });
+            saveDialog.show();
+            saveDialog.toFront();
+        } else {
         ServicesInjector.INSTANCE.getFileEditorServiceFacade().uploadTextAsFile(file.getPath(), getEditorContent(), false, new FileSaveCallback(file.getPath(), false, container));
+        }
     }
 
     @Override

@@ -33,7 +33,7 @@ public class TextDataViewCommand implements ViewCommand {
             if (infoType.equals(InfoType.CSV.toString()) || infoType.equals(InfoType.TSV.toString())
                     || infoType.equals(InfoType.VCF.toString())
                     || infoType.equals(InfoType.GFF.toString())) {
-                viewers.add(new StrcturedTextViewerImpl(file, infoType));
+                viewers.add(new StrcturedTextViewerImpl(file, infoType, parentFolder));
 
             }
         }
