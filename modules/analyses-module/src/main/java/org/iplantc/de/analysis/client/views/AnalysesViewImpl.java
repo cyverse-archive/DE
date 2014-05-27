@@ -35,7 +35,6 @@ import com.sencha.gxt.data.shared.ModelKeyProvider;
 import com.sencha.gxt.data.shared.loader.FilterPagingLoadConfig;
 import com.sencha.gxt.data.shared.loader.FilterPagingLoadConfigBean;
 import com.sencha.gxt.data.shared.loader.LoadHandler;
-import com.sencha.gxt.data.shared.loader.LoadResultListStoreBinding;
 import com.sencha.gxt.data.shared.loader.PagingLoadResult;
 import com.sencha.gxt.data.shared.loader.PagingLoader;
 import com.sencha.gxt.widget.core.client.Composite;
@@ -158,7 +157,6 @@ public class AnalysesViewImpl extends Composite implements AnalysesView {
         loader.useLoadConfig(new FilterPagingLoadConfigBean());
         loader.setRemoteSort(true);
         loader.setReuseLoadConfig(true);
-        loader.addLoadHandler(new LoadResultListStoreBinding<FilterPagingLoadConfig, Analysis, PagingLoadResult<Analysis>>(this.listStore));
     }
 
     @Override
