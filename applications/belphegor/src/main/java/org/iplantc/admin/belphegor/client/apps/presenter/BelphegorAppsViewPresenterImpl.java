@@ -47,14 +47,12 @@ import com.google.web.bindery.autobean.shared.AutoBean;
 import com.google.web.bindery.autobean.shared.AutoBeanCodex;
 import com.google.web.bindery.autobean.shared.AutoBeanUtils;
 
-import com.sencha.gxt.widget.core.client.Dialog;
 import com.sencha.gxt.widget.core.client.Dialog.PredefinedButton;
 import com.sencha.gxt.widget.core.client.box.AlertMessageBox;
 import com.sencha.gxt.widget.core.client.box.ConfirmMessageBox;
 import com.sencha.gxt.widget.core.client.box.MessageBox;
 import com.sencha.gxt.widget.core.client.box.PromptMessageBox;
-import com.sencha.gxt.widget.core.client.event.HideEvent;
-import com.sencha.gxt.widget.core.client.event.HideEvent.HideHandler;
+import com.sencha.gxt.widget.core.client.event.DialogHideEvent;
 import com.sencha.gxt.widget.core.client.event.SelectEvent;
 import com.sencha.gxt.widget.core.client.event.SelectEvent.SelectHandler;
 import com.sencha.gxt.widget.core.client.form.TextField;
@@ -191,13 +189,10 @@ public class BelphegorAppsViewPresenterImpl extends AppsViewPresenterImpl implem
         field.setAutoValidate(true);
         field.setAllowBlank(false);
         field.setText(selectedAppGroup.getName());
-        msgBox.addHideHandler(new HideHandler() {
-
+        msgBox.addDialogHideHandler(new DialogHideEvent.DialogHideHandler() {
             @Override
-            public void onHide(HideEvent event) {
-                Dialog btn = (Dialog)event.getSource();
-                String text = btn.getHideButton().getItemId();
-                if (text.equals(PredefinedButton.OK.name())) {
+            public void onDialogHide(DialogHideEvent event) {
+                if(PredefinedButton.OK.equals(event.getHideButton())) {
                     view.maskWestPanel(displayStrings.loadingMask());
                     adminAppService.renameAppGroup(selectedAppGroup.getId(), field.getText(),
                             new AsyncCallback<String>() {
@@ -244,14 +239,11 @@ public class BelphegorAppsViewPresenterImpl extends AppsViewPresenterImpl implem
 
             ConfirmMessageBox msgBox = new ConfirmMessageBox(displayStrings.warning(),
                     displayStrings.confirmDeleteAppGroup(selectedAppGroup.getName()));
-            msgBox.addHideHandler(new HideHandler() {
-
+            msgBox.addDialogHideHandler(new DialogHideEvent.DialogHideHandler() {
                 @Override
-                public void onHide(HideEvent event) {
-                    Dialog btn = (Dialog)event.getSource();
-                    String text = btn.getHideButton().getItemId();
-                    if (text.equals(PredefinedButton.YES.name())) {
-                        view.maskWestPanel(displayStrings.loadingMask());
+                public void onDialogHide(DialogHideEvent event) {
+                    if(PredefinedButton.YES.equals(event.getHideButton())) {
+                         view.maskWestPanel(displayStrings.loadingMask());
                         adminAppService.deleteAppGroup(selectedAppGroup.getId(),
                                 new AsyncCallback<String>() {
 
@@ -273,42 +265,36 @@ public class BelphegorAppsViewPresenterImpl extends AppsViewPresenterImpl implem
                                     }
                                 });
                     }
-
                 }
             });
             msgBox.show();
 
         } else if (getSelectedApp() != null) {
             final App selectedApp = getSelectedApp();
-            ConfirmMessageBox msgBox = new ConfirmMessageBox(displayStrings.warning(),
-                    displayStrings.confirmDeleteAppTitle());
-            msgBox.addHideHandler(new HideHandler() {
-
+            ConfirmMessageBox msgBox = new ConfirmMessageBox(displayStrings.warning(), displayStrings.confirmDeleteAppTitle());
+            msgBox.addDialogHideHandler(new DialogHideEvent.DialogHideHandler() {
                 @Override
-                public void onHide(HideEvent event) {
-                    Dialog btn = (Dialog)event.getSource();
-                    String text = btn.getHideButton().getItemId();
-                    if (text.equals(PredefinedButton.YES.name())) {
+                public void onDialogHide(DialogHideEvent event) {
+                    if (PredefinedButton.YES.equals(event.getHideButton())) {
                         view.maskCenterPanel(displayStrings.loadingMask());
                         adminAppService.deleteApplication(selectedApp.getId(),
-                                new AsyncCallback<String>() {
+                              new AsyncCallback<String>() {
 
-                                    @Override
-                                    public void onSuccess(String result) {
-                                        eventBus.fireEvent(
-                                                new CatalogCategoryRefreshEvent());
-                                        view.removeApp(selectedApp);
-                                        view.unMaskCenterPanel();
-                                    }
+                                  @Override
+                                  public void onSuccess(String result) {
+                                      eventBus.fireEvent(new CatalogCategoryRefreshEvent());
+                                      view.removeApp(selectedApp);
+                                      view.unMaskCenterPanel();
+                                  }
 
-                                    @Override
-                                    public void onFailure(Throwable caught) {
-                                        ErrorHandler.post(errorStrings.deleteApplicationError(selectedApp
-                                                .getName()));
-                                        view.unMaskCenterPanel();
-                                    }
-                                });
+                                  @Override
+                                  public void onFailure(Throwable caught) {
+                                      ErrorHandler.post(errorStrings.deleteApplicationError(selectedApp.getName()));
+                                      view.unMaskCenterPanel();
+                                  }
+                              });
                     }
+
                 }
             });
             msgBox.show();

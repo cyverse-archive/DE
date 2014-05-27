@@ -33,22 +33,7 @@ import org.iplantc.de.commons.client.views.gxt3.dialogs.IPlantDialog;
 import org.iplantc.de.commons.client.views.window.configs.TabularFileViewerWindowConfig;
 import org.iplantc.de.diskResource.client.dataLink.presenter.DataLinkPresenter;
 import org.iplantc.de.diskResource.client.dataLink.view.DataLinkPanel;
-import org.iplantc.de.diskResource.client.events.CreateNewFileEvent;
-import org.iplantc.de.diskResource.client.events.DiskResourceRenamedEvent;
-import org.iplantc.de.diskResource.client.events.DiskResourceSelectionChangedEvent;
-import org.iplantc.de.diskResource.client.events.DiskResourcesDeletedEvent;
-import org.iplantc.de.diskResource.client.events.DiskResourcesMovedEvent;
-import org.iplantc.de.diskResource.client.events.FolderCreatedEvent;
-import org.iplantc.de.diskResource.client.events.FolderSelectionEvent;
-import org.iplantc.de.diskResource.client.events.RequestBulkDownloadEvent;
-import org.iplantc.de.diskResource.client.events.RequestBulkUploadEvent;
-import org.iplantc.de.diskResource.client.events.RequestImportFromUrlEvent;
-import org.iplantc.de.diskResource.client.events.RequestSendToCoGeEvent;
-import org.iplantc.de.diskResource.client.events.RequestSendToEnsemblEvent;
-import org.iplantc.de.diskResource.client.events.RequestSendToTreeViewerEvent;
-import org.iplantc.de.diskResource.client.events.RequestSimpleDownloadEvent;
-import org.iplantc.de.diskResource.client.events.RequestSimpleUploadEvent;
-import org.iplantc.de.diskResource.client.events.ShowFilePreviewEvent;
+import org.iplantc.de.diskResource.client.events.*;
 import org.iplantc.de.diskResource.client.metadata.presenter.DiskResourceMetadataUpdateCallback;
 import org.iplantc.de.diskResource.client.metadata.presenter.MetadataPresenter;
 import org.iplantc.de.diskResource.client.metadata.view.DiskResourceMetadataView;
@@ -87,7 +72,6 @@ import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
-
 import com.google.common.base.Strings;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
@@ -118,8 +102,7 @@ import com.sencha.gxt.widget.core.client.Dialog.PredefinedButton;
 import com.sencha.gxt.widget.core.client.box.ConfirmMessageBox;
 import com.sencha.gxt.widget.core.client.box.MessageBox;
 import com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer;
-import com.sencha.gxt.widget.core.client.event.HideEvent;
-import com.sencha.gxt.widget.core.client.event.HideEvent.HideHandler;
+import com.sencha.gxt.widget.core.client.event.DialogHideEvent;
 import com.sencha.gxt.widget.core.client.event.SelectEvent;
 import com.sencha.gxt.widget.core.client.event.SelectEvent.SelectHandler;
 import com.sencha.gxt.widget.core.client.form.TextField;
@@ -793,9 +776,9 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter, Di
     private void doShareWithCollaborators(final Iterable<DiskResource> resourcesToBeShared){
         DataSharingDialog dlg = new DataSharingDialog(Sets.newHashSet(resourcesToBeShared));
         dlg.show();
-        dlg.addHideHandler(new HideHandler() {
+        dlg.addDialogHideHandler(new DialogHideEvent.DialogHideHandler() {
             @Override
-            public void onHide(HideEvent event) {
+            public void onDialogHide(DialogHideEvent event) {
                 final Set<DiskResource> selection = view.getSelectedDiskResources();
                 if (selection != null && selection.size() == 1) {
                     Iterator<DiskResource> it = selection.iterator();
@@ -824,10 +807,10 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter, Di
     private void confirmDelete(final Set<DiskResource> drSet) {
         final MessageBox confirm = new ConfirmMessageBox(displayStrings.warning(), displayStrings.emptyTrashWarning());
 
-        confirm.addHideHandler(new HideHandler() {
+        confirm.addDialogHideHandler(new DialogHideEvent.DialogHideHandler() {
             @Override
-            public void onHide(HideEvent event) {
-                if (confirm.getHideButton() == confirm.getButtonById(PredefinedButton.YES.name())) {
+            public void onDialogHide(DialogHideEvent event) {
+                if(PredefinedButton.YES.equals(event.getHideButton())){
                     delete(drSet, displayStrings.deleteTrash());
                 }
             }
@@ -1094,15 +1077,14 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter, Di
 
         // TODO CORE-5300 Move confirmation box to view, which will call presenter
         final ConfirmMessageBox cmb = new ConfirmMessageBox(I18N.DISPLAY.emptyTrash(), I18N.DISPLAY.emptyTrashWarning());
-        cmb.addHideHandler(new HideHandler() {
+        cmb.addDialogHideHandler(new DialogHideEvent.DialogHideHandler() {
             @Override
-            public void onHide(HideEvent event) {
-                if (cmb.getHideButton() == cmb.getButtonById(PredefinedButton.YES.name())) {
+            public void onDialogHide(DialogHideEvent event) {
+                if(PredefinedButton.YES.equals(event.getHideButton())){
                     doEmptyTrash();
                 }
             }
         });
-
         cmb.setWidth(300);
         cmb.show();
     }

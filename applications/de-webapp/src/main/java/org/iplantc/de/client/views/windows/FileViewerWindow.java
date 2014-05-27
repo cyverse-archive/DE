@@ -34,6 +34,7 @@ import com.google.web.bindery.autobean.shared.AutoBeanCodex;
 import com.sencha.gxt.widget.core.client.Dialog.PredefinedButton;
 import com.sencha.gxt.widget.core.client.PlainTabPanel;
 import com.sencha.gxt.widget.core.client.box.MessageBox;
+import com.sencha.gxt.widget.core.client.event.DialogHideEvent;
 import com.sencha.gxt.widget.core.client.event.HideEvent;
 import com.sencha.gxt.widget.core.client.event.HideEvent.HideHandler;
 
@@ -42,56 +43,6 @@ import com.sencha.gxt.widget.core.client.event.HideEvent.HideHandler;
  * 
  */
 public class FileViewerWindow extends IplantWindowBase implements IsMaskable {
-
-    private final class ConfirmHideHandler implements HideHandler {
-        private final MessageBox cmb;
-
-        private ConfirmHideHandler(MessageBox cmb) {
-            this.cmb = cmb;
-        }
-
-        @Override
-        public void onHide(HideEvent event) {
-            if (cmb.getHideButton().getText().equalsIgnoreCase("yes")) {
-                SaveFileEvent sfe = new SaveFileEvent();
-                tabPanel.getActiveWidget().fireEvent(sfe);
-            } else if (cmb.getHideButton().getText().equalsIgnoreCase("no")) {
-                presenter.cleanUp();
-                FileViewerWindow.super.doHide();
-                doClose();
-            }
-        }
-    }
-
-    private final class GetManifestCallback implements AsyncCallback<String> {
-        @Override
-        public void onSuccess(String result) {
-            if (result != null) {
-                manifest = JsonUtil.getObject(result);
-                presenter = new FileViewerPresenter(file, manifest, configAB.isEditing(), configAB.isVizTabFirst());
-                initWidget();
-                presenter.go(FileViewerWindow.this, configAB.getParentFolder());
-                unmask();
-            } else {
-                onFailure(null);
-            }
-        }
-
-        @Override
-        public void onFailure(Throwable caught) {
-            unmask();
-            DiskResourceErrorAutoBeanFactory factory = GWT.create(DiskResourceErrorAutoBeanFactory.class);
-            String message = caught.getMessage();
-            FileViewerWindow.this.hide();
-
-            if (JsonUtils.safeToEval(message)) {
-                AutoBean<ErrorGetManifest> errorBean = AutoBeanCodex.decode(factory, ErrorGetManifest.class, message);
-                ErrorHandler.post(errorBean.as(), caught);
-            } else {
-                ErrorHandler.post(I18N.ERROR.retrieveStatFailed(), caught);
-            }
-        }
-    }
 
     private PlainTabPanel tabPanel;
     protected JSONObject manifest;
@@ -158,7 +109,20 @@ public class FileViewerWindow extends IplantWindowBase implements IsMaskable {
         if (presenter != null && presenter.isDirty() && configAB.isEditing()) {
             final MessageBox cmb = new MessageBox(I18N.DISPLAY.save(), I18N.DISPLAY.unsavedChanges());
             cmb.setPredefinedButtons(PredefinedButton.YES, PredefinedButton.NO, PredefinedButton.CANCEL);
-            cmb.addHideHandler(new ConfirmHideHandler(cmb));
+            cmb.addDialogHideHandler(new DialogHideEvent.DialogHideHandler() {
+                @Override
+                public void onDialogHide(DialogHideEvent event) {
+                    if(PredefinedButton.YES.equals(event.getHideButton())) {
+                        SaveFileEvent sfe = new SaveFileEvent();
+                        eventBus.fireEvent(sfe);
+                    } else if(PredefinedButton.NO.equals(event.getHideButton())) {
+                        presenter.cleanUp();
+                        FileViewerWindow.super.doHide();
+                        doClose();
+                    }
+
+                }
+            });
             cmb.show();
         } else {
             presenter.cleanUp();
@@ -187,7 +151,37 @@ public class FileViewerWindow extends IplantWindowBase implements IsMaskable {
     private void getFileManifest() {
         mask(I18N.DISPLAY.loadingMask());
         if (file != null) {
-            ServicesInjector.INSTANCE.getFileEditorServiceFacade().getManifest(file.getId(), new GetManifestCallback());
+            ServicesInjector.INSTANCE.getFileEditorServiceFacade().getManifest(file.getId(), new AsyncCallback<String>() {
+                @Override
+                public void onSuccess(String result) {
+                    if (result != null) {
+                        manifest = JsonUtil.getObject(result);
+                        presenter = new FileViewerPresenter(file, manifest, configAB.isEditing(), configAB.isVizTabFirst());
+                        initWidget();
+                        presenter.go(FileViewerWindow.this, configAB.getParentFolder());
+                        unmask();
+                    } else {
+                        onFailure(null);
+                    }
+                }
+
+                @Override
+                public void onFailure(Throwable caught) {
+                    unmask();
+                    DiskResourceErrorAutoBeanFactory factory = GWT
+                            .create(DiskResourceErrorAutoBeanFactory.class);
+                    String message = caught.getMessage();
+                    FileViewerWindow.this.hide();
+
+                    if (JsonUtils.safeToEval(message)) {
+                        AutoBean<ErrorGetManifest> errorBean = AutoBeanCodex.decode(factory,
+                                ErrorGetManifest.class, message);
+                        ErrorHandler.post(errorBean.as(), caught);
+                    } else {
+                        ErrorHandler.post(I18N.ERROR.retrieveStatFailed(), caught);
+                    }
+                }
+            });
         } else {
             if (configAB.isEditing()) {
                 JSONObject manifest = new JSONObject();

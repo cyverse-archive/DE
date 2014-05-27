@@ -62,12 +62,10 @@ import com.google.gwt.user.client.ui.RootPanel;
 import com.sencha.gxt.core.client.dom.XDOM;
 import com.sencha.gxt.core.client.util.KeyNav;
 import com.sencha.gxt.core.client.util.Size;
-import com.sencha.gxt.widget.core.client.Dialog;
 import com.sencha.gxt.widget.core.client.Dialog.PredefinedButton;
 import com.sencha.gxt.widget.core.client.box.MessageBox;
 import com.sencha.gxt.widget.core.client.button.IconButton;
-import com.sencha.gxt.widget.core.client.event.HideEvent;
-import com.sencha.gxt.widget.core.client.event.HideEvent.HideHandler;
+import com.sencha.gxt.widget.core.client.event.DialogHideEvent;
 import com.sencha.gxt.widget.core.client.event.SelectEvent;
 import com.sencha.gxt.widget.core.client.event.SelectEvent.SelectHandler;
 
@@ -428,12 +426,10 @@ public class DEPresenter implements DEView.Presenter {
                     MessageBox box = new MessageBox(I18N.DISPLAY.welcome(), I18N.TOUR.introWelcome());
                     box.setPredefinedButtons(PredefinedButton.YES, PredefinedButton.NO);
                     box.setIcon(MessageBox.ICONS.question());
-                    box.addHideHandler(new HideHandler() {
-
+                    box.addDialogHideHandler(new DialogHideEvent.DialogHideHandler() {
                         @Override
-                        public void onHide(HideEvent event) {
-                            Dialog btn = (Dialog)event.getSource();
-                            if (btn.getHideButton().getText().equalsIgnoreCase("yes")) { //$NON-NLS-1$
+                        public void onDialogHide(DialogHideEvent event) {
+                            if(PredefinedButton.YES.equals(event.getHideButton())) {
                                 doIntro();
                             }
                         }

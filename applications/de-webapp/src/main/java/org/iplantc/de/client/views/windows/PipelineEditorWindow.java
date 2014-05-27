@@ -17,6 +17,7 @@ import com.google.web.bindery.autobean.shared.Splittable;
 import com.sencha.gxt.widget.core.client.Dialog;
 import com.sencha.gxt.widget.core.client.Dialog.PredefinedButton;
 import com.sencha.gxt.widget.core.client.box.MessageBox;
+import com.sencha.gxt.widget.core.client.event.DialogHideEvent;
 import com.sencha.gxt.widget.core.client.event.HideEvent;
 import com.sencha.gxt.widget.core.client.event.HideEvent.HideHandler;
 
@@ -92,19 +93,16 @@ public class PipelineEditorWindow extends IplantWindowBase {
         box.setPredefinedButtons(PredefinedButton.YES, PredefinedButton.NO, PredefinedButton.CANCEL);
         box.setIcon(MessageBox.ICONS.question());
         box.setMessage(org.iplantc.de.resources.client.messages.I18N.DISPLAY.unsavedChanges());
-        box.addHideHandler(new HideHandler() {
-
+        box.addDialogHideHandler(new DialogHideEvent.DialogHideHandler() {
             @Override
-            public void onHide(HideEvent event) {
-                Dialog btn = (Dialog)event.getSource();
-                if (btn.getHideButton().getText().equalsIgnoreCase(PredefinedButton.NO.toString())) {
+            public void onDialogHide(DialogHideEvent event) {
+
+                if(PredefinedButton.NO.equals(event.getHideButton())) {
                     PipelineEditorWindow.super.hide();
-                }
-                if (btn.getHideButton().getText().equalsIgnoreCase(PredefinedButton.YES.toString())) {
+                } else if(PredefinedButton.YES.equals(event.getHideButton())){
                     presenter.saveOnClose();
                     close_after_save = true;
                 }
-
             }
         });
         box.show();

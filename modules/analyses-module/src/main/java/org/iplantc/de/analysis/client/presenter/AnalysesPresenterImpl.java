@@ -39,7 +39,6 @@ import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 import org.iplantc.de.resources.client.messages.IplantErrorStrings;
 
 import static com.google.common.base.Preconditions.checkState;
-
 import com.google.common.collect.Lists;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.HandlerRegistration;
@@ -62,8 +61,7 @@ import com.sencha.gxt.data.shared.loader.LoadHandler;
 import com.sencha.gxt.data.shared.loader.PagingLoadResult;
 import com.sencha.gxt.widget.core.client.Dialog.PredefinedButton;
 import com.sencha.gxt.widget.core.client.box.ConfirmMessageBox;
-import com.sencha.gxt.widget.core.client.event.HideEvent;
-import com.sencha.gxt.widget.core.client.event.HideEvent.HideHandler;
+import com.sencha.gxt.widget.core.client.event.DialogHideEvent;
 import com.sencha.gxt.widget.core.client.event.SelectEvent;
 import com.sencha.gxt.widget.core.client.form.TextArea;
 
@@ -175,7 +173,7 @@ public class AnalysesPresenterImpl implements AnalysesView.Presenter, AnalysisNa
 
     }
 
-    private final class DeleteMessageBoxHandler implements HideHandler {
+    private final class DeleteMessageBoxHandler implements DialogHideEvent.DialogHideHandler {
         private final List<Analysis> analysesToBeDeleted;
 
         private DeleteMessageBoxHandler(List<Analysis> analysesToBeDeleted) {
@@ -183,9 +181,8 @@ public class AnalysesPresenterImpl implements AnalysesView.Presenter, AnalysisNa
         }
 
         @Override
-        public void onHide(HideEvent event) {
-            ConfirmMessageBox cmb = (ConfirmMessageBox)event.getSource();
-            if (cmb.getHideButton() == cmb.getButtonById(PredefinedButton.OK.name())) {
+        public void onDialogHide(DialogHideEvent event) {
+            if(PredefinedButton.OK.equals(event.getHideButton())) {
                 analysisService.deleteAnalyses(analysesToBeDeleted, new AsyncCallback<String>() {
 
                     @Override
@@ -199,7 +196,6 @@ public class AnalysesPresenterImpl implements AnalysesView.Presenter, AnalysisNa
                     }
                 });
             }
-
         }
     }
 
@@ -344,7 +340,7 @@ public class AnalysesPresenterImpl implements AnalysesView.Presenter, AnalysisNa
 
         ConfirmMessageBox cmb = new ConfirmMessageBox(displayStrings.warning(), displayStrings.analysesExecDeleteWarning());
         cmb.setPredefinedButtons(PredefinedButton.OK, PredefinedButton.CANCEL);
-        cmb.addHideHandler(new DeleteMessageBoxHandler(analysesToBeDeleted));
+        cmb.addDialogHideHandler(new DeleteMessageBoxHandler(analysesToBeDeleted));
         cmb.show();
     }
 
@@ -461,17 +457,16 @@ public class AnalysesPresenterImpl implements AnalysesView.Presenter, AnalysisNa
     public void onAnalysisCommentSelected(final AnalysisCommentSelectedEvent event) {
         // Show comments
         final AnalysisCommentsDialog d = new AnalysisCommentsDialog(event.getValue(), displayStrings);
-        d.show();
-        d.addHideHandler(new HideHandler() {
+        d.addDialogHideHandler(new DialogHideEvent.DialogHideHandler() {
             @Override
-            public void onHide(HideEvent hideEvent) {
-                if (PredefinedButton.OK.name().equals(d.getHideButton().getItemId())) {
-                    if (d.isCommentChanged()) {
-                        analysisService.updateAnalysisComments(event.getValue(), d.getComment(), new UpdateCommentsCallback(event.getValue(), d.getComment(), view.getListStore()));
-                    }
+            public void onDialogHide(DialogHideEvent hideEvent) {
+                if (PredefinedButton.OK.equals(hideEvent.getHideButton())
+                            && d.isCommentChanged()) {
+                    analysisService.updateAnalysisComments(event.getValue(), d.getComment(), new UpdateCommentsCallback(event.getValue(), d.getComment(), view.getListStore()));
                 }
             }
         });
+        d.show();
     }
 
     @Override
@@ -545,16 +540,19 @@ public class AnalysesPresenterImpl implements AnalysesView.Presenter, AnalysisNa
         checkState(selectedAnalyses.size() == 1, "There should only be 1 analysis selected, but there were %i", selectedAnalyses.size());
 
         final AnalysisCommentsDialog d = new AnalysisCommentsDialog(selectedAnalyses.get(0), displayStrings);
-        d.show();
-        d.addHideHandler(new HideHandler() {
+        d.addDialogHideHandler(new DialogHideEvent.DialogHideHandler() {
             @Override
-            public void onHide(HideEvent event) {
-                if (PredefinedButton.OK.name().equals(d.getHideButton().getItemId())) {
-                    if (d.isCommentChanged()){
-                        analysisService.updateAnalysisComments(selectedAnalyses.get(0), d.getComment(), new UpdateCommentsCallback(selectedAnalyses.get(0), d.getComment(), view.getListStore()));
-                    }
+            public void onDialogHide(DialogHideEvent event) {
+                if (PredefinedButton.OK.equals(event.getHideButton())
+                            && d.isCommentChanged()) {
+                    analysisService.updateAnalysisComments(selectedAnalyses.get(0),
+                                                           d.getComment(),
+                           new UpdateCommentsCallback(selectedAnalyses.get(0),
+                                                      d.getComment(),
+                                                      view.getListStore()));
                 }
             }
         });
+        d.show();
     }
 }

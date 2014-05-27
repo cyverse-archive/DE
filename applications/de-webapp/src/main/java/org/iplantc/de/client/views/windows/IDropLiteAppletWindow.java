@@ -19,10 +19,12 @@ import com.google.gwt.user.client.Command;
 
 import com.sencha.gxt.core.client.GXT;
 import com.sencha.gxt.core.client.Style.HideMode;
+import com.sencha.gxt.widget.core.client.Dialog;
 import com.sencha.gxt.widget.core.client.Window;
 import com.sencha.gxt.widget.core.client.box.ConfirmMessageBox;
 import com.sencha.gxt.widget.core.client.event.DeactivateEvent;
 import com.sencha.gxt.widget.core.client.event.DeactivateEvent.DeactivateHandler;
+import com.sencha.gxt.widget.core.client.event.DialogHideEvent;
 import com.sencha.gxt.widget.core.client.event.HideEvent;
 import com.sencha.gxt.widget.core.client.event.HideEvent.HideHandler;
 
@@ -132,22 +134,16 @@ public class IDropLiteAppletWindow extends IplantWindowBase {
         final ConfirmMessageBox cmb = new ConfirmMessageBox(org.iplantc.de.resources.client.messages.I18N.DISPLAY.idropLiteCloseConfirmTitle(),
                 org.iplantc.de.resources.client.messages.I18N.DISPLAY.idropLiteCloseConfirmMessage());
 
-        cmb.addHideHandler(new HideHandler() {
-
+        cmb.addDialogHideHandler(new DialogHideEvent.DialogHideHandler() {
             @Override
-            public void onHide(HideEvent event) {
-                if (GXT.isWindows()) {
-                    show();
-                }
-
-                if (cmb.getHideButton().getText().equalsIgnoreCase("yes")) {
+            public void onDialogHide(DialogHideEvent event) {
+                if(Dialog.PredefinedButton.YES.equals(event.getHideButton())) {
                     // The user confirmed closing the applet.
                     cmdRemoveAppletConfirmed.execute();
                 }
 
             }
         });
-
         cmb.show();
     }
 

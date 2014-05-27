@@ -51,11 +51,9 @@ import com.google.web.bindery.autobean.shared.AutoBeanCodex;
 import com.google.web.bindery.autobean.shared.Splittable;
 import com.google.web.bindery.autobean.shared.impl.StringQuoter;
 
-import com.sencha.gxt.widget.core.client.Dialog;
 import com.sencha.gxt.widget.core.client.Dialog.PredefinedButton;
 import com.sencha.gxt.widget.core.client.box.ConfirmMessageBox;
-import com.sencha.gxt.widget.core.client.event.HideEvent;
-import com.sencha.gxt.widget.core.client.event.HideEvent.HideHandler;
+import com.sencha.gxt.widget.core.client.event.DialogHideEvent;
 import com.sencha.gxt.widget.core.client.grid.Grid;
 
 import java.util.ArrayList;
@@ -503,13 +501,10 @@ public class AppsViewPresenterImpl implements AppsView.Presenter {
 
         ConfirmMessageBox msgBox = new ConfirmMessageBox(displayStrings.warning(), displayStrings.appDeleteWarning());
 
-        msgBox.addHideHandler(new HideHandler() {
-
+        msgBox.addDialogHideHandler(new DialogHideEvent.DialogHideHandler() {
             @Override
-            public void onHide(HideEvent event) {
-                Dialog btn = (Dialog)event.getSource();
-                String text = btn.getHideButton().getItemId();
-                if (text.equals(PredefinedButton.YES.name())) {
+            public void onDialogHide(DialogHideEvent event) {
+                if(PredefinedButton.YES.equals(event.getHideButton())) {
                     List<String> appIds = Lists.newArrayList();
                     for (App app : apps) {
                         appIds.add(app.getId());

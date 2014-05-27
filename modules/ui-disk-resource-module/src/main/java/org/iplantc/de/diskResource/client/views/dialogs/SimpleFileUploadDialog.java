@@ -38,8 +38,7 @@ import com.sencha.gxt.widget.core.client.Status;
 import com.sencha.gxt.widget.core.client.box.ConfirmMessageBox;
 import com.sencha.gxt.widget.core.client.button.TextButton;
 import com.sencha.gxt.widget.core.client.container.HorizontalLayoutContainer;
-import com.sencha.gxt.widget.core.client.event.HideEvent;
-import com.sencha.gxt.widget.core.client.event.HideEvent.HideHandler;
+import com.sencha.gxt.widget.core.client.event.DialogHideEvent;
 import com.sencha.gxt.widget.core.client.event.InvalidEvent;
 import com.sencha.gxt.widget.core.client.event.SelectEvent;
 import com.sencha.gxt.widget.core.client.event.SubmitCompleteEvent;
@@ -203,11 +202,10 @@ public class SimpleFileUploadDialog extends IPlantDialog {
                     I18N.DISPLAY.confirmAction(),
                     I18N.DISPLAY.idropLiteCloseConfirmMessage());
 
-            cmb.addHideHandler(new HideHandler() {
-
+            cmb.addDialogHideHandler(new DialogHideEvent.DialogHideHandler() {
                 @Override
-                public void onHide(HideEvent event) {
-                    if (cmb.getHideButton().getText().equalsIgnoreCase("yes")) {
+                public void onDialogHide(DialogHideEvent event) {
+                    if(PredefinedButton.YES.equals(event.getHideButton())){
                         SimpleFileUploadDialog.super.hide();
                     }
                 }
