@@ -1,7 +1,9 @@
 package org.iplantc.de.server;
 
 import com.google.common.base.Strings;
+import net.sf.json.JSONObject;
 import org.apache.commons.io.IOUtils;
+import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
@@ -19,12 +21,11 @@ import java.net.URISyntaxException;
 public abstract class OAuthCallbackServlet extends HttpServlet {
 
     private static final String CALLBACK_PATH = "oauth/access-code";
-
     private static final String ERROR_PARAM = "error";
-
     private static final String AUTH_CODE_PARAM = "code";
-
     private static final String REDIRECT_URI_PARAM = "redirect_uri";
+    private static final String AUTH_DENIED_PARAM = "auth-denied";
+    private static final String SERVICE_NAME = "Agave";
 
     private static final Logger LOG = Logger.getLogger(OAuthCallbackServlet.class);
 
@@ -48,7 +49,7 @@ public abstract class OAuthCallbackServlet extends HttpServlet {
     protected void doGet(final HttpServletRequest req, final HttpServletResponse resp)
             throws ServletException, IOException {
         if (isError(req)) {
-            authorizationErrorResponse(req, resp);
+            authorizationErrorRedirect(req, resp);
         } else {
             callAuthCodeService(req, resp);
         }
@@ -76,8 +77,33 @@ public abstract class OAuthCallbackServlet extends HttpServlet {
         final HttpClient client = new DefaultHttpClient();
         final HttpResponse response = client.execute(request);
 
-        resp.getWriter().append(IOUtils.toString(response.getEntity().getContent()));
-        resp.setStatus(response.getStatusLine().getStatusCode());
+        final int statusCode = response.getStatusLine().getStatusCode();
+        final String responseBody = readResponse(response);
+        if (statusCode < 200 || statusCode > 299) {
+            LOG.warn("error while trying to obtain access token: " + responseBody);
+            authorizationErrorRedirect(req, resp);
+        }
+
+        resp.sendRedirect(authorizationSuccessRedirectUrl(req, responseBody));
+    }
+
+    private String readResponse(HttpResponse response) throws IOException {
+        final HttpEntity entity = response.getEntity();
+        return IOUtils.toString(entity.getContent());
+    }
+
+    private String authorizationSuccessRedirectUrl(HttpServletRequest req, String responseBody) {
+        try {
+            JSONObject json = JSONObject.fromObject(responseBody);
+            String queryString = json.getString("state_info");
+            return new URIBuilder(req.getContextPath())
+                    .setQuery(queryString)
+                    .build()
+                    .toString();
+        } catch (URISyntaxException e) {
+            LOG.error("unable to build the authorization success redirect URL", e);
+            throw new RuntimeException(e);
+        }
     }
 
     private String rebuildRedirectUri(HttpServletRequest req) {
@@ -98,13 +124,23 @@ public abstract class OAuthCallbackServlet extends HttpServlet {
         }
     }
 
-    private void authorizationErrorResponse(final HttpServletRequest req, final HttpServletResponse resp)
+    private void authorizationErrorRedirect(final HttpServletRequest req, final HttpServletResponse resp)
             throws IOException {
         final String errorCode = req.getHeader(ERROR_PARAM);
         LOG.warn("unable to obtain authorization: " + errorCode);
-        resp.getWriter().append("Authorization not obtained. Some Discovery Environment features will not ");
-        resp.getWriter().append("be available.");
-        resp.setContentType("text/plain");
+        resp.sendRedirect(authorizationErrorRedirectUrl(req));
+    }
+
+    private String authorizationErrorRedirectUrl(final HttpServletRequest req) {
+        try {
+            return new URIBuilder(req.getContextPath())
+                    .addParameter(AUTH_DENIED_PARAM, SERVICE_NAME)
+                    .build()
+                    .toString();
+        } catch (URISyntaxException e) {
+            LOG.error("unable to build the authorization error redirect URL", e);
+            throw new RuntimeException(e);
+        }
     }
 
     private boolean isError(HttpServletRequest req) {
