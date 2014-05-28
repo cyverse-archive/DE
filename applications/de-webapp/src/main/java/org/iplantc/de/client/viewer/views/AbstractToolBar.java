@@ -40,4 +40,10 @@ public abstract class AbstractToolBar extends ToolBar {
         return editing;
     }
 
+    public abstract void save();
+
+    public void cleanup() {
+        // do nothing intentionally
+    }
+
 }

@@ -50,7 +50,7 @@ public class StructuredTextViewToolBar extends AbstractToolBar {
 
             @Override
             public void onSelect(SelectEvent event) {
-                view.save();
+                save();
 
             }
         });
@@ -153,6 +153,12 @@ public class StructuredTextViewToolBar extends AbstractToolBar {
             disableAdd();
         }
         setEditingStatus(editing);
+    }
+
+    @Override
+    public void save() {
+        view.save();
+
     }
 
 }

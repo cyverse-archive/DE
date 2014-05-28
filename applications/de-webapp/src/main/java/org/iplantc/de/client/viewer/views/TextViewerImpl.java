@@ -89,6 +89,14 @@ public class TextViewerImpl extends AbstractFileViewer implements EditingSupport
         toolbar = initToolBar();
         pagingToolbar = initPagingToolbar();
         widget = uiBinder.createAndBindUi(this);
+        widget.addHandler(new SaveFileEventHandler() {
+
+            @Override
+            public void onSave(SaveFileEvent event) {
+                save();
+
+            }
+        }, SaveFileEvent.TYPE);
 
         addWrapHandler();
 
@@ -114,15 +122,6 @@ public class TextViewerImpl extends AbstractFileViewer implements EditingSupport
 
     TextViewToolBar initToolBar() {
         TextViewToolBar textViewPagingToolBar = new TextViewToolBar(this, editing);
-        textViewPagingToolBar.addHandler(new SaveFileEventHandler() {
-
-            @Override
-            public void onSave(SaveFileEvent event) {
-                save();
-
-            }
-
-        }, SaveFileEvent.TYPE);
         return textViewPagingToolBar;
     }
 
@@ -138,7 +137,9 @@ public class TextViewerImpl extends AbstractFileViewer implements EditingSupport
         }
         file = null;
         jso = null;
+        toolbar.cleanup();
         toolbar = null;
+        pagingToolbar = null;
         data = null;
     }
 

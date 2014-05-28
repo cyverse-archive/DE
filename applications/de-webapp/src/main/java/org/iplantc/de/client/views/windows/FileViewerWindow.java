@@ -54,7 +54,7 @@ public class FileViewerWindow extends IplantWindowBase implements IsMaskable {
         public void onHide(HideEvent event) {
             if (cmb.getHideButton().getText().equalsIgnoreCase("yes")) {
                 SaveFileEvent sfe = new SaveFileEvent();
-                eventBus.fireEvent(sfe);
+                tabPanel.getActiveWidget().fireEvent(sfe);
             } else if (cmb.getHideButton().getText().equalsIgnoreCase("no")) {
                 presenter.cleanUp();
                 FileViewerWindow.super.doHide();

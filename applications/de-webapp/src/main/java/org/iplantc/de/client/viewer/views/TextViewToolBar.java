@@ -33,11 +33,9 @@ public class TextViewToolBar extends AbstractToolBar {
 
     private void addSaveHandler() {
         saveBtn.addSelectHandler(new SelectHandler() {
-            
             @Override
             public void onSelect(SelectEvent event) {
-                view.save();
-                
+                save();
             }
         });
     }
@@ -66,6 +64,12 @@ public class TextViewToolBar extends AbstractToolBar {
     public void setEditing(boolean editing) {
         super.setEditing(editing);
         setEditingStatus(editing);
+    }
+
+    @Override
+    public void save() {
+        view.save();
+
     }
 
 }

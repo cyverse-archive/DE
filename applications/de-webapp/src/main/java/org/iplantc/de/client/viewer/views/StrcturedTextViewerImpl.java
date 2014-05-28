@@ -10,12 +10,16 @@ import org.iplantc.de.client.models.viewer.StructuredTextAutoBeanFactory;
 import org.iplantc.de.client.util.JsonUtil;
 import org.iplantc.de.client.viewer.events.EditNewTabFileEvent;
 import org.iplantc.de.client.viewer.events.EditNewTabFileEvent.EditNewTabFileEventHandeler;
+import org.iplantc.de.client.viewer.events.SaveFileEvent;
+import org.iplantc.de.client.viewer.events.SaveFileEvent.SaveFileEventHandler;
 import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.diskResource.client.views.dialogs.SaveAsDialog;
 import org.iplantc.de.resources.client.messages.I18N;
 
 import com.google.common.base.Joiner;
 import com.google.gwt.core.shared.GWT;
+import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.http.client.URL;
 import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONString;
@@ -55,8 +59,6 @@ import com.sencha.gxt.widget.core.client.grid.filters.StringFilter;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class StrcturedTextViewerImpl extends StructuredTextViewer {
 
@@ -93,24 +95,28 @@ public class StrcturedTextViewerImpl extends StructuredTextViewer {
     private StructuredTextViewToolBar toolbar;
     private ViewerPagingToolBar pagingToolbar;
     private ListStore<JSONObject> store;
+
     private BorderLayoutContainer container;
     private ContentPanel north;
+    private ContentPanel south;
     private VerticalLayoutContainer center;
+
     private final String COMMA_SEPARATOR = ",";
     private final String TAB_SEPARATOR = "\t";
     private final String NEW_LINE = "\n";
+
+    private final StructuredTextAutoBeanFactory factory = GWT.create(StructuredTextAutoBeanFactory.class);
+    private final List<HandlerRegistration> eventHandlers = new ArrayList<HandlerRegistration>();
+
     private StructuredText text_bean;
     private List<JSONObject> skippedRows;
     private boolean dirty;
-
-    private final StructuredTextAutoBeanFactory factory = GWT.create(StructuredTextAutoBeanFactory.class);
     private boolean hasHeader;
     private JSONObject headerRow;
     private GridInlineEditing<JSONObject> rowEditing;
-    Logger logger = Logger.getLogger("tabular view");
     private int columns;
     private final Folder parentFolder;
-    private ContentPanel south;
+
 
     public StrcturedTextViewerImpl(File file, String infoType, Folder parentFolder) {
         super(file, infoType);
@@ -119,7 +125,8 @@ public class StrcturedTextViewerImpl extends StructuredTextViewer {
         initToolbar();
         initPagingToolbar();
         loadData();
-        EventBus.getInstance().addHandler(EditNewTabFileEvent.TYPE, new EditNewTabFileEventHandeler() {
+        EventBus eventbus = EventBus.getInstance();
+        eventHandlers.add(eventbus.addHandler(EditNewTabFileEvent.TYPE, new EditNewTabFileEventHandeler() {
 
             @Override
             public void onNewTabFile(EditNewTabFileEvent event) {
@@ -128,7 +135,8 @@ public class StrcturedTextViewerImpl extends StructuredTextViewer {
                 addRow();
             }
 
-        });
+        }));
+
     }
 
     private void initLayout() {
@@ -180,6 +188,18 @@ public class StrcturedTextViewerImpl extends StructuredTextViewer {
     }
 
     @Override
+    public void cleanUp() {
+        EventBus eventBus = EventBus.getInstance();
+        for (HandlerRegistration hr : eventHandlers) {
+            eventBus.removeHandler(hr);
+        }
+        file = null;
+        toolbar.cleanup();
+        toolbar = null;
+        pagingToolbar = null;
+    }
+
+    @Override
     public void loadData() {
         String url = "read-csv-chunk";
         if (file != null) {
@@ -212,6 +232,7 @@ public class StrcturedTextViewerImpl extends StructuredTextViewer {
     private void setEditing(boolean editing) {
         if (grid != null) {
             if (rowEditing == null && editing) {
+                grid.setToolTip("Double click to edit...");
                 rowEditing = new GridInlineEditing<JSONObject>(grid);
                 rowEditing.setClicksToEdit(ClicksToEdit.TWO);
                 rowEditing.addCompleteEditHandler(new CompleteEditHandler<JSONObject>() {
@@ -226,6 +247,7 @@ public class StrcturedTextViewerImpl extends StructuredTextViewer {
             } else {
                 rowEditing = null;
                 toolbar.setEditing(false);
+                grid.setToolTip("");
                 return;
             }
 
@@ -245,13 +267,11 @@ public class StrcturedTextViewerImpl extends StructuredTextViewer {
         Joiner joiner = Joiner.on(getSeparator()).skipNulls();
         if (skippedRows != null && skippedRows.size() > 0) {
             for (JSONObject skipr : skippedRows) {
-                logger.log(Level.SEVERE, "skip row--> " + skipr.toString());
                 joiner.appendTo(sw, jsonToStringList(skipr));
                 sw.append(NEW_LINE);
             }
         }
         if (headerRow != null) {
-            logger.log(Level.SEVERE, "header--> " + headerRow.toString());
             joiner.appendTo(sw, jsonToStringList(headerRow));
             sw.append(NEW_LINE);
         }
@@ -259,7 +279,6 @@ public class StrcturedTextViewerImpl extends StructuredTextViewer {
             joiner.appendTo(sw, jsonToStringList(obj));
             sw.append(NEW_LINE);
         }
-        logger.log(Level.SEVERE, sw.toString());
         return sw.toString();
     }
 
@@ -293,6 +312,7 @@ public class StrcturedTextViewerImpl extends StructuredTextViewer {
 
         grid = new Grid<JSONObject>(getStore(), new ColumnModel<JSONObject>(configs));
         grid.getView().setStripeRows(true);
+        grid.getView().setTrackMouseOver(true);
         filters.initPlugin(grid);
         filters.setLocal(true);
         grid.setHeight(center.getOffsetHeight(true));
@@ -319,7 +339,7 @@ public class StrcturedTextViewerImpl extends StructuredTextViewer {
     private JSONObject getRequestBody() {
         JSONObject obj = new JSONObject();
         obj.put("path", new JSONString(file.getId()));
-        obj.put("separator", new JSONString(getSeparator()));
+        obj.put("separator", new JSONString(URL.encode(getSeparator())));
         obj.put("page", new JSONString(pagingToolbar.getPageNumber() + ""));
         obj.put("chunk-size", new JSONString("" + pagingToolbar.getPageSize()));
         return obj;
@@ -397,6 +417,14 @@ public class StrcturedTextViewerImpl extends StructuredTextViewer {
     public Widget asWidget() {
         SimpleContainer widget = new SimpleContainer();
         widget.add(container);
+        widget.addHandler(new SaveFileEventHandler() {
+            
+            @Override
+            public void onSave(SaveFileEvent event) {
+                save();
+                
+            }
+        }, SaveFileEvent.TYPE);
         return widget;
     }
 
@@ -467,8 +495,8 @@ public class StrcturedTextViewerImpl extends StructuredTextViewer {
             rowEditing.cancelEditing();
             getStore().add(obj);
             int row = getStore().indexOf(obj);
+            setDirty(true);
             rowEditing.startEditing(new GridCell(row, 0));
-            dirty = true;
         }
     }
 
@@ -479,13 +507,12 @@ public class StrcturedTextViewerImpl extends StructuredTextViewer {
             for (JSONObject obj : selectedRows) {
                 getStore().remove(obj);
             }
-            dirty = true;
+            setDirty(true);
         }
     }
 
     @Override
     public void save() {
-        logger.log(Level.SEVERE, "editing complete: saving");
         store.commitChanges();
         if (file == null) {
             final SaveAsDialog saveDialog = new SaveAsDialog(parentFolder);
@@ -518,6 +545,7 @@ public class StrcturedTextViewerImpl extends StructuredTextViewer {
 
     @Override
     public void setDirty(Boolean dirty) {
+        this.dirty = dirty;
         if (presenter.isDirty() == dirty) {
             return;
         }
