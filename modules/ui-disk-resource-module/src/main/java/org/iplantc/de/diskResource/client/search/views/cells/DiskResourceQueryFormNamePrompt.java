@@ -98,7 +98,7 @@ public class DiskResourceQueryFormNamePrompt extends Composite implements Editor
         showing = true;
 
         getElement().setWidth(element.getOffsetWidth());
-        getElement().alignTo(element, anchorAlignment, new int[] {0, 0});
+        getElement().alignTo(element, anchorAlignment, 0, 0);
 
         getElement().show();
         if (!eventPreview.getIgnoreList().contains(element)) {

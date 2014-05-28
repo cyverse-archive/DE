@@ -80,7 +80,7 @@ public class TileDesktopLayout implements DesktopLayout {
                     window.setPixelSize(tileWidth, tileHeight); // must set prior to alignTo
                 }
                 window.alignTo(element, new AnchorAlignment(Anchor.TOP_LEFT, Anchor.TOP_LEFT),
-                        new int[] {left, top});
+                        left, top);
                 window.setMaximized(maximized);
 
                 layoutIndex++;

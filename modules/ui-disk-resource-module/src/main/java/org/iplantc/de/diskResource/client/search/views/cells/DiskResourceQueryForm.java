@@ -167,8 +167,6 @@ public class DiskResourceQueryForm extends Composite implements Editor<DiskResou
 
     /**
      * Creates the form with a new filter.
-     * 
-     * @param searchService
      */
     public DiskResourceQueryForm() {
         this(SearchModelUtils.createDefaultFilter());
@@ -262,7 +260,7 @@ public class DiskResourceQueryForm extends Composite implements Editor<DiskResou
 
         showing = true;
 
-        getElement().alignTo(parent, anchorAlignment, new int[] {0, 0});
+        getElement().alignTo(parent, anchorAlignment, 0, 0);
 
         getElement().show();
         eventPreview.add();
