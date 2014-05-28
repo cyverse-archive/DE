@@ -72,7 +72,7 @@ public class BelphegorAppColumnModel extends ColumnModel<App> implements AppHype
             }
         });
 
-        rating.setAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+        rating.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 
         list.add(name);
         list.add(integrator);

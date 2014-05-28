@@ -104,7 +104,7 @@ public class SystemMessageViewImpl extends Composite implements SystemMessageVie
         msgCol.setCell(new SystemMessageNameCell(this));
         msgCol.setComparator(new MsgColComparator());
         typeCol.setFixed(true);
-        typeCol.setAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+        typeCol.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
         
         @SuppressWarnings("unchecked")
         List<ColumnConfig<SystemMessage, ?>> colList = Lists.<ColumnConfig<SystemMessage, ?>> newArrayList(msgCol, activationDateCol, deactivationDateCol, dismissibleColumn, typeCol);

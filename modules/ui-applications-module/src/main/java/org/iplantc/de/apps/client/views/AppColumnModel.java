@@ -97,7 +97,7 @@ public class AppColumnModel extends ColumnModel<App> implements
         rating.setCell(new AppRatingCell());
         comment.setCell(new AppCommentCell());
 
-        rating.setAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+        rating.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 
         list.add(info);
         list.add(name);
