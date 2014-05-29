@@ -1,0 +1,96 @@
+.tagListEditable {
+    cursor: text;   
+}
+
+.tagList ul {
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+}
+
+.tagList li {
+    display: inline-block;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    max-width: 100%;
+    padding: 2px;
+}
+
+.tag {
+    display: inline-block;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    max-width: 100%;
+    border-bottom: 1px solid #B3CEE1;
+    border-right: 1px solid #B3CEE1;
+    background-color: #E0EAF1;
+    color: #3E6D8E;
+    white-space: nowrap;
+}
+
+.tagEditable {
+    cursor: move;   
+}
+
+.tagCaption {
+    display: inline-block;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    max-width: 100%;
+    vertical-align: top;
+    padding: 2px 5px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.tagCaptionEditable {
+    max-width: literal('calc( 100% - 0.55em - 9px )');
+}
+
+.tagDelete {
+    display: inline-block;
+    border-left: 1px solid #d9d9d9;
+    padding: 2px 5px 2px 4px;
+    opacity: 0.6;
+    cursor: pointer;
+}
+      
+.tagDelete:hover {
+    opacity: 1;
+}
+
+.inputListItem {
+    vertical-align: bottom;
+    width: 15px;
+    max-width: 100%;
+}
+
+.inputField {
+    width: 100%;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    border: 0px none;
+    margin: 0px;
+    padding: 3px 2px 3px 6px;
+    font-size: inherit;
+}
+
+.inputField:focus {
+    outline: none;
+}
+
+.previewLeft {
+    margin-left: -1px;
+    border-left: 2px solid #4d90fe;
+    padding-left: 2px
+}
+
+.previewRight {
+    margin-right: -1px;
+    border-right: 2px solid #4d90fe;
+    padding-right: 2px
+}

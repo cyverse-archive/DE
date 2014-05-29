@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module rename-to="TagListTest">
+    <inherits name="com.virilis_software.gwt.taglist.TagList" />    
+    
+    <extend-property name="locale" values="en"/>
+    <set-property-fallback name="locale" value="en"/>
+    
+    <entry-point class="com.virilis_software.gwt.taglist.client.TagListEntryPoint" />
+</module>

@@ -1,0 +1,15 @@
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
+        xmlns:g='urn:import:com.google.gwt.user.client.ui'
+        ui:generateFormat='com.google.gwt.i18n.rebind.format.PropertiesFormat'
+        ui:generateKeys='com.google.gwt.i18n.rebind.keygen.MD5KeyGenerator'
+        ui:generateLocales='default'>
+        
+    <g:HTMLPanel ui:field="tagPanel">
+        <div ui:field="tag">
+            <!-- Necessary to start both tags in one line, otherwise HTML will include a space gap between both divs -->
+            <g:Label ui:field="caption"></g:Label><g:HTMLPanel ui:field="deletePanel">
+               <b>x</b>
+            </g:HTMLPanel>
+        </div>
+    </g:HTMLPanel>
+</ui:UiBinder>

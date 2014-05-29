@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    
+    <groupId>com.virilis_software.gwt</groupId>
+    <artifactId>com.virilis_software.gwt.taglist</artifactId>
+    <version>1.0.1</version>
+    <packaging>jar</packaging>
+    
+    <name>GWT Module - TagList</name>
+    <description>GWT TagList module</description>
+    <url>https://github.com/cbopp/gwt-taglist/wiki</url>    
+
+    <inceptionYear>2014</inceptionYear>
+  
+    <organization>
+        <name>Virilis Software</name>
+        <url>http://www.virilis-software.com</url>
+    </organization>
+    
+    <licenses>
+        <license>
+            <name>Apache License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0</url>
+        </license>
+    </licenses>
+    
+    <developers>
+        <developer>
+            <id>cbopp</id>
+            <name>Christian Bopp</name>
+            <organization>Virilis Software</organization>
+            <timezone>1</timezone>
+        </developer>
+    </developers>
+        
+    <scm>
+        <developerConnection>scm:git:https://github.com/cbopp/gwt-taglist.git</developerConnection>
+        <url>https://github.com/cbopp/gwt-taglist</url>
+    </scm>
+    
+    <issueManagement>
+        <system>GitHub</system>
+        <url>https://github.com/cbopp/gwt-taglist/issues</url>
+    </issueManagement>
+
+    <properties>
+        <!-- Dependencies -->
+        <gwtVersion>2.5.1</gwtVersion>
+
+        <!-- Plugins -->
+        <maven-compiler-plugin>2.5.1</maven-compiler-plugin>
+        <maven-enforcer-plugin>1.1.1</maven-enforcer-plugin>
+        <maven-jar-plugin>2.3</maven-jar-plugin>
+        <maven-source-plugin>2.2</maven-source-plugin>
+
+        <!-- Plugin settings -->
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.source>1.6</maven.compiler.source>
+        <maven.compiler.target>1.6</maven.compiler.target>
+    </properties>
+
+    <dependencies>
+        <!-- GWT -->
+        <dependency>
+            <groupId>com.google.gwt</groupId>
+            <artifactId>gwt-user</artifactId>
+            <version>${gwtVersion}</version>
+            <scope>provided</scope>
+        </dependency>
+        
+         <!-- Misc. -->
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava-gwt</artifactId>
+            <version>15.0</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+    
+    <build>
+        <finalName>${project.artifactId}_${project.version}</finalName>
+        
+        <pluginManagement />
+        
+        <plugins>
+            <!-- 
+                 The Compiler Plugin is used to compile the sources of your project.
+                 The default compiler is javac and is used to compile Java sources.
+            -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>${maven-compiler-plugin}</version>
+                <configuration>
+                    <encoding>${project.build.sourceEncoding}</encoding>
+                    <source>${maven.compiler.source}</source>
+                    <target>${maven.compiler.target}</target>
+                </configuration>
+            </plugin>
+                    
+            <plugin>
+	        <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+		<version>${maven-source-plugin}</version>
+		<executions>
+		    <execution>
+			<id>attach-sources</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>jar-no-fork</goal>
+                        </goals>
+	            </execution>
+                </executions>
+	    </plugin>
+        </plugins>
+    </build>
+
+    <profiles>
+        <profile>
+            <id>iTest</id>
+            <build>
+                <resources>
+                    <resource>
+                        <directory>src/main/resources</directory>
+                    </resource>
+                    <resource>
+                        <directory>src/test/resources</directory>
+                    </resource>
+                    <resource>
+                        <directory>src/main/java</directory>
+                    </resource>
+                    <resource>
+                        <directory>src/test/java</directory>
+                    </resource>
+                </resources>
+            
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>gwt-maven-plugin</artifactId>
+                        <version>2.5.1</version>
+                        <configuration>
+                            <logLevel>DEBUG</logLevel>
+                            <warSourceDirectory>${basedir}/src/test/resources/webapp</warSourceDirectory>
+                            <copyWebapp>true</copyWebapp>
+                            <output>${basedir}/target/iTest/war</output>
+                            <webXml>${basedir}/target/iTest/war/WEB-INF/web.xml</webXml>
+                            <runTarget>tagListTest.html</runTarget>
+                            <hostedWebapp>${basedir}/target/iTest/war</hostedWebapp>
+                            <noServer>false</noServer>                    
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+  </profiles>
+    
+</project>
+
