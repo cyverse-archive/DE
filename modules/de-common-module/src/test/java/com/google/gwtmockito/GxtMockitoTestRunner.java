@@ -7,6 +7,7 @@ import com.sencha.gxt.cell.core.client.form.TriggerFieldCell;
 import com.sencha.gxt.cell.core.client.form.ValueBaseInputCell;
 import com.sencha.gxt.core.client.dom.XDOM;
 import com.sencha.gxt.core.client.dom.XElement;
+import com.sencha.gxt.core.client.resources.CommonStyles;
 import com.sencha.gxt.core.client.resources.StyleInjectorHelper;
 import com.sencha.gxt.dnd.core.client.GridDragSource;
 import com.sencha.gxt.fx.client.Draggable;
@@ -48,6 +49,7 @@ public class GxtMockitoTestRunner extends GwtMockitoTestRunner {
         classes.add(ValueBaseInputCell.class);
         classes.add(TriggerFieldCell.class);
         classes.add(Draggable.class);
+        classes.add(CommonStyles.class);
         return classes;
     }
 
