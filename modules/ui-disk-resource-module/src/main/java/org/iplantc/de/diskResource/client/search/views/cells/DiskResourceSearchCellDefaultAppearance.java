@@ -45,13 +45,6 @@ public class DiskResourceSearchCellDefaultAppearance extends TriggerFieldDefault
         @Source("funnel-icon.png")
         ImageResource triggerArrowFocus();
 
-        @Override
-        @Source("funnel-icon.png")
-        ImageResource triggerArrowFocusOver();
-
-        @Override
-        @Source("funnel-icon.png")
-        ImageResource triggerArrowFocusClick();
     }
 
     public interface DiskResourceSearchCellStyle extends TriggerFieldStyle {

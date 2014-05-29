@@ -341,7 +341,6 @@ public class DiskResourceViewImpl extends Composite implements DiskResourceView,
     }
 
     private void initLiveView() {
-        gridView.setRowHeight(25);
         grid.setLoadMask(true);
         LiveToolItem toolItem = new LiveToolItem(grid);
         toolItem.setWidth(150);
@@ -354,7 +353,7 @@ public class DiskResourceViewImpl extends Composite implements DiskResourceView,
         pagingToolBar.add(new FillToolItem());
         pagingToolBar.add(selectionStatus);
 
-        pagingToolBar.addStyleName(ThemeStyles.getStyle().borderTop());
+        pagingToolBar.addStyleName(ThemeStyles.get().style().borderTop());
         pagingToolBar.getElement().getStyle().setProperty("borderBottom", "none");
     }
 

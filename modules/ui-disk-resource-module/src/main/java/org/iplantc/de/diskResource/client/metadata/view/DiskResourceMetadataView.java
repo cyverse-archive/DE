@@ -540,7 +540,7 @@ public class DiskResourceMetadataView implements IsWidget {
         userMetadataPanel = new ContentPanel(appearance);
         userMetadataPanel.setSize("575", "275"); //$NON-NLS-1$ //$NON-NLS-2$
         userMetadataPanel.setCollapsible(true);
-        userMetadataPanel.getHeader().addStyleName(ThemeStyles.getStyle().borderTop());
+        userMetadataPanel.getHeader().addStyleName(ThemeStyles.get().style().borderTop());
 
         userMetadataPanel.setHeadingHtml(htmlTemplates.boldHeader(I18N.DISPLAY.userMetadata()));
     }
@@ -582,7 +582,7 @@ public class DiskResourceMetadataView implements IsWidget {
         md.setId(unique_avu_id++ + ""); //$NON-NLS-1$
         listStore.add(0, md);
         gridInlineEditing.startEditing(new GridCell(0, 0));
-        gridInlineEditing.getEditor(grid.getColumnModel().getColumn(0)).validate();
+        gridInlineEditing.getEditor(grid.getColumnModel().getColumn(0)).validate(false);
     }
 
     private String getUniqeAttrName(String attrName, int i) {
@@ -767,7 +767,7 @@ public class DiskResourceMetadataView implements IsWidget {
         templateForm.setBodyStyle("background-color: #fff; padding: 5px"); //$NON-NLS-1$
         templateForm.setSize("575", "275"); //$NON-NLS-1$ //$NON-NLS-2$
         templateForm.setHeadingHtml(htmlTemplates.boldHeader(templateCombo.getCurrentValue().getName()));
-        templateForm.getHeader().addStyleName(ThemeStyles.getStyle().borderTop());
+        templateForm.getHeader().addStyleName(ThemeStyles.get().style().borderTop());
         templateContainer = new VerticalLayoutContainer();
         templateContainer.setScrollMode(ScrollMode.AUTOY);
         templateForm.add(templateContainer);
