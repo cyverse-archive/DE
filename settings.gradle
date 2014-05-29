@@ -40,3 +40,5 @@ project( ':ui-pipeline-builder-module').projectDir = new File( rootProject.proje
 include ':ui-pipelines-module'
 project( ':ui-pipelines-module').projectDir = new File( rootProject.projectDir, uiPipelinesModuleSubtreePrefix)
 
+include ':gwt-taglist'
+project ( ':gwt-taglist').projectDir = new File( rootProject.projectDir, gwtTagListViewSubtreePrefix)

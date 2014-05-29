@@ -115,7 +115,6 @@ project(':de') {
 
     dependencies {
         applet "org.irods.idrop:idrop-lite:2.0.1-SNAPSHOT@jar"
-
         gwt project(':ui-disk-resource-module')
         gwt project(':ui-commons-module')
         gwt project(':ui-applications-module')
@@ -135,12 +134,12 @@ project(':de') {
         compile project(':ui-pipelines-module')
         compile project(':ui-apps-integration')
         compile project(':analyses-module')
-
     }
 
     gwt {
         modules 'org.iplantc.de.discoveryenvironment'
         devModules 'org.iplantc.de.discoveryenvironmentDev'
+ 	src += files(project(':gwt-taglist').sourceSets.main.allJava.srcDirs) + files(project(':gwt-taglist').sourceSets.main.output.resourcesDir)
         src += files(project(':analyses-module').sourceSets.main.allJava.srcDirs) + files(project(':analyses-module').sourceSets.main.output.resourcesDir)
         src += files(project(':ui-apps-widgets-module').sourceSets.main.allJava.srcDirs) + files(project(':ui-apps-widgets-module').sourceSets.main.output.resourcesDir)
         src += files(project(':ui-apps-integration').sourceSets.main.allJava.srcDirs) + files(project(':ui-apps-integration').sourceSets.main.output.resourcesDir)

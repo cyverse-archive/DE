@@ -198,8 +198,6 @@ project(':ui-commons-module') {
         compile "com.sencha.gxt:gxt:$gxtVersion"
         compile project(':ui-resources-module')
         compile project(':de-common-module')
-
-
         testCompile "com.google.gwt.gwtmockito:gwtmockito:$gwtMockitoVer"
         testCompile project(':de-common-module').sourceSets.test.output
     }
@@ -274,4 +272,13 @@ project(':clavin-java') {
         testCompile "junit:junit:$jUnitVersion"
     }
 }
+project(':gwt-taglist') {
+    apply plugin: 'gwt-base'
+    gwt { gwtVersion="$gwtVer" }
+
+    dependencies {
+ 	compile "com.google.guava:guava-gwt:$guavaVer"
+   }
+}
+
 
