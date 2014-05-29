@@ -276,8 +276,10 @@ project(':gwt-taglist') {
     apply plugin: 'gwt-base'
     gwt { gwtVersion="$gwtVer" }
 
+    compileTestJava.enabled = false
+    test.enabled = false
     dependencies {
- 	compile "com.google.guava:guava-gwt:$guavaVer"
+ 	compile "com.google.guava:guava-gwt:15.0"
    }
 }
 
