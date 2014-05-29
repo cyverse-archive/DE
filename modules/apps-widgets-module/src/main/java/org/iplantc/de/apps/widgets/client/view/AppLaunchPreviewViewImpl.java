@@ -37,7 +37,6 @@ public class AppLaunchPreviewViewImpl extends Window implements AppLaunchPreview
         setSize("640", "375");
         setBorders(false);
         editorDriver.initialize(this);
-        this.getHideButton();
     }
 
     @Override
