@@ -55,8 +55,8 @@ import com.sencha.gxt.data.shared.ListStore;
 import com.sencha.gxt.data.shared.ModelKeyProvider;
 import com.sencha.gxt.data.shared.SortDir;
 import com.sencha.gxt.data.shared.Store.StoreSortInfo;
+import com.sencha.gxt.theme.base.client.listview.ListViewCustomAppearance;
 import com.sencha.gxt.widget.core.client.ListView;
-import com.sencha.gxt.widget.core.client.ListViewCustomAppearance;
 import com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer;
 
 import java.util.List;
@@ -250,7 +250,7 @@ public class NotificationListView implements IsWidget {
     /**
      * Process notifications
      * 
-     * @param list of notifications to be processed.
+     * @param notifications list of notifications to be processed.
      */
     public void processMessages(final List<Notification> notifications) {
         // cache before removing
