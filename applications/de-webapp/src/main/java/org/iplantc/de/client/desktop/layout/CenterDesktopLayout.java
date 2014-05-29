@@ -7,7 +7,7 @@ package org.iplantc.de.client.desktop.layout;
 
 import org.iplantc.de.client.views.windows.IPlantWindowInterface;
 
-import com.google.gwt.user.client.Element;
+import com.google.gwt.dom.client.Element;
 
 import com.sencha.gxt.core.client.util.Point;
 

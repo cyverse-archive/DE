@@ -6,9 +6,9 @@ import org.iplantc.de.client.models.search.FileSizeRange.FileSizeUnit;
 import org.iplantc.de.diskResource.client.search.events.SubmitDiskResourceQueryEvent;
 
 import com.google.common.collect.Lists;
+import com.google.gwt.dom.client.Element;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.user.client.Element;
 import com.google.gwtmockito.GwtMockito;
 import com.google.gwtmockito.GxtMockitoTestRunner;
 import com.google.gwtmockito.fakes.FakeSimpleBeanEditorDriverProvider;
@@ -18,10 +18,7 @@ import com.sencha.gxt.widget.core.client.event.SelectEvent;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.verify;
-
+import static org.mockito.Mockito.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

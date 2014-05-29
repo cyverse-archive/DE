@@ -9,7 +9,7 @@ import org.iplantc.de.client.desktop.layout.DesktopLayout.RequestType;
 import org.iplantc.de.client.utils.IplantWindowManager;
 import org.iplantc.de.client.views.windows.IPlantWindowInterface;
 
-import com.google.gwt.user.client.Element;
+import com.google.gwt.dom.client.Element;
 
 public abstract class LimitedDesktopLayout {
 

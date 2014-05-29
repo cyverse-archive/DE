@@ -1,12 +1,12 @@
 package org.iplantc.de.apps.widgets.client.view.editors.style;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.EventTarget;
 import com.google.gwt.event.dom.client.MouseMoveEvent;
 import com.google.gwt.event.dom.client.MouseOutEvent;
 import com.google.gwt.event.dom.client.MouseOverEvent;
 import com.google.gwt.user.client.DOM;
-import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -92,7 +92,7 @@ public class AppWizardQuickTip extends ToolTip {
     @Override
     protected void onTargetOut(Event ce) {
         EventTarget to = ce.getRelatedEventTarget();
-        if (to == null || (Element.is(target.getElement()) && Element.is(to) && !DOM.isOrHasChild(target.getElement(), (Element)Element.as(to)))) {
+        if (to == null || (Element.is(target) && Element.is(to) && !DOM.isOrHasChild(target, Element.as(to)))) {
             super.onTargetOut(ce);
         }
     }
@@ -104,11 +104,11 @@ public class AppWizardQuickTip extends ToolTip {
         }
 
         Element t = ce.getEventTarget().cast();
-        while (t != null && t != target.getElement()) {
+        while (t != null && t != target) {
             if (hasTip(t)) {
                 break;
             }
-            t = (Element)t.getParentElement();
+            t = t.getParentElement();
         }
 
         boolean hasTip = t != null && hasTip(t);

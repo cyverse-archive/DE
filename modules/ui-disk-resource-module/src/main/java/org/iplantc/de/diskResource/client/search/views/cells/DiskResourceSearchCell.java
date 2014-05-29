@@ -162,9 +162,8 @@ public class DiskResourceSearchCell extends TriggerFieldCell<String> implements 
     }
 
     @Override
-    protected boolean isFocusClick(XElement parent, XElement target) {
-        boolean result = parent.isOrHasChild(target) || (searchForm != null && searchForm.getElement().isOrHasChild(target));
-        return result;
+    protected boolean isFocusedWithTarget(Element parent, Element target) {
+        return super.isFocusedWithTarget(parent, target) || (searchForm != null && searchForm.getElement().isOrHasChild(target));
     }
 
     @Override

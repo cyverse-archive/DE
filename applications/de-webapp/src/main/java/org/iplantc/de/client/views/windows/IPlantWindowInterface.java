@@ -5,10 +5,10 @@ import org.iplantc.de.client.models.WindowState;
 import org.iplantc.de.client.utils.DEWindowManager;
 import org.iplantc.de.commons.client.views.window.configs.WindowConfig;
 
-import com.google.gwt.user.client.Element;
+import com.google.gwt.dom.client.Element;
 import com.google.gwt.user.client.ui.IsWidget;
 
-import com.sencha.gxt.core.client.Style.AnchorAlignment;
+import com.sencha.gxt.core.client.Style;
 import com.sencha.gxt.core.client.util.Point;
 import com.sencha.gxt.widget.core.client.Component;
 import com.sencha.gxt.widget.core.client.Window;
@@ -71,7 +71,7 @@ public interface IPlantWindowInterface extends HasActivateHandlers<Window>,
 
     int getHeaderOffSetHeight();
 
-    void alignTo(Element e, AnchorAlignment align, int[] offsets);
+    void alignTo(Element elem, Style.AnchorAlignment alignment, int offsetX, int offsetY);
 
     void hide();
 
