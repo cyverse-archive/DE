@@ -23,8 +23,8 @@ public abstract class OAuthCallbackServlet extends HttpServlet {
     private static final String CALLBACK_PATH = "oauth/access-code";
     private static final String ERROR_PARAM = "error";
     private static final String AUTH_CODE_PARAM = "code";
-    private static final String REDIRECT_URI_PARAM = "redirect_uri";
     private static final String AUTH_DENIED_PARAM = "auth-denied";
+    private static final String STATE_PARAM = "state";
     private static final String SERVICE_NAME = "Agave";
 
     private static final Logger LOG = Logger.getLogger(OAuthCallbackServlet.class);
@@ -70,10 +70,14 @@ public abstract class OAuthCallbackServlet extends HttpServlet {
             return;
         }
 
-        final String redirectUri = rebuildRedirectUri(req);
-        LOG.warn("Redirect URI: " + redirectUri);
+        final String state = req.getParameter(STATE_PARAM);
+        if (Strings.isNullOrEmpty(state)) {
+            LOG.error("no opaque state in query string: " + req.getQueryString());
+            resp.sendError(resp.SC_BAD_REQUEST);
+            return;
+        }
 
-        final HttpGet request = urlConnector.getRequest(req, serviceCallbackUrl(apiName, authCode, redirectUri));
+        final HttpGet request = urlConnector.getRequest(req, serviceCallbackUrl(apiName, authCode, state));
         final HttpClient client = new DefaultHttpClient();
         final HttpResponse response = client.execute(request);
 
@@ -82,6 +86,7 @@ public abstract class OAuthCallbackServlet extends HttpServlet {
         if (statusCode < 200 || statusCode > 299) {
             LOG.warn("error while trying to obtain access token: " + responseBody);
             authorizationErrorRedirect(req, resp);
+            return;
         }
 
         resp.sendRedirect(authorizationSuccessRedirectUrl(req, responseBody));
@@ -106,17 +111,11 @@ public abstract class OAuthCallbackServlet extends HttpServlet {
         }
     }
 
-    private String rebuildRedirectUri(HttpServletRequest req) {
-        final String replacementPattern = "\\Q" + req.getContextPath() + "\\E$";
-        final String baseUrl = deProps.getDeBaseUrl().replaceAll(replacementPattern, "");
-        return baseUrl + req.getRequestURI();
-    }
-
-    private String serviceCallbackUrl(String apiName, String authCode, String redirectUri) {
+    private String serviceCallbackUrl(String apiName, String authCode, String state) {
         try {
             return new URIBuilder(deProps.getProtectedDonkeyBaseUrl() + CALLBACK_PATH + "/" + apiName)
                     .addParameter(AUTH_CODE_PARAM, authCode)
-                    .addParameter(REDIRECT_URI_PARAM, redirectUri)
+                    .addParameter(STATE_PARAM, state)
                     .toString();
         } catch (URISyntaxException e) {
             LOG.error("unable to build the auth code service callback URI", e);
