@@ -9,6 +9,7 @@ import org.iplantc.de.client.util.DiskResourceUtil;
 import org.iplantc.de.client.util.JsonUtil;
 import org.iplantc.de.commons.client.ErrorHandler;
 
+import com.google.common.collect.Lists;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONParser;
@@ -50,7 +51,7 @@ public class FileSaveCallback implements AsyncCallback<String> {
     @Override
     public void onFailure(Throwable caught) {
         maskingContainer.unmask();
-        ErrorHandler.post(org.iplantc.de.resources.client.messages.I18N.ERROR.fileUploadFailed(fileName), caught);
+        ErrorHandler.post(org.iplantc.de.resources.client.messages.I18N.ERROR.fileUploadsFailed(Lists.newArrayList(fileName)), caught);
     }
 
 }

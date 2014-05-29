@@ -7,6 +7,7 @@ import org.iplantc.de.client.util.JsonUtil;
 import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.resources.client.messages.I18N;
 
+import com.google.common.collect.Lists;
 import com.google.gwt.json.client.JSONBoolean;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONString;
@@ -33,7 +34,7 @@ public class DefaultUploadCompleteHandler extends UploadCompleteHandler {
     protected JSONObject buildPayload(String sourceUrl, String json) throws Exception {
         JSONObject jsonObj = JsonUtil.getObject(JsonUtil.formatString(json));
         if (jsonObj == null) {
-            throw new Exception(I18N.ERROR.fileUploadFailed(sourceUrl) + ": " + json); //$NON-NLS-1$
+            throw new Exception(I18N.ERROR.fileUploadsFailed(Lists.newArrayList(sourceUrl)) + ": " + json); //$NON-NLS-1$
         }
 
         // since our current file info objects don't have a parent folder id, we have to add it in.
@@ -93,7 +94,7 @@ public class DefaultUploadCompleteHandler extends UploadCompleteHandler {
             String error = d.getElementsByTagName("error").item(0).getFirstChild().getNodeValue(); //$NON-NLS-1$
             return error;
         } catch (Exception e) {
-            return I18N.ERROR.fileUploadFailed(sourceUrl) + ": " + message; //$NON-NLS-1$
+            return I18N.ERROR.fileUploadsFailed(Lists.newArrayList(sourceUrl)) + ": " + message; //$NON-NLS-1$
         }
     }
 
