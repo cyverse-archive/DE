@@ -11,6 +11,7 @@
 	<inherits name='com.sencha.gxt.ui.GXT' />
 	<stylesheet src="reset.css" />
 	<inherits name='com.sencha.gxt.theme.gray.Gray' />
+    <inherits name="com.google.common.collect.Collect"/>
 
 	<inherits name='org.iplantc.de.DiscoveryEnvironmentCommon' />
     <inherits name="org.iplantc.de.diskResource.diskresource"/>

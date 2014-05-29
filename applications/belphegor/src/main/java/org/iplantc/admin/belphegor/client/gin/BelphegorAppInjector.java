@@ -7,14 +7,11 @@ import org.iplantc.admin.belphegor.client.systemMessage.SystemMessageView;
 import org.iplantc.admin.belphegor.client.toolRequest.ToolRequestView;
 import org.iplantc.admin.belphegor.client.views.BelphegorView;
 
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.inject.client.GinModules;
 import com.google.gwt.inject.client.Ginjector;
 
 @GinModules(BelphegorAppsGinModule.class)
 public interface BelphegorAppInjector extends Ginjector {
-
-    public static final BelphegorAppInjector INSTANCE = GWT.create(BelphegorAppInjector.class);
 
     BelphegorView.Presenter getBelphegorPresenter();
 

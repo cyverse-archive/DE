@@ -11,6 +11,7 @@ import org.iplantc.de.shared.services.PropertyServiceFacade;
 import org.iplantc.de.shared.services.ServiceCallWrapper;
 
 import com.google.gwt.core.client.EntryPoint;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.RootPanel;
@@ -21,6 +22,7 @@ import java.util.Map;
  * Entry point classes define <code>onModuleLoad()</code>.
  */
 public class Belphegor implements EntryPoint {
+    private final BelphegorAppInjector injector = GWT.create(BelphegorAppInjector.class);
     /**
      * This is the entry point method.
      */
@@ -69,7 +71,7 @@ public class Belphegor implements EntryPoint {
     }
 
     private void initApp() {
-        BelphegorView.Presenter belphegorPresenter = BelphegorAppInjector.INSTANCE.getBelphegorPresenter();
+        BelphegorView.Presenter belphegorPresenter = injector.getBelphegorPresenter();
         belphegorPresenter.go(RootPanel.get());
 
         String keepaliveTarget = ToolIntegrationAdminProperties.getInstance().getKeepaliveTarget();

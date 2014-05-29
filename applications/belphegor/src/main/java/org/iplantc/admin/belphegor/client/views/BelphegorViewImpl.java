@@ -5,7 +5,6 @@ import org.iplantc.admin.belphegor.client.BelphegorStyle;
 import org.iplantc.admin.belphegor.client.Constants;
 import org.iplantc.admin.belphegor.client.I18N;
 import org.iplantc.admin.belphegor.client.apps.presenter.BelphegorAppsViewPresenterImpl;
-import org.iplantc.admin.belphegor.client.gin.BelphegorAppInjector;
 import org.iplantc.admin.belphegor.client.models.ToolIntegrationAdminProperties;
 import org.iplantc.admin.belphegor.client.refGenome.RefGenomeView;
 import org.iplantc.admin.belphegor.client.systemMessage.SystemMessageView;
@@ -54,7 +53,7 @@ public class BelphegorViewImpl extends Composite implements BelphegorView {
     }
 
     @UiField(provided = true)
-    BelphegorResources res = BelphegorAppInjector.INSTANCE.getResources();
+    BelphegorResources res;
 
     @UiField(provided = true)
     IplantDisplayStrings strings = I18N.DISPLAY;
@@ -68,11 +67,18 @@ public class BelphegorViewImpl extends Composite implements BelphegorView {
     private final MyTemplate template;
 
     @Inject
-    public BelphegorViewImpl(MyTemplate template) {
+    public BelphegorViewImpl(MyTemplate template,
+                             final BelphegorAppsViewPresenterImpl presenter,
+                             final RefGenomeView.Presenter refGenPresenter,
+                             final ToolRequestView.Presenter toolReqPresenter,
+                             final SystemMessageView.Presenter sysMsgPresenter,
+                             final ToolIntegrationAdminProperties toolIntProps,
+                             final BelphegorResources resources) {
         this.template = template;
+        this.res = resources;
         res.css().ensureInjected();
         initWidget(uiBinder.createAndBindUi(this));
-        init();
+        init(presenter, refGenPresenter, toolReqPresenter, sysMsgPresenter, toolIntProps);
     }
 
     @UiFactory
@@ -80,22 +86,16 @@ public class BelphegorViewImpl extends Composite implements BelphegorView {
         return new HtmlLayoutContainer(template.getTemplate(res.css(), UriUtils.fromSafeConstant(Constants.CLIENT.iplantHome())));
     }
 
-    private void init() {
+    private void init(final BelphegorAppsViewPresenterImpl presenter,
+                      final RefGenomeView.Presenter refGenPresenter,
+                      final ToolRequestView.Presenter toolReqPresenter,
+                      final SystemMessageView.Presenter sysMsgPresenter,
+                      final ToolIntegrationAdminProperties toolIntProps) {
         buildUserMenu();
-
-        BelphegorAppsViewPresenterImpl presenter = BelphegorAppInjector.INSTANCE.getAppsViewPresenter();
-        String betaGroupId = ToolIntegrationAdminProperties.getInstance()
-                .getDefaultBetaAnalysisGroupId();
-        HasId betaGroup = CommonModelUtils.createHasIdFromString(betaGroupId);
+        HasId betaGroup = CommonModelUtils.createHasIdFromString(toolIntProps.getDefaultBetaAnalysisGroupId());
         presenter.go(appsPanel, betaGroup, null);
-        
-        RefGenomeView.Presenter refGenPresenter = BelphegorAppInjector.INSTANCE.getReferenceGenomePresenter();
         refGenPresenter.go(refGenomePanel);
-
-        ToolRequestView.Presenter toolReqPresenter = BelphegorAppInjector.INSTANCE.getToolRequestPresenter();
         toolReqPresenter.go(toolRequestPanel);
-        
-        SystemMessageView.Presenter sysMsgPresenter = BelphegorAppInjector.INSTANCE.getSystemMessagePresenter();
         sysMsgPresenter.go(systemMessagesPanel);
     }
 
