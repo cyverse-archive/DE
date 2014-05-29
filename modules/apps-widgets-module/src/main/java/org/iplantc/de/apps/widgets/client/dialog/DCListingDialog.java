@@ -40,10 +40,10 @@ public class DCListingDialog extends IPlantDialog {
         public void onSelectionChanged(SelectionChangedEvent<DeployedComponent> event) {
             List<DeployedComponent> items = event.getSelection();
             if (items != null && items.size() > 0) {
-                getButtonById(PredefinedButton.OK.toString()).setEnabled(true);
+                getButton(PredefinedButton.OK).setEnabled(true);
                 selectedComponent = items.get(0);
             } else {
-                getButtonById(PredefinedButton.OK.toString()).setEnabled(false);
+                getButton(PredefinedButton.OK).setEnabled(false);
                 selectedComponent = null;
             }
 
@@ -60,7 +60,7 @@ public class DCListingDialog extends IPlantDialog {
         setHeadingText("Installed Tools");
         setHideOnButtonClick(false);
         getOkButton().setEnabled(false);
-        getButtonById(PredefinedButton.CANCEL.toString()).addSelectHandler(new SelectHandler() {
+        getButton(PredefinedButton.CANCEL).addSelectHandler(new SelectHandler() {
 
             @Override
             public void onSelect(SelectEvent event) {
@@ -68,7 +68,7 @@ public class DCListingDialog extends IPlantDialog {
                 hide();
             }
         });
-        getButtonById(PredefinedButton.OK.toString()).addSelectHandler(new SelectHandler() {
+        getButton(PredefinedButton.OK).addSelectHandler(new SelectHandler() {
 
             @Override
             public void onSelect(SelectEvent event) {
