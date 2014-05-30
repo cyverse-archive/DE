@@ -18,3 +18,8 @@ modules/analyses-module/.gitignore
 modules/analyses-module/.project
 modules/analyses-module/.settings/org.eclipse.jdt.core.prefs
 modules/analyses-module/.gwt/.gwt-log
+modules/gwt-taglist/.classpath
+modules/gwt-taglist/.project
+modules/gwt-taglist/bin/.gitignore
+modules/gwt-taglist/.settings/org.eclipse.jdt.core.prefs
+modules/gwt-taglist/target/
