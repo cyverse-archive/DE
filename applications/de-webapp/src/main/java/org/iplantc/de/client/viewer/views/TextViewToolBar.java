@@ -2,8 +2,6 @@ package org.iplantc.de.client.viewer.views;
 
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 
-import com.sencha.gxt.widget.core.client.event.SelectEvent;
-import com.sencha.gxt.widget.core.client.event.SelectEvent.SelectHandler;
 import com.sencha.gxt.widget.core.client.form.CheckBox;
 import com.sencha.gxt.widget.core.client.toolbar.FillToolItem;
 import com.sencha.gxt.widget.core.client.toolbar.SeparatorToolItem;
@@ -24,20 +22,10 @@ public class TextViewToolBar extends AbstractToolBar {
         add(cbxWrap);
         saveBtn.setEnabled(editing);
         setEditingStatus(editing);
-        addSaveHandler();
         add(new FillToolItem());
         add(editStatus);
         setEditingStatus(editing);
 
-    }
-
-    private void addSaveHandler() {
-        saveBtn.addSelectHandler(new SelectHandler() {
-            @Override
-            public void onSelect(SelectEvent event) {
-                save();
-            }
-        });
     }
 
     protected void setEditingStatus(boolean editing) {
@@ -69,6 +57,12 @@ public class TextViewToolBar extends AbstractToolBar {
     @Override
     public void save() {
         view.save();
+
+    }
+
+    @Override
+    public void refresh() {
+        view.refresh();
 
     }
 

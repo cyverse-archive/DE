@@ -206,9 +206,14 @@ public class TextViewerImpl extends AbstractFileViewer implements EditingSupport
 
     @Override
     public void setData(Object data) {
-        clearDisplay();
         boolean allowEditing = pagingToolbar.getToltalPages() == 1 && editing;
-        jso = displayData(this, center.getElement(), infoType, (String)data, center.getElement().getOffsetWidth(), center.getElement().getOffsetHeight(), toolbar.isWrapText(), allowEditing);
+        if (jso == null) {
+            clearDisplay();
+            jso = displayData(this, center.getElement(), infoType, (String)data, center.getElement().getOffsetWidth(), center.getElement().getOffsetHeight(), toolbar.isWrapText(), allowEditing);
+        } else {
+            updateData(jso, (String)data);
+            setDirty(false);
+        }
         toolbar.setEditing(allowEditing);
         /**
          * XXX - SS - support editing for files with only one page
@@ -222,11 +227,12 @@ public class TextViewerImpl extends AbstractFileViewer implements EditingSupport
 
     @Override
     public void setDirty(Boolean dirty) {
-        if (presenter.isDirty() == dirty) {
-            return;
-        }
         presenter.setVeiwDirtyState(dirty);
     }
+    
+    public static native void updateData(JavaScriptObject jso, String val) /*-{
+		jso.setValue(val);
+    }-*/;
 
     public static native JavaScriptObject displayData(final TextViewerImpl instance, XElement textArea, String mode, String val, int width, int height, boolean wrap, boolean editing) /*-{
 		var myCodeMirror = $wnd.CodeMirror(textArea, {

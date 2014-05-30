@@ -39,23 +39,11 @@ public class StructuredTextViewToolBar extends AbstractToolBar {
         add(new SeparatorToolItem());
         addSkipRowsFields();
         addHeaderRowChkBox();
-        addSaveHandler();
         add(new FillToolItem());
         add(editStatus);
         setEditingStatus(editing);
     }
 
-    private void addSaveHandler() {
-        saveBtn.addSelectHandler(new SelectHandler() {
-
-            @Override
-            public void onSelect(SelectEvent event) {
-                save();
-
-            }
-        });
-
-    }
 
     private void addAddRowBtn() {
         addRowBtn = new TextButton("", IplantResources.RESOURCES.add());
@@ -159,6 +147,11 @@ public class StructuredTextViewToolBar extends AbstractToolBar {
     public void save() {
         view.save();
 
+    }
+
+    @Override
+    public void refresh() {
+        view.refresh();
     }
 
 }

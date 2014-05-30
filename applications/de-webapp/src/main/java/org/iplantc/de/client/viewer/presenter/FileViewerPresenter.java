@@ -50,6 +50,8 @@ public class FileViewerPresenter implements FileViewer.Presenter {
 
     private final boolean isVizTabFirst;
 
+    private String title;
+
     public FileViewerPresenter(File file, JSONObject manifest, boolean editing, boolean isVizTabFirst) {
         this.manifest = manifest;
         viewers = new ArrayList<FileViewer>();
@@ -68,6 +70,7 @@ public class FileViewerPresenter implements FileViewer.Presenter {
     @Override
     public void go(HasOneWidget container, Folder parentFolder) {
         this.container = (FileViewerWindow)container;
+        title = this.container.getTitle();
         composeView(parentFolder);
     }
 
@@ -148,11 +151,7 @@ public class FileViewerPresenter implements FileViewer.Presenter {
         if (isDirty) {
             container.setTitle(container.getTitle() + "<span style='color:red; vertical-align: super'> * </span>");
         } else {
-            String temp = container.getTitle();
-            if (temp.endsWith("*")) {
-                temp = temp.substring(0, temp.length() - 1);
-            }
-            container.setTitle(temp);
+            container.setTitle(title);
         }
     }
 

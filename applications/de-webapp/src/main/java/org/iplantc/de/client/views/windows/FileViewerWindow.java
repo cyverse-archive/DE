@@ -114,8 +114,6 @@ public class FileViewerWindow extends IplantWindowBase implements IsMaskable {
                     presenter.cleanUp();
                     getFileManifest();
                     setTitle(file.getName());
-                } else {
-                    presenter.refreshViews();
                 }
                 if (presenter != null) {
                     presenter.setVeiwDirtyState(false);

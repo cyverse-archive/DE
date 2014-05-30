@@ -117,7 +117,6 @@ public class StrcturedTextViewerImpl extends StructuredTextViewer {
     private int columns;
     private final Folder parentFolder;
 
-
     public StrcturedTextViewerImpl(File file, String infoType, Folder parentFolder) {
         super(file, infoType);
         this.parentFolder = parentFolder;
@@ -418,11 +417,11 @@ public class StrcturedTextViewerImpl extends StructuredTextViewer {
         SimpleContainer widget = new SimpleContainer();
         widget.add(container);
         widget.addHandler(new SaveFileEventHandler() {
-            
+
             @Override
             public void onSave(SaveFileEvent event) {
                 save();
-                
+
             }
         }, SaveFileEvent.TYPE);
         return widget;
@@ -481,8 +480,7 @@ public class StrcturedTextViewerImpl extends StructuredTextViewer {
 
     @Override
     public void refresh() {
-        // do nothing intentionally
-
+        loadData();
     }
 
     @Override
@@ -514,6 +512,7 @@ public class StrcturedTextViewerImpl extends StructuredTextViewer {
     @Override
     public void save() {
         store.commitChanges();
+        container.mask(I18N.DISPLAY.savingMask());
         if (file == null) {
             final SaveAsDialog saveDialog = new SaveAsDialog(parentFolder);
             saveDialog.addOkButtonSelectHandler(new SelectHandler() {
@@ -521,7 +520,7 @@ public class StrcturedTextViewerImpl extends StructuredTextViewer {
                 @Override
                 public void onSelect(SelectEvent event) {
                     if (saveDialog.isVaild()) {
-                        container.mask(I18N.DISPLAY.savingMask());
+
                         String destination = saveDialog.getSelectedFolder().getPath() + "/" + saveDialog.getFileName();
                         ServicesInjector.INSTANCE.getFileEditorServiceFacade().uploadTextAsFile(destination, getEditorContent(), true, new FileSaveCallback(destination, true, container));
                         saveDialog.hide();
@@ -539,7 +538,7 @@ public class StrcturedTextViewerImpl extends StructuredTextViewer {
             saveDialog.show();
             saveDialog.toFront();
         } else {
-        ServicesInjector.INSTANCE.getFileEditorServiceFacade().uploadTextAsFile(file.getPath(), getEditorContent(), false, new FileSaveCallback(file.getPath(), false, container));
+            ServicesInjector.INSTANCE.getFileEditorServiceFacade().uploadTextAsFile(file.getPath(), getEditorContent(), false, new FileSaveCallback(file.getPath(), false, container));
         }
     }
 
