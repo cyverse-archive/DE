@@ -22,10 +22,11 @@ public abstract class OAuthCallbackServlet extends HttpServlet {
 
     private static final String CALLBACK_PATH = "oauth/access-code";
     private static final String ERROR_PARAM = "error";
+    private static final String ERROR_DESCRIPTION_PARAM = "error_description";
+    private static final String ERROR_URI_PARAM = "error_uri";
     private static final String AUTH_CODE_PARAM = "code";
-    private static final String AUTH_DENIED_PARAM = "auth-denied";
     private static final String STATE_PARAM = "state";
-    private static final String SERVICE_NAME = "Agave";
+    private static final String API_NAME_PARAM = "api_name";
 
     private static final Logger LOG = Logger.getLogger(OAuthCallbackServlet.class);
 
@@ -48,48 +49,33 @@ public abstract class OAuthCallbackServlet extends HttpServlet {
     @Override
     protected void doGet(final HttpServletRequest req, final HttpServletResponse resp)
             throws ServletException, IOException {
-        if (isError(req)) {
-            authorizationErrorRedirect(req, resp);
+        final AuthorizationResponse authResponse = new AuthorizationResponse(req);
+        if (authResponse.isError()) {
+            authResponse.authorizationErrorRedirect(resp);
         } else {
-            callAuthCodeService(req, resp);
+            callAuthCodeService(authResponse, req, resp);
         }
     }
 
-    private void callAuthCodeService(final HttpServletRequest req, final HttpServletResponse resp) throws IOException {
-        final String apiName = extractApiName(req.getPathInfo());
-        if (Strings.isNullOrEmpty(apiName)) {
-            LOG.error("no API name found in URL path: " + req.getPathInfo());
-            resp.sendError(resp.SC_BAD_REQUEST);
-            return;
-        }
-
-        final String authCode = req.getParameter(AUTH_CODE_PARAM);
-        if (Strings.isNullOrEmpty(authCode)) {
-            LOG.error("no authorization code in query string: " + req.getQueryString());
-            resp.sendError(resp.SC_BAD_REQUEST);
-            return;
-        }
-
-        final String state = req.getParameter(STATE_PARAM);
-        if (Strings.isNullOrEmpty(state)) {
-            LOG.error("no opaque state in query string: " + req.getQueryString());
-            resp.sendError(resp.SC_BAD_REQUEST);
-            return;
-        }
-
-        final HttpGet request = urlConnector.getRequest(req, serviceCallbackUrl(apiName, authCode, state));
+    private void callAuthCodeService(final AuthorizationResponse authResponse,
+                                     final HttpServletRequest req,
+                                     final HttpServletResponse resp)
+            throws IOException {
         final HttpClient client = new DefaultHttpClient();
-        final HttpResponse response = client.execute(request);
-
-        final int statusCode = response.getStatusLine().getStatusCode();
-        final String responseBody = readResponse(response);
-        if (statusCode < 200 || statusCode > 299) {
-            LOG.warn("error while trying to obtain access token: " + responseBody);
-            authorizationErrorRedirect(req, resp);
-            return;
+        try {
+            final HttpGet request = urlConnector.getRequest(req, serviceCallbackUrl(authResponse));
+            final HttpResponse response = client.execute(request);
+            final int statusCode = response.getStatusLine().getStatusCode();
+            final String responseBody = readResponse(response);
+            if (statusCode < 200 || statusCode > 299) {
+                LOG.warn("error while trying to obtain access token: " + responseBody);
+                authResponse.serviceErrorRedirect(resp);
+            } else {
+                resp.sendRedirect(authorizationSuccessRedirectUrl(req, responseBody));
+            }
+        } finally {
+            client.getConnectionManager().shutdown();
         }
-
-        resp.sendRedirect(authorizationSuccessRedirectUrl(req, responseBody));
     }
 
     private String readResponse(HttpResponse response) throws IOException {
@@ -111,11 +97,12 @@ public abstract class OAuthCallbackServlet extends HttpServlet {
         }
     }
 
-    private String serviceCallbackUrl(String apiName, String authCode, String state) {
+    private String serviceCallbackUrl(final AuthorizationResponse authResponse) {
         try {
-            return new URIBuilder(deProps.getProtectedDonkeyBaseUrl() + CALLBACK_PATH + "/" + apiName)
-                    .addParameter(AUTH_CODE_PARAM, authCode)
-                    .addParameter(STATE_PARAM, state)
+            final String baseUrl = deProps.getProtectedDonkeyBaseUrl() + CALLBACK_PATH;
+            return new URIBuilder(baseUrl + "/" + authResponse.getApiName())
+                    .addParameter(AUTH_CODE_PARAM, authResponse.getAuthCode())
+                    .addParameter(STATE_PARAM, authResponse.getState())
                     .toString();
         } catch (URISyntaxException e) {
             LOG.error("unable to build the auth code service callback URI", e);
@@ -123,30 +110,173 @@ public abstract class OAuthCallbackServlet extends HttpServlet {
         }
     }
 
-    private void authorizationErrorRedirect(final HttpServletRequest req, final HttpServletResponse resp)
-            throws IOException {
-        final String errorCode = req.getHeader(ERROR_PARAM);
-        LOG.warn("unable to obtain authorization: " + errorCode);
-        resp.sendRedirect(authorizationErrorRedirectUrl(req));
-    }
+    // Default descriptions for request error codes.
+    private static final String ERR_DESC_INVALID_REQUEST
+            = "The authorization request sent to the OAuth server by the DE was invalid.";
+    private static final String ERR_DESC_UNAUTHORIZED_CLIENT
+            = "The DE is not authorized to request access to the API.";
+    private static final String ERR_DESC_ACCESS_DENIED
+            = "Either the OAuth server or the user denied access.";
+    private static final String ERR_DESC_UNSUPPORTED_RESPONSE_TYPE
+            = "The OAuth server doesn't support the requested response type.";
+    private static final String ERR_DESC_INVALID_SCOPE
+            = "The OAuth server doesn't support the requested scope.";
+    private static final String ERR_DESC_SERVER
+            = "The OAuth server encountered an error.";
+    private static final String ERR_DESC_TEMPORARILY_UNAVAILABLE
+            = "The OAuth server is temporarily unavailable.";
+    private static final String ERR_DESC_OAUTH_CONFIG
+            = "The DE's OAuth configuration is invalid.";
+    private static final String ERR_DESC_MISSING_AUTH_CODE
+            = "No authorization code or error code was sent by the OAuth server.";
+    private static final String ERR_DESC_MISSING_STATE
+            = "No state information was sent by the OAuth server.";
+    private static final String ERR_DESC_SERVICE
+            = "The DE service encountered an error.";
 
-    private String authorizationErrorRedirectUrl(final HttpServletRequest req) {
-        try {
-            return new URIBuilder(req.getContextPath())
-                    .addParameter(AUTH_DENIED_PARAM, SERVICE_NAME)
-                    .build()
-                    .toString();
-        } catch (URISyntaxException e) {
-            LOG.error("unable to build the authorization error redirect URL", e);
-            throw new RuntimeException(e);
+    /**
+     * An enumerated type for error codes that can be sent back to the main page of the DE.
+     */
+    private enum ErrorCodes {
+        ERR_INVALID_REQUEST("invalid_request", ERR_DESC_INVALID_REQUEST),
+        ERR_UNAUTHORIZED_CLIENT("unauthorized_client", ERR_DESC_UNAUTHORIZED_CLIENT),
+        ERR_ACCESS_DENIED("access_denied", ERR_DESC_ACCESS_DENIED),
+        ERR_UNSUPPORTED_RESPONSE_TYPE("unsupported_response_type", ERR_DESC_UNSUPPORTED_RESPONSE_TYPE),
+        ERR_INVALID_SCOPE("invalid_scope", ERR_DESC_INVALID_SCOPE),
+        ERR_SERVER("server_error", ERR_DESC_SERVER),
+        ERR_TEMPORARILY_UNAVAILABLE("temporarily_unavailable", ERR_DESC_TEMPORARILY_UNAVAILABLE),
+        ERR_OAUTH_CONFIG("invalid_oauth_config", ERR_DESC_OAUTH_CONFIG),
+        ERR_MISSING_AUTH_CODE("no_auth_code_provided", ERR_DESC_MISSING_AUTH_CODE),
+        ERR_MISSING_STATE("no_state_id_provided", ERR_DESC_MISSING_STATE),
+        ERR_SERVICE("general_service_error", ERR_DESC_SERVICE);
+
+        private final String errorCode;
+        public String getErrorCode() { return errorCode; }
+
+        private final String errorDescription;
+        public String getErrorDescription() { return errorDescription; }
+
+        private ErrorCodes(final String errorCode, final String errorDescription) {
+            this.errorCode = errorCode;
+            this.errorDescription = errorDescription;
+        }
+
+        public static ErrorCodes fromString(final String errorCode) {
+            for (ErrorCodes code : ErrorCodes.values()) {
+                if (code.errorCode.equals(errorCode)) {
+                    return code;
+                }
+            }
+            return null;
+        }
+
+        @Override
+        public String toString() {
+            return errorCode;
         }
     }
 
-    private boolean isError(HttpServletRequest req) {
-        return req.getParameter(ERROR_PARAM) != null;
-    }
+    /**
+     * The authorization response is really a GET request initiated by a redirection from the OAuth
+     * server. This class stores information about and the authorization response and provides some
+     * methods to perform a few tasks using the information from the authorization response.
+     */
+    private class AuthorizationResponse {
+        private final String apiName;
+        public String getApiName() { return apiName; }
 
-    private String extractApiName(String pathInfo) {
-        return pathInfo.replaceAll(".*/", "");
+        private final String authCode;
+        public String getAuthCode() { return authCode; }
+
+        private final String state;
+        private final String getState() { return state; }
+
+        private final ErrorCodes errorCode;
+        private final String errorDescription;
+        private final String errorUri;
+        private final String contextPath;
+
+        public AuthorizationResponse(HttpServletRequest request) {
+            apiName = request.getPathInfo().replaceAll(".*/", "");
+            authCode = request.getParameter(AUTH_CODE_PARAM);
+            state = request.getParameter(STATE_PARAM);
+            errorDescription = request.getParameter(ERROR_DESCRIPTION_PARAM);
+            errorUri = request.getParameter(ERROR_URI_PARAM);
+            errorCode = determineErrorCode(request.getParameter(ERROR_PARAM));
+            contextPath = request.getContextPath();
+        }
+
+        private ErrorCodes determineErrorCode(String providedErrorCode) {
+            return !Strings.isNullOrEmpty(providedErrorCode) ? ErrorCodes.fromString(providedErrorCode)
+                 : Strings.isNullOrEmpty(apiName)            ? ErrorCodes.ERR_OAUTH_CONFIG
+                 : Strings.isNullOrEmpty(authCode)           ? ErrorCodes.ERR_MISSING_AUTH_CODE
+                 : Strings.isNullOrEmpty(state)              ? ErrorCodes.ERR_MISSING_STATE
+                 :                                             null;
+        }
+
+        private String getErrorDescription() {
+            return !Strings.isNullOrEmpty(errorDescription) ? errorDescription
+                 : errorCode != null                        ? errorCode.getErrorDescription()
+                 :                                            null;
+        }
+
+        public boolean isError() {
+            return errorCode != null;
+        }
+
+        public void authorizationErrorRedirect(final HttpServletResponse response) throws IOException {
+            logAuthorizationErrorRedirect();
+            response.sendRedirect(authorizationErrorRedirectUrl());
+        }
+
+        private String authorizationErrorRedirectUrl() {
+            try {
+                final URIBuilder uriBuilder = new URIBuilder(contextPath);
+                addParameter(uriBuilder, ERROR_PARAM, errorCode.getErrorCode());
+                addParameter(uriBuilder, ERROR_DESCRIPTION_PARAM, getErrorDescription());
+                addParameter(uriBuilder, ERROR_URI_PARAM, errorUri);
+                addParameter(uriBuilder, API_NAME_PARAM, apiName);
+                addParameters(uriBuilder);
+                return uriBuilder.toString();
+            } catch (URISyntaxException e) {
+                LOG.error("unable to build the authorization error redirect URL", e);
+                throw new RuntimeException(e);
+            }
+        }
+
+        private void addParameters(URIBuilder uriBuilder) {
+        }
+
+        public void serviceErrorRedirect(final HttpServletResponse response) throws IOException {
+            response.sendRedirect(serviceErrorRedirectUrl());
+        }
+
+        private String serviceErrorRedirectUrl() {
+            try {
+                final ErrorCodes errorCode = ErrorCodes.ERR_SERVICE;
+                final URIBuilder uriBuilder = new URIBuilder(contextPath);
+                addParameter(uriBuilder, ERROR_PARAM, errorCode.getErrorCode());
+                addParameter(uriBuilder, ERROR_DESCRIPTION_PARAM, errorCode.getErrorDescription());
+                addParameter(uriBuilder, API_NAME_PARAM, apiName);
+                return uriBuilder.toString();
+            } catch (URISyntaxException e) {
+                LOG.error("unable to build the service error redirect URL", e);
+                throw new RuntimeException(e);
+            }
+        }
+
+        private void addParameter(final URIBuilder uriBuilder, final String name, final String value) {
+            if (!Strings.isNullOrEmpty(value)) {
+                uriBuilder.addParameter(name, value);
+            }
+        }
+
+        private void logAuthorizationErrorRedirect() {
+            if (errorCode == ErrorCodes.ERR_ACCESS_DENIED) {
+                LOG.warn("access denied by user or server.");
+            } else {
+                LOG.error("unable to obtain authorization: " + errorCode);
+            }
+        }
     }
 }
