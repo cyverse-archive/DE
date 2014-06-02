@@ -1,6 +1,7 @@
-package org.iplantc.de.server;
+package org.iplantc.de.server.oauth;
 
 import com.google.common.base.Strings;
+import net.lightoze.gwt.i18n.client.LocaleFactory;
 import net.sf.json.JSONObject;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpEntity;
@@ -10,6 +11,9 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.log4j.Logger;
+import org.iplantc.de.client.oauth.OAuthErrorDescriptions;
+import org.iplantc.de.server.DiscoveryEnvironmentProperties;
+import org.iplantc.de.server.UrlConnector;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -111,44 +115,23 @@ public abstract class OAuthCallbackServlet extends HttpServlet {
     }
 
     // Default descriptions for request error codes.
-    private static final String ERR_DESC_INVALID_REQUEST
-            = "The authorization request sent to the OAuth server by the DE was invalid.";
-    private static final String ERR_DESC_UNAUTHORIZED_CLIENT
-            = "The DE is not authorized to request access to the API.";
-    private static final String ERR_DESC_ACCESS_DENIED
-            = "Either the OAuth server or the user denied access.";
-    private static final String ERR_DESC_UNSUPPORTED_RESPONSE_TYPE
-            = "The OAuth server doesn't support the requested response type.";
-    private static final String ERR_DESC_INVALID_SCOPE
-            = "The OAuth server doesn't support the requested scope.";
-    private static final String ERR_DESC_SERVER
-            = "The OAuth server encountered an error.";
-    private static final String ERR_DESC_TEMPORARILY_UNAVAILABLE
-            = "The OAuth server is temporarily unavailable.";
-    private static final String ERR_DESC_OAUTH_CONFIG
-            = "The DE's OAuth configuration is invalid.";
-    private static final String ERR_DESC_MISSING_AUTH_CODE
-            = "No authorization code or error code was sent by the OAuth server.";
-    private static final String ERR_DESC_MISSING_STATE
-            = "No state information was sent by the OAuth server.";
-    private static final String ERR_DESC_SERVICE
-            = "The DE service encountered an error.";
+    private static final OAuthErrorDescriptions ERR_TEXT = LocaleFactory.get(OAuthErrorDescriptions.class);
 
     /**
      * An enumerated type for error codes that can be sent back to the main page of the DE.
      */
     private enum ErrorCodes {
-        ERR_INVALID_REQUEST("invalid_request", ERR_DESC_INVALID_REQUEST),
-        ERR_UNAUTHORIZED_CLIENT("unauthorized_client", ERR_DESC_UNAUTHORIZED_CLIENT),
-        ERR_ACCESS_DENIED("access_denied", ERR_DESC_ACCESS_DENIED),
-        ERR_UNSUPPORTED_RESPONSE_TYPE("unsupported_response_type", ERR_DESC_UNSUPPORTED_RESPONSE_TYPE),
-        ERR_INVALID_SCOPE("invalid_scope", ERR_DESC_INVALID_SCOPE),
-        ERR_SERVER("server_error", ERR_DESC_SERVER),
-        ERR_TEMPORARILY_UNAVAILABLE("temporarily_unavailable", ERR_DESC_TEMPORARILY_UNAVAILABLE),
-        ERR_OAUTH_CONFIG("invalid_oauth_config", ERR_DESC_OAUTH_CONFIG),
-        ERR_MISSING_AUTH_CODE("no_auth_code_provided", ERR_DESC_MISSING_AUTH_CODE),
-        ERR_MISSING_STATE("no_state_id_provided", ERR_DESC_MISSING_STATE),
-        ERR_SERVICE("general_service_error", ERR_DESC_SERVICE);
+        ERR_INVALID_REQUEST("invalid_request", ERR_TEXT.invalidRequest()),
+        ERR_UNAUTHORIZED_CLIENT("unauthorized_client", ERR_TEXT.unauthorizedClient()),
+        ERR_ACCESS_DENIED("access_denied", ERR_TEXT.accessDenied()),
+        ERR_UNSUPPORTED_RESPONSE_TYPE("unsupported_response_type", ERR_TEXT.unsupportedResponseType()),
+        ERR_INVALID_SCOPE("invalid_scope", ERR_TEXT.invalidScope()),
+        ERR_SERVER("server_error", ERR_TEXT.serverError()),
+        ERR_TEMPORARILY_UNAVAILABLE("temporarily_unavailable", ERR_TEXT.temporarilyUnavailable()),
+        ERR_OAUTH_CONFIG("invalid_oauth_config", ERR_TEXT.invalidOauthConfig()),
+        ERR_MISSING_AUTH_CODE("no_auth_code_provided", ERR_TEXT.missingAuthCode()),
+        ERR_MISSING_STATE("no_state_id_provided", ERR_TEXT.missingState()),
+        ERR_SERVICE("general_service_error", ERR_TEXT.serviceError());
 
         private final String errorCode;
         public String getErrorCode() { return errorCode; }

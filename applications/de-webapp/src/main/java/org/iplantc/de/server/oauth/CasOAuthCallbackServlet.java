@@ -1,6 +1,7 @@
-package org.iplantc.de.server;
+package org.iplantc.de.server.oauth;
 
-import javax.servlet.ServletException;
+import org.iplantc.de.server.CasUrlConnector;
+import org.iplantc.de.server.DiscoveryEnvironmentProperties;
 
 public class CasOAuthCallbackServlet  extends OAuthCallbackServlet {
 
