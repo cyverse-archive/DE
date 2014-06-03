@@ -32,8 +32,10 @@ public interface JobExecution extends HasName, HasDescription {
     @PropertyName("debug")
     void setRetainInputs(Boolean retainInputs);
 
+    @PropertyName("workspace_id")
     String getWorkspaceId();
 
+    @PropertyName("workspace_id")
     void setWorkspaceId(String workspaceId);
 
     @PropertyName("notify")

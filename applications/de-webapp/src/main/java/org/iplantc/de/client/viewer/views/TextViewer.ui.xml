@@ -25,7 +25,7 @@
 	</ui:with>
 	<ui:with
 		type="com.sencha.gxt.widget.core.client.container.BorderLayoutContainer.BorderLayoutData"
-		field="northData">
+		field="toolbarData">
 		<ui:attributes size="30" margins="{northMargins}" />
 	</ui:with>
 
@@ -40,14 +40,18 @@
 		<container:child layoutData="{outerData}">
 			<container:BorderLayoutContainer
 				ui:field="con" borders="true">
-				<container:north layoutData="{northData}">
-					<toolbar:TextViewPagingToolBar
+				<container:north layoutData="{toolbarData}">
+					<toolbar:TextViewToolBar
 						ui:field="toolbar">
-					</toolbar:TextViewPagingToolBar>
+					</toolbar:TextViewToolBar>
 				</container:north>
 				<container:center layoutData="{centerData}">
-						<container:SimpleContainer ui:field="center"></container:SimpleContainer>
+					<container:SimpleContainer ui:field="center"></container:SimpleContainer>
 				</container:center>
+				<container:south layoutData="{toolbarData}">
+					<toolbar:ViewerPagingToolBar ui:field="pagingToolbar">
+					</toolbar:ViewerPagingToolBar>
+				</container:south>
 			</container:BorderLayoutContainer>
 		</container:child>
 	</container:SimpleContainer>

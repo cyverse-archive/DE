@@ -3,7 +3,7 @@ apply plugin: 'java'
 sourceCompatibility = 1.7
 
 buildscript {
-    repositories {
+   repositories {
       mavenCentral() 
       maven {
          url 'https://github.com/steffenschaefer/gwt-gradle-plugin/raw/maven-repo/'
@@ -11,10 +11,13 @@ buildscript {
       maven {
          url 'https://maven.sencha.com/repo/support-commercial-release'
       }
-    }
-    dependencies { 
+      maven {
+         url 'http://katic.iplantcollaborative.org/archiva/repository/internal/'
+      }
+   }
+   dependencies { 
       classpath 'de.richsource.gradle.plugins:gwt-gradle-plugin:0.3'
-    }
+   }
 }
 
 // Establish extended properties for all projects
@@ -38,6 +41,12 @@ subprojects {
    repositories {
       mavenLocal()
       mavenCentral()
+      maven {
+         url 'https://maven.sencha.com/repo/support-commercial-release'
+      }
+      maven {
+         url 'http://katic.iplantcollaborative.org/archiva/repository/internal/'
+      }
    }
 
    group = 'org.iplantc.de'

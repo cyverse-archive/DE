@@ -17,12 +17,7 @@ public interface FileViewerWindowConfig extends WindowConfig {
 
     void setEditing(boolean editing);
 
-    boolean isShowTreeTab();
-
-    void setShowTreeTab(boolean b);
-
     void setVizTabFirst(boolean b);
 
     boolean isVizTabFirst();
-
 }

@@ -25,6 +25,7 @@ import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.commons.client.info.ErrorAnnouncementConfig;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
 import org.iplantc.de.commons.client.views.gxt3.dialogs.IPlantDialog;
+import org.iplantc.de.commons.client.views.window.configs.TabularFileViewerWindowConfig;
 import org.iplantc.de.diskResource.client.dataLink.presenter.DataLinkPresenter;
 import org.iplantc.de.diskResource.client.dataLink.view.DataLinkPanel;
 import org.iplantc.de.diskResource.client.events.CreateNewFileEvent;
@@ -678,6 +679,12 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter, Di
     @Override
     public void createNewPlainTextFile() {
         CreateNewFileEvent event = new CreateNewFileEvent(getSelectedUploadFolder());
+        eventBus.fireEvent(event);
+    }
+
+    @Override
+    public void createNewTabFile(TabularFileViewerWindowConfig config) {
+        CreateNewFileEvent event = new CreateNewFileEvent(getSelectedUploadFolder(), config);
         eventBus.fireEvent(event);
     }
 

@@ -7,6 +7,7 @@ import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.client.models.diskResources.DiskResourceInfo;
 import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.client.services.DiskResourceServiceFacade;
+import org.iplantc.de.commons.client.views.window.configs.TabularFileViewerWindowConfig;
 import org.iplantc.de.diskResource.client.events.DiskResourceSelectionChangedEvent;
 import org.iplantc.de.diskResource.client.events.FolderSelectionEvent;
 import org.iplantc.de.diskResource.client.presenters.proxy.FolderContentsLoadConfig;
@@ -83,6 +84,8 @@ public interface DiskResourceView extends IsWidget,
         void createNewFolder();
 
         void createNewPlainTextFile();
+
+        void createNewTabFile(TabularFileViewerWindowConfig config);
 
         void deleteSelectedResources();
 

@@ -61,7 +61,7 @@ public class ExternalVizURLRequestHandler implements RequestSendToCoGeEventHandl
 
     private void showFile(File file, boolean vizTabFirst) {
         FileViewerWindowConfig fileViewerWindowConfig = null;
-        fileViewerWindowConfig = ConfigFactory.fileViewerWindowConfig(file, false);
+        fileViewerWindowConfig = ConfigFactory.fileViewerWindowConfig(file);
         fileViewerWindowConfig.setVizTabFirst(true);
         fileViewerWindowConfig.setEditing(DiskResourceUtil.isWritable(file));
         desktop.showWindow(fileViewerWindowConfig);

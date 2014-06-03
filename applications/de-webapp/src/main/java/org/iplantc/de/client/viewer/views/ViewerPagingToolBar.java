@@ -13,24 +13,25 @@ import com.sencha.gxt.widget.core.client.event.SelectEvent;
 import com.sencha.gxt.widget.core.client.event.SelectEvent.SelectHandler;
 import com.sencha.gxt.widget.core.client.form.NumberField;
 import com.sencha.gxt.widget.core.client.form.NumberPropertyEditor;
+import com.sencha.gxt.widget.core.client.toolbar.FillToolItem;
 import com.sencha.gxt.widget.core.client.toolbar.LabelToolItem;
 import com.sencha.gxt.widget.core.client.toolbar.SeparatorToolItem;
 import com.sencha.gxt.widget.core.client.toolbar.ToolBar;
 
-public abstract class AbstractPagingToolbar extends ToolBar {
+public class ViewerPagingToolBar extends ToolBar {
 
     GrayPagingToolBarAppearance appearance = new GrayPagingToolBarAppearance();
     protected TextButton first, prev, next, last;
     protected LabelToolItem beforePage, afterText;
     protected NumberField<Integer> pageText;
     protected Slider pageSize;
-    private LabelToolItem sliderLabel;
     private int totalPages;
     long fileSize;
-
-    public AbstractPagingToolbar(long fileSize) {
+    private final AbstractFileViewer view;
+    
+    public ViewerPagingToolBar(AbstractFileViewer view, long fileSize) {
+        this.view = view;
         this.fileSize = fileSize;
-        sliderLabel = new LabelToolItem(org.iplantc.de.resources.client.messages.I18N.DISPLAY.pageSize());
         initPageSizeSlider();
 
         first = new TextButton();
@@ -62,11 +63,10 @@ public abstract class AbstractPagingToolbar extends ToolBar {
         addPageSizeChangeHandler();
         addSelectPageKeyHandler();
         computeTotalPages();
-
     }
 
     private void addToolbarItems() {
-        add(sliderLabel);
+        add(new FillToolItem());
         add(pageSize);
         add(first);
         add(prev);
@@ -78,6 +78,7 @@ public abstract class AbstractPagingToolbar extends ToolBar {
         add(next);
         add(last);
         add(new SeparatorToolItem());
+        add(new FillToolItem());
     }
 
     private void initPageSizeSlider() {
@@ -87,6 +88,7 @@ public abstract class AbstractPagingToolbar extends ToolBar {
         pageSize.setIncrement(FileViewer.PAGE_INCREMENT_SIZE_KB);
         pageSize.setValue(FileViewer.MIN_PAGE_SIZE_KB);
         pageSize.setWidth(100);
+        pageSize.setToolTip(org.iplantc.de.resources.client.messages.I18N.DISPLAY.pageSize());
     }
 
     /**
@@ -152,18 +154,6 @@ public abstract class AbstractPagingToolbar extends ToolBar {
     public void addPageSizeChangeHandler(ValueChangeHandler<Integer> changeHandler) {
         pageSize.addValueChangeHandler(changeHandler);
     }
-
-    public abstract void onFirst();
-
-    public abstract void onLast();
-
-    public abstract void onPrev();
-
-    public abstract void onNext();
-
-    public abstract void onPageSizeChange();
-
-    public abstract void onPageSelect();
 
     private void addFirstHandler() {
         addFirstSelectHandler(new SelectHandler() {
@@ -310,6 +300,34 @@ public abstract class AbstractPagingToolbar extends ToolBar {
             setPrevEnabled(false);
             setLastEnabled(false);
         }
+    }
+
+    public void onFirst() {
+        view.loadData();
+
+    }
+
+    public void onLast() {
+        view.loadData();
+    }
+
+    public void onPrev() {
+        view.loadData();
+
+    }
+
+    public void onNext() {
+        view.loadData();
+
+    }
+
+    public void onPageSizeChange() {
+        view.loadData();
+    }
+
+    public void onPageSelect() {
+        view.loadData();
+
     }
 
 }

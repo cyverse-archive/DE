@@ -62,11 +62,10 @@ public class ConfigFactory {
         return drwc.as();
     }
 
-    public static FileViewerWindowConfig fileViewerWindowConfig(File file, boolean b) {
+    public static FileViewerWindowConfig fileViewerWindowConfig(File file) {
         AutoBean<FileViewerWindowConfig> fvwc = applyWindowType(WindowType.DATA_VIEWER,
                 factory.fileViewerWindowConfig());
         fvwc.as().setFile(file);
-        fvwc.as().setShowTreeTab(b);
         if (file != null) {
             applyTag(file.getId(), fvwc);
         } else {
@@ -77,6 +76,11 @@ public class ConfigFactory {
         }
 
         return fvwc.as();
+    }
+
+    public static TabularFileViewerWindowConfig newTabularFileViewerWindowConfig() {
+        AutoBean<TabularFileViewerWindowConfig> ab = applyWindowType(WindowType.DATA_VIEWER, factory.newTabularFileViewerWindowConfig());
+        return ab.as();
     }
 
     public static IDropLiteWindowConfig iDropLiteUploadWindowConfig() {

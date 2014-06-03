@@ -28,6 +28,8 @@ public interface FileViewer extends IsWidget {
         boolean isDirty();
         
         void cleanUp();
+
+        void refreshViews();
     }
 
     void setPresenter(Presenter p);
@@ -43,5 +45,7 @@ public interface FileViewer extends IsWidget {
     String getViewName();
     
     void cleanUp();
+
+    void refresh();
 
 }

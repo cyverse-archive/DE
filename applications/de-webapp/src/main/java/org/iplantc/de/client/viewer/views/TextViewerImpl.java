@@ -61,7 +61,10 @@ public class TextViewerImpl extends AbstractFileViewer implements EditingSupport
     BorderLayoutContainer con;
 
     @UiField(provided = true)
-    TextViewPagingToolBar toolbar;
+    TextViewToolBar toolbar;
+
+    @UiField(provided = true)
+    ViewerPagingToolBar pagingToolbar;
 
     private long file_size;
 
@@ -70,6 +73,7 @@ public class TextViewerImpl extends AbstractFileViewer implements EditingSupport
     private String data;
 
     protected boolean editing;
+
     private final Folder parentFolder;
 
     private Presenter presenter;
@@ -83,7 +87,16 @@ public class TextViewerImpl extends AbstractFileViewer implements EditingSupport
         this.editing = editing;
         this.parentFolder = parentFolder;
         toolbar = initToolBar();
+        pagingToolbar = initPagingToolbar();
         widget = uiBinder.createAndBindUi(this);
+        widget.addHandler(new SaveFileEventHandler() {
+
+            @Override
+            public void onSave(SaveFileEvent event) {
+                save();
+
+            }
+        }, SaveFileEvent.TYPE);
 
         addWrapHandler();
 
@@ -105,31 +118,15 @@ public class TextViewerImpl extends AbstractFileViewer implements EditingSupport
             }
         });
 
-        // handle data events
-        eventHandlers.add(EventBus.getInstance().addHandler(SaveFileEvent.TYPE, new SaveFileEventHandler() {
-
-            @Override
-            public void onSave(SaveFileEvent event) {
-                save();
-            }
-        }
-
-        ));
-
     }
 
-    TextViewPagingToolBar initToolBar() {
-        TextViewPagingToolBar textViewPagingToolBar = new TextViewPagingToolBar(this, editing);
-        textViewPagingToolBar.addHandler(new SaveFileEventHandler() {
-
-            @Override
-            public void onSave(SaveFileEvent event) {
-                save();
-
-            }
-
-        }, SaveFileEvent.TYPE);
+    TextViewToolBar initToolBar() {
+        TextViewToolBar textViewPagingToolBar = new TextViewToolBar(this, editing);
         return textViewPagingToolBar;
+    }
+
+    ViewerPagingToolBar initPagingToolbar() {
+        return new ViewerPagingToolBar(this, getFileSize());
     }
 
     @Override
@@ -140,7 +137,9 @@ public class TextViewerImpl extends AbstractFileViewer implements EditingSupport
         }
         file = null;
         jso = null;
+        toolbar.cleanup();
         toolbar = null;
+        pagingToolbar = null;
         data = null;
     }
 
@@ -165,8 +164,8 @@ public class TextViewerImpl extends AbstractFileViewer implements EditingSupport
         JSONObject obj = new JSONObject();
         obj.put("path", new JSONString(file.getId()));
         // position starts at 0
-        obj.put("position", new JSONString("" + toolbar.getPageSize() * (toolbar.getPageNumber() - 1)));
-        obj.put("chunk-size", new JSONString("" + toolbar.getPageSize()));
+        obj.put("position", new JSONString("" + pagingToolbar.getPageSize() * (pagingToolbar.getPageNumber() - 1)));
+        obj.put("chunk-size", new JSONString("" + pagingToolbar.getPageSize()));
         return obj;
     }
 
@@ -207,9 +206,14 @@ public class TextViewerImpl extends AbstractFileViewer implements EditingSupport
 
     @Override
     public void setData(Object data) {
-        clearDisplay();
-        boolean allowEditing = toolbar.getToltalPages() == 1 && editing;
-        jso = displayData(this, center.getElement(), infoType, (String)data, center.getElement().getOffsetWidth(), center.getElement().getOffsetHeight(), toolbar.isWrapText(), allowEditing);
+        boolean allowEditing = pagingToolbar.getToltalPages() == 1 && editing;
+        if (jso == null) {
+            clearDisplay();
+            jso = displayData(this, center.getElement(), infoType, (String)data, center.getElement().getOffsetWidth(), center.getElement().getOffsetHeight(), toolbar.isWrapText(), allowEditing);
+        } else {
+            updateData(jso, (String)data);
+            setDirty(false);
+        }
         toolbar.setEditing(allowEditing);
         /**
          * XXX - SS - support editing for files with only one page
@@ -223,11 +227,12 @@ public class TextViewerImpl extends AbstractFileViewer implements EditingSupport
 
     @Override
     public void setDirty(Boolean dirty) {
-        if (presenter.isDirty() == dirty) {
-            return;
-        }
         presenter.setVeiwDirtyState(dirty);
     }
+    
+    public static native void updateData(JavaScriptObject jso, String val) /*-{
+		jso.setValue(val);
+    }-*/;
 
     public static native JavaScriptObject displayData(final TextViewerImpl instance, XElement textArea, String mode, String val, int width, int height, boolean wrap, boolean editing) /*-{
 		var myCodeMirror = $wnd.CodeMirror(textArea, {
@@ -295,5 +300,11 @@ public class TextViewerImpl extends AbstractFileViewer implements EditingSupport
     @Override
     public boolean isDirty() {
         return isClean(jso);
+    }
+
+    @Override
+    public void refresh() {
+        loadData();
+
     }
 }

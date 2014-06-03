@@ -5,10 +5,13 @@ import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.client.models.diskResources.File;
 import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.client.util.DiskResourceUtil;
+import org.iplantc.de.commons.client.views.window.configs.ConfigFactory;
+import org.iplantc.de.commons.client.views.window.configs.TabularFileViewerWindowConfig;
 import org.iplantc.de.diskResource.client.events.DiskResourceSelectionChangedEvent;
 import org.iplantc.de.diskResource.client.events.FolderSelectionEvent;
 import org.iplantc.de.diskResource.client.search.views.DiskResourceSearchField;
 import org.iplantc.de.diskResource.client.views.DiskResourceView;
+import org.iplantc.de.diskResource.share.DiskResourceModule.Ids;
 
 import com.google.common.collect.Lists;
 import com.google.gwt.core.client.GWT;
@@ -21,15 +24,14 @@ import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 
 import com.sencha.gxt.widget.core.client.Composite;
+import com.sencha.gxt.widget.core.client.Dialog.PredefinedButton;
 import com.sencha.gxt.widget.core.client.button.TextButton;
 import com.sencha.gxt.widget.core.client.event.SelectEvent;
+import com.sencha.gxt.widget.core.client.event.SelectEvent.SelectHandler;
 import com.sencha.gxt.widget.core.client.menu.Item;
 import com.sencha.gxt.widget.core.client.menu.MenuItem;
-import org.iplantc.de.diskResource.share.DiskResourceModule;
 
 import java.util.List;
-
-import static org.iplantc.de.diskResource.share.DiskResourceModule.Ids;
 
 public class DiskResourceViewToolbarImpl extends Composite implements DiskResourceView.DiskResourceViewToolbar, DiskResourceSelectionChangedEvent.DiskResourceSelectionChangedEventHandler, FolderSelectionEvent.FolderSelectionEventHandler {
 
@@ -371,6 +373,23 @@ public class DiskResourceViewToolbarImpl extends Composite implements DiskResour
 
     @UiHandler("newTabularDataFileMi")
     void onNewTabularDataFileClicked(SelectionEvent<Item> event){
+        final TabFileConfigDialog d = new TabFileConfigDialog();
+        d.setPredefinedButtons(PredefinedButton.OK, PredefinedButton.CANCEL);
+        d.setModal(true);
+        d.getButtonById(PredefinedButton.OK.toString()).addSelectHandler(new SelectHandler() {
+            @Override
+            public void onSelect(SelectEvent event) {
+                TabularFileViewerWindowConfig config = ConfigFactory.newTabularFileViewerWindowConfig();
+                config.setEditing(true);
+                config.setVizTabFirst(true);
+                config.setSeparator(d.getSeparator());
+                config.setColumns(d.getNumberOfColumns());
+                presenter.createNewTabFile(config);
+            }
+        });
+        d.setHideOnButtonClick(true);;
+        d.setSize("300px", "150px");
+        d.show();
     }
 
     @UiHandler("newWindowAtLocMi")
