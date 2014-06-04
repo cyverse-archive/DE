@@ -19,6 +19,7 @@
 
     <inherits name='org.iplantc.de.resources.ui-resources' />
     <inherits name='org.iplantc.de.DiscoveryEnvironmentCommon' />
+    <inherits name="com.virilis_software.gwt.taglist.TagList" />
 
     <!-- Default Appearances -->
     <replace-with class="org.iplantc.de.commons.client.appearance.widgets.InternalAnchorDefaultAppearance">
