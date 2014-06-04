@@ -65,8 +65,7 @@
                         <menu:MenuItem ui:field="newTabularDataFileMi"
                                        text="{display.newTabularDataFileMenuItem}"
                                        visible="true"
-                                       icon="{res.fileRename}"
-                                       enabled="false"/>
+                                       icon="{res.fileRename}"/>
                         <menu:MenuItem ui:field="moveToTrashMi"
                                        text="{display.moveToTrashMenuItem}"
                                        icon="{res.trash}"

@@ -227,7 +227,9 @@ public class TextViewerImpl extends AbstractFileViewer implements EditingSupport
 
     @Override
     public void setDirty(Boolean dirty) {
-        presenter.setVeiwDirtyState(dirty);
+        if (presenter.isDirty() != dirty) {
+            presenter.setVeiwDirtyState(dirty);
+        }
     }
     
     public static native void updateData(JavaScriptObject jso, String val) /*-{
