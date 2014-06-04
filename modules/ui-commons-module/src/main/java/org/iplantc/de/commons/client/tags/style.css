@@ -1,0 +1,107 @@
+.tagListEditable {
+    cursor: text;   
+}
+
+.tagList ul {
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+}
+
+.tagList li {
+    display: inline-block;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    max-width: 100%;
+    padding: 2px;
+}
+
+.tag {
+     max-width: 100%;
+     -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    border: 1px solid #d9d9d9;
+    background-color: #DB6619;
+    white-space: nowrap;
+    float:left;
+}
+
+.tagEditable {
+    cursor: pointer;   
+}
+
+.tagCaption {
+    max-width: 100%;
+    padding: 2px 5px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color:#ffffff;
+    float:left;
+}
+
+.tagCaptionEditable {
+    max-width: literal('calc( 100% - 0.18em - 35px )') !important;
+}
+
+.tagOptions {
+	float:right;
+}
+.tagDelete {
+    background-image: url(./images/tag_blue_delete.png);
+	cursor: pointer;
+	height: 16px;
+    width: 16px;
+}
+
+.tagEdit {
+	background-image: url(./images/pencil.png);
+    cursor: pointer;
+    height: 16px;
+    width: 16px;
+}
+      
+.tagDelete:hover {
+    opacity: 1;
+}
+
+.tagEdit:hover {
+	opacity: 1;
+}
+
+.inputListItem {
+    vertical-align: bottom;
+    width: 15px;
+    max-width: 100%;
+}
+
+.inputField {
+    width: 100%;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    border: 0px none;
+    margin: 0px;
+    padding: 3px 2px 3px 6px;
+    font-size: inherit;
+}
+
+.inputField:focus {
+    outline: none;
+}
+
+.previewLeft {
+    margin-left: -1px;
+    border-left: 2px solid #4d90fe;
+    padding-left: 2px
+}
+
+.previewRight {
+    margin-right: -1px;
+    border-right: 2px solid #4d90fe;
+    padding-right: 2px
+}
