@@ -13,7 +13,7 @@
  */
 package com.virilis_software.gwt.taglist.client.tag;
 
-import com.virilis_software.gwt.taglist.client.TagList.TagCreationCodex;
+import com.virilis_software.gwt.taglist.client.TagCreationCodex;
 
 /**
  * 

@@ -13,7 +13,6 @@
  */
 package com.virilis_software.gwt.taglist.client.comp;
 
-import com.virilis_software.gwt.taglist.client.TagList.InsertionPoint;
 import com.virilis_software.gwt.taglist.client.comp.tag.TagView;
 import com.virilis_software.gwt.taglist.client.tag.Tag;
 
@@ -23,9 +22,17 @@ import com.virilis_software.gwt.taglist.client.tag.Tag;
  *
  */
 public interface TagListHandlers {
+
+    public enum InsertionPoint {
+        BEFORE, AFTER
+    };
+
     void onAddTag( Tag<?> tag );
     void onRemoveTag( TagView tagView );
+
+    void onEditTag(TagView tagView);
     void onRelocateTag( TagView tagViewToRelocate, TagView tagViewRelocationRef, InsertionPoint insertionPoint );
     void onFocus();
     void onBlur();
+
 }

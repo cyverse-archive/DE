@@ -13,9 +13,9 @@
  */
 package com.virilis_software.gwt.taglist.client.comp.taglist;
 
+import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.UListElement;
 import com.google.gwt.user.client.DOM;
-import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -32,10 +32,12 @@ public class TagsPanel extends HTMLPanel {
 
     @Override
     public void add( Widget widget ) {
-        Element liWrapper = DOM.createElement( "li" );
+        
+         Element liWrapper = DOM.createElement( "li" );
         //First widget is the input TextBox, add new widgets between the last tag and the input TextBox
-        DOM.insertChild( this.getElement(), liWrapper, this.getWidgetCount() - 1 );
-        add( widget, liWrapper );
+        // DOM.insertChild( this.getElement(), liWrapper, this.getWidgetCount() - 1 );
+        getElement().appendChild(liWrapper);
+        add(widget, liWrapper);
     }
     
     @Override

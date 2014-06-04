@@ -18,48 +18,58 @@
 }
 
 .tag {
-    display: inline-block;
-    -webkit-box-sizing: border-box;
+     max-width: 100%;
+     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
     box-sizing: border-box;
-    max-width: 100%;
     -webkit-border-radius: 3px;
     -moz-border-radius: 3px;
     border-radius: 3px;
     border: 1px solid #d9d9d9;
-    background-color: #f5f5f5;
+    background-color: #DB6619;
     white-space: nowrap;
+    float:left;
 }
 
 .tagEditable {
-    cursor: move;   
+    cursor: pointer;   
 }
 
 .tagCaption {
-    display: inline-block;
-    -webkit-box-sizing: border-box;
-    -moz-box-sizing: border-box;
-    box-sizing: border-box;
     max-width: 100%;
-    vertical-align: top;
     padding: 2px 5px;
     overflow: hidden;
     text-overflow: ellipsis;
+    color:#ffffff;
+    float:left;
 }
 
 .tagCaptionEditable {
-    max-width: literal('calc( 100% - 0.55em - 9px )') !important;
+    max-width: literal('calc( 100% - 0.18em - 35px )') !important;
 }
 
+.tagOptions {
+    float:right;
+}
 .tagDelete {
-    display: inline-block;
-    border-left: 1px solid #d9d9d9;
-    padding: 2px 5px 2px 4px;
-    opacity: 0.6;
+    background-image: url(./images/tag_blue_delete.png);
     cursor: pointer;
+    height: 16px;
+    width: 16px;
+}
+
+.tagEdit {
+    background-image: url(./images/pencil.png);
+    cursor: pointer;
+    height: 16px;
+    width: 16px;
 }
       
 .tagDelete:hover {
+    opacity: 1;
+}
+
+.tagEdit:hover {
     opacity: 1;
 }
 

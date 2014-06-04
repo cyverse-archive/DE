@@ -13,9 +13,6 @@
  */
 package com.virilis_software.gwt.taglist.client.comp.tag;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.DivElement;
 import com.google.gwt.dom.client.Element;
@@ -33,6 +30,10 @@ import com.google.gwt.event.dom.client.DragStartEvent;
 import com.google.gwt.event.dom.client.DragStartHandler;
 import com.google.gwt.event.dom.client.DropEvent;
 import com.google.gwt.event.dom.client.DropHandler;
+import com.google.gwt.event.dom.client.MouseOutEvent;
+import com.google.gwt.event.dom.client.MouseOutHandler;
+import com.google.gwt.event.dom.client.MouseOverEvent;
+import com.google.gwt.event.dom.client.MouseOverHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
@@ -40,184 +41,229 @@ import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.web.bindery.event.shared.HandlerRegistration;
-import com.virilis_software.gwt.taglist.client.TagList.InsertionPoint;
+
 import com.virilis_software.gwt.taglist.client.comp.TagListHandlers;
+import com.virilis_software.gwt.taglist.client.comp.TagListHandlers.InsertionPoint;
 import com.virilis_software.gwt.taglist.client.resource.Resources;
 import com.virilis_software.gwt.taglist.client.tag.Tag;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * 
  * @author cbopp
- *
+ * 
  */
 public class TagView extends Composite {
-    interface Binder extends UiBinder<Widget, TagView> {}
-    private static Binder uiBinder = GWT.create( Binder.class );
-    
-    @UiField HTMLPanel tagPanel;
-    @UiField DivElement tag;
-    @UiField Label caption;
-    @UiField HTMLPanel deletePanel;
-    
+    interface Binder extends UiBinder<Widget, TagView> {
+    }
+
+    private static Binder uiBinder = GWT.create(Binder.class);
+
+    @UiField
+    HTMLPanel tagPanel;
+    @UiField
+    DivElement tag;
+    @UiField
+    Label caption;
     private TagListHandlers uiHandlers;
-    
+
+    @UiField
+    DivElement editOption;
+
+    @UiField
+    DivElement deleteOption;
+
     private HandlerRegistration handlerRegistration;
-    private List<HandlerRegistration> dndHandlers = new ArrayList<HandlerRegistration>();
+
+    private final List<HandlerRegistration> dndHandlers = new ArrayList<HandlerRegistration>();
 
     private boolean editable;
-    private static TagView draggedElement;
-    
 
-    public void setUiHandlers( TagListHandlers tagListHandlers ) {
+    private final Resources resources;
+    private static TagView draggedElement;
+    Logger logger = Logger.getLogger("tags");
+
+    public void setUiHandlers(TagListHandlers tagListHandlers) {
         this.uiHandlers = tagListHandlers;
     }
 
-    public TagView( Resources resources, Tag<?> tag ) {
-        initWidget( uiBinder.createAndBindUi( this ) );
-        
-        this.tag.setAttribute( "class", resources.style().tag() );
-        this.caption.setStylePrimaryName( resources.style().tagCaption() );
-        this.deletePanel.setStylePrimaryName( resources.style().tagDelete() );
+    public TagView(Resources resources, Tag<?> tag) {
+        this.resources = resources;
+        initWidget(uiBinder.createAndBindUi(this));
 
-        this.caption.setText( tag.getCaption() );
-        
-        this.deletePanel.setVisible( false );
+        this.tag.setAttribute("class", resources.style().tag());
+        this.caption.setStylePrimaryName(resources.style().tagCaption());
+
+        this.caption.setText(tag.getCaption());
     }
 
-    public void setEditable( boolean editable ) {
-        if( this.editable != editable ) {
+    public void setEditable(boolean editable) {
+        if (this.editable != editable) {
             this.editable = editable;
 
-            if( editable ) {
-        	    this.activateDeleteButton();
-        	    this.activateDnD();
-        	
-        	} else { 
-        	    this.deactivateDeleteButton();
-        	    this.deactivateDnD();
-        	}
-        }
-    }
-    
-    private void activateDeleteButton() {
-        this.caption.addStyleName( Resources.INSTANCE.style().tagCaptionEditable() ); //Reduce width to include delete button
-        
-        this.handlerRegistration = this.deletePanel.addDomHandler( new ClickHandler() {
-            @Override
-            public void onClick( ClickEvent event ) {
-                uiHandlers.onRemoveTag( TagView.this );
+            if (editable) {
+                this.activateDeleteButton();
+                this.activateEditButton();
+                this.activateDnD();
+                editOption.addClassName(resources.style().tagOptions());
+                deleteOption.addClassName(resources.style().tagOptions());
+                tagPanel.addDomHandler(new ClickHandler() {
+
+                    @Override
+                    public void onClick(ClickEvent event) {
+                        Element e = Element.as(event.getNativeEvent().getEventTarget());
+                        logger.log(Level.SEVERE, e.getClassName());
+                        if (e.getClassName().contains("tagEdit")) {
+                            uiHandlers.onEditTag(TagView.this);
+                        } else if (e.getClassName().contains("tagDelete")) {
+                            uiHandlers.onRemoveTag(TagView.this);
+                        }
+                    }
+                }, ClickEvent.getType());
+
+            } else {
+                deactivateDnD();
+                // TODO: should also remove all handlers
             }
-            
-        }, ClickEvent.getType() );
-        
-        this.deletePanel.setVisible( true );
+        }
+
     }
 
-    private void deactivateDeleteButton() {
-        this.caption.removeStyleName( Resources.INSTANCE.style().tagCaptionEditable() );
-        
-        if( this.handlerRegistration != null ) {
-            this.handlerRegistration.removeHandler();
-            this.handlerRegistration = null;
-        }
-        this.deletePanel.setVisible( false );
+    private void activateEditButton() {
+
+        tagPanel.addDomHandler(new MouseOverHandler() {
+            @Override
+            public void onMouseOver(MouseOverEvent event) {
+                editOption.addClassName(resources.style().tagEdit());
+            }
+        }, MouseOverEvent.getType());
+
+        tagPanel.addDomHandler(new MouseOutHandler() {
+            @Override
+            public void onMouseOut(MouseOutEvent event) {
+                editOption.removeClassName(resources.style().tagEdit());
+            }
+        }, MouseOutEvent.getType());
+    }
+
+    private void activateDeleteButton() {
+
+        tagPanel.addDomHandler(new MouseOverHandler() {
+
+            @Override
+            public void onMouseOver(MouseOverEvent event) {
+                deleteOption.addClassName(resources.style().tagDelete());
+
+            }
+        }, MouseOverEvent.getType());
+
+        tagPanel.addDomHandler(new MouseOutHandler() {
+
+            @Override
+            public void onMouseOut(MouseOutEvent event) {
+                deleteOption.removeClassName(resources.style().tagDelete());
+
+            }
+        }, MouseOutEvent.getType());
+
     }
 
     private void activateDnD() {
-        this.tagPanel.addStyleName( Resources.INSTANCE.style().tagEditable() ); //Change cursor on hover
-        
-        //DnD
-        this.getElement().setDraggable( Element.DRAGGABLE_TRUE );
-        this.dndHandlers.add( this.addDomHandler( new DragStartHandler() {
+        this.tagPanel.addStyleName(Resources.INSTANCE.style().tagEditable()); // Change cursor on hover
+
+        // DnD
+        this.getElement().setDraggable(Element.DRAGGABLE_TRUE);
+        this.dndHandlers.add(this.addDomHandler(new DragStartHandler() {
             @Override
-            public void onDragStart( DragStartEvent event ) {
-                event.setData( "text", "" );
+            public void onDragStart(DragStartEvent event) {
+                event.setData("text", "");
                 draggedElement = TagView.this;
                 uiHandlers.onFocus();
             }
-          }, DragStartEvent.getType() ) );
-        
-        
-        this.dndHandlers.add( this.addDomHandler( new DragEnterHandler() {
+        }, DragStartEvent.getType()));
+
+        this.dndHandlers.add(this.addDomHandler(new DragEnterHandler() {
             @Override
-            public void onDragEnter( DragEnterEvent event ) {
-                if( draggedElement.equals( TagView.this ) )
+            public void onDragEnter(DragEnterEvent event) {
+                if (draggedElement.equals(TagView.this))
                     return;
-                
-                //Calculate the mouse's percentage X position relative to the drag over element
-                //0 = left border; 100 = right border
-                int percentagePositionX = ( event.getNativeEvent().getClientX() - getAbsoluteLeft() ) * 100 / getElement().getClientWidth(); 
-                if( percentagePositionX < 50 ) {
-                    tagPanel.addStyleName( Resources.INSTANCE.style().previewLeft() );
-                    tagPanel.removeStyleName( Resources.INSTANCE.style().previewRight() );
-                    
+
+                // Calculate the mouse's percentage X position relative to the drag over element
+                // 0 = left border; 100 = right border
+                int percentagePositionX = (event.getNativeEvent().getClientX() - getAbsoluteLeft()) * 100 / getElement().getClientWidth();
+                if (percentagePositionX < 50) {
+                    tagPanel.addStyleName(Resources.INSTANCE.style().previewLeft());
+                    tagPanel.removeStyleName(Resources.INSTANCE.style().previewRight());
+
                 } else {
-                    tagPanel.addStyleName( Resources.INSTANCE.style().previewRight() );
-                    tagPanel.removeStyleName( Resources.INSTANCE.style().previewLeft() );
+                    tagPanel.addStyleName(Resources.INSTANCE.style().previewRight());
+                    tagPanel.removeStyleName(Resources.INSTANCE.style().previewLeft());
                 }
             }
-        }, DragEnterEvent.getType() ) );
-        
-        this.dndHandlers.add( this.addDomHandler( new DragOverHandler() {
+        }, DragEnterEvent.getType()));
+
+        this.dndHandlers.add(this.addDomHandler(new DragOverHandler() {
             @Override
-            public void onDragOver( DragOverEvent event ) {
-                if( draggedElement.equals( TagView.this ) )
+            public void onDragOver(DragOverEvent event) {
+                if (draggedElement.equals(TagView.this))
                     return;
-                
-                //Calculate the mouse's percentage X position relative to the drag over element
-                //0 = left border; 100 = right border
-                int percentagePositionX = ( event.getNativeEvent().getClientX() - getAbsoluteLeft() ) * 100 / getElement().getClientWidth(); 
-                if( percentagePositionX < 50 ) {
-                    tagPanel.addStyleName( Resources.INSTANCE.style().previewLeft() );
-                    tagPanel.removeStyleName( Resources.INSTANCE.style().previewRight() );
-                    
+
+                // Calculate the mouse's percentage X position relative to the drag over element
+                // 0 = left border; 100 = right border
+                int percentagePositionX = (event.getNativeEvent().getClientX() - getAbsoluteLeft()) * 100 / getElement().getClientWidth();
+                if (percentagePositionX < 50) {
+                    tagPanel.addStyleName(Resources.INSTANCE.style().previewLeft());
+                    tagPanel.removeStyleName(Resources.INSTANCE.style().previewRight());
+
                 } else {
-                    tagPanel.addStyleName( Resources.INSTANCE.style().previewRight() );
-                    tagPanel.removeStyleName( Resources.INSTANCE.style().previewLeft() );
+                    tagPanel.addStyleName(Resources.INSTANCE.style().previewRight());
+                    tagPanel.removeStyleName(Resources.INSTANCE.style().previewLeft());
                 }
             }
-        }, DragOverEvent.getType() ) );
-        
-        this.dndHandlers.add( this.addDomHandler( new DragLeaveHandler() {
+        }, DragOverEvent.getType()));
+
+        this.dndHandlers.add(this.addDomHandler(new DragLeaveHandler() {
             @Override
-            public void onDragLeave( DragLeaveEvent event ) {
-                if( draggedElement.equals( TagView.this ) )
+            public void onDragLeave(DragLeaveEvent event) {
+                if (draggedElement.equals(TagView.this))
                     return;
-                
-                tagPanel.removeStyleName( Resources.INSTANCE.style().previewLeft() );
-                tagPanel.removeStyleName( Resources.INSTANCE.style().previewRight() );
+
+                tagPanel.removeStyleName(Resources.INSTANCE.style().previewLeft());
+                tagPanel.removeStyleName(Resources.INSTANCE.style().previewRight());
             }
-        }, DragLeaveEvent.getType() ) );
-        
-        this.dndHandlers.add( this.addDomHandler( new DropHandler() {
+        }, DragLeaveEvent.getType()));
+
+        this.dndHandlers.add(this.addDomHandler(new DropHandler() {
             @Override
-            public void onDrop( DropEvent event ) {
-                if( draggedElement.equals( TagView.this ) )
+            public void onDrop(DropEvent event) {
+                if (draggedElement.equals(TagView.this))
                     return;
-                
+
                 event.preventDefault();
-                uiHandlers.onRelocateTag( draggedElement, TagView.this,
-                        tagPanel.getStyleName().contains( Resources.INSTANCE.style().previewLeft() ) ?
-                                InsertionPoint.BEFORE : InsertionPoint.AFTER );
-                tagPanel.removeStyleName( Resources.INSTANCE.style().previewLeft() );
-                tagPanel.removeStyleName( Resources.INSTANCE.style().previewRight() );
+                uiHandlers.onRelocateTag(draggedElement, TagView.this, tagPanel.getStyleName().contains(Resources.INSTANCE.style().previewLeft()) ? InsertionPoint.BEFORE : InsertionPoint.AFTER);
+                tagPanel.removeStyleName(Resources.INSTANCE.style().previewLeft());
+                tagPanel.removeStyleName(Resources.INSTANCE.style().previewRight());
             }
-        }, DropEvent.getType() ) );
-        
-        this.dndHandlers.add( this.addDomHandler( new DragEndHandler() {
+        }, DropEvent.getType()));
+
+        this.dndHandlers.add(this.addDomHandler(new DragEndHandler() {
             @Override
-            public void onDragEnd( DragEndEvent event ) {
+            public void onDragEnd(DragEndEvent event) {
                 uiHandlers.onBlur();
             }
-        }, DragEndEvent.getType() ) );
+        }, DragEndEvent.getType()));
     }
-    
+
     private void deactivateDnD() {
-        this.tagPanel.removeStyleName( Resources.INSTANCE.style().tagEditable() );
-        
-        for( HandlerRegistration dndHandler : this.dndHandlers )
+        this.tagPanel.removeStyleName(Resources.INSTANCE.style().tagEditable());
+
+        for (HandlerRegistration dndHandler : this.dndHandlers)
             dndHandler.removeHandler();
-        
+
         this.dndHandlers.clear();
     }
 }

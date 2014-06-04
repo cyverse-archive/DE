@@ -38,6 +38,8 @@ public interface Resources extends ClientBundle {
     	String tagCaption();
     	String tagCaptionEditable();
     	String tagDelete();
+
+        String tagEdit();
     	
     	String inputListItem();
     	String inputField();
@@ -45,6 +47,8 @@ public interface Resources extends ClientBundle {
     	//DnD
     	String previewLeft();
         String previewRight();
+
+        String tagOptions();
     }
     
     @Source( cssRoot + "/style.css" )

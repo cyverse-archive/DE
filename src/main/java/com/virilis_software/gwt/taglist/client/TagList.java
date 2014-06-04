@@ -13,18 +13,23 @@
  */
 package com.virilis_software.gwt.taglist.client;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.IsWidget;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.PopupPanel;
+import com.google.gwt.user.client.ui.TextBox;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+
 import com.virilis_software.gwt.taglist.client.comp.TagListHandlers;
 import com.virilis_software.gwt.taglist.client.comp.tag.TagView;
 import com.virilis_software.gwt.taglist.client.comp.taglist.TagListView;
 import com.virilis_software.gwt.taglist.client.resource.Resources;
 import com.virilis_software.gwt.taglist.client.tag.Tag;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * 
@@ -32,12 +37,6 @@ import com.virilis_software.gwt.taglist.client.tag.Tag;
  *
  */
 public class TagList<T extends Tag<?>> implements IsWidget, TagListHandlers {
-    public interface TagCreationCodex<T extends Tag<?>> {
-         T createTag( Tag<?> tag );
-    }
-    
-    public enum InsertionPoint { BEFORE, AFTER };
-    
     private final Resources resources;
     private final TagListView tagListView;
     private final List<TagItem> tagItems = new ArrayList<TagItem>();
@@ -77,7 +76,7 @@ public class TagList<T extends Tag<?>> implements IsWidget, TagListHandlers {
     /**
      * @param tagCreationCodex the tagCreationCodex to set
      */
-    public void setTagCreationCodex( TagCreationCodex<T> tagCreationCodex ) {
+    public void setTagCreationCodex(TagCreationCodex<T> tagCreationCodex) {
         this.tagCreationCodex = tagCreationCodex;
     }
     
@@ -278,8 +277,8 @@ public class TagList<T extends Tag<?>> implements IsWidget, TagListHandlers {
     }
     
     public class TagItem {
-        private T tag;
-        private TagView tagView;
+        private final T tag;
+        private final TagView tagView;
 
         public TagItem( T tag, TagView tagView ) {
             this.tag = tag;
@@ -293,5 +292,24 @@ public class TagList<T extends Tag<?>> implements IsWidget, TagListHandlers {
         public T getTag() {
             return this.tag;
         }
+    }
+
+    @Override
+    public void onEditTag(TagView tagView) {
+        for( Iterator<TagItem> tagItemIt = this.tagItems.iterator(); tagItemIt.hasNext(); ) {
+            TagItem tagItem = tagItemIt.next();
+            if( tagItem.getTagView().equals( tagView ) ) {
+                Label l = new Label("Tag");
+                TextBox tb = new TextBox();
+                tb.setValue(tagItem.getTag().getValue().toString());
+                VerticalPanel vp = new VerticalPanel();
+                vp.add(l);
+                vp.add(tb);
+                PopupPanel pop = new PopupPanel();
+                pop.setWidget(vp);
+                pop.show();
+            }
+        }
+
     }
 }

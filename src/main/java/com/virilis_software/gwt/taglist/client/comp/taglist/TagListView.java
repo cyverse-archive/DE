@@ -34,6 +34,7 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
+
 import com.virilis_software.gwt.taglist.client.comp.TagListHandlers;
 import com.virilis_software.gwt.taglist.client.resource.Resources;
 import com.virilis_software.gwt.taglist.client.tag.StringTag;

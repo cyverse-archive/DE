@@ -7,9 +7,10 @@
     <g:HTMLPanel ui:field="tagPanel">
         <div ui:field="tag">
             <!-- Necessary to start both tags in one line, otherwise HTML will include a space gap between both divs -->
-            <g:Label ui:field="caption"></g:Label><g:HTMLPanel ui:field="deletePanel">
-               <b>x</b>
-            </g:HTMLPanel>
+            <g:Label ui:field="caption"></g:Label>
+             <div ui:field="editOption"></div>
+             <div ui:field="deleteOption"></div>
         </div>
-    </g:HTMLPanel>
+       
+   </g:HTMLPanel>
 </ui:UiBinder>
