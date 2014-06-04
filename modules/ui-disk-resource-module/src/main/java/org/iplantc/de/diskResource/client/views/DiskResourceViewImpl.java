@@ -11,6 +11,8 @@ import org.iplantc.de.client.models.diskResources.PermissionValue;
 import org.iplantc.de.client.models.search.DiskResourceQueryTemplate;
 import org.iplantc.de.client.util.CommonModelUtils;
 import org.iplantc.de.client.util.DiskResourceUtil;
+import org.iplantc.de.commons.client.tags.CustomIplantTagResources;
+import org.iplantc.de.commons.client.tags.IplantTagList;
 import org.iplantc.de.commons.client.widgets.IPlantAnchor;
 import org.iplantc.de.diskResource.client.events.DiskResourceSelectionChangedEvent;
 import org.iplantc.de.diskResource.client.events.FolderSelectionEvent;
@@ -47,10 +49,12 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiFactory;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiTemplate;
+import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.IsWidget;
+import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 
@@ -95,6 +99,11 @@ import com.sencha.gxt.widget.core.client.tree.Tree;
 import com.sencha.gxt.widget.core.client.tree.Tree.TreeNode;
 import com.sencha.gxt.widget.core.client.tree.TreeView;
 
+import com.virilis_software.gwt.taglist.client.TagCreationCodex;
+import com.virilis_software.gwt.taglist.client.tag.StringTag;
+import com.virilis_software.gwt.taglist.client.tag.Tag;
+
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -834,6 +843,71 @@ public class DiskResourceViewImpl extends Composite implements DiskResourceView,
             }
 
         }
+       
+        CustomIplantTagResources r = com.google.gwt.core.shared.GWT.create(CustomIplantTagResources.class);
+        detailsPanel.add(createSample("", r, true));
+    }
+
+    private Widget createSample(String containerStyle, CustomIplantTagResources resources, boolean editable) {
+        HorizontalPanel hp = new HorizontalPanel();
+        // TagList
+        SimplePanel boundaryBox = new SimplePanel();
+        boundaryBox.setWidget(createTagList(resources, editable, this.createOnFocusCmd(boundaryBox, containerStyle), this.createOnBlurCmd(boundaryBox, containerStyle)));
+        hp.add(boundaryBox);
+        return hp;
+    }
+
+    private Command createOnFocusCmd(final SimplePanel boundaryBox, final String defaultStyle) {
+        return new Command() {
+            @Override
+            public void execute() {
+                boundaryBox.getElement().setAttribute("style", defaultStyle + " outline: -webkit-focus-ring-color auto 5px;");
+            }
+        };
+    }
+
+    private Command createOnBlurCmd(final SimplePanel boundaryBox, final String defaultStyle) {
+        return new Command() {
+            @Override
+            public void execute() {
+                boundaryBox.getElement().setAttribute("style", defaultStyle);
+            }
+        };
+    }
+
+    private IplantTagList<StringTag> createTagList(CustomIplantTagResources resources, boolean editable, Command onFocusCmd, Command onBlurCmd) {
+        List<StringTag> items = new ArrayList<StringTag>();
+        items.add(new StringTag("Tag 1", "Tag 1"));
+        items.add(new StringTag("Tag 2", "Tag 2"));
+        items.add(new StringTag("Bigger Tag", "Bigger Tag"));
+        items.add(new StringTag("This Tag is even bigger", "Bigger Tag"));
+        items.add(new StringTag("This Tag is even bigger bigger", "Bigger Tag1"));
+        items.add(new StringTag("This Tag is even bigger bigger bigger", "Bigger Tag2"));
+        items.add(new StringTag("Bigger Tag2", "Bigger Tag"));
+        items.add(new StringTag("Bigger Tag3", "Bigger Tag"));
+        items.add(new StringTag("Bigger Tag4", "Bigger Tag"));
+        items.add(new StringTag("Bigger Tag5", "Bigger Tag"));
+        items.add(new StringTag("Bigger Tag6", "Bigger Tag"));
+        items.add(new StringTag("Bigger Tag7", "Bigger Tag"));
+
+        IplantTagList<StringTag> tagList;
+        if (resources == null) {
+            tagList = new IplantTagList<StringTag>();
+        } else {
+            tagList = new IplantTagList<StringTag>(resources);
+        }
+        tagList.setEditable(editable);
+        tagList.setTagCreationCodex(new TagCreationCodex<StringTag>() {
+            @Override
+            public StringTag createTag(Tag<?> tag) {
+                return new StringTag(tag.getCaption());
+            }
+        });
+        tagList.setOnFocusCmd(onFocusCmd);
+        tagList.setOnBlurCmd(onBlurCmd);
+        tagList.addTags(items);
+
+        return tagList;
     }
 
     private void addFolderDetails(DiskResourceInfo info) {
