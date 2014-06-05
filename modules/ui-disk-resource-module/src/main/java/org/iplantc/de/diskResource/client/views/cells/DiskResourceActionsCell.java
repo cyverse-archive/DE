@@ -1,7 +1,5 @@
 package org.iplantc.de.diskResource.client.views.cells;
 
-import com.google.common.base.Strings;
-import com.google.gwt.debug.client.DebugInfo;
 import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.client.models.diskResources.File;
 import org.iplantc.de.client.models.diskResources.Folder;
@@ -15,10 +13,13 @@ import org.iplantc.de.resources.client.messages.I18N;
 import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 
 import static com.google.gwt.dom.client.BrowserEvents.CLICK;
+
+import com.google.common.base.Strings;
 import com.google.gwt.cell.client.AbstractCell;
 import com.google.gwt.cell.client.Cell;
 import com.google.gwt.cell.client.ValueUpdater;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.debug.client.DebugInfo;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.shared.HasHandlers;
@@ -73,6 +74,8 @@ public class DiskResourceActionsCell extends AbstractCell<DiskResource> {
     private final String SHARE_FILE_BY_LINK_ACTION;
     private final String SHARE_BY_DE_ACTION;
     private final String MANAGE_METADATA_ACTION;
+    private final String FAVORITE_ACTION;
+    private final String COMMENTS_ACTION;
 
 
     public DiskResourceActionsCell() {
@@ -86,6 +89,9 @@ public class DiskResourceActionsCell extends AbstractCell<DiskResource> {
         SHARE_FILE_BY_LINK_ACTION = displayStrings.share() + " " + displayStrings.viaPublicLink();
         SHARE_BY_DE_ACTION = displayStrings.share() + " " + displayStrings.viaDiscoveryEnvironment();
         MANAGE_METADATA_ACTION = displayStrings.metadata();
+        FAVORITE_ACTION = "Favorite";
+        COMMENTS_ACTION = displayStrings.comments();
+
     }
 
     @Override
@@ -160,6 +166,36 @@ public class DiskResourceActionsCell extends AbstractCell<DiskResource> {
         // Append metadata action
         if(name != null && className != null && imgSrc != null){
             if(DebugInfo.isDebugIdEnabled() && !Strings.isNullOrEmpty(baseID) && (debugId != null)) {
+                sb.append(templates.debugImgCell(name, toolTip, className, imgSrc, debugId));
+            } else {
+                sb.append(templates.imgCell(name, toolTip, className, imgSrc));
+            }
+        }
+
+        name = FAVORITE_ACTION;
+        toolTip = FAVORITE_ACTION;
+        className = resources.css().actionIcon();
+        imgSrc = iplantResources.favIcon().getSafeUri();
+        debugId = baseID + "." + value.getId() + DiskResourceModule.Ids.ACTION_CELL_FAVORITE;
+
+        // append favorite action
+        if (name != null && className != null && imgSrc != null) {
+            if (DebugInfo.isDebugIdEnabled() && !Strings.isNullOrEmpty(baseID) && (debugId != null)) {
+                sb.append(templates.debugImgCell(name, toolTip, className, imgSrc, debugId));
+            } else {
+                sb.append(templates.imgCell(name, toolTip, className, imgSrc));
+            }
+        }
+
+        name = COMMENTS_ACTION;
+        toolTip = COMMENTS_ACTION;
+        className = resources.css().actionIcon();
+        imgSrc = iplantResources.userComment().getSafeUri();
+        debugId = baseID + "." + value.getId() + DiskResourceModule.Ids.ACTION_CELL_COMMENTS;
+
+        // append comments action
+        if (name != null && className != null && imgSrc != null) {
+            if (DebugInfo.isDebugIdEnabled() && !Strings.isNullOrEmpty(baseID) && (debugId != null)) {
                 sb.append(templates.debugImgCell(name, toolTip, className, imgSrc, debugId));
             } else {
                 sb.append(templates.imgCell(name, toolTip, className, imgSrc));

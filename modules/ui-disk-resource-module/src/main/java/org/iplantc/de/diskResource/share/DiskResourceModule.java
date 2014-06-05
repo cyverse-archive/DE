@@ -52,6 +52,8 @@ public interface DiskResourceModule {
         String ACTION_CELL_DATA_LINK = ".actionCellDataLink";
         String ACTION_CELL_SHARE = ".actionCellShare";
         String ACTION_CELL_METADATA = ".actionCellMetadata";
+        String ACTION_CELL_FAVORITE = ".favorite";
+        String ACTION_CELL_COMMENTS = ".comments";
         String NAME_CELL = ".nameCell";
     }
 }
