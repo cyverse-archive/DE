@@ -1,20 +1,81 @@
 package org.iplantc.de.server;
 
-import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.http.client.methods.*;
+import org.apache.http.client.params.HttpClientParams;
 import org.apache.http.client.utils.URIBuilder;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
-import java.net.HttpURLConnection;
 import java.net.URISyntaxException;
 import java.net.URLEncoder;
-
-import javax.servlet.http.HttpServletRequest;
 
 /**
  * Performs actions common to most URL connectors.
  */
 public abstract class BaseUrlConnector implements UrlConnector {
-    
+
+    /**
+     * Disables redirects for an HTTP request.
+     *
+     * @param request the request.
+     * @param <T> the type of the request.
+     * @return the original request.
+     */
+    protected <T extends HttpRequestBase> T disableRedirects(T request) {
+        HttpClientParams.setRedirecting(request.getParams(), false);
+        return request;
+    }
+
+    /**
+     * Creates a new HTTP GET request.
+     *
+     * @param url the URL to connect to.
+     * @return the request.
+     */
+    protected HttpGet createHttpGet(String url) {
+        return disableRedirects(new HttpGet(url));
+    }
+
+    /**
+     * Creates a new HTTP PUT request.
+     *
+     * @param url the URL to connect to.
+     * @return the request.
+     */
+    protected HttpPut createHttpPut(String url) {
+        return disableRedirects(new HttpPut(url));
+    }
+
+    /**
+     * Creates a new HTTP POST request.
+     *
+     * @param url the URL to connect to.
+     * @return the request.
+     */
+    protected HttpPost createHttpPost(String url) {
+        return disableRedirects(new HttpPost(url));
+    }
+
+    /**
+     * Creates a new HTTP DELETE request.
+     *
+     * @param url the URL to connect to.
+     * @return the request.
+     */
+    protected HttpDelete createHttpDelete(String url) {
+        return disableRedirects(new HttpDelete(url));
+    }
+
+    /**
+     * Creates a new HTTP PATCH request.
+     *
+     * @param url the URL to connect to.
+     * @return the request.
+     */
+    protected HttpPatch createHttpPatch(String url) {
+        return disableRedirects(new HttpPatch(url));
+    }
+
     /**
      * Adds a query string parameter to a URI.
      *

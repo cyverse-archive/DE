@@ -402,6 +402,16 @@ public class AppsViewImpl extends Composite implements AppsView,
             if (ag != null) {
                 tree.getSelectionModel().select(ag, false);
                 tree.scrollIntoView(ag);
+            } else {
+                // Try to find app group by name if ID could not locate the
+                for(AppGroup appGrp : treeStore.getAll()){
+
+                    if(appGrp.getName().equalsIgnoreCase(appGroupId)) {
+                        tree.getSelectionModel().select(appGrp, false);
+                        tree.scrollIntoView(appGrp);
+                        return;
+                    }
+                }
             }
         }
     }

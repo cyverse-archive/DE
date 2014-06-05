@@ -1,7 +1,8 @@
 package org.iplantc.de.resources.client.messages;
 
-import com.google.gwt.safehtml.shared.SafeHtml;
 import org.iplantc.de.resources.client.uiapps.integration.AppIntegrationErrorMessages;
+
+import com.google.gwt.safehtml.shared.SafeHtml;
 
 import java.util.List;
 
@@ -85,6 +86,10 @@ public interface IplantErrorStrings extends com.google.gwt.i18n.client.Messages,
     @DefaultMessage("Error deleting the selected app.")
     @Key("appRemoveFailure")
     String appRemoveFailure();
+
+    @DefaultMessage("Authorization Error: {0}")
+    @Key("authError")
+    String authError(String service);
 
     /**
      * Translated "Cannot create documentation page for app {0}".

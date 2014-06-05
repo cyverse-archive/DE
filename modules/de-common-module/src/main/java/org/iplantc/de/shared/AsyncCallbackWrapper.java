@@ -57,7 +57,14 @@ public class AsyncCallbackWrapper<T> implements AsyncCallback<T> {
                 redirectToLandingPage();
             }
         }
+
         callback.onFailure(error);
+
+        if (error instanceof HttpRedirectException) {
+            HttpRedirectException e = (HttpRedirectException) error;
+            Window.Location.replace(e.getLocation());
+        }
+
     }
 
     /**

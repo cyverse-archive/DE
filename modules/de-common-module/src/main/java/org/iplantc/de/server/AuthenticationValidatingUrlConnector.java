@@ -1,17 +1,13 @@
 package org.iplantc.de.server;
 
-import static org.iplantc.de.server.util.CasUtils.attributePrincipalFromServletRequest;
-
 import org.apache.http.client.methods.*;
 import org.iplantc.de.shared.AuthenticationException;
-
 import org.jasig.cas.client.authentication.AttributePrincipal;
 
-import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.URL;
-
 import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
+
+import static org.iplantc.de.server.util.CasUtils.attributePrincipalFromServletRequest;
 
 /**
  * A URL connector that verifies that the user has authenticated, but does not add authentication
@@ -36,30 +32,30 @@ public class AuthenticationValidatingUrlConnector extends BaseUrlConnector {
     @Override
     public HttpGet getRequest(HttpServletRequest request, String address) throws IOException {
         validateAuthentication(request);
-        return copyUserAgent(request, new HttpGet(address));
+        return copyUserAgent(request, createHttpGet(address));
     }
 
     @Override
     public HttpPut putRequest(HttpServletRequest request, String address) throws IOException {
         validateAuthentication(request);
-        return copyUserAgent(request, new HttpPut(address));
+        return copyUserAgent(request, createHttpPut(address));
     }
 
     @Override
     public HttpPost postRequest(HttpServletRequest request, String address) throws IOException {
         validateAuthentication(request);
-        return copyUserAgent(request, new HttpPost(address));
+        return copyUserAgent(request, createHttpPost(address));
     }
 
     @Override
     public HttpDelete deleteRequest(HttpServletRequest request, String address) throws IOException {
         validateAuthentication(request);
-        return copyUserAgent(request, new HttpDelete(address));
+        return copyUserAgent(request, createHttpDelete(address));
     }
 
     @Override
     public HttpPatch patchRequest(HttpServletRequest request, String address) throws IOException {
         validateAuthentication(request);
-        return copyUserAgent(request, new HttpPatch(address));
+        return copyUserAgent(request, createHttpPatch(address));
     }
 }

@@ -14,6 +14,8 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.log4j.Logger;
 import org.iplantc.de.shared.AuthenticationException;
 import org.iplantc.de.shared.DEService;
+import org.iplantc.de.shared.HttpException;
+import org.iplantc.de.shared.HttpRedirectException;
 import org.iplantc.de.shared.services.BaseServiceCallWrapper;
 import org.iplantc.de.shared.services.HTTPPart;
 import org.iplantc.de.shared.services.MultiPartServiceWrapper;
@@ -134,7 +136,12 @@ public abstract class BaseDEServiceDispatcher extends RemoteServiceServlet imple
      * @throws IOException if an I/O error occurs or the server returns an error status.
      */
     private void checkResponse(HttpResponse response) throws IOException {
-        int status = response.getStatusLine().getStatusCode();
+        final int status = response.getStatusLine().getStatusCode();
+        if (status == 302) {
+            final String responseBody = IOUtils.toString(response.getEntity().getContent());
+            final String location = response.getFirstHeader("Location").getValue();
+            throw new HttpRedirectException(status, responseBody, location);
+        }
         if (status < 200 || status > 299) {
             throw new HttpException(status, IOUtils.toString(response.getEntity().getContent()));
         }
@@ -489,7 +496,8 @@ public abstract class BaseDEServiceDispatcher extends RemoteServiceServlet imple
      * @throws SerializationException if any other error occurs.
      */
     @Override
-    public String getServiceData(ServiceCallWrapper wrapper) throws SerializationException, AuthenticationException {
+    public String getServiceData(ServiceCallWrapper wrapper) throws SerializationException, AuthenticationException,
+            HttpException {
         String json = null;
 
         if (isValidServiceCall(wrapper)) {
@@ -497,6 +505,8 @@ public abstract class BaseDEServiceDispatcher extends RemoteServiceServlet imple
             try {
                 json = getResponseBody(getResponse(client, wrapper));
             } catch (AuthenticationException ex) {
+                throw ex;
+            } catch (HttpRedirectException ex) {
                 throw ex;
             } catch (HttpException ex) {
                 LOGGER.error(ex.getResponseBody(), ex);
@@ -530,6 +540,9 @@ public abstract class BaseDEServiceDispatcher extends RemoteServiceServlet imple
                 HttpResponse response = getResponse(client, wrapper);
                 checkResponse(response);
                 return new DEServiceInputStream(client, response);
+            } catch (HttpRedirectException ex) {
+                client.getConnectionManager().shutdown();
+                throw ex;
             } catch (AuthenticationException ex) {
                 client.getConnectionManager().shutdown();
                 throw ex;
@@ -567,7 +580,7 @@ public abstract class BaseDEServiceDispatcher extends RemoteServiceServlet imple
      */
     @Override
     public String getServiceData(MultiPartServiceWrapper wrapper)
-            throws SerializationException, AuthenticationException {
+            throws SerializationException, AuthenticationException, HttpException {
         String json = null;
 
         if (isValidServiceCall(wrapper)) {
@@ -575,6 +588,8 @@ public abstract class BaseDEServiceDispatcher extends RemoteServiceServlet imple
             try {
                 json = getResponseBody(getResponse(client, wrapper));
             } catch (AuthenticationException ex) {
+                throw ex;
+            } catch (HttpRedirectException ex) {
                 throw ex;
             } catch (HttpException ex) {
                 LOGGER.error(ex.getResponseBody(), ex);

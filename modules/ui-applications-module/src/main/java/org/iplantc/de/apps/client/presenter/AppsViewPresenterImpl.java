@@ -1,15 +1,6 @@
 package org.iplantc.de.apps.client.presenter;
 
-import org.iplantc.de.apps.client.events.AppCommentSelectedEvent;
-import org.iplantc.de.apps.client.events.AppDeleteEvent;
-import org.iplantc.de.apps.client.events.AppFavoritedEvent;
-import org.iplantc.de.apps.client.events.AppGroupSelectionChangedEvent;
-import org.iplantc.de.apps.client.events.AppUpdatedEvent;
-import org.iplantc.de.apps.client.events.CreateNewAppEvent;
-import org.iplantc.de.apps.client.events.CreateNewWorkflowEvent;
-import org.iplantc.de.apps.client.events.EditAppEvent;
-import org.iplantc.de.apps.client.events.EditWorkflowEvent;
-import org.iplantc.de.apps.client.events.RunAppEvent;
+import org.iplantc.de.apps.client.events.*;
 import org.iplantc.de.apps.client.presenter.proxy.AppGroupProxy;
 import org.iplantc.de.apps.client.views.AppsView;
 import org.iplantc.de.apps.client.views.cells.AppFavoriteCell;
@@ -38,6 +29,7 @@ import org.iplantc.de.commons.client.info.IplantAnnouncer;
 import org.iplantc.de.resources.client.messages.I18N;
 import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 import org.iplantc.de.resources.client.messages.IplantErrorStrings;
+import org.iplantc.de.shared.HttpRedirectException;
 import org.iplantc.de.shared.services.ConfluenceServiceFacade;
 
 import com.google.common.base.Strings;
@@ -50,6 +42,7 @@ import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.regexp.shared.RegExp;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.user.client.Command;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HasOneWidget;
 import com.google.inject.Inject;
@@ -316,11 +309,14 @@ public class AppsViewPresenterImpl implements AppsView.Presenter {
 
             @Override
             public void onFailure(Throwable caught) {
-                ErrorHandler.post(errorStrings.retrieveAppListingFailed(), caught);
+                if(caught instanceof HttpRedirectException){
+                    Window.alert(displayStrings.agaveAuthRequiredMsg());
+                } else {
+                    ErrorHandler.post(errorStrings.retrieveAppListingFailed(), caught);
+                }
                 view.unMaskCenterPanel();
             }
         });
-
     }
 
     protected void selectFirstApp() {

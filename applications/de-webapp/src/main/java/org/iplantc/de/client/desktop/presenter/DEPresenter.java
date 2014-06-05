@@ -28,17 +28,22 @@ import org.iplantc.de.commons.client.events.UserSettingsUpdatedEvent;
 import org.iplantc.de.commons.client.events.UserSettingsUpdatedEventHandler;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
 import org.iplantc.de.commons.client.requests.KeepaliveTimer;
+import org.iplantc.de.commons.client.views.gxt3.dialogs.IplantErrorDialog;
+import org.iplantc.de.commons.client.views.window.configs.AppsWindowConfig;
 import org.iplantc.de.commons.client.views.window.configs.ConfigFactory;
 import org.iplantc.de.commons.client.views.window.configs.DiskResourceWindowConfig;
+import org.iplantc.de.commons.client.views.window.configs.WindowConfig;
 import org.iplantc.de.diskResource.client.events.FileUploadedEvent;
 import org.iplantc.de.diskResource.client.events.FileUploadedEvent.FileUploadedEventHandler;
 import org.iplantc.de.resources.client.DEFeedbackStyle;
 import org.iplantc.de.resources.client.IplantResources;
 import org.iplantc.de.resources.client.messages.I18N;
+import org.iplantc.de.resources.client.messages.IplantErrorStrings;
 import org.iplantc.de.shared.services.PropertyServiceFacade;
 import org.iplantc.de.shared.services.ServiceCallWrapper;
 
 import com.google.common.base.Strings;
+import com.google.common.collect.Iterables;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.shared.GWT;
 import com.google.gwt.dom.client.NativeEvent;
@@ -78,10 +83,27 @@ import java.util.Map;
  */
 public class DEPresenter implements DEView.Presenter {
 
-    private static final String FOLDER_PARAMETER = "folder";
-    private static final String DATA_TYPE_VAL = "data";
-    private static final String TYPE_PARAMETER = "type";
+    interface QueryStrings {
+        String TYPE = "type";
+        String APP_CATEGORY = "app-category";
+        String FOLDER = "folder";
+    }
+
+    interface TypeQueryValues {
+        String APPS = "apps";
+        String DATA = "data";
+    }
+
+    interface AuthErrors {
+        String API_NAME = "api_name";
+        String ERROR_DESCRIPTION = "error_description";
+        String ERROR = "error";
+        String ACCESS_DENIED = "access_denied";
+    }
+
+
     private final DEView view;
+    private final IplantErrorStrings errorStrings;
     private final DeResources res;
     private final EventBus eventBus;
     private final NewMessagePresenter newSysMsgPresenter;
@@ -94,8 +116,12 @@ public class DEPresenter implements DEView.Presenter {
     /**
      * Constructs a default instance of the object.
      */
-    public DEPresenter(final DEView view, final DeResources resources, EventBus eventBus) {
+    public DEPresenter(final DEView view,
+                       final DeResources resources,
+                       final EventBus eventBus,
+                       final IplantErrorStrings errorStrings) {
         this.view = view;
+        this.errorStrings = errorStrings;
         this.view.setPresenter(this);
         this.res = resources;
         this.eventBus = eventBus;
@@ -310,31 +336,60 @@ public class DEPresenter implements DEView.Presenter {
         addKeyBoardEvents();
     }
 
+    /**
+     *
+     * @param params
+     * @return true if parameter has "type=data"
+     */
     private boolean urlHasDataTypeParameter(Map<String, List<String>> params) {
         for (String key : params.keySet()) {
-            if (TYPE_PARAMETER.equalsIgnoreCase(key) && DATA_TYPE_VAL.equalsIgnoreCase(params.get(key).get(0))) {
+            if (QueryStrings.TYPE.equalsIgnoreCase(key)
+                        && TypeQueryValues.DATA.equalsIgnoreCase(Iterables.getFirst(params.get(key), ""))) {
                 return true;
             }
         }
-
         return false;
     }
 
     // Sriram : We need a generic way to process query strings. This is temp. solution for CORE-4694
     private void processQueryStrings() {
         Map<String, List<String>> params = Window.Location.getParameterMap();
-        if(urlHasDataTypeParameter(params)){
-            DiskResourceWindowConfig diskResourceWindowConfig = ConfigFactory
-                    .diskResourceWindowConfig(false);
-            diskResourceWindowConfig.setMaximized(true);
-            String folderParameter = Window.Location.getParameter(FOLDER_PARAMETER);
-            String selectedFolder = URL.decode(Strings.nullToEmpty(folderParameter));
+        for(String key : params.keySet()){
 
-            if (!Strings.isNullOrEmpty(selectedFolder)) {
-                HasPath folder = CommonModelUtils.createHasPathFromString(selectedFolder);
-                diskResourceWindowConfig.setSelectedFolder(folder);
+            if (QueryStrings.TYPE.equalsIgnoreCase(key)) { // Process query strings for opening DE windows
+                for(String paramValue : params.get(key)){
+                    WindowConfig windowConfig = null;
+
+                    if(TypeQueryValues.APPS.equalsIgnoreCase(paramValue)){
+                        final AppsWindowConfig appsConfig = ConfigFactory.appsWindowConfig();
+                        final String appCategoryId = Window.Location.getParameter(QueryStrings.APP_CATEGORY);
+                        appsConfig.setSelectedAppGroup(CommonModelUtils.createHasIdFromString(appCategoryId));
+                        windowConfig = appsConfig;
+                    } else if (TypeQueryValues.DATA.equalsIgnoreCase(paramValue)){
+                        DiskResourceWindowConfig drConfig = ConfigFactory.diskResourceWindowConfig(true);
+                        drConfig.setMaximized(true);
+                        // If user has multiple folder parameters, the last one will be used.
+                        String folderParameter = Window.Location.getParameter(QueryStrings.FOLDER);
+                        String selectedFolder = URL.decode(Strings.nullToEmpty(folderParameter));
+
+                        if (!Strings.isNullOrEmpty(selectedFolder)) {
+                            HasPath folder = CommonModelUtils.createHasPathFromString(selectedFolder);
+                            drConfig.setSelectedFolder(folder);
+                        }
+                        windowConfig = drConfig;
+                    }
+
+                    if(windowConfig != null){
+                        eventBus.fireEvent(new WindowShowRequestEvent(windowConfig));
+                    }
+                }
+            } else if(AuthErrors.ERROR.equalsIgnoreCase(key)) { // Process auth errors
+                if(AuthErrors.ACCESS_DENIED.equalsIgnoreCase(Iterables.getFirst(params.get(key), ""))){
+                    IplantErrorDialog errorDialog = new IplantErrorDialog(errorStrings.authError(Window.Location.getParameter(AuthErrors.API_NAME)),
+                                                                          Window.Location.getParameter(AuthErrors.ERROR_DESCRIPTION));
+                    errorDialog.show();
+                }
             }
-            eventBus.fireEvent(new WindowShowRequestEvent(diskResourceWindowConfig));
         }
     }
 
