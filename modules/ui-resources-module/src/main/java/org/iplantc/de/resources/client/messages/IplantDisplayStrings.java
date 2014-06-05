@@ -120,6 +120,10 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     @Key("affirmativeResponse")
     String affirmativeResponse();
 
+    @DefaultMessage("Your browser will be temporarily redirected to Agave for authorization.")
+    @Key("agaveAuthRequiredMsg")
+    String agaveAuthRequiredMsg();
+
     /**
      * Translated "Alert".
      *

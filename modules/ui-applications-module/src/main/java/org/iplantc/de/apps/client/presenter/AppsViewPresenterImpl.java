@@ -310,14 +310,13 @@ public class AppsViewPresenterImpl implements AppsView.Presenter {
             @Override
             public void onFailure(Throwable caught) {
                 if(caught instanceof HttpRedirectException){
-                    Window.alert("Authorization is required to proceed.");
+                    Window.alert(displayStrings.agaveAuthRequiredMsg());
                 } else {
                     ErrorHandler.post(errorStrings.retrieveAppListingFailed(), caught);
                 }
                 view.unMaskCenterPanel();
             }
         });
-
     }
 
     protected void selectFirstApp() {

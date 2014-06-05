@@ -28,6 +28,7 @@ import org.iplantc.de.commons.client.events.UserSettingsUpdatedEvent;
 import org.iplantc.de.commons.client.events.UserSettingsUpdatedEventHandler;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
 import org.iplantc.de.commons.client.requests.KeepaliveTimer;
+import org.iplantc.de.commons.client.views.gxt3.dialogs.IplantErrorDialog;
 import org.iplantc.de.commons.client.views.window.configs.AppsWindowConfig;
 import org.iplantc.de.commons.client.views.window.configs.ConfigFactory;
 import org.iplantc.de.commons.client.views.window.configs.DiskResourceWindowConfig;
@@ -37,6 +38,7 @@ import org.iplantc.de.diskResource.client.events.FileUploadedEvent.FileUploadedE
 import org.iplantc.de.resources.client.DEFeedbackStyle;
 import org.iplantc.de.resources.client.IplantResources;
 import org.iplantc.de.resources.client.messages.I18N;
+import org.iplantc.de.resources.client.messages.IplantErrorStrings;
 import org.iplantc.de.shared.services.PropertyServiceFacade;
 import org.iplantc.de.shared.services.ServiceCallWrapper;
 
@@ -81,14 +83,25 @@ import java.util.Map;
  */
 public class DEPresenter implements DEView.Presenter {
 
-    private final String FOLDER_PARAMETER = "folder";
-    private final String DATA_TYPE_VAL = "data";
-    private final String TYPE_PARAMETER = "type";
+    interface QueryStrings {
+        String TYPE = "type";
+        String APP_CATEGORY = "app-category";
+        String FOLDER = "folder";
+        String AUTH_DENIED = "auth-denied";
+    }
 
-    private final String APP_TYPE_VAL = "apps";
-    private final String APP_CATEGORY_PARAMETER = "app-category";
+    interface TypeQueryValues {
+        String APPS = "apps";
+        String DATA = "data";
+    }
+
+    interface AuthDeniedApps {
+        String AGAVE = "agave";
+    }
+
 
     private final DEView view;
+    private final IplantErrorStrings errorStrings;
     private final DeResources res;
     private final EventBus eventBus;
     private final NewMessagePresenter newSysMsgPresenter;
@@ -101,8 +114,12 @@ public class DEPresenter implements DEView.Presenter {
     /**
      * Constructs a default instance of the object.
      */
-    public DEPresenter(final DEView view, final DeResources resources, EventBus eventBus) {
+    public DEPresenter(final DEView view,
+                       final DeResources resources,
+                       final EventBus eventBus,
+                       final IplantErrorStrings errorStrings) {
         this.view = view;
+        this.errorStrings = errorStrings;
         this.view.setPresenter(this);
         this.res = resources;
         this.eventBus = eventBus;
@@ -324,8 +341,8 @@ public class DEPresenter implements DEView.Presenter {
      */
     private boolean urlHasDataTypeParameter(Map<String, List<String>> params) {
         for (String key : params.keySet()) {
-            if (TYPE_PARAMETER.equalsIgnoreCase(key)
-                        && DATA_TYPE_VAL.equalsIgnoreCase(Iterables.getFirst(params.get(key), ""))) {
+            if (QueryStrings.TYPE.equalsIgnoreCase(key)
+                        && TypeQueryValues.DATA.equalsIgnoreCase(Iterables.getFirst(params.get(key), ""))) {
                 return true;
             }
         }
@@ -336,31 +353,38 @@ public class DEPresenter implements DEView.Presenter {
     private void processQueryStrings() {
         Map<String, List<String>> params = Window.Location.getParameterMap();
         for(String key : params.keySet()){
-            for(String paramValue : params.get(key)){
-                WindowConfig windowConfig = null;
 
-                if(APP_TYPE_VAL.equalsIgnoreCase(paramValue)){
-                    final AppsWindowConfig appsConfig = ConfigFactory.appsWindowConfig();
-                    final String appCategoryId = Window.Location.getParameter(APP_CATEGORY_PARAMETER);
-                    appsConfig.setSelectedAppGroup(CommonModelUtils.createHasIdFromString(appCategoryId));
-                    windowConfig = appsConfig;
-                } else if (DATA_TYPE_VAL.equalsIgnoreCase(paramValue)){
-                    DiskResourceWindowConfig drConfig = ConfigFactory.diskResourceWindowConfig(true);
-                    drConfig.setMaximized(true);
-                    // If user has multiple folder parameters, the last one will be used.
-                    String folderParameter = Window.Location.getParameter(FOLDER_PARAMETER);
-                    String selectedFolder = URL.decode(Strings.nullToEmpty(folderParameter));
+            if (QueryStrings.TYPE.equalsIgnoreCase(key)) { // Process query strings for opening DE windows
+                for(String paramValue : params.get(key)){
+                    WindowConfig windowConfig = null;
 
-                    if (!Strings.isNullOrEmpty(selectedFolder)) {
-                        HasPath folder = CommonModelUtils.createHasPathFromString(selectedFolder);
-                        drConfig.setSelectedFolder(folder);
+                    if(TypeQueryValues.APPS.equalsIgnoreCase(paramValue)){
+                        final AppsWindowConfig appsConfig = ConfigFactory.appsWindowConfig();
+                        final String appCategoryId = Window.Location.getParameter(QueryStrings.APP_CATEGORY);
+                        appsConfig.setSelectedAppGroup(CommonModelUtils.createHasIdFromString(appCategoryId));
+                        windowConfig = appsConfig;
+                    } else if (TypeQueryValues.DATA.equalsIgnoreCase(paramValue)){
+                        DiskResourceWindowConfig drConfig = ConfigFactory.diskResourceWindowConfig(true);
+                        drConfig.setMaximized(true);
+                        // If user has multiple folder parameters, the last one will be used.
+                        String folderParameter = Window.Location.getParameter(QueryStrings.FOLDER);
+                        String selectedFolder = URL.decode(Strings.nullToEmpty(folderParameter));
+
+                        if (!Strings.isNullOrEmpty(selectedFolder)) {
+                            HasPath folder = CommonModelUtils.createHasPathFromString(selectedFolder);
+                            drConfig.setSelectedFolder(folder);
+                        }
+                        windowConfig = drConfig;
                     }
-                    windowConfig = drConfig;
-                }
 
-                if(windowConfig != null){
-                    eventBus.fireEvent(new WindowShowRequestEvent(windowConfig));
+                    if(windowConfig != null){
+                        eventBus.fireEvent(new WindowShowRequestEvent(windowConfig));
+                    }
                 }
+            } else if(QueryStrings.AUTH_DENIED.equalsIgnoreCase(key)) { // Process auth denied errors
+                IplantErrorDialog errorDialog = new IplantErrorDialog(errorStrings.authError(),
+                                                                      errorStrings.authFailedForService(Iterables.getFirst(params.get(key), "")));
+                errorDialog.show();
             }
         }
     }
