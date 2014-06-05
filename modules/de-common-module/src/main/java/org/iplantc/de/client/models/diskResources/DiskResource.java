@@ -39,7 +39,7 @@ public interface DiskResource extends HasId, HasName, HasPath {
 
     boolean isFavorite();
 
-    void setFavorite();
+    void setFavorite(boolean favorite);
 
     void setDiskResourceInfo(DiskResourceInfo info);
 
