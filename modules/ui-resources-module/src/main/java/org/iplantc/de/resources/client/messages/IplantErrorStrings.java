@@ -87,13 +87,9 @@ public interface IplantErrorStrings extends com.google.gwt.i18n.client.Messages,
     @Key("appRemoveFailure")
     String appRemoveFailure();
 
-    @DefaultMessage("Authorization Error")
+    @DefaultMessage("Authorization Error: {0}")
     @Key("authError")
-    String authError();
-
-    @DefaultMessage("Authorization failed for the following service:\n{0}")
-    @Key("authFailedForService")
-    String authFailedForService(String strings);
+    String authError(String service);
 
     /**
      * Translated "Cannot create documentation page for app {0}".

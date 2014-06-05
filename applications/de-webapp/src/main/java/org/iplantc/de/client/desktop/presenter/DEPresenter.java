@@ -87,7 +87,6 @@ public class DEPresenter implements DEView.Presenter {
         String TYPE = "type";
         String APP_CATEGORY = "app-category";
         String FOLDER = "folder";
-        String AUTH_DENIED = "auth-denied";
     }
 
     interface TypeQueryValues {
@@ -95,8 +94,11 @@ public class DEPresenter implements DEView.Presenter {
         String DATA = "data";
     }
 
-    interface AuthDeniedApps {
-        String AGAVE = "agave";
+    interface AuthErrors {
+        String API_NAME = "api_name";
+        String ERROR_DESCRIPTION = "error_description";
+        String ERROR = "error";
+        String ACCESS_DENIED = "access_denied";
     }
 
 
@@ -381,10 +383,12 @@ public class DEPresenter implements DEView.Presenter {
                         eventBus.fireEvent(new WindowShowRequestEvent(windowConfig));
                     }
                 }
-            } else if(QueryStrings.AUTH_DENIED.equalsIgnoreCase(key)) { // Process auth denied errors
-                IplantErrorDialog errorDialog = new IplantErrorDialog(errorStrings.authError(),
-                                                                      errorStrings.authFailedForService(Iterables.getFirst(params.get(key), "")));
-                errorDialog.show();
+            } else if(AuthErrors.ERROR.equalsIgnoreCase(key)) { // Process auth errors
+                if(AuthErrors.ACCESS_DENIED.equalsIgnoreCase(Iterables.getFirst(params.get(key), ""))){
+                    IplantErrorDialog errorDialog = new IplantErrorDialog(errorStrings.authError(Window.Location.getParameter(AuthErrors.API_NAME)),
+                                                                          Window.Location.getParameter(AuthErrors.ERROR_DESCRIPTION));
+                    errorDialog.show();
+                }
             }
         }
     }
