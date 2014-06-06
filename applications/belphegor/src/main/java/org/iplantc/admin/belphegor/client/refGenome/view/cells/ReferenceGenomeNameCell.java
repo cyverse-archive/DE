@@ -2,8 +2,8 @@ package org.iplantc.admin.belphegor.client.refGenome.view.cells;
 
 import org.iplantc.admin.belphegor.client.refGenome.RefGenomeView;
 import org.iplantc.de.client.models.apps.refGenome.ReferenceGenome;
-import org.iplantc.de.resources.client.AppFavoriteCellStyle;
 import org.iplantc.de.resources.client.DiskResourceNameCellStyle;
+import org.iplantc.de.resources.client.FavoriteCellStyle;
 import org.iplantc.de.resources.client.IplantResources;
 
 import static com.google.gwt.dom.client.BrowserEvents.CLICK;
@@ -24,14 +24,14 @@ public class ReferenceGenomeNameCell extends AbstractCell<ReferenceGenome> {
 
     interface Templates extends XTemplates {
         @XTemplate("<span><span class='{appStyle.appUnavailable}'> </span>&nbsp;<span name='rgName' class='{style.nameStyle}' >{refGenome.name}</span></span>")
-        SafeHtml genomeDeleted(AppFavoriteCellStyle appStyle, DiskResourceNameCellStyle style, ReferenceGenome refGenome);
+        SafeHtml genomeDeleted(FavoriteCellStyle appStyle, DiskResourceNameCellStyle style, ReferenceGenome refGenome);
 
         @XTemplate("<span name='rgName' class='{style.nameStyle}' >{refGenome.name}</span>")
         SafeHtml genome(DiskResourceNameCellStyle style, ReferenceGenome refGenome);
     }
 
     private static final DiskResourceNameCellStyle diskResourceNameStyle = IplantResources.RESOURCES.diskResourceNameCss();
-    private final AppFavoriteCellStyle appFavStyle = IplantResources.RESOURCES.appFavoriteCss();
+    private final FavoriteCellStyle appFavStyle = IplantResources.RESOURCES.favoriteCss();
 
     private final Templates templates = GWT.create(Templates.class);
     private final RefGenomeView view;

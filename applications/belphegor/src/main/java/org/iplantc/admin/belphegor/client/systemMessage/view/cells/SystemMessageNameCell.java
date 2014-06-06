@@ -2,8 +2,8 @@ package org.iplantc.admin.belphegor.client.systemMessage.view.cells;
 
 import org.iplantc.admin.belphegor.client.systemMessage.SystemMessageView;
 import org.iplantc.de.client.models.systemMessages.SystemMessage;
-import org.iplantc.de.resources.client.AppFavoriteCellStyle;
 import org.iplantc.de.resources.client.DiskResourceNameCellStyle;
+import org.iplantc.de.resources.client.FavoriteCellStyle;
 import org.iplantc.de.resources.client.IplantResources;
 
 import static com.google.gwt.dom.client.BrowserEvents.CLICK;
@@ -28,7 +28,7 @@ public class SystemMessageNameCell extends AbstractCell<SystemMessage> {
     }
 
     private static final DiskResourceNameCellStyle diskResourceNameStyle = IplantResources.RESOURCES.diskResourceNameCss();
-    private final AppFavoriteCellStyle appFavStyle = IplantResources.RESOURCES.appFavoriteCss();
+    private final FavoriteCellStyle appFavStyle = IplantResources.RESOURCES.favoriteCss();
 
     private final Templates templates = GWT.create(Templates.class);
     private final SystemMessageView view;
