@@ -23,7 +23,7 @@ import com.sencha.gxt.core.client.XTemplates;
 public class ReferenceGenomeNameCell extends AbstractCell<ReferenceGenome> {
 
     interface Templates extends XTemplates {
-        @XTemplate("<span><span class='{appStyle.appUnavailable}'> </span>&nbsp;<span name='rgName' class='{style.nameStyle}' >{refGenome.name}</span></span>")
+        @XTemplate("<span><span class='{appStyle.unavailable}'> </span>&nbsp;<span name='rgName' class='{style.nameStyle}' >{refGenome.name}</span></span>")
         SafeHtml genomeDeleted(FavoriteCellStyle appStyle, DiskResourceNameCellStyle style, ReferenceGenome refGenome);
 
         @XTemplate("<span name='rgName' class='{style.nameStyle}' >{refGenome.name}</span>")
