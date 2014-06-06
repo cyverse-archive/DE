@@ -161,7 +161,10 @@ project(':clavin-java') {
 
     dependencies {
         compile 'com.netflix.curator:curator-framework:1.1.16'
-        compile "com.google.guava:guava:$guavaVer"
+        /* The netflix curator lib needs a version of guava
+         * whose Closeables.closeQuietly(..) method accepts a Closeable interface
+         */
+        compile 'com.google.guava:guava:15.0'
         provided 'javax:javaee-web-api:6.0'
         compile 'org.springframework:spring-web:3.0.7.RELEASE'
         compile 'org.springframework:spring-beans:3.0.7.RELEASE'
