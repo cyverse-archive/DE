@@ -22,58 +22,59 @@ import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.sencha.gxt.core.client.dom.XElement;
 import com.sencha.gxt.core.client.resources.StyleInjectorHelper;
 import com.sencha.gxt.widget.core.client.grid.ColumnHeader.ColumnHeaderStyles;
-import com.sencha.gxt.widget.core.client.grid.GridView.GridDataTableStyles;
+import com.sencha.gxt.widget.core.client.grid.GridView.GridStyles;
 
 public class CheckBoxColumnDefaultAppearance implements CheckBoxColumnAppearance {
 
-  public interface CheckBoxColumnStyle extends CssResource, ColumnHeaderStyles, GridDataTableStyles {
-    String checkColumn();
+    public interface CheckBoxColumnStyle extends CssResource, ColumnHeaderStyles, GridStyles {
+        String checkColumn();
 
-    String checkColumnSelected();
+        String checkColumnSelected();
 
-    String checkColumnDisabled();
+        String checkColumnDisabled();
 
-    String headerChecked();
-  }
+        String headerChecked();
+    }
 
-  public interface CheckBoxColumnResources extends ClientBundle {
-    @Source("CheckBoxColumn.css")
-    CheckBoxColumnStyle style();
+    public interface CheckBoxColumnResources extends ClientBundle {
+        //    @Source("CheckBoxColumn.css")
+        @Source({"com/sencha/gxt/theme/base/client/grid/Grid.css", "com/sencha/gxt/theme/gray/client/grid/GrayGrid.css", "com/sencha/gxt/theme/base/client/grid/ColumnHeader.css"})
+        CheckBoxColumnStyle style();
 
-    @ImageOptions(repeatStyle = RepeatStyle.Vertical)
-    ImageResource specialColumn();
+        @ImageOptions(repeatStyle = RepeatStyle.Vertical)
+        ImageResource specialColumn();
 
-    @ImageOptions(repeatStyle = RepeatStyle.Vertical)
-    ImageResource specialColumnSelected();
-  }
+        @ImageOptions(repeatStyle = RepeatStyle.Vertical)
+        ImageResource specialColumnSelected();
+    }
 
-  private final CheckBoxColumnResources resources;
-  private final CheckBoxColumnStyle style;
+    private final CheckBoxColumnResources resources;
+    private final CheckBoxColumnStyle style;
 
-  public CheckBoxColumnDefaultAppearance() {
-    this(GWT.<CheckBoxColumnResources> create(CheckBoxColumnResources.class));
-  }
+    public CheckBoxColumnDefaultAppearance() {
+        this(GWT.<CheckBoxColumnResources> create(CheckBoxColumnResources.class));
+    }
 
-  public CheckBoxColumnDefaultAppearance(CheckBoxColumnResources resources) {
-    this.resources = resources;
-    this.style = this.resources.style();
+    public CheckBoxColumnDefaultAppearance(CheckBoxColumnResources resources) {
+        this.resources = resources;
+        this.style = this.resources.style();
 
-    StyleInjectorHelper.ensureInjected(style, true);
-  }
+        StyleInjectorHelper.ensureInjected(style, true);
+    }
 
-  @Override
-  public void renderCheckBox(Context context, DiskResource value, SafeHtmlBuilder sb) {
-    sb.appendHtmlConstant("<div class='x-grid-row-checker'>&#160;</div>");
-  }
+    @Override
+    public void renderCheckBox(Context context, DiskResource value, SafeHtmlBuilder sb) {
+        sb.appendHtmlConstant("<div class='x-grid-row-checker'>&#160;</div>");
+    }
 
-  @Override
-  public void onHeaderChecked(XElement header, boolean checked) {
-    header.setClassName(style.headerChecked(), checked);
-  }
+    @Override
+    public void onHeaderChecked(XElement header, boolean checked) {
+        header.setClassName(style.headerChecked(), checked);
+    }
 
-  @Override
-  public boolean isHeaderChecked(XElement header) {
-    return header.getParentElement().<XElement>cast().hasClassName(style.headerChecked());
-  }
+    @Override
+    public boolean isHeaderChecked(XElement header) {
+        return header.getParentElement().<XElement>cast().hasClassName(style.headerChecked());
+    }
 
 }

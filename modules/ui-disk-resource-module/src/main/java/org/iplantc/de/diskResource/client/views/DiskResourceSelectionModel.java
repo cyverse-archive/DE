@@ -52,7 +52,7 @@ public class DiskResourceSelectionModel extends GridSelectionModel<DiskResource>
         void renderCheckBox(Context context, DiskResource value, SafeHtmlBuilder sb);
     }
 
-    protected ColumnConfig<DiskResource, DiskResource> config;
+    private final ColumnConfig<DiskResource, DiskResource> config;
 
     private final CheckBoxColumnAppearance appearance = GWT.create(CheckBoxColumnAppearance.class);
 
@@ -70,7 +70,7 @@ public class DiskResourceSelectionModel extends GridSelectionModel<DiskResource>
 
     /**
      * Creates a CheckBoxSelectionModel that will operate on the row itself. To customize the row it is
-     * acting on, use the {@link #CheckBoxSelectionModel(ValueProvider)} constructor.
+     * acting on, use the {@link com.sencha.gxt.widget.core.client.grid.CheckBoxSelectionModel (ValueProvider)} constructor.
      */
     public DiskResourceSelectionModel() {
         this(new IdentityValueProvider<DiskResource>());
@@ -83,7 +83,7 @@ public class DiskResourceSelectionModel extends GridSelectionModel<DiskResource>
      */
     public DiskResourceSelectionModel(ValueProvider<DiskResource, DiskResource> valueProvider) {
         config = newColumnConfig(valueProvider);
-        config.setColumnClassSuffix("checker");
+//        config.setColumnClassSuffix("checker");
         config.setWidth(20);
         config.setSortable(false);
         config.setResizable(false);
@@ -165,7 +165,7 @@ public class DiskResourceSelectionModel extends GridSelectionModel<DiskResource>
         }
     }
 
-    protected void handleHeaderClick(HeaderClickEvent event) {
+    void handleHeaderClick(HeaderClickEvent event) {
         ColumnConfig<DiskResource, ?> c = grid.getColumnModel().getColumn(event.getColumnIndex());
         if (c == config) {
             XElement hd = event.getEvent().getEventTarget().<Element> cast().getParentElement().cast();
@@ -194,7 +194,7 @@ public class DiskResourceSelectionModel extends GridSelectionModel<DiskResource>
     }
 
     @Override
-    protected void handleRowClick(RowClickEvent event) {
+    protected void onRowClick(RowClickEvent event) {
         Element target = event.getEvent().getEventTarget().cast();
         int rowIndex = event.getRowIndex();
         if (target.getClassName().equals("x-grid-row-checker")) {
@@ -211,9 +211,8 @@ public class DiskResourceSelectionModel extends GridSelectionModel<DiskResource>
                 setSelectAll(false);
                 selectByRowItem(model);
             }
-            super.handleRowClick(event);
+            super.onRowClick(event);
         }
-
     }
 
     private void selectByRowItem(DiskResource model) {
@@ -221,15 +220,14 @@ public class DiskResourceSelectionModel extends GridSelectionModel<DiskResource>
         if (model != null) {
             if (sel) {
                 deselect(model);
-            } else if (!sel) {
+            } else {
                 select(true, model);
             }
         }
     }
 
     private DiskResource getItemByIndex(int rowIndex) {
-        DiskResource model = listStore.get(rowIndex);
-        return model;
+        return listStore.get(rowIndex);
     }
 
     public void clearSelectedItemsCache() {
@@ -237,7 +235,7 @@ public class DiskResourceSelectionModel extends GridSelectionModel<DiskResource>
     }
 
     @Override
-    protected void handleRowMouseDown(RowMouseDownEvent event) {
+    protected void onRowMouseDown(RowMouseDownEvent event) {
         boolean left = event.getEvent().getButton() == Event.BUTTON_LEFT;
         Element target = event.getEvent().getEventTarget().cast();
         int rowIndex = event.getRowIndex();
@@ -249,12 +247,12 @@ public class DiskResourceSelectionModel extends GridSelectionModel<DiskResource>
         } else {
             DiskResource model = getItemByIndex(rowIndex);
             if (model != null && !model.isFilter()) {
-                super.handleRowMouseDown(event);
+                super.onRowMouseDown(event);
             }
         }
     }
 
-    protected ColumnConfig<DiskResource, DiskResource> newColumnConfig(
+    ColumnConfig<DiskResource, DiskResource> newColumnConfig(
             ValueProvider<DiskResource, DiskResource> valueProvider) {
         return new ColumnConfig<DiskResource, DiskResource>(valueProvider);
     }
@@ -278,9 +276,9 @@ public class DiskResourceSelectionModel extends GridSelectionModel<DiskResource>
     protected void onClear(StoreClearEvent<DiskResource> event) {
         super.onClear(event);
         updateHeaderCheckBox();
-    };
+    }
 
-    protected void onRefresh(RefreshEvent event) {
+    void onRefresh(RefreshEvent event) {
         updateHeaderCheckBox();
     }
 
@@ -291,23 +289,15 @@ public class DiskResourceSelectionModel extends GridSelectionModel<DiskResource>
         }
         super.onRemove(model);
         updateHeaderCheckBox();
-    };
+    }
 
     @Override
     public List<DiskResource> getSelectedItems() {
         return getSelectedItemsCache();
     }
 
-    public void addToSelectedCache(DiskResource dr) {
-        selectedItemsCache.put(dr.getId(), dr);
-    }
-
     public List<DiskResource> getSelectedItemsCache() {
         return new ArrayList<DiskResource>(selectedItemsCache.values());
-    }
-
-    public DiskResource removeFromSelectedCache(DiskResource dr) {
-        return selectedItemsCache.remove(dr.getId());
     }
 
     public void setRowCount(int rowCount) {
@@ -319,16 +309,16 @@ public class DiskResourceSelectionModel extends GridSelectionModel<DiskResource>
         if (!model.isFilter()) {
             super.onSelectChange(model, select);
             if (select) {
-                addToSelectedCache(model);
+                selectedItemsCache.put(model.getId(), model);
             } else {
-                removeFromSelectedCache(model);
+                selectedItemsCache.remove(model.getId());
                 setSelectAll(false);
             }
             updateHeaderCheckBox();
         }
     }
 
-    public void setChecked(boolean checked) {
+    void setChecked(boolean checked) {
         if (grid.isViewReady() && isAllowSelectAll()) {
             XElement hd = grid.getView().getHeader().getElement().child(".x-grid-hd-checker");
             if (hd != null) {
@@ -365,8 +355,6 @@ public class DiskResourceSelectionModel extends GridSelectionModel<DiskResource>
         }
 
         setChecked(isSelectAll());
-        return;
-
     }
 
     public void setTotal(int totalCount) {
@@ -380,7 +368,7 @@ public class DiskResourceSelectionModel extends GridSelectionModel<DiskResource>
     /**
      * @return the allowSelectAll
      */
-    public boolean isAllowSelectAll() {
+    boolean isAllowSelectAll() {
         return allowSelectAll;
     }
 
