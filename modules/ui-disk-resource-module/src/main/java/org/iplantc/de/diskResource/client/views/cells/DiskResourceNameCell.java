@@ -1,7 +1,5 @@
 package org.iplantc.de.diskResource.client.views.cells;
 
-import com.google.common.base.Strings;
-import com.google.gwt.debug.client.DebugInfo;
 import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.client.models.diskResources.File;
@@ -12,11 +10,16 @@ import org.iplantc.de.resources.client.DiskResourceNameCellStyle;
 import org.iplantc.de.resources.client.IplantResources;
 import org.iplantc.de.resources.client.messages.I18N;
 
-import static com.google.gwt.dom.client.BrowserEvents.*;
+import static com.google.gwt.dom.client.BrowserEvents.CLICK;
+import static com.google.gwt.dom.client.BrowserEvents.MOUSEOUT;
+import static com.google.gwt.dom.client.BrowserEvents.MOUSEOVER;
+
+import com.google.common.base.Strings;
 import com.google.gwt.cell.client.AbstractCell;
 import com.google.gwt.cell.client.Cell;
 import com.google.gwt.cell.client.ValueUpdater;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.debug.client.DebugInfo;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.dom.client.Style.TextDecoration;
@@ -56,7 +59,7 @@ public class DiskResourceNameCell extends AbstractCell<DiskResource> {
      */
     interface Templates extends SafeHtmlTemplates {
 
-        @SafeHtmlTemplates.Template("<span><span class='{0}'> </span>&nbsp;<span name=\"drName\" class='{1}' >{2}</span></span>")
+        @SafeHtmlTemplates.Template("<span></span><span class='{0}'> </span>&nbsp;<span name=\"drName\" class='{1}' >{2}</span></span>")
         SafeHtml cell(String imgClassName, String diskResourceClassName, SafeHtml diskResourceName);
 
         @SafeHtmlTemplates.Template("<span><span class='{0}'> </span>&nbsp;<span id='{3}' name=\"drName\" class='{1}' >{2}</span></span>")
@@ -69,13 +72,15 @@ public class DiskResourceNameCell extends AbstractCell<DiskResource> {
 
     private Popup linkPopup;
 
+    private final DiskResourceFavoriteCell favCell;
+
     public DiskResourceNameCell() {
         this(true);
     }
 
     public DiskResourceNameCell(boolean previewEnabled) {
         super(CLICK, MOUSEOVER, MOUSEOUT);
-
+        favCell = new DiskResourceFavoriteCell();
         this.previewEnabled = previewEnabled;
         CSS.ensureInjected();
     }
@@ -86,12 +91,13 @@ public class DiskResourceNameCell extends AbstractCell<DiskResource> {
             return;
         }
 
+        favCell.render(context, value, sb);
+
         boolean inTrash = value.getPath().startsWith(UserInfo.getInstance().getBaseTrashPath());
 
         SafeHtml name = SafeHtmlUtils.fromString(value.getName());
         String nameStyle = CSS.nameStyle();
         String imgClassName = ""; //$NON-NLS-1$
-
         if (value instanceof File) {
             if (!previewEnabled) {
                 nameStyle = CSS.nameStyleNoPointer();
@@ -104,6 +110,12 @@ public class DiskResourceNameCell extends AbstractCell<DiskResource> {
 
         if (value.isFilter()) {
             nameStyle += " " + CSS.nameDisabledStyle(); //$NON-NLS-1$
+        } else {
+            if (value.isFavorite()) {
+
+            } else {
+
+            }
         }
 
         if(DebugInfo.isDebugIdEnabled() && !Strings.isNullOrEmpty(baseID)) {
@@ -120,7 +132,7 @@ public class DiskResourceNameCell extends AbstractCell<DiskResource> {
         if (value == null) {
             return;
         }
-
+        favCell.onBrowserEvent(context, parent, value, event, valueUpdater);
         Element eventTarget = Element.as(event.getEventTarget());
         if (parent.isOrHasChild(eventTarget)) {
 

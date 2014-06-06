@@ -276,8 +276,8 @@ public interface IplantResources extends ClientBundle, AppResources, DiskResourc
 
     /** Begin App resources **/
 
-    @Source("AppFavoriteCell.css")
-    AppFavoriteCellStyle appFavoriteCss();
+    @Source("FavoriteCell.css")
+    FavoriteCellStyle favoriteCss();
 
     @Override
     @Source("star-gold.gif")

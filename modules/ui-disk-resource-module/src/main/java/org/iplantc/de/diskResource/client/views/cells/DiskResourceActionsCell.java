@@ -87,13 +87,13 @@ public class DiskResourceActionsCell extends AbstractCell<DiskResource> {
     private final String SHARE_FILE_BY_LINK_ACTION;
     private final String SHARE_BY_DE_ACTION;
     private final String MANAGE_METADATA_ACTION;
-    private final String FAVORITE_ACTION;
     private final String COMMENTS_ACTION;
+
+
 
 
     public DiskResourceActionsCell() {
         super(CLICK);
-
         resources.css().ensureInjected();
         displayStrings = I18N.DISPLAY;
         iplantResources = IplantResources.RESOURCES;
@@ -102,7 +102,6 @@ public class DiskResourceActionsCell extends AbstractCell<DiskResource> {
         SHARE_FILE_BY_LINK_ACTION = displayStrings.share() + " " + displayStrings.viaPublicLink();
         SHARE_BY_DE_ACTION = displayStrings.share() + " " + displayStrings.viaDiscoveryEnvironment();
         MANAGE_METADATA_ACTION = displayStrings.metadata();
-        FAVORITE_ACTION = "Favorite";
         COMMENTS_ACTION = displayStrings.comments();
 
     }
@@ -179,21 +178,6 @@ public class DiskResourceActionsCell extends AbstractCell<DiskResource> {
         // Append metadata action
         if(name != null && className != null && imgSrc != null){
             if(DebugInfo.isDebugIdEnabled() && !Strings.isNullOrEmpty(baseID) && (debugId != null)) {
-                sb.append(templates.debugImgCell(name, toolTip, className, imgSrc, debugId));
-            } else {
-                sb.append(templates.imgCell(name, toolTip, className, imgSrc));
-            }
-        }
-
-        name = FAVORITE_ACTION;
-        toolTip = FAVORITE_ACTION;
-        className = resources.css().actionIcon();
-        imgSrc = iplantResources.favIcon().getSafeUri();
-        debugId = baseID + "." + value.getId() + DiskResourceModule.Ids.ACTION_CELL_FAVORITE;
-
-        // append favorite action
-        if (name != null && className != null && imgSrc != null) {
-            if (DebugInfo.isDebugIdEnabled() && !Strings.isNullOrEmpty(baseID) && (debugId != null)) {
                 sb.append(templates.debugImgCell(name, toolTip, className, imgSrc, debugId));
             } else {
                 sb.append(templates.imgCell(name, toolTip, className, imgSrc));

@@ -1,28 +1,28 @@
-@sprite .appFavorite {
+@sprite .favorite {
 	gwt-image: "favIcon";	
 	cursor: pointer; 
 	float: left;
 }
 
-@sprite .appFavoriteAdd {
+@sprite .favoriteAdd {
 	gwt-image: "favIconAdd"; 
 	cursor: pointer;
 	float: left;
 }
 
-@sprite .appFavoriteDelete {
+@sprite .favoriteDelete {
 	gwt-image: "favIconDelete";
 	cursor: pointer;
 	float: left;
 }
 
-@sprite .appFavoriteDisabled {
+@sprite .favoriteDisabled {
 	gwt-image: "disabledFavIcon";
 	cursor: pointer;
 	float: left;
 }
 
-@sprite .appUnavailable {
+@sprite .unavailable {
 	gwt-image: "exclamation";
 	float: left;
 }

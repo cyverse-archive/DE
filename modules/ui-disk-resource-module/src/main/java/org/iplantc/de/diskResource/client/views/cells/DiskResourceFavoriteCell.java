@@ -1,7 +1,7 @@
-package org.iplantc.de.apps.client.views.cells;
+package org.iplantc.de.diskResource.client.views.cells;
 
-import org.iplantc.de.apps.shared.AppsModule;
-import org.iplantc.de.client.models.apps.App;
+import org.iplantc.de.client.models.diskResources.DiskResource;
+import org.iplantc.de.diskResource.share.DiskResourceModule;
 import org.iplantc.de.resources.client.FavoriteCellStyle;
 import org.iplantc.de.resources.client.FavoriteTemplates;
 import org.iplantc.de.resources.client.IplantResources;
@@ -26,42 +26,39 @@ import com.google.gwt.event.shared.HasHandlers;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.client.Event;
 
-/**
- * FIXME Create appearance
- * 
- * @param <FavoriteTemplates>
- */
-public class AppFavoriteCell extends AbstractCell<App> {
+public class DiskResourceFavoriteCell extends AbstractCell<DiskResource> {
 
-    public static final GwtEvent.Type<RequestAppFavoriteEventHandler> REQUEST_APP_FAV_EVNT_TYPE = new GwtEvent.Type<RequestAppFavoriteEventHandler>();
-    public class RequestAppFavoriteEvent extends GwtEvent<RequestAppFavoriteEventHandler> {
+    public static final GwtEvent.Type<RequestDiskResourceFavoriteEventHandler> REQUEST_DR_FAV_EVNT_TYPE = new GwtEvent.Type<RequestDiskResourceFavoriteEventHandler>();
 
-        private final App app;
+    public class RequestDiskResourceFavoriteEvent extends GwtEvent<RequestDiskResourceFavoriteEventHandler> {
 
-        public RequestAppFavoriteEvent(App app) {
-            this.app = app;
+        private final DiskResource dr;
+
+        public RequestDiskResourceFavoriteEvent(DiskResource dr) {
+            this.dr = dr;
         }
 
-        public App getApp() {
-            return app;
+        public DiskResource getDiskResource() {
+            return dr;
         }
 
         @Override
-        public Type<RequestAppFavoriteEventHandler> getAssociatedType() {
-            return REQUEST_APP_FAV_EVNT_TYPE;
+        public Type<RequestDiskResourceFavoriteEventHandler> getAssociatedType() {
+            return REQUEST_DR_FAV_EVNT_TYPE;
         }
 
         @Override
-        protected void dispatch(RequestAppFavoriteEventHandler handler) {
+        protected void dispatch(RequestDiskResourceFavoriteEventHandler handler) {
             handler.onAppFavoriteRequest(this);
         }
     }
 
-    public interface RequestAppFavoriteEventHandler extends EventHandler {
-        void onAppFavoriteRequest(RequestAppFavoriteEvent event);
+    public interface RequestDiskResourceFavoriteEventHandler extends EventHandler {
+        void onAppFavoriteRequest(RequestDiskResourceFavoriteEvent event);
     }
+
     public static interface HasRequestAppFavoriteEventHandlers {
-        HandlerRegistration addRequestAppFavoriteEventHandlers(RequestAppFavoriteEventHandler handler);
+        HandlerRegistration addRequestAppFavoriteEventHandlers(RequestDiskResourceFavoriteEventHandler handler);
     }
 
     final FavoriteTemplates templates = GWT.create(FavoriteTemplates.class);
@@ -69,56 +66,53 @@ public class AppFavoriteCell extends AbstractCell<App> {
     private String baseID;
     private HasHandlers hasHandlers;
 
-    public AppFavoriteCell() {
+    public DiskResourceFavoriteCell() {
         super(CLICK, MOUSEOVER, MOUSEOUT);
         css.ensureInjected();
     }
 
     @Override
-    public void render(Cell.Context context, App value, SafeHtmlBuilder sb) {
+    public void render(com.google.gwt.cell.client.Cell.Context context, DiskResource value, SafeHtmlBuilder sb) {
         if (value == null) {
             return;
         }
 
         String imgName, imgClassName, imgToolTip;
+        if (!value.isFilter()) {
+            if (value.isFavorite()) {
+                imgName = "fav";
+                imgClassName = css.favorite();
+                imgToolTip = I18N.DISPLAY.remAppFromFav();
+            } else {
+                imgName = "fav";
+                imgClassName = css.favoriteDisabled();
+                imgToolTip = I18N.DISPLAY.addAppToFav();
+            }
 
-        if (!value.isDisabled() && value.isFavorite()) {
-            imgName = "fav";
-            imgClassName = css.favorite();
-            imgToolTip = I18N.DISPLAY.remAppFromFav();
-        } else if (!value.isDisabled() && !value.isFavorite()) {
-            imgName = "fav";
-            imgClassName = css.favoriteDisabled();
-            imgToolTip = I18N.DISPLAY.addAppToFav();
-        } else{
-            imgName = "disabled";
-            imgClassName = css.favoriteDisabled();
-            imgToolTip = I18N.DISPLAY.appUnavailable();
+            if (DebugInfo.isDebugIdEnabled() && !Strings.isNullOrEmpty(baseID)) {
+                String debugId = baseID + "." + value.getId() + DiskResourceModule.Ids.ACTION_CELL_FAVORITE;
+                sb.append(templates.debugCell(imgName, imgClassName, imgToolTip, debugId));
+            } else {
+                sb.append(templates.cell(imgName, imgClassName, imgToolTip));
+            }
+
         }
 
-        if(DebugInfo.isDebugIdEnabled() && !Strings.isNullOrEmpty(baseID)){
-            String debugId = baseID + "." + value.getId() + AppsModule.Ids.APP_FAVORITE_CELL;
-            sb.append(templates.debugCell(imgName, imgClassName, imgToolTip, debugId));
-        } else {
-            sb.append(templates.cell(imgName, imgClassName, imgToolTip));
-        }
     }
 
     @Override
-    public void onBrowserEvent(Cell.Context context, Element parent, App value, NativeEvent event,
-            ValueUpdater<App> valueUpdater) {
+    public void onBrowserEvent(Cell.Context context, Element parent, DiskResource value, NativeEvent event, ValueUpdater<DiskResource> valueUpdater) {
         if (value == null) {
             return;
         }
 
         Element eventTarget = Element.as(event.getEventTarget());
-        if (parent.isOrHasChild(eventTarget) && eventTarget.getAttribute("name").equalsIgnoreCase("fav")
-                && !value.isDisabled()) {
+        if (parent.isOrHasChild(eventTarget) && eventTarget.getAttribute("name").equalsIgnoreCase("fav") && !value.isFilter()) {
 
             switch (Event.as(event).getTypeInt()) {
                 case Event.ONCLICK:
                     if (hasHandlers != null) {
-                        hasHandlers.fireEvent(new RequestAppFavoriteEvent(value));
+                        hasHandlers.fireEvent(new RequestDiskResourceFavoriteEvent(value));
                     }
                     break;
                 case Event.ONMOUSEOVER:
@@ -141,7 +135,7 @@ public class AppFavoriteCell extends AbstractCell<App> {
         this.hasHandlers = hasHandlers;
     }
 
-    private void doOnMouseOut(Element eventTarget, App value) {
+    private void doOnMouseOut(Element eventTarget, DiskResource value) {
         if (value.isFavorite()) {
             eventTarget.setClassName(css.favorite());
             eventTarget.setAttribute("qtip", I18N.DISPLAY.remAppFromFav());
@@ -151,7 +145,7 @@ public class AppFavoriteCell extends AbstractCell<App> {
         }
     }
 
-    private void doOnMouseOver(Element eventTarget, App value) {
+    private void doOnMouseOver(Element eventTarget, DiskResource value) {
         if (value.isFavorite()) {
             eventTarget.setClassName(css.favoriteDelete());
         } else {
