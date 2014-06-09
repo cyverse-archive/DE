@@ -2,8 +2,6 @@ package org.iplantc.de.commons.client.tags;
 
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.IsWidget;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.sencha.gxt.widget.core.client.Dialog;
@@ -139,8 +137,9 @@ public class IplantTagList<T extends Tag<?>> implements IsWidget, TagListHandler
 
     public boolean addTag(T tag) {
         for (TagItem tagItem : this.tagItems)
-            if (tagItem.getTag().equals(tag))
+            if (tagItem.getTag().equals(tag)) {
                 return false;
+            }
 
         TagView tagView = new TagView(this.resources, tag);
         tagView.setUiHandlers(this);
@@ -190,12 +189,14 @@ public class IplantTagList<T extends Tag<?>> implements IsWidget, TagListHandler
 
     @Override
     public void onAddTag(Tag<?> tag) {
-        if (this.tagCreationCodex == null)
+        if (this.tagCreationCodex == null) {
             throw new RuntimeException("Found no TagCreationCodex." + " You have to specify a TagCreationCodex in order to convert base tags to your tag type");
+        }
         this.addTag(this.tagCreationCodex.createTag(tag));
 
-        if (this.onChangeCmd != null)
+        if (this.onChangeCmd != null) {
             this.onChangeCmd.execute();
+        }
     }
 
     @Override
@@ -283,15 +284,13 @@ public class IplantTagList<T extends Tag<?>> implements IsWidget, TagListHandler
         for (Iterator<TagItem> tagItemIt = this.tagItems.iterator(); tagItemIt.hasNext();) {
             TagItem tagItem = tagItemIt.next();
             if (tagItem.getTagView().equals(tagView)) {
-                Label l = new Label("Tag");
                 TextArea tb = new TextArea();
+                tb.setSize("250", "200");
                 tb.setValue(tagItem.getTag().getCaption());
-                VerticalPanel vp = new VerticalPanel();
-                vp.add(l);
-                vp.add(tb);
                 Dialog pop = new Dialog();
+                pop.setSize("300", "250");
                 pop.setHeadingText("Edit Tag Description for " + tagItem.getTag().getValue().toString());
-                pop.setWidget(vp);
+                pop.setWidget(tb);
                 pop.show();
             }
         }

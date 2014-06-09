@@ -880,9 +880,9 @@ public class DiskResourceViewImpl extends Composite implements DiskResourceView,
         items.add(new StringTag("Tag 1", "Tag 1"));
         items.add(new StringTag("Tag 2", "Tag 2"));
         items.add(new StringTag("Bigger Tag", "Bigger Tag"));
-        items.add(new StringTag("This Tag is even bigger", "Bigger Tag"));
-        items.add(new StringTag("This Tag is even bigger bigger", "Bigger Tag1"));
-        items.add(new StringTag("This Tag is even bigger bigger bigger", "Bigger Tag2"));
+        items.add(new StringTag("This Tag is even bigger", "This Tag is even bigger"));
+        items.add(new StringTag("This Tag is even bigger bigger", "This Tag is even bigger bigger"));
+        items.add(new StringTag("This Tag is even bigger bigger bigger", "This Tag is even bigger bigger bigger"));
         items.add(new StringTag("Bigger Tag2", "Bigger Tag"));
         items.add(new StringTag("Bigger Tag3", "Bigger Tag"));
         items.add(new StringTag("Bigger Tag4", "Bigger Tag"));
@@ -900,7 +900,7 @@ public class DiskResourceViewImpl extends Composite implements DiskResourceView,
         tagList.setTagCreationCodex(new TagCreationCodex<StringTag>() {
             @Override
             public StringTag createTag(Tag<?> tag) {
-                return new StringTag(tag.getCaption());
+                return new StringTag((String)tag.getValue());
             }
         });
         tagList.setOnFocusCmd(onFocusCmd);
