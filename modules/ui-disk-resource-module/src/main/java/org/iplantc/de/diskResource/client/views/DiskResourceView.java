@@ -19,8 +19,10 @@ import org.iplantc.de.diskResource.client.search.events.SubmitDiskResourceQueryE
 import org.iplantc.de.diskResource.client.search.presenter.DataSearchPresenter;
 import org.iplantc.de.diskResource.client.search.views.DiskResourceSearchField;
 import org.iplantc.de.diskResource.client.views.cells.events.DiskResourceNameSelectedEvent;
+import org.iplantc.de.diskResource.client.views.cells.events.ManageCommentsEvent;
 import org.iplantc.de.diskResource.client.views.cells.events.ManageMetadataEvent;
 import org.iplantc.de.diskResource.client.views.cells.events.ManageSharingEvent;
+import org.iplantc.de.diskResource.client.views.cells.events.RequestDiskResourceFavoriteEvent;
 import org.iplantc.de.diskResource.client.views.cells.events.ShareByDataLinkEvent;
 
 import com.google.gwt.dom.client.Element;
@@ -42,28 +44,17 @@ import java.util.Set;
 
 /**
  * @author jstroot
- *
+ * 
  */
-public interface DiskResourceView extends IsWidget,
-                                          IsMaskable,
-                                          IsDiskResourceRoot,
-                                          FolderSelectionEvent.HasFolderSelectionEventHandlers,
-                                          DeleteSavedSearchEvent.HasDeleteSavedSearchEventHandlers,
-                                          DiskResourceSelectionChangedEvent.HasDiskResourceSelectionChangedEventHandlers {
+public interface DiskResourceView extends IsWidget, IsMaskable, IsDiskResourceRoot, FolderSelectionEvent.HasFolderSelectionEventHandlers, DeleteSavedSearchEvent.HasDeleteSavedSearchEventHandlers,
+        DiskResourceSelectionChangedEvent.HasDiskResourceSelectionChangedEventHandlers {
 
-    interface Presenter extends org.iplantc.de.commons.client.presenter.Presenter,
-                                IsMaskable,
-                                HasHandlerRegistrationMgmt,
-                                FolderSelectionEvent.FolderSelectionEventHandler,
-                                DiskResourceNameSelectedEvent.DiskResourceNameSelectedEventHandler,
-                                ManageMetadataEvent.ManageMetadataEventHandler,
-                                ManageSharingEvent.ManageSharingEventHandler,
-                                DiskResourceSelectionChangedEvent.HasDiskResourceSelectionChangedEventHandlers,
-                                FolderSelectionEvent.HasFolderSelectionEventHandlers,
-                                DiskResourceSelectionChangedEvent.DiskResourceSelectionChangedEventHandler,
-                                SaveDiskResourceQueryEvent.SaveDiskResourceQueryEventHandler,
-                                SubmitDiskResourceQueryEvent.SubmitDiskResourceQueryEventHandler,
-                                ShareByDataLinkEvent.ShareByDataLinkEventHandler {
+    interface Presenter extends org.iplantc.de.commons.client.presenter.Presenter, IsMaskable, HasHandlerRegistrationMgmt, FolderSelectionEvent.FolderSelectionEventHandler,
+            DiskResourceNameSelectedEvent.DiskResourceNameSelectedEventHandler, ManageMetadataEvent.ManageMetadataEventHandler, ManageSharingEvent.ManageSharingEventHandler,
+            DiskResourceSelectionChangedEvent.HasDiskResourceSelectionChangedEventHandlers, FolderSelectionEvent.HasFolderSelectionEventHandlers,
+            DiskResourceSelectionChangedEvent.DiskResourceSelectionChangedEventHandler, SaveDiskResourceQueryEvent.SaveDiskResourceQueryEventHandler,
+            SubmitDiskResourceQueryEvent.SubmitDiskResourceQueryEventHandler, ShareByDataLinkEvent.ShareByDataLinkEventHandler,
+            RequestDiskResourceFavoriteEvent.RequestDiskResourceFavoriteEventHandler, ManageCommentsEvent.ManageCommentsEventHandler {
 
         void setViewDebugId(String baseID);
 
@@ -117,8 +108,7 @@ public interface DiskResourceView extends IsWidget,
 
         Folder getSelectedFolder();
 
-        void go(HasOneWidget container, HasPath folderToSelect,
-                List<? extends HasId> diskResourcesToSelect);
+        void go(HasOneWidget container, HasPath folderToSelect, List<? extends HasId> diskResourcesToSelect);
 
         /**
          * Method to clean up all the events when it is no longer required.
@@ -157,7 +147,7 @@ public interface DiskResourceView extends IsWidget,
          * Selects the folder with the given path in the view. If the given path is not yet loaded in the
          * view, a {@link SelectFolderByPathLoadHandler} is added to the view's corresponding
          * {@link TreeLoader}, then a remote load is triggered.
-         *
+         * 
          * @param folderToSelect
          */
         void setSelectedFolderByPath(HasPath folderToSelect);
@@ -168,6 +158,7 @@ public interface DiskResourceView extends IsWidget,
 
         /**
          * A convenience method for looking up drop target folders for View components
+         * 
          * @param widget
          * @param el
          * @return
@@ -197,11 +188,11 @@ public interface DiskResourceView extends IsWidget,
      * A dataproxy used by the <code>Presenter</code> to fetch <code>DiskResource</code> data from the
      * {@link DiskResourceServiceFacade}.
      * When the proxy completes a load of a non-root folder, it is expected to call the
-     * link DiskResourceView.PresenteronFolderLoad(Folder, ArrayList)method with the
-     * <code>Folder</code> and <code>File</code> contents of the loaded folder.
-     *
+     * link DiskResourceView.PresenteronFolderLoad(Folder, ArrayList)method with the <code>Folder</code>
+     * and <code>File</code> contents of the loaded folder.
+     * 
      * @author jstroot
-     *
+     * 
      */
     public interface Proxy extends DataProxy<Folder, List<Folder>>, HasSubmitDiskResourceQueryEventHandlers {
         void init(DataSearchPresenter presenter, IsMaskable isMaskable);
@@ -236,7 +227,7 @@ public interface DiskResourceView extends IsWidget,
     /**
      * Selects the given Folder.
      * This method will also ensure that the Data listing widget is shown.
-     *
+     * 
      * @param folder
      */
     void setSelectedFolder(Folder folder);
@@ -263,7 +254,7 @@ public interface DiskResourceView extends IsWidget,
 
     /**
      * Determines if the given widget is this view's <code>Tree</code> object.
-     *
+     * 
      * @param widget
      * @return
      */
@@ -271,7 +262,7 @@ public interface DiskResourceView extends IsWidget,
 
     /**
      * Determines if the given widget is this view's <code>Grid</code> object.
-     *
+     * 
      * @param widget
      * @return
      */

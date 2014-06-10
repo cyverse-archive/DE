@@ -1,6 +1,7 @@
 package org.iplantc.de.diskResource.client.views.cells;
 
 import org.iplantc.de.client.models.diskResources.DiskResource;
+import org.iplantc.de.diskResource.client.views.cells.events.RequestDiskResourceFavoriteEvent;
 import org.iplantc.de.diskResource.share.DiskResourceModule;
 import org.iplantc.de.resources.client.FavoriteCellStyle;
 import org.iplantc.de.resources.client.FavoriteTemplates;
@@ -19,47 +20,11 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.debug.client.DebugInfo;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NativeEvent;
-import com.google.gwt.event.shared.EventHandler;
-import com.google.gwt.event.shared.GwtEvent;
-import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.event.shared.HasHandlers;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.client.Event;
 
 public class DiskResourceFavoriteCell extends AbstractCell<DiskResource> {
-
-    public static final GwtEvent.Type<RequestDiskResourceFavoriteEventHandler> REQUEST_DR_FAV_EVNT_TYPE = new GwtEvent.Type<RequestDiskResourceFavoriteEventHandler>();
-
-    public class RequestDiskResourceFavoriteEvent extends GwtEvent<RequestDiskResourceFavoriteEventHandler> {
-
-        private final DiskResource dr;
-
-        public RequestDiskResourceFavoriteEvent(DiskResource dr) {
-            this.dr = dr;
-        }
-
-        public DiskResource getDiskResource() {
-            return dr;
-        }
-
-        @Override
-        public Type<RequestDiskResourceFavoriteEventHandler> getAssociatedType() {
-            return REQUEST_DR_FAV_EVNT_TYPE;
-        }
-
-        @Override
-        protected void dispatch(RequestDiskResourceFavoriteEventHandler handler) {
-            handler.onAppFavoriteRequest(this);
-        }
-    }
-
-    public interface RequestDiskResourceFavoriteEventHandler extends EventHandler {
-        void onAppFavoriteRequest(RequestDiskResourceFavoriteEvent event);
-    }
-
-    public static interface HasRequestAppFavoriteEventHandlers {
-        HandlerRegistration addRequestAppFavoriteEventHandlers(RequestDiskResourceFavoriteEventHandler handler);
-    }
 
     final FavoriteTemplates templates = GWT.create(FavoriteTemplates.class);
     final FavoriteCellStyle css = IplantResources.RESOURCES.favoriteCss();

@@ -1,6 +1,5 @@
 package org.iplantc.de.diskResource.client.views;
 
-import com.sencha.gxt.widget.core.client.Composite;
 import org.iplantc.de.client.models.HasId;
 import org.iplantc.de.client.models.HasPath;
 import org.iplantc.de.client.models.UserInfo;
@@ -71,6 +70,7 @@ import com.sencha.gxt.data.shared.loader.TreeLoader;
 import com.sencha.gxt.dnd.core.client.DND.Operation;
 import com.sencha.gxt.dnd.core.client.DragSource;
 import com.sencha.gxt.dnd.core.client.DropTarget;
+import com.sencha.gxt.widget.core.client.Composite;
 import com.sencha.gxt.widget.core.client.ContentPanel;
 import com.sencha.gxt.widget.core.client.Status;
 import com.sencha.gxt.widget.core.client.button.IconButton.IconConfig;
@@ -434,6 +434,8 @@ public class DiskResourceViewImpl extends Composite implements DiskResourceView,
         ((DiskResourceColumnModel)cm).addManageSharingEventHandler(presenter);
         ((DiskResourceColumnModel)cm).addManageMetadataEventHandler(presenter);
         ((DiskResourceColumnModel)cm).addShareByDataLinkEventHandler(presenter);
+        ((DiskResourceColumnModel)cm).addManageFavoritesEventHandler(presenter);
+        ((DiskResourceColumnModel)cm).addManageCommentsEventHandler(presenter);
         toolbar.init(presenter, this);
         initDragAndDrop();
     }

@@ -7,6 +7,8 @@ import org.iplantc.de.client.models.HasId;
 import org.iplantc.de.client.models.HasPath;
 import org.iplantc.de.client.models.HasPaths;
 import org.iplantc.de.client.models.UserInfo;
+import org.iplantc.de.client.models.comments.Comment;
+import org.iplantc.de.client.models.comments.CommentsAutoBeanFactory;
 import org.iplantc.de.client.models.dataLink.DataLink;
 import org.iplantc.de.client.models.dataLink.DataLinkFactory;
 import org.iplantc.de.client.models.dataLink.DataLinkList;
@@ -22,6 +24,9 @@ import org.iplantc.de.client.services.DiskResourceServiceFacade;
 import org.iplantc.de.client.util.CommonModelUtils;
 import org.iplantc.de.client.util.DiskResourceUtil;
 import org.iplantc.de.commons.client.ErrorHandler;
+import org.iplantc.de.commons.client.comments.presenter.CommentsPresenter;
+import org.iplantc.de.commons.client.comments.view.CommentsView;
+import org.iplantc.de.commons.client.comments.view.CommentsViewImpl;
 import org.iplantc.de.commons.client.info.ErrorAnnouncementConfig;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
 import org.iplantc.de.commons.client.views.gxt3.dialogs.IPlantDialog;
@@ -66,8 +71,10 @@ import org.iplantc.de.diskResource.client.search.presenter.DataSearchPresenter;
 import org.iplantc.de.diskResource.client.sharing.views.DataSharingDialog;
 import org.iplantc.de.diskResource.client.views.DiskResourceView;
 import org.iplantc.de.diskResource.client.views.cells.events.DiskResourceNameSelectedEvent;
+import org.iplantc.de.diskResource.client.views.cells.events.ManageCommentsEvent;
 import org.iplantc.de.diskResource.client.views.cells.events.ManageMetadataEvent;
 import org.iplantc.de.diskResource.client.views.cells.events.ManageSharingEvent;
+import org.iplantc.de.diskResource.client.views.cells.events.RequestDiskResourceFavoriteEvent;
 import org.iplantc.de.diskResource.client.views.cells.events.ShareByDataLinkEvent;
 import org.iplantc.de.diskResource.client.views.dialogs.CreateFolderDialog;
 import org.iplantc.de.diskResource.client.views.dialogs.FolderSelectDialog;
@@ -106,6 +113,7 @@ import com.sencha.gxt.data.shared.loader.LoadHandler;
 import com.sencha.gxt.data.shared.loader.PagingLoadResult;
 import com.sencha.gxt.data.shared.loader.PagingLoader;
 import com.sencha.gxt.data.shared.loader.TreeLoader;
+import com.sencha.gxt.widget.core.client.Dialog;
 import com.sencha.gxt.widget.core.client.Dialog.PredefinedButton;
 import com.sencha.gxt.widget.core.client.box.ConfirmMessageBox;
 import com.sencha.gxt.widget.core.client.box.MessageBox;
@@ -120,6 +128,7 @@ import com.sencha.gxt.widget.core.client.tree.Tree.TreeNode;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -243,6 +252,52 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter, Di
     public void onRequestShareByDataLink(ShareByDataLinkEvent event) {
         checkNotNull(event.getDiskResourceToShare());
         doShareByDataLink(event.getDiskResourceToShare());
+    }
+
+    @Override
+    public void onFavoriteRequest(RequestDiskResourceFavoriteEvent event) {
+        checkNotNull(event.getDiskResource());
+        if(event.getDiskResource().isFavorite()) {
+            //call unfavorite
+        } else {
+            // call favorite
+        }
+    }
+
+    @Override
+    public void onManageComments(ManageCommentsEvent event) {
+        checkNotNull(event.getDiskResource());
+        // call to retrieve comments...and show dialog
+        Dialog d = new Dialog();
+        d.setHeadingText(I18N.DISPLAY.comments());
+        d.remove(d.getButtonBar());
+        d.setSize("500px", "400px");
+        CommentsView cv = new CommentsViewImpl();
+        CommentsPresenter cp = new CommentsPresenter(cv);
+        cv.setPresenter(cp);
+        cp.loadComments(loadTestComments());
+        cp.go(d);
+        d.show();
+    }
+
+    private List<Comment> loadTestComments() {
+        List<Comment> commentsList = new ArrayList<Comment>();
+        CommentsAutoBeanFactory factory = GWT.create(CommentsAutoBeanFactory.class);
+        UserInfo userInfo = UserInfo.getInstance();
+
+        for (int i = 0; i < 10; i++) {
+            Comment c = AutoBeanCodex.decode(factory, Comment.class, "{}").as();
+            long time = new Date().getTime();
+            c.setId(time + "" + i);
+            c.setCommentText("foo bar foo barfoo barfoo barfoo barfoo barfoo barfoo barfoo barfoo barfoo barfoo barfoo barfoo bar" + "foo barfoo barfoo barfoo barfoo barfoo barfoo barfoo barfoo bar"
+                    + "foo barfoo barfoo barfoo barfoo barfoo bar" + "foo barfoo barfoo barfoo bar");
+            c.setCommentedBy(userInfo.getUsername());
+            c.setTimestamp(time);
+            commentsList.add(c);
+
+        }
+
+        return commentsList;
     }
 
     void doShareByDataLink(final DiskResource toBeShared) {
