@@ -139,7 +139,6 @@ project(':de') {
     gwt {
         modules 'org.iplantc.de.discoveryenvironment'
         devModules 'org.iplantc.de.discoveryenvironmentDev'
- 	src += files(project(':gwt-taglist').sourceSets.main.allJava.srcDirs) + files(project(':gwt-taglist').sourceSets.main.output.resourcesDir)
         src += files(project(':analyses-module').sourceSets.main.allJava.srcDirs) + files(project(':analyses-module').sourceSets.main.output.resourcesDir)
         src += files(project(':ui-apps-widgets-module').sourceSets.main.allJava.srcDirs) + files(project(':ui-apps-widgets-module').sourceSets.main.output.resourcesDir)
         src += files(project(':ui-apps-integration').sourceSets.main.allJava.srcDirs) + files(project(':ui-apps-integration').sourceSets.main.output.resourcesDir)

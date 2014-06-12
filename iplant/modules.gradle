@@ -198,6 +198,7 @@ project(':ui-commons-module') {
         compile "com.sencha.gxt:gxt:$gxtVersion"
         compile project(':ui-resources-module')
         compile project(':de-common-module')
+
         testCompile "com.google.gwt.gwtmockito:gwtmockito:$gwtMockitoVer"
         testCompile project(':de-common-module').sourceSets.test.output
     }
@@ -271,16 +272,6 @@ project(':clavin-java') {
         testCompile 'com.netflix.curator:curator-test:1.1.16'
         testCompile "junit:junit:$jUnitVersion"
     }
-}
-project(':gwt-taglist') {
-    apply plugin: 'gwt-base'
-    gwt { gwtVersion="$gwtVer" }
-
-    compileTestJava.enabled = false
-    test.enabled = false
-    dependencies {
- 	compile "com.google.guava:guava-gwt:15.0"
-   }
 }
 
 
