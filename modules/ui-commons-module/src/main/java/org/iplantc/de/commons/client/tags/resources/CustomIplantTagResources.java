@@ -11,58 +11,39 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.iplantc.de.commons.client.tags;
+package org.iplantc.de.commons.client.tags.resources;
 
 import com.google.gwt.core.client.GWT;
-
-import com.virilis_software.gwt.taglist.client.resource.Resources;
+import com.google.gwt.resources.client.ClientBundle;
+import com.google.gwt.resources.client.CssResource;
 
 /**
  * 
  * @author cbopp
  *
  */
-public interface CustomIplantTagResources extends Resources {
+public interface CustomIplantTagResources extends ClientBundle {
     public static final CustomIplantTagResources INSTANCE = GWT.create( CustomIplantTagResources.class );
 
-    public interface CustomStyle extends Style {
+    public interface CustomStyle extends CssResource {
         //Widget style
-        @Override
         String tagList();
-        @Override
         String tagListEditable();
 
         //Tag style
-        @Override
         String tag();
-        @Override
         String tagEditable();
-    	@Override
         String tagCaption();
-    	@Override
-        String tagCaptionEditable();
-    	@Override
         String tagDelete();
 
-        @Override
         String tagEdit();
-    	
-    	@Override
-        String inputListItem();
-    	@Override
-        String inputField();
-    	
     	//DnD
-    	@Override
         String previewLeft();
-        @Override
         String previewRight();
 
-        @Override
         String tagOptions();
     }
     
-    @Override
     @Source("style.css")
     CustomStyle style();
 }

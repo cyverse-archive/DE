@@ -44,9 +44,6 @@
     float:left;
 }
 
-.tagCaptionEditable {
-    max-width: literal('calc( 100% - 0.18em - 35px )') !important;
-}
 
 .tagOptions {
 	float:right;
@@ -55,43 +52,14 @@
     background-image: url(./images/delete-tag.png);
 	cursor: pointer;
 	height: 16px;
-    width: 16px;
+    width:16px;
 }
 
 .tagEdit {
 	background-image: url(./images/pencil.png);
     cursor: pointer;
     height: 16px;
-    width: 16px;
-}
-      
-.tagDelete:hover {
-    opacity: 1;
-}
-
-.tagEdit:hover {
-	opacity: 1;
-}
-
-.inputListItem {
-    vertical-align: bottom;
-    width: 15px;
-    max-width: 100%;
-}
-
-.inputField {
-    width: 100%;
-    -webkit-box-sizing: border-box;
-    -moz-box-sizing: border-box;
-    box-sizing: border-box;
-    border: 0px none;
-    margin: 0px;
-    padding: 3px 2px 3px 6px;
-    font-size: inherit;
-}
-
-.inputField:focus {
-    outline: none;
+    width:16px;
 }
 
 .previewLeft {

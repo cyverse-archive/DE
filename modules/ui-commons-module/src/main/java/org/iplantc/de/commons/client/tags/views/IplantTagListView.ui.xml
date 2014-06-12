@@ -2,7 +2,7 @@
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:container="urn:import:com.sencha.gxt.widget.core.client.container"
 	xmlns:form="urn:import:com.sencha.gxt.widget.core.client.form"
-	xmlns:vs="urn:import:com.virilis_software.gwt.taglist.client.comp.taglist">
+	xmlns:vs="urn:import:org.iplantc.de.commons.client.tags.views">
 
 	<ui:with type="com.sencha.gxt.core.client.util.Margins" field="outerMargins">
 		<ui:attributes top="4" right="4" bottom="4" left="4" />
@@ -11,20 +11,19 @@
 	<ui:with
 		type="com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer.VerticalLayoutData"
 		field="tagSearchLayoutData">
-		<ui:attributes width=".65" height="-1" margins="{outerMargins}" />
+		<ui:attributes width=".85" height="-1" margins="{outerMargins}" />
 	</ui:with>
 
 	<ui:with
 		type="com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer.VerticalLayoutData"
 		field="tagsLayoutData">
-		<ui:attributes width="1" height="1" margins="{outerMargins}" />
+		<ui:attributes width="1" height="1" />
 	</ui:with>
 
 	<container:VerticalLayoutContainer
 		ui:field="tagListPanel">
 		<container:child layoutData="{tagSearchLayoutData}">
-			<form:ComboBox ui:field="tagSearchCbo" forceSelection="true"
-				triggerAction="ALL" />
+			<form:ComboBox ui:field="tagSearchCbo" />
 		</container:child>
 		<container:child layoutData="{tagsLayoutData}">
 			<vs:TagsPanel ui:field="tagsPanel">

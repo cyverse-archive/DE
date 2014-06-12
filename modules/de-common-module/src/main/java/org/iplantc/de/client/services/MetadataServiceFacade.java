@@ -6,6 +6,6 @@ public interface MetadataServiceFacade {
 
     public void createTag(String value, String description, AsyncCallback<String> callback);
 
-    public void suggestTag(String text, AsyncCallback<String> callback);
+    public void suggestTag(String text, int limit, AsyncCallback<String> callback);
 
 }
