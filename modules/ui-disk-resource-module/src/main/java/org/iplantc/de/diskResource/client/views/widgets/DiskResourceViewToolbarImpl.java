@@ -376,7 +376,7 @@ public class DiskResourceViewToolbarImpl extends Composite implements DiskResour
         final TabFileConfigDialog d = new TabFileConfigDialog();
         d.setPredefinedButtons(PredefinedButton.OK, PredefinedButton.CANCEL);
         d.setModal(true);
-        d.getButtonById(PredefinedButton.OK.toString()).addSelectHandler(new SelectHandler() {
+        d.getButton(PredefinedButton.OK).addSelectHandler(new SelectHandler() {
             @Override
             public void onSelect(SelectEvent event) {
                 TabularFileViewerWindowConfig config = ConfigFactory.newTabularFileViewerWindowConfig();

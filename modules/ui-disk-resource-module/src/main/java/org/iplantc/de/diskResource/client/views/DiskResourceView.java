@@ -60,7 +60,9 @@ public interface DiskResourceView extends IsWidget,
                                 DiskResourceSelectionChangedEvent.DiskResourceSelectionChangedEventHandler,
                                 SaveDiskResourceQueryEvent.SaveDiskResourceQueryEventHandler,
                                 SubmitDiskResourceQueryEvent.SubmitDiskResourceQueryEventHandler,
-                                ShareByDataLinkEvent.ShareByDataLinkEventHandler {
+                                ShareByDataLinkEvent.ShareByDataLinkEventHandler,
+                                RequestDiskResourceFavoriteEvent.RequestDiskResourceFavoriteEventHandler,
+                                ManageCommentsEvent.ManageCommentsEventHandler {
 
         void setViewDebugId(String baseID);
 
