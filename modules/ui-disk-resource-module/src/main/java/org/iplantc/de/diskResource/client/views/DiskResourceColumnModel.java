@@ -23,6 +23,7 @@ import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 
 import com.sencha.gxt.core.client.IdentityValueProvider;
 import com.sencha.gxt.core.client.ValueProvider;
+import com.sencha.gxt.widget.core.client.grid.CheckBoxSelectionModel;
 import com.sencha.gxt.widget.core.client.grid.ColumnConfig;
 import com.sencha.gxt.widget.core.client.grid.ColumnModel;
 
@@ -36,7 +37,7 @@ public class DiskResourceColumnModel extends ColumnModel<DiskResource> implement
  ManageMetadataEvent.HasManageMetadataEventHandlers,
         RequestDiskResourceFavoriteEvent.HasManageFavoritesEventHandlers, ManageCommentsEvent.HasManageCommentsEventHandlers {
 
-    public DiskResourceColumnModel(DiskResourceSelectionModel sm, IplantDisplayStrings displayStrings) {
+    public DiskResourceColumnModel(CheckBoxSelectionModel sm, IplantDisplayStrings displayStrings) {
         super(createColumnConfigList(sm, displayStrings));
 
         for(ColumnConfig<DiskResource, ?> cc : configs){
@@ -48,7 +49,7 @@ public class DiskResourceColumnModel extends ColumnModel<DiskResource> implement
         }
     }
 
-    public static List<ColumnConfig<DiskResource, ?>> createColumnConfigList(DiskResourceSelectionModel sm, IplantDisplayStrings displayStrings) {
+    public static List<ColumnConfig<DiskResource, ?>> createColumnConfigList(CheckBoxSelectionModel sm, IplantDisplayStrings displayStrings) {
         List<ColumnConfig<DiskResource, ?>> list = new ArrayList<ColumnConfig<DiskResource, ?>>();
 
         DiskResourceProperties props = GWT.create(DiskResourceProperties.class);

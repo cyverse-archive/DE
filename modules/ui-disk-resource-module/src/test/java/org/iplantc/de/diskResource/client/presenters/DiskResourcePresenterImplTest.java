@@ -8,7 +8,6 @@ import org.iplantc.de.client.models.diskResources.DiskResourceAutoBeanFactory;
 import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.client.services.DiskResourceServiceFacade;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
-import org.iplantc.de.diskResource.client.presenters.proxy.FolderContentsRpcProxy;
 import org.iplantc.de.diskResource.client.presenters.proxy.SelectFolderByPathLoadHandler;
 import org.iplantc.de.diskResource.client.search.presenter.DataSearchPresenter;
 import org.iplantc.de.diskResource.client.search.views.DiskResourceSearchField;
@@ -17,18 +16,12 @@ import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 
 import com.google.common.collect.Lists;
 import com.google.gwt.event.shared.HandlerRegistration;
-import com.google.gwt.safehtml.client.HasSafeHtml;
 import com.google.gwtmockito.GxtMockitoTestRunner;
 
 import com.sencha.gxt.data.shared.TreeStore;
 
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
+import static org.mockito.Mockito.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -39,7 +32,6 @@ public class DiskResourcePresenterImplTest {
 
     @Mock DiskResourceView mockView;
     @Mock DiskResourceView.Proxy mockProck;
-    @Mock FolderContentsRpcProxy mockFolderRpcProxy;
     @Mock DiskResourceServiceFacade mockDiskResourceService;
     @Mock IplantDisplayStrings mockDisplayStrings;
     @Mock DiskResourceAutoBeanFactory mockFactory;
@@ -58,7 +50,7 @@ public class DiskResourcePresenterImplTest {
 
     @Before public void setUp() {
         setupMocks();
-        uut = new DiskResourcePresenterImpl(mockView, mockProck, mockFolderRpcProxy,
+        uut = new DiskResourcePresenterImpl(mockView, mockProck,
                 mockDiskResourceService, mockDisplayStrings, mockFactory, mockDlFactory, mockUserInfo, mockDataSearchPresenter,
                 mockEventBus, mockAnnouncer);
     }
@@ -151,9 +143,6 @@ public class DiskResourcePresenterImplTest {
         when(mockView.getTreeStore()).thenReturn(mockTreeStore);
         when(mockView.getToolbar()).thenReturn(mockToolbar);
         when(mockToolbar.getSearchField()).thenReturn(mockSearchField);
-
-        when(mockView.getCenterPanelHeader()).thenReturn(mock(HasSafeHtml.class));
-
     }
 
 }

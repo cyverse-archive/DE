@@ -50,7 +50,7 @@ class DiskResourceViewDnDHandler implements DndDragStartHandler, DndDropHandler,
 
         // Reset status message
         status.setStatus(true);
-        if(view.isSelectAll()) {
+        if(view.isSelectAllChecked()) {
             status.update(I18N.DISPLAY.dataDragDropStatusText(view.getTotalSelectionCount()));
         } else {
             status.update(I18N.DISPLAY.dataDragDropStatusText(dropData.size()));
@@ -88,7 +88,7 @@ class DiskResourceViewDnDHandler implements DndDragStartHandler, DndDropHandler,
 
         if ((dragData != null) && !dragData.isEmpty() && (!containsFilteredItems(dragData))) {
             event.setData(dragData);
-            if(view.isSelectAll()) {
+            if(view.isSelectAllChecked()) {
                 event.getStatusProxy().update(I18N.DISPLAY.dataDragDropStatusText(view.getTotalSelectionCount()));
             } else {
                 event.getStatusProxy().update(I18N.DISPLAY.dataDragDropStatusText(dragData.size()));
@@ -125,7 +125,7 @@ class DiskResourceViewDnDHandler implements DndDragStartHandler, DndDropHandler,
             return;
         }
 
-        if(view.isSelectAll()) {
+        if(view.isSelectAllChecked()) {
             event.getStatusProxy().update(I18N.DISPLAY.dataDragDropStatusText(view.getTotalSelectionCount()));
         } else {
             event.getStatusProxy().update(I18N.DISPLAY.dataDragDropStatusText(dropData.size()));

@@ -45,8 +45,6 @@ import org.iplantc.de.diskResource.client.presenters.callbacks.GetDiskResourceDe
 import org.iplantc.de.diskResource.client.presenters.callbacks.RenameDiskResourceCallback;
 import org.iplantc.de.diskResource.client.presenters.handlers.CachedFolderTreeStoreBinding;
 import org.iplantc.de.diskResource.client.presenters.handlers.DiskResourcesEventHandler;
-import org.iplantc.de.diskResource.client.presenters.proxy.FolderContentsLoadConfig;
-import org.iplantc.de.diskResource.client.presenters.proxy.FolderContentsRpcProxy;
 import org.iplantc.de.diskResource.client.presenters.proxy.SelectDiskResourceByIdStoreAddHandler;
 import org.iplantc.de.diskResource.client.presenters.proxy.SelectFolderByPathLoadHandler;
 import org.iplantc.de.diskResource.client.search.events.SaveDiskResourceQueryEvent;
@@ -94,8 +92,6 @@ import com.google.web.bindery.autobean.shared.AutoBean;
 import com.google.web.bindery.autobean.shared.AutoBeanCodex;
 
 import com.sencha.gxt.data.shared.loader.LoadHandler;
-import com.sencha.gxt.data.shared.loader.PagingLoadResult;
-import com.sencha.gxt.data.shared.loader.PagingLoader;
 import com.sencha.gxt.data.shared.loader.TreeLoader;
 import com.sencha.gxt.widget.core.client.Dialog;
 import com.sencha.gxt.widget.core.client.Dialog.PredefinedButton;
@@ -136,8 +132,6 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter, Di
     private final DiskResourceAutoBeanFactory drFactory;
     private final Builder builder;
     protected boolean isFilePreviewEnabled = true;
-    private FolderContentsRpcProxy rpc_proxy;
-    private PagingLoader<FolderContentsLoadConfig, PagingLoadResult<DiskResource>> gridLoader;
     private final DataLinkFactory dlFactory;
     private final UserInfo userInfo;
     private final DataSearchPresenter dataSearchPresenter;
@@ -147,7 +141,6 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter, Di
     @Inject
     public DiskResourcePresenterImpl(final DiskResourceView view,
                                      final DiskResourceView.Proxy proxy,
-                                     final FolderContentsRpcProxy folderRpcProxy,
                                      final DiskResourceServiceFacade diskResourceService,
                                      final IplantDisplayStrings display,
                                      final DiskResourceAutoBeanFactory factory,
@@ -158,7 +151,6 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter, Di
                                      final IplantAnnouncer announcer) {
         this.view = view;
         this.proxy = proxy;
-        this.rpc_proxy = folderRpcProxy;
         this.diskResourceService = diskResourceService;
         this.displayStrings = display;
         this.drFactory = factory;
@@ -179,15 +171,9 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter, Di
 
         this.proxy.init(dataSearchPresenter, this);
         this.dataSearchPresenter.searchInit(view, view, this, view.getToolbar().getSearchField());
-        this.rpc_proxy.init(view.getCenterPanelHeader());
 
         this.view.setTreeLoader(treeLoader);
         this.view.setPresenter(this);
-
-        gridLoader = new PagingLoader<FolderContentsLoadConfig, PagingLoadResult<DiskResource>>(rpc_proxy);
-        gridLoader.useLoadConfig(new FolderContentsLoadConfig());
-        gridLoader.setReuseLoadConfig(true);
-        view.setViewLoader(gridLoader);
 
         initHandlers();
     }
@@ -304,37 +290,9 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter, Di
         }
     }
 
-    /**
-     * Method called by the view when a folder is selected.
-     * Whenever this method is called with a non-null and non-empty list, the presenter will have the
-     * view de-select all disk resources
-     * in the center panel.
-     * 
-     * @param folder the selected folder
-     */
-    void onFolderSelected(final Folder folder) {
-        view.showDataListingWidget();
-        view.deSelectDiskResources();
-        FolderContentsLoadConfig config = gridLoader.getLastLoadConfig();
-        config.setFolder(folder);
-        gridLoader.load(0, 200);
-    }
-
     @Override
     public void onFolderSelected(FolderSelectionEvent event) {
-        Folder selectedFolder = event.getSelectedFolder();
-        if (selectedFolder instanceof DiskResourceQueryTemplate) {
-            // If the given query has not been saved, we need to deselect everything
-            DiskResourceQueryTemplate searchQuery = (DiskResourceQueryTemplate)selectedFolder;
-            if (!searchQuery.isSaved()) {
-                deSelectDiskResources();
-                getView().deSelectNavigationFolder();
-            }
-            view.setAllowSelectAll(false);
-        } else {
-            view.setAllowSelectAll(true);
-        }
-        onFolderSelected(selectedFolder);
+        view.loadFolder(event.getSelectedFolder());
     }
 
     @Override
@@ -475,7 +433,7 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter, Di
             if (folder == selectedFolder) {
                 // If the folder IS the currently selected folder, then trigger
                 // reload of center panel.
-                onFolderSelected(folder);
+                view.loadFolder(folder);
             } else {
                 /*
                  * If it is NOT the currently selected folder, then deselect the
@@ -616,7 +574,7 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter, Di
         mask(""); //$NON-NLS-1$
 
         DiskResourceRestoreCallback callback = new DiskResourceRestoreCallback(this, drFactory, selectedResources);
-        if (view.isSelectAll()) {
+        if (view.isSelectAllChecked()) {
             diskResourceService.restoreAll(callback);
         } else {
             HasPaths request = drFactory.pathsList().as();
@@ -745,7 +703,7 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter, Di
         if (!(folder instanceof DiskResourceQueryTemplate) && selectedFolder == folder) {
             // If the folder is currently selected, then trigger reload of
             // center panel.
-            onFolderSelected(folder);
+            view.loadFolder(folder);
         }
 
     }
@@ -757,7 +715,7 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter, Di
 
     @Override
     public void doBulkDownload() {
-        eventBus.fireEvent(new RequestBulkDownloadEvent(this, view.isSelectAll(), getSelectedDiskResources(), getSelectedFolder()));
+        eventBus.fireEvent(new RequestBulkDownloadEvent(this, view.isSelectAllChecked(), getSelectedDiskResources(), getSelectedFolder()));
     }
 
     @Override
@@ -824,7 +782,7 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter, Di
         Folder selectedFolder = getSelectedFolder();
         final AsyncCallback<HasPaths> callback = new DiskResourceDeleteCallback(drSet, selectedFolder, view, announce);
 
-        if (view.isSelectAll() && selectedFolder != null) {
+        if (view.isSelectAllChecked() && selectedFolder != null) {
             diskResourceService.deleteContents(selectedFolder.getPath(), callback);
 
         } else {
@@ -925,7 +883,7 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter, Di
     public void doMoveDiskResources(Folder targetFolder, Set<DiskResource> resources) {
         Folder parent = getSelectedFolder();
         view.mask(I18N.DISPLAY.loadingMask());
-        if (view.isSelectAll()) {
+        if (view.isSelectAllChecked()) {
             diskResourceService.moveContents(parent.getPath(), targetFolder, new DiskResourceMoveCallback(view, true, parent, targetFolder, resources));
         } else {
             diskResourceService.moveDiskResources(resources, targetFolder, new DiskResourceMoveCallback(view, false, parent, targetFolder, resources));

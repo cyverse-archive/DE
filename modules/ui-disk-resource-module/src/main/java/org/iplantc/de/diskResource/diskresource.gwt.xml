@@ -14,13 +14,10 @@
        <when-type-is class="org.iplantc.de.diskResource.client.views.DiskResourceView.DiskResourceViewToolbar"/>
     </replace-with>
      <!-- Deferred binding rules -->
-    <replace-with class="org.iplantc.de.diskResource.client.views.CheckBoxColumnDefaultAppearance">
-       <when-type-is class="org.iplantc.de.diskResource.client.views.DiskResourceSelectionModel.CheckBoxColumnAppearance"/>
-    </replace-with>
     <replace-with class="org.iplantc.de.diskResource.client.search.views.cells.DiskResourceSearchCellDefaultAppearance">
         <when-type-is class="org.iplantc.de.diskResource.client.search.views.cells.DiskResourceSearchCell.DiskResourceSearchCellAppearance"/>
     </replace-with>
-    
+
     <replace-with class="org.iplantc.de.diskResource.client.gin.appearance.TreeCellDefaultAppearance">
         <when-type-is class="org.iplantc.de.diskResource.client.gin.TreeCell.TreeCellAppearance" />
     </replace-with>

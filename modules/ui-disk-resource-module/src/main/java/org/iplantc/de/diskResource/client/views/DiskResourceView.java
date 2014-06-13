@@ -10,7 +10,6 @@ import org.iplantc.de.client.services.DiskResourceServiceFacade;
 import org.iplantc.de.commons.client.views.window.configs.TabularFileViewerWindowConfig;
 import org.iplantc.de.diskResource.client.events.DiskResourceSelectionChangedEvent;
 import org.iplantc.de.diskResource.client.events.FolderSelectionEvent;
-import org.iplantc.de.diskResource.client.presenters.proxy.FolderContentsLoadConfig;
 import org.iplantc.de.diskResource.client.presenters.proxy.SelectFolderByPathLoadHandler;
 import org.iplantc.de.diskResource.client.search.events.DeleteSavedSearchEvent;
 import org.iplantc.de.diskResource.client.search.events.SaveDiskResourceQueryEvent;
@@ -26,15 +25,12 @@ import org.iplantc.de.diskResource.client.views.cells.events.RequestDiskResource
 import org.iplantc.de.diskResource.client.views.cells.events.ShareByDataLinkEvent;
 
 import com.google.gwt.dom.client.Element;
-import com.google.gwt.safehtml.client.HasSafeHtml;
 import com.google.gwt.user.client.ui.HasOneWidget;
 import com.google.gwt.user.client.ui.IsWidget;
 
 import com.sencha.gxt.data.shared.ListStore;
 import com.sencha.gxt.data.shared.TreeStore;
 import com.sencha.gxt.data.shared.loader.DataProxy;
-import com.sencha.gxt.data.shared.loader.PagingLoadResult;
-import com.sencha.gxt.data.shared.loader.PagingLoader;
 import com.sencha.gxt.data.shared.loader.TreeLoader;
 import com.sencha.gxt.widget.core.client.tree.Tree.TreeNode;
 
@@ -46,15 +42,25 @@ import java.util.Set;
  * @author jstroot
  * 
  */
-public interface DiskResourceView extends IsWidget, IsMaskable, IsDiskResourceRoot, FolderSelectionEvent.HasFolderSelectionEventHandlers, DeleteSavedSearchEvent.HasDeleteSavedSearchEventHandlers,
-        DiskResourceSelectionChangedEvent.HasDiskResourceSelectionChangedEventHandlers {
+public interface DiskResourceView extends IsWidget,
+                                          IsMaskable,
+                                          FolderSelectionEvent.HasFolderSelectionEventHandlers,
+                                          DeleteSavedSearchEvent.HasDeleteSavedSearchEventHandlers,
+                                          DiskResourceSelectionChangedEvent.HasDiskResourceSelectionChangedEventHandlers {
 
-    interface Presenter extends org.iplantc.de.commons.client.presenter.Presenter, IsMaskable, HasHandlerRegistrationMgmt, FolderSelectionEvent.FolderSelectionEventHandler,
-            DiskResourceNameSelectedEvent.DiskResourceNameSelectedEventHandler, ManageMetadataEvent.ManageMetadataEventHandler, ManageSharingEvent.ManageSharingEventHandler,
-            DiskResourceSelectionChangedEvent.HasDiskResourceSelectionChangedEventHandlers, FolderSelectionEvent.HasFolderSelectionEventHandlers,
-            DiskResourceSelectionChangedEvent.DiskResourceSelectionChangedEventHandler, SaveDiskResourceQueryEvent.SaveDiskResourceQueryEventHandler,
-            SubmitDiskResourceQueryEvent.SubmitDiskResourceQueryEventHandler, ShareByDataLinkEvent.ShareByDataLinkEventHandler,
-            RequestDiskResourceFavoriteEvent.RequestDiskResourceFavoriteEventHandler, ManageCommentsEvent.ManageCommentsEventHandler {
+    interface Presenter extends org.iplantc.de.commons.client.presenter.Presenter,
+                                IsMaskable,
+                                HasHandlerRegistrationMgmt,
+                                FolderSelectionEvent.FolderSelectionEventHandler,
+                                DiskResourceNameSelectedEvent.DiskResourceNameSelectedEventHandler,
+                                ManageMetadataEvent.ManageMetadataEventHandler,
+                                ManageSharingEvent.ManageSharingEventHandler,
+                                DiskResourceSelectionChangedEvent.HasDiskResourceSelectionChangedEventHandlers,
+                                FolderSelectionEvent.HasFolderSelectionEventHandlers,
+                                DiskResourceSelectionChangedEvent.DiskResourceSelectionChangedEventHandler,
+                                SaveDiskResourceQueryEvent.SaveDiskResourceQueryEventHandler,
+                                SubmitDiskResourceQueryEvent.SubmitDiskResourceQueryEventHandler,
+                                ShareByDataLinkEvent.ShareByDataLinkEventHandler {
 
         void setViewDebugId(String baseID);
 
@@ -198,6 +204,8 @@ public interface DiskResourceView extends IsWidget, IsMaskable, IsDiskResourceRo
         void init(DataSearchPresenter presenter, IsMaskable isMaskable);
     }
 
+    void loadFolder(Folder folder);
+
     void setPresenter(Presenter presenter);
 
     void setTreeLoader(TreeLoader<Folder> treeLoader);
@@ -278,8 +286,6 @@ public interface DiskResourceView extends IsWidget, IsMaskable, IsDiskResourceRo
 
     void setSingleSelect();
 
-    void showDataListingWidget();
-
     void updateDetails(String path, DiskResourceInfo info);
 
     void resetDetailsPanel();
@@ -290,15 +296,9 @@ public interface DiskResourceView extends IsWidget, IsMaskable, IsDiskResourceRo
 
     void maskDetailsPanel();
 
-    void setViewLoader(PagingLoader<FolderContentsLoadConfig, PagingLoadResult<DiskResource>> gridLoader);
-
-    boolean isSelectAll();
+    boolean isSelectAllChecked();
 
     int getTotalSelectionCount();
-
-    void setAllowSelectAll(boolean allowSelectAll);
-
-    HasSafeHtml getCenterPanelHeader();
 
     void maskSendToCoGe();
 
