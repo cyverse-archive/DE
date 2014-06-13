@@ -12,6 +12,7 @@ import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.sencha.gxt.core.client.Style;
 import com.sencha.gxt.data.shared.ListStore;
 import com.sencha.gxt.data.shared.ModelKeyProvider;
+import com.sencha.gxt.data.shared.TreeStore;
 import com.sencha.gxt.data.shared.event.StoreClearEvent;
 import com.sencha.gxt.data.shared.loader.PagingLoader;
 import com.sencha.gxt.widget.core.client.event.LiveGridViewUpdateEvent;
@@ -172,6 +173,57 @@ public class LiveGridCheckBoxSelectionModel extends CheckBoxSelectionModel<DiskR
   }
 
   @Override
+  protected void doSingleSelect(DiskResource model, boolean suppressEvent) {
+    if (locked) return;
+
+    if(model.isFilter()) return;
+
+    int index = -1;
+    if (store instanceof ListStore) {
+      ListStore<DiskResource> ls = (ListStore<DiskResource>) store;
+      index = ls.indexOf(model);
+    }
+    if (store instanceof TreeStore) {
+      TreeStore<DiskResource> ls = (TreeStore<DiskResource>) store;
+      index = ls.indexOf(model);
+    }
+    final boolean isSelected = isSelected(model);
+    if (index == -1 || isSelected) {
+      return;
+    } else {
+      if (!suppressEvent) {
+        BeforeSelectionEvent<DiskResource> evt = BeforeSelectionEvent.fire(this, model);
+        if (evt != null && evt.isCanceled()) {
+          return;
+        }
+      }
+    }
+
+    boolean change = false;
+    if (selected.size() > 0 && !isSelected) {
+      doDeselect(Collections.singletonList(lastSelected), true);
+      change = true;
+    }
+    if (selected.size() == 0) {
+      change = true;
+    }
+    if(!isSelected){
+      selected.add(model);
+    }
+    lastSelected = model;
+    onSelectChange(model, true);
+    setLastFocused(lastSelected);
+
+    if (!suppressEvent) {
+      SelectionEvent.fire(this, model);
+    }
+
+    if (change && !suppressEvent) {
+      fireSelectionChange();
+    }
+  }
+
+  @Override
   protected void doMultiSelect(List<DiskResource> models, boolean keepExisting,
                                boolean suppressEvent) {
     if (locked) return;
@@ -262,6 +314,8 @@ public class LiveGridCheckBoxSelectionModel extends CheckBoxSelectionModel<DiskR
     if (!(grid.getLoader() instanceof PagingLoader<?, ?>)) {
       return;
     }
+    if(getColumn().isHidden()) return;
+
     if (isSupportedSelectionSize()) {
       int sizeMinusFiltered = Iterables.size(Iterables.filter(getCacheStore().getAll(),
                                                               new IsNotFilteredPredicate()));
