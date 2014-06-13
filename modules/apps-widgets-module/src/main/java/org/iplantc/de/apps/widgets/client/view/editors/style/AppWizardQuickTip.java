@@ -6,7 +6,6 @@ import com.google.gwt.dom.client.EventTarget;
 import com.google.gwt.event.dom.client.MouseMoveEvent;
 import com.google.gwt.event.dom.client.MouseOutEvent;
 import com.google.gwt.event.dom.client.MouseOverEvent;
-import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -92,7 +91,8 @@ public class AppWizardQuickTip extends ToolTip {
     @Override
     protected void onTargetOut(Event ce) {
         EventTarget to = ce.getRelatedEventTarget();
-        if (to == null || (Element.is(target) && Element.is(to) && !DOM.isOrHasChild(target, Element.as(to)))) {
+        if (to == null || (Element.is(target) && Element.is(to)
+                               && !target.isOrHasChild(Element.as(to)))) {
             super.onTargetOut(ce);
         }
     }
