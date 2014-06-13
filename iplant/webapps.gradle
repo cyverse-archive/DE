@@ -7,12 +7,26 @@ configure(subprojects.findAll { it.name == "de" || it.name == "belphegor" }) {
     apply plugin: 'jetty'
 
     dependencies {
+        gwt "com.sencha.gxt:gxt:$gxtVersion"
+        gwt "com.google.gwt.inject:gin:$gwtGinVer"
+        gwt "com.google.guava:guava-gwt:$guavaGwtVer"
+
+        gwt project(':ui-commons-module')
+        gwt project(':ui-applications-module')
+        gwt project(':ui-resources-module')
+        gwt project(':confluence-client')
+        gwt project(':de-common-module')
+
         compile "com.sencha.gxt:gxt:$gxtVersion"
-        compile project(':ui-commons-module'),
-                project(':ui-applications-module'),
-                project(':ui-resources-module'),
-                project(':confluence-client'),
-                project(':de-common-module')
+        compile "com.google.gwt.inject:gin:$gwtGinVer"
+        compile "com.google.guava:guava-gwt:$guavaGwtVer"
+
+        compile project(':ui-commons-module')
+        compile project(':ui-applications-module')
+        compile project(':ui-resources-module')
+        compile project(':confluence-client')
+        compile project(':de-common-module')
+
         testCompile "com.google.gwt.gwtmockito:gwtmockito:$gwtMockitoVer"
         testCompile project(':de-common-module').sourceSets.test.output
     }
@@ -27,6 +41,11 @@ configure(subprojects.findAll { it.name == "de" || it.name == "belphegor" }) {
 
         superDev { noPrecompile = true }
         maxHeapSize = '1024M'
+        compiler {
+            enableClosureCompiler = true;
+            disableClassMetadata = true;
+            disableCastChecking = true;
+        }
     }
 
     task runDraftJetty(type: JettyRunWar) {
@@ -96,10 +115,27 @@ project(':de') {
 
     dependencies {
         applet "org.irods.idrop:idrop-lite:2.0.1-SNAPSHOT@jar"
-        compile project(':ui-apps-widgets-module'),
-                project(':ui-pipelines-module'),
-                project(':ui-apps-integration'),
-                project(':analyses-module')
+
+        gwt project(':ui-disk-resource-module')
+        gwt project(':ui-commons-module')
+        gwt project(':ui-applications-module')
+        gwt project(':ui-resources-module')
+        gwt project(':de-common-module')
+        gwt project(':ui-apps-widgets-module')
+        gwt project(':ui-pipelines-module')
+        gwt project(':ui-apps-integration')
+        gwt project(':analyses-module')
+
+        compile project(':ui-disk-resource-module')
+        compile project(':ui-commons-module')
+        compile project(':ui-applications-module')
+        compile project(':ui-resources-module')
+        compile project(':de-common-module')
+        compile project(':ui-apps-widgets-module')
+        compile project(':ui-pipelines-module')
+        compile project(':ui-apps-integration')
+        compile project(':analyses-module')
+
     }
 
     gwt {
@@ -109,6 +145,8 @@ project(':de') {
         src += files(project(':ui-apps-widgets-module').sourceSets.main.allJava.srcDirs) + files(project(':ui-apps-widgets-module').sourceSets.main.output.resourcesDir)
         src += files(project(':ui-apps-integration').sourceSets.main.allJava.srcDirs) + files(project(':ui-apps-integration').sourceSets.main.output.resourcesDir)
         src += files(project(':ui-pipelines-module').sourceSets.main.allJava.srcDirs) + files(project(':ui-pipelines-module').sourceSets.main.output.resourcesDir)
+        src += files(project(':ui-disk-resource-module').sourceSets.main.allJava.srcDirs) + files(project(':ui-disk-resource-module').sourceSets.main.output.resourcesDir)
+        src += files(project(':ui-pipeline-builder-module').sourceSets.main.allJava.srcDirs) + files(project(':ui-pipeline-builder-module').sourceSets.main.output.resourcesDir)
     }
 
     // Put idrop lite jar into war

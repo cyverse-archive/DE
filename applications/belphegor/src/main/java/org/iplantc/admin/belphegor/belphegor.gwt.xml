@@ -14,7 +14,6 @@
     <inherits name="com.google.common.collect.Collect"/>
 
 	<inherits name='org.iplantc.de.DiscoveryEnvironmentCommon' />
-    <inherits name="org.iplantc.de.diskResource.diskresource"/>
 	<inherits name="org.iplantc.de.apps.Apps"/>
 	<inherits name="org.iplantc.de.resources.ui-resources"/>
 

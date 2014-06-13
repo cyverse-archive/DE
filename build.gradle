@@ -1,5 +1,6 @@
 // Establish version and status ext.githubProjectName = rootProject.name // Change if github project name is not the same as the root project's name
 apply plugin: 'java'
+apply plugin: 'idea'
 sourceCompatibility = 1.7
 
 buildscript {
@@ -11,22 +12,14 @@ buildscript {
       maven {
          url 'https://maven.sencha.com/repo/support-commercial-release'
       }
-      maven {
-         url 'http://katic.iplantcollaborative.org/archiva/repository/internal/'
-      }
    }
    dependencies { 
-      classpath 'de.richsource.gradle.plugins:gwt-gradle-plugin:0.3'
+      classpath 'de.richsource.gradle.plugins:gwt-gradle-plugin:0.4'
    }
 }
 
 // Establish extended properties for all projects
 apply from: 'versions.gradle'
-ext {
-   remoteUri = ""
-   remoteRef = ""
-   subtreePrefix = ""
-}
 
 dependencies {
    compile project(':de')
@@ -36,6 +29,8 @@ dependencies {
 // Set dependencies for all sub projects
 subprojects {
    apply plugin: 'java'
+   apply plugin: 'eclipse'
+   apply plugin: 'idea'
    sourceCompatibility = 1.7
 
    repositories {
@@ -51,31 +46,16 @@ subprojects {
 
    group = 'org.iplantc.de'
 
-   jar {
-      from sourceSets.main.allJava
-   }
-         
    // Exclude all GwtTests from normal java compiles
    test {
         exclude '**/GwtTest**'
         // Disable the test report for the individual test task
         reports.html.enabled = false
    }
-   sourceSets.main.resources.srcDir 'src/main/java'
-}
-
-task testReport(type: TestReport) {
-    group "Verification"
-    description "Aggregates all sub-project jUnit tests reports"
-    destinationDir = file("$buildDir/reports/allTests")
-    // Include the results from the `test` task in all subprojects
-    reportOn subprojects*.test
 }
 
 apply from: 'iplant/webapps.gradle'
 apply from: 'iplant/modules.gradle'
 
-apply from: 'iplant/eclipse.gradle'
-apply from: 'iplant/idea.gradle'
 apply from: 'iplant/webappBootstrap.gradle'
 

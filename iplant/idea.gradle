@@ -1,6 +1,0 @@
-apply plugin: 'idea'
-
-subprojects {
-   apply plugin: 'idea'
-}
-
