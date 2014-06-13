@@ -13,7 +13,7 @@
  */
 package org.iplantc.de.commons.client.tags.views;
 
-import org.iplantc.de.commons.client.tags.models.IplantTag;
+import org.iplantc.de.client.models.tags.IplantTag;
 import org.iplantc.de.commons.client.tags.presenter.TagListHandlers;
 import org.iplantc.de.commons.client.tags.presenter.TagListHandlers.InsertionPoint;
 import org.iplantc.de.commons.client.tags.resources.CustomIplantTagResources;

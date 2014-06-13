@@ -45,6 +45,7 @@ public interface DiskResource extends HasId, HasName, HasPath {
 
     DiskResourceInfo getDiskResourceInfo();
 
+    @PropertyName("uuid")
     String getUUID();
 
     @PropertyName("uuid")

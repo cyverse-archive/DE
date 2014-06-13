@@ -1,4 +1,4 @@
-package org.iplantc.de.commons.client.tags.models;
+package org.iplantc.de.client.models.tags;
 
 import org.iplantc.de.client.models.HasId;
 

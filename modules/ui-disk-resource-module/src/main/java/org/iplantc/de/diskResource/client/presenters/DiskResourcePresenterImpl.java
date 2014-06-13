@@ -19,8 +19,10 @@ import org.iplantc.de.client.models.diskResources.File;
 import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.client.models.diskResources.PermissionValue;
 import org.iplantc.de.client.models.search.DiskResourceQueryTemplate;
+import org.iplantc.de.client.models.tags.IplantTag;
 import org.iplantc.de.client.models.viewer.InfoType;
 import org.iplantc.de.client.services.DiskResourceServiceFacade;
+import org.iplantc.de.client.services.MetadataServiceFacade;
 import org.iplantc.de.client.util.CommonModelUtils;
 import org.iplantc.de.client.util.DiskResourceUtil;
 import org.iplantc.de.commons.client.ErrorHandler;
@@ -29,6 +31,7 @@ import org.iplantc.de.commons.client.comments.view.CommentsView;
 import org.iplantc.de.commons.client.comments.view.CommentsViewImpl;
 import org.iplantc.de.commons.client.info.ErrorAnnouncementConfig;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
+import org.iplantc.de.commons.client.info.SuccessAnnouncementConfig;
 import org.iplantc.de.commons.client.views.gxt3.dialogs.IPlantDialog;
 import org.iplantc.de.commons.client.views.window.configs.TabularFileViewerWindowConfig;
 import org.iplantc.de.diskResource.client.dataLink.presenter.DataLinkPresenter;
@@ -137,12 +140,13 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter, Di
     private final DataSearchPresenter dataSearchPresenter;
     private final EventBus eventBus;
     private final IplantAnnouncer announcer;
+    private MetadataServiceFacade mdataService;
 
     @Inject
     public DiskResourcePresenterImpl(final DiskResourceView view,
                                      final DiskResourceView.Proxy proxy,
                                      final DiskResourceServiceFacade diskResourceService,
-                                     final IplantDisplayStrings display,
+            final MetadataServiceFacade mdataService, final IplantDisplayStrings display,
                                      final DiskResourceAutoBeanFactory factory,
                                      final DataLinkFactory dlFactory,
                                      final UserInfo userInfo,
@@ -159,6 +163,7 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter, Di
         this.dataSearchPresenter = dataSearchPresenter;
         this.eventBus = eventBus;
         this.announcer = announcer;
+        this.mdataService = mdataService;
 
         builder = new MyBuilder(this);
 
@@ -1174,6 +1179,54 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter, Di
         checkState(getSelectedDiskResources().size() == 1, "Selected resources should only contain 1 item, but contains %i", getSelectedDiskResources().size());
 
         doShareByDataLink(Iterables.getFirst(getSelectedDiskResources(), null));
+    }
+
+    @Override
+    public void attachTag(final IplantTag tag) {
+        if (getSelectedDiskResources().size() > 0) {
+            Iterator<DiskResource> it = getSelectedDiskResources().iterator();
+            if (it != null && it.hasNext()) {
+                final DiskResource next = it.next();
+                mdataService.attachTags(Arrays.asList(tag.getId()), next.getUUID(), new AsyncCallback<String>() {
+
+                    @Override
+                    public void onFailure(Throwable caught) {
+                        ErrorHandler.post("Unable to tag this resource!", caught);
+
+                    }
+
+                    @Override
+                    public void onSuccess(String result) {
+                        announcer.schedule(new SuccessAnnouncementConfig(next.getName() + " tagged with " + tag.getValue()));
+
+                    }
+                });
+            }
+        }
+
+    }
+
+    @Override
+    public void detachTag(final IplantTag tag) {
+        if (getSelectedDiskResources().size() > 0) {
+            Iterator<DiskResource> it = getSelectedDiskResources().iterator();
+            if (it != null && it.hasNext()) {
+                final DiskResource next = it.next();
+                mdataService.detachTags(Arrays.asList(tag.getId()), next.getUUID(), new AsyncCallback<String>() {
+
+                    @Override
+                    public void onFailure(Throwable caught) {
+                        ErrorHandler.post("Unable to tag this resource!", caught);
+                    }
+
+                    @Override
+                    public void onSuccess(String result) {
+                        announcer.schedule(new SuccessAnnouncementConfig(tag.getValue() + " removed from " + next.getName()));
+                    }
+                });
+            }
+        }
+
     }
 
 }

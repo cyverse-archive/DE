@@ -6,6 +6,7 @@ import org.iplantc.de.client.models.IsMaskable;
 import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.client.models.diskResources.DiskResourceInfo;
 import org.iplantc.de.client.models.diskResources.Folder;
+import org.iplantc.de.client.models.tags.IplantTag;
 import org.iplantc.de.client.services.DiskResourceServiceFacade;
 import org.iplantc.de.commons.client.views.window.configs.TabularFileViewerWindowConfig;
 import org.iplantc.de.diskResource.client.events.DiskResourceSelectionChangedEvent;
@@ -190,6 +191,10 @@ public interface DiskResourceView extends IsWidget,
         void unmaskVizMenuOptions();
 
         void shareSelectedFolderByDataLink();
+
+        void attachTag(IplantTag tag);
+
+        void detachTag(IplantTag tag);
     }
 
     /**

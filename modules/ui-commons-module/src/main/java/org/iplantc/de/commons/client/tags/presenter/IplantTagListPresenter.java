@@ -1,11 +1,14 @@
 package org.iplantc.de.commons.client.tags.presenter;
 
 import org.iplantc.de.client.gin.ServicesInjector;
+import org.iplantc.de.client.models.tags.IplantTag;
 import org.iplantc.de.client.services.MetadataServiceFacade;
 import org.iplantc.de.client.util.JsonUtil;
 import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.commons.client.gin.CommonsInjector;
-import org.iplantc.de.commons.client.tags.models.IplantTag;
+import org.iplantc.de.commons.client.info.IplantAnnouncer;
+import org.iplantc.de.commons.client.info.SuccessAnnouncementConfig;
+import org.iplantc.de.commons.client.tags.Taggable;
 import org.iplantc.de.commons.client.tags.resources.CustomIplantTagResources;
 import org.iplantc.de.commons.client.tags.views.IplantTagListView;
 import org.iplantc.de.commons.client.tags.views.TagView;
@@ -15,6 +18,9 @@ import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import com.sencha.gxt.widget.core.client.Dialog;
+import com.sencha.gxt.widget.core.client.Dialog.PredefinedButton;
+import com.sencha.gxt.widget.core.client.event.SelectEvent;
+import com.sencha.gxt.widget.core.client.event.SelectEvent.SelectHandler;
 import com.sencha.gxt.widget.core.client.form.TextArea;
 
 import java.util.ArrayList;
@@ -32,6 +38,7 @@ public class IplantTagListPresenter implements TagListHandlers {
     private Command onBlurCmd;
     private Command onChangeCmd;
     private final MetadataServiceFacade mdataService;
+    private final Taggable taggable;
 
     /**
      * @return the editable
@@ -94,6 +101,7 @@ public class IplantTagListPresenter implements TagListHandlers {
         this.onChangeCmd = onChangeCmd;
     }
 
+
     /**
      * Creates a non editable TagList with default styles.
      * 
@@ -101,16 +109,16 @@ public class IplantTagListPresenter implements TagListHandlers {
      * Use {@link TagList#setEditable(boolean)} to enable/disable tag creation on an existing TagList.
      * You have to set a {@link TagCreationCodex} to successfully enable tag creation.
      */
-    public IplantTagListPresenter() {
-        this(CustomIplantTagResources.INSTANCE);
+    public IplantTagListPresenter(Taggable taggable) {
+        this(taggable, CustomIplantTagResources.INSTANCE);
     }
 
     /**
      * Creates a non editable TagList with custom styles.
      */
-    public IplantTagListPresenter(CustomIplantTagResources resources) {
+    public IplantTagListPresenter(Taggable taggable, CustomIplantTagResources resources) {
         super();
-
+        this.taggable = taggable;
         this.resources = resources;
         this.resources.style().ensureInjected();
 
@@ -138,6 +146,7 @@ public class IplantTagListPresenter implements TagListHandlers {
 
         this.getTagListView().getTagsPanel().add(tagView);
         this.tagItems.add(new TagItem(tag, tagView));
+        taggable.attachTag(tag);
 
         return true;
     }
@@ -158,6 +167,7 @@ public class IplantTagListPresenter implements TagListHandlers {
             if (tagItem.getTag().equals(tag)) {
                 this.getTagListView().getTagsPanel().remove(tagItem.getTagView());
                 tagItemIt.remove();
+                taggable.detachTag(tag);
                 return true;
             }
         }
@@ -192,8 +202,9 @@ public class IplantTagListPresenter implements TagListHandlers {
             }
         }
 
-        if (this.onChangeCmd != null)
+        if (this.onChangeCmd != null) {
             this.onChangeCmd.execute();
+        }
     }
 
     @Override
@@ -267,10 +278,26 @@ public class IplantTagListPresenter implements TagListHandlers {
         for (Iterator<TagItem> tagItemIt = this.tagItems.iterator(); tagItemIt.hasNext();) {
             TagItem tagItem = tagItemIt.next();
             if (tagItem.getTagView().equals(tagView)) {
-                TextArea tb = new TextArea();
+                final IplantTag tag = tagItem.tag;
+                final String tagId = tag.getId();
+                final TextArea tb = new TextArea();
                 tb.setSize("250", "200");
-                tb.setValue(tagItem.getTag().getDescription());
+                final String description = tag.getDescription();
+                tb.setValue(description);
                 Dialog pop = new Dialog();
+                pop.setHideOnButtonClick(true);
+                pop.setPredefinedButtons(PredefinedButton.OK, PredefinedButton.CANCEL);
+                pop.getButtonById(PredefinedButton.OK.toString()).addSelectHandler(new SelectHandler() {
+                    
+                    @Override
+                    public void onSelect(SelectEvent event) {
+                        if (tb.getCurrentValue() != null && !tb.getCurrentValue().equals(description)) {
+                            tag.setDescription(tb.getCurrentValue());
+                            updateTagDescription(tagId, tb.getCurrentValue());
+                        }
+                        
+                    }
+                });
                 pop.setSize("300", "250");
                 pop.setHeadingText("Edit Tag Description for " + tagItem.getTag().getValue().toString());
                 pop.setWidget(tb);
@@ -280,13 +307,30 @@ public class IplantTagListPresenter implements TagListHandlers {
 
     }
 
+    private void updateTagDescription(String tagId, String newDesc) {
+        mdataService.updateTagDescription(tagId, newDesc, new AsyncCallback<String>() {
+
+            @Override
+            public void onFailure(Throwable caught) {
+                ErrorHandler.post("Unable to update tag description", caught);
+
+            }
+
+            @Override
+            public void onSuccess(String result) {
+                IplantAnnouncer.getInstance().schedule(new SuccessAnnouncementConfig("Tag description updated successfully."));
+
+            }
+        });
+    }
+
     public IplantTagListView getTagListView() {
         return tagListView;
     }
 
     @Override
     public void onCreateTag(final IplantTag tag) {
-        mdataService.createTag(tag.getValue(), tag.getDescription(), new AsyncCallback<String>() {
+        mdataService.createTag(tag, new AsyncCallback<String>() {
 
             @Override
             public void onSuccess(String result) {
@@ -303,5 +347,4 @@ public class IplantTagListPresenter implements TagListHandlers {
         });
 
     }
-
 }

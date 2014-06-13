@@ -1,7 +1,7 @@
 package org.iplantc.de.commons.client.tags.views;
 
-import org.iplantc.de.commons.client.tags.models.IpalntTagAutoBeanFactory;
-import org.iplantc.de.commons.client.tags.models.IplantTag;
+import org.iplantc.de.client.models.tags.IpalntTagAutoBeanFactory;
+import org.iplantc.de.client.models.tags.IplantTag;
 import org.iplantc.de.commons.client.tags.presenter.TagListHandlers;
 import org.iplantc.de.commons.client.tags.proxy.TagSuggestionLoadConfig;
 import org.iplantc.de.commons.client.tags.proxy.TagSuggestionRpcProxy;
@@ -116,6 +116,7 @@ public class IplantTagListView extends Composite implements IsWidget {
                 IplantTag tag = event.getValue();
                 if (tag == null) {
                     String text = combo.getText();
+                    logger.log(Level.SEVERE, "from value key -->" + text + "<--");
                     AutoBean<IplantTag> tagBean = AutoBeanCodex.decode(factory, IplantTag.class, "{}");
                     tag = tagBean.as();
                     tag.setValue(text);
@@ -171,7 +172,7 @@ public class IplantTagListView extends Composite implements IsWidget {
                 IplantTag tag = tagSearchCbo.getCurrentValue();
                 if (tag == null) {
                     String text = tagSearchCbo.getText();
-                    logger.log(Level.SEVERE, "-->" + text + "<--");
+                    logger.log(Level.SEVERE, "from enter key -->" + text + "<--");
                     if (!Strings.isNullOrEmpty(text)) {
                         AutoBean<IplantTag> tagBean = AutoBeanCodex.decode(factory, IplantTag.class, "{}");
                         tag = tagBean.as();
@@ -181,7 +182,7 @@ public class IplantTagListView extends Composite implements IsWidget {
                 } else {
                     uiHandlers.onAddTag(tag);
                 }
-                super.onEnterKeyDown(context, parent, value, event, valueUpdater);
+                // super.onEnterKeyDown(context, parent, value, event, valueUpdater);
             }
         };
         return cell;

@@ -9,10 +9,10 @@ import org.iplantc.de.client.models.diskResources.DiskResourceInfo;
 import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.client.models.diskResources.PermissionValue;
 import org.iplantc.de.client.models.search.DiskResourceQueryTemplate;
+import org.iplantc.de.client.models.tags.IplantTag;
 import org.iplantc.de.client.util.CommonModelUtils;
 import org.iplantc.de.client.util.DiskResourceUtil;
-import org.iplantc.de.commons.client.tags.models.IpalntTagAutoBeanFactory;
-import org.iplantc.de.commons.client.tags.models.IplantTag;
+import org.iplantc.de.commons.client.tags.Taggable;
 import org.iplantc.de.commons.client.tags.presenter.IplantTagListPresenter;
 import org.iplantc.de.commons.client.tags.resources.CustomIplantTagResources;
 import org.iplantc.de.commons.client.tags.views.IplantTagListView;
@@ -60,8 +60,6 @@ import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
-import com.google.web.bindery.autobean.shared.AutoBean;
-import com.google.web.bindery.autobean.shared.AutoBeanCodex;
 
 import com.sencha.gxt.core.client.Style.SelectionMode;
 import com.sencha.gxt.core.client.ValueProvider;
@@ -104,13 +102,12 @@ import com.sencha.gxt.widget.core.client.tree.Tree;
 import com.sencha.gxt.widget.core.client.tree.Tree.TreeNode;
 import com.sencha.gxt.widget.core.client.tree.TreeView;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-public class DiskResourceViewImpl extends Composite implements DiskResourceView, SelectionHandler<Folder>, SelectionChangedHandler<DiskResource> {
+public class DiskResourceViewImpl extends Composite implements DiskResourceView, SelectionHandler<Folder>, SelectionChangedHandler<DiskResource>, Taggable {
 
     private final class PathFieldKeyPressHandlerImpl implements KeyPressHandler {
         @Override
@@ -877,34 +874,34 @@ public class DiskResourceViewImpl extends Composite implements DiskResourceView,
     }
 
     private IplantTagListView createTagList(CustomIplantTagResources resources, boolean editable, Command onFocusCmd, Command onBlurCmd) {
-        List<IplantTag> items = new ArrayList<IplantTag>();
-
-        IpalntTagAutoBeanFactory factory = GWT.create(IpalntTagAutoBeanFactory.class);
-
-        for (int i = 0; i < 10; i++) {
-            AutoBean<IplantTag> tagBean = AutoBeanCodex.decode(factory, IplantTag.class, "{}");
-            IplantTag tag = tagBean.as();
-            tag.setId(i + "");
-            if (i % 2 == 0) {
-                tag.setValue("foo");
-            } else {
-                tag.setValue("bar fooed");
-            }
-            tag.setDescription("this is a big desription");
-            items.add(tag);
-
-        }
+        // List<IplantTag> items = new ArrayList<IplantTag>();
+        //
+        // IpalntTagAutoBeanFactory factory = GWT.create(IpalntTagAutoBeanFactory.class);
+        //
+        // for (int i = 0; i < 10; i++) {
+        // AutoBean<IplantTag> tagBean = AutoBeanCodex.decode(factory, IplantTag.class, "{}");
+        // IplantTag tag = tagBean.as();
+        // tag.setId(i + "");
+        // if (i % 2 == 0) {
+        // tag.setValue("foo");
+        // } else {
+        // tag.setValue("bar fooed");
+        // }
+        // tag.setDescription("this is a big description");
+        // items.add(tag);
+        //
+        // }
 
         IplantTagListPresenter tagList;
         if (resources == null) {
-            tagList = new IplantTagListPresenter();
+            tagList = new IplantTagListPresenter(this);
         } else {
-            tagList = new IplantTagListPresenter(resources);
+            tagList = new IplantTagListPresenter(this, resources);
         }
         tagList.setEditable(editable);
         tagList.setOnFocusCmd(onFocusCmd);
         tagList.setOnBlurCmd(onBlurCmd);
-        tagList.addTags(items);
+        // tagList.addTags(items);
 
         return tagList.getTagListView();
     }
@@ -1131,6 +1128,16 @@ public class DiskResourceViewImpl extends Composite implements DiskResourceView,
     @Override
     public void unmaskSendToTreeViewer() {
         toolbar.unmaskSendToTreeViewer();
+    }
+
+    @Override
+    public void attachTag(IplantTag tag) {
+        presenter.attachTag(tag);
+    }
+
+    @Override
+    public void detachTag(IplantTag tag) {
+        presenter.detachTag(tag);
     }
 
 }

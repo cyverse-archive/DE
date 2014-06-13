@@ -1,10 +1,10 @@
 package org.iplantc.de.commons.client.tags.proxy;
 
+import org.iplantc.de.client.models.tags.IpalntTagAutoBeanFactory;
+import org.iplantc.de.client.models.tags.IplantTag;
+import org.iplantc.de.client.models.tags.IplantTagList;
 import org.iplantc.de.client.services.MetadataServiceFacade;
 import org.iplantc.de.commons.client.ErrorHandler;
-import org.iplantc.de.commons.client.tags.models.IpalntTagAutoBeanFactory;
-import org.iplantc.de.commons.client.tags.models.IplantTag;
-import org.iplantc.de.commons.client.tags.models.IplantTagList;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
