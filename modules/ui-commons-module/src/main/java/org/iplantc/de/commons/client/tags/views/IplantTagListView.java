@@ -43,6 +43,7 @@ import com.sencha.gxt.data.shared.loader.LoadResultListStoreBinding;
 import com.sencha.gxt.widget.core.client.ListView;
 import com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer;
 import com.sencha.gxt.widget.core.client.form.ComboBox;
+import com.sencha.gxt.widget.core.client.form.FieldLabel;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -70,6 +71,9 @@ public class IplantTagListView extends Composite implements IsWidget {
     @UiField
     TagsPanel tagsPanel;
 
+    @UiField
+    FieldLabel taglbl;
+
     private ListStore<IplantTag> store;
 
     private final TagSuggestionRpcProxy proxy;
@@ -81,6 +85,8 @@ public class IplantTagListView extends Composite implements IsWidget {
     public IplantTagListView(TagSuggestionRpcProxy proxy) {
         this.proxy = proxy;
         initWidget(uiBinder.createAndBindUi(this));
+        taglbl.setHTML("<b> Tags </b>");
+        taglbl.setLabelSeparator("");
     }
 
     public void setUiHandlers(TagListHandlers tagListHandlers) {
@@ -182,7 +188,6 @@ public class IplantTagListView extends Composite implements IsWidget {
                 } else {
                     uiHandlers.onAddTag(tag);
                 }
-                // super.onEnterKeyDown(context, parent, value, event, valueUpdater);
             }
         };
         return cell;

@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface IplantTagList {
 
-    @PropertyName("suggestions")
+    @PropertyName("tags")
     List<IplantTag> getTagList();
 
 }

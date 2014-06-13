@@ -5,8 +5,6 @@ import org.iplantc.de.client.services.MetadataServiceFacade;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-import java.util.List;
-
 public class MetadataServiceFacadeStub implements MetadataServiceFacade {
 
     @Override
@@ -23,18 +21,6 @@ public class MetadataServiceFacadeStub implements MetadataServiceFacade {
 
     @Override
     public void updateTagDescription(String tagId, String description, AsyncCallback<String> callback) {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public void attachTags(List<String> tagIds, String objectId, AsyncCallback<String> callback) {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public void detachTags(List<String> tagIds, String objectId, AsyncCallback<String> callback) {
         // TODO Auto-generated method stub
 
     }

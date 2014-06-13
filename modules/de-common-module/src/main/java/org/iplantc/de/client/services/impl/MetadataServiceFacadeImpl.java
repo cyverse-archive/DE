@@ -12,7 +12,6 @@ import org.iplantc.de.shared.services.ServiceCallWrapper;
 
 import com.google.gwt.core.shared.GWT;
 import com.google.gwt.http.client.URL;
-import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONString;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -20,8 +19,6 @@ import com.google.inject.Inject;
 import com.google.web.bindery.autobean.shared.AutoBeanCodex;
 import com.google.web.bindery.autobean.shared.AutoBeanUtils;
 import com.google.web.bindery.autobean.shared.Splittable;
-
-import java.util.List;
 
 public class MetadataServiceFacadeImpl implements MetadataServiceFacade {
     
@@ -72,31 +69,4 @@ public class MetadataServiceFacadeImpl implements MetadataServiceFacade {
 
     }
 
-    @Override
-    public void attachTags(List<String> tagIds, String objectId, AsyncCallback<String> callback) {
-        String address = deProps.getMuleServiceBaseUrl() + "filesystem/entry/" + objectId + "/tags?type=attach";
-        ServiceCallWrapper wrapper = new ServiceCallWrapper(Type.PATCH, address, arrayToJsonString(tagIds));
-        callService(wrapper, callback);
-
-    }
-
-    @Override
-    public void detachTags(List<String> tagIds, String objectId, AsyncCallback<String> callback) {
-        String address = deProps.getMuleServiceBaseUrl() + "filesystem/entry/" + objectId + "/tags?type=detach";
-        ServiceCallWrapper wrapper = new ServiceCallWrapper(Type.PATCH, address, arrayToJsonString(tagIds));
-        callService(wrapper, callback);
-
-    }
-
-    private String arrayToJsonString(List<String> ids) {
-        JSONObject obj = new JSONObject();
-        JSONArray arr = new JSONArray();
-        int index = 0;
-        for (String id:ids) {
-            arr.set(index++, new JSONString(id));
-        }
-        obj.put("tags", arr);
-        return obj.toString();
-
-    }
 }

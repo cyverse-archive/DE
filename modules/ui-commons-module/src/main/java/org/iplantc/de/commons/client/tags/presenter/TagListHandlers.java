@@ -29,6 +29,7 @@ public interface TagListHandlers {
     };
 
     void onCreateTag(IplantTag tag);
+
     void onAddTag(IplantTag tag);
     void onRemoveTag( TagView tagView );
 

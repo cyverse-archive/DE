@@ -10,6 +10,7 @@ import org.iplantc.de.client.services.DEFeedbackServiceFacade;
 import org.iplantc.de.client.services.DeployedComponentServices;
 import org.iplantc.de.client.services.DiskResourceServiceFacade;
 import org.iplantc.de.client.services.FileEditorServiceFacade;
+import org.iplantc.de.client.services.FileSystemMetadataServiceFacade;
 import org.iplantc.de.client.services.MessageServiceFacade;
 import org.iplantc.de.client.services.MetadataServiceFacade;
 import org.iplantc.de.client.services.SearchServiceFacade;
@@ -60,6 +61,8 @@ public interface ServicesInjector extends Ginjector {
     UUIDServiceAsync getUUIDService();
 
     MetadataServiceFacade getMetadataService();
+
+    FileSystemMetadataServiceFacade getFileSysteMetadataServiceFacade();
 
 
 }

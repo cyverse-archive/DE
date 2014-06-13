@@ -58,7 +58,6 @@ public class IplantTagListPresenter implements TagListHandlers {
             tagItem.getTagView().setEditable(true);
     }
 
-
     /**
      * @return the onFocusCmd
      */
@@ -101,7 +100,6 @@ public class IplantTagListPresenter implements TagListHandlers {
         this.onChangeCmd = onChangeCmd;
     }
 
-
     /**
      * Creates a non editable TagList with default styles.
      * 
@@ -127,18 +125,39 @@ public class IplantTagListPresenter implements TagListHandlers {
         this.mdataService = ServicesInjector.INSTANCE.getMetadataService();
     }
 
+    /**
+     * A method t build view containing tags for selected resource. No associated call backs and events
+     * will be called.
+     * 
+     * @param tags
+     */
+    public void buildTagCloudForSelectedResource(List<IplantTag> tags) {
+        if (tags != null) {
+            for (IplantTag tag : tags) {
+                TagView tagView = new TagView(this.resources, tag);
+                tagView.setUiHandlers(this);
+                tagView.setEditable(this.editable);
+
+                this.getTagListView().getTagsPanel().add(tagView);
+                this.tagItems.add(new TagItem(tag, tagView));
+            }
+        }
+    }
+
     public List<IplantTag> getTags() {
         List<IplantTag> tags = new ArrayList<IplantTag>();
-        for (TagItem tagItem : this.tagItems)
+        for (TagItem tagItem : this.tagItems) {
             tags.add(tagItem.getTag());
+        }
         return tags;
     }
 
     public boolean addTag(IplantTag tag) {
-        for (TagItem tagItem : this.tagItems)
+        for (TagItem tagItem : this.tagItems) {
             if (tagItem.getTag().equals(tag)) {
                 return false;
             }
+        }
 
         TagView tagView = new TagView(this.resources, tag);
         tagView.setUiHandlers(this);
@@ -153,9 +172,10 @@ public class IplantTagListPresenter implements TagListHandlers {
 
     public boolean addTags(List<IplantTag> tags) {
         boolean hasChanged = false;
-
-        for (IplantTag tag : tags) {
-            hasChanged |= this.addTag(tag);
+        if (tags != null) {
+            for (IplantTag tag : tags) {
+                hasChanged |= this.addTag(tag);
+            }
         }
 
         return hasChanged;
@@ -199,6 +219,7 @@ public class IplantTagListPresenter implements TagListHandlers {
             if (tagItem.getTagView().equals(tagView)) {
                 this.getTagListView().getTagsPanel().remove(tagItem.getTagView());
                 tagItemIt.remove();
+                taggable.detachTag(tagItem.getTag());
             }
         }
 
@@ -288,14 +309,14 @@ public class IplantTagListPresenter implements TagListHandlers {
                 pop.setHideOnButtonClick(true);
                 pop.setPredefinedButtons(PredefinedButton.OK, PredefinedButton.CANCEL);
                 pop.getButtonById(PredefinedButton.OK.toString()).addSelectHandler(new SelectHandler() {
-                    
+
                     @Override
                     public void onSelect(SelectEvent event) {
                         if (tb.getCurrentValue() != null && !tb.getCurrentValue().equals(description)) {
                             tag.setDescription(tb.getCurrentValue());
                             updateTagDescription(tagId, tb.getCurrentValue());
                         }
-                        
+
                     }
                 });
                 pop.setSize("300", "250");
@@ -336,6 +357,7 @@ public class IplantTagListPresenter implements TagListHandlers {
             public void onSuccess(String result) {
                 JSONObject resultObj = JsonUtil.getObject(result);
                 tag.setId(JsonUtil.getString(resultObj, "id"));
+                // this is a side-effect ?!?
                 onAddTag(tag);
             }
 

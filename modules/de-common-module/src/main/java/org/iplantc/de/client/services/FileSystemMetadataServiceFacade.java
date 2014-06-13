@@ -6,6 +6,7 @@ package org.iplantc.de.client.services;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author sriram
@@ -25,8 +26,10 @@ public interface FileSystemMetadataServiceFacade {
 
     public void markAsRetracted(String UUID, String commentId, boolean retracted, AsyncCallback<String> callback);
 
-    public void attachTag(String UUID, String tagId, AsyncCallback<String> callback);
+    public void attachTags(List<String> tagIds, String objectId, AsyncCallback<String> callback);
 
-    public void detachTag(String UUID, String tagId, AsyncCallback<String> callback);
+    public void detachTags(List<String> tagIds, String objectId, AsyncCallback<String> callback);
+    
+    public void getTags(String UUID, AsyncCallback<String> callback);
  
 }

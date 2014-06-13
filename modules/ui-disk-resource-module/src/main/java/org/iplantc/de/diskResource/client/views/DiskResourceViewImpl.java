@@ -15,7 +15,6 @@ import org.iplantc.de.client.util.DiskResourceUtil;
 import org.iplantc.de.commons.client.tags.Taggable;
 import org.iplantc.de.commons.client.tags.presenter.IplantTagListPresenter;
 import org.iplantc.de.commons.client.tags.resources.CustomIplantTagResources;
-import org.iplantc.de.commons.client.tags.views.IplantTagListView;
 import org.iplantc.de.commons.client.widgets.IPlantAnchor;
 import org.iplantc.de.diskResource.client.events.DiskResourceSelectionChangedEvent;
 import org.iplantc.de.diskResource.client.events.FolderSelectionEvent;
@@ -842,15 +841,23 @@ public class DiskResourceViewImpl extends Composite implements DiskResourceView,
 
         }
 
-        CustomIplantTagResources r = com.google.gwt.core.shared.GWT.create(CustomIplantTagResources.class);
-        detailsPanel.add(createSample("", r, true));
+        presenter.getTagsForSelectedResource();
+
     }
 
-    private Widget createSample(String containerStyle, CustomIplantTagResources resources, boolean editable) {
+    @Override
+    public void updateTags(List<IplantTag> tags) {
+        CustomIplantTagResources r = com.google.gwt.core.shared.GWT.create(CustomIplantTagResources.class);
+        detailsPanel.add(createSample(tags, "", r, true));
+    }
+
+    private Widget createSample(List<IplantTag> tags, String containerStyle, CustomIplantTagResources resources, boolean editable) {
         HorizontalPanel hp = new HorizontalPanel();
         // TagList
         SimplePanel boundaryBox = new SimplePanel();
-        boundaryBox.setWidget(createTagList(resources, editable, this.createOnFocusCmd(boundaryBox, containerStyle), this.createOnBlurCmd(boundaryBox, containerStyle)));
+        IplantTagListPresenter tagPresenter = createTagList(resources, editable, this.createOnFocusCmd(boundaryBox, containerStyle), this.createOnBlurCmd(boundaryBox, containerStyle));
+        tagPresenter.buildTagCloudForSelectedResource(tags);
+        boundaryBox.setWidget(tagPresenter.getTagListView());
         hp.add(boundaryBox);
         return hp;
     }
@@ -873,37 +880,18 @@ public class DiskResourceViewImpl extends Composite implements DiskResourceView,
         };
     }
 
-    private IplantTagListView createTagList(CustomIplantTagResources resources, boolean editable, Command onFocusCmd, Command onBlurCmd) {
-        // List<IplantTag> items = new ArrayList<IplantTag>();
-        //
-        // IpalntTagAutoBeanFactory factory = GWT.create(IpalntTagAutoBeanFactory.class);
-        //
-        // for (int i = 0; i < 10; i++) {
-        // AutoBean<IplantTag> tagBean = AutoBeanCodex.decode(factory, IplantTag.class, "{}");
-        // IplantTag tag = tagBean.as();
-        // tag.setId(i + "");
-        // if (i % 2 == 0) {
-        // tag.setValue("foo");
-        // } else {
-        // tag.setValue("bar fooed");
-        // }
-        // tag.setDescription("this is a big description");
-        // items.add(tag);
-        //
-        // }
-
-        IplantTagListPresenter tagList;
+    private IplantTagListPresenter createTagList(CustomIplantTagResources resources, boolean editable, Command onFocusCmd, Command onBlurCmd) {
+        IplantTagListPresenter tagsPresenter;
         if (resources == null) {
-            tagList = new IplantTagListPresenter(this);
+            tagsPresenter = new IplantTagListPresenter(this);
         } else {
-            tagList = new IplantTagListPresenter(this, resources);
+            tagsPresenter = new IplantTagListPresenter(this, resources);
         }
-        tagList.setEditable(editable);
-        tagList.setOnFocusCmd(onFocusCmd);
-        tagList.setOnBlurCmd(onBlurCmd);
-        // tagList.addTags(items);
+        tagsPresenter.setEditable(editable);
+        tagsPresenter.setOnFocusCmd(onFocusCmd);
+        tagsPresenter.setOnBlurCmd(onBlurCmd);
 
-        return tagList.getTagListView();
+        return tagsPresenter;
     }
 
     private void addFolderDetails(DiskResourceInfo info) {

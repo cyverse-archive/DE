@@ -23,7 +23,11 @@
 	<container:VerticalLayoutContainer
 		ui:field="tagListPanel">
 		<container:child layoutData="{tagSearchLayoutData}">
-			<form:ComboBox ui:field="tagSearchCbo" />
+			<form:FieldLabel ui:field="taglbl" labelWidth="30" labelAlign="TOP">
+				<form:widget>
+					<form:ComboBox ui:field="tagSearchCbo" />
+				</form:widget>
+			</form:FieldLabel>
 		</container:child>
 		<container:child layoutData="{tagsLayoutData}">
 			<vs:TagsPanel ui:field="tagsPanel">
