@@ -37,8 +37,10 @@ public interface DiskResource extends HasId, HasName, HasPath {
     @PropertyName("filter")
     void setFilter(boolean filter);
 
+    @PropertyName("isFavorite")
     boolean isFavorite();
 
+    @PropertyName("isFavorite")
     void setFavorite(boolean favorite);
 
     void setDiskResourceInfo(DiskResourceInfo info);

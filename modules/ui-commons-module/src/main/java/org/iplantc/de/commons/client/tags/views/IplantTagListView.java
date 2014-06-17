@@ -120,16 +120,8 @@ public class IplantTagListView extends Composite implements IsWidget {
             @Override
             public void onValueChange(ValueChangeEvent<IplantTag> event) {
                 IplantTag tag = event.getValue();
-                if (tag == null) {
-                    String text = combo.getText();
-                    logger.log(Level.SEVERE, "from value key -->" + text + "<--");
-                    AutoBean<IplantTag> tagBean = AutoBeanCodex.decode(factory, IplantTag.class, "{}");
-                    tag = tagBean.as();
-                    tag.setValue(text);
-                    uiHandlers.onCreateTag(tag);
-                } else {
-                    uiHandlers.onAddTag(tag);
-                }
+                logger.log(Level.SEVERE, "from value change-->" + tagSearchCbo.getText() + "<--");
+                processCurrentValue(tag);
 
             }
         });
@@ -176,18 +168,8 @@ public class IplantTagListView extends Composite implements IsWidget {
             @Override
             protected void onEnterKeyDown(Context context, Element parent, IplantTag value, NativeEvent event, ValueUpdater<IplantTag> valueUpdater) {
                 IplantTag tag = tagSearchCbo.getCurrentValue();
-                if (tag == null) {
-                    String text = tagSearchCbo.getText();
-                    logger.log(Level.SEVERE, "from enter key -->" + text + "<--");
-                    if (!Strings.isNullOrEmpty(text)) {
-                        AutoBean<IplantTag> tagBean = AutoBeanCodex.decode(factory, IplantTag.class, "{}");
-                        tag = tagBean.as();
-                        tag.setValue(text);
-                        uiHandlers.onCreateTag(tag);
-                    }
-                } else {
-                    uiHandlers.onAddTag(tag);
-                }
+                logger.log(Level.SEVERE, "from enter key -->" + tagSearchCbo.getText() + "<--");
+                processCurrentValue(tag);
             }
         };
         return cell;
@@ -238,6 +220,20 @@ public class IplantTagListView extends Composite implements IsWidget {
         else
             this.tagListPanel.removeStyleName(CustomIplantTagResources.INSTANCE.style().tagListEditable());
 
+    }
+
+    private void processCurrentValue(IplantTag tag) {
+        if (tag == null) {
+            String text = tagSearchCbo.getText();
+            if (!Strings.isNullOrEmpty(text)) {
+                AutoBean<IplantTag> tagBean = AutoBeanCodex.decode(factory, IplantTag.class, "{}");
+                tag = tagBean.as();
+                tag.setValue(text);
+                uiHandlers.onCreateTag(tag);
+            }
+        } else {
+            uiHandlers.onAddTag(tag);
+        }
     }
 
 }

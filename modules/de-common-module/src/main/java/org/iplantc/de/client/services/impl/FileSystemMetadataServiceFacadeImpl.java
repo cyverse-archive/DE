@@ -1,9 +1,13 @@
 package org.iplantc.de.client.services.impl;
 
 import org.iplantc.de.client.models.DEProperties;
+import org.iplantc.de.client.models.diskResources.DiskResourceAutoBeanFactory;
+import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.client.models.tags.IpalntTagAutoBeanFactory;
 import org.iplantc.de.client.services.DEServiceFacade;
 import org.iplantc.de.client.services.FileSystemMetadataServiceFacade;
+import org.iplantc.de.client.services.converters.AsyncCallbackConverter;
+import org.iplantc.de.client.util.JsonUtil;
 import org.iplantc.de.shared.services.BaseServiceCallWrapper.Type;
 import org.iplantc.de.shared.services.ServiceCallWrapper;
 
@@ -13,8 +17,8 @@ import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONString;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.inject.Inject;
+import com.google.web.bindery.autobean.shared.AutoBeanCodex;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class FileSystemMetadataServiceFacadeImpl implements FileSystemMetadataServiceFacade {
@@ -22,6 +26,7 @@ public class FileSystemMetadataServiceFacadeImpl implements FileSystemMetadataSe
     private final DEProperties deProps;
     private final DEServiceFacade deServiceFacade;
     IpalntTagAutoBeanFactory factory = GWT.create(IpalntTagAutoBeanFactory.class);
+    private static final DiskResourceAutoBeanFactory drFactory = GWT.create(DiskResourceAutoBeanFactory.class);
 
     @Inject
     public FileSystemMetadataServiceFacadeImpl(final DEServiceFacade deServiceFacade, final DEProperties deProps) {
@@ -30,20 +35,37 @@ public class FileSystemMetadataServiceFacadeImpl implements FileSystemMetadataSe
     }
 
     @Override
-    public void getFavorites(AsyncCallback<String> callback) {
-        // TODO Auto-generated method stub
+    public void getFavorites(AsyncCallback<Folder> callback) {
+        String address = deProps.getMuleServiceBaseUrl() + "favorites/filesystem";
+        ServiceCallWrapper wrapper = new ServiceCallWrapper(Type.GET, address);
+        callService(wrapper, new AsyncCallbackConverter<String, Folder>(callback) {
+
+            @Override
+            protected Folder convertFrom(String object) {
+                JSONObject contents = JsonUtil.getObject(object);
+                JSONObject todecode = JsonUtil.getObject(contents, "filesystem");
+                return decode(Folder.class, todecode.toString());
+            }
+        });
+    }
+
+    private static <T> T decode(Class<T> clazz, String payload) {
+        return AutoBeanCodex.decode(drFactory, clazz, payload).as();
+    }
+
+    @Override
+    public void addToFavorites(String UUID, AsyncCallback<String> callback) {
+        String address = deProps.getMuleServiceBaseUrl() + "favorites/filesystem/" + UUID;
+        ServiceCallWrapper wrapper = new ServiceCallWrapper(Type.PUT, address, "{}");
+        callService(wrapper, callback);
 
     }
 
     @Override
-    public void addToFavorites(ArrayList<String> UUID, AsyncCallback<String> callback) {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public void removeFromFavorites(ArrayList<String> UUID, AsyncCallback<String> callback) {
-        // TODO Auto-generated method stub
+    public void removeFromFavorites(String UUID, AsyncCallback<String> callback) {
+        String address = deProps.getMuleServiceBaseUrl() + "favorites/filesystem/" + UUID;
+        ServiceCallWrapper wrapper = new ServiceCallWrapper(Type.DELETE, address);
+        callService(wrapper, callback);
 
     }
 

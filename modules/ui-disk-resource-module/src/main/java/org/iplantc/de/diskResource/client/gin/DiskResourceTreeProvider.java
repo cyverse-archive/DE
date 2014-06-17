@@ -1,5 +1,6 @@
 package org.iplantc.de.diskResource.client.gin;
 
+import org.iplantc.de.client.models.diskResources.DiskResourceFavorite;
 import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.client.models.search.DiskResourceQueryTemplate;
 import org.iplantc.de.resources.client.IplantResources;
@@ -49,6 +50,8 @@ public class DiskResourceTreeProvider implements Provider<Tree<Folder, Folder>> 
                 if (model instanceof DiskResourceQueryTemplate) {
                     // Set magic folder icon
                     return IplantResources.RESOURCES.folderView();
+                } else if (model instanceof DiskResourceFavorite) {
+                    return IplantResources.RESOURCES.favoritesFolder();
                 }
                 return super.calculateIconStyle(model);
             }

@@ -343,4 +343,6 @@ public interface DiskResourceView extends IsWidget,
     void displayAndCacheDiskResourceInfo(String path, DiskResourceInfo info);
 
     void updateTags(List<IplantTag> tags);
+
+    void refreshView();
 }

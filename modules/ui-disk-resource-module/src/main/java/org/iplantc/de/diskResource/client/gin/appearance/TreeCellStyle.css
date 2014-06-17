@@ -13,6 +13,7 @@
 .treeCell {
 	float: left;
 }
+
 /* Removed image for time being. We may used the delete button as below at a later date */
 /*@sprite .deleteBtn{ 
 	gwt-image: "deleteButton";

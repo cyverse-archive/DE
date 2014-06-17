@@ -698,4 +698,7 @@ public interface IplantResources extends ClientBundle, AppResources, DiskResourc
 
     @Source("user_comment.png")
     ImageResource userComment();
+
+    @Source("folder_star.png")
+    ImageResource favoritesFolder();
 }

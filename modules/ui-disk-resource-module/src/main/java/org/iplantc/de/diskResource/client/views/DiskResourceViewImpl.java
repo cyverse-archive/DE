@@ -596,6 +596,11 @@ public class DiskResourceViewImpl extends Composite implements DiskResourceView,
     }
 
     @Override
+    public void refreshView() {
+        gridView.refresh();
+    }
+
+    @Override
     public Folder getFolderById(String folderId) {
         // KLUDGE Until the services are able to use GUIDs for folder IDs, first
         // check for a root folder

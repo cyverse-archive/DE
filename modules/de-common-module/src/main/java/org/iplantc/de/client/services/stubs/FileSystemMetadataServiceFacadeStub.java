@@ -1,28 +1,28 @@
 package org.iplantc.de.client.services.stubs;
 
+import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.client.services.FileSystemMetadataServiceFacade;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class FileSystemMetadataServiceFacadeStub implements FileSystemMetadataServiceFacade {
 
     @Override
-    public void getFavorites(AsyncCallback<String> callback) {
+    public void getFavorites(AsyncCallback<Folder> callback) {
         // TODO Auto-generated method stub
 
     }
 
     @Override
-    public void addToFavorites(ArrayList<String> UUID, AsyncCallback<String> callback) {
+    public void addToFavorites(String UUID, AsyncCallback<String> callback) {
         // TODO Auto-generated method stub
 
     }
 
     @Override
-    public void removeFromFavorites(ArrayList<String> UUID, AsyncCallback<String> callback) {
+    public void removeFromFavorites(String UUID, AsyncCallback<String> callback) {
         // TODO Auto-generated method stub
 
     }

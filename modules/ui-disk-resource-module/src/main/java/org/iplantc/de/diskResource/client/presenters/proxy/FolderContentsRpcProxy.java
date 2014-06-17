@@ -1,10 +1,13 @@
 package org.iplantc.de.diskResource.client.presenters.proxy;
 
 import org.iplantc.de.client.models.diskResources.DiskResource;
+import org.iplantc.de.client.models.diskResources.DiskResourceFavorite;
 import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.client.models.search.DiskResourceQueryTemplate;
 import org.iplantc.de.client.services.DiskResourceServiceFacade;
+import org.iplantc.de.client.services.FileSystemMetadataServiceFacade;
 import org.iplantc.de.client.services.SearchServiceFacade;
+import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.commons.client.info.ErrorAnnouncementConfig;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
 import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
@@ -150,16 +153,19 @@ public class FolderContentsRpcProxy extends RpcProxy<FolderContentsLoadConfig, P
 
     private final DiskResourceServiceFacade drService;
     private final SearchServiceFacade searchService;
+    private final FileSystemMetadataServiceFacade metadataService;
     private final IplantAnnouncer announcer;
     private final IplantDisplayStrings displayStrings;
     private HasSafeHtml hasSafeHtml;
 
     @Inject
-    public FolderContentsRpcProxy(final DiskResourceServiceFacade drService, final SearchServiceFacade searchService, final IplantAnnouncer announcer, final IplantDisplayStrings displayStrings) {
+    public FolderContentsRpcProxy(final DiskResourceServiceFacade drService, final SearchServiceFacade searchService, final FileSystemMetadataServiceFacade fsmdata, final IplantAnnouncer announcer,
+            final IplantDisplayStrings displayStrings) {
         this.drService = drService;
         this.searchService = searchService;
         this.announcer = announcer;
         this.displayStrings = displayStrings;
+        this.metadataService = fsmdata;
     }
 
     @Override
@@ -171,6 +177,27 @@ public class FolderContentsRpcProxy extends RpcProxy<FolderContentsLoadConfig, P
                 callback.onSuccess(new PagingLoadResultBean<DiskResource>(emptyResult, 0, 0));
             }
             return;
+        } else if (folder instanceof DiskResourceFavorite) {
+            metadataService.getFavorites(new AsyncCallback<Folder>() {
+
+                @Override
+                public void onFailure(Throwable caught) {
+                    ErrorHandler.post("Unable to retrieve favorites", caught);
+
+                }
+
+                @Override
+                public void onSuccess(Folder result) {
+                    if (callback == null || result == null) {
+                        onFailure(null);
+                        return;
+                    }
+                    // Create list of all items within the result folder
+                    List<DiskResource> list = Lists.newArrayList(Iterables.concat(result.getFolders(), result.getFiles()));
+
+                    callback.onSuccess(new PagingLoadResultBean<DiskResource>(list, list.size(), 0));
+                }
+            });
         } else if (folder instanceof DiskResourceQueryTemplate) {
             searchService.submitSearchFromQueryTemplate((DiskResourceQueryTemplate)folder, loadConfig, null, new SearchResultsCallback(announcer, loadConfig, callback, displayStrings, hasSafeHtml));
         } else {

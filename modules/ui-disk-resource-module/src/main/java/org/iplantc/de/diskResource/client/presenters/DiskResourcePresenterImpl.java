@@ -39,7 +39,23 @@ import org.iplantc.de.commons.client.views.gxt3.dialogs.IPlantDialog;
 import org.iplantc.de.commons.client.views.window.configs.TabularFileViewerWindowConfig;
 import org.iplantc.de.diskResource.client.dataLink.presenter.DataLinkPresenter;
 import org.iplantc.de.diskResource.client.dataLink.view.DataLinkPanel;
-import org.iplantc.de.diskResource.client.events.*;
+import org.iplantc.de.diskResource.client.events.CreateNewFileEvent;
+import org.iplantc.de.diskResource.client.events.DiskResourceRenamedEvent;
+import org.iplantc.de.diskResource.client.events.DiskResourceSelectionChangedEvent;
+import org.iplantc.de.diskResource.client.events.DiskResourcesDeletedEvent;
+import org.iplantc.de.diskResource.client.events.DiskResourcesMovedEvent;
+import org.iplantc.de.diskResource.client.events.FolderCreatedEvent;
+import org.iplantc.de.diskResource.client.events.FolderSelectionEvent;
+import org.iplantc.de.diskResource.client.events.RequestAttachDiskResourceFavoritesFolderEvent;
+import org.iplantc.de.diskResource.client.events.RequestBulkDownloadEvent;
+import org.iplantc.de.diskResource.client.events.RequestBulkUploadEvent;
+import org.iplantc.de.diskResource.client.events.RequestImportFromUrlEvent;
+import org.iplantc.de.diskResource.client.events.RequestSendToCoGeEvent;
+import org.iplantc.de.diskResource.client.events.RequestSendToEnsemblEvent;
+import org.iplantc.de.diskResource.client.events.RequestSendToTreeViewerEvent;
+import org.iplantc.de.diskResource.client.events.RequestSimpleDownloadEvent;
+import org.iplantc.de.diskResource.client.events.RequestSimpleUploadEvent;
+import org.iplantc.de.diskResource.client.events.ShowFilePreviewEvent;
 import org.iplantc.de.diskResource.client.metadata.presenter.DiskResourceMetadataUpdateCallback;
 import org.iplantc.de.diskResource.client.metadata.presenter.MetadataPresenter;
 import org.iplantc.de.diskResource.client.metadata.view.DiskResourceMetadataView;
@@ -76,6 +92,7 @@ import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
+
 import com.google.common.base.Strings;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
@@ -179,12 +196,13 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter, Di
             }
         };
 
+
+
         this.proxy.init(dataSearchPresenter, this);
         this.dataSearchPresenter.searchInit(view, view, this, view.getToolbar().getSearchField());
 
         this.view.setTreeLoader(treeLoader);
         this.view.setPresenter(this);
-
         initHandlers();
     }
 
@@ -235,11 +253,57 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter, Di
 
     @Override
     public void onFavoriteRequest(RequestDiskResourceFavoriteEvent event) {
-        checkNotNull(event.getDiskResource());
-        if(event.getDiskResource().isFavorite()) {
-            //call unfavorite
+        final DiskResource diskResource = event.getDiskResource();
+        checkNotNull(diskResource);
+        if (!diskResource.isFavorite()) {
+            fsmdataService.addToFavorites(diskResource.getUUID(), new AsyncCallback<String>() {
+
+                @Override
+                public void onFailure(Throwable caught) {
+                    ErrorHandler.post("Unable to mark the selected item as favorite.", caught);
+
+                }
+
+                @Override
+                public void onSuccess(String result) {
+                    if (getSelectedDiskResources().size() > 0) {
+                        Iterator<DiskResource> it = getSelectedDiskResources().iterator();
+                        if (it != null && it.hasNext()) {
+                            final DiskResource next = it.next();
+                            if (next.getId().equals(diskResource.getId())) {
+                                next.setFavorite(true);
+                                view.refreshView();
+                            }
+                        }
+                    }
+
+                }
+            });
         } else {
-            // call favorite
+            fsmdataService.removeFromFavorites(diskResource.getUUID(), new AsyncCallback<String>() {
+
+                @Override
+                public void onFailure(Throwable caught) {
+                    ErrorHandler.post("Unable to remove selected item from favorites.", caught);
+
+                }
+
+                @Override
+                public void onSuccess(String result) {
+                    // TODO Auto-generated method stub
+                    if (getSelectedDiskResources().size() > 0) {
+                        Iterator<DiskResource> it = getSelectedDiskResources().iterator();
+                        if (it != null && it.hasNext()) {
+                            final DiskResource next = it.next();
+                            if (next.getId().equals(diskResource.getId())) {
+                                next.setFavorite(false);
+                                view.refreshView();
+                            }
+                        }
+                    }
+
+                }
+            });
         }
     }
 
@@ -378,13 +442,14 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter, Di
     private void initHandlers() {
         treeLoader.addLoadHandler(new CachedFolderTreeStoreBinding(view.getTreeStore()));
 
-        DiskResourcesEventHandler diskResourcesEventHandler = new DiskResourcesEventHandler(this);
+        DiskResourcesEventHandler diskResourcesEventHandler = new DiskResourcesEventHandler(this, drFactory);
         dreventHandlers.add(eventBus.addHandler(FolderRefreshEvent.TYPE, diskResourcesEventHandler));
         dreventHandlers.add(eventBus.addHandler(DiskResourcesDeletedEvent.TYPE, diskResourcesEventHandler));
         dreventHandlers.add(eventBus.addHandler(FolderCreatedEvent.TYPE, diskResourcesEventHandler));
         dreventHandlers.add(eventBus.addHandler(DiskResourceRenamedEvent.TYPE, diskResourcesEventHandler));
         dreventHandlers.add(eventBus.addHandler(DiskResourcesMovedEvent.TYPE, diskResourcesEventHandler));
         dreventHandlers.add(eventBus.addHandler(UpdateSavedSearchesEvent.TYPE, diskResourcesEventHandler));
+        dreventHandlers.add(eventBus.addHandler(RequestAttachDiskResourceFavoritesFolderEvent.TYPE, diskResourcesEventHandler));
     }
 
     @Override
@@ -1244,7 +1309,7 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter, Di
 
                     @Override
                     public void onFailure(Throwable caught) {
-                        ErrorHandler.post("Unable to remove tag on this resource!", caught);
+                        ErrorHandler.post("Unable to remove tag from this resource!", caught);
                     }
 
                     @Override

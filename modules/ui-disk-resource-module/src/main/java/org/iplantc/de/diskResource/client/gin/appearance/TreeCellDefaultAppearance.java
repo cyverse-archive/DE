@@ -32,12 +32,14 @@ public class TreeCellDefaultAppearance implements TreeCell.TreeCellAppearance, B
     interface TreeCellTempates extends XTemplates {
         @XTemplate("<span class='{style.treeCell}'>{name}&nbsp;</span><span class='{style.deleteBtn}' qtip='{imgToolTip}'>&nbsp;x</span>")
         SafeHtml savedQuery(String name, TreeCellStyle style, String imgToolTip);
+
     }
 
     public interface TreeCellStyle extends CssResource {
         String deleteBtn();
 
         String treeCell();
+
     }
 
     public interface TreeCellResources extends ClientBundle {
@@ -46,6 +48,7 @@ public class TreeCellDefaultAppearance implements TreeCell.TreeCellAppearance, B
 
         @Source("delete_icon.png")
         ImageResource deleteButton();
+
     }
 
     private final TreeCellTempates templates;

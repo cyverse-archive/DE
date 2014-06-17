@@ -154,6 +154,8 @@ public class DiskResourceNameCell extends AbstractCell<DiskResource> {
 
     public void setHasHandlers(HasHandlers hasHandlers) {
         this.hasHandlers = hasHandlers;
+        // Side effect ?
+        favCell.setHasHandlers(hasHandlers);
     }
 
     private void doOnMouseOut(Element eventTarget, DiskResource value) {

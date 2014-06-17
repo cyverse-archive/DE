@@ -2,7 +2,10 @@ package org.iplantc.de.diskResource.client.presenters.handlers;
 
 import org.iplantc.de.client.events.diskResources.FolderRefreshEvent;
 import org.iplantc.de.client.events.diskResources.FolderRefreshEvent.FolderRefreshEventHandler;
+import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.client.models.diskResources.DiskResource;
+import org.iplantc.de.client.models.diskResources.DiskResourceAutoBeanFactory;
+import org.iplantc.de.client.models.diskResources.DiskResourceFavorite;
 import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.client.models.search.DiskResourceQueryTemplate;
 import org.iplantc.de.client.util.DiskResourceUtil;
@@ -11,9 +14,14 @@ import org.iplantc.de.diskResource.client.events.DiskResourcesDeletedEvent;
 import org.iplantc.de.diskResource.client.events.DiskResourcesMovedEvent;
 import org.iplantc.de.diskResource.client.events.DiskResourcesMovedEvent.DiskResourcesMovedEventHandler;
 import org.iplantc.de.diskResource.client.events.FolderCreatedEvent.FolderCreatedEventHandler;
+import org.iplantc.de.diskResource.client.events.RequestAttachDiskResourceFavoritesFolderEvent;
+import org.iplantc.de.diskResource.client.events.RequestAttachDiskResourceFavoritesFolderEvent.RequestAttachDiskResourceFavoritesFolderEventHandler;
 import org.iplantc.de.diskResource.client.search.events.UpdateSavedSearchesEvent;
 import org.iplantc.de.diskResource.client.search.events.UpdateSavedSearchesEvent.UpdateSavedSearchesHandler;
 import org.iplantc.de.diskResource.client.views.DiskResourceView;
+
+import com.google.web.bindery.autobean.shared.AutoBean;
+import com.google.web.bindery.autobean.shared.AutoBeanCodex;
 
 import com.sencha.gxt.data.shared.TreeStore;
 
@@ -26,13 +34,15 @@ public final class DiskResourcesEventHandler implements DiskResourcesDeletedEven
                                                         DiskResourceRenamedEventHandler,
                                                         FolderCreatedEventHandler,
                                                         FolderRefreshEventHandler,
- UpdateSavedSearchesHandler {
+ UpdateSavedSearchesHandler, RequestAttachDiskResourceFavoritesFolderEventHandler {
     private final DiskResourceView.Presenter presenter;
     private final DiskResourceView view;
+    private final DiskResourceAutoBeanFactory factory;
 
-    public DiskResourcesEventHandler(DiskResourceView.Presenter presenter) {
+    public DiskResourcesEventHandler(DiskResourceView.Presenter presenter, DiskResourceAutoBeanFactory factory) {
         this.presenter = presenter;
         this.view = presenter.getView();
+        this.factory = factory;
     }
 
     @Override
@@ -161,4 +171,19 @@ public final class DiskResourcesEventHandler implements DiskResourcesDeletedEven
             }
         }
     }
+
+    @Override
+    public void onRequest(RequestAttachDiskResourceFavoritesFolderEvent event) {
+        TreeStore<Folder> treeStore = view.getTreeStore();
+        AutoBean<DiskResourceFavorite> bean = AutoBeanCodex.decode(factory, DiskResourceFavorite.class, "{}");
+
+        DiskResourceFavorite as = bean.as();
+        String id = UserInfo.getInstance().getHomePath() + "/favorites";
+        as.setId(id);
+        as.setPath(id);
+        as.setName("Favorites");
+        treeStore.add(as);
+
+    }
+
 }

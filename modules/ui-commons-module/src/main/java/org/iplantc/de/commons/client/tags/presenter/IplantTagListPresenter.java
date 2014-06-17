@@ -308,7 +308,7 @@ public class IplantTagListPresenter implements TagListHandlers {
                 Dialog pop = new Dialog();
                 pop.setHideOnButtonClick(true);
                 pop.setPredefinedButtons(PredefinedButton.OK, PredefinedButton.CANCEL);
-                pop.getButtonById(PredefinedButton.OK.toString()).addSelectHandler(new SelectHandler() {
+                pop.getButton(PredefinedButton.OK).addSelectHandler(new SelectHandler() {
 
                     @Override
                     public void onSelect(SelectEvent event) {

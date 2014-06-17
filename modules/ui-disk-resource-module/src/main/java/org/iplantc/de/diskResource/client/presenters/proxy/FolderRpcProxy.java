@@ -1,5 +1,6 @@
 package org.iplantc.de.diskResource.client.presenters.proxy;
 
+import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.models.IsMaskable;
 import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.client.models.diskResources.RootFolders;
@@ -9,12 +10,15 @@ import org.iplantc.de.client.services.SearchServiceFacade;
 import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.commons.client.info.ErrorAnnouncementConfig;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
+import org.iplantc.de.diskResource.client.events.RequestAttachDiskResourceFavoritesFolderEvent;
 import org.iplantc.de.diskResource.client.search.events.SubmitDiskResourceQueryEvent;
 import org.iplantc.de.diskResource.client.search.events.SubmitDiskResourceQueryEvent.SubmitDiskResourceQueryEventHandler;
 import org.iplantc.de.diskResource.client.search.presenter.DataSearchPresenter;
 import org.iplantc.de.diskResource.client.views.DiskResourceView;
 import org.iplantc.de.resources.client.messages.I18N;
 
+import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.event.shared.HandlerManager;
 import com.google.gwt.event.shared.HandlerRegistration;
@@ -98,6 +102,13 @@ public class FolderRpcProxy extends RpcProxy<Folder, List<Folder>> implements Di
             }
             // Retrieve any saved searches.
             searchSvc.getSavedQueryTemplates(new GetSavedQueryTemplatesCallback(searchPresenter1, ipAnnouncer));
+            Scheduler.get().scheduleFinally(new ScheduledCommand() {
+
+                @Override
+                public void execute() {
+                    eventbus.fireEvent(new RequestAttachDiskResourceFavoritesFolderEvent());
+                }
+            });
             maskable.unmask();
         }
 
@@ -118,12 +129,14 @@ public class FolderRpcProxy extends RpcProxy<Folder, List<Folder>> implements Di
     private DataSearchPresenter searchPresenter;
     private IsMaskable isMaskable;
     private final HandlerManager handlerManager;
+    private final EventBus eventbus;
 
     @Inject
-    public FolderRpcProxy(final DiskResourceServiceFacade drService, final SearchServiceFacade searchService, final IplantAnnouncer announcer) {
+    public FolderRpcProxy(final DiskResourceServiceFacade drService, final SearchServiceFacade searchService, final IplantAnnouncer announcer, final EventBus eventbus) {
         this.drService = drService;
         this.searchService = searchService;
         this.announcer = announcer;
+        this.eventbus = eventbus;
         handlerManager = new HandlerManager(this);
     }
 

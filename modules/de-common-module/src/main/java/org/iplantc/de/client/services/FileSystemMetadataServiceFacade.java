@@ -3,9 +3,10 @@
  */
 package org.iplantc.de.client.services;
 
+import org.iplantc.de.client.models.diskResources.Folder;
+
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -14,11 +15,11 @@ import java.util.List;
  */
 public interface FileSystemMetadataServiceFacade {
 
-    public void getFavorites(AsyncCallback<String> callback);
+    public void getFavorites(AsyncCallback<Folder> asyncCallback);
     
-    public void addToFavorites(ArrayList<String> UUID, AsyncCallback<String> callback);
+    public void addToFavorites(String UUID, AsyncCallback<String> callback);
 
-    public void removeFromFavorites(ArrayList<String> UUID, AsyncCallback<String> callback);
+    public void removeFromFavorites(String UUID, AsyncCallback<String> callback);
 
     public void getComments(String UUID, AsyncCallback<String> callback);
 

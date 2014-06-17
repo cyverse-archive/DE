@@ -54,4 +54,6 @@ public interface DiskResourceAutoBeanFactory extends AutoBeanFactory {
 
     AutoBean<DiskResourceMetadataBatchRequest> metadataBatchRequest();
 
+    AutoBean<DiskResourceFavorite> getFavortieFolder();
+
 }
