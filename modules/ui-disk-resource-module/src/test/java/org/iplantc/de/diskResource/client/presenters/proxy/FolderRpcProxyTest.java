@@ -1,5 +1,6 @@
 package org.iplantc.de.diskResource.client.presenters.proxy;
 
+import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.models.IsMaskable;
 import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.client.models.diskResources.RootFolders;
@@ -22,7 +23,12 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.when;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -52,10 +58,13 @@ public class FolderRpcProxyTest {
     
     @Captor ArgumentCaptor<List<Folder>> folderListCaptor;
 
+    @Mock
+    EventBus mockEventBus;
+
     private FolderRpcProxy proxyUnderTest;
 
     @Before public void setUp() {
-        proxyUnderTest = new FolderRpcProxy(drServiceMock, searchServiceMock, announcerMock);
+        proxyUnderTest = new FolderRpcProxy(drServiceMock, searchServiceMock, announcerMock, mockEventBus);
         proxyUnderTest.init(searchPresenterMock, maskableMock);
     }
 

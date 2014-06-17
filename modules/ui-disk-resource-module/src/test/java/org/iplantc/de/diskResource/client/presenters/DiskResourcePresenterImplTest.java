@@ -7,6 +7,8 @@ import org.iplantc.de.client.models.dataLink.DataLinkFactory;
 import org.iplantc.de.client.models.diskResources.DiskResourceAutoBeanFactory;
 import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.client.services.DiskResourceServiceFacade;
+import org.iplantc.de.client.services.FileSystemMetadataServiceFacade;
+import org.iplantc.de.client.services.MetadataServiceFacade;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
 import org.iplantc.de.diskResource.client.presenters.proxy.SelectFolderByPathLoadHandler;
 import org.iplantc.de.diskResource.client.search.presenter.DataSearchPresenter;
@@ -21,7 +23,12 @@ import com.google.gwtmockito.GxtMockitoTestRunner;
 import com.sencha.gxt.data.shared.TreeStore;
 
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -39,6 +46,10 @@ public class DiskResourcePresenterImplTest {
     @Mock DataSearchPresenter mockDataSearchPresenter;
     @Mock EventBus mockEventBus;
     @Mock UserInfo mockUserInfo;
+    @Mock
+    MetadataServiceFacade mockMetadataService;
+    @Mock
+    FileSystemMetadataServiceFacade mockFileSystemMetataService;
 
     @Mock IplantAnnouncer mockAnnouncer;
     @Mock DiskResourceView.DiskResourceViewToolbar mockToolbar;
@@ -48,10 +59,12 @@ public class DiskResourcePresenterImplTest {
 
     private DiskResourcePresenterImpl uut;
 
+    // TODO: SS complete tests with new service
     @Before public void setUp() {
         setupMocks();
         uut = new DiskResourcePresenterImpl(mockView, mockProck,
-                mockDiskResourceService, mockDisplayStrings, mockFactory, mockDlFactory, mockUserInfo, mockDataSearchPresenter,
+ mockDiskResourceService, mockMetadataService, mockFileSystemMetataService, mockDisplayStrings, mockFactory, mockDlFactory,
+                mockUserInfo, mockDataSearchPresenter,
                 mockEventBus, mockAnnouncer);
     }
 
