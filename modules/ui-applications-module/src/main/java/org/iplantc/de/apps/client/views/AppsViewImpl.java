@@ -64,20 +64,17 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- *
+ * 
  * @author jstroot
- *
+ * 
  */
-public class AppsViewImpl extends Composite implements AppsView,
-                                                       IsMaskable,
-                                                       AppGroupSelectionChangedEvent.HasAppGroupSelectionChangedEventHandlers,
-                                                       AppSelectionChangedEvent.HasAppSelectionChangedEventHandlers,
-                                                       AppInfoCell.AppInfoClickedEventHandler,
-                                                       AppFavoritedEvent.HasAppFavoritedEventHandlers,
-                                                       AppFavoriteCell.RequestAppFavoriteEventHandler {
+public class AppsViewImpl extends Composite implements AppsView, IsMaskable, AppGroupSelectionChangedEvent.HasAppGroupSelectionChangedEventHandlers,
+        AppSelectionChangedEvent.HasAppSelectionChangedEventHandlers, AppInfoCell.AppInfoClickedEventHandler, AppFavoritedEvent.HasAppFavoritedEventHandlers,
+        AppFavoriteCell.RequestAppFavoriteEventHandler {
     /**
      * FIXME CORE-2992: Add an ID to the Categories panel collapse tool to assist QA.
      */
@@ -85,7 +82,8 @@ public class AppsViewImpl extends Composite implements AppsView,
     private static MyUiBinder uiBinder = GWT.create(MyUiBinder.class);
 
     @UiTemplate("AppsView.ui.xml")
-    interface MyUiBinder extends UiBinder<Widget, AppsViewImpl> { }
+    interface MyUiBinder extends UiBinder<Widget, AppsViewImpl> {
+    }
 
     private String FAVORITES;
     private String USER_APPS_GROUP;
@@ -136,13 +134,8 @@ public class AppsViewImpl extends Composite implements AppsView,
     Logger logger = Logger.getLogger("App View");
 
     @Inject
-    public AppsViewImpl(final Tree<AppGroup, String> tree,
-                        final DEProperties properties,
-                        final AppsView.ViewMenu toolbar,
-                        final IplantResources resources,
-                        final UserInfo userInfo,
-                        final IplantDisplayStrings displayStrings,
-                        final AppUserServiceFacade appUserService) {
+    public AppsViewImpl(final Tree<AppGroup, String> tree, final DEProperties properties, final AppsView.ViewMenu toolbar, final IplantResources resources, final UserInfo userInfo,
+            final IplantDisplayStrings displayStrings, final AppUserServiceFacade appUserService) {
         this.tree = tree;
         this.properties = properties;
         this.toolbar = toolbar;
@@ -157,7 +150,6 @@ public class AppsViewImpl extends Composite implements AppsView,
 
         this.tree.getSelectionModel().setSelectionMode(SINGLE);
         initTreeStoreSorter();
-
 
         grid.getSelectionModel().addSelectionChangedHandler(new SelectionChangedHandler<App>() {
             @Override
@@ -199,7 +191,7 @@ public class AppsViewImpl extends Composite implements AppsView,
     }
 
     @UiFactory
-    protected ColumnModel<App> createColumnModel(){
+    protected ColumnModel<App> createColumnModel() {
         return new AppColumnModel(this, displayStrings);
     }
 
@@ -219,23 +211,21 @@ public class AppsViewImpl extends Composite implements AppsView,
         final App app = event.getApp();
         grid.getStore().update(app);
         final AppGroup appGroupByName = findAppGroupByName(FAVORITES);
-        if(appGroupByName != null){
+        if (appGroupByName != null) {
             int tmp = app.isFavorite() ? 1 : -1;
 
             updateAppGroupAppCount(appGroupByName, appGroupByName.getAppCount() + tmp);
         }
         final String selectedAppGrpName = getSelectedAppGroup().getName();
 
-        /* If the app is in favorites, remove it.
+        /*
+         * If the app is in favorites, remove it.
          * OR If we don't own the app, and the app is no longer a favorite, then remove it
          */
-        if(FAVORITES.equalsIgnoreCase(selectedAppGrpName)
-            || (WORKSPACE.equalsIgnoreCase(selectedAppGrpName)
-                   && !app.isFavorite()
-                   && app.isPublic()
-                   && !app.getIntegratorEmail().equals(userInfo.getEmail()))){
+        if (FAVORITES.equalsIgnoreCase(selectedAppGrpName)
+                || (WORKSPACE.equalsIgnoreCase(selectedAppGrpName) && !app.isFavorite() && app.isPublic() && !app.getIntegratorEmail().equals(userInfo.getEmail()))) {
             removeApp(app);
-        }else if(FAVORITES.equalsIgnoreCase(selectedAppGrpName)){
+        } else if (FAVORITES.equalsIgnoreCase(selectedAppGrpName)) {
             removeApp(app);
         }
         // Forward event so the App Info window can get it if it is open
@@ -266,7 +256,7 @@ public class AppsViewImpl extends Composite implements AppsView,
         String searchText = event.getSearchText();
 
         List<App> results = event.getResults();
-        int total = results == null ?0 : results.size();
+        int total = results == null ? 0 : results.size();
 
         centerPanel.setHeadingText(displayStrings.searchAppResultsHeader(searchText, total));
         setApps(results);
@@ -274,7 +264,7 @@ public class AppsViewImpl extends Composite implements AppsView,
     }
 
     void updateCenterPanelHeading(List<AppGroup> selection) {
-        if(selection.isEmpty())
+        if (selection.isEmpty())
             return;
 
         checkArgument(selection.size() == 1, "Only one app group should be selected");
@@ -324,8 +314,7 @@ public class AppsViewImpl extends Composite implements AppsView,
 
             @Override
             public int compare(AppGroup group1, AppGroup group2) {
-                if (treeStore.getRootItems().contains(group1)
-                            || treeStore.getRootItems().contains(group2)) {
+                if (treeStore.getRootItems().contains(group1) || treeStore.getRootItems().contains(group2)) {
                     // Do not sort Root groups, since we want to keep the service's root order.
                     return 0;
                 }
@@ -404,9 +393,9 @@ public class AppsViewImpl extends Composite implements AppsView,
                 tree.scrollIntoView(ag);
             } else {
                 // Try to find app group by name if ID could not locate the
-                for(AppGroup appGrp : treeStore.getAll()){
+                for (AppGroup appGrp : treeStore.getAll()) {
 
-                    if(appGrp.getName().equalsIgnoreCase(appGroupId)) {
+                    if (appGrp.getName().equalsIgnoreCase(appGroupId)) {
                         tree.getSelectionModel().select(appGrp, false);
                         tree.scrollIntoView(appGrp);
                         return;
@@ -433,7 +422,6 @@ public class AppsViewImpl extends Composite implements AppsView,
     }
 
     @Override
-
     public List<App> getAllSelectedApps() {
         return grid.getSelectionModel().getSelectedItems();
     }
@@ -453,7 +441,6 @@ public class AppsViewImpl extends Composite implements AppsView,
             }
         }
     }
-
 
     protected void setNorthWidget(IsWidget widget) {
         northData.setHidden(false);
@@ -600,11 +587,13 @@ public class AppsViewImpl extends Composite implements AppsView,
             groups = new ArrayList<AppGroup>();
         }
         groups.add(grp);
-        if (treeStore.getRootItems().contains(grp)) {
-            return groups;
-        } else {
-            return getGroupHierarchy(treeStore.getParent(grp), groups);
+        for (AppGroup ap : treeStore.getRootItems()) {
+            logger.log(Level.SEVERE, ap.getName());
+            if (ap.getId().equals(grp.getId())) {
+                return groups;
+            }
         }
+        return getGroupHierarchy(treeStore.getParent(grp), groups);
     }
 
     @Override
