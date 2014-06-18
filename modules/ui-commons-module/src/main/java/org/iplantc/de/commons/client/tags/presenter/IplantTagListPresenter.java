@@ -154,7 +154,7 @@ public class IplantTagListPresenter implements TagListHandlers {
 
     public boolean addTag(IplantTag tag) {
         for (TagItem tagItem : this.tagItems) {
-            if (tagItem.getTag().equals(tag)) {
+            if (tagItem.getTag().getValue().equals(tag.getValue())) {
                 return false;
             }
         }
