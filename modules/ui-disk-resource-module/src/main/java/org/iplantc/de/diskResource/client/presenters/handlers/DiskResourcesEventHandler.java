@@ -182,7 +182,9 @@ public final class DiskResourcesEventHandler implements DiskResourcesDeletedEven
         as.setId(id);
         as.setPath(id);
         as.setName("Favorites");
-        treeStore.add(as);
+        if (treeStore.findModel(as) == null) {
+            treeStore.add(as);
+        }
 
     }
 
