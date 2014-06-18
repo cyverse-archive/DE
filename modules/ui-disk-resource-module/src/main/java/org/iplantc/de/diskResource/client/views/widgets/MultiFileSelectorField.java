@@ -65,6 +65,7 @@ import com.sencha.gxt.widget.core.client.selection.SelectionChangedEvent;
 import com.sencha.gxt.widget.core.client.selection.SelectionChangedEvent.SelectionChangedHandler;
 import com.sencha.gxt.widget.core.client.toolbar.ToolBar;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -241,11 +242,18 @@ public class MultiFileSelectorField extends Composite implements IsField<List<Ha
         Set<DiskResource> dropData = getDropData(event.getData());
 
         if (validateDropStatus(dropData, event.getStatusProxy())) {
+            List<HasId> validateList = new ArrayList<HasId>();
             for (DiskResource data : dropData) {
                 if ((data instanceof File) && listStore.findModel(data) == null) {
                     listStore.add(data);
+                    validateList.add(data);
                 }
             }
+
+            if (checkForSplChar(validateList).length() > 0) {
+                setInfoErrorText(getSplCharWarning());
+            }
+
             ValueChangeEvent.fire(this, Lists.<HasId> newArrayList(dropData));
         }
     }
