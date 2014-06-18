@@ -30,7 +30,7 @@ public class ShareAnonymousCallback implements AsyncCallback<String> {
         SafeHtml notificationWithContextHelp(SafeHtml label, SafeUri img, String toolTip);
     }
 
-    private EnsemblPopupTemplate template = GWT.create(EnsemblPopupTemplate.class);
+    private final EnsemblPopupTemplate template = GWT.create(EnsemblPopupTemplate.class);
 
     private final IsMaskable container;
     private final File file;
@@ -68,7 +68,7 @@ public class ShareAnonymousCallback implements AsyncCallback<String> {
         dlg.setSize("535", "150");
 
         FieldLabel fl = new FieldLabel();
-        fl.setHTML("Please vist <a target='_blank' href='http://www.ensembl.org/'>Ensembl</a> and use the following URL to import your bam / vcf / gff file");
+        fl.setHTML(I18N.DISPLAY.ensemblUrl());
         TextField textBox = new TextField();
         textBox.setWidth(500);
         textBox.setReadOnly(true);
