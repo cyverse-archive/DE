@@ -7,8 +7,8 @@ import org.iplantc.de.client.models.dataLink.DataLinkFactory;
 import org.iplantc.de.client.models.diskResources.DiskResourceAutoBeanFactory;
 import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.client.services.DiskResourceServiceFacade;
-import org.iplantc.de.client.services.FileSystemMetadataServiceFacade;
 import org.iplantc.de.client.services.MetadataServiceFacade;
+import org.iplantc.de.client.services.TagsServiceFacade;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
 import org.iplantc.de.diskResource.client.presenters.proxy.SelectFolderByPathLoadHandler;
 import org.iplantc.de.diskResource.client.search.presenter.DataSearchPresenter;
@@ -47,9 +47,9 @@ public class DiskResourcePresenterImplTest {
     @Mock EventBus mockEventBus;
     @Mock UserInfo mockUserInfo;
     @Mock
-    MetadataServiceFacade mockMetadataService;
+    TagsServiceFacade mockMetadataService;
     @Mock
-    FileSystemMetadataServiceFacade mockFileSystemMetataService;
+    MetadataServiceFacade mockFileSystemMetataService;
 
     @Mock IplantAnnouncer mockAnnouncer;
     @Mock DiskResourceView.DiskResourceViewToolbar mockToolbar;

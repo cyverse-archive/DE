@@ -5,7 +5,7 @@ import org.iplantc.de.client.models.diskResources.DiskResourceAutoBeanFactory;
 import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.client.models.tags.IpalntTagAutoBeanFactory;
 import org.iplantc.de.client.services.DEServiceFacade;
-import org.iplantc.de.client.services.FileSystemMetadataServiceFacade;
+import org.iplantc.de.client.services.MetadataServiceFacade;
 import org.iplantc.de.client.services.converters.AsyncCallbackConverter;
 import org.iplantc.de.client.util.JsonUtil;
 import org.iplantc.de.shared.services.BaseServiceCallWrapper.Type;
@@ -21,7 +21,7 @@ import com.google.web.bindery.autobean.shared.AutoBeanCodex;
 
 import java.util.List;
 
-public class FileSystemMetadataServiceFacadeImpl implements FileSystemMetadataServiceFacade {
+public class FileSystemMetadataServiceFacadeImpl implements MetadataServiceFacade {
 
     private final DEProperties deProps;
     private final DEServiceFacade deServiceFacade;
@@ -71,19 +71,26 @@ public class FileSystemMetadataServiceFacadeImpl implements FileSystemMetadataSe
 
     @Override
     public void getComments(String UUID, AsyncCallback<String> callback) {
-        // TODO Auto-generated method stub
-
+        String address = deProps.getMuleServiceBaseUrl() + "filesystem/" + UUID + "/comments";
+        ServiceCallWrapper wrapper = new ServiceCallWrapper(Type.GET, address);
+        callService(wrapper, callback);
     }
 
     @Override
     public void addComment(String UUID, String comment, AsyncCallback<String> callback) {
-        // TODO Auto-generated method stub
+        String address = deProps.getMuleServiceBaseUrl() + "filesystem/" + UUID + "/comments";
+        JSONObject obj = new JSONObject();
+        obj.put("comment", new JSONString(comment));
+        ServiceCallWrapper wrapper = new ServiceCallWrapper(Type.POST, address);
+        callService(wrapper, callback);
 
     }
 
     @Override
     public void markAsRetracted(String UUID, String commentId, boolean retracted, AsyncCallback<String> callback) {
-        // TODO Auto-generated method stub
+        String address = deProps.getMuleServiceBaseUrl() + "filesystem/entry/" + UUID + "/comments/" + commentId + "?retracted=" + retracted;
+        ServiceCallWrapper wrapper = new ServiceCallWrapper(Type.PATCH, address, "");
+        callService(wrapper, callback);
 
     }
 

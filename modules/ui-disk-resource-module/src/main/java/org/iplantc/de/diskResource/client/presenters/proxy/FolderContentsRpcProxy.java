@@ -5,7 +5,7 @@ import org.iplantc.de.client.models.diskResources.DiskResourceFavorite;
 import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.client.models.search.DiskResourceQueryTemplate;
 import org.iplantc.de.client.services.DiskResourceServiceFacade;
-import org.iplantc.de.client.services.FileSystemMetadataServiceFacade;
+import org.iplantc.de.client.services.MetadataServiceFacade;
 import org.iplantc.de.client.services.SearchServiceFacade;
 import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.commons.client.info.ErrorAnnouncementConfig;
@@ -153,13 +153,13 @@ public class FolderContentsRpcProxy extends RpcProxy<FolderContentsLoadConfig, P
 
     private final DiskResourceServiceFacade drService;
     private final SearchServiceFacade searchService;
-    private final FileSystemMetadataServiceFacade metadataService;
+    private final MetadataServiceFacade metadataService;
     private final IplantAnnouncer announcer;
     private final IplantDisplayStrings displayStrings;
     private HasSafeHtml hasSafeHtml;
 
     @Inject
-    public FolderContentsRpcProxy(final DiskResourceServiceFacade drService, final SearchServiceFacade searchService, final FileSystemMetadataServiceFacade fsmdata, final IplantAnnouncer announcer,
+    public FolderContentsRpcProxy(final DiskResourceServiceFacade drService, final SearchServiceFacade searchService, final MetadataServiceFacade fsmdata, final IplantAnnouncer announcer,
             final IplantDisplayStrings displayStrings) {
         this.drService = drService;
         this.searchService = searchService;

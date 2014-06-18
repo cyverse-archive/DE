@@ -2,7 +2,7 @@ package org.iplantc.de.commons.client.tags.presenter;
 
 import org.iplantc.de.client.gin.ServicesInjector;
 import org.iplantc.de.client.models.tags.IplantTag;
-import org.iplantc.de.client.services.MetadataServiceFacade;
+import org.iplantc.de.client.services.TagsServiceFacade;
 import org.iplantc.de.client.util.JsonUtil;
 import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.commons.client.gin.CommonsInjector;
@@ -37,7 +37,7 @@ public class IplantTagListPresenter implements TagListHandlers {
     private Command onFocusCmd;
     private Command onBlurCmd;
     private Command onChangeCmd;
-    private final MetadataServiceFacade mdataService;
+    private final TagsServiceFacade mdataService;
     private final Taggable taggable;
 
     /**

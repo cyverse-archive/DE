@@ -5,8 +5,8 @@ import org.iplantc.de.client.gin.ServicesInjector;
 import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.client.services.DiskResourceServiceFacade;
-import org.iplantc.de.client.services.FileSystemMetadataServiceFacade;
 import org.iplantc.de.client.services.MetadataServiceFacade;
+import org.iplantc.de.client.services.TagsServiceFacade;
 import org.iplantc.de.client.services.SearchServiceFacade;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
 import org.iplantc.de.diskResource.client.presenters.DiskResourcePresenterImpl;
@@ -65,12 +65,12 @@ public class DiskResourceGinModule extends AbstractGinModule {
     }
 
     @Provides
-    public MetadataServiceFacade createMetadataServiceFacade() {
+    public TagsServiceFacade createMetadataServiceFacade() {
         return ServicesInjector.INSTANCE.getMetadataService();
     }
 
     @Provides
-    public FileSystemMetadataServiceFacade createFileSystemMetadataServiceFacade() {
+    public MetadataServiceFacade createFileSystemMetadataServiceFacade() {
         return ServicesInjector.INSTANCE.getFileSysteMetadataServiceFacade();
     }
 }
