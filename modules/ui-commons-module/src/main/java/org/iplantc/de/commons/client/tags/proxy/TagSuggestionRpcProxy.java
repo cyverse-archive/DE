@@ -33,7 +33,7 @@ public class TagSuggestionRpcProxy extends RpcProxy<TagSuggestionLoadConfig, Lis
 
     @Override
     public void load(TagSuggestionLoadConfig loadConfig, final AsyncCallback<ListLoadResult<IplantTag>> callback) {
-        if (loadConfig.getQuery() != null && loadConfig.getQuery().length() > 2) {
+        if (loadConfig.getQuery() != null) {
             mService.suggestTag(loadConfig.getQuery(), LIMIT, new AsyncCallback<String>() {
 
                 @Override
@@ -49,25 +49,6 @@ public class TagSuggestionRpcProxy extends RpcProxy<TagSuggestionLoadConfig, Lis
 
                         @Override
                         public List<IplantTag> getData() {
-                            // String test = "{\n" + "    \"tags\": [\n" + "        {\n" +
-                            // "            \"id\": \"tag-id1\",\n" +
-                            // "            \"value\": \"thetag1\",\n"
-                            // + "            \"description\": \"thedescriptionofthetag\"\n" +
-                            // "        },\n" + "        {\n" + "            \"id\": \"tag-id2\",\n"
-                            // + "            \"value\": \"thetag2\",\n" +
-                            // "            \"description\": \"thedescriptionofthetag\"\n" +
-                            // "        },\n" + "        {\n"
-                            // + "            \"id\": \"tag-id3\",\n" +
-                            // "            \"value\": \"thetag3\",\n" +
-                            // "            \"description\": \"thedescriptionofthetag\"\n" +
-                            // "        },\n"
-                            // + "        {\n" + "            \"id\": \"tag-id4\",\n" +
-                            // "            \"value\": \"thetag4\",\n" +
-                            // "            \"description\": \"thedescriptionofthetag\"\n"
-                            // + "        },\n" + "        {\n" + "            \"id\": \"tag-id5\",\n" +
-                            // "            \"value\": \"thetag5\",\n"
-                            // + "            \"description\": \"thedescriptionofthetag\"\n" +
-                            // "        }\n" + "    ]\n" + "}";
                             AutoBean<IplantTagList> tagListBean = AutoBeanCodex.decode(factory, IplantTagList.class, result);
                             List<IplantTag> tagList = tagListBean.as().getTagList();
                             logger.log(Level.SEVERE, tagList.size() + "<--");

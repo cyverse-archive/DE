@@ -40,8 +40,6 @@ public interface CustomIplantTagResources extends ClientBundle {
     	//DnD
         String previewLeft();
         String previewRight();
-
-        String tagOptions();
     }
     
     @Source("style.css")

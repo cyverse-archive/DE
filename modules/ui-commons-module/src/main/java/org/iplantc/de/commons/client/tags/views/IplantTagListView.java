@@ -135,7 +135,7 @@ public class IplantTagListView extends Composite implements IsWidget {
         combo.setFinishEditOnEnter(true);
         combo.setEditable(true);
         combo.setForceSelection(false);
-        combo.setMinChars(3);
+        combo.setMinChars(2);
         combo.setTypeAhead(true);
         return combo;
     }
