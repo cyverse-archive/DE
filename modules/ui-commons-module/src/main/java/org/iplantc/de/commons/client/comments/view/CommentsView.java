@@ -22,8 +22,7 @@ public interface CommentsView {
 
     Widget getWidget();
 
+    void addComment(Comment c);
 
-
-
-
+    void retractComment(Comment c);
 }
