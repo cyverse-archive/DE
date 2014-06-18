@@ -2,6 +2,7 @@ package org.iplantc.de.diskResource.client.presenters.proxy;
 
 import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.models.IsMaskable;
+import org.iplantc.de.client.models.diskResources.DiskResourceFavorite;
 import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.client.models.diskResources.RootFolders;
 import org.iplantc.de.client.models.search.DiskResourceQueryTemplate;
@@ -146,7 +147,7 @@ public class FolderRpcProxy extends RpcProxy<Folder, List<Folder>> implements Di
             // Performing initial load of root folders and saved searches
             isMaskable.mask("");
             drService.getRootFolders(new RootFolderCallback(searchService, searchPresenter, callback, announcer, isMaskable));
-        } else if (parentFolder.isFilter()) {
+        } else if (parentFolder.isFilter() || parentFolder instanceof DiskResourceFavorite) {
             if (callback != null) {
                 callback.onSuccess(Collections.<Folder> emptyList());
             }
