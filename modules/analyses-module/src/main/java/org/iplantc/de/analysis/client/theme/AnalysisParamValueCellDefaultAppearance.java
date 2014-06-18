@@ -38,7 +38,7 @@ public class AnalysisParamValueCellDefaultAppearance implements AnalysisParamVal
         this(GWT.<AnalysisParamValueCellResources> create(AnalysisParamValueCellResources.class));
     }
 
-    protected AnalysisParamValueCellDefaultAppearance(AnalysisParamValueCellResources resources){
+    protected AnalysisParamValueCellDefaultAppearance(AnalysisParamValueCellResources resources) {
         this.resources = resources;
         resources.styles().ensureInjected();
         this.template = GWT.create(Template.class);
@@ -49,23 +49,30 @@ public class AnalysisParamValueCellDefaultAppearance implements AnalysisParamVal
         String info_type = value.getInfoType();
         // At present,reference genome info types are not supported by DE viewers
         boolean valid_info_type = isValidInputType(info_type);
-        final SafeHtml displayValue = SafeHtmlUtils.fromString(value.getDisplayValue());
+        SafeHtml displayValue = null;
+        if (value.getDisplayValue() != null) {
+            displayValue = SafeHtmlUtils.fromString(value.getDisplayValue());
+        }
+
+        if (displayValue == null) {
+            SafeHtmlBuilder builder = new SafeHtmlBuilder();
+            displayValue = builder.appendEscaped("").toSafeHtml();
+        }
         if (ArgumentType.Input.equals(value.getType()) && valid_info_type) {
             sb.append(template.cell(resources.styles().inputType(), displayValue));
         } else {
             sb.append(template.cell(resources.styles().other(), displayValue));
         }
-    }
 
+    }
 
     /**
      * FIXME The AnalysisParameter bean needs to use the enum instead of a string.
+     * 
      * @param info_type
      * @return
      */
     public boolean isValidInputType(String info_type) {
-        return !info_type.equalsIgnoreCase("ReferenceGenome")
-                       && !info_type.equalsIgnoreCase("ReferenceSequence")
-                       && !info_type.equalsIgnoreCase("ReferenceAnnotation");
+        return !info_type.equalsIgnoreCase("ReferenceGenome") && !info_type.equalsIgnoreCase("ReferenceSequence") && !info_type.equalsIgnoreCase("ReferenceAnnotation");
     }
 }
