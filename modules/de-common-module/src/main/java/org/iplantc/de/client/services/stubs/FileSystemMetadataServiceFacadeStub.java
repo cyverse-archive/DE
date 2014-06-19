@@ -1,13 +1,13 @@
 package org.iplantc.de.client.services.stubs;
 
 import org.iplantc.de.client.models.diskResources.Folder;
-import org.iplantc.de.client.services.FileSystemMetadataServiceFacade;
+import org.iplantc.de.client.services.MetadataServiceFacade;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import java.util.List;
 
-public class FileSystemMetadataServiceFacadeStub implements FileSystemMetadataServiceFacade {
+public class FileSystemMetadataServiceFacadeStub implements MetadataServiceFacade {
 
     @Override
     public void getFavorites(AsyncCallback<Folder> callback) {

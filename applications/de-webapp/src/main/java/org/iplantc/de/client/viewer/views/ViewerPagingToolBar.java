@@ -67,6 +67,7 @@ public class ViewerPagingToolBar extends ToolBar {
 
     private void addToolbarItems() {
         add(new FillToolItem());
+        add(new LabelToolItem(org.iplantc.de.resources.client.messages.I18N.DISPLAY.pageSize()));
         add(pageSize);
         add(first);
         add(prev);
@@ -88,7 +89,6 @@ public class ViewerPagingToolBar extends ToolBar {
         pageSize.setIncrement(FileViewer.PAGE_INCREMENT_SIZE_KB);
         pageSize.setValue(FileViewer.MIN_PAGE_SIZE_KB);
         pageSize.setWidth(100);
-        pageSize.setToolTip(org.iplantc.de.resources.client.messages.I18N.DISPLAY.pageSize());
     }
 
     /**

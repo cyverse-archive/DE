@@ -23,3 +23,5 @@ modules/gwt-taglist/.project
 modules/gwt-taglist/bin/.gitignore
 modules/gwt-taglist/.settings/org.eclipse.jdt.core.prefs
 modules/gwt-taglist/target/
+modules/analyses-module/.settings/com.google.gdt.eclipse.core.prefs
+modules/analyses-module/.settings/com.google.gwt.eclipse.core.prefs

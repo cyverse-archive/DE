@@ -8,6 +8,7 @@ import org.iplantc.de.client.models.diskResources.DiskResourceInfo;
 import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.client.models.tags.IplantTag;
 import org.iplantc.de.client.services.DiskResourceServiceFacade;
+import org.iplantc.de.commons.client.tags.Taggable;
 import org.iplantc.de.commons.client.views.window.configs.TabularFileViewerWindowConfig;
 import org.iplantc.de.diskResource.client.events.DiskResourceSelectionChangedEvent;
 import org.iplantc.de.diskResource.client.events.FolderSelectionEvent;
@@ -47,7 +48,7 @@ public interface DiskResourceView extends IsWidget,
                                           IsMaskable,
                                           FolderSelectionEvent.HasFolderSelectionEventHandlers,
                                           DeleteSavedSearchEvent.HasDeleteSavedSearchEventHandlers,
-                                          DiskResourceSelectionChangedEvent.HasDiskResourceSelectionChangedEventHandlers {
+        DiskResourceSelectionChangedEvent.HasDiskResourceSelectionChangedEventHandlers, Taggable {
 
     interface Presenter extends org.iplantc.de.commons.client.presenter.Presenter,
                                 IsMaskable,

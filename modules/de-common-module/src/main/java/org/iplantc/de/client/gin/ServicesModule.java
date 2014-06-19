@@ -14,9 +14,9 @@ import org.iplantc.de.client.services.DEServiceFacade;
 import org.iplantc.de.client.services.DeployedComponentServices;
 import org.iplantc.de.client.services.DiskResourceServiceFacade;
 import org.iplantc.de.client.services.FileEditorServiceFacade;
-import org.iplantc.de.client.services.FileSystemMetadataServiceFacade;
-import org.iplantc.de.client.services.MessageServiceFacade;
 import org.iplantc.de.client.services.MetadataServiceFacade;
+import org.iplantc.de.client.services.MessageServiceFacade;
+import org.iplantc.de.client.services.TagsServiceFacade;
 import org.iplantc.de.client.services.SearchServiceFacade;
 import org.iplantc.de.client.services.SystemMessageServiceFacade;
 import org.iplantc.de.client.services.ToolRequestServiceFacade;
@@ -31,7 +31,7 @@ import org.iplantc.de.client.services.impl.DiskResourceServiceFacadeImpl;
 import org.iplantc.de.client.services.impl.FileEditorServiceFacadeImpl;
 import org.iplantc.de.client.services.impl.FileSystemMetadataServiceFacadeImpl;
 import org.iplantc.de.client.services.impl.MessageServiceFacadeImpl;
-import org.iplantc.de.client.services.impl.MetadataServiceFacadeImpl;
+import org.iplantc.de.client.services.impl.TagsServiceFacadeImpl;
 import org.iplantc.de.client.services.impl.SearchServiceFacadeImpl;
 import org.iplantc.de.client.services.impl.SystemMessageServiceFacadeImpl;
 import org.iplantc.de.client.services.impl.ToolRequestServiceFacadeImpl;
@@ -78,8 +78,8 @@ final class ServicesModule extends AbstractGinModule {
         bind(SearchServiceFacade.class).to(SearchServiceFacadeImpl.class);
         bind(SystemMessageServiceFacade.class).to(SystemMessageServiceFacadeImpl.class);
         bind(UserSessionServiceFacade.class).to(UserSessionServiceFacadeImpl.class);
-        bind(MetadataServiceFacade.class).to(MetadataServiceFacadeImpl.class);
-        bind(FileSystemMetadataServiceFacade.class).to(FileSystemMetadataServiceFacadeImpl.class);
+        bind(TagsServiceFacade.class).to(TagsServiceFacadeImpl.class);
+        bind(MetadataServiceFacade.class).to(FileSystemMetadataServiceFacadeImpl.class);
 
         bind(DiskResourceServiceFacade.class).annotatedWith(Stub.class).to(DiskResourceServiceFacadeStub.class);
         bind(ToolRequestServiceFacade.class).annotatedWith(Stub.class).to(ToolRequestServiceFacadeStub.class);
@@ -96,7 +96,7 @@ final class ServicesModule extends AbstractGinModule {
         bind(SearchServiceFacade.class).annotatedWith(Stub.class).to(SearchServiceFacadeStub.class);
         bind(SystemMessageServiceFacade.class).annotatedWith(Stub.class).to(SystemMessageServiceFacadeStub.class);
         bind(UserSessionServiceFacade.class).annotatedWith(Stub.class).to(UserSessionServiceFacadeStub.class);
-        bind(MetadataServiceFacade.class).annotatedWith(Stub.class).to(MetadataServiceFacadeStub.class);
+        bind(TagsServiceFacade.class).annotatedWith(Stub.class).to(MetadataServiceFacadeStub.class);
     }
 
     @Provides

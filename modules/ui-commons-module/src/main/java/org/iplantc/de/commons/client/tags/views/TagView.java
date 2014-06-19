@@ -109,8 +109,6 @@ public class TagView extends Composite {
                 this.activateDeleteButton();
                 this.activateEditButton();
                 this.activateDnD();
-                editOption.addClassName(resources.style().tagOptions());
-                deleteOption.addClassName(resources.style().tagOptions());
                 tagPanel.addDomHandler(new ClickHandler() {
 
                     @Override

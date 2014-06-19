@@ -12,7 +12,6 @@ import org.iplantc.de.client.models.search.DiskResourceQueryTemplate;
 import org.iplantc.de.client.models.tags.IplantTag;
 import org.iplantc.de.client.util.CommonModelUtils;
 import org.iplantc.de.client.util.DiskResourceUtil;
-import org.iplantc.de.commons.client.tags.Taggable;
 import org.iplantc.de.commons.client.tags.presenter.IplantTagListPresenter;
 import org.iplantc.de.commons.client.tags.resources.CustomIplantTagResources;
 import org.iplantc.de.commons.client.widgets.IPlantAnchor;
@@ -106,7 +105,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-public class DiskResourceViewImpl extends Composite implements DiskResourceView, SelectionHandler<Folder>, SelectionChangedHandler<DiskResource>, Taggable {
+public class DiskResourceViewImpl extends Composite implements DiskResourceView, SelectionHandler<Folder>, SelectionChangedHandler<DiskResource> {
 
     private final class PathFieldKeyPressHandlerImpl implements KeyPressHandler {
         @Override

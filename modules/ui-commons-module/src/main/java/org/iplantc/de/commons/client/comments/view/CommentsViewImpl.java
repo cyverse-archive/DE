@@ -141,12 +141,12 @@ public class CommentsViewImpl extends Composite implements CommentsView {
     @UiHandler("addBtn")
     void addHandler(SelectEvent event) {
         Comment c = buildComment();
-        addComment(c);
+        presenter.onAdd(c);
     }
 
-    private void addComment(Comment c) {
+    @Override
+    public void addComment(Comment c) {
         store.add(0, c);
-        presenter.onAdd(c);
     }
 
     private Comment buildComment() {
@@ -162,7 +162,6 @@ public class CommentsViewImpl extends Composite implements CommentsView {
     @UiHandler("deleteBtn")
     void deleteBtn(SelectEvent event) {
         Comment selectedItem = grid.getSelectionModel().getSelectedItem();
-        store.remove(selectedItem);
         presenter.onDelete(selectedItem);
     }
 
@@ -175,12 +174,17 @@ public class CommentsViewImpl extends Composite implements CommentsView {
     @Override
     public void setPresenter(Presenter p) {
         this.presenter = p;
-
     }
 
     @Override
     public Widget getWidget() {
         return container;
+    }
+
+    @Override
+    public void retractComment(Comment c) {
+        c.setCommentText("This comment is retracted!");
+        store.update(c);
     }
 
 }

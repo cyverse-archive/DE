@@ -6,10 +6,10 @@ import com.google.web.bindery.autobean.shared.AutoBean.PropertyName;
 
 public interface Comment extends HasId {
 
-    @PropertyName("comment_time")
+    @PropertyName("post_time")
     long getTimestamp();
 
-    @PropertyName("comment_time")
+    @PropertyName("post_time")
     void setTimestamp(long timestamp);
 
     @PropertyName("commenter")

@@ -1,7 +1,7 @@
 package org.iplantc.de.commons.client.gin;
 
 import org.iplantc.de.client.gin.ServicesInjector;
-import org.iplantc.de.client.services.MetadataServiceFacade;
+import org.iplantc.de.client.services.TagsServiceFacade;
 import org.iplantc.de.commons.client.tags.proxy.TagSuggestionRpcProxy;
 
 import com.google.gwt.inject.client.AbstractGinModule;
@@ -17,7 +17,7 @@ public class CommonsGinModule extends AbstractGinModule {
 
     @Provides
     @Singleton
-    public MetadataServiceFacade createMetadataServiceFacade() {
+    public TagsServiceFacade createMetadataServiceFacade() {
         return ServicesInjector.INSTANCE.getMetadataService();
     }
 

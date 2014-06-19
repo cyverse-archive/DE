@@ -7,8 +7,6 @@ import org.iplantc.de.client.models.HasId;
 import org.iplantc.de.client.models.HasPath;
 import org.iplantc.de.client.models.HasPaths;
 import org.iplantc.de.client.models.UserInfo;
-import org.iplantc.de.client.models.comments.Comment;
-import org.iplantc.de.client.models.comments.CommentsAutoBeanFactory;
 import org.iplantc.de.client.models.dataLink.DataLink;
 import org.iplantc.de.client.models.dataLink.DataLinkFactory;
 import org.iplantc.de.client.models.dataLink.DataLinkList;
@@ -24,8 +22,8 @@ import org.iplantc.de.client.models.tags.IplantTag;
 import org.iplantc.de.client.models.tags.IplantTagList;
 import org.iplantc.de.client.models.viewer.InfoType;
 import org.iplantc.de.client.services.DiskResourceServiceFacade;
-import org.iplantc.de.client.services.FileSystemMetadataServiceFacade;
 import org.iplantc.de.client.services.MetadataServiceFacade;
+import org.iplantc.de.client.services.TagsServiceFacade;
 import org.iplantc.de.client.util.CommonModelUtils;
 import org.iplantc.de.client.util.DiskResourceUtil;
 import org.iplantc.de.commons.client.ErrorHandler;
@@ -130,7 +128,6 @@ import com.sencha.gxt.widget.core.client.tree.Tree.TreeNode;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -160,14 +157,15 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter, Di
     private final DataSearchPresenter dataSearchPresenter;
     private final EventBus eventBus;
     private final IplantAnnouncer announcer;
-    private MetadataServiceFacade mdataService;
-    private FileSystemMetadataServiceFacade fsmdataService;
+    private TagsServiceFacade mdataService;
+    private MetadataServiceFacade fsmdataService;
 
     @Inject
     public DiskResourcePresenterImpl(final DiskResourceView view,
                                      final DiskResourceView.Proxy proxy,
                                      final DiskResourceServiceFacade diskResourceService,
-            final MetadataServiceFacade mdataService, final FileSystemMetadataServiceFacade fsmDataService, final IplantDisplayStrings display,
+ final TagsServiceFacade mdataService,
+            final MetadataServiceFacade fsmDataService, final IplantDisplayStrings display,
                                      final DiskResourceAutoBeanFactory factory,
                                      final DataLinkFactory dlFactory,
                                      final UserInfo userInfo,
@@ -316,32 +314,32 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter, Di
         d.remove(d.getButtonBar());
         d.setSize("500px", "400px");
         CommentsView cv = new CommentsViewImpl();
-        CommentsPresenter cp = new CommentsPresenter(cv);
+        CommentsPresenter cp = new CommentsPresenter(cv, event.getDiskResource().getUUID(), fsmdataService);
         cv.setPresenter(cp);
-        cp.loadComments(loadTestComments());
         cp.go(d);
         d.show();
     }
 
-    private List<Comment> loadTestComments() {
-        List<Comment> commentsList = new ArrayList<Comment>();
-        CommentsAutoBeanFactory factory = GWT.create(CommentsAutoBeanFactory.class);
-        UserInfo userInfo = UserInfo.getInstance();
-
-        for (int i = 0; i < 10; i++) {
-            Comment c = AutoBeanCodex.decode(factory, Comment.class, "{}").as();
-            long time = new Date().getTime();
-            c.setId(time + "" + i);
-            c.setCommentText("foo bar foo barfoo barfoo barfoo barfoo barfoo barfoo barfoo barfoo barfoo barfoo barfoo barfoo bar" + "foo barfoo barfoo barfoo barfoo barfoo barfoo barfoo barfoo bar"
-                    + "foo barfoo barfoo barfoo barfoo barfoo bar" + "foo barfoo barfoo barfoo bar");
-            c.setCommentedBy(userInfo.getUsername());
-            c.setTimestamp(time);
-            commentsList.add(c);
-
-        }
-
-        return commentsList;
-    }
+    // private List<Comment> loadTestComments() {
+    // List<Comment> commentsList = new ArrayList<Comment>();
+    // CommentsAutoBeanFactory factory = GWT.create(CommentsAutoBeanFactory.class);
+    // UserInfo userInfo = UserInfo.getInstance();
+    //
+    // for (int i = 0; i < 10; i++) {
+    // Comment c = AutoBeanCodex.decode(factory, Comment.class, "{}").as();
+    // long time = new Date().getTime();
+    // c.setId(time + "" + i);
+    // c.setCommentText("foo bar foo barfoo barfoo barfoo barfoo barfoo barfoo barfoo barfoo barfoo barfoo barfoo barfoo bar"
+    // + "foo barfoo barfoo barfoo barfoo barfoo barfoo barfoo barfoo bar"
+    // + "foo barfoo barfoo barfoo barfoo barfoo bar" + "foo barfoo barfoo barfoo bar");
+    // c.setCommentedBy(userInfo.getUsername());
+    // c.setTimestamp(time);
+    // commentsList.add(c);
+    //
+    // }
+    //
+    // return commentsList;
+    // }
 
     void doShareByDataLink(final DiskResource toBeShared) {
         if (toBeShared instanceof Folder) {
@@ -1321,5 +1319,6 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter, Di
         }
 
     }
+
 
 }

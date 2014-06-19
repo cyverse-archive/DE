@@ -4,7 +4,7 @@ import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.client.models.search.DiskResourceQueryTemplate;
 import org.iplantc.de.client.services.DiskResourceServiceFacade;
-import org.iplantc.de.client.services.FileSystemMetadataServiceFacade;
+import org.iplantc.de.client.services.MetadataServiceFacade;
 import org.iplantc.de.client.services.SearchServiceFacade;
 import org.iplantc.de.client.services.SearchServiceFacade.SearchType;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
@@ -60,7 +60,7 @@ public class FolderContentsRpcProxyTest {
 
     @Mock AsyncCallback<PagingLoadResult<DiskResource>> pagingAsyncMock;
     @Mock
-    FileSystemMetadataServiceFacade mockFileSystemMetataService;
+    MetadataServiceFacade mockFileSystemMetataService;
 
     @Captor ArgumentCaptor<AsyncCallback<PagingLoadResult<DiskResource>>> pagingAsyncCaptor;
     @Captor ArgumentCaptor<PagingLoadResult<DiskResource>> pagingLoadResultArgumentCaptor;
