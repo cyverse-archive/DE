@@ -3,6 +3,7 @@ package com.sencha.gxt.widget.core.client.grid;
 import org.iplantc.de.client.models.diskResources.DiskResource;
 
 import static com.google.common.base.Preconditions.checkArgument;
+
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
@@ -121,10 +122,10 @@ public class LiveGridCheckBoxSelectionModel extends CheckBoxSelectionModel<DiskR
     }
     // It is selected if it is in the selection or select all is checked
     final ModelKeyProvider<? super DiskResource> keyProvider = store.getKeyProvider();
+        final String itemKey = keyProvider.getKey(item);
     boolean isInSelectedList = false;
     for (DiskResource dr : selected) {
       final String key = keyProvider.getKey(dr);
-      final String itemKey = keyProvider.getKey(item);
       if (key.equals(itemKey)) {
         isInSelectedList = true;
         break;
@@ -265,6 +266,10 @@ public class LiveGridCheckBoxSelectionModel extends CheckBoxSelectionModel<DiskR
       fireSelectionChange();
     }
   }
+
+    public void clear() {
+        super.onClear(null);
+    }
 
   @Override
   protected void onClear(StoreClearEvent<DiskResource> event) {
