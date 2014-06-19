@@ -10,6 +10,7 @@ import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.commons.client.comments.view.CommentsView;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
 import org.iplantc.de.commons.client.info.SuccessAnnouncementConfig;
+import org.iplantc.de.resources.client.messages.I18N;
 
 import com.google.gwt.core.shared.GWT;
 import com.google.gwt.json.client.JSONObject;
@@ -62,12 +63,12 @@ public class CommentsPresenter implements CommentsView.Presenter {
 
             @Override
             public void onFailure(Throwable caught) {
-                ErrorHandler.post("Unable to add your comment!", caught);
+                ErrorHandler.post(I18N.ERROR.addCommentError(), caught);
             }
 
             @Override
             public void onSuccess(String result) {
-                IplantAnnouncer.getInstance().schedule(new SuccessAnnouncementConfig("Comment added successfully."));
+                IplantAnnouncer.getInstance().schedule(new SuccessAnnouncementConfig(I18N.DISPLAY.addComment()));
                 JSONObject obj = JsonUtil.getObject(result);
                 JSONObject comObj = JsonUtil.getObject(obj, "comment");
                 AutoBean<Comment> cl = AutoBeanCodex.decode(cabf, Comment.class, comObj.toString());
@@ -83,16 +84,16 @@ public class CommentsPresenter implements CommentsView.Presenter {
 
             @Override
             public void onFailure(Throwable caught) {
-                ErrorHandler.post("Unable to retract this comment!", caught);
+                ErrorHandler.post(I18N.ERROR.retractCommentEorror(), caught);
 
             }
 
             @Override
             public void onSuccess(String result) {
-                comment.setCommentText("This comment is retracted!");
+                comment.setCommentText(I18N.DISPLAY.commentRetracted());
                 comment.setRetracted(true);
                 view.retractComment(comment);
-                IplantAnnouncer.getInstance().schedule(new SuccessAnnouncementConfig("Comment retracted!"));
+                IplantAnnouncer.getInstance().schedule(new SuccessAnnouncementConfig(I18N.DISPLAY.commentRetracted()));
             }
 
         });
@@ -103,7 +104,7 @@ public class CommentsPresenter implements CommentsView.Presenter {
 
             @Override
             public void onFailure(Throwable caught) {
-                ErrorHandler.post("Unable to load comments!", caught);
+                ErrorHandler.post(I18N.ERROR.commentsError(), caught);
 
             }
 
@@ -117,7 +118,7 @@ public class CommentsPresenter implements CommentsView.Presenter {
 
     @Override
     public void onSelect(Comment comment) {
-        if (comment.getCommentedBy().equalsIgnoreCase(UserInfo.getInstance().getUsername()) || isResourceOwner) {
+        if ((comment.getCommentedBy().equalsIgnoreCase(UserInfo.getInstance().getUsername()) || isResourceOwner) && !(comment.isRetracted())) {
             view.enableDelete();
         } else {
             view.disableDelete();

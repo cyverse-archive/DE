@@ -10,6 +10,7 @@ import org.iplantc.de.client.services.SearchServiceFacade;
 import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.commons.client.info.ErrorAnnouncementConfig;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
+import org.iplantc.de.resources.client.messages.I18N;
 import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 
 import com.google.common.base.Strings;
@@ -182,8 +183,7 @@ public class FolderContentsRpcProxy extends RpcProxy<FolderContentsLoadConfig, P
 
                 @Override
                 public void onFailure(Throwable caught) {
-                    ErrorHandler.post("Unable to retrieve favorites", caught);
-
+                    ErrorHandler.post(I18N.ERROR.favoritesError(), caught);
                 }
 
                 @Override

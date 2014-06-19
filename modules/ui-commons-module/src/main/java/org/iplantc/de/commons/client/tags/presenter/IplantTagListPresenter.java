@@ -12,6 +12,7 @@ import org.iplantc.de.commons.client.tags.Taggable;
 import org.iplantc.de.commons.client.tags.resources.CustomIplantTagResources;
 import org.iplantc.de.commons.client.tags.views.IplantTagListView;
 import org.iplantc.de.commons.client.tags.views.TagView;
+import org.iplantc.de.resources.client.messages.I18N;
 
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.user.client.Command;
@@ -363,7 +364,7 @@ public class IplantTagListPresenter implements TagListHandlers {
 
             @Override
             public void onFailure(Throwable caught) {
-                ErrorHandler.post("Unable to create this tag!", caught);
+                ErrorHandler.post(I18N.ERROR.tagCreateError(), caught);
 
             }
         });

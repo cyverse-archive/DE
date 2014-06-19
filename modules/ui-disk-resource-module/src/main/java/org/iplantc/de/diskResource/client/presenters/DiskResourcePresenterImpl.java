@@ -258,7 +258,7 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter, Di
 
                 @Override
                 public void onFailure(Throwable caught) {
-                    ErrorHandler.post("Unable to mark the selected item as favorite.", caught);
+                    ErrorHandler.post(I18N.ERROR.markFavoriteError(), caught);
 
                 }
 
@@ -282,7 +282,7 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter, Di
 
                 @Override
                 public void onFailure(Throwable caught) {
-                    ErrorHandler.post("Unable to remove selected item from favorites.", caught);
+                    ErrorHandler.post(I18N.ERROR.removeFavoriteError(), caught);
 
                 }
 
@@ -1262,13 +1262,13 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter, Di
 
                     @Override
                     public void onFailure(Throwable caught) {
-                        ErrorHandler.post("Unable to tag this resource!", caught);
+                        ErrorHandler.post(I18N.ERROR.tagAttachError(), caught);
 
                     }
 
                     @Override
                     public void onSuccess(String result) {
-                        announcer.schedule(new SuccessAnnouncementConfig(next.getName() + " tagged with " + tag.getValue()));
+                        announcer.schedule(new SuccessAnnouncementConfig(I18N.DISPLAY.tagAttached(next.getName(), tag.getValue())));
 
                     }
                 });
@@ -1287,12 +1287,12 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter, Di
 
                     @Override
                     public void onFailure(Throwable caught) {
-                        ErrorHandler.post("Unable to remove tag from this resource!", caught);
+                        ErrorHandler.post(I18N.ERROR.tagDetachError(), caught);
                     }
 
                     @Override
                     public void onSuccess(String result) {
-                        announcer.schedule(new SuccessAnnouncementConfig(tag.getValue() + " removed from " + next.getName()));
+                        announcer.schedule(new SuccessAnnouncementConfig(I18N.DISPLAY.tagDetached(tag.getValue(), next.getName())));
                     }
                 });
             }

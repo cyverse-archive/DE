@@ -1179,4 +1179,27 @@ public interface IplantErrorStrings extends com.google.gwt.i18n.client.Messages,
     SafeHtml analysisRenameFailed();
 
     SafeHtml analysisCommentUpdateFailed();
+
+    // tags
+    String tagCreateError();
+
+    String tagAttachError();
+
+    String tagDetachError();
+
+    String tagRetrieveError();
+
+    // favorites
+    String favoritesError();
+
+    String markFavoriteError();
+
+    String removeFavoriteError();
+
+    // Comments
+    String commentsError();
+
+    String addCommentError();
+
+    String retractCommentEorror();
 }

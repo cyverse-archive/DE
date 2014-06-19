@@ -5,6 +5,7 @@ import org.iplantc.de.client.models.tags.IplantTag;
 import org.iplantc.de.client.models.tags.IplantTagList;
 import org.iplantc.de.client.services.TagsServiceFacade;
 import org.iplantc.de.commons.client.ErrorHandler;
+import org.iplantc.de.resources.client.messages.I18N;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -38,7 +39,7 @@ public class TagSuggestionRpcProxy extends RpcProxy<TagSuggestionLoadConfig, Lis
 
                 @Override
                 public void onFailure(Throwable caught) {
-                    ErrorHandler.post("unable to retrieve tags!", caught);
+                    ErrorHandler.post(I18N.ERROR.tagRetrieveError(), caught);
 
                 }
 
