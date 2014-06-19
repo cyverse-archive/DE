@@ -71,17 +71,17 @@ public class FileSystemMetadataServiceFacadeImpl implements MetadataServiceFacad
 
     @Override
     public void getComments(String UUID, AsyncCallback<String> callback) {
-        String address = deProps.getMuleServiceBaseUrl() + "filesystem/" + UUID + "/comments";
+        String address = deProps.getMuleServiceBaseUrl() + "filesystem/entry/" + UUID + "/comments";
         ServiceCallWrapper wrapper = new ServiceCallWrapper(Type.GET, address);
         callService(wrapper, callback);
     }
 
     @Override
     public void addComment(String UUID, String comment, AsyncCallback<String> callback) {
-        String address = deProps.getMuleServiceBaseUrl() + "filesystem/" + UUID + "/comments";
+        String address = deProps.getMuleServiceBaseUrl() + "filesystem/entry/" + UUID + "/comments";
         JSONObject obj = new JSONObject();
         obj.put("comment", new JSONString(comment));
-        ServiceCallWrapper wrapper = new ServiceCallWrapper(Type.POST, address);
+        ServiceCallWrapper wrapper = new ServiceCallWrapper(Type.POST, address, obj.toString());
         callService(wrapper, callback);
 
     }
@@ -89,7 +89,7 @@ public class FileSystemMetadataServiceFacadeImpl implements MetadataServiceFacad
     @Override
     public void markAsRetracted(String UUID, String commentId, boolean retracted, AsyncCallback<String> callback) {
         String address = deProps.getMuleServiceBaseUrl() + "filesystem/entry/" + UUID + "/comments/" + commentId + "?retracted=" + retracted;
-        ServiceCallWrapper wrapper = new ServiceCallWrapper(Type.PATCH, address, "");
+        ServiceCallWrapper wrapper = new ServiceCallWrapper(Type.PATCH, address, "{}");
         callService(wrapper, callback);
 
     }

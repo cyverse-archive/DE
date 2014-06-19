@@ -24,6 +24,9 @@ public class CommentsCell extends AbstractCell<Comment> {
         @SafeHtmlTemplates.Template("<div style='white-space: normal;'> <p>On <b>{1}</b>, <i>{0} </i> wrote: </p> <p>{2}</p> </dvi>")
         SafeHtml commentCell(String user, String timestamp, String comment);
 
+        @SafeHtmlTemplates.Template("<div style='white-space: normal;'> <p>On <b>{1}</b>, <i>{0} </i> wrote: </p> <p style='color:red;'>{2}</p> </dvi>")
+        SafeHtml retractedCommentCell(String user, String timestamp, String comment);
+
     }
 
     private static Templates templates = GWT.create(Templates.class);
@@ -34,7 +37,12 @@ public class CommentsCell extends AbstractCell<Comment> {
 
     @Override
     public void render(com.google.gwt.cell.client.Cell.Context context, Comment value, SafeHtmlBuilder sb) {
-        sb.append(templates.commentCell(value.getCommentedBy(), DateTimeFormat.getFormat(PredefinedFormat.DATE_TIME_MEDIUM).format(new Date(value.getTimestamp())), value.getCommentText()));
+        if (value.isRetracted()) {
+            value.setCommentText("This comment is retracted!");
+            sb.append(templates.retractedCommentCell(value.getCommentedBy(), DateTimeFormat.getFormat(PredefinedFormat.DATE_TIME_MEDIUM).format(new Date(value.getTimestamp())), value.getCommentText()));
+        } else {
+            sb.append(templates.commentCell(value.getCommentedBy(), DateTimeFormat.getFormat(PredefinedFormat.DATE_TIME_MEDIUM).format(new Date(value.getTimestamp())), value.getCommentText()));
+        }
     }
 
 }

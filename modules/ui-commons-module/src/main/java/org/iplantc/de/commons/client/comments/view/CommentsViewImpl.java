@@ -1,6 +1,5 @@
 package org.iplantc.de.commons.client.comments.view;
 
-import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.client.models.comments.Comment;
 import org.iplantc.de.client.models.comments.CommentsAutoBeanFactory;
 import org.iplantc.de.commons.client.comments.view.cells.CommentsCell;
@@ -18,6 +17,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.google.web.bindery.autobean.shared.AutoBeanCodex;
 
 import com.sencha.gxt.core.client.IdentityValueProvider;
+import com.sencha.gxt.core.client.Style.SelectionMode;
 import com.sencha.gxt.data.shared.ListStore;
 import com.sencha.gxt.data.shared.ModelKeyProvider;
 import com.sencha.gxt.data.shared.SortDir;
@@ -34,7 +34,6 @@ import com.sencha.gxt.widget.core.client.selection.SelectionChangedEvent;
 import com.sencha.gxt.widget.core.client.selection.SelectionChangedEvent.SelectionChangedHandler;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 public class CommentsViewImpl extends Composite implements CommentsView {
@@ -53,15 +52,19 @@ public class CommentsViewImpl extends Composite implements CommentsView {
         grid.getView().setAutoExpandColumn(cm.getColumn(0));
         grid.getView().setAutoFill(true);
         grid.getView().setForceFit(true);
+        grid.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
         grid.getSelectionModel().addSelectionChangedHandler(new SelectionChangedHandler<Comment>() {
 
             @Override
             public void onSelectionChanged(SelectionChangedEvent<Comment> event) {
                 if (event.getSelection().size() > 0) {
                     deleteBtn.enable();
+                    presenter.onSelect(event.getSelection().get(0));
                 } else {
                     deleteBtn.disable();
                 }
+                
+
                 
             }
         });
@@ -69,18 +72,16 @@ public class CommentsViewImpl extends Composite implements CommentsView {
             
             @Override
             public void onKeyPress(KeyPressEvent event) {
-                if (commentBox.getCurrentValue() == null) {
+                if (commentBox.getCurrentValue() == null || commentBox.getCurrentValue().length() < 1) {
                     addBtn.disable();
                 } else {
                     addBtn.enable();
                 }
                 if (event.isShiftKeyDown() && event.getNativeEvent().getKeyCode() == KeyCodes.KEY_ENTER) {
                     Comment c = buildComment();
-                    addComment(c);
+                    presenter.onAdd(c);
                     return;
                 }
-                
-
             }
         });
     }
@@ -134,9 +135,7 @@ public class CommentsViewImpl extends Composite implements CommentsView {
 
     private final CommentsAutoBeanFactory factory = GWT.create(CommentsAutoBeanFactory.class);;
 
-    private final UserInfo userInfo = UserInfo.getInstance();
-
-    private CommentsComparator commentComparator;;
+    private CommentsComparator commentComparator;
 
     @UiHandler("addBtn")
     void addHandler(SelectEvent event) {
@@ -146,16 +145,13 @@ public class CommentsViewImpl extends Composite implements CommentsView {
 
     @Override
     public void addComment(Comment c) {
-        store.add(0, c);
+        store.add(c);
+        commentBox.clear();
     }
 
     private Comment buildComment() {
         Comment c = AutoBeanCodex.decode(factory, Comment.class, "{}").as();
-        long time = new Date().getTime();
-        c.setId(time + "");
         c.setCommentText(commentBox.getCurrentValue());
-        c.setCommentedBy(userInfo.getUsername());
-        c.setTimestamp(time);
         return c;
     }
 
@@ -183,8 +179,20 @@ public class CommentsViewImpl extends Composite implements CommentsView {
 
     @Override
     public void retractComment(Comment c) {
-        c.setCommentText("This comment is retracted!");
         store.update(c);
+        grid.getView().refresh(false);
+    }
+
+    @Override
+    public void enableDelete() {
+        deleteBtn.enable();
+
+    }
+
+    @Override
+    public void disableDelete() {
+        deleteBtn.disable();
+
     }
 
 }

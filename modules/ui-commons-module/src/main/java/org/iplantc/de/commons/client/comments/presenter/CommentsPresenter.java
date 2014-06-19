@@ -1,15 +1,18 @@
 package org.iplantc.de.commons.client.comments.presenter;
 
+import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.client.models.comments.Comment;
 import org.iplantc.de.client.models.comments.CommentList;
 import org.iplantc.de.client.models.comments.CommentsAutoBeanFactory;
 import org.iplantc.de.client.services.MetadataServiceFacade;
+import org.iplantc.de.client.util.JsonUtil;
 import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.commons.client.comments.view.CommentsView;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
 import org.iplantc.de.commons.client.info.SuccessAnnouncementConfig;
 
 import com.google.gwt.core.shared.GWT;
+import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HasOneWidget;
 import com.google.web.bindery.autobean.shared.AutoBean;
@@ -22,11 +25,13 @@ public class CommentsPresenter implements CommentsView.Presenter {
     final String resourceID;
     final MetadataServiceFacade facade;
     CommentsAutoBeanFactory cabf = GWT.create(CommentsAutoBeanFactory.class);
+    private final boolean isResourceOwner;
 
-    public CommentsPresenter(CommentsView cv, String resourceID, MetadataServiceFacade facade) {
+    public CommentsPresenter(CommentsView cv, String resourceID, boolean owner, MetadataServiceFacade facade) {
         this.view = cv;
         this.resourceID = resourceID;
         this.facade = facade;
+        this.isResourceOwner = owner;
         getComments();
     }
 
@@ -63,7 +68,9 @@ public class CommentsPresenter implements CommentsView.Presenter {
             @Override
             public void onSuccess(String result) {
                 IplantAnnouncer.getInstance().schedule(new SuccessAnnouncementConfig("Comment added successfully."));
-                AutoBean<Comment> cl = AutoBeanCodex.decode(cabf, Comment.class, result);
+                JSONObject obj = JsonUtil.getObject(result);
+                JSONObject comObj = JsonUtil.getObject(obj, "comment");
+                AutoBean<Comment> cl = AutoBeanCodex.decode(cabf, Comment.class, comObj.toString());
                 view.addComment(cl.as());
             }
 
@@ -82,7 +89,10 @@ public class CommentsPresenter implements CommentsView.Presenter {
 
             @Override
             public void onSuccess(String result) {
+                comment.setCommentText("This comment is retracted!");
+                comment.setRetracted(true);
                 view.retractComment(comment);
+                IplantAnnouncer.getInstance().schedule(new SuccessAnnouncementConfig("Comment retracted!"));
             }
 
         });
@@ -103,6 +113,16 @@ public class CommentsPresenter implements CommentsView.Presenter {
                 loadComments(cl.as().getComments());
             }
         });
+    }
+
+    @Override
+    public void onSelect(Comment comment) {
+        if (comment.getCommentedBy().equalsIgnoreCase(UserInfo.getInstance().getUsername()) || isResourceOwner) {
+            view.enableDelete();
+        } else {
+            view.disableDelete();
+        }
+
     }
 
 }

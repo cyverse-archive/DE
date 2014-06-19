@@ -14,6 +14,8 @@ public interface CommentsView {
         void onDelete(Comment c);
 
         void loadComments(List<Comment> comments);
+
+        void onSelect(Comment comment);
     }
 
     void setPresenter(Presenter p);
@@ -25,4 +27,8 @@ public interface CommentsView {
     void addComment(Comment c);
 
     void retractComment(Comment c);
+
+    void enableDelete();
+
+    void disableDelete();
 }

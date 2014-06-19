@@ -30,6 +30,7 @@ public interface Comment extends HasId {
     @PropertyName("retracted")
     boolean isRetracted();
 
+    @PropertyName("id")
     void setId(String id);
 
 }

@@ -114,8 +114,8 @@ import com.google.web.bindery.autobean.shared.AutoBeanCodex;
 
 import com.sencha.gxt.data.shared.loader.LoadHandler;
 import com.sencha.gxt.data.shared.loader.TreeLoader;
-import com.sencha.gxt.widget.core.client.Dialog;
 import com.sencha.gxt.widget.core.client.Dialog.PredefinedButton;
+import com.sencha.gxt.widget.core.client.Window;
 import com.sencha.gxt.widget.core.client.box.ConfirmMessageBox;
 import com.sencha.gxt.widget.core.client.box.MessageBox;
 import com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer;
@@ -307,39 +307,19 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter, Di
 
     @Override
     public void onManageComments(ManageCommentsEvent event) {
-        checkNotNull(event.getDiskResource());
+        DiskResource dr = event.getDiskResource();
+        checkNotNull(dr);
         // call to retrieve comments...and show dialog
-        Dialog d = new Dialog();
+        Window d = new Window();
         d.setHeadingText(I18N.DISPLAY.comments());
         d.remove(d.getButtonBar());
-        d.setSize("500px", "400px");
+        d.setSize("600px", "450px");
         CommentsView cv = new CommentsViewImpl();
-        CommentsPresenter cp = new CommentsPresenter(cv, event.getDiskResource().getUUID(), fsmdataService);
+        CommentsPresenter cp = new CommentsPresenter(cv, dr.getUUID(), dr.getPermission() == PermissionValue.own, fsmdataService);
         cv.setPresenter(cp);
         cp.go(d);
         d.show();
     }
-
-    // private List<Comment> loadTestComments() {
-    // List<Comment> commentsList = new ArrayList<Comment>();
-    // CommentsAutoBeanFactory factory = GWT.create(CommentsAutoBeanFactory.class);
-    // UserInfo userInfo = UserInfo.getInstance();
-    //
-    // for (int i = 0; i < 10; i++) {
-    // Comment c = AutoBeanCodex.decode(factory, Comment.class, "{}").as();
-    // long time = new Date().getTime();
-    // c.setId(time + "" + i);
-    // c.setCommentText("foo bar foo barfoo barfoo barfoo barfoo barfoo barfoo barfoo barfoo barfoo barfoo barfoo barfoo bar"
-    // + "foo barfoo barfoo barfoo barfoo barfoo barfoo barfoo barfoo bar"
-    // + "foo barfoo barfoo barfoo barfoo barfoo bar" + "foo barfoo barfoo barfoo bar");
-    // c.setCommentedBy(userInfo.getUsername());
-    // c.setTimestamp(time);
-    // commentsList.add(c);
-    //
-    // }
-    //
-    // return commentsList;
-    // }
 
     void doShareByDataLink(final DiskResource toBeShared) {
         if (toBeShared instanceof Folder) {
