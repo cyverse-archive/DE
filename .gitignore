@@ -1,6 +1,25 @@
+# files to be excluded from tracking by Git
+*~
+
+# eclipse-related files
+.classpath
+.options
+.project
+.settings
+
+# ignore war directory
+war
+
+# ignore directories related to GWT Unit Tests
+tomcat
+gwt-unitCache
+.gwt
+
+# ignore gradle build directory
+build
+
 .gradle
 .metadata
-build
 ucdetector_reports
 
 # the Mac .DS_Store directory
@@ -13,15 +32,4 @@ ucdetector_reports
 *.iml
 out/
 applications/config*
-modules/analyses-module/.classpath
-modules/analyses-module/.gitignore
-modules/analyses-module/.project
-modules/analyses-module/.settings/org.eclipse.jdt.core.prefs
-modules/analyses-module/.gwt/.gwt-log
-modules/gwt-taglist/.classpath
-modules/gwt-taglist/.project
-modules/gwt-taglist/bin/.gitignore
-modules/gwt-taglist/.settings/org.eclipse.jdt.core.prefs
-modules/gwt-taglist/target/
-modules/analyses-module/.settings/com.google.gdt.eclipse.core.prefs
-modules/analyses-module/.settings/com.google.gwt.eclipse.core.prefs
+
