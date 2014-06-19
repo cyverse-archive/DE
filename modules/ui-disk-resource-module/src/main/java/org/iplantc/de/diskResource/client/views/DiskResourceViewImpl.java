@@ -392,6 +392,26 @@ public class DiskResourceViewImpl extends Composite implements DiskResourceView,
     }
 
     @UiFactory
+    LiveGridView<DiskResource> createLiveGridView() {
+        // CORE-5723 KLUDGE for Firefox bug with LiveGridView row height calculation.
+        // Always use a row height of 25 for now.
+        LiveGridView<DiskResource> liveGridView = new LiveGridView<DiskResource>() {
+
+            @Override
+            protected void insertRows(int firstRow, int lastRow, boolean isUpdate) {
+                super.insertRows(firstRow, lastRow, isUpdate);
+
+                setRowHeight(25);
+            }
+        };
+
+        liveGridView.setAutoFill(true);
+        liveGridView.setForceFit(true);
+
+        return liveGridView;
+    }
+
+    @UiFactory
     ListStore<DiskResource> createListStore() {
         DiskResourceModelKeyProvider keyProvider = new DiskResourceModelKeyProvider();
         ListStore<DiskResource> listStore2 = new ListStore<DiskResource>(keyProvider);
