@@ -264,7 +264,7 @@ public class DiskResourceViewImpl extends Composite implements DiskResourceView,
         grid.setLoader(gridLoader);
         grid.setSelectionModel(sm);
         grid.getSelectionModel().addSelectionChangedHandler(this);
-        gridView.setCacheSize(1000);
+        gridView.setCacheSize(500);
         initLiveToolbar();
 
         tree.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
@@ -357,6 +357,7 @@ public class DiskResourceViewImpl extends Composite implements DiskResourceView,
 
     @Override
     public void loadFolder(Folder folder) {
+        sm.clear();
         sm.setShowSelectAll(!(folder instanceof DiskResourceQueryTemplate));
         grid.getView().getHeader().refresh();
 
@@ -370,7 +371,6 @@ public class DiskResourceViewImpl extends Composite implements DiskResourceView,
         gridLoader.getLastLoadConfig().setFolder(folder);
         gridLoader.getLastLoadConfig().setOffset(0);
         gridLoader.load();
-        updateSelectionCount(0);
     }
 
     private void addTreeCollapseButton() {
@@ -389,6 +389,26 @@ public class DiskResourceViewImpl extends Composite implements DiskResourceView,
         });
         westPanel.getHeader().removeTool(westPanel.getHeader().getTool(0));
         westPanel.getHeader().addTool(tool);
+    }
+
+    @UiFactory
+    LiveGridView<DiskResource> createLiveGridView() {
+        // CORE-5723 KLUDGE for Firefox bug with LiveGridView row height calculation.
+        // Always use a row height of 25 for now.
+        LiveGridView<DiskResource> liveGridView = new LiveGridView<DiskResource>() {
+
+            @Override
+            protected void insertRows(int firstRow, int lastRow, boolean isUpdate) {
+                super.insertRows(firstRow, lastRow, isUpdate);
+
+                setRowHeight(25);
+            }
+        };
+
+        liveGridView.setAutoFill(true);
+        liveGridView.setForceFit(true);
+
+        return liveGridView;
     }
 
     @UiFactory
