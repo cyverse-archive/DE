@@ -48,6 +48,7 @@ import com.sencha.gxt.widget.core.client.event.CompleteEditEvent.CompleteEditHan
 import com.sencha.gxt.widget.core.client.event.SelectEvent;
 import com.sencha.gxt.widget.core.client.event.SelectEvent.SelectHandler;
 import com.sencha.gxt.widget.core.client.form.TextField;
+import com.sencha.gxt.widget.core.client.grid.CellSelectionModel;
 import com.sencha.gxt.widget.core.client.grid.ColumnConfig;
 import com.sencha.gxt.widget.core.client.grid.ColumnModel;
 import com.sencha.gxt.widget.core.client.grid.Grid;
@@ -239,7 +240,7 @@ public class StrcturedTextViewerImpl extends StructuredTextViewer {
                     @Override
                     public void onCompleteEdit(CompleteEditEvent<JSONObject> event) {
                         dirty = true;
-
+                        store.commitChanges();
                     }
                 });
                 toolbar.setEditing(true);
@@ -253,7 +254,9 @@ public class StrcturedTextViewerImpl extends StructuredTextViewer {
             List<ColumnConfig<JSONObject, ?>> cols = grid.getColumnModel().getColumns();
             for (ColumnConfig<JSONObject, ?> cc : cols) {
                 if (editing) {
-                    rowEditing.addEditor((ColumnConfig<JSONObject, String>)cc, new TextField());
+                    TextField field = new TextField();
+                    field.setClearValueOnParseError(false);
+                    rowEditing.addEditor((ColumnConfig<JSONObject, String>)cc, field);
                 } else {
                     rowEditing.removeEditor(cc);
                 }
@@ -310,6 +313,7 @@ public class StrcturedTextViewerImpl extends StructuredTextViewer {
         }
 
         grid = new Grid<JSONObject>(getStore(), new ColumnModel<JSONObject>(configs));
+        grid.setSelectionModel(new CellSelectionModel<JSONObject>());
         grid.getView().setStripeRows(true);
         grid.getView().setTrackMouseOver(true);
         filters.initPlugin(grid);
@@ -491,7 +495,7 @@ public class StrcturedTextViewerImpl extends StructuredTextViewer {
         }
         if (rowEditing != null) {
             rowEditing.cancelEditing();
-            getStore().add(obj);
+            getStore().add(0, obj);
             int row = getStore().indexOf(obj);
             setDirty(true);
             rowEditing.startEditing(new GridCell(row, 0));
