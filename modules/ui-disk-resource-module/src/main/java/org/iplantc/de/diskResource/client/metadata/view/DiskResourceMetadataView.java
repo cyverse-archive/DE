@@ -41,7 +41,6 @@ import com.google.gwt.user.client.ui.Widget;
 import com.google.web.bindery.autobean.shared.AutoBean;
 import com.google.web.bindery.autobean.shared.AutoBeanCodex;
 
-import static com.sencha.gxt.widget.core.client.Dialog.PredefinedButton;
 import com.sencha.gxt.core.client.XTemplates;
 import com.sencha.gxt.core.client.dom.ScrollSupport.ScrollMode;
 import com.sencha.gxt.core.client.resources.ThemeStyles;
@@ -49,7 +48,10 @@ import com.sencha.gxt.core.shared.FastMap;
 import com.sencha.gxt.data.shared.LabelProvider;
 import com.sencha.gxt.data.shared.ListStore;
 import com.sencha.gxt.data.shared.ModelKeyProvider;
+import com.sencha.gxt.data.shared.Store;
+import com.sencha.gxt.data.shared.Store.StoreFilter;
 import com.sencha.gxt.widget.core.client.ContentPanel;
+import com.sencha.gxt.widget.core.client.Dialog.PredefinedButton;
 import com.sencha.gxt.widget.core.client.box.ConfirmMessageBox;
 import com.sencha.gxt.widget.core.client.button.TextButton;
 import com.sencha.gxt.widget.core.client.container.AccordionLayoutContainer;
@@ -68,10 +70,20 @@ import com.sencha.gxt.widget.core.client.event.StartEditEvent;
 import com.sencha.gxt.widget.core.client.event.StartEditEvent.StartEditHandler;
 import com.sencha.gxt.widget.core.client.event.ValidEvent;
 import com.sencha.gxt.widget.core.client.event.ValidEvent.ValidHandler;
-import com.sencha.gxt.widget.core.client.form.*;
+import com.sencha.gxt.widget.core.client.form.CheckBox;
+import com.sencha.gxt.widget.core.client.form.ComboBox;
+import com.sencha.gxt.widget.core.client.form.DateField;
+import com.sencha.gxt.widget.core.client.form.DateTimePropertyEditor;
+import com.sencha.gxt.widget.core.client.form.Field;
+import com.sencha.gxt.widget.core.client.form.FieldLabel;
 import com.sencha.gxt.widget.core.client.form.FormPanel.LabelAlign;
+import com.sencha.gxt.widget.core.client.form.FormPanelHelper;
+import com.sencha.gxt.widget.core.client.form.IsField;
+import com.sencha.gxt.widget.core.client.form.NumberField;
 import com.sencha.gxt.widget.core.client.form.NumberPropertyEditor.DoublePropertyEditor;
 import com.sencha.gxt.widget.core.client.form.NumberPropertyEditor.IntegerPropertyEditor;
+import com.sencha.gxt.widget.core.client.form.TextArea;
+import com.sencha.gxt.widget.core.client.form.TextField;
 import com.sencha.gxt.widget.core.client.grid.ColumnConfig;
 import com.sencha.gxt.widget.core.client.grid.ColumnModel;
 import com.sencha.gxt.widget.core.client.grid.Grid;
@@ -158,6 +170,7 @@ public class DiskResourceMetadataView implements IsWidget {
     private static final String USER_UNIT_TAG = "ipc_user_unit_tag"; //$NON-NLS-1$
     private static final String IPC_METADATA_TEMPLATE_COMPELTE = "ipc-metadata-template-complete"; //$NON-NLS-1$
     private static final String METADATA_COMPLETE = "Metadata complete";
+    private static final String IPC_UUID = "ipc_UUID";
 
     @UiTemplate("DiskResourceMetadataEditorPanel.ui.xml")
     interface DiskResourceMetadataEditorPanelUiBinder extends UiBinder<Widget, DiskResourceMetadataView> {
@@ -492,6 +505,16 @@ public class DiskResourceMetadataView implements IsWidget {
             initEditor();
         }
         grid.getSelectionModel().addSelectionChangedHandler(new MetadataSelectionChangedListener());
+        grid.getStore().addFilter(new StoreFilter<DiskResourceMetadata>() {
+
+            @Override
+            public boolean select(Store<DiskResourceMetadata> store, DiskResourceMetadata parent, DiskResourceMetadata item) {
+                if (item.getAttribute().equals(IPC_UUID)) {
+                    return false;
+                }
+                return true;
+            }
+        });
         new QuickTip(grid);
     }
 
@@ -721,6 +744,7 @@ public class DiskResourceMetadataView implements IsWidget {
             templateCombo.setValue(selectedTemplate);
             onTemplateSelected(selectedTemplate);
         }
+        grid.getStore().setEnableFilters(true);
     }
 
     public boolean isValid() {
