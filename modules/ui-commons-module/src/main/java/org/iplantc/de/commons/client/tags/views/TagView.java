@@ -64,7 +64,7 @@ public class TagView extends Composite {
     private static Binder uiBinder = GWT.create(Binder.class);
 
     @UiField
-    HTMLPanel tagPanel;
+    HTMLPanel                               tagPanel;
     @UiField
     DivElement tag;
     @UiField

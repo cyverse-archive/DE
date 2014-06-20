@@ -146,6 +146,9 @@ public class CommentsViewImpl extends Composite implements CommentsView {
     @Override
     public void addComment(Comment c) {
         store.add(c);
+        store.applySort(false);
+        grid.getSelectionModel().select(c, false);
+        grid.getView().ensureVisible(store.indexOf(c), 0, false);
         commentBox.clear();
     }
 
@@ -165,6 +168,7 @@ public class CommentsViewImpl extends Composite implements CommentsView {
     public void loadComments(List<Comment> comments) {
         store.clear();
         store.addAll(comments);
+        store.applySort(false);
     }
 
     @Override

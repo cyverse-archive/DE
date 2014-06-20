@@ -6,6 +6,7 @@ import org.iplantc.de.commons.client.tags.presenter.TagListHandlers;
 import org.iplantc.de.commons.client.tags.proxy.TagSuggestionLoadConfig;
 import org.iplantc.de.commons.client.tags.proxy.TagSuggestionRpcProxy;
 import org.iplantc.de.commons.client.tags.resources.CustomIplantTagResources;
+import org.iplantc.de.resources.client.messages.I18N;
 
 import com.google.common.base.Strings;
 import com.google.gwt.cell.client.AbstractCell;
@@ -85,8 +86,9 @@ public class IplantTagListView extends Composite implements IsWidget {
     public IplantTagListView(TagSuggestionRpcProxy proxy) {
         this.proxy = proxy;
         initWidget(uiBinder.createAndBindUi(this));
-        taglbl.setHTML("<b> Tags </b>");
+        taglbl.setHTML("<b>" + I18N.DISPLAY.tags() + "</b>");
         taglbl.setLabelSeparator("");
+        tagsPanel.setStyleName(CustomIplantTagResources.INSTANCE.style().tagPanel());
     }
 
     public void setUiHandlers(TagListHandlers tagListHandlers) {
@@ -215,10 +217,11 @@ public class IplantTagListView extends Composite implements IsWidget {
         tagSearchCbo.setEnabled(editable);
         this.tagListPanel.getElement().setPropertyBoolean("disabled", !editable);
 
-        if (editable)
+        if (editable) {
             this.tagListPanel.addStyleName(CustomIplantTagResources.INSTANCE.style().tagListEditable());
-        else
+        } else {
             this.tagListPanel.removeStyleName(CustomIplantTagResources.INSTANCE.style().tagListEditable());
+        }
 
     }
 

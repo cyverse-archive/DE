@@ -19,6 +19,10 @@ import com.google.gwt.user.client.ui.HasOneWidget;
 import com.google.web.bindery.autobean.shared.AutoBean;
 import com.google.web.bindery.autobean.shared.AutoBeanCodex;
 
+import com.sencha.gxt.widget.core.client.box.ConfirmMessageBox;
+import com.sencha.gxt.widget.core.client.event.DialogHideEvent;
+import com.sencha.gxt.widget.core.client.event.DialogHideEvent.DialogHideHandler;
+
 import java.util.List;
 
 public class CommentsPresenter implements CommentsView.Presenter {
@@ -48,9 +52,21 @@ public class CommentsPresenter implements CommentsView.Presenter {
     }
 
     @Override
-    public void onDelete(Comment c) {
-        retractComment(c);
+    public void onDelete(final Comment c) {
+        ConfirmMessageBox mbox = new ConfirmMessageBox(I18N.DISPLAY.confirmAction(),
+                                                       I18N.DISPLAY.retractCommentConfirm());
+        mbox.addDialogHideHandler(new DialogHideHandler() {
 
+            @Override
+            public void onDialogHide(DialogHideEvent event) {
+                if (event.getHideButton().toString().equalsIgnoreCase("YES")) {
+                    retractComment(c);
+                }
+
+            }
+        });
+
+        mbox.show();
     }
 
     @Override
@@ -94,6 +110,7 @@ public class CommentsPresenter implements CommentsView.Presenter {
                 comment.setRetracted(true);
                 view.retractComment(comment);
                 IplantAnnouncer.getInstance().schedule(new SuccessAnnouncementConfig(I18N.DISPLAY.commentRetracted()));
+                onSelect(comment);
             }
 
         });

@@ -30,6 +30,8 @@ public interface CustomIplantTagResources extends ClientBundle {
         String tagList();
         String tagListEditable();
 
+        String tagPanel();
+
         //Tag style
         String tag();
         String tagEditable();

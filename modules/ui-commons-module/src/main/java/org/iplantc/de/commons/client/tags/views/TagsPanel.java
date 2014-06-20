@@ -24,6 +24,7 @@ import com.google.gwt.user.client.ui.Widget;
 public class TagsPanel extends FlowPanel {
 
 
+
     @Override
     public boolean remove( Widget widget ) {
         boolean removed = super.remove( widget );

@@ -11,13 +11,13 @@
 	<ui:with
 		type="com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer.VerticalLayoutData"
 		field="tagSearchLayoutData">
-		<ui:attributes width=".85" height="-1" margins="{outerMargins}" />
+		<ui:attributes width="-1" height="-1"  />
 	</ui:with>
 
 	<ui:with
 		type="com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer.VerticalLayoutData"
 		field="tagsLayoutData">
-		<ui:attributes width="1" height="1" />
+		<ui:attributes width="-1" height="-1" />
 	</ui:with>
 
 	<container:VerticalLayoutContainer
@@ -30,7 +30,7 @@
 			</form:FieldLabel>
 		</container:child>
 		<container:child layoutData="{tagsLayoutData}">
-			<vs:TagsPanel ui:field="tagsPanel">
+			<vs:TagsPanel ui:field="tagsPanel" height="150px" width="160px">
 			</vs:TagsPanel>
 		</container:child>
 	</container:VerticalLayoutContainer>
