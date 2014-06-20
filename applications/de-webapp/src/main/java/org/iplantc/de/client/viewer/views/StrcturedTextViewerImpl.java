@@ -82,6 +82,9 @@ public class StrcturedTextViewerImpl extends StructuredTextViewer {
 
         @Override
         public void setValue(JSONObject object, String value) {
+            if (value == null) {
+                value = "";
+            }
             object.put(index + "", new JSONString(value));
 
         }
