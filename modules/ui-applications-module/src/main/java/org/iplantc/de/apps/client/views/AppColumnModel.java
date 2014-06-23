@@ -70,6 +70,8 @@ public class AppColumnModel extends ColumnModel<App> implements
         ColumnConfig<App, App> comment = new ColumnConfig<App, App>(new IdentityValueProvider<App>(
                 "comment"), 30); //$NON-NLS-1$
 
+        comment.setHeader("");
+
         name.setComparator(new AppNameComparator());
         rating.setComparator(new AppRatingComparator());
         info.setSortable(false);

@@ -44,7 +44,8 @@ public class AnalysisColumnModel extends ColumnModel<Analysis> implements Analys
 
     public static List<ColumnConfig<Analysis, ?>> createColumnConfigList(CheckBoxSelectionModel<Analysis> checkBoxSelectionModel, IplantDisplayStrings displayStrings) {
         ColumnConfig<Analysis, Analysis> colCheckBox = checkBoxSelectionModel.getColumn();
-        ColumnConfig<Analysis, Analysis> name = new ColumnConfig<Analysis, Analysis>(new IdentityValueProvider<Analysis>("name"), 150);
+        ColumnConfig<Analysis, Analysis> name = new ColumnConfig<Analysis, Analysis>(new IdentityValueProvider<Analysis>("name"),
+                                                                                     150);
         ColumnConfig<Analysis, Analysis> comment = new ColumnConfig<Analysis, Analysis>(new IdentityValueProvider<Analysis>("description"), 30);
         ColumnConfig<Analysis, Analysis> app = new ColumnConfig<Analysis, Analysis>(new IdentityValueProvider<Analysis>("analysis_name"), 100);
         ColumnConfig<Analysis, Analysis> startDate = new ColumnConfig<Analysis, Analysis>(new IdentityValueProvider<Analysis>("startdate"), 125);
@@ -75,6 +76,7 @@ public class AnalysisColumnModel extends ColumnModel<Analysis> implements Analys
         comment.setMenuDisabled(true);
         comment.setCell(new AnalysisCommentCell());
         comment.setSortable(false);
+        comment.setHeader("");
 
         app.setHeader(displayStrings.appName());
         app.setCell(new AnalysisAppNameCell());
