@@ -22,6 +22,12 @@ public interface ServicePipelineStep extends HasId, HasName, HasDescription {
     @PropertyName("template_id")
     public void setTemplateId(String template_id);
 
+    @PropertyName("app_type")
+    public String getAppType();
+
+    @PropertyName("app_type")
+    public void setAppType(String appType);
+
     public ServicePipelineStepConfig getConfig();
 
     public void setConfig(ServicePipelineStepConfig config);

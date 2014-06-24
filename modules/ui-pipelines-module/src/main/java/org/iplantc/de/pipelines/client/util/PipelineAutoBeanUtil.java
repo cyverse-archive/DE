@@ -246,6 +246,7 @@ public class PipelineAutoBeanUtil {
         // Even when editing an existing Pipeline, the service should recreate the steps.
         step.setId(AUTO_GEN_ID);
         step.setTemplateId(app.getTemplateId());
+        step.setAppType(app.getAppType());
         step.setName(getStepName(app));
         step.setDescription(app.getName());
         step.setConfig(serviceFactory.servicePipelineMappingConfig().as());
