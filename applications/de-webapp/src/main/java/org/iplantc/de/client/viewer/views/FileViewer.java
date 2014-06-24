@@ -30,6 +30,8 @@ public interface FileViewer extends IsWidget {
         void cleanUp();
 
         void refreshViews();
+
+        void setTitle(String windowTitle);
     }
 
     void setPresenter(Presenter p);

@@ -70,7 +70,6 @@ public class FileViewerPresenter implements FileViewer.Presenter {
     @Override
     public void go(HasOneWidget container, Folder parentFolder) {
         this.container = (FileViewerWindow)container;
-        title = this.container.getTitle();
         composeView(parentFolder);
     }
 
@@ -180,6 +179,12 @@ public class FileViewerPresenter implements FileViewer.Presenter {
             fv.refresh();
             }
         }
+    }
+
+    @Override
+    public void setTitle(String windowTitle) {
+        this.title = windowTitle;
+
     }
 
 }
