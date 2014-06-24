@@ -5,12 +5,15 @@ import org.iplantc.de.client.services.MetadataServiceFacade;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
+import com.sencha.gxt.data.shared.loader.FilterPagingLoadConfigBean;
+
 import java.util.List;
 
 public class FileSystemMetadataServiceFacadeStub implements MetadataServiceFacade {
 
     @Override
-    public void getFavorites(AsyncCallback<Folder> callback) {
+    public void
+            getFavorites(final FilterPagingLoadConfigBean configBean, AsyncCallback<Folder> callback) {
         // TODO Auto-generated method stub
 
     }

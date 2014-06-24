@@ -11,6 +11,7 @@ import org.iplantc.de.client.util.JsonUtil;
 import org.iplantc.de.shared.services.BaseServiceCallWrapper.Type;
 import org.iplantc.de.shared.services.ServiceCallWrapper;
 
+import com.google.common.collect.Iterables;
 import com.google.gwt.core.shared.GWT;
 import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONObject;
@@ -18,6 +19,10 @@ import com.google.gwt.json.client.JSONString;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.inject.Inject;
 import com.google.web.bindery.autobean.shared.AutoBeanCodex;
+
+import com.sencha.gxt.data.shared.SortDir;
+import com.sencha.gxt.data.shared.SortInfoBean;
+import com.sencha.gxt.data.shared.loader.FilterPagingLoadConfigBean;
 
 import java.util.List;
 
@@ -35,8 +40,9 @@ public class FileSystemMetadataServiceFacadeImpl implements MetadataServiceFacad
     }
 
     @Override
-    public void getFavorites(AsyncCallback<Folder> callback) {
-        String address = deProps.getMuleServiceBaseUrl() + "favorites/filesystem";
+    public void
+            getFavorites(final FilterPagingLoadConfigBean configBean, AsyncCallback<Folder> callback) {
+        String address = getPaginateFavsEndPoint(configBean);
         ServiceCallWrapper wrapper = new ServiceCallWrapper(Type.GET, address);
         callService(wrapper, new AsyncCallbackConverter<String, Folder>(callback) {
 
@@ -138,6 +144,27 @@ public class FileSystemMetadataServiceFacadeImpl implements MetadataServiceFacad
         ServiceCallWrapper wrapper = new ServiceCallWrapper(Type.GET, address);
         callService(wrapper, callback);
 
+    }
+
+    /**
+     * This method constructs the address for the paged-directory listing endpoint.
+     * 
+     * If the sort info contained in the configBean parameter is null, then a default sort info object
+     * will be used in its place.
+     * 
+     * @param configBean
+     * @return the fully constructed address for the paged-fav listing endpoint.
+     */
+    private String getPaginateFavsEndPoint(final FilterPagingLoadConfigBean configBean) {
+        String address = deProps.getMuleServiceBaseUrl() + "favorites/filesystem?";
+
+        SortInfoBean sortInfo = Iterables.getFirst(configBean.getSortInfo(),
+                                                   new SortInfoBean("NAME", SortDir.ASC));
+        address += "sort-col="
+                    + sortInfo.getSortField() + "&limit=" + configBean.getLimit() + "&offset="
+                    + configBean.getOffset() + "&sort-order=" + sortInfo.getSortDir().toString();
+
+        return address;
     }
 
 }

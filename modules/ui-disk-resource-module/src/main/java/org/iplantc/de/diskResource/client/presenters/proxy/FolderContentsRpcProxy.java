@@ -179,7 +179,7 @@ public class FolderContentsRpcProxy extends RpcProxy<FolderContentsLoadConfig, P
             }
             return;
         } else if (folder instanceof DiskResourceFavorite) {
-            metadataService.getFavorites(new AsyncCallback<Folder>() {
+            metadataService.getFavorites(loadConfig, new AsyncCallback<Folder>() {
 
                 @Override
                 public void onFailure(Throwable caught) {
@@ -195,7 +195,9 @@ public class FolderContentsRpcProxy extends RpcProxy<FolderContentsLoadConfig, P
                     // Create list of all items within the result folder
                     List<DiskResource> list = Lists.newArrayList(Iterables.concat(result.getFolders(), result.getFiles()));
 
-                    callback.onSuccess(new PagingLoadResultBean<DiskResource>(list, list.size(), 0));
+                    callback.onSuccess(new PagingLoadResultBean<DiskResource>(list,
+                                                                              result.getTotal(),
+                                                                              loadConfig.getOffset()));
                 }
             });
         } else if (folder instanceof DiskResourceQueryTemplate) {

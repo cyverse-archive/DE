@@ -7,6 +7,8 @@ import org.iplantc.de.client.models.diskResources.Folder;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
+import com.sencha.gxt.data.shared.loader.FilterPagingLoadConfigBean;
+
 import java.util.List;
 
 /**
@@ -15,7 +17,8 @@ import java.util.List;
  */
 public interface MetadataServiceFacade {
 
-    public void getFavorites(AsyncCallback<Folder> asyncCallback);
+    public void getFavorites(final FilterPagingLoadConfigBean configBean,
+                             AsyncCallback<Folder> asyncCallback);
     
     public void addToFavorites(String UUID, AsyncCallback<String> callback);
 
