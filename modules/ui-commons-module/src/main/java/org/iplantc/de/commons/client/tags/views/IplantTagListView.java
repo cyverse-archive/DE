@@ -139,6 +139,7 @@ public class IplantTagListView extends Composite implements IsWidget {
         combo.setForceSelection(false);
         combo.setMinChars(2);
         combo.setTypeAhead(true);
+        combo.setQueryDelay(100);
         return combo;
     }
 
