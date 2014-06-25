@@ -345,5 +345,5 @@ public interface DiskResourceView extends IsWidget,
 
     void updateTags(List<IplantTag> tags);
 
-    void refreshView();
+    void updateStore(DiskResource item);
 }

@@ -270,7 +270,7 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter, Di
                             final DiskResource next = it.next();
                             if (next.getId().equals(diskResource.getId())) {
                                 next.setFavorite(true);
-                                view.refreshView();
+                                view.updateStore(next);
                             }
                         }
                     }
@@ -288,14 +288,13 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter, Di
 
                 @Override
                 public void onSuccess(String result) {
-                    // TODO Auto-generated method stub
                     if (getSelectedDiskResources().size() > 0) {
                         Iterator<DiskResource> it = getSelectedDiskResources().iterator();
                         if (it != null && it.hasNext()) {
                             final DiskResource next = it.next();
                             if (next.getId().equals(diskResource.getId())) {
                                 next.setFavorite(false);
-                                view.refreshView();
+                                view.updateStore(next);
                             }
                         }
                     }

@@ -615,8 +615,8 @@ public class DiskResourceViewImpl extends Composite implements DiskResourceView,
     }
 
     @Override
-    public void refreshView() {
-        gridView.refresh();
+    public void updateStore(DiskResource item) {
+        grid.getStore().update(item);
     }
 
     @Override
