@@ -1,12 +1,15 @@
 package org.iplantc.de.apps.client.views.widgets;
 
 
-import static org.iplantc.de.apps.client.views.widgets.events.AppSearchResultLoadEvent.*;
-import static org.iplantc.de.apps.shared.AppsModule.Ids;
+import static org.iplantc.de.apps.client.views.widgets.events.AppSearchResultLoadEvent.TYPE;
+
 import org.iplantc.de.apps.client.events.AppGroupSelectionChangedEvent;
 import org.iplantc.de.apps.client.events.AppSelectionChangedEvent;
 import org.iplantc.de.apps.client.views.AppsView;
+import org.iplantc.de.apps.client.views.widgets.events.AppSearchResultLoadEvent.AppSearchResultLoadEventHandler;
+import org.iplantc.de.apps.client.views.widgets.events.AppSearchResultLoadEvent.HasAppSearchResultLoadEventHandlers;
 import org.iplantc.de.apps.client.views.widgets.proxy.AppSearchRpcProxy;
+import org.iplantc.de.apps.shared.AppsModule.Ids;
 import org.iplantc.de.client.models.IsMaskable;
 import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.client.models.apps.App;
@@ -22,7 +25,11 @@ import com.google.common.collect.Lists;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.shared.HandlerRegistration;
-import com.google.gwt.uibinder.client.*;
+import com.google.gwt.uibinder.client.UiBinder;
+import com.google.gwt.uibinder.client.UiFactory;
+import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.uibinder.client.UiTemplate;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 
@@ -31,6 +38,7 @@ import com.sencha.gxt.data.shared.loader.PagingLoadResult;
 import com.sencha.gxt.data.shared.loader.PagingLoader;
 import com.sencha.gxt.widget.core.client.Composite;
 import com.sencha.gxt.widget.core.client.button.TextButton;
+import com.sencha.gxt.widget.core.client.container.BoxLayoutContainer.BoxLayoutData;
 import com.sencha.gxt.widget.core.client.menu.Item;
 import com.sencha.gxt.widget.core.client.menu.MenuItem;
 
@@ -72,6 +80,8 @@ public class AppsViewToolbarImpl extends Composite implements AppsView.ViewMenu,
     MenuItem wfRun;
     @UiField
     TextButton wf_menu;
+    @UiField
+    BoxLayoutData boxData;
 
     private static AppsViewToolbarUiBinder uiBinder = GWT.create(AppsViewToolbarUiBinder.class);
     private final UserInfo userInfo;
@@ -154,11 +164,15 @@ public class AppsViewToolbarImpl extends Composite implements AppsView.ViewMenu,
     @Override
     public void hideAppMenu() {
         app_menu.setVisible(false);
+        // KLUDE:for CORE-5761 set flex to 0 so that search box shows up
+        boxData.setFlex(0);
     }
 
     @Override
     public void hideWorkflowMenu() {
         wf_menu.setVisible(false);
+        // KLUDE:for CORE-5761 set flex to 0 so that search box shows up
+        boxData.setFlex(0);
     }
 
     @Override
