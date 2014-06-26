@@ -1,15 +1,13 @@
 /*
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in
+ * compliance with the License. You may obtain a copy of the License at
  * 
  * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is
+ * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+ * implied. See the License for the specific language governing permissions and limitations under the
+ * License.
  */
 package org.iplantc.de.commons.client.tags.views;
 
@@ -17,6 +15,7 @@ import org.iplantc.de.client.models.tags.IplantTag;
 import org.iplantc.de.commons.client.tags.presenter.TagListHandlers;
 import org.iplantc.de.commons.client.tags.presenter.TagListHandlers.InsertionPoint;
 import org.iplantc.de.commons.client.tags.resources.CustomIplantTagResources;
+import org.iplantc.de.resources.client.messages.I18N;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.DivElement;
@@ -64,7 +63,7 @@ public class TagView extends Composite {
     private static Binder uiBinder = GWT.create(Binder.class);
 
     @UiField
-    HTMLPanel                               tagPanel;
+    HTMLPanel tagPanel;
     @UiField
     DivElement tag;
     @UiField
@@ -123,6 +122,8 @@ public class TagView extends Composite {
                     }
                 }, ClickEvent.getType());
 
+                editOption.setTitle(I18N.DISPLAY.edit());
+                deleteOption.setTitle(I18N.DISPLAY.remove());
             } else {
                 deactivateDnD();
                 // TODO: should also remove all handlers
@@ -192,7 +193,8 @@ public class TagView extends Composite {
 
                 // Calculate the mouse's percentage X position relative to the drag over element
                 // 0 = left border; 100 = right border
-                int percentagePositionX = (event.getNativeEvent().getClientX() - getAbsoluteLeft()) * 100 / getElement().getClientWidth();
+                int percentagePositionX = (event.getNativeEvent().getClientX() - getAbsoluteLeft())
+                        * 100 / getElement().getClientWidth();
                 if (percentagePositionX < 50) {
                     tagPanel.addStyleName(resources.style().previewLeft());
                     tagPanel.removeStyleName(resources.style().previewRight());
@@ -212,7 +214,8 @@ public class TagView extends Composite {
 
                 // Calculate the mouse's percentage X position relative to the drag over element
                 // 0 = left border; 100 = right border
-                int percentagePositionX = (event.getNativeEvent().getClientX() - getAbsoluteLeft()) * 100 / getElement().getClientWidth();
+                int percentagePositionX = (event.getNativeEvent().getClientX() - getAbsoluteLeft())
+                        * 100 / getElement().getClientWidth();
                 if (percentagePositionX < 50) {
                     tagPanel.addStyleName(resources.style().previewLeft());
                     tagPanel.removeStyleName(resources.style().previewRight());
@@ -242,11 +245,16 @@ public class TagView extends Composite {
                     return;
 
                 event.preventDefault();
-                uiHandlers.onRelocateTag(draggedElement, TagView.this, tagPanel.getStyleName().contains(resources.style().previewLeft()) ? InsertionPoint.BEFORE : InsertionPoint.AFTER);
+                uiHandlers.onRelocateTag(draggedElement,
+                                         TagView.this,
+                                         tagPanel.getStyleName().contains(resources.style()
+                                                                                   .previewLeft()) ? InsertionPoint.BEFORE
+                                                                                                  : InsertionPoint.AFTER);
                 tagPanel.removeStyleName(resources.style().previewLeft());
                 tagPanel.removeStyleName(resources.style().previewRight());
             }
-        }, DropEvent.getType()));
+        },
+                                                DropEvent.getType()));
 
         this.dndHandlers.add(this.addDomHandler(new DragEndHandler() {
             @Override

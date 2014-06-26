@@ -370,4 +370,11 @@ public class IplantTagListPresenter implements TagListHandlers {
         });
 
     }
+
+    public void removeAll() {
+        if (tagListView != null) {
+            tagListView.getTagsPanel().clear();
+        }
+
+    }
 }

@@ -235,6 +235,7 @@ public class DiskResourceViewImpl extends Composite implements DiskResourceView,
     private Status selectionStatus;
 
     private final DiskResourceAutoBeanFactory drFactory;
+    private IplantTagListPresenter tagPresenter;
 
     @Inject
     public DiskResourceViewImpl(final Tree<Folder, Folder> tree,
@@ -866,21 +867,28 @@ public class DiskResourceViewImpl extends Composite implements DiskResourceView,
         }
 
         presenter.getTagsForSelectedResource();
-
+        CustomIplantTagResources r = GWT.create(CustomIplantTagResources.class);
+        detailsPanel.add(createTagView("", r, true));
+        tagPresenter.removeAll();
     }
 
     @Override
     public void updateTags(List<IplantTag> tags) {
-        CustomIplantTagResources r = com.google.gwt.core.shared.GWT.create(CustomIplantTagResources.class);
-        detailsPanel.add(createSample(tags, "", r, true));
+        tagPresenter.buildTagCloudForSelectedResource(tags);
     }
 
-    private Widget createSample(List<IplantTag> tags, String containerStyle, CustomIplantTagResources resources, boolean editable) {
+    private Widget createTagView(String containerStyle,
+                                 CustomIplantTagResources resources,
+                                 boolean editable) {
         HorizontalPanel hp = new HorizontalPanel();
-        // TagList
         SimplePanel boundaryBox = new SimplePanel();
-        IplantTagListPresenter tagPresenter = createTagList(resources, editable, this.createOnFocusCmd(boundaryBox, containerStyle), this.createOnBlurCmd(boundaryBox, containerStyle));
-        tagPresenter.buildTagCloudForSelectedResource(tags);
+        if (tagPresenter == null) {
+            tagPresenter = createTagList(resources,
+                                         editable,
+                                         this.createOnFocusCmd(boundaryBox, containerStyle),
+                                         this.createOnBlurCmd(boundaryBox, containerStyle));
+
+        }
         boundaryBox.setWidget(tagPresenter.getTagListView());
         hp.add(boundaryBox);
         return hp;

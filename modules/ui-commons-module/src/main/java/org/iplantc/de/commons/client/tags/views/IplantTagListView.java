@@ -238,6 +238,7 @@ public class IplantTagListView extends Composite implements IsWidget {
         } else {
             uiHandlers.onAddTag(tag);
         }
+        tagSearchCbo.clear();
     }
 
 }
