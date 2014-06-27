@@ -348,46 +348,7 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter, Di
 
     @Override
     public void onRequestManageMetadata(ManageMetadataEvent event) {
-        DiskResource selected = event.getDiskResource();
-        final DiskResourceMetadataView mview = new DiskResourceMetadataView(selected);
-        final DiskResourceMetadataView.Presenter p = new MetadataPresenter(selected, mview);
-        final IPlantDialog ipd = new IPlantDialog(true);
-
-        ipd.setSize("600", "400"); //$NON-NLS-1$ //$NON-NLS-2$
-        ipd.setHeadingText(displayStrings.metadata() + ":" + selected.getId()); //$NON-NLS-1$
-        ipd.setResizable(true);
-        ipd.addHelp(new HTML(I18N.HELP.metadataHelp()));
-        p.go(ipd);
-        if (DiskResourceUtil.isWritable(selected)) {
-            ipd.setHideOnButtonClick(false);
-            ipd.addOkButtonSelectHandler(new SelectHandler() {
-                @Override
-                public void onSelect(SelectEvent event) {
-                    if (mview.shouldValidate()) {
-                        if (mview.isValid()) {
-                            p.setDiskResourceMetaData(mview.getMetadataToAdd(), mview.getMetadataToDelete(), new DiskResourceMetadataUpdateCallback());
-                            ipd.hide();
-                        } else {
-                            IplantAnnouncer.getInstance().schedule(new ErrorAnnouncementConfig(I18N.ERROR.metadataFormInvalid()));
-                        }
-                    } else {
-                        p.setDiskResourceMetaData(mview.getMetadataToAdd(), mview.getMetadataToDelete(), new DiskResourceMetadataUpdateCallback());
-                        ipd.hide();
-                    }
-                }
-            });
-
-            ipd.addCancelButtonSelectHandler(new SelectHandler() {
-
-                @Override
-                public void onSelect(SelectEvent event) {
-                    ipd.hide();
-                }
-            });
-        }
-
-        ipd.show();
-
+        manageSelectedResourceMetadata(event.getDiskResource());
     }
 
     @Override
@@ -868,31 +829,32 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter, Di
 
     @Override
     public void manageSelectedResourceMetadata() {
-        DiskResource selected = getSelectedDiskResources().iterator().next();
-        final DiskResourceMetadataView mview = new DiskResourceMetadataView(selected);
-        final DiskResourceMetadataView.Presenter p = new MetadataPresenter(selected, mview);
+        manageSelectedResourceMetadata(getSelectedDiskResources().iterator().next());
+    }
+
+    private void manageSelectedResourceMetadata(DiskResource selected) {
+        final DiskResourceMetadataView mdView = new DiskResourceMetadataView(selected);
+        final DiskResourceMetadataView.Presenter mdPresenter = new MetadataPresenter(selected, mdView);
         final IPlantDialog ipd = new IPlantDialog(true);
 
         ipd.setSize("600", "400"); //$NON-NLS-1$ //$NON-NLS-2$
-        ipd.setHeadingText(I18N.DISPLAY.metadata() + ":" + selected.getId()); //$NON-NLS-1$
+        ipd.setHeadingText(I18N.DISPLAY.metadata() + ":" + selected.getName()); //$NON-NLS-1$
         ipd.setResizable(true);
         ipd.addHelp(new HTML(I18N.HELP.metadataHelp()));
-        p.go(ipd);
+
+        mdPresenter.go(ipd);
+
         if (DiskResourceUtil.isWritable(selected)) {
             ipd.setHideOnButtonClick(false);
             ipd.addOkButtonSelectHandler(new SelectHandler() {
+
                 @Override
                 public void onSelect(SelectEvent event) {
-                    if (mview.shouldValidate()) {
-                        if (mview.isValid()) {
-                            p.setDiskResourceMetaData(mview.getMetadataToAdd(), mview.getMetadataToDelete(), new DiskResourceMetadataUpdateCallback());
-                            ipd.hide();
-                        } else {
-                            IplantAnnouncer.getInstance().schedule(new ErrorAnnouncementConfig(I18N.ERROR.metadataFormInvalid()));
-                        }
+                    if (mdView.shouldValidate() && !mdView.isValid()) {
+                        ErrorAnnouncementConfig errNotice = new ErrorAnnouncementConfig(I18N.ERROR.metadataFormInvalid());
+                        IplantAnnouncer.getInstance().schedule(errNotice);
                     } else {
-                        p.setDiskResourceMetaData(mview.getMetadataToAdd(), mview.getMetadataToDelete(), new DiskResourceMetadataUpdateCallback());
-                        ipd.hide();
+                        mdPresenter.setDiskResourceMetadata(new DiskResourceMetadataUpdateCallback(ipd));
                     }
                 }
             });
@@ -907,7 +869,6 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter, Di
         }
 
         ipd.show();
-
     }
 
     @Override

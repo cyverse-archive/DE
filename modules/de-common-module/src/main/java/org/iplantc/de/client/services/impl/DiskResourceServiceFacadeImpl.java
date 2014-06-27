@@ -15,6 +15,8 @@ import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.client.models.diskResources.DiskResourceAutoBeanFactory;
 import org.iplantc.de.client.models.diskResources.DiskResourceExistMap;
 import org.iplantc.de.client.models.diskResources.DiskResourceMetadata;
+import org.iplantc.de.client.models.diskResources.DiskResourceMetadataTemplate;
+import org.iplantc.de.client.models.diskResources.DiskResourceMetadataTemplateList;
 import org.iplantc.de.client.models.diskResources.DiskResourceStatMap;
 import org.iplantc.de.client.models.diskResources.File;
 import org.iplantc.de.client.models.diskResources.Folder;
@@ -901,4 +903,44 @@ public class DiskResourceServiceFacadeImpl extends TreeStore<Folder> implements 
         callService(wrapper, callback);
     }
 
+    @Override
+    public void getMetadataTemplateAvus(DiskResource resource,
+                                        AsyncCallback<DiskResourceMetadataTemplate> callback) {
+        String address = deProperties.getDataMgmtBaseUrl() + resource.getUUID() + "/template-avus"; //$NON-NLS-1$
+        final ServiceCallWrapper wrapper = new ServiceCallWrapper(GET, address);
+
+        callService(wrapper, new AsyncCallbackConverter<String, DiskResourceMetadataTemplate>(callback) {
+
+            @Override
+            protected DiskResourceMetadataTemplate convertFrom(String result) {
+                DiskResourceMetadataTemplateList list = decode(DiskResourceMetadataTemplateList.class,
+                                                               result);
+                if (list != null && list.getTemplates().size() > 0) {
+                    return list.getTemplates().get(0);
+                } else {
+                    return null;
+                }
+            }
+        });
+    }
+
+    @Override
+    public void setMetadataTemplateAvus(DiskResource resource,
+                                        DiskResourceMetadataTemplate templateAvus,
+                                        AsyncCallback<String> callback) {
+        String address = deProperties.getDataMgmtBaseUrl() + resource.getUUID() + "/template-avus/" //$NON-NLS-1$
+                + templateAvus.getId();
+        ServiceCallWrapper wrapper = new ServiceCallWrapper(POST, address, encode(templateAvus));
+        callService(wrapper, callback);
+    }
+
+    @Override
+    public void deleteMetadataTemplateAvus(DiskResource resource,
+                                           DiskResourceMetadataTemplate templateAvus,
+                                           AsyncCallback<String> callback) {
+        String address = deProperties.getDataMgmtBaseUrl() + resource.getUUID() + "/template-avus/" //$NON-NLS-1$
+                + templateAvus.getId();
+        ServiceCallWrapper wrapper = new ServiceCallWrapper(DELETE, address);
+        callService(wrapper, callback);
+    }
 }
