@@ -36,7 +36,7 @@ public class CollaboratorsServiceFacadeImpl implements CollaboratorsServiceFacad
     @Override
     public void searchCollaborators(String term, AsyncCallback<String> callback) {
         String address = deProperties.getMuleServiceBaseUrl()
-                + "user-search/" + URL.encodeQueryString(term.trim()); //$NON-NLS-1$
+                + "user-search?search=" + URL.encodeQueryString(term.trim()); //$NON-NLS-1$
 
         ServiceCallWrapper wrapper = new ServiceCallWrapper(GET, address);
 
