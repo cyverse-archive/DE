@@ -30,7 +30,7 @@ import javax.servlet.ServletException;
 public class ConfluenceServlet extends SessionManagementServlet implements ConfluenceService {
     private static final long serialVersionUID = -8576144366505536966L;
 
-    private static final Logger LOG = Logger.getLogger(ConfluenceServlet.class);
+    private static final Logger LOG = Logger.getLogger(ConfluenceServlet.class.getName());
 
     /** A filled star */
     private static final String BLACK_STAR = "&#x2605;";
@@ -91,13 +91,14 @@ public class ConfluenceServlet extends SessionManagementServlet implements Confl
             content = getTemplate();
             content = replaceTemplate(content, toolName, description);
         } catch (IOException e) {
-            LOG.error("Can't read wiki template file.", e);
+            LOG.error("Can't read wiki template file.");
             // if the template cannot be read, use the raw description text instead
             content = description;
         }
 
         try {
-            return getConfluenceClient().addPage(toolName, content);
+            IPlantConfluenceClient confluenceClient = getConfluenceClient();
+            return confluenceClient.addPage(toolName, content);
         } catch (Exception e) {
             throw new ConfluenceException(e);
         }
@@ -168,7 +169,9 @@ public class ConfluenceServlet extends SessionManagementServlet implements Confl
      * @throws IOException
      */
     private String getTemplate() throws IOException {
-        InputStream stream = ConfluenceServlet.class.getResourceAsStream(TEMPLATE_FILE);
+        InputStream stream = Thread.currentThread()
+                                   .getContextClassLoader()
+                                   .getResourceAsStream(TEMPLATE_FILE);
         try {
             BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
             StringBuilder builder = new StringBuilder();

@@ -1,0 +1,42 @@
+{color:#800080}Items in PURPLE and links are the things you must modify. Change PURPLE items to{color} {color:#000000}BLACK{color} {color:#800080}when you save your page.{color}
+
+h1. {color:#800080}@TOOLNAME{color}
+Community rating: @AVGRATING
+
+@DESCRIPTION
+
+h2. Quick Start
+
+* To use {*}@TOOLNAME{*}, import your data in {color:#800080}\__\_{color} format.
+* *Resources:* {color:#800080}[http://replace.with.URL.for.tool.documentation.from.the.tool.source.org]{color}
+
+h2. Test Data
+
+{info}Test data for this app appears directly in the Discovery Environment in the Data window under _Community Data \-> iplantcollaborative \-> example_data \->_ {color:#800080}{_}directory{_}{color}.{info}
+
+h4. Input File(s)
+
+Use {color:#800080}{*}TerriblyIncomprehensible.txt{*}{color} {color:#800080}and{color} {color:#800080}{*}HorriblyWritten.txt{*}{color} from the directory above as test input.
+
+h4. Parameters Used in App
+
+When the app is run in the Discovery Environment, use the following parameters with the above input file(s) to get the output provided in the next section below.
+
+{color:#800080}Use either the "Default parameters..." section OR fill in the "Use these parameters..." section. Delete the unused section and the OR. Then, delete this note.{color}
+
+* Default parameters only, no further configuration needed.
+
+OR
+* Use these parameters within the DE app interface:
+** {color:#800080}parameter name - value/setting{color}
+** {color:#800080}parameter name - value/setting{color}
+
+
+
+h4. Output File(s)
+
+Expect a {color:#800080}text file named after the input files{color} as output. For the test case, the output file you will find in the example_data directory is named {color:#800080}{*}BeautifulProse.txt{*}{color}.
+
+h2. Tool Source for App
+
+* {color:#800080}[http://replace.with.URL.for.tool.org]{color}
