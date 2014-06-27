@@ -113,7 +113,7 @@ public class AppUserServiceFacadeImpl implements AppUserServiceFacade {
      */
     @Override
     public void getDataObjectsForApp(String analysisId, AsyncCallback<String> callback) {
-        String address = deProperties.getUnproctedMuleServiceBaseUrl() + "analysis-data-objects/" + analysisId;
+        String address = deProperties.getMuleServiceBaseUrl() + "apps/" + analysisId + "/data-objects";
 
         ServiceCallWrapper wrapper = new ServiceCallWrapper(address);
         deServiceFacade.getServiceData(wrapper, callback);

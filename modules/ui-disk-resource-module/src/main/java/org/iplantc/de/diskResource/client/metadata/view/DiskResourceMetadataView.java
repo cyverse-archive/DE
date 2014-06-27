@@ -4,6 +4,7 @@ import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.client.models.diskResources.DiskResourceAutoBeanFactory;
 import org.iplantc.de.client.models.diskResources.DiskResourceMetadata;
 import org.iplantc.de.client.models.diskResources.DiskResourceMetadataList;
+import org.iplantc.de.client.models.diskResources.DiskResourceMetadataTemplate;
 import org.iplantc.de.client.models.diskResources.MetadataTemplateAttribute;
 import org.iplantc.de.client.models.diskResources.MetadataTemplateInfo;
 import org.iplantc.de.client.util.DiskResourceUtil;
@@ -38,7 +39,6 @@ import com.google.gwt.uibinder.client.UiTemplate;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
-import com.google.web.bindery.autobean.shared.AutoBean;
 import com.google.web.bindery.autobean.shared.AutoBeanCodex;
 
 import com.sencha.gxt.core.client.XTemplates;
@@ -95,6 +95,7 @@ import com.sencha.gxt.widget.core.client.selection.SelectionChangedEvent.Selecti
 import com.sencha.gxt.widget.core.client.tips.QuickTip;
 import com.sencha.gxt.widget.core.client.toolbar.ToolBar;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -112,7 +113,6 @@ public class DiskResourceMetadataView implements IsWidget {
                 public void onDialogHide(DialogHideEvent event) {
                     if(PredefinedButton.YES.equals(event.getHideButton())){
                         alc.remove(templateForm);
-                        deleteTemplateAttrs();
                         templateCombo.setEnabled(true);
                         expandUserMetadataPanel();
                         templateCombo.setValue(null);
@@ -156,7 +156,7 @@ public class DiskResourceMetadataView implements IsWidget {
          */
         void getDiskResourceMetadata(AsyncCallback<String> callback);
 
-        void setDiskResourceMetaData(Set<DiskResourceMetadata> metadataToAdd, Set<DiskResourceMetadata> metadataToDelete, DiskResourceMetadataUpdateCallback diskResourceMetadataUpdateCallback);
+        void setDiskResourceMetadata(DiskResourceMetadataUpdateCallback callback);
 
         DiskResource getSelectedResource();
 
@@ -166,11 +166,9 @@ public class DiskResourceMetadataView implements IsWidget {
 
     }
 
-    private static final String IPC_METADATA_TEMPLATE_ATTR = "ipc-metadata-template"; //$NON-NLS-1$
     private static final String USER_UNIT_TAG = "ipc_user_unit_tag"; //$NON-NLS-1$
-    private static final String IPC_METADATA_TEMPLATE_COMPELTE = "ipc-metadata-template-complete"; //$NON-NLS-1$
-    private static final String METADATA_COMPLETE = "Metadata complete";
-    private static final String IPC_UUID = "ipc_UUID";
+    private static final String METADATA_COMPLETE = "Metadata complete"; //$NON-NLS-1$
+    private static final String IPC_UUID = "ipc_UUID"; //$NON-NLS-1$
 
     @UiTemplate("DiskResourceMetadataEditorPanel.ui.xml")
     interface DiskResourceMetadataEditorPanelUiBinder extends UiBinder<Widget, DiskResourceMetadataView> {
@@ -227,9 +225,11 @@ public class DiskResourceMetadataView implements IsWidget {
 
     private final FastMap<Field<?>> templateAttrFieldMap = new FastMap<Field<?>>();
 
-    private final FastMap<DiskResourceMetadata> attrAvuMap = new FastMap<DiskResourceMetadata>();
+    private final FastMap<DiskResourceMetadata> templateAttrAvuMap = new FastMap<DiskResourceMetadata>();
 
     private MetadataTemplateInfo selectedTemplate;
+
+    private DiskResourceMetadataTemplate currentMetadataTemplate;
 
     private final DiskResource selectedResource;
 
@@ -321,8 +321,6 @@ public class DiskResourceMetadataView implements IsWidget {
             if (field != null) {
                 templateAttrFieldMap.put(attribute.getName(), field);
                 templateContainer.add(buildFieldLabel(field, attribute.getName(), attribute.getDescription(), !attribute.isRequired()), new VerticalLayoutData(.90, -1));
-                // remove these from store so that they don't display in grid
-                listStore.remove(attrAvuMap.get(attribute.getName()));
             }
         }
         alc.forceLayout();
@@ -333,26 +331,11 @@ public class DiskResourceMetadataView implements IsWidget {
         return new IPlantAnchor(I18N.DISPLAY.metadataTemplateRemove(), 575, new RemoveTemplateHandlerImpl());
     }
 
-
-    private void deleteTemplateAttrs() {
-        DiskResourceMetadata drmd = attrAvuMap.get(IPC_METADATA_TEMPLATE_ATTR);
-        if (drmd != null) {
-            toBeDeleted.add(drmd);
-            for (String key : templateAttrFieldMap.keySet()) {
-                DiskResourceMetadata avu = attrAvuMap.get(key);
-                if (avu != null) {
-                    toBeDeleted.add(avu);
-                    listStore.remove(avu);
-                }
-            }
-        }
-    }
-
     private TextField buildTextField(MetadataTemplateAttribute attribute) {
         TextField fld = new TextField();
         fld.setAllowBlank(!attribute.isRequired());
 
-        DiskResourceMetadata avu = attrAvuMap.get(attribute.getName());
+        DiskResourceMetadata avu = templateAttrAvuMap.get(attribute.getName());
         if (avu != null) {
             fld.setValue(avu.getValue());
         }
@@ -366,8 +349,8 @@ public class DiskResourceMetadataView implements IsWidget {
         nf.setAllowDecimals(false);
         nf.setAllowNegative(true);
 
-        DiskResourceMetadata avu = attrAvuMap.get(attribute.getName());
-        if (avu != null) {
+        DiskResourceMetadata avu = templateAttrAvuMap.get(attribute.getName());
+        if (avu != null && !Strings.isNullOrEmpty(avu.getValue())) {
             nf.setValue(new Integer(avu.getValue()));
         }
 
@@ -380,8 +363,8 @@ public class DiskResourceMetadataView implements IsWidget {
         nf.setAllowDecimals(true);
         nf.setAllowNegative(true);
 
-        DiskResourceMetadata avu = attrAvuMap.get(attribute.getName());
-        if (avu != null) {
+        DiskResourceMetadata avu = templateAttrAvuMap.get(attribute.getName());
+        if (avu != null && !Strings.isNullOrEmpty(avu.getValue())) {
             nf.setValue(new Double(avu.getValue()));
         }
 
@@ -406,7 +389,7 @@ public class DiskResourceMetadataView implements IsWidget {
         area.setAllowBlank(!attribute.isRequired());
         area.setHeight(200);
 
-        DiskResourceMetadata avu = attrAvuMap.get(attribute.getName());
+        DiskResourceMetadata avu = templateAttrAvuMap.get(attribute.getName());
         if (avu != null) {
             area.setValue(avu.getValue());
         }
@@ -417,8 +400,8 @@ public class DiskResourceMetadataView implements IsWidget {
     private CheckBox buildBooleanField(MetadataTemplateAttribute attribute) {
         CheckBox cb = new CheckBox();
 
-        DiskResourceMetadata avu = attrAvuMap.get(attribute.getName());
-        if (avu != null) {
+        DiskResourceMetadata avu = templateAttrAvuMap.get(attribute.getName());
+        if (avu != null && !Strings.isNullOrEmpty(avu.getValue())) {
             cb.setValue(new Boolean(avu.getValue()));
         }
 
@@ -441,8 +424,8 @@ public class DiskResourceMetadataView implements IsWidget {
         tf.setAllowBlank(!attribute.isRequired());
         tf.setEmptyText(timestampFormat.format(new Date(0)));
 
-        DiskResourceMetadata avu = attrAvuMap.get(attribute.getName());
-        if (avu != null) {
+        DiskResourceMetadata avu = templateAttrAvuMap.get(attribute.getName());
+        if (avu != null && !Strings.isNullOrEmpty(avu.getValue())) {
             try {
                 tf.setValue(timestampFormat.parse(avu.getValue()));
             } catch (Exception e) {
@@ -641,6 +624,52 @@ public class DiskResourceMetadataView implements IsWidget {
         return cm;
     }
 
+    public DiskResourceMetadataTemplate getMetadataTemplateToAdd() {
+        if (selectedTemplate == null) {
+            return null;
+        }
+
+        DiskResourceMetadataTemplate metadataTemplate = autoBeanFactory.templateAvus().as();
+        metadataTemplate.setId(selectedTemplate.getId());
+
+        ArrayList<DiskResourceMetadata> avus = Lists.newArrayList();
+        metadataTemplate.setAvus(avus);
+
+        for (String attr : templateAttrFieldMap.keySet()) {
+            DiskResourceMetadata avu = templateAttrAvuMap.get(attr);
+            if (avu == null) {
+                avu = newMetadata(attr, "", ""); //$NON-NLS-1$ //$NON-NLS-2$
+                templateAttrAvuMap.put(attr, avu);
+            }
+            if (Strings.isNullOrEmpty(avu.getId())) {
+                avu.setId(null);
+            }
+
+            Field<?> field = templateAttrFieldMap.get(attr);
+            if (field.isValid() && field.getValue() != null) {
+                String value = field.getValue().toString();
+                if ((field instanceof DateField) && !Strings.isNullOrEmpty(value)) {
+                    value = timestampFormat.format(((DateField)field).getValue());
+                }
+
+                avu.setValue(value);
+            }
+
+            avus.add(avu);
+        }
+
+        return metadataTemplate;
+    }
+
+    public DiskResourceMetadataTemplate getMetadataTemplateToDelete() {
+        if (selectedTemplate == null || currentMetadataTemplate == null
+                || !(selectedTemplate.getId().equals(currentMetadataTemplate.getId()))) {
+            return currentMetadataTemplate;
+        }
+
+        return null;
+    }
+
     public Set<DiskResourceMetadata> getMetadataToDelete() {
         return toBeDeleted;
     }
@@ -648,21 +677,6 @@ public class DiskResourceMetadataView implements IsWidget {
     public Set<DiskResourceMetadata> getMetadataToAdd() {
         HashSet<DiskResourceMetadata> metaDataToAdd = Sets.newHashSet();
         metaDataToAdd.addAll(listStore.getAll());
-
-        if (selectedTemplate != null) {
-            metaDataToAdd.add(newMetadata(IPC_METADATA_TEMPLATE_ATTR, selectedTemplate.getId(), "")); //$NON-NLS-1$
-
-            for (String attr : templateAttrFieldMap.keySet()) {
-                Field<?> field = templateAttrFieldMap.get(attr);
-                if (field.isValid() && field.getValue() != null && !field.getValue().toString().isEmpty()) {
-                    String value = field.getValue().toString();
-                    if (field instanceof DateField) {
-                        value = timestampFormat.format(((DateField)field).getValue());
-                    }
-                    metaDataToAdd.add(newMetadata(attr, value, "")); //$NON-NLS-1$
-                }
-            }
-        }
 
         return metaDataToAdd;
     }
@@ -721,30 +735,32 @@ public class DiskResourceMetadataView implements IsWidget {
 
     public void loadMetadata(DiskResourceMetadataList metadataList) {
         List<DiskResourceMetadata> metadata = metadataList.getMetadata();
-        attrAvuMap.clear();
 
-        DiskResourceMetadata templateAvu = null;
         for (DiskResourceMetadata avu : metadata) {
             avu.setId(unique_avu_id++ + ""); //$NON-NLS-1$
-            String attribute = avu.getAttribute();
-            attrAvuMap.put(attribute, avu);
-
-            if (attribute.equalsIgnoreCase(IPC_METADATA_TEMPLATE_ATTR)) {
-                templateAvu = avu;
-            }
         }
 
         listStore.clear();
         listStore.commitChanges();
         listStore.addAll(metadata);
 
-        if (templateAvu != null) {
-            listStore.remove(templateAvu);
-            selectedTemplate = templateStore.findModelWithKey(templateAvu.getValue());
+        grid.getStore().setEnableFilters(true);
+    }
+
+    public void loadMetadataTemplate(DiskResourceMetadataTemplate metadataTemplate) {
+        currentMetadataTemplate = metadataTemplate;
+        templateAttrAvuMap.clear();
+
+        if (metadataTemplate != null) {
+            for (DiskResourceMetadata avu : metadataTemplate.getAvus()) {
+                String attribute = avu.getAttribute();
+                templateAttrAvuMap.put(attribute, avu);
+            }
+
+            selectedTemplate = templateStore.findModelWithKey(metadataTemplate.getId());
             templateCombo.setValue(selectedTemplate);
             onTemplateSelected(selectedTemplate);
         }
-        grid.getStore().setEnableFilters(true);
     }
 
     public boolean isValid() {
@@ -802,8 +818,7 @@ public class DiskResourceMetadataView implements IsWidget {
 
     private DiskResourceMetadata copy(DiskResourceMetadata drm) {
         DiskResourceAutoBeanFactory factory = GWT.create(DiskResourceAutoBeanFactory.class);
-        AutoBean<DiskResourceMetadata> bean = AutoBeanCodex.decode(factory, DiskResourceMetadata.class, "{}");
-        DiskResourceMetadata temp = bean.as();
+        DiskResourceMetadata temp = AutoBeanCodex.decode(factory, DiskResourceMetadata.class, "{}").as(); //$NON-NLS-1$
         temp.setAttribute(drm.getAttribute());
         temp.setValue(drm.getValue());
         temp.setUnit(drm.getUnit());

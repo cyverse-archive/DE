@@ -26,6 +26,7 @@ public class App extends IPCType{
 	private int publicId;
 	private String ID;
     private String templateId;
+    private String appType;
 
 	public App(int id) {
 		this.id = id;
@@ -147,5 +148,13 @@ public class App extends IPCType{
 
     public void setTemplateId(String templateId) {
         this.templateId = templateId;
+    }
+
+    public String getAppType() {
+        return appType;
+    }
+
+    public void setAppType(String appType) {
+        this.appType = appType;
     }
 }

@@ -14,6 +14,12 @@ public interface App extends HasId, HasName, HasDescription {
     
     static final String NEW_APP_ID = "NEW_APP_TEMPLATE";
 
+    @PropertyName("app_type")
+    String getAppType();
+
+    @PropertyName("app_type")
+    void setAppType(String appType);
+
     @PropertyName("is_favorite")
     boolean isFavorite();
 

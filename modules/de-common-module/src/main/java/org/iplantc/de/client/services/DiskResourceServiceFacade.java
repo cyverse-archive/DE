@@ -5,6 +5,7 @@ import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.client.models.diskResources.DiskResourceAutoBeanFactory;
 import org.iplantc.de.client.models.diskResources.DiskResourceExistMap;
 import org.iplantc.de.client.models.diskResources.DiskResourceMetadata;
+import org.iplantc.de.client.models.diskResources.DiskResourceMetadataTemplate;
 import org.iplantc.de.client.models.diskResources.DiskResourceStatMap;
 import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.client.models.diskResources.RootFolders;
@@ -383,5 +384,15 @@ public interface DiskResourceServiceFacade {
      */
     void shareWithAnonymous(final HasPaths diskResourcePaths, final AsyncCallback<String> callback);
 
+    void getMetadataTemplateAvus(final DiskResource resource,
+                                 final AsyncCallback<DiskResourceMetadataTemplate> callback);
+
+    void setMetadataTemplateAvus(final DiskResource resource,
+                                 final DiskResourceMetadataTemplate templateAvus,
+                                 final AsyncCallback<String> callback);
+
+    void deleteMetadataTemplateAvus(final DiskResource resource,
+                                    final DiskResourceMetadataTemplate templateAvus,
+                                    final AsyncCallback<String> callback);
 }
 

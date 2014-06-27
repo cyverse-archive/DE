@@ -5,6 +5,7 @@ import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.client.models.diskResources.DiskResourceAutoBeanFactory;
 import org.iplantc.de.client.models.diskResources.DiskResourceExistMap;
 import org.iplantc.de.client.models.diskResources.DiskResourceMetadata;
+import org.iplantc.de.client.models.diskResources.DiskResourceMetadataTemplate;
 import org.iplantc.de.client.models.diskResources.DiskResourceStatMap;
 import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.client.models.diskResources.RootFolders;
@@ -244,5 +245,25 @@ public class DiskResourceServiceFacadeStub implements DiskResourceServiceFacade 
     public void shareWithAnonymous(HasPaths diskResourcePaths, AsyncCallback<String> callback) {
         // TODO Auto-generated method stub
 
+    }
+
+    @Override
+    public void getMetadataTemplateAvus(DiskResource resource,
+                                        AsyncCallback<DiskResourceMetadataTemplate> callback) {
+        // TODO Auto-generated method stub
+    }
+
+    @Override
+    public void setMetadataTemplateAvus(DiskResource resource,
+                                        DiskResourceMetadataTemplate templateAvus,
+                                        AsyncCallback<String> callback) {
+        // TODO Auto-generated method stub
+    }
+
+    @Override
+    public void deleteMetadataTemplateAvus(DiskResource resource,
+                                           DiskResourceMetadataTemplate templateAvus,
+                                           AsyncCallback<String> callback) {
+        // TODO Auto-generated method stub
     }
 }

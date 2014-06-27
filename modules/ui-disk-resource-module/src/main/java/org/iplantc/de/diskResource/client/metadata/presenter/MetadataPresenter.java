@@ -3,8 +3,8 @@ package org.iplantc.de.diskResource.client.metadata.presenter;
 import org.iplantc.de.client.gin.ServicesInjector;
 import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.client.models.diskResources.DiskResourceAutoBeanFactory;
-import org.iplantc.de.client.models.diskResources.DiskResourceMetadata;
 import org.iplantc.de.client.models.diskResources.DiskResourceMetadataList;
+import org.iplantc.de.client.models.diskResources.DiskResourceMetadataTemplate;
 import org.iplantc.de.client.models.diskResources.MetadataTemplate;
 import org.iplantc.de.client.models.diskResources.MetadataTemplateAttribute;
 import org.iplantc.de.client.models.diskResources.MetadataTemplateInfo;
@@ -21,7 +21,6 @@ import com.google.web.bindery.autobean.shared.AutoBean;
 import com.google.web.bindery.autobean.shared.AutoBeanCodex;
 
 import java.util.List;
-import java.util.Set;
 
 public class MetadataPresenter implements Presenter {
 
@@ -36,6 +35,7 @@ public class MetadataPresenter implements Presenter {
         view.setPresenter(this);
         getDiskResourceMetadata(new RetrieveMetadataCallback());
         getTemplates();
+        getMetadataTemplateAvus();
     }
 
     @Override
@@ -49,8 +49,68 @@ public class MetadataPresenter implements Presenter {
     }
 
     @Override
-    public void setDiskResourceMetaData(Set<DiskResourceMetadata> metadataToAdd, Set<DiskResourceMetadata> metadataToDelete, DiskResourceMetadataUpdateCallback diskResourceMetadataUpdateCallback) {
-        drService.setDiskResourceMetaData(resource, metadataToAdd, metadataToDelete, diskResourceMetadataUpdateCallback);
+    public void setDiskResourceMetadata(final DiskResourceMetadataUpdateCallback callback) {
+        AsyncCallback<String> batchAvuCallback = new AsyncCallback<String>() {
+
+            @Override
+            public void onSuccess(String result) {
+                saveMetadataTemplateAvus(callback);
+            }
+
+            @Override
+            public void onFailure(Throwable caught) {
+                callback.onFailure(caught);
+            }
+        };
+
+        drService.setDiskResourceMetaData(resource,
+                                          view.getMetadataToAdd(),
+                                          view.getMetadataToDelete(),
+                                          batchAvuCallback);
+    }
+
+    private void saveMetadataTemplateAvus(final DiskResourceMetadataUpdateCallback callback) {
+        AsyncCallback<String> templateAvuCallback = new AsyncCallback<String>() {
+
+            @Override
+            public void onSuccess(String result) {
+                setMetadataTemplateAvus(callback);
+            }
+
+            @Override
+            public void onFailure(Throwable caught) {
+                callback.onFailure(caught);
+            }
+        };
+
+        DiskResourceMetadataTemplate avusToDelete = view.getMetadataTemplateToDelete();
+        if (avusToDelete != null) {
+            drService.deleteMetadataTemplateAvus(resource, avusToDelete, templateAvuCallback);
+        } else {
+            templateAvuCallback.onSuccess(null);
+        }
+    }
+
+    private void setMetadataTemplateAvus(final DiskResourceMetadataUpdateCallback callback) {
+        AsyncCallback<String> templateAvuCallback = new AsyncCallback<String>() {
+
+            @Override
+            public void onSuccess(String result) {
+                callback.onSuccess(result);
+            }
+
+            @Override
+            public void onFailure(Throwable caught) {
+                callback.onFailure(caught);
+            }
+        };
+
+        DiskResourceMetadataTemplate metadataTemplateToAdd = view.getMetadataTemplateToAdd();
+        if (metadataTemplateToAdd != null) {
+            drService.setMetadataTemplateAvus(resource, metadataTemplateToAdd, templateAvuCallback);
+        } else {
+            templateAvuCallback.onSuccess(null);
+        }
     }
 
     @Override
@@ -94,6 +154,26 @@ public class MetadataPresenter implements Presenter {
 
     }
 
+    @Override
+    public DiskResource getSelectedResource() {
+        return resource;
+    }
+
+    private void getMetadataTemplateAvus() {
+        drService.getMetadataTemplateAvus(resource, new AsyncCallback<DiskResourceMetadataTemplate>() {
+
+            @Override
+            public void onSuccess(DiskResourceMetadataTemplate result) {
+                view.loadMetadataTemplate(result);
+            }
+
+            @Override
+            public void onFailure(Throwable caught) {
+                ErrorHandler.post("Unable to retrieve template AVUs.", caught);
+            }
+        });
+    }
+
     private final class RetrieveMetadataCallback implements AsyncCallback<String> {
 
         public RetrieveMetadataCallback() {
@@ -111,10 +191,4 @@ public class MetadataPresenter implements Presenter {
             ErrorHandler.post(caught);
         }
     }
-
-    @Override
-    public DiskResource getSelectedResource() {
-        return resource;
-    }
-
 }

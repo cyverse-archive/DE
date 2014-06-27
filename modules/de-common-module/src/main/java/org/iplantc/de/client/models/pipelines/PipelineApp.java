@@ -23,6 +23,12 @@ public interface PipelineApp extends HasName {
     @PropertyName("template_id")
     public void setTemplateId(String template_id);
 
+    @PropertyName("app_type")
+    public String getAppType();
+
+    @PropertyName("app_type")
+    public void setAppType(String appType);
+
     public String getDescription();
 
     public void setDescription(String description);

@@ -5,6 +5,7 @@ import org.iplantc.de.client.models.errors.diskResources.ErrorUpdateMetadata;
 import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
 import org.iplantc.de.commons.client.info.SuccessAnnouncementConfig;
+import org.iplantc.de.commons.client.views.gxt3.dialogs.IPlantDialog;
 import org.iplantc.de.diskResource.client.presenters.callbacks.DiskResourceServiceCallback;
 import org.iplantc.de.resources.client.messages.I18N;
 
@@ -14,13 +15,22 @@ import com.google.web.bindery.autobean.shared.AutoBeanCodex;
 
 public class DiskResourceMetadataUpdateCallback extends DiskResourceServiceCallback<String> {
 
-    public DiskResourceMetadataUpdateCallback() {
-        super(null);
+    private final IPlantDialog dialog;
+
+    public DiskResourceMetadataUpdateCallback(IPlantDialog dialog) {
+        super(dialog);
+
+        this.dialog = dialog;
     }
-    
+
     @Override
     public void onSuccess(String result) {
         super.onSuccess(result);
+
+        if (dialog != null) {
+            dialog.hide();
+        }
+
         IplantAnnouncer.getInstance().schedule(new SuccessAnnouncementConfig(I18N.DISPLAY.metadataSuccess()));
     }
 
