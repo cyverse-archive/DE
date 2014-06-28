@@ -228,7 +228,6 @@ public class DiskResourceViewToolbarImpl extends Composite implements DiskResour
         // Edit menu
         renameMi.ensureDebugId(baseID + Ids.EDIT_MENU + Ids.MENU_ITEM_RENAME);
         moveMi.ensureDebugId(baseID + Ids.EDIT_MENU + Ids.MENU_ITEM_MOVE);
-        deleteMi.ensureDebugId(baseID + Ids.EDIT_MENU + Ids.MENU_ITEM_DELETE);
         editFileMi.ensureDebugId(baseID + Ids.EDIT_MENU + Ids.MENU_ITEM_EDIT_FILE);
         editInfoTypeMi.ensureDebugId(baseID + Ids.EDIT_MENU + Ids.MENU_ITEM_EDIT_INFO_TYPE);
         metadataMi.ensureDebugId(baseID + Ids.EDIT_MENU + Ids.MENU_ITEM_METADATA);
@@ -248,6 +247,7 @@ public class DiskResourceViewToolbarImpl extends Composite implements DiskResour
         openTrashMi.ensureDebugId(baseID + Ids.TRASH_MENU + Ids.MENU_ITEM_OPEN_TRASH);
         restoreMi.ensureDebugId(baseID + Ids.TRASH_MENU + Ids.MENU_ITEM_RESTORE);
         emptyTrashMi.ensureDebugId(baseID + Ids.TRASH_MENU + Ids.MENU_ITEM_EMPTY_TRASH);
+        deleteMi.ensureDebugId(baseID + Ids.TRASH_MENU + Ids.MENU_ITEM_DELETE);
 
     }
 
