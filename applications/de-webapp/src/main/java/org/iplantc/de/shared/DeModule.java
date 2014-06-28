@@ -25,5 +25,14 @@ public interface DeModule {
         String FORUMS_BUTTON = ".forumsButton";
 
         String DISK_RESOURCE_WINDOW = "diskResourceWindow";
+
+        /**
+         * window tool buttons
+         */
+        String WIN_MAX_BTN = ".maximize";
+        String WIN_RESTORE_BTN = ".restore";
+        String WIN_MIN_BTN = ".minimize";
+        String WIN_CLOSE_BTN = ".close";
+        String WIN_LAYOUT_BTN = ".layout";
     }
 }

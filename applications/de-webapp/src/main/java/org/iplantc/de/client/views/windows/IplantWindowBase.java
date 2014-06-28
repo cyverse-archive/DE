@@ -9,6 +9,7 @@ import org.iplantc.de.client.models.WindowState;
 import org.iplantc.de.commons.client.views.window.configs.WindowConfig;
 import org.iplantc.de.resources.client.IplantResources;
 import org.iplantc.de.resources.client.theme.window.IPlantWindowAppearance;
+import org.iplantc.de.shared.DeModule;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.DoubleClickEvent;
@@ -66,6 +67,7 @@ public abstract class IplantWindowBase extends Window implements IPlantWindowInt
     protected boolean maximized;
     protected boolean minimized;
 
+    private ToolButton btnLayout;
     private ToolButton btnMinimize;
     private ToolButton btnMaximize;
     private ToolButton btnRestore;
@@ -79,7 +81,6 @@ public abstract class IplantWindowBase extends Window implements IPlantWindowInt
     private final DeResources res = GWT.create(DeResources.class);
 
     private final WindowStateFactory wsf = GWT.create(WindowStateFactory.class);
-    private ToolButton maxBtn;
 
     /**
      * Constructs an instance of the window.
@@ -117,7 +118,8 @@ public abstract class IplantWindowBase extends Window implements IPlantWindowInt
             status.hide();
         }
 
-        getHeader().addTool(createLayoutButton());
+        btnLayout = createLayoutButton();
+        getHeader().addTool(btnLayout);
 
         if (isMinimizable) {
             btnMinimize = createMinimizeButton();
@@ -126,7 +128,7 @@ public abstract class IplantWindowBase extends Window implements IPlantWindowInt
         if (isMaximizable) {
             btnMaximize = createMaximizeButton();
             // SRI: if a window is maximizable, then it is restorable.
-            createRestoreButton();
+            btnRestore = createRestoreButton();
             getHeader().addTool(btnMaximize);
             getHeader().sinkEvents(Event.ONDBLCLICK);
             getHeader().addHandler(createHeaderDblClickHandler(), DoubleClickEvent.getType());
@@ -220,7 +222,6 @@ public abstract class IplantWindowBase extends Window implements IPlantWindowInt
 
     private ToolButton createLayoutButton() {
         final ToolButton layoutBtn = new ToolButton(res.css().xToolLayoutwindow());
-        layoutBtn.setId("idLayout"); //$NON-NLS-1$
         layoutBtn.sinkEvents(Event.ONMOUSEOUT);
         layoutBtn.setToolTip("Layout");
         final Menu m = new Menu();
@@ -289,9 +290,19 @@ public abstract class IplantWindowBase extends Window implements IPlantWindowInt
         EventBus.getInstance().fireEvent(event);
     }
 
-    private ToolButton createMaximizeButton() {
-        maxBtn = new ToolButton(res.css().xToolMaximizewindow());
-        maxBtn.setId("idmaximize"); //$NON-NLS-1$
+    @Override
+    protected void onEnsureDebugId(String baseID) {
+      super.onEnsureDebugId(baseID);
+
+      btnMaximize.ensureDebugId(baseID + DeModule.Ids.WIN_MAX_BTN);
+      btnMinimize.ensureDebugId(baseID + DeModule.Ids.WIN_MIN_BTN);
+      btnRestore.ensureDebugId(baseID + DeModule.Ids.WIN_RESTORE_BTN);
+      btnClose.ensureDebugId(baseID + DeModule.Ids.WIN_CLOSE_BTN);
+      btnLayout.ensureDebugId(baseID + DeModule.Ids.WIN_LAYOUT_BTN);
+  }
+
+  private ToolButton createMaximizeButton() {
+        final ToolButton maxBtn = new ToolButton(res.css().xToolMaximizewindow());
         maxBtn.sinkEvents(Event.ONMOUSEOUT);
         maxBtn.setToolTip(org.iplantc.de.resources.client.messages.I18N.DISPLAY.maximize());
 
@@ -327,8 +338,7 @@ public abstract class IplantWindowBase extends Window implements IPlantWindowInt
     }
 
     private ToolButton createRestoreButton() {
-        btnRestore = new ToolButton(res.css().xToolRestorewindow());
-        btnRestore.setId("idrestore"); //$NON-NLS-1$
+        final ToolButton btnRestore = new ToolButton(res.css().xToolRestorewindow());
         btnRestore.sinkEvents(Event.ONMOUSEOUT);
         btnRestore.setToolTip(org.iplantc.de.resources.client.messages.I18N.DISPLAY.restore());
 
@@ -364,7 +374,6 @@ public abstract class IplantWindowBase extends Window implements IPlantWindowInt
 
     private ToolButton createMinimizeButton() {
         final ToolButton newMinBtn = new ToolButton(res.css().xToolMinimizewindow());
-        newMinBtn.setId("idminimize"); //$NON-NLS-1$
         newMinBtn.sinkEvents(Event.ONMOUSEOUT);
         newMinBtn.setToolTip(org.iplantc.de.resources.client.messages.I18N.DISPLAY.minimize());
 
@@ -396,7 +405,6 @@ public abstract class IplantWindowBase extends Window implements IPlantWindowInt
 
     private ToolButton createCloseButton() {
         final ToolButton newCloseBtn = new ToolButton(res.css().xToolClosewindow());
-        newCloseBtn.setId("idclose"); //$NON-NLS-1$
         newCloseBtn.sinkEvents(Event.ONMOUSEOUT);
         newCloseBtn.setToolTip(org.iplantc.de.resources.client.messages.I18N.DISPLAY.close());
 
