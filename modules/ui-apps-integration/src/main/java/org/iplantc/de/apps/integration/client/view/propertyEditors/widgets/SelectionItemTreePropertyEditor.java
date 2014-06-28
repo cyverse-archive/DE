@@ -64,9 +64,8 @@ import java.util.List;
 
 /**
  * A container with a TreeGrid editor and button toolbar for editing hierarchical list selectors.
- * 
+ *
  * @author psarando, jstroot
- * 
  */
 public class SelectionItemTreePropertyEditor extends Composite implements HasValueChangeHandlers<List<SelectionItem>> {
 
@@ -76,9 +75,10 @@ public class SelectionItemTreePropertyEditor extends Composite implements HasVal
     private final class CascadeOptionsComboSelectionHandler implements SelectionHandler<CheckCascade> {
         @Override
         public void onSelection(SelectionEvent<CheckCascade> event) {
-            ValueChangeEvent.fire(SelectionItemTreePropertyEditor.this, Lists.<SelectionItem> newArrayList(selectionItemsEditor.getCurrentTree()));
+            ValueChangeEvent.fire(SelectionItemTreePropertyEditor.this, Lists.<SelectionItem>newArrayList(selectionItemsEditor.getCurrentTree()));
         }
     }
+
     private final class IsDefaultColumnValueProvider implements ValueProvider<SelectionItem, Boolean> {
         @Override
         public String getPath() {
@@ -123,7 +123,8 @@ public class SelectionItemTreePropertyEditor extends Composite implements HasVal
 
     private final class MyTreeStoreEditor extends SelectionItemTreeStoreEditor {
 
-        private MyTreeStoreEditor(TreeStore<SelectionItem> store, HasValueChangeHandlers<List<SelectionItem>> valueChangeTarget) {
+        private MyTreeStoreEditor(TreeStore<SelectionItem> store,
+                                  HasValueChangeHandlers<List<SelectionItem>> valueChangeTarget) {
             super(store, valueChangeTarget);
         }
 
@@ -185,7 +186,7 @@ public class SelectionItemTreePropertyEditor extends Composite implements HasVal
     private final SelectionItemProperties siProps = GWT.create(SelectionItemProperties.class);
 
     private final List<SelectionItem> toBeRemoved = Lists.newArrayList();
-    
+
     private final UUIDServiceAsync uuidService = ServicesInjector.INSTANCE.getUUIDService();
 
     public SelectionItemTreePropertyEditor(List<SelectionItem> selectionItems) {
@@ -213,16 +214,16 @@ public class SelectionItemTreePropertyEditor extends Composite implements HasVal
 
     /**
      * Returns a group of values added by the editor.
-     * 
+     *
      * @return A root group containing the groups and args added by the editor.
      */
     public AutoBean<SelectionItemGroup> getValues() {
-        List<SelectionItemGroup> groups = new ArrayList<SelectionItemGroup>();
-        List<SelectionItem> arguments = new ArrayList<SelectionItem>();
+        List<SelectionItemGroup> groups = new ArrayList<>();
+        List<SelectionItem> arguments = new ArrayList<>();
 
         for (SelectionItem ruleArg : store.getRootItems()) {
             if (ruleArg instanceof SelectionItemGroup) {
-                groups.add((SelectionItemGroup)ruleArg);
+                groups.add((SelectionItemGroup) ruleArg);
             } else {
                 arguments.add(ruleArg);
             }
@@ -234,7 +235,7 @@ public class SelectionItemTreePropertyEditor extends Composite implements HasVal
         rootAb.as().setSingleSelect(isSingleSelect());
         rootAb.as().setSelectionCascade(cascadeOptionsCombo.getValue());
 
-        rootAb.setTag(SelectionItem.TO_BE_REMOVED, Lists.<SelectionItem> newArrayList(toBeRemoved));
+        rootAb.setTag(SelectionItem.TO_BE_REMOVED, Lists.newArrayList(toBeRemoved));
         toBeRemoved.clear();
 
         return rootAb;
@@ -242,8 +243,8 @@ public class SelectionItemTreePropertyEditor extends Composite implements HasVal
 
     /**
      * Resets the editor with the values in the given root group.
-     * 
-     * @param root
+     *
+     * @param root the root tree element
      */
     public void setValues(SelectionItemGroup root) {
         store.clear();
@@ -277,7 +278,7 @@ public class SelectionItemTreePropertyEditor extends Composite implements HasVal
 
     @UiFactory
     SimpleComboBox<CheckCascade> buildCascadeComboBoxLabelProvider() {
-        return new SimpleComboBox<CheckCascade>(new LabelProvider<CheckCascade>() {
+        return new SimpleComboBox<>(new LabelProvider<CheckCascade>() {
             @Override
             public String getLabel(CheckCascade item) {
                 String ret = "";
@@ -339,7 +340,7 @@ public class SelectionItemTreePropertyEditor extends Composite implements HasVal
         if (selected != null) {
             SelectionItem parent = store.getParent(selected);
             if (parent != null) {
-                SelectionItemGroup group = (SelectionItemGroup)parent;
+                SelectionItemGroup group = (SelectionItemGroup) parent;
 
                 if (selected instanceof SelectionItemGroup) {
                     group.getGroups().remove(selected);
@@ -355,7 +356,7 @@ public class SelectionItemTreePropertyEditor extends Composite implements HasVal
 
     @UiHandler("treeGrid")
     void onExpand(ExpandItemEvent<SelectionItem> event) {
-        SelectionItemGroup parent = (SelectionItemGroup)event.getItem();
+        SelectionItemGroup parent = (SelectionItemGroup) event.getItem();
 
         if (parent.getGroups() != null) {
             for (SelectionItemGroup group : parent.getGroups()) {
@@ -368,7 +369,7 @@ public class SelectionItemTreePropertyEditor extends Composite implements HasVal
     @UiHandler("forceSingleSelectCheckBox")
     void onSingleSelectChanged(@SuppressWarnings("unused") ChangeEvent event) {
         if (isSingleSelect()) {
-            List<SelectionItem> checked = new ArrayList<SelectionItem>();
+            List<SelectionItem> checked = new ArrayList<>();
 
             for (SelectionItem ruleArg : store.getAll()) {
                 if (ruleArg.isDefault() && !(ruleArg instanceof SelectionItemGroup)) {
@@ -382,7 +383,7 @@ public class SelectionItemTreePropertyEditor extends Composite implements HasVal
                 }
             }
         }
-        ValueChangeEvent.fire(this, Lists.<SelectionItem> newArrayList(selectionItemsEditor.getCurrentTree()));
+        ValueChangeEvent.fire(this, Lists.<SelectionItem>newArrayList(selectionItemsEditor.getCurrentTree()));
     }
 
     @UiHandler("treeGrid")
@@ -391,7 +392,7 @@ public class SelectionItemTreePropertyEditor extends Composite implements HasVal
         if (rootItems != null) {
             for (SelectionItem root : rootItems) {
                 if (root instanceof SelectionItemGroup) {
-                    SelectionItemGroup group = (SelectionItemGroup)root;
+                    SelectionItemGroup group = (SelectionItemGroup) root;
 
                     if (treeGrid.isLeaf(group)) {
                         treeGrid.setLeaf(group, false);
@@ -410,7 +411,7 @@ public class SelectionItemTreePropertyEditor extends Composite implements HasVal
             List<SelectionItem> arguments = selectedGroup.getArguments();
 
             if (arguments == null) {
-                arguments = new ArrayList<SelectionItem>();
+                arguments = new ArrayList<>();
                 selectedGroup.setArguments(arguments);
             }
 
@@ -428,7 +429,7 @@ public class SelectionItemTreePropertyEditor extends Composite implements HasVal
             List<SelectionItemGroup> groups = selectedGroup.getGroups();
 
             if (groups == null) {
-                groups = new ArrayList<SelectionItemGroup>();
+                groups = new ArrayList<>();
                 selectedGroup.setGroups(groups);
             }
 
@@ -477,22 +478,22 @@ public class SelectionItemTreePropertyEditor extends Composite implements HasVal
     private TextField buildEditorField(Validator<String> validator) {
         final TextField field1 = new TextField();
         field1.setSelectOnFocus(true);
-        if(validator != null) {
+        if (validator != null) {
             field1.addValidator(validator);
             field1.setAutoValidate(true);
         }
         field1.addInvalidHandler(new InvalidHandler() {
-            
+
             @Override
             public void onInvalid(InvalidEvent event) {
-               field1.clear();
+                field1.clear();
             }
         });
         return field1;
     }
 
     private ColumnConfig<SelectionItem, Boolean> buildIsDefaultConfig() {
-        ColumnConfig<SelectionItem, Boolean> defaultConfig = new ColumnConfig<SelectionItem, Boolean>(new IsDefaultColumnValueProvider(), 45, labels.singleSelectIsDefaultColumnHeader());
+        ColumnConfig<SelectionItem, Boolean> defaultConfig = new ColumnConfig<>(new IsDefaultColumnValueProvider(), 45, labels.singleSelectIsDefaultColumnHeader());
 
         CheckBoxCell cell = new CheckBoxCell();
         defaultConfig.setCell(cell);
@@ -504,14 +505,14 @@ public class SelectionItemTreePropertyEditor extends Composite implements HasVal
 
     private void buildTreeGrid() {
         // Build treeStore
-        store = new TreeStore<SelectionItem>(siProps.id());
+        store = new TreeStore<>(siProps.id());
         store.setAutoCommit(true);
 
         // Build ColumnModel
-        ColumnConfig<SelectionItem, String> displayConfig = new ColumnConfig<SelectionItem, String>(siProps.display(), 90, labels.singleSelectDisplayColumnHeader());
-        ColumnConfig<SelectionItem, String> nameConfig = new ColumnConfig<SelectionItem, String>(siProps.name(), 60, labels.singleSelectNameColumnHeader());
-        ColumnConfig<SelectionItem, String> valueConfig = new ColumnConfig<SelectionItem, String>(siProps.value(), 40, labels.singleSelectValueColumnHeader());
-        ColumnConfig<SelectionItem, String> descriptionConfig = new ColumnConfig<SelectionItem, String>(siProps.description(), 90, labels.singleSelectToolTipColumnHeader());
+        ColumnConfig<SelectionItem, String> displayConfig = new ColumnConfig<>(siProps.display(), 90, labels.singleSelectDisplayColumnHeader());
+        ColumnConfig<SelectionItem, String> nameConfig = new ColumnConfig<>(siProps.name(), 60, labels.singleSelectNameColumnHeader());
+        ColumnConfig<SelectionItem, String> valueConfig = new ColumnConfig<>(siProps.value(), 40, labels.singleSelectValueColumnHeader());
+        ColumnConfig<SelectionItem, String> descriptionConfig = new ColumnConfig<>(siProps.description(), 90, labels.singleSelectToolTipColumnHeader());
         ColumnConfig<SelectionItem, Boolean> defaultColumn = buildIsDefaultConfig();
 
         defaultColumn.setSortable(false);
@@ -520,14 +521,14 @@ public class SelectionItemTreePropertyEditor extends Composite implements HasVal
         valueConfig.setSortable(false);
         descriptionConfig.setSortable(false);
 
-        ArrayList<ColumnConfig<SelectionItem, ?>> newArrayList = Lists.<ColumnConfig<SelectionItem, ?>> newArrayList();
+        ArrayList<ColumnConfig<SelectionItem, ?>> newArrayList = Lists.newArrayList();
         newArrayList.add(defaultColumn);
         newArrayList.add(displayConfig);
         newArrayList.add(nameConfig);
         newArrayList.add(valueConfig);
         newArrayList.add(descriptionConfig);
 
-        ColumnModel<SelectionItem> cm = new ColumnModel<SelectionItem>(newArrayList);
+        ColumnModel<SelectionItem> cm = new ColumnModel<>(newArrayList);
 
         // Create and configure TreeGrid
         treeGrid = new TreeGrid<SelectionItem>(store, cm, displayConfig) {
@@ -540,28 +541,28 @@ public class SelectionItemTreePropertyEditor extends Composite implements HasVal
             }
         };
 
-        GridRowEditing<SelectionItem> editing = new GridRowEditing<SelectionItem>(treeGrid){
-            
+        GridRowEditing<SelectionItem> editing = new GridRowEditing<SelectionItem>(treeGrid) {
+
             @Override
             protected void showTooltip(SafeHtml msg) {
                 if (tooltip == null) {
-                  ToolTipConfig config = new ToolTipConfig();
-                  config.setAutoHide(false);
-                  config.setAnchor(Side.RIGHT);
-                  config.setTitleHtml(getMessages().errorTipTitleText());
-                  tooltip = new ToolTip(toolTipAlignWidget, config);
-                  tooltip.setMaxWidth(600);
+                    ToolTipConfig config = new ToolTipConfig();
+                    config.setAutoHide(false);
+                    config.setAnchor(Side.RIGHT);
+                    config.setTitleHtml(getMessages().errorTipTitleText());
+                    tooltip = new ToolTip(toolTipAlignWidget, config);
+                    tooltip.setMaxWidth(600);
                 }
                 ToolTipConfig config = tooltip.getToolTipConfig();
                 config.setBodyHtml(msg);
                 tooltip.update(config);
                 tooltip.enable();
                 if (!tooltip.isAttached()) {
-                  tooltip.show();
-                  tooltip.getElement().updateZIndex(0);
+                    tooltip.show();
+                    tooltip.getElement().updateZIndex(0);
                 }
-              }
-            
+            }
+
         };
         editing.addEditor(defaultColumn, new CheckBox());
         editing.addEditor(displayConfig, buildEditorField(null));
@@ -597,11 +598,11 @@ public class SelectionItemTreePropertyEditor extends Composite implements HasVal
 
         if (selected != null) {
             if (selected instanceof SelectionItemGroup) {
-                return (SelectionItemGroup)selected;
+                return (SelectionItemGroup) selected;
             } else {
                 selected = store.getParent(selected);
                 if (selected != null) {
-                    return (SelectionItemGroup)selected;
+                    return (SelectionItemGroup) selected;
                 }
             }
         }
@@ -610,11 +611,11 @@ public class SelectionItemTreePropertyEditor extends Composite implements HasVal
     }
 
     private void initDragNDrop() {
-        TreeGridDragSource<SelectionItem> dragSource = new TreeGridDragSource<SelectionItem>(treeGrid);
+        TreeGridDragSource<SelectionItem> dragSource = new TreeGridDragSource<>(treeGrid);
         SelectionItemTreePropertyEditorDnDHandler dndHandler = new SelectionItemTreePropertyEditorDnDHandler(this);
         dragSource.addDragStartHandler(dndHandler);
 
-        TreeGridDropTarget<SelectionItem> target = new TreeGridDropTarget<SelectionItem>(treeGrid);
+        TreeGridDropTarget<SelectionItem> target = new TreeGridDropTarget<>(treeGrid);
         target.setAllowSelfAsSource(true);
         target.setFeedback(Feedback.BOTH);
         target.addDropHandler(dndHandler);
@@ -637,7 +638,7 @@ public class SelectionItemTreePropertyEditor extends Composite implements HasVal
         store.update(object);
 
         if ((object instanceof SelectionItemGroup) && isCascadeToChildren()) {
-            SelectionItemGroup group = (SelectionItemGroup)object;
+            SelectionItemGroup group = (SelectionItemGroup) object;
 
             List<SelectionItemGroup> groups = group.getGroups();
             if (groups != null) {
