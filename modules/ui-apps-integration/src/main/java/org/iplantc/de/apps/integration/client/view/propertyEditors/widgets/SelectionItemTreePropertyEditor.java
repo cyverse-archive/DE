@@ -69,9 +69,6 @@ import java.util.List;
  */
 public class SelectionItemTreePropertyEditor extends Composite implements HasValueChangeHandlers<List<SelectionItem>> {
 
-    interface SelectionItemTreePropertyEditorUiBinder extends UiBinder<Widget, SelectionItemTreePropertyEditor> {
-    }
-
     private final class CascadeOptionsComboSelectionHandler implements SelectionHandler<CheckCascade> {
         @Override
         public void onSelection(SelectionEvent<CheckCascade> event) {
@@ -134,11 +131,6 @@ public class SelectionItemTreePropertyEditor extends Composite implements HasVal
         }
 
         @Override
-        protected boolean getSingleSelect() {
-            return forceSingleSelectCheckBox.getValue();
-        }
-
-        @Override
         protected void setCheckStyle(CheckCascade treeCheckCascade) {
             if (treeCheckCascade == null) {
                 return;
@@ -147,8 +139,8 @@ public class SelectionItemTreePropertyEditor extends Composite implements HasVal
         }
 
         @Override
-        protected void setItems(SelectionItemGroup root) {
-            setValues(root);
+        protected boolean getSingleSelect() {
+            return forceSingleSelectCheckBox.getValue();
         }
 
         @Override
@@ -157,37 +149,36 @@ public class SelectionItemTreePropertyEditor extends Composite implements HasVal
         }
 
         @Override
+        protected void setItems(SelectionItemGroup root) {
+            setValues(root);
+        }
+
+        @Override
         protected boolean shouldFlush() {
             return true;
         }
     }
 
-    private static SelectionItemTreePropertyEditorUiBinder BINDER = GWT.create(SelectionItemTreePropertyEditorUiBinder.class);
-
-    private static final String LIST_RULE_ARG_IS_DEFAULT = "isDefault"; //$NON-NLS-1$
+    interface SelectionItemTreePropertyEditorUiBinder extends UiBinder<Widget, SelectionItemTreePropertyEditor> { }
 
     @UiField
     SimpleComboBox<CheckCascade> cascadeOptionsCombo;
-
     @UiField
     CheckBox forceSingleSelectCheckBox;
-
     SelectionItemTreeStoreEditor selectionItemsEditor;
-
     TreeStore<SelectionItem> store;
     @UiField(provided = true)
     TreeGrid<SelectionItem> treeGrid;
+
+    private static final String LIST_RULE_ARG_IS_DEFAULT = "isDefault"; //$NON-NLS-1$
+    private static SelectionItemTreePropertyEditorUiBinder BINDER = GWT.create(SelectionItemTreePropertyEditorUiBinder.class);
+    private final AppTemplateAutoBeanFactory factory = GWT.create(AppTemplateAutoBeanFactory.class);
+    private final AppsWidgetsPropertyPanelLabels labels = GWT.create(AppsWidgetsPropertyPanelLabels.class);
+    private final SelectionItemProperties siProps = GWT.create(SelectionItemProperties.class);
+    private final List<SelectionItem> toBeRemoved = Lists.newArrayList();
+    private final UUIDServiceAsync uuidService = ServicesInjector.INSTANCE.getUUIDService();
     private int countArgLabel = 1;
     private int countGroupLabel = 1;
-    private final AppTemplateAutoBeanFactory factory = GWT.create(AppTemplateAutoBeanFactory.class);
-
-    private final AppsWidgetsPropertyPanelLabels labels = GWT.create(AppsWidgetsPropertyPanelLabels.class);
-
-    private final SelectionItemProperties siProps = GWT.create(SelectionItemProperties.class);
-
-    private final List<SelectionItem> toBeRemoved = Lists.newArrayList();
-
-    private final UUIDServiceAsync uuidService = ServicesInjector.INSTANCE.getUUIDService();
 
     public SelectionItemTreePropertyEditor(List<SelectionItem> selectionItems) {
         buildTreeGrid();
