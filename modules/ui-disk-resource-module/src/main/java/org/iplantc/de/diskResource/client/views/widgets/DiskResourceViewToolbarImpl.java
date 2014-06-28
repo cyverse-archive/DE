@@ -239,6 +239,7 @@ public class DiskResourceViewToolbarImpl extends Composite implements DiskResour
         // Share menu
         shareWithCollaboratorsMi.ensureDebugId(baseID + Ids.SHARE_MENU + Ids.MENU_ITEM_SHARE_WITH_COLLABORATORS);
         createPublicLinkMi.ensureDebugId(baseID + Ids.SHARE_MENU + Ids.MENU_ITEM_CREATE_PUBLIC_LINK);
+        shareFolderLocationMi.ensureDebugId(baseID + Ids.SHARE_MENU + Ids.MENU_ITEM_SHARE_FOLDER_LOCATION);
         sendToCogeMi.ensureDebugId(baseID + Ids.SHARE_MENU + Ids.MENU_ITEM_SEND_TO_COGE);
         sendToEnsemblMi.ensureDebugId(baseID + Ids.SHARE_MENU + Ids.MENU_ITEM_SEND_TO_ENSEMBL);
         sendToTreeViewerMi.ensureDebugId(baseID + Ids.SHARE_MENU + Ids.MENU_ITEM_SEND_TO_TREE_VIEWER);

@@ -40,6 +40,7 @@ public interface DiskResourceModule {
         String MENU_ITEM_BULK_DOWNLOAD = ".bulkDownload";
         String MENU_ITEM_SHARE_WITH_COLLABORATORS = ".shareWithCollaborators";
         String MENU_ITEM_CREATE_PUBLIC_LINK = ".createPublicLink";
+        String MENU_ITEM_SHARE_FOLDER_LOCATION = ".shareFolderLocation";
         String MENU_ITEM_SEND_TO_COGE = ".sendToCoge";
         String MENU_ITEM_SEND_TO_ENSEMBL = ".sendToEnsembl";
         String MENU_ITEM_SEND_TO_TREE_VIEWER = ".sendToTreeViewer";
