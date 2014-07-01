@@ -1,5 +1,6 @@
 package org.iplantc.de.apps.integration.client.view.propertyEditors;
 
+import static org.iplantc.de.apps.integration.shared.AppIntegrationModule.PropertyPanelIds;
 import org.iplantc.de.apps.integration.client.view.propertyEditors.util.EnvironmentVariableNameValidator;
 import org.iplantc.de.apps.widgets.client.view.editors.arguments.converters.ArgumentEditorConverter;
 import org.iplantc.de.apps.widgets.client.view.editors.arguments.converters.SplittableToStringConverter;
@@ -125,6 +126,16 @@ public class EnvVarPropertyEditor extends AbstractArgumentPropertyEditor {
             name.getValidators().clear();
             requiredEditor.getValidators().clear();
         }
+    }
+
+    @Override
+    protected void onEnsureDebugId(String baseID) {
+        super.onEnsureDebugId(baseID);
+        label.ensureDebugId(baseID + PropertyPanelIds.LABEL);
+        name.ensureDebugId(baseID + PropertyPanelIds.NAME);
+        defaultValueEditor.ensureDebugId(baseID + PropertyPanelIds.DEFAULT_VALUE);
+        requiredEditor.ensureDebugId(baseID + PropertyPanelIds.REQUIRED);
+        toolTipEditor.ensureDebugId(baseID + PropertyPanelIds.TOOL_TIP);
     }
 
     @UiHandler("defaultValueEditor")
