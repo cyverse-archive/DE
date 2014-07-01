@@ -38,6 +38,7 @@ import static com.sencha.gxt.core.client.dom.ScrollSupport.ScrollMode.AUTOY;
 
 import com.sencha.gxt.core.client.util.Margins;
 import com.sencha.gxt.widget.core.client.ContentPanel;
+import com.sencha.gxt.widget.core.client.container.MarginData;
 import com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer;
 import com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer.VerticalLayoutData;
 
@@ -102,8 +103,8 @@ public class ArgumentGroupEditorImpl extends ContentPanel implements AppTemplate
         public AppTemplateForm.ArgumentEditorFactory create(int index) {
             final AppTemplateForm.ArgumentEditorFactory subEditor = argumentEditorProvider.get();
 
-    
-            con.insert(subEditor, index, new VerticalLayoutData(1, -1, new Margins(DEF_ARGUMENT_MARGIN)));
+            final Margins margins = new Margins(0, DEF_ARGUMENT_MARGIN, 0, DEF_ARGUMENT_MARGIN);
+            con.insert(subEditor, index, new VerticalLayoutData(1, -1, margins));
             con.forceLayout();
             subEditor.asWidget().fireEvent(new ArgumentSelectedEvent(null));
             Scheduler.get().scheduleFinally(new ScheduledCommand() {
@@ -132,7 +133,8 @@ public class ArgumentGroupEditorImpl extends ContentPanel implements AppTemplate
     
         @Override
         public void setIndex(AppTemplateForm.ArgumentEditorFactory editor, int index) {
-            con.insert(editor, index, new VerticalLayoutData(1, -1, new Margins(DEF_ARGUMENT_MARGIN)));
+            final Margins margins = new Margins(0, DEF_ARGUMENT_MARGIN, 0, DEF_ARGUMENT_MARGIN);
+            con.insert(editor, index, new VerticalLayoutData(1, -1, margins));
         }
     }
 
@@ -164,7 +166,7 @@ public class ArgumentGroupEditorImpl extends ContentPanel implements AppTemplate
         labelLeafEditor = new ArgGrpLabelLeafEditor(getHeader(), this);
         editor = ListEditor.of(new PropertyListEditorSource(argumentsContainer, argumentEditorProvider, this, this));
 
-        add(argumentsContainer);
+        add(argumentsContainer, new MarginData(5, 0, 5, 0));
         new AppWizardQuickTip(header);
     }
 
