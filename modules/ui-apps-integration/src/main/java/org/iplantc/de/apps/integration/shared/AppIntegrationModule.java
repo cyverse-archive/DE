@@ -31,5 +31,17 @@ public interface AppIntegrationModule {
         String REFERENCE_SEQUENCE = ".referenceSequence";
 
         String GROUP = ".group";
+        String PROPERTY_EDITOR = ".propertyEditor";
+    }
+
+    interface PropertyPanelIds {
+        String LABEL = ".label";
+        String ARGUMENT_OPTION = ".argumentOption";
+        String DEFAULT_VALUE = ".defaultValue";
+        String DO_NOT_DISPLAY = ".doNotDisplay";
+        String REQUIRED = ".required";
+        String OMIT_IF_BLANK = ".omitIfBlank";
+        String TOOL_TIP = ".toolTip";
+        String VALIDATOR_RULES = ".validatorRules";
     }
 }
