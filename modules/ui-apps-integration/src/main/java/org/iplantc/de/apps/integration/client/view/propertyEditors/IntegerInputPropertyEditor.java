@@ -1,5 +1,7 @@
 package org.iplantc.de.apps.integration.client.view.propertyEditors;
 
+import static org.iplantc.de.apps.integration.shared.AppIntegrationModule.Ids;
+import static org.iplantc.de.apps.integration.shared.AppIntegrationModule.PropertyPanelIds;
 import org.iplantc.de.apps.integration.client.view.propertyEditors.widgets.ArgumentValidatorEditor;
 import org.iplantc.de.apps.widgets.client.view.editors.arguments.converters.ArgumentEditorConverter;
 import org.iplantc.de.apps.widgets.client.view.editors.arguments.converters.SplittableToIntegerConverter;
@@ -37,21 +39,19 @@ import java.util.List;
 
 public class IntegerInputPropertyEditor extends AbstractArgumentPropertyEditor {
 
-    interface EditorDriver extends SimpleBeanEditorDriver<Argument, IntegerInputPropertyEditor> {}
-    interface IntegerInputPropertyEditorUiBinder extends UiBinder<Widget, IntegerInputPropertyEditor> {}
+    interface EditorDriver extends SimpleBeanEditorDriver<Argument, IntegerInputPropertyEditor> {
+    }
 
-    private static IntegerInputPropertyEditorUiBinder uiBinder = GWT.create(IntegerInputPropertyEditorUiBinder.class);
+    interface IntegerInputPropertyEditorUiBinder extends UiBinder<Widget, IntegerInputPropertyEditor> {
+    }
 
     @UiField(provided = true)
     AppsWidgetsPropertyPanelLabels appLabels;
-
     @UiField
     @Path("name")
-    TextField argumentOption;
-
+    TextField argumentOptionEditor;
     @UiField(provided = true)
     ArgumentEditorConverter<Integer> defaultValueEditor;
-
     @UiField
     @Path("visible")
     CheckBoxAdapter doNotDisplay;
@@ -59,7 +59,6 @@ public class IntegerInputPropertyEditor extends AbstractArgumentPropertyEditor {
     IntegerInputLabels integerInputLabels;
     @UiField
     TextField label;
-
     @UiField
     CheckBoxAdapter omitIfBlank, requiredEditor;
     @UiField
@@ -67,16 +66,17 @@ public class IntegerInputPropertyEditor extends AbstractArgumentPropertyEditor {
     TextField toolTipEditor;
     @UiField
     FieldLabel toolTipLabel, argumentOptionLabel, defaultValueLabel;
-
     @Path("")
     @UiField(provided = true)
     ArgumentValidatorEditor validatorsEditor;
-
-
+    private static IntegerInputPropertyEditorUiBinder uiBinder = GWT.create(IntegerInputPropertyEditorUiBinder.class);
     private final EditorDriver editorDriver = GWT.create(EditorDriver.class);
 
     @Inject
-    public IntegerInputPropertyEditor(AppTemplateWizardAppearance appearance, AppsWidgetsPropertyPanelLabels appLabels, AppsWidgetsContextualHelpMessages help, ArgumentValidatorEditor validatorsEditor) {
+    public IntegerInputPropertyEditor(AppTemplateWizardAppearance appearance,
+                                      AppsWidgetsPropertyPanelLabels appLabels,
+                                      AppsWidgetsContextualHelpMessages help,
+                                      ArgumentValidatorEditor validatorsEditor) {
         super(appearance);
         this.appLabels = appLabels;
         this.integerInputLabels = appLabels;
@@ -91,8 +91,8 @@ public class IntegerInputPropertyEditor extends AbstractArgumentPropertyEditor {
 
         initWidget(uiBinder.createAndBindUi(this));
 
-        argumentOption.addValidator(new CmdLineArgCharacterValidator(I18N.V_CONSTANTS
-                .restrictedCmdLineChars()));
+        argumentOptionEditor.addValidator(new CmdLineArgCharacterValidator(I18N.V_CONSTANTS
+                                                                         .restrictedCmdLineChars()));
 
         defaultValueLabel.setHTML(appearance.createContextualHelpLabel(integerInputLabels.integerInputDefaultLabel(), help.integerInputDefaultValue()));
 
@@ -105,10 +105,24 @@ public class IntegerInputPropertyEditor extends AbstractArgumentPropertyEditor {
         requiredEditor.setHTML(new SafeHtmlBuilder().appendHtmlConstant("&nbsp;").append(appLabels.isRequired()).toSafeHtml());
 
         omitIfBlank.setHTML(new SafeHtmlBuilder().appendHtmlConstant("&nbsp;")
-                .append(appearance.createContextualHelpLabelNoFloat(appLabels.excludeWhenEmpty(), help.integerInputExcludeArgument())).toSafeHtml());
+                                                 .append(appearance.createContextualHelpLabelNoFloat(appLabels.excludeWhenEmpty(), help.integerInputExcludeArgument())).toSafeHtml());
 
         editorDriver.initialize(this);
         editorDriver.accept(new InitializeTwoWayBinding(this));
+        ensureDebugId(Ids.PROPERTY_EDITOR + Ids.INTEGER_INPUT);
+    }
+
+    @Override
+    protected void onEnsureDebugId(String baseID) {
+        super.onEnsureDebugId(baseID);
+        label.ensureDebugId(baseID + PropertyPanelIds.LABEL);
+        argumentOptionEditor.ensureDebugId(baseID + PropertyPanelIds.ARGUMENT_OPTION);
+        defaultValueEditor.ensureDebugId(baseID + PropertyPanelIds.DEFAULT_VALUE);
+        doNotDisplay.ensureDebugId(baseID + PropertyPanelIds.DO_NOT_DISPLAY);
+        requiredEditor.ensureDebugId(baseID + PropertyPanelIds.REQUIRED);
+        omitIfBlank.ensureDebugId(baseID + PropertyPanelIds.OMIT_IF_BLANK);
+        toolTipEditor.ensureDebugId(baseID + PropertyPanelIds.TOOL_TIP);
+        validatorsEditor.ensureDebugId(baseID + PropertyPanelIds.VALIDATOR_RULES);
     }
 
     @Override
@@ -130,7 +144,7 @@ public class IntegerInputPropertyEditor extends AbstractArgumentPropertyEditor {
 
     @Override
     protected void initLabelOnlyEditMode(boolean isLabelOnlyEditMode) {
-        argumentOption.setEnabled(!isLabelOnlyEditMode);
+        argumentOptionEditor.setEnabled(!isLabelOnlyEditMode);
         defaultValueEditor.setEnabled(!isLabelOnlyEditMode);
         doNotDisplay.setEnabled(!isLabelOnlyEditMode);
         omitIfBlank.setEnabled(!isLabelOnlyEditMode);
@@ -138,7 +152,7 @@ public class IntegerInputPropertyEditor extends AbstractArgumentPropertyEditor {
         validatorsEditor.setEnabled(!isLabelOnlyEditMode);
 
         if (isLabelOnlyEditMode) {
-            argumentOption.getValidators().clear();
+            argumentOptionEditor.getValidators().clear();
             defaultValueEditor.getValidators().clear();
             doNotDisplay.getValidators().clear();
             omitIfBlank.getValidators().clear();
