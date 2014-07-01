@@ -1084,6 +1084,7 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter, Di
     @Override
     public void manageSelectedResourceDataLinks() {
         IPlantDialog dlg = new IPlantDialog(true);
+        dlg.setPredefinedButtons(PredefinedButton.OK);
         dlg.setHeadingText(I18N.DISPLAY.manageDataLinks());
         dlg.setHideOnButtonClick(true);
         dlg.setWidth(550);
