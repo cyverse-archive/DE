@@ -45,5 +45,6 @@ public interface AppIntegrationModule {
         String VALIDATOR_RULES = ".validatorRules";
         String EDIT_LIST = ".editList";
         String FILE_INFO_TYPE = ".fileInfoType";
+        String DATA_SOURCE = ".dataSource";
     }
 }

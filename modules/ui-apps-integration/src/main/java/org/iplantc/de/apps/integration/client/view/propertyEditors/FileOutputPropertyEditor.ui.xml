@@ -54,7 +54,7 @@
                 <form:FieldLabel ui:field="argumentOptionLabel"
                                  labelAlign="TOP">
                     <form:widget>
-                        <form:TextField ui:field="argumentOption"
+                        <form:TextField ui:field="argumentOptionEditor"
                                         emptyText="{appLabels.argumentOptionEmptyText}"/>
                     </form:widget>
                 </form:FieldLabel>
