@@ -516,7 +516,7 @@ public class AppsEditorPresenterImpl implements AppsEditorView.Presenter, Delete
         }
 
         AutoBean<ArgumentGroup> autoBean = AutoBeanUtils.getAutoBean(event.getArgumentGroup());
-        view.getEditorDriver().accept(new InitializeArgumentGroupEventManagement(autoBean, event.getArgumentGroupEditor(), this));
+        view.getEditorDriver().accept(new InitializeArgumentGroupEventManagement(appearance, autoBean, event.getArgumentGroupEditor(), this, this));
         event.getArgumentGroupEditor().addArgumentAddedEventHandler(this);
         event.getArgumentGroupEditor().addArgumentGroupSelectedHandler(view);
     }

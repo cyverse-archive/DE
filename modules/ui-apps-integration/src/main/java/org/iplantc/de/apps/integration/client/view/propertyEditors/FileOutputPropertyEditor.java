@@ -1,5 +1,7 @@
 package org.iplantc.de.apps.integration.client.view.propertyEditors;
 
+import static org.iplantc.de.apps.integration.shared.AppIntegrationModule.Ids;
+import static org.iplantc.de.apps.integration.shared.AppIntegrationModule.PropertyPanelIds;
 import org.iplantc.de.apps.widgets.client.view.editors.arguments.converters.ArgumentEditorConverter;
 import org.iplantc.de.apps.widgets.client.view.editors.arguments.converters.SplittableToStringConverter;
 import org.iplantc.de.apps.widgets.client.view.editors.style.AppTemplateWizardAppearance;
@@ -33,43 +35,37 @@ import com.sencha.gxt.widget.core.client.form.TextField;
 
 public class FileOutputPropertyEditor extends AbstractArgumentPropertyEditor {
 
-    interface EditorDriver extends SimpleBeanEditorDriver<Argument, FileOutputPropertyEditor> {}
-    interface FileOutputPropertyEditorUiBinder extends UiBinder<Widget, FileOutputPropertyEditor> {}
+    interface EditorDriver extends SimpleBeanEditorDriver<Argument, FileOutputPropertyEditor> {
+    }
 
-    private static FileOutputPropertyEditorUiBinder uiBinder = GWT.create(FileOutputPropertyEditorUiBinder.class);
+    interface FileOutputPropertyEditorUiBinder extends UiBinder<Widget, FileOutputPropertyEditor> {
+    }
 
     @UiField(provided = true)
     AppsWidgetsPropertyPanelLabels appLabels;
-
     @UiField
     @Path("name")
-    TextField argumentOption;
-
+    TextField argumentOptionEditor;
     @Ignore
     @UiField(provided = true)
     @Path("dataObject.dataSource")
     ComboBox<DataSource> dataSourceComboBox;
     @UiField
     FieldLabel dataSourceLabel, toolTipLabel, argumentOptionLabel, defaultValueLabel;
-
     @UiField(provided = true)
     ArgumentEditorConverter<String> defaultValueEditor;
-
     @UiField
     @Path("visible")
     CheckBoxAdapter doNotDisplay;
-
     @Ignore
     @UiField(provided = true)
     @Path("dataObject.fileInfoType")
     ComboBox<FileInfoType> fileInfoTypeComboBox;
-
     @UiField(provided = true)
     FileOutputLabels fileOutputLabels;
     @UiField
     @Path("dataObject.implicit")
     CheckBoxAdapter isImplicit;
-
     @UiField
     TextField label;
     @UiField
@@ -77,13 +73,14 @@ public class FileOutputPropertyEditor extends AbstractArgumentPropertyEditor {
     @UiField
     @Path("description")
     TextField toolTipEditor;
-
-
+    private static FileOutputPropertyEditorUiBinder uiBinder = GWT.create(FileOutputPropertyEditorUiBinder.class);
     private final EditorDriver editorDriver = GWT.create(EditorDriver.class);
 
     @Inject
-    public FileOutputPropertyEditor(AppTemplateWizardAppearance appearance, AppsWidgetsPropertyPanelLabels appLabels, AppsWidgetsContextualHelpMessages help,
-            AppMetadataServiceFacade appMetadataService) {
+    public FileOutputPropertyEditor(AppTemplateWizardAppearance appearance,
+                                    AppsWidgetsPropertyPanelLabels appLabels,
+                                    AppsWidgetsContextualHelpMessages help,
+                                    AppMetadataServiceFacade appMetadataService) {
         super(appearance);
         this.appLabels = appLabels;
         this.fileOutputLabels = appLabels;
@@ -97,8 +94,8 @@ public class FileOutputPropertyEditor extends AbstractArgumentPropertyEditor {
 
         initWidget(uiBinder.createAndBindUi(this));
 
-        argumentOption.addValidator(new CmdLineArgCharacterValidator(I18N.V_CONSTANTS
-                .restrictedCmdLineChars()));
+        argumentOptionEditor.addValidator(new CmdLineArgCharacterValidator(I18N.V_CONSTANTS
+                                                                               .restrictedCmdLineChars()));
 
         defaultValueLabel.setHTML(appearance.createContextualHelpLabel(fileOutputLabels.fileOutputDefaultLabel(), help.fileOutputDefaultValue()));
         toolTipLabel.setHTML(appearance.createContextualHelpLabel(appLabels.toolTipText(), help.toolTip()));
@@ -108,14 +105,15 @@ public class FileOutputPropertyEditor extends AbstractArgumentPropertyEditor {
         requiredEditor.setHTML(new SafeHtmlBuilder().appendHtmlConstant("&nbsp;").append(appLabels.isRequired()).toSafeHtml());
         dataSourceLabel.setHTML(appearance.createContextualHelpLabel(appLabels.fileOutputSourceLabel(), help.fileOutputOutputSource()));
         omitIfBlank.setHTML(new SafeHtmlBuilder().appendHtmlConstant("&nbsp;")
-                .append(appearance.createContextualHelpLabelNoFloat(appLabels.excludeWhenEmpty(), help.fileOutputExcludeArgument()))
-                .toSafeHtml());
+                                                 .append(appearance.createContextualHelpLabelNoFloat(appLabels.excludeWhenEmpty(), help.fileOutputExcludeArgument()))
+                                                 .toSafeHtml());
         isImplicit.setHTML(new SafeHtmlBuilder().appendHtmlConstant("&nbsp;").append(appearance.createContextualHelpLabelNoFloat(appLabels.doNotPass(), help.doNotPass()))
-                .toSafeHtml());
+                                                .toSafeHtml());
 
 
         editorDriver.initialize(this);
         editorDriver.accept(new InitializeTwoWayBinding(this));
+        ensureDebugId(Ids.PROPERTY_EDITOR + Ids.FILE_OUTPUT);
     }
 
     @Override
@@ -154,7 +152,7 @@ public class FileOutputPropertyEditor extends AbstractArgumentPropertyEditor {
         doNotDisplay.setEnabled(!isLabelOnlyEditMode);
         fileInfoTypeComboBox.setEnabled(!isLabelOnlyEditMode);
         isImplicit.setEnabled(!isLabelOnlyEditMode);
-        argumentOption.setEnabled(!isLabelOnlyEditMode);
+        argumentOptionEditor.setEnabled(!isLabelOnlyEditMode);
         omitIfBlank.setEnabled(!isLabelOnlyEditMode);
         requiredEditor.setEnabled(!isLabelOnlyEditMode);
 
@@ -164,10 +162,22 @@ public class FileOutputPropertyEditor extends AbstractArgumentPropertyEditor {
             doNotDisplay.getValidators().clear();
             fileInfoTypeComboBox.getValidators().clear();
             isImplicit.getValidators().clear();
-            argumentOption.getValidators().clear();
+            argumentOptionEditor.getValidators().clear();
             omitIfBlank.getValidators().clear();
             requiredEditor.getValidators().clear();
         }
+    }
+
+    @Override
+    protected void onEnsureDebugId(String baseID) {
+        super.onEnsureDebugId(baseID);
+        label.ensureDebugId(baseID + PropertyPanelIds.LABEL);
+        argumentOptionEditor.ensureDebugId(baseID + PropertyPanelIds.ARGUMENT_OPTION);
+        requiredEditor.ensureDebugId(baseID + PropertyPanelIds.REQUIRED);
+        omitIfBlank.ensureDebugId(baseID + PropertyPanelIds.OMIT_IF_BLANK);
+        toolTipEditor.ensureDebugId(baseID + PropertyPanelIds.TOOL_TIP);
+        dataSourceComboBox.ensureDebugId(baseID + PropertyPanelIds.DATA_SOURCE);
+        fileInfoTypeComboBox.ensureDebugId(baseID + PropertyPanelIds.FILE_INFO_TYPE);
     }
 
     @UiHandler("defaultValueEditor")

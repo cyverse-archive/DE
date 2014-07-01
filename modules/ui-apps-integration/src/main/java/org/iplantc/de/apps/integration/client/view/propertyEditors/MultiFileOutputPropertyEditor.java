@@ -1,5 +1,7 @@
 package org.iplantc.de.apps.integration.client.view.propertyEditors;
 
+import static org.iplantc.de.apps.integration.shared.AppIntegrationModule.Ids;
+import static org.iplantc.de.apps.integration.shared.AppIntegrationModule.PropertyPanelIds;
 import org.iplantc.de.apps.widgets.client.view.editors.arguments.converters.ArgumentEditorConverter;
 import org.iplantc.de.apps.widgets.client.view.editors.arguments.converters.SplittableToStringConverter;
 import org.iplantc.de.apps.widgets.client.view.editors.style.AppTemplateWizardAppearance;
@@ -32,24 +34,22 @@ import com.sencha.gxt.widget.core.client.form.TextField;
 
 public class MultiFileOutputPropertyEditor extends AbstractArgumentPropertyEditor {
 
-    interface EditorDriver extends SimpleBeanEditorDriver<Argument, MultiFileOutputPropertyEditor> {}
-    interface MultiFileOutputPropertyEditorUiBinder extends UiBinder<Widget, MultiFileOutputPropertyEditor> {}
+    interface EditorDriver extends SimpleBeanEditorDriver<Argument, MultiFileOutputPropertyEditor> {
+    }
 
-    private static MultiFileOutputPropertyEditorUiBinder uiBinder = GWT.create(MultiFileOutputPropertyEditorUiBinder.class);
+    interface MultiFileOutputPropertyEditorUiBinder extends UiBinder<Widget, MultiFileOutputPropertyEditor> {
+    }
 
     @UiField(provided = true)
     AppsWidgetsPropertyPanelLabels appLabels;
-
     @UiField
     @Path("name")
-    TextField argumentOption;
+    TextField argumentOptionEditor;
     @UiField(provided = true)
     ArgumentEditorConverter<String> defaultValueEditor;
-
     @UiField
     @Path("visible")
     CheckBoxAdapter doNotDisplay;
-
     @Ignore
     @UiField(provided = true)
     @Path("dataObject.fileInfoType")
@@ -61,7 +61,6 @@ public class MultiFileOutputPropertyEditor extends AbstractArgumentPropertyEdito
     CheckBoxAdapter isImplicit;
     @UiField
     TextField label;
-
     @UiField(provided = true)
     MultiFileOutputLabels multiFileOutputLabels;
     @UiField
@@ -69,13 +68,15 @@ public class MultiFileOutputPropertyEditor extends AbstractArgumentPropertyEdito
     @UiField
     @Path("description")
     TextField toolTipEditor;
-
-
+    private static MultiFileOutputPropertyEditorUiBinder uiBinder = GWT.create(MultiFileOutputPropertyEditorUiBinder.class);
     private final EditorDriver editorDriver = GWT.create(EditorDriver.class);
 
+
     @Inject
-    public MultiFileOutputPropertyEditor(AppTemplateWizardAppearance appearance, AppsWidgetsPropertyPanelLabels appLabels, AppsWidgetsContextualHelpMessages help,
-            AppMetadataServiceFacade appMetadataService) {
+    public MultiFileOutputPropertyEditor(AppTemplateWizardAppearance appearance,
+                                         AppsWidgetsPropertyPanelLabels appLabels,
+                                         AppsWidgetsContextualHelpMessages help,
+                                         AppMetadataServiceFacade appMetadataService) {
         super(appearance);
         this.appLabels = appLabels;
         this.multiFileOutputLabels = appLabels;
@@ -88,8 +89,8 @@ public class MultiFileOutputPropertyEditor extends AbstractArgumentPropertyEdito
 
         initWidget(uiBinder.createAndBindUi(this));
 
-        argumentOption.addValidator(new CmdLineArgCharacterValidator(I18N.V_CONSTANTS
-                .restrictedCmdLineChars()));
+        argumentOptionEditor.addValidator(new CmdLineArgCharacterValidator(I18N.V_CONSTANTS
+                                                                               .restrictedCmdLineChars()));
 
         defaultValueLabel.setHTML(appearance.createContextualHelpLabel(multiFileOutputLabels.multiFileOutputDefaultLabel(), help.multiFileOutputDefaultValue()));
         toolTipLabel.setHTML(appearance.createContextualHelpLabel(appLabels.toolTipText(), help.toolTip()));
@@ -99,14 +100,15 @@ public class MultiFileOutputPropertyEditor extends AbstractArgumentPropertyEdito
         requiredEditor.setHTML(new SafeHtmlBuilder().appendHtmlConstant("&nbsp;").append(appLabels.isRequired()).toSafeHtml());
 
         omitIfBlank.setHTML(new SafeHtmlBuilder().appendHtmlConstant("&nbsp;")
-                .append(appearance.createContextualHelpLabelNoFloat(appLabels.excludeWhenEmpty(), help.fileOutputExcludeArgument()))
-                .toSafeHtml());
+                                                 .append(appearance.createContextualHelpLabelNoFloat(appLabels.excludeWhenEmpty(), help.fileOutputExcludeArgument()))
+                                                 .toSafeHtml());
         isImplicit.setHTML(new SafeHtmlBuilder().appendHtmlConstant("&nbsp;").append(appearance.createContextualHelpLabelNoFloat(appLabels.doNotPass(), help.doNotPass()))
-                .toSafeHtml());
+                                                .toSafeHtml());
 
 
         editorDriver.initialize(this);
         editorDriver.accept(new InitializeTwoWayBinding(this));
+        ensureDebugId(Ids.PROPERTY_EDITOR + Ids.MULTI_FILE_OUTPUT);
     }
 
     @Override
@@ -134,7 +136,7 @@ public class MultiFileOutputPropertyEditor extends AbstractArgumentPropertyEdito
 
     @Override
     protected void initLabelOnlyEditMode(boolean isLabelOnlyEditMode) {
-        argumentOption.setEnabled(!isLabelOnlyEditMode);
+        argumentOptionEditor.setEnabled(!isLabelOnlyEditMode);
         defaultValueEditor.setEnabled(!isLabelOnlyEditMode);
         doNotDisplay.setEnabled(!isLabelOnlyEditMode);
         fileInfoTypeComboBox.setEnabled(!isLabelOnlyEditMode);
@@ -143,7 +145,7 @@ public class MultiFileOutputPropertyEditor extends AbstractArgumentPropertyEdito
         requiredEditor.setEnabled(!isLabelOnlyEditMode);
 
         if (isLabelOnlyEditMode) {
-            argumentOption.getValidators().clear();
+            argumentOptionEditor.getValidators().clear();
             defaultValueEditor.getValidators().clear();
             doNotDisplay.getValidators().clear();
             fileInfoTypeComboBox.getValidators().clear();
@@ -151,6 +153,17 @@ public class MultiFileOutputPropertyEditor extends AbstractArgumentPropertyEdito
             omitIfBlank.getValidators().clear();
             requiredEditor.getValidators().clear();
         }
+    }
+
+    @Override
+    protected void onEnsureDebugId(String baseID) {
+        super.onEnsureDebugId(baseID);
+        label.ensureDebugId(baseID + PropertyPanelIds.LABEL);
+        argumentOptionEditor.ensureDebugId(baseID + PropertyPanelIds.ARGUMENT_OPTION);
+        requiredEditor.ensureDebugId(baseID + PropertyPanelIds.REQUIRED);
+        omitIfBlank.ensureDebugId(baseID + PropertyPanelIds.OMIT_IF_BLANK);
+        toolTipEditor.ensureDebugId(baseID + PropertyPanelIds.TOOL_TIP);
+        fileInfoTypeComboBox.ensureDebugId(baseID + PropertyPanelIds.FILE_INFO_TYPE);
     }
 
     @UiHandler("defaultValueEditor")

@@ -1,7 +1,7 @@
 // Build file for configuring the Webapp projects
 
 
-configure(subprojects.findAll { it.name == "de" || it.name == "belphegor" }) {
+configure(subprojects.findAll { it.name == "de" || it.name == "belphegor" }) { 
     apply plugin: 'war'
     apply plugin: 'gwt'
     apply plugin: 'jetty'
@@ -45,6 +45,13 @@ configure(subprojects.findAll { it.name == "de" || it.name == "belphegor" }) {
             enableClosureCompiler = true;
             disableClassMetadata = true;
             disableCastChecking = true;
+        }
+    }
+
+    idea {
+        module {
+            scopes.PROVIDED.plus += configurations.gwtSdk
+            scopes.PROVIDED.plus += configurations.gwt
         }
     }
 

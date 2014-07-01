@@ -1,5 +1,9 @@
 package org.iplantc.de.apps.integration.client.view.propertyEditors;
 
+import static org.iplantc.de.apps.integration.shared.AppIntegrationModule.Ids;
+import static org.iplantc.de.apps.integration.shared.AppIntegrationModule.PropertyPanelIds;
+import static org.iplantc.de.apps.integration.shared.AppIntegrationModule.PropertyPanelIds.ARGUMENT_OPTION;
+import static org.iplantc.de.apps.integration.shared.AppIntegrationModule.PropertyPanelIds.LABEL;
 import org.iplantc.de.apps.integration.client.view.propertyEditors.widgets.ArgumentValidatorEditor;
 import org.iplantc.de.apps.widgets.client.view.editors.arguments.converters.ArgumentEditorConverter;
 import org.iplantc.de.apps.widgets.client.view.editors.arguments.converters.SplittableToDoubleConverter;
@@ -36,29 +40,24 @@ import java.util.List;
 
 public class DecimalInputPropertyEditor extends AbstractArgumentPropertyEditor {
 
-    interface DecimalInputPropertyEditorUiBinder extends UiBinder<Widget, DecimalInputPropertyEditor> {}
-    interface EditorDriver extends SimpleBeanEditorDriver<Argument, DecimalInputPropertyEditor> {}
+    interface DecimalInputPropertyEditorUiBinder extends UiBinder<Widget, DecimalInputPropertyEditor> { }
 
-    private static DecimalInputPropertyEditorUiBinder uiBinder = GWT.create(DecimalInputPropertyEditorUiBinder.class);
+    interface EditorDriver extends SimpleBeanEditorDriver<Argument, DecimalInputPropertyEditor> { }
 
     @UiField(provided = true)
     AppsWidgetsPropertyPanelLabels appLabels;
-
     @UiField
     @Path("name")
     TextField argumentOptionEditor;
     @UiField(provided = true)
     ArgumentEditorConverter<Double> defaultValueEditor;
-
     @UiField
     @Path("visible")
     CheckBoxAdapter doNotDisplay;
-
     @UiField(provided = true)
     DoubleInputLabels doubleInputLabels;
     @UiField
     TextField label;
-
     @UiField
     CheckBoxAdapter omitIfBlank, requiredEditor;
     @UiField
@@ -69,11 +68,14 @@ public class DecimalInputPropertyEditor extends AbstractArgumentPropertyEditor {
     @Path("")
     @UiField(provided = true)
     ArgumentValidatorEditor validatorsEditor;
-
+    private static DecimalInputPropertyEditorUiBinder uiBinder = GWT.create(DecimalInputPropertyEditorUiBinder.class);
     private final EditorDriver editorDriver = GWT.create(EditorDriver.class);
 
     @Inject
-    public DecimalInputPropertyEditor(AppTemplateWizardAppearance appearance, AppsWidgetsPropertyPanelLabels appLabels, AppsWidgetsContextualHelpMessages help, ArgumentValidatorEditor validatorsEditor) {
+    public DecimalInputPropertyEditor(AppTemplateWizardAppearance appearance,
+                                      AppsWidgetsPropertyPanelLabels appLabels,
+                                      AppsWidgetsContextualHelpMessages help,
+                                      ArgumentValidatorEditor validatorsEditor) {
         super(appearance);
         this.appLabels = appLabels;
         this.doubleInputLabels = appLabels;
@@ -88,11 +90,11 @@ public class DecimalInputPropertyEditor extends AbstractArgumentPropertyEditor {
         initWidget(uiBinder.createAndBindUi(this));
 
         argumentOptionEditor.addValidator(new CmdLineArgCharacterValidator(I18N.V_CONSTANTS
-                .restrictedCmdLineChars()));
+                                                                               .restrictedCmdLineChars()));
 
         defaultValueLabel.setHTML(appearance.createContextualHelpLabel(appLabels.integerInputDefaultLabel(), help.integerInputDefaultValue()));
         omitIfBlank.setHTML(new SafeHtmlBuilder().appendHtmlConstant("&nbsp;")
-                .append(appearance.createContextualHelpLabelNoFloat(appLabels.excludeWhenEmpty(), help.integerInputExcludeArgument())).toSafeHtml());
+                                                 .append(appearance.createContextualHelpLabelNoFloat(appLabels.excludeWhenEmpty(), help.integerInputExcludeArgument())).toSafeHtml());
         toolTipLabel.setHTML(appearance.createContextualHelpLabel(appLabels.toolTipText(), help.toolTip()));
         argumentOptionLabel.setHTML(appearance.createContextualHelpLabel(appLabels.argumentOption(), help.argumentOption()));
         doNotDisplay.setHTML(new SafeHtmlBuilder().appendHtmlConstant("&nbsp;").append(appLabels.doNotDisplay()).toSafeHtml());
@@ -100,6 +102,7 @@ public class DecimalInputPropertyEditor extends AbstractArgumentPropertyEditor {
         requiredEditor.setHTML(new SafeHtmlBuilder().appendHtmlConstant("&nbsp;").append(appLabels.isRequired()).toSafeHtml());
         editorDriver.initialize(this);
         editorDriver.accept(new InitializeTwoWayBinding(this));
+        ensureDebugId(Ids.PROPERTY_EDITOR + Ids.DOUBLE_INPUT);
     }
 
     @Override
@@ -135,6 +138,19 @@ public class DecimalInputPropertyEditor extends AbstractArgumentPropertyEditor {
             omitIfBlank.getValidators().clear();
             requiredEditor.getValidators().clear();
         }
+    }
+
+    @Override
+    protected void onEnsureDebugId(String baseID) {
+        super.onEnsureDebugId(baseID);
+        label.ensureDebugId(baseID + LABEL);
+        argumentOptionEditor.ensureDebugId(baseID + ARGUMENT_OPTION);
+        defaultValueEditor.ensureDebugId(baseID + PropertyPanelIds.DEFAULT_VALUE);
+        doNotDisplay.ensureDebugId(baseID + PropertyPanelIds.DO_NOT_DISPLAY);
+        requiredEditor.ensureDebugId(baseID + PropertyPanelIds.REQUIRED);
+        omitIfBlank.ensureDebugId(baseID + PropertyPanelIds.OMIT_IF_BLANK);
+        toolTipEditor.ensureDebugId(baseID + PropertyPanelIds.TOOL_TIP);
+        validatorsEditor.ensureDebugId(baseID + PropertyPanelIds.VALIDATOR_RULES);
     }
 
     @UiHandler("defaultValueEditor")

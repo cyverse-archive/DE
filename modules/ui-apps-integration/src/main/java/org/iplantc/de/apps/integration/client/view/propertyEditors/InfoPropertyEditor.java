@@ -1,5 +1,7 @@
 package org.iplantc.de.apps.integration.client.view.propertyEditors;
 
+import static org.iplantc.de.apps.integration.shared.AppIntegrationModule.Ids;
+import static org.iplantc.de.apps.integration.shared.AppIntegrationModule.PropertyPanelIds;
 import org.iplantc.de.apps.widgets.client.view.editors.style.AppTemplateWizardAppearance;
 import org.iplantc.de.client.models.apps.integration.Argument;
 import org.iplantc.de.resources.client.uiapps.widgets.AppsWidgetsContextualHelpMessages;
@@ -18,29 +20,32 @@ import com.sencha.gxt.widget.core.client.form.TextArea;
 
 public class InfoPropertyEditor extends AbstractArgumentPropertyEditor {
 
-    interface EditorDriver extends SimpleBeanEditorDriver<Argument, InfoPropertyEditor> {}
-    interface InfoPropertyEditorUiBinder extends UiBinder<Widget, InfoPropertyEditor> {}
+    interface EditorDriver extends SimpleBeanEditorDriver<Argument, InfoPropertyEditor> {
+    }
 
-    private static InfoPropertyEditorUiBinder uiBinder = GWT.create(InfoPropertyEditorUiBinder.class);
+    interface InfoPropertyEditorUiBinder extends UiBinder<Widget, InfoPropertyEditor> {
+    }
 
     @UiField
     FieldLabel argLabelLabel;
-
     @UiField(provided = true)
     InfoTypeLabels infoLabels;
     @UiField
     TextArea label;
-
+    private static InfoPropertyEditorUiBinder uiBinder = GWT.create(InfoPropertyEditorUiBinder.class);
     private final EditorDriver editorDriver = GWT.create(EditorDriver.class);
 
     @Inject
-    public InfoPropertyEditor(AppTemplateWizardAppearance appearance, AppsWidgetsPropertyPanelLabels appLabels, AppsWidgetsContextualHelpMessages help) {
+    public InfoPropertyEditor(AppTemplateWizardAppearance appearance,
+                              AppsWidgetsPropertyPanelLabels appLabels,
+                              AppsWidgetsContextualHelpMessages help) {
         super(appearance);
         this.infoLabels = appLabels;
         initWidget(uiBinder.createAndBindUi(this));
         argLabelLabel.setHTML(appearance.createContextualHelpLabel(infoLabels.infoLabel(), help.infoLabelHelp()));
         editorDriver.initialize(this);
         editorDriver.accept(new InitializeTwoWayBinding(this));
+        ensureDebugId(Ids.PROPERTY_EDITOR + Ids.INFO);
     }
 
     @Override
@@ -59,4 +64,9 @@ public class InfoPropertyEditor extends AbstractArgumentPropertyEditor {
         // Do nothing
     }
 
+    @Override
+    protected void onEnsureDebugId(String baseID) {
+        super.onEnsureDebugId(baseID);
+        label.ensureDebugId(baseID + PropertyPanelIds.LABEL);
+    }
 }

@@ -16,7 +16,7 @@
              type="com.sencha.gxt.core.client.util.Margins">
       <ui:attributes top="10"
                      right="5"
-                     bottom="10"
+                     bottom="0"
                      left="5" />
     </ui:with>
     <ui:with field="marginsBottom"

@@ -1,5 +1,7 @@
 package org.iplantc.de.apps.integration.client.view.propertyEditors;
 
+import static org.iplantc.de.apps.integration.shared.AppIntegrationModule.Ids;
+import static org.iplantc.de.apps.integration.shared.AppIntegrationModule.PropertyPanelIds;
 import org.iplantc.de.apps.widgets.client.view.editors.arguments.converters.ArgumentEditorConverter;
 import org.iplantc.de.apps.widgets.client.view.editors.arguments.converters.SplittableToStringConverter;
 import org.iplantc.de.apps.widgets.client.view.editors.style.AppTemplateWizardAppearance;
@@ -29,42 +31,40 @@ import com.sencha.gxt.widget.core.client.form.TextField;
 
 public class MultiLineTextInputPropertyEditor extends AbstractArgumentPropertyEditor {
 
-    interface EditorDriver extends SimpleBeanEditorDriver<Argument, MultiLineTextInputPropertyEditor> {}
-    interface MultiLineTextInputPropertyEditorUiBinder extends UiBinder<Widget, MultiLineTextInputPropertyEditor> {}
+    interface EditorDriver extends SimpleBeanEditorDriver<Argument, MultiLineTextInputPropertyEditor> {
+    }
 
-    private static MultiLineTextInputPropertyEditorUiBinder uiBinder = GWT.create(MultiLineTextInputPropertyEditorUiBinder.class);
+    interface MultiLineTextInputPropertyEditorUiBinder extends UiBinder<Widget, MultiLineTextInputPropertyEditor> {
+    }
 
     @UiField(provided = true)
     AppsWidgetsPropertyPanelLabels appLabels;
-
     @UiField
     @Path("name")
     TextField argumentOptionEditor;
     @UiField(provided = true)
     ArgumentEditorConverter<String> defaultValueEditor;
-
-
     @UiField
     FieldLabel defaultValueLabel, toolTipLabel, argumentOptionLabel;
     @UiField
     @Path("visible")
     CheckBoxAdapter doNotDisplay;
-
     @UiField
     TextField label;
     @UiField(provided = true)
     MultiLineTextLabels multiLineTextInputLabels;
     @UiField
     CheckBoxAdapter omitIfBlank, requiredEditor;
-
     @UiField
     @Path("description")
     TextField toolTipEditor;
-
+    private static MultiLineTextInputPropertyEditorUiBinder uiBinder = GWT.create(MultiLineTextInputPropertyEditorUiBinder.class);
     private final EditorDriver editorDriver = GWT.create(EditorDriver.class);
 
     @Inject
-    public MultiLineTextInputPropertyEditor(AppTemplateWizardAppearance appearance, AppsWidgetsPropertyPanelLabels appLabels, AppsWidgetsContextualHelpMessages help) {
+    public MultiLineTextInputPropertyEditor(AppTemplateWizardAppearance appearance,
+                                            AppsWidgetsPropertyPanelLabels appLabels,
+                                            AppsWidgetsContextualHelpMessages help) {
         super(appearance);
         this.appLabels = appLabels;
         this.multiLineTextInputLabels = appLabels;
@@ -77,7 +77,7 @@ public class MultiLineTextInputPropertyEditor extends AbstractArgumentPropertyEd
         initWidget(uiBinder.createAndBindUi(this));
 
         argumentOptionEditor.addValidator(new CmdLineArgCharacterValidator(I18N.V_CONSTANTS
-                .restrictedCmdLineChars()));
+                                                                               .restrictedCmdLineChars()));
 
         defaultValueLabel.setHTML(appearance.createContextualHelpLabel(appLabels.textInputDefaultLabel(), help.textInputDefaultText()));
 
@@ -88,10 +88,11 @@ public class MultiLineTextInputPropertyEditor extends AbstractArgumentPropertyEd
         requiredEditor.setHTML(new SafeHtmlBuilder().appendHtmlConstant("&nbsp;").append(appLabels.isRequired()).toSafeHtml());
 
         omitIfBlank.setHTML(new SafeHtmlBuilder().appendHtmlConstant("&nbsp;")
-                .append(appearance.createContextualHelpLabelNoFloat(appLabels.excludeWhenEmpty(), help.textInputExcludeArgument()))
-                .toSafeHtml());
+                                                 .append(appearance.createContextualHelpLabelNoFloat(appLabels.excludeWhenEmpty(), help.textInputExcludeArgument()))
+                                                 .toSafeHtml());
         editorDriver.initialize(this);
         editorDriver.accept(new InitializeTwoWayBinding(this));
+        ensureDebugId(Ids.PROPERTY_EDITOR + Ids.MULTI_LINE_TEXT);
     }
 
     @Override
@@ -126,6 +127,17 @@ public class MultiLineTextInputPropertyEditor extends AbstractArgumentPropertyEd
             omitIfBlank.getValidators().clear();
             requiredEditor.getValidators().clear();
         }
+    }
+
+    @Override
+    protected void onEnsureDebugId(String baseID) {
+        super.onEnsureDebugId(baseID);
+        label.ensureDebugId(baseID + PropertyPanelIds.LABEL);
+        argumentOptionEditor.ensureDebugId(baseID + PropertyPanelIds.ARGUMENT_OPTION);
+        defaultValueEditor.ensureDebugId(baseID + PropertyPanelIds.DEFAULT_VALUE);
+        requiredEditor.ensureDebugId(baseID + PropertyPanelIds.REQUIRED);
+        omitIfBlank.ensureDebugId(baseID + PropertyPanelIds.OMIT_IF_BLANK);
+        toolTipEditor.ensureDebugId(baseID + PropertyPanelIds.TOOL_TIP);
     }
 
     @UiHandler("defaultValueEditor")
