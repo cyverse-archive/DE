@@ -1,7 +1,17 @@
 // This build file configures all of the project module builds
-project(':confluence-client') {
+configure(subprojects.findAll { it.name != "de" && it.name != "belphegor" }) {
     apply plugin: 'gwt-base'
     gwt { gwtVersion="$gwtVer" }
+
+    idea {
+        module {
+            scopes.PROVIDED.plus += configurations.gwtSdk
+            scopes.PROVIDED.plus += configurations.gwt
+        }
+    }
+}
+
+project(':confluence-client') {
 
     dependencies {
         compile project(':de-common-module')
@@ -21,8 +31,6 @@ project(':confluence-client') {
     }
 }
 project(':analyses-module') {
-    apply plugin: 'gwt-base'
-    gwt { gwtVersion="$gwtVer" }
 
     dependencies {
         gwt "com.google.gwt.inject:gin:$gwtGinVer"
@@ -45,8 +53,6 @@ project(':analyses-module') {
 }
 
 project(':ui-apps-integration') {
-    apply plugin: 'gwt-base'
-    gwt { gwtVersion="$gwtVer" }
 
     dependencies {
         gwt "com.google.gwt.inject:gin:$gwtGinVer"
@@ -73,8 +79,6 @@ project(':ui-apps-integration') {
     }
 }
 project(':ui-apps-widgets-module') {
-    apply plugin: 'gwt-base'
-    gwt { gwtVersion="$gwtVer" }
 
     dependencies {
         gwt "com.google.gwt.inject:gin:$gwtGinVer"
@@ -99,8 +103,6 @@ project(':ui-apps-widgets-module') {
     }
 }
 project(':ui-disk-resource-module') {
-    apply plugin: 'gwt-base'
-    gwt { gwtVersion="$gwtVer" }
 
     dependencies {
         gwt "com.sencha.gxt:gxt:$gxtVersion"
@@ -120,8 +122,6 @@ project(':ui-disk-resource-module') {
     }
 }
 project(':ui-pipelines-module') {
-    apply plugin: 'gwt-base'
-    gwt { gwtVersion="$gwtVer" }
 
     dependencies {
         gwt "com.google.gwt.inject:gin:$gwtGinVer"
@@ -144,8 +144,6 @@ project(':ui-pipelines-module') {
     }
 }
 project(':ui-pipeline-builder-module') {
-    apply plugin: 'gwt-base'
-    gwt { gwtVersion="$gwtVer" }
 
     dependencies {
         gwt project(':ui-applications-module')
@@ -158,8 +156,6 @@ project(':ui-pipeline-builder-module') {
     }
 }
 project(':ui-applications-module') {
-    apply plugin: 'gwt-base'
-    gwt { gwtVersion="$gwtVer" }
 
     dependencies {
         gwt "com.google.gwt.inject:gin:$gwtGinVer"
@@ -181,8 +177,6 @@ project(':ui-applications-module') {
     }
 }
 project(':ui-commons-module') {
-    apply plugin: 'gwt-base'
-    gwt { gwtVersion="$gwtVer" }
 
     dependencies {
         gwt "com.google.gwt.inject:gin:$gwtGinVer"
@@ -204,8 +198,6 @@ project(':ui-commons-module') {
     }
 }
 project(':de-common-module') {
-    apply plugin: 'gwt-base'
-    gwt { gwtVersion="$gwtVer" }
 
     dependencies {
 
@@ -239,8 +231,6 @@ project(':de-common-module') {
     }
 }
 project(':ui-resources-module') {
-    apply plugin: 'gwt-base'
-    gwt { gwtVersion="$gwtVer" }
 
     dependencies {
         gwt "com.sencha.gxt:gxt:$gxtVersion"
