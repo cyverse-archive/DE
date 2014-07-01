@@ -1,6 +1,7 @@
 package org.iplantc.de.apps.integration.client.view.propertyEditors;
 
 
+import static org.iplantc.de.apps.integration.shared.AppIntegrationModule.PropertyPanelIds;
 import org.iplantc.de.apps.integration.client.events.DeleteArgumentGroupEvent;
 import org.iplantc.de.apps.integration.client.events.DeleteArgumentGroupEvent.DeleteArgumentGroupEventHandler;
 import org.iplantc.de.apps.integration.client.events.DeleteArgumentGroupEvent.HasDeleteArgumentGroupEventHandlers;
@@ -57,6 +58,13 @@ public class ArgumentGroupPropertyEditor extends Composite implements Editor<Arg
     private final EditorDriver editorDriver = GWT.create(EditorDriver.class);
 
     private boolean labelOnlyEditMode = false;
+
+    @Override
+    protected void onEnsureDebugId(String baseID) {
+        super.onEnsureDebugId(baseID);
+        label.ensureDebugId(baseID + PropertyPanelIds.LABEL);
+        deleteButton.ensureDebugId(baseID + PropertyPanelIds.DELETE);
+    }
 
     private ArgumentGroup model;
 

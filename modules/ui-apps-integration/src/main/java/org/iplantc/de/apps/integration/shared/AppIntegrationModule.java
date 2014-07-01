@@ -47,5 +47,6 @@ public interface AppIntegrationModule {
         String FILE_INFO_TYPE = ".fileInfoType";
         String DATA_SOURCE = ".dataSource";
         String NAME = ".name";
+        String DELETE = ".delete";
     }
 }
