@@ -82,8 +82,6 @@ public interface AppsView extends IsWidget, AppSearchResultLoadEventHandler, App
 
     void maskCenterPanel(final String loadingMask);
 
-    void submitSelectedApp();
-
     void unMaskCenterPanel();
 
     void maskWestPanel(String loadingMask);

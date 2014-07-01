@@ -2,7 +2,6 @@ package org.iplantc.de.apps.client.views.widgets;
 
 
 import static org.iplantc.de.apps.client.views.widgets.events.AppSearchResultLoadEvent.TYPE;
-
 import org.iplantc.de.apps.client.events.AppGroupSelectionChangedEvent;
 import org.iplantc.de.apps.client.events.AppSelectionChangedEvent;
 import org.iplantc.de.apps.client.views.AppsView;
@@ -11,7 +10,6 @@ import org.iplantc.de.apps.client.views.widgets.events.AppSearchResultLoadEvent.
 import org.iplantc.de.apps.client.views.widgets.proxy.AppSearchRpcProxy;
 import org.iplantc.de.apps.shared.AppsModule.Ids;
 import org.iplantc.de.client.models.IsMaskable;
-import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.models.apps.AppAutoBeanFactory;
 import org.iplantc.de.client.models.apps.proxy.AppLoadConfig;
@@ -84,19 +82,15 @@ public class AppsViewToolbarImpl extends Composite implements AppsView.ViewMenu,
     BoxLayoutData boxData;
 
     private static AppsViewToolbarUiBinder uiBinder = GWT.create(AppsViewToolbarUiBinder.class);
-    private final UserInfo userInfo;
     private final PagingLoader<FilterPagingLoadConfig, PagingLoadResult<App>> loader;
     private final AppSearchRpcProxy proxy;
     private AppsView.Presenter presenter;
-    private AppsView appsView;
 
     @Inject
     public AppsViewToolbarImpl(final AppServiceFacade appService,
                                final IplantDisplayStrings displayStrings,
                                final AppSearchAutoBeanFactory appSearchFactory,
-                               final AppAutoBeanFactory appFactory,
-                               final UserInfo userInfo) {
-        this.userInfo = userInfo;
+                               final AppAutoBeanFactory appFactory) {
         proxy = new AppSearchRpcProxy(appService, appSearchFactory, appFactory, displayStrings);
         loader = createPagingLoader(proxy, appSearchFactory);
         initWidget(uiBinder.createAndBindUi(this));
@@ -164,14 +158,14 @@ public class AppsViewToolbarImpl extends Composite implements AppsView.ViewMenu,
     @Override
     public void hideAppMenu() {
         app_menu.setVisible(false);
-        // KLUDE:for CORE-5761 set flex to 0 so that search box shows up
+        // KLUDGE:for CORE-5761 set flex to 0 so that search box shows up
         boxData.setFlex(0);
     }
 
     @Override
     public void hideWorkflowMenu() {
         wf_menu.setVisible(false);
-        // KLUDE:for CORE-5761 set flex to 0 so that search box shows up
+        // KLUDGE:for CORE-5761 set flex to 0 so that search box shows up
         boxData.setFlex(0);
     }
 
@@ -181,7 +175,6 @@ public class AppsViewToolbarImpl extends Composite implements AppsView.ViewMenu,
                      final AppSelectionChangedEvent.HasAppSelectionChangedEventHandlers hasAppSelectionChangedEventHandlers,
                      final AppGroupSelectionChangedEvent.HasAppGroupSelectionChangedEventHandlers hasAppGroupSelectionChangedEventHandlers) {
         this.presenter = presenter;
-        this.appsView = appsView;
         addAppSearchResultLoadEventHandler(appsView);
         hasAppSelectionChangedEventHandlers.addAppSelectionChangedEventHandler(this);
         hasAppGroupSelectionChangedEventHandlers.addAppGroupSelectedEventHandler(this);
@@ -238,10 +231,11 @@ public class AppsViewToolbarImpl extends Composite implements AppsView.ViewMenu,
                 final boolean isMultiStep = selectedApp.getStepCount() > 1;
                 final boolean isAppPublic = selectedApp.isPublic();
                 final boolean isAppDisabled = selectedApp.isDisabled();
+                final boolean isRunnable = selectedApp.isRunnable();
 
                 deleteAppEnabled = isSingleStep && !isAppPublic;
                 editAppEnabled = isSingleStep && !isAppPublic;
-                submitAppEnabled = isSingleStep && !isAppPublic;
+                submitAppEnabled = isSingleStep && isRunnable && !isAppPublic;
                 copyAppEnabled = isSingleStep;
                 appRunEnabled = isSingleStep && !isAppDisabled;
 
@@ -252,15 +246,11 @@ public class AppsViewToolbarImpl extends Composite implements AppsView.ViewMenu,
                 wfRunEnabled = isMultiStep && !isAppDisabled;
                 break;
             default:
-                // How does deleting workflows work?
 
                 deleteAppEnabled = false;
                 editAppEnabled = false;
-                // TODO JDS Do we want to be able to do this?
                 submitAppEnabled = false;
-                // TODO JDS Do we want to be able to do this?
                 copyAppEnabled = false;
-                // TODO JDS Do we want to be able to do this?
                 appRunEnabled = false;
 
                 deleteWfEnabled = false;
@@ -290,7 +280,6 @@ public class AppsViewToolbarImpl extends Composite implements AppsView.ViewMenu,
     @UiHandler({"submitApp", "submitWf"})
     public void submitClicked(SelectionEvent<Item> event) {
         presenter.submitClicked();
-        appsView.submitSelectedApp();
     }
 
     @UiFactory
@@ -300,7 +289,7 @@ public class AppsViewToolbarImpl extends Composite implements AppsView.ViewMenu,
     
     private PagingLoader<FilterPagingLoadConfig, PagingLoadResult<App>> createPagingLoader(final AppSearchRpcProxy proxy,
                                                                                            final AppSearchAutoBeanFactory appSearchFactory) {
-        PagingLoader<FilterPagingLoadConfig, PagingLoadResult<App>> loader = new PagingLoader<FilterPagingLoadConfig, PagingLoadResult<App>>(proxy);
+        PagingLoader<FilterPagingLoadConfig, PagingLoadResult<App>> loader = new PagingLoader<>(proxy);
 
         AppLoadConfig appLoadConfig = appSearchFactory.loadConfig().as();
         loader.useLoadConfig(appLoadConfig);

@@ -354,12 +354,6 @@ public class AppsViewImpl extends Composite implements AppsView, IsMaskable, App
     }
 
     @Override
-    public void submitSelectedApp() {
-        App selectedApp = grid.getSelectionModel().getSelectedItem();
-        new SubmitAppForPublicDialog(selectedApp).show();
-    }
-
-    @Override
     public void unMaskCenterPanel() {
         centerPanel.unmask();
     }
