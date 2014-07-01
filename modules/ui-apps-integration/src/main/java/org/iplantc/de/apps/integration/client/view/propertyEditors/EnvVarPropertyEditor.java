@@ -1,5 +1,6 @@
 package org.iplantc.de.apps.integration.client.view.propertyEditors;
 
+import static org.iplantc.de.apps.integration.shared.AppIntegrationModule.Ids;
 import static org.iplantc.de.apps.integration.shared.AppIntegrationModule.PropertyPanelIds;
 import org.iplantc.de.apps.integration.client.view.propertyEditors.util.EnvironmentVariableNameValidator;
 import org.iplantc.de.apps.widgets.client.view.editors.arguments.converters.ArgumentEditorConverter;
@@ -31,22 +32,18 @@ import com.sencha.gxt.widget.core.client.form.TextField;
 
 public class EnvVarPropertyEditor extends AbstractArgumentPropertyEditor {
 
-    interface EditorDriver extends SimpleBeanEditorDriver<Argument, EnvVarPropertyEditor> {}
-    interface EnvVarPropertyEditorUiBinder extends UiBinder<Widget, EnvVarPropertyEditor> {}
+    interface EditorDriver extends SimpleBeanEditorDriver<Argument, EnvVarPropertyEditor> { }
 
-    private static EnvVarPropertyEditorUiBinder uiBinder = GWT.create(EnvVarPropertyEditorUiBinder.class);
+    interface EnvVarPropertyEditorUiBinder extends UiBinder<Widget, EnvVarPropertyEditor> { }
 
     @UiField(provided = true)
     AppsWidgetsPropertyPanelLabels appLabels;
-
     @UiField
     FieldLabel argLabelLabel;
-
     @UiField(provided = true)
     ArgumentEditorConverter<String> defaultValueEditor;
     @UiField
     FieldLabel defaultValueLabel;
-
     @UiField
     @Path("visible")
     CheckBoxAdapter doNotDisplay;
@@ -63,11 +60,13 @@ public class EnvVarPropertyEditor extends AbstractArgumentPropertyEditor {
     TextField toolTipEditor;
     @UiField
     FieldLabel toolTipLabel;
-
+    private static EnvVarPropertyEditorUiBinder uiBinder = GWT.create(EnvVarPropertyEditorUiBinder.class);
     private final EditorDriver editorDriver = GWT.create(EditorDriver.class);
 
     @Inject
-    public EnvVarPropertyEditor(AppTemplateWizardAppearance appearance, AppsWidgetsPropertyPanelLabels appLabels, AppsWidgetsContextualHelpMessages help) {
+    public EnvVarPropertyEditor(AppTemplateWizardAppearance appearance,
+                                AppsWidgetsPropertyPanelLabels appLabels,
+                                AppsWidgetsContextualHelpMessages help) {
         super(appearance);
         this.appLabels = appLabels;
         this.envVarLabels = appLabels;
@@ -90,6 +89,7 @@ public class EnvVarPropertyEditor extends AbstractArgumentPropertyEditor {
         requiredEditor.setHTML(new SafeHtmlBuilder().appendHtmlConstant("&nbsp;").append(appLabels.isRequired()).toSafeHtml());
         editorDriver.initialize(this);
         editorDriver.accept(new InitializeTwoWayBinding(this));
+        ensureDebugId(Ids.PROPERTY_EDITOR + Ids.ENV_VARIABLE);
     }
 
     @Override
