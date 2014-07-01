@@ -158,7 +158,9 @@ public class ExternalVizualizationURLViwerImpl extends AbstractFileViewer implem
             @Override
             public void onSelect(SelectEvent event) {
                 mask(I18N.DISPLAY.loadingMask());
-                ServicesInjector.INSTANCE.getFileEditorServiceFacade().getTreeUrl(file.getId(), true,
+                ServicesInjector.INSTANCE.getFileEditorServiceFacade()
+                                         .getTreeUrl(file.getPath(),
+                                                     true,
                         new TreeUrlCallback(file, ExternalVizualizationURLViwerImpl.this, ExternalVizualizationURLViwerImpl.this));
 
             }

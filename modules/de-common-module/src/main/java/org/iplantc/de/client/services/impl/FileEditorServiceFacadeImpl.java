@@ -1,6 +1,5 @@
 package org.iplantc.de.client.services.impl;
 
-import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.GET;
 import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.POST;
 
 import org.iplantc.de.client.DEClientConstants;
@@ -37,9 +36,9 @@ public class FileEditorServiceFacadeImpl implements FileEditorServiceFacade {
     }
 
     @Override
-    public void getManifest(String idFile, AsyncCallback<String> callback) {
+    public void getManifest(String pathToFile, AsyncCallback<String> callback) {
         String address = deProperties.getDataMgmtBaseUrl() + "file/manifest?path=" //$NON-NLS-1$
-                + URL.encodeQueryString(idFile);
+                + URL.encodeQueryString(pathToFile);
 
         ServiceCallWrapper wrapper = new ServiceCallWrapper(address);
         callService(wrapper, callback);
@@ -69,8 +68,8 @@ public class FileEditorServiceFacadeImpl implements FileEditorServiceFacade {
     }
 
     @Override
-    public void getTreeUrl(String idFile, boolean refresh, AsyncCallback<String> callback) {
-        String address = "org.iplantc.services.buggalo.baseUrl?refresh=" + refresh + "&path=" + URL.encodeQueryString(idFile); //$NON-NLS-1$
+    public void getTreeUrl(String pathToFile, boolean refresh, AsyncCallback<String> callback) {
+        String address = "org.iplantc.services.buggalo.baseUrl?refresh=" + refresh + "&path=" + URL.encodeQueryString(pathToFile); //$NON-NLS-1$
 
         ServiceCallWrapper wrapper = new ServiceCallWrapper(address);
         callService(wrapper, callback);
@@ -98,15 +97,6 @@ public class FileEditorServiceFacadeImpl implements FileEditorServiceFacade {
      */
     private void callService(ServiceCallWrapper wrapper, AsyncCallback<String> callback) {
         deServiceFacade.getServiceData(wrapper, callback);
-    }
-
-    @Override
-    public void getGenomeVizUrl(String idFile, AsyncCallback<String> callback) {
-        String address = deProperties.getMuleServiceBaseUrl()
-                + "get-genomes-viz-url?path=" + idFile;
-        ServiceCallWrapper wrapper = new ServiceCallWrapper(GET, address);
-        callService(wrapper, callback);
-
     }
 
     @Override

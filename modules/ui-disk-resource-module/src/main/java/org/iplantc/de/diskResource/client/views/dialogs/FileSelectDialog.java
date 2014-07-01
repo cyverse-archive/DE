@@ -176,8 +176,8 @@ public class FileSelectDialog extends IPlantDialog implements TakesValue<List<Fi
             ArrayList<File> newArrayList = Lists.newArrayList(DiskResourceUtil.extractFiles(event
                     .getSelection()));
             dlg.setValue(newArrayList);
-            List<String> idList = DiskResourceUtil.asStringIdList(newArrayList);
-            String fileNames = DiskResourceUtil.asCommaSeperatedNameList(idList);
+            List<String> pathList = DiskResourceUtil.asStringPathList(newArrayList);
+            String fileNames = DiskResourceUtil.asCommaSeperatedNameList(pathList);
             textbox.setValue(fileNames);
 
             if (!Strings.isNullOrEmpty(fileNames)) {

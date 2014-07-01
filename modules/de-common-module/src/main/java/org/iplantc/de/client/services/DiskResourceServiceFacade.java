@@ -6,14 +6,15 @@ import org.iplantc.de.client.models.diskResources.DiskResourceAutoBeanFactory;
 import org.iplantc.de.client.models.diskResources.DiskResourceExistMap;
 import org.iplantc.de.client.models.diskResources.DiskResourceMetadata;
 import org.iplantc.de.client.models.diskResources.DiskResourceMetadataTemplate;
-import org.iplantc.de.client.models.diskResources.DiskResourceStatMap;
 import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.client.models.diskResources.RootFolders;
+import org.iplantc.de.client.models.diskResources.TYPE;
 import org.iplantc.de.client.models.services.DiskResourceMove;
 
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
+import com.sencha.gxt.core.shared.FastMap;
 import com.sencha.gxt.data.shared.loader.FilterPagingLoadConfigBean;
 
 import java.util.List;
@@ -246,8 +247,8 @@ public interface DiskResourceServiceFacade {
      * @param callback callback object
      * @deprecated User {@link #getStat(HasPaths, AsyncCallback)}
      */
-    @Deprecated
-    void getStat(String body, AsyncCallback<String> callback);
+    // @Deprecated
+    // void getStat(String body, AsyncCallback<String> callback);
 
     /**
      * Get info about a selected file or folder
@@ -255,7 +256,7 @@ public interface DiskResourceServiceFacade {
      * @param diskResourcePaths the paths to query
      * @param callback callback object
      */
-    void getStat(final HasPaths diskResourcePaths, final AsyncCallback<DiskResourceStatMap> callback);
+    void getStat(final FastMap<TYPE> paths, final AsyncCallback<FastMap<DiskResource>> callback);
 
     /**
      * get data search history

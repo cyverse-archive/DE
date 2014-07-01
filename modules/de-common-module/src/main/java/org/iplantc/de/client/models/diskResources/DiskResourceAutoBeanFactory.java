@@ -11,7 +11,7 @@ import com.google.web.bindery.autobean.shared.AutoBean;
 import com.google.web.bindery.autobean.shared.AutoBeanFactory;
 import com.google.web.bindery.autobean.shared.AutoBeanFactory.Category;
 
-@Category({DiskResourceExistMap.Category.class, DiskResourceStatMap.Category.class})
+@Category({DiskResourceExistMap.Category.class})
 public interface DiskResourceAutoBeanFactory extends AutoBeanFactory {
 
     AutoBean<Folder> folder();
@@ -28,8 +28,6 @@ public interface DiskResourceAutoBeanFactory extends AutoBeanFactory {
 
     AutoBean<DiskResourceMetadataList> metadataList();
 
-    AutoBean<DiskResourceInfo> info();
-
     AutoBean<HasPaths> pathsList();
 
     AutoBean<RestoreResponse> restoreResponse();
@@ -37,8 +35,6 @@ public interface DiskResourceAutoBeanFactory extends AutoBeanFactory {
     AutoBean<RestoredResource> partialRestoreResponse();
 
     AutoBean<DiskResourceExistMap> diskResourceExistMap();
-
-    AutoBean<DiskResourceStatMap> diskResourceStatMap();
 
     AutoBean<SimpleServiceError> simpleServiceError();
 

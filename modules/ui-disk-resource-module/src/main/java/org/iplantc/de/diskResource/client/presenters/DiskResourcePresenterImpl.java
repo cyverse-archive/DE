@@ -12,10 +12,10 @@ import org.iplantc.de.client.models.dataLink.DataLinkFactory;
 import org.iplantc.de.client.models.dataLink.DataLinkList;
 import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.client.models.diskResources.DiskResourceAutoBeanFactory;
-import org.iplantc.de.client.models.diskResources.DiskResourceInfo;
 import org.iplantc.de.client.models.diskResources.File;
 import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.client.models.diskResources.PermissionValue;
+import org.iplantc.de.client.models.diskResources.TYPE;
 import org.iplantc.de.client.models.search.DiskResourceQueryTemplate;
 import org.iplantc.de.client.models.tags.IpalntTagAutoBeanFactory;
 import org.iplantc.de.client.models.tags.IplantTag;
@@ -99,7 +99,6 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.shared.EventHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
-import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONString;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
@@ -231,12 +230,10 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter, Di
         if (selection != null && selection.size() == 1) {
             Iterator<DiskResource> it = selection.iterator();
             DiskResource next = it.next();
-            String path = next.getPath();
-            DiskResourceInfo diskResourceInfo = next.getDiskResourceInfo();
-            if (diskResourceInfo == null) {
-                getDetails(path);
+            if (!next.isStatLoaded()) {
+                getDetails(next);
             } else {
-                view.updateDetails(path, diskResourceInfo);
+                view.updateDetails(next);
             }
         } else {
             view.resetDetailsPanel();
@@ -254,7 +251,7 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter, Di
         final DiskResource diskResource = event.getDiskResource();
         checkNotNull(diskResource);
         if (!diskResource.isFavorite()) {
-            fsmdataService.addToFavorites(diskResource.getUUID(), new AsyncCallback<String>() {
+            fsmdataService.addToFavorites(diskResource.getId(), new AsyncCallback<String>() {
 
                 @Override
                 public void onFailure(Throwable caught) {
@@ -278,7 +275,7 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter, Di
                 }
             });
         } else {
-            fsmdataService.removeFromFavorites(diskResource.getUUID(), new AsyncCallback<String>() {
+            fsmdataService.removeFromFavorites(diskResource.getId(), new AsyncCallback<String>() {
 
                 @Override
                 public void onFailure(Throwable caught) {
@@ -314,7 +311,10 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter, Di
         d.remove(d.getButtonBar());
         d.setSize("600px", "450px");
         CommentsView cv = new CommentsViewImpl();
-        CommentsPresenter cp = new CommentsPresenter(cv, dr.getUUID(), dr.getPermission() == PermissionValue.own, fsmdataService);
+        CommentsPresenter cp = new CommentsPresenter(cv,
+                                                     dr.getId(),
+                                                     dr.getPermission() == PermissionValue.own,
+                                                     fsmdataService);
         cv.setPresenter(cp);
         cp.go(d);
         d.show();
@@ -478,12 +478,11 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter, Di
         return view.getSelectedDiskResources();
     }
 
-    private void getDetails(String path) {
-        JSONObject obj = new JSONObject();
-        JSONArray arr = new JSONArray();
-        arr.set(0, new JSONString(path));
-        obj.put("paths", arr); //$NON-NLS-1$
-        diskResourceService.getStat(obj.toString(), new GetDiskResourceDetailsCallback(this, path, drFactory));
+    private void getDetails(DiskResource path) {
+        
+        diskResourceService.getStat(DiskResourceUtil.asStringPathTypeMap(Arrays.asList(path), path instanceof File ? TYPE.FILE
+                                                                                             : TYPE.FOLDER),
+                                    new GetDiskResourceDetailsCallback(this, path.getPath(), drFactory));
         view.maskSendToCoGe();
         view.maskSendToEnsembl();
         view.maskSendToTreeViewer();
@@ -495,7 +494,7 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter, Di
             Iterator<DiskResource> it = getSelectedDiskResources().iterator();
             if (it != null && it.hasNext()) {
                 final DiskResource next = it.next();
-                fsmdataService.getTags(next.getUUID(), new AsyncCallback<String>() {
+                fsmdataService.getTags(next.getId(), new AsyncCallback<String>() {
 
                     @Override
                     public void onFailure(Throwable caught) {
@@ -691,7 +690,7 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter, Di
 
 
     private String getInfoType(DiskResource dr) {
-        DiskResourceInfo diskResourceInfo = dr.getDiskResourceInfo();
+        File diskResourceInfo = ((File)dr);
         if (diskResourceInfo == null) {
             ErrorHandler.post("Unable to retrieve information type");
         }
@@ -778,8 +777,7 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter, Di
                 if (selection != null && selection.size() == 1) {
                     Iterator<DiskResource> it = selection.iterator();
                     DiskResource next = it.next();
-                    String path = next.getPath();
-                    getDetails(path);
+                    getDetails(next);
                 }
             }
         });
@@ -1105,7 +1103,7 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter, Di
             @Override
             public void onSelect(SelectEvent event) {
                 String newType = dialog.getSelectedValue();
-                setInfoType(dr.getId(), newType);
+                setInfoType(dr, newType);
             }
         });
 
@@ -1169,13 +1167,13 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter, Di
         if (getSelectedDiskResources().size() > 0) {
             Iterator<DiskResource> it = getSelectedDiskResources().iterator();
             if (it != null && it.hasNext()) {
-                setInfoType(it.next().getPath(), "");
+                setInfoType(it.next(), "");
             }
         }
     }
 
-    private void setInfoType(final String id, String newType) {
-        diskResourceService.setFileType(id, newType, new AsyncCallback<String>() {
+    private void setInfoType(final DiskResource dr, String newType) {
+        diskResourceService.setFileType(dr.getPath(), newType, new AsyncCallback<String>() {
 
             @Override
             public void onFailure(Throwable arg0) {
@@ -1184,18 +1182,18 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter, Di
 
             @Override
             public void onSuccess(String arg0) {
-                getDetails(id);
+                getDetails(dr);
             }
         });
     }
 
     @Override
-    public void displayAndCacheDiskResourceInfo(String path, DiskResourceInfo info) {
+    public void displayAndCacheDiskResourceInfo(DiskResource info) {
         if (info == null) {
             return;
         }
 
-        view.displayAndCacheDiskResourceInfo(path, info);
+        view.displayAndCacheDiskResourceInfo(info);
     }
 
     @Override
@@ -1218,7 +1216,9 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter, Di
             Iterator<DiskResource> it = getSelectedDiskResources().iterator();
             if (it != null && it.hasNext()) {
                 final DiskResource next = it.next();
-                fsmdataService.attachTags(Arrays.asList(tag.getId()), next.getUUID(), new AsyncCallback<String>() {
+                fsmdataService.attachTags(Arrays.asList(tag.getId()),
+                                          next.getId(),
+                                          new AsyncCallback<String>() {
 
                     @Override
                     public void onFailure(Throwable caught) {
@@ -1243,7 +1243,9 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter, Di
             Iterator<DiskResource> it = getSelectedDiskResources().iterator();
             if (it != null && it.hasNext()) {
                 final DiskResource next = it.next();
-                fsmdataService.detachTags(Arrays.asList(tag.getId()), next.getUUID(), new AsyncCallback<String>() {
+                fsmdataService.detachTags(Arrays.asList(tag.getId()),
+                                          next.getId(),
+                                          new AsyncCallback<String>() {
 
                     @Override
                     public void onFailure(Throwable caught) {

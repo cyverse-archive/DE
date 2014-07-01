@@ -344,7 +344,7 @@ public class StrcturedTextViewerImpl extends StructuredTextViewer {
 
     private JSONObject getRequestBody() {
         JSONObject obj = new JSONObject();
-        obj.put("path", new JSONString(file.getId()));
+        obj.put("path", new JSONString(file.getPath()));
         obj.put("separator", new JSONString(URL.encode(getSeparator())));
         obj.put("page", new JSONString(pagingToolbar.getPageNumber() + ""));
         obj.put("chunk-size", new JSONString("" + pagingToolbar.getPageSize()));

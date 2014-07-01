@@ -27,4 +27,16 @@ public interface Folder extends DiskResource {
 
     @PropertyName("total_filtered")
     int getTotalFiltered();
+
+    @PropertyName("dir-count")
+    int getDirCount();
+
+    @PropertyName("dir-count")
+    void setDirCount(int count);
+
+    @PropertyName("file-count")
+    void setFileCount(int count);
+
+    @PropertyName("file-count")
+    int getFileCount();
 }

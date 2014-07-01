@@ -2,12 +2,11 @@ package org.iplantc.de.diskResource.client.views.widgets;
 
 import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.gin.ServicesInjector;
-import org.iplantc.de.client.models.HasId;
-import org.iplantc.de.client.models.HasPaths;
+import org.iplantc.de.client.models.HasPath;
 import org.iplantc.de.client.models.UserSettings;
 import org.iplantc.de.client.models.diskResources.DiskResource;
-import org.iplantc.de.client.models.diskResources.DiskResourceStatMap;
 import org.iplantc.de.client.models.diskResources.File;
+import org.iplantc.de.client.models.diskResources.TYPE;
 import org.iplantc.de.client.models.errorHandling.ServiceErrorCode;
 import org.iplantc.de.client.models.errorHandling.SimpleServiceError;
 import org.iplantc.de.client.services.DiskResourceServiceFacade;
@@ -39,6 +38,7 @@ import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.web.bindery.autobean.shared.AutoBeanCodex;
 
+import com.sencha.gxt.core.shared.FastMap;
 import com.sencha.gxt.data.shared.ListStore;
 import com.sencha.gxt.dnd.core.client.DND.Operation;
 import com.sencha.gxt.dnd.core.client.DndDragEnterEvent;
@@ -77,7 +77,12 @@ import java.util.Set;
  * @author jstroot
  * 
  */
-public class MultiFileSelectorField extends Composite implements IsField<List<HasId>>, ValueAwareEditor<List<HasId>>, HasValueChangeHandlers<List<HasId>>, DndDragEnterHandler, DndDragMoveHandler,
+public class MultiFileSelectorField extends Composite implements
+                                                     IsField<List<HasPath>>,
+                                                     ValueAwareEditor<List<HasPath>>,
+                                                     HasValueChangeHandlers<List<HasPath>>,
+                                                     DndDragEnterHandler,
+                                                     DndDragMoveHandler,
         DndDropHandler, DiskResourceSelector, DiskResourceSelector.HasDisableBrowseButtons {
 
     interface MultiFileSelectorFieldUiBinder extends UiBinder<Widget, MultiFileSelectorField> {
@@ -104,8 +109,9 @@ public class MultiFileSelectorField extends Composite implements IsField<List<Ha
                 UserSettingsUpdatedEvent usue = new UserSettingsUpdatedEvent();
                 EventBus.getInstance().fireEvent(usue);
             }
-            ValueChangeEvent.fire(MultiFileSelectorField.this, Lists.<HasId> newArrayList(store.getAll()));
-            setValue(Lists.<HasId> newArrayList(store.getAll()));
+            ValueChangeEvent.fire(MultiFileSelectorField.this,
+                                  Lists.<HasPath> newArrayList(store.getAll()));
+            setValue(Lists.<HasPath> newArrayList(store.getAll()));
         }
     }
 
@@ -171,13 +177,13 @@ public class MultiFileSelectorField extends Composite implements IsField<List<Ha
     }
 
     @Override
-    public HandlerRegistration addValueChangeHandler(ValueChangeHandler<List<HasId>> handler) {
+    public HandlerRegistration addValueChangeHandler(ValueChangeHandler<List<HasPath>> handler) {
         return addHandler(handler, ValueChangeEvent.getType());
     }
 
     @Override
     public void clear() {
-        setValue(Collections.<HasId> emptyList());
+        setValue(Collections.<HasPath> emptyList());
         clearInvalid();
     }
 
@@ -206,8 +212,8 @@ public class MultiFileSelectorField extends Composite implements IsField<List<Ha
     }
 
     @Override
-    public List<HasId> getValue() {
-        List<HasId> hasIdList = Lists.newArrayList();
+    public List<HasPath> getValue() {
+        List<HasPath> hasIdList = Lists.newArrayList();
         for (DiskResource dr : listStore.getAll()) {
             hasIdList.add(dr);
         }
@@ -242,7 +248,7 @@ public class MultiFileSelectorField extends Composite implements IsField<List<Ha
         Set<DiskResource> dropData = getDropData(event.getData());
 
         if (validateDropStatus(dropData, event.getStatusProxy())) {
-            List<HasId> validateList = new ArrayList<HasId>();
+            List<HasPath> validateList = new ArrayList<HasPath>();
             for (DiskResource data : dropData) {
                 if ((data instanceof File) && listStore.findModel(data) == null) {
                     listStore.add(data);
@@ -254,7 +260,7 @@ public class MultiFileSelectorField extends Composite implements IsField<List<Ha
                 setInfoErrorText(getSplCharWarning());
             }
 
-            ValueChangeEvent.fire(this, Lists.<HasId> newArrayList(dropData));
+            ValueChangeEvent.fire(this, Lists.<HasPath> newArrayList(dropData));
         }
     }
 
@@ -265,7 +271,8 @@ public class MultiFileSelectorField extends Composite implements IsField<List<Ha
     public void reset() {}
 
     @Override
-    public void setDelegate(EditorDelegate<List<HasId>> delegate) {/* Do Nothing */}
+    public void setDelegate(EditorDelegate<List<HasPath>> delegate) {/* Do Nothing */
+    }
 
     public void setEmptyText(String emptyText) {
         gridView.setEmptyText(emptyText);
@@ -277,7 +284,7 @@ public class MultiFileSelectorField extends Composite implements IsField<List<Ha
     }
 
     @Override
-    public void setValue(List<HasId> value) {
+    public void setValue(List<HasPath> value) {
         if ((value == null) || value.isEmpty())
             return;
 
@@ -374,19 +381,19 @@ public class MultiFileSelectorField extends Composite implements IsField<List<Ha
             listStore.remove(dr);
         }
 
-        if (checkForSplChar(Lists.<HasId> newArrayList(grid.getStore().getAll())).length() > 0) {
+        if (checkForSplChar(Lists.<HasPath> newArrayList(grid.getStore().getAll())).length() > 0) {
             setInfoErrorText(getSplCharWarning());
         } else {
             setInfoErrorText("");
         }
      }
 
-    private StringBuilder checkForSplChar(List<HasId> idSet) {
+    private StringBuilder checkForSplChar(List<HasPath> idSet) {
         char[] restrictedChars = (I18N.V_CONSTANTS.warnedDiskResourceNameChars()).toCharArray(); //$NON-NLS-1$
         StringBuilder restrictedFound = new StringBuilder();
 
-        for (HasId id : idSet) {
-            String diskresourceId = id.getId();
+        for (HasPath path : idSet) {
+            String diskresourceId = path.getPath();
             for (char restricted : restrictedChars) {
                 for (char next : diskresourceId.toCharArray()) {
                     if (next == restricted && next != '/') {
@@ -406,13 +413,12 @@ public class MultiFileSelectorField extends Composite implements IsField<List<Ha
     }
 
     
-    private void doGetStat(final List<HasId> value) {
+    private void doGetStat(final List<HasPath> value) {
         // JDS Clear permissions and existence errors since we are about to recheck
         permissionErrors.clear();
         existsErrors.clear();
-        HasPaths diskResourcePaths = drServiceFacade.getDiskResourceFactory().pathsList().as();
-        diskResourcePaths.setPaths(DiskResourceUtil.asStringIdList(value));
-        drServiceFacade.getStat(diskResourcePaths, new AsyncCallback<DiskResourceStatMap>() {
+        drServiceFacade.getStat(DiskResourceUtil.asStringPathTypeMap(value, TYPE.FILE),
+                                new AsyncCallback<FastMap<DiskResource>>() {
 
             @Override
             public void onFailure(Throwable caught) {
@@ -432,12 +438,12 @@ public class MultiFileSelectorField extends Composite implements IsField<List<Ha
             }
 
             @Override
-            public void onSuccess(DiskResourceStatMap result) {
-                if (result.getMap().isEmpty()) {
+            public void onSuccess(FastMap<DiskResource> result) {
+                if (result.isEmpty()) {
                     return;
                 }
 
-                Set<Entry<String, DiskResource>> entrySet = result.getMap().entrySet();
+                Set<Entry<String, DiskResource>> entrySet = result.entrySet();
                 for (Entry<String, DiskResource> entry : entrySet) {
                     DiskResource entryValue = entry.getValue();
                     DefaultEditorError permError = new DefaultEditorError(MultiFileSelectorField.this, I18N.DISPLAY.permissionSelectErrorMessage(), entryValue.getId());

@@ -32,11 +32,6 @@ public class FileEditorServiceFacadeStub implements FileEditorServiceFacade {
     }
 
     @Override
-    public void getGenomeVizUrl(String idFile, AsyncCallback<String> callback) {
-
-    }
-
-    @Override
     public void viewGenomes(JSONObject pathArray, AsyncCallback<String> callback) {
 
     }

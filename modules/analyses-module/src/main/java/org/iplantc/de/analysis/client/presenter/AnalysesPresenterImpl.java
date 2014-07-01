@@ -11,7 +11,6 @@ import org.iplantc.de.analysis.client.views.widget.AnalysisParamView;
 import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.events.FileSavedEvent;
 import org.iplantc.de.client.events.diskResources.OpenFolderEvent;
-import org.iplantc.de.client.models.HasPaths;
 import org.iplantc.de.client.models.IsMaskable;
 import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.client.models.analysis.Analysis;
@@ -19,8 +18,8 @@ import org.iplantc.de.client.models.analysis.AnalysisParameter;
 import org.iplantc.de.client.models.apps.integration.ArgumentType;
 import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.client.models.diskResources.DiskResourceAutoBeanFactory;
-import org.iplantc.de.client.models.diskResources.DiskResourceStatMap;
 import org.iplantc.de.client.models.diskResources.File;
+import org.iplantc.de.client.models.diskResources.TYPE;
 import org.iplantc.de.client.services.AnalysisServiceFacade;
 import org.iplantc.de.client.services.DiskResourceServiceFacade;
 import org.iplantc.de.client.services.FileEditorServiceFacade;
@@ -39,6 +38,7 @@ import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 import org.iplantc.de.resources.client.messages.IplantErrorStrings;
 
 import static com.google.common.base.Preconditions.checkState;
+
 import com.google.common.collect.Lists;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.HandlerRegistration;
@@ -48,12 +48,11 @@ import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HasOneWidget;
 import com.google.inject.Inject;
-import com.google.web.bindery.autobean.shared.AutoBean;
 import com.google.web.bindery.autobean.shared.AutoBeanCodex;
-import com.google.web.bindery.autobean.shared.AutoBeanUtils;
 import com.google.web.bindery.autobean.shared.Splittable;
 import com.google.web.bindery.autobean.shared.impl.StringQuoter;
 
+import com.sencha.gxt.core.shared.FastMap;
 import com.sencha.gxt.data.shared.ListStore;
 import com.sencha.gxt.data.shared.loader.FilterPagingLoadConfig;
 import com.sencha.gxt.data.shared.loader.LoadEvent;
@@ -66,29 +65,35 @@ import com.sencha.gxt.widget.core.client.event.SelectEvent;
 import com.sencha.gxt.widget.core.client.form.TextArea;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
- *
+ * 
  * A presenter for analyses view
- *
+ * 
  * @author sriram
- *
+ * 
  */
 @SuppressWarnings("unused")
-public class AnalysesPresenterImpl implements AnalysesView.Presenter, AnalysisNameSelectedEvent.AnalysisNameSelectedEventHandler, AnalysisParamValueSelectedEvent.AnalysisParamValueSelectedEventHandler, AnalysisCommentSelectedEvent.AnalysisCommentSelectedEventHandler, AnalysisAppSelectedEvent.AnalysisAppSelectedEventHandler {
+public class AnalysesPresenterImpl implements
+                                  AnalysesView.Presenter,
+                                  AnalysisNameSelectedEvent.AnalysisNameSelectedEventHandler,
+                                  AnalysisParamValueSelectedEvent.AnalysisParamValueSelectedEventHandler,
+                                  AnalysisCommentSelectedEvent.AnalysisCommentSelectedEventHandler,
+                                  AnalysisAppSelectedEvent.AnalysisAppSelectedEventHandler {
 
     private static class AnalysisCommentsDialog extends IPlantDialog {
 
         private final Analysis analysis;
         private final TextArea ta;
 
-        public AnalysisCommentsDialog(final Analysis analysis, final IplantDisplayStrings displayStrings){
+        public AnalysisCommentsDialog(final Analysis analysis, final IplantDisplayStrings displayStrings) {
             this.analysis = analysis;
 
             String comments = analysis.getComments();
             setHeadingText(displayStrings.comments());
-            setSize("350px","300px");
+            setSize("350px", "300px");
             ta = new TextArea();
             ta.setValue(comments);
             add(ta);
@@ -98,7 +103,7 @@ public class AnalysesPresenterImpl implements AnalysesView.Presenter, AnalysisNa
             return ta.getValue();
         }
 
-        public boolean isCommentChanged(){
+        public boolean isCommentChanged() {
             return !getComment().equals(analysis.getComments());
         }
     }
@@ -123,12 +128,13 @@ public class AnalysesPresenterImpl implements AnalysesView.Presenter, AnalysisNa
         }
     }
 
-    private class AnalysisParamSelectedStatCallback implements AsyncCallback<DiskResourceStatMap> {
+    private class AnalysisParamSelectedStatCallback implements AsyncCallback<FastMap<DiskResource>> {
 
         private final DiskResourceAutoBeanFactory factory;
         private final AnalysisParameter value;
 
-        public AnalysisParamSelectedStatCallback(AnalysisParameter value, DiskResourceAutoBeanFactory factory) {
+        public AnalysisParamSelectedStatCallback(AnalysisParameter value,
+                                                 DiskResourceAutoBeanFactory factory) {
             this.value = value;
             this.factory = factory;
         }
@@ -140,11 +146,9 @@ public class AnalysesPresenterImpl implements AnalysesView.Presenter, AnalysisNa
         }
 
         @Override
-        public void onSuccess(DiskResourceStatMap result) {
-            final AutoBean<DiskResource> autoBean = AutoBeanUtils.getAutoBean(result.get(value.getDisplayValue()));
-            final Splittable encode = AutoBeanCodex.encode(autoBean);
-            File file = AutoBeanCodex.decode(factory, File.class, encode).as();
-            eventBus.fireEvent(new ShowFilePreviewEvent(file, AnalysesPresenterImpl.this));
+        public void onSuccess(FastMap<DiskResource> result) {
+            eventBus.fireEvent(new ShowFilePreviewEvent((File)result.get(value.getDisplayValue()),
+                                                        AnalysesPresenterImpl.this));
         }
     }
 
@@ -182,7 +186,7 @@ public class AnalysesPresenterImpl implements AnalysesView.Presenter, AnalysisNa
 
         @Override
         public void onDialogHide(DialogHideEvent event) {
-            if(PredefinedButton.OK.equals(event.getHideButton())) {
+            if (PredefinedButton.OK.equals(event.getHideButton())) {
                 analysisService.deleteAnalyses(analysesToBeDeleted, new AsyncCallback<String>() {
 
                     @Override
@@ -202,17 +206,18 @@ public class AnalysesPresenterImpl implements AnalysesView.Presenter, AnalysisNa
     /**
      * A LoadHandler needed to set selected analyses after the initial view load, since settings like
      * page size are only set in the reused config by the loader after an initial grid load, which may be
-     * by-passed by the {@link org.iplantc.de.analysis.client.views.widget.AnalysisSearchField#filterByAnalysisId} call in
+     * by-passed by the
+     * {@link org.iplantc.de.analysis.client.views.widget.AnalysisSearchField#filterByAnalysisId} call in
      * {@link AnalysesPresenterImpl#setSelectedAnalyses}.
-     *
+     * 
      * A benefit of selecting analyses with this LoadHandler is if the analysis to select has already
      * loaded when this handler is called, then it can be selected immediately without filtering.
-     *
+     * 
      * @author psarando
-     *
+     * 
      */
     private class FirstLoadHandler implements
-            LoadHandler<FilterPagingLoadConfig, PagingLoadResult<Analysis>> {
+                                  LoadHandler<FilterPagingLoadConfig, PagingLoadResult<Analysis>> {
 
         private final List<Analysis> selectedAnalyses;
 
@@ -233,7 +238,9 @@ public class AnalysesPresenterImpl implements AnalysesView.Presenter, AnalysisNa
         private final String newName;
         private final ListStore<Analysis> listStore;
 
-        public RenameAnalysisCallback(Analysis selectedAnalysis, String newName, ListStore<Analysis> listStore) {
+        public RenameAnalysisCallback(Analysis selectedAnalysis,
+                                      String newName,
+                                      ListStore<Analysis> listStore) {
             this.selectedAnalysis = selectedAnalysis;
             this.newName = newName;
             this.listStore = listStore;
@@ -259,7 +266,9 @@ public class AnalysesPresenterImpl implements AnalysesView.Presenter, AnalysisNa
         private final String newComment;
         private final ListStore<Analysis> listStore;
 
-        public UpdateCommentsCallback(Analysis selectedAnalysis, String newComment, ListStore<Analysis> listStore) {
+        public UpdateCommentsCallback(Analysis selectedAnalysis,
+                                      String newComment,
+                                      ListStore<Analysis> listStore) {
             this.selectedAnalysis = selectedAnalysis;
             this.newComment = newComment;
             this.listStore = listStore;
@@ -294,7 +303,8 @@ public class AnalysesPresenterImpl implements AnalysesView.Presenter, AnalysisNa
     private HandlerRegistration handlerFirstLoad;
 
     @Inject
-    public AnalysesPresenterImpl(final AnalysesView view, final EventBus eventBus,
+    public AnalysesPresenterImpl(final AnalysesView view,
+                                 final EventBus eventBus,
                                  final AnalysisServiceFacade analysisService,
                                  final IplantAnnouncer announcer,
                                  final IplantDisplayStrings displayStrings,
@@ -338,7 +348,8 @@ public class AnalysesPresenterImpl implements AnalysesView.Presenter, AnalysisNa
 
         final List<Analysis> analysesToBeDeleted = view.getSelectedAnalyses();
 
-        ConfirmMessageBox cmb = new ConfirmMessageBox(displayStrings.warning(), displayStrings.analysesExecDeleteWarning());
+        ConfirmMessageBox cmb = new ConfirmMessageBox(displayStrings.warning(),
+                                                      displayStrings.analysesExecDeleteWarning());
         cmb.setPredefinedButtons(PredefinedButton.OK, PredefinedButton.CANCEL);
         cmb.addDialogHideHandler(new DeleteMessageBoxHandler(analysesToBeDeleted));
         cmb.show();
@@ -354,51 +365,67 @@ public class AnalysesPresenterImpl implements AnalysesView.Presenter, AnalysisNa
 
         final IsMaskable maskable = event.getMaskable();
         maskable.mask(displayStrings.savingFileMask());
-        fileEditorService.uploadTextAsFile(event.getPath(), event.getFileContents(), true, new AsyncCallback<String>() {
-            @Override
-            public void onFailure(Throwable caught) {
+        fileEditorService.uploadTextAsFile(event.getPath(),
+                                           event.getFileContents(),
+                                           true,
+                                           new AsyncCallback<String>() {
+                                               @Override
+                                               public void onFailure(Throwable caught) {
 
-            }
+                                               }
 
-            @Override
-            public void onSuccess(String result) {
-                final Splittable split = StringQuoter.split(result);
-                final File file = AutoBeanCodex.decode(drFactory, File.class, split.get("file")).as();
-                eventBus.fireEvent(new FileSavedEvent(file));
+                                               @Override
+                                               public void onSuccess(String result) {
+                                                   final Splittable split = StringQuoter.split(result);
+                                                   final File file = AutoBeanCodex.decode(drFactory,
+                                                                                          File.class,
+                                                                                          split.get("file"))
+                                                                                  .as();
+                                                   eventBus.fireEvent(new FileSavedEvent(file));
 
-                final Splittable annotatedFile = split.get("file");
-                StringQuoter.create(DiskResourceUtil.parseParent(file.getPath())).assign(annotatedFile, "parentFolderId");
-                StringQuoter.create(event.getPath()).assign(annotatedFile, "sourceUrl");
+                                                   final Splittable annotatedFile = split.get("file");
+                                                   StringQuoter.create(DiskResourceUtil.parseParent(file.getPath()))
+                                                               .assign(annotatedFile, "parentFolderId");
+                                                   StringQuoter.create(event.getPath())
+                                                               .assign(annotatedFile, "sourceUrl");
 
-                final Splittable payload = StringQuoter.createSplittable();
-                StringQuoter.create("file_uploaded").assign(payload, "action");
-                annotatedFile.assign(payload, "data");
+                                                   final Splittable payload = StringQuoter.createSplittable();
+                                                   StringQuoter.create("file_uploaded").assign(payload,
+                                                                                               "action");
+                                                   annotatedFile.assign(payload, "data");
 
-                final Splittable notificationMsg = StringQuoter.createSplittable();
-                StringQuoter.create("data").assign(notificationMsg, "type");
-                String subject = file.getName().isEmpty() ? errorStrings.importFailed(event.getPath())
-                                         : displayStrings.fileUploadSuccess(file.getName());
-                StringQuoter.create(subject).assign(notificationMsg, "subject");
-                payload.assign(notificationMsg, "payload");
-                StringQuoter.create(userInfo.getUsername()).assign(notificationMsg, "user");
+                                                   final Splittable notificationMsg = StringQuoter.createSplittable();
+                                                   StringQuoter.create("data").assign(notificationMsg,
+                                                                                      "type");
+                                                   String subject = file.getName().isEmpty() ? errorStrings.importFailed(event.getPath())
+                                                                                            : displayStrings.fileUploadSuccess(file.getName());
+                                                   StringQuoter.create(subject).assign(notificationMsg,
+                                                                                       "subject");
+                                                   payload.assign(notificationMsg, "payload");
+                                                   StringQuoter.create(userInfo.getUsername())
+                                                               .assign(notificationMsg, "user");
 
+                                                   final String notificationMsgPayload = notificationMsg.getPayload();
+                                                   userSessionService.postClientNotification(JsonUtil.getObject(notificationMsgPayload),
+                                                                                             new AsyncCallback<String>() {
+                                                                                                 @Override
+                                                                                                 public void
+                                                                                                         onFailure(Throwable caught) {
+                                                                                                     event.getHideable()
+                                                                                                          .hide();
+                                                                                                     announcer.schedule(new ErrorAnnouncementConfig(caught.getMessage()));
+                                                                                                 }
 
-                final String notificationMsgPayload = notificationMsg.getPayload();
-                userSessionService.postClientNotification(JsonUtil.getObject(notificationMsgPayload), new AsyncCallback<String>(){
-                    @Override
-                    public void onFailure(Throwable caught) {
-                        event.getHideable().hide();
-                        announcer.schedule(new ErrorAnnouncementConfig(caught.getMessage()));
-                    }
-
-                    @Override
-                    public void onSuccess(String result) {
-                        event.getHideable().hide();
-                        announcer.schedule(new SuccessAnnouncementConfig(displayStrings.importRequestSubmit(file.getName())));
-                    }
-                });
-            }
-        });
+                                                                                                 @Override
+                                                                                                 public void
+                                                                                                         onSuccess(String result) {
+                                                                                                     event.getHideable()
+                                                                                                          .hide();
+                                                                                                     announcer.schedule(new SuccessAnnouncementConfig(displayStrings.importRequestSubmit(file.getName())));
+                                                                                                 }
+                                                                                             });
+                                               }
+                                           });
 
     }
 
@@ -460,9 +487,12 @@ public class AnalysesPresenterImpl implements AnalysesView.Presenter, AnalysisNa
         d.addDialogHideHandler(new DialogHideEvent.DialogHideHandler() {
             @Override
             public void onDialogHide(DialogHideEvent hideEvent) {
-                if (PredefinedButton.OK.equals(hideEvent.getHideButton())
-                            && d.isCommentChanged()) {
-                    analysisService.updateAnalysisComments(event.getValue(), d.getComment(), new UpdateCommentsCallback(event.getValue(), d.getComment(), view.getListStore()));
+                if (PredefinedButton.OK.equals(hideEvent.getHideButton()) && d.isCommentChanged()) {
+                    analysisService.updateAnalysisComments(event.getValue(),
+                                                           d.getComment(),
+                                                           new UpdateCommentsCallback(event.getValue(),
+                                                                                      d.getComment(),
+                                                                                      view.getListStore()));
                 }
             }
         });
@@ -480,19 +510,21 @@ public class AnalysesPresenterImpl implements AnalysesView.Presenter, AnalysisNa
 
         final AnalysisParameter value = event.getValue();
 
-        if(!ArgumentType.Input.equals(value.getType()))
+        if (!ArgumentType.Input.equals(value.getType()))
             return;
         String infoType = value.getInfoType();
-        if(infoType.equalsIgnoreCase("ReferenceGenome")
-                   || infoType.equalsIgnoreCase("ReferenceSequence")
-                   || infoType.equalsIgnoreCase("ReferenceAnnotation"))
+        if (infoType.equalsIgnoreCase("ReferenceGenome")
+                || infoType.equalsIgnoreCase("ReferenceSequence")
+                || infoType.equalsIgnoreCase("ReferenceAnnotation"))
             return;
 
-
         final DiskResourceAutoBeanFactory factory = GWT.create(DiskResourceAutoBeanFactory.class);
-        final HasPaths hasPaths = factory.pathsList().as();
-        hasPaths.setPaths(Lists.newArrayList(value.getDisplayValue()));
-        diskResourceService.getStat(hasPaths, new AnalysisParamSelectedStatCallback(value, factory));
+        final File hasPath = factory.file().as();
+        String path = value.getDisplayValue();
+        hasPath.setPath(path);
+        diskResourceService.getStat(DiskResourceUtil.asStringPathTypeMap(Arrays.asList(hasPath),
+                                                                         TYPE.FILE),
+                                    new AnalysisParamSelectedStatCallback(value, factory));
     }
 
     @Override
@@ -510,13 +542,20 @@ public class AnalysesPresenterImpl implements AnalysesView.Presenter, AnalysisNa
         assert view.getSelectedAnalyses().size() == 1 : "There should be 1 and only 1 selected analysis.";
         final Analysis selectedAnalysis = view.getSelectedAnalyses().get(0);
 
-        final IPlantPromptDialog dlg = new IPlantPromptDialog(displayStrings.rename(), -1, selectedAnalysis.getName(), new DiskResourceNameValidator());
+        final IPlantPromptDialog dlg = new IPlantPromptDialog(displayStrings.rename(),
+                                                              -1,
+                                                              selectedAnalysis.getName(),
+                                                              new DiskResourceNameValidator());
         dlg.setHeadingText(displayStrings.renameAnalysis());
         dlg.addOkButtonSelectHandler(new SelectEvent.SelectHandler() {
             @Override
             public void onSelect(SelectEvent event) {
-                if(!selectedAnalysis.getName().equals(dlg.getFieldText())){
-                    analysisService.renameAnalysis(selectedAnalysis, dlg.getFieldText(), new RenameAnalysisCallback(selectedAnalysis, dlg.getFieldText(), view.getListStore()));
+                if (!selectedAnalysis.getName().equals(dlg.getFieldText())) {
+                    analysisService.renameAnalysis(selectedAnalysis,
+                                                   dlg.getFieldText(),
+                                                   new RenameAnalysisCallback(selectedAnalysis,
+                                                                              dlg.getFieldText(),
+                                                                              view.getListStore()));
                 }
             }
         });
@@ -524,7 +563,7 @@ public class AnalysesPresenterImpl implements AnalysesView.Presenter, AnalysisNa
     }
 
     @Override
-    public void retrieveParameterData(final Analysis analysis, final AnalysisParamView apv){
+    public void retrieveParameterData(final Analysis analysis, final AnalysisParamView apv) {
         apv.mask();
         analysisService.getAnalysisParams(analysis, new GetAnalysisParametersCallback(apv));
     }
@@ -537,19 +576,21 @@ public class AnalysesPresenterImpl implements AnalysesView.Presenter, AnalysisNa
     @Override
     public void updateComments() {
         final List<Analysis> selectedAnalyses = view.getSelectedAnalyses();
-        checkState(selectedAnalyses.size() == 1, "There should only be 1 analysis selected, but there were %i", selectedAnalyses.size());
+        checkState(selectedAnalyses.size() == 1,
+                   "There should only be 1 analysis selected, but there were %i",
+                   selectedAnalyses.size());
 
-        final AnalysisCommentsDialog d = new AnalysisCommentsDialog(selectedAnalyses.get(0), displayStrings);
+        final AnalysisCommentsDialog d = new AnalysisCommentsDialog(selectedAnalyses.get(0),
+                                                                    displayStrings);
         d.addDialogHideHandler(new DialogHideEvent.DialogHideHandler() {
             @Override
             public void onDialogHide(DialogHideEvent event) {
-                if (PredefinedButton.OK.equals(event.getHideButton())
-                            && d.isCommentChanged()) {
+                if (PredefinedButton.OK.equals(event.getHideButton()) && d.isCommentChanged()) {
                     analysisService.updateAnalysisComments(selectedAnalyses.get(0),
                                                            d.getComment(),
-                           new UpdateCommentsCallback(selectedAnalyses.get(0),
-                                                      d.getComment(),
-                                                      view.getListStore()));
+                                                           new UpdateCommentsCallback(selectedAnalyses.get(0),
+                                                                                      d.getComment(),
+                                                                                      view.getListStore()));
                 }
             }
         });

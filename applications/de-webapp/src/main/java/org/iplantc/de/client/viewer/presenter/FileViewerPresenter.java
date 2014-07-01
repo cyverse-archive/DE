@@ -137,7 +137,11 @@ public class FileViewerPresenter implements FileViewer.Presenter {
      */
     public void callTreeCreateService(final FileViewer viewer) {
         container.mask(org.iplantc.de.resources.client.messages.I18N.DISPLAY.loadingMask());
-        ServicesInjector.INSTANCE.getFileEditorServiceFacade().getTreeUrl(file.getId(), false, new TreeUrlCallback(file, container, viewer));
+        ServicesInjector.INSTANCE.getFileEditorServiceFacade().getTreeUrl(file.getPath(),
+                                                                          false,
+                                                                          new TreeUrlCallback(file,
+                                                                                              container,
+                                                                                              viewer));
     }
 
     @Override

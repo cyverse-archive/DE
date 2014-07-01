@@ -8,10 +8,10 @@ public interface FileEditorServiceFacade {
     /**
      * Call service to retrieve the manifest for a requested file
      * 
-     * @param idFile desired manifest's file ID (path).
+     * @param pathToFile desired manifest's file ID (path).
      * @param callback executes when RPC call is complete.
      */
-    void getManifest(String idFile, AsyncCallback<String> callback);
+    void getManifest(String pathToFile, AsyncCallback<String> callback);
 
     /**
      * Construct a servlet download URL for the given file ID.
@@ -38,19 +38,12 @@ public interface FileEditorServiceFacade {
     /**
      * Get Tree URLs for the given tree's file ID.
      * 
-     * @param idFile file ID (path) of the tree.
+     * @param pathToFile file ID (path) of the tree.
      * @param refresh discard existing tree and create new one
      * @param callback executes when RPC call is complete.
      */
-    void getTreeUrl(String idFile, boolean refresh, AsyncCallback<String> callback);
+    void getTreeUrl(String pathToFile, boolean refresh, AsyncCallback<String> callback);
     
-    /**
-     * Get genome VIZ URLs for the given  file ID.
-     * 
-     * @param idFile file ID (path) of the tree.
-     * @param callback executes when RPC call is complete.
-     */
-    void getGenomeVizUrl(String idFile, AsyncCallback<String> callback);
     
     /**
      * Load genome in Coge

@@ -10,6 +10,7 @@ import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.client.models.diskResources.File;
 import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.client.models.diskResources.PermissionValue;
+import org.iplantc.de.client.models.diskResources.TYPE;
 import org.iplantc.de.client.models.search.DiskResourceQueryTemplate;
 import org.iplantc.de.client.models.viewer.InfoType;
 
@@ -23,6 +24,8 @@ import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONObject;
 import com.google.web.bindery.autobean.shared.Splittable;
 import com.google.web.bindery.autobean.shared.impl.StringQuoter;
+
+import com.sencha.gxt.core.shared.FastMap;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -239,6 +242,25 @@ public class DiskResourceUtil {
         return ids;
     }
 
+    public static <R extends HasPath> List<String> asStringPathList(Iterable<R> diskResourceList) {
+        List<String> paths = Lists.newArrayList();
+        for (R dr : diskResourceList) {
+            paths.add(dr.getPath());
+        }
+
+        return paths;
+    }
+
+    public static <R extends HasPath> FastMap<TYPE> asStringPathTypeMap(Iterable<R> diskResourceList,
+                                                                        TYPE type) {
+        FastMap<TYPE> pathMap = new FastMap<>();
+        for (R dr : diskResourceList) {
+            pathMap.put(dr.getPath(), type);
+        }
+        return pathMap;
+
+    }
+
     public static <R extends HasId> Splittable createStringIdListSplittable(Iterable<R> hasIdList) {
         JSONArray jArr = JsonUtil.buildArrayFromStrings(asStringIdList(hasIdList));
 
@@ -380,5 +402,11 @@ public class DiskResourceUtil {
             return (info_type.equals(InfoType.BAM.toString()) || info_type.equals(InfoType.VCF.toString()) || info_type.equals(InfoType.GFF.toString()));
         }
         return false;
+    }
+
+    public static Splittable createStringPathListSplittable(List<HasPath> hasPathList) {
+        JSONArray jArr = JsonUtil.buildArrayFromStrings(asStringPathList(hasPathList));
+
+        return StringQuoter.split(jArr.toString());
     }
 }

@@ -3,7 +3,7 @@ package org.iplantc.de.diskResource.client.views.widgets;
 import org.iplantc.de.client.gin.ServicesInjector;
 import org.iplantc.de.client.models.HasPaths;
 import org.iplantc.de.client.models.diskResources.DiskResource;
-import org.iplantc.de.client.models.diskResources.DiskResourceStatMap;
+import org.iplantc.de.client.models.diskResources.TYPE;
 import org.iplantc.de.client.models.errorHandling.ServiceErrorCode;
 import org.iplantc.de.client.models.errorHandling.SimpleServiceError;
 import org.iplantc.de.client.services.DiskResourceServiceFacade;
@@ -43,6 +43,7 @@ import com.google.web.bindery.autobean.shared.AutoBeanCodex;
 import com.sencha.gxt.core.client.XTemplates;
 import com.sencha.gxt.core.client.dom.XDOM;
 import com.sencha.gxt.core.client.dom.XElement;
+import com.sencha.gxt.core.shared.FastMap;
 import com.sencha.gxt.dnd.core.client.DND.Operation;
 import com.sencha.gxt.dnd.core.client.DndDragEnterEvent;
 import com.sencha.gxt.dnd.core.client.DndDragEnterEvent.DndDragEnterHandler;
@@ -63,6 +64,7 @@ import com.sencha.gxt.widget.core.client.form.TextField;
 import com.sencha.gxt.widget.core.client.form.Validator;
 import com.sencha.gxt.widget.core.client.form.error.DefaultEditorError;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
@@ -76,8 +78,17 @@ import java.util.Set;
  * @author jstroot
  * 
  */
-public abstract class AbstractDiskResourceSelector<R extends DiskResource> extends Component implements IsField<R>, ValueAwareEditor<R>, HasValueChangeHandlers<R>, HasEditorErrors<R>,
-        DndDragEnterHandler, DndDragMoveHandler, DndDropHandler, HasInvalidHandlers, DiskResourceSelector, DiskResourceSelector.HasDisableBrowseButtons {
+public abstract class AbstractDiskResourceSelector<R extends DiskResource> extends Component implements
+                                                                                            IsField<R>,
+                                                                                            ValueAwareEditor<R>,
+                                                                                            HasValueChangeHandlers<R>,
+                                                                                            HasEditorErrors<R>,
+                                                                                            DndDragEnterHandler,
+                                                                                            DndDragMoveHandler,
+                                                                                            DndDropHandler,
+                                                                                            HasInvalidHandlers,
+                                                                                            DiskResourceSelector,
+                                                                                            DiskResourceSelector.HasDisableBrowseButtons {
 
     public interface FileUploadTemplate extends XTemplates {
         @XTemplate("<div class='{style.wrap}'></div>")
@@ -98,7 +109,6 @@ public abstract class AbstractDiskResourceSelector<R extends DiskResource> exten
         @Source("AbstractDiskResourceSelector.css")
         FileFolderSelectorStyle style();
     }
-
 
     /**
      * KLUDGE: CORE-4671,
@@ -294,7 +304,8 @@ public abstract class AbstractDiskResourceSelector<R extends DiskResource> exten
     }
 
     @Override
-    public void onPropertyChange(String... paths) {/* Do Nothing */}
+    public void onPropertyChange(String... paths) {/* Do Nothing */
+    }
 
     @Override
     public void reset() {
@@ -311,7 +322,8 @@ public abstract class AbstractDiskResourceSelector<R extends DiskResource> exten
     }
 
     @Override
-    public void setDelegate(EditorDelegate<R> delegate) {/* Do Nothing */}
+    public void setDelegate(EditorDelegate<R> delegate) {/* Do Nothing */
+    }
 
     public void setEmptyText(String emptyText) {
         input.setEmptyText(emptyText);
@@ -379,7 +391,8 @@ public abstract class AbstractDiskResourceSelector<R extends DiskResource> exten
     public abstract void setValueFromStringId(String path);
 
     @Override
-    public void showErrors(List<EditorError> errors) {/* Do Nothing */}
+    public void showErrors(List<EditorError> errors) {/* Do Nothing */
+    }
 
     @Override
     public boolean validate(boolean preventMark) {
@@ -469,49 +482,63 @@ public abstract class AbstractDiskResourceSelector<R extends DiskResource> exten
         permissionEditorError = null;
         existsEditorError = null;
         final IplantErrorStrings errorStrings = I18N.ERROR;
-        drServiceFacade.getStat(diskResourcePaths, new AsyncCallback<DiskResourceStatMap>() {
+        drServiceFacade.getStat(DiskResourceUtil.asStringPathTypeMap(Arrays.asList(value), TYPE.FILE),
+                                new AsyncCallback<FastMap<DiskResource>>() {
 
-            @Override
-            public void onFailure(Throwable caught) {
+                                    @Override
+                                    public void onFailure(Throwable caught) {
 
-                SimpleServiceError serviceError = AutoBeanCodex.decode(drServiceFacade.getDiskResourceFactory(), SimpleServiceError.class, caught.getMessage()).as();
-                if (serviceError.getErrorCode().equals(ServiceErrorCode.ERR_DOES_NOT_EXIST.toString())) {
-                    existsEditorError = new DefaultEditorError(input, errorStrings.diskResourceDoesNotExist(diskResourceId), diskResourceId);
-                    errors.add(existsEditorError);
-                    setInfoErrorText(errorStrings.diskResourceDoesNotExist(diskResourceId));
-                    ValueChangeEvent.fire(AbstractDiskResourceSelector.this, value);
-                }
-            }
+                                        SimpleServiceError serviceError = AutoBeanCodex.decode(drServiceFacade.getDiskResourceFactory(),
+                                                                                               SimpleServiceError.class,
+                                                                                               caught.getMessage())
+                                                                                       .as();
+                                        if (serviceError.getErrorCode()
+                                                        .equals(ServiceErrorCode.ERR_DOES_NOT_EXIST.toString())) {
+                                            existsEditorError = new DefaultEditorError(input,
+                                                                                       errorStrings.diskResourceDoesNotExist(diskResourceId),
+                                                                                       diskResourceId);
+                                            errors.add(existsEditorError);
+                                            setInfoErrorText(errorStrings.diskResourceDoesNotExist(diskResourceId));
+                                            ValueChangeEvent.fire(AbstractDiskResourceSelector.this,
+                                                                  value);
+                                        }
+                                    }
 
-            @Override
-            public void onSuccess(DiskResourceStatMap result) {
-                if (!validatePermissions) {
-                    setInfoErrorText("");
-                } else {
-                    ValueChangeEvent.fire(AbstractDiskResourceSelector.this, value);
-                    DiskResource diskResource = result.get(diskResourceId);
-                    String infoText = getInfoText();
-                    if (diskResource == null) {
-                        permissionEditorError = new DefaultEditorError(input, I18N.DISPLAY.permissionSelectErrorMessage(), diskResourceId);
-                        errors.add(permissionEditorError);
-                        input.showErrors(Lists.<EditorError> newArrayList(permissionEditorError));
-                        setInfoErrorText(I18N.DISPLAY.permissionSelectErrorMessage());
-                    } else if (!(DiskResourceUtil.isWritable(diskResource) || DiskResourceUtil.isOwner(diskResource))) {
-                        permissionEditorError = new DefaultEditorError(input, I18N.DISPLAY.permissionSelectErrorMessage(), diskResourceId);
-                        errors.add(permissionEditorError);
-                        input.showErrors(Lists.<EditorError> newArrayList(permissionEditorError));
-                        setInfoErrorText(I18N.DISPLAY.permissionSelectErrorMessage());
-                    } else if (!Strings.isNullOrEmpty(infoText) && (!infoText.equalsIgnoreCase(I18N.APPS_MESSAGES.nonDefaultFolderWarning()))) {
-                        // clear only permission related errors on success
-                        setInfoErrorText(null);
-                    }
-                }
+                                    @Override
+                                    public void onSuccess(FastMap<DiskResource> result) {
+                                        if (!validatePermissions) {
+                                            setInfoErrorText("");
+                                        } else {
+                                            ValueChangeEvent.fire(AbstractDiskResourceSelector.this,
+                                                                  value);
+                                            DiskResource diskResource = result.get(diskResourceId);
+                                            String infoText = getInfoText();
+                                            if (diskResource == null) {
+                                                permissionEditorError = new DefaultEditorError(input,
+                                                                                               I18N.DISPLAY.permissionSelectErrorMessage(),
+                                                                                               diskResourceId);
+                                                errors.add(permissionEditorError);
+                                                input.showErrors(Lists.<EditorError> newArrayList(permissionEditorError));
+                                                setInfoErrorText(I18N.DISPLAY.permissionSelectErrorMessage());
+                                            } else if (!(DiskResourceUtil.isWritable(diskResource) || DiskResourceUtil.isOwner(diskResource))) {
+                                                permissionEditorError = new DefaultEditorError(input,
+                                                                                               I18N.DISPLAY.permissionSelectErrorMessage(),
+                                                                                               diskResourceId);
+                                                errors.add(permissionEditorError);
+                                                input.showErrors(Lists.<EditorError> newArrayList(permissionEditorError));
+                                                setInfoErrorText(I18N.DISPLAY.permissionSelectErrorMessage());
+                                            } else if (!Strings.isNullOrEmpty(infoText)
+                                                    && (!infoText.equalsIgnoreCase(I18N.APPS_MESSAGES.nonDefaultFolderWarning()))) {
+                                                // clear only permission related errors on success
+                                                setInfoErrorText(null);
+                                            }
+                                        }
 
-                if (checkForSplChar(input.getValue()).length() > 0) {
-                    setInfoErrorText(I18N.DISPLAY.analysisFailureWarning(I18N.V_CONSTANTS.warnedDiskResourceNameChars()));
-                }
-            }
-        });
+                                        if (checkForSplChar(input.getValue()).length() > 0) {
+                                            setInfoErrorText(I18N.DISPLAY.analysisFailureWarning(I18N.V_CONSTANTS.warnedDiskResourceNameChars()));
+                                        }
+                                    }
+                                });
 
     }
 

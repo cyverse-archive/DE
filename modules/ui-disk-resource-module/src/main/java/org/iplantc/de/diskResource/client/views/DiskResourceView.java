@@ -4,7 +4,6 @@ import org.iplantc.de.client.models.HasId;
 import org.iplantc.de.client.models.HasPath;
 import org.iplantc.de.client.models.IsMaskable;
 import org.iplantc.de.client.models.diskResources.DiskResource;
-import org.iplantc.de.client.models.diskResources.DiskResourceInfo;
 import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.client.models.tags.IplantTag;
 import org.iplantc.de.client.services.DiskResourceServiceFacade;
@@ -187,7 +186,7 @@ public interface DiskResourceView extends IsWidget,
 
         void resetInfoType();
 
-        void displayAndCacheDiskResourceInfo(String path, DiskResourceInfo info);
+        void displayAndCacheDiskResourceInfo(DiskResource info);
 
         void unmaskVizMenuOptions();
 
@@ -296,7 +295,7 @@ public interface DiskResourceView extends IsWidget,
 
     void setSingleSelect();
 
-    void updateDetails(String path, DiskResourceInfo info);
+    void updateDetails(DiskResource info);
 
     void resetDetailsPanel();
 
@@ -341,7 +340,7 @@ public interface DiskResourceView extends IsWidget,
         void unmaskSendToTreeViewer();
     }
 
-    void displayAndCacheDiskResourceInfo(String path, DiskResourceInfo info);
+    void displayAndCacheDiskResourceInfo(DiskResource info);
 
     void updateTags(List<IplantTag> tags);
 

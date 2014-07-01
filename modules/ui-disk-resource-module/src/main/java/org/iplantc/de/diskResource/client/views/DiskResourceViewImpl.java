@@ -5,7 +5,7 @@ import org.iplantc.de.client.models.HasPath;
 import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.client.models.diskResources.DiskResourceAutoBeanFactory;
-import org.iplantc.de.client.models.diskResources.DiskResourceInfo;
+import org.iplantc.de.client.models.diskResources.File;
 import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.client.models.diskResources.PermissionValue;
 import org.iplantc.de.client.models.search.DiskResourceQueryTemplate;
@@ -641,14 +641,14 @@ public class DiskResourceViewImpl extends Composite implements DiskResourceView,
     @Override
     public Folder getFolderByPath(String path) {
         if (treeStore.getRootItems() != null) {
-            for (Folder root : treeStore.getRootItems()) {
-                if (root.getPath().equals(path)) {
-                    return root;
+            for (Folder folder : treeStore.getAll()) {
+                if (folder.getPath().equals(path)) {
+                    return folder;
                 }
             }
         }
 
-        return treeStore.findModelWithKey(path);
+        return null;
     }
 
     @Override
@@ -842,25 +842,27 @@ public class DiskResourceViewImpl extends Composite implements DiskResourceView,
     }
 
     @Override
-    public void updateDetails(String path, DiskResourceInfo info) {
+    public void updateDetails(DiskResource info) {
         detailsPanel.clear();
         List<DiskResource> selection = grid.getSelectionModel().getSelectedItems();
         // guard race condition
         if (selection != null && selection.size() == 1) {
             Iterator<DiskResource> it = selection.iterator();
             DiskResource next = it.next();
-            if (next.getId().equals(path)) {
-                detailsPanel.add(getDateLabel(I18N.DISPLAY.lastModified(), info.getModified()));
-                detailsPanel.add(getDateLabel(I18N.DISPLAY.createdDate(), info.getCreated()));
+            if (next.getId().equals(info.getId())) {
+                detailsPanel.add(getDateLabel(I18N.DISPLAY.lastModified(), info.getLastModified()));
+                detailsPanel.add(getDateLabel(I18N.DISPLAY.createdDate(), info.getDateCreated()));
                 detailsPanel.add(getPermissionsLabel(I18N.DISPLAY.permissions(), info.getPermission()));
                 if (!DiskResourceUtil.inTrash(next)) {
-                    detailsPanel.add(getSharingLabel(I18N.DISPLAY.share(), info.getShareCount(), info.getPermission()));
+                    detailsPanel.add(getSharingLabel(I18N.DISPLAY.share(),
+                                                     info.getShareCount(),
+                                                     info.getPermission()));
                 }
-                if (info.getType().equalsIgnoreCase("file")) {
-                    addFileDetails(info, !DiskResourceUtil.inTrash(next));
+                if (info instanceof File) {
+                    addFileDetails((File)info, !DiskResourceUtil.inTrash(next));
 
                 } else {
-                    addFolderDetails(info);
+                    addFolderDetails((Folder)info);
                 }
             }
 
@@ -926,12 +928,12 @@ public class DiskResourceViewImpl extends Composite implements DiskResourceView,
         return tagsPresenter;
     }
 
-    private void addFolderDetails(DiskResourceInfo info) {
+    private void addFolderDetails(Folder info) {
         detailsPanel.add(getDirFileCount(I18N.DISPLAY.files() + " / " + I18N.DISPLAY.folders(), //$NON-NLS-1$
                 info.getFileCount(), info.getDirCount()));
     }
 
-    private void addFileDetails(DiskResourceInfo info, boolean addViewerInfo) {
+    private void addFileDetails(File info, boolean addViewerInfo) {
         detailsPanel.add(getStringLabel(I18N.DISPLAY.size(), DiskResourceUtil.formatFileSize(info.getSize() + ""))); //$NON-NLS-1$
         detailsPanel.add(getStringLabel("Type", info.getFileType()));
         detailsPanel.add(getInfoTypeLabel("Info-Type", info));
@@ -940,7 +942,7 @@ public class DiskResourceViewImpl extends Composite implements DiskResourceView,
         }
     }
 
-    private HorizontalPanel getViewerInfo(DiskResourceInfo info) {
+    private HorizontalPanel getViewerInfo(File info) {
         HorizontalPanel panel = buildRow();
         FieldLabel fl = new FieldLabel();
         fl.setWidth(100);
@@ -988,7 +990,7 @@ public class DiskResourceViewImpl extends Composite implements DiskResourceView,
         return panel;
     }
 
-    private HorizontalPanel getInfoTypeLabel(String label, DiskResourceInfo info) {
+    private HorizontalPanel getInfoTypeLabel(String label, File info) {
         HorizontalPanel panel = buildRow();
         FieldLabel fl = new FieldLabel();
         fl.setWidth(100);
@@ -1110,13 +1112,13 @@ public class DiskResourceViewImpl extends Composite implements DiskResourceView,
     }
 
     @Override
-    public void displayAndCacheDiskResourceInfo(String path, DiskResourceInfo info) {
-        DiskResource dr = listStore.findModelWithKey(path);
+    public void displayAndCacheDiskResourceInfo(DiskResource info) {
+        DiskResource dr = listStore.findModelWithKey(info.getId());
         if (dr == null) {
             return;
         } else {
-            dr.setDiskResourceInfo(info);
-            updateDetails(path, info);
+            listStore.update(info);
+            updateDetails(info);
         }
     }
 

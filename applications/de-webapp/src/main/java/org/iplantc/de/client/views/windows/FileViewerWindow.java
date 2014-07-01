@@ -190,7 +190,7 @@ public class FileViewerWindow extends IplantWindowBase implements IsMaskable {
         mask(I18N.DISPLAY.loadingMask());
         if (file != null) {
             ServicesInjector.INSTANCE.getFileEditorServiceFacade()
-                                     .getManifest(file.getId(), new GetManifestCallback());
+                                     .getManifest(file.getPath(), new GetManifestCallback());
         } else {
             if (configAB.isEditing()) {
                 JSONObject manifest = new JSONObject();

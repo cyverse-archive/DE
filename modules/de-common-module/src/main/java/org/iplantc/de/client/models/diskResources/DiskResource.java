@@ -43,13 +43,13 @@ public interface DiskResource extends HasId, HasName, HasPath {
     @PropertyName("isFavorite")
     void setFavorite(boolean favorite);
 
-    void setDiskResourceInfo(DiskResourceInfo info);
+    @PropertyName("share-count")
+    int getShareCount();
 
-    DiskResourceInfo getDiskResourceInfo();
+    @PropertyName("share-count")
+    void setShareCount(int count);
 
-    @PropertyName("uuid")
-    String getUUID();
+    void setStatLoaded(boolean loaded);
 
-    @PropertyName("uuid")
-    void setUUID(String uuid);
+    boolean isStatLoaded();
 }

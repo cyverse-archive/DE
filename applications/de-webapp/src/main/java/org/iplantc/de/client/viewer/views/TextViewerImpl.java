@@ -162,7 +162,7 @@ public class TextViewerImpl extends AbstractFileViewer implements EditingSupport
             return null;
         }
         JSONObject obj = new JSONObject();
-        obj.put("path", new JSONString(file.getId()));
+        obj.put("path", new JSONString(file.getPath()));
         // position starts at 0
         obj.put("position", new JSONString("" + pagingToolbar.getPageSize() * (pagingToolbar.getPageNumber() - 1)));
         obj.put("chunk-size", new JSONString("" + pagingToolbar.getPageSize()));
