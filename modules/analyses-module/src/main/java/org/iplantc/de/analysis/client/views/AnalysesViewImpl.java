@@ -63,7 +63,7 @@ public class AnalysesViewImpl extends Composite implements AnalysesView {
 
         @Override
         public String getKey(AnalysisParameter item) {
-            return item.getId();
+            return item.getId() + item.getDisplayValue();
         }
 
     }
