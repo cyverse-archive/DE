@@ -44,5 +44,6 @@ public interface AppIntegrationModule {
         String TOOL_TIP = ".toolTip";
         String VALIDATOR_RULES = ".validatorRules";
         String EDIT_LIST = ".editList";
+        String FILE_INFO_TYPE = ".fileInfoType";
     }
 }
