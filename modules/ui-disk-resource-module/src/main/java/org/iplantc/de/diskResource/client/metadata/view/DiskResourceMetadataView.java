@@ -662,8 +662,7 @@ public class DiskResourceMetadataView implements IsWidget {
     }
 
     public DiskResourceMetadataTemplate getMetadataTemplateToDelete() {
-        if (selectedTemplate == null || currentMetadataTemplate == null
-                || !(selectedTemplate.getId().equals(currentMetadataTemplate.getId()))) {
+        if (selectedTemplate == null) {
             return currentMetadataTemplate;
         }
 

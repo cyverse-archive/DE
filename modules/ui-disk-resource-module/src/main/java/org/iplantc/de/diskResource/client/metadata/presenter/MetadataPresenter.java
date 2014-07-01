@@ -70,24 +70,12 @@ public class MetadataPresenter implements Presenter {
     }
 
     private void saveMetadataTemplateAvus(final DiskResourceMetadataUpdateCallback callback) {
-        AsyncCallback<String> templateAvuCallback = new AsyncCallback<String>() {
-
-            @Override
-            public void onSuccess(String result) {
-                setMetadataTemplateAvus(callback);
-            }
-
-            @Override
-            public void onFailure(Throwable caught) {
-                callback.onFailure(caught);
-            }
-        };
-
-        DiskResourceMetadataTemplate avusToDelete = view.getMetadataTemplateToDelete();
-        if (avusToDelete != null) {
-            drService.deleteMetadataTemplateAvus(resource, avusToDelete, templateAvuCallback);
+        // CORE-5602 Setting a data item's AVUs on one template automatically removes its AVUs from other
+        // templates. So we only need to set or delete here, but not both.
+        if (view.getMetadataTemplateToAdd() != null) {
+            setMetadataTemplateAvus(callback);
         } else {
-            templateAvuCallback.onSuccess(null);
+            deleteMetadataTemplateAvus(callback);
         }
     }
 
@@ -108,6 +96,28 @@ public class MetadataPresenter implements Presenter {
         DiskResourceMetadataTemplate metadataTemplateToAdd = view.getMetadataTemplateToAdd();
         if (metadataTemplateToAdd != null) {
             drService.setMetadataTemplateAvus(resource, metadataTemplateToAdd, templateAvuCallback);
+        } else {
+            templateAvuCallback.onSuccess(null);
+        }
+    }
+
+    private void deleteMetadataTemplateAvus(final DiskResourceMetadataUpdateCallback callback) {
+        AsyncCallback<String> templateAvuCallback = new AsyncCallback<String>() {
+
+            @Override
+            public void onSuccess(String result) {
+                callback.onSuccess(result);
+            }
+
+            @Override
+            public void onFailure(Throwable caught) {
+                callback.onFailure(caught);
+            }
+        };
+
+        DiskResourceMetadataTemplate avusToDelete = view.getMetadataTemplateToDelete();
+        if (avusToDelete != null) {
+            drService.deleteMetadataTemplateAvus(resource, avusToDelete, templateAvuCallback);
         } else {
             templateAvuCallback.onSuccess(null);
         }
