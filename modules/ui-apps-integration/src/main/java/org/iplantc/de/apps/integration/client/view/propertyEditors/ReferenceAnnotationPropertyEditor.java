@@ -1,5 +1,7 @@
 package org.iplantc.de.apps.integration.client.view.propertyEditors;
 
+import static org.iplantc.de.apps.integration.shared.AppIntegrationModule.Ids;
+import static org.iplantc.de.apps.integration.shared.AppIntegrationModule.PropertyPanelIds;
 import org.iplantc.de.apps.widgets.client.view.editors.arguments.ClearComboBoxSelectionKeyDownHandler;
 import org.iplantc.de.apps.widgets.client.view.editors.arguments.converters.ArgumentEditorConverter;
 import org.iplantc.de.apps.widgets.client.view.editors.arguments.converters.SplittableToReferenceGenomeConverter;
@@ -32,42 +34,38 @@ import com.sencha.gxt.widget.core.client.form.TextField;
 
 public class ReferenceAnnotationPropertyEditor extends AbstractArgumentPropertyEditor {
 
-    interface EditorDriver extends SimpleBeanEditorDriver<Argument, ReferenceAnnotationPropertyEditor> {}
-    interface ReferenceAnnotationPropertyEditorUiBinder extends UiBinder<Widget, ReferenceAnnotationPropertyEditor> {}
+    interface EditorDriver extends SimpleBeanEditorDriver<Argument, ReferenceAnnotationPropertyEditor> {
+    }
 
-    private static ReferenceAnnotationPropertyEditorUiBinder uiBinder = GWT.create(ReferenceAnnotationPropertyEditorUiBinder.class);
+    interface ReferenceAnnotationPropertyEditorUiBinder extends UiBinder<Widget, ReferenceAnnotationPropertyEditor> {
+    }
 
     @UiField(provided = true)
     AppsWidgetsPropertyPanelLabels appLabels;
-
     @UiField
     @Path("name")
     TextField argumentOptionEditor;
-
     @UiField(provided = true)
     ArgumentEditorConverter<ReferenceGenome> defaultValueEditor;
-
     @UiField
     TextField label;
-
     @UiField
     CheckBoxAdapter omitIfBlank, requiredEditor;
-
     @UiField(provided = true)
     ReferenceSelectorLabels referenceAnnotationSelectorLabels;
-
     @UiField
     @Path("description")
     TextField toolTipEditor;
-
     @UiField
     FieldLabel toolTipLabel, argumentOptionLabel, selectionItemDefaultValueLabel;
-
+    private static ReferenceAnnotationPropertyEditorUiBinder uiBinder = GWT.create(ReferenceAnnotationPropertyEditorUiBinder.class);
     private final EditorDriver editorDriver = GWT.create(EditorDriver.class);
 
     @Inject
-    public ReferenceAnnotationPropertyEditor(AppTemplateWizardAppearance appearance, AppsWidgetsPropertyPanelLabels appLabels, AppsWidgetsContextualHelpMessages help,
-            AppMetadataServiceFacade appMetadataService) {
+    public ReferenceAnnotationPropertyEditor(AppTemplateWizardAppearance appearance,
+                                             AppsWidgetsPropertyPanelLabels appLabels,
+                                             AppsWidgetsContextualHelpMessages help,
+                                             AppMetadataServiceFacade appMetadataService) {
         super(appearance);
         this.appLabels = appLabels;
         this.referenceAnnotationSelectorLabels = appLabels;
@@ -81,7 +79,7 @@ public class ReferenceAnnotationPropertyEditor extends AbstractArgumentPropertyE
         initWidget(uiBinder.createAndBindUi(this));
 
         argumentOptionEditor.addValidator(new CmdLineArgCharacterValidator(I18N.V_CONSTANTS
-                .restrictedCmdLineChars()));
+                                                                               .restrictedCmdLineChars()));
 
         selectionItemDefaultValueLabel.setHTML(appearance.createContextualHelpLabel(appLabels.singleSelectionDefaultValue(), help.singleSelectDefaultItem()));
 
@@ -92,10 +90,11 @@ public class ReferenceAnnotationPropertyEditor extends AbstractArgumentPropertyE
 
 
         omitIfBlank.setHTML(new SafeHtmlBuilder().appendHtmlConstant("&nbsp;")
-                .append(appearance.createContextualHelpLabelNoFloat(appLabels.excludeWhenEmpty(), help.excludeReference()))
-                .toSafeHtml());
+                                                 .append(appearance.createContextualHelpLabelNoFloat(appLabels.excludeWhenEmpty(), help.excludeReference()))
+                                                 .toSafeHtml());
         editorDriver.initialize(this);
         editorDriver.accept(new InitializeTwoWayBinding(this));
+        ensureDebugId(Ids.PROPERTY_EDITOR + Ids.REFERENCE_ANNOTATION);
     }
 
     @Override
@@ -128,6 +127,17 @@ public class ReferenceAnnotationPropertyEditor extends AbstractArgumentPropertyE
             omitIfBlank.getValidators().clear();
             requiredEditor.getValidators().clear();
         }
+    }
+
+    @Override
+    protected void onEnsureDebugId(String baseID) {
+        super.onEnsureDebugId(baseID);
+        label.ensureDebugId(baseID + PropertyPanelIds.LABEL);
+        argumentOptionEditor.ensureDebugId(baseID + PropertyPanelIds.ARGUMENT_OPTION);
+        defaultValueEditor.ensureDebugId(baseID + PropertyPanelIds.DEFAULT_VALUE);
+        requiredEditor.ensureDebugId(baseID + PropertyPanelIds.REQUIRED);
+        omitIfBlank.ensureDebugId(baseID + PropertyPanelIds.OMIT_IF_BLANK);
+        toolTipEditor.ensureDebugId(baseID + PropertyPanelIds.TOOL_TIP);
     }
 
     @UiHandler("defaultValueEditor")
