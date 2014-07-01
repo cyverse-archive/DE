@@ -1,5 +1,7 @@
 package org.iplantc.de.apps.integration.client.view.propertyEditors;
 
+import static org.iplantc.de.apps.integration.shared.AppIntegrationModule.Ids;
+import static org.iplantc.de.apps.integration.shared.AppIntegrationModule.PropertyPanelIds;
 import org.iplantc.de.apps.integration.client.view.propertyEditors.widgets.SelectionItemPropertyEditor;
 import org.iplantc.de.apps.widgets.client.view.editors.SelectionItemProperties;
 import org.iplantc.de.apps.widgets.client.view.editors.arguments.ClearComboBoxSelectionKeyDownHandler;
@@ -33,7 +35,6 @@ import com.google.inject.Inject;
 import com.google.web.bindery.autobean.shared.Splittable;
 
 import static com.sencha.gxt.cell.core.client.form.ComboBoxCell.TriggerAction.ALL;
-
 import com.sencha.gxt.data.client.editor.ListStoreEditor;
 import com.sencha.gxt.data.shared.ListStore;
 import com.sencha.gxt.widget.core.client.Dialog.PredefinedButton;
@@ -49,48 +50,43 @@ import java.util.Collection;
 
 public class DecimalSelectionPropertyEditor extends AbstractArgumentPropertyEditor {
 
-    interface DecimalSelectionPropertyEditorUiBinder extends UiBinder<Widget, DecimalSelectionPropertyEditor> {}
-    interface EditorDriver extends SimpleBeanEditorDriver<Argument, DecimalSelectionPropertyEditor> {}
+    interface DecimalSelectionPropertyEditorUiBinder extends UiBinder<Widget, DecimalSelectionPropertyEditor> {
+    }
 
-    private static DecimalSelectionPropertyEditorUiBinder uiBinder = GWT.create(DecimalSelectionPropertyEditorUiBinder.class);
+    interface EditorDriver extends SimpleBeanEditorDriver<Argument, DecimalSelectionPropertyEditor> {
+    }
 
+    final ListStoreEditor<SelectionItem> selectionItemsEditor;
     @UiField(provided = true)
     AppsWidgetsPropertyPanelLabels appLabels;
-
-    @UiField
-    FieldLabel toolTipLabel, selectionItemDefaultValueLabel;
-
     @UiField(provided = true)
     ArgumentEditorConverter<SelectionItem> defaultValueEditor;
-
     @UiField(provided = true)
     DoubleSelectionLabels doubleSelectionLabels;
-
     @Ignore
     @UiField
     TextButton editSimpleListBtn;
-
     @UiField
     TextField label;
-
     @UiField
     CheckBoxAdapter omitIfBlank, requiredEditor;
-
-    final ListStoreEditor<SelectionItem> selectionItemsEditor;
-
     @UiField
     @Path("description")
     TextField toolTipEditor;
-
+    @UiField
+    FieldLabel toolTipLabel, selectionItemDefaultValueLabel;
+    private static DecimalSelectionPropertyEditorUiBinder uiBinder = GWT.create(DecimalSelectionPropertyEditorUiBinder.class);
     private final EditorDriver editorDriver = GWT.create(EditorDriver.class);
-
     private final ComboBox<SelectionItem> selectionItemsComboBox;
-
     private final UUIDServiceAsync uuidService;
 
     @Inject
-    public DecimalSelectionPropertyEditor(AppTemplateWizardAppearance appearance, AppsWidgetsPropertyPanelLabels appLabels, AppsWidgetsContextualHelpMessages help,
-            AppsWidgetsDisplayMessages appsWidgetsMessages, SelectionItemProperties props, UUIDServiceAsync uuidService) {
+    public DecimalSelectionPropertyEditor(AppTemplateWizardAppearance appearance,
+                                          AppsWidgetsPropertyPanelLabels appLabels,
+                                          AppsWidgetsContextualHelpMessages help,
+                                          AppsWidgetsDisplayMessages appsWidgetsMessages,
+                                          SelectionItemProperties props,
+                                          UUIDServiceAsync uuidService) {
         super(appearance);
         this.appLabels = appLabels;
         this.doubleSelectionLabels = appLabels;
@@ -111,12 +107,13 @@ public class DecimalSelectionPropertyEditor extends AbstractArgumentPropertyEdit
 
         selectionItemDefaultValueLabel.setHTML(appearance.createContextualHelpLabel(appLabels.singleSelectionDefaultValue(), help.singleSelectDefaultItem()));
         omitIfBlank.setHTML(new SafeHtmlBuilder().appendHtmlConstant("&nbsp;")
-                .append(appearance.createContextualHelpLabelNoFloat(appLabels.excludeWhenEmpty(), help.singleSelectExcludeArgument())).toSafeHtml());
+                                                 .append(appearance.createContextualHelpLabelNoFloat(appLabels.excludeWhenEmpty(), help.singleSelectExcludeArgument())).toSafeHtml());
         toolTipLabel.setHTML(appearance.createContextualHelpLabel(appLabels.toolTipText(), help.toolTip()));
 
         requiredEditor.setHTML(new SafeHtmlBuilder().appendHtmlConstant("&nbsp;").append(appLabels.isRequired()).toSafeHtml());
         editorDriver.initialize(this);
         editorDriver.accept(new InitializeTwoWayBinding(this));
+        ensureDebugId(Ids.PROPERTY_EDITOR + Ids.DOUBLE_SELECTION);
     }
 
     @Override
@@ -143,6 +140,17 @@ public class DecimalSelectionPropertyEditor extends AbstractArgumentPropertyEdit
         requiredEditor.setEnabled(!isLabelOnlyEditMode);
         selectionItemsComboBox.setEnabled(!isLabelOnlyEditMode);
         editSimpleListBtn.setEnabled(!isLabelOnlyEditMode);
+    }
+
+    @Override
+    protected void onEnsureDebugId(String baseID) {
+        super.onEnsureDebugId(baseID);
+        label.ensureDebugId(baseID + PropertyPanelIds.LABEL);
+        defaultValueEditor.ensureDebugId(baseID + PropertyPanelIds.DEFAULT_VALUE);
+        requiredEditor.ensureDebugId(baseID + PropertyPanelIds.REQUIRED);
+        omitIfBlank.ensureDebugId(baseID + PropertyPanelIds.OMIT_IF_BLANK);
+        toolTipEditor.ensureDebugId(baseID + PropertyPanelIds.TOOL_TIP);
+        editSimpleListBtn.ensureDebugId(baseID + PropertyPanelIds.EDIT_LIST);
     }
 
     @UiHandler("defaultValueEditor")
