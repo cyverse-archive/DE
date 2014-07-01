@@ -93,7 +93,7 @@ public class DataSharingPresenter implements DataSharingView.Presenter {
         JSONObject obj = new JSONObject();
         JSONArray ids = new JSONArray();
         for (int i = 0; i < selectedResources.size(); i++) {
-            ids.set(i, new JSONString(selectedResources.get(i).getId()));
+            ids.set(i, new JSONString(selectedResources.get(i).getPath()));
         }
         obj.put("paths", ids);
         return obj;
@@ -330,7 +330,7 @@ public class DataSharingPresenter implements DataSharingView.Presenter {
     @Override
     public DataSharing.TYPE getSharingResourceType(String path) {
         for (DiskResource dr : selectedResources) {
-            if (dr.getId().equalsIgnoreCase(path)) {
+            if (dr.getPath().equalsIgnoreCase(path)) {
                 if (dr instanceof Folder) {
                     return DataSharing.TYPE.FOLDER;
                 } else {
