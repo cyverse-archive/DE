@@ -52,7 +52,7 @@ public class AppsViewToolbarImplTest {
     @Before public void setUp() {
         when(mockAppSearchFactory.loadConfig()).thenReturn(mockLoadConfigAb);
         when(mockLoadConfigAb.as()).thenReturn(mockLoadConfig);
-        uut = new AppsViewToolbarImpl(mockAppService, mockDisplayStrings, mockAppSearchFactory, mockAppFactory, mockUserInfo);
+        uut = new AppsViewToolbarImpl(mockAppService, mockDisplayStrings, mockAppSearchFactory, mockAppFactory);
         mockMenuItems(uut);
     }
 
