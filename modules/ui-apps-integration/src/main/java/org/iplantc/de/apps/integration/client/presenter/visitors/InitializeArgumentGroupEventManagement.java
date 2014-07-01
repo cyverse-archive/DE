@@ -2,8 +2,10 @@ package org.iplantc.de.apps.integration.client.presenter.visitors;
 
 import static org.iplantc.de.apps.integration.client.view.AppsEditorView.Presenter.HANDLERS;
 
+import org.iplantc.de.apps.integration.client.events.DeleteArgumentEvent;
 import org.iplantc.de.apps.integration.client.presenter.dnd.ArgListEditorDragSource;
 import org.iplantc.de.apps.integration.client.presenter.dnd.ArgListEditorDropTarget;
+import org.iplantc.de.apps.integration.client.presenter.dnd.ArgumentWYSIWYGDeleteHandler;
 import org.iplantc.de.apps.widgets.client.events.AppTemplateSelectedEvent.HasAppTemplateSelectedEventHandlers;
 import org.iplantc.de.apps.widgets.client.events.ArgumentGroupSelectedEvent.ArgumentGroupSelectedEventHandler;
 import org.iplantc.de.apps.widgets.client.events.ArgumentGroupSelectedEvent.HasArgumentGroupSelectedHandlers;
@@ -12,6 +14,7 @@ import org.iplantc.de.apps.widgets.client.view.AppTemplateForm;
 import org.iplantc.de.apps.widgets.client.view.AppTemplateForm.ArgumentEditorFactory;
 import org.iplantc.de.apps.widgets.client.view.AppTemplateForm.ArgumentGroupEditor;
 import org.iplantc.de.apps.widgets.client.view.HasLabelOnlyEditMode;
+import org.iplantc.de.apps.widgets.client.view.editors.style.AppTemplateWizardAppearance;
 import org.iplantc.de.client.models.apps.integration.Argument;
 import org.iplantc.de.client.models.apps.integration.ArgumentGroup;
 
@@ -37,11 +40,17 @@ public class InitializeArgumentGroupEventManagement extends EditorVisitor {
     private final AutoBean<ArgumentGroup> autoBean;
     private final HasLabelOnlyEditMode hasLabelOnlyEditMode;
 
-    public InitializeArgumentGroupEventManagement(AutoBean<ArgumentGroup> argumentGroupAutoBean, ArgumentGroupEditor argumentGroupEditor, HasLabelOnlyEditMode hasLabelOnlyEditMode) {
+    public InitializeArgumentGroupEventManagement(final AppTemplateWizardAppearance appearance,
+                                                  final AutoBean<ArgumentGroup> argumentGroupAutoBean,
+                                                  final ArgumentGroupEditor argumentGroupEditor,
+                                                  final HasLabelOnlyEditMode hasLabelOnlyEditMode,
+                                                  final DeleteArgumentEvent.DeleteArgumentEventHandler deleteArgumentEventHandler) {
         this.argumentGroupEditor = argumentGroupEditor;
         this.autoBean = argumentGroupAutoBean;
         this.hasLabelOnlyEditMode = hasLabelOnlyEditMode;
         argumentGroupEditor.showWhenEmptyOrAllInvisible();
+        ArgumentWYSIWYGDeleteHandler deleteHandler = new ArgumentWYSIWYGDeleteHandler(appearance, argumentGroupEditor.argumentsEditor(), argumentGroupEditor.getDndContainer(), appearance.getArgListDeleteButton(), hasLabelOnlyEditMode);
+        deleteHandler.addDeleteArgumentEventHandler(deleteArgumentEventHandler);
     }
 
     @Override
