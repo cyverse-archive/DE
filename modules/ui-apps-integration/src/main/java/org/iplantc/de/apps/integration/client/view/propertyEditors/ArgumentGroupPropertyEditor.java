@@ -1,6 +1,7 @@
 package org.iplantc.de.apps.integration.client.view.propertyEditors;
 
 
+import static org.iplantc.de.apps.integration.shared.AppIntegrationModule.Ids;
 import static org.iplantc.de.apps.integration.shared.AppIntegrationModule.PropertyPanelIds;
 import org.iplantc.de.apps.integration.client.events.DeleteArgumentGroupEvent;
 import org.iplantc.de.apps.integration.client.events.DeleteArgumentGroupEvent.DeleteArgumentGroupEventHandler;
@@ -33,39 +34,25 @@ import com.sencha.gxt.widget.core.client.form.TextField;
 
 public class ArgumentGroupPropertyEditor extends Composite implements Editor<ArgumentGroup>, HasDeleteArgumentGroupEventHandlers, HasLabelOnlyEditMode {
 
-    interface ArgumentGroupPropertyEditorUiBinder extends UiBinder<Widget, ArgumentGroupPropertyEditor> {}
+    interface ArgumentGroupPropertyEditorUiBinder extends UiBinder<Widget, ArgumentGroupPropertyEditor> { }
 
-    interface EditorDriver extends SimpleBeanEditorDriver<ArgumentGroup, ArgumentGroupPropertyEditor> {}
+    interface EditorDriver extends SimpleBeanEditorDriver<ArgumentGroup, ArgumentGroupPropertyEditor> { }
 
-    private static ArgumentGroupPropertyEditorUiBinder BINDER = GWT.create(ArgumentGroupPropertyEditorUiBinder.class);
-
-    @UiField 
+    final PrefixedHasTextEditor labelEditor;
+    @UiField
     ContentPanel cp;
 
     @Ignore
     @UiField
     TextButton deleteButton;
-    
+
     @UiField
     TextField label;
-
-    final PrefixedHasTextEditor labelEditor;
-
-    private String absoluteEditorPath;
-
-    private ArgumentGroupEditor argumentGroupEditor;
-
+    private static ArgumentGroupPropertyEditorUiBinder BINDER = GWT.create(ArgumentGroupPropertyEditorUiBinder.class);
     private final EditorDriver editorDriver = GWT.create(EditorDriver.class);
-
+    private String absoluteEditorPath;
+    private ArgumentGroupEditor argumentGroupEditor;
     private boolean labelOnlyEditMode = false;
-
-    @Override
-    protected void onEnsureDebugId(String baseID) {
-        super.onEnsureDebugId(baseID);
-        label.ensureDebugId(baseID + PropertyPanelIds.LABEL);
-        deleteButton.ensureDebugId(baseID + PropertyPanelIds.DELETE);
-    }
-
     private ArgumentGroup model;
 
     @Inject
@@ -73,6 +60,7 @@ public class ArgumentGroupPropertyEditor extends Composite implements Editor<Arg
         initWidget(BINDER.createAndBindUi(this));
         labelEditor = new PrefixedHasTextEditor(cp.getHeader(), appearance);
         editorDriver.initialize(this);
+        ensureDebugId(Ids.PROPERTY_EDITOR + Ids.GROUP);
     }
 
     @Override
@@ -104,10 +92,6 @@ public class ArgumentGroupPropertyEditor extends Composite implements Editor<Arg
         return labelOnlyEditMode;
     }
 
-    public void setBoundArgumentGroupEditor(ArgumentGroupEditor argumentGroupEditor) {
-        this.argumentGroupEditor = argumentGroupEditor;
-    }
-
     @Override
     public void setLabelOnlyEditMode(boolean labelOnlyEditMode) {
         this.labelOnlyEditMode = labelOnlyEditMode;
@@ -115,6 +99,17 @@ public class ArgumentGroupPropertyEditor extends Composite implements Editor<Arg
             // Perform labelOnlyEdit actions
             deleteButton.disable();
         }
+    }
+
+    public void setBoundArgumentGroupEditor(ArgumentGroupEditor argumentGroupEditor) {
+        this.argumentGroupEditor = argumentGroupEditor;
+    }
+
+    @Override
+    protected void onEnsureDebugId(String baseID) {
+        super.onEnsureDebugId(baseID);
+        label.ensureDebugId(baseID + PropertyPanelIds.LABEL);
+        deleteButton.ensureDebugId(baseID + PropertyPanelIds.DELETE);
     }
 
     @UiFactory
