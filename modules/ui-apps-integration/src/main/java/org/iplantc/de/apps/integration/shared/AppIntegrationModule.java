@@ -43,5 +43,6 @@ public interface AppIntegrationModule {
         String OMIT_IF_BLANK = ".omitIfBlank";
         String TOOL_TIP = ".toolTip";
         String VALIDATOR_RULES = ".validatorRules";
+        String EDIT_LIST = ".editList";
     }
 }
