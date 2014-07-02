@@ -61,7 +61,7 @@ public class DataSharingPresenter implements DataSharingView.Presenter {
     private FastMap<DiskResource> getSelectedResourcesAsMap(List<DiskResource> selectedResources) {
     	FastMap<DiskResource> resourcesMap = new FastMap<DiskResource>();
     	for (DiskResource sr : selectedResources) {
-    		resourcesMap.put(sr.getId(), sr);
+            resourcesMap.put(sr.getPath(), sr);
     	}
     	return resourcesMap;
     }
