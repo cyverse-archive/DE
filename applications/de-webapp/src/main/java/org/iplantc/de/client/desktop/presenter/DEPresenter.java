@@ -381,12 +381,14 @@ public class DEPresenter implements DEView.Presenter {
                         eventBus.fireEvent(new WindowShowRequestEvent(windowConfig));
                     }
                 }
-            } else if(AuthErrors.ERROR.equalsIgnoreCase(key)) { // Process auth errors
-                if(AuthErrors.ACCESS_DENIED.equalsIgnoreCase(Iterables.getFirst(params.get(key), ""))){
-                    IplantErrorDialog errorDialog = new IplantErrorDialog(errorStrings.authError(Window.Location.getParameter(AuthErrors.API_NAME)),
-                                                                          Window.Location.getParameter(AuthErrors.ERROR_DESCRIPTION));
-                    errorDialog.show();
-                }
+            } else if(AuthErrors.ERROR.equalsIgnoreCase(key)) { // Process errors
+                // Remove underscores, and upper case whole error
+                String error = Iterables.getFirst(params.get(key), "").replace("_", " ").toUpperCase();
+                String apiName = Strings.nullToEmpty(Window.Location.getParameter(AuthErrors.API_NAME));
+                String titleApi = apiName.isEmpty() ? "" : " : " + apiName;
+                IplantErrorDialog errorDialog = new IplantErrorDialog(error + titleApi,
+                                                                      Window.Location.getParameter(AuthErrors.ERROR_DESCRIPTION));
+                errorDialog.show();
             }
         }
     }
