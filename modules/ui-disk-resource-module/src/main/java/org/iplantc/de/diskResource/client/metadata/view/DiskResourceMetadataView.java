@@ -48,8 +48,6 @@ import com.sencha.gxt.core.shared.FastMap;
 import com.sencha.gxt.data.shared.LabelProvider;
 import com.sencha.gxt.data.shared.ListStore;
 import com.sencha.gxt.data.shared.ModelKeyProvider;
-import com.sencha.gxt.data.shared.Store;
-import com.sencha.gxt.data.shared.Store.StoreFilter;
 import com.sencha.gxt.widget.core.client.ContentPanel;
 import com.sencha.gxt.widget.core.client.Dialog.PredefinedButton;
 import com.sencha.gxt.widget.core.client.box.ConfirmMessageBox;
@@ -166,9 +164,7 @@ public class DiskResourceMetadataView implements IsWidget {
 
     }
 
-    private static final String USER_UNIT_TAG = "ipc_user_unit_tag"; //$NON-NLS-1$
     private static final String METADATA_COMPLETE = "Metadata complete"; //$NON-NLS-1$
-    private static final String IPC_UUID = "ipc_UUID"; //$NON-NLS-1$
 
     @UiTemplate("DiskResourceMetadataEditorPanel.ui.xml")
     interface DiskResourceMetadataEditorPanelUiBinder extends UiBinder<Widget, DiskResourceMetadataView> {
@@ -488,16 +484,6 @@ public class DiskResourceMetadataView implements IsWidget {
             initEditor();
         }
         grid.getSelectionModel().addSelectionChangedHandler(new MetadataSelectionChangedListener());
-        grid.getStore().addFilter(new StoreFilter<DiskResourceMetadata>() {
-
-            @Override
-            public boolean select(Store<DiskResourceMetadata> store, DiskResourceMetadata parent, DiskResourceMetadata item) {
-                if (item.getAttribute().equals(IPC_UUID)) {
-                    return false;
-                }
-                return true;
-            }
-        });
         new QuickTip(grid);
     }
 
@@ -584,7 +570,8 @@ public class DiskResourceMetadataView implements IsWidget {
     @UiHandler("addMetadataButton")
     void onAddMetadataSelected(SelectEvent event) {
         expandUserMetadataPanel();
-        DiskResourceMetadata md = newMetadata(getUniqeAttrName(I18N.DISPLAY.newAttribute(), 0), I18N.DISPLAY.newValue(), USER_UNIT_TAG);
+        String attr = getUniqeAttrName(I18N.DISPLAY.newAttribute(), 0);
+        DiskResourceMetadata md = newMetadata(attr, I18N.DISPLAY.newValue(), ""); //$NON-NLS-1$
         md.setId(unique_avu_id++ + ""); //$NON-NLS-1$
         listStore.add(0, md);
         gridInlineEditing.startEditing(new GridCell(0, 0));
