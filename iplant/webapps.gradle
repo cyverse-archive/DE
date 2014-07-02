@@ -33,7 +33,7 @@ configure(subprojects.findAll { it.name == "de" || it.name == "belphegor" }) {
 
     gwt {
         gwtVersion = "$gwtVer"
-        src += files(project(':ui-resources-module').sourceSets.main.allJava.srcDirs) + files(project(':ui-resources-module').sourceSets.main.output.resourcesDir)
+        src += files(project(':ui-resources-module').sourceSets.main.allJava.srcDirs) + files(project(':ui-resources-module').sourceSets.main.output.resourcesDir) + files(project(':ui-resources-module').sourceSets.main.resources.srcDirs)
         src += files(project(':de-common-module').sourceSets.main.allJava.srcDirs) + files(project(':de-common-module').sourceSets.main.output.resourcesDir)
         src += files(project(':ui-commons-module').sourceSets.main.allJava.srcDirs) + files(project(':ui-commons-module').sourceSets.main.output.resourcesDir)
         src += files(project(':confluence-client').sourceSets.main.allJava.srcDirs) + files(project(':confluence-client').sourceSets.main.output.resourcesDir)
