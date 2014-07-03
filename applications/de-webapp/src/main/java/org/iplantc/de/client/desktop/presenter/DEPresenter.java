@@ -1,7 +1,6 @@
 package org.iplantc.de.client.desktop.presenter;
 
 import org.iplantc.de.client.Constants;
-import org.iplantc.de.client.DeResources;
 import org.iplantc.de.client.desktop.views.DEFeedbackDialog;
 import org.iplantc.de.client.desktop.views.DEView;
 import org.iplantc.de.client.events.DefaultUploadCompleteHandler;
@@ -96,17 +95,15 @@ public class DEPresenter implements DEView.Presenter {
         String API_NAME = "api_name";
         String ERROR_DESCRIPTION = "error_description";
         String ERROR = "error";
-        String ACCESS_DENIED = "access_denied";
     }
 
 
     private final DEView view;
     private final IplantErrorStrings errorStrings;
-    private final DeResources res;
     private final EventBus eventBus;
     private final NewMessagePresenter newSysMsgPresenter;
     private final HashMap<String, Command> keyboardShortCuts;
-    private final List<HandlerRegistration> eventHandlers = new ArrayList<HandlerRegistration>();
+    private final List<HandlerRegistration> eventHandlers = new ArrayList<>();
     private boolean keyboardEventsAdded;
     private IconButton feedbackBtn;
     private final SaveSessionPeriodic ssp;
@@ -115,16 +112,14 @@ public class DEPresenter implements DEView.Presenter {
      * Constructs a default instance of the object.
      */
     public DEPresenter(final DEView view,
-                       final DeResources resources,
                        final EventBus eventBus,
                        final IplantErrorStrings errorStrings) {
         this.view = view;
         this.errorStrings = errorStrings;
         this.view.setPresenter(this);
-        this.res = resources;
         this.eventBus = eventBus;
         newSysMsgPresenter = new NewMessagePresenter(eventBus, IplantAnnouncer.getInstance());
-        keyboardShortCuts = new HashMap<String, Command>();
+        keyboardShortCuts = new HashMap<>();
         initializeEventHandlers();
         initializeDEProperties();
         ssp = new SaveSessionPeriodic(this);
@@ -183,7 +178,7 @@ public class DEPresenter implements DEView.Presenter {
         PropertyServiceFacade.getInstance().getProperties(new AsyncCallback<Map<String, String>>() {
             @Override
             public void onFailure(Throwable caught) {
-                ErrorHandler.post(I18N.ERROR.systemInitializationError(), caught);
+                ErrorHandler.post(errorStrings.systemInitializationError(), caught);
             }
 
             @Override
@@ -222,7 +217,7 @@ public class DEPresenter implements DEView.Presenter {
         DEServiceFacade.getInstance().getServiceData(wrapper, new AsyncCallback<String>() {
             @Override
             public void onFailure(Throwable caught) {
-                ErrorHandler.post(I18N.ERROR.retrieveUserInfoFailed(), caught);
+                ErrorHandler.post(errorStrings.retrieveUserInfoFailed(), caught);
             }
 
             @Override
@@ -312,8 +307,7 @@ public class DEPresenter implements DEView.Presenter {
     }
 
     private Size getViewPortSize() {
-        Size s = XDOM.getViewportSize();
-        return s;
+        return XDOM.getViewportSize();
     }
 
     public static native void doIntro() /*-{
@@ -336,7 +330,7 @@ public class DEPresenter implements DEView.Presenter {
 
     /**
      *
-     * @param params
+     * @param params the url parameters map
      * @return true if parameter has "type=data"
      */
     private boolean urlHasDataTypeParameter(Map<String, List<String>> params) {
@@ -383,10 +377,10 @@ public class DEPresenter implements DEView.Presenter {
                 }
             } else if(AuthErrors.ERROR.equalsIgnoreCase(key)) { // Process errors
                 // Remove underscores, and upper case whole error
-                String error = Iterables.getFirst(params.get(key), "").replace("_", " ").toUpperCase();
+                String upperCaseError = Iterables.getFirst(params.get(key), "").replaceAll("_", " ").toUpperCase();
                 String apiName = Strings.nullToEmpty(Window.Location.getParameter(AuthErrors.API_NAME));
                 String titleApi = apiName.isEmpty() ? "" : " : " + apiName;
-                IplantErrorDialog errorDialog = new IplantErrorDialog(error + titleApi,
+                IplantErrorDialog errorDialog = new IplantErrorDialog(upperCaseError + titleApi,
                                                                       Window.Location.getParameter(AuthErrors.ERROR_DESCRIPTION));
                 errorDialog.show();
             }

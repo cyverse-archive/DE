@@ -30,7 +30,7 @@ public class DiscoveryEnvironment implements EntryPoint {
         DeResources resources = GWT.create(DeResources.class);
         resources.css().ensureInjected();
         DEView view = new DEViewImpl(resources, EventBus.getInstance());
-        new DEPresenter(view, resources, EventBus.getInstance(), I18N.ERROR);
+        new DEPresenter(view, EventBus.getInstance(), I18N.ERROR);
         Event.addNativePreviewHandler(new NativePreviewHandler() {
             @Override
             public void onPreviewNativeEvent(NativePreviewEvent event) {
