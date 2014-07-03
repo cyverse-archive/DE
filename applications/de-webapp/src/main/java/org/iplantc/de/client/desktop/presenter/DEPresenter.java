@@ -226,8 +226,6 @@ public class DEPresenter implements DEView.Presenter {
                 initKeepaliveTimer();
                 doWorkspaceDisplay();
                 getUserPreferences();
-                processQueryStrings();
-
             }
         });
     }
@@ -242,15 +240,11 @@ public class DEPresenter implements DEView.Presenter {
 
             @Override
             public void onSuccess(String result) {
-                loadPreferences(JsonUtil.getObject(result));
+                UserSettings.getInstance().setValues(JsonUtil.getObject(result));
+                setUpKBShortCuts();
+                processQueryStrings();
             }
         });
-    }
-
-    private void loadPreferences(JSONObject obj) {
-        UserSettings.getInstance().setValues(obj);
-        setUpKBShortCuts();
-        getUserSession();
     }
 
     private void getUserSession() {
@@ -345,6 +339,7 @@ public class DEPresenter implements DEView.Presenter {
 
     // Sriram : We need a generic way to process query strings. This is temp. solution for CORE-4694
     private void processQueryStrings() {
+        boolean hasError = false;
         Map<String, List<String>> params = Window.Location.getParameterMap();
         for(String key : params.keySet()){
 
@@ -376,6 +371,7 @@ public class DEPresenter implements DEView.Presenter {
                     }
                 }
             } else if(AuthErrors.ERROR.equalsIgnoreCase(key)) { // Process errors
+                hasError = true;
                 // Remove underscores, and upper case whole error
                 String upperCaseError = Iterables.getFirst(params.get(key), "").replaceAll("_", " ").toUpperCase();
                 String apiName = Strings.nullToEmpty(Window.Location.getParameter(AuthErrors.API_NAME));
@@ -383,8 +379,15 @@ public class DEPresenter implements DEView.Presenter {
                 IplantErrorDialog errorDialog = new IplantErrorDialog(upperCaseError + titleApi,
                                                                       Window.Location.getParameter(AuthErrors.ERROR_DESCRIPTION));
                 errorDialog.show();
+                errorDialog.addDialogHideHandler(new DialogHideEvent.DialogHideHandler() {
+                    @Override
+                    public void onDialogHide(DialogHideEvent event) {
+                        getUserSession();
+                    }
+                });
             }
         }
+        if(!hasError) getUserSession();
     }
 
     private void addKeyBoardEvents() {
