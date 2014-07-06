@@ -42,6 +42,7 @@
     <inherits name="com.google.gwt.i18n.I18N"/>
     <inherits name="com.google.gwt.resources.Resources"/>
     <!-- Common Service Interfaces -->
+    <inherits name="org.iplantc.de.theme.base.Base" />
     <inherits name='org.iplantc.de.DiscoveryEnvironmentCommon'/>
     <inherits name="org.iplantc.de.apps.Apps"/>
     <inherits name="org.iplantc.de.apps.widgets.Widgets"/>

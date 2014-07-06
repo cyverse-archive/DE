@@ -10,7 +10,6 @@ import org.iplantc.de.client.notifications.util.NotificationHelper;
 import org.iplantc.de.client.notifications.views.NotificationToolbarView;
 import org.iplantc.de.client.notifications.views.NotificationToolbarViewImpl;
 import org.iplantc.de.client.notifications.views.NotificationView;
-import org.iplantc.de.client.notifications.views.NotificationView.Presenter;
 import org.iplantc.de.client.services.callbacks.NotificationCallback;
 import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.resources.client.messages.I18N;
@@ -48,7 +47,7 @@ import java.util.List;
  * @author sriram
  * 
  */
-public class NotificationPresenter implements Presenter, NotificationToolbarView.Presenter {
+public class NotificationPresenter implements NotificationView.Presenter, NotificationToolbarView.Presenter {
 
     private final NotificationView view;
     private final NotificationToolbarView toolbar;

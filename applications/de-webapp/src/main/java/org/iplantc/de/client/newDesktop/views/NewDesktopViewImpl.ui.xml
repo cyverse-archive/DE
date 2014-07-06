@@ -1,0 +1,57 @@
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
+             xmlns:g='urn:import:com.google.gwt.user.client.ui'
+             xmlns:button='urn:import:com.sencha.gxt.widget.core.client.button'
+             xmlns:taskbar='urn:import:org.iplantc.de.client.desktop.widget'>
+
+    <ui:with field="appearance"
+             type="org.iplantc.de.client.newDesktop.NewDesktopView.DesktopAppearance"/>
+    <ui:with field="display"
+             type="org.iplantc.de.resources.client.messages.IplantDisplayStrings"/>
+    <ui:with field="help"
+             type="org.iplantc.de.resources.client.messages.IplantContextualHelpStrings"/>
+
+    <g:HTMLPanel>
+        <!--Header-->
+        <header>
+            <div class="{appearance.styles.headerLayout}">
+                <a href="http://iplantcollaborative.org"
+                   target="_blank">
+                    <span class="{appearance.styles.logo}"/><span>Discovery Environment</span>
+                </a>
+            </div>
+            <nav class="{appearance.styles.userMenuLayout}">
+                <button:IconButton ui:field="notificationsBtn"
+                                   toolTip="{display.notifications}"
+                                   config="{appearance.notificationsConfig}"/>
+                <button:IconButton ui:field="userPrefsBtn"
+                                   toolTip="{display.preferences}"
+                                   config="{appearance.userPrefsConfig}"/>
+                <button:IconButton ui:field="forumsBtn"
+                                   toolTip="{display.forums}"
+                                   config="{appearance.forumsConfig}"/>
+            </nav>
+        </header>
+        <!--Body-->
+        <div class="{appearance.styles.desktopBackgroundRepeat}" />
+        <div class="{appearance.styles.desktopBackground}">
+            <nav class="{appearance.styles.windowBtnNav}">
+                <button:IconButton ui:field="dataWinBtn"
+                                   toolTip="{help.iconHomepageDataTip}"
+                                   config="{appearance.dataConfig}"/>
+                <button:IconButton ui:field="appsWinBtn"
+                                   toolTip="{help.iconHomepageAppsTip}"
+                                   config="{appearance.appsConfig}"/>
+                <button:IconButton ui:field="analysisWinBtn"
+                                   toolTip="{help.iconHomepageAnalysesTip}"
+                                   config="{appearance.analysisConfig}"/>
+            </nav>
+            <button:IconButton ui:field="feedbackBtn"
+                               config="{appearance.feedbackBtnConfig}"/>
+        </div>
+        <!--TODO: Put a 'margin-bottom' on the body element-->
+        <!--Footer-->
+        <taskbar:TaskBar ui:field="taskBar"
+                         addStyleNames="{appearance.styles.taskBarLayout}"/>
+    </g:HTMLPanel>
+
+</ui:UiBinder>

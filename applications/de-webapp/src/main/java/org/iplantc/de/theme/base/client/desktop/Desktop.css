@@ -1,0 +1,173 @@
+@def headerHeight 39px;
+@def footerHeight 40px;
+
+.deBody {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    left: 0;
+}
+@sprite .iplantHeader {
+    gwt-image: 'headerBg';
+    background-color: #009bad;
+    position: absolute;
+    height: headerHeight;
+    width: 100%;
+    top: 0;
+    left: 0;
+    right: 0;
+}
+
+.logoContainer {
+    display: inline-block;
+}
+
+@sprite .logo {
+    gwt-image: 'iplantLogo';
+}
+
+.headerLayout {
+
+}
+
+@sprite .desktopBackground {
+    gwt-image: 'desktopBackground';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: headerHeight;
+    background-position: top center;
+    bottom: footerHeight;
+}
+
+@sprite .desktopBackgroundRepeat {
+    gwt-image: 'desktopBackgroundRepeat';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: headerHeight;
+    bottom: footerHeight;
+}
+
+.userMenuContainer {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+}
+
+.windowBtnNav {
+    position: fixed;
+    left: 0;
+    top: 40px;
+}
+
+.taskBarLayout {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+
+}
+
+header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 40px;
+}
+
+@sprite .feedbackOver {
+    gwt-image: 'feedbackImg';
+}
+
+@sprite .feedback {
+    gwt-image: 'feedbackImg';
+    position: fixed;
+    bottom: footerHeight;
+    right: 100px;
+    height: 37px !important;
+    width: 115px !important;
+}
+
+@def winBtnHeight 68px;
+@def winBtnWidth 68px;
+@def winBtnTop 10px;
+@def winBtnLeft 30px;
+
+@sprite .analysesOver {
+    gwt-image: 'analysisBtnHover';
+}
+
+@sprite .analyses {
+    gwt-image: 'analysisBtn';
+    height: winBtnHeight !important;
+    width: winBtnWidth !important;
+    top: winBtnTop;
+    left: winBtnLeft;
+}
+
+@sprite .appsOver {
+    gwt-image: 'appBtnHover';
+}
+
+@sprite .apps {
+    gwt-image: 'appBtn';
+    height: winBtnHeight !important;
+    width: winBtnWidth !important;
+    top: winBtnTop;
+    left: winBtnLeft;
+}
+
+@sprite .dataOver {
+    gwt-image: 'dataBtnHover';
+}
+
+@sprite .data {
+    gwt-image: 'dataBtn';
+    height: winBtnHeight !important;
+    width: winBtnWidth !important;
+    top: winBtnTop;
+    left: winBtnLeft;
+}
+
+@sprite .forumsOver {
+    gwt-image: 'forumsImg';
+}
+
+@def userMenuIconHeight 28px;
+@def userMenuIconWidth 28px;
+
+@sprite .forums {
+    gwt-image: 'forumsImg';
+    height: userMenuIconHeight !important;
+    width: userMenuIconWidth !important;
+    display: inline-block;
+}
+
+@sprite .userPrefsOver {
+    gwt-image: 'userPrefImg';
+}
+
+@sprite .userPrefs {
+    gwt-image: 'userPrefImg';
+    height: userMenuIconHeight !important;
+    width: userMenuIconWidth !important;
+    display: inline-block;
+}
+
+@sprite .notificationOver {
+    gwt-image: 'notificationsImg';
+}
+
+@sprite .notification {
+    gwt-image: 'notificationsImg';
+    height: userMenuIconHeight !important;
+    width: userMenuIconWidth !important;
+    display: inline-block;
+}
+
+@sprite .desktopBackground {
+    gwt-image: 'desktopBackground';
+}

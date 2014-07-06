@@ -1,9 +1,7 @@
 package org.iplantc.de.client;
 
-import org.iplantc.de.client.desktop.presenter.DEPresenter;
-import org.iplantc.de.client.desktop.views.DEView;
-import org.iplantc.de.client.desktop.views.DEViewImpl;
-import org.iplantc.de.client.events.EventBus;
+import org.iplantc.de.client.gin.DEInjector;
+import org.iplantc.de.client.newDesktop.NewDesktopView;
 import org.iplantc.de.resources.client.messages.I18N;
 
 import com.google.gwt.core.client.EntryPoint;
@@ -27,10 +25,17 @@ public class DiscoveryEnvironment implements EntryPoint {
     @Override
     public void onModuleLoad() {
         setEntryPointTitle();
+        DEInjector injector = DEInjector.INSTANCE;
         DeResources resources = GWT.create(DeResources.class);
         resources.css().ensureInjected();
-        DEView view = new DEViewImpl(resources, EventBus.getInstance());
-        new DEPresenter(view, EventBus.getInstance(), I18N.ERROR);
+        RootLayoutPanel.get().clear();
+        //DEView view = new DEViewImpl(resources, EventBus.getInstance());
+        //new DEPresenter(view, EventBus.getInstance(), I18N.ERROR);
+        final NewDesktopView.Presenter newDesktopPresenter = injector.getNewDesktopPresenter();
+        newDesktopPresenter.go(RootPanel.get());
+
+//        NewDesktopViewImpl nv = new NewDesktopViewImpl();
+//        RootPanel.get().add(nv);
         Event.addNativePreviewHandler(new NativePreviewHandler() {
             @Override
             public void onPreviewNativeEvent(NativePreviewEvent event) {
@@ -42,7 +47,6 @@ public class DiscoveryEnvironment implements EntryPoint {
                             event.getNativeEvent().preventDefault();
                         }
                     }
-
                 }
             }
         });
