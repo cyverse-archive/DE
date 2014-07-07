@@ -44,6 +44,7 @@ public class EnsemblUtil {
         String filename = DiskResourceUtil.parseNameFromPath(path);
         String parent = DiskResourceUtil.parseParent(path);
         String indexFile = null;
+        String indexFilePath = null;
         if (infoType.equals(InfoType.BAM.toString())) {
             indexFile = filename + ".bai";
         } else if (infoType.equals(InfoType.VCF.toString())) {
@@ -53,33 +54,34 @@ public class EnsemblUtil {
         }
         list.add(file);
         if (indexFile != null) {
-            final String indexFilePath = parent + "/" + indexFile;
+            indexFilePath = parent + "/" + indexFile;
             list.add(CommonModelUtils.createHasPathFromString((indexFilePath)));
-            
+
         }
-        
-        diskResourcePaths.setPaths(Arrays.asList(path, indexFile));
+
+        diskResourcePaths.setPaths(Arrays.asList(path, indexFilePath));
 
         diskResourceServiceFacade.getStat(DiskResourceUtil.asStringPathTypeMap(list, TYPE.FILE),
                                           new AsyncCallback<FastMap<DiskResource>>() {
 
-            @Override
+                                              @Override
                                               public void onSuccess(FastMap<DiskResource> result) {
-                                                 
+
                                                   diskResourceServiceFacade.shareWithAnonymous(diskResourcePaths,
                                                                                                new ShareAnonymousCallback(file,
                                                                                                                           container));
-            }
+                                              }
 
-            @Override
-            public void onFailure(Throwable caught) {
-                IplantInfoBox info = new IplantInfoBox(I18N.DISPLAY.indexFileMissing(), I18N.ERROR.indexFileMissing());
-                info.show();
-                if (container != null) {
-                    container.unmask();
-                }
-            }
-        });
+                                              @Override
+                                              public void onFailure(Throwable caught) {
+                                                  IplantInfoBox info = new IplantInfoBox(I18N.DISPLAY.indexFileMissing(),
+                                                                                         I18N.ERROR.indexFileMissing());
+                                                  info.show();
+                                                  if (container != null) {
+                                                      container.unmask();
+                                                  }
+                                              }
+                                          });
     }
 
 }
