@@ -57,7 +57,9 @@ public class DiskResourceColumnModel extends ColumnModel<DiskResource> implement
         ColumnConfig<DiskResource, DiskResource> name = new ColumnConfig<DiskResource, DiskResource>(new IdentityValueProvider<DiskResource>("name"), 100, displayStrings.name());
         ColumnConfig<DiskResource, Date> lastModified = new ColumnConfig<DiskResource, Date>(props.lastModified(), 120, displayStrings.lastModified());
         ColumnConfig<DiskResource, Long> size = new ColumnConfig<DiskResource, Long>(new DiskResourceSizeValueProvider(), 50, displayStrings.size());
-        ColumnConfig<DiskResource, String> path = new ColumnConfig<DiskResource, String>(props.id(), 100, displayStrings.path());
+        ColumnConfig<DiskResource, String> path = new ColumnConfig<DiskResource, String>(props.path(),
+                                                                                         100,
+                                                                                         displayStrings.path());
         ColumnConfig<DiskResource, Date> created = new ColumnConfig<DiskResource, Date>(props.dateSubmitted(), 120, displayStrings.dateSubmitted());
         ColumnConfig<DiskResource, DiskResource> actions = new ColumnConfig<DiskResource, DiskResource>(new IdentityValueProvider<DiskResource>("actions"), 100, "");
 
