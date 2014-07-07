@@ -33,7 +33,8 @@ public class ImageViewerImpl extends AbstractFileViewer {
 
     public ImageViewerImpl(File file) {
         super(file, null);
-        img = new Image(ServicesInjector.INSTANCE.getFileEditorServiceFacade().getServletDownloadUrl(this.file.getId()));
+        img = new Image(ServicesInjector.INSTANCE.getFileEditorServiceFacade()
+                                                 .getServletDownloadUrl(this.file.getPath()));
         widget = uiBinder.createAndBindUi(this);
         con.setScrollMode(ScrollMode.AUTO);
     }
