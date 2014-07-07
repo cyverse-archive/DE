@@ -3,6 +3,7 @@ package org.iplantc.de.diskResource.client.dataLink.presenter.callbacks;
 import org.iplantc.de.client.models.dataLink.DataLink;
 import org.iplantc.de.client.models.dataLink.DataLinkFactory;
 import org.iplantc.de.client.models.dataLink.DataLinkList;
+import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.client.util.JsonUtil;
 import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.resources.client.messages.I18N;
@@ -24,7 +25,7 @@ public class ListDataLinksCallback<M> implements AsyncCallback<String> {
 
     private final Tree<M, M> tree;
     private final DataLinkFactory dlFactory;
-    
+
     public ListDataLinksCallback(Tree<M, M> tree, DataLinkFactory dlFactory) {
         this.tree = tree;
         this.dlFactory = dlFactory;
@@ -36,20 +37,29 @@ public class ListDataLinksCallback<M> implements AsyncCallback<String> {
         // Get tickets by resource id, add them to the tree.
         JSONObject response = JsonUtil.getObject(result);
         JSONObject tickets = JsonUtil.getObject(response, "tickets");
-        
+
         Splittable placeHolder;
-        for(String key : tickets.keySet()){
+        for (String key : tickets.keySet()) {
             placeHolder = StringQuoter.createSplittable();
-            M dr = tree.getStore().findModelWithKey(key);
-            
+            M dr = null;
+            // manually find the item since id's wont work
+            for (M item : tree.getStore().getAll()) {
+                if (((DiskResource)item).getPath().equals(key)) {
+                    dr = item;
+                    break;
+                }
+            }
+
             JSONArray dlIds = JsonUtil.getArray(tickets, key);
             Splittable splittable = StringQuoter.split(dlIds.toString());
             splittable.assign(placeHolder, "tickets");
-            AutoBean<DataLinkList> ticketsAB = AutoBeanCodex.decode(dlFactory, DataLinkList.class, placeHolder);
-            
+            AutoBean<DataLinkList> ticketsAB = AutoBeanCodex.decode(dlFactory,
+                                                                    DataLinkList.class,
+                                                                    placeHolder);
+
             List<DataLink> dlList = ticketsAB.as().getTickets();
-            
-            for(DataLink dl : dlList){
+
+            for (DataLink dl : dlList) {
                 tree.getStore().add(dr, (M)dl);
                 tree.setChecked((M)dl, CheckState.CHECKED);
             }

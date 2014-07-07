@@ -614,7 +614,7 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter, Di
             diskResourceService.restoreAll(callback);
         } else {
             HasPaths request = drFactory.pathsList().as();
-            request.setPaths(DiskResourceUtil.asStringIdList(selectedResources));
+            request.setPaths(DiskResourceUtil.asStringPathList(selectedResources));
             diskResourceService.restoreDiskResource(request, callback);
         }
     }

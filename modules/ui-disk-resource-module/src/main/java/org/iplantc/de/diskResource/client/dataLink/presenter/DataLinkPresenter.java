@@ -44,7 +44,8 @@ public class DataLinkPresenter<M extends DiskResource> implements DataLinkPanel.
     @SuppressWarnings({"unchecked", "rawtypes"})
     private void getExistingDataLinks(List<M> resources) {
         view.addRoots(resources);
-        drService.listDataLinks(DiskResourceUtil.asStringIdList(resources), new ListDataLinksCallback(
+        drService.listDataLinks(DiskResourceUtil.asStringPathList(resources),
+                                new ListDataLinksCallback(
                 view.getTree(),dlFactory));
     }
 
