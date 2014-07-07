@@ -80,7 +80,7 @@ public class IDropLitePresenter implements Presenter {
 
         } else {
             HasPaths request = drFactory.pathsList().as();
-            request.setPaths(DiskResourceUtil.asStringIdList(idlwc.getResourcesToDownload()));
+            request.setPaths(DiskResourceUtil.asStringPathList(idlwc.getResourcesToDownload()));
 
             ServicesInjector.INSTANCE.getDiskResourceServiceFacade().download(request, new IDropLiteServiceCallback() {
                 @Override

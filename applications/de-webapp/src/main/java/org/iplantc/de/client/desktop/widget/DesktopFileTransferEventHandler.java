@@ -90,7 +90,9 @@ class DesktopFileTransferEventHandler implements RequestBulkDownloadEventHandler
         if (isDownloadable(resources)) {
             if (resources.size() == 1) {
                 // Download now. No folders possible here....
-                final String encodedSimpleDownloadURL = ServicesInjector.INSTANCE.getDiskResourceServiceFacade().getEncodedSimpleDownloadURL(resources.get(0).getId());
+                final String encodedSimpleDownloadURL = ServicesInjector.INSTANCE.getDiskResourceServiceFacade()
+                                                                                 .getEncodedSimpleDownloadURL(resources.get(0)
+                                                                                                                       .getPath());
                 WindowUtil.open(encodedSimpleDownloadURL, "width=100,height=100");
             } else {
                 SimpleDownloadWindowConfig sdwc = ConfigFactory.simpleDownloadWindowConfig();
