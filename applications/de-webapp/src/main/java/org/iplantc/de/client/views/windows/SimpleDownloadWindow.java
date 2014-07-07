@@ -48,7 +48,9 @@ public class SimpleDownloadWindow extends IplantWindowBase {
 
     private void buildLinks(SimpleDownloadWindowConfig config, VerticalLayoutContainer vlc) {
         for (final DiskResource dr : config.getResourcesToDownload()) {
-            IPlantAnchor link2 = new IPlantAnchor(DiskResourceUtil.parseNameFromPath(dr.getId()), 120, new ClickHandler() {
+            IPlantAnchor link2 = new IPlantAnchor(DiskResourceUtil.parseNameFromPath(dr.getPath()),
+                                                  120,
+                                                  new ClickHandler() {
 
                 @Override
                 public void onClick(ClickEvent event) {
