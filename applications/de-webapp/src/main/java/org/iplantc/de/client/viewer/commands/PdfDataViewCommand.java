@@ -17,8 +17,11 @@ import java.util.List;
 public class PdfDataViewCommand implements ViewCommand {
 
     @Override
-    public List<FileViewer> execute(File file, String infoType, boolean editing, Folder parentFolder) {
-        String fileId = file.getId();
+    public List<FileViewer> execute(File file,
+                                    String infoType,
+                                    boolean editing,
+                                    Folder parentFolder) {
+        String fileId = file.getPath();
         if (editing) {
             ErrorAnnouncementConfig config = new ErrorAnnouncementConfig(
                     "Editing is not supported for this type of file!");
