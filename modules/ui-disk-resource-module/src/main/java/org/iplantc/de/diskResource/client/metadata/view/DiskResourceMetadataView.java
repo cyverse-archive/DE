@@ -315,6 +315,7 @@ public class DiskResourceMetadataView implements IsWidget {
         for (MetadataTemplateAttribute attribute : attributes) {
             Field<?> field = getAttributeValueWidget(attribute);
             if (field != null) {
+                field.setReadOnly(!writable);
                 templateAttrFieldMap.put(attribute.getName(), field);
                 templateContainer.add(buildFieldLabel(field, attribute.getName(), attribute.getDescription(), !attribute.isRequired()), new VerticalLayoutData(.90, -1));
             }
@@ -405,20 +406,27 @@ public class DiskResourceMetadataView implements IsWidget {
             isCompleteCbx = cb;
         }
 
+        // CheckBox fields can still be (un)checked when setReadOnly is set to true.
+        cb.setEnabled(writable);
+
         return cb;
     }
 
     private TextField buildURLField(MetadataTemplateAttribute attribute) {
         TextField tf = buildTextField(attribute);
         tf.addValidator(new UrlValidator());
-        tf.setEmptyText("Valid URL");
+        if (writable) {
+            tf.setEmptyText("Valid URL");
+        }
         return tf;
     }
 
     private DateField buildDateField(MetadataTemplateAttribute attribute) {
         final DateField tf = new DateField(new DateTimePropertyEditor(timestampFormat));
         tf.setAllowBlank(!attribute.isRequired());
-        tf.setEmptyText(timestampFormat.format(new Date(0)));
+        if (writable) {
+            tf.setEmptyText(timestampFormat.format(new Date(0)));
+        }
 
         DiskResourceMetadata avu = templateAttrAvuMap.get(attribute.getName());
         if (avu != null && !Strings.isNullOrEmpty(avu.getValue())) {
