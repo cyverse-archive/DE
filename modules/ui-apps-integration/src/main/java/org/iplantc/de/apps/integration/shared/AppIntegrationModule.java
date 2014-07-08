@@ -8,6 +8,8 @@ public interface AppIntegrationModule {
     interface Ids {
         String APP_EDITOR_VIEW = ".appEditorView";
         String PALETTE = ".pallete";
+        String TOOLBAR = ".menuBar";
+        String CMD_LINE_PREVIEW = ".cmdLinePreview";
 
         String ENV_VARIABLE = ".environmentVariable";
         String FILE_INPUT = ".fileInput";
@@ -32,6 +34,14 @@ public interface AppIntegrationModule {
 
         String GROUP = ".group";
         String PROPERTY_EDITOR = ".propertyEditor";
+        String ARG_ORDER = ".argumentOrder";
+        String PREVIEW = ".preview";
+        String PREVIEW_UI = ".UI";
+        String PREVIEW_JSON = ".JSON";
+        String SAVE = ".save";
+        String TOOL = ".tool";
+        String APP_NAME = ".appName";
+        String APP_DESCRIPTION = ".appDescription";
     }
 
     interface PropertyPanelIds {

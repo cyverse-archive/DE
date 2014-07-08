@@ -14,12 +14,9 @@ import com.google.gwt.event.logical.shared.HasValueChangeHandlers;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
-import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
-import com.google.gwt.user.client.ui.IsWidget;
-import com.google.gwt.user.client.ui.Widget;
 
 import com.sencha.gxt.cell.core.client.form.ComboBoxCell;
 import com.sencha.gxt.core.client.IdentityValueProvider;
@@ -36,12 +33,13 @@ import com.sencha.gxt.data.shared.loader.FilterPagingLoadConfigBean;
 import com.sencha.gxt.data.shared.loader.LoadResultListStoreBinding;
 import com.sencha.gxt.data.shared.loader.PagingLoadResult;
 import com.sencha.gxt.data.shared.loader.PagingLoader;
+import com.sencha.gxt.widget.core.client.Composite;
 import com.sencha.gxt.widget.core.client.ListView;
 import com.sencha.gxt.widget.core.client.form.ComboBox;
 
 import java.util.List;
 
-public class DCSearchField implements IsWidget, HasSelectionHandlers<DeployedComponent>, HasValueChangeHandlers<DeployedComponent> {
+public class DCSearchField extends Composite implements HasSelectionHandlers<DeployedComponent>, HasValueChangeHandlers<DeployedComponent> {
 
     interface DCTemplate extends XTemplates {
         @XTemplate(source = "DCSearchResult.html")
@@ -51,13 +49,13 @@ public class DCSearchField implements IsWidget, HasSelectionHandlers<DeployedCom
     ComboBox<DeployedComponent> combo;
     
     private final DCSearchRPCProxy searchProxy;
-    
+
     public DCSearchField() {
         searchProxy = new DCSearchRPCProxy();
         PagingLoader<FilterPagingLoadConfig, PagingLoadResult<DeployedComponent>> loader = buildLoader();
 
         ListStore<DeployedComponent> store = buildStore();
-        
+
         loader.addLoadHandler(new LoadResultListStoreBinding<FilterPagingLoadConfig, DeployedComponent, PagingLoadResult<DeployedComponent>>(
                 store));
 
@@ -67,9 +65,9 @@ public class DCSearchField implements IsWidget, HasSelectionHandlers<DeployedCom
 
         ComboBoxCell<DeployedComponent> cell = buildComboCell(store, view);
         initCombo(loader, cell);
-        
+        initWidget(combo);
     }
-    
+
     @Override
     public HandlerRegistration addSelectionHandler(SelectionHandler<DeployedComponent> handler) {
         return combo.addSelectionHandler(handler);
@@ -80,30 +78,17 @@ public class DCSearchField implements IsWidget, HasSelectionHandlers<DeployedCom
         return combo.addValueChangeHandler(handler);
     }
     
-    @Override
-    public Widget asWidget() {
-       return combo;
-    }
-
     public void clear() {
         combo.clear();
     }
-    
-    @Override
-    public void fireEvent(GwtEvent<?> event) {
-        throw new UnsupportedOperationException("DCSearchField.fireEvent not supported.");
-    }
-    
 
     public DeployedComponent getValue() {
         return combo.getValue();
     }
-
-
+    
     public void setValue(DeployedComponent value) {
         combo.setValue(value);
     }
-
 
     private ComboBoxCell<DeployedComponent> buildComboCell(ListStore<DeployedComponent> store,
             ListView<DeployedComponent, DeployedComponent> view) {

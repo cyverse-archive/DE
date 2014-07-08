@@ -22,7 +22,8 @@
       
       <!-- Preview Menu -->
       <toolbar:child>
-         <button:TextButton text="{display.preview}"
+         <button:TextButton ui:field="previewBtn"
+                            text="{display.preview}"
                             icon="{res.search}">
             <button:menu>
                <menu:Menu>
