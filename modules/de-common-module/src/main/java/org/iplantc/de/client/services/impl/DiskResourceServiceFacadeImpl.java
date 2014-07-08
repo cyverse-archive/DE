@@ -560,7 +560,7 @@ public class DiskResourceServiceFacadeImpl extends TreeStore<Folder> implements
     public <T extends DiskResource> void deleteDiskResources(final Set<T> diskResources,
                                                              final AsyncCallback<HasPaths> callback) {
         final HasPaths dto = FACTORY.pathsList().as();
-        dto.setPaths(DiskResourceUtil.asStringIdList(diskResources));
+        dto.setPaths(DiskResourceUtil.asStringPathList(diskResources));
         deleteDiskResources(dto, callback);
     }
 
