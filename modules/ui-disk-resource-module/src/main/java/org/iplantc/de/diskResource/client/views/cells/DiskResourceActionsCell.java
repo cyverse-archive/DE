@@ -114,14 +114,14 @@ public class DiskResourceActionsCell extends AbstractCell<DiskResource> {
             toolTip = SHARE_FOLDER_BY_LINK_ACTION;
             className = resources.css().actionIcon();
             imgSrc = iplantResources.dataLink().getSafeUri();
-            debugId = baseID + "." + value.getId() + DiskResourceModule.Ids.ACTION_CELL_DATA_LINK;
+            debugId = baseID + "." + value.getPath() + DiskResourceModule.Ids.ACTION_CELL_DATA_LINK;
         }
         if ((value instanceof File) && DiskResourceUtil.isOwner(value)) {
             name = SHARE_FILE_BY_LINK_ACTION;
             toolTip = SHARE_FILE_BY_LINK_ACTION;
             className = resources.css().actionIcon();
             imgSrc = iplantResources.linkAdd().getSafeUri();
-            debugId = baseID + "." + value.getId() + DiskResourceModule.Ids.ACTION_CELL_DATA_LINK_ADD;
+            debugId = baseID + "." + value.getPath() + DiskResourceModule.Ids.ACTION_CELL_DATA_LINK_ADD;
         }
 
 
@@ -140,7 +140,7 @@ public class DiskResourceActionsCell extends AbstractCell<DiskResource> {
             toolTip = SHARE_BY_DE_ACTION;
             className = resources.css().actionIcon();
             imgSrc = iplantResources.share().getSafeUri();
-            debugId = baseID + "." + value.getId() + DiskResourceModule.Ids.ACTION_CELL_SHARE;
+            debugId = baseID + "." + value.getPath() + DiskResourceModule.Ids.ACTION_CELL_SHARE;
         } else {
             name = null;
             toolTip = null;
@@ -161,7 +161,7 @@ public class DiskResourceActionsCell extends AbstractCell<DiskResource> {
         toolTip = MANAGE_METADATA_ACTION;
         className = resources.css().actionIcon();
         imgSrc = iplantResources.metadata().getSafeUri();
-        debugId = baseID + "." + value.getId() + DiskResourceModule.Ids.ACTION_CELL_METADATA;
+        debugId = baseID + "." + value.getPath() + DiskResourceModule.Ids.ACTION_CELL_METADATA;
 
         // Append metadata action
         if(name != null && className != null && imgSrc != null){
@@ -176,7 +176,7 @@ public class DiskResourceActionsCell extends AbstractCell<DiskResource> {
         toolTip = COMMENTS_ACTION;
         className = resources.css().actionIcon();
         imgSrc = iplantResources.userComment().getSafeUri();
-        debugId = baseID + "." + value.getId() + DiskResourceModule.Ids.ACTION_CELL_COMMENTS;
+        debugId = baseID + "." + value.getPath() + DiskResourceModule.Ids.ACTION_CELL_COMMENTS;
 
         // append comments action
         if (name != null && className != null && imgSrc != null) {

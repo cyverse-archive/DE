@@ -119,7 +119,7 @@ public class DiskResourceNameCell extends AbstractCell<DiskResource> {
         }
 
         if(DebugInfo.isDebugIdEnabled() && !Strings.isNullOrEmpty(baseID)) {
-            final String debugId = baseID + "." + value.getId() + DiskResourceModule.Ids.NAME_CELL;
+            final String debugId = baseID + "." + value.getPath() + DiskResourceModule.Ids.NAME_CELL;
             sb.append(templates.debugCell(imgClassName, nameStyle, name, debugId));
         }else {
             sb.append(templates.cell(imgClassName, nameStyle, name));

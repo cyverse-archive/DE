@@ -55,7 +55,8 @@ public class DiskResourceFavoriteCell extends AbstractCell<DiskResource> {
             }
 
             if (DebugInfo.isDebugIdEnabled() && !Strings.isNullOrEmpty(baseID)) {
-                String debugId = baseID + "." + value.getId() + DiskResourceModule.Ids.ACTION_CELL_FAVORITE;
+                String debugId = baseID + "." + value.getPath()
+                        + DiskResourceModule.Ids.ACTION_CELL_FAVORITE;
                 sb.append(templates.debugCell(imgName, imgClassName, imgToolTip, debugId));
             } else {
                 sb.append(templates.cell(imgName, imgClassName, imgToolTip));
