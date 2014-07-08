@@ -322,7 +322,7 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter, Di
 
     void doShareByDataLink(final DiskResource toBeShared) {
         if (toBeShared instanceof Folder) {
-            showShareLink(GWT.getHostPageBaseURL() + "?type=data&folder=" + toBeShared.getId());
+            showShareLink(GWT.getHostPageBaseURL() + "?type=data&folder=" + toBeShared.getPath());
         } else {
             diskResourceService.createDataLinks(Arrays.asList(toBeShared.getPath()), new AsyncCallback<String>() {
 
