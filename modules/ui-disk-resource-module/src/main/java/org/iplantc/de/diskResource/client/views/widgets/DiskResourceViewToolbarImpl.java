@@ -124,7 +124,7 @@ public class DiskResourceViewToolbarImpl extends Composite implements DiskResour
         moveMiEnabled = !isSelectionEmpty && isOwner && !isSelectionInTrash;
         deleteMiEnabled = !isSelectionEmpty && isOwner;
         editFileMiEnabled = !isSelectionEmpty && isSingleSelection && containsFile(selection) && isOwner && !isSelectionInTrash;
-        editCommentsMiEnabled = false;
+        editCommentsMiEnabled = !isSelectionEmpty && isSingleSelection && !isSelectionInTrash && isReadable(selection.get(0));
         editInfoTypeMiEnabled = !isSelectionEmpty && isSingleSelection && !isSelectionInTrash && containsFile(selection) && isOwner;
         metadataMiEnabled = !isSelectionEmpty && isSingleSelection && !isSelectionInTrash && isReadable(selection.get(0));
 
@@ -283,11 +283,11 @@ public class DiskResourceViewToolbarImpl extends Composite implements DiskResour
 
         String trashPath = userInfo.getTrashPath();
         for (DiskResource dr : selection) {
-            if (dr.getId().equals(trashPath)) {
+            if (dr.getPath().equals(trashPath)) {
                 return false;
             }
 
-            if (!dr.getId().startsWith(trashPath)) {
+            if (!dr.getPath().startsWith(trashPath)) {
                 return false;
             }
         }
@@ -325,6 +325,7 @@ public class DiskResourceViewToolbarImpl extends Composite implements DiskResour
 
     @UiHandler("editCommentsMi")
     void onEditCommentClicked(SelectionEvent<Item> event){
+        presenter.manageSelectedResourceComments();
     }
 
     @UiHandler("editFileMi")

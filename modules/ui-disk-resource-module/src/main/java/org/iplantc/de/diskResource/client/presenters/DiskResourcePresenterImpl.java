@@ -303,11 +303,20 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter, Di
 
     @Override
     public void onManageComments(ManageCommentsEvent event) {
-        DiskResource dr = event.getDiskResource();
+        doManageDiskResourceComments(event.getDiskResource());
+    }
+
+    @Override
+    public void manageSelectedResourceComments() {
+        checkState(getSelectedDiskResources().size() == 1, "Only one Disk Resource should be selected, but there are %i", getSelectedDiskResources().size());
+        doManageDiskResourceComments(Iterables.getFirst(getSelectedDiskResources(), null));
+    }
+
+    void doManageDiskResourceComments(final DiskResource dr){
         checkNotNull(dr);
         // call to retrieve comments...and show dialog
         Window d = new Window();
-        d.setHeadingText(I18N.DISPLAY.comments());
+        d.setHeadingText(displayStrings.comments());
         d.remove(d.getButtonBar());
         d.setSize("600px", "450px");
         CommentsView cv = new CommentsViewImpl();
@@ -318,6 +327,7 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter, Di
         cv.setPresenter(cp);
         cp.go(d);
         d.show();
+
     }
 
     void doShareByDataLink(final DiskResource toBeShared) {

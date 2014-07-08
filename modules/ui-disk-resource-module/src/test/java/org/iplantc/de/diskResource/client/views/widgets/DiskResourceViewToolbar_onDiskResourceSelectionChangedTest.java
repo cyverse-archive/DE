@@ -172,7 +172,7 @@ public class DiskResourceViewToolbar_onDiskResourceSelectionChangedTest {
         verify(mockMove).setEnabled(false);
         verify(mockDelete).setEnabled(false);
         verify(mockEditFile).setEnabled(false);
-        verify(mockEditComments).setEnabled(false);
+        verify(mockEditComments).setEnabled(true);
         verify(mockEditInfoType).setEnabled(false);
         verify(mockMetadata).setEnabled(true);
 
@@ -223,7 +223,7 @@ public class DiskResourceViewToolbar_onDiskResourceSelectionChangedTest {
         verify(mockMove).setEnabled(false);
         verify(mockDelete).setEnabled(false);
         verify(mockEditFile).setEnabled(false);
-        verify(mockEditComments).setEnabled(false);
+        verify(mockEditComments).setEnabled(true);
         verify(mockEditInfoType).setEnabled(false);
         verify(mockMetadata).setEnabled(true);
 
@@ -273,7 +273,7 @@ public class DiskResourceViewToolbar_onDiskResourceSelectionChangedTest {
         verify(mockMove).setEnabled(true);
         verify(mockDelete).setEnabled(true);
         verify(mockEditFile).setEnabled(true);
-        verify(mockEditComments).setEnabled(false);
+        verify(mockEditComments).setEnabled(true);
         verify(mockEditInfoType).setEnabled(true);
         verify(mockMetadata).setEnabled(true);
 
@@ -474,7 +474,7 @@ public class DiskResourceViewToolbar_onDiskResourceSelectionChangedTest {
         verify(mockMove).setEnabled(false);
         verify(mockDelete).setEnabled(false);
         verify(mockEditFile).setEnabled(false);
-        verify(mockEditComments).setEnabled(false);
+        verify(mockEditComments).setEnabled(true);
         verify(mockEditInfoType).setEnabled(false);
         verify(mockMetadata).setEnabled(true);
 
@@ -524,7 +524,7 @@ public class DiskResourceViewToolbar_onDiskResourceSelectionChangedTest {
         verify(mockMove).setEnabled(false);
         verify(mockDelete).setEnabled(false);
         verify(mockEditFile).setEnabled(false);
-        verify(mockEditComments).setEnabled(false);
+        verify(mockEditComments).setEnabled(true);
         verify(mockEditInfoType).setEnabled(false);
         verify(mockMetadata).setEnabled(true);
 
@@ -574,7 +574,7 @@ public class DiskResourceViewToolbar_onDiskResourceSelectionChangedTest {
         verify(mockMove).setEnabled(true);
         verify(mockDelete).setEnabled(true);
         verify(mockEditFile).setEnabled(false);
-        verify(mockEditComments).setEnabled(false);
+        verify(mockEditComments).setEnabled(true);
         verify(mockEditInfoType).setEnabled(false);
         verify(mockMetadata).setEnabled(true);
 
