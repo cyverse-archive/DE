@@ -16,5 +16,8 @@ public interface ViewCommand {
     /**
      * Execute command.
      */
-    List<? extends FileViewer> execute(File file, String infoType, boolean editing, Folder parentFolder);
+    List<? extends FileViewer> execute(File file,
+                                       String infoType,
+                                       boolean editing,
+                                       Folder parentFolder);
 }

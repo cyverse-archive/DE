@@ -18,6 +18,8 @@ import org.iplantc.de.resources.client.messages.I18N;
 
 import com.google.common.base.Joiner;
 import com.google.gwt.core.shared.GWT;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.json.client.JSONArray;
@@ -53,6 +55,7 @@ import com.sencha.gxt.widget.core.client.grid.ColumnConfig;
 import com.sencha.gxt.widget.core.client.grid.ColumnModel;
 import com.sencha.gxt.widget.core.client.grid.Grid;
 import com.sencha.gxt.widget.core.client.grid.Grid.GridCell;
+import com.sencha.gxt.widget.core.client.grid.RowNumberer;
 import com.sencha.gxt.widget.core.client.grid.editing.ClicksToEdit;
 import com.sencha.gxt.widget.core.client.grid.editing.GridInlineEditing;
 import com.sencha.gxt.widget.core.client.grid.filters.GridFilters;
@@ -120,6 +123,7 @@ public class StrcturedTextViewerImpl extends StructuredTextViewer {
     private GridInlineEditing<JSONObject> rowEditing;
     private int columns;
     private final Folder parentFolder;
+    private RowNumberer<JSONObject> numberer;
 
     public StrcturedTextViewerImpl(File file, String infoType, Folder parentFolder) {
         super(file, infoType);
@@ -129,16 +133,18 @@ public class StrcturedTextViewerImpl extends StructuredTextViewer {
         initPagingToolbar();
         loadData();
         EventBus eventbus = EventBus.getInstance();
-        eventHandlers.add(eventbus.addHandler(EditNewTabFileEvent.TYPE, new EditNewTabFileEventHandeler() {
+        eventHandlers.add(eventbus.addHandler(EditNewTabFileEvent.TYPE,
+                                              new EditNewTabFileEventHandeler() {
 
-            @Override
-            public void onNewTabFile(EditNewTabFileEvent event) {
-                initGrid(event.getColumns());
-                setEditing(true);
-                addRow();
-            }
+                                                  @Override
+                                                  public void onNewTabFile(EditNewTabFileEvent event) {
+                                                      initGrid(event.getColumns());
+                                                      setEditing(true);
+                                                      addRow();
+                                                  }
 
-        }));
+                                              }));
+        addLineHumberHandler();
 
     }
 
@@ -190,6 +196,18 @@ public class StrcturedTextViewerImpl extends StructuredTextViewer {
         return new MarginData();
     }
 
+    private void addLineHumberHandler() {
+        toolbar.addLineNumberCbxChangeHandleer(new ValueChangeHandler<Boolean>() {
+
+            @Override
+            public void onValueChange(ValueChangeEvent<Boolean> event) {
+                numberer.setHidden(!event.getValue());
+                grid.getView().refresh(false);
+            }
+
+        });
+    }
+
     @Override
     public void cleanUp() {
         EventBus eventBus = EventBus.getInstance();
@@ -207,27 +225,31 @@ public class StrcturedTextViewerImpl extends StructuredTextViewer {
         String url = "read-csv-chunk";
         if (file != null) {
             container.mask(org.iplantc.de.resources.client.messages.I18N.DISPLAY.loadingMask());
-            ServicesInjector.INSTANCE.getFileEditorServiceFacade().getDataChunk(url, getRequestBody(), new AsyncCallback<String>() {
+            ServicesInjector.INSTANCE.getFileEditorServiceFacade()
+                                     .getDataChunk(url, getRequestBody(), new AsyncCallback<String>() {
 
-                @Override
-                public void onSuccess(String result) {
-                    AutoBean<StructuredText> bean = AutoBeanCodex.decode(factory, StructuredText.class, result);
-                    text_bean = bean.as();
-                    if (grid == null) {
-                        initGrid(Integer.parseInt(text_bean.getMaxColumns()));
-                    }
-                    Splittable sp = StringQuoter.split(result);
-                    setData(sp);
-                    setEditing(pagingToolbar.getToltalPages() == 1);
-                    container.unmask();
-                }
+                                         @Override
+                                         public void onSuccess(String result) {
+                                             AutoBean<StructuredText> bean = AutoBeanCodex.decode(factory,
+                                                                                                  StructuredText.class,
+                                                                                                  result);
+                                             text_bean = bean.as();
+                                             if (grid == null) {
+                                                 initGrid(Integer.parseInt(text_bean.getMaxColumns()));
+                                             }
+                                             Splittable sp = StringQuoter.split(result);
+                                             setData(sp);
+                                             setEditing(pagingToolbar.getToltalPages() == 1);
+                                             container.unmask();
+                                         }
 
-                @Override
-                public void onFailure(Throwable caught) {
-                    ErrorHandler.post(org.iplantc.de.resources.client.messages.I18N.ERROR.unableToRetrieveFileData(file.getName()), caught);
-                    container.unmask();
-                }
-            });
+                                         @Override
+                                         public void onFailure(Throwable caught) {
+                                             ErrorHandler.post(org.iplantc.de.resources.client.messages.I18N.ERROR.unableToRetrieveFileData(file.getName()),
+                                                               caught);
+                                             container.unmask();
+                                         }
+                                     });
         }
     }
 
@@ -301,6 +323,9 @@ public class StrcturedTextViewerImpl extends StructuredTextViewer {
 
     private void initGrid(int columns) {
         List<ColumnConfig<JSONObject, ?>> configs = new ArrayList<ColumnConfig<JSONObject, ?>>();
+        numberer = new RowNumberer<JSONObject>();
+        numberer.setHidden(true);
+        configs.add(numberer);
         GridFilters<JSONObject> filters = new GridFilters<JSONObject>();
         if (columns > 0) {
             this.columns = columns;
@@ -354,7 +379,8 @@ public class StrcturedTextViewerImpl extends StructuredTextViewer {
     private String getSeparator() {
         if (infoType.equalsIgnoreCase("csv")) {
             return COMMA_SEPARATOR;
-        } else if (infoType.equalsIgnoreCase("tsv") || infoType.equalsIgnoreCase("vcf") || infoType.equalsIgnoreCase("gff")) {
+        } else if (infoType.equalsIgnoreCase("tsv") || infoType.equalsIgnoreCase("vcf")
+                || infoType.equalsIgnoreCase("gff")) {
             return TAB_SEPARATOR;
         } else {
             return " ";
@@ -394,13 +420,17 @@ public class StrcturedTextViewerImpl extends StructuredTextViewer {
         JSONObject firstRow = store.get(0);
         int index = 0;
         for (ColumnConfig<JSONObject, ?> conf : configs) {
-            JSONString string = (firstRow.get(index + "") != null) ? firstRow.get(index + "").isString() : null;
-            if (hasHeader) {
-                conf.setHeader((string != null) ? string.stringValue() : index + "");
-            } else {
-                conf.setHeader(index + "");
+            if (cm.indexOf(conf) != 0) { // col 0 is numberer
+                JSONString string = (firstRow.get(index + "") != null) ? firstRow.get(index + "")
+                                                                                 .isString() : null;
+                if (hasHeader) {
+                    conf.setHeader((string != null) ? string.stringValue() : index + "");
+                } else {
+                    conf.setHeader(index + "");
+                }
+                index++;
             }
-            index++;
+
         }
 
         // converted first row to header. so remove first row
@@ -483,6 +513,8 @@ public class StrcturedTextViewerImpl extends StructuredTextViewer {
             skippedRows = null;
         }
 
+        grid.getView().refresh(true);
+
     }
 
     @Override
@@ -528,8 +560,15 @@ public class StrcturedTextViewerImpl extends StructuredTextViewer {
                 public void onSelect(SelectEvent event) {
                     if (saveDialog.isVaild()) {
 
-                        String destination = saveDialog.getSelectedFolder().getPath() + "/" + saveDialog.getFileName();
-                        ServicesInjector.INSTANCE.getFileEditorServiceFacade().uploadTextAsFile(destination, getEditorContent(), true, new FileSaveCallback(destination, true, container));
+                        String destination = saveDialog.getSelectedFolder().getPath() + "/"
+                                + saveDialog.getFileName();
+                        ServicesInjector.INSTANCE.getFileEditorServiceFacade()
+                                                 .uploadTextAsFile(destination,
+                                                                   getEditorContent(),
+                                                                   true,
+                                                                   new FileSaveCallback(destination,
+                                                                                        true,
+                                                                                        container));
                         saveDialog.hide();
                     }
                 }
@@ -545,7 +584,13 @@ public class StrcturedTextViewerImpl extends StructuredTextViewer {
             saveDialog.show();
             saveDialog.toFront();
         } else {
-            ServicesInjector.INSTANCE.getFileEditorServiceFacade().uploadTextAsFile(file.getPath(), getEditorContent(), false, new FileSaveCallback(file.getPath(), false, container));
+            ServicesInjector.INSTANCE.getFileEditorServiceFacade()
+                                     .uploadTextAsFile(file.getPath(),
+                                                       getEditorContent(),
+                                                       false,
+                                                       new FileSaveCallback(file.getPath(),
+                                                                            false,
+                                                                            container));
         }
     }
 

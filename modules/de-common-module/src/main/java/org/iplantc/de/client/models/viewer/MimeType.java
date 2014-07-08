@@ -27,8 +27,16 @@ public enum MimeType {
 
     X_SH("x-sh"),
 
-    VIZ("viz");
+    VIZ("viz"),
 
+    X_PERL("x-perl"),
+    
+    X_RSRC("x-rsrc"),
+
+    X_PYTHON("x-python"),
+
+    X_WEB_MARKDOWN("x-web-markdown");
+    
     private String type;
 
     private MimeType(String type) {

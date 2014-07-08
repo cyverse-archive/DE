@@ -83,4 +83,5 @@ public abstract class AbstractFileViewer implements FileViewer, EditingSupport {
             return "Untitled-" + Math.random();
         }
     }
+
 }

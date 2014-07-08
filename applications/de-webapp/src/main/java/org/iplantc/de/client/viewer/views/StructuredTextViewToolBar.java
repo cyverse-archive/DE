@@ -29,6 +29,8 @@ public class StructuredTextViewToolBar extends AbstractToolBar {
     private TextButton addRowBtn;
     private TextButton deleteRowBtn;
 
+    private CheckBox lineNumberCbx;
+
     public StructuredTextViewToolBar(StructuredTextViewer view, boolean editing) {
         super(editing);
         this.view = view;
@@ -37,6 +39,8 @@ public class StructuredTextViewToolBar extends AbstractToolBar {
         addAddRowBtn();
         addDeleteRowBtn();
         add(new SeparatorToolItem());
+        buildLineNumberButton();
+        add(lineNumberCbx);
         addSkipRowsFields();
         addHeaderRowChkBox();
         add(new FillToolItem());
@@ -118,8 +122,6 @@ public class StructuredTextViewToolBar extends AbstractToolBar {
 
     private void addHeaderRowChkBox() {
         cbxHeaderRows = new CheckBox();
-
-        cbxHeaderLabel = new LabelToolItem(I18N.DISPLAY.fileViewerHeaderRow());
         cbxHeaderRows.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
 
             @Override
@@ -129,7 +131,7 @@ public class StructuredTextViewToolBar extends AbstractToolBar {
                 skipRowsCount.setEnabled(!hasHeader);
             }
         });
-        add(cbxHeaderLabel);
+        cbxHeaderRows.setBoxLabel(I18N.DISPLAY.fileViewerHeaderRow());
         add(cbxHeaderRows);
     }
     @Override
@@ -152,6 +154,16 @@ public class StructuredTextViewToolBar extends AbstractToolBar {
     @Override
     public void refresh() {
         view.refresh();
+    }
+
+    private void buildLineNumberButton() {
+        lineNumberCbx = new CheckBox();
+        lineNumberCbx.setBoxLabel("Line Numbers");
+    }
+
+    public void addLineNumberCbxChangeHandleer(ValueChangeHandler<Boolean> valueChangeHandler) {
+        lineNumberCbx.addValueChangeHandler(valueChangeHandler);
+
     }
 
 }

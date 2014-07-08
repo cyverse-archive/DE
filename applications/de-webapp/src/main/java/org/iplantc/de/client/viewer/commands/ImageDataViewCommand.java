@@ -20,7 +20,10 @@ import java.util.List;
 public class ImageDataViewCommand implements ViewCommand {
 
     @Override
-    public List<AbstractFileViewer> execute(File file, String infoType, boolean editing, Folder parentFolder) {
+    public List<AbstractFileViewer> execute(File file,
+                                            String infoType,
+                                            boolean editing,
+                                            Folder parentFolder) {
 
         AbstractFileViewer view = null;
 

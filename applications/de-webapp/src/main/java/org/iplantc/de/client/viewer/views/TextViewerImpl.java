@@ -15,7 +15,6 @@ import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.diskResource.client.views.dialogs.SaveAsDialog;
 import org.iplantc.de.resources.client.messages.I18N;
 
-import com.google.common.base.Strings;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.event.logical.shared.ResizeEvent;
@@ -39,6 +38,8 @@ import com.sencha.gxt.widget.core.client.event.SelectEvent.SelectHandler;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * @author sriram
@@ -79,12 +80,18 @@ public class TextViewerImpl extends AbstractFileViewer implements EditingSupport
     private Presenter presenter;
 
     protected JavaScriptObject jso;
+    
+    private final String mode;
 
     private final List<HandlerRegistration> eventHandlers = new ArrayList<HandlerRegistration>();
 
-    public TextViewerImpl(File file, String infoType, boolean editing, Folder parentFolder) {
+    static Logger LOG = Logger.getLogger("viewer");
+
+    public TextViewerImpl(File file, String infoType, String mode, boolean editing, Folder parentFolder) {
         super(file, infoType);
         this.editing = editing;
+        this.mode = mode;
+        LOG.log(Level.SEVERE, "in viewer-->" + mode);
         this.parentFolder = parentFolder;
         toolbar = initToolBar();
         pagingToolbar = initPagingToolbar();
@@ -99,6 +106,7 @@ public class TextViewerImpl extends AbstractFileViewer implements EditingSupport
         }, SaveFileEvent.TYPE);
 
         addWrapHandler();
+        addLineHumberHandler();
 
         if (file != null) {
             loadData();
@@ -148,12 +156,19 @@ public class TextViewerImpl extends AbstractFileViewer implements EditingSupport
 
             @Override
             public void onValueChange(ValueChangeEvent<Boolean> event) {
-                if (isDirty() || Strings.isNullOrEmpty(data)) {
-                    setData(getEditorContent(jso));
-                } else {
-                    setData(data);
-                }
+                    wrapText(jso,event.getValue());
             }
+        });
+    }
+
+    private void addLineHumberHandler() {
+        toolbar.addLineNumberCbxChangeHandleer(new ValueChangeHandler<Boolean>() {
+
+            @Override
+            public void onValueChange(ValueChangeEvent<Boolean> event) {
+                showLineNumbersInEditor(jso, event.getValue());
+            }
+            
         });
     }
 
@@ -209,7 +224,14 @@ public class TextViewerImpl extends AbstractFileViewer implements EditingSupport
         boolean allowEditing = pagingToolbar.getToltalPages() == 1 && editing;
         if (jso == null) {
             clearDisplay();
-            jso = displayData(this, center.getElement(), infoType, (String)data, center.getElement().getOffsetWidth(), center.getElement().getOffsetHeight(), toolbar.isWrapText(), allowEditing);
+            jso = displayData(this,
+                              center.getElement(),
+                              mode,
+                              (String)data,
+                              center.getElement().getOffsetWidth(),
+                              center.getElement().getOffsetHeight(),
+                              toolbar.isWrapText(),
+                              allowEditing);
         } else {
             updateData(jso, (String)data);
             setDirty(false);
@@ -236,12 +258,28 @@ public class TextViewerImpl extends AbstractFileViewer implements EditingSupport
 		jso.setValue(val);
     }-*/;
 
-    public static native JavaScriptObject displayData(final TextViewerImpl instance, XElement textArea, String mode, String val, int width, int height, boolean wrap, boolean editing) /*-{
+    public static native JavaScriptObject displayData(final TextViewerImpl instance,
+                                                      XElement textArea,
+                                                      String editorMode,
+                                                      String val,
+                                                      int width,
+                                                      int height,
+                                                      boolean wrap,
+                                                      boolean editing) /*-{
+		if (editorMode == "python") {
+			editorMode = {
+				name : "python",
+				version : 3,
+				singleLineStringErrors : false
+			}
+		}
 		var myCodeMirror = $wnd.CodeMirror(textArea, {
 			value : val,
-			mode : mode
+			mode : editorMode,
+			matchBrackets : true,
+			autoCloseBrackets : true
+
 		});
-		myCodeMirror.setOption("lineWrapping", wrap);
 		myCodeMirror.setSize(width, height);
 		myCodeMirror.setOption("readOnly", !editing);
 		if (editing) {
@@ -266,6 +304,15 @@ public class TextViewerImpl extends AbstractFileViewer implements EditingSupport
     public static native void resizeDisplay(JavaScriptObject jso, int width, int height) /*-{
 		jso.setSize(width, height);
     }-*/;
+
+    public static native void showLineNumbersInEditor(JavaScriptObject jso, boolean show) /*-{
+		jso.setOption("lineNumbers", show);
+    }-*/;
+
+    public static native void wrapText(JavaScriptObject jso, boolean wrap) /*-{
+		jso.setOption("lineWrapping", wrap);
+    }-*/;
+
 
     @Override
     public void save() {
@@ -298,6 +345,7 @@ public class TextViewerImpl extends AbstractFileViewer implements EditingSupport
             ServicesInjector.INSTANCE.getFileEditorServiceFacade().uploadTextAsFile(file.getPath(), getEditorContent(jso), false, new FileSaveCallback(file.getPath(), false, con));
         }
     }
+
 
     @Override
     public boolean isDirty() {

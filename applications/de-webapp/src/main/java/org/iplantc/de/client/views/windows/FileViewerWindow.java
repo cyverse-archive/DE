@@ -113,7 +113,7 @@ public class FileViewerWindow extends IplantWindowBase implements IsMaskable {
     }
 
     private void init() {
-        setSize("670px", "400px");
+        setSize("800", "480");
         this.file = configAB.getFile();
         if (file != null) {
             setTitle(file.getName());

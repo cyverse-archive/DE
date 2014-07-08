@@ -15,7 +15,10 @@ import java.util.List;
 public class VizURLViewerCommand implements ViewCommand {
 
     @Override
-    public List<FileViewer> execute(File file, String infoType, boolean editing, Folder parentFolder) {
+    public List<FileViewer> execute(File file,
+                                    String infoType,
+                                    boolean editing,
+                                    Folder parentFolder) {
         FileViewer viewer = new ExternalVizualizationURLViwerImpl(file, infoType);
         return Arrays.asList(viewer);
     }

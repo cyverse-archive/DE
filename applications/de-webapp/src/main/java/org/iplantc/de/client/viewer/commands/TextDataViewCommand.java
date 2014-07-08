@@ -18,16 +18,26 @@ import java.util.List;
 public class TextDataViewCommand implements ViewCommand {
 
     private Folder parentFolder;
+    private final String mode;
+
+    public TextDataViewCommand(String mode) {
+        this.mode = mode;
+    }
 
     @Override
-    public List<FileViewer> execute(final File file, String infoType, boolean editing, Folder parentFolder) {
+    public List<FileViewer> execute(final File file,
+                                    String infoType,
+                                    boolean editing,
+                                    Folder parentFolder) {
         this.parentFolder = parentFolder;
         List<FileViewer> viewers = null;
         viewers = getViewerByInfoType(file, infoType, editing);
         return viewers;
     }
 
-    private List<FileViewer> getViewerByInfoType(final File file, String infoType, boolean editing) {
+    private List<FileViewer> getViewerByInfoType(final File file,
+                                                 String infoType,
+                                                 boolean editing) {
         List<FileViewer> viewers = new ArrayList<FileViewer>();
         if (!Strings.isNullOrEmpty(infoType)) {
             if (infoType.equals(InfoType.CSV.toString()) || infoType.equals(InfoType.TSV.toString())
@@ -37,7 +47,7 @@ public class TextDataViewCommand implements ViewCommand {
 
             }
         }
-        viewers.add(new TextViewerImpl(file, infoType, editing, parentFolder));
+        viewers.add(new TextViewerImpl(file, infoType, mode, editing, parentFolder));
         return viewers;
     }
 }
