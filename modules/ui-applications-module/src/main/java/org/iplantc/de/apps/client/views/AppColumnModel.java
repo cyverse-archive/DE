@@ -30,8 +30,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AppColumnModel extends ColumnModel<App> implements
-        AppInfoCell.HasAppInfoClickedEventHandlers, AppHyperlinkCell.HasAppNameSelectedEventHandlers,
-        AppFavoriteCell.HasRequestAppFavoriteEventHandlers, HasAppCommentSelectedEventHandlers {
+                                                    AppInfoCell.HasAppInfoClickedEventHandlers,
+                                                    AppHyperlinkCell.HasAppNameSelectedEventHandlers,
+                                                    AppFavoriteCell.HasRequestAppFavoriteEventHandlers,
+                                                    HasAppCommentSelectedEventHandlers {
 
     public AppColumnModel(AppsView view, final IplantDisplayStrings displayStrings) {
         super(createColumnConfigList(view, displayStrings));
@@ -51,24 +53,25 @@ public class AppColumnModel extends ColumnModel<App> implements
         }
     }
 
-    public static List<ColumnConfig<App, ?>> createColumnConfigList(final AppsView view, final IplantDisplayStrings displayStrings) {
+    public static List<ColumnConfig<App, ?>>
+            createColumnConfigList(final AppsView view, final IplantDisplayStrings displayStrings) {
         AppProperties props = GWT.create(AppProperties.class);
         List<ColumnConfig<App, ?>> list = new ArrayList<ColumnConfig<App, ?>>();
 
-        ColumnConfig<App, App> info = new ColumnConfig<App, App>(
-                new IdentityValueProvider<App>(), 20);
+        ColumnConfig<App, App> info = new ColumnConfig<App, App>(new IdentityValueProvider<App>(""), 20);
+        info.setHeader("");
 
         ColumnConfig<App, App> name = new ColumnConfig<App, App>(new IdentityValueProvider<App>("name"), //$NON-NLS-1$
-                180, displayStrings.name());
+                                                                 180,
+                                                                 displayStrings.name());
 
-        ColumnConfig<App, String> integrator = new ColumnConfig<App, String>(
-                props.integratorName(), 130, displayStrings.integratedby());
+        ColumnConfig<App, String> integrator = new ColumnConfig<App, String>(props.integratorName(),
+                                                                             130,
+                                                                             displayStrings.integratedby());
 
-        ColumnConfig<App, App> rating = new ColumnConfig<App, App>(new IdentityValueProvider<App>(
-                "rating"), 105, displayStrings.rating()); //$NON-NLS-1$
+        ColumnConfig<App, App> rating = new ColumnConfig<App, App>(new IdentityValueProvider<App>("rating"), 105, displayStrings.rating()); //$NON-NLS-1$
 
-        ColumnConfig<App, App> comment = new ColumnConfig<App, App>(new IdentityValueProvider<App>(
-                "comment"), 30); //$NON-NLS-1$
+        ColumnConfig<App, App> comment = new ColumnConfig<App, App>(new IdentityValueProvider<App>("comment"), 30); //$NON-NLS-1$
 
         comment.setHeader("");
 
@@ -111,35 +114,37 @@ public class AppColumnModel extends ColumnModel<App> implements
     }
 
     @Override
-    public HandlerRegistration addAppInfoClickedEventHandler(AppInfoCell.AppInfoClickedEventHandler handler) {
+    public HandlerRegistration
+            addAppInfoClickedEventHandler(AppInfoCell.AppInfoClickedEventHandler handler) {
         return ensureHandlers().addHandler(AppInfoCell.APP_INFO_CLICKED_EVENT_HANDLER_TYPE, handler);
     }
 
     @Override
-    public HandlerRegistration addAppNameSelectedEventHandler(AppHyperlinkCell.AppNameSelectedEventHandler handler) {
+    public HandlerRegistration
+            addAppNameSelectedEventHandler(AppHyperlinkCell.AppNameSelectedEventHandler handler) {
         return ensureHandlers().addHandler(AppHyperlinkCell.EVENT_TYPE, handler);
     }
 
     @Override
-    public HandlerRegistration addRequestAppFavoriteEventHandlers(AppFavoriteCell.RequestAppFavoriteEventHandler handler) {
+    public HandlerRegistration
+            addRequestAppFavoriteEventHandlers(AppFavoriteCell.RequestAppFavoriteEventHandler handler) {
         return ensureHandlers().addHandler(AppFavoriteCell.REQUEST_APP_FAV_EVNT_TYPE, handler);
     }
 
     @Override
-    public HandlerRegistration addAppCommentSelectedEventHandlers(AppCommentSelectedEventHandler handler) {
+    public HandlerRegistration
+            addAppCommentSelectedEventHandlers(AppCommentSelectedEventHandler handler) {
         return ensureHandlers().addHandler(AppCommentSelectedEvent.TYPE, handler);
     }
 
     public void ensureDebugId(String baseID) {
-        for(ColumnConfig<App, ?> cc : configs){
-            if(cc.getCell() instanceof AppInfoCell){
+        for (ColumnConfig<App, ?> cc : configs) {
+            if (cc.getCell() instanceof AppInfoCell) {
                 ((AppInfoCell)cc.getCell()).setBaseDebugId(baseID + AppsModule.Ids.APP_GRID);
-            }else if(cc.getCell() instanceof AppHyperlinkCell){
+            } else if (cc.getCell() instanceof AppHyperlinkCell) {
                 ((AppHyperlinkCell)cc.getCell()).setBaseDebugId(baseID + AppsModule.Ids.APP_GRID);
             }
         }
 
     }
 }
-
-
