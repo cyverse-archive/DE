@@ -1,9 +1,9 @@
 /**
  *
  */
-package org.iplantc.de.apps.widgets.client.presenter;
+package org.iplantc.de.apps.integration.client.presenter;
 
-import org.iplantc.de.apps.widgets.client.view.deployedComponents.DeployedComponentsListingView;
+import org.iplantc.de.apps.integration.client.view.deployedComponents.DeployedComponentsListingView;
 import org.iplantc.de.client.models.deployedComps.DeployedComponent;
 
 import com.google.gwt.user.client.ui.HasOneWidget;

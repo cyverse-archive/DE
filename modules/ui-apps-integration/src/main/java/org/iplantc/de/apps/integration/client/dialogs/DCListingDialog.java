@@ -1,11 +1,11 @@
 /**
  * 
  */
-package org.iplantc.de.apps.widgets.client.dialog;
+package org.iplantc.de.apps.integration.client.dialogs;
 
-import org.iplantc.de.apps.widgets.client.presenter.DeployedComponentPresenterImpl;
-import org.iplantc.de.apps.widgets.client.view.deployedComponents.DeployedComponentsListingView;
-import org.iplantc.de.apps.widgets.client.view.deployedComponents.DeployedComponentsListingViewImpl;
+import org.iplantc.de.apps.integration.client.presenter.DeployedComponentPresenterImpl;
+import org.iplantc.de.apps.integration.client.view.deployedComponents.DeployedComponentsListingView;
+import org.iplantc.de.apps.integration.client.view.deployedComponents.DeployedComponentsListingViewImpl;
 import org.iplantc.de.client.models.deployedComps.DeployedComponent;
 import org.iplantc.de.commons.client.views.gxt3.dialogs.IPlantDialog;
 
@@ -46,9 +46,7 @@ public class DCListingDialog extends IPlantDialog {
                 getButton(PredefinedButton.OK).setEnabled(false);
                 selectedComponent = null;
             }
-
         }
-
     }
 
     private DeployedComponent selectedComponent = null;
