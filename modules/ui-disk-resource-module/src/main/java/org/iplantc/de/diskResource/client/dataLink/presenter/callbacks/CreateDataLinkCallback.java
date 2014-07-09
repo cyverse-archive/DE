@@ -3,6 +3,7 @@ package org.iplantc.de.diskResource.client.dataLink.presenter.callbacks;
 import org.iplantc.de.client.models.dataLink.DataLink;
 import org.iplantc.de.client.models.dataLink.DataLinkFactory;
 import org.iplantc.de.client.models.dataLink.DataLinkList;
+import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.diskResource.client.dataLink.view.DataLinkPanel;
 import org.iplantc.de.resources.client.messages.I18N;
@@ -39,8 +40,15 @@ public class CreateDataLinkCallback<M> implements AsyncCallback<String> {
         List<DataLink> dlList = tickets.as().getTickets();
 
         TreeStore<M> treeStore = tree.getStore();
+        M parent = null;
         for (DataLink dl : dlList) {
-            M parent = treeStore.findModelWithKey(dl.getPath());
+            // manually find the item since id's wont work
+            for (M item : tree.getStore().getAll()) {
+                if (((DiskResource)item).getPath().equals(dl.getPath())) {
+                    parent = item;
+                    break;
+                }
+            }
             if (parent != null) {
                 treeStore.add(parent, (M)dl);
                 tree.setExpanded(parent, true);

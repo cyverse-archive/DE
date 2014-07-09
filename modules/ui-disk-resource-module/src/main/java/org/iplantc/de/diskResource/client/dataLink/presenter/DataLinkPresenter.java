@@ -75,7 +75,7 @@ public class DataLinkPresenter<M extends DiskResource> implements DataLinkPanel.
         final List<String> drResourceIds = Lists.newArrayList();
         for(M dr : selectedItems){
             if(!(dr instanceof DataLink)){
-                drResourceIds.add(dr.getId());
+                drResourceIds.add(dr.getPath());
             }
         }
 
