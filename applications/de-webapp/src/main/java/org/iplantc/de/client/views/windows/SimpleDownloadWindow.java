@@ -54,7 +54,8 @@ public class SimpleDownloadWindow extends IplantWindowBase {
 
                 @Override
                 public void onClick(ClickEvent event) {
-                    final String encodedSimpleDownloadURL = ServicesInjector.INSTANCE.getDiskResourceServiceFacade().getEncodedSimpleDownloadURL(dr.getId());
+                                                          final String encodedSimpleDownloadURL = ServicesInjector.INSTANCE.getDiskResourceServiceFacade()
+                                                                                                                           .getEncodedSimpleDownloadURL(dr.getPath());
                     WindowUtil.open(encodedSimpleDownloadURL, "width=100,height=100");
                 }
             });
