@@ -65,7 +65,7 @@ public class FlagArgumentPropertyEditor extends AbstractArgumentPropertyEditor {
             @Override
             public List<EditorError> validate(Editor<String> editor, String value) {
                 if (Strings.isNullOrEmpty(value) && Strings.isNullOrEmpty(otherArgOption.getValue())) {
-                    return Lists.<EditorError> newArrayList(new DefaultEditorError(editor, "At least one argument option must be defined.", value));
+                    return Lists.<EditorError>newArrayList(new DefaultEditorError(editor, "At least one argument option must be defined.", value));
                 }
                 return null;
             }
@@ -81,7 +81,7 @@ public class FlagArgumentPropertyEditor extends AbstractArgumentPropertyEditor {
             @Override
             public List<EditorError> validate(Editor<String> editor, String value) {
                 if (!Strings.isNullOrEmpty(value) && Strings.isNullOrEmpty(argOption.getValue())) {
-                    return Lists.<EditorError> newArrayList(new DefaultEditorError(editor, "An argument value cannot be defined without a corresponding argument option.", value));
+                    return Lists.<EditorError>newArrayList(new DefaultEditorError(editor, "An argument value cannot be defined without a corresponding argument option.", value));
                 }
                 return null;
             }
@@ -89,20 +89,20 @@ public class FlagArgumentPropertyEditor extends AbstractArgumentPropertyEditor {
 
         private final TextField checkedArgOption1;
         private final TextField checkedValue1;
-        private EditorDelegate<String> delegate;
         private final ArrayList<EditorError> errors;
+        private final TextField unCheckedArgOption1;
+        private final TextField unCheckedValue1;
+        private EditorDelegate<String> delegate;
         private String flagArgModel;
         private HandlerManager handlerManager;
-        private final TextField unCheckedArgOption1;
 
-        private final TextField unCheckedValue1;
-
-        public FlagArgumentOptionEditor(TextField checkedArgOption, TextField checkedValue, TextField unCheckedArgOption, TextField unCheckedValue) {
+        public FlagArgumentOptionEditor(TextField checkedArgOption, TextField checkedValue,
+                                        TextField unCheckedArgOption, TextField unCheckedValue) {
             this.checkedArgOption1 = checkedArgOption;
             this.checkedValue1 = checkedValue;
             this.unCheckedArgOption1 = unCheckedArgOption;
             this.unCheckedValue1 = unCheckedValue;
-            errors = Lists.<EditorError> newArrayList();
+            errors = Lists.newArrayList();
             init();
         }
 
@@ -132,11 +132,23 @@ public class FlagArgumentPropertyEditor extends AbstractArgumentPropertyEditor {
             if (errors.isEmpty()) {
                 String checked = Strings.nullToEmpty(checkedArgOption1.getValue()) + " " + Strings.nullToEmpty(checkedValue1.getValue());
                 String unChecked = Strings.nullToEmpty(unCheckedArgOption1.getValue()) + " " + Strings.nullToEmpty(unCheckedValue1.getValue());
-                String ret = checked.trim() + ", " + unChecked.trim();
 
-                flagArgModel = ret;
+                flagArgModel = checked.trim() + ", " + unChecked.trim();
             }
             return flagArgModel;
+        }
+
+        @Override
+        public void setValue(String value) {
+            this.flagArgModel = value;
+            // Split value
+            LinkedList<String> newLinkedList = Lists.newLinkedList(Splitter.on(",").trimResults().split(Strings.nullToEmpty(value)));
+            if (newLinkedList.peek() != null) {
+                setCheckedFields(newLinkedList.removeFirst());
+                if (newLinkedList.peek() != null) {
+                    setUncheckedFields(newLinkedList.removeFirst());
+                }
+            }
         }
 
         @Override
@@ -154,7 +166,7 @@ public class FlagArgumentPropertyEditor extends AbstractArgumentPropertyEditor {
         public void onValueChange(ValueChangeEvent<String> event) {
             // Validate when a subfield changes value.
             if (event.getSource() instanceof IsField<?>) {
-                ((IsField<?>)event.getSource()).validate(false);
+                ((IsField<?>) event.getSource()).validate(false);
             }
             ValueChangeEvent.fire(this, flagArgModel);
         }
@@ -162,19 +174,6 @@ public class FlagArgumentPropertyEditor extends AbstractArgumentPropertyEditor {
         @Override
         public void setDelegate(EditorDelegate<String> delegate) {
             this.delegate = delegate;
-        }
-
-        @Override
-        public void setValue(String value) {
-            this.flagArgModel = value;
-            // Split value
-            LinkedList<String> newLinkedList = Lists.newLinkedList(Splitter.on(",").trimResults().split(Strings.nullToEmpty(value)));
-            if (newLinkedList.peek() != null) {
-                setCheckedFields(newLinkedList.removeFirst());
-                if (newLinkedList.peek() != null) {
-                    setUncheckedFields(newLinkedList.removeFirst());
-                }
-            }
         }
 
         HandlerManager ensureHandlers() {
@@ -242,20 +241,16 @@ public class FlagArgumentPropertyEditor extends AbstractArgumentPropertyEditor {
         }
     }
 
-    interface EditorDriver extends SimpleBeanEditorDriver<Argument, FlagArgumentPropertyEditor> {}
-    interface FlagArgumentPropertyEditorUiBinder extends UiBinder<Widget, FlagArgumentPropertyEditor> {}
+    interface EditorDriver extends SimpleBeanEditorDriver<Argument, FlagArgumentPropertyEditor> { }
 
-    private static FlagArgumentPropertyEditorUiBinder uiBinder = GWT.create(FlagArgumentPropertyEditorUiBinder.class);
+    interface FlagArgumentPropertyEditorUiBinder extends UiBinder<Widget, FlagArgumentPropertyEditor> { }
 
     @UiField(provided = true)
     AppsWidgetsPropertyPanelLabels appLabels;
-
     @UiField
     FieldLabel argLabelLabel;
-
     @Path("name")
     FlagArgumentOptionEditor argumentOptionEditor;
-
     @UiField(provided = true)
     CheckboxInputLabels checkBoxLabels;
     @Ignore
@@ -263,36 +258,34 @@ public class FlagArgumentPropertyEditor extends AbstractArgumentPropertyEditor {
     TextField checkedArgOption, checkedValue, unCheckedArgOption, unCheckedValue;
     @UiField(provided = true)
     ArgumentEditorConverter<Boolean> defaultValueEditor;
-
     @UiField
     @Path("visible")
     CheckBoxAdapter doNotDisplay;
     @UiField
     TextField label;
-
     @UiField
     @Path("description")
     TextField toolTipEditor;
-
     @UiField
     FieldLabel toolTipLabel;
-
+    private static FlagArgumentPropertyEditorUiBinder uiBinder = GWT.create(FlagArgumentPropertyEditorUiBinder.class);
     private final EditorDriver editorDriver = GWT.create(EditorDriver.class);
 
     @Inject
-    public FlagArgumentPropertyEditor(AppTemplateWizardAppearance appearance, AppsWidgetsPropertyPanelLabels appLabels, AppsWidgetsContextualHelpMessages help) {
+    public FlagArgumentPropertyEditor(AppTemplateWizardAppearance appearance,
+                                      AppsWidgetsPropertyPanelLabels appLabels,
+                                      AppsWidgetsContextualHelpMessages help) {
         super(appearance);
         this.appLabels = appLabels;
         this.checkBoxLabels = appLabels;
 
         CheckBoxAdapter checkBoxAdapter = new CheckBoxAdapter();
         checkBoxAdapter.setHTML(new SafeHtmlBuilder().appendHtmlConstant("&nbsp;").appendEscaped(checkBoxLabels.checkboxDefaultLabel()).toSafeHtml());
-        defaultValueEditor = new ArgumentEditorConverter<Boolean>(checkBoxAdapter, new SplittableToBooleanConverter());
+        defaultValueEditor = new ArgumentEditorConverter<>(checkBoxAdapter, new SplittableToBooleanConverter());
 
         initWidget(uiBinder.createAndBindUi(this));
 
-        CmdLineArgCharacterValidator argOptValidator = new CmdLineArgCharacterValidator(
-                I18N.V_CONSTANTS.restrictedCmdLineChars());
+        CmdLineArgCharacterValidator argOptValidator = new CmdLineArgCharacterValidator(I18N.V_CONSTANTS.restrictedCmdLineChars());
         CmdLineArgCharacterValidator argValueValidator = new CmdLineArgCharacterValidator();
 
         checkedArgOption.addValidator(argOptValidator);
@@ -308,19 +301,6 @@ public class FlagArgumentPropertyEditor extends AbstractArgumentPropertyEditor {
         editorDriver.initialize(this);
         editorDriver.accept(new InitializeTwoWayBinding(this));
         ensureDebugId(PROPERTY_EDITOR + FLAG);
-    }
-
-    @Override
-    protected void onEnsureDebugId(String baseID) {
-        super.onEnsureDebugId(baseID);
-        label.ensureDebugId(baseID + LABEL);
-        checkedArgOption.ensureDebugId(baseID + CHECKED_OPTION);
-        checkedValue.ensureDebugId(baseID + CHECKED_VALUE);
-        unCheckedArgOption.ensureDebugId(baseID + UNCHECKED_OPTION);
-        unCheckedValue.ensureDebugId(baseID + UNCHECKED_VALUE);
-        defaultValueEditor.ensureDebugId(baseID + DEFAULT_VALUE);
-        doNotDisplay.ensureDebugId(baseID + DO_NOT_DISPLAY);
-        toolTipEditor.ensureDebugId(baseID + TOOL_TIP);
     }
 
     @Override
@@ -357,6 +337,19 @@ public class FlagArgumentPropertyEditor extends AbstractArgumentPropertyEditor {
             unCheckedArgOption.getValidators().clear();
             unCheckedValue.getValidators().clear();
         }
+    }
+
+    @Override
+    protected void onEnsureDebugId(String baseID) {
+        super.onEnsureDebugId(baseID);
+        label.ensureDebugId(baseID + LABEL);
+        checkedArgOption.ensureDebugId(baseID + CHECKED_OPTION);
+        checkedValue.ensureDebugId(baseID + CHECKED_VALUE);
+        unCheckedArgOption.ensureDebugId(baseID + UNCHECKED_OPTION);
+        unCheckedValue.ensureDebugId(baseID + UNCHECKED_VALUE);
+        defaultValueEditor.ensureDebugId(baseID + DEFAULT_VALUE);
+        doNotDisplay.ensureDebugId(baseID + DO_NOT_DISPLAY);
+        toolTipEditor.ensureDebugId(baseID + TOOL_TIP);
     }
 
     @UiHandler("defaultValueEditor")
