@@ -725,6 +725,31 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter, Di
     }
 
     @Override
+    public void onNewRFile() {
+
+    }
+
+    @Override
+    public void onNewPerlFile() {
+
+    }
+
+    @Override
+    public void onNewPythonFile() {
+
+    }
+
+    @Override
+    public void onNewShellScript() {
+
+    }
+
+    @Override
+    public void onNewMdFile() {
+
+    }
+
+    @Override
     public void createNewTabFile(TabularFileViewerWindowConfig config) {
         CreateNewFileEvent event = new CreateNewFileEvent(getSelectedUploadFolder(), config);
         eventBus.fireEvent(event);

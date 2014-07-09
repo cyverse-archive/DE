@@ -20,4 +20,8 @@ public interface FileViewerWindowConfig extends WindowConfig {
     void setVizTabFirst(boolean b);
 
     boolean isVizTabFirst();
+
+    void setInfoType(String infoType);
+
+    String getInfoType();
 }

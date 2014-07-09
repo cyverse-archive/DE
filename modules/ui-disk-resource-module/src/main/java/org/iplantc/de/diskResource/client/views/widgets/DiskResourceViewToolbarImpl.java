@@ -44,9 +44,13 @@ public class DiskResourceViewToolbarImpl extends Composite implements DiskResour
     @UiField
     TextButton fileMenu;
     @UiField
+    MenuItem newFileMi;
+
+    @UiField
     MenuItem newWindowMi, newWindowAtLocMi, newFolderMi,
-            duplicateMi, addToSideBarMi, newPlainTextFileMi,
-            newTabularDataFileMi, moveToTrashMi;
+ duplicateMi, newPlainTextFileMi,
+            newTabularDataFileMi, moveToTrashMi, newRFileMi, newPerlFileMi, newPythonFileMi,
+            newShellScriptFileMi, newMdFileMi;
     @UiField
     MenuItem openTrashMi, restoreMi, emptyTrashMi;
     @UiField
@@ -117,7 +121,6 @@ public class DiskResourceViewToolbarImpl extends Composite implements DiskResour
         final boolean isSelectionInTrash = isSelectionInTrash(selection);
 
         duplicateMiEnabled = !isSelectionEmpty && isOwner && !isSelectionInTrash;
-        addToSideBarMiEnabled = !isSelectionEmpty && !isSelectionInTrash && containsOnlyFolders(selection);
         moveToTrashMiEnabled = !isSelectionEmpty && isOwner && !isSelectionInTrash;
 
         renameMiEnabled = !isSelectionEmpty && isSingleSelection && isOwner && !isSelectionInTrash;
@@ -142,7 +145,6 @@ public class DiskResourceViewToolbarImpl extends Composite implements DiskResour
         restoreMiEnabled = !isSelectionEmpty && isSelectionInTrash && isOwner;
 
         duplicateMi.setEnabled(duplicateMiEnabled);
-        addToSideBarMi.setEnabled(addToSideBarMiEnabled);
         moveToTrashMi.setEnabled(moveToTrashMiEnabled);
 
         renameMi.setEnabled(renameMiEnabled);
@@ -193,8 +195,9 @@ public class DiskResourceViewToolbarImpl extends Composite implements DiskResour
         importFromUrlMi.setEnabled(importFromUrlMiEnabled);
 
         newFolderMi.setEnabled(newFolderMiEnabled);
-        newPlainTextFileMi.setEnabled(newPlainTextFileMiEnabled);
-        newTabularDataFileMi.setEnabled(newTabularDataFileMiEnabled);
+        newFileMi.setEnabled(newPlainTextFileMiEnabled);
+        // newPlainTextFileMi.setEnabled(newPlainTextFileMiEnabled);
+        // newTabularDataFileMi.setEnabled(newTabularDataFileMiEnabled);
 
         refreshButton.setEnabled(refreshButtonEnabled);
     }
@@ -295,10 +298,6 @@ public class DiskResourceViewToolbarImpl extends Composite implements DiskResour
         return true;
     }
 
-    @UiHandler("addToSideBarMi")
-    void onAddToSideBarClicked(SelectionEvent<Item> event){
-    }
-
     @UiHandler("bulkDownloadMi")
     void onBulkDownloadClicked(SelectionEvent<Item> event) {
         presenter.doBulkDownload();
@@ -371,6 +370,31 @@ public class DiskResourceViewToolbarImpl extends Composite implements DiskResour
     @UiHandler("newPlainTextFileMi")
     void onNewPlainTextFileClicked(SelectionEvent<Item> event){
         presenter.createNewPlainTextFile();
+    }
+
+    @UiHandler("newRFileMi")
+    void onNewRFileClicked(SelectionEvent<Item> event) {
+
+    }
+
+    @UiHandler("newPerlFileMi")
+    void onNewPerlFileClicked(SelectionEvent<Item> event) {
+
+    }
+
+    @UiHandler("newPythonFileMi")
+    void onNewPythonFileClicked(SelectionEvent<Item> event) {
+
+    }
+
+    @UiHandler("newShellScriptFileMi")
+    void onNewShellScript(SelectionEvent<Item> event) {
+
+    }
+
+    @UiHandler("newMdFileMi")
+    void onNewMdFile(SelectionEvent<Item> event) {
+
     }
 
     @UiHandler("newTabularDataFileMi")

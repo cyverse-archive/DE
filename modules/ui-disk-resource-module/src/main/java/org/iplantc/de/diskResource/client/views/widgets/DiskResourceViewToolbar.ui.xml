@@ -1,207 +1,185 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
-             xmlns:toolbar="urn:import:com.sencha.gxt.widget.core.client.toolbar"
-             xmlns:button="urn:import:com.sencha.gxt.widget.core.client.button"
-             xmlns:menu="urn:import:com.sencha.gxt.widget.core.client.menu"
-             xmlns:search="urn:import:org.iplantc.de.diskResource.client.search.views">
+	xmlns:toolbar="urn:import:com.sencha.gxt.widget.core.client.toolbar"
+	xmlns:button="urn:import:com.sencha.gxt.widget.core.client.button"
+	xmlns:menu="urn:import:com.sencha.gxt.widget.core.client.menu"
+	xmlns:search="urn:import:org.iplantc.de.diskResource.client.search.views">
 
-    <ui:with field="res"
-             type="org.iplantc.de.resources.client.IplantResources"/>
-    <ui:with field="display"
-             type="org.iplantc.de.resources.client.messages.IplantDisplayStrings"/>
-    <ui:with field="flexBoxData"
-             type="com.sencha.gxt.widget.core.client.container.BoxLayoutContainer.BoxLayoutData">
-        <ui:attributes flex="3" />
-    </ui:with>
-
-
-    <toolbar:ToolBar>
-        <!-- Upload Menu -->
-        <toolbar:child>
-            <button:TextButton ui:field="uploadMenu"
-                               text="{display.upload}">
-                <button:menu>
-                    <menu:Menu>
-                        <menu:MenuItem ui:field="simpleUploadMi"
-                                       icon="{res.importData}"
-                                       text="{display.simpleUploadFromDesktop}"/>
-                        <menu:MenuItem ui:field="bulkUploadMi"
-                                       icon="{res.importData}"
-                                       text="{display.bulkUploadFromDesktop}"/>
-                        <menu:MenuItem ui:field="importFromUrlMi"
-                                       icon="{res.importData}"
-                                       text="{display.importFromUrlMenuItem}"/>
-                    </menu:Menu>
-                </button:menu>
-            </button:TextButton>
-        </toolbar:child>
-
-        <!-- File Menu -->
-        <toolbar:child>
-            <button:TextButton ui:field="fileMenu"
-                               text="File">
-                <button:menu>
-                    <menu:Menu>
-                        <menu:MenuItem ui:field="newWindowMi"
-                                       text="{display.newWindow}"
-                                       icon="{res.add}"/>
-                        <menu:MenuItem ui:field="newWindowAtLocMi"
-                                       text="{display.newDataWindowAtLocMenuItem}"
-                                       icon="{res.add}"/>
-                        <menu:MenuItem ui:field="newFolderMi"
-                                       text="{display.newFolderMenuItem}"
-                                       icon="{res.folderAdd}"/>
-                        <menu:MenuItem ui:field="duplicateMi"
-                                       text="{display.duplicateMenuItem}"
-                                       enabled="false"
-                                       visible="false"/>
-                        <menu:MenuItem ui:field="addToSideBarMi"
-                                       text="{display.addToSideBarMenuItem}"
-                                       enabled="false"
-                                       visible="false"/>
-                        <menu:MenuItem ui:field="newPlainTextFileMi"
-                                       text="{display.newPlainTextFileMenuItem}"
-                                       icon="{res.fileRename}"/>
-                        <menu:MenuItem ui:field="newTabularDataFileMi"
-                                       text="{display.newTabularDataFileMenuItem}"
-                                       visible="true"
-                                       icon="{res.fileRename}"/>
-                        <menu:MenuItem ui:field="moveToTrashMi"
-                                       text="{display.moveToTrashMenuItem}"
-                                       icon="{res.trash}"
-                                       enabled="false"/>
-                    </menu:Menu>
-                </button:menu>
-            </button:TextButton>
-        </toolbar:child>
-
-        <!-- Edit Menu -->
-        <toolbar:child>
-            <button:TextButton ui:field="editMenu"
-                               text="{display.edit}">
-                <button:menu>
-                    <menu:Menu>
-                        <menu:MenuItem ui:field="renameMi"
-                                       text="{display.renameMenuItem}"
-                                       icon="{res.fileRename}"
-                                       enabled="false"/>
-                        <menu:MenuItem ui:field="editFileMi"
-                                       text="{display.editMenuItem}"
-                                       icon="{res.fileRename}"
-                                       enabled="false"/>
-                        <menu:MenuItem ui:field="editCommentsMi"
-                                       text="{display.editCommentsMenuItem}"
-                                       icon="{res.userComment}"
-                                       enabled="false"/>
-                        <menu:MenuItem ui:field="editInfoTypeMi"
-                                       text="{display.editInfoTypeMenuItem}"
-                                       icon="{res.info}"
-                                       enabled="false"/>
-                        <menu:MenuItem ui:field="metadataMi"
-                                       text="{display.metadataMenuItem}"
-                                       icon="{res.metadata}"
-                                       enabled="false"/>
-                        <menu:MenuItem ui:field="moveMi"
-                                       text="{display.moveMenuItem}"
-                                       icon="{res.edit}"
-                                       enabled="false"/>
-                    </menu:Menu>
-                </button:menu>
-            </button:TextButton>
-        </toolbar:child>
-
-        <!-- Download Menu -->
-        <toolbar:child>
-            <button:TextButton ui:field="downloadMenu"
-                               text="{display.download}">
-                <button:menu>
-                    <menu:Menu>
-                        <menu:MenuItem ui:field="simpleDownloadMi"
-                                       text="{display.simpleDownloadMenuItem}"
-                                       icon="{res.download}"
-                                       enabled="false"/>
-                        <menu:MenuItem ui:field="bulkDownloadMi"
-                                       text="{display.bulkDownloadMenuItem}"
-                                       icon="{res.download}"
-                                       enabled="false"/>
-                    </menu:Menu>
-                </button:menu>
-            </button:TextButton>
-        </toolbar:child>
-
-        <!-- Share Menu -->
-        <toolbar:child>
-            <button:TextButton ui:field="shareMenu"
-                               text="{display.share}">
-                <button:menu>
-                    <menu:Menu>
-                        <menu:MenuItem ui:field="shareWithCollaboratorsMi"
-                                       text="{display.shareWithCollaboratorsMenuItem}"
-                                       icon="{res.share}"
-                                       enabled="false"/>
-                        <menu:MenuItem ui:field="createPublicLinkMi"
-                                       text="{display.createPublicLinkMenuItem}"
-                                       icon="{res.linkAdd}"
-                                       enabled="false"/>
-                        <menu:MenuItem ui:field="shareFolderLocationMi"
-                                       text="{display.shareFolderLocationMenuItem}"
-                                       icon="{res.folder}"
-                                       enabled="false"/>
-                        <menu:MenuItem ui:field="sendToCogeMi"
-                                       text="{display.sendToCogeMenuItem}"
-                                       icon="{res.arrowUp}"
-                                       enabled="false"/>
-                        <menu:MenuItem ui:field="sendToEnsemblMi"
-                                       text="{display.sendToEnsemblMenuItem}"
-                                       icon="{res.arrowUp}"
-                                       enabled="false"/>
-                        <menu:MenuItem ui:field="sendToTreeViewerMi"
-                                       text="{display.sendToTreeViewerMenuItem}"
-                                       icon="{res.arrowUp}"
-                                       enabled="false"/>
-                    </menu:Menu>
-                </button:menu>
-            </button:TextButton>
-        </toolbar:child>
-
-        <!-- Refresh button -->
-        <toolbar:child>
-            <button:TextButton ui:field="refreshButton"
-                               text="{display.refresh}"
-                               icon="{res.refresh}"
-                               enabled="false"/>
-        </toolbar:child>
-
-        <!-- Data Search box -->
-        <toolbar:child layoutData="{flexBoxData}">
-            <search:DiskResourceSearchField ui:field="searchField"/>
-        </toolbar:child>
+	<ui:with field="res"
+		type="org.iplantc.de.resources.client.IplantResources" />
+	<ui:with field="display"
+		type="org.iplantc.de.resources.client.messages.IplantDisplayStrings" />
+	<ui:with field="flexBoxData"
+		type="com.sencha.gxt.widget.core.client.container.BoxLayoutContainer.BoxLayoutData">
+		<ui:attributes flex="3" />
+	</ui:with>
 
 
-        <!-- Trash Menu -->
-        <toolbar:child>
-            <button:TextButton ui:field="trashMenu"
-                               text="Trash">
-                <button:menu>
-                    <menu:Menu>
-                        <menu:MenuItem ui:field="openTrashMi"
-                                       text="{display.openTrashMenuItem}"
-                                       icon="{res.trash}"/>
-                        <menu:MenuItem ui:field="restoreMi"
-                                       text="{display.restore}"
-                                       enabled="false"/>
-                        <menu:SeparatorMenuItem/>
-                        <menu:MenuItem ui:field="emptyTrashMi"
-                                       text="{display.emptyTrash}"
-                                       icon="{res.trashEmpty}"/>
-                        <menu:MenuItem ui:field="deleteMi"
-                                       text="{display.delete}"
-                                       icon="{res.fileDelete}"
-                                       enabled="false"/>
-                    </menu:Menu>
-                </button:menu>
-            </button:TextButton>
-        </toolbar:child>
+	<toolbar:ToolBar>
+		<!-- Upload Menu -->
+		<toolbar:child>
+			<button:TextButton ui:field="uploadMenu" text="{display.upload}">
+				<button:menu>
+					<menu:Menu>
+						<menu:MenuItem ui:field="simpleUploadMi" icon="{res.importData}"
+							text="{display.simpleUploadFromDesktop}" />
+						<menu:MenuItem ui:field="bulkUploadMi" icon="{res.importData}"
+							text="{display.bulkUploadFromDesktop}" />
+						<menu:MenuItem ui:field="importFromUrlMi" icon="{res.importData}"
+							text="{display.importFromUrlMenuItem}" />
+					</menu:Menu>
+				</button:menu>
+			</button:TextButton>
+		</toolbar:child>
 
-    </toolbar:ToolBar>
+		<!-- File Menu -->
+		<toolbar:child>
+			<button:TextButton ui:field="fileMenu" text="File">
+				<button:menu>
+					<menu:Menu>
+						<menu:MenuItem ui:field="newWindowMi" text="{display.newWindow}"
+							icon="{res.add}" />
+						<menu:MenuItem ui:field="newWindowAtLocMi"
+							text="{display.newDataWindowAtLocMenuItem}" icon="{res.add}" />
+						<menu:MenuItem ui:field="newFolderMi"
+							text="{display.newFolderMenuItem}" icon="{res.folderAdd}" />
+						<menu:MenuItem ui:field="duplicateMi"
+							text="{display.duplicateMenuItem}" enabled="false" visible="false" />
+						<menu:MenuItem ui:field="newFileMi" text="{display.create}"
+							icon="{res.fileRename}">
+							<menu:submenu>
+								<menu:Menu ui:field="newFileMenu">
+									<menu:MenuItem ui:field="newPlainTextFileMi"
+										text="{display.newPlainTextFileMenuItem}" icon="{res.fileRename}" />
+									
+									<menu:MenuItem ui:field="newTabularDataFileMi"
+										text="{display.newTabularDataFileMenuItem}" visible="true"
+										icon="{res.fileRename}" />
+
+									<menu:MenuItem ui:field="newRFileMi" text="New R Script..."
+										visible="true" icon="{res.fileRename}" />
+
+									<menu:MenuItem ui:field="newPerlFileMi" text="New Perl Script..."
+										visible="true" icon="{res.fileRename}" />
+
+									<menu:MenuItem ui:field="newPythonFileMi" text="New Python Script..."
+										visible="true" icon="{res.fileRename}" />
+
+									<menu:MenuItem ui:field="newShellScriptFileMi"
+										text="New Schell Script..." visible="true" icon="{res.fileRename}" />
+
+									<menu:MenuItem ui:field="newMdFileMi" text="New Markdown file..."
+										visible="true" icon="{res.fileRename}" />
+								</menu:Menu>
+							</menu:submenu>
+						</menu:MenuItem>
+
+
+
+						<menu:MenuItem ui:field="moveToTrashMi"
+							text="{display.moveToTrashMenuItem}" icon="{res.trash}" enabled="false" />
+					</menu:Menu>
+				</button:menu>
+			</button:TextButton>
+		</toolbar:child>
+
+		<!-- Edit Menu -->
+		<toolbar:child>
+			<button:TextButton ui:field="editMenu" text="{display.edit}">
+				<button:menu>
+					<menu:Menu>
+						<menu:MenuItem ui:field="renameMi" text="{display.renameMenuItem}"
+							icon="{res.fileRename}" enabled="false" />
+						<menu:MenuItem ui:field="editFileMi" text="{display.editMenuItem}"
+							icon="{res.fileRename}" enabled="false" />
+						<menu:MenuItem ui:field="editCommentsMi"
+							text="{display.editCommentsMenuItem}" enabled="false" icon="{res.userComment}" />
+						<menu:MenuItem ui:field="editInfoTypeMi"
+							text="{display.editInfoTypeMenuItem}" icon="{res.info}" enabled="false" />
+						<menu:MenuItem ui:field="metadataMi" text="{display.metadataMenuItem}"
+							icon="{res.metadata}" enabled="false" />
+						<menu:MenuItem ui:field="moveMi" text="{display.moveMenuItem}"
+							icon="{res.edit}" enabled="false" />
+					</menu:Menu>
+				</button:menu>
+			</button:TextButton>
+		</toolbar:child>
+
+		<!-- Download Menu -->
+		<toolbar:child>
+			<button:TextButton ui:field="downloadMenu" text="{display.download}">
+				<button:menu>
+					<menu:Menu>
+						<menu:MenuItem ui:field="simpleDownloadMi"
+							text="{display.simpleDownloadMenuItem}" icon="{res.download}"
+							enabled="false" />
+						<menu:MenuItem ui:field="bulkDownloadMi"
+							text="{display.bulkDownloadMenuItem}" icon="{res.download}"
+							enabled="false" />
+					</menu:Menu>
+				</button:menu>
+			</button:TextButton>
+		</toolbar:child>
+
+		<!-- Share Menu -->
+		<toolbar:child>
+			<button:TextButton ui:field="shareMenu" text="{display.share}">
+				<button:menu>
+					<menu:Menu>
+						<menu:MenuItem ui:field="shareWithCollaboratorsMi"
+							text="{display.shareWithCollaboratorsMenuItem}" icon="{res.share}"
+							enabled="false" />
+						<menu:MenuItem ui:field="createPublicLinkMi"
+							text="{display.createPublicLinkMenuItem}" icon="{res.linkAdd}"
+							enabled="false" />
+						<menu:MenuItem ui:field="shareFolderLocationMi"
+							text="{display.shareFolderLocationMenuItem}" icon="{res.folder}"
+							enabled="false" />
+						<menu:MenuItem ui:field="sendToCogeMi"
+							text="{display.sendToCogeMenuItem}" icon="{res.arrowUp}" enabled="false" />
+						<menu:MenuItem ui:field="sendToEnsemblMi"
+							text="{display.sendToEnsemblMenuItem}" icon="{res.arrowUp}"
+							enabled="false" />
+						<menu:MenuItem ui:field="sendToTreeViewerMi"
+							text="{display.sendToTreeViewerMenuItem}" icon="{res.arrowUp}"
+							enabled="false" />
+					</menu:Menu>
+				</button:menu>
+			</button:TextButton>
+		</toolbar:child>
+
+		<!-- Refresh button -->
+		<toolbar:child>
+			<button:TextButton ui:field="refreshButton" text="{display.refresh}"
+				icon="{res.refresh}" enabled="false" />
+		</toolbar:child>
+
+		<!-- Data Search box -->
+		<toolbar:child layoutData="{flexBoxData}">
+			<search:DiskResourceSearchField
+				ui:field="searchField" />
+		</toolbar:child>
+
+
+		<!-- Trash Menu -->
+		<toolbar:child>
+			<button:TextButton ui:field="trashMenu" text="Trash">
+				<button:menu>
+					<menu:Menu>
+						<menu:MenuItem ui:field="openTrashMi"
+							text="{display.openTrashMenuItem}" icon="{res.trash}" />
+						<menu:MenuItem ui:field="restoreMi" text="{display.restore}"
+							enabled="false" />
+						<menu:SeparatorMenuItem />
+						<menu:MenuItem ui:field="emptyTrashMi" text="{display.emptyTrash}"
+							icon="{res.trashEmpty}" />
+						<menu:MenuItem ui:field="deleteMi" text="{display.delete}"
+							icon="{res.fileDelete}" enabled="false" />
+					</menu:Menu>
+				</button:menu>
+			</button:TextButton>
+		</toolbar:child>
+
+	</toolbar:ToolBar>
+>>>>>>> Stashed changes
 </ui:UiBinder>

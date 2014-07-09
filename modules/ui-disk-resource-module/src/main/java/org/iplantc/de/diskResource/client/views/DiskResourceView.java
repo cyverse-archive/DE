@@ -199,6 +199,16 @@ public interface DiskResourceView extends IsWidget,
         void detachTag(IplantTag tag);
 
         void getTagsForSelectedResource();
+
+        void onNewRFile();
+
+        void onNewPerlFile();
+
+        void onNewPythonFile();
+
+        void onNewShellScript();
+
+        void onNewMdFile();
     }
 
     /**
