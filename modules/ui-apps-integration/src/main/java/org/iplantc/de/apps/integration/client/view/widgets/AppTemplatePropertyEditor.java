@@ -49,8 +49,7 @@ import com.sencha.gxt.widget.core.client.tips.QuickTip;
 public class AppTemplatePropertyEditor extends Composite implements ValueAwareEditor<AppTemplate>, HasLabelOnlyEditMode, HasAppTemplateSelectedEventHandlers, ArgumentGroupSelectedEventHandler,
                                                                     ArgumentSelectedEventHandler, HasUpdateCommandLinePreviewEventHandlers {
 
-    interface AppTemplatePropertyEditorUiBinder extends UiBinder<Widget, AppTemplatePropertyEditor> {
-    }
+    interface AppTemplatePropertyEditorUiBinder extends UiBinder<Widget, AppTemplatePropertyEditor> { }
 
     @UiField
     AppTemplateContentPanel cp;

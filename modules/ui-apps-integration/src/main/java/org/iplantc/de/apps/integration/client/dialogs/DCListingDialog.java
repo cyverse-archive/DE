@@ -1,8 +1,9 @@
 /**
- * 
+ *
  */
 package org.iplantc.de.apps.integration.client.dialogs;
 
+import static org.iplantc.de.apps.integration.shared.AppIntegrationModule.Ids.*;
 import org.iplantc.de.apps.integration.client.presenter.DeployedComponentPresenterImpl;
 import org.iplantc.de.apps.integration.client.view.deployedComponents.DeployedComponentsListingView;
 import org.iplantc.de.apps.integration.client.view.deployedComponents.DeployedComponentsListingViewImpl;
@@ -19,9 +20,7 @@ import com.sencha.gxt.widget.core.client.selection.SelectionChangedEvent.Selecti
 import java.util.List;
 
 /**
- * 
  * @author sriram
- * 
  */
 public class DCListingDialog extends IPlantDialog {
 
@@ -77,6 +76,8 @@ public class DCListingDialog extends IPlantDialog {
         ListStore<DeployedComponent> listStore = new ListStore<DeployedComponent>(new DCKeyProvider());
         DeployedComponentsListingView view = new DeployedComponentsListingViewImpl(listStore, new DCSelectionChangedHandler());
         DeployedComponentsListingView.Presenter p = new DeployedComponentPresenterImpl(view);
+        getButton(PredefinedButton.OK).ensureDebugId(INSTALLED_TOOLS_DLG + OK);
+        getButton(PredefinedButton.CANCEL).ensureDebugId(INSTALLED_TOOLS_DLG + CANCEL);
         p.go(this);
 
     }

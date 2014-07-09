@@ -42,6 +42,12 @@ public interface AppIntegrationModule {
         String TOOL = ".tool";
         String APP_NAME = ".appName";
         String APP_DESCRIPTION = ".appDescription";
+
+        String SEARCH = ".search";
+        String NEW_TOOL_REQUEST = ".newToolRequest";
+        String INSTALLED_TOOLS_DLG = ".installedToolsDlg";
+        String OK = ".ok";
+        String CANCEL = ".cancel";
     }
 
     interface PropertyPanelIds {
