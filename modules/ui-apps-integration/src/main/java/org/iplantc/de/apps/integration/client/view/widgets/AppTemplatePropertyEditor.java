@@ -3,7 +3,8 @@ package org.iplantc.de.apps.integration.client.view.widgets;
 import org.iplantc.de.apps.integration.client.events.UpdateCommandLinePreviewEvent;
 import org.iplantc.de.apps.integration.client.events.UpdateCommandLinePreviewEvent.HasUpdateCommandLinePreviewEventHandlers;
 import org.iplantc.de.apps.integration.client.events.UpdateCommandLinePreviewEvent.UpdateCommandLinePreviewEventHandler;
-import org.iplantc.de.apps.widgets.client.dialog.DCListingDialog;
+import org.iplantc.de.apps.integration.shared.AppIntegrationModule;
+import org.iplantc.de.apps.integration.client.dialogs.DCListingDialog;
 import org.iplantc.de.apps.widgets.client.events.AppTemplateSelectedEvent.AppTemplateSelectedEventHandler;
 import org.iplantc.de.apps.widgets.client.events.AppTemplateSelectedEvent.HasAppTemplateSelectedEventHandlers;
 import org.iplantc.de.apps.widgets.client.events.ArgumentGroupSelectedEvent;
@@ -11,7 +12,7 @@ import org.iplantc.de.apps.widgets.client.events.ArgumentGroupSelectedEvent.Argu
 import org.iplantc.de.apps.widgets.client.events.ArgumentSelectedEvent;
 import org.iplantc.de.apps.widgets.client.events.ArgumentSelectedEvent.ArgumentSelectedEventHandler;
 import org.iplantc.de.apps.widgets.client.view.HasLabelOnlyEditMode;
-import org.iplantc.de.apps.widgets.client.view.deployedComponents.DCSearchField;
+import org.iplantc.de.apps.integration.client.view.deployedComponents.DCSearchField;
 import org.iplantc.de.apps.widgets.client.view.editors.style.AppTemplateWizardAppearance;
 import org.iplantc.de.client.models.apps.integration.AppTemplate;
 import org.iplantc.de.client.models.deployedComps.DeployedComponent;
@@ -44,40 +45,31 @@ import com.sencha.gxt.widget.core.client.tips.QuickTip;
 
 /**
  * @author jstroot
- * 
  */
 public class AppTemplatePropertyEditor extends Composite implements ValueAwareEditor<AppTemplate>, HasLabelOnlyEditMode, HasAppTemplateSelectedEventHandlers, ArgumentGroupSelectedEventHandler,
-        ArgumentSelectedEventHandler, HasUpdateCommandLinePreviewEventHandlers {
+                                                                    ArgumentSelectedEventHandler, HasUpdateCommandLinePreviewEventHandlers {
 
-    interface AppTemplatePropertyEditorUiBinder extends UiBinder<Widget, AppTemplatePropertyEditor> {}
+    interface AppTemplatePropertyEditorUiBinder extends UiBinder<Widget, AppTemplatePropertyEditor> { }
 
-    private static AppTemplatePropertyEditorUiBinder BINDER = GWT.create(AppTemplatePropertyEditorUiBinder.class);
-    
     @UiField
     AppTemplateContentPanel cp;
-
     @UiField
     @Path("description")
     TextArea description;
-
     @UiField
     @Path("name")
     TextField name;
-
     @Path("name")
     HasHTMLEditor nameEditor;
-
     @Ignore
     @UiField
     TextButton searchBtn;
-
     @UiField
     @Ignore
     DCSearchField tool;
-
     @UiField
     FieldLabel toolLabel, appNameLabel, appDescriptionLabel;
-
+    private static AppTemplatePropertyEditorUiBinder BINDER = GWT.create(AppTemplatePropertyEditorUiBinder.class);
     private final AppTemplateWizardAppearance appearance;
 
     private boolean labelOnlyEditMode = false;
@@ -112,16 +104,23 @@ public class AppTemplatePropertyEditor extends Composite implements ValueAwareEd
 
     @Override
     public void flush() {
-        if(model == null) {
+        if (model == null) {
             return;
         }
-        
+
         model.setDeployedComponent(tool.getValue());
     }
 
     @Override
     public boolean isLabelOnlyEditMode() {
         return labelOnlyEditMode;
+    }
+
+    @Override
+    public void setLabelOnlyEditMode(boolean labelOnlyEditMode) {
+        this.labelOnlyEditMode = labelOnlyEditMode;
+        toolLabel.setEnabled(!labelOnlyEditMode);
+        appNameLabel.setEnabled(!labelOnlyEditMode);
     }
 
     @Override
@@ -141,18 +140,11 @@ public class AppTemplatePropertyEditor extends Composite implements ValueAwareEd
     public void setDelegate(EditorDelegate<AppTemplate> delegate) {/* Do Nothing */}
 
     @Override
-    public void setLabelOnlyEditMode(boolean labelOnlyEditMode) {
-        this.labelOnlyEditMode = labelOnlyEditMode;
-        toolLabel.setEnabled(!labelOnlyEditMode);
-        appNameLabel.setEnabled(!labelOnlyEditMode);
-    }
-
-    @Override
     public void setValue(AppTemplate value) {
         if (value == null) {
             return;
         }
-        
+
         this.model = value;
 
         if (value.getDeployedComponent() != null) {
@@ -160,6 +152,14 @@ public class AppTemplatePropertyEditor extends Composite implements ValueAwareEd
         } else {
             tool.clear();
         }
+    }
+
+    @Override
+    protected void onEnsureDebugId(String baseID) {
+        super.onEnsureDebugId(baseID);
+        tool.ensureDebugId(baseID + AppIntegrationModule.Ids.TOOL);
+        name.ensureDebugId(baseID + AppIntegrationModule.Ids.APP_NAME);
+        description.ensureDebugId(baseID + AppIntegrationModule.Ids.APP_DESCRIPTION);
     }
 
     /**

@@ -1,4 +1,4 @@
-package org.iplantc.de.apps.widgets.client.view.deployedComponents.proxy;
+package org.iplantc.de.apps.integration.client.view.deployedComponents.proxy;
 
 import org.iplantc.de.client.gin.ServicesInjector;
 import org.iplantc.de.client.models.deployedComps.DeployedComponent;

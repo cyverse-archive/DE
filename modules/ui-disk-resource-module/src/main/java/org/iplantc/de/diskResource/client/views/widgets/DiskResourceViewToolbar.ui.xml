@@ -91,8 +91,8 @@
                                        enabled="false"/>
                         <menu:MenuItem ui:field="editCommentsMi"
                                        text="{display.editCommentsMenuItem}"
-                                       enabled="false"
-                                       visible="false"/>
+                                       icon="{res.userComment}"
+                                       enabled="false"/>
                         <menu:MenuItem ui:field="editInfoTypeMi"
                                        text="{display.editInfoTypeMenuItem}"
                                        icon="{res.info}"

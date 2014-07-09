@@ -1,9 +1,10 @@
 /**
  *
  */
-package org.iplantc.de.apps.widgets.client.presenter;
+package org.iplantc.de.apps.integration.client.presenter;
 
-import org.iplantc.de.apps.widgets.client.view.deployedComponents.DeployedComponentsListingView;
+import org.iplantc.de.apps.integration.client.view.deployedComponents.DeployedComponentsListingView;
+import org.iplantc.de.apps.integration.shared.AppIntegrationModule;
 import org.iplantc.de.client.models.deployedComps.DeployedComponent;
 
 import com.google.gwt.user.client.ui.HasOneWidget;
@@ -32,6 +33,8 @@ public class DeployedComponentPresenterImpl implements DeployedComponentsListing
 
     @Override
     public void go(HasOneWidget container) {
+
+        view.asWidget().ensureDebugId(AppIntegrationModule.Ids.INSTALLED_TOOLS_DLG);
         container.setWidget(view.asWidget());
     }
 }

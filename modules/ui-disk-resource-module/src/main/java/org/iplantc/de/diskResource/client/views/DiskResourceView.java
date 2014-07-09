@@ -65,6 +65,8 @@ public interface DiskResourceView extends IsWidget,
                                 RequestDiskResourceFavoriteEvent.RequestDiskResourceFavoriteEventHandler,
                                 ManageCommentsEvent.ManageCommentsEventHandler {
 
+        void manageSelectedResourceComments();
+
         void setViewDebugId(String baseID);
 
         interface Builder extends org.iplantc.de.commons.client.presenter.Presenter {

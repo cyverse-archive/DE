@@ -191,6 +191,9 @@ public class AppsEditorViewImpl extends Composite implements AppsEditorView {
     protected void onEnsureDebugId(String baseID) {
         super.onEnsureDebugId(baseID);
         palette.ensureDebugId(baseID + AppIntegrationModule.Ids.PALETTE);
+        toolbar.asWidget().ensureDebugId(baseID + AppIntegrationModule.Ids.TOOLBAR);
+        cmdLinePreview.ensureDebugId(baseID + AppIntegrationModule.Ids.CMD_LINE_PREVIEW);
+        appTemplatePropertyEditor.ensureDebugId(baseID);
     }
 
     @Override

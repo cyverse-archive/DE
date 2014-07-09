@@ -1,6 +1,6 @@
-package org.iplantc.de.apps.widgets.client.view.deployedComponents.cells;
+package org.iplantc.de.apps.integration.client.view.deployedComponents.cells;
 
-import org.iplantc.de.apps.widgets.client.view.deployedComponents.DeployedComponentsListingView;
+import org.iplantc.de.apps.integration.client.view.deployedComponents.DeployedComponentsListingView;
 import org.iplantc.de.client.models.deployedComps.DeployedComponent;
 
 import static com.google.gwt.dom.client.BrowserEvents.CLICK;

@@ -1,11 +1,12 @@
 /**
  *
  */
-package org.iplantc.de.apps.widgets.client.view.deployedComponents;
+package org.iplantc.de.apps.integration.client.view.deployedComponents;
 
 import org.iplantc.de.apps.client.views.dialogs.NewToolRequestDialog;
-import org.iplantc.de.apps.widgets.client.view.deployedComponents.cells.DCNameHyperlinkCell;
-import org.iplantc.de.apps.widgets.client.view.deployedComponents.proxy.DCSearchRPCProxy;
+import org.iplantc.de.apps.integration.client.view.deployedComponents.cells.DCNameHyperlinkCell;
+import org.iplantc.de.apps.integration.client.view.deployedComponents.proxy.DCSearchRPCProxy;
+import org.iplantc.de.apps.integration.shared.AppIntegrationModule;
 import org.iplantc.de.client.models.deployedComps.DeployedComponent;
 import org.iplantc.de.commons.client.widgets.SearchField;
 import org.iplantc.de.resources.client.messages.I18N;
@@ -31,6 +32,7 @@ import com.sencha.gxt.data.shared.loader.PagingLoadResult;
 import com.sencha.gxt.data.shared.loader.PagingLoader;
 import com.sencha.gxt.widget.core.client.Composite;
 import com.sencha.gxt.widget.core.client.Dialog;
+import com.sencha.gxt.widget.core.client.button.TextButton;
 import com.sencha.gxt.widget.core.client.container.AbstractHtmlLayoutContainer.HtmlData;
 import com.sencha.gxt.widget.core.client.container.HtmlLayoutContainer;
 import com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer;
@@ -49,10 +51,9 @@ import java.util.List;
  * A grid that displays list of available deployed components (bin/tools) in Condor
  *
  * @author sriram
- *
  */
 public class DeployedComponentsListingViewImpl extends Composite implements
-        DeployedComponentsListingView {
+                                                                 DeployedComponentsListingView {
 
     interface DCDetailsRenderer extends XTemplates {
         @XTemplate(source = "DCDetails.html")
@@ -63,34 +64,28 @@ public class DeployedComponentsListingViewImpl extends Composite implements
     interface MyUiBinder extends UiBinder<Widget, DeployedComponentsListingViewImpl> {
     }
 
-    private static MyUiBinder uiBinder = GWT.create(MyUiBinder.class);
-
     @UiField
     VerticalLayoutContainer container;
-
     @UiField
     Grid<DeployedComponent> grid;
-
     PagingLoader<FilterPagingLoadConfig, PagingLoadResult<DeployedComponent>> loader;
-
+    @UiField
+    TextButton newToolBtn;
     @UiField
     SearchField<DeployedComponent> searchField;
 
     DCSearchRPCProxy searchProxy;
-    
+
     @UiField(provided = true)
     ListStore<DeployedComponent> store;
-    
-    private final Widget widget;
+    private static MyUiBinder uiBinder = GWT.create(MyUiBinder.class);
 
-    
-    
     public DeployedComponentsListingViewImpl(ListStore<DeployedComponent> listStore,
-            SelectionChangedHandler<DeployedComponent> handler) {
+                                             SelectionChangedHandler<DeployedComponent> handler) {
         this.store = listStore;
         searchProxy = new DCSearchRPCProxy();
         loader = buildLoader();
-        widget = uiBinder.createAndBindUi(this);
+        initWidget(uiBinder.createAndBindUi(this));
         searchField.setEmptyText(I18N.DISPLAY.searchEmptyText());
         grid.setLoader(loader);
         grid.getSelectionModel().addSelectionChangedHandler(handler);
@@ -99,21 +94,16 @@ public class DeployedComponentsListingViewImpl extends Composite implements
     }
 
     @Override
-    public Widget asWidget() {
-        return widget;
-    }
-
-    @Override
     public DeployedComponent getSelectedDC() {
         return grid.getSelectionModel().getSelectedItem();
     }
 
-     @Override
+    @Override
     public void loadDC(List<DeployedComponent> list) {
         store.clear();
         store.addAll(list);
     }
-    
+
     @Override
     public void mask() {
         container.mask(I18N.DISPLAY.loadingMask());
@@ -147,18 +137,25 @@ public class DeployedComponentsListingViewImpl extends Composite implements
 
     }
 
+    @Override
+    protected void onEnsureDebugId(String baseID) {
+        super.onEnsureDebugId(baseID);
+        searchField.ensureDebugId(baseID + AppIntegrationModule.Ids.SEARCH);
+        newToolBtn.ensureDebugId(baseID + AppIntegrationModule.Ids.NEW_TOOL_REQUEST);
+    }
+
     @UiFactory
     SearchField<DeployedComponent> createAppSearchField() {
-        return new SearchField<DeployedComponent>(loader);
+        return new SearchField<>(loader);
     }
 
     @UiFactory
     ColumnModel<DeployedComponent> createColumnModel() {
         DeployedComponentProperties properties = GWT.create(DeployedComponentProperties.class);
-        IdentityValueProvider<DeployedComponent> provider = new IdentityValueProvider<DeployedComponent>("name");
-        List<ColumnConfig<DeployedComponent, ?>> configs = new LinkedList<ColumnConfig<DeployedComponent, ?>>();
+        IdentityValueProvider<DeployedComponent> provider = new IdentityValueProvider<>("name");
+        List<ColumnConfig<DeployedComponent, ?>> configs = new LinkedList<>();
 
-        ColumnConfig<DeployedComponent, DeployedComponent> name = new ColumnConfig<DeployedComponent, DeployedComponent>(provider, 100);
+        ColumnConfig<DeployedComponent, DeployedComponent> name = new ColumnConfig<>(provider, 100);
         name.setComparator(new Comparator<DeployedComponent>() {
 
             @Override
@@ -172,16 +169,16 @@ public class DeployedComponentsListingViewImpl extends Composite implements
         name.setCell(new DCNameHyperlinkCell(this));
         name.setMenuDisabled(true);
 
-        ColumnConfig<DeployedComponent, String> version = new ColumnConfig<DeployedComponent, String>(properties.version(), 100);
+        ColumnConfig<DeployedComponent, String> version = new ColumnConfig<>(properties.version(), 100);
         version.setHeader(I18N.DISPLAY.version());
         configs.add(version);
         version.setMenuDisabled(true);
 
-        ColumnConfig<DeployedComponent, String> path = new ColumnConfig<DeployedComponent, String>(properties.location(), 100);
+        ColumnConfig<DeployedComponent, String> path = new ColumnConfig<>(properties.location(), 100);
         path.setHeader(I18N.DISPLAY.path());
         configs.add(path);
         path.setMenuDisabled(true);
-        return new ColumnModel<DeployedComponent>(configs);
+        return new ColumnModel<>(configs);
     }
 
     @UiHandler({"newToolBtn"})
@@ -200,8 +197,8 @@ public class DeployedComponentsListingViewImpl extends Composite implements
     }
 
     private PagingLoader<FilterPagingLoadConfig, PagingLoadResult<DeployedComponent>> buildLoader() {
-        final PagingLoader<FilterPagingLoadConfig, PagingLoadResult<DeployedComponent>> loader = new PagingLoader<FilterPagingLoadConfig, PagingLoadResult<DeployedComponent>>(
-                searchProxy);
+        final PagingLoader<FilterPagingLoadConfig, PagingLoadResult<DeployedComponent>> loader = new PagingLoader<>(
+                                                                                                                                                                                  searchProxy);
         loader.useLoadConfig(new FilterPagingLoadConfigBean());
         return loader;
     }

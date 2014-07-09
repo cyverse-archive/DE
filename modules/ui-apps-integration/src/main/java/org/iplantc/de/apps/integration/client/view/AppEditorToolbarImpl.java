@@ -1,5 +1,7 @@
 package org.iplantc.de.apps.integration.client.view;
 
+import static org.iplantc.de.apps.integration.shared.AppIntegrationModule.Ids;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -8,43 +10,44 @@ import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.uibinder.client.UiTemplate;
 import com.google.gwt.user.client.ui.Widget;
 
+import com.sencha.gxt.widget.core.client.Composite;
 import com.sencha.gxt.widget.core.client.button.TextButton;
 import com.sencha.gxt.widget.core.client.event.SelectEvent;
 import com.sencha.gxt.widget.core.client.menu.Item;
 import com.sencha.gxt.widget.core.client.menu.MenuItem;
 
-public class AppEditorToolbarImpl implements AppEditorToolbar {
+public class AppEditorToolbarImpl extends Composite implements AppEditorToolbar {
 
     @UiTemplate("AppIntegrationToolbar.ui.xml")
-    interface AppIntegrationToolBarUiBinder extends UiBinder<Widget, AppEditorToolbarImpl> {}
-
-    private static AppIntegrationToolBarUiBinder BINDER = GWT.create(AppIntegrationToolBarUiBinder.class);
-
+    interface AppIntegrationToolBarUiBinder extends UiBinder<Widget, AppEditorToolbarImpl> { }
     @UiField
     TextButton argumentOrderButton;
-
     @UiField
     MenuItem previewUiMenuItem, previewJsonMenuItem;
-
     @UiField
     TextButton saveButton;
-
+    @UiField
+    TextButton previewBtn;
+    private static AppIntegrationToolBarUiBinder BINDER = GWT.create(AppIntegrationToolBarUiBinder.class);
     private AppEditorToolbar.Presenter presenter;
 
-    private final Widget widget;
-
     public AppEditorToolbarImpl() {
-        widget = BINDER.createAndBindUi(this);
-    }
-
-    @Override
-    public Widget asWidget() {
-        return widget;
+        initWidget(BINDER.createAndBindUi(this));
     }
 
     @Override
     public void setPresenter(AppEditorToolbar.Presenter presenter) {
         this.presenter = presenter;
+    }
+
+    @Override
+    protected void onEnsureDebugId(String baseID) {
+        super.onEnsureDebugId(baseID);
+        argumentOrderButton.ensureDebugId(baseID + Ids.ARG_ORDER);
+        previewBtn.ensureDebugId(baseID + Ids.PREVIEW);
+        previewUiMenuItem.ensureDebugId(baseID + Ids.PREVIEW + Ids.PREVIEW_UI);
+        previewJsonMenuItem.ensureDebugId(baseID + Ids.PREVIEW + Ids.PREVIEW_JSON);
+        saveButton.ensureDebugId(baseID + Ids.SAVE);
     }
 
     @UiHandler("argumentOrderButton")

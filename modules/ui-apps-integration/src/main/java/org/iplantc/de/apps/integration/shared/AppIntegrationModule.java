@@ -8,6 +8,8 @@ public interface AppIntegrationModule {
     interface Ids {
         String APP_EDITOR_VIEW = ".appEditorView";
         String PALETTE = ".pallete";
+        String TOOLBAR = ".menuBar";
+        String CMD_LINE_PREVIEW = ".cmdLinePreview";
 
         String ENV_VARIABLE = ".environmentVariable";
         String FILE_INPUT = ".fileInput";
@@ -32,6 +34,20 @@ public interface AppIntegrationModule {
 
         String GROUP = ".group";
         String PROPERTY_EDITOR = ".propertyEditor";
+        String ARG_ORDER = ".argumentOrder";
+        String PREVIEW = ".preview";
+        String PREVIEW_UI = ".UI";
+        String PREVIEW_JSON = ".JSON";
+        String SAVE = ".save";
+        String TOOL = ".tool";
+        String APP_NAME = ".appName";
+        String APP_DESCRIPTION = ".appDescription";
+
+        String SEARCH = ".search";
+        String NEW_TOOL_REQUEST = ".newToolRequest";
+        String INSTALLED_TOOLS_DLG = ".installedToolsDlg";
+        String OK = ".ok";
+        String CANCEL = ".cancel";
     }
 
     interface PropertyPanelIds {
@@ -48,5 +64,9 @@ public interface AppIntegrationModule {
         String DATA_SOURCE = ".dataSource";
         String NAME = ".name";
         String DELETE = ".delete";
+        String CHECKED_OPTION = ".checkedOption";
+        String CHECKED_VALUE = ".checkedValue";
+        String UNCHECKED_OPTION = ".unCheckedOption";
+        String UNCHECKED_VALUE = ".unCheckedValue";
     }
 }
