@@ -64,5 +64,9 @@ public interface AppIntegrationModule {
         String DATA_SOURCE = ".dataSource";
         String NAME = ".name";
         String DELETE = ".delete";
+        String CHECKED_OPTION = ".checkedOption";
+        String CHECKED_VALUE = ".checkedValue";
+        String UNCHECKED_OPTION = ".unCheckedOption";
+        String UNCHECKED_VALUE = ".unCheckedValue";
     }
 }

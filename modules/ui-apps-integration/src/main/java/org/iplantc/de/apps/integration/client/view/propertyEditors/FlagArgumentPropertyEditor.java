@@ -1,5 +1,8 @@
 package org.iplantc.de.apps.integration.client.view.propertyEditors;
 
+import static org.iplantc.de.apps.integration.shared.AppIntegrationModule.Ids.FLAG;
+import static org.iplantc.de.apps.integration.shared.AppIntegrationModule.Ids.PROPERTY_EDITOR;
+import static org.iplantc.de.apps.integration.shared.AppIntegrationModule.PropertyPanelIds.*;
 import org.iplantc.de.apps.widgets.client.view.editors.arguments.converters.ArgumentEditorConverter;
 import org.iplantc.de.apps.widgets.client.view.editors.arguments.converters.SplittableToBooleanConverter;
 import org.iplantc.de.apps.widgets.client.view.editors.style.AppTemplateWizardAppearance;
@@ -304,6 +307,20 @@ public class FlagArgumentPropertyEditor extends AbstractArgumentPropertyEditor {
 
         editorDriver.initialize(this);
         editorDriver.accept(new InitializeTwoWayBinding(this));
+        ensureDebugId(PROPERTY_EDITOR + FLAG);
+    }
+
+    @Override
+    protected void onEnsureDebugId(String baseID) {
+        super.onEnsureDebugId(baseID);
+        label.ensureDebugId(baseID + LABEL);
+        checkedArgOption.ensureDebugId(baseID + CHECKED_OPTION);
+        checkedValue.ensureDebugId(baseID + CHECKED_VALUE);
+        unCheckedArgOption.ensureDebugId(baseID + UNCHECKED_OPTION);
+        unCheckedValue.ensureDebugId(baseID + UNCHECKED_VALUE);
+        defaultValueEditor.ensureDebugId(baseID + DEFAULT_VALUE);
+        doNotDisplay.ensureDebugId(baseID + DO_NOT_DISPLAY);
+        toolTipEditor.ensureDebugId(baseID + TOOL_TIP);
     }
 
     @Override
