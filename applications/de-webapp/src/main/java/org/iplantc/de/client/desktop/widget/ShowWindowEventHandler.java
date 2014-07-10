@@ -123,8 +123,8 @@ final class ShowWindowEventHandler implements ShowAboutWindowEventHandler, ShowF
 
     @Override
     public void onCreateNewFile(CreateNewFileEvent event) {
-        if (event.getTabularFileViewerWindowConfig() != null) {
-            desktop.showWindow((FileViewerWindowConfig)event.getTabularFileViewerWindowConfig());
+        if (event.geFileViewerWindowConfig() != null) {
+            desktop.showWindow(event.geFileViewerWindowConfig());
         } else {
             FileViewerWindowConfig fileViewerWindowConfig = ConfigFactory.fileViewerWindowConfig(null);
             fileViewerWindowConfig.setEditing(true);

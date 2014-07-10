@@ -1,6 +1,9 @@
 package org.iplantc.de.diskResource.client.views.widgets;
 
-import static org.iplantc.de.client.models.diskResources.PermissionValue.*;
+import static org.iplantc.de.client.models.diskResources.PermissionValue.own;
+import static org.iplantc.de.client.models.diskResources.PermissionValue.read;
+import static org.iplantc.de.client.models.diskResources.PermissionValue.write;
+
 import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.client.models.diskResources.File;
@@ -13,7 +16,12 @@ import com.google.gwtmockito.GxtMockitoTestRunner;
 import com.sencha.gxt.widget.core.client.button.TextButton;
 import com.sencha.gxt.widget.core.client.menu.MenuItem;
 
-import static org.mockito.Mockito.*;
+import static org.mockito.Matchers.anyBoolean;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -69,13 +77,14 @@ public class DiskResourceViewToolbar_onDiskResourceSelectionChangedTest {
             mockTrashMenu;
     private boolean containsFile = false;
     private boolean containsOnlyFolders = false;
-    private boolean isReadable = true;
+    private final boolean isReadable = true;
     private boolean isSelectionInTrash = false;
     private boolean isSelectionOwner = true;
     private DiskResourceViewToolbarImpl uut;
 
     @Before public void setup() {
         uut = new DiskResourceViewToolbarImpl(mock(UserInfo.class)){
+            @Override
             boolean containsFile(List<DiskResource> selection) {
                 return containsFile;
             }
@@ -95,6 +104,7 @@ public class DiskResourceViewToolbar_onDiskResourceSelectionChangedTest {
                 return isSelectionInTrash;
             }
 
+            @Override
             boolean containsOnlyFolders(List<DiskResource> selection) {
                 return containsOnlyFolders;
             }
@@ -1555,7 +1565,6 @@ public class DiskResourceViewToolbar_onDiskResourceSelectionChangedTest {
         uut.newWindowAtLocMi = mockNewWindowAtLoc;
         uut.newFolderMi = mockNewFolder;
         uut.duplicateMi = mockDuplicate;
-        uut.addToSideBarMi = mockAddToSideBar;
         uut.newPlainTextFileMi = mockNewPlainTextFile;
         uut.newTabularDataFileMi = mockNewTabularFile;
         uut.moveToTrashMi = mockMoveToTrash;

@@ -4,8 +4,10 @@ import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.client.models.diskResources.File;
 import org.iplantc.de.client.models.diskResources.Folder;
+import org.iplantc.de.client.models.viewer.MimeType;
 import org.iplantc.de.client.util.DiskResourceUtil;
 import org.iplantc.de.commons.client.views.window.configs.ConfigFactory;
+import org.iplantc.de.commons.client.views.window.configs.FileViewerWindowConfig;
 import org.iplantc.de.commons.client.views.window.configs.TabularFileViewerWindowConfig;
 import org.iplantc.de.diskResource.client.events.DiskResourceSelectionChangedEvent;
 import org.iplantc.de.diskResource.client.events.FolderSelectionEvent;
@@ -369,32 +371,50 @@ public class DiskResourceViewToolbarImpl extends Composite implements DiskResour
 
     @UiHandler("newPlainTextFileMi")
     void onNewPlainTextFileClicked(SelectionEvent<Item> event){
-        presenter.createNewPlainTextFile();
+        FileViewerWindowConfig config = ConfigFactory.fileViewerWindowConfig(null);
+        config.setEditing(true);
+        config.setContentType(MimeType.PLAIN);
+        presenter.createNewPlainTextFile(config);
     }
 
     @UiHandler("newRFileMi")
     void onNewRFileClicked(SelectionEvent<Item> event) {
-
+        FileViewerWindowConfig config = ConfigFactory.fileViewerWindowConfig(null);
+        config.setEditing(true);
+        config.setContentType(MimeType.X_RSRC);
+        presenter.onNewRFile(config);
     }
 
     @UiHandler("newPerlFileMi")
     void onNewPerlFileClicked(SelectionEvent<Item> event) {
-
+        FileViewerWindowConfig config = ConfigFactory.fileViewerWindowConfig(null);
+        config.setEditing(true);
+        config.setContentType(MimeType.X_PERL);
+        presenter.onNewPerlFile(config);
     }
 
     @UiHandler("newPythonFileMi")
     void onNewPythonFileClicked(SelectionEvent<Item> event) {
-
+        FileViewerWindowConfig config = ConfigFactory.fileViewerWindowConfig(null);
+        config.setEditing(true);
+        config.setContentType(MimeType.X_PYTHON);
+        presenter.onNewPythonFile(config);
     }
 
     @UiHandler("newShellScriptFileMi")
     void onNewShellScript(SelectionEvent<Item> event) {
-
+        FileViewerWindowConfig config = ConfigFactory.fileViewerWindowConfig(null);
+        config.setEditing(true);
+        config.setContentType(MimeType.X_SH);
+        presenter.onNewShellScript(config);
     }
 
     @UiHandler("newMdFileMi")
     void onNewMdFile(SelectionEvent<Item> event) {
-
+        FileViewerWindowConfig config = ConfigFactory.fileViewerWindowConfig(null);
+        config.setEditing(true);
+        config.setContentType(MimeType.X_WEB_MARKDOWN);
+        presenter.onNewMdFile(config);
     }
 
     @UiHandler("newTabularDataFileMi")
@@ -406,6 +426,7 @@ public class DiskResourceViewToolbarImpl extends Composite implements DiskResour
             @Override
             public void onSelect(SelectEvent event) {
                 TabularFileViewerWindowConfig config = ConfigFactory.newTabularFileViewerWindowConfig();
+                config.setContentType(MimeType.PLAIN);
                 config.setEditing(true);
                 config.setVizTabFirst(true);
                 config.setSeparator(d.getSeparator());

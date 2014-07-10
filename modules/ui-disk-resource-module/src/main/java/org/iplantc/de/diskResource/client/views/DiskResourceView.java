@@ -8,6 +8,7 @@ import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.client.models.tags.IplantTag;
 import org.iplantc.de.client.services.DiskResourceServiceFacade;
 import org.iplantc.de.commons.client.tags.Taggable;
+import org.iplantc.de.commons.client.views.window.configs.FileViewerWindowConfig;
 import org.iplantc.de.commons.client.views.window.configs.TabularFileViewerWindowConfig;
 import org.iplantc.de.diskResource.client.events.DiskResourceSelectionChangedEvent;
 import org.iplantc.de.diskResource.client.events.FolderSelectionEvent;
@@ -84,8 +85,6 @@ public interface DiskResourceView extends IsWidget,
         }
 
         void createNewFolder();
-
-        void createNewPlainTextFile();
 
         void createNewTabFile(TabularFileViewerWindowConfig config);
 
@@ -200,15 +199,17 @@ public interface DiskResourceView extends IsWidget,
 
         void getTagsForSelectedResource();
 
-        void onNewRFile();
+        void onNewRFile(FileViewerWindowConfig config);
 
-        void onNewPerlFile();
+        void onNewPerlFile(FileViewerWindowConfig config);
 
-        void onNewPythonFile();
+        void onNewPythonFile(FileViewerWindowConfig config);
 
-        void onNewShellScript();
+        void onNewShellScript(FileViewerWindowConfig config);
 
-        void onNewMdFile();
+        void onNewMdFile(FileViewerWindowConfig config);
+
+        void createNewPlainTextFile(FileViewerWindowConfig config);
     }
 
     /**

@@ -36,6 +36,9 @@ import com.sencha.gxt.widget.core.client.PlainTabPanel;
 import com.sencha.gxt.widget.core.client.box.MessageBox;
 import com.sencha.gxt.widget.core.client.event.DialogHideEvent;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 /**
  * @author sriram
  * 
@@ -86,6 +89,8 @@ public class FileViewerWindow extends IplantWindowBase implements IsMaskable {
     private final FileViewerWindowConfig configAB;
     private final EventBus eventBus;
     private FileViewer.Presenter presenter;
+
+    Logger LOG = Logger.getLogger("Viewer");
 
     public FileViewerWindow(FileViewerWindowConfig config, EventBus eventBus) {
         super(null, null);
@@ -152,7 +157,7 @@ public class FileViewerWindow extends IplantWindowBase implements IsMaskable {
                 public void onDialogHide(DialogHideEvent event) {
                     if (PredefinedButton.YES.equals(event.getHideButton())) {
                         SaveFileEvent sfe = new SaveFileEvent();
-                        eventBus.fireEvent(sfe);
+                        tabPanel.getActiveWidget().fireEvent(sfe);
                     } else if (PredefinedButton.NO.equals(event.getHideButton())) {
                         presenter.cleanUp();
                         FileViewerWindow.super.doHide();
@@ -163,6 +168,7 @@ public class FileViewerWindow extends IplantWindowBase implements IsMaskable {
             });
             cmb.show();
         } else {
+            LOG.log(Level.SEVERE, "close <<<<<");
             presenter.cleanUp();
             super.doHide();
             doClose();
@@ -194,7 +200,10 @@ public class FileViewerWindow extends IplantWindowBase implements IsMaskable {
         } else {
             if (configAB.isEditing()) {
                 JSONObject manifest = new JSONObject();
-                manifest.put("content-type", new JSONString("plain"));
+                if (configAB.getContentType() != null) {
+                    manifest.put("content-type", new JSONString(configAB.getContentType().toString()));
+                }
+
                 if (configAB instanceof TabularFileViewerWindowConfig) {
                     processTabularFileEditingConfig(manifest);
                 }

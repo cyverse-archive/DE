@@ -2,6 +2,7 @@ package org.iplantc.de.commons.client.views.window.configs;
 
 import org.iplantc.de.client.models.diskResources.File;
 import org.iplantc.de.client.models.diskResources.Folder;
+import org.iplantc.de.client.models.viewer.MimeType;
 
 public interface FileViewerWindowConfig extends WindowConfig {
 
@@ -21,7 +22,7 @@ public interface FileViewerWindowConfig extends WindowConfig {
 
     boolean isVizTabFirst();
 
-    void setInfoType(String infoType);
+    void setContentType(MimeType contentType);
 
-    String getInfoType();
+    MimeType getContentType();
 }

@@ -1,7 +1,7 @@
 package org.iplantc.de.diskResource.client.events;
 
 import org.iplantc.de.client.models.diskResources.Folder;
-import org.iplantc.de.commons.client.views.window.configs.TabularFileViewerWindowConfig;
+import org.iplantc.de.commons.client.views.window.configs.FileViewerWindowConfig;
 import org.iplantc.de.diskResource.client.events.CreateNewFileEvent.CreateNewFileEventHandler;
 
 import com.google.gwt.event.shared.EventHandler;
@@ -16,16 +16,13 @@ public class CreateNewFileEvent extends GwtEvent<CreateNewFileEventHandler> {
     
     public static final GwtEvent.Type<CreateNewFileEventHandler> TYPE = new GwtEvent.Type<CreateNewFileEventHandler>();
     private final Folder parentFolder;
-    private TabularFileViewerWindowConfig config;
+    private FileViewerWindowConfig config;
 
-    public CreateNewFileEvent(Folder parentFolder) {
-        this(parentFolder, null);
+    public CreateNewFileEvent(FileViewerWindowConfig config) {
+        this.parentFolder = config.getParentFolder();
+        this.config = config;
     }
     
-    public CreateNewFileEvent(Folder parentFolder, TabularFileViewerWindowConfig config) {
-        this.parentFolder = parentFolder;
-        this.setTabularFileViewerWindowConfig(config);
-    }
 
     @Override
     public com.google.gwt.event.shared.GwtEvent.Type<CreateNewFileEventHandler> getAssociatedType() {
@@ -42,11 +39,11 @@ public class CreateNewFileEvent extends GwtEvent<CreateNewFileEventHandler> {
         
     }
 
-    public TabularFileViewerWindowConfig getTabularFileViewerWindowConfig() {
+    public FileViewerWindowConfig geFileViewerWindowConfig() {
         return config;
     }
 
-    public void setTabularFileViewerWindowConfig(TabularFileViewerWindowConfig config) {
+    public void setFileViewerWindowConfig(FileViewerWindowConfig config) {
         this.config = config;
     }
     
