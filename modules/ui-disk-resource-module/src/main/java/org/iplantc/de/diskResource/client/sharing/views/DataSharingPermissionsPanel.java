@@ -79,36 +79,8 @@ public class DataSharingPermissionsPanel implements IsWidget {
     private FastMap<List<DataSharing>> originalList;
     private final FastMap<DiskResource> resources;
     private final Presenter presenter;
-    private ComboBoxCell<PermissionValue> permCombo;
     private FastMap<List<DataSharing>> sharingMap;
     private HorizontalPanel explainPanel;
-
-    private final class PermissionComparator implements Comparator<PermissionValue> {
-        @Override
-        public int compare(PermissionValue s1, PermissionValue s2) {
-            if (!s1.equals(s2)) {
-                if (s1.equals(PermissionValue.varies)) {
-                    return 1;
-                }
-                if (s2.equals(PermissionValue.varies)) {
-                    return -1;
-                }
-                if (s1.equals(PermissionValue.own)) {
-                    return 1;
-                }
-                if (s2.equals(PermissionValue.own)) {
-                    return -1;
-                }
-                if (s1.equals(PermissionValue.write)) {
-                    return 1;
-                }
-                if (s2.equals(PermissionValue.write)) {
-                    return -1;
-                }
-            }
-            return 0;
-        }
-    }
 
     final Widget widget;
     private static MyUiBinder uiBinder = GWT.create(MyUiBinder.class);
@@ -117,13 +89,13 @@ public class DataSharingPermissionsPanel implements IsWidget {
     interface MyUiBinder extends UiBinder<Widget, DataSharingPermissionsPanel> {
     }
 
+    
     public DataSharingPermissionsPanel(Presenter dataSharingPresenter, FastMap<DiskResource> resources) {
         this.presenter = dataSharingPresenter;
         this.resources = resources;
         init();
         widget = uiBinder.createAndBindUi(this);
         initToolbar();
-        // initGrid();
     }
 
     @Override
@@ -197,7 +169,8 @@ public class DataSharingPermissionsPanel implements IsWidget {
         perms.add(PermissionValue.write);
         perms.add(PermissionValue.own);
 
-        permCombo = new ComboBoxCell<PermissionValue>(perms, new StringLabelProvider<PermissionValue>() {
+        final ComboBoxCell<PermissionValue> permCombo = new ComboBoxCell<PermissionValue>(perms,
+                                                                                    new StringLabelProvider<PermissionValue>() {
             @Override
             public String getLabel(PermissionValue value) {
                 return value.toString();
@@ -205,7 +178,8 @@ public class DataSharingPermissionsPanel implements IsWidget {
         });
 
         permCombo.setForceSelection(true);
-
+        permCombo.setSelectOnFocus(true);
+        
         permCombo.setTriggerAction(TriggerAction.ALL);
         permCombo.addSelectionHandler(new SelectionHandler<PermissionValue>() {
 
@@ -214,7 +188,9 @@ public class DataSharingPermissionsPanel implements IsWidget {
                 PermissionValue perm = event.getSelectedItem();
                 CellSelectionEvent<PermissionValue> sel = (CellSelectionEvent<PermissionValue>)event;
                 DataSharing ds = listStore.get(sel.getContext().getIndex());
+                ds.setDisplayPermission(perm);
                 updatePermissions(perm, ds.getUserName());
+                listStore.update(ds);
             }
         });
         return permCombo;
@@ -283,8 +259,7 @@ public class DataSharingPermissionsPanel implements IsWidget {
         this.sharingMap = sharingMap;
         originalList = new FastMap<List<DataSharing>>();
 
-        ListStore<DataSharing> store = grid.getStore();
-        store.clear();
+        listStore.clear();
         explainPanel.setVisible(false);
 
         for (String userName : sharingMap.keySet()) {
@@ -307,7 +282,7 @@ public class DataSharingPermissionsPanel implements IsWidget {
                     explainPanel.setVisible(true);
                 }
 
-                store.add(displayShare);
+                listStore.add(displayShare);
             }
         }
     }
@@ -333,7 +308,13 @@ public class DataSharingPermissionsPanel implements IsWidget {
         permission.setColumnTextStyle(permTextStyles);
         permission.setFixed(true);
         permission.setCell(buildPermissionsCombo());
-        permission.setComparator(new PermissionComparator());
+        permission.setComparator(new Comparator<PermissionValue>() {
+
+            @Override
+            public int compare(PermissionValue o1, PermissionValue o2) {
+                return o1.toString().compareTo(o2.toString());
+            }
+        });
 
         return permission;
     }
@@ -359,6 +340,7 @@ public class DataSharingPermissionsPanel implements IsWidget {
         });
 
         remove.setColumnTextClassName(CommonStyles.get().inlineBlock());
+        remove.setHeader("");
         remove.setSortable(false);
         remove.setFixed(true);
         SafeStyles textStyles = SafeStylesUtils.fromTrustedString("padding: 1px 3px;cursor:pointer;");
