@@ -13,29 +13,47 @@
     background-color: #009bad;
     position: absolute;
     height: headerHeight;
+    z-index: 1;
     width: 100%;
     top: 0;
     left: 0;
     right: 0;
+    box-shadow: -1px 0px 4px 0px #777;
 }
 
 .logoContainer {
     display: inline-block;
 }
 
-@sprite .logo {
-    gwt-image: 'iplantLogo';
+.logoContainer span {
+    color: #eee;
+    font-size: 1.3em;
+    text-align: right;
+    font-style: normal;
+    display: inline-block;
+    margin-top: 12px;
+    vertical-align: top;
 }
 
-.headerLayout {
+@sprite .logo {
+    gwt-image: 'iplantLogo';
+    display: inline-block;
+    height: 28px;
+    margin-top: 5px;
+    margin-left: 5px;
+    margin-right: 3px;
+}
 
+.logoText {
+    cursor: default;
 }
 
 @sprite .desktopBackground {
     gwt-image: 'desktopBackground';
     position: absolute;
-    width: 100%;
-    height: 100%;
+    width: 100% !important;
+    height: 100% !important;
+    z-index: 0;
     top: headerHeight;
     background-position: top center;
     bottom: footerHeight;
@@ -46,40 +64,95 @@
     position: absolute;
     width: 100%;
     height: 100%;
+    z-index: 0;
     top: headerHeight;
     bottom: footerHeight;
 }
 
 .userMenuContainer {
     position: absolute;
-    right: 0;
+    right: 30px;
     bottom: 0;
+}
+
+@def userMenuIconHeight 28px;
+@def userMenuIconWidth 28px;
+@def userMenuIconPaddingRight 5px;
+@def userMenuIconOpacity 0.8;
+@def userMenuIconOpacityHover 1;
+
+@sprite .forums {
+    gwt-image: 'forumsImg';
+    height: userMenuIconHeight !important;
+    width: userMenuIconWidth !important;
+    display: inline-block;
+    padding-right: userMenuIconPaddingRight;
+    opacity: userMenuIconOpacity;
+}
+@sprite .userPrefs {
+    gwt-image: 'userPrefImg';
+    height: userMenuIconHeight !important;
+    width: userMenuIconWidth !important;
+    display: inline-block;
+    padding-right: userMenuIconPaddingRight;
+    opacity: userMenuIconOpacity;
+}
+@sprite .notification {
+    gwt-image: 'notificationsImg';
+    height: userMenuIconHeight !important;
+    width: userMenuIconWidth !important;
+    display: inline-block;
+    padding-right: userMenuIconPaddingRight;
+    opacity: userMenuIconOpacity;
+}
+
+.forums:hover {
+    opacity: userMenuIconOpacityHover;
+}
+.userPrefs:hover {
+    opacity: userMenuIconOpacityHover;
+}
+.notification:hover {
+    opacity: userMenuIconOpacityHover;
 }
 
 .windowBtnNav {
     position: fixed;
-    left: 0;
+    left: 30px;
     top: 40px;
 }
 
-.taskBarLayout {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
+@def winBtnHeight 68px;
+@def winBtnWidth 68px;
+@def winBtnMarginTop 5px;
 
+@sprite .analyses {
+    gwt-image: 'analysisBtn';
+    height: winBtnHeight !important;
+    width: winBtnWidth !important;
+    margin-top: winBtnMarginTop;
+}
+@sprite .apps {
+    gwt-image: 'appBtn';
+    height: winBtnHeight !important;
+    width: winBtnWidth !important;
+    margin-top: winBtnMarginTop;
+}
+@sprite .data {
+    gwt-image: 'dataBtn';
+    height: winBtnHeight !important;
+    width: winBtnWidth !important;
+    margin-top: winBtnMarginTop;
 }
 
-header {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 40px;
+@sprite .analyses:hover {
+    gwt-image: 'analysisBtnHover';
 }
-
-@sprite .feedbackOver {
-    gwt-image: 'feedbackImg';
+@sprite .apps:hover {
+    gwt-image: 'appBtnHover';
+}
+@sprite .data:hover {
+    gwt-image: 'dataBtnHover';
 }
 
 @sprite .feedback {
@@ -91,83 +164,10 @@ header {
     width: 115px !important;
 }
 
-@def winBtnHeight 68px;
-@def winBtnWidth 68px;
-@def winBtnTop 10px;
-@def winBtnLeft 30px;
+.taskBarLayout {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
 
-@sprite .analysesOver {
-    gwt-image: 'analysisBtnHover';
-}
-
-@sprite .analyses {
-    gwt-image: 'analysisBtn';
-    height: winBtnHeight !important;
-    width: winBtnWidth !important;
-    top: winBtnTop;
-    left: winBtnLeft;
-}
-
-@sprite .appsOver {
-    gwt-image: 'appBtnHover';
-}
-
-@sprite .apps {
-    gwt-image: 'appBtn';
-    height: winBtnHeight !important;
-    width: winBtnWidth !important;
-    top: winBtnTop;
-    left: winBtnLeft;
-}
-
-@sprite .dataOver {
-    gwt-image: 'dataBtnHover';
-}
-
-@sprite .data {
-    gwt-image: 'dataBtn';
-    height: winBtnHeight !important;
-    width: winBtnWidth !important;
-    top: winBtnTop;
-    left: winBtnLeft;
-}
-
-@sprite .forumsOver {
-    gwt-image: 'forumsImg';
-}
-
-@def userMenuIconHeight 28px;
-@def userMenuIconWidth 28px;
-
-@sprite .forums {
-    gwt-image: 'forumsImg';
-    height: userMenuIconHeight !important;
-    width: userMenuIconWidth !important;
-    display: inline-block;
-}
-
-@sprite .userPrefsOver {
-    gwt-image: 'userPrefImg';
-}
-
-@sprite .userPrefs {
-    gwt-image: 'userPrefImg';
-    height: userMenuIconHeight !important;
-    width: userMenuIconWidth !important;
-    display: inline-block;
-}
-
-@sprite .notificationOver {
-    gwt-image: 'notificationsImg';
-}
-
-@sprite .notification {
-    gwt-image: 'notificationsImg';
-    height: userMenuIconHeight !important;
-    width: userMenuIconWidth !important;
-    display: inline-block;
-}
-
-@sprite .desktopBackground {
-    gwt-image: 'desktopBackground';
 }

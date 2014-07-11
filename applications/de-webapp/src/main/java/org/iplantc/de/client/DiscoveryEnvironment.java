@@ -28,7 +28,7 @@ public class DiscoveryEnvironment implements EntryPoint {
         DEInjector injector = DEInjector.INSTANCE;
         DeResources resources = GWT.create(DeResources.class);
         resources.css().ensureInjected();
-        RootLayoutPanel.get().clear();
+        RootPanel.get().clear();
         //DEView view = new DEViewImpl(resources, EventBus.getInstance());
         //new DEPresenter(view, EventBus.getInstance(), I18N.ERROR);
         final NewDesktopView.Presenter newDesktopPresenter = injector.getNewDesktopPresenter();

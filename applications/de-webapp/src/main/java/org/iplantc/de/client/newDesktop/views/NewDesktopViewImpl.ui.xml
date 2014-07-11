@@ -10,16 +10,17 @@
     <ui:with field="help"
              type="org.iplantc.de.resources.client.messages.IplantContextualHelpStrings"/>
 
-    <g:HTMLPanel>
+    <g:HTMLPanel addStyleNames="{appearance.styles.deBody}">
         <!--Header-->
-        <header>
-            <div class="{appearance.styles.headerLayout}">
+        <div class="{appearance.styles.iplantHeader}">
+            <div class="{appearance.styles.logoContainer}">
                 <a href="http://iplantcollaborative.org"
                    target="_blank">
-                    <span class="{appearance.styles.logo}"/><span>Discovery Environment</span>
+                    <div class="{appearance.styles.logo}"/>
                 </a>
+                <span class="{appearance.styles.logoText}">Discovery Environment</span>
             </div>
-            <nav class="{appearance.styles.userMenuLayout}">
+            <nav class="{appearance.styles.userMenuContainer}">
                 <button:IconButton ui:field="notificationsBtn"
                                    toolTip="{display.notifications}"
                                    config="{appearance.notificationsConfig}"/>
@@ -30,7 +31,7 @@
                                    toolTip="{display.forums}"
                                    config="{appearance.forumsConfig}"/>
             </nav>
-        </header>
+        </div>
         <!--Body-->
         <div class="{appearance.styles.desktopBackgroundRepeat}" />
         <div class="{appearance.styles.desktopBackground}">

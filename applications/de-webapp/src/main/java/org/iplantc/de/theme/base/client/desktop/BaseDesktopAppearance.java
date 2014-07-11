@@ -36,8 +36,6 @@ public class BaseDesktopAppearance implements DesktopAppearance {
         ImageResource dataBtnHover();
 
         @Source("background.png")
-        ImageResource desktopBackground();
-
         @ImageOptions(repeatStyle = Horizontal)
         ImageResource desktopBackground();
 
@@ -80,32 +78,32 @@ public class BaseDesktopAppearance implements DesktopAppearance {
 
     @Override
     public IconConfig analysisConfig() {
-        return new IconConfig(style.analyses(), style.analysesOver());
+        return new IconConfig(style.analyses());
     }
 
     @Override
     public IconConfig appsConfig() {
-        return new IconConfig(style.apps(), style.appsOver());
+        return new IconConfig(style.apps());
     }
 
     @Override
     public IconConfig dataConfig() {
-        return new IconConfig(style.data(), style.dataOver());
+        return new IconConfig(style.data());
     }
 
     @Override
     public IconConfig feedbackBtnConfig() {
-        return new IconConfig(style.feedback(), style.feedbackOver());
+        return new IconConfig(style.feedback());
     }
 
     @Override
     public IconConfig forumsConfig() {
-        return new IconConfig(style.forums(), style.forumsOver());
+        return new IconConfig(style.forums());
     }
 
     @Override
     public IconConfig notificationsConfig() {
-        return new IconConfig(style.notification(), style.notificationOver());
+        return new IconConfig(style.notification());
     }
 
     @Override
@@ -115,6 +113,6 @@ public class BaseDesktopAppearance implements DesktopAppearance {
 
     @Override
     public IconConfig userPrefsConfig() {
-        return new IconConfig(style.userPrefs(), style.userPrefsOver());
+        return new IconConfig(style.userPrefs());
     }
 }

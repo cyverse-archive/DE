@@ -17,15 +17,9 @@ public interface NewDesktopView extends IsWidget {
         interface DesktopStyles extends CssResource {
             String analyses();
 
-            String analysesOver();
-
             String apps();
 
-            String appsOver();
-
             String data();
-
-            String dataOver();
 
             String deBody();
 
@@ -33,11 +27,7 @@ public interface NewDesktopView extends IsWidget {
 
             String feedback();
 
-            String feedbackOver();
-
             String forums();
-
-            String forumsOver();
 
             String iplantHeader();
 
@@ -47,19 +37,17 @@ public interface NewDesktopView extends IsWidget {
 
             String notification();
 
-            String notificationOver();
-
             String taskBarLayout();
 
             String userMenuContainer();
 
             String userPrefs();
 
-            String userPrefsOver();
-
             String windowBtnNav();
 
             String desktopBackgroundRepeat();
+
+            String logoText();
         }
 
         IconButton.IconConfig analysisConfig();

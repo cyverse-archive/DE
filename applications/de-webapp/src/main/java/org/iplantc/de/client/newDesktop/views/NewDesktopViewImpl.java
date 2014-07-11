@@ -6,6 +6,7 @@ import org.iplantc.de.resources.client.messages.IplantNewUserTourStrings;
 import org.iplantc.de.shared.DeModule;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -132,11 +133,6 @@ public class NewDesktopViewImpl implements NewDesktopView {
     @Override
     public Widget asWidget() {
         return widget;
-    }
-
-    @Override
-    public void setPresenter(final Presenter presenter) {
-        this.presenter = presenter;
     }
 
     @Override
