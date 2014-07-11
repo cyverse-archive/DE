@@ -24,7 +24,6 @@ public class StructuredTextViewToolBar extends AbstractToolBar {
     private NumberField<Integer> skipRowsCount;
 
     private LabelToolItem skipRowsLabel;
-    private LabelToolItem cbxHeaderLabel;
 
     private TextButton addRowBtn;
     private TextButton deleteRowBtn;

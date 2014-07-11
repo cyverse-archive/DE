@@ -31,6 +31,8 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.sencha.gxt.core.client.dom.XElement;
+import com.sencha.gxt.widget.core.client.Window;
+import com.sencha.gxt.widget.core.client.box.AlertMessageBox;
 import com.sencha.gxt.widget.core.client.container.BorderLayoutContainer;
 import com.sencha.gxt.widget.core.client.container.SimpleContainer;
 import com.sencha.gxt.widget.core.client.event.SelectEvent;
@@ -48,6 +50,92 @@ import java.util.logging.Logger;
 public class TextViewerImpl extends AbstractFileViewer implements EditingSupport {
 
     private static TextViewerUiBinder uiBinder = GWT.create(TextViewerUiBinder.class);
+
+    private final class SaveAsDialogHandlerImpl implements SelectHandler {
+        private final SaveAsDialog saveDialog;
+
+        private SaveAsDialogHandlerImpl(SaveAsDialog saveDialog) {
+            this.saveDialog = saveDialog;
+        }
+
+        @Override
+        public void onSelect(SelectEvent event) {
+            if (saveDialog.isVaild()) {
+                con.mask(I18N.DISPLAY.savingMask());
+                String destination = saveDialog.getSelectedFolder().getPath() + "/"
+                        + saveDialog.getFileName();
+                ServicesInjector.INSTANCE.getFileEditorServiceFacade()
+                                         .uploadTextAsFile(destination,
+                                                           getEditorContent(jso),
+                                                           true,
+                                                           new FileSaveCallback(destination,
+                                                                                true,
+                                                                                con));
+                saveDialog.hide();
+            }
+        }
+    }
+
+    private final class GetDataCallbackImpl implements AsyncCallback<String> {
+        @Override
+         public void onSuccess(String result) {
+             data = JsonUtil.getString(JsonUtil.getObject(result),
+                                       "chunk");
+             setData(data);
+             con.unmask();
+         }
+
+        @Override
+         public void onFailure(Throwable caught) {
+             ErrorHandler.post(org.iplantc.de.resources.client.messages.I18N.ERROR.unableToRetrieveFileData(file.getName()),
+                               caught);
+             con.unmask();
+         }
+    }
+
+    private final class ResizeViewHandlerImpl implements ResizeHandler {
+        @Override
+        public void onResize(ResizeEvent event) {
+            if (jso != null) {
+                resizeDisplay(jso, center.getElement().getOffsetWidth(), center.getElement()
+                                                                               .getOffsetHeight());
+            }
+        }
+    }
+
+    private final class SaveFileHandlerImpl implements SaveFileEventHandler {
+        @Override
+        public void onSave(SaveFileEvent event) {
+            save();
+
+        }
+    }
+
+    private final class PreviewSelectHandlerImpl implements SelectHandler {
+        @Override
+        public void onSelect(SelectEvent event) {
+            // do not support preview if content cannot be fit in one page.
+            if(pagingToolbar.getToltalPages() > 1) {
+                AlertMessageBox amb = new AlertMessageBox("Preview",
+                                                          "Unable to generate preview. Please adjust page size to fit  file contents in 1 page and try again!");
+                amb.show();
+                return;
+            }
+            Window d = new Window();
+            File fileObj = TextViewerImpl.this.file;
+            if (fileObj != null) {
+                d.setHeadingHtml(fileObj.getName());
+            } else {
+                d.setHeadingHtml("Preview");
+            }
+            d.setSize("600", "500");
+            MarkDownRendererViewImpl renderer = new MarkDownRendererViewImpl(fileObj,
+                                                                             TextViewerImpl.this.infoType,
+                                                                             getEditorContent(jso));
+            d.add(renderer.asWidget());
+            d.show();
+        }
+    }
 
     @UiTemplate("TextViewer.ui.xml")
     interface TextViewerUiBinder extends UiBinder<Widget, TextViewerImpl> {
@@ -80,7 +168,7 @@ public class TextViewerImpl extends AbstractFileViewer implements EditingSupport
     private Presenter presenter;
 
     protected JavaScriptObject jso;
-    
+
     private final String mode;
 
     private final List<HandlerRegistration> eventHandlers = new ArrayList<HandlerRegistration>();
@@ -95,15 +183,12 @@ public class TextViewerImpl extends AbstractFileViewer implements EditingSupport
         this.parentFolder = parentFolder;
         toolbar = initToolBar();
         pagingToolbar = initPagingToolbar();
+
+        if (mode != null && mode.equals("markdown")) {
+            toolbar.addPreviewHandler(new PreviewSelectHandlerImpl());
+        }
         widget = uiBinder.createAndBindUi(this);
-        widget.addHandler(new SaveFileEventHandler() {
-
-            @Override
-            public void onSave(SaveFileEvent event) {
-                save();
-
-            }
-        }, SaveFileEvent.TYPE);
+        widget.addHandler(new SaveFileHandlerImpl(), SaveFileEvent.TYPE);
 
         addWrapHandler();
         addLineHumberHandler();
@@ -116,20 +201,17 @@ public class TextViewerImpl extends AbstractFileViewer implements EditingSupport
             setData("");
         }
 
-        center.addResizeHandler(new ResizeHandler() {
-
-            @Override
-            public void onResize(ResizeEvent event) {
-                if (jso != null) {
-                    resizeDisplay(jso, center.getElement().getOffsetWidth(), center.getElement().getOffsetHeight());
-                }
-            }
-        });
+        center.addResizeHandler(new ResizeViewHandlerImpl());
 
     }
 
     TextViewToolBar initToolBar() {
-        TextViewToolBar textViewPagingToolBar = new TextViewToolBar(this, editing);
+        TextViewToolBar textViewPagingToolBar;
+        if (mode != null && mode == "markdown") {
+             textViewPagingToolBar = new TextViewToolBar(this, editing, true);
+        } else {
+             textViewPagingToolBar = new TextViewToolBar(this, editing, false);
+        }
         return textViewPagingToolBar;
     }
 
@@ -156,7 +238,7 @@ public class TextViewerImpl extends AbstractFileViewer implements EditingSupport
 
             @Override
             public void onValueChange(ValueChangeEvent<Boolean> event) {
-                    wrapText(jso,event.getValue());
+                wrapText(jso, event.getValue());
             }
         });
     }
@@ -168,7 +250,7 @@ public class TextViewerImpl extends AbstractFileViewer implements EditingSupport
             public void onValueChange(ValueChangeEvent<Boolean> event) {
                 showLineNumbersInEditor(jso, event.getValue());
             }
-            
+
         });
     }
 
@@ -179,7 +261,8 @@ public class TextViewerImpl extends AbstractFileViewer implements EditingSupport
         JSONObject obj = new JSONObject();
         obj.put("path", new JSONString(file.getPath()));
         // position starts at 0
-        obj.put("position", new JSONString("" + pagingToolbar.getPageSize() * (pagingToolbar.getPageNumber() - 1)));
+        obj.put("position",
+                new JSONString("" + pagingToolbar.getPageSize() * (pagingToolbar.getPageNumber() - 1)));
         obj.put("chunk-size", new JSONString("" + pagingToolbar.getPageSize()));
         return obj;
     }
@@ -190,21 +273,8 @@ public class TextViewerImpl extends AbstractFileViewer implements EditingSupport
         JSONObject requestBody = getRequestBody();
         if (requestBody != null) {
             con.mask(org.iplantc.de.resources.client.messages.I18N.DISPLAY.loadingMask());
-            ServicesInjector.INSTANCE.getFileEditorServiceFacade().getDataChunk(url, requestBody, new AsyncCallback<String>() {
-
-                @Override
-                public void onSuccess(String result) {
-                    data = JsonUtil.getString(JsonUtil.getObject(result), "chunk");
-                    setData(data);
-                    con.unmask();
-                }
-
-                @Override
-                public void onFailure(Throwable caught) {
-                    ErrorHandler.post(org.iplantc.de.resources.client.messages.I18N.ERROR.unableToRetrieveFileData(file.getName()), caught);
-                    con.unmask();
-                }
-            });
+            ServicesInjector.INSTANCE.getFileEditorServiceFacade()
+                                     .getDataChunk(url, requestBody, new GetDataCallbackImpl());
         }
 
     }
@@ -237,6 +307,7 @@ public class TextViewerImpl extends AbstractFileViewer implements EditingSupport
             setDirty(false);
         }
         toolbar.setEditing(allowEditing);
+
         /**
          * XXX - SS - support editing for files with only one page
          */
@@ -253,7 +324,7 @@ public class TextViewerImpl extends AbstractFileViewer implements EditingSupport
             presenter.setVeiwDirtyState(dirty);
         }
     }
-    
+
     public static native void updateData(JavaScriptObject jso, String val) /*-{
 		jso.setValue(val);
     }-*/;
@@ -313,23 +384,11 @@ public class TextViewerImpl extends AbstractFileViewer implements EditingSupport
 		jso.setOption("lineWrapping", wrap);
     }-*/;
 
-
     @Override
     public void save() {
         if (file == null) {
             final SaveAsDialog saveDialog = new SaveAsDialog(parentFolder);
-            saveDialog.addOkButtonSelectHandler(new SelectHandler() {
-
-                @Override
-                public void onSelect(SelectEvent event) {
-                    if (saveDialog.isVaild()) {
-                        con.mask(I18N.DISPLAY.savingMask());
-                        String destination = saveDialog.getSelectedFolder().getPath() + "/" + saveDialog.getFileName();
-                        ServicesInjector.INSTANCE.getFileEditorServiceFacade().uploadTextAsFile(destination, getEditorContent(jso), true, new FileSaveCallback(destination, true, con));
-                        saveDialog.hide();
-                    }
-                }
-            });
+            saveDialog.addOkButtonSelectHandler(new SaveAsDialogHandlerImpl(saveDialog));
             saveDialog.addCancelButtonSelectHandler(new SelectHandler() {
 
                 @Override
@@ -342,10 +401,13 @@ public class TextViewerImpl extends AbstractFileViewer implements EditingSupport
             saveDialog.toFront();
         } else {
             con.mask(I18N.DISPLAY.savingMask());
-            ServicesInjector.INSTANCE.getFileEditorServiceFacade().uploadTextAsFile(file.getPath(), getEditorContent(jso), false, new FileSaveCallback(file.getPath(), false, con));
+            ServicesInjector.INSTANCE.getFileEditorServiceFacade()
+                                     .uploadTextAsFile(file.getPath(),
+                                                       getEditorContent(jso),
+                                                       false,
+                                                       new FileSaveCallback(file.getPath(), false, con));
         }
     }
-
 
     @Override
     public boolean isDirty() {

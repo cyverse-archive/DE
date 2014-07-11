@@ -217,20 +217,4 @@ public class ExternalVizualizationURLViwerImpl extends AbstractFileViewer implem
 
     }
 
-    @Override
-    public void save() {
-        throw new UnsupportedOperationException("Editing not supported in this view");
-
-    }
-
-    @Override
-    public void setDirty(Boolean dirty) {
-        // do nothing intetionally
-
-    }
-
-    @Override
-    public boolean isDirty() {
-        return false;
-    }
 }

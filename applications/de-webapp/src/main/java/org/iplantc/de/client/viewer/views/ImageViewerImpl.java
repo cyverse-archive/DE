@@ -68,21 +68,4 @@ public class ImageViewerImpl extends AbstractFileViewer {
         // Do nothing intentionally
 
     }
-
-    @Override
-    public void save() {
-        throw new UnsupportedOperationException("Editing not supported in this view");
-
-    }
-
-    @Override
-    public void setDirty(Boolean dirty) {
-        // Do nothing intentionally
-
-    }
-
-    @Override
-    public boolean isDirty() {
-        return false;
-    }
 }

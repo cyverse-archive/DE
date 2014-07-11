@@ -71,6 +71,10 @@ if (deMaintenance.isUnderMaintenance()) {
 	src="scripts/matchbrackets.js"></script>
 			<script type="text/javascript" language="javascript"
 	src="scripts/closebrackets.js"></script>
+				<script type="text/javascript" language="javascript"
+	src="scripts/Markdown.Converter.js"></script>
+	<script type="text/javascript" language="javascript"
+	src="scripts/Markdown.Sanitizer.js"></script>
 
 <%
 	out.println("<p style='position:absolute;top:45%; left:48%  margin-top: 45%; margin-left: 48%;'>Loading...Please wait!</p><img style='position:absolute;top:50%; left:50%  margin-top: 50%; margin-left: 50%;' src='./images/loading_spinner.gif'/>");

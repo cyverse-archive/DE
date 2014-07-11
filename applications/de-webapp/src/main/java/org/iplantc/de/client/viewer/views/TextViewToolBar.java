@@ -2,6 +2,8 @@ package org.iplantc.de.client.viewer.views;
 
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 
+import com.sencha.gxt.widget.core.client.button.TextButton;
+import com.sencha.gxt.widget.core.client.event.SelectEvent.SelectHandler;
 import com.sencha.gxt.widget.core.client.form.CheckBox;
 import com.sencha.gxt.widget.core.client.toolbar.FillToolItem;
 import com.sencha.gxt.widget.core.client.toolbar.SeparatorToolItem;
@@ -14,7 +16,10 @@ public class TextViewToolBar extends AbstractToolBar {
 
     private CheckBox lineNumberCbx;
 
-    public TextViewToolBar(AbstractFileViewer view, boolean editing) {
+    // for markdown preview
+    private TextButton previewMDBtn;
+
+    public TextViewToolBar(AbstractFileViewer view, boolean editing, boolean preview) {
         super(editing);
         this.view = view;
         this.editing = editing;
@@ -26,6 +31,12 @@ public class TextViewToolBar extends AbstractToolBar {
         setEditingStatus(editing);
         buildLineNumberButton();
         add(lineNumberCbx);
+        if(preview) {
+            add(new SeparatorToolItem());
+            previewMDBtn = new TextButton("Preview Markdown");
+            add(previewMDBtn);
+        }
+
         add(new FillToolItem());
         add(editStatus);
         setEditingStatus(editing);
@@ -41,6 +52,12 @@ public class TextViewToolBar extends AbstractToolBar {
             editStatus.setText("Editable");
         } else {
             editStatus.setText("Not Editable");
+        }
+    }
+
+    public void addPreviewHandler(SelectHandler handler) {
+        if (previewMDBtn != null) {
+            previewMDBtn.addSelectHandler(handler);
         }
     }
 
@@ -68,7 +85,7 @@ public class TextViewToolBar extends AbstractToolBar {
 
     @Override
     public void save() {
-        view.save();
+        ((TextViewerImpl)view).save();
 
     }
 

@@ -11,7 +11,7 @@ import com.google.gwt.user.client.ui.Widget;
  * @author sriram
  * 
  */
-public abstract class AbstractFileViewer implements FileViewer, EditingSupport {
+public abstract class AbstractFileViewer implements FileViewer {
 
     protected File file;
 
@@ -42,6 +42,7 @@ public abstract class AbstractFileViewer implements FileViewer, EditingSupport {
 
     @Override
     public abstract void setData(Object data);
+
 
     @Override
     public abstract void loadData();

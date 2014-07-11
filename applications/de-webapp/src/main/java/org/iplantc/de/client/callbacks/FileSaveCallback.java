@@ -23,8 +23,10 @@ public class FileSaveCallback implements AsyncCallback<String> {
 
     private final String parentFolder;
     private final String fileName;
-    private Component maskingContainer;
-    private boolean newFile;
+    private final Component maskingContainer;
+    private final boolean newFile;
+
+    private boolean fireEvent = true;
 
     public FileSaveCallback(String path, boolean newFile, Component container) {
         this.fileName = DiskResourceUtil.parseNameFromPath(path);
@@ -42,16 +44,28 @@ public class FileSaveCallback implements AsyncCallback<String> {
         if (newFile) {
             uch.onCompletion(fileName, fileJson);
         }
-        DiskResourceAutoBeanFactory factory = GWT.create(DiskResourceAutoBeanFactory.class);
-        AutoBean<File> fileAB = AutoBeanCodex.decode(factory, File.class, fileJson);
-        FileSavedEvent evnt = new FileSavedEvent(fileAB.as());
-        EventBus.getInstance().fireEvent(evnt);
+
+        if (fireEvent) {
+            DiskResourceAutoBeanFactory factory = GWT.create(DiskResourceAutoBeanFactory.class);
+            AutoBean<File> fileAB = AutoBeanCodex.decode(factory, File.class, fileJson);
+            FileSavedEvent evnt = new FileSavedEvent(fileAB.as());
+            EventBus.getInstance().fireEvent(evnt);
+        }
     }
 
     @Override
     public void onFailure(Throwable caught) {
         maskingContainer.unmask();
-        ErrorHandler.post(org.iplantc.de.resources.client.messages.I18N.ERROR.fileUploadsFailed(Lists.newArrayList(fileName)), caught);
+        ErrorHandler.post(org.iplantc.de.resources.client.messages.I18N.ERROR.fileUploadsFailed(Lists.newArrayList(fileName)),
+                          caught);
+    }
+
+    public boolean isFireEvent() {
+        return fireEvent;
+    }
+
+    public void setFireEvent(boolean fireEvent) {
+        this.fireEvent = fireEvent;
     }
 
 }
