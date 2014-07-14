@@ -2,6 +2,7 @@
   background: none repeat scroll 0 0 ;
   padding: 3px;
   width: 200px;
+  font-size: 11px;
   border-bottom: 1px solid #DDDDDD;
   overflow: hidden;
 }
@@ -15,7 +16,6 @@
 .thumbWrap {
   float: left;
   margin: 4px 0 4px 4px;
-  font: 11px;
   display: block;
   overflow: hidden;
   text-align: left;

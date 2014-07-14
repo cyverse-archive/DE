@@ -23,6 +23,7 @@ import com.google.gwt.debug.client.DebugInfo;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.dom.client.Style.TextDecoration;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.shared.HasHandlers;
 import com.google.gwt.safehtml.client.SafeHtmlTemplates;
 import com.google.gwt.safehtml.shared.SafeHtml;
@@ -174,6 +175,7 @@ public class DiskResourceNameCell extends AbstractCell<DiskResource> {
         if (!isValidClickTarget(eventTarget, value)) {
             if (value.isFilter()) {
                 initPopup();
+                linkPopup.getElement().getStyle().setFontSize(11, Unit.PX);
                 linkPopup.add(new HTML(I18N.DISPLAY.diskResourceNotAvailable()));
                 linkPopup.setSize("300px", "150px");
                 schedulePopupTimer(eventTarget);

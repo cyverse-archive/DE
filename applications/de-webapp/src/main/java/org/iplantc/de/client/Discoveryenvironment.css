@@ -216,9 +216,8 @@ html,body {
 
 .de_header_menu {
 	border-style: solid;
-	border-color: #0098AA #0098AA;
-	padding: 1px;
-	margin-top: 5px;
+	border-width: 1px;
+	border-color: #0098AA;
 }
 
 .tag {
