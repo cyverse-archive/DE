@@ -2,6 +2,7 @@ package org.iplantc.de.client.services.impl;
 
 import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.GET;
 import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.POST;
+
 import org.iplantc.de.client.models.DEProperties;
 import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.client.models.diskResources.DiskResource;
@@ -72,7 +73,6 @@ public class SearchServiceFacadeImpl implements SearchServiceFacade {
 
                     reMapDateKeys(entity);
                     reMapPermissions(entity);
-                    reMapPath(entity);
 
                     if (asString.equals("folder")) {
                         ret.add(decodeFolderIntoQueryTemplate(entity, queryTemplate, factory));
@@ -117,14 +117,6 @@ public class SearchServiceFacadeImpl implements SearchServiceFacade {
             entity.get("fileSize").assign(entity, "file-size");
         }
 
-        /**
-         * KLUDGE Re-map JSON keys until service JSON is unified.
-         */
-        void reMapPath(Splittable entity) {
-            final String id = entity.get("id").asString();
-            // StringQuoter.create(DiskResourceUtil.parseParent(id)).assign(entity, "path");
-            StringQuoter.create(id).assign(entity, "path");
-        }
 
         void reMapPermissions(Splittable entity) {
             Splittable userPermissionsList = entity.get("userPermissions");
