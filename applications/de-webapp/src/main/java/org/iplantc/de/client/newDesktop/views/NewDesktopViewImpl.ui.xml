@@ -24,7 +24,7 @@
                 <button:IconButton ui:field="notificationsBtn"
                                    toolTip="{display.notifications}"
                                    config="{appearance.notificationsConfig}"/>
-                <button:IconButton ui:field="userPrefsBtn"
+                <button:IconButton ui:field="userSettingsBtn"
                                    toolTip="{display.preferences}"
                                    config="{appearance.userPrefsConfig}"/>
                 <button:IconButton ui:field="forumsBtn"

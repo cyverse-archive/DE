@@ -2,17 +2,20 @@ package org.iplantc.de.client.newDesktop.views;
 
 import org.iplantc.de.client.desktop.widget.TaskBar;
 import org.iplantc.de.client.newDesktop.NewDesktopView;
+import org.iplantc.de.client.newDesktop.views.widgets.UserSettingsMenu;
 import org.iplantc.de.resources.client.messages.IplantNewUserTourStrings;
 import org.iplantc.de.shared.DeModule;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 
+import static com.sencha.gxt.core.client.Style.Anchor.BOTTOM_LEFT;
+import static com.sencha.gxt.core.client.Style.Anchor.TOP_LEFT;
+import static com.sencha.gxt.core.client.Style.AnchorAlignment;
 import com.sencha.gxt.widget.core.client.button.IconButton;
 import com.sencha.gxt.widget.core.client.event.SelectEvent;
 
@@ -20,56 +23,6 @@ import com.sencha.gxt.widget.core.client.event.SelectEvent;
  * Created by jstroot on 7/6/14.
  */
 public class NewDesktopViewImpl implements NewDesktopView {
-
-    public interface DesktopStyles extends CssResource {
-
-        String analyses();
-
-        String headerLayout();
-
-        String userMenuLayout();
-        String analysesOver();
-
-        String apps();
-
-        String appsOver();
-
-        String data();
-
-        String dataOver();
-
-        String deBody();
-
-        String desktopBackground();
-
-        String feedback();
-
-        String feedbackOver();
-
-        String forums();
-
-        String forumsOver();
-
-        String iplantHeader();
-
-        String logo();
-
-        String logoContainer();
-
-        String notification();
-
-        String notificationOver();
-
-        String taskBarLayout();
-
-        String userMenuContainer();
-
-        String userPrefs();
-
-        String userPrefsOver();
-
-        String windowBtnNav();
-    }
 
     interface NewViewUiBinder extends UiBinder<Widget, NewDesktopViewImpl> { }
 
@@ -88,14 +41,18 @@ public class NewDesktopViewImpl implements NewDesktopView {
     @UiField
     TaskBar taskBar;
     @UiField
-    IconButton userPrefsBtn;
+    IconButton userSettingsBtn;
     private static NewViewUiBinder ourUiBinder = GWT.create(NewViewUiBinder.class);
     private final Widget widget;
-    private Presenter presenter;
+    private final UserSettingsMenu userSettingsMenu;
+    private final AnchorAlignment anchorAlignment = new AnchorAlignment(TOP_LEFT, BOTTOM_LEFT, true);
+    private NewDesktopView.Presenter presenter;
 
     @Inject
     public NewDesktopViewImpl(final IplantNewUserTourStrings tourStrings) {
         widget = ourUiBinder.createAndBindUi(this);
+        userSettingsMenu = new UserSettingsMenu();
+        userSettingsMenu.setPresenter(presenter);
         initIntroAttributes(tourStrings);
     }
 
@@ -121,9 +78,9 @@ public class NewDesktopViewImpl implements NewDesktopView {
         notificationsBtn.getElement().setAttribute("data-position", "left");
         notificationsBtn.getElement().setAttribute("data-step", "4");
 
-        userPrefsBtn.getElement().setAttribute("data-intro", tourStrings.introSettings());
-        userPrefsBtn.getElement().setAttribute("data-position", "left");
-        userPrefsBtn.getElement().setAttribute("data-step", "5");
+        userSettingsBtn.getElement().setAttribute("data-intro", tourStrings.introSettings());
+        userSettingsBtn.getElement().setAttribute("data-position", "left");
+        userSettingsBtn.getElement().setAttribute("data-step", "5");
 
         forumsBtn.getElement().setAttribute("data-intro", tourStrings.introAsk());
         forumsBtn.getElement().setAttribute("data-position", "left");
@@ -138,17 +95,20 @@ public class NewDesktopViewImpl implements NewDesktopView {
     @Override
     public void ensureDebugId(String baseID) {
         notificationsBtn.ensureDebugId(baseID + DeModule.Ids.NOTIFICATION_BUTTON);
-        userPrefsBtn.ensureDebugId(baseID + DeModule.Ids.USER_PREF_BUTTON);
+        userSettingsBtn.ensureDebugId(baseID + DeModule.Ids.USER_PREF_BUTTON);
         forumsBtn.ensureDebugId(baseID + DeModule.Ids.FORUMS_BUTTON);
         dataWinBtn.ensureDebugId(baseID + DeModule.Ids.DATA_BTN);
         appsWinBtn.ensureDebugId(baseID + DeModule.Ids.APPS_BTN);
         analysisWinBtn.ensureDebugId(baseID + DeModule.Ids.ANALYSES_BTN);
         feedbackBtn.ensureDebugId(baseID + DeModule.Ids.FEEDBACK_BTN);
         taskBar.ensureDebugId(baseID + DeModule.Ids.TASK_BAR);
+
+
+        // TODO JDS Set debug ids for user settings menu
     }
 
     @Override
-    public void setPresenter(final Presenter presenter) {
+    public void setPresenter(final NewDesktopView.Presenter presenter) {
         this.presenter = presenter;
     }
 
@@ -174,12 +134,13 @@ public class NewDesktopViewImpl implements NewDesktopView {
 
     @UiHandler("notificationsBtn")
     void onNotificationsSelect(SelectEvent event) {
-        presenter.onNotificationsBtnSelect();
+        // Show userSettingsMenu
     }
 
-    @UiHandler("userPrefsBtn")
+    @UiHandler("userSettingsBtn")
     void onUserPrefsSelect(SelectEvent event) {
-        presenter.onUserPrefsBtnSelect();
+        // show userSettingsMenu
+        userSettingsMenu.getMenu().show(userSettingsBtn.getElement(), anchorAlignment);
     }
 
 }

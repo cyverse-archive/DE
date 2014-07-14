@@ -7,9 +7,7 @@ import com.google.gwt.user.client.ui.Panel;
 import com.sencha.gxt.widget.core.client.button.IconButton;
 
 /**
- * TODO Opacity for tool button hover styles
- *
- * Created by jstroot on 7/9/14.
+ * @author jstroot
  */
 public interface NewDesktopView extends IsWidget {
 
@@ -70,7 +68,7 @@ public interface NewDesktopView extends IsWidget {
     /**
      * -- The presenter is responsible for window management.
      */
-    interface Presenter {
+    interface Presenter extends UserSettingsMenuPresenter {
 
         /**
          * <ul>
@@ -90,10 +88,25 @@ public interface NewDesktopView extends IsWidget {
 
         void onForumsBtnSelect();
 
-        void onNotificationsBtnSelect();
+    }
 
-        void onUserPrefsBtnSelect();
+    interface UserSettingsMenuPresenter {
 
+        void onAboutClick();
+
+        void onCollaboratorsClick();
+
+        void onContactSupportClick();
+
+        void onDocumentationClick();
+
+        void onIntroClick();
+
+        void onLogoutClick();
+
+        void onPreferencesClick();
+
+        void onSystemMessagesClick();
     }
 
     void ensureDebugId(String baseID);

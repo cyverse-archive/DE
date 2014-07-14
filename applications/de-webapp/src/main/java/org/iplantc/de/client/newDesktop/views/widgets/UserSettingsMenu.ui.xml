@@ -1,0 +1,29 @@
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
+             xmlns:menu='urn:import:com.sencha.gxt.widget.core.client.menu'
+             xmlns:anchors='urn:import:org.iplantc.de.commons.client.widgets'>
+    <ui:with field="appearance"
+             type="org.iplantc.de.client.newDesktop.views.widgets.UserSettingsMenu.UserSettingsMenuAppearance"/>
+    <ui:with field="display"
+             type="org.iplantc.de.resources.client.messages.IplantDisplayStrings"/>
+
+    <menu:Menu styleName="{appearance.styles.menu}">
+        <anchors:IPlantAnchor ui:field="preferencesBtn"
+                              text="{display.preferences}"/>
+        <anchors:IPlantAnchor ui:field="collaboratorsBtn"
+                              text="{display.collaborators}"/>
+        <anchors:IPlantAnchor ui:field="systemMsgsBtn"
+                              text="{display.systemMessagesLabel}"/>
+        <menu:SeparatorMenuItem />
+        <anchors:IPlantAnchor ui:field="documentationBtn"
+                              text="{display.documentation}"/>
+        <anchors:IPlantAnchor ui:field="introBtn"
+                              text="{display.introduction}"/>
+        <anchors:IPlantAnchor ui:field="contactSupportBtn"
+                              text="{display.contactSupport}"/>
+        <anchors:IPlantAnchor ui:field="aboutBtn"
+                              text="{display.about}"/>
+        <menu:SeparatorMenuItem />
+        <anchors:IPlantAnchor ui:field="logoutBtn"
+                              text="{display.logout}"/>
+    </menu:Menu>
+</ui:UiBinder>
