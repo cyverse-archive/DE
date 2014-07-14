@@ -14,6 +14,8 @@ import com.google.web.bindery.autobean.shared.Splittable;
 import com.google.web.bindery.autobean.shared.impl.StringQuoter;
 
 import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * This class uses a builder pattern to construct a search query from a given query template.
@@ -29,30 +31,44 @@ public class DataSearchQueryBuilder {
 
     private final DiskResourceQueryTemplate dsf;
     private final UserInfo userinfo;
-    private final Splittable queryList;
+    private final Splittable mustList;
+    private final Splittable mustNotList;
+
+    Splittable query = StringQuoter.createSplittable();
+    Splittable bool = addChild(query, "bool");
+
+    Logger LOG = Logger.getLogger("Query builder");
 
     public DataSearchQueryBuilder(DiskResourceQueryTemplate dsf, UserInfo userinfo) {
         this.dsf = dsf;
         this.userinfo = userinfo;
-        queryList = StringQuoter.createIndexed();
+        mustList = StringQuoter.createIndexed();
+        mustNotList = StringQuoter.createIndexed();
     }
 
     public String buildFullQuery() {
-        ownedBy().createdWithin().file().fileSizeRange().metadataAttribute().metadataValue().modifiedWithin().negatedFile().sharedWith();
+        ownedBy().createdWithin()
+                 .file()
+                 .fileSizeRange()
+                 .metadataAttribute()
+                 .metadataValue()
+                 .modifiedWithin()
+                 .negatedFile()
+                 .sharedWith();
+        LOG.log(Level.SEVERE, "==>" + toString());
         return toString();
     }
 
     /**
-     * {"nested":{"path":"userPermissions",
-     *            "query":{"bool":{"must":[{"term":{"permission":"own"}},
-     *                                     {"wildcard":{"user":(some query)}}]}}}}
+     * {"nested":{"path":"userPermissions", "query":{"bool":{"must":[{"term":{"permission":"own"}},
+     * {"wildcard":{"user":(some query)}}]}}}}
      * 
      * @return
      */
     public DataSearchQueryBuilder ownedBy() {
         String queryContent = dsf.getOwnedBy();
         if (!Strings.isNullOrEmpty(queryContent)) {
-            appendArrayItem(queryList, createOwnerQuery(queryContent));
+            appendArrayItem(mustList, createOwnerQuery(queryContent));
         }
         return this;
     }
@@ -69,15 +85,15 @@ public class DataSearchQueryBuilder {
             if ((dateFrom != null) && (dateTo != null)) {
                 // {"range": {"dateCreated": {"gte":"1380559151000","lte":"1390511909000"}}}
                 Splittable range = createRangeQuery("dateCreated", dateFrom.getTime(), dateTo.getTime());
-                appendArrayItem(queryList, range);
+                appendArrayItem(mustList, range);
             } else if (dateFrom != null) {
                 // {"range": {"dateModified": {"gte":"1380559151000"}}}
                 Splittable range = createMinRangeQuery("dateCreated", dateFrom.getTime());
-                appendArrayItem(queryList, range);
+                appendArrayItem(mustList, range);
             } else if (dateTo != null) {
                 // {"range": {"dateModified": {"lte":"1390511909000"}}}
                 Splittable range = createMaxRangeQuery("dateCreated", dateTo.getTime());
-                appendArrayItem(queryList, range);
+                appendArrayItem(mustList, range);
             }
         }
         return this;
@@ -93,7 +109,7 @@ public class DataSearchQueryBuilder {
         if (!Strings.isNullOrEmpty(content)) {
             // {"wildcard": {"label": "*txt*"}}
             content = applyImplicitAsteriskSearchText(content);
-            appendArrayItem(queryList, createWildcard("label", content));
+            appendArrayItem(mustList, createWildcard("label", content));
         }
         return this;
     }
@@ -107,22 +123,22 @@ public class DataSearchQueryBuilder {
         FileSizeRange fileSizeRange = dsf.getFileSizeRange();
         if (fileSizeRange != null) {
             Double minSize = SearchModelUtils.convertFileSizeToBytes(fileSizeRange.getMin(),
-                    fileSizeRange.getMinUnit());
+                                                                     fileSizeRange.getMinUnit());
             Double maxSize = SearchModelUtils.convertFileSizeToBytes(fileSizeRange.getMax(),
-                    fileSizeRange.getMaxUnit());
+                                                                     fileSizeRange.getMaxUnit());
 
             if ((minSize != null) && (maxSize != null)) {
                 // {"range": {"fileSize": {"gte":"1000","lte":"100000"}}}
-                appendArrayItem(queryList,
-                        createRangeQuery("fileSize", minSize.longValue(), maxSize.longValue()));
+                appendArrayItem(mustList,
+                                createRangeQuery("fileSize", minSize.longValue(), maxSize.longValue()));
             } else if (minSize != null) {
                 // {"range": {"fileSize": {"gte":"1000"}}}
                 Splittable range = createMinRangeQuery("fileSize", minSize.longValue());
-                appendArrayItem(queryList, range);
+                appendArrayItem(mustList, range);
             } else if (maxSize != null) {
                 // {"range": {"fileSize": {"lte":"100000"}}}
                 Splittable range = createMaxRangeQuery("fileSize", maxSize.longValue());
-                appendArrayItem(queryList, range);
+                appendArrayItem(mustList, range);
             }
         }
         return this;
@@ -151,7 +167,7 @@ public class DataSearchQueryBuilder {
 
             createWildcard("attribute", content).assign(nested, "query");
 
-            appendArrayItem(queryList, metadata);
+            appendArrayItem(mustList, metadata);
         }
         return this;
     }
@@ -169,7 +185,7 @@ public class DataSearchQueryBuilder {
 
             createWildcard("value", content).assign(nested, "query");
 
-            appendArrayItem(queryList, metadata);
+            appendArrayItem(mustList, metadata);
         }
         return this;
     }
@@ -187,15 +203,15 @@ public class DataSearchQueryBuilder {
             if ((dateFrom != null) && (dateTo != null)) {
                 // {"range": {"dateModified": {"gte":"1380559151000","lte":"1390511909000"}}}
                 Splittable range = createRangeQuery("dateModified", dateFrom.getTime(), dateTo.getTime());
-                appendArrayItem(queryList, range);
+                appendArrayItem(mustList, range);
             } else if (dateFrom != null) {
                 // {"range": {"dateModified": {"gte":"1380559151000"}}}
                 Splittable range = createMinRangeQuery("dateModified", dateFrom.getTime());
-                appendArrayItem(queryList, range);
+                appendArrayItem(mustList, range);
             } else if (dateTo != null) {
                 // {"range": {"dateModified": {"lte":"1390511909000"}}}
                 Splittable range = createMaxRangeQuery("dateModified", dateTo.getTime());
-                appendArrayItem(queryList, range);
+                appendArrayItem(mustList, range);
             }
         }
         return this;
@@ -210,13 +226,8 @@ public class DataSearchQueryBuilder {
         String content = dsf.getNegatedFileQuery();
         if (!Strings.isNullOrEmpty(content)) {
             content = applyImplicitAsteriskSearchText(content);
+            appendArrayItem(mustNotList, createWildcard("label", content));
 
-            // Split the query and reassemble with a "-" slapped onto the front.
-            Iterable<String> split = Splitter.on(" ").split(content);
-            content = "-" + Joiner.on(" -").join(split);
-
-            // {"field": {"label": "-*txt*"}}
-            appendArrayItem(queryList, createField("label", content));
         }
         return this;
     }
@@ -240,7 +251,7 @@ public class DataSearchQueryBuilder {
 
             appendArrayItem(must, sharedWith);
 
-            appendArrayItem(queryList, query);
+            appendArrayItem(mustList, query);
         }
         return this;
     }
@@ -266,12 +277,17 @@ public class DataSearchQueryBuilder {
             implicitSearchText = searchText;
         } else {
             // Apply implicit "*"
-            final Iterable<String> transform = Iterables.transform(Splitter.on(" ").omitEmptyStrings().trimResults().split(searchText), new Function<String, String>() {
-                @Override
-                public String apply(String input) {
-                    return "*".concat(input).concat("*");
-                }
-            });
+            final Iterable<String> transform = Iterables.transform(Splitter.on(" ")
+                                                                           .omitEmptyStrings()
+                                                                           .trimResults()
+                                                                           .split(searchText),
+                                                                   new Function<String, String>() {
+                                                                       @Override
+                                                                       public String apply(String input) {
+                                                                           return "*".concat(input)
+                                                                                     .concat("*");
+                                                                       }
+                                                                   });
             implicitSearchText = Joiner.on(" ").join(transform);
         }
         return implicitSearchText;
@@ -282,17 +298,15 @@ public class DataSearchQueryBuilder {
      */
     @Override
     public String toString() {
-        // {"bool":{"must":[queryList]}}
-        Splittable query = StringQuoter.createSplittable();
-        Splittable bool = addChild(query, "bool");
-        queryList.assign(bool, "must");
+        // {"bool":{"must":[mustList],"must_not":[mustNotList]}}
+
+        mustList.assign(bool, "must");
+        mustNotList.assign(bool, "must_not");
 
         // CORE-5182 exclude Trash items by default
         String baseTrashPath = userinfo.getBaseTrashPath();
         if (!dsf.isIncludeTrashItems() && !Strings.isNullOrEmpty(baseTrashPath)) {
-            Splittable negatedQueryList = StringQuoter.createIndexed();
-            negatedQueryList.assign(bool, "must_not");
-            appendArrayItem(negatedQueryList, createWildcard("path", baseTrashPath + "/*"));
+                appendArrayItem(mustNotList, createWildcard("path", baseTrashPath + "/*"));
         }
 
         return query.getPayload();
@@ -304,11 +318,6 @@ public class DataSearchQueryBuilder {
         // service and values are indexed as lowercase.
         content = Strings.isNullOrEmpty(content) ? null : content.toLowerCase();
         return createQuery("wildcard", field, content);
-    }
-
-    private Splittable createField(String field, String content) {
-        // {"field": {field: content}}
-        return createQuery("field", field, content);
     }
 
     private Splittable createQuery(String queryType, String field, String content) {
