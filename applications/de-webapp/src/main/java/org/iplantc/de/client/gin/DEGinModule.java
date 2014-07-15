@@ -20,6 +20,8 @@ import com.google.gwt.inject.client.AbstractGinModule;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
 
+import com.sencha.gxt.widget.core.client.WindowManager;
+
 public class DEGinModule extends AbstractGinModule {
     @Provides
     @Singleton
@@ -67,6 +69,11 @@ public class DEGinModule extends AbstractGinModule {
     @Provides
     public PropertyServiceFacade createPropertyServiceFacade() {
         return PropertyServiceFacade.getInstance();
+    }
+
+    @Provides
+    public WindowManager getWindowManager() {
+        return WindowManager.get();
     }
 
     @Provides

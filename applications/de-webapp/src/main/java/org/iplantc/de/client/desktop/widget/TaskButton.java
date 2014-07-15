@@ -60,6 +60,10 @@ public class TaskButton extends ToggleButton {
         super.setText(Format.ellipse(text, MAX_TEXT_LENGTH));
     }
 
+    public IPlantWindowInterface getWindow(){
+        return win;
+    }
+
     protected void doSelect(SelectEvent event) {
         if (!win.isVisible()) {
             win.show();

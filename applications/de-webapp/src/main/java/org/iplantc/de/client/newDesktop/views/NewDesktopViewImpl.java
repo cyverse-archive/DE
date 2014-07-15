@@ -1,14 +1,17 @@
 package org.iplantc.de.client.newDesktop.views;
 
 import org.iplantc.de.client.desktop.widget.TaskBar;
+import org.iplantc.de.client.desktop.widget.TaskButton;
 import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.newDesktop.NewDesktopView;
 import org.iplantc.de.client.newDesktop.views.widgets.DesktopIconButton;
 import org.iplantc.de.client.notifications.views.NotificationListView;
+import org.iplantc.de.client.views.windows.IPlantWindowInterface;
 import org.iplantc.de.commons.client.widgets.IPlantAnchor;
 import org.iplantc.de.resources.client.messages.IplantNewUserTourStrings;
 import org.iplantc.de.shared.DeModule;
 
+import com.google.common.base.Preconditions;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -17,13 +20,16 @@ import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 
+import com.sencha.gxt.widget.core.client.WindowManager;
 import com.sencha.gxt.widget.core.client.button.IconButton;
+import com.sencha.gxt.widget.core.client.event.RegisterEvent;
 import com.sencha.gxt.widget.core.client.event.SelectEvent;
+import com.sencha.gxt.widget.core.client.event.UnregisterEvent;
 
 /**
  * Created by jstroot on 7/6/14.
  */
-public class NewDesktopViewImpl implements NewDesktopView {
+public class NewDesktopViewImpl implements NewDesktopView, UnregisterEvent.UnregisterHandler<Widget>, RegisterEvent.RegisterHandler<Widget> {
 
     interface NewViewUiBinder extends UiBinder<Widget, NewDesktopViewImpl> { }
 
@@ -68,10 +74,58 @@ public class NewDesktopViewImpl implements NewDesktopView {
 
     @Inject
     public NewDesktopViewImpl(final IplantNewUserTourStrings tourStrings,
-                              final EventBus eventBus) {
+                              final EventBus eventBus,
+                              final WindowManager windowManager) {
         notificationsListView = new NotificationListView(eventBus);
         widget = ourUiBinder.createAndBindUi(this);
+
+        windowManager.addRegisterHandler(this);
+        windowManager.addUnregisterHandler(this);
         initIntroAttributes(tourStrings);
+    }
+
+    @Override
+    public void onRegister(RegisterEvent<Widget> event) {
+        final Widget eventItem = event.getItem();
+
+        if(eventItem instanceof IPlantWindowInterface) {
+            IPlantWindowInterface iplantWindow = (IPlantWindowInterface) eventItem;
+            // If it already exists, mark button active
+            for(TaskButton btn : taskBar.getButtons()){
+                if(btn.getWindow() == iplantWindow){
+                    // Mark button active
+                    btn.setValue(true);
+                    return;
+                }
+            }
+
+            // If it is new, add task button and mark active
+            taskBar.addTaskButton(iplantWindow);
+        }
+    }
+
+    @Override
+    public void onUnregister(UnregisterEvent<Widget> event) {
+
+        final Widget eventItem = event.getItem();
+        if(eventItem instanceof IPlantWindowInterface){
+            IPlantWindowInterface iplantWindow = (IPlantWindowInterface) eventItem;
+            TaskButton taskButton = null;
+            for(TaskButton btn : taskBar.getButtons()){
+                if(btn.getWindow() == iplantWindow){
+                   taskButton = btn;
+                    break;
+                }
+            }
+            Preconditions.checkNotNull(taskButton, "TaskButton should not be null");
+            if(iplantWindow.isMinimized()){
+                // mark corresponding task button inactive
+                taskButton.setValue(false);
+                return;
+            }
+            // remove corresponding task button
+            taskBar.removeTaskButton(taskButton);
+        }
     }
 
     private void initIntroAttributes(IplantNewUserTourStrings tourStrings) {

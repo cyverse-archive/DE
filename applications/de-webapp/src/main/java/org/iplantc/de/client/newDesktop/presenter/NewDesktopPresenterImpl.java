@@ -47,7 +47,8 @@ public class NewDesktopPresenterImpl implements NewDesktopView.Presenter {
                                    final EventBus eventBus,
                                    final NewMessageView.Presenter systemMsgPresenter,
                                    final CommonUiConstants constants,
-                                   final DEClientConstants deClientConstants) {
+                                   final DEClientConstants deClientConstants,
+                                   final WindowManager gxtWindowManager) {
         this.view = view;
         this.eventBus = eventBus;
         this.systemMsgPresenter = systemMsgPresenter;
@@ -56,7 +57,7 @@ public class NewDesktopPresenterImpl implements NewDesktopView.Presenter {
         this.view.setPresenter(this);
         globalEventHandler.setPresenter(this);
         windowEventHandler.setPresenter(this);
-        windowManager = new DesktopWindowManager();
+        windowManager = new DesktopWindowManager(gxtWindowManager);
         if (DebugInfo.isDebugIdEnabled()) {
             this.view.ensureDebugId(DeModule.Ids.DESKTOP);
         }

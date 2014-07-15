@@ -10,6 +10,8 @@ import com.google.gwt.user.client.ui.Widget;
 import com.sencha.gxt.core.client.util.Point;
 import com.sencha.gxt.widget.core.client.Window;
 import com.sencha.gxt.widget.core.client.WindowManager;
+import com.sencha.gxt.widget.core.client.event.RegisterEvent;
+import com.sencha.gxt.widget.core.client.event.UnregisterEvent;
 
 /**
  * Window manager for the DE desktop.
@@ -17,7 +19,25 @@ import com.sencha.gxt.widget.core.client.WindowManager;
  * Accepts window configs
  * @author jstroot
  */
-public class DesktopWindowManager {
+public class DesktopWindowManager implements UnregisterEvent.UnregisterHandler<Widget>, RegisterEvent.RegisterHandler<Widget> {
+
+    private final WindowManager windowManager;
+
+    public DesktopWindowManager(WindowManager windowManager) {
+        this.windowManager = windowManager;
+        windowManager.addRegisterHandler(this);
+        windowManager.addUnregisterHandler(this);
+    }
+
+    @Override
+    public void onRegister(RegisterEvent<Widget> event) {
+
+    }
+
+    @Override
+    public void onUnregister(UnregisterEvent<Widget> event) {
+
+    }
 
     public void show(final WindowConfig config, final boolean updateExistingWindow) {
 
@@ -34,8 +54,8 @@ public class DesktopWindowManager {
             window = (Window) WindowFactory.build(config);
         }
 
-        if(WindowManager.get().getActive() != null){
-            final Point position = ((Window)WindowManager.get().getActive()).getElement().getPosition(true);
+        if(windowManager.getActive() != null){
+            final Point position = ((Window)windowManager.getActive()).getElement().getPosition(true);
             position.setX(position.getX() + 10);
             position.setY(position.getY() + 20);
 
@@ -49,7 +69,7 @@ public class DesktopWindowManager {
 
     Window getWindow(final WindowConfig config){
         String windowId = constructWindowId(config);
-        for(Widget w : WindowManager.get().getWindows()){
+        for(Widget w : windowManager.getWindows()){
             String currentId = ((Window)w).getStateId();
             if(windowId.equals(currentId)){
                 return (Window) w;
