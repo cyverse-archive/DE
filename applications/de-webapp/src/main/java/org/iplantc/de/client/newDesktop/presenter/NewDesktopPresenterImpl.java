@@ -3,23 +3,29 @@ package org.iplantc.de.client.newDesktop.presenter;
 import static org.iplantc.de.commons.client.collaborators.presenter.ManageCollaboratorsPresenter.MODE.MANAGE;
 import org.iplantc.de.client.DEClientConstants;
 import org.iplantc.de.client.events.EventBus;
-import org.iplantc.de.client.events.ShowAboutWindowEvent;
-import org.iplantc.de.client.events.ShowSystemMessagesEvent;
-import org.iplantc.de.client.events.WindowShowRequestEvent;
+import org.iplantc.de.client.models.WindowState;
 import org.iplantc.de.client.newDesktop.NewDesktopView;
 import org.iplantc.de.client.preferences.views.PreferencesDialog;
 import org.iplantc.de.client.sysmsgs.view.NewMessageView;
+import org.iplantc.de.client.views.windows.IPlantWindowInterface;
 import org.iplantc.de.commons.client.CommonUiConstants;
 import org.iplantc.de.commons.client.collaborators.views.ManageCollaboratorsDailog;
 import org.iplantc.de.commons.client.util.WindowUtil;
 import org.iplantc.de.commons.client.views.window.configs.ConfigFactory;
+import org.iplantc.de.commons.client.views.window.configs.WindowConfig;
 import org.iplantc.de.shared.DeModule;
 import org.iplantc.de.shared.services.PropertyServiceFacade;
 
+import com.google.common.collect.Lists;
 import com.google.gwt.debug.client.DebugInfo;
 import com.google.gwt.user.client.ui.Panel;
+import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
+
+import com.sencha.gxt.widget.core.client.WindowManager;
+
+import java.util.List;
 
 public class NewDesktopPresenterImpl implements NewDesktopView.Presenter {
 
@@ -32,9 +38,12 @@ public class NewDesktopPresenterImpl implements NewDesktopView.Presenter {
     private final EventBus eventBus;
     private final NewMessageView.Presenter systemMsgPresenter;
     private final NewDesktopView view;
+    private final DesktopWindowManager windowManager;
 
     @Inject
     public NewDesktopPresenterImpl(final NewDesktopView view,
+                                   final DesktopPresenterEventHandler globalEventHandler,
+                                   final DesktopPresenterWindowEventHandler windowEventHandler,
                                    final EventBus eventBus,
                                    final NewMessageView.Presenter systemMsgPresenter,
                                    final CommonUiConstants constants,
@@ -45,6 +54,9 @@ public class NewDesktopPresenterImpl implements NewDesktopView.Presenter {
         this.constants = constants;
         this.deClientConstants = deClientConstants;
         this.view.setPresenter(this);
+        globalEventHandler.setPresenter(this);
+        windowEventHandler.setPresenter(this);
+        windowManager = new DesktopWindowManager();
         if (DebugInfo.isDebugIdEnabled()) {
             this.view.ensureDebugId(DeModule.Ids.DESKTOP);
         }
@@ -58,17 +70,17 @@ public class NewDesktopPresenterImpl implements NewDesktopView.Presenter {
 
     @Override
     public void onAboutClick() {
-        eventBus.fireEvent(new ShowAboutWindowEvent());
+        show(ConfigFactory.aboutWindowConfig());
     }
 
     @Override
     public void onAnalysesWinBtnSelect() {
-        eventBus.fireEvent(new WindowShowRequestEvent(ConfigFactory.analysisWindowConfig()));
+        show(ConfigFactory.analysisWindowConfig());
     }
 
     @Override
     public void onAppsWinBtnSelect() {
-        eventBus.fireEvent(new WindowShowRequestEvent(ConfigFactory.appsWindowConfig()));
+        show(ConfigFactory.appsWindowConfig());
     }
 
     @Override
@@ -84,7 +96,7 @@ public class NewDesktopPresenterImpl implements NewDesktopView.Presenter {
 
     @Override
     public void onDataWinBtnSelect() {
-        eventBus.fireEvent(new WindowShowRequestEvent(ConfigFactory.diskResourceWindowConfig(true)));
+        show(ConfigFactory.diskResourceWindowConfig(true));
     }
 
     @Override
@@ -115,7 +127,23 @@ public class NewDesktopPresenterImpl implements NewDesktopView.Presenter {
 
     @Override
     public void onSystemMessagesClick() {
-        eventBus.fireEvent(new ShowSystemMessagesEvent());
+        show(ConfigFactory.systemMessagesWindowConfig(null));
+    }
+
+    public void show(final WindowConfig config) {
+        windowManager.show(config, false);
+    }
+
+    public void show(final WindowConfig config, final boolean updateExistingWindow) {
+        windowManager.show(config, updateExistingWindow);
+    }
+
+    List<WindowState> getWindowStates() {
+        List<WindowState> windowStates = Lists.newArrayList();
+        for (Widget w : WindowManager.get().getStack()) {
+            windowStates.add(((IPlantWindowInterface) w).getWindowState());
+        }
+        return windowStates;
     }
 
     private void doIntro() {

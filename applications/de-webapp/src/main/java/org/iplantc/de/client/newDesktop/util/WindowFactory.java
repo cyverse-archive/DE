@@ -1,4 +1,4 @@
-package org.iplantc.de.client.factories;
+package org.iplantc.de.client.newDesktop.util;
 
 import org.iplantc.de.client.Constants;
 import org.iplantc.de.client.events.EventBus;
@@ -45,6 +45,7 @@ public class WindowFactory {
      * @return
      */
     public static <C extends WindowConfig> IPlantWindowInterface build(C config) {
+        String windowId = constructWindowId(config);
         final EventBus eventBus = EventBus.getInstance();
         IPlantWindowInterface ret = null;
         switch (config.getWindowType()) {
@@ -92,6 +93,9 @@ public class WindowFactory {
                 ret = new SystemMessagesWindow((SystemMessagesWindowConfig)config);
             default:
                 break;
+        }
+        if(ret != null) {
+            ret.setStateId(windowId);
         }
         return ret;
     }

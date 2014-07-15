@@ -34,9 +34,18 @@ import org.iplantc.de.diskResource.client.events.ShowFilePreviewEvent.ShowFilePr
 
 import com.google.web.bindery.autobean.shared.Splittable;
 
-final class ShowWindowEventHandler implements ShowAboutWindowEventHandler, ShowFilePreviewEventHandler, CreateNewAppEventHandler, CreateNewWorkflowEvent.CreateNewWorkflowEventHandler,
-        WindowShowRequestEventHandler, RunAppEventHandler, EditAppEventHandler, EditWorkflowEventHandler, ShowSystemMessagesEvent.Handler, CreateNewFileEventHandler,
-        OpenAppForRelaunchEvent.OpenAppForRelaunchEventHandler, OpenFolderEvent.OpenFolderEventHandler {
+final class ShowWindowEventHandler implements ShowAboutWindowEventHandler,
+                                              ShowFilePreviewEventHandler,
+                                              CreateNewAppEventHandler,
+                                              CreateNewWorkflowEvent.CreateNewWorkflowEventHandler,
+                                              WindowShowRequestEventHandler,
+                                              RunAppEventHandler,
+                                              EditAppEventHandler,
+                                              EditWorkflowEventHandler,
+                                              ShowSystemMessagesEvent.Handler,
+                                              CreateNewFileEventHandler,
+                                              OpenAppForRelaunchEvent.OpenAppForRelaunchEventHandler,
+                                              OpenFolderEvent.OpenFolderEventHandler {
 
     private final Desktop desktop;
 

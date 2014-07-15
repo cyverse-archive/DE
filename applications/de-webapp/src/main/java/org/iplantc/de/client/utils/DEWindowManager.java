@@ -1,7 +1,7 @@
 package org.iplantc.de.client.utils;
 
 import org.iplantc.de.client.desktop.widget.TaskButton;
-import org.iplantc.de.client.factories.WindowFactory;
+import org.iplantc.de.client.newDesktop.util.WindowFactory;
 import org.iplantc.de.client.models.WindowState;
 import org.iplantc.de.client.views.windows.IPlantWindowInterface;
 import org.iplantc.de.commons.client.views.window.configs.WindowConfig;
@@ -27,8 +27,7 @@ import java.util.Map;
  * redundancy in this class. More use should be made of {@link IplantWindowManager}
  */
 public class DEWindowManager extends IplantWindowManager {
-    private IPlantWindowInterface activeWindow;
-    private final FastMap<IPlantWindowInterface> windows = new FastMap<IPlantWindowInterface>();
+    private final FastMap<IPlantWindowInterface> windows = new FastMap<>();
     private Point lastWindowPosition;
     private final ActivateHandler<Window> activateHandler;
     private final DeactivateHandler<Window> deactivateHandler;
@@ -40,7 +39,6 @@ public class DEWindowManager extends IplantWindowManager {
     /**
      * Instantiate from a window listener.
      * 
-     * @param listener window listener.
      */
     public DEWindowManager(ActivateHandler<Window> activateHandler,
             DeactivateHandler<Window> deactivateHandler, HideHandler hideHandler,
@@ -50,28 +48,7 @@ public class DEWindowManager extends IplantWindowManager {
         this.hideHandler = hideHandler;
         this.minimizeHandler = minimizeHandler;
         this.showHandler = showHandler;
-        taskButtons = new HashMap<String, TaskButton>();
-    }
-
-    /**
-     * Bring a window to the foreground.
-     * 
-     * @param window window to set as active.
-     */
-    public void setActiveWindow(IPlantWindowInterface window) {
-        activeWindow = window;
-        if (window != null) {
-            bringToFront(window.asWidget());
-        }
-    }
-
-    /**
-     * Retrieve the active window.
-     * 
-     * @return the active window.
-     */
-    public IPlantWindowInterface getActiveWindow() {
-        return activeWindow;
+        taskButtons = new HashMap<>();
     }
 
     public <C extends org.iplantc.de.commons.client.views.window.configs.WindowConfig> IPlantWindowInterface add(
@@ -104,16 +81,6 @@ public class DEWindowManager extends IplantWindowManager {
         }
     }
 
-    /**
-     * Retrieve a window by tag.
-     * 
-     * @param tag unique tag for window to retrieve.
-     * @return null on failure. Requested window on success.
-     */
-    public IPlantWindowInterface getWindow(String tag) {
-        return getDEWindows().get(tag);
-    }
-
     public <C extends org.iplantc.de.commons.client.views.window.configs.WindowConfig> IPlantWindowInterface getWindow(
             C config) {
         String windowId = WindowFactory.constructWindowId(config);
@@ -134,9 +101,8 @@ public class DEWindowManager extends IplantWindowManager {
     }
 
     /**
-     * get the no.of open windows in the app
-     * 
-     * @return
+     *
+     * @return the no of open windows
      */
     public int getCount() {
         return getDEWindows().size();

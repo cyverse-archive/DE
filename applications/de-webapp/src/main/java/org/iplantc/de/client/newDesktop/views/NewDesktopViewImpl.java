@@ -1,8 +1,10 @@
 package org.iplantc.de.client.newDesktop.views;
 
 import org.iplantc.de.client.desktop.widget.TaskBar;
+import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.newDesktop.NewDesktopView;
 import org.iplantc.de.client.newDesktop.views.widgets.DesktopIconButton;
+import org.iplantc.de.client.notifications.views.NotificationListView;
 import org.iplantc.de.commons.client.widgets.IPlantAnchor;
 import org.iplantc.de.resources.client.messages.IplantNewUserTourStrings;
 import org.iplantc.de.shared.DeModule;
@@ -57,12 +59,17 @@ public class NewDesktopViewImpl implements NewDesktopView {
     IPlantAnchor aboutBtn;
     @UiField
     IPlantAnchor logoutBtn;
+    @UiField(provided = true)
+    NotificationListView notificationsListView;
     private static NewViewUiBinder ourUiBinder = GWT.create(NewViewUiBinder.class);
     private final Widget widget;
     private NewDesktopView.Presenter presenter;
 
+
     @Inject
-    public NewDesktopViewImpl(final IplantNewUserTourStrings tourStrings) {
+    public NewDesktopViewImpl(final IplantNewUserTourStrings tourStrings,
+                              final EventBus eventBus) {
+        notificationsListView = new NotificationListView(eventBus);
         widget = ourUiBinder.createAndBindUi(this);
         initIntroAttributes(tourStrings);
     }

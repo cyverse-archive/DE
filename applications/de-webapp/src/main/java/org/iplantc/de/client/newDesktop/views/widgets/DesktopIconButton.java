@@ -13,6 +13,7 @@ import com.sencha.gxt.widget.core.client.menu.Menu;
  * An icon button capable of displaying a menu on click by utilizing
  * the {@link Component#setContextMenu(Menu)}. This is accomplished by displaying the
  * context menu on left click instead of right click.
+ *
  * @author jstroot
  */
 public class DesktopIconButton extends IconButton {

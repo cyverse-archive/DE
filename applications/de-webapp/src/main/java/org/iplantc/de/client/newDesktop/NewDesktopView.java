@@ -1,5 +1,7 @@
 package org.iplantc.de.client.newDesktop;
 
+import org.iplantc.de.commons.client.views.window.configs.WindowConfig;
+
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Panel;
@@ -7,6 +9,10 @@ import com.google.gwt.user.client.ui.Panel;
 import com.sencha.gxt.widget.core.client.button.IconButton;
 
 /**
+ * TODO JDS Change initial display time for user menu tooltips
+ *
+ * Notifications, window events, layouts
+ *
  * @author jstroot
  */
 public interface NewDesktopView extends IsWidget {
@@ -90,6 +96,19 @@ public interface NewDesktopView extends IsWidget {
         void onDataWinBtnSelect();
 
         void onForumsBtnSelect();
+
+        /**
+         *
+         * @param config
+         */
+        void show(final WindowConfig config);
+
+        /**
+         *
+         * @param config
+         * @param updateExistingWindow
+         */
+        void show(final WindowConfig config, final boolean updateExistingWindow);
 
     }
 
