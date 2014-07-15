@@ -85,7 +85,8 @@ public class MarkDownRendererViewImpl extends AbstractFileViewer {
     @UiFactory
     HtmlLayoutContainer buildHtmlContainer() {
         renderHtml = render(previewData);
-        return new HtmlLayoutContainer(renderHtml);
+        return new HtmlLayoutContainer("<link href=\"./markdown.css\" rel=\"stylesheet\"></link><div class=\"markdown\">"
+                + renderHtml + "</div>");
     }
 
     @Override
