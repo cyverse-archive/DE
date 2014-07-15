@@ -1,6 +1,7 @@
 package org.iplantc.de.commons.client.info;
 
 import com.google.gwt.dom.client.Style.Float;
+import com.google.gwt.dom.client.Style.Unit;
 
 import com.sencha.gxt.widget.core.client.Popup;
 import com.sencha.gxt.widget.core.client.button.ToolButton;
@@ -50,6 +51,7 @@ public class IplantAnnouncement extends Popup {
             closeButton.getElement().getStyle().setFloat(Float.RIGHT);
         }
 
+        getElement().getStyle().setFontSize(12, Unit.PX);
         setWidget(layout);
         setAutoHide(false);
         addStyleName(config.getPanelStyle());
