@@ -46,6 +46,8 @@ public interface NewDesktopView extends IsWidget {
             String desktopBackgroundRepeat();
 
             String logoText();
+
+            String userContextMenu();
         }
 
         IconButton.IconConfig analysisConfig();
@@ -75,6 +77,7 @@ public interface NewDesktopView extends IsWidget {
          *     <li>Initialize keyboard shortcuts
          *     <li>Init Save session
          *     <li>Initialize DE Properties
+         *     <li>Do initial fetch of unseen notifications
          * </ul>
          * @param panel
          */
@@ -112,4 +115,6 @@ public interface NewDesktopView extends IsWidget {
     void ensureDebugId(String baseID);
 
     void setPresenter(Presenter presenter);
+
+    void setUnseenNotificationCount(int count);
 }

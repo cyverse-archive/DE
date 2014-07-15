@@ -69,7 +69,7 @@ public class NotificationButton extends IconButton {
 
 
     public void setNotificationCount(int new_count) {
-        if (new_count > 0 && new_count > getCount()) {
+        if (new_count > 0 && new_count > count) {
             notificationsView.fetchUnseenNotifications();
         } else {
             notificationsView.setUnseenNotificationsFetchedOnce(true);
@@ -89,10 +89,6 @@ public class NotificationButton extends IconButton {
             Window.setTitle(I18N.DISPLAY.rootApplicationTitle());
         }
 
-    }
-
-    public int getCount() {
-        return count;
     }
 
     private void buildNotificationMenu() {

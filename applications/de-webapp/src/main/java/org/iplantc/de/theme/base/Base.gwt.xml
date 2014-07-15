@@ -9,7 +9,4 @@
         <when-type-is class="org.iplantc.de.client.newDesktop.NewDesktopView.DesktopAppearance"/>
     </replace-with>
 
-    <replace-with class="org.iplantc.de.theme.base.client.newDesktop.BaseUserSettingsMenuAppearance">
-        <when-type-is class="org.iplantc.de.client.newDesktop.views.widgets.UserSettingsMenu.UserSettingsMenuAppearance"/>
-    </replace-with>
 </module>

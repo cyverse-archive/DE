@@ -2,20 +2,19 @@ package org.iplantc.de.client.newDesktop.views;
 
 import org.iplantc.de.client.desktop.widget.TaskBar;
 import org.iplantc.de.client.newDesktop.NewDesktopView;
-import org.iplantc.de.client.newDesktop.views.widgets.UserSettingsMenu;
+import org.iplantc.de.client.newDesktop.views.widgets.DesktopIconButton;
+import org.iplantc.de.commons.client.widgets.IPlantAnchor;
 import org.iplantc.de.resources.client.messages.IplantNewUserTourStrings;
 import org.iplantc.de.shared.DeModule;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 
-import static com.sencha.gxt.core.client.Style.Anchor.BOTTOM_LEFT;
-import static com.sencha.gxt.core.client.Style.Anchor.TOP_LEFT;
-import static com.sencha.gxt.core.client.Style.AnchorAlignment;
 import com.sencha.gxt.widget.core.client.button.IconButton;
 import com.sencha.gxt.widget.core.client.event.SelectEvent;
 
@@ -41,18 +40,30 @@ public class NewDesktopViewImpl implements NewDesktopView {
     @UiField
     TaskBar taskBar;
     @UiField
-    IconButton userSettingsBtn;
+    DesktopIconButton userSettingsBtn;
+    @UiField
+    IPlantAnchor preferencesBtn;
+    @UiField
+    IPlantAnchor collaboratorsBtn;
+    @UiField
+    IPlantAnchor systemMsgsBtn;
+    @UiField
+    IPlantAnchor documentationBtn;
+    @UiField
+    IPlantAnchor introBtn;
+    @UiField
+    IPlantAnchor contactSupportBtn;
+    @UiField
+    IPlantAnchor aboutBtn;
+    @UiField
+    IPlantAnchor logoutBtn;
     private static NewViewUiBinder ourUiBinder = GWT.create(NewViewUiBinder.class);
     private final Widget widget;
-    private final UserSettingsMenu userSettingsMenu;
-    private final AnchorAlignment anchorAlignment = new AnchorAlignment(TOP_LEFT, BOTTOM_LEFT, true);
     private NewDesktopView.Presenter presenter;
 
     @Inject
     public NewDesktopViewImpl(final IplantNewUserTourStrings tourStrings) {
         widget = ourUiBinder.createAndBindUi(this);
-        userSettingsMenu = new UserSettingsMenu();
-        userSettingsMenu.setPresenter(presenter);
         initIntroAttributes(tourStrings);
     }
 
@@ -112,6 +123,11 @@ public class NewDesktopViewImpl implements NewDesktopView {
         this.presenter = presenter;
     }
 
+    @Override
+    public void setUnseenNotificationCount(int count) {
+
+    }
+
     @UiHandler("analysisWinBtn")
     void onAnalysesWinBtnSelect(SelectEvent event) {
         presenter.onAnalysesWinBtnSelect();
@@ -137,10 +153,50 @@ public class NewDesktopViewImpl implements NewDesktopView {
         // Show userSettingsMenu
     }
 
-    @UiHandler("userSettingsBtn")
-    void onUserPrefsSelect(SelectEvent event) {
-        // show userSettingsMenu
-        userSettingsMenu.getMenu().show(userSettingsBtn.getElement(), anchorAlignment);
+    @UiHandler({"preferencesBtn", "collaboratorsBtn", "systemMsgsBtn",
+                   "documentationBtn", "introBtn", "contactSupportBtn", "aboutBtn", "logoutBtn"})
+    void onAnyUserSettingsItemClick(ClickEvent event){
+        userSettingsBtn.hideMenu();
+    }
+
+    @UiHandler("preferencesBtn")
+    void onPreferencesClick(ClickEvent event){
+        presenter.onPreferencesClick();
+    }
+
+    @UiHandler("collaboratorsBtn")
+    void onCollaboratorsClick(ClickEvent event){
+        presenter.onCollaboratorsClick();
+    }
+
+    @UiHandler("systemMsgsBtn")
+    void onSystemMessagesClick(ClickEvent event){
+        presenter.onSystemMessagesClick();
+    }
+
+    @UiHandler("documentationBtn")
+    void onDocumentationClick(ClickEvent event){
+        presenter.onDocumentationClick();
+    }
+
+    @UiHandler("introBtn")
+    void onIntroClick(ClickEvent event){
+        presenter.onIntroClick();
+    }
+
+    @UiHandler("contactSupportBtn")
+    void onContactSupportClick(ClickEvent event){
+        presenter.onContactSupportClick();
+    }
+
+    @UiHandler("aboutBtn")
+    void onAboutClick(ClickEvent event){
+        presenter.onAboutClick();
+    }
+
+    @UiHandler("logoutBtn")
+    void onLogoutClick(ClickEvent event){
+        presenter.onLogoutClick();
     }
 
 }

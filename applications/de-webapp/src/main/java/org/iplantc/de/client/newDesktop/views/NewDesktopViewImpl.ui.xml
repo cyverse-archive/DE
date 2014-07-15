@@ -1,6 +1,9 @@
 <ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
              xmlns:g='urn:import:com.google.gwt.user.client.ui'
              xmlns:button='urn:import:com.sencha.gxt.widget.core.client.button'
+             xmlns:desktopBtn='urn:import:org.iplantc.de.client.newDesktop.views.widgets'
+             xmlns:menu="urn:import:com.sencha.gxt.widget.core.client.menu"
+             xmlns:anchors='urn:import:org.iplantc.de.commons.client.widgets'
              xmlns:taskbar='urn:import:org.iplantc.de.client.desktop.widget'>
 
     <ui:with field="appearance"
@@ -21,12 +24,42 @@
                 <span class="{appearance.styles.logoText}">Discovery Environment</span>
             </div>
             <nav class="{appearance.styles.userMenuContainer}">
-                <button:IconButton ui:field="notificationsBtn"
-                                   toolTip="{display.notifications}"
-                                   config="{appearance.notificationsConfig}"/>
-                <button:IconButton ui:field="userSettingsBtn"
-                                   toolTip="{display.preferences}"
-                                   config="{appearance.userPrefsConfig}"/>
+                <desktopBtn:DesktopIconButton ui:field="notificationsBtn"
+                                              toolTip="{display.notifications}"
+                                              config="{appearance.notificationsConfig}">
+                    <desktopBtn:contextmenu>
+                        <menu:Menu styleName="{appearance.styles.userContextMenu}">
+                            <menu:MenuItem text="sample menu 1"/>
+                            <menu:MenuItem text="sample menu 2"/>
+                        </menu:Menu>
+                    </desktopBtn:contextmenu>
+                </desktopBtn:DesktopIconButton>
+                <desktopBtn:DesktopIconButton ui:field="userSettingsBtn"
+                                              toolTip="{display.preferences}"
+                                              config="{appearance.userPrefsConfig}">
+                    <desktopBtn:contextmenu>
+                        <menu:Menu styleName="{appearance.styles.userContextMenu}">
+                            <anchors:IPlantAnchor ui:field="preferencesBtn"
+                                                  text="{display.preferences}"/>
+                            <anchors:IPlantAnchor ui:field="collaboratorsBtn"
+                                                  text="{display.collaborators}"/>
+                            <anchors:IPlantAnchor ui:field="systemMsgsBtn"
+                                                  text="{display.systemMessagesLabel}"/>
+                            <menu:SeparatorMenuItem />
+                            <anchors:IPlantAnchor ui:field="documentationBtn"
+                                                  text="{display.documentation}"/>
+                            <anchors:IPlantAnchor ui:field="introBtn"
+                                                  text="{display.introduction}"/>
+                            <anchors:IPlantAnchor ui:field="contactSupportBtn"
+                                                  text="{display.contactSupport}"/>
+                            <anchors:IPlantAnchor ui:field="aboutBtn"
+                                                  text="{display.about}"/>
+                            <menu:SeparatorMenuItem />
+                            <anchors:IPlantAnchor ui:field="logoutBtn"
+                                                  text="{display.logout}"/>
+                        </menu:Menu>
+                    </desktopBtn:contextmenu>
+                </desktopBtn:DesktopIconButton>
                 <button:IconButton ui:field="forumsBtn"
                                    toolTip="{display.forums}"
                                    config="{appearance.forumsConfig}"/>
