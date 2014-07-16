@@ -66,7 +66,7 @@
 										visible="true" icon="{res.fileRename}" />
 
 									<menu:MenuItem ui:field="newShellScriptFileMi"
-										text="New Schell Script..." visible="true" icon="{res.fileRename}" />
+										text="New Shell Script..." visible="true" icon="{res.fileRename}" />
 
 									<menu:MenuItem ui:field="newMdFileMi" text="New Markdown file..."
 										visible="true" icon="{res.fileRename}" />
