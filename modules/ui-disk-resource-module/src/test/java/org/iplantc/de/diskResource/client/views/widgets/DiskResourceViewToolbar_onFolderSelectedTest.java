@@ -36,9 +36,7 @@ public class DiskResourceViewToolbar_onFolderSelectedTest {
             mockNewWindowAtLoc,
             mockNewFolder,
             mockDuplicate,
-            mockAddToSideBar,
-            mockNewPlainTextFile,
-            mockNewTabularFile,
+ mockNewFileMi,
             mockMoveToTrash;
     // Trash Menu
     @Mock public MenuItem mockOpenTrash,
@@ -131,8 +129,7 @@ public class DiskResourceViewToolbar_onFolderSelectedTest {
 
         // File Menu Items
         verify(mockNewFolder).setEnabled(true);
-        verify(mockNewPlainTextFile).setEnabled(true);
-        verify(mockNewTabularFile).setEnabled(true);
+        verify(mockNewFileMi).setEnabled(true);
 
         verify(mockRefreshButton).setEnabled(false);
     }
@@ -159,8 +156,7 @@ public class DiskResourceViewToolbar_onFolderSelectedTest {
 
         // File Menu Items
         verify(mockNewFolder).setEnabled(false);
-        verify(mockNewPlainTextFile).setEnabled(false);
-        verify(mockNewTabularFile).setEnabled(false);
+        verify(mockNewFileMi).setEnabled(false);
 
         verify(mockRefreshButton).setEnabled(true);
     }
@@ -187,8 +183,7 @@ public class DiskResourceViewToolbar_onFolderSelectedTest {
 
         // File Menu Items
         verify(mockNewFolder).setEnabled(true);
-        verify(mockNewPlainTextFile).setEnabled(true);
-        verify(mockNewTabularFile).setEnabled(true);
+        verify(mockNewFileMi).setEnabled(true);
 
         verify(mockRefreshButton).setEnabled(true);
     }
@@ -215,8 +210,7 @@ public class DiskResourceViewToolbar_onFolderSelectedTest {
 
         // File Menu Items
         verify(mockNewFolder).setEnabled(true);
-        verify(mockNewPlainTextFile).setEnabled(true);
-        verify(mockNewTabularFile).setEnabled(true);
+        verify(mockNewFileMi).setEnabled(true);
 
         verify(mockRefreshButton).setEnabled(true);
     }
@@ -243,9 +237,7 @@ public class DiskResourceViewToolbar_onFolderSelectedTest {
 
         // File Menu Items
         verify(mockNewFolder).setEnabled(false);
-        verify(mockNewPlainTextFile).setEnabled(false);
-        verify(mockNewTabularFile).setEnabled(false);
-
+        verify(mockNewFileMi).setEnabled(false);
         verify(mockRefreshButton).setEnabled(true);
     }
 
@@ -271,8 +263,7 @@ public class DiskResourceViewToolbar_onFolderSelectedTest {
 
         // File Menu Items
         verify(mockNewFolder).setEnabled(false);
-        verify(mockNewPlainTextFile).setEnabled(false);
-        verify(mockNewTabularFile).setEnabled(false);
+        verify(mockNewFileMi).setEnabled(false);
 
         verify(mockRefreshButton).setEnabled(true);
     }
@@ -299,9 +290,7 @@ public class DiskResourceViewToolbar_onFolderSelectedTest {
 
         // File Menu Items
         verify(mockNewFolder).setEnabled(false);
-        verify(mockNewPlainTextFile).setEnabled(false);
-        verify(mockNewTabularFile).setEnabled(false);
-
+        verify(mockNewFileMi).setEnabled(false);
         verify(mockRefreshButton).setEnabled(true);
     }
 
@@ -327,8 +316,7 @@ public class DiskResourceViewToolbar_onFolderSelectedTest {
 
         // File Menu Items
         verify(mockNewFolder).setEnabled(false);
-        verify(mockNewPlainTextFile).setEnabled(false);
-        verify(mockNewTabularFile).setEnabled(false);
+        verify(mockNewFileMi).setEnabled(false);
 
         verify(mockRefreshButton).setEnabled(true);
     }
@@ -354,8 +342,7 @@ public class DiskResourceViewToolbar_onFolderSelectedTest {
 
         // File Menu Items
         verify(mockNewFolder).setEnabled(false);
-        verify(mockNewPlainTextFile).setEnabled(false);
-        verify(mockNewTabularFile).setEnabled(false);
+        verify(mockNewFileMi).setEnabled(false);
 
         verify(mockRefreshButton).setEnabled(true);
     }
@@ -413,8 +400,7 @@ public class DiskResourceViewToolbar_onFolderSelectedTest {
         uut.newWindowAtLocMi = mockNewWindowAtLoc;
         uut.newFolderMi = mockNewFolder;
         uut.duplicateMi = mockDuplicate;
-        uut.newPlainTextFileMi = mockNewPlainTextFile;
-        uut.newTabularDataFileMi = mockNewTabularFile;
+        uut.newFileMi = mockNewFileMi;
         uut.moveToTrashMi = mockMoveToTrash;
 
         // Edit Menu

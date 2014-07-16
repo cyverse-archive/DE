@@ -38,7 +38,6 @@ public class DiskResourceViewToolbar_onDiskResourceSelectionChangedTest {
             mockNewWindowAtLoc,
             mockNewFolder,
             mockDuplicate,
-            mockAddToSideBar,
             mockNewPlainTextFile,
             mockNewTabularFile,
             mockMoveToTrash;
@@ -127,7 +126,6 @@ public class DiskResourceViewToolbar_onDiskResourceSelectionChangedTest {
 
         // File Menu Items
         verify(mockDuplicate).setEnabled(false);
-        verify(mockAddToSideBar).setEnabled(false);
         verify(mockMoveToTrash).setEnabled(false);
 
         // Edit Menu Items
@@ -174,7 +172,6 @@ public class DiskResourceViewToolbar_onDiskResourceSelectionChangedTest {
 
         // File Menu Items
         verify(mockDuplicate).setEnabled(false);
-        verify(mockAddToSideBar).setEnabled(false);
         verify(mockMoveToTrash).setEnabled(false);
 
         // Edit Menu Items
@@ -225,7 +222,6 @@ public class DiskResourceViewToolbar_onDiskResourceSelectionChangedTest {
 
         // File Menu Items
         verify(mockDuplicate).setEnabled(false);
-        verify(mockAddToSideBar).setEnabled(false);
         verify(mockMoveToTrash).setEnabled(false);
 
         // Edit Menu Items
@@ -275,7 +271,6 @@ public class DiskResourceViewToolbar_onDiskResourceSelectionChangedTest {
 
         // File Menu Items
         verify(mockDuplicate).setEnabled(true);
-        verify(mockAddToSideBar).setEnabled(false);
         verify(mockMoveToTrash).setEnabled(true);
 
         // Edit Menu Items
@@ -325,7 +320,6 @@ public class DiskResourceViewToolbar_onDiskResourceSelectionChangedTest {
 
         // File Menu Items
         verify(mockDuplicate).setEnabled(false);
-        verify(mockAddToSideBar).setEnabled(false);
         verify(mockMoveToTrash).setEnabled(false);
 
         // Edit Menu Items
@@ -375,7 +369,6 @@ public class DiskResourceViewToolbar_onDiskResourceSelectionChangedTest {
 
         // File Menu Items
         verify(mockDuplicate).setEnabled(false);
-        verify(mockAddToSideBar).setEnabled(false);
         verify(mockMoveToTrash).setEnabled(false);
 
         // Edit Menu Items
@@ -425,7 +418,6 @@ public class DiskResourceViewToolbar_onDiskResourceSelectionChangedTest {
 
         // File Menu Items
         verify(mockDuplicate).setEnabled(false);
-        verify(mockAddToSideBar).setEnabled(false);
         verify(mockMoveToTrash).setEnabled(false);
 
         // Edit Menu Items
@@ -476,7 +468,6 @@ public class DiskResourceViewToolbar_onDiskResourceSelectionChangedTest {
 
         // File Menu Items
         verify(mockDuplicate).setEnabled(false);
-        verify(mockAddToSideBar).setEnabled(true);
         verify(mockMoveToTrash).setEnabled(false);
 
         // Edit Menu Items
@@ -526,7 +517,6 @@ public class DiskResourceViewToolbar_onDiskResourceSelectionChangedTest {
 
         // File Menu Items
         verify(mockDuplicate).setEnabled(false);
-        verify(mockAddToSideBar).setEnabled(true);
         verify(mockMoveToTrash).setEnabled(false);
 
         // Edit Menu Items
@@ -576,7 +566,6 @@ public class DiskResourceViewToolbar_onDiskResourceSelectionChangedTest {
 
         // File Menu Items
         verify(mockDuplicate).setEnabled(true);
-        verify(mockAddToSideBar).setEnabled(true);
         verify(mockMoveToTrash).setEnabled(true);
 
         // Edit Menu Items
@@ -625,7 +614,6 @@ public class DiskResourceViewToolbar_onDiskResourceSelectionChangedTest {
 
         // File Menu Items
         verify(mockDuplicate).setEnabled(false);
-        verify(mockAddToSideBar).setEnabled(false);
         verify(mockMoveToTrash).setEnabled(false);
 
         // Edit Menu Items
@@ -675,7 +663,6 @@ public class DiskResourceViewToolbar_onDiskResourceSelectionChangedTest {
 
         // File Menu Items
         verify(mockDuplicate).setEnabled(false);
-        verify(mockAddToSideBar).setEnabled(false);
         verify(mockMoveToTrash).setEnabled(false);
 
         // Edit Menu Items
@@ -725,7 +712,6 @@ public class DiskResourceViewToolbar_onDiskResourceSelectionChangedTest {
 
         // File Menu Items
         verify(mockDuplicate).setEnabled(false);
-        verify(mockAddToSideBar).setEnabled(false);
         verify(mockMoveToTrash).setEnabled(false);
 
         // Edit Menu Items
@@ -780,7 +766,6 @@ public class DiskResourceViewToolbar_onDiskResourceSelectionChangedTest {
 
         // File Menu Items
         verify(mockDuplicate).setEnabled(false);
-        verify(mockAddToSideBar).setEnabled(false);
         verify(mockMoveToTrash).setEnabled(false);
 
         // Edit Menu Items
@@ -833,7 +818,6 @@ public class DiskResourceViewToolbar_onDiskResourceSelectionChangedTest {
 
         // File Menu Items
         verify(mockDuplicate).setEnabled(false);
-        verify(mockAddToSideBar).setEnabled(false);
         verify(mockMoveToTrash).setEnabled(false);
 
         // Edit Menu Items
@@ -886,7 +870,6 @@ public class DiskResourceViewToolbar_onDiskResourceSelectionChangedTest {
 
         // File Menu Items
         verify(mockDuplicate).setEnabled(true);
-        verify(mockAddToSideBar).setEnabled(false);
         verify(mockMoveToTrash).setEnabled(true);
 
         // Edit Menu Items
@@ -947,7 +930,6 @@ public class DiskResourceViewToolbar_onDiskResourceSelectionChangedTest {
 
         // File Menu Items
         verify(mockDuplicate).setEnabled(false);
-        verify(mockAddToSideBar).setEnabled(false);
         verify(mockMoveToTrash).setEnabled(false);
 
         // Edit Menu Items
@@ -1000,7 +982,6 @@ public class DiskResourceViewToolbar_onDiskResourceSelectionChangedTest {
 
         // File Menu Items
         verify(mockDuplicate).setEnabled(false);
-        verify(mockAddToSideBar).setEnabled(false);
         verify(mockMoveToTrash).setEnabled(false);
 
         // Edit Menu Items
@@ -1053,7 +1034,6 @@ public class DiskResourceViewToolbar_onDiskResourceSelectionChangedTest {
 
         // File Menu Items
         verify(mockDuplicate).setEnabled(false);
-        verify(mockAddToSideBar).setEnabled(false);
         verify(mockMoveToTrash).setEnabled(false);
 
         // Edit Menu Items
@@ -1113,7 +1093,6 @@ public class DiskResourceViewToolbar_onDiskResourceSelectionChangedTest {
 
         // File Menu Items
         verify(mockDuplicate).setEnabled(false);
-        verify(mockAddToSideBar).setEnabled(false);
         verify(mockMoveToTrash).setEnabled(false);
 
         // Edit Menu Items
@@ -1166,7 +1145,6 @@ public class DiskResourceViewToolbar_onDiskResourceSelectionChangedTest {
 
         // File Menu Items
         verify(mockDuplicate).setEnabled(false);
-        verify(mockAddToSideBar).setEnabled(true);
         verify(mockMoveToTrash).setEnabled(false);
 
         // Edit Menu Items
@@ -1219,7 +1197,6 @@ public class DiskResourceViewToolbar_onDiskResourceSelectionChangedTest {
 
         // File Menu Items
         verify(mockDuplicate).setEnabled(true);
-        verify(mockAddToSideBar).setEnabled(true);
         verify(mockMoveToTrash).setEnabled(true);
 
         // Edit Menu Items
@@ -1278,7 +1255,6 @@ public class DiskResourceViewToolbar_onDiskResourceSelectionChangedTest {
 
         // File Menu Items
         verify(mockDuplicate).setEnabled(false);
-        verify(mockAddToSideBar).setEnabled(false);
         verify(mockMoveToTrash).setEnabled(false);
 
         // Edit Menu Items
@@ -1331,7 +1307,6 @@ public class DiskResourceViewToolbar_onDiskResourceSelectionChangedTest {
 
         // File Menu Items
         verify(mockDuplicate).setEnabled(false);
-        verify(mockAddToSideBar).setEnabled(false);
         verify(mockMoveToTrash).setEnabled(false);
 
         // Edit Menu Items
@@ -1384,7 +1359,6 @@ public class DiskResourceViewToolbar_onDiskResourceSelectionChangedTest {
 
         // File Menu Items
         verify(mockDuplicate).setEnabled(false);
-        verify(mockAddToSideBar).setEnabled(false);
         verify(mockMoveToTrash).setEnabled(false);
 
         // Edit Menu Items
@@ -1445,7 +1419,6 @@ public class DiskResourceViewToolbar_onDiskResourceSelectionChangedTest {
 
         // File Menu Items
         verify(mockDuplicate).setEnabled(false);
-        verify(mockAddToSideBar).setEnabled(false);
         verify(mockMoveToTrash).setEnabled(false);
 
         // Edit Menu Items
@@ -1495,7 +1468,6 @@ public class DiskResourceViewToolbar_onDiskResourceSelectionChangedTest {
 
         // File Menu Items
         verify(mockDuplicate).setEnabled(false);
-        verify(mockAddToSideBar).setEnabled(false);
         verify(mockMoveToTrash).setEnabled(false);
 
         // Edit Menu Items

@@ -18,6 +18,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -35,6 +36,7 @@ import java.util.List;
  * 
  */
 @RunWith(GwtMockitoTestRunner.class)
+@Ignore("SS: ignored till CORE-5807 is resolved.")
 public class DataSearchQueryBuilderTest {
     
     @Mock DiskResourceQueryTemplate dsf;
