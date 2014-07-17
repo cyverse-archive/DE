@@ -116,6 +116,35 @@ public class NewDesktopPresenterImpl implements NewDesktopView.Presenter {
         }
     }
 
+    private class GetUserSessionCallback implements AsyncCallback<List<WindowState>> {
+        private final AutoProgressMessageBox progressMessageBox;
+        private final IplantErrorStrings errorStrings;
+        private final IplantAnnouncer announcer;
+
+        public GetUserSessionCallback(final AutoProgressMessageBox progressMessageBox,
+                                      final IplantErrorStrings errorStrings,
+                                      final IplantAnnouncer announcer) {
+            this.progressMessageBox = progressMessageBox;
+            this.errorStrings = errorStrings;
+            this.announcer = announcer;
+        }
+
+        @Override
+        public void onFailure(Throwable caught) {
+            final SafeHtml message = SafeHtmlUtils.fromTrustedString(errorStrings.loadSessionFailed());
+            announcer.schedule(new ErrorAnnouncementConfig(message, true, 5000));
+            doPeriodicSessionSave();
+            progressMessageBox.hide();
+        }
+
+        @Override
+        public void onSuccess(List<WindowState> result) {
+            restoreWindows(result);
+            doPeriodicSessionSave();
+            progressMessageBox.hide();
+        }
+    }
+
     private class LogoutCallback implements AsyncCallback<String> {
         private final UserSessionServiceFacade userSessionService;
         private final DEClientConstants constants;
@@ -154,15 +183,12 @@ public class NewDesktopPresenterImpl implements NewDesktopView.Presenter {
         private void logout() {
             final String redirectUrl = GWT.getHostPageBaseURL() + constants.logoutUrl();
             if (userSettings.isSaveSession()) {
-//                UserSessionProgressMessageBox uspmb = UserSessionProgressMessageBox.saveSession(NewDesktopPresenterImpl.this, redirectUrl);
-//                uspmb.show();
-
                 final AutoProgressMessageBox progressMessageBox = new AutoProgressMessageBox(displayStrings.savingSession(),
                                                                                              displayStrings.savingSessionWaitNotice());
                 progressMessageBox.getProgressBar().setDuration(1000);
                 progressMessageBox.getProgressBar().setInterval(100);
                 progressMessageBox.auto();
-                Request req = userSessionService.saveUserSession(orderedWindowStates, new AsyncCallback<Void>() {
+                userSessionService.saveUserSession(orderedWindowStates, new AsyncCallback<Void>() {
                     @Override
                     public void onFailure(Throwable caught) {
                         GWT.log(errorStrings.saveSessionFailed(), caught);
@@ -286,6 +312,7 @@ public class NewDesktopPresenterImpl implements NewDesktopView.Presenter {
                                    final EventBus eventBus,
                                    final NewMessageView.Presenter systemMsgPresenter,
                                    final WindowManager windowManager,
+                                   final DesktopWindowManager desktopWindowManager,
                                    final MessagePoller messagePoller,
                                    final KeepaliveTimer keepaliveTimer) {
         this.view = view;
@@ -294,7 +321,7 @@ public class NewDesktopPresenterImpl implements NewDesktopView.Presenter {
         this.windowManager = windowManager;
         this.keepaliveTimer = keepaliveTimer;
         this.messagePoller = messagePoller;
-        this.desktopWindowManager = new DesktopWindowManager(windowManager);
+        this.desktopWindowManager = desktopWindowManager;
         this.ssp = new SaveSessionPeriodic(this);
 
         this.view.setPresenter(this);
@@ -315,7 +342,6 @@ public class NewDesktopPresenterImpl implements NewDesktopView.Presenter {
     @Override
     public void doPeriodicSessionSave() {
         if (userSettings.isSaveSession()) {
-
             ssp.run();
             messagePoller.addTask(ssp);
             // start if not started...
@@ -338,6 +364,7 @@ public class NewDesktopPresenterImpl implements NewDesktopView.Presenter {
 
     @Override
     public void go(final Panel panel) {
+        // Fetch DE properties, the rest of DE initialization is performed in callback
         propertyServiceFacade.getProperties(new PropertyServiceCallback(deProperties,
                                                                         userInfo,
                                                                         userSettings,
@@ -424,7 +451,9 @@ public class NewDesktopPresenterImpl implements NewDesktopView.Presenter {
 
     @Override
     public void restoreWindows(List<WindowState> windowStates) {
-        // TODO Implement method
+        for(WindowState ws : windowStates){
+            desktopWindowManager.show(ws);
+        }
     }
 
     @Override
@@ -457,30 +486,12 @@ public class NewDesktopPresenterImpl implements NewDesktopView.Presenter {
     private void getUserSession(final boolean urlHasDataTypeParameter) {
         if (userSettings.isSaveSession() && !urlHasDataTypeParameter) {
             // This restoreSession's callback will also init periodic session saving.
-//            UserSessionProgressMessageBox uspmb = UserSessionProgressMessageBox.restoreSession(this);
-//            uspmb.show();
-
             final AutoProgressMessageBox progressMessageBox = new AutoProgressMessageBox(displayStrings.loadingSession(),
-                                                                                   displayStrings.loadingSessionWaitNotice());
+                                                                                         displayStrings.loadingSessionWaitNotice());
             progressMessageBox.getProgressBar().setDuration(1000);
             progressMessageBox.getProgressBar().setInterval(100);
             progressMessageBox.auto();
-            final Request req = userSessionService.getUserSession(new AsyncCallback<List<WindowState>>() {
-                @Override
-                public void onFailure(Throwable caught) {
-                    final SafeHtml message = SafeHtmlUtils.fromTrustedString(errorStrings.loadSessionFailed());
-                    announcer.schedule(new ErrorAnnouncementConfig(message, true, 5000));
-                    doPeriodicSessionSave();
-                    progressMessageBox.hide();
-                }
-
-                @Override
-                public void onSuccess(List<WindowState> result) {
-                    restoreWindows(result);
-                    doPeriodicSessionSave();
-                    progressMessageBox.hide();
-                }
-            });
+            final Request req = userSessionService.getUserSession(new GetUserSessionCallback(progressMessageBox));
             progressMessageBox.addDialogHideHandler(new DialogHideEvent.DialogHideHandler() {
                 @Override
                 public void onDialogHide(DialogHideEvent event) {

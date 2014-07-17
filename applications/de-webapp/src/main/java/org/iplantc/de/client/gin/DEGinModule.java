@@ -7,6 +7,7 @@ import org.iplantc.de.client.models.UserSettings;
 import org.iplantc.de.client.newDesktop.NewDesktopView;
 import org.iplantc.de.client.newDesktop.presenter.DesktopPresenterEventHandler;
 import org.iplantc.de.client.newDesktop.presenter.DesktopPresenterWindowEventHandler;
+import org.iplantc.de.client.newDesktop.presenter.DesktopWindowManager;
 import org.iplantc.de.client.newDesktop.presenter.NewDesktopPresenterImpl;
 import org.iplantc.de.client.newDesktop.views.NewDesktopViewImpl;
 import org.iplantc.de.client.periodic.MessagePoller;
@@ -92,5 +93,6 @@ public class DEGinModule extends AbstractGinModule {
         bind(NewMessageView.Presenter.class).to(NewMessagePresenter.class);
         bind(DesktopPresenterEventHandler.class);
         bind(DesktopPresenterWindowEventHandler.class);
+        bind(DesktopWindowManager.class).in(Singleton.class);
     }
 }
