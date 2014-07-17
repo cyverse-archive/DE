@@ -9,12 +9,15 @@ import org.iplantc.de.client.newDesktop.presenter.DesktopPresenterEventHandler;
 import org.iplantc.de.client.newDesktop.presenter.DesktopPresenterWindowEventHandler;
 import org.iplantc.de.client.newDesktop.presenter.NewDesktopPresenterImpl;
 import org.iplantc.de.client.newDesktop.views.NewDesktopViewImpl;
+import org.iplantc.de.client.periodic.MessagePoller;
 import org.iplantc.de.client.services.AnalysisServiceFacade;
 import org.iplantc.de.client.services.DiskResourceServiceFacade;
 import org.iplantc.de.client.services.FileEditorServiceFacade;
 import org.iplantc.de.client.services.UserSessionServiceFacade;
 import org.iplantc.de.client.sysmsgs.presenter.NewMessagePresenter;
 import org.iplantc.de.client.sysmsgs.view.NewMessageView;
+import org.iplantc.de.commons.client.info.IplantAnnouncer;
+import org.iplantc.de.commons.client.requests.KeepaliveTimer;
 import org.iplantc.de.resources.client.IplantResources;
 import org.iplantc.de.shared.services.PropertyServiceFacade;
 
@@ -65,8 +68,20 @@ public class DEGinModule extends AbstractGinModule {
         return DEProperties.getInstance();
     }
 
-    @Provides public WindowManager getWindowManager() {
+    @Provides @Singleton public KeepaliveTimer createKeepaliveTimer() {
+        return KeepaliveTimer.getInstance();
+    }
+
+    @Provides @Singleton public MessagePoller createMessagePoller() {
+        return MessagePoller.getInstance();
+    }
+
+    @Provides @Singleton public WindowManager getWindowManager() {
         return WindowManager.get();
+    }
+
+    @Provides @Singleton public IplantAnnouncer createAnnouncer() {
+        return IplantAnnouncer.getInstance();
     }
 
     @Override

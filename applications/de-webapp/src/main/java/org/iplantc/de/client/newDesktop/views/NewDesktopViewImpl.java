@@ -257,7 +257,7 @@ public class NewDesktopViewImpl implements NewDesktopView, UnregisterEvent.Unreg
 
     @UiHandler("logoutBtn")
     void onLogoutClick(ClickEvent event){
-        presenter.onLogoutClick();
+        presenter.doLogout();
     }
 
 }

@@ -90,6 +90,11 @@ public interface NewDesktopView extends IsWidget {
      * -- Desktop window management.
      * -- Maintaining user session saving
      * -- Handling user desktop events for the desktop icons and user settings menu
+     *
+     *
+     * TODO JDS Eventually, certain injected parameters will be injected via an AsyncProvider
+     *           This will provide us with split points through injection. Only items which are not
+     *           immediately necessary should be provided this way.
      */
     interface Presenter extends UserSettingsMenuPresenter {
 
@@ -158,7 +163,7 @@ public interface NewDesktopView extends IsWidget {
 
         void onIntroClick();
 
-        void onLogoutClick();
+        void doLogout();
 
         void onPreferencesClick();
 

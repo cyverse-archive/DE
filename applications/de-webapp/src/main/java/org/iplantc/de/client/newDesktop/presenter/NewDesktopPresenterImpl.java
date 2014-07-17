@@ -20,6 +20,9 @@ import org.iplantc.de.client.views.windows.IPlantWindowInterface;
 import org.iplantc.de.commons.client.CommonUiConstants;
 import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.commons.client.collaborators.views.ManageCollaboratorsDialog;
+import org.iplantc.de.commons.client.info.ErrorAnnouncementConfig;
+import org.iplantc.de.commons.client.info.IplantAnnouncer;
+import org.iplantc.de.commons.client.info.SuccessAnnouncementConfig;
 import org.iplantc.de.commons.client.requests.KeepaliveTimer;
 import org.iplantc.de.commons.client.util.WindowUtil;
 import org.iplantc.de.commons.client.views.gxt3.dialogs.IplantErrorDialog;
@@ -27,6 +30,7 @@ import org.iplantc.de.commons.client.views.window.configs.AppsWindowConfig;
 import org.iplantc.de.commons.client.views.window.configs.ConfigFactory;
 import org.iplantc.de.commons.client.views.window.configs.DiskResourceWindowConfig;
 import org.iplantc.de.commons.client.views.window.configs.WindowConfig;
+import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 import org.iplantc.de.resources.client.messages.IplantErrorStrings;
 import org.iplantc.de.shared.DeModule;
 import org.iplantc.de.shared.services.PropertyServiceFacade;
@@ -39,6 +43,8 @@ import com.google.gwt.debug.client.DebugInfo;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.http.client.Request;
 import com.google.gwt.http.client.URL;
+import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -50,9 +56,12 @@ import com.google.inject.Provider;
 import com.google.web.bindery.autobean.shared.impl.StringQuoter;
 
 import com.sencha.gxt.core.client.util.KeyNav;
+import com.sencha.gxt.widget.core.client.Dialog;
 import com.sencha.gxt.widget.core.client.WindowManager;
+import com.sencha.gxt.widget.core.client.box.AutoProgressMessageBox;
 import com.sencha.gxt.widget.core.client.event.DialogHideEvent;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -108,13 +117,25 @@ public class NewDesktopPresenterImpl implements NewDesktopView.Presenter {
     }
 
     private class LogoutCallback implements AsyncCallback<String> {
+        private final UserSessionServiceFacade userSessionService;
         private final DEClientConstants constants;
         private final UserSettings userSettings;
+        private final IplantDisplayStrings displayStrings;
+        private final IplantErrorStrings errorStrings;
+        private final List<WindowState> orderedWindowStates;
 
-        private LogoutCallback(final DEClientConstants constants,
-                               final UserSettings userSettings) {
+        private LogoutCallback(final UserSessionServiceFacade userSessionService,
+                               final DEClientConstants constants,
+                               final UserSettings userSettings,
+                               final IplantDisplayStrings displayStrings,
+                               final IplantErrorStrings errorStrings,
+                               final List<WindowState> orderedWindowStates) {
+            this.userSessionService = userSessionService;
             this.constants = constants;
             this.userSettings = userSettings;
+            this.displayStrings = displayStrings;
+            this.errorStrings = errorStrings;
+            this.orderedWindowStates = orderedWindowStates;
         }
 
         @Override
@@ -131,10 +152,32 @@ public class NewDesktopPresenterImpl implements NewDesktopView.Presenter {
         }
 
         private void logout() {
-            String redirectUrl = GWT.getHostPageBaseURL() + constants.logoutUrl();
+            final String redirectUrl = GWT.getHostPageBaseURL() + constants.logoutUrl();
             if (userSettings.isSaveSession()) {
-                UserSessionProgressMessageBox uspmb = UserSessionProgressMessageBox.saveSession(NewDesktopPresenterImpl.this, redirectUrl);
-                uspmb.show();
+//                UserSessionProgressMessageBox uspmb = UserSessionProgressMessageBox.saveSession(NewDesktopPresenterImpl.this, redirectUrl);
+//                uspmb.show();
+
+                final AutoProgressMessageBox progressMessageBox = new AutoProgressMessageBox(displayStrings.savingSession(),
+                                                                                             displayStrings.savingSessionWaitNotice());
+                progressMessageBox.getProgressBar().setDuration(1000);
+                progressMessageBox.getProgressBar().setInterval(100);
+                progressMessageBox.auto();
+                Request req = userSessionService.saveUserSession(orderedWindowStates, new AsyncCallback<Void>() {
+                    @Override
+                    public void onFailure(Throwable caught) {
+                        GWT.log(errorStrings.saveSessionFailed(), caught);
+                        progressMessageBox.hide();
+                        Window.Location.assign(redirectUrl);
+                    }
+
+                    @Override
+                    public void onSuccess(Void result) {
+                        progressMessageBox.hide();
+                        Window.Location.assign(redirectUrl);
+                    }
+                });
+
+                progressMessageBox.show();
             } else {
                 Window.Location.assign(redirectUrl);
             }
@@ -148,20 +191,20 @@ public class NewDesktopPresenterImpl implements NewDesktopView.Presenter {
         private final IplantErrorStrings errorStrings;
         private final Panel panel;
         private final UserInfo userInfo;
-        private final Provider<UserSessionServiceFacade> userSessionServiceProvider;
+        private final UserSessionServiceFacade userSessionService;
         private final UserSettings userSettings;
 
         public PropertyServiceCallback(DEProperties deProperties,
                                        UserInfo userInfo,
                                        UserSettings userSettings,
-                                       Provider<UserSessionServiceFacade> userSessionServiceProvider,
+                                       UserSessionServiceFacade userSessionService,
                                        Provider<ErrorHandler> errorHandlerProvider,
                                        IplantErrorStrings errorStrings,
                                        Panel panel) {
             this.deProps = deProperties;
             this.userInfo = userInfo;
             this.userSettings = userSettings;
-            this.userSessionServiceProvider = userSessionServiceProvider;
+            this.userSessionService = userSessionService;
             this.errorHandlerProvider = errorHandlerProvider;
             this.errorStrings = errorStrings;
             this.panel = panel;
@@ -175,14 +218,12 @@ public class NewDesktopPresenterImpl implements NewDesktopView.Presenter {
         @Override
         public void onSuccess(Map<String, String> result) {
             deProps.initialize(result);
-            final Request bootstrapReq = userSessionServiceProvider.get()
-                                                                   .bootstrap(new BootstrapCallback(userInfo,
-                                                                                                    errorHandlerProvider,
-                                                                                                    errorStrings));
-            final Request userPrefReq = userSessionServiceProvider.get()
-                                                                  .getUserPreferences(new UserPreferencesCallback(userSettings,
-                                                                                                                  errorHandlerProvider,
-                                                                                                                  errorStrings));
+            final Request bootstrapReq = userSessionService.bootstrap(new BootstrapCallback(userInfo,
+                                                                                            errorHandlerProvider,
+                                                                                            errorStrings));
+            final Request userPrefReq = userSessionService.getUserPreferences(new UserPreferencesCallback(userSettings,
+                                                                                                          errorHandlerProvider,
+                                                                                                          errorStrings));
 
             Timer t = new Timer() {
                 @Override
@@ -217,20 +258,26 @@ public class NewDesktopPresenterImpl implements NewDesktopView.Presenter {
 
     @Inject CommonUiConstants commonUiConstants;
     @Inject DEClientConstants deClientConstants;
+    @Inject IplantDisplayStrings displayStrings;
     @Inject IplantErrorStrings errorStrings;
     @Inject DEProperties deProperties;
     @Inject UserInfo userInfo;
     @Inject UserSettings userSettings;
+    @Inject IplantAnnouncer announcer;
+
+    @Inject PropertyServiceFacade propertyServiceFacade;
+    @Inject UserSessionServiceFacade userSessionService;
 
     @Inject Provider<ErrorHandler> errorHandlerProvider;
-    @Inject PropertyServiceFacade propertyServiceFacade;
-    @Inject Provider<UserSessionServiceFacade> userSessionServiceProvider;
 
     private final EventBus eventBus;
+    private final WindowManager windowManager;
+    private final KeepaliveTimer keepaliveTimer;
     private final SaveSessionPeriodic ssp;
     private final NewMessageView.Presenter systemMsgPresenter;
     private final NewDesktopView view;
-    private final DesktopWindowManager windowManager;
+    private final DesktopWindowManager desktopWindowManager;
+    private final MessagePoller messagePoller;
 
     @Inject
     public NewDesktopPresenterImpl(final NewDesktopView view,
@@ -238,19 +285,24 @@ public class NewDesktopPresenterImpl implements NewDesktopView.Presenter {
                                    final DesktopPresenterWindowEventHandler windowEventHandler,
                                    final EventBus eventBus,
                                    final NewMessageView.Presenter systemMsgPresenter,
-                                   final WindowManager gxtWindowManager) {
+                                   final WindowManager windowManager,
+                                   final MessagePoller messagePoller,
+                                   final KeepaliveTimer keepaliveTimer) {
         this.view = view;
         this.eventBus = eventBus;
         this.systemMsgPresenter = systemMsgPresenter;
+        this.windowManager = windowManager;
+        this.keepaliveTimer = keepaliveTimer;
+        this.messagePoller = messagePoller;
+        this.desktopWindowManager = new DesktopWindowManager(windowManager);
+        this.ssp = new SaveSessionPeriodic(this);
+
         this.view.setPresenter(this);
         globalEventHandler.setPresenter(this);
         windowEventHandler.setPresenter(this);
-        windowManager = new DesktopWindowManager(gxtWindowManager);
         if (DebugInfo.isDebugIdEnabled()) {
             this.view.ensureDebugId(DeModule.Ids.DESKTOP);
         }
-        ssp = new SaveSessionPeriodic(this);
-
     }
 
     public static native void doIntro() /*-{
@@ -262,25 +314,26 @@ public class NewDesktopPresenterImpl implements NewDesktopView.Presenter {
 
     @Override
     public void doPeriodicSessionSave() {
-        MessagePoller poller = MessagePoller.getInstance();
         if (userSettings.isSaveSession()) {
 
             ssp.run();
-            poller.addTask(ssp);
+            messagePoller.addTask(ssp);
             // start if not started...
-            poller.start();
+            messagePoller.start();
         } else {
-            poller.removeTask(ssp);
+            messagePoller.removeTask(ssp);
         }
     }
 
     @Override
     public List<WindowState> getOrderedWindowStates() {
         List<WindowState> windowStates = Lists.newArrayList();
-        for (Widget w : WindowManager.get().getStack()) {
-            windowStates.add(((IPlantWindowInterface) w).getWindowState());
+        for (Widget w : windowManager.getStack()) {
+            if(w instanceof IPlantWindowInterface){
+                windowStates.add(((IPlantWindowInterface) w).getWindowState());
+            }
         }
-        return windowStates;
+        return Collections.unmodifiableList(windowStates);
     }
 
     @Override
@@ -288,7 +341,7 @@ public class NewDesktopPresenterImpl implements NewDesktopView.Presenter {
         propertyServiceFacade.getProperties(new PropertyServiceCallback(deProperties,
                                                                         userInfo,
                                                                         userSettings,
-                                                                        userSessionServiceProvider,
+                                                                        userSessionService,
                                                                         errorHandlerProvider,
                                                                         errorStrings,
                                                                         panel));
@@ -309,10 +362,12 @@ public class NewDesktopPresenterImpl implements NewDesktopView.Presenter {
         show(ConfigFactory.appsWindowConfig());
     }
 
+    /**
+     * FIXME JDS The manage collaborators presenter should be used here, not the view.
+     */
     @Override
     public void onCollaboratorsClick() {
-        ManageCollaboratorsDialog d = new ManageCollaboratorsDialog(MANAGE);
-        d.show();
+        new ManageCollaboratorsDialog(MANAGE).show();
     }
 
     @Override
@@ -341,14 +396,25 @@ public class NewDesktopPresenterImpl implements NewDesktopView.Presenter {
     }
 
     @Override
-    public void onLogoutClick() {
-        doLogout();
+    public void doLogout() {
+        // Need to stop polling
+        messagePoller.stop();
+//        cleanUp();
+
+        userSessionService.logout(new LogoutCallback(userSessionService,
+                                                     deClientConstants,
+                                                     userSettings,
+                                                     displayStrings,
+                                                     errorStrings,
+                                                     getOrderedWindowStates()));
     }
 
+    /**
+     * FIXME JDS The preferences presenter should be used here, not the view.
+     */
     @Override
     public void onPreferencesClick() {
-        PreferencesDialog d = new PreferencesDialog();
-        d.show();
+        new PreferencesDialog().show();
     }
 
     @Override
@@ -358,17 +424,18 @@ public class NewDesktopPresenterImpl implements NewDesktopView.Presenter {
 
     @Override
     public void restoreWindows(List<WindowState> windowStates) {
-
+        // TODO Implement method
     }
 
     @Override
     public void show(final WindowConfig config) {
-        windowManager.show(config, false);
+        desktopWindowManager.show(config, false);
     }
 
     @Override
-    public void show(final WindowConfig config, final boolean updateExistingWindow) {
-        windowManager.show(config, updateExistingWindow);
+    public void show(final WindowConfig config,
+                     final boolean updateExistingWindow) {
+        desktopWindowManager.show(config, updateExistingWindow);
     }
 
     void postBootstrap(final Panel panel) {
@@ -377,51 +444,73 @@ public class NewDesktopPresenterImpl implements NewDesktopView.Presenter {
         String target = deProperties.getKeepaliveTarget();
         int interval = deProperties.getKeepaliveInterval();
         if (target != null && !target.equals("") && interval > 0) {
-            KeepaliveTimer.getInstance().start(target, interval);
+            keepaliveTimer.start(target, interval);
         }
 
 
         initMessagePoller();
-        setUpKBShortCuts();
+        initKBShortCuts();
         panel.add(view);
         processQueryStrings();
     }
 
-    private void doLogout() {
-        // Need to stop polling
-        MessagePoller.getInstance().stop();
-//        cleanUp();
-
-        userSessionServiceProvider.get().logout(new LogoutCallback(deClientConstants,
-                                                                   userSettings));
-    }
-
-    private void getUserSession() {
-        boolean urlHasDataTypeParameter = urlHasDataTypeParameter(Window.Location.getParameterMap());
+    private void getUserSession(final boolean urlHasDataTypeParameter) {
         if (userSettings.isSaveSession() && !urlHasDataTypeParameter) {
             // This restoreSession's callback will also init periodic session saving.
-            UserSessionProgressMessageBox uspmb = UserSessionProgressMessageBox.restoreSession(this);
-            uspmb.show();
+//            UserSessionProgressMessageBox uspmb = UserSessionProgressMessageBox.restoreSession(this);
+//            uspmb.show();
+
+            final AutoProgressMessageBox progressMessageBox = new AutoProgressMessageBox(displayStrings.loadingSession(),
+                                                                                   displayStrings.loadingSessionWaitNotice());
+            progressMessageBox.getProgressBar().setDuration(1000);
+            progressMessageBox.getProgressBar().setInterval(100);
+            progressMessageBox.auto();
+            final Request req = userSessionService.getUserSession(new AsyncCallback<List<WindowState>>() {
+                @Override
+                public void onFailure(Throwable caught) {
+                    final SafeHtml message = SafeHtmlUtils.fromTrustedString(errorStrings.loadSessionFailed());
+                    announcer.schedule(new ErrorAnnouncementConfig(message, true, 5000));
+                    doPeriodicSessionSave();
+                    progressMessageBox.hide();
+                }
+
+                @Override
+                public void onSuccess(List<WindowState> result) {
+                    restoreWindows(result);
+                    doPeriodicSessionSave();
+                    progressMessageBox.hide();
+                }
+            });
+            progressMessageBox.addDialogHideHandler(new DialogHideEvent.DialogHideHandler() {
+                @Override
+                public void onDialogHide(DialogHideEvent event) {
+                    if(Dialog.PredefinedButton.CANCEL.equals(event.getHideButton())){
+                        req.cancel();
+                        SafeHtml msg = SafeHtmlUtils.fromString("Session restore cancelled");
+                        announcer.schedule(new SuccessAnnouncementConfig(msg, true, 5000));
+                    }
+                }
+            });
         } else if (urlHasDataTypeParameter) {
             doPeriodicSessionSave();
         }
     }
 
     /**
-     * TODO JDS This needs to be ported to notifications.
+     * FIXME JDS This needs to be ported to notifications.
      */
     private void initMessagePoller() {
         // Do an initial fetch of message counts, otherwise the initial count will not be fetched until
         // after an entire poll-length of the MessagePoller's timer (15 seconds by default).
         GetMessageCounts notificationCounts = new GetMessageCounts();
         notificationCounts.run();
-        MessagePoller poller = MessagePoller.getInstance();
-        poller.addTask(notificationCounts);
-        poller.start();
+        messagePoller.addTask(notificationCounts);
+        messagePoller.start();
     }
 
     private void processQueryStrings() {
         boolean hasError = false;
+        boolean hasDataTypeParameter = false;
         Map<String, List<String>> params = Window.Location.getParameterMap();
         for (String key : params.keySet()) {
 
@@ -435,6 +524,7 @@ public class NewDesktopPresenterImpl implements NewDesktopView.Presenter {
                         appsConfig.setSelectedAppGroup(CommonModelUtils.createHasIdFromString(appCategoryId));
                         windowConfig = appsConfig;
                     } else if (TypeQueryValues.DATA.equalsIgnoreCase(paramValue)) {
+                        hasDataTypeParameter = true;
                         DiskResourceWindowConfig drConfig = ConfigFactory.diskResourceWindowConfig(true);
                         drConfig.setMaximized(true);
                         // If user has multiple folder parameters, the last one will be used.
@@ -465,12 +555,12 @@ public class NewDesktopPresenterImpl implements NewDesktopView.Presenter {
                 errorDialog.addDialogHideHandler(new DialogHideEvent.DialogHideHandler() {
                     @Override
                     public void onDialogHide(DialogHideEvent event) {
-                        getUserSession();
+                        getUserSession(false);
                     }
                 });
             }
         }
-        if (!hasError) getUserSession();
+        if (!hasError) getUserSession(hasDataTypeParameter);
     }
 
     /**
@@ -485,7 +575,7 @@ public class NewDesktopPresenterImpl implements NewDesktopView.Presenter {
         };
     }-*/;
 
-    private void setUpKBShortCuts() {
+    private void initKBShortCuts() {
         new KeyNav(RootPanel.get()) {
             @Override
             public void handleEvent(NativeEvent event) {
@@ -505,20 +595,6 @@ public class NewDesktopPresenterImpl implements NewDesktopView.Presenter {
                 }
             }
         };
-    }
-
-    /**
-     * @param params the url parameters map
-     * @return true if parameter has "type=data"
-     */
-    private boolean urlHasDataTypeParameter(Map<String, List<String>> params) {
-        for (String key : params.keySet()) {
-            if (QueryStrings.TYPE.equalsIgnoreCase(key)
-                    && TypeQueryValues.DATA.equalsIgnoreCase(Iterables.getFirst(params.get(key), ""))) {
-                return true;
-            }
-        }
-        return false;
     }
 
 }

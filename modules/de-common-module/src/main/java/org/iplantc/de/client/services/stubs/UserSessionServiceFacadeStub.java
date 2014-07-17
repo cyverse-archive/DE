@@ -1,6 +1,6 @@
 package org.iplantc.de.client.services.stubs;
 
-import org.iplantc.de.client.models.UserSession;
+import org.iplantc.de.client.models.WindowState;
 import org.iplantc.de.client.services.UserSessionServiceFacade;
 
 import com.google.gwt.http.client.Request;
@@ -8,15 +8,17 @@ import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.web.bindery.autobean.shared.Splittable;
 
+import java.util.List;
+
 public class UserSessionServiceFacadeStub implements UserSessionServiceFacade {
     @Override
-    public void getUserSession(AsyncCallback<String> callback) {
-
+    public Request getUserSession(AsyncCallback<List<WindowState>> callback) {
+        return null;
     }
 
     @Override
-    public void saveUserSession(UserSession userSession, AsyncCallback<String> callback) {
-
+    public Request saveUserSession(List<WindowState> windowStates, AsyncCallback<Void> callback) {
+        return null;
     }
 
     @Override

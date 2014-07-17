@@ -10,4 +10,6 @@ public interface CommonModelAutoBeanFactory extends AutoBeanFactory {
     AutoBean<HasPath> hasPath();
 
     AutoBean<UserBootstrap> bootstrap();
+
+    AutoBean<UserSession> userSession();
 }
