@@ -5,11 +5,13 @@ import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.GET;
 import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.POST;
 
 import org.iplantc.de.client.models.DEProperties;
+import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.client.models.UserSession;
 import org.iplantc.de.client.services.DEServiceFacade;
 import org.iplantc.de.client.services.UserSessionServiceFacade;
 import org.iplantc.de.shared.services.ServiceCallWrapper;
 
+import com.google.gwt.http.client.Request;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.inject.Inject;
@@ -26,12 +28,16 @@ import com.google.web.bindery.autobean.shared.Splittable;
 public class UserSessionServiceFacadeImpl implements UserSessionServiceFacade {
 
     private final DEProperties deProperties;
+    private final UserInfo userInfo;
     private final DEServiceFacade deServiceFacade;
 
     @Inject
-    public UserSessionServiceFacadeImpl(final DEServiceFacade deServiceFacade, final DEProperties deProperties) {
+    public UserSessionServiceFacadeImpl(final DEServiceFacade deServiceFacade,
+                                        final DEProperties deProperties,
+                                        final UserInfo userInfo) {
         this.deServiceFacade = deServiceFacade;
         this.deProperties = deProperties;
+        this.userInfo = userInfo;
     }
 
     /*
@@ -84,10 +90,10 @@ public class UserSessionServiceFacadeImpl implements UserSessionServiceFacade {
      * .client.rpc.AsyncCallback)
      */
     @Override
-    public void getUserPreferences(AsyncCallback<String> callback) {
+    public Request getUserPreferences(AsyncCallback<String> callback) {
         String address = deProperties.getMuleServiceBaseUrl() + "preferences"; //$NON-NLS-1$
         ServiceCallWrapper wrapper = new ServiceCallWrapper(address);
-        deServiceFacade.getServiceData(wrapper, callback);
+        return deServiceFacade.getServiceData(wrapper, callback);
     }
 
     /*
@@ -148,6 +154,20 @@ public class UserSessionServiceFacadeImpl implements UserSessionServiceFacade {
         ServiceCallWrapper wrapper = new ServiceCallWrapper(POST, address, body.toString());
         deServiceFacade.getServiceData(wrapper, callback);
 
+    }
+
+    @Override
+    public Request bootstrap(AsyncCallback<String> callback) {
+        String address = deProperties.getMuleServiceBaseUrl() + "bootstrap";
+        ServiceCallWrapper wrapper = new ServiceCallWrapper(address);
+        return deServiceFacade.getServiceData(wrapper, callback);
+    }
+
+    @Override
+    public void logout(AsyncCallback<String> callback) {
+        String address = deProperties.getMuleServiceBaseUrl() + "logout?=login-time=" + userInfo.getLoginTime();
+        ServiceCallWrapper wrapper = new ServiceCallWrapper(address);
+        deServiceFacade.getServiceData(wrapper, callback);
     }
 
 }

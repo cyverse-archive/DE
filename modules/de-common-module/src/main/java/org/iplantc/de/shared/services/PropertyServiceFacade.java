@@ -1,6 +1,7 @@
 package org.iplantc.de.shared.services;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.http.client.Request;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.ServiceDefTarget;
 
@@ -52,7 +53,7 @@ public class PropertyServiceFacade {
      * 
      * @param callback called when the service call completes.
      */
-    public void getProperties(AsyncCallback<Map<String, String>> callback) {
-        proxy.getProperties(callback);
+    public Request getProperties(AsyncCallback<Map<String, String>> callback) {
+        return proxy.getProperties(callback);
     }
 }

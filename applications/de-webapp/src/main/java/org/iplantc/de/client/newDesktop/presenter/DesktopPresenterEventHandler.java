@@ -22,8 +22,8 @@ import java.util.List;
  */
 public class DesktopPresenterEventHandler implements PreferencesUpdatedEvent.PreferencesUpdatedEventHandler, SystemMessageCountUpdateEvent.Handler, UserSettingsUpdatedEventHandler, FileUploadedEvent.FileUploadedEventHandler, NotificationCountUpdateEvent.NotificationCountUpdateEventHandler {
 
-    @Inject
-    EventBus eventBus;
+    @Inject EventBus eventBus;
+
     private NewDesktopPresenterImpl presenter;
 
     @Inject

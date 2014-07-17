@@ -1,7 +1,9 @@
 package org.iplantc.de.client.gin;
 
 import org.iplantc.de.client.events.EventBus;
+import org.iplantc.de.client.models.DEProperties;
 import org.iplantc.de.client.models.UserInfo;
+import org.iplantc.de.client.models.UserSettings;
 import org.iplantc.de.client.newDesktop.NewDesktopView;
 import org.iplantc.de.client.newDesktop.presenter.DesktopPresenterEventHandler;
 import org.iplantc.de.client.newDesktop.presenter.DesktopPresenterWindowEventHandler;
@@ -23,17 +25,48 @@ import com.google.inject.Singleton;
 import com.sencha.gxt.widget.core.client.WindowManager;
 
 public class DEGinModule extends AbstractGinModule {
-    @Provides
-    @Singleton
-    public EventBus createGlobalEventBus(){
+    @Provides public AnalysisServiceFacade createAnalysisService() {
+        return ServicesInjector.INSTANCE.getAnalysisServiceFacade();
+    }
 
+    @Provides @Singleton public DiskResourceServiceFacade createDiskResourceService() {
+        return ServicesInjector.INSTANCE.getDiskResourceServiceFacade();
+    }
+
+    @Provides public FileEditorServiceFacade createFileEditorService() {
+        return ServicesInjector.INSTANCE.getFileEditorServiceFacade();
+    }
+
+    @Provides @Singleton public EventBus createGlobalEventBus() {
         return EventBus.getInstance();
     }
 
-    @Provides
-    @Singleton
-    public UserInfo createUserInfo() {
+    @Provides public IplantResources createIplantResources() {
+        return IplantResources.RESOURCES;
+    }
+
+    @Provides public PropertyServiceFacade createPropertyServiceFacade() {
+        return PropertyServiceFacade.getInstance();
+    }
+
+    @Provides @Singleton public UserInfo createUserInfo() {
         return UserInfo.getInstance();
+    }
+
+    @Provides public UserSessionServiceFacade createUserSessionServiceFacade() {
+        return ServicesInjector.INSTANCE.getUserSessionServiceFacade();
+    }
+
+    @Provides @Singleton public UserSettings createUserSettings() {
+        return UserSettings.getInstance();
+    }
+
+    @Provides @Singleton public DEProperties getDeProperties() {
+        return DEProperties.getInstance();
+    }
+
+    @Provides public WindowManager getWindowManager() {
+        return WindowManager.get();
     }
 
     @Override
@@ -44,40 +77,5 @@ public class DEGinModule extends AbstractGinModule {
         bind(NewMessageView.Presenter.class).to(NewMessagePresenter.class);
         bind(DesktopPresenterEventHandler.class);
         bind(DesktopPresenterWindowEventHandler.class);
-    }
-
-    @Provides
-    public AnalysisServiceFacade createAnalysisService() {
-        return ServicesInjector.INSTANCE.getAnalysisServiceFacade();
-    }
-
-    @Provides
-    public FileEditorServiceFacade createFileEditorService() {
-        return ServicesInjector.INSTANCE.getFileEditorServiceFacade();
-    }
-
-    @Provides
-    public DiskResourceServiceFacade createDiskResourceService() {
-        return ServicesInjector.INSTANCE.getDiskResourceServiceFacade();
-    }
-
-    @Provides
-    public UserSessionServiceFacade createUserSessionServiceFacade(){
-        return ServicesInjector.INSTANCE.getUserSessionServiceFacade();
-    }
-
-    @Provides
-    public PropertyServiceFacade createPropertyServiceFacade() {
-        return PropertyServiceFacade.getInstance();
-    }
-
-    @Provides
-    public WindowManager getWindowManager() {
-        return WindowManager.get();
-    }
-
-    @Provides
-    public IplantResources createIplantResources(){
-        return IplantResources.RESOURCES;
     }
 }

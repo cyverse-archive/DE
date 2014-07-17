@@ -1,5 +1,6 @@
 package org.iplantc.de.client.newDesktop;
 
+import org.iplantc.de.client.models.WindowState;
 import org.iplantc.de.commons.client.views.window.configs.WindowConfig;
 
 import com.google.gwt.resources.client.CssResource;
@@ -8,10 +9,20 @@ import com.google.gwt.user.client.ui.Panel;
 
 import com.sencha.gxt.widget.core.client.button.IconButton;
 
+import java.util.List;
+
 /**
  * TODO JDS Change initial display time for user menu tooltips
+ * TODO JDS Window layout
  *
  * Notifications, window events, layouts
+ *
+ * <ul>
+ *     <li>Task bar buttons are controlled from the view.
+ *     <li>Moved minimize functionality to IplantWindowBase. Was previously in Desktop.minimizeWindow
+ *     <li>Getting rid of window managers as it previously existed. Making more use of GXT's existing
+ *         WindowManager.
+ * </ul>
  *
  * @author jstroot
  */
@@ -74,16 +85,37 @@ public interface NewDesktopView extends IsWidget {
     }
 
     /**
-     * -- The presenter is responsible for window management.
+     * This presenter is responsible for the following;
+     * -- Initializing properties, user info, user settings.
+     * -- Desktop window management.
+     * -- Maintaining user session saving
+     * -- Handling user desktop events for the desktop icons and user settings menu
      */
     interface Presenter extends UserSettingsMenuPresenter {
 
+        void doPeriodicSessionSave();
+
+        List<WindowState> getOrderedWindowStates();
+
         /**
          * <ul>
+         *     <li>Fetch DE properties
+         *     <li>Fetch UserInfo
+         *     <li>Fetch UserSettings
+         *     <li>
+         *     <li> setBrowserContextMenuEnabled (using boolean from DEProperties)
+         *     <li> initIntro
+         *     <li> init KeepaliveTimer
+         *     <li> init UI
+         *     <li> keyboard shortcuts
+         *     <li> process query strings
+         *     <li>
+         *     <li>
          *     <li>Initialize keyboard shortcuts
          *     <li>Init Save session
          *     <li>Initialize DE Properties
          *     <li>Do initial fetch of unseen notifications
+         *     <li>
          * </ul>
          * @param panel
          */
@@ -96,6 +128,8 @@ public interface NewDesktopView extends IsWidget {
         void onDataWinBtnSelect();
 
         void onForumsBtnSelect();
+
+        void restoreWindows(List<WindowState> windowStates);
 
         /**
          *
