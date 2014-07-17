@@ -29,13 +29,32 @@ import java.util.logging.Logger;
 @SuppressWarnings("nls")
 public class DataSearchQueryBuilder {
 
+    public static final String METADATA_VALUE = "metadata.value";
+    public static final String METADATA_ATTRIBUTE = "metadata.attribute";
+    public static final String FIELDS = "fields";
+    public static final String QUERY_STRING = "query_string";
+    public static final String LESSER = "lte";
+    public static final String GREATER = "gte";
+    public static final String RANGE2 = "range";
+    public static final String WILDCARD = "wildcard";
+    public static final String OR_OPERATOR = " OR ";
+    public static final String DATE_MODIFIED = "dateModified";
+    public static final String QUERY2 = "query";
+    public static final String PATH = "path";
+    public static final String METADATA2 = "metadata";
+    public static final String NESTED2 = "nested";
+    public static final String FILE_SIZE = "fileSize";
+    public static final String LABEL = "label";
+    public static final String DATE_CREATED = "dateCreated";
+    public static final String BOOL = "bool";
+
     private final DiskResourceQueryTemplate dsf;
     private final UserInfo userinfo;
     private final Splittable mustList;
     private final Splittable mustNotList;
 
     Splittable query = StringQuoter.createSplittable();
-    Splittable bool = addChild(query, "bool");
+    Splittable bool = addChild(query, BOOL);
 
     Logger LOG = Logger.getLogger("Query builder");
 
@@ -84,15 +103,15 @@ public class DataSearchQueryBuilder {
             Date dateTo = dsf.getCreatedWithin().getTo();
             if ((dateFrom != null) && (dateTo != null)) {
                 // {"range": {"dateCreated": {"gte":"1380559151000","lte":"1390511909000"}}}
-                Splittable range = createRangeQuery("dateCreated", dateFrom.getTime(), dateTo.getTime());
+                Splittable range = createRangeQuery(DATE_CREATED, dateFrom.getTime(), dateTo.getTime());
                 appendArrayItem(mustList, range);
             } else if (dateFrom != null) {
                 // {"range": {"dateModified": {"gte":"1380559151000"}}}
-                Splittable range = createMinRangeQuery("dateCreated", dateFrom.getTime());
+                Splittable range = createMinRangeQuery(DATE_CREATED, dateFrom.getTime());
                 appendArrayItem(mustList, range);
             } else if (dateTo != null) {
                 // {"range": {"dateModified": {"lte":"1390511909000"}}}
-                Splittable range = createMaxRangeQuery("dateCreated", dateTo.getTime());
+                Splittable range = createMaxRangeQuery(DATE_CREATED, dateTo.getTime());
                 appendArrayItem(mustList, range);
             }
         }
@@ -107,9 +126,10 @@ public class DataSearchQueryBuilder {
     public DataSearchQueryBuilder file() {
         String content = dsf.getFileQuery();
         if (!Strings.isNullOrEmpty(content)) {
-            // {"wildcard": {"label": "*txt*"}}
-            content = applyImplicitAsteriskSearchText(content);
-            appendArrayItem(mustList, createWildcard("label", content));
+            /*
+             * { "simple_query_string": { "query": "*test*|*csv*", "fields": [ "label" ] } }
+             */
+            appendArrayItem(mustList, getSimpleQuery(LABEL, content));
         }
         return this;
     }
@@ -130,14 +150,14 @@ public class DataSearchQueryBuilder {
             if ((minSize != null) && (maxSize != null)) {
                 // {"range": {"fileSize": {"gte":"1000","lte":"100000"}}}
                 appendArrayItem(mustList,
-                                createRangeQuery("fileSize", minSize.longValue(), maxSize.longValue()));
+                                createRangeQuery(FILE_SIZE, minSize.longValue(), maxSize.longValue()));
             } else if (minSize != null) {
                 // {"range": {"fileSize": {"gte":"1000"}}}
-                Splittable range = createMinRangeQuery("fileSize", minSize.longValue());
+                Splittable range = createMinRangeQuery(FILE_SIZE, minSize.longValue());
                 appendArrayItem(mustList, range);
             } else if (maxSize != null) {
                 // {"range": {"fileSize": {"lte":"100000"}}}
-                Splittable range = createMaxRangeQuery("fileSize", maxSize.longValue());
+                Splittable range = createMaxRangeQuery(FILE_SIZE, maxSize.longValue());
                 appendArrayItem(mustList, range);
             }
         }
@@ -157,15 +177,14 @@ public class DataSearchQueryBuilder {
     public DataSearchQueryBuilder metadataAttribute() {
         String content = dsf.getMetadataAttributeQuery();
         if (!Strings.isNullOrEmpty(content)) {
-            content = applyImplicitAsteriskSearchText(content);
 
-            // {"nested":{"path":"metadata","query":{"wildcard":{"attribute":"*content*"}}}}
+            // {"nested":{"path":"metadata","query":{"query_string":{"query":"*ipc* OR *attrib*","fields":["metadata.attribute"]}}}}
             Splittable metadata = StringQuoter.createSplittable();
 
-            Splittable nested = addChild(metadata, "nested");
-            StringQuoter.create("metadata").assign(nested, "path");
+            Splittable nested = addChild(metadata, NESTED2);
+            StringQuoter.create(METADATA2).assign(nested, PATH);
 
-            createWildcard("attribute", content).assign(nested, "query");
+            getSimpleQuery(METADATA_ATTRIBUTE, content).assign(nested, QUERY2);
 
             appendArrayItem(mustList, metadata);
         }
@@ -175,15 +194,12 @@ public class DataSearchQueryBuilder {
     public DataSearchQueryBuilder metadataValue() {
         String content = dsf.getMetadataValueQuery();
         if (!Strings.isNullOrEmpty(content)) {
-            content = applyImplicitAsteriskSearchText(content);
-
-            // {"nested":{"path":"metadata","query":{"wildcard":{"value":"*content*"}}}}
+            // {"nested":{"path":"metadata","query":{"query_string":{"query":"*ipc* OR *attrib*","fields":["metadata.value"]}}}}
             Splittable metadata = StringQuoter.createSplittable();
 
-            Splittable nested = addChild(metadata, "nested");
-            StringQuoter.create("metadata").assign(nested, "path");
-
-            createWildcard("value", content).assign(nested, "query");
+            Splittable nested = addChild(metadata, NESTED2);
+            StringQuoter.create(METADATA2).assign(nested, PATH);
+            getSimpleQuery(METADATA_VALUE, content).assign(nested, QUERY2);
 
             appendArrayItem(mustList, metadata);
         }
@@ -202,15 +218,15 @@ public class DataSearchQueryBuilder {
 
             if ((dateFrom != null) && (dateTo != null)) {
                 // {"range": {"dateModified": {"gte":"1380559151000","lte":"1390511909000"}}}
-                Splittable range = createRangeQuery("dateModified", dateFrom.getTime(), dateTo.getTime());
+                Splittable range = createRangeQuery(DATE_MODIFIED, dateFrom.getTime(), dateTo.getTime());
                 appendArrayItem(mustList, range);
             } else if (dateFrom != null) {
                 // {"range": {"dateModified": {"gte":"1380559151000"}}}
-                Splittable range = createMinRangeQuery("dateModified", dateFrom.getTime());
+                Splittable range = createMinRangeQuery(DATE_MODIFIED, dateFrom.getTime());
                 appendArrayItem(mustList, range);
             } else if (dateTo != null) {
                 // {"range": {"dateModified": {"lte":"1390511909000"}}}
-                Splittable range = createMaxRangeQuery("dateModified", dateTo.getTime());
+                Splittable range = createMaxRangeQuery(DATE_MODIFIED, dateTo.getTime());
                 appendArrayItem(mustList, range);
             }
         }
@@ -218,15 +234,17 @@ public class DataSearchQueryBuilder {
     }
 
     /**
-     * {"field":{"label":(-some -query -fldjf)}}
+     * 
      * 
      * @return
      */
     public DataSearchQueryBuilder negatedFile() {
         String content = dsf.getNegatedFileQuery();
         if (!Strings.isNullOrEmpty(content)) {
-            content = applyImplicitAsteriskSearchText(content);
-            appendArrayItem(mustNotList, createWildcard("label", content));
+            /*
+             * { "simple_query_string": { "query": "*test*|*csv*", "fields": [ "label" ] } }
+             */
+            appendArrayItem(mustNotList, getSimpleQuery(LABEL, content));
 
         }
         return this;
@@ -237,17 +255,17 @@ public class DataSearchQueryBuilder {
         if (!Strings.isNullOrEmpty(content)) {
             // {"bool":{"must":[{"nested":{"path":"userPermissions","query":{"bool":{"must":[{"term":{"permission":"own"}},{"wildcard":{"user":"currentUser#*"}}]}}}},{"nested":{"path":"userPermissions","query":{"bool":{"must":[{"wildcard":{"user":queryContent}}]}}}}]}}
             Splittable query = StringQuoter.createSplittable();
-            Splittable bool = addChild(query, "bool");
+            Splittable bool = addChild(query, BOOL);
             Splittable must = addArray(bool, "must");
 
             appendArrayItem(must, createOwnerQuery(userinfo.getUsername()));
 
             Splittable sharedWith = StringQuoter.createSplittable();
 
-            Splittable nested = addChild(sharedWith, "nested");
-            StringQuoter.create("userPermissions").assign(nested, "path");
+            Splittable nested = addChild(sharedWith, NESTED2);
+            StringQuoter.create("userPermissions").assign(nested, PATH);
 
-            createWildcard("user", content).assign(nested, "query");
+            createWildcard("user", content).assign(nested, QUERY2);
 
             appendArrayItem(must, sharedWith);
 
@@ -257,7 +275,7 @@ public class DataSearchQueryBuilder {
     }
 
     /**
-     * Applies "implicit asterisks" to the front and end of every space delimited term in the given
+     * Applies "implicit asterisks" to the front and end of every search term delimited term in the given
      * searchText string if that string does not contain any of the following characters:
      * 
      * <pre>
@@ -277,7 +295,7 @@ public class DataSearchQueryBuilder {
             implicitSearchText = searchText;
         } else {
             // Apply implicit "*"
-            final Iterable<String> transform = Iterables.transform(Splitter.on(" ")
+            final Iterable<String> transform = Iterables.transform(Splitter.on(OR_OPERATOR)
                                                                            .omitEmptyStrings()
                                                                            .trimResults()
                                                                            .split(searchText),
@@ -288,8 +306,24 @@ public class DataSearchQueryBuilder {
                                                                                      .concat("*");
                                                                        }
                                                                    });
-            implicitSearchText = Joiner.on(" ").join(transform);
+            implicitSearchText = Joiner.on(OR_OPERATOR).join(transform);
         }
+        return implicitSearchText;
+    }
+
+    /**
+     * Join multiple search text using '|'
+     * 
+     * @param searchText
+     * @return
+     */
+    String applyOROperator(final String searchText) {
+        String implicitSearchText = "";
+        final Iterable<String> transform = Splitter.on(" ")
+                                                   .trimResults()
+                                                   .omitEmptyStrings()
+                                                   .split(searchText);
+        implicitSearchText = Joiner.on(OR_OPERATOR).join(transform);
         return implicitSearchText;
     }
 
@@ -306,7 +340,7 @@ public class DataSearchQueryBuilder {
         // CORE-5182 exclude Trash items by default
         String baseTrashPath = userinfo.getBaseTrashPath();
         if (!dsf.isIncludeTrashItems() && !Strings.isNullOrEmpty(baseTrashPath)) {
-                appendArrayItem(mustNotList, createWildcard("path", baseTrashPath + "/*"));
+                appendArrayItem(mustNotList, createWildcard(PATH, baseTrashPath + "/*"));
         }
 
         return query.getPayload();
@@ -317,7 +351,7 @@ public class DataSearchQueryBuilder {
         // Use lowercase values since wildcard queries are not analyzed by the
         // service and values are indexed as lowercase.
         content = Strings.isNullOrEmpty(content) ? null : content.toLowerCase();
-        return createQuery("wildcard", field, content);
+        return createQuery(WILDCARD, field, content);
     }
 
     private Splittable createQuery(String queryType, String field, String content) {
@@ -334,10 +368,10 @@ public class DataSearchQueryBuilder {
         // {"range": {field: {"gte": lowerLimit,"lte": upperLimit}}}
         Splittable query = StringQuoter.createSplittable();
 
-        Splittable range = addChild(addChild(query, "range"), field);
+        Splittable range = addChild(addChild(query, RANGE2), field);
 
-        StringQuoter.create(String.valueOf(lowerLimit)).assign(range, "gte");
-        StringQuoter.create(String.valueOf(upperLimit)).assign(range, "lte");
+        StringQuoter.create(String.valueOf(lowerLimit)).assign(range, GREATER);
+        StringQuoter.create(String.valueOf(upperLimit)).assign(range, LESSER);
 
         return query;
     }
@@ -346,9 +380,9 @@ public class DataSearchQueryBuilder {
         // {"range": {field: {"gte": lowerLimit}}}
         Splittable query = StringQuoter.createSplittable();
 
-        Splittable range = addChild(addChild(query, "range"), field);
+        Splittable range = addChild(addChild(query, RANGE2), field);
 
-        StringQuoter.create(String.valueOf(lowerLimit)).assign(range, "gte");
+        StringQuoter.create(String.valueOf(lowerLimit)).assign(range, GREATER);
 
         return query;
     }
@@ -357,9 +391,9 @@ public class DataSearchQueryBuilder {
         // {"range": {field: {"lte": upperLimit}}}
         Splittable query = StringQuoter.createSplittable();
 
-        Splittable range = addChild(addChild(query, "range"), field);
+        Splittable range = addChild(addChild(query, RANGE2), field);
 
-        StringQuoter.create(String.valueOf(upperLimit)).assign(range, "lte");
+        StringQuoter.create(String.valueOf(upperLimit)).assign(range, LESSER);
 
         return query;
     }
@@ -368,11 +402,11 @@ public class DataSearchQueryBuilder {
         // {"nested":{"path":"userPermissions","query":{"bool":{"must":[{"term":{"permission":"own"}},{"wildcard":{"user":queryContent}}]}}}}
         Splittable ownedBy = StringQuoter.createSplittable();
 
-        Splittable nested = addChild(ownedBy, "nested");
-        StringQuoter.create("userPermissions").assign(nested, "path");
+        Splittable nested = addChild(ownedBy, NESTED2);
+        StringQuoter.create("userPermissions").assign(nested, PATH);
 
-        Splittable query = addChild(nested, "query");
-        Splittable bool = addChild(query, "bool");
+        Splittable query = addChild(nested, QUERY2);
+        Splittable bool = addChild(query, BOOL);
         Splittable must = addArray(bool, "must");
 
         appendArrayItem(must, createQuery("term", "permission", "own"));
@@ -404,5 +438,15 @@ public class DataSearchQueryBuilder {
 
     private void appendArrayItem(Splittable array, Splittable item) {
         item.assign(array, array.size());
+    }
+
+    public Splittable getSimpleQuery(String field, String userEntry) {
+        Splittable query = StringQuoter.createSplittable();
+        Splittable simpleQuery = addChild(query, QUERY_STRING);
+        String entry = applyImplicitAsteriskSearchText(applyOROperator(userEntry));
+        StringQuoter.create(entry).assign(simpleQuery, QUERY2);
+        Splittable fieldsArr = addArray(simpleQuery, FIELDS);
+        appendArrayItem(fieldsArr, StringQuoter.create(field));
+        return query;
     }
 }

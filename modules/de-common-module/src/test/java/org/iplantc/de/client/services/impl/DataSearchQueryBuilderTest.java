@@ -5,8 +5,6 @@ import org.iplantc.de.client.models.search.DateInterval;
 import org.iplantc.de.client.models.search.DiskResourceQueryTemplate;
 import org.iplantc.de.client.models.search.FileSizeRange;
 
-import com.google.common.base.Joiner;
-import com.google.common.collect.Lists;
 import com.google.gwtmockito.GwtMockitoTestRunner;
 
 import com.sencha.gxt.core.client.util.DateWrapper;
@@ -18,14 +16,11 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 /**
  * 
@@ -36,7 +31,6 @@ import java.util.List;
  * 
  */
 @RunWith(GwtMockitoTestRunner.class)
-@Ignore("SS: ignored till CORE-5807 is resolved.")
 public class DataSearchQueryBuilderTest {
     
     @Mock DiskResourceQueryTemplate dsf;
@@ -48,14 +42,35 @@ public class DataSearchQueryBuilderTest {
         when(userInfoMock.getUsername()).thenReturn("test_user");
     }
 
+    @Test
+    public void testApplyOROperator_case1() {
+        DataSearchQueryBuilder uut = new DataSearchQueryBuilder(dsf, userInfoMock);
+        String searchText = "one two three";
+        final String applyOROperator = uut.applyOROperator(searchText);
+        final String expected = "one" + DataSearchQueryBuilder.OR_OPERATOR + "two"
+                + DataSearchQueryBuilder.OR_OPERATOR + "three";
+        assertEquals("Verify OR operator applied", expected, applyOROperator);
+    }
+
+    @Test
+    public void testApplyOROperator_case2() {
+        DataSearchQueryBuilder uut = new DataSearchQueryBuilder(dsf, userInfoMock);
+        String searchText = "one ";
+        final String applyOROperator = uut.applyOROperator(searchText);
+        final String expected = "one";
+        assertEquals("Verify OR operator applied", expected, applyOROperator);
+    }
+
     /**
      * when asterisks needed
      */
     @Test public void testApplyImplicitAsteriskSearchText_Case1() {
         DataSearchQueryBuilder uut = new DataSearchQueryBuilder(dsf, userInfoMock);
-        String searchText = "one two three";
+        String searchText = "one" + DataSearchQueryBuilder.OR_OPERATOR + "two"
+                + DataSearchQueryBuilder.OR_OPERATOR + "three";
         final String applyImplicitAsteriskSearchText = uut.applyImplicitAsteriskSearchText(searchText);
-        final String expected = "*one* *two* *three*";
+        final String expected = "*one*" + DataSearchQueryBuilder.OR_OPERATOR + "*two*"
+                + DataSearchQueryBuilder.OR_OPERATOR + "*three*";
         assertEquals("Verify application of implicit asterisk(*)", expected, applyImplicitAsteriskSearchText);
     }
 
@@ -64,7 +79,8 @@ public class DataSearchQueryBuilderTest {
      */
     @Test public void testApplyImplicitAsteriskSearchText_Case2() {
         DataSearchQueryBuilder uut = new DataSearchQueryBuilder(dsf, userInfoMock);
-        String searchText = "one* two three";
+        String searchText = "one*" + DataSearchQueryBuilder.OR_OPERATOR + "two"
+                + DataSearchQueryBuilder.OR_OPERATOR + "three";
         final String applyImplicitAsteriskSearchText = uut.applyImplicitAsteriskSearchText(searchText);
         assertEquals("Verify that implicit asterisk NOT applied", searchText, applyImplicitAsteriskSearchText);
     }
@@ -74,7 +90,8 @@ public class DataSearchQueryBuilderTest {
      */
     @Test public void testApplyImplicitAsteriskSearchText_Case3() {
         DataSearchQueryBuilder uut = new DataSearchQueryBuilder(dsf, userInfoMock);
-        String searchText = "one ?two three";
+        String searchText = "one" + DataSearchQueryBuilder.OR_OPERATOR + "?two"
+                + DataSearchQueryBuilder.OR_OPERATOR + "three";
         final String applyImplicitAsteriskSearchText = uut.applyImplicitAsteriskSearchText(searchText);
         assertEquals("Verify that implicit asterisk NOT applied", searchText, applyImplicitAsteriskSearchText);
     }
@@ -84,7 +101,8 @@ public class DataSearchQueryBuilderTest {
      */
     @Test public void testApplyImplicitAsteriskSearchText_Case4() {
         DataSearchQueryBuilder uut = new DataSearchQueryBuilder(dsf, userInfoMock);
-        String searchText = "one two \\three";
+        String searchText = "one" + DataSearchQueryBuilder.OR_OPERATOR + "two"
+                + DataSearchQueryBuilder.OR_OPERATOR + "\\three";
         final String applyImplicitAsteriskSearchText = uut.applyImplicitAsteriskSearchText(searchText);
         assertEquals("Verify that implicit asterisk NOT applied", searchText, applyImplicitAsteriskSearchText);
     }
@@ -96,7 +114,8 @@ public class DataSearchQueryBuilderTest {
         final String expectedCreatedWithin = setCreatedWithin(new Date(), new DateWrapper().addMonths(1)
                 .asDate(), dsf);
         final String expectedNegatedFile = setNegatedFileQuery(
-                Lists.newArrayList("term1*", "term2*", "term3*"), dsf);
+"term1*" + " " + "term2*" + " "
+                + "term3*", dsf);
         final String expectedMetadataAttributeQuery = setMetadataAttributeQuery(
                 "some* metadata* query*", dsf);
         final String expectedMetadataValueQuery = setMetadataValueQuery("some* metadata* query*", dsf);
@@ -172,11 +191,10 @@ public class DataSearchQueryBuilderTest {
         final String term1 = "term1*";
         final String term2 = "term2*";
         final String term3 = "term3*";
-        final ArrayList<String> newArrayList = Lists.newArrayList(term1, term2, term3);
-        final String expectedValue = setNegatedFileQuery(newArrayList, dsf);
+        final String expectedValue = setNegatedFileQuery(term1 + " " + term2 + " " + term3 , dsf);
 
         String result = new DataSearchQueryBuilder(dsf, userInfoMock).negatedFile().toString();
-        assertEquals(wrappedQuery(expectedValue), result);
+        assertEquals(wrappedNegatedQuery(expectedValue), result);
     }
 
     @Test public void testSharedWith() {
@@ -231,7 +249,8 @@ public class DataSearchQueryBuilderTest {
      */
     private String setFileQuery(final String givenQuery, final DiskResourceQueryTemplate drqt) {
         when(dsf.getFileQuery()).thenReturn(givenQuery);
-        return "{\"wildcard\":{\"label\":\"" + givenQuery + "\"}}";
+        DataSearchQueryBuilder uut = new DataSearchQueryBuilder(dsf, userInfoMock);
+        return uut.getSimpleQuery(DataSearchQueryBuilder.LABEL, givenQuery).getPayload();
     }
 
     /**
@@ -257,8 +276,10 @@ public class DataSearchQueryBuilderTest {
      */
     private String setMetadataAttributeQuery(final String givenQuery, final DiskResourceQueryTemplate drqt) {
         when(dsf.getMetadataAttributeQuery()).thenReturn(givenQuery);
-        return "{\"nested\":{\"query\":{\"wildcard\":{\"attribute\":\"" + givenQuery
-                + "\"}},\"path\":\"metadata\"}}";
+        DataSearchQueryBuilder uut = new DataSearchQueryBuilder(dsf, userInfoMock);
+        return "{\"nested\":{\"query\":"
+                + uut.getSimpleQuery(DataSearchQueryBuilder.METADATA_ATTRIBUTE, givenQuery).getPayload()
+                + ",\"path\":\"metadata\"}}";
     }
 
     /**
@@ -268,8 +289,10 @@ public class DataSearchQueryBuilderTest {
      */
     private String setMetadataValueQuery(final String givenQuery, final DiskResourceQueryTemplate drqt) {
         when(dsf.getMetadataValueQuery()).thenReturn(givenQuery);
-        return "{\"nested\":{\"query\":{\"wildcard\":{\"value\":\"" + givenQuery
-                + "\"}},\"path\":\"metadata\"}}";
+        DataSearchQueryBuilder uut = new DataSearchQueryBuilder(dsf, userInfoMock);
+        return "{\"nested\":{\"query\":"
+                + uut.getSimpleQuery(DataSearchQueryBuilder.METADATA_VALUE, givenQuery).getPayload()
+                + ",\"path\":\"metadata\"}}";
     }
 
     /**
@@ -293,10 +316,11 @@ public class DataSearchQueryBuilderTest {
      * @param drqt
      * @return the expected value
      */
-    private String setNegatedFileQuery(final List<String> givenSearchTerms, final DiskResourceQueryTemplate drqt) {
-        when(dsf.getNegatedFileQuery()).thenReturn(Joiner.on(" ").join(givenSearchTerms));
+    private String setNegatedFileQuery(final String givenSearchTerms, final DiskResourceQueryTemplate drqt) {
+        when(dsf.getNegatedFileQuery()).thenReturn(givenSearchTerms);
 
-        return "{\"field\":{\"label\":\"" + "-" + Joiner.on(" -").join(givenSearchTerms) + "\"}}";
+        DataSearchQueryBuilder uut = new DataSearchQueryBuilder(dsf, userInfoMock);
+        return uut.getSimpleQuery(DataSearchQueryBuilder.LABEL, givenSearchTerms).getPayload();
     }
 
     /**
@@ -313,7 +337,11 @@ public class DataSearchQueryBuilderTest {
     }
 
     private String wrappedQuery(String query) {
-        return Format.substitute("{\"bool\":{\"must\":[{0}]}}", query);
+        return Format.substitute("{\"bool\":{\"must_not\":[],\"must\":[{0}]}}", query);
+    }
+
+    private String wrappedNegatedQuery(String query) {
+        return Format.substitute("{\"bool\":{\"must_not\":[{0}],\"must\":[]}}", query);
     }
 
     private String wrappedQueryExcludingTrash(String query) {
