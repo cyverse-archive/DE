@@ -19,7 +19,7 @@ import org.iplantc.de.client.util.CommonModelUtils;
 import org.iplantc.de.client.views.windows.IPlantWindowInterface;
 import org.iplantc.de.commons.client.CommonUiConstants;
 import org.iplantc.de.commons.client.ErrorHandler;
-import org.iplantc.de.commons.client.collaborators.views.ManageCollaboratorsDailog;
+import org.iplantc.de.commons.client.collaborators.views.ManageCollaboratorsDialog;
 import org.iplantc.de.commons.client.requests.KeepaliveTimer;
 import org.iplantc.de.commons.client.util.WindowUtil;
 import org.iplantc.de.commons.client.views.gxt3.dialogs.IplantErrorDialog;
@@ -311,7 +311,7 @@ public class NewDesktopPresenterImpl implements NewDesktopView.Presenter {
 
     @Override
     public void onCollaboratorsClick() {
-        ManageCollaboratorsDailog d = new ManageCollaboratorsDailog(MANAGE);
+        ManageCollaboratorsDialog d = new ManageCollaboratorsDialog(MANAGE);
         d.show();
     }
 

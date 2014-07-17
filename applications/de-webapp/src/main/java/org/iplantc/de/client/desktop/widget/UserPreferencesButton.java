@@ -9,7 +9,7 @@ import org.iplantc.de.client.events.ShowSystemMessagesEvent;
 import org.iplantc.de.client.preferences.views.PreferencesDialog;
 import org.iplantc.de.commons.client.CommonUiConstants;
 import org.iplantc.de.commons.client.collaborators.presenter.ManageCollaboratorsPresenter.MODE;
-import org.iplantc.de.commons.client.collaborators.views.ManageCollaboratorsDailog;
+import org.iplantc.de.commons.client.collaborators.views.ManageCollaboratorsDialog;
 import org.iplantc.de.commons.client.util.WindowUtil;
 import org.iplantc.de.commons.client.widgets.IPlantAnchor;
 import org.iplantc.de.resources.client.messages.I18N;
@@ -199,7 +199,7 @@ public class UserPreferencesButton extends IconButton {
         IPlantAnchor anchor = new IPlantAnchor(I18N.DISPLAY.collaborators(), -1, new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                ManageCollaboratorsDailog dialog = new ManageCollaboratorsDailog(MODE.MANAGE);
+                ManageCollaboratorsDialog dialog = new ManageCollaboratorsDialog(MODE.MANAGE);
                 dialog.show();
                 userMenu.hide();
             }

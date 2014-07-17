@@ -13,7 +13,7 @@ import org.iplantc.de.commons.client.collaborators.events.UserSearchResultSelect
 import org.iplantc.de.commons.client.collaborators.events.UserSearchResultSelected.USER_SEARCH_EVENT_TAG;
 import org.iplantc.de.commons.client.collaborators.presenter.ManageCollaboratorsPresenter.MODE;
 import org.iplantc.de.commons.client.collaborators.util.UserSearchField;
-import org.iplantc.de.commons.client.collaborators.views.ManageCollaboratorsDailog;
+import org.iplantc.de.commons.client.collaborators.views.ManageCollaboratorsDialog;
 import org.iplantc.de.diskResource.client.sharing.views.DataSharingView.Presenter;
 import org.iplantc.de.resources.client.IplantResources;
 import org.iplantc.de.resources.client.messages.I18N;
@@ -133,7 +133,7 @@ public class DataSharingPermissionsPanel implements IsWidget {
 
             @Override
             public void onSelect(SelectEvent event) {
-                final ManageCollaboratorsDailog dialog = new ManageCollaboratorsDailog(MODE.SELECT);
+                final ManageCollaboratorsDialog dialog = new ManageCollaboratorsDialog(MODE.SELECT);
                 dialog.setModal(true);
                 dialog.show();
                 dialog.addOkButtonSelectHandler(new SelectHandler() {

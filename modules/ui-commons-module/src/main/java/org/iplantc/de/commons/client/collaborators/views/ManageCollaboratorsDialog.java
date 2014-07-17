@@ -28,7 +28,7 @@ import java.util.List;
  * @author sriram
  * 
  */
-public class ManageCollaboratorsDailog extends IPlantDialog {
+public class ManageCollaboratorsDialog extends IPlantDialog {
 
     private final class NameComparator implements Comparator<Collaborator> {
         @Override
@@ -73,7 +73,7 @@ public class ManageCollaboratorsDailog extends IPlantDialog {
     private CollaboratorProperties properties;
     private final Presenter p;
 
-    public ManageCollaboratorsDailog(MODE mode) {
+    public ManageCollaboratorsDialog(MODE mode) {
         super(true);
         initDialog();
         ListStore<Collaborator> store = new ListStore<Collaborator>(new CollaboratorKeyProvider());
