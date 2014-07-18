@@ -17,6 +17,7 @@ import org.iplantc.de.client.services.FileEditorServiceFacade;
 import org.iplantc.de.client.services.UserSessionServiceFacade;
 import org.iplantc.de.client.sysmsgs.presenter.NewMessagePresenter;
 import org.iplantc.de.client.sysmsgs.view.NewMessageView;
+import org.iplantc.de.client.views.windows.util.WindowFactory;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
 import org.iplantc.de.commons.client.requests.KeepaliveTimer;
 import org.iplantc.de.resources.client.IplantResources;
@@ -94,5 +95,7 @@ public class DEGinModule extends AbstractGinModule {
         bind(DesktopPresenterEventHandler.class);
         bind(DesktopPresenterWindowEventHandler.class);
         bind(DesktopWindowManager.class).in(Singleton.class);
+
+        bind(WindowFactory.class);
     }
 }

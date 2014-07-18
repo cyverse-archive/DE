@@ -1,7 +1,6 @@
 package org.iplantc.de.client.utils;
 
 import org.iplantc.de.client.desktop.widget.TaskButton;
-import org.iplantc.de.client.newDesktop.util.WindowFactory;
 import org.iplantc.de.client.models.WindowState;
 import org.iplantc.de.client.views.windows.IPlantWindowInterface;
 import org.iplantc.de.commons.client.views.window.configs.WindowConfig;
@@ -53,13 +52,14 @@ public class DEWindowManager extends IplantWindowManager {
 
     public <C extends org.iplantc.de.commons.client.views.window.configs.WindowConfig> IPlantWindowInterface add(
             C config) {
-        IPlantWindowInterface window = WindowFactory.build(config);
+//        IPlantWindowInterface window = WindowFactory.build(config);
+        IPlantWindowInterface window = null;//WindowFactory.build(config);
 
         if (window == null)
             return null;
-        String windowStateId = WindowFactory.constructWindowId(config);
-        window.setStateId(windowStateId);
-        getDEWindows().put(windowStateId, window);
+//        String windowStateId = WindowFactory.constructWindowId(config);
+//        window.setStateId(windowStateId);
+//        getDEWindows().put(windowStateId, window);
         window.addActivateHandler(activateHandler);
         window.addDeactivateHandler(deactivateHandler);
         window.addHideHandler(hideHandler);
@@ -83,8 +83,9 @@ public class DEWindowManager extends IplantWindowManager {
 
     public <C extends org.iplantc.de.commons.client.views.window.configs.WindowConfig> IPlantWindowInterface getWindow(
             C config) {
-        String windowId = WindowFactory.constructWindowId(config);
-        return getDEWindows().get(windowId);
+//        String windowId = WindowFactory.constructWindowId(config);
+//        return getDEWindows().get(windowId);
+        return getDEWindows().get("");
     }
 
     /**

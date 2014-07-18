@@ -98,8 +98,6 @@ public interface NewDesktopView extends IsWidget {
      */
     interface Presenter extends UserSettingsMenuPresenter {
 
-        void doPeriodicSessionSave();
-
         List<WindowState> getOrderedWindowStates();
 
         /**
@@ -135,8 +133,6 @@ public interface NewDesktopView extends IsWidget {
         void onFeedbackBtnSelect();
 
         void onForumsBtnSelect();
-
-        void restoreWindows(List<WindowState> windowStates);
 
         /**
          *

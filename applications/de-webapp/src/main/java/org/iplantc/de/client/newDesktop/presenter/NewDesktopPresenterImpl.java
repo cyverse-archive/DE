@@ -10,6 +10,7 @@ import org.iplantc.de.client.models.HasPath;
 import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.client.models.UserSettings;
 import org.iplantc.de.client.models.WindowState;
+import org.iplantc.de.client.models.WindowType;
 import org.iplantc.de.client.models.notifications.NotificationCategory;
 import org.iplantc.de.client.newDesktop.NewDesktopView;
 import org.iplantc.de.client.periodic.MessagePoller;
@@ -118,9 +119,9 @@ public class NewDesktopPresenterImpl implements NewDesktopView.Presenter {
     }
 
     private class GetUserSessionCallback implements AsyncCallback<List<WindowState>> {
-        private final AutoProgressMessageBox progressMessageBox;
-        private final IplantErrorStrings errorStrings;
         private final IplantAnnouncer announcer;
+        private final IplantErrorStrings errorStrings;
+        private final AutoProgressMessageBox progressMessageBox;
 
         public GetUserSessionCallback(final AutoProgressMessageBox progressMessageBox,
                                       final IplantErrorStrings errorStrings,
@@ -147,12 +148,12 @@ public class NewDesktopPresenterImpl implements NewDesktopView.Presenter {
     }
 
     private class LogoutCallback implements AsyncCallback<String> {
-        private final UserSessionServiceFacade userSessionService;
         private final DEClientConstants constants;
-        private final UserSettings userSettings;
         private final IplantDisplayStrings displayStrings;
         private final IplantErrorStrings errorStrings;
         private final List<WindowState> orderedWindowStates;
+        private final UserSessionServiceFacade userSessionService;
+        private final UserSettings userSettings;
 
         private LogoutCallback(final UserSessionServiceFacade userSessionService,
                                final DEClientConstants constants,
@@ -283,28 +284,36 @@ public class NewDesktopPresenterImpl implements NewDesktopView.Presenter {
         String DATA = "data";
     }
 
-    @Inject CommonUiConstants commonUiConstants;
-    @Inject DEClientConstants deClientConstants;
-    @Inject IplantDisplayStrings displayStrings;
-    @Inject IplantErrorStrings errorStrings;
-    @Inject DEProperties deProperties;
-    @Inject UserInfo userInfo;
-    @Inject UserSettings userSettings;
-    @Inject IplantAnnouncer announcer;
-
-    @Inject PropertyServiceFacade propertyServiceFacade;
-    @Inject UserSessionServiceFacade userSessionService;
-
-    @Inject Provider<ErrorHandler> errorHandlerProvider;
-
+    @Inject
+    IplantAnnouncer announcer;
+    @Inject
+    CommonUiConstants commonUiConstants;
+    @Inject
+    DEClientConstants deClientConstants;
+    @Inject
+    DEProperties deProperties;
+    @Inject
+    IplantDisplayStrings displayStrings;
+    @Inject
+    Provider<ErrorHandler> errorHandlerProvider;
+    @Inject
+    IplantErrorStrings errorStrings;
+    @Inject
+    PropertyServiceFacade propertyServiceFacade;
+    @Inject
+    UserInfo userInfo;
+    @Inject
+    UserSessionServiceFacade userSessionService;
+    @Inject
+    UserSettings userSettings;
+    private final DesktopWindowManager desktopWindowManager;
     private final EventBus eventBus;
-    private final WindowManager windowManager;
     private final KeepaliveTimer keepaliveTimer;
+    private final MessagePoller messagePoller;
     private final SaveSessionPeriodic ssp;
     private final NewMessageView.Presenter systemMsgPresenter;
     private final NewDesktopView view;
-    private final DesktopWindowManager desktopWindowManager;
-    private final MessagePoller messagePoller;
+    private final WindowManager windowManager;
 
     @Inject
     public NewDesktopPresenterImpl(final NewDesktopView view,
@@ -341,22 +350,24 @@ public class NewDesktopPresenterImpl implements NewDesktopView.Presenter {
     }-*/;
 
     @Override
-    public void doPeriodicSessionSave() {
-        if (userSettings.isSaveSession()) {
-            ssp.run();
-            messagePoller.addTask(ssp);
-            // start if not started...
-            messagePoller.start();
-        } else {
-            messagePoller.removeTask(ssp);
-        }
+    public void doLogout() {
+        // Need to stop polling
+        messagePoller.stop();
+//        cleanUp();
+
+        userSessionService.logout(new LogoutCallback(userSessionService,
+                                                     deClientConstants,
+                                                     userSettings,
+                                                     displayStrings,
+                                                     errorStrings,
+                                                     getOrderedWindowStates()));
     }
 
     @Override
     public List<WindowState> getOrderedWindowStates() {
         List<WindowState> windowStates = Lists.newArrayList();
         for (Widget w : windowManager.getStack()) {
-            if(w instanceof IPlantWindowInterface){
+            if (w instanceof IPlantWindowInterface) {
                 windowStates.add(((IPlantWindowInterface) w).getWindowState());
             }
         }
@@ -377,17 +388,17 @@ public class NewDesktopPresenterImpl implements NewDesktopView.Presenter {
 
     @Override
     public void onAboutClick() {
-        show(ConfigFactory.aboutWindowConfig());
+        desktopWindowManager.show(WindowType.ABOUT);
     }
 
     @Override
     public void onAnalysesWinBtnSelect() {
-        show(ConfigFactory.analysisWindowConfig());
+        desktopWindowManager.show(WindowType.ANALYSES);
     }
 
     @Override
     public void onAppsWinBtnSelect() {
-        show(ConfigFactory.appsWindowConfig());
+        desktopWindowManager.show(WindowType.APPS);
     }
 
     /**
@@ -405,7 +416,12 @@ public class NewDesktopPresenterImpl implements NewDesktopView.Presenter {
 
     @Override
     public void onDataWinBtnSelect() {
-        show(ConfigFactory.diskResourceWindowConfig(true));
+        desktopWindowManager.show(WindowType.DATA);
+    }
+
+    @Override
+    public void onDocumentationClick() {
+        WindowUtil.open(deClientConstants.deHelpFile());
     }
 
     /**
@@ -419,11 +435,6 @@ public class NewDesktopPresenterImpl implements NewDesktopView.Presenter {
     }
 
     @Override
-    public void onDocumentationClick() {
-        WindowUtil.open(deClientConstants.deHelpFile());
-    }
-
-    @Override
     public void onForumsBtnSelect() {
         WindowUtil.open(commonUiConstants.forumsUrl());
     }
@@ -431,20 +442,6 @@ public class NewDesktopPresenterImpl implements NewDesktopView.Presenter {
     @Override
     public void onIntroClick() {
         doIntro();
-    }
-
-    @Override
-    public void doLogout() {
-        // Need to stop polling
-        messagePoller.stop();
-//        cleanUp();
-
-        userSessionService.logout(new LogoutCallback(userSessionService,
-                                                     deClientConstants,
-                                                     userSettings,
-                                                     displayStrings,
-                                                     errorStrings,
-                                                     getOrderedWindowStates()));
     }
 
     /**
@@ -457,14 +454,7 @@ public class NewDesktopPresenterImpl implements NewDesktopView.Presenter {
 
     @Override
     public void onSystemMessagesClick() {
-        show(ConfigFactory.systemMessagesWindowConfig(null));
-    }
-
-    @Override
-    public void restoreWindows(List<WindowState> windowStates) {
-        for(WindowState ws : windowStates){
-            desktopWindowManager.show(ws);
-        }
+        desktopWindowManager.show(WindowType.SYSTEM_MESSAGES);
     }
 
     @Override
@@ -478,6 +468,17 @@ public class NewDesktopPresenterImpl implements NewDesktopView.Presenter {
         desktopWindowManager.show(config, updateExistingWindow);
     }
 
+    void doPeriodicSessionSave() {
+        if (userSettings.isSaveSession()) {
+            ssp.run();
+            messagePoller.addTask(ssp);
+            // start if not started...
+            messagePoller.start();
+        } else {
+            messagePoller.removeTask(ssp);
+        }
+    }
+
     void postBootstrap(final Panel panel) {
         setBrowserContextMenuEnabled(deProperties.isContextClickEnabled());
         // Initialize keepalive timer
@@ -487,11 +488,16 @@ public class NewDesktopPresenterImpl implements NewDesktopView.Presenter {
             keepaliveTimer.start(target, interval);
         }
 
-
         initMessagePoller();
         initKBShortCuts();
         panel.add(view);
         processQueryStrings();
+    }
+
+    void restoreWindows(List<WindowState> windowStates) {
+        for (WindowState ws : windowStates) {
+            desktopWindowManager.show(ws);
+        }
     }
 
     private void getUserSession(final boolean urlHasDataTypeParameter) {
@@ -508,7 +514,7 @@ public class NewDesktopPresenterImpl implements NewDesktopView.Presenter {
             progressMessageBox.addDialogHideHandler(new DialogHideEvent.DialogHideHandler() {
                 @Override
                 public void onDialogHide(DialogHideEvent event) {
-                    if(Dialog.PredefinedButton.CANCEL.equals(event.getHideButton())){
+                    if (Dialog.PredefinedButton.CANCEL.equals(event.getHideButton())) {
                         req.cancel();
                         SafeHtml msg = SafeHtmlUtils.fromString("Session restore cancelled");
                         announcer.schedule(new SuccessAnnouncementConfig(msg, true, 5000));
@@ -518,6 +524,28 @@ public class NewDesktopPresenterImpl implements NewDesktopView.Presenter {
         } else if (urlHasDataTypeParameter) {
             doPeriodicSessionSave();
         }
+    }
+
+    private void initKBShortCuts() {
+        new KeyNav(RootPanel.get()) {
+            @Override
+            public void handleEvent(NativeEvent event) {
+                if (event.getCtrlKey() && event.getShiftKey()) {
+                    final String keycode = String.valueOf((char) event.getKeyCode());
+                    if (userSettings.getDataShortCut().equals(keycode)) {
+                        show(ConfigFactory.diskResourceWindowConfig(true));
+                    } else if (userSettings.getAnalysesShortCut().equals(keycode)) {
+                        show(ConfigFactory.analysisWindowConfig());
+                    } else if (userSettings.getAppsShortCut().equals(keycode)) {
+                        show(ConfigFactory.appsWindowConfig());
+                    } else if (userSettings.getNotifiShortCut().equals(keycode)) {
+                        show(ConfigFactory.notifyWindowConfig(NotificationCategory.ALL));
+                    } else if (userSettings.getCloseShortCut().equals(keycode)) {
+                        eventBus.fireEvent(new WindowCloseRequestEvent());
+                    }
+                }
+            }
+        };
     }
 
     /**
@@ -598,27 +626,5 @@ public class NewDesktopPresenterImpl implements NewDesktopView.Presenter {
             return enabled;
         };
     }-*/;
-
-    private void initKBShortCuts() {
-        new KeyNav(RootPanel.get()) {
-            @Override
-            public void handleEvent(NativeEvent event) {
-                if (event.getCtrlKey() && event.getShiftKey()) {
-                    final String keycode = String.valueOf((char) event.getKeyCode());
-                    if (userSettings.getDataShortCut().equals(keycode)) {
-                        show(ConfigFactory.diskResourceWindowConfig(true));
-                    } else if (userSettings.getAnalysesShortCut().equals(keycode)) {
-                        show(ConfigFactory.analysisWindowConfig());
-                    } else if (userSettings.getAppsShortCut().equals(keycode)) {
-                        show(ConfigFactory.appsWindowConfig());
-                    } else if (userSettings.getNotifiShortCut().equals(keycode)) {
-                        show(ConfigFactory.notifyWindowConfig(NotificationCategory.ALL));
-                    } else if (userSettings.getCloseShortCut().equals(keycode)) {
-                        eventBus.fireEvent(new WindowCloseRequestEvent());
-                    }
-                }
-            }
-        };
-    }
 
 }

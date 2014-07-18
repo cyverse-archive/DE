@@ -174,7 +174,6 @@ public abstract class IplantWindowBase extends Window implements IPlantWindowInt
         // rendered yet, so those values could be 0 or something very large.
         int offsetWidth = Util.parseInt(width, 0);
         int offsetHeight = Util.parseInt(height, 0) + Constants.CLIENT.deTaskBarHeight();
-
         // Calculate the maximum X and Y position for this window.
         int maxX = XDOM.getViewportWidth();
         int maxY = XDOM.getViewportHeight();
