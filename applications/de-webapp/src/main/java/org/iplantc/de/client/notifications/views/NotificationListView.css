@@ -5,6 +5,7 @@
   font-size: 11px;
   border-bottom: 1px solid #DDDDDD;
   overflow: hidden;
+  cursor: pointer;
 }
 
 .thumb_highlight {
@@ -29,7 +30,6 @@
 .select {
   background: none repeat scroll 0 50% #DFE8F6;
   border: 1px dotted #A3BAE9 !important;
-  cursor: pointer;
 }
 
 .select .thumb {
