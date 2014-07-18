@@ -3,13 +3,11 @@ package org.iplantc.de.client.desktop.presenter;
 import org.iplantc.de.client.desktop.presenter.UserSessionProgressMessageBox.UserSessionFactory;
 import org.iplantc.de.client.desktop.views.DEView;
 import org.iplantc.de.client.desktop.views.DEView.Presenter;
-import org.iplantc.de.client.gin.ServicesInjector;
 import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.client.models.UserSession;
 import org.iplantc.de.client.models.WindowState;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.web.bindery.autobean.shared.AutoBean;
 import com.google.web.bindery.autobean.shared.AutoBeanCodex;
 import com.google.web.bindery.autobean.shared.Splittable;
@@ -33,20 +31,20 @@ public class SaveSessionPeriodic implements Runnable {
         Splittable spl = AutoBeanCodex.encode(userSession);
         if (isStateChanged(orderedWindowStates, spl)) {
             GWT.log("saving periodic...");
-            ServicesInjector.INSTANCE.getUserSessionServiceFacade().saveUserSession(userSession.as(), new AsyncCallback<String>() {
-
-                @Override
-                public void onSuccess(String result) {
-                    // cache the update
-                    UserInfo info = UserInfo.getInstance();
-                    info.setSavedOrderedWindowStates(orderedWindowStates);
-                }
-
-                @Override
-                public void onFailure(Throwable caught) {
-                    GWT.log("Session periodic save failed");
-                }
-            });
+//            ServicesInjector.INSTANCE.getUserSessionServiceFacade().saveUserSession(userSession.as(), new AsyncCallback<String>() {
+//
+//                @Override
+//                public void onSuccess(String result) {
+//                    // cache the update
+//                    UserInfo info = UserInfo.getInstance();
+//                    info.setSavedOrderedWindowStates(orderedWindowStates);
+//                }
+//
+//                @Override
+//                public void onFailure(Throwable caught) {
+//                    GWT.log("Session periodic save failed");
+//                }
+//            });
         }
     }
 

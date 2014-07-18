@@ -1,7 +1,7 @@
 package org.iplantc.de.client.newDesktop.presenter;
 
+import org.iplantc.de.client.models.CommonModelAutoBeanFactory;
 import org.iplantc.de.client.newDesktop.NewDesktopView;
-import org.iplantc.de.client.newDesktop.presenter.UserSessionProgressMessageBox.UserSessionFactory;
 import org.iplantc.de.client.gin.ServicesInjector;
 import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.client.models.UserSession;
@@ -18,7 +18,7 @@ import java.util.List;
 public class SaveSessionPeriodic implements Runnable {
 
     private final NewDesktopView.Presenter presenter;
-    private final UserSessionFactory factory = GWT.create(UserSessionFactory.class);
+    private final CommonModelAutoBeanFactory factory = GWT.create(CommonModelAutoBeanFactory.class);
 
     public SaveSessionPeriodic(NewDesktopView.Presenter presenter) {
         this.presenter = presenter;
@@ -32,10 +32,10 @@ public class SaveSessionPeriodic implements Runnable {
         Splittable spl = AutoBeanCodex.encode(userSession);
         if (isStateChanged(orderedWindowStates, spl)) {
             GWT.log("saving periodic...");
-            ServicesInjector.INSTANCE.getUserSessionServiceFacade().saveUserSession(userSession.as(), new AsyncCallback<String>() {
+            ServicesInjector.INSTANCE.getUserSessionServiceFacade().saveUserSession(userSession.as().getWindowStates(), new AsyncCallback<Void>() {
 
                 @Override
-                public void onSuccess(String result) {
+                public void onSuccess(Void result) {
                     // cache the update
                     UserInfo info = UserInfo.getInstance();
                     info.setSavedOrderedWindowStates(orderedWindowStates);

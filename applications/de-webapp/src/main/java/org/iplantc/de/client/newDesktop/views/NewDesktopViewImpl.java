@@ -204,6 +204,11 @@ public class NewDesktopViewImpl implements NewDesktopView, UnregisterEvent.Unreg
         presenter.onDataWinBtnSelect();
     }
 
+    @UiHandler("feedbackBtn")
+    void onFeedbackBtnSelect(SelectEvent event) {
+        presenter.onFeedbackBtnSelect();
+    }
+
     @UiHandler("forumsBtn")
     void onForumsSelect(SelectEvent event) {
         presenter.onForumsBtnSelect();

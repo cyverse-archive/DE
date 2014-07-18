@@ -132,6 +132,8 @@ public interface NewDesktopView extends IsWidget {
 
         void onDataWinBtnSelect();
 
+        void onFeedbackBtnSelect();
+
         void onForumsBtnSelect();
 
         void restoreWindows(List<WindowState> windowStates);

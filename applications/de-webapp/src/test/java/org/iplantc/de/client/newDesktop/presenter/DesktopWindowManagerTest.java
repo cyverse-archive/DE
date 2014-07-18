@@ -1,5 +1,7 @@
 package org.iplantc.de.client.newDesktop.presenter;
 
+import org.iplantc.de.commons.client.views.window.configs.ConfigAutoBeanFactory;
+
 import com.google.gwtmockito.GxtMockitoTestRunner;
 
 import com.sencha.gxt.widget.core.client.WindowManager;
@@ -13,11 +15,12 @@ import org.mockito.Mock;
 public class DesktopWindowManagerTest {
 
     @Mock WindowManager windowManagerMock;
+    @Mock ConfigAutoBeanFactory mockFactory;
 
     private DesktopWindowManager uut;
 
     @Before public void setup() {
-        uut = new DesktopWindowManager(windowManagerMock);
+        uut = new DesktopWindowManager(windowManagerMock, mockFactory);
     }
 
     @Test public void showNewWindowCreatesNewWindowTest() {

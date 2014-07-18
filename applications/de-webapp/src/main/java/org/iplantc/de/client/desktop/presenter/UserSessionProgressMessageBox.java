@@ -2,7 +2,6 @@ package org.iplantc.de.client.desktop.presenter;
 
 import org.iplantc.de.client.desktop.views.DEView;
 import org.iplantc.de.client.desktop.views.DEView.Presenter;
-import org.iplantc.de.client.gin.ServicesInjector;
 import org.iplantc.de.client.models.IsHideable;
 import org.iplantc.de.client.models.UserSession;
 import org.iplantc.de.client.models.WindowState;
@@ -84,11 +83,11 @@ class UserSessionProgressMessageBox extends AutoProgressMessageBox implements Is
     public void show() {
         super.show();
         if (type.equals(ProgressBoxType.RESTORE_SESSION)) {
-            ServicesInjector.INSTANCE.getUserSessionServiceFacade().getUserSession(restoreSessionCallback);
+//            ServicesInjector.INSTANCE.getUserSessionServiceFacade().getUserSession(restoreSessionCallback);
         } else if (type.equals(ProgressBoxType.SAVE_SESSION)) {
             AutoBean<UserSession> userSession = factory.userSession();
             userSession.as().setWindowStates(presenter.getOrderedWindowStates());
-            ServicesInjector.INSTANCE.getUserSessionServiceFacade().saveUserSession(userSession.as(), new SaveUserSessionCallback(this, redirectUrl));
+//            ServicesInjector.INSTANCE.getUserSessionServiceFacade().saveUserSession(userSession.as(), new SaveUserSessionCallback(this, redirectUrl));
         }
 
     }

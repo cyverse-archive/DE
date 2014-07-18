@@ -2,6 +2,7 @@ package org.iplantc.de.client.newDesktop.presenter;
 
 import static org.iplantc.de.commons.client.collaborators.presenter.ManageCollaboratorsPresenter.MODE.MANAGE;
 import org.iplantc.de.client.DEClientConstants;
+import org.iplantc.de.client.desktop.views.DEFeedbackDialog;
 import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.events.WindowCloseRequestEvent;
 import org.iplantc.de.client.models.DEProperties;
@@ -407,6 +408,16 @@ public class NewDesktopPresenterImpl implements NewDesktopView.Presenter {
         show(ConfigFactory.diskResourceWindowConfig(true));
     }
 
+    /**
+     * FIXME JDS The feedback presenter should be used here, not the view
+     * OR the presenter functionality should be inlined here.
+     */
+    @Override
+    public void onFeedbackBtnSelect() {
+        // TODO Implement method
+        new DEFeedbackDialog().show();
+    }
+
     @Override
     public void onDocumentationClick() {
         WindowUtil.open(deClientConstants.deHelpFile());
@@ -491,7 +502,9 @@ public class NewDesktopPresenterImpl implements NewDesktopView.Presenter {
             progressMessageBox.getProgressBar().setDuration(1000);
             progressMessageBox.getProgressBar().setInterval(100);
             progressMessageBox.auto();
-            final Request req = userSessionService.getUserSession(new GetUserSessionCallback(progressMessageBox));
+            final Request req = userSessionService.getUserSession(new GetUserSessionCallback(progressMessageBox,
+                                                                                             errorStrings,
+                                                                                             announcer));
             progressMessageBox.addDialogHideHandler(new DialogHideEvent.DialogHideHandler() {
                 @Override
                 public void onDialogHide(DialogHideEvent event) {
