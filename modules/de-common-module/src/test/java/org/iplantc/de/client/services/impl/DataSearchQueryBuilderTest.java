@@ -150,6 +150,22 @@ public class DataSearchQueryBuilderTest {
         assertEquals(wrappedQuery(expectedValue), result);
     }
     
+    @Test
+    public void testCreatedWithinFromNull() {
+        final String expectedValue = setCreatedWithin(null, new DateWrapper().addDays(1).asDate(), dsf);
+
+        String result = new DataSearchQueryBuilder(dsf, userInfoMock).createdWithin().toString();
+        assertEquals(wrappedQuery(expectedValue), result);
+    }
+
+    @Test
+    public void testCreatedWithinToNull() {
+        final String expectedValue = setCreatedWithin(new Date(), null, dsf);
+
+        String result = new DataSearchQueryBuilder(dsf, userInfoMock).createdWithin().toString();
+        assertEquals(wrappedQuery(expectedValue), result);
+    }
+
     @Test public void testFile() {
         final String expectedValue = setFileQuery("some* words* in* query*", dsf);
 
@@ -159,6 +175,22 @@ public class DataSearchQueryBuilderTest {
 
     @Test public void testFileSizeRange() {
         final String expectedValue = setFileSizeRange(1.0, 100.0, dsf);
+
+        String result = new DataSearchQueryBuilder(dsf, userInfoMock).fileSizeRange().toString();
+        assertEquals(wrappedQuery(expectedValue), result);
+    }
+
+    @Test
+    public void testFileSizeRangeMinNull() {
+        final String expectedValue = setFileSizeRange(null, 100.0, dsf);
+
+        String result = new DataSearchQueryBuilder(dsf, userInfoMock).fileSizeRange().toString();
+        assertEquals(wrappedQuery(expectedValue), result);
+    }
+
+    @Test
+    public void testFileSizeRangeMaxNul() {
+        final String expectedValue = setFileSizeRange(1.0, null, dsf);
 
         String result = new DataSearchQueryBuilder(dsf, userInfoMock).fileSizeRange().toString();
         assertEquals(wrappedQuery(expectedValue), result);
@@ -181,6 +213,26 @@ public class DataSearchQueryBuilderTest {
     @Test public void testModifiedWithin() {
         final Date fromDate = new Date();
         final Date toDate = new DateWrapper(fromDate).addDays(2).asDate();
+        final String expectedValue = setModifiedWithin(fromDate, toDate, dsf);
+
+        String result = new DataSearchQueryBuilder(dsf, userInfoMock).modifiedWithin().toString();
+        assertEquals(wrappedQuery(expectedValue), result);
+    }
+
+    @Test
+    public void testModifiedWithinFromNull() {
+        final Date fromDate = null;
+        final Date toDate = new DateWrapper(new Date()).addDays(2).asDate();
+        final String expectedValue = setModifiedWithin(fromDate, toDate, dsf);
+
+        String result = new DataSearchQueryBuilder(dsf, userInfoMock).modifiedWithin().toString();
+        assertEquals(wrappedQuery(expectedValue), result);
+    }
+
+    @Test
+    public void testModifiedWithinToNull() {
+        final Date fromDate = new Date();
+        final Date toDate = null;
         final String expectedValue = setModifiedWithin(fromDate, toDate, dsf);
 
         String result = new DataSearchQueryBuilder(dsf, userInfoMock).modifiedWithin().toString();
@@ -238,6 +290,16 @@ public class DataSearchQueryBuilderTest {
 
         when(dsf.getCreatedWithin()).thenReturn(di);
 
+        if (fromDate == null && toDate == null) {
+            return null;
+        }
+
+        if (fromDate == null) {
+            return "{\"range\":{\"dateCreated\":{\"lte\":\"" + toDate.getTime() + "\"}}}";
+        } else if (toDate == null) {
+            return "{\"range\":{\"dateCreated\":{\"gte\":\"" + fromDate.getTime() + "\"}}}";
+        }
+
         return "{\"range\":{\"dateCreated\":{\"gte\":\"" + fromDate.getTime() + "\",\"lte\":\""
                 + toDate.getTime() + "\"}}}";
     }
@@ -265,6 +327,14 @@ public class DataSearchQueryBuilderTest {
         when(fsr.getMax()).thenReturn(max);
 
         when(dsf.getFileSizeRange()).thenReturn(fsr);
+        if (min == null && max == null) {
+            return null;
+        }
+        if (min == null) {
+            return "{\"range\":{\"fileSize\":{\"lte\":\"" + max.longValue() + "\"}}}";
+        } else if (max == null) {
+            return "{\"range\":{\"fileSize\":{\"gte\":\"" + min.longValue() + "\"}}}";
+        }
         return "{\"range\":{\"fileSize\":{\"gte\":\"" + min.longValue() + "\",\"lte\":\""
                 + max.longValue() + "\"}}}";
     }
@@ -307,6 +377,15 @@ public class DataSearchQueryBuilderTest {
         when(di.getTo()).thenReturn(to);
 
         when(dsf.getModifiedWithin()).thenReturn(di);
+        if(from == null && to == null) {
+            return null;
+        }
+        if (from == null) {
+            return "{\"range\":{\"dateModified\":{\"lte\":\""
+                    + to.getTime() + "\"}}}";
+        } else if (to == null) {
+            return "{\"range\":{\"dateModified\":{\"gte\":\"" + from.getTime() + "\"}}}";
+        }
         return "{\"range\":{\"dateModified\":{\"gte\":\"" + from.getTime() + "\",\"lte\":\""
                 + to.getTime() + "\"}}}";
     }
