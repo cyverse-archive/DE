@@ -5,6 +5,7 @@ import org.iplantc.de.client.models.IsMaskable;
 import org.iplantc.de.commons.client.widgets.ContextualHelpToolButton;
 
 import com.google.gwt.cell.client.Cell.Context;
+import com.google.gwt.editor.client.Editor;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.sencha.gxt.widget.core.client.Dialog;
@@ -61,16 +62,13 @@ public class IPlantDialog extends Dialog implements IsHideable, IsMaskable {
 
     @Override
     protected void onButtonPressed(TextButton button) {
-        if (isHideOnButtonClick()) {
-//            hide(button);
-            hide();
-        }
         if (button == getButtonBar().getItemByItemId(PredefinedButton.OK.name())) {
             onOkButtonClicked();
             callEventHandlers(okButtonSelectHandlers, button);
         } else if (button == getButtonBar().getItemByItemId(PredefinedButton.CANCEL.name())) {
             callEventHandlers(cancelButtonSelectHandlers, button);
         }
+        super.onButtonPressed(button);
     }
 
     protected void onOkButtonClicked() {
@@ -81,6 +79,7 @@ public class IPlantDialog extends Dialog implements IsHideable, IsMaskable {
         return helpTool;
     }
 
+    @Editor.Ignore
     public TextButton getOkButton() {
         Widget okButton = getButtonBar().getItemByItemId(PredefinedButton.OK.name());
         if ((okButton != null) && (okButton instanceof TextButton)) {

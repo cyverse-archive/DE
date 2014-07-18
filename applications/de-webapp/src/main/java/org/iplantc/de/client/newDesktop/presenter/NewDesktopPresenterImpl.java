@@ -14,7 +14,6 @@ import org.iplantc.de.client.models.WindowType;
 import org.iplantc.de.client.models.notifications.NotificationCategory;
 import org.iplantc.de.client.newDesktop.NewDesktopView;
 import org.iplantc.de.client.periodic.MessagePoller;
-import org.iplantc.de.client.preferences.views.PreferencesDialog;
 import org.iplantc.de.client.services.UserSessionServiceFacade;
 import org.iplantc.de.client.sysmsgs.view.NewMessageView;
 import org.iplantc.de.client.util.CommonModelUtils;
@@ -267,6 +266,25 @@ public class NewDesktopPresenterImpl implements NewDesktopView.Presenter {
         }
     }
 
+    private class SaveUserSettingsCallback implements AsyncCallback<Void> {
+        private final UserSettings value;
+
+        public SaveUserSettingsCallback(UserSettings value) {
+            this.value = value;
+        }
+
+        @Override
+        public void onFailure(Throwable caught) {
+            announcer.schedule(new ErrorAnnouncementConfig("Sorry about that, we were unable to save your preferences."));
+        }
+
+        @Override
+        public void onSuccess(Void result) {
+            userSettings.setValues(value.asSplittable());
+            announcer.schedule(new SuccessAnnouncementConfig(displayStrings.saveSettings(), true, 3000));
+        }
+    }
+
     interface AuthErrors {
         String API_NAME = "api_name";
         String ERROR = "error";
@@ -440,16 +458,13 @@ public class NewDesktopPresenterImpl implements NewDesktopView.Presenter {
     }
 
     @Override
-    public void onIntroClick() {
-        doIntro();
+    public void saveUserSettings(final UserSettings value) {
+         userSessionService.saveUserPreferences(value.asSplittable(), new SaveUserSettingsCallback(value));
     }
 
-    /**
-     * FIXME JDS The preferences presenter should be used here, not the view.
-     */
     @Override
-    public void onPreferencesClick() {
-        new PreferencesDialog().show();
+    public void onIntroClick() {
+        doIntro();
     }
 
     @Override
@@ -538,7 +553,7 @@ public class NewDesktopPresenterImpl implements NewDesktopView.Presenter {
                         show(ConfigFactory.analysisWindowConfig());
                     } else if (userSettings.getAppsShortCut().equals(keycode)) {
                         show(ConfigFactory.appsWindowConfig());
-                    } else if (userSettings.getNotifiShortCut().equals(keycode)) {
+                    } else if (userSettings.getNotifyShortCut().equals(keycode)) {
                         show(ConfigFactory.notifyWindowConfig(NotificationCategory.ALL));
                     } else if (userSettings.getCloseShortCut().equals(keycode)) {
                         eventBus.fireEvent(new WindowCloseRequestEvent());

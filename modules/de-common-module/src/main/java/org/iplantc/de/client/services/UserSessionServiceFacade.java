@@ -19,7 +19,7 @@ public interface UserSessionServiceFacade {
 
     Request getUserPreferences(AsyncCallback<String> callback);
 
-    void saveUserPreferences(Splittable json, AsyncCallback<String> callback);
+    void saveUserPreferences(Splittable json, AsyncCallback<Void> callback);
 
     void postClientNotification(JSONObject notification, AsyncCallback<String> callback);
 

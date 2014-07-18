@@ -3,8 +3,10 @@ package org.iplantc.de.client.newDesktop.views;
 import org.iplantc.de.client.desktop.widget.TaskBar;
 import org.iplantc.de.client.desktop.widget.TaskButton;
 import org.iplantc.de.client.events.EventBus;
+import org.iplantc.de.client.models.UserSettings;
 import org.iplantc.de.client.newDesktop.NewDesktopView;
 import org.iplantc.de.client.newDesktop.views.widgets.DesktopIconButton;
+import org.iplantc.de.client.newDesktop.views.widgets.PreferencesDialog;
 import org.iplantc.de.client.notifications.views.NotificationListView;
 import org.iplantc.de.client.views.windows.IPlantWindowInterface;
 import org.iplantc.de.commons.client.widgets.IPlantAnchor;
@@ -19,9 +21,12 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
+import com.google.inject.Provider;
 
+import com.sencha.gxt.widget.core.client.Dialog;
 import com.sencha.gxt.widget.core.client.WindowManager;
 import com.sencha.gxt.widget.core.client.button.IconButton;
+import com.sencha.gxt.widget.core.client.event.DialogHideEvent;
 import com.sencha.gxt.widget.core.client.event.RegisterEvent;
 import com.sencha.gxt.widget.core.client.event.SelectEvent;
 import com.sencha.gxt.widget.core.client.event.UnregisterEvent;
@@ -67,6 +72,9 @@ public class NewDesktopViewImpl implements NewDesktopView, UnregisterEvent.Unreg
     IPlantAnchor logoutBtn;
     @UiField(provided = true)
     NotificationListView notificationsListView;
+
+    @Inject Provider<org.iplantc.de.client.newDesktop.views.widgets.PreferencesDialog> preferencesDialogProvider;
+    @Inject UserSettings userSettings;
     private static NewViewUiBinder ourUiBinder = GWT.create(NewViewUiBinder.class);
     private final Widget widget;
     private NewDesktopView.Presenter presenter;
@@ -214,11 +222,6 @@ public class NewDesktopViewImpl implements NewDesktopView, UnregisterEvent.Unreg
         presenter.onForumsBtnSelect();
     }
 
-    @UiHandler("notificationsBtn")
-    void onNotificationsSelect(SelectEvent event) {
-        // Show userSettingsMenu
-    }
-
     @UiHandler({"preferencesBtn", "collaboratorsBtn", "systemMsgsBtn",
                    "documentationBtn", "introBtn", "contactSupportBtn", "aboutBtn", "logoutBtn"})
     void onAnyUserSettingsItemClick(ClickEvent event){
@@ -227,7 +230,18 @@ public class NewDesktopViewImpl implements NewDesktopView, UnregisterEvent.Unreg
 
     @UiHandler("preferencesBtn")
     void onPreferencesClick(ClickEvent event){
-        presenter.onPreferencesClick();
+        final PreferencesDialog preferencesDialog = preferencesDialogProvider.get();
+        final UserSettings userSettingsCopy = new UserSettings(userSettings.asSplittable());
+        preferencesDialog.initAndShow(userSettingsCopy);
+        preferencesDialog.addDialogHideHandler(new DialogHideEvent.DialogHideHandler() {
+            @Override
+            public void onDialogHide(DialogHideEvent event) {
+                if(Dialog.PredefinedButton.OK.equals(event.getHideButton())){
+                    presenter.saveUserSettings(preferencesDialog.getValue());
+                    preferencesDialog.hide();
+                }
+            }
+        });
     }
 
     @UiHandler("collaboratorsBtn")

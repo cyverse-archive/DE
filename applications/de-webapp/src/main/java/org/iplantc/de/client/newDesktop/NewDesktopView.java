@@ -1,5 +1,6 @@
 package org.iplantc.de.client.newDesktop;
 
+import org.iplantc.de.client.models.UserSettings;
 import org.iplantc.de.client.models.WindowState;
 import org.iplantc.de.commons.client.views.window.configs.WindowConfig;
 
@@ -134,6 +135,8 @@ public interface NewDesktopView extends IsWidget {
 
         void onForumsBtnSelect();
 
+        void saveUserSettings(UserSettings value);
+
         /**
          *
          * @param config
@@ -162,8 +165,6 @@ public interface NewDesktopView extends IsWidget {
         void onIntroClick();
 
         void doLogout();
-
-        void onPreferencesClick();
 
         void onSystemMessagesClick();
     }

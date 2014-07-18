@@ -192,19 +192,19 @@ public class DEPresenter implements DEView.Presenter {
 
     private void saveSettings() {
         UserSettings us = UserSettings.getInstance();
-        ServicesInjector.INSTANCE.getUserSessionServiceFacade().saveUserPreferences(us.asSplittable(), new AsyncCallback<String>() {
-
-            @Override
-            public void onSuccess(String result) {
-                // do nothing intentionally
-
-            }
-
-            @Override
-            public void onFailure(Throwable caught) {
-                ErrorHandler.post(caught);
-            }
-        });
+//        ServicesInjector.INSTANCE.getUserSessionServiceFacade().saveUserPreferences(us.asSplittable(), new AsyncCallback<String>() {
+//
+//            @Override
+//            public void onSuccess(String result) {
+//                do nothing intentionally
+//
+//            }
+//
+//            @Override
+//            public void onFailure(Throwable caught) {
+//                ErrorHandler.post(caught);
+//            }
+//        });
     }
 
     /**
@@ -317,7 +317,7 @@ public class DEPresenter implements DEView.Presenter {
         keyboardShortCuts.put(us.getDataShortCut(), new DataKBShortCutCmd());
         keyboardShortCuts.put(us.getAppsShortCut(), new AppsKBShortCutCmd());
         keyboardShortCuts.put(us.getAnalysesShortCut(), new AnalysesKBShortCutCmd());
-        keyboardShortCuts.put(us.getNotifiShortCut(), new NotifyKBShortCutCmd());
+        keyboardShortCuts.put(us.getNotifyShortCut(), new NotifyKBShortCutCmd());
         keyboardShortCuts.put(us.getCloseShortCut(), new CloseKBShortCutCmd());
         addKeyBoardEvents();
     }

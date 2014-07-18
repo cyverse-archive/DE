@@ -119,10 +119,10 @@ public class UserSessionServiceFacadeImpl implements UserSessionServiceFacade {
      * .autobean.shared.Splittable, com.google.gwt.user.client.rpc.AsyncCallback)
      */
     @Override
-    public void saveUserPreferences(Splittable json, AsyncCallback<String> callback) {
+    public void saveUserPreferences(Splittable json, AsyncCallback<Void> callback) {
         String address = deProperties.getMuleServiceBaseUrl() + "preferences"; //$NON-NLS-1$
         ServiceCallWrapper wrapper = new ServiceCallWrapper(POST, address, json.getPayload());
-        deServiceFacade.getServiceData(wrapper, callback);
+        deServiceFacade.getServiceData(wrapper, new StringToVoidCallbackConverter(callback));
     }
 
     /*

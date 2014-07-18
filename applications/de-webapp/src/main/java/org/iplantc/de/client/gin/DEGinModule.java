@@ -10,6 +10,7 @@ import org.iplantc.de.client.newDesktop.presenter.DesktopPresenterWindowEventHan
 import org.iplantc.de.client.newDesktop.presenter.DesktopWindowManager;
 import org.iplantc.de.client.newDesktop.presenter.NewDesktopPresenterImpl;
 import org.iplantc.de.client.newDesktop.views.NewDesktopViewImpl;
+import org.iplantc.de.client.newDesktop.views.widgets.PreferencesDialog;
 import org.iplantc.de.client.periodic.MessagePoller;
 import org.iplantc.de.client.services.AnalysisServiceFacade;
 import org.iplantc.de.client.services.DiskResourceServiceFacade;
@@ -97,5 +98,7 @@ public class DEGinModule extends AbstractGinModule {
         bind(DesktopWindowManager.class).in(Singleton.class);
 
         bind(WindowFactory.class);
+        bind(PreferencesDialog.class);
+
     }
 }

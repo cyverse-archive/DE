@@ -32,7 +32,7 @@ public class UserSessionServiceFacadeStub implements UserSessionServiceFacade {
     }
 
     @Override
-    public void saveUserPreferences(Splittable json, AsyncCallback<String> callback) {
+    public void saveUserPreferences(Splittable json, AsyncCallback<Void> callback) {
 
     }
 

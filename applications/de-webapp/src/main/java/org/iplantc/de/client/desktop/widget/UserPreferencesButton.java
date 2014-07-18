@@ -6,7 +6,6 @@ import org.iplantc.de.client.desktop.views.DEView;
 import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.events.ShowAboutWindowEvent;
 import org.iplantc.de.client.events.ShowSystemMessagesEvent;
-import org.iplantc.de.client.preferences.views.PreferencesDialog;
 import org.iplantc.de.commons.client.CommonUiConstants;
 import org.iplantc.de.commons.client.collaborators.presenter.ManageCollaboratorsPresenter.MODE;
 import org.iplantc.de.commons.client.collaborators.views.ManageCollaboratorsDialog;
@@ -222,8 +221,8 @@ public class UserPreferencesButton extends IconButton {
     }
 
     private void buildAndShowPreferencesDialog() {
-        PreferencesDialog d = new PreferencesDialog();
-        d.show();
+//        PreferencesDialog d = new PreferencesDialog();
+//        d.show();
     }
 
     private Menu buildMenu() {
