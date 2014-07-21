@@ -5,6 +5,7 @@ import org.iplantc.de.client.models.diskResources.File;
 import org.iplantc.de.client.util.DiskResourceUtil;
 import org.iplantc.de.diskResource.client.views.cells.DiskResourceActionsCell;
 import org.iplantc.de.diskResource.client.views.cells.DiskResourceNameCell;
+import org.iplantc.de.diskResource.client.views.cells.DiskResourcePathCell;
 import org.iplantc.de.diskResource.client.views.cells.events.DiskResourceNameSelectedEvent;
 import org.iplantc.de.diskResource.client.views.cells.events.ManageCommentsEvent;
 import org.iplantc.de.diskResource.client.views.cells.events.ManageMetadataEvent;
@@ -37,7 +38,8 @@ public class DiskResourceColumnModel extends ColumnModel<DiskResource> implement
  ManageMetadataEvent.HasManageMetadataEventHandlers,
         RequestDiskResourceFavoriteEvent.HasManageFavoritesEventHandlers, ManageCommentsEvent.HasManageCommentsEventHandlers {
 
-    public DiskResourceColumnModel(CheckBoxSelectionModel sm, IplantDisplayStrings displayStrings) {
+    public DiskResourceColumnModel(@SuppressWarnings("rawtypes") CheckBoxSelectionModel sm,
+                                   IplantDisplayStrings displayStrings) {
         super(createColumnConfigList(sm, displayStrings));
 
         for(ColumnConfig<DiskResource, ?> cc : configs){
@@ -45,29 +47,42 @@ public class DiskResourceColumnModel extends ColumnModel<DiskResource> implement
                 ((DiskResourceNameCell)cc.getCell()).setHasHandlers(this);
             } else if(cc.getCell() instanceof DiskResourceActionsCell){
                 ((DiskResourceActionsCell)cc.getCell()).setHasHandlers(this);
+            } else if (cc.getCell() instanceof DiskResourcePathCell) {
+                ((DiskResourcePathCell)cc.getCell()).setHasHandlers(this);
             }
         }
     }
 
-    public static List<ColumnConfig<DiskResource, ?>> createColumnConfigList(CheckBoxSelectionModel sm, IplantDisplayStrings displayStrings) {
+    public static List<ColumnConfig<DiskResource, ?>>
+            createColumnConfigList(@SuppressWarnings("rawtypes") CheckBoxSelectionModel sm,
+                                   IplantDisplayStrings displayStrings) {
         List<ColumnConfig<DiskResource, ?>> list = new ArrayList<ColumnConfig<DiskResource, ?>>();
 
         DiskResourceProperties props = GWT.create(DiskResourceProperties.class);
 
-        ColumnConfig<DiskResource, DiskResource> name = new ColumnConfig<DiskResource, DiskResource>(new IdentityValueProvider<DiskResource>("name"), 100, displayStrings.name());
-        ColumnConfig<DiskResource, Date> lastModified = new ColumnConfig<DiskResource, Date>(props.lastModified(), 120, displayStrings.lastModified());
+        ColumnConfig<DiskResource, DiskResource> name = new ColumnConfig<DiskResource, DiskResource>(new IdentityValueProvider<DiskResource>("name"),
+                                                                                                     120,
+                                                                                                     displayStrings.name());
+        ColumnConfig<DiskResource, Date> lastModified = new ColumnConfig<DiskResource, Date>(props.lastModified(),
+                                                                                             100,
+                                                                                             displayStrings.lastModified());
         ColumnConfig<DiskResource, Long> size = new ColumnConfig<DiskResource, Long>(new DiskResourceSizeValueProvider(), 50, displayStrings.size());
-        ColumnConfig<DiskResource, String> path = new ColumnConfig<DiskResource, String>(props.path(),
-                                                                                         100,
+        ColumnConfig<DiskResource, DiskResource> path = new ColumnConfig<DiskResource, DiskResource>(new IdentityValueProvider<DiskResource>("path"),
+                                                                                         120,
                                                                                          displayStrings.path());
-        ColumnConfig<DiskResource, Date> created = new ColumnConfig<DiskResource, Date>(props.dateSubmitted(), 120, displayStrings.dateSubmitted());
-        ColumnConfig<DiskResource, DiskResource> actions = new ColumnConfig<DiskResource, DiskResource>(new IdentityValueProvider<DiskResource>("actions"), 100, "");
+        ColumnConfig<DiskResource, Date> created = new ColumnConfig<DiskResource, Date>(props.dateSubmitted(),
+                                                                                        100,
+                                                                                        displayStrings.dateSubmitted());
+        ColumnConfig<DiskResource, DiskResource> actions = new ColumnConfig<DiskResource, DiskResource>(new IdentityValueProvider<DiskResource>("actions"),
+                                                                                                        90,
+                                                                                                        "");
 
         name.setCell(new DiskResourceNameCell());
         lastModified.setCell(new DateCell(DateTimeFormat.getFormat(DateTimeFormat.PredefinedFormat.DATE_TIME_MEDIUM)));
         size.setCell(new DiskResourceSizeCell());
         created.setCell(new DateCell(DateTimeFormat.getFormat(DateTimeFormat.PredefinedFormat.DATE_TIME_MEDIUM)));
         actions.setCell(new DiskResourceActionsCell());
+        path.setCell(new DiskResourcePathCell());
 
         name.setComparator(new DiskResourceNameComparator());
 
@@ -78,6 +93,7 @@ public class DiskResourceColumnModel extends ColumnModel<DiskResource> implement
         actions.setMenuDisabled(true);
         actions.setSortable(false);
         actions.setFixed(true);
+        actions.setHideable(false);
         
         list.add(sm.getColumn());
         list.add(name);

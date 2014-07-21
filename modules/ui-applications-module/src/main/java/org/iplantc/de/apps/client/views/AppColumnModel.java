@@ -80,6 +80,8 @@ public class AppColumnModel extends ColumnModel<App> implements
         info.setSortable(false);
         comment.setSortable(false);
 
+        info.setMenuDisabled(true);
+        info.setHideable(false);
         info.setResizable(false);
         name.setResizable(true);
         rating.setResizable(false);
@@ -88,6 +90,7 @@ public class AppColumnModel extends ColumnModel<App> implements
         info.setFixed(true);
         rating.setFixed(true);
         comment.setFixed(true);
+        comment.setHideable(false);
 
         info.setCell(new AppInfoCell());
         name.setCell(new AppHyperlinkCell(view));

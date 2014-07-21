@@ -1036,7 +1036,8 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter, Di
     }
 
     @Override
-    public void doSubmitDiskResourceQuery(SubmitDiskResourceQueryEvent event) {}
+    public void doSubmitDiskResourceQuery(SubmitDiskResourceQueryEvent event) {
+    }
 
     private class MyBuilder implements Builder {
 

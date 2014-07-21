@@ -56,5 +56,6 @@ public interface DiskResourceModule {
         String ACTION_CELL_FAVORITE = ".favorite";
         String ACTION_CELL_COMMENTS = ".comments";
         String NAME_CELL = ".nameCell";
+        String PATH_CELL = ".pathCell";
     }
 }

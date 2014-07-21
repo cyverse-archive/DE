@@ -77,6 +77,7 @@ public class AnalysisColumnModel extends ColumnModel<Analysis> implements Analys
         comment.setCell(new AnalysisCommentCell());
         comment.setSortable(false);
         comment.setHeader("");
+        comment.setHideable(false);
 
         app.setHeader(displayStrings.appName());
         app.setCell(new AnalysisAppNameCell());

@@ -5,6 +5,7 @@ import org.iplantc.de.client.models.HasPath;
 import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.client.models.diskResources.DiskResourceAutoBeanFactory;
+import org.iplantc.de.client.models.diskResources.DiskResourceFavorite;
 import org.iplantc.de.client.models.diskResources.File;
 import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.client.models.diskResources.PermissionValue;
@@ -362,6 +363,12 @@ public class DiskResourceViewImpl extends Composite implements DiskResourceView,
         sm.setShowSelectAll(!(folder instanceof DiskResourceQueryTemplate));
         grid.getView().getHeader().refresh();
 
+        if (folder instanceof DiskResourceFavorite || folder instanceof DiskResourceQueryTemplate) {
+            reconfigureToSearchView();
+        } else {
+            reconfigureToListingView();
+        }
+
         if (folder instanceof DiskResourceQueryTemplate){
             // If the given query has not been saved, we need to deselect everything
             DiskResourceQueryTemplate searchQuery = (DiskResourceQueryTemplate)folder;
@@ -369,8 +376,10 @@ public class DiskResourceViewImpl extends Composite implements DiskResourceView,
                 deSelectNavigationFolder();
             }
         }
+
         gridLoader.getLastLoadConfig().setFolder(folder);
         gridLoader.getLastLoadConfig().setOffset(0);
+
         gridLoader.load();
     }
 
@@ -1160,6 +1169,24 @@ public class DiskResourceViewImpl extends Composite implements DiskResourceView,
     @Override
     public void detachTag(IplantTag tag) {
         presenter.detachTag(tag);
+    }
+
+    private void reconfigureToSearchView() {
+        // display Path
+        grid.getColumnModel().getColumn(4).setHidden(false);
+        grid.getColumnModel().getColumn(2).setHidden(true);
+        grid.getColumnModel().getColumn(3).setHidden(true);
+        grid.getView().refresh(true);
+        grid.getView().setAutoExpandColumn(grid.getColumnModel().getColumn(4));
+    }
+
+    private void reconfigureToListingView() {
+        // hide Path. display last modified and size
+        grid.getColumnModel().getColumn(4).setHidden(true);
+        grid.getColumnModel().getColumn(2).setHidden(false);
+        grid.getColumnModel().getColumn(3).setHidden(false);
+        grid.getView().refresh(true);
+        grid.getView().setAutoExpandColumn(grid.getColumnModel().getColumn(1));
     }
 
 }
