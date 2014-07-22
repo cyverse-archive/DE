@@ -36,7 +36,8 @@ public class DiskResourceColumnModel extends ColumnModel<DiskResource> implement
                                                                                   ShareByDataLinkEvent.HasShareByDataLinkEventHandlers,
                                                                                   ManageSharingEvent.HasManageSharingEventHandlers,
  ManageMetadataEvent.HasManageMetadataEventHandlers,
-        RequestDiskResourceFavoriteEvent.HasManageFavoritesEventHandlers, ManageCommentsEvent.HasManageCommentsEventHandlers {
+                                                                      RequestDiskResourceFavoriteEvent.HasManageFavoritesEventHandlers,
+                                                                      ManageCommentsEvent.HasManageCommentsEventHandlers {
 
     public DiskResourceColumnModel(@SuppressWarnings("rawtypes") CheckBoxSelectionModel sm,
                                    IplantDisplayStrings displayStrings) {
@@ -47,12 +48,11 @@ public class DiskResourceColumnModel extends ColumnModel<DiskResource> implement
                 ((DiskResourceNameCell)cc.getCell()).setHasHandlers(this);
             } else if(cc.getCell() instanceof DiskResourceActionsCell){
                 ((DiskResourceActionsCell)cc.getCell()).setHasHandlers(this);
-            } else if (cc.getCell() instanceof DiskResourcePathCell) {
-                ((DiskResourcePathCell)cc.getCell()).setHasHandlers(this);
             }
         }
     }
 
+    @SuppressWarnings("unchecked")
     public static List<ColumnConfig<DiskResource, ?>>
             createColumnConfigList(@SuppressWarnings("rawtypes") CheckBoxSelectionModel sm,
                                    IplantDisplayStrings displayStrings) {

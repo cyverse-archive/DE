@@ -1,10 +1,9 @@
 package org.iplantc.de.diskResource.client.views.cells;
 
+import org.iplantc.de.client.events.EventBus;
+import org.iplantc.de.client.events.diskResources.OpenFolderEvent;
 import org.iplantc.de.client.models.diskResources.DiskResource;
-import org.iplantc.de.client.models.diskResources.DiskResourceAutoBeanFactory;
-import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.client.util.DiskResourceUtil;
-import org.iplantc.de.diskResource.client.views.cells.events.DiskResourceNameSelectedEvent;
 import org.iplantc.de.diskResource.share.DiskResourceModule;
 import org.iplantc.de.resources.client.DiskResourceNameCellStyle;
 import org.iplantc.de.resources.client.IplantResources;
@@ -23,7 +22,6 @@ import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.dom.client.Style.Cursor;
 import com.google.gwt.dom.client.Style.TextDecoration;
-import com.google.gwt.event.shared.HasHandlers;
 import com.google.gwt.safehtml.client.SafeHtmlTemplates;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
@@ -54,9 +52,6 @@ public class DiskResourcePathCell extends AbstractCell<DiskResource> {
     }
 
     final Templates templates = GWT.create(Templates.class);
-    private HasHandlers hasHandlers;
-
-    private final DiskResourceAutoBeanFactory drFactory = GWT.create(DiskResourceAutoBeanFactory.class);
 
     public DiskResourcePathCell() {
         this(true);
@@ -105,10 +100,6 @@ public class DiskResourcePathCell extends AbstractCell<DiskResource> {
         }
     }
 
-    public void setHasHandlers(HasHandlers hasHandlers) {
-        this.hasHandlers = hasHandlers;
-    }
-
     private void doOnMouseOut(Element eventTarget, DiskResource value) {
         eventTarget.getStyle().setCursor(Cursor.DEFAULT);
         eventTarget.getStyle().setTextDecoration(TextDecoration.NONE);
@@ -123,11 +114,10 @@ public class DiskResourcePathCell extends AbstractCell<DiskResource> {
                            DiskResource value,
                            ValueUpdater<DiskResource> valueUpdater) {
 
-        if (hasHandlers != null) {
-            Folder request = drFactory.folder().as();
-            request.setPath(DiskResourceUtil.parseParent(value.getPath()));
-            hasHandlers.fireEvent(new DiskResourceNameSelectedEvent(request));
-        }
+
+            OpenFolderEvent openEvent = new OpenFolderEvent(DiskResourceUtil.parseParent(value.getPath()));
+            openEvent.requestNewView(true);
+        EventBus.getInstance().fireEvent(openEvent);
     }
 
 
