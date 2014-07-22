@@ -25,7 +25,6 @@ import com.google.gwt.dom.client.Style.TextDecoration;
 import com.google.gwt.safehtml.client.SafeHtmlTemplates;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
-import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.user.client.Event;
 
 public class DiskResourcePathCell extends AbstractCell<DiskResource> {
@@ -41,13 +40,13 @@ public class DiskResourcePathCell extends AbstractCell<DiskResource> {
      */
     interface Templates extends SafeHtmlTemplates {
 
-        @SafeHtmlTemplates.Template("<span name=\"drPath\" >{0}</span>")
+        @SafeHtmlTemplates.Template("<span name=\"drPath\" title='{0}' >{0}</span>")
                 SafeHtml
- cell(SafeHtml diskResourceName);
+ cell(String path);
 
-        @SafeHtmlTemplates.Template("<span id='{1}' name=\"drPath\">{0}</span>")
+        @SafeHtmlTemplates.Template("<span id='{1}' title='{0}' name=\"drPath\">{0}</span>")
                 SafeHtml
- debugCell(SafeHtml diskResourceName,
+ debugCell(String path,
                           String id);
     }
 
@@ -66,9 +65,9 @@ public class DiskResourcePathCell extends AbstractCell<DiskResource> {
     public void render(Cell.Context context, DiskResource value, SafeHtmlBuilder sb) {
         if (DebugInfo.isDebugIdEnabled() && !Strings.isNullOrEmpty(baseID)) {
             final String debugId = baseID + "." + value.getPath() + DiskResourceModule.Ids.PATH_CELL;
-            sb.append(templates.debugCell(SafeHtmlUtils.fromString(value.getPath()), debugId));
+            sb.append(templates.debugCell(value.getPath(), debugId));
         } else {
-            sb.append(templates.cell(SafeHtmlUtils.fromString(value.getPath())));
+            sb.append(templates.cell(value.getPath()));
         }
     }
 
