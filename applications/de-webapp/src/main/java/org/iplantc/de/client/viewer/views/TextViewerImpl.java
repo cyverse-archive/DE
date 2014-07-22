@@ -304,6 +304,7 @@ public class TextViewerImpl extends AbstractFileViewer implements EditingSupport
                               allowEditing);
         } else {
             updateData(jso, (String)data);
+            setEditing(jso, allowEditing);
             setDirty(false);
         }
         toolbar.setEditing(allowEditing);
@@ -329,6 +330,10 @@ public class TextViewerImpl extends AbstractFileViewer implements EditingSupport
 		jso.setValue(val);
     }-*/;
 
+    public static native void setEditing(JavaScriptObject jso, boolean editing) /*-{
+		jso.setOption("readOnly", !editing);
+    }-*/;
+
     public static native JavaScriptObject displayData(final TextViewerImpl instance,
                                                       XElement textArea,
                                                       String editorMode,
@@ -337,6 +342,7 @@ public class TextViewerImpl extends AbstractFileViewer implements EditingSupport
                                                       int height,
                                                       boolean wrap,
                                                       boolean editing) /*-{
+
 		if (editorMode == "python") {
 			editorMode = {
 				name : "python",
@@ -353,14 +359,12 @@ public class TextViewerImpl extends AbstractFileViewer implements EditingSupport
 		});
 		myCodeMirror.setSize(width, height);
 		myCodeMirror.setOption("readOnly", !editing);
-		if (editing) {
-			myCodeMirror
-					.on(
-							"change",
-							$entry(function() {
-								instance.@org.iplantc.de.client.viewer.views.TextViewerImpl::setDirty(Ljava/lang/Boolean;)(@java.lang.Boolean::TRUE);
-							}));
-		}
+		myCodeMirror
+				.on(
+						"change",
+						$entry(function() {
+							instance.@org.iplantc.de.client.viewer.views.TextViewerImpl::setDirty(Ljava/lang/Boolean;)(@java.lang.Boolean::TRUE);
+						}));
 		return myCodeMirror;
     }-*/;
 
