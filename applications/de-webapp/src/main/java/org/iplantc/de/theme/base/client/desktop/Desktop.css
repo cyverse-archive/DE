@@ -1,8 +1,9 @@
 @def headerHeight 39px;
-@def footerHeight 40px;
+@def footerHeight 30px;
+@def footerHeight10 40px;
 
 .deBody {
-    position: absolute;
+    position: fixed;
     top: 0;
     bottom: 0;
     right: 0;
@@ -52,7 +53,7 @@
     gwt-image: 'desktopBackground';
     position: absolute;
     width: 100% !important;
-    height: 100% !important;
+    /*height: 100% !important;*/
     z-index: 0;
     top: headerHeight;
     background-position: top center;
@@ -63,7 +64,7 @@
     gwt-image: 'desktopBackgroundRepeat';
     position: absolute;
     width: 100%;
-    height: 100%;
+    /*height: 100%;*/
     z-index: 0;
     top: headerHeight;
     bottom: footerHeight;
@@ -158,7 +159,7 @@
 @sprite .feedback {
     gwt-image: 'feedbackImg';
     position: fixed;
-    bottom: footerHeight;
+    bottom: footerHeight10;
     right: 100px;
     height: 37px !important;
     width: 115px !important;

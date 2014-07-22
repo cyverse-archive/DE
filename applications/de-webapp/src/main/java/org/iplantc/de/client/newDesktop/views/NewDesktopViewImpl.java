@@ -5,11 +5,13 @@ import org.iplantc.de.client.desktop.widget.TaskButton;
 import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.models.UserSettings;
 import org.iplantc.de.client.newDesktop.NewDesktopView;
+import org.iplantc.de.client.newDesktop.views.widgets.DEFeedbackDialog;
 import org.iplantc.de.client.newDesktop.views.widgets.DesktopIconButton;
 import org.iplantc.de.client.newDesktop.views.widgets.PreferencesDialog;
 import org.iplantc.de.client.notifications.views.NotificationListView;
 import org.iplantc.de.client.views.windows.IPlantWindowInterface;
 import org.iplantc.de.commons.client.widgets.IPlantAnchor;
+import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 import org.iplantc.de.resources.client.messages.IplantNewUserTourStrings;
 import org.iplantc.de.shared.DeModule;
 
@@ -23,8 +25,9 @@ import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 
-import com.sencha.gxt.widget.core.client.Dialog;
+import static com.sencha.gxt.widget.core.client.Dialog.PredefinedButton;
 import com.sencha.gxt.widget.core.client.WindowManager;
+import com.sencha.gxt.widget.core.client.box.AlertMessageBox;
 import com.sencha.gxt.widget.core.client.button.IconButton;
 import com.sencha.gxt.widget.core.client.event.DialogHideEvent;
 import com.sencha.gxt.widget.core.client.event.RegisterEvent;
@@ -73,8 +76,10 @@ public class NewDesktopViewImpl implements NewDesktopView, UnregisterEvent.Unreg
     @UiField(provided = true)
     NotificationListView notificationsListView;
 
-    @Inject Provider<org.iplantc.de.client.newDesktop.views.widgets.PreferencesDialog> preferencesDialogProvider;
+    @Inject Provider<PreferencesDialog> preferencesDialogProvider;
+    @Inject Provider<DEFeedbackDialog> deFeedbackDialogProvider;
     @Inject UserSettings userSettings;
+    @Inject IplantDisplayStrings displayStrings;
     private static NewViewUiBinder ourUiBinder = GWT.create(NewViewUiBinder.class);
     private final Widget widget;
     private NewDesktopView.Presenter presenter;
@@ -214,7 +219,21 @@ public class NewDesktopViewImpl implements NewDesktopView, UnregisterEvent.Unreg
 
     @UiHandler("feedbackBtn")
     void onFeedbackBtnSelect(SelectEvent event) {
-        presenter.onFeedbackBtnSelect();
+        final DEFeedbackDialog feedbackDialog = deFeedbackDialogProvider.get();
+        feedbackDialog.show();
+        feedbackDialog.getButton(PredefinedButton.OK).addSelectHandler(new SelectEvent.SelectHandler() {
+            @Override
+            public void onSelect(SelectEvent event) {
+                if(feedbackDialog.validate()){
+                    presenter.submitUserFeedback(feedbackDialog.toJson(), feedbackDialog);
+                } else {
+                    AlertMessageBox amb = new AlertMessageBox(displayStrings.warning(),
+                                                              displayStrings.publicSubmitTip());
+                    amb.setModal(true);
+                    amb.show();
+                }
+            }
+        });
     }
 
     @UiHandler("forumsBtn")
@@ -236,7 +255,7 @@ public class NewDesktopViewImpl implements NewDesktopView, UnregisterEvent.Unreg
         preferencesDialog.addDialogHideHandler(new DialogHideEvent.DialogHideHandler() {
             @Override
             public void onDialogHide(DialogHideEvent event) {
-                if(Dialog.PredefinedButton.OK.equals(event.getHideButton())){
+                if(PredefinedButton.OK.equals(event.getHideButton())){
                     presenter.saveUserSettings(preferencesDialog.getValue());
                     preferencesDialog.hide();
                 }

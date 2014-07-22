@@ -3,13 +3,9 @@ package org.iplantc.de.client.desktop.presenter;
 import org.iplantc.de.client.desktop.views.DEFeedbackView;
 import org.iplantc.de.client.desktop.views.DEFeedbackView.Presenter;
 import org.iplantc.de.client.desktop.views.DEFeedbackViewImpl;
-import org.iplantc.de.client.gin.ServicesInjector;
-import org.iplantc.de.commons.client.ErrorHandler;
-import org.iplantc.de.commons.client.views.gxt3.dialogs.IplantInfoBox;
 import org.iplantc.de.resources.client.messages.I18N;
 
 import com.google.gwt.user.client.Command;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HasOneWidget;
 
 import com.sencha.gxt.widget.core.client.box.AlertMessageBox;
@@ -34,27 +30,27 @@ public class DEFeedbackPresenter implements Presenter {
         // System.out.println("-->" + view.validate());
         if (view.validate()) {
             // System.out.println("-->" + view.toJson());
-            ServicesInjector.INSTANCE.getDeFeedbackServiceFacade().submitFeedback(view.toJson().toString(), new AsyncCallback<String>() {
-
-                @Override
-                public void onSuccess(String result) {
-                    if (callbackCommand != null) {
-                        callbackCommand.execute();
-                    }
-                    IplantInfoBox info = new IplantInfoBox(I18N.DISPLAY.feedbackTitle(), I18N.DISPLAY
-                            .feedbackSubmitted());
-                    info.show();
-                }
-
-                @Override
-                public void onFailure(Throwable caught) {
-                    if (callbackCommand != null) {
-                        callbackCommand.execute();
-                    }
-                    ErrorHandler.post(I18N.ERROR.feedbackServiceFailure(), caught);
-
-                }
-            });
+//            ServicesInjector.INSTANCE.getDeFeedbackServiceFacade().submitFeedback(view.toJson().toString(), new AsyncCallback<String>() {
+//
+//                @Override
+//                public void onSuccess(String result) {
+//                    if (callbackCommand != null) {
+//                        callbackCommand.execute();
+//                    }
+//                    IplantInfoBox info = new IplantInfoBox(I18N.DISPLAY.feedbackTitle(), I18N.DISPLAY
+//                            .feedbackSubmitted());
+//                    info.show();
+//                }
+//
+//                @Override
+//                public void onFailure(Throwable caught) {
+//                    if (callbackCommand != null) {
+//                        callbackCommand.execute();
+//                    }
+//                    ErrorHandler.post(I18N.ERROR.feedbackServiceFailure(), caught);
+//
+//                }
+//            });
         } else {
             AlertMessageBox amb = new AlertMessageBox(I18N.DISPLAY.warning(),
                     I18N.DISPLAY.publicSubmitTip());

@@ -1,18 +1,16 @@
-package org.iplantc.de.client.desktop.views;
+package org.iplantc.de.client.newDesktop.views.widgets;
 
-import org.iplantc.de.client.models.UserInfo;
+import org.iplantc.de.commons.client.views.gxt3.dialogs.IPlantDialog;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.i18n.client.Messages;
-import com.google.gwt.json.client.JSONArray;
-import com.google.gwt.json.client.JSONObject;
-import com.google.gwt.json.client.JSONString;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiTemplate;
-import com.google.gwt.user.client.Window.Navigator;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.inject.Inject;
+import com.google.web.bindery.autobean.shared.Splittable;
+import com.google.web.bindery.autobean.shared.impl.StringQuoter;
 
 import com.sencha.gxt.core.client.util.ToggleGroup;
 import com.sencha.gxt.widget.core.client.form.CheckBox;
@@ -25,17 +23,23 @@ import com.sencha.gxt.widget.core.client.form.TextField;
  * -- Externalize strings. Do it in appearance? Yes.
  * -- Validation should still occur here.
  */
-public class DEFeedbackViewImpl implements DEFeedbackView {
+public class DEFeedbackDialog extends IPlantDialog {
 
-    //<editor-fold desc="Interfaces">
     private static DEFeedbackViewUiBinder uiBinder = GWT.create(DEFeedbackViewUiBinder.class);
 
     @UiTemplate("DEFeedbackView.ui.xml")
-    interface DEFeedbackViewUiBinder extends UiBinder<Widget, DEFeedbackViewImpl> {
-    }
+    interface DEFeedbackViewUiBinder extends UiBinder<Widget, DEFeedbackDialog> { }
 
     public interface FeedbackAppearance {
-        interface FeedbackStrings extends Messages {
+        interface FeedbackStrings {
+            String headingText();
+
+            SafeHtml reason();
+
+            SafeHtml complete();
+
+            SafeHtml satisfy();
+
             String justExploring();
 
             String manageData();
@@ -48,6 +52,8 @@ public class DEFeedbackViewImpl implements DEFeedbackView {
 
             String other();
 
+            String submit();
+
             String yes();
 
             String somewhat();
@@ -56,7 +62,7 @@ public class DEFeedbackViewImpl implements DEFeedbackView {
 
             String notAtAll();
 
-            String verifySatisfied();
+            String verySatisfied();
 
             String somewhatSatisfied();
 
@@ -66,19 +72,14 @@ public class DEFeedbackViewImpl implements DEFeedbackView {
 
             String notSatisfied();
 
+            String featuresAndImprovements();
+
+            String anythingElse();
 
         }
 
-        SafeHtml reasonLabel();
-
-        SafeHtml completeLabel();
-
-        SafeHtml satisfyLabel();
+        FeedbackStrings displayStrings();
     }
-    //</editor-fold>
-
-    //<editor-fold desc="Fields">
-    final Widget widget;
 
     @UiField
     Radio vastField;
@@ -138,16 +139,26 @@ public class DEFeedbackViewImpl implements DEFeedbackView {
     @UiField
     FieldLabel anythingField;
     private final ToggleGroup group;
+    
+    @UiField(provided = true)
+    FeedbackAppearance appearance;
 
     @UiField
     TextField otherSatisfiedField;
 
     @UiField
     Radio otsatField;
-    //</editor-fold>
 
-    public DEFeedbackViewImpl() {
-        widget = uiBinder.createAndBindUi(this);
+    @Inject
+    public DEFeedbackDialog(final FeedbackAppearance appearance) {
+        this.appearance = appearance;
+        setHeadingText(appearance.displayStrings().headingText());
+        setPredefinedButtons(PredefinedButton.OK, PredefinedButton.CANCEL);
+        getButton(PredefinedButton.OK).setText(appearance.displayStrings().submit());
+        setHideOnButtonClick(false);
+        setSize("400", "500");
+
+        Widget widget = uiBinder.createAndBindUi(this);
         group = new ToggleGroup();
         group.add(vastField);
         group.add(swsatField);
@@ -155,17 +166,10 @@ public class DEFeedbackViewImpl implements DEFeedbackView {
         group.add(swdField);
         group.add(nsField);
         group.add(otsatField);
-//        reasonField.setHTML(buildRequiredFieldLabel(reasonField.getText()));
-//        completeField.setHTML(buildRequiredFieldLabel(completeField.getText()));
-//        satisfyField.setHTML(buildRequiredFieldLabel(satisfyField.getText()));
+        add(widget);
     }
 
-    @Override
-    public Widget asWidget() {
-        return widget;
-    }
 
-    @Override
     public boolean validate() {
         boolean validate1 = validateQ1();
         boolean validate2 = validateQ2();
@@ -177,17 +181,12 @@ public class DEFeedbackViewImpl implements DEFeedbackView {
         }
     }
 
-    private String buildRequiredFieldLabel(String label) {
-        if (label == null) {
-            return null;
-        }
-
-        return "<span style='color:red; top:-5px;' >*</span> " + label; //$NON-NLS-1$
-    }
-
     private boolean validateQ1() {
-        boolean ret = (expField.getValue() || mngField.getValue() || runField.getValue()
-                || chkField.getValue() || appField.getValue());
+        boolean ret = expField.getValue()
+                          || mngField.getValue()
+                          || runField.getValue()
+                          || chkField.getValue()
+                          || appField.getValue();
 
         if (otrField.getValue()) {
             otherField.setAllowBlank(false);
@@ -201,8 +200,10 @@ public class DEFeedbackViewImpl implements DEFeedbackView {
     }
 
     private boolean validateQ2() {
-        boolean ret = (yesField.getValue() || swField.getValue() || noField.getValue() || notField
-                .getValue());
+        boolean ret = yesField.getValue()
+                          || swField.getValue()
+                          || noField.getValue()
+                          || notField.getValue();
 
         if (tskOtrField.getValue()) {
             otherCompField.setAllowBlank(false);
@@ -216,8 +217,11 @@ public class DEFeedbackViewImpl implements DEFeedbackView {
     }
 
     private boolean validateQ3() {
-        boolean ret = (vastField.getValue() || swsatField.getValue() || okField.getValue()
-                || swdField.getValue() || nsField.getValue());
+        boolean ret = vastField.getValue()
+                          || swsatField.getValue()
+                          || okField.getValue()
+                          || swdField.getValue()
+                          || nsField.getValue();
         if (otsatField.getValue()) {
             otherSatisfiedField.setAllowBlank(false);
             return otherSatisfiedField.validate();
@@ -227,88 +231,85 @@ public class DEFeedbackViewImpl implements DEFeedbackView {
         }
     }
 
-    @Override
-    public JSONObject toJson() {
-        JSONObject obj = new JSONObject();
-        obj.put("username", new JSONString(UserInfo.getInstance().getUsername()));
-        obj.put("User-agent", new JSONString(Navigator.getUserAgent()));
-        obj.put(reasonField.getText(), getAnswer1());
-        obj.put(completeField.getText(), getAnswer2());
+    public Splittable toJson() {
+        Splittable split = StringQuoter.createSplittable();
+        getAnswer1().assign(split, appearance.displayStrings().reason().asString());
+        getAnswer2().assign(split, appearance.displayStrings().complete().asString());
+
         if (getAnswer3() != null) {
-            obj.put(satisfyField.getText(), new JSONString(getAnswer3()));
+            getAnswer3().assign(split, appearance.displayStrings().satisfy().asString());
         }
         if (featureTextArea.getValue() != null) {
-            obj.put(featureField.getText(), new JSONString(featureTextArea.getValue()));
+            StringQuoter.create(featureTextArea.getValue()).assign(split, appearance.displayStrings().featuresAndImprovements());
         }
 
         if (otherTextArea.getValue() != null) {
-            obj.put(anythingField.getText(), new JSONString(otherTextArea.getValue()));
+            StringQuoter.create(otherTextArea.getValue()).assign(split, appearance.displayStrings().anythingElse());
         }
-        return obj;
+        return split;
     }
 
-    private JSONArray getAnswer1() {
-        JSONArray arr = new JSONArray();
+    private Splittable getAnswer1() {
+        Splittable indexedSplit = StringQuoter.createIndexed();
         int counter = 0;
         if (expField.getValue()) {
-            arr.set(counter++, new JSONString(expField.getBoxLabel()));
+            StringQuoter.create(appearance.displayStrings().justExploring()).assign(indexedSplit, counter++);
         }
         if (mngField.getValue()) {
-            arr.set(counter++, new JSONString(mngField.getBoxLabel()));
+            StringQuoter.create(appearance.displayStrings().manageData()).assign(indexedSplit, counter++);
         }
         if (runField.getValue()) {
-            arr.set(counter++, new JSONString(runField.getBoxLabel()));
+            StringQuoter.create(appearance.displayStrings().runAnalysis()).assign(indexedSplit, counter++);
         }
         if (chkField.getValue()) {
-            arr.set(counter++, new JSONString(chkField.getBoxLabel()));
+            StringQuoter.create(appearance.displayStrings().checkStatus()).assign(indexedSplit, counter++);
         }
         if (appField.getValue()) {
-            arr.set(counter++, new JSONString(appField.getBoxLabel()));
+            StringQuoter.create(appearance.displayStrings().createApp()).assign(indexedSplit, counter++);
         }
         if (otrField.getValue()) {
-            arr.set(counter++, new JSONString(otherField.getValue()));
+            StringQuoter.create(otherField.getValue()).assign(indexedSplit, counter++);
         }
 
-        return arr;
+        return indexedSplit;
     }
 
-    private JSONArray getAnswer2() {
-        JSONArray arr = new JSONArray();
+    private Splittable getAnswer2() {
+        Splittable indexedSplit = StringQuoter.createIndexed();
         int counter = 0;
         if (yesField.getValue()) {
-            arr.set(counter++, new JSONString(yesField.getBoxLabel()));
+            StringQuoter.create(appearance.displayStrings().yes()).assign(indexedSplit, counter++);
         }
         if (swField.getValue()) {
-            arr.set(counter++, new JSONString(swField.getBoxLabel()));
+            StringQuoter.create(appearance.displayStrings().somewhat()).assign(indexedSplit, counter++);
         }
         if (noField.getValue()) {
-            arr.set(counter++, new JSONString(noField.getBoxLabel()));
+            StringQuoter.create(appearance.displayStrings().noSpecificTask()).assign(indexedSplit, counter++);
         }
         if (notField.getValue()) {
-            arr.set(counter++, new JSONString(notField.getBoxLabel()));
+            StringQuoter.create(appearance.displayStrings().notAtAll()).assign(indexedSplit, counter++);
         }
         if (tskOtrField.getValue()) {
-            arr.set(counter++, new JSONString(otherCompField.getValue()));
+            StringQuoter.create(otherCompField.getValue()).assign(indexedSplit, counter++);
         }
 
-        return arr;
+        return indexedSplit;
     }
 
-    private String getAnswer3() {
+    private Splittable getAnswer3() {
         if (vastField.getValue()) {
-            return vastField.getBoxLabel();
+            return StringQuoter.create(appearance.displayStrings().verySatisfied());
         } else if (swsatField.getValue()) {
-            return swsatField.getBoxLabel();
+            return StringQuoter.create(appearance.displayStrings().somewhatSatisfied());
         } else if (okField.getValue()) {
-            return okField.getBoxLabel();
+            return StringQuoter.create(appearance.displayStrings().okay());
         } else if (swdField.getValue()) {
-            return swdField.getBoxLabel();
+            return StringQuoter.create(appearance.displayStrings().somewhatDissatisfied());
         } else if (nsField.getValue()) {
-            return nsField.getBoxLabel();
+            return StringQuoter.create(appearance.displayStrings().notSatisfied());
         } else {
-            return otherSatisfiedField.getValue();
+            return StringQuoter.create(otherSatisfiedField.getValue());
         }
-
     }
 
 }

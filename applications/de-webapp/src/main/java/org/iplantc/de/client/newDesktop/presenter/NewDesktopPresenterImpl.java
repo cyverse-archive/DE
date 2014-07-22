@@ -2,11 +2,11 @@ package org.iplantc.de.client.newDesktop.presenter;
 
 import static org.iplantc.de.commons.client.collaborators.presenter.ManageCollaboratorsPresenter.MODE.MANAGE;
 import org.iplantc.de.client.DEClientConstants;
-import org.iplantc.de.client.desktop.views.DEFeedbackDialog;
 import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.events.WindowCloseRequestEvent;
 import org.iplantc.de.client.models.DEProperties;
 import org.iplantc.de.client.models.HasPath;
+import org.iplantc.de.client.models.IsHideable;
 import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.client.models.UserSettings;
 import org.iplantc.de.client.models.WindowState;
@@ -14,6 +14,7 @@ import org.iplantc.de.client.models.WindowType;
 import org.iplantc.de.client.models.notifications.NotificationCategory;
 import org.iplantc.de.client.newDesktop.NewDesktopView;
 import org.iplantc.de.client.periodic.MessagePoller;
+import org.iplantc.de.client.services.DEFeedbackServiceFacade;
 import org.iplantc.de.client.services.UserSessionServiceFacade;
 import org.iplantc.de.client.sysmsgs.view.NewMessageView;
 import org.iplantc.de.client.util.CommonModelUtils;
@@ -54,6 +55,7 @@ import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
+import com.google.web.bindery.autobean.shared.Splittable;
 import com.google.web.bindery.autobean.shared.impl.StringQuoter;
 
 import com.sencha.gxt.core.client.util.KeyNav;
@@ -146,7 +148,7 @@ public class NewDesktopPresenterImpl implements NewDesktopView.Presenter {
         }
     }
 
-    private class LogoutCallback implements AsyncCallback<String> {
+    private static class LogoutCallback implements AsyncCallback<String> {
         private final DEClientConstants constants;
         private final IplantDisplayStrings displayStrings;
         private final IplantErrorStrings errorStrings;
@@ -266,11 +268,20 @@ public class NewDesktopPresenterImpl implements NewDesktopView.Presenter {
         }
     }
 
-    private class SaveUserSettingsCallback implements AsyncCallback<Void> {
-        private final UserSettings value;
+    private static class SaveUserSettingsCallback implements AsyncCallback<Void> {
+        private final UserSettings newValue;
+        private final UserSettings userSettings;
+        private final IplantAnnouncer announcer;
+        private final IplantDisplayStrings displayStrings;
 
-        public SaveUserSettingsCallback(UserSettings value) {
-            this.value = value;
+        public SaveUserSettingsCallback(final UserSettings newValue,
+                                        final UserSettings userSettings,
+                                        final IplantAnnouncer announcer,
+                                        final IplantDisplayStrings displayStrings) {
+            this.newValue = newValue;
+            this.userSettings = userSettings;
+            this.announcer = announcer;
+            this.displayStrings = displayStrings;
         }
 
         @Override
@@ -280,7 +291,7 @@ public class NewDesktopPresenterImpl implements NewDesktopView.Presenter {
 
         @Override
         public void onSuccess(Void result) {
-            userSettings.setValues(value.asSplittable());
+            userSettings.setValues(newValue.asSplittable());
             announcer.schedule(new SuccessAnnouncementConfig(displayStrings.saveSettings(), true, 3000));
         }
     }
@@ -314,6 +325,8 @@ public class NewDesktopPresenterImpl implements NewDesktopView.Presenter {
     IplantDisplayStrings displayStrings;
     @Inject
     Provider<ErrorHandler> errorHandlerProvider;
+    @Inject
+    Provider<DEFeedbackServiceFacade> feedbackServiceProvider;
     @Inject
     IplantErrorStrings errorStrings;
     @Inject
@@ -442,16 +455,6 @@ public class NewDesktopPresenterImpl implements NewDesktopView.Presenter {
         WindowUtil.open(deClientConstants.deHelpFile());
     }
 
-    /**
-     * FIXME JDS The feedback presenter should be used here, not the view
-     * OR the presenter functionality should be inlined here.
-     */
-    @Override
-    public void onFeedbackBtnSelect() {
-        // TODO Implement method
-        new DEFeedbackDialog().show();
-    }
-
     @Override
     public void onForumsBtnSelect() {
         WindowUtil.open(commonUiConstants.forumsUrl());
@@ -459,7 +462,11 @@ public class NewDesktopPresenterImpl implements NewDesktopView.Presenter {
 
     @Override
     public void saveUserSettings(final UserSettings value) {
-         userSessionService.saveUserPreferences(value.asSplittable(), new SaveUserSettingsCallback(value));
+        final SaveUserSettingsCallback callback = new SaveUserSettingsCallback(value,
+                                                                               userSettings,
+                                                                               announcer,
+                                                                               displayStrings);
+        userSessionService.saveUserPreferences(value.asSplittable(), callback);
     }
 
     @Override
@@ -481,6 +488,25 @@ public class NewDesktopPresenterImpl implements NewDesktopView.Presenter {
     public void show(final WindowConfig config,
                      final boolean updateExistingWindow) {
         desktopWindowManager.show(config, updateExistingWindow);
+    }
+
+    @Override
+    public void submitUserFeedback(Splittable splittable, final IsHideable isHideable) {
+        StringQuoter.create(userInfo.getUsername()).assign(splittable, "username");
+        StringQuoter.create(Window.Navigator.getUserAgent()).assign(splittable, "User-agent");
+        feedbackServiceProvider.get().submitFeedback(splittable, new AsyncCallback<Void>() {
+            @Override
+            public void onFailure(Throwable caught) {
+                errorHandlerProvider.get().post(errorStrings.feedbackServiceFailure(), caught);
+            }
+
+            @Override
+            public void onSuccess(Void result) {
+                isHideable.hide();
+                announcer.schedule(new SuccessAnnouncementConfig(displayStrings.feedbackSubmitted(), true, 3000));
+            }
+        });
+
     }
 
     void doPeriodicSessionSave() {

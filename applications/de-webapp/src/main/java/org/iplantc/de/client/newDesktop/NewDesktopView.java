@@ -1,5 +1,6 @@
 package org.iplantc.de.client.newDesktop;
 
+import org.iplantc.de.client.models.IsHideable;
 import org.iplantc.de.client.models.UserSettings;
 import org.iplantc.de.client.models.WindowState;
 import org.iplantc.de.commons.client.views.window.configs.WindowConfig;
@@ -7,6 +8,7 @@ import org.iplantc.de.commons.client.views.window.configs.WindowConfig;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Panel;
+import com.google.web.bindery.autobean.shared.Splittable;
 
 import com.sencha.gxt.widget.core.client.button.IconButton;
 
@@ -14,7 +16,7 @@ import java.util.List;
 
 /**
  * TODO JDS Change initial display time for user menu tooltips
- * TODO JDS Window layout
+ * TODO JDS Window layout, implement as 'one-shot' layouts. 'layout then done' no re-sizing
  *
  * Notifications, window events, layouts
  *
@@ -96,6 +98,7 @@ public interface NewDesktopView extends IsWidget {
      * TODO JDS Eventually, certain injected parameters will be injected via an AsyncProvider
      *           This will provide us with split points through injection. Only items which are not
      *           immediately necessary should be provided this way.
+     * TODO Pull strings from IplantDisplayStrings into a desktop appearance
      */
     interface Presenter extends UserSettingsMenuPresenter {
 
@@ -131,8 +134,6 @@ public interface NewDesktopView extends IsWidget {
 
         void onDataWinBtnSelect();
 
-        void onFeedbackBtnSelect();
-
         void onForumsBtnSelect();
 
         void saveUserSettings(UserSettings value);
@@ -150,6 +151,7 @@ public interface NewDesktopView extends IsWidget {
          */
         void show(final WindowConfig config, final boolean updateExistingWindow);
 
+        void submitUserFeedback(Splittable splittable, IsHideable isHideable);
     }
 
     interface UserSettingsMenuPresenter {

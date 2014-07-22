@@ -10,9 +10,11 @@ import org.iplantc.de.client.newDesktop.presenter.DesktopPresenterWindowEventHan
 import org.iplantc.de.client.newDesktop.presenter.DesktopWindowManager;
 import org.iplantc.de.client.newDesktop.presenter.NewDesktopPresenterImpl;
 import org.iplantc.de.client.newDesktop.views.NewDesktopViewImpl;
+import org.iplantc.de.client.newDesktop.views.widgets.DEFeedbackDialog;
 import org.iplantc.de.client.newDesktop.views.widgets.PreferencesDialog;
 import org.iplantc.de.client.periodic.MessagePoller;
 import org.iplantc.de.client.services.AnalysisServiceFacade;
+import org.iplantc.de.client.services.DEFeedbackServiceFacade;
 import org.iplantc.de.client.services.DiskResourceServiceFacade;
 import org.iplantc.de.client.services.FileEditorServiceFacade;
 import org.iplantc.de.client.services.UserSessionServiceFacade;
@@ -87,6 +89,10 @@ public class DEGinModule extends AbstractGinModule {
         return IplantAnnouncer.getInstance();
     }
 
+    @Provides public DEFeedbackServiceFacade createFeedbackService() {
+        return ServicesInjector.INSTANCE.getDeFeedbackServiceFacade();
+    }
+
     @Override
     protected void configure() {
         bind(NewDesktopView.class).to(NewDesktopViewImpl.class);
@@ -99,6 +105,7 @@ public class DEGinModule extends AbstractGinModule {
 
         bind(WindowFactory.class);
         bind(PreferencesDialog.class);
+        bind(DEFeedbackDialog.class);
 
     }
 }

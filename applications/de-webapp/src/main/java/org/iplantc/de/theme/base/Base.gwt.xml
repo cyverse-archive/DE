@@ -1,12 +1,19 @@
 <!DOCTYPE module PUBLIC "-//Google Inc.//DTD Google Web Toolkit 2.0//EN"
         "http://google-web-toolkit.googlecode.com/svn/releases/2.0/distro-source/core/src/gwt-module.dtd">
 <module>
-
+<!--This module currently has a circular dependency with discovery environment module.
+      TODO: need to break this circular dependency
+      Possibly by creating a DE core module. Then, the primary module will just be an entry point
+      which references the desktop view.-->
     <inherits name='com.google.gwt.user.User'/>
     <inherits name="org.iplantc.de.discoveryenvironment"/>
 
     <replace-with class="org.iplantc.de.theme.base.client.desktop.BaseDesktopAppearance">
         <when-type-is class="org.iplantc.de.client.newDesktop.NewDesktopView.DesktopAppearance"/>
+    </replace-with>
+
+    <replace-with class="org.iplantc.de.theme.base.client.desktop.views.BaseFeedbackDialogAppearance">
+        <when-type-is class="org.iplantc.de.client.newDesktop.views.widgets.DEFeedbackDialog.FeedbackAppearance"/>
     </replace-with>
 
 </module>

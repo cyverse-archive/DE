@@ -9,7 +9,7 @@
     <ui:with field="strings"
              type="org.iplantc.de.resources.client.messages.IplantDisplayStrings"/>
     <ui:with field="appearance"
-             type="org.iplantc.de.client.desktop.views.DEFeedbackViewImpl.FeedbackAppearance"/>
+             type="org.iplantc.de.client.newDesktop.views.widgets.DEFeedbackDialog.FeedbackAppearance"/>
 
     <ui:with field="centerMargins"
              type="com.sencha.gxt.core.client.util.Margins">
@@ -26,22 +26,22 @@
             <form:FieldLabel ui:field="reasonField"
                              labelAlign="TOP"
                              labelSeparator=""
-                             text="What is your primary reason for coming to the Discovery Environment today ?">
+                             HTML="{appearance.displayStrings.reason.asString}">
                 <form:widget>
                     <g:VerticalPanel>
                         <form:CheckBox ui:field="expField"
-                                       boxLabel="I'm just exploring."/>
+                                       boxLabel="{appearance.displayStrings.justExploring}"/>
                         <form:CheckBox ui:field="mngField"
-                                       boxLabel="Manage my data."/>
+                                       boxLabel="{appearance.displayStrings.manageData}"/>
                         <form:CheckBox ui:field="runField"
-                                       boxLabel="Run an analysis."/>
+                                       boxLabel="{appearance.displayStrings.runAnalysis}"/>
                         <form:CheckBox ui:field="chkField"
-                                       boxLabel="Check status on my analysis."/>
+                                       boxLabel="{appearance.displayStrings.checkStatus}"/>
                         <form:CheckBox ui:field="appField"
-                                       boxLabel="Create an app."/>
+                                       boxLabel="{appearance.displayStrings.createApp}"/>
                         <g:HorizontalPanel>
                             <form:CheckBox ui:field="otrField"
-                                           boxLabel="Other:"/>
+                                           boxLabel="{appearance.displayStrings.other}"/>
                             <form:TextField ui:field="otherField"/>
                         </g:HorizontalPanel>
                     </g:VerticalPanel>
@@ -52,20 +52,20 @@
             <form:FieldLabel ui:field="completeField"
                              labelAlign="TOP"
                              labelSeparator=""
-                             text="Were you able to complete your task today ?">
+                             HTML="{appearance.displayStrings.complete.asString}">
                 <form:widget>
                     <g:VerticalPanel>
                         <form:CheckBox ui:field="yesField"
-                                       boxLabel="Yes!"/>
+                                       boxLabel="{appearance.displayStrings.yes}"/>
                         <form:CheckBox ui:field="swField"
-                                       boxLabel="Somewhat."/>
+                                       boxLabel="{appearance.displayStrings.somewhat}"/>
                         <form:CheckBox ui:field="noField"
-                                       boxLabel="No specific task in mind."/>
+                                       boxLabel="{appearance.displayStrings.noSpecificTask}"/>
                         <form:CheckBox ui:field="notField"
-                                       boxLabel="Not at all."/>
+                                       boxLabel="{appearance.displayStrings.notAtAll}"/>
                         <g:HorizontalPanel>
                             <form:CheckBox ui:field="tskOtrField"
-                                           boxLabel="Other:"/>
+                                           boxLabel="{appearance.displayStrings.other}"/>
                             <form:TextField ui:field="otherCompField"/>
                         </g:HorizontalPanel>
                     </g:VerticalPanel>
@@ -76,22 +76,22 @@
             <form:FieldLabel ui:field="satisfyField"
                              labelAlign="TOP"
                              labelSeparator=""
-                             text="How satisfied are you with the Discovery Environment ?">
+                             HTML="{appearance.displayStrings.satisfy.asString}">
                 <form:widget>
                     <g:VerticalPanel>
                         <form:Radio ui:field="vastField"
-                                    boxLabel="Very satisfied!"/>
+                                    boxLabel="{appearance.displayStrings.verySatisfied}"/>
                         <form:Radio ui:field="swsatField"
-                                    boxLabel="Somewhat satisfied."/>
+                                    boxLabel="{appearance.displayStrings.somewhatSatisfied}"/>
                         <form:Radio ui:field="okField"
-                                    boxLabel="It's okay."/>
+                                    boxLabel="{appearance.displayStrings.okay}"/>
                         <form:Radio ui:field="swdField"
-                                    boxLabel="Somewhat dissatisfied."/>
+                                    boxLabel="{appearance.displayStrings.somewhatDissatisfied}"/>
                         <form:Radio ui:field="nsField"
-                                    boxLabel="Not satisfied."/>
+                                    boxLabel="{appearance.displayStrings.notSatisfied}"/>
                         <g:HorizontalPanel>
                             <form:Radio ui:field="otsatField"
-                                        boxLabel="Other:"/>
+                                        boxLabel="{appearance.displayStrings.other}"/>
                             <form:TextField ui:field="otherSatisfiedField"/>
                         </g:HorizontalPanel>
                     </g:VerticalPanel>
@@ -102,7 +102,7 @@
             <form:FieldLabel ui:field="featureField"
                              labelAlign="TOP"
                              labelSeparator=""
-                             text="What features or improvements would you like to see ?">
+                             text="{appearance.displayStrings.featuresAndImprovements}">
                 <form:widget>
                     <form:TextArea ui:field="featureTextArea"
                                    height="100"/>
@@ -113,7 +113,7 @@
             <form:FieldLabel ui:field="anythingField"
                              labelAlign="TOP"
                              labelSeparator=""
-                             text="Is there anything else we should know?">
+                             text="{appearance.displayStrings.anythingElse}">
                 <form:widget>
                     <form:TextArea ui:field="otherTextArea"
                                    height="100"/>
