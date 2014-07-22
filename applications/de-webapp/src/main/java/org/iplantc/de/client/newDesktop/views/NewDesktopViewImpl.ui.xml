@@ -66,7 +66,8 @@
             </nav>
         </div>
         <!--Body-->
-        <div class="{appearance.styles.desktopBackgroundRepeat}" />
+        <div ui:field="desktopContainer"
+             class="{appearance.styles.desktopBackgroundRepeat}" />
         <div class="{appearance.styles.desktopBackground}">
             <nav class="{appearance.styles.windowBtnNav}">
                 <button:IconButton ui:field="dataWinBtn"
@@ -82,7 +83,6 @@
             <button:IconButton ui:field="feedbackBtn"
                                config="{appearance.feedbackBtnConfig}"/>
         </div>
-        <!--TODO: Put a 'margin-bottom' on the body element-->
         <!--Footer-->
         <taskbar:TaskBar ui:field="taskBar"
                          addStyleNames="{appearance.styles.taskBarLayout}"/>

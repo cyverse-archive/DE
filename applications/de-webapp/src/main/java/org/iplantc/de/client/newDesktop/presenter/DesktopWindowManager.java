@@ -10,6 +10,7 @@ import org.iplantc.de.commons.client.views.window.configs.WindowConfig;
 import static com.google.common.base.Preconditions.checkNotNull;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
+import com.google.gwt.dom.client.Element;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 
@@ -30,12 +31,27 @@ public class DesktopWindowManager {
 
     private final WindowManager windowManager;
     private final WindowFactory windowFactory;
+    private Element desktopContainer;
 
     @Inject
     public DesktopWindowManager(final WindowManager windowManager,
                                 final WindowFactory windowFactory) {
         this.windowManager = windowManager;
         this.windowFactory = windowFactory;
+    }
+
+    public void closeActiveWindow() {
+        final List<Widget> reverse = Lists.reverse(windowManager.getStack());
+        for (Widget w : reverse) {
+            if(w instanceof IPlantWindowInterface){
+                ((Window)w).hide();
+            }
+        }
+
+    }
+
+    void setDesktopContainer(Element desktopContainer) {
+        this.desktopContainer = desktopContainer;
     }
 
     public void show(final WindowState windowState) {
@@ -141,6 +157,9 @@ public class DesktopWindowManager {
         }
         final Window window = (Window) windowFactory.build(config);
         window.setStateId(constructWindowId(config));
+        if(desktopContainer != null){
+            window.setContainer(desktopContainer);
+        }
         return window;
     }
 }

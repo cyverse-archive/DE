@@ -3,8 +3,10 @@ package org.iplantc.de.client.newDesktop;
 import org.iplantc.de.client.models.IsHideable;
 import org.iplantc.de.client.models.UserSettings;
 import org.iplantc.de.client.models.WindowState;
+import org.iplantc.de.client.views.windows.IPlantWindowInterface;
 import org.iplantc.de.commons.client.views.window.configs.WindowConfig;
 
+import com.google.gwt.dom.client.Element;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Panel;
@@ -172,6 +174,11 @@ public interface NewDesktopView extends IsWidget {
     }
 
     void ensureDebugId(String baseID);
+
+    /**
+     * @return the desktop container element used to constrain {@link IPlantWindowInterface} classes
+     */
+    Element getDesktopContainer();
 
     void setPresenter(Presenter presenter);
 

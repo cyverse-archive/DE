@@ -32,7 +32,6 @@ import com.google.web.bindery.event.shared.HandlerRegistration;
 import com.sencha.gxt.core.client.dom.XDOM;
 import com.sencha.gxt.core.client.dom.XElement;
 import com.sencha.gxt.core.client.util.Point;
-import com.sencha.gxt.core.client.util.Rectangle;
 import com.sencha.gxt.core.client.util.Util;
 import com.sencha.gxt.widget.core.client.Status;
 import com.sencha.gxt.widget.core.client.Window;
@@ -197,26 +196,6 @@ public abstract class IplantWindowBase extends Window implements IPlantWindowInt
         }
 
         return adjusted;
-    }
-
-    @Override
-    /**
-     * SRI -
-     * fit container for maximize by off setting for header and taskbar
-     * 
-     */
-    protected void fitContainer() {
-        // Offset for header height and real taskbar height.
-        int maxHeightOffset = Constants.CLIENT.deHeaderHeight() + Constants.CLIENT.deTaskBarHeight() - 5;
-        if (getContainer() != null) {
-            Rectangle bounds = ((XElement)getContainer()).getBounds();
-            setPagePosition(bounds.getX(), bounds.getY());
-            setPixelSize(bounds.getWidth(), bounds.getHeight() - maxHeightOffset);
-        } else {
-            setPosition(0, 0);
-            setPixelSize(XDOM.getViewportWidth(), XDOM.getViewportHeight() - maxHeightOffset);
-            center();
-        }
     }
 
     private ToolButton createLayoutButton() {

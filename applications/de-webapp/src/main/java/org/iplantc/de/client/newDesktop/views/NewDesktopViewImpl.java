@@ -17,6 +17,8 @@ import org.iplantc.de.shared.DeModule;
 
 import com.google.common.base.Preconditions;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.DivElement;
+import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -75,6 +77,8 @@ public class NewDesktopViewImpl implements NewDesktopView, UnregisterEvent.Unreg
     IPlantAnchor logoutBtn;
     @UiField(provided = true)
     NotificationListView notificationsListView;
+    @UiField
+    DivElement desktopContainer;
 
     @Inject Provider<PreferencesDialog> preferencesDialogProvider;
     @Inject Provider<DEFeedbackDialog> deFeedbackDialogProvider;
@@ -190,6 +194,11 @@ public class NewDesktopViewImpl implements NewDesktopView, UnregisterEvent.Unreg
 
 
         // TODO JDS Set debug ids for user settings menu
+    }
+
+    @Override
+    public Element getDesktopContainer() {
+        return desktopContainer;
     }
 
     @Override

@@ -2,6 +2,7 @@ package org.iplantc.de.client.newDesktop.presenter;
 
 import static org.iplantc.de.commons.client.collaborators.presenter.ManageCollaboratorsPresenter.MODE.MANAGE;
 import org.iplantc.de.client.DEClientConstants;
+import org.iplantc.de.client.desktop.layout.DesktopLayoutType;
 import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.events.WindowCloseRequestEvent;
 import org.iplantc.de.client.models.DEProperties;
@@ -337,7 +338,7 @@ public class NewDesktopPresenterImpl implements NewDesktopView.Presenter {
     UserSessionServiceFacade userSessionService;
     @Inject
     UserSettings userSettings;
-    private final DesktopWindowManager desktopWindowManager;
+    final DesktopWindowManager desktopWindowManager;
     private final EventBus eventBus;
     private final KeepaliveTimer keepaliveTimer;
     private final MessagePoller messagePoller;
@@ -363,11 +364,12 @@ public class NewDesktopPresenterImpl implements NewDesktopView.Presenter {
         this.keepaliveTimer = keepaliveTimer;
         this.messagePoller = messagePoller;
         this.desktopWindowManager = desktopWindowManager;
+        this.desktopWindowManager.setDesktopContainer(view.getDesktopContainer());
         this.ssp = new SaveSessionPeriodic(this);
 
         this.view.setPresenter(this);
         globalEventHandler.setPresenter(this);
-        windowEventHandler.setPresenter(this);
+        windowEventHandler.setPresenter(this, desktopWindowManager);
         if (DebugInfo.isDebugIdEnabled()) {
             this.view.ensureDebugId(DeModule.Ids.DESKTOP);
         }
@@ -458,6 +460,12 @@ public class NewDesktopPresenterImpl implements NewDesktopView.Presenter {
     @Override
     public void onForumsBtnSelect() {
         WindowUtil.open(commonUiConstants.forumsUrl());
+    }
+
+    void organizeWindows(DesktopLayoutType type) {
+
+        // TODO Implement window organizing logic
+
     }
 
     @Override

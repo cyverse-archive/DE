@@ -76,6 +76,7 @@ public class DesktopPresenterWindowEventHandler implements EditAppEvent.EditAppE
     @Inject
     EventBus eventBus;
     private NewDesktopPresenterImpl presenter;
+    private DesktopWindowManager desktopWindowManager;
 
     @Inject
     public DesktopPresenterWindowEventHandler() {
@@ -182,12 +183,12 @@ public class DesktopPresenterWindowEventHandler implements EditAppEvent.EditAppE
 
     @Override
     public void onWindowCloseRequest(WindowCloseRequestEvent event) {
-
+        desktopWindowManager.closeActiveWindow();
     }
 
     @Override
     public void onWindowLayoutRequest(WindowLayoutRequestEvent event) {
-
+        presenter.organizeWindows(event.getType());
     }
 
     @Override
@@ -195,8 +196,10 @@ public class DesktopPresenterWindowEventHandler implements EditAppEvent.EditAppE
         presenter.show(event.getWindowConfig(), event.updateWithConfig());
     }
 
-    public void setPresenter(NewDesktopPresenterImpl presenter) {
+    public void setPresenter(final NewDesktopPresenterImpl presenter,
+                             final DesktopWindowManager desktopWindowManager) {
         this.presenter = presenter;
+        this.desktopWindowManager = desktopWindowManager;
         init(eventBus);
     }
 

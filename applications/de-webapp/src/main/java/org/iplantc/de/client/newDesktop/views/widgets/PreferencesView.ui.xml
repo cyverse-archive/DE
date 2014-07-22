@@ -72,7 +72,7 @@
                 <form:FieldLabel labelWidth="150"
                                  text="{strings.openAppswindow}">
                     <form:widget>
-                        <g:HorizontalPanel spacing="1">
+                        <g:HorizontalPanel spacing="5">
                             <g:Label text="{strings.kbShortcutMetaKey}"/>
                             <form:TextField ui:field="appsShortCut"
                                             toolTip="{strings.oneCharMax}"
@@ -85,7 +85,7 @@
                 <form:FieldLabel labelWidth="150"
                                  text="{strings.openDatawindow}">
                     <form:widget>
-                        <g:HorizontalPanel spacing="1">
+                        <g:HorizontalPanel spacing="5">
                             <g:Label text="{strings.kbShortcutMetaKey}"/>
                             <form:TextField ui:field="dataShortCut"
                                             toolTip="{strings.oneCharMax}"
@@ -98,7 +98,7 @@
                 <form:FieldLabel labelWidth="150"
                                  text="{strings.openAnalyseswindow}">
                     <form:widget>
-                        <g:HorizontalPanel spacing="1">
+                        <g:HorizontalPanel spacing="5">
                             <g:Label text="{strings.kbShortcutMetaKey}"/>
                             <form:TextField ui:field="analysesShortCut"
                                             toolTip="{strings.oneCharMax}"
@@ -111,7 +111,7 @@
                 <form:FieldLabel labelWidth="150"
                                  text="{strings.openNotificationswindow}">
                     <form:widget>
-                        <g:HorizontalPanel spacing="1">
+                        <g:HorizontalPanel spacing="5">
                             <g:Label text="{strings.kbShortcutMetaKey}"/>
                             <form:TextField ui:field="notifyShortCut"
                                             toolTip="{strings.oneCharMax}"
@@ -124,7 +124,7 @@
                 <form:FieldLabel labelWidth="150"
                                  text="{strings.closeActivewindow}">
                     <form:widget>
-                        <g:HorizontalPanel spacing="1">
+                        <g:HorizontalPanel spacing="5">
                             <g:Label text="{strings.kbShortcutMetaKey}"/>
                             <form:TextField ui:field="closeShortCut"
                                             toolTip="{strings.oneCharMax}"
