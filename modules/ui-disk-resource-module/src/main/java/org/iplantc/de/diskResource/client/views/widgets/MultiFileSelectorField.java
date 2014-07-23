@@ -457,10 +457,8 @@ public class MultiFileSelectorField extends Composite implements IsField<List<Ha
                             errors.add(permError);
                             errorSupport.markInvalid(errors);
                         }
-                    } else if (listStore.findModelWithKey(entry.getKey()) == null) {
-                        // JDS Add the items which are valid.
-                        entryValue.setId(entry.getKey());
-                        entryValue.setName(DiskResourceUtil.parseNameFromPath(entry.getKey()));
+                    } else if (listStore.findModelWithKey(entryValue.getId()) == null) {
+                        // JDS If item does not exist in store, add it.
                         listStore.add(entryValue);
                     }
                 }
@@ -471,8 +469,6 @@ public class MultiFileSelectorField extends Composite implements IsField<List<Ha
                 }
             }
         });
-
-
     }
 
     protected void setInfoErrorText(String analysisFailureWarning) {
