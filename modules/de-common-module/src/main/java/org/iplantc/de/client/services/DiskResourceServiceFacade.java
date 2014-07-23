@@ -6,6 +6,7 @@ import org.iplantc.de.client.models.diskResources.DiskResourceAutoBeanFactory;
 import org.iplantc.de.client.models.diskResources.DiskResourceExistMap;
 import org.iplantc.de.client.models.diskResources.DiskResourceMetadata;
 import org.iplantc.de.client.models.diskResources.DiskResourceMetadataTemplate;
+import org.iplantc.de.client.models.diskResources.File;
 import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.client.models.diskResources.RootFolders;
 import org.iplantc.de.client.models.diskResources.TYPE;
@@ -243,18 +244,8 @@ public interface DiskResourceServiceFacade {
     /**
      * Get info about a selected file or folder
      *
-     * @param body request body
-     * @param callback callback object
-     * @deprecated User {@link #getStat(HasPaths, AsyncCallback)}
-     */
-    // @Deprecated
-    // void getStat(String body, AsyncCallback<String> callback);
-
-    /**
-     * Get info about a selected file or folder
-     *
-     * @param diskResourcePaths the paths to query
-     * @param callback callback object
+     * @param paths the paths to query
+     * @param callback callback which returns a map of {@code DiskResource}s keyed by their paths
      */
     void getStat(final FastMap<TYPE> paths, final AsyncCallback<FastMap<DiskResource>> callback);
 

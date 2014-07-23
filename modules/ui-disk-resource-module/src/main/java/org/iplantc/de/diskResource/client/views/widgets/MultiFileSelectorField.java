@@ -77,16 +77,16 @@ import java.util.Set;
  * @author jstroot
  * 
  */
-public class MultiFileSelectorField extends Composite implements
-                                                     IsField<List<HasPath>>,
-                                                     ValueAwareEditor<List<HasPath>>,
-                                                     HasValueChangeHandlers<List<HasPath>>,
-                                                     DndDragEnterHandler,
-                                                     DndDragMoveHandler,
-        DndDropHandler, DiskResourceSelector, DiskResourceSelector.HasDisableBrowseButtons {
+public class MultiFileSelectorField extends Composite implements IsField<List<HasPath>>,
+                                                                 ValueAwareEditor<List<HasPath>>,
+                                                                 HasValueChangeHandlers<List<HasPath>>,
+                                                                 DndDragEnterHandler,
+                                                                 DndDragMoveHandler,
+                                                                 DndDropHandler,
+                                                                 DiskResourceSelector,
+                                                                 DiskResourceSelector.HasDisableBrowseButtons {
 
-    interface MultiFileSelectorFieldUiBinder extends UiBinder<Widget, MultiFileSelectorField> {
-    }
+    interface MultiFileSelectorFieldUiBinder extends UiBinder<Widget, MultiFileSelectorField> { }
 
     private final class FileSelectDialogHideHandler implements HideHandler {
         private final FileSelectDialog dlg;
@@ -248,7 +248,7 @@ public class MultiFileSelectorField extends Composite implements
         Set<DiskResource> dropData = getDropData(event.getData());
 
         if (validateDropStatus(dropData, event.getStatusProxy())) {
-            List<HasPath> validateList = new ArrayList<HasPath>();
+            List<HasPath> validateList = new ArrayList<>();
             for (DiskResource data : dropData) {
                 if ((data instanceof File) && listStore.findModel(data) == null) {
                     listStore.add(data);
@@ -342,14 +342,14 @@ public class MultiFileSelectorField extends Composite implements
         List<ColumnConfig<DiskResource, ?>> list = Lists.newArrayList();
         DiskResourceProperties props = GWT.create(DiskResourceProperties.class);
 
-        ColumnConfig<DiskResource, String> name = new ColumnConfig<DiskResource, String>(props.name(), 130, I18N.DISPLAY.name());
+        ColumnConfig<DiskResource, String> name = new ColumnConfig<>(props.name(), 130, I18N.DISPLAY.name());
         list.add(name);
-        return new ColumnModel<DiskResource>(list);
+        return new ColumnModel<>(list);
     }
 
     @UiFactory
     ListStore<DiskResource> createListStore() {
-        return new ListStore<DiskResource>(new DiskResourceModelKeyProvider());
+        return new ListStore<>(new DiskResourceModelKeyProvider());
     }
 
     @UiHandler("addButton")
@@ -357,7 +357,7 @@ public class MultiFileSelectorField extends Composite implements
         if (!addDeleteButtonsEnabled) {
             return;
         }
-        // Open a multiselect file selector
+        // Open a multi-select file selector
         String path = null;
         if (userSettings.isRememberLastPath()) {
             path = userSettings.getLastPath();
