@@ -4,8 +4,9 @@ import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.events.NewSystemMessagesEvent;
 import org.iplantc.de.client.events.NotificationCountUpdateEvent;
 import org.iplantc.de.client.events.SystemMessageCountUpdateEvent;
-import org.iplantc.de.client.gin.ServicesInjector;
 import org.iplantc.de.client.models.notifications.Counts;
+import org.iplantc.de.client.newDesktop.NewDesktopView;
+import org.iplantc.de.client.services.MessageServiceFacade;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -14,12 +15,24 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
  */
 final class GetMessageCounts implements Runnable {
 
-    /**
-     * @see Runnable#run()
-     */
+    private final EventBus eventBus;
+    private final MessageServiceFacade messageServiceFacade;
+    private final NewDesktopView view;
+    private final NewDesktopPresenterImpl presenter;
+
+    GetMessageCounts(final EventBus eventBus,
+                     final MessageServiceFacade messageServiceFacade,
+                     final NewDesktopView view,
+                     final NewDesktopPresenterImpl presenter) {
+        this.eventBus = eventBus;
+        this.messageServiceFacade = messageServiceFacade;
+        this.view = view;
+        this.presenter = presenter;
+    }
+
     @Override
     public void run() {
-        ServicesInjector.INSTANCE.getMessageServiceFacade().getMessageCounts(new AsyncCallback<Counts>() {
+        messageServiceFacade.getMessageCounts(new AsyncCallback<Counts>() {
             @Override
             public void onFailure(final Throwable caught) {
             }
@@ -32,13 +45,19 @@ final class GetMessageCounts implements Runnable {
     }
 
     private void fireEvents(final Counts counts) {
-        final EventBus bus = EventBus.getInstance();
         final int unseenNoteCnt = counts.getUnseenNotificationCount();
-        bus.fireEvent(new NotificationCountUpdateEvent(unseenNoteCnt));
+        view.setUnseenNotificationCount(unseenNoteCnt);
+        presenter.fetchRecentNotifications();
+        // fetch the unseen messages
+
         final int unseenSysMsgCnt = counts.getUnseenSystemMessageCount();
-        bus.fireEvent(new SystemMessageCountUpdateEvent(unseenSysMsgCnt));
+        // Fire event for unseen notification counts
+        eventBus.fireEvent(new NotificationCountUpdateEvent(unseenNoteCnt));
+        // Fire event for system message counts
+        eventBus.fireEvent(new SystemMessageCountUpdateEvent(unseenSysMsgCnt));
+
         if (counts.getNewSystemMessageCount() > 0) {
-            bus.fireEvent(new NewSystemMessagesEvent());
+            eventBus.fireEvent(new NewSystemMessagesEvent());
         }
     }
 

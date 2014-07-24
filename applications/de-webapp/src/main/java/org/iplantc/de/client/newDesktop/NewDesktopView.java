@@ -3,6 +3,7 @@ package org.iplantc.de.client.newDesktop;
 import org.iplantc.de.client.models.IsHideable;
 import org.iplantc.de.client.models.UserSettings;
 import org.iplantc.de.client.models.WindowState;
+import org.iplantc.de.client.models.notifications.NotificationMessage;
 import org.iplantc.de.client.views.windows.IPlantWindowInterface;
 import org.iplantc.de.commons.client.views.window.configs.WindowConfig;
 
@@ -12,6 +13,7 @@ import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.web.bindery.autobean.shared.Splittable;
 
+import com.sencha.gxt.data.shared.ListStore;
 import com.sencha.gxt.widget.core.client.button.IconButton;
 
 import java.util.List;
@@ -56,6 +58,8 @@ public interface NewDesktopView extends IsWidget {
             String logoContainer();
 
             String notification();
+
+            String notificationCount();
 
             String taskBarLayout();
 
@@ -179,6 +183,8 @@ public interface NewDesktopView extends IsWidget {
      * @return the desktop container element used to constrain {@link IPlantWindowInterface} classes
      */
     Element getDesktopContainer();
+
+    ListStore<NotificationMessage> getNotificationStore();
 
     void setPresenter(Presenter presenter);
 

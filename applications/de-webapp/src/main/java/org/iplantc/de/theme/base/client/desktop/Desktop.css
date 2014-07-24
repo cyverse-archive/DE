@@ -89,6 +89,7 @@
     display: inline-block;
     padding-right: userMenuIconPaddingRight;
     opacity: userMenuIconOpacity;
+    position: relative;
 }
 @sprite .userPrefs {
     gwt-image: 'userPrefImg';
@@ -97,6 +98,7 @@
     display: inline-block;
     padding-right: userMenuIconPaddingRight;
     opacity: userMenuIconOpacity;
+    position: relative;
 }
 @sprite .notification {
     gwt-image: 'notificationsImg';
@@ -105,6 +107,7 @@
     display: inline-block;
     padding-right: userMenuIconPaddingRight;
     opacity: userMenuIconOpacity;
+    position: relative;
 }
 
 .forums:hover {
@@ -179,4 +182,15 @@
     border: solid #0098AA;
     padding: 1px;
     margin-top: 5px;
+}
+
+.notificationCount {
+    background-color: #DB6619;
+    font-size: 10px;
+    position: absolute;
+    top: 0;
+    right: 0;
+    color: white;
+    padding: 2px;
+    height: 10px;
 }

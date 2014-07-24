@@ -1,6 +1,4 @@
-package org.iplantc.de.client.periodic;
-
-import org.iplantc.de.client.utils.TaskRunner;
+package org.iplantc.de.client.newDesktop.presenter.util;
 
 import java.util.ArrayList;
 

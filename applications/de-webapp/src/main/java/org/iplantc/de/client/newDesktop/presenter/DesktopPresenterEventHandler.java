@@ -1,7 +1,6 @@
 package org.iplantc.de.client.newDesktop.presenter;
 
 import org.iplantc.de.client.events.EventBus;
-import org.iplantc.de.client.events.NotificationCountUpdateEvent;
 import org.iplantc.de.client.events.PreferencesUpdatedEvent;
 import org.iplantc.de.client.events.SystemMessageCountUpdateEvent;
 import org.iplantc.de.commons.client.events.UserSettingsUpdatedEvent;
@@ -20,7 +19,10 @@ import java.util.List;
  *
  * @author jstroot
  */
-public class DesktopPresenterEventHandler implements PreferencesUpdatedEvent.PreferencesUpdatedEventHandler, SystemMessageCountUpdateEvent.Handler, UserSettingsUpdatedEventHandler, FileUploadedEvent.FileUploadedEventHandler, NotificationCountUpdateEvent.NotificationCountUpdateEventHandler {
+public class DesktopPresenterEventHandler implements PreferencesUpdatedEvent.PreferencesUpdatedEventHandler,
+                                                     SystemMessageCountUpdateEvent.Handler,
+                                                     UserSettingsUpdatedEventHandler,
+                                                     FileUploadedEvent.FileUploadedEventHandler {
 
     @Inject EventBus eventBus;
 
@@ -32,11 +34,6 @@ public class DesktopPresenterEventHandler implements PreferencesUpdatedEvent.Pre
 
     @Override
     public void onCountUpdate(SystemMessageCountUpdateEvent event) {
-
-    }
-
-    @Override
-    public void onCountUpdate(NotificationCountUpdateEvent ncue) {
 
     }
 
@@ -69,8 +66,6 @@ public class DesktopPresenterEventHandler implements PreferencesUpdatedEvent.Pre
         handlerRegistration = eventBus.addHandler(UserSettingsUpdatedEvent.TYPE, this);
         handlerRegistrations.add(handlerRegistration);
         handlerRegistration = eventBus.addHandler(FileUploadedEvent.TYPE, this);
-        handlerRegistrations.add(handlerRegistration);
-        handlerRegistration = eventBus.addHandler(NotificationCountUpdateEvent.TYPE, this);
         handlerRegistrations.add(handlerRegistration);
     }
 }

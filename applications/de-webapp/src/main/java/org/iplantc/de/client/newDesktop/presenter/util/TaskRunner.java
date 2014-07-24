@@ -1,4 +1,4 @@
-package org.iplantc.de.client.utils;
+package org.iplantc.de.client.newDesktop.presenter.util;
 
 import org.iplantc.de.client.models.DEProperties;
 

@@ -31,6 +31,10 @@ public class ErrorAnnouncementConfig extends IplantAnnouncementConfig {
         super(message, closable, timeout_ms);
     }
 
+    public ErrorAnnouncementConfig(final String message, boolean closable, int timeout_ms) {
+        this(SafeHtmlUtils.fromString(message), closable, timeout_ms);
+    }
+
     @Override
     public String getPanelStyle() {
         return STYLE.panelError();

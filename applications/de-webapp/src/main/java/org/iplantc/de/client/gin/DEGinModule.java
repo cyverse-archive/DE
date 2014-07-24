@@ -12,11 +12,12 @@ import org.iplantc.de.client.newDesktop.presenter.NewDesktopPresenterImpl;
 import org.iplantc.de.client.newDesktop.views.NewDesktopViewImpl;
 import org.iplantc.de.client.newDesktop.views.widgets.DEFeedbackDialog;
 import org.iplantc.de.client.newDesktop.views.widgets.PreferencesDialog;
-import org.iplantc.de.client.periodic.MessagePoller;
+import org.iplantc.de.client.newDesktop.presenter.util.MessagePoller;
 import org.iplantc.de.client.services.AnalysisServiceFacade;
 import org.iplantc.de.client.services.DEFeedbackServiceFacade;
 import org.iplantc.de.client.services.DiskResourceServiceFacade;
 import org.iplantc.de.client.services.FileEditorServiceFacade;
+import org.iplantc.de.client.services.MessageServiceFacade;
 import org.iplantc.de.client.services.UserSessionServiceFacade;
 import org.iplantc.de.client.sysmsgs.presenter.NewMessagePresenter;
 import org.iplantc.de.client.sysmsgs.view.NewMessageView;
@@ -33,6 +34,8 @@ import com.google.inject.Singleton;
 import com.sencha.gxt.widget.core.client.WindowManager;
 
 public class DEGinModule extends AbstractGinModule {
+
+    //<editor-fold desc="Services">
     @Provides public AnalysisServiceFacade createAnalysisService() {
         return ServicesInjector.INSTANCE.getAnalysisServiceFacade();
     }
@@ -41,9 +44,26 @@ public class DEGinModule extends AbstractGinModule {
         return ServicesInjector.INSTANCE.getDiskResourceServiceFacade();
     }
 
+    @Provides public UserSessionServiceFacade createUserSessionServiceFacade() {
+        return ServicesInjector.INSTANCE.getUserSessionServiceFacade();
+    }
+
+    @Provides public PropertyServiceFacade createPropertyServiceFacade() {
+        return PropertyServiceFacade.getInstance();
+    }
+
     @Provides public FileEditorServiceFacade createFileEditorService() {
         return ServicesInjector.INSTANCE.getFileEditorServiceFacade();
     }
+
+    @Provides public DEFeedbackServiceFacade createFeedbackService() {
+        return ServicesInjector.INSTANCE.getDeFeedbackServiceFacade();
+    }
+
+    @Provides public MessageServiceFacade createMessageServiceFacade () {
+        return ServicesInjector.INSTANCE.getMessageServiceFacade();
+    }
+    //</editor-fold>
 
     @Provides @Singleton public EventBus createGlobalEventBus() {
         return EventBus.getInstance();
@@ -53,16 +73,8 @@ public class DEGinModule extends AbstractGinModule {
         return IplantResources.RESOURCES;
     }
 
-    @Provides public PropertyServiceFacade createPropertyServiceFacade() {
-        return PropertyServiceFacade.getInstance();
-    }
-
     @Provides @Singleton public UserInfo createUserInfo() {
         return UserInfo.getInstance();
-    }
-
-    @Provides public UserSessionServiceFacade createUserSessionServiceFacade() {
-        return ServicesInjector.INSTANCE.getUserSessionServiceFacade();
     }
 
     @Provides @Singleton public UserSettings createUserSettings() {
@@ -87,10 +99,6 @@ public class DEGinModule extends AbstractGinModule {
 
     @Provides @Singleton public IplantAnnouncer createAnnouncer() {
         return IplantAnnouncer.getInstance();
-    }
-
-    @Provides public DEFeedbackServiceFacade createFeedbackService() {
-        return ServicesInjector.INSTANCE.getDeFeedbackServiceFacade();
     }
 
     @Override

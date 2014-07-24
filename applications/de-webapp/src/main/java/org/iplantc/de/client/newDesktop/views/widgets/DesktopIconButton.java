@@ -7,6 +7,7 @@ import com.google.gwt.user.client.Event;
 import com.sencha.gxt.core.client.Style;
 import com.sencha.gxt.widget.core.client.Component;
 import com.sencha.gxt.widget.core.client.button.IconButton;
+import com.sencha.gxt.widget.core.client.event.ShowContextMenuEvent;
 import com.sencha.gxt.widget.core.client.menu.Menu;
 
 /**
@@ -48,6 +49,7 @@ public class DesktopIconButton extends IconButton {
     @Override
     protected void onClick(Event e) {
         super.onClick(e);
+        fireEvent(new ShowContextMenuEvent(menu));
         Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
             @Override
             public void execute() {

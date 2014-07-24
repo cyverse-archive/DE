@@ -4,6 +4,7 @@ import org.iplantc.de.client.desktop.widget.TaskBar;
 import org.iplantc.de.client.desktop.widget.TaskButton;
 import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.models.UserSettings;
+import org.iplantc.de.client.models.notifications.NotificationMessage;
 import org.iplantc.de.client.newDesktop.NewDesktopView;
 import org.iplantc.de.client.newDesktop.views.widgets.DEFeedbackDialog;
 import org.iplantc.de.client.newDesktop.views.widgets.DesktopIconButton;
@@ -18,22 +19,27 @@ import org.iplantc.de.shared.DeModule;
 import com.google.common.base.Preconditions;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.DivElement;
+import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Element;
+import com.google.gwt.dom.client.SpanElement;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 
 import static com.sencha.gxt.widget.core.client.Dialog.PredefinedButton;
+import com.sencha.gxt.data.shared.ListStore;
 import com.sencha.gxt.widget.core.client.WindowManager;
 import com.sencha.gxt.widget.core.client.box.AlertMessageBox;
 import com.sencha.gxt.widget.core.client.button.IconButton;
 import com.sencha.gxt.widget.core.client.event.DialogHideEvent;
 import com.sencha.gxt.widget.core.client.event.RegisterEvent;
 import com.sencha.gxt.widget.core.client.event.SelectEvent;
+import com.sencha.gxt.widget.core.client.event.ShowContextMenuEvent;
 import com.sencha.gxt.widget.core.client.event.UnregisterEvent;
 
 /**
@@ -79,6 +85,8 @@ public class NewDesktopViewImpl implements NewDesktopView, UnregisterEvent.Unreg
     NotificationListView notificationsListView;
     @UiField
     DivElement desktopContainer;
+    @UiField
+    DesktopAppearance appearance;
 
     @Inject Provider<PreferencesDialog> preferencesDialogProvider;
     @Inject Provider<DEFeedbackDialog> deFeedbackDialogProvider;
@@ -86,6 +94,7 @@ public class NewDesktopViewImpl implements NewDesktopView, UnregisterEvent.Unreg
     @Inject IplantDisplayStrings displayStrings;
     private static NewViewUiBinder ourUiBinder = GWT.create(NewViewUiBinder.class);
     private final Widget widget;
+    private final SpanElement notificationCountElement;
     private NewDesktopView.Presenter presenter;
 
 
@@ -95,6 +104,9 @@ public class NewDesktopViewImpl implements NewDesktopView, UnregisterEvent.Unreg
                               final WindowManager windowManager) {
         notificationsListView = new NotificationListView(eventBus);
         widget = ourUiBinder.createAndBindUi(this);
+        notificationCountElement = Document.get().createSpanElement();
+        notificationCountElement.addClassName(appearance.styles().notificationCount());
+        notificationsBtn.getElement().appendChild(notificationCountElement);
 
         windowManager.addRegisterHandler(this);
         windowManager.addUnregisterHandler(this);
@@ -202,13 +214,31 @@ public class NewDesktopViewImpl implements NewDesktopView, UnregisterEvent.Unreg
     }
 
     @Override
+    public ListStore<NotificationMessage> getNotificationStore() {
+        return notificationsListView.getStore();
+    }
+
+    @Override
     public void setPresenter(final NewDesktopView.Presenter presenter) {
         this.presenter = presenter;
     }
 
     @Override
     public void setUnseenNotificationCount(int count) {
+        if(count > 0){
+            notificationCountElement.setInnerText(Integer.toString(count));
+            notificationCountElement.removeAttribute("hidden");
+            Window.setTitle("(" + count + ") " + displayStrings.rootApplicationTitle());
+        }else {
+            notificationCountElement.setAttribute("hidden", "");
+            notificationCountElement.setInnerText(null);
+            Window.setTitle(displayStrings.rootApplicationTitle());
+        }
+    }
 
+    @UiHandler("notificationsBtn")
+    void onShowNotificationMenu(ShowContextMenuEvent event){
+       // mark as seen
     }
 
     @UiHandler("analysisWinBtn")

@@ -3,7 +3,7 @@ package org.iplantc.de.client.newDesktop.presenter;
 import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.models.WindowType;
 import org.iplantc.de.client.newDesktop.NewDesktopView;
-import org.iplantc.de.client.periodic.MessagePoller;
+import org.iplantc.de.client.newDesktop.presenter.util.MessagePoller;
 import org.iplantc.de.client.sysmsgs.view.NewMessageView;
 import org.iplantc.de.commons.client.requests.KeepaliveTimer;
 

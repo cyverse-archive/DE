@@ -7,11 +7,13 @@ import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.POST;
 import org.iplantc.de.client.models.DEProperties;
 import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.client.models.notifications.Counts;
+import org.iplantc.de.client.models.notifications.Notification;
 import org.iplantc.de.client.models.notifications.NotificationAutoBeanFactory;
 import org.iplantc.de.client.services.DEServiceFacade;
 import org.iplantc.de.client.services.MessageServiceFacade;
 import org.iplantc.de.client.services.callbacks.NotificationCallback;
 import org.iplantc.de.client.services.converters.AsyncCallbackConverter;
+import org.iplantc.de.client.services.converters.NotificationCallbackConverter;
 import org.iplantc.de.shared.services.BaseServiceCallWrapper.Type;
 import org.iplantc.de.shared.services.ServiceCallWrapper;
 
@@ -20,6 +22,8 @@ import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.inject.Inject;
 import com.google.web.bindery.autobean.shared.AutoBeanCodex;
+
+import java.util.List;
 
 /**
  * Provides access to remote services to acquire messages and notifications.
@@ -82,12 +86,12 @@ public class MessageServiceFacadeImpl implements MessageServiceFacade {
      * @see org.iplantc.de.client.services.impl.MessageServiceFacade#getRecentMessages(com.google.gwt.user.client.rpc.AsyncCallback)
      */
     @Override
-    public void getRecentMessages(AsyncCallback<String> callback) {
+    public void getRecentMessages(AsyncCallback<List<Notification>> callback) {
         String address = deProperties.getMuleServiceBaseUrl()
                 + "notifications/last-ten-messages"; //$NON-NLS-1$
         ServiceCallWrapper wrapper = new ServiceCallWrapper(GET, address);
 
-        deServiceFacade.getServiceData(wrapper, callback);
+        deServiceFacade.getServiceData(wrapper, new NotificationCallbackConverter(callback, notesFactory));
     }
 
     /* (non-Javadoc)

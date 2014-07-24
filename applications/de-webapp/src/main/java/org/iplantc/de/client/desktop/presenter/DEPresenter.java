@@ -17,7 +17,7 @@ import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.client.models.UserSettings;
 import org.iplantc.de.client.models.WindowState;
 import org.iplantc.de.client.models.notifications.NotificationCategory;
-import org.iplantc.de.client.periodic.MessagePoller;
+import org.iplantc.de.client.newDesktop.presenter.util.MessagePoller;
 import org.iplantc.de.client.services.DEServiceFacade;
 import org.iplantc.de.client.sysmsgs.presenter.NewMessagePresenter;
 import org.iplantc.de.client.util.CommonModelUtils;

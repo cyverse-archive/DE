@@ -12,10 +12,12 @@ import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.client.models.UserSettings;
 import org.iplantc.de.client.models.WindowState;
 import org.iplantc.de.client.models.WindowType;
+import org.iplantc.de.client.models.notifications.NotificationAutoBeanFactory;
 import org.iplantc.de.client.models.notifications.NotificationCategory;
 import org.iplantc.de.client.newDesktop.NewDesktopView;
-import org.iplantc.de.client.periodic.MessagePoller;
+import org.iplantc.de.client.newDesktop.presenter.util.MessagePoller;
 import org.iplantc.de.client.services.DEFeedbackServiceFacade;
+import org.iplantc.de.client.services.MessageServiceFacade;
 import org.iplantc.de.client.services.UserSessionServiceFacade;
 import org.iplantc.de.client.sysmsgs.view.NewMessageView;
 import org.iplantc.de.client.util.CommonModelUtils;
@@ -23,7 +25,6 @@ import org.iplantc.de.client.views.windows.IPlantWindowInterface;
 import org.iplantc.de.commons.client.CommonUiConstants;
 import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.commons.client.collaborators.views.ManageCollaboratorsDialog;
-import org.iplantc.de.commons.client.info.ErrorAnnouncementConfig;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
 import org.iplantc.de.commons.client.info.SuccessAnnouncementConfig;
 import org.iplantc.de.commons.client.requests.KeepaliveTimer;
@@ -41,14 +42,12 @@ import org.iplantc.de.shared.services.PropertyServiceFacade;
 import com.google.common.base.Strings;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.debug.client.DebugInfo;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.http.client.Request;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
-import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Panel;
@@ -71,232 +70,6 @@ import java.util.Map;
 
 public class NewDesktopPresenterImpl implements NewDesktopView.Presenter {
 
-    private static class BootstrapCallback implements AsyncCallback<String> {
-        private final Provider<ErrorHandler> errorHandlerProvider;
-        private final IplantErrorStrings errorStrings;
-        private final UserInfo userInfo;
-
-        public BootstrapCallback(UserInfo userInfo,
-                                 Provider<ErrorHandler> errorHandlerProvider,
-                                 IplantErrorStrings errorStrings) {
-
-            this.userInfo = userInfo;
-            this.errorHandlerProvider = errorHandlerProvider;
-            this.errorStrings = errorStrings;
-        }
-
-        @Override
-        public void onFailure(Throwable caught) {
-            errorHandlerProvider.get().post(errorStrings.systemInitializationError(), caught);
-        }
-
-        @Override
-        public void onSuccess(String result) {
-            userInfo.init(result);
-        }
-    }
-
-    private static class UserPreferencesCallback implements AsyncCallback<String> {
-        private final Provider<ErrorHandler> errorHandlerProvider;
-        private final IplantErrorStrings errorStrings;
-        private final UserSettings userSettings;
-
-        public UserPreferencesCallback(UserSettings userSettings,
-                                       Provider<ErrorHandler> errorHandlerProvider,
-                                       IplantErrorStrings errorStrings) {
-            this.userSettings = userSettings;
-            this.errorHandlerProvider = errorHandlerProvider;
-            this.errorStrings = errorStrings;
-        }
-
-        @Override
-        public void onFailure(Throwable caught) {
-            errorHandlerProvider.get().post(errorStrings.systemInitializationError(), caught);
-        }
-
-        @Override
-        public void onSuccess(String result) {
-            userSettings.setValues(StringQuoter.split(result));
-        }
-    }
-
-    private class GetUserSessionCallback implements AsyncCallback<List<WindowState>> {
-        private final IplantAnnouncer announcer;
-        private final IplantErrorStrings errorStrings;
-        private final AutoProgressMessageBox progressMessageBox;
-
-        public GetUserSessionCallback(final AutoProgressMessageBox progressMessageBox,
-                                      final IplantErrorStrings errorStrings,
-                                      final IplantAnnouncer announcer) {
-            this.progressMessageBox = progressMessageBox;
-            this.errorStrings = errorStrings;
-            this.announcer = announcer;
-        }
-
-        @Override
-        public void onFailure(Throwable caught) {
-            final SafeHtml message = SafeHtmlUtils.fromTrustedString(errorStrings.loadSessionFailed());
-            announcer.schedule(new ErrorAnnouncementConfig(message, true, 5000));
-            doPeriodicSessionSave();
-            progressMessageBox.hide();
-        }
-
-        @Override
-        public void onSuccess(List<WindowState> result) {
-            restoreWindows(result);
-            doPeriodicSessionSave();
-            progressMessageBox.hide();
-        }
-    }
-
-    private static class LogoutCallback implements AsyncCallback<String> {
-        private final DEClientConstants constants;
-        private final IplantDisplayStrings displayStrings;
-        private final IplantErrorStrings errorStrings;
-        private final List<WindowState> orderedWindowStates;
-        private final UserSessionServiceFacade userSessionService;
-        private final UserSettings userSettings;
-
-        private LogoutCallback(final UserSessionServiceFacade userSessionService,
-                               final DEClientConstants constants,
-                               final UserSettings userSettings,
-                               final IplantDisplayStrings displayStrings,
-                               final IplantErrorStrings errorStrings,
-                               final List<WindowState> orderedWindowStates) {
-            this.userSessionService = userSessionService;
-            this.constants = constants;
-            this.userSettings = userSettings;
-            this.displayStrings = displayStrings;
-            this.errorStrings = errorStrings;
-            this.orderedWindowStates = orderedWindowStates;
-        }
-
-        @Override
-        public void onFailure(Throwable arg0) {
-            GWT.log("error on logout:" + arg0.getMessage());
-            // logout anyway
-            logout();
-        }
-
-        @Override
-        public void onSuccess(String arg0) {
-            GWT.log("logout service success:" + arg0);
-            logout();
-        }
-
-        private void logout() {
-            final String redirectUrl = GWT.getHostPageBaseURL() + constants.logoutUrl();
-            if (userSettings.isSaveSession()) {
-                final AutoProgressMessageBox progressMessageBox = new AutoProgressMessageBox(displayStrings.savingSession(),
-                                                                                             displayStrings.savingSessionWaitNotice());
-                progressMessageBox.getProgressBar().setDuration(1000);
-                progressMessageBox.getProgressBar().setInterval(100);
-                progressMessageBox.auto();
-                userSessionService.saveUserSession(orderedWindowStates, new AsyncCallback<Void>() {
-                    @Override
-                    public void onFailure(Throwable caught) {
-                        GWT.log(errorStrings.saveSessionFailed(), caught);
-                        progressMessageBox.hide();
-                        Window.Location.assign(redirectUrl);
-                    }
-
-                    @Override
-                    public void onSuccess(Void result) {
-                        progressMessageBox.hide();
-                        Window.Location.assign(redirectUrl);
-                    }
-                });
-
-                progressMessageBox.show();
-            } else {
-                Window.Location.assign(redirectUrl);
-            }
-        }
-
-    }
-
-    class PropertyServiceCallback implements AsyncCallback<Map<String, String>> {
-        private final DEProperties deProps;
-        private final Provider<ErrorHandler> errorHandlerProvider;
-        private final IplantErrorStrings errorStrings;
-        private final Panel panel;
-        private final UserInfo userInfo;
-        private final UserSessionServiceFacade userSessionService;
-        private final UserSettings userSettings;
-
-        public PropertyServiceCallback(DEProperties deProperties,
-                                       UserInfo userInfo,
-                                       UserSettings userSettings,
-                                       UserSessionServiceFacade userSessionService,
-                                       Provider<ErrorHandler> errorHandlerProvider,
-                                       IplantErrorStrings errorStrings,
-                                       Panel panel) {
-            this.deProps = deProperties;
-            this.userInfo = userInfo;
-            this.userSettings = userSettings;
-            this.userSessionService = userSessionService;
-            this.errorHandlerProvider = errorHandlerProvider;
-            this.errorStrings = errorStrings;
-            this.panel = panel;
-        }
-
-        @Override
-        public void onFailure(Throwable caught) {
-            errorHandlerProvider.get().post(errorStrings.systemInitializationError(), caught);
-        }
-
-        @Override
-        public void onSuccess(Map<String, String> result) {
-            deProps.initialize(result);
-            final Request bootstrapReq = userSessionService.bootstrap(new BootstrapCallback(userInfo,
-                                                                                            errorHandlerProvider,
-                                                                                            errorStrings));
-            final Request userPrefReq = userSessionService.getUserPreferences(new UserPreferencesCallback(userSettings,
-                                                                                                          errorHandlerProvider,
-                                                                                                          errorStrings));
-
-            Timer t = new Timer() {
-                @Override
-                public void run() {
-                    if (!bootstrapReq.isPending() && !userPrefReq.isPending()) {
-                        // Cancel timer
-                        cancel();
-                        postBootstrap(panel);
-                    }
-                }
-            };
-            t.scheduleRepeating(1);
-        }
-    }
-
-    private static class SaveUserSettingsCallback implements AsyncCallback<Void> {
-        private final UserSettings newValue;
-        private final UserSettings userSettings;
-        private final IplantAnnouncer announcer;
-        private final IplantDisplayStrings displayStrings;
-
-        public SaveUserSettingsCallback(final UserSettings newValue,
-                                        final UserSettings userSettings,
-                                        final IplantAnnouncer announcer,
-                                        final IplantDisplayStrings displayStrings) {
-            this.newValue = newValue;
-            this.userSettings = userSettings;
-            this.announcer = announcer;
-            this.displayStrings = displayStrings;
-        }
-
-        @Override
-        public void onFailure(Throwable caught) {
-            announcer.schedule(new ErrorAnnouncementConfig("Sorry about that, we were unable to save your preferences."));
-        }
-
-        @Override
-        public void onSuccess(Void result) {
-            userSettings.setValues(newValue.asSplittable());
-            announcer.schedule(new SuccessAnnouncementConfig(displayStrings.saveSettings(), true, 3000));
-        }
-    }
-
     interface AuthErrors {
         String API_NAME = "api_name";
         String ERROR = "error";
@@ -314,6 +87,7 @@ public class NewDesktopPresenterImpl implements NewDesktopView.Presenter {
         String DATA = "data";
     }
 
+    final DesktopWindowManager desktopWindowManager;
     @Inject
     IplantAnnouncer announcer;
     @Inject
@@ -327,9 +101,13 @@ public class NewDesktopPresenterImpl implements NewDesktopView.Presenter {
     @Inject
     Provider<ErrorHandler> errorHandlerProvider;
     @Inject
+    IplantErrorStrings errorStrings;
+    @Inject
     Provider<DEFeedbackServiceFacade> feedbackServiceProvider;
     @Inject
-    IplantErrorStrings errorStrings;
+    MessageServiceFacade messageServiceFacade;
+    @Inject
+    NotificationAutoBeanFactory notificationFactory;
     @Inject
     PropertyServiceFacade propertyServiceFacade;
     @Inject
@@ -338,7 +116,6 @@ public class NewDesktopPresenterImpl implements NewDesktopView.Presenter {
     UserSessionServiceFacade userSessionService;
     @Inject
     UserSettings userSettings;
-    final DesktopWindowManager desktopWindowManager;
     private final EventBus eventBus;
     private final KeepaliveTimer keepaliveTimer;
     private final MessagePoller messagePoller;
@@ -388,7 +165,7 @@ public class NewDesktopPresenterImpl implements NewDesktopView.Presenter {
         messagePoller.stop();
 //        cleanUp();
 
-        userSessionService.logout(new LogoutCallback(userSessionService,
+        userSessionService.logout(new RuntimeCallbacks.LogoutCallback(userSessionService,
                                                      deClientConstants,
                                                      userSettings,
                                                      displayStrings,
@@ -410,13 +187,14 @@ public class NewDesktopPresenterImpl implements NewDesktopView.Presenter {
     @Override
     public void go(final Panel panel) {
         // Fetch DE properties, the rest of DE initialization is performed in callback
-        propertyServiceFacade.getProperties(new PropertyServiceCallback(deProperties,
+        propertyServiceFacade.getProperties(new InitializationCallbacks.PropertyServiceCallback(deProperties,
                                                                         userInfo,
                                                                         userSettings,
                                                                         userSessionService,
                                                                         errorHandlerProvider,
                                                                         errorStrings,
-                                                                        panel));
+                                                                        panel,
+                                                                        this));
     }
 
     @Override
@@ -462,21 +240,6 @@ public class NewDesktopPresenterImpl implements NewDesktopView.Presenter {
         WindowUtil.open(commonUiConstants.forumsUrl());
     }
 
-    void organizeWindows(DesktopLayoutType type) {
-
-        // TODO Implement window organizing logic
-
-    }
-
-    @Override
-    public void saveUserSettings(final UserSettings value) {
-        final SaveUserSettingsCallback callback = new SaveUserSettingsCallback(value,
-                                                                               userSettings,
-                                                                               announcer,
-                                                                               displayStrings);
-        userSessionService.saveUserPreferences(value.asSplittable(), callback);
-    }
-
     @Override
     public void onIntroClick() {
         doIntro();
@@ -485,6 +248,15 @@ public class NewDesktopPresenterImpl implements NewDesktopView.Presenter {
     @Override
     public void onSystemMessagesClick() {
         desktopWindowManager.show(WindowType.SYSTEM_MESSAGES);
+    }
+
+    @Override
+    public void saveUserSettings(final UserSettings value) {
+        final RuntimeCallbacks.SaveUserSettingsCallback callback = new RuntimeCallbacks.SaveUserSettingsCallback(value,
+                                                                               userSettings,
+                                                                               announcer,
+                                                                               displayStrings);
+        userSessionService.saveUserPreferences(value.asSplittable(), callback);
     }
 
     @Override
@@ -528,6 +300,20 @@ public class NewDesktopPresenterImpl implements NewDesktopView.Presenter {
         }
     }
 
+    /**
+     * This method is called by the periodic message task. It updates the store used by the
+     * user notification menu, and displays notification popups
+     */
+    void fetchRecentNotifications() {
+        messageServiceFacade.getRecentMessages(new RuntimeCallbacks.GetRecentNotificationsCallback(displayStrings, notificationFactory, view));
+    }
+
+    void organizeWindows(DesktopLayoutType type) {
+
+        // TODO Implement window organizing logic
+
+    }
+
     void postBootstrap(final Panel panel) {
         setBrowserContextMenuEnabled(deProperties.isContextClickEnabled());
         // Initialize keepalive timer
@@ -537,10 +323,19 @@ public class NewDesktopPresenterImpl implements NewDesktopView.Presenter {
             keepaliveTimer.start(target, interval);
         }
 
-        initMessagePoller();
+        /*
+         * Start periodic message count polling
+         * Do an initial fetch of message counts, otherwise the initial count will not be fetched
+         * until after an entire poll-length of the MessagePoller's timer (15 seconds by default).
+         */
+        GetMessageCounts notificationCounts = new GetMessageCounts(eventBus, messageServiceFacade, view, this);
+        notificationCounts.run();
+        messagePoller.addTask(notificationCounts);
+        messagePoller.start();
         initKBShortCuts();
         panel.add(view);
         processQueryStrings();
+        messageServiceFacade.getRecentMessages(new InitializationCallbacks.GetInitialNotificationsCallback(view, announcer));
     }
 
     void restoreWindows(List<WindowState> windowStates) {
@@ -557,9 +352,10 @@ public class NewDesktopPresenterImpl implements NewDesktopView.Presenter {
             progressMessageBox.getProgressBar().setDuration(1000);
             progressMessageBox.getProgressBar().setInterval(100);
             progressMessageBox.auto();
-            final Request req = userSessionService.getUserSession(new GetUserSessionCallback(progressMessageBox,
+            final Request req = userSessionService.getUserSession(new RuntimeCallbacks.GetUserSessionCallback(progressMessageBox,
                                                                                              errorStrings,
-                                                                                             announcer));
+                                                                                             announcer,
+                                                                                             this));
             progressMessageBox.addDialogHideHandler(new DialogHideEvent.DialogHideHandler() {
                 @Override
                 public void onDialogHide(DialogHideEvent event) {
@@ -595,18 +391,6 @@ public class NewDesktopPresenterImpl implements NewDesktopView.Presenter {
                 }
             }
         };
-    }
-
-    /**
-     * FIXME JDS This needs to be ported to notifications.
-     */
-    private void initMessagePoller() {
-        // Do an initial fetch of message counts, otherwise the initial count will not be fetched until
-        // after an entire poll-length of the MessagePoller's timer (15 seconds by default).
-        GetMessageCounts notificationCounts = new GetMessageCounts();
-        notificationCounts.run();
-        messagePoller.addTask(notificationCounts);
-        messagePoller.start();
     }
 
     private void processQueryStrings() {

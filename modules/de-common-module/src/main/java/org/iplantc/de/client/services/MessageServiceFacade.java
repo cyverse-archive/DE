@@ -1,10 +1,13 @@
 package org.iplantc.de.client.services;
 
 import org.iplantc.de.client.models.notifications.Counts;
+import org.iplantc.de.client.models.notifications.Notification;
 import org.iplantc.de.client.services.callbacks.NotificationCallback;
 
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+
+import java.util.List;
 
 public interface MessageServiceFacade {
 
@@ -21,7 +24,7 @@ public interface MessageServiceFacade {
      *
      * @param callback called on RPC completion.
      */
-    void getRecentMessages(AsyncCallback<String> callback);
+    void getRecentMessages(AsyncCallback<List<Notification>> callback);
 
     void markAsSeen(JSONObject seenIds, AsyncCallback<String> callback);
 

@@ -75,6 +75,10 @@ public class NotificationListView implements IsWidget {
     private final HorizontalPanel hyperlinkPanel;
     private boolean unseenNotificationsFetchedOnce;
 
+    public ListStore<NotificationMessage> getStore() {
+        return store;
+    }
+
     /**
      * @return the unseenNotificationsFetchedOnce
      */
@@ -128,7 +132,7 @@ public class NotificationListView implements IsWidget {
     ModelKeyProvider<NotificationMessage> kp = new ModelKeyProvider<NotificationMessage>() {
         @Override
         public String getKey(NotificationMessage item) {
-            return item.getTimestamp() + "";
+            return Long.toString(item.getTimestamp());
         }
     };
 
@@ -268,7 +272,9 @@ public class NotificationListView implements IsWidget {
             nm.setSeen(n.isSeen());
             store.add(nm);
 
-            if (unseenNotificationsFetchedOnce && !nm.isSeen() && !isExist(temp, nm)
+            if (unseenNotificationsFetchedOnce
+                    && !nm.isSeen()
+                    && !isExist(temp, nm)
                     && total_msg_popup < NEW_NOTIFICATIONS_LIMIT) {
                 displayNotificationPopup(nm);
                 total_msg_popup++;
@@ -293,7 +299,7 @@ public class NotificationListView implements IsWidget {
     private void displayNotificationPopup(NotificationMessage msg) {
         if (NotificationCategory.ANALYSIS.equals(msg.getCategory())) {
             PayloadAnalysis analysisPayload = AutoBeanCodex.decode(notificationFactory,
-                    PayloadAnalysis.class, msg.getContext()).as();
+                   PayloadAnalysis.class, msg.getContext()).as();
 
             if ("Failed".equals(analysisPayload.getStatus())) { //$NON-NLS-1$
                 NotifyInfo.displayWarning(msg.getMessage());

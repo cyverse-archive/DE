@@ -1,11 +1,14 @@
 package org.iplantc.de.client.services.stubs;
 
 import org.iplantc.de.client.models.notifications.Counts;
+import org.iplantc.de.client.models.notifications.Notification;
 import org.iplantc.de.client.services.MessageServiceFacade;
 import org.iplantc.de.client.services.callbacks.NotificationCallback;
 
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+
+import java.util.List;
 
 public class MessageServiceFacadeStub implements MessageServiceFacade {
     @Override
@@ -14,7 +17,7 @@ public class MessageServiceFacadeStub implements MessageServiceFacade {
     }
 
     @Override
-    public void getRecentMessages(AsyncCallback<String> callback) {
+    public void getRecentMessages(AsyncCallback<List<Notification>> callback) {
 
     }
 
