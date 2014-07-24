@@ -6,21 +6,31 @@ import org.iplantc.de.client.desktop.layout.DesktopLayoutType;
 import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.events.WindowCloseRequestEvent;
 import org.iplantc.de.client.models.DEProperties;
+import org.iplantc.de.client.models.HasId;
 import org.iplantc.de.client.models.HasPath;
 import org.iplantc.de.client.models.IsHideable;
 import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.client.models.UserSettings;
 import org.iplantc.de.client.models.WindowState;
 import org.iplantc.de.client.models.WindowType;
+import org.iplantc.de.client.models.analysis.AnalysesAutoBeanFactory;
+import org.iplantc.de.client.models.analysis.Analysis;
+import org.iplantc.de.client.models.diskResources.DiskResourceAutoBeanFactory;
+import org.iplantc.de.client.models.diskResources.File;
 import org.iplantc.de.client.models.notifications.NotificationAutoBeanFactory;
 import org.iplantc.de.client.models.notifications.NotificationCategory;
+import org.iplantc.de.client.models.notifications.NotificationMessage;
+import org.iplantc.de.client.models.notifications.payload.PayloadToolRequest;
+import org.iplantc.de.client.models.toolRequest.ToolRequestHistory;
 import org.iplantc.de.client.newDesktop.NewDesktopView;
 import org.iplantc.de.client.newDesktop.presenter.util.MessagePoller;
+import org.iplantc.de.client.notifications.views.dialogs.ToolRequestHistoryDialog;
 import org.iplantc.de.client.services.DEFeedbackServiceFacade;
 import org.iplantc.de.client.services.MessageServiceFacade;
 import org.iplantc.de.client.services.UserSessionServiceFacade;
 import org.iplantc.de.client.sysmsgs.view.NewMessageView;
 import org.iplantc.de.client.util.CommonModelUtils;
+import org.iplantc.de.client.util.DiskResourceUtil;
 import org.iplantc.de.client.utils.NotifyInfo;
 import org.iplantc.de.client.views.windows.IPlantWindowInterface;
 import org.iplantc.de.commons.client.CommonUiConstants;
@@ -31,6 +41,7 @@ import org.iplantc.de.commons.client.info.SuccessAnnouncementConfig;
 import org.iplantc.de.commons.client.requests.KeepaliveTimer;
 import org.iplantc.de.commons.client.util.WindowUtil;
 import org.iplantc.de.commons.client.views.gxt3.dialogs.IplantErrorDialog;
+import org.iplantc.de.commons.client.views.window.configs.AnalysisWindowConfig;
 import org.iplantc.de.commons.client.views.window.configs.AppsWindowConfig;
 import org.iplantc.de.commons.client.views.window.configs.ConfigFactory;
 import org.iplantc.de.commons.client.views.window.configs.DiskResourceWindowConfig;
@@ -40,6 +51,7 @@ import org.iplantc.de.resources.client.messages.IplantErrorStrings;
 import org.iplantc.de.shared.DeModule;
 import org.iplantc.de.shared.services.PropertyServiceFacade;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import com.google.common.base.Strings;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
@@ -56,6 +68,8 @@ import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
+import com.google.web.bindery.autobean.shared.AutoBean;
+import com.google.web.bindery.autobean.shared.AutoBeanCodex;
 import com.google.web.bindery.autobean.shared.Splittable;
 import com.google.web.bindery.autobean.shared.impl.StringQuoter;
 
@@ -68,6 +82,8 @@ import com.sencha.gxt.widget.core.client.event.DialogHideEvent;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class NewDesktopPresenterImpl implements NewDesktopView.Presenter {
 
@@ -109,6 +125,10 @@ public class NewDesktopPresenterImpl implements NewDesktopView.Presenter {
     MessageServiceFacade messageServiceFacade;
     @Inject
     NotificationAutoBeanFactory notificationFactory;
+    @Inject
+    DiskResourceAutoBeanFactory diskResourceFactory;
+    @Inject
+    AnalysesAutoBeanFactory analysesFactory;
     @Inject
     PropertyServiceFacade propertyServiceFacade;
     @Inject
@@ -174,6 +194,11 @@ public class NewDesktopPresenterImpl implements NewDesktopView.Presenter {
                                                      displayStrings,
                                                      errorStrings,
                                                      getOrderedWindowStates()));
+    }
+
+    @Override
+    public void doSeeAllNotifications() {
+         show(ConfigFactory.notifyWindowConfig(NotificationCategory.ALL));
     }
 
     @Override
@@ -244,6 +269,78 @@ public class NewDesktopPresenterImpl implements NewDesktopView.Presenter {
     }
 
     @Override
+    public void onNotificationSelected(final NotificationMessage selectedItem) {
+        /* TODO JDS Eventually, this should be migrated to notifications
+                    when notifications is factored into its own module.
+         */
+
+        checkNotNull(selectedItem);
+        checkNotNull(selectedItem.getCategory());
+        checkNotNull(selectedItem.getContext());
+
+        String context = selectedItem.getContext();
+        switch(selectedItem.getCategory()){
+            case DATA:
+                // execute data context
+                File file = AutoBeanCodex.decode(diskResourceFactory, File.class, context).as();
+                List<HasId> selectedResources = Lists.newArrayList();
+                selectedResources.add(file);
+
+                DiskResourceWindowConfig dataWindowConfig = ConfigFactory.diskResourceWindowConfig(false);
+                HasPath folder = DiskResourceUtil.getFolderPathFromFile(file);
+                dataWindowConfig.setSelectedFolder(folder);
+                dataWindowConfig.setSelectedDiskResources(selectedResources);
+                show(dataWindowConfig, true);
+
+                break;
+
+            case ANALYSIS:
+                AutoBean<Analysis> hAb = AutoBeanCodex.decode(analysesFactory, Analysis.class, context);
+
+                AnalysisWindowConfig analysisWindowConfig = ConfigFactory.analysisWindowConfig();
+                analysisWindowConfig.setSelectedAnalyses(Lists.newArrayList(hAb.as()));
+                show(analysisWindowConfig, true);
+                break;
+
+            case TOOLREQUEST:
+                PayloadToolRequest toolRequest = AutoBeanCodex.decode(notificationFactory,
+                                                                      PayloadToolRequest.class,
+                                                                      context).as();
+
+                List<ToolRequestHistory> history = toolRequest.getHistory();
+
+                Logger logger = Logger.getLogger("NameOfYourLogger");
+                logger.log(Level.SEVERE, "history size==>" + history.size());
+
+                ToolRequestHistoryDialog dlg = new ToolRequestHistoryDialog(toolRequest.getName(),
+                        history);
+                dlg.show();
+
+                break;
+
+            default:
+                break;
+        }
+
+        messageServiceFacade.markAsSeen(selectedItem, new AsyncCallback<String>() {
+            @Override
+            public void onFailure(Throwable caught) {
+                errorHandlerProvider.get().post(caught);
+            }
+
+            @Override
+            public void onSuccess(String result) {
+                selectedItem.setSeen(true);
+                view.getNotificationStore().update(selectedItem);
+                Splittable split = StringQuoter.split(result);
+
+                view.setUnseenNotificationCount((int) split.get("count").asNumber());
+            }
+        });
+
+    }
+
+    @Override
     public void onIntroClick() {
         doIntro();
     }
@@ -294,7 +391,7 @@ public class NewDesktopPresenterImpl implements NewDesktopView.Presenter {
 
     @Override
     public void markAllNotificationsSeen() {
-
+        // TODO JDS Implement method
     }
 
     void doPeriodicSessionSave() {

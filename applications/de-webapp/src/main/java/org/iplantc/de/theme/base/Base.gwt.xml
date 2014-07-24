@@ -16,4 +16,8 @@
         <when-type-is class="org.iplantc.de.client.newDesktop.views.widgets.DEFeedbackDialog.FeedbackAppearance"/>
     </replace-with>
 
+    <replace-with class="org.iplantc.de.theme.base.client.desktop.views.BaseUnseenNotificationsAppearance">
+        <when-type-is class="org.iplantc.de.client.newDesktop.views.widgets.UnseenNotificationsView.UnseenNotificationsAppearance"/>
+    </replace-with>
+
 </module>

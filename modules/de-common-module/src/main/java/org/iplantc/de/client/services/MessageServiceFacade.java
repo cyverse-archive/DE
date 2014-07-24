@@ -1,5 +1,6 @@
 package org.iplantc.de.client.services;
 
+import org.iplantc.de.client.models.HasId;
 import org.iplantc.de.client.models.notifications.Counts;
 import org.iplantc.de.client.models.notifications.Notification;
 import org.iplantc.de.client.services.callbacks.NotificationCallback;
@@ -26,7 +27,9 @@ public interface MessageServiceFacade {
      */
     void getRecentMessages(AsyncCallback<List<Notification>> callback);
 
-    void markAsSeen(JSONObject seenIds, AsyncCallback<String> callback);
+    void markAsSeen(List<HasId> seenIds, AsyncCallback<String> callback);
+
+    void markAsSeen(HasId id, AsyncCallback<String> callback);
 
     /**
      * Delete messages from the server.

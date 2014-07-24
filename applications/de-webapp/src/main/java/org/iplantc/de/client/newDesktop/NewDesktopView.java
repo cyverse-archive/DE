@@ -106,7 +106,7 @@ public interface NewDesktopView extends IsWidget {
      *           immediately necessary should be provided this way.
      * TODO Pull strings from IplantDisplayStrings into a desktop appearance
      */
-    interface Presenter extends UserSettingsMenuPresenter {
+    interface Presenter extends UserSettingsMenuPresenter, UnseenNotificationsPresenter{
 
         List<WindowState> getOrderedWindowStates();
 
@@ -141,6 +141,8 @@ public interface NewDesktopView extends IsWidget {
         void onDataWinBtnSelect();
 
         void onForumsBtnSelect();
+
+        void onNotificationSelected(NotificationMessage selectedItem);
 
         void saveUserSettings(UserSettings value);
 
@@ -177,6 +179,11 @@ public interface NewDesktopView extends IsWidget {
         void doLogout();
 
         void onSystemMessagesClick();
+    }
+
+    interface UnseenNotificationsPresenter {
+
+        void doSeeAllNotifications();
     }
 
     void ensureDebugId(String baseID);

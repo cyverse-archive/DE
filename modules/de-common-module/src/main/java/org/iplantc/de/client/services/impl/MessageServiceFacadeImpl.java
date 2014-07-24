@@ -1,10 +1,8 @@
 package org.iplantc.de.client.services.impl;
 
-import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.DELETE;
-import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.GET;
-import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.POST;
-
+import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.*;
 import org.iplantc.de.client.models.DEProperties;
+import org.iplantc.de.client.models.HasId;
 import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.client.models.notifications.Counts;
 import org.iplantc.de.client.models.notifications.Notification;
@@ -14,6 +12,7 @@ import org.iplantc.de.client.services.MessageServiceFacade;
 import org.iplantc.de.client.services.callbacks.NotificationCallback;
 import org.iplantc.de.client.services.converters.AsyncCallbackConverter;
 import org.iplantc.de.client.services.converters.NotificationCallbackConverter;
+import org.iplantc.de.client.util.DiskResourceUtil;
 import org.iplantc.de.shared.services.BaseServiceCallWrapper.Type;
 import org.iplantc.de.shared.services.ServiceCallWrapper;
 
@@ -22,7 +21,10 @@ import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.inject.Inject;
 import com.google.web.bindery.autobean.shared.AutoBeanCodex;
+import com.google.web.bindery.autobean.shared.Splittable;
+import com.google.web.bindery.autobean.shared.impl.StringQuoter;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -94,14 +96,18 @@ public class MessageServiceFacadeImpl implements MessageServiceFacade {
         deServiceFacade.getServiceData(wrapper, new NotificationCallbackConverter(callback, notesFactory));
     }
 
-    /* (non-Javadoc)
-     * @see org.iplantc.de.client.services.impl.MessageServiceFacade#markAsSeen(com.google.gwt.json.client.JSONObject, com.google.gwt.user.client.rpc.AsyncCallback)
-     */
     @Override
-    public void markAsSeen(final JSONObject seenIds, AsyncCallback<String> callback) {
+    public void markAsSeen(HasId id, AsyncCallback<String> callback) {
+        markAsSeen(Collections.singletonList(id), callback);
+    }
+
+    @Override
+    public void markAsSeen(final List<HasId> seenIds, AsyncCallback<String> callback) {
         String address = deProperties.getMuleServiceBaseUrl() + "notifications/seen"; //$NON-NLS-1$
-        ServiceCallWrapper wrapper = new ServiceCallWrapper(POST, address,
-                seenIds.toString());
+        Splittable payload = StringQuoter.createSplittable();
+        DiskResourceUtil.createStringIdListSplittable(seenIds).assign(payload, "uuids");
+
+        ServiceCallWrapper wrapper = new ServiceCallWrapper(POST, address, payload.getPayload());
 
         deServiceFacade.getServiceData(wrapper, callback);
     }

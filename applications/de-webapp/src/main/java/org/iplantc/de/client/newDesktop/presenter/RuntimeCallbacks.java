@@ -64,7 +64,6 @@ class RuntimeCallbacks {
 
             for (Notification n : result) {
                 NotificationMessage newMessage = n.getMessage();
-                newMessage.setSeen(n.isSeen());
 
                 final NotificationMessage modelWithKey = nmStore.findModelWithKey(Long.toString(newMessage.getTimestamp()));
                 if (modelWithKey == null) {

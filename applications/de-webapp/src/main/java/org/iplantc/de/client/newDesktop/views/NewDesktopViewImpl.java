@@ -2,14 +2,13 @@ package org.iplantc.de.client.newDesktop.views;
 
 import org.iplantc.de.client.desktop.widget.TaskBar;
 import org.iplantc.de.client.desktop.widget.TaskButton;
-import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.models.UserSettings;
 import org.iplantc.de.client.models.notifications.NotificationMessage;
 import org.iplantc.de.client.newDesktop.NewDesktopView;
 import org.iplantc.de.client.newDesktop.views.widgets.DEFeedbackDialog;
 import org.iplantc.de.client.newDesktop.views.widgets.DesktopIconButton;
 import org.iplantc.de.client.newDesktop.views.widgets.PreferencesDialog;
-import org.iplantc.de.client.notifications.views.NotificationListView;
+import org.iplantc.de.client.newDesktop.views.widgets.UnseenNotificationsView;
 import org.iplantc.de.client.views.windows.IPlantWindowInterface;
 import org.iplantc.de.commons.client.widgets.IPlantAnchor;
 import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
@@ -23,6 +22,7 @@ import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.SpanElement;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -39,7 +39,6 @@ import com.sencha.gxt.widget.core.client.button.IconButton;
 import com.sencha.gxt.widget.core.client.event.DialogHideEvent;
 import com.sencha.gxt.widget.core.client.event.RegisterEvent;
 import com.sencha.gxt.widget.core.client.event.SelectEvent;
-import com.sencha.gxt.widget.core.client.event.ShowContextMenuEvent;
 import com.sencha.gxt.widget.core.client.event.UnregisterEvent;
 
 /**
@@ -82,7 +81,7 @@ public class NewDesktopViewImpl implements NewDesktopView, UnregisterEvent.Unreg
     @UiField
     IPlantAnchor logoutBtn;
     @UiField(provided = true)
-    NotificationListView notificationsListView;
+    UnseenNotificationsView notificationsListView;
     @UiField
     DivElement desktopContainer;
     @UiField
@@ -100,12 +99,12 @@ public class NewDesktopViewImpl implements NewDesktopView, UnregisterEvent.Unreg
 
     @Inject
     public NewDesktopViewImpl(final IplantNewUserTourStrings tourStrings,
-                              final EventBus eventBus,
                               final WindowManager windowManager) {
-        notificationsListView = new NotificationListView(eventBus);
+        notificationsListView = new UnseenNotificationsView();
         widget = ourUiBinder.createAndBindUi(this);
         notificationCountElement = Document.get().createSpanElement();
         notificationCountElement.addClassName(appearance.styles().notificationCount());
+        notificationCountElement.setAttribute("hidden", "");
         notificationsBtn.getElement().appendChild(notificationCountElement);
 
         windowManager.addRegisterHandler(this);
@@ -221,6 +220,7 @@ public class NewDesktopViewImpl implements NewDesktopView, UnregisterEvent.Unreg
     @Override
     public void setPresenter(final NewDesktopView.Presenter presenter) {
         this.presenter = presenter;
+        notificationsListView.setPresenter(presenter);
     }
 
     @Override
@@ -234,11 +234,12 @@ public class NewDesktopViewImpl implements NewDesktopView, UnregisterEvent.Unreg
             notificationCountElement.setInnerText(null);
             Window.setTitle(displayStrings.rootApplicationTitle());
         }
+        notificationsListView.onUnseenCountUpdated(count);
     }
 
-    @UiHandler("notificationsBtn")
-    public void onShowNotificationMenu(ShowContextMenuEvent event){
-        presenter.markAllNotificationsSeen();
+    @UiHandler("notificationsListView")
+    void onUnseenNotificationSelected(SelectionEvent<NotificationMessage> event){
+        presenter.onNotificationSelected(event.getSelectedItem());
     }
 
     @UiHandler("analysisWinBtn")

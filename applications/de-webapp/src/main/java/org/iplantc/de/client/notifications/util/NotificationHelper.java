@@ -1,7 +1,6 @@
 package org.iplantc.de.client.notifications.util;
 
 import org.iplantc.de.client.events.EventBus;
-import org.iplantc.de.client.events.NotificationCountUpdateEvent;
 import org.iplantc.de.client.events.WindowShowRequestEvent;
 import org.iplantc.de.client.gin.ServicesInjector;
 import org.iplantc.de.client.models.HasId;
@@ -18,7 +17,6 @@ import org.iplantc.de.client.models.toolRequest.ToolRequestHistory;
 import org.iplantc.de.client.notifications.events.DeleteNotificationsUpdateEvent;
 import org.iplantc.de.client.notifications.views.dialogs.ToolRequestHistoryDialog;
 import org.iplantc.de.client.util.DiskResourceUtil;
-import org.iplantc.de.client.util.JsonUtil;
 import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.commons.client.views.window.configs.AnalysisWindowConfig;
 import org.iplantc.de.commons.client.views.window.configs.ConfigFactory;
@@ -171,7 +169,7 @@ public class NotificationHelper {
             if (arr.size() > 0) {
                 JSONObject obj = new JSONObject();
                 obj.put("uuids", arr);
-                ServicesInjector.INSTANCE.getMessageServiceFacade().markAsSeen(obj, new AsyncCallback<String>() {
+                /*ServicesInjector.INSTANCE.getMessageServiceFacade().markAsSeen(obj, new AsyncCallback<String>() {
 
                     @Override
                     public void onSuccess(String result) {
@@ -186,7 +184,7 @@ public class NotificationHelper {
                     public void onFailure(Throwable caught) {
                         ErrorHandler.post(caught);
                     }
-                });
+                });*/
             }
         }
     }

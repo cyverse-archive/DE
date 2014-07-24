@@ -3,7 +3,7 @@
              xmlns:button='urn:import:com.sencha.gxt.widget.core.client.button'
              xmlns:desktopBtn='urn:import:org.iplantc.de.client.newDesktop.views.widgets'
              xmlns:menu='urn:import:com.sencha.gxt.widget.core.client.menu'
-             xmlns:notifications='urn:import:org.iplantc.de.client.notifications.views'
+             xmlns:widget='urn:import:org.iplantc.de.client.newDesktop.views.widgets'
              xmlns:anchors='urn:import:org.iplantc.de.commons.client.widgets'
              xmlns:taskbar='urn:import:org.iplantc.de.client.desktop.widget'>
 
@@ -30,7 +30,7 @@
                                               config="{appearance.notificationsConfig}">
                     <desktopBtn:contextmenu>
                         <menu:Menu styleName="{appearance.styles.userContextMenu}">
-                            <notifications:NotificationListView ui:field="notificationsListView"/>
+                            <widget:UnseenNotificationsView ui:field="notificationsListView"/>
                         </menu:Menu>
                     </desktopBtn:contextmenu>
                 </desktopBtn:DesktopIconButton>

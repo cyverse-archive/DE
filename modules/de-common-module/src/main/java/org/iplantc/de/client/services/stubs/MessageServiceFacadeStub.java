@@ -1,5 +1,6 @@
 package org.iplantc.de.client.services.stubs;
 
+import org.iplantc.de.client.models.HasId;
 import org.iplantc.de.client.models.notifications.Counts;
 import org.iplantc.de.client.models.notifications.Notification;
 import org.iplantc.de.client.services.MessageServiceFacade;
@@ -22,7 +23,12 @@ public class MessageServiceFacadeStub implements MessageServiceFacade {
     }
 
     @Override
-    public void markAsSeen(JSONObject seenIds, AsyncCallback<String> callback) {
+    public void markAsSeen(List<HasId> seenIds, AsyncCallback<String> callback) {
+
+    }
+
+    @Override
+    public void markAsSeen(HasId id, AsyncCallback<String> callback) {
 
     }
 
