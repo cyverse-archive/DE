@@ -1309,6 +1309,9 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     @Key("editMenuItem")
     String editMenuItem();
 
+    @DefaultMessage("Edit File...")
+    String editFile();
+
     
     /**
      * Translated "Edit app...".
