@@ -21,6 +21,7 @@ import org.iplantc.de.client.services.MessageServiceFacade;
 import org.iplantc.de.client.services.UserSessionServiceFacade;
 import org.iplantc.de.client.sysmsgs.view.NewMessageView;
 import org.iplantc.de.client.util.CommonModelUtils;
+import org.iplantc.de.client.utils.NotifyInfo;
 import org.iplantc.de.client.views.windows.IPlantWindowInterface;
 import org.iplantc.de.commons.client.CommonUiConstants;
 import org.iplantc.de.commons.client.ErrorHandler;
@@ -116,6 +117,8 @@ public class NewDesktopPresenterImpl implements NewDesktopView.Presenter {
     UserSessionServiceFacade userSessionService;
     @Inject
     UserSettings userSettings;
+    @Inject
+    NotifyInfo notifyInfo;
     private final EventBus eventBus;
     private final KeepaliveTimer keepaliveTimer;
     private final MessagePoller messagePoller;
@@ -289,6 +292,11 @@ public class NewDesktopPresenterImpl implements NewDesktopView.Presenter {
 
     }
 
+    @Override
+    public void markAllNotificationsSeen() {
+
+    }
+
     void doPeriodicSessionSave() {
         if (userSettings.isSaveSession()) {
             ssp.run();
@@ -305,7 +313,7 @@ public class NewDesktopPresenterImpl implements NewDesktopView.Presenter {
      * user notification menu, and displays notification popups
      */
     void fetchRecentNotifications() {
-        messageServiceFacade.getRecentMessages(new RuntimeCallbacks.GetRecentNotificationsCallback(displayStrings, notificationFactory, view));
+        messageServiceFacade.getRecentMessages(new RuntimeCallbacks.GetRecentNotificationsCallback(displayStrings, notificationFactory, view, notifyInfo));
     }
 
     void organizeWindows(DesktopLayoutType type) {
@@ -371,7 +379,7 @@ public class NewDesktopPresenterImpl implements NewDesktopView.Presenter {
         }
     }
 
-    private void initKBShortCuts() {
+    void initKBShortCuts() {
         new KeyNav(RootPanel.get()) {
             @Override
             public void handleEvent(NativeEvent event) {
@@ -393,7 +401,7 @@ public class NewDesktopPresenterImpl implements NewDesktopView.Presenter {
         };
     }
 
-    private void processQueryStrings() {
+    void processQueryStrings() {
         boolean hasError = false;
         boolean hasDataTypeParameter = false;
         Map<String, List<String>> params = Window.Location.getParameterMap();
@@ -448,12 +456,16 @@ public class NewDesktopPresenterImpl implements NewDesktopView.Presenter {
         if (!hasError) getUserSession(hasDataTypeParameter);
     }
 
+    void setBrowserContextMenuEnabled(boolean enabled){
+        setBrowserContextMenuEnabledNative(enabled);
+    }
+
     /**
      * Disable the context menu of the browser using native JavaScript.
      * <p/>
      * This disables the user's ability to right-click on this widget and get the browser's context menu
      */
-    private native void setBrowserContextMenuEnabled(boolean enabled)
+    private native void setBrowserContextMenuEnabledNative(boolean enabled)
     /*-{
         $doc.oncontextmenu = function () {
             return enabled;

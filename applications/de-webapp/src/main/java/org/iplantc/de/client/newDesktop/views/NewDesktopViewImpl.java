@@ -237,8 +237,8 @@ public class NewDesktopViewImpl implements NewDesktopView, UnregisterEvent.Unreg
     }
 
     @UiHandler("notificationsBtn")
-    void onShowNotificationMenu(ShowContextMenuEvent event){
-       // mark as seen
+    public void onShowNotificationMenu(ShowContextMenuEvent event){
+        presenter.markAllNotificationsSeen();
     }
 
     @UiHandler("analysisWinBtn")

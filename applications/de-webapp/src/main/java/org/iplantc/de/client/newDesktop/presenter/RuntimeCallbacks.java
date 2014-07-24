@@ -38,13 +38,16 @@ class RuntimeCallbacks {
         private final IplantDisplayStrings displayStrings;
         private final NotificationAutoBeanFactory notificationFactory;
         private final NewDesktopView view;
+        private NotifyInfo notifyInfo;
 
         public GetRecentNotificationsCallback(final IplantDisplayStrings displayStrings,
                                        final NotificationAutoBeanFactory notificationFactory,
-                                       final NewDesktopView view) {
+                                       final NewDesktopView view,
+                                       final NotifyInfo notifyInfo) {
             this.displayStrings = displayStrings;
             this.notificationFactory = notificationFactory;
             this.view = view;
+            this.notifyInfo = notifyInfo;
         }
 
         @Override
@@ -74,7 +77,7 @@ class RuntimeCallbacks {
                 }
             }
             if (numNewMessageNotifications > NEW_NOTIFICATION_LIMIT) {
-                NotifyInfo.display(displayStrings.newNotificationsAlert());
+                notifyInfo.display(displayStrings.newNotificationsAlert());
             }
         }
 
@@ -85,12 +88,12 @@ class RuntimeCallbacks {
                                                                            PayloadAnalysis.class, nm.getContext()).as();
 
                     if ("Failed".equals(analysisPayload.getStatus())) { //$NON-NLS-1$
-                        NotifyInfo.displayWarning(nm.getMessage());
+                        notifyInfo.displayWarning(nm.getMessage());
                         return;
                     }
                 }
 
-                NotifyInfo.display(nm.getMessage());
+                notifyInfo.display(nm.getMessage());
             }
         }
 

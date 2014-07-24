@@ -3,6 +3,8 @@
  */
 package org.iplantc.de.client.notifications.views;
 
+import com.sencha.gxt.data.shared.event.StoreAddEvent;
+import com.sencha.gxt.data.shared.event.StoreClearEvent;
 import org.iplantc.de.client.DeResources;
 import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.events.NotificationCountUpdateEvent;
@@ -63,7 +65,11 @@ import java.util.List;
 
 /**
  * New notifications as list
- * 
+ *
+ * This whole view just need to be re-written. It should listen to changes on its store, and act accordingly. When store
+ * is cleared, or empty, it should put up the "no new notifications" message.
+ *
+ * When items are added to the store, it should remove the "no new notifications".
  * @author sriram
  * 
  */
@@ -196,61 +202,6 @@ public class NotificationListView implements IsWidget {
         // TODO: implement higlight
     }
 
-    //
-    public void markAsSeen() {
-        java.util.List<NotificationMessage> new_notifications = store.getAll();
-        JSONArray arr = new JSONArray();
-        int i = 0;
-        for (NotificationMessage n : new_notifications) {
-            if (!n.isSeen()) {
-                arr.set(i++, new JSONString(n.getId().toString()));
-                n.setSeen(true);
-            }
-        }
-
-        if (arr.size() > 0) {
-            JSONObject obj = new JSONObject();
-            obj.put("uuids", arr);
-
-            ServicesInjector.INSTANCE.getMessageServiceFacade().markAsSeen(obj, new AsyncCallback<String>() {
-
-                @Override
-                public void onSuccess(String result) {
-                    JSONObject obj = JsonUtil.getObject(result);
-                    int new_count = Integer.parseInt(JsonUtil.getString(obj, "count"));
-                    NotificationCountUpdateEvent event = new NotificationCountUpdateEvent(new_count);
-                    EventBus.getInstance().fireEvent(event);
-                    view.refresh();
-                }
-
-                @Override
-                public void onFailure(Throwable caught) {
-                    org.iplantc.de.commons.client.ErrorHandler.post(caught);
-                }
-            });
-        }
-
-    }
-
-    public void fetchUnseenNotifications() {
-
-        ServicesInjector.INSTANCE.getMessageServiceFacade().getRecentMessages(new NotificationCallback() {
-
-            @Override
-            public void onSuccess(String result) {
-                super.onSuccess(result);
-                processMessages(this.getNotifications());
-                unseenNotificationsFetchedOnce = true;
-            }
-
-            @Override
-            public void onFailure(Throwable caught) {
-                ErrorHandler.post(caught);
-            }
-
-        });
-    }
-
     /**
      * Process notifications
      * 
@@ -291,8 +242,6 @@ public class NotificationListView implements IsWidget {
             emptyTextPnl.setVisible(true);
         }
 
-        NotificationMessageProperties props = GWT.create(NotificationMessageProperties.class);
-        store.addSortInfo(new StoreSortInfo<NotificationMessage>(props.timestamp(), SortDir.DESC));
         highlightNewNotifications();
     }
 
@@ -404,8 +353,24 @@ public class NotificationListView implements IsWidget {
         VerticalLayoutContainer container = new VerticalLayoutContainer();
         container.setBorders(false);
 
-        store = new ListStore<NotificationMessage>(kp);
-        view = new ListView<NotificationMessage, NotificationMessage>(store,
+        store = new ListStore<>(kp);
+
+        NotificationMessageProperties props = GWT.create(NotificationMessageProperties.class);
+        store.addSortInfo(new StoreSortInfo<>(props.timestamp(), SortDir.DESC));
+        store.addStoreAddHandler(new StoreAddEvent.StoreAddHandler<NotificationMessage>() {
+            @Override
+            public void onAdd(StoreAddEvent<NotificationMessage> event) {
+               // remove "no new notifications" message
+            }
+        });
+        store.addStoreClearHandler(new StoreClearEvent.StoreClearHandler<NotificationMessage>() {
+            @Override
+            public void onClear(StoreClearEvent<NotificationMessage> event) {
+
+                // put up "no new notifications" message
+            }
+        });
+        view = new ListView<>(store,
                 new IdentityValueProvider<NotificationMessage>(), appearance);
         view.setShadow(false);
         view.getSelectionModel().addSelectionHandler(new SelectionHandler<NotificationMessage>() {
@@ -421,7 +386,7 @@ public class NotificationListView implements IsWidget {
 
         });
 
-        view.setCell(new SimpleSafeHtmlCell<NotificationMessage>(
+        view.setCell(new SimpleSafeHtmlCell<>(
                 new AbstractSafeHtmlRenderer<NotificationMessage>() {
 
                     @Override

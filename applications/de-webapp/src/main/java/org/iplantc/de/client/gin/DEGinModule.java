@@ -21,6 +21,7 @@ import org.iplantc.de.client.services.MessageServiceFacade;
 import org.iplantc.de.client.services.UserSessionServiceFacade;
 import org.iplantc.de.client.sysmsgs.presenter.NewMessagePresenter;
 import org.iplantc.de.client.sysmsgs.view.NewMessageView;
+import org.iplantc.de.client.utils.NotifyInfo;
 import org.iplantc.de.client.views.windows.util.WindowFactory;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
 import org.iplantc.de.commons.client.requests.KeepaliveTimer;
@@ -64,6 +65,10 @@ public class DEGinModule extends AbstractGinModule {
         return ServicesInjector.INSTANCE.getMessageServiceFacade();
     }
     //</editor-fold>
+
+    @Provides @Singleton public NotifyInfo createNotifyInfo() {
+        return NotifyInfo.getInstance();
+    }
 
     @Provides @Singleton public EventBus createGlobalEventBus() {
         return EventBus.getInstance();

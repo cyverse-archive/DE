@@ -25,7 +25,7 @@ public class ViewNotificationMenu extends Menu {
             @Override
             public void onShow(ShowEvent event) {
                 view.highlightNewNotifications();
-                view.markAsSeen();
+//                view.markAsSeen();
                 view.updateNotificationLink();
 
             }
@@ -33,7 +33,7 @@ public class ViewNotificationMenu extends Menu {
     }
 
     public void fetchUnseenNotifications() {
-        view.fetchUnseenNotifications();
+//        view.fetchUnseenNotifications();
 
     }
 

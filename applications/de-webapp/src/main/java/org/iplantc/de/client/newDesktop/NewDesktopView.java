@@ -158,6 +158,8 @@ public interface NewDesktopView extends IsWidget {
         void show(final WindowConfig config, final boolean updateExistingWindow);
 
         void submitUserFeedback(Splittable splittable, IsHideable isHideable);
+
+        void markAllNotificationsSeen();
     }
 
     interface UserSettingsMenuPresenter {
