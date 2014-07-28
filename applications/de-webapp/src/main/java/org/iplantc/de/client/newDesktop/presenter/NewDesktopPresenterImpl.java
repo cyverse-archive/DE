@@ -197,6 +197,26 @@ public class NewDesktopPresenterImpl implements NewDesktopView.Presenter {
     }
 
     @Override
+    public void doMarkAllSeen() {
+       messageServiceFacade.markAllNotificationsSeen(new AsyncCallback<Void>() {
+           @Override
+           public void onFailure(Throwable caught) {
+               errorHandlerProvider.get().post(caught);
+           }
+
+           @Override
+           public void onSuccess(Void result) {
+               for(NotificationMessage nm : view.getNotificationStore().getAll()){
+                   nm.setSeen(true);
+                   view.getNotificationStore().update(nm);
+               }
+               view.setUnseenNotificationCount(0);
+               announcer.schedule(new SuccessAnnouncementConfig(displayStrings.markAllasSeenSuccess(), true, 3000));
+           }
+       });
+    }
+
+    @Override
     public void doSeeAllNotifications() {
          show(ConfigFactory.notifyWindowConfig(NotificationCategory.ALL));
     }
@@ -332,9 +352,10 @@ public class NewDesktopPresenterImpl implements NewDesktopView.Presenter {
             public void onSuccess(String result) {
                 selectedItem.setSeen(true);
                 view.getNotificationStore().update(selectedItem);
-                Splittable split = StringQuoter.split(result);
 
-                view.setUnseenNotificationCount((int) split.get("count").asNumber());
+                final String asString = StringQuoter.split(result).get("count").asString();
+                final int count = Integer.parseInt(asString);
+                view.setUnseenNotificationCount(count);
             }
         });
 
@@ -387,11 +408,6 @@ public class NewDesktopPresenterImpl implements NewDesktopView.Presenter {
             }
         });
 
-    }
-
-    @Override
-    public void markAllNotificationsSeen() {
-        // TODO JDS Implement method
     }
 
     void doPeriodicSessionSave() {

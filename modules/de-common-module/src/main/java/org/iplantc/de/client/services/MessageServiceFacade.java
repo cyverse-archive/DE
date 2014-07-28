@@ -55,6 +55,6 @@ public interface MessageServiceFacade {
 
     void deleteAll(AsyncCallback<String> callback);
 
-    void acknowledgeAll(AsyncCallback<String> callback);
+    void markAllNotificationsSeen(AsyncCallback<Void> callback);
 
 }

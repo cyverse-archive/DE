@@ -3,11 +3,8 @@
  */
 package org.iplantc.de.client.notifications.views;
 
-import com.sencha.gxt.data.shared.event.StoreAddEvent;
-import com.sencha.gxt.data.shared.event.StoreClearEvent;
 import org.iplantc.de.client.DeResources;
 import org.iplantc.de.client.events.EventBus;
-import org.iplantc.de.client.events.NotificationCountUpdateEvent;
 import org.iplantc.de.client.events.WindowShowRequestEvent;
 import org.iplantc.de.client.gin.ServicesInjector;
 import org.iplantc.de.client.models.notifications.Notification;
@@ -18,8 +15,6 @@ import org.iplantc.de.client.models.notifications.payload.PayloadAnalysis;
 import org.iplantc.de.client.notifications.events.DeleteNotificationsUpdateEvent;
 import org.iplantc.de.client.notifications.events.DeleteNotificationsUpdateEventHandler;
 import org.iplantc.de.client.notifications.util.NotificationHelper;
-import org.iplantc.de.client.services.callbacks.NotificationCallback;
-import org.iplantc.de.client.util.JsonUtil;
 import org.iplantc.de.client.utils.NotifyInfo;
 import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
@@ -34,9 +29,6 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
-import com.google.gwt.json.client.JSONArray;
-import com.google.gwt.json.client.JSONObject;
-import com.google.gwt.json.client.JSONString;
 import com.google.gwt.resources.client.ClientBundle;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.safehtml.shared.SafeHtml;
@@ -57,6 +49,8 @@ import com.sencha.gxt.data.shared.ListStore;
 import com.sencha.gxt.data.shared.ModelKeyProvider;
 import com.sencha.gxt.data.shared.SortDir;
 import com.sencha.gxt.data.shared.Store.StoreSortInfo;
+import com.sencha.gxt.data.shared.event.StoreAddEvent;
+import com.sencha.gxt.data.shared.event.StoreClearEvent;
 import com.sencha.gxt.theme.base.client.listview.ListViewCustomAppearance;
 import com.sencha.gxt.widget.core.client.ListView;
 import com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer;
@@ -288,7 +282,7 @@ public class NotificationListView implements IsWidget {
 
             @Override
             public void onClick(ClickEvent event) {
-                ServicesInjector.INSTANCE.getMessageServiceFacade().acknowledgeAll(new AsyncCallback<String>() {
+                ServicesInjector.INSTANCE.getMessageServiceFacade().markAllNotificationsSeen(new AsyncCallback<Void>() {
 
                     @Override
                     public void onFailure(Throwable caught) {
@@ -297,7 +291,7 @@ public class NotificationListView implements IsWidget {
                     }
 
                     @Override
-                    public void onSuccess(String result) {
+                    public void onSuccess(Void result) {
                         IplantAnnouncer.getInstance().schedule(new SuccessAnnouncementConfig(I18N.DISPLAY.markAllasSeenSuccess()));
                     }
                 });

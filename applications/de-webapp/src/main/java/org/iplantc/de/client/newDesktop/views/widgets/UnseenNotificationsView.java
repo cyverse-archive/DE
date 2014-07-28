@@ -134,4 +134,8 @@ public class UnseenNotificationsView extends Composite implements StoreClearEven
         presenter.doSeeAllNotifications();
     }
 
+    @UiHandler("markAllSeenLink")
+    public void onMarkAllSeenClicked(ClickEvent event) {
+        presenter.doMarkAllSeen();
+    }
 }

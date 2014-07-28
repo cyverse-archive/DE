@@ -53,7 +53,7 @@ public class MessageServiceFacadeStub implements MessageServiceFacade {
     }
 
     @Override
-    public void acknowledgeAll(AsyncCallback<String> callback) {
+    public void markAllNotificationsSeen(AsyncCallback<Void> callback) {
 
     }
 }

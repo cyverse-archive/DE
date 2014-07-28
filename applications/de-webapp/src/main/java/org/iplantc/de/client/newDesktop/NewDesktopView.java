@@ -161,7 +161,6 @@ public interface NewDesktopView extends IsWidget {
 
         void submitUserFeedback(Splittable splittable, IsHideable isHideable);
 
-        void markAllNotificationsSeen();
     }
 
     interface UserSettingsMenuPresenter {
@@ -182,6 +181,8 @@ public interface NewDesktopView extends IsWidget {
     }
 
     interface UnseenNotificationsPresenter {
+
+        void doMarkAllSeen();
 
         void doSeeAllNotifications();
     }

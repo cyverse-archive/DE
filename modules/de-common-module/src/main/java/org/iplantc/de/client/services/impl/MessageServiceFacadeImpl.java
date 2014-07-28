@@ -12,6 +12,7 @@ import org.iplantc.de.client.services.MessageServiceFacade;
 import org.iplantc.de.client.services.callbacks.NotificationCallback;
 import org.iplantc.de.client.services.converters.AsyncCallbackConverter;
 import org.iplantc.de.client.services.converters.NotificationCallbackConverter;
+import org.iplantc.de.client.services.converters.StringToVoidCallbackConverter;
 import org.iplantc.de.client.util.DiskResourceUtil;
 import org.iplantc.de.shared.services.BaseServiceCallWrapper.Type;
 import org.iplantc.de.shared.services.ServiceCallWrapper;
@@ -62,15 +63,12 @@ public class MessageServiceFacadeImpl implements MessageServiceFacade {
         this.userInfo = userInfo;
     }
 
-    /* (non-Javadoc)
-     * @see org.iplantc.de.client.services.impl.MessageServiceFacade#getNotifications(int, int, java.lang.String, java.lang.String, C)
-     */
     @Override
     public <C extends NotificationCallback> void getNotifications(int limit, int offset, String filter, String sortDir, C callback) {
         String address = deProperties.getMuleServiceBaseUrl();
 
         StringBuilder builder = new StringBuilder("notifications/messages?limit=" + limit + "&offset="
-                + offset);
+                                                      + offset);
         if (filter != null && !filter.isEmpty()) {
             builder.append("&filter=" + URL.encodeQueryString(filter));
         }
@@ -84,13 +82,10 @@ public class MessageServiceFacadeImpl implements MessageServiceFacade {
         deServiceFacade.getServiceData(wrapper, callback);
     }
 
-    /* (non-Javadoc)
-     * @see org.iplantc.de.client.services.impl.MessageServiceFacade#getRecentMessages(com.google.gwt.user.client.rpc.AsyncCallback)
-     */
     @Override
     public void getRecentMessages(AsyncCallback<List<Notification>> callback) {
         String address = deProperties.getMuleServiceBaseUrl()
-                + "notifications/last-ten-messages"; //$NON-NLS-1$
+                             + "notifications/last-ten-messages"; //$NON-NLS-1$
         ServiceCallWrapper wrapper = new ServiceCallWrapper(GET, address);
 
         deServiceFacade.getServiceData(wrapper, new NotificationCallbackConverter(callback, notesFactory));
@@ -112,45 +107,33 @@ public class MessageServiceFacadeImpl implements MessageServiceFacade {
         deServiceFacade.getServiceData(wrapper, callback);
     }
 
-    /* (non-Javadoc)
-     * @see org.iplantc.de.client.services.impl.MessageServiceFacade#deleteMessages(com.google.gwt.json.client.JSONObject, com.google.gwt.user.client.rpc.AsyncCallback)
-     */
     @Override
     public void deleteMessages(final JSONObject deleteIds, AsyncCallback<String> callback) {
         String address = deProperties.getMuleServiceBaseUrl() + "notifications/delete"; //$NON-NLS-1$
         ServiceCallWrapper wrapper = new ServiceCallWrapper(POST, address,
-                deleteIds.toString());
+                                                            deleteIds.toString());
 
         deServiceFacade.getServiceData(wrapper, callback);
     }
 
-    /* (non-Javadoc)
-     * @see org.iplantc.de.client.services.impl.MessageServiceFacade#getRecentMessages(C)
-     */
     @Override
     public <C extends NotificationCallback> void getRecentMessages(C callback) {
         String address = deProperties.getMuleServiceBaseUrl()
-                + "notifications/last-ten-messages"; //$NON-NLS-1$
+                             + "notifications/last-ten-messages"; //$NON-NLS-1$
         ServiceCallWrapper wrapper = new ServiceCallWrapper(GET, address);
         deServiceFacade.getServiceData(wrapper, callback);
 
     }
 
-    /* (non-Javadoc)
-     * @see org.iplantc.de.client.services.impl.MessageServiceFacade#getMessageCounts(com.google.gwt.user.client.rpc.AsyncCallback)
-     */
     @Override
     public void getMessageCounts(final AsyncCallback<Counts> callback) {
         final String addr = deProperties.getMuleServiceBaseUrl()
-                + "notifications/count-messages?seen=false"; //$NON-NLS-1$
+                                + "notifications/count-messages?seen=false"; //$NON-NLS-1$
         final ServiceCallWrapper wrapper = new ServiceCallWrapper(Type.GET, addr);
         final AsyncCallback<String> convCB = new CountsCB(callback, notesFactory);
         deServiceFacade.getServiceData(wrapper, convCB);
     }
 
-    /* (non-Javadoc)
-     * @see org.iplantc.de.client.services.impl.MessageServiceFacade#deleteAll(com.google.gwt.user.client.rpc.AsyncCallback)
-     */
     @Override
     public void deleteAll(AsyncCallback<String> callback) {
         String address = deProperties.getMuleServiceBaseUrl() + "notifications/delete-all"; //$NON-NLS-1$
@@ -160,18 +143,15 @@ public class MessageServiceFacadeImpl implements MessageServiceFacade {
         deServiceFacade.getServiceData(wrapper, callback);
     }
 
-    /* (non-Javadoc)
-     * @see org.iplantc.de.client.services.impl.MessageServiceFacade#acknowledgeAll(com.google.gwt.user.client.rpc.AsyncCallback)
-     */
     @Override
-    public void acknowledgeAll(AsyncCallback<String> callback) {
+    public void markAllNotificationsSeen(AsyncCallback<Void> callback) {
         String address = deProperties.getMuleServiceBaseUrl()
-                + "notifications/mark-all-seen"; //$NON-NLS-1$
+                             + "notifications/mark-all-seen"; //$NON-NLS-1$
 
         ServiceCallWrapper wrapper = new ServiceCallWrapper(POST, address,
- userInfo.getUsername());
+                                                            userInfo.getUsername());
 
-        deServiceFacade.getServiceData(wrapper, callback);
+        deServiceFacade.getServiceData(wrapper, new StringToVoidCallbackConverter(callback));
     }
-    
+
 }
