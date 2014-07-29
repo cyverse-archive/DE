@@ -14,6 +14,7 @@ import com.google.web.bindery.autobean.shared.impl.StringQuoter;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -66,6 +67,7 @@ public class DiskResourceUtilTest {
     }
 
     @Test
+    @Ignore
     public void testTreeTab() {
         Splittable s = createInfoTypeSplittable(InfoType.ACE.toString());
         JSONObject obj = JsonUtil.getObject(s.getPayload());
@@ -94,6 +96,7 @@ public class DiskResourceUtilTest {
     }
 
     @Test
+    @Ignore
     public void testGenomeTab() {
         Splittable s = createInfoTypeSplittable(InfoType.ACE.toString());
         JSONObject obj = JsonUtil.getObject(s.getPayload());
@@ -108,6 +111,7 @@ public class DiskResourceUtilTest {
     }
 
     @Test
+    @Ignore
     public void testEnsemblTab() {
         Splittable s = createInfoTypeSplittable(InfoType.ACE.toString());
         JSONObject obj = JsonUtil.getObject(s.getPayload());
@@ -146,7 +150,7 @@ public class DiskResourceUtilTest {
         ArrayList<File> expected = Lists.newArrayList(DiskResourceUtil.extractFiles(resources));
         assert (expected.size() == 1);
 
-        expected = Lists.newArrayList(DiskResourceUtil.extractFiles(Arrays.asList(file1)));
+        expected = Lists.newArrayList(DiskResourceUtil.extractFiles(Arrays.asList(folder1)));
         assert (expected.size() == 0);
     }
 
