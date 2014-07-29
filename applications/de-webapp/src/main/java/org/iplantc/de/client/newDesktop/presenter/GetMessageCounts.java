@@ -2,8 +2,6 @@ package org.iplantc.de.client.newDesktop.presenter;
 
 import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.events.NewSystemMessagesEvent;
-import org.iplantc.de.client.events.NotificationCountUpdateEvent;
-import org.iplantc.de.client.events.SystemMessageCountUpdateEvent;
 import org.iplantc.de.client.models.notifications.Counts;
 import org.iplantc.de.client.newDesktop.NewDesktopView;
 import org.iplantc.de.client.services.MessageServiceFacade;
@@ -48,13 +46,9 @@ final class GetMessageCounts implements Runnable {
         final int unseenNoteCnt = counts.getUnseenNotificationCount();
         view.setUnseenNotificationCount(unseenNoteCnt);
         presenter.fetchRecentNotifications();
-        // fetch the unseen messages
 
         final int unseenSysMsgCnt = counts.getUnseenSystemMessageCount();
-        // Fire event for unseen notification counts
-        eventBus.fireEvent(new NotificationCountUpdateEvent(unseenNoteCnt));
-        // Fire event for system message counts
-        eventBus.fireEvent(new SystemMessageCountUpdateEvent(unseenSysMsgCnt));
+        view.setUnseenSystemMessageCount(unseenSysMsgCnt);
 
         if (counts.getNewSystemMessageCount() > 0) {
             eventBus.fireEvent(new NewSystemMessagesEvent());

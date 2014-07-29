@@ -199,4 +199,6 @@ public interface NewDesktopView extends IsWidget {
     void setPresenter(Presenter presenter);
 
     void setUnseenNotificationCount(int count);
+
+    void setUnseenSystemMessageCount(int count);
 }

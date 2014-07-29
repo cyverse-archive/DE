@@ -175,7 +175,7 @@ public class NewDesktopPresenterImpl implements NewDesktopView.Presenter {
         this.ssp = new SaveSessionPeriodic(this);
 
         this.view.setPresenter(this);
-        globalEventHandler.setPresenter(this);
+        globalEventHandler.setPresenter(this, this.view);
         windowEventHandler.setPresenter(this, desktopWindowManager);
         if (DebugInfo.isDebugIdEnabled()) {
             this.view.ensureDebugId(DeModule.Ids.DESKTOP);

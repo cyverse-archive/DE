@@ -1,14 +1,19 @@
 package org.iplantc.de.client.newDesktop.presenter;
 
+import org.iplantc.de.client.events.DefaultUploadCompleteHandler;
 import org.iplantc.de.client.events.EventBus;
+import org.iplantc.de.client.events.NotificationCountUpdateEvent;
 import org.iplantc.de.client.events.PreferencesUpdatedEvent;
-import org.iplantc.de.client.events.SystemMessageCountUpdateEvent;
+import org.iplantc.de.client.newDesktop.NewDesktopView;
+import org.iplantc.de.client.util.JsonUtil;
 import org.iplantc.de.commons.client.events.UserSettingsUpdatedEvent;
 import org.iplantc.de.commons.client.events.UserSettingsUpdatedEventHandler;
 import org.iplantc.de.diskResource.client.events.FileUploadedEvent;
 
 import com.google.common.collect.Lists;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.json.client.JSONObject;
 import com.google.inject.Inject;
 
 import java.util.List;
@@ -20,40 +25,49 @@ import java.util.List;
  * @author jstroot
  */
 public class DesktopPresenterEventHandler implements PreferencesUpdatedEvent.PreferencesUpdatedEventHandler,
-                                                     SystemMessageCountUpdateEvent.Handler,
                                                      UserSettingsUpdatedEventHandler,
+                                                     NotificationCountUpdateEvent.NotificationCountUpdateEventHandler,
                                                      FileUploadedEvent.FileUploadedEventHandler {
 
     @Inject EventBus eventBus;
 
     private NewDesktopPresenterImpl presenter;
+    private NewDesktopView view;
 
     @Inject
     public DesktopPresenterEventHandler() {
     }
 
     @Override
-    public void onCountUpdate(SystemMessageCountUpdateEvent event) {
-
+    public void onCountUpdate(NotificationCountUpdateEvent ncue) {
+        view.setUnseenNotificationCount(ncue.getTotal());
     }
 
     @Override
     public void onFileUploaded(FileUploadedEvent event) {
 
+        DefaultUploadCompleteHandler duc = new DefaultUploadCompleteHandler(event.getUploadDestFolderFolder().toString());
+        JSONObject obj = JsonUtil.getObject(event.getResponse());
+        String fileJson = JsonUtil.getObject(obj, "file").toString();
+        duc.onCompletion(event.getFilepath(), fileJson);
+        // FIXME JDS refactor this and roll user notification posting into presenter
     }
 
     @Override
     public void onUpdate(PreferencesUpdatedEvent event) {
 
+        GWT.log("IMPLEMENT PREFERENCES UPDATED EVENT handler");
     }
 
     @Override
     public void onUpdate(UserSettingsUpdatedEvent usue) {
 
+        GWT.log("IMPLEMENT USER SETTINGS UPDATED EVENT handler");
     }
 
-    public void setPresenter(NewDesktopPresenterImpl presenter) {
+    public void setPresenter(NewDesktopPresenterImpl presenter, NewDesktopView view) {
         this.presenter = presenter;
+        this.view = view;
         init(eventBus);
     }
 
@@ -61,11 +75,11 @@ public class DesktopPresenterEventHandler implements PreferencesUpdatedEvent.Pre
         List<HandlerRegistration> handlerRegistrations = Lists.newArrayList();
         HandlerRegistration handlerRegistration = eventBus.addHandler(PreferencesUpdatedEvent.TYPE, this);
         handlerRegistrations.add(handlerRegistration);
-        handlerRegistration = eventBus.addHandler(SystemMessageCountUpdateEvent.TYPE, this);
-        handlerRegistrations.add(handlerRegistration);
         handlerRegistration = eventBus.addHandler(UserSettingsUpdatedEvent.TYPE, this);
         handlerRegistrations.add(handlerRegistration);
         handlerRegistration = eventBus.addHandler(FileUploadedEvent.TYPE, this);
+        handlerRegistrations.add(handlerRegistration);
+        handlerRegistration = eventBus.addHandler(NotificationCountUpdateEvent.TYPE, this);
         handlerRegistrations.add(handlerRegistration);
     }
 }
