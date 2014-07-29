@@ -26,12 +26,14 @@ import org.iplantc.de.client.newDesktop.NewDesktopView;
 import org.iplantc.de.client.newDesktop.presenter.util.MessagePoller;
 import org.iplantc.de.client.notifications.views.dialogs.ToolRequestHistoryDialog;
 import org.iplantc.de.client.services.DEFeedbackServiceFacade;
+import org.iplantc.de.client.services.FileEditorServiceFacade;
 import org.iplantc.de.client.services.MessageServiceFacade;
 import org.iplantc.de.client.services.UserSessionServiceFacade;
 import org.iplantc.de.client.sysmsgs.view.NewMessageView;
 import org.iplantc.de.client.util.CommonModelUtils;
 import org.iplantc.de.client.util.DiskResourceUtil;
 import org.iplantc.de.client.utils.NotifyInfo;
+import org.iplantc.de.client.viewer.callbacks.LoadGenomeInCoGeCallback;
 import org.iplantc.de.client.views.windows.IPlantWindowInterface;
 import org.iplantc.de.commons.client.CommonUiConstants;
 import org.iplantc.de.commons.client.ErrorHandler;
@@ -59,6 +61,9 @@ import com.google.gwt.debug.client.DebugInfo;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.http.client.Request;
 import com.google.gwt.http.client.URL;
+import com.google.gwt.json.client.JSONArray;
+import com.google.gwt.json.client.JSONObject;
+import com.google.gwt.json.client.JSONString;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.user.client.Window;
@@ -121,6 +126,8 @@ public class NewDesktopPresenterImpl implements NewDesktopView.Presenter {
     IplantErrorStrings errorStrings;
     @Inject
     Provider<DEFeedbackServiceFacade> feedbackServiceProvider;
+    @Inject
+    Provider<FileEditorServiceFacade> fileEditorServiceProvider;
     @Inject
     MessageServiceFacade messageServiceFacade;
     @Inject
@@ -219,6 +226,14 @@ public class NewDesktopPresenterImpl implements NewDesktopView.Presenter {
     @Override
     public void doSeeAllNotifications() {
          show(ConfigFactory.notifyWindowConfig(NotificationCategory.ALL));
+    }
+
+    public void doViewGenomes(final File file) {
+        JSONObject obj = new JSONObject();
+        JSONArray pathArr = new JSONArray();
+        pathArr.set(0, new JSONString(file.getPath()));
+        obj.put("paths", pathArr);
+        fileEditorServiceProvider.get().viewGenomes(obj, new LoadGenomeInCoGeCallback(null));
     }
 
     @Override

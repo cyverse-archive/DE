@@ -2,7 +2,6 @@ package org.iplantc.de.client.views.windows;
 
 import org.iplantc.de.client.models.IsMinimizable;
 import org.iplantc.de.client.models.WindowState;
-import org.iplantc.de.client.utils.DEWindowManager;
 import org.iplantc.de.commons.client.views.window.configs.WindowConfig;
 
 import com.google.gwt.dom.client.Element;
@@ -19,7 +18,7 @@ import com.sencha.gxt.widget.core.client.event.MinimizeEvent.HasMinimizeHandlers
 import com.sencha.gxt.widget.core.client.event.ShowEvent.HasShowHandlers;
 
 /**
- * This interface is intended to be used by the {@link DEWindowManager} for all primary iPlant windows.
+ * This interface is intended to be used by the DE Desktop presenter for all primary iPlant windows.
  * 
  * FIXME Rename this file to "IPlantWindow" and rename "IPlantWindow" -> "IPlantWindowImpl"
  * 

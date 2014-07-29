@@ -6,10 +6,11 @@
 package org.iplantc.de.client.desktop.layout;
 
 import org.iplantc.de.client.desktop.layout.DesktopLayout.RequestType;
-import org.iplantc.de.client.utils.IplantWindowManager;
 import org.iplantc.de.client.views.windows.IPlantWindowInterface;
 
 import com.google.gwt.dom.client.Element;
+
+import com.sencha.gxt.widget.core.client.WindowManager;
 
 public abstract class LimitedDesktopLayout {
 
@@ -37,7 +38,7 @@ public abstract class LimitedDesktopLayout {
                     layoutWindow(window, containerWidth, containerHeight, width, height);
                     // TODO: Determine why z-order is still messed up on cascade
                     // TODO: sriram fix window manager
-                    IplantWindowManager.get().bringToFront(window.asWidget());
+                    WindowManager.get().bringToFront(window.asWidget());
                 }
                 break;
             case OPEN:

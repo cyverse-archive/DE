@@ -30,7 +30,7 @@
     <inherits name='com.sencha.gxt.theme.gray.Gray'/>
     
     <!-- GXT Stylesheet -->
- <stylesheet src="reset.css" />
+    <stylesheet src="reset.css" />
 
     <extend-property name="user.agent.os" values="unknown"/>
 
@@ -56,12 +56,8 @@
     <replace-with class="org.iplantc.de.client.desktop.theme.shortcut.ShortcutCellDefaultAppearance">
         <when-type-is class="org.iplantc.de.client.desktop.widget.ShortcutCell.ShortcutCellAppearance"/>
     </replace-with>
-    <replace-with class="org.iplantc.de.client.desktop.theme.taskbutton.TaskButtonCellDefaultAppearance">
-        <when-type-is class="org.iplantc.de.client.desktop.widget.TaskButtonCell.TaskButtonCellAppearance"/>
-    </replace-with>
 
-    <replace-with
-            class="org.iplantc.de.commons.client.appearance.widgets.IPlantAnchorDefaultAppearance">
+    <replace-with class="org.iplantc.de.commons.client.appearance.widgets.IPlantAnchorDefaultAppearance">
         <when-type-is class="org.iplantc.de.commons.client.widgets.IPlantAnchorAppearance"/>
     </replace-with>
 

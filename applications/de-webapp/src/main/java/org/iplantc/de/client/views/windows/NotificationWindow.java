@@ -6,7 +6,7 @@ package org.iplantc.de.client.views.windows;
 import org.iplantc.de.client.models.WindowState;
 import org.iplantc.de.client.models.notifications.NotificationCategory;
 import org.iplantc.de.client.models.notifications.NotificationMessage;
-import org.iplantc.de.client.notifications.presenter.NotificationPresenter;
+import org.iplantc.de.client.notifications.presenter.NotificationPresenterImpl;
 import org.iplantc.de.client.notifications.views.NotificationMessageProperties;
 import org.iplantc.de.client.notifications.views.NotificationView;
 import org.iplantc.de.client.notifications.views.NotificationViewImpl;
@@ -45,7 +45,7 @@ public class NotificationWindow extends IplantWindowBase {
         ListStore<NotificationMessage> store = new ListStore<NotificationMessage>(keyProvider);
         ColumnModel<NotificationMessage> cm = buildNotificationColumnModel();
         NotificationView view = new NotificationViewImpl(store, cm, checkBoxModel);
-        presenter = new NotificationPresenter(view);
+        presenter = new NotificationPresenterImpl(view);
         setSize("600", "375");
         presenter.go(this);
         if (config != null) {

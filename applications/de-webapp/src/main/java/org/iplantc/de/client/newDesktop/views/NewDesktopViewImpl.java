@@ -1,7 +1,7 @@
 package org.iplantc.de.client.newDesktop.views;
 
-import org.iplantc.de.client.desktop.widget.TaskBar;
-import org.iplantc.de.client.desktop.widget.TaskButton;
+import org.iplantc.de.client.newDesktop.views.widgets.TaskBar;
+import org.iplantc.de.client.newDesktop.views.widgets.TaskButton;
 import org.iplantc.de.client.models.UserSettings;
 import org.iplantc.de.client.models.notifications.NotificationMessage;
 import org.iplantc.de.client.newDesktop.NewDesktopView;

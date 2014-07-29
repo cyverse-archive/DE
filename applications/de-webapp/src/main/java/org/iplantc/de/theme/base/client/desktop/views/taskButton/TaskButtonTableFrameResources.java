@@ -3,7 +3,7 @@
  * 
  * http://www.sencha.com/products/gxt/license/
  */
-package org.iplantc.de.client.desktop.theme.taskbutton;
+package org.iplantc.de.theme.base.client.desktop.views.taskButton;
 
 import com.google.gwt.resources.client.ClientBundle;
 import com.google.gwt.resources.client.ImageResource;

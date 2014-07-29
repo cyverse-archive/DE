@@ -29,8 +29,8 @@ import java.util.List;
  */
 public class DesktopWindowManager {
 
-    private final WindowManager windowManager;
     private final WindowFactory windowFactory;
+    private final WindowManager windowManager;
     private Element desktopContainer;
 
     @Inject
@@ -43,15 +43,10 @@ public class DesktopWindowManager {
     public void closeActiveWindow() {
         final List<Widget> reverse = Lists.reverse(windowManager.getStack());
         for (Widget w : reverse) {
-            if(w instanceof IPlantWindowInterface){
-                ((Window)w).hide();
+            if (w instanceof IPlantWindowInterface) {
+                ((Window) w).hide();
             }
         }
-
-    }
-
-    void setDesktopContainer(Element desktopContainer) {
-        this.desktopContainer = desktopContainer;
     }
 
     public void show(final WindowState windowState) {
@@ -66,7 +61,7 @@ public class DesktopWindowManager {
      * Shows the last focused instance of a window of the give type, or creates a new window.
      * This method also provides a 'cycling' affect, where windows of the given WindowType are in
      * focus (on top of the stack) are sent to the back so the next WindowType can be focused.
-     *
+     * <p/>
      * This method works on the assumption that the {@code Window.getStateId()} begins with the
      * string value of its corresponding {@code WindowType}.
      *
@@ -157,9 +152,13 @@ public class DesktopWindowManager {
         }
         final Window window = (Window) windowFactory.build(config);
         window.setStateId(constructWindowId(config));
-        if(desktopContainer != null){
+        if (desktopContainer != null) {
             window.setContainer(desktopContainer);
         }
         return window;
+    }
+
+    void setDesktopContainer(Element desktopContainer) {
+        this.desktopContainer = desktopContainer;
     }
 }

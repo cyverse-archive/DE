@@ -4,8 +4,7 @@
              xmlns:desktopBtn='urn:import:org.iplantc.de.client.newDesktop.views.widgets'
              xmlns:menu='urn:import:com.sencha.gxt.widget.core.client.menu'
              xmlns:widget='urn:import:org.iplantc.de.client.newDesktop.views.widgets'
-             xmlns:anchors='urn:import:org.iplantc.de.commons.client.widgets'
-             xmlns:taskbar='urn:import:org.iplantc.de.client.desktop.widget'>
+             xmlns:anchors='urn:import:org.iplantc.de.commons.client.widgets'>
 
     <ui:with field="appearance"
              type="org.iplantc.de.client.newDesktop.NewDesktopView.DesktopAppearance"/>
@@ -84,8 +83,8 @@
                                config="{appearance.feedbackBtnConfig}"/>
         </div>
         <!--Footer-->
-        <taskbar:TaskBar ui:field="taskBar"
-                         addStyleNames="{appearance.styles.taskBarLayout}"/>
+        <widget:TaskBar ui:field="taskBar"
+                        addStyleNames="{appearance.styles.taskBarLayout}"/>
     </g:HTMLPanel>
 
 </ui:UiBinder>

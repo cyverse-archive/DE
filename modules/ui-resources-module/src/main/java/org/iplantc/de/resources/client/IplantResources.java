@@ -211,14 +211,6 @@ public interface IplantResources extends ClientBundle, AppResources, DiskResourc
     ImageResource delete();
 
     /**
-     * Image resource for window title-bars and the taskbar.
-     * 
-     * @return image.
-     */
-    @Source("whitelogo_sm.png")
-    ImageResource whitelogoSmall();
-
-    /**
      * Image resource.
      * 
      * @return image.

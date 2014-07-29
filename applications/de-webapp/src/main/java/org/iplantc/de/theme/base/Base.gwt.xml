@@ -20,4 +20,12 @@
         <when-type-is class="org.iplantc.de.client.newDesktop.views.widgets.UnseenNotificationsView.UnseenNotificationsAppearance"/>
     </replace-with>
 
+    <replace-with class="org.iplantc.de.theme.base.client.desktop.views.taskbar.TaskBarBaseAppearance">
+        <when-type-is class="org.iplantc.de.client.newDesktop.views.widgets.TaskBar.TaskBarAppearance"/>
+    </replace-with>
+
+    <replace-with class="org.iplantc.de.theme.base.client.desktop.views.taskButton.TaskButtonCellDefaultAppearance">
+        <when-type-is class="org.iplantc.de.client.newDesktop.views.widgets.TaskButtonCell.TaskButtonCellAppearance"/>
+    </replace-with>
+
 </module>
