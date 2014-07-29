@@ -51,6 +51,8 @@ public class DesktopPresenterEventHandler implements PreferencesUpdatedEvent.Pre
         String fileJson = JsonUtil.getObject(obj, "file").toString();
         duc.onCompletion(event.getFilepath(), fileJson);
         // FIXME JDS refactor this and roll user notification posting into presenter
+        // FIXME JDS Have diskResource presenter listen to this and perform refresh
+
     }
 
     @Override

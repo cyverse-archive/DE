@@ -238,8 +238,6 @@ public class DesktopPresenterWindowEventHandler implements EditAppEvent.EditAppE
                                        UriUtils.fromTrustedString(clientConstants.fileUploadServlet()),
                                        userInfo.getUsername()).show();
         }
-        // TODO JDS Possibly move this into where event is fired.
-        // it is merely opening a dialog
     }
 
     @Override

@@ -237,6 +237,15 @@ public class NewDesktopViewImpl implements NewDesktopView, UnregisterEvent.Unreg
         notificationsListView.onUnseenCountUpdated(count);
     }
 
+    @Override
+    public void setUnseenSystemMessageCount(int count) {
+        String labelText = displayStrings.systemMessagesLabel();
+        if(count > 0) {
+            labelText += " (" + count + ")";
+        }
+        systemMsgsBtn.setText(labelText);
+    }
+
     @UiHandler("notificationsListView")
     void onUnseenNotificationSelected(SelectionEvent<NotificationMessage> event){
         presenter.onNotificationSelected(event.getSelectedItem());
