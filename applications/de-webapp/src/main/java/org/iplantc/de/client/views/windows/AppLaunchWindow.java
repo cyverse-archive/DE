@@ -1,6 +1,5 @@
 package org.iplantc.de.client.views.windows;
 
-import org.iplantc.de.apps.integration.shared.AppIntegrationModule;
 import org.iplantc.de.apps.widgets.client.events.AnalysisLaunchEvent;
 import org.iplantc.de.apps.widgets.client.events.AnalysisLaunchEvent.AnalysisLaunchEventHandler;
 import org.iplantc.de.apps.widgets.client.gin.AppLaunchInjector;
@@ -19,12 +18,13 @@ import org.iplantc.de.commons.client.info.ErrorAnnouncementConfig;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
 import org.iplantc.de.commons.client.views.window.configs.AppWizardConfig;
 import org.iplantc.de.commons.client.views.window.configs.ConfigFactory;
-import org.iplantc.de.shared.DeModule;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.web.bindery.autobean.shared.AutoBeanCodex;
 import com.google.web.bindery.autobean.shared.AutoBeanUtils;
+
+import com.sencha.gxt.widget.core.client.container.SimpleContainer;
 
 public class AppLaunchWindow extends IplantWindowBase implements AnalysisLaunchEventHandler {
 
@@ -44,17 +44,17 @@ public class AppLaunchWindow extends IplantWindowBase implements AnalysisLaunchE
                 AppLaunchWindow.this.hide();
                 return;
             }
+            AppLaunchWindow.this.clear();
             presenter1.go(AppLaunchWindow.this, result);
             AppLaunchWindow.this.setHeadingText(presenter1.getAppTemplate().getLabel());
             AppLaunchWindow.this.fireEvent(new WindowHeadingUpdatedEvent());
             // KLUDGE JDS This call to forceLayout should not be necessary.
             AppLaunchWindow.this.forceLayout();
-            AppLaunchWindow.this.unmask();
         }
 
         @Override
         public void onFailure(Throwable caught) {
-            AppLaunchWindow.this.unmask();
+            AppLaunchWindow.this.clear();
             ErrorHandler.post(org.iplantc.de.resources.client.messages.I18N.ERROR.unableToRetrieveWorkflowGuide(), caught);
         }
     }
@@ -84,7 +84,10 @@ public class AppLaunchWindow extends IplantWindowBase implements AnalysisLaunchE
     }
 
     private void init(final AppLaunchView.Presenter presenter, AppWizardConfig config) {
-        mask(org.iplantc.de.resources.client.messages.I18N.DISPLAY.loadingMask());
+        SimpleContainer sc = new SimpleContainer();
+        this.setWidget(sc);
+
+        sc.mask(org.iplantc.de.resources.client.messages.I18N.DISPLAY.loadingMask());
         if (config.getAppTemplate() != null) {
             AppTemplateCallbackConverter cnvt = new AppTemplateCallbackConverter(factory, dcServices,
                     new AsyncCallback<AppTemplate>() {
@@ -92,8 +95,8 @@ public class AppLaunchWindow extends IplantWindowBase implements AnalysisLaunchE
                         @Override
                         public void onSuccess(AppTemplate result) {
                             setHeadingText(result.getLabel());
+                            AppLaunchWindow.this.clear();
                             presenter.go(AppLaunchWindow.this, result);
-                            AppLaunchWindow.this.unmask();
                         }
 
                         @Override

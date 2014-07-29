@@ -475,9 +475,9 @@ public abstract class AbstractDiskResourceSelector<R extends DiskResource> exten
     abstract protected boolean validateDropStatus(Set<DiskResource> dropData, StatusProxy status);
 
     private void doGetStat(final R value) {
-        final String diskResourceId = value.getPath();
+        final String diskResourcePath = value.getPath();
         HasPaths diskResourcePaths = drServiceFacade.getDiskResourceFactory().pathsList().as();
-        diskResourcePaths.setPaths(Lists.newArrayList(diskResourceId));
+        diskResourcePaths.setPaths(Lists.newArrayList(diskResourcePath));
 
         permissionEditorError = null;
         existsEditorError = null;
@@ -495,10 +495,10 @@ public abstract class AbstractDiskResourceSelector<R extends DiskResource> exten
                                         if (serviceError.getErrorCode()
                                                         .equals(ServiceErrorCode.ERR_DOES_NOT_EXIST.toString())) {
                                             existsEditorError = new DefaultEditorError(input,
-                                                                                       errorStrings.diskResourceDoesNotExist(diskResourceId),
-                                                                                       diskResourceId);
+                                                                                       errorStrings.diskResourceDoesNotExist(diskResourcePath),
+                                                                                       diskResourcePath);
                                             errors.add(existsEditorError);
-                                            setInfoErrorText(errorStrings.diskResourceDoesNotExist(diskResourceId));
+                                            setInfoErrorText(errorStrings.diskResourceDoesNotExist(diskResourcePath));
                                             ValueChangeEvent.fire(AbstractDiskResourceSelector.this,
                                                                   value);
                                         }
@@ -511,19 +511,19 @@ public abstract class AbstractDiskResourceSelector<R extends DiskResource> exten
                                         } else {
                                             ValueChangeEvent.fire(AbstractDiskResourceSelector.this,
                                                                   value);
-                                            DiskResource diskResource = result.get(diskResourceId);
+                                            DiskResource diskResource = result.get(diskResourcePath);
                                             String infoText = getInfoText();
                                             if (diskResource == null) {
                                                 permissionEditorError = new DefaultEditorError(input,
                                                                                                I18N.DISPLAY.permissionSelectErrorMessage(),
-                                                                                               diskResourceId);
+                                                                                               diskResourcePath);
                                                 errors.add(permissionEditorError);
                                                 input.showErrors(Lists.<EditorError> newArrayList(permissionEditorError));
                                                 setInfoErrorText(I18N.DISPLAY.permissionSelectErrorMessage());
                                             } else if (!(DiskResourceUtil.isWritable(diskResource) || DiskResourceUtil.isOwner(diskResource))) {
                                                 permissionEditorError = new DefaultEditorError(input,
                                                                                                I18N.DISPLAY.permissionSelectErrorMessage(),
-                                                                                               diskResourceId);
+                                                                                               diskResourcePath);
                                                 errors.add(permissionEditorError);
                                                 input.showErrors(Lists.<EditorError> newArrayList(permissionEditorError));
                                                 setInfoErrorText(I18N.DISPLAY.permissionSelectErrorMessage());
