@@ -272,7 +272,7 @@ public class StrcturedTextViewerImpl extends StructuredTextViewer {
             } else {
                 rowEditing = null;
                 toolbar.setEditing(false);
-                grid.setToolTip("");
+                grid.removeToolTip();
                 return;
             }
 

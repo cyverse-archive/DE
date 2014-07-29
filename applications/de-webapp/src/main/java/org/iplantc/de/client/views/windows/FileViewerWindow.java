@@ -36,7 +36,6 @@ import com.sencha.gxt.widget.core.client.PlainTabPanel;
 import com.sencha.gxt.widget.core.client.box.MessageBox;
 import com.sencha.gxt.widget.core.client.event.DialogHideEvent;
 
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -168,7 +167,6 @@ public class FileViewerWindow extends IplantWindowBase implements IsMaskable {
             });
             cmb.show();
         } else {
-            LOG.log(Level.SEVERE, "close <<<<<");
             presenter.cleanUp();
             super.doHide();
             doClose();
