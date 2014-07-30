@@ -20,7 +20,7 @@ import com.sencha.gxt.widget.core.client.event.ShowEvent.HasShowHandlers;
 /**
  * This interface is intended to be used by the DE Desktop presenter for all primary iPlant windows.
  * 
- * FIXME Rename this file to "IPlantWindow" and rename "IPlantWindow" -> "IPlantWindowImpl"
+ * FIXME REFACTOR Rename this file to "IPlantWindow" and rename "IPlantWindow" -> "IPlantWindowImpl"
  * 
  * @author jstroot
  * 

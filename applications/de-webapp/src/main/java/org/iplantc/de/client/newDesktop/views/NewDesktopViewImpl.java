@@ -204,7 +204,7 @@ public class NewDesktopViewImpl implements NewDesktopView, UnregisterEvent.Unreg
         taskBar.ensureDebugId(baseID + DeModule.Ids.TASK_BAR);
 
 
-        // TODO JDS Set debug ids for user settings menu
+        // FIXME JDS Set debug ids for user settings menu
     }
 
     @Override

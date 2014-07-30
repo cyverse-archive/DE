@@ -31,7 +31,7 @@ import com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer;
 /**
  * Presenter will have to listen for deletes and update the store
  * Created by jstroot on 7/24/14.
- * TODO JDS Fold all strings into appearance
+ * FIXME REFACTOR JDS Fold all strings into appearance
  */
 public class UnseenNotificationsView extends Composite implements StoreClearEvent.StoreClearHandler<NotificationMessage>,
                                                                   StoreAddEvent.StoreAddHandler<NotificationMessage>,

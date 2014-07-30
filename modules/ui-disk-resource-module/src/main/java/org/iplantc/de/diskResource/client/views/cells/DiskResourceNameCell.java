@@ -42,7 +42,7 @@ import com.sencha.gxt.widget.core.client.tips.Tip;
  * TODO JDS Implement preview tooltip. Tooltip will probably have to be {@link Tip}, since this is a cell
  * and not a widget.
  *
- * FIXME This cell needs an appearance
+ * FIXME REFACTOR This cell needs an appearance
  * @author jstroot
  * 
  */

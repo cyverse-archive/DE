@@ -276,7 +276,7 @@ public class NewDesktopPresenterImpl implements NewDesktopView.Presenter {
     }
 
     /**
-     * FIXME JDS The manage collaborators presenter should be used here, not the view.
+     * FIXME REFACTOR JDS The manage collaborators presenter should be used here, not the view.
      */
     @Override
     public void onCollaboratorsClick() {
@@ -303,12 +303,12 @@ public class NewDesktopPresenterImpl implements NewDesktopView.Presenter {
         WindowUtil.open(commonUiConstants.forumsUrl());
     }
 
+    /**
+     * FIXME REFACTOR JDS Create notifications module and move this implementation there
+     * @param selectedItem
+     */
     @Override
     public void onNotificationSelected(final NotificationMessage selectedItem) {
-        /* TODO JDS Eventually, this should be migrated to notifications
-                    when notifications is factored into its own module.
-         */
-
         checkNotNull(selectedItem);
         checkNotNull(selectedItem.getCategory());
         checkNotNull(selectedItem.getContext());

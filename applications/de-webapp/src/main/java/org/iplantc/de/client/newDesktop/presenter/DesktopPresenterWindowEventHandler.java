@@ -248,8 +248,9 @@ public class DesktopPresenterWindowEventHandler implements EditAppEvent.EditAppE
                                       diskResourceServiceProvider.get(),
                                       userInfo.getUsername()).show();
         }
-        // TODO JDS Possibly move this into where event is fired.
-        // it is merely opening a dialog
+        /* FIXME REFACTOR JDS Possibly move this into where event is fired.
+         *                it is merely opening a dialog
+         */
     }
 
     @Override

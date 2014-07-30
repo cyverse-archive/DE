@@ -50,15 +50,15 @@ public class DesktopPresenterEventHandler implements UserSettingsUpdatedEventHan
         JSONObject obj = JsonUtil.getObject(event.getResponse());
         String fileJson = JsonUtil.getObject(obj, "file").toString();
         duc.onCompletion(event.getFilepath(), fileJson);
-        // FIXME JDS refactor this and roll user notification posting into presenter
-        // FIXME JDS Have diskResource presenter listen to this and perform refresh
+        // FIXME REFACTOR JDS move user notification posting from DefaultUpload...Handler into desktop presenter
+        // FIXME REFACTOR JDS Have diskResource presenter listen to this and perform refresh
 
     }
 
     @Override
     public void onUpdate(UserSettingsUpdatedEvent usue) {
         presenter.saveUserSettings(userSettings);
-        /* FIXME JDS Change this to "lastPathUpdated" or similar
+        /* FIXME REFACTOR JDS Change this to "lastPathUpdated" or similar
          *           This event is ONLY used to update the last path from file selector fields, etc
          *           It would be more declarative to fire an event which communicates that
          *           "last path has been updated".

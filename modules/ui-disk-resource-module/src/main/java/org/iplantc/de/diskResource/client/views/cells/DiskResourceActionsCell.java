@@ -33,7 +33,7 @@ import com.google.gwt.safehtml.shared.SafeUri;
 import com.google.gwt.user.client.Event;
 
 /**
- * FIXME This cell needs an appearance
+ * FIXME REFACTOR This cell needs an appearance
  */
 public class DiskResourceActionsCell extends AbstractCell<DiskResource> {
 

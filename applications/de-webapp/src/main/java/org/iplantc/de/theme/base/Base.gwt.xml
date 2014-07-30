@@ -2,7 +2,7 @@
         "http://google-web-toolkit.googlecode.com/svn/releases/2.0/distro-source/core/src/gwt-module.dtd">
 <module>
 <!--This module currently has a circular dependency with discovery environment module.
-      TODO: need to break this circular dependency
+      FIXME: need to break this circular dependency
       Possibly by creating a DE core module. Then, the primary module will just be an entry point
       which references the desktop view.-->
     <inherits name='com.google.gwt.user.User'/>
