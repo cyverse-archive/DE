@@ -2,7 +2,6 @@ package org.iplantc.de.client.newDesktop.presenter;
 
 import static org.iplantc.de.commons.client.collaborators.presenter.ManageCollaboratorsPresenter.MODE.MANAGE;
 import org.iplantc.de.client.DEClientConstants;
-import org.iplantc.de.client.desktop.layout.DesktopLayoutType;
 import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.events.WindowCloseRequestEvent;
 import org.iplantc.de.client.models.DEProperties;
@@ -442,12 +441,6 @@ public class NewDesktopPresenterImpl implements NewDesktopView.Presenter {
      */
     void fetchRecentNotifications() {
         messageServiceFacade.getRecentMessages(new RuntimeCallbacks.GetRecentNotificationsCallback(displayStrings, notificationFactory, view, notifyInfo));
-    }
-
-    void organizeWindows(DesktopLayoutType type) {
-
-        // TODO Implement window organizing logic
-
     }
 
     void postBootstrap(final Panel panel) {

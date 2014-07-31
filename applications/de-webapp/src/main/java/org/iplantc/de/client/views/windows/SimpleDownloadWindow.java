@@ -28,7 +28,7 @@ public class SimpleDownloadWindow extends IplantWindowBase {
     private final DeResources res = GWT.create(DeResources.class);
 
     public SimpleDownloadWindow(SimpleDownloadWindowConfig config) {
-        super(null, false, true, true, true);
+        super(null, true);
         res.css().ensureInjected();
         setHeadingText(org.iplantc.de.resources.client.messages.I18N.DISPLAY.download());
         setSize("320", "320");

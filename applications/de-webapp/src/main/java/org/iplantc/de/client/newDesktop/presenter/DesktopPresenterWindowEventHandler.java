@@ -11,7 +11,6 @@ import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.events.ShowAboutWindowEvent;
 import org.iplantc.de.client.events.ShowSystemMessagesEvent;
 import org.iplantc.de.client.events.WindowCloseRequestEvent;
-import org.iplantc.de.client.events.WindowLayoutRequestEvent;
 import org.iplantc.de.client.events.WindowShowRequestEvent;
 import org.iplantc.de.client.events.diskResources.OpenFolderEvent;
 import org.iplantc.de.client.idroplite.util.IDropLiteUtil;
@@ -81,8 +80,7 @@ public class DesktopPresenterWindowEventHandler implements EditAppEvent.EditAppE
                                                            RequestBulkUploadEvent.RequestBulkUploadEventHandler,
                                                            RequestImportFromUrlEvent.RequestImportFromUrlEventHandler,
                                                            RequestSimpleDownloadEvent.RequestSimpleDownloadEventHandler,
-                                                           RequestSimpleUploadEvent.RequestSimpleUploadEventHandler,
-                                                           WindowLayoutRequestEvent.WindowLayoutRequestEventHandler {
+                                                           RequestSimpleUploadEvent.RequestSimpleUploadEventHandler {
 
     @Inject
     DEClientConstants clientConstants;
@@ -265,11 +263,6 @@ public class DesktopPresenterWindowEventHandler implements EditAppEvent.EditAppE
     }
 
     @Override
-    public void onWindowLayoutRequest(WindowLayoutRequestEvent event) {
-        presenter.organizeWindows(event.getType());
-    }
-
-    @Override
     public void onWindowShowRequest(WindowShowRequestEvent event) {
         presenter.show(event.getWindowConfig(), event.updateWithConfig());
     }
@@ -401,9 +394,6 @@ public class DesktopPresenterWindowEventHandler implements EditAppEvent.EditAppE
         handlerRegistration = eventBus.addHandler(RequestSimpleDownloadEvent.TYPE, this);
         registrations.add(handlerRegistration);
         handlerRegistration = eventBus.addHandler(RequestSimpleUploadEvent.TYPE, this);
-        registrations.add(handlerRegistration);
-
-        handlerRegistration = eventBus.addHandler(WindowLayoutRequestEvent.TYPE, this);
         registrations.add(handlerRegistration);
     }
 }

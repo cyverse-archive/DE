@@ -2,9 +2,6 @@ package org.iplantc.de.client.views.windows;
 
 import org.iplantc.de.client.Constants;
 import org.iplantc.de.client.DeResources;
-import org.iplantc.de.client.desktop.layout.DesktopLayoutType;
-import org.iplantc.de.client.events.EventBus;
-import org.iplantc.de.client.events.WindowLayoutRequestEvent;
 import org.iplantc.de.client.models.WindowState;
 import org.iplantc.de.commons.client.views.window.configs.WindowConfig;
 import org.iplantc.de.resources.client.IplantResources;
@@ -18,8 +15,6 @@ import com.google.gwt.event.dom.client.MouseOutEvent;
 import com.google.gwt.event.dom.client.MouseOutHandler;
 import com.google.gwt.event.dom.client.MouseOverEvent;
 import com.google.gwt.event.dom.client.MouseOverHandler;
-import com.google.gwt.event.logical.shared.SelectionEvent;
-import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.web.bindery.autobean.shared.AutoBean;
@@ -27,13 +22,11 @@ import com.google.web.bindery.autobean.shared.AutoBeanCodex;
 import com.google.web.bindery.autobean.shared.AutoBeanFactory;
 import com.google.web.bindery.autobean.shared.AutoBeanUtils;
 import com.google.web.bindery.autobean.shared.Splittable;
-import com.google.web.bindery.event.shared.HandlerRegistration;
 
 import com.sencha.gxt.core.client.dom.XDOM;
 import com.sencha.gxt.core.client.dom.XElement;
 import com.sencha.gxt.core.client.util.Point;
 import com.sencha.gxt.core.client.util.Util;
-import com.sencha.gxt.widget.core.client.Status;
 import com.sencha.gxt.widget.core.client.Window;
 import com.sencha.gxt.widget.core.client.button.ToolButton;
 import com.sencha.gxt.widget.core.client.event.MaximizeEvent;
@@ -41,14 +34,8 @@ import com.sencha.gxt.widget.core.client.event.MaximizeEvent.MaximizeHandler;
 import com.sencha.gxt.widget.core.client.event.RestoreEvent;
 import com.sencha.gxt.widget.core.client.event.SelectEvent;
 import com.sencha.gxt.widget.core.client.event.SelectEvent.SelectHandler;
-import com.sencha.gxt.widget.core.client.menu.Item;
 import com.sencha.gxt.widget.core.client.menu.Menu;
 import com.sencha.gxt.widget.core.client.menu.MenuItem;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * @author jstroot
@@ -60,7 +47,6 @@ public abstract class IplantWindowBase extends Window implements IPlantWindowInt
     }
 
     protected WindowConfig config;
-    protected Status status;
 
     protected boolean isMaximizable;
     protected boolean maximized;
@@ -72,11 +58,6 @@ public abstract class IplantWindowBase extends Window implements IPlantWindowInt
     private ToolButton btnRestore;
     private ToolButton btnClose;
 
-    /**
-     * Used to store the <code>HandlerRegistration</code>s of widgets when needed.
-     */
-    private final Map<Widget, List<HandlerRegistration>> handlerRegMap = new HashMap<Widget, List<HandlerRegistration>>();
-
     private final DeResources res = GWT.create(DeResources.class);
 
     private final WindowStateFactory wsf = GWT.create(WindowStateFactory.class);
@@ -87,43 +68,36 @@ public abstract class IplantWindowBase extends Window implements IPlantWindowInt
      * @param tag a unique identifier for the window.
      */
     protected IplantWindowBase(String tag) {
-        this(tag, false, true, false, true);
+        this(tag, false);
     }
 
-    public IplantWindowBase(IPlantWindowAppearance appearance) {
-        super(appearance);
+    protected IplantWindowBase(final String tag,
+                               final WindowConfig config) {
+        this(tag, true, config);
     }
 
-    protected IplantWindowBase(final String tag, final WindowConfig config) {
-        this(tag, false, true, true, true, config);
-    }
-
-    protected IplantWindowBase(String tag, boolean haveStatus, boolean isMinimizable,
-            boolean isMaximizable, boolean isClosable, WindowConfig config) {
-        this(tag, haveStatus, isMinimizable, isMaximizable, isClosable);
+    protected IplantWindowBase(String tag,
+                               boolean isMaximizable,
+                               WindowConfig config) {
+        this(tag, isMaximizable);
         this.config = config;
     }
 
-    public IplantWindowBase(String tag, boolean haveStatus, boolean isMinimizable,
-            boolean isMaximizable, boolean isClosable) {
+    public IplantWindowBase(String tag,
+                            boolean isMaximizable) {
         super(GWT.<IPlantWindowAppearance> create(IPlantWindowAppearance.class));
         res.css().ensureInjected();
         setStateId(tag);
         this.isMaximizable = isMaximizable;
 
-        if (haveStatus) {
-            status = new Status();
-            getHeader().addTool(status);
-            status.hide();
-        }
-
+        // Add Layout button
         btnLayout = createLayoutButton();
         getHeader().addTool(btnLayout);
 
-        if (isMinimizable) {
-            btnMinimize = createMinimizeButton();
-            getHeader().addTool(btnMinimize);
-        }
+        // Add minimizable button
+        btnMinimize = createMinimizeButton();
+        getHeader().addTool(btnMinimize);
+
         if (isMaximizable) {
             btnMaximize = createMaximizeButton();
             // SRI: if a window is maximizable, then it is restorable.
@@ -132,10 +106,9 @@ public abstract class IplantWindowBase extends Window implements IPlantWindowInt
             getHeader().sinkEvents(Event.ONDBLCLICK);
             getHeader().addHandler(createHeaderDblClickHandler(), DoubleClickEvent.getType());
         }
-        if (isClosable) {
-            btnClose = createCloseButton();
-            getHeader().addTool(btnClose);
-        }
+        // Add close button
+        btnClose = createCloseButton();
+        getHeader().addTool(btnClose);
 
         // Turn off default window buttons.
         setMaximizable(false);
@@ -203,69 +176,37 @@ public abstract class IplantWindowBase extends Window implements IPlantWindowInt
         layoutBtn.sinkEvents(Event.ONMOUSEOUT);
         layoutBtn.setToolTip("Layout");
         final Menu m = new Menu();
-        m.add(buildCascadeLayoutMenuItem());
-        m.add(buildTileLayoutMenuItem());
+        // FIXME JDS Reimplement layout button which has position left/right.
+//        m.add(buildCascadeLayoutMenuItem());
+//        m.add(buildTileLayoutMenuItem());
+        MenuItem left = new MenuItem("Left");
+        MenuItem right = new MenuItem("Right");
 
-        ArrayList<HandlerRegistration> hrList = new ArrayList<HandlerRegistration>();
-        HandlerRegistration reg;
-        reg = layoutBtn.addSelectHandler(new SelectHandler() {
+        m.add(left);
+        m.add(right);
+
+        layoutBtn.addSelectHandler(new SelectHandler() {
             @Override
             public void onSelect(SelectEvent event) {
                 m.showAt(layoutBtn.getAbsoluteLeft() + 10, layoutBtn.getAbsoluteTop() + 15);
             }
         });
-        hrList.add(reg);
 
-        reg = layoutBtn.addHandler(new MouseOverHandler() {
+        layoutBtn.addHandler(new MouseOverHandler() {
             @Override
             public void onMouseOver(MouseOverEvent event) {
                 layoutBtn.addStyleName(res.css().xToolLayoutwindowHover());
             }
         }, MouseOverEvent.getType());
-        hrList.add(reg);
 
-        reg = layoutBtn.addHandler(new MouseOutHandler() {
+        layoutBtn.addHandler(new MouseOutHandler() {
             @Override
             public void onMouseOut(MouseOutEvent event) {
                 layoutBtn.removeStyleName(res.css().xToolLayoutwindowHover());
             }
         }, MouseOutEvent.getType());
-        hrList.add(reg);
-
-        handlerRegMap.put(layoutBtn, hrList);
 
         return layoutBtn;
-    }
-
-    private MenuItem buildCascadeLayoutMenuItem() {
-        MenuItem item = new MenuItem(DesktopLayoutType.CASCADE.toString());
-        item.addSelectionHandler(new SelectionHandler<Item>() {
-
-            @Override
-            public void onSelection(SelectionEvent<Item> event) {
-                fireLayoutRequest(DesktopLayoutType.CASCADE);
-            }
-        });
-
-        return item;
-    }
-
-    private MenuItem buildTileLayoutMenuItem() {
-        MenuItem item = new MenuItem(DesktopLayoutType.TILE.toString());
-        item.addSelectionHandler(new SelectionHandler<Item>() {
-
-            @Override
-            public void onSelection(SelectionEvent<Item> event) {
-                fireLayoutRequest(DesktopLayoutType.TILE);
-            }
-        });
-
-        return item;
-    }
-
-    private void fireLayoutRequest(DesktopLayoutType type) {
-        WindowLayoutRequestEvent event = new WindowLayoutRequestEvent(type);
-        EventBus.getInstance().fireEvent(event);
     }
 
     @Override
@@ -284,34 +225,28 @@ public abstract class IplantWindowBase extends Window implements IPlantWindowInt
         maxBtn.sinkEvents(Event.ONMOUSEOUT);
         maxBtn.setToolTip(org.iplantc.de.resources.client.messages.I18N.DISPLAY.maximize());
 
-        ArrayList<HandlerRegistration> hrList = new ArrayList<HandlerRegistration>();
-        HandlerRegistration reg;
-        reg = maxBtn.addSelectHandler(new SelectHandler() {
+        maxBtn.addSelectHandler(new SelectHandler() {
 
             @Override
             public void onSelect(SelectEvent event) {
                 setMaximized(true);
             }
         });
-        hrList.add(reg);
 
-        reg = maxBtn.addHandler(new MouseOverHandler() {
+        maxBtn.addHandler(new MouseOverHandler() {
             @Override
             public void onMouseOver(MouseOverEvent event) {
                 maxBtn.addStyleName(res.css().xToolMaximizewindowHover());
             }
         }, MouseOverEvent.getType());
-        hrList.add(reg);
 
-        reg = maxBtn.addHandler(new MouseOutHandler() {
+        maxBtn.addHandler(new MouseOutHandler() {
             @Override
             public void onMouseOut(MouseOutEvent event) {
                 maxBtn.removeStyleName(res.css().xToolMaximizewindowHover());
             }
         }, MouseOutEvent.getType());
-        hrList.add(reg);
 
-        handlerRegMap.put(maxBtn, hrList);
         return maxBtn;
     }
 
@@ -320,33 +255,27 @@ public abstract class IplantWindowBase extends Window implements IPlantWindowInt
         btnRestore.sinkEvents(Event.ONMOUSEOUT);
         btnRestore.setToolTip(org.iplantc.de.resources.client.messages.I18N.DISPLAY.restore());
 
-        ArrayList<HandlerRegistration> hrList = new ArrayList<HandlerRegistration>();
-        HandlerRegistration reg;
-        reg = btnRestore.addSelectHandler(new SelectHandler() {
+        btnRestore.addSelectHandler(new SelectHandler() {
             @Override
             public void onSelect(SelectEvent event) {
                 setMaximized(false);
             }
         });
-        hrList.add(reg);
 
-        reg = btnRestore.addHandler(new MouseOverHandler() {
+        btnRestore.addHandler(new MouseOverHandler() {
             @Override
             public void onMouseOver(MouseOverEvent event) {
                 btnRestore.addStyleName(res.css().xToolRestorewindowHover());
             }
         }, MouseOverEvent.getType());
-        hrList.add(reg);
 
-        reg = btnRestore.addHandler(new MouseOutHandler() {
+        btnRestore.addHandler(new MouseOutHandler() {
             @Override
             public void onMouseOut(MouseOutEvent event) {
                 btnRestore.removeStyleName(res.css().xToolRestorewindowHover());
             }
         }, MouseOutEvent.getType());
-        hrList.add(reg);
 
-        handlerRegMap.put(btnRestore, hrList);
         return btnRestore;
     }
 
