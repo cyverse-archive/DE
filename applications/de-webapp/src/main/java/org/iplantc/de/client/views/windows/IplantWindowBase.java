@@ -39,7 +39,6 @@ import com.sencha.gxt.widget.core.client.menu.MenuItem;
 
 /**
  * @author jstroot
- * 
  */
 public abstract class IplantWindowBase extends Window implements IPlantWindowInterface {
     interface WindowStateFactory extends AutoBeanFactory {
@@ -51,20 +50,17 @@ public abstract class IplantWindowBase extends Window implements IPlantWindowInt
     protected boolean isMaximizable;
     protected boolean maximized;
     protected boolean minimized;
-
-    private ToolButton btnLayout;
-    private ToolButton btnMinimize;
-    private ToolButton btnMaximize;
-    private ToolButton btnRestore;
-    private ToolButton btnClose;
-
     private final DeResources res = GWT.create(DeResources.class);
-
     private final WindowStateFactory wsf = GWT.create(WindowStateFactory.class);
+    private ToolButton btnClose;
+    private ToolButton btnLayout;
+    private ToolButton btnMaximize;
+    private ToolButton btnMinimize;
+    private ToolButton btnRestore;
 
     /**
      * Constructs an instance of the window.
-     * 
+     *
      * @param tag a unique identifier for the window.
      */
     protected IplantWindowBase(String tag) {
@@ -85,7 +81,7 @@ public abstract class IplantWindowBase extends Window implements IPlantWindowInt
 
     public IplantWindowBase(String tag,
                             boolean isMaximizable) {
-        super(GWT.<IPlantWindowAppearance> create(IPlantWindowAppearance.class));
+        super(GWT.<IPlantWindowAppearance>create(IPlantWindowAppearance.class));
         res.css().ensureInjected();
         setStateId(tag);
         this.isMaximizable = isMaximizable;
@@ -136,10 +132,6 @@ public abstract class IplantWindowBase extends Window implements IPlantWindowInt
         });
     }
 
-    protected void doHide() {
-        hide();
-    }
-
     @Override
     public Point adjustPositionForView(Point position) {
         // We need to parse the string width and height here, since the window's element may not be
@@ -150,7 +142,7 @@ public abstract class IplantWindowBase extends Window implements IPlantWindowInt
         int maxX = XDOM.getViewportWidth();
         int maxY = XDOM.getViewportHeight();
 
-        XElement container = (XElement)getContainer();
+        XElement container = (XElement) getContainer();
         if (container != null) {
             maxX = container.getBounds().getWidth();
             maxY = container.getBounds().getHeight();
@@ -171,143 +163,99 @@ public abstract class IplantWindowBase extends Window implements IPlantWindowInt
         return adjusted;
     }
 
-    private ToolButton createLayoutButton() {
-        final ToolButton layoutBtn = new ToolButton(res.css().xToolLayoutwindow());
-        layoutBtn.sinkEvents(Event.ONMOUSEOUT);
-        layoutBtn.setToolTip("Layout");
-        final Menu m = new Menu();
-        // FIXME JDS Reimplement layout button which has position left/right.
-//        m.add(buildCascadeLayoutMenuItem());
-//        m.add(buildTileLayoutMenuItem());
-        MenuItem left = new MenuItem("Left");
-        MenuItem right = new MenuItem("Right");
+    @Override
+    public int getHeaderOffSetHeight() {
+        return getHeader().getOffsetHeight();
+    }
 
-        m.add(left);
-        m.add(right);
+    @Override
+    public Point getPosition3(boolean b) {
+        return getElement().getPosition(b);
+    }
 
-        layoutBtn.addSelectHandler(new SelectHandler() {
-            @Override
-            public void onSelect(SelectEvent event) {
-                m.showAt(layoutBtn.getAbsoluteLeft() + 10, layoutBtn.getAbsoluteTop() + 15);
+    @Override
+    public String getTitle() {
+        return getHeader().getText();
+    }
+
+    @Override
+    public void setTitle(String wintitle) {
+        setHeadingText(wintitle);
+    }
+
+    @Override
+    public boolean isMaximized() {
+        return maximized;
+    }
+
+    @Override
+    public void setMaximized(boolean maximize) {
+        if (isMaximizable) {
+            this.maximized = maximize;
+
+            if (maximize) {
+                maximize();
+                btnRestore.removeStyleName(res.css().xToolRestorewindowHover());
+            } else {
+                restore();
+                btnMaximize.removeStyleName(res.css().xToolMaximizewindowHover());
             }
-        });
+        }
+    }
 
-        layoutBtn.addHandler(new MouseOverHandler() {
-            @Override
-            public void onMouseOver(MouseOverEvent event) {
-                layoutBtn.addStyleName(res.css().xToolLayoutwindowHover());
-            }
-        }, MouseOverEvent.getType());
+    @Override
+    public boolean isMinimized() {
+        return minimized;
+    }
 
-        layoutBtn.addHandler(new MouseOutHandler() {
-            @Override
-            public void onMouseOut(MouseOutEvent event) {
-                layoutBtn.removeStyleName(res.css().xToolLayoutwindowHover());
-            }
-        }, MouseOutEvent.getType());
+    @Override
+    public void setMinimized(boolean min) {
+        minimized = min;
+    }
 
-        return layoutBtn;
+    @Override
+    public void minimize() {
+        super.minimize();
+        setMinimized(true);
+        hide();
+    }
+
+    @Override
+    public void setPixelSize(int width, int height) {
+        super.setPixelSize(width, height);
+    }
+
+    @Override
+    public <C extends WindowConfig> void update(C config) {
+    }
+
+    protected <C extends WindowConfig> WindowState createWindowState(C config) {
+        WindowState ws = wsf.windowState().as();
+        ws.setConfigType(config.getWindowType());
+        ws.setMaximized(isMaximized());
+        ws.setMinimized(!isVisible());
+        ws.setWinLeft(getAbsoluteLeft());
+        ws.setWinTop(getAbsoluteTop());
+        ws.setWidth(getElement().getWidth(true));
+        ws.setHeight(getElement().getHeight(true));
+        Splittable configSplittable = AutoBeanCodex.encode(AutoBeanUtils.getAutoBean(config));
+        ws.setWindowConfig(configSplittable);
+        return ws;
+    }
+
+    protected void doHide() {
+        hide();
     }
 
     @Override
     protected void onEnsureDebugId(String baseID) {
-      super.onEnsureDebugId(baseID);
+        super.onEnsureDebugId(baseID);
 
-      btnMaximize.ensureDebugId(baseID + DeModule.Ids.WIN_MAX_BTN);
-      btnMinimize.ensureDebugId(baseID + DeModule.Ids.WIN_MIN_BTN);
-      btnRestore.ensureDebugId(baseID + DeModule.Ids.WIN_RESTORE_BTN);
-      btnClose.ensureDebugId(baseID + DeModule.Ids.WIN_CLOSE_BTN);
-      btnLayout.ensureDebugId(baseID + DeModule.Ids.WIN_LAYOUT_BTN);
-  }
-
-  private ToolButton createMaximizeButton() {
-        final ToolButton maxBtn = new ToolButton(res.css().xToolMaximizewindow());
-        maxBtn.sinkEvents(Event.ONMOUSEOUT);
-        maxBtn.setToolTip(org.iplantc.de.resources.client.messages.I18N.DISPLAY.maximize());
-
-        maxBtn.addSelectHandler(new SelectHandler() {
-
-            @Override
-            public void onSelect(SelectEvent event) {
-                setMaximized(true);
-            }
-        });
-
-        maxBtn.addHandler(new MouseOverHandler() {
-            @Override
-            public void onMouseOver(MouseOverEvent event) {
-                maxBtn.addStyleName(res.css().xToolMaximizewindowHover());
-            }
-        }, MouseOverEvent.getType());
-
-        maxBtn.addHandler(new MouseOutHandler() {
-            @Override
-            public void onMouseOut(MouseOutEvent event) {
-                maxBtn.removeStyleName(res.css().xToolMaximizewindowHover());
-            }
-        }, MouseOutEvent.getType());
-
-        return maxBtn;
-    }
-
-    private ToolButton createRestoreButton() {
-        final ToolButton btnRestore = new ToolButton(res.css().xToolRestorewindow());
-        btnRestore.sinkEvents(Event.ONMOUSEOUT);
-        btnRestore.setToolTip(org.iplantc.de.resources.client.messages.I18N.DISPLAY.restore());
-
-        btnRestore.addSelectHandler(new SelectHandler() {
-            @Override
-            public void onSelect(SelectEvent event) {
-                setMaximized(false);
-            }
-        });
-
-        btnRestore.addHandler(new MouseOverHandler() {
-            @Override
-            public void onMouseOver(MouseOverEvent event) {
-                btnRestore.addStyleName(res.css().xToolRestorewindowHover());
-            }
-        }, MouseOverEvent.getType());
-
-        btnRestore.addHandler(new MouseOutHandler() {
-            @Override
-            public void onMouseOut(MouseOutEvent event) {
-                btnRestore.removeStyleName(res.css().xToolRestorewindowHover());
-            }
-        }, MouseOutEvent.getType());
-
-        return btnRestore;
-    }
-
-    private ToolButton createMinimizeButton() {
-        final ToolButton newMinBtn = new ToolButton(res.css().xToolMinimizewindow());
-        newMinBtn.sinkEvents(Event.ONMOUSEOUT);
-        newMinBtn.setToolTip(org.iplantc.de.resources.client.messages.I18N.DISPLAY.minimize());
-
-        newMinBtn.addSelectHandler(new SelectHandler() {
-            @Override
-            public void onSelect(SelectEvent event) {
-                minimized = true;
-                minimize();
-                newMinBtn.removeStyleName(res.css().xToolMinimizewindowHover());
-            }
-        });
-
-        newMinBtn.addHandler(new MouseOverHandler() {
-            @Override
-            public void onMouseOver(MouseOverEvent event) {
-                newMinBtn.addStyleName(res.css().xToolMinimizewindowHover());
-            }
-        }, MouseOverEvent.getType());
-
-        newMinBtn.addHandler(new MouseOutHandler() {
-            @Override
-            public void onMouseOut(MouseOutEvent event) {
-                newMinBtn.removeStyleName(res.css().xToolMinimizewindowHover());
-            }
-        }, MouseOutEvent.getType());
-
-        return newMinBtn;
+        btnMaximize.ensureDebugId(baseID + DeModule.Ids.WIN_MAX_BTN);
+        btnMinimize.ensureDebugId(baseID + DeModule.Ids.WIN_MIN_BTN);
+        btnRestore.ensureDebugId(baseID + DeModule.Ids.WIN_RESTORE_BTN);
+        btnClose.ensureDebugId(baseID + DeModule.Ids.WIN_CLOSE_BTN);
+        btnLayout.ensureDebugId(baseID + DeModule.Ids.WIN_LAYOUT_BTN);
     }
 
     private ToolButton createCloseButton() {
@@ -355,9 +303,154 @@ public abstract class IplantWindowBase extends Window implements IPlantWindowInt
         return handler;
     }
 
+    private ToolButton createLayoutButton() {
+        final ToolButton layoutBtn = new ToolButton(res.css().xToolLayoutwindow());
+        layoutBtn.sinkEvents(Event.ONMOUSEOUT);
+        layoutBtn.setToolTip("Layout");
+        final Menu m = new Menu();
+        // FIXME JDS Reimplement layout button which has position left/right.
+//        m.add(buildCascadeLayoutMenuItem());
+//        m.add(buildTileLayoutMenuItem());
+        MenuItem left = new MenuItem("Left");
+        MenuItem right = new MenuItem("Right");
+
+        m.add(left);
+        m.add(right);
+
+        layoutBtn.addSelectHandler(new SelectHandler() {
+            @Override
+            public void onSelect(SelectEvent event) {
+                m.showAt(layoutBtn.getAbsoluteLeft() + 10, layoutBtn.getAbsoluteTop() + 15);
+            }
+        });
+
+        layoutBtn.addHandler(new MouseOverHandler() {
+            @Override
+            public void onMouseOver(MouseOverEvent event) {
+                layoutBtn.addStyleName(res.css().xToolLayoutwindowHover());
+            }
+        }, MouseOverEvent.getType());
+
+        layoutBtn.addHandler(new MouseOutHandler() {
+            @Override
+            public void onMouseOut(MouseOutEvent event) {
+                layoutBtn.removeStyleName(res.css().xToolLayoutwindowHover());
+            }
+        }, MouseOutEvent.getType());
+
+        return layoutBtn;
+    }
+
+    private ToolButton createMaximizeButton() {
+        final ToolButton maxBtn = new ToolButton(res.css().xToolMaximizewindow());
+        maxBtn.sinkEvents(Event.ONMOUSEOUT);
+        maxBtn.setToolTip(org.iplantc.de.resources.client.messages.I18N.DISPLAY.maximize());
+
+        maxBtn.addSelectHandler(new SelectHandler() {
+
+            @Override
+            public void onSelect(SelectEvent event) {
+                setMaximized(true);
+            }
+        });
+
+        maxBtn.addHandler(new MouseOverHandler() {
+            @Override
+            public void onMouseOver(MouseOverEvent event) {
+                maxBtn.addStyleName(res.css().xToolMaximizewindowHover());
+            }
+        }, MouseOverEvent.getType());
+
+        maxBtn.addHandler(new MouseOutHandler() {
+            @Override
+            public void onMouseOut(MouseOutEvent event) {
+                maxBtn.removeStyleName(res.css().xToolMaximizewindowHover());
+            }
+        }, MouseOutEvent.getType());
+
+        return maxBtn;
+    }
+
+    private ToolButton createMinimizeButton() {
+        final ToolButton newMinBtn = new ToolButton(res.css().xToolMinimizewindow());
+        newMinBtn.sinkEvents(Event.ONMOUSEOUT);
+        newMinBtn.setToolTip(org.iplantc.de.resources.client.messages.I18N.DISPLAY.minimize());
+
+        newMinBtn.addSelectHandler(new SelectHandler() {
+            @Override
+            public void onSelect(SelectEvent event) {
+                minimized = true;
+                minimize();
+                newMinBtn.removeStyleName(res.css().xToolMinimizewindowHover());
+            }
+        });
+
+        newMinBtn.addHandler(new MouseOverHandler() {
+            @Override
+            public void onMouseOver(MouseOverEvent event) {
+                newMinBtn.addStyleName(res.css().xToolMinimizewindowHover());
+            }
+        }, MouseOverEvent.getType());
+
+        newMinBtn.addHandler(new MouseOutHandler() {
+            @Override
+            public void onMouseOut(MouseOutEvent event) {
+                newMinBtn.removeStyleName(res.css().xToolMinimizewindowHover());
+            }
+        }, MouseOutEvent.getType());
+
+        return newMinBtn;
+    }
+
+    private ToolButton createRestoreButton() {
+        final ToolButton btnRestore = new ToolButton(res.css().xToolRestorewindow());
+        btnRestore.sinkEvents(Event.ONMOUSEOUT);
+        btnRestore.setToolTip(org.iplantc.de.resources.client.messages.I18N.DISPLAY.restore());
+
+        btnRestore.addSelectHandler(new SelectHandler() {
+            @Override
+            public void onSelect(SelectEvent event) {
+                setMaximized(false);
+            }
+        });
+
+        btnRestore.addHandler(new MouseOverHandler() {
+            @Override
+            public void onMouseOver(MouseOverEvent event) {
+                btnRestore.addStyleName(res.css().xToolRestorewindowHover());
+            }
+        }, MouseOverEvent.getType());
+
+        btnRestore.addHandler(new MouseOutHandler() {
+            @Override
+            public void onMouseOut(MouseOutEvent event) {
+                btnRestore.removeStyleName(res.css().xToolRestorewindowHover());
+            }
+        }, MouseOutEvent.getType());
+
+        return btnRestore;
+    }
+
+    private int findToolButtonIndex(String btnToolName) {
+        int toolCount = getHeader().getToolCount();
+        int index = -1;
+
+        for (int i = 0; i < toolCount; i++) {
+            Widget tool = getHeader().getTool(i);
+            String fullStyle = tool.getStyleName();
+
+            if (fullStyle.contains(btnToolName)) {
+                index = i;
+                break;
+            }
+        }
+
+        return index;
+    }
+
     /**
      * Replaces the maximize icon with the restore icon.
-     * 
+     * <p/>
      * The restore icon is only visible to the user when a window is in maximized state.
      */
     private void replaceMaximizeIcon() {
@@ -380,103 +473,6 @@ public abstract class IplantWindowBase extends Window implements IPlantWindowInt
             // re-insert maximize button at same index as restore button
             getHeader().insertTool(btnMaximize, index);
         }
-    }
-
-    private int findToolButtonIndex(String btnToolName) {
-        int toolCount = getHeader().getToolCount();
-        int index = -1;
-
-        for (int i = 0; i < toolCount; i++) {
-            Widget tool = getHeader().getTool(i);
-            String fullStyle = tool.getStyleName();
-
-            if (fullStyle.contains(btnToolName)) {
-                index = i;
-                break;
-            }
-        }
-
-        return index;
-    }
-
-    protected <C extends WindowConfig> WindowState createWindowState(C config) {
-        WindowState ws = wsf.windowState().as();
-        ws.setConfigType(config.getWindowType());
-        ws.setMaximized(isMaximized());
-        ws.setMinimized(!isVisible());
-        ws.setWinLeft(getAbsoluteLeft());
-        ws.setWinTop(getAbsoluteTop());
-        ws.setWidth(getElement().getWidth(true));
-        ws.setHeight(getElement().getHeight(true));
-        Splittable configSplittable = AutoBeanCodex.encode(AutoBeanUtils.getAutoBean(config));
-        ws.setWindowConfig(configSplittable);
-        return ws;
-    }
-
-    @Override
-    public void minimize() {
-        super.minimize();
-        setMinimized(true);
-        hide();
-    }
-
-    @Override
-    public Point getPosition3(boolean b) {
-        return getElement().getPosition(b);
-    }
-
-    @Override
-    public boolean isMaximized() {
-        return maximized;
-    }
-
-    @Override
-    public void setMaximized(boolean maximize) {
-        if (isMaximizable) {
-            this.maximized = maximize;
-
-            if (maximize) {
-                maximize();
-                btnRestore.removeStyleName(res.css().xToolRestorewindowHover());
-            } else {
-                restore();
-                btnMaximize.removeStyleName(res.css().xToolMaximizewindowHover());
-            }
-        }
-    }
-
-    @Override
-    public boolean isMinimized() {
-        return minimized;
-    }
-
-    @Override
-    public void setMinimized(boolean min) {
-        minimized = min;
-    }
-
-    @Override
-    public void setTitle(String wintitle) {
-        setHeadingText(wintitle);
-    }
-
-    @Override
-    public String getTitle() {
-        return getHeader().getText();
-    }
-
-    @Override
-    public void setPixelSize(int width, int height) {
-        super.setPixelSize(width, height);
-    }
-
-    @Override
-    public int getHeaderOffSetHeight() {
-        return getHeader().getOffsetHeight();
-    }
-
-    @Override
-    public <C extends WindowConfig> void update(C config) {
     }
 
 }
