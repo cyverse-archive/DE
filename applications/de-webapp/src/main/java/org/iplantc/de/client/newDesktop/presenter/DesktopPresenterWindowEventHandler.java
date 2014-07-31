@@ -8,7 +8,6 @@ import org.iplantc.de.apps.client.events.EditWorkflowEvent;
 import org.iplantc.de.apps.client.events.RunAppEvent;
 import org.iplantc.de.client.DEClientConstants;
 import org.iplantc.de.client.events.EventBus;
-import org.iplantc.de.client.events.ShowAboutWindowEvent;
 import org.iplantc.de.client.events.ShowSystemMessagesEvent;
 import org.iplantc.de.client.events.WindowCloseRequestEvent;
 import org.iplantc.de.client.events.WindowShowRequestEvent;
@@ -66,7 +65,6 @@ public class DesktopPresenterWindowEventHandler implements EditAppEvent.EditAppE
                                                            EditWorkflowEvent.EditWorkflowEventHandler,
                                                            ShowFilePreviewEvent.ShowFilePreviewEventHandler,
                                                            CreateNewFileEvent.CreateNewFileEventHandler,
-                                                           ShowAboutWindowEvent.ShowAboutWindowEventHandler,
                                                            WindowShowRequestEvent.WindowShowRequestEventHandler,
                                                            RunAppEvent.RunAppEventHandler,
                                                            ShowSystemMessagesEvent.Handler,
@@ -275,11 +273,6 @@ public class DesktopPresenterWindowEventHandler implements EditAppEvent.EditAppE
     }
 
     @Override
-    public void showAboutWindowRequested(ShowAboutWindowEvent event) {
-        presenter.show(ConfigFactory.aboutWindowConfig());
-    }
-
-    @Override
     public void showFilePreview(ShowFilePreviewEvent event) {
         FileViewerWindowConfig fileViewerWindowConfig;
         if (event.getConfig() == null) {
@@ -364,8 +357,6 @@ public class DesktopPresenterWindowEventHandler implements EditAppEvent.EditAppE
         handlerRegistration = eventBus.addHandler(ShowFilePreviewEvent.TYPE, this);
         registrations.add(handlerRegistration);
         handlerRegistration = eventBus.addHandler(CreateNewFileEvent.TYPE, this);
-        registrations.add(handlerRegistration);
-        handlerRegistration = eventBus.addHandler(ShowAboutWindowEvent.TYPE, this);
         registrations.add(handlerRegistration);
         handlerRegistration = eventBus.addHandler(WindowShowRequestEvent.TYPE, this);
         registrations.add(handlerRegistration);
