@@ -113,4 +113,8 @@ public class DesktopWindowManagerTest {
         verify(windowManagerMock).sendToBack(eq(window3));
         verify(windowManagerMock).bringToFront(eq(window2));
     }
+
+    @Test public void windowShownWhenUnregisteredButIsInTaskbar() {
+
+    }
 }

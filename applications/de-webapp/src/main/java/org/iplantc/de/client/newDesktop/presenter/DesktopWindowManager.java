@@ -2,6 +2,7 @@ package org.iplantc.de.client.newDesktop.presenter;
 
 import org.iplantc.de.client.models.WindowState;
 import org.iplantc.de.client.models.WindowType;
+import org.iplantc.de.client.newDesktop.views.widgets.TaskBar;
 import org.iplantc.de.client.views.windows.IPlantWindowInterface;
 import org.iplantc.de.client.views.windows.util.WindowFactory;
 import org.iplantc.de.commons.client.views.window.configs.ConfigFactory;
@@ -32,6 +33,7 @@ public class DesktopWindowManager {
     private final WindowFactory windowFactory;
     private final WindowManager windowManager;
     private Element desktopContainer;
+    private TaskBar taskBar;
 
     @Inject
     public DesktopWindowManager(final WindowManager windowManager,
@@ -160,5 +162,9 @@ public class DesktopWindowManager {
 
     void setDesktopContainer(Element desktopContainer) {
         this.desktopContainer = desktopContainer;
+    }
+
+    void setTaskBar(TaskBar taskBar){
+        this.taskBar = taskBar;
     }
 }

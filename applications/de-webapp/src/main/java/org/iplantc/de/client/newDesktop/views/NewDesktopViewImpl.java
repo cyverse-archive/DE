@@ -1,13 +1,13 @@
 package org.iplantc.de.client.newDesktop.views;
 
-import org.iplantc.de.client.newDesktop.views.widgets.TaskBar;
-import org.iplantc.de.client.newDesktop.views.widgets.TaskButton;
 import org.iplantc.de.client.models.UserSettings;
 import org.iplantc.de.client.models.notifications.NotificationMessage;
 import org.iplantc.de.client.newDesktop.NewDesktopView;
 import org.iplantc.de.client.newDesktop.views.widgets.DEFeedbackDialog;
 import org.iplantc.de.client.newDesktop.views.widgets.DesktopIconButton;
 import org.iplantc.de.client.newDesktop.views.widgets.PreferencesDialog;
+import org.iplantc.de.client.newDesktop.views.widgets.TaskBar;
+import org.iplantc.de.client.newDesktop.views.widgets.TaskButton;
 import org.iplantc.de.client.newDesktop.views.widgets.UnseenNotificationsView;
 import org.iplantc.de.client.views.windows.IPlantWindowInterface;
 import org.iplantc.de.commons.client.widgets.IPlantAnchor;
@@ -121,8 +121,7 @@ public class NewDesktopViewImpl implements NewDesktopView, UnregisterEvent.Unreg
             // If it already exists, mark button active
             for(TaskButton btn : taskBar.getButtons()){
                 if(btn.getWindow() == iplantWindow){
-                    // Mark button active
-                    btn.setValue(true);
+                    // If it already exists, do not re-add
                     return;
                 }
             }
@@ -136,7 +135,7 @@ public class NewDesktopViewImpl implements NewDesktopView, UnregisterEvent.Unreg
     public void onUnregister(UnregisterEvent<Widget> event) {
 
         final Widget eventItem = event.getItem();
-        if(eventItem instanceof IPlantWindowInterface){
+        if(eventItem instanceof IPlantWindowInterface) {
             IPlantWindowInterface iplantWindow = (IPlantWindowInterface) eventItem;
             TaskButton taskButton = null;
             for(TaskButton btn : taskBar.getButtons()){
@@ -145,10 +144,9 @@ public class NewDesktopViewImpl implements NewDesktopView, UnregisterEvent.Unreg
                     break;
                 }
             }
+
             Preconditions.checkNotNull(taskButton, "TaskButton should not be null");
             if(iplantWindow.isMinimized()){
-                // mark corresponding task button inactive
-                taskButton.setValue(false);
                 return;
             }
             // remove corresponding task button
@@ -215,6 +213,14 @@ public class NewDesktopViewImpl implements NewDesktopView, UnregisterEvent.Unreg
     @Override
     public ListStore<NotificationMessage> getNotificationStore() {
         return notificationsListView.getStore();
+    }
+
+    @Override
+    public TaskBar getTaskBar() {
+        // TODO JDS Not sure about this, but the windowmanager needs it.
+        // Inject it?
+        // Singleton inject THIS class?
+        return taskBar;
     }
 
     @Override

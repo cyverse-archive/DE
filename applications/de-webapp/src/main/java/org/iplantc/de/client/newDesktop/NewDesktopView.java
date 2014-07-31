@@ -4,6 +4,7 @@ import org.iplantc.de.client.models.IsHideable;
 import org.iplantc.de.client.models.UserSettings;
 import org.iplantc.de.client.models.WindowState;
 import org.iplantc.de.client.models.notifications.NotificationMessage;
+import org.iplantc.de.client.newDesktop.views.widgets.TaskBar;
 import org.iplantc.de.client.views.windows.IPlantWindowInterface;
 import org.iplantc.de.commons.client.views.window.configs.WindowConfig;
 
@@ -195,6 +196,8 @@ public interface NewDesktopView extends IsWidget {
     Element getDesktopContainer();
 
     ListStore<NotificationMessage> getNotificationStore();
+
+    TaskBar getTaskBar();
 
     void setPresenter(Presenter presenter);
 

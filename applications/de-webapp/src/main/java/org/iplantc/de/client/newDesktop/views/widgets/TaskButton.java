@@ -9,6 +9,9 @@ import com.google.common.base.Strings;
 
 import com.sencha.gxt.widget.core.client.Window;
 import com.sencha.gxt.widget.core.client.button.ToggleButton;
+import com.sencha.gxt.widget.core.client.event.MaximizeEvent;
+import com.sencha.gxt.widget.core.client.event.MinimizeEvent;
+import com.sencha.gxt.widget.core.client.event.ShowEvent;
 
 /**
  * Provides a task button that can be added to a task bar and indicates the current state of a desktop
@@ -17,7 +20,7 @@ import com.sencha.gxt.widget.core.client.button.ToggleButton;
  * 
  * @see TaskBar
  */
-public class TaskButton extends ToggleButton {
+public class TaskButton extends ToggleButton implements MinimizeEvent.MinimizeHandler, MaximizeEvent.MaximizeHandler, ShowEvent.ShowHandler {
 
     private final Window win;
 
@@ -27,16 +30,42 @@ public class TaskButton extends ToggleButton {
      * @param win a window containing a desktop application
      */
     public TaskButton(Window win) {
-        super(new TaskButtonCell(win));
-        setText(win.getTitle());
+        this(win, new TaskButtonCell(win));
+    }
+
+    TaskButton(Window win, TaskButtonCell cell){
+        super(cell);
+        setText(win.getHeader().getText());
         setIcon(getCell().getAppearance().getIcon());
         setHeight(getCell().getAppearance().getHeight());
         this.win = win;
+        setValue(true);
+        win.addMinimizeHandler(this);
+        win.addMaximizeHandler(this);
+        win.addShowHandler(this);
     }
+
 
     @Override
     public TaskButtonCell getCell() {
         return (TaskButtonCell) super.getCell();
+    }
+
+    @Override
+    public void onMaximize(MaximizeEvent event) {
+        // Set NOT toggled
+        setValue(false, false);
+    }
+
+    @Override
+    public void onMinimize(MinimizeEvent event) {
+        // Set toggled (button depressed)
+        setValue(true, false);
+    }
+
+    @Override
+    public void onShow(ShowEvent event) {
+        setValue(false, false);
     }
 
     @Override
