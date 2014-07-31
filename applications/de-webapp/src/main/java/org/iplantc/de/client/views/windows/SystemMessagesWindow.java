@@ -31,7 +31,7 @@ public final class SystemMessagesWindow extends IplantWindowBase {
     public SystemMessagesWindow(final SystemMessagesWindowConfig config) {
         super("", config);
         this.presenter = new MessagesPresenter(config.getSelectedMessage());
-        setTitle(I18N.DISPLAY.systemMessagesLabel());
+        setHeadingText(I18N.DISPLAY.systemMessagesLabel());
         this.setWidth(computeDefaultWidth());
         this.setHeight(computeDefaultHeight());
         presenter.go(this);

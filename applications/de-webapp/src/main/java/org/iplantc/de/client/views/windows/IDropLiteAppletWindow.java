@@ -25,8 +25,6 @@ import com.sencha.gxt.widget.core.client.box.ConfirmMessageBox;
 import com.sencha.gxt.widget.core.client.event.DeactivateEvent;
 import com.sencha.gxt.widget.core.client.event.DeactivateEvent.DeactivateHandler;
 import com.sencha.gxt.widget.core.client.event.DialogHideEvent;
-import com.sencha.gxt.widget.core.client.event.HideEvent;
-import com.sencha.gxt.widget.core.client.event.HideEvent.HideHandler;
 
 /**
  * @author sriram
@@ -93,10 +91,10 @@ public class IDropLiteAppletWindow extends IplantWindowBase {
         // Set the heading and add the correct simple mode button based on the applet display mode.
         int displayMode = idlwc.getDisplayMode();
         if (displayMode == IDropLiteUtil.DISPLAY_MODE_UPLOAD) {
-            setTitle(org.iplantc.de.resources.client.messages.I18N.DISPLAY.upload());
+            setHeadingText(org.iplantc.de.resources.client.messages.I18N.DISPLAY.upload());
 
         } else if (displayMode == IDropLiteUtil.DISPLAY_MODE_DOWNLOAD) {
-            setTitle(org.iplantc.de.resources.client.messages.I18N.DISPLAY.download());
+            setHeadingText(org.iplantc.de.resources.client.messages.I18N.DISPLAY.download());
         }
 
         return displayMode;

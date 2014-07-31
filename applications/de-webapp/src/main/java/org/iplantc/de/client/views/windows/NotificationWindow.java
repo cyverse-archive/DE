@@ -40,7 +40,7 @@ public class NotificationWindow extends IplantWindowBase {
 
     public NotificationWindow(NotifyWindowConfig config) {
         super(null, null);
-        setTitle(org.iplantc.de.resources.client.messages.I18N.DISPLAY.notifications());
+        setHeadingText(org.iplantc.de.resources.client.messages.I18N.DISPLAY.notifications());
         NotificationKeyProvider keyProvider = new NotificationKeyProvider();
         ListStore<NotificationMessage> store = new ListStore<NotificationMessage>(keyProvider);
         ColumnModel<NotificationMessage> cm = buildNotificationColumnModel();

@@ -5,10 +5,9 @@
  */
 package org.iplantc.de.client.newDesktop.views.widgets;
 
-import org.iplantc.de.client.views.windows.IPlantWindowInterface;
-
 import com.google.common.base.Strings;
 
+import com.sencha.gxt.widget.core.client.Window;
 import com.sencha.gxt.widget.core.client.button.ToggleButton;
 
 /**
@@ -20,14 +19,14 @@ import com.sencha.gxt.widget.core.client.button.ToggleButton;
  */
 public class TaskButton extends ToggleButton {
 
-    private final IPlantWindowInterface win;
+    private final Window win;
 
     /**
      * Creates a task button for the specified window.
      * 
      * @param win a window containing a desktop application
      */
-    public TaskButton(IPlantWindowInterface win) {
+    public TaskButton(Window win) {
         super(new TaskButtonCell(win));
         setText(win.getTitle());
         setIcon(getCell().getAppearance().getIcon());
@@ -48,7 +47,7 @@ public class TaskButton extends ToggleButton {
         }
     }
 
-    public IPlantWindowInterface getWindow(){
+    public Window getWindow(){
         return win;
     }
 }

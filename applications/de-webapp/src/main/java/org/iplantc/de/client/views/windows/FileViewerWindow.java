@@ -56,7 +56,7 @@ public class FileViewerWindow extends IplantWindowBase implements IsMaskable {
                  initWidget();
                  presenter.go(FileViewerWindow.this,
                               configAB.getParentFolder());
-                 presenter.setTitle(getTitle());
+                 presenter.setTitle(getHeader().getText());
                  unmask();
              } else {
                  onFailure(null);
@@ -104,7 +104,7 @@ public class FileViewerWindow extends IplantWindowBase implements IsMaskable {
                     tabPanel = null;
                     presenter.cleanUp();
                     getFileManifest();
-                    setTitle(file.getName());
+                    setHeadingText(file.getName());
                     presenter.setTitle(file.getName());
                 }
                 if (presenter != null) {
@@ -120,9 +120,9 @@ public class FileViewerWindow extends IplantWindowBase implements IsMaskable {
         setSize("800", "480");
         this.file = configAB.getFile();
         if (file != null) {
-            setTitle(file.getName());
+            setHeadingText(file.getName());
         } else {
-            setTitle("Untitled-" + Math.random());
+            setHeadingText("Untitled-" + Math.random());
         }
         getFileManifest();
 
@@ -211,7 +211,7 @@ public class FileViewerWindow extends IplantWindowBase implements IsMaskable {
                                                     configAB.isVizTabFirst());
                 initWidget();
                 presenter.go(FileViewerWindow.this, configAB.getParentFolder());
-                presenter.setTitle(getTitle());
+                presenter.setTitle(getHeader().getText());
                 unmask();
             }
         }

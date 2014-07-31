@@ -152,9 +152,9 @@ public class FileViewerPresenter implements FileViewer.Presenter {
 
     private void updateWindowTitle() {
         if (isDirty) {
-            container.setTitle(container.getTitle() + "<span style='color:red; vertical-align: super'> * </span>");
+            container.setHeadingText(container.getHeader().getText() + "<span style='color:red; vertical-align: super'> * </span>");
         } else {
-            container.setTitle(title);
+            container.setHeadingText(title);
         }
     }
 

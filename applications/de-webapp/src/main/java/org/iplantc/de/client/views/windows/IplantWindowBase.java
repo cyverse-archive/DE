@@ -1,6 +1,5 @@
 package org.iplantc.de.client.views.windows;
 
-import org.iplantc.de.client.Constants;
 import org.iplantc.de.client.DeResources;
 import org.iplantc.de.client.models.WindowState;
 import org.iplantc.de.commons.client.views.window.configs.WindowConfig;
@@ -23,10 +22,6 @@ import com.google.web.bindery.autobean.shared.AutoBeanFactory;
 import com.google.web.bindery.autobean.shared.AutoBeanUtils;
 import com.google.web.bindery.autobean.shared.Splittable;
 
-import com.sencha.gxt.core.client.dom.XDOM;
-import com.sencha.gxt.core.client.dom.XElement;
-import com.sencha.gxt.core.client.util.Point;
-import com.sencha.gxt.core.client.util.Util;
 import com.sencha.gxt.widget.core.client.Window;
 import com.sencha.gxt.widget.core.client.button.ToolButton;
 import com.sencha.gxt.widget.core.client.event.MaximizeEvent;
@@ -133,63 +128,11 @@ public abstract class IplantWindowBase extends Window implements IPlantWindowInt
     }
 
     @Override
-    public Point adjustPositionForView(Point position) {
-        // We need to parse the string width and height here, since the window's element may not be
-        // rendered yet, so those values could be 0 or something very large.
-        int offsetWidth = Util.parseInt(width, 0);
-        int offsetHeight = Util.parseInt(height, 0) + Constants.CLIENT.deTaskBarHeight();
-        // Calculate the maximum X and Y position for this window.
-        int maxX = XDOM.getViewportWidth();
-        int maxY = XDOM.getViewportHeight();
-
-        XElement container = (XElement) getContainer();
-        if (container != null) {
-            maxX = container.getBounds().getWidth();
-            maxY = container.getBounds().getHeight();
-        }
-
-        maxX = Math.max(maxX - offsetWidth, 0);
-        maxY = Math.max(maxY - offsetHeight, 0);
-
-        // Calculate the adjusted position.
-        Point adjusted = new Point(position.getX(), position.getY());
-        if (adjusted.getX() > maxX) {
-            adjusted.setX(0);
-        }
-        if (adjusted.getY() > maxY) {
-            adjusted.setY(Constants.CLIENT.deHeaderHeight());
-        }
-
-        return adjusted;
-    }
-
-    @Override
-    public int getHeaderOffSetHeight() {
-        return getHeader().getOffsetHeight();
-    }
-
-    @Override
-    public Point getPosition3(boolean b) {
-        return getElement().getPosition(b);
-    }
-
-    @Override
-    public String getTitle() {
-        return getHeader().getText();
-    }
-
-    @Override
-    public void setTitle(String wintitle) {
-        setHeadingText(wintitle);
-    }
-
-    @Override
     public boolean isMaximized() {
         return maximized;
     }
 
-    @Override
-    public void setMaximized(boolean maximize) {
+    void setMaximized(boolean maximize) {
         if (isMaximizable) {
             this.maximized = maximize;
 
@@ -208,8 +151,7 @@ public abstract class IplantWindowBase extends Window implements IPlantWindowInt
         return minimized;
     }
 
-    @Override
-    public void setMinimized(boolean min) {
+    void setMinimized(boolean min) {
         minimized = min;
     }
 

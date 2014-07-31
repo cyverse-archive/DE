@@ -5,7 +5,6 @@
  */
 package org.iplantc.de.client.newDesktop.views.widgets;
 
-import org.iplantc.de.client.views.windows.IPlantWindowInterface;
 import org.iplantc.de.theme.base.client.desktop.views.taskButton.TaskButtonCellDefaultAppearance;
 
 import com.google.gwt.cell.client.ValueUpdater;
@@ -18,6 +17,7 @@ import com.sencha.gxt.cell.core.client.form.ToggleButtonCell;
 import com.sencha.gxt.core.client.XTemplates;
 import com.sencha.gxt.core.client.dom.XElement;
 import com.sencha.gxt.core.client.util.Format;
+import com.sencha.gxt.widget.core.client.Window;
 import com.sencha.gxt.widget.core.client.WindowManager;
 
 /**
@@ -46,7 +46,7 @@ public class TaskButtonCell extends ToggleButtonCell {
         int getMaxTextLength();
     }
 
-    private final IPlantWindowInterface window;
+    private final Window window;
 
     /**
      * Constructs a task button cell with the default appearance.
@@ -55,7 +55,7 @@ public class TaskButtonCell extends ToggleButtonCell {
      * (specified as the argument to the create method) to a concrete implementation class, e.g.
      * {@link TaskButtonCellDefaultAppearance}. See {@code Desktop.gwt.xml} for more information.
      */
-    public TaskButtonCell(final IPlantWindowInterface window) {
+    public TaskButtonCell(final Window window) {
         this(GWT.<TaskButtonCellAppearance<Boolean>>create(TaskButtonCellAppearance.class), window);
     }
 
@@ -65,7 +65,7 @@ public class TaskButtonCell extends ToggleButtonCell {
      * @param appearance the appearance of the task button cell
      */
     public TaskButtonCell(TaskButtonCellAppearance<Boolean> appearance,
-                          final IPlantWindowInterface window) {
+                          final Window window) {
         super(appearance);
         this.window = window;
     }

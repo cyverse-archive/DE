@@ -2,13 +2,13 @@ package org.iplantc.de.client.newDesktop.views.widgets;
 
 import org.iplantc.de.client.events.WindowHeadingUpdatedEvent;
 import org.iplantc.de.client.events.WindowHeadingUpdatedEvent.WindowHeadingUpdatedEventHandler;
-import org.iplantc.de.client.views.windows.IPlantWindowInterface;
 
 import com.google.common.base.Strings;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.sencha.gxt.core.client.util.Padding;
+import com.sencha.gxt.widget.core.client.Window;
 import com.sencha.gxt.widget.core.client.toolbar.ToolBar;
 
 import java.util.LinkedList;
@@ -22,9 +22,9 @@ public class TaskBar extends ToolBar {
     private static class HeadingUpdatedEventHandler implements WindowHeadingUpdatedEventHandler {
 
         private final TaskButton taskButton;
-        private final IPlantWindowInterface win;
+        private final Window win;
 
-        public HeadingUpdatedEventHandler(TaskButton taskButton, IPlantWindowInterface win) {
+        public HeadingUpdatedEventHandler(TaskButton taskButton, Window win) {
             this.taskButton = taskButton;
             this.win = win;
         }
@@ -32,7 +32,7 @@ public class TaskBar extends ToolBar {
         @Override
         public void onWindowHeadingUpdated(WindowHeadingUpdatedEvent event) {
             if (Strings.isNullOrEmpty(event.getWindowTitle())) {
-                taskButton.setText(win.getTitle());
+                taskButton.setText(win.getHeader().getText());
             } else {
                 taskButton.setText(event.getWindowTitle());
             }
@@ -70,7 +70,7 @@ public class TaskBar extends ToolBar {
      * @param win the window
      * @return the new task button
      */
-    public TaskButton addTaskButton(final IPlantWindowInterface win) {
+    public TaskButton addTaskButton(final Window win) {
         final TaskButton taskButton = new TaskButton(win);
         add(taskButton, tbAppearance.getButtonLayoutData());
         autoSize();

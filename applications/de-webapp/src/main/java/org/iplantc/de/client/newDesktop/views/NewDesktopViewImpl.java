@@ -116,8 +116,8 @@ public class NewDesktopViewImpl implements NewDesktopView, UnregisterEvent.Unreg
     public void onRegister(RegisterEvent<Widget> event) {
         final Widget eventItem = event.getItem();
 
-        if(eventItem instanceof IPlantWindowInterface) {
-            IPlantWindowInterface iplantWindow = (IPlantWindowInterface) eventItem;
+        if(eventItem instanceof com.sencha.gxt.widget.core.client.Window) {
+            com.sencha.gxt.widget.core.client.Window iplantWindow = (com.sencha.gxt.widget.core.client.Window) eventItem;
             // If it already exists, mark button active
             for(TaskButton btn : taskBar.getButtons()){
                 if(btn.getWindow() == iplantWindow){

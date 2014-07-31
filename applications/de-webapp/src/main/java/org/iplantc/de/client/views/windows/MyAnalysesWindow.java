@@ -8,10 +8,9 @@ import org.iplantc.de.client.models.analysis.Analysis;
 import org.iplantc.de.commons.client.views.window.configs.AnalysisWindowConfig;
 import org.iplantc.de.commons.client.views.window.configs.ConfigFactory;
 import org.iplantc.de.commons.client.views.window.configs.WindowConfig;
+import org.iplantc.de.shared.DeModule;
 
 import com.google.common.collect.Lists;
-
-import org.iplantc.de.shared.DeModule;
 
 import java.util.List;
 
@@ -25,7 +24,7 @@ public class MyAnalysesWindow extends IplantWindowBase {
 
     public MyAnalysesWindow(AnalysisWindowConfig config) {
         super(null, null);
-        setTitle(org.iplantc.de.resources.client.messages.I18N.DISPLAY.analyses());
+        setHeadingText(org.iplantc.de.resources.client.messages.I18N.DISPLAY.analyses());
         setSize("670", "375");
         setMinWidth(400);
 

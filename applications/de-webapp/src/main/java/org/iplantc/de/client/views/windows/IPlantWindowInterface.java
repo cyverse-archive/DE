@@ -4,12 +4,8 @@ import org.iplantc.de.client.models.IsMinimizable;
 import org.iplantc.de.client.models.WindowState;
 import org.iplantc.de.commons.client.views.window.configs.WindowConfig;
 
-import com.google.gwt.dom.client.Element;
 import com.google.gwt.user.client.ui.IsWidget;
 
-import com.sencha.gxt.core.client.Style;
-import com.sencha.gxt.core.client.util.Point;
-import com.sencha.gxt.widget.core.client.Component;
 import com.sencha.gxt.widget.core.client.Window;
 import com.sencha.gxt.widget.core.client.event.ActivateEvent.HasActivateHandlers;
 import com.sencha.gxt.widget.core.client.event.DeactivateEvent.HasDeactivateHandlers;
@@ -26,60 +22,17 @@ import com.sencha.gxt.widget.core.client.event.ShowEvent.HasShowHandlers;
  * 
  */
 public interface IPlantWindowInterface extends HasActivateHandlers<Window>,
- HasDeactivateHandlers<Window>, HasMinimizeHandlers, HasHideHandlers, HasShowHandlers, IsWidget, IsMinimizable {
-
-    /**
-     * @see Component#getStateId()
-     */
-    String getStateId();
-
-    /**
-     * @see Component#setStateId(String)
-     */
-    void setStateId(String stateId);
-
-    void setPagePosition(int new_x, int new_y);
+                                               HasDeactivateHandlers<Window>,
+                                               HasMinimizeHandlers,
+                                               HasHideHandlers,
+                                               HasShowHandlers,
+                                               IsWidget,
+                                               IsMinimizable {
 
     void show();
     
     <C extends WindowConfig> void update(C config);
 
-    void toFront();
-
-    Point getPosition3(boolean b);
-
     WindowState getWindowState();
     
-    boolean isVisible();
-
-    boolean isResizable();
-
-    boolean isMaximized();
-
-    void setMaximized(boolean maximized);
-
-    void setMinimized(boolean min);
-
-    void setTitle(String wintitle);
-
-    String getTitle();
-
-    void setPixelSize(int width, int height);
-
-    void setPosition(int left, int top);
-
-    int getHeaderOffSetHeight();
-
-    void alignTo(Element elem, Style.AnchorAlignment alignment, int offsetX, int offsetY);
-
-    void hide();
-
-    /**
-     * Takes a Point representing a potential position for this window and returns an adjusted position
-     * that accounts for this window's width and height.
-     * 
-     * @param position A Point representing a potential position for this window.
-     * @return An adjusted position that accounts for this window's width and height.
-     */
-    Point adjustPositionForView(Point position);
 }

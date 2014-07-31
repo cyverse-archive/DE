@@ -103,7 +103,7 @@ public class AppEditorWindow extends IplantWindowBase implements AppPublishedEve
         templateService = ServicesInjector.INSTANCE.getAppTemplateServices();
         presenter = AppsEditorInjector.INSTANCE.getAppEditorPresenter();
         ensureDebugId(DeModule.Ids.APP_EDITOR_WINDOW);
-        setTitle(org.iplantc.de.resources.client.messages.I18N.DISPLAY.createApps());
+        setHeadingText(org.iplantc.de.resources.client.messages.I18N.DISPLAY.createApps());
         setSize("800", "480");
         setMinWidth(725);
         setMinHeight(375);
@@ -155,7 +155,7 @@ public class AppEditorWindow extends IplantWindowBase implements AppPublishedEve
                     });
             at.onSuccess(config.getAppTemplate().getPayload());
         } else if (Strings.isNullOrEmpty(config.getAppId()) || config.getAppId().equalsIgnoreCase(NEW_APP_ID)) {
-            setTitle(org.iplantc.de.resources.client.messages.I18N.DISPLAY.createApps());
+            setHeadingText(org.iplantc.de.resources.client.messages.I18N.DISPLAY.createApps());
             // Create empty AppTemplate
             AppTemplateAutoBeanFactory factory = GWT.create(AppTemplateAutoBeanFactory.class);
 

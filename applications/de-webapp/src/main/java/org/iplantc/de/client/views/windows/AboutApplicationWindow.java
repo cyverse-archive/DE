@@ -35,7 +35,7 @@ public class AboutApplicationWindow extends IplantWindowBase {
     public AboutApplicationWindow(AboutWindowConfig config) {
         super("");
         setSize("320", "260");
-        setTitle(I18N.DISPLAY.aboutDiscoveryEnvironment());
+        setHeadingText(I18N.DISPLAY.aboutDiscoveryEnvironment());
         executeServiceCall();
         res = GWT.create(DeResources.class);
         appearance = GWT.create(AboutApplicationAppearance.class);
