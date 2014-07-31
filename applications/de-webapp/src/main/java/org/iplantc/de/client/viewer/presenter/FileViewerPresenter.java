@@ -90,9 +90,9 @@ public class FileViewerPresenter implements FileViewer.Presenter {
             container.unmask();
         }
 
-        boolean treeViewer = DiskResourceUtil.isTreeTab(manifest);
-        boolean cogeViewer = DiskResourceUtil.isGenomeVizTab(manifest);
-        boolean ensembleViewer = DiskResourceUtil.isEnsemblVizTab(manifest);
+        boolean treeViewer = DiskResourceUtil.isTreeTab(DiskResourceUtil.createInfoTypeSplittable(infoType));
+        boolean cogeViewer = DiskResourceUtil.isGenomeVizTab(DiskResourceUtil.createInfoTypeSplittable(infoType));
+        boolean ensembleViewer = DiskResourceUtil.isEnsemblVizTab(DiskResourceUtil.createInfoTypeSplittable(infoType));
 
         if (treeViewer || cogeViewer || ensembleViewer) {
             cmd = MimeTypeViewerResolverFactory.getViewerCommand(MimeType.fromTypeString("viz"));

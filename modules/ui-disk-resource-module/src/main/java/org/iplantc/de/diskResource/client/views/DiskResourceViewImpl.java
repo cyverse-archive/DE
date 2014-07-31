@@ -44,8 +44,6 @@ import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.i18n.client.DateTimeFormat;
-import com.google.gwt.json.client.JSONObject;
-import com.google.gwt.json.client.JSONString;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiFactory;
@@ -59,6 +57,7 @@ import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
+import com.google.web.bindery.autobean.shared.Splittable;
 
 import com.sencha.gxt.core.client.Style.SelectionMode;
 import com.sencha.gxt.core.client.ValueProvider;
@@ -960,8 +959,7 @@ public class DiskResourceViewImpl extends Composite implements DiskResourceView,
         IPlantAnchor link = null;
         String infoType = info.getInfoType();
         if (infoType != null && !infoType.isEmpty()) {
-            JSONObject manifest = new JSONObject();
-            manifest.put("info-type", new JSONString(infoType));
+            Splittable manifest = DiskResourceUtil.createInfoTypeSplittable(infoType);
             if (DiskResourceUtil.isTreeTab(manifest)) {
                 link = new IPlantAnchor(displayStrings.treeViewer(), 100, new TreeViewerInfoClickHandler());
             } else if (DiskResourceUtil.isGenomeVizTab(manifest)) {

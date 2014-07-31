@@ -21,7 +21,6 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.json.client.JSONArray;
-import com.google.gwt.json.client.JSONObject;
 import com.google.web.bindery.autobean.shared.Splittable;
 import com.google.web.bindery.autobean.shared.impl.StringQuoter;
 
@@ -364,11 +363,11 @@ public class DiskResourceUtil {
         return dr.getPermission().equals(PermissionValue.own) || dr.getPermission().equals(PermissionValue.write);
     }
 
-    public static boolean checkManifest(JSONObject obj) {
+    public static boolean checkManifest(Splittable obj) {
         if (obj == null) {
             return false;
         }
-        String info_type = JsonUtil.getString(obj, "info-type");
+        String info_type = obj.get("info-type").asString();
         if (info_type == null || info_type.isEmpty()) {
             return false;
         }
@@ -376,9 +375,9 @@ public class DiskResourceUtil {
         return true;
     }
 
-    public static boolean isTreeTab(JSONObject obj) {
+    public static boolean isTreeTab(Splittable obj) {
         if (checkManifest(obj)) {
-            String infoType = JsonUtil.getString(obj, "info-type");
+            String infoType = obj.get("info-type").asString();
             return (infoType.equals(InfoType.NEXUS.toString()) || infoType.equals(InfoType.NEXML.toString()) || infoType.equals(InfoType.NEWICK.toString()) || infoType.equals(InfoType.PHYLOXML
                     .toString()));
         }
@@ -387,19 +386,19 @@ public class DiskResourceUtil {
 
     }
 
-    public static boolean isGenomeVizTab(JSONObject obj) {
+    public static boolean isGenomeVizTab(Splittable obj) {
         if (checkManifest(obj)) {
-            String info_type = JsonUtil.getString(obj, "info-type");
-            return (info_type.equals(InfoType.FASTA.toString()));
+            String infoType = obj.get("info-type").asString();
+            return (infoType.equals(InfoType.FASTA.toString()));
         }
 
         return false;
     }
 
-    public static boolean isEnsemblVizTab(JSONObject obj) {
+    public static boolean isEnsemblVizTab(Splittable obj) {
         if (checkManifest(obj)) {
-            String info_type = JsonUtil.getString(obj, "info-type");
-            return (info_type.equals(InfoType.BAM.toString()) || info_type.equals(InfoType.VCF.toString()) || info_type.equals(InfoType.GFF.toString()));
+            String infoType = obj.get("info-type").asString();
+            return (infoType.equals(InfoType.BAM.toString()) || infoType.equals(InfoType.VCF.toString()) || infoType.equals(InfoType.GFF.toString()));
         }
         return false;
     }
@@ -408,5 +407,11 @@ public class DiskResourceUtil {
         JSONArray jArr = JsonUtil.buildArrayFromStrings(asStringPathList(hasPathList));
 
         return StringQuoter.split(jArr.toString());
+    }
+
+    public static Splittable createInfoTypeSplittable(String infoType) {
+        Splittable s = StringQuoter.createSplittable();
+        StringQuoter.create(infoType).assign(s, "info-type");
+        return s;
     }
 }

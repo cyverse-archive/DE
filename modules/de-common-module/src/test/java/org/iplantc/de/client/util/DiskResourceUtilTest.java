@@ -6,15 +6,15 @@ import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.client.models.viewer.InfoType;
 
 import com.google.common.collect.Lists;
-import com.google.gwt.json.client.JSONObject;
 import com.google.gwtmockito.GwtMockitoTestRunner;
 import com.google.web.bindery.autobean.shared.Splittable;
 import com.google.web.bindery.autobean.shared.impl.StringQuoter;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -67,91 +67,83 @@ public class DiskResourceUtilTest {
     }
 
     @Test
-    @Ignore
     public void testTreeTab() {
         Splittable s = createInfoTypeSplittable(InfoType.ACE.toString());
-        JSONObject obj = JsonUtil.getObject(s.getPayload());
-        boolean expected = DiskResourceUtil.isTreeTab(obj);
-        assert (expected == false);
+        boolean expected = DiskResourceUtil.isTreeTab(s);
+        assertFalse(expected);
 
         s = createInfoTypeSplittable(InfoType.NEXUS.toString());
-        obj = JsonUtil.getObject(s.getPayload());
-        expected = DiskResourceUtil.isTreeTab(obj);
-        assert (expected == true);
+        expected = DiskResourceUtil.isTreeTab(s);
+        assertTrue(expected);
 
         s = createInfoTypeSplittable(InfoType.PHYLIP.toString());
-        obj = JsonUtil.getObject(s.getPayload());
-        expected = DiskResourceUtil.isTreeTab(obj);
-        assert (expected == true);
+        expected = DiskResourceUtil.isTreeTab(s);
+        assertFalse(expected);
+
+        s = createInfoTypeSplittable(InfoType.PHYLOXML.toString());
+        expected = DiskResourceUtil.isTreeTab(s);
+        assertTrue(expected);
 
         s = createInfoTypeSplittable(InfoType.NEWICK.toString());
-        obj = JsonUtil.getObject(s.getPayload());
-        expected = DiskResourceUtil.isTreeTab(obj);
-        assert (expected == true);
+        expected = DiskResourceUtil.isTreeTab(s);
+        assertTrue(expected);
 
         s = createInfoTypeSplittable("");
-        obj = JsonUtil.getObject(s.getPayload());
-        expected = DiskResourceUtil.isTreeTab(obj);
-        assert (expected == false);
+        expected = DiskResourceUtil.isTreeTab(s);
+        assertFalse(expected);
     }
 
     @Test
-    @Ignore
     public void testGenomeTab() {
         Splittable s = createInfoTypeSplittable(InfoType.ACE.toString());
-        JSONObject obj = JsonUtil.getObject(s.getPayload());
-        boolean expected = DiskResourceUtil.isTreeTab(obj);
-        assert (expected == false);
+        boolean expected = DiskResourceUtil.isGenomeVizTab(s);
+        assertFalse(expected);
 
         s = createInfoTypeSplittable(InfoType.FASTA.toString());
-        obj = JsonUtil.getObject(s.getPayload());
-        expected = DiskResourceUtil.isTreeTab(obj);
-        assert (expected == true);
+        expected = DiskResourceUtil.isGenomeVizTab(s);
+        assertTrue(expected);
 
     }
 
     @Test
-    @Ignore
     public void testEnsemblTab() {
         Splittable s = createInfoTypeSplittable(InfoType.ACE.toString());
-        JSONObject obj = JsonUtil.getObject(s.getPayload());
-        boolean expected = DiskResourceUtil.isTreeTab(obj);
-        assert (expected == false);
+        boolean expected = DiskResourceUtil.isEnsemblVizTab(s);
+        assertFalse(expected);
 
         s = createInfoTypeSplittable(InfoType.BAM.toString());
-        obj = JsonUtil.getObject(s.getPayload());
-        expected = DiskResourceUtil.isTreeTab(obj);
-        assert (expected == true);
+        expected = DiskResourceUtil.isEnsemblVizTab(s);
+        assertTrue(expected);
+
+        System.out.println("will it run ?");
 
         s = createInfoTypeSplittable(InfoType.VCF.toString());
-        obj = JsonUtil.getObject(s.getPayload());
-        expected = DiskResourceUtil.isTreeTab(obj);
-        assert (expected == true);
+        expected = DiskResourceUtil.isEnsemblVizTab(s);
+        assertTrue(expected);
 
         s = createInfoTypeSplittable(InfoType.GFF.toString());
-        obj = JsonUtil.getObject(s.getPayload());
-        expected = DiskResourceUtil.isTreeTab(obj);
-        assert (expected == true);
+        expected = DiskResourceUtil.isEnsemblVizTab(s);
+        assertTrue(expected);
     }
 
     @Test
     public void testExtractFolders() {
         List<DiskResource> resources = Arrays.asList(folder1, file1);
         ArrayList<Folder> expected = Lists.newArrayList(DiskResourceUtil.extractFolders(resources));
-        assert (expected.size() == 1);
+        assertTrue(expected.size() == 1);
 
         expected = Lists.newArrayList(DiskResourceUtil.extractFolders(Arrays.asList(file1)));
-        assert (expected.size() == 0);
+        assertTrue(expected.size() == 0);
     }
 
     @Test
     public void testExtractFiles() {
         List<DiskResource> resources = Arrays.asList(folder1, file1);
         ArrayList<File> expected = Lists.newArrayList(DiskResourceUtil.extractFiles(resources));
-        assert (expected.size() == 1);
+        assertTrue(expected.size() == 1);
 
         expected = Lists.newArrayList(DiskResourceUtil.extractFiles(Arrays.asList(folder1)));
-        assert (expected.size() == 0);
+        assertTrue(expected.size() == 0);
     }
 
 

@@ -105,15 +105,13 @@ public class ExternalVizualizationURLViwerImpl extends AbstractFileViewer implem
     }
 
     private void buildToolBar(String infoType) {
-        JSONObject manifest = new JSONObject();
-        manifest.put("info-type", new JSONString(infoType));
-        if (DiskResourceUtil.isTreeTab(manifest)) {
+        if (DiskResourceUtil.isTreeTab(DiskResourceUtil.createInfoTypeSplittable(infoType))) {
             TextButton button = buildTreeViewerButton();
             toolbar.add(button);
-        } else if (DiskResourceUtil.isGenomeVizTab(manifest)) {
+        } else if (DiskResourceUtil.isGenomeVizTab(DiskResourceUtil.createInfoTypeSplittable(infoType))) {
             TextButton button = buildCogeButton();
             toolbar.add(button);
-        } else if (DiskResourceUtil.isEnsemblVizTab(manifest)) {
+        } else if (DiskResourceUtil.isEnsemblVizTab(DiskResourceUtil.createInfoTypeSplittable(infoType))) {
             TextButton button = buildEnsemblButton();
             toolbar.add(button);
         }
