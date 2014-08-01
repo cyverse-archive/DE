@@ -14,6 +14,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -115,8 +116,6 @@ public class DiskResourceUtilTest {
         expected = DiskResourceUtil.isEnsemblVizTab(s);
         assertTrue(expected);
 
-        System.out.println("will it run ?");
-
         s = createInfoTypeSplittable(InfoType.VCF.toString());
         expected = DiskResourceUtil.isEnsemblVizTab(s);
         assertTrue(expected);
@@ -146,6 +145,21 @@ public class DiskResourceUtilTest {
         assertTrue(expected.size() == 0);
     }
 
+    @Test
+    public void testFormatFileSize() {
+        String expected = DiskResourceUtil.formatFileSize(null);
+        assertNull(expected);
+        expected = DiskResourceUtil.formatFileSize("");
+        assertNull(expected);
+        
+        try {
+            expected = DiskResourceUtil.formatFileSize("foo");
+            fail("Cannot parse this string into Double");
+        } catch (NumberFormatException nfe) {
+            System.out.println("failed with exception");
+        }
+
+    }
 
     private Splittable createInfoTypeSplittable(String infoType) {
         Splittable s = StringQuoter.createSplittable();
