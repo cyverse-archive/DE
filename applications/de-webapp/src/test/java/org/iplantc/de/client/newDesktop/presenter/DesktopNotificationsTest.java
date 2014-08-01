@@ -10,7 +10,9 @@ import org.iplantc.de.client.newDesktop.views.widgets.UnseenNotificationsView;
 import org.iplantc.de.client.services.MessageServiceFacade;
 import org.iplantc.de.client.sysmsgs.view.NewMessageView;
 import org.iplantc.de.client.utils.NotifyInfo;
+import org.iplantc.de.commons.client.info.IplantAnnouncer;
 import org.iplantc.de.commons.client.requests.KeepaliveTimer;
+import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 import org.iplantc.de.resources.client.messages.IplantNewUserTourStrings;
 
 import com.google.common.collect.Lists;
@@ -74,14 +76,17 @@ public class DesktopNotificationsTest {
                                                                   keepAliveTimerMock){
             @Override
             void setBrowserContextMenuEnabled(boolean enabled) {
+                // Test stub, Do nothing
             }
 
             @Override
             void initKBShortCuts() {
+                // Test stub, Do nothing
             }
 
             @Override
             void processQueryStrings() {
+                // Test stub, Do nothing
             }
         };
 
@@ -132,7 +137,12 @@ public class DesktopNotificationsTest {
                                                                             msgPollerMock,
                                                                             keepAliveTimerMock));
         testPresenter.messageServiceFacade = mock(MessageServiceFacade.class);
+        testPresenter.announcer = mock(IplantAnnouncer.class);
+        testPresenter.displayStrings = mock(IplantDisplayStrings.class);
+        when(testPresenter.displayStrings.markAllasSeenSuccess()).thenReturn("Mock success");
 
+        when(viewMock.getNotificationStore()).thenReturn(msgStoreMock);
+        when(msgStoreMock.getAll()).thenReturn(Lists.<NotificationMessage>newArrayList());
         UnseenNotificationsView testUnseenNotification = new UnseenNotificationsView();
         testUnseenNotification.setPresenter(testPresenter);
 

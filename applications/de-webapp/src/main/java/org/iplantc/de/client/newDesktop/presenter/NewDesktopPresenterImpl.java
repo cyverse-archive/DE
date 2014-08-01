@@ -171,7 +171,6 @@ public class NewDesktopPresenterImpl implements NewDesktopView.Presenter {
         this.messagePoller = messagePoller;
         this.desktopWindowManager = desktopWindowManager;
         this.desktopWindowManager.setDesktopContainer(view.getDesktopContainer());
-        this.desktopWindowManager.setTaskBar(view.getTaskBar());
         this.ssp = new SaveSessionPeriodic(this);
 
         this.view.setPresenter(this);

@@ -26,16 +26,17 @@ import java.util.List;
 public class NewDesktopViewImplTest {
 
     @Mock
-    IplantNewUserTourStrings tourStringsMock;
-    @Mock
-    WindowManager windowManagerMock;
-    @Mock
     RegisterEvent<Widget> registerEventMock;
     @Mock
+    IplantNewUserTourStrings tourStringsMock;
+    @Mock
     UnregisterEvent<Widget> unregisterEventMock;
+    @Mock
+    WindowManager windowManagerMock;
 
     @Test public void viewAddsTaskButtonWhenWindowIsRegistered() {
         NewDesktopViewImpl uut = new NewDesktopViewImpl(tourStringsMock, windowManagerMock);
+        verifyViewInit(uut);
         uut.taskBar = mock(TaskBar.class);
 
         TaskButton mockTaskButton = mock(TaskButton.class);
@@ -44,12 +45,16 @@ public class NewDesktopViewImplTest {
 
         final Window window = mock(Window.class);
         when(registerEventMock.getItem()).thenReturn(window);
+
+
         uut.onRegister(registerEventMock);
         verify(uut.taskBar).addTaskButton(eq(window));
+        verifyNoMoreInteractions(windowManagerMock);
     }
 
     @Test public void viewDoesNotAddNewTaskButtonsForExistingWindows() {
         NewDesktopViewImpl uut = new NewDesktopViewImpl(tourStringsMock, windowManagerMock);
+        verifyViewInit(uut);
         uut.taskBar = mock(TaskBar.class);
 
         TaskButton mockTaskButton = mock(TaskButton.class);
@@ -59,12 +64,39 @@ public class NewDesktopViewImplTest {
         final Window window = mock(Window.class);
         when(registerEventMock.getItem()).thenReturn(window);
         when(mockTaskButton.getWindow()).thenReturn(window);
+
+
         uut.onRegister(registerEventMock);
         verify(uut.taskBar, never()).addTaskButton(eq(window));
+        verifyNoMoreInteractions(windowManagerMock);
     }
 
-    @Test public void viewRemovesTaskButtonWhenWindowIsUnregisteredAndNotMinimized() {
+    @Test public void taskButtonNotRemovedWhenWindowIsUnregisteredAndMinimized() {
         NewDesktopViewImpl uut = new NewDesktopViewImpl(tourStringsMock, windowManagerMock);
+        verifyViewInit(uut);
+        uut.taskBar = mock(TaskBar.class);
+
+        TaskButton mockTaskButton = mock(TaskButton.class);
+        List<TaskButton> tbList = Lists.newArrayList(mockTaskButton);
+        when(uut.taskBar.getButtons()).thenReturn(tbList);
+
+        final Window window = mock(Window.class, withSettings().extraInterfaces(IPlantWindowInterface.class));
+        when(((IPlantWindowInterface) window).isMinimized()).thenReturn(true);
+        when(unregisterEventMock.getItem()).thenReturn(window);
+        when(mockTaskButton.getWindow()).thenReturn(window);
+
+
+        uut.onUnregister(unregisterEventMock);
+        verify(mockTaskButton).getWindow();
+        // Verify that window is re-registered with the window manager when the window is minimized
+        verify(windowManagerMock).register(eq(window));
+        verify(uut.taskBar, never()).removeTaskButton(any(TaskButton.class));
+        verifyNoMoreInteractions(mockTaskButton, windowManagerMock);
+    }
+
+    @Test public void taskButtonRemovedWhenWindowIsUnregisteredAndNotMinimized() {
+        NewDesktopViewImpl uut = new NewDesktopViewImpl(tourStringsMock, windowManagerMock);
+        verifyViewInit(uut);
         uut.taskBar = mock(TaskBar.class);
 
         TaskButton mockTaskButton = mock(TaskButton.class);
@@ -77,24 +109,11 @@ public class NewDesktopViewImplTest {
         uut.onUnregister(unregisterEventMock);
         verify(mockTaskButton).getWindow();
         verify(uut.taskBar).removeTaskButton(eq(mockTaskButton));
-        verifyNoMoreInteractions(mockTaskButton);
+        verifyNoMoreInteractions(mockTaskButton, windowManagerMock);
     }
 
-    @Test public void viewRemovesTaskButtonWhenWindowIsUnregisteredAndMinimized() {
-        NewDesktopViewImpl uut = new NewDesktopViewImpl(tourStringsMock, windowManagerMock);
-        uut.taskBar = mock(TaskBar.class);
-
-        TaskButton mockTaskButton = mock(TaskButton.class);
-        List<TaskButton> tbList = Lists.newArrayList(mockTaskButton);
-        when(uut.taskBar.getButtons()).thenReturn(tbList);
-
-        final Window window = mock(Window.class, withSettings().extraInterfaces(IPlantWindowInterface.class));
-        when(((IPlantWindowInterface)window).isMinimized()).thenReturn(true);
-        when(unregisterEventMock.getItem()).thenReturn(window);
-        when(mockTaskButton.getWindow()).thenReturn(window);
-        uut.onUnregister(unregisterEventMock);
-        verify(mockTaskButton).getWindow();
-        verify(uut.taskBar, never()).removeTaskButton(any(TaskButton.class));
-        verifyNoMoreInteractions(mockTaskButton);
+    private void verifyViewInit(NewDesktopViewImpl uut) {
+        verify(windowManagerMock).addRegisterHandler(eq(uut));
+        verify(windowManagerMock).addUnregisterHandler(eq(uut));
     }
 }

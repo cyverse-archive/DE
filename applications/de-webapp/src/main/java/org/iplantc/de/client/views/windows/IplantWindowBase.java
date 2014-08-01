@@ -51,7 +51,7 @@ public abstract class IplantWindowBase extends Window implements IPlantWindowInt
     private ToolButton btnLayout;
     private ToolButton btnMaximize;
     private ToolButton btnMinimize;
-    private ToolButton btnRestore;
+    ToolButton btnRestore;
 
     /**
      * Constructs an instance of the window.
@@ -138,6 +138,7 @@ public abstract class IplantWindowBase extends Window implements IPlantWindowInt
 
             if (maximize) {
                 maximize();
+                minimized = false;
                 btnRestore.removeStyleName(res.css().xToolRestorewindowHover());
             } else {
                 restore();
@@ -151,15 +152,17 @@ public abstract class IplantWindowBase extends Window implements IPlantWindowInt
         return minimized;
     }
 
-    void setMinimized(boolean min) {
-        minimized = min;
-    }
-
     @Override
     public void minimize() {
         super.minimize();
-        setMinimized(true);
+        minimized = true;
         hide();
+    }
+
+    @Override
+    protected void onShow() {
+        super.onShow();
+        minimized = false;
     }
 
     @Override

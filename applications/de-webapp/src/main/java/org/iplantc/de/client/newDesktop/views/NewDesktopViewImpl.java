@@ -94,12 +94,14 @@ public class NewDesktopViewImpl implements NewDesktopView, UnregisterEvent.Unreg
     private static NewViewUiBinder ourUiBinder = GWT.create(NewViewUiBinder.class);
     private final Widget widget;
     private final SpanElement notificationCountElement;
+    private final WindowManager windowManager;
     private NewDesktopView.Presenter presenter;
 
 
     @Inject
     public NewDesktopViewImpl(final IplantNewUserTourStrings tourStrings,
                               final WindowManager windowManager) {
+        this.windowManager = windowManager;
         notificationsListView = new UnseenNotificationsView();
         widget = ourUiBinder.createAndBindUi(this);
         notificationCountElement = Document.get().createSpanElement();
@@ -147,6 +149,8 @@ public class NewDesktopViewImpl implements NewDesktopView, UnregisterEvent.Unreg
 
             Preconditions.checkNotNull(taskButton, "TaskButton should not be null");
             if(iplantWindow.isMinimized()){
+                // Re register
+                windowManager.register(eventItem);
                 return;
             }
             // remove corresponding task button
@@ -213,14 +217,6 @@ public class NewDesktopViewImpl implements NewDesktopView, UnregisterEvent.Unreg
     @Override
     public ListStore<NotificationMessage> getNotificationStore() {
         return notificationsListView.getStore();
-    }
-
-    @Override
-    public TaskBar getTaskBar() {
-        // TODO JDS Not sure about this, but the windowmanager needs it.
-        // Inject it?
-        // Singleton inject THIS class?
-        return taskBar;
     }
 
     @Override
