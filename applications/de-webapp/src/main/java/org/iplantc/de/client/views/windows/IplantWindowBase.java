@@ -45,13 +45,13 @@ public abstract class IplantWindowBase extends Window implements IPlantWindowInt
     protected boolean isMaximizable;
     protected boolean maximized;
     protected boolean minimized;
+    ToolButton btnRestore;
     private final DeResources res = GWT.create(DeResources.class);
     private final WindowStateFactory wsf = GWT.create(WindowStateFactory.class);
     private ToolButton btnClose;
     private ToolButton btnLayout;
     private ToolButton btnMaximize;
     private ToolButton btnMinimize;
-    ToolButton btnRestore;
 
     /**
      * Constructs an instance of the window.
@@ -160,12 +160,6 @@ public abstract class IplantWindowBase extends Window implements IPlantWindowInt
     }
 
     @Override
-    protected void onShow() {
-        super.onShow();
-        minimized = false;
-    }
-
-    @Override
     public void setPixelSize(int width, int height) {
         super.setPixelSize(width, height);
     }
@@ -201,6 +195,12 @@ public abstract class IplantWindowBase extends Window implements IPlantWindowInt
         btnRestore.ensureDebugId(baseID + DeModule.Ids.WIN_RESTORE_BTN);
         btnClose.ensureDebugId(baseID + DeModule.Ids.WIN_CLOSE_BTN);
         btnLayout.ensureDebugId(baseID + DeModule.Ids.WIN_LAYOUT_BTN);
+    }
+
+    @Override
+    protected void onShow() {
+        super.onShow();
+        minimized = false;
     }
 
     private ToolButton createCloseButton() {
