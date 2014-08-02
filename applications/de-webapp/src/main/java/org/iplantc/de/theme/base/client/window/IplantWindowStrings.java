@@ -16,4 +16,8 @@ public interface IplantWindowStrings extends Messages {
     String minimizeBtnToolTip();
 
     String restoreBtnToolTip();
+
+    String snapLeft();
+
+    String snapRight();
 }

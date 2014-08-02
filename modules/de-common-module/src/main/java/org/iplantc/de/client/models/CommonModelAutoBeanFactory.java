@@ -5,6 +5,8 @@ import com.google.web.bindery.autobean.shared.AutoBeanFactory;
 
 public interface CommonModelAutoBeanFactory extends AutoBeanFactory {
 
+    AutoBean<AboutApplicationData> aboutApplicationData();
+
     AutoBean<HasId> hasId();
 
     AutoBean<HasPath> hasPath();

@@ -61,10 +61,6 @@
         <when-type-is class="org.iplantc.de.commons.client.widgets.IPlantAnchorAppearance"/>
     </replace-with>
 
-    <replace-with class="org.iplantc.de.client.views.windows.AboutApplicationDefaultAppearance">
-        <when-type-is class="org.iplantc.de.client.views.windows.AboutApplicationAppearance"/>
-    </replace-with>
-
     <!--  system messages deferred binding rules -->
     <replace-with class="org.iplantc.de.client.sysmsgs.services.RemoteServices">
         <when-type-is class="org.iplantc.de.client.sysmsgs.services.Services"/>

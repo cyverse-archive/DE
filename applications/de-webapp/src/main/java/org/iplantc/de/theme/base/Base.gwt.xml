@@ -36,4 +36,8 @@
         <when-type-is class="org.iplantc.de.client.views.windows.IplantWindowBase.IplantWindowAppearance"/>
     </replace-with>
 
+    <replace-with class="org.iplantc.de.theme.base.client.window.AboutApplicationDefaultAppearance">
+        <when-type-is class="org.iplantc.de.client.views.windows.AboutApplicationWindow.AboutApplicationAppearance"/>
+    </replace-with>
+
 </module>

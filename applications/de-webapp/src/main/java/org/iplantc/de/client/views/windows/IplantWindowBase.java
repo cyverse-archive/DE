@@ -249,9 +249,9 @@ public abstract class IplantWindowBase extends Window implements IPlantWindowInt
 
     private ToolButton createLayoutButton() {
         final ToolButton layoutBtn = new ToolButton(windowAppearance.layoutBtnConfig());
-        layoutBtn.setToolTip(windowAppearance.layoutBtnToolTip());
+        // Remove tool tip, it gets in the way of the menu.
+//        layoutBtn.setToolTip(windowAppearance.layoutBtnToolTip());
         final Menu m = new Menu();
-        // FIXME JDS Reimplement layout button which has position left/right.
         MenuItem left = new MenuItem(windowAppearance.snapLeftMenuItem());
         MenuItem right = new MenuItem(windowAppearance.snapRightMenuItem());
         left.addSelectionHandler(new SelectionHandler<Item>() {

@@ -1,4 +1,4 @@
-package org.iplantc.de.client.views.windows;
+package org.iplantc.de.theme.base.client.window;
 
 import org.iplantc.de.client.models.AboutApplicationData;
 import org.iplantc.de.resources.client.messages.I18N;
@@ -15,7 +15,7 @@ import com.google.gwt.user.client.Window;
  * @author psarando
  * 
  */
-public class AboutApplicationDevAppearance implements AboutApplicationAppearance {
+public class AboutApplicationDevAppearance extends AboutApplicationDefaultAppearance {
 
     interface DevTemplate extends SafeHtmlTemplates {
         @SafeHtmlTemplates.Template("<p style='font-style:italic;'> {9} </p>"
@@ -33,16 +33,19 @@ public class AboutApplicationDevAppearance implements AboutApplicationAppearance
 
     }
 
-    private final DevTemplate template = GWT.create(DevTemplate.class);
+    private final DevTemplate devTemplate = GWT.create(DevTemplate.class);
 
     @Override
-    public SafeHtml about(AboutApplicationData data, String userAgent, SafeHtml copyright,
-            SafeHtml nsfProject) {
-        return template.about(Strings.nullToEmpty(data.getReleaseVersion()),
-                Strings.nullToEmpty(data.getBuild()), Strings.nullToEmpty(data.getBuildNumber()),
-                Strings.nullToEmpty(data.getBuildId()), Strings.nullToEmpty(data.getBuildBranch()),
-                Strings.nullToEmpty(data.getBuildCommit()), Strings.nullToEmpty(data.getBuildJdk()),
-                Window.Navigator.getUserAgent(), I18N.DISPLAY.projectCopyrightStatement(),
+    public SafeHtml about(AboutApplicationData data) {
+        return devTemplate.about(Strings.nullToEmpty(data.getReleaseVersion()),
+                Strings.nullToEmpty(data.getBuild()),
+                Strings.nullToEmpty(data.getBuildNumber()),
+                Strings.nullToEmpty(data.getBuildId()),
+                Strings.nullToEmpty(data.getBuildBranch()),
+                Strings.nullToEmpty(data.getBuildCommit()),
+                Strings.nullToEmpty(data.getBuildJdk()),
+                Window.Navigator.getUserAgent(),
+                I18N.DISPLAY.projectCopyrightStatement(),
                 I18N.DISPLAY.nsfProjectText());
     }
 }

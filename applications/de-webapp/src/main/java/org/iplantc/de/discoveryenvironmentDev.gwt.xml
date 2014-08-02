@@ -15,7 +15,7 @@
     <set-property name="gwt.logging.enabled" value="TRUE"/>            # To disable logging
     <set-property name="gwt.logging.consoleHandler" value="ENABLED"/>  # To disable a default Handler
 
-    <replace-with class="org.iplantc.de.client.views.windows.AboutApplicationDevAppearance">
-        <when-type-is class="org.iplantc.de.client.views.windows.AboutApplicationAppearance" />
+    <replace-with class="org.iplantc.de.theme.base.client.window.AboutApplicationDevAppearance">
+        <when-type-is class="org.iplantc.de.client.views.windows.AboutApplicationWindow.AboutApplicationAppearance" />
     </replace-with>
 </module>

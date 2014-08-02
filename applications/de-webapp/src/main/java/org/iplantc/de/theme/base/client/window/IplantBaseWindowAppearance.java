@@ -134,16 +134,15 @@ public class IplantBaseWindowAppearance implements IplantWindowBase.IplantWindow
     public void setHeaderStyle(Header header) {
         header.setIcon(resources.headerIcon());
         header.getAppearance().getTextElem(header.getElement()).addClassName(resources.css().headerText());
-
     }
 
     @Override
     public String snapLeftMenuItem() {
-        return null;
+        return strings.snapLeft();
     }
 
     @Override
     public String snapRightMenuItem() {
-        return null;
+        return strings.snapRight();
     }
 }

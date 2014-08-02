@@ -193,3 +193,14 @@
     padding: 2px;
     height: 10px;
 }
+
+html,body {
+    font-family: Univers, Calibri, "Gill Sans", "Gill Sans MT", "Myriad Pro",
+    Myriad, "DejaVu Sans Condensed", "Liberation Sans", "Nimbus Sans L",
+    Tahoma, Geneva, "Helvetica Neue", Helvetica, Arial,
+    sans-serif !important;
+    border: 0 none;
+    overflow: hidden;
+    height: 100%;
+}
+

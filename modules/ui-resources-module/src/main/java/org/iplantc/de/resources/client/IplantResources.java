@@ -156,9 +156,6 @@ public interface IplantResources extends ClientBundle, AppResources, DiskResourc
     @Source("arrow.gif")
     ImageResource menuAnchor();
 
-    @Source("iplant_about.png")
-    ImageResource iplantAbout();
-
     @Source("wand.png")
     ImageResource layoutWand();
 
