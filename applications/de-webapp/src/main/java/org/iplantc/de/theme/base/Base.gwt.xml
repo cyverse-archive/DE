@@ -40,4 +40,8 @@
         <when-type-is class="org.iplantc.de.client.views.windows.AboutApplicationWindow.AboutApplicationAppearance"/>
     </replace-with>
 
+    <replace-with class="org.iplantc.de.theme.base.client.window.AppEditorWindowBaseAppearance">
+        <when-type-is class="org.iplantc.de.client.views.windows.AppEditorWindow.AppEditorAppearance"/>
+    </replace-with>
+
 </module>

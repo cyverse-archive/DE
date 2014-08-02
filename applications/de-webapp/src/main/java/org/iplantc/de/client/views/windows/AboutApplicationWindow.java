@@ -31,7 +31,7 @@ public class AboutApplicationWindow extends IplantWindowBase {
      *
      * @author psarando
      */
-    public static interface AboutApplicationAppearance {
+    public interface AboutApplicationAppearance {
 
         SafeHtml about(AboutApplicationData data);
 
