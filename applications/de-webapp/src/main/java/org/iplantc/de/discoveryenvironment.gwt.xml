@@ -30,7 +30,6 @@
     <set-property name="gwt.logging.popupHandler" value="DISABLED"/>
     <set-property name="gwt.logging.consoleHandler" value="DISABLED"/>
 
-    <set-configuration-property name="CssResource.style" value="pretty"/>
 
     <!-- Turn on GWT debug IDs -->
     <inherits name="com.google.gwt.user.Debug"/>
