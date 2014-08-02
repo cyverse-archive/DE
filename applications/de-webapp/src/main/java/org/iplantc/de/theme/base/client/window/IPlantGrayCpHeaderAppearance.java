@@ -1,4 +1,4 @@
-package org.iplantc.de.resources.client.theme.window;
+package org.iplantc.de.theme.base.client.window;
 
 import com.google.gwt.core.client.GWT;
 

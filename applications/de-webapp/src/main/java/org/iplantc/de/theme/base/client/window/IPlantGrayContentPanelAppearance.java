@@ -1,4 +1,4 @@
-package org.iplantc.de.resources.client.theme.window;
+package org.iplantc.de.theme.base.client.window;
 
 import com.sencha.gxt.theme.base.client.widget.HeaderDefaultAppearance;
 import com.sencha.gxt.theme.gray.client.panel.GrayContentPanelAppearance;

@@ -1,6 +1,5 @@
 package org.iplantc.de.client.views.windows;
 
-import org.iplantc.de.client.DeResources;
 import org.iplantc.de.client.gin.ServicesInjector;
 import org.iplantc.de.client.models.WindowState;
 import org.iplantc.de.client.models.diskResources.DiskResource;
@@ -10,7 +9,6 @@ import org.iplantc.de.commons.client.views.window.configs.ConfigFactory;
 import org.iplantc.de.commons.client.views.window.configs.SimpleDownloadWindowConfig;
 import org.iplantc.de.commons.client.widgets.IPlantAnchor;
 
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Label;
@@ -25,11 +23,8 @@ import com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer;
  */
 public class SimpleDownloadWindow extends IplantWindowBase {
 
-    private final DeResources res = GWT.create(DeResources.class);
-
     public SimpleDownloadWindow(SimpleDownloadWindowConfig config) {
         super(null, true);
-        res.css().ensureInjected();
         setHeadingText(org.iplantc.de.resources.client.messages.I18N.DISPLAY.download());
         setSize("320", "320");
 

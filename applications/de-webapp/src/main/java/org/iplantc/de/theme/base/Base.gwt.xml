@@ -28,4 +28,12 @@
         <when-type-is class="org.iplantc.de.client.newDesktop.views.widgets.TaskButtonCell.TaskButtonCellAppearance"/>
     </replace-with>
 
+    <replace-with class="org.iplantc.de.theme.base.client.window.IPlantGrayContentPanelAppearance">
+        <when-type-is class="com.sencha.gxt.widget.core.client.ContentPanel.ContentPanelAppearance"/>
+    </replace-with>
+
+    <replace-with class="org.iplantc.de.theme.base.client.window.IplantBaseWindowAppearance">
+        <when-type-is class="org.iplantc.de.client.views.windows.IplantWindowBase.IplantWindowAppearance"/>
+    </replace-with>
+
 </module>
