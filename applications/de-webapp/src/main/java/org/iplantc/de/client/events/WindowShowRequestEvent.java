@@ -24,10 +24,6 @@ public class WindowShowRequestEvent extends GwtEvent<WindowShowRequestEventHandl
     private final WindowConfig windowConfig;
     private boolean updateWithConfig = false;
 
-    public WindowShowRequestEvent(WindowConfig config) {
-        this(config, false);
-    }
-
     public WindowShowRequestEvent(WindowConfig config, boolean updateWithConfig) {
         this.windowConfig = config;
         this.updateWithConfig = updateWithConfig;

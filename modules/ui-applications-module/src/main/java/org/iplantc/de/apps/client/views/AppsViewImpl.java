@@ -5,7 +5,6 @@ import org.iplantc.de.apps.client.events.AppGroupSelectionChangedEvent;
 import org.iplantc.de.apps.client.events.AppSelectionChangedEvent;
 import org.iplantc.de.apps.client.views.cells.AppFavoriteCell;
 import org.iplantc.de.apps.client.views.cells.AppInfoCell;
-import org.iplantc.de.apps.client.views.dialogs.SubmitAppForPublicDialog;
 import org.iplantc.de.apps.client.views.widgets.events.AppSearchResultLoadEvent;
 import org.iplantc.de.apps.shared.AppsModule.Ids;
 import org.iplantc.de.client.models.DEProperties;
@@ -19,7 +18,6 @@ import org.iplantc.de.resources.client.IplantResources;
 import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 
 import static com.google.common.base.Preconditions.checkArgument;
-
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
@@ -37,7 +35,6 @@ import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 
 import static com.sencha.gxt.core.client.Style.SelectionMode.SINGLE;
-
 import com.sencha.gxt.data.shared.ListStore;
 import com.sencha.gxt.data.shared.ModelKeyProvider;
 import com.sencha.gxt.data.shared.SortDir;
@@ -75,9 +72,6 @@ import java.util.logging.Logger;
 public class AppsViewImpl extends Composite implements AppsView, IsMaskable, AppGroupSelectionChangedEvent.HasAppGroupSelectionChangedEventHandlers,
         AppSelectionChangedEvent.HasAppSelectionChangedEventHandlers, AppInfoCell.AppInfoClickedEventHandler, AppFavoritedEvent.HasAppFavoritedEventHandlers,
         AppFavoriteCell.RequestAppFavoriteEventHandler {
-    /**
-     * FIXME CORE-2992: Add an ID to the Categories panel collapse tool to assist QA.
-     */
     private static String WEST_COLLAPSE_BTN_ID = "idCategoryCollapseBtn"; //$NON-NLS-1$
     private static MyUiBinder uiBinder = GWT.create(MyUiBinder.class);
 

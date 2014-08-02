@@ -18,12 +18,6 @@
     <inherits name="com.google.web.bindery.autobean.AutoBean"/>
     <inherits name="com.google.gwt.uibinder.UiBinder" />
 
-    <replace-with class="org.iplantc.de.resources.client.theme.window.IPlantGrayWindowAppearance">
-      <when-type-is class="org.iplantc.de.resources.client.theme.window.IPlantWindowAppearance"/>
-    </replace-with> 
-    <replace-with class="org.iplantc.de.resources.client.theme.window.IPlantGrayContentPanelAppearance">
-      <when-type-is class="com.sencha.gxt.widget.core.client.ContentPanel.ContentPanelAppearance"/>
-    </replace-with> 
 
     <source path="client"/>
 </module>

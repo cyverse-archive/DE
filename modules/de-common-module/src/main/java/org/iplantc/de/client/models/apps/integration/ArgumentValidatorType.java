@@ -2,8 +2,7 @@ package org.iplantc.de.client.models.apps.integration;
 
 
 /**
- * FIXME JDS This needs to have a corresponding Label for each validator.
- * 
+ *
  * @author jstroot
  * 
  */

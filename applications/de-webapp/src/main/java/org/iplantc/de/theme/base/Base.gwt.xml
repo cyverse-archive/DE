@@ -1,0 +1,47 @@
+<!DOCTYPE module PUBLIC "-//Google Inc.//DTD Google Web Toolkit 2.0//EN"
+        "http://google-web-toolkit.googlecode.com/svn/releases/2.0/distro-source/core/src/gwt-module.dtd">
+<module>
+<!--This module currently has a circular dependency with discovery environment module.
+      FIXME: need to break this circular dependency
+      Possibly by creating a DE core module. Then, the primary module will just be an entry point
+      which references the desktop view.-->
+    <inherits name='com.google.gwt.user.User'/>
+    <inherits name="org.iplantc.de.discoveryenvironment"/>
+
+    <replace-with class="org.iplantc.de.theme.base.client.desktop.BaseDesktopAppearance">
+        <when-type-is class="org.iplantc.de.client.desktop.DesktopView.DesktopAppearance"/>
+    </replace-with>
+
+    <replace-with class="org.iplantc.de.theme.base.client.desktop.views.BaseFeedbackDialogAppearance">
+        <when-type-is class="org.iplantc.de.client.desktop.views.widgets.DEFeedbackDialog.FeedbackAppearance"/>
+    </replace-with>
+
+    <replace-with class="org.iplantc.de.theme.base.client.desktop.views.BaseUnseenNotificationsAppearance">
+        <when-type-is class="org.iplantc.de.client.desktop.views.widgets.UnseenNotificationsView.UnseenNotificationsAppearance"/>
+    </replace-with>
+
+    <replace-with class="org.iplantc.de.theme.base.client.desktop.views.taskbar.TaskBarBaseAppearance">
+        <when-type-is class="org.iplantc.de.client.desktop.views.widgets.TaskBar.TaskBarAppearance"/>
+    </replace-with>
+
+    <replace-with class="org.iplantc.de.theme.base.client.desktop.views.taskButton.TaskButtonCellDefaultAppearance">
+        <when-type-is class="org.iplantc.de.client.desktop.views.widgets.TaskButtonCell.TaskButtonCellAppearance"/>
+    </replace-with>
+
+    <replace-with class="org.iplantc.de.theme.base.client.window.IPlantGrayContentPanelAppearance">
+        <when-type-is class="com.sencha.gxt.widget.core.client.ContentPanel.ContentPanelAppearance"/>
+    </replace-with>
+
+    <replace-with class="org.iplantc.de.theme.base.client.window.IplantBaseWindowAppearance">
+        <when-type-is class="org.iplantc.de.client.windows.IplantWindowBase.IplantWindowAppearance"/>
+    </replace-with>
+
+    <replace-with class="org.iplantc.de.theme.base.client.window.AboutApplicationDefaultAppearance">
+        <when-type-is class="org.iplantc.de.client.windows.AboutApplicationWindow.AboutApplicationAppearance"/>
+    </replace-with>
+
+    <replace-with class="org.iplantc.de.theme.base.client.window.AppEditorWindowBaseAppearance">
+        <when-type-is class="org.iplantc.de.client.windows.AppEditorWindow.AppEditorAppearance"/>
+    </replace-with>
+
+</module>

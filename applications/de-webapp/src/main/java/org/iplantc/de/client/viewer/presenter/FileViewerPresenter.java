@@ -11,7 +11,7 @@ import org.iplantc.de.client.viewer.callbacks.TreeUrlCallback;
 import org.iplantc.de.client.viewer.commands.ViewCommand;
 import org.iplantc.de.client.viewer.factory.MimeTypeViewerResolverFactory;
 import org.iplantc.de.client.viewer.views.FileViewer;
-import org.iplantc.de.client.views.windows.FileViewerWindow;
+import org.iplantc.de.client.windows.FileViewerWindow;
 
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.user.client.ui.HTML;
@@ -152,9 +152,9 @@ public class FileViewerPresenter implements FileViewer.Presenter {
 
     private void updateWindowTitle() {
         if (isDirty) {
-            container.setTitle(container.getTitle() + "<span style='color:red; vertical-align: super'> * </span>");
+            container.setHeadingText(container.getHeader().getText() + "<span style='color:red; vertical-align: super'> * </span>");
         } else {
-            container.setTitle(title);
+            container.setHeadingText(title);
         }
     }
 

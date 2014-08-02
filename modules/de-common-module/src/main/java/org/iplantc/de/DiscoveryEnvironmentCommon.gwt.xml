@@ -8,6 +8,7 @@
 <module>
 	<inherits name="com.google.gwt.user.User" />
 	<inherits name="com.google.gwt.json.JSON" />
+    <inherits name="com.google.gwt.http.HTTP"/>
 	<inherits name="com.google.gwt.rpc.RPC" />
 	<inherits name="com.google.gwt.resources.Resources" />
     <inherits name="com.google.web.bindery.autobean.AutoBean"/>

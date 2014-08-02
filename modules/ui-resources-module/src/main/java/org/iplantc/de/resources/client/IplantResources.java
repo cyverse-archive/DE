@@ -156,9 +156,6 @@ public interface IplantResources extends ClientBundle, AppResources, DiskResourc
     @Source("arrow.gif")
     ImageResource menuAnchor();
 
-    @Source("iplant_about.png")
-    ImageResource iplantAbout();
-
     @Source("wand.png")
     ImageResource layoutWand();
 
@@ -209,14 +206,6 @@ public interface IplantResources extends ClientBundle, AppResources, DiskResourc
      */
     @Source("delete.gif")
     ImageResource delete();
-
-    /**
-     * Image resource for window title-bars and the taskbar.
-     * 
-     * @return image.
-     */
-    @Source("whitelogo_sm.png")
-    ImageResource whitelogoSmall();
 
     /**
      * Image resource.

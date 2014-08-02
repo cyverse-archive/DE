@@ -1,5 +1,6 @@
 package org.iplantc.de.shared.services;
 
+import com.google.gwt.http.client.Request;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import java.util.Map;
@@ -16,5 +17,5 @@ public interface PropertyServiceAsync {
      * 
      * @param callback executed when RPC call completes.
      */
-    void getProperties(AsyncCallback<Map<String, String>> callback);
+    Request getProperties(AsyncCallback<Map<String, String>> callback);
 }
