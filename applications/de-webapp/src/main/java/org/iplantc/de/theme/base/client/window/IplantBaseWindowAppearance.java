@@ -1,6 +1,6 @@
 package org.iplantc.de.theme.base.client.window;
 
-import org.iplantc.de.client.views.windows.IplantWindowBase;
+import org.iplantc.de.client.windows.IplantWindowBase;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.resources.client.ClientBundle;

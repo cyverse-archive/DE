@@ -1,6 +1,6 @@
 package org.iplantc.de.theme.base.client.window;
 
-import org.iplantc.de.client.views.windows.AppEditorWindow;
+import org.iplantc.de.client.windows.AppEditorWindow;
 import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 import org.iplantc.de.resources.client.uiapps.widgets.AppsWidgetsPropertyPanelLabels;
 

@@ -2,7 +2,7 @@ package org.iplantc.de.client.gin;
 
 import org.iplantc.de.analysis.client.gin.AnalysisGinModule;
 import org.iplantc.de.analysis.client.gin.AnalysisInjector;
-import org.iplantc.de.client.newDesktop.NewDesktopView;
+import org.iplantc.de.client.desktop.DesktopView;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.inject.client.GinModules;
@@ -16,7 +16,7 @@ import com.google.gwt.inject.client.Ginjector;
 public interface DEInjector extends Ginjector, AnalysisInjector {
     public static final DEInjector INSTANCE = GWT.create(DEInjector.class);
 
-    NewDesktopView.Presenter getNewDesktopPresenter();
+    DesktopView.Presenter getNewDesktopPresenter();
 
 
 }

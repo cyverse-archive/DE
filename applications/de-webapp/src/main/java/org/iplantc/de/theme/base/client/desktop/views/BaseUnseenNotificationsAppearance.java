@@ -1,7 +1,7 @@
 package org.iplantc.de.theme.base.client.desktop.views;
 
 import org.iplantc.de.client.models.notifications.NotificationMessage;
-import org.iplantc.de.client.newDesktop.views.widgets.UnseenNotificationsView;
+import org.iplantc.de.client.desktop.views.widgets.UnseenNotificationsView;
 
 import com.google.gwt.cell.client.Cell;
 import com.google.gwt.core.client.GWT;
@@ -9,13 +9,9 @@ import com.google.gwt.resources.client.ClientBundle;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.safehtml.client.SafeHtmlTemplates;
 import com.google.gwt.safehtml.shared.SafeHtml;
-import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.text.shared.AbstractSafeHtmlRenderer;
 
 import com.sencha.gxt.cell.core.client.SimpleSafeHtmlCell;
-import com.sencha.gxt.core.client.resources.CommonStyles;
-import com.sencha.gxt.theme.base.client.listview.ListViewCustomAppearance;
-import com.sencha.gxt.widget.core.client.ListView;
 
 public class BaseUnseenNotificationsAppearance implements UnseenNotificationsView.UnseenNotificationsAppearance {
 

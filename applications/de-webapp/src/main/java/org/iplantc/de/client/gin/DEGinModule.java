@@ -1,18 +1,18 @@
 package org.iplantc.de.client.gin;
 
+import org.iplantc.de.client.desktop.presenter.DesktopPresenterImpl;
+import org.iplantc.de.client.desktop.views.DesktopViewImpl;
 import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.models.DEProperties;
 import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.client.models.UserSettings;
-import org.iplantc.de.client.newDesktop.NewDesktopView;
-import org.iplantc.de.client.newDesktop.presenter.DesktopPresenterEventHandler;
-import org.iplantc.de.client.newDesktop.presenter.DesktopPresenterWindowEventHandler;
-import org.iplantc.de.client.newDesktop.presenter.DesktopWindowManager;
-import org.iplantc.de.client.newDesktop.presenter.NewDesktopPresenterImpl;
-import org.iplantc.de.client.newDesktop.views.NewDesktopViewImpl;
-import org.iplantc.de.client.newDesktop.views.widgets.DEFeedbackDialog;
-import org.iplantc.de.client.newDesktop.views.widgets.PreferencesDialog;
-import org.iplantc.de.client.newDesktop.presenter.util.MessagePoller;
+import org.iplantc.de.client.desktop.DesktopView;
+import org.iplantc.de.client.desktop.presenter.DesktopPresenterEventHandler;
+import org.iplantc.de.client.desktop.presenter.DesktopPresenterWindowEventHandler;
+import org.iplantc.de.client.desktop.presenter.DesktopWindowManager;
+import org.iplantc.de.client.desktop.views.widgets.DEFeedbackDialog;
+import org.iplantc.de.client.desktop.views.widgets.PreferencesDialog;
+import org.iplantc.de.client.desktop.presenter.util.MessagePoller;
 import org.iplantc.de.client.services.AnalysisServiceFacade;
 import org.iplantc.de.client.services.DEFeedbackServiceFacade;
 import org.iplantc.de.client.services.DiskResourceServiceFacade;
@@ -22,7 +22,7 @@ import org.iplantc.de.client.services.UserSessionServiceFacade;
 import org.iplantc.de.client.sysmsgs.presenter.NewMessagePresenter;
 import org.iplantc.de.client.sysmsgs.view.NewMessageView;
 import org.iplantc.de.client.utils.NotifyInfo;
-import org.iplantc.de.client.views.windows.util.WindowFactory;
+import org.iplantc.de.client.windows.util.WindowFactory;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
 import org.iplantc.de.commons.client.requests.KeepaliveTimer;
 import org.iplantc.de.resources.client.IplantResources;
@@ -108,8 +108,8 @@ public class DEGinModule extends AbstractGinModule {
 
     @Override
     protected void configure() {
-        bind(NewDesktopView.class).to(NewDesktopViewImpl.class);
-        bind(NewDesktopView.Presenter.class).to(NewDesktopPresenterImpl.class);
+        bind(DesktopView.class).to(DesktopViewImpl.class);
+        bind(DesktopView.Presenter.class).to(DesktopPresenterImpl.class);
 
         bind(NewMessageView.Presenter.class).to(NewMessagePresenter.class);
         bind(DesktopPresenterEventHandler.class);

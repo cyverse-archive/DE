@@ -1,6 +1,6 @@
 package org.iplantc.de.theme.base.client.desktop;
 
-import org.iplantc.de.client.newDesktop.NewDesktopView.DesktopAppearance;
+import org.iplantc.de.client.desktop.DesktopView.DesktopAppearance;
 
 import static com.google.gwt.resources.client.ImageResource.ImageOptions;
 import static com.google.gwt.resources.client.ImageResource.RepeatStyle.Both;

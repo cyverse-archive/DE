@@ -1,6 +1,6 @@
 package org.iplantc.de.theme.base.client.desktop.views;
 
-import org.iplantc.de.client.newDesktop.views.widgets.DEFeedbackDialog;
+import org.iplantc.de.client.desktop.views.widgets.DEFeedbackDialog;
 
 import com.google.gwt.core.client.GWT;
 

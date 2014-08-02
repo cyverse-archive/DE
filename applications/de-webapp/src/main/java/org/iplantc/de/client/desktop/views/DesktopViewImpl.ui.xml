@@ -1,0 +1,90 @@
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
+             xmlns:g='urn:import:com.google.gwt.user.client.ui'
+             xmlns:button='urn:import:com.sencha.gxt.widget.core.client.button'
+             xmlns:menu='urn:import:com.sencha.gxt.widget.core.client.menu'
+             xmlns:desktopBtn='urn:import:org.iplantc.de.client.desktop.views.widgets'
+             xmlns:widget='urn:import:org.iplantc.de.client.desktop.views.widgets'
+             xmlns:anchors='urn:import:org.iplantc.de.commons.client.widgets'>
+
+    <ui:with field="appearance"
+             type="org.iplantc.de.client.desktop.DesktopView.DesktopAppearance"/>
+    <ui:with field="display"
+             type="org.iplantc.de.resources.client.messages.IplantDisplayStrings"/>
+    <ui:with field="help"
+             type="org.iplantc.de.resources.client.messages.IplantContextualHelpStrings"/>
+
+    <g:HTMLPanel addStyleNames="{appearance.styles.deBody}">
+        <!--Header-->
+        <div class="{appearance.styles.iplantHeader}">
+            <div class="{appearance.styles.logoContainer}">
+                <a href="http://iplantcollaborative.org"
+                   target="_blank">
+                    <div class="{appearance.styles.logo}"/>
+                </a>
+                <span class="{appearance.styles.logoText}">Discovery Environment</span>
+            </div>
+            <nav class="{appearance.styles.userMenuContainer}">
+                <desktopBtn:DesktopIconButton ui:field="notificationsBtn"
+                                              toolTip="{display.notifications}"
+                                              config="{appearance.notificationsConfig}">
+                    <desktopBtn:contextmenu>
+                        <menu:Menu styleName="{appearance.styles.userContextMenu}">
+                            <widget:UnseenNotificationsView ui:field="notificationsListView"/>
+                        </menu:Menu>
+                    </desktopBtn:contextmenu>
+                </desktopBtn:DesktopIconButton>
+                <desktopBtn:DesktopIconButton ui:field="userSettingsBtn"
+                                              toolTip="{display.preferences}"
+                                              config="{appearance.userPrefsConfig}">
+                    <desktopBtn:contextmenu>
+                        <menu:Menu styleName="{appearance.styles.userContextMenu}">
+                            <anchors:IPlantAnchor ui:field="preferencesBtn"
+                                                  text="{display.preferences}"/>
+                            <anchors:IPlantAnchor ui:field="collaboratorsBtn"
+                                                  text="{display.collaborators}"/>
+                            <anchors:IPlantAnchor ui:field="systemMsgsBtn"
+                                                  text="{display.systemMessagesLabel}"/>
+                            <menu:SeparatorMenuItem />
+                            <anchors:IPlantAnchor ui:field="documentationBtn"
+                                                  text="{display.documentation}"/>
+                            <anchors:IPlantAnchor ui:field="introBtn"
+                                                  text="{display.introduction}"/>
+                            <anchors:IPlantAnchor ui:field="contactSupportBtn"
+                                                  text="{display.contactSupport}"/>
+                            <anchors:IPlantAnchor ui:field="aboutBtn"
+                                                  text="{display.about}"/>
+                            <menu:SeparatorMenuItem />
+                            <anchors:IPlantAnchor ui:field="logoutBtn"
+                                                  text="{display.logout}"/>
+                        </menu:Menu>
+                    </desktopBtn:contextmenu>
+                </desktopBtn:DesktopIconButton>
+                <button:IconButton ui:field="forumsBtn"
+                                   toolTip="{display.forums}"
+                                   config="{appearance.forumsConfig}"/>
+            </nav>
+        </div>
+        <!--Body-->
+        <div ui:field="desktopContainer"
+             class="{appearance.styles.desktopBackgroundRepeat}" />
+        <div class="{appearance.styles.desktopBackground}">
+            <nav class="{appearance.styles.windowBtnNav}">
+                <button:IconButton ui:field="dataWinBtn"
+                                   toolTip="{help.iconHomepageDataTip}"
+                                   config="{appearance.dataConfig}"/>
+                <button:IconButton ui:field="appsWinBtn"
+                                   toolTip="{help.iconHomepageAppsTip}"
+                                   config="{appearance.appsConfig}"/>
+                <button:IconButton ui:field="analysisWinBtn"
+                                   toolTip="{help.iconHomepageAnalysesTip}"
+                                   config="{appearance.analysisConfig}"/>
+            </nav>
+            <button:IconButton ui:field="feedbackBtn"
+                               config="{appearance.feedbackBtnConfig}"/>
+        </div>
+        <!--Footer-->
+        <widget:TaskBar ui:field="taskBar"
+                        addStyleNames="{appearance.styles.taskBarLayout}"/>
+    </g:HTMLPanel>
+
+</ui:UiBinder>

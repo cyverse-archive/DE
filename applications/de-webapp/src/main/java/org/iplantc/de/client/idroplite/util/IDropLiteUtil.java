@@ -1,9 +1,10 @@
 package org.iplantc.de.client.idroplite.util;
 
-import org.iplantc.de.client.Constants;
+import org.iplantc.de.client.DEClientConstants;
 import org.iplantc.de.client.util.JsonUtil;
 import org.iplantc.de.resources.client.messages.I18N;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.json.client.JSONObject;
 
 import com.sencha.gxt.core.client.GXT;
@@ -19,6 +20,7 @@ import com.sencha.gxt.widget.core.client.container.HtmlLayoutContainer;
 public class IDropLiteUtil {
     public static int DISPLAY_MODE_UPLOAD = 2;
     public static int DISPLAY_MODE_DOWNLOAD = 3;
+    static final DEClientConstants constants = GWT.create(DEClientConstants.class);
 
     public static HtmlLayoutContainer getAppletForUpload(JSONObject jsonAppletParams, int width,
             int height) {
@@ -70,7 +72,7 @@ public class IDropLiteUtil {
         } else {
             htmlAppletTag = new StringBuilder(Format.substitute(
                     "<APPLET code=\"{0}\" archive=\"{1}\" WIDTH=\"{2}\" HEIGHT=\"{3}\" >",
-                    Constants.CLIENT.iDropLiteMainClass(), Constants.CLIENT.iDropLiteArchivePath(),
+                    constants.iDropLiteMainClass(), constants.iDropLiteArchivePath(),
                     width, height));
         }
 
@@ -97,8 +99,8 @@ public class IDropLiteUtil {
                                 + "name=\"idrop-lite\" "
                                 + "codebase =\" http://java.sun.com/products/plugin/autodl/jinstall-1_5_0-windows-i586.cab#Version=1,5,0,0\">",
                         width, height));
-        htmlAppletTag.append(buildAppletParam("code", Constants.CLIENT.iDropLiteMainClass() + ".class"));
-        htmlAppletTag.append(buildAppletParam("archive", Constants.CLIENT.iDropLiteArchivePath()));
+        htmlAppletTag.append(buildAppletParam("code", constants.iDropLiteMainClass() + ".class"));
+        htmlAppletTag.append(buildAppletParam("archive", constants.iDropLiteArchivePath()));
         htmlAppletTag.append(buildAppletParam("type", "application/x-java-applet;version=1.5.0"));
         htmlAppletTag.append(buildAppletParam("scriptable", "true"));
 

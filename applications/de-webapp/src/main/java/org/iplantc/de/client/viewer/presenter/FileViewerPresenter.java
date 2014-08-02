@@ -11,7 +11,7 @@ import org.iplantc.de.client.viewer.callbacks.TreeUrlCallback;
 import org.iplantc.de.client.viewer.commands.ViewCommand;
 import org.iplantc.de.client.viewer.factory.MimeTypeViewerResolverFactory;
 import org.iplantc.de.client.viewer.views.FileViewer;
-import org.iplantc.de.client.views.windows.FileViewerWindow;
+import org.iplantc.de.client.windows.FileViewerWindow;
 
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.user.client.ui.HTML;

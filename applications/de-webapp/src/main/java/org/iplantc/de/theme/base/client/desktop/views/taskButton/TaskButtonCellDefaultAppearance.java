@@ -5,7 +5,7 @@
  */
 package org.iplantc.de.theme.base.client.desktop.views.taskButton;
 
-import org.iplantc.de.client.newDesktop.views.widgets.TaskButtonCell.TaskButtonCellAppearance;
+import org.iplantc.de.client.desktop.views.widgets.TaskButtonCell.TaskButtonCellAppearance;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.resources.client.ClientBundle;

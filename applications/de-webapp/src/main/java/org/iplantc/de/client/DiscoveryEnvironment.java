@@ -1,7 +1,7 @@
 package org.iplantc.de.client;
 
 import org.iplantc.de.client.gin.DEInjector;
-import org.iplantc.de.client.newDesktop.NewDesktopView;
+import org.iplantc.de.client.desktop.DesktopView;
 import org.iplantc.de.resources.client.messages.I18N;
 
 import com.google.gwt.core.client.EntryPoint;
@@ -26,7 +26,7 @@ public class DiscoveryEnvironment implements EntryPoint {
         setEntryPointTitle();
         DEInjector injector = DEInjector.INSTANCE;
         RootPanel.get().clear();
-        final NewDesktopView.Presenter newDesktopPresenter = injector.getNewDesktopPresenter();
+        final DesktopView.Presenter newDesktopPresenter = injector.getNewDesktopPresenter();
         newDesktopPresenter.go(RootPanel.get());
 
         Event.addNativePreviewHandler(new NativePreviewHandler() {
