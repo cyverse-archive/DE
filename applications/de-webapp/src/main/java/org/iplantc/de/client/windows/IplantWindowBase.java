@@ -15,6 +15,9 @@ import com.google.web.bindery.autobean.shared.AutoBeanFactory;
 import com.google.web.bindery.autobean.shared.AutoBeanUtils;
 import com.google.web.bindery.autobean.shared.Splittable;
 
+import com.sencha.gxt.core.client.Style;
+import com.sencha.gxt.core.client.dom.XElement;
+import com.sencha.gxt.core.client.util.Rectangle;
 import com.sencha.gxt.widget.core.client.Header;
 import com.sencha.gxt.widget.core.client.Window;
 import com.sencha.gxt.widget.core.client.button.IconButton;
@@ -250,20 +253,21 @@ public abstract class IplantWindowBase extends Window implements IPlantWindowInt
     private ToolButton createLayoutButton() {
         final ToolButton layoutBtn = new ToolButton(windowAppearance.layoutBtnConfig());
         // Remove tool tip, it gets in the way of the menu.
-//        layoutBtn.setToolTip(windowAppearance.layoutBtnToolTip());
+        layoutBtn.setToolTip(windowAppearance.layoutBtnToolTip());
+        layoutBtn.getToolTip().getToolTipConfig().setAnchor(Style.Side.TOP);
         final Menu m = new Menu();
         MenuItem left = new MenuItem(windowAppearance.snapLeftMenuItem());
         MenuItem right = new MenuItem(windowAppearance.snapRightMenuItem());
         left.addSelectionHandler(new SelectionHandler<Item>() {
             @Override
             public void onSelection(SelectionEvent<Item> event) {
-                // TODO JDS Implement snap left
+                doSnapLeft(IplantWindowBase.this.getContainer().<XElement>cast());
             }
         });
         right.addSelectionHandler(new SelectionHandler<Item>() {
             @Override
             public void onSelection(SelectionEvent<Item> event) {
-                // TODO JDS Implement snap right
+                doSnapRight(IplantWindowBase.this.getContainer().<XElement>cast());
             }
         });
 
@@ -278,6 +282,20 @@ public abstract class IplantWindowBase extends Window implements IPlantWindowInt
         });
 
         return layoutBtn;
+    }
+
+    void doSnapLeft(XElement xElement) {
+        setMaximized(false);
+        Rectangle bounds = xElement.getBounds();
+        setPagePosition(bounds.getX(), bounds.getY());
+        setPixelSize(bounds.getWidth()/2, bounds.getHeight());
+    }
+
+    void doSnapRight(XElement xElement) {
+        setMaximized(false);
+        Rectangle bounds = xElement.getBounds();
+        setPagePosition(bounds.getWidth()/2, bounds.getY());
+        setPixelSize(bounds.getWidth()/2, bounds.getHeight());
     }
 
     private ToolButton createMaximizeButton() {
