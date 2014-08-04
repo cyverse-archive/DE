@@ -1108,7 +1108,7 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter, Di
 
     @Override
     public void emptyTrash() {
-        // TODO CORE-5300 Move confirmation box to view, which will call presenter
+        // TODO REFACTOR CORE-5300 Move confirmation box to view, which will call presenter
         final ConfirmMessageBox cmb = new ConfirmMessageBox(I18N.DISPLAY.emptyTrash(), I18N.DISPLAY.emptyTrashWarning());
         cmb.addDialogHideHandler(new DialogHideEvent.DialogHideHandler() {
             @Override

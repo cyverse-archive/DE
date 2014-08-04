@@ -873,15 +873,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     String create();
 
     /**
-     * Translated "Create Apps".
-     *
-     * @return translated "Create Apps"
-     */
-    @DefaultMessage("Create Apps")
-    @Key("createApps")
-    String createApps();
-
-    /**
      * Translated "Enter barcodes used in library:".
      *
      * @return translated "Enter barcodes used in library:"
@@ -4980,4 +4971,7 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
 
     String commentRetracted();
 
+    String oneCharMax();
+
+    String kbShortcutMetaKey();
 }

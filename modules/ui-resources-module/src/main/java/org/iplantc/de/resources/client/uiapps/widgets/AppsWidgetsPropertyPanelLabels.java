@@ -28,8 +28,6 @@ public interface AppsWidgetsPropertyPanelLabels extends Messages, ArgumentGroupL
         IntegerSelectionLabels, DoubleSelectionLabels, TreeSelectionLabels, TextInputLabels, MultiLineTextLabels, CheckboxInputLabels, EnvironmentVariableLabels, IntegerInputLabels,
         DoubleInputLabels, FileOutputLabels, FolderOutputLabels, MultiFileOutputLabels, ListCreationColumnHeaders, ReferenceSelectorLabels {
 
-    String appDefaultName();
-
     String appDescriptionEmptyText();
 
     String appDescriptionLabel();

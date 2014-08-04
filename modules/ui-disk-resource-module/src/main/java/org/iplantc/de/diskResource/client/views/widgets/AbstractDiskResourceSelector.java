@@ -111,8 +111,8 @@ public abstract class AbstractDiskResourceSelector<R extends DiskResource> exten
     }
 
     /**
-     * KLUDGE: CORE-4671,
-     * 
+     * XXX CORE-4671, FYI EXTGWT-1788,2518,3037 have been fixed, and this class MAY no longer be necessary
+     *
      * @author jstroot
      * 
      */

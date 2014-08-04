@@ -17,6 +17,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.IsWidget;
+import com.google.inject.Inject;
 
 /**
  * An object of this class manages the interactions of a NewMessageView view.
@@ -44,6 +45,7 @@ public final class NewMessagePresenter implements NewMessageView.Presenter {
      * @param eventBus the event bus used by the application
      * @param announcer the particular announcer that will contain the view managed by this presenter.
      */
+    @Inject
     public NewMessagePresenter(final EventBus eventBus, final IplantAnnouncer announcer) {
         view = VIEW_FACTORY.makeNewMessageView(this);
         this.eventBus = eventBus;

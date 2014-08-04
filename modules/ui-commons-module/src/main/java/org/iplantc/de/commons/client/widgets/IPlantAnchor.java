@@ -9,6 +9,7 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
+import com.google.gwt.uibinder.client.UiConstructor;
 
 import com.sencha.gxt.core.client.dom.XDOM;
 import com.sencha.gxt.widget.core.client.Component;
@@ -22,6 +23,11 @@ import com.sencha.gxt.widget.core.client.Component;
 public class IPlantAnchor extends Component implements HasClickHandlers {
 
     private final IPlantAnchorAppearance appearance;
+
+    @UiConstructor
+    public IPlantAnchor(String text) {
+        this(text, -1);
+    }
 
     public IPlantAnchor(String text, int width) {
         this(text, width, GWT.<IPlantAnchorAppearance> create(IPlantAnchorAppearance.class));

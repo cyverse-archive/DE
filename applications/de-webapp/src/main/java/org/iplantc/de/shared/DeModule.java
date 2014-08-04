@@ -34,5 +34,12 @@ public interface DeModule {
         String WIN_MIN_BTN = ".minimize";
         String WIN_CLOSE_BTN = ".close";
         String WIN_LAYOUT_BTN = ".layout";
+
+
+        String DATA_BTN = ".dataBtn";
+        String APPS_BTN = ".appsBtn";
+        String ANALYSES_BTN = ".analysesBtn";
+        String FEEDBACK_BTN = ".feedbackBtn";
+        String TASK_BAR = ".deTaskBar";
     }
 }

@@ -13,27 +13,6 @@
     <inherits name="com.google.gwt.logging.Logging"/>
     <inherits name="com.google.common.collect.Collect"/>
 
-    <!-- Configure logging. -->
-    <set-property name="gwt.logging.logLevel" value="INFO"/>
-    <set-property name="gwt.logging.enabled" value="TRUE"/>
-    <set-property name="gwt.logging.simpleRemoteHandler" value="ENABLED"/>
-    <set-property name="gwt.logging.popupHandler" value="DISABLED"/>
-    <set-property name="gwt.logging.consoleHandler" value="DISABLED"/>
-
-    <set-configuration-property name="CssResource.style" value="pretty"/>
-
-    <inherits name="com.google.gwt.user.Debug"/>
-
-
-    <!-- Other module inherits                                      -->
-    <inherits name='com.sencha.gxt.ui.GXT'/>
-    <inherits name='com.sencha.gxt.theme.gray.Gray'/>
-    
-    <!-- GXT Stylesheet -->
- <stylesheet src="reset.css" />
-
-    <extend-property name="user.agent.os" values="unknown"/>
-
     <!-- UIBinder -->
     <inherits name="com.google.web.bindery.autobean.AutoBean"/>
     <inherits name="com.google.gwt.uibinder.UiBinder"/>
@@ -41,6 +20,27 @@
     <!-- I18N -->
     <inherits name="com.google.gwt.i18n.I18N"/>
     <inherits name="com.google.gwt.resources.Resources"/>
+    <!-- for server push -->
+    <inherits name="com.google.gwt.rpc.RPC"/>
+
+    <!-- Configure logging. -->
+    <set-property name="gwt.logging.logLevel" value="INFO"/>
+    <set-property name="gwt.logging.enabled" value="TRUE"/>
+    <set-property name="gwt.logging.simpleRemoteHandler" value="ENABLED"/>
+    <set-property name="gwt.logging.popupHandler" value="DISABLED"/>
+    <set-property name="gwt.logging.consoleHandler" value="DISABLED"/>
+
+
+    <!-- Turn on GWT debug IDs -->
+    <inherits name="com.google.gwt.user.Debug"/>
+
+    <!-- GXT -->
+    <inherits name='com.sencha.gxt.ui.GXT'/>
+    <inherits name='com.sencha.gxt.theme.gray.Gray'/>
+    <stylesheet src="reset.css" />
+
+    <extend-property name="user.agent.os" values="unknown"/>
+
     <!-- Common Service Interfaces -->
     <inherits name='org.iplantc.de.DiscoveryEnvironmentCommon'/>
     <inherits name="org.iplantc.de.apps.Apps"/>
@@ -49,23 +49,16 @@
     <inherits name="org.iplantc.de.diskResource.diskresource"/>
     <inherits name="org.iplantc.de.pipelines.pipelines"/>
     <inherits name="org.iplantc.de.analysis.Analysis"/>
-    <!-- for server push -->
-    <inherits name="com.google.gwt.rpc.RPC"/>
+
+    <!-- iPlant Theme -->
+    <inherits name="org.iplantc.de.theme.base.Base" />
 
     <replace-with class="org.iplantc.de.client.desktop.theme.shortcut.ShortcutCellDefaultAppearance">
         <when-type-is class="org.iplantc.de.client.desktop.widget.ShortcutCell.ShortcutCellAppearance"/>
     </replace-with>
-    <replace-with class="org.iplantc.de.client.desktop.theme.taskbutton.TaskButtonCellDefaultAppearance">
-        <when-type-is class="org.iplantc.de.client.desktop.widget.TaskButtonCell.TaskButtonCellAppearance"/>
-    </replace-with>
 
-    <replace-with
-            class="org.iplantc.de.commons.client.appearance.widgets.IPlantAnchorDefaultAppearance">
+    <replace-with class="org.iplantc.de.commons.client.appearance.widgets.IPlantAnchorDefaultAppearance">
         <when-type-is class="org.iplantc.de.commons.client.widgets.IPlantAnchorAppearance"/>
-    </replace-with>
-
-    <replace-with class="org.iplantc.de.client.views.windows.AboutApplicationDefaultAppearance">
-        <when-type-is class="org.iplantc.de.client.views.windows.AboutApplicationAppearance"/>
     </replace-with>
 
     <!--  system messages deferred binding rules -->
@@ -78,7 +71,6 @@
 
     <!-- Specify the app entry point class.                         -->
     <entry-point class='org.iplantc.de.client.DiscoveryEnvironment'/>
-
 
     <source path="client"/>
     <source path="shared"/>

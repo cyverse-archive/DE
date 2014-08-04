@@ -8,8 +8,6 @@ public interface AppsWidgetsDisplayMessages extends Messages {
      */
     String emptyListSelectionText();
 
-    String editPublicAppWarning();
-
     String defaultAnalysisName();
 
     String nonEmptyFolderWarning();

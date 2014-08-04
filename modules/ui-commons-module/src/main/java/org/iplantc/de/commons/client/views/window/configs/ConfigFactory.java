@@ -122,6 +122,55 @@ public class ConfigFactory {
         return ab.as();
     }
 
+    public static WindowConfig getDefaultConfig(WindowType type) {
+        WindowConfig config = null;
+        switch (type) {
+            case ABOUT:
+                config = aboutWindowConfig();
+                break;
+            case ANALYSES:
+                config = analysisWindowConfig();
+                break;
+
+            case APPS:
+                config = appsWindowConfig();
+                break;
+
+            case DATA:
+                config = diskResourceWindowConfig(true);
+                break;
+
+            case IDROP_LITE_DOWNLOAD:
+                config = iDropLiteDownloadWindowConfig();
+                break;
+            case IDROP_LITE_UPLOAD:
+                config = iDropLiteUploadWindowConfig();
+                break;
+
+            case NOTIFICATIONS:
+                config = notifyWindowConfig(NotificationCategory.ALL);
+                break;
+
+            case SIMPLE_DOWNLOAD:
+                config = simpleDownloadWindowConfig();
+                break;
+
+            case SYSTEM_MESSAGES:
+                config = systemMessagesWindowConfig(null);
+                break;
+
+            case APP_INTEGRATION:
+            case APP_WIZARD:
+            case DATA_VIEWER:
+            case HELP:
+            case WORKFLOW_INTEGRATION:
+                // Default unsupported
+                break;
+        }
+
+        return config;
+    }
+
     public static WindowConfig getConfig(WindowState ws) {
         WindowConfig config = null;
         switch (ws.getConfigType()) {
