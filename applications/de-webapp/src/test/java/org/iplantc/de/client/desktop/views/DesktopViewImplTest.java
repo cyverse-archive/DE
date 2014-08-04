@@ -3,6 +3,7 @@ package org.iplantc.de.client.desktop.views;
 import org.iplantc.de.client.desktop.views.widgets.TaskBar;
 import org.iplantc.de.client.desktop.views.widgets.TaskButton;
 import org.iplantc.de.client.windows.IPlantWindowInterface;
+import org.iplantc.de.client.windows.IplantWindowBase;
 import org.iplantc.de.resources.client.messages.IplantNewUserTourStrings;
 
 import com.google.common.collect.Lists;
@@ -43,7 +44,7 @@ public class DesktopViewImplTest {
         List<TaskButton> tbList = Lists.newArrayList(mockTaskButton);
         when(uut.taskBar.getButtons()).thenReturn(tbList);
 
-        final Window window = mock(Window.class);
+        final IplantWindowBase window = mock(IplantWindowBase.class);
         when(registerEventMock.getItem()).thenReturn(window);
 
 
