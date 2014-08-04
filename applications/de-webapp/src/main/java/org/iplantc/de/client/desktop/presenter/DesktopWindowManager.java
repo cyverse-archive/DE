@@ -19,6 +19,7 @@ import com.sencha.gxt.widget.core.client.Window;
 import com.sencha.gxt.widget.core.client.WindowManager;
 
 import java.util.List;
+import java.util.Stack;
 
 /**
  * Window manager for the DE desktop.
@@ -68,24 +69,32 @@ public class DesktopWindowManager {
      * @param windowType the window type to be shown
      */
     public void show(WindowType windowType) {
+        Stack<Window> multiWindowStack = new Stack<>();
         // Look for existing window type, then show it
-        final List<Widget> reverse = Lists.reverse(windowManager.getStack());
-        for (Widget w : reverse) {
+        boolean wasLast = false;
+        for (Widget w : windowManager.getStack()) {
             Window window = (Window) w;
             if (Strings.nullToEmpty(window.getStateId()).startsWith(windowType.toString())) {
-                if (window.isVisible() && (reverse.indexOf(w) == 0) && (reverse.size() > 1)) {
-                    // If the window is visible, and on top
-                    windowManager.sendToBack(window);
-                    continue;
-                }
-                window.show();
-                windowManager.bringToFront(window);
-                return;
+                multiWindowStack.push(window);
+                wasLast = true;
+            } else {
+                wasLast = false;
             }
         }
+        if(!multiWindowStack.isEmpty()){
+            Window toFront;
+            if((multiWindowStack.size() == 1) || !wasLast){
+                toFront = multiWindowStack.pop();
+            } else {
+                toFront = multiWindowStack.get(0);
+            }
+            toFront.show();
+            windowManager.bringToFront(toFront);
+        } else {
+            // If window type could not be found, create and show one
+            show(getDefaultConfig(windowType), false);
+        }
 
-        // If window type could not be found, create and show one
-        show(getDefaultConfig(windowType), false);
     }
 
     public void show(final WindowConfig config, final boolean updateExistingWindow) {

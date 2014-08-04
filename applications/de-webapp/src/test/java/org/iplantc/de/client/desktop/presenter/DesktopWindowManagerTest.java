@@ -93,25 +93,35 @@ public class DesktopWindowManagerTest {
         when(window2.getStateId()).thenReturn(WindowType.DATA.toString() + "1");
         when(window3.getStateId()).thenReturn(WindowType.DATA.toString() + "2");
         when(window4.getStateId()).thenReturn(WindowType.ANALYSES.toString());
+
+        /* When data window is focused, next data window will be shown */
         final Stack<Widget> windowStack = new Stack<>();
-        windowStack.push(window1);
         windowStack.push(window2);
         windowStack.push(window3);
-        windowStack.push(window4);
 
         when(windowManagerMock.getStack()).thenReturn(windowStack);
         uut.show(WindowType.DATA);
-        verify(windowManagerMock).bringToFront(eq(window3));
+        verify(windowManagerMock).bringToFront(eq(window2));
 
         windowStack.clear();
         windowStack.push(window1);
-        windowStack.push(window2);
         windowStack.push(window4);
+        windowStack.push(window2);
         windowStack.push(window3);
 
         uut.show(WindowType.DATA);
-        verify(windowManagerMock).sendToBack(eq(window3));
-        verify(windowManagerMock).bringToFront(eq(window2));
+        verify(windowManagerMock, times(2)).bringToFront(eq(window2));
+
+        /* When data window is NOT focused, data window highest in stack is shown */
+        windowStack.clear();
+        windowStack.push(window1);
+        windowStack.push(window2);
+        windowStack.push(window3);
+        windowStack.push(window4);
+
+        uut.show(WindowType.DATA);
+        verify(windowManagerMock).bringToFront(eq(window3));
+
     }
 
 }
