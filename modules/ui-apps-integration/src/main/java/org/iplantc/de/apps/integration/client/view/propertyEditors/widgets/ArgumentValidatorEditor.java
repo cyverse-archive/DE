@@ -49,8 +49,6 @@ import java.util.Set;
  * FIXME JDS Need to create simple test to validate Number-based validators with simplified range
  * testing. Should inform user that the newest validator conflicts with existing validators.
  * 
- * TODO CORE-4806 Refactor. Remove field label from this class, move it down.
- * 
  * @author jstroot
  * 
  */

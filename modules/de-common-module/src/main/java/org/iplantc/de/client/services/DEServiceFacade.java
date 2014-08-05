@@ -7,6 +7,7 @@ import org.iplantc.de.shared.services.MultiPartServiceWrapper;
 import org.iplantc.de.shared.services.ServiceCallWrapper;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.http.client.Request;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.SerializationException;
 import com.google.gwt.user.client.rpc.ServiceDefTarget;
@@ -47,8 +48,8 @@ public class DEServiceFacade implements DEServiceAsync {
      * @throws SerializationException
      */
     @Override
-    public void getServiceData(ServiceCallWrapper wrapper, AsyncCallback<String> callback) {
-        proxy.getServiceData(wrapper, new AsyncCallbackWrapper<String>(callback));
+    public Request getServiceData(ServiceCallWrapper wrapper, AsyncCallback<String> callback) {
+        return proxy.getServiceData(wrapper, new AsyncCallbackWrapper<String>(callback));
     }
 
     /**
@@ -59,7 +60,7 @@ public class DEServiceFacade implements DEServiceAsync {
      * @throws SerializationException
      */
     @Override
-    public void getServiceData(MultiPartServiceWrapper wrapper, AsyncCallback<String> callback) {
-        proxy.getServiceData(wrapper, new AsyncCallbackWrapper<String>(callback));
+    public Request getServiceData(MultiPartServiceWrapper wrapper, AsyncCallback<String> callback) {
+        return proxy.getServiceData(wrapper, new AsyncCallbackWrapper<String>(callback));
     }
 }

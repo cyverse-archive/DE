@@ -21,7 +21,7 @@ import com.google.web.bindery.autobean.shared.impl.StringQuoter;
  */
 public class UserSettings {
 
-    private final KeyBoardShortcutConstants SHORTCUTS;
+    private final KeyBoardShortcutConstants SHORTCUTS = GWT.create(KeyBoardShortcutConstants.class);
     private boolean enableEmailNotification;
     private String defaultFileSelectorPath;
     private boolean rememberLastPath;
@@ -52,11 +52,14 @@ public class UserSettings {
 
     private static UserSettings instance;
 
+    public UserSettings(final Splittable userSettingsSplit){
+        setValues(userSettingsSplit);
+    }
+
     private UserSettings() {
         this.enableEmailNotification = false;
         this.rememberLastPath = false;
         this.saveSession = true;
-        this.SHORTCUTS = GWT.create(KeyBoardShortcutConstants.class);
     }
 
     public static UserSettings getInstance() {
@@ -120,7 +123,7 @@ public class UserSettings {
             setDataShortCut(SHORTCUTS.dataKeyShortCut());
             setAppsShortCut(SHORTCUTS.appsKeyShortCut());
             setAnalysesShortCut(SHORTCUTS.analysisKeyShortCut());
-            setNotifiShortCut(SHORTCUTS.notifyKeyShortCut());
+            setNotifyShortCut(SHORTCUTS.notifyKeyShortCut());
             setCloseShortCut(SHORTCUTS.closeKeyShortCut());
             return;
         }
@@ -148,9 +151,9 @@ public class UserSettings {
 
         final Splittable notifyShortcutSplit = split.get(NOTIFICATION_KB_SHORTCUT);
         if ((notifyShortcutSplit == null) || !notifyShortcutSplit.isString()) {
-            setNotifiShortCut(SHORTCUTS.notifyKeyShortCut());
+            setNotifyShortCut(SHORTCUTS.notifyKeyShortCut());
         } else {
-            setNotifiShortCut(notifyShortcutSplit.asString());
+            setNotifyShortCut(notifyShortcutSplit.asString());
         }
 
         final Splittable closeShortcutSplit = split.get(CLOSE_KB_SHORTCUT_STRING);
@@ -186,11 +189,11 @@ public class UserSettings {
         return analysesShortCut;
     }
 
-    public void setNotifiShortCut(String c) {
+    public void setNotifyShortCut(String c) {
         this.notifyShortCut = c;
     }
 
-    public String getNotifiShortCut() {
+    public String getNotifyShortCut() {
         return notifyShortCut;
     }
     /**
@@ -236,7 +239,7 @@ public class UserSettings {
         StringQuoter.create(getAppsShortCut()).assign(ret, APPS_KB_SHORTCUT);
         StringQuoter.create(getAnalysesShortCut()).assign(ret, ANALYSIS_KB_SHORTCUT);
         StringQuoter.create(getDataShortCut()).assign(ret, DATA_KB_SHORTCUT);
-        StringQuoter.create(getNotifiShortCut()).assign(ret, NOTIFICATION_KB_SHORTCUT);
+        StringQuoter.create(getNotifyShortCut()).assign(ret, NOTIFICATION_KB_SHORTCUT);
         StringQuoter.create(getCloseShortCut()).assign(ret, CLOSE_KB_SHORTCUT_STRING);
         StringQuoter.create(getLastPath()).assign(ret, LAST_PATH);
 

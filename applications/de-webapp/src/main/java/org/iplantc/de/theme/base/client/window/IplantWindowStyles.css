@@ -1,0 +1,65 @@
+@sprite .restoreBtn {
+    gwt-image: 'restoreBtnImage';
+    height: 15px;
+    width: 15px;
+    position: relative;
+    top: 2px;
+    padding-right: 2px;
+}
+@sprite .restoreBtn:hover {
+    gwt-image: 'restoreBtnHoverImage';
+}
+
+@sprite .minimizeBtn {
+    gwt-image: 'minimizeBtnImage';
+    height: 15px;
+    width: 15px;
+    position: relative;
+    top: 2px;
+    padding-right: 2px;
+}
+@sprite .minimizeBtn:hover {
+    gwt-image: 'minimizeBtnHoverImage';
+}
+
+@sprite .maximizeBtn {
+    gwt-image: 'maximizeBtnImage';
+    height: 15px;
+    width: 15px;
+    position: relative;
+    top: 2px;
+    padding-right: 2px;
+}
+@sprite .maximizeBtn:hover {
+    gwt-image: 'maximizeBtnHoverImage';
+}
+
+@sprite .layoutBtn {
+    gwt-image: 'layoutBtnImage';
+    height: 15px;
+    width: 15px;
+    position: relative;
+    top: 2px;
+    padding-right: 2px;
+}
+@sprite .layoutBtn:hover {
+    gwt-image: 'layoutBtnHoverImage';
+}
+
+@sprite .closeBtn {
+    gwt-image: 'closeBtnImage';
+    height: 15px;
+    width: 15px;
+    position: relative;
+    top: 2px;
+    padding-right: 2px;
+}
+@sprite .closeBtn:hover {
+    gwt-image: 'closeBtnHoverImage';
+}
+
+.headerText {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}

@@ -31,6 +31,10 @@ public class SuccessAnnouncementConfig extends IplantAnnouncementConfig {
         super(message, closable, timeout_ms);
     }
 
+    public SuccessAnnouncementConfig(final String message, boolean closable, int timeout_ms){
+        this(SafeHtmlUtils.fromString(message), closable, timeout_ms);
+    }
+
     /**
      * @return The given message as an HTML widget, for display by an IplantAnnouncement, proceeded by a
      *         success icon.

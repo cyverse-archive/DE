@@ -100,8 +100,6 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.shared.EventHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
-import com.google.gwt.json.client.JSONObject;
-import com.google.gwt.json.client.JSONString;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HTML;
@@ -646,9 +644,7 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter, Di
             showInfoTypeError(I18N.ERROR.unsupportedEnsemblInfoType());
             return;
         }
-        JSONObject obj = new JSONObject();
-        obj.put("info-type", new JSONString(infoType));
-        if (DiskResourceUtil.isEnsemblVizTab(obj)) {
+        if (DiskResourceUtil.isEnsemblVizTab(DiskResourceUtil.createInfoTypeSplittable(infoType))) {
             eventBus.fireEvent(new RequestSendToEnsemblEvent((File)next, InfoType.fromTypeString(infoType)));
         } else {
             showInfoTypeError(I18N.ERROR.unsupportedEnsemblInfoType());
@@ -665,9 +661,7 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter, Di
             showInfoTypeError(I18N.ERROR.unsupportedCogeInfoType());
             return;
         }
-        JSONObject obj = new JSONObject();
-        obj.put("info-type", new JSONString(infoType));
-        if (DiskResourceUtil.isGenomeVizTab(obj)) {
+        if (DiskResourceUtil.isGenomeVizTab(DiskResourceUtil.createInfoTypeSplittable(infoType))) {
             eventBus.fireEvent(new RequestSendToCoGeEvent((File)next));
         } else {
             showInfoTypeError(I18N.ERROR.unsupportedCogeInfoType());
@@ -684,9 +678,7 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter, Di
             showInfoTypeError(I18N.ERROR.unsupportedTreeInfoType());
             return;
         }
-        JSONObject obj = new JSONObject();
-        obj.put("info-type", new JSONString(infoType));
-        if (DiskResourceUtil.isTreeTab(obj)) {
+        if (DiskResourceUtil.isTreeTab(DiskResourceUtil.createInfoTypeSplittable(infoType))) {
             eventBus.fireEvent(new RequestSendToTreeViewerEvent((File)next));
         } else {
             showInfoTypeError(I18N.ERROR.unsupportedTreeInfoType());
@@ -763,6 +755,7 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter, Di
 
     @Override
     public void createNewTabFile(TabularFileViewerWindowConfig config) {
+        config.setParentFolder(getSelectedUploadFolder());
         CreateNewFileEvent event = new CreateNewFileEvent(config);
         eventBus.fireEvent(event);
     }
@@ -1115,7 +1108,7 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter, Di
 
     @Override
     public void emptyTrash() {
-        // TODO CORE-5300 Move confirmation box to view, which will call presenter
+        // TODO REFACTOR CORE-5300 Move confirmation box to view, which will call presenter
         final ConfirmMessageBox cmb = new ConfirmMessageBox(I18N.DISPLAY.emptyTrash(), I18N.DISPLAY.emptyTrashWarning());
         cmb.addDialogHideHandler(new DialogHideEvent.DialogHideHandler() {
             @Override

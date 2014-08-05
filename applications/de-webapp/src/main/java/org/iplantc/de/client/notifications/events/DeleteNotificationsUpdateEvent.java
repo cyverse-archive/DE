@@ -5,6 +5,7 @@ package org.iplantc.de.client.notifications.events;
 
 import org.iplantc.de.client.models.notifications.NotificationMessage;
 
+import com.google.gwt.event.shared.EventHandler;
 import com.google.gwt.event.shared.GwtEvent;
 
 import java.util.List;
@@ -13,7 +14,7 @@ import java.util.List;
  * @author sriram
  * 
  */
-public class DeleteNotificationsUpdateEvent extends GwtEvent<DeleteNotificationsUpdateEventHandler> {
+public class DeleteNotificationsUpdateEvent extends GwtEvent<DeleteNotificationsUpdateEvent.DeleteNotificationsUpdateEventHandler> {
     private List<NotificationMessage> messages;
 
     /**
@@ -51,4 +52,14 @@ public class DeleteNotificationsUpdateEvent extends GwtEvent<DeleteNotifications
         this.messages = ids;
     }
 
+    /**
+     * @author sriram
+     *
+     */
+    public static interface DeleteNotificationsUpdateEventHandler extends EventHandler {
+        /**
+        *
+        */
+        public void onDelete(DeleteNotificationsUpdateEvent event);
+    }
 }

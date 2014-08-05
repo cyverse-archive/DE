@@ -90,7 +90,6 @@ public class DiskResourceViewToolbarImpl extends Composite implements DiskResour
 
     @Override
     public DiskResourceSearchField getSearchField() {
-        // TODO CORE-5300 This class will listen for events on this field, here.
         return searchField;
     }
 

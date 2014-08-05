@@ -159,7 +159,6 @@ public class TextInputPropertyEditor extends AbstractArgumentPropertyEditor {
 
     @UiHandler("validatorsEditor")
     void onValidatorListChanged(@SuppressWarnings("unused") ValueChangeEvent<List<ArgumentValidator>> event) {
-        // FIXME CORE-4806 Refactor ArgumentValidatorEditor s.t. it integrates with InitializeTwoWayBinding
         editorDriver.flush();
         this.getBoundEditorDelegate().accept(new Refresher());
     }
