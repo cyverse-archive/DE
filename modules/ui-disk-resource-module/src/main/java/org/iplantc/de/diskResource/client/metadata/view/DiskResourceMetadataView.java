@@ -1,5 +1,6 @@
 package org.iplantc.de.diskResource.client.metadata.view;
 
+import static org.iplantc.de.diskResource.share.DiskResourceModule.MetadataIds;
 import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.client.models.diskResources.DiskResourceAutoBeanFactory;
 import org.iplantc.de.client.models.diskResources.DiskResourceMetadata;
@@ -49,6 +50,7 @@ import com.sencha.gxt.core.shared.FastMap;
 import com.sencha.gxt.data.shared.LabelProvider;
 import com.sencha.gxt.data.shared.ListStore;
 import com.sencha.gxt.data.shared.ModelKeyProvider;
+import com.sencha.gxt.widget.core.client.Composite;
 import com.sencha.gxt.widget.core.client.ContentPanel;
 import com.sencha.gxt.widget.core.client.Dialog.PredefinedButton;
 import com.sencha.gxt.widget.core.client.box.ConfirmMessageBox;
@@ -90,11 +92,16 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class DiskResourceMetadataView implements IsWidget {
+/**
+ * FIXME REFACTOR Segregate programmatic view construction to a different UIBinder, class, etc
+ * FIXME REFACTOR Factor out an appearance for this class
+ */
+public class DiskResourceMetadataView extends Composite {
 
     private final class AttributeValidationHandler implements ValidHandler, InvalidHandler {
         public AttributeValidationHandler() {
         }
+
         @Override
         public void onInvalid(InvalidEvent event) {
             valid = false;
@@ -191,7 +198,7 @@ public class DiskResourceMetadataView implements IsWidget {
     }
 
     interface MetadataInfoTemplate extends XTemplates {
-        @XTemplate("<div style='text-overflow:ellipsis;overflow:hidden;white-space:nowarp;border:none;' qtip=\"{name}\" >{name}</div>")
+        @XTemplate("<div style='text-overflow:ellipsis;overflow:hidden;white-space:nowrap;border:none;' qtip='{name}' >{name}</div>")
         SafeHtml templateInfo(String name);
     }
 
@@ -220,7 +227,6 @@ public class DiskResourceMetadataView implements IsWidget {
     BorderLayoutContainer con;
     @UiField
     TextButton deleteMetadataButton;
-    MetadataHtmlTemplates htmlTemplates = GWT.create(MetadataHtmlTemplates.class);
     @UiField
     ComboBox<MetadataTemplateInfo> templateCombo;
     @UiField
@@ -229,24 +235,22 @@ public class DiskResourceMetadataView implements IsWidget {
     private static DiskResourceMetadataEditorPanelUiBinder uiBinder = GWT.create(DiskResourceMetadataEditorPanelUiBinder.class);
     private final AccordionLayoutContainer alc;
     private final AccordionLayoutAppearance appearance;
-    private final DiskResourceAutoBeanFactory autoBeanFactory = GWT.create(DiskResourceAutoBeanFactory.class);
+    private final DiskResourceAutoBeanFactory autoBeanFactory;
     private final VerticalLayoutContainer centerPanel;
     private final DiskResourceAutoBeanFactory diskResourceAutoBeanFactory;
     private final IplantDisplayStrings displayStrings;
+    private final MetadataHtmlTemplates htmlTemplates;
     private final IplantResources iplantResources;
-    private final DiskResource selectedResource;
     private final FastMap<DiskResourceMetadata> templateAttrAvuMap = new FastMap<>();
     private final FastMap<Field<?>> templateAttrFieldMap = new FastMap<>();
-    private final DateTimeFormat timestampFormat = DateTimeFormat.getFormat(DateTimeFormat.PredefinedFormat.DATE_TIME_SHORT);
+    private final DateTimeFormat timestampFormat;
     private final Set<DiskResourceMetadata> toBeDeleted = Sets.newHashSet();
-    private final Widget widget;
     private final boolean writable;
     private DiskResourceMetadataTemplate currentMetadataTemplate;
     private Grid<DiskResourceMetadata> grid;
     private GridInlineEditing<DiskResourceMetadata> gridInlineEditing;
     private CheckBox isCompleteCbx;
     private ListStore<DiskResourceMetadata> listStore;
-    private MetadataCell metadataCell;
     private Presenter presenter;
     private MetadataTemplateInfo selectedTemplate;
     private VerticalLayoutContainer templateContainer;
@@ -257,26 +261,25 @@ public class DiskResourceMetadataView implements IsWidget {
     private boolean valid;
 
     public DiskResourceMetadataView(DiskResource dr) {
-        widget = uiBinder.createAndBindUi(this);
-        selectedResource = dr;
-        writable = DiskResourceUtil.isWritable(selectedResource);
+        htmlTemplates = GWT.create(MetadataHtmlTemplates.class);
+        autoBeanFactory = GWT.create(DiskResourceAutoBeanFactory.class);
+        timestampFormat = DateTimeFormat.getFormat(DateTimeFormat.PredefinedFormat.DATE_TIME_SHORT);
+        displayStrings = I18N.DISPLAY;
+        iplantResources = IplantResources.RESOURCES;
+        diskResourceAutoBeanFactory = GWT.create(DiskResourceAutoBeanFactory.class);
+        appearance = GWT.create(AccordionLayoutAppearance.class);
+        writable = DiskResourceUtil.isWritable(dr);
         alc = new AccordionLayoutContainer();
         centerPanel = new VerticalLayoutContainer();
+        valid = true;
+
+        initWidget(uiBinder.createAndBindUi(this));
         con.setCenterWidget(centerPanel);
-        appearance = GWT.create(AccordionLayoutAppearance.class);
         initGrid();
         addMetadataButton.setEnabled(writable);
         deleteMetadataButton.disable();
         templateCombo.setEnabled(writable);
-        valid = true;
-        displayStrings = I18N.DISPLAY;
-        iplantResources = IplantResources.RESOURCES;
-        diskResourceAutoBeanFactory = GWT.create(DiskResourceAutoBeanFactory.class);
-    }
-
-    @Override
-    public Widget asWidget() {
-        return widget;
+        ensureDebugId(MetadataIds.METADATA_VIEW);
     }
 
     public DiskResourceMetadataTemplate getMetadataTemplateToAdd() {
@@ -412,6 +415,14 @@ public class DiskResourceMetadataView implements IsWidget {
 
         // validate by default
         return true;
+    }
+
+    @Override
+    protected void onEnsureDebugId(String baseID) {
+        super.onEnsureDebugId(baseID);
+        addMetadataButton.ensureDebugId(baseID + MetadataIds.ADD_METADATA);
+        deleteMetadataButton.ensureDebugId(baseID + MetadataIds.DELETE_METADATA);
+        templateCombo.ensureDebugId(baseID + MetadataIds.TEMPLATES);
     }
 
     @UiFactory
@@ -637,7 +648,7 @@ public class DiskResourceMetadataView implements IsWidget {
         ColumnConfig<DiskResourceMetadata, String> attributeColumn = new ColumnConfig<>(props.attribute(), 150, displayStrings.attribute());
         ColumnConfig<DiskResourceMetadata, String> valueColumn = new ColumnConfig<>(props.value(), 150, displayStrings.paramValue());
 
-        metadataCell = new MetadataCell();
+        MetadataCell metadataCell = new MetadataCell();
         attributeColumn.setCell(metadataCell);
         valueColumn.setCell(metadataCell);
         columns.add(attributeColumn);
