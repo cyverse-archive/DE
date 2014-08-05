@@ -19,20 +19,22 @@
 .cell {
     background: none repeat scroll 0 0 ;
     padding: 3px;
-    width: 200px;
     font-size: 11px;
     border-bottom: 1px solid #DDDDDD;
     overflow: hidden;
     cursor: pointer;
     text-align: left;
+    white-space: normal;
+    text-overflow: ellipsis;
 }
 
 .cellHighlight {
     background: none repeat scroll 0 0 #DDDDDD;
     padding: 3px;
-    width: 200px;
     font-size: 11px;
     overflow: hidden;
     cursor: pointer;
     text-align: left;
+    white-space: normal;
+    text-overflow: ellipsis;
 }

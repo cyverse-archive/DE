@@ -127,17 +127,17 @@ public class NotificationPresenterImpl implements NotificationView.Presenter, No
 
     public NotificationPresenterImpl(NotificationView view) {
         this.view = view;
+        this.errorStrings = I18N.ERROR;
+        this.displayStrings = I18N.DISPLAY;
+        this.messageServiceFacade = ServicesInjector.INSTANCE.getMessageServiceFacade();
+        this.eventBus = EventBus.getInstance();
+        currentCategory = NotificationCategory.ALL;
         toolbar = new NotificationToolbarViewImpl();
         toolbar.setPresenter(this);
         view.setNorthWidget(toolbar);
         this.view.setPresenter(this);
         setRefreshButton(view.getRefreshButton());
         // set default cat
-        currentCategory = NotificationCategory.ALL;
-        messageServiceFacade = ServicesInjector.INSTANCE.getMessageServiceFacade();
-        eventBus = EventBus.getInstance();
-        errorStrings = I18N.ERROR;
-        displayStrings = I18N.DISPLAY;
     }
 
     @Override

@@ -1,7 +1,7 @@
 package org.iplantc.de.client.desktop.views.widgets;
 
-import org.iplantc.de.client.models.notifications.NotificationMessage;
 import org.iplantc.de.client.desktop.DesktopView;
+import org.iplantc.de.client.models.notifications.NotificationMessage;
 import org.iplantc.de.commons.client.widgets.IPlantAnchor;
 
 import com.google.gwt.cell.client.Cell;
