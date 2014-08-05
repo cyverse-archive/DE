@@ -14,6 +14,7 @@ import org.iplantc.de.diskResource.client.metadata.presenter.DiskResourceMetadat
 import org.iplantc.de.diskResource.client.views.DiskResourceMetadataProperties;
 import org.iplantc.de.resources.client.IplantResources;
 import org.iplantc.de.resources.client.messages.I18N;
+import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
@@ -105,7 +106,7 @@ public class DiskResourceMetadataView implements IsWidget {
 
         @Override
         public void onClick(ClickEvent event) {
-            ConfirmMessageBox cmb = new ConfirmMessageBox(I18N.DISPLAY.confirmAction(), I18N.DISPLAY.metadataTemplateConfirmRemove());
+            ConfirmMessageBox cmb = new ConfirmMessageBox(displayStrings.confirmAction(), displayStrings.metadataTemplateConfirmRemove());
             cmb.addDialogHideHandler(new DialogHideEvent.DialogHideHandler() {
                 @Override
                 public void onDialogHide(DialogHideEvent event) {
@@ -149,7 +150,7 @@ public class DiskResourceMetadataView implements IsWidget {
         /**
          * Retrieves a collection of metadata for the given resource.
          * 
-         * @param callback
+         * @param callback the callback
          * @return a collection of the given resource's metadata.
          */
         void getDiskResourceMetadata(AsyncCallback<String> callback);
@@ -183,6 +184,9 @@ public class DiskResourceMetadataView implements IsWidget {
 
     @UiField
     TextButton deleteMetadataButton;
+    private final IplantDisplayStrings displayStrings;
+    private final IplantResources iplantResources;
+    private final DiskResourceAutoBeanFactory diskResourceAutoBeanFactory;
 
     private Grid<DiskResourceMetadata> grid;
 
@@ -264,12 +268,15 @@ public class DiskResourceMetadataView implements IsWidget {
         alc = new AccordionLayoutContainer();
         centerPanel = new VerticalLayoutContainer();
         con.setCenterWidget(centerPanel);
-        appearance = GWT.<AccordionLayoutAppearance> create(AccordionLayoutAppearance.class);
+        appearance = GWT.create(AccordionLayoutAppearance.class);
         initGrid();
         addMetadataButton.setEnabled(writable);
         deleteMetadataButton.disable();
         templateCombo.setEnabled(writable);
         valid = true;
+        displayStrings = I18N.DISPLAY;
+        iplantResources = IplantResources.RESOURCES;
+        diskResourceAutoBeanFactory = GWT.create(DiskResourceAutoBeanFactory.class);
     }
 
     public void setPresenter(Presenter p) {
@@ -295,7 +302,7 @@ public class DiskResourceMetadataView implements IsWidget {
         });
         templateCombo.setEditable(false);
         templateCombo.setWidth(250);
-        templateCombo.setEmptyText(I18N.DISPLAY.metadataTemplateSelect());
+        templateCombo.setEmptyText(displayStrings.metadataTemplateSelect());
         templateCombo.setTypeAhead(true);
         templateCombo.addSelectionHandler(new TemplateInfoSelectionHandler());
         return templateCombo;
@@ -305,7 +312,7 @@ public class DiskResourceMetadataView implements IsWidget {
         templateCombo.setEnabled(false);
         presenter.onTemplateSelected(templateInfo.getId());
         buildTemplateContainer();
-        alc.mask(I18N.DISPLAY.loadingMask());
+        alc.mask(displayStrings.loadingMask());
     }
 
     public void loadTemplateAttributes(List<MetadataTemplateAttribute> attributes) {
@@ -325,7 +332,7 @@ public class DiskResourceMetadataView implements IsWidget {
     }
 
     private IPlantAnchor buildRemoveTemplateLink() {
-        return new IPlantAnchor(I18N.DISPLAY.metadataTemplateRemove(), 575, new RemoveTemplateHandlerImpl());
+        return new IPlantAnchor(displayStrings.metadataTemplateRemove(), 575, new RemoveTemplateHandlerImpl());
     }
 
     private TextField buildTextField(MetadataTemplateAttribute attribute) {
@@ -469,7 +476,7 @@ public class DiskResourceMetadataView implements IsWidget {
         if (label == null) {
             return null;
         }
-        SafeUri infoUri = IplantResources.RESOURCES.info().getSafeUri();
+        SafeUri infoUri = iplantResources.info().getSafeUri();
         SafeHtml infoImg = Strings.isNullOrEmpty(description) ? SafeHtmlUtils.fromString("") //$NON-NLS-1$
                 : htmlTemplates.labelInfo(infoUri, description);
         SafeHtml required = allowBlank ? SafeHtmlUtils.fromString("") : htmlTemplates.required(); //$NON-NLS-1$
@@ -542,7 +549,7 @@ public class DiskResourceMetadataView implements IsWidget {
         userMetadataPanel.setCollapsible(true);
         userMetadataPanel.getHeader().addStyleName(ThemeStyles.get().style().borderTop());
 
-        userMetadataPanel.setHeadingHtml(htmlTemplates.boldHeader(I18N.DISPLAY.userMetadata()));
+        userMetadataPanel.setHeadingHtml(htmlTemplates.boldHeader(displayStrings.userMetadata()));
     }
 
     private ListStore<DiskResourceMetadata> createListStore() {
@@ -578,8 +585,8 @@ public class DiskResourceMetadataView implements IsWidget {
     @UiHandler("addMetadataButton")
     void onAddMetadataSelected(SelectEvent event) {
         expandUserMetadataPanel();
-        String attr = getUniqueAttrName(I18N.DISPLAY.newAttribute(), 0);
-        DiskResourceMetadata md = newMetadata(attr, I18N.DISPLAY.newValue(), ""); //$NON-NLS-1$
+        String attr = getUniqueAttrName(displayStrings.newAttribute(), 0);
+        DiskResourceMetadata md = newMetadata(attr, displayStrings.newValue(), ""); //$NON-NLS-1$
         md.setId(unique_avu_id++ + ""); //$NON-NLS-1$
         listStore.add(0, md);
         gridInlineEditing.startEditing(new GridCell(0, 0));
@@ -599,8 +606,8 @@ public class DiskResourceMetadataView implements IsWidget {
     private ColumnModel<DiskResourceMetadata> createColumnModel() {
         List<ColumnConfig<DiskResourceMetadata, ?>> columns = Lists.newArrayList();
         DiskResourceMetadataProperties props = GWT.create(DiskResourceMetadataProperties.class);
-        ColumnConfig<DiskResourceMetadata, String> attributeColumn = new ColumnConfig<>(props.attribute(), 150, I18N.DISPLAY.attribute());
-        ColumnConfig<DiskResourceMetadata, String> valueColumn = new ColumnConfig<>(props.value(), 150, I18N.DISPLAY.paramValue());
+        ColumnConfig<DiskResourceMetadata, String> attributeColumn = new ColumnConfig<>(props.attribute(), 150, displayStrings.attribute());
+        ColumnConfig<DiskResourceMetadata, String> valueColumn = new ColumnConfig<>(props.value(), 150, displayStrings.paramValue());
 
         metadataCell = new MetadataCell();
         attributeColumn.setCell(metadataCell);
@@ -804,8 +811,7 @@ public class DiskResourceMetadataView implements IsWidget {
     }
 
     private DiskResourceMetadata copy(DiskResourceMetadata drm) {
-        DiskResourceAutoBeanFactory factory = GWT.create(DiskResourceAutoBeanFactory.class);
-        DiskResourceMetadata temp = AutoBeanCodex.decode(factory, DiskResourceMetadata.class, "{}").as(); //$NON-NLS-1$
+        DiskResourceMetadata temp = AutoBeanCodex.decode(diskResourceAutoBeanFactory, DiskResourceMetadata.class, "{}").as(); //$NON-NLS-1$
         temp.setAttribute(drm.getAttribute());
         temp.setValue(drm.getValue());
         temp.setUnit(drm.getUnit());
