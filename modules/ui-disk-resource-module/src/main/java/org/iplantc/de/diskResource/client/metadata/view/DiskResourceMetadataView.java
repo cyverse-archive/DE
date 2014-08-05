@@ -219,9 +219,9 @@ public class DiskResourceMetadataView implements IsWidget {
 
     private final VerticalLayoutContainer centerPanel;
 
-    private final FastMap<Field<?>> templateAttrFieldMap = new FastMap<Field<?>>();
+    private final FastMap<Field<?>> templateAttrFieldMap = new FastMap<>();
 
-    private final FastMap<DiskResourceMetadata> templateAttrAvuMap = new FastMap<DiskResourceMetadata>();
+    private final FastMap<DiskResourceMetadata> templateAttrAvuMap = new FastMap<>();
 
     private MetadataTemplateInfo selectedTemplate;
 
@@ -283,9 +283,9 @@ public class DiskResourceMetadataView implements IsWidget {
 
     @UiFactory
     ComboBox<MetadataTemplateInfo> buildTemplateCombo() {
-        templateStore = new ListStore<MetadataTemplateInfo>(new TemplateInfoModelKeyProvider());
+        templateStore = new ListStore<>(new TemplateInfoModelKeyProvider());
 
-        templateCombo = new ComboBox<MetadataTemplateInfo>(templateStore, new TemplateInfoLabelProvider(), new AbstractSafeHtmlRenderer<MetadataTemplateInfo>() {
+        templateCombo = new ComboBox<>(templateStore, new TemplateInfoLabelProvider(), new AbstractSafeHtmlRenderer<MetadataTemplateInfo>() {
 
             @Override
             public SafeHtml render(MetadataTemplateInfo object) {
@@ -341,7 +341,7 @@ public class DiskResourceMetadataView implements IsWidget {
     }
 
     private NumberField<Integer> buildIntegerField(MetadataTemplateAttribute attribute) {
-        NumberField<Integer> nf = new NumberField<Integer>(new IntegerPropertyEditor());
+        NumberField<Integer> nf = new NumberField<>(new IntegerPropertyEditor());
         nf.setAllowBlank(!attribute.isRequired());
         nf.setAllowDecimals(false);
         nf.setAllowNegative(true);
@@ -355,7 +355,7 @@ public class DiskResourceMetadataView implements IsWidget {
     }
 
     private NumberField<Double> buildNumberField(MetadataTemplateAttribute attribute) {
-        NumberField<Double> nf = new NumberField<Double>(new DoublePropertyEditor());
+        NumberField<Double> nf = new NumberField<>(new DoublePropertyEditor());
         nf.setAllowBlank(!attribute.isRequired());
         nf.setAllowDecimals(true);
         nf.setAllowNegative(true);
@@ -441,7 +441,7 @@ public class DiskResourceMetadataView implements IsWidget {
     }
 
     /**
-     * @param attribute
+     * @param attribute the template attribute
      * @return Field based on MetadataTemplateAttribute type.
      */
     private Field<?> getAttributeValueWidget(MetadataTemplateAttribute attribute) {
@@ -484,7 +484,7 @@ public class DiskResourceMetadataView implements IsWidget {
 
     private void initGrid() {
         buildUserMetadataPanel();
-        grid = new Grid<DiskResourceMetadata>(createListStore(), createColumnModel());
+        grid = new Grid<>(createListStore(), createColumnModel());
         userMetadataPanel.add(grid);
         centerPanel.add(userMetadataPanel, new VerticalLayoutData(1, -1));
 
@@ -496,7 +496,7 @@ public class DiskResourceMetadataView implements IsWidget {
     }
 
     private void initEditor() {
-        gridInlineEditing = new GridInlineEditing<DiskResourceMetadata>(grid);
+        gridInlineEditing = new GridInlineEditing<>(grid);
         gridInlineEditing.setClicksToEdit(ClicksToEdit.TWO);
         ColumnConfig<DiskResourceMetadata, String> column1 = grid.getColumnModel().getColumn(0);
         ColumnConfig<DiskResourceMetadata, String> column2 = grid.getColumnModel().getColumn(1);
@@ -546,7 +546,7 @@ public class DiskResourceMetadataView implements IsWidget {
     }
 
     private ListStore<DiskResourceMetadata> createListStore() {
-        listStore = new ListStore<DiskResourceMetadata>(new ModelKeyProvider<DiskResourceMetadata>() {
+        listStore = new ListStore<>(new ModelKeyProvider<DiskResourceMetadata>() {
             @Override
             public String getKey(DiskResourceMetadata item) {
                 if (item != null) {
@@ -578,7 +578,7 @@ public class DiskResourceMetadataView implements IsWidget {
     @UiHandler("addMetadataButton")
     void onAddMetadataSelected(SelectEvent event) {
         expandUserMetadataPanel();
-        String attr = getUniqeAttrName(I18N.DISPLAY.newAttribute(), 0);
+        String attr = getUniqueAttrName(I18N.DISPLAY.newAttribute(), 0);
         DiskResourceMetadata md = newMetadata(attr, I18N.DISPLAY.newValue(), ""); //$NON-NLS-1$
         md.setId(unique_avu_id++ + ""); //$NON-NLS-1$
         listStore.add(0, md);
@@ -586,28 +586,21 @@ public class DiskResourceMetadataView implements IsWidget {
         gridInlineEditing.getEditor(grid.getColumnModel().getColumn(0)).validate(false);
     }
 
-    private String getUniqeAttrName(String attrName, int i) {
+    private String getUniqueAttrName(String attrName, int i) {
         String retName = i > 0 ? attrName + "_(" + i + ")" : attrName; //$NON-NLS-1$ //$NON-NLS-2$
         for (DiskResourceMetadata md : listStore.getAll()) {
             if (md.getAttribute().equals(retName)) {
-                return getUniqeAttrName(attrName, ++i);
+                return getUniqueAttrName(attrName, ++i);
             }
         }
         return retName;
     }
 
-    ColumnModel<MetadataTemplateAttribute> createTemplateColumnModel() {
-        List<ColumnConfig<MetadataTemplateAttribute, ?>> columns = Lists.newArrayList();
-
-        ColumnModel<MetadataTemplateAttribute> cm = new ColumnModel<MetadataTemplateAttribute>(columns);
-        return cm;
-    }
-
     private ColumnModel<DiskResourceMetadata> createColumnModel() {
         List<ColumnConfig<DiskResourceMetadata, ?>> columns = Lists.newArrayList();
         DiskResourceMetadataProperties props = GWT.create(DiskResourceMetadataProperties.class);
-        ColumnConfig<DiskResourceMetadata, String> attributeColumn = new ColumnConfig<DiskResourceMetadata, String>(props.attribute(), 150, I18N.DISPLAY.attribute());
-        ColumnConfig<DiskResourceMetadata, String> valueColumn = new ColumnConfig<DiskResourceMetadata, String>(props.value(), 150, I18N.DISPLAY.paramValue());
+        ColumnConfig<DiskResourceMetadata, String> attributeColumn = new ColumnConfig<>(props.attribute(), 150, I18N.DISPLAY.attribute());
+        ColumnConfig<DiskResourceMetadata, String> valueColumn = new ColumnConfig<>(props.value(), 150, I18N.DISPLAY.paramValue());
 
         metadataCell = new MetadataCell();
         attributeColumn.setCell(metadataCell);
@@ -615,7 +608,7 @@ public class DiskResourceMetadataView implements IsWidget {
         columns.add(attributeColumn);
         columns.add(valueColumn);
 
-        ColumnModel<DiskResourceMetadata> cm = new ColumnModel<DiskResourceMetadata>(columns);
+        ColumnModel<DiskResourceMetadata> cm = new ColumnModel<>(columns);
         return cm;
     }
 
@@ -763,7 +756,7 @@ public class DiskResourceMetadataView implements IsWidget {
             for (IsField<?> f : fields) {
                 if (!f.isValid(false)) {
                     valid = false;
-                    return valid;
+                    break;
                 }
                 valid = true;
             }
