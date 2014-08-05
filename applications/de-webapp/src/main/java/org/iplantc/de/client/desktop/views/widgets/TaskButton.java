@@ -20,7 +20,9 @@ import com.sencha.gxt.widget.core.client.event.ShowEvent;
  * 
  * @see TaskBar
  */
-public class TaskButton extends ToggleButton implements MinimizeEvent.MinimizeHandler, MaximizeEvent.MaximizeHandler, ShowEvent.ShowHandler {
+public class TaskButton extends ToggleButton implements MinimizeEvent.MinimizeHandler,
+                                                        MaximizeEvent.MaximizeHandler,
+                                                        ShowEvent.ShowHandler {
 
     private final Window win;
 
@@ -35,7 +37,7 @@ public class TaskButton extends ToggleButton implements MinimizeEvent.MinimizeHa
 
     TaskButton(Window win, TaskButtonCell cell){
         super(cell);
-        setText(win.getHeader().getText());
+        setText(Strings.nullToEmpty(win.getHeader().getText()));
         setIcon(getCell().getAppearance().getIcon());
         setHeight(getCell().getAppearance().getHeight());
         this.win = win;

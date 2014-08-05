@@ -118,7 +118,7 @@ public class DesktopViewImpl implements DesktopView, UnregisterEvent.UnregisterH
     public void onRegister(RegisterEvent<Widget> event) {
         final Widget eventItem = event.getItem();
 
-        if(eventItem instanceof com.sencha.gxt.widget.core.client.Window) {
+        if(eventItem instanceof IPlantWindowInterface) {
             com.sencha.gxt.widget.core.client.Window iplantWindow = (com.sencha.gxt.widget.core.client.Window) eventItem;
             // If it already exists, mark button active
             for(TaskButton btn : taskBar.getButtons()){

@@ -66,7 +66,7 @@ public class AppLaunchWindow extends IplantWindowBase implements AnalysisLaunchE
     private final DeployedComponentServices dcServices = ServicesInjector.INSTANCE.getDeployedComponentServices();
 
     public AppLaunchWindow(AppWizardConfig config) {
-        super(null, null);
+        super(null, config);
         setSize("640", "375");
         setMinWidth(300);
         setMinHeight(350);

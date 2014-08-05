@@ -47,6 +47,7 @@ public class TaskButtonCell extends ToggleButtonCell {
     }
 
     private final Window window;
+    private final WindowManager windowManager;
 
     /**
      * Constructs a task button cell with the default appearance.
@@ -56,7 +57,7 @@ public class TaskButtonCell extends ToggleButtonCell {
      * {@link TaskButtonCellDefaultAppearance}. See {@code Desktop.gwt.xml} for more information.
      */
     public TaskButtonCell(final Window window) {
-        this(GWT.<TaskButtonCellAppearance<Boolean>>create(TaskButtonCellAppearance.class), window);
+        this(GWT.<TaskButtonCellAppearance<Boolean>>create(TaskButtonCellAppearance.class), window, WindowManager.get());
     }
 
     /**
@@ -64,10 +65,12 @@ public class TaskButtonCell extends ToggleButtonCell {
      *
      * @param appearance the appearance of the task button cell
      */
-    public TaskButtonCell(TaskButtonCellAppearance<Boolean> appearance,
-                          final Window window) {
+    TaskButtonCell(TaskButtonCellAppearance<Boolean> appearance,
+                   final Window window,
+                   final WindowManager windowManager) {
         super(appearance);
         this.window = window;
+        this.windowManager = windowManager;
     }
 
     @Override
@@ -83,14 +86,22 @@ public class TaskButtonCell extends ToggleButtonCell {
     @Override
     protected void onClick(Context context, XElement p, Boolean value, NativeEvent event,
                            ValueUpdater<Boolean> valueUpdater) {
-        super.onClick(context, p, value, event, valueUpdater);
+       boolean valuePassed = value;
         if(!window.isVisible()) {
             window.show();
-        } else if (window == WindowManager.get().getActive()){
+        } else if (window == windowManager.getActive()){
             window.minimize();
         } else {
             window.toFront();
+            // Force button state, to prevent button toggle.
+            valuePassed = true;
         }
+        callSuperOnClick(context, p, event, valueUpdater, valuePassed);
+    }
+
+    void callSuperOnClick(Context context, XElement p, NativeEvent event,
+                          ValueUpdater<Boolean> valueUpdater, boolean valuePassed) {
+        super.onClick(context, p, valuePassed, event, valueUpdater);
     }
 
 }

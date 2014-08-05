@@ -57,4 +57,5 @@ public class TaskButtonTest {
 
         verify(uut).setValue(eq(false), eq(false));
     }
+
 }
