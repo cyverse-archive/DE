@@ -2,6 +2,7 @@ package org.iplantc.de.client.desktop.views.widgets;
 
 import org.iplantc.de.client.desktop.DesktopView;
 import org.iplantc.de.client.models.notifications.NotificationMessage;
+import org.iplantc.de.client.notifications.views.NotificationMessageProperties;
 import org.iplantc.de.commons.client.widgets.IPlantAnchor;
 
 import com.google.gwt.cell.client.Cell;
@@ -18,9 +19,11 @@ import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.HTML;
 
 import static com.sencha.gxt.core.client.Style.SelectionMode.SINGLE;
+import static com.sencha.gxt.data.shared.SortDir.DESC;
 import com.sencha.gxt.core.client.IdentityValueProvider;
 import com.sencha.gxt.data.shared.ListStore;
 import com.sencha.gxt.data.shared.ModelKeyProvider;
+import com.sencha.gxt.data.shared.Store;
 import com.sencha.gxt.data.shared.event.StoreAddEvent;
 import com.sencha.gxt.data.shared.event.StoreClearEvent;
 import com.sencha.gxt.data.shared.event.StoreRemoveEvent;
@@ -112,6 +115,7 @@ public class UnseenNotificationsView extends Composite implements StoreClearEven
 
     @UiFactory
     ListView<NotificationMessage, NotificationMessage> createListView() {
+        NotificationMessageProperties props = GWT.create(NotificationMessageProperties.class);
         store = new ListStore<>(new ModelKeyProvider<NotificationMessage>() {
             @Override
             public String getKey(NotificationMessage item) {
@@ -121,6 +125,7 @@ public class UnseenNotificationsView extends Composite implements StoreClearEven
         store.addStoreClearHandler(this);
         store.addStoreAddHandler(this);
         store.addStoreRemoveHandler(this);
+        store.addSortInfo(new Store.StoreSortInfo<>(props.timestamp(), DESC));
         ListView<NotificationMessage, NotificationMessage> lv = new ListView<>(store,
                                                                                new IdentityValueProvider<NotificationMessage>(),
                                                                                appearance.getListViewCell());
