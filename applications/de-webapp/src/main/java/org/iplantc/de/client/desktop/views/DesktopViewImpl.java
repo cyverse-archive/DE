@@ -197,7 +197,7 @@ public class DesktopViewImpl implements DesktopView, UnregisterEvent.UnregisterH
     @Override
     public void ensureDebugId(String baseID) {
         notificationsBtn.ensureDebugId(baseID + DeModule.Ids.NOTIFICATION_BUTTON);
-        userSettingsBtn.ensureDebugId(baseID + DeModule.Ids.USER_PREF_BUTTON);
+        userSettingsBtn.ensureDebugId(baseID + DeModule.Ids.USER_PREF_MENU);
         forumsBtn.ensureDebugId(baseID + DeModule.Ids.FORUMS_BUTTON);
         dataWinBtn.ensureDebugId(baseID + DeModule.Ids.DATA_BTN);
         appsWinBtn.ensureDebugId(baseID + DeModule.Ids.APPS_BTN);
@@ -206,7 +206,15 @@ public class DesktopViewImpl implements DesktopView, UnregisterEvent.UnregisterH
         taskBar.ensureDebugId(baseID + DeModule.Ids.TASK_BAR);
 
 
-        // FIXME JDS Set debug ids for user settings menu
+        // User Settings Menu Items
+        preferencesBtn.ensureDebugId(baseID + DeModule.Ids.USER_PREF_MENU + DeModule.Ids.PREFERENCES_BTN);
+        collaboratorsBtn.ensureDebugId(baseID + DeModule.Ids.USER_PREF_MENU + DeModule.Ids.COLLABORATORS_BTN);
+        systemMsgsBtn.ensureDebugId(baseID + DeModule.Ids.USER_PREF_MENU + DeModule.Ids.SYS_MSGS_BTN);
+        documentationBtn.ensureDebugId(baseID + DeModule.Ids.USER_PREF_MENU + DeModule.Ids.USER_MANUAL_BTN);
+        introBtn.ensureDebugId(baseID + DeModule.Ids.USER_PREF_MENU + DeModule.Ids.INTRO_BTN);
+        contactSupportBtn.ensureDebugId(baseID + DeModule.Ids.USER_PREF_MENU + DeModule.Ids.SUPPORT_BTN);
+        aboutBtn.ensureDebugId(baseID + DeModule.Ids.USER_PREF_MENU + DeModule.Ids.ABOUT_BTN);
+        logoutBtn.ensureDebugId(baseID + DeModule.Ids.USER_PREF_MENU + DeModule.Ids.LOGOUT_BTN);
     }
 
     @Override
