@@ -73,9 +73,6 @@ public class NotificationPresenterImpl implements NotificationView.Presenter, No
         @Override
         public void onSuccess(String result) {
             super.onSuccess(result);
-            if (getNotifications().isEmpty()) {
-                return;
-            }
             Splittable splitResult = StringQuoter.split(result);
             int total = 0;
 
@@ -151,7 +148,7 @@ public class NotificationPresenterImpl implements NotificationView.Presenter, No
         config.setSortInfo(sortInfo);
 
         FilterConfig filterBean = new FilterConfigBean();
-        if (!currentCategory.toString().equalsIgnoreCase("ALL")) {
+        if (!NotificationCategory.ALL.equals(currentCategory)) {
             filterBean.setField(currentCategory.toString());
         }
 
@@ -168,7 +165,7 @@ public class NotificationPresenterImpl implements NotificationView.Presenter, No
         toolbar.setCurrentCategory(category);
         FilterPagingLoadConfig config = view.getCurrentLoadConfig();
         FilterConfig filterBean = new FilterConfigBean();
-        if (!currentCategory.toString().equalsIgnoreCase("ALL")) {
+        if (!NotificationCategory.ALL.equals(currentCategory)) {
             filterBean.setField(currentCategory.toString());
         }
 
