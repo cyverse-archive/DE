@@ -110,28 +110,6 @@ public interface DesktopView extends IsWidget {
 
         List<WindowState> getOrderedWindowStates();
 
-        /**
-         * <ul>
-         *     <li>Fetch DE properties
-         *     <li>Fetch UserInfo
-         *     <li>Fetch UserSettings
-         *     <li>
-         *     <li> setBrowserContextMenuEnabled (using boolean from DEProperties)
-         *     <li> initIntro
-         *     <li> init KeepaliveTimer
-         *     <li> init UI
-         *     <li> keyboard shortcuts
-         *     <li> process query strings
-         *     <li>
-         *     <li>
-         *     <li>Initialize keyboard shortcuts
-         *     <li>Init Save session
-         *     <li>Initialize DE Properties
-         *     <li>Do initial fetch of unseen notifications
-         *     <li>
-         * </ul>
-         * @param panel
-         */
         void go(Panel panel);
 
         void onAnalysesWinBtnSelect();
@@ -146,17 +124,8 @@ public interface DesktopView extends IsWidget {
 
         void saveUserSettings(UserSettings value);
 
-        /**
-         *
-         * @param config
-         */
         void show(final WindowConfig config);
 
-        /**
-         *
-         * @param config
-         * @param updateExistingWindow
-         */
         void show(final WindowConfig config, final boolean updateExistingWindow);
 
         void submitUserFeedback(Splittable splittable, IsHideable isHideable);
@@ -182,9 +151,11 @@ public interface DesktopView extends IsWidget {
 
     interface UnseenNotificationsPresenter {
 
-        void doMarkAllSeen();
+        void doMarkAllSeen(boolean announce);
 
         void doSeeAllNotifications();
+
+        void doSeeNewNotifications();
     }
 
     void ensureDebugId(String baseID);

@@ -58,4 +58,12 @@ public interface DiskResourceModule {
         String NAME_CELL = ".nameCell";
         String PATH_CELL = ".pathCell";
     }
+
+    interface MetadataIds {
+
+        String METADATA_VIEW = ".metadataView";
+        String ADD_METADATA = ".addMetadata";
+        String DELETE_METADATA = ".deleteMetadata";
+        String TEMPLATES = ".templates";
+    }
 }

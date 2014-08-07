@@ -25,6 +25,11 @@
 .logoContainer {
     display: inline-block;
 }
+.logoContainer a {
+    overflow: auto;
+    color: transparent;
+    background: transparent;
+}
 
 .logoContainer span {
     color: #eee;

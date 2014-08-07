@@ -40,7 +40,7 @@ import org.mockito.Mock;
  * Created by jstroot on 7/23/14.
  */
 @RunWith(GxtMockitoTestRunner.class)
-public class DesktopNotificationsTest {
+public class DesktopNotifications_PresenterTest {
 
     @Mock IplantNewUserTourStrings tourStringsMock;
     @Mock EventBus eventBusMock;
@@ -148,11 +148,13 @@ public class DesktopNotificationsTest {
         testUnseenNotification.setPresenter(testPresenter);
 
         testUnseenNotification.onMarkAllSeenClicked(mock(ClickEvent.class));
-        verify(testPresenter).doMarkAllSeen();
+        verify(testPresenter).doMarkAllSeen(eq(true));
         verify(testPresenter.messageServiceFacade).markAllNotificationsSeen(voidAsyncCaptor.capture());
         voidAsyncCaptor.getValue().onSuccess(null);
         verify(viewMock).setUnseenNotificationCount(eq(0));
         // TODO JDS Expand test to verify that notification store is updated
     }
+
+
 
 }

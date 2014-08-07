@@ -1,7 +1,5 @@
 package org.iplantc.de.client.desktop.views;
 
-import org.iplantc.de.client.models.UserSettings;
-import org.iplantc.de.client.models.notifications.NotificationMessage;
 import org.iplantc.de.client.desktop.DesktopView;
 import org.iplantc.de.client.desktop.views.widgets.DEFeedbackDialog;
 import org.iplantc.de.client.desktop.views.widgets.DesktopIconButton;
@@ -9,6 +7,8 @@ import org.iplantc.de.client.desktop.views.widgets.PreferencesDialog;
 import org.iplantc.de.client.desktop.views.widgets.TaskBar;
 import org.iplantc.de.client.desktop.views.widgets.TaskButton;
 import org.iplantc.de.client.desktop.views.widgets.UnseenNotificationsView;
+import org.iplantc.de.client.models.UserSettings;
+import org.iplantc.de.client.models.notifications.NotificationMessage;
 import org.iplantc.de.client.windows.IPlantWindowInterface;
 import org.iplantc.de.commons.client.widgets.IPlantAnchor;
 import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
@@ -39,6 +39,7 @@ import com.sencha.gxt.widget.core.client.button.IconButton;
 import com.sencha.gxt.widget.core.client.event.DialogHideEvent;
 import com.sencha.gxt.widget.core.client.event.RegisterEvent;
 import com.sencha.gxt.widget.core.client.event.SelectEvent;
+import com.sencha.gxt.widget.core.client.event.ShowContextMenuEvent;
 import com.sencha.gxt.widget.core.client.event.UnregisterEvent;
 
 /**
@@ -95,6 +96,7 @@ public class DesktopViewImpl implements DesktopView, UnregisterEvent.UnregisterH
     private final Widget widget;
     private final SpanElement notificationCountElement;
     private final WindowManager windowManager;
+    int unseenNotificationCount;
     private DesktopView.Presenter presenter;
 
 
@@ -112,6 +114,13 @@ public class DesktopViewImpl implements DesktopView, UnregisterEvent.UnregisterH
         windowManager.addRegisterHandler(this);
         windowManager.addUnregisterHandler(this);
         initIntroAttributes(tourStrings);
+    }
+
+    @UiHandler("notificationsBtn")
+    void onNotificationMenuClicked(ShowContextMenuEvent event){
+        if(unseenNotificationCount < 10){
+            presenter.doMarkAllSeen(false);
+        }
     }
 
     @Override
@@ -197,7 +206,7 @@ public class DesktopViewImpl implements DesktopView, UnregisterEvent.UnregisterH
     @Override
     public void ensureDebugId(String baseID) {
         notificationsBtn.ensureDebugId(baseID + DeModule.Ids.NOTIFICATION_BUTTON);
-        userSettingsBtn.ensureDebugId(baseID + DeModule.Ids.USER_PREF_BUTTON);
+        userSettingsBtn.ensureDebugId(baseID + DeModule.Ids.USER_PREF_MENU);
         forumsBtn.ensureDebugId(baseID + DeModule.Ids.FORUMS_BUTTON);
         dataWinBtn.ensureDebugId(baseID + DeModule.Ids.DATA_BTN);
         appsWinBtn.ensureDebugId(baseID + DeModule.Ids.APPS_BTN);
@@ -206,7 +215,15 @@ public class DesktopViewImpl implements DesktopView, UnregisterEvent.UnregisterH
         taskBar.ensureDebugId(baseID + DeModule.Ids.TASK_BAR);
 
 
-        // FIXME JDS Set debug ids for user settings menu
+        // User Settings Menu Items
+        preferencesBtn.ensureDebugId(baseID + DeModule.Ids.USER_PREF_MENU + DeModule.Ids.PREFERENCES_BTN);
+        collaboratorsBtn.ensureDebugId(baseID + DeModule.Ids.USER_PREF_MENU + DeModule.Ids.COLLABORATORS_BTN);
+        systemMsgsBtn.ensureDebugId(baseID + DeModule.Ids.USER_PREF_MENU + DeModule.Ids.SYS_MSGS_BTN);
+        documentationBtn.ensureDebugId(baseID + DeModule.Ids.USER_PREF_MENU + DeModule.Ids.USER_MANUAL_BTN);
+        introBtn.ensureDebugId(baseID + DeModule.Ids.USER_PREF_MENU + DeModule.Ids.INTRO_BTN);
+        contactSupportBtn.ensureDebugId(baseID + DeModule.Ids.USER_PREF_MENU + DeModule.Ids.SUPPORT_BTN);
+        aboutBtn.ensureDebugId(baseID + DeModule.Ids.USER_PREF_MENU + DeModule.Ids.ABOUT_BTN);
+        logoutBtn.ensureDebugId(baseID + DeModule.Ids.USER_PREF_MENU + DeModule.Ids.LOGOUT_BTN);
     }
 
     @Override
@@ -227,6 +244,7 @@ public class DesktopViewImpl implements DesktopView, UnregisterEvent.UnregisterH
 
     @Override
     public void setUnseenNotificationCount(int count) {
+        this.unseenNotificationCount = count;
         if(count > 0){
             notificationCountElement.setInnerText(Integer.toString(count));
             notificationCountElement.removeAttribute("hidden");

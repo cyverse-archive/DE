@@ -21,7 +21,7 @@ public interface DeModule {
          * sub-items
          */
         String NOTIFICATION_BUTTON = ".notificationButton";
-        String USER_PREF_BUTTON = ".userPrefButton";
+        String USER_PREF_MENU = ".userPrefMenu";
         String FORUMS_BUTTON = ".forumsButton";
 
         String DISK_RESOURCE_WINDOW = "diskResourceWindow";
@@ -41,5 +41,13 @@ public interface DeModule {
         String ANALYSES_BTN = ".analysesBtn";
         String FEEDBACK_BTN = ".feedbackBtn";
         String TASK_BAR = ".deTaskBar";
+        String PREFERENCES_BTN = ".preferences";
+        String COLLABORATORS_BTN = ".collaborators";
+        String SYS_MSGS_BTN = ".systemMessages";
+        String USER_MANUAL_BTN = ".userManual";
+        String INTRO_BTN = ".introduction";
+        String ABOUT_BTN = ".about";
+        String LOGOUT_BTN = ".logout";
+        String SUPPORT_BTN = ".support";
     }
 }

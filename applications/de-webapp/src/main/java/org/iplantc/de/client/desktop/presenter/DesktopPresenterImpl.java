@@ -203,7 +203,7 @@ public class DesktopPresenterImpl implements DesktopView.Presenter {
     }
 
     @Override
-    public void doMarkAllSeen() {
+    public void doMarkAllSeen(final boolean announce) {
        messageServiceFacade.markAllNotificationsSeen(new AsyncCallback<Void>() {
            @Override
            public void onFailure(Throwable caught) {
@@ -217,6 +217,9 @@ public class DesktopPresenterImpl implements DesktopView.Presenter {
                    view.getNotificationStore().update(nm);
                }
                view.setUnseenNotificationCount(0);
+               if(!announce){
+                   return;
+               }
                announcer.schedule(new SuccessAnnouncementConfig(displayStrings.markAllasSeenSuccess(), true, 3000));
            }
        });
@@ -225,6 +228,11 @@ public class DesktopPresenterImpl implements DesktopView.Presenter {
     @Override
     public void doSeeAllNotifications() {
          show(ConfigFactory.notifyWindowConfig(NotificationCategory.ALL));
+    }
+
+    @Override
+    public void doSeeNewNotifications() {
+        show(ConfigFactory.notifyWindowConfig(NotificationCategory.NEW));
     }
 
     public void doViewGenomes(final File file) {

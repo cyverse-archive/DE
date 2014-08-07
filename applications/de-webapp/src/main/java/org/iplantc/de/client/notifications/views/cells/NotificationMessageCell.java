@@ -54,7 +54,7 @@ public class NotificationMessageCell extends AbstractCell<NotificationMessage> {
 
     @Override
     public void render(Context context, NotificationMessage value, SafeHtmlBuilder sb) {
-        String style = "white-space:pre-wrap;"; //$NON-NLS-1$
+        String style = "white-space:pre-wrap;text-overflow:ellipsis;overflow:hidden;"; //$NON-NLS-1$
 
         if (value.getContext() != null) {
             style += "cursor:pointer; text-decoration:underline;"; //$NON-NLS-1$

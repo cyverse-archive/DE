@@ -134,15 +134,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     String alert();
 
     /**
-     * Translated "See all notifications".
-     *
-     * @return translated "See all notifications"
-     */
-    @DefaultMessage("See all notifications")
-    @Key("allNotifications")
-    String allNotifications();
-
-    /**
      * Translated "Analyses".
      *
      * @return translated "Analyses"
@@ -2178,15 +2169,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     String mapOutputsToInputs();
 
     /**
-     * Translated "Mark All As Read".
-     *
-     * @return translated "Mark All As Read"
-     */
-    @DefaultMessage("Mark All As Read")
-    @Key("markAllasSeen")
-    String markAllasSeen();
-
-    /**
      * Translated "All new notifications were marked as read.".
      *
      * @return translated "All new notifications were marked as read."
@@ -2496,15 +2478,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     String newFolder();
 
     /**
-     * Translated "New Notifications".
-     *
-     * @return translated "New Notifications"
-     */
-    @DefaultMessage("New Notifications")
-    @Key("newNotifications")
-    String newNotifications();
-
-    /**
      * Translated
      * "You have new notifications. Please select 'Notifications' link from top level menu to view them."
      * .
@@ -2626,15 +2599,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     @DefaultMessage("No items to display.")
     @Key("noItemsToDisplay")
     String noItemsToDisplay();
-
-    /**
-     * Translated "No new notifications!".
-     *
-     * @return translated "No new notifications!"
-     */
-    @DefaultMessage("No new notifications!")
-    @Key("noNewNotifications")
-    String noNewNotifications();
 
     /**
      * Translated "No notifications to display.".

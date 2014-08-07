@@ -73,9 +73,6 @@ public class NotificationPresenterImpl implements NotificationView.Presenter, No
         @Override
         public void onSuccess(String result) {
             super.onSuccess(result);
-            if (getNotifications().isEmpty()) {
-                return;
-            }
             Splittable splitResult = StringQuoter.split(result);
             int total = 0;
 
@@ -127,17 +124,17 @@ public class NotificationPresenterImpl implements NotificationView.Presenter, No
 
     public NotificationPresenterImpl(NotificationView view) {
         this.view = view;
+        this.errorStrings = I18N.ERROR;
+        this.displayStrings = I18N.DISPLAY;
+        this.messageServiceFacade = ServicesInjector.INSTANCE.getMessageServiceFacade();
+        this.eventBus = EventBus.getInstance();
+        currentCategory = NotificationCategory.ALL;
         toolbar = new NotificationToolbarViewImpl();
         toolbar.setPresenter(this);
         view.setNorthWidget(toolbar);
         this.view.setPresenter(this);
         setRefreshButton(view.getRefreshButton());
         // set default cat
-        currentCategory = NotificationCategory.ALL;
-        messageServiceFacade = ServicesInjector.INSTANCE.getMessageServiceFacade();
-        eventBus = EventBus.getInstance();
-        errorStrings = I18N.ERROR;
-        displayStrings = I18N.DISPLAY;
     }
 
     @Override
@@ -151,7 +148,7 @@ public class NotificationPresenterImpl implements NotificationView.Presenter, No
         config.setSortInfo(sortInfo);
 
         FilterConfig filterBean = new FilterConfigBean();
-        if (!currentCategory.toString().equalsIgnoreCase("ALL")) {
+        if (!NotificationCategory.ALL.equals(currentCategory)) {
             filterBean.setField(currentCategory.toString());
         }
 
@@ -168,7 +165,7 @@ public class NotificationPresenterImpl implements NotificationView.Presenter, No
         toolbar.setCurrentCategory(category);
         FilterPagingLoadConfig config = view.getCurrentLoadConfig();
         FilterConfig filterBean = new FilterConfigBean();
-        if (!currentCategory.toString().equalsIgnoreCase("ALL")) {
+        if (!NotificationCategory.ALL.equals(currentCategory)) {
             filterBean.setField(currentCategory.toString());
         }
 
