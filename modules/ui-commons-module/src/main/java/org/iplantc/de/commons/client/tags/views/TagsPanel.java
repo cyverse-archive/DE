@@ -18,8 +18,8 @@ import com.google.gwt.user.client.ui.Widget;
 
 /**
  * 
- * @author cbopp
- *
+ * @author Sriram
+ * 
  */
 public class TagsPanel extends FlowPanel {
 

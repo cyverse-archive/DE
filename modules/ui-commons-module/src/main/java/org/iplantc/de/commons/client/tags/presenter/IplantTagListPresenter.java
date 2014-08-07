@@ -40,6 +40,7 @@ public class IplantTagListPresenter implements TagListHandlers {
     private Command onChangeCmd;
     private final TagsServiceFacade mdataService;
     private final Taggable taggable;
+    private boolean removeable;
 
     /**
      * @return the editable
@@ -55,8 +56,18 @@ public class IplantTagListPresenter implements TagListHandlers {
         this.editable = editable;
 
         this.getTagListView().setEditable(editable);
-        for (TagItem tagItem : this.tagItems)
-            tagItem.getTagView().setEditable(true);
+        for (TagItem tagItem : this.tagItems) {
+            tagItem.getTagView().setEditable(editable);
+        }
+    }
+
+    public void setRemoveable(boolean removeable) {
+        this.removeable = removeable;
+
+        this.getTagListView().setEditable(removeable);
+        for (TagItem tagItem : this.tagItems) {
+            tagItem.getTagView().setRemoveable(removeable);
+        }
     }
 
     /**
@@ -113,7 +124,7 @@ public class IplantTagListPresenter implements TagListHandlers {
     }
 
     /**
-     * Creates a non editable TagList with custom styles.
+     * Creates a TagList with custom styles.
      */
     public IplantTagListPresenter(Taggable taggable, CustomIplantTagResources resources) {
         super();
@@ -137,7 +148,8 @@ public class IplantTagListPresenter implements TagListHandlers {
             for (IplantTag tag : tags) {
                 TagView tagView = new TagView(this.resources, tag);
                 tagView.setUiHandlers(this);
-                tagView.setEditable(this.editable);
+                tagView.setEditable(editable);
+                tagView.setRemoveable(removeable);
 
                 this.getTagListView().getTagsPanel().add(tagView);
                 this.tagItems.add(new TagItem(tag, tagView));
@@ -162,7 +174,8 @@ public class IplantTagListPresenter implements TagListHandlers {
 
         TagView tagView = new TagView(this.resources, tag);
         tagView.setUiHandlers(this);
-        tagView.setEditable(this.editable);
+        tagView.setEditable(editable);
+        tagView.setRemoveable(removeable);
 
         this.getTagListView().getTagsPanel().add(tagView);
         this.tagItems.add(new TagItem(tag, tagView));
@@ -376,5 +389,17 @@ public class IplantTagListPresenter implements TagListHandlers {
             tagListView.getTagsPanel().clear();
         }
 
+        tagItems.clear();
+    }
+
+    @Override
+    public void onSelectTag(TagView tagView) {
+        for (Iterator<TagItem> tagItemIt = this.tagItems.iterator(); tagItemIt.hasNext();) {
+            TagItem tagItem = tagItemIt.next();
+            if (tagItem.getTagView().equals(tagView)) {
+                taggable.selectTag(tagItem.getTag());
+                break;
+            }
+        }
     }
 }

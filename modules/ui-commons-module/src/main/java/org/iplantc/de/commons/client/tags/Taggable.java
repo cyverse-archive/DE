@@ -8,4 +8,6 @@ public interface Taggable {
 
     void detachTag(IplantTag tag);
 
+    void selectTag(IplantTag tag);
+
 }

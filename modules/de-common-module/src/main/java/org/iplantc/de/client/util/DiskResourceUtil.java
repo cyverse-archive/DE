@@ -35,7 +35,6 @@ import java.util.Set;
  * 
  */
 public class DiskResourceUtil {
-
     /**
      * Parse the parent folder from a path.
      * 

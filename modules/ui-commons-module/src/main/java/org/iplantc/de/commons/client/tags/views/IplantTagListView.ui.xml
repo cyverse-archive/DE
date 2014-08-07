@@ -2,16 +2,17 @@
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:container="urn:import:com.sencha.gxt.widget.core.client.container"
 	xmlns:form="urn:import:com.sencha.gxt.widget.core.client.form"
-	xmlns:vs="urn:import:org.iplantc.de.commons.client.tags.views">
+	xmlns:vs="urn:import:org.iplantc.de.commons.client.tags.views"
+	xmlns:w="urn:import:org.iplantc.de.commons.client.tags.views">
 
 	<ui:with type="com.sencha.gxt.core.client.util.Margins" field="outerMargins">
-		<ui:attributes top="4" right="4" bottom="4" left="4" />
+		<ui:attributes top="0" right="2" bottom="2" left="2" />
 	</ui:with>
 
 	<ui:with
 		type="com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer.VerticalLayoutData"
 		field="tagSearchLayoutData">
-		<ui:attributes width="-1" height="-1"  />
+		<ui:attributes width="-1" height="-1" margins="{outerMargins}" />
 	</ui:with>
 
 	<ui:with
@@ -24,10 +25,10 @@
 		ui:field="tagListPanel">
 		<container:child layoutData="{tagSearchLayoutData}">
 			<form:FieldLabel ui:field="taglbl" labelWidth="30" labelAlign="TOP">
-				<form:widget>
-					<form:ComboBox ui:field="tagSearchCbo" />
-				</form:widget>
 			</form:FieldLabel>
+		</container:child>
+		<container:child layoutData="{tagSearchLayoutData}">
+		      <w:TagSearchField ui:field="tagSearchField"></w:TagSearchField>
 		</container:child>
 		<container:child layoutData="{tagsLayoutData}">
 			<vs:TagsPanel ui:field="tagsPanel" height="150px" width="160px">

@@ -38,4 +38,6 @@ public interface TagListHandlers {
     void onFocus();
     void onBlur();
 
+    void onSelectTag(TagView tagView);
+
 }

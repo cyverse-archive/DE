@@ -104,6 +104,8 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class DiskResourceViewImpl extends Composite implements DiskResourceView, SelectionHandler<Folder>, SelectionChangedHandler<DiskResource> {
 
@@ -236,6 +238,8 @@ public class DiskResourceViewImpl extends Composite implements DiskResourceView,
 
     private final DiskResourceAutoBeanFactory drFactory;
     private IplantTagListPresenter tagPresenter;
+
+    Logger LOG = Logger.getLogger("DRV");
 
     @Inject
     public DiskResourceViewImpl(final Tree<Folder, Folder> tree,
@@ -878,8 +882,7 @@ public class DiskResourceViewImpl extends Composite implements DiskResourceView,
 
         presenter.getTagsForSelectedResource();
         CustomIplantTagResources r = GWT.create(CustomIplantTagResources.class);
-        detailsPanel.add(createTagView("", r, true));
-        tagPresenter.removeAll();
+        detailsPanel.add(createTagView("", r, true, true));
     }
 
     @Override
@@ -889,16 +892,19 @@ public class DiskResourceViewImpl extends Composite implements DiskResourceView,
 
     private Widget createTagView(String containerStyle,
                                  CustomIplantTagResources resources,
-                                 boolean editable) {
+                                 boolean editable,
+                                 boolean removeable) {
         HorizontalPanel hp = new HorizontalPanel();
         SimplePanel boundaryBox = new SimplePanel();
         if (tagPresenter == null) {
             tagPresenter = createTagList(resources,
                                          editable,
+                                         removeable,
                                          this.createOnFocusCmd(boundaryBox, containerStyle),
                                          this.createOnBlurCmd(boundaryBox, containerStyle));
 
         }
+        tagPresenter.removeAll();
         boundaryBox.setWidget(tagPresenter.getTagListView());
         hp.add(boundaryBox);
         return hp;
@@ -922,7 +928,11 @@ public class DiskResourceViewImpl extends Composite implements DiskResourceView,
         };
     }
 
-    private IplantTagListPresenter createTagList(CustomIplantTagResources resources, boolean editable, Command onFocusCmd, Command onBlurCmd) {
+    private IplantTagListPresenter createTagList(CustomIplantTagResources resources,
+                                                 boolean editable,
+                                                 boolean removeable,
+                                                 Command onFocusCmd,
+                                                 Command onBlurCmd) {
         IplantTagListPresenter tagsPresenter;
         if (resources == null) {
             tagsPresenter = new IplantTagListPresenter(this);
@@ -930,6 +940,7 @@ public class DiskResourceViewImpl extends Composite implements DiskResourceView,
             tagsPresenter = new IplantTagListPresenter(this, resources);
         }
         tagsPresenter.setEditable(editable);
+        tagsPresenter.setRemoveable(removeable);
         tagsPresenter.setOnFocusCmd(onFocusCmd);
         tagsPresenter.setOnBlurCmd(onBlurCmd);
 
@@ -1185,6 +1196,12 @@ public class DiskResourceViewImpl extends Composite implements DiskResourceView,
         grid.getColumnModel().getColumn(3).setHidden(false);
         grid.getView().refresh(true);
         grid.getView().setAutoExpandColumn(grid.getColumnModel().getColumn(1));
+    }
+
+    @Override
+    public void selectTag(IplantTag tag) {
+        LOG.log(Level.SEVERE, "==>" + tag.getValue());
+
     }
 
 }

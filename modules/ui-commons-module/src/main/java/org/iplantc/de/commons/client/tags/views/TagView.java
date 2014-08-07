@@ -48,7 +48,6 @@ import com.google.web.bindery.event.shared.HandlerRegistration;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -76,8 +75,6 @@ public class TagView extends Composite {
     @UiField
     DivElement deleteOption;
 
-    private HandlerRegistration handlerRegistration;
-
     private final List<HandlerRegistration> dndHandlers = new ArrayList<HandlerRegistration>();
 
     private boolean editable;
@@ -85,6 +82,8 @@ public class TagView extends Composite {
     private final CustomIplantTagResources resources;
     private static TagView draggedElement;
     Logger logger = Logger.getLogger("tags");
+
+    private boolean removeable;
 
     public void setUiHandlers(TagListHandlers tagListHandlers) {
         this.uiHandlers = tagListHandlers;
@@ -98,6 +97,25 @@ public class TagView extends Composite {
         this.value.setStylePrimaryName(resources.style().tagCaption());
 
         this.value.setText(tag.getValue());
+
+        tagPanel.addDomHandler(new ClickHandler() {
+
+            @Override
+            public void onClick(ClickEvent event) {
+                Element e = Element.as(event.getNativeEvent().getEventTarget());
+                if (e.getClassName().contains("tagEdit")) {
+                    uiHandlers.onEditTag(TagView.this);
+                } else if (e.getClassName().contains("tagDelete")) {
+                    uiHandlers.onRemoveTag(TagView.this);
+                } else {
+                    uiHandlers.onSelectTag(TagView.this);
+                }
+
+            }
+        }, ClickEvent.getType());
+
+        activateDnD();
+
     }
 
     public void setEditable(boolean editable) {
@@ -105,31 +123,22 @@ public class TagView extends Composite {
             this.editable = editable;
 
             if (editable) {
-                this.activateDeleteButton();
-                this.activateEditButton();
-                this.activateDnD();
-                tagPanel.addDomHandler(new ClickHandler() {
-
-                    @Override
-                    public void onClick(ClickEvent event) {
-                        Element e = Element.as(event.getNativeEvent().getEventTarget());
-                        logger.log(Level.SEVERE, e.getClassName());
-                        if (e.getClassName().contains("tagEdit")) {
-                            uiHandlers.onEditTag(TagView.this);
-                        } else if (e.getClassName().contains("tagDelete")) {
-                            uiHandlers.onRemoveTag(TagView.this);
-                        }
-                    }
-                }, ClickEvent.getType());
-
+                activateEditButton();
                 editOption.setTitle(I18N.DISPLAY.edit());
-                deleteOption.setTitle(I18N.DISPLAY.remove());
-            } else {
-                deactivateDnD();
-                // TODO: should also remove all handlers
             }
         }
 
+    }
+
+    public void setRemoveable(boolean removeable) {
+        if (this.removeable != removeable) {
+            this.removeable = removeable;
+
+            if (removeable) {
+                activateDeleteButton();
+                deleteOption.setTitle(I18N.DISPLAY.remove());
+            }
+        }
     }
 
     private void activateEditButton() {
