@@ -1,7 +1,5 @@
 package org.iplantc.de.client.desktop.views;
 
-import org.iplantc.de.client.models.UserSettings;
-import org.iplantc.de.client.models.notifications.NotificationMessage;
 import org.iplantc.de.client.desktop.DesktopView;
 import org.iplantc.de.client.desktop.views.widgets.DEFeedbackDialog;
 import org.iplantc.de.client.desktop.views.widgets.DesktopIconButton;
@@ -9,6 +7,8 @@ import org.iplantc.de.client.desktop.views.widgets.PreferencesDialog;
 import org.iplantc.de.client.desktop.views.widgets.TaskBar;
 import org.iplantc.de.client.desktop.views.widgets.TaskButton;
 import org.iplantc.de.client.desktop.views.widgets.UnseenNotificationsView;
+import org.iplantc.de.client.models.UserSettings;
+import org.iplantc.de.client.models.notifications.NotificationMessage;
 import org.iplantc.de.client.windows.IPlantWindowInterface;
 import org.iplantc.de.commons.client.widgets.IPlantAnchor;
 import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
@@ -39,6 +39,7 @@ import com.sencha.gxt.widget.core.client.button.IconButton;
 import com.sencha.gxt.widget.core.client.event.DialogHideEvent;
 import com.sencha.gxt.widget.core.client.event.RegisterEvent;
 import com.sencha.gxt.widget.core.client.event.SelectEvent;
+import com.sencha.gxt.widget.core.client.event.ShowContextMenuEvent;
 import com.sencha.gxt.widget.core.client.event.UnregisterEvent;
 
 /**
@@ -95,6 +96,7 @@ public class DesktopViewImpl implements DesktopView, UnregisterEvent.UnregisterH
     private final Widget widget;
     private final SpanElement notificationCountElement;
     private final WindowManager windowManager;
+    int unseenNotificationCount;
     private DesktopView.Presenter presenter;
 
 
@@ -112,6 +114,13 @@ public class DesktopViewImpl implements DesktopView, UnregisterEvent.UnregisterH
         windowManager.addRegisterHandler(this);
         windowManager.addUnregisterHandler(this);
         initIntroAttributes(tourStrings);
+    }
+
+    @UiHandler("notificationsBtn")
+    void onNotificationMenuClicked(ShowContextMenuEvent event){
+        if(unseenNotificationCount < 10){
+            presenter.doMarkAllSeen(false);
+        }
     }
 
     @Override
@@ -235,6 +244,7 @@ public class DesktopViewImpl implements DesktopView, UnregisterEvent.UnregisterH
 
     @Override
     public void setUnseenNotificationCount(int count) {
+        this.unseenNotificationCount = count;
         if(count > 0){
             notificationCountElement.setInnerText(Integer.toString(count));
             notificationCountElement.removeAttribute("hidden");

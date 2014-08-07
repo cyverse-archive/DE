@@ -4,13 +4,13 @@
              xmlns:widget='urn:import:com.sencha.gxt.widget.core.client'
              xmlns:anchor='urn:import:org.iplantc.de.commons.client.widgets'>
 
-    <ui:with field="displayStrings"
-             type="org.iplantc.de.resources.client.messages.IplantDisplayStrings"/>
+    <ui:with field="appearance"
+             type="org.iplantc.de.client.desktop.views.widgets.UnseenNotificationsView.UnseenNotificationsAppearance"/>
 
     <container:VerticalLayoutContainer borders="false">
         <container:child>
             <g:HTML ui:field="emptyNotificationsText"
-                    text="{displayStrings.noNewNotifications}"/>
+                    text="{appearance.noNewNotifications}"/>
         </container:child>
         <container:child>
             <widget:ListView ui:field="listView"
@@ -21,9 +21,9 @@
         <container:child>
             <g:HorizontalPanel spacing="2">
                 <anchor:IPlantAnchor ui:field="notificationsLink"
-                                     text="{displayStrings.allNotifications}" />
+                                     text="{appearance.allNotifications}" />
                 <anchor:IPlantAnchor ui:field="markAllSeenLink"
-                                     text="{displayStrings.markAllasSeen}" />
+                                     text="{appearance.markAllAsSeen}" />
             </g:HorizontalPanel>
         </container:child>
 

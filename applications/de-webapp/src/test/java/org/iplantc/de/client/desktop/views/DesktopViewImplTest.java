@@ -26,14 +26,10 @@ import java.util.List;
 @RunWith(GxtMockitoTestRunner.class)
 public class DesktopViewImplTest {
 
-    @Mock
-    RegisterEvent<Widget> registerEventMock;
-    @Mock
-    IplantNewUserTourStrings tourStringsMock;
-    @Mock
-    UnregisterEvent<Widget> unregisterEventMock;
-    @Mock
-    WindowManager windowManagerMock;
+    @Mock RegisterEvent<Widget> registerEventMock;
+    @Mock IplantNewUserTourStrings tourStringsMock;
+    @Mock UnregisterEvent<Widget> unregisterEventMock;
+    @Mock WindowManager windowManagerMock;
 
     @Test public void viewAddsTaskButtonWhenWindowIsRegistered() {
         DesktopViewImpl uut = new DesktopViewImpl(tourStringsMock, windowManagerMock);

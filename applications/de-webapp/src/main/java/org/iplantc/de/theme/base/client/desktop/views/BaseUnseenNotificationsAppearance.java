@@ -46,11 +46,15 @@ public class BaseUnseenNotificationsAppearance implements UnseenNotificationsVie
 
     }
 
+    private final UnseenNotificationsStrings strings;
+
     private final UnseenNotificationStyles style;
     private final UnseenNotificationsTemplates templates;
     private final Cell<NotificationMessage> listViewCell;
 
-    public BaseUnseenNotificationsAppearance(final UnseenNotificationResources resources) {
+    public BaseUnseenNotificationsAppearance(final UnseenNotificationResources resources,
+                                             final UnseenNotificationsStrings strings) {
+        this.strings = strings;
         this.style = resources.style();
         this.style.ensureInjected();
         templates = GWT.create(UnseenNotificationsTemplates.class);
@@ -67,11 +71,32 @@ public class BaseUnseenNotificationsAppearance implements UnseenNotificationsVie
     }
 
     public BaseUnseenNotificationsAppearance(){
-        this(GWT.<UnseenNotificationResources> create(UnseenNotificationResources.class));
+        this(GWT.<UnseenNotificationResources> create(UnseenNotificationResources.class),
+             GWT.<UnseenNotificationsStrings> create(UnseenNotificationsStrings.class));
+    }
+
+    @Override
+    public String allNotifications() {
+        return strings.allNotifications();
     }
 
     @Override
     public Cell<NotificationMessage> getListViewCell() {
         return listViewCell;
+    }
+
+    @Override
+    public String newNotificationsLink(int unseenCount) {
+        return strings.newNotificationsLink(unseenCount);
+    }
+
+    @Override
+    public String markAllAsSeen() {
+        return strings.markAllAsSeen();
+    }
+
+    @Override
+    public String noNewNotifications() {
+        return strings.noNewNotifications();
     }
 }

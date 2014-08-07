@@ -43,7 +43,15 @@ public class UnseenNotificationsView extends Composite implements StoreClearEven
                                                                   SelectionHandler<NotificationMessage> {
     public interface UnseenNotificationsAppearance {
 
+        String allNotifications();
+
         Cell<NotificationMessage> getListViewCell();
+
+        String newNotificationsLink(int unseenCount);
+
+        String markAllAsSeen();
+
+        String noNewNotifications();
     }
 
     interface UnseenNotificationsViewUiBinder extends UiBinder<VerticalLayoutContainer, UnseenNotificationsView> { }
@@ -58,12 +66,14 @@ public class UnseenNotificationsView extends Composite implements StoreClearEven
     IPlantAnchor notificationsLink;
     ListStore<NotificationMessage> store;
 
-    private final UnseenNotificationsAppearance appearance;
+    @UiField(provided = true)
+    UnseenNotificationsAppearance appearance;
     private DesktopView.UnseenNotificationsPresenter presenter;
 
     private static UnseenNotificationsViewUiBinder ourUiBinder = GWT.create(UnseenNotificationsViewUiBinder.class);
+    int unseenNotificationCount;
 
-    protected UnseenNotificationsView(final UnseenNotificationsAppearance appearance) {
+    public UnseenNotificationsView(final UnseenNotificationsAppearance appearance) {
         this.appearance = appearance;
         initWidget(ourUiBinder.createAndBindUi(this));
     }
@@ -106,7 +116,15 @@ public class UnseenNotificationsView extends Composite implements StoreClearEven
     }
 
     public void onUnseenCountUpdated(int unseenCount) {
+        this.unseenNotificationCount = unseenCount;
         markAllSeenLink.setVisible(unseenCount > 0);
+        if(unseenCount > 10){
+            // Update hyperlink
+            notificationsLink.setText(appearance.newNotificationsLink(unseenCount));
+        } else {
+            // Default hyperlink text
+            notificationsLink.setText(appearance.allNotifications());
+        }
     }
 
     public void setPresenter(DesktopView.UnseenNotificationsPresenter presenter) {
@@ -136,11 +154,15 @@ public class UnseenNotificationsView extends Composite implements StoreClearEven
 
     @UiHandler("notificationsLink")
     void onSeeAllNotificationsSelected(ClickEvent event) {
-        presenter.doSeeAllNotifications();
+        if(unseenNotificationCount > 10) {
+            presenter.doSeeNewNotifications();
+        } else {
+            presenter.doSeeAllNotifications();
+        }
     }
 
     @UiHandler("markAllSeenLink")
     public void onMarkAllSeenClicked(ClickEvent event) {
-        presenter.doMarkAllSeen();
+        presenter.doMarkAllSeen(true);
     }
 }
