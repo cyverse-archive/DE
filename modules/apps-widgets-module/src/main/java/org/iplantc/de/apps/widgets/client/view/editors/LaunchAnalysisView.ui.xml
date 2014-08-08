@@ -10,9 +10,9 @@
              type="org.iplantc.de.resources.client.uiapps.widgets.AppsWidgetsDisplayMessages"/>
     <ui:with field="margins"
              type="com.sencha.gxt.core.client.util.Margins">
-      <ui:attributes top="10"
+      <ui:attributes top="0"
                      right="10"
-                     bottom="10"
+                     bottom="0"
                      left="10" />
     </ui:with>             
     <ui:with type="com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer.VerticalLayoutData" 
