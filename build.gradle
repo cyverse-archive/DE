@@ -54,6 +54,12 @@ subprojects {
    }
 }
 
+task testReport(type: TestReport) {
+    destinationDir = file("$buildDir/reports/allTests")
+    // Include the results from the `test` task in all subprojects
+    reportOn subprojects*.test
+}
+
 apply from: 'iplant/webapps.gradle'
 apply from: 'iplant/modules.gradle'
 
