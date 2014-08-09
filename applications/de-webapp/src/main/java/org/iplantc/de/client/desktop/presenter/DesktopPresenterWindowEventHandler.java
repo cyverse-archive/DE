@@ -34,12 +34,22 @@ import org.iplantc.de.commons.client.views.window.configs.FileViewerWindowConfig
 import org.iplantc.de.commons.client.views.window.configs.IDropLiteWindowConfig;
 import org.iplantc.de.commons.client.views.window.configs.PipelineEditorWindowConfig;
 import org.iplantc.de.commons.client.views.window.configs.SimpleDownloadWindowConfig;
-import org.iplantc.de.diskResource.client.events.*;
+import org.iplantc.de.diskResource.client.events.CreateNewFileEvent;
+import org.iplantc.de.diskResource.client.events.RequestBulkDownloadEvent;
+import org.iplantc.de.diskResource.client.events.RequestBulkUploadEvent;
+import org.iplantc.de.diskResource.client.events.RequestImportFromUrlEvent;
+import org.iplantc.de.diskResource.client.events.RequestSendToCoGeEvent;
+import org.iplantc.de.diskResource.client.events.RequestSendToEnsemblEvent;
+import org.iplantc.de.diskResource.client.events.RequestSendToTreeViewerEvent;
+import org.iplantc.de.diskResource.client.events.RequestSimpleDownloadEvent;
+import org.iplantc.de.diskResource.client.events.RequestSimpleUploadEvent;
+import org.iplantc.de.diskResource.client.events.ShowFilePreviewEvent;
 import org.iplantc.de.diskResource.client.views.dialogs.FileUploadByUrlDialog;
 import org.iplantc.de.diskResource.client.views.dialogs.SimpleFileUploadDialog;
 import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.gwt.event.shared.HandlerRegistration;
@@ -373,6 +383,8 @@ public class DesktopPresenterWindowEventHandler implements EditAppEvent.EditAppE
         handlerRegistration = eventBus.addHandler(RequestSendToCoGeEvent.TYPE, this);
         registrations.add(handlerRegistration);
         handlerRegistration = eventBus.addHandler(RequestSendToTreeViewerEvent.TYPE, this);
+        registrations.add(handlerRegistration);
+        handlerRegistration = eventBus.addHandler(RequestSendToEnsemblEvent.TYPE, this);
         registrations.add(handlerRegistration);
 
 

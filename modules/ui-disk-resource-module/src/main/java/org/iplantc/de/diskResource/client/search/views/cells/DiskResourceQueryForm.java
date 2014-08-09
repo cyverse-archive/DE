@@ -23,29 +23,32 @@ import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.shared.HandlerRegistration;
-import com.google.gwt.uibinder.client.UiBinder;
+import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.uibinder.client.UiFactory;
-import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.uibinder.client.UiTemplate;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.Event.NativePreviewEvent;
 import com.google.gwt.user.client.ui.RootPanel;
-import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.user.client.ui.VerticalPanel;
 
+import com.sencha.gxt.cell.core.client.form.ComboBoxCell.TriggerAction;
 import com.sencha.gxt.core.client.Style.Anchor;
 import com.sencha.gxt.core.client.Style.AnchorAlignment;
-import com.sencha.gxt.core.client.dom.ScrollSupport.ScrollMode;
+import com.sencha.gxt.core.client.XTemplates;
 import com.sencha.gxt.core.client.dom.XElement;
 import com.sencha.gxt.core.client.util.BaseEventPreview;
 import com.sencha.gxt.core.client.util.DateWrapper;
 import com.sencha.gxt.data.shared.LabelProvider;
 import com.sencha.gxt.widget.core.client.Composite;
-import com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer;
+import com.sencha.gxt.widget.core.client.container.AbstractHtmlLayoutContainer.HtmlData;
+import com.sencha.gxt.widget.core.client.container.HtmlLayoutContainer;
 import com.sencha.gxt.widget.core.client.event.HideEvent;
 import com.sencha.gxt.widget.core.client.event.SelectEvent;
 import com.sencha.gxt.widget.core.client.event.ShowEvent;
 import com.sencha.gxt.widget.core.client.form.CheckBox;
+import com.sencha.gxt.widget.core.client.form.FieldLabel;
+import com.sencha.gxt.widget.core.client.form.FormPanel.LabelAlign;
+import com.sencha.gxt.widget.core.client.form.FormPanelHelper;
 import com.sencha.gxt.widget.core.client.form.NumberField;
 import com.sencha.gxt.widget.core.client.form.NumberPropertyEditor;
 import com.sencha.gxt.widget.core.client.form.SimpleComboBox;
@@ -95,75 +98,83 @@ import java.util.List;
  */
 public class DiskResourceQueryForm extends Composite implements Editor<DiskResourceQueryTemplate>, SaveDiskResourceQueryEvent.HasSaveDiskResourceQueryEventHandlers, HasSubmitDiskResourceQueryEventHandlers, SaveDiskResourceQueryEvent.SaveDiskResourceQueryEventHandler {
 
-    @UiTemplate("DiskResourceQueryForm.ui.xml")
-    interface DiskResourceQueryFormUiBinder extends UiBinder<Widget, DiskResourceQueryForm> {}
+    // @UiTemplate("DiskResourceQueryForm.ui.xml")
+    // interface DiskResourceQueryFormUiBinder extends UiBinder<Widget, DiskResourceQueryForm> {}
 
     interface SearchFormEditorDriver extends SimpleBeanEditorDriver<DiskResourceQueryTemplate, DiskResourceQueryForm> {}
 
     protected BaseEventPreview eventPreview;
 
-    @Ignore
-    @UiField
-    VerticalLayoutContainer con;
-
-    @UiField
+    // @UiField
     TextField ownedBy;
 
     @Path("createdWithin")
-    @UiField(provided = true)
+    // @UiField(provided = true)
     SimpleComboBox<DateInterval> createdWithinCombo;
 
-    @UiField
+    // @UiField
     IPlantAnchor createFilterLink;
 
     final SearchFormEditorDriver editorDriver = GWT.create(SearchFormEditorDriver.class);
 
-    @UiField
+    // @UiField
     TextField fileQuery;
     
     @Path("fileSizeRange.min")
-    @UiField(provided = true)
+    // @UiField(provided = true)
     NumberField<Double> fileSizeGreaterThan;
     
     @Path("fileSizeRange.max")
-    @UiField(provided = true)
+    // @UiField(provided = true)
     NumberField<Double> fileSizeLessThan;
 
     @Path("fileSizeRange.minUnit")
-    @UiField(provided = true)
+    // @UiField(provided = true)
     SimpleComboBox<FileSizeUnit> greaterThanComboBox;
 
     @Path("fileSizeRange.maxUnit")
-    @UiField(provided = true)
+    // @UiField(provided = true)
     SimpleComboBox<FileSizeUnit> lessThanComboBox;
 
-    @UiField
+    // @UiField
     TextField metadataAttributeQuery;
 
     @Path("modifiedWithin")
-    @UiField(provided = true)
+    // @UiField(provided = true)
     SimpleComboBox<DateInterval> modifiedWithinCombo;
 
     @Ignore
     DiskResourceQueryFormNamePrompt namePrompt;
 
-    @UiField
+    // @UiField
     TextField negatedFileQuery;
 
-    @UiField
+    // @UiField
     TextField metadataValueQuery;
 
-    @UiField 
+    // @UiField
     TextField sharedWith;
 
-    @UiField
+    // @UiField
     CheckBox includeTrashItems;
 
+    @Ignore
     private boolean showing;
 
-    private final DiskResourceQueryFormUiBinder uiBinder = GWT.create(DiskResourceQueryFormUiBinder.class);
+    // private final DiskResourceQueryFormUiBinder uiBinder =
+    // GWT.create(DiskResourceQueryFormUiBinder.class);
 
     private final SearchAutoBeanFactory factory = GWT.create(SearchAutoBeanFactory.class);
+
+    @Ignore
+    private final HtmlLayoutContainer con;
+
+    private static final int COLUMN_FORM_WIDTH = 600;
+
+    public interface HtmlLayoutContainerTemplate extends XTemplates {
+        @XTemplate(source = "DiskResourceQueryFormTemplate.html")
+        SafeHtml getTemplate();
+    }
 
     /**
      * Creates the form with a new filter.
@@ -176,15 +187,26 @@ public class DiskResourceQueryForm extends Composite implements Editor<DiskResou
      * @param filter
      */
     public DiskResourceQueryForm(final DiskResourceQueryTemplate filter) {
-        init(new DiskResourceQueryFormNamePrompt());
-        Widget createAndBindUi = uiBinder.createAndBindUi(this);
 
-        initWidget(createAndBindUi);
+        // Widget createAndBindUi = uiBinder.createAndBindUi(this);
+        // initWidget(createAndBindUi);
+
+        VerticalPanel vp = new VerticalPanel();
+        vp.setWidth(600 + "px");
+
+
+        HtmlLayoutContainerTemplate templates = GWT.create(HtmlLayoutContainerTemplate.class);
+        con = new HtmlLayoutContainer(templates.getTemplate());
+        vp.add(con);
+        initWidget(vp);
+
+        init(new DiskResourceQueryFormNamePrompt());
+
         getElement().getStyle().setBackgroundColor("white");
         getElement().getStyle().setOutlineWidth(0, Unit.PX);
         getElement().getStyle().setPaddingTop(5, Unit.PX);
         getElement().getStyle().setPaddingBottom(5, Unit.PX);
-        setSize("330", "250");
+        setSize(COLUMN_FORM_WIDTH + "px", "300px");
         editorDriver.initialize(this);
         editorDriver.edit(filter);
 
@@ -206,10 +228,15 @@ public class DiskResourceQueryForm extends Composite implements Editor<DiskResou
         eventPreview.getIgnoreList().add(getElement());
         eventPreview.setAutoHide(false);
         addStyleName("x-ignore");
-        con.setScrollMode(ScrollMode.AUTOY);
+        // con.setScrollMode(ScrollMode.AUTOY);
         con.setBorders(true);
          // JDS Small trial to correct placement of form in constrained views.
         this.ensureVisibilityOnSizing = true;
+
+        List<FieldLabel> labels = FormPanelHelper.getFieldLabels(vp);
+        for (FieldLabel lbl : labels) {
+            lbl.setLabelAlign(LabelAlign.TOP);
+        }
     }
 
     @Override
@@ -316,9 +343,49 @@ public class DiskResourceQueryForm extends Composite implements Editor<DiskResou
     void init(DiskResourceQueryFormNamePrompt namePrompt) {
         this.namePrompt = namePrompt;
         this.namePrompt.addSaveDiskResourceQueryEventHandler(this);
+        initFileQuery();
+        initNegatedFileQuery();
+        initMetadataSearchFields();
         initDateRangeCombos();
         initFileSizeNumberFields();
         initFileSizeComboBoxes();
+        initOwnerSharedSearchField();
+    }
+
+    private void initFileQuery() {
+        fileQuery = new TextField();
+        fileQuery.setEmptyText("Enter values...");
+        con.add(new FieldLabel(fileQuery, "File/Folder name has the words"), new HtmlData(".filename"));
+    }
+
+    private void initNegatedFileQuery() {
+        negatedFileQuery = new TextField();
+        negatedFileQuery.setEmptyText("Enter values...");
+        con.add(new FieldLabel(negatedFileQuery, "File/Folder name doesn't have"),
+                new HtmlData(".negatefilename"));
+    }
+
+    private void initMetadataSearchFields() {
+        metadataAttributeQuery = new TextField();
+        metadataAttributeQuery.setEmptyText("Enter values...");
+        con.add(new FieldLabel(metadataAttributeQuery, "Metadata attribute has the words"),
+                new HtmlData(".metadataattrib"));
+
+        metadataValueQuery = new TextField();
+        metadataValueQuery.setEmptyText("Enter values...");
+        con.add(new FieldLabel(metadataValueQuery, "Metadata value has the words"),
+                new HtmlData(".metadataval"));
+
+    }
+
+    private void initOwnerSharedSearchField() {
+        ownedBy = new TextField();
+        ownedBy.setEmptyText("Enter iPlant user name");
+        con.add(new FieldLabel(ownedBy, "Owned by"), new HtmlData(".owner"));
+
+        sharedWith = new TextField();
+        sharedWith.setEmptyText("Enter iPlant user name");
+        con.add(new FieldLabel(sharedWith, "Shared with"), new HtmlData(".shared"));
     }
 
     @UiHandler("createFilterLink")
@@ -411,8 +478,13 @@ public class DiskResourceQueryForm extends Composite implements Editor<DiskResou
         modifiedWithinCombo = new SimpleComboBox<DateInterval>(dateIntervalLabelProvider);
         createdWithinCombo.add(timeIntervals);
         modifiedWithinCombo.add(timeIntervals);
+
         createdWithinCombo.setEmptyText("---");
         modifiedWithinCombo.setEmptyText("---");
+
+        con.add(new FieldLabel(createdWithinCombo, "Created within"), new HtmlData(".createwithin"));
+        con.add(new FieldLabel(modifiedWithinCombo, "Modified within"), new HtmlData(".modifiedwithin"));
+
     }
 
     DateInterval createDateInterval(Date from, Date to, String label) {
@@ -435,10 +507,32 @@ public class DiskResourceQueryForm extends Composite implements Editor<DiskResou
         };
         greaterThanComboBox = new SimpleComboBox<FileSizeUnit>(fileSizeUnitLabelProvider);
         lessThanComboBox = new SimpleComboBox<FileSizeUnit>(fileSizeUnitLabelProvider);
+        greaterThanComboBox.setWidth("64px");
+        lessThanComboBox.setWidth("64px");
+
+        greaterThanComboBox.setTriggerAction(TriggerAction.ALL);
+        greaterThanComboBox.setForceSelection(true);
+
+        lessThanComboBox.setTriggerAction(TriggerAction.ALL);
+        lessThanComboBox.setForceSelection(true);
 
         List<FileSizeUnit> fileSizeUnitList = createFileSizeUnits();
         greaterThanComboBox.add(fileSizeUnitList);
         lessThanComboBox.add(fileSizeUnitList);
+
+        FieldLabel fl1 = new FieldLabel();
+        fl1.setLabelSeparator("");
+        fl1.setText("");
+        fl1.setWidget(greaterThanComboBox);
+
+        con.add(fl1, new HtmlData(".sizeunitbigger"));
+
+        FieldLabel fl2 = new FieldLabel();
+        fl2.setLabelSeparator("");
+        fl2.setText("");
+        fl2.setWidget(lessThanComboBox);
+        con.add(fl2, new HtmlData(".sizeunitlesser"));
+
     }
 
     List<FileSizeUnit> createFileSizeUnits() {
@@ -450,8 +544,14 @@ public class DiskResourceQueryForm extends Composite implements Editor<DiskResou
         NumberPropertyEditor.DoublePropertyEditor doublePropertyEditor = new NumberPropertyEditor.DoublePropertyEditor();
         fileSizeGreaterThan = new NumberField<Double>(doublePropertyEditor);
         fileSizeLessThan = new NumberField<Double>(doublePropertyEditor);
+
         fileSizeGreaterThan.setAllowNegative(false);
         fileSizeLessThan.setAllowNegative(false);
+
+        con.add(new FieldLabel(fileSizeGreaterThan, "File size is bigger than or equal to"),
+                new HtmlData(".filesizebigger"));
+        con.add(new FieldLabel(fileSizeLessThan, "File size is smaller than or equal to"),
+                new HtmlData(".filesizelesser"));
     }
 
     private void onEscape(NativePreviewEvent pe) {
