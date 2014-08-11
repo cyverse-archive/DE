@@ -31,14 +31,15 @@ import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 
-import static com.sencha.gxt.widget.core.client.Dialog.PredefinedButton;
 import com.sencha.gxt.data.shared.ListStore;
+import com.sencha.gxt.widget.core.client.Dialog.PredefinedButton;
 import com.sencha.gxt.widget.core.client.WindowManager;
 import com.sencha.gxt.widget.core.client.box.AlertMessageBox;
 import com.sencha.gxt.widget.core.client.button.IconButton;
 import com.sencha.gxt.widget.core.client.event.DialogHideEvent;
 import com.sencha.gxt.widget.core.client.event.RegisterEvent;
 import com.sencha.gxt.widget.core.client.event.SelectEvent;
+import com.sencha.gxt.widget.core.client.event.SelectEvent.SelectHandler;
 import com.sencha.gxt.widget.core.client.event.ShowContextMenuEvent;
 import com.sencha.gxt.widget.core.client.event.UnregisterEvent;
 
@@ -303,6 +304,16 @@ public class DesktopViewImpl implements DesktopView, UnregisterEvent.UnregisterH
                 }
             }
         });
+
+        feedbackDialog.getButton(PredefinedButton.CANCEL).addSelectHandler(new SelectHandler() {
+
+            @Override
+            public void onSelect(SelectEvent event) {
+                feedbackDialog.hide();
+
+            }
+        });
+
     }
 
     @UiHandler("forumsBtn")
