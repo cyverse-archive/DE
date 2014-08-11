@@ -157,13 +157,13 @@ public class DiskResourceQueryForm extends Composite implements Editor<DiskResou
     @Ignore
     private final HtmlLayoutContainer con;
 
-    private static final int COLUMN_FORM_WIDTH = 600;
+    static final int COLUMN_FORM_WIDTH = 600;
 
-    private static final int cw = ((COLUMN_FORM_WIDTH - 30) / 2) - 12;
+    static final int cw = ((COLUMN_FORM_WIDTH - 30) / 2) - 12;
 
-    private FieldLabel greaterField;
+    FieldLabel greaterField;
 
-    private FieldLabel lesserField;
+    FieldLabel lesserField;
 
     public interface HtmlLayoutContainerTemplate extends XTemplates {
         @XTemplate(source = "DiskResourceQueryFormTemplate.html")
@@ -335,7 +335,7 @@ public class DiskResourceQueryForm extends Composite implements Editor<DiskResou
         initSearchButton();
     }
 
-    private void addTrashAndFilter() {
+    void addTrashAndFilter() {
         VerticalPanel vp = new VerticalPanel();
         vp.add(includeTrashItems);
         vp.add(createFilterLink);
@@ -343,21 +343,13 @@ public class DiskResourceQueryForm extends Composite implements Editor<DiskResou
         con.add(vp, new HtmlData(".trashandfilter"));
     }
 
-    private void initSearchButton() {
+    void initSearchButton() {
         searchButton = new TextButton("Search");
         searchButton.addSelectHandler(new SelectHandler() {
 
             @Override
             public void onSelect(SelectEvent event) {
-                // Flush to perform local validations
-                DiskResourceQueryTemplate flushedQueryTemplate = editorDriver.flush();
-                if (editorDriver.hasErrors() || isEmptyQuery(flushedQueryTemplate)) {
-                    return;
-                }
-
-                // Fire event and pass flushed query
-                fireEvent(new SubmitDiskResourceQueryEvent(flushedQueryTemplate));
-                hide();
+                onSearchButtonSelect();
 
             }
         });
@@ -371,7 +363,7 @@ public class DiskResourceQueryForm extends Composite implements Editor<DiskResou
         con.add(hp, new HtmlData(".search"));
     }
 
-    private void initSizeFilterFields() {
+    void initSizeFilterFields() {
         HorizontalPanel hp1 = new HorizontalPanel();
         hp1.add(fileSizeGreaterThan);
         hp1.add(greaterThanComboBox);
@@ -390,7 +382,7 @@ public class DiskResourceQueryForm extends Composite implements Editor<DiskResou
 
     }
 
-    private void initCreateFilter() {
+    void initCreateFilter() {
         createFilterLink = new IPlantAnchor("Create filter with this search...", -1);
         createFilterLink.addClickHandler(new ClickHandler() {
             
@@ -405,23 +397,21 @@ public class DiskResourceQueryForm extends Composite implements Editor<DiskResou
                 
             }
         });
-        // con.add(createFilterLink, new HtmlData(".createfilter"));
     }
 
-    private void initExcludeTrashField() {
+    void initExcludeTrashField() {
         includeTrashItems = new CheckBox();
         includeTrashItems.setBoxLabel("Include items in Trash");
-        // con.add(includeTrashItems, new HtmlData(".includetrash"));
     }
 
-    private void initFileQuery() {
+    void initFileQuery() {
         fileQuery = new TextField();
         fileQuery.setWidth(cw);
         fileQuery.setEmptyText("Enter values...");
         con.add(new FieldLabel(fileQuery, "File/Folder name has the words"), new HtmlData(".filename"));
     }
 
-    private void initNegatedFileQuery() {
+    void initNegatedFileQuery() {
         negatedFileQuery = new TextField();
         negatedFileQuery.setEmptyText("Enter values...");
         negatedFileQuery.setWidth(cw);
@@ -429,7 +419,7 @@ public class DiskResourceQueryForm extends Composite implements Editor<DiskResou
                 new HtmlData(".negatefilename"));
     }
 
-    private void initMetadataSearchFields() {
+    void initMetadataSearchFields() {
         metadataAttributeQuery = new TextField();
         metadataAttributeQuery.setEmptyText("Enter values...");
         metadataAttributeQuery.setWidth(cw);
@@ -444,7 +434,7 @@ public class DiskResourceQueryForm extends Composite implements Editor<DiskResou
 
     }
 
-    private void initOwnerSharedSearchField() {
+    void initOwnerSharedSearchField() {
         ownedBy = new TextField();
         ownedBy.setEmptyText("Enter iPlant user name");
         ownedBy.setWidth(cw);
@@ -489,7 +479,7 @@ public class DiskResourceQueryForm extends Composite implements Editor<DiskResou
         namePrompt.show(filter, getElement(), new AnchorAlignment(Anchor.BOTTOM_LEFT, Anchor.BOTTOM_LEFT, true));
     }
 
-    private void initDateRangeCombos() {
+    void initDateRangeCombos() {
         List<DateInterval> timeIntervals = Lists.newArrayList();
         Date now = new Date();
 
@@ -553,7 +543,7 @@ public class DiskResourceQueryForm extends Composite implements Editor<DiskResou
         return ret;
     }
 
-    private void initFileSizeComboBoxes() {
+    void initFileSizeComboBoxes() {
         // File Size ComboBoxes
         LabelProvider<FileSizeUnit> fileSizeUnitLabelProvider = new LabelProvider<FileSizeUnit>() {
 
@@ -584,7 +574,7 @@ public class DiskResourceQueryForm extends Composite implements Editor<DiskResou
         return SearchModelUtils.createFileSizeUnits();
     }
 
-    private void initFileSizeNumberFields() {
+    void initFileSizeNumberFields() {
         // File Size Number fields
         NumberPropertyEditor.DoublePropertyEditor doublePropertyEditor = new NumberPropertyEditor.DoublePropertyEditor();
         fileSizeGreaterThan = new NumberField<Double>(doublePropertyEditor);
@@ -595,12 +585,24 @@ public class DiskResourceQueryForm extends Composite implements Editor<DiskResou
 
     }
 
-    private void onEscape(NativePreviewEvent pe) {
+    void onEscape(NativePreviewEvent pe) {
         if (pe.getNativeEvent().getKeyCode() == KeyCodes.KEY_ESCAPE) {
             pe.getNativeEvent().preventDefault();
             pe.getNativeEvent().stopPropagation();
             hide();
         }
+    }
+
+    void onSearchButtonSelect() {
+        // Flush to perform local validations
+        DiskResourceQueryTemplate flushedQueryTemplate = editorDriver.flush();
+        if (editorDriver.hasErrors() || isEmptyQuery(flushedQueryTemplate)) {
+            return;
+        }
+
+        // Fire event and pass flushed query
+        fireEvent(new SubmitDiskResourceQueryEvent(flushedQueryTemplate));
+        hide();
     }
 
 }
