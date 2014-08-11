@@ -37,7 +37,7 @@ import java.util.logging.Logger;
 
 /**
  * A widget to search for tags. The widget will load suggestions based on user query. Caller must supply
- * Selection Handler to determine the widget's behavior
+ * Selection Handler and valuechange handler to determine the widget's behavior
  * 
  * @author sriram
  * 
