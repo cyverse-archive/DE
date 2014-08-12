@@ -50,11 +50,13 @@ public class AsyncCallbackWrapper<T> implements AsyncCallback<T> {
     public void onFailure(Throwable error) {
         if (error instanceof AuthenticationException) {
             redirectToLandingPage();
+            return;
         }
         if (error instanceof StatusCodeException) {
             int statusCode = ((StatusCodeException)error).getStatusCode();
             if (statusCode == 302 || statusCode == 0) {
                 redirectToLandingPage();
+                return;
             }
         }
 

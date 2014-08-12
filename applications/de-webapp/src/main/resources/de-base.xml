@@ -46,6 +46,8 @@
 
     <bean id="casAuthEntryPoint" class="org.iplantc.de.server.DeCasAuthenticationEntryPoint">
         <property name="landingPage" ref="deLandingPage" />
+        <property name="rpcPrefix" value="discoveryenvironment/deservice" />
+        <property name="logoutSuccessHandler" ref="logoutHandler" />
     </bean>
 
     <bean id="casAuthenticationFilter" class="org.springframework.security.cas.web.CasAuthenticationFilter">
