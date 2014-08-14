@@ -1,6 +1,7 @@
 package org.iplantc.de.commons.client.gin;
 
 import org.iplantc.de.commons.client.tags.views.IplantTagListView;
+import org.iplantc.de.commons.client.tags.views.TagSearchField;
 
 import com.google.gwt.core.shared.GWT;
 import com.google.gwt.inject.client.GinModules;
@@ -12,5 +13,7 @@ public interface CommonsInjector extends Ginjector {
     public static final CommonsInjector INSTANCE = GWT.create(CommonsInjector.class);
 
     public IplantTagListView getIplantTagListView();
+
+    public TagSearchField getTagSearchField();
 
 }

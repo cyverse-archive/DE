@@ -897,7 +897,7 @@ public class DiskResourceViewImpl extends Composite implements DiskResourceView,
         HorizontalPanel hp = new HorizontalPanel();
         SimplePanel boundaryBox = new SimplePanel();
         if (tagPresenter == null) {
-            tagPresenter = createTagList(resources,
+            tagPresenter = createTagListPresenter(resources,
                                          editable,
                                          removeable,
                                          this.createOnFocusCmd(boundaryBox, containerStyle),
@@ -928,7 +928,7 @@ public class DiskResourceViewImpl extends Composite implements DiskResourceView,
         };
     }
 
-    private IplantTagListPresenter createTagList(CustomIplantTagResources resources,
+    private IplantTagListPresenter createTagListPresenter(CustomIplantTagResources resources,
                                                  boolean editable,
                                                  boolean removeable,
                                                  Command onFocusCmd,

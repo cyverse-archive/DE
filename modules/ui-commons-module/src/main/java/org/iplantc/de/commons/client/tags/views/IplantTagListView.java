@@ -2,8 +2,8 @@ package org.iplantc.de.commons.client.tags.views;
 
 import org.iplantc.de.client.models.tags.IpalntTagAutoBeanFactory;
 import org.iplantc.de.client.models.tags.IplantTag;
+import org.iplantc.de.commons.client.gin.CommonsInjector;
 import org.iplantc.de.commons.client.tags.presenter.TagListHandlers;
-import org.iplantc.de.commons.client.tags.proxy.TagSuggestionRpcProxy;
 import org.iplantc.de.commons.client.tags.resources.CustomIplantTagResources;
 import org.iplantc.de.resources.client.messages.I18N;
 
@@ -61,8 +61,8 @@ public class IplantTagListView extends Composite implements IsWidget {
     IpalntTagAutoBeanFactory factory = GWT.create(IpalntTagAutoBeanFactory.class);
 
     @Inject
-    public IplantTagListView(TagSuggestionRpcProxy proxy) {
-        tagSearchField = new TagSearchField(proxy);
+    public IplantTagListView() {
+        tagSearchField = CommonsInjector.INSTANCE.getTagSearchField();
         initWidget(uiBinder.createAndBindUi(this));
         taglbl.setHTML("<span style='font-size:10px; font-weight:bold;'>" + I18N.DISPLAY.tags()
                 + "</span>");

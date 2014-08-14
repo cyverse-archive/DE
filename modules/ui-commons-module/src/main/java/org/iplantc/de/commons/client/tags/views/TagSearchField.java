@@ -17,6 +17,7 @@ import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.inject.Inject;
 
 import com.sencha.gxt.cell.core.client.form.ComboBoxCell;
 import com.sencha.gxt.core.client.IdentityValueProvider;
@@ -57,6 +58,7 @@ public class TagSearchField implements IsWidget {
     private final TagSuggestionRpcProxy proxy;
     private Command createTagCommand;
 
+    @Inject
     public TagSearchField(TagSuggestionRpcProxy proxy) {
         this.proxy = proxy;
         initStore();

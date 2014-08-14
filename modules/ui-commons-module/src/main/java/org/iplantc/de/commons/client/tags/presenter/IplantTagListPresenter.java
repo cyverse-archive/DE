@@ -148,13 +148,15 @@ public class IplantTagListPresenter implements TagListHandlers {
             for (IplantTag tag : tags) {
                 TagView tagView = new TagView(this.resources, tag);
                 tagView.setUiHandlers(this);
-                tagView.setEditable(editable);
-                tagView.setRemoveable(removeable);
+
 
                 this.getTagListView().getTagsPanel().add(tagView);
                 this.tagItems.add(new TagItem(tag, tagView));
             }
         }
+
+        setEditable(editable);
+        setRemoveable(removeable);
     }
 
     public List<IplantTag> getTags() {
