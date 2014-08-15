@@ -291,6 +291,7 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter, Di
                             if (next.getId().equals(diskResource.getId())) {
                                 next.setFavorite(false);
                                 view.updateStore(next);
+                                view.refreshFolder(getSelectedFolder());
                             }
                         }
                     }
