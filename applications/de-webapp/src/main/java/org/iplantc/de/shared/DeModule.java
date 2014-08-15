@@ -9,13 +9,6 @@ package org.iplantc.de.shared;
  */
 public interface DeModule {
     interface Ids {
-        /**
-         * top level items grouping
-         * 
-         */
-        String ANALYSES_WINDOW = "analysesWindow";
-        String APPS_WINDOW = "appsWindow";
-        String APP_EDITOR_WINDOW = "appEditorWindow";
         String DESKTOP = "desktop";
         /**
          * sub-items
@@ -23,8 +16,6 @@ public interface DeModule {
         String NOTIFICATION_BUTTON = ".notificationButton";
         String USER_PREF_MENU = ".userPrefMenu";
         String FORUMS_BUTTON = ".forumsButton";
-
-        String DISK_RESOURCE_WINDOW = "diskResourceWindow";
 
         /**
          * window tool buttons
@@ -49,5 +40,23 @@ public interface DeModule {
         String ABOUT_BTN = ".about";
         String LOGOUT_BTN = ".logout";
         String SUPPORT_BTN = ".support";
+    }
+
+    interface WindowIds {
+
+        /**
+         * top level items grouping
+         *
+         */
+        String ANALYSES_WINDOW = "analysesWindow";
+        String APPS_WINDOW = "appsWindow";
+        String APP_EDITOR_WINDOW = "appEditorWindow";
+        String DISK_RESOURCE_WINDOW = "diskResourceWindow";
+        String APP_LAUNCH_WINDOW = "appLaunchWindow";
+        String IDROP_LITE = "iDropLiteWindow";
+        String NOTIFICATION = "notificationWindow";
+        String WORKFLOW_EDITOR = "workflowEditorWindow";
+        String SIMPLE_DOWNLOAD = "simpleDownloadWindow";
+        String SYSTEM_MESSAGES = "systemMessageWindow";
     }
 }

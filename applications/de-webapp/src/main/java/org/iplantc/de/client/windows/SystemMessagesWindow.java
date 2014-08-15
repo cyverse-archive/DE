@@ -5,6 +5,8 @@ import org.iplantc.de.client.sysmsgs.presenter.MessagesPresenter;
 import org.iplantc.de.commons.client.views.window.configs.ConfigFactory;
 import org.iplantc.de.commons.client.views.window.configs.SystemMessagesWindowConfig;
 import org.iplantc.de.resources.client.messages.I18N;
+import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
+import org.iplantc.de.shared.DeModule;
 
 import com.google.gwt.user.client.Window;
 
@@ -12,6 +14,8 @@ import com.google.gwt.user.client.Window;
  * The window for displaying all active system messages.
  */
 public final class SystemMessagesWindow extends IplantWindowBase {
+
+    private final IplantDisplayStrings displayStrings;
 
     private static int computeDefaultWidth() {
         return Math.max(600, Window.getClientWidth() / 3);
@@ -30,10 +34,14 @@ public final class SystemMessagesWindow extends IplantWindowBase {
      */
     public SystemMessagesWindow(final SystemMessagesWindowConfig config) {
         super("", config);
+        displayStrings = I18N.DISPLAY;
         this.presenter = new MessagesPresenter(config.getSelectedMessage());
-        setHeadingText(I18N.DISPLAY.systemMessagesLabel());
+
+        ensureDebugId(DeModule.WindowIds.SYSTEM_MESSAGES);
+        setHeadingText(displayStrings.systemMessagesLabel());
         this.setWidth(computeDefaultWidth());
         this.setHeight(computeDefaultHeight());
+
         presenter.go(this);
     }
 

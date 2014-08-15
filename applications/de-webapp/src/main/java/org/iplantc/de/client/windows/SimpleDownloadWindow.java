@@ -8,6 +8,7 @@ import org.iplantc.de.commons.client.util.WindowUtil;
 import org.iplantc.de.commons.client.views.window.configs.ConfigFactory;
 import org.iplantc.de.commons.client.views.window.configs.SimpleDownloadWindowConfig;
 import org.iplantc.de.commons.client.widgets.IPlantAnchor;
+import org.iplantc.de.shared.DeModule;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -27,6 +28,7 @@ public class SimpleDownloadWindow extends IplantWindowBase {
         super(null, true);
         setHeadingText(org.iplantc.de.resources.client.messages.I18N.DISPLAY.download());
         setSize("320", "320");
+        ensureDebugId(DeModule.WindowIds.SIMPLE_DOWNLOAD);
 
         init(config);
     }

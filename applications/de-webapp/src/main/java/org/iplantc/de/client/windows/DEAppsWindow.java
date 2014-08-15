@@ -13,14 +13,15 @@ public class DEAppsWindow extends IplantWindowBase {
     private final AppsView.Presenter presenter;
 
     public DEAppsWindow(AppsWindowConfig config) {
-        super(null, null);
+        super(null, config);
         presenter = AppsInjector.INSTANCE.getAppsViewPresenter();
 
-        setSize("600", "375");
         // This must be set before we render view
-        ensureDebugId(DeModule.Ids.APPS_WINDOW);
-        presenter.go(this, config.getSelectedAppGroup(), config.getSelectedApp());
+        ensureDebugId(DeModule.WindowIds.APPS_WINDOW);
+        setSize("600", "375");
         setHeadingText(org.iplantc.de.resources.client.messages.I18N.DISPLAY.applications());
+
+        presenter.go(this, config.getSelectedAppGroup(), config.getSelectedApp());
     }
 
     @Override

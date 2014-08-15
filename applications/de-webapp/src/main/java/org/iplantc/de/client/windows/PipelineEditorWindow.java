@@ -10,6 +10,7 @@ import org.iplantc.de.commons.client.views.window.configs.WindowConfig;
 import org.iplantc.de.pipelines.client.presenter.PipelineViewPresenter;
 import org.iplantc.de.pipelines.client.views.PipelineView;
 import org.iplantc.de.pipelines.client.views.PipelineViewImpl;
+import org.iplantc.de.shared.DeModule;
 
 import com.google.gwt.user.client.Command;
 import com.google.web.bindery.autobean.shared.Splittable;
@@ -33,6 +34,7 @@ public class PipelineEditorWindow extends IplantWindowBase {
 
         PipelineView view = new PipelineViewImpl();
         presenter = new PipelineViewPresenter(view, new PublishCallbackCommand());
+        ensureDebugId(DeModule.WindowIds.WORKFLOW_EDITOR);
 
         if (config instanceof PipelineEditorWindowConfig) {
             PipelineEditorWindowConfig pipelineConfig = (PipelineEditorWindowConfig)config;

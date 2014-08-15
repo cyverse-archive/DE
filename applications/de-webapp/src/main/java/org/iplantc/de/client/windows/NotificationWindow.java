@@ -13,6 +13,7 @@ import org.iplantc.de.client.notifications.views.NotificationViewImpl;
 import org.iplantc.de.client.notifications.views.cells.NotificationMessageCell;
 import org.iplantc.de.commons.client.views.window.configs.ConfigFactory;
 import org.iplantc.de.commons.client.views.window.configs.NotifyWindowConfig;
+import org.iplantc.de.shared.DeModule;
 
 import com.google.gwt.cell.client.DateCell;
 import com.google.gwt.core.shared.GWT;
@@ -46,6 +47,7 @@ public class NotificationWindow extends IplantWindowBase {
         ColumnModel<NotificationMessage> cm = buildNotificationColumnModel();
         NotificationView view = new NotificationViewImpl(store, cm, checkBoxModel);
         presenter = new NotificationPresenterImpl(view);
+        ensureDebugId(DeModule.WindowIds.NOTIFICATION);
         setSize("600", "375");
         presenter.go(this);
         if (config != null) {

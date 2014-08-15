@@ -225,9 +225,13 @@ public abstract class IplantWindowBase extends Window implements IPlantWindowInt
     protected void onEnsureDebugId(String baseID) {
         super.onEnsureDebugId(baseID);
 
-        btnMaximize.ensureDebugId(baseID + DeModule.Ids.WIN_MAX_BTN);
+        if(btnMaximize != null){
+            btnMaximize.ensureDebugId(baseID + DeModule.Ids.WIN_MAX_BTN);
+        }
+        if(btnRestore != null) {
+            btnRestore.ensureDebugId(baseID + DeModule.Ids.WIN_RESTORE_BTN);
+        }
         btnMinimize.ensureDebugId(baseID + DeModule.Ids.WIN_MIN_BTN);
-        btnRestore.ensureDebugId(baseID + DeModule.Ids.WIN_RESTORE_BTN);
         btnClose.ensureDebugId(baseID + DeModule.Ids.WIN_CLOSE_BTN);
         btnLayout.ensureDebugId(baseID + DeModule.Ids.WIN_LAYOUT_BTN);
     }

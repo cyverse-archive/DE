@@ -23,14 +23,15 @@ public class MyAnalysesWindow extends IplantWindowBase {
     private final AnalysesView.Presenter presenter;
 
     public MyAnalysesWindow(AnalysisWindowConfig config) {
-        super(null, null);
+        super(null, config);
+        presenter = DEInjector.INSTANCE.getAnalysesViewPresenter();
+
+        ensureDebugId(DeModule.WindowIds.ANALYSES_WINDOW);
         setHeadingText(org.iplantc.de.resources.client.messages.I18N.DISPLAY.analyses());
         setSize("670", "375");
         setMinWidth(400);
 
-        presenter = DEInjector.INSTANCE.getAnalysesViewPresenter();
 
-        ensureDebugId(DeModule.Ids.ANALYSES_WINDOW);
         presenter.go(this, config.getSelectedAnalyses());
     }
 

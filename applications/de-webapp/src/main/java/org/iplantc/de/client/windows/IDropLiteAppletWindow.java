@@ -12,6 +12,7 @@ import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.commons.client.views.gxt3.dialogs.IplantInfoBox;
 import org.iplantc.de.commons.client.views.window.configs.IDropLiteWindowConfig;
 import org.iplantc.de.resources.client.messages.I18N;
+import org.iplantc.de.shared.DeModule;
 
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
@@ -37,6 +38,7 @@ public class IDropLiteAppletWindow extends IplantWindowBase {
     public IDropLiteAppletWindow(IDropLiteWindowConfig config) {
         super("");
         this.idlwc = config;
+        ensureDebugId(DeModule.WindowIds.IDROP_LITE);
         setSize("850", "430");
         setResizable(false);
         init();

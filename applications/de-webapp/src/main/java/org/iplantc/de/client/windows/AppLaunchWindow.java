@@ -18,6 +18,7 @@ import org.iplantc.de.commons.client.info.ErrorAnnouncementConfig;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
 import org.iplantc.de.commons.client.views.window.configs.AppWizardConfig;
 import org.iplantc.de.commons.client.views.window.configs.ConfigFactory;
+import org.iplantc.de.shared.DeModule;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -73,6 +74,7 @@ public class AppLaunchWindow extends IplantWindowBase implements AnalysisLaunchE
         setBorders(false);
 
         presenter = AppLaunchInjector.INSTANCE.getAppLaunchPresenter();
+        ensureDebugId(DeModule.WindowIds.APP_LAUNCH_WINDOW);
         presenter.addAnalysisLaunchHandler(this);
         appId = config.getAppId();
         init(presenter, config);

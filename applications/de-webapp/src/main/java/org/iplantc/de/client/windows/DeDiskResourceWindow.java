@@ -34,7 +34,7 @@ public class DeDiskResourceWindow extends IplantWindowBase implements FolderSele
         presenter = DiskResourceInjector.INSTANCE.getDiskResourceViewPresenter();
 
         final String uniqueWindowTag = (config.getTag() == null) ? "" : "." + config.getTag();
-        ensureDebugId(DeModule.Ids.DISK_RESOURCE_WINDOW + uniqueWindowTag);
+        ensureDebugId(DeModule.WindowIds.DISK_RESOURCE_WINDOW + uniqueWindowTag);
         setHeadingText(I18N.DISPLAY.data());
         setSize("800", "480");
 
