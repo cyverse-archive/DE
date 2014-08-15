@@ -3,6 +3,7 @@ package org.iplantc.de.commons.client.tags.views;
 import org.iplantc.de.client.models.tags.IplantTag;
 import org.iplantc.de.commons.client.tags.proxy.TagSuggestionLoadConfig;
 import org.iplantc.de.commons.client.tags.proxy.TagSuggestionRpcProxy;
+import org.iplantc.de.resources.client.messages.I18N;
 
 import com.google.common.base.Strings;
 import com.google.gwt.cell.client.AbstractCell;
@@ -70,6 +71,7 @@ public class TagSearchField implements IsWidget {
 
         ListLoader<TagSuggestionLoadConfig, ListLoadResult<IplantTag>> loader = initLoader();
         tagSearchCbo.setLoader(loader);
+        tagSearchCbo.setEmptyText(I18N.DISPLAY.search());
     }
 
     public void addSelectionHandler(SelectionHandler<IplantTag> handler) {

@@ -64,7 +64,7 @@ public class TagView extends Composite {
     @UiField
     HTMLPanel tagPanel;
     @UiField
-    DivElement tag;
+    DivElement tagDiv;
     @UiField
     Label value;
     private TagListHandlers uiHandlers;
@@ -81,9 +81,12 @@ public class TagView extends Composite {
 
     private final CustomIplantTagResources resources;
     private static TagView draggedElement;
+
     Logger logger = Logger.getLogger("tags");
 
     private boolean removeable;
+
+    private final IplantTag tag;
 
     public void setUiHandlers(TagListHandlers tagListHandlers) {
         this.uiHandlers = tagListHandlers;
@@ -91,9 +94,11 @@ public class TagView extends Composite {
 
     public TagView(CustomIplantTagResources resources, IplantTag tag) {
         this.resources = resources;
+        this.tag = tag;
+
         initWidget(uiBinder.createAndBindUi(this));
 
-        this.tag.setAttribute("class", resources.style().tag());
+        this.tagDiv.setAttribute("class", resources.style().tag());
         this.value.setStylePrimaryName(resources.style().tagCaption());
 
         this.value.setText(tag.getValue());
@@ -273,12 +278,16 @@ public class TagView extends Composite {
         }, DragEndEvent.getType()));
     }
 
-    private void deactivateDnD() {
+    public void deactivateDnD() {
         this.tagPanel.removeStyleName(resources.style().tagEditable());
 
         for (HandlerRegistration dndHandler : this.dndHandlers)
             dndHandler.removeHandler();
 
         this.dndHandlers.clear();
+    }
+
+    public IplantTag getTag() {
+        return tag;
     }
 }

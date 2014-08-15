@@ -5,8 +5,15 @@ import org.iplantc.de.client.models.search.DiskResourceQueryTemplate;
 import org.iplantc.de.client.models.search.FileSizeRange.FileSizeUnit;
 import org.iplantc.de.client.models.search.SearchAutoBeanFactory;
 import org.iplantc.de.client.models.search.SearchModelUtils;
+import org.iplantc.de.client.models.tags.IplantTag;
+import org.iplantc.de.commons.client.gin.CommonsInjector;
 import org.iplantc.de.commons.client.info.ErrorAnnouncementConfig;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
+import org.iplantc.de.commons.client.tags.presenter.TagListHandlers;
+import org.iplantc.de.commons.client.tags.resources.CustomIplantTagResources;
+import org.iplantc.de.commons.client.tags.views.TagSearchField;
+import org.iplantc.de.commons.client.tags.views.TagView;
+import org.iplantc.de.commons.client.tags.views.TagsPanel;
 import org.iplantc.de.commons.client.widgets.IPlantAnchor;
 import org.iplantc.de.diskResource.client.search.events.SaveDiskResourceQueryEvent;
 import org.iplantc.de.diskResource.client.search.events.SubmitDiskResourceQueryEvent;
@@ -22,6 +29,10 @@ import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
+import com.google.gwt.event.logical.shared.SelectionEvent;
+import com.google.gwt.event.logical.shared.SelectionHandler;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -89,8 +100,8 @@ import java.util.List;
  * <li>If the form is <b>invalid</b>, the validation errors will appear in the form and not other action
  * will occur.</li>
  * <li>Else, the user will be presented with a text field allowing them to set a name. Then, if the user
- * clicks "Save", a {@link org.iplantc.de.diskResource.client.search.events.SaveDiskResourceQueryEvent} will be fired with the form's current query
- * template and this form will be hidden.</li>
+ * clicks "Save", a {@link org.iplantc.de.diskResource.client.search.events.SaveDiskResourceQueryEvent}
+ * will be fired with the form's current query template and this form will be hidden.</li>
  * </ol>
  * </li>
  * </ol>
@@ -99,7 +110,11 @@ import java.util.List;
  * @author jstroot
  * 
  */
-public class DiskResourceQueryForm extends Composite implements Editor<DiskResourceQueryTemplate>, SaveDiskResourceQueryEvent.HasSaveDiskResourceQueryEventHandlers, HasSubmitDiskResourceQueryEventHandlers, SaveDiskResourceQueryEvent.SaveDiskResourceQueryEventHandler {
+public class DiskResourceQueryForm extends Composite implements
+                                                    Editor<DiskResourceQueryTemplate>,
+                                                    SaveDiskResourceQueryEvent.HasSaveDiskResourceQueryEventHandlers,
+                                                    HasSubmitDiskResourceQueryEventHandlers,
+                                                    SaveDiskResourceQueryEvent.SaveDiskResourceQueryEventHandler {
 
     interface SearchFormEditorDriver extends
                                     SimpleBeanEditorDriver<DiskResourceQueryTemplate, DiskResourceQueryForm> {
@@ -117,10 +132,10 @@ public class DiskResourceQueryForm extends Composite implements Editor<DiskResou
     final SearchFormEditorDriver editorDriver = GWT.create(SearchFormEditorDriver.class);
 
     TextField fileQuery;
-    
+
     @Path("fileSizeRange.min")
     NumberField<Double> fileSizeGreaterThan;
-    
+
     @Path("fileSizeRange.max")
     NumberField<Double> fileSizeLessThan;
 
@@ -164,6 +179,11 @@ public class DiskResourceQueryForm extends Composite implements Editor<DiskResou
     FieldLabel greaterField;
 
     FieldLabel lesserField;
+
+    List<IplantTag> tagQuery;
+
+    @Ignore
+    private TagsPanel tagPanel;
 
     public interface HtmlLayoutContainerTemplate extends XTemplates {
         @XTemplate(source = "DiskResourceQueryFormTemplate.html")
@@ -212,7 +232,7 @@ public class DiskResourceQueryForm extends Composite implements Editor<DiskResou
         eventPreview.setAutoHide(false);
         addStyleName("x-ignore");
         con.setBorders(true);
-         // JDS Small trial to correct placement of form in constrained views.
+        // JDS Small trial to correct placement of form in constrained views.
         this.ensureVisibilityOnSizing = true;
 
         List<FieldLabel> labels = FormPanelHelper.getFieldLabels(vp);
@@ -222,12 +242,14 @@ public class DiskResourceQueryForm extends Composite implements Editor<DiskResou
     }
 
     @Override
-    public HandlerRegistration addSaveDiskResourceQueryEventHandler(SaveDiskResourceQueryEvent.SaveDiskResourceQueryEventHandler handler) {
+    public HandlerRegistration
+            addSaveDiskResourceQueryEventHandler(SaveDiskResourceQueryEvent.SaveDiskResourceQueryEventHandler handler) {
         return addHandler(handler, SaveDiskResourceQueryEvent.TYPE);
     }
 
     @Override
-    public HandlerRegistration addSubmitDiskResourceQueryEventHandler(SubmitDiskResourceQueryEventHandler handler) {
+    public HandlerRegistration
+            addSubmitDiskResourceQueryEventHandler(SubmitDiskResourceQueryEventHandler handler) {
         return addHandler(handler, SubmitDiskResourceQueryEvent.TYPE);
     }
 
@@ -259,7 +281,6 @@ public class DiskResourceQueryForm extends Composite implements Editor<DiskResou
             fireEvent(new HideEvent());
         }
     }
-
 
     public void show(Element parent, AnchorAlignment anchorAlignment) {
         getElement().makePositionable(true);
@@ -316,8 +337,6 @@ public class DiskResourceQueryForm extends Composite implements Editor<DiskResou
         return;
     }
 
-
-
     void init(DiskResourceQueryFormNamePrompt namePrompt) {
         this.namePrompt = namePrompt;
         this.namePrompt.addSaveDiskResourceQueryEventHandler(this);
@@ -330,9 +349,47 @@ public class DiskResourceQueryForm extends Composite implements Editor<DiskResou
         initSizeFilterFields();
         initOwnerSharedSearchField();
         initExcludeTrashField();
+        initTagField();
         initCreateFilter();
         addTrashAndFilter();
         initSearchButton();
+    }
+
+    void initTagField() {
+        final TagSearchField tagSearchField = CommonsInjector.INSTANCE.getTagSearchField();
+
+        final SearchTagListHandler tagListHandlers = new SearchTagListHandler();
+
+        VerticalPanel vp = new VerticalPanel();
+        FieldLabel fl = new FieldLabel();
+        fl.setText("Tagged with");
+
+        vp.add(fl);
+        vp.add(tagSearchField);
+
+        tagPanel = new TagsPanel();
+        tagPanel.setSize("200px", "50px");
+        vp.add(tagPanel);
+
+        con.add(vp, new HtmlData(".tags"));
+
+        tagSearchField.addSelectionHandler(new SelectionHandler<IplantTag>() {
+
+            @Override
+            public void onSelection(SelectionEvent<IplantTag> event) {
+                tagSearchField.setValue(event.getSelectedItem());
+
+            }
+        });
+        tagSearchField.addValueChangeHandler(new ValueChangeHandler<IplantTag>() {
+
+            @Override
+            public void onValueChange(ValueChangeEvent<IplantTag> event) {
+                tagListHandlers.onAddTag(event.getValue());
+                tagSearchField.clear();
+                tagSearchField.asWidget().getElement().focus();
+            }
+        });
     }
 
     void addTrashAndFilter() {
@@ -364,13 +421,14 @@ public class DiskResourceQueryForm extends Composite implements Editor<DiskResou
     }
 
     void initSizeFilterFields() {
+        VerticalPanel vp = new VerticalPanel();
         HorizontalPanel hp1 = new HorizontalPanel();
         hp1.add(fileSizeGreaterThan);
         hp1.add(greaterThanComboBox);
         hp1.setSpacing(3);
 
         greaterField = new FieldLabel(hp1, "File size is bigger than or equal to");
-        con.add(greaterField, new HtmlData(".filesizebigger"));
+        vp.add(greaterField);
 
         HorizontalPanel hp2 = new HorizontalPanel();
         hp2.add(fileSizeLessThan);
@@ -378,14 +436,15 @@ public class DiskResourceQueryForm extends Composite implements Editor<DiskResou
         hp2.setSpacing(3);
 
         lesserField = new FieldLabel(hp2, "File size is smaller than or equal to");
-        con.add(lesserField, new HtmlData(".filesizelesser"));
+        vp.add(lesserField);
+        con.add(vp, new HtmlData(".filesize"));
 
     }
 
     void initCreateFilter() {
         createFilterLink = new IPlantAnchor("Create filter with this search...", -1);
         createFilterLink.addClickHandler(new ClickHandler() {
-            
+
             @Override
             public void onClick(ClickEvent event) {
                 // Flush to perform local validations
@@ -394,7 +453,7 @@ public class DiskResourceQueryForm extends Composite implements Editor<DiskResou
                     return;
                 }
                 showNamePrompt(flushedFilter);
-                
+
             }
         });
     }
@@ -456,7 +515,7 @@ public class DiskResourceQueryForm extends Composite implements Editor<DiskResou
         showNamePrompt(flushedFilter);
     }
 
-    static boolean isEmptyQuery(DiskResourceQueryTemplate template){
+    static boolean isEmptyQuery(DiskResourceQueryTemplate template) {
         if (Strings.isNullOrEmpty(template.getOwnedBy())
                 && Strings.isNullOrEmpty(template.getFileQuery())
                 && Strings.isNullOrEmpty(template.getMetadataAttributeQuery())
@@ -465,18 +524,24 @@ public class DiskResourceQueryForm extends Composite implements Editor<DiskResou
                 && Strings.isNullOrEmpty(template.getSharedWith())
                 && (template.getDateCreated() == null)
                 && (template.getLastModified() == null)
-                && ((template.getCreatedWithin() == null) || (template.getCreatedWithin().getFrom() == null && template.getCreatedWithin().getTo() == null))
-                && ((template.getModifiedWithin() == null) || (template.getModifiedWithin().getFrom() == null && template.getModifiedWithin().getTo() == null))
-                && ((template.getFileSizeRange() == null) || (template.getFileSizeRange().getMax() == null && template.getFileSizeRange().getMin() == null))){
+                && ((template.getCreatedWithin() == null) || (template.getCreatedWithin().getFrom() == null && template.getCreatedWithin()
+                                                                                                                       .getTo() == null))
+                && ((template.getModifiedWithin() == null) || (template.getModifiedWithin().getFrom() == null && template.getModifiedWithin()
+                                                                                                                         .getTo() == null))
+                && ((template.getFileSizeRange() == null) || (template.getFileSizeRange().getMax() == null && template.getFileSizeRange()
+                                                                                                                      .getMin() == null))) {
             // TODO Implement user error feedback
-            IplantAnnouncer.getInstance().schedule(new ErrorAnnouncementConfig("You must select at least one filter."));
+            IplantAnnouncer.getInstance()
+                           .schedule(new ErrorAnnouncementConfig("You must select at least one filter."));
             return true;
         }
         return false;
     }
 
     void showNamePrompt(DiskResourceQueryTemplate filter) {
-        namePrompt.show(filter, getElement(), new AnchorAlignment(Anchor.BOTTOM_LEFT, Anchor.BOTTOM_LEFT, true));
+        namePrompt.show(filter, getElement(), new AnchorAlignment(Anchor.BOTTOM_LEFT,
+                                                                  Anchor.BOTTOM_LEFT,
+                                                                  true));
     }
 
     void initDateRangeCombos() {
@@ -603,6 +668,79 @@ public class DiskResourceQueryForm extends Composite implements Editor<DiskResou
         // Fire event and pass flushed query
         fireEvent(new SubmitDiskResourceQueryEvent(flushedQueryTemplate));
         hide();
+    }
+    
+    private class SearchTagListHandler implements TagListHandlers {
+        
+        final CustomIplantTagResources r = GWT.create(CustomIplantTagResources.class);
+
+        public SearchTagListHandler() {
+            r.style().ensureInjected();
+        }
+
+        @Override
+        public void onCreateTag(IplantTag tag) {
+            // do nothing intentionally
+
+        }
+
+        @Override
+        public void onAddTag(IplantTag tag) {
+            for (int i = 0; i < tagPanel.getWidgetCount(); i++) {
+                TagView test = (TagView)tagPanel.getWidget(i);
+                if (test.getTag().getValue().equals(tag.getValue())) {
+                    return;
+                }
+            }
+            TagView tv = new TagView(r, tag);
+            tv.setUiHandlers(this);
+            tv.setRemoveable(true);
+            tv.setEditable(true);
+            tagPanel.add(tv);
+            tagQuery.add(tag);
+        }
+
+        @Override
+        public void onRemoveTag(TagView tagView) {
+            if (tagPanel.getWidgetIndex(tagView) != -1) {
+                tagPanel.remove(tagPanel.getWidgetIndex(tagView));
+                tagQuery.remove(tagView.getTag());
+            }
+        }
+
+        @Override
+        public void onEditTag(TagView tagView) {
+            // do nothing intentionally
+
+        }
+
+        @Override
+        public void onRelocateTag(TagView tagViewToRelocate,
+                                  TagView tagViewRelocationRef,
+                                  InsertionPoint insertionPoint) {
+            // do nothing intentionally
+
+        }
+
+        @Override
+        public void onFocus() {
+            // do nothing intentionally
+
+        }
+
+        @Override
+        public void onBlur() {
+            // do nothing intentionally
+
+        }
+
+        @Override
+        public void onSelectTag(TagView tagView) {
+            // do nothing intentionally
+
+        }
+        
+        
     }
 
 }
