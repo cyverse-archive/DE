@@ -58,5 +58,6 @@ public interface DeModule {
         String WORKFLOW_EDITOR = "workflowEditorWindow";
         String SIMPLE_DOWNLOAD = "simpleDownloadWindow";
         String SYSTEM_MESSAGES = "systemMessageWindow";
+        String ABOUT_WINDOW = "aboutWindow";
     }
 }

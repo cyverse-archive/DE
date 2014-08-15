@@ -6,6 +6,7 @@ import org.iplantc.de.client.models.WindowState;
 import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.commons.client.views.window.configs.AboutWindowConfig;
 import org.iplantc.de.commons.client.views.window.configs.ConfigFactory;
+import org.iplantc.de.shared.DeModule;
 import org.iplantc.de.shared.services.AboutApplicationServiceFacade;
 
 import com.google.gwt.core.client.GWT;
@@ -52,6 +53,7 @@ public class AboutApplicationWindow extends IplantWindowBase {
         aboutApplicationService = AboutApplicationServiceFacade.getInstance();
         setSize("320", "260");
         setHeadingText(appearance.headingText());
+        ensureDebugId(DeModule.WindowIds.ABOUT_WINDOW);
         executeServiceCall();
     }
 

@@ -16,20 +16,11 @@ import com.google.gwt.user.client.Window;
 public final class SystemMessagesWindow extends IplantWindowBase {
 
     private final IplantDisplayStrings displayStrings;
-
-    private static int computeDefaultWidth() {
-        return Math.max(600, Window.getClientWidth() / 3);
-    }
-
-    private static int computeDefaultHeight() {
-        return Math.max(400, Window.getClientHeight() / 3);
-    }
-
     private final MessagesPresenter presenter;
 
     /**
      * the constructor
-     * 
+     *
      * @param config the persisted window configuration
      */
     public SystemMessagesWindow(final SystemMessagesWindowConfig config) {
@@ -43,6 +34,14 @@ public final class SystemMessagesWindow extends IplantWindowBase {
         this.setHeight(computeDefaultHeight());
 
         presenter.go(this);
+    }
+
+    private static int computeDefaultHeight() {
+        return Math.max(400, Window.getClientHeight() / 3);
+    }
+
+    private static int computeDefaultWidth() {
+        return Math.max(600, Window.getClientWidth() / 3);
     }
 
     /**

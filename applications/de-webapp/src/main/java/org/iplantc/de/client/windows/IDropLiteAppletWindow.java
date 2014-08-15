@@ -12,6 +12,7 @@ import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.commons.client.views.gxt3.dialogs.IplantInfoBox;
 import org.iplantc.de.commons.client.views.window.configs.IDropLiteWindowConfig;
 import org.iplantc.de.resources.client.messages.I18N;
+import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 import org.iplantc.de.shared.DeModule;
 
 import com.google.gwt.core.client.Scheduler;
@@ -33,6 +34,7 @@ import com.sencha.gxt.widget.core.client.event.DialogHideEvent;
  */
 public class IDropLiteAppletWindow extends IplantWindowBase {
 
+    private final IplantDisplayStrings displayStrings;
     private final IDropLiteWindowConfig idlwc;
 
     public IDropLiteAppletWindow(IDropLiteWindowConfig config) {
@@ -42,6 +44,7 @@ public class IDropLiteAppletWindow extends IplantWindowBase {
         setSize("850", "430");
         setResizable(false);
         init();
+        displayStrings = I18N.DISPLAY;
     }
 
     private void init() {
@@ -63,7 +66,7 @@ public class IDropLiteAppletWindow extends IplantWindowBase {
         boolean isOSX = GXT.isMac();
         boolean isChrome = GXT.isChrome();
         if (isOSX && isChrome) {
-            final IplantInfoBox iib = new IplantInfoBox(I18N.DISPLAY.warning(), "Bulk operations may not work as intented with Chrome browser on OS X. Please use Safari or Firefox browser.");
+            final IplantInfoBox iib = new IplantInfoBox(displayStrings.warning(), "Bulk operations may not work as intented with Chrome browser on OS X. Please use Safari or Firefox browser.");
             Scheduler.get().scheduleFinally(new ScheduledCommand() {
 
                 @Override

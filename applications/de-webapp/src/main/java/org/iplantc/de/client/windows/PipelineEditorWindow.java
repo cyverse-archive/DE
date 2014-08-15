@@ -10,6 +10,7 @@ import org.iplantc.de.commons.client.views.window.configs.WindowConfig;
 import org.iplantc.de.pipelines.client.presenter.PipelineViewPresenter;
 import org.iplantc.de.pipelines.client.views.PipelineView;
 import org.iplantc.de.pipelines.client.views.PipelineViewImpl;
+import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 import org.iplantc.de.shared.DeModule;
 
 import com.google.gwt.user.client.Command;
@@ -20,14 +21,29 @@ import com.sencha.gxt.widget.core.client.box.MessageBox;
 import com.sencha.gxt.widget.core.client.event.DialogHideEvent;
 
 public class PipelineEditorWindow extends IplantWindowBase {
+    class PublishCallbackCommand implements Command {
+        @Override
+        public void execute() {
+            IplantAnnouncer.getInstance().schedule(new SuccessAnnouncementConfig(displayStrings.publishWorkflowSuccess()));
+            if (close_after_save) {
+                close_after_save = false;
+                PipelineEditorWindow.super.hide();
+            } else {
+                initPipelineJson = presenter.getPublishJson(presenter.getPipeline());
+            }
+        }
+    }
+
+    private final IplantDisplayStrings displayStrings;
     private final PipelineView.Presenter presenter;
-    private String initPipelineJson;
     private boolean close_after_save;
+    private String initPipelineJson;
 
     public PipelineEditorWindow(WindowConfig config) {
-        super(null, null);
+        super(null, config);
 
-        setHeadingText(org.iplantc.de.resources.client.messages.I18N.DISPLAY.pipeline());
+        displayStrings = org.iplantc.de.resources.client.messages.I18N.DISPLAY;
+        setHeadingText(displayStrings.pipeline());
         setSize("900", "500"); //$NON-NLS-1$ //$NON-NLS-2$
         setMinWidth(640);
         setMinHeight(440);
@@ -37,7 +53,7 @@ public class PipelineEditorWindow extends IplantWindowBase {
         ensureDebugId(DeModule.WindowIds.WORKFLOW_EDITOR);
 
         if (config instanceof PipelineEditorWindowConfig) {
-            PipelineEditorWindowConfig pipelineConfig = (PipelineEditorWindowConfig)config;
+            PipelineEditorWindowConfig pipelineConfig = (PipelineEditorWindowConfig) config;
             Pipeline pipeline = pipelineConfig.getPipeline();
 
             if (pipeline != null) {
@@ -57,17 +73,11 @@ public class PipelineEditorWindow extends IplantWindowBase {
         close_after_save = false;
     }
 
-    class PublishCallbackCommand implements Command {
-        @Override
-        public void execute() {
-            IplantAnnouncer.getInstance().schedule(new SuccessAnnouncementConfig(org.iplantc.de.resources.client.messages.I18N.DISPLAY.publishWorkflowSuccess()));
-            if (close_after_save) {
-                close_after_save = false;
-                PipelineEditorWindow.super.hide();
-            } else {
-                initPipelineJson = presenter.getPublishJson(presenter.getPipeline());
-            }
-        }
+    @Override
+    public WindowState getWindowState() {
+        PipelineEditorWindowConfig configData = ConfigFactory.workflowIntegrationWindowConfig();
+        configData.setPipeline(presenter.getPipeline());
+        return createWindowState(configData);
     }
 
     @Override
@@ -77,7 +87,7 @@ public class PipelineEditorWindow extends IplantWindowBase {
                     && !initPipelineJson.equals(presenter.getPublishJson(presenter.getPipeline()))) {
                 checkForSave();
             } else if (initPipelineJson == null
-                    && presenter.getPublishJson(presenter.getPipeline()) != null) {
+                           && presenter.getPublishJson(presenter.getPipeline()) != null) {
                 checkForSave();
             } else {
                 PipelineEditorWindow.super.hide();
@@ -88,29 +98,22 @@ public class PipelineEditorWindow extends IplantWindowBase {
     }
 
     private void checkForSave() {
-        MessageBox box = new MessageBox(org.iplantc.de.resources.client.messages.I18N.DISPLAY.save(), "");
+        MessageBox box = new MessageBox(displayStrings.save(), "");
         box.setPredefinedButtons(PredefinedButton.YES, PredefinedButton.NO, PredefinedButton.CANCEL);
         box.setIcon(MessageBox.ICONS.question());
-        box.setMessage(org.iplantc.de.resources.client.messages.I18N.DISPLAY.unsavedChanges());
+        box.setMessage(displayStrings.unsavedChanges());
         box.addDialogHideHandler(new DialogHideEvent.DialogHideHandler() {
             @Override
             public void onDialogHide(DialogHideEvent event) {
 
-                if(PredefinedButton.NO.equals(event.getHideButton())) {
+                if (PredefinedButton.NO.equals(event.getHideButton())) {
                     PipelineEditorWindow.super.hide();
-                } else if(PredefinedButton.YES.equals(event.getHideButton())){
+                } else if (PredefinedButton.YES.equals(event.getHideButton())) {
                     presenter.saveOnClose();
                     close_after_save = true;
                 }
             }
         });
         box.show();
-    }
-
-    @Override
-    public WindowState getWindowState() {
-        PipelineEditorWindowConfig configData = ConfigFactory.workflowIntegrationWindowConfig();
-        configData.setPipeline(presenter.getPipeline());
-        return createWindowState(configData);
     }
 }
