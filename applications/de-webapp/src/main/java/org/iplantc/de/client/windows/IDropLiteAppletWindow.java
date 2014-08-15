@@ -40,11 +40,23 @@ public class IDropLiteAppletWindow extends IplantWindowBase {
     public IDropLiteAppletWindow(IDropLiteWindowConfig config) {
         super("");
         this.idlwc = config;
-        ensureDebugId(DeModule.WindowIds.IDROP_LITE);
+        displayStrings = I18N.DISPLAY;
+        String debugId = DeModule.WindowIds.IDROP_LITE + ".";
+        // Set the heading and add the correct simple mode button based on the applet display mode.
+        int displayMode = idlwc.getDisplayMode();
+        if (displayMode == IDropLiteUtil.DISPLAY_MODE_UPLOAD) {
+            setHeadingText(displayStrings.upload());
+            debugId += displayStrings.upload();
+
+        } else if (displayMode == IDropLiteUtil.DISPLAY_MODE_DOWNLOAD) {
+            setHeadingText(displayStrings.download());
+            debugId += displayStrings.download();
+        }
+
+        ensureDebugId(debugId);
         setSize("850", "430");
         setResizable(false);
         init();
-        displayStrings = I18N.DISPLAY;
     }
 
     private void init() {
@@ -52,7 +64,6 @@ public class IDropLiteAppletWindow extends IplantWindowBase {
         removeFromParentOnHide = false;
         setHideMode(HideMode.VISIBILITY);
 
-        initViewMode();
         initListeners();
 
         IDropLiteView view = new IDropLiteViewImpl();
@@ -90,20 +101,6 @@ public class IDropLiteAppletWindow extends IplantWindowBase {
                 }
             });
         }
-    }
-
-    private int initViewMode() {
-        // Set the heading and add the correct simple mode button based on the applet display mode.
-        int displayMode = idlwc.getDisplayMode();
-        if (displayMode == IDropLiteUtil.DISPLAY_MODE_UPLOAD) {
-            setHeadingText(org.iplantc.de.resources.client.messages.I18N.DISPLAY.upload());
-
-        } else if (displayMode == IDropLiteUtil.DISPLAY_MODE_DOWNLOAD) {
-            setHeadingText(org.iplantc.de.resources.client.messages.I18N.DISPLAY.download());
-        }
-
-        return displayMode;
-
     }
 
     protected void confirmHide() {
