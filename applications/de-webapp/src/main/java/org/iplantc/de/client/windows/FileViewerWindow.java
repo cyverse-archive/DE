@@ -92,7 +92,7 @@ public class FileViewerWindow extends IplantWindowBase implements IsMaskable {
     Logger LOG = Logger.getLogger("Viewer");
 
     public FileViewerWindow(FileViewerWindowConfig config, EventBus eventBus) {
-        super(null, null);
+        super(null, config);
         this.configAB = config;
         this.eventBus = eventBus;
         eventBus.addHandler(FileSavedEvent.TYPE, new FileSavedEventHandler() {

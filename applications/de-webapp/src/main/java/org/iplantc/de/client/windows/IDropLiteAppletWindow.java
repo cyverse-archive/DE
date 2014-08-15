@@ -12,6 +12,8 @@ import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.commons.client.views.gxt3.dialogs.IplantInfoBox;
 import org.iplantc.de.commons.client.views.window.configs.IDropLiteWindowConfig;
 import org.iplantc.de.resources.client.messages.I18N;
+import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
+import org.iplantc.de.shared.DeModule;
 
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
@@ -32,11 +34,26 @@ import com.sencha.gxt.widget.core.client.event.DialogHideEvent;
  */
 public class IDropLiteAppletWindow extends IplantWindowBase {
 
+    private final IplantDisplayStrings displayStrings;
     private final IDropLiteWindowConfig idlwc;
 
     public IDropLiteAppletWindow(IDropLiteWindowConfig config) {
         super("");
         this.idlwc = config;
+        displayStrings = I18N.DISPLAY;
+        String debugId = DeModule.WindowIds.IDROP_LITE + ".";
+        // Set the heading and add the correct simple mode button based on the applet display mode.
+        int displayMode = idlwc.getDisplayMode();
+        if (displayMode == IDropLiteUtil.DISPLAY_MODE_UPLOAD) {
+            setHeadingText(displayStrings.upload());
+            debugId += displayStrings.upload();
+
+        } else if (displayMode == IDropLiteUtil.DISPLAY_MODE_DOWNLOAD) {
+            setHeadingText(displayStrings.download());
+            debugId += displayStrings.download();
+        }
+
+        ensureDebugId(debugId);
         setSize("850", "430");
         setResizable(false);
         init();
@@ -47,7 +64,6 @@ public class IDropLiteAppletWindow extends IplantWindowBase {
         removeFromParentOnHide = false;
         setHideMode(HideMode.VISIBILITY);
 
-        initViewMode();
         initListeners();
 
         IDropLiteView view = new IDropLiteViewImpl();
@@ -61,7 +77,7 @@ public class IDropLiteAppletWindow extends IplantWindowBase {
         boolean isOSX = GXT.isMac();
         boolean isChrome = GXT.isChrome();
         if (isOSX && isChrome) {
-            final IplantInfoBox iib = new IplantInfoBox(I18N.DISPLAY.warning(), "Bulk operations may not work as intented with Chrome browser on OS X. Please use Safari or Firefox browser.");
+            final IplantInfoBox iib = new IplantInfoBox(displayStrings.warning(), "Bulk operations may not work as intented with Chrome browser on OS X. Please use Safari or Firefox browser.");
             Scheduler.get().scheduleFinally(new ScheduledCommand() {
 
                 @Override
@@ -85,20 +101,6 @@ public class IDropLiteAppletWindow extends IplantWindowBase {
                 }
             });
         }
-    }
-
-    private int initViewMode() {
-        // Set the heading and add the correct simple mode button based on the applet display mode.
-        int displayMode = idlwc.getDisplayMode();
-        if (displayMode == IDropLiteUtil.DISPLAY_MODE_UPLOAD) {
-            setHeadingText(org.iplantc.de.resources.client.messages.I18N.DISPLAY.upload());
-
-        } else if (displayMode == IDropLiteUtil.DISPLAY_MODE_DOWNLOAD) {
-            setHeadingText(org.iplantc.de.resources.client.messages.I18N.DISPLAY.download());
-        }
-
-        return displayMode;
-
     }
 
     protected void confirmHide() {
