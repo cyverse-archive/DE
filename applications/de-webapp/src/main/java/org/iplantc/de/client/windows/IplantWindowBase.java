@@ -15,7 +15,6 @@ import com.google.web.bindery.autobean.shared.AutoBeanFactory;
 import com.google.web.bindery.autobean.shared.AutoBeanUtils;
 import com.google.web.bindery.autobean.shared.Splittable;
 
-import com.sencha.gxt.core.client.Style;
 import com.sencha.gxt.core.client.dom.XElement;
 import com.sencha.gxt.core.client.util.Rectangle;
 import com.sencha.gxt.widget.core.client.Header;
@@ -258,7 +257,6 @@ public abstract class IplantWindowBase extends Window implements IPlantWindowInt
         final ToolButton layoutBtn = new ToolButton(windowAppearance.layoutBtnConfig());
         // Remove tool tip, it gets in the way of the menu.
         layoutBtn.setToolTip(windowAppearance.layoutBtnToolTip());
-        layoutBtn.getToolTip().getToolTipConfig().setAnchor(Style.Side.TOP);
         final Menu m = new Menu();
         MenuItem left = new MenuItem(windowAppearance.snapLeftMenuItem());
         MenuItem right = new MenuItem(windowAppearance.snapRightMenuItem());
