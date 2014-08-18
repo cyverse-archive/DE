@@ -44,8 +44,9 @@ public class DesktopWindowManager {
     public void closeActiveWindow() {
         final List<Widget> reverse = Lists.reverse(windowManager.getStack());
         for (Widget w : reverse) {
-            if (w instanceof IPlantWindowInterface) {
+            if (w instanceof Window) {
                 ((Window) w).hide();
+                return;
             }
         }
     }

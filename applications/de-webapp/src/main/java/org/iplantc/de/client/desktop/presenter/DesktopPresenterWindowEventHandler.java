@@ -9,7 +9,6 @@ import org.iplantc.de.apps.client.events.RunAppEvent;
 import org.iplantc.de.client.DEClientConstants;
 import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.events.ShowSystemMessagesEvent;
-import org.iplantc.de.client.events.WindowCloseRequestEvent;
 import org.iplantc.de.client.events.WindowShowRequestEvent;
 import org.iplantc.de.client.events.diskResources.OpenFolderEvent;
 import org.iplantc.de.client.idroplite.util.IDropLiteUtil;
@@ -78,7 +77,6 @@ public class DesktopPresenterWindowEventHandler implements EditAppEvent.EditAppE
                                                            WindowShowRequestEvent.WindowShowRequestEventHandler,
                                                            RunAppEvent.RunAppEventHandler,
                                                            ShowSystemMessagesEvent.Handler,
-                                                           WindowCloseRequestEvent.WindowCloseRequestEventHandler,
                                                            OpenFolderEvent.OpenFolderEventHandler,
                                                            OpenAppForRelaunchEvent.OpenAppForRelaunchEventHandler,
                                                            RequestSendToCoGeEvent.RequestSendToCoGeEventHandler,
@@ -266,11 +264,6 @@ public class DesktopPresenterWindowEventHandler implements EditAppEvent.EditAppE
     }
 
     @Override
-    public void onWindowCloseRequest(WindowCloseRequestEvent event) {
-        desktopWindowManager.closeActiveWindow();
-    }
-
-    @Override
     public void onWindowShowRequest(WindowShowRequestEvent event) {
         presenter.show(event.getWindowConfig(), event.updateWithConfig());
     }
@@ -373,8 +366,6 @@ public class DesktopPresenterWindowEventHandler implements EditAppEvent.EditAppE
         handlerRegistration = eventBus.addHandler(RunAppEvent.TYPE, this);
         registrations.add(handlerRegistration);
         handlerRegistration = eventBus.addHandler(ShowSystemMessagesEvent.TYPE, this);
-        registrations.add(handlerRegistration);
-        handlerRegistration = eventBus.addHandler(WindowCloseRequestEvent.TYPE, this);
         registrations.add(handlerRegistration);
         handlerRegistration = eventBus.addHandler(OpenAppForRelaunchEvent.TYPE, this);
         registrations.add(handlerRegistration);
