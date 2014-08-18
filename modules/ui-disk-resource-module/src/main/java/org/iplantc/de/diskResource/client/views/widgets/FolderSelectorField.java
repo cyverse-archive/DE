@@ -28,36 +28,6 @@ import java.util.Set;
 
 public class FolderSelectorField extends AbstractDiskResourceSelector<Folder> {
 
-    UserSettings userSettings = UserSettings.getInstance();
-    private final IplantDisplayStrings displayStrings;
-    private final EventBus eventBus;
-
-    public FolderSelectorField() {
-        displayStrings = I18N.DISPLAY;
-        eventBus = EventBus.getInstance();
-        setEmptyText(displayStrings.selectAFolder());
-    }
-
-    @Override
-    protected void onBrowseSelected() {
-        HasPath value = getValue();
-        FolderSelectDialog folderSD;
-        if (value == null && userSettings.isRememberLastPath()) {
-            String path = userSettings.getLastPath();
-            if (path != null) {
-                value = CommonModelUtils.createHasPathFromString(path);
-            }
-        }
-        folderSD = new FolderSelectDialog(value);
-        folderSD.addHideHandler(new FolderDialogHideHandler(folderSD));
-        folderSD.show();
-    }
-
-    @Override
-    public void setValue(Folder value) {
-        super.setValue(value);
-    }
-
     private class FolderDialogHideHandler implements HideHandler {
         private final TakesValue<Folder> takesValue;
 
@@ -81,6 +51,57 @@ public class FolderSelectorField extends AbstractDiskResourceSelector<Folder> {
         }
     }
 
+    UserSettings userSettings = UserSettings.getInstance();
+    private final IplantDisplayStrings displayStrings;
+    private final EventBus eventBus;
+
+    public FolderSelectorField() {
+        displayStrings = I18N.DISPLAY;
+        eventBus = EventBus.getInstance();
+        setEmptyText(displayStrings.selectAFolder());
+    }
+
+    @Override
+    public void onDrop(DndDropEvent event) {
+        Set<DiskResource> dropData = getDropData(event.getData());
+
+        if (validateDropStatus(dropData, event.getStatusProxy())) {
+            Folder selectedFolder = (Folder) dropData.iterator().next();
+            setSelectedResource(selectedFolder);
+            ValueChangeEvent.fire(this, selectedFolder);
+        }
+    }
+
+    @Override
+    public void setValue(Folder value) {
+        super.setValue(value);
+    }
+
+    @Override
+    public void setValueFromStringId(String path) {
+        if (Strings.isNullOrEmpty(path)) {
+            setValue(null);
+        }
+        DiskResourceAutoBeanFactory factory = GWT.create(DiskResourceAutoBeanFactory.class);
+        setValue(AutoBeanCodex.decode(factory, Folder.class, "{\"path\":\"" + path + "\"}").as());
+
+    }
+
+    @Override
+    protected void onBrowseSelected() {
+        HasPath value = getValue();
+        FolderSelectDialog folderSD;
+        if (value == null && userSettings.isRememberLastPath()) {
+            String path = userSettings.getLastPath();
+            if (path != null) {
+                value = CommonModelUtils.createHasPathFromString(path);
+            }
+        }
+        folderSD = new FolderSelectDialog(value);
+        folderSD.addHideHandler(new FolderDialogHideHandler(folderSD));
+        folderSD.show();
+    }
+
     @Override
     protected boolean validateDropStatus(Set<DiskResource> dropData, StatusProxy status) {
         // Only allow 1 folder to be dropped in this field.
@@ -94,26 +115,5 @@ public class FolderSelectorField extends AbstractDiskResourceSelector<Folder> {
         status.update(displayStrings.dataDragDropStatusText(dropData.size()));
 
         return true;
-    }
-
-    @Override
-    public void onDrop(DndDropEvent event) {
-        Set<DiskResource> dropData = getDropData(event.getData());
-
-        if (validateDropStatus(dropData, event.getStatusProxy())) {
-            Folder selectedFolder = (Folder)dropData.iterator().next();
-            setSelectedResource(selectedFolder);
-            ValueChangeEvent.fire(this, selectedFolder);
-        }
-    }
-
-    @Override
-    public void setValueFromStringId(String path) {
-        if (Strings.isNullOrEmpty(path)) {
-            setValue(null);
-          }
-        DiskResourceAutoBeanFactory factory = GWT.create(DiskResourceAutoBeanFactory.class);
-        setValue(AutoBeanCodex.decode(factory, Folder.class, "{\"path\":\"" + path + "\"}").as());
-        
     }
 }

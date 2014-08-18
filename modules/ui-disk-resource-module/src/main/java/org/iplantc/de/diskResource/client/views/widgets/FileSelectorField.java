@@ -28,6 +28,30 @@ import java.util.Set;
 
 public class FileSelectorField extends AbstractDiskResourceSelector<File> {
 
+    private class FileDialogHideHandler implements HideHandler {
+        private final TakesValue<List<File>> takesValue;
+
+        public FileDialogHideHandler(TakesValue<List<File>> dlg) {
+            this.takesValue = dlg;
+        }
+
+        @Override
+        public void onHide(HideEvent event) {
+            if ((takesValue.getValue() == null) || takesValue.getValue().isEmpty())
+                return;
+
+            // This class is single select, so only grab first element
+            File selectedResource = takesValue.getValue().get(0);
+            setSelectedResource(selectedResource);
+            // cache the last used path
+            if (userSettings.isRememberLastPath()) {
+                userSettings.setLastPath(DiskResourceUtil.parseParent(selectedResource.getPath()));
+                eventBus.fireEvent(new LastSelectedPathChangedEvent(true));
+            }
+            ValueChangeEvent.fire(FileSelectorField.this, selectedResource);
+        }
+    }
+
     UserSettings userSettings = UserSettings.getInstance();
     private final IplantDisplayStrings displayStrings;
     private final EventBus eventBus;
@@ -36,6 +60,27 @@ public class FileSelectorField extends AbstractDiskResourceSelector<File> {
         displayStrings = I18N.DISPLAY;
         eventBus = EventBus.getInstance();
         setEmptyText(displayStrings.selectAFile());
+    }
+
+    @Override
+    public void onDrop(DndDropEvent event) {
+        Set<DiskResource> dropData = getDropData(event.getData());
+
+        if (validateDropStatus(dropData, event.getStatusProxy())) {
+            File selectedFile = (File) dropData.iterator().next();
+            setSelectedResource(selectedFile);
+            ValueChangeEvent.fire(this, selectedFile);
+        }
+    }
+
+    @Override
+    public void setValueFromStringId(String path) {
+        if (Strings.isNullOrEmpty(path)) {
+            setValue(null);
+        }
+        DiskResourceAutoBeanFactory factory = GWT.create(DiskResourceAutoBeanFactory.class);
+        setValue(AutoBeanCodex.decode(factory, File.class, "{\"path\":\"" + path + "\"}").as());
+
     }
 
     @Override
@@ -66,30 +111,6 @@ public class FileSelectorField extends AbstractDiskResourceSelector<File> {
         fileSD.show();
     }
 
-    private class FileDialogHideHandler implements HideHandler {
-        private final TakesValue<List<File>> takesValue;
-
-        public FileDialogHideHandler(TakesValue<List<File>> dlg) {
-            this.takesValue = dlg;
-        }
-
-        @Override
-        public void onHide(HideEvent event) {
-            if ((takesValue.getValue() == null) || takesValue.getValue().isEmpty())
-                return;
-
-            // This class is single select, so only grab first element
-            File selectedResource = takesValue.getValue().get(0);
-            setSelectedResource(selectedResource);
-            // cache the last used path
-            if (userSettings.isRememberLastPath()) {
-                userSettings.setLastPath(DiskResourceUtil.parseParent(selectedResource.getPath()));
-                eventBus.fireEvent(new LastSelectedPathChangedEvent(true));
-            }
-            ValueChangeEvent.fire(FileSelectorField.this, selectedResource);
-        }
-    }
-
     @Override
     protected boolean validateDropStatus(Set<DiskResource> dropData, StatusProxy status) {
         // Only allow 1 file to be dropped in this field.
@@ -103,26 +124,5 @@ public class FileSelectorField extends AbstractDiskResourceSelector<File> {
         status.update(displayStrings.dataDragDropStatusText(dropData.size()));
 
         return true;
-    }
-
-    @Override
-    public void onDrop(DndDropEvent event) {
-        Set<DiskResource> dropData = getDropData(event.getData());
-
-        if (validateDropStatus(dropData, event.getStatusProxy())) {
-            File selectedFile = (File)dropData.iterator().next();
-            setSelectedResource(selectedFile);
-            ValueChangeEvent.fire(this, selectedFile);
-        }
-    }
-
-    @Override
-    public void setValueFromStringId(String path) {
-        if (Strings.isNullOrEmpty(path)) {
-            setValue(null);
-          }
-        DiskResourceAutoBeanFactory factory = GWT.create(DiskResourceAutoBeanFactory.class);
-        setValue(AutoBeanCodex.decode(factory, File.class, "{\"path\":\"" + path + "\"}").as());
-        
     }
 }
