@@ -393,11 +393,13 @@ public class DesktopPresenterImpl implements DesktopView.Presenter {
     }
 
     @Override
-    public void saveUserSettings(final UserSettings value) {
+    public void saveUserSettings(final UserSettings value,
+                                 final boolean updateSilently) {
         final RuntimeCallbacks.SaveUserSettingsCallback callback = new RuntimeCallbacks.SaveUserSettingsCallback(value,
                                                                                userSettings,
                                                                                announcer,
-                                                                               displayStrings);
+                                                                               displayStrings,
+                                                                               updateSilently);
         userSessionService.saveUserPreferences(value.asSplittable(), callback);
     }
 

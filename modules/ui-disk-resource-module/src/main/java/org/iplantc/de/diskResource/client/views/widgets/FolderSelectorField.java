@@ -8,9 +8,10 @@ import org.iplantc.de.client.models.diskResources.DiskResourceAutoBeanFactory;
 import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.client.util.CommonModelUtils;
 import org.iplantc.de.client.util.DiskResourceUtil;
-import org.iplantc.de.commons.client.events.UserSettingsUpdatedEvent;
+import org.iplantc.de.commons.client.events.LastSelectedPathChangedEvent;
 import org.iplantc.de.diskResource.client.views.dialogs.FolderSelectDialog;
 import org.iplantc.de.resources.client.messages.I18N;
+import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 
 import com.google.common.base.Strings;
 import com.google.gwt.core.shared.GWT;
@@ -28,15 +29,19 @@ import java.util.Set;
 public class FolderSelectorField extends AbstractDiskResourceSelector<Folder> {
 
     UserSettings userSettings = UserSettings.getInstance();
+    private final IplantDisplayStrings displayStrings;
+    private final EventBus eventBus;
 
     public FolderSelectorField() {
-        setEmptyText(I18N.DISPLAY.selectAFolder());
+        displayStrings = I18N.DISPLAY;
+        eventBus = EventBus.getInstance();
+        setEmptyText(displayStrings.selectAFolder());
     }
 
     @Override
     protected void onBrowseSelected() {
         HasPath value = getValue();
-        FolderSelectDialog folderSD = null;
+        FolderSelectDialog folderSD;
         if (value == null && userSettings.isRememberLastPath()) {
             String path = userSettings.getLastPath();
             if (path != null) {
@@ -70,8 +75,7 @@ public class FolderSelectorField extends AbstractDiskResourceSelector<Folder> {
             // cache the last used path
             if (userSettings.isRememberLastPath()) {
                 userSettings.setLastPath(value.getPath());
-                UserSettingsUpdatedEvent usue = new UserSettingsUpdatedEvent();
-                EventBus.getInstance().fireEvent(usue);
+                eventBus.fireEvent(new LastSelectedPathChangedEvent(true));
             }
             ValueChangeEvent.fire(FolderSelectorField.this, value);
         }
@@ -87,7 +91,7 @@ public class FolderSelectorField extends AbstractDiskResourceSelector<Folder> {
 
         // Reset status message
         status.setStatus(true);
-        status.update(I18N.DISPLAY.dataDragDropStatusText(dropData.size()));
+        status.update(displayStrings.dataDragDropStatusText(dropData.size()));
 
         return true;
     }

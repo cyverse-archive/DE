@@ -122,7 +122,7 @@ public interface DesktopView extends IsWidget {
 
         void onNotificationSelected(NotificationMessage selectedItem);
 
-        void saveUserSettings(UserSettings value);
+        void saveUserSettings(UserSettings value, boolean updateSilently);
 
         void show(final WindowConfig config);
 

@@ -6,8 +6,7 @@ import org.iplantc.de.client.events.NotificationCountUpdateEvent;
 import org.iplantc.de.client.models.UserSettings;
 import org.iplantc.de.client.desktop.DesktopView;
 import org.iplantc.de.client.util.JsonUtil;
-import org.iplantc.de.commons.client.events.UserSettingsUpdatedEvent;
-import org.iplantc.de.commons.client.events.UserSettingsUpdatedEventHandler;
+import org.iplantc.de.commons.client.events.LastSelectedPathChangedEvent;
 import org.iplantc.de.diskResource.client.events.FileUploadedEvent;
 
 import com.google.common.collect.Lists;
@@ -23,7 +22,7 @@ import java.util.List;
  *
  * @author jstroot
  */
-public class DesktopPresenterEventHandler implements UserSettingsUpdatedEventHandler,
+public class DesktopPresenterEventHandler implements LastSelectedPathChangedEvent.LastSelectedPathChangedEventHandler,
                                                      NotificationCountUpdateEvent.NotificationCountUpdateEventHandler,
                                                      FileUploadedEvent.FileUploadedEventHandler {
 
@@ -56,13 +55,8 @@ public class DesktopPresenterEventHandler implements UserSettingsUpdatedEventHan
     }
 
     @Override
-    public void onUpdate(UserSettingsUpdatedEvent usue) {
-        presenter.saveUserSettings(userSettings);
-        /* FIXME REFACTOR JDS Change this to "lastPathUpdated" or similar
-         *           This event is ONLY used to update the last path from file selector fields, etc
-         *           It would be more declarative to fire an event which communicates that
-         *           "last path has been updated".
-         */
+    public void onLastSelectedPathChanged(LastSelectedPathChangedEvent usue) {
+        presenter.saveUserSettings(userSettings, usue.isUpdateSilently());
     }
 
     public void setPresenter(DesktopPresenterImpl presenter, DesktopView view) {
@@ -73,7 +67,7 @@ public class DesktopPresenterEventHandler implements UserSettingsUpdatedEventHan
 
     private void init(EventBus eventBus) {
         List<HandlerRegistration> handlerRegistrations = Lists.newArrayList();
-        HandlerRegistration handlerRegistration = eventBus.addHandler(UserSettingsUpdatedEvent.TYPE, this);
+        HandlerRegistration handlerRegistration = eventBus.addHandler(LastSelectedPathChangedEvent.TYPE, this);
         handlerRegistrations.add(handlerRegistration);
         handlerRegistration = eventBus.addHandler(FileUploadedEvent.TYPE, this);
         handlerRegistrations.add(handlerRegistration);

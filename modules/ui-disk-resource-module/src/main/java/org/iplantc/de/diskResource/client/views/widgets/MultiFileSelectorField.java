@@ -11,12 +11,14 @@ import org.iplantc.de.client.models.errorHandling.ServiceErrorCode;
 import org.iplantc.de.client.models.errorHandling.SimpleServiceError;
 import org.iplantc.de.client.services.DiskResourceServiceFacade;
 import org.iplantc.de.client.util.DiskResourceUtil;
-import org.iplantc.de.commons.client.events.UserSettingsUpdatedEvent;
+import org.iplantc.de.commons.client.events.LastSelectedPathChangedEvent;
 import org.iplantc.de.commons.client.widgets.IPlantSideErrorHandler;
 import org.iplantc.de.diskResource.client.views.DiskResourceModelKeyProvider;
 import org.iplantc.de.diskResource.client.views.DiskResourceProperties;
 import org.iplantc.de.diskResource.client.views.dialogs.FileSelectDialog;
+import org.iplantc.de.resources.client.constants.IplantValidationConstants;
 import org.iplantc.de.resources.client.messages.I18N;
+import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 import org.iplantc.de.resources.client.messages.IplantErrorStrings;
 
 import com.google.common.collect.Lists;
@@ -106,8 +108,7 @@ public class MultiFileSelectorField extends Composite implements IsField<List<Ha
             store.addAll(files);
             if (userSettings.isRememberLastPath() && store.size() > 0) {
                 userSettings.setLastPath(DiskResourceUtil.parseParent(store.get(0).getPath()));
-                UserSettingsUpdatedEvent usue = new UserSettingsUpdatedEvent();
-                EventBus.getInstance().fireEvent(usue);
+                eventBus.fireEvent(new LastSelectedPathChangedEvent(true));
             }
             ValueChangeEvent.fire(MultiFileSelectorField.this,
                                   Lists.<HasPath> newArrayList(store.getAll()));
@@ -148,6 +149,9 @@ public class MultiFileSelectorField extends Composite implements IsField<List<Ha
     HTML warnInfo;
 
     UserSettings userSettings = UserSettings.getInstance();
+    private final IplantDisplayStrings displayStrings;
+    private final EventBus eventBus;
+    private final IplantValidationConstants validationConstants;
     private boolean addDeleteButtonsEnabled = true;
     private final DiskResourceServiceFacade drServiceFacade;
 
@@ -159,6 +163,11 @@ public class MultiFileSelectorField extends Composite implements IsField<List<Ha
     private final boolean validatePermissions = false;
 
     public MultiFileSelectorField() {
+        drServiceFacade = ServicesInjector.INSTANCE.getDiskResourceServiceFacade();
+        this.errorSupport = new IPlantSideErrorHandler(this);
+        eventBus = EventBus.getInstance();
+        validationConstants = I18N.V_CONSTANTS;
+        displayStrings = I18N.DISPLAY;
         initWidget(BINDER.createAndBindUi(this));
 
         grid.getSelectionModel().addSelectionChangedHandler(new SelectionChangedHandler<DiskResource>() {
@@ -170,10 +179,7 @@ public class MultiFileSelectorField extends Composite implements IsField<List<Ha
         });
 
         grid.setBorders(true);
-
-        drServiceFacade = ServicesInjector.INSTANCE.getDiskResourceServiceFacade();
         initDragAndDrop();
-        this.errorSupport = new IPlantSideErrorHandler(this);
     }
 
     @Override
@@ -318,10 +324,7 @@ public class MultiFileSelectorField extends Composite implements IsField<List<Ha
             return null;
         }
 
-        Set<DiskResource> dropData = null;
-        dropData = Sets.newHashSet((Collection<DiskResource>)dataColl);
-
-        return dropData;
+        return Sets.newHashSet((Collection<DiskResource>)dataColl);
     }
 
     protected boolean validateDropStatus(Set<DiskResource> dropData, StatusProxy status) {
@@ -332,7 +335,7 @@ public class MultiFileSelectorField extends Composite implements IsField<List<Ha
 
         // Reset status message
         status.setStatus(true);
-        status.update(I18N.DISPLAY.dataDragDropStatusText(dropData.size()));
+        status.update(displayStrings.dataDragDropStatusText(dropData.size()));
 
         return true;
     }
@@ -342,7 +345,7 @@ public class MultiFileSelectorField extends Composite implements IsField<List<Ha
         List<ColumnConfig<DiskResource, ?>> list = Lists.newArrayList();
         DiskResourceProperties props = GWT.create(DiskResourceProperties.class);
 
-        ColumnConfig<DiskResource, String> name = new ColumnConfig<>(props.name(), 130, I18N.DISPLAY.name());
+        ColumnConfig<DiskResource, String> name = new ColumnConfig<>(props.name(), 130, displayStrings.name());
         list.add(name);
         return new ColumnModel<>(list);
     }
@@ -369,7 +372,7 @@ public class MultiFileSelectorField extends Composite implements IsField<List<Ha
     }
 
     private String getSplCharWarning() {
-        return "<span style='color:red;width:65%;font-size:9px;'>" + I18N.DISPLAY.analysisFailureWarning(I18N.V_CONSTANTS.warnedDiskResourceNameChars()) + "</span>";
+        return "<span style='color:red;width:65%;font-size:9px;'>" + displayStrings.analysisFailureWarning(validationConstants.warnedDiskResourceNameChars()) + "</span>";
     }
 
     @UiHandler("deleteButton")
@@ -389,20 +392,20 @@ public class MultiFileSelectorField extends Composite implements IsField<List<Ha
      }
 
     private StringBuilder checkForSplChar(List<HasPath> idSet) {
-        char[] restrictedChars = (I18N.V_CONSTANTS.warnedDiskResourceNameChars()).toCharArray(); //$NON-NLS-1$
+        char[] restrictedChars = (validationConstants.warnedDiskResourceNameChars()).toCharArray(); //$NON-NLS-1$
         StringBuilder restrictedFound = new StringBuilder();
 
         for (HasPath path : idSet) {
-            String diskresourceId = path.getPath();
+            String diskResourceId = path.getPath();
             for (char restricted : restrictedChars) {
-                for (char next : diskresourceId.toCharArray()) {
+                for (char next : diskResourceId.toCharArray()) {
                     if (next == restricted && next != '/') {
                         restrictedFound.append(restricted);
                     }
                 }
             }
             // validate '/' only on label
-            for (char next : DiskResourceUtil.parseNameFromPath(diskresourceId).toCharArray()) {
+            for (char next : DiskResourceUtil.parseNameFromPath(diskResourceId).toCharArray()) {
                 if (next == '/') {
                     restrictedFound.append('/');
                 }
@@ -422,7 +425,7 @@ public class MultiFileSelectorField extends Composite implements IsField<List<Ha
 
             @Override
             public void onFailure(Throwable caught) {
-                // Assuming that if there are any non-existant files, that this will kick off.
+                // Assuming that if there are any non-existent files, that this will kick off.
                 final IplantErrorStrings errorStrings = I18N.ERROR;
                 SimpleServiceError serviceError = AutoBeanCodex.decode(drServiceFacade.getDiskResourceFactory(), SimpleServiceError.class, caught.getMessage()).as();
                 if (serviceError.getErrorCode().equals(ServiceErrorCode.ERR_DOES_NOT_EXIST.toString())) {
@@ -446,7 +449,7 @@ public class MultiFileSelectorField extends Composite implements IsField<List<Ha
                 Set<Entry<String, DiskResource>> entrySet = result.entrySet();
                 for (Entry<String, DiskResource> entry : entrySet) {
                     DiskResource entryValue = entry.getValue();
-                    DefaultEditorError permError = new DefaultEditorError(MultiFileSelectorField.this, I18N.DISPLAY.permissionSelectErrorMessage(), entryValue.getId());
+                    DefaultEditorError permError = new DefaultEditorError(MultiFileSelectorField.this, displayStrings.permissionSelectErrorMessage(), entryValue.getId());
                     if (validatePermissions) {
                         if (entryValue == null) {
                             permissionErrors.add(permError);
