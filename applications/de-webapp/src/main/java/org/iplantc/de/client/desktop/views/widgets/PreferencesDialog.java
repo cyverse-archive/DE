@@ -30,6 +30,7 @@ import com.sencha.gxt.core.client.XTemplates;
 import com.sencha.gxt.widget.core.client.button.TextButton;
 import com.sencha.gxt.widget.core.client.container.HtmlLayoutContainer;
 import com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer;
+import com.sencha.gxt.widget.core.client.event.SelectEvent;
 import com.sencha.gxt.widget.core.client.form.CheckBox;
 import com.sencha.gxt.widget.core.client.form.TextField;
 import com.sencha.gxt.widget.core.client.form.validator.MaxLengthValidator;
@@ -93,6 +94,7 @@ public class PreferencesDialog extends IPlantDialog implements Editor<UserSettin
     private static MyUiBinder uiBinder = GWT.create(MyUiBinder.class);
 
     private UserSettings flushedValue;
+    private UserSettings usValue;
 
     @Inject
     public PreferencesDialog(final IplantDisplayStrings displayStrings,
@@ -123,6 +125,21 @@ public class PreferencesDialog extends IPlantDialog implements Editor<UserSettin
 
         getButton(PredefinedButton.OK).setText(displayStrings.done());
         defaultsBtn = new TextButton(displayStrings.restoreDefaults());
+        defaultsBtn.addSelectHandler(new SelectEvent.SelectHandler() {
+            @Override
+            public void onSelect(SelectEvent event) {
+                enableEmailNotification.setValue(true);
+                rememberLastPath.setValue(true);
+                saveSession.setValue(true);
+                appsShortCut.setValue(KB_CONSTANTS.appsKeyShortCut());
+                dataShortCut.setValue(KB_CONSTANTS.dataKeyShortCut());
+                analysesShortCut.setValue(KB_CONSTANTS.analysisKeyShortCut());
+                notifyShortCut.setValue(KB_CONSTANTS.notifyKeyShortCut());
+                closeShortCut.setValue(KB_CONSTANTS.closeKeyShortCut());
+                final Folder systemDefaultOutputFolder = usValue.getSystemDefaultOutputFolder();
+                defaultOutputFolder.setValue(systemDefaultOutputFolder);
+            }
+        });
         getButtonBar().insert(defaultsBtn, 0);
         addHelp(constructHelpView());
         add(vlc);
@@ -142,6 +159,7 @@ public class PreferencesDialog extends IPlantDialog implements Editor<UserSettin
     }
 
     public void initAndShow(final UserSettings userSettings) {
+        this.usValue = userSettings;
         editorDriver.edit(userSettings);
         show();
     }
