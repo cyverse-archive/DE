@@ -2,8 +2,9 @@ package org.iplantc.de.client.desktop.presenter;
 
 import static org.iplantc.de.commons.client.collaborators.presenter.ManageCollaboratorsPresenter.MODE.MANAGE;
 import org.iplantc.de.client.DEClientConstants;
+import org.iplantc.de.client.desktop.DesktopView;
+import org.iplantc.de.client.desktop.presenter.util.MessagePoller;
 import org.iplantc.de.client.events.EventBus;
-import org.iplantc.de.client.events.WindowCloseRequestEvent;
 import org.iplantc.de.client.models.DEProperties;
 import org.iplantc.de.client.models.HasId;
 import org.iplantc.de.client.models.HasPath;
@@ -21,8 +22,6 @@ import org.iplantc.de.client.models.notifications.NotificationCategory;
 import org.iplantc.de.client.models.notifications.NotificationMessage;
 import org.iplantc.de.client.models.notifications.payload.PayloadToolRequest;
 import org.iplantc.de.client.models.toolRequest.ToolRequestHistory;
-import org.iplantc.de.client.desktop.DesktopView;
-import org.iplantc.de.client.desktop.presenter.util.MessagePoller;
 import org.iplantc.de.client.notifications.views.dialogs.ToolRequestHistoryDialog;
 import org.iplantc.de.client.services.DEFeedbackServiceFacade;
 import org.iplantc.de.client.services.FileEditorServiceFacade;
@@ -523,7 +522,7 @@ public class DesktopPresenterImpl implements DesktopView.Presenter {
                     } else if (userSettings.getNotifyShortCut().equals(keycode)) {
                         show(ConfigFactory.notifyWindowConfig(NotificationCategory.ALL));
                     } else if (userSettings.getCloseShortCut().equals(keycode)) {
-                        eventBus.fireEvent(new WindowCloseRequestEvent());
+                        desktopWindowManager.closeActiveWindow();
                     }
                 }
             }

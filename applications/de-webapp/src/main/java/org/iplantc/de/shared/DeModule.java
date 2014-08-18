@@ -42,6 +42,22 @@ public interface DeModule {
         String SUPPORT_BTN = ".support";
     }
 
+    interface PreferenceIds {
+        String PREFERENCES_DLG = "preferencesDlg";
+        String DONE = ".done";
+        String CANCEL = ".cancel";
+        String DEFAULTS_BTN = ".defaults";
+        String APPS_SC = ".appsShortcut";
+        String DATA_SC = ".dataShortcut";
+        String ANALYSES_SC = ".analysesShortcut";
+        String NOTIFICATION_SC = ".notificationsShortcut";
+        String CLOSE_SC = ".closeActiveShortcut";
+        String EMAIL_NOTIFICATION = ".emailNotification";
+        String REMEMBER_LAST_PATH = ".rememberLastPath";
+        String SAVE_SESSION = ".saveSession";
+        String DEFAULT_OUTPUT_FOLDER = ".defaultOutputFolder";
+    }
+
     interface WindowIds {
 
         /**

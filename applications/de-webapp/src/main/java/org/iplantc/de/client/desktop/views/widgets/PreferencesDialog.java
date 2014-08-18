@@ -8,6 +8,7 @@ import org.iplantc.de.commons.client.views.gxt3.dialogs.IPlantDialog;
 import org.iplantc.de.diskResource.client.views.widgets.FolderSelectorField;
 import org.iplantc.de.resources.client.messages.IplantContextualHelpStrings;
 import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
+import org.iplantc.de.shared.DeModule;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.Editor;
@@ -29,6 +30,7 @@ import com.sencha.gxt.core.client.XTemplates;
 import com.sencha.gxt.widget.core.client.button.TextButton;
 import com.sencha.gxt.widget.core.client.container.HtmlLayoutContainer;
 import com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer;
+import com.sencha.gxt.widget.core.client.event.SelectEvent;
 import com.sencha.gxt.widget.core.client.form.CheckBox;
 import com.sencha.gxt.widget.core.client.form.TextField;
 import com.sencha.gxt.widget.core.client.form.validator.MaxLengthValidator;
@@ -92,6 +94,7 @@ public class PreferencesDialog extends IPlantDialog implements Editor<UserSettin
     private static MyUiBinder uiBinder = GWT.create(MyUiBinder.class);
 
     private UserSettings flushedValue;
+    private UserSettings usValue;
 
     @Inject
     public PreferencesDialog(final IplantDisplayStrings displayStrings,
@@ -122,10 +125,26 @@ public class PreferencesDialog extends IPlantDialog implements Editor<UserSettin
 
         getButton(PredefinedButton.OK).setText(displayStrings.done());
         defaultsBtn = new TextButton(displayStrings.restoreDefaults());
+        defaultsBtn.addSelectHandler(new SelectEvent.SelectHandler() {
+            @Override
+            public void onSelect(SelectEvent event) {
+                enableEmailNotification.setValue(true);
+                rememberLastPath.setValue(true);
+                saveSession.setValue(true);
+                appsShortCut.setValue(KB_CONSTANTS.appsKeyShortCut());
+                dataShortCut.setValue(KB_CONSTANTS.dataKeyShortCut());
+                analysesShortCut.setValue(KB_CONSTANTS.analysisKeyShortCut());
+                notifyShortCut.setValue(KB_CONSTANTS.notifyKeyShortCut());
+                closeShortCut.setValue(KB_CONSTANTS.closeKeyShortCut());
+                final Folder systemDefaultOutputFolder = usValue.getSystemDefaultOutputFolder();
+                defaultOutputFolder.setValue(systemDefaultOutputFolder);
+            }
+        });
         getButtonBar().insert(defaultsBtn, 0);
         addHelp(constructHelpView());
         add(vlc);
         editorDriver.initialize(this);
+        ensureDebugId(DeModule.PreferenceIds.PREFERENCES_DLG);
     }
 
     @Ignore
@@ -140,6 +159,7 @@ public class PreferencesDialog extends IPlantDialog implements Editor<UserSettin
     }
 
     public void initAndShow(final UserSettings userSettings) {
+        this.usValue = userSettings;
         editorDriver.edit(userSettings);
         show();
     }
@@ -193,6 +213,20 @@ public class PreferencesDialog extends IPlantDialog implements Editor<UserSettin
     @Override
     protected void onEnsureDebugId(String baseID) {
         super.onEnsureDebugId(baseID);
+        getButton(PredefinedButton.OK).ensureDebugId(baseID + DeModule.PreferenceIds.DONE);
+        getButton(PredefinedButton.CANCEL).ensureDebugId(baseID + DeModule.PreferenceIds.CANCEL);
+        defaultsBtn.ensureDebugId(baseID + DeModule.PreferenceIds.DEFAULTS_BTN);
+
+        enableEmailNotification.ensureDebugId(baseID + DeModule.PreferenceIds.EMAIL_NOTIFICATION);
+        rememberLastPath.ensureDebugId(baseID + DeModule.PreferenceIds.REMEMBER_LAST_PATH);
+        saveSession.ensureDebugId(baseID + DeModule.PreferenceIds.SAVE_SESSION);
+        defaultOutputFolder.ensureDebugId(baseID + DeModule.PreferenceIds.DEFAULT_OUTPUT_FOLDER);
+
+        appsShortCut.ensureDebugId(baseID + DeModule.PreferenceIds.APPS_SC);
+        dataShortCut.ensureDebugId(baseID + DeModule.PreferenceIds.DATA_SC);
+        analysesShortCut.ensureDebugId(baseID + DeModule.PreferenceIds.ANALYSES_SC);
+        notifyShortCut.ensureDebugId(baseID + DeModule.PreferenceIds.NOTIFICATION_SC);
+        closeShortCut.ensureDebugId(baseID + DeModule.PreferenceIds.CLOSE_SC);
     }
 
     @UiHandler({"appsShortCut", "dataShortCut", "analysesShortCut", "notifyShortCut", "closeShortCut"})

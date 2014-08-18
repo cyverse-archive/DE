@@ -241,6 +241,8 @@ public class UserSettings {
         StringQuoter.create(getDataShortCut()).assign(ret, DATA_KB_SHORTCUT);
         StringQuoter.create(getNotifyShortCut()).assign(ret, NOTIFICATION_KB_SHORTCUT);
         StringQuoter.create(getCloseShortCut()).assign(ret, CLOSE_KB_SHORTCUT_STRING);
+        Splittable sysDefFolder = AutoBeanCodex.encode(AutoBeanUtils.getAutoBean(getSystemDefaultOutputFolder()));
+        sysDefFolder.assign(ret, SYSTEM_DEFAULT_OUTPUT_DIR);
         StringQuoter.create(getLastPath()).assign(ret, LAST_PATH);
 
         return ret;
@@ -322,6 +324,7 @@ public class UserSettings {
      */
     public void setSystemDefaultOutputFolder(Folder systemDefaultOutputFolder) {
         this.systemDefaultOutputFolder = systemDefaultOutputFolder;
+        GWT.log("System Default Output folder set: path = " + systemDefaultOutputFolder.getPath());
     }
 
     /**
