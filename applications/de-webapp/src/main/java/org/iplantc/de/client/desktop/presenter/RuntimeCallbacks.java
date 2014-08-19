@@ -82,16 +82,15 @@ class RuntimeCallbacks {
 
         void displayNotificationPopup(NotificationMessage nm) {
             if (NotificationCategory.ANALYSIS.equals(nm.getCategory())) {
-                if (NotificationCategory.ANALYSIS.equals(nm.getCategory())) {
-                    PayloadAnalysis analysisPayload = AutoBeanCodex.decode(notificationFactory,
-                                                                           PayloadAnalysis.class, nm.getContext()).as();
-
-                    if ("Failed".equals(analysisPayload.getStatus())) { //$NON-NLS-1$
-                        notifyInfo.displayWarning(nm.getMessage());
-                        return;
-                    }
+                PayloadAnalysis analysisPayload = AutoBeanCodex.decode(notificationFactory,
+                                                                       PayloadAnalysis.class,
+                                                                       nm.getContext()).as();
+                if ("Failed".equals(analysisPayload.getStatus())) { //$NON-NLS-1$
+                    notifyInfo.displayWarning(nm.getMessage());
+                } else {
+                    notifyInfo.display(nm.getMessage());
                 }
-
+            } else {
                 notifyInfo.display(nm.getMessage());
             }
         }
