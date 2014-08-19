@@ -32,7 +32,8 @@ import com.sencha.gxt.widget.core.client.toolbar.ToolBar;
 
 import java.util.List;
 
-public class ManageCollaboratorsViewImpl extends Composite implements ManageCollaboratorsView {
+public class ManageCollaboratorsViewImpl extends Composite implements ManageCollaboratorsView,
+                                                                      SelectionChangedHandler<Collaborator> {
 
     Presenter presenter;
 
@@ -92,30 +93,18 @@ public class ManageCollaboratorsViewImpl extends Composite implements ManageColl
 
     private void init() {
         collaboratorListPnl.setHeadingText(I18N.DISPLAY.myCollaborators());
-        grid.getSelectionModel().addSelectionChangedHandler(new SelectionChangedHandler<Collaborator>() {
+        grid.getSelectionModel().addSelectionChangedHandler(this);
+    }
 
-            @Override
-            public void onSelectionChanged(SelectionChangedEvent<Collaborator> event) {
-                if (event.getSelection() != null && event.getSelection().size() > 0) {
-                    if (mode.equals(MODE.MANAGE)) {
-                        deleteBtn.enable();
-                    } else {
-                        deleteBtn.disable();
-                    }
-
-                    if (mode.equals(MODE.SELECT)) {
-                        manageBtn.setVisible(true);
-                        deleteBtn.disable();
-                    } else {
-                        manageBtn.setVisible(false);
-                    }
-
-                } else {
-                    deleteBtn.disable();
-                }
-
-            }
-        });
+    @Override
+    public void onSelectionChanged(SelectionChangedEvent<Collaborator> event) {
+        if (event.getSelection() != null
+                && event.getSelection().size() > 0
+                && MODE.MANAGE.equals(mode)) {
+            deleteBtn.enable();
+        } else {
+            deleteBtn.disable();
+        }
     }
 
     @UiHandler("manageBtn")
@@ -137,12 +126,14 @@ public class ManageCollaboratorsViewImpl extends Composite implements ManageColl
                 grid.getView().setEmptyText(I18N.DISPLAY.noCollaborators());
                 collaboratorListPnl.setHeadingText(I18N.DISPLAY.myCollaborators());
                 manageBtn.setVisible(false);
+                deleteBtn.setVisible(true);
                 con.show(LayoutRegion.NORTH);
                 break;
             case SELECT:
                 grid.getView().setEmptyText(I18N.DISPLAY.noCollaborators());
                 con.hide(LayoutRegion.NORTH);
                 manageBtn.setVisible(true);
+                deleteBtn.setVisible(false);
                 collaboratorListPnl.setHeadingText(I18N.DISPLAY.selectCollabs());
                 break;
         }
