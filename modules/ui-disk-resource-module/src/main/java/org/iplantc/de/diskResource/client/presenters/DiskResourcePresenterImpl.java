@@ -260,17 +260,7 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter, Di
 
                 @Override
                 public void onSuccess(String result) {
-                    if (getSelectedDiskResources().size() > 0) {
-                        Iterator<DiskResource> it = getSelectedDiskResources().iterator();
-                        if (it != null && it.hasNext()) {
-                            final DiskResource next = it.next();
-                            if (next.getId().equals(diskResource.getId())) {
-                                next.setFavorite(true);
-                                view.updateStore(next);
-                            }
-                        }
-                    }
-
+                    updateFav(diskResource, true);
                 }
             });
         } else {
@@ -284,17 +274,7 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter, Di
 
                 @Override
                 public void onSuccess(String result) {
-                    if (getSelectedDiskResources().size() > 0) {
-                        Iterator<DiskResource> it = getSelectedDiskResources().iterator();
-                        if (it != null && it.hasNext()) {
-                            final DiskResource next = it.next();
-                            if (next.getId().equals(diskResource.getId())) {
-                                next.setFavorite(false);
-                                view.updateStore(next);
-                                view.refreshFolder(getSelectedFolder());
-                            }
-                        }
-                    }
+                    updateFav(diskResource, false);
 
                 }
             });
@@ -1303,6 +1283,20 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter, Di
             }
         }
 
+    }
+
+    private void updateFav(final DiskResource diskResource, boolean fav) {
+        if (getSelectedDiskResources().size() > 0) {
+            Iterator<DiskResource> it = getSelectedDiskResources().iterator();
+            if (it != null && it.hasNext()) {
+                final DiskResource next = it.next();
+                if (next.getId().equals(diskResource.getId())) {
+                    next.setFavorite(fav);
+                    view.updateStore(next);
+                }
+            }
+
+        }
     }
 
 }
