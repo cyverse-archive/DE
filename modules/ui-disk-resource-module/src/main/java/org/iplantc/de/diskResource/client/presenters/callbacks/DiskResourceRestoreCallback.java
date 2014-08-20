@@ -66,7 +66,7 @@ public class DiskResourceRestoreCallback extends DiskResourceServiceCallback<Str
         Splittable restored = response.getRestored();
 
         for (DiskResource resource : selectedResources) {
-            Splittable restoredResourceJson = restored.get(resource.getId());
+            Splittable restoredResourceJson = restored.get(resource.getPath());
 
             if (restoredResourceJson != null) {
                 RestoredResource restoredResource = AutoBeanCodex.decode(drFactory,
