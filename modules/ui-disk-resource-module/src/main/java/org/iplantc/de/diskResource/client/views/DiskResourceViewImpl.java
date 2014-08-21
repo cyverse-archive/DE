@@ -263,7 +263,7 @@ public class DiskResourceViewImpl extends Composite implements DiskResourceView,
         detailsPanel.setScrollMode(ScrollMode.AUTO);
 
         folderRpcProxy.init(centerCp.getHeader());
-        gridLoader = new PagingLoader<FolderContentsLoadConfig, PagingLoadResult<DiskResource>>(folderRpcProxy);
+        gridLoader = new PagingLoader<>(folderRpcProxy);
         gridLoader.setReuseLoadConfig(true);
         gridLoader.setRemoteSort(true);
         grid.setLoader(gridLoader);
@@ -426,10 +426,7 @@ public class DiskResourceViewImpl extends Composite implements DiskResourceView,
 
     @UiFactory
     ListStore<DiskResource> createListStore() {
-        DiskResourceModelKeyProvider keyProvider = new DiskResourceModelKeyProvider();
-        ListStore<DiskResource> listStore2 = new ListStore<DiskResource>(keyProvider);
-
-        return listStore2;
+        return new ListStore<>(new DiskResourceModelKeyProvider());
     }
 
     @UiFactory
@@ -722,30 +719,6 @@ public class DiskResourceViewImpl extends Composite implements DiskResourceView,
 
     private void setGridEmptyText() {
         gridView.setEmptyText(I18N.DISPLAY.noItemsToDisplay());
-    }
-
-    public void updateDiskResource(DiskResource originalDr, DiskResource newDr) {
-        // Check each store for for existence of original disk resource
-        Folder treeStoreModel = treeStore.findModelWithKey(originalDr.getId());
-        if (treeStoreModel != null) {
-
-            // Grab original disk resource's parent, then remove original from
-            // tree store
-            Folder parentFolder = treeStore.getParent(treeStoreModel);
-            treeStore.remove(treeStoreModel);
-
-            treeStoreModel.setId(newDr.getId());
-            treeStoreModel.setName(newDr.getName());
-            treeStore.add(parentFolder, treeStoreModel);
-        }
-
-        DiskResource listStoreModel = listStore.findModelWithKey(originalDr.getId());
-
-        if (listStoreModel != null) {
-            listStore.remove(listStoreModel);
-            listStore.add(newDr);
-        }
-
     }
 
     @Override
@@ -1135,10 +1108,9 @@ public class DiskResourceViewImpl extends Composite implements DiskResourceView,
         DiskResource dr = listStore.findModelWithKey(info.getId());
         if (dr == null) {
             return;
-        } else {
-            listStore.update(info);
-            updateDetails(info);
         }
+        listStore.update(info);
+        updateDetails(info);
     }
 
     @Override
