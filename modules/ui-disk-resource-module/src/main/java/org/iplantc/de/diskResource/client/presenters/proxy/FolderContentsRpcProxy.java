@@ -24,6 +24,7 @@ import com.google.inject.Inject;
 import com.sencha.gxt.data.client.loader.RpcProxy;
 import com.sencha.gxt.data.shared.loader.PagingLoadResult;
 import com.sencha.gxt.data.shared.loader.PagingLoadResultBean;
+import org.iplantc.de.resources.client.messages.IplantErrorStrings;
 
 import java.util.List;
 
@@ -32,6 +33,7 @@ import java.util.List;
  * 
  */
 public class FolderContentsRpcProxy extends RpcProxy<FolderContentsLoadConfig, PagingLoadResult<DiskResource>> {
+
 
     /**
      * Constructs a valid {@link PagingLoadResultBean} from the given search results.
@@ -61,7 +63,7 @@ public class FolderContentsRpcProxy extends RpcProxy<FolderContentsLoadConfig, P
                 onFailure(null);
                 return;
             }
-            callback.onSuccess(new PagingLoadResultBean<DiskResource>(results, loadConfig.getFolder().getTotal(), loadConfig.getOffset()));
+            callback.onSuccess(new PagingLoadResultBean<>(results, loadConfig.getFolder().getTotal(), loadConfig.getOffset()));
             DiskResourceQueryTemplate query = (DiskResourceQueryTemplate)loadConfig.getFolder();
             String searchText = setSearchText(query.getFileQuery());
 
@@ -128,7 +130,7 @@ public class FolderContentsRpcProxy extends RpcProxy<FolderContentsLoadConfig, P
 
             loadConfig.getFolder().setTotalFiltered(result.getTotalFiltered());
 
-            callback.onSuccess(new PagingLoadResultBean<DiskResource>(list, result.getTotal(), loadConfig.getOffset()));
+            callback.onSuccess(new PagingLoadResultBean<>(list, result.getTotal(), loadConfig.getOffset()));
 
             /* Set search results header to a non-breaking space to ensure it retains its height. */
             hasSafeHtml1.setHTML(SafeHtmlUtils.fromString((result.getName() != null) ? result.getName() : ""));
@@ -157,16 +159,22 @@ public class FolderContentsRpcProxy extends RpcProxy<FolderContentsLoadConfig, P
     private final MetadataServiceFacade metadataService;
     private final IplantAnnouncer announcer;
     private final IplantDisplayStrings displayStrings;
+    private final IplantErrorStrings errorStrings;
     private HasSafeHtml hasSafeHtml;
 
     @Inject
-    public FolderContentsRpcProxy(final DiskResourceServiceFacade drService, final SearchServiceFacade searchService, final MetadataServiceFacade fsmdata, final IplantAnnouncer announcer,
-            final IplantDisplayStrings displayStrings) {
+    public FolderContentsRpcProxy(final DiskResourceServiceFacade drService,
+                                  final SearchServiceFacade searchService,
+                                  final MetadataServiceFacade fsmdata,
+                                  final IplantAnnouncer announcer,
+                                  final IplantDisplayStrings displayStrings,
+                                  final IplantErrorStrings errorStrings) {
         this.drService = drService;
         this.searchService = searchService;
         this.announcer = announcer;
         this.displayStrings = displayStrings;
         this.metadataService = fsmdata;
+        this.errorStrings = errorStrings;
     }
 
     @Override
@@ -175,15 +183,14 @@ public class FolderContentsRpcProxy extends RpcProxy<FolderContentsLoadConfig, P
         if (folder.isFilter()) {
             if (callback != null) {
                 List<DiskResource> emptyResult = Lists.newArrayList();
-                callback.onSuccess(new PagingLoadResultBean<DiskResource>(emptyResult, 0, 0));
+                callback.onSuccess(new PagingLoadResultBean<>(emptyResult, 0, 0));
             }
-            return;
         } else if (folder instanceof DiskResourceFavorite) {
             metadataService.getFavorites(loadConfig, new AsyncCallback<Folder>() {
 
                 @Override
                 public void onFailure(Throwable caught) {
-                    ErrorHandler.post(I18N.ERROR.favoritesError(), caught);
+                    announcer.schedule(new ErrorAnnouncementConfig(errorStrings.favoritesError(caught.getMessage())));
                 }
 
                 @Override
@@ -195,9 +202,9 @@ public class FolderContentsRpcProxy extends RpcProxy<FolderContentsLoadConfig, P
                     // Create list of all items within the result folder
                     List<DiskResource> list = Lists.newArrayList(Iterables.concat(result.getFolders(), result.getFiles()));
 
-                    callback.onSuccess(new PagingLoadResultBean<DiskResource>(list,
-                                                                              result.getTotal(),
-                                                                              loadConfig.getOffset()));
+                    callback.onSuccess(new PagingLoadResultBean<>(list,
+                            result.getTotal(),
+                            loadConfig.getOffset()));
                 }
             });
         } else if (folder instanceof DiskResourceQueryTemplate) {
