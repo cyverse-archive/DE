@@ -7,10 +7,8 @@ import org.iplantc.de.client.models.search.DiskResourceQueryTemplate;
 import org.iplantc.de.client.services.DiskResourceServiceFacade;
 import org.iplantc.de.client.services.MetadataServiceFacade;
 import org.iplantc.de.client.services.SearchServiceFacade;
-import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.commons.client.info.ErrorAnnouncementConfig;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
-import org.iplantc.de.resources.client.messages.I18N;
 import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 
 import com.google.common.base.Strings;
@@ -32,8 +30,8 @@ import java.util.List;
  * This proxy is responsible for retrieving directory listings and search requests from the server.
  * 
  */
-public class FolderContentsRpcProxy extends RpcProxy<FolderContentsLoadConfig, PagingLoadResult<DiskResource>> {
-
+public class FolderContentsRpcProxy extends RpcProxy<FolderContentsLoadConfig,
+                                            PagingLoadResult<DiskResource>> {
 
     /**
      * Constructs a valid {@link PagingLoadResultBean} from the given search results.
@@ -41,15 +39,18 @@ public class FolderContentsRpcProxy extends RpcProxy<FolderContentsLoadConfig, P
      * @author jstroot
      * 
      */
-    class SearchResultsCallback implements AsyncCallback<List<DiskResource>> {
+    static class SearchResultsCallback implements AsyncCallback<List<DiskResource>> {
         private final FolderContentsLoadConfig loadConfig;
         private final AsyncCallback<PagingLoadResult<DiskResource>> callback;
         private final IplantAnnouncer announcer1;
         private final IplantDisplayStrings dStrings;
         private final HasSafeHtml hasSafeHtml1;
 
-        private SearchResultsCallback(IplantAnnouncer announcer, FolderContentsLoadConfig loadConfig, AsyncCallback<PagingLoadResult<DiskResource>> callback, IplantDisplayStrings displayStrings,
-                HasSafeHtml hasSafeHtml) {
+        public SearchResultsCallback(final IplantAnnouncer announcer,
+                                     final FolderContentsLoadConfig loadConfig,
+                                     final AsyncCallback<PagingLoadResult<DiskResource>> callback,
+                                     final IplantDisplayStrings displayStrings,
+                                     final HasSafeHtml hasSafeHtml) {
             this.announcer1 = announcer;
             this.loadConfig = loadConfig;
             this.callback = callback;
@@ -105,13 +106,16 @@ public class FolderContentsRpcProxy extends RpcProxy<FolderContentsLoadConfig, P
      * @author jstroot
      * 
      */
-    class FolderContentsCallback implements AsyncCallback<Folder> {
+    static class FolderContentsCallback implements AsyncCallback<Folder> {
         private final FolderContentsLoadConfig loadConfig;
         private final AsyncCallback<PagingLoadResult<DiskResource>> callback;
         private final IplantAnnouncer announcer;
         private final HasSafeHtml hasSafeHtml1;
 
-        private FolderContentsCallback(IplantAnnouncer announcer, FolderContentsLoadConfig loadConfig, AsyncCallback<PagingLoadResult<DiskResource>> callback, HasSafeHtml hasSafeHtml) {
+        public FolderContentsCallback(final IplantAnnouncer announcer,
+                                      final FolderContentsLoadConfig loadConfig,
+                                      final AsyncCallback<PagingLoadResult<DiskResource>> callback,
+                                      final HasSafeHtml hasSafeHtml) {
             this.announcer = announcer;
             this.loadConfig = loadConfig;
             this.callback = callback;
@@ -154,6 +158,43 @@ public class FolderContentsRpcProxy extends RpcProxy<FolderContentsLoadConfig, P
 
     }
 
+    static class FavoritesCallback implements AsyncCallback<Folder> {
+
+        private final AsyncCallback<PagingLoadResult<DiskResource>> callback;
+        private final FolderContentsLoadConfig loadConfig;
+        private final IplantAnnouncer announcer;
+        private final IplantErrorStrings errorStrings;
+
+        public FavoritesCallback(final AsyncCallback<PagingLoadResult<DiskResource>> callback,
+                                 final FolderContentsLoadConfig loadConfig,
+                                 final IplantAnnouncer announcer,
+                                 final IplantErrorStrings errorStrings) {
+            this.callback = callback;
+            this.loadConfig = loadConfig;
+            this.announcer = announcer;
+            this.errorStrings = errorStrings;
+        }
+
+        @Override
+        public void onFailure(Throwable caught) {
+            announcer.schedule(new ErrorAnnouncementConfig(errorStrings.favoritesError(caught.getMessage())));
+        }
+
+        @Override
+        public void onSuccess(Folder result) {
+            if (callback == null || result == null) {
+                onFailure(null);
+                return;
+            }
+            // Create list of all items within the result folder
+            List<DiskResource> list = Lists.newArrayList(Iterables.concat(result.getFolders(), result.getFiles()));
+
+            callback.onSuccess(new PagingLoadResultBean<>(list,
+                    result.getTotal(),
+                    loadConfig.getOffset()));
+        }
+    }
+
     private final DiskResourceServiceFacade drService;
     private final SearchServiceFacade searchService;
     private final MetadataServiceFacade metadataService;
@@ -165,7 +206,7 @@ public class FolderContentsRpcProxy extends RpcProxy<FolderContentsLoadConfig, P
     @Inject
     public FolderContentsRpcProxy(final DiskResourceServiceFacade drService,
                                   final SearchServiceFacade searchService,
-                                  final MetadataServiceFacade fsmdata,
+                                  final MetadataServiceFacade metadataService,
                                   final IplantAnnouncer announcer,
                                   final IplantDisplayStrings displayStrings,
                                   final IplantErrorStrings errorStrings) {
@@ -173,7 +214,7 @@ public class FolderContentsRpcProxy extends RpcProxy<FolderContentsLoadConfig, P
         this.searchService = searchService;
         this.announcer = announcer;
         this.displayStrings = displayStrings;
-        this.metadataService = fsmdata;
+        this.metadataService = metadataService;
         this.errorStrings = errorStrings;
     }
 
@@ -186,27 +227,7 @@ public class FolderContentsRpcProxy extends RpcProxy<FolderContentsLoadConfig, P
                 callback.onSuccess(new PagingLoadResultBean<>(emptyResult, 0, 0));
             }
         } else if (folder instanceof DiskResourceFavorite) {
-            metadataService.getFavorites(loadConfig, new AsyncCallback<Folder>() {
-
-                @Override
-                public void onFailure(Throwable caught) {
-                    announcer.schedule(new ErrorAnnouncementConfig(errorStrings.favoritesError(caught.getMessage())));
-                }
-
-                @Override
-                public void onSuccess(Folder result) {
-                    if (callback == null || result == null) {
-                        onFailure(null);
-                        return;
-                    }
-                    // Create list of all items within the result folder
-                    List<DiskResource> list = Lists.newArrayList(Iterables.concat(result.getFolders(), result.getFiles()));
-
-                    callback.onSuccess(new PagingLoadResultBean<>(list,
-                            result.getTotal(),
-                            loadConfig.getOffset()));
-                }
-            });
+            metadataService.getFavorites(loadConfig, new FavoritesCallback(callback, loadConfig, announcer, errorStrings));
         } else if (folder instanceof DiskResourceQueryTemplate) {
             searchService.submitSearchFromQueryTemplate((DiskResourceQueryTemplate)folder, loadConfig, null, new SearchResultsCallback(announcer, loadConfig, callback, displayStrings, hasSafeHtml));
         } else {
@@ -218,4 +239,5 @@ public class FolderContentsRpcProxy extends RpcProxy<FolderContentsLoadConfig, P
     public void init(final HasSafeHtml hasSafeHtml) {
         this.hasSafeHtml = hasSafeHtml;
     }
+
 }
