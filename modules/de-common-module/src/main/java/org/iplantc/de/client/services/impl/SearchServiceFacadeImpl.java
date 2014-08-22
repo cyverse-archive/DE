@@ -344,6 +344,10 @@ public class SearchServiceFacadeImpl implements SearchServiceFacade {
             return "entity.label";
         }
 
+        if ("path".equalsIgnoreCase(sortField)) {
+            return "entity.path";
+        }
+
         return sortField;
     }
 
