@@ -8,13 +8,14 @@ import org.iplantc.de.client.models.diskResources.DiskResourceAutoBeanFactory;
 import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.client.services.DiskResourceServiceFacade;
 import org.iplantc.de.client.services.MetadataServiceFacade;
-import org.iplantc.de.client.services.TagsServiceFacade;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
 import org.iplantc.de.diskResource.client.presenters.proxy.SelectFolderByPathLoadHandler;
 import org.iplantc.de.diskResource.client.search.presenter.DataSearchPresenter;
 import org.iplantc.de.diskResource.client.search.views.DiskResourceSearchField;
 import org.iplantc.de.diskResource.client.views.DiskResourceView;
+import org.iplantc.de.resources.client.messages.IplantContextualHelpStrings;
 import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
+import org.iplantc.de.resources.client.messages.IplantErrorStrings;
 
 import com.google.common.collect.Lists;
 import com.google.gwt.event.shared.HandlerRegistration;
@@ -23,12 +24,7 @@ import com.google.gwtmockito.GxtMockitoTestRunner;
 import com.sencha.gxt.data.shared.TreeStore;
 
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
+import static org.mockito.Mockito.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -41,15 +37,14 @@ public class DiskResourcePresenterImplTest {
     @Mock DiskResourceView.Proxy mockProck;
     @Mock DiskResourceServiceFacade mockDiskResourceService;
     @Mock IplantDisplayStrings mockDisplayStrings;
+    @Mock IplantErrorStrings errorStringsMock;
+    @Mock IplantContextualHelpStrings helpStringsMock;
     @Mock DiskResourceAutoBeanFactory mockFactory;
     @Mock DataLinkFactory mockDlFactory;
     @Mock DataSearchPresenter mockDataSearchPresenter;
     @Mock EventBus mockEventBus;
     @Mock UserInfo mockUserInfo;
-    @Mock
-    TagsServiceFacade mockMetadataService;
-    @Mock
-    MetadataServiceFacade mockFileSystemMetataService;
+    @Mock MetadataServiceFacade mockFileSystemMetataService;
 
     @Mock IplantAnnouncer mockAnnouncer;
     @Mock DiskResourceView.DiskResourceViewToolbar mockToolbar;
@@ -63,9 +58,10 @@ public class DiskResourcePresenterImplTest {
     @Before public void setUp() {
         setupMocks();
         uut = new DiskResourcePresenterImpl(mockView, mockProck,
- mockDiskResourceService, mockMetadataService, mockFileSystemMetataService, mockDisplayStrings, mockFactory, mockDlFactory,
-                mockUserInfo, mockDataSearchPresenter,
-                mockEventBus, mockAnnouncer);
+                                            mockDiskResourceService, mockFileSystemMetataService, mockDisplayStrings, errorStringsMock, helpStringsMock,
+                                            mockFactory, mockDlFactory,
+                                            mockUserInfo, mockDataSearchPresenter,
+                                            mockEventBus, mockAnnouncer);
     }
 
     /**
@@ -75,8 +71,7 @@ public class DiskResourcePresenterImplTest {
      * Folder has not yet been loaded.
      * Folder has no common roots with tree store.
      */
-    @Test
-    public void testSetSelectedFolderByPath_Case1() {
+    @Test public void testSetSelectedFolderByPath_Case1() {
         DiskResourcePresenterImpl spy = spy(uut);
         HasPath mockHasPath = mock(HasPath.class);
         final String TEST_PATH = "/no/common/root";
@@ -100,8 +95,7 @@ public class DiskResourcePresenterImplTest {
      * Folder has not yet been loaded.
      * Folder has common root with treeStore
      */
-    @Test
-    public void testSetSelectedFolderByPath_Case2() {
+    @Test public void testSetSelectedFolderByPath_Case2() {
         DiskResourcePresenterImpl spy = spy(uut);
         HasPath mockHasPath = mock(HasPath.class);
         final String COMMON_ROOT = "/home";
@@ -133,8 +127,7 @@ public class DiskResourcePresenterImplTest {
      * Root folders have not been loaded.
      * Folder has not yet been loaded.
      */
-    @Test
-    public void testSetSelectedFolderByPath_Case3() {
+    @Test public void testSetSelectedFolderByPath_Case3() {
         DiskResourcePresenterImpl spy = spy(uut);
         HasPath mockHasPath = mock(HasPath.class);
         final String COMMON_ROOT = "/home";
