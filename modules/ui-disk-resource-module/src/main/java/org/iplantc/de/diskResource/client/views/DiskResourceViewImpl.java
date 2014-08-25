@@ -24,7 +24,6 @@ import org.iplantc.de.diskResource.client.search.events.DeleteSavedSearchEvent;
 import org.iplantc.de.diskResource.share.DiskResourceModule;
 import org.iplantc.de.resources.client.DataCollapseStyle;
 import org.iplantc.de.resources.client.IplantResources;
-import org.iplantc.de.resources.client.messages.I18N;
 import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 
 import com.google.common.base.Strings;
@@ -110,6 +109,7 @@ import java.util.logging.Logger;
 
 /**
  * FIXME Factor out appearance. This class is not testable in it's current form.
+ * FIXME Factor out details panel.
  *
  * @author jstroot, sriram, psarando
  */
@@ -416,7 +416,7 @@ public class DiskResourceViewImpl extends Composite implements DiskResourceView,
         style.ensureInjected();
         ToolButton tool = new ToolButton(new IconConfig(style.collapse(), style.collapseHover()));
         tool.setId("idTreeCollapse");
-        tool.setToolTip(I18N.DISPLAY.collapseAll());
+        tool.setToolTip(displayStrings.collapseAll());
         tool.addSelectHandler(new SelectHandler() {
 
             @Override
@@ -742,7 +742,7 @@ public class DiskResourceViewImpl extends Composite implements DiskResourceView,
     }
 
     private void setGridEmptyText() {
-        gridView.setEmptyText(I18N.DISPLAY.noItemsToDisplay());
+        gridView.setEmptyText(displayStrings.noItemsToDisplay());
     }
 
     @Override
@@ -783,7 +783,7 @@ public class DiskResourceViewImpl extends Composite implements DiskResourceView,
         FieldLabel fl = new FieldLabel();
         fl.setLabelWidth(detailsPanel.getOffsetWidth(true) - 10);
         fl.setLabelSeparator(""); //$NON-NLS-1$
-        fl.setHTML(getDetailAsHtml(I18N.DISPLAY.noDetails(), false));
+        fl.setHTML(getDetailAsHtml(displayStrings.noDetails(), false));
         HorizontalPanel hp = new HorizontalPanel();
         hp.setSpacing(2);
         hp.add(fl);
@@ -860,11 +860,11 @@ public class DiskResourceViewImpl extends Composite implements DiskResourceView,
             Iterator<DiskResource> it = selection.iterator();
             DiskResource next = it.next();
             if (next.getId().equals(info.getId())) {
-                detailsPanel.add(getDateLabel(I18N.DISPLAY.lastModified(), info.getLastModified()));
-                detailsPanel.add(getDateLabel(I18N.DISPLAY.createdDate(), info.getDateCreated()));
-                detailsPanel.add(getPermissionsLabel(I18N.DISPLAY.permissions(), info.getPermission()));
+                detailsPanel.add(getDateLabel(displayStrings.lastModified(), info.getLastModified()));
+                detailsPanel.add(getDateLabel(displayStrings.createdDate(), info.getDateCreated()));
+                detailsPanel.add(getPermissionsLabel(displayStrings.permissions(), info.getPermission()));
                 if (!DiskResourceUtil.inTrash(next)) {
-                    detailsPanel.add(getSharingLabel(I18N.DISPLAY.share(),
+                    detailsPanel.add(getSharingLabel(displayStrings.share(),
                                                      info.getShareCount(),
                                                      info.getPermission()));
                 }
@@ -946,12 +946,12 @@ public class DiskResourceViewImpl extends Composite implements DiskResourceView,
     }
 
     private void addFolderDetails(Folder info) {
-        detailsPanel.add(getDirFileCount(I18N.DISPLAY.files() + " / " + I18N.DISPLAY.folders(), //$NON-NLS-1$
+        detailsPanel.add(getDirFileCount(displayStrings.files() + " / " + displayStrings.folders(), //$NON-NLS-1$
                 info.getFileCount(), info.getDirCount()));
     }
 
     private void addFileDetails(File info, boolean addViewerInfo) {
-        detailsPanel.add(getStringLabel(I18N.DISPLAY.size(), DiskResourceUtil.formatFileSize(info.getSize() + ""))); //$NON-NLS-1$
+        detailsPanel.add(getStringLabel(displayStrings.size(), DiskResourceUtil.formatFileSize(info.getSize() + ""))); //$NON-NLS-1$
         detailsPanel.add(getStringLabel("Type", info.getFileType()));
         detailsPanel.add(getInfoTypeLabel("Info-Type", info));
         if (addViewerInfo) {
@@ -994,7 +994,7 @@ public class DiskResourceViewImpl extends Composite implements DiskResourceView,
         if (permissions.equals(PermissionValue.own)) {
             IPlantAnchor link;
             if (shareCount == 0) {
-                link = new IPlantAnchor(I18N.DISPLAY.nosharing(), 100, new SharingLabelClickHandler());
+                link = new IPlantAnchor(displayStrings.nosharing(), 100, new SharingLabelClickHandler());
             } else {
                 link = new IPlantAnchor("" + shareCount, 100, new SharingLabelClickHandler()); //$NON-NLS-1$
             }
@@ -1021,7 +1021,7 @@ public class DiskResourceViewImpl extends Composite implements DiskResourceView,
                 panel.add(link);
                 Image rmImg = new Image(IplantResources.RESOURCES.deleteIcon());
                 rmImg.addClickHandler(new RemoveInfoTypeClickHandler());
-                rmImg.setTitle(I18N.DISPLAY.delete());
+                rmImg.setTitle(displayStrings.delete());
                 rmImg.getElement().getStyle().setCursor(Cursor.POINTER);
                 panel.add(rmImg);
             } else {
