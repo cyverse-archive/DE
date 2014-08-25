@@ -10,6 +10,7 @@ import org.iplantc.de.client.services.SearchServiceFacade.SearchType;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
 import org.iplantc.de.diskResource.client.presenters.proxy.FolderContentsRpcProxy.FolderContentsCallback;
 import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
+import org.iplantc.de.resources.client.messages.IplantErrorStrings;
 
 import com.google.common.collect.Lists;
 import com.google.gwt.safehtml.client.HasSafeHtml;
@@ -57,6 +58,7 @@ public class FolderContentsRpcProxyTest {
     SearchServiceFacade searchServiceMock;
     @Mock IplantAnnouncer announcer;
     @Mock IplantDisplayStrings displayStringsMock;
+    @Mock IplantErrorStrings errorStringsMock;
 
     @Mock AsyncCallback<PagingLoadResult<DiskResource>> pagingAsyncMock;
     @Mock
@@ -68,7 +70,7 @@ public class FolderContentsRpcProxyTest {
     private FolderContentsRpcProxy folderContentsRpcProxy;
 
     @Before public void setUp() {
-        folderContentsRpcProxy = new FolderContentsRpcProxy(diskResourceService, searchServiceMock, mockFileSystemMetataService, announcer, displayStringsMock);
+        folderContentsRpcProxy = new FolderContentsRpcProxy(diskResourceService, searchServiceMock, mockFileSystemMetataService, announcer, displayStringsMock, errorStringsMock);
     }
 
     /**
