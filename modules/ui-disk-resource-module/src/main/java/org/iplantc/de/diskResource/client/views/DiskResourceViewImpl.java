@@ -68,6 +68,7 @@ import com.sencha.gxt.data.shared.ListStore;
 import com.sencha.gxt.data.shared.TreeStore;
 import com.sencha.gxt.data.shared.event.StoreDataChangeEvent;
 import com.sencha.gxt.data.shared.event.StoreDataChangeEvent.StoreDataChangeHandler;
+import com.sencha.gxt.data.shared.loader.BeforeLoadEvent;
 import com.sencha.gxt.data.shared.loader.PagingLoadResult;
 import com.sencha.gxt.data.shared.loader.PagingLoader;
 import com.sencha.gxt.data.shared.loader.TreeLoader;
@@ -107,7 +108,15 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class DiskResourceViewImpl extends Composite implements DiskResourceView, SelectionHandler<Folder>, SelectionChangedHandler<DiskResource> {
+/**
+ * FIXME Factor out appearance. This class is not testable in it's current form.
+ *
+ * @author jstroot, sriram, psarando
+ */
+public class DiskResourceViewImpl extends Composite implements DiskResourceView,
+                                                               SelectionHandler<Folder>,
+                                                               SelectionChangedHandler<DiskResource>,
+                                                               BeforeLoadEvent.BeforeLoadHandler<FolderContentsLoadConfig> {
 
     private final class PathFieldKeyPressHandlerImpl implements KeyPressHandler {
         @Override
@@ -266,6 +275,7 @@ public class DiskResourceViewImpl extends Composite implements DiskResourceView,
         gridLoader = new PagingLoader<>(folderRpcProxy);
         gridLoader.setReuseLoadConfig(true);
         gridLoader.setRemoteSort(true);
+        gridLoader.addBeforeLoadHandler(this);
         grid.setLoader(gridLoader);
         grid.setSelectionModel(sm);
         grid.getSelectionModel().addSelectionChangedHandler(this);
@@ -336,6 +346,20 @@ public class DiskResourceViewImpl extends Composite implements DiskResourceView,
         } else {
             // Do not allow user to select Filtered folders.
             tree.getSelectionModel().deselect(selectedItem);
+        }
+    }
+
+
+    @Override
+    public void onBeforeLoad(BeforeLoadEvent<FolderContentsLoadConfig> event) {
+        if(getSelectedFolder() == null){
+            return;
+        }
+        final Folder folderToBeLoaded = event.getLoadConfig().getFolder();
+
+        // If the loaded contents are not the contents of the currently selected folder, then cancel the load.
+        if(!folderToBeLoaded.getId().equals(getSelectedFolder().getId())){
+            event.setCancelled(true);
         }
     }
 
