@@ -4,7 +4,6 @@ import org.iplantc.de.apps.client.events.*;
 import org.iplantc.de.apps.client.presenter.proxy.AppGroupProxy;
 import org.iplantc.de.apps.client.views.AppsView;
 import org.iplantc.de.apps.client.views.cells.AppFavoriteCell;
-import org.iplantc.de.apps.client.views.cells.AppHyperlinkCell;
 import org.iplantc.de.apps.client.views.dialogs.AppCommentDialog;
 import org.iplantc.de.apps.client.views.dialogs.NewToolRequestDialog;
 import org.iplantc.de.apps.client.views.dialogs.SubmitAppForPublicDialog;
@@ -32,6 +31,7 @@ import org.iplantc.de.resources.client.messages.IplantErrorStrings;
 import org.iplantc.de.shared.HttpRedirectException;
 import org.iplantc.de.shared.services.ConfluenceServiceFacade;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.gwt.core.client.GWT;
@@ -226,7 +226,7 @@ public class AppsViewPresenterImpl implements AppsView.Presenter {
     }
 
     @Override
-    public void onAppNameSelected(AppHyperlinkCell.AppNameSelectedEvent event) {
+    public void onAppNameSelected(AppNameSelectedEvent event) {
         App app = event.getSelectedApp();
         if (app.isRunnable()) {
             fireRunAppEvent(app);
@@ -598,11 +598,12 @@ public class AppsViewPresenterImpl implements AppsView.Presenter {
 
     @Override
     public void runSelectedApp() {
-        fireRunAppEvent(getSelectedApp());
+        onAppNameSelected(new AppNameSelectedEvent(getSelectedApp()));
     }
 
     private void fireRunAppEvent(final App app) {
-        if (app != null && !app.isDisabled()) {
+        checkNotNull(app);
+        if (!app.isDisabled()) {
             eventBus.fireEvent(new RunAppEvent(app));
         }
     }

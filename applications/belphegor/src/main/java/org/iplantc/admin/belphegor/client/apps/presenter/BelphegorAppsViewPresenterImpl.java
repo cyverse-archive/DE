@@ -12,10 +12,10 @@ import org.iplantc.admin.belphegor.client.services.model.AppAdminServiceRequestA
 import org.iplantc.admin.belphegor.client.services.model.AppCategorizeRequest;
 import org.iplantc.admin.belphegor.client.services.model.AppCategorizeRequest.CategoryPath;
 import org.iplantc.admin.belphegor.client.services.model.AppCategorizeRequest.CategoryRequest;
+import org.iplantc.de.apps.client.events.AppNameSelectedEvent;
 import org.iplantc.de.apps.client.presenter.AppsViewPresenterImpl;
 import org.iplantc.de.apps.client.presenter.proxy.AppGroupProxy;
 import org.iplantc.de.apps.client.views.AppsView;
-import org.iplantc.de.apps.client.views.cells.AppHyperlinkCell;
 import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.models.DEProperties;
 import org.iplantc.de.client.models.HasId;
@@ -86,11 +86,6 @@ public class BelphegorAppsViewPresenterImpl extends AppsViewPresenterImpl implem
     private final IplantDisplayStrings displayStrings;
     private final IplantErrorStrings errorStrings;
 
-    @Override
-    public void onAppNameSelected(AppHyperlinkCell.AppNameSelectedEvent event) {
-        new AppEditor(event.getSelectedApp(), this).show();
-    }
-
     @Inject
     public BelphegorAppsViewPresenterImpl(final AppsView view,
                                           final AppGroupProxy proxy,
@@ -121,6 +116,11 @@ public class BelphegorAppsViewPresenterImpl extends AppsViewPresenterImpl implem
                 reloadAppGroups(getSelectedAppGroup(), getSelectedApp());
             }
         });
+    }
+
+    @Override
+    public void onAppNameSelected(AppNameSelectedEvent event) {
+        new AppEditor(event.getSelectedApp(), this).show();
     }
 
     @Override
