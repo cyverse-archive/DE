@@ -428,7 +428,7 @@ public class AppsEditorPresenterImpl implements AppsEditorView.Presenter, Delete
         /*
          * JDS Make a copy so we can check for differences on exit.
          */
-        lastSave = AppTemplateUtils.copyAppTemplate(view.flush());
+        lastSave = AppTemplateUtils.copyAppTemplate(flushViewAndClean());
 
         updateCommandLinePreview(lastSave);
         if (container.getWidget() == null) {
@@ -482,7 +482,7 @@ public class AppsEditorPresenterImpl implements AppsEditorView.Presenter, Delete
         try {
             // Determine if there are any changes, variables are broken out for readability
             AutoBean<AppTemplate> lastSaveAb = AutoBeanUtils.getAutoBean(lastSave);
-            AutoBean<AppTemplate> currentAb = AutoBeanUtils.getAutoBean(AppTemplateUtils.copyAppTemplate(view.flush()));
+            AutoBean<AppTemplate> currentAb = AutoBeanUtils.getAutoBean(AppTemplateUtils.copyAppTemplate(flushViewAndClean()));
             String lastSavePayload = AutoBeanCodex.encode(lastSaveAb).getPayload();
             String currentPayload = AutoBeanCodex.encode(currentAb).getPayload();
             return !lastSavePayload.equals(currentPayload);
