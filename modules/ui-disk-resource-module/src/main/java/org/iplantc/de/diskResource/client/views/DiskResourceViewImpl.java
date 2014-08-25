@@ -1180,25 +1180,20 @@ public class DiskResourceViewImpl extends Composite implements DiskResourceView,
     private void reconfigureToSearchView() {
         // display Path
         grid.getColumnModel().getColumn(4).setHidden(false);
-        grid.getColumnModel().getColumn(2).setHidden(true);
-        grid.getColumnModel().getColumn(3).setHidden(true);
-        grid.getView().refresh(true);
         grid.getView().setAutoExpandColumn(grid.getColumnModel().getColumn(4));
+        grid.getView().refresh(true);
     }
 
     private void reconfigureToListingView() {
-        // hide Path. display last modified and size
+        // hide Path.
         grid.getColumnModel().getColumn(4).setHidden(true);
-        grid.getColumnModel().getColumn(2).setHidden(false);
-        grid.getColumnModel().getColumn(3).setHidden(false);
-        grid.getView().refresh(true);
         grid.getView().setAutoExpandColumn(grid.getColumnModel().getColumn(1));
+        grid.getView().refresh(true);
     }
 
     @Override
     public void selectTag(IplantTag tag) {
         LOG.log(Level.SEVERE, "==>" + tag.getValue());
-
     }
 
 }
