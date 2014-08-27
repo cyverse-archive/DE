@@ -17,7 +17,7 @@ import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.client.models.diskResources.PermissionValue;
 import org.iplantc.de.client.models.diskResources.TYPE;
 import org.iplantc.de.client.models.search.DiskResourceQueryTemplate;
-import org.iplantc.de.client.models.tags.IpalntTagAutoBeanFactory;
+import org.iplantc.de.client.models.tags.IplantTagAutoBeanFactory;
 import org.iplantc.de.client.models.tags.IplantTag;
 import org.iplantc.de.client.models.tags.IplantTagList;
 import org.iplantc.de.client.models.viewer.InfoType;
@@ -475,7 +475,7 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter, Di
 
                     @Override
                     public void onSuccess(String result) {
-                        IpalntTagAutoBeanFactory factory = GWT.create(IpalntTagAutoBeanFactory.class);
+                        IplantTagAutoBeanFactory factory = GWT.create(IplantTagAutoBeanFactory.class);
                         AutoBean<IplantTagList> tagList = AutoBeanCodex.decode(factory, IplantTagList.class, result);
                         view.updateTags(tagList.as().getTagList());
 

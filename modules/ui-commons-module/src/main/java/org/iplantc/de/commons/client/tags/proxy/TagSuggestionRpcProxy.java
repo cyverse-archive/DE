@@ -1,6 +1,6 @@
 package org.iplantc.de.commons.client.tags.proxy;
 
-import org.iplantc.de.client.models.tags.IpalntTagAutoBeanFactory;
+import org.iplantc.de.client.models.tags.IplantTagAutoBeanFactory;
 import org.iplantc.de.client.models.tags.IplantTag;
 import org.iplantc.de.client.models.tags.IplantTagList;
 import org.iplantc.de.client.services.TagsServiceFacade;
@@ -24,7 +24,7 @@ public class TagSuggestionRpcProxy extends RpcProxy<TagSuggestionLoadConfig, Lis
 
     private final int LIMIT = 10;
     private final TagsServiceFacade mService;
-    IpalntTagAutoBeanFactory factory = GWT.create(IpalntTagAutoBeanFactory.class);
+    IplantTagAutoBeanFactory factory = GWT.create(IplantTagAutoBeanFactory.class);
     Logger logger = Logger.getLogger("Tag Proxy Logger");
 
     @Inject
