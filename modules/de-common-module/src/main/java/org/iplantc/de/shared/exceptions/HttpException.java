@@ -1,4 +1,4 @@
-package org.iplantc.de.shared;
+package org.iplantc.de.shared.exceptions;
 
 import java.io.IOException;
 

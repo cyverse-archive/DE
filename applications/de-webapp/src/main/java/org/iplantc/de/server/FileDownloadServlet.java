@@ -1,5 +1,6 @@
 package org.iplantc.de.server;
 
+import org.iplantc.de.server.service.DEServiceImpl;
 import org.iplantc.de.shared.services.ServiceCallWrapper;
 
 import org.apache.commons.io.IOUtils;
@@ -73,7 +74,7 @@ public class FileDownloadServlet extends HttpServlet {
         try {
             String address = buildRequestAddress(request);
             ServiceCallWrapper wrapper = new ServiceCallWrapper(address);
-            CasServiceDispatcher dispatcher = createServiceDispatcher(request);
+            DEServiceImpl dispatcher = createServiceDispatcher(request);
 
             LOG.debug("doGet - Making service call.");
             fileContents = dispatcher.getServiceStream(wrapper);
@@ -135,8 +136,8 @@ public class FileDownloadServlet extends HttpServlet {
      * @param request our HTTP servlet request.
      * @return the service dispatcher.
      */
-    private CasServiceDispatcher createServiceDispatcher(HttpServletRequest request) {
-        CasServiceDispatcher dispatcher = new CasServiceDispatcher(serviceResolver);
+    private DEServiceImpl createServiceDispatcher(HttpServletRequest request) {
+        DEServiceImpl dispatcher = new DEServiceImpl(serviceResolver);
         try {
             dispatcher.init(getServletConfig());
         } catch (ServletException e) {

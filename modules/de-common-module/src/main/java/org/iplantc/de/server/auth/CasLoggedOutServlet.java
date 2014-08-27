@@ -1,4 +1,4 @@
-package org.iplantc.de.server;
+package org.iplantc.de.server.auth;
 
 import static org.iplantc.de.server.util.ServletUtils.getPropertyPrefix;
 import static org.iplantc.de.server.util.ServletUtils.getRequiredProp;

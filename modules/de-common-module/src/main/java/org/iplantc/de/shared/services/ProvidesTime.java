@@ -1,4 +1,4 @@
-package org.iplantc.de.shared;
+package org.iplantc.de.shared.services;
 
 import java.util.Date;
 

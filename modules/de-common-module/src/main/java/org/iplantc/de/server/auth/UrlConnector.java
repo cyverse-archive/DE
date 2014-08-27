@@ -1,4 +1,4 @@
-package org.iplantc.de.server;
+package org.iplantc.de.server.auth;
 
 import org.apache.http.client.methods.*;
 

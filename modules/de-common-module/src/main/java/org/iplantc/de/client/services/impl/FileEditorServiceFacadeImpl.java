@@ -1,12 +1,11 @@
 package org.iplantc.de.client.services.impl;
 
 import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.POST;
-
 import org.iplantc.de.client.DEClientConstants;
 import org.iplantc.de.client.models.DEProperties;
 import org.iplantc.de.client.models.UserInfo;
-import org.iplantc.de.client.services.DEServiceFacade;
 import org.iplantc.de.client.services.FileEditorServiceFacade;
+import org.iplantc.de.shared.services.DEServiceAsync;
 import org.iplantc.de.shared.services.ServiceCallWrapper;
 
 import com.google.gwt.core.client.GWT;
@@ -24,11 +23,14 @@ import com.sencha.gxt.core.client.util.Format;
 public class FileEditorServiceFacadeImpl implements FileEditorServiceFacade {
     private final DEClientConstants constants;
     private final DEProperties deProperties;
-    private final DEServiceFacade deServiceFacade;
+    private final DEServiceAsync deServiceFacade;
     private final UserInfo userInfo;
 
     @Inject
-    public FileEditorServiceFacadeImpl(final DEServiceFacade deServiceFacade, final DEProperties deProperties, final DEClientConstants constants, final UserInfo userInfo) {
+    public FileEditorServiceFacadeImpl(final DEServiceAsync deServiceFacade,
+                                       final DEProperties deProperties,
+                                       final DEClientConstants constants,
+                                       final UserInfo userInfo) {
         this.deServiceFacade = deServiceFacade;
         this.deProperties = deProperties;
         this.constants = constants;

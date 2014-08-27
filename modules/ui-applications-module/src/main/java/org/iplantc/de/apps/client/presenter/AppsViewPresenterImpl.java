@@ -9,7 +9,6 @@ import org.iplantc.de.apps.client.views.dialogs.NewToolRequestDialog;
 import org.iplantc.de.apps.client.views.dialogs.SubmitAppForPublicDialog;
 import org.iplantc.de.apps.client.views.widgets.events.AppSearchResultLoadEvent;
 import org.iplantc.de.client.events.EventBus;
-import org.iplantc.de.client.gin.ServicesInjector;
 import org.iplantc.de.client.models.DEProperties;
 import org.iplantc.de.client.models.HasId;
 import org.iplantc.de.client.models.UserInfo;
@@ -25,11 +24,10 @@ import org.iplantc.de.client.util.JsonUtil;
 import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.commons.client.info.ErrorAnnouncementConfig;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
-import org.iplantc.de.resources.client.messages.I18N;
 import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 import org.iplantc.de.resources.client.messages.IplantErrorStrings;
-import org.iplantc.de.shared.HttpRedirectException;
-import org.iplantc.de.shared.services.ConfluenceServiceFacade;
+import org.iplantc.de.shared.exceptions.HttpRedirectException;
+import org.iplantc.de.shared.services.ConfluenceServiceAsync;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import com.google.common.base.Strings;
@@ -95,13 +93,14 @@ public class AppsViewPresenterImpl implements AppsView.Presenter {
 
     private final AppGroupProxy appGroupProxy;
 
-    private final List<HandlerRegistration> eventHandlers = new ArrayList<HandlerRegistration>();
+    private final List<HandlerRegistration> eventHandlers = new ArrayList<>();
 
     private HasId desiredSelectedAppId;
     private final AppServiceFacade appService;
     private final AppUserServiceFacade appUserService;
     private final UserInfo userInfo;
     private final DEProperties props;
+    private final ConfluenceServiceAsync confluenceService;
     private final IplantAnnouncer announcer;
     private final IplantDisplayStrings displayStrings;
     private final IplantErrorStrings errorStrings;
@@ -115,6 +114,7 @@ public class AppsViewPresenterImpl implements AppsView.Presenter {
                                  final EventBus eventBus,
                                  final UserInfo userInfo,
                                  final DEProperties props,
+                                 final ConfluenceServiceAsync confluenceService,
                                  final IplantAnnouncer announcer,
                                  final IplantDisplayStrings displayStrings,
                                  final IplantErrorStrings errorStrings) {
@@ -124,6 +124,7 @@ public class AppsViewPresenterImpl implements AppsView.Presenter {
         this.eventBus = eventBus;
         this.userInfo = userInfo;
         this.props = props;
+        this.confluenceService = confluenceService;
         this.announcer = announcer;
         this.displayStrings = displayStrings;
         this.errorStrings = errorStrings;
@@ -166,7 +167,7 @@ public class AppsViewPresenterImpl implements AppsView.Presenter {
         if ((commentId == null) || (commentId == 0)) {
             dlg.unmaskDialog();
         } else {
-            ConfluenceServiceFacade.getInstance().getComment(commentId, new AsyncCallback<String>() {
+            confluenceService.getComment(commentId, new AsyncCallback<String>() {
                 @Override
                 public void onSuccess(String comment) {
                     dlg.setText(comment);
@@ -206,7 +207,7 @@ public class AppsViewPresenterImpl implements AppsView.Presenter {
 
             @Override
             public void onFailure(Throwable caught) {
-                ErrorHandler.post(I18N.ERROR.confluenceError(), caught);
+                ErrorHandler.post(errorStrings.confluenceError(), caught);
             }
         };
 
@@ -217,11 +218,11 @@ public class AppsViewPresenterImpl implements AppsView.Presenter {
 
         Long commentId = userFeedback.getCommentId();
         if ((commentId == null) || (commentId == 0)) {
-            ServicesInjector.INSTANCE.getAppUserServiceFacade().addAppComment(appId, rating, appWikiUrl,
-                    comment, authorEmail, callback);
+            appUserService.addAppComment(appId, rating, appWikiUrl,
+                                         comment, authorEmail, callback);
         } else {
-            ServicesInjector.INSTANCE.getAppUserServiceFacade().editAppComment(appId, rating,
-                    appWikiUrl, commentId, comment, authorEmail, callback);
+            appUserService.editAppComment(appId, rating,
+                                          appWikiUrl, commentId, comment, authorEmail, callback);
         }
     }
 

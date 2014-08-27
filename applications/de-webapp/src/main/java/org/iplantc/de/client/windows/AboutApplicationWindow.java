@@ -7,7 +7,8 @@ import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.commons.client.views.window.configs.AboutWindowConfig;
 import org.iplantc.de.commons.client.views.window.configs.ConfigFactory;
 import org.iplantc.de.shared.DeModule;
-import org.iplantc.de.shared.services.AboutApplicationServiceFacade;
+import org.iplantc.de.shared.services.AboutApplicationService;
+import org.iplantc.de.shared.services.AboutApplicationServiceAsync;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.resources.client.ImageResource;
@@ -44,13 +45,13 @@ public class AboutApplicationWindow extends IplantWindowBase {
     }
 
     private final AboutApplicationAppearance appearance;
-    private final AboutApplicationServiceFacade aboutApplicationService;
+    private final AboutApplicationServiceAsync aboutApplicationService;
     private AboutApplicationData model;
 
     public AboutApplicationWindow(AboutWindowConfig config) {
         super("");
         appearance = GWT.create(AboutApplicationAppearance.class);
-        aboutApplicationService = AboutApplicationServiceFacade.getInstance();
+        aboutApplicationService = GWT.create(AboutApplicationService.class);
         setSize("320", "260");
         setHeadingText(appearance.headingText());
         ensureDebugId(DeModule.WindowIds.ABOUT_WINDOW);

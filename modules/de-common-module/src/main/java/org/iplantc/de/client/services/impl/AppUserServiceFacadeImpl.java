@@ -2,20 +2,19 @@ package org.iplantc.de.client.services.impl;
 
 import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.GET;
 import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.POST;
-
 import org.iplantc.de.client.models.DEProperties;
 import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.client.models.apps.AppGroup;
 import org.iplantc.de.client.services.AppUserServiceFacade;
-import org.iplantc.de.client.services.DEServiceFacade;
 import org.iplantc.de.client.services.converters.AppGroupListCallbackConverter;
 import org.iplantc.de.client.util.DiskResourceUtil;
 import org.iplantc.de.client.util.JsonUtil;
 import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 import org.iplantc.de.resources.client.messages.IplantErrorStrings;
-import org.iplantc.de.shared.ConfluenceException;
-import org.iplantc.de.shared.services.ConfluenceServiceFacade;
-import org.iplantc.de.shared.services.EmailServiceFacade;
+import org.iplantc.de.shared.exceptions.ConfluenceException;
+import org.iplantc.de.shared.services.DEServiceAsync;
+import org.iplantc.de.shared.services.ConfluenceServiceAsync;
+import org.iplantc.de.shared.services.EmailServiceAsync;
 import org.iplantc.de.shared.services.ServiceCallWrapper;
 
 import com.google.common.base.Strings;
@@ -40,17 +39,22 @@ import java.util.List;
  */
 public class AppUserServiceFacadeImpl implements AppUserServiceFacade {
 
-    private final DEServiceFacade deServiceFacade;
+    private final DEServiceAsync deServiceFacade;
     private final DEProperties deProperties;
-    private final ConfluenceServiceFacade confluenceService;
+    private final ConfluenceServiceAsync confluenceService;
     private final UserInfo userInfo;
-    private final EmailServiceFacade emailService;
+    private final EmailServiceAsync emailService;
     private final IplantErrorStrings errorStrings;
     private final IplantDisplayStrings displayStrings;
 
     @Inject
-    public AppUserServiceFacadeImpl(final DEServiceFacade deServiceFacade, final DEProperties deProperties, final ConfluenceServiceFacade confluenceService, final UserInfo userInfo,
-            final EmailServiceFacade emailService, final IplantDisplayStrings displayStrings, final IplantErrorStrings errorStrings) {
+    public AppUserServiceFacadeImpl(final DEServiceAsync deServiceFacade,
+                                    final DEProperties deProperties,
+                                    final ConfluenceServiceAsync confluenceService,
+                                    final UserInfo userInfo,
+                                    final EmailServiceAsync emailService,
+                                    final IplantDisplayStrings displayStrings,
+                                    final IplantErrorStrings errorStrings) {
         this.deServiceFacade = deServiceFacade;
         this.deProperties = deProperties;
         this.confluenceService = confluenceService;
@@ -60,9 +64,6 @@ public class AppUserServiceFacadeImpl implements AppUserServiceFacade {
         this.errorStrings = errorStrings;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void getPublicAppGroups(AsyncCallback<List<AppGroup>> callback) {
         String address = deProperties.getUnproctedMuleServiceBaseUrl() + "public-app-groups"; //$NON-NLS-1$
@@ -77,9 +78,6 @@ public class AppUserServiceFacadeImpl implements AppUserServiceFacade {
         deServiceFacade.getServiceData(wrapper, new AppGroupListCallbackConverter(callback, errorStrings));
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void getApps(String analysisGroupId, AsyncCallback<String> callback) {
         String address = deProperties.getMuleServiceBaseUrl() + "get-analyses-in-group/" //$NON-NLS-1$
@@ -96,11 +94,6 @@ public class AppUserServiceFacadeImpl implements AppUserServiceFacade {
         deServiceFacade.getServiceData(wrapper, asyncCallback);
     }
 
-    /**
-     * 
-     * @param appId
-     * @param callback
-     */
     @Override
     public void getDCDetails(String appId, AsyncCallback<String> callback) {
         String address = deProperties.getMuleServiceBaseUrl() + "get-components-in-analysis/" + appId; //$NON-NLS-1$
@@ -108,9 +101,6 @@ public class AppUserServiceFacadeImpl implements AppUserServiceFacade {
         deServiceFacade.getServiceData(wrapper, callback);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void getDataObjectsForApp(String analysisId, AsyncCallback<String> callback) {
         String address = deProperties.getMuleServiceBaseUrl() + "apps/" + analysisId + "/data-objects";
@@ -119,9 +109,6 @@ public class AppUserServiceFacadeImpl implements AppUserServiceFacade {
         deServiceFacade.getServiceData(wrapper, callback);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void publishToWorld(JSONObject application, AsyncCallback<String> callback) {
         String address = deProperties.getMuleServiceBaseUrl() + "make-analysis-public"; //$NON-NLS-1$
@@ -131,9 +118,6 @@ public class AppUserServiceFacadeImpl implements AppUserServiceFacade {
         deServiceFacade.getServiceData(wrapper, callback);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void getAppDetails(String id, AsyncCallback<String> callback) {
         String address = deProperties.getMuleServiceBaseUrl() + "app-details/" + id; //$NON-NLS-1$
@@ -192,7 +176,7 @@ public class AppUserServiceFacadeImpl implements AppUserServiceFacade {
         JSONObject body = new JSONObject();
         body.put("analysis_id", new JSONString(analysisId)); //$NON-NLS-1$
         body.put("rating", new JSONNumber(rating)); //$NON-NLS-1$
-        body.put("comment_id", new JSONNumber(Long.valueOf(commentId))); //$NON-NLS-1$
+        body.put("comment_id", new JSONNumber(commentId)); //$NON-NLS-1$
 
         String address = deProperties.getMuleServiceBaseUrl() + "rate-analysis"; //$NON-NLS-1$
         ServiceCallWrapper wrapper = new ServiceCallWrapper(POST, address, body.toString());
@@ -232,7 +216,7 @@ public class AppUserServiceFacadeImpl implements AppUserServiceFacade {
             Number avg = JsonUtil.getNumber(json, "avg"); //$NON-NLS-1$
             int avgRounded = (int)Math.round(avg.doubleValue());
             String appName = parsePageName(appWikiPageUrl);
-            confluenceService.updateDocumentationPage(appName, avgRounded, new AsyncCallback<Void>() {
+            confluenceService.updatePage(appName, avgRounded, new AsyncCallback<Void>() {
 
                 @Override
                 public void onFailure(Throwable caught) {
@@ -365,9 +349,6 @@ public class AppUserServiceFacadeImpl implements AppUserServiceFacade {
         deServiceFacade.getServiceData(wrapper, callback);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void searchApp(String search, AsyncCallback<String> callback) {
         String address = deProperties.getMuleServiceBaseUrl() + "search-analyses?search=" //$NON-NLS-1$
@@ -377,9 +358,6 @@ public class AppUserServiceFacadeImpl implements AppUserServiceFacade {
         deServiceFacade.getServiceData(wrapper, callback);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void publishWorkflow(String body, AsyncCallback<String> callback) {
         String address = deProperties.getMuleServiceBaseUrl() + "update-workflow";
@@ -388,9 +366,6 @@ public class AppUserServiceFacadeImpl implements AppUserServiceFacade {
         deServiceFacade.getServiceData(wrapper, callback);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void editWorkflow(String workflowId, AsyncCallback<String> callback) {
         String address = "org.iplantc.services.zoidberg.edit-workflow/" + workflowId; //$NON-NLS-1$

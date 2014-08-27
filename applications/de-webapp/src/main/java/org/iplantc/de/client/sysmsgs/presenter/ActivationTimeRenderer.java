@@ -1,6 +1,6 @@
 package org.iplantc.de.client.sysmsgs.presenter;
 
-import org.iplantc.de.shared.ProvidesTime;
+import org.iplantc.de.shared.services.ProvidesTime;
 
 import com.google.gwt.core.shared.GWT;
 import com.google.gwt.i18n.client.DateTimeFormat;

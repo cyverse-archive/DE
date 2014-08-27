@@ -1,4 +1,4 @@
-package org.iplantc.de.server;
+package org.iplantc.de.server.auth;
 
 import org.apache.log4j.Logger;
 import org.springframework.security.core.Authentication;

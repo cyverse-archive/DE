@@ -1,4 +1,4 @@
-package org.iplantc.de.server;
+package org.iplantc.de.server.service;
 
 import org.iplantc.de.server.service.IplantEmailClient;
 import org.iplantc.de.server.service.IplantEmailClient.MessageRequest;
@@ -14,25 +14,13 @@ import javax.servlet.ServletException;
  * @author hariolf
  *
  */
-public class EmailServlet extends RemoteServiceServlet implements EmailService {
+public class EmailServiceImpl extends RemoteServiceServlet implements EmailService {
     private static final long serialVersionUID = -3893564670515471591L;
 
     /**
      * The client used to send message requests to the iPlant email service.
      */
     private IplantEmailClient client;
-
-    /**
-     * The default constructor.
-     */
-    public EmailServlet() {}
-
-    /**
-     * @param client the client used to send message requests to the iPlant email service.
-     */
-    public EmailServlet(IplantEmailClient client) {
-        this.client = client;
-    }
 
     /**
      * Initializes the servlet.
@@ -48,11 +36,6 @@ public class EmailServlet extends RemoteServiceServlet implements EmailService {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     * 
-     * @return
-     */
     @Override
     public void sendEmail(String subject, String message, String fromAddress, String toAddress) {
         MessageRequest request = new MessageRequest()

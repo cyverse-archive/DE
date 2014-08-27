@@ -1,8 +1,8 @@
 package org.iplantc.admin.belphegor.client.services;
 
 import org.iplantc.de.shared.AsyncCallbackWrapper;
-import org.iplantc.de.shared.DEService;
-import org.iplantc.de.shared.DEServiceAsync;
+import org.iplantc.de.shared.services.DEService;
+import org.iplantc.de.shared.services.DEServiceAsync;
 import org.iplantc.de.shared.services.MultiPartServiceWrapper;
 import org.iplantc.de.shared.services.ServiceCallWrapper;
 

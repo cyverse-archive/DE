@@ -1,12 +1,11 @@
 package org.iplantc.de.client.services.impl;
 
 import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.POST;
-
 import org.iplantc.de.client.models.DEProperties;
-import org.iplantc.de.client.models.tags.IpalntTagAutoBeanFactory;
+import org.iplantc.de.client.models.tags.IplantTagAutoBeanFactory;
 import org.iplantc.de.client.models.tags.IplantTag;
-import org.iplantc.de.client.services.DEServiceFacade;
 import org.iplantc.de.client.services.TagsServiceFacade;
+import org.iplantc.de.shared.services.DEServiceAsync;
 import org.iplantc.de.shared.services.BaseServiceCallWrapper.Type;
 import org.iplantc.de.shared.services.ServiceCallWrapper;
 
@@ -23,11 +22,11 @@ import com.google.web.bindery.autobean.shared.Splittable;
 public class TagsServiceFacadeImpl implements TagsServiceFacade {
     
     private final DEProperties deProps;
-    private final DEServiceFacade deServiceFacade;
-    IpalntTagAutoBeanFactory factory = GWT.create(IpalntTagAutoBeanFactory.class);
+    private final DEServiceAsync deServiceFacade;
+    IplantTagAutoBeanFactory factory = GWT.create(IplantTagAutoBeanFactory.class);
 
     @Inject
-    public TagsServiceFacadeImpl(final DEServiceFacade deServiceFacade, final DEProperties deProps) {
+    public TagsServiceFacadeImpl(final DEServiceAsync deServiceFacade, final DEProperties deProps) {
         this.deServiceFacade = deServiceFacade;
         this.deProps = deProps;
     }

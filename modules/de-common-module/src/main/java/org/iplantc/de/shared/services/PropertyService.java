@@ -1,6 +1,7 @@
 package org.iplantc.de.shared.services;
 
 import com.google.gwt.user.client.rpc.RemoteService;
+import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 import com.google.gwt.user.client.rpc.SerializationException;
 
 import java.util.Map;
@@ -10,6 +11,7 @@ import java.util.Map;
  * 
  * @author Dennis Roberts
  */
+@RemoteServiceRelativePath("properties")
 public interface PropertyService extends RemoteService {
     /**
      * Retrieves the entire set of discovery environment properties.

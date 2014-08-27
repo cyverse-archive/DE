@@ -1,4 +1,4 @@
-package org.iplantc.de.server;
+package org.iplantc.de.server.service;
 
 import org.iplantc.clavin.spring.ConfigAliasResolver;
 import org.iplantc.de.shared.services.PropertyService;
@@ -12,7 +12,7 @@ import java.util.Properties;
 
 import javax.servlet.ServletException;
 
-public class PropertyServlet extends RemoteServiceServlet implements PropertyService{
+public class PropertyServiceImpl extends RemoteServiceServlet implements PropertyService{
 
     /**
      * {@inheritDoc}
@@ -27,12 +27,12 @@ public class PropertyServlet extends RemoteServiceServlet implements PropertySer
     /**
      * The default constructor.
      */
-    public PropertyServlet() {}
+    public PropertyServiceImpl() {}
 
     /**
      * @param props the configuration properties.
      */
-    public PropertyServlet(Properties props) {
+    public PropertyServiceImpl(Properties props) {
         this.props = props;
     }
 
@@ -55,7 +55,7 @@ public class PropertyServlet extends RemoteServiceServlet implements PropertySer
      */
     @Override
     public Map<String, String> getProperties() throws SerializationException {
-        HashMap<String, String> propertyMap = new HashMap<String, String>();
+        HashMap<String, String> propertyMap = new HashMap<>();
         for (Object key : props.keySet()) {
             propertyMap.put(key.toString(), props.get(key).toString());
         }

@@ -1,7 +1,8 @@
 package org.iplantc.de.server;
 
 import org.iplantc.clavin.spring.ConfigAliasResolver;
-import org.iplantc.de.shared.ConfluenceException;
+import org.iplantc.de.server.service.SessionManagementServiceImpl;
+import org.iplantc.de.shared.exceptions.ConfluenceException;
 import org.iplantc.de.shared.services.ConfluenceService;
 
 import com.google.gwt.user.client.rpc.SerializationException;
@@ -27,10 +28,10 @@ import javax.servlet.ServletException;
  * @author hariolf
  */
 @SuppressWarnings("nls")
-public class ConfluenceServlet extends SessionManagementServlet implements ConfluenceService {
+public class ConfluenceServiceImpl extends SessionManagementServiceImpl implements ConfluenceService {
     private static final long serialVersionUID = -8576144366505536966L;
 
-    private static final Logger LOG = Logger.getLogger(ConfluenceServlet.class.getName());
+    private static final Logger LOG = Logger.getLogger(ConfluenceServiceImpl.class.getName());
 
     /** A filled star */
     private static final String BLACK_STAR = "&#x2605;";
@@ -58,12 +59,12 @@ public class ConfluenceServlet extends SessionManagementServlet implements Confl
     /**
      * The default constructor.
      */
-    public ConfluenceServlet() {}
+    public ConfluenceServiceImpl() {}
 
     /**
      * @param properties the configuration settings used to initialize the ConfluenceProperties instance.
      */
-    public ConfluenceServlet(Properties properties) {
+    public ConfluenceServiceImpl(Properties properties) {
         this.properties = new ConfluenceProperties(properties);
     }
 

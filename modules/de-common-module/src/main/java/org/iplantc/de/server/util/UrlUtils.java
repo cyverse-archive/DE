@@ -1,6 +1,6 @@
 package org.iplantc.de.server.util;
 
-import org.iplantc.de.server.DESecurityConstants;
+import org.iplantc.de.server.auth.DESecurityConstants;
 
 import java.io.IOException;
 import java.net.URL;

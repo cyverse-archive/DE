@@ -1,5 +1,8 @@
 package org.iplantc.de.shared;
 
+import org.iplantc.de.shared.exceptions.AuthenticationException;
+import org.iplantc.de.shared.exceptions.HttpRedirectException;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;

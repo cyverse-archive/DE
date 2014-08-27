@@ -1,6 +1,6 @@
 package org.iplantc.de.commons.client.tags.views;
 
-import org.iplantc.de.client.models.tags.IpalntTagAutoBeanFactory;
+import org.iplantc.de.client.models.tags.IplantTagAutoBeanFactory;
 import org.iplantc.de.client.models.tags.IplantTag;
 import org.iplantc.de.commons.client.gin.CommonsInjector;
 import org.iplantc.de.commons.client.tags.presenter.TagListHandlers;
@@ -58,7 +58,7 @@ public class IplantTagListView extends Composite implements IsWidget {
 
     Logger logger = Logger.getLogger("list view logger");
 
-    IpalntTagAutoBeanFactory factory = GWT.create(IpalntTagAutoBeanFactory.class);
+    IplantTagAutoBeanFactory factory = GWT.create(IplantTagAutoBeanFactory.class);
 
     @Inject
     public IplantTagListView() {

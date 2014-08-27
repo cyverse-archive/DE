@@ -7,13 +7,13 @@ import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.client.models.notifications.Counts;
 import org.iplantc.de.client.models.notifications.Notification;
 import org.iplantc.de.client.models.notifications.NotificationAutoBeanFactory;
-import org.iplantc.de.client.services.DEServiceFacade;
 import org.iplantc.de.client.services.MessageServiceFacade;
 import org.iplantc.de.client.services.callbacks.NotificationCallback;
 import org.iplantc.de.client.services.converters.AsyncCallbackConverter;
 import org.iplantc.de.client.services.converters.NotificationCallbackConverter;
 import org.iplantc.de.client.services.converters.StringToVoidCallbackConverter;
 import org.iplantc.de.client.util.DiskResourceUtil;
+import org.iplantc.de.shared.services.DEServiceAsync;
 import org.iplantc.de.shared.services.BaseServiceCallWrapper.Type;
 import org.iplantc.de.shared.services.ServiceCallWrapper;
 
@@ -52,11 +52,14 @@ public class MessageServiceFacadeImpl implements MessageServiceFacade {
 
     private final NotificationAutoBeanFactory notesFactory;
     private final DEProperties deProperties;
-    private final DEServiceFacade deServiceFacade;
+    private final DEServiceAsync deServiceFacade;
     private final UserInfo userInfo;
 
     @Inject
-    public MessageServiceFacadeImpl(final DEServiceFacade deServiceFacade, final DEProperties deProperties, final NotificationAutoBeanFactory notesFactory, final UserInfo userInfo) {
+    public MessageServiceFacadeImpl(final DEServiceAsync deServiceFacade,
+                                    final DEProperties deProperties,
+                                    final NotificationAutoBeanFactory notesFactory,
+                                    final UserInfo userInfo) {
         this.deServiceFacade = deServiceFacade;
         this.deProperties = deProperties;
         this.notesFactory = notesFactory;
@@ -70,11 +73,11 @@ public class MessageServiceFacadeImpl implements MessageServiceFacade {
         StringBuilder builder = new StringBuilder("notifications/messages?limit=" + limit + "&offset="
                                                       + offset);
         if (filter != null && !filter.isEmpty()) {
-            builder.append("&filter=" + URL.encodeQueryString(filter));
+            builder.append("&filter=").append(URL.encodeQueryString(filter));
         }
 
         if (sortDir != null && !sortDir.isEmpty() && !sortDir.equalsIgnoreCase("NONE")) {
-            builder.append("&sortDir=" + URL.encodeQueryString(sortDir));
+            builder.append("&sortDir=").append(URL.encodeQueryString(sortDir));
         }
 
         address = address + builder.toString();
