@@ -27,7 +27,7 @@ import javax.servlet.ServletException;
  * @author hariolf
  */
 @SuppressWarnings("nls")
-public class ConfluenceServiceImpl extends SessionManagementServlet implements ConfluenceService {
+public class ConfluenceServiceImpl extends SessionManagementServiceImpl implements ConfluenceService {
     private static final long serialVersionUID = -8576144366505536966L;
 
     private static final Logger LOG = Logger.getLogger(ConfluenceServiceImpl.class.getName());

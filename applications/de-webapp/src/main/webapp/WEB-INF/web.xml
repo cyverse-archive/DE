@@ -50,7 +50,7 @@
 	</servlet>
 	<servlet>
 		<servlet-name>sessionManagementServlet</servlet-name>
-		<servlet-class>org.iplantc.de.server.SessionManagementServlet</servlet-class>
+		<servlet-class>org.iplantc.de.server.SessionManagementServiceImpl</servlet-class>
 	</servlet>
 	<servlet>
 		<servlet-name>propertyServlet</servlet-name>

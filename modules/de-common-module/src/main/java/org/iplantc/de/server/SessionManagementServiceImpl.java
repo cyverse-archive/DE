@@ -16,7 +16,7 @@ import javax.servlet.http.HttpSession;
  * 
  * @author sriram
  */
-public class SessionManagementServlet extends RemoteServiceServlet implements SessionManagementService {
+public class SessionManagementServiceImpl extends RemoteServiceServlet implements SessionManagementService {
 
     /**
      * Generated Unique Identifier for serialization
@@ -29,7 +29,7 @@ public class SessionManagementServlet extends RemoteServiceServlet implements Se
     @Override
     @SuppressWarnings("unchecked")
     public Map<String, String> getAttributes() throws SerializationException {
-        Map<String, String> attributes = new HashMap<String, String>();
+        Map<String, String> attributes = new HashMap<>();
         HttpSession session = getSession();
         Enumeration<String> enumeration = session.getAttributeNames();
         while (enumeration.hasMoreElements()) {
