@@ -1,9 +1,6 @@
 package org.iplantc.de.client.services.impl;
 
-import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.DELETE;
-import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.GET;
-import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.POST;
-
+import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.*;
 import org.iplantc.de.client.DEClientConstants;
 import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.events.diskResources.FolderRefreshEvent;
@@ -11,23 +8,14 @@ import org.iplantc.de.client.events.diskResources.FolderRefreshEvent.FolderRefre
 import org.iplantc.de.client.models.DEProperties;
 import org.iplantc.de.client.models.HasPaths;
 import org.iplantc.de.client.models.UserInfo;
-import org.iplantc.de.client.models.diskResources.DiskResource;
-import org.iplantc.de.client.models.diskResources.DiskResourceAutoBeanFactory;
-import org.iplantc.de.client.models.diskResources.DiskResourceExistMap;
-import org.iplantc.de.client.models.diskResources.DiskResourceMetadata;
-import org.iplantc.de.client.models.diskResources.DiskResourceMetadataTemplate;
-import org.iplantc.de.client.models.diskResources.DiskResourceMetadataTemplateList;
-import org.iplantc.de.client.models.diskResources.File;
-import org.iplantc.de.client.models.diskResources.Folder;
-import org.iplantc.de.client.models.diskResources.RootFolders;
-import org.iplantc.de.client.models.diskResources.TYPE;
+import org.iplantc.de.client.models.diskResources.*;
 import org.iplantc.de.client.models.services.DiskResourceMove;
 import org.iplantc.de.client.models.services.DiskResourceRename;
-import org.iplantc.de.client.services.DEServiceFacade;
 import org.iplantc.de.client.services.DiskResourceServiceFacade;
 import org.iplantc.de.client.services.converters.AsyncCallbackConverter;
 import org.iplantc.de.client.services.impl.models.DiskResourceMetadataBatchRequest;
 import org.iplantc.de.client.util.DiskResourceUtil;
+import org.iplantc.de.shared.DEServiceAsync;
 import org.iplantc.de.shared.services.ServiceCallWrapper;
 
 import com.google.common.base.Strings;
@@ -69,12 +57,12 @@ public class DiskResourceServiceFacadeImpl extends TreeStore<Folder> implements
 
     private final DiskResourceAutoBeanFactory factory;
     private final DEProperties deProperties;
-    private final DEServiceFacade deServiceFacade;
+    private final DEServiceAsync deServiceFacade;
     private final DEClientConstants constants;
     private final UserInfo userInfo;
 
     @Inject
-    public DiskResourceServiceFacadeImpl(final DEServiceFacade deServiceFacade,
+    public DiskResourceServiceFacadeImpl(final DEServiceAsync deServiceFacade,
                                          final DEProperties deProperties,
                                          final DEClientConstants constants,
                                          final DiskResourceAutoBeanFactory factory,
@@ -402,7 +390,6 @@ public class DiskResourceServiceFacadeImpl extends TreeStore<Folder> implements
         }
 
         // Update the folder's path to its new location, then cache it in the TreeStore.
-        String newPath = DiskResourceUtil.appendNameToPath(dest.getPath(), folder.getName());
         add(dest, folder);
 
         // Move the folder's children to the new location in the cache, updating their paths first.
@@ -432,7 +419,7 @@ public class DiskResourceServiceFacadeImpl extends TreeStore<Folder> implements
             protected DiskResource convertFrom(String result) {
                 DiskResourceRename response = decode(DiskResourceRename.class, result);
 
-                DiskResource newDr = null;
+                DiskResource newDr;
                 if (src instanceof Folder) {
                     newDr = decode(Folder.class, encode(src));
                 } else {

@@ -4,9 +4,9 @@ import org.iplantc.de.client.models.DEProperties;
 import org.iplantc.de.client.models.toolRequests.NewToolRequest;
 import org.iplantc.de.client.models.toolRequests.RequestedToolDetails;
 import org.iplantc.de.client.models.toolRequests.ToolRequestFactory;
-import org.iplantc.de.client.services.DEServiceFacade;
 import org.iplantc.de.client.services.ToolRequestServiceFacade;
 import org.iplantc.de.client.services.converters.AsyncCallbackConverter;
+import org.iplantc.de.shared.DEServiceAsync;
 import org.iplantc.de.shared.services.BaseServiceCallWrapper.Type;
 import org.iplantc.de.shared.services.ServiceCallWrapper;
 
@@ -27,11 +27,13 @@ public final class ToolRequestServiceFacadeImpl implements ToolRequestServiceFac
 
     private final ToolRequestFactory factory;
     private final DEProperties props;
-    private final DEServiceFacade deServiceFacade;
+    private final DEServiceAsync deServiceFacade;
 
 
     @Inject
-    public ToolRequestServiceFacadeImpl(final ToolRequestFactory factory, final DEProperties props, final DEServiceFacade deServiceFacade){
+    public ToolRequestServiceFacadeImpl(final ToolRequestFactory factory,
+                                        final DEProperties props,
+                                        final DEServiceAsync deServiceFacade){
         this.factory = factory;
         this.props = props;
         this.deServiceFacade = deServiceFacade;

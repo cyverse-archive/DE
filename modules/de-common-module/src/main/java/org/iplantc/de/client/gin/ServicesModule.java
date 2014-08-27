@@ -3,55 +3,9 @@ package org.iplantc.de.client.gin;
 import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.models.DEProperties;
 import org.iplantc.de.client.models.UserInfo;
-import org.iplantc.de.client.services.AnalysisServiceFacade;
-import org.iplantc.de.client.services.AppMetadataServiceFacade;
-import org.iplantc.de.client.services.AppServiceFacade;
-import org.iplantc.de.client.services.AppTemplateServices;
-import org.iplantc.de.client.services.AppUserServiceFacade;
-import org.iplantc.de.client.services.CollaboratorsServiceFacade;
-import org.iplantc.de.client.services.DEFeedbackServiceFacade;
-import org.iplantc.de.client.services.DEServiceFacade;
-import org.iplantc.de.client.services.DeployedComponentServices;
-import org.iplantc.de.client.services.DiskResourceServiceFacade;
-import org.iplantc.de.client.services.FileEditorServiceFacade;
-import org.iplantc.de.client.services.MetadataServiceFacade;
-import org.iplantc.de.client.services.MessageServiceFacade;
-import org.iplantc.de.client.services.TagsServiceFacade;
-import org.iplantc.de.client.services.SearchServiceFacade;
-import org.iplantc.de.client.services.SystemMessageServiceFacade;
-import org.iplantc.de.client.services.ToolRequestServiceFacade;
-import org.iplantc.de.client.services.UserSessionServiceFacade;
-import org.iplantc.de.client.services.impl.AnalysisServiceFacadeImpl;
-import org.iplantc.de.client.services.impl.AppTemplateServicesImpl;
-import org.iplantc.de.client.services.impl.AppUserServiceFacadeImpl;
-import org.iplantc.de.client.services.impl.CollaboratorsServiceFacadeImpl;
-import org.iplantc.de.client.services.impl.DEFeedbackServiceFacadeImpl;
-import org.iplantc.de.client.services.impl.DeployedComponentServicesImpl;
-import org.iplantc.de.client.services.impl.DiskResourceServiceFacadeImpl;
-import org.iplantc.de.client.services.impl.FileEditorServiceFacadeImpl;
-import org.iplantc.de.client.services.impl.FileSystemMetadataServiceFacadeImpl;
-import org.iplantc.de.client.services.impl.MessageServiceFacadeImpl;
-import org.iplantc.de.client.services.impl.TagsServiceFacadeImpl;
-import org.iplantc.de.client.services.impl.SearchServiceFacadeImpl;
-import org.iplantc.de.client.services.impl.SystemMessageServiceFacadeImpl;
-import org.iplantc.de.client.services.impl.ToolRequestServiceFacadeImpl;
-import org.iplantc.de.client.services.impl.UserSessionServiceFacadeImpl;
-import org.iplantc.de.client.services.stubs.AnalysisServiceFacadeStub;
-import org.iplantc.de.client.services.stubs.AppMetadataServiceStub;
-import org.iplantc.de.client.services.stubs.AppServiceFacadeStub;
-import org.iplantc.de.client.services.stubs.AppTemplateServicesStub;
-import org.iplantc.de.client.services.stubs.AppUserServiceFacadeStub;
-import org.iplantc.de.client.services.stubs.CollaboratorsServiceFacadeStub;
-import org.iplantc.de.client.services.stubs.DEFeedbackServiceFacadeStub;
-import org.iplantc.de.client.services.stubs.DeployedComponentServicesStub;
-import org.iplantc.de.client.services.stubs.DiskResourceServiceFacadeStub;
-import org.iplantc.de.client.services.stubs.FileEditorServiceFacadeStub;
-import org.iplantc.de.client.services.stubs.MessageServiceFacadeStub;
-import org.iplantc.de.client.services.stubs.MetadataServiceFacadeStub;
-import org.iplantc.de.client.services.stubs.SearchServiceFacadeStub;
-import org.iplantc.de.client.services.stubs.SystemMessageServiceFacadeStub;
-import org.iplantc.de.client.services.stubs.ToolRequestServiceFacadeStub;
-import org.iplantc.de.client.services.stubs.UserSessionServiceFacadeStub;
+import org.iplantc.de.client.services.*;
+import org.iplantc.de.client.services.impl.*;
+import org.iplantc.de.client.services.stubs.*;
 import org.iplantc.de.shared.services.EmailServiceFacade;
 
 import com.google.gwt.inject.client.AbstractGinModule;
@@ -101,12 +55,6 @@ final class ServicesModule extends AbstractGinModule {
     @Provides
     EmailServiceFacade createEmailServiceFacade() {
         return EmailServiceFacade.getInstance();
-    }
-
-    @Provides
-    @Singleton
-    public DEServiceFacade createDeServiceFacade() {
-        return DEServiceFacade.getInstance();
     }
 
     @Provides

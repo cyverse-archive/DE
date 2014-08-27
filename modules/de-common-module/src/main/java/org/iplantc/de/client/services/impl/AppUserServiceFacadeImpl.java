@@ -2,18 +2,17 @@ package org.iplantc.de.client.services.impl;
 
 import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.GET;
 import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.POST;
-
 import org.iplantc.de.client.models.DEProperties;
 import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.client.models.apps.AppGroup;
 import org.iplantc.de.client.services.AppUserServiceFacade;
-import org.iplantc.de.client.services.DEServiceFacade;
 import org.iplantc.de.client.services.converters.AppGroupListCallbackConverter;
 import org.iplantc.de.client.util.DiskResourceUtil;
 import org.iplantc.de.client.util.JsonUtil;
 import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 import org.iplantc.de.resources.client.messages.IplantErrorStrings;
 import org.iplantc.de.shared.ConfluenceException;
+import org.iplantc.de.shared.DEServiceAsync;
 import org.iplantc.de.shared.services.ConfluenceServiceAsync;
 import org.iplantc.de.shared.services.EmailServiceFacade;
 import org.iplantc.de.shared.services.ServiceCallWrapper;
@@ -40,7 +39,7 @@ import java.util.List;
  */
 public class AppUserServiceFacadeImpl implements AppUserServiceFacade {
 
-    private final DEServiceFacade deServiceFacade;
+    private final DEServiceAsync deServiceFacade;
     private final DEProperties deProperties;
     private final ConfluenceServiceAsync confluenceService;
     private final UserInfo userInfo;
@@ -49,7 +48,7 @@ public class AppUserServiceFacadeImpl implements AppUserServiceFacade {
     private final IplantDisplayStrings displayStrings;
 
     @Inject
-    public AppUserServiceFacadeImpl(final DEServiceFacade deServiceFacade,
+    public AppUserServiceFacadeImpl(final DEServiceAsync deServiceFacade,
                                     final DEProperties deProperties,
                                     final ConfluenceServiceAsync confluenceService,
                                     final UserInfo userInfo,

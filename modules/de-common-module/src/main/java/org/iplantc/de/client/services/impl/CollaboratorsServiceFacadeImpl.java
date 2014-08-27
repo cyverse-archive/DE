@@ -5,10 +5,9 @@ package org.iplantc.de.client.services.impl;
 
 import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.GET;
 import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.POST;
-
 import org.iplantc.de.client.models.DEProperties;
 import org.iplantc.de.client.services.CollaboratorsServiceFacade;
-import org.iplantc.de.client.services.DEServiceFacade;
+import org.iplantc.de.shared.DEServiceAsync;
 import org.iplantc.de.shared.services.ServiceCallWrapper;
 
 import com.google.gwt.http.client.URL;
@@ -25,10 +24,11 @@ import java.util.List;
 public class CollaboratorsServiceFacadeImpl implements CollaboratorsServiceFacade {
 
     private final DEProperties deProperties;
-    private final DEServiceFacade deServiceFacade;
+    private final DEServiceAsync deServiceFacade;
 
     @Inject
-    public CollaboratorsServiceFacadeImpl(final DEServiceFacade deServiceFacade, final DEProperties deProperties) {
+    public CollaboratorsServiceFacadeImpl(final DEServiceAsync deServiceFacade,
+                                          final DEProperties deProperties) {
         this.deServiceFacade = deServiceFacade;
         this.deProperties = deProperties;
     }

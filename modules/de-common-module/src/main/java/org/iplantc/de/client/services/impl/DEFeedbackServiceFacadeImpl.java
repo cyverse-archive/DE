@@ -1,11 +1,10 @@
 package org.iplantc.de.client.services.impl;
 
 import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.PUT;
-
 import org.iplantc.de.client.models.DEProperties;
 import org.iplantc.de.client.services.DEFeedbackServiceFacade;
-import org.iplantc.de.client.services.DEServiceFacade;
 import org.iplantc.de.client.services.converters.StringToVoidCallbackConverter;
+import org.iplantc.de.shared.DEServiceAsync;
 import org.iplantc.de.shared.services.ServiceCallWrapper;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -20,10 +19,11 @@ public class DEFeedbackServiceFacadeImpl implements DEFeedbackServiceFacade {
 
     private static String FEEDBACK_SERVICE_PATH = "feedback";
     private final DEProperties deProperties;
-    private final DEServiceFacade deServiceFacade;
+    private final DEServiceAsync deServiceFacade;
 
     @Inject
-    public DEFeedbackServiceFacadeImpl(final DEServiceFacade deServiceFacade, final DEProperties deProperties) {
+    public DEFeedbackServiceFacadeImpl(final DEServiceAsync deServiceFacade,
+                                       final DEProperties deProperties) {
         this.deServiceFacade = deServiceFacade;
         this.deProperties = deProperties;
     }

@@ -47,7 +47,7 @@
     </servlet>
     <servlet>
         <servlet-name>deServiceDispatcher</servlet-name>
-        <servlet-class>org.iplantc.de.server.CasServiceDispatcher</servlet-class>
+        <servlet-class>org.iplantc.de.server.DEServiceImpl</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>sessionManagementServlet</servlet-name>

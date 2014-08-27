@@ -1,32 +1,16 @@
 package org.iplantc.de.client.services.impl;
 
-import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.GET;
-import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.POST;
-import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.PUT;
-
+import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.*;
 import org.iplantc.de.client.models.DEProperties;
 import org.iplantc.de.client.models.HasId;
-import org.iplantc.de.client.models.apps.integration.AppTemplate;
-import org.iplantc.de.client.models.apps.integration.AppTemplateAutoBeanFactory;
-import org.iplantc.de.client.models.apps.integration.Argument;
-import org.iplantc.de.client.models.apps.integration.ArgumentGroup;
-import org.iplantc.de.client.models.apps.integration.ArgumentType;
-import org.iplantc.de.client.models.apps.integration.DataSource;
-import org.iplantc.de.client.models.apps.integration.DataSourceList;
-import org.iplantc.de.client.models.apps.integration.FileInfoType;
-import org.iplantc.de.client.models.apps.integration.FileInfoTypeList;
-import org.iplantc.de.client.models.apps.integration.JobExecution;
-import org.iplantc.de.client.models.apps.integration.ReferenceGenome;
-import org.iplantc.de.client.models.apps.integration.ReferenceGenomeList;
-import org.iplantc.de.client.models.apps.integration.SelectionItem;
-import org.iplantc.de.client.models.apps.integration.SelectionItemGroup;
+import org.iplantc.de.client.models.apps.integration.*;
 import org.iplantc.de.client.services.AppMetadataServiceFacade;
 import org.iplantc.de.client.services.AppTemplateServices;
-import org.iplantc.de.client.services.DEServiceFacade;
 import org.iplantc.de.client.services.DeployedComponentServices;
 import org.iplantc.de.client.services.converters.AppTemplateCallbackConverter;
 import org.iplantc.de.client.util.AppTemplateUtils;
 import org.iplantc.de.client.util.JsonUtil;
+import org.iplantc.de.shared.DEServiceAsync;
 import org.iplantc.de.shared.SharedServiceFacade;
 import org.iplantc.de.shared.services.ServiceCallWrapper;
 
@@ -52,11 +36,14 @@ public class AppTemplateServicesImpl implements AppTemplateServices, AppMetadata
     private final List<FileInfoType> fileInfoTypeList = Lists.newArrayList();
 
     private final List<ReferenceGenome> refGenList = Lists.newArrayList();
-    private final DEServiceFacade deServiceFacade;
+    private final DEServiceAsync deServiceFacade;
     private final DEProperties deProperties;
 
     @Inject
-    public AppTemplateServicesImpl(final DEServiceFacade deServiceFacade, final DEProperties deProperties, final DeployedComponentServices dcServices, final AppTemplateAutoBeanFactory factory) {
+    public AppTemplateServicesImpl(final DEServiceAsync deServiceFacade,
+                                   final DEProperties deProperties,
+                                   final DeployedComponentServices dcServices,
+                                   final AppTemplateAutoBeanFactory factory) {
         this.deServiceFacade = deServiceFacade;
         this.deProperties = deProperties;
         this.dcServices = dcServices;
@@ -104,7 +91,6 @@ public class AppTemplateServicesImpl implements AppTemplateServices, AppMetadata
     public void getDataSources(AsyncCallback<List<DataSource>> callback) {
         if (!dataSourceList.isEmpty()) {
             callback.onSuccess(dataSourceList);
-            return;
         } else {
             enqueueDataSourceCallback(callback);
         }
@@ -114,7 +100,6 @@ public class AppTemplateServicesImpl implements AppTemplateServices, AppMetadata
     public void getFileInfoTypes(AsyncCallback<List<FileInfoType>> callback) {
         if (!fileInfoTypeList.isEmpty()) {
             callback.onSuccess(fileInfoTypeList);
-            return;
         } else {
             enqueueFileInfoTypeCallback(callback);
         }
@@ -124,7 +109,6 @@ public class AppTemplateServicesImpl implements AppTemplateServices, AppMetadata
     public void getReferenceGenomes(AsyncCallback<List<ReferenceGenome>> callback) {
         if (!refGenList.isEmpty()) {
             callback.onSuccess(refGenList);
-            return;
         } else {
             enqueueRefGenomeCallback(callback);
         }

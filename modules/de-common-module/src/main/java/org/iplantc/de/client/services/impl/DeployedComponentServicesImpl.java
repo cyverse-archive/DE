@@ -1,15 +1,14 @@
 package org.iplantc.de.client.services.impl;
 
 import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.GET;
-
 import org.iplantc.de.client.models.DEProperties;
 import org.iplantc.de.client.models.HasId;
 import org.iplantc.de.client.models.deployedComps.DeployedComponent;
 import org.iplantc.de.client.models.deployedComps.DeployedComponentAutoBeanFactory;
-import org.iplantc.de.client.services.DEServiceFacade;
 import org.iplantc.de.client.services.DeployedComponentServices;
 import org.iplantc.de.client.services.converters.GetAppTemplateDeployedComponentConverter;
 import org.iplantc.de.client.services.converters.GetDeployedComponentsCallbackConverter;
+import org.iplantc.de.shared.DEServiceAsync;
 import org.iplantc.de.shared.SharedAuthenticationValidatingServiceFacade;
 import org.iplantc.de.shared.services.ServiceCallWrapper;
 
@@ -23,10 +22,12 @@ public class DeployedComponentServicesImpl implements DeployedComponentServices 
 
     private final DeployedComponentAutoBeanFactory factory;
     private final DEProperties deProperties;
-    private final DEServiceFacade deServiceFacade;
+    private final DEServiceAsync deServiceFacade;
 
     @Inject
-    public DeployedComponentServicesImpl(final DEServiceFacade deServiceFacade, final DEProperties deProperties, final DeployedComponentAutoBeanFactory factory) {
+    public DeployedComponentServicesImpl(final DEServiceAsync deServiceFacade,
+                                         final DEProperties deProperties,
+                                         final DeployedComponentAutoBeanFactory factory) {
         this.deServiceFacade = deServiceFacade;
         this.deProperties = deProperties;
         this.factory = factory;

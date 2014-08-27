@@ -1,17 +1,5 @@
 package org.iplantc.de.server;
 
-import com.google.gwt.user.client.rpc.SerializationException;
-import com.google.gwt.user.server.rpc.RemoteServiceServlet;
-import org.apache.commons.io.IOUtils;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.*;
-import org.apache.http.entity.ContentType;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.entity.mime.MultipartEntity;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.log4j.Logger;
 import org.iplantc.de.shared.AuthenticationException;
 import org.iplantc.de.shared.DEService;
 import org.iplantc.de.shared.HttpException;
@@ -21,18 +9,37 @@ import org.iplantc.de.shared.services.HTTPPart;
 import org.iplantc.de.shared.services.MultiPartServiceWrapper;
 import org.iplantc.de.shared.services.ServiceCallWrapper;
 
+import com.google.gwt.user.client.rpc.SerializationException;
+import com.google.gwt.user.server.rpc.RemoteServiceServlet;
+
+import org.apache.commons.io.IOUtils;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpDelete;
+import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
+import org.apache.http.client.methods.HttpPatch;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpPut;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.entity.mime.MultipartEntity;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.log4j.Logger;
+
+import java.io.IOException;
+import java.util.List;
+
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
-import java.util.List;
 
 /**
  * Dispatches HTTP requests to other services.
  */
-public abstract class BaseDEServiceDispatcher extends RemoteServiceServlet implements DEService {
+public class DEServiceImpl extends RemoteServiceServlet implements DEService {
     private static final long serialVersionUID = 1L;
-    private static final Logger LOGGER = Logger.getLogger(BaseDEServiceDispatcher.class);
+    private static final Logger LOGGER = Logger.getLogger(DEServiceImpl.class);
 
     private ServiceCallResolver serviceResolver;
 
@@ -54,12 +61,15 @@ public abstract class BaseDEServiceDispatcher extends RemoteServiceServlet imple
     /**
      * The default constructor.
      */
-    public BaseDEServiceDispatcher() {}
+    public DEServiceImpl() {
+        setUrlConnector(new CasUrlConnector());
+    }
 
     /**
      * @param serviceResolver resolves aliased URLs.
      */
-    public BaseDEServiceDispatcher(ServiceCallResolver serviceResolver) {
+    public DEServiceImpl(ServiceCallResolver serviceResolver) {
+        this();
         this.serviceResolver = serviceResolver;
     }
 
@@ -156,8 +166,7 @@ public abstract class BaseDEServiceDispatcher extends RemoteServiceServlet imple
      */
     private String getResponseBody(HttpResponse response) throws IOException {
         checkResponse(response);
-        String responseBody = IOUtils.toString(response.getEntity().getContent());
-        return responseBody;
+        return IOUtils.toString(response.getEntity().getContent());
     }
 
     /**
@@ -504,9 +513,7 @@ public abstract class BaseDEServiceDispatcher extends RemoteServiceServlet imple
             HttpClient client = new DefaultHttpClient();
             try {
                 json = getResponseBody(getResponse(client, wrapper));
-            } catch (AuthenticationException ex) {
-                throw ex;
-            } catch (HttpRedirectException ex) {
+            } catch (AuthenticationException | HttpRedirectException ex) {
                 throw ex;
             } catch (HttpException ex) {
                 LOGGER.error(ex.getResponseBody(), ex);
@@ -587,9 +594,7 @@ public abstract class BaseDEServiceDispatcher extends RemoteServiceServlet imple
             HttpClient client = new DefaultHttpClient();
             try {
                 json = getResponseBody(getResponse(client, wrapper));
-            } catch (AuthenticationException ex) {
-                throw ex;
-            } catch (HttpRedirectException ex) {
+            } catch (AuthenticationException | HttpRedirectException ex) {
                 throw ex;
             } catch (HttpException ex) {
                 LOGGER.error(ex.getResponseBody(), ex);
