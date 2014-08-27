@@ -1,4 +1,4 @@
-package org.iplantc.de.shared;
+package org.iplantc.de.shared.services;
 
 import org.iplantc.de.shared.services.MultiPartServiceWrapper;
 import org.iplantc.de.shared.services.ServiceCallWrapper;

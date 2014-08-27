@@ -1,7 +1,13 @@
-package org.iplantc.de.server;
+package org.iplantc.de.server.service;
 
+import org.iplantc.de.server.CasUrlConnector;
+import org.iplantc.de.server.DESecurityConstants;
+import org.iplantc.de.server.DEServiceInputStream;
+import org.iplantc.de.server.MultipartBodyFactory;
+import org.iplantc.de.server.ServiceCallResolver;
+import org.iplantc.de.server.UrlConnector;
 import org.iplantc.de.shared.AuthenticationException;
-import org.iplantc.de.shared.DEService;
+import org.iplantc.de.shared.services.DEService;
 import org.iplantc.de.shared.HttpException;
 import org.iplantc.de.shared.HttpRedirectException;
 import org.iplantc.de.shared.services.BaseServiceCallWrapper;

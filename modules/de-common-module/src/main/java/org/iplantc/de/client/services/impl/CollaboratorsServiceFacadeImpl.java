@@ -7,7 +7,7 @@ import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.GET;
 import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.POST;
 import org.iplantc.de.client.models.DEProperties;
 import org.iplantc.de.client.services.CollaboratorsServiceFacade;
-import org.iplantc.de.shared.DEServiceAsync;
+import org.iplantc.de.shared.services.DEServiceAsync;
 import org.iplantc.de.shared.services.ServiceCallWrapper;
 
 import com.google.gwt.http.client.URL;

@@ -5,7 +5,7 @@ import org.iplantc.de.client.DEClientConstants;
 import org.iplantc.de.client.models.DEProperties;
 import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.client.services.FileEditorServiceFacade;
-import org.iplantc.de.shared.DEServiceAsync;
+import org.iplantc.de.shared.services.DEServiceAsync;
 import org.iplantc.de.shared.services.ServiceCallWrapper;
 
 import com.google.gwt.core.client.GWT;

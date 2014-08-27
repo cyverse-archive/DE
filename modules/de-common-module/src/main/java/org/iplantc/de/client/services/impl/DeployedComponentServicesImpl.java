@@ -8,7 +8,7 @@ import org.iplantc.de.client.models.deployedComps.DeployedComponentAutoBeanFacto
 import org.iplantc.de.client.services.DeployedComponentServices;
 import org.iplantc.de.client.services.converters.GetAppTemplateDeployedComponentConverter;
 import org.iplantc.de.client.services.converters.GetDeployedComponentsCallbackConverter;
-import org.iplantc.de.shared.DEServiceAsync;
+import org.iplantc.de.shared.services.DEServiceAsync;
 import org.iplantc.de.shared.services.ServiceCallWrapper;
 
 import com.google.gwt.http.client.URL;

@@ -4,7 +4,7 @@ import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.PUT;
 import org.iplantc.de.client.models.DEProperties;
 import org.iplantc.de.client.services.DEFeedbackServiceFacade;
 import org.iplantc.de.client.services.converters.StringToVoidCallbackConverter;
-import org.iplantc.de.shared.DEServiceAsync;
+import org.iplantc.de.shared.services.DEServiceAsync;
 import org.iplantc.de.shared.services.ServiceCallWrapper;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
