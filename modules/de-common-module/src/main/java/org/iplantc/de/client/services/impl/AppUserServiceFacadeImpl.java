@@ -11,7 +11,7 @@ import org.iplantc.de.client.util.DiskResourceUtil;
 import org.iplantc.de.client.util.JsonUtil;
 import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 import org.iplantc.de.resources.client.messages.IplantErrorStrings;
-import org.iplantc.de.shared.ConfluenceException;
+import org.iplantc.de.shared.exceptions.ConfluenceException;
 import org.iplantc.de.shared.services.DEServiceAsync;
 import org.iplantc.de.shared.services.ConfluenceServiceAsync;
 import org.iplantc.de.shared.services.EmailServiceAsync;

@@ -1,6 +1,6 @@
 package org.iplantc.de.shared.services;
 
-import org.iplantc.de.shared.ConfluenceException;
+import org.iplantc.de.shared.exceptions.ConfluenceException;
 
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;

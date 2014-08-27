@@ -1,6 +1,4 @@
-package org.iplantc.de.shared;
-
-import java.io.IOException;
+package org.iplantc.de.shared.exceptions;
 
 /**
  * Thrown by the service dispatcher when an HTTP redirect is received.

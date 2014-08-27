@@ -1,7 +1,8 @@
 package org.iplantc.de.server;
 
 import org.iplantc.clavin.spring.ConfigAliasResolver;
-import org.iplantc.de.shared.ConfluenceException;
+import org.iplantc.de.server.service.SessionManagementServiceImpl;
+import org.iplantc.de.shared.exceptions.ConfluenceException;
 import org.iplantc.de.shared.services.ConfluenceService;
 
 import com.google.gwt.user.client.rpc.SerializationException;

@@ -26,7 +26,7 @@ import org.iplantc.de.commons.client.info.ErrorAnnouncementConfig;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
 import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 import org.iplantc.de.resources.client.messages.IplantErrorStrings;
-import org.iplantc.de.shared.HttpRedirectException;
+import org.iplantc.de.shared.exceptions.HttpRedirectException;
 import org.iplantc.de.shared.services.ConfluenceServiceAsync;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -219,10 +219,10 @@ public class AppsViewPresenterImpl implements AppsView.Presenter {
         Long commentId = userFeedback.getCommentId();
         if ((commentId == null) || (commentId == 0)) {
             appUserService.addAppComment(appId, rating, appWikiUrl,
-                    comment, authorEmail, callback);
+                                         comment, authorEmail, callback);
         } else {
             appUserService.editAppComment(appId, rating,
-                    appWikiUrl, commentId, comment, authorEmail, callback);
+                                          appWikiUrl, commentId, comment, authorEmail, callback);
         }
     }
 

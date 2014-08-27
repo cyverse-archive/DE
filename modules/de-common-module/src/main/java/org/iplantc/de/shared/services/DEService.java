@@ -1,9 +1,7 @@
 package org.iplantc.de.shared.services;
 
-import org.iplantc.de.shared.AuthenticationException;
-import org.iplantc.de.shared.HttpException;
-import org.iplantc.de.shared.services.MultiPartServiceWrapper;
-import org.iplantc.de.shared.services.ServiceCallWrapper;
+import org.iplantc.de.shared.exceptions.AuthenticationException;
+import org.iplantc.de.shared.exceptions.HttpException;
 
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;

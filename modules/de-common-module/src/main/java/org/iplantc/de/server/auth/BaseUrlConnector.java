@@ -1,13 +1,19 @@
-package org.iplantc.de.server;
+package org.iplantc.de.server.auth;
 
-import org.apache.http.client.methods.*;
+import org.apache.http.client.methods.HttpDelete;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPatch;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpPut;
+import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.params.HttpClientParams;
 import org.apache.http.client.utils.URIBuilder;
 
-import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URLEncoder;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * Performs actions common to most URL connectors.

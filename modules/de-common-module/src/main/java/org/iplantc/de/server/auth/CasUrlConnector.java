@@ -1,7 +1,8 @@
-package org.iplantc.de.server;
+package org.iplantc.de.server.auth;
 
 import org.apache.http.client.methods.*;
-import org.iplantc.de.shared.AuthenticationException;
+
+import org.iplantc.de.shared.exceptions.AuthenticationException;
 import org.jasig.cas.client.authentication.AttributePrincipal;
 
 import javax.servlet.http.HttpServletRequest;

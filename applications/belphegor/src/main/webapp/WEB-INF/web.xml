@@ -15,7 +15,7 @@
     <!-- Servlets -->
     <servlet>
         <servlet-name>sessionInitializationServlet</servlet-name>
-        <servlet-class>org.iplantc.de.server.CasSessionInitializationServlet</servlet-class>
+        <servlet-class>org.iplantc.de.server.auth.CasSessionInitializationServlet</servlet-class>
         <init-param>
             <param-name>initialPage</param-name>
             <param-value>#workspace</param-value>
@@ -23,7 +23,7 @@
     </servlet>
     <servlet>
         <servlet-name>logoutSuccessServlet</servlet-name>
-        <servlet-class>org.iplantc.de.server.CasLogoutServlet</servlet-class>
+        <servlet-class>org.iplantc.de.server.auth.CasLogoutServlet</servlet-class>
         <init-param>
             <param-name>propertyNamePrefix</param-name>
             <param-value>org.iplantc.belphegor</param-value>
@@ -31,7 +31,7 @@
     </servlet>
     <servlet>
         <servlet-name>loggedOutServlet</servlet-name>
-        <servlet-class>org.iplantc.de.server.CasLoggedOutServlet</servlet-class>
+        <servlet-class>org.iplantc.de.server.auth.CasLoggedOutServlet</servlet-class>
         <init-param>
             <param-name>propertyNamePrefix</param-name>
             <param-value>org.iplantc.belphegor</param-value>
@@ -39,7 +39,7 @@
     </servlet>
     <servlet>
         <servlet-name>accessDeniedServlet</servlet-name>
-        <servlet-class>org.iplantc.de.server.CasAccessDeniedServlet</servlet-class>
+        <servlet-class>org.iplantc.de.server.auth.CasAccessDeniedServlet</servlet-class>
         <init-param>
             <param-name>propertyNamePrefix</param-name>
             <param-value>org.iplantc.belphegor</param-value>
@@ -51,7 +51,7 @@
     </servlet>
     <servlet>
         <servlet-name>sessionManagementServlet</servlet-name>
-        <servlet-class>org.iplantc.de.server.SessionManagementServiceImpl</servlet-class>
+        <servlet-class>org.iplantc.de.server.service.SessionManagementServiceImpl</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>propertyServlet</servlet-name>

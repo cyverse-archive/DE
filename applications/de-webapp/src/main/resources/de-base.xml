@@ -76,7 +76,7 @@
 
     <bean id="singleLogoutFilter" class="org.jasig.cas.client.session.SingleSignOutFilter"/>
 
-    <bean id="logoutHandler" class="org.iplantc.de.server.CasLogoutSuccessHandler">
+    <bean id="logoutHandler" class="org.iplantc.de.server.auth.CasLogoutSuccessHandler">
         <property name="logoutUrl" value="${org.iplantc.discoveryenvironment.cas.base-url}/logout"/>
         <property name="defaultRedirectUrl"
                   value="${org.iplantc.discoveryenvironment.cas.server-name}/discoveryenvironment/logged-out"/>
