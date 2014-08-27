@@ -58,7 +58,7 @@
 	</servlet>
 	<servlet>
 		<servlet-name>aboutAppServlet</servlet-name>
-		<servlet-class>org.iplantc.de.server.AboutApplicationServlet</servlet-class>
+		<servlet-class>org.iplantc.de.server.AboutApplicationServiceImpl</servlet-class>
 	</servlet>
 	<servlet>
 		<servlet-name>confluenceServlet</servlet-name>

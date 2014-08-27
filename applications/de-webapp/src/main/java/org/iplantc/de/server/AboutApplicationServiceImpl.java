@@ -19,11 +19,10 @@ import javax.servlet.ServletException;
  *
  * This servlet will include information about services once the modeling of software components has been completed.
  *
- * @see org.iplantc.de.client.services.AboutApplicationService
  * @author lenards
  */
 @SuppressWarnings("nls")
-public class AboutApplicationServlet extends RemoteServiceServlet implements AboutApplicationService {
+public class AboutApplicationServiceImpl extends RemoteServiceServlet implements AboutApplicationService {
 
     private static final long serialVersionUID          = 6046105023536377635L;
     private static final String DEFAULT_RELEASE_VERSION = "unversioned";
@@ -37,7 +36,7 @@ public class AboutApplicationServlet extends RemoteServiceServlet implements Abo
     /**
      * The logger for error and informational messages.
      */
-    private static Logger LOG = Logger.getLogger(AboutApplicationServlet.class);
+    private static Logger LOG = Logger.getLogger(AboutApplicationServiceImpl.class);
 
     /**
      * The DE configuration properties.
@@ -48,12 +47,12 @@ public class AboutApplicationServlet extends RemoteServiceServlet implements Abo
     /**
      * The default constructor.
      */
-    public AboutApplicationServlet() {}
+    public AboutApplicationServiceImpl() {}
 
     /**
      * @param deProps the DE configuration properties.
      */
-    public AboutApplicationServlet(DiscoveryEnvironmentProperties deProps) {
+    public AboutApplicationServiceImpl(DiscoveryEnvironmentProperties deProps) {
         this.deProps = deProps;
     }
 

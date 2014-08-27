@@ -1,6 +1,7 @@
 package org.iplantc.de.shared.services;
 
 import com.google.gwt.user.client.rpc.RemoteService;
+import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
 /**
  * Provides a synchronous service for retrieving information about the application.
@@ -8,10 +9,10 @@ import com.google.gwt.user.client.rpc.RemoteService;
  * This information will include the user agent browsing the application along with the versions of
  * client software and the build number. Client software versions stated will be for GWT and GXT.
  * 
- * @see org.iplantc.de.client.services.AboutApplicationServiceAsync
  * @author lenards
  * 
  */
+@RemoteServiceRelativePath("about")
 public interface AboutApplicationService extends RemoteService {
     /**
      * Retrieve information about the application.
