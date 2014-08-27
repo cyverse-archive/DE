@@ -1,4 +1,4 @@
-package org.iplantc.de.server;
+package org.iplantc.de.server.service;
 
 import org.iplantc.de.server.service.IplantEmailClient;
 import org.iplantc.de.server.service.IplantEmailClient.MessageRequest;

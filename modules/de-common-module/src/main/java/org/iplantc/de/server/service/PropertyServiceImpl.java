@@ -1,4 +1,4 @@
-package org.iplantc.de.server;
+package org.iplantc.de.server.service;
 
 import org.iplantc.clavin.spring.ConfigAliasResolver;
 import org.iplantc.de.shared.services.PropertyService;
