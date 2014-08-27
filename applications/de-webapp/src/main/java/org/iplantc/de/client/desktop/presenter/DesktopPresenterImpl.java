@@ -49,7 +49,7 @@ import org.iplantc.de.commons.client.views.window.configs.WindowConfig;
 import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 import org.iplantc.de.resources.client.messages.IplantErrorStrings;
 import org.iplantc.de.shared.DeModule;
-import org.iplantc.de.shared.services.PropertyServiceFacade;
+import org.iplantc.de.shared.services.PropertyServiceAsync;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import com.google.common.base.Strings;
@@ -135,7 +135,7 @@ public class DesktopPresenterImpl implements DesktopView.Presenter {
     @Inject
     AnalysesAutoBeanFactory analysesFactory;
     @Inject
-    PropertyServiceFacade propertyServiceFacade;
+    PropertyServiceAsync propertyServiceFacade;
     @Inject
     UserInfo userInfo;
     @Inject
