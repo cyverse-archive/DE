@@ -9,7 +9,6 @@ import org.iplantc.de.client.services.DeployedComponentServices;
 import org.iplantc.de.client.services.converters.GetAppTemplateDeployedComponentConverter;
 import org.iplantc.de.client.services.converters.GetDeployedComponentsCallbackConverter;
 import org.iplantc.de.shared.DEServiceAsync;
-import org.iplantc.de.shared.SharedAuthenticationValidatingServiceFacade;
 import org.iplantc.de.shared.services.ServiceCallWrapper;
 
 import com.google.gwt.http.client.URL;
@@ -46,7 +45,7 @@ public class DeployedComponentServicesImpl implements DeployedComponentServices 
         GetDeployedComponentsCallbackConverter callbackCnvt = new GetDeployedComponentsCallbackConverter(callback, factory);
         ServiceCallWrapper wrapper = new ServiceCallWrapper("org.iplantc.services.zoidberg.components"); //$NON-NLS-1$
 
-        callService(callbackCnvt, wrapper);
+        deServiceFacade.getServiceData(wrapper, callbackCnvt);
     }
 
     @Override
@@ -57,11 +56,5 @@ public class DeployedComponentServicesImpl implements DeployedComponentServices 
         ServiceCallWrapper wrapper = new ServiceCallWrapper(address);
         deServiceFacade.getServiceData(wrapper, callbackCnvt);
     }
-
-    private void callService(AsyncCallback<String> callback, ServiceCallWrapper wrapper) {
-        SharedAuthenticationValidatingServiceFacade.getInstance().getServiceData(wrapper, callback);
-    }
-
-
 
 }

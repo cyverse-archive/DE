@@ -11,7 +11,6 @@ import org.iplantc.de.client.services.converters.AppTemplateCallbackConverter;
 import org.iplantc.de.client.util.AppTemplateUtils;
 import org.iplantc.de.client.util.JsonUtil;
 import org.iplantc.de.shared.DEServiceAsync;
-import org.iplantc.de.shared.SharedServiceFacade;
 import org.iplantc.de.shared.services.ServiceCallWrapper;
 
 import com.google.common.collect.Lists;
@@ -138,7 +137,7 @@ public class AppTemplateServicesImpl implements AppTemplateServices, AppMetadata
         String address = deProperties.getMuleServiceBaseUrl() + "update-app"; //$NON-NLS-1$
         Splittable split = appTemplateToSplittable(at);
         ServiceCallWrapper wrapper = new ServiceCallWrapper(PUT, address, split.getPayload());
-        callSecuredService(callback, wrapper);
+        deServiceFacade.getServiceData(wrapper, callback);
     }
 
     @Override
@@ -146,7 +145,7 @@ public class AppTemplateServicesImpl implements AppTemplateServices, AppMetadata
         String address = deProperties.getUnproctedMuleServiceBaseUrl() + "update-app-labels"; //$NON-NLS-1$
         Splittable split = appTemplateToSplittable(at);
         ServiceCallWrapper wrapper = new ServiceCallWrapper(POST, address, split.getPayload());
-        callSecuredService(callback, wrapper);
+        deServiceFacade.getServiceData(wrapper, callback);
 
     }
 
@@ -166,14 +165,10 @@ public class AppTemplateServicesImpl implements AppTemplateServices, AppMetadata
                         arg.setValue(split);
                     }
                 }
-                    }
-                }
+            }
+        }
         return ret;
     }
-
-    private void callSecuredService(AsyncCallback<String> callback, ServiceCallWrapper wrapper) {
-        SharedServiceFacade.getInstance().getServiceData(wrapper, callback);
-            }
 
     private Splittable doAssembleLaunchAnalysisPayload(AppTemplate at, JobExecution je) {
         Splittable assembledPayload = AutoBeanCodex.encode(AutoBeanUtils.getAutoBean(je));
@@ -199,10 +194,10 @@ public class AppTemplateServicesImpl implements AppTemplateServices, AppMetadata
                 }
 
             }
-                }
+        }
         configSplit.assign(assembledPayload, "config");
         return assembledPayload;
-            }
+    }
 
     private AppTemplate doCmdLinePreviewCleanup(AppTemplate templateToClean) {
         AppTemplate copy = AppTemplateUtils.copyAppTemplate(templateToClean);
@@ -237,13 +232,13 @@ public class AppTemplateServicesImpl implements AppTemplateServices, AppMetadata
                     if (arg.getDataObject().isImplicit()) {
                         arg.setValue(null);
                         arg.setName("");
-                            }
-                        }
                     }
                 }
+            }
+        }
 
         return copy;
-            }
+    }
 
     private void enqueueDataSourceCallback(final AsyncCallback<List<DataSource>> callback) {
         if (dataSourceQueue.isEmpty()) {
@@ -267,7 +262,7 @@ public class AppTemplateServicesImpl implements AppTemplateServices, AppMetadata
                 }
             });
 
-                }
+        }
         dataSourceQueue.add(callback);
     }
 
@@ -295,7 +290,7 @@ public class AppTemplateServicesImpl implements AppTemplateServices, AppMetadata
                     }
                 }
             });
-                }
+        }
         fileInfoTypeQueue.add(callback);
 
     }
