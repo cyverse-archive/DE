@@ -3,6 +3,7 @@ package org.iplantc.de.shared.services;
 import org.iplantc.de.shared.ConfluenceException;
 
 import com.google.gwt.user.client.rpc.RemoteService;
+import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
 /**
  * A service interface for interfacing with Confluence (synchronous part).
@@ -10,6 +11,7 @@ import com.google.gwt.user.client.rpc.RemoteService;
  * @author hariolf
  * 
  */
+@RemoteServiceRelativePath("confluence")
 public interface ConfluenceService extends RemoteService {
 
     /**
@@ -27,7 +29,6 @@ public interface ConfluenceService extends RemoteService {
      * 
      * @param toolName the name of the tool which is used as the page title
      * @param avgRating the new average rating score
-     * @param callback called after the service call finishes
      * @throws ConfluenceException
      */
     void updatePage(String toolName, int avgRating) throws ConfluenceException;
@@ -80,9 +81,8 @@ public interface ConfluenceService extends RemoteService {
      * 
      * Move the wiki doc page for an app to new location under list of application with new title
      * 
-     * @param oldAppName
-     * @param newAppName
-     * @return
+     * @param oldAppName the old app name
+     * @param newAppName the new app name
      * @throws ConfluenceException
      */
     String movePage(String oldAppName, String newAppName) throws ConfluenceException;

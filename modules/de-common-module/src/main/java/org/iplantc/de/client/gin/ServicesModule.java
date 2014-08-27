@@ -52,7 +52,6 @@ import org.iplantc.de.client.services.stubs.SearchServiceFacadeStub;
 import org.iplantc.de.client.services.stubs.SystemMessageServiceFacadeStub;
 import org.iplantc.de.client.services.stubs.ToolRequestServiceFacadeStub;
 import org.iplantc.de.client.services.stubs.UserSessionServiceFacadeStub;
-import org.iplantc.de.shared.services.ConfluenceServiceFacade;
 import org.iplantc.de.shared.services.EmailServiceFacade;
 
 import com.google.gwt.inject.client.AbstractGinModule;
@@ -97,11 +96,6 @@ final class ServicesModule extends AbstractGinModule {
         bind(SystemMessageServiceFacade.class).annotatedWith(Stub.class).to(SystemMessageServiceFacadeStub.class);
         bind(UserSessionServiceFacade.class).annotatedWith(Stub.class).to(UserSessionServiceFacadeStub.class);
         bind(TagsServiceFacade.class).annotatedWith(Stub.class).to(MetadataServiceFacadeStub.class);
-    }
-
-    @Provides
-    public ConfluenceServiceFacade createConfluenceService() {
-        return ConfluenceServiceFacade.getInstance();
     }
 
     @Provides

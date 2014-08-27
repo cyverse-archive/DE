@@ -35,7 +35,7 @@ import org.iplantc.de.commons.client.views.gxt3.dialogs.IPlantDialog;
 import org.iplantc.de.commons.client.views.gxt3.dialogs.IPlantPromptDialog;
 import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 import org.iplantc.de.resources.client.messages.IplantErrorStrings;
-import org.iplantc.de.shared.services.ConfluenceServiceFacade;
+import org.iplantc.de.shared.services.ConfluenceServiceAsync;
 
 import com.google.common.collect.Lists;
 import com.google.gwt.json.client.JSONArray;
@@ -82,6 +82,7 @@ public class BelphegorAppsViewPresenterImpl extends AppsViewPresenterImpl implem
     private final AppsView view;
     private final AppAdminServiceFacade adminAppService;
     private final EventBus eventBus;
+    private final ConfluenceServiceAsync confluenceService;
     private final IplantAnnouncer announcer;
     private final IplantDisplayStrings displayStrings;
     private final IplantErrorStrings errorStrings;
@@ -89,22 +90,24 @@ public class BelphegorAppsViewPresenterImpl extends AppsViewPresenterImpl implem
     @Inject
     public BelphegorAppsViewPresenterImpl(final AppsView view,
                                           final AppGroupProxy proxy,
-                                          AppAdminServiceFacade appService,
-                                          AppUserServiceFacade appUserService,
+                                          final AppAdminServiceFacade appService,
+                                          final AppUserServiceFacade appUserService,
                                           final AppAutoBeanFactory factory,
                                           final AppAdminServiceRequestAutoBeanFactory serviceFactory,
                                           final EventBus eventBus,
                                           final UserInfo userInfo,
                                           final DEProperties props,
+                                          final ConfluenceServiceAsync confluenceService,
                                           final IplantAnnouncer announcer,
                                           final IplantDisplayStrings displayStrings,
                                           final IplantErrorStrings errorStrings) {
-        super(view, proxy, appService, appUserService, eventBus, userInfo, props, announcer, displayStrings, errorStrings);
+        super(view, proxy, appService, appUserService, eventBus, userInfo, props, confluenceService, announcer, displayStrings, errorStrings);
         this.view = view;
         this.adminAppService = appService;
         this.factory = factory;
         this.serviceFactory = serviceFactory;
         this.eventBus = eventBus;
+        this.confluenceService = confluenceService;
         this.announcer = announcer;
         this.displayStrings = displayStrings;
         this.errorStrings = errorStrings;
@@ -474,7 +477,7 @@ public class BelphegorAppsViewPresenterImpl extends AppsViewPresenterImpl implem
         final JSONObject jsonObj = JsonUtil.getObject(jsonString);
 
         if (app.getName() != null) {
-            ConfluenceServiceFacade.getInstance().movePage(app.getName(), app.getName(),
+            confluenceService.movePage(app.getName(), app.getName(),
                     new AsyncCallback<String>() {
 
                         @Override

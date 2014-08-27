@@ -12,8 +12,9 @@ import org.iplantc.de.client.models.apps.AppRefLink;
 import org.iplantc.de.client.services.AppUserServiceFacade;
 import org.iplantc.de.client.util.JsonUtil;
 import org.iplantc.de.commons.client.ErrorHandler;
-import org.iplantc.de.resources.client.messages.I18N;
-import org.iplantc.de.shared.services.ConfluenceServiceFacade;
+import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
+import org.iplantc.de.resources.client.messages.IplantErrorStrings;
+import org.iplantc.de.shared.services.ConfluenceServiceAsync;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.json.client.JSONArray;
@@ -37,12 +38,26 @@ public class SubmitAppForPublicPresenter implements SubmitAppForPublicUseView.Pr
     private AsyncCallback<String> callback;
     private final AppUserServiceFacade appService;
     private final PublicAppGroupProxy appGroupProxy;
+    private final EventBus eventBus;
+    private final IplantDisplayStrings displayStrings;
+    private final IplantErrorStrings errorStrings;
+    private final ConfluenceServiceAsync confluenceService;
 
     @Inject
-    public SubmitAppForPublicPresenter(SubmitAppForPublicUseView view, AppUserServiceFacade appService, PublicAppGroupProxy appGroupProxy) {
+    public SubmitAppForPublicPresenter(SubmitAppForPublicUseView view,
+                                       final AppUserServiceFacade appService,
+                                       final PublicAppGroupProxy appGroupProxy,
+                                       final EventBus eventBus,
+                                       final IplantDisplayStrings displayStrings,
+                                       final IplantErrorStrings errorStrings,
+                                       final ConfluenceServiceAsync confluenceService) {
         this.view = view;
         this.appService = appService;
         this.appGroupProxy = appGroupProxy;
+        this.eventBus = eventBus;
+        this.displayStrings = displayStrings;
+        this.errorStrings = errorStrings;
+        this.confluenceService = confluenceService;
     }
 
     @Override
@@ -75,7 +90,7 @@ public class SubmitAppForPublicPresenter implements SubmitAppForPublicUseView.Pr
 
             @Override
             public void onFailure(Throwable caught) {
-                ErrorHandler.post(I18N.ERROR.publishFailureDefaultMessage(), caught);
+                ErrorHandler.post(errorStrings.publishFailureDefaultMessage(), caught);
             }
         });
     }
@@ -85,7 +100,7 @@ public class SubmitAppForPublicPresenter implements SubmitAppForPublicUseView.Pr
         if (view.validate()) {
             createDocumentationPage(view.toJson());
         } else {
-            AlertMessageBox amb = new AlertMessageBox(I18N.DISPLAY.warning(), I18N.DISPLAY.publicSubmitTip());
+            AlertMessageBox amb = new AlertMessageBox(displayStrings.warning(), displayStrings.publicSubmitTip());
             amb.show();
         }
     }
@@ -95,7 +110,7 @@ public class SubmitAppForPublicPresenter implements SubmitAppForPublicUseView.Pr
 
             @Override
             public void onFailure(Throwable caught) {
-                ErrorHandler.post(I18N.ERROR.publishFailureDefaultMessage(), caught);
+                ErrorHandler.post(errorStrings.publishFailureDefaultMessage(), caught);
             }
 
             @Override
@@ -110,17 +125,17 @@ public class SubmitAppForPublicPresenter implements SubmitAppForPublicUseView.Pr
     }
 
     private void createDocumentationPage(final JSONObject obj) {
-        final AutoProgressMessageBox pmb = new AutoProgressMessageBox(I18N.DISPLAY.submitForPublicUse(), I18N.DISPLAY.submitRequest());
-        pmb.setProgressText(I18N.DISPLAY.submitting());
+        final AutoProgressMessageBox pmb = new AutoProgressMessageBox(displayStrings.submitForPublicUse(), displayStrings.submitRequest());
+        pmb.setProgressText(displayStrings.submitting());
         pmb.setClosable(false);
         pmb.getProgressBar().setInterval(100);
         pmb.auto();
         pmb.show();
-        ConfluenceServiceFacade.getInstance().createDocumentationPage(JsonUtil.getString(obj, "name"), JsonUtil.getString(obj, "desc"), new AsyncCallback<String>() {
+        confluenceService.addPage(JsonUtil.getString(obj, "name"), JsonUtil.getString(obj, "desc"), new AsyncCallback<String>() {
             @Override
             public void onFailure(Throwable caught) {
                 pmb.hide();
-                ErrorHandler.post(I18N.ERROR.cantCreateConfluencePage(JsonUtil.getString(obj, "name")), caught);
+                ErrorHandler.post(errorStrings.cantCreateConfluencePage(JsonUtil.getString(obj, "name")), caught);
 
                 // SS:uncomment this for testing purposes only...
                 // onSuccess("http://test.com/url");
@@ -133,7 +148,7 @@ public class SubmitAppForPublicPresenter implements SubmitAppForPublicUseView.Pr
                     @Override
                     public void onSuccess(String result) {
                         pmb.hide();
-                        EventBus.getInstance().fireEvent(new AppPublishedEvent(view.getSelectedApp()));
+                        eventBus.fireEvent(new AppPublishedEvent(view.getSelectedApp()));
                         callback.onSuccess(url);
                     }
 
@@ -149,7 +164,7 @@ public class SubmitAppForPublicPresenter implements SubmitAppForPublicUseView.Pr
 
     private List<AppRefLink> parseRefLinks(JSONArray arr) {
         AppAutoBeanFactory factory = GWT.create(AppAutoBeanFactory.class);
-        List<AppRefLink> linksList = new ArrayList<AppRefLink>();
+        List<AppRefLink> linksList = new ArrayList<>();
         for (int i = 0; i < arr.size(); i++) {
             AutoBean<AppRefLink> bean = AutoBeanCodex.decode(factory, AppRefLink.class, "{}");
             AppRefLink link = bean.as();
