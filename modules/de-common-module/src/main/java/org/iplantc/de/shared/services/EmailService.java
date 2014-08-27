@@ -1,6 +1,7 @@
 package org.iplantc.de.shared.services;
 
 import com.google.gwt.user.client.rpc.RemoteService;
+import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
 /**
  * A service for sending simple emails.
@@ -8,6 +9,7 @@ import com.google.gwt.user.client.rpc.RemoteService;
  * @author hariolf
  * 
  */
+@RemoteServiceRelativePath("email")
 public interface EmailService extends RemoteService {
 
     /**

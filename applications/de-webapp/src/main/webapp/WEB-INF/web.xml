@@ -62,7 +62,7 @@
     </servlet>
     <servlet>
         <servlet-name>emailServlet</servlet-name>
-        <servlet-class>org.iplantc.de.server.EmailServlet</servlet-class>
+        <servlet-class>org.iplantc.de.server.EmailServiceImpl</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>emptyResponseServlet</servlet-name>

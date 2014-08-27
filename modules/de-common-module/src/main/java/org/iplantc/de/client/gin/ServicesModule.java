@@ -6,7 +6,6 @@ import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.client.services.*;
 import org.iplantc.de.client.services.impl.*;
 import org.iplantc.de.client.services.stubs.*;
-import org.iplantc.de.shared.services.EmailServiceFacade;
 
 import com.google.gwt.inject.client.AbstractGinModule;
 import com.google.inject.Provides;
@@ -50,11 +49,6 @@ final class ServicesModule extends AbstractGinModule {
         bind(SystemMessageServiceFacade.class).annotatedWith(Stub.class).to(SystemMessageServiceFacadeStub.class);
         bind(UserSessionServiceFacade.class).annotatedWith(Stub.class).to(UserSessionServiceFacadeStub.class);
         bind(TagsServiceFacade.class).annotatedWith(Stub.class).to(MetadataServiceFacadeStub.class);
-    }
-
-    @Provides
-    EmailServiceFacade createEmailServiceFacade() {
-        return EmailServiceFacade.getInstance();
     }
 
     @Provides

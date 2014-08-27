@@ -14,7 +14,7 @@ import org.iplantc.de.resources.client.messages.IplantErrorStrings;
 import org.iplantc.de.shared.ConfluenceException;
 import org.iplantc.de.shared.DEServiceAsync;
 import org.iplantc.de.shared.services.ConfluenceServiceAsync;
-import org.iplantc.de.shared.services.EmailServiceFacade;
+import org.iplantc.de.shared.services.EmailServiceAsync;
 import org.iplantc.de.shared.services.ServiceCallWrapper;
 
 import com.google.common.base.Strings;
@@ -43,7 +43,7 @@ public class AppUserServiceFacadeImpl implements AppUserServiceFacade {
     private final DEProperties deProperties;
     private final ConfluenceServiceAsync confluenceService;
     private final UserInfo userInfo;
-    private final EmailServiceFacade emailService;
+    private final EmailServiceAsync emailService;
     private final IplantErrorStrings errorStrings;
     private final IplantDisplayStrings displayStrings;
 
@@ -52,7 +52,7 @@ public class AppUserServiceFacadeImpl implements AppUserServiceFacade {
                                     final DEProperties deProperties,
                                     final ConfluenceServiceAsync confluenceService,
                                     final UserInfo userInfo,
-                                    final EmailServiceFacade emailService,
+                                    final EmailServiceAsync emailService,
                                     final IplantDisplayStrings displayStrings,
                                     final IplantErrorStrings errorStrings) {
         this.deServiceFacade = deServiceFacade;
@@ -64,9 +64,6 @@ public class AppUserServiceFacadeImpl implements AppUserServiceFacade {
         this.errorStrings = errorStrings;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void getPublicAppGroups(AsyncCallback<List<AppGroup>> callback) {
         String address = deProperties.getUnproctedMuleServiceBaseUrl() + "public-app-groups"; //$NON-NLS-1$
