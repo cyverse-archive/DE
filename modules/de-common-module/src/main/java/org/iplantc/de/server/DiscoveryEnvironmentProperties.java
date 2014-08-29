@@ -1,13 +1,10 @@
 package org.iplantc.de.server;
 
-import org.iplantc.clavin.spring.ClavinPropertyPlaceholderConfigurer;
+import com.google.common.base.Preconditions;
 
-import org.springframework.web.context.WebApplicationContext;
-import org.springframework.web.context.support.WebApplicationContextUtils;
-
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Properties;
-
-import javax.servlet.ServletContext;
 
 /**
  * Provides access to configuration properties for the Discovery Environment.
@@ -28,6 +25,7 @@ public class DiscoveryEnvironmentProperties {
     private static final String MULE_SERVICE_BASE_URL = PREFIX + ".muleServiceBaseUrl";                // $NON-NLS$
     private static final String PRODUCTION_DEPLOYMENT = PREFIX + ".environment.prod-deployment";       // $NON-NLS$
     private static final String MAINTENANCE_FILE = PREFIX + ".maintenance-file";                       // $NON-NLS$
+    private static final String EMAIL_BASE_PROPERTY = "org.iplantc.services.email-base";
 
     /**
      * The list of required properties.
@@ -42,26 +40,10 @@ public class DiscoveryEnvironmentProperties {
     private final Properties props;
 
     /**
-     * @param configurer the configurer that was used to load the properties.
-     */
-    public DiscoveryEnvironmentProperties(ClavinPropertyPlaceholderConfigurer configurer) {
-        if (configurer == null) {
-            throw new IllegalArgumentException("the configurer may not be null"); // $NON-NLS$
-        }
-        props = configurer.getConfig("discoveryenvironment"); // $NON-NLS$
-        if (props == null) {
-            throw new IllegalArgumentException("discovery environment configuration not found"); // $NON-NLS$
-        }
-        validateProperties();
-    }
-
-    /**
      * @param props the configuration properties.
      */
     public DiscoveryEnvironmentProperties(Properties props) {
-        if (props == null) {
-            throw new IllegalArgumentException("the properties may not be null"); // $NON-NLS$
-        }
+        Preconditions.checkNotNull(props);
         this.props = props;
         validateProperties();
     }
@@ -69,27 +51,28 @@ public class DiscoveryEnvironmentProperties {
     /**
      * Gets the discovery environment properties to use for the given servlet context.
      * 
-     * @param context the servlet context.
      * @return the discovery environment properties.
-     * @throws IllegalStateException if the discovery environment properties aren't defined.
      */
-    public static DiscoveryEnvironmentProperties getDiscoveryEnvironmentProperties(ServletContext context) {
-        WebApplicationContext appContext = WebApplicationContextUtils
-                .getRequiredWebApplicationContext(context);
-        DiscoveryEnvironmentProperties result
-                = (DiscoveryEnvironmentProperties) appContext.getBean(DiscoveryEnvironmentProperties.class);
-        if (result == null) {
-            throw new IllegalStateException("discovery environment properties bean not defined"); // $NON-NLS$
+    public static DiscoveryEnvironmentProperties getDiscoveryEnvironmentProperties() throws IOException {
+
+        DiscoveryEnvironmentProperties deProps;
+        try {
+            InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream("discoveryenvironment.properties");
+            Properties properties = new Properties();
+            properties.load(in);
+            in.close();
+            deProps = new DiscoveryEnvironmentProperties(properties);
+        } catch (IOException e) {
+            throw e;
         }
-        return result;
+        return deProps;
     }
 
     /**
      * Validates that we have values for all required properties.
      */
     private void validateProperties() {
-        for (int i = 0; i < REQUIRED_PROPERTIES.length; i++) {
-            String propertyName = REQUIRED_PROPERTIES[i];
+        for (String propertyName : REQUIRED_PROPERTIES) {
             String propertyValue = props.getProperty(propertyName);
             if (propertyValue == null || propertyValue.equals("")) {
                 throw new ExceptionInInitializerError("missing required property: " + propertyName); // $NON-NLS$
@@ -175,5 +158,13 @@ public class DiscoveryEnvironmentProperties {
      */
     public String getMaintenanceFile() {
         return props.getProperty(MAINTENANCE_FILE);
+    }
+
+    public Properties getProperties() {
+        return props;
+    }
+
+    public String getEmailBaseUrl() {
+        return props.getProperty(EMAIL_BASE_PROPERTY);
     }
 }

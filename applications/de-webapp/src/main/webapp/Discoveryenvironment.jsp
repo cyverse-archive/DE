@@ -7,8 +7,7 @@ response.setHeader("Pragma", "no-cache");
 response.setDateHeader("Expires", 0);
 
 // Fetch the DE configuration settings.
-ServletContext ctx = getServletConfig().getServletContext();
-DiscoveryEnvironmentProperties props = DiscoveryEnvironmentProperties.getDiscoveryEnvironmentProperties(ctx);
+DiscoveryEnvironmentProperties props = DiscoveryEnvironmentProperties.getDiscoveryEnvironmentProperties();
 
 // Redirect the user to the maintenance page if the DE is under maintenance.
 DiscoveryEnvironmentMaintenance deMaintenance = new DiscoveryEnvironmentMaintenance(props.getMaintenanceFile());

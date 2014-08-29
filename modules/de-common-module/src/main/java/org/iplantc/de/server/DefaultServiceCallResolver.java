@@ -1,11 +1,11 @@
 package org.iplantc.de.server;
 
-import org.iplantc.clavin.spring.ConfigAliasResolver;
 import org.iplantc.de.shared.services.BaseServiceCallWrapper;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
+import java.io.IOException;
 import java.util.Properties;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
@@ -18,8 +18,12 @@ public class DefaultServiceCallResolver extends ServiceCallResolver {
     private Properties appProperties;
     private String prefix;
 
-    public DefaultServiceCallResolver(ConfigAliasResolver configResolver) {
-        appProperties = configResolver.getRequiredAliasedConfig("webapp");
+    public DefaultServiceCallResolver() throws IOException {
+        this(DiscoveryEnvironmentProperties.getDiscoveryEnvironmentProperties());
+    }
+
+    protected DefaultServiceCallResolver(DiscoveryEnvironmentProperties deProps) {
+        appProperties = deProps.getProperties();
         setPrefix();
         validatePrefix();
     }

@@ -15,7 +15,7 @@ project(':confluence-client') {
 
     dependencies {
         compile project(':de-common-module')
-        compile project(':clavin-java')
+//        compile project(':clavin-java')
         compile "org.slf4j:jcl-over-slf4j:$slf4jVersion"
         compile "log4j:log4j:$log4jVersion"
         compile 'org.swift.common:cli:2.4.0'
@@ -35,6 +35,7 @@ project(':analyses-module') {
     dependencies {
         gwt "com.google.gwt.inject:gin:$gwtGinVer"
         gwt "com.sencha.gxt:gxt:$gxtVersion"
+        gwt "com.google.guava:guava-gwt:$guavaGwtVer"
         gwt project(':ui-commons-module')
         gwt project(':de-common-module')
         gwt project(':ui-disk-resource-module')
@@ -42,6 +43,7 @@ project(':analyses-module') {
 
         compile "com.google.gwt.inject:gin:$gwtGinVer"
         compile "com.sencha.gxt:gxt:$gxtVersion"
+        compile "com.google.guava:guava-gwt:$guavaGwtVer"
         compile project(':ui-commons-module')
         compile project(':de-common-module')
         compile project(':ui-disk-resource-module')
@@ -57,6 +59,7 @@ project(':ui-apps-integration') {
     dependencies {
         gwt "com.google.gwt.inject:gin:$gwtGinVer"
         gwt "com.sencha.gxt:gxt:$gxtVersion"
+        gwt "com.google.guava:guava-gwt:$guavaGwtVer"
         gwt project(':ui-applications-module')
         gwt project(':ui-disk-resource-module')
         gwt project(':ui-apps-widgets-module')
@@ -66,6 +69,7 @@ project(':ui-apps-integration') {
 
         compile "com.google.gwt.inject:gin:$gwtGinVer"
         compile "com.sencha.gxt:gxt:$gxtVersion"
+        compile "com.google.guava:guava-gwt:$guavaGwtVer"
         compile project(':ui-applications-module')
         compile project(':ui-disk-resource-module')
         compile project(':ui-apps-widgets-module')
@@ -83,6 +87,7 @@ project(':ui-apps-widgets-module') {
     dependencies {
         gwt "com.google.gwt.inject:gin:$gwtGinVer"
         gwt "com.sencha.gxt:gxt:$gxtVersion"
+        gwt "com.google.guava:guava-gwt:$guavaGwtVer"
         gwt project(':ui-disk-resource-module')
         gwt project(':ui-commons-module')
         gwt project(':ui-applications-module')
@@ -91,6 +96,7 @@ project(':ui-apps-widgets-module') {
 
         compile "com.google.gwt.inject:gin:$gwtGinVer"
         compile "com.sencha.gxt:gxt:$gxtVersion"
+        compile "com.google.guava:guava-gwt:$guavaGwtVer"
         compile project(':ui-disk-resource-module')
         compile project(':ui-commons-module')
         compile project(':ui-applications-module')
@@ -106,6 +112,7 @@ project(':ui-disk-resource-module') {
 
     dependencies {
         gwt "com.sencha.gxt:gxt:$gxtVersion"
+        gwt "com.google.guava:guava-gwt:$guavaGwtVer"
         gwt "com.google.gwt.inject:gin:$gwtGinVer"
         gwt project(':ui-resources-module')
         gwt project(':de-common-module')
@@ -113,6 +120,7 @@ project(':ui-disk-resource-module') {
 
         compile "com.sencha.gxt:gxt:$gxtVersion"
         compile "com.google.gwt.inject:gin:$gwtGinVer"
+        compile "com.google.guava:guava-gwt:$guavaGwtVer"
         compile project(':ui-resources-module')
         compile project(':de-common-module')
         compile project(':ui-commons-module')
@@ -126,6 +134,7 @@ project(':ui-pipelines-module') {
     dependencies {
         gwt "com.google.gwt.inject:gin:$gwtGinVer"
         gwt "com.sencha.gxt:gxt:$gxtVersion"
+        gwt "com.google.guava:guava-gwt:$guavaGwtVer"
         compile "com.sencha.gxt:gxt:$gxtVersion"
         gwt project(':ui-applications-module')
         gwt project(':ui-commons-module')
@@ -135,6 +144,7 @@ project(':ui-pipelines-module') {
 
         compile "com.google.gwt.inject:gin:$gwtGinVer"
         compile "com.sencha.gxt:gxt:$gxtVersion"
+        compile "com.google.guava:guava-gwt:$guavaGwtVer"
         compile project(':ui-applications-module')
         compile project(':ui-commons-module')
         compile project(':ui-pipeline-builder-module')
@@ -160,6 +170,7 @@ project(':ui-applications-module') {
     dependencies {
         gwt "com.google.gwt.inject:gin:$gwtGinVer"
         gwt "com.sencha.gxt:gxt:$gxtVersion"
+        gwt "com.google.guava:guava-gwt:$guavaGwtVer"
         gwt project(':ui-resources-module')
         gwt project(':ui-disk-resource-module')
         gwt project(':de-common-module')
@@ -167,6 +178,7 @@ project(':ui-applications-module') {
 
         compile "com.google.gwt.inject:gin:$gwtGinVer"
         compile "com.sencha.gxt:gxt:$gxtVersion"
+        compile "com.google.gwt.inject:gin:$gwtGinVer"
         compile project(':ui-resources-module')
         compile project(':ui-disk-resource-module')
         compile project(':de-common-module')
@@ -204,12 +216,14 @@ project(':de-common-module') {
         gwt project(':ui-resources-module')
         gwt "com.google.gwt.inject:gin:$gwtGinVer"
         gwt "com.sencha.gxt:gxt:$gxtVersion"
+        gwt "com.google.guava:guava-gwt:$guavaGwtVer"
 
         compile project(':ui-resources-module')
         compile "com.google.gwt.inject:gin:$gwtGinVer"
         compile "com.sencha.gxt:gxt:$gxtVersion"
+        compile "com.google.guava:guava-gwt:$guavaGwtVer"
 
-        compile project(':clavin-java')
+//        compile project(':clavin-java')
         compile "log4j:log4j:$log4jVersion"
         compile 'org.apache.httpcomponents:httpclient:4.2.1'
         compile 'org.apache.httpcomponents:httpmime:4.2.1'
@@ -237,31 +251,31 @@ project(':ui-resources-module') {
         compile "com.sencha.gxt:gxt:$gxtVersion"
     }
 }
-project(':clavin-java') {
-
-    configurations {
-        provided
-        compile.extendsFrom provided
-        runtime.exclude module: 'javaee-api'
-        runtime.exclude module: 'javaee-web-api'
-    }
-    sourceSets {
-        main { compileClasspath += configurations.provided }
-    }
-
-    dependencies {
-        compile 'com.netflix.curator:curator-framework:1.1.16'
-        /* The netflix curator lib needs a version of guava
-         * whose Closeables.closeQuietly(..) method accepts a Closeable interface
-         */
-        compile 'com.google.guava:guava:15.0'
-        provided 'javax:javaee-web-api:6.0'
-        compile 'org.springframework:spring-web:3.0.7.RELEASE'
-        compile 'org.springframework:spring-beans:3.0.7.RELEASE'
-
-        testCompile 'com.netflix.curator:curator-test:1.1.16'
-        testCompile "junit:junit:$jUnitVersion"
-    }
-}
+//project(':clavin-java') {
+//
+//    configurations {
+//        provided
+//        compile.extendsFrom provided
+//        runtime.exclude module: 'javaee-api'
+//        runtime.exclude module: 'javaee-web-api'
+//    }
+//    sourceSets {
+//        main { compileClasspath += configurations.provided }
+//    }
+//
+//    dependencies {
+//        compile 'com.netflix.curator:curator-framework:1.1.16'
+//        /* The netflix curator lib needs a version of guava
+//         * whose Closeables.closeQuietly(..) method accepts a Closeable interface
+//         */
+//        compile 'com.google.guava:guava:15.0'
+//        provided 'javax:javaee-web-api:6.0'
+//        compile 'org.springframework:spring-web:3.0.7.RELEASE'
+//        compile 'org.springframework:spring-beans:3.0.7.RELEASE'
+//
+//        testCompile 'com.netflix.curator:curator-test:1.1.16'
+//        testCompile "junit:junit:$jUnitVersion"
+//    }
+//}
 
 

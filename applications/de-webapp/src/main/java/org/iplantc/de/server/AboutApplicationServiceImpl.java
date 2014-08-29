@@ -9,6 +9,7 @@ import net.sf.json.JSONObject;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
+import java.io.IOException;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 
@@ -45,18 +46,6 @@ public class AboutApplicationServiceImpl extends RemoteServiceServlet implements
     private Attributes manifestAttrs;
 
     /**
-     * The default constructor.
-     */
-    public AboutApplicationServiceImpl() {}
-
-    /**
-     * @param deProps the DE configuration properties.
-     */
-    public AboutApplicationServiceImpl(DiscoveryEnvironmentProperties deProps) {
-        this.deProps = deProps;
-    }
-
-    /**
      * Initializes the servlet.
      *
      * @throws ServletException if the servlet can't be initialized.
@@ -66,13 +55,14 @@ public class AboutApplicationServiceImpl extends RemoteServiceServlet implements
     public void init() throws ServletException {
         super.init();
         if (deProps == null) {
-            deProps = DiscoveryEnvironmentProperties.getDiscoveryEnvironmentProperties(getServletContext());
+            try {
+                deProps = DiscoveryEnvironmentProperties.getDiscoveryEnvironmentProperties();
+            } catch (IOException e) {
+                throw new ServletException(e);
+            }
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String getAboutInfo() {
         return produceInfo();

@@ -61,7 +61,11 @@ public class FileDownloadServlet extends HttpServlet {
         super.init();
         if (serviceResolver == null && deProps == null) {
             serviceResolver = ServiceCallResolver.getServiceCallResolver(getServletContext());
-            deProps = DiscoveryEnvironmentProperties.getDiscoveryEnvironmentProperties(getServletContext());
+            try {
+                deProps = DiscoveryEnvironmentProperties.getDiscoveryEnvironmentProperties();
+            } catch (IOException e) {
+               throw new ServletException(e);
+            }
         }
     }
 

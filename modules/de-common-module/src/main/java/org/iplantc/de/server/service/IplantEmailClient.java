@@ -1,19 +1,17 @@
 package org.iplantc.de.server.service;
 
-import org.iplantc.clavin.spring.ConfigAliasResolver;
-
 import net.sf.json.JSONObject;
 
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.log4j.Logger;
+import org.iplantc.de.server.DiscoveryEnvironmentProperties;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.util.Properties;
 
 import javax.servlet.ServletContext;
 
@@ -31,34 +29,23 @@ public class IplantEmailClient {
     private static final Logger LOG = Logger.getLogger(IplantEmailClient.class);
 
     /**
-     * The name of the property used to store the base URL for the iPlant e-mail service.
-     */
-    private static final String EMAIL_BASE_PROPERTY = "org.iplantc.services.email-base";
-
-    /**
      * The base URL to use when connecting to the e-mail service.
      */
     private final String baseUrl;
-
-    /**
-     * @param resolver the configuration alias resolver used to retrieve the web application properties.
-     */
-    public IplantEmailClient(ConfigAliasResolver resolver) {
-        Properties props = resolver.getRequiredAliasedConfig("webapp");
-        if (props == null) {
-            throw new IllegalStateException("web application configuration settings not found");
-        }
-        baseUrl = props.getProperty(EMAIL_BASE_PROPERTY);
-        if (baseUrl == null) {
-            throw new IllegalStateException("configuration setting, " + EMAIL_BASE_PROPERTY + ", not found");
-        }
+    public IplantEmailClient() throws IOException {
+        this(DiscoveryEnvironmentProperties.getDiscoveryEnvironmentProperties());
     }
 
     /**
-     * @param baseUrl the base URL to use when connecting to the e-mail service.
+     * @param discoveryEnvironmentProperties
      */
-    public IplantEmailClient(String baseUrl) {
-        this.baseUrl = baseUrl;
+    public IplantEmailClient(DiscoveryEnvironmentProperties discoveryEnvironmentProperties) {
+//        Properties props = resolver.getRequiredAliasedConfig("webapp");
+//        if (props == null) {
+//            throw new IllegalStateException("web application configuration settings not found");
+//        }
+//        baseUrl = props.getProperty(EMAIL_BASE_PROPERTY);
+        baseUrl = discoveryEnvironmentProperties.getEmailBaseUrl();
     }
 
     /**

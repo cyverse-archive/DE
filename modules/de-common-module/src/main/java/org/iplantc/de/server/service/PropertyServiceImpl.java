@@ -1,11 +1,12 @@
 package org.iplantc.de.server.service;
 
-import org.iplantc.clavin.spring.ConfigAliasResolver;
+import org.iplantc.de.server.DiscoveryEnvironmentProperties;
 import org.iplantc.de.shared.services.PropertyService;
 
 import com.google.gwt.user.client.rpc.SerializationException;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -14,27 +15,12 @@ import javax.servlet.ServletException;
 
 public class PropertyServiceImpl extends RemoteServiceServlet implements PropertyService{
 
-    /**
-     * {@inheritDoc}
-     */
     private static final long serialVersionUID = 1L;
 
     /**
      * The configuration settings.
      */
     private Properties props;
-
-    /**
-     * The default constructor.
-     */
-    public PropertyServiceImpl() {}
-
-    /**
-     * @param props the configuration properties.
-     */
-    public PropertyServiceImpl(Properties props) {
-        this.props = props;
-    }
 
     /**
      * Initializes the servlet.
@@ -46,10 +32,14 @@ public class PropertyServiceImpl extends RemoteServiceServlet implements Propert
     public void init() throws ServletException {
         super.init();
         if (props == null) {
-            props = ConfigAliasResolver.getRequiredAliasedConfigFrom(getServletContext(), "webapp");
+            try {
+                DiscoveryEnvironmentProperties deProps = DiscoveryEnvironmentProperties.getDiscoveryEnvironmentProperties();
+                props = deProps.getProperties();
+            } catch (IOException e) {
+                throw new ServletException(e);
+            }
         }
     }
-
     /**
      * {@inheritDoc}
      */

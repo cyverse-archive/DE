@@ -10,27 +10,7 @@
            http://www.springframework.org/schema/util
            http://www.springframework.org/schema/util/spring-util-3.0.xsd http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task.xsd">
 
-    <bean id="propertyPlaceholderConfigurer" class="org.iplantc.clavin.spring.ClavinPropertyPlaceholderConfigurer">
-        <property name="serviceName" value="belphegor" />
-        <property name="configNames">
-            <list>
-                <value>belphegor-confluence</value>
-            </list>
-        </property>
-    </bean>
-
-    <bean id="configAliasResolver" class="org.iplantc.clavin.spring.ConfigAliasResolver">
-        <property name="configurer" ref="propertyPlaceholderConfigurer" />
-        <property name="aliases">
-            <map>
-                <entry key="webapp" value="belphegor" />
-                <entry key="confluence" value="belphegor-confluence" />
-            </map>
-        </property>
-    </bean>
-
     <bean id="serviceCallResolver" class="org.iplantc.de.server.DefaultServiceCallResolver">
-        <constructor-arg index='0' ref="configAliasResolver" />
     </bean>
 
     <bean id="casService" class="org.springframework.security.cas.ServiceProperties">

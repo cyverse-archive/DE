@@ -1,6 +1,5 @@
 package org.iplantc.de.server;
 
-import org.iplantc.clavin.spring.ConfigAliasResolver;
 import org.iplantc.de.server.service.SessionManagementServiceImpl;
 import org.iplantc.de.shared.exceptions.ConfluenceException;
 import org.iplantc.de.shared.services.ConfluenceService;
@@ -77,8 +76,15 @@ public class ConfluenceServiceImpl extends SessionManagementServiceImpl implemen
     @Override public void init() throws ServletException {
         super.init();
         if (properties == null) {
-            Properties props = ConfigAliasResolver.getRequiredAliasedConfigFrom(getServletContext(), "confluence");
-            properties = new ConfluenceProperties(props);
+            Properties props = new Properties();
+            try {
+                InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream("confluence.properties");
+                props.load(in);
+                in.close();
+                properties = new ConfluenceProperties(props);
+            } catch (IOException e) {
+                throw new ServletException("Failed to load properties", e);
+            }
         }
     }
 
