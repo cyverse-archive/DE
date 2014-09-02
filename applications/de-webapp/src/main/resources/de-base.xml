@@ -6,10 +6,14 @@
            http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
             http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task.xsd">
 
+    <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="location" value="discoveryenvironment.properties"/>
+    </bean>
+
     <bean id="emailClient" class="org.iplantc.de.server.service.IplantEmailClient">
     </bean>
 
-    <bean id="serviceCallResolver" class="org.iplantc.de.server.DefaultServiceCallResolver">
+    <bean id="serviceCallResolver" class="org.iplantc.de.server.DEServiceCallResolver">
     </bean>
 
     <bean id="casService" class="org.springframework.security.cas.ServiceProperties">

@@ -106,6 +106,6 @@ cmd = [
     '-t', template_dir(configulon),
     '-d', options.deployment,
     '--dest', prop_dest,
-    'belphegor', 'belphegor-confluence'
+    'belphegor', 'confluence'
 ]
 subprocess.call(cmd)

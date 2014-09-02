@@ -11,24 +11,18 @@ import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class DefaultServiceCallResolver extends ServiceCallResolver {
-    private static final Logger LOG = Logger.getLogger(DefaultServiceCallResolver.class);
+public class DEServiceCallResolver extends ServiceCallResolver {
+    private static final Logger LOG = Logger.getLogger(DEServiceCallResolver.class);
     private static final String PREFIX_KEY = "prefix";
 
     private Properties appProperties;
     private String prefix;
 
-    public DefaultServiceCallResolver() throws IOException {
-        this(DiscoveryEnvironmentProperties.getDiscoveryEnvironmentProperties());
+    public DEServiceCallResolver() throws IOException {
+        this(DiscoveryEnvironmentProperties.getDiscoveryEnvironmentProperties().getProperties());
     }
 
-    protected DefaultServiceCallResolver(DiscoveryEnvironmentProperties deProps) {
-        appProperties = deProps.getProperties();
-        setPrefix();
-        validatePrefix();
-    }
-
-    public DefaultServiceCallResolver(Properties prop) {
+    protected DEServiceCallResolver(Properties prop) {
         appProperties = prop;
         setPrefix();
         validatePrefix();

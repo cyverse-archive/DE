@@ -7,9 +7,9 @@ import com.sencha.gxt.core.shared.FastMap;
 import java.util.Arrays;
 import java.util.Map;
 
-public class ToolIntegrationAdminProperties {
+public class BelphegorAdminProperties {
 
-    private static ToolIntegrationAdminProperties instance;
+    private static BelphegorAdminProperties instance;
     private FastMap<String> serviceUrlMap;
 
     /**
@@ -174,10 +174,10 @@ public class ToolIntegrationAdminProperties {
 
     private String[] validAppWikiUrlPath;
 
-    public static ToolIntegrationAdminProperties getInstance() {
+    public static BelphegorAdminProperties getInstance() {
 
         if (instance == null) {
-            instance = new ToolIntegrationAdminProperties();
+            instance = new BelphegorAdminProperties();
         }
         return instance;
     }
@@ -188,7 +188,7 @@ public class ToolIntegrationAdminProperties {
      * @param properties the properties that were fetched from the server.
      */
     public void initialize(Map<String, String> properties) {
-        serviceUrlMap = new FastMap<String>();
+        serviceUrlMap = new FastMap<>();
 
         for (String key : Arrays.asList(SERVICE_URL_BASE, SERVICE_URL_CATEGORY_ADD,
                 SERVICE_URL_CATEGORY_RENAME, SERVICE_URL_CATEGORY_MOVE, SERVICE_URL_CATEGORY_DELETE,

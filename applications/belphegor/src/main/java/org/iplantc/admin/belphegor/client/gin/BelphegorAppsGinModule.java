@@ -4,6 +4,7 @@ import org.iplantc.admin.belphegor.client.BelphegorResources;
 import org.iplantc.admin.belphegor.client.apps.views.AdminAppViewImpl;
 import org.iplantc.admin.belphegor.client.apps.views.AdminAppsView;
 import org.iplantc.admin.belphegor.client.apps.views.widgets.BelphegorAppsToolbarImpl;
+import org.iplantc.admin.belphegor.client.models.BelphegorAdminProperties;
 import org.iplantc.admin.belphegor.client.presenter.BelphegorPresenterImpl;
 import org.iplantc.admin.belphegor.client.refGenome.RefGenomeView;
 import org.iplantc.admin.belphegor.client.refGenome.presenter.RefGenomePresenterImpl;
@@ -92,4 +93,7 @@ public class BelphegorAppsGinModule extends AbstractGinModule {
         return DEProperties.getInstance();
     }
 
+    @Provides public BelphegorAdminProperties getAdminProperties() {
+        return BelphegorAdminProperties.getInstance();
+    }
 }
