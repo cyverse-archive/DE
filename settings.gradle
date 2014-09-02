@@ -7,9 +7,6 @@ project( ':belphegor').projectDir = new File( rootProject.projectDir, belphegorS
 include ':analyses-module'
 project( ':analyses-module').projectDir = new File( rootProject.projectDir, analysesSubtreePrefix )
 
-//include ':clavin-java'
-//project( ':clavin-java').projectDir = new File( rootProject.projectDir, clavinJavaSubtreePrefix)
-
 include ':confluence-client'
 project( ':confluence-client').projectDir = new File( rootProject.projectDir, confluenceClientSubtreePrefix)
 
