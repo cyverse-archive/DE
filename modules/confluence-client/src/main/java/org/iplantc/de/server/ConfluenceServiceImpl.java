@@ -1,6 +1,6 @@
 package org.iplantc.de.server;
 
-import org.iplantc.de.server.service.SessionManagementServiceImpl;
+import org.iplantc.de.server.services.SessionManagementServiceImpl;
 import org.iplantc.de.shared.exceptions.ConfluenceException;
 import org.iplantc.de.shared.services.ConfluenceService;
 

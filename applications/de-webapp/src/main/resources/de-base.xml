@@ -10,7 +10,7 @@
         <property name="location" value="classpath:discoveryenvironment.properties"/>
     </bean>
 
-    <bean id="emailClient" class="org.iplantc.de.server.service.IplantEmailClient">
+    <bean id="emailClient" class="org.iplantc.de.server.services.IplantEmailClient">
     </bean>
 
     <bean id="serviceCallResolver" class="org.iplantc.de.server.DEServiceCallResolver">

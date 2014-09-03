@@ -1,4 +1,4 @@
-package org.iplantc.de.server.service;
+package org.iplantc.de.server.services;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -9,14 +9,14 @@ import org.apache.http.util.EntityUtils;
 import java.io.IOException;
 
 /**
- * A response handler that reads the response body from failed service calls.
+ * A response handler that reads the response body from failed services calls.
  *
  * @author Dennis Roberts
  */
 public class ServiceResponseHandler implements ResponseHandler<String> {
 
     /**
-     * Handles a response from a service.  If the service call fails then the response body is captured and stored in
+     * Handles a response from a services.  If the services call fails then the response body is captured and stored in
      * the resulting exception.
      *
      * @param response the response.

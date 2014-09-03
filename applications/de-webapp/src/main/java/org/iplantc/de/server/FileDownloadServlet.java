@@ -1,6 +1,6 @@
 package org.iplantc.de.server;
 
-import org.iplantc.de.server.service.DEServiceImpl;
+import org.iplantc.de.server.services.DEServiceImpl;
 import org.iplantc.de.shared.services.ServiceCallWrapper;
 
 import org.apache.commons.io.IOUtils;

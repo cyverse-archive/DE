@@ -1,4 +1,4 @@
-package org.iplantc.de.server.service;
+package org.iplantc.de.server.services;
 
 import org.iplantc.de.server.auth.CasUrlConnector;
 import org.iplantc.de.server.auth.DESecurityConstants;
@@ -83,7 +83,7 @@ public class DEServiceImpl extends RemoteServiceServlet implements DEService {
      * Initializes the servlet.
      *
      * @throws ServletException if the servlet can't be initialized.
-     * @throws IllegalStateException if the service call resolver can't be found.
+     * @throws IllegalStateException if the services call resolver can't be found.
      */
     @Override
     public void init() throws ServletException {
@@ -129,7 +129,7 @@ public class DEServiceImpl extends RemoteServiceServlet implements DEService {
     }
 
     /**
-     * Sets the URL connector for this service dispatcher. This connector should be set once when the
+     * Sets the URL connector for this services dispatcher. This connector should be set once when the
      * object is created.
      *
      * @param urlConnector the new URL connector.
@@ -210,7 +210,7 @@ public class DEServiceImpl extends RemoteServiceServlet implements DEService {
     }
 
     /**
-     * Sends an HTTP GET request to another service.
+     * Sends an HTTP GET request to another services.
      *
      * @param client the HTTP client to use.
      * @param address the address to connect to.
@@ -225,7 +225,7 @@ public class DEServiceImpl extends RemoteServiceServlet implements DEService {
     }
 
     /**
-     * Sends an HTTP POST request to another service.
+     * Sends an HTTP POST request to another services.
      *
      * @param client the HTTP client to use.
      * @param address the address to connect to.
@@ -243,7 +243,7 @@ public class DEServiceImpl extends RemoteServiceServlet implements DEService {
     }
 
     /**
-     * Sends an HTTP PUT request to another service.
+     * Sends an HTTP PUT request to another services.
      *
      * @param client the HTTP client to use.
      * @param address the address to connect to.
@@ -261,7 +261,7 @@ public class DEServiceImpl extends RemoteServiceServlet implements DEService {
     }
 
     /**
-     * Sends an HTTP PATCH request to another service.
+     * Sends an HTTP PATCH request to another services.
      *
      * @param client the HTTP client to use.
      * @param address the address to send the request to.
@@ -279,7 +279,7 @@ public class DEServiceImpl extends RemoteServiceServlet implements DEService {
     }
 
     /**
-     * Sends an HTTP DELETE request to another service.
+     * Sends an HTTP DELETE request to another services.
      *
      * @param client the HTTP client to use.
      * @param address the address to connect to.
@@ -295,7 +295,7 @@ public class DEServiceImpl extends RemoteServiceServlet implements DEService {
     }
 
     /**
-     * Sends a multipart HTTP PUT request to another service.
+     * Sends a multipart HTTP PUT request to another services.
      *
      * @param client the HTTP client to use.
      * @param address the address to send the request to.
@@ -314,7 +314,7 @@ public class DEServiceImpl extends RemoteServiceServlet implements DEService {
     }
 
     /**
-     * Sends a multipart HTTP POST request to another service.
+     * Sends a multipart HTTP POST request to another services.
      *
      * @param client the HTTP client to use.
      * @param address the address to send the request to.
@@ -364,11 +364,11 @@ public class DEServiceImpl extends RemoteServiceServlet implements DEService {
     }
 
     /**
-     * Validates a service call wrapper. The address must be a non-empty string for all HTTP requests.
+     * Validates a services call wrapper. The address must be a non-empty string for all HTTP requests.
      * The message body must be a non-empty string for PUT and POST requests.
      *
-     * @param wrapper the service call wrapper being validated.
-     * @return true if the service call wrapper is valid.
+     * @param wrapper the services call wrapper being validated.
+     * @return true if the services call wrapper is valid.
      */
     private boolean isValidServiceCall(ServiceCallWrapper wrapper) {
         boolean ret = false; // assume failure
@@ -399,11 +399,11 @@ public class DEServiceImpl extends RemoteServiceServlet implements DEService {
     }
 
     /**
-     * Validates a multi-part service call wrapper. The address must not be null or empty and the message
+     * Validates a multi-part services call wrapper. The address must not be null or empty and the message
      * body must have at least one part.
      *
      * @param wrapper the wrapper to validate.
-     * @return true if the service call wrapper is valid.
+     * @return true if the services call wrapper is valid.
      */
     private boolean isValidServiceCall(MultiPartServiceWrapper wrapper) {
         boolean ret = false; // assume failure
@@ -428,9 +428,9 @@ public class DEServiceImpl extends RemoteServiceServlet implements DEService {
     }
 
     /**
-     * Retrieve the service address for the wrapper.
+     * Retrieve the services address for the wrapper.
      *
-     * @param wrapper service call wrapper containing metadata for a call.
+     * @param wrapper services call wrapper containing metadata for a call.
      * @return a string representing a valid URL.
      */
     private String retrieveServiceAddress(BaseServiceCallWrapper wrapper) {
@@ -443,7 +443,7 @@ public class DEServiceImpl extends RemoteServiceServlet implements DEService {
     }
 
     /**
-     * Allows concrete service dispatchers to update the request body.
+     * Allows concrete services dispatchers to update the request body.
      *
      * @param body the request body.
      * @return the updated request body.
@@ -470,7 +470,7 @@ public class DEServiceImpl extends RemoteServiceServlet implements DEService {
      * Gets the response for an HTTP connection.
      *
      * @param client the HTTP client to use.
-     * @param wrapper the service call wrapper.
+     * @param wrapper the services call wrapper.
      * @return the response.
      * @throws IOException if an I/O error occurs.
      */
@@ -503,10 +503,10 @@ public class DEServiceImpl extends RemoteServiceServlet implements DEService {
     }
 
     /**
-     * Implements entry point for service dispatcher.
+     * Implements entry point for services dispatcher.
      *
-     * @param wrapper the service call wrapper.
-     * @return the response from the service call.
+     * @param wrapper the services call wrapper.
+     * @return the response from the services call.
      * @throws AuthenticationException if the user isn't authenticated.
      * @throws SerializationException if any other error occurs.
      */
@@ -537,10 +537,10 @@ public class DEServiceImpl extends RemoteServiceServlet implements DEService {
     }
 
     /**
-     * Implements entry point for service dispatcher for streaming data back to client.
+     * Implements entry point for services dispatcher for streaming data back to client.
      *
-     * @param wrapper the service call wrapper.
-     * @return an input stream that can be used to retrieve the response from the service call.
+     * @param wrapper the services call wrapper.
+     * @return an input stream that can be used to retrieve the response from the services call.
      * @throws AuthenticationException if the user isn't authenticated.
      * @throws IOException if an I/O error occurs.
      * @throws SerializationException if any other error occurs.
@@ -585,9 +585,9 @@ public class DEServiceImpl extends RemoteServiceServlet implements DEService {
         }
     }
     /**
-     * Sends a multi-part HTTP PUT or POST request to another service and returns the response.
+     * Sends a multi-part HTTP PUT or POST request to another services and returns the response.
      *
-     * @param wrapper the service call wrapper.
+     * @param wrapper the services call wrapper.
      * @return the response to the HTTP request.
      * @throws SerializationException if an error occurs.
      */

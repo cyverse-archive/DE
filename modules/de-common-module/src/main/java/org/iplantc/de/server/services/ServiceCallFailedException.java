@@ -1,7 +1,7 @@
-package org.iplantc.de.server.service;
+package org.iplantc.de.server.services;
 
 /**
- * Thrown when a service call fails.
+ * Thrown when a services call fails.
  *
  * @author Dennis Roberts
  */

@@ -1,4 +1,4 @@
-package org.iplantc.de.server.service;
+package org.iplantc.de.server.services;
 
 import net.sf.json.JSONObject;
 
@@ -16,7 +16,7 @@ import java.io.UnsupportedEncodingException;
 import javax.servlet.ServletContext;
 
 /**
- * A client for the iPlant e-mail service.
+ * A client for the iPlant e-mail services.
  *
  * @author Dennis Roberts
  */
@@ -29,7 +29,7 @@ public class IplantEmailClient {
     private static final Logger LOG = Logger.getLogger(IplantEmailClient.class);
 
     /**
-     * The base URL to use when connecting to the e-mail service.
+     * The base URL to use when connecting to the e-mail services.
      */
     private final String baseUrl;
     public IplantEmailClient() throws IOException {

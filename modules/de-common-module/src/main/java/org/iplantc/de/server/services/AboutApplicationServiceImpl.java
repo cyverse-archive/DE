@@ -1,5 +1,6 @@
-package org.iplantc.de.server;
+package org.iplantc.de.server.services;
 
+import org.iplantc.de.server.DiscoveryEnvironmentProperties;
 import org.iplantc.de.shared.services.AboutApplicationService;
 
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;

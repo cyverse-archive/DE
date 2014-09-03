@@ -1,7 +1,7 @@
-package org.iplantc.de.server.service;
+package org.iplantc.de.server.services;
 
 /**
- * Thrown by the proxy servlet when no service name was provided by the caller.
+ * Thrown by the proxy servlet when no services name was provided by the caller.
  *
  * @author Dennis Roberts
  */
@@ -13,6 +13,6 @@ public class NoServiceNameProvidedException extends RuntimeException {
      * The default constructor.
      */
     public NoServiceNameProvidedException() {
-        super("no service name was provided");
+        super("no services name was provided");
     }
 }

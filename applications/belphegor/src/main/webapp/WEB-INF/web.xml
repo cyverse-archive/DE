@@ -47,15 +47,15 @@
     </servlet>
     <servlet>
         <servlet-name>deServiceDispatcher</servlet-name>
-        <servlet-class>org.iplantc.de.server.service.DEServiceImpl</servlet-class>
+        <servlet-class>org.iplantc.de.server.services.DEServiceImpl</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>sessionManagementServlet</servlet-name>
-        <servlet-class>org.iplantc.de.server.service.SessionManagementServiceImpl</servlet-class>
+        <servlet-class>org.iplantc.de.server.services.SessionManagementServiceImpl</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>propertyServlet</servlet-name>
-        <servlet-class>org.iplantc.de.server.service.PropertyServiceImpl</servlet-class>
+        <servlet-class>org.iplantc.de.server.services.PropertyServiceImpl</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>confluenceServlet</servlet-name>

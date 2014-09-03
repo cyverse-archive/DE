@@ -1,4 +1,4 @@
-package org.iplantc.de.server.service;
+package org.iplantc.de.server.services;
 
 import org.iplantc.de.client.services.UUIDService;
 

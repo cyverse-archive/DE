@@ -1,4 +1,4 @@
-package org.iplantc.de.server.service;
+package org.iplantc.de.server.services;
 
 import org.iplantc.de.server.ServiceCallResolver;
 import org.iplantc.de.server.UnresolvableServiceNameException;
@@ -47,7 +47,7 @@ public class ProxyServlet extends HttpServlet {
     private static final Set<String> HEADERS_TO_SKIP = new HashSet<String>(Arrays.asList("content-length"));
 
     /**
-     * Used to resolve aliased service calls.
+     * Used to resolve aliased services calls.
      */
     private ServiceCallResolver serviceResolver;
 
@@ -58,7 +58,7 @@ public class ProxyServlet extends HttpServlet {
     }
 
     /**
-     * @param serviceResolver used to resolve aliased service calls.
+     * @param serviceResolver used to resolve aliased services calls.
      */
     public ProxyServlet(ServiceCallResolver serviceResolver) {
         this.serviceResolver = serviceResolver;
@@ -68,7 +68,7 @@ public class ProxyServlet extends HttpServlet {
      * Initializes the servlet.
      *
      * @throws ServletException if the servlet can't be initialized.
-     * @throws IllegalStateException if the service call resolver can't be found.
+     * @throws IllegalStateException if the services call resolver can't be found.
      */
     @Override
     public void init() throws ServletException {
@@ -78,7 +78,7 @@ public class ProxyServlet extends HttpServlet {
     }
 
     /**
-     * Forwards an HTTP DELETE request to a named service.
+     * Forwards an HTTP DELETE request to a named services.
      *
      * @param req the HTTP servlet request.
      * @param res the HTTP servlet response.
@@ -95,7 +95,7 @@ public class ProxyServlet extends HttpServlet {
     }
 
     /**
-     * Forwards an HTTP GET request to a named service.
+     * Forwards an HTTP GET request to a named services.
      *
      * @param req the HTTP servlet request.
      * @param res the HTTP servlet response.
@@ -112,7 +112,7 @@ public class ProxyServlet extends HttpServlet {
     }
 
     /**
-     * Forwards an HTTP HEAD request to a named service.
+     * Forwards an HTTP HEAD request to a named services.
      *
      * @param req the HTTP servlet request.
      * @param res the HTTP servlet response.
@@ -129,7 +129,7 @@ public class ProxyServlet extends HttpServlet {
     }
 
     /**
-     * Forwards an HTTP OPTIONS request to a named service.
+     * Forwards an HTTP OPTIONS request to a named services.
      *
      * @param req the HTTP servlet request.
      * @param res the HTTP servlet response.
@@ -146,7 +146,7 @@ public class ProxyServlet extends HttpServlet {
     }
 
     /**
-     * Forwards an HTTP POST request to a named service.
+     * Forwards an HTTP POST request to a named services.
      *
      * @param req the HTTP servlet request.
      * @param res the HTTP servlet response.
@@ -163,7 +163,7 @@ public class ProxyServlet extends HttpServlet {
     }
 
     /**
-     * Forwards an HTTP PUT request to a named service.
+     * Forwards an HTTP PUT request to a named services.
      *
      * @param req the HTTP servlet request.
      * @param res the HTTP servlet response.
@@ -180,7 +180,7 @@ public class ProxyServlet extends HttpServlet {
     }
 
     /**
-     * Forwards an HTTP TRACE request to a named service.
+     * Forwards an HTTP TRACE request to a named services.
      *
      * @param req the HTTP servlet request.
      * @param res the HTTP servlet response.
@@ -197,7 +197,7 @@ public class ProxyServlet extends HttpServlet {
     }
 
     /**
-     * Resolves an aliased service call.
+     * Resolves an aliased services call.
      *
      * @param req the original HTTP servlet request.
      * @return the string representation of the URI to forward the request to.
@@ -212,7 +212,7 @@ public class ProxyServlet extends HttpServlet {
     }
 
     /**
-     * Wraps a service call resolution so that the servlet returns an appropriate response whenever a servlet can't be
+     * Wraps a services call resolution so that the servlet returns an appropriate response whenever a servlet can't be
      * resolved.
      */
     private abstract class ServiceCallResolutionWrapper {
@@ -237,7 +237,7 @@ public class ProxyServlet extends HttpServlet {
         }
 
         /**
-         * Calls the service call resolution wrapper.
+         * Calls the services call resolution wrapper.
          *
          * @throws IOException if an I/O error occurs.
          */
@@ -262,9 +262,9 @@ public class ProxyServlet extends HttpServlet {
         }
 
         /**
-         * Forwards the request to the named service.
+         * Forwards the request to the named services.
          *
-         * @param uri the URI to use to connect to the named service.
+         * @param uri the URI to use to connect to the named services.
          * @throws IOException if an I/O error occurs.
          */
         protected abstract void forwardRequest(String uri) throws IOException;
@@ -352,7 +352,7 @@ public class ProxyServlet extends HttpServlet {
         }
 
         /**
-         * Sends a response indicating that a service call resolution error has occurred.
+         * Sends a response indicating that a services call resolution error has occurred.
          *
          * @param res the outgoing HTTP servlet response.
          * @param msg the error detail message.
@@ -372,7 +372,7 @@ public class ProxyServlet extends HttpServlet {
         }
 
         /**
-         * Builds a string representation of a JSON object indicating that a service call resolution error has occurred.
+         * Builds a string representation of a JSON object indicating that a services call resolution error has occurred.
          *
          * @param msg the error detail message.
          * @return the string representation of the JSON object.

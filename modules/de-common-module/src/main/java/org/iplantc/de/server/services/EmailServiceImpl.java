@@ -1,7 +1,6 @@
-package org.iplantc.de.server.service;
+package org.iplantc.de.server.services;
 
-import org.iplantc.de.server.service.IplantEmailClient;
-import org.iplantc.de.server.service.IplantEmailClient.MessageRequest;
+import org.iplantc.de.server.services.IplantEmailClient.MessageRequest;
 import org.iplantc.de.shared.services.EmailService;
 
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
@@ -18,7 +17,7 @@ public class EmailServiceImpl extends RemoteServiceServlet implements EmailServi
     private static final long serialVersionUID = -3893564670515471591L;
 
     /**
-     * The client used to send message requests to the iPlant email service.
+     * The client used to send message requests to the iPlant email services.
      */
     private IplantEmailClient client;
 
