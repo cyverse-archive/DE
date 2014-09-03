@@ -5,7 +5,7 @@ import org.iplantc.admin.belphegor.client.BelphegorStyle;
 import org.iplantc.admin.belphegor.client.Constants;
 import org.iplantc.admin.belphegor.client.I18N;
 import org.iplantc.admin.belphegor.client.apps.presenter.BelphegorAppsViewPresenterImpl;
-import org.iplantc.admin.belphegor.client.models.ToolIntegrationAdminProperties;
+import org.iplantc.admin.belphegor.client.models.BelphegorAdminProperties;
 import org.iplantc.admin.belphegor.client.refGenome.RefGenomeView;
 import org.iplantc.admin.belphegor.client.systemMessage.SystemMessageView;
 import org.iplantc.admin.belphegor.client.toolRequest.ToolRequestView;
@@ -72,7 +72,7 @@ public class BelphegorViewImpl extends Composite implements BelphegorView {
                              final RefGenomeView.Presenter refGenPresenter,
                              final ToolRequestView.Presenter toolReqPresenter,
                              final SystemMessageView.Presenter sysMsgPresenter,
-                             final ToolIntegrationAdminProperties toolIntProps,
+                             final BelphegorAdminProperties toolIntProps,
                              final BelphegorResources resources) {
         this.template = template;
         this.res = resources;
@@ -90,7 +90,7 @@ public class BelphegorViewImpl extends Composite implements BelphegorView {
                       final RefGenomeView.Presenter refGenPresenter,
                       final ToolRequestView.Presenter toolReqPresenter,
                       final SystemMessageView.Presenter sysMsgPresenter,
-                      final ToolIntegrationAdminProperties toolIntProps) {
+                      final BelphegorAdminProperties toolIntProps) {
         buildUserMenu();
         HasId betaGroup = CommonModelUtils.createHasIdFromString(toolIntProps.getDefaultBetaAnalysisGroupId());
         presenter.go(appsPanel, betaGroup, null);

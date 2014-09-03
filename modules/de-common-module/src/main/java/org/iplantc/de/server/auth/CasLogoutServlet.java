@@ -5,8 +5,7 @@ import static org.iplantc.de.server.util.ServletUtils.getRequiredProp;
 import static org.iplantc.de.server.util.ServletUtils.loadResource;
 import static org.iplantc.de.server.util.UrlUtils.convertRelativeUrl;
 
-import org.iplantc.clavin.spring.ConfigAliasResolver;
-
+import org.iplantc.de.server.DiscoveryEnvironmentProperties;
 import org.stringtemplate.v4.ST;
 
 import java.io.IOException;
@@ -120,9 +119,18 @@ public class CasLogoutServlet extends HttpServlet {
     public void init() throws ServletException {
         super.init();
         if (!initialized) {
-            Properties config = ConfigAliasResolver.getRequiredAliasedConfigFrom(getServletContext(), "webapp");
-            loadConfig(config, getPropertyPrefix(getServletConfig()));
+//            Properties config = ConfigAliasResolver.getRequiredAliasedConfigFrom(getServletContext(), "webapp");
+//            loadConfig(config, getPropertyPrefix(getServletConfig()));
+
+            Properties config;
+            try {
+                config = DiscoveryEnvironmentProperties.getDiscoveryEnvironmentProperties().getProperties();
+                loadConfig(config, getPropertyPrefix(getServletConfig()));
+            } catch (IOException e) {
+                throw new ServletException(e);
+            }
         }
+
     }
 
     /**

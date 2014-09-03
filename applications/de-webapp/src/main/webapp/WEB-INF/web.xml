@@ -42,19 +42,19 @@
     </servlet>
     <servlet>
         <servlet-name>deServiceDispatcher</servlet-name>
-        <servlet-class>org.iplantc.de.server.service.DEServiceImpl</servlet-class>
+        <servlet-class>org.iplantc.de.server.services.DEServiceImpl</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>sessionManagementServlet</servlet-name>
-        <servlet-class>org.iplantc.de.server.service.SessionManagementServiceImpl</servlet-class>
+        <servlet-class>org.iplantc.de.server.services.SessionManagementServiceImpl</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>propertyServlet</servlet-name>
-        <servlet-class>org.iplantc.de.server.service.PropertyServiceImpl</servlet-class>
+        <servlet-class>org.iplantc.de.server.services.PropertyServiceImpl</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>aboutAppServlet</servlet-name>
-        <servlet-class>org.iplantc.de.server.AboutApplicationServiceImpl</servlet-class>
+        <servlet-class>org.iplantc.de.server.services.AboutApplicationServiceImpl</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>confluenceServlet</servlet-name>
@@ -62,7 +62,7 @@
     </servlet>
     <servlet>
         <servlet-name>emailServlet</servlet-name>
-        <servlet-class>org.iplantc.de.server.service.EmailServiceImpl</servlet-class>
+        <servlet-class>org.iplantc.de.server.services.EmailServiceImpl</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>emptyResponseServlet</servlet-name>
@@ -70,7 +70,7 @@
     </servlet>
     <servlet>
         <servlet-name>proxyServlet</servlet-name>
-        <servlet-class>org.iplantc.de.server.service.ProxyServlet</servlet-class>
+        <servlet-class>org.iplantc.de.server.services.ProxyServlet</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>remoteLogging</servlet-name>
@@ -78,7 +78,7 @@
     </servlet>
     <servlet>
         <servlet-name>uuidService</servlet-name>
-        <servlet-class>org.iplantc.de.server.service.UUIDServiceImpl</servlet-class>
+        <servlet-class>org.iplantc.de.server.services.UUIDServiceImpl</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>oauthCallbackServlet</servlet-name>
