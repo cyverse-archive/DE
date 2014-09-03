@@ -6,9 +6,10 @@ import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.client.models.diskResources.DiskResourceAutoBeanFactory;
 import org.iplantc.de.client.models.diskResources.File;
 import org.iplantc.de.client.util.DiskResourceUtil;
-import org.iplantc.de.commons.client.events.UserSettingsUpdatedEvent;
+import org.iplantc.de.commons.client.events.LastSelectedPathChangedEvent;
 import org.iplantc.de.diskResource.client.views.dialogs.FileSelectDialog;
 import org.iplantc.de.resources.client.messages.I18N;
+import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
@@ -26,40 +27,6 @@ import java.util.List;
 import java.util.Set;
 
 public class FileSelectorField extends AbstractDiskResourceSelector<File> {
-
-    UserSettings userSettings = UserSettings.getInstance();
-
-    public FileSelectorField() {
-        setEmptyText(I18N.DISPLAY.selectAFile());
-    }
-
-    @Override
-    protected void onBrowseSelected() {
-        List<DiskResource> selected = null;
-
-        DiskResource value = getValue();
-        if (value != null) {
-            selected = Lists.newArrayList();
-            selected.add(value);
-        }
-        FileSelectDialog fileSD = null;
-        if (selected != null && selected.size() > 0) {
-            fileSD = FileSelectDialog.singleSelect(selected);
-        } else {
-            if (userSettings.isRememberLastPath()) {
-                String path = userSettings.getLastPath();
-                if (path != null) {
-                    fileSD = FileSelectDialog.selectParentFolderByPath(path, true);
-                } else {
-                    fileSD = FileSelectDialog.singleSelect(null);
-                }
-            } else {
-                fileSD = FileSelectDialog.singleSelect(null);
-            }
-        }
-        fileSD.addHideHandler(new FileDialogHideHandler(fileSD));
-        fileSD.show();
-    }
 
     private class FileDialogHideHandler implements HideHandler {
         private final TakesValue<List<File>> takesValue;
@@ -79,11 +46,69 @@ public class FileSelectorField extends AbstractDiskResourceSelector<File> {
             // cache the last used path
             if (userSettings.isRememberLastPath()) {
                 userSettings.setLastPath(DiskResourceUtil.parseParent(selectedResource.getPath()));
-                UserSettingsUpdatedEvent usue = new UserSettingsUpdatedEvent();
-                EventBus.getInstance().fireEvent(usue);
+                eventBus.fireEvent(new LastSelectedPathChangedEvent(true));
             }
             ValueChangeEvent.fire(FileSelectorField.this, selectedResource);
         }
+    }
+
+    UserSettings userSettings = UserSettings.getInstance();
+    private final IplantDisplayStrings displayStrings;
+    private final EventBus eventBus;
+
+    public FileSelectorField() {
+        displayStrings = I18N.DISPLAY;
+        eventBus = EventBus.getInstance();
+        setEmptyText(displayStrings.selectAFile());
+    }
+
+    @Override
+    public void onDrop(DndDropEvent event) {
+        Set<DiskResource> dropData = getDropData(event.getData());
+
+        if (validateDropStatus(dropData, event.getStatusProxy())) {
+            File selectedFile = (File) dropData.iterator().next();
+            setSelectedResource(selectedFile);
+            ValueChangeEvent.fire(this, selectedFile);
+        }
+    }
+
+    @Override
+    public void setValueFromStringId(String path) {
+        if (Strings.isNullOrEmpty(path)) {
+            setValue(null);
+        }
+        DiskResourceAutoBeanFactory factory = GWT.create(DiskResourceAutoBeanFactory.class);
+        setValue(AutoBeanCodex.decode(factory, File.class, "{\"path\":\"" + path + "\"}").as());
+
+    }
+
+    @Override
+    protected void onBrowseSelected() {
+        List<DiskResource> selected = null;
+
+        DiskResource value = getValue();
+        if (value != null) {
+            selected = Lists.newArrayList();
+            selected.add(value);
+        }
+        FileSelectDialog fileSD;
+        if (selected != null && selected.size() > 0) {
+            fileSD = FileSelectDialog.singleSelect(selected);
+        } else {
+            if (userSettings.isRememberLastPath()) {
+                String path = userSettings.getLastPath();
+                if (path != null) {
+                    fileSD = FileSelectDialog.selectParentFolderByPath(path, true);
+                } else {
+                    fileSD = FileSelectDialog.singleSelect(null);
+                }
+            } else {
+                fileSD = FileSelectDialog.singleSelect(null);
+            }
+        }
+        fileSD.addHideHandler(new FileDialogHideHandler(fileSD));
+        fileSD.show();
     }
 
     @Override
@@ -96,29 +121,8 @@ public class FileSelectorField extends AbstractDiskResourceSelector<File> {
 
         // Reset status message
         status.setStatus(true);
-        status.update(I18N.DISPLAY.dataDragDropStatusText(dropData.size()));
+        status.update(displayStrings.dataDragDropStatusText(dropData.size()));
 
         return true;
-    }
-
-    @Override
-    public void onDrop(DndDropEvent event) {
-        Set<DiskResource> dropData = getDropData(event.getData());
-
-        if (validateDropStatus(dropData, event.getStatusProxy())) {
-            File selectedFile = (File)dropData.iterator().next();
-            setSelectedResource(selectedFile);
-            ValueChangeEvent.fire(this, selectedFile);
-        }
-    }
-
-    @Override
-    public void setValueFromStringId(String path) {
-        if (Strings.isNullOrEmpty(path)) {
-            setValue(null);
-          }
-        DiskResourceAutoBeanFactory factory = GWT.create(DiskResourceAutoBeanFactory.class);
-        setValue(AutoBeanCodex.decode(factory, File.class, "{\"path\":\"" + path + "\"}").as());
-        
     }
 }

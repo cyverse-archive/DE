@@ -32,8 +32,8 @@ public class NotifyInfo extends IplantAnnouncer {
      * 
      * @param text represents the message text to display.
      */
-    public static void display(final String text) {
-        getInstance().schedule(text);
+    public void display(final String text) {
+        schedule(text);
     }
 
     /**
@@ -41,8 +41,8 @@ public class NotifyInfo extends IplantAnnouncer {
      * 
      * @param text represents the warning text to display.
      */
-    public static void displayWarning(String text) {
-        getInstance().schedule(new ErrorAnnouncementConfig(text));
+    public void displayWarning(String text) {
+        schedule(new ErrorAnnouncementConfig(text));
     }
 
     @Override

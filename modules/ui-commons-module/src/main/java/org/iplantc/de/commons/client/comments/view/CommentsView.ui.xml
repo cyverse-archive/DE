@@ -39,7 +39,7 @@
     <container:VerticalLayoutContainer ui:field="container">
       <container:child layoutData="{toolBarLayoutData}">
         <toolbar:ToolBar>
-            <button:TextButton debugId="idDeleteBtn" ui:field="deleteBtn" text="{strings.delete}" icon="{icons.delete}" enabled="false"></button:TextButton>
+            <button:TextButton debugId="idDeleteBtn" ui:field="deleteBtn" text="{strings.retract}" icon="{icons.delete}" enabled="false"></button:TextButton>
         </toolbar:ToolBar>
       </container:child>
       <container:child layoutData="{gridLayoutData}">

@@ -59,7 +59,7 @@
                 <container:child layoutData="{fileSelLabel}">
                     <g:HTML HTML="{strings.defaultOutputFolder}"/>
                 </container:child>
-                <container:child layoutData="{fileSelLabel}">
+                <container:child layoutData="{preferenceLayoutData}">
                     <selector:FolderSelectorField ui:field="defaultOutputFolder"
                                                   debugId="idDefaultFolderSelector"
                                                   validatePermissions="true"/>

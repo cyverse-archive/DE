@@ -1,10 +1,6 @@
 package org.iplantc.de.client.services.impl;
 
-import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.DELETE;
-import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.GET;
-import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.PATCH;
-import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.PUT;
-
+import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.*;
 import org.iplantc.de.client.models.DEProperties;
 import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.client.models.analysis.AnalysesAutoBeanFactory;
@@ -16,11 +12,11 @@ import org.iplantc.de.client.models.analysis.SelectionValue;
 import org.iplantc.de.client.models.analysis.SimpleValue;
 import org.iplantc.de.client.models.apps.integration.ArgumentType;
 import org.iplantc.de.client.services.AnalysisServiceFacade;
-import org.iplantc.de.client.services.DEServiceFacade;
 import org.iplantc.de.client.services.converters.AsyncCallbackConverter;
 import org.iplantc.de.client.services.converters.StringToVoidCallbackConverter;
 import org.iplantc.de.client.util.AppTemplateUtils;
 import org.iplantc.de.client.util.DiskResourceUtil;
+import org.iplantc.de.shared.services.DEServiceAsync;
 import org.iplantc.de.shared.services.ServiceCallWrapper;
 
 import com.google.common.base.Strings;
@@ -69,7 +65,7 @@ public class AnalysisServiceFacadeImpl implements AnalysisServiceFacade {
 
         List<AnalysisParameter> parse(final List<AnalysisParameter> paramList) {
 
-            List<AnalysisParameter> parsedList = new ArrayList<AnalysisParameter>();
+            List<AnalysisParameter> parsedList = new ArrayList<>();
             for (AnalysisParameter ap : paramList) {
                 if (AppTemplateUtils.isTextType(ap.getType()) || ap.getType().equals(ArgumentType.Flag)) {
                     parsedList.addAll(parseStringValue(ap));
@@ -110,11 +106,11 @@ public class AnalysisServiceFacadeImpl implements AnalysisServiceFacade {
             }
             AutoBean<SelectionValue> ab = AutoBeanCodex.decode(factory, SelectionValue.class, val);
             ap.setDisplayValue(ab.as().getDisplay());
-            return Lists.<AnalysisParameter>newArrayList(ap);
+            return Lists.newArrayList(ap);
         }
 
         List<AnalysisParameter> parseStringValue(final AnalysisParameter ap) {
-            List<AnalysisParameter> parsedList = new ArrayList<AnalysisParameter>();
+            List<AnalysisParameter> parsedList = new ArrayList<>();
             Splittable s = ap.getValue();
             AutoBean<SimpleValue> ab = AutoBeanCodex.decode(factory, SimpleValue.class, s);
             ap.setDisplayValue(ab.as().getValue());
@@ -126,11 +122,14 @@ public class AnalysisServiceFacadeImpl implements AnalysisServiceFacade {
     private final DEProperties deProperties;
     private final UserInfo userInfo;
     private final AnalysesAutoBeanFactory factory;
-    private final DEServiceFacade deServiceFacade;
+    private final DEServiceAsync deServiceFacade;
 
 
     @Inject
-    public AnalysisServiceFacadeImpl(final DEServiceFacade deServiceFacade, final DEProperties deProperties, final UserInfo userInfo, final AnalysesAutoBeanFactory factory) {
+    public AnalysisServiceFacadeImpl(final DEServiceAsync deServiceFacade,
+                                     final DEProperties deProperties,
+                                     final UserInfo userInfo,
+                                     final AnalysesAutoBeanFactory factory) {
         this.deServiceFacade = deServiceFacade;
         this.deProperties = deProperties;
         this.userInfo = userInfo;
@@ -202,8 +201,7 @@ public class AnalysisServiceFacadeImpl implements AnalysisServiceFacade {
             @Override
             protected PagingLoadResultBean<Analysis> convertFrom(String object) {
                 AnalysesList ret = AutoBeanCodex.decode(factory, AnalysesList.class, object).as();
-                PagingLoadResultBean<Analysis> loadResult = new PagingLoadResultBean<Analysis>(ret.getAnalysisList(), ret.getTotal(), loadConfig.getOffset());
-                return loadResult;
+                return new PagingLoadResultBean<>(ret.getAnalysisList(), ret.getTotal(), loadConfig.getOffset());
             }
 
         });

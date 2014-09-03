@@ -7,7 +7,8 @@ import org.iplantc.admin.belphegor.client.views.BelphegorView;
 import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.commons.client.requests.KeepaliveTimer;
-import org.iplantc.de.shared.services.PropertyServiceFacade;
+import org.iplantc.de.shared.services.PropertyService;
+import org.iplantc.de.shared.services.PropertyServiceAsync;
 import org.iplantc.de.shared.services.ServiceCallWrapper;
 
 import com.google.gwt.core.client.EntryPoint;
@@ -23,6 +24,7 @@ import java.util.Map;
  */
 public class Belphegor implements EntryPoint {
     private final BelphegorAppInjector injector = GWT.create(BelphegorAppInjector.class);
+    private final PropertyServiceAsync propertyService = GWT.create(PropertyService.class);
     /**
      * This is the entry point method.
      */
@@ -38,7 +40,7 @@ public class Belphegor implements EntryPoint {
     }
 
     private void initProperties() {
-        PropertyServiceFacade.getInstance().getProperties(new AsyncCallback<Map<String, String>>() {
+        propertyService.getProperties(new AsyncCallback<Map<String, String>>() {
             @Override
             public void onFailure(Throwable caught) {
                 ErrorHandler.post(I18N.DISPLAY.cantLoadUserInfo(), caught);

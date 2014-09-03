@@ -13,12 +13,11 @@ import com.google.web.bindery.autobean.shared.AutoBeanCodex;
 import com.google.web.bindery.autobean.shared.Splittable;
 import com.google.web.bindery.autobean.shared.impl.StringQuoter;
 
-import com.sencha.gxt.core.client.dom.XDOM;
-
 import java.util.Date;
 
 public class ConfigFactory {
     private static ConfigAutoBeanFactory factory = GWT.create(ConfigAutoBeanFactory.class);
+    private static int dataWindowCount = 0;
 
     public static AboutWindowConfig aboutWindowConfig() {
         AboutWindowConfig awc = applyWindowType(WindowType.ABOUT, factory.aboutWindowConfig()).as();
@@ -56,7 +55,7 @@ public class ConfigFactory {
                 factory.diskResourceWindowConfig());
 
         if (newWindowRequested) {
-            applyTag(XDOM.getUniqueId(), drwc);
+            applyTag(Integer.toString(dataWindowCount++), drwc);
         }
 
         return drwc.as();

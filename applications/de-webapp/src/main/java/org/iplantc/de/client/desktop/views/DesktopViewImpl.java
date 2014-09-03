@@ -336,7 +336,7 @@ public class DesktopViewImpl implements DesktopView, UnregisterEvent.UnregisterH
             @Override
             public void onDialogHide(DialogHideEvent event) {
                 if(PredefinedButton.OK.equals(event.getHideButton())){
-                    presenter.saveUserSettings(preferencesDialog.getValue());
+                    presenter.saveUserSettings(preferencesDialog.getValue(), false);
                     preferencesDialog.hide();
                 }
             }

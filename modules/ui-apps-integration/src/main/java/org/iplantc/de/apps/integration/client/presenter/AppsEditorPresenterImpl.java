@@ -1,7 +1,6 @@
 package org.iplantc.de.apps.integration.client.presenter;
 
 import static org.iplantc.de.client.models.apps.App.NEW_APP_ID;
-
 import org.iplantc.de.apps.client.events.AppUpdatedEvent;
 import org.iplantc.de.apps.integration.client.dialogs.CommandLineOrderingPanel;
 import org.iplantc.de.apps.integration.client.events.DeleteArgumentEvent;
@@ -42,7 +41,6 @@ import org.iplantc.de.commons.client.info.IplantAnnouncer;
 import org.iplantc.de.commons.client.info.SuccessAnnouncementConfig;
 import org.iplantc.de.commons.client.views.gxt3.dialogs.IPlantDialog;
 import org.iplantc.de.commons.client.views.gxt3.dialogs.IplantInfoBox;
-import org.iplantc.de.resources.client.messages.I18N;
 import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 import org.iplantc.de.resources.client.messages.IplantErrorStrings;
 import org.iplantc.de.resources.client.uiapps.integration.AppIntegrationErrorMessages;
@@ -70,13 +68,18 @@ import com.sencha.gxt.widget.core.client.box.MessageBox;
 import com.sencha.gxt.widget.core.client.button.TextButton;
 import com.sencha.gxt.widget.core.client.event.BeforeHideEvent;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
 
 /**
  * @author jstroot
  * 
  */
-public class AppsEditorPresenterImpl implements AppsEditorView.Presenter, DeleteArgumentEventHandler, ArgumentAddedEventHandler, ArgumentGroupAddedEventHandler {
+public class AppsEditorPresenterImpl implements AppsEditorView.Presenter,
+                                                DeleteArgumentEventHandler,
+                                                ArgumentAddedEventHandler,
+                                                ArgumentGroupAddedEventHandler {
 
     class DoSaveCallback implements AsyncCallback<String> {
         private final AsyncCallback<Void> onSaveCallback;
@@ -85,18 +88,24 @@ public class AppsEditorPresenterImpl implements AppsEditorView.Presenter, Delete
         private final AppTemplate at;
         private final RenameWindowHeaderCommand renameCommand;
         private final AppsEditorPresenterImpl presenterImpl;
-        private final String successfullSaveMsg;
+        private final String successfulSaveMsg;
         private final String failedSaveMsg;
 
-        DoSaveCallback(AsyncCallback<Void> onSaveCallback, final AppTemplate appTemplate, final IplantAnnouncer announcer, final EventBus eventBus, final RenameWindowHeaderCommand renameCmd,
-                final AppsEditorPresenterImpl presenterImpl, final String successfullSaveMsg, final String failedSaveMsg) {
+        DoSaveCallback(AsyncCallback<Void> onSaveCallback,
+                       final AppTemplate appTemplate,
+                       final IplantAnnouncer announcer,
+                       final EventBus eventBus,
+                       final RenameWindowHeaderCommand renameCmd,
+                       final AppsEditorPresenterImpl presenterImpl,
+                       final String successfulSaveMsg,
+                       final String failedSaveMsg) {
             this.onSaveCallback = onSaveCallback;
             this.at = appTemplate;
             this.announcer1 = announcer;
             this.eventBus1 = eventBus;
             this.renameCommand = renameCmd;
             this.presenterImpl = presenterImpl;
-            this.successfullSaveMsg = successfullSaveMsg;
+            this.successfulSaveMsg = successfulSaveMsg;
             this.failedSaveMsg = failedSaveMsg;
 
         }
@@ -126,15 +135,14 @@ public class AppsEditorPresenterImpl implements AppsEditorView.Presenter, Delete
             }
             eventBus1.fireEvent(new AppUpdatedEvent(presenterImpl.lastSave));
 
-            announcer1.schedule(new SuccessAnnouncementConfig(successfullSaveMsg));
+            announcer1.schedule(new SuccessAnnouncementConfig(successfulSaveMsg));
             if (onSaveCallback != null) {
                 onSaveCallback.onSuccess(null);
             }
         }
 
         AppTemplate copyAppTemplate(AppTemplate templateToCopy) {
-            AppTemplate copy = AppTemplateUtils.copyAppTemplate(templateToCopy);
-            return copy;
+            return AppTemplateUtils.copyAppTemplate(templateToCopy);
         }
     }
     /**
@@ -148,7 +156,10 @@ public class AppsEditorPresenterImpl implements AppsEditorView.Presenter, Delete
         private final HandlerRegistration beforeHideHndlrReg;
         private final Component component;
 
-        private ContainsErrorsOnHideDialog(IplantDisplayStrings messages, IplantErrorStrings errorMessages, Component component, HandlerRegistration beforeHideHndlrReg) {
+        private ContainsErrorsOnHideDialog(IplantDisplayStrings messages,
+                                           IplantErrorStrings errorMessages,
+                                           Component component,
+                                           HandlerRegistration beforeHideHndlrReg) {
             super(messages.warning(), errorMessages.appContainsErrorsPromptToContinue());
             this.component = component;
             this.beforeHideHndlrReg = beforeHideHndlrReg;
@@ -179,7 +190,11 @@ public class AppsEditorPresenterImpl implements AppsEditorView.Presenter, Delete
         private final HasOneWidget container;
         private final RenameWindowHeaderCommand renameHeaderCmd;
 
-        private ContainsErrorsOnSwitchDialog(IplantDisplayStrings messages, IplantErrorStrings errorMessages, HasOneWidget container, AppTemplate appTemplate, RenameWindowHeaderCommand renameCmd) {
+        private ContainsErrorsOnSwitchDialog(IplantDisplayStrings messages,
+                                             IplantErrorStrings errorMessages,
+                                             HasOneWidget container,
+                                             AppTemplate appTemplate,
+                                             RenameWindowHeaderCommand renameCmd) {
             super(messages.warning(), errorMessages.appContainsErrorsPromptToContinue());
             this.container = container;
             this.appTempl = appTemplate;
@@ -213,7 +228,9 @@ public class AppsEditorPresenterImpl implements AppsEditorView.Presenter, Delete
         private final AsyncCallback<Void> onSaveCallback;
         private final AppTemplate toBeSaved;
 
-        private GetUuidThenDoSaveCallback(List<Argument> argNeedUuid, AppTemplate toBeSaved, AsyncCallback<Void> onSaveCallback) {
+        private GetUuidThenDoSaveCallback(List<Argument> argNeedUuid,
+                                          AppTemplate toBeSaved,
+                                          AsyncCallback<Void> onSaveCallback) {
             this.argNeedUuid = argNeedUuid;
             this.toBeSaved = toBeSaved;
             this.onSaveCallback = onSaveCallback;
@@ -247,7 +264,9 @@ public class AppsEditorPresenterImpl implements AppsEditorView.Presenter, Delete
         private final HandlerRegistration beforeHideHndlrReg;
         private final Component component;
 
-        private PromptForSaveDialog(IplantDisplayStrings messages, Component component, HandlerRegistration beforeHideHndlrReg) {
+        private PromptForSaveDialog(IplantDisplayStrings messages,
+                                    Component component,
+                                    HandlerRegistration beforeHideHndlrReg) {
             super(messages.save(), messages.unsavedChanges());
             setIcon(MessageBox.ICONS.question());
             setPredefinedButtons(PredefinedButton.YES, PredefinedButton.NO, PredefinedButton.CANCEL);
@@ -282,7 +301,10 @@ public class AppsEditorPresenterImpl implements AppsEditorView.Presenter, Delete
         private final HasOneWidget container;
         private final RenameWindowHeaderCommand renameHeaderCmd;
 
-        private PromptForSaveThenSwitchDialog(IplantDisplayStrings messages, HasOneWidget container, AppTemplate appTemplate, RenameWindowHeaderCommand renameCmd) {
+        private PromptForSaveThenSwitchDialog(IplantDisplayStrings messages,
+                                              HasOneWidget container,
+                                              AppTemplate appTemplate,
+                                              RenameWindowHeaderCommand renameCmd) {
             super(messages.save(), messages.unsavedChanges());
             setIcon(MessageBox.ICONS.question());
             setPredefinedButtons(PredefinedButton.YES, PredefinedButton.NO, PredefinedButton.CANCEL);
@@ -320,6 +342,9 @@ public class AppsEditorPresenterImpl implements AppsEditorView.Presenter, Delete
             hide();
         }
     }
+
+    private final IplantErrorStrings errorStrings;
+
     public static native void doJsonFormattting(XElement textArea,String val,int width, int height) /*-{
 		var myCodeMirror = $wnd.CodeMirror(textArea, {
 			value : val,
@@ -355,8 +380,15 @@ public class AppsEditorPresenterImpl implements AppsEditorView.Presenter, Delete
     private final IplantAnnouncer announcer;
 
     @Inject
-    public AppsEditorPresenterImpl(final AppsEditorView view, final EventBus eventBus, final AppTemplateServices atService, final AppIntegrationErrorMessages errorMessages,
-            final IplantDisplayStrings messages, final UUIDServiceAsync uuidService, final AppTemplateWizardAppearance appearance, final IplantAnnouncer announcer) {
+    public AppsEditorPresenterImpl(final AppsEditorView view,
+                                   final EventBus eventBus,
+                                   final AppTemplateServices atService,
+                                   final AppIntegrationErrorMessages errorMessages,
+                                   final IplantDisplayStrings messages,
+                                   final UUIDServiceAsync uuidService,
+                                   final AppTemplateWizardAppearance appearance,
+                                   final IplantAnnouncer announcer,
+                                   final IplantErrorStrings errorStrings) {
         this.view = view;
         this.eventBus = eventBus;
         this.atService = atService;
@@ -365,6 +397,7 @@ public class AppsEditorPresenterImpl implements AppsEditorView.Presenter, Delete
         this.uuidService = uuidService;
         this.appearance = appearance;
         this.announcer = announcer;
+        this.errorStrings = errorStrings;
         view.setPresenter(this);
     }
 
@@ -428,7 +461,7 @@ public class AppsEditorPresenterImpl implements AppsEditorView.Presenter, Delete
         /*
          * JDS Make a copy so we can check for differences on exit.
          */
-        lastSave = AppTemplateUtils.copyAppTemplate(view.flush());
+        lastSave = AppTemplateUtils.copyAppTemplate(flushViewAndClean());
 
         updateCommandLinePreview(lastSave);
         if (container.getWidget() == null) {
@@ -460,7 +493,7 @@ public class AppsEditorPresenterImpl implements AppsEditorView.Presenter, Delete
                 public void execute() {
                     if (!isViewValid()) {
                         // JDS View has changes, but contains errors.
-                        new ContainsErrorsOnSwitchDialog(messages, I18N.ERROR, container, appTemplate, renameCmd).show();
+                        new ContainsErrorsOnSwitchDialog(messages, errorStrings, container, appTemplate, renameCmd).show();
                     } else {
                         // JDS There are differences and form is valid, so prompt user to save.
                         new PromptForSaveThenSwitchDialog(messages, container, appTemplate, renameCmd).show();
@@ -482,7 +515,7 @@ public class AppsEditorPresenterImpl implements AppsEditorView.Presenter, Delete
         try {
             // Determine if there are any changes, variables are broken out for readability
             AutoBean<AppTemplate> lastSaveAb = AutoBeanUtils.getAutoBean(lastSave);
-            AutoBean<AppTemplate> currentAb = AutoBeanUtils.getAutoBean(AppTemplateUtils.copyAppTemplate(view.flush()));
+            AutoBean<AppTemplate> currentAb = AutoBeanUtils.getAutoBean(AppTemplateUtils.copyAppTemplate(flushViewAndClean()));
             String lastSavePayload = AutoBeanCodex.encode(lastSaveAb).getPayload();
             String currentPayload = AutoBeanCodex.encode(currentAb).getPayload();
             return !lastSavePayload.equals(currentPayload);
@@ -562,7 +595,7 @@ public class AppsEditorPresenterImpl implements AppsEditorView.Presenter, Delete
                 // JDS There are differences and form is valid, so prompt user to save.
                 new PromptForSaveDialog(messages, component, beforeHideHandlerRegistration).show();
             } else {
-                new ContainsErrorsOnHideDialog(messages, I18N.ERROR, component,
+                new ContainsErrorsOnHideDialog(messages, errorStrings, component,
                         beforeHideHandlerRegistration).show();
             }
         }
@@ -595,7 +628,7 @@ public class AppsEditorPresenterImpl implements AppsEditorView.Presenter, Delete
             doOnSaveClicked(null);
         } else {
             IplantInfoBox errorsInfo = new IplantInfoBox(messages.warning(),
-                    I18N.ERROR.appContainsErrorsUnableToSave());
+                    errorStrings.appContainsErrorsUnableToSave());
             errorsInfo.setIcon(MessageBox.ICONS.error());
             errorsInfo.show();
         }

@@ -6,10 +6,10 @@ import org.iplantc.de.client.models.DEProperties;
 import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.client.models.UserSession;
 import org.iplantc.de.client.models.WindowState;
-import org.iplantc.de.client.services.DEServiceFacade;
 import org.iplantc.de.client.services.UserSessionServiceFacade;
 import org.iplantc.de.client.services.converters.AsyncCallbackConverter;
 import org.iplantc.de.client.services.converters.StringToVoidCallbackConverter;
+import org.iplantc.de.shared.services.DEServiceAsync;
 import org.iplantc.de.shared.services.ServiceCallWrapper;
 
 import com.google.gwt.http.client.Request;
@@ -33,10 +33,10 @@ public class UserSessionServiceFacadeImpl implements UserSessionServiceFacade {
     private final DEProperties deProperties;
     private final UserInfo userInfo;
     private final CommonModelAutoBeanFactory factory;
-    private final DEServiceFacade deServiceFacade;
+    private final DEServiceAsync deServiceFacade;
 
     @Inject
-    public UserSessionServiceFacadeImpl(final DEServiceFacade deServiceFacade,
+    public UserSessionServiceFacadeImpl(final DEServiceAsync deServiceFacade,
                                         final DEProperties deProperties,
                                         final UserInfo userInfo,
                                         final CommonModelAutoBeanFactory factory) {
@@ -46,13 +46,6 @@ public class UserSessionServiceFacadeImpl implements UserSessionServiceFacade {
         this.factory = factory;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.iplantc.de.client.services.UserSessionServiceFacade#getUserSession(com.google.gwt.user.client
-     * .rpc.AsyncCallback)
-     */
     @Override
     public Request getUserSession(AsyncCallback<List<WindowState>> callback) {
         String address = deProperties.getMuleServiceBaseUrl() + "sessions"; //$NON-NLS-1$
@@ -67,13 +60,6 @@ public class UserSessionServiceFacadeImpl implements UserSessionServiceFacade {
         });
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.iplantc.de.client.services.UserSessionServiceFacade#saveUserSession(org.iplantc.de.client.
-     * models.UserSession, com.google.gwt.user.client.rpc.AsyncCallback)
-     */
     @Override
     public Request saveUserSession(final List<WindowState> windowStates, AsyncCallback<Void> callback) {
         String address = deProperties.getMuleServiceBaseUrl() + "sessions"; //$NON-NLS-1$
@@ -83,13 +69,6 @@ public class UserSessionServiceFacadeImpl implements UserSessionServiceFacade {
         return deServiceFacade.getServiceData(wrapper, new StringToVoidCallbackConverter(callback));
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.iplantc.de.client.services.UserSessionServiceFacade#clearUserSession(com.google.gwt.user.client
-     * .rpc.AsyncCallback)
-     */
     @Override
     public void clearUserSession(AsyncCallback<String> callback) {
         String address = deProperties.getMuleServiceBaseUrl() + "sessions"; //$NON-NLS-1$
@@ -97,13 +76,6 @@ public class UserSessionServiceFacadeImpl implements UserSessionServiceFacade {
         deServiceFacade.getServiceData(wrapper, callback);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.iplantc.de.client.services.UserSessionServiceFacade#getUserPreferences(com.google.gwt.user
-     * .client.rpc.AsyncCallback)
-     */
     @Override
     public Request getUserPreferences(AsyncCallback<String> callback) {
         String address = deProperties.getMuleServiceBaseUrl() + "preferences"; //$NON-NLS-1$
@@ -111,13 +83,6 @@ public class UserSessionServiceFacadeImpl implements UserSessionServiceFacade {
         return deServiceFacade.getServiceData(wrapper, callback);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.iplantc.de.client.services.UserSessionServiceFacade#saveUserPreferences(com.google.web.bindery
-     * .autobean.shared.Splittable, com.google.gwt.user.client.rpc.AsyncCallback)
-     */
     @Override
     public void saveUserPreferences(Splittable json, AsyncCallback<Void> callback) {
         String address = deProperties.getMuleServiceBaseUrl() + "preferences"; //$NON-NLS-1$
@@ -125,13 +90,6 @@ public class UserSessionServiceFacadeImpl implements UserSessionServiceFacade {
         deServiceFacade.getServiceData(wrapper, new StringToVoidCallbackConverter(callback));
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.iplantc.de.client.services.UserSessionServiceFacade#postClientNotification(com.google.gwt.
-     * json.client.JSONObject, com.google.gwt.user.client.rpc.AsyncCallback)
-     */
     @Override
     public void postClientNotification(JSONObject notification, AsyncCallback<String> callback) {
         String address = deProperties.getUnproctedMuleServiceBaseUrl() + "send-notification";
@@ -142,13 +100,6 @@ public class UserSessionServiceFacadeImpl implements UserSessionServiceFacade {
 
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.iplantc.de.client.services.UserSessionServiceFacade#getSearchHistory(com.google.gwt.user.client
-     * .rpc.AsyncCallback)
-     */
     @Override
     public void getSearchHistory(AsyncCallback<String> callback) {
         String address = deProperties.getMuleServiceBaseUrl() + "search-history";
@@ -156,13 +107,6 @@ public class UserSessionServiceFacadeImpl implements UserSessionServiceFacade {
         deServiceFacade.getServiceData(wrapper, callback);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.iplantc.de.client.services.UserSessionServiceFacade#saveSearchHistory(com.google.gwt.json.
-     * client.JSONObject, com.google.gwt.user.client.rpc.AsyncCallback)
-     */
     @Override
     public void saveSearchHistory(JSONObject body, AsyncCallback<String> callback) {
         String address = deProperties.getMuleServiceBaseUrl() + "search-history";

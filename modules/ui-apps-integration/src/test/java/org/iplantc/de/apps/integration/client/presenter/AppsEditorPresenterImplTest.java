@@ -14,6 +14,7 @@ import org.iplantc.de.client.services.UUIDServiceAsync;
 import org.iplantc.de.commons.client.info.ErrorAnnouncementConfig;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
 import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
+import org.iplantc.de.resources.client.messages.IplantErrorStrings;
 import org.iplantc.de.resources.client.uiapps.integration.AppIntegrationErrorMessages;
 
 import com.google.common.collect.Lists;
@@ -33,6 +34,10 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 
+/**
+ * FIXME Update test to verify editor dirty state.
+ * This will require getting rid of the AppTemplateUtils static class. Need to be able to mock it out.
+ */
 @RunWith(GxtMockitoTestRunner.class)
 public class AppsEditorPresenterImplTest {
 
@@ -41,6 +46,7 @@ public class AppsEditorPresenterImplTest {
     @Mock private AppTemplateServices mockAppTemplateService;
     @Mock private AppIntegrationErrorMessages mockErrorMessages;
     @Mock private IplantDisplayStrings mockDisplayStrings;
+    @Mock private IplantErrorStrings errorStringsMock;
     @Mock private UUIDServiceAsync mockUuidService;
     @Mock private AppTemplateWizardAppearance mockAppearance;
     @Mock private IplantAnnouncer mockAnnouncer;
@@ -50,7 +56,7 @@ public class AppsEditorPresenterImplTest {
     private AppsEditorPresenterImpl uut;
 
     @Before public void setUp() {
-        uut = new AppsEditorPresenterImpl(mockView, mockEventBus, mockAppTemplateService, mockErrorMessages, mockDisplayStrings, mockUuidService, mockAppearance, mockAnnouncer);
+        uut = new AppsEditorPresenterImpl(mockView, mockEventBus, mockAppTemplateService, mockErrorMessages, mockDisplayStrings, mockUuidService, mockAppearance, mockAnnouncer, errorStringsMock);
     }
 
     @Test public void testDoArgumentGroupDelete() {
@@ -88,5 +94,6 @@ public class AppsEditorPresenterImplTest {
         doSaveCallback.onSuccess(successResult);
         verify(mockAppTemplate).setId(eq(successResult));
     }
+
 
 }

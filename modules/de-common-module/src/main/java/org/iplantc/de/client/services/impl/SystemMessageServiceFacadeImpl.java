@@ -2,17 +2,16 @@ package org.iplantc.de.client.services.impl;
 
 import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.GET;
 import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.POST;
-
 import org.iplantc.de.client.models.DEProperties;
 import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.client.models.sysMsgs.IdList;
 import org.iplantc.de.client.models.sysMsgs.MessageFactory;
 import org.iplantc.de.client.models.sysMsgs.MessageList;
 import org.iplantc.de.client.models.sysMsgs.User;
-import org.iplantc.de.client.services.DEServiceFacade;
 import org.iplantc.de.client.services.SystemMessageServiceFacade;
 import org.iplantc.de.client.services.converters.AsyncCallbackConverter;
 import org.iplantc.de.client.services.converters.StringToVoidCallbackConverter;
+import org.iplantc.de.shared.services.DEServiceAsync;
 import org.iplantc.de.shared.services.ServiceCallWrapper;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -26,7 +25,7 @@ import com.google.web.bindery.autobean.shared.Splittable;
  * Provides access to remote services to acquire system messages.
  */
 public final class SystemMessageServiceFacadeImpl implements SystemMessageServiceFacade {
-	
+
     private static final class MsgListCB extends AsyncCallbackConverter<String, MessageList> {
         private final MessageFactory msgFactory;
 
@@ -43,17 +42,20 @@ public final class SystemMessageServiceFacadeImpl implements SystemMessageServic
 
     private final MessageFactory factory;
     private final DEProperties deProperties;
-    private final DEServiceFacade deServiceFacade;
+    private final DEServiceAsync deServiceFacade;
     private final UserInfo userInfo;
 
     @Inject
-    public SystemMessageServiceFacadeImpl(final DEServiceFacade deServiceFacade, final DEProperties deProperties, final MessageFactory factory, final UserInfo userInfo) {
+    public SystemMessageServiceFacadeImpl(final DEServiceAsync deServiceFacade,
+                                          final DEProperties deProperties,
+                                          final MessageFactory factory,
+                                          final UserInfo userInfo) {
         this.deServiceFacade = deServiceFacade;
         this.deProperties = deProperties;
         this.factory = factory;
         this.userInfo = userInfo;
     }
-	
+
     /**
      * @see SystemMessageServiceFacade#getAllMessages(AsyncCallback)
      */

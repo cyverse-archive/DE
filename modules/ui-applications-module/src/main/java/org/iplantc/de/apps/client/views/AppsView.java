@@ -4,10 +4,10 @@ import org.iplantc.de.apps.client.events.AppCommentSelectedEvent.AppCommentSelec
 import org.iplantc.de.apps.client.events.AppFavoritedEvent;
 import org.iplantc.de.apps.client.events.AppGroupSelectionChangedEvent.AppGroupSelectionChangedEventHandler;
 import org.iplantc.de.apps.client.events.AppGroupSelectionChangedEvent.HasAppGroupSelectionChangedEventHandlers;
+import org.iplantc.de.apps.client.events.AppNameSelectedEvent;
 import org.iplantc.de.apps.client.events.AppSelectionChangedEvent.AppSelectionChangedEventHandler;
 import org.iplantc.de.apps.client.events.AppSelectionChangedEvent.HasAppSelectionChangedEventHandlers;
 import org.iplantc.de.apps.client.views.cells.AppFavoriteCell;
-import org.iplantc.de.apps.client.views.cells.AppHyperlinkCell;
 import org.iplantc.de.apps.client.views.widgets.events.AppSearchResultLoadEvent.AppSearchResultLoadEventHandler;
 import org.iplantc.de.client.models.HasId;
 import org.iplantc.de.client.models.apps.App;
@@ -21,12 +21,16 @@ import com.sencha.gxt.widget.core.client.grid.Grid;
 
 import java.util.List;
 
-public interface AppsView extends IsWidget, AppSearchResultLoadEventHandler, AppFavoritedEvent.AppFavoritedEventHandler {
+public interface AppsView extends IsWidget,
+                                  AppSearchResultLoadEventHandler,
+                                  AppFavoritedEvent.AppFavoritedEventHandler {
 
     public interface Presenter extends org.iplantc.de.commons.client.presenter.Presenter,
-            AppHyperlinkCell.AppNameSelectedEventHandler, AppSearchResultLoadEventHandler,
-            AppGroupSelectionChangedEventHandler, AppFavoriteCell.RequestAppFavoriteEventHandler,
-            AppCommentSelectedEventHandler {
+                                       AppNameSelectedEvent.AppNameSelectedEventHandler,
+                                       AppSearchResultLoadEventHandler,
+                                       AppGroupSelectionChangedEventHandler,
+                                       AppFavoriteCell.RequestAppFavoriteEventHandler,
+                                       AppCommentSelectedEventHandler {
 
         void copySelectedApp();
 
@@ -63,7 +67,9 @@ public interface AppsView extends IsWidget, AppSearchResultLoadEventHandler, App
         void setViewDebugId(String baseId);
     }
 
-    public interface ViewMenu extends IsWidget, AppSelectionChangedEventHandler, AppGroupSelectionChangedEventHandler {
+    public interface ViewMenu extends IsWidget,
+                                      AppSelectionChangedEventHandler,
+                                      AppGroupSelectionChangedEventHandler {
 
         void hideAppMenu();
 

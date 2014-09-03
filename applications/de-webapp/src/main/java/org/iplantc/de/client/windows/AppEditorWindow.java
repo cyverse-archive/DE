@@ -126,6 +126,7 @@ public class AppEditorWindow extends IplantWindowBase implements AppPublishedEve
         factory = GWT.create(AppTemplateAutoBeanFactory.class);
         renameCmd = new RenameWindowHeaderCmdImpl(this);
 
+        ensureDebugId(DeModule.WindowIds.APP_EDITOR_WINDOW);
         setHeadingText(appearance.headingText());
         setSize("800", "480");
         setMinWidth(appearance.minWidth());
@@ -137,8 +138,6 @@ public class AppEditorWindow extends IplantWindowBase implements AppPublishedEve
         eventBus.addHandler(AppPublishedEvent.TYPE, this);
 
         init(presenter, config);
-
-        ensureDebugId(DeModule.Ids.APP_EDITOR_WINDOW);
     }
 
     @Override

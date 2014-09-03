@@ -530,10 +530,10 @@ public class StrcturedTextViewerImpl extends StructuredTextViewer {
         }
         if (rowEditing != null) {
             rowEditing.cancelEditing();
-            getStore().add(0, obj);
+            getStore().add(obj);
             int row = getStore().indexOf(obj);
             setDirty(true);
-            rowEditing.startEditing(new GridCell(row, 0));
+            rowEditing.startEditing(new GridCell(row, 1));
         }
     }
 

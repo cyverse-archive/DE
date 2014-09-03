@@ -1,18 +1,18 @@
 package org.iplantc.de.client.gin;
 
+import org.iplantc.de.client.desktop.DesktopView;
+import org.iplantc.de.client.desktop.presenter.DesktopPresenterEventHandler;
 import org.iplantc.de.client.desktop.presenter.DesktopPresenterImpl;
+import org.iplantc.de.client.desktop.presenter.DesktopPresenterWindowEventHandler;
+import org.iplantc.de.client.desktop.presenter.DesktopWindowManager;
+import org.iplantc.de.client.desktop.presenter.util.MessagePoller;
 import org.iplantc.de.client.desktop.views.DesktopViewImpl;
+import org.iplantc.de.client.desktop.views.widgets.DEFeedbackDialog;
+import org.iplantc.de.client.desktop.views.widgets.PreferencesDialog;
 import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.models.DEProperties;
 import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.client.models.UserSettings;
-import org.iplantc.de.client.desktop.DesktopView;
-import org.iplantc.de.client.desktop.presenter.DesktopPresenterEventHandler;
-import org.iplantc.de.client.desktop.presenter.DesktopPresenterWindowEventHandler;
-import org.iplantc.de.client.desktop.presenter.DesktopWindowManager;
-import org.iplantc.de.client.desktop.views.widgets.DEFeedbackDialog;
-import org.iplantc.de.client.desktop.views.widgets.PreferencesDialog;
-import org.iplantc.de.client.desktop.presenter.util.MessagePoller;
 import org.iplantc.de.client.services.AnalysisServiceFacade;
 import org.iplantc.de.client.services.DEFeedbackServiceFacade;
 import org.iplantc.de.client.services.DiskResourceServiceFacade;
@@ -26,7 +26,6 @@ import org.iplantc.de.client.windows.util.WindowFactory;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
 import org.iplantc.de.commons.client.requests.KeepaliveTimer;
 import org.iplantc.de.resources.client.IplantResources;
-import org.iplantc.de.shared.services.PropertyServiceFacade;
 
 import com.google.gwt.inject.client.AbstractGinModule;
 import com.google.inject.Provides;
@@ -47,10 +46,6 @@ public class DEGinModule extends AbstractGinModule {
 
     @Provides public UserSessionServiceFacade createUserSessionServiceFacade() {
         return ServicesInjector.INSTANCE.getUserSessionServiceFacade();
-    }
-
-    @Provides public PropertyServiceFacade createPropertyServiceFacade() {
-        return PropertyServiceFacade.getInstance();
     }
 
     @Provides public FileEditorServiceFacade createFileEditorService() {

@@ -8,9 +8,10 @@ import org.iplantc.de.client.models.diskResources.DiskResourceAutoBeanFactory;
 import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.client.util.CommonModelUtils;
 import org.iplantc.de.client.util.DiskResourceUtil;
-import org.iplantc.de.commons.client.events.UserSettingsUpdatedEvent;
+import org.iplantc.de.commons.client.events.LastSelectedPathChangedEvent;
 import org.iplantc.de.diskResource.client.views.dialogs.FolderSelectDialog;
 import org.iplantc.de.resources.client.messages.I18N;
+import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 
 import com.google.common.base.Strings;
 import com.google.gwt.core.shared.GWT;
@@ -26,32 +27,6 @@ import com.sencha.gxt.widget.core.client.event.HideEvent.HideHandler;
 import java.util.Set;
 
 public class FolderSelectorField extends AbstractDiskResourceSelector<Folder> {
-
-    UserSettings userSettings = UserSettings.getInstance();
-
-    public FolderSelectorField() {
-        setEmptyText(I18N.DISPLAY.selectAFolder());
-    }
-
-    @Override
-    protected void onBrowseSelected() {
-        HasPath value = getValue();
-        FolderSelectDialog folderSD = null;
-        if (value == null && userSettings.isRememberLastPath()) {
-            String path = userSettings.getLastPath();
-            if (path != null) {
-                value = CommonModelUtils.createHasPathFromString(path);
-            }
-        }
-        folderSD = new FolderSelectDialog(value);
-        folderSD.addHideHandler(new FolderDialogHideHandler(folderSD));
-        folderSD.show();
-    }
-
-    @Override
-    public void setValue(Folder value) {
-        super.setValue(value);
-    }
 
     private class FolderDialogHideHandler implements HideHandler {
         private final TakesValue<Folder> takesValue;
@@ -70,11 +45,61 @@ public class FolderSelectorField extends AbstractDiskResourceSelector<Folder> {
             // cache the last used path
             if (userSettings.isRememberLastPath()) {
                 userSettings.setLastPath(value.getPath());
-                UserSettingsUpdatedEvent usue = new UserSettingsUpdatedEvent();
-                EventBus.getInstance().fireEvent(usue);
+                eventBus.fireEvent(new LastSelectedPathChangedEvent(true));
             }
             ValueChangeEvent.fire(FolderSelectorField.this, value);
         }
+    }
+
+    UserSettings userSettings = UserSettings.getInstance();
+    private final IplantDisplayStrings displayStrings;
+    private final EventBus eventBus;
+
+    public FolderSelectorField() {
+        displayStrings = I18N.DISPLAY;
+        eventBus = EventBus.getInstance();
+        setEmptyText(displayStrings.selectAFolder());
+    }
+
+    @Override
+    public void onDrop(DndDropEvent event) {
+        Set<DiskResource> dropData = getDropData(event.getData());
+
+        if (validateDropStatus(dropData, event.getStatusProxy())) {
+            Folder selectedFolder = (Folder) dropData.iterator().next();
+            setSelectedResource(selectedFolder);
+            ValueChangeEvent.fire(this, selectedFolder);
+        }
+    }
+
+    @Override
+    public void setValue(Folder value) {
+        super.setValue(value);
+    }
+
+    @Override
+    public void setValueFromStringId(String path) {
+        if (Strings.isNullOrEmpty(path)) {
+            setValue(null);
+        }
+        DiskResourceAutoBeanFactory factory = GWT.create(DiskResourceAutoBeanFactory.class);
+        setValue(AutoBeanCodex.decode(factory, Folder.class, "{\"path\":\"" + path + "\"}").as());
+
+    }
+
+    @Override
+    protected void onBrowseSelected() {
+        HasPath value = getValue();
+        FolderSelectDialog folderSD;
+        if (value == null && userSettings.isRememberLastPath()) {
+            String path = userSettings.getLastPath();
+            if (path != null) {
+                value = CommonModelUtils.createHasPathFromString(path);
+            }
+        }
+        folderSD = new FolderSelectDialog(value);
+        folderSD.addHideHandler(new FolderDialogHideHandler(folderSD));
+        folderSD.show();
     }
 
     @Override
@@ -87,29 +112,8 @@ public class FolderSelectorField extends AbstractDiskResourceSelector<Folder> {
 
         // Reset status message
         status.setStatus(true);
-        status.update(I18N.DISPLAY.dataDragDropStatusText(dropData.size()));
+        status.update(displayStrings.dataDragDropStatusText(dropData.size()));
 
         return true;
-    }
-
-    @Override
-    public void onDrop(DndDropEvent event) {
-        Set<DiskResource> dropData = getDropData(event.getData());
-
-        if (validateDropStatus(dropData, event.getStatusProxy())) {
-            Folder selectedFolder = (Folder)dropData.iterator().next();
-            setSelectedResource(selectedFolder);
-            ValueChangeEvent.fire(this, selectedFolder);
-        }
-    }
-
-    @Override
-    public void setValueFromStringId(String path) {
-        if (Strings.isNullOrEmpty(path)) {
-            setValue(null);
-          }
-        DiskResourceAutoBeanFactory factory = GWT.create(DiskResourceAutoBeanFactory.class);
-        setValue(AutoBeanCodex.decode(factory, Folder.class, "{\"path\":\"" + path + "\"}").as());
-        
     }
 }

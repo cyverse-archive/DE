@@ -8,18 +8,18 @@ package org.iplantc.de.client.models.notifications;
  */
 public enum NotificationCategory {
     /** All notification categories */
-    ALL(NotificationCategoryConstants.INSTANCE.notificationCategoryAll()),
+    ALL("All"),
     /** System notifications */
-    SYSTEM(NotificationCategoryConstants.INSTANCE.notificationCategorySystem()),
+    SYSTEM("System"),
     /** Data notifications */
-    DATA(NotificationCategoryConstants.INSTANCE.notificationCategoryData()),
+    DATA("Data"),
     /** Analysis notifications */
-    ANALYSIS(NotificationCategoryConstants.INSTANCE.notificationCategoryAnalysis()),
+    ANALYSIS("Analysis"),
     /** tool rquest status update notification */
-    TOOLREQUEST(NotificationCategoryConstants.INSTANCE.toolRequest()),
+    TOOLREQUEST("Tool Request"),
 
     /** unseen notifications */
-    NEW(NotificationCategoryConstants.INSTANCE.notificationCategoryUnseen());
+    NEW("New");
 
     private String displayText;
 

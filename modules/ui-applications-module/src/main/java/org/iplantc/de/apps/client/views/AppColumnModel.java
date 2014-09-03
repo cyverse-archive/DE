@@ -3,6 +3,7 @@ package org.iplantc.de.apps.client.views;
 import org.iplantc.de.apps.client.events.AppCommentSelectedEvent;
 import org.iplantc.de.apps.client.events.AppCommentSelectedEvent.AppCommentSelectedEventHandler;
 import org.iplantc.de.apps.client.events.AppCommentSelectedEvent.HasAppCommentSelectedEventHandlers;
+import org.iplantc.de.apps.client.events.AppNameSelectedEvent;
 import org.iplantc.de.apps.client.views.cells.AppCommentCell;
 import org.iplantc.de.apps.client.views.cells.AppFavoriteCell;
 import org.iplantc.de.apps.client.views.cells.AppHyperlinkCell;
@@ -31,7 +32,7 @@ import java.util.List;
 
 public class AppColumnModel extends ColumnModel<App> implements
                                                     AppInfoCell.HasAppInfoClickedEventHandlers,
-                                                    AppHyperlinkCell.HasAppNameSelectedEventHandlers,
+                                                    AppNameSelectedEvent.HasAppNameSelectedEventHandlers,
                                                     AppFavoriteCell.HasRequestAppFavoriteEventHandlers,
                                                     HasAppCommentSelectedEventHandlers {
 
@@ -56,22 +57,22 @@ public class AppColumnModel extends ColumnModel<App> implements
     public static List<ColumnConfig<App, ?>>
             createColumnConfigList(final AppsView view, final IplantDisplayStrings displayStrings) {
         AppProperties props = GWT.create(AppProperties.class);
-        List<ColumnConfig<App, ?>> list = new ArrayList<ColumnConfig<App, ?>>();
+        List<ColumnConfig<App, ?>> list = new ArrayList<>();
 
-        ColumnConfig<App, App> info = new ColumnConfig<App, App>(new IdentityValueProvider<App>(""), 20);
+        ColumnConfig<App, App> info = new ColumnConfig<>(new IdentityValueProvider<App>(""), 20);
         info.setHeader("");
 
-        ColumnConfig<App, App> name = new ColumnConfig<App, App>(new IdentityValueProvider<App>("name"), //$NON-NLS-1$
+        ColumnConfig<App, App> name = new ColumnConfig<>(new IdentityValueProvider<App>("name"), //$NON-NLS-1$
                                                                  180,
                                                                  displayStrings.name());
 
-        ColumnConfig<App, String> integrator = new ColumnConfig<App, String>(props.integratorName(),
+        ColumnConfig<App, String> integrator = new ColumnConfig<>(props.integratorName(),
                                                                              130,
                                                                              displayStrings.integratedby());
 
-        ColumnConfig<App, App> rating = new ColumnConfig<App, App>(new IdentityValueProvider<App>("rating"), 105, displayStrings.rating()); //$NON-NLS-1$
+        ColumnConfig<App, App> rating = new ColumnConfig<>(new IdentityValueProvider<App>("rating"), 105, displayStrings.rating()); //$NON-NLS-1$
 
-        ColumnConfig<App, App> comment = new ColumnConfig<App, App>(new IdentityValueProvider<App>("comment"), 30); //$NON-NLS-1$
+        ColumnConfig<App, App> comment = new ColumnConfig<>(new IdentityValueProvider<App>("comment"), 30); //$NON-NLS-1$
 
         comment.setHeader("");
 
@@ -124,7 +125,7 @@ public class AppColumnModel extends ColumnModel<App> implements
 
     @Override
     public HandlerRegistration
-            addAppNameSelectedEventHandler(AppHyperlinkCell.AppNameSelectedEventHandler handler) {
+            addAppNameSelectedEventHandler(AppNameSelectedEvent.AppNameSelectedEventHandler handler) {
         return ensureHandlers().addHandler(AppHyperlinkCell.EVENT_TYPE, handler);
     }
 

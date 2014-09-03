@@ -13,7 +13,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.log4j.Logger;
 import org.iplantc.de.client.oauth.OAuthErrorDescriptions;
 import org.iplantc.de.server.DiscoveryEnvironmentProperties;
-import org.iplantc.de.server.UrlConnector;
+import org.iplantc.de.server.auth.UrlConnector;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;

@@ -17,13 +17,12 @@ import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.client.models.diskResources.PermissionValue;
 import org.iplantc.de.client.models.diskResources.TYPE;
 import org.iplantc.de.client.models.search.DiskResourceQueryTemplate;
-import org.iplantc.de.client.models.tags.IpalntTagAutoBeanFactory;
+import org.iplantc.de.client.models.tags.IplantTagAutoBeanFactory;
 import org.iplantc.de.client.models.tags.IplantTag;
 import org.iplantc.de.client.models.tags.IplantTagList;
 import org.iplantc.de.client.models.viewer.InfoType;
 import org.iplantc.de.client.services.DiskResourceServiceFacade;
 import org.iplantc.de.client.services.MetadataServiceFacade;
-import org.iplantc.de.client.services.TagsServiceFacade;
 import org.iplantc.de.client.util.CommonModelUtils;
 import org.iplantc.de.client.util.DiskResourceUtil;
 import org.iplantc.de.commons.client.ErrorHandler;
@@ -38,23 +37,7 @@ import org.iplantc.de.commons.client.views.window.configs.FileViewerWindowConfig
 import org.iplantc.de.commons.client.views.window.configs.TabularFileViewerWindowConfig;
 import org.iplantc.de.diskResource.client.dataLink.presenter.DataLinkPresenter;
 import org.iplantc.de.diskResource.client.dataLink.view.DataLinkPanel;
-import org.iplantc.de.diskResource.client.events.CreateNewFileEvent;
-import org.iplantc.de.diskResource.client.events.DiskResourceRenamedEvent;
-import org.iplantc.de.diskResource.client.events.DiskResourceSelectionChangedEvent;
-import org.iplantc.de.diskResource.client.events.DiskResourcesDeletedEvent;
-import org.iplantc.de.diskResource.client.events.DiskResourcesMovedEvent;
-import org.iplantc.de.diskResource.client.events.FolderCreatedEvent;
-import org.iplantc.de.diskResource.client.events.FolderSelectionEvent;
-import org.iplantc.de.diskResource.client.events.RequestAttachDiskResourceFavoritesFolderEvent;
-import org.iplantc.de.diskResource.client.events.RequestBulkDownloadEvent;
-import org.iplantc.de.diskResource.client.events.RequestBulkUploadEvent;
-import org.iplantc.de.diskResource.client.events.RequestImportFromUrlEvent;
-import org.iplantc.de.diskResource.client.events.RequestSendToCoGeEvent;
-import org.iplantc.de.diskResource.client.events.RequestSendToEnsemblEvent;
-import org.iplantc.de.diskResource.client.events.RequestSendToTreeViewerEvent;
-import org.iplantc.de.diskResource.client.events.RequestSimpleDownloadEvent;
-import org.iplantc.de.diskResource.client.events.RequestSimpleUploadEvent;
-import org.iplantc.de.diskResource.client.events.ShowFilePreviewEvent;
+import org.iplantc.de.diskResource.client.events.*;
 import org.iplantc.de.diskResource.client.metadata.presenter.DiskResourceMetadataUpdateCallback;
 import org.iplantc.de.diskResource.client.metadata.presenter.MetadataPresenter;
 import org.iplantc.de.diskResource.client.metadata.view.DiskResourceMetadataView;
@@ -86,12 +69,12 @@ import org.iplantc.de.diskResource.client.views.dialogs.InfoTypeEditorDialog;
 import org.iplantc.de.diskResource.client.views.dialogs.RenameFileDialog;
 import org.iplantc.de.diskResource.client.views.dialogs.RenameFolderDialog;
 import org.iplantc.de.diskResource.share.DiskResourceModule;
-import org.iplantc.de.resources.client.messages.I18N;
+import org.iplantc.de.resources.client.messages.IplantContextualHelpStrings;
 import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
+import org.iplantc.de.resources.client.messages.IplantErrorStrings;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
-
 import com.google.common.base.Strings;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
@@ -141,10 +124,11 @@ import java.util.Set;
 public class DiskResourcePresenterImpl implements DiskResourceView.Presenter, DiskResourceSelectionChangedEvent.DiskResourceSelectionChangedEventHandler {
 
     final DiskResourceView view;
-    private final DiskResourceView.Proxy proxy;
+    private final IplantErrorStrings errorStrings;
+    private final IplantContextualHelpStrings helpStrings;
     private final TreeLoader<Folder> treeLoader;
-    private final HashMap<EventHandler, HandlerRegistration> registeredHandlers = new HashMap<EventHandler, HandlerRegistration>();
-    private final List<HandlerRegistration> dreventHandlers = new ArrayList<HandlerRegistration>();
+    private final HashMap<EventHandler, HandlerRegistration> registeredHandlers = new HashMap<>();
+    private final List<HandlerRegistration> dreventHandlers = new ArrayList<>();
     private final DiskResourceServiceFacade diskResourceService;
     private final IplantDisplayStrings displayStrings;
     private final DiskResourceAutoBeanFactory drFactory;
@@ -152,18 +136,18 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter, Di
     protected boolean isFilePreviewEnabled = true;
     private final DataLinkFactory dlFactory;
     private final UserInfo userInfo;
-    private final DataSearchPresenter dataSearchPresenter;
     private final EventBus eventBus;
     private final IplantAnnouncer announcer;
-    private TagsServiceFacade mdataService;
     private MetadataServiceFacade fsmdataService;
 
     @Inject
     public DiskResourcePresenterImpl(final DiskResourceView view,
                                      final DiskResourceView.Proxy proxy,
                                      final DiskResourceServiceFacade diskResourceService,
- final TagsServiceFacade mdataService,
-            final MetadataServiceFacade fsmDataService, final IplantDisplayStrings display,
+                                     final MetadataServiceFacade fsmDataService,
+                                     final IplantDisplayStrings display,
+                                     final IplantErrorStrings errorStrings,
+                                     final IplantContextualHelpStrings helpStrings,
                                      final DiskResourceAutoBeanFactory factory,
                                      final DataLinkFactory dlFactory,
                                      final UserInfo userInfo,
@@ -171,31 +155,28 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter, Di
                                      final EventBus eventBus,
                                      final IplantAnnouncer announcer) {
         this.view = view;
-        this.proxy = proxy;
         this.diskResourceService = diskResourceService;
         this.displayStrings = display;
+        this.errorStrings = errorStrings;
+        this.helpStrings = helpStrings;
         this.drFactory = factory;
         this.dlFactory = dlFactory;
         this.userInfo = userInfo;
-        this.dataSearchPresenter = dataSearchPresenter;
         this.eventBus = eventBus;
         this.announcer = announcer;
-        this.mdataService = mdataService;
         this.fsmdataService = fsmDataService;
 
         builder = new MyBuilder(this);
 
-        treeLoader = new TreeLoader<Folder>(this.proxy) {
+        treeLoader = new TreeLoader<Folder>(proxy) {
             @Override
             public boolean hasChildren(Folder parent) {
                 return parent.hasSubDirs();
             }
         };
 
-
-
-        this.proxy.init(dataSearchPresenter, this);
-        this.dataSearchPresenter.searchInit(view, view, this, view.getToolbar().getSearchField());
+        proxy.init(dataSearchPresenter, this);
+        dataSearchPresenter.searchInit(view, view, this, view.getToolbar().getSearchField());
 
         this.view.setTreeLoader(treeLoader);
         this.view.setPresenter(this);
@@ -254,23 +235,13 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter, Di
 
                 @Override
                 public void onFailure(Throwable caught) {
-                    ErrorHandler.post(I18N.ERROR.markFavoriteError(), caught);
+                    ErrorHandler.post(errorStrings.markFavoriteError(), caught);
 
                 }
 
                 @Override
                 public void onSuccess(String result) {
-                    if (getSelectedDiskResources().size() > 0) {
-                        Iterator<DiskResource> it = getSelectedDiskResources().iterator();
-                        if (it != null && it.hasNext()) {
-                            final DiskResource next = it.next();
-                            if (next.getId().equals(diskResource.getId())) {
-                                next.setFavorite(true);
-                                view.updateStore(next);
-                            }
-                        }
-                    }
-
+                    updateFav(diskResource, true);
                 }
             });
         } else {
@@ -278,23 +249,13 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter, Di
 
                 @Override
                 public void onFailure(Throwable caught) {
-                    ErrorHandler.post(I18N.ERROR.removeFavoriteError(), caught);
+                    ErrorHandler.post(errorStrings.removeFavoriteError(), caught);
 
                 }
 
                 @Override
                 public void onSuccess(String result) {
-                    if (getSelectedDiskResources().size() > 0) {
-                        Iterator<DiskResource> it = getSelectedDiskResources().iterator();
-                        if (it != null && it.hasNext()) {
-                            final DiskResource next = it.next();
-                            if (next.getId().equals(diskResource.getId())) {
-                                next.setFavorite(false);
-                                view.updateStore(next);
-                                view.refreshFolder(getSelectedFolder());
-                            }
-                        }
-                    }
+                    updateFav(diskResource, false);
 
                 }
             });
@@ -345,7 +306,7 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter, Di
 
                 @Override
                 public void onFailure(Throwable caught) {
-                    ErrorHandler.post(I18N.ERROR.createDataLinksError(), caught);
+                    ErrorHandler.post(errorStrings.createDataLinksError(), caught);
                 }
             });
         }
@@ -502,7 +463,7 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter, Di
     public void getTagsForSelectedResource() {
         if (getSelectedDiskResources().size() > 0) {
             Iterator<DiskResource> it = getSelectedDiskResources().iterator();
-            if (it != null && it.hasNext()) {
+            if (it.hasNext()) {
                 final DiskResource next = it.next();
                 fsmdataService.getTags(next.getId(), new AsyncCallback<String>() {
 
@@ -514,7 +475,7 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter, Di
 
                     @Override
                     public void onSuccess(String result) {
-                        IpalntTagAutoBeanFactory factory = GWT.create(IpalntTagAutoBeanFactory.class);
+                        IplantTagAutoBeanFactory factory = GWT.create(IplantTagAutoBeanFactory.class);
                         AutoBean<IplantTagList> tagList = AutoBeanCodex.decode(factory, IplantTagList.class, result);
                         view.updateTags(tagList.as().getTagList());
 
@@ -540,7 +501,7 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter, Di
         final DiskResource next = getSelectedDiskResources().iterator().next();
         checkState(next instanceof File, "Selected item should be a file, but is not.");
         checkState(PermissionValue.own.equals(next.getPermission())
-                          || PermissionValue.write.equals(next), "User should have either own or write permissions for the selected item");
+                          || PermissionValue.write.equals(next.getPermission()), "User should have either own or write permissions for the selected item");
 
         eventBus.fireEvent(new ShowFilePreviewEvent((File) next, this));
     }
@@ -579,15 +540,6 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter, Di
     public void refreshSelectedFolder() {
         checkState(getSelectedFolder() != null, "Selected folder should no be null");
         doRefreshFolder(getSelectedFolder());
-    }
-
-    void onFolderRefresh(Folder folder) {
-        if (folder == null || Strings.isNullOrEmpty(folder.getId())) {
-            dataSearchPresenter.refreshQuery();
-            return;
-        }
-
-        eventBus.fireEvent(new FolderRefreshEvent(folder));
     }
 
     @Override
@@ -642,13 +594,13 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter, Di
         DiskResource next = it.next();
         String infoType = getInfoType(next);
         if(Strings.isNullOrEmpty(infoType)) {
-            showInfoTypeError(I18N.ERROR.unsupportedEnsemblInfoType());
+            showInfoTypeError(errorStrings.unsupportedEnsemblInfoType());
             return;
         }
         if (DiskResourceUtil.isEnsemblVizTab(DiskResourceUtil.createInfoTypeSplittable(infoType))) {
             eventBus.fireEvent(new RequestSendToEnsemblEvent((File)next, InfoType.fromTypeString(infoType)));
         } else {
-            showInfoTypeError(I18N.ERROR.unsupportedEnsemblInfoType());
+            showInfoTypeError(errorStrings.unsupportedEnsemblInfoType());
         }
     }
 
@@ -659,13 +611,13 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter, Di
         DiskResource next = it.next();
         String infoType = getInfoType(next);
         if (Strings.isNullOrEmpty(infoType)) {
-            showInfoTypeError(I18N.ERROR.unsupportedCogeInfoType());
+            showInfoTypeError(errorStrings.unsupportedCogeInfoType());
             return;
         }
         if (DiskResourceUtil.isGenomeVizTab(DiskResourceUtil.createInfoTypeSplittable(infoType))) {
             eventBus.fireEvent(new RequestSendToCoGeEvent((File)next));
         } else {
-            showInfoTypeError(I18N.ERROR.unsupportedCogeInfoType());
+            showInfoTypeError(errorStrings.unsupportedCogeInfoType());
         }
     }
 
@@ -676,13 +628,13 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter, Di
         DiskResource next = it.next();
         String infoType = getInfoType(next);
         if (Strings.isNullOrEmpty(infoType)) {
-            showInfoTypeError(I18N.ERROR.unsupportedTreeInfoType());
+            showInfoTypeError(errorStrings.unsupportedTreeInfoType());
             return;
         }
         if (DiskResourceUtil.isTreeTab(DiskResourceUtil.createInfoTypeSplittable(infoType))) {
             eventBus.fireEvent(new RequestSendToTreeViewerEvent((File)next));
         } else {
-            showInfoTypeError(I18N.ERROR.unsupportedTreeInfoType());
+            showInfoTypeError(errorStrings.unsupportedTreeInfoType());
         }
     }
 
@@ -697,6 +649,7 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter, Di
         File diskResourceInfo = ((File)dr);
         if (diskResourceInfo == null) {
             ErrorHandler.post("Unable to retrieve information type");
+            return null;
         }
         return diskResourceInfo.getInfoType();
     }
@@ -877,9 +830,9 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter, Di
         final IPlantDialog ipd = new IPlantDialog(true);
 
         ipd.setSize("600", "400"); //$NON-NLS-1$ //$NON-NLS-2$
-        ipd.setHeadingText(I18N.DISPLAY.metadata() + ":" + selected.getName()); //$NON-NLS-1$
+        ipd.setHeadingText(displayStrings.metadata() + ":" + selected.getName()); //$NON-NLS-1$
         ipd.setResizable(true);
-        ipd.addHelp(new HTML(I18N.HELP.metadataHelp()));
+        ipd.addHelp(new HTML(helpStrings.metadataHelp()));
 
         mdPresenter.go(ipd);
 
@@ -890,7 +843,7 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter, Di
                 @Override
                 public void onSelect(SelectEvent event) {
                     if (mdView.shouldValidate() && !mdView.isValid()) {
-                        ErrorAnnouncementConfig errNotice = new ErrorAnnouncementConfig(I18N.ERROR.metadataFormInvalid());
+                        ErrorAnnouncementConfig errNotice = new ErrorAnnouncementConfig(errorStrings.metadataFormInvalid());
                         IplantAnnouncer.getInstance().schedule(errNotice);
                     } else {
                         mdPresenter.setDiskResourceMetadata(new DiskResourceMetadataUpdateCallback(ipd));
@@ -958,7 +911,7 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter, Di
     @Override
     public void doMoveDiskResources(Folder targetFolder, Set<DiskResource> resources) {
         Folder parent = getSelectedFolder();
-        view.mask(I18N.DISPLAY.loadingMask());
+        view.mask(displayStrings.loadingMask());
         if (view.isSelectAllChecked()) {
             diskResourceService.moveContents(parent.getPath(), targetFolder, new DiskResourceMoveCallback(view, true, parent, targetFolder, resources));
         } else {
@@ -1110,7 +1063,7 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter, Di
     @Override
     public void emptyTrash() {
         // TODO REFACTOR CORE-5300 Move confirmation box to view, which will call presenter
-        final ConfirmMessageBox cmb = new ConfirmMessageBox(I18N.DISPLAY.emptyTrash(), I18N.DISPLAY.emptyTrashWarning());
+        final ConfirmMessageBox cmb = new ConfirmMessageBox(displayStrings.emptyTrash(), displayStrings.emptyTrashWarning());
         cmb.addDialogHideHandler(new DialogHideEvent.DialogHideHandler() {
             @Override
             public void onDialogHide(DialogHideEvent event) {
@@ -1127,13 +1080,13 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter, Di
     public void manageSelectedResourceDataLinks() {
         IPlantDialog dlg = new IPlantDialog(true);
         dlg.setPredefinedButtons(PredefinedButton.OK);
-        dlg.setHeadingText(I18N.DISPLAY.manageDataLinks());
+        dlg.setHeadingText(displayStrings.manageDataLinks());
         dlg.setHideOnButtonClick(true);
         dlg.setWidth(550);
-        dlg.setOkButtonText(I18N.DISPLAY.done());
-        DataLinkPanel.Presenter<DiskResource> dlPresenter = new DataLinkPresenter<DiskResource>(new ArrayList<DiskResource>(getSelectedDiskResources()));
+        dlg.setOkButtonText(displayStrings.done());
+        DataLinkPanel.Presenter<DiskResource> dlPresenter = new DataLinkPresenter<>(new ArrayList<>(getSelectedDiskResources()));
         dlPresenter.go(dlg);
-        dlg.addHelp(new HTML(I18N.HELP.manageDataLinksHelp()));
+        dlg.addHelp(new HTML(helpStrings.manageDataLinksHelp()));
         dlg.show();
     }
 
@@ -1166,11 +1119,11 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter, Di
                     if (canDragDataToTargetFolder(targetFolder, selectedResources)) {
                         doMoveDiskResources(targetFolder, selectedResources);
                     } else {
-                        announcer.schedule(new ErrorAnnouncementConfig(I18N.ERROR.diskResourceIncompleteMove()));
+                        announcer.schedule(new ErrorAnnouncementConfig(errorStrings.diskResourceIncompleteMove()));
                         view.unmask();
                     }
                 } else {
-                    announcer.schedule(new ErrorAnnouncementConfig(I18N.ERROR.permissionErrorMessage()));
+                    announcer.schedule(new ErrorAnnouncementConfig(errorStrings.permissionErrorMessage()));
                     view.unmask();
                 }
             }
@@ -1209,7 +1162,7 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter, Di
     public void resetInfoType() {
         if (getSelectedDiskResources().size() > 0) {
             Iterator<DiskResource> it = getSelectedDiskResources().iterator();
-            if (it != null && it.hasNext()) {
+            if (it.hasNext()) {
                 setInfoType(it.next(), "");
             }
         }
@@ -1257,7 +1210,7 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter, Di
     public void attachTag(final IplantTag tag) {
         if (getSelectedDiskResources().size() > 0) {
             Iterator<DiskResource> it = getSelectedDiskResources().iterator();
-            if (it != null && it.hasNext()) {
+            if (it.hasNext()) {
                 final DiskResource next = it.next();
                 fsmdataService.attachTags(Arrays.asList(tag.getId()),
                                           next.getId(),
@@ -1265,13 +1218,13 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter, Di
 
                     @Override
                     public void onFailure(Throwable caught) {
-                        ErrorHandler.post(I18N.ERROR.tagAttachError(), caught);
+                        ErrorHandler.post(errorStrings.tagAttachError(), caught);
 
                     }
 
                     @Override
                     public void onSuccess(String result) {
-                        announcer.schedule(new SuccessAnnouncementConfig(I18N.DISPLAY.tagAttached(next.getName(), tag.getValue())));
+                        announcer.schedule(new SuccessAnnouncementConfig(displayStrings.tagAttached(next.getName(), tag.getValue())));
 
                     }
                 });
@@ -1284,7 +1237,7 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter, Di
     public void detachTag(final IplantTag tag) {
         if (getSelectedDiskResources().size() > 0) {
             Iterator<DiskResource> it = getSelectedDiskResources().iterator();
-            if (it != null && it.hasNext()) {
+            if (it.hasNext()) {
                 final DiskResource next = it.next();
                 fsmdataService.detachTags(Arrays.asList(tag.getId()),
                                           next.getId(),
@@ -1292,17 +1245,31 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter, Di
 
                     @Override
                     public void onFailure(Throwable caught) {
-                        ErrorHandler.post(I18N.ERROR.tagDetachError(), caught);
+                        ErrorHandler.post(errorStrings.tagDetachError(), caught);
                     }
 
                     @Override
                     public void onSuccess(String result) {
-                        announcer.schedule(new SuccessAnnouncementConfig(I18N.DISPLAY.tagDetached(tag.getValue(), next.getName())));
+                        announcer.schedule(new SuccessAnnouncementConfig(displayStrings.tagDetached(tag.getValue(), next.getName())));
                     }
                 });
             }
         }
 
+    }
+
+    private void updateFav(final DiskResource diskResource, boolean fav) {
+        if (getSelectedDiskResources().size() > 0) {
+            Iterator<DiskResource> it = getSelectedDiskResources().iterator();
+            if (it.hasNext()) {
+                final DiskResource next = it.next();
+                if (next.getId().equals(diskResource.getId())) {
+                    next.setFavorite(fav);
+                    view.updateStore(next);
+                }
+            }
+
+        }
     }
 
 }

@@ -24,7 +24,6 @@ import org.iplantc.de.diskResource.client.search.events.DeleteSavedSearchEvent;
 import org.iplantc.de.diskResource.share.DiskResourceModule;
 import org.iplantc.de.resources.client.DataCollapseStyle;
 import org.iplantc.de.resources.client.IplantResources;
-import org.iplantc.de.resources.client.messages.I18N;
 import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 
 import com.google.common.base.Strings;
@@ -68,6 +67,7 @@ import com.sencha.gxt.data.shared.ListStore;
 import com.sencha.gxt.data.shared.TreeStore;
 import com.sencha.gxt.data.shared.event.StoreDataChangeEvent;
 import com.sencha.gxt.data.shared.event.StoreDataChangeEvent.StoreDataChangeHandler;
+import com.sencha.gxt.data.shared.loader.BeforeLoadEvent;
 import com.sencha.gxt.data.shared.loader.PagingLoadResult;
 import com.sencha.gxt.data.shared.loader.PagingLoader;
 import com.sencha.gxt.data.shared.loader.TreeLoader;
@@ -107,7 +107,16 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class DiskResourceViewImpl extends Composite implements DiskResourceView, SelectionHandler<Folder>, SelectionChangedHandler<DiskResource> {
+/**
+ * FIXME Factor out appearance. This class is not testable in it's current form.
+ * FIXME Factor out details panel.
+ *
+ * @author jstroot, sriram, psarando
+ */
+public class DiskResourceViewImpl extends Composite implements DiskResourceView,
+                                                               SelectionHandler<Folder>,
+                                                               SelectionChangedHandler<DiskResource>,
+                                                               BeforeLoadEvent.BeforeLoadHandler<FolderContentsLoadConfig> {
 
     private final class PathFieldKeyPressHandlerImpl implements KeyPressHandler {
         @Override
@@ -263,9 +272,10 @@ public class DiskResourceViewImpl extends Composite implements DiskResourceView,
         detailsPanel.setScrollMode(ScrollMode.AUTO);
 
         folderRpcProxy.init(centerCp.getHeader());
-        gridLoader = new PagingLoader<FolderContentsLoadConfig, PagingLoadResult<DiskResource>>(folderRpcProxy);
+        gridLoader = new PagingLoader<>(folderRpcProxy);
         gridLoader.setReuseLoadConfig(true);
         gridLoader.setRemoteSort(true);
+        gridLoader.addBeforeLoadHandler(this);
         grid.setLoader(gridLoader);
         grid.setSelectionModel(sm);
         grid.getSelectionModel().addSelectionChangedHandler(this);
@@ -339,6 +349,20 @@ public class DiskResourceViewImpl extends Composite implements DiskResourceView,
         }
     }
 
+
+    @Override
+    public void onBeforeLoad(BeforeLoadEvent<FolderContentsLoadConfig> event) {
+        if(getSelectedFolder() == null){
+            return;
+        }
+        final Folder folderToBeLoaded = event.getLoadConfig().getFolder();
+
+        // If the loaded contents are not the contents of the currently selected folder, then cancel the load.
+        if(!folderToBeLoaded.getId().equals(getSelectedFolder().getId())){
+            event.setCancelled(true);
+        }
+    }
+
     private void initLiveToolbar() {
         grid.setLoadMask(true);
         LiveToolItem toolItem = new LiveToolItem(grid);
@@ -392,7 +416,7 @@ public class DiskResourceViewImpl extends Composite implements DiskResourceView,
         style.ensureInjected();
         ToolButton tool = new ToolButton(new IconConfig(style.collapse(), style.collapseHover()));
         tool.setId("idTreeCollapse");
-        tool.setToolTip(I18N.DISPLAY.collapseAll());
+        tool.setToolTip(displayStrings.collapseAll());
         tool.addSelectHandler(new SelectHandler() {
 
             @Override
@@ -426,10 +450,7 @@ public class DiskResourceViewImpl extends Composite implements DiskResourceView,
 
     @UiFactory
     ListStore<DiskResource> createListStore() {
-        DiskResourceModelKeyProvider keyProvider = new DiskResourceModelKeyProvider();
-        ListStore<DiskResource> listStore2 = new ListStore<DiskResource>(keyProvider);
-
-        return listStore2;
+        return new ListStore<>(new DiskResourceModelKeyProvider());
     }
 
     @UiFactory
@@ -630,6 +651,7 @@ public class DiskResourceViewImpl extends Composite implements DiskResourceView,
     @Override
     public void updateStore(DiskResource item) {
         grid.getStore().update(item);
+        gridView.refresh();
     }
 
     @Override
@@ -720,31 +742,7 @@ public class DiskResourceViewImpl extends Composite implements DiskResourceView,
     }
 
     private void setGridEmptyText() {
-        gridView.setEmptyText(I18N.DISPLAY.noItemsToDisplay());
-    }
-
-    public void updateDiskResource(DiskResource originalDr, DiskResource newDr) {
-        // Check each store for for existence of original disk resource
-        Folder treeStoreModel = treeStore.findModelWithKey(originalDr.getId());
-        if (treeStoreModel != null) {
-
-            // Grab original disk resource's parent, then remove original from
-            // tree store
-            Folder parentFolder = treeStore.getParent(treeStoreModel);
-            treeStore.remove(treeStoreModel);
-
-            treeStoreModel.setId(newDr.getId());
-            treeStoreModel.setName(newDr.getName());
-            treeStore.add(parentFolder, treeStoreModel);
-        }
-
-        DiskResource listStoreModel = listStore.findModelWithKey(originalDr.getId());
-
-        if (listStoreModel != null) {
-            listStore.remove(listStoreModel);
-            listStore.add(newDr);
-        }
-
+        gridView.setEmptyText(displayStrings.noItemsToDisplay());
     }
 
     @Override
@@ -785,7 +783,7 @@ public class DiskResourceViewImpl extends Composite implements DiskResourceView,
         FieldLabel fl = new FieldLabel();
         fl.setLabelWidth(detailsPanel.getOffsetWidth(true) - 10);
         fl.setLabelSeparator(""); //$NON-NLS-1$
-        fl.setHTML(getDetailAsHtml(I18N.DISPLAY.noDetails(), false));
+        fl.setHTML(getDetailAsHtml(displayStrings.noDetails(), false));
         HorizontalPanel hp = new HorizontalPanel();
         hp.setSpacing(2);
         hp.add(fl);
@@ -862,11 +860,11 @@ public class DiskResourceViewImpl extends Composite implements DiskResourceView,
             Iterator<DiskResource> it = selection.iterator();
             DiskResource next = it.next();
             if (next.getId().equals(info.getId())) {
-                detailsPanel.add(getDateLabel(I18N.DISPLAY.lastModified(), info.getLastModified()));
-                detailsPanel.add(getDateLabel(I18N.DISPLAY.createdDate(), info.getDateCreated()));
-                detailsPanel.add(getPermissionsLabel(I18N.DISPLAY.permissions(), info.getPermission()));
+                detailsPanel.add(getDateLabel(displayStrings.lastModified(), info.getLastModified()));
+                detailsPanel.add(getDateLabel(displayStrings.createdDate(), info.getDateCreated()));
+                detailsPanel.add(getPermissionsLabel(displayStrings.permissions(), info.getPermission()));
                 if (!DiskResourceUtil.inTrash(next)) {
-                    detailsPanel.add(getSharingLabel(I18N.DISPLAY.share(),
+                    detailsPanel.add(getSharingLabel(displayStrings.share(),
                                                      info.getShareCount(),
                                                      info.getPermission()));
                 }
@@ -948,12 +946,12 @@ public class DiskResourceViewImpl extends Composite implements DiskResourceView,
     }
 
     private void addFolderDetails(Folder info) {
-        detailsPanel.add(getDirFileCount(I18N.DISPLAY.files() + " / " + I18N.DISPLAY.folders(), //$NON-NLS-1$
+        detailsPanel.add(getDirFileCount(displayStrings.files() + " / " + displayStrings.folders(), //$NON-NLS-1$
                 info.getFileCount(), info.getDirCount()));
     }
 
     private void addFileDetails(File info, boolean addViewerInfo) {
-        detailsPanel.add(getStringLabel(I18N.DISPLAY.size(), DiskResourceUtil.formatFileSize(info.getSize() + ""))); //$NON-NLS-1$
+        detailsPanel.add(getStringLabel(displayStrings.size(), DiskResourceUtil.formatFileSize(info.getSize() + ""))); //$NON-NLS-1$
         detailsPanel.add(getStringLabel("Type", info.getFileType()));
         detailsPanel.add(getInfoTypeLabel("Info-Type", info));
         if (addViewerInfo) {
@@ -996,7 +994,7 @@ public class DiskResourceViewImpl extends Composite implements DiskResourceView,
         if (permissions.equals(PermissionValue.own)) {
             IPlantAnchor link;
             if (shareCount == 0) {
-                link = new IPlantAnchor(I18N.DISPLAY.nosharing(), 100, new SharingLabelClickHandler());
+                link = new IPlantAnchor(displayStrings.nosharing(), 100, new SharingLabelClickHandler());
             } else {
                 link = new IPlantAnchor("" + shareCount, 100, new SharingLabelClickHandler()); //$NON-NLS-1$
             }
@@ -1023,7 +1021,7 @@ public class DiskResourceViewImpl extends Composite implements DiskResourceView,
                 panel.add(link);
                 Image rmImg = new Image(IplantResources.RESOURCES.deleteIcon());
                 rmImg.addClickHandler(new RemoveInfoTypeClickHandler());
-                rmImg.setTitle(I18N.DISPLAY.delete());
+                rmImg.setTitle(displayStrings.delete());
                 rmImg.getElement().getStyle().setCursor(Cursor.POINTER);
                 panel.add(rmImg);
             } else {
@@ -1134,10 +1132,9 @@ public class DiskResourceViewImpl extends Composite implements DiskResourceView,
         DiskResource dr = listStore.findModelWithKey(info.getId());
         if (dr == null) {
             return;
-        } else {
-            listStore.update(info);
-            updateDetails(info);
         }
+        listStore.update(info);
+        updateDetails(info);
     }
 
     @Override
@@ -1183,25 +1180,20 @@ public class DiskResourceViewImpl extends Composite implements DiskResourceView,
     private void reconfigureToSearchView() {
         // display Path
         grid.getColumnModel().getColumn(4).setHidden(false);
-        grid.getColumnModel().getColumn(2).setHidden(true);
-        grid.getColumnModel().getColumn(3).setHidden(true);
-        grid.getView().refresh(true);
         grid.getView().setAutoExpandColumn(grid.getColumnModel().getColumn(4));
+        grid.getView().refresh(true);
     }
 
     private void reconfigureToListingView() {
-        // hide Path. display last modified and size
+        // hide Path.
         grid.getColumnModel().getColumn(4).setHidden(true);
-        grid.getColumnModel().getColumn(2).setHidden(false);
-        grid.getColumnModel().getColumn(3).setHidden(false);
-        grid.getView().refresh(true);
         grid.getView().setAutoExpandColumn(grid.getColumnModel().getColumn(1));
+        grid.getView().refresh(true);
     }
 
     @Override
     public void selectTag(IplantTag tag) {
         LOG.log(Level.SEVERE, "==>" + tag.getValue());
-
     }
 
 }

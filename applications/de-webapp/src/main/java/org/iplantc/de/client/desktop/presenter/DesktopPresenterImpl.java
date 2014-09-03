@@ -2,8 +2,9 @@ package org.iplantc.de.client.desktop.presenter;
 
 import static org.iplantc.de.commons.client.collaborators.presenter.ManageCollaboratorsPresenter.MODE.MANAGE;
 import org.iplantc.de.client.DEClientConstants;
+import org.iplantc.de.client.desktop.DesktopView;
+import org.iplantc.de.client.desktop.presenter.util.MessagePoller;
 import org.iplantc.de.client.events.EventBus;
-import org.iplantc.de.client.events.WindowCloseRequestEvent;
 import org.iplantc.de.client.models.DEProperties;
 import org.iplantc.de.client.models.HasId;
 import org.iplantc.de.client.models.HasPath;
@@ -21,8 +22,6 @@ import org.iplantc.de.client.models.notifications.NotificationCategory;
 import org.iplantc.de.client.models.notifications.NotificationMessage;
 import org.iplantc.de.client.models.notifications.payload.PayloadToolRequest;
 import org.iplantc.de.client.models.toolRequest.ToolRequestHistory;
-import org.iplantc.de.client.desktop.DesktopView;
-import org.iplantc.de.client.desktop.presenter.util.MessagePoller;
 import org.iplantc.de.client.notifications.views.dialogs.ToolRequestHistoryDialog;
 import org.iplantc.de.client.services.DEFeedbackServiceFacade;
 import org.iplantc.de.client.services.FileEditorServiceFacade;
@@ -50,7 +49,7 @@ import org.iplantc.de.commons.client.views.window.configs.WindowConfig;
 import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 import org.iplantc.de.resources.client.messages.IplantErrorStrings;
 import org.iplantc.de.shared.DeModule;
-import org.iplantc.de.shared.services.PropertyServiceFacade;
+import org.iplantc.de.shared.services.PropertyServiceAsync;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import com.google.common.base.Strings;
@@ -136,7 +135,7 @@ public class DesktopPresenterImpl implements DesktopView.Presenter {
     @Inject
     AnalysesAutoBeanFactory analysesFactory;
     @Inject
-    PropertyServiceFacade propertyServiceFacade;
+    PropertyServiceAsync propertyServiceFacade;
     @Inject
     UserInfo userInfo;
     @Inject
@@ -394,11 +393,13 @@ public class DesktopPresenterImpl implements DesktopView.Presenter {
     }
 
     @Override
-    public void saveUserSettings(final UserSettings value) {
+    public void saveUserSettings(final UserSettings value,
+                                 final boolean updateSilently) {
         final RuntimeCallbacks.SaveUserSettingsCallback callback = new RuntimeCallbacks.SaveUserSettingsCallback(value,
                                                                                userSettings,
                                                                                announcer,
-                                                                               displayStrings);
+                                                                               displayStrings,
+                                                                               updateSilently);
         userSessionService.saveUserPreferences(value.asSplittable(), callback);
     }
 
@@ -523,7 +524,7 @@ public class DesktopPresenterImpl implements DesktopView.Presenter {
                     } else if (userSettings.getNotifyShortCut().equals(keycode)) {
                         show(ConfigFactory.notifyWindowConfig(NotificationCategory.ALL));
                     } else if (userSettings.getCloseShortCut().equals(keycode)) {
-                        eventBus.fireEvent(new WindowCloseRequestEvent());
+                        desktopWindowManager.closeActiveWindow();
                     }
                 }
             }

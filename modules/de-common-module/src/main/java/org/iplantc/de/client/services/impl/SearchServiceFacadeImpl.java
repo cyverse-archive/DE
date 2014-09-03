@@ -2,7 +2,6 @@ package org.iplantc.de.client.services.impl;
 
 import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.GET;
 import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.POST;
-
 import org.iplantc.de.client.models.DEProperties;
 import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.client.models.diskResources.DiskResource;
@@ -12,9 +11,9 @@ import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.client.models.search.DiskResourceQueryTemplate;
 import org.iplantc.de.client.models.search.DiskResourceQueryTemplateList;
 import org.iplantc.de.client.models.search.SearchAutoBeanFactory;
-import org.iplantc.de.client.services.DEServiceFacade;
 import org.iplantc.de.client.services.SearchServiceFacade;
 import org.iplantc.de.client.services.converters.AsyncCallbackConverter;
+import org.iplantc.de.shared.services.DEServiceAsync;
 import org.iplantc.de.shared.services.ServiceCallWrapper;
 
 import com.google.common.base.Splitter;
@@ -127,18 +126,22 @@ public class SearchServiceFacadeImpl implements SearchServiceFacade {
                 final Iterable<String> userStringSplit = Splitter.on("#").split(userString);
                 Splittable newPermissionsSplit = StringQuoter.createSplittable();
                 if (userStringSplit.iterator().next().equals(userInfo1.getUsername())) {
-                    if (permissionString.equals("own")) {
-                        StringQuoter.create(true).assign(newPermissionsSplit, "own");
-                        StringQuoter.create(true).assign(newPermissionsSplit, "write");
-                        StringQuoter.create(true).assign(newPermissionsSplit, "read");
-                    } else if (permissionString.equals("write")) {
-                        StringQuoter.create(false).assign(newPermissionsSplit, "own");
-                        StringQuoter.create(true).assign(newPermissionsSplit, "write");
-                        StringQuoter.create(true).assign(newPermissionsSplit, "read");
-                    } else if (permissionString.equals("read")) {
-                        StringQuoter.create(false).assign(newPermissionsSplit, "own");
-                        StringQuoter.create(false).assign(newPermissionsSplit, "write");
-                        StringQuoter.create(true).assign(newPermissionsSplit, "read");
+                    switch (permissionString) {
+                        case "own":
+                            StringQuoter.create(true).assign(newPermissionsSplit, "own");
+                            StringQuoter.create(true).assign(newPermissionsSplit, "write");
+                            StringQuoter.create(true).assign(newPermissionsSplit, "read");
+                            break;
+                        case "write":
+                            StringQuoter.create(false).assign(newPermissionsSplit, "own");
+                            StringQuoter.create(true).assign(newPermissionsSplit, "write");
+                            StringQuoter.create(true).assign(newPermissionsSplit, "read");
+                            break;
+                        case "read":
+                            StringQuoter.create(false).assign(newPermissionsSplit, "own");
+                            StringQuoter.create(false).assign(newPermissionsSplit, "write");
+                            StringQuoter.create(true).assign(newPermissionsSplit, "read");
+                            break;
                     }
                     newPermissionsSplit.assign(entity, "permissions");
                     break;
@@ -198,8 +201,7 @@ public class SearchServiceFacadeImpl implements SearchServiceFacade {
             // Make sure all saved templates are set as saved.
             final Splittable encode = AutoBeanCodex.encode(AutoBeanUtils.getAutoBean(qt));
             StringQuoter.create(true).assign(encode, "saved");
-            final DiskResourceQueryTemplate as = AutoBeanCodex.decode(factory, DiskResourceQueryTemplate.class, encode).as();
-            return as;
+            return AutoBeanCodex.decode(factory, DiskResourceQueryTemplate.class, encode).as();
         }
     }
 
@@ -244,19 +246,18 @@ public class SearchServiceFacadeImpl implements SearchServiceFacade {
             // Make sure all saved templates are set as saved.
             final Splittable encode = AutoBeanCodex.encode(AutoBeanUtils.getAutoBean(qt));
             StringQuoter.create(true).assign(encode, "saved");
-            final DiskResourceQueryTemplate as = AutoBeanCodex.decode(factory, DiskResourceQueryTemplate.class, encode).as();
-            return as;
+            return AutoBeanCodex.decode(factory, DiskResourceQueryTemplate.class, encode).as();
         }
     }
 
-    private final DEServiceFacade deServiceFacade;
+    private final DEServiceAsync deServiceFacade;
     private final DiskResourceAutoBeanFactory drFactory;
     private final SearchAutoBeanFactory searchAbFactory;
     private final UserInfo userInfo;
     private final DEProperties deProperties;
 
     @Inject
-    public SearchServiceFacadeImpl(final DEServiceFacade deServiceFacade,
+    public SearchServiceFacadeImpl(final DEServiceAsync deServiceFacade,
                                    final DEProperties deProperties,
                                    final SearchAutoBeanFactory searchAbFactory,
                                    final DiskResourceAutoBeanFactory drFactory,
@@ -342,6 +343,10 @@ public class SearchServiceFacadeImpl implements SearchServiceFacade {
 
         if ("name".equalsIgnoreCase(sortField)) {
             return "entity.label";
+        }
+
+        if ("path".equalsIgnoreCase(sortField)) {
+            return "entity.path";
         }
 
         return sortField;

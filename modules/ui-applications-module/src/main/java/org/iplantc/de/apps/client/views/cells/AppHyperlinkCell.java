@@ -1,5 +1,6 @@
 package org.iplantc.de.apps.client.views.cells;
 
+import org.iplantc.de.apps.client.events.AppNameSelectedEvent;
 import org.iplantc.de.apps.client.views.AppsView;
 import org.iplantc.de.apps.shared.AppsModule;
 import org.iplantc.de.client.models.apps.App;
@@ -16,9 +17,7 @@ import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.dom.client.Node;
 import com.google.gwt.dom.client.Style.TextDecoration;
-import com.google.gwt.event.shared.EventHandler;
 import com.google.gwt.event.shared.GwtEvent;
-import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.event.shared.HasHandlers;
 import com.google.gwt.resources.client.ClientBundle;
 import com.google.gwt.resources.client.CssResource;
@@ -38,37 +37,7 @@ import com.google.gwt.user.client.Event;
  */
 public class AppHyperlinkCell extends AbstractCell<App> {
 
-    public static GwtEvent.Type<AppNameSelectedEventHandler> EVENT_TYPE = new GwtEvent.Type<AppNameSelectedEventHandler>();
-    public class AppNameSelectedEvent extends GwtEvent<AppNameSelectedEventHandler> {
-
-        private final App selectedApp;
-
-        public AppNameSelectedEvent(App selectedApp) {
-            this.selectedApp = selectedApp;
-        }
-
-        @Override
-        public Type<AppNameSelectedEventHandler> getAssociatedType() {
-            return EVENT_TYPE;
-        }
-
-        public App getSelectedApp() {
-            return selectedApp;
-        }
-
-        @Override
-        protected void dispatch(AppNameSelectedEventHandler handler) {
-            handler.onAppNameSelected(this);
-        }
-    }
-
-    public interface AppNameSelectedEventHandler extends EventHandler {
-        void onAppNameSelected(AppNameSelectedEvent event);
-    }
-
-    public static interface HasAppNameSelectedEventHandlers {
-        HandlerRegistration addAppNameSelectedEventHandler(AppNameSelectedEventHandler handler);
-    }
+    public static GwtEvent.Type<AppNameSelectedEvent.AppNameSelectedEventHandler> EVENT_TYPE = new GwtEvent.Type<AppNameSelectedEvent.AppNameSelectedEventHandler>();
 
     public interface MyCss extends CssResource {
         String appName();

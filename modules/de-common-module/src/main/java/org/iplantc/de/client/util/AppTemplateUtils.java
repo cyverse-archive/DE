@@ -23,6 +23,9 @@ import com.google.web.bindery.autobean.shared.impl.StringQuoter;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * FIXME Convert methods to non-static methods.
+ */
 public class AppTemplateUtils {
     private static final AppTemplateAutoBeanFactory factory = GWT.create(AppTemplateAutoBeanFactory.class);
     private static final AppsWidgetsDisplayMessages displayMessages = I18N.APPS_MESSAGES;

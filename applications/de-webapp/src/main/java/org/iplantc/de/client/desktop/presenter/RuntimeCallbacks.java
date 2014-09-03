@@ -1,6 +1,7 @@
 package org.iplantc.de.client.desktop.presenter;
 
 import org.iplantc.de.client.DEClientConstants;
+import org.iplantc.de.client.desktop.DesktopView;
 import org.iplantc.de.client.models.UserSettings;
 import org.iplantc.de.client.models.WindowState;
 import org.iplantc.de.client.models.notifications.Notification;
@@ -8,7 +9,6 @@ import org.iplantc.de.client.models.notifications.NotificationAutoBeanFactory;
 import org.iplantc.de.client.models.notifications.NotificationCategory;
 import org.iplantc.de.client.models.notifications.NotificationMessage;
 import org.iplantc.de.client.models.notifications.payload.PayloadAnalysis;
-import org.iplantc.de.client.desktop.DesktopView;
 import org.iplantc.de.client.services.UserSessionServiceFacade;
 import org.iplantc.de.client.utils.NotifyInfo;
 import org.iplantc.de.commons.client.info.ErrorAnnouncementConfig;
@@ -82,16 +82,15 @@ class RuntimeCallbacks {
 
         void displayNotificationPopup(NotificationMessage nm) {
             if (NotificationCategory.ANALYSIS.equals(nm.getCategory())) {
-                if (NotificationCategory.ANALYSIS.equals(nm.getCategory())) {
-                    PayloadAnalysis analysisPayload = AutoBeanCodex.decode(notificationFactory,
-                                                                           PayloadAnalysis.class, nm.getContext()).as();
-
-                    if ("Failed".equals(analysisPayload.getStatus())) { //$NON-NLS-1$
-                        notifyInfo.displayWarning(nm.getMessage());
-                        return;
-                    }
+                PayloadAnalysis analysisPayload = AutoBeanCodex.decode(notificationFactory,
+                                                                       PayloadAnalysis.class,
+                                                                       nm.getContext()).as();
+                if ("Failed".equals(analysisPayload.getStatus())) { //$NON-NLS-1$
+                    notifyInfo.displayWarning(nm.getMessage());
+                } else {
+                    notifyInfo.display(nm.getMessage());
                 }
-
+            } else {
                 notifyInfo.display(nm.getMessage());
             }
         }
@@ -199,17 +198,20 @@ class RuntimeCallbacks {
     static class SaveUserSettingsCallback implements AsyncCallback<Void> {
         private final IplantAnnouncer announcer;
         private final IplantDisplayStrings displayStrings;
+        private final boolean updateSilently;
         private final UserSettings newValue;
         private final UserSettings userSettings;
 
         public SaveUserSettingsCallback(final UserSettings newValue,
                                         final UserSettings userSettings,
                                         final IplantAnnouncer announcer,
-                                        final IplantDisplayStrings displayStrings) {
+                                        final IplantDisplayStrings displayStrings,
+                                        final boolean updateSilently) {
             this.newValue = newValue;
             this.userSettings = userSettings;
             this.announcer = announcer;
             this.displayStrings = displayStrings;
+            this.updateSilently = updateSilently;
         }
 
         @Override
@@ -220,7 +222,9 @@ class RuntimeCallbacks {
         @Override
         public void onSuccess(Void result) {
             userSettings.setValues(newValue.asSplittable());
-            announcer.schedule(new SuccessAnnouncementConfig(displayStrings.saveSettings(), true, 3000));
+            if(!updateSilently){
+                announcer.schedule(new SuccessAnnouncementConfig(displayStrings.saveSettings(), true, 3000));
+            }
         }
     }
 }

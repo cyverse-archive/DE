@@ -124,4 +124,30 @@ public class DesktopWindowManagerTest {
 
     }
 
+    @Test public void closeActiveWindowOnlyClosesActiveWindow() {
+        // Set up current window stack
+        Window window1 = mock(Window.class);
+        Window window2 = mock(Window.class);
+        Window window3 = mock(Window.class);
+        Window window4 = mock(Window.class);
+
+        final Stack<Widget> windowStack = new Stack<>();
+        windowStack.push(window1);
+        windowStack.push(window2);
+        windowStack.push(window3);
+        windowStack.push(window4);
+
+        when(windowManagerMock.getStack()).thenReturn(windowStack);
+
+        uut.closeActiveWindow();
+        verify(windowManagerMock).getStack();
+        verify(window1, never()).hide();
+        verify(window2, never()).hide();
+        verify(window3, never()).hide();
+        verify(window4).hide();
+
+        verifyNoMoreInteractions(windowManagerMock);
+
+    }
+
 }
