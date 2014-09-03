@@ -2,6 +2,7 @@ package org.iplantc.de.apps.client.views.widgets;
 
 
 import static org.iplantc.de.apps.client.views.widgets.events.AppSearchResultLoadEvent.TYPE;
+
 import org.iplantc.de.apps.client.events.AppGroupSelectionChangedEvent;
 import org.iplantc.de.apps.client.events.AppSelectionChangedEvent;
 import org.iplantc.de.apps.client.views.AppsView;
@@ -10,6 +11,7 @@ import org.iplantc.de.apps.client.views.widgets.events.AppSearchResultLoadEvent.
 import org.iplantc.de.apps.client.views.widgets.proxy.AppSearchRpcProxy;
 import org.iplantc.de.apps.shared.AppsModule.Ids;
 import org.iplantc.de.client.models.IsMaskable;
+import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.models.apps.AppAutoBeanFactory;
 import org.iplantc.de.client.models.apps.proxy.AppLoadConfig;
@@ -232,9 +234,12 @@ public class AppsViewToolbarImpl extends Composite implements AppsView.ViewMenu,
                 final boolean isAppPublic = selectedApp.isPublic();
                 final boolean isAppDisabled = selectedApp.isDisabled();
                 final boolean isRunnable = selectedApp.isRunnable();
+                final boolean isOwner = selectedApp.getIntegratorEmail() == UserInfo.getInstance()
+                                                                                    .getEmail();
 
                 deleteAppEnabled = isSingleStep && !isAppPublic;
-                editAppEnabled = isSingleStep && !isAppPublic;
+                // allow owners to edit their app
+                editAppEnabled = isSingleStep && isOwner;
                 submitAppEnabled = isSingleStep && isRunnable && !isAppPublic;
                 copyAppEnabled = isSingleStep;
                 appRunEnabled = isSingleStep && !isAppDisabled;
