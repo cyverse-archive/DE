@@ -7,7 +7,7 @@
             http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task.xsd">
 
     <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-        <property name="location" value="discoveryenvironment.properties"/>
+        <property name="location" value="classpath:discoveryenvironment.properties"/>
     </bean>
 
     <bean id="emailClient" class="org.iplantc.de.server.service.IplantEmailClient">
