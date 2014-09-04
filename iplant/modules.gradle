@@ -238,7 +238,6 @@ project(':de-common-module') {
         compile 'net.sf.json-lib:json-lib:2.4:jdk15'
         compile 'commons-fileupload:commons-fileupload:1.2.1'
 
-        compile 'net.lightoze.gwt-i18n-server:gwt-i18n-server:0.22'
         testCompile "com.google.gwt.gwtmockito:gwtmockito:$gwtMockitoVer"
     }
 }
