@@ -1,7 +1,7 @@
 // Contains a list of versions used in dependencies
 
 ext {
-   gwtVer = "2.6.0"
+   gwtVer = "2.6.1"
    gxtVersion = "3.1.0"
    log4jVersion = "1.2.16"
    slf4jVersion = "1.7.6"
