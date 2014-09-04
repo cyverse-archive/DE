@@ -2,7 +2,7 @@
 
 ext {
    gwtVer = "2.6.1"
-   gxtVersion = "3.1.0"
+   gxtVersion = "3.1.1"
    log4jVersion = "1.2.16"
    slf4jVersion = "1.7.6"
    jUnitVersion = "4.11"
