@@ -296,7 +296,7 @@ public class NewToolRequestFormPresenterImpl implements Presenter {
         } else if(toolSelectionMode.equals(SELECTION_MODE.LINK)) {
             req.setSourceURL(view.getSourceURLField().getValue());
         } else if (toolSelectionMode.equals(SELECTION_MODE.SELECT)) {
-            req.setSourceFile(view.getBinSelectField().getValue().getId());
+            req.setSourceFile(view.getBinSelectField().getValue().getPath());
         }
         req.setDocURL(view.getDocURLField().getValue());
         req.setVersion(view.getVersionField().getValue());
@@ -307,13 +307,13 @@ public class NewToolRequestFormPresenterImpl implements Presenter {
         if(testDataSelectionMode.equals(SELECTION_MODE.UPLOAD)) {
             req.setTestDataFile(makeDestinationPath(getTestDataName()));
         } else if(testDataSelectionMode.equals(SELECTION_MODE.SELECT)) {
-            req.setTestDataFile(view.getTestDataSelectField().getValue().getId());
+            req.setTestDataFile(view.getTestDataSelectField().getValue().getPath());
         }
         req.setInstructions(view.getInstructionsField().getValue());
         if (otherDataSelectionMode.equals(SELECTION_MODE.UPLOAD) && !view.getOtherDataUploader().getValue().isEmpty()) {
             req.setAdditionalDataFile(makeDestinationPath(getOtherDataName()));
         } else if (otherDataSelectionMode.equals(SELECTION_MODE.SELECT) && !(view.getOtherDataSelectField().getValue() == null)) {
-            req.setAdditionalDataFile(view.getOtherDataSelectField().getValue().getId());
+            req.setAdditionalDataFile(view.getOtherDataSelectField().getValue().getPath());
         }    
         req.setAdditionaInfo(view.getAdditionalInfoField().getValue());
         return req;
