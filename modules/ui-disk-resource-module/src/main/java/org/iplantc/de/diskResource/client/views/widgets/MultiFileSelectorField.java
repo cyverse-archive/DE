@@ -157,6 +157,7 @@ public class MultiFileSelectorField extends Composite implements IsField<List<Ha
         initWidget(BINDER.createAndBindUi(this));
         grid.getSelectionModel().addSelectionChangedHandler(this);
         grid.setBorders(true);
+        gridView.setEmptyText(displayStrings.selectMultipleInputs());
         initDragAndDrop();
     }
 

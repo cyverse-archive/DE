@@ -3775,6 +3775,8 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     @Key("selectAFile")
     String selectAFile();
 
+    String selectMultipleInputs();
+
     /**
      * Translated "Select a folder".
      *
