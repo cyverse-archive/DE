@@ -31,6 +31,28 @@ public class ManageCollaboratorsPresenter implements Presenter {
     private final ManageCollaboratorsView view;
     private HandlerRegistration addCollabHandlerRegistration;
 
+    private final class UserSearchResultSelectedEventHandlerImpl implements
+                                                                UserSearchResultSelected.UserSearchResultSelectedEventHandler {
+        @Override
+           public void
+                   onUserSearchResultSelected(UserSearchResultSelected userSearchResultSelected) {
+               if (userSearchResultSelected.getTag()
+                                           .equalsIgnoreCase(UserSearchResultSelected.USER_SEARCH_EVENT_TAG.MANAGE.toString())) {
+                   Collaborator collaborator = userSearchResultSelected.getCollaborator();
+                   if (!UserInfo.getInstance()
+                                .getUsername()
+                                .equals(collaborator.getUserName())) {
+                       if (!CollaboratorsUtil.isCurrentCollaborator(collaborator)) {
+                           addAsCollaborators(Arrays.asList(collaborator));
+                       }
+                   } else {
+                       IplantAnnouncer.getInstance()
+                                      .schedule(new ErrorAnnouncementConfig(I18N.DISPLAY.collaboratorSelfAdd()));
+                   }
+               }
+           }
+    }
+
     public static enum MODE {
         MANAGE, SELECT
     };
@@ -43,32 +65,16 @@ public class ManageCollaboratorsPresenter implements Presenter {
     }
 
     private void addEventHandlers() {
-        addCollabHandlerRegistration = EventBus.getInstance().addHandler(UserSearchResultSelected.TYPE,
-                new UserSearchResultSelected.UserSearchResultSelectedEventHandler() {
-
-                    @Override
-                    public void onUserSearchResultSelected(
-                            UserSearchResultSelected userSearchResultSelected) {
-                        if (userSearchResultSelected.getTag().equalsIgnoreCase(
-                                UserSearchResultSelected.USER_SEARCH_EVENT_TAG.MANAGE.toString())) {
-                            Collaborator collaborator = userSearchResultSelected.getCollaborator();
-                            if (!UserInfo.getInstance().getUsername().equals(collaborator.getUserName())) {
-                                addAsCollaborators(Arrays.asList(collaborator));
-                            } else {
-                                IplantAnnouncer.getInstance().schedule(
-                                        new ErrorAnnouncementConfig(I18N.DISPLAY.collaboratorSelfAdd()));
-                            }
-                        }
-                    }
-                });
+        addCollabHandlerRegistration = EventBus.getInstance()
+                                               .addHandler(UserSearchResultSelected.TYPE,
+                                                           new UserSearchResultSelectedEventHandlerImpl());
     }
 
     /*
      * (non-Javadoc)
      * 
      * @see
-     * org.iplantc.de.commons.client.presenter.Presenter#go(com.google.gwt.user.client.ui.HasOneWidget
-     * )
+     * org.iplantc.de.commons.client.presenter.Presenter#go(com.google.gwt.user.client.ui.HasOneWidget )
      */
     @Override
     public void go(HasOneWidget container) {
@@ -151,7 +157,6 @@ public class ManageCollaboratorsPresenter implements Presenter {
         });
 
     }
-
 
     @Override
     public void setCurrentMode(MODE m) {
