@@ -56,7 +56,7 @@ import javax.annotation.Nullable;
  * a selected {@link org.iplantc.de.client.models.diskResources.Folder}) <br/>
  * If the user clicks the select all checkbox, and then tries to de-select a single item (which would
  * conceptually result in a selection greater than the cache size) the de-selection will be prevented.
- * 
+ *
  * @author jstroot
  * @see LiveGridView#getCacheSize()
  * @see PagingLoader#getTotalCount()
@@ -86,7 +86,7 @@ public class LiveGridCheckBoxSelectionModel extends CheckBoxSelectionModel<DiskR
      * Return the number of currently selected items. If the select all checkbox is checked and the total
      * number of items exceeds the bound {@link LiveGridView#getCacheSize()}, then the total number of
      * items will be returned. Otherwise, the {@link #selected} collection's size will be returned.
-     * 
+     *
      * @return the number of currently selected items, virtual or not.
      */
     public int getSelectedCount() {
@@ -196,7 +196,8 @@ public class LiveGridCheckBoxSelectionModel extends CheckBoxSelectionModel<DiskR
 
         boolean change = false;
         if (selected.size() > 0 && !isSelected) {
-            doDeselect(Collections.singletonList(lastSelected), true);
+            // Deselect all items, since this is single select
+            doDeselect(selected, true);
             change = true;
         }
         if (selected.size() == 0) {
