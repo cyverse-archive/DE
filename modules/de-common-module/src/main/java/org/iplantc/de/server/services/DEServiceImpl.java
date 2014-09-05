@@ -20,6 +20,7 @@ import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpEntity;
+import org.apache.http.HttpHeaders;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpDelete;
@@ -155,7 +156,7 @@ public class DEServiceImpl extends RemoteServiceServlet implements DEService {
         final int status = response.getStatusLine().getStatusCode();
         if (status == 302) {
             final String responseBody = IOUtils.toString(response.getEntity().getContent());
-            final String location = response.getFirstHeader("Location").getValue();
+            final String location = response.getFirstHeader(HttpHeaders.LOCATION).getValue();
             throw new HttpRedirectException(status, responseBody, location);
         }
         if (status < 200 || status > 299) {
