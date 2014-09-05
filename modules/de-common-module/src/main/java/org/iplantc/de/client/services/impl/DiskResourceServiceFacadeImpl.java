@@ -15,7 +15,7 @@ import org.iplantc.de.client.services.DiskResourceServiceFacade;
 import org.iplantc.de.client.services.converters.AsyncCallbackConverter;
 import org.iplantc.de.client.services.impl.models.DiskResourceMetadataBatchRequest;
 import org.iplantc.de.client.util.DiskResourceUtil;
-import org.iplantc.de.shared.services.DEServiceAsync;
+import org.iplantc.de.shared.services.DiscEnvApiService;
 import org.iplantc.de.shared.services.ServiceCallWrapper;
 
 import com.google.common.base.Strings;
@@ -57,12 +57,12 @@ public class DiskResourceServiceFacadeImpl extends TreeStore<Folder> implements
 
     private final DiskResourceAutoBeanFactory factory;
     private final DEProperties deProperties;
-    private final DEServiceAsync deServiceFacade;
+    private final DiscEnvApiService deServiceFacade;
     private final DEClientConstants constants;
     private final UserInfo userInfo;
 
     @Inject
-    public DiskResourceServiceFacadeImpl(final DEServiceAsync deServiceFacade,
+    public DiskResourceServiceFacadeImpl(final DiscEnvApiService deServiceFacade,
                                          final DEProperties deProperties,
                                          final DEClientConstants constants,
                                          final DiskResourceAutoBeanFactory factory,

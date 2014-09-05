@@ -7,7 +7,7 @@ import org.iplantc.admin.belphegor.client.models.BelphegorAdminProperties;
 import org.iplantc.admin.belphegor.client.refGenome.service.ReferenceGenomeServiceFacade;
 import org.iplantc.de.client.models.apps.refGenome.ReferenceGenome;
 import org.iplantc.de.client.models.apps.refGenome.ReferenceGenomeAutoBeanFactory;
-import org.iplantc.de.shared.services.DEServiceAsync;
+import org.iplantc.de.shared.services.DiscEnvApiService;
 import org.iplantc.de.shared.services.ServiceCallWrapper;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -20,12 +20,12 @@ import java.util.List;
 public class ReferenceGenomeServiceFacadeImpl implements ReferenceGenomeServiceFacade {
 
     private final ReferenceGenomeAutoBeanFactory factory;
-    private final DEServiceAsync deService;
+    private final DiscEnvApiService deService;
     private final BelphegorAdminProperties properties;
 
     @Inject
     public ReferenceGenomeServiceFacadeImpl(ReferenceGenomeAutoBeanFactory factory,
-                                            final DEServiceAsync deService,
+                                            final DiscEnvApiService deService,
                                             final BelphegorAdminProperties properties) {
         this.factory = factory;
         this.deService = deService;

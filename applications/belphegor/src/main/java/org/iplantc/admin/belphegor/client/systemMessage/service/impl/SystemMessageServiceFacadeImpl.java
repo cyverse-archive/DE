@@ -6,7 +6,7 @@ import org.iplantc.admin.belphegor.client.systemMessage.service.SystemMessageSer
 import org.iplantc.de.client.models.systemMessages.SystemMessage;
 import org.iplantc.de.client.models.systemMessages.SystemMessageFactory;
 import org.iplantc.de.client.services.converters.StringToVoidCallbackConverter;
-import org.iplantc.de.shared.services.DEServiceAsync;
+import org.iplantc.de.shared.services.DiscEnvApiService;
 import org.iplantc.de.shared.services.ServiceCallWrapper;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -20,12 +20,12 @@ import java.util.List;
 public class SystemMessageServiceFacadeImpl implements SystemMessageServiceFacade {
 
     private final SystemMessageFactory factory;
-    private final DEServiceAsync deService;
+    private final DiscEnvApiService deService;
     private final BelphegorAdminProperties properties;
 
     @Inject
     public SystemMessageServiceFacadeImpl(SystemMessageFactory factory,
-                                          final DEServiceAsync deService,
+                                          final DiscEnvApiService deService,
                                           final BelphegorAdminProperties properties) {
         this.factory = factory;
         this.deService = deService;

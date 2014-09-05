@@ -10,7 +10,7 @@ import org.iplantc.de.client.models.toolRequest.ToolRequest;
 import org.iplantc.de.client.models.toolRequest.ToolRequestAdminAutoBeanFactory;
 import org.iplantc.de.client.models.toolRequest.ToolRequestDetails;
 import org.iplantc.de.client.models.toolRequest.ToolRequestUpdate;
-import org.iplantc.de.shared.services.DEServiceAsync;
+import org.iplantc.de.shared.services.DiscEnvApiService;
 import org.iplantc.de.shared.services.ServiceCallWrapper;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -26,12 +26,12 @@ import java.util.List;
 public class ToolRequestServiceFacadeImpl implements ToolRequestServiceFacade {
 
     private final ToolRequestAdminAutoBeanFactory factory;
-    private final DEServiceAsync deService;
+    private final DiscEnvApiService deService;
     private final BelphegorAdminProperties properties;
 
     @Inject
     public ToolRequestServiceFacadeImpl(ToolRequestAdminAutoBeanFactory factory,
-                                        final DEServiceAsync deService,
+                                        final DiscEnvApiService deService,
                                         final BelphegorAdminProperties properties) {
         this.factory = factory;
         this.deService = deService;

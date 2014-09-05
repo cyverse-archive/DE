@@ -7,7 +7,7 @@ import org.iplantc.admin.belphegor.client.services.model.AppCategorizeRequest;
 import org.iplantc.de.client.models.apps.AppGroup;
 import org.iplantc.de.client.services.converters.AppGroupListCallbackConverter;
 import org.iplantc.de.resources.client.messages.IplantErrorStrings;
-import org.iplantc.de.shared.services.DEServiceAsync;
+import org.iplantc.de.shared.services.DiscEnvApiService;
 import org.iplantc.de.shared.services.ServiceCallWrapper;
 
 import com.google.gwt.http.client.URL;
@@ -21,7 +21,7 @@ import com.google.web.bindery.autobean.shared.AutoBeanUtils;
 import java.util.List;
 
 public class AppAdminServiceFacadeImpl implements AppAdminServiceFacade {
-    @Inject private DEServiceAsync deService;
+    @Inject private DiscEnvApiService deService;
     @Inject private IplantErrorStrings errorStrings;
     @Inject private BelphegorAdminProperties properties;
 

@@ -35,6 +35,7 @@ import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.client.models.apps.AppGroup;
 import org.iplantc.de.client.services.AppServiceFacade;
 import org.iplantc.de.client.services.AppUserServiceFacade;
+import org.iplantc.de.shared.services.DiscEnvApiService;
 
 import com.google.gwt.inject.client.AbstractGinModule;
 import com.google.inject.Provides;
@@ -76,6 +77,8 @@ public class BelphegorAppsGinModule extends AbstractGinModule {
         bind(AppUserServiceFacade.class).to(AppAdminUserServiceFacade.class);
         bind(AppAdminServiceFacade.class).to(AppAdminServiceFacadeImpl.class);
         bind(AppServiceFacade.class).to(AppAdminServiceFacadeImpl.class);
+
+        bind(DiscEnvApiService.class).in(Singleton.class);
     }
 
     @Provides

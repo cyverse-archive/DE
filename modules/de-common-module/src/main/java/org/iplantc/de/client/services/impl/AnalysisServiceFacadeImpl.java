@@ -16,7 +16,7 @@ import org.iplantc.de.client.services.converters.AsyncCallbackConverter;
 import org.iplantc.de.client.services.converters.StringToVoidCallbackConverter;
 import org.iplantc.de.client.util.AppTemplateUtils;
 import org.iplantc.de.client.util.DiskResourceUtil;
-import org.iplantc.de.shared.services.DEServiceAsync;
+import org.iplantc.de.shared.services.DiscEnvApiService;
 import org.iplantc.de.shared.services.ServiceCallWrapper;
 
 import com.google.common.base.Strings;
@@ -122,11 +122,11 @@ public class AnalysisServiceFacadeImpl implements AnalysisServiceFacade {
     private final DEProperties deProperties;
     private final UserInfo userInfo;
     private final AnalysesAutoBeanFactory factory;
-    private final DEServiceAsync deServiceFacade;
+    private final DiscEnvApiService deServiceFacade;
 
 
     @Inject
-    public AnalysisServiceFacadeImpl(final DEServiceAsync deServiceFacade,
+    public AnalysisServiceFacadeImpl(final DiscEnvApiService deServiceFacade,
                                      final DEProperties deProperties,
                                      final UserInfo userInfo,
                                      final AnalysesAutoBeanFactory factory) {

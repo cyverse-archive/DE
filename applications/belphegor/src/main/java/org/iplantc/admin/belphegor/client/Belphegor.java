@@ -10,8 +10,7 @@ import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.commons.client.requests.KeepaliveTimer;
 import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 import org.iplantc.de.resources.client.messages.IplantErrorStrings;
-import org.iplantc.de.shared.services.DEService;
-import org.iplantc.de.shared.services.DEServiceAsync;
+import org.iplantc.de.shared.services.DiscEnvApiService;
 import org.iplantc.de.shared.services.ServiceCallWrapper;
 
 import com.google.gwt.core.client.EntryPoint;
@@ -31,7 +30,7 @@ public class Belphegor implements EntryPoint {
     private final BelphegorAppInjector injector = GWT.create(BelphegorAppInjector.class);
     private final KeepaliveTimer keepaliveTimer = KeepaliveTimer.getInstance();
     private final BelphegorPropertyServiceAsync propertyService = GWT.create(BelphegorPropertyService.class);
-    private final DEServiceAsync deService = GWT.create(DEService.class);
+    private final DiscEnvApiService deService = injector.getApiService();
     private final BelphegorAdminProperties adminProperties = BelphegorAdminProperties.getInstance();
     private final UserInfo userInfo = UserInfo.getInstance();
 

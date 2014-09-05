@@ -8,7 +8,7 @@ import org.iplantc.de.client.models.deployedComps.DeployedComponentAutoBeanFacto
 import org.iplantc.de.client.services.DeployedComponentServices;
 import org.iplantc.de.client.services.converters.GetAppTemplateDeployedComponentConverter;
 import org.iplantc.de.client.services.converters.GetDeployedComponentsCallbackConverter;
-import org.iplantc.de.shared.services.DEServiceAsync;
+import org.iplantc.de.shared.services.DiscEnvApiService;
 import org.iplantc.de.shared.services.ServiceCallWrapper;
 
 import com.google.gwt.http.client.URL;
@@ -21,10 +21,10 @@ public class DeployedComponentServicesImpl implements DeployedComponentServices 
 
     private final DeployedComponentAutoBeanFactory factory;
     private final DEProperties deProperties;
-    private final DEServiceAsync deServiceFacade;
+    private final DiscEnvApiService deServiceFacade;
 
     @Inject
-    public DeployedComponentServicesImpl(final DEServiceAsync deServiceFacade,
+    public DeployedComponentServicesImpl(final DiscEnvApiService deServiceFacade,
                                          final DEProperties deProperties,
                                          final DeployedComponentAutoBeanFactory factory) {
         this.deServiceFacade = deServiceFacade;

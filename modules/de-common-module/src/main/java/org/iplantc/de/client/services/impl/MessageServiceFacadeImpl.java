@@ -13,7 +13,7 @@ import org.iplantc.de.client.services.converters.AsyncCallbackConverter;
 import org.iplantc.de.client.services.converters.NotificationCallbackConverter;
 import org.iplantc.de.client.services.converters.StringToVoidCallbackConverter;
 import org.iplantc.de.client.util.DiskResourceUtil;
-import org.iplantc.de.shared.services.DEServiceAsync;
+import org.iplantc.de.shared.services.DiscEnvApiService;
 import org.iplantc.de.shared.services.BaseServiceCallWrapper.Type;
 import org.iplantc.de.shared.services.ServiceCallWrapper;
 
@@ -52,11 +52,11 @@ public class MessageServiceFacadeImpl implements MessageServiceFacade {
 
     private final NotificationAutoBeanFactory notesFactory;
     private final DEProperties deProperties;
-    private final DEServiceAsync deServiceFacade;
+    private final DiscEnvApiService deServiceFacade;
     private final UserInfo userInfo;
 
     @Inject
-    public MessageServiceFacadeImpl(final DEServiceAsync deServiceFacade,
+    public MessageServiceFacadeImpl(final DiscEnvApiService deServiceFacade,
                                     final DEProperties deProperties,
                                     final NotificationAutoBeanFactory notesFactory,
                                     final UserInfo userInfo) {
