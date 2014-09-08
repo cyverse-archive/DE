@@ -3,7 +3,6 @@ package com.sencha.gxt.widget.core.client.grid;
 import org.iplantc.de.client.models.diskResources.DiskResource;
 
 import static com.google.common.base.Preconditions.checkArgument;
-
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
@@ -56,13 +55,13 @@ import javax.annotation.Nullable;
  * a selected {@link org.iplantc.de.client.models.diskResources.Folder}) <br/>
  * If the user clicks the select all checkbox, and then tries to de-select a single item (which would
  * conceptually result in a selection greater than the cache size) the de-selection will be prevented.
- * 
+ *
  * @author jstroot
  * @see LiveGridView#getCacheSize()
  * @see PagingLoader#getTotalCount()
  */
 public class LiveGridCheckBoxSelectionModel extends CheckBoxSelectionModel<DiskResource> implements
-                                                                                        LiveGridViewUpdateEvent.LiveGridViewUpdateHandler {
+                                                                                         LiveGridViewUpdateEvent.LiveGridViewUpdateHandler {
 
     private static class IsNotFilteredPredicate implements Predicate<DiskResource> {
         @Override
@@ -78,21 +77,24 @@ public class LiveGridCheckBoxSelectionModel extends CheckBoxSelectionModel<DiskR
         // Handle LiveGridViewUpdate events
         final GridView<DiskResource> gridView = grid.getView();
         if (gridView instanceof LiveGridViewUpdateEvent.HasLiveGridViewUpdateHandlers) {
-            ((LiveGridViewUpdateEvent.HasLiveGridViewUpdateHandlers)gridView).addLiveGridViewUpdateHandler(this);
+            ((LiveGridViewUpdateEvent.HasLiveGridViewUpdateHandlers) gridView).addLiveGridViewUpdateHandler(this);
         }
+    }
+
+    public void clear() {
+        super.onClear(null);
     }
 
     /**
      * Return the number of currently selected items. If the select all checkbox is checked and the total
      * number of items exceeds the bound {@link LiveGridView#getCacheSize()}, then the total number of
      * items will be returned. Otherwise, the {@link #selected} collection's size will be returned.
-     * 
+     *
      * @return the number of currently selected items, virtual or not.
      */
     public int getSelectedCount() {
         if (!isSupportedSelectionSize() && isSelectAllChecked()) {
-            int totalCount = ((PagingLoader<?, ?>)grid.getLoader()).getTotalCount();
-            return totalCount;
+            return ((PagingLoader<?, ?>) grid.getLoader()).getTotalCount();
         }
 
         return selected.size();
@@ -127,17 +129,10 @@ public class LiveGridCheckBoxSelectionModel extends CheckBoxSelectionModel<DiskR
             return isInSelectedList;
         } else {
 
-            if (isSelectAllChecked()) {
-                return true;
-            } else {
-                return isInSelectedList;
-            }
+            return isSelectAllChecked() || isInSelectedList;
         }
     }
 
-    /**
-     * @param event
-     */
     @Override
     public void onUpdate(LiveGridViewUpdateEvent event) {
         refresh();
@@ -166,66 +161,14 @@ public class LiveGridCheckBoxSelectionModel extends CheckBoxSelectionModel<DiskR
     }
 
     @Override
-    protected void doSingleSelect(DiskResource model, boolean suppressEvent) {
-        if (locked)
-            return;
-
-        if (model.isFilter())
-            return;
-
-        int index = -1;
-        if (store instanceof ListStore) {
-            ListStore<DiskResource> ls = (ListStore<DiskResource>)store;
-            index = ls.indexOf(model);
-        }
-        if (store instanceof TreeStore) {
-            TreeStore<DiskResource> ls = (TreeStore<DiskResource>)store;
-            index = ls.indexOf(model);
-        }
-        final boolean isSelected = isSelected(model);
-        if (index == -1 || isSelected) {
-            return;
-        } else {
-            if (!suppressEvent) {
-                BeforeSelectionEvent<DiskResource> evt = BeforeSelectionEvent.fire(this, model);
-                if (evt != null && evt.isCanceled()) {
-                    return;
-                }
-            }
-        }
-
-        boolean change = false;
-        if (selected.size() > 0 && !isSelected) {
-            doDeselect(Collections.singletonList(lastSelected), true);
-            change = true;
-        }
-        if (selected.size() == 0) {
-            change = true;
-        }
-        if (!isSelected) {
-            selected.add(model);
-        }
-        lastSelected = model;
-        onSelectChange(model, true);
-        setLastFocused(lastSelected);
-
-        if (!suppressEvent) {
-            SelectionEvent.fire(this, model);
-        }
-
-        if (change && !suppressEvent) {
-            fireSelectionChange();
-        }
-    }
-
-    @Override
-    protected void doMultiSelect(List<DiskResource> models, boolean keepExisting, boolean suppressEvent) {
+    protected void doMultiSelect(List<DiskResource> models, boolean keepExisting,
+                                 boolean suppressEvent) {
         if (locked)
             return;
         boolean change = false;
         if (!keepExisting && selected.size() > 0) {
             change = true;
-            doDeselect(new ArrayList<DiskResource>(selected), true);
+            doDeselect(new ArrayList<>(selected), true);
         }
         for (DiskResource m : models) {
             if (m.isFilter()) {
@@ -261,8 +204,56 @@ public class LiveGridCheckBoxSelectionModel extends CheckBoxSelectionModel<DiskR
         }
     }
 
-    public void clear() {
-        super.onClear(null);
+    @Override
+    protected void doSingleSelect(DiskResource model, boolean suppressEvent) {
+        if (locked)
+            return;
+
+        if (model.isFilter())
+            return;
+
+        int index = -1;
+        if (store instanceof ListStore) {
+            ListStore<DiskResource> ls = (ListStore<DiskResource>) store;
+            index = ls.indexOf(model);
+        }
+        if (store instanceof TreeStore) {
+            TreeStore<DiskResource> ls = (TreeStore<DiskResource>) store;
+            index = ls.indexOf(model);
+        }
+        final boolean isSelected = isSelected(model);
+        if (index == -1 || isSelected) {
+            return;
+        } else {
+            if (!suppressEvent) {
+                BeforeSelectionEvent<DiskResource> evt = BeforeSelectionEvent.fire(this, model);
+                if (evt != null && evt.isCanceled()) {
+                    return;
+                }
+            }
+        }
+
+        boolean change = false;
+        if (selected.size() > 0) {
+            // Deselect all items, since this is single select
+            doDeselect(selected, true);
+            change = true;
+        }
+        if (selected.size() == 0) {
+            change = true;
+        }
+        selected.add(model);
+        lastSelected = model;
+        onSelectChange(model, true);
+        setLastFocused(lastSelected);
+
+        if (!suppressEvent) {
+            SelectionEvent.fire(this, model);
+        }
+
+        if (change && !suppressEvent) {
+            fireSelectionChange();
+        }
     }
 
     @Override
@@ -320,22 +311,16 @@ public class LiveGridCheckBoxSelectionModel extends CheckBoxSelectionModel<DiskR
             int sizeMinusFiltered = Iterables.size(Iterables.filter(getCacheStore().getAll(),
                                                                     new IsNotFilteredPredicate()));
             setChecked((sizeMinusFiltered != 0) && (selected.size() == sizeMinusFiltered));
-        } else {
-            /*
-             * Do nothing. If the live view has more items than selections, than we should not change the
-             * state of the header checkbox.
-             */
         }
     }
 
     ListStore<DiskResource> getCacheStore() {
-        final ListStore<DiskResource> cacheStore = ((LiveGridView<DiskResource>)grid.getView()).cacheStore;
-        return cacheStore;
+        return ((LiveGridView<DiskResource>) grid.getView()).cacheStore;
     }
 
     boolean isSupportedSelectionSize() {
-        int cacheSize = ((LiveGridView<?>)grid.getView()).getCacheSize();
-        int totalCount = ((PagingLoader<?, ?>)grid.getLoader()).getTotalCount();
+        int cacheSize = ((LiveGridView<?>) grid.getView()).getCacheSize();
+        int totalCount = ((PagingLoader<?, ?>) grid.getLoader()).getTotalCount();
         return totalCount <= cacheSize;
     }
 

@@ -12,7 +12,7 @@ import org.iplantc.de.client.util.JsonUtil;
 import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 import org.iplantc.de.resources.client.messages.IplantErrorStrings;
 import org.iplantc.de.shared.exceptions.ConfluenceException;
-import org.iplantc.de.shared.services.DEServiceAsync;
+import org.iplantc.de.shared.services.DiscEnvApiService;
 import org.iplantc.de.shared.services.ConfluenceServiceAsync;
 import org.iplantc.de.shared.services.EmailServiceAsync;
 import org.iplantc.de.shared.services.ServiceCallWrapper;
@@ -39,7 +39,7 @@ import java.util.List;
  */
 public class AppUserServiceFacadeImpl implements AppUserServiceFacade {
 
-    private final DEServiceAsync deServiceFacade;
+    private final DiscEnvApiService deServiceFacade;
     private final DEProperties deProperties;
     private final ConfluenceServiceAsync confluenceService;
     private final UserInfo userInfo;
@@ -48,7 +48,7 @@ public class AppUserServiceFacadeImpl implements AppUserServiceFacade {
     private final IplantDisplayStrings displayStrings;
 
     @Inject
-    public AppUserServiceFacadeImpl(final DEServiceAsync deServiceFacade,
+    public AppUserServiceFacadeImpl(final DiscEnvApiService deServiceFacade,
                                     final DEProperties deProperties,
                                     final ConfluenceServiceAsync confluenceService,
                                     final UserInfo userInfo,

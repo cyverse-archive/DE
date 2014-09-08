@@ -34,7 +34,7 @@ gwt-unitCache/
 
 # Ignore any actual (as opposed to example) configuration files.
 belphegor.properties
-belphegor-confluence.properties
+confluence.properties
 
 # Ignore Clavin uberjar files downloaded by bootstrap-config.py
 clavin-*-standalone.jar

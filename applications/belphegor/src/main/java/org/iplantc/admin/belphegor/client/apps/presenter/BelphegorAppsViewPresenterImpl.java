@@ -5,7 +5,7 @@ import org.iplantc.admin.belphegor.client.apps.views.AppCategorizeViewImpl;
 import org.iplantc.admin.belphegor.client.apps.views.editors.AppEditor;
 import org.iplantc.admin.belphegor.client.events.CatalogCategoryRefreshEvent;
 import org.iplantc.admin.belphegor.client.events.CatalogCategoryRefreshEventHandler;
-import org.iplantc.admin.belphegor.client.models.ToolIntegrationAdminProperties;
+import org.iplantc.admin.belphegor.client.models.BelphegorAdminProperties;
 import org.iplantc.admin.belphegor.client.services.AppAdminServiceFacade;
 import org.iplantc.admin.belphegor.client.services.callbacks.AdminServiceCallback;
 import org.iplantc.admin.belphegor.client.services.model.AppAdminServiceRequestAutoBeanFactory;
@@ -86,6 +86,7 @@ public class BelphegorAppsViewPresenterImpl extends AppsViewPresenterImpl implem
     private final IplantAnnouncer announcer;
     private final IplantDisplayStrings displayStrings;
     private final IplantErrorStrings errorStrings;
+    @Inject private BelphegorAdminProperties properties;
 
     @Inject
     public BelphegorAppsViewPresenterImpl(final AppsView view,
@@ -133,14 +134,12 @@ public class BelphegorAppsViewPresenterImpl extends AppsViewPresenterImpl implem
         }
         final AppGroup selectedAppGroup = getSelectedAppGroup();
 
-        ToolIntegrationAdminProperties props = ToolIntegrationAdminProperties.getInstance();
-
         // Check if a new AppGroup can be created in the target AppGroup.
         if ((!selectedAppGroup.getName().contains("Public Apps"))
                 && selectedAppGroup.getAppCount() > 0
                 && selectedAppGroup.getGroups().size() == 0
-                || ((props.getDefaultTrashAnalysisGroupId().equalsIgnoreCase(selectedAppGroup.getId()))
-                        || props.getDefaultBetaAnalysisGroupId().equalsIgnoreCase(selectedAppGroup.getId()))) {
+                || ((properties.getDefaultTrashAnalysisGroupId().equalsIgnoreCase(selectedAppGroup.getId()))
+                        || properties.getDefaultBetaAnalysisGroupId().equalsIgnoreCase(selectedAppGroup.getId()))) {
             ErrorHandler.post(errorStrings.addCategoryPermissionError());
             return;
         }
@@ -381,7 +380,7 @@ public class BelphegorAppsViewPresenterImpl extends AppsViewPresenterImpl implem
 
     private void showCategorizeAppDialog(final App selectedApp) {
         final AppCategorizePresenter presenter = new AppCategorizePresenter(new AppCategorizeViewImpl(),
-                selectedApp);
+                selectedApp, properties);
         presenter.setAppGroups(view.getAppGroupRoots());
 
         final IPlantDialog dlg = new IPlantDialog();
@@ -578,11 +577,8 @@ public class BelphegorAppsViewPresenterImpl extends AppsViewPresenterImpl implem
         }
 
         // Don't allow a category drop into its own parent.
-        if (parentGroup.getGroups().contains(childGroup)) {
-            return false;
-        }
+        return !parentGroup.getGroups().contains(childGroup);
 
-        return true;
     }
 
     @Override
@@ -592,11 +588,8 @@ public class BelphegorAppsViewPresenterImpl extends AppsViewPresenterImpl implem
         }
 
         // Apps can only be dropped into leaf categories.
-        if (!isLeaf(parentGroup)) {
-            return false;
-        }
+        return isLeaf(parentGroup);
 
-        return true;
     }
 
     private boolean isLeaf(AppGroup parentGroup) {

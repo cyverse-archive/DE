@@ -10,7 +10,7 @@ import org.iplantc.de.client.services.DeployedComponentServices;
 import org.iplantc.de.client.services.converters.AppTemplateCallbackConverter;
 import org.iplantc.de.client.util.AppTemplateUtils;
 import org.iplantc.de.client.util.JsonUtil;
-import org.iplantc.de.shared.services.DEServiceAsync;
+import org.iplantc.de.shared.services.DiscEnvApiService;
 import org.iplantc.de.shared.services.ServiceCallWrapper;
 
 import com.google.common.collect.Lists;
@@ -35,11 +35,11 @@ public class AppTemplateServicesImpl implements AppTemplateServices, AppMetadata
     private final List<FileInfoType> fileInfoTypeList = Lists.newArrayList();
 
     private final List<ReferenceGenome> refGenList = Lists.newArrayList();
-    private final DEServiceAsync deServiceFacade;
+    private final DiscEnvApiService deServiceFacade;
     private final DEProperties deProperties;
 
     @Inject
-    public AppTemplateServicesImpl(final DEServiceAsync deServiceFacade,
+    public AppTemplateServicesImpl(final DiscEnvApiService deServiceFacade,
                                    final DEProperties deProperties,
                                    final DeployedComponentServices dcServices,
                                    final AppTemplateAutoBeanFactory factory) {

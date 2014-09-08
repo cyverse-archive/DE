@@ -13,7 +13,7 @@ import org.iplantc.de.client.models.search.DiskResourceQueryTemplateList;
 import org.iplantc.de.client.models.search.SearchAutoBeanFactory;
 import org.iplantc.de.client.services.SearchServiceFacade;
 import org.iplantc.de.client.services.converters.AsyncCallbackConverter;
-import org.iplantc.de.shared.services.DEServiceAsync;
+import org.iplantc.de.shared.services.DiscEnvApiService;
 import org.iplantc.de.shared.services.ServiceCallWrapper;
 
 import com.google.common.base.Splitter;
@@ -250,14 +250,14 @@ public class SearchServiceFacadeImpl implements SearchServiceFacade {
         }
     }
 
-    private final DEServiceAsync deServiceFacade;
+    private final DiscEnvApiService deServiceFacade;
     private final DiskResourceAutoBeanFactory drFactory;
     private final SearchAutoBeanFactory searchAbFactory;
     private final UserInfo userInfo;
     private final DEProperties deProperties;
 
     @Inject
-    public SearchServiceFacadeImpl(final DEServiceAsync deServiceFacade,
+    public SearchServiceFacadeImpl(final DiscEnvApiService deServiceFacade,
                                    final DEProperties deProperties,
                                    final SearchAutoBeanFactory searchAbFactory,
                                    final DiskResourceAutoBeanFactory drFactory,

@@ -11,7 +11,7 @@ import org.iplantc.de.client.models.sysMsgs.User;
 import org.iplantc.de.client.services.SystemMessageServiceFacade;
 import org.iplantc.de.client.services.converters.AsyncCallbackConverter;
 import org.iplantc.de.client.services.converters.StringToVoidCallbackConverter;
-import org.iplantc.de.shared.services.DEServiceAsync;
+import org.iplantc.de.shared.services.DiscEnvApiService;
 import org.iplantc.de.shared.services.ServiceCallWrapper;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -42,11 +42,11 @@ public final class SystemMessageServiceFacadeImpl implements SystemMessageServic
 
     private final MessageFactory factory;
     private final DEProperties deProperties;
-    private final DEServiceAsync deServiceFacade;
+    private final DiscEnvApiService deServiceFacade;
     private final UserInfo userInfo;
 
     @Inject
-    public SystemMessageServiceFacadeImpl(final DEServiceAsync deServiceFacade,
+    public SystemMessageServiceFacadeImpl(final DiscEnvApiService deServiceFacade,
                                           final DEProperties deProperties,
                                           final MessageFactory factory,
                                           final UserInfo userInfo) {

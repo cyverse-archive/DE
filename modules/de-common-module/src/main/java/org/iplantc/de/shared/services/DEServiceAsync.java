@@ -1,8 +1,5 @@
 package org.iplantc.de.shared.services;
 
-import org.iplantc.de.shared.services.MultiPartServiceWrapper;
-import org.iplantc.de.shared.services.ServiceCallWrapper;
-
 import com.google.gwt.http.client.Request;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
