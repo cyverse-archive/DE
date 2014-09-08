@@ -1,6 +1,16 @@
 package org.iplantc.de.analysis.client.views;
 
-import static org.iplantc.de.client.models.analysis.AnalysisExecutionStatus.*;
+import static org.iplantc.de.client.models.analysis.AnalysisExecutionStatus.CANCELED;
+import static org.iplantc.de.client.models.analysis.AnalysisExecutionStatus.COMPLETED;
+import static org.iplantc.de.client.models.analysis.AnalysisExecutionStatus.FAILED;
+import static org.iplantc.de.client.models.analysis.AnalysisExecutionStatus.HELD;
+import static org.iplantc.de.client.models.analysis.AnalysisExecutionStatus.IDLE;
+import static org.iplantc.de.client.models.analysis.AnalysisExecutionStatus.REMOVED;
+import static org.iplantc.de.client.models.analysis.AnalysisExecutionStatus.RUNNING;
+import static org.iplantc.de.client.models.analysis.AnalysisExecutionStatus.SUBMISSION_ERR;
+import static org.iplantc.de.client.models.analysis.AnalysisExecutionStatus.SUBMITTED;
+import static org.iplantc.de.client.models.analysis.AnalysisExecutionStatus.UNKNOWN;
+
 import org.iplantc.de.client.models.analysis.Analysis;
 import org.iplantc.de.resources.client.IplantResources;
 import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
@@ -14,7 +24,10 @@ import com.sencha.gxt.widget.core.client.selection.SelectionChangedEvent;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -190,6 +203,7 @@ public class AnalysesViewMenuImplTest {
         Analysis mock1 = mock(Analysis.class);
         Analysis mock2 = mock(Analysis.class);
         Analysis mock3 = mock(Analysis.class);
+        Analysis mock4 = mock(Analysis.class);
 
         when(mock1.getStatus()).thenReturn(SUBMITTED.toString());
         when(mock2.getStatus()).thenReturn(RUNNING.toString());
@@ -211,6 +225,7 @@ public class AnalysesViewMenuImplTest {
         when(mock1.getStatus()).thenReturn(COMPLETED.toString());
         when(mock2.getStatus()).thenReturn(FAILED.toString());
         when(mock3.getStatus()).thenReturn(COMPLETED.toString());
+        when(mock4.getStatus()).thenReturn(CANCELED.toString());
         assertTrue("Selection should be deletable", uut.canDeleteSelection(Lists.newArrayList(mock1, mock2, mock3)));
     }
 }
