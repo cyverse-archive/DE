@@ -314,7 +314,7 @@ public class DiskResourceMetadataView extends Composite {
             }
 
             Field<?> field = templateAttrFieldMap.get(attr);
-            if (field.isValid() && field.getValue() != null) {
+            if (field.getValue() != null) {
                 String value = field.getValue().toString();
                 if ((field instanceof DateField) && !Strings.isNullOrEmpty(value)) {
                     value = timestampFormat.format(((DateField) field).getValue());
