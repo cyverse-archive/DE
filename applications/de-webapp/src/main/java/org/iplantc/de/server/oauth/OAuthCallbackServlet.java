@@ -1,8 +1,12 @@
 package org.iplantc.de.server.oauth;
 
+import org.iplantc.de.server.DiscoveryEnvironmentProperties;
+import org.iplantc.de.server.auth.UrlConnector;
+
 import com.google.common.base.Strings;
-import net.lightoze.gwt.i18n.client.LocaleFactory;
+
 import net.sf.json.JSONObject;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -11,18 +15,59 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.log4j.Logger;
-import org.iplantc.de.client.oauth.OAuthErrorDescriptions;
-import org.iplantc.de.server.DiscoveryEnvironmentProperties;
-import org.iplantc.de.server.auth.UrlConnector;
+
+import java.io.IOException;
+import java.net.URISyntaxException;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.net.URISyntaxException;
 
 public abstract class OAuthCallbackServlet extends HttpServlet {
+
+
+    /**
+     * An enumerated type for error codes that can be sent back to the main page of the DE.
+     */
+    private enum ErrorCodes {
+        ERR_INVALID_REQUEST("invalid_request", "The authorization request sent to the OAuth server by the DE was invalid."),
+        ERR_UNAUTHORIZED_CLIENT("unauthorized_client", "The DE is not authorized to request access to the API."),
+        ERR_ACCESS_DENIED("access_denied", "Either the OAuth server or the user denied access."),
+        ERR_UNSUPPORTED_RESPONSE_TYPE("unsupported_response_type", "The OAuth server doesn't support the requested response type."),
+        ERR_INVALID_SCOPE("invalid_scope", "The OAuth server doesn't support the requested scope."),
+        ERR_SERVER("server_error", "The OAuth server encountered an error."),
+        ERR_TEMPORARILY_UNAVAILABLE("temporarily_unavailable", "The OAuth server is temporarily unavailable."),
+        ERR_OAUTH_CONFIG("invalid_oauth_config", "The DE's OAuth configuration is invalid."),
+        ERR_MISSING_AUTH_CODE("no_auth_code_provided", "No authorization code or error code was sent by the OAuth server."),
+        ERR_MISSING_STATE("no_state_id_provided", "No state information was sent by the OAuth server."),
+        ERR_SERVICE("general_service_error", "The DE service encountered an error.");
+
+        private final String errorCode;
+        public String getErrorCode() { return errorCode; }
+
+        private final String errorDescription;
+        public String getErrorDescription() { return errorDescription; }
+
+        private ErrorCodes(final String errorCode, final String errorDescription) {
+            this.errorCode = errorCode;
+            this.errorDescription = errorDescription;
+        }
+
+        public static ErrorCodes fromString(final String errorCode) {
+            for (ErrorCodes code : ErrorCodes.values()) {
+                if (code.errorCode.equals(errorCode)) {
+                    return code;
+                }
+            }
+            return null;
+        }
+
+        @Override
+        public String toString() {
+            return errorCode;
+        }
+    }
 
     private static final String CALLBACK_PATH = "oauth/access-code";
     private static final String ERROR_PARAM = "error";
@@ -35,20 +80,24 @@ public abstract class OAuthCallbackServlet extends HttpServlet {
     private static final Logger LOG = Logger.getLogger(OAuthCallbackServlet.class);
 
     private DiscoveryEnvironmentProperties deProps;
-    protected void setDeProps(final DiscoveryEnvironmentProperties deProps) { this.deProps = deProps; }
-
     private UrlConnector urlConnector;
-    protected void setUrlConnector(final UrlConnector urlConnector) { this.urlConnector = urlConnector; }
-
-    public OAuthCallbackServlet() {}
+    // Default descriptions for request error codes.
 
     @Override
     public void init() throws ServletException {
         super.init();
         if (deProps == null) {
-            deProps = DiscoveryEnvironmentProperties.getDiscoveryEnvironmentProperties(getServletContext());
+            try {
+                deProps = DiscoveryEnvironmentProperties.getDiscoveryEnvironmentProperties();
+            } catch (IOException e) {
+                throw new ServletException(e);
+            }
         }
     }
+
+    protected void setDeProps(final DiscoveryEnvironmentProperties deProps) { this.deProps = deProps; }
+
+    protected void setUrlConnector(final UrlConnector urlConnector) { this.urlConnector = urlConnector; }
 
     @Override
     protected void doGet(final HttpServletRequest req, final HttpServletResponse resp)
@@ -114,50 +163,6 @@ public abstract class OAuthCallbackServlet extends HttpServlet {
         }
     }
 
-    // Default descriptions for request error codes.
-    private static final OAuthErrorDescriptions ERR_TEXT = LocaleFactory.get(OAuthErrorDescriptions.class);
-
-    /**
-     * An enumerated type for error codes that can be sent back to the main page of the DE.
-     */
-    private enum ErrorCodes {
-        ERR_INVALID_REQUEST("invalid_request", ERR_TEXT.invalidRequest()),
-        ERR_UNAUTHORIZED_CLIENT("unauthorized_client", ERR_TEXT.unauthorizedClient()),
-        ERR_ACCESS_DENIED("access_denied", ERR_TEXT.accessDenied()),
-        ERR_UNSUPPORTED_RESPONSE_TYPE("unsupported_response_type", ERR_TEXT.unsupportedResponseType()),
-        ERR_INVALID_SCOPE("invalid_scope", ERR_TEXT.invalidScope()),
-        ERR_SERVER("server_error", ERR_TEXT.serverError()),
-        ERR_TEMPORARILY_UNAVAILABLE("temporarily_unavailable", ERR_TEXT.temporarilyUnavailable()),
-        ERR_OAUTH_CONFIG("invalid_oauth_config", ERR_TEXT.invalidOauthConfig()),
-        ERR_MISSING_AUTH_CODE("no_auth_code_provided", ERR_TEXT.missingAuthCode()),
-        ERR_MISSING_STATE("no_state_id_provided", ERR_TEXT.missingState()),
-        ERR_SERVICE("general_service_error", ERR_TEXT.serviceError());
-
-        private final String errorCode;
-        public String getErrorCode() { return errorCode; }
-
-        private final String errorDescription;
-        public String getErrorDescription() { return errorDescription; }
-
-        private ErrorCodes(final String errorCode, final String errorDescription) {
-            this.errorCode = errorCode;
-            this.errorDescription = errorDescription;
-        }
-
-        public static ErrorCodes fromString(final String errorCode) {
-            for (ErrorCodes code : ErrorCodes.values()) {
-                if (code.errorCode.equals(errorCode)) {
-                    return code;
-                }
-            }
-            return null;
-        }
-
-        @Override
-        public String toString() {
-            return errorCode;
-        }
-    }
 
     /**
      * The authorization response is really a GET request initiated by a redirection from the OAuth
@@ -172,7 +177,7 @@ public abstract class OAuthCallbackServlet extends HttpServlet {
         public String getAuthCode() { return authCode; }
 
         private final String state;
-        private final String getState() { return state; }
+        private String getState() { return state; }
 
         private final ErrorCodes errorCode;
         private final String errorDescription;
@@ -219,15 +224,11 @@ public abstract class OAuthCallbackServlet extends HttpServlet {
                 addParameter(uriBuilder, ERROR_DESCRIPTION_PARAM, getErrorDescription());
                 addParameter(uriBuilder, ERROR_URI_PARAM, errorUri);
                 addParameter(uriBuilder, API_NAME_PARAM, apiName);
-                addParameters(uriBuilder);
                 return uriBuilder.toString();
             } catch (URISyntaxException e) {
                 LOG.error("unable to build the authorization error redirect URL", e);
                 throw new RuntimeException(e);
             }
-        }
-
-        private void addParameters(URIBuilder uriBuilder) {
         }
 
         public void serviceErrorRedirect(final HttpServletResponse response) throws IOException {

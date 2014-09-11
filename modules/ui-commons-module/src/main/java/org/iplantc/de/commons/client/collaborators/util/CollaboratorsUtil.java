@@ -15,6 +15,7 @@ import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.commons.client.events.CollaboratorsLoadedEvent;
 import org.iplantc.de.commons.client.info.ErrorAnnouncementConfig;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
+import org.iplantc.de.commons.client.info.SuccessAnnouncementConfig;
 import org.iplantc.de.resources.client.messages.I18N;
 
 import com.google.gwt.core.shared.GWT;
@@ -243,8 +244,9 @@ public class CollaboratorsUtil {
                 builder.deleteCharAt(builder.length() - 1);
             }
 
-            IplantAnnouncer.getInstance().schedule(
-                    I18N.DISPLAY.collaboratorAddConfirm(builder.toString()));
+            IplantAnnouncer.getInstance()
+                           .schedule(new SuccessAnnouncementConfig(
+                    I18N.DISPLAY.collaboratorAddConfirm(builder.toString())));
             if (callback != null) {
                 callback.onSuccess(null);
             }
@@ -321,8 +323,8 @@ public class CollaboratorsUtil {
                 builder.deleteCharAt(builder.length() - 1);
             }
 
-            IplantAnnouncer.getInstance().schedule(
-                    I18N.DISPLAY.collaboratorRemoveConfirm(builder.toString()));
+            IplantAnnouncer.getInstance()
+                           .schedule(new SuccessAnnouncementConfig(I18N.DISPLAY.collaboratorRemoveConfirm(builder.toString())));
             if (callback != null) {
                 callback.onSuccess(null);
             }

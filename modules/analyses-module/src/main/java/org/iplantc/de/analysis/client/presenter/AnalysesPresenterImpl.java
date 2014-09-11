@@ -173,6 +173,7 @@ public class AnalysesPresenterImpl implements
         public void onSuccess(String result) {
             SafeHtml msg = SafeHtmlUtils.fromString(displayStrings.analysisStopSuccess(ae.getName()));
             announcer.schedule(new SuccessAnnouncementConfig(msg, true, 3000));
+            loadAnalyses();
         }
 
     }

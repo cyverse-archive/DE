@@ -4,6 +4,7 @@ import org.iplantc.admin.belphegor.client.BelphegorResources;
 import org.iplantc.admin.belphegor.client.apps.views.AdminAppViewImpl;
 import org.iplantc.admin.belphegor.client.apps.views.AdminAppsView;
 import org.iplantc.admin.belphegor.client.apps.views.widgets.BelphegorAppsToolbarImpl;
+import org.iplantc.admin.belphegor.client.models.BelphegorAdminProperties;
 import org.iplantc.admin.belphegor.client.presenter.BelphegorPresenterImpl;
 import org.iplantc.admin.belphegor.client.refGenome.RefGenomeView;
 import org.iplantc.admin.belphegor.client.refGenome.presenter.RefGenomePresenterImpl;
@@ -34,6 +35,7 @@ import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.client.models.apps.AppGroup;
 import org.iplantc.de.client.services.AppServiceFacade;
 import org.iplantc.de.client.services.AppUserServiceFacade;
+import org.iplantc.de.shared.services.DiscEnvApiService;
 
 import com.google.gwt.inject.client.AbstractGinModule;
 import com.google.inject.Provides;
@@ -75,6 +77,8 @@ public class BelphegorAppsGinModule extends AbstractGinModule {
         bind(AppUserServiceFacade.class).to(AppAdminUserServiceFacade.class);
         bind(AppAdminServiceFacade.class).to(AppAdminServiceFacadeImpl.class);
         bind(AppServiceFacade.class).to(AppAdminServiceFacadeImpl.class);
+
+        bind(DiscEnvApiService.class).in(Singleton.class);
     }
 
     @Provides
@@ -92,4 +96,7 @@ public class BelphegorAppsGinModule extends AbstractGinModule {
         return DEProperties.getInstance();
     }
 
+    @Provides public BelphegorAdminProperties getAdminProperties() {
+        return BelphegorAdminProperties.getInstance();
+    }
 }

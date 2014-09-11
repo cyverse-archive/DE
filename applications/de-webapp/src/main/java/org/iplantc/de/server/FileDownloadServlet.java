@@ -1,6 +1,6 @@
 package org.iplantc.de.server;
 
-import org.iplantc.de.server.service.DEServiceImpl;
+import org.iplantc.de.server.services.DEServiceImpl;
 import org.iplantc.de.shared.services.ServiceCallWrapper;
 
 import org.apache.commons.io.IOUtils;
@@ -61,7 +61,11 @@ public class FileDownloadServlet extends HttpServlet {
         super.init();
         if (serviceResolver == null && deProps == null) {
             serviceResolver = ServiceCallResolver.getServiceCallResolver(getServletContext());
-            deProps = DiscoveryEnvironmentProperties.getDiscoveryEnvironmentProperties(getServletContext());
+            try {
+                deProps = DiscoveryEnvironmentProperties.getDiscoveryEnvironmentProperties();
+            } catch (IOException e) {
+               throw new ServletException(e);
+            }
         }
     }
 

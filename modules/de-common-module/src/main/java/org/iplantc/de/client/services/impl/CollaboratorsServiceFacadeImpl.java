@@ -7,7 +7,7 @@ import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.GET;
 import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.POST;
 import org.iplantc.de.client.models.DEProperties;
 import org.iplantc.de.client.services.CollaboratorsServiceFacade;
-import org.iplantc.de.shared.services.DEServiceAsync;
+import org.iplantc.de.shared.services.DiscEnvApiService;
 import org.iplantc.de.shared.services.ServiceCallWrapper;
 
 import com.google.gwt.http.client.URL;
@@ -24,10 +24,10 @@ import java.util.List;
 public class CollaboratorsServiceFacadeImpl implements CollaboratorsServiceFacade {
 
     private final DEProperties deProperties;
-    private final DEServiceAsync deServiceFacade;
+    private final DiscEnvApiService deServiceFacade;
 
     @Inject
-    public CollaboratorsServiceFacadeImpl(final DEServiceAsync deServiceFacade,
+    public CollaboratorsServiceFacadeImpl(final DiscEnvApiService deServiceFacade,
                                           final DEProperties deProperties) {
         this.deServiceFacade = deServiceFacade;
         this.deProperties = deProperties;

@@ -9,7 +9,7 @@ import org.iplantc.de.client.models.WindowState;
 import org.iplantc.de.client.services.UserSessionServiceFacade;
 import org.iplantc.de.client.services.converters.AsyncCallbackConverter;
 import org.iplantc.de.client.services.converters.StringToVoidCallbackConverter;
-import org.iplantc.de.shared.services.DEServiceAsync;
+import org.iplantc.de.shared.services.DiscEnvApiService;
 import org.iplantc.de.shared.services.ServiceCallWrapper;
 
 import com.google.gwt.http.client.Request;
@@ -33,10 +33,10 @@ public class UserSessionServiceFacadeImpl implements UserSessionServiceFacade {
     private final DEProperties deProperties;
     private final UserInfo userInfo;
     private final CommonModelAutoBeanFactory factory;
-    private final DEServiceAsync deServiceFacade;
+    private final DiscEnvApiService deServiceFacade;
 
     @Inject
-    public UserSessionServiceFacadeImpl(final DEServiceAsync deServiceFacade,
+    public UserSessionServiceFacadeImpl(final DiscEnvApiService deServiceFacade,
                                         final DEProperties deProperties,
                                         final UserInfo userInfo,
                                         final CommonModelAutoBeanFactory factory) {

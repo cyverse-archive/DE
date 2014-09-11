@@ -7,7 +7,7 @@ import org.iplantc.de.client.models.tags.IplantTagAutoBeanFactory;
 import org.iplantc.de.client.services.MetadataServiceFacade;
 import org.iplantc.de.client.services.converters.AsyncCallbackConverter;
 import org.iplantc.de.client.util.JsonUtil;
-import org.iplantc.de.shared.services.DEServiceAsync;
+import org.iplantc.de.shared.services.DiscEnvApiService;
 import org.iplantc.de.shared.services.BaseServiceCallWrapper.Type;
 import org.iplantc.de.shared.services.ServiceCallWrapper;
 
@@ -29,12 +29,12 @@ import java.util.List;
 public class FileSystemMetadataServiceFacadeImpl implements MetadataServiceFacade {
 
     private final DEProperties deProps;
-    private final DEServiceAsync deServiceFacade;
+    private final DiscEnvApiService deServiceFacade;
     IplantTagAutoBeanFactory factory = GWT.create(IplantTagAutoBeanFactory.class);
     private static final DiskResourceAutoBeanFactory drFactory = GWT.create(DiskResourceAutoBeanFactory.class);
 
     @Inject
-    public FileSystemMetadataServiceFacadeImpl(final DEServiceAsync deServiceFacade,
+    public FileSystemMetadataServiceFacadeImpl(final DiscEnvApiService deServiceFacade,
                                                final DEProperties deProps) {
         this.deServiceFacade = deServiceFacade;
         this.deProps = deProps;

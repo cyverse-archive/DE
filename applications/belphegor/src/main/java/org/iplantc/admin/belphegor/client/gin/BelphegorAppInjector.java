@@ -6,6 +6,7 @@ import org.iplantc.admin.belphegor.client.refGenome.RefGenomeView;
 import org.iplantc.admin.belphegor.client.systemMessage.SystemMessageView;
 import org.iplantc.admin.belphegor.client.toolRequest.ToolRequestView;
 import org.iplantc.admin.belphegor.client.views.BelphegorView;
+import org.iplantc.de.shared.services.DiscEnvApiService;
 
 import com.google.gwt.inject.client.GinModules;
 import com.google.gwt.inject.client.Ginjector;
@@ -22,6 +23,8 @@ public interface BelphegorAppInjector extends Ginjector {
     ToolRequestView.Presenter getToolRequestPresenter();
 
     SystemMessageView.Presenter getSystemMessagePresenter();
+
+    DiscEnvApiService getApiService();
 
     BelphegorResources getResources();
 }

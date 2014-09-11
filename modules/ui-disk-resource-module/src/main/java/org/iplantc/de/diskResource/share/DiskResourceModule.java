@@ -29,6 +29,11 @@ public interface DiskResourceModule {
         String MENU_ITEM_DUPLICATE = ".duplicate";
         String MENU_ITEM_NEW_PLAIN_TEXT = ".newPlainText";
         String MENU_ITEM_NEW_TABULAR_DATA = ".newTabularData";
+        String MENU_ITEM_NEW_R_DATA = ".newRData";
+        String MENU_ITEM_NEW_PYTHON_DATA = ".newPythonData";
+        String MENU_ITEM_NEW_PERL_DATA = ".newPerlData";
+        String MENU_ITEM_NEW_SHELL_DATA = ".newShellData";
+        String MENU_ITEM_NEW_MD_DATA = ".newMdData";
         String MENU_ITEM_MOVE_TO_TRASH = ".moveToTrash";
         String MENU_ITEM_RENAME = ".rename";
         String MENU_ITEM_MOVE = ".move";

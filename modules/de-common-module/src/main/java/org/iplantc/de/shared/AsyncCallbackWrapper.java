@@ -8,6 +8,8 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.StatusCodeException;
 
+import org.apache.http.HttpStatus;
+
 /**
  * Detects when the user is not logged in to the application and redirects the user to the login page.  Under normal
  * circumstances, we'll receive a 302 status code if the user is not authenticated, but we also have to check for a
@@ -57,7 +59,7 @@ public class AsyncCallbackWrapper<T> implements AsyncCallback<T> {
         }
         if (error instanceof StatusCodeException) {
             int statusCode = ((StatusCodeException)error).getStatusCode();
-            if (statusCode == 302 || statusCode == 0) {
+            if (statusCode == HttpStatus.SC_MOVED_TEMPORARILY || statusCode == 0) {
                 redirectToLandingPage();
                 return;
             }

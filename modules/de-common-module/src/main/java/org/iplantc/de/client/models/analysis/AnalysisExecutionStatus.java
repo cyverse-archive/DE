@@ -29,7 +29,9 @@ public enum AnalysisExecutionStatus {
     /** analysis is idle */
     IDLE("Idle"),
     /** analysis is removed */
-    REMOVED("Removed");
+    REMOVED("Removed"),
+    /** analyses is cancelled */
+    CANCELED("Canceled");
 
     private String displayText;
 
