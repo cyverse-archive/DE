@@ -5,13 +5,12 @@ import net.sf.json.JSONObject;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.log4j.Logger;
-import org.iplantc.de.server.DiscoveryEnvironmentProperties;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 
 import javax.servlet.ServletContext;
 
@@ -26,26 +25,16 @@ public class IplantEmailClient {
     /**
      * Used to log debugging messages.
      */
-    private static final Logger LOG = Logger.getLogger(IplantEmailClient.class);
+    private static final Logger LOG = LoggerFactory.getLogger(IplantEmailClient.class);
 
     /**
      * The base URL to use when connecting to the e-mail services.
      */
     private final String baseUrl;
-    public IplantEmailClient() throws IOException {
-        this(DiscoveryEnvironmentProperties.getDiscoveryEnvironmentProperties());
-    }
 
-    /**
-     * @param discoveryEnvironmentProperties
-     */
-    public IplantEmailClient(DiscoveryEnvironmentProperties discoveryEnvironmentProperties) {
-//        Properties props = resolver.getRequiredAliasedConfig("webapp");
-//        if (props == null) {
-//            throw new IllegalStateException("web application configuration settings not found");
-//        }
-//        baseUrl = props.getProperty(EMAIL_BASE_PROPERTY);
-        baseUrl = discoveryEnvironmentProperties.getEmailBaseUrl();
+    public IplantEmailClient(final String baseUrl){
+        this.baseUrl = baseUrl;
+        LOG.debug("Constructor; baseUrl = " +baseUrl);
     }
 
     /**
@@ -78,12 +67,7 @@ public class IplantEmailClient {
             post.setHeader("Content-Type", "application/json");
             String responseBody = client.execute(post, new ServiceResponseHandler());
             LOG.trace(responseBody);
-        }
-        catch (UnsupportedEncodingException e) {
-            LOG.error("message request failed", e);
-            throw new ServiceCallFailedException(e);
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             LOG.error("message request failed", e);
             throw new ServiceCallFailedException(e);
         }
@@ -198,7 +182,7 @@ public class IplantEmailClient {
          * Sets the message contents. This field is optional and defaults to the empty string.
          *
          * @param contents the message contents.
-         * @returnk the message request.
+         * @return the message request.
          */
         public MessageRequest setContent(String contents) {
             if (contents != null) {

@@ -8,7 +8,8 @@ import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import net.sf.json.JSONObject;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.jar.Attributes;
@@ -38,7 +39,7 @@ public class AboutApplicationServiceImpl extends RemoteServiceServlet implements
     /**
      * The logger for error and informational messages.
      */
-    private static Logger LOG = Logger.getLogger(AboutApplicationServiceImpl.class);
+    private static Logger LOG = LoggerFactory.getLogger(AboutApplicationServiceImpl.class);
 
     /**
      * The DE configuration properties.

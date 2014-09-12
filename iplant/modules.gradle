@@ -223,6 +223,7 @@ project(':de-common-module') {
         compile "com.google.guava:guava-gwt:$guavaGwtVer"
 
         compile "log4j:log4j:$log4jVersion"
+        compile "org.slf4j:slf4j-api:$slf4jVersion"
         compile 'org.apache.httpcomponents:httpclient:4.2.1'
         compile 'org.apache.httpcomponents:httpmime:4.2.1'
         compile ('org.jasig.cas.client:cas-client-core:3.2.0') {

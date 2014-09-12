@@ -2,14 +2,10 @@
 <beans:beans xmlns="http://www.springframework.org/schema/security"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:beans="http://www.springframework.org/schema/beans"
-       xmlns:context="http://www.springframework.org/schema/context"
-       xsi:schemaLocation="
-           http://www.springframework.org/schema/beans
-           http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
-           http://www.springframework.org/schema/security
-           http://www.springframework.org/schema/security/spring-security-3.1.xsd
-           http://www.springframework.org/schema/context
-           http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+                           http://www.springframework.org/schema/security
+                           http://www.springframework.org/schema/security/spring-security-3.1.xsd">
 
     <authentication-manager alias="authenticationManager">
         <authentication-provider ref="casAuthenticationProvider"/>
@@ -17,13 +13,13 @@
 
     <http use-expressions="true" entry-point-ref="casAuthEntryPoint">
     	<intercept-url pattern="/applets/**" access="permitAll" />
-        <intercept-url pattern="/discoveryenvironment/logout" access="permitAll" />
-        <intercept-url pattern="/discoveryenvironment/logged-out" access="permitAll" />
+        <intercept-url pattern="/logout" access="permitAll" />
+        <intercept-url pattern="/logged-out" access="permitAll" />
         <intercept-url pattern="/*.css" access="permitAll" />
         <intercept-url pattern="/*.png" access="permitAll" />
         <intercept-url pattern="/**" access="isAuthenticated()" />
         <custom-filter ref="casAuthenticationFilter" position="CAS_FILTER" />
-        <logout logout-success-url="/discoveryenvironment/logout" />
+        <logout logout-success-url="/logout" />
         <custom-filter ref="requestSingleLogoutFilter" before="LOGOUT_FILTER" />
         <custom-filter ref="singleLogoutFilter" before="CAS_FILTER" />
     </http>

@@ -18,32 +18,20 @@
         <servlet-class>org.iplantc.de.server.auth.CasSessionInitializationServlet</servlet-class>
         <init-param>
             <param-name>initialPage</param-name>
-            <param-value>#workspace</param-value>
+            <param-value>belphegor</param-value>
         </init-param>
     </servlet>
     <servlet>
         <servlet-name>logoutSuccessServlet</servlet-name>
-        <servlet-class>org.iplantc.de.server.auth.CasLogoutServlet</servlet-class>
-        <init-param>
-            <param-name>propertyNamePrefix</param-name>
-            <param-value>org.iplantc.belphegor</param-value>
-        </init-param>
+        <servlet-class>org.springframework.web.context.support.HttpRequestHandlerServlet</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>loggedOutServlet</servlet-name>
-        <servlet-class>org.iplantc.de.server.auth.CasLoggedOutServlet</servlet-class>
-        <init-param>
-            <param-name>propertyNamePrefix</param-name>
-            <param-value>org.iplantc.belphegor</param-value>
-        </init-param>
+        <servlet-class>org.springframework.web.context.support.HttpRequestHandlerServlet</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>accessDeniedServlet</servlet-name>
-        <servlet-class>org.iplantc.de.server.auth.CasAccessDeniedServlet</servlet-class>
-        <init-param>
-            <param-name>propertyNamePrefix</param-name>
-            <param-value>org.iplantc.belphegor</param-value>
-        </init-param>
+        <servlet-class>org.springframework.web.context.support.HttpRequestHandlerServlet</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>deServiceDispatcher</servlet-name>
@@ -52,10 +40,6 @@
     <servlet>
         <servlet-name>sessionManagementServlet</servlet-name>
         <servlet-class>org.iplantc.de.server.services.SessionManagementServiceImpl</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>propertyServlet</servlet-name>
-        <servlet-class>org.iplantc.de.server.services.PropertyServiceImpl</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>confluenceServlet</servlet-name>
@@ -73,19 +57,19 @@
     <!-- Servlet Mappings -->
     <servlet-mapping>
         <servlet-name>sessionInitializationServlet</servlet-name>
-        <url-pattern>/belphegor/login</url-pattern>
+        <url-pattern>/login</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>logoutSuccessServlet</servlet-name>
-        <url-pattern>/belphegor/logout</url-pattern>
+        <url-pattern>/logout</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>loggedOutServlet</servlet-name>
-        <url-pattern>/belphegor/logged-out</url-pattern>
+        <url-pattern>/logged-out</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>accessDeniedServlet</servlet-name>
-        <url-pattern>/belphegor/access-denied</url-pattern>
+        <url-pattern>/access-denied</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>deServiceDispatcher</servlet-name>
@@ -94,10 +78,6 @@
     <servlet-mapping>
         <servlet-name>sessionManagementServlet</servlet-name>
         <url-pattern>/belphegor/sessionmanagement</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>propertyServlet</servlet-name>
-        <url-pattern>/belphegor/properties</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>confluenceServlet</servlet-name>

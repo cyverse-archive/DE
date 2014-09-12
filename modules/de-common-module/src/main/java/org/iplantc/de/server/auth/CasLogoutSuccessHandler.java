@@ -1,6 +1,7 @@
 package org.iplantc.de.server.auth;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.DefaultRedirectStrategy;
 import org.springframework.security.web.RedirectStrategy;
@@ -27,7 +28,7 @@ public class CasLogoutSuccessHandler implements LogoutSuccessHandler {
     /**
      * Used to log debugging information.
      */
-    private static final Logger LOG = Logger.getLogger(CasLogoutSuccessHandler.class);
+    private final Logger LOG = LoggerFactory.getLogger(CasLogoutSuccessHandler.class);
 
     /**
      * The strategy to use when sending redirect requests.
@@ -95,7 +96,7 @@ public class CasLogoutSuccessHandler implements LogoutSuccessHandler {
     public void onLogoutSuccess(HttpServletRequest req, HttpServletResponse res, Authentication auth)
             throws IOException, ServletException {
         String fullLogoutUrl = buildFullLogoutUrl(req, determineRedirectUrl(req));
-        LOG.debug("fullLogoutUrl =" + fullLogoutUrl);
+        LOG.debug("fullLogoutUrl = {}", fullLogoutUrl);
         redirectStrategy.sendRedirect(req, res, fullLogoutUrl);
     }
 

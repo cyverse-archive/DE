@@ -3,8 +3,9 @@ package org.iplantc.de.server.auth;
 import static org.iplantc.de.server.util.CasUtils.attributePrincipalFromServletRequest;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 import org.jasig.cas.client.authentication.AttributePrincipal;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -28,7 +29,7 @@ public class CasSessionInitializationServlet extends HttpServlet {
     /**
      * Used to log debugging information.
      */
-    private static final Logger LOG = Logger.getLogger(CasSessionInitializationServlet.class);
+    private static final Logger LOG = LoggerFactory.getLogger(CasSessionInitializationServlet.class);
 
     /**
      * The name of the HTTP session attribute used to store the CAS principal.
