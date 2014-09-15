@@ -4,7 +4,8 @@ import org.iplantc.de.server.services.DEServiceImpl;
 import org.iplantc.de.shared.services.ServiceCallWrapper;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -20,11 +21,10 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * A servlet for downloading a file.
  */
-@SuppressWarnings({"serial", "nls"})
 public class FileDownloadServlet extends HttpServlet {
     private static final String[] HEADER_FIELDS_TO_COPY = {"Content-Disposition"};
 
-    private static final Logger LOG = Logger.getLogger(FileDownloadServlet.class);
+    private static final Logger LOG = LoggerFactory.getLogger(FileDownloadServlet.class);
 
     /**
      * Used to resolve aliased service calls.
@@ -40,15 +40,6 @@ public class FileDownloadServlet extends HttpServlet {
      * The default constructor.
      */
     public FileDownloadServlet() {}
-
-    /**
-     * @param serviceResolver used to resolve aliased service calls.
-     * @param deProps used to obtain some configuration settings.
-     */
-    public FileDownloadServlet(ServiceCallResolver serviceResolver, DiscoveryEnvironmentProperties deProps) {
-        this.serviceResolver = serviceResolver;
-        this.deProps = deProps;
-    }
 
     /**
      * Initializes the servlet if it hasn't already been initialized.
@@ -69,9 +60,6 @@ public class FileDownloadServlet extends HttpServlet {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException {
         DEServiceInputStream fileContents = null;

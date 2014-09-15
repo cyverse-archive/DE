@@ -2,13 +2,16 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:context="http://www.springframework.org/schema/context"
        xmlns:util="http://www.springframework.org/schema/util"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:task="http://www.springframework.org/schema/task"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:task="http://www.springframework.org/schema/task"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
-           http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
-           http://www.springframework.org/schema/context
-           http://www.springframework.org/schema/context/spring-context-3.0.xsd
-           http://www.springframework.org/schema/util
-           http://www.springframework.org/schema/util/spring-util-3.0.xsd http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task.xsd">
+                           http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+                           http://www.springframework.org/schema/context
+                           http://www.springframework.org/schema/context/spring-context-3.0.xsd
+                           http://www.springframework.org/schema/util
+                           http://www.springframework.org/schema/util/spring-util-3.0.xsd
+                           http://www.springframework.org/schema/task
+                           http://www.springframework.org/schema/task/spring-task.xsd">
 
     <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
         <property name="location" value="classpath:belphegor.properties"/>
@@ -35,18 +38,18 @@
     </bean>
 
     <bean id="authenticationSuccessHandler" class="org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler">
-        <property name="defaultTargetUrl" value="${org.iplantc.belphegor.cas.server-name}/belphegor/login"/>
+        <property name="defaultTargetUrl" value="${org.iplantc.belphegor.cas.server-name}/login"/>
     </bean>
 
     <bean id="singleLogoutFilter" class="org.jasig.cas.client.session.SingleSignOutFilter" />
 
     <bean id="logoutHandler" class="org.iplantc.de.server.auth.CasLogoutSuccessHandler">
         <property name="logoutUrl" value="${org.iplantc.belphegor.cas.base-url}/logout" />
-        <property name="defaultRedirectUrl" value="${org.iplantc.belphegor.cas.server-name}/belphegor/logged-out" />
+        <property name="defaultRedirectUrl" value="${org.iplantc.belphegor.cas.server-name}/logged-out" />
         <property name="redirectUrlSelectorName" value="reason" />
         <property name="redirectUrls">
             <map>
-                <entry key="unauthorized" value="${org.iplantc.belphegor.cas.server-name}/belphegor/login" />
+                <entry key="unauthorized" value="${org.iplantc.belphegor.cas.server-name}/login" />
             </map>
         </property>
     </bean>
@@ -81,4 +84,20 @@
     <bean id="authenticationUserDetailsService" class="org.iplantc.de.server.auth.CasGroupUserDetailsService">
         <constructor-arg index="0" value="${org.iplantc.belphegor.cas.group-attribute-name}" />
     </bean>
+
+    <bean id="accessDeniedServlet" class="org.iplantc.de.server.auth.CasAccessDeniedServlet">
+        <constructor-arg index="0" value="${org.iplantc.belphegor.cas.logout-url}"/>
+    </bean>
+    <bean id="loggedOutServlet" class="org.iplantc.de.server.auth.CasLoggedOutServlet">
+        <constructor-arg index="0" value="${org.iplantc.belphegor.cas.app-name}"/>
+        <constructor-arg index="1" value="${org.iplantc.belphegor.cas.login-url}"/>
+    </bean>
+    <bean id="logoutSuccessServlet" class="org.iplantc.de.server.auth.CasLogoutServlet">
+        <constructor-arg index="0" value="${org.iplantc.belphegor.cas.logout-url}"/>
+        <constructor-arg index="1" value="${org.iplantc.belphegor.cas.app-name}"/>
+        <constructor-arg index="2" value="${org.iplantc.belphegor.cas.login-url}"/>
+        <constructor-arg index="3" value="${org.iplantc.belphegor.cas.no-logout-url}"/>
+        <constructor-arg index="4" value="${org.iplantc.belphegor.cas.app-list}"/>
+    </bean>
+
 </beans>

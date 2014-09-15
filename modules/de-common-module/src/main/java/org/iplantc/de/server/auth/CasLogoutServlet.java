@@ -1,15 +1,14 @@
 package org.iplantc.de.server.auth;
 
-import static org.iplantc.de.server.util.ServletUtils.getPropertyPrefix;
-import static org.iplantc.de.server.util.ServletUtils.getRequiredProp;
 import static org.iplantc.de.server.util.ServletUtils.loadResource;
 import static org.iplantc.de.server.util.UrlUtils.convertRelativeUrl;
 
-import org.iplantc.de.server.DiscoveryEnvironmentProperties;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.web.HttpRequestHandler;
 import org.stringtemplate.v4.ST;
 
 import java.io.IOException;
-import java.util.Properties;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -19,40 +18,12 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * A shared servlet for handling CAS logout.
  *
- * @author Dennis Roberts
+ * @author Dennis Roberts, jstroot
  */
-public class CasLogoutServlet extends HttpServlet {
+public class CasLogoutServlet extends HttpServlet implements HttpRequestHandler {
 
     private static final long serialVersionUID = 4844593776560973333L;
-
-    /**
-     * The name of the property containing the relative URL to redirect the user to when the user chooses to log out of
-     * all applications.
-     */
-    private static final String LOGOUT_URL_PROPERTY = ".cas.logout-url";
-
-    /**
-     * The name of the property containing the name of the current web application.
-     */
-    private static final String APP_NAME_PROPERTY = ".cas.app-name";
-
-    /**
-     * The name of the property containing the relative URL to redirect the user to when the user chooses to log back
-     * into the web application.
-     */
-    private static final String LOGIN_URL_PROPERTY = ".cas.login-url";
-
-    /**
-     * The name of the property containing the URL to redirect users to when they choose not to log out of the web
-     * application.
-     */
-    private static final String NO_LOGOUT_URL_PROPERTY = ".cas.no-logout-url";
-
-    /**
-     * The name of the property containing the text that describes all of the applications whose sessions will be closed
-     * if the user decides to log out of all applications.
-     */
-    private static final String APP_LIST_PROPERTY = ".cas.app-list";
+    private final Logger LOG = LoggerFactory.getLogger(CasLogoutServlet.class);
 
     /**
      * The name of the file containing the template for the logout alert page.
@@ -92,59 +63,39 @@ public class CasLogoutServlet extends HttpServlet {
     private String templateText;
 
     /**
-     * True if the servlet has been initialized.
-     */
-    private boolean initialized;
-
-    /**
      * The default constructor.
      */
     public CasLogoutServlet() {}
 
-    /**
-     * @param props the properties containing the app configuration settings.
-     * @param propPrefix the prefix to use when determining property names.
-     */
-    public CasLogoutServlet(Properties props, String propPrefix) {
-        loadConfig(props, propPrefix);
-    }
+    public CasLogoutServlet(final String logoutUrl,
+                            final String appName,
+                            final String loginUrl,
+                            final String noLogoutUrl,
+                            final String appList){
 
-    /**
-     * Initializes the servlet.
-     *
-     * @throws ServletException if the servlet can't be initialized.
-     * @throws IllegalStateException if a required configuration parameter is missing.
-     */
-    @Override
-    public void init() throws ServletException {
-        super.init();
-        if (!initialized) {
-//            Properties config = ConfigAliasResolver.getRequiredAliasedConfigFrom(getServletContext(), "webapp");
-//            loadConfig(config, getPropertyPrefix(getServletConfig()));
-
-            Properties config;
-            try {
-                config = DiscoveryEnvironmentProperties.getDiscoveryEnvironmentProperties().getProperties();
-                loadConfig(config, getPropertyPrefix(getServletConfig()));
-            } catch (IOException e) {
-                throw new ServletException(e);
-            }
-        }
-
-    }
-
-    /**
-     * @param props the properties to extract the desired configuration settings from.
-     * @param propPrefix the property name prefix.
-     */
-    private void loadConfig(Properties props, String propPrefix) {
-        logoutUrl = getRequiredProp(props, propPrefix + LOGOUT_URL_PROPERTY);
-        appName = getRequiredProp(props, propPrefix + APP_NAME_PROPERTY);
-        loginUrl = getRequiredProp(props, propPrefix + LOGIN_URL_PROPERTY);
-        noLogoutUrl = getRequiredProp(props, propPrefix + NO_LOGOUT_URL_PROPERTY);
-        appList = getRequiredProp(props, propPrefix + APP_LIST_PROPERTY);
+        this.logoutUrl = logoutUrl;
+        this.appName = appName;
+        this.loginUrl = loginUrl;
+        this.noLogoutUrl = noLogoutUrl;
+        this.appList = appList;
         templateText = loadResource(TEMPLATE_FILENAME);
-        initialized = true;
+        if(templateText == null){
+            System.out.println("template text is null");
+        }
+        LOG.debug("Constructor args:\n\t" +
+                      "logoutUrl = {}\n\t" +
+                      "appName = {}\n\t" +
+                      "loginUrl = {}\n\t" +
+                      "noLogoutUrl = {}\n\t" +
+                      "appList = {}", logoutUrl, appName, loginUrl, noLogoutUrl, appList);
+    }
+
+    @Override
+    public void handleRequest(HttpServletRequest request,
+                              HttpServletResponse response) throws ServletException, IOException {
+        if(request.getMethod().equalsIgnoreCase("GET")){
+            doGet(request, response);
+        }
     }
 
     /**
@@ -163,9 +114,6 @@ public class CasLogoutServlet extends HttpServlet {
         return st.render();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         resp.setContentType("text/html");

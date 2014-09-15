@@ -1,15 +1,14 @@
 package org.iplantc.de.server.auth;
 
-import static org.iplantc.de.server.util.ServletUtils.getPropertyPrefix;
-import static org.iplantc.de.server.util.ServletUtils.getRequiredProp;
 import static org.iplantc.de.server.util.ServletUtils.loadResource;
 import static org.iplantc.de.server.util.UrlUtils.convertRelativeUrl;
 
-import org.iplantc.de.server.DiscoveryEnvironmentProperties;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.web.HttpRequestHandler;
 import org.stringtemplate.v4.ST;
 
 import java.io.IOException;
-import java.util.Properties;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -19,20 +18,15 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * A shared servlet for handling CAS authorization failure.
  *
- * @author Dennis Roberts
+ * @author Dennis Roberts, jstroot
  */
-public class CasAccessDeniedServlet extends HttpServlet {
-
-    /**
-     * The name of the property containing the relative URL to redirect the user to when the user chooses to log out of
-     * all applications.
-     */
-    private static final String LOGOUT_URL_PROPERTY = ".cas.logout-url";
+public class CasAccessDeniedServlet extends HttpServlet implements HttpRequestHandler {
 
     /**
      * The name of the template used to generate the HTML to return.
      */
     private static final String TEMPLATE_NAME = "access-denied-template.html";
+    private final Logger LOG = LoggerFactory.getLogger(CasAccessDeniedServlet.class);
 
     /**
      * The URL used to log out of the application,
@@ -44,55 +38,21 @@ public class CasAccessDeniedServlet extends HttpServlet {
      */
     private String templateText;
 
-    /**
-     * True if the template has been initialized.
-     */
-    private Boolean initialized = false;
+    public CasAccessDeniedServlet() {}
 
-    /**
-     * The default constructor.
-     */
-    public CasAccessDeniedServlet() {
-    }
-
-    /**
-     * @param props the web application configuration properties.
-     * @param propPrefix the property name prefix.
-     */
-    public CasAccessDeniedServlet(Properties props, String propPrefix) {
-        loadConfig(props, propPrefix);
-    }
-
-    /**
-     * Initializes the servlet.
-     *
-     * @throws ServletException if the servlet can't be initialized.
-     * @throws IllegalStateException if a required configuration setting is missing.
-     */
-    @Override
-    public void init() throws ServletException {
-        super.init();
-        if (!initialized) {
-//            Properties config = ConfigAliasResolver.getRequiredAliasedConfigFrom(getServletContext(), "webapp");
-            Properties config;
-            try {
-                config = DiscoveryEnvironmentProperties.getDiscoveryEnvironmentProperties().getProperties();
-                loadConfig(config, getPropertyPrefix(getServletConfig()));
-            } catch (IOException e) {
-                throw new ServletException(e);
-            }
-         }
-    }
-
-    /**
-     * Loads the configuration from the configuration properties.
-     *
-     * @param config the configuration properties.
-     * @param propPrefix the property name prefix.
-     */
-    private void loadConfig(Properties config, String propPrefix) {
-        logoutUrl = getRequiredProp(config, propPrefix + LOGOUT_URL_PROPERTY);
+    public CasAccessDeniedServlet(final String logoutUrl){
+        this.logoutUrl = logoutUrl;
         templateText = loadResource(TEMPLATE_NAME);
+        LOG.debug("Constructor args:\n\t" +
+                      "logoutUrl = {}", logoutUrl);
+    }
+
+    @Override
+    public void handleRequest(HttpServletRequest request,
+                              HttpServletResponse response) throws ServletException, IOException {
+        if(request.getMethod().equalsIgnoreCase("GET")){
+            doGet(request, response);
+        }
     }
 
     /**
@@ -107,9 +67,6 @@ public class CasAccessDeniedServlet extends HttpServlet {
         return st.render();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
         res.setContentType("text/html");
