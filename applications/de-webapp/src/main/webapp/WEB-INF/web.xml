@@ -15,10 +15,6 @@
     <servlet>
         <servlet-name>sessionInitializationServlet</servlet-name>
         <servlet-class>org.iplantc.de.server.auth.CasSessionInitializationServlet</servlet-class>
-        <init-param>
-            <param-name>initialPage</param-name>
-            <param-value>de</param-value>
-        </init-param>
     </servlet>
     <servlet>
         <servlet-name>logoutSuccessServlet</servlet-name>

@@ -1,21 +1,19 @@
 package org.iplantc.de.server.auth;
 
-import static org.iplantc.de.server.util.CasUtils.attributePrincipalFromServletRequest;
-
-import org.apache.commons.lang.StringUtils;
 import org.jasig.cas.client.authentication.AttributePrincipal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+
+import static org.iplantc.de.server.util.CasUtils.attributePrincipalFromServletRequest;
 
 /**
  * A servlet used to initialize HTTP sessions for CAS-secured web applications.
@@ -58,37 +56,9 @@ public class CasSessionInitializationServlet extends HttpServlet {
     }
 
     /**
-     * The page to redirect the user to after initializing the session.
-     */
-    private String initialPage;
-
-    /**
      * The default constructor.
      */
     public CasSessionInitializationServlet() {}
-
-    /**
-     * @param initialPage the page to redirect the user to after initializing the session.
-     */
-    public CasSessionInitializationServlet(String initialPage) {
-        this.initialPage = initialPage;
-    }
-
-    /**
-     * Initializes the servlet.
-     *
-     * @throws ServletException  if the {@code initialPage} initialization parameter is not defined.
-     */
-    @Override
-    public void init() throws ServletException {
-        super.init();
-        if (initialPage == null) {
-            initialPage = getServletConfig().getInitParameter("initialPage");
-            if (initialPage == null) {
-                throw new ServletException("initialPage initialization parameter required");
-            }
-        }
-    }
 
     /**
      * {@inheritDoc}
@@ -97,7 +67,7 @@ public class CasSessionInitializationServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         try {
             copyCasAttributes(req);
-            redirectUser(req, resp);
+            resp.sendRedirect(getServletContext().getContextPath());
         }
         catch (Exception e) {
             LOG.error("unable to initialize the user's session", e);
@@ -155,20 +125,5 @@ public class CasSessionInitializationServlet extends HttpServlet {
             LOG.debug("Saving user attribute: " + name + " = " + value);
         }
         session.setAttribute(name, value);
-    }
-
-    /**
-     * Redirects the user to the web application's initial page.
-     *
-     * @param req the HTTP servlet request.
-     * @param resp the HTTP servlet response.
-     * @throws IOException if the redirect can't be sent to the client.
-     */
-    private void redirectUser(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        StringBuffer urlBuffer = req.getRequestURL();
-        int pos = StringUtils.lastOrdinalIndexOf(urlBuffer.toString(), "/", 2);
-        urlBuffer.delete(pos + 1, urlBuffer.length());
-        urlBuffer.append(initialPage);
-        resp.sendRedirect(urlBuffer.toString());
     }
 }

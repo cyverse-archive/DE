@@ -34,7 +34,7 @@ public class IplantEmailClient {
 
     public IplantEmailClient(final String baseUrl){
         this.baseUrl = baseUrl;
-        LOG.debug("Constructor; baseUrl = " +baseUrl);
+        LOG.debug("Constructor; baseUrl = {}", baseUrl);
     }
 
     /**
