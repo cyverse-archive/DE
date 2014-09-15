@@ -15,26 +15,14 @@
     <servlet>
         <servlet-name>sessionInitializationServlet</servlet-name>
         <servlet-class>org.iplantc.de.server.auth.CasSessionInitializationServlet</servlet-class>
-        <init-param>
-            <param-name>initialPage</param-name>
-            <param-value>Discoveryenvironment.jsp#workspace</param-value>
-        </init-param>
     </servlet>
     <servlet>
         <servlet-name>logoutSuccessServlet</servlet-name>
-        <servlet-class>org.iplantc.de.server.auth.CasLogoutServlet</servlet-class>
-        <init-param>
-            <param-name>propertyNamePrefix</param-name>
-            <param-value>org.iplantc.discoveryenvironment</param-value>
-        </init-param>
+        <servlet-class>org.springframework.web.context.support.HttpRequestHandlerServlet</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>loggedOutServlet</servlet-name>
-        <servlet-class>org.iplantc.de.server.auth.CasLoggedOutServlet</servlet-class>
-        <init-param>
-            <param-name>propertyNamePrefix</param-name>
-            <param-value>org.iplantc.discoveryenvironment</param-value>
-        </init-param>
+        <servlet-class>org.springframework.web.context.support.HttpRequestHandlerServlet</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>fileDownloadServlet</servlet-name>
@@ -82,21 +70,21 @@
     </servlet>
     <servlet>
         <servlet-name>oauthCallbackServlet</servlet-name>
-        <servlet-class>org.iplantc.de.server.oauth.CasOAuthCallbackServlet</servlet-class>
+        <servlet-class>org.springframework.web.context.support.HttpRequestHandlerServlet</servlet-class>
     </servlet>
 
     <!-- Servlet Mappings -->
     <servlet-mapping>
         <servlet-name>sessionInitializationServlet</servlet-name>
-        <url-pattern>/discoveryenvironment/login</url-pattern>
+        <url-pattern>/login</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>logoutSuccessServlet</servlet-name>
-        <url-pattern>/discoveryenvironment/logout</url-pattern>
+        <url-pattern>/logout</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>loggedOutServlet</servlet-name>
-        <url-pattern>/discoveryenvironment/logged-out</url-pattern>
+        <url-pattern>/logged-out</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>fileDownloadServlet</servlet-name>

@@ -3,18 +3,19 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:task="http://www.springframework.org/schema/task"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
-           http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
-            http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task.xsd">
+                           http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+                           http://www.springframework.org/schema/task
+                           http://www.springframework.org/schema/task/spring-task.xsd">
 
     <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
         <property name="location" value="classpath:discoveryenvironment.properties"/>
     </bean>
 
     <bean id="emailClient" class="org.iplantc.de.server.services.IplantEmailClient">
+        <constructor-arg index="0" value="${org.iplantc.services.email-base}"/>
     </bean>
 
-    <bean id="serviceCallResolver" class="org.iplantc.de.server.DEServiceCallResolver">
-    </bean>
+    <bean id="serviceCallResolver" class="org.iplantc.de.server.DEServiceCallResolver"/>
 
     <bean id="casService" class="org.springframework.security.cas.ServiceProperties">
         <property name="service"
@@ -48,7 +49,7 @@
     <bean id="authenticationSuccessHandler"
           class="org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler">
         <property name="defaultTargetUrl"
-                  value="${org.iplantc.discoveryenvironment.cas.server-name}/discoveryenvironment/login"/>
+                  value="${org.iplantc.discoveryenvironment.cas.server-name}/login"/>
     </bean>
 
     <bean id="singleLogoutFilter" class="org.jasig.cas.client.session.SingleSignOutFilter"/>
@@ -56,7 +57,7 @@
     <bean id="logoutHandler" class="org.iplantc.de.server.auth.CasLogoutSuccessHandler">
         <property name="logoutUrl" value="${org.iplantc.discoveryenvironment.cas.base-url}/logout"/>
         <property name="defaultRedirectUrl"
-                  value="${org.iplantc.discoveryenvironment.cas.server-name}/discoveryenvironment/logged-out"/>
+                  value="${org.iplantc.discoveryenvironment.cas.server-name}/logged-out"/>
     </bean>
 
     <bean id="requestSingleLogoutFilter"
@@ -99,4 +100,24 @@
             </array>
         </constructor-arg>
     </bean>
+
+    <bean id="accessDeniedServlet" class="org.iplantc.de.server.auth.CasAccessDeniedServlet">
+        <constructor-arg index="0" value="${org.iplantc.discoveryenvironment.cas.logout-url}"/>
+    </bean>
+    <bean id="loggedOutServlet" class="org.iplantc.de.server.auth.CasLoggedOutServlet">
+        <constructor-arg index="0" value="${org.iplantc.discoveryenvironment.cas.app-name}"/>
+        <constructor-arg index="1" value="${org.iplantc.discoveryenvironment.cas.login-url}"/>
+    </bean>
+    <bean id="logoutSuccessServlet" class="org.iplantc.de.server.auth.CasLogoutServlet">
+        <constructor-arg index="0" value="${org.iplantc.discoveryenvironment.cas.logout-url}"/>
+        <constructor-arg index="1" value="${org.iplantc.discoveryenvironment.cas.app-name}"/>
+        <constructor-arg index="2" value="${org.iplantc.discoveryenvironment.cas.login-url}"/>
+        <constructor-arg index="3" value="${org.iplantc.discoveryenvironment.cas.no-logout-url}"/>
+        <constructor-arg index="4" value="${org.iplantc.discoveryenvironment.cas.app-list}"/>
+    </bean>
+
+    <bean id="oauthCallbackServlet" class="org.iplantc.de.server.oauth.CasOAuthCallbackServlet">
+        <constructor-arg index="0" value="${org.iplantc.discoveryenvironment.muleServiceBaseUrl}"/>
+    </bean>
+
 </beans>

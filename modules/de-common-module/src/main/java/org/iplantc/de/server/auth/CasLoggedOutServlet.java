@@ -1,15 +1,14 @@
 package org.iplantc.de.server.auth;
 
-import static org.iplantc.de.server.util.ServletUtils.getPropertyPrefix;
-import static org.iplantc.de.server.util.ServletUtils.getRequiredProp;
 import static org.iplantc.de.server.util.ServletUtils.loadResource;
 import static org.iplantc.de.server.util.UrlUtils.convertRelativeUrl;
 
-import org.iplantc.de.server.DiscoveryEnvironmentProperties;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.web.HttpRequestHandler;
 import org.stringtemplate.v4.ST;
 
 import java.io.IOException;
-import java.util.Properties;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -19,24 +18,15 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * A shared servlet for displaying a logout-successful page.
  *
- * @author Dennis Roberts
+ * @author Dennis Roberts, jstroot
  */
-public class CasLoggedOutServlet extends HttpServlet {
-
-    /**
-     * The name of the property used to retrieve the application name to display in the logout success page.
-     */
-    private static final String APP_NAME_PROPERTY = ".cas.app-name";
-
-    /**
-     * The name of the property used to retrieve the login URL to use in the logout success page.
-     */
-    private static final String LOGIN_URL_PROPERTY = ".cas.login-url";
+public class CasLoggedOutServlet extends HttpServlet implements HttpRequestHandler {
 
     /**
      * The name of the template used to generate the logout success page.
      */
     private static final String TEMPLATE_NAME = "logged-out-template.html";
+    private final Logger LOG = LoggerFactory.getLogger(CasLoggedOutServlet.class);
 
     /**
      * The application name to display in the logout success page.
@@ -54,58 +44,26 @@ public class CasLoggedOutServlet extends HttpServlet {
     private String templateText;
 
     /**
-     * True if the servlet has been initialized.
-     */
-    private boolean initialized = false;
-
-    /**
      * The default constructor.
      */
     public CasLoggedOutServlet() {
     }
 
-    /**
-     * @param props the web application configuration properties.
-     * @param propPrefix the property name prefix.
-     */
-    public CasLoggedOutServlet(Properties props, String propPrefix) {
-        loadConfig(props, propPrefix);
+    public CasLoggedOutServlet(final String appName, final String loginUrl){
+        this.appName = appName;
+        this.loginUrl = loginUrl;
+        this.templateText = loadResource(TEMPLATE_NAME);
+        LOG.debug("Constructor args: \n\t" +
+                      "appName = {}\n\t" +
+                      "loginUrl {}", appName, loginUrl);
     }
 
-    /**
-     * Initializes the servlet.
-     *
-     * @throws ServletException if the servlet can't be initialized.
-     * @throws IllegalStateException if a required configuration setting is missing.
-     */
     @Override
-    public void init() throws ServletException {
-        super.init();
-        if (!initialized) {
-//            Properties config = ConfigAliasResolver.getRequiredAliasedConfigFrom(getServletContext(), "webapp");
-//            loadConfig(config, getPropertyPrefix(getServletConfig()));
-
-            Properties config;
-            try {
-                config = DiscoveryEnvironmentProperties.getDiscoveryEnvironmentProperties().getProperties();
-                loadConfig(config, getPropertyPrefix(getServletConfig()));
-            } catch (IOException e) {
-                throw new ServletException(e);
-            }
+    public void handleRequest(HttpServletRequest request,
+                              HttpServletResponse response) throws ServletException, IOException {
+        if(request.getMethod().equalsIgnoreCase("GET")){
+            doGet(request, response);
         }
-    }
-
-    /**
-     * Loads the configuration from the configuration properties.
-     *
-     * @param config the configuration properties.
-     * @param propPrefix the property name prefix.
-     */
-    private void loadConfig(Properties config, String propPrefix) {
-        appName = getRequiredProp(config, propPrefix + APP_NAME_PROPERTY);
-        loginUrl = getRequiredProp(config, propPrefix + LOGIN_URL_PROPERTY);
-        templateText = loadResource(TEMPLATE_NAME);
-        initialized = true;
     }
 
     /**
@@ -121,9 +79,6 @@ public class CasLoggedOutServlet extends HttpServlet {
         return st.render();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
         res.setContentType("text/html");

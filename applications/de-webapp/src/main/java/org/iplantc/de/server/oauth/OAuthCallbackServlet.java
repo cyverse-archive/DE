@@ -1,6 +1,5 @@
 package org.iplantc.de.server.oauth;
 
-import org.iplantc.de.server.DiscoveryEnvironmentProperties;
 import org.iplantc.de.server.auth.UrlConnector;
 
 import com.google.common.base.Strings;
@@ -15,6 +14,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.log4j.Logger;
+import org.springframework.web.HttpRequestHandler;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -24,8 +24,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-public abstract class OAuthCallbackServlet extends HttpServlet {
-
+public abstract class OAuthCallbackServlet extends HttpServlet implements HttpRequestHandler {
 
     /**
      * An enumerated type for error codes that can be sent back to the main page of the DE.
@@ -78,24 +77,20 @@ public abstract class OAuthCallbackServlet extends HttpServlet {
     private static final String API_NAME_PARAM = "api_name";
 
     private static final Logger LOG = Logger.getLogger(OAuthCallbackServlet.class);
+    private final String serviceUrl;
 
-    private DiscoveryEnvironmentProperties deProps;
     private UrlConnector urlConnector;
     // Default descriptions for request error codes.
 
-    @Override
-    public void init() throws ServletException {
-        super.init();
-        if (deProps == null) {
-            try {
-                deProps = DiscoveryEnvironmentProperties.getDiscoveryEnvironmentProperties();
-            } catch (IOException e) {
-                throw new ServletException(e);
-            }
-        }
+    public OAuthCallbackServlet(final String serviceUrl){
+        this.serviceUrl = serviceUrl;
     }
 
-    protected void setDeProps(final DiscoveryEnvironmentProperties deProps) { this.deProps = deProps; }
+    @Override
+    public void handleRequest(HttpServletRequest httpServletRequest,
+                              HttpServletResponse httpServletResponse) throws ServletException, IOException {
+        doGet(httpServletRequest, httpServletResponse);
+    }
 
     protected void setUrlConnector(final UrlConnector urlConnector) { this.urlConnector = urlConnector; }
 
@@ -152,7 +147,7 @@ public abstract class OAuthCallbackServlet extends HttpServlet {
 
     private String serviceCallbackUrl(final AuthorizationResponse authResponse) {
         try {
-            final String baseUrl = deProps.getProtectedDonkeyBaseUrl() + CALLBACK_PATH;
+            final String baseUrl = serviceUrl + CALLBACK_PATH;
             return new URIBuilder(baseUrl + "/" + authResponse.getApiName())
                     .addParameter(AUTH_CODE_PARAM, authResponse.getAuthCode())
                     .addParameter(STATE_PARAM, authResponse.getState())
