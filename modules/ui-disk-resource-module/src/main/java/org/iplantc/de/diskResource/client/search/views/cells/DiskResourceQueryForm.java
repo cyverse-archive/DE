@@ -183,7 +183,7 @@ public class DiskResourceQueryForm extends Composite implements
     List<IplantTag> tagQuery;
 
     @Ignore
-    private TagsPanel tagPanel;
+    TagsPanel tagPanel;
 
     public interface HtmlLayoutContainerTemplate extends XTemplates {
         @XTemplate(source = "DiskResourceQueryFormTemplate.html")
@@ -670,7 +670,7 @@ public class DiskResourceQueryForm extends Composite implements
         hide();
     }
     
-    private class SearchTagListHandler implements TagListHandlers {
+    class SearchTagListHandler implements TagListHandlers {
         
         final CustomIplantTagResources r = GWT.create(CustomIplantTagResources.class);
 

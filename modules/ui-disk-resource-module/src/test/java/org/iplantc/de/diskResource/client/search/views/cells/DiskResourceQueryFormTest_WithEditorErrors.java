@@ -3,6 +3,9 @@ package org.iplantc.de.diskResource.client.search.views.cells;
 import org.iplantc.de.client.models.search.DateInterval;
 import org.iplantc.de.client.models.search.DiskResourceQueryTemplate;
 import org.iplantc.de.client.models.search.FileSizeRange.FileSizeUnit;
+import org.iplantc.de.client.models.tags.IplantTag;
+import org.iplantc.de.commons.client.tags.views.TagSearchField;
+import org.iplantc.de.commons.client.tags.views.TagsPanel;
 import org.iplantc.de.commons.client.widgets.IPlantAnchor;
 
 import com.google.common.collect.Lists;
@@ -10,6 +13,10 @@ import com.google.gwt.dom.client.Element;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.logical.shared.SelectionEvent;
+import com.google.gwt.event.logical.shared.SelectionHandler;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
@@ -24,6 +31,7 @@ import com.sencha.gxt.widget.core.client.button.TextButton;
 import com.sencha.gxt.widget.core.client.event.SelectEvent;
 import com.sencha.gxt.widget.core.client.event.SelectEvent.SelectHandler;
 import com.sencha.gxt.widget.core.client.form.CheckBox;
+import com.sencha.gxt.widget.core.client.form.FieldLabel;
 import com.sencha.gxt.widget.core.client.form.SimpleComboBox;
 import com.sencha.gxt.widget.core.client.form.TextField;
 
@@ -202,6 +210,36 @@ public class DiskResourceQueryFormTest_WithEditorErrors {
                 createdWithinCombo.setWidth(cw);
                 modifiedWithinCombo.setWidth(cw);
 
+            }
+
+            @Override
+            void initTagField() {
+                final TagSearchField tagSearchField = mock(TagSearchField.class);
+
+                final SearchTagListHandler tagListHandlers = mock(SearchTagListHandler.class);
+
+                FieldLabel fl = mock(FieldLabel.class);
+
+                tagPanel = mock(TagsPanel.class);
+                tagPanel.setSize("200px", "50px");
+
+                tagSearchField.addSelectionHandler(new SelectionHandler<IplantTag>() {
+
+                    @Override
+                    public void onSelection(SelectionEvent<IplantTag> event) {
+                        tagSearchField.setValue(event.getSelectedItem());
+
+                    }
+                });
+                tagSearchField.addValueChangeHandler(new ValueChangeHandler<IplantTag>() {
+
+                    @Override
+                    public void onValueChange(ValueChangeEvent<IplantTag> event) {
+                        tagListHandlers.onAddTag(event.getValue());
+                        tagSearchField.clear();
+                        tagSearchField.asWidget().getElement().focus();
+                    }
+                });
             }
 
         };
