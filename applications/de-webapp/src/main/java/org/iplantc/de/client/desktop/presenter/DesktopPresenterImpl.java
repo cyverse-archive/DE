@@ -1,6 +1,7 @@
 package org.iplantc.de.client.desktop.presenter;
 
 import static org.iplantc.de.commons.client.collaborators.presenter.ManageCollaboratorsPresenter.MODE.MANAGE;
+
 import org.iplantc.de.client.DEClientConstants;
 import org.iplantc.de.client.desktop.DesktopView;
 import org.iplantc.de.client.desktop.presenter.util.MessagePoller;
@@ -52,6 +53,7 @@ import org.iplantc.de.shared.DeModule;
 import org.iplantc.de.shared.services.PropertyServiceAsync;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+
 import com.google.common.base.Strings;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
@@ -181,10 +183,11 @@ public class DesktopPresenterImpl implements DesktopView.Presenter {
     }
 
     public static native void doIntro() /*-{
-        var introjs = $wnd.introJs();
-        introjs.setOption("showStepNumbers", false);
-        introjs.setOption("skipLabel", "Exit");
-        introjs.start();
+		var introjs = $wnd.introJs();
+		introjs.setOption("showStepNumbers", false);
+		introjs.setOption("skipLabel", "Exit");
+		introjs.setOption("overlayOpacity", .5);
+		introjs.start();
     }-*/;
 
     @Override
@@ -483,7 +486,8 @@ public class DesktopPresenterImpl implements DesktopView.Presenter {
     }
 
     private void getUserSession(final boolean urlHasDataTypeParameter) {
-        if (userSettings.isSaveSession() && !urlHasDataTypeParameter) {
+        // do not attempt to get user session for new user
+        if (userSettings.isSaveSession() && !urlHasDataTypeParameter && !userInfo.isNewUser()) {
             // This restoreSession's callback will also init periodic session saving.
             final AutoProgressMessageBox progressMessageBox = new AutoProgressMessageBox(displayStrings.loadingSession(),
                                                                                          displayStrings.loadingSessionWaitNotice());
@@ -597,9 +601,9 @@ public class DesktopPresenterImpl implements DesktopView.Presenter {
      */
     private native void setBrowserContextMenuEnabledNative(boolean enabled)
     /*-{
-        $doc.oncontextmenu = function () {
-            return enabled;
-        };
+		$doc.oncontextmenu = function() {
+			return enabled;
+		};
     }-*/;
 
 }
