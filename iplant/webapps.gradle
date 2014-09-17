@@ -1,7 +1,92 @@
-// Build file for configuring the Webapp projects
+project(':de') {
+    apply plugin: 'war'
+    apply plugin: 'gwt'
+    apply plugin: 'jetty'
 
+    configurations {
+        applet
+    }
 
-configure(subprojects.findAll { it.name == "de" || it.name == "belphegor" }) { 
+    dependencies {
+        applet "org.irods.idrop:idrop-lite:2.0.1-SNAPSHOT@jar"
+
+        gwt "com.sencha.gxt:gxt:$gxtVersion"
+        gwt "com.google.gwt.inject:gin:$gwtGinVer"
+        gwt "com.google.guava:guava-gwt:$guavaGwtVer"
+
+        gwt project(':ui-commons-module')
+        gwt project(':ui-applications-module')
+        gwt project(':ui-resources-module')
+        gwt project(':confluence-client')
+        gwt project(':ui-disk-resource-module')
+        gwt project(':ui-apps-widgets-module')
+        gwt project(':ui-pipelines-module')
+        gwt project(':ui-apps-integration')
+        gwt project(':analyses-module')
+        gwt project(':de-common-module')
+
+        compile "com.sencha.gxt:gxt:$gxtVersion"
+        compile "com.google.gwt.inject:gin:$gwtGinVer"
+        compile "com.google.guava:guava-gwt:$guavaGwtVer"
+
+        compile project(':ui-commons-module')
+        compile project(':ui-applications-module')
+        compile project(':ui-resources-module')
+        compile project(':confluence-client')
+        compile project(':ui-disk-resource-module')
+        compile project(':ui-apps-widgets-module')
+        compile project(':ui-pipelines-module')
+        compile project(':ui-apps-integration')
+        compile project(':analyses-module')
+        compile project(':de-common-module')
+
+        testCompile "com.google.gwt.gwtmockito:gwtmockito:$gwtMockitoVer"
+        testCompile project(':de-common-module').sourceSets.test.output
+    }
+
+    gwt {
+        gwtVersion = "$gwtVer"
+        modules 'org.iplantc.de.discoveryenvironment'
+        devModules 'org.iplantc.de.discoveryenvironmentDev'
+
+        src += files(project(':ui-commons-module').sourceSets.main.allJava.srcDirs) + files(project(':ui-commons-module').sourceSets.main.output.resourcesDir)
+        src += files(project(':ui-applications-module').sourceSets.main.allJava.srcDirs) + files(project(':ui-applications-module').sourceSets.main.output.resourcesDir)
+        src += files(project(':ui-resources-module').sourceSets.main.allJava.srcDirs) + files(project(':ui-resources-module').sourceSets.main.output.resourcesDir) + files(project(':ui-resources-module').sourceSets.main.resources.srcDirs)
+        src += files(project(':confluence-client').sourceSets.main.allJava.srcDirs) + files(project(':confluence-client').sourceSets.main.output.resourcesDir)
+        src += files(project(':ui-disk-resource-module').sourceSets.main.allJava.srcDirs) + files(project(':ui-disk-resource-module').sourceSets.main.output.resourcesDir)
+        src += files(project(':ui-apps-widgets-module').sourceSets.main.allJava.srcDirs) + files(project(':ui-apps-widgets-module').sourceSets.main.output.resourcesDir)
+        src += files(project(':ui-pipelines-module').sourceSets.main.allJava.srcDirs) + files(project(':ui-pipelines-module').sourceSets.main.output.resourcesDir)
+        src += files(project(':ui-pipeline-builder-module').sourceSets.main.allJava.srcDirs) + files(project(':ui-pipeline-builder-module').sourceSets.main.output.resourcesDir)
+        src += files(project(':ui-apps-integration').sourceSets.main.allJava.srcDirs) + files(project(':ui-apps-integration').sourceSets.main.output.resourcesDir)
+        src += files(project(':analyses-module').sourceSets.main.allJava.srcDirs) + files(project(':analyses-module').sourceSets.main.output.resourcesDir)
+        src += files(project(':de-common-module').sourceSets.main.allJava.srcDirs) + files(project(':de-common-module').sourceSets.main.output.resourcesDir)
+
+        superDev { noPrecompile = true }
+        maxHeapSize = '1024M'
+        compiler {
+            enableClosureCompiler = true;
+            disableClassMetadata = true;
+            disableCastChecking = true;
+        }
+
+    }
+
+    war {
+        // Put idrop lite jar into war
+        from(configurations.applet) {
+            into 'applets'
+        }
+    }
+
+    draftWar {
+        // Put idrop lite jar into war
+        from(configurations.applet) {
+            into 'applets'
+        }
+    }
+}
+
+project(':belphegor') {
     apply plugin: 'war'
     apply plugin: 'gwt'
     apply plugin: 'jetty'
@@ -33,11 +118,14 @@ configure(subprojects.findAll { it.name == "de" || it.name == "belphegor" }) {
 
     gwt {
         gwtVersion = "$gwtVer"
+        modules 'org.iplantc.admin.belphegor.belphegor'
+        devModules 'org.iplantc.admin.belphegor.belphegorDev'
+
+        src += files(project(':ui-commons-module').sourceSets.main.allJava.srcDirs) + files(project(':ui-commons-module').sourceSets.main.output.resourcesDir)
+        src += files(project(':ui-applications-module').sourceSets.main.allJava.srcDirs) + files(project(':ui-applications-module').sourceSets.main.output.resourcesDir)
         src += files(project(':ui-resources-module').sourceSets.main.allJava.srcDirs) + files(project(':ui-resources-module').sourceSets.main.output.resourcesDir) + files(project(':ui-resources-module').sourceSets.main.resources.srcDirs)
         src += files(project(':de-common-module').sourceSets.main.allJava.srcDirs) + files(project(':de-common-module').sourceSets.main.output.resourcesDir)
-        src += files(project(':ui-commons-module').sourceSets.main.allJava.srcDirs) + files(project(':ui-commons-module').sourceSets.main.output.resourcesDir)
         src += files(project(':confluence-client').sourceSets.main.allJava.srcDirs) + files(project(':confluence-client').sourceSets.main.output.resourcesDir)
-        src += files(project(':ui-applications-module').sourceSets.main.allJava.srcDirs) + files(project(':ui-applications-module').sourceSets.main.output.resourcesDir)
 
         superDev { noPrecompile = true }
         maxHeapSize = '1024M'
@@ -46,14 +134,12 @@ configure(subprojects.findAll { it.name == "de" || it.name == "belphegor" }) {
             disableClassMetadata = true;
             disableCastChecking = true;
         }
-    }
 
-    idea {
-        module {
-            scopes.PROVIDED.plus += configurations.gwtSdk
-            scopes.PROVIDED.plus += configurations.gwt
-        }
+
     }
+}
+
+configure(subprojects.findAll { it.name == "de" || it.name == "belphegor" }) {
 
     task runDraftJetty(type: JettyRunWar) {
         group 'Web application'
@@ -110,69 +196,6 @@ configure(subprojects.findAll { it.name == "de" || it.name == "belphegor" }) {
     clean {
         delete "./war"
         delete "./bin"
-    }
-}
-
-
-
-project(':de') {
-    configurations {
-        applet
-    }
-
-    dependencies {
-        applet "org.irods.idrop:idrop-lite:2.0.1-SNAPSHOT@jar"
-        gwt project(':ui-disk-resource-module')
-        gwt project(':ui-commons-module')
-        gwt project(':ui-applications-module')
-        gwt project(':ui-resources-module')
-        gwt project(':de-common-module')
-        gwt project(':ui-apps-widgets-module')
-        gwt project(':ui-pipelines-module')
-        gwt project(':ui-apps-integration')
-        gwt project(':analyses-module')
-
-        compile project(':ui-disk-resource-module')
-        compile project(':ui-commons-module')
-        compile project(':ui-applications-module')
-        compile project(':ui-resources-module')
-        compile project(':de-common-module')
-        compile project(':ui-apps-widgets-module')
-        compile project(':ui-pipelines-module')
-        compile project(':ui-apps-integration')
-        compile project(':analyses-module')
-    }
-
-    gwt {
-        modules 'org.iplantc.de.discoveryenvironment'
-        devModules 'org.iplantc.de.discoveryenvironmentDev'
-        src += files(project(':analyses-module').sourceSets.main.allJava.srcDirs) + files(project(':analyses-module').sourceSets.main.output.resourcesDir)
-        src += files(project(':ui-apps-widgets-module').sourceSets.main.allJava.srcDirs) + files(project(':ui-apps-widgets-module').sourceSets.main.output.resourcesDir)
-        src += files(project(':ui-apps-integration').sourceSets.main.allJava.srcDirs) + files(project(':ui-apps-integration').sourceSets.main.output.resourcesDir)
-        src += files(project(':ui-pipelines-module').sourceSets.main.allJava.srcDirs) + files(project(':ui-pipelines-module').sourceSets.main.output.resourcesDir)
-        src += files(project(':ui-disk-resource-module').sourceSets.main.allJava.srcDirs) + files(project(':ui-disk-resource-module').sourceSets.main.output.resourcesDir)
-        src += files(project(':ui-pipeline-builder-module').sourceSets.main.allJava.srcDirs) + files(project(':ui-pipeline-builder-module').sourceSets.main.output.resourcesDir)
-    }
-
-    // Put idrop lite jar into war
-    war {
-        from(configurations.applet) {
-            into 'applets'
-        }
-    }
-
-    // Put idrop lite jar into draft war
-    draftWar {
-        from(configurations.applet) {
-            into 'applets'
-        }
-    }
-}
-
-project(':belphegor') {
-    gwt {
-        modules 'org.iplantc.admin.belphegor.belphegor'
-        devModules 'org.iplantc.admin.belphegor.belphegorDev'
     }
 }
 
