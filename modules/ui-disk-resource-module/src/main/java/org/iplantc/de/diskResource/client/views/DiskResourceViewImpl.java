@@ -280,6 +280,7 @@ public class DiskResourceViewImpl extends Composite implements DiskResourceView,
         grid.setSelectionModel(sm);
         grid.getSelectionModel().addSelectionChangedHandler(this);
         gridView.setCacheSize(500);
+        gridView.setAutoExpandColumn(grid.getColumnModel().getColumn(1));
         initLiveToolbar();
 
         tree.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
@@ -388,13 +389,7 @@ public class DiskResourceViewImpl extends Composite implements DiskResourceView,
     public void loadFolder(Folder folder) {
         sm.clear();
         sm.setShowSelectAll(!(folder instanceof DiskResourceQueryTemplate));
-        grid.getView().getHeader().refresh();
-
-        if (folder instanceof DiskResourceFavorite || folder instanceof DiskResourceQueryTemplate) {
-            reconfigureToSearchView();
-        } else {
-            reconfigureToListingView();
-        }
+        // grid.getView().getHeader().refresh();
 
         if (folder instanceof DiskResourceQueryTemplate){
             // If the given query has not been saved, we need to deselect everything
@@ -408,6 +403,12 @@ public class DiskResourceViewImpl extends Composite implements DiskResourceView,
         gridLoader.getLastLoadConfig().setOffset(0);
 
         gridLoader.load();
+
+        if (folder instanceof DiskResourceFavorite || folder instanceof DiskResourceQueryTemplate) {
+            reconfigureToSearchView();
+        } else {
+            reconfigureToListingView();
+        }
     }
 
     private void addTreeCollapseButton() {
@@ -1179,21 +1180,20 @@ public class DiskResourceViewImpl extends Composite implements DiskResourceView,
 
     private void reconfigureToSearchView() {
         // display Path
-        grid.getColumnModel().getColumn(4).setHidden(false);
-        grid.getView().setAutoExpandColumn(grid.getColumnModel().getColumn(4));
+        grid.getColumnModel().getColumn(2).setHidden(false);
         grid.getView().refresh(true);
     }
 
     private void reconfigureToListingView() {
         // hide Path.
-        grid.getColumnModel().getColumn(4).setHidden(true);
-        grid.getView().setAutoExpandColumn(grid.getColumnModel().getColumn(1));
+        grid.getColumnModel().getColumn(2).setHidden(true);
         grid.getView().refresh(true);
     }
 
     @Override
     public void selectTag(IplantTag tag) {
         LOG.log(Level.SEVERE, "==>" + tag.getValue());
+        presenter.doSearchTaggedWithResources(Sets.newHashSet(tag));
     }
 
 }

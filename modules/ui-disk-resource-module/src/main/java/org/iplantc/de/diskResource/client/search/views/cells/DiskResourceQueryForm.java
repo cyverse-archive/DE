@@ -26,6 +26,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.editor.client.Editor;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
+import com.google.gwt.editor.client.adapters.SimpleEditor;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
@@ -69,7 +70,11 @@ import com.sencha.gxt.widget.core.client.form.SimpleComboBox;
 import com.sencha.gxt.widget.core.client.form.TextField;
 
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * This form is used to construct, edit and/or save "search filters".
@@ -180,10 +185,14 @@ public class DiskResourceQueryForm extends Composite implements
 
     FieldLabel lesserField;
 
-    List<IplantTag> tagQuery;
+    SimpleEditor<Set<IplantTag>> tagQuery;
 
     @Ignore
     TagsPanel tagPanel;
+
+    static Logger LOG = Logger.getLogger("Adv Search");
+
+    private SearchTagListHandler tagListHandlers;
 
     public interface HtmlLayoutContainerTemplate extends XTemplates {
         @XTemplate(source = "DiskResourceQueryFormTemplate.html")
@@ -200,7 +209,7 @@ public class DiskResourceQueryForm extends Composite implements
     /**
      * @param filter
      */
-    public DiskResourceQueryForm(final DiskResourceQueryTemplate filter) {
+    protected DiskResourceQueryForm(final DiskResourceQueryTemplate filter) {
         VerticalPanel vp = new VerticalPanel();
         HtmlLayoutContainerTemplate templates = GWT.create(HtmlLayoutContainerTemplate.class);
         con = new HtmlLayoutContainer(templates.getTemplate());
@@ -208,10 +217,11 @@ public class DiskResourceQueryForm extends Composite implements
         vp.getElement().getStyle().setBackgroundColor("#fff");
         initWidget(vp);
 
+        tagQuery = SimpleEditor.<Set<IplantTag>> of();
         init(new DiskResourceQueryFormNamePrompt());
-
         editorDriver.initialize(this);
         editorDriver.edit(filter);
+        tagQuery.setValue(new HashSet<IplantTag>());
 
         eventPreview = new BaseEventPreview() {
 
@@ -267,6 +277,11 @@ public class DiskResourceQueryForm extends Composite implements
     }
 
     public void edit(DiskResourceQueryTemplate queryTemplate) {
+        if (queryTemplate.getTagQuery() == null) {
+            tagQuery.setValue(new HashSet<IplantTag>());
+        } else {
+            populateTags(queryTemplate.getTagQuery());
+        }
         editorDriver.edit(SearchModelUtils.copyDiskResourceQueryTemplate(queryTemplate));
     }
 
@@ -358,7 +373,7 @@ public class DiskResourceQueryForm extends Composite implements
     void initTagField() {
         final TagSearchField tagSearchField = CommonsInjector.INSTANCE.getTagSearchField();
 
-        final SearchTagListHandler tagListHandlers = new SearchTagListHandler();
+        tagListHandlers = new SearchTagListHandler();
 
         VerticalPanel vp = new VerticalPanel();
         FieldLabel fl = new FieldLabel();
@@ -390,6 +405,12 @@ public class DiskResourceQueryForm extends Composite implements
                 tagSearchField.asWidget().getElement().focus();
             }
         });
+    }
+
+    void populateTags(Set<IplantTag> tags) {
+        for (IplantTag it : tags) {
+            tagListHandlers.onAddTag(it);
+        }
     }
 
     void addTrashAndFilter() {
@@ -529,7 +550,11 @@ public class DiskResourceQueryForm extends Composite implements
                 && ((template.getModifiedWithin() == null) || (template.getModifiedWithin().getFrom() == null && template.getModifiedWithin()
                                                                                                                          .getTo() == null))
                 && ((template.getFileSizeRange() == null) || (template.getFileSizeRange().getMax() == null && template.getFileSizeRange()
-                                                                                                                      .getMin() == null))) {
+                                                                                                                      .getMin() == null))
+                && (template.getTagQuery() == null || template.getTagQuery().size() == 0)) {
+
+            LOG.log(Level.SEVERE, "tags size==>" + template.getTagQuery());
+
             // TODO Implement user error feedback
             IplantAnnouncer.getInstance()
                            .schedule(new ErrorAnnouncementConfig("You must select at least one filter."));
@@ -697,14 +722,14 @@ public class DiskResourceQueryForm extends Composite implements
             tv.setRemoveable(true);
             tv.setEditable(true);
             tagPanel.add(tv);
-            tagQuery.add(tag);
+            tagQuery.getValue().add(tv.getTag());
         }
 
         @Override
         public void onRemoveTag(TagView tagView) {
             if (tagPanel.getWidgetIndex(tagView) != -1) {
                 tagPanel.remove(tagPanel.getWidgetIndex(tagView));
-                tagQuery.remove(tagView.getTag());
+                tagQuery.getValue().remove(tagView.getTag());
             }
         }
 

@@ -61,14 +61,14 @@ public class DiskResourceColumnModel extends ColumnModel<DiskResource> implement
         DiskResourceProperties props = GWT.create(DiskResourceProperties.class);
 
         ColumnConfig<DiskResource, DiskResource> name = new ColumnConfig<DiskResource, DiskResource>(new IdentityValueProvider<DiskResource>("name"),
-                                                                                                     120,
+                                                                                                     100,
                                                                                                      displayStrings.name());
         ColumnConfig<DiskResource, Date> lastModified = new ColumnConfig<DiskResource, Date>(props.lastModified(),
                                                                                              100,
                                                                                              displayStrings.lastModified());
         ColumnConfig<DiskResource, Long> size = new ColumnConfig<DiskResource, Long>(new DiskResourceSizeValueProvider(), 50, displayStrings.size());
         ColumnConfig<DiskResource, DiskResource> path = new ColumnConfig<DiskResource, DiskResource>(new IdentityValueProvider<DiskResource>("path"),
-                                                                                         120,
+                                                                                                     100,
                                                                                          displayStrings.path());
         ColumnConfig<DiskResource, Date> created = new ColumnConfig<DiskResource, Date>(props.dateSubmitted(),
                                                                                         100,
@@ -85,8 +85,9 @@ public class DiskResourceColumnModel extends ColumnModel<DiskResource> implement
         path.setCell(new DiskResourcePathCell());
 
         name.setComparator(new DiskResourceNameComparator());
+        name.setHideable(false);
 
-        path.setHidden(true);
+        path.setHidden(false);
         created.setHidden(true);
         actions.setHidden(false);
 
@@ -97,10 +98,11 @@ public class DiskResourceColumnModel extends ColumnModel<DiskResource> implement
         
         list.add(sm.getColumn());
         list.add(name);
-        list.add(lastModified);
-        list.add(size);
         list.add(path);
+        list.add(lastModified);
         list.add(created);
+
+        list.add(size);
         list.add(actions);
 
         return list;

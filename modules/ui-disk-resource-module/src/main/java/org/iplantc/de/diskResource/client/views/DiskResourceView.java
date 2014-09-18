@@ -210,6 +210,8 @@ public interface DiskResourceView extends IsWidget,
         void onNewMdFile(FileViewerWindowConfig config);
 
         void createNewPlainTextFile(FileViewerWindowConfig config);
+        
+        void doSearchTaggedWithResources(Set<IplantTag> tags);
     }
 
     /**

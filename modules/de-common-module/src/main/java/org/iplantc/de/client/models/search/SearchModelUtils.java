@@ -11,11 +11,15 @@ import com.google.web.bindery.autobean.shared.Splittable;
 import com.google.web.bindery.autobean.shared.impl.StringQuoter;
 
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class SearchModelUtils {
 
     private final static List<String> fileSizeUnits = Lists.newArrayList("KB", "MB", "GB", "TB");
     private final static SearchAutoBeanFactory factory = GWT.create(SearchAutoBeanFactory.class);
+
+    static Logger LOG = Logger.getLogger("Search Utils");
 
     public static DiskResourceQueryTemplate createDefaultFilter() {
         Splittable defFilter = StringQuoter.createSplittable();
@@ -78,7 +82,11 @@ public class SearchModelUtils {
             return null;
         }
 
-        return AutoBeanCodex.decode(factory, DiskResourceQueryTemplate.class,
+        DiskResourceQueryTemplate temp = AutoBeanCodex.decode(factory,
+                                                              DiskResourceQueryTemplate.class,
                 AutoBeanCodex.encode(queryBean).getPayload()).as();
+
+        LOG.log(Level.SEVERE, temp.getTagQuery().toString());
+        return temp;
     }
 }

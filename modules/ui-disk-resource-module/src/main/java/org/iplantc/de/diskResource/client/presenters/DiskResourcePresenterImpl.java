@@ -17,8 +17,9 @@ import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.client.models.diskResources.PermissionValue;
 import org.iplantc.de.client.models.diskResources.TYPE;
 import org.iplantc.de.client.models.search.DiskResourceQueryTemplate;
-import org.iplantc.de.client.models.tags.IplantTagAutoBeanFactory;
+import org.iplantc.de.client.models.search.SearchAutoBeanFactory;
 import org.iplantc.de.client.models.tags.IplantTag;
+import org.iplantc.de.client.models.tags.IplantTagAutoBeanFactory;
 import org.iplantc.de.client.models.tags.IplantTagList;
 import org.iplantc.de.client.models.viewer.InfoType;
 import org.iplantc.de.client.services.DiskResourceServiceFacade;
@@ -37,7 +38,23 @@ import org.iplantc.de.commons.client.views.window.configs.FileViewerWindowConfig
 import org.iplantc.de.commons.client.views.window.configs.TabularFileViewerWindowConfig;
 import org.iplantc.de.diskResource.client.dataLink.presenter.DataLinkPresenter;
 import org.iplantc.de.diskResource.client.dataLink.view.DataLinkPanel;
-import org.iplantc.de.diskResource.client.events.*;
+import org.iplantc.de.diskResource.client.events.CreateNewFileEvent;
+import org.iplantc.de.diskResource.client.events.DiskResourceRenamedEvent;
+import org.iplantc.de.diskResource.client.events.DiskResourceSelectionChangedEvent;
+import org.iplantc.de.diskResource.client.events.DiskResourcesDeletedEvent;
+import org.iplantc.de.diskResource.client.events.DiskResourcesMovedEvent;
+import org.iplantc.de.diskResource.client.events.FolderCreatedEvent;
+import org.iplantc.de.diskResource.client.events.FolderSelectionEvent;
+import org.iplantc.de.diskResource.client.events.RequestAttachDiskResourceFavoritesFolderEvent;
+import org.iplantc.de.diskResource.client.events.RequestBulkDownloadEvent;
+import org.iplantc.de.diskResource.client.events.RequestBulkUploadEvent;
+import org.iplantc.de.diskResource.client.events.RequestImportFromUrlEvent;
+import org.iplantc.de.diskResource.client.events.RequestSendToCoGeEvent;
+import org.iplantc.de.diskResource.client.events.RequestSendToEnsemblEvent;
+import org.iplantc.de.diskResource.client.events.RequestSendToTreeViewerEvent;
+import org.iplantc.de.diskResource.client.events.RequestSimpleDownloadEvent;
+import org.iplantc.de.diskResource.client.events.RequestSimpleUploadEvent;
+import org.iplantc.de.diskResource.client.events.ShowFilePreviewEvent;
 import org.iplantc.de.diskResource.client.metadata.presenter.DiskResourceMetadataUpdateCallback;
 import org.iplantc.de.diskResource.client.metadata.presenter.MetadataPresenter;
 import org.iplantc.de.diskResource.client.metadata.view.DiskResourceMetadataView;
@@ -75,6 +92,7 @@ import org.iplantc.de.resources.client.messages.IplantErrorStrings;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
+
 import com.google.common.base.Strings;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
@@ -139,6 +157,7 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter, Di
     private final EventBus eventBus;
     private final IplantAnnouncer announcer;
     private MetadataServiceFacade fsmdataService;
+    private DataSearchPresenter dataSearchPresenter;
 
     @Inject
     public DiskResourcePresenterImpl(final DiskResourceView view,
@@ -165,6 +184,7 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter, Di
         this.eventBus = eventBus;
         this.announcer = announcer;
         this.fsmdataService = fsmDataService;
+        this.dataSearchPresenter = dataSearchPresenter;
 
         builder = new MyBuilder(this);
 
@@ -175,8 +195,8 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter, Di
             }
         };
 
-        proxy.init(dataSearchPresenter, this);
-        dataSearchPresenter.searchInit(view, view, this, view.getToolbar().getSearchField());
+        proxy.init(this.dataSearchPresenter, this);
+        this.dataSearchPresenter.searchInit(view, view, this, view.getToolbar().getSearchField());
 
         this.view.setTreeLoader(treeLoader);
         this.view.setPresenter(this);
@@ -1270,6 +1290,14 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter, Di
             }
 
         }
+    }
+
+    @Override
+    public void doSearchTaggedWithResources(Set<IplantTag> tags) {
+        final SearchAutoBeanFactory factory = GWT.create(SearchAutoBeanFactory.class);
+        DiskResourceQueryTemplate qt = factory.dataSearchFilter().as();
+        qt.setTagQuery(tags);
+        dataSearchPresenter.doSubmitDiskResourceQuery(new SubmitDiskResourceQueryEvent(qt));
     }
 
 }

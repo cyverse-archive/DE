@@ -2,6 +2,7 @@ package org.iplantc.de.client.services.impl;
 
 import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.GET;
 import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.POST;
+
 import org.iplantc.de.client.models.DEProperties;
 import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.client.models.diskResources.DiskResource;
@@ -302,10 +303,19 @@ public class SearchServiceFacadeImpl implements SearchServiceFacade {
     @Override
     public void submitSearchFromQueryTemplate(DiskResourceQueryTemplate queryTemplate, FilterPagingLoadConfigBean loadConfig, SearchType searchType, AsyncCallback<List<DiskResource>> callback) {
         DataSearchQueryBuilder builder = new DataSearchQueryBuilder(queryTemplate, userInfo);
-        String queryParameter = "q=" + URL.encodeQueryString(builder.buildFullQuery());
+        String queryParameter = "";
+        String tags = "";
+        
+        String buildFullQuery = builder.buildFullQuery();
+        if (!Strings.isNullOrEmpty(buildFullQuery)) {
+            queryParameter = "q=" + URL.encodeQueryString(buildFullQuery);
+        }
         String limitParameter = "&limit=" + loadConfig.getLimit();
         String offsetParameter = "&offset=" + loadConfig.getOffset();
         String typeParameter = "&type=" + ((searchType == null) ? SearchType.ANY.toString() : searchType.toString());
+        if (!Strings.isNullOrEmpty(builder.taggedWith())) {
+            tags = "tags=" + URL.encodeQueryString(builder.taggedWith());
+        }
         String sortParameter = "";
         List<SortInfoBean> sortInfoList = loadConfig.getSortInfo();
         if (sortInfoList != null && !sortInfoList.isEmpty()) {
@@ -317,9 +327,20 @@ public class SearchServiceFacadeImpl implements SearchServiceFacade {
             }
         }
 
-        String address = deProperties.getDataMgmtBaseUrl() + "index?" + queryParameter + limitParameter + offsetParameter + typeParameter + sortParameter;
+        StringBuilder addressSb = new StringBuilder().append(deProperties.getDataMgmtBaseUrl() + "index?");
+        if (!Strings.isNullOrEmpty(queryParameter)) {
+            addressSb.append(queryParameter + "&");
+        }
+        
+        if (!Strings.isNullOrEmpty(tags)) {
+            addressSb.append(tags);
+        }
 
-        ServiceCallWrapper wrapper = new ServiceCallWrapper(GET, address);
+        addressSb.append(limitParameter);
+        addressSb.append(offsetParameter);
+        addressSb.append(typeParameter);
+        addressSb.append(sortParameter);
+        ServiceCallWrapper wrapper = new ServiceCallWrapper(GET, addressSb.toString());
         deServiceFacade.getServiceData(wrapper, new SubmitSearchCallbackConverter(callback, queryTemplate, userInfo, drFactory));
 
     }

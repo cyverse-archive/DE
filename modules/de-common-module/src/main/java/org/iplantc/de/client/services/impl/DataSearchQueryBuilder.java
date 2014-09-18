@@ -3,6 +3,7 @@ package org.iplantc.de.client.services.impl;
 import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.client.models.search.DiskResourceQueryTemplate;
 import org.iplantc.de.client.models.search.FileSizeRange;
+import org.iplantc.de.client.models.tags.IplantTag;
 import org.iplantc.de.client.util.SearchModelUtils;
 
 import com.google.common.base.Function;
@@ -14,6 +15,7 @@ import com.google.web.bindery.autobean.shared.Splittable;
 import com.google.web.bindery.autobean.shared.impl.StringQuoter;
 
 import java.util.Date;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -73,9 +75,23 @@ public class DataSearchQueryBuilder {
                  .metadataValue()
                  .modifiedWithin()
                  .negatedFile()
-                 .sharedWith();
+                 .sharedWith()
+                 .taggedWith();
         LOG.log(Level.SEVERE, "==>" + toString());
         return toString();
+    }
+
+    public String taggedWith() {
+        Set<IplantTag> tags = dsf.getTagQuery();
+        StringBuilder sb = new StringBuilder();
+        for (IplantTag it : tags) {
+            sb.append(it.getId());
+            sb.append(",");
+        }
+
+        // delete last comma
+        sb.deleteCharAt(sb.length() - 1);
+        return sb.toString();
     }
 
     /**
