@@ -457,7 +457,7 @@ public class DEServiceImpl extends RemoteServiceServlet implements DEService {
         String body = updateRequestBody(wrapper.getBody());
         if(LOGGER.isTraceEnabled()){
             Gson prettyGson = new GsonBuilder().setPrettyPrinting().create();
-            LOGGER.trace("{} {}\nRequest JSON:\n{}", wrapper.getType(), wrapper.getAddress(),prettyGson.toJson(new JsonParser().parse(body)));
+            LOGGER.trace("{} {}\nRequest JSON:\n{}", wrapper.getType(), address, prettyGson.toJson(new JsonParser().parse(body)));
         }
 
         BaseServiceCallWrapper.Type type = wrapper.getType();

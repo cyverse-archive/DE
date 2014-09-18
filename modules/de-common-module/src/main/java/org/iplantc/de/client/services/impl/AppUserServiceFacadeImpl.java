@@ -39,6 +39,7 @@ import java.util.List;
  */
 public class AppUserServiceFacadeImpl implements AppUserServiceFacade {
 
+    private final String CATEGORIES = "org.iplantc.services.apps.categories";
     private final DiscEnvApiService deServiceFacade;
     private final DEProperties deProperties;
     private final ConfluenceServiceAsync confluenceService;
@@ -65,23 +66,26 @@ public class AppUserServiceFacadeImpl implements AppUserServiceFacade {
     }
 
     @Override
-    public void getPublicAppGroups(AsyncCallback<List<AppGroup>> callback) {
-        String address = deProperties.getUnproctedMuleServiceBaseUrl() + "public-app-groups"; //$NON-NLS-1$
+    public void getPublicAppCategories(AsyncCallback<List<AppGroup>> callback) {
+//        String address = deProperties.getUnproctedMuleServiceBaseUrl() + "public-app-groups"; //$NON-NLS-1$
+        String address = CATEGORIES + "?public=true";
         ServiceCallWrapper wrapper = new ServiceCallWrapper(address);
         deServiceFacade.getServiceData(wrapper, new AppGroupListCallbackConverter(callback, errorStrings));
     }
 
     @Override
-    public void getAppGroups(AsyncCallback<List<AppGroup>> callback) {
-        String address = deProperties.getMuleServiceBaseUrl() + "app-groups"; //$NON-NLS-1$
+    public void getAppCategories(AsyncCallback<List<AppGroup>> callback) {
+//        String address = deProperties.getMuleServiceBaseUrl() + "app-groups";
+        String address = CATEGORIES;
         ServiceCallWrapper wrapper = new ServiceCallWrapper(address);
         deServiceFacade.getServiceData(wrapper, new AppGroupListCallbackConverter(callback, errorStrings));
     }
 
     @Override
-    public void getApps(String analysisGroupId, AsyncCallback<String> callback) {
-        String address = deProperties.getMuleServiceBaseUrl() + "get-analyses-in-group/" //$NON-NLS-1$
-                + analysisGroupId;
+    public void getApps(String appCategoryId, AsyncCallback<String> callback) {
+//        String address = deProperties.getMuleServiceBaseUrl() + "get-analyses-in-group/" //$NON-NLS-1$
+//                + analysisGroupId;
+        String address = CATEGORIES + "/" + appCategoryId;
         ServiceCallWrapper wrapper = new ServiceCallWrapper(address);
         deServiceFacade.getServiceData(wrapper, callback);
     }

@@ -17,10 +17,10 @@ public interface AppServiceFacade {
     /**
      * Retrieves list of templates in the given group.
      *
-     * @param appGroupId unique identifier for the group to search in for apps.
+     * @param appCategoryId unique identifier for the group to search in for apps.
      * @param callback called when the RPC call is complete.
      */
-    void getApps(String appGroupId, AsyncCallback<String> callback);
+    void getApps(String appCategoryId, AsyncCallback<String> callback);
 
     /**
      * Retrieves a paged listing of templates in the given group.
@@ -41,14 +41,14 @@ public interface AppServiceFacade {
      * @param workspaceId
      * @param callback
      */
-    void getPublicAppGroups(AsyncCallback<List<AppGroup>> callback);
+    void getPublicAppCategories(AsyncCallback<List<AppGroup>> callback);
 
     /**
      * Retrieves a hierarchy of all <code>AppGroups</code>s via a secured endpoint.
      *
      * @param callback
      */
-    void getAppGroups(AsyncCallback<List<AppGroup>> callback);
+    void getAppCategories(AsyncCallback<List<AppGroup>> callback);
 
     /**
      * Searches for all active Apps with a name or description that contains the given search term.

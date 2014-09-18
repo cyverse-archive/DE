@@ -20,7 +20,7 @@ import java.util.List;
 public class AppAdminUserServiceFacade implements AppUserServiceFacade {
 
     @Override
-    public void getApps(String analysisGroupId, AsyncCallback<String> callback) {
+    public void getApps(String appCategoryId, AsyncCallback<String> callback) {
         assert false : "Dummy Class to satisfy deferred-binding, this class not used in this module.";
     }
 
@@ -31,12 +31,12 @@ public class AppAdminUserServiceFacade implements AppUserServiceFacade {
     }
 
     @Override
-    public void getPublicAppGroups(AsyncCallback<List<AppGroup>> callback) {
+    public void getPublicAppCategories(AsyncCallback<List<AppGroup>> callback) {
         assert false : "Dummy Class to satisfy deferred-binding, this class not used in this module.";
     }
 
     @Override
-    public void getAppGroups(AsyncCallback<List<AppGroup>> callback) {
+    public void getAppCategories(AsyncCallback<List<AppGroup>> callback) {
         assert false : "Dummy Class to satisfy deferred-binding, this class not used in this module.";
     }
 

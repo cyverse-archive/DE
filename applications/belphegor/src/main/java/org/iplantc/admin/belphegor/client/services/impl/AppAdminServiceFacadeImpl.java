@@ -79,16 +79,16 @@ public class AppAdminServiceFacadeImpl implements AppAdminServiceFacade {
     }
 
     @Override
-    public void getAppGroups(AsyncCallback<List<AppGroup>> callback) {
+    public void getAppCategories(AsyncCallback<List<AppGroup>> callback) {
         String address = properties.getCategoryListServiceUrl();
         ServiceCallWrapper wrapper = new ServiceCallWrapper(address);
         deService.getServiceData(wrapper, new AppGroupListCallbackConverter(callback, errorStrings));
     }
 
     @Override
-    public void getApps(String analysisGroupId, AsyncCallback<String> callback) {
+    public void getApps(String appCategoryId, AsyncCallback<String> callback) {
         String address = properties.getAppsInCategoryServiceUrl()
-                             + "/" + analysisGroupId; //$NON-NLS-1$
+                             + "/" + appCategoryId; //$NON-NLS-1$
         ServiceCallWrapper wrapper = new ServiceCallWrapper(address);
         deService.getServiceData(wrapper, callback);
     }
@@ -102,8 +102,8 @@ public class AppAdminServiceFacadeImpl implements AppAdminServiceFacade {
     }
 
     @Override
-    public void getPublicAppGroups(AsyncCallback<List<AppGroup>> callback) {
-        getAppGroups(callback);
+    public void getPublicAppCategories(AsyncCallback<List<AppGroup>> callback) {
+        getAppCategories(callback);
     }
 
     @Override

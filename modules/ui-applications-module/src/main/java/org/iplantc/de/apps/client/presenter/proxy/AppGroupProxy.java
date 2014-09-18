@@ -25,7 +25,7 @@ public class AppGroupProxy extends RpcProxy<AppGroup, List<AppGroup>> {
 
     @Override
     public void load(AppGroup loadConfig, final AsyncCallback<List<AppGroup>> callback) {
-        serviceFacade.getAppGroups(callback);
+        serviceFacade.getAppCategories(callback);
     }
 
 }

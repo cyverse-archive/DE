@@ -11,7 +11,7 @@ import java.util.List;
 
 public class AppServiceFacadeStub implements AppServiceFacade {
     @Override
-    public void getApps(String appGroupId, AsyncCallback<String> callback) {
+    public void getApps(String appCategoryId, AsyncCallback<String> callback) {
 
     }
 
@@ -21,12 +21,12 @@ public class AppServiceFacadeStub implements AppServiceFacade {
     }
 
     @Override
-    public void getPublicAppGroups(AsyncCallback<List<AppGroup>> callback) {
+    public void getPublicAppCategories(AsyncCallback<List<AppGroup>> callback) {
 
     }
 
     @Override
-    public void getAppGroups(AsyncCallback<List<AppGroup>> callback) {
+    public void getAppCategories(AsyncCallback<List<AppGroup>> callback) {
 
     }
 
