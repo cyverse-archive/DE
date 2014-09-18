@@ -29,6 +29,10 @@ project(':de') {
         compile "com.google.gwt.inject:gin:$gwtGinVer"
         compile "com.google.guava:guava-gwt:$guavaGwtVer"
 
+        compile "org.slf4j:slf4j-api:$slf4jVersion"
+        compile "org.slf4j:jcl-over-slf4j:$slf4jVersion"
+        compile "org.slf4j:slf4j-simple:$slf4jVersion"
+
         compile project(':ui-commons-module')
         compile project(':ui-applications-module')
         compile project(':ui-resources-module')
@@ -144,7 +148,7 @@ configure(subprojects.findAll { it.name == "de" || it.name == "belphegor" }) {
     task runDraftJetty(type: JettyRunWar) {
         group 'Web application'
         description 'Runs Jetty with an exploded draft war'
-        //port = 8888
+        //httpPort = 8888
         dependsOn draftWar
         dependsOn.remove('war')
         webApp = draftWar.archivePath

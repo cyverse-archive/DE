@@ -3,7 +3,8 @@ package org.iplantc.de.server;
 import org.iplantc.de.shared.services.BaseServiceCallWrapper;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.Properties;
@@ -12,7 +13,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class DEServiceCallResolver extends ServiceCallResolver {
-    private static final Logger LOG = Logger.getLogger(DEServiceCallResolver.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DEServiceCallResolver.class);
     private static final String PREFIX_KEY = "prefix";
 
     private Properties appProperties;
@@ -153,10 +154,10 @@ public class DEServiceCallResolver extends ServiceCallResolver {
         private String getServiceBaseUrl(Properties props) {
             String result = props.getProperty(serviceName);
             if (result == null) {
-                LOG.error("unknown service name: " + serviceName);
+                LOG.error("unknown service name: {}", serviceName);
                 if (LOG.isDebugEnabled()) {
-                    for (String prop : new TreeSet<String>(props.stringPropertyNames())) {
-                        LOG.debug("configuration setting: " + prop + " = " + props.getProperty(prop));
+                    for (String prop : new TreeSet<>(props.stringPropertyNames())) {
+                        LOG.debug("configuration setting: {} = {}", prop, props.getProperty(prop));
                     }
                 }
                 throw new UnresolvableServiceNameException(serviceName);

@@ -1,8 +1,9 @@
 package org.iplantc.de.server.auth;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 import org.jasig.cas.client.validation.Assertion;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.cas.userdetails.AbstractCasAssertionUserDetailsService;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -25,7 +26,7 @@ public class CasGroupUserDetailsService extends AbstractCasAssertionUserDetailsS
     /**
      * Used to log error and informational messages.
      */
-    private static final Logger LOG = Logger.getLogger(CasGroupUserDetailsService.class);
+    private final Logger LOG = LoggerFactory.getLogger(CasGroupUserDetailsService.class);
 
     /**
      * The pattern used to extract list contents from the string representation of a list.
@@ -60,7 +61,7 @@ public class CasGroupUserDetailsService extends AbstractCasAssertionUserDetailsS
      */
     @Override
     protected UserDetails loadUserDetails(Assertion assertion) {
-        final List<GrantedAuthority> grantedAuthorities = new ArrayList<GrantedAuthority>();
+        final List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
         final Object value = assertion.getPrincipal().getAttributes().get(attribute);
         if (value != null) {
             for (String groupName : convertToList(value.toString())) {
@@ -68,7 +69,7 @@ public class CasGroupUserDetailsService extends AbstractCasAssertionUserDetailsS
             }
         }
         String name = assertion.getPrincipal().getName();
-        LOG.debug("Granted Authorities: " + grantedAuthorities);
+        LOG.debug("Granted Authorities: {}", grantedAuthorities);
         return new User(name, NON_EXISTENT_PASSWORD_VALUE, true, true, true, true, grantedAuthorities);
     }
 

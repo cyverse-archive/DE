@@ -1,19 +1,20 @@
 package org.iplantc.de.server.auth;
 
+import static org.iplantc.de.server.util.CasUtils.attributePrincipalFromServletRequest;
+
 import org.jasig.cas.client.authentication.AttributePrincipal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-
-import static org.iplantc.de.server.util.CasUtils.attributePrincipalFromServletRequest;
 
 /**
  * A servlet used to initialize HTTP sessions for CAS-secured web applications.
@@ -121,9 +122,7 @@ public class CasSessionInitializationServlet extends HttpServlet {
      * @param value the value of the attribute.
      */
     private void setAttr(HttpSession session, String name, Object value) {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Saving user attribute: " + name + " = " + value);
-        }
+        LOG.debug("Saving user attribute: {} = {}", name, value);
         session.setAttribute(name, value);
     }
 }

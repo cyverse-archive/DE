@@ -1,15 +1,21 @@
 package org.iplantc.de.server.auth;
 
-import org.apache.http.client.methods.*;
-
+import static org.iplantc.de.server.util.CasUtils.attributePrincipalFromServletRequest;
 import org.iplantc.de.shared.exceptions.AuthenticationException;
-import org.jasig.cas.client.authentication.AttributePrincipal;
 
-import javax.servlet.http.HttpServletRequest;
+import org.apache.http.client.methods.HttpDelete;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPatch;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpPut;
+import org.jasig.cas.client.authentication.AttributePrincipal;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.net.URL;
 
-import static org.iplantc.de.server.util.CasUtils.attributePrincipalFromServletRequest;
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * Used to establish connections to a services that are secured by CAS.  The service must be configured to accept
@@ -19,6 +25,7 @@ import static org.iplantc.de.server.util.CasUtils.attributePrincipalFromServletR
  * @author Dennis Roberts
  */
 public class CasUrlConnector extends BaseUrlConnector {
+    private final Logger LOG = LoggerFactory.getLogger(CasUrlConnector.class);
 
     @Override
     public HttpGet getRequest(HttpServletRequest request, String address) throws IOException {
@@ -79,7 +86,10 @@ public class CasUrlConnector extends BaseUrlConnector {
         String ticket = principal.getProxyTicketFor(extractServiceName(url));
         if (ticket == null) {
             request.getSession().invalidate();
-            throw new AuthenticationException("unable to obtain a proxy ticket");
+            final String msg = "unable to obtain a proxy ticket";
+            final AuthenticationException authenticationException = new AuthenticationException(msg);
+            LOG.error(msg, authenticationException);
+            throw authenticationException;
         }
         return ticket;
     }

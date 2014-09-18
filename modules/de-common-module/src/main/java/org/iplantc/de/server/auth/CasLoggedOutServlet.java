@@ -53,7 +53,7 @@ public class CasLoggedOutServlet extends HttpServlet implements HttpRequestHandl
         this.appName = appName;
         this.loginUrl = loginUrl;
         this.templateText = loadResource(TEMPLATE_NAME);
-        LOG.debug("Constructor args: \n\t" +
+        LOG.info("Constructor args: \n\t" +
                       "appName = {}\n\t" +
                       "loginUrl {}", appName, loginUrl);
     }

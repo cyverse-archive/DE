@@ -13,7 +13,8 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.HttpRequestHandler;
 
 import java.io.IOException;
@@ -76,7 +77,7 @@ public abstract class OAuthCallbackServlet extends HttpServlet implements HttpRe
     private static final String STATE_PARAM = "state";
     private static final String API_NAME_PARAM = "api_name";
 
-    private static final Logger LOG = Logger.getLogger(OAuthCallbackServlet.class);
+    private final Logger LOG = LoggerFactory.getLogger(OAuthCallbackServlet.class);
     private final String serviceUrl;
 
     private UrlConnector urlConnector;
@@ -116,7 +117,7 @@ public abstract class OAuthCallbackServlet extends HttpServlet implements HttpRe
             final int statusCode = response.getStatusLine().getStatusCode();
             final String responseBody = readResponse(response);
             if (statusCode < 200 || statusCode > 299) {
-                LOG.warn("error while trying to obtain access token: " + responseBody);
+                LOG.warn("error while trying to obtain access token: {}", responseBody);
                 authResponse.serviceErrorRedirect(resp);
             } else {
                 resp.sendRedirect(authorizationSuccessRedirectUrl(req, responseBody));
@@ -254,7 +255,7 @@ public abstract class OAuthCallbackServlet extends HttpServlet implements HttpRe
             if (errorCode == ErrorCodes.ERR_ACCESS_DENIED) {
                 LOG.warn("access denied by user or server.");
             } else {
-                LOG.error("unable to obtain authorization: " + errorCode);
+                LOG.error("unable to obtain authorization: {}", errorCode);
             }
         }
     }

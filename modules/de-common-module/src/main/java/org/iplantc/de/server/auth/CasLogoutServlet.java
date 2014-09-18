@@ -79,15 +79,15 @@ public class CasLogoutServlet extends HttpServlet implements HttpRequestHandler 
         this.noLogoutUrl = noLogoutUrl;
         this.appList = appList;
         templateText = loadResource(TEMPLATE_FILENAME);
-        if(templateText == null){
-            System.out.println("template text is null");
-        }
-        LOG.debug("Constructor args:\n\t" +
+        LOG.info("Constructor args:\n\t" +
                       "logoutUrl = {}\n\t" +
                       "appName = {}\n\t" +
                       "loginUrl = {}\n\t" +
                       "noLogoutUrl = {}\n\t" +
                       "appList = {}", logoutUrl, appName, loginUrl, noLogoutUrl, appList);
+        if(templateText == null){
+            LOG.info("template text is null");
+        }
     }
 
     @Override
