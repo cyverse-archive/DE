@@ -83,6 +83,11 @@ public class DataSearchQueryBuilder {
 
     public String taggedWith() {
         Set<IplantTag> tags = dsf.getTagQuery();
+
+        if (tags == null) {
+            return "";
+        }
+
         StringBuilder sb = new StringBuilder();
         for (IplantTag it : tags) {
             sb.append(it.getId());
