@@ -4,6 +4,7 @@ import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.client.models.search.DateInterval;
 import org.iplantc.de.client.models.search.DiskResourceQueryTemplate;
 import org.iplantc.de.client.models.search.FileSizeRange;
+import org.iplantc.de.client.models.tags.IplantTag;
 
 import com.google.gwtmockito.GwtMockitoTestRunner;
 
@@ -21,6 +22,8 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 
 import java.util.Date;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 /**
  * 
@@ -108,20 +111,20 @@ public class DataSearchQueryBuilderTest {
     }
 
     @Test public void testBuildQuery() {
-        final String expectedFileQuery = setFileQuery("some* file* query*", dsf);
+        final String expectedFileQuery = setFileQuery("some* file* query*");
         final String expectedModifiedWithin = setModifiedWithin(new Date(), new DateWrapper().addDays(1)
-                .asDate(), dsf);
+                .asDate());
         final String expectedCreatedWithin = setCreatedWithin(new Date(), new DateWrapper().addMonths(1)
-                .asDate(), dsf);
+                .asDate());
         final String expectedNegatedFile = setNegatedFileQuery(
 "term1*" + " " + "term2*" + " "
-                + "term3*", dsf);
+                + "term3*");
         final String expectedMetadataAttributeQuery = setMetadataAttributeQuery(
-                "some* metadata* query*", dsf);
-        final String expectedMetadataValueQuery = setMetadataValueQuery("some* metadata* query*", dsf);
-		final String expectedOwnedBy = setOwnedBy("someuser", dsf);
-        final String expectedFileSizeRange = setFileSizeRange(0.1, 100.78763, dsf);
-        final String expectedSharedWith = setSharedWith("some users who were shared with", dsf);
+                "some* metadata* query*");
+        final String expectedMetadataValueQuery = setMetadataValueQuery("some* metadata* query*");
+		final String expectedOwnedBy = setOwnedBy("someuser");
+        final String expectedFileSizeRange = setFileSizeRange(0.1, 100.78763);
+        final String expectedSharedWith = setSharedWith("some users who were shared with");
 
         String result = new DataSearchQueryBuilder(dsf, userInfoMock).buildFullQuery();
 
@@ -137,14 +140,14 @@ public class DataSearchQueryBuilderTest {
     }
 
     @Test public void testOwnedBy() {
-		final String expectedValue = setOwnedBy("someuser", dsf);
+        final String expectedValue = setOwnedBy("someuser");
 
         String result = new DataSearchQueryBuilder(dsf, userInfoMock).ownedBy().toString();
         assertEquals(wrappedQuery(expectedValue), result);
     }
 
     @Test public void testCreatedWithin() {
-        final String expectedValue = setCreatedWithin(new Date(), new DateWrapper().addDays(1).asDate(), dsf);
+        final String expectedValue = setCreatedWithin(new Date(), new DateWrapper().addDays(1).asDate());
 
         String result = new DataSearchQueryBuilder(dsf, userInfoMock).createdWithin().toString();
         assertEquals(wrappedQuery(expectedValue), result);
@@ -152,7 +155,7 @@ public class DataSearchQueryBuilderTest {
     
     @Test
     public void testCreatedWithinFromNull() {
-        final String expectedValue = setCreatedWithin(null, new DateWrapper().addDays(1).asDate(), dsf);
+        final String expectedValue = setCreatedWithin(null, new DateWrapper().addDays(1).asDate());
 
         String result = new DataSearchQueryBuilder(dsf, userInfoMock).createdWithin().toString();
         assertEquals(wrappedQuery(expectedValue), result);
@@ -160,21 +163,21 @@ public class DataSearchQueryBuilderTest {
 
     @Test
     public void testCreatedWithinToNull() {
-        final String expectedValue = setCreatedWithin(new Date(), null, dsf);
+        final String expectedValue = setCreatedWithin(new Date(), null);
 
         String result = new DataSearchQueryBuilder(dsf, userInfoMock).createdWithin().toString();
         assertEquals(wrappedQuery(expectedValue), result);
     }
 
     @Test public void testFile() {
-        final String expectedValue = setFileQuery("some* words* in* query*", dsf);
+        final String expectedValue = setFileQuery("some* words* in* query*");
 
         String result = new DataSearchQueryBuilder(dsf, userInfoMock).file().toString();
         assertEquals(wrappedQuery(expectedValue), result);
     }
 
     @Test public void testFileSizeRange() {
-        final String expectedValue = setFileSizeRange(1.0, 100.0, dsf);
+        final String expectedValue = setFileSizeRange(1.0, 100.0);
 
         String result = new DataSearchQueryBuilder(dsf, userInfoMock).fileSizeRange().toString();
         assertEquals(wrappedQuery(expectedValue), result);
@@ -182,7 +185,7 @@ public class DataSearchQueryBuilderTest {
 
     @Test
     public void testFileSizeRangeMinNull() {
-        final String expectedValue = setFileSizeRange(null, 100.0, dsf);
+        final String expectedValue = setFileSizeRange(null, 100.0);
 
         String result = new DataSearchQueryBuilder(dsf, userInfoMock).fileSizeRange().toString();
         assertEquals(wrappedQuery(expectedValue), result);
@@ -190,21 +193,21 @@ public class DataSearchQueryBuilderTest {
 
     @Test
     public void testFileSizeRangeMaxNul() {
-        final String expectedValue = setFileSizeRange(1.0, null, dsf);
+        final String expectedValue = setFileSizeRange(1.0, null);
 
         String result = new DataSearchQueryBuilder(dsf, userInfoMock).fileSizeRange().toString();
         assertEquals(wrappedQuery(expectedValue), result);
     }
 
     @Test public void testMetadataAttribute() {
-        final String expectedValue = setMetadataAttributeQuery("some* metadata* to* search* for*", dsf);
+        final String expectedValue = setMetadataAttributeQuery("some* metadata* to* search* for*");
 
         String result = new DataSearchQueryBuilder(dsf, userInfoMock).metadataAttribute().toString();
         assertEquals(wrappedQuery(expectedValue), result);
     }
 
     @Test public void testMetadataValue() {
-        final String expectedValue = setMetadataValueQuery("some* metadata* to* search* for*", dsf);
+        final String expectedValue = setMetadataValueQuery("some* metadata* to* search* for*");
 
         String result = new DataSearchQueryBuilder(dsf, userInfoMock).metadataValue().toString();
         assertEquals(wrappedQuery(expectedValue), result);
@@ -213,7 +216,7 @@ public class DataSearchQueryBuilderTest {
     @Test public void testModifiedWithin() {
         final Date fromDate = new Date();
         final Date toDate = new DateWrapper(fromDate).addDays(2).asDate();
-        final String expectedValue = setModifiedWithin(fromDate, toDate, dsf);
+        final String expectedValue = setModifiedWithin(fromDate, toDate);
 
         String result = new DataSearchQueryBuilder(dsf, userInfoMock).modifiedWithin().toString();
         assertEquals(wrappedQuery(expectedValue), result);
@@ -223,7 +226,7 @@ public class DataSearchQueryBuilderTest {
     public void testModifiedWithinFromNull() {
         final Date fromDate = null;
         final Date toDate = new DateWrapper(new Date()).addDays(2).asDate();
-        final String expectedValue = setModifiedWithin(fromDate, toDate, dsf);
+        final String expectedValue = setModifiedWithin(fromDate, toDate);
 
         String result = new DataSearchQueryBuilder(dsf, userInfoMock).modifiedWithin().toString();
         assertEquals(wrappedQuery(expectedValue), result);
@@ -233,7 +236,7 @@ public class DataSearchQueryBuilderTest {
     public void testModifiedWithinToNull() {
         final Date fromDate = new Date();
         final Date toDate = null;
-        final String expectedValue = setModifiedWithin(fromDate, toDate, dsf);
+        final String expectedValue = setModifiedWithin(fromDate, toDate);
 
         String result = new DataSearchQueryBuilder(dsf, userInfoMock).modifiedWithin().toString();
         assertEquals(wrappedQuery(expectedValue), result);
@@ -243,7 +246,7 @@ public class DataSearchQueryBuilderTest {
         final String term1 = "term1*";
         final String term2 = "term2*";
         final String term3 = "term3*";
-        final String expectedValue = setNegatedFileQuery(term1 + " " + term2 + " " + term3 , dsf);
+        final String expectedValue = setNegatedFileQuery(term1 + " " + term2 + " " + term3);
 
         String result = new DataSearchQueryBuilder(dsf, userInfoMock).negatedFile().toString();
         assertEquals(wrappedNegatedQuery(expectedValue), result);
@@ -251,7 +254,7 @@ public class DataSearchQueryBuilderTest {
 
     @Test public void testSharedWith() {
         final String retVal = "user that are shared with";
-        final String expectedValue = setSharedWith(retVal, dsf);
+        final String expectedValue = setSharedWith(retVal);
 
         String result = new DataSearchQueryBuilder(dsf, userInfoMock).sharedWith().toString();
         assertEquals(wrappedQuery(expectedValue), result);
@@ -260,10 +263,41 @@ public class DataSearchQueryBuilderTest {
     @Test public void testFileExcludingTrash() {
         when(dsf.isIncludeTrashItems()).thenReturn(false);
 
-        final String expectedValue = setFileQuery("*query*", dsf);
+        final String expectedValue = setFileQuery("*query*");
 
         String result = new DataSearchQueryBuilder(dsf, userInfoMock).file().toString();
         assertEquals(wrappedQueryExcludingTrash(expectedValue), result);
+    }
+
+    @Test
+    public void testTaggedWith() {
+        when(dsf.isIncludeTrashItems()).thenReturn(false);
+        Set<IplantTag> tags = new LinkedHashSet<>();
+
+        final String expectedValue = setTaggedWithQuery(tags, dsf);
+        assertEquals("", expectedValue);
+
+        IplantTag mock1 = mock(IplantTag.class);
+        mock1.setId("id1");
+        mock1.setValue("tag1");
+        
+        when(mock1.getId()).thenReturn("id1");
+
+        IplantTag mock2 = mock(IplantTag.class);
+        mock1.setId("id2");
+        mock1.setValue("tag2");
+        
+        when(mock2.getId()).thenReturn("id2");
+
+        tags.add(mock1);
+        final String expectedValue1 = setTaggedWithQuery(tags, dsf);
+        assertEquals("id1", expectedValue1);
+
+        tags.add(mock2);
+
+        final String expectedValue2 = setTaggedWithQuery(tags, dsf);
+        assertEquals("id1,id2", expectedValue2);
+
     }
 
     /**
@@ -271,7 +305,7 @@ public class DataSearchQueryBuilderTest {
      * @param drqt
      * @return the expected value
      */
-    private String setOwnedBy(final String givenValue, final DiskResourceQueryTemplate drqt) {
+    private String setOwnedBy(final String givenValue) {
         when(dsf.getOwnedBy()).thenReturn(givenValue);
         return "{\"nested\":{\"query\":{\"bool\":{\"must\":[{\"term\":{\"permission\":\"own\"}},{\"wildcard\":{\"user\":\""
                 + givenValue + "#*\"}}]}},\"path\":\"userPermissions\"}}";
@@ -283,7 +317,7 @@ public class DataSearchQueryBuilderTest {
      * @param drqt
      * @return the expected value
      */
-    private String setCreatedWithin(final Date fromDate, final Date toDate, final DiskResourceQueryTemplate drqt) {
+    private String setCreatedWithin(final Date fromDate, final Date toDate) {
         DateInterval di = mock(DateInterval.class);
         when(di.getFrom()).thenReturn(fromDate);
         when(di.getTo()).thenReturn(toDate);
@@ -309,7 +343,7 @@ public class DataSearchQueryBuilderTest {
      * @param drqt
      * @return the expected value
      */
-    private String setFileQuery(final String givenQuery, final DiskResourceQueryTemplate drqt) {
+    private String setFileQuery(final String givenQuery) {
         when(dsf.getFileQuery()).thenReturn(givenQuery);
         DataSearchQueryBuilder uut = new DataSearchQueryBuilder(dsf, userInfoMock);
         return uut.getSimpleQuery(DataSearchQueryBuilder.LABEL, givenQuery).getPayload();
@@ -321,7 +355,7 @@ public class DataSearchQueryBuilderTest {
      * @param drqt
      * @return the expected value
      */
-    private String setFileSizeRange(final Double min, final Double max, final DiskResourceQueryTemplate drqt) {
+    private String setFileSizeRange(final Double min, final Double max) {
         FileSizeRange fsr = mock(FileSizeRange.class);
         when(fsr.getMin()).thenReturn(min);
         when(fsr.getMax()).thenReturn(max);
@@ -344,7 +378,7 @@ public class DataSearchQueryBuilderTest {
      * @param drqt
      * @return the expected value
      */
-    private String setMetadataAttributeQuery(final String givenQuery, final DiskResourceQueryTemplate drqt) {
+    private String setMetadataAttributeQuery(final String givenQuery) {
         when(dsf.getMetadataAttributeQuery()).thenReturn(givenQuery);
         DataSearchQueryBuilder uut = new DataSearchQueryBuilder(dsf, userInfoMock);
         return "{\"nested\":{\"query\":"
@@ -357,7 +391,7 @@ public class DataSearchQueryBuilderTest {
      * @param drqt
      * @return the expected value
      */
-    private String setMetadataValueQuery(final String givenQuery, final DiskResourceQueryTemplate drqt) {
+    private String setMetadataValueQuery(final String givenQuery) {
         when(dsf.getMetadataValueQuery()).thenReturn(givenQuery);
         DataSearchQueryBuilder uut = new DataSearchQueryBuilder(dsf, userInfoMock);
         return "{\"nested\":{\"query\":"
@@ -371,7 +405,7 @@ public class DataSearchQueryBuilderTest {
      * @param drqt
      * @return the expected value
      */
-    private String setModifiedWithin(final Date from, final Date to, final DiskResourceQueryTemplate drqt) {
+    private String setModifiedWithin(final Date from, final Date to) {
         DateInterval di = mock(DateInterval.class);
         when(di.getFrom()).thenReturn(from);
         when(di.getTo()).thenReturn(to);
@@ -395,7 +429,7 @@ public class DataSearchQueryBuilderTest {
      * @param drqt
      * @return the expected value
      */
-    private String setNegatedFileQuery(final String givenSearchTerms, final DiskResourceQueryTemplate drqt) {
+    private String setNegatedFileQuery(final String givenSearchTerms) {
         when(dsf.getNegatedFileQuery()).thenReturn(givenSearchTerms);
 
         DataSearchQueryBuilder uut = new DataSearchQueryBuilder(dsf, userInfoMock);
@@ -407,12 +441,18 @@ public class DataSearchQueryBuilderTest {
      * @param drqt
      * @return the expected value
      */
-    private String setSharedWith(final String givenValue, final DiskResourceQueryTemplate drqt) {
+    private String setSharedWith(final String givenValue) {
         when(dsf.getSharedWith()).thenReturn(givenValue);
         return "{\"bool\":{\"must\":[{\"nested\":{\"query\":{\"bool\":{\"must\":[{\"term\":{\"permission\":\"own\"}},{\"wildcard\":{\"user\":\""
                 + userInfoMock.getUsername()
                 + "#*\"}}]}},\"path\":\"userPermissions\"}},{\"nested\":{\"query\":{\"wildcard\":{\"user\":\""
                 + givenValue + "#*\"}},\"path\":\"userPermissions\"}}]}}";
+    }
+
+    private String setTaggedWithQuery(final Set<IplantTag> tags, final DiskResourceQueryTemplate drqt) {
+        when(dsf.getTagQuery()).thenReturn(tags);
+        DataSearchQueryBuilder uut = new DataSearchQueryBuilder(dsf, userInfoMock);
+        return uut.taggedWith();
     }
 
     private String wrappedQuery(String query) {
