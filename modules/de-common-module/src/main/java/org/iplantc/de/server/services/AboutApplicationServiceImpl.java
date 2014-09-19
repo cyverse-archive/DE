@@ -39,7 +39,7 @@ public class AboutApplicationServiceImpl extends RemoteServiceServlet implements
     /**
      * The logger for error and informational messages.
      */
-    private static Logger LOG = LoggerFactory.getLogger(AboutApplicationServiceImpl.class);
+    private final Logger LOG = LoggerFactory.getLogger(AboutApplicationServiceImpl.class);
 
     /**
      * The DE configuration properties.
@@ -87,7 +87,7 @@ public class AboutApplicationServiceImpl extends RemoteServiceServlet implements
         json.put("buildJdk", getManifestAttribute(BUILD_JDK_ATTR));
 
         String response = json.toString(4);
-        LOG.debug("the about application JSON is: " + response);
+        LOG.trace("Generated About JSON: {}", response);
         return response;
     }
 

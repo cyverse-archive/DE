@@ -3,12 +3,14 @@ package org.iplantc.de.shared;
 import org.iplantc.de.shared.exceptions.AuthenticationException;
 import org.iplantc.de.shared.exceptions.HttpRedirectException;
 
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.StatusCodeException;
 
 import org.apache.http.HttpStatus;
+
+import java.util.logging.Logger;
+import java.util.logging.Level;
 
 /**
  * Detects when the user is not logged in to the application and redirects the user to the login page.  Under normal
@@ -22,6 +24,7 @@ import org.apache.http.HttpStatus;
 public class AsyncCallbackWrapper<T> implements AsyncCallback<T> {
     private static final String LANDING_PAGE = "logged-out";
 
+    Logger LOG = Logger.getLogger(AsyncCallbackWrapper.class.getName());
     /**
      * The callback that we're wrapping.
      */
@@ -40,7 +43,7 @@ public class AsyncCallbackWrapper<T> implements AsyncCallback<T> {
      * Redirects the user to the DE landing page.
      */
     private void redirectToLandingPage() {
-        Window.Location.replace(GWT.getModuleBaseURL() + LANDING_PAGE);
+        Window.Location.replace(LANDING_PAGE);
     }
 
     /**
@@ -54,11 +57,13 @@ public class AsyncCallbackWrapper<T> implements AsyncCallback<T> {
     @Override
     public void onFailure(Throwable error) {
         if (error instanceof AuthenticationException) {
+            LOG.log(Level.SEVERE, "Auth error!!!!!", error);
             redirectToLandingPage();
             return;
         }
         if (error instanceof StatusCodeException) {
             int statusCode = ((StatusCodeException)error).getStatusCode();
+            LOG.log(Level.SEVERE, "Status code: " + statusCode, error);
             if (statusCode == HttpStatus.SC_MOVED_TEMPORARILY || statusCode == 0) {
                 redirectToLandingPage();
                 return;

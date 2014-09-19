@@ -43,7 +43,7 @@ public class CasAccessDeniedServlet extends HttpServlet implements HttpRequestHa
     public CasAccessDeniedServlet(final String logoutUrl){
         this.logoutUrl = logoutUrl;
         templateText = loadResource(TEMPLATE_NAME);
-        LOG.debug("Constructor args:\n\t" +
+        LOG.info("Constructor args:\n\t" +
                       "logoutUrl = {}", logoutUrl);
     }
 

@@ -6,7 +6,8 @@ import org.iplantc.de.shared.services.ConfluenceService;
 
 import com.google.gwt.user.client.rpc.SerializationException;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.swift.common.cli.CliClient.ClientException;
 import org.swift.common.soap.confluence.RemoteComment;
 import org.swift.common.soap.confluence.RemotePage;
@@ -30,7 +31,7 @@ import javax.servlet.ServletException;
 public class ConfluenceServiceImpl extends SessionManagementServiceImpl implements ConfluenceService {
     private static final long serialVersionUID = -8576144366505536966L;
 
-    private static final Logger LOG = Logger.getLogger(ConfluenceServiceImpl.class.getName());
+    private final Logger LOG = LoggerFactory.getLogger(ConfluenceServiceImpl.class.getName());
 
     /** A filled star */
     private static final String BLACK_STAR = "&#x2605;";
@@ -98,7 +99,7 @@ public class ConfluenceServiceImpl extends SessionManagementServiceImpl implemen
             content = getTemplate();
             content = replaceTemplate(content, toolName, description);
         } catch (IOException e) {
-            LOG.error("Can't read wiki template file.");
+            LOG.error("Can't read wiki template file.", e);
             // if the template cannot be read, use the raw description text instead
             content = description;
         }

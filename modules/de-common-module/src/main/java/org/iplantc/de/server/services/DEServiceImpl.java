@@ -1,20 +1,23 @@
 package org.iplantc.de.server.services;
 
-import org.iplantc.de.server.auth.CasUrlConnector;
-import org.iplantc.de.server.auth.DESecurityConstants;
 import org.iplantc.de.server.DEServiceInputStream;
 import org.iplantc.de.server.MultipartBodyFactory;
 import org.iplantc.de.server.ServiceCallResolver;
+import org.iplantc.de.server.auth.CasUrlConnector;
+import org.iplantc.de.server.auth.DESecurityConstants;
 import org.iplantc.de.server.auth.UrlConnector;
 import org.iplantc.de.shared.exceptions.AuthenticationException;
-import org.iplantc.de.shared.services.DEService;
 import org.iplantc.de.shared.exceptions.HttpException;
 import org.iplantc.de.shared.exceptions.HttpRedirectException;
 import org.iplantc.de.shared.services.BaseServiceCallWrapper;
+import org.iplantc.de.shared.services.DEService;
 import org.iplantc.de.shared.services.HTTPPart;
 import org.iplantc.de.shared.services.MultiPartServiceWrapper;
 import org.iplantc.de.shared.services.ServiceCallWrapper;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonParser;
 import com.google.gwt.user.client.rpc.SerializationException;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
@@ -32,7 +35,8 @@ import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.entity.mime.MultipartEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.List;
@@ -46,7 +50,7 @@ import javax.servlet.http.HttpServletRequest;
  */
 public class DEServiceImpl extends RemoteServiceServlet implements DEService {
     private static final long serialVersionUID = 1L;
-    private static final Logger LOGGER = Logger.getLogger(DEServiceImpl.class);
+    private final Logger LOGGER = LoggerFactory.getLogger(DEServiceImpl.class);
 
     private ServiceCallResolver serviceResolver;
 
@@ -140,13 +144,6 @@ public class DEServiceImpl extends RemoteServiceServlet implements DEService {
     }
 
     /**
-     * @return the content type to use for JSON request bodies.
-     */
-    private ContentType jsonContentType() {
-        return ContentType.create("application/json", "UTF-8");
-    }
-
-    /**
      * Checks the response for an error status.
      *
      * @param response the HTTP response.
@@ -177,37 +174,13 @@ public class DEServiceImpl extends RemoteServiceServlet implements DEService {
     }
 
     /**
-     * Logs the start of an HTTP request.
-     *
-     * @param method the HTTP method name.
-     * @param address the request URI.
-     */
-    private void logRequestStart(String method, String address) {
-        if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("sending a " + method + " request to " + address);
-        }
-    }
-
-    /**
-     * Logs the completion of an HTTP request.
-     *
-     * @param method the HTTP method name.
-     * @param address the request URI.
-     */
-    private void logRequestEnd(String method, String address) {
-        if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("sent a " + method + " request to " + address);
-        }
-    }
-
-    /**
      * Creates an HTTP request entity containing a string.
      *
      * @param body the request body.
      * @return the request entity.
      */
     private HttpEntity createEntity(String body) {
-        return new StringEntity(body, jsonContentType());
+        return new StringEntity(body, ContentType.APPLICATION_JSON);
     }
 
     /**
@@ -219,9 +192,7 @@ public class DEServiceImpl extends RemoteServiceServlet implements DEService {
      * @throws IOException if an error occurs.
      */
     private HttpResponse get(HttpClient client, String address) throws IOException {
-        logRequestStart("GET", address);
         HttpResponse response = client.execute(urlConnector.getRequest(getRequest(), address));
-        logRequestEnd("GET", address);
         return response;
     }
 
@@ -235,11 +206,9 @@ public class DEServiceImpl extends RemoteServiceServlet implements DEService {
      * @throws IOException if an error occurs.
      */
     private HttpResponse post(HttpClient client, String address, String body) throws IOException {
-        logRequestStart("POST", address);
         HttpPost clientRequest = urlConnector.postRequest(getRequest(), address);
         clientRequest.setEntity(createEntity(body));
         HttpResponse response = client.execute(clientRequest);
-        logRequestEnd("POST", address);
         return response;
     }
 
@@ -253,11 +222,9 @@ public class DEServiceImpl extends RemoteServiceServlet implements DEService {
      * @throws IOException if an error occurs.
      */
     private HttpResponse put(HttpClient client, String address, String body) throws IOException {
-        logRequestStart("PUT", address);
         HttpPut clientRequest = urlConnector.putRequest(getRequest(), address);
         clientRequest.setEntity(createEntity(body));
         HttpResponse response = client.execute(clientRequest);
-        logRequestEnd("PUT", address);
         return response;
     }
 
@@ -271,11 +238,9 @@ public class DEServiceImpl extends RemoteServiceServlet implements DEService {
      * @throws IOException if an I/O error occurs.
      */
     private HttpResponse patch(HttpClient client, String address, String body) throws IOException {
-        logRequestStart("PATCH", address);
         HttpPatch clientRequest = urlConnector.patchRequest(getRequest(), address);
         clientRequest.setEntity(createEntity(body));
         HttpResponse response = client.execute(clientRequest);
-        logRequestEnd("PATCH", address);
         return response;
     }
 
@@ -288,10 +253,8 @@ public class DEServiceImpl extends RemoteServiceServlet implements DEService {
      * @throws IOException if an error occurs.
      */
     private HttpResponse delete(HttpClient client, String address) throws IOException {
-        logRequestStart("DELETE", address);
         HttpDelete clientRequest = urlConnector.deleteRequest(getRequest(), address);
         HttpResponse response = client.execute(clientRequest);
-        logRequestEnd("DELETE", address);
         return response;
     }
 
@@ -306,11 +269,9 @@ public class DEServiceImpl extends RemoteServiceServlet implements DEService {
      */
     private HttpResponse putMultipart(HttpClient client, String address, List<HTTPPart> parts)
             throws IOException {
-        logRequestStart("multipart PUT", address);
         HttpPut clientRequest = urlConnector.putRequest(getRequest(), address);
         buildMultipartRequest(clientRequest, parts);
         HttpResponse response = client.execute(clientRequest);
-        logRequestEnd("multipart PUT", address);
         return response;
     }
 
@@ -325,11 +286,9 @@ public class DEServiceImpl extends RemoteServiceServlet implements DEService {
      */
     private HttpResponse postMultipart(HttpClient client, String address, List<HTTPPart> parts)
             throws IOException {
-        logRequestStart("multipart POST", address);
         HttpPost clientRequest = urlConnector.postRequest(getRequest(), address);
         buildMultipartRequest(clientRequest, parts);
         HttpResponse response = client.execute(clientRequest);
-        logRequestEnd("multipart POST", address);
         return response;
     }
 
@@ -479,7 +438,10 @@ public class DEServiceImpl extends RemoteServiceServlet implements DEService {
             throws IOException {
         String address = retrieveServiceAddress(wrapper);
         String body = updateRequestBody(wrapper.getBody());
-        LOGGER.debug("request json==>" + body);
+        if(LOGGER.isTraceEnabled()){
+            Gson prettyGson = new GsonBuilder().setPrettyPrinting().create();
+            LOGGER.trace("{} {}\nRequest JSON:\n{}", wrapper.getType(), wrapper.getAddress(),prettyGson.toJson(new JsonParser().parse(body)));
+        }
 
         BaseServiceCallWrapper.Type type = wrapper.getType();
         switch (type) {
@@ -523,17 +485,19 @@ public class DEServiceImpl extends RemoteServiceServlet implements DEService {
             } catch (AuthenticationException | HttpRedirectException ex) {
                 throw ex;
             } catch (HttpException ex) {
-                LOGGER.error(ex.getResponseBody(), ex);
                 throw new SerializationException(ex.getResponseBody(), ex);
             } catch (Exception ex) {
-                LOGGER.error("unexpected exception", ex);
                 throw new SerializationException(ex);
             } finally {
                 client.getConnectionManager().shutdown();
             }
         }
 
-        LOGGER.debug("json==>" + json);
+        if(LOGGER.isTraceEnabled()){
+            Gson prettyGson = new GsonBuilder().setPrettyPrinting().create();
+            LOGGER.trace("RESPONSE: {} {}\n{}", wrapper.getType(), wrapper.getAddress(), prettyGson.toJson(new JsonParser().parse(json)));
+        }
+
         return json;
     }
 
@@ -554,10 +518,7 @@ public class DEServiceImpl extends RemoteServiceServlet implements DEService {
                 HttpResponse response = getResponse(client, wrapper);
                 checkResponse(response);
                 return new DEServiceInputStream(client, response);
-            } catch (HttpRedirectException ex) {
-                client.getConnectionManager().shutdown();
-                throw ex;
-            } catch (AuthenticationException ex) {
+            } catch (HttpRedirectException | AuthenticationException ex) {
                 client.getConnectionManager().shutdown();
                 throw ex;
             } catch (Exception ex) {
@@ -604,7 +565,6 @@ public class DEServiceImpl extends RemoteServiceServlet implements DEService {
             } catch (AuthenticationException | HttpRedirectException ex) {
                 throw ex;
             } catch (HttpException ex) {
-                LOGGER.error(ex.getResponseBody(), ex);
                 throw new SerializationException(ex.getResponseBody(), ex);
             } catch (Exception ex) {
                 throw new SerializationException(ex);
@@ -613,7 +573,10 @@ public class DEServiceImpl extends RemoteServiceServlet implements DEService {
             }
         }
 
-        System.out.println("json==>" + json);
+        if(LOGGER.isTraceEnabled()){
+            Gson prettyGson = new GsonBuilder().setPrettyPrinting().create();
+            LOGGER.trace("RESPONSE: {} {}\n{}",wrapper.getType(), wrapper.getAddress(), prettyGson.toJson(new JsonParser().parse(json)));
+        }
         return json;
     }
 }

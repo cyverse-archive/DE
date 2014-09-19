@@ -1,7 +1,8 @@
 package org.iplantc.de.server.util;
 
-import org.apache.log4j.Logger;
 import org.jasig.cas.client.authentication.AttributePrincipal;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.cas.authentication.CasAuthenticationToken;
 
 import javax.servlet.http.HttpServletRequest;
@@ -16,7 +17,7 @@ public class CasUtils {
     /**
      * Used to log debugging information.
      */
-    private static final Logger LOG = Logger.getLogger(CasUtils.class);
+    private static final Logger LOG = LoggerFactory.getLogger(CasUtils.class);
 
     /**
      * Prevent instantiation.
@@ -49,7 +50,7 @@ public class CasUtils {
         }
         else if (userPrincipal instanceof CasAuthenticationToken) {
             LOG.debug("returning the user principal from within the CAS assertion");
-            return (AttributePrincipal) ((CasAuthenticationToken) userPrincipal).getAssertion().getPrincipal();
+            return ((CasAuthenticationToken) userPrincipal).getAssertion().getPrincipal();
         }
         return null;
     }

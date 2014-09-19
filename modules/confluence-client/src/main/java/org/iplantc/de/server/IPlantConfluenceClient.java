@@ -2,7 +2,8 @@ package org.iplantc.de.server;
 
 import com.martiansoftware.jsap.JSAP;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.swift.common.soap.confluence.InvalidSessionException;
 import org.swift.common.soap.confluence.RemoteComment;
 import org.swift.common.soap.confluence.RemotePage;
@@ -19,7 +20,7 @@ import java.rmi.RemoteException;
  *
  */
 public class IPlantConfluenceClient extends ConfluenceClient {
-    private static final Logger LOG = Logger.getLogger(IPlantConfluenceClient.class);
+    private final Logger LOG = LoggerFactory.getLogger(IPlantConfluenceClient.class);
 
     private final ConfluenceProperties properties;
 
@@ -63,7 +64,7 @@ public class IPlantConfluenceClient extends ConfluenceClient {
                     try {
                         page = getPage(safeTitle, space);
                     } catch (ClientException cx) {
-                        LOG.debug("Page does not exist?\n" + cx.getMessage());
+                        LOG.debug("Page does not exist?\n{}", cx.getMessage());
                         // page does not exist, continue creating page.
                     }
 
