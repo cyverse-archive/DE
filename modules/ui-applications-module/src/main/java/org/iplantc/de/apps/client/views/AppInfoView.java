@@ -6,7 +6,7 @@ import org.iplantc.de.apps.client.views.widgets.AppFavoriteCellWidget;
 import org.iplantc.de.apps.client.views.widgets.AppRatingCellWidget;
 import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.models.apps.AppAutoBeanFactory;
-import org.iplantc.de.client.models.apps.AppGroup;
+import org.iplantc.de.client.models.apps.AppCategory;
 import org.iplantc.de.client.models.deployedComps.DeployedComponent;
 import org.iplantc.de.client.services.AppUserServiceFacade;
 import org.iplantc.de.commons.client.ErrorHandler;
@@ -224,14 +224,14 @@ public class AppInfoView implements IsWidget, AppFavoriteCell.RequestAppFavorite
         hlc.add(rcell, new HtmlData(".cell10"));
     }
 
-    private void addGroups(List<AppGroup> groups) {
+    private void addGroups(List<AppCategory> groups) {
         if (groups == null || groups.size() <= 0) {
             return;
         }
 
         appDetailsHtmlContainer.add(new Label(I18N.DISPLAY.category() + ": "), new HtmlData(".cell11"));
         List<String> builder = new ArrayList<String>();
-        for (AppGroup ag : groups) {
+        for (AppCategory ag : groups) {
             builder.add(Joiner.on(" >> ").join(appsView.computeGroupHierarchy(ag)));
         }
         Collections.sort(builder);

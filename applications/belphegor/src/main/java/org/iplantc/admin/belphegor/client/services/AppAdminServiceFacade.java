@@ -24,7 +24,8 @@ public interface AppAdminServiceFacade extends AppServiceFacade {
      * @param name
      * @param callback
      */
-    public abstract void renameAppGroup(String categoryId, String name, AsyncCallback<String> callback);
+    public abstract void renameAppCategory(String categoryId, String name,
+                                           AsyncCallback<String> callback);
 
     /**
      * Moves a Category with the given category ID to a parent Category with the given parentCategoryId.
@@ -41,7 +42,7 @@ public interface AppAdminServiceFacade extends AppServiceFacade {
      * @param categoryId
      * @param callback
      */
-    public abstract void deleteAppGroup(String categoryId, AsyncCallback<String> callback);
+    public abstract void deleteAppCategory(String categoryId, AsyncCallback<String> callback);
 
     /**
      * Updates an app with the given values in application.

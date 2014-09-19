@@ -1,7 +1,7 @@
 package org.iplantc.de.apps.client.views;
 
+import org.iplantc.de.apps.client.events.AppCategorySelectionChangedEvent;
 import org.iplantc.de.apps.client.events.AppFavoritedEvent;
-import org.iplantc.de.apps.client.events.AppGroupSelectionChangedEvent;
 import org.iplantc.de.apps.client.events.AppSelectionChangedEvent;
 import org.iplantc.de.apps.client.views.cells.AppFavoriteCell;
 import org.iplantc.de.apps.client.views.cells.AppInfoCell;
@@ -11,7 +11,7 @@ import org.iplantc.de.client.models.DEProperties;
 import org.iplantc.de.client.models.IsMaskable;
 import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.client.models.apps.App;
-import org.iplantc.de.client.models.apps.AppGroup;
+import org.iplantc.de.client.models.apps.AppCategory;
 import org.iplantc.de.client.services.AppUserServiceFacade;
 import org.iplantc.de.client.util.JsonUtil;
 import org.iplantc.de.resources.client.IplantResources;
@@ -69,7 +69,7 @@ import java.util.logging.Logger;
  * @author jstroot
  * 
  */
-public class AppsViewImpl extends Composite implements AppsView, IsMaskable, AppGroupSelectionChangedEvent.HasAppGroupSelectionChangedEventHandlers,
+public class AppsViewImpl extends Composite implements AppsView, IsMaskable, AppCategorySelectionChangedEvent.HasAppCategorySelectionChangedEventHandlers,
         AppSelectionChangedEvent.HasAppSelectionChangedEventHandlers, AppInfoCell.AppInfoClickedEventHandler, AppFavoritedEvent.HasAppFavoritedEventHandlers,
         AppFavoriteCell.RequestAppFavoriteEventHandler {
     private static String WEST_COLLAPSE_BTN_ID = "idCategoryCollapseBtn"; //$NON-NLS-1$
@@ -86,10 +86,10 @@ public class AppsViewImpl extends Composite implements AppsView, IsMaskable, App
     protected Presenter presenter;
 
     @UiField(provided = true)
-    protected Tree<AppGroup, String> tree;
+    protected Tree<AppCategory, String> tree;
 
     @UiField(provided = true)
-    TreeStore<AppGroup> treeStore;
+    TreeStore<AppCategory> treeStore;
 
     @UiField
     protected Grid<App> grid;
@@ -128,7 +128,7 @@ public class AppsViewImpl extends Composite implements AppsView, IsMaskable, App
     Logger logger = Logger.getLogger("App View");
 
     @Inject
-    public AppsViewImpl(final Tree<AppGroup, String> tree, final DEProperties properties, final AppsView.ViewMenu toolbar, final IplantResources resources, final UserInfo userInfo,
+    public AppsViewImpl(final Tree<AppCategory, String> tree, final DEProperties properties, final AppsView.ViewMenu toolbar, final IplantResources resources, final UserInfo userInfo,
             final IplantDisplayStrings displayStrings, final AppUserServiceFacade appUserService) {
         this.tree = tree;
         this.properties = properties;
@@ -152,11 +152,11 @@ public class AppsViewImpl extends Composite implements AppsView, IsMaskable, App
             }
         });
 
-        tree.getSelectionModel().addSelectionChangedHandler(new SelectionChangedHandler<AppGroup>() {
+        tree.getSelectionModel().addSelectionChangedHandler(new SelectionChangedHandler<AppCategory>() {
             @Override
-            public void onSelectionChanged(SelectionChangedEvent<AppGroup> event) {
+            public void onSelectionChanged(SelectionChangedEvent<AppCategory> event) {
                 updateCenterPanelHeading(event.getSelection());
-                asWidget().fireEvent(new AppGroupSelectionChangedEvent(event.getSelection()));
+                asWidget().fireEvent(new AppCategorySelectionChangedEvent(event.getSelection()));
             }
         });
         setTreeIcons();
@@ -204,13 +204,13 @@ public class AppsViewImpl extends Composite implements AppsView, IsMaskable, App
     public void onAppFavorited(AppFavoritedEvent event) {
         final App app = event.getApp();
         grid.getStore().update(app);
-        final AppGroup appGroupByName = findAppGroupByName(FAVORITES);
-        if (appGroupByName != null) {
+        final AppCategory appCategoryByName = findAppCategoryByName(FAVORITES);
+        if (appCategoryByName != null) {
             int tmp = app.isFavorite() ? 1 : -1;
 
-            updateAppGroupAppCount(appGroupByName, appGroupByName.getAppCount() + tmp);
+            updateAppCategoryAppCount(appCategoryByName, appCategoryByName.getAppCount() + tmp);
         }
-        final String selectedAppGrpName = getSelectedAppGroup().getName();
+        final String selectedAppGrpName = getSelectedAppCategory().getName();
 
         /*
          * If the app is in favorites, remove it.
@@ -245,7 +245,7 @@ public class AppsViewImpl extends Composite implements AppsView, IsMaskable, App
 
     @Override
     public void onAppSearchResultLoad(AppSearchResultLoadEvent event) {
-        selectAppGroup(null);
+        selectAppCategory(null);
         presenter.onAppSearchResultLoad(event);
         String searchText = event.getSearchText();
 
@@ -257,7 +257,7 @@ public class AppsViewImpl extends Composite implements AppsView, IsMaskable, App
         unMaskCenterPanel();
     }
 
-    void updateCenterPanelHeading(List<AppGroup> selection) {
+    void updateCenterPanelHeading(List<AppCategory> selection) {
         if (selection.isEmpty())
             return;
 
@@ -266,8 +266,8 @@ public class AppsViewImpl extends Composite implements AppsView, IsMaskable, App
     }
 
     @Override
-    public HandlerRegistration addAppGroupSelectedEventHandler(AppGroupSelectionChangedEvent.AppGroupSelectionChangedEventHandler handler) {
-        return asWidget().addHandler(handler, AppGroupSelectionChangedEvent.TYPE);
+    public HandlerRegistration addAppCategorySelectedEventHandler(AppCategorySelectionChangedEvent.AppCategorySelectionChangedEventHandler handler) {
+        return asWidget().addHandler(handler, AppCategorySelectionChangedEvent.TYPE);
     }
 
     @Override
@@ -304,10 +304,10 @@ public class AppsViewImpl extends Composite implements AppsView, IsMaskable, App
 
     private void initTreeStoreSorter() {
 
-        Comparator<AppGroup> comparator = new Comparator<AppGroup>() {
+        Comparator<AppCategory> comparator = new Comparator<AppCategory>() {
 
             @Override
-            public int compare(AppGroup group1, AppGroup group2) {
+            public int compare(AppCategory group1, AppCategory group2) {
                 if (treeStore.getRootItems().contains(group1) || treeStore.getRootItems().contains(group2)) {
                     // Do not sort Root groups, since we want to keep the service's root order.
                     return 0;
@@ -317,7 +317,7 @@ public class AppsViewImpl extends Composite implements AppsView, IsMaskable, App
             }
         };
 
-        treeStore.addSortInfo(new StoreSortInfo<AppGroup>(comparator, SortDir.ASC));
+        treeStore.addSortInfo(new StoreSortInfo<AppCategory>(comparator, SortDir.ASC));
     }
 
     @Override
@@ -338,7 +338,7 @@ public class AppsViewImpl extends Composite implements AppsView, IsMaskable, App
         appColModel.addAppNameSelectedEventHandler(presenter);
         appColModel.addRequestAppFavoriteEventHandlers(this);
         appColModel.addAppCommentSelectedEventHandlers(presenter);
-        addAppGroupSelectedEventHandler(presenter);
+        addAppCategorySelectedEventHandler(presenter);
         this.toolbar.init(presenter, this, this, this);
     }
 
@@ -371,17 +371,17 @@ public class AppsViewImpl extends Composite implements AppsView, IsMaskable, App
     }
 
     @Override
-    public void selectAppGroup(String appGroupId) {
+    public void selectAppCategory(String appGroupId) {
         if (Strings.isNullOrEmpty(appGroupId)) {
             tree.getSelectionModel().deselectAll();
         } else {
-            AppGroup ag = treeStore.findModelWithKey(appGroupId);
+            AppCategory ag = treeStore.findModelWithKey(appGroupId);
             if (ag != null) {
                 tree.getSelectionModel().select(ag, false);
                 tree.scrollIntoView(ag);
             } else {
                 // Try to find app group by name if ID could not locate the
-                for (AppGroup appGrp : treeStore.getAll()) {
+                for (AppCategory appGrp : treeStore.getAll()) {
 
                     if (appGrp.getName().equalsIgnoreCase(appGroupId)) {
                         tree.getSelectionModel().select(appGrp, false);
@@ -394,10 +394,10 @@ public class AppsViewImpl extends Composite implements AppsView, IsMaskable, App
     }
 
     @Override
-    public List<String> computeGroupHierarchy(final AppGroup ag) {
+    public List<String> computeGroupHierarchy(final AppCategory ag) {
         List<String> groupNames = Lists.newArrayList();
 
-        for (AppGroup group : getGroupHierarchy(ag, null)) {
+        for (AppCategory group : getGroupHierarchy(ag, null)) {
             groupNames.add(group.getName());
         }
         Collections.reverse(groupNames);
@@ -415,7 +415,7 @@ public class AppsViewImpl extends Composite implements AppsView, IsMaskable, App
     }
 
     @Override
-    public AppGroup getSelectedAppGroup() {
+    public AppCategory getSelectedAppCategory() {
         return tree.getSelectionModel().getSelectedItem();
     }
 
@@ -441,14 +441,14 @@ public class AppsViewImpl extends Composite implements AppsView, IsMaskable, App
     }
 
     @Override
-    public void selectFirstAppGroup() {
-        AppGroup ag = treeStore.getRootItems().get(0);
+    public void selectFirstAppCategory() {
+        AppCategory ag = treeStore.getRootItems().get(0);
         tree.getSelectionModel().select(ag, false);
         tree.scrollIntoView(ag);
     }
 
     @Override
-    public void addAppGroup(AppGroup parent, AppGroup child) {
+    public void addAppCategory(AppCategory parent, AppCategory child) {
         if (child == null) {
             return;
         }
@@ -461,7 +461,7 @@ public class AppsViewImpl extends Composite implements AppsView, IsMaskable, App
     }
 
     @Override
-    public void addAppGroups(AppGroup parent, List<AppGroup> children) {
+    public void addAppCategories(AppCategory parent, List<AppCategory> children) {
         if ((children == null) || children.isEmpty()) {
             return;
         }
@@ -471,8 +471,8 @@ public class AppsViewImpl extends Composite implements AppsView, IsMaskable, App
             treeStore.add(parent, children);
         }
 
-        for (AppGroup ag : children) {
-            addAppGroups(ag, ag.getGroups());
+        for (AppCategory ag : children) {
+            addAppCategories(ag, ag.getCategories());
         }
     }
 
@@ -482,20 +482,20 @@ public class AppsViewImpl extends Composite implements AppsView, IsMaskable, App
         listStore.remove(app);
     }
 
-    protected void deSelectAllAppGroups() {
+    protected void deSelectAllAppCategories() {
         tree.getSelectionModel().deselectAll();
     }
 
     @Override
-    public void updateAppGroup(AppGroup appGroup) {
-        treeStore.update(appGroup);
+    public void updateAppCategory(AppCategory appCategory) {
+        treeStore.update(appCategory);
     }
 
     @Override
-    public AppGroup findAppGroupByName(String name) {
-        for (AppGroup appGroup : treeStore.getAll()) {
-            if (appGroup.getName().equalsIgnoreCase(name)) {
-                return appGroup;
+    public AppCategory findAppCategoryByName(String name) {
+        for (AppCategory appCategory : treeStore.getAll()) {
+            if (appCategory.getName().equalsIgnoreCase(name)) {
+                return appCategory;
             }
         }
 
@@ -503,12 +503,12 @@ public class AppsViewImpl extends Composite implements AppsView, IsMaskable, App
     }
 
     @Override
-    public void updateAppGroupAppCount(AppGroup appGroup, int newCount) {
+    public void updateAppCategoryAppCount(AppCategory appGroup, int newCount) {
         int difference = appGroup.getAppCount() - newCount;
 
         while (appGroup != null) {
             appGroup.setAppCount(appGroup.getAppCount() - difference);
-            updateAppGroup(appGroup);
+            updateAppCategory(appGroup);
             appGroup = treeStore.getParent(appGroup);
         }
 
@@ -524,7 +524,7 @@ public class AppsViewImpl extends Composite implements AppsView, IsMaskable, App
     }
 
     @Override
-    public void expandAppGroups() {
+    public void expandAppCategories() {
         tree.expandAll();
     }
 
@@ -534,13 +534,13 @@ public class AppsViewImpl extends Composite implements AppsView, IsMaskable, App
     }
 
     @Override
-    public void clearAppGroups() {
+    public void clearAppCategories() {
         treeStore.clear();
     }
 
     @Override
-    public AppGroup getAppGroupFromElement(Element el) {
-        TreeNode<AppGroup> node = tree.findNode(el);
+    public AppCategory getAppCategoryFromElement(Element el) {
+        TreeNode<AppCategory> node = tree.findNode(el);
         if (node != null && tree.getView().isSelectableTarget(node.getModel(), el)) {
             return node.getModel();
         }
@@ -561,21 +561,21 @@ public class AppsViewImpl extends Composite implements AppsView, IsMaskable, App
     }
 
     @Override
-    public List<AppGroup> getAppGroupRoots() {
+    public List<AppCategory> getAppCategoryRoots() {
         return treeStore.getRootItems();
     }
 
     @Override
-    public AppGroup getParent(AppGroup child) {
+    public AppCategory getParent(AppCategory child) {
         return treeStore.getParent(child);
     }
 
-    List<AppGroup> getGroupHierarchy(AppGroup grp, List<AppGroup> groups) {
+    List<AppCategory> getGroupHierarchy(AppCategory grp, List<AppCategory> groups) {
         if (groups == null) {
-            groups = new ArrayList<AppGroup>();
+            groups = new ArrayList<AppCategory>();
         }
         groups.add(grp);
-        for (AppGroup ap : treeStore.getRootItems()) {
+        for (AppCategory ap : treeStore.getRootItems()) {
             logger.log(Level.SEVERE, ap.getName());
             if (ap.getId().equals(grp.getId())) {
                 return groups;

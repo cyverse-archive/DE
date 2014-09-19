@@ -8,12 +8,12 @@ import com.google.web.bindery.autobean.shared.AutoBean.PropertyName;
 
 import java.util.List;
 
-public interface AppGroup extends HasId, HasName, HasDescription {
+public interface AppCategory extends HasId, HasName, HasDescription {
 
-    @PropertyName("template_count")
+    @PropertyName("app_count")
     int getAppCount();
 
-    List<AppGroup> getGroups();
+    List<AppCategory> getCategories();
 
     @PropertyName("is_public")
     boolean isPublic();
@@ -21,10 +21,10 @@ public interface AppGroup extends HasId, HasName, HasDescription {
     @PropertyName("workspace_id")
     String getWorkspaceId();
 
-    @PropertyName("template_count")
+    @PropertyName("app_count")
     void setAppCount(int templateCount);
 
-    void setGroups(List<AppGroup> groups);
+    void setCategories(List<AppCategory> categories);
 
     @PropertyName("is_public")
     void setIsPublic(boolean isPublic);

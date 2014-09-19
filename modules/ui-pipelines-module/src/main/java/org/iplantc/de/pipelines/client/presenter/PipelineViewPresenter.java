@@ -1,6 +1,6 @@
 package org.iplantc.de.pipelines.client.presenter;
 
-import org.iplantc.de.apps.client.events.AppGroupCountUpdateEvent;
+import org.iplantc.de.apps.client.events.AppCategoryCountUpdateEvent;
 import org.iplantc.de.apps.client.events.AppUpdatedEvent;
 import org.iplantc.de.apps.client.gin.AppsInjector;
 import org.iplantc.de.apps.client.views.AppsView;
@@ -250,7 +250,7 @@ public class PipelineViewPresenter implements Presenter, PipelineView.Presenter,
                     pipeline.setId(newId);
                     loadPipeline(pipeline);
 
-                    AppGroupCountUpdateEvent event = new AppGroupCountUpdateEvent(true, null);
+                    AppCategoryCountUpdateEvent event = new AppCategoryCountUpdateEvent(true, null);
                     EventBus.getInstance().fireEvent(event);
                     AppUpdatedEvent aevent = new AppUpdatedEvent(null);
                     EventBus.getInstance().fireEvent(aevent);

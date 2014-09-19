@@ -1,6 +1,6 @@
 package org.iplantc.de.apps.client.presenter.proxy;
 
-import org.iplantc.de.client.models.apps.AppGroup;
+import org.iplantc.de.client.models.apps.AppCategory;
 import org.iplantc.de.client.services.AppServiceFacade;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -14,17 +14,17 @@ import java.util.List;
  * @author jstroot
  *
  */
-public class AppGroupProxy extends RpcProxy<AppGroup, List<AppGroup>> {
+public class AppCategoryProxy extends RpcProxy<AppCategory, List<AppCategory>> {
 
     private final AppServiceFacade serviceFacade;
 
     @Inject
-    public AppGroupProxy(AppServiceFacade serviceFacade) {
+    public AppCategoryProxy(AppServiceFacade serviceFacade) {
         this.serviceFacade = serviceFacade;
     }
 
     @Override
-    public void load(AppGroup loadConfig, final AsyncCallback<List<AppGroup>> callback) {
+    public void load(AppCategory loadConfig, final AsyncCallback<List<AppCategory>> callback) {
         serviceFacade.getAppCategories(callback);
     }
 

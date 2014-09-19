@@ -1,10 +1,10 @@
 package org.iplantc.admin.belphegor.client.apps.views.widgets;
 
-import org.iplantc.de.apps.client.events.AppGroupSelectionChangedEvent;
+import org.iplantc.de.apps.client.events.AppCategorySelectionChangedEvent;
 import org.iplantc.de.apps.client.events.AppSelectionChangedEvent;
 import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.models.apps.AppAutoBeanFactory;
-import org.iplantc.de.client.models.apps.AppGroup;
+import org.iplantc.de.client.models.apps.AppCategory;
 import org.iplantc.de.client.models.apps.proxy.AppSearchAutoBeanFactory;
 import org.iplantc.de.client.services.AppServiceFacade;
 import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
@@ -39,7 +39,8 @@ public class BelphegorAppsToolbarImplTest {
     @Mock TextButton mockRestoreApp;
 
     @Mock AppSelectionChangedEvent mockAppSelectionChangedEvent;
-    @Mock AppGroupSelectionChangedEvent mockAppGrpSelectionChangedEvent;
+    @Mock
+    AppCategorySelectionChangedEvent mockAppGrpSelectionChangedEvent;
 
     private BelphegorAppsToolbarImpl uut;
 
@@ -93,9 +94,9 @@ public class BelphegorAppsToolbarImplTest {
         verify(mockRestoreApp).setEnabled(eq(true));
     }
 
-    @Test public void testOnAppGroupSelectionChanged_zeroSelected() {
-        when(mockAppGrpSelectionChangedEvent.getAppGroupSelection()).thenReturn(Collections.<AppGroup>emptyList());
-        uut.onAppGroupSelectionChanged(mockAppGrpSelectionChangedEvent);
+    @Test public void testOnAppCategorySelectionChanged_zeroSelected() {
+        when(mockAppGrpSelectionChangedEvent.getAppCategorySelection()).thenReturn(Collections.<AppCategory>emptyList());
+        uut.onAppCategorySelectionChanged(mockAppGrpSelectionChangedEvent);
 
         verify(mockAddCategory).setEnabled(eq(true));
         verify(mockCategorizeApp).setEnabled(eq(false));
@@ -104,9 +105,9 @@ public class BelphegorAppsToolbarImplTest {
         verify(mockRestoreApp).setEnabled(eq(false));
     }
 
-    @Test public void testOnAppGroupSelectionChanged_oneSelected() {
-        when(mockAppGrpSelectionChangedEvent.getAppGroupSelection()).thenReturn(Lists.newArrayList(mock(AppGroup.class)));
-        uut.onAppGroupSelectionChanged(mockAppGrpSelectionChangedEvent);
+    @Test public void testOnAppCategorySelectionChanged_oneSelected() {
+        when(mockAppGrpSelectionChangedEvent.getAppCategorySelection()).thenReturn(Lists.newArrayList(mock(AppCategory.class)));
+        uut.onAppCategorySelectionChanged(mockAppGrpSelectionChangedEvent);
 
         verify(mockAddCategory).setEnabled(eq(true));
         verify(mockCategorizeApp).setEnabled(eq(false));

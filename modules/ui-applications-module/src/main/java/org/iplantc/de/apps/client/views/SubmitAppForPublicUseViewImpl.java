@@ -2,7 +2,7 @@ package org.iplantc.de.apps.client.views;
 
 import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.models.apps.AppAutoBeanFactory;
-import org.iplantc.de.client.models.apps.AppGroup;
+import org.iplantc.de.client.models.apps.AppCategory;
 import org.iplantc.de.client.models.apps.AppRefLink;
 import org.iplantc.de.commons.client.validators.UrlValidator;
 import org.iplantc.de.commons.client.widgets.ContextualHelpPopup;
@@ -88,10 +88,10 @@ public class SubmitAppForPublicUseViewImpl implements SubmitAppForPublicUseView 
 	VerticalLayoutContainer container;
 
 	@UiField(provided = true)
-	TreeStore<AppGroup> treeStore;
+	TreeStore<AppCategory> treeStore;
 
 	@UiField(provided = true)
-	Tree<AppGroup, String> tree;
+	Tree<AppCategory, String> tree;
 
 	@UiField
 	Grid<AppRefLink> grid;
@@ -222,7 +222,7 @@ public class SubmitAppForPublicUseViewImpl implements SubmitAppForPublicUseView 
 	}
 
 	private CellSelectionModel<AppRefLink> buildRefCellSelecitonModel() {
-		CellSelectionModel<AppRefLink> csm = new CellSelectionModel<AppRefLink>();
+		CellSelectionModel<AppRefLink> csm = new CellSelectionModel<>();
 		csm.addCellSelectionChangedHandler(new CellSelectionChangedHandler<AppRefLink>() {
 			@Override
 			public void onCellSelectionChanged(
@@ -244,26 +244,26 @@ public class SubmitAppForPublicUseViewImpl implements SubmitAppForPublicUseView 
 	}
 
 	private void initCategoryTree() {
-		treeStore = new TreeStore<AppGroup>(new ModelKeyProvider<AppGroup>() {
+		treeStore = new TreeStore<>(new ModelKeyProvider<AppCategory>() {
 
 			@Override
-			public String getKey(AppGroup item) {
+			public String getKey(AppCategory item) {
 				return item.getId();
 			}
 		});
 
         initTreeStoreSorter();
 
-		tree = new Tree<AppGroup, String>(treeStore,
-				new ValueProvider<AppGroup, String>() {
+		tree = new Tree<>(treeStore,
+				new ValueProvider<AppCategory, String>() {
 
 					@Override
-					public String getValue(AppGroup object) {
+					public String getValue(AppCategory object) {
 						return object.getName();
 					}
 
 					@Override
-					public void setValue(AppGroup object, String value) {
+					public void setValue(AppCategory object, String value) {
 						// do nothing intentionally
 					}
 
@@ -280,20 +280,20 @@ public class SubmitAppForPublicUseViewImpl implements SubmitAppForPublicUseView 
 	}
 
     private void initTreeStoreSorter() {
-        Comparator<AppGroup> comparator = new Comparator<AppGroup>() {
+        Comparator<AppCategory> comparator = new Comparator<AppCategory>() {
 
             @Override
-            public int compare(AppGroup group1, AppGroup group2) {
+            public int compare(AppCategory group1, AppCategory group2) {
                 return group1.getName().compareToIgnoreCase(group2.getName());
             }
         };
 
-        treeStore.addSortInfo(new StoreSortInfo<AppGroup>(comparator, SortDir.ASC));
+        treeStore.addSortInfo(new StoreSortInfo<>(comparator, SortDir.ASC));
     }
 
 	@UiFactory
 	ListStore<AppRefLink> buildRefLinksStore() {
-		return new ListStore<AppRefLink>(new ModelKeyProvider<AppRefLink>() {
+		return new ListStore<>(new ModelKeyProvider<AppRefLink>() {
 
 			@Override
 			public String getKey(AppRefLink item) {
@@ -305,9 +305,9 @@ public class SubmitAppForPublicUseViewImpl implements SubmitAppForPublicUseView 
 
 	@UiFactory
 	ColumnModel<AppRefLink> buildRefLinkColumn() {
-		List<ColumnConfig<AppRefLink, ?>> columns = new ArrayList<ColumnConfig<AppRefLink, ?>>();
+		List<ColumnConfig<AppRefLink, ?>> columns = new ArrayList<>();
 
-		ColumnConfig<AppRefLink, String> link = new ColumnConfig<AppRefLink, String>(
+		ColumnConfig<AppRefLink, String> link = new ColumnConfig<>(
 				new ValueProvider<AppRefLink, String>() {
 
 					@Override
@@ -331,7 +331,7 @@ public class SubmitAppForPublicUseViewImpl implements SubmitAppForPublicUseView 
 		link.setHideable(false);
 		link.setMenuDisabled(true);
 		columns.add(link);
-		return new ColumnModel<AppRefLink>(columns);
+		return new ColumnModel<>(columns);
 	}
 
 	private TextField buildRefLinkEditor() {
@@ -378,17 +378,17 @@ public class SubmitAppForPublicUseViewImpl implements SubmitAppForPublicUseView 
 	}
 
 	@Override
-	public TreeStore<AppGroup> getTreeStore() {
+	public TreeStore<AppCategory> getTreeStore() {
 		return treeStore;
 	}
 
 	@Override
-	public void expandAppGroups() {
+	public void expandAppCategories() {
 		tree.expandAll();
 	}
 
 	private GridEditing<AppRefLink> createGridEditing() {
-		return new GridInlineEditing<AppRefLink>(grid);
+		return new GridInlineEditing<>(grid);
 	}
 
 	@Override
@@ -396,7 +396,7 @@ public class SubmitAppForPublicUseViewImpl implements SubmitAppForPublicUseView 
 		return appName.getCurrentValue() != null
 				&& appName.getCurrentValue().length() <= 255
 				&& appDesc.getCurrentValue() != null && checkRefLinksGrid()
-				&& checkAppGroups();
+				&& checkAppCategories();
 
 	}
 
@@ -427,7 +427,7 @@ public class SubmitAppForPublicUseViewImpl implements SubmitAppForPublicUseView 
 
 	}
 
-	private boolean checkAppGroups() {
+	private boolean checkAppCategories() {
 		if (tree.getCheckedSelection().size() > 0) {
 			return true;
 		} else {
@@ -451,7 +451,7 @@ public class SubmitAppForPublicUseViewImpl implements SubmitAppForPublicUseView 
 	private JSONArray buildSelectedCategoriesAsJson() {
 		JSONArray arr = new JSONArray();
 		int index = 0;
-		for (AppGroup model : tree.getCheckedSelection()) {
+		for (AppCategory model : tree.getCheckedSelection()) {
 			arr.set(index++, new JSONString(model.getId()));
 		}
 		return arr;

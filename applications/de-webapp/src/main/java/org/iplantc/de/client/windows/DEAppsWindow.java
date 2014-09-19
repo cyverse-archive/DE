@@ -24,7 +24,7 @@ public class DEAppsWindow extends IplantWindowBase {
         setSize("600", "375");
         setHeadingText(displayStrings.applications());
 
-        presenter.go(this, config.getSelectedAppGroup(), config.getSelectedApp());
+        presenter.go(this, config.getSelectedAppCategory(), config.getSelectedApp());
     }
 
     @Override
@@ -37,7 +37,7 @@ public class DEAppsWindow extends IplantWindowBase {
     public WindowState getWindowState() {
         AppsWindowConfig config = ConfigFactory.appsWindowConfig();
         config.setSelectedApp(presenter.getSelectedApp());
-        config.setSelectedAppGroup(presenter.getSelectedAppGroup());
+        config.setSelectedAppCategory(presenter.getSelectedAppCategory());
         return createWindowState(config);
     }
 

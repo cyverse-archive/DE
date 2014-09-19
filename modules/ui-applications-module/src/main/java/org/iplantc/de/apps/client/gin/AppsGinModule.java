@@ -11,7 +11,7 @@ import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.gin.ServicesInjector;
 import org.iplantc.de.client.models.DEProperties;
 import org.iplantc.de.client.models.UserInfo;
-import org.iplantc.de.client.models.apps.AppGroup;
+import org.iplantc.de.client.models.apps.AppCategory;
 import org.iplantc.de.client.services.AppServiceFacade;
 import org.iplantc.de.client.services.AppUserServiceFacade;
 
@@ -26,10 +26,10 @@ public class AppsGinModule extends AbstractGinModule {
 
     @Override
     protected void configure() {
-        bind(new TypeLiteral<TreeStore<AppGroup>>() {}).toProvider(AppGroupTreeStoreProvider.class);
+        bind(new TypeLiteral<TreeStore<AppCategory>>() {}).toProvider(AppCategoryTreeStoreProvider.class);
 
-        bind(new TypeLiteral<Tree<AppGroup, String>>() {
-        }).toProvider(AppGroupTreeProvider.class);
+        bind(new TypeLiteral<Tree<AppCategory, String>>() {
+        }).toProvider(AppCategoryTreeProvider.class);
 
         bind(AppsView.class).to(AppsViewImpl.class);
         bind(AppsView.Presenter.class).to(AppsViewPresenterImpl.class);

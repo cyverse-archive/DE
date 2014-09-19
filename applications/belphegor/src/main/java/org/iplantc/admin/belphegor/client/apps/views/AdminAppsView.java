@@ -1,10 +1,10 @@
 package org.iplantc.admin.belphegor.client.apps.views;
 
-import static org.iplantc.de.apps.client.events.AppGroupSelectionChangedEvent.HasAppGroupSelectionChangedEventHandlers;
 import static org.iplantc.de.apps.client.events.AppSelectionChangedEvent.HasAppSelectionChangedEventHandlers;
+import org.iplantc.de.apps.client.events.AppCategorySelectionChangedEvent;
 import org.iplantc.de.apps.client.views.AppsView;
 import org.iplantc.de.client.models.apps.App;
-import org.iplantc.de.client.models.apps.AppGroup;
+import org.iplantc.de.client.models.apps.AppCategory;
 
 import com.google.gwt.user.client.ui.IsWidget;
 
@@ -14,17 +14,17 @@ import com.google.gwt.user.client.ui.IsWidget;
 public interface AdminAppsView extends AppsView {
     public interface AdminPresenter extends Presenter {
 
-        boolean canMoveAppGroup(AppGroup parentGroup, AppGroup childGroup);
+        boolean canMoveAppCategory(AppCategory parentCategory, AppCategory childCategory);
 
-        boolean canMoveApp(final AppGroup parentGroup, final App app);
+        boolean canMoveApp(final AppCategory parentGroup, final App app);
 
-        void moveAppGroup(final AppGroup parentGroup, final AppGroup childGroup);
+        void moveAppCategory(final AppCategory parentCategory, final AppCategory childCategory);
 
-        void moveApp(final AppGroup parentGroup, final App app);
+        void moveApp(final AppCategory parentCategory, final App app);
 
-        void onAddAppGroupClicked();
+        void onAddAppCategoryClicked();
 
-        void onRenameAppGroupClicked();
+        void onRenameAppCategoryClicked();
 
         void onDeleteClicked();
 
@@ -37,6 +37,6 @@ public interface AdminAppsView extends AppsView {
     interface Toolbar extends IsWidget {
         void init(AdminPresenter presenter,
                   AdminAppsView appView, final HasAppSelectionChangedEventHandlers hasAppSelectionChangedEventHandlers,
-                  final HasAppGroupSelectionChangedEventHandlers hasAppGroupSelectionChangedEventHandlers);
+                  final AppCategorySelectionChangedEvent.HasAppCategorySelectionChangedEventHandlers hasAppCategorySelectionChangedEventHandlers);
     }
 }

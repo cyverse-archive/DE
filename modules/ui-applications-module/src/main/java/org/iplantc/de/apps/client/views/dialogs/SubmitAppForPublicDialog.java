@@ -3,8 +3,7 @@
  */
 package org.iplantc.de.apps.client.views.dialogs;
 
-import org.iplantc.de.apps.client.events.AppGroupCountUpdateEvent;
-import org.iplantc.de.apps.client.events.AppGroupCountUpdateEvent.AppGroupType;
+import org.iplantc.de.apps.client.events.AppCategoryCountUpdateEvent;
 import org.iplantc.de.apps.client.gin.AppsInjector;
 import org.iplantc.de.apps.client.views.SubmitAppForPublicUseView.Presenter;
 import org.iplantc.de.client.events.EventBus;
@@ -39,8 +38,8 @@ public class SubmitAppForPublicDialog extends IPlantDialog {
                     new SuccessAnnouncementConfig(SafeHtmlUtils.fromTrustedString(I18N.DISPLAY.makePublicSuccessMessage(url))));
 
             // Create and fire event
-            AppGroupCountUpdateEvent event = new AppGroupCountUpdateEvent(false,
-                    AppGroupType.BETA);
+            AppCategoryCountUpdateEvent event = new AppCategoryCountUpdateEvent(false,
+                    AppCategoryCountUpdateEvent.AppCategoryType.BETA);
             EventBus.getInstance().fireEvent(event);
         }
 

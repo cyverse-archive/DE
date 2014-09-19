@@ -1,6 +1,6 @@
 package org.iplantc.admin.belphegor.client.apps.views;
 
-import org.iplantc.de.client.models.apps.AppGroup;
+import org.iplantc.de.client.models.apps.AppCategory;
 
 import com.google.gwt.user.client.ui.IsWidget;
 
@@ -9,14 +9,14 @@ import java.util.List;
 public interface AppCategorizeView extends IsWidget {
 
     public interface Presenter extends org.iplantc.de.commons.client.presenter.Presenter {
-        void setAppGroups(List<AppGroup> children);
+        void setAppCategories(List<AppCategory> children);
     }
 
-    void setAppGroups(List<AppGroup> children);
+    void setAppCategories(List<AppCategory> categories);
 
-    List<AppGroup> getSelectedGroups();
+    List<AppCategory> getSelectedCategories();
 
-    void setSelectedGroups(List<AppGroup> groups);
+    void setSelectedCategories(List<AppCategory> categories);
 
-    void removeGroupWithId(String groupId);
+    void removeCategoryWithId(String categoryId);
 }

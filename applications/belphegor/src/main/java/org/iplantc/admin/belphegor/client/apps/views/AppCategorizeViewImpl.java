@@ -1,7 +1,7 @@
 package org.iplantc.admin.belphegor.client.apps.views;
 
 import org.iplantc.admin.belphegor.client.I18N;
-import org.iplantc.de.client.models.apps.AppGroup;
+import org.iplantc.de.client.models.apps.AppCategory;
 import org.iplantc.de.resources.client.IplantResources;
 
 import com.google.common.collect.Lists;
@@ -37,10 +37,10 @@ public class AppCategorizeViewImpl implements AppCategorizeView {
     private static AppCategorizeViewUiBinder uiBinder = GWT.create(AppCategorizeViewUiBinder.class);
 
     @UiField(provided = true)
-    TreeStore<AppGroup> treeStore;
+    TreeStore<AppCategory> treeStore;
 
     @UiField(provided = true)
-    Tree<AppGroup, String> tree;
+    Tree<AppCategory, String> tree;
 
     @UiField
     ContentPanel con;
@@ -73,25 +73,25 @@ public class AppCategorizeViewImpl implements AppCategorizeView {
     }
 
     private void initCategoryTree() {
-        treeStore = new TreeStore<AppGroup>(new ModelKeyProvider<AppGroup>() {
+        treeStore = new TreeStore<>(new ModelKeyProvider<AppCategory>() {
 
             @Override
-            public String getKey(AppGroup item) {
+            public String getKey(AppCategory item) {
                 return item.getId();
             }
         });
 
         initTreeStoreSorter();
 
-        tree = new Tree<AppGroup, String>(treeStore, new ValueProvider<AppGroup, String>() {
+        tree = new Tree<>(treeStore, new ValueProvider<AppCategory, String>() {
 
             @Override
-            public String getValue(AppGroup object) {
+            public String getValue(AppCategory object) {
                 return object.getName();
             }
 
             @Override
-            public void setValue(AppGroup object, String value) {
+            public void setValue(AppCategory object, String value) {
                 // do nothing intentionally
             }
 
@@ -107,15 +107,15 @@ public class AppCategorizeViewImpl implements AppCategorizeView {
     }
 
     private void initTreeStoreSorter() {
-        Comparator<AppGroup> comparator = new Comparator<AppGroup>() {
+        Comparator<AppCategory> comparator = new Comparator<AppCategory>() {
 
             @Override
-            public int compare(AppGroup group1, AppGroup group2) {
-                return group1.getName().compareToIgnoreCase(group2.getName());
+            public int compare(AppCategory category1, AppCategory category2) {
+                return category1.getName().compareToIgnoreCase(category2.getName());
             }
         };
 
-        treeStore.addSortInfo(new StoreSortInfo<AppGroup>(comparator, SortDir.ASC));
+        treeStore.addSortInfo(new StoreSortInfo<>(comparator, SortDir.ASC));
     }
 
     /**
@@ -129,12 +129,12 @@ public class AppCategorizeViewImpl implements AppCategorizeView {
     }
 
     @Override
-    public void setAppGroups(List<AppGroup> groups) {
+    public void setAppCategories(List<AppCategory> categories) {
         treeStore.clear();
-        addAppGroup(null, groups);
+        addAppCategory(null, categories);
     }
 
-    private void addAppGroup(AppGroup parent, List<AppGroup> children) {
+    private void addAppCategory(AppCategory parent, List<AppCategory> children) {
         if ((children == null) || children.isEmpty()) {
             return;
         }
@@ -145,16 +145,16 @@ public class AppCategorizeViewImpl implements AppCategorizeView {
             treeStore.add(parent, children);
         }
 
-        for (AppGroup group : children) {
-            addAppGroup(group, group.getGroups());
+        for (AppCategory category : children) {
+            addAppCategory(category, category.getCategories());
         }
     }
 
     @Override
-    public void setSelectedGroups(List<AppGroup> groups) {
-        List<AppGroup> selection = Lists.newArrayList();
-        for (AppGroup group : groups) {
-            AppGroup model = treeStore.findModel(group);
+    public void setSelectedCategories(List<AppCategory> categories) {
+        List<AppCategory> selection = Lists.newArrayList();
+        for (AppCategory category : categories) {
+            AppCategory model = treeStore.findModel(category);
             if (model != null) {
                 selection.add(model);
                 tree.setExpanded(model, true);
@@ -165,15 +165,15 @@ public class AppCategorizeViewImpl implements AppCategorizeView {
     }
 
     @Override
-    public List<AppGroup> getSelectedGroups() {
+    public List<AppCategory> getSelectedCategories() {
         return tree.getCheckedSelection();
     }
 
     @Override
-    public void removeGroupWithId(String groupId) {
-        AppGroup group = treeStore.findModelWithKey(groupId);
-        if (group != null) {
-            treeStore.remove(group);
+    public void removeCategoryWithId(String categoryId) {
+        AppCategory category = treeStore.findModelWithKey(categoryId);
+        if (category != null) {
+            treeStore.remove(category);
         }
     }
 }

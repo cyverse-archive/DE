@@ -1,7 +1,7 @@
 package org.iplantc.de.apps.client.views;
 
 import org.iplantc.de.client.models.apps.App;
-import org.iplantc.de.client.models.apps.AppGroup;
+import org.iplantc.de.client.models.apps.AppCategory;
 import org.iplantc.de.client.models.apps.AppRefLink;
 
 import com.google.gwt.json.client.JSONObject;
@@ -21,9 +21,9 @@ public interface SubmitAppForPublicUseView extends IsWidget {
         void go(HasOneWidget container, App selectedApp, AsyncCallback<String> callback);
     }
 
-    TreeStore<AppGroup> getTreeStore();
+    TreeStore<AppCategory> getTreeStore();
 
-    void expandAppGroups();
+    void expandAppCategories();
 
     JSONObject toJson();
 

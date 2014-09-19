@@ -3,14 +3,9 @@ package org.iplantc.de.apps.client.events;
 import com.google.gwt.event.shared.EventHandler;
 import com.google.gwt.event.shared.GwtEvent;
 
-public class AppGroupCountUpdateEvent extends GwtEvent<AppGroupCountUpdateEvent.AppGroupCountUpdateEventHandler> {
+public class AppCategoryCountUpdateEvent extends GwtEvent<AppCategoryCountUpdateEvent.AppCategoryCountUpdateEventHandler> {
 
-    /**
-     * Defines the GWT Event Type.
-     * 
-     * @see org.iplantc.de.apps.client.events.AppGroupCountUpdateEvent.AppGroupCountUpdateEventHandler.AppGroupCountUpdateEventHandler
-     */
-    public static final GwtEvent.Type<AppGroupCountUpdateEventHandler> TYPE = new GwtEvent.Type<AppGroupCountUpdateEventHandler>();
+    public static final GwtEvent.Type<AppCategoryCountUpdateEventHandler> TYPE = new GwtEvent.Type<AppCategoryCountUpdateEventHandler>();
 
     /**
      * Describes the count update type
@@ -26,7 +21,7 @@ public class AppGroupCountUpdateEvent extends GwtEvent<AppGroupCountUpdateEvent.
      * @author psarando
      * 
      */
-    public enum AppGroupType {
+    public enum AppCategoryType {
         /**
          * The favorites category should be incremented instead of the user apps category.
          */
@@ -39,20 +34,20 @@ public class AppGroupCountUpdateEvent extends GwtEvent<AppGroupCountUpdateEvent.
     }
 
     private boolean increment;
-    private AppGroupType groupType;
+    private AppCategoryType appCategoryType;
   
-    public AppGroupCountUpdateEvent(boolean inc, AppGroupType groupType) {
+    public AppCategoryCountUpdateEvent(boolean inc, AppCategoryType appCategoryType) {
         setIncrement(inc);
-        setAppGroupType(groupType);
+        setAppCategoryType(appCategoryType);
     }
 
     @Override
-    public com.google.gwt.event.shared.GwtEvent.Type<AppGroupCountUpdateEventHandler> getAssociatedType() {
+    public com.google.gwt.event.shared.GwtEvent.Type<AppCategoryCountUpdateEventHandler> getAssociatedType() {
         return TYPE;
     }
 
     @Override
-    protected void dispatch(AppGroupCountUpdateEventHandler handler) {
+    protected void dispatch(AppCategoryCountUpdateEventHandler handler) {
         handler.onGroupCountUpdate(this);
     }
 
@@ -73,18 +68,18 @@ public class AppGroupCountUpdateEvent extends GwtEvent<AppGroupCountUpdateEvent.
     /**
      * @param groupType the fav_event to set
      */
-    public void setAppGroupType(AppGroupType groupType) {
-        this.groupType = groupType;
+    public void setAppCategoryType(AppCategoryType groupType) {
+        this.appCategoryType = groupType;
     }
 
     /**
      * @return the GroupType
      */
-    public AppGroupType getAppGroupType() {
-        return groupType;
+    public AppCategoryType getAppCategoryType() {
+        return appCategoryType;
     }
 
-    public static interface AppGroupCountUpdateEventHandler extends EventHandler {
-        void onGroupCountUpdate(AppGroupCountUpdateEvent event);
+    public static interface AppCategoryCountUpdateEventHandler extends EventHandler {
+        void onGroupCountUpdate(AppCategoryCountUpdateEvent event);
     }
 }

@@ -78,7 +78,7 @@ public class AppsViewToolbarImplTest {
 
     }
 
-    @Test public void testOnAppGroupSelectionChanged() {
+    @Test public void testOnAppCategorySelectionChanged() {
 
     }
 

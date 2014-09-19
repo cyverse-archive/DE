@@ -1,7 +1,7 @@
 package org.iplantc.admin.belphegor.client.apps.views;
 
 import org.iplantc.de.client.models.apps.App;
-import org.iplantc.de.client.models.apps.AppGroup;
+import org.iplantc.de.client.models.apps.AppCategory;
 
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.EventTarget;
@@ -16,12 +16,12 @@ import com.sencha.gxt.dnd.core.client.DndDropEvent;
 import com.sencha.gxt.dnd.core.client.DndDropEvent.DndDropHandler;
 
 /**
- * A Drag and Drop handler for the AdminAppViewImpl to support moving Apps and AppGroups.
+ * A Drag and Drop handler for the AdminAppViewImpl to support moving Apps and AppCategories.
  * 
  * @author psarando
  * 
  */
-public class AppGroupDnDHandler implements DndDragStartHandler, DndDragEnterHandler, DndDragMoveHandler,
+public class AppCategoryDnDHandler implements DndDragStartHandler, DndDragEnterHandler, DndDragMoveHandler,
         DndDropHandler {
 
     private final AdminAppsView adminAppView;
@@ -32,14 +32,14 @@ public class AppGroupDnDHandler implements DndDragStartHandler, DndDragEnterHand
      */
     private boolean moved;
 
-    public AppGroupDnDHandler(AdminAppsView adminAppView, AdminAppsView.AdminPresenter presenter) {
+    public AppCategoryDnDHandler(AdminAppsView adminAppView, AdminAppsView.AdminPresenter presenter) {
         this.adminAppView = adminAppView;
         this.presenter = presenter;
     }
 
-    private boolean validateMove(AppGroup targetGroup, Object source) {
-        if (source instanceof AppGroup) {
-            return presenter.canMoveAppGroup(targetGroup, (AppGroup)source);
+    private boolean validateMove(AppCategory targetGroup, Object source) {
+        if (source instanceof AppCategory) {
+            return presenter.canMoveAppCategory(targetGroup, (AppCategory) source);
         } else {
             return presenter.canMoveApp(targetGroup, (App)source);
         }
@@ -51,17 +51,17 @@ public class AppGroupDnDHandler implements DndDragStartHandler, DndDragEnterHand
 
         Element dragStartEl = event.getDragStartEvent().getStartElement();
 
-        Object dragData = adminAppView.getAppGroupFromElement(dragStartEl);
+        Object dragData = adminAppView.getAppCategoryFromElement(dragStartEl);
 
         if (dragData == null) {
-            // If we don't have an AppGroup, check for an App.
+            // If we don't have an AppCategory, check for an App.
             dragData = adminAppView.getAppFromElement(dragStartEl);
         }
 
         if (dragData != null) {
             String dragDataLabel;
-            if (dragData instanceof AppGroup) {
-                dragDataLabel = ((AppGroup)dragData).getName();
+            if (dragData instanceof AppCategory) {
+                dragDataLabel = ((AppCategory)dragData).getName();
             } else {
                 dragDataLabel = ((App)dragData).getName();
             }
@@ -86,7 +86,7 @@ public class AppGroupDnDHandler implements DndDragStartHandler, DndDragEnterHand
 
         // Get our destination category.
         EventTarget eventTarget = event.getDragMoveEvent().getNativeEvent().getEventTarget();
-        AppGroup targetGroup = adminAppView.getAppGroupFromElement(Element.as(eventTarget));
+        AppCategory targetGroup = adminAppView.getAppCategoryFromElement(Element.as(eventTarget));
 
         // Check if the source may be dropped into the target.
         boolean isValid = validateMove(targetGroup, event.getData());
@@ -103,12 +103,12 @@ public class AppGroupDnDHandler implements DndDragStartHandler, DndDragEnterHand
 
         // Get our destination category.
         EventTarget eventTarget = event.getDragEndEvent().getNativeEvent().getEventTarget();
-        AppGroup targetGroup = adminAppView.getAppGroupFromElement(Element.as(eventTarget));
+        AppCategory targetGroup = adminAppView.getAppCategoryFromElement(Element.as(eventTarget));
 
         if (validateMove(targetGroup, event.getData())) {
-            if (event.getData() instanceof AppGroup) {
-                AppGroup source = (AppGroup)event.getData();
-                presenter.moveAppGroup(targetGroup, source);
+            if (event.getData() instanceof AppCategory) {
+                AppCategory source = (AppCategory)event.getData();
+                presenter.moveAppCategory(targetGroup, source);
             } else {
                 App source = (App)event.getData();
                 presenter.moveApp(targetGroup, source);

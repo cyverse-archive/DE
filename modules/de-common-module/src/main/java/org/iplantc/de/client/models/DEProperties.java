@@ -63,18 +63,18 @@ public class DEProperties {
     /**
      * Properties key for the private workspace
      */
-    private static final String PRIVATE_WORKSPACE = WORKSPACE_PREFIX + "rootAnalysisGroup";
+    private static final String PRIVATE_WORKSPACE = WORKSPACE_PREFIX + "rootAppCategory";
 
     /**
      * Properties key for the private workspace items
      */
-    private static final String PRIVATE_WORKSPACE_ITEMS = WORKSPACE_PREFIX + "defaultAnalysisGroups";
+    private static final String PRIVATE_WORKSPACE_ITEMS = WORKSPACE_PREFIX + "defaultAppCategories";
 
     /**
      * Properties key for the default Beta Category ID
      */
     private static final String DEFAULT_BETA_CATEGORY_ID = WORKSPACE_PREFIX
-            + "defaultBetaAnalysisGroupId";
+            + "defaultBetaAppCategoryId";
 
     /**
      * Properties key for the default output folder name

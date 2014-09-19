@@ -92,7 +92,7 @@ public class BelphegorViewImpl extends Composite implements BelphegorView {
                       final SystemMessageView.Presenter sysMsgPresenter,
                       final BelphegorAdminProperties toolIntProps) {
         buildUserMenu();
-        HasId betaGroup = CommonModelUtils.createHasIdFromString(toolIntProps.getDefaultBetaAnalysisGroupId());
+        HasId betaGroup = CommonModelUtils.createHasIdFromString(toolIntProps.getDefaultBetaAppCategoryId());
         presenter.go(appsPanel, betaGroup, null);
         refGenPresenter.go(refGenomePanel);
         toolReqPresenter.go(toolRequestPanel);

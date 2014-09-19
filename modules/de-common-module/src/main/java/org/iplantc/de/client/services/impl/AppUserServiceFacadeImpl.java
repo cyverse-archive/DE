@@ -4,16 +4,16 @@ import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.GET;
 import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.POST;
 import org.iplantc.de.client.models.DEProperties;
 import org.iplantc.de.client.models.UserInfo;
-import org.iplantc.de.client.models.apps.AppGroup;
+import org.iplantc.de.client.models.apps.AppCategory;
 import org.iplantc.de.client.services.AppUserServiceFacade;
-import org.iplantc.de.client.services.converters.AppGroupListCallbackConverter;
+import org.iplantc.de.client.services.converters.AppCategoryListCallbackConverter;
 import org.iplantc.de.client.util.DiskResourceUtil;
 import org.iplantc.de.client.util.JsonUtil;
 import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 import org.iplantc.de.resources.client.messages.IplantErrorStrings;
 import org.iplantc.de.shared.exceptions.ConfluenceException;
-import org.iplantc.de.shared.services.DiscEnvApiService;
 import org.iplantc.de.shared.services.ConfluenceServiceAsync;
+import org.iplantc.de.shared.services.DiscEnvApiService;
 import org.iplantc.de.shared.services.EmailServiceAsync;
 import org.iplantc.de.shared.services.ServiceCallWrapper;
 
@@ -45,55 +45,53 @@ public class AppUserServiceFacadeImpl implements AppUserServiceFacade {
     private final ConfluenceServiceAsync confluenceService;
     private final UserInfo userInfo;
     private final EmailServiceAsync emailService;
-    private final IplantErrorStrings errorStrings;
-    private final IplantDisplayStrings displayStrings;
+    @Inject
+    IplantErrorStrings errorStrings;
+    @Inject
+    IplantDisplayStrings displayStrings;
 
     @Inject
     public AppUserServiceFacadeImpl(final DiscEnvApiService deServiceFacade,
                                     final DEProperties deProperties,
                                     final ConfluenceServiceAsync confluenceService,
                                     final UserInfo userInfo,
-                                    final EmailServiceAsync emailService,
-                                    final IplantDisplayStrings displayStrings,
-                                    final IplantErrorStrings errorStrings) {
+                                    final EmailServiceAsync emailService) {
         this.deServiceFacade = deServiceFacade;
         this.deProperties = deProperties;
         this.confluenceService = confluenceService;
         this.userInfo = userInfo;
         this.emailService = emailService;
-        this.displayStrings = displayStrings;
-        this.errorStrings = errorStrings;
     }
 
     @Override
-    public void getPublicAppCategories(AsyncCallback<List<AppGroup>> callback) {
-//        String address = deProperties.getUnproctedMuleServiceBaseUrl() + "public-app-groups"; //$NON-NLS-1$
+    public void getPublicAppCategories(AsyncCallback<List<AppCategory>> callback) {
         String address = CATEGORIES + "?public=true";
         ServiceCallWrapper wrapper = new ServiceCallWrapper(address);
-        deServiceFacade.getServiceData(wrapper, new AppGroupListCallbackConverter(callback, errorStrings));
+        deServiceFacade.getServiceData(wrapper, new AppCategoryListCallbackConverter(callback, errorStrings));
     }
 
     @Override
-    public void getAppCategories(AsyncCallback<List<AppGroup>> callback) {
-//        String address = deProperties.getMuleServiceBaseUrl() + "app-groups";
+    public void getAppCategories(AsyncCallback<List<AppCategory>> callback) {
         String address = CATEGORIES;
         ServiceCallWrapper wrapper = new ServiceCallWrapper(address);
-        deServiceFacade.getServiceData(wrapper, new AppGroupListCallbackConverter(callback, errorStrings));
+        deServiceFacade.getServiceData(wrapper, new AppCategoryListCallbackConverter(callback, errorStrings));
     }
 
     @Override
     public void getApps(String appCategoryId, AsyncCallback<String> callback) {
-//        String address = deProperties.getMuleServiceBaseUrl() + "get-analyses-in-group/" //$NON-NLS-1$
-//                + analysisGroupId;
         String address = CATEGORIES + "/" + appCategoryId;
         ServiceCallWrapper wrapper = new ServiceCallWrapper(address);
         deServiceFacade.getServiceData(wrapper, callback);
     }
 
+
     @Override
-    public void getPagedApps(String analysisGroupId, int limit, String sortField, int offset, SortDir sortDir, AsyncCallback<String> asyncCallback) {
-        String address = deProperties.getMuleServiceBaseUrl() + "get-analyses-in-group/" //$NON-NLS-1$
-                + analysisGroupId + "?limit=" + limit + "&sortField=" + sortField + "&sortDir=" + sortDir.toString() + "&offset=" + offset;
+    public void getPagedApps(String appCategoryId, int limit, String sortField, int offset, SortDir sortDir, AsyncCallback<String> asyncCallback) {
+        String address = CATEGORIES + "/" + appCategoryId
+                             + "?limit=" + limit
+                             + "&sort-field=" + sortField
+                             + "&sort-dir=" + sortDir.toString()
+                             + "&offset=" + offset;
         ServiceCallWrapper wrapper = new ServiceCallWrapper(address);
         deServiceFacade.getServiceData(wrapper, asyncCallback);
     }

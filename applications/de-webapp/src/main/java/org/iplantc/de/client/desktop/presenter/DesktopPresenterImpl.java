@@ -548,7 +548,7 @@ public class DesktopPresenterImpl implements DesktopView.Presenter {
                     if (TypeQueryValues.APPS.equalsIgnoreCase(paramValue)) {
                         final AppsWindowConfig appsConfig = ConfigFactory.appsWindowConfig();
                         final String appCategoryId = Window.Location.getParameter(QueryStrings.APP_CATEGORY);
-                        appsConfig.setSelectedAppGroup(CommonModelUtils.createHasIdFromString(appCategoryId));
+                        appsConfig.setSelectedAppCategory(CommonModelUtils.createHasIdFromString(appCategoryId));
                         windowConfig = appsConfig;
                     } else if (TypeQueryValues.DATA.equalsIgnoreCase(paramValue)) {
                         hasDataTypeParameter = true;

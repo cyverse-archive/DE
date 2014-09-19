@@ -132,13 +132,13 @@ public class BelphegorAdminProperties {
      * Properties key of the default Beta Category ID.
      */
     private static final String CATEGORY_DEFAULT_BETA_GROUP_ID = PROPERTY_NAME_PREFIX
-            + "category.defaultBetaAnalysisGroupId";//$NON-NLS-1$
+            + "category.defaultBetaAppCategoryId";//$NON-NLS-1$
 
     /**
      * Properties key of the default Beta Category ID.
      */
     private static final String CATEGORY_DEFAULT_TRASH_GROUP_ID = PROPERTY_NAME_PREFIX
-            + "category.defaultTrashAnalysisGroupId";//$NON-NLS-1$
+            + "category.defaultTrashAppCategoryId";//$NON-NLS-1$
 
     /**
      * The property name prefix for CAS session keepalive settings.
@@ -162,9 +162,9 @@ public class BelphegorAdminProperties {
      */
     private static final String CONTEXT_CLICK_ENABLED = PROPERTY_NAME_PREFIX + "contextMenu.enabled";//$NON-NLS-1$
 
-    private String defaultBetaAnalysisGroupId;
+    private String defaultBetaAppCategoryId;
 
-    private String defaultTrashAnalysisGroupId;
+    private String defaultTrashAppCategoryId;
 
     private boolean contextClickEnabled;
 
@@ -201,12 +201,12 @@ public class BelphegorAdminProperties {
             serviceUrlMap.put(key, properties.get(key));
         }
 
-        setDefaultTrashAnalysisGroupId(properties.get(CATEGORY_DEFAULT_TRASH_GROUP_ID));
+        setDefaultTrashAppCategoryId(properties.get(CATEGORY_DEFAULT_TRASH_GROUP_ID));
 
         contextClickEnabled = getBooleanProperty(properties, CONTEXT_CLICK_ENABLED, false);
         keepaliveInterval = getIntProperty(properties, KEEPALIVE_INTERVAL, -1);
 
-        defaultBetaAnalysisGroupId = getStringProperty(properties, CATEGORY_DEFAULT_BETA_GROUP_ID, "");
+        defaultBetaAppCategoryId = getStringProperty(properties, CATEGORY_DEFAULT_BETA_GROUP_ID, "");
         keepaliveTarget = getStringProperty(properties, KEEPALIVE_TARGET, "");
         validAppWikiUrlPath = getStringList(properties, APP_DOC_URL);
     }
@@ -467,8 +467,8 @@ public class BelphegorAdminProperties {
      * 
      * @return the Beta Category ID as a string.
      */
-    public String getDefaultBetaAnalysisGroupId() {
-        return defaultBetaAnalysisGroupId;
+    public String getDefaultBetaAppCategoryId() {
+        return defaultBetaAppCategoryId;
     }
 
     /**
@@ -479,17 +479,17 @@ public class BelphegorAdminProperties {
     }
 
     /**
-     * @param defaultTrashAnalysisGroupId the defaultTrashAnalysisGroupId to set
+     * @param defaultTrashAppCategoryId the defaultTrashAppCategoryId to set
      */
-    public void setDefaultTrashAnalysisGroupId(String defaultTrashAnalysisGroupId) {
-        this.defaultTrashAnalysisGroupId = defaultTrashAnalysisGroupId;
+    public void setDefaultTrashAppCategoryId(String defaultTrashAppCategoryId) {
+        this.defaultTrashAppCategoryId = defaultTrashAppCategoryId;
     }
 
     /**
-     * @return the defaultTrashAnalysisGroupId
+     * @return the defaultTrashAppCategoryId
      */
-    public String getDefaultTrashAnalysisGroupId() {
-        return defaultTrashAnalysisGroupId;
+    public String getDefaultTrashAppCategoryId() {
+        return defaultTrashAppCategoryId;
     }
 
     /**

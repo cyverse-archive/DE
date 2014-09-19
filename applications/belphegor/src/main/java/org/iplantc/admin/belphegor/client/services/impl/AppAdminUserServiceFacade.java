@@ -1,6 +1,6 @@
 package org.iplantc.admin.belphegor.client.services.impl;
 
-import org.iplantc.de.client.models.apps.AppGroup;
+import org.iplantc.de.client.models.apps.AppCategory;
 import org.iplantc.de.client.services.AppUserServiceFacade;
 
 import com.google.gwt.json.client.JSONObject;
@@ -25,18 +25,18 @@ public class AppAdminUserServiceFacade implements AppUserServiceFacade {
     }
 
     @Override
-    public void getPagedApps(String analysisGroupId, int limit, String sortField, int offset,
+    public void getPagedApps(String appCategoryId, int limit, String sortField, int offset,
             SortDir sortDir, AsyncCallback<String> callback) {
         assert false : "Dummy Class to satisfy deferred-binding, this class not used in this module.";
     }
 
     @Override
-    public void getPublicAppCategories(AsyncCallback<List<AppGroup>> callback) {
+    public void getPublicAppCategories(AsyncCallback<List<AppCategory>> callback) {
         assert false : "Dummy Class to satisfy deferred-binding, this class not used in this module.";
     }
 
     @Override
-    public void getAppCategories(AsyncCallback<List<AppGroup>> callback) {
+    public void getAppCategories(AsyncCallback<List<AppCategory>> callback) {
         assert false : "Dummy Class to satisfy deferred-binding, this class not used in this module.";
     }
 
@@ -46,7 +46,7 @@ public class AppAdminUserServiceFacade implements AppUserServiceFacade {
     }
 
     @Override
-    public void favoriteApp(String workspaceId, String analysisId, boolean fav,
+    public void favoriteApp(String workspaceId, String appId, boolean fav,
             AsyncCallback<String> callback) {
         assert false : "Dummy Class to satisfy deferred-binding, this class not used in this module.";
     }
@@ -58,25 +58,25 @@ public class AppAdminUserServiceFacade implements AppUserServiceFacade {
     }
 
     @Override
-    public void addAppComment(String analysisId, int rating, String appName, String comment,
+    public void addAppComment(String appId, int rating, String appName, String comment,
             String authorEmail, AsyncCallback<String> callback) {
         assert false : "Dummy Class to satisfy deferred-binding, this class not used in this module.";
     }
 
     @Override
-    public void editAppComment(String analysisId, int rating, String appName, Long commentId,
+    public void editAppComment(String appId, int rating, String appName, Long commentId,
             String comment, String authorEmail, AsyncCallback<String> callback) {
         assert false : "Dummy Class to satisfy deferred-binding, this class not used in this module.";
     }
 
     @Override
-    public void deleteRating(String analysisId, String toolName, Long commentId,
+    public void deleteRating(String appId, String toolName, Long commentId,
             AsyncCallback<String> callback) {
         assert false : "Dummy Class to satisfy deferred-binding, this class not used in this module.";
     }
 
     @Override
-    public void getDataObjectsForApp(String analysisId, AsyncCallback<String> callback) {
+    public void getDataObjectsForApp(String appId, AsyncCallback<String> callback) {
         assert false : "Dummy Class to satisfy deferred-binding, this class not used in this module.";
     }
 

@@ -18,6 +18,8 @@ import org.iplantc.de.shared.services.ServiceCallWrapper;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonParser;
+import com.google.gson.JsonSyntaxException;
+import com.google.gson.stream.MalformedJsonException;
 import com.google.gwt.user.client.rpc.SerializationException;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
@@ -28,6 +30,7 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPatch;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
@@ -209,7 +212,8 @@ public class DEServiceImpl extends RemoteServiceServlet implements DEService {
      * @throws IOException if an error occurs.
      */
     private HttpResponse get(HttpClient client, String address) throws IOException {
-        HttpResponse response = client.execute(urlConnector.getRequest(getRequest(), address));
+        final HttpGet getRequest = urlConnector.getRequest(getRequest(), address);
+        HttpResponse response = client.execute(getRequest);
         return response;
     }
 
@@ -457,7 +461,7 @@ public class DEServiceImpl extends RemoteServiceServlet implements DEService {
         String body = updateRequestBody(wrapper.getBody());
         if(LOGGER.isTraceEnabled()){
             Gson prettyGson = new GsonBuilder().setPrettyPrinting().create();
-            LOGGER.trace("{} {}\nRequest JSON:\n{}", wrapper.getType(), address, prettyGson.toJson(new JsonParser().parse(body)));
+            LOGGER.trace("\n{} {}\nRequest JSON:\n{}", wrapper.getType(), address, prettyGson.toJson(new JsonParser().parse(body)));
         }
 
         BaseServiceCallWrapper.Type type = wrapper.getType();
@@ -500,10 +504,13 @@ public class DEServiceImpl extends RemoteServiceServlet implements DEService {
             try {
                 json = getResponseBody(getResponse(client, wrapper));
             } catch (AuthenticationException | HttpRedirectException ex) {
+                doLogError(ex);
                 throw ex;
             } catch (HttpException ex) {
+                doLogError(ex);
                 throw new SerializationException(ex.getResponseBody(), ex);
             } catch (Exception ex) {
+                LOGGER.error("", ex);
                 throw new SerializationException(ex);
             } finally {
                 client.getConnectionManager().shutdown();
@@ -512,10 +519,21 @@ public class DEServiceImpl extends RemoteServiceServlet implements DEService {
 
         if(LOGGER.isTraceEnabled()){
             Gson prettyGson = new GsonBuilder().setPrettyPrinting().create();
-            LOGGER.trace("RESPONSE: {} {}\n{}", wrapper.getType(), wrapper.getAddress(), prettyGson.toJson(new JsonParser().parse(json)));
+            LOGGER.trace("\nRESPONSE: {} {}\n{}", wrapper.getType(), wrapper.getAddress(), prettyGson.toJson(new JsonParser().parse(json)));
         }
 
         return json;
+    }
+
+    private void doLogError(Exception ex){
+        if(LOGGER.isDebugEnabled()){
+            Gson prettyGson = new GsonBuilder().setPrettyPrinting().create();
+            String errMsg = ex.getMessage();
+            try{
+                errMsg = prettyGson.toJson(new JsonParser().parse(ex.getMessage()));
+            } catch (JsonSyntaxException malformedEx){  }
+            LOGGER.error(errMsg, ex);
+        }
     }
 
     /**
@@ -536,11 +554,14 @@ public class DEServiceImpl extends RemoteServiceServlet implements DEService {
                 checkResponse(response);
                 return new DEServiceInputStream(client, response);
             } catch (HttpRedirectException | AuthenticationException ex) {
-                client.getConnectionManager().shutdown();
+                doLogError(ex);
                 throw ex;
             } catch (Exception ex) {
-                client.getConnectionManager().shutdown();
+                doLogError(ex);
                 throw new SerializationException(ex);
+            }
+            finally {
+                client.getConnectionManager().shutdown();
             }
         }
 
@@ -580,10 +601,13 @@ public class DEServiceImpl extends RemoteServiceServlet implements DEService {
             try {
                 json = getResponseBody(getResponse(client, wrapper));
             } catch (AuthenticationException | HttpRedirectException ex) {
+                doLogError(ex);
                 throw ex;
             } catch (HttpException ex) {
+                doLogError(ex);
                 throw new SerializationException(ex.getResponseBody(), ex);
             } catch (Exception ex) {
+                doLogError(ex);
                 throw new SerializationException(ex);
             } finally {
                 client.getConnectionManager().shutdown();
@@ -592,7 +616,7 @@ public class DEServiceImpl extends RemoteServiceServlet implements DEService {
 
         if(LOGGER.isTraceEnabled()){
             Gson prettyGson = new GsonBuilder().setPrettyPrinting().create();
-            LOGGER.trace("RESPONSE: {} {}\n{}",wrapper.getType(), wrapper.getAddress(), prettyGson.toJson(new JsonParser().parse(json)));
+            LOGGER.trace("\nRESPONSE: {} {}\n{}",wrapper.getType(), wrapper.getAddress(), prettyGson.toJson(new JsonParser().parse(json)));
         }
         return json;
     }

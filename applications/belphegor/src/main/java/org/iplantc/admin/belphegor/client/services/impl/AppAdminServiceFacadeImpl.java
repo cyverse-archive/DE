@@ -4,8 +4,8 @@ import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.*;
 import org.iplantc.admin.belphegor.client.models.BelphegorAdminProperties;
 import org.iplantc.admin.belphegor.client.services.AppAdminServiceFacade;
 import org.iplantc.admin.belphegor.client.services.model.AppCategorizeRequest;
-import org.iplantc.de.client.models.apps.AppGroup;
-import org.iplantc.de.client.services.converters.AppGroupListCallbackConverter;
+import org.iplantc.de.client.models.apps.AppCategory;
+import org.iplantc.de.client.services.converters.AppCategoryListCallbackConverter;
 import org.iplantc.de.resources.client.messages.IplantErrorStrings;
 import org.iplantc.de.shared.services.DiscEnvApiService;
 import org.iplantc.de.shared.services.ServiceCallWrapper;
@@ -52,7 +52,7 @@ public class AppAdminServiceFacadeImpl implements AppAdminServiceFacade {
     }
 
     @Override
-    public void deleteAppGroup(String categoryId, AsyncCallback<String> callback) {
+    public void deleteAppCategory(String categoryId, AsyncCallback<String> callback) {
         String address = properties.getDeleteCategoryServiceUrl()
                              + "/" + categoryId; //$NON-NLS-1$
 
@@ -79,10 +79,10 @@ public class AppAdminServiceFacadeImpl implements AppAdminServiceFacade {
     }
 
     @Override
-    public void getAppCategories(AsyncCallback<List<AppGroup>> callback) {
+    public void getAppCategories(AsyncCallback<List<AppCategory>> callback) {
         String address = properties.getCategoryListServiceUrl();
         ServiceCallWrapper wrapper = new ServiceCallWrapper(address);
-        deService.getServiceData(wrapper, new AppGroupListCallbackConverter(callback, errorStrings));
+        deService.getServiceData(wrapper, new AppCategoryListCallbackConverter(callback, errorStrings));
     }
 
     @Override
@@ -94,7 +94,7 @@ public class AppAdminServiceFacadeImpl implements AppAdminServiceFacade {
     }
 
     @Override
-    public void getPagedApps(String appGroupId, int limit, String sortField, int offset,
+    public void getPagedApps(String appCategoryId, int limit, String sortField, int offset,
                              com.sencha.gxt.data.shared.SortDir sortDir,
                              AsyncCallback<String> callback) {
         // TODO Auto-generated method stub
@@ -102,7 +102,7 @@ public class AppAdminServiceFacadeImpl implements AppAdminServiceFacade {
     }
 
     @Override
-    public void getPublicAppCategories(AsyncCallback<List<AppGroup>> callback) {
+    public void getPublicAppCategories(AsyncCallback<List<AppCategory>> callback) {
         getAppCategories(callback);
     }
 
@@ -135,7 +135,7 @@ public class AppAdminServiceFacadeImpl implements AppAdminServiceFacade {
     }
 
     @Override
-    public void renameAppGroup(String categoryId, String name, AsyncCallback<String> callback) {
+    public void renameAppCategory(String categoryId, String name, AsyncCallback<String> callback) {
         String address = properties.getRenameCategoryServiceUrl();
 
         JSONObject body = new JSONObject();

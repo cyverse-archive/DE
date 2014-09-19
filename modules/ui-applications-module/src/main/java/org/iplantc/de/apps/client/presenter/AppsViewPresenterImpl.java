@@ -1,7 +1,7 @@
 package org.iplantc.de.apps.client.presenter;
 
 import org.iplantc.de.apps.client.events.*;
-import org.iplantc.de.apps.client.presenter.proxy.AppGroupProxy;
+import org.iplantc.de.apps.client.presenter.proxy.AppCategoryProxy;
 import org.iplantc.de.apps.client.views.AppsView;
 import org.iplantc.de.apps.client.views.cells.AppFavoriteCell;
 import org.iplantc.de.apps.client.views.dialogs.AppCommentDialog;
@@ -14,8 +14,8 @@ import org.iplantc.de.client.models.HasId;
 import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.models.apps.AppAutoBeanFactory;
+import org.iplantc.de.client.models.apps.AppCategory;
 import org.iplantc.de.client.models.apps.AppFeedback;
-import org.iplantc.de.client.models.apps.AppGroup;
 import org.iplantc.de.client.models.apps.AppList;
 import org.iplantc.de.client.services.AppServiceFacade;
 import org.iplantc.de.client.services.AppUserServiceFacade;
@@ -76,9 +76,9 @@ public class AppsViewPresenterImpl implements AppsView.Presenter {
         public void onAppUpdated(AppUpdatedEvent event) {
 
             // JDS Always assume that the app is in the "Apps Under Development" group
-            AppGroup userAppGrp = view.findAppGroupByName(USER_APPS_GROUP);
-            if (userAppGrp != null) {
-                view.selectAppGroup(userAppGrp.getId());
+            AppCategory userAppCategory = view.findAppCategoryByName(USER_APPS_GROUP);
+            if (userAppCategory != null) {
+                view.selectAppCategory(userAppCategory.getId());
             }
 
         }
@@ -91,7 +91,7 @@ public class AppsViewPresenterImpl implements AppsView.Presenter {
 
     protected final AppsView view;
 
-    private final AppGroupProxy appGroupProxy;
+    private final AppCategoryProxy appCategoryProxy;
 
     private final List<HandlerRegistration> eventHandlers = new ArrayList<>();
 
@@ -108,7 +108,7 @@ public class AppsViewPresenterImpl implements AppsView.Presenter {
 
     @Inject
     public AppsViewPresenterImpl(final AppsView view,
-                                 final AppGroupProxy proxy,
+                                 final AppCategoryProxy proxy,
                                  final AppServiceFacade appService,
                                  final AppUserServiceFacade appUserService,
                                  final EventBus eventBus,
@@ -129,8 +129,8 @@ public class AppsViewPresenterImpl implements AppsView.Presenter {
         this.displayStrings = displayStrings;
         this.errorStrings = errorStrings;
 
-        // Initialize AppGroup TreeStore proxy and loader
-        this.appGroupProxy = proxy;
+        // Initialize AppCategory TreeStore proxy and loader
+        this.appCategoryProxy = proxy;
 
         this.view.setPresenter(this);
 
@@ -259,7 +259,7 @@ public class AppsViewPresenterImpl implements AppsView.Presenter {
     }
 
     /**
-     * Sets a string which is a place holder for selection after a call to {@link #fetchApps(AppGroup)}
+     * Sets a string which is a place holder for selection after a call to {@link #fetchApps(org.iplantc.de.client.models.apps.AppCategory)}
      * 
      * @param selectedApp
      */
@@ -272,12 +272,12 @@ public class AppsViewPresenterImpl implements AppsView.Presenter {
     }
 
     @Override
-    public void onAppGroupSelectionChanged(AppGroupSelectionChangedEvent event) {
+    public void onAppCategorySelectionChanged(AppCategorySelectionChangedEvent event) {
         searchRegex = null;
-        if (event.getAppGroupSelection().isEmpty()){
+        if (event.getAppCategorySelection().isEmpty()){
             return;
         }
-        AppGroup ag = event.getAppGroupSelection().get(0);
+        AppCategory ag = event.getAppCategorySelection().get(0);
         fetchApps(ag);
     }
 
@@ -286,7 +286,7 @@ public class AppsViewPresenterImpl implements AppsView.Presenter {
      * 
      * @param ag
      */
-    protected void fetchApps(final AppGroup ag) {
+    protected void fetchApps(final AppCategory ag) {
         view.maskCenterPanel(displayStrings.loadingMask());
         appService.getApps(ag.getId(), new AsyncCallback<String>() {
 
@@ -303,7 +303,7 @@ public class AppsViewPresenterImpl implements AppsView.Presenter {
                 }
                 setDesiredSelectedApp(null);
                 view.unMaskCenterPanel();
-                view.updateAppGroupAppCount(ag, apps.size());
+                view.updateAppCategoryAppCount(ag, apps.size());
             }
 
             @Override
@@ -323,26 +323,26 @@ public class AppsViewPresenterImpl implements AppsView.Presenter {
     }
 
     @Override
-    public void go(HasOneWidget container, final HasId selectedAppGroup, final HasId selectedApp) {
+    public void go(HasOneWidget container, final HasId selectedAppCategory, final HasId selectedApp) {
         container.setWidget(view);
 
         if (!view.isTreeStoreEmpty()) {
-            doInitialAppSelection(selectedAppGroup, selectedApp);
+            doInitialAppSelection(selectedAppCategory, selectedApp);
         } else {
-            // Fetch AppGroups
-            reloadAppGroups(selectedAppGroup, selectedApp);
+            // Fetch AppCategories
+            reloadAppCategories(selectedAppCategory, selectedApp);
         }
     }
 
-    protected void reloadAppGroups(final HasId selectedAppGroup, final HasId selectedApp) {
+    protected void reloadAppCategories(final HasId selectedAppCategory, final HasId selectedApp) {
         view.maskWestPanel(displayStrings.loadingMask());
-        view.clearAppGroups();
-        appGroupProxy.load(null, new AsyncCallback<List<AppGroup>>() {
+        view.clearAppCategories();
+        appCategoryProxy.load(null, new AsyncCallback<List<AppCategory>>() {
             @Override
-            public void onSuccess(List<AppGroup> result) {
-                view.addAppGroups(null, result);
-                view.expandAppGroups();
-                doInitialAppSelection(selectedAppGroup, selectedApp);
+            public void onSuccess(List<AppCategory> result) {
+                view.addAppCategories(null, result);
+                view.expandAppCategories();
+                doInitialAppSelection(selectedAppCategory, selectedApp);
                 view.unMaskWestPanel();
             }
 
@@ -355,13 +355,13 @@ public class AppsViewPresenterImpl implements AppsView.Presenter {
         });
     }
 
-    private void doInitialAppSelection(HasId selectedAppGroup, HasId selectedApp) {
+    private void doInitialAppSelection(HasId selectedAppCategory, HasId selectedApp) {
         // Select previous user selections
-        if (selectedAppGroup != null) {
-            view.selectAppGroup(selectedAppGroup.getId());
+        if (selectedAppCategory != null) {
+            view.selectAppCategory(selectedAppCategory.getId());
             setDesiredSelectedApp(selectedApp);
         } else {
-            view.selectFirstAppGroup();
+            view.selectFirstAppCategory();
         }
 
     }
@@ -377,8 +377,8 @@ public class AppsViewPresenterImpl implements AppsView.Presenter {
     }
 
     @Override
-    public AppGroup getSelectedAppGroup() {
-        return view.getSelectedAppGroup();
+    public AppCategory getSelectedAppCategory() {
+        return view.getSelectedAppCategory();
     }
 
     @Override
@@ -421,18 +421,18 @@ public class AppsViewPresenterImpl implements AppsView.Presenter {
             @Override
             public void onSuccess(String result) {
                 // Update the user's private apps group count.
-                AppGroup userAppsGrp = view.findAppGroupByName(USER_APPS_GROUP);
+                AppCategory userAppsGrp = view.findAppCategoryByName(USER_APPS_GROUP);
                 if (userAppsGrp != null) {
-                    view.updateAppGroupAppCount(userAppsGrp, userAppsGrp.getAppCount() + 1);
+                    view.updateAppCategoryAppCount(userAppsGrp, userAppsGrp.getAppCount() + 1);
                 }
 
                 // If the current app group is Workspace or the user's private apps, reload that group.
-                AppGroup selectedAppGroup = getSelectedAppGroup();
-                if (selectedAppGroup != null) {
-                    String selectedGroupName = selectedAppGroup.getName();
+                AppCategory selectedAppCategory = getSelectedAppCategory();
+                if (selectedAppCategory != null) {
+                    String selectedGroupName = selectedAppCategory.getName();
 
                     if (selectedGroupName.equalsIgnoreCase(WORKSPACE) || selectedGroupName.equalsIgnoreCase(USER_APPS_GROUP)) {
-                        fetchApps(selectedAppGroup);
+                        fetchApps(selectedAppCategory);
                     }
                 }
 
@@ -454,15 +454,15 @@ public class AppsViewPresenterImpl implements AppsView.Presenter {
             @Override
             public void onSuccess(String result) {
                 // Update the user's private apps group count.
-                AppGroup usersAppsGrp = view.findAppGroupByName(USER_APPS_GROUP);
+                AppCategory usersAppsGrp = view.findAppCategoryByName(USER_APPS_GROUP);
                 if (usersAppsGrp != null) {
-                    view.updateAppGroupAppCount(usersAppsGrp, usersAppsGrp.getAppCount() + 1);
+                    view.updateAppCategoryAppCount(usersAppsGrp, usersAppsGrp.getAppCount() + 1);
                 }
                 HasId hasId = CommonModelUtils.createHasIdFromString(StringQuoter.split(result).get("analysis_id").asString());
                 if (!hasId.getId().isEmpty()) {
-                    AppGroup selectedAppGroup = getSelectedAppGroup();
-                    if (selectedAppGroup != null) {
-                        fetchApps(selectedAppGroup);
+                    AppCategory selectedAppCategory = getSelectedAppCategory();
+                    if (selectedAppCategory != null) {
+                        fetchApps(selectedAppCategory);
                     }
                     eventBus.fireEvent(new EditAppEvent(hasId, false));
                 }
@@ -521,14 +521,14 @@ public class AppsViewPresenterImpl implements AppsView.Presenter {
                         @Override
                         public void onSuccess(String result) {
                             for (App app : apps) {
-                                // Remove from visible list and update AppGroup app counts
+                                // Remove from visible list and update AppCategory app counts
                                 view.removeApp(app);
 
                                 // PSAR Always assume that the app is in the
                                 // "Apps Under Development" group
-                                AppGroup userAppGrp = view.findAppGroupByName(USER_APPS_GROUP);
+                                AppCategory userAppGrp = view.findAppCategoryByName(USER_APPS_GROUP);
                                 if (userAppGrp != null) {
-                                    view.updateAppGroupAppCount(userAppGrp, userAppGrp.getAppCount() - 1);
+                                    view.updateAppCategoryAppCount(userAppGrp, userAppGrp.getAppCount() - 1);
                                 }
 
                                 eventBus.fireEvent(new AppDeleteEvent(app.getId()));

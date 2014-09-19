@@ -1,6 +1,6 @@
 package org.iplantc.de.apps.client.gin;
 
-import org.iplantc.de.client.models.apps.AppGroup;
+import org.iplantc.de.client.models.apps.AppCategory;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
@@ -10,26 +10,26 @@ import com.sencha.gxt.data.shared.TreeStore;
 import com.sencha.gxt.theme.gray.client.tree.GrayTreeAppearance;
 import com.sencha.gxt.widget.core.client.tree.Tree;
 
-public class AppGroupTreeProvider implements Provider<Tree<AppGroup, String>> {
+public class AppCategoryTreeProvider implements Provider<Tree<AppCategory, String>> {
     
-    private final TreeStore<AppGroup> treeStore;
+    private final TreeStore<AppCategory> treeStore;
     
     @Inject
-    public AppGroupTreeProvider(TreeStore<AppGroup> treeStore) {
+    public AppCategoryTreeProvider(TreeStore<AppCategory> treeStore) {
         this.treeStore = treeStore;
     }
 
     @Override
-    public Tree<AppGroup, String> get() {
-        return new Tree<AppGroup, String>(treeStore, new ValueProvider<AppGroup, String>() {
+    public Tree<AppCategory, String> get() {
+        return new Tree<>(treeStore, new ValueProvider<AppCategory, String>() {
 
             @Override
-            public String getValue(AppGroup object) {
+            public String getValue(AppCategory object) {
                 return object.getName() + " (" + object.getAppCount() + ")";
             }
 
             @Override
-            public void setValue(AppGroup object, String value) {
+            public void setValue(AppCategory object, String value) {
                 // do nothing intentionally
             }
 

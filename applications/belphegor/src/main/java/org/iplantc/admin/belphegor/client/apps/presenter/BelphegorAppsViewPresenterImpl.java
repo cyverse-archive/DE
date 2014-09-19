@@ -14,7 +14,7 @@ import org.iplantc.admin.belphegor.client.services.model.AppCategorizeRequest.Ca
 import org.iplantc.admin.belphegor.client.services.model.AppCategorizeRequest.CategoryRequest;
 import org.iplantc.de.apps.client.events.AppNameSelectedEvent;
 import org.iplantc.de.apps.client.presenter.AppsViewPresenterImpl;
-import org.iplantc.de.apps.client.presenter.proxy.AppGroupProxy;
+import org.iplantc.de.apps.client.presenter.proxy.AppCategoryProxy;
 import org.iplantc.de.apps.client.views.AppsView;
 import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.models.DEProperties;
@@ -22,7 +22,7 @@ import org.iplantc.de.client.models.HasId;
 import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.models.apps.AppAutoBeanFactory;
-import org.iplantc.de.client.models.apps.AppGroup;
+import org.iplantc.de.client.models.apps.AppCategory;
 import org.iplantc.de.client.services.AppServiceFacade;
 import org.iplantc.de.client.services.AppUserServiceFacade;
 import org.iplantc.de.client.util.CommonModelUtils;
@@ -68,7 +68,7 @@ import java.util.List;
  * implementations are resolved, enabling the ability to reuse code.
  * 
  * <b> There are two places in the {@link org.iplantc.de.apps.client.presenter.AppsViewPresenterImpl} where this deferred binding takes place; in
- * the {@link #go(com.google.gwt.user.client.ui.HasOneWidget)} method, and in the {@link AppGroupProxy}.
+ * the {@link #go(com.google.gwt.user.client.ui.HasOneWidget)} method, and in the {@link org.iplantc.de.apps.client.presenter.proxy.AppCategoryProxy}.
  * 
  * 
  * @author jstroot
@@ -90,7 +90,7 @@ public class BelphegorAppsViewPresenterImpl extends AppsViewPresenterImpl implem
 
     @Inject
     public BelphegorAppsViewPresenterImpl(final AppsView view,
-                                          final AppGroupProxy proxy,
+                                          final AppCategoryProxy proxy,
                                           final AppAdminServiceFacade appService,
                                           final AppUserServiceFacade appUserService,
                                           final AppAutoBeanFactory factory,
@@ -117,7 +117,7 @@ public class BelphegorAppsViewPresenterImpl extends AppsViewPresenterImpl implem
 
             @Override
             public void onRefresh(CatalogCategoryRefreshEvent event) {
-                reloadAppGroups(getSelectedAppGroup(), getSelectedApp());
+                reloadAppCategories(getSelectedAppCategory(), getSelectedApp());
             }
         });
     }
@@ -128,18 +128,18 @@ public class BelphegorAppsViewPresenterImpl extends AppsViewPresenterImpl implem
     }
 
     @Override
-    public void onAddAppGroupClicked() {
-        if (getSelectedAppGroup() == null) {
+    public void onAddAppCategoryClicked() {
+        if (getSelectedAppCategory() == null) {
             return;
         }
-        final AppGroup selectedAppGroup = getSelectedAppGroup();
+        final AppCategory selectedAppCategory = getSelectedAppCategory();
 
-        // Check if a new AppGroup can be created in the target AppGroup.
-        if ((!selectedAppGroup.getName().contains("Public Apps"))
-                && selectedAppGroup.getAppCount() > 0
-                && selectedAppGroup.getGroups().size() == 0
-                || ((properties.getDefaultTrashAnalysisGroupId().equalsIgnoreCase(selectedAppGroup.getId()))
-                        || properties.getDefaultBetaAnalysisGroupId().equalsIgnoreCase(selectedAppGroup.getId()))) {
+        // Check if a new AppCategory can be created in the target AppCategory.
+        if ((!selectedAppCategory.getName().contains("Public Apps"))
+                && selectedAppCategory.getAppCount() > 0
+                && selectedAppCategory.getCategories().size() == 0
+                || ((properties.getDefaultTrashAppCategoryId().equalsIgnoreCase(selectedAppCategory.getId()))
+                        || properties.getDefaultBetaAppCategoryId().equalsIgnoreCase(selectedAppCategory.getId()))) {
             ErrorHandler.post(errorStrings.addCategoryPermissionError());
             return;
         }
@@ -154,22 +154,22 @@ public class BelphegorAppsViewPresenterImpl extends AppsViewPresenterImpl implem
                 final String name = dlg.getFieldText();
 
                 view.maskCenterPanel(displayStrings.loadingMask());
-                adminAppService.addCategory(name, selectedAppGroup.getId(), new AdminServiceCallback() {
+                adminAppService.addCategory(name, selectedAppCategory.getId(), new AdminServiceCallback() {
                     @Override
                     protected void onSuccess(JSONObject jsonResult) {
 
                         // Get result
-                        AutoBean<AppGroup> group = AutoBeanCodex.decode(factory, AppGroup.class,
+                        AutoBean<AppCategory> group = AutoBeanCodex.decode(factory, AppCategory.class,
                                 jsonResult.get("category").toString());
 
-                        view.addAppGroup(selectedAppGroup, group.as());
+                        view.addAppCategory(selectedAppCategory, group.as());
                         view.unMaskCenterPanel();
                     }
 
                     @Override
                     protected String getErrorMessage() {
                         view.unMaskCenterPanel();
-                        return errorStrings.addAppGroupError(name);
+                        return errorStrings.addAppCategoryError(name);
                     }
                 });
 
@@ -179,42 +179,42 @@ public class BelphegorAppsViewPresenterImpl extends AppsViewPresenterImpl implem
     }
 
     @Override
-    public void onRenameAppGroupClicked() {
-        if (getSelectedAppGroup() == null) {
+    public void onRenameAppCategoryClicked() {
+        if (getSelectedAppCategory() == null) {
             return;
         }
-        final AppGroup selectedAppGroup = getSelectedAppGroup();
+        final AppCategory selectedAppCategory = getSelectedAppCategory();
 
         PromptMessageBox msgBox = new PromptMessageBox(displayStrings.rename(),
                 displayStrings.renamePrompt());
         final TextField field = ((TextField)msgBox.getField());
         field.setAutoValidate(true);
         field.setAllowBlank(false);
-        field.setText(selectedAppGroup.getName());
+        field.setText(selectedAppCategory.getName());
         msgBox.addDialogHideHandler(new DialogHideEvent.DialogHideHandler() {
             @Override
             public void onDialogHide(DialogHideEvent event) {
                 if(PredefinedButton.OK.equals(event.getHideButton())) {
                     view.maskWestPanel(displayStrings.loadingMask());
-                    adminAppService.renameAppGroup(selectedAppGroup.getId(), field.getText(),
-                            new AsyncCallback<String>() {
+                    adminAppService.renameAppCategory(selectedAppCategory.getId(), field.getText(),
+                                                      new AsyncCallback<String>() {
 
-                                @Override
-                                public void onSuccess(String result) {
-                                    AutoBean<AppGroup> group = AutoBeanCodex.decode(factory,
-                                            AppGroup.class, result);
-                                    selectedAppGroup.setName(group.as().getName());
-                                    view.updateAppGroup(selectedAppGroup);
-                                    view.unMaskWestPanel();
-                                }
+                                                          @Override
+                                                          public void onSuccess(String result) {
+                                                              AutoBean<AppCategory> group = AutoBeanCodex.decode(factory,
+                                                                                                                 AppCategory.class, result);
+                                                              selectedAppCategory.setName(group.as().getName());
+                                                              view.updateAppCategory(selectedAppCategory);
+                                                              view.unMaskWestPanel();
+                                                          }
 
-                                @Override
-                                public void onFailure(Throwable caught) {
-                                    ErrorHandler.post(errorStrings.renameCategoryError(selectedAppGroup
-                                            .getName()));
-                                    view.unMaskWestPanel();
-                                }
-                            });
+                                                          @Override
+                                                          public void onFailure(Throwable caught) {
+                                                              ErrorHandler.post(errorStrings.renameCategoryError(selectedAppCategory
+                                                                                                                     .getName()));
+                                                              view.unMaskWestPanel();
+                                                          }
+                                                      });
                 }
 
             }
@@ -229,43 +229,42 @@ public class BelphegorAppsViewPresenterImpl extends AppsViewPresenterImpl implem
 
     @Override
     public void onDeleteClicked() {
-         // Determine if the current selection is an AnalysisGroup
-        if (getSelectedAppGroup() != null) {
-            final AppGroup selectedAppGroup = getSelectedAppGroup();
+        if (getSelectedAppCategory() != null) {
+            final AppCategory selectedAppCategory = getSelectedAppCategory();
 
-            // Determine if the selected AnalysisGroup can be deleted.
-            if (selectedAppGroup.getAppCount() > 0) {
+            // Determine if the selected AppCategory can be deleted.
+            if (selectedAppCategory.getAppCount() > 0) {
                 ErrorHandler.post(errorStrings.deleteCategoryPermissionError());
                 return;
             }
 
             ConfirmMessageBox msgBox = new ConfirmMessageBox(displayStrings.warning(),
-                    displayStrings.confirmDeleteAppGroup(selectedAppGroup.getName()));
+                    displayStrings.confirmDeleteAppCategory(selectedAppCategory.getName()));
             msgBox.addDialogHideHandler(new DialogHideEvent.DialogHideHandler() {
                 @Override
                 public void onDialogHide(DialogHideEvent event) {
                     if(PredefinedButton.YES.equals(event.getHideButton())) {
                          view.maskWestPanel(displayStrings.loadingMask());
-                        adminAppService.deleteAppGroup(selectedAppGroup.getId(),
-                                new AsyncCallback<String>() {
+                        adminAppService.deleteAppCategory(selectedAppCategory.getId(),
+                                                          new AsyncCallback<String>() {
 
-                                    @Override
-                                    public void onSuccess(String result) {
-                                        // Refresh the catalog, so that the proper category counts
-                                        // display.
-                                        // FIXME JDS These events need to be common to ui-applications.
-                                        eventBus.fireEvent(
-                                                new CatalogCategoryRefreshEvent());
-                                        view.unMaskWestPanel();
-                                    }
+                                                              @Override
+                                                              public void onSuccess(String result) {
+                                                                  // Refresh the catalog, so that the proper category counts
+                                                                  // display.
+                                                                  // FIXME JDS These events need to be common to ui-applications.
+                                                                  eventBus.fireEvent(
+                                                                                        new CatalogCategoryRefreshEvent());
+                                                                  view.unMaskWestPanel();
+                                                              }
 
-                                    @Override
-                                    public void onFailure(Throwable caught) {
-                                        ErrorHandler.post(errorStrings
-                                                .deleteAppGroupError(selectedAppGroup.getName()));
-                                        view.unMaskWestPanel();
-                                    }
-                                });
+                                                              @Override
+                                                              public void onFailure(Throwable caught) {
+                                                                  ErrorHandler.post(errorStrings
+                                                                                        .deleteAppCategoryError(selectedAppCategory.getName()));
+                                                                  view.unMaskWestPanel();
+                                                              }
+                                                          });
                     }
                 }
             });
@@ -381,19 +380,19 @@ public class BelphegorAppsViewPresenterImpl extends AppsViewPresenterImpl implem
     private void showCategorizeAppDialog(final App selectedApp) {
         final AppCategorizePresenter presenter = new AppCategorizePresenter(new AppCategorizeViewImpl(),
                 selectedApp, properties);
-        presenter.setAppGroups(view.getAppGroupRoots());
+        presenter.setAppCategories(view.getAppCategoryRoots());
 
         final IPlantDialog dlg = new IPlantDialog();
         dlg.addOkButtonSelectHandler(new SelectHandler() {
 
             @Override
             public void onSelect(SelectEvent event) {
-                List<AppGroup> groups = presenter.getSelectedGroups();
-                if (groups == null || groups.isEmpty()) {
+                List<AppCategory> categoriess = presenter.getSelectedCategories();
+                if (categoriess == null || categoriess.isEmpty()) {
                     announcer.schedule(
                             new ErrorAnnouncementConfig(errorStrings.noCategoriesSelected()));
                 } else {
-                    doCategorizeSelectedApp(selectedApp, groups);
+                    doCategorizeSelectedApp(selectedApp, categoriess);
                 }
             }
         });
@@ -406,9 +405,9 @@ public class BelphegorAppsViewPresenterImpl extends AppsViewPresenterImpl implem
         dlg.show();
     }
 
-    private void doCategorizeSelectedApp(final App selectedApp, final List<AppGroup> groups) {
+    private void doCategorizeSelectedApp(final App selectedApp, final List<AppCategory> grouappCategoriess) {
         view.maskCenterPanel(displayStrings.loadingMask());
-        AppCategorizeRequest request = buildAppCategorizeRequest(selectedApp, groups);
+        AppCategorizeRequest request = buildAppCategorizeRequest(selectedApp, grouappCategoriess);
 
         adminAppService.categorizeApp(request, new AsyncCallback<String>() {
 
@@ -417,7 +416,7 @@ public class BelphegorAppsViewPresenterImpl extends AppsViewPresenterImpl implem
                 view.unMaskCenterPanel();
 
                 List<String> groupNames = Lists.newArrayList();
-                for (AppGroup group : groups) {
+                for (AppCategory group : grouappCategoriess) {
                     groupNames.add(group.getName());
                 }
                 Collections.sort(groupNames, String.CASE_INSENSITIVE_ORDER);
@@ -437,10 +436,10 @@ public class BelphegorAppsViewPresenterImpl extends AppsViewPresenterImpl implem
         });
     }
 
-    private AppCategorizeRequest buildAppCategorizeRequest(App selectedApp, List<AppGroup> groups) {
-        HasId analysis = CommonModelUtils.createHasIdFromString(selectedApp.getId());
+    private AppCategorizeRequest buildAppCategorizeRequest(App selectedApp, List<AppCategory> appCategories) {
+        HasId appId = CommonModelUtils.createHasIdFromString(selectedApp.getId());
         List<CategoryRequest> categories = Lists.newArrayList();
-        for (AppGroup group : groups) {
+        for (AppCategory group : appCategories) {
 
             List<String> path = Lists.newArrayList();
             while (group != null) {
@@ -455,7 +454,7 @@ public class BelphegorAppsViewPresenterImpl extends AppsViewPresenterImpl implem
             groupPath.setPath(path);
 
             CategoryRequest categoryRequest = serviceFactory.categoryRequest().as();
-            categoryRequest.setAnalysis(analysis);
+            categoryRequest.setAnalysis(appId);
             categoryRequest.setCategoryPath(groupPath);
 
             categories.add(categoryRequest);
@@ -517,8 +516,8 @@ public class BelphegorAppsViewPresenterImpl extends AppsViewPresenterImpl implem
     }
 
     @Override
-    public void moveAppGroup(final AppGroup parentGroup, final AppGroup childGroup) {
-        adminAppService.moveCategory(childGroup.getId(), parentGroup.getId(),
+    public void moveAppCategory(final AppCategory parentCategory, final AppCategory childCategory) {
+        adminAppService.moveCategory(childCategory.getId(), parentCategory.getId(),
                 new AsyncCallback<String>() {
 
                     @Override
@@ -531,14 +530,14 @@ public class BelphegorAppsViewPresenterImpl extends AppsViewPresenterImpl implem
 
                     @Override
                     public void onFailure(Throwable caught) {
-                        ErrorHandler.post(errorStrings.moveCategoryError(childGroup.getName()));
+                        ErrorHandler.post(errorStrings.moveCategoryError(childCategory.getName()));
                     }
                 });
     }
 
     @Override
-    public void moveApp(final AppGroup parentGroup, final App app) {
-        adminAppService.moveApplication(app.getId(), parentGroup.getId(), new AsyncCallback<String>() {
+    public void moveApp(final AppCategory parentCategory, final App app) {
+        adminAppService.moveApplication(app.getId(), parentCategory.getId(), new AsyncCallback<String>() {
 
             @Override
             public void onSuccess(String result) {
@@ -556,43 +555,43 @@ public class BelphegorAppsViewPresenterImpl extends AppsViewPresenterImpl implem
     }
 
     @Override
-    public boolean canMoveAppGroup(AppGroup parentGroup, AppGroup childGroup) {
-        if (parentGroup == null || childGroup == null) {
+    public boolean canMoveAppCategory(AppCategory parentCategory, AppCategory childCategory) {
+        if (parentCategory == null || childCategory == null) {
             return false;
         }
 
         // Don't allow a category drop onto itself.
-        if (childGroup == parentGroup) {
+        if (childCategory == parentCategory) {
             return false;
         }
 
         // Don't allow a category drop into a category leaf with apps in it.
-        if (isLeaf(parentGroup) && parentGroup.getAppCount() > 0) {
+        if (isLeaf(parentCategory) && parentCategory.getAppCount() > 0) {
             return false;
         }
 
         // Don't allow a category drop into one of its children.
-        if (childGroup.getGroups().contains(parentGroup)) {
+        if (childCategory.getCategories().contains(parentCategory)) {
             return false;
         }
 
         // Don't allow a category drop into its own parent.
-        return !parentGroup.getGroups().contains(childGroup);
+        return !parentCategory.getCategories().contains(childCategory);
 
     }
 
     @Override
-    public boolean canMoveApp(AppGroup parentGroup, App app) {
-        if (parentGroup == null || app == null) {
+    public boolean canMoveApp(AppCategory parentCategory, App app) {
+        if (parentCategory == null || app == null) {
             return false;
         }
 
         // Apps can only be dropped into leaf categories.
-        return isLeaf(parentGroup);
+        return isLeaf(parentCategory);
 
     }
 
-    private boolean isLeaf(AppGroup parentGroup) {
-        return parentGroup.getGroups() == null || parentGroup.getGroups().isEmpty();
+    private boolean isLeaf(AppCategory parentCategory) {
+        return parentCategory.getCategories() == null || parentCategory.getCategories().isEmpty();
     }
 }

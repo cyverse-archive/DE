@@ -17,9 +17,9 @@ public interface AppAutoBeanFactory extends AutoBeanFactory {
 
     AutoBean<AppList> appList();
 
-    AutoBean<AppGroup> appGroup();
+    AutoBean<AppCategory> appGroup();
 
-    AutoBean<AppGroupList> appGroups();
+    AutoBean<AppCategoryList> appGroups();
 
     AutoBean<AppRefLink> appRefLink();
 }

@@ -26,13 +26,13 @@ import org.iplantc.admin.belphegor.client.toolRequest.service.impl.ToolRequestSe
 import org.iplantc.admin.belphegor.client.toolRequest.view.ToolRequestViewImpl;
 import org.iplantc.admin.belphegor.client.views.BelphegorView;
 import org.iplantc.admin.belphegor.client.views.BelphegorViewImpl;
-import org.iplantc.de.apps.client.gin.AppGroupTreeProvider;
-import org.iplantc.de.apps.client.gin.AppGroupTreeStoreProvider;
+import org.iplantc.de.apps.client.gin.AppCategoryTreeProvider;
+import org.iplantc.de.apps.client.gin.AppCategoryTreeStoreProvider;
 import org.iplantc.de.apps.client.views.AppsView;
 import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.models.DEProperties;
 import org.iplantc.de.client.models.UserInfo;
-import org.iplantc.de.client.models.apps.AppGroup;
+import org.iplantc.de.client.models.apps.AppCategory;
 import org.iplantc.de.client.services.AppServiceFacade;
 import org.iplantc.de.client.services.AppUserServiceFacade;
 import org.iplantc.de.shared.services.DiscEnvApiService;
@@ -51,11 +51,11 @@ public class BelphegorAppsGinModule extends AbstractGinModule {
         bind(BelphegorView.class).to(BelphegorViewImpl.class);
         bind(BelphegorView.Presenter.class).to(BelphegorPresenterImpl.class).in(Singleton.class);
 
-        bind(new TypeLiteral<TreeStore<AppGroup>>() {
-        }).toProvider(AppGroupTreeStoreProvider.class).in(Singleton.class);
+        bind(new TypeLiteral<TreeStore<AppCategory>>() {
+        }).toProvider(AppCategoryTreeStoreProvider.class).in(Singleton.class);
 
-        bind(new TypeLiteral<Tree<AppGroup, String>>() {
-        }).toProvider(AppGroupTreeProvider.class).in(Singleton.class);
+        bind(new TypeLiteral<Tree<AppCategory, String>>() {
+        }).toProvider(AppCategoryTreeProvider.class).in(Singleton.class);
 
         bind(AppsView.class).to(AdminAppViewImpl.class);
         bind(AdminAppsView.Toolbar.class).to(BelphegorAppsToolbarImpl.class);

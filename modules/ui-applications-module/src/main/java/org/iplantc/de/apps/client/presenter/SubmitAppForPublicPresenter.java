@@ -1,13 +1,13 @@
 package org.iplantc.de.apps.client.presenter;
 
 import org.iplantc.de.apps.client.events.AppPublishedEvent;
-import org.iplantc.de.apps.client.presenter.proxy.PublicAppGroupProxy;
+import org.iplantc.de.apps.client.presenter.proxy.PublicAppCategoryProxy;
 import org.iplantc.de.apps.client.views.SubmitAppForPublicUseView;
 import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.models.DEProperties;
 import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.models.apps.AppAutoBeanFactory;
-import org.iplantc.de.client.models.apps.AppGroup;
+import org.iplantc.de.client.models.apps.AppCategory;
 import org.iplantc.de.client.models.apps.AppRefLink;
 import org.iplantc.de.client.services.AppUserServiceFacade;
 import org.iplantc.de.client.util.JsonUtil;
@@ -37,7 +37,7 @@ public class SubmitAppForPublicPresenter implements SubmitAppForPublicUseView.Pr
     private final SubmitAppForPublicUseView view;
     private AsyncCallback<String> callback;
     private final AppUserServiceFacade appService;
-    private final PublicAppGroupProxy appGroupProxy;
+    private final PublicAppCategoryProxy appGroupProxy;
     private final EventBus eventBus;
     private final IplantDisplayStrings displayStrings;
     private final IplantErrorStrings errorStrings;
@@ -46,7 +46,7 @@ public class SubmitAppForPublicPresenter implements SubmitAppForPublicUseView.Pr
     @Inject
     public SubmitAppForPublicPresenter(SubmitAppForPublicUseView view,
                                        final AppUserServiceFacade appService,
-                                       final PublicAppGroupProxy appGroupProxy,
+                                       final PublicAppCategoryProxy appGroupProxy,
                                        final EventBus eventBus,
                                        final IplantDisplayStrings displayStrings,
                                        final IplantErrorStrings errorStrings,
@@ -63,17 +63,17 @@ public class SubmitAppForPublicPresenter implements SubmitAppForPublicUseView.Pr
     @Override
     public void go(HasOneWidget container) {
         container.setWidget(view);
-        // Fetch AppGroups
-        appGroupProxy.load(null, new AsyncCallback<List<AppGroup>>() {
+        // Fetch AppCategories
+        appGroupProxy.load(null, new AsyncCallback<List<AppCategory>>() {
             @Override
-            public void onSuccess(List<AppGroup> result) {
-                addAppGroup(null, result);
-                view.expandAppGroups();
+            public void onSuccess(List<AppCategory> result) {
+                addAppCategory(null, result);
+                view.expandAppCategories();
                 // remove workspace node from store
                 view.getTreeStore().remove(view.getTreeStore().findModelWithKey(DEProperties.getInstance().getDefaultBetaCategoryId()));
             }
 
-            private void addAppGroup(AppGroup parent, List<AppGroup> children) {
+            private void addAppCategory(AppCategory parent, List<AppCategory> children) {
                 if ((children == null) || children.isEmpty()) {
                     return;
                 }
@@ -83,8 +83,8 @@ public class SubmitAppForPublicPresenter implements SubmitAppForPublicUseView.Pr
                     view.getTreeStore().add(parent, children);
                 }
 
-                for (AppGroup ag : children) {
-                    addAppGroup(ag, ag.getGroups());
+                for (AppCategory ag : children) {
+                    addAppCategory(ag, ag.getCategories());
                 }
             }
 

@@ -8,11 +8,7 @@ import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 
-public class AvgAnalysisUserRatingCell extends AbstractCell<AppFeedback> {
-
-    public AvgAnalysisUserRatingCell() {
-
-    }
+public class AvgAppRatingCell extends AbstractCell<AppFeedback> {
 
     @Override
     public void render(Cell.Context context, AppFeedback value, SafeHtmlBuilder sb) {
@@ -20,9 +16,7 @@ public class AvgAnalysisUserRatingCell extends AbstractCell<AppFeedback> {
             return;
         }
 
-        // NumberFormat df = new NumberFormat("#.###");
         sb.append(SafeHtmlUtils.fromString(NumberFormat.getFormat("0.00").format(
                 value.getAverageRating())));
-        // sb.append(SafeHtmlUtils.fromString(Double.toString(value.getAverageRating())));
     }
 }

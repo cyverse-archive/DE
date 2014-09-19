@@ -7,15 +7,15 @@ import com.sencha.gxt.theme.base.client.widget.HeaderDefaultAppearance;
 import com.sencha.gxt.theme.base.client.widget.HeaderDefaultAppearance.HeaderResources;
 import com.sencha.gxt.theme.base.client.widget.HeaderDefaultAppearance.HeaderStyle;
 
-public class AppGroupContentPanelAppearance extends ContentPanelBaseAppearance {
+public class ArgumentGroupContentPanelAppearance extends ContentPanelBaseAppearance {
 
-    public interface AppGroupContentPanelAppearanceResources extends ContentPanelResources {
-        @Source({"com/sencha/gxt/theme/base/client/panel/ContentPanel.css", "AppGroupContentPanel.css"})
+    public interface ArgumentGroupContentPanelAppearanceResources extends ContentPanelResources {
+        @Source({"com/sencha/gxt/theme/base/client/panel/ContentPanel.css", "ArgumentGroupContentPanel.css"})
         @Override
-        AppGroupContentPanelAppearanceStyle style();
+        ArgumentGroupContentPanelAppearanceStyle style();
     }
 
-    public interface AppGroupContentPanelAppearanceStyle extends ContentPanelStyle {
+    public interface ArgumentGroupContentPanelAppearanceStyle extends ContentPanelStyle {
 
     }
 
@@ -39,13 +39,13 @@ public class AppGroupContentPanelAppearance extends ContentPanelBaseAppearance {
         String headerSelect();
     }
 
-    private static final SelectableHeaderResources resources1 = GWT.<SelectableHeaderResources> create(SelectableHeaderResources.class);
+    private static final SelectableHeaderResources resources1 = GWT.create(SelectableHeaderResources.class);
 
-    public AppGroupContentPanelAppearance() {
-        super(GWT.<AppGroupContentPanelAppearanceResources> create(AppGroupContentPanelAppearanceResources.class), GWT.<ContentPanelTemplate> create(ContentPanelTemplate.class));
+    public ArgumentGroupContentPanelAppearance() {
+        super(GWT.<ArgumentGroupContentPanelAppearanceResources> create(ArgumentGroupContentPanelAppearanceResources.class), GWT.<ContentPanelTemplate> create(ContentPanelTemplate.class));
     }
 
-    public AppGroupContentPanelAppearance(AppGroupContentPanelAppearanceResources resources) {
+    public ArgumentGroupContentPanelAppearance(ArgumentGroupContentPanelAppearanceResources resources) {
         super(resources, GWT.<ContentPanelTemplate> create(ContentPanelTemplate.class));
     }
 

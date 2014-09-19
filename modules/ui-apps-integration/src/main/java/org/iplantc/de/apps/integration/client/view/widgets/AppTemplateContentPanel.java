@@ -17,10 +17,10 @@ public final class AppTemplateContentPanel extends ContentPanel implements HasAp
     private final AppTemplateWizardAppearance wizAppearance;
 
     public AppTemplateContentPanel() {
-        this(new AppGroupContentPanelAppearance(), AppTemplateWizardAppearance.INSTANCE);
+        this(new ArgumentGroupContentPanelAppearance(), AppTemplateWizardAppearance.INSTANCE);
     }
 
-    private AppTemplateContentPanel(AppGroupContentPanelAppearance appearance, AppTemplateWizardAppearance wizAppearance) {
+    private AppTemplateContentPanel(ArgumentGroupContentPanelAppearance appearance, AppTemplateWizardAppearance wizAppearance) {
         super(appearance);
         setCollapsible(true);
         setAnimCollapse(false);

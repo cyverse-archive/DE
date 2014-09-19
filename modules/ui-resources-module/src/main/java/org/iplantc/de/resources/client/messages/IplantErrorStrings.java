@@ -21,8 +21,8 @@ public interface IplantErrorStrings extends com.google.gwt.i18n.client.Messages,
      * @return translated "Could not add Category \"{0}\"."
      */
     @DefaultMessage("Could not add Category \"{0}\".")
-    @Key("addAppGroupError")
-    String addAppGroupError(String arg0);
+    @Key("addAppCategoryError")
+    String addAppCategoryError(String arg0);
 
     /**
      * Translated "Can not add a Category under a Category that only contains Applications.".
@@ -61,13 +61,13 @@ public interface IplantErrorStrings extends com.google.gwt.i18n.client.Messages,
     String analysisFailedToLaunch(String arg0);
 
     /**
-     * Translated "Failed to load analysis groups.".
+     * Translated "Failed to load App categories.".
      * 
-     * @return translated "Failed to load analysis groups."
+     * @return translated "Failed to load App categories."
      */
-    @DefaultMessage("Failed to load analysis groups.")
-    @Key("analysisGroupsLoadFailure")
-    String analysisGroupsLoadFailure();
+    @DefaultMessage("Failed to load App categories.")
+    @Key("appCategoriesLoadFailure")
+    String appCategoriesLoadFailure();
 
     /**
      * Translated "No application exists for the specified ID.".
@@ -228,8 +228,8 @@ public interface IplantErrorStrings extends com.google.gwt.i18n.client.Messages,
      * @return translated "Could not delete Category \"{0}\"."
      */
     @DefaultMessage("Could not delete Category \"{0}\".")
-    @Key("deleteAppGroupError")
-    String deleteAppGroupError(String arg0);
+    @Key("deleteAppCategoryError")
+    String deleteAppCategoryError(String arg0);
 
     /**
      * Translated "Could not delete Application \"{0}\".".

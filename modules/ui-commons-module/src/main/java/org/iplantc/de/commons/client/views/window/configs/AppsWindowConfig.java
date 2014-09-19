@@ -4,11 +4,11 @@ import org.iplantc.de.client.models.HasId;
 
 public interface AppsWindowConfig extends WindowConfig {
 
-    HasId getSelectedAppGroup();
+    HasId getSelectedAppCategory();
 
     HasId getSelectedApp();
 
-    void setSelectedAppGroup(HasId appGroup);
+    void setSelectedAppCategory(HasId appGroup);
 
     void setSelectedApp(HasId app);
 

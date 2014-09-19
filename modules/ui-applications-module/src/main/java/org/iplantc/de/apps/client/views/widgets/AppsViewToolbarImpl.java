@@ -3,7 +3,7 @@ package org.iplantc.de.apps.client.views.widgets;
 
 import static org.iplantc.de.apps.client.views.widgets.events.AppSearchResultLoadEvent.TYPE;
 
-import org.iplantc.de.apps.client.events.AppGroupSelectionChangedEvent;
+import org.iplantc.de.apps.client.events.AppCategorySelectionChangedEvent;
 import org.iplantc.de.apps.client.events.AppSelectionChangedEvent;
 import org.iplantc.de.apps.client.views.AppsView;
 import org.iplantc.de.apps.client.views.widgets.events.AppSearchResultLoadEvent.AppSearchResultLoadEventHandler;
@@ -175,11 +175,11 @@ public class AppsViewToolbarImpl extends Composite implements AppsView.ViewMenu,
     public void init(final AppsView.Presenter presenter,
                      final AppsView appsView,
                      final AppSelectionChangedEvent.HasAppSelectionChangedEventHandlers hasAppSelectionChangedEventHandlers,
-                     final AppGroupSelectionChangedEvent.HasAppGroupSelectionChangedEventHandlers hasAppGroupSelectionChangedEventHandlers) {
+                     final AppCategorySelectionChangedEvent.HasAppCategorySelectionChangedEventHandlers hasAppCategorySelectionChangedEventHandlers) {
         this.presenter = presenter;
         addAppSearchResultLoadEventHandler(appsView);
         hasAppSelectionChangedEventHandlers.addAppSelectionChangedEventHandler(this);
-        hasAppGroupSelectionChangedEventHandlers.addAppGroupSelectedEventHandler(this);
+        hasAppCategorySelectionChangedEventHandlers.addAppCategorySelectedEventHandler(this);
         proxy.setHasHandlers(this);
         proxy.setMaskable(new IsMaskable() {
             @Override
@@ -196,7 +196,7 @@ public class AppsViewToolbarImpl extends Composite implements AppsView.ViewMenu,
     }
 
     @Override
-    public void onAppGroupSelectionChanged(AppGroupSelectionChangedEvent event) {
+    public void onAppCategorySelectionChanged(AppCategorySelectionChangedEvent event) {
         app_menu.setEnabled(false);
         wf_menu.setEnabled(false);
     }

@@ -1,11 +1,9 @@
 package org.iplantc.admin.belphegor.client.apps.views.widgets;
 
-import static org.iplantc.de.apps.client.events.AppGroupSelectionChangedEvent.AppGroupSelectionChangedEventHandler;
-import static org.iplantc.de.apps.client.events.AppGroupSelectionChangedEvent.HasAppGroupSelectionChangedEventHandlers;
 import static org.iplantc.de.apps.client.events.AppSelectionChangedEvent.AppSelectionChangedEventHandler;
 import static org.iplantc.de.apps.client.events.AppSelectionChangedEvent.HasAppSelectionChangedEventHandlers;
 import org.iplantc.admin.belphegor.client.apps.views.AdminAppsView;
-import org.iplantc.de.apps.client.events.AppGroupSelectionChangedEvent;
+import org.iplantc.de.apps.client.events.AppCategorySelectionChangedEvent;
 import org.iplantc.de.apps.client.events.AppSelectionChangedEvent;
 import org.iplantc.de.apps.client.views.widgets.AppSearchField;
 import org.iplantc.de.apps.client.views.widgets.events.AppSearchResultLoadEvent;
@@ -13,7 +11,7 @@ import org.iplantc.de.apps.client.views.widgets.proxy.AppSearchRpcProxy;
 import org.iplantc.de.client.models.IsMaskable;
 import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.models.apps.AppAutoBeanFactory;
-import org.iplantc.de.client.models.apps.AppGroup;
+import org.iplantc.de.client.models.apps.AppCategory;
 import org.iplantc.de.client.models.apps.proxy.AppLoadConfig;
 import org.iplantc.de.client.models.apps.proxy.AppSearchAutoBeanFactory;
 import org.iplantc.de.client.services.AppServiceFacade;
@@ -40,7 +38,7 @@ import java.util.List;
  * 
  */
 public class BelphegorAppsToolbarImpl implements AdminAppsView.Toolbar,
-                                                 AppGroupSelectionChangedEventHandler,
+                                                 AppCategorySelectionChangedEvent.AppCategorySelectionChangedEventHandler,
                                                  AppSelectionChangedEventHandler,
                                                  AppSearchResultLoadEvent.HasAppSearchResultLoadEventHandlers {
 
@@ -92,7 +90,7 @@ public class BelphegorAppsToolbarImpl implements AdminAppsView.Toolbar,
 
     @UiHandler("addCategory")
     public void addCategoryClicked(SelectEvent event) {
-        presenter.onAddAppGroupClicked();
+        presenter.onAddAppCategoryClicked();
     }
 
     @Override
@@ -114,11 +112,11 @@ public class BelphegorAppsToolbarImpl implements AdminAppsView.Toolbar,
     public void init(final AdminAppsView.AdminPresenter presenter,
                      final AdminAppsView appView,
                      final HasAppSelectionChangedEventHandlers hasAppSelectionChangedEventHandlers,
-                     final HasAppGroupSelectionChangedEventHandlers hasAppGroupSelectionChangedEventHandlers) {
+                     final AppCategorySelectionChangedEvent.HasAppCategorySelectionChangedEventHandlers hasAppCategorySelectionChangedEventHandlers) {
         this.presenter = presenter;
         addAppSearchResultLoadEventHandler(appView);
         hasAppSelectionChangedEventHandlers.addAppSelectionChangedEventHandler(this);
-        hasAppGroupSelectionChangedEventHandlers.addAppGroupSelectedEventHandler(this);
+        hasAppCategorySelectionChangedEventHandlers.addAppCategorySelectedEventHandler(this);
         proxy.setHasHandlers(asWidget());
         proxy.setMaskable(new IsMaskable() {
             @Override
@@ -134,11 +132,11 @@ public class BelphegorAppsToolbarImpl implements AdminAppsView.Toolbar,
     }
 
     @Override
-    public void onAppGroupSelectionChanged(AppGroupSelectionChangedEvent event) {
-        final List<AppGroup> appGroupSelection = event.getAppGroupSelection();
+    public void onAppCategorySelectionChanged(AppCategorySelectionChangedEvent event) {
+        final List<AppCategory> appCategorySelection = event.getAppCategorySelection();
 
         boolean renameCategoryEnabled, deleteEnabled;
-        switch (appGroupSelection.size()){
+        switch (appCategorySelection.size()){
             case 1:
                 renameCategoryEnabled = true;
                 deleteEnabled = true;
@@ -182,7 +180,7 @@ public class BelphegorAppsToolbarImpl implements AdminAppsView.Toolbar,
 
     @UiHandler("renameCategory")
     public void renameCategoryClicked(SelectEvent event) {
-        presenter.onRenameAppGroupClicked();
+        presenter.onRenameAppCategoryClicked();
     }
 
     @UiHandler("restoreApp")

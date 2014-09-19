@@ -196,7 +196,7 @@ public abstract class SelectionItemTreeStoreEditor implements ValueAwareEditor<L
             return true;
         }
 
-        // Verify the getGroups() child collections
+        // Verify the getCategories() child collections
         boolean c = currSig.getGroups() == null;
         boolean d = newSig.getGroups() == null;
         if ((c) ^ (d)) {

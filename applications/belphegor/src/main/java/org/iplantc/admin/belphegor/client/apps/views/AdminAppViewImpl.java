@@ -6,7 +6,7 @@ import org.iplantc.de.apps.client.views.AppsViewImpl;
 import org.iplantc.de.client.models.DEProperties;
 import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.client.models.apps.App;
-import org.iplantc.de.client.models.apps.AppGroup;
+import org.iplantc.de.client.models.apps.AppCategory;
 import org.iplantc.de.resources.client.IplantResources;
 import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 
@@ -26,7 +26,7 @@ public class AdminAppViewImpl extends AppsViewImpl implements AdminAppsView,
     private final AdminAppsView.Toolbar toolbar;
 
     @Inject
-    public AdminAppViewImpl(final Tree<AppGroup, String> tree,
+    public AdminAppViewImpl(final Tree<AppCategory, String> tree,
                             final AdminAppsView.Toolbar toolbar,
                             final DEProperties props,
                             final IplantResources resources,
@@ -49,7 +49,7 @@ public class AdminAppViewImpl extends AppsViewImpl implements AdminAppsView,
 
     @Override
     public void onAppSelectionChanged(AppSelectionChangedEvent event) {
-        deSelectAllAppGroups();
+        deSelectAllAppCategories();
     }
 
     @Override
@@ -60,12 +60,12 @@ public class AdminAppViewImpl extends AppsViewImpl implements AdminAppsView,
             ((BelphegorAppColumnModel)cm).addAppNameSelectedEventHandler(presenter);
             initDragAndDrop((AdminAppsView.AdminPresenter)presenter);
             addAppSelectionChangedEventHandler(this);
-            addAppGroupSelectedEventHandler(presenter);
+            addAppCategorySelectedEventHandler(presenter);
         }
     }
 
     private void initDragAndDrop(AdminAppsView.AdminPresenter presenter) {
-        AppGroupDnDHandler dndHandler = new AppGroupDnDHandler(this, presenter);
+        AppCategoryDnDHandler dndHandler = new AppCategoryDnDHandler(this, presenter);
 
         DragSource gridDragSource = new DragSource(grid);
         gridDragSource.addDragStartHandler(dndHandler);

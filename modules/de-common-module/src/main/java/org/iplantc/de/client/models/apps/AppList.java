@@ -11,6 +11,6 @@ import java.util.List;
  * 
  */
 public interface AppList {
-    @PropertyName("templates")
+    @PropertyName("apps")
     List<App> getApps();
 }

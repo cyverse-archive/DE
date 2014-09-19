@@ -1,7 +1,7 @@
 package org.iplantc.de.client.services;
 
 
-import org.iplantc.de.client.models.apps.AppGroup;
+import org.iplantc.de.client.models.apps.AppCategory;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -25,30 +25,29 @@ public interface AppServiceFacade {
     /**
      * Retrieves a paged listing of templates in the given group.
      *
-     * @param appGroupId unique identifier for the group to search in for apps.
+     * @param appCategoryId unique identifier for the group to search in for apps.
      * @param limit
      * @param sortField
      * @param offset
      * @param sortDir
      * @param callback called when the RPC call is complete.
      */
-    void getPagedApps(String appGroupId, int limit, String sortField, int offset,
+    void getPagedApps(String appCategoryId, int limit, String sortField, int offset,
             SortDir sortDir, AsyncCallback<String> callback);
 
     /**
      * Retrieves a hierarchy of public App Groups.
      *
-     * @param workspaceId
      * @param callback
      */
-    void getPublicAppCategories(AsyncCallback<List<AppGroup>> callback);
+    void getPublicAppCategories(AsyncCallback<List<AppCategory>> callback);
 
     /**
-     * Retrieves a hierarchy of all <code>AppGroups</code>s via a secured endpoint.
+     * Retrieves a hierarchy of all <code>AppCategory</code>s via a secured endpoint.
      *
      * @param callback
      */
-    void getAppCategories(AsyncCallback<List<AppGroup>> callback);
+    void getAppCategories(AsyncCallback<List<AppCategory>> callback);
 
     /**
      * Searches for all active Apps with a name or description that contains the given search term.

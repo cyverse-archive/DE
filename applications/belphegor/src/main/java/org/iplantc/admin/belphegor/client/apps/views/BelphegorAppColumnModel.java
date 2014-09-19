@@ -2,7 +2,7 @@ package org.iplantc.admin.belphegor.client.apps.views;
 
 import org.iplantc.admin.belphegor.client.I18N;
 import org.iplantc.admin.belphegor.client.apps.views.cells.AppNameCell;
-import org.iplantc.admin.belphegor.client.apps.views.cells.AvgAnalysisUserRatingCell;
+import org.iplantc.admin.belphegor.client.apps.views.cells.AvgAppRatingCell;
 import org.iplantc.de.apps.client.events.AppNameSelectedEvent;
 import org.iplantc.de.apps.client.views.AppProperties;
 import org.iplantc.de.apps.client.views.AppsView;
@@ -60,7 +60,7 @@ public class BelphegorAppColumnModel extends ColumnModel<App> implements AppName
         rating.setResizable(false);
 
         name.setCell(new AppNameCell(view));
-        rating.setCell(new AvgAnalysisUserRatingCell());
+        rating.setCell(new AvgAppRatingCell());
         rating.setComparator(new Comparator<AppFeedback>() {
             @Override
             public int compare(AppFeedback o1, AppFeedback o2) {

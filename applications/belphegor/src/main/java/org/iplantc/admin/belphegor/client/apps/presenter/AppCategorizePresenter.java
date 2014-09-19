@@ -3,7 +3,7 @@ package org.iplantc.admin.belphegor.client.apps.presenter;
 import org.iplantc.admin.belphegor.client.apps.views.AppCategorizeView;
 import org.iplantc.admin.belphegor.client.models.BelphegorAdminProperties;
 import org.iplantc.de.client.models.apps.App;
-import org.iplantc.de.client.models.apps.AppGroup;
+import org.iplantc.de.client.models.apps.AppCategory;
 
 import com.google.gwt.user.client.ui.HasOneWidget;
 
@@ -29,41 +29,41 @@ public class AppCategorizePresenter implements AppCategorizeView.Presenter {
     }
 
     @Override
-    public void setAppGroups(List<AppGroup> children) {
-        view.setAppGroups(children);
+    public void setAppCategories(List<AppCategory> children) {
+        view.setAppCategories(children);
 
         // Remove trash and beta from the store.
         BelphegorAdminProperties props = properties;
-        view.removeGroupWithId(props.getDefaultTrashAnalysisGroupId());
+        view.removeCategoryWithId(props.getDefaultTrashAppCategoryId());
 
-        List<AppGroup> selectedGroups = findPreSelectedGroups();
+        List<AppCategory> selectedGroups = findPreSelectedGroups();
         if (selectedGroups != null && !selectedGroups.isEmpty()) {
-            view.setSelectedGroups(selectedGroups);
+            view.setSelectedCategories(selectedGroups);
         }
     }
 
     /**
-     * Returns the AppGroups the App is currently listed under. Unless the App is listed in no other
+     * Returns the AppCategories the App is currently listed under. Unless the App is listed in no other
      * groups except Beta, then the App integrator's suggested groups are returned.
      * 
-     * @return List of AppGroups to pre-select in the view.
+     * @return List of AppCategories to pre-select in the view.
      */
-    private List<AppGroup> findPreSelectedGroups() {
-        List<AppGroup> appGroups = app.getGroups();
-        if (appGroups == null || appGroups.isEmpty()) {
+    private List<AppCategory> findPreSelectedGroups() {
+        List<AppCategory> appCategories = app.getGroups();
+        if (appCategories == null || appCategories.isEmpty()) {
             return app.getSuggestedGroups();
         }
 
         String betaGroupId = properties
-                .getDefaultBetaAnalysisGroupId();
-        if (appGroups.size() == 1 && appGroups.get(0).getId().equals(betaGroupId)) {
+                .getDefaultBetaAppCategoryId();
+        if (appCategories.size() == 1 && appCategories.get(0).getId().equals(betaGroupId)) {
             return app.getSuggestedGroups();
         }
 
-        return appGroups;
+        return appCategories;
     }
 
-    public List<AppGroup> getSelectedGroups() {
-        return view.getSelectedGroups();
+    public List<AppCategory> getSelectedCategories() {
+        return view.getSelectedCategories();
     }
 }

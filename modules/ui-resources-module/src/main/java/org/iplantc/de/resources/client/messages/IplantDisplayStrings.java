@@ -785,8 +785,8 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
      * @return translated "Do you want to delete the category \"{0}\"?"
      */
     @DefaultMessage("Do you want to delete the category \"{0}\"?")
-    @Key("confirmDeleteAppGroup")
-    String confirmDeleteAppGroup(String arg0);
+    @Key("confirmDeleteAppCategory")
+    String confirmDeleteAppCategory(String arg0);
 
     /**
      * Translated "Delete App".
