@@ -4,6 +4,8 @@ import org.iplantc.de.apps.widgets.client.view.editors.validation.AnalysisOutput
 import org.iplantc.de.client.KeyBoardShortcutConstants;
 import org.iplantc.de.client.models.UserSettings;
 import org.iplantc.de.client.models.diskResources.Folder;
+import org.iplantc.de.commons.client.info.ErrorAnnouncementConfig;
+import org.iplantc.de.commons.client.info.IplantAnnouncer;
 import org.iplantc.de.commons.client.views.gxt3.dialogs.IPlantDialog;
 import org.iplantc.de.diskResource.client.views.widgets.FolderSelectorField;
 import org.iplantc.de.resources.client.messages.IplantContextualHelpStrings;
@@ -25,9 +27,9 @@ import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 
-import static com.sencha.gxt.widget.core.client.container.AbstractHtmlLayoutContainer.HtmlData;
 import com.sencha.gxt.core.client.XTemplates;
 import com.sencha.gxt.widget.core.client.button.TextButton;
+import com.sencha.gxt.widget.core.client.container.AbstractHtmlLayoutContainer.HtmlData;
 import com.sencha.gxt.widget.core.client.container.HtmlLayoutContainer;
 import com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer;
 import com.sencha.gxt.widget.core.client.event.SelectEvent;
@@ -190,8 +192,12 @@ public class PreferencesDialog extends IPlantDialog implements Editor<UserSettin
     protected void onButtonPressed(TextButton button) {
         if (button == getButton(PredefinedButton.OK)) {
             UserSettings value = editorDriver.flush();
-            if (!editorDriver.hasErrors()) {
+            if (!editorDriver.hasErrors() && isValid()) {
                 this.flushedValue = value;
+                super.onButtonPressed(button);
+            } else {
+                IplantAnnouncer.getInstance()
+                               .schedule(new ErrorAnnouncementConfig(displayStrings.publicSubmitTip()));
             }
 
 
@@ -205,9 +211,13 @@ public class PreferencesDialog extends IPlantDialog implements Editor<UserSettin
             notifyShortCut.setValue(KB_CONSTANTS.notifyKeyShortCut());
             closeShortCut.setValue(KB_CONSTANTS.closeKeyShortCut());
             defaultOutputFolder.setValue(us.getSystemDefaultOutputFolder());
-            isValid();
+            if (isValid()) {
+                super.onButtonPressed(button);
+            }
+        } else if (button == getButton(PredefinedButton.CANCEL)) {
+            super.onButtonPressed(button);
         }
-        super.onButtonPressed(button);
+
     }
 
     @Override
