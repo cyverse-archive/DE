@@ -14,6 +14,7 @@ import org.iplantc.de.client.util.DiskResourceUtil;
 import org.iplantc.de.commons.client.views.gxt3.dialogs.IplantInfoBox;
 import org.iplantc.de.resources.client.messages.I18N;
 
+import com.google.common.base.Strings;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import com.sencha.gxt.core.shared.FastMap;
@@ -52,14 +53,20 @@ public class EnsemblUtil {
         } else if (infoType.equals(InfoType.GFF.toString())) {
             indexFile = null;
         }
+
         list.add(file);
+
         if (indexFile != null) {
             indexFilePath = parent + "/" + indexFile;
             list.add(CommonModelUtils.createHasPathFromString((indexFilePath)));
 
         }
 
-        diskResourcePaths.setPaths(Arrays.asList(path, indexFilePath));
+        if (!Strings.isNullOrEmpty(indexFilePath)) {
+            diskResourcePaths.setPaths(Arrays.asList(path, indexFilePath));
+        } else {
+            diskResourcePaths.setPaths(Arrays.asList(path));
+        }
 
         diskResourceServiceFacade.getStat(DiskResourceUtil.asStringPathTypeMap(list, TYPE.FILE),
                                           new AsyncCallback<FastMap<DiskResource>>() {
