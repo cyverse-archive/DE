@@ -1,6 +1,7 @@
 package org.iplantc.de.client.models.search;
 
 import org.iplantc.de.client.models.search.FileSizeRange.FileSizeUnit;
+import org.iplantc.de.client.models.tags.IplantTag;
 
 import com.google.common.collect.Lists;
 import com.google.gwt.core.client.GWT;
@@ -10,6 +11,7 @@ import com.google.web.bindery.autobean.shared.AutoBeanUtils;
 import com.google.web.bindery.autobean.shared.Splittable;
 import com.google.web.bindery.autobean.shared.impl.StringQuoter;
 
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -37,6 +39,7 @@ public class SearchModelUtils {
         dataSearchFilter.setFileSizeRange(factory.fileSizeRange().as());
         dataSearchFilter.getFileSizeRange().setMaxUnit(createDefaultFileSizeUnit());
         dataSearchFilter.getFileSizeRange().setMinUnit(createDefaultFileSizeUnit());
+        dataSearchFilter.setTagQuery(new LinkedHashSet<IplantTag>());
 
         return dataSearchFilter;
     }

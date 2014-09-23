@@ -267,6 +267,7 @@ public class DiskResourceQueryForm extends Composite implements
      * Clears search form by binding it to a new default query template
      */
     public void clearSearch() {
+        tagPanel.clear();
         editorDriver.edit(SearchModelUtils.createDefaultFilter());
     }
 
@@ -279,6 +280,7 @@ public class DiskResourceQueryForm extends Composite implements
     public void edit(DiskResourceQueryTemplate queryTemplate) {
         if (queryTemplate.getTagQuery() == null) {
             tagQuery.setValue(new HashSet<IplantTag>());
+            tagPanel.clear();
         } else {
             populateTags(queryTemplate.getTagQuery());
         }
