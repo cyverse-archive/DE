@@ -37,6 +37,7 @@ import org.apache.http.entity.mime.MultipartEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 
 import java.io.IOException;
 import java.util.List;
@@ -44,6 +45,7 @@ import java.util.List;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * Dispatches HTTP requests to other services.
@@ -82,6 +84,18 @@ public class DEServiceImpl extends RemoteServiceServlet implements DEService {
     public DEServiceImpl(ServiceCallResolver serviceResolver) {
         this();
         this.serviceResolver = serviceResolver;
+    }
+
+    @Override
+    protected void onAfterResponseSerialized(String serializedResponse) {
+        super.onAfterResponseSerialized(serializedResponse);
+        MDC.clear();
+    }
+
+    @Override
+    protected String readContent(HttpServletRequest request) throws ServletException, IOException {
+        MDC.put("username", request.getSession().getAttribute("username").toString());
+        return super.readContent(request);
     }
 
     /**

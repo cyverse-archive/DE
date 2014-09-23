@@ -30,9 +30,11 @@ project(':de') {
         compile "com.google.guava:guava-gwt:$guavaGwtVer"
 
         compile "org.slf4j:slf4j-api:$slf4jVersion"
+        compile "ch.qos.logback:logback-core:$logbackVersion"
+        compile "ch.qos.logback:logback-classic:$logbackVersion"
+
         compile "org.slf4j:jcl-over-slf4j:$slf4jVersion"
         compile "org.slf4j:log4j-over-slf4j:$slf4jVersion"
-        compile "org.slf4j:slf4j-simple:$slf4jVersion"
 
         compile project(':ui-commons-module')
         compile project(':ui-applications-module')
@@ -89,6 +91,7 @@ project(':de') {
             into 'applets'
         }
     }
+
 }
 
 project(':belphegor') {
