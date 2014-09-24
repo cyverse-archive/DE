@@ -94,7 +94,10 @@ public class DEServiceImpl extends RemoteServiceServlet implements DEService {
 
     @Override
     protected String readContent(HttpServletRequest request) throws ServletException, IOException {
-        MDC.put("username", request.getSession().getAttribute("username").toString());
+        final Object usernameAttr = request.getSession().getAttribute("username");
+        if(usernameAttr != null){
+            MDC.put("username", usernameAttr.toString());
+        }
         return super.readContent(request);
     }
 
