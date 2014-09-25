@@ -88,17 +88,17 @@ public class AppUserServiceFacadeStub implements AppUserServiceFacade {
     }
 
     @Override
-    public void appExportable(String id, AsyncCallback<String> asyncCallback) {
+    public void appExportable(String appId, AsyncCallback<String> asyncCallback) {
 
     }
 
     @Override
-    public void copyApp(String id, AsyncCallback<String> asyncCallback) {
+    public void copyApp(String appId, AsyncCallback<String> asyncCallback) {
 
     }
 
     @Override
-    public void deleteAppFromWorkspace(String username, String fullUsername, List<String> ids, AsyncCallback<String> asyncCallback) {
+    public void deleteAppFromWorkspace(String username, String fullUsername, List<String> appIds, AsyncCallback<String> asyncCallback) {
 
     }
 
@@ -108,7 +108,7 @@ public class AppUserServiceFacadeStub implements AppUserServiceFacade {
     }
 
     @Override
-    public void getAppDetails(String id, AsyncCallback<String> callback) {
+    public void getAppDetails(String appId, AsyncCallback<String> callback) {
 
     }
 }

@@ -39,6 +39,7 @@ import java.util.List;
  */
 public class AppUserServiceFacadeImpl implements AppUserServiceFacade {
 
+    private final String APPS = "org.iplantc.services.apps";
     private final String CATEGORIES = "org.iplantc.services.apps.categories";
     private final DiscEnvApiService deServiceFacade;
     private final DEProperties deProperties;
@@ -104,8 +105,9 @@ public class AppUserServiceFacadeImpl implements AppUserServiceFacade {
     }
 
     @Override
-    public void getDataObjectsForApp(String analysisId, AsyncCallback<String> callback) {
-        String address = deProperties.getMuleServiceBaseUrl() + "apps/" + analysisId + "/data-objects";
+    public void getDataObjectsForApp(String appId, AsyncCallback<String> callback) {
+//        String address = deProperties.getMuleServiceBaseUrl() + "apps/" + analysisId + "/data-objects";
+        String address = APPS + "/" + appId + "/data-objects";
 
         ServiceCallWrapper wrapper = new ServiceCallWrapper(address);
         deServiceFacade.getServiceData(wrapper, callback);
@@ -121,8 +123,8 @@ public class AppUserServiceFacadeImpl implements AppUserServiceFacade {
     }
 
     @Override
-    public void getAppDetails(String id, AsyncCallback<String> callback) {
-        String address = deProperties.getMuleServiceBaseUrl() + "app-details/" + id; //$NON-NLS-1$
+    public void getAppDetails(String appId, AsyncCallback<String> callback) {
+        String address = deProperties.getMuleServiceBaseUrl() + "app-details/" + appId; //$NON-NLS-1$
 
         ServiceCallWrapper wrapper = new ServiceCallWrapper(GET, address);
 
@@ -173,10 +175,10 @@ public class AppUserServiceFacadeImpl implements AppUserServiceFacade {
      * updateDocumentationPage()
      */
     @Override
-    public void rateApp(final String appWikiPageUrl, String analysisId, int rating,
+    public void rateApp(final String appWikiPageUrl, String appId, int rating,
             final long commentId, final String authorEmail, final AsyncCallback<String> callback) {
         JSONObject body = new JSONObject();
-        body.put("analysis_id", new JSONString(analysisId)); //$NON-NLS-1$
+        body.put("analysis_id", new JSONString(appId)); //$NON-NLS-1$
         body.put("rating", new JSONNumber(rating)); //$NON-NLS-1$
         body.put("comment_id", new JSONNumber(commentId)); //$NON-NLS-1$
 
@@ -234,7 +236,7 @@ public class AppUserServiceFacadeImpl implements AppUserServiceFacade {
     }
 
     @Override
-    public void editAppComment(final String analysisId, final int rating, final String appWikiPageUrl,
+    public void editAppComment(final String appId, final int rating, final String appWikiPageUrl,
             final Long commentId, final String comment, final String authorEmail,
             final AsyncCallback<String> callback) {
         // update comment on wiki page, then call rating service, then update avg on wiki page
@@ -253,12 +255,12 @@ public class AppUserServiceFacadeImpl implements AppUserServiceFacade {
     }
 
     @Override
-    public void deleteRating(final String analysisId, final String toolName, final Long commentId, final AsyncCallback<String> callback) {
+    public void deleteRating(final String appId, final String toolName, final Long commentId, final AsyncCallback<String> callback) {
         // call rating service, then delete comment from wiki page
         String address = deProperties.getMuleServiceBaseUrl() + "delete-rating"; //$NON-NLS-1$
 
         JSONObject body = new JSONObject();
-        body.put("analysis_id", new JSONString(analysisId)); //$NON-NLS-1$
+        body.put("analysis_id", new JSONString(appId)); //$NON-NLS-1$
 
         ServiceCallWrapper wrapper = new ServiceCallWrapper(POST, address, body.toString());
         deServiceFacade.getServiceData(wrapper, new AsyncCallback<String>() {
@@ -307,12 +309,12 @@ public class AppUserServiceFacadeImpl implements AppUserServiceFacade {
     }
 
     @Override
-    public void favoriteApp(String workspaceId, String analysisId, boolean fav, AsyncCallback<String> callback) {
+    public void favoriteApp(String workspaceId, String appId, boolean fav, AsyncCallback<String> callback) {
         String address = deProperties.getMuleServiceBaseUrl() + "update-favorites";
 
         JSONObject body = new JSONObject();
         body.put("workspace_id", new JSONString(workspaceId));
-        body.put("analysis_id", new JSONString(analysisId));
+        body.put("analysis_id", new JSONString(appId));
         body.put("user_favorite", JSONBoolean.getInstance(fav));
 
         ServiceCallWrapper wrapper = new ServiceCallWrapper(POST, address, body.toString());
@@ -320,30 +322,30 @@ public class AppUserServiceFacadeImpl implements AppUserServiceFacade {
     }
 
     @Override
-    public void appExportable(String analysisId, AsyncCallback<String> callback) {
+    public void appExportable(String appId, AsyncCallback<String> callback) {
         String address = deProperties.getUnproctedMuleServiceBaseUrl() + "can-export-analysis";
 
         JSONObject body = new JSONObject();
-        body.put("analysis_id", new JSONString(analysisId));
+        body.put("analysis_id", new JSONString(appId));
 
         ServiceCallWrapper wrapper = new ServiceCallWrapper(ServiceCallWrapper.Type.POST, address, body.toString());
         deServiceFacade.getServiceData(wrapper, callback);
     }
 
     @Override
-    public void copyApp(String analysisId, AsyncCallback<String> callback) {
-        String address = deProperties.getMuleServiceBaseUrl() + "copy-template/" + analysisId;
+    public void copyApp(String appId, AsyncCallback<String> callback) {
+        String address = deProperties.getMuleServiceBaseUrl() + "copy-template/" + appId;
 
         ServiceCallWrapper wrapper = new ServiceCallWrapper(GET, address);
         deServiceFacade.getServiceData(wrapper, callback);
     }
 
     @Override
-    public void deleteAppFromWorkspace(String user, String fullUsername, List<String> analysisIds, AsyncCallback<String> callback) {
+    public void deleteAppFromWorkspace(String user, String fullUsername, List<String> appIds, AsyncCallback<String> callback) {
         String address = deProperties.getMuleServiceBaseUrl() + "delete-workflow"; //$NON-NLS-1$
 
         JSONObject body = new JSONObject();
-        body.put("analysis_ids", JsonUtil.buildArrayFromStrings(analysisIds)); //$NON-NLS-1$
+        body.put("analysis_ids", JsonUtil.buildArrayFromStrings(appIds)); //$NON-NLS-1$
         body.put("user", new JSONString(user)); //$NON-NLS-1$
         body.put("full_username", new JSONString(fullUsername)); //$NON-NLS-1$
 

@@ -74,7 +74,7 @@ public interface AppUserServiceFacade extends AppServiceFacade {
      *
      * <pre>
      * {
-     *     "id": "analysid-id",
+     *     "id": "app-id",
      *     "name": "analysis-name",
      *     "inputs": [{...property-details...},...],
      *     "outputs": [{...property-details...},...]
@@ -115,7 +115,7 @@ public interface AppUserServiceFacade extends AppServiceFacade {
      * @param appId
      * @param callback
      */
-    void getDCDetails(String appId, AsyncCallback<String> asyncCallback);
+    void getDCDetails(String appId, AsyncCallback<String> callback);
 
     /**
      * Checks if the given appId is able to be exported to TITo via a copy or edit. The service will
@@ -126,40 +126,40 @@ public interface AppUserServiceFacade extends AppServiceFacade {
      * { "can-export": false, "cause": "Analysis has multiple templates." }
      * </code>
      *
-     * @param id
+     * @param appId
      * @param callback
      */
-    void appExportable(String id, AsyncCallback<String> asyncCallback);
+    void appExportable(String appId, AsyncCallback<String> callback);
 
     /**
-     * @param id
-     * @param asyncCallback
+     * @param appId
+     * @param callback
      */
-    void copyApp(String id, AsyncCallback<String> asyncCallback);
+    void copyApp(String appId, AsyncCallback<String> callback);
 
     /**
      * @param username
      * @param fullUsername
-     * @param id
-     * @param asyncCallback
+     * @param appIds
+     * @param callback
      */
-    void deleteAppFromWorkspace(String username, String fullUsername, List<String> ids,
-            AsyncCallback<String> asyncCallback);
+    void deleteAppFromWorkspace(String username, String fullUsername, List<String> appIds,
+            AsyncCallback<String> callback);
 
     /**
      * Adds an app to the given public categories.
      *
-     * @param application
+     * @param json
      * @param callback
      */
-    void publishToWorld(JSONObject json, AsyncCallback<String> asyncCallback);
+    void publishToWorld(JSONObject json, AsyncCallback<String> callback);
 
 
     /**
      * Get app details
      *
-     * @param id
+     * @param appId
      * @param callback
      */
-    void getAppDetails(String  id, AsyncCallback<String> callback);
+    void getAppDetails(String appId, AsyncCallback<String> callback);
 }
