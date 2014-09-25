@@ -66,7 +66,9 @@ public class DEServiceCallResolver extends ServiceCallResolver {
     @Override
     public String resolveAddress(String serviceName) {
         NamedServiceCall serviceCall = NamedServiceCall.parse(prefix, serviceName);
-        return serviceCall == null ? serviceName : serviceCall.resolve(appProperties);
+        final String retVal = serviceCall == null ? serviceName : serviceCall.resolve(appProperties);
+        LOG.debug("\"{}\" resolved to: {}", serviceName, retVal);
+        return retVal;
     }
 
     /**
@@ -74,6 +76,7 @@ public class DEServiceCallResolver extends ServiceCallResolver {
      */
     private static class NamedServiceCall {
 
+        private static final Logger LOG = LoggerFactory.getLogger(NamedServiceCall.class);
         /**
          * The name of the service.
          */
@@ -112,6 +115,10 @@ public class DEServiceCallResolver extends ServiceCallResolver {
             this.serviceName = serviceName;
             this.additionalPath = additionalPath;
             this.query = query;
+            LOG.debug("Constructor args:\n\t" +
+                         "serviceName = {}\n\t" +
+                         "additionalPath = {}\n\t" +
+                         "query = {}", serviceName, additionalPath, query);
         }
 
         /**
@@ -129,6 +136,9 @@ public class DEServiceCallResolver extends ServiceCallResolver {
                 return new NamedServiceCall(matcher.group(1), matcher.group(2), matcher.group(3));
             }
             else {
+                LOG.debug("Parsing failed for;\n\t" +
+                              "prefix = {}\n\t" +
+                              "address = {}", prefix, address);
                 return null;
             }
         }
@@ -141,7 +151,11 @@ public class DEServiceCallResolver extends ServiceCallResolver {
          * @throws UnresolvableServiceNameException if the service name isn't found in the properties.
          */
         public String resolve(Properties props) {
-            return getServiceBaseUrl(props) + getAdditionalPath() + getQuery();
+            final String retVal = getServiceBaseUrl(props) + getAdditionalPath() + getQuery();
+            LOG.debug("RESOLVED\n\t" +
+                          "service name: {}\n\t" +
+                          "to: {}", serviceName, retVal);
+            return retVal;
         }
 
         /**

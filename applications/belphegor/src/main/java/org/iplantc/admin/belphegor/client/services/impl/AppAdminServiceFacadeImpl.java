@@ -31,7 +31,7 @@ public class AppAdminServiceFacadeImpl implements AppAdminServiceFacade {
 
     @Override
     public void addCategory(String name, String destCategoryId, AsyncCallback<String> callback) {
-        String address = properties.getAddCategoryServiceUrl();
+        String address = "org.iplantc.belphegor.add-category";
 
         JSONObject body = new JSONObject();
         body.put("parentCategoryId", new JSONString(destCategoryId)); //$NON-NLS-1$
@@ -44,7 +44,7 @@ public class AppAdminServiceFacadeImpl implements AppAdminServiceFacade {
 
     @Override
     public void categorizeApp(AppCategorizeRequest request, AsyncCallback<String> callback) {
-        String address = properties.getCategorizeAppServiceUrl();
+        String address = "org.iplantc.belphegor.categorize-app";
         String body = AutoBeanCodex.encode(AutoBeanUtils.getAutoBean(request)).getPayload();
 
         ServiceCallWrapper wrapper = new ServiceCallWrapper(POST, address, body);
@@ -53,8 +53,7 @@ public class AppAdminServiceFacadeImpl implements AppAdminServiceFacade {
 
     @Override
     public void deleteAppCategory(String categoryId, AsyncCallback<String> callback) {
-        String address = properties.getDeleteCategoryServiceUrl()
-                             + "/" + categoryId; //$NON-NLS-1$
+        String address = "org.iplantc.belphegor.delete-category/" + categoryId;
 
         ServiceCallWrapper wrapper = new ServiceCallWrapper(DELETE, address);
         deService.getServiceData(wrapper, callback);
@@ -62,8 +61,7 @@ public class AppAdminServiceFacadeImpl implements AppAdminServiceFacade {
 
     @Override
     public void deleteApplication(String applicationId, AsyncCallback<String> callback) {
-        String address = properties.getDeleteAppServiceUrl() + "/" //$NON-NLS-1$
-                             + applicationId;
+        String address = "org.iplantc.belphegor.delete-app/" + applicationId;
 
         ServiceCallWrapper wrapper = new ServiceCallWrapper(DELETE, address);
         deService.getServiceData(wrapper, callback);
@@ -71,8 +69,7 @@ public class AppAdminServiceFacadeImpl implements AppAdminServiceFacade {
 
     @Override
     public void getAppDetails(String appId, AsyncCallback<String> callback) {
-        String address = properties.getAppDetailsServiceUrl() + "/" //$NON-NLS-1$
-                             + appId;
+        String address = "org.iplantc.belphegor.app-details/" + appId;
 
         ServiceCallWrapper wrapper = new ServiceCallWrapper(GET, address);
         deService.getServiceData(wrapper, callback);
@@ -80,15 +77,14 @@ public class AppAdminServiceFacadeImpl implements AppAdminServiceFacade {
 
     @Override
     public void getAppCategories(AsyncCallback<List<AppCategory>> callback) {
-        String address = properties.getCategoryListServiceUrl();
+        String address = "org.iplantc.belphegor.get-app-groups";
         ServiceCallWrapper wrapper = new ServiceCallWrapper(address);
         deService.getServiceData(wrapper, new AppCategoryListCallbackConverter(callback, errorStrings));
     }
 
     @Override
     public void getApps(String appCategoryId, AsyncCallback<String> callback) {
-        String address = properties.getAppsInCategoryServiceUrl()
-                             + "/" + appCategoryId; //$NON-NLS-1$
+        String address = "org.iplantc.belphegor.get-apps-in-group/" + appCategoryId;
         ServiceCallWrapper wrapper = new ServiceCallWrapper(address);
         deService.getServiceData(wrapper, callback);
     }
@@ -109,7 +105,7 @@ public class AppAdminServiceFacadeImpl implements AppAdminServiceFacade {
     @Override
     public void moveApplication(String applicationId, String groupId,
                                 AsyncCallback<String> callback) {
-        String address = properties.getMoveAppServiceUrl();
+        String address = "org.iplantc.belphegor.move-app";
 
         JSONObject body = new JSONObject();
         body.put("id", new JSONString(applicationId)); //$NON-NLS-1$
@@ -123,7 +119,7 @@ public class AppAdminServiceFacadeImpl implements AppAdminServiceFacade {
     @Override
     public void moveCategory(String categoryId, String parentCategoryId,
                              AsyncCallback<String> callback) {
-        String address = properties.getMoveCategoryServiceUrl();
+        String address = "org.iplantc.belphegor.move-category";
 
         JSONObject body = new JSONObject();
         body.put("categoryId", new JSONString(categoryId)); //$NON-NLS-1$
@@ -136,7 +132,7 @@ public class AppAdminServiceFacadeImpl implements AppAdminServiceFacade {
 
     @Override
     public void renameAppCategory(String categoryId, String name, AsyncCallback<String> callback) {
-        String address = properties.getRenameCategoryServiceUrl();
+        String address = "org.iplantc.belphegor.rename-category";
 
         JSONObject body = new JSONObject();
         body.put("categoryId", new JSONString(categoryId)); //$NON-NLS-1$
@@ -149,8 +145,7 @@ public class AppAdminServiceFacadeImpl implements AppAdminServiceFacade {
 
     @Override
     public void restoreApplication(String applicationId, AsyncCallback<String> callback) {
-        String address = properties.getRestoreAppServiceUrl() + "/" //$NON-NLS-1$
-                             + applicationId;
+        String address = "org.iplantc.belphegor.restore-app/" + applicationId;
 
         ServiceCallWrapper wrapper = new ServiceCallWrapper(GET, address);
         deService.getServiceData(wrapper, callback);
@@ -158,8 +153,7 @@ public class AppAdminServiceFacadeImpl implements AppAdminServiceFacade {
 
     @Override
     public void searchApp(String search, AsyncCallback<String> callback) {
-        String address = properties.getSearchAppServiceUrl()
-                             + "?search=" + URL.encodeQueryString(search); //$NON-NLS-1$
+        String address = "org.iplantc.belphegor.search-apps?search=" + URL.encodeQueryString(search);
 
         ServiceCallWrapper wrapper = new ServiceCallWrapper(address);
         deService.getServiceData(wrapper, callback);
@@ -167,7 +161,7 @@ public class AppAdminServiceFacadeImpl implements AppAdminServiceFacade {
 
     @Override
     public void updateApplication(JSONObject application, AsyncCallback<String> callback) {
-        String address = properties.getUpdateAppServiceUrl();
+        String address = "org.iplantc.belphegor.update-app";
 
         ServiceCallWrapper wrapper = new ServiceCallWrapper(POST, address,
                                                             application.toString());
