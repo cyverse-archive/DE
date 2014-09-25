@@ -1,5 +1,6 @@
 package org.iplantc.de.shared;
 
+import com.google.gwt.core.client.GWT;
 import org.iplantc.de.shared.exceptions.AuthenticationException;
 import org.iplantc.de.shared.exceptions.HttpRedirectException;
 
@@ -35,6 +36,7 @@ public class AsyncCallbackWrapper<T> implements AsyncCallback<T> {
      *
      * @param callback the callback that we're wrapping.
      */
+
     public AsyncCallbackWrapper(AsyncCallback<T> callback) {
         this.callback = callback;
     }
@@ -43,7 +45,7 @@ public class AsyncCallbackWrapper<T> implements AsyncCallback<T> {
      * Redirects the user to the DE landing page.
      */
     private void redirectToLandingPage() {
-        Window.Location.replace(LANDING_PAGE);
+        Window.Location.replace(GWT.getHostPageBaseURL() + LANDING_PAGE);
     }
 
     /**
