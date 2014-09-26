@@ -19,6 +19,7 @@ import java.util.List;
 
 public class DeployedComponentServicesImpl implements DeployedComponentServices {
 
+    private final String COMPONENTS = "org.iplantc.services.apps.metadata.components";
     private final DeployedComponentAutoBeanFactory factory;
     private final DEProperties deProperties;
     private final DiscEnvApiService deServiceFacade;
@@ -42,8 +43,9 @@ public class DeployedComponentServicesImpl implements DeployedComponentServices 
 
     @Override
     public void getDeployedComponents(AsyncCallback<List<DeployedComponent>> callback) {
+        String address = COMPONENTS;
         GetDeployedComponentsCallbackConverter callbackCnvt = new GetDeployedComponentsCallbackConverter(callback, factory);
-        ServiceCallWrapper wrapper = new ServiceCallWrapper("org.iplantc.services.zoidberg.components"); //$NON-NLS-1$
+        ServiceCallWrapper wrapper = new ServiceCallWrapper(address);
 
         deServiceFacade.getServiceData(wrapper, callbackCnvt);
     }

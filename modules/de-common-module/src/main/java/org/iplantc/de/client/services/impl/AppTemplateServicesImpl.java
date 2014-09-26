@@ -27,6 +27,11 @@ import java.util.Queue;
 
 public class AppTemplateServicesImpl implements AppTemplateServices, AppMetadataServiceFacade {
     private static final Queue<AsyncCallback<List<DataSource>>> dataSourceQueue = Lists.newLinkedList();
+    private final String APPS = "org.iplantc.services.apps";
+    private final String ARG_PREVIEW = "org.iplantc.services.apps.argPreview";
+    private final String DATA_SOURCES = "org.iplantc.apps.metadata.dataSources";
+    private final String FILE_INFO_TYPES = "org.iplantc.services.apps.metadata.infoTypes";
+    private final String REFERENCE_GENOMES = "org.iplantc.services.referenceGenomes";
     private final AppTemplateAutoBeanFactory factory;
     private static final Queue<AsyncCallback<List<FileInfoType>>> fileInfoTypeQueue = Lists.newLinkedList();
     private static final Queue<AsyncCallback<List<ReferenceGenome>>> refGenQueue = Lists.newLinkedList();
@@ -51,7 +56,7 @@ public class AppTemplateServicesImpl implements AppTemplateServices, AppMetadata
 
     @Override
     public void cmdLinePreview(AppTemplate at, AsyncCallback<String> callback) {
-        String address = deProperties.getUnproctedMuleServiceBaseUrl() + "arg-preview"; //$NON-NLS-1$
+        String address = ARG_PREVIEW;
         AppTemplate cleaned = doCmdLinePreviewCleanup(at);
         Splittable split = appTemplateToSplittable(cleaned);
         String payload = split.getPayload();
@@ -73,7 +78,7 @@ public class AppTemplateServicesImpl implements AppTemplateServices, AppMetadata
 
     @Override
     public void getAppTemplateForEdit(HasId appId, AsyncCallback<AppTemplate> callback) {
-        String address = deProperties.getMuleServiceBaseUrl() + "edit-app/" + appId.getId(); //$NON-NLS-1$
+        String address = APPS + "/" + appId.getId() + "/ui";
         ServiceCallWrapper wrapper = new ServiceCallWrapper(address);
         deServiceFacade.getServiceData(wrapper, new AppTemplateCallbackConverter(factory, dcServices, callback));
     }
@@ -142,9 +147,9 @@ public class AppTemplateServicesImpl implements AppTemplateServices, AppMetadata
 
     @Override
     public void updateAppLabels(AppTemplate at, AsyncCallback<String> callback) {
-        String address = deProperties.getUnproctedMuleServiceBaseUrl() + "update-app-labels"; //$NON-NLS-1$
+        String address = APPS +  "/" + at.getId(); //$NON-NLS-1$
         Splittable split = appTemplateToSplittable(at);
-        ServiceCallWrapper wrapper = new ServiceCallWrapper(POST, address, split.getPayload());
+        ServiceCallWrapper wrapper = new ServiceCallWrapper(PATCH, address, split.getPayload());
         deServiceFacade.getServiceData(wrapper, callback);
 
     }
@@ -242,7 +247,7 @@ public class AppTemplateServicesImpl implements AppTemplateServices, AppMetadata
 
     private void enqueueDataSourceCallback(final AsyncCallback<List<DataSource>> callback) {
         if (dataSourceQueue.isEmpty()) {
-            String address = deProperties.getUnproctedMuleServiceBaseUrl() + "get-workflow-elements/data-sources"; //$NON-NLS-1$
+            String address = DATA_SOURCES;
             ServiceCallWrapper wrapper = new ServiceCallWrapper(address);
             deServiceFacade.getServiceData(wrapper, new AsyncCallback<String>() {
                 @Override
@@ -268,7 +273,7 @@ public class AppTemplateServicesImpl implements AppTemplateServices, AppMetadata
 
     private void enqueueFileInfoTypeCallback(final AsyncCallback<List<FileInfoType>> callback) {
         if (fileInfoTypeQueue.isEmpty()) {
-            String address = deProperties.getUnproctedMuleServiceBaseUrl() + "get-workflow-elements/info-types";//$NON-NLS-1$
+            String address = FILE_INFO_TYPES;
             ServiceCallWrapper wrapper = new ServiceCallWrapper(address);
 
             deServiceFacade.getServiceData(wrapper, new AsyncCallback<String>() {
@@ -297,7 +302,7 @@ public class AppTemplateServicesImpl implements AppTemplateServices, AppMetadata
 
     private void enqueueRefGenomeCallback(final AsyncCallback<List<ReferenceGenome>> callback) {
         if (refGenQueue.isEmpty()) {
-            String address = deProperties.getMuleServiceBaseUrl() + "reference-genomes"; //$NON-NLS-1$
+            String address = REFERENCE_GENOMES;
             ServiceCallWrapper wrapper = new ServiceCallWrapper(address);
             deServiceFacade.getServiceData(wrapper, new AsyncCallback<String>() {
                 @Override

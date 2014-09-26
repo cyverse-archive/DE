@@ -1,7 +1,7 @@
 package org.iplantc.de.client.services.impl;
 
 import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.GET;
-import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.POST;
+import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.*;
 import org.iplantc.de.client.models.DEProperties;
 import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.client.models.apps.AppCategory;
@@ -106,7 +106,6 @@ public class AppUserServiceFacadeImpl implements AppUserServiceFacade {
 
     @Override
     public void getDataObjectsForApp(String appId, AsyncCallback<String> callback) {
-//        String address = deProperties.getMuleServiceBaseUrl() + "apps/" + analysisId + "/data-objects";
         String address = APPS + "/" + appId + "/data-objects";
 
         ServiceCallWrapper wrapper = new ServiceCallWrapper(address);
@@ -124,7 +123,7 @@ public class AppUserServiceFacadeImpl implements AppUserServiceFacade {
 
     @Override
     public void getAppDetails(String appId, AsyncCallback<String> callback) {
-        String address = deProperties.getMuleServiceBaseUrl() + "app-details/" + appId; //$NON-NLS-1$
+        String address = APPS + "/" + appId + "/details";
 
         ServiceCallWrapper wrapper = new ServiceCallWrapper(GET, address);
 
@@ -182,7 +181,7 @@ public class AppUserServiceFacadeImpl implements AppUserServiceFacade {
         body.put("rating", new JSONNumber(rating)); //$NON-NLS-1$
         body.put("comment_id", new JSONNumber(commentId)); //$NON-NLS-1$
 
-        String address = deProperties.getMuleServiceBaseUrl() + "rate-analysis"; //$NON-NLS-1$
+        String address = APPS + "/" + appId + "/rating";
         ServiceCallWrapper wrapper = new ServiceCallWrapper(POST, address, body.toString());
         deServiceFacade.getServiceData(wrapper, new AsyncCallback<String>() {
             @Override
@@ -257,12 +256,12 @@ public class AppUserServiceFacadeImpl implements AppUserServiceFacade {
     @Override
     public void deleteRating(final String appId, final String toolName, final Long commentId, final AsyncCallback<String> callback) {
         // call rating service, then delete comment from wiki page
-        String address = deProperties.getMuleServiceBaseUrl() + "delete-rating"; //$NON-NLS-1$
+        String address = APPS + "/" + appId + "/rating";
 
         JSONObject body = new JSONObject();
         body.put("analysis_id", new JSONString(appId)); //$NON-NLS-1$
 
-        ServiceCallWrapper wrapper = new ServiceCallWrapper(POST, address, body.toString());
+        ServiceCallWrapper wrapper = new ServiceCallWrapper(DELETE, address, body.toString());
         deServiceFacade.getServiceData(wrapper, new AsyncCallback<String>() {
             @Override
             public void onSuccess(String result) {
@@ -328,13 +327,13 @@ public class AppUserServiceFacadeImpl implements AppUserServiceFacade {
         JSONObject body = new JSONObject();
         body.put("analysis_id", new JSONString(appId));
 
-        ServiceCallWrapper wrapper = new ServiceCallWrapper(ServiceCallWrapper.Type.POST, address, body.toString());
+        ServiceCallWrapper wrapper = new ServiceCallWrapper(POST, address, body.toString());
         deServiceFacade.getServiceData(wrapper, callback);
     }
 
     @Override
     public void copyApp(String appId, AsyncCallback<String> callback) {
-        String address = deProperties.getMuleServiceBaseUrl() + "copy-template/" + appId;
+        String address = APPS + "/" + appId + "/copy";
 
         ServiceCallWrapper wrapper = new ServiceCallWrapper(GET, address);
         deServiceFacade.getServiceData(wrapper, callback);
@@ -355,10 +354,9 @@ public class AppUserServiceFacadeImpl implements AppUserServiceFacade {
 
     @Override
     public void searchApp(String search, AsyncCallback<String> callback) {
-        String address = deProperties.getMuleServiceBaseUrl() + "search-analyses?search=" //$NON-NLS-1$
-                + URL.encodeQueryString(search);
+        String address = APPS + "?search=" + URL.encodeQueryString(search);
 
-        ServiceCallWrapper wrapper = new ServiceCallWrapper(address);
+        ServiceCallWrapper wrapper = new ServiceCallWrapper(GET, address);
         deServiceFacade.getServiceData(wrapper, callback);
     }
 
@@ -372,14 +370,14 @@ public class AppUserServiceFacadeImpl implements AppUserServiceFacade {
 
     @Override
     public void editWorkflow(String workflowId, AsyncCallback<String> callback) {
-        String address = "org.iplantc.services.zoidberg.edit-workflow/" + workflowId; //$NON-NLS-1$
+        String address = APPS + "/" + workflowId + "/pipeline-ui";
         ServiceCallWrapper wrapper = new ServiceCallWrapper(address);
         deServiceFacade.getServiceData(wrapper, callback);
     }
 
     @Override
     public void copyWorkflow(String workflowId, AsyncCallback<String> callback) {
-        String address = "org.iplantc.services.zoidberg.copy-workflow/" + workflowId; //$NON-NLS-1$
+        String address = APPS + "/" + workflowId + "/copy-pipeline";
         ServiceCallWrapper wrapper = new ServiceCallWrapper(address);
         deServiceFacade.getServiceData(wrapper, callback);
     }
