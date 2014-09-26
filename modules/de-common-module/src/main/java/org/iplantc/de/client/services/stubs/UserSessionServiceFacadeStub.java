@@ -22,11 +22,6 @@ public class UserSessionServiceFacadeStub implements UserSessionServiceFacade {
     }
 
     @Override
-    public void clearUserSession(AsyncCallback<String> callback) {
-
-    }
-
-    @Override
     public Request getUserPreferences(AsyncCallback<String> callback) {
         return null;
     }
@@ -38,16 +33,6 @@ public class UserSessionServiceFacadeStub implements UserSessionServiceFacade {
 
     @Override
     public void postClientNotification(JSONObject notification, AsyncCallback<String> callback) {
-
-    }
-
-    @Override
-    public void getSearchHistory(AsyncCallback<String> callback) {
-
-    }
-
-    @Override
-    public void saveSearchHistory(JSONObject body, AsyncCallback<String> callback) {
 
     }
 

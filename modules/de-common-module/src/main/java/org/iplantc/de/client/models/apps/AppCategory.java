@@ -18,9 +18,6 @@ public interface AppCategory extends HasId, HasName, HasDescription {
     @PropertyName("is_public")
     boolean isPublic();
 
-    @PropertyName("workspace_id")
-    String getWorkspaceId();
-
     @PropertyName("app_count")
     void setAppCount(int templateCount);
 
@@ -28,9 +25,6 @@ public interface AppCategory extends HasId, HasName, HasDescription {
 
     @PropertyName("is_public")
     void setIsPublic(boolean isPublic);
-
-    @PropertyName("workspace_id")
-    void setWorkspaceId(String workspaceId);
 
     void setId(String id);
 

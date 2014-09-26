@@ -12,6 +12,7 @@ import com.sencha.gxt.data.shared.SortInfo;
 import java.util.List;
 
 public interface ToolRequestServiceFacade {
+    String TOOL_REQUESTS = "org.iplantc.services.toolRequests";
 
     /**
      * <a href=

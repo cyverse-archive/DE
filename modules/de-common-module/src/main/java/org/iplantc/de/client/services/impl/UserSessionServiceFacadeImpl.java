@@ -30,6 +30,8 @@ import java.util.List;
  */
 public class UserSessionServiceFacadeImpl implements UserSessionServiceFacade {
 
+    private final String BOOTSTRAP = "org.iplantc.services.bootstrap";
+    private final String LOGOUT = "org.iplantc.services.logout";
     private final DEProperties deProperties;
     private final UserInfo userInfo;
     private final CommonModelAutoBeanFactory factory;
@@ -49,7 +51,7 @@ public class UserSessionServiceFacadeImpl implements UserSessionServiceFacade {
     @Override
     public Request getUserSession(AsyncCallback<List<WindowState>> callback) {
         String address = deProperties.getMuleServiceBaseUrl() + "sessions"; //$NON-NLS-1$
-        ServiceCallWrapper wrapper = new ServiceCallWrapper(address);
+        ServiceCallWrapper wrapper = new ServiceCallWrapper(GET, address);
         return deServiceFacade.getServiceData(wrapper, new AsyncCallbackConverter<String, List<WindowState>>(callback) {
 
             @Override
@@ -70,16 +72,9 @@ public class UserSessionServiceFacadeImpl implements UserSessionServiceFacade {
     }
 
     @Override
-    public void clearUserSession(AsyncCallback<String> callback) {
-        String address = deProperties.getMuleServiceBaseUrl() + "sessions"; //$NON-NLS-1$
-        ServiceCallWrapper wrapper = new ServiceCallWrapper(DELETE, address);
-        deServiceFacade.getServiceData(wrapper, callback);
-    }
-
-    @Override
     public Request getUserPreferences(AsyncCallback<String> callback) {
         String address = deProperties.getMuleServiceBaseUrl() + "preferences"; //$NON-NLS-1$
-        ServiceCallWrapper wrapper = new ServiceCallWrapper(address);
+        ServiceCallWrapper wrapper = new ServiceCallWrapper(GET, address);
         return deServiceFacade.getServiceData(wrapper, callback);
     }
 
@@ -101,31 +96,16 @@ public class UserSessionServiceFacadeImpl implements UserSessionServiceFacade {
     }
 
     @Override
-    public void getSearchHistory(AsyncCallback<String> callback) {
-        String address = deProperties.getMuleServiceBaseUrl() + "search-history";
-        ServiceCallWrapper wrapper = new ServiceCallWrapper(GET, address);
-        deServiceFacade.getServiceData(wrapper, callback);
-    }
-
-    @Override
-    public void saveSearchHistory(JSONObject body, AsyncCallback<String> callback) {
-        String address = deProperties.getMuleServiceBaseUrl() + "search-history";
-        ServiceCallWrapper wrapper = new ServiceCallWrapper(POST, address, body.toString());
-        deServiceFacade.getServiceData(wrapper, callback);
-
-    }
-
-    @Override
     public Request bootstrap(AsyncCallback<String> callback) {
-        String address = deProperties.getMuleServiceBaseUrl() + "bootstrap";
-        ServiceCallWrapper wrapper = new ServiceCallWrapper(address);
+        String address = BOOTSTRAP;
+        ServiceCallWrapper wrapper = new ServiceCallWrapper(GET, address);
         return deServiceFacade.getServiceData(wrapper, callback);
     }
 
     @Override
     public void logout(AsyncCallback<String> callback) {
-        String address = deProperties.getMuleServiceBaseUrl() + "logout?=login-time=" + userInfo.getLoginTime();
-        ServiceCallWrapper wrapper = new ServiceCallWrapper(address);
+        String address = LOGOUT + "?=login-time=" + userInfo.getLoginTime();
+        ServiceCallWrapper wrapper = new ServiceCallWrapper(GET, address);
         deServiceFacade.getServiceData(wrapper, callback);
     }
 

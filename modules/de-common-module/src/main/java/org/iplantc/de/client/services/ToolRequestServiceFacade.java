@@ -10,6 +10,8 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
  */
 public interface ToolRequestServiceFacade {
 
+    String TOOL_REQUESTS = "org.iplantc.services.toolRequests";
+
     /**
      * Asynchronously requests the installation of a tool.
      * 

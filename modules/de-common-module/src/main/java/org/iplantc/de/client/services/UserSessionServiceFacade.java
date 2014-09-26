@@ -15,17 +15,11 @@ public interface UserSessionServiceFacade {
 
     Request saveUserSession(List<WindowState> windowStates, AsyncCallback<Void> callback);
 
-    void clearUserSession(AsyncCallback<String> callback);
-
     Request getUserPreferences(AsyncCallback<String> callback);
 
     void saveUserPreferences(Splittable json, AsyncCallback<Void> callback);
 
     void postClientNotification(JSONObject notification, AsyncCallback<String> callback);
-
-    void getSearchHistory(AsyncCallback<String> callback);
-
-    void saveSearchHistory(JSONObject body, AsyncCallback<String> callback);
 
     Request bootstrap(AsyncCallback<String> callback);
 

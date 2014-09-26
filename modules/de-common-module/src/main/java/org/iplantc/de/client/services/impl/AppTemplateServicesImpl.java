@@ -26,13 +26,15 @@ import java.util.List;
 import java.util.Queue;
 
 public class AppTemplateServicesImpl implements AppTemplateServices, AppMetadataServiceFacade {
-    private static final Queue<AsyncCallback<List<DataSource>>> dataSourceQueue = Lists.newLinkedList();
+
     private final String APPS = "org.iplantc.services.apps";
     private final String ARG_PREVIEW = "org.iplantc.services.apps.argPreview";
     private final String DATA_SOURCES = "org.iplantc.apps.metadata.dataSources";
     private final String FILE_INFO_TYPES = "org.iplantc.services.apps.metadata.infoTypes";
     private final String REFERENCE_GENOMES = "org.iplantc.services.referenceGenomes";
+
     private final AppTemplateAutoBeanFactory factory;
+    private static final Queue<AsyncCallback<List<DataSource>>> dataSourceQueue = Lists.newLinkedList();
     private static final Queue<AsyncCallback<List<FileInfoType>>> fileInfoTypeQueue = Lists.newLinkedList();
     private static final Queue<AsyncCallback<List<ReferenceGenome>>> refGenQueue = Lists.newLinkedList();
     private final List<DataSource> dataSourceList = Lists.newArrayList();
@@ -66,7 +68,7 @@ public class AppTemplateServicesImpl implements AppTemplateServices, AppMetadata
 
     @Override
     public void getAppTemplate(HasId appId, AsyncCallback<AppTemplate> callback) {
-        String address = deProperties.getMuleServiceBaseUrl() + "app/" + appId.getId(); //$NON-NLS-1$
+        String address = deProperties.getMuleServiceBaseUrl() + "app/" + appId.getId();
         ServiceCallWrapper wrapper = new ServiceCallWrapper(address);
         deServiceFacade.getServiceData(wrapper, new AppTemplateCallbackConverter(factory, dcServices, callback));
     }
@@ -85,7 +87,7 @@ public class AppTemplateServicesImpl implements AppTemplateServices, AppMetadata
 
     @Override
     public void getAppTemplatePreview(AppTemplate at, AsyncCallback<AppTemplate> callback) {
-        String address = deProperties.getUnproctedMuleServiceBaseUrl() + "preview-template"; //$NON-NLS-1$
+        String address = deProperties.getUnproctedMuleServiceBaseUrl() + "preview-template";
         Splittable split = appTemplateToSplittable(at);
         ServiceCallWrapper wrapper = new ServiceCallWrapper(POST, address, split.getPayload());
         deServiceFacade.getServiceData(wrapper, new AppTemplateCallbackConverter(factory, dcServices, callback));
@@ -120,7 +122,7 @@ public class AppTemplateServicesImpl implements AppTemplateServices, AppMetadata
 
     @Override
     public void launchAnalysis(AppTemplate at, JobExecution je, AsyncCallback<String> callback) {
-        String address = deProperties.getMuleServiceBaseUrl() + "workspaces/" + je.getWorkspaceId() + "/newexperiment"; //$NON-NLS-1$ //$NON-NLS-2$
+        String address = deProperties.getMuleServiceBaseUrl() + "workspaces/" + je.getWorkspaceId() + "/newexperiment";  //$NON-NLS-2$
         Splittable assembledPayload = doAssembleLaunchAnalysisPayload(at, je);
         GWT.log("LaunchAnalysis Json:\n" + JsonUtil.prettyPrint(assembledPayload));
 
@@ -130,7 +132,7 @@ public class AppTemplateServicesImpl implements AppTemplateServices, AppMetadata
 
     @Override
     public void rerunAnalysis(HasId analysisId, AsyncCallback<AppTemplate> callback) {
-        String address = deProperties.getMuleServiceBaseUrl() + "app-rerun-info/" + analysisId.getId(); //$NON-NLS-1$
+        String address = deProperties.getMuleServiceBaseUrl() + "app-rerun-info/" + analysisId.getId();
 
         ServiceCallWrapper wrapper = new ServiceCallWrapper(GET, address);
 
@@ -139,7 +141,7 @@ public class AppTemplateServicesImpl implements AppTemplateServices, AppMetadata
 
     @Override
     public void saveAndPublishAppTemplate(AppTemplate at, AsyncCallback<String> callback) {
-        String address = deProperties.getMuleServiceBaseUrl() + "update-app"; //$NON-NLS-1$
+        String address = deProperties.getMuleServiceBaseUrl() + "update-app";
         Splittable split = appTemplateToSplittable(at);
         ServiceCallWrapper wrapper = new ServiceCallWrapper(PUT, address, split.getPayload());
         deServiceFacade.getServiceData(wrapper, callback);
@@ -147,7 +149,7 @@ public class AppTemplateServicesImpl implements AppTemplateServices, AppMetadata
 
     @Override
     public void updateAppLabels(AppTemplate at, AsyncCallback<String> callback) {
-        String address = APPS +  "/" + at.getId(); //$NON-NLS-1$
+        String address = APPS +  "/" + at.getId();
         Splittable split = appTemplateToSplittable(at);
         ServiceCallWrapper wrapper = new ServiceCallWrapper(PATCH, address, split.getPayload());
         deServiceFacade.getServiceData(wrapper, callback);
@@ -157,7 +159,7 @@ public class AppTemplateServicesImpl implements AppTemplateServices, AppMetadata
     private Splittable appTemplateToSplittable(AppTemplate at) {
         Splittable ret = AutoBeanCodex.encode(AutoBeanUtils.getAutoBean(at));
         if (at.getDeployedComponent() != null) {
-            StringQuoter.create(at.getDeployedComponent().getId()).assign(ret, "component_id");//$NON-NLS-1$
+            StringQuoter.create(at.getDeployedComponent().getId()).assign(ret, "component_id");
         }
         // JDS Convert Argument.getValue() which contain any selected/checked *Selection types to only
         // contain their value.

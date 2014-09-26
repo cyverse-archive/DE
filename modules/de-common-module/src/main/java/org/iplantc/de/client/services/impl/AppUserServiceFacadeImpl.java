@@ -176,12 +176,13 @@ public class AppUserServiceFacadeImpl implements AppUserServiceFacade {
     @Override
     public void rateApp(final String appWikiPageUrl, String appId, int rating,
             final long commentId, final String authorEmail, final AsyncCallback<String> callback) {
+        String address = APPS + "/" + appId + "/rating";
+
         JSONObject body = new JSONObject();
         body.put("analysis_id", new JSONString(appId)); //$NON-NLS-1$
         body.put("rating", new JSONNumber(rating)); //$NON-NLS-1$
         body.put("comment_id", new JSONNumber(commentId)); //$NON-NLS-1$
 
-        String address = APPS + "/" + appId + "/rating";
         ServiceCallWrapper wrapper = new ServiceCallWrapper(POST, address, body.toString());
         deServiceFacade.getServiceData(wrapper, new AsyncCallback<String>() {
             @Override

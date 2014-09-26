@@ -4,7 +4,6 @@ import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.GET;
 import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.POST;
 import org.iplantc.admin.belphegor.client.toolRequest.service.ToolRequestServiceFacade;
 import org.iplantc.de.client.models.HasId;
-import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.client.models.toolRequest.ToolRequest;
 import org.iplantc.de.client.models.toolRequest.ToolRequestAdminAutoBeanFactory;
 import org.iplantc.de.client.models.toolRequest.ToolRequestDetails;
@@ -24,10 +23,8 @@ import java.util.List;
 
 public class ToolRequestServiceFacadeImpl implements ToolRequestServiceFacade {
 
-    private final String TOOL_REQUESTS = "org.iplantc.services.toolRequests";
     @Inject private ToolRequestAdminAutoBeanFactory factory;
     @Inject private DiscEnvApiService deService;
-    @Inject private UserInfo userInfo;
 
     @Inject
     public ToolRequestServiceFacadeImpl() { }
@@ -42,8 +39,7 @@ public class ToolRequestServiceFacadeImpl implements ToolRequestServiceFacade {
 
     @Override
     public void updateToolRequest(ToolRequestUpdate trUpdate, AsyncCallback<ToolRequestDetails> callback) {
-        String address = TOOL_REQUESTS + "/" + trUpdate.getId();
-        trUpdate.setUserName(userInfo.getUsername());
+        String address = TOOL_REQUESTS + "/" + trUpdate.getId() + "/status";
 
         final Splittable encode = AutoBeanCodex.encode(AutoBeanUtils.getAutoBean(trUpdate));
         ServiceCallWrapper wrapper = new ServiceCallWrapper(POST, address, encode.getPayload());
