@@ -25,6 +25,7 @@ import java.util.Map;
  * Entry point classes define <code>onModuleLoad()</code>.
  */
 public class Belphegor implements EntryPoint {
+    private final String BOOTSTRAP = "org.iplantc.services.admin.bootstrap";
     private final IplantDisplayStrings displayStrings = I18N.DISPLAY;
     private final IplantErrorStrings errorStrings = I18N.ERROR;
     private final BelphegorAppInjector injector = GWT.create(BelphegorAppInjector.class);
@@ -64,7 +65,7 @@ public class Belphegor implements EntryPoint {
     }
 
     private void initUserInfo() {
-        String address = adminProperties.getBootStrapUrl();
+        String address = BOOTSTRAP;
         ServiceCallWrapper wrapper = new ServiceCallWrapper(address);
         deService.getServiceData(wrapper, new AsyncCallback<String>() {
 

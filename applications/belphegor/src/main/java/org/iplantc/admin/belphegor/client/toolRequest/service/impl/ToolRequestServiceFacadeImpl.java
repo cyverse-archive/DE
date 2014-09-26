@@ -2,7 +2,6 @@ package org.iplantc.admin.belphegor.client.toolRequest.service.impl;
 
 import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.GET;
 import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.POST;
-import org.iplantc.admin.belphegor.client.models.BelphegorAdminProperties;
 import org.iplantc.admin.belphegor.client.toolRequest.service.ToolRequestServiceFacade;
 import org.iplantc.de.client.models.HasId;
 import org.iplantc.de.client.models.UserInfo;
@@ -25,22 +24,17 @@ import java.util.List;
 
 public class ToolRequestServiceFacadeImpl implements ToolRequestServiceFacade {
 
-    private final ToolRequestAdminAutoBeanFactory factory;
-    private final DiscEnvApiService deService;
-    private final BelphegorAdminProperties properties;
+    private final String TOOL_REQUESTS = "org.iplantc.services.toolRequests";
+    @Inject private ToolRequestAdminAutoBeanFactory factory;
+    @Inject private DiscEnvApiService deService;
+    @Inject private UserInfo userInfo;
 
     @Inject
-    public ToolRequestServiceFacadeImpl(ToolRequestAdminAutoBeanFactory factory,
-                                        final DiscEnvApiService deService,
-                                        final BelphegorAdminProperties properties) {
-        this.factory = factory;
-        this.deService = deService;
-        this.properties = properties;
-    }
+    public ToolRequestServiceFacadeImpl() { }
 
     @Override
     public void getToolRequestDetails(HasId toolRequest, AsyncCallback<ToolRequestDetails> callback) {
-        String address = properties.getToolRequestServiceUrl() + "/" + toolRequest.getId();
+        String address = TOOL_REQUESTS + "/" + toolRequest.getId();
 
         ServiceCallWrapper wrapper = new ServiceCallWrapper(GET, address);
         deService.getServiceData(wrapper, new ToolRequestDetailsCallbackConverter(callback, factory));
@@ -48,8 +42,8 @@ public class ToolRequestServiceFacadeImpl implements ToolRequestServiceFacade {
 
     @Override
     public void updateToolRequest(ToolRequestUpdate trUpdate, AsyncCallback<ToolRequestDetails> callback) {
-        String address = properties.getToolRequestServiceUrl();
-        trUpdate.setUserName(UserInfo.getInstance().getUsername());
+        String address = TOOL_REQUESTS + "/" + trUpdate.getId();
+        trUpdate.setUserName(userInfo.getUsername());
 
         final Splittable encode = AutoBeanCodex.encode(AutoBeanUtils.getAutoBean(trUpdate));
         ServiceCallWrapper wrapper = new ServiceCallWrapper(POST, address, encode.getPayload());
@@ -58,7 +52,7 @@ public class ToolRequestServiceFacadeImpl implements ToolRequestServiceFacade {
 
     @Override
     public void getToolRequests(SortInfo sortInfo, String userName, AsyncCallback<List<ToolRequest>> callback) {
-        String address = properties.getListToolRequestsServiceUrl();
+        String address = TOOL_REQUESTS;
         // TODO Pending rest of endpoint setup. Waiting for generic get all tool requests endpoint.
 
         ServiceCallWrapper wrapper = new ServiceCallWrapper(GET, address);

@@ -2,165 +2,45 @@ package org.iplantc.admin.belphegor.client.models;
 
 import org.iplantc.de.commons.client.ErrorHandler;
 
-import com.sencha.gxt.core.shared.FastMap;
-
-import java.util.Arrays;
 import java.util.Map;
 
 public class BelphegorAdminProperties {
 
     private static BelphegorAdminProperties instance;
-    private FastMap<String> serviceUrlMap;
 
     /**
      * The prefix used in each of the property names.
      */
-    private static final String PROPERTY_NAME_PREFIX = "org.iplantc.belphegor."; //$NON-NLS-1$
-
-    /**
-     * The base URL used to access the bootstrap.
-     */
-    private static final String SERVICE_URL_BOOTSTRAP = PROPERTY_NAME_PREFIX + "bootstrap"; //$NON-NLS-1$
-
-    /**
-     * The base URL used to access the services.
-     */
-    private static final String SERVICE_URL_BASE = PROPERTY_NAME_PREFIX + "conrad-base"; //$NON-NLS-1$
-
-    /**
-     * The URL used to access the App Groups service.
-     */
-    private static final String SERVICE_URL_CATEGORY_LIST = PROPERTY_NAME_PREFIX + "get-app-groups"; //$NON-NLS-1$
-    /**
-     * The URL used to access the App Groups service.
-     */
-    private static final String SERVICE_URL_CATEGORY_LIST_SEC = PROPERTY_NAME_PREFIX + "app-groups"; //$NON-NLS-1$
-
-    /**
-     * The URL used to access the Apps by Group service.
-     */
-    private static final String SERVICE_URL_CATEGORY_APPS = PROPERTY_NAME_PREFIX + "get-apps-in-group"; //$NON-NLS-1$
-
-    /**
-     * The URL used to access the Add Category service.
-     */
-    private static final String SERVICE_URL_CATEGORY_ADD = PROPERTY_NAME_PREFIX + "add-category"; //$NON-NLS-1$
-
-    /**
-     * The URL used to access the Rename Category service.
-     */
-    private static final String SERVICE_URL_CATEGORY_RENAME = PROPERTY_NAME_PREFIX + "rename-category"; //$NON-NLS-1$
-
-    /**
-     * The URL used to access the Move Category service.
-     */
-    private static final String SERVICE_URL_CATEGORY_MOVE = PROPERTY_NAME_PREFIX + "move-category"; //$NON-NLS-1$
-
-    /**
-     * The URL used to access the Delete Category service.
-     */
-    private static final String SERVICE_URL_CATEGORY_DELETE = PROPERTY_NAME_PREFIX + "delete-category"; //$NON-NLS-1$
-
-    /**
-     * The URL used to access the Update App service.
-     */
-    private static final String SERVICE_URL_APP_UPDATE = PROPERTY_NAME_PREFIX + "update-app"; //$NON-NLS-1$
-
-    /**
-     * The URL used to access the Move App service.
-     */
-    private static final String SERVICE_URL_APP_MOVE = PROPERTY_NAME_PREFIX + "move-app"; //$NON-NLS-1$
-
-    /**
-     * The URL used to access the restore App service.
-     */
-    private static final String SERVICE_URL_APP_RESTORE = PROPERTY_NAME_PREFIX + "restore-app"; //$NON-NLS-1$
-
-    /**
-     * The URL used to access the Delete App service.
-     */
-    private static final String SERVICE_URL_APP_DELETE = PROPERTY_NAME_PREFIX + "delete-app"; //$NON-NLS-1$
-
-    /**
-     * The URL used to access the categorize App service.
-     */
-    private static final String SERVICE_URL_APP_CATEGORIZE = PROPERTY_NAME_PREFIX + "categorize-app"; //$NON-NLS-1$
-
-    /**
-     * The URL used to access the App details service.
-     */
-    private static final String SERVICE_URL_APP_DETAILS = PROPERTY_NAME_PREFIX + "app-details"; //$NON-NLS-1$
-
-    /**
-     * The URL used to access the App Search service.
-     */
-    private static final String SERVICE_URL_APP_SEARCH = PROPERTY_NAME_PREFIX + "search-apps"; //$NON-NLS-1$
-
-    /**
-     * The URL used to access the add ref genome service.
-     */
-    private static final String SERVICE_ADD_REF_GENOME = PROPERTY_NAME_PREFIX + "add-ref-genome"; //$NON-NLS-1$
-
-    /**
-     * The URL used to access the edit ref genome service.
-     */
-    private static final String SERVICE_EDIT_REF_GENOME = PROPERTY_NAME_PREFIX + "edit-ref-genome"; //$NON-NLS-1$
-
-    /**
-     * The URL used to access the list ref genome service
-     */
-    private static final String SERVICE_LIST_REF_GENOME = PROPERTY_NAME_PREFIX + "get-ref-genomes"; //$NON-NLS-1$
-
-    /**
-     * The URL used to access the list of tool requests.
-     */
-    private static final String SERVICE_LIST_TOOL_REQUESTS = PROPERTY_NAME_PREFIX + "get-tool-requests"; //$NON-NLS-1$
-
-    /**
-     * The URL used to access the Tool Request endpoint.
-     */
-    private static final String SERVICE_TOOL_REQUEST = PROPERTY_NAME_PREFIX + "tool-request"; //$NON-NLS-1$
-
-    /**
-     * The URL used to access the admin system message endpoint.
-     */
-    private static final String SERVICE_SYSTEM_MESSAGES = PROPERTY_NAME_PREFIX + "notifications.system"; //$NON-NLS-1$  
-
-    private static final String SERVICE_SYSTEM_MESSAGE_TYPES = PROPERTY_NAME_PREFIX + "notifications.system-types"; //$NON-NLS-1$
+    private static final String PROPERTY_NAME_PREFIX = "org.iplantc.admin.";
 
     /**
      * Properties key of the default Beta Category ID.
      */
     private static final String CATEGORY_DEFAULT_BETA_GROUP_ID = PROPERTY_NAME_PREFIX
-            + "category.defaultBetaAppCategoryId";//$NON-NLS-1$
+            + "category.defaultBetaAppCategoryId";
 
     /**
      * Properties key of the default Beta Category ID.
      */
     private static final String CATEGORY_DEFAULT_TRASH_GROUP_ID = PROPERTY_NAME_PREFIX
-            + "category.defaultTrashAppCategoryId";//$NON-NLS-1$
-
-    /**
-     * The property name prefix for CAS session keepalive settings.
-     */
-    private static final String KEEPALIVE_PREFIX = PROPERTY_NAME_PREFIX + "keepalive."; //$NON-NLS-1$
+            + "category.defaultTrashAppCategoryId";
 
     /**
      * The name of property containing the CAS session keepalive target URL.
      */
-    private static final String KEEPALIVE_TARGET = KEEPALIVE_PREFIX + "target"; //$NON-NLS-1$
+    private static final String KEEPALIVE_TARGET = PROPERTY_NAME_PREFIX + "keepalive.target";
 
     /**
      * The name of the property containing the CAS session keepalive interval.
      */
-    private static final String KEEPALIVE_INTERVAL = KEEPALIVE_PREFIX + "interval"; //$NON-NLS-1$
+    private static final String KEEPALIVE_INTERVAL = PROPERTY_NAME_PREFIX + "keepalive.interval";
 
-    private static final String APP_DOC_URL = PROPERTY_NAME_PREFIX + "validAppWikiUrlPath"; //$NON-NLS-1$
+    private static final String APP_DOC_URL = PROPERTY_NAME_PREFIX + "validAppWikiUrlPath";
 
     /**
      * Properties key of the context click enabled option
      */
-    private static final String CONTEXT_CLICK_ENABLED = PROPERTY_NAME_PREFIX + "contextMenu.enabled";//$NON-NLS-1$
+    private static final String CONTEXT_CLICK_ENABLED = PROPERTY_NAME_PREFIX + "contextMenu.enabled";
 
     private String defaultBetaAppCategoryId;
 
@@ -188,20 +68,8 @@ public class BelphegorAdminProperties {
      * @param properties the properties that were fetched from the server.
      */
     public void initialize(Map<String, String> properties) {
-        serviceUrlMap = new FastMap<>();
 
-        for (String key : Arrays.asList(SERVICE_URL_BASE, SERVICE_URL_CATEGORY_ADD,
-                SERVICE_URL_CATEGORY_RENAME, SERVICE_URL_CATEGORY_MOVE, SERVICE_URL_CATEGORY_DELETE,
-                SERVICE_URL_CATEGORY_LIST, SERVICE_URL_CATEGORY_LIST_SEC, SERVICE_URL_CATEGORY_APPS,
-                SERVICE_URL_APP_UPDATE, SERVICE_URL_APP_MOVE, SERVICE_URL_APP_DELETE,
-                SERVICE_URL_APP_RESTORE, SERVICE_URL_APP_CATEGORIZE, SERVICE_URL_APP_DETAILS,
-                SERVICE_URL_APP_SEARCH, SERVICE_ADD_REF_GENOME, SERVICE_EDIT_REF_GENOME,
-                SERVICE_LIST_REF_GENOME, SERVICE_URL_BOOTSTRAP, SERVICE_LIST_TOOL_REQUESTS,
-                SERVICE_TOOL_REQUEST, SERVICE_SYSTEM_MESSAGES, SERVICE_SYSTEM_MESSAGE_TYPES)) {
-            serviceUrlMap.put(key, properties.get(key));
-        }
-
-        setDefaultTrashAppCategoryId(properties.get(CATEGORY_DEFAULT_TRASH_GROUP_ID));
+        this.defaultTrashAppCategoryId = properties.get(CATEGORY_DEFAULT_TRASH_GROUP_ID);
 
         contextClickEnabled = getBooleanProperty(properties, CONTEXT_CLICK_ENABLED, false);
         keepaliveInterval = getIntProperty(properties, KEEPALIVE_INTERVAL, -1);
@@ -292,176 +160,6 @@ public class BelphegorAdminProperties {
         }
     }
 
-    public String getBootStrapUrl() {
-        return serviceUrlMap.get(SERVICE_URL_BOOTSTRAP);
-    }
-
-    /**
-     * Gets the Add ref genome service URL.
-     * 
-     * @return the URL as a string.
-     */
-    public String getAddRefGenomeServiceUrl() {
-        return serviceUrlMap.get(SERVICE_ADD_REF_GENOME);
-    }
-
-    /**
-     * Gets the edit ref genome service URL.
-     * 
-     * @return the URL as a string.
-     */
-    public String getEditRefGenomeServiceUrl() {
-        return serviceUrlMap.get(SERVICE_EDIT_REF_GENOME);
-    }
-
-    /**
-     * Gets the list ref genomes service URL.
-     * 
-     * @return the URL as a string.
-     */
-    public String getListRefGenomeServiceUrl() {
-        return serviceUrlMap.get(SERVICE_LIST_REF_GENOME);
-    }
-
-    /**
-     * Gets the Add Category service URL.
-     * 
-     * @return the URL as a string.
-     */
-    public String getAddCategoryServiceUrl() {
-        return serviceUrlMap.get(SERVICE_URL_CATEGORY_ADD);
-    }
-
-    /**
-     * Gets the List Tool Requests service URL.
-     * 
-     * @return the URL as a string.
-     */
-    public String getListToolRequestsServiceUrl() {
-        return serviceUrlMap.get(SERVICE_LIST_TOOL_REQUESTS);
-    }
-
-    /**
-     * Gets the Tool Request service URL.
-     * 
-     * @return the URL as a string.
-     */
-    public String getToolRequestServiceUrl() {
-        return serviceUrlMap.get(SERVICE_TOOL_REQUEST);
-    }
-
-    /**
-     * Gets the Rename Category service URL.
-     * 
-     * @return the URL as a string.
-     */
-    public String getRenameCategoryServiceUrl() {
-        return serviceUrlMap.get(SERVICE_URL_CATEGORY_RENAME);
-    }
-
-    /**
-     * Gets the Move Category service URL.
-     * 
-     * @return the URL as a string.
-     */
-    public String getMoveCategoryServiceUrl() {
-        return serviceUrlMap.get(SERVICE_URL_CATEGORY_MOVE);
-    }
-
-    /**
-     * Gets the Delete Category service URL.
-     * 
-     * @return the URL as a string.
-     */
-    public String getDeleteCategoryServiceUrl() {
-        return serviceUrlMap.get(SERVICE_URL_CATEGORY_DELETE);
-    }
-
-    /**
-     * Gets the Category Listing service URL.
-     * 
-     * @return the URL as a string.
-     */
-    public String getCategoryListServiceUrl() {
-        return serviceUrlMap.get(SERVICE_URL_CATEGORY_LIST);
-    }
-
-    public String getCategoryListSecuredServiceUrl() {
-        return serviceUrlMap.get(SERVICE_URL_CATEGORY_LIST_SEC);
-    }
-
-    /**
-     * Gets the Apps-by-Category service URL.
-     * 
-     * @return the URL as a string.
-     */
-    public String getAppsInCategoryServiceUrl() {
-        return serviceUrlMap.get(SERVICE_URL_CATEGORY_APPS);
-    }
-
-    /**
-     * Gets the Update App service URL.
-     * 
-     * @return the URL as a string.
-     */
-    public String getUpdateAppServiceUrl() {
-        return serviceUrlMap.get(SERVICE_URL_APP_UPDATE);
-    }
-
-    /**
-     * Gets the Move App service URL.
-     * 
-     * @return the URL as a string.
-     */
-    public String getMoveAppServiceUrl() {
-        return serviceUrlMap.get(SERVICE_URL_APP_MOVE);
-    }
-
-    /**
-     * Gets the Delete App service URL.
-     * 
-     * @return the URL as a string.
-     */
-    public String getDeleteAppServiceUrl() {
-        return serviceUrlMap.get(SERVICE_URL_APP_DELETE);
-    }
-
-    /**
-     * Gets the Restore App service URL.
-     * 
-     * @return the URL as a string.
-     */
-    public String getRestoreAppServiceUrl() {
-        return serviceUrlMap.get(SERVICE_URL_APP_RESTORE);
-    }
-
-    /**
-     * Gets the Categorize App service URL.
-     * 
-     * @return the URL as a string.
-     */
-    public String getCategorizeAppServiceUrl() {
-        return serviceUrlMap.get(SERVICE_URL_APP_CATEGORIZE);
-    }
-
-    /**
-     * Gets the App Details service URL.
-     * 
-     * @return the URL as a string.
-     */
-    public String getAppDetailsServiceUrl() {
-        return serviceUrlMap.get(SERVICE_URL_APP_DETAILS);
-    }
-
-    /**
-     * Gets the Search App service URL.
-     * 
-     * @return the URL as a string.
-     */
-    public String getSearchAppServiceUrl() {
-        return serviceUrlMap.get(SERVICE_URL_APP_SEARCH);
-    }
-
     /**
      * Gets the default Beta Category ID.
      * 
@@ -476,13 +174,6 @@ public class BelphegorAdminProperties {
      */
     public boolean isContextClickEnabled() {
         return contextClickEnabled;
-    }
-
-    /**
-     * @param defaultTrashAppCategoryId the defaultTrashAppCategoryId to set
-     */
-    public void setDefaultTrashAppCategoryId(String defaultTrashAppCategoryId) {
-        this.defaultTrashAppCategoryId = defaultTrashAppCategoryId;
     }
 
     /**
@@ -506,31 +197,4 @@ public class BelphegorAdminProperties {
         return keepaliveInterval;
     }
 
-    /**
-     * The path to DE help file
-     * 
-     * @return path to help file
-     */
-    public String[] getValidAppWikiUrlPath() {
-        return validAppWikiUrlPath;
-    }
-
-    /**
-     * Gets the Admin System message service URL.
-     * 
-     * @return the URL as a string.
-     */
-    public String getAdminSystemMessageServiceUrl() {
-        return serviceUrlMap.get(SERVICE_SYSTEM_MESSAGES);
-    }
-
-    /**
-     * Gets the Admin System message types service URL.
-     * 
-     * @return the URL as a string.
-     */
-    public String getAdminSystemMessageTypesUrl() {
-        return serviceUrlMap.get(SERVICE_SYSTEM_MESSAGE_TYPES);
-    }
-    
 }
