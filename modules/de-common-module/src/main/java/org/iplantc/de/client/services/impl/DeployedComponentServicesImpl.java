@@ -19,7 +19,7 @@ import java.util.List;
 
 public class DeployedComponentServicesImpl implements DeployedComponentServices {
 
-    private final String COMPONENTS = "org.iplantc.services.apps.metadata.components";
+    private final String COMPONENTS = "org.iplantc.services.apps.elements.components";
     private final DeployedComponentAutoBeanFactory factory;
     private final DEProperties deProperties;
     private final DiscEnvApiService deServiceFacade;

@@ -4,7 +4,6 @@ import java.util.List;
 
 public interface AppCategoryList {
 
-    // FIXME RENAME GROUPS to CATEGORIES
-    List<AppCategory> getGroups();
+    List<AppCategory> getCategories();
 
 }

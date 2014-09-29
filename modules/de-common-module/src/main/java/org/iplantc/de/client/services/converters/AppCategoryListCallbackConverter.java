@@ -17,11 +17,13 @@ public class AppCategoryListCallbackConverter extends AsyncCallbackConverter<Str
     public class AppCategoryListLoadException extends Exception {
         private static final long serialVersionUID = -9221968252788551910L;
 
+        public AppCategoryListLoadException() { }
+
         public AppCategoryListLoadException(IplantErrorStrings errorStrings, Throwable caught) {
             super(errorStrings.appCategoriesLoadFailure(), caught);
         }
-        
     }
+
     private final IplantErrorStrings errorStrings;
 
     private final AppAutoBeanFactory factory = GWT.create(AppAutoBeanFactory.class);
@@ -33,16 +35,15 @@ public class AppCategoryListCallbackConverter extends AsyncCallbackConverter<Str
     }
 
     @Override
+    public void onFailure(Throwable caught) {
+        super.onFailure(new AppCategoryListLoadException(errorStrings, caught));
+    }
+
+    @Override
     protected List<AppCategory> convertFrom(String object) {
         AutoBean<AppCategoryList> bean = AutoBeanCodex.decode(factory, AppCategoryList.class, object);
         AppCategoryList as = bean.as();
-        List<AppCategory> groups = as.getGroups();
-        return groups;
-    }
-    
-    @Override
-    public void onFailure(Throwable caught) {
-        super.onFailure(new AppCategoryListLoadException(errorStrings, caught));
+        return as.getCategories();
     }
 
 }

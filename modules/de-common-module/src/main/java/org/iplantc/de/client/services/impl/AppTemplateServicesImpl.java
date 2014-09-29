@@ -29,8 +29,8 @@ public class AppTemplateServicesImpl implements AppTemplateServices, AppMetadata
 
     private final String APPS = "org.iplantc.services.apps";
     private final String ARG_PREVIEW = "org.iplantc.services.apps.argPreview";
-    private final String DATA_SOURCES = "org.iplantc.apps.metadata.dataSources";
-    private final String FILE_INFO_TYPES = "org.iplantc.services.apps.metadata.infoTypes";
+    private final String DATA_SOURCES = "org.iplantc.apps.elements.dataSources";
+    private final String FILE_INFO_TYPES = "org.iplantc.services.apps.elements.infoTypes";
     private final String REFERENCE_GENOMES = "org.iplantc.services.referenceGenomes";
 
     private final AppTemplateAutoBeanFactory factory;
