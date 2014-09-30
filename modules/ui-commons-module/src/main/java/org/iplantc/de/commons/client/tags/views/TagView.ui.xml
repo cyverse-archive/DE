@@ -8,8 +8,8 @@
         <div ui:field="tagDiv">
             <!-- Necessary to start both tags in one line, otherwise HTML will include a space gap between both divs -->
             <g:Label ui:field="value"></g:Label>
-             <div ui:field="editOption"></div>
-             <div ui:field="deleteOption"></div>
+             <div name="tagEdit" ui:field="editOption"></div>
+             <div name="tagDelete" ui:field="deleteOption"></div>
         </div>
        
    </g:HTMLPanel>

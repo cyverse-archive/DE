@@ -108,9 +108,9 @@ public class TagView extends Composite {
             @Override
             public void onClick(ClickEvent event) {
                 Element e = Element.as(event.getNativeEvent().getEventTarget());
-                if (e.getClassName().contains("tagEdit")) {
+                if (e.getAttribute("name").contains("tagEdit")) {
                     uiHandlers.onEditTag(TagView.this);
-                } else if (e.getClassName().contains("tagDelete")) {
+                } else if (e.getAttribute("name").contains("tagDelete")) {
                     uiHandlers.onRemoveTag(TagView.this);
                 } else {
                     uiHandlers.onSelectTag(TagView.this);
