@@ -1,7 +1,7 @@
 package org.iplantc.de.commons.client.tags.views;
 
-import org.iplantc.de.client.models.tags.IplantTagAutoBeanFactory;
 import org.iplantc.de.client.models.tags.IplantTag;
+import org.iplantc.de.client.models.tags.IplantTagAutoBeanFactory;
 import org.iplantc.de.commons.client.gin.CommonsInjector;
 import org.iplantc.de.commons.client.tags.presenter.TagListHandlers;
 import org.iplantc.de.commons.client.tags.resources.CustomIplantTagResources;
@@ -125,7 +125,7 @@ public class IplantTagListView extends Composite implements IsWidget {
         if (!Strings.isNullOrEmpty(text)) {
             AutoBean<IplantTag> tagBean = AutoBeanCodex.decode(factory, IplantTag.class, "{}");
             IplantTag tag = tagBean.as();
-            tag.setValue(text);
+            tag.setValue(text.trim());
             uiHandlers.onCreateTag(tag);
             tagSearchField.clear();
         }
