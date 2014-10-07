@@ -23,9 +23,9 @@ import com.google.inject.Inject;
 import com.sencha.gxt.cell.core.client.form.ComboBoxCell;
 import com.sencha.gxt.core.client.IdentityValueProvider;
 import com.sencha.gxt.core.client.XTemplates;
-import com.sencha.gxt.data.shared.LabelProvider;
 import com.sencha.gxt.data.shared.ListStore;
 import com.sencha.gxt.data.shared.ModelKeyProvider;
+import com.sencha.gxt.data.shared.StringLabelProvider;
 import com.sencha.gxt.data.shared.loader.BeforeLoadEvent;
 import com.sencha.gxt.data.shared.loader.BeforeLoadEvent.BeforeLoadHandler;
 import com.sencha.gxt.data.shared.loader.ListLoadResult;
@@ -64,14 +64,11 @@ public class TagSearchField implements IsWidget {
         this.proxy = proxy;
         initStore();
 
+        ListLoader<TagSuggestionLoadConfig, ListLoadResult<IplantTag>> loader = initLoader();
         final TagTemplate template = GWT.create(TagTemplate.class);
         ListView<IplantTag, IplantTag> view = initView(template);
         ComboBoxCell<IplantTag> cell = initCell(view);
-        initCombo(cell);
-
-        ListLoader<TagSuggestionLoadConfig, ListLoadResult<IplantTag>> loader = initLoader();
-        tagSearchCbo.setLoader(loader);
-        tagSearchCbo.setEmptyText(I18N.DISPLAY.search());
+        initCombo(cell, loader);
     }
 
     public void addSelectionHandler(SelectionHandler<IplantTag> handler) {
@@ -91,15 +88,14 @@ public class TagSearchField implements IsWidget {
         return tagSearchCbo;
     }
 
-    private void initCombo(ComboBoxCell<IplantTag> cell) {
+    private void initCombo(ComboBoxCell<IplantTag> cell,
+                           ListLoader<TagSuggestionLoadConfig, ListLoadResult<IplantTag>> loader) {
         tagSearchCbo = new ComboBox<>(cell);
         tagSearchCbo.setHideTrigger(true);
-        tagSearchCbo.setFinishEditOnEnter(true);
         tagSearchCbo.setEditable(true);
-        tagSearchCbo.setForceSelection(false);
-        tagSearchCbo.setMinChars(2);
-        tagSearchCbo.setTypeAhead(true);
-        tagSearchCbo.setQueryDelay(100);
+        tagSearchCbo.setLoader(loader);
+        tagSearchCbo.setMinChars(3);
+        tagSearchCbo.setEmptyText(I18N.DISPLAY.search());
     }
 
     private void initStore() {
@@ -129,7 +125,7 @@ public class TagSearchField implements IsWidget {
 
     private ComboBoxCell<IplantTag> initCell(ListView<IplantTag, IplantTag> view) {
         ComboBoxCell<IplantTag> cell = new ComboBoxCell<IplantTag>(store,
-                                                                   new LabelProvider<IplantTag>() {
+                                                                   new StringLabelProvider<IplantTag>() {
 
                                                                        @Override
                                                                        public String

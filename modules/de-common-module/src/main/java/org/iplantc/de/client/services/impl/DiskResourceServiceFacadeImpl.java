@@ -1,6 +1,9 @@
 package org.iplantc.de.client.services.impl;
 
-import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.*;
+import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.DELETE;
+import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.GET;
+import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.POST;
+
 import org.iplantc.de.client.DEClientConstants;
 import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.events.diskResources.FolderRefreshEvent;
@@ -8,7 +11,16 @@ import org.iplantc.de.client.events.diskResources.FolderRefreshEvent.FolderRefre
 import org.iplantc.de.client.models.DEProperties;
 import org.iplantc.de.client.models.HasPaths;
 import org.iplantc.de.client.models.UserInfo;
-import org.iplantc.de.client.models.diskResources.*;
+import org.iplantc.de.client.models.diskResources.DiskResource;
+import org.iplantc.de.client.models.diskResources.DiskResourceAutoBeanFactory;
+import org.iplantc.de.client.models.diskResources.DiskResourceExistMap;
+import org.iplantc.de.client.models.diskResources.DiskResourceMetadata;
+import org.iplantc.de.client.models.diskResources.DiskResourceMetadataTemplate;
+import org.iplantc.de.client.models.diskResources.DiskResourceMetadataTemplateList;
+import org.iplantc.de.client.models.diskResources.File;
+import org.iplantc.de.client.models.diskResources.Folder;
+import org.iplantc.de.client.models.diskResources.RootFolders;
+import org.iplantc.de.client.models.diskResources.TYPE;
 import org.iplantc.de.client.models.services.DiskResourceMove;
 import org.iplantc.de.client.models.services.DiskResourceRename;
 import org.iplantc.de.client.services.DiskResourceServiceFacade;
@@ -531,8 +543,8 @@ public class DiskResourceServiceFacadeImpl extends TreeStore<Folder> implements
         String address = Format.substitute("{0}{1}?user={2}&path={3}", GWT.getModuleBaseURL(), //$NON-NLS-1$
                                            constants.fileDownloadServlet(),
                                            userInfo.getUsername(),
-                                           path);
-        return URL.encode(address);
+                                           URL.encodeQueryString(path));
+        return address;
     }
 
     @Override
