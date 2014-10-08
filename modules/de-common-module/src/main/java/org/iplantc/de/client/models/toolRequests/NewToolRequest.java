@@ -29,16 +29,16 @@ public interface NewToolRequest {
 
     void setDescription(String description);
 
-    @PropertyName("src_url")
+    @PropertyName("source_url")
     String getSourceURL();
 
-    @PropertyName("src_url")
+    @PropertyName("source_url")
     void setSourceURL(String url);
 
-    @PropertyName("src_upload_file")
+    @PropertyName("source_upload_file")
     String getSourceFile();
 
-    @PropertyName("src_upload_file")
+    @PropertyName("source_upload_file")
     void setSourceFile(final String filePath);
 
     @PropertyName("documentation_url")
@@ -61,14 +61,14 @@ public interface NewToolRequest {
     /**
      * This is optional.
      */
-    YesNoMaybe getMultithreaded();
+    Boolean getMultithreaded();
 
-    void setMultithreaded(YesNoMaybe multithreaded);
+    void setMultithreaded(Boolean multithreaded);
 
-    @PropertyName("test_data_file")
+    @PropertyName("test_data_path")
     String getTestDataFile();
 
-    @PropertyName("test_data_file")
+    @PropertyName("test_data_path")
     void setTestDataFile(String filePath);
 
     @PropertyName("cmd_line")

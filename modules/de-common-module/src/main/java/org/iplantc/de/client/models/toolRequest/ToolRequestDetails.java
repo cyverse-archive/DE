@@ -52,7 +52,7 @@ public interface ToolRequestDetails extends HasId, HasName, HasDescription {
     String getTestDataPath();
 
     @Override
-    @PropertyName("uuid")
+    @PropertyName("id")
     String getId();
 
     String getVersion();

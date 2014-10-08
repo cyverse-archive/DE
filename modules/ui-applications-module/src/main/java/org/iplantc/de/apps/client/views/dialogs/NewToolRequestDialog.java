@@ -65,9 +65,9 @@ public class NewToolRequestDialog extends IPlantDialog {
             @Override
             public String getLabel(final YesNoMaybe item) {
                 switch (item) {
-                    case YES:
+                    case TRUE:
                         return YES;
-                    case NO:
+                    case FALSE:
                         return NO;
                     default:
                         return DONT_KNOW;
@@ -75,7 +75,7 @@ public class NewToolRequestDialog extends IPlantDialog {
             }
         };
         final SimpleComboBox<YesNoMaybe> chooser = new SimpleComboBox<YesNoMaybe>(labeler);
-        chooser.add(Arrays.asList(YesNoMaybe.YES, YesNoMaybe.NO, YesNoMaybe.MAYBE));
+        chooser.add(Arrays.asList(YesNoMaybe.TRUE, YesNoMaybe.FALSE, YesNoMaybe.MAYBE));
         chooser.setValue(YesNoMaybe.MAYBE);
         return chooser;
     }

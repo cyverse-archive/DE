@@ -302,7 +302,7 @@ public class NewToolRequestFormPresenterImpl implements Presenter {
         req.setVersion(view.getVersionField().getValue());
         req.setArchitecture(view.getArchitectureField().getValue());
         if (view.getMultithreadedField().getValue() != YesNoMaybe.MAYBE) {
-            req.setMultithreaded(view.getMultithreadedField().getValue());
+            req.setMultithreaded(Boolean.parseBoolean(view.getMultithreadedField().getValue().toString()));
         }
         if(testDataSelectionMode.equals(SELECTION_MODE.UPLOAD)) {
             req.setTestDataFile(makeDestinationPath(getTestDataName()));

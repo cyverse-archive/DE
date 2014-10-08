@@ -6,6 +6,6 @@ package org.iplantc.de.client.models.toolRequests;
  */
 public enum YesNoMaybe {
 
-    YES, NO, MAYBE;
+    TRUE, FALSE, MAYBE;
 
 }

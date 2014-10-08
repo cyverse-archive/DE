@@ -19,7 +19,7 @@ import java.util.Date;
  * 
  */
 public interface ToolRequest extends HasName, HasId {
-    @PropertyName("uuid")
+    @PropertyName("id")
     void setId(String id);
 
     @PropertyName("date_submitted")
@@ -39,7 +39,7 @@ public interface ToolRequest extends HasName, HasId {
     String getUpdatedBy();
 
     @Override
-    @PropertyName("uuid")
+    @PropertyName("id")
     String getId();
 
     String getVersion();

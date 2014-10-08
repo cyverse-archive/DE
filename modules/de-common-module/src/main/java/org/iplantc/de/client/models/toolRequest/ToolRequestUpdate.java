@@ -1,8 +1,5 @@
 package org.iplantc.de.client.models.toolRequest;
 
-import org.iplantc.de.client.models.HasId;
-
-import com.google.web.bindery.autobean.shared.AutoBean.PropertyName;
 
 /**
  * https://github.com/iPlantCollaborativeOpenSource/metadactyl-clj/blob/
@@ -14,14 +11,7 @@ import com.google.web.bindery.autobean.shared.AutoBean.PropertyName;
  * @author jstroot
  * 
  */
-public interface ToolRequestUpdate extends HasId {
-
-    @Override
-    @PropertyName("uuid")
-    String getId();
-
-    @PropertyName("uuid")
-    void setId(String id);
+public interface ToolRequestUpdate {
 
     String getStatus();
 
