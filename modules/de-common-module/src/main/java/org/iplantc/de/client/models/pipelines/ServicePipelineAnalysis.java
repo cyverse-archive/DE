@@ -16,10 +16,10 @@ import java.util.List;
 public interface ServicePipelineAnalysis extends HasId, HasDescription {
 
     @Override
-    @PropertyName("analysis_id")
+    @PropertyName("id")
     public String getId();
 
-    @PropertyName("analysis_id")
+    @PropertyName("id")
     public void setId(String id);
 
     @PropertyName("analysis_name")

@@ -1,7 +1,9 @@
 package org.iplantc.de.client.services.impl;
 
+import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.DELETE;
 import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.GET;
-import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.*;
+import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.POST;
+
 import org.iplantc.de.client.models.DEProperties;
 import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.client.models.apps.AppCategory;
@@ -41,6 +43,7 @@ public class AppUserServiceFacadeImpl implements AppUserServiceFacade {
 
     private final String APPS = "org.iplantc.services.apps";
     private final String CATEGORIES = "org.iplantc.services.apps.categories";
+    private final String PIPELINES = "org.iplantc.services.apps.pipelines";
     private final DiscEnvApiService deServiceFacade;
     private final DEProperties deProperties;
     private final ConfluenceServiceAsync confluenceService;
@@ -363,22 +366,21 @@ public class AppUserServiceFacadeImpl implements AppUserServiceFacade {
 
     @Override
     public void publishWorkflow(String body, AsyncCallback<String> callback) {
-        String address = deProperties.getMuleServiceBaseUrl() + "update-workflow";
-
+        String address = PIPELINES;
         ServiceCallWrapper wrapper = new ServiceCallWrapper(POST, address, body);
         deServiceFacade.getServiceData(wrapper, callback);
     }
 
     @Override
     public void editWorkflow(String workflowId, AsyncCallback<String> callback) {
-        String address = APPS + "/" + workflowId + "/pipeline-ui";
+        String address = PIPELINES + "/" + workflowId + "/ui";
         ServiceCallWrapper wrapper = new ServiceCallWrapper(address);
         deServiceFacade.getServiceData(wrapper, callback);
     }
 
     @Override
     public void copyWorkflow(String workflowId, AsyncCallback<String> callback) {
-        String address = APPS + "/" + workflowId + "/copy-pipeline";
+        String address = PIPELINES + "/" + workflowId + "/copy";
         ServiceCallWrapper wrapper = new ServiceCallWrapper(address);
         deServiceFacade.getServiceData(wrapper, callback);
     }

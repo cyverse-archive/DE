@@ -17,11 +17,11 @@ public interface PipelineApp extends HasName {
 
     public void setId(String id);
 
-    @PropertyName("template_id")
-    public String getTemplateId();
+    @PropertyName("task_id")
+    public String getTaskId();
 
-    @PropertyName("template_id")
-    public void setTemplateId(String template_id);
+    @PropertyName("task_id")
+    public void setTaskId(String task_id);
 
     @PropertyName("app_type")
     public String getAppType();

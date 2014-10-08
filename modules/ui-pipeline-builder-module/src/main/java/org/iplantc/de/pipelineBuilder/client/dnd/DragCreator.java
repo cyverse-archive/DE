@@ -180,7 +180,7 @@ public class DragCreator {
         app.setDescription(json.getDescription());
         app.setId(1);
         app.setID(json.getId());
-        app.setTemplateId(json.getTemplateId());
+        app.setTemplateId(json.getTaskId());
         app.setAppType(json.getAppType());
 
         List<PipelineAppData> inputs = json.getInputs();

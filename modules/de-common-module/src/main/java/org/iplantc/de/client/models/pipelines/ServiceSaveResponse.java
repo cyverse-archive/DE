@@ -15,6 +15,6 @@ public interface ServiceSaveResponse {
     /**
      * @return The list of IDs of Pipelines that were created or updated in the service call.
      */
-    @PropertyName("analyses")
+    @PropertyName("apps")
     public List<String> getWorkflowIds();
 }

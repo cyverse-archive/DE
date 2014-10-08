@@ -119,7 +119,7 @@ public class PipelineAutoBeanUtil {
         PipelineApp ret = AutoBeanCodex.decode(factory, PipelineApp.class,
                 AutoBeanCodex.encode(appBean).getPayload()).as();
 
-        ret.setTemplateId(app.getId());
+        ret.setTaskId(app.getId());
         ret.setId(AUTO_GEN_ID);
 
         ret.setInputs(appDataObjectsToPipelineAppData(app.getInputs()));
@@ -245,7 +245,7 @@ public class PipelineAutoBeanUtil {
 
         // Even when editing an existing Pipeline, the service should recreate the steps.
         step.setId(AUTO_GEN_ID);
-        step.setTemplateId(app.getTemplateId());
+        step.setTaskId(app.getTaskId());
         step.setAppType(app.getAppType());
         step.setName(getStepName(app));
         step.setDescription(app.getName());
@@ -261,7 +261,7 @@ public class PipelineAutoBeanUtil {
      * @return the PipelineApp's step name.
      */
     public String getStepName(PipelineApp app) {
-        return app == null ? "" : getStepName(app.getStep(), app.getTemplateId()); //$NON-NLS-1$
+        return app == null ? "" : getStepName(app.getStep(), app.getTaskId()); //$NON-NLS-1$
     }
 
     /**
@@ -411,7 +411,7 @@ public class PipelineAutoBeanUtil {
 
         ret.setStep(stepPosition);
 
-        ServicePipelineTemplate template = templateLookup.get(ret.getTemplateId());
+        ServicePipelineTemplate template = templateLookup.get(ret.getTaskId());
         if (template != null) {
             ret.setName(template.getName());
             ret.setDescription(template.getDescription());
@@ -484,7 +484,7 @@ public class PipelineAutoBeanUtil {
             // Create a new output->input mapping for sourceStepName.
             targetAppMapping = factory.appMapping().as();
             targetAppMapping.setStep(sourceStep.getStep());
-            targetAppMapping.setId(sourceStep.getTemplateId());
+            targetAppMapping.setId(sourceStep.getTaskId());
             targetAppMapping.setMap(new FastMap<String>());
 
             mapInputsOutputs.put(sourceStepName, targetAppMapping);
