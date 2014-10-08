@@ -32,8 +32,8 @@ public class ToolRequestPresenterImpl implements ToolRequestView.Presenter {
     }
 
     @Override
-    public void updateToolRequest(final ToolRequestUpdate update) {
-        toolReqService.updateToolRequest(update, new AsyncCallback<ToolRequestDetails>() {
+    public void updateToolRequest(String id, final ToolRequestUpdate update) {
+        toolReqService.updateToolRequest(id, update, new AsyncCallback<ToolRequestDetails>() {
 
             @Override
             public void onSuccess(ToolRequestDetails result) {

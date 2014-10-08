@@ -21,7 +21,7 @@ public interface ToolRequestView extends IsWidget, IsMaskable {
          * 
          * @param update
          */
-        void updateToolRequest(ToolRequestUpdate update);
+        void updateToolRequest(String id, ToolRequestUpdate update);
 
         /**
          * Retrieves and assembles a {@link ToolRequestDetails} object via the

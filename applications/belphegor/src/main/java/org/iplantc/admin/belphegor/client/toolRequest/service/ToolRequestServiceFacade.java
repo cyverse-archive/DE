@@ -38,7 +38,9 @@ public interface ToolRequestServiceFacade {
      * @param trUpdate
      * @param callback
      */
-    void updateToolRequest(ToolRequestUpdate trUpdate, AsyncCallback<ToolRequestDetails> callback);
+    void updateToolRequest(String id,
+                           ToolRequestUpdate trUpdate,
+                           AsyncCallback<ToolRequestDetails> callback);
 
     /**
      * <a href=

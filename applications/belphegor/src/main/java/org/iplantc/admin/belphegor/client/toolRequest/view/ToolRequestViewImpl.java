@@ -101,7 +101,7 @@ public class ToolRequestViewImpl extends Composite implements ToolRequestView, S
             @Override
             public void onSelect(SelectEvent event) {
                 ToolRequestUpdate tru = updateToolRequestDialog.getToolRequestUpdate();
-                presenter.updateToolRequest(tru);
+                presenter.updateToolRequest(grid.getSelectionModel().getSelectedItem().getId(), tru);
             }
         });
         updateToolRequestDialog.setSize("350px", "400px");

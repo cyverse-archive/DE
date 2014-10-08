@@ -2,6 +2,7 @@ package org.iplantc.admin.belphegor.client.toolRequest.service.impl;
 
 import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.GET;
 import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.POST;
+
 import org.iplantc.admin.belphegor.client.toolRequest.service.ToolRequestServiceFacade;
 import org.iplantc.de.client.models.HasId;
 import org.iplantc.de.client.models.toolRequest.ToolRequest;
@@ -38,9 +39,10 @@ public class ToolRequestServiceFacadeImpl implements ToolRequestServiceFacade {
     }
 
     @Override
-    public void updateToolRequest(ToolRequestUpdate trUpdate, AsyncCallback<ToolRequestDetails> callback) {
+    public void updateToolRequest(String id,
+                                  ToolRequestUpdate trUpdate,
+                                  AsyncCallback<ToolRequestDetails> callback) {
         String address = TOOL_REQUESTS + "/" + trUpdate.getId() + "/status";
-
         final Splittable encode = AutoBeanCodex.encode(AutoBeanUtils.getAutoBean(trUpdate));
         ServiceCallWrapper wrapper = new ServiceCallWrapper(POST, address, encode.getPayload());
         deService.getServiceData(wrapper, new ToolRequestDetailsCallbackConverter(callback, factory));
