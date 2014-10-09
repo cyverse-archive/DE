@@ -16,10 +16,10 @@ public interface ArgumentGroup extends HasId, HasLabel, HasName{
      */
     String IS_NEW = "new argument group";
     
-    @PropertyName("properties")
+    @PropertyName("parameters")
     List<Argument> getArguments();
     
-    @PropertyName("properties")
+    @PropertyName("parameters")
     void setArguments(List<Argument> arguments);
 
 }
