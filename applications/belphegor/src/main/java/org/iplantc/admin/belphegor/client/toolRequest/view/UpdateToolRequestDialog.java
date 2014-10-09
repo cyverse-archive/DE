@@ -143,7 +143,6 @@ public class UpdateToolRequestDialog extends IPlantDialog {
 
     public ToolRequestUpdate getToolRequestUpdate() {
         ToolRequestUpdate trUpdate = factory.update().as();
-        trUpdate.setId(toolRequest.getId());
         trUpdate.setStatus(statusCombo.getCurrentValue() != null ? (statusCombo.getCurrentValue().toString()) : statusField.getCurrentValue());
         trUpdate.setComments(commentsEditor.getCurrentValue());
         return trUpdate;

@@ -42,7 +42,7 @@ public class ToolRequestServiceFacadeImpl implements ToolRequestServiceFacade {
     public void updateToolRequest(String id,
                                   ToolRequestUpdate trUpdate,
                                   AsyncCallback<ToolRequestDetails> callback) {
-        String address = TOOL_REQUESTS + "/" + trUpdate.getId() + "/status";
+        String address = TOOL_REQUESTS + "/" + id + "/status";
         final Splittable encode = AutoBeanCodex.encode(AutoBeanUtils.getAutoBean(trUpdate));
         ServiceCallWrapper wrapper = new ServiceCallWrapper(POST, address, encode.getPayload());
         deService.getServiceData(wrapper, new ToolRequestDetailsCallbackConverter(callback, factory));

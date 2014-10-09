@@ -145,7 +145,7 @@ public class ToolRequestViewImpl extends Composite implements ToolRequestView, S
     @Override
     public void update(ToolRequestUpdate toolRequestUpdate, ToolRequestDetails toolRequestDetails) {
 
-        final ToolRequest findModelWithKey = store.findModelWithKey(toolRequestUpdate.getId());
+        final ToolRequest findModelWithKey = store.findModelWithKey(toolRequestDetails.getId());
         if (findModelWithKey != null) {
             findModelWithKey.setStatus(toolRequestUpdate.getStatus());
             findModelWithKey.setDateUpdated(new Date());
