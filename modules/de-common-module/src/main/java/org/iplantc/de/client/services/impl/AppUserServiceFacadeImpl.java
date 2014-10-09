@@ -182,7 +182,6 @@ public class AppUserServiceFacadeImpl implements AppUserServiceFacade {
         String address = APPS + "/" + appId + "/rating";
 
         JSONObject body = new JSONObject();
-        body.put("analysis_id", new JSONString(appId)); //$NON-NLS-1$
         body.put("rating", new JSONNumber(rating)); //$NON-NLS-1$
         body.put("comment_id", new JSONNumber(commentId)); //$NON-NLS-1$
 
