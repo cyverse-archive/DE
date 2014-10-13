@@ -2,6 +2,7 @@ package org.iplantc.de.client.models.apps;
 
 import org.iplantc.de.client.models.HasDescription;
 import org.iplantc.de.client.models.HasId;
+import org.iplantc.de.client.models.HasLabel;
 
 import com.google.web.bindery.autobean.shared.AutoBean.PropertyName;
 
@@ -11,7 +12,7 @@ import com.google.web.bindery.autobean.shared.AutoBean.PropertyName;
  * @author psarando
  * 
  */
-public interface DataObject extends HasId, HasDescription {
+public interface DataObject extends HasId, HasLabel, HasDescription {
 
     String getName();
 

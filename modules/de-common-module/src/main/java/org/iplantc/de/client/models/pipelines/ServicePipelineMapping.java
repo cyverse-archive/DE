@@ -13,16 +13,16 @@ import java.util.Map;
 public interface ServicePipelineMapping {
 
     @PropertyName("source_step")
-    public String getSourceStep();
+    public Integer getSourceStep();
 
     @PropertyName("source_step")
-    public void setSourceStep(String source_step);
+    public void setSourceStep(Integer source_step);
 
     @PropertyName("target_step")
-    public String getTargetStep();
+    public Integer getTargetStep();
 
     @PropertyName("target_step")
-    public void setTargetStep(String target_step);
+    public void setTargetStep(Integer target_step);
 
     public Map<String, String> getMap();
 

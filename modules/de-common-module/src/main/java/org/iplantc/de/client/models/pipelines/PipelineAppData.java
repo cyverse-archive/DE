@@ -1,5 +1,7 @@
 package org.iplantc.de.client.models.pipelines;
 
+import org.iplantc.de.client.models.HasLabel;
+
 import com.google.gwt.user.client.ui.HasName;
 
 /**
@@ -8,7 +10,7 @@ import com.google.gwt.user.client.ui.HasName;
  * @author psarando
  *
  */
-public interface PipelineAppData extends HasName {
+public interface PipelineAppData extends HasName, HasLabel {
 
     public String getId();
 

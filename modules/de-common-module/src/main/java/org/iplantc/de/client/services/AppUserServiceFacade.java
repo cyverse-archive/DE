@@ -92,7 +92,7 @@ public interface AppUserServiceFacade extends AppServiceFacade {
      * @param body post body json
      * @param callback called when the RPC call is complete
      */
-    void publishWorkflow(String body, AsyncCallback<String> callback);
+    void publishWorkflow(String workflowId, String body, AsyncCallback<String> callback);
 
     /**
      * Retrieves a workflow from the database for editing in the client.

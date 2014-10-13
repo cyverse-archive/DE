@@ -14,7 +14,7 @@ import java.util.List;
  * @author psarando
  * 
  */
-public interface ServicePipelineTemplate extends HasId, HasName, HasDescription {
+public interface ServicePipelineTask extends HasId, HasName, HasDescription {
 
     public List<DataObject> getInputs();
 

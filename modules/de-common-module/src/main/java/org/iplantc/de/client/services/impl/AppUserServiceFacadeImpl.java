@@ -14,6 +14,7 @@ import org.iplantc.de.client.util.JsonUtil;
 import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 import org.iplantc.de.resources.client.messages.IplantErrorStrings;
 import org.iplantc.de.shared.exceptions.ConfluenceException;
+import org.iplantc.de.shared.services.BaseServiceCallWrapper.Type;
 import org.iplantc.de.shared.services.ConfluenceServiceAsync;
 import org.iplantc.de.shared.services.DiscEnvApiService;
 import org.iplantc.de.shared.services.EmailServiceAsync;
@@ -364,9 +365,9 @@ public class AppUserServiceFacadeImpl implements AppUserServiceFacade {
     }
 
     @Override
-    public void publishWorkflow(String body, AsyncCallback<String> callback) {
-        String address = PIPELINES;
-        ServiceCallWrapper wrapper = new ServiceCallWrapper(POST, address, body);
+    public void publishWorkflow(String workflowId, String body, AsyncCallback<String> callback) {
+        String address = PIPELINES + "/" + workflowId;
+        ServiceCallWrapper wrapper = new ServiceCallWrapper(Type.PUT, address, body);
         deServiceFacade.getServiceData(wrapper, callback);
     }
 

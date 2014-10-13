@@ -10,11 +10,11 @@ import java.util.List;
  */
 public interface ServicePipeline {
 
-    public List<ServicePipelineAnalysis> getAnalyses();
+    public List<ServicePipelineApp> getApps();
 
-    public void setAnalyses(List<ServicePipelineAnalysis> analyses);
+    public void setApps(List<ServicePipelineApp> analyses);
 
-    public List<ServicePipelineTemplate> getTemplates();
+    public List<ServicePipelineTask> getTasks();
 
-    public void setTemplates(List<ServicePipelineTemplate> templates);
+    public void setTasks(List<ServicePipelineTask> templates);
 }

@@ -47,9 +47,13 @@ public class DragCreator {
 			e.dataTransfer.effectAllowed = 'all';
 
 			if (element.getAttribute("data-downloadurl") != null) {
-				e.dataTransfer.setData("DownloadURL", element.getAttribute("data-downloadurl"));
+				e.dataTransfer.setData("DownloadURL", element
+						.getAttribute("data-downloadurl"));
 			} else {
-				e.dataTransfer.setData('Text',rec.@org.iplantc.de.pipelineBuilder.client.json.IPCType::getId()()); // required otherwise doesn't work
+				e.dataTransfer
+						.setData(
+								'Text',
+								rec.@org.iplantc.de.pipelineBuilder.client.json.IPCType::getId()()); // required otherwise doesn't work
 				@org.iplantc.de.pipelineBuilder.client.dnd.DragCreator::dragEvent = dragIcon;
 			}
 		}
@@ -159,7 +163,7 @@ public class DragCreator {
 			if (el && el.nodeName || el === window) {
 				el.addEventListener(type, fn, false);
 			} else if (el && el.length) {
-				for ( var i = 0; i < el.length; i++) {
+				for (var i = 0; i < el.length; i++) {
 					addEvent(el[i], type, fn);
 				}
 			}
@@ -179,7 +183,6 @@ public class DragCreator {
         app.setName(json.getName());
         app.setDescription(json.getDescription());
         app.setId(1);
-        app.setID(json.getId());
         app.setTemplateId(json.getTaskId());
         app.setAppType(json.getAppType());
 
@@ -188,7 +191,7 @@ public class DragCreator {
         for (PipelineAppData dataObj : inputs) {
             Input input = new Input();
             if (dataObj != null) {
-                input.setName(dataObj.getName());
+                input.setName(dataObj.getLabel());
                 input.setDescription(dataObj.getDescription());
                 input.setId(1);
                 input.setRequired(dataObj.getRequired());
@@ -203,8 +206,9 @@ public class DragCreator {
         for (PipelineAppData dataObj : outputs) {
             Output output = new Output();
             if (dataObj != null) {
-                output.setName(dataObj.getName());
+                output.setName(dataObj.getLabel());
                 output.setDescription(dataObj.getDescription());
+                output.setValue(dataObj.getLabel());
                 output.setId(1);
                 output.setType(dataObj.getFormat());
                 output.setID(dataObj.getId());

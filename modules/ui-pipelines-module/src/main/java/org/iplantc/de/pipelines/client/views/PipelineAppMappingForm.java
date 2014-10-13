@@ -138,7 +138,7 @@ public class PipelineAppMappingForm implements PipelineAppMappingView {
                 for (PipelineAppData input : appInputs) {
                     ComboBox<PipelineMappingOutputWrapper> combo = buildOutputCombo(app, input, outputs);
 
-                    FieldLabel inputField = new FieldLabel(combo, input.getName());
+                    FieldLabel inputField = new FieldLabel(combo, input.getLabel());
                     panel.add(inputField);
                 }
             }
@@ -300,7 +300,7 @@ public class PipelineAppMappingForm implements PipelineAppMappingView {
         @Override
         public String getLabel(PipelineMappingOutputWrapper item) {
             String stepLabel = I18N.DISPLAY.stepWithValue(item.getApp().getStep());
-            return Format.substitute("{0}: {1}", stepLabel, item.getOutput().getName()); //$NON-NLS-1$
+            return Format.substitute("{0}: {1}", stepLabel, item.getOutput().getLabel()); //$NON-NLS-1$
         }
     }
 
@@ -316,7 +316,7 @@ public class PipelineAppMappingForm implements PipelineAppMappingView {
 
         @Override
         public String getValue(PipelineMappingOutputWrapper object) {
-            return object.getOutput().getName();
+            return object.getOutput().getLabel();
         }
 
         @Override

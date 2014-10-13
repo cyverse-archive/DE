@@ -239,7 +239,9 @@ public class PipelineViewPresenter implements Presenter, PipelineView.Presenter,
             return;
         }
 
-        ServicesInjector.INSTANCE.getAppUserServiceFacade().publishWorkflow(publishJson, new AsyncCallback<String>() {
+        ServicesInjector.INSTANCE.getAppUserServiceFacade().publishWorkflow(pipeline.getId(),
+                                                                            publishJson,
+                                                                            new AsyncCallback<String>() {
 
             @Override
             public void onSuccess(String result) {
@@ -457,7 +459,7 @@ public class PipelineViewPresenter implements Presenter, PipelineView.Presenter,
                     if (result != null) {
                         ListStore<PipelineApp> store = view.getPipelineAppStore();
 
-                        result.setStep(store.size() + 1);
+                        result.setStep(store.size());
                         store.add(result);
 
                         appSelectView.updateStatusBar(store.size(), result.getName());
@@ -514,7 +516,7 @@ public class PipelineViewPresenter implements Presenter, PipelineView.Presenter,
      */
     @Override
     public String getStepName(PipelineApp app) {
-        return utils.getStepName(app);
+        return app.getStep() + "";
     }
 
     /**

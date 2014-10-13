@@ -13,7 +13,7 @@ import java.util.List;
  * @author psarando
  * 
  */
-public interface ServicePipelineAnalysis extends HasId, HasDescription {
+public interface ServicePipelineApp extends HasId, HasDescription {
 
     @Override
     @PropertyName("id")
@@ -22,11 +22,11 @@ public interface ServicePipelineAnalysis extends HasId, HasDescription {
     @PropertyName("id")
     public void setId(String id);
 
-    @PropertyName("analysis_name")
-    public String getAnalysisName();
+    @PropertyName("name")
+    public String getAppName();
 
-    @PropertyName("analysis_name")
-    public void setAnalysisName(String name);
+    @PropertyName("name")
+    public void setAppName(String name);
 
     public ImplementorDetails getImplementation();
 

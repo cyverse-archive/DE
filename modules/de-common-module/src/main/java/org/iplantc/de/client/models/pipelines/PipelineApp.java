@@ -13,10 +13,6 @@ import java.util.List;
  */
 public interface PipelineApp extends HasName {
 
-    public String getId();
-
-    public void setId(String id);
-
     @PropertyName("task_id")
     public String getTaskId();
 
@@ -33,9 +29,9 @@ public interface PipelineApp extends HasName {
 
     public void setDescription(String description);
 
-    public int getStep();
+    public Integer getStep();
 
-    public void setStep(int step);
+    public void setStep(Integer step);
 
     public List<PipelineAppMapping> getMappings();
 

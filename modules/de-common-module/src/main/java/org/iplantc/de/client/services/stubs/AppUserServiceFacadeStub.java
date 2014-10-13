@@ -68,7 +68,7 @@ public class AppUserServiceFacadeStub implements AppUserServiceFacade {
     }
 
     @Override
-    public void publishWorkflow(String body, AsyncCallback<String> callback) {
+    public void publishWorkflow(String workflowId, String body, AsyncCallback<String> callback) {
 
     }
 
