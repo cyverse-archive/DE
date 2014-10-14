@@ -8,7 +8,6 @@ import org.iplantc.de.client.models.deployedComps.DeployedComponent;
 import com.google.gwt.user.client.ui.HasName;
 import com.google.web.bindery.autobean.shared.AutoBean.PropertyName;
 
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -31,16 +30,16 @@ public interface AppTemplate extends HasId, HasLabel, HasName, HasDescription {
     void setDeployedComponent(DeployedComponent deployedComponent);
 
     @PropertyName("edited_date")
-    Date getEditedDate();
+    Long getEditedDate();
 
     @PropertyName("edited_date")
-    void setEditedDate(Date edited_date);
+    void setEditedDate(Long edited_date);
 
     @PropertyName("published_date")
-    Date getPublishedDate();
+    Long getPublishedDate();
 
     @PropertyName("published_date")
-    void setPublishedDate(Date published_date);
+    void setPublishedDate(Long published_date);
 
     void setId(String id);
     
