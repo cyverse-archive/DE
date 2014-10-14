@@ -1,6 +1,7 @@
 package org.iplantc.de.apps.integration.client.presenter;
 
 import static org.iplantc.de.client.models.apps.App.NEW_APP_ID;
+
 import org.iplantc.de.apps.client.events.AppUpdatedEvent;
 import org.iplantc.de.apps.integration.client.dialogs.CommandLineOrderingPanel;
 import org.iplantc.de.apps.integration.client.events.DeleteArgumentEvent;
@@ -671,8 +672,8 @@ public class AppsEditorPresenterImpl implements AppsEditorView.Presenter,
 
         // Update the AppTemplate's edited and published date.
         Date currentTime = new Date();
-        toBeSaved.setEditedDate(currentTime);
-        toBeSaved.setPublishedDate(currentTime);
+        toBeSaved.setEditedDate(currentTime.getTime());
+        toBeSaved.setPublishedDate(currentTime.getTime());
 
         final List<Argument> argNeedUuid = Lists.newArrayList();
         // First loop over AppTemplate and look for UUIDs which need to be applied

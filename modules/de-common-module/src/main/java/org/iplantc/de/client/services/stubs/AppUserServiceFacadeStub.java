@@ -111,4 +111,10 @@ public class AppUserServiceFacadeStub implements AppUserServiceFacade {
     public void getAppDetails(String appId, AsyncCallback<String> callback) {
 
     }
+
+    @Override
+    public void createWorkflows(String body, AsyncCallback<String> callback) {
+        // TODO Auto-generated method stub
+
+    }
 }

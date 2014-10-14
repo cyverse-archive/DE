@@ -60,6 +60,42 @@ import java.util.Map;
 public class PipelineViewPresenter implements Presenter, PipelineView.Presenter, PipelineViewToolbar.Presenter, PipelineBuilderDNDHandler.Presenter, PipelineAppOrderView.Presenter,
         PipelineAppMappingView.Presenter, AppSelectionDialog.Presenter {
 
+    private final class PipelineSaveCallback implements AsyncCallback<String> {
+        private final Pipeline pipeline;
+
+        private PipelineSaveCallback(Pipeline pipeline) {
+            this.pipeline = pipeline;
+        }
+
+        @Override
+        public void onSuccess(String result) {
+
+            String newId = utils.parseServiceSaveResponseId(result);
+
+            if (!Strings.isNullOrEmpty(newId) && !newId.equals(pipeline.getId())) {
+                pipeline.setId(newId);
+                loadPipeline(pipeline);
+
+                AppCategoryCountUpdateEvent event = new AppCategoryCountUpdateEvent(true, null);
+                EventBus.getInstance().fireEvent(event);
+                AppUpdatedEvent aevent = new AppUpdatedEvent(null);
+                EventBus.getInstance().fireEvent(aevent);
+            }
+
+            toolbar.setPublishButtonEnabled(true);
+
+            if (onPublishCallback != null) {
+                onPublishCallback.execute();
+            }
+        }
+
+        @Override
+        public void onFailure(Throwable caught) {
+            ErrorHandler.post(I18N.ERROR.workflowPublishError(), caught);
+            toolbar.setPublishButtonEnabled(true);
+        }
+    }
+
     private final PipelineView view;
     private final PipelineViewToolbar toolbar;
     private AppsView.Presenter appsPresenter;
@@ -239,38 +275,16 @@ public class PipelineViewPresenter implements Presenter, PipelineView.Presenter,
             return;
         }
 
+        // create pipeline
+        if (pipeline.getId().equals(PipelineAutoBeanUtil.AUTO_GEN_ID)) {
+            ServicesInjector.INSTANCE.getAppUserServiceFacade()
+                                     .createWorkflows(publishJson, new PipelineSaveCallback(pipeline));
+        } else {
+            // update existing pipeline
         ServicesInjector.INSTANCE.getAppUserServiceFacade().publishWorkflow(pipeline.getId(),
                                                                             publishJson,
-                                                                            new AsyncCallback<String>() {
-
-            @Override
-            public void onSuccess(String result) {
-
-                String newId = utils.parseServiceSaveResponseId(result);
-
-                if (!Strings.isNullOrEmpty(newId) && !newId.equals(pipeline.getId())) {
-                    pipeline.setId(newId);
-                    loadPipeline(pipeline);
-
-                    AppCategoryCountUpdateEvent event = new AppCategoryCountUpdateEvent(true, null);
-                    EventBus.getInstance().fireEvent(event);
-                    AppUpdatedEvent aevent = new AppUpdatedEvent(null);
-                    EventBus.getInstance().fireEvent(aevent);
-                }
-
-                toolbar.setPublishButtonEnabled(true);
-
-                if (onPublishCallback != null) {
-                    onPublishCallback.execute();
-                }
-            }
-
-            @Override
-            public void onFailure(Throwable caught) {
-                ErrorHandler.post(I18N.ERROR.workflowPublishError(), caught);
-                toolbar.setPublishButtonEnabled(true);
-            }
-        });
+                                                                            new PipelineSaveCallback(pipeline));
+        }
     }
 
     private void markErrors(boolean showErrDialog) {

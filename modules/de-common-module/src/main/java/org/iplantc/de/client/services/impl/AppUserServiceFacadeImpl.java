@@ -372,6 +372,13 @@ public class AppUserServiceFacadeImpl implements AppUserServiceFacade {
     }
 
     @Override
+    public void createWorkflows(String body, AsyncCallback<String> callback) {
+        String address = PIPELINES;
+        ServiceCallWrapper wrapper = new ServiceCallWrapper(Type.POST, address, body);
+        deServiceFacade.getServiceData(wrapper, callback);
+    }
+
+    @Override
     public void editWorkflow(String workflowId, AsyncCallback<String> callback) {
         String address = PIPELINES + "/" + workflowId + "/ui";
         ServiceCallWrapper wrapper = new ServiceCallWrapper(address);

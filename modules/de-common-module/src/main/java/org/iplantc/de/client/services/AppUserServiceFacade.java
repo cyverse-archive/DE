@@ -162,4 +162,6 @@ public interface AppUserServiceFacade extends AppServiceFacade {
      * @param callback
      */
     void getAppDetails(String appId, AsyncCallback<String> callback);
+
+    void createWorkflows(String body, AsyncCallback<String> callback);
 }

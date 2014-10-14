@@ -56,4 +56,5 @@ public interface AppServiceFacade {
      * @param callback called when the RPC call is complete.
      */
     void searchApp(String search, AsyncCallback<String> callback);
+
 }
