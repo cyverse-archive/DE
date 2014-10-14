@@ -35,9 +35,4 @@ public class AppServiceFacadeStub implements AppServiceFacade {
 
     }
 
-    @Override
-    public void createWorkflows(String body, AsyncCallback<String> callback) {
-        // TODO Auto-generated method stub
-
-    }
 }
