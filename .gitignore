@@ -32,4 +32,5 @@ ucdetector_reports
 *.iml
 out/
 applications/config*
+.idea/
 
