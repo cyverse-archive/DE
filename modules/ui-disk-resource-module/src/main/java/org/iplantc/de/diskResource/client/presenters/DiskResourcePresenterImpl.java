@@ -220,6 +220,7 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter, Di
         if (event.getSelectedItem() instanceof Folder) {
             setSelectedFolderByPath(event.getSelectedItem());
         } else if ((event.getSelectedItem() instanceof File) && isFilePreviewEnabled) {
+            // TODO: JDS - Possibly refactor to get stat/manifest before hand
             eventBus.fireEvent(new ShowFilePreviewEvent((File)event.getSelectedItem(), this));
         }
     }

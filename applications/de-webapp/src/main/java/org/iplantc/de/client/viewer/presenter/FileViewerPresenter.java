@@ -1,5 +1,6 @@
 package org.iplantc.de.client.viewer.presenter;
 
+import org.iplantc.de.client.events.FileSavedEvent;
 import org.iplantc.de.client.gin.ServicesInjector;
 import org.iplantc.de.client.models.diskResources.File;
 import org.iplantc.de.client.models.diskResources.Folder;
@@ -13,6 +14,8 @@ import org.iplantc.de.client.viewer.factory.MimeTypeViewerResolverFactory;
 import org.iplantc.de.client.viewer.views.FileViewer;
 import org.iplantc.de.client.windows.FileViewerWindow;
 
+import com.google.common.collect.Iterables;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasOneWidget;
@@ -28,6 +31,7 @@ import java.util.List;
  * 
  */
 public class FileViewerPresenter implements FileViewer.Presenter {
+
 
     // A presenter can handle more than one view of the same data at a time
     private List<FileViewer> viewers;
@@ -54,10 +58,20 @@ public class FileViewerPresenter implements FileViewer.Presenter {
 
     public FileViewerPresenter(File file, JSONObject manifest, boolean editing, boolean isVizTabFirst) {
         this.manifest = manifest;
-        viewers = new ArrayList<FileViewer>();
+        viewers = new ArrayList<>();
         this.file = file;
         this.editing = editing;
         this.isVizTabFirst = isVizTabFirst;
+    }
+
+    @Override
+    public HandlerRegistration addFileSavedEventHandler(FileSavedEvent.FileSavedEventHandler handler) {
+        // Only the first file viewers fire FileSavedEvents.
+        FileViewer firstFileViewer = Iterables.getFirst(viewers, null);
+        if(firstFileViewer == null){
+            return null;
+        }
+        return firstFileViewer.addFileSavedEventHandler(handler);
     }
 
     /*

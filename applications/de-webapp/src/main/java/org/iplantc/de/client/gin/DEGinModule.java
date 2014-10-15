@@ -27,6 +27,7 @@ import org.iplantc.de.commons.client.info.IplantAnnouncer;
 import org.iplantc.de.commons.client.requests.KeepaliveTimer;
 import org.iplantc.de.resources.client.IplantResources;
 
+import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.inject.client.AbstractGinModule;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
@@ -99,6 +100,10 @@ public class DEGinModule extends AbstractGinModule {
 
     @Provides @Singleton public IplantAnnouncer createAnnouncer() {
         return IplantAnnouncer.getInstance();
+    }
+
+    @Provides @Singleton public Scheduler getScheduler() {
+        return Scheduler.get();
     }
 
     @Override

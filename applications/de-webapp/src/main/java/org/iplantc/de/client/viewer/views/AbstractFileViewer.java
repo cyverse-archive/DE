@@ -3,12 +3,15 @@
  */
 package org.iplantc.de.client.viewer.views;
 
+import static org.iplantc.de.client.events.FileSavedEvent.FileSavedEventHandler;
+import org.iplantc.de.client.events.FileSavedEvent;
 import org.iplantc.de.client.models.diskResources.File;
 
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.Widget;
 
 /**
- * @author sriram
+ * @author sriram, jstroot
  * 
  */
 public abstract class AbstractFileViewer implements FileViewer {
@@ -27,22 +30,18 @@ public abstract class AbstractFileViewer implements FileViewer {
     @Override
     public abstract Widget asWidget();
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.iplantc.de.client.viewer.views.FileViewer#setPresenter(org.iplantc.de.client.viewer.views.
-     * FileViewer.Presenter)
-     */
+    @Override
+    public HandlerRegistration addFileSavedEventHandler(final FileSavedEventHandler handler){
+        return asWidget().addHandler(handler, FileSavedEvent.TYPE);
+    }
+
     @Override
     public void setPresenter(Presenter p) {
         this.presenter = p;
-
     }
 
     @Override
     public abstract void setData(Object data);
-
 
     @Override
     public abstract void loadData();
@@ -52,11 +51,6 @@ public abstract class AbstractFileViewer implements FileViewer {
     	//do nothing
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.iplantc.de.client.viewer.views.FileViewer#getFileSize()
-     */
     @Override
     public long getFileSize() {
         if (file != null) {
@@ -66,11 +60,6 @@ public abstract class AbstractFileViewer implements FileViewer {
         return 0;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.iplantc.de.client.viewer.views.FileViewer#getInfoType()
-     */
     @Override
     public String getInfoType() {
         return infoType;

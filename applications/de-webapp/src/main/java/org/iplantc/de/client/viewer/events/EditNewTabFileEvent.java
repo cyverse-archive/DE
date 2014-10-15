@@ -1,49 +1,33 @@
 package org.iplantc.de.client.viewer.events;
 
-import org.iplantc.de.client.viewer.events.EditNewTabFileEvent.EditNewTabFileEventHandeler;
-
 import com.google.gwt.event.shared.EventHandler;
 import com.google.gwt.event.shared.GwtEvent;
 
-public class EditNewTabFileEvent extends GwtEvent<EditNewTabFileEventHandeler> {
+public class EditNewTabFileEvent extends GwtEvent<EditNewTabFileEvent.EditNewTabFileEventHandler> {
     
-    public interface EditNewTabFileEventHandeler extends EventHandler {
+    public interface EditNewTabFileEventHandler extends EventHandler {
         void onNewTabFile(EditNewTabFileEvent event);
     }
 
-    public static final com.google.gwt.event.shared.GwtEvent.Type<EditNewTabFileEventHandeler> TYPE = new Type<EditNewTabFileEventHandeler>();
+    public static final GwtEvent.Type<EditNewTabFileEventHandler> TYPE = new Type<>();
     private int columns;
-    private String separator;
 
-    public EditNewTabFileEvent(int columns, String separator) {
-        this.setColumns(columns);
-        this.setSeparator(separator);
+    public EditNewTabFileEvent(final int columns) {
+        this.columns = columns;
     }
 
     @Override
-    public com.google.gwt.event.shared.GwtEvent.Type<EditNewTabFileEventHandeler> getAssociatedType() {
+    public GwtEvent.Type<EditNewTabFileEventHandler> getAssociatedType() {
         return TYPE;
     }
 
     @Override
-    protected void dispatch(EditNewTabFileEventHandeler handler) {
+    protected void dispatch(EditNewTabFileEventHandler handler) {
         handler.onNewTabFile(this);
-    }
-
-    public String getSeparator() {
-        return separator;
-    }
-
-    public void setSeparator(String separator) {
-        this.separator = separator;
     }
 
     public int getColumns() {
         return columns;
-    }
-
-    public void setColumns(int columns) {
-        this.columns = columns;
     }
 
 }

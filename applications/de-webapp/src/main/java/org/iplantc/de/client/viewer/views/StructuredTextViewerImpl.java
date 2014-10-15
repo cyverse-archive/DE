@@ -9,7 +9,6 @@ import org.iplantc.de.client.models.viewer.StructuredText;
 import org.iplantc.de.client.models.viewer.StructuredTextAutoBeanFactory;
 import org.iplantc.de.client.util.JsonUtil;
 import org.iplantc.de.client.viewer.events.EditNewTabFileEvent;
-import org.iplantc.de.client.viewer.events.EditNewTabFileEvent.EditNewTabFileEventHandeler;
 import org.iplantc.de.client.viewer.events.SaveFileEvent;
 import org.iplantc.de.client.viewer.events.SaveFileEvent.SaveFileEventHandler;
 import org.iplantc.de.commons.client.ErrorHandler;
@@ -64,7 +63,7 @@ import com.sencha.gxt.widget.core.client.grid.filters.StringFilter;
 import java.util.ArrayList;
 import java.util.List;
 
-public class StrcturedTextViewerImpl extends StructuredTextViewer {
+public class StructuredTextViewerImpl extends StructuredTextViewer {
 
     private final class StructuredTextValueProvider implements ValueProvider<JSONObject, String> {
         private final int index;
@@ -113,7 +112,7 @@ public class StrcturedTextViewerImpl extends StructuredTextViewer {
     private final String NEW_LINE = "\n";
 
     private final StructuredTextAutoBeanFactory factory = GWT.create(StructuredTextAutoBeanFactory.class);
-    private final List<HandlerRegistration> eventHandlers = new ArrayList<HandlerRegistration>();
+    private final List<HandlerRegistration> eventHandlers = new ArrayList<>();
 
     private StructuredText text_bean;
     private List<JSONObject> skippedRows;
@@ -125,7 +124,7 @@ public class StrcturedTextViewerImpl extends StructuredTextViewer {
     private final Folder parentFolder;
     private RowNumberer<JSONObject> numberer;
 
-    public StrcturedTextViewerImpl(File file, String infoType, Folder parentFolder) {
+    public StructuredTextViewerImpl(File file, String infoType, Folder parentFolder) {
         super(file, infoType);
         this.parentFolder = parentFolder;
         initLayout();
@@ -134,7 +133,7 @@ public class StrcturedTextViewerImpl extends StructuredTextViewer {
         loadData();
         EventBus eventbus = EventBus.getInstance();
         eventHandlers.add(eventbus.addHandler(EditNewTabFileEvent.TYPE,
-                                              new EditNewTabFileEventHandeler() {
+                                              new EditNewTabFileEvent.EditNewTabFileEventHandler() {
 
                                                   @Override
                                                   public void onNewTabFile(EditNewTabFileEvent event) {
@@ -144,7 +143,7 @@ public class StrcturedTextViewerImpl extends StructuredTextViewer {
                                                   }
 
                                               }));
-        addLineHumberHandler();
+        addLineNumberHandler();
 
     }
 
@@ -196,7 +195,7 @@ public class StrcturedTextViewerImpl extends StructuredTextViewer {
         return new MarginData();
     }
 
-    private void addLineHumberHandler() {
+    private void addLineNumberHandler() {
         toolbar.addLineNumberCbxChangeHandleer(new ValueChangeHandler<Boolean>() {
 
             @Override
@@ -258,7 +257,7 @@ public class StrcturedTextViewerImpl extends StructuredTextViewer {
         if (grid != null) {
             if (rowEditing == null && editing) {
                 grid.setToolTip("Double click to edit...");
-                rowEditing = new GridInlineEditing<JSONObject>(grid);
+                rowEditing = new GridInlineEditing<>(grid);
                 rowEditing.setClicksToEdit(ClicksToEdit.TWO);
                 rowEditing.addCompleteEditHandler(new CompleteEditHandler<JSONObject>() {
 
@@ -310,7 +309,7 @@ public class StrcturedTextViewerImpl extends StructuredTextViewer {
     }
 
     private List<String> jsonToStringList(JSONObject obj) {
-        List<String> strList = new ArrayList<String>();
+        List<String> strList = new ArrayList<>();
         for (String key : obj.keySet()) {
             JSONValue val = obj.get(key);
             if (val != null && val.isString() != null) {
@@ -322,25 +321,24 @@ public class StrcturedTextViewerImpl extends StructuredTextViewer {
     }
 
     private void initGrid(int columns) {
-        List<ColumnConfig<JSONObject, ?>> configs = new ArrayList<ColumnConfig<JSONObject, ?>>();
-        numberer = new RowNumberer<JSONObject>();
+        List<ColumnConfig<JSONObject, ?>> configs = new ArrayList<>();
+        numberer = new RowNumberer<>();
         numberer.setHidden(true);
         configs.add(numberer);
-        GridFilters<JSONObject> filters = new GridFilters<JSONObject>();
+        GridFilters<JSONObject> filters = new GridFilters<>();
         if (columns > 0) {
             this.columns = columns;
             for (int i = 0; i < columns; i++) {
-                final int index = i;
-                StructuredTextValueProvider valueProvider = new StructuredTextValueProvider(index);
-                ColumnConfig<JSONObject, String> col = new ColumnConfig<JSONObject, String>(valueProvider);
-                col.setHeader(index + "");
-                StringFilter<JSONObject> strFilter = new StringFilter<JSONObject>(valueProvider);
+                StructuredTextValueProvider valueProvider = new StructuredTextValueProvider(i);
+                ColumnConfig<JSONObject, String> col = new ColumnConfig<>(valueProvider);
+                col.setHeader(i + "");
+                StringFilter<JSONObject> strFilter = new StringFilter<>(valueProvider);
                 filters.addFilter(strFilter);
                 configs.add(col);
             }
         }
 
-        grid = new Grid<JSONObject>(getStore(), new ColumnModel<JSONObject>(configs));
+        grid = new Grid<>(getStore(), new ColumnModel<>(configs));
         grid.setSelectionModel(new CellSelectionModel<JSONObject>());
         grid.getView().setStripeRows(true);
         grid.getView().setTrackMouseOver(true);
@@ -352,7 +350,7 @@ public class StrcturedTextViewerImpl extends StructuredTextViewer {
 
     private ListStore<JSONObject> getStore() {
         if (store == null) {
-            store = new ListStore<JSONObject>(new ModelKeyProvider<JSONObject>() {
+            store = new ListStore<>(new ModelKeyProvider<JSONObject>() {
 
                 private int index;
 
@@ -483,7 +481,7 @@ public class StrcturedTextViewerImpl extends StructuredTextViewer {
     public void skipRows(int val) {
         if (val > 0 && val < store.size() + ((skippedRows != null) ? skippedRows.size() : 0)) {
             if (skippedRows == null) {
-                skippedRows = new ArrayList<JSONObject>();
+                skippedRows = new ArrayList<>();
                 // increment
                 skippedRows.addAll(store.subList(0, val));
             } else if (skippedRows.size() > val) {

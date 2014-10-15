@@ -2,10 +2,14 @@ package org.iplantc.de.client.windows.util;
 
 import org.iplantc.de.client.DEClientConstants;
 import org.iplantc.de.client.events.EventBus;
+import org.iplantc.de.client.services.FileEditorServiceFacade;
 import org.iplantc.de.client.windows.*;
 import org.iplantc.de.commons.client.util.WindowUtil;
 import org.iplantc.de.commons.client.views.window.configs.*;
+import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
+import org.iplantc.de.resources.client.messages.IplantErrorStrings;
 
+import com.google.gwt.core.client.Scheduler;
 import com.google.inject.Inject;
 
 /**
@@ -15,10 +19,25 @@ import com.google.inject.Inject;
 public class WindowFactory {
 
     private final DEClientConstants constants;
+    private EventBus eventBus;
+    private final IplantDisplayStrings displayStrings;
+    private final IplantErrorStrings errorStrings;
+    private FileEditorServiceFacade fileEditorService;
+    private Scheduler scheduler;
 
     @Inject
-    public WindowFactory(final DEClientConstants constants) {
+    public WindowFactory(final DEClientConstants constants,
+                         final EventBus eventBus,
+                         final IplantDisplayStrings displayStrings,
+                         final IplantErrorStrings errorStrings,
+                         final FileEditorServiceFacade fileEditorService,
+                         final Scheduler scheduler) {
         this.constants = constants;
+        this.eventBus = eventBus;
+        this.displayStrings = displayStrings;
+        this.errorStrings = errorStrings;
+        this.fileEditorService = fileEditorService;
+        this.scheduler = scheduler;
     }
 
     /**
@@ -29,7 +48,6 @@ public class WindowFactory {
      * @return
      */
     public <C extends WindowConfig> IPlantWindowInterface build(C config) {
-        final EventBus eventBus = EventBus.getInstance();
         IPlantWindowInterface ret = null;
         switch (config.getWindowType()) {
             case ABOUT:
@@ -51,7 +69,7 @@ public class WindowFactory {
                 ret = new DeDiskResourceWindow((DiskResourceWindowConfig)config);
                 break;
             case DATA_VIEWER:
-                ret = new FileViewerWindow((FileViewerWindowConfig)config, eventBus);
+                ret = new FileViewerWindow((FileViewerWindowConfig)config, eventBus, displayStrings, errorStrings, fileEditorService, scheduler);
                 break;
             case HELP:
                 WindowUtil.open(constants.deHelpFile());

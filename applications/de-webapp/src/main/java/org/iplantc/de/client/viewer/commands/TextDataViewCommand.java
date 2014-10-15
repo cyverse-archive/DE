@@ -4,7 +4,7 @@ import org.iplantc.de.client.models.diskResources.File;
 import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.client.models.viewer.InfoType;
 import org.iplantc.de.client.viewer.views.FileViewer;
-import org.iplantc.de.client.viewer.views.StrcturedTextViewerImpl;
+import org.iplantc.de.client.viewer.views.StructuredTextViewerImpl;
 import org.iplantc.de.client.viewer.views.TextViewerImpl;
 
 import com.google.common.base.Strings;
@@ -43,7 +43,7 @@ public class TextDataViewCommand implements ViewCommand {
             if (infoType.equals(InfoType.CSV.toString()) || infoType.equals(InfoType.TSV.toString())
                     || infoType.equals(InfoType.VCF.toString())
                     || infoType.equals(InfoType.GFF.toString())) {
-                viewers.add(new StrcturedTextViewerImpl(file, infoType, parentFolder));
+                viewers.add(new StructuredTextViewerImpl(file, infoType, parentFolder));
 
             }
         }
