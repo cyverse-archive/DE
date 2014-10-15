@@ -8,6 +8,21 @@ import com.google.web.bindery.autobean.shared.AutoBean.PropertyName;
 
 public interface DeployedComponent extends HasId, HasDescription, HasName {
 
+    @Override
+    @PropertyName("tool_id")
+    String getId();
+    
+    @PropertyName("tool_id")
+    void setId(String id);
+    
+    @Override
+    @PropertyName("tool")
+    String getName();
+
+    @Override
+    @PropertyName("tool")
+    void setName(String name);
+
     @PropertyName("hid")
     String getHid();
     

@@ -672,8 +672,8 @@ public class AppsEditorPresenterImpl implements AppsEditorView.Presenter,
 
         // Update the AppTemplate's edited and published date.
         Date currentTime = new Date();
-        toBeSaved.setEditedDate(currentTime.getTime());
-        toBeSaved.setPublishedDate(currentTime.getTime());
+        toBeSaved.setEditedDate(currentTime);
+        toBeSaved.setPublishedDate(currentTime);
 
         final List<Argument> argNeedUuid = Lists.newArrayList();
         // First loop over AppTemplate and look for UUIDs which need to be applied

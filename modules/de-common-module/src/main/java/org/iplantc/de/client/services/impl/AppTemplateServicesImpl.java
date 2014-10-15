@@ -34,6 +34,7 @@ import com.google.common.collect.Lists;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.inject.Inject;
+import com.google.web.bindery.autobean.shared.AutoBean;
 import com.google.web.bindery.autobean.shared.AutoBeanCodex;
 import com.google.web.bindery.autobean.shared.AutoBeanUtils;
 import com.google.web.bindery.autobean.shared.Splittable;
@@ -41,6 +42,8 @@ import com.google.web.bindery.autobean.shared.impl.StringQuoter;
 
 import java.util.List;
 import java.util.Queue;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class AppTemplateServicesImpl implements AppTemplateServices, AppMetadataServiceFacade {
 
@@ -62,6 +65,8 @@ public class AppTemplateServicesImpl implements AppTemplateServices, AppMetadata
     private final DiscEnvApiService deServiceFacade;
     private final DEProperties deProperties;
 
+    Logger LOG = Logger.getLogger("Template service");
+
     @Inject
     public AppTemplateServicesImpl(final DiscEnvApiService deServiceFacade,
                                    final DEProperties deProperties,
@@ -77,6 +82,8 @@ public class AppTemplateServicesImpl implements AppTemplateServices, AppMetadata
     public void cmdLinePreview(AppTemplate at, AsyncCallback<String> callback) {
         String address = ARG_PREVIEW;
         AppTemplate cleaned = doCmdLinePreviewCleanup(at);
+        // SS: Service wont accept string values for dates
+        cleaned.setEditedDate(null);
         Splittable split = appTemplateToSplittable(cleaned);
         String payload = split.getPayload();
         ServiceCallWrapper wrapper = new ServiceCallWrapper(POST, address, payload);
@@ -174,7 +181,9 @@ public class AppTemplateServicesImpl implements AppTemplateServices, AppMetadata
     }
 
     private Splittable appTemplateToSplittable(AppTemplate at) {
-        Splittable ret = AutoBeanCodex.encode(AutoBeanUtils.getAutoBean(at));
+        AutoBean<AppTemplate> autoBean = AutoBeanUtils.getAutoBean(at);
+        Splittable ret = AutoBeanCodex.encode(autoBean);
+        LOG.log(Level.SEVERE, "template from bean-->" + ret.getPayload() + "");
         if (at.getDeployedComponent() != null) {
             StringQuoter.create(at.getDeployedComponent().getId()).assign(ret, "component_id");
         }
