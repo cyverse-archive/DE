@@ -1,20 +1,22 @@
 package org.iplantc.de.client.viewer.views;
 
+import static org.iplantc.de.resources.client.messages.I18N.DISPLAY;
+import static org.iplantc.de.resources.client.messages.I18N.ERROR;
 import org.iplantc.de.client.callbacks.FileSaveCallback;
-import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.events.FileSavedEvent;
 import org.iplantc.de.client.gin.ServicesInjector;
 import org.iplantc.de.client.models.diskResources.File;
 import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.client.models.viewer.StructuredText;
 import org.iplantc.de.client.models.viewer.StructuredTextAutoBeanFactory;
+import org.iplantc.de.client.services.FileEditorServiceFacade;
 import org.iplantc.de.client.util.JsonUtil;
-import org.iplantc.de.client.viewer.events.EditNewTabFileEvent;
 import org.iplantc.de.client.viewer.events.SaveFileEvent;
 import org.iplantc.de.client.viewer.events.SaveFileEvent.SaveFileEventHandler;
 import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.diskResource.client.views.dialogs.SaveAsDialog;
-import org.iplantc.de.resources.client.messages.I18N;
+import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
+import org.iplantc.de.resources.client.messages.IplantErrorStrings;
 
 import com.google.common.base.Joiner;
 import com.google.gwt.core.shared.GWT;
@@ -98,6 +100,10 @@ public class StructuredTextViewerImpl extends StructuredTextViewer {
         }
     }
 
+    private final IplantDisplayStrings displayStrings = DISPLAY;
+    private final IplantErrorStrings errorStrings = ERROR;
+    private final FileEditorServiceFacade fileEditorService = ServicesInjector.INSTANCE.getFileEditorServiceFacade();
+
     private Grid<JSONObject> grid;
     private StructuredTextViewToolBar toolbar;
     private ViewerPagingToolBar pagingToolbar;
@@ -124,27 +130,22 @@ public class StructuredTextViewerImpl extends StructuredTextViewer {
     private final Folder parentFolder;
     private RowNumberer<JSONObject> numberer;
 
-    public StructuredTextViewerImpl(File file, String infoType, Folder parentFolder) {
+    public StructuredTextViewerImpl(File file,
+                                    String infoType,
+                                    Integer columns,
+                                    Folder parentFolder) {
         super(file, infoType);
         this.parentFolder = parentFolder;
         initLayout();
         initToolbar();
         initPagingToolbar();
         loadData();
-        EventBus eventbus = EventBus.getInstance();
-        eventbus.addHandler(EditNewTabFileEvent.TYPE,
-                                              new EditNewTabFileEvent.EditNewTabFileEventHandler() {
-
-                                                  @Override
-                                                  public void onNewTabFile(EditNewTabFileEvent event) {
-                                                      initGrid(event.getColumns());
-                                                      setEditing(true);
-                                                      addRow();
-                                                  }
-
-                                              });
+        if(columns != null){
+            initGrid(columns);
+            setEditing(true);
+            addRow();
+        }
         addLineNumberHandler();
-
     }
 
 
@@ -217,32 +218,31 @@ public class StructuredTextViewerImpl extends StructuredTextViewer {
     public void loadData() {
         String url = "read-csv-chunk";
         if (file != null) {
-            container.mask(org.iplantc.de.resources.client.messages.I18N.DISPLAY.loadingMask());
-            ServicesInjector.INSTANCE.getFileEditorServiceFacade()
-                                     .getDataChunk(url, getRequestBody(), new AsyncCallback<String>() {
+            container.mask(displayStrings.loadingMask());
+            fileEditorService.getDataChunk(url, getRequestBody(), new AsyncCallback<String>() {
 
-                                         @Override
-                                         public void onSuccess(String result) {
-                                             AutoBean<StructuredText> bean = AutoBeanCodex.decode(factory,
-                                                                                                  StructuredText.class,
-                                                                                                  result);
-                                             text_bean = bean.as();
-                                             if (grid == null) {
-                                                 initGrid(Integer.parseInt(text_bean.getMaxColumns()));
-                                             }
-                                             Splittable sp = StringQuoter.split(result);
-                                             setData(sp);
-                                             setEditing(pagingToolbar.getToltalPages() == 1);
-                                             container.unmask();
-                                         }
+                @Override
+                public void onSuccess(String result) {
+                    AutoBean<StructuredText> bean = AutoBeanCodex.decode(factory,
+                                                                         StructuredText.class,
+                                                                         result);
+                    text_bean = bean.as();
+                    if (grid == null) {
+                        initGrid(Integer.parseInt(text_bean.getMaxColumns()));
+                    }
+                    Splittable sp = StringQuoter.split(result);
+                    setData(sp);
+                    setEditing(pagingToolbar.getToltalPages() == 1);
+                    container.unmask();
+                }
 
-                                         @Override
-                                         public void onFailure(Throwable caught) {
-                                             ErrorHandler.post(org.iplantc.de.resources.client.messages.I18N.ERROR.unableToRetrieveFileData(file.getName()),
-                                                               caught);
-                                             container.unmask();
-                                         }
-                                     });
+                @Override
+                public void onFailure(Throwable caught) {
+                    ErrorHandler.post(errorStrings.unableToRetrieveFileData(file.getName()),
+                                      caught);
+                    container.unmask();
+                }
+            });
         }
     }
 
@@ -543,7 +543,7 @@ public class StructuredTextViewerImpl extends StructuredTextViewer {
     @Override
     public void save() {
         store.commitChanges();
-        container.mask(I18N.DISPLAY.savingMask());
+        container.mask(displayStrings.savingMask());
         if (file == null) {
             final SaveAsDialog saveDialog = new SaveAsDialog(parentFolder);
             saveDialog.addOkButtonSelectHandler(new SelectHandler() {
@@ -554,13 +554,12 @@ public class StructuredTextViewerImpl extends StructuredTextViewer {
 
                         String destination = saveDialog.getSelectedFolder().getPath() + "/"
                                 + saveDialog.getFileName();
-                        ServicesInjector.INSTANCE.getFileEditorServiceFacade()
-                                                 .uploadTextAsFile(destination,
-                                                                   getEditorContent(),
-                                                                   true,
-                                                                   new FileSaveCallback(destination,
-                                                                                        true,
-                                                                                        container));
+                        fileEditorService.uploadTextAsFile(destination,
+                                                           getEditorContent(),
+                                                           true,
+                                                           new FileSaveCallback(destination,
+                                                                                true,
+                                                                                container));
                         saveDialog.hide();
                     }
                 }
@@ -576,13 +575,12 @@ public class StructuredTextViewerImpl extends StructuredTextViewer {
             saveDialog.show();
             saveDialog.toFront();
         } else {
-            ServicesInjector.INSTANCE.getFileEditorServiceFacade()
-                                     .uploadTextAsFile(file.getPath(),
-                                                       getEditorContent(),
-                                                       false,
-                                                       new FileSaveCallback(file.getPath(),
-                                                                            false,
-                                                                            container));
+            fileEditorService.uploadTextAsFile(file.getPath(),
+                                               getEditorContent(),
+                                               false,
+                                               new FileSaveCallback(file.getPath(),
+                                                                    false,
+                                                                    container));
         }
     }
 

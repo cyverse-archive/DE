@@ -5,11 +5,13 @@ import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.client.viewer.views.ExternalVizualizationURLViwerImpl;
 import org.iplantc.de.client.viewer.views.FileViewer;
 
+import com.google.gwt.json.client.JSONObject;
+
 import java.util.Arrays;
 import java.util.List;
 
 /**
- * @author sriram
+ * @author sriram, jstroot
  * 
  */
 public class VizURLViewerCommand implements ViewCommand {
@@ -18,7 +20,8 @@ public class VizURLViewerCommand implements ViewCommand {
     public List<FileViewer> execute(File file,
                                     String infoType,
                                     boolean editing,
-                                    Folder parentFolder) {
+                                    Folder parentFolder,
+                                    JSONObject manifest) {
         FileViewer viewer = new ExternalVizualizationURLViwerImpl(file, infoType);
         return Arrays.asList(viewer);
     }

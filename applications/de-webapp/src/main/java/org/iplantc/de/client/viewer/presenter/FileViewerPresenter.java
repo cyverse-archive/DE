@@ -6,6 +6,7 @@ import org.iplantc.de.client.models.diskResources.File;
 import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.client.models.viewer.MimeType;
 import org.iplantc.de.client.models.viewer.VizUrl;
+import org.iplantc.de.client.services.FileEditorServiceFacade;
 import org.iplantc.de.client.util.DiskResourceUtil;
 import org.iplantc.de.client.util.JsonUtil;
 import org.iplantc.de.client.viewer.callbacks.TreeUrlCallback;
@@ -13,6 +14,7 @@ import org.iplantc.de.client.viewer.commands.ViewCommand;
 import org.iplantc.de.client.viewer.factory.MimeTypeViewerResolverFactory;
 import org.iplantc.de.client.viewer.views.FileViewer;
 import org.iplantc.de.client.windows.FileViewerWindow;
+import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 
 import com.google.common.base.Preconditions;
 import com.google.gwt.event.shared.HandlerRegistration;
@@ -32,7 +34,8 @@ import java.util.logging.Logger;
  * 
  */
 public class FileViewerPresenter implements FileViewer.Presenter {
-
+    private final IplantDisplayStrings displayStrings;
+    private final FileEditorServiceFacade fileEditorService;
 
     // A presenter can handle more than one view of the same data at a time
     private List<FileViewer> viewers;
@@ -65,6 +68,8 @@ public class FileViewerPresenter implements FileViewer.Presenter {
         this.file = file;
         this.editing = editing;
         this.isVizTabFirst = isVizTabFirst;
+        displayStrings = org.iplantc.de.resources.client.messages.I18N.DISPLAY;
+        fileEditorService = ServicesInjector.INSTANCE.getFileEditorServiceFacade();
     }
 
     @Override
@@ -88,11 +93,11 @@ public class FileViewerPresenter implements FileViewer.Presenter {
     }
 
     void composeView(Folder parentFolder) {
-        container.mask(org.iplantc.de.resources.client.messages.I18N.DISPLAY.loadingMask());
+        container.mask(displayStrings.loadingMask());
         String mimeType = JsonUtil.getString(manifest, "content-type");
         ViewCommand cmd = MimeTypeViewerResolverFactory.getViewerCommand(MimeType.fromTypeString(mimeType));
         String infoType = JsonUtil.getString(manifest, "info-type");
-        List<? extends FileViewer> viewers_list = cmd.execute(file, infoType, editing, parentFolder);
+        List<? extends FileViewer> viewers_list = cmd.execute(file, infoType, editing, parentFolder, manifest);
 
         if (viewers_list != null && viewers_list.size() > 0) {
             viewers.addAll(viewers_list);
@@ -109,7 +114,7 @@ public class FileViewerPresenter implements FileViewer.Presenter {
 
         if (treeViewer || cogeViewer || ensembleViewer) {
             cmd = MimeTypeViewerResolverFactory.getViewerCommand(MimeType.fromTypeString("viz"));
-            List<? extends FileViewer> vizViewers = cmd.execute(file, infoType, editing, parentFolder);
+            List<? extends FileViewer> vizViewers = cmd.execute(file, infoType, editing, parentFolder, null);
             List<VizUrl> urls = getManifestVizUrls();
             if (urls != null && urls.size() > 0) {
                 vizViewers.get(0).setData(urls);
@@ -130,7 +135,7 @@ public class FileViewerPresenter implements FileViewer.Presenter {
 
         if (viewers.size() == 0) {
             container.unmask();
-            container.add(new HTML(org.iplantc.de.resources.client.messages.I18N.DISPLAY.fileOpenMsg()));
+            container.add(new HTML(displayStrings.fileOpenMsg()));
         }
 
     }
@@ -149,12 +154,12 @@ public class FileViewerPresenter implements FileViewer.Presenter {
      * Calls the tree URL service to fetch the URLs to display in the grid.
      */
     void callTreeCreateService(final FileViewer viewer) {
-        container.mask(org.iplantc.de.resources.client.messages.I18N.DISPLAY.loadingMask());
-        ServicesInjector.INSTANCE.getFileEditorServiceFacade().getTreeUrl(file.getPath(),
-                                                                          false,
-                                                                          new TreeUrlCallback(file,
-                                                                                              container,
-                                                                                              viewer));
+        container.mask(displayStrings.loadingMask());
+        fileEditorService.getTreeUrl(file.getPath(),
+                                     false,
+                                     new TreeUrlCallback(file,
+                                                         container,
+                                                         viewer));
     }
 
     @Override
@@ -179,7 +184,6 @@ public class FileViewerPresenter implements FileViewer.Presenter {
     @Override
     public void setTitle(String windowTitle) {
         this.title = windowTitle;
-
     }
 
 }

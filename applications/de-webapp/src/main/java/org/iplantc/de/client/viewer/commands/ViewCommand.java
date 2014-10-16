@@ -4,12 +4,14 @@ import org.iplantc.de.client.models.diskResources.File;
 import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.client.viewer.views.FileViewer;
 
+import com.google.gwt.json.client.JSONObject;
+
 import java.util.List;
 
 /**
  * Basic interface for command pattern
  * 
- * @author sriram
+ * @author sriram, jstroot
  * 
  */
 public interface ViewCommand {
@@ -19,5 +21,6 @@ public interface ViewCommand {
     List<? extends FileViewer> execute(File file,
                                        String infoType,
                                        boolean editing,
-                                       Folder parentFolder);
+                                       Folder parentFolder,
+                                       JSONObject manifest);
 }

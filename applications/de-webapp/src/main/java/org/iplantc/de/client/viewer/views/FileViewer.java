@@ -10,14 +10,15 @@ import com.google.gwt.user.client.ui.HasOneWidget;
 import com.google.gwt.user.client.ui.IsWidget;
 
 /**
- * @author sriram
+ * @author sriram, jstroot
  * 
  */
 public interface FileViewer extends IsWidget, FileSavedEvent.HasFileSavedEventHandlers {
 
-    public static final int MIN_PAGE_SIZE_KB = 8;
-    public static final int MAX_PAGE_SIZE_KB = 1024;
-    public static final int PAGE_INCREMENT_SIZE_KB = 8;
+    int MIN_PAGE_SIZE_KB = 8;
+    int MAX_PAGE_SIZE_KB = 1024;
+    int PAGE_INCREMENT_SIZE_KB = 8;
+    String COLUMNS_KEY = "columns";
 
     public interface Presenter extends FileSavedEvent.HasFileSavedEventHandlers {
         void go(HasOneWidget container, Folder parentFolder);

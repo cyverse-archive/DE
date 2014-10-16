@@ -1,6 +1,5 @@
 package org.iplantc.de.client.windows;
 
-import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.events.FileSavedEvent;
 import org.iplantc.de.client.events.FileSavedEvent.FileSavedEventHandler;
 import org.iplantc.de.client.models.IsMaskable;
@@ -10,7 +9,6 @@ import org.iplantc.de.client.models.errors.diskResources.DiskResourceErrorAutoBe
 import org.iplantc.de.client.models.errors.diskResources.ErrorGetManifest;
 import org.iplantc.de.client.services.FileEditorServiceFacade;
 import org.iplantc.de.client.util.JsonUtil;
-import org.iplantc.de.client.viewer.events.EditNewTabFileEvent;
 import org.iplantc.de.client.viewer.events.SaveFileEvent;
 import org.iplantc.de.client.viewer.presenter.FileViewerPresenter;
 import org.iplantc.de.client.viewer.views.FileViewer;
@@ -23,7 +21,7 @@ import org.iplantc.de.resources.client.messages.IplantErrorStrings;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JsonUtils;
 import com.google.gwt.core.client.Scheduler;
-import com.google.gwt.core.client.Scheduler.ScheduledCommand;
+import com.google.gwt.json.client.JSONNumber;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONString;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -110,20 +108,17 @@ public class FileViewerWindow extends IplantWindowBase implements IsMaskable, Fi
     protected JSONObject manifest;
     protected File file;
     private final FileViewerWindowConfig configAB;
-    private final EventBus eventBus;
     private FileViewer.Presenter presenter;
 
     Logger LOG = Logger.getLogger(FileViewerWindow.class.getName());
 
     public FileViewerWindow(final FileViewerWindowConfig config,
-                            final EventBus eventBus,
                             final IplantDisplayStrings displayStrings,
                             final IplantErrorStrings errorStrings,
                             final FileEditorServiceFacade fileEditorService,
                             final Scheduler scheduler) {
         super(null, config);
         this.configAB = config;
-        this.eventBus = eventBus;
         this.displayStrings = displayStrings;
         this.errorStrings = errorStrings;
         this.fileEditorService = fileEditorService;
@@ -226,14 +221,7 @@ public class FileViewerWindow extends IplantWindowBase implements IsMaskable, Fi
         } else if (config.getSeparator().equals("\t")) {
             manifest.put("info-type", new JSONString("tsv"));
         }
-
-        scheduler.scheduleFinally(new ScheduledCommand() {
-
-            @Override
-            public void execute() {
-                eventBus.fireEvent(new EditNewTabFileEvent(config.getColumns()));
-            }
-        });
+        manifest.put(FileViewer.COLUMNS_KEY, new JSONNumber(config.getColumns()));
     }
 
 }
