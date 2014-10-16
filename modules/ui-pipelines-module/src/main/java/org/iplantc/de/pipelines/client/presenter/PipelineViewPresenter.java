@@ -276,7 +276,7 @@ public class PipelineViewPresenter implements Presenter, PipelineView.Presenter,
         }
 
         // create pipeline
-        if (pipeline.getId().equals(PipelineAutoBeanUtil.AUTO_GEN_ID)) {
+        if (Strings.isNullOrEmpty(pipeline.getId())) {
             ServicesInjector.INSTANCE.getAppUserServiceFacade()
                                      .createWorkflows(publishJson, new PipelineSaveCallback(pipeline));
         } else {

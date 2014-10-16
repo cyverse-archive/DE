@@ -48,8 +48,6 @@ public class PipelineAutoBeanUtil {
     private final ServicePipelineAutoBeanFactory serviceFactory = GWT
             .create(ServicePipelineAutoBeanFactory.class);
 
-    public static final String AUTO_GEN_ID = "auto-gen"; //$NON-NLS-1$
-
     /**
      * @return A singleton instance of the PipelineAutoBeanFactory.
      */
@@ -166,10 +164,6 @@ public class PipelineAutoBeanUtil {
         }
 
         String id = pipeline.getId();
-        if (Strings.isNullOrEmpty(id)) {
-            id = AUTO_GEN_ID;
-        }
-
         ServicePipelineApp pipelineApp = serviceFactory.servicePipelineAnalysis().as();
         pipelineApp.setId(id);
         pipelineApp.setAppName(pipeline.getName());
