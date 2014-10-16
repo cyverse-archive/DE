@@ -75,8 +75,4 @@ public abstract class AbstractToolBar extends ToolBar {
 
     public abstract void refresh();
 
-    public void cleanup() {
-        // do nothing intentionally
-    }
-
 }

@@ -4,7 +4,7 @@
 package org.iplantc.de.client.viewer.views;
 
 import org.iplantc.de.client.callbacks.FileSaveCallback;
-import org.iplantc.de.client.events.EventBus;
+import org.iplantc.de.client.events.FileSavedEvent;
 import org.iplantc.de.client.gin.ServicesInjector;
 import org.iplantc.de.client.models.diskResources.File;
 import org.iplantc.de.client.models.diskResources.Folder;
@@ -38,8 +38,6 @@ import com.sencha.gxt.widget.core.client.container.SimpleContainer;
 import com.sencha.gxt.widget.core.client.event.SelectEvent;
 import com.sencha.gxt.widget.core.client.event.SelectEvent.SelectHandler;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -171,8 +169,6 @@ public class TextViewerImpl extends AbstractFileViewer implements EditingSupport
 
     private final String mode;
 
-    private final List<HandlerRegistration> eventHandlers = new ArrayList<HandlerRegistration>();
-
     static Logger LOG = Logger.getLogger("viewer");
 
     public TextViewerImpl(File file, String infoType, String mode, boolean editing, Folder parentFolder) {
@@ -205,6 +201,11 @@ public class TextViewerImpl extends AbstractFileViewer implements EditingSupport
 
     }
 
+    @Override
+    public HandlerRegistration addFileSavedEventHandler(final FileSavedEvent.FileSavedEventHandler handler){
+        return asWidget().addHandler(handler, FileSavedEvent.TYPE);
+    }
+
     TextViewToolBar initToolBar() {
         TextViewToolBar textViewPagingToolBar;
         if (mode != null && mode == "markdown") {
@@ -217,20 +218,6 @@ public class TextViewerImpl extends AbstractFileViewer implements EditingSupport
 
     ViewerPagingToolBar initPagingToolbar() {
         return new ViewerPagingToolBar(this, getFileSize());
-    }
-
-    @Override
-    public void cleanUp() {
-        EventBus eventBus = EventBus.getInstance();
-        for (HandlerRegistration hr : eventHandlers) {
-            eventBus.removeHandler(hr);
-        }
-        file = null;
-        jso = null;
-        toolbar.cleanup();
-        toolbar = null;
-        pagingToolbar = null;
-        data = null;
     }
 
     private void addWrapHandler() {
@@ -322,7 +309,7 @@ public class TextViewerImpl extends AbstractFileViewer implements EditingSupport
     @Override
     public void setDirty(Boolean dirty) {
         if (presenter.isDirty() != dirty) {
-            presenter.setVeiwDirtyState(dirty);
+            presenter.setViewDirtyState(dirty);
         }
     }
 

@@ -113,7 +113,7 @@ public class FileViewerWindow extends IplantWindowBase implements IsMaskable, Fi
     private final EventBus eventBus;
     private FileViewer.Presenter presenter;
 
-    Logger LOG = Logger.getLogger("Viewer");
+    Logger LOG = Logger.getLogger(FileViewerWindow.class.getName());
 
     public FileViewerWindow(final FileViewerWindowConfig config,
                             final EventBus eventBus,
@@ -133,8 +133,6 @@ public class FileViewerWindow extends IplantWindowBase implements IsMaskable, Fi
         tabPanel = new PlainTabPanel();
         setSize("800", "480");
         add(tabPanel);
-        // TODO: JDS - Need to remove this global handler. Prefer command pattern instead.
-        eventBus.addHandler(FileSavedEvent.TYPE, this);
 
         if (file != null) {
             setHeadingText(file.getName());
@@ -148,15 +146,16 @@ public class FileViewerWindow extends IplantWindowBase implements IsMaskable, Fi
     @Override
     public void onFileSaved(FileSavedEvent event) {
         if (file == null) {
+            // If it was a new file, re-initialize tabs
             file = event.getFile();
+            tabPanel.clear();
             tabPanel = null;
-            presenter.cleanUp();
             getFileManifest();
             setHeadingText(file.getName());
             presenter.setTitle(file.getName());
         }
         if (presenter != null) {
-            presenter.setVeiwDirtyState(false);
+            presenter.setViewDirtyState(false);
         }
     }
 
@@ -174,7 +173,6 @@ public class FileViewerWindow extends IplantWindowBase implements IsMaskable, Fi
                         SaveFileEvent sfe = new SaveFileEvent();
                         tabPanel.getActiveWidget().fireEvent(sfe);
                     } else if (PredefinedButton.NO.equals(event.getHideButton())) {
-                        presenter.cleanUp();
                         FileViewerWindow.super.doHide();
                     }
 
@@ -182,9 +180,6 @@ public class FileViewerWindow extends IplantWindowBase implements IsMaskable, Fi
             });
             cmb.show();
         } else {
-            // TODO JDS - Prefer removing this. There may be other ways to communicate other than the global event bus
-            //            Here is an example of what else can be done; eventBus.removeHandlers();
-            presenter.cleanUp();
             super.doHide();
         }
     }

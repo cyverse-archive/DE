@@ -2,6 +2,7 @@ package org.iplantc.de.client.viewer.views;
 
 import org.iplantc.de.client.callbacks.FileSaveCallback;
 import org.iplantc.de.client.events.EventBus;
+import org.iplantc.de.client.events.FileSavedEvent;
 import org.iplantc.de.client.gin.ServicesInjector;
 import org.iplantc.de.client.models.diskResources.File;
 import org.iplantc.de.client.models.diskResources.Folder;
@@ -112,7 +113,6 @@ public class StructuredTextViewerImpl extends StructuredTextViewer {
     private final String NEW_LINE = "\n";
 
     private final StructuredTextAutoBeanFactory factory = GWT.create(StructuredTextAutoBeanFactory.class);
-    private final List<HandlerRegistration> eventHandlers = new ArrayList<>();
 
     private StructuredText text_bean;
     private List<JSONObject> skippedRows;
@@ -132,7 +132,7 @@ public class StructuredTextViewerImpl extends StructuredTextViewer {
         initPagingToolbar();
         loadData();
         EventBus eventbus = EventBus.getInstance();
-        eventHandlers.add(eventbus.addHandler(EditNewTabFileEvent.TYPE,
+        eventbus.addHandler(EditNewTabFileEvent.TYPE,
                                               new EditNewTabFileEvent.EditNewTabFileEventHandler() {
 
                                                   @Override
@@ -142,9 +142,15 @@ public class StructuredTextViewerImpl extends StructuredTextViewer {
                                                       addRow();
                                                   }
 
-                                              }));
+                                              });
         addLineNumberHandler();
 
+    }
+
+
+    @Override
+    public HandlerRegistration addFileSavedEventHandler(final FileSavedEvent.FileSavedEventHandler handler){
+        return asWidget().addHandler(handler, FileSavedEvent.TYPE);
     }
 
     private void initLayout() {
@@ -205,18 +211,6 @@ public class StructuredTextViewerImpl extends StructuredTextViewer {
             }
 
         });
-    }
-
-    @Override
-    public void cleanUp() {
-        EventBus eventBus = EventBus.getInstance();
-        for (HandlerRegistration hr : eventHandlers) {
-            eventBus.removeHandler(hr);
-        }
-        file = null;
-        toolbar.cleanup();
-        toolbar = null;
-        pagingToolbar = null;
     }
 
     @Override
@@ -598,7 +592,7 @@ public class StructuredTextViewerImpl extends StructuredTextViewer {
         if (presenter.isDirty() == dirty) {
             return;
         }
-        presenter.setVeiwDirtyState(dirty);
+        presenter.setViewDirtyState(dirty);
     }
 
     @Override

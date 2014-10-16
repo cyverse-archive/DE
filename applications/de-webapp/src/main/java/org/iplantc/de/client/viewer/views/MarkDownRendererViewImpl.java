@@ -1,6 +1,7 @@
 package org.iplantc.de.client.viewer.views;
 
 import org.iplantc.de.client.callbacks.FileSaveCallback;
+import org.iplantc.de.client.events.FileSavedEvent;
 import org.iplantc.de.client.gin.ServicesInjector;
 import org.iplantc.de.client.models.diskResources.File;
 import org.iplantc.de.resources.client.IplantResources;
@@ -8,6 +9,7 @@ import org.iplantc.de.resources.client.messages.I18N;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Overflow;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiFactory;
 import com.google.gwt.uibinder.client.UiField;
@@ -75,6 +77,13 @@ public class MarkDownRendererViewImpl extends AbstractFileViewer {
             saveBtn.enable();
         }
     }
+
+
+    @Override
+    public HandlerRegistration addFileSavedEventHandler(final FileSavedEvent.FileSavedEventHandler handler){
+        return asWidget().addHandler(handler, FileSavedEvent.TYPE);
+    }
+
 
     @Override
     public void refresh() {

@@ -4,7 +4,6 @@
 package org.iplantc.de.client.viewer.views;
 
 import static org.iplantc.de.client.events.FileSavedEvent.FileSavedEventHandler;
-import org.iplantc.de.client.events.FileSavedEvent;
 import org.iplantc.de.client.models.diskResources.File;
 
 import com.google.gwt.event.shared.HandlerRegistration;
@@ -32,7 +31,8 @@ public abstract class AbstractFileViewer implements FileViewer {
 
     @Override
     public HandlerRegistration addFileSavedEventHandler(final FileSavedEventHandler handler){
-        return asWidget().addHandler(handler, FileSavedEvent.TYPE);
+        // Subclasses which use the FileSaveCallback, or otherwise fire a FileSavedEvent will override this method
+        return null;
     }
 
     @Override
@@ -43,16 +43,9 @@ public abstract class AbstractFileViewer implements FileViewer {
     @Override
     public abstract void setData(Object data);
 
-    @Override
     public abstract void loadData();
     
-    @Override
-    public void cleanUp() {
-    	//do nothing
-    }
-
-    @Override
-    public long getFileSize() {
+    protected long getFileSize() {
         if (file != null) {
             return file.getSize();
         }

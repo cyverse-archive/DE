@@ -22,16 +22,10 @@ public interface FileViewer extends IsWidget, FileSavedEvent.HasFileSavedEventHa
     public interface Presenter extends FileSavedEvent.HasFileSavedEventHandlers {
         void go(HasOneWidget container, Folder parentFolder);
 
-        void composeView(Folder parentFolder);
-
-        void setVeiwDirtyState(boolean dirty);
+        void setViewDirtyState(boolean dirty);
 
         boolean isDirty();
         
-        void cleanUp();
-
-        void refreshViews();
-
         void setTitle(String windowTitle);
     }
 
@@ -39,16 +33,10 @@ public interface FileViewer extends IsWidget, FileSavedEvent.HasFileSavedEventHa
 
     void setData(Object data);
 
-    void loadData();
-
-    long getFileSize();
-
     String getInfoType();
 
     String getViewName();
     
-    void cleanUp();
-
     void refresh();
 
 }

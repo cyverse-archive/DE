@@ -14,7 +14,7 @@ import org.iplantc.de.client.viewer.factory.MimeTypeViewerResolverFactory;
 import org.iplantc.de.client.viewer.views.FileViewer;
 import org.iplantc.de.client.windows.FileViewerWindow;
 
-import com.google.common.collect.Iterables;
+import com.google.common.base.Preconditions;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.user.client.ui.HTML;
@@ -25,6 +25,7 @@ import com.sencha.gxt.widget.core.client.TabItemConfig;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 /**
  * @author sriram
@@ -56,6 +57,8 @@ public class FileViewerPresenter implements FileViewer.Presenter {
 
     private String title;
 
+    Logger LOG = Logger.getLogger(FileViewerPresenter.class.getName());
+
     public FileViewerPresenter(File file, JSONObject manifest, boolean editing, boolean isVizTabFirst) {
         this.manifest = manifest;
         viewers = new ArrayList<>();
@@ -66,29 +69,25 @@ public class FileViewerPresenter implements FileViewer.Presenter {
 
     @Override
     public HandlerRegistration addFileSavedEventHandler(FileSavedEvent.FileSavedEventHandler handler) {
-        // Only the first file viewers fire FileSavedEvents.
-        FileViewer firstFileViewer = Iterables.getFirst(viewers, null);
-        if(firstFileViewer == null){
-            return null;
+        Preconditions.checkState((viewers != null) && !viewers.isEmpty(), "No viewers found. There should be at least one viewer in the presenter.");
+        // All file viewers created per presenter are for the same file. Only one of the tabs should
+        for(FileViewer fileViewer : viewers){
+            HandlerRegistration hr = fileViewer.addFileSavedEventHandler(handler);
+            if(hr != null){
+                return hr;
+            }
         }
-        return firstFileViewer.addFileSavedEventHandler(handler);
+        LOG.info("No file viewers registered the FileSavedEventHandler");
+        return null;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.iplantc.de.commons.client.presenter.Presenter#go(com.google.gwt
-     * .user.client.ui.HasOneWidget )
-     */
     @Override
     public void go(HasOneWidget container, Folder parentFolder) {
         this.container = (FileViewerWindow)container;
         composeView(parentFolder);
     }
 
-    @Override
-    public void composeView(Folder parentFolder) {
+    void composeView(Folder parentFolder) {
         container.mask(org.iplantc.de.resources.client.messages.I18N.DISPLAY.loadingMask());
         String mimeType = JsonUtil.getString(manifest, "content-type");
         ViewCommand cmd = MimeTypeViewerResolverFactory.getViewerCommand(MimeType.fromTypeString(mimeType));
@@ -149,7 +148,7 @@ public class FileViewerPresenter implements FileViewer.Presenter {
     /**
      * Calls the tree URL service to fetch the URLs to display in the grid.
      */
-    public void callTreeCreateService(final FileViewer viewer) {
+    void callTreeCreateService(final FileViewer viewer) {
         container.mask(org.iplantc.de.resources.client.messages.I18N.DISPLAY.loadingMask());
         ServicesInjector.INSTANCE.getFileEditorServiceFacade().getTreeUrl(file.getPath(),
                                                                           false,
@@ -159,7 +158,7 @@ public class FileViewerPresenter implements FileViewer.Presenter {
     }
 
     @Override
-    public void setVeiwDirtyState(boolean dirty) {
+    public void setViewDirtyState(boolean dirty) {
         this.isDirty = dirty;
         updateWindowTitle();
     }
@@ -175,28 +174,6 @@ public class FileViewerPresenter implements FileViewer.Presenter {
     @Override
     public boolean isDirty() {
         return isDirty;
-    }
-
-    @Override
-    public void cleanUp() {
-        if (viewers != null && viewers.size() > 0) {
-            for (FileViewer view : viewers) {
-                view.cleanUp();
-            }
-        }
-
-        viewers = null;
-        file = null;
-
-    }
-
-    @Override
-    public void refreshViews() {
-        if (viewers != null) {
-        for (FileViewer fv : viewers) {
-            fv.refresh();
-            }
-        }
     }
 
     @Override
