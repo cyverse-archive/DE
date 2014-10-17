@@ -22,12 +22,13 @@ import org.iplantc.de.client.services.UserSessionServiceFacade;
 import org.iplantc.de.client.sysmsgs.presenter.NewMessagePresenter;
 import org.iplantc.de.client.sysmsgs.view.NewMessageView;
 import org.iplantc.de.client.utils.NotifyInfo;
+import org.iplantc.de.client.viewer.presenter.FileViewerPresenterImpl;
+import org.iplantc.de.client.viewer.views.FileViewer;
 import org.iplantc.de.client.windows.util.WindowFactory;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
 import org.iplantc.de.commons.client.requests.KeepaliveTimer;
 import org.iplantc.de.resources.client.IplantResources;
 
-import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.inject.client.AbstractGinModule;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
@@ -102,10 +103,6 @@ public class DEGinModule extends AbstractGinModule {
         return IplantAnnouncer.getInstance();
     }
 
-    @Provides @Singleton public Scheduler getScheduler() {
-        return Scheduler.get();
-    }
-
     @Override
     protected void configure() {
         bind(DesktopView.class).to(DesktopViewImpl.class);
@@ -115,6 +112,8 @@ public class DEGinModule extends AbstractGinModule {
         bind(DesktopPresenterEventHandler.class);
         bind(DesktopPresenterWindowEventHandler.class);
         bind(DesktopWindowManager.class).in(Singleton.class);
+
+        bind(FileViewer.Presenter.class).to(FileViewerPresenterImpl.class);
 
         bind(WindowFactory.class);
         bind(PreferencesDialog.class);

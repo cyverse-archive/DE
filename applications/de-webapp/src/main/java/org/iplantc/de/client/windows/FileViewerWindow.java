@@ -2,6 +2,7 @@ package org.iplantc.de.client.windows;
 
 import org.iplantc.de.client.events.FileSavedEvent;
 import org.iplantc.de.client.events.FileSavedEvent.FileSavedEventHandler;
+import org.iplantc.de.client.gin.DEInjector;
 import org.iplantc.de.client.models.IsMaskable;
 import org.iplantc.de.client.models.WindowState;
 import org.iplantc.de.client.models.diskResources.File;
@@ -9,8 +10,8 @@ import org.iplantc.de.client.models.errors.diskResources.DiskResourceErrorAutoBe
 import org.iplantc.de.client.models.errors.diskResources.ErrorGetManifest;
 import org.iplantc.de.client.services.FileEditorServiceFacade;
 import org.iplantc.de.client.util.JsonUtil;
+import org.iplantc.de.client.viewer.events.DirtyStateChangedEvent;
 import org.iplantc.de.client.viewer.events.SaveFileEvent;
-import org.iplantc.de.client.viewer.presenter.FileViewerPresenter;
 import org.iplantc.de.client.viewer.views.FileViewer;
 import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.commons.client.views.window.configs.FileViewerWindowConfig;
@@ -20,7 +21,6 @@ import org.iplantc.de.resources.client.messages.IplantErrorStrings;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JsonUtils;
-import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.json.client.JSONNumber;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONString;
@@ -40,24 +40,29 @@ import java.util.logging.Logger;
  * @author sriram
  * 
  */
-public class FileViewerWindow extends IplantWindowBase implements IsMaskable, FileSavedEventHandler {
+public class FileViewerWindow extends IplantWindowBase implements IsMaskable,
+                                                                  FileSavedEventHandler,
+                                                                  DirtyStateChangedEvent.DirtyStateChangedEventHandler {
 
     private static final class GetManifestCallback implements AsyncCallback<String> {
 
         private final IplantErrorStrings errorStrings;
+        private FileViewer.Presenter presenter;
         private FileViewerWindowConfig config;
         private Window window;
         private JSONObject manifest;
 
         /**
+         * @param presenter
          * @param config the window config with a non-null file.
          * @param window the parent window.
          * @param errorStrings strings for possible errors.
          */
-        GetManifestCallback(final FileViewerWindowConfig config,
+        GetManifestCallback(final FileViewer.Presenter presenter,
+                            final FileViewerWindowConfig config,
                             final Window window,
                             final IplantErrorStrings errorStrings){
-
+            this.presenter = presenter;
             this.config = config;
             this.window = window;
             this.errorStrings = errorStrings;
@@ -67,12 +72,12 @@ public class FileViewerWindow extends IplantWindowBase implements IsMaskable, Fi
          public void onSuccess(String result) {
              if (result != null) {
                  manifest = JsonUtil.getObject(result);
-                 FileViewerPresenter presenter = new FileViewerPresenter(config.getFile(),
-                                                     manifest,
-                                                     config.isEditing(),
-                                                     config.isVizTabFirst());
                  presenter.go(window,
-                              config.getParentFolder());
+                              config.getFile(),
+                              config.getParentFolder(),
+                              manifest,
+                              config.isEditing(),
+                              config.isVizTabFirst());
                  presenter.setTitle(window.getHeader().getText());
                  window.unmask();
              } else {
@@ -101,7 +106,6 @@ public class FileViewerWindow extends IplantWindowBase implements IsMaskable, Fi
 
     private final IplantDisplayStrings displayStrings;
     private final FileEditorServiceFacade fileEditorService;
-    private final Scheduler scheduler;
     private IplantErrorStrings errorStrings;
 
     private PlainTabPanel tabPanel;
@@ -115,16 +119,19 @@ public class FileViewerWindow extends IplantWindowBase implements IsMaskable, Fi
     public FileViewerWindow(final FileViewerWindowConfig config,
                             final IplantDisplayStrings displayStrings,
                             final IplantErrorStrings errorStrings,
-                            final FileEditorServiceFacade fileEditorService,
-                            final Scheduler scheduler) {
+                            final FileEditorServiceFacade fileEditorService) {
         super(null, config);
         this.configAB = config;
         this.displayStrings = displayStrings;
         this.errorStrings = errorStrings;
         this.fileEditorService = fileEditorService;
-        this.scheduler = scheduler;
 
         this.file = configAB.getFile();
+
+        this.presenter = DEInjector.INSTANCE.getFileViewerPresenter();
+        this.presenter.addFileSavedEventHandler(this);
+        this.presenter.addDirtyStateChangedEventHandler(this);
+
         tabPanel = new PlainTabPanel();
         setSize("800", "480");
         add(tabPanel);
@@ -135,7 +142,16 @@ public class FileViewerWindow extends IplantWindowBase implements IsMaskable, Fi
             setHeadingText("Untitled-" + Math.random());
         }
 
-        getFileManifest();
+        getFileManifest(displayStrings, file, fileEditorService, configAB, presenter);
+    }
+
+    @Override
+    public void onEditorDirtyStateChanged(DirtyStateChangedEvent event) {
+        if(event.isDirty()){
+            setHeadingText(getHeader().getText() + "<span style='color:red; vertical-align: super'> * </span>");
+        } else {
+            setHeadingText(presenter.getTitle());
+        }
     }
 
     @Override
@@ -145,13 +161,11 @@ public class FileViewerWindow extends IplantWindowBase implements IsMaskable, Fi
             file = event.getFile();
             tabPanel.clear();
             tabPanel = null;
-            getFileManifest();
+            getFileManifest(displayStrings, file, fileEditorService, configAB, presenter);
             setHeadingText(file.getName());
             presenter.setTitle(file.getName());
         }
-        if (presenter != null) {
-            presenter.setViewDirtyState(false);
-        }
+        presenter.setViewDirtyState(false);
     }
 
     @Override
@@ -189,28 +203,29 @@ public class FileViewerWindow extends IplantWindowBase implements IsMaskable, Fi
         return createWindowState(configAB);
     }
 
-    private void getFileManifest() {
-        mask(displayStrings.loadingMask());
-        if (file != null) {
-            fileEditorService.getManifest(file.getPath(), new GetManifestCallback(configAB, this, errorStrings));
-        } else {
-            if (configAB.isEditing()) {
-                JSONObject manifest = new JSONObject();
-                if (configAB.getContentType() != null) {
-                    manifest.put("content-type", new JSONString(configAB.getContentType().toString()));
-                }
-
-                if (configAB instanceof TabularFileViewerWindowConfig) {
-                    processTabularFileEditingConfig(manifest, (TabularFileViewerWindowConfig)configAB);
-                }
-                FileViewerPresenter presenter = new FileViewerPresenter(file,
-                                                    manifest,
-                                                    configAB.isEditing(),
-                                                    configAB.isVizTabFirst());
-                presenter.go(FileViewerWindow.this, configAB.getParentFolder());
-                presenter.setTitle(getHeader().getText());
-                unmask();
+    private void getFileManifest(IplantDisplayStrings displayStrings1, File file1,
+                                 FileEditorServiceFacade fileEditorService1,
+                                 FileViewerWindowConfig configAB1, FileViewer.Presenter presenter1) {
+        mask(displayStrings1.loadingMask());
+        if (file1 != null) {
+            fileEditorService1.getManifest(file1.getPath(), new GetManifestCallback(presenter1, configAB1, this, errorStrings));
+        } else if (configAB1.isEditing()) {
+            JSONObject manifest = new JSONObject();
+            if (configAB1.getContentType() != null) {
+                manifest.put("content-type", new JSONString(configAB1.getContentType().toString()));
             }
+
+            if (configAB1 instanceof TabularFileViewerWindowConfig) {
+                processTabularFileEditingConfig(manifest, (TabularFileViewerWindowConfig) configAB1);
+            }
+            presenter1.go(FileViewerWindow.this,
+                          null,
+                          configAB1.getParentFolder(),
+                          manifest,
+                          configAB1.isEditing(),
+                          configAB1.isVizTabFirst());
+            presenter1.setTitle(getHeader().getText());
+            unmask();
         }
     }
 

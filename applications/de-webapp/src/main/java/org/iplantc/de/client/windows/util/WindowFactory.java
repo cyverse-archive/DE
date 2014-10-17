@@ -9,7 +9,6 @@ import org.iplantc.de.commons.client.views.window.configs.*;
 import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 import org.iplantc.de.resources.client.messages.IplantErrorStrings;
 
-import com.google.gwt.core.client.Scheduler;
 import com.google.inject.Inject;
 
 /**
@@ -23,21 +22,18 @@ public class WindowFactory {
     private final IplantDisplayStrings displayStrings;
     private final IplantErrorStrings errorStrings;
     private FileEditorServiceFacade fileEditorService;
-    private Scheduler scheduler;
 
     @Inject
     public WindowFactory(final DEClientConstants constants,
                          final EventBus eventBus,
                          final IplantDisplayStrings displayStrings,
                          final IplantErrorStrings errorStrings,
-                         final FileEditorServiceFacade fileEditorService,
-                         final Scheduler scheduler) {
+                         final FileEditorServiceFacade fileEditorService) {
         this.constants = constants;
         this.eventBus = eventBus;
         this.displayStrings = displayStrings;
         this.errorStrings = errorStrings;
         this.fileEditorService = fileEditorService;
-        this.scheduler = scheduler;
     }
 
     /**
@@ -69,7 +65,7 @@ public class WindowFactory {
                 ret = new DeDiskResourceWindow((DiskResourceWindowConfig)config);
                 break;
             case DATA_VIEWER:
-                ret = new FileViewerWindow((FileViewerWindowConfig)config, eventBus, displayStrings, errorStrings, fileEditorService, scheduler);
+                ret = new FileViewerWindow((FileViewerWindowConfig)config, displayStrings, errorStrings, fileEditorService);
                 break;
             case HELP:
                 WindowUtil.open(constants.deHelpFile());

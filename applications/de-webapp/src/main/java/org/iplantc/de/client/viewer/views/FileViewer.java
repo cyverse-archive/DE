@@ -1,17 +1,16 @@
-/**
- * 
- */
 package org.iplantc.de.client.viewer.views;
 
 import org.iplantc.de.client.events.FileSavedEvent;
+import org.iplantc.de.client.models.diskResources.File;
 import org.iplantc.de.client.models.diskResources.Folder;
+import org.iplantc.de.client.viewer.events.DirtyStateChangedEvent;
 
+import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.user.client.ui.HasOneWidget;
 import com.google.gwt.user.client.ui.IsWidget;
 
 /**
  * @author sriram, jstroot
- * 
  */
 public interface FileViewer extends IsWidget, FileSavedEvent.HasFileSavedEventHandlers {
 
@@ -20,8 +19,16 @@ public interface FileViewer extends IsWidget, FileSavedEvent.HasFileSavedEventHa
     int PAGE_INCREMENT_SIZE_KB = 8;
     String COLUMNS_KEY = "columns";
 
-    public interface Presenter extends FileSavedEvent.HasFileSavedEventHandlers {
-        void go(HasOneWidget container, Folder parentFolder);
+    public interface Presenter extends FileSavedEvent.HasFileSavedEventHandlers,
+                                       DirtyStateChangedEvent.HasDirtyStateChangedEventHandlers {
+        String getTitle();
+
+        void go(HasOneWidget container,
+                       File file,
+                       Folder parentFolder,
+                       JSONObject manifest,
+                       boolean editing,
+                       boolean isVizTabFirst);
 
         void setViewDirtyState(boolean dirty);
 
