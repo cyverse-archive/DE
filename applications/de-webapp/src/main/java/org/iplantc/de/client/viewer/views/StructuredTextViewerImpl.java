@@ -11,8 +11,6 @@ import org.iplantc.de.client.models.viewer.StructuredText;
 import org.iplantc.de.client.models.viewer.StructuredTextAutoBeanFactory;
 import org.iplantc.de.client.services.FileEditorServiceFacade;
 import org.iplantc.de.client.util.JsonUtil;
-import org.iplantc.de.client.viewer.events.SaveFileEvent;
-import org.iplantc.de.client.viewer.events.SaveFileEvent.SaveFileEventHandler;
 import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.diskResource.client.views.dialogs.SaveAsDialog;
 import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
@@ -445,14 +443,14 @@ public class StructuredTextViewerImpl extends StructuredTextViewer {
     public Widget asWidget() {
         SimpleContainer widget = new SimpleContainer();
         widget.add(container);
-        widget.addHandler(new SaveFileEventHandler() {
-
-            @Override
-            public void onSave(SaveFileEvent event) {
-                save();
-
-            }
-        }, SaveFileEvent.TYPE);
+//        widget.addHandler(new SaveFileEventHandler() {
+//
+//            @Override
+//            public void onSave(SaveFileEvent event) {
+//                save();
+//
+//            }
+//        }, SaveFileEvent.TYPE);
         return widget;
     }
 

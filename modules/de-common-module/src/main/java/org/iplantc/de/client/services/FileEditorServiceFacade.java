@@ -1,5 +1,7 @@
 package org.iplantc.de.client.services;
 
+import org.iplantc.de.client.models.diskResources.File;
+
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -7,11 +9,10 @@ public interface FileEditorServiceFacade {
 
     /**
      * Call service to retrieve the manifest for a requested file
-     * 
-     * @param pathToFile desired manifest's file ID (path).
+     *  @param file desired manifest's file ID (path).
      * @param callback executes when RPC call is complete.
      */
-    void getManifest(String pathToFile, AsyncCallback<String> callback);
+    void getManifest(File file, AsyncCallback<String> callback);
 
     /**
      * Construct a servlet download URL for the given file ID.

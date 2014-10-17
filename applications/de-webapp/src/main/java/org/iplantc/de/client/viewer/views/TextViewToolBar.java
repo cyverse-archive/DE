@@ -65,16 +65,12 @@ public class TextViewToolBar extends AbstractToolBar {
         cbxWrap.addValueChangeHandler(changeHandler);
     }
 
-    public void addLineNumberCbxChangeHandleer(ValueChangeHandler<Boolean> changeHandler) {
+    public void addLineNumberCbxChangeHandler(ValueChangeHandler<Boolean> changeHandler) {
         lineNumberCbx.addValueChangeHandler(changeHandler);
     }
 
     public boolean isWrapText() {
         return cbxWrap.getValue();
-    }
-
-    public void setWordWrap(boolean wrap) {
-        cbxWrap.setValue(wrap);
     }
 
     @Override
@@ -86,13 +82,11 @@ public class TextViewToolBar extends AbstractToolBar {
     @Override
     public void save() {
         ((TextViewerImpl)view).save();
-
     }
 
     @Override
     public void refresh() {
         view.refresh();
-
     }
 
 }

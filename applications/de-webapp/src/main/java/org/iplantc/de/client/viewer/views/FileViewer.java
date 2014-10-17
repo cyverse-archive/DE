@@ -3,9 +3,10 @@ package org.iplantc.de.client.viewer.views;
 import org.iplantc.de.client.events.FileSavedEvent;
 import org.iplantc.de.client.models.diskResources.File;
 import org.iplantc.de.client.models.diskResources.Folder;
+import org.iplantc.de.client.models.viewer.MimeType;
 import org.iplantc.de.client.viewer.events.DirtyStateChangedEvent;
 
-import com.google.gwt.json.client.JSONObject;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HasOneWidget;
 import com.google.gwt.user.client.ui.IsWidget;
 
@@ -24,11 +25,23 @@ public interface FileViewer extends IsWidget, FileSavedEvent.HasFileSavedEventHa
         String getTitle();
 
         void go(HasOneWidget container,
-                       File file,
+                File file,
+                Folder parentFolder,
+                MimeType contentType,
+                boolean editing,
+                boolean isVizTabFirst,
+                AsyncCallback<String> asyncCallback);
+
+        void newFileGo(HasOneWidget container,
+                       String title,
+                       MimeType contentType,
                        Folder parentFolder,
-                       JSONObject manifest,
                        boolean editing,
-                       boolean isVizTabFirst);
+                       boolean vizTabFirst,
+                       boolean isTabularFile,
+                       String separator);
+
+        void saveFile();
 
         void setViewDirtyState(boolean dirty);
 

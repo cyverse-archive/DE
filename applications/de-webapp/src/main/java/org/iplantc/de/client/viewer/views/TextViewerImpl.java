@@ -9,8 +9,6 @@ import org.iplantc.de.client.gin.ServicesInjector;
 import org.iplantc.de.client.models.diskResources.File;
 import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.client.util.JsonUtil;
-import org.iplantc.de.client.viewer.events.SaveFileEvent;
-import org.iplantc.de.client.viewer.events.SaveFileEvent.SaveFileEventHandler;
 import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.diskResource.client.views.dialogs.SaveAsDialog;
 import org.iplantc.de.resources.client.messages.I18N;
@@ -101,13 +99,13 @@ public class TextViewerImpl extends AbstractFileViewer implements EditingSupport
         }
     }
 
-    private final class SaveFileHandlerImpl implements SaveFileEventHandler {
-        @Override
-        public void onSave(SaveFileEvent event) {
-            save();
-
-        }
-    }
+//    private final class SaveFileHandlerImpl implements SaveFileEventHandler {
+//        @Override
+//        public void onSave(SaveFileEvent event) {
+//            save();
+//
+//        }
+//    }
 
     private final class PreviewSelectHandlerImpl implements SelectHandler {
         @Override
@@ -163,7 +161,7 @@ public class TextViewerImpl extends AbstractFileViewer implements EditingSupport
 
     private final Folder parentFolder;
 
-    private Presenter presenter;
+    private FileViewer.Presenter presenter;
 
     protected JavaScriptObject jso;
 
@@ -184,10 +182,10 @@ public class TextViewerImpl extends AbstractFileViewer implements EditingSupport
             toolbar.addPreviewHandler(new PreviewSelectHandlerImpl());
         }
         widget = uiBinder.createAndBindUi(this);
-        widget.addHandler(new SaveFileHandlerImpl(), SaveFileEvent.TYPE);
+//        widget.addHandler(new SaveFileHandlerImpl(), SaveFileEvent.TYPE);
 
         addWrapHandler();
-        addLineHumberHandler();
+        addLineNumberHandler();
 
         if (file != null) {
             loadData();
@@ -230,8 +228,8 @@ public class TextViewerImpl extends AbstractFileViewer implements EditingSupport
         });
     }
 
-    private void addLineHumberHandler() {
-        toolbar.addLineNumberCbxChangeHandleer(new ValueChangeHandler<Boolean>() {
+    private void addLineNumberHandler() {
+        toolbar.addLineNumberCbxChangeHandler(new ValueChangeHandler<Boolean>() {
 
             @Override
             public void onValueChange(ValueChangeEvent<Boolean> event) {
@@ -272,7 +270,7 @@ public class TextViewerImpl extends AbstractFileViewer implements EditingSupport
     }
 
     @Override
-    public void setPresenter(Presenter p) {
+    public void setPresenter(FileViewer.Presenter p) {
         this.presenter = p;
     }
 

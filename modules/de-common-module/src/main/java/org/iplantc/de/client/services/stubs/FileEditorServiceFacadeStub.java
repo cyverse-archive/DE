@@ -1,5 +1,6 @@
 package org.iplantc.de.client.services.stubs;
 
+import org.iplantc.de.client.models.diskResources.File;
 import org.iplantc.de.client.services.FileEditorServiceFacade;
 
 import com.google.gwt.json.client.JSONObject;
@@ -7,7 +8,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class FileEditorServiceFacadeStub implements FileEditorServiceFacade {
     @Override
-    public void getManifest(String idFile, AsyncCallback<String> callback) {
+    public void getManifest(File idFile, AsyncCallback<String> callback) {
 
     }
 
