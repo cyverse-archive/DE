@@ -953,7 +953,7 @@ public class DiskResourceViewImpl extends Composite implements DiskResourceView,
 
     private void addFileDetails(File info, boolean addViewerInfo) {
         detailsPanel.add(getStringLabel(displayStrings.size(), DiskResourceUtil.formatFileSize(info.getSize() + ""))); //$NON-NLS-1$
-        detailsPanel.add(getStringLabel("Type", info.getFileType()));
+        detailsPanel.add(getStringLabel("Type", info.getContentType()));
         detailsPanel.add(getInfoTypeLabel("Info-Type", info));
         if (addViewerInfo) {
             detailsPanel.add(getViewerInfo(info));
