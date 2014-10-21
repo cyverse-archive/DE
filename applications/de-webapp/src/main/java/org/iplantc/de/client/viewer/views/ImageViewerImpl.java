@@ -14,10 +14,7 @@ import com.sencha.gxt.core.client.dom.ScrollSupport.ScrollMode;
 import com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer;
 
 /**
- * 
- * 
- * @author sriram
- * 
+ * @author sriram, jstroot
  */
 public class ImageViewerImpl extends AbstractFileViewer {
 
@@ -49,23 +46,11 @@ public class ImageViewerImpl extends AbstractFileViewer {
     }
 
     @Override
-    public void setPresenter(Presenter p) {/* Not Used */
-    }
+    public void setData(Object data) { /* Do nothing intentionally */ }
 
     @Override
-    public void setData(Object data) {
-        // Do nothing intentionally
-
-    }
+    public void loadData() {  /* Do nothing intentionally */ }
 
     @Override
-    public void loadData() {
-        // Do nothing intentionally
-    }
-
-    @Override
-    public void refresh() {
-        // Do nothing intentionally
-
-    }
+    public void refresh() { /* Do nothing intentionally */ }
 }

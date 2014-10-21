@@ -17,11 +17,12 @@ import java.util.List;
 public class VizURLViewerCommand implements ViewCommand {
 
     @Override
-    public List<FileViewer> execute(File file,
-                                    String infoType,
-                                    boolean editing,
-                                    Folder parentFolder,
-                                    JSONObject manifest) {
+    public List<FileViewer> execute(final File file,
+                                    final String infoType,
+                                    final boolean editing,
+                                    final Folder parentFolder,
+                                    final JSONObject manifest,
+                                    final FileViewer.Presenter presenter) {
         FileViewer viewer = new ExternalVizualizationURLViwerImpl(file, infoType);
         return Arrays.asList(viewer);
     }

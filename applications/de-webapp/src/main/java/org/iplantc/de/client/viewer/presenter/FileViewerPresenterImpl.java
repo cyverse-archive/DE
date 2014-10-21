@@ -21,12 +21,13 @@ import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 import org.iplantc.de.resources.client.messages.IplantErrorStrings;
 
-import com.google.common.base.Preconditions;
+import static com.google.common.base.Preconditions.*;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JsonUtils;
 import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.json.client.JSONNumber;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONString;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -36,6 +37,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 import com.google.web.bindery.autobean.shared.AutoBean;
 import com.google.web.bindery.autobean.shared.AutoBeanCodex;
+import com.google.web.bindery.autobean.shared.Splittable;
 
 import com.sencha.gxt.widget.core.client.PlainTabPanel;
 import com.sencha.gxt.widget.core.client.TabItemConfig;
@@ -52,7 +54,6 @@ public class FileViewerPresenterImpl implements FileViewer.Presenter, FileSavedE
         private final FileViewerPresenterImpl presenter;
         private final File file;
         private final Folder parentFolder;
-        private final MimeType mimeType;
         private final boolean editing;
         private final boolean isVizTabFirst;
         private final AsyncCallback<String> asyncCallback;
@@ -61,7 +62,6 @@ public class FileViewerPresenterImpl implements FileViewer.Presenter, FileSavedE
         public GetManifestCallback(FileViewerPresenterImpl presenter,
                                    File file,
                                    Folder parentFolder,
-                                   MimeType mimeType,
                                    boolean editing,
                                    boolean isVizTabFirst,
                                    AsyncCallback<String> asyncCallback,
@@ -70,7 +70,6 @@ public class FileViewerPresenterImpl implements FileViewer.Presenter, FileSavedE
             this.presenter = presenter;
             this.file = file;
             this.parentFolder = parentFolder;
-            this.mimeType = mimeType;
             this.editing = editing;
             this.isVizTabFirst = isVizTabFirst;
             this.asyncCallback = asyncCallback;
@@ -100,14 +99,22 @@ public class FileViewerPresenterImpl implements FileViewer.Presenter, FileSavedE
 
             JSONObject manifest = JsonUtil.getObject(result);
             String infoType = JsonUtil.getString(manifest, "info-type");
+            MimeType contentType = MimeType.fromTypeString(JsonUtil.getString(manifest, "content-type"));
+            checkNotNull(contentType);
             presenter.setTitle(file.getName());
-            presenter.composeView(file, parentFolder, manifest, mimeType, infoType, editing, isVizTabFirst);
+            presenter.setManifest(manifest);
+            presenter.setContentType(contentType);
+            presenter.composeView(file, parentFolder, manifest, contentType, infoType, editing, isVizTabFirst);
+            LOG.info("Manifest retrieved: " + file.getName());
         }
     }
 
     private final IplantDisplayStrings displayStrings;
     private final IplantErrorStrings errorStrings;
     private final FileEditorServiceFacade fileEditorService;
+    private MimeType contentType;
+    private JSONObject manifest;
+    private Folder parentFolder;
 
     // A presenter can handle more than one view of the same data at a time
     private List<FileViewer> viewers;
@@ -148,16 +155,16 @@ public class FileViewerPresenterImpl implements FileViewer.Presenter, FileSavedE
     }
 
     @Override
-    public void go(HasOneWidget container,
-                   File file,
-                   Folder parentFolder,
-                   MimeType mimeType,
-                   boolean editing,
-                   boolean isVizTabFirst,
-                   AsyncCallback<String> asyncCallback){
-        Preconditions.checkState(!tabPanel.isAttached(), "You cannot 'go' this presenter more than once.");
-        Preconditions.checkArgument(file != null, "File cannot be null.\n" +
-                                                      "To create new files, user 'newFileGo(..)'.");
+    public void go(final HasOneWidget container,
+                   final File file,
+                   final Folder parentFolder,
+                   final boolean editing,
+                   final boolean isVizTabFirst,
+                   final AsyncCallback<String> asyncCallback){
+        this.parentFolder = parentFolder;
+        checkState(!tabPanel.isAttached(), "You cannot 'go' this presenter more than once.");
+        checkArgument(file != null, "File cannot be null.\n" +
+                                        "To create new files, user 'newFileGo(..)'.");
         container.setWidget(tabPanel);
         tabPanel.mask(displayStrings.loadingMask());
         this.file = file;
@@ -166,7 +173,6 @@ public class FileViewerPresenterImpl implements FileViewer.Presenter, FileSavedE
         fileEditorService.getManifest(file, new GetManifestCallback(this,
                                                                     file,
                                                                     parentFolder,
-                                                                    mimeType,
                                                                     editing,
                                                                     isVizTabFirst,
                                                                     asyncCallback,
@@ -174,38 +180,48 @@ public class FileViewerPresenterImpl implements FileViewer.Presenter, FileSavedE
     }
 
     @Override
-    public void newFileGo(HasOneWidget container,
-                          String title,
-                          MimeType contentType,
-                          Folder parentFolder,
-                          boolean editing,
-                          boolean vizTabFirst,
-                          boolean isTabularFile,
-                          String delimiter) {
-        Preconditions.checkState(!tabPanel.isAttached(), "You cannot 'go' this presenter more than once.");
+    public void newFileGo(final HasOneWidget container,
+                          final String title,
+                          final MimeType contentType,
+                          final Folder parentFolder,
+                          final boolean editing,
+                          final boolean vizTabFirst,
+                          final boolean isTabularFile,
+                          final Integer columns,
+                          final String delimiter) {
+        this.parentFolder = parentFolder;
+        checkNotNull(contentType);
+        checkState(!tabPanel.isAttached(), "You cannot 'go' this presenter more than once.");
         container.setWidget(tabPanel);
         tabPanel.mask(displayStrings.loadingMask());
         this.vizTabFirst = vizTabFirst;
 
+
         // Assemble manifest
         JSONObject manifest = new JSONObject();
-        if(contentType != null){
-            manifest.put("content-type", new JSONString(contentType.toString()));
-        }
+        manifest.put("content-type", new JSONString(contentType.toString()));
 
-        if(isTabularFile){
-            Preconditions.checkArgument(!Strings.isNullOrEmpty(delimiter), "Must specify a delimiter.");
-            Preconditions.checkArgument(delimiter.matches("(,|\\\\t)"), "Unrecognized delimiter \"" + delimiter + "\"");
+        if (isTabularFile) {
+            checkArgument(!Strings.isNullOrEmpty(delimiter), "Must specify a delimiter.");
+            checkArgument(delimiter.matches("(,|\\t)"), "Unrecognized delimiter \"" + delimiter + "\"");
+            checkNotNull(columns, "Number of columns must be specified for new tabular files.");
+            checkArgument(columns >= 1, "Must specify a non-zero, positive number of columns.");
+
             JSONString infoType = null;
-            if(",".equals(delimiter)){
+            if (",".equals(delimiter)) {
                 infoType = new JSONString("csv");
-            } else if("\t".equals(delimiter)){
+            } else if ("\t".equals(delimiter)) {
                 infoType = new JSONString("tsv");
             }
             manifest.put("info-type", infoType);
+
+            manifest.put(FileViewer.COLUMNS_KEY, new JSONNumber(columns));
         }
         setTitle(title);
-        composeView(null, parentFolder, manifest, contentType, null, editing, vizTabFirst);
+        setManifest(manifest);
+        setContentType(contentType);
+        String infoType = JsonUtil.getString(manifest, "info-type");
+        composeView(null, parentFolder, manifest, contentType, infoType, editing, vizTabFirst);
     }
 
     @Override
@@ -218,79 +234,81 @@ public class FileViewerPresenterImpl implements FileViewer.Presenter, FileSavedE
     }
 
     @Override
-    public HandlerRegistration addFileSavedEventHandler(FileSavedEvent.FileSavedEventHandler handler) {
-        Preconditions.checkState((viewers != null) && !viewers.isEmpty(), "No viewers found. There should be at least one viewer in the presenter.");
-        // All file viewers created per presenter are for the same file. Only one of the tabs should
-        for(FileViewer fileViewer : viewers){
-            HandlerRegistration hr = fileViewer.addFileSavedEventHandler(handler);
-            if(hr != null){
-                return hr;
-            }
-        }
-        LOG.info("No file viewers registered the FileSavedEventHandler");
-        return null;
-    }
-
-    @Override
     public void onFileSaved(FileSavedEvent event) {
         if(file == null) {
             file = event.getFile();
-            tabPanel.clear();
+            /* Iterate through tab collection and individually remove. TabPanel.clear() does not
+             * correctly clear the tabs.
+             */
+            for(int i = tabPanel.getWidgetCount() - 1; i >= 0; i--){
+                tabPanel.remove(i);
+            }
+            viewers.clear();
             setTitle(file.getName());
-            // FIXME: JDS Need to recompose view
-            // FIXME: Need to get manifest, mimeType, and infotype
-            composeView(file, null, null, null, file.getInfoType(), true, vizTabFirst);
+            composeView(file, parentFolder, manifest, contentType, file.getInfoType(), true, vizTabFirst);
         }
         setViewDirtyState(false);
     }
 
-    void composeView(File file,
-                     Folder parentFolder,
-                     JSONObject manifest,
-                     MimeType mimeType,
-                     String infoType,
-                     boolean editing,
-                     boolean isVizTabFirst) {
-        ViewCommand cmd = MimeTypeViewerResolverFactory.getViewerCommand(mimeType);
-        List<? extends FileViewer> viewers_list = cmd.execute(file, infoType, editing, parentFolder, manifest);
+    void setContentType(MimeType contentType) {
+        this.contentType = contentType;
+    }
+
+    void setManifest(JSONObject manifest) {
+        this.manifest = manifest;
+    }
+
+    void composeView(final File file,
+                     final Folder parentFolder,
+                     final JSONObject manifest,
+                     final MimeType contentType,
+                     final String infoType,
+                     final boolean editing,
+                     final boolean isVizTabFirst) {
+        checkNotNull(contentType);
+        ViewCommand cmd = MimeTypeViewerResolverFactory.getViewerCommand(contentType);
+        List<? extends FileViewer> viewers_list = cmd.execute(file, infoType, editing, parentFolder, manifest, this);
 
         if (viewers_list != null && viewers_list.size() > 0) {
             viewers.addAll(viewers_list);
             for (FileViewer view : viewers) {
-                view.setPresenter(this);
                 tabPanel.add(view.asWidget(), view.getViewName());
             }
-            tabPanel.unmask();
         }
 
-        boolean treeViewer = DiskResourceUtil.isTreeTab(DiskResourceUtil.createInfoTypeSplittable(infoType));
-        boolean cogeViewer = DiskResourceUtil.isGenomeVizTab(DiskResourceUtil.createInfoTypeSplittable(infoType));
-        boolean ensembleViewer = DiskResourceUtil.isEnsemblVizTab(DiskResourceUtil.createInfoTypeSplittable(infoType));
+        Splittable infoTypeSplittable = DiskResourceUtil.createInfoTypeSplittable(infoType);
+        boolean treeViewer = DiskResourceUtil.isTreeTab(infoTypeSplittable);
+        boolean cogeViewer = DiskResourceUtil.isGenomeVizTab(infoTypeSplittable);
+        boolean ensembleViewer = DiskResourceUtil.isEnsemblVizTab(infoTypeSplittable);
 
         if (treeViewer || cogeViewer || ensembleViewer) {
             cmd = MimeTypeViewerResolverFactory.getViewerCommand(MimeType.fromTypeString("viz"));
-            List<? extends FileViewer> vizViewers = cmd.execute(file, infoType, editing, parentFolder, null);
+            List<? extends FileViewer> vizViewers = cmd.execute(file, infoType, editing, parentFolder, manifest, this);
             List<VizUrl> urls = getManifestVizUrls(manifest);
+            FileViewer vizViewer = vizViewers.get(0);
+
             if (urls != null && urls.size() > 0) {
-                vizViewers.get(0).setData(urls);
+                vizViewer.setData(urls);
             } else if (treeViewer) {
-                callTreeCreateService(vizViewers.get(0), file);
+                callTreeCreateService(vizViewer, file);
             }
-            viewers.add(vizViewers.get(0));
+            viewers.add(vizViewer);
             if (isVizTabFirst) {
-                Widget asWidget = vizViewers.get(0).asWidget();
-                tabPanel.insert(asWidget, 0, new TabItemConfig(vizViewers.get(0).getViewName()));
+                Widget asWidget = vizViewer.asWidget();
+                tabPanel.insert(asWidget, 0, new TabItemConfig(vizViewer.getViewName()));
                 tabPanel.setActiveWidget(asWidget);
             } else {
-                tabPanel.add(vizViewers.get(0).asWidget(), vizViewers.get(0).getViewName());
+                tabPanel.add(vizViewer.asWidget(), vizViewer.getViewName());
             }
+        }
+
+        for(FileSavedEvent.HasFileSavedEventHandlers hasHandlers : viewers){
+            // Add ourselves as FileSaved handlers
+            hasHandlers.addFileSavedEventHandler(this);
         }
 
         if (viewers.size() == 0) {
             tabPanel.add(new HTML(displayStrings.fileOpenMsg()));
-        } else {
-            // Add ourselves as FileSaved handlers
-            addFileSavedEventHandler(this);
         }
         tabPanel.unmask();
     }

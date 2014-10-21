@@ -42,7 +42,6 @@ import com.sencha.gxt.widget.core.client.ContentPanel;
 import com.sencha.gxt.widget.core.client.container.BorderLayoutContainer;
 import com.sencha.gxt.widget.core.client.container.BorderLayoutContainer.BorderLayoutData;
 import com.sencha.gxt.widget.core.client.container.MarginData;
-import com.sencha.gxt.widget.core.client.container.SimpleContainer;
 import com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer;
 import com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer.VerticalLayoutData;
 import com.sencha.gxt.widget.core.client.event.CompleteEditEvent;
@@ -63,6 +62,7 @@ import com.sencha.gxt.widget.core.client.grid.filters.StringFilter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 public class StructuredTextViewerImpl extends StructuredTextViewer {
 
@@ -101,6 +101,7 @@ public class StructuredTextViewerImpl extends StructuredTextViewer {
     private final IplantDisplayStrings displayStrings = DISPLAY;
     private final IplantErrorStrings errorStrings = ERROR;
     private final FileEditorServiceFacade fileEditorService = ServicesInjector.INSTANCE.getFileEditorServiceFacade();
+    private final FileViewer.Presenter presenter;
 
     private Grid<JSONObject> grid;
     private StructuredTextViewToolBar toolbar;
@@ -127,18 +128,22 @@ public class StructuredTextViewerImpl extends StructuredTextViewer {
     private int columns;
     private final Folder parentFolder;
     private RowNumberer<JSONObject> numberer;
+    Logger LOG = Logger.getLogger(StructuredTextViewerImpl.class.getName());
 
-    public StructuredTextViewerImpl(File file,
-                                    String infoType,
-                                    Integer columns,
-                                    Folder parentFolder) {
+    public StructuredTextViewerImpl(final File file,
+                                    final String infoType,
+                                    final Integer columns,
+                                    final Folder parentFolder,
+                                    final FileViewer.Presenter presenter) {
         super(file, infoType);
         this.parentFolder = parentFolder;
+        this.presenter = presenter;
         initLayout();
         initToolbar();
         initPagingToolbar();
         loadData();
         if(columns != null){
+            LOG.info("Columns: " + columns);
             initGrid(columns);
             setEditing(true);
             addRow();
@@ -246,8 +251,15 @@ public class StructuredTextViewerImpl extends StructuredTextViewer {
 
     @SuppressWarnings("unchecked")
     private void setEditing(boolean editing) {
-        if (grid != null) {
-            if (rowEditing == null && editing) {
+        if (grid == null) {
+            return;
+        }
+
+        toolbar.setEditing(editing);
+
+        if(editing){
+            if(rowEditing == null) {
+                // Initialize row editing
                 grid.setToolTip("Double click to edit...");
                 rowEditing = new GridInlineEditing<>(grid);
                 rowEditing.setClicksToEdit(ClicksToEdit.TWO);
@@ -259,24 +271,17 @@ public class StructuredTextViewerImpl extends StructuredTextViewer {
                         store.commitChanges();
                     }
                 });
-                toolbar.setEditing(true);
-            } else {
-                rowEditing = null;
-                toolbar.setEditing(false);
-                grid.removeToolTip();
-                return;
-            }
 
-            List<ColumnConfig<JSONObject, ?>> cols = grid.getColumnModel().getColumns();
-            for (ColumnConfig<JSONObject, ?> cc : cols) {
-                if (editing) {
+                List<ColumnConfig<JSONObject, ?>> cols = grid.getColumnModel().getColumns();
+                for (ColumnConfig<JSONObject, ?> cc : cols) {
                     TextField field = new TextField();
                     field.setClearValueOnParseError(false);
-                    rowEditing.addEditor((ColumnConfig<JSONObject, String>)cc, field);
-                } else {
-                    rowEditing.removeEditor(cc);
+                    rowEditing.addEditor((ColumnConfig<JSONObject, String>) cc, field);
                 }
             }
+        } else {
+            rowEditing = null;
+            grid.removeToolTip();
         }
     }
 
@@ -441,17 +446,7 @@ public class StructuredTextViewerImpl extends StructuredTextViewer {
 
     @Override
     public Widget asWidget() {
-        SimpleContainer widget = new SimpleContainer();
-        widget.add(container);
-//        widget.addHandler(new SaveFileEventHandler() {
-//
-//            @Override
-//            public void onSave(SaveFileEvent event) {
-//                save();
-//
-//            }
-//        }, SaveFileEvent.TYPE);
-        return widget;
+        return container;
     }
 
     @Override

@@ -161,20 +161,26 @@ public class TextViewerImpl extends AbstractFileViewer implements EditingSupport
 
     private final Folder parentFolder;
 
-    private FileViewer.Presenter presenter;
+    private final FileViewer.Presenter presenter;
 
     protected JavaScriptObject jso;
 
     private final String mode;
 
-    static Logger LOG = Logger.getLogger("viewer");
+    static Logger LOG = Logger.getLogger(TextViewerImpl.class.getName());
 
-    public TextViewerImpl(File file, String infoType, String mode, boolean editing, Folder parentFolder) {
+    public TextViewerImpl(File file,
+                          final String infoType,
+                          final String mode,
+                          final boolean editing,
+                          final Folder parentFolder,
+                          final FileViewer.Presenter presenter) {
         super(file, infoType);
         this.editing = editing;
         this.mode = mode;
-        LOG.log(Level.SEVERE, "in viewer-->" + mode);
+        LOG.log(Level.INFO, "in viewer-->" + mode);
         this.parentFolder = parentFolder;
+        this.presenter = presenter;
         toolbar = initToolBar();
         pagingToolbar = initPagingToolbar();
 
@@ -182,7 +188,6 @@ public class TextViewerImpl extends AbstractFileViewer implements EditingSupport
             toolbar.addPreviewHandler(new PreviewSelectHandlerImpl());
         }
         widget = uiBinder.createAndBindUi(this);
-//        widget.addHandler(new SaveFileHandlerImpl(), SaveFileEvent.TYPE);
 
         addWrapHandler();
         addLineNumberHandler();
@@ -201,7 +206,7 @@ public class TextViewerImpl extends AbstractFileViewer implements EditingSupport
 
     @Override
     public HandlerRegistration addFileSavedEventHandler(final FileSavedEvent.FileSavedEventHandler handler){
-        return asWidget().addHandler(handler, FileSavedEvent.TYPE);
+        return con.addHandler(handler, FileSavedEvent.TYPE);
     }
 
     TextViewToolBar initToolBar() {
@@ -267,11 +272,6 @@ public class TextViewerImpl extends AbstractFileViewer implements EditingSupport
     @Override
     public Widget asWidget() {
         return widget;
-    }
-
-    @Override
-    public void setPresenter(FileViewer.Presenter p) {
-        this.presenter = p;
     }
 
     @Override

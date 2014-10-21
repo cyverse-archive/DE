@@ -24,11 +24,12 @@ public class HtmlDataViewCommand implements ViewCommand {
     private final FileEditorServiceFacade fileEditorService = ServicesInjector.INSTANCE.getFileEditorServiceFacade();
 
     @Override
-    public List<FileViewer> execute(File file,
-                                    String infoType,
-                                    boolean editing,
-                                    Folder parentFolder,
-                                    JSONObject manifest) {
+    public List<FileViewer> execute(final File file,
+                                    final String infoType,
+                                    final boolean editing,
+                                    final Folder parentFolder,
+                                    final JSONObject manifest,
+                                    final FileViewer.Presenter presenter) {
         if (editing) {
             ErrorAnnouncementConfig config = new ErrorAnnouncementConfig(
                     "Editing is not supported for this type of file!");

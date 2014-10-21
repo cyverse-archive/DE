@@ -13,6 +13,7 @@ import com.google.gwt.json.client.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 /**
  * @author sriram, jstroot
@@ -21,6 +22,7 @@ public class TextDataViewCommand implements ViewCommand {
 
     private Folder parentFolder;
     private final String mode;
+    Logger LOG = Logger.getLogger(TextDataViewCommand.class.getName());
 
     public TextDataViewCommand(String mode) {
         this.mode = mode;
@@ -28,32 +30,36 @@ public class TextDataViewCommand implements ViewCommand {
 
     @Override
     public List<FileViewer> execute(final File file,
-                                    String infoType,
-                                    boolean editing,
-                                    Folder parentFolder,
-                                    JSONObject manifest) {
+                                    final String infoType,
+                                    final boolean editing,
+                                    final Folder parentFolder,
+                                    final JSONObject manifest,
+                                    final FileViewer.Presenter presenter) {
         this.parentFolder = parentFolder;
         Integer columns = null;
         if(manifest.containsKey(FileViewer.COLUMNS_KEY)){
             columns = JsonUtil.getNumber(manifest, FileViewer.COLUMNS_KEY).intValue();
+            LOG.info("Columns are defined: " + columns);
         }
-        return getViewerByInfoType(file, infoType, columns, editing);
+        return getViewerByInfoType(file, infoType, columns, editing, presenter);
     }
 
     private List<FileViewer> getViewerByInfoType(final File file,
-                                                 String infoType,
-                                                 Integer columns,
-                                                 boolean editing) {
+                                                 final String infoType,
+                                                 final Integer columns,
+                                                 final boolean editing,
+                                                 final FileViewer.Presenter presenter) {
         List<FileViewer> viewers = new ArrayList<>();
         if (!Strings.isNullOrEmpty(infoType)) {
-            if (infoType.equals(InfoType.CSV.toString()) || infoType.equals(InfoType.TSV.toString())
+            if (infoType.equals(InfoType.CSV.toString())
+                    || infoType.equals(InfoType.TSV.toString())
                     || infoType.equals(InfoType.VCF.toString())
                     || infoType.equals(InfoType.GFF.toString())) {
-                viewers.add(new StructuredTextViewerImpl(file, infoType, columns, parentFolder));
+                viewers.add(new StructuredTextViewerImpl(file, infoType, columns, parentFolder, presenter));
 
             }
         }
-        viewers.add(new TextViewerImpl(file, infoType, mode, editing, parentFolder));
+        viewers.add(new TextViewerImpl(file, infoType, mode, editing, parentFolder, presenter));
         return viewers;
     }
 }

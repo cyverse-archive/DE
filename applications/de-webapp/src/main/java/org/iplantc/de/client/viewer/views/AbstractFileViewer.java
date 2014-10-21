@@ -19,8 +19,6 @@ public abstract class AbstractFileViewer implements FileViewer {
 
     protected String infoType;
 
-    protected Presenter presenter;
-
     public AbstractFileViewer(File file, String infoType) {
         this.file = file;
         this.infoType = infoType;
@@ -33,11 +31,6 @@ public abstract class AbstractFileViewer implements FileViewer {
     public HandlerRegistration addFileSavedEventHandler(final FileSavedEventHandler handler){
         // Subclasses which use the FileSaveCallback, or otherwise fire a FileSavedEvent will override this method
         return null;
-    }
-
-    @Override
-    public void setPresenter(Presenter p) {
-        this.presenter = p;
     }
 
     @Override

@@ -17,14 +17,13 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * @author sriram
- * 
+ * @author sriram, jstroot
  */
 public class MimeTypeViewerResolverFactory {
 
     public static final Map<MimeType, String> modeMap = new HashMap<>();
 
-    static Logger LOG = Logger.getLogger("viewer");
+    static Logger LOG = Logger.getLogger(MimeTypeViewerResolverFactory.class.getName());
 
     static {
         modeMap.put(MimeType.X_SH, "shell");
@@ -37,9 +36,9 @@ public class MimeTypeViewerResolverFactory {
 
     public static ViewCommand getViewerCommand(MimeType type) {
 
-        LOG.log(Level.SEVERE, "mime->" + type.toString());
+        LOG.log(Level.INFO, "mime->" + type.toString());
 
-        ViewCommand cmd = null;
+        ViewCommand cmd;
 
         switch (type) {
 
@@ -68,6 +67,7 @@ public class MimeTypeViewerResolverFactory {
                 break;
 
             case X_SH:
+                LOG.log(Level.INFO, "mode-->" + modeMap.get(type));
                 cmd = new TextDataViewCommand(modeMap.get(type));
                 break;
 
@@ -84,19 +84,22 @@ public class MimeTypeViewerResolverFactory {
                 break;
 
             case X_PYTHON:
+                LOG.log(Level.INFO, "mode-->" + modeMap.get(type));
                 cmd = new TextDataViewCommand(modeMap.get(type));
-                LOG.log(Level.SEVERE, "mode-->" + modeMap.get(type));
                 break;
 
             case X_RSRC:
+                LOG.log(Level.INFO, "mode-->" + modeMap.get(type));
                 cmd = new TextDataViewCommand(modeMap.get(type));
                 break;
 
             case X_PERL:
+                LOG.log(Level.INFO, "mode-->" + modeMap.get(type));
                 cmd = new TextDataViewCommand(modeMap.get(type));
                 break;
 
             case X_WEB_MARKDOWN:
+                LOG.log(Level.INFO, "mode-->" + modeMap.get(type));
                 cmd = new TextDataViewCommand(modeMap.get(type));
                 break;
 

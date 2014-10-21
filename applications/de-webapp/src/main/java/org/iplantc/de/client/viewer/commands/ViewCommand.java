@@ -22,5 +22,6 @@ public interface ViewCommand {
                                        String infoType,
                                        boolean editing,
                                        Folder parentFolder,
-                                       JSONObject manifest);
+                                       JSONObject manifest,
+                                       FileViewer.Presenter presenter);
 }

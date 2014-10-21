@@ -20,14 +20,12 @@ public interface FileViewer extends IsWidget, FileSavedEvent.HasFileSavedEventHa
     int PAGE_INCREMENT_SIZE_KB = 8;
     String COLUMNS_KEY = "columns";
 
-    public interface Presenter extends FileSavedEvent.HasFileSavedEventHandlers,
-                                       DirtyStateChangedEvent.HasDirtyStateChangedEventHandlers {
+    public interface Presenter extends DirtyStateChangedEvent.HasDirtyStateChangedEventHandlers {
         String getTitle();
 
         void go(HasOneWidget container,
                 File file,
                 Folder parentFolder,
-                MimeType contentType,
                 boolean editing,
                 boolean isVizTabFirst,
                 AsyncCallback<String> asyncCallback);
@@ -39,7 +37,7 @@ public interface FileViewer extends IsWidget, FileSavedEvent.HasFileSavedEventHa
                        boolean editing,
                        boolean vizTabFirst,
                        boolean isTabularFile,
-                       String separator);
+                       Integer columns, String separator);
 
         void saveFile();
 
@@ -49,8 +47,6 @@ public interface FileViewer extends IsWidget, FileSavedEvent.HasFileSavedEventHa
         
         void setTitle(String windowTitle);
     }
-
-    void setPresenter(Presenter p);
 
     void setData(Object data);
 

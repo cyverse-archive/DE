@@ -62,7 +62,6 @@ public class FileViewerWindow extends IplantWindowBase implements IsMaskable,
             presenter.go(this,
                          file,
                          configAB.getParentFolder(),
-                         configAB.getContentType(),
                          config.isEditing(),
                          config.isVizTabFirst(),
                          new CriticalPathCallback());
@@ -71,6 +70,7 @@ public class FileViewerWindow extends IplantWindowBase implements IsMaskable,
             setHeadingText(title);
             boolean isTabularFile = config instanceof TabularFileViewerWindowConfig;
             String delimiter = isTabularFile ? ((TabularFileViewerWindowConfig)config).getSeparator() : "";
+            Integer columns = isTabularFile ? ((TabularFileViewerWindowConfig)config).getColumns() : null;
             presenter.newFileGo(this,
                                 title,
                                 config.getContentType(),
@@ -78,6 +78,7 @@ public class FileViewerWindow extends IplantWindowBase implements IsMaskable,
                                 config.isEditing(),
                                 config.isVizTabFirst(),
                                 isTabularFile,
+                                columns,
                                 delimiter);
         }
     }

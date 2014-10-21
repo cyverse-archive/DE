@@ -15,8 +15,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * @author sriram
- * 
+ * @author sriram, jstroot
  */
 public class PdfDataViewCommand implements ViewCommand {
 
@@ -24,11 +23,12 @@ public class PdfDataViewCommand implements ViewCommand {
     private final FileEditorServiceFacade fileEditorService = ServicesInjector.INSTANCE.getFileEditorServiceFacade();
 
     @Override
-    public List<FileViewer> execute(File file,
-                                    String infoType,
-                                    boolean editing,
-                                    Folder parentFolder,
-                                    JSONObject manifest) {
+    public List<FileViewer> execute(final File file,
+                                    final String infoType,
+                                    final boolean editing,
+                                    final Folder parentFolder,
+                                    final JSONObject manifest,
+                                    final FileViewer.Presenter presenter) {
         String fileId = file.getPath();
         if (editing) {
             ErrorAnnouncementConfig config = new ErrorAnnouncementConfig(
