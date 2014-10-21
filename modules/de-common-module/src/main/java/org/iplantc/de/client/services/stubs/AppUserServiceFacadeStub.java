@@ -83,11 +83,6 @@ public class AppUserServiceFacadeStub implements AppUserServiceFacade {
     }
 
     @Override
-    public void getDCDetails(String appId, AsyncCallback<String> asyncCallback) {
-
-    }
-
-    @Override
     public void appExportable(String appId, AsyncCallback<String> asyncCallback) {
 
     }

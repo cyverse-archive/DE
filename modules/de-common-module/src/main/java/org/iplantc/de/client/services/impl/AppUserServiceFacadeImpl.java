@@ -102,15 +102,8 @@ public class AppUserServiceFacadeImpl implements AppUserServiceFacade {
     }
 
     @Override
-    public void getDCDetails(String appId, AsyncCallback<String> callback) {
-        String address = deProperties.getMuleServiceBaseUrl() + "get-components-in-analysis/" + appId; //$NON-NLS-1$
-        ServiceCallWrapper wrapper = new ServiceCallWrapper(address);
-        deServiceFacade.getServiceData(wrapper, callback);
-    }
-
-    @Override
     public void getDataObjectsForApp(String appId, AsyncCallback<String> callback) {
-        String address = APPS + "/" + appId + "/data-objects";
+        String address = APPS + "/" + appId + "/file-parameters";
 
         ServiceCallWrapper wrapper = new ServiceCallWrapper(address);
         deServiceFacade.getServiceData(wrapper, callback);

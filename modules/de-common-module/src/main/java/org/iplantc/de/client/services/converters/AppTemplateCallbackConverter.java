@@ -1,6 +1,5 @@
 package org.iplantc.de.client.services.converters;
 
-import org.iplantc.de.client.models.HasId;
 import org.iplantc.de.client.models.apps.integration.AppTemplate;
 import org.iplantc.de.client.models.apps.integration.AppTemplateAutoBeanFactory;
 import org.iplantc.de.client.models.apps.integration.Argument;
@@ -8,55 +7,29 @@ import org.iplantc.de.client.models.apps.integration.ArgumentGroup;
 import org.iplantc.de.client.models.apps.integration.ArgumentType;
 import org.iplantc.de.client.models.apps.integration.SelectionItem;
 import org.iplantc.de.client.models.apps.integration.SelectionItemGroup;
-import org.iplantc.de.client.models.tool.Tool;
-import org.iplantc.de.client.services.DeployedComponentServices;
-import org.iplantc.de.client.util.CommonModelUtils;
 
 import com.google.common.collect.Lists;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.web.bindery.autobean.shared.AutoBean;
 import com.google.web.bindery.autobean.shared.AutoBeanCodex;
-import com.google.web.bindery.autobean.shared.AutoBeanUtils;
 import com.google.web.bindery.autobean.shared.Splittable;
 import com.google.web.bindery.autobean.shared.impl.StringQuoter;
 
 public class AppTemplateCallbackConverter extends AsyncCallbackConverter<String, AppTemplate> {
 
-    private final DeployedComponentServices dcServices;
     private final AppTemplateAutoBeanFactory factory;
 
-    public AppTemplateCallbackConverter(AppTemplateAutoBeanFactory factory, DeployedComponentServices dcServices, AsyncCallback<AppTemplate> callback) {
+    public AppTemplateCallbackConverter(AppTemplateAutoBeanFactory factory,
+                                        AsyncCallback<AppTemplate> callback) {
         super(callback);
         this.factory = factory;
-        this.dcServices = dcServices;
     }
 
     @Override
     public void onSuccess(String result) {
         final Splittable split = StringQuoter.split(result);
-
-        HasId createHasIdFromSplittable = CommonModelUtils.createHasIdFromSplittable(split);
-        if (createHasIdFromSplittable == null) {
-            super.onSuccess(split.getPayload());
-            return;
-        }
-        dcServices.getAppTemplateDeployedComponent(createHasIdFromSplittable, new AsyncCallback<Tool>() {
-
-            @Override
-            public void onFailure(Throwable caught) {
-                // Didn't find Tool, just return unaltered AppTemplate
-                AppTemplateCallbackConverter.super.onSuccess(split.getPayload());
-            }
-
-            @Override
-            public void onSuccess(Tool dc) {
-                if(dc != null){
-                    Splittable dcSplittable = AutoBeanCodex.encode(AutoBeanUtils.getAutoBean(dc));
-                    dcSplittable.assign(split, "deployedComponent");                    
-                }
-                AppTemplateCallbackConverter.super.onSuccess(split.getPayload());
-            }
-        });
+        super.onSuccess(split.getPayload());
+        return;
     }
 
     @Override
@@ -85,13 +58,19 @@ public class AppTemplateCallbackConverter extends AsyncCallbackConverter<String,
                 if (type.asString().equals(ArgumentType.TreeSelection.name())) {
                     Splittable arguments = arg.get("arguments");
                     if ((arguments != null) && (arguments.isIndexed()) && (arguments.size() > 0)) {
-                        SelectionItemGroup sig = AutoBeanCodex.decode(factory, SelectionItemGroup.class, arguments.get(0)).as();
-                        atAb.as().getArgumentGroups().get(i).getArguments().get(j).setSelectionItems(Lists.<SelectionItem>newArrayList(sig));
+                        SelectionItemGroup sig = AutoBeanCodex.decode(factory,
+                                                                      SelectionItemGroup.class,
+                                                                      arguments.get(0)).as();
+                        atAb.as()
+                            .getArgumentGroups()
+                            .get(i)
+                            .getArguments()
+                            .get(j)
+                            .setSelectionItems(Lists.<SelectionItem> newArrayList(sig));
                     }
                 }
             }
         }
-
 
         if (forwardDefaults) {
             /*

@@ -1,6 +1,5 @@
 package org.iplantc.de.client.util;
 
-import org.iplantc.de.client.gin.ServicesInjector;
 import org.iplantc.de.client.models.apps.integration.AppTemplate;
 import org.iplantc.de.client.models.apps.integration.AppTemplateAutoBeanFactory;
 import org.iplantc.de.client.models.apps.integration.Argument;
@@ -65,7 +64,7 @@ public class AppTemplateUtils {
         AutoBean<AppTemplate> argAb = AutoBeanUtils.getAutoBean(value);
 
         final String payload = AutoBeanCodex.encode(argAb).getPayload();
-        return new AppTemplateCallbackConverter(factory, ServicesInjector.INSTANCE.getDeployedComponentServices(), null)
+        return new AppTemplateCallbackConverter(factory, null)
                 .convertFrom(payload, false);
     }
 

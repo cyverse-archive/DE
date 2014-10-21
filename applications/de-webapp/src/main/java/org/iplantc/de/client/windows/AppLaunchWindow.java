@@ -10,7 +10,6 @@ import org.iplantc.de.client.models.WindowState;
 import org.iplantc.de.client.models.apps.integration.AppTemplate;
 import org.iplantc.de.client.models.apps.integration.AppTemplateAutoBeanFactory;
 import org.iplantc.de.client.services.AppTemplateServices;
-import org.iplantc.de.client.services.DeployedComponentServices;
 import org.iplantc.de.client.services.converters.AppTemplateCallbackConverter;
 import org.iplantc.de.client.util.CommonModelUtils;
 import org.iplantc.de.commons.client.ErrorHandler;
@@ -67,18 +66,16 @@ public class AppLaunchWindow extends IplantWindowBase implements AnalysisLaunchE
     }
 
     private final String appId;
-    private final DeployedComponentServices dcServices;
     private final IplantDisplayStrings displayStrings;
     private final AppTemplateAutoBeanFactory factory;
     private final AppLaunchView.Presenter presenter;
     private final AppTemplateServices templateService;
-    private IplantErrorStrings errorStrings;
+    private final IplantErrorStrings errorStrings;
 
     public AppLaunchWindow(AppWizardConfig config) {
         super(null, config);
         templateService = ServicesInjector.INSTANCE.getAppTemplateServices();
         factory = GWT.create(AppTemplateAutoBeanFactory.class);
-        dcServices = ServicesInjector.INSTANCE.getDeployedComponentServices();
         presenter = AppLaunchInjector.INSTANCE.getAppLaunchPresenter();
         displayStrings = I18N.DISPLAY;
         errorStrings = I18N.ERROR;
@@ -114,7 +111,7 @@ public class AppLaunchWindow extends IplantWindowBase implements AnalysisLaunchE
 
         sc.mask(displayStrings.loadingMask());
         if (config.getAppTemplate() != null) {
-            AppTemplateCallbackConverter cnvt = new AppTemplateCallbackConverter(factory, dcServices,
+            AppTemplateCallbackConverter cnvt = new AppTemplateCallbackConverter(factory,
                                                                                  new AsyncCallback<AppTemplate>() {
 
                                                                                      @Override

@@ -189,7 +189,7 @@ public class AppEditorWindow extends IplantWindowBase implements AppPublishedEve
                       final AppsIntegrationWindowConfig config) {
         if (config.getAppTemplate() != null) {
             // JDS Use converter for convenience.
-            AppTemplateCallbackConverter at = new AppTemplateCallbackConverter(factory, dcServices,
+            AppTemplateCallbackConverter at = new AppTemplateCallbackConverter(factory,
                                                                                new AsyncCallback<AppTemplate>() {
 
                                                                                    @Override

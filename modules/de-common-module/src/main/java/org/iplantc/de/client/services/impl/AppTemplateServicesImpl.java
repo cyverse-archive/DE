@@ -24,7 +24,6 @@ import org.iplantc.de.client.models.apps.integration.SelectionItemGroup;
 import org.iplantc.de.client.models.tool.Tool;
 import org.iplantc.de.client.services.AppMetadataServiceFacade;
 import org.iplantc.de.client.services.AppTemplateServices;
-import org.iplantc.de.client.services.DeployedComponentServices;
 import org.iplantc.de.client.services.converters.AppTemplateCallbackConverter;
 import org.iplantc.de.client.util.AppTemplateUtils;
 import org.iplantc.de.client.util.JsonUtil;
@@ -59,7 +58,6 @@ public class AppTemplateServicesImpl implements AppTemplateServices, AppMetadata
     private static final Queue<AsyncCallback<List<FileInfoType>>> fileInfoTypeQueue = Lists.newLinkedList();
     private static final Queue<AsyncCallback<List<ReferenceGenome>>> refGenQueue = Lists.newLinkedList();
     private final List<DataSource> dataSourceList = Lists.newArrayList();
-    private final DeployedComponentServices dcServices;
     private final List<FileInfoType> fileInfoTypeList = Lists.newArrayList();
 
     private final List<ReferenceGenome> refGenList = Lists.newArrayList();
@@ -71,11 +69,9 @@ public class AppTemplateServicesImpl implements AppTemplateServices, AppMetadata
     @Inject
     public AppTemplateServicesImpl(final DiscEnvApiService deServiceFacade,
                                    final DEProperties deProperties,
-                                   final DeployedComponentServices dcServices,
                                    final AppTemplateAutoBeanFactory factory) {
         this.deServiceFacade = deServiceFacade;
         this.deProperties = deProperties;
-        this.dcServices = dcServices;
         this.factory = factory;
     }
 
@@ -95,7 +91,7 @@ public class AppTemplateServicesImpl implements AppTemplateServices, AppMetadata
     public void getAppTemplate(HasId appId, AsyncCallback<AppTemplate> callback) {
         String address = APPS + "/" + appId.getId();
         ServiceCallWrapper wrapper = new ServiceCallWrapper(address);
-        deServiceFacade.getServiceData(wrapper, new AppTemplateCallbackConverter(factory, dcServices, callback));
+        deServiceFacade.getServiceData(wrapper, new AppTemplateCallbackConverter(factory, callback));
     }
 
     @Override
@@ -107,7 +103,7 @@ public class AppTemplateServicesImpl implements AppTemplateServices, AppMetadata
     public void getAppTemplateForEdit(HasId appId, AsyncCallback<AppTemplate> callback) {
         String address = APPS + "/" + appId.getId() + "/ui";
         ServiceCallWrapper wrapper = new ServiceCallWrapper(address);
-        deServiceFacade.getServiceData(wrapper, new AppTemplateCallbackConverter(factory, dcServices, callback));
+        deServiceFacade.getServiceData(wrapper, new AppTemplateCallbackConverter(factory, callback));
     }
 
     @Override
@@ -115,7 +111,7 @@ public class AppTemplateServicesImpl implements AppTemplateServices, AppMetadata
         String address = deProperties.getUnproctedMuleServiceBaseUrl() + "preview-template";
         Splittable split = appTemplateToSplittable(at);
         ServiceCallWrapper wrapper = new ServiceCallWrapper(POST, address, split.getPayload());
-        deServiceFacade.getServiceData(wrapper, new AppTemplateCallbackConverter(factory, dcServices, callback));
+        deServiceFacade.getServiceData(wrapper, new AppTemplateCallbackConverter(factory, callback));
     }
 
     @Override
@@ -161,7 +157,7 @@ public class AppTemplateServicesImpl implements AppTemplateServices, AppMetadata
 
         ServiceCallWrapper wrapper = new ServiceCallWrapper(GET, address);
 
-        deServiceFacade.getServiceData(wrapper, new AppTemplateCallbackConverter(factory, dcServices, callback));
+        deServiceFacade.getServiceData(wrapper, new AppTemplateCallbackConverter(factory, callback));
     }
 
     @Override

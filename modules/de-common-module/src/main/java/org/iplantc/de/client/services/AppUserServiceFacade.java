@@ -111,13 +111,6 @@ public interface AppUserServiceFacade extends AppServiceFacade {
     void copyWorkflow(String workflowId, AsyncCallback<String> callback);
 
     /**
-     *
-     * @param appId
-     * @param callback
-     */
-    void getDCDetails(String appId, AsyncCallback<String> callback);
-
-    /**
      * Checks if the given appId is able to be exported to TITo via a copy or edit. The service will
      * respond with JSON that contains a boolean "can-export" key, and a "cause" key if "can-export" is
      * false:
