@@ -3,7 +3,6 @@ package org.iplantc.de.pipelines.client.util;
 import org.iplantc.de.client.gin.ServicesInjector;
 import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.models.apps.AppFileParameters;
-import org.iplantc.de.client.models.apps.integration.FileParameters;
 import org.iplantc.de.client.models.pipelines.Pipeline;
 import org.iplantc.de.client.models.pipelines.PipelineApp;
 import org.iplantc.de.client.models.pipelines.PipelineAppData;
@@ -126,7 +125,7 @@ public class PipelineAutoBeanUtil {
         List<PipelineAppData> ret = new ArrayList<PipelineAppData>();
         if (appDataObjs != null) {
             for (AppFileParameters appDataObj : appDataObjs) {
-                PipelineAppData appData = dataObjectToPipelineAppData(appDataObj.getFileParameters());
+                PipelineAppData appData = dataObjectToPipelineAppData(appDataObj);
 
                 if (appData != null) {
                     ret.add(appData);
@@ -137,14 +136,23 @@ public class PipelineAutoBeanUtil {
         return ret;
     }
 
-    private PipelineAppData dataObjectToPipelineAppData(FileParameters dataObject) {
-        AutoBean<FileParameters> dataBean = AutoBeanUtils.getAutoBean(dataObject);
+    private PipelineAppData dataObjectToPipelineAppData(AppFileParameters dataObject) {
+        AutoBean<AppFileParameters> dataBean = AutoBeanUtils.getAutoBean(dataObject);
         if (dataBean == null) {
             return null;
         }
 
-        return AutoBeanCodex.decode(factory, PipelineAppData.class,
+        PipelineAppData pad = AutoBeanCodex.decode(factory,
+                                    PipelineAppData.class,
                 AutoBeanCodex.encode(dataBean).getPayload()).as();
+
+        if (pad != null) {
+            pad.setId(dataObject.getId());
+            pad.setName(dataObject.getName());
+            pad.setDescription(dataObject.getDescription());
+        }
+
+        return pad;
     }
 
     /**
@@ -390,10 +398,11 @@ public class PipelineAutoBeanUtil {
         return ret;
     }
 
-    private List<PipelineAppData> templateDataObjectsToPipelineAppData(List<FileParameters> appDataObjs) {
+    private List<PipelineAppData>
+            templateDataObjectsToPipelineAppData(List<AppFileParameters> appDataObjs) {
         List<PipelineAppData> ret = new ArrayList<PipelineAppData>();
         if (appDataObjs != null) {
-            for (FileParameters dataObj : appDataObjs) {
+            for (AppFileParameters dataObj : appDataObjs) {
                 PipelineAppData appData = dataObjectToPipelineAppData(dataObj);
 
                 if (appData != null) {

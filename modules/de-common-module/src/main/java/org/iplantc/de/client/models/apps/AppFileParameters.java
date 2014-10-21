@@ -3,8 +3,8 @@ package org.iplantc.de.client.models.apps;
 import org.iplantc.de.client.models.HasDescription;
 import org.iplantc.de.client.models.HasId;
 import org.iplantc.de.client.models.HasLabel;
-import org.iplantc.de.client.models.apps.integration.FileParameters;
 
+import com.google.gwt.user.client.ui.HasName;
 import com.google.web.bindery.autobean.shared.AutoBean.PropertyName;
 
 /**
@@ -13,11 +13,7 @@ import com.google.web.bindery.autobean.shared.AutoBean.PropertyName;
  * @author psarando
  * 
  */
-public interface AppFileParameters extends HasId, HasLabel, HasDescription {
-
-    String getName();
-
-    void setName(String name);
+public interface AppFileParameters extends HasId, HasLabel, HasDescription, HasName {
 
     String getValue();
 
@@ -33,9 +29,13 @@ public interface AppFileParameters extends HasId, HasLabel, HasDescription {
 
     void setType(String type);
 
-    @PropertyName("file_parameters")
-    FileParameters getFileParameters();
+    String getFormat();
 
-    @PropertyName("file_parameters")
-    void setFileParameters(FileParameters dataObj);
+    void setFormat(String format);
+
+    @PropertyName("required")
+    boolean getRequired();
+
+    @PropertyName("required")
+    void setRequired(boolean required);
 }
