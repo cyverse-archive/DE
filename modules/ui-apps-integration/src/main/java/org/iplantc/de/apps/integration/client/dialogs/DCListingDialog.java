@@ -4,10 +4,11 @@
 package org.iplantc.de.apps.integration.client.dialogs;
 
 import static org.iplantc.de.apps.integration.shared.AppIntegrationModule.Ids.*;
+
 import org.iplantc.de.apps.integration.client.presenter.DeployedComponentPresenterImpl;
 import org.iplantc.de.apps.integration.client.view.deployedComponents.DeployedComponentsListingView;
 import org.iplantc.de.apps.integration.client.view.deployedComponents.DeployedComponentsListingViewImpl;
-import org.iplantc.de.client.models.deployedComps.DeployedComponent;
+import org.iplantc.de.client.models.tool.Tool;
 import org.iplantc.de.commons.client.views.gxt3.dialogs.IPlantDialog;
 
 import com.sencha.gxt.data.shared.ListStore;
@@ -24,20 +25,20 @@ import java.util.List;
  */
 public class DCListingDialog extends IPlantDialog {
 
-    class DCKeyProvider implements ModelKeyProvider<DeployedComponent> {
+    class DCKeyProvider implements ModelKeyProvider<Tool> {
 
         @Override
-        public String getKey(DeployedComponent item) {
+        public String getKey(Tool item) {
             return item.getId();
         }
 
     }
 
-    class DCSelectionChangedHandler implements SelectionChangedHandler<DeployedComponent> {
+    class DCSelectionChangedHandler implements SelectionChangedHandler<Tool> {
 
         @Override
-        public void onSelectionChanged(SelectionChangedEvent<DeployedComponent> event) {
-            List<DeployedComponent> items = event.getSelection();
+        public void onSelectionChanged(SelectionChangedEvent<Tool> event) {
+            List<Tool> items = event.getSelection();
             if (items != null && items.size() > 0) {
                 getButton(PredefinedButton.OK).setEnabled(true);
                 selectedComponent = items.get(0);
@@ -48,7 +49,7 @@ public class DCListingDialog extends IPlantDialog {
         }
     }
 
-    private DeployedComponent selectedComponent = null;
+    private Tool selectedComponent = null;
 
     public DCListingDialog() {
         setPixelSize(600, 500);
@@ -73,7 +74,7 @@ public class DCListingDialog extends IPlantDialog {
             }
         });
 
-        ListStore<DeployedComponent> listStore = new ListStore<DeployedComponent>(new DCKeyProvider());
+        ListStore<Tool> listStore = new ListStore<Tool>(new DCKeyProvider());
         DeployedComponentsListingView view = new DeployedComponentsListingViewImpl(listStore, new DCSelectionChangedHandler());
         DeployedComponentsListingView.Presenter p = new DeployedComponentPresenterImpl(view);
         getButton(PredefinedButton.OK).ensureDebugId(INSTALLED_TOOLS_DLG + OK);
@@ -82,7 +83,7 @@ public class DCListingDialog extends IPlantDialog {
 
     }
 
-    public DeployedComponent getSelectedComponent() {
+    public Tool getSelectedComponent() {
         return selectedComponent;
     }
 

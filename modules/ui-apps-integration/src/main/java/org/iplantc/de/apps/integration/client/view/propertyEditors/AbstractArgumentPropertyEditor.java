@@ -246,7 +246,7 @@ public abstract class AbstractArgumentPropertyEditor extends Composite implement
         comboBox.addValueChangeHandler(new ValueChangeHandler<DataSource>() {
             @Override
             public void onValueChange(ValueChangeEvent<DataSource> event) {
-                model.getDataObject().setDataSource(event.getValue().getType());
+                model.getFileParameters().setDataSource(event.getValue().getType());
             }
         });
         return comboBox;
@@ -281,7 +281,7 @@ public abstract class AbstractArgumentPropertyEditor extends Composite implement
         comboBox.addValueChangeHandler(new ValueChangeHandler<FileInfoType>() {
             @Override
             public void onValueChange(ValueChangeEvent<FileInfoType> event) {
-                model.getDataObject().setFileInfoType(event.getValue().getType());
+                model.getFileParameters().setFileInfoType(event.getValue().getType());
             }
         });
         return comboBox;
@@ -335,14 +335,14 @@ public abstract class AbstractArgumentPropertyEditor extends Composite implement
     }
 
     private void updateDataSourceSelection(Argument model) {
-        if ((model != null) && (model.getDataObject() != null) && (model.getDataObject().getDataSource() != null)) {
+        if ((model != null) && (model.getFileParameters() != null) && (model.getFileParameters().getDataSource() != null)) {
             List<DataSource> dataSourceList = getDataSourceComboBox().getStore().getAll();
             if ((dataSourceStoreAddHandlerReg != null) && !dataSourceList.isEmpty()) {
                 dataSourceStoreAddHandlerReg.removeHandler();
                 dataSourceStoreAddHandlerReg = null;
             }
             for (DataSource ds : dataSourceList) {
-                if (ds.getType().equals(model.getDataObject().getDataSource())) {
+                if (ds.getType().equals(model.getFileParameters().getDataSource())) {
                     getDataSourceComboBox().setValue(ds);
                     break;
                 }
@@ -352,7 +352,7 @@ public abstract class AbstractArgumentPropertyEditor extends Composite implement
     }
 
     private void updateFileInfoTypeSelection(Argument model) {
-        if ((model != null) && (model.getDataObject() != null) && (model.getDataObject().getFileInfoType() != null)) {
+        if ((model != null) && (model.getFileParameters() != null) && (model.getFileParameters().getFileInfoType() != null)) {
     
             List<FileInfoType> fileInfoTypeList = getFileInfoTypeComboBox().getStore().getAll();
             if ((fileInfoTypeStoreAddHandlerReg != null) && !fileInfoTypeList.isEmpty()) {
@@ -360,7 +360,7 @@ public abstract class AbstractArgumentPropertyEditor extends Composite implement
                 fileInfoTypeStoreAddHandlerReg = null;
             }
             for (final FileInfoType fit : fileInfoTypeList) {
-                if (fit.getType().equals(model.getDataObject().getFileInfoType())) {
+                if (fit.getType().equals(model.getFileParameters().getFileInfoType())) {
                     getFileInfoTypeComboBox().setValue(fit);
                     break;
                 }

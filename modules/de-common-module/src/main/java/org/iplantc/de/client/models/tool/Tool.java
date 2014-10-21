@@ -1,4 +1,4 @@
-package org.iplantc.de.client.models.deployedComps;
+package org.iplantc.de.client.models.tool;
 
 import org.iplantc.de.client.models.HasDescription;
 import org.iplantc.de.client.models.HasId;
@@ -6,28 +6,7 @@ import org.iplantc.de.client.models.HasId;
 import com.google.gwt.user.client.ui.HasName;
 import com.google.web.bindery.autobean.shared.AutoBean.PropertyName;
 
-public interface DeployedComponent extends HasId, HasDescription, HasName {
-
-    @Override
-    @PropertyName("tool_id")
-    String getId();
-    
-    @PropertyName("tool_id")
-    void setId(String id);
-    
-    @Override
-    @PropertyName("tool")
-    String getName();
-
-    @Override
-    @PropertyName("tool")
-    void setName(String name);
-
-    @PropertyName("hid")
-    String getHid();
-    
-    @PropertyName("hid")
-    void setHid(String hid);
+public interface Tool extends HasId, HasDescription, HasName {
 
     @PropertyName("location")
     String getLocation();

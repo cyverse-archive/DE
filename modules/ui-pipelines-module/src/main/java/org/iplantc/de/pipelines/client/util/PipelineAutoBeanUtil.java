@@ -2,8 +2,8 @@ package org.iplantc.de.pipelines.client.util;
 
 import org.iplantc.de.client.gin.ServicesInjector;
 import org.iplantc.de.client.models.apps.App;
-import org.iplantc.de.client.models.apps.AppDataObject;
-import org.iplantc.de.client.models.apps.DataObject;
+import org.iplantc.de.client.models.apps.AppFileParameters;
+import org.iplantc.de.client.models.apps.integration.FileParameters;
 import org.iplantc.de.client.models.pipelines.Pipeline;
 import org.iplantc.de.client.models.pipelines.PipelineApp;
 import org.iplantc.de.client.models.pipelines.PipelineAppData;
@@ -122,11 +122,11 @@ public class PipelineAutoBeanUtil {
         return ret;
     }
 
-    private List<PipelineAppData> appDataObjectsToPipelineAppData(List<AppDataObject> appDataObjs) {
+    private List<PipelineAppData> appDataObjectsToPipelineAppData(List<AppFileParameters> appDataObjs) {
         List<PipelineAppData> ret = new ArrayList<PipelineAppData>();
         if (appDataObjs != null) {
-            for (AppDataObject appDataObj : appDataObjs) {
-                PipelineAppData appData = dataObjectToPipelineAppData(appDataObj.getDataObject());
+            for (AppFileParameters appDataObj : appDataObjs) {
+                PipelineAppData appData = dataObjectToPipelineAppData(appDataObj.getFileParameters());
 
                 if (appData != null) {
                     ret.add(appData);
@@ -137,8 +137,8 @@ public class PipelineAutoBeanUtil {
         return ret;
     }
 
-    private PipelineAppData dataObjectToPipelineAppData(DataObject dataObject) {
-        AutoBean<DataObject> dataBean = AutoBeanUtils.getAutoBean(dataObject);
+    private PipelineAppData dataObjectToPipelineAppData(FileParameters dataObject) {
+        AutoBean<FileParameters> dataBean = AutoBeanUtils.getAutoBean(dataObject);
         if (dataBean == null) {
             return null;
         }
@@ -390,10 +390,10 @@ public class PipelineAutoBeanUtil {
         return ret;
     }
 
-    private List<PipelineAppData> templateDataObjectsToPipelineAppData(List<DataObject> appDataObjs) {
+    private List<PipelineAppData> templateDataObjectsToPipelineAppData(List<FileParameters> appDataObjs) {
         List<PipelineAppData> ret = new ArrayList<PipelineAppData>();
         if (appDataObjs != null) {
-            for (DataObject dataObj : appDataObjs) {
+            for (FileParameters dataObj : appDataObjs) {
                 PipelineAppData appData = dataObjectToPipelineAppData(dataObj);
 
                 if (appData != null) {

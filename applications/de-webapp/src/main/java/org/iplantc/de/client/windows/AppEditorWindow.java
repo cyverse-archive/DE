@@ -1,6 +1,5 @@
 package org.iplantc.de.client.windows;
 
-import static org.iplantc.de.client.models.apps.App.NEW_APP_ID;
 import org.iplantc.de.apps.client.events.AppPublishedEvent;
 import org.iplantc.de.apps.client.events.AppPublishedEvent.AppPublishedEventHandler;
 import org.iplantc.de.apps.integration.client.gin.AppsEditorInjector;
@@ -65,7 +64,7 @@ public class AppEditorWindow extends IplantWindowBase implements AppPublishedEve
         @Override
         public void execute() {
             // JDS Don't update window title for new, un-saved apps.
-            if (NEW_APP_ID.equalsIgnoreCase(appTemplate.getId())) {
+            if (Strings.isNullOrEmpty(appTemplate.getId())) {
                 return;
             }
             final String name = !Strings.isNullOrEmpty(appTemplate.getName()) ? appTemplate.getName() : appearance.headingText();
@@ -212,7 +211,7 @@ public class AppEditorWindow extends IplantWindowBase implements AppPublishedEve
                                                                                    }
                                                                                });
             at.onSuccess(config.getAppTemplate().getPayload());
-        } else if (Strings.isNullOrEmpty(config.getAppId()) || config.getAppId().equalsIgnoreCase(NEW_APP_ID)) {
+        } else if (Strings.isNullOrEmpty(config.getAppId())) {
             setHeadingText(appearance.headingText());
 
             // Create empty AppTemplate
@@ -223,7 +222,7 @@ public class AppEditorWindow extends IplantWindowBase implements AppPublishedEve
             argGrp.setLabel(appearance.groupDefaultLabel(1));
             argGrp.setArguments(Lists.<Argument>newArrayList());
             newAppTemplate.setArgumentGroups(Lists.newArrayList(argGrp));
-            newAppTemplate.setId(NEW_APP_ID);
+            newAppTemplate.setId(null);
 
             /*
              * JDS Set the id of the AppTemplate passed to the rename command to newAppTemplate. This is

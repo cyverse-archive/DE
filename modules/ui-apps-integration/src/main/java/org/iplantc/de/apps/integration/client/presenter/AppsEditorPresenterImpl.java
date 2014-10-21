@@ -1,7 +1,5 @@
 package org.iplantc.de.apps.integration.client.presenter;
 
-import static org.iplantc.de.client.models.apps.App.NEW_APP_ID;
-
 import org.iplantc.de.apps.client.events.AppUpdatedEvent;
 import org.iplantc.de.apps.integration.client.dialogs.CommandLineOrderingPanel;
 import org.iplantc.de.apps.integration.client.events.DeleteArgumentEvent;
@@ -28,10 +26,11 @@ import org.iplantc.de.apps.widgets.client.view.editors.style.AppTemplateWizardAp
 import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.models.IsMinimizable;
 import org.iplantc.de.client.models.apps.integration.AppTemplate;
+import org.iplantc.de.client.models.apps.integration.AppTemplateAutoBeanFactory;
 import org.iplantc.de.client.models.apps.integration.Argument;
 import org.iplantc.de.client.models.apps.integration.ArgumentGroup;
 import org.iplantc.de.client.models.apps.integration.ArgumentType;
-import org.iplantc.de.client.models.apps.integration.DataObject;
+import org.iplantc.de.client.models.apps.integration.FileParameters;
 import org.iplantc.de.client.services.AppTemplateServices;
 import org.iplantc.de.client.services.UUIDServiceAsync;
 import org.iplantc.de.client.util.AppTemplateUtils;
@@ -70,8 +69,8 @@ import com.sencha.gxt.widget.core.client.button.TextButton;
 import com.sencha.gxt.widget.core.client.event.BeforeHideEvent;
 
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
+import java.util.logging.Logger;
 
 /**
  * @author jstroot
@@ -121,10 +120,12 @@ public class AppsEditorPresenterImpl implements AppsEditorView.Presenter,
 
         @Override
         public void onSuccess(String result) {
+            AppTemplateAutoBeanFactory factory = GWT.create(AppTemplateAutoBeanFactory.class);
+            AppTemplate savedTemplate = AutoBeanCodex.decode(factory, AppTemplate.class, result).as();
             String atId = at.getId();
-            if (Strings.isNullOrEmpty(atId) || NEW_APP_ID.equals(atId)) {
-                at.setId(result);
-            } else if (atId.equalsIgnoreCase(result)) {
+            if (Strings.isNullOrEmpty(atId)) {
+                at.setId(savedTemplate.getId());
+            } else if (atId.equalsIgnoreCase(savedTemplate.getId())) {
                 // JDS There was an app ID, but now we are changing it. This is undesired.
                 GWT.log("Attempt to change app ID from \"" + atId + "\" to \"" + result + "\"");
             }
@@ -379,6 +380,8 @@ public class AppsEditorPresenterImpl implements AppsEditorView.Presenter,
 
     private final AppsEditorView view;
     private final IplantAnnouncer announcer;
+
+    Logger LOG = Logger.getLogger("App Editor");
 
     @Inject
     public AppsEditorPresenterImpl(final AppsEditorView view,
@@ -650,7 +653,7 @@ public class AppsEditorPresenterImpl implements AppsEditorView.Presenter,
             return false;
         }
     
-        DataObject dataObject = arg.getDataObject();
+        FileParameters dataObject = arg.getFileParameters();
         boolean isOutput = ArgumentType.FileOutput.equals(type)
                 || ArgumentType.FolderOutput.equals(type) || ArgumentType.MultiFileOutput.equals(type);
         return !(isOutput && (dataObject != null) && dataObject.isImplicit());
@@ -669,44 +672,46 @@ public class AppsEditorPresenterImpl implements AppsEditorView.Presenter,
 
     private void doOnSaveClicked(AsyncCallback<Void> onSaveCallback) {
         AppTemplate toBeSaved = flushViewAndClean();
+        doSave(toBeSaved, onSaveCallback);
 
-        // Update the AppTemplate's edited and published date.
-        Date currentTime = new Date();
-        toBeSaved.setEditedDate(currentTime);
-        toBeSaved.setPublishedDate(currentTime);
-
-        final List<Argument> argNeedUuid = Lists.newArrayList();
-        // First loop over AppTemplate and look for UUIDs which need to be applied
-        for (ArgumentGroup ag : toBeSaved.getArgumentGroups()) {
-            for (Argument arg : ag.getArguments()) {
-                if (Strings.isNullOrEmpty(arg.getId())) {
-                    argNeedUuid.add(arg);
-                }
-            }
-        }
-
-        // Check if we have anything which needs a UUID
-        if (argNeedUuid.size() > 0) {
-            uuidService.getUUIDs(argNeedUuid.size(), new GetUuidThenDoSaveCallback(argNeedUuid, toBeSaved, onSaveCallback));
-        } else {
-            doSave(toBeSaved, onSaveCallback);
-        }
+        // // Update the AppTemplate's edited and published date.
+        // Date currentTime = new Date();
+        // toBeSaved.setEditedDate(currentTime);
+        // toBeSaved.setPublishedDate(currentTime);
+        //
+        // final List<Argument> argNeedUuid = Lists.newArrayList();
+        // // First loop over AppTemplate and look for UUIDs which need to be applied
+        // for (ArgumentGroup ag : toBeSaved.getArgumentGroups()) {
+        // for (Argument arg : ag.getArguments()) {
+        // if (Strings.isNullOrEmpty(arg.getId())) {
+        // argNeedUuid.add(arg);
+        // }
+        // }
+        // }
+        //
+        // // Check if we have anything which needs a UUID
+        // if (argNeedUuid.size() > 0) {
+        // uuidService.getUUIDs(argNeedUuid.size(), new GetUuidThenDoSaveCallback(argNeedUuid, toBeSaved,
+        // onSaveCallback));
+        // } else {
+        // doSave(toBeSaved, onSaveCallback);
+        // }
     }
 
     private void doSave(AppTemplate toBeSaved, final AsyncCallback<Void> onSaveCallback) {
         // JDS Make a copy so we can check for differences on exit
-        lastSave = AppTemplateUtils.copyAppTemplate(toBeSaved);
-
-        // Remove id if it is a new app.
-        if (NEW_APP_ID.equals(lastSave.getId())) {
-            lastSave.setId("");
-        }
+        lastSave = AppTemplateUtils.removeDateFields((AppTemplateUtils.copyAppTemplate(toBeSaved)));
+        
         DoSaveCallback saveCallback = new DoSaveCallback(onSaveCallback, appTemplate, announcer, eventBus, renameCmd, this, appIntMessages.saveSuccessful(), errorMessages.unableToSave());
 
         if (isLabelOnlyEditMode()) {
             atService.updateAppLabels(lastSave, saveCallback);
         } else {
-            atService.saveAndPublishAppTemplate(lastSave, saveCallback);
+            if (Strings.isNullOrEmpty(lastSave.getId())) {
+                atService.createAppTemplate(lastSave, saveCallback);
+            } else {
+                atService.saveAndPublishAppTemplate(lastSave, saveCallback);
+            }
         }
     
     }
@@ -733,6 +738,11 @@ public class AppsEditorPresenterImpl implements AppsEditorView.Presenter,
 
     private void updateCommandLinePreview(final AppTemplate at) {
         AppTemplate cleaned = AppTemplateUtils.removeEmptyGroupArguments(at);
+
+        // do not send id for new App Template
+        if (Strings.isNullOrEmpty(cleaned.getId())) {
+            cleaned.setId(null);
+        }
         atService.cmdLinePreview(cleaned, new AsyncCallback<String>() {
 
             @Override
@@ -749,8 +759,9 @@ public class AppsEditorPresenterImpl implements AppsEditorView.Presenter,
                  * JDS If the given AppTemplate has a valid DeployedComponent, prepend the
                  * DeployedComponent name to the command line preview
                  */
-                if ((at.getDeployedComponent() != null) && !Strings.isNullOrEmpty(at.getDeployedComponent().getName())) {
-                    cmdLinePrev = at.getDeployedComponent().getName() + " " + cmdLinePrev;
+                if (at.getTools() != null 
+ && at.getTools().size() > 0) {
+                    cmdLinePrev = at.getTools().get(0).getName() + " " + cmdLinePrev;
                 }
                 view.setCmdLinePreview(cmdLinePrev);
             }

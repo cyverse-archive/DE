@@ -1,7 +1,7 @@
 package org.iplantc.de.apps.integration.client.view.propertyEditors;
 
-import static org.iplantc.de.apps.integration.shared.AppIntegrationModule.Ids;
-import static org.iplantc.de.apps.integration.shared.AppIntegrationModule.PropertyPanelIds;
+import org.iplantc.de.apps.integration.shared.AppIntegrationModule.Ids;
+import org.iplantc.de.apps.integration.shared.AppIntegrationModule.PropertyPanelIds;
 import org.iplantc.de.apps.widgets.client.view.editors.arguments.converters.ArgumentEditorConverter;
 import org.iplantc.de.apps.widgets.client.view.editors.arguments.converters.SplittableToStringConverter;
 import org.iplantc.de.apps.widgets.client.view.editors.style.AppTemplateWizardAppearance;
@@ -52,12 +52,12 @@ public class MultiFileOutputPropertyEditor extends AbstractArgumentPropertyEdito
     CheckBoxAdapter doNotDisplay;
     @Ignore
     @UiField(provided = true)
-    @Path("dataObject.fileInfoType")
+    @Path("fileParameters.fileInfoType")
     ComboBox<FileInfoType> fileInfoTypeComboBox;
     @UiField
     FieldLabel fileInfoTypeLabel, toolTipLabel, argumentOptionLabel, argLabelLabel, defaultValueLabel;
     @UiField
-    @Path("dataObject.implicit")
+    @Path("fileParameters.implicit")
     CheckBoxAdapter isImplicit;
     @UiField
     TextField label;

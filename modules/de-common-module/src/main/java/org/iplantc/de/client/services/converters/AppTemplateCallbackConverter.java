@@ -8,7 +8,7 @@ import org.iplantc.de.client.models.apps.integration.ArgumentGroup;
 import org.iplantc.de.client.models.apps.integration.ArgumentType;
 import org.iplantc.de.client.models.apps.integration.SelectionItem;
 import org.iplantc.de.client.models.apps.integration.SelectionItemGroup;
-import org.iplantc.de.client.models.deployedComps.DeployedComponent;
+import org.iplantc.de.client.models.tool.Tool;
 import org.iplantc.de.client.services.DeployedComponentServices;
 import org.iplantc.de.client.util.CommonModelUtils;
 
@@ -40,7 +40,7 @@ public class AppTemplateCallbackConverter extends AsyncCallbackConverter<String,
             super.onSuccess(split.getPayload());
             return;
         }
-        dcServices.getAppTemplateDeployedComponent(createHasIdFromSplittable, new AsyncCallback<DeployedComponent>() {
+        dcServices.getAppTemplateDeployedComponent(createHasIdFromSplittable, new AsyncCallback<Tool>() {
 
             @Override
             public void onFailure(Throwable caught) {
@@ -49,7 +49,7 @@ public class AppTemplateCallbackConverter extends AsyncCallbackConverter<String,
             }
 
             @Override
-            public void onSuccess(DeployedComponent dc) {
+            public void onSuccess(Tool dc) {
                 if(dc != null){
                     Splittable dcSplittable = AutoBeanCodex.encode(AutoBeanUtils.getAutoBean(dc));
                     dcSplittable.assign(split, "deployedComponent");                    

@@ -71,6 +71,14 @@ public interface AppTemplateServices {
     void saveAndPublishAppTemplate(AppTemplate at, AsyncCallback<String> callback);
 
     /**
+     * Create a new App template
+     * 
+     * @param at
+     * @param callback
+     */
+    void createAppTemplate(AppTemplate at, AsyncCallback<String> callback);
+
+    /**
      * Submits a published app template with non-functional changes.
      * 
      * @param at

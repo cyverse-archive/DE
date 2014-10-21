@@ -1,10 +1,11 @@
 package org.iplantc.de.apps.integration.client.view.widgets;
 
+import org.iplantc.de.apps.integration.client.dialogs.DCListingDialog;
 import org.iplantc.de.apps.integration.client.events.UpdateCommandLinePreviewEvent;
 import org.iplantc.de.apps.integration.client.events.UpdateCommandLinePreviewEvent.HasUpdateCommandLinePreviewEventHandlers;
 import org.iplantc.de.apps.integration.client.events.UpdateCommandLinePreviewEvent.UpdateCommandLinePreviewEventHandler;
+import org.iplantc.de.apps.integration.client.view.deployedComponents.DCSearchField;
 import org.iplantc.de.apps.integration.shared.AppIntegrationModule;
-import org.iplantc.de.apps.integration.client.dialogs.DCListingDialog;
 import org.iplantc.de.apps.widgets.client.events.AppTemplateSelectedEvent.AppTemplateSelectedEventHandler;
 import org.iplantc.de.apps.widgets.client.events.AppTemplateSelectedEvent.HasAppTemplateSelectedEventHandlers;
 import org.iplantc.de.apps.widgets.client.events.ArgumentGroupSelectedEvent;
@@ -12,10 +13,9 @@ import org.iplantc.de.apps.widgets.client.events.ArgumentGroupSelectedEvent.Argu
 import org.iplantc.de.apps.widgets.client.events.ArgumentSelectedEvent;
 import org.iplantc.de.apps.widgets.client.events.ArgumentSelectedEvent.ArgumentSelectedEventHandler;
 import org.iplantc.de.apps.widgets.client.view.HasLabelOnlyEditMode;
-import org.iplantc.de.apps.integration.client.view.deployedComponents.DCSearchField;
 import org.iplantc.de.apps.widgets.client.view.editors.style.AppTemplateWizardAppearance;
 import org.iplantc.de.client.models.apps.integration.AppTemplate;
-import org.iplantc.de.client.models.deployedComps.DeployedComponent;
+import org.iplantc.de.client.models.tool.Tool;
 import org.iplantc.de.commons.client.validators.AppNameValidator;
 import org.iplantc.de.commons.client.widgets.PreventEntryAfterLimitHandler;
 import org.iplantc.de.resources.client.uiapps.widgets.AppsWidgetsPropertyPanelLabels;
@@ -42,6 +42,10 @@ import com.sencha.gxt.widget.core.client.form.TextArea;
 import com.sencha.gxt.widget.core.client.form.TextField;
 import com.sencha.gxt.widget.core.client.form.validator.MaxLengthValidator;
 import com.sencha.gxt.widget.core.client.tips.QuickTip;
+
+import java.util.Arrays;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * @author jstroot
@@ -75,6 +79,7 @@ public class AppTemplatePropertyEditor extends Composite implements ValueAwareEd
     private boolean labelOnlyEditMode = false;
 
     private AppTemplate model;
+    Logger LOG = Logger.getLogger("App template");
 
     @Inject
     public AppTemplatePropertyEditor(AppTemplateWizardAppearance appearance) {
@@ -108,7 +113,7 @@ public class AppTemplatePropertyEditor extends Composite implements ValueAwareEd
             return;
         }
 
-        model.setDeployedComponent(tool.getValue());
+        model.setTools(Arrays.asList(tool.getValue()));
     }
 
     @Override
@@ -147,8 +152,10 @@ public class AppTemplatePropertyEditor extends Composite implements ValueAwareEd
 
         this.model = value;
 
-        if (value.getDeployedComponent() != null) {
-            tool.setValue(value.getDeployedComponent());
+        LOG.log(Level.SEVERE, "-> size" + value.getTools().size() + "");
+
+        if (value.getTools().size() > 0) {
+            tool.setValue(value.getTools().get(0));
         } else {
             tool.clear();
         }
@@ -180,7 +187,7 @@ public class AppTemplatePropertyEditor extends Composite implements ValueAwareEd
 
             @Override
             public void onHide(HideEvent event) {
-                DeployedComponent dc = dialog.getSelectedComponent();
+                Tool dc = dialog.getSelectedComponent();
                 // Set the deployed component in the AppTemplate
                 if (dc != null) {
                     tool.setValue(dc);
@@ -195,7 +202,7 @@ public class AppTemplatePropertyEditor extends Composite implements ValueAwareEd
      * @param event
      */
     @UiHandler("tool")
-    void onToolValueChanged(ValueChangeEvent<DeployedComponent> event) {
+    void onToolValueChanged(ValueChangeEvent<Tool> event) {
         // presenter.onArgumentPropertyValueChange();
         fireEvent(new UpdateCommandLinePreviewEvent());
     }

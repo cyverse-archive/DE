@@ -7,7 +7,7 @@ import org.iplantc.de.apps.client.views.widgets.AppRatingCellWidget;
 import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.models.apps.AppAutoBeanFactory;
 import org.iplantc.de.client.models.apps.AppCategory;
-import org.iplantc.de.client.models.deployedComps.DeployedComponent;
+import org.iplantc.de.client.models.tool.Tool;
 import org.iplantc.de.client.services.AppUserServiceFacade;
 import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.commons.client.widgets.IPlantAnchor;
@@ -139,7 +139,7 @@ public class AppInfoView implements IsWidget, AppFavoriteCell.RequestAppFavorite
         appearance = GWT.<AccordionLayoutAppearance> create(AccordionLayoutAppearance.class);
     }
 
-    private ContentPanel buildDCPanel(DeployedComponent dc) {
+    private ContentPanel buildDCPanel(Tool dc) {
         ContentPanel cp = new ContentPanel(appearance);
         cp.setAnimCollapse(false);
         cp.setHeadingText(dc.getName());
@@ -152,7 +152,7 @@ public class AppInfoView implements IsWidget, AppFavoriteCell.RequestAppFavorite
         return cp;
     }
 
-    private void addDCDetails(DeployedComponent dc, HtmlLayoutContainer hlc) {
+    private void addDCDetails(Tool dc, HtmlLayoutContainer hlc) {
         String name = appsView.highlightSearchText(dc.getName());
 
         hlc.add(new Label(I18N.DISPLAY.name() + ": "), new HtmlData(".cell1"));
@@ -174,9 +174,9 @@ public class AppInfoView implements IsWidget, AppFavoriteCell.RequestAppFavorite
             public void onSuccess(String result) {
                 AppAutoBeanFactory factory = GWT.create(AppAutoBeanFactory.class);
                 App appDetails = AutoBeanCodex.decode(factory, App.class, result).as();
-                List<DeployedComponent> deployedComponents = appDetails.getDeployedComponents();
+                List<Tool> deployedComponents = appDetails.getTools();
                 if (deployedComponents != null) {
-                    for (DeployedComponent component : deployedComponents) {
+                    for (Tool component : deployedComponents) {
                         buildDCPanel(component);
                     }
                 }

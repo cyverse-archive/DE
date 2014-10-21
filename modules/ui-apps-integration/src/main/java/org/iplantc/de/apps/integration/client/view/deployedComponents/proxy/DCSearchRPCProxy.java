@@ -1,7 +1,7 @@
 package org.iplantc.de.apps.integration.client.view.deployedComponents.proxy;
 
 import org.iplantc.de.client.gin.ServicesInjector;
-import org.iplantc.de.client.models.deployedComps.DeployedComponent;
+import org.iplantc.de.client.models.tool.Tool;
 import org.iplantc.de.client.services.DeployedComponentServices;
 import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.resources.client.messages.I18N;
@@ -18,7 +18,7 @@ import com.sencha.gxt.data.shared.loader.PagingLoadResultBean;
 import java.util.List;
 
 public class DCSearchRPCProxy extends
-        RpcProxy<FilterPagingLoadConfig, PagingLoadResult<DeployedComponent>> {
+        RpcProxy<FilterPagingLoadConfig, PagingLoadResult<Tool>> {
 
     DeployedComponentServices dcService = ServicesInjector.INSTANCE.getDeployedComponentServices();
 
@@ -30,7 +30,7 @@ public class DCSearchRPCProxy extends
 
     @Override
     public void load(FilterPagingLoadConfig loadConfig,
-            final AsyncCallback<PagingLoadResult<DeployedComponent>> callback) {
+            final AsyncCallback<PagingLoadResult<Tool>> callback) {
         // Get the proxy's search params.
         List<FilterConfig> filterConfigs = loadConfig.getFilters();
         if (filterConfigs != null && !filterConfigs.isEmpty()) {
@@ -39,7 +39,7 @@ public class DCSearchRPCProxy extends
 
         if (!Strings.isNullOrEmpty(lastQueryText)) {
             dcService.searchDeployedComponents(lastQueryText,
-                    new AsyncCallback<List<DeployedComponent>>() {
+                    new AsyncCallback<List<Tool>>() {
 
                         @Override
                         public void onFailure(Throwable caught) {
@@ -47,14 +47,14 @@ public class DCSearchRPCProxy extends
                         }
 
                         @Override
-                        public void onSuccess(List<DeployedComponent> result) {
-                            callback.onSuccess(new PagingLoadResultBean<DeployedComponent>(result,
+                        public void onSuccess(List<Tool> result) {
+                            callback.onSuccess(new PagingLoadResultBean<Tool>(result,
                                     result.size(), 0));
                         }
                     });
         } else {
 
-            dcService.getDeployedComponents(new AsyncCallback<List<DeployedComponent>>() {
+            dcService.getDeployedComponents(new AsyncCallback<List<Tool>>() {
 
                 @Override
                 public void onFailure(Throwable caught) {
@@ -63,8 +63,8 @@ public class DCSearchRPCProxy extends
                 }
 
                 @Override
-                public void onSuccess(List<DeployedComponent> result) {
-                    callback.onSuccess(new PagingLoadResultBean<DeployedComponent>(result,
+                public void onSuccess(List<Tool> result) {
+                    callback.onSuccess(new PagingLoadResultBean<Tool>(result,
                             result.size(), 0));
                 }
 

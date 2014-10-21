@@ -2,7 +2,7 @@ package org.iplantc.de.client.models.apps;
 
 import org.iplantc.de.client.models.HasDescription;
 import org.iplantc.de.client.models.HasId;
-import org.iplantc.de.client.models.deployedComps.DeployedComponent;
+import org.iplantc.de.client.models.tool.Tool;
 
 import com.google.gwt.user.client.ui.HasName;
 import com.google.web.bindery.autobean.shared.AutoBean.PropertyName;
@@ -11,8 +11,6 @@ import java.util.Date;
 import java.util.List;
 
 public interface App extends HasId, HasName, HasDescription {
-    
-    static final String NEW_APP_ID = "NEW_APP_TEMPLATE";
 
     @PropertyName("app_type")
     String getAppType();
@@ -96,16 +94,16 @@ public interface App extends HasId, HasName, HasDescription {
 
     void setReferences(List<String> references);
 
-    @PropertyName("components")
-    List<DeployedComponent> getDeployedComponents();
+    @PropertyName("Tools")
+    List<Tool> getTools();
 
-    List<AppDataObject> getInputs();
+    List<AppFileParameters> getInputs();
 
-    void setInputs(List<AppDataObject> inputs);
+    void setInputs(List<AppFileParameters> inputs);
 
-    List<AppDataObject> getOutputs();
+    List<AppFileParameters> getOutputs();
 
-    void setOutputs(List<AppDataObject> outputs);
+    void setOutputs(List<AppFileParameters> outputs);
 
     List<AppCategory> getGroups();
 

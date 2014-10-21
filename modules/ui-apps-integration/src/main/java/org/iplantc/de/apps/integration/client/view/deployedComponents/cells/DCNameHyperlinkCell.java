@@ -1,7 +1,7 @@
 package org.iplantc.de.apps.integration.client.view.deployedComponents.cells;
 
 import org.iplantc.de.apps.integration.client.view.deployedComponents.DeployedComponentsListingView;
-import org.iplantc.de.client.models.deployedComps.DeployedComponent;
+import org.iplantc.de.client.models.tool.Tool;
 
 import static com.google.gwt.dom.client.BrowserEvents.CLICK;
 import static com.google.gwt.dom.client.BrowserEvents.MOUSEOUT;
@@ -28,7 +28,7 @@ import com.google.gwt.user.client.Event;
  * @author sriram
  * 
  */
-public class DCNameHyperlinkCell extends AbstractCell<DeployedComponent> {
+public class DCNameHyperlinkCell extends AbstractCell<Tool> {
 
 
     interface MyCss extends CssResource {
@@ -61,8 +61,8 @@ public class DCNameHyperlinkCell extends AbstractCell<DeployedComponent> {
     }
 
     @Override
-    public void onBrowserEvent(Cell.Context context, Element parent, DeployedComponent value,
-            NativeEvent event, ValueUpdater<DeployedComponent> valueUpdater) {
+    public void onBrowserEvent(Cell.Context context, Element parent, Tool value,
+            NativeEvent event, ValueUpdater<Tool> valueUpdater) {
         Element eventTarget = Element.as(event.getEventTarget());
         if ((value == null) && !parent.isOrHasChild(eventTarget)) {
             return;
@@ -87,7 +87,7 @@ public class DCNameHyperlinkCell extends AbstractCell<DeployedComponent> {
     }
 
     @Override
-    public void render(Cell.Context context, DeployedComponent value, SafeHtmlBuilder sb) {
+    public void render(Cell.Context context, Tool value, SafeHtmlBuilder sb) {
         if (value == null) {
             return;
         }
@@ -98,7 +98,7 @@ public class DCNameHyperlinkCell extends AbstractCell<DeployedComponent> {
 
     }
 
-    private void doOnClick(final DeployedComponent value) {
+    private void doOnClick(final Tool value) {
         view.showInfo(value);
     }
 

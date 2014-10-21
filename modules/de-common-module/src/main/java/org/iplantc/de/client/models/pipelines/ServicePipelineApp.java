@@ -28,10 +28,6 @@ public interface ServicePipelineApp extends HasId, HasDescription {
     @PropertyName("name")
     public void setAppName(String name);
 
-    public ImplementorDetails getImplementation();
-
-    public void setImplementation(ImplementorDetails implementation);
-
     @PropertyName("full_username")
     public String getFullUsername();
 

@@ -21,7 +21,7 @@ public interface AppTemplateAutoBeanFactory extends AutoBeanFactory {
 
     AutoBean<SelectionItemGroup> selectionItemGroup();
 
-    AutoBean<DataObject> dataObject();
+    AutoBean<FileParameters> fileParameters();
 
     AutoBean<JobExecution> jobExecution();
 

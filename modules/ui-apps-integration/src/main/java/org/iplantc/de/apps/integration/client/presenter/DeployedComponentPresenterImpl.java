@@ -5,7 +5,7 @@ package org.iplantc.de.apps.integration.client.presenter;
 
 import org.iplantc.de.apps.integration.client.view.deployedComponents.DeployedComponentsListingView;
 import org.iplantc.de.apps.integration.shared.AppIntegrationModule;
-import org.iplantc.de.client.models.deployedComps.DeployedComponent;
+import org.iplantc.de.client.models.tool.Tool;
 
 import com.google.gwt.user.client.ui.HasOneWidget;
 
@@ -27,7 +27,7 @@ public class DeployedComponentPresenterImpl implements DeployedComponentsListing
      * @see org.iplantc.core.appsIntegration.client.view.DeployedComponentsListingView.Presenter#getSelectedDC()
      */
     @Override
-    public DeployedComponent getSelectedDC() {
+    public Tool getSelectedDC() {
         return view.getSelectedDC();
     }
 

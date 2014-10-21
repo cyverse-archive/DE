@@ -4,7 +4,7 @@ import org.iplantc.de.apps.widgets.client.view.editors.style.AppTemplateWizardAp
 import org.iplantc.de.client.models.apps.integration.AppTemplateAutoBeanFactory;
 import org.iplantc.de.client.models.apps.integration.Argument;
 import org.iplantc.de.client.models.apps.integration.ArgumentType;
-import org.iplantc.de.client.models.apps.integration.DataObject;
+import org.iplantc.de.client.models.apps.integration.FileParameters;
 import org.iplantc.de.resources.client.IplantContextualHelpAccessStyle;
 import org.iplantc.de.resources.client.uiapps.widgets.AppsWidgetsDefaultLabels;
 
@@ -34,7 +34,7 @@ public class AppIntegrationPaletteTest {
     @Mock AppTemplateAutoBeanFactory mockFactory; 
     @Mock IplantContextualHelpAccessStyle mockStyle; 
     @Mock AutoBean<Argument> mockAbArgument; 
-    @Mock AutoBean<DataObject> mockAbDataObject;
+    @Mock AutoBean<FileParameters> mockAbDataObject;
     @Mock DragSource mockDragSource;
 
 	private AppIntegrationPalette uut;
@@ -58,18 +58,18 @@ public class AppIntegrationPaletteTest {
     @Test
     public void testCreateNewArgument_FileOutput() {
         when(mockFactory.argument()).thenReturn(mockAbArgument);
-        when(mockFactory.dataObject()).thenReturn(mockAbDataObject);
+        when(mockFactory.fileParameters()).thenReturn(mockAbDataObject);
 
         Argument mockArgument = mock(Argument.class);
-        DataObject mockDataObject = mock(DataObject.class);
+        FileParameters mockDataObject = mock(FileParameters.class);
         when(mockAbArgument.as()).thenReturn(mockArgument);
         when(mockAbDataObject.as()).thenReturn(mockDataObject);
 
         // FileOutput
         uut.createNewArgument(ArgumentType.FileOutput);
         verify(mockFactory).argument();
-        verify(mockFactory).dataObject();
-        verify(mockArgument).setDataObject(eq(mockDataObject));
+        verify(mockFactory).fileParameters();
+        verify(mockArgument).setFileParameters(eq(mockDataObject));
         verify(mockLabels).defFileOutput();
 
         verifyNoMoreInteractions(mockFactory, mockLabels);
@@ -78,18 +78,18 @@ public class AppIntegrationPaletteTest {
     @Test
     public void testCreateNewArgument_FolderOutput() {
         when(mockFactory.argument()).thenReturn(mockAbArgument);
-        when(mockFactory.dataObject()).thenReturn(mockAbDataObject);
+        when(mockFactory.fileParameters()).thenReturn(mockAbDataObject);
 
         Argument mockArgument = mock(Argument.class);
-        DataObject mockDataObject = mock(DataObject.class);
+        FileParameters mockDataObject = mock(FileParameters.class);
         when(mockAbArgument.as()).thenReturn(mockArgument);
         when(mockAbDataObject.as()).thenReturn(mockDataObject);
 
         // FolderOutput
         uut.createNewArgument(ArgumentType.FolderOutput);
         verify(mockFactory).argument();
-        verify(mockFactory).dataObject();
-        verify(mockArgument).setDataObject(eq(mockDataObject));
+        verify(mockFactory).fileParameters();
+        verify(mockArgument).setFileParameters(eq(mockDataObject));
         verify(mockLabels).defFolderOutput();
 
         verifyNoMoreInteractions(mockFactory, mockLabels);
@@ -98,18 +98,18 @@ public class AppIntegrationPaletteTest {
     @Test
     public void testCreateNewArgument_MultiFileOutput() {
         when(mockFactory.argument()).thenReturn(mockAbArgument);
-        when(mockFactory.dataObject()).thenReturn(mockAbDataObject);
+        when(mockFactory.fileParameters()).thenReturn(mockAbDataObject);
 
         Argument mockArgument = mock(Argument.class);
-        DataObject mockDataObject = mock(DataObject.class);
+        FileParameters mockDataObject = mock(FileParameters.class);
         when(mockAbArgument.as()).thenReturn(mockArgument);
         when(mockAbDataObject.as()).thenReturn(mockDataObject);
 
         // MultiFileOutput
         uut.createNewArgument(ArgumentType.MultiFileOutput);
         verify(mockFactory).argument();
-        verify(mockFactory).dataObject();
-        verify(mockArgument).setDataObject(eq(mockDataObject));
+        verify(mockFactory).fileParameters();
+        verify(mockArgument).setFileParameters(eq(mockDataObject));
         verify(mockLabels).defMultiFileOutput();
 
         verifyNoMoreInteractions(mockFactory, mockLabels);

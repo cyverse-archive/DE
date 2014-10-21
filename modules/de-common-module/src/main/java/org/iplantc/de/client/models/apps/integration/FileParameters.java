@@ -2,7 +2,7 @@ package org.iplantc.de.client.models.apps.integration;
 
 import com.google.web.bindery.autobean.shared.AutoBean.PropertyName;
 
-public interface DataObject {
+public interface FileParameters {
 
     @PropertyName("file_info_type")
     FileInfoTypeEnum getFileInfoType();
@@ -30,7 +30,4 @@ public interface DataObject {
     @PropertyName("is_implicit")
     void setImplicit(boolean implicit);
 
-    void setCmdSwitch(String string);
-
-    String getCmdSwitch();
 }

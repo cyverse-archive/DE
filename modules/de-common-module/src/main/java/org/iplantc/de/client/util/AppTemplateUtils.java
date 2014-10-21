@@ -232,4 +232,10 @@ public class AppTemplateUtils {
         return ret;
     }
 
+    public static AppTemplate removeDateFields(AppTemplate at) {
+        at.setEditedDate(null);
+        at.setPublishedDate(null);
+        return at;
+    }
+
 }

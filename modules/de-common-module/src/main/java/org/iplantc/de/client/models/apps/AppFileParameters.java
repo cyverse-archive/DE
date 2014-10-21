@@ -3,16 +3,17 @@ package org.iplantc.de.client.models.apps;
 import org.iplantc.de.client.models.HasDescription;
 import org.iplantc.de.client.models.HasId;
 import org.iplantc.de.client.models.HasLabel;
+import org.iplantc.de.client.models.apps.integration.FileParameters;
 
 import com.google.web.bindery.autobean.shared.AutoBean.PropertyName;
 
 /**
- * An App Property wrapper for Input and Output DataObjects.
+ * An App Property wrapper for Input and Output File parameters.
  * 
  * @author psarando
  * 
  */
-public interface AppDataObject extends HasId, HasLabel, HasDescription {
+public interface AppFileParameters extends HasId, HasLabel, HasDescription {
 
     String getName();
 
@@ -32,9 +33,9 @@ public interface AppDataObject extends HasId, HasLabel, HasDescription {
 
     void setType(String type);
 
-    @PropertyName("data_object")
-    DataObject getDataObject();
+    @PropertyName("file_parameters")
+    FileParameters getFileParameters();
 
-    @PropertyName("data_object")
-    void setDataObject(DataObject dataObj);
+    @PropertyName("file_parameters")
+    void setFileParameters(FileParameters dataObj);
 }

@@ -3,7 +3,7 @@ package org.iplantc.de.client.models.apps.integration;
 import org.iplantc.de.client.models.HasDescription;
 import org.iplantc.de.client.models.HasId;
 import org.iplantc.de.client.models.HasLabel;
-import org.iplantc.de.client.models.deployedComps.DeployedComponent;
+import org.iplantc.de.client.models.tool.Tool;
 
 import com.google.gwt.user.client.ui.HasName;
 import com.google.web.bindery.autobean.shared.AutoBean.PropertyName;
@@ -26,9 +26,9 @@ public interface AppTemplate extends HasId, HasLabel, HasName, HasDescription {
     @PropertyName("groups")
     void setArgumentGroups(List<ArgumentGroup> argumentGroups);
 
-    DeployedComponent getDeployedComponent();
+    List<Tool> getTools();
 
-    void setDeployedComponent(DeployedComponent deployedComponent);
+    void setTools(List<Tool> tools);
 
     @PropertyName("edited_date")
     Date getEditedDate();

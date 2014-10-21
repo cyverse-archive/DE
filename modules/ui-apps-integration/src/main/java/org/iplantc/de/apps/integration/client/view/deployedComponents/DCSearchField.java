@@ -1,7 +1,7 @@
 package org.iplantc.de.apps.integration.client.view.deployedComponents;
 
 import org.iplantc.de.apps.integration.client.view.deployedComponents.proxy.DCSearchRPCProxy;
-import org.iplantc.de.client.models.deployedComps.DeployedComponent;
+import org.iplantc.de.client.models.tool.Tool;
 import org.iplantc.de.resources.client.messages.I18N;
 
 import com.google.gwt.cell.client.AbstractCell;
@@ -39,42 +39,42 @@ import com.sencha.gxt.widget.core.client.form.ComboBox;
 
 import java.util.List;
 
-public class DCSearchField extends Composite implements HasSelectionHandlers<DeployedComponent>, HasValueChangeHandlers<DeployedComponent> {
+public class DCSearchField extends Composite implements HasSelectionHandlers<Tool>, HasValueChangeHandlers<Tool> {
 
     interface DCTemplate extends XTemplates {
         @XTemplate(source = "DCSearchResult.html")
-        SafeHtml render(DeployedComponent c);
+        SafeHtml render(Tool c);
     }
 
-    ComboBox<DeployedComponent> combo;
+    ComboBox<Tool> combo;
     
     private final DCSearchRPCProxy searchProxy;
 
     public DCSearchField() {
         searchProxy = new DCSearchRPCProxy();
-        PagingLoader<FilterPagingLoadConfig, PagingLoadResult<DeployedComponent>> loader = buildLoader();
+        PagingLoader<FilterPagingLoadConfig, PagingLoadResult<Tool>> loader = buildLoader();
 
-        ListStore<DeployedComponent> store = buildStore();
+        ListStore<Tool> store = buildStore();
 
-        loader.addLoadHandler(new LoadResultListStoreBinding<FilterPagingLoadConfig, DeployedComponent, PagingLoadResult<DeployedComponent>>(
+        loader.addLoadHandler(new LoadResultListStoreBinding<FilterPagingLoadConfig, Tool, PagingLoadResult<Tool>>(
                 store));
 
         final DCTemplate template = GWT.create(DCTemplate.class);
 
-        ListView<DeployedComponent, DeployedComponent> view = buildView(store, template);
+        ListView<Tool, Tool> view = buildView(store, template);
 
-        ComboBoxCell<DeployedComponent> cell = buildComboCell(store, view);
+        ComboBoxCell<Tool> cell = buildComboCell(store, view);
         initCombo(loader, cell);
         initWidget(combo);
     }
 
     @Override
-    public HandlerRegistration addSelectionHandler(SelectionHandler<DeployedComponent> handler) {
+    public HandlerRegistration addSelectionHandler(SelectionHandler<Tool> handler) {
         return combo.addSelectionHandler(handler);
     }
     
     @Override
-    public HandlerRegistration addValueChangeHandler(ValueChangeHandler<DeployedComponent> handler) {
+    public HandlerRegistration addValueChangeHandler(ValueChangeHandler<Tool> handler) {
         return combo.addValueChangeHandler(handler);
     }
     
@@ -82,28 +82,28 @@ public class DCSearchField extends Composite implements HasSelectionHandlers<Dep
         combo.clear();
     }
 
-    public DeployedComponent getValue() {
+    public Tool getValue() {
         return combo.getValue();
     }
     
-    public void setValue(DeployedComponent value) {
+    public void setValue(Tool value) {
         combo.setValue(value);
     }
 
-    private ComboBoxCell<DeployedComponent> buildComboCell(ListStore<DeployedComponent> store,
-            ListView<DeployedComponent, DeployedComponent> view) {
-        ComboBoxCell<DeployedComponent> cell = new ComboBoxCell<DeployedComponent>(store,
-                new StringLabelProvider<DeployedComponent>() {
+    private ComboBoxCell<Tool> buildComboCell(ListStore<Tool> store,
+            ListView<Tool, Tool> view) {
+        ComboBoxCell<Tool> cell = new ComboBoxCell<Tool>(store,
+                new StringLabelProvider<Tool>() {
 
                     @Override
-                    public String getLabel(DeployedComponent c) {
+                    public String getLabel(Tool c) {
                         return c.getName() +  " " + c.getVersion();
                     }
 
                 }, view) {
             @Override
-            protected void onEnterKeyDown(Context context, Element parent, DeployedComponent value,
-                    NativeEvent event, ValueUpdater<DeployedComponent> valueUpdater) {
+            protected void onEnterKeyDown(Context context, Element parent, Tool value,
+                    NativeEvent event, ValueUpdater<Tool> valueUpdater) {
                 if (isExpanded()) {
                     super.onEnterKeyDown(context, parent, value, event, valueUpdater);
                 }
@@ -115,8 +115,8 @@ public class DCSearchField extends Composite implements HasSelectionHandlers<Dep
     }
 
 
-    private PagingLoader<FilterPagingLoadConfig, PagingLoadResult<DeployedComponent>> buildLoader() {
-        final PagingLoader<FilterPagingLoadConfig, PagingLoadResult<DeployedComponent>> loader = new PagingLoader<FilterPagingLoadConfig, PagingLoadResult<DeployedComponent>>(
+    private PagingLoader<FilterPagingLoadConfig, PagingLoadResult<Tool>> buildLoader() {
+        final PagingLoader<FilterPagingLoadConfig, PagingLoadResult<Tool>> loader = new PagingLoader<FilterPagingLoadConfig, PagingLoadResult<Tool>>(
                 searchProxy);
         loader.useLoadConfig(new FilterPagingLoadConfigBean());
         loader.addBeforeLoadHandler(new BeforeLoadHandler<FilterPagingLoadConfig>() {
@@ -146,12 +146,12 @@ public class DCSearchField extends Composite implements HasSelectionHandlers<Dep
         return loader;
     }
 
-    private ListStore<DeployedComponent> buildStore() {
-        ListStore<DeployedComponent> store = new ListStore<DeployedComponent>(
-                new ModelKeyProvider<DeployedComponent>() {
+    private ListStore<Tool> buildStore() {
+        ListStore<Tool> store = new ListStore<Tool>(
+                new ModelKeyProvider<Tool>() {
 
                     @Override
-                    public String getKey(DeployedComponent item) {
+                    public String getKey(Tool item) {
                         return item.getId();
                     }
 
@@ -159,15 +159,15 @@ public class DCSearchField extends Composite implements HasSelectionHandlers<Dep
         return store;
     }
 
-    private ListView<DeployedComponent, DeployedComponent> buildView(ListStore<DeployedComponent> store,
+    private ListView<Tool, Tool> buildView(ListStore<Tool> store,
             final DCTemplate template) {
-        ListView<DeployedComponent, DeployedComponent> view = new ListView<DeployedComponent, DeployedComponent>(store,
-                new IdentityValueProvider<DeployedComponent>());
+        ListView<Tool, Tool> view = new ListView<Tool, Tool>(store,
+                new IdentityValueProvider<Tool>());
 
-        view.setCell(new AbstractCell<DeployedComponent>() {
+        view.setCell(new AbstractCell<Tool>() {
 
             @Override
-            public void render(com.google.gwt.cell.client.Cell.Context context, DeployedComponent value,
+            public void render(com.google.gwt.cell.client.Cell.Context context, Tool value,
                     SafeHtmlBuilder sb) {
                 sb.append(template.render(value));
             }
@@ -176,17 +176,17 @@ public class DCSearchField extends Composite implements HasSelectionHandlers<Dep
         return view;
     }
 
-    private void initCombo(PagingLoader<FilterPagingLoadConfig, PagingLoadResult<DeployedComponent>> loader, ComboBoxCell<DeployedComponent> cell) {
-        combo = new ComboBox<DeployedComponent>(cell);
+    private void initCombo(PagingLoader<FilterPagingLoadConfig, PagingLoadResult<Tool>> loader, ComboBoxCell<Tool> cell) {
+        combo = new ComboBox<Tool>(cell);
         combo.setLoader(loader);
         combo.setMinChars(3);
         combo.setWidth(250);
         combo.setHideTrigger(true);
         combo.setEmptyText(I18N.DISPLAY.searchEmptyText());
-        combo.addSelectionHandler(new SelectionHandler<DeployedComponent>() {
+        combo.addSelectionHandler(new SelectionHandler<Tool>() {
 
             @Override
-            public void onSelection(SelectionEvent<DeployedComponent> event) {
+            public void onSelection(SelectionEvent<Tool> event) {
                 GWT.log("Selected " + event.getSelectedItem().getName());
             }
         });

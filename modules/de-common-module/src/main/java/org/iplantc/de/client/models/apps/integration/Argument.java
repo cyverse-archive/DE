@@ -75,11 +75,11 @@ public interface Argument extends HasId, HasName, HasLabel, HasDescription {
     @PropertyName("arguments")
     void setSelectionItems(List<SelectionItem> arguments);
 
-    @PropertyName("data_object")
-    DataObject getDataObject();
+    @PropertyName("file_parameters")
+    FileParameters getFileParameters();
 
-    @PropertyName("data_object")
-    void setDataObject(DataObject dataObject);
+    @PropertyName("file_parameters")
+    void setFileParameters(FileParameters dataObject);
 
     void setId(String id);
 

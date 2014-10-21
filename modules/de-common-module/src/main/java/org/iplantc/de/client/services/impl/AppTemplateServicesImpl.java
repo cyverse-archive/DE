@@ -21,6 +21,7 @@ import org.iplantc.de.client.models.apps.integration.ReferenceGenome;
 import org.iplantc.de.client.models.apps.integration.ReferenceGenomeList;
 import org.iplantc.de.client.models.apps.integration.SelectionItem;
 import org.iplantc.de.client.models.apps.integration.SelectionItemGroup;
+import org.iplantc.de.client.models.tool.Tool;
 import org.iplantc.de.client.services.AppMetadataServiceFacade;
 import org.iplantc.de.client.services.AppTemplateServices;
 import org.iplantc.de.client.services.DeployedComponentServices;
@@ -165,10 +166,19 @@ public class AppTemplateServicesImpl implements AppTemplateServices, AppMetadata
 
     @Override
     public void saveAndPublishAppTemplate(AppTemplate at, AsyncCallback<String> callback) {
-        String address = deProperties.getMuleServiceBaseUrl() + "update-app";
+        String address = APPS + "/" + at.getId();
         Splittable split = appTemplateToSplittable(at);
         ServiceCallWrapper wrapper = new ServiceCallWrapper(PUT, address, split.getPayload());
         deServiceFacade.getServiceData(wrapper, callback);
+    }
+
+    @Override
+    public void createAppTemplate(AppTemplate at, AsyncCallback<String> callback) {
+        String address = APPS;
+        Splittable split = appTemplateToSplittable(at);
+        ServiceCallWrapper wrapper = new ServiceCallWrapper(POST, address, split.getPayload());
+        deServiceFacade.getServiceData(wrapper, callback);
+
     }
 
     @Override
@@ -184,8 +194,15 @@ public class AppTemplateServicesImpl implements AppTemplateServices, AppMetadata
         AutoBean<AppTemplate> autoBean = AutoBeanUtils.getAutoBean(at);
         Splittable ret = AutoBeanCodex.encode(autoBean);
         LOG.log(Level.SEVERE, "template from bean-->" + ret.getPayload() + "");
-        if (at.getDeployedComponent() != null) {
-            StringQuoter.create(at.getDeployedComponent().getId()).assign(ret, "component_id");
+        if (at.getTools() != null && at.getTools().size() > 0) {
+            Splittable tools = StringQuoter.createIndexed();
+            for (Tool t : at.getTools()) {
+                AutoBean<Tool> toolBean = AutoBeanUtils.getAutoBean(t);
+                Splittable sp = AutoBeanCodex.encode(toolBean);
+                sp.assign(tools, tools.size());
+            }
+            tools.assign(ret, "tools");
+
         }
         // JDS Convert Argument.getValue() which contain any selected/checked *Selection types to only
         // contain their value.
@@ -262,7 +279,7 @@ public class AppTemplateServicesImpl implements AppTemplateServices, AppMetadata
                     arg.setValue(null);
                     arg.setName("");
                 } else if (AppTemplateUtils.isDiskResourceOutputType(arg.getType())) {
-                    if (arg.getDataObject().isImplicit()) {
+                    if (arg.getFileParameters().isImplicit()) {
                         arg.setValue(null);
                         arg.setName("");
                     }

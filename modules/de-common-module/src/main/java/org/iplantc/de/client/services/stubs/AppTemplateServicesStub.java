@@ -53,4 +53,10 @@ public class AppTemplateServicesStub implements AppTemplateServices {
     public void updateAppLabels(AppTemplate at, AsyncCallback<String> callback) {
 
     }
+
+    @Override
+    public void createAppTemplate(AppTemplate at, AsyncCallback<String> callback) {
+        // TODO Auto-generated method stub
+
+    }
 }

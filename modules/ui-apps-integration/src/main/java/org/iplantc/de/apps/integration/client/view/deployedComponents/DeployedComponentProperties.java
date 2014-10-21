@@ -1,6 +1,6 @@
 package org.iplantc.de.apps.integration.client.view.deployedComponents;
 
-import org.iplantc.de.client.models.deployedComps.DeployedComponent;
+import org.iplantc.de.client.models.tool.Tool;
 
 import com.sencha.gxt.core.client.ValueProvider;
 import com.sencha.gxt.data.shared.PropertyAccess;
@@ -9,12 +9,12 @@ import com.sencha.gxt.data.shared.PropertyAccess;
  * @author sriram
  *
  */
-public interface DeployedComponentProperties extends PropertyAccess<DeployedComponent> {
+public interface DeployedComponentProperties extends PropertyAccess<Tool> {
 
-    ValueProvider<DeployedComponent, String> name();
+    ValueProvider<Tool, String> name();
 
-    ValueProvider<DeployedComponent, String> version();
+    ValueProvider<Tool, String> version();
 
-    ValueProvider<DeployedComponent, String> location();
+    ValueProvider<Tool, String> location();
 
 }

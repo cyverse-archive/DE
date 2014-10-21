@@ -10,10 +10,6 @@ import com.google.web.bindery.autobean.shared.AutoBeanFactory;
  * 
  */
 public interface ServicePipelineAutoBeanFactory extends AutoBeanFactory {
-    AutoBean<ImplementorDetails> implementorDetails();
-
-    AutoBean<ImplementorDetailTest> implementorDetailTest();
-
     AutoBean<ServicePipeline> servicePipeline();
 
     AutoBean<ServicePipelineApp> servicePipelineAnalysis();

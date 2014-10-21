@@ -15,7 +15,6 @@ import org.iplantc.de.client.idroplite.util.IDropLiteUtil;
 import org.iplantc.de.client.models.HasPath;
 import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.client.models.analysis.Analysis;
-import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.client.models.diskResources.File;
 import org.iplantc.de.client.models.diskResources.Folder;
@@ -107,7 +106,7 @@ public class DesktopPresenterWindowEventHandler implements EditAppEvent.EditAppE
 
     @Override
     public void createNewApp(CreateNewAppEvent event) {
-        presenter.show(ConfigFactory.appsIntegrationWindowConfig(App.NEW_APP_ID), true);
+        presenter.show(ConfigFactory.appsIntegrationWindowConfig(null), true);
     }
 
     @Override

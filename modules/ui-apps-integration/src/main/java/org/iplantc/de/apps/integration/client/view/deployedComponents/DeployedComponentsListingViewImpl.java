@@ -7,7 +7,7 @@ import org.iplantc.de.apps.client.views.dialogs.NewToolRequestDialog;
 import org.iplantc.de.apps.integration.client.view.deployedComponents.cells.DCNameHyperlinkCell;
 import org.iplantc.de.apps.integration.client.view.deployedComponents.proxy.DCSearchRPCProxy;
 import org.iplantc.de.apps.integration.shared.AppIntegrationModule;
-import org.iplantc.de.client.models.deployedComps.DeployedComponent;
+import org.iplantc.de.client.models.tool.Tool;
 import org.iplantc.de.commons.client.widgets.SearchField;
 import org.iplantc.de.resources.client.messages.I18N;
 
@@ -67,21 +67,21 @@ public class DeployedComponentsListingViewImpl extends Composite implements
     @UiField
     VerticalLayoutContainer container;
     @UiField
-    Grid<DeployedComponent> grid;
-    PagingLoader<FilterPagingLoadConfig, PagingLoadResult<DeployedComponent>> loader;
+    Grid<Tool> grid;
+    PagingLoader<FilterPagingLoadConfig, PagingLoadResult<Tool>> loader;
     @UiField
     TextButton newToolBtn;
     @UiField
-    SearchField<DeployedComponent> searchField;
+    SearchField<Tool> searchField;
 
     DCSearchRPCProxy searchProxy;
 
     @UiField(provided = true)
-    ListStore<DeployedComponent> store;
+    ListStore<Tool> store;
     private static MyUiBinder uiBinder = GWT.create(MyUiBinder.class);
 
-    public DeployedComponentsListingViewImpl(ListStore<DeployedComponent> listStore,
-                                             SelectionChangedHandler<DeployedComponent> handler) {
+    public DeployedComponentsListingViewImpl(ListStore<Tool> listStore,
+                                             SelectionChangedHandler<Tool> handler) {
         this.store = listStore;
         searchProxy = new DCSearchRPCProxy();
         loader = buildLoader();
@@ -89,17 +89,17 @@ public class DeployedComponentsListingViewImpl extends Composite implements
         searchField.setEmptyText(I18N.DISPLAY.searchEmptyText());
         grid.setLoader(loader);
         grid.getSelectionModel().addSelectionChangedHandler(handler);
-        loader.addLoadHandler(new LoadResultListStoreBinding<FilterPagingLoadConfig, DeployedComponent, PagingLoadResult<DeployedComponent>>(store));
+        loader.addLoadHandler(new LoadResultListStoreBinding<FilterPagingLoadConfig, Tool, PagingLoadResult<Tool>>(store));
         loader.load(new FilterPagingLoadConfigBean());
     }
 
     @Override
-    public DeployedComponent getSelectedDC() {
+    public Tool getSelectedDC() {
         return grid.getSelectionModel().getSelectedItem();
     }
 
     @Override
-    public void loadDC(List<DeployedComponent> list) {
+    public void loadDC(List<Tool> list) {
         store.clear();
         store.addAll(list);
     }
@@ -116,7 +116,7 @@ public class DeployedComponentsListingViewImpl extends Composite implements
     }
 
     @Override
-    public void showInfo(DeployedComponent dc) {
+    public void showInfo(Tool dc) {
         DCDetailsRenderer templates = GWT.create(DCDetailsRenderer.class);
         HtmlLayoutContainer c = new HtmlLayoutContainer(templates.render());
         VerticalLayoutContainer vlc = new VerticalLayoutContainer();
@@ -145,21 +145,21 @@ public class DeployedComponentsListingViewImpl extends Composite implements
     }
 
     @UiFactory
-    SearchField<DeployedComponent> createAppSearchField() {
+    SearchField<Tool> createAppSearchField() {
         return new SearchField<>(loader);
     }
 
     @UiFactory
-    ColumnModel<DeployedComponent> createColumnModel() {
+    ColumnModel<Tool> createColumnModel() {
         DeployedComponentProperties properties = GWT.create(DeployedComponentProperties.class);
-        IdentityValueProvider<DeployedComponent> provider = new IdentityValueProvider<>("name");
-        List<ColumnConfig<DeployedComponent, ?>> configs = new LinkedList<>();
+        IdentityValueProvider<Tool> provider = new IdentityValueProvider<>("name");
+        List<ColumnConfig<Tool, ?>> configs = new LinkedList<>();
 
-        ColumnConfig<DeployedComponent, DeployedComponent> name = new ColumnConfig<>(provider, 100);
-        name.setComparator(new Comparator<DeployedComponent>() {
+        ColumnConfig<Tool, Tool> name = new ColumnConfig<>(provider, 100);
+        name.setComparator(new Comparator<Tool>() {
 
             @Override
-            public int compare(DeployedComponent o1, DeployedComponent o2) {
+            public int compare(Tool o1, Tool o2) {
                 return o1.getName().compareTo(o2.getName());
             }
         });
@@ -169,12 +169,12 @@ public class DeployedComponentsListingViewImpl extends Composite implements
         name.setCell(new DCNameHyperlinkCell(this));
         name.setMenuDisabled(true);
 
-        ColumnConfig<DeployedComponent, String> version = new ColumnConfig<>(properties.version(), 100);
+        ColumnConfig<Tool, String> version = new ColumnConfig<>(properties.version(), 100);
         version.setHeader(I18N.DISPLAY.version());
         configs.add(version);
         version.setMenuDisabled(true);
 
-        ColumnConfig<DeployedComponent, String> path = new ColumnConfig<>(properties.location(), 100);
+        ColumnConfig<Tool, String> path = new ColumnConfig<>(properties.location(), 100);
         path.setHeader(I18N.DISPLAY.path());
         configs.add(path);
         path.setMenuDisabled(true);
@@ -196,8 +196,8 @@ public class DeployedComponentsListingViewImpl extends Composite implements
         return d;
     }
 
-    private PagingLoader<FilterPagingLoadConfig, PagingLoadResult<DeployedComponent>> buildLoader() {
-        final PagingLoader<FilterPagingLoadConfig, PagingLoadResult<DeployedComponent>> loader = new PagingLoader<>(
+    private PagingLoader<FilterPagingLoadConfig, PagingLoadResult<Tool>> buildLoader() {
+        final PagingLoader<FilterPagingLoadConfig, PagingLoadResult<Tool>> loader = new PagingLoader<>(
                                                                                                                                                                                   searchProxy);
         loader.useLoadConfig(new FilterPagingLoadConfigBean());
         return loader;

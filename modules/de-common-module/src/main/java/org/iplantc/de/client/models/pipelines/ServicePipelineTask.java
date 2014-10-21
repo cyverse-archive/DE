@@ -2,7 +2,7 @@ package org.iplantc.de.client.models.pipelines;
 
 import org.iplantc.de.client.models.HasDescription;
 import org.iplantc.de.client.models.HasId;
-import org.iplantc.de.client.models.apps.DataObject;
+import org.iplantc.de.client.models.apps.integration.FileParameters;
 
 import com.google.gwt.user.client.ui.HasName;
 
@@ -16,11 +16,11 @@ import java.util.List;
  */
 public interface ServicePipelineTask extends HasId, HasName, HasDescription {
 
-    public List<DataObject> getInputs();
+    public List<FileParameters> getInputs();
 
-    public void setInputs(List<DataObject> inputs);
+    public void setInputs(List<FileParameters> inputs);
 
-    public List<DataObject> getOutputs();
+    public List<FileParameters> getOutputs();
 
-    public void setOutputs(List<DataObject> outputs);
+    public void setOutputs(List<FileParameters> outputs);
 }
