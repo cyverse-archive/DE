@@ -24,8 +24,12 @@ import com.google.web.bindery.autobean.shared.AutoBeanUtils;
 import java.util.List;
 
 public class AppAdminServiceFacadeImpl implements AppAdminServiceFacade {
+    private final String APPS_ADMIN = "org.iplantc.services.admin.apps";
+    private final String CATEGORIES_ADMIN = "org.iplantc.services.admin.apps.categories";
+
     private final String APPS = "org.iplantc.services.apps";
     private final String CATEGORIES = "org.iplantc.services.apps.categories";
+
     @Inject private DiscEnvApiService deService;
     @Inject private IplantErrorStrings errorStrings;
 
@@ -34,7 +38,7 @@ public class AppAdminServiceFacadeImpl implements AppAdminServiceFacade {
 
     @Override
     public void addCategory(String name, String destCategoryId, AsyncCallback<String> callback) {
-        String address = CATEGORIES;
+        String address = CATEGORIES_ADMIN;
 
         JSONObject body = new JSONObject();
         body.put("parentCategoryId", new JSONString(destCategoryId));
@@ -46,7 +50,7 @@ public class AppAdminServiceFacadeImpl implements AppAdminServiceFacade {
 
     @Override
     public void categorizeApp(AppCategorizeRequest request, AsyncCallback<String> callback) {
-        String address = APPS;
+        String address = APPS_ADMIN;
         String body = AutoBeanCodex.encode(AutoBeanUtils.getAutoBean(request)).getPayload();
 
         ServiceCallWrapper wrapper = new ServiceCallWrapper(POST, address, body);
@@ -55,7 +59,7 @@ public class AppAdminServiceFacadeImpl implements AppAdminServiceFacade {
 
     @Override
     public void deleteAppCategory(String categoryId, AsyncCallback<String> callback) {
-        String address = CATEGORIES + "/" + categoryId;
+        String address = CATEGORIES_ADMIN + "/" + categoryId;
 
         ServiceCallWrapper wrapper = new ServiceCallWrapper(DELETE, address);
         deService.getServiceData(wrapper, callback);
@@ -63,7 +67,7 @@ public class AppAdminServiceFacadeImpl implements AppAdminServiceFacade {
 
     @Override
     public void deleteApplication(String applicationId, AsyncCallback<String> callback) {
-        String address = APPS + "/" + applicationId;
+        String address = APPS_ADMIN + "/" + applicationId;
 
         ServiceCallWrapper wrapper = new ServiceCallWrapper(DELETE, address);
         deService.getServiceData(wrapper, callback);
@@ -71,7 +75,7 @@ public class AppAdminServiceFacadeImpl implements AppAdminServiceFacade {
 
     @Override
     public void getAppDetails(String appId, AsyncCallback<String> callback) {
-        String address = APPS + "/" + appId + "/details";
+        String address = APPS_ADMIN + "/" + appId + "/details";
 
         ServiceCallWrapper wrapper = new ServiceCallWrapper(GET, address);
         deService.getServiceData(wrapper, callback);
@@ -79,7 +83,7 @@ public class AppAdminServiceFacadeImpl implements AppAdminServiceFacade {
 
     @Override
     public void getAppCategories(AsyncCallback<List<AppCategory>> callback) {
-        String address = CATEGORIES;
+        String address = CATEGORIES + "?public=true";
         ServiceCallWrapper wrapper = new ServiceCallWrapper(GET, address);
         deService.getServiceData(wrapper, new AppCategoryListCallbackConverter(callback, errorStrings));
     }
@@ -107,7 +111,7 @@ public class AppAdminServiceFacadeImpl implements AppAdminServiceFacade {
     @Override
     public void moveApplication(String applicationId, String groupId,
                                 AsyncCallback<String> callback) {
-        String address = APPS + "/" + applicationId;
+        String address = APPS_ADMIN + "/" + applicationId;
 
         JSONObject body = new JSONObject();
         // XXX JDS - is this key necessary?
@@ -122,7 +126,7 @@ public class AppAdminServiceFacadeImpl implements AppAdminServiceFacade {
     @Override
     public void moveCategory(String categoryId, String parentCategoryId,
                              AsyncCallback<String> callback) {
-        String address = CATEGORIES;
+        String address = CATEGORIES_ADMIN;
 
         JSONObject body = new JSONObject();
         body.put("categoryId", new JSONString(categoryId));
@@ -135,7 +139,7 @@ public class AppAdminServiceFacadeImpl implements AppAdminServiceFacade {
 
     @Override
     public void renameAppCategory(String categoryId, String name, AsyncCallback<String> callback) {
-        String address = CATEGORIES;
+        String address = CATEGORIES_ADMIN;
 
         JSONObject body = new JSONObject();
         body.put("categoryId", new JSONString(categoryId));
@@ -148,7 +152,7 @@ public class AppAdminServiceFacadeImpl implements AppAdminServiceFacade {
 
     @Override
     public void restoreApplication(String applicationId, AsyncCallback<String> callback) {
-        String address = APPS + "/" + applicationId + "/restore";
+        String address = APPS_ADMIN + "/" + applicationId + "/restore";
 
         ServiceCallWrapper wrapper = new ServiceCallWrapper(POST, address);
         deService.getServiceData(wrapper, callback);
@@ -156,7 +160,7 @@ public class AppAdminServiceFacadeImpl implements AppAdminServiceFacade {
 
     @Override
     public void searchApp(String search, AsyncCallback<String> callback) {
-        String address = APPS + "?search=" + URL.encodeQueryString(search);
+        String address = APPS_ADMIN + "?search=" + URL.encodeQueryString(search);
 
         ServiceCallWrapper wrapper = new ServiceCallWrapper(address);
         deService.getServiceData(wrapper, callback);
@@ -164,7 +168,7 @@ public class AppAdminServiceFacadeImpl implements AppAdminServiceFacade {
 
     @Override
     public void updateApplication(JSONObject application, AsyncCallback<String> callback) {
-        String address = APPS;
+        String address = APPS_ADMIN;
 
         ServiceCallWrapper wrapper = new ServiceCallWrapper(PATCH, address,
                                                             application.toString());

@@ -94,7 +94,7 @@ public interface App extends HasId, HasName, HasDescription {
 
     void setReferences(List<String> references);
 
-    @PropertyName("Tools")
+    @PropertyName("tools")
     List<Tool> getTools();
 
     List<AppFileParameters> getInputs();
