@@ -24,7 +24,6 @@
   <ui:with field="eastData"
            type="com.sencha.gxt.widget.core.client.container.BorderLayoutContainer.BorderLayoutData">
     <ui:attributes size="500"
-                   collapsible="true"
                    split="true"/>
                    
   </ui:with>
