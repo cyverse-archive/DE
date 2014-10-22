@@ -87,7 +87,7 @@ public class LaunchAnalysisViewImpl implements LaunchAnalysisView {
         name.addKeyDownHandler(new PreventEntryAfterLimitHandler(name));
         name.addValidator(new MaxLengthValidator(PreventEntryAfterLimitHandler.DEFAULT_LIMIT));
         name.setAllowBlank(false);
-        outputDirectory = new ConverterEditorAdapter<String, Folder, FolderSelectorField>(awFolderSel, new Converter<String, Folder>() {
+        outputDirectory = new ConverterEditorAdapter<>(awFolderSel, new Converter<String, Folder>() {
             @Override
             public String convertFieldValue(Folder object) {
                 if (object == null) {
