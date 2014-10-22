@@ -53,6 +53,7 @@ public class AppTemplateServicesImpl implements AppTemplateServices, AppMetadata
     private final String DATA_SOURCES = "org.iplantc.apps.elements.dataSources";
     private final String FILE_INFO_TYPES = "org.iplantc.services.apps.elements.infoTypes";
     private final String REFERENCE_GENOMES = "org.iplantc.services.referenceGenomes";
+    private final String ANALYSES = "org.iplantc.services.analyses";
 
     private final AppTemplateAutoBeanFactory factory;
     private static final Queue<AsyncCallback<List<DataSource>>> dataSourceQueue = Lists.newLinkedList();
@@ -147,11 +148,11 @@ public class AppTemplateServicesImpl implements AppTemplateServices, AppMetadata
 
     @Override
     public void launchAnalysis(AppTemplate at, JobExecution je, AsyncCallback<String> callback) {
-        String address = deProperties.getMuleServiceBaseUrl() + "workspaces/" + je.getWorkspaceId() + "/newexperiment";  //$NON-NLS-2$
+        String address = ANALYSES;
         Splittable assembledPayload = doAssembleLaunchAnalysisPayload(at, je);
         GWT.log("LaunchAnalysis Json:\n" + JsonUtil.prettyPrint(assembledPayload));
 
-        ServiceCallWrapper wrapper = new ServiceCallWrapper(PUT, address, assembledPayload.getPayload());
+        ServiceCallWrapper wrapper = new ServiceCallWrapper(POST, address, assembledPayload.getPayload());
         deServiceFacade.getServiceData(wrapper, callback);
     }
 
