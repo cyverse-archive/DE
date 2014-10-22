@@ -190,13 +190,14 @@ public class AppTemplateServicesImpl implements AppTemplateServices, AppMetadata
     private Splittable appTemplateToSplittable(AppTemplate at) {
         AutoBean<AppTemplate> autoBean = AutoBeanUtils.getAutoBean(at);
         Splittable ret = AutoBeanCodex.encode(autoBean);
-        LOG.log(Level.SEVERE, "template from bean-->" + ret.getPayload() + "");
         if (at.getTools() != null && at.getTools().size() > 0) {
             Splittable tools = StringQuoter.createIndexed();
             for (Tool t : at.getTools()) {
                 AutoBean<Tool> toolBean = AutoBeanUtils.getAutoBean(t);
-                Splittable sp = AutoBeanCodex.encode(toolBean);
-                sp.assign(tools, tools.size());
+                if (toolBean != null) {
+                    Splittable sp = AutoBeanCodex.encode(toolBean);
+                    sp.assign(tools, tools.size());
+                }
             }
             tools.assign(ret, "tools");
 
@@ -214,6 +215,7 @@ public class AppTemplateServicesImpl implements AppTemplateServices, AppMetadata
                 }
             }
         }
+        LOG.log(Level.SEVERE, "template from bean-->" + ret.getPayload() + "");
         return ret;
     }
 

@@ -44,7 +44,6 @@ import com.sencha.gxt.widget.core.client.form.validator.MaxLengthValidator;
 import com.sencha.gxt.widget.core.client.tips.QuickTip;
 
 import java.util.Arrays;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -152,9 +151,7 @@ public class AppTemplatePropertyEditor extends Composite implements ValueAwareEd
 
         this.model = value;
 
-        LOG.log(Level.SEVERE, "-> size" + value.getTools().size() + "");
-
-        if (value.getTools().size() > 0) {
+        if (value.getTools() != null && value.getTools().size() > 0) {
             tool.setValue(value.getTools().get(0));
         } else {
             tool.clear();
