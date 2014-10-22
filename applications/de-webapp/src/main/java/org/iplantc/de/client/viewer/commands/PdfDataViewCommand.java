@@ -31,8 +31,7 @@ public class PdfDataViewCommand implements ViewCommand {
                                     final FileViewer.Presenter presenter) {
         String fileId = file.getPath();
         if (editing) {
-            ErrorAnnouncementConfig config = new ErrorAnnouncementConfig(
-                    "Editing is not supported for this type of file!");
+            ErrorAnnouncementConfig config = new ErrorAnnouncementConfig("Editing is not supported for this type of file!");
             announcer.schedule(config);
         }
         if (fileId != null && !fileId.isEmpty()) {

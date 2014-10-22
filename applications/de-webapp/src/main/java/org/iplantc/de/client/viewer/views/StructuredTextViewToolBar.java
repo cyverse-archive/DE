@@ -19,16 +19,12 @@ import com.sencha.gxt.widget.core.client.toolbar.SeparatorToolItem;
 public class StructuredTextViewToolBar extends AbstractToolBar {
 
     private final StructuredTextViewer view;
-
-    private CheckBox cbxHeaderRows;
-    private NumberField<Integer> skipRowsCount;
-
-    private LabelToolItem skipRowsLabel;
-
     private TextButton addRowBtn;
+    private CheckBox cbxHeaderRows;
     private TextButton deleteRowBtn;
-
     private CheckBox lineNumberCbx;
+    private NumberField<Integer> skipRowsCount;
+    private LabelToolItem skipRowsLabel;
 
     public StructuredTextViewToolBar(StructuredTextViewer view, boolean editing) {
         super(editing);
@@ -47,11 +43,59 @@ public class StructuredTextViewToolBar extends AbstractToolBar {
         setEditingStatus(editing);
     }
 
+    public void addLineNumberCbxChangeHandler(ValueChangeHandler<Boolean> valueChangeHandler) {
+        lineNumberCbx.addValueChangeHandler(valueChangeHandler);
+    }
+
+    public void disableAdd() {
+        addRowBtn.disable();
+    }
+
+    public void enableAdd() {
+        addRowBtn.enable();
+    }
+
+    public int getSkipRowCount() {
+        if (skipRowsCount.getValue() == null) {
+            return 0;
+        } else {
+            return skipRowsCount.getValue();
+        }
+    }
+
+    @Override
+    public void refresh() {
+        view.refresh();
+    }
+
+    @Override
+    public void save() {
+        view.save();
+    }
+
+    @Override
+    public void setEditing(boolean editing) {
+        super.setEditing(editing);
+        if (editing) {
+            enableAdd();
+        } else {
+            disableAdd();
+        }
+        setEditingStatus(editing);
+    }
+
+    protected void setEditingStatus(boolean editing) {
+        if (editing) {
+            editStatus.setText("Editable");
+        } else {
+            editStatus.setText("Not Editable");
+        }
+    }
 
     private void addAddRowBtn() {
         addRowBtn = new TextButton("", IplantResources.RESOURCES.add());
         addRowBtn.addSelectHandler(new SelectHandler() {
-            
+
             @Override
             public void onSelect(SelectEvent event) {
                 view.addRow();
@@ -59,9 +103,7 @@ public class StructuredTextViewToolBar extends AbstractToolBar {
         });
         addRowBtn.setToolTip("Add Row");
         add(addRowBtn);
-
     }
-
 
     private void addDeleteRowBtn() {
         deleteRowBtn = new TextButton("", IplantResources.RESOURCES.delete());
@@ -73,50 +115,6 @@ public class StructuredTextViewToolBar extends AbstractToolBar {
         });
         deleteRowBtn.setToolTip("Delete Row");
         add(deleteRowBtn);
-    }
-
-    protected void setEditingStatus(boolean editing) {
-        if (editing) {
-            editStatus.setText("Editable");
-        } else {
-            editStatus.setText("Not Editable");
-        }
-    }
-
-    public void disableAdd() {
-        addRowBtn.disable();
-    }
-
-    public void enableAdd() {
-        addRowBtn.enable();
-    }
-
-    private void addSkipRowsFields() {
-        skipRowsLabel = new LabelToolItem(I18N.DISPLAY.fileViewerSkipLines());
-        add(skipRowsLabel);
-
-        skipRowsCount = new NumberField<Integer>(new NumberPropertyEditor.IntegerPropertyEditor());
-        skipRowsCount.setWidth(30);
-        skipRowsCount.setValue(0);
-        skipRowsCount.setAllowNegative(false);
-        skipRowsCount.setAllowDecimals(false);
-        skipRowsCount.addValueChangeHandler(new ValueChangeHandler<Integer>() {
-
-            @Override
-            public void onValueChange(ValueChangeEvent<Integer> event) {
-                view.skipRows(getSkipRowCount());
-                skipRowsCount.setValue(getSkipRowCount());
-            }
-        });
-        add(skipRowsCount);
-    }
-
-    public int getSkipRowCount() {
-        if (skipRowsCount.getValue() == null) {
-            return 0;
-        } else {
-            return skipRowsCount.getValue();
-        }
     }
 
     private void addHeaderRowChkBox() {
@@ -133,36 +131,30 @@ public class StructuredTextViewToolBar extends AbstractToolBar {
         cbxHeaderRows.setBoxLabel(I18N.DISPLAY.fileViewerHeaderRow());
         add(cbxHeaderRows);
     }
-    @Override
-    public void setEditing(boolean editing) {
-        super.setEditing(editing);
-        if (editing) {
-            enableAdd();
-        } else {
-            disableAdd();
-        }
-        setEditingStatus(editing);
-    }
 
-    @Override
-    public void save() {
-        view.save();
+    private void addSkipRowsFields() {
+        skipRowsLabel = new LabelToolItem(I18N.DISPLAY.fileViewerSkipLines());
+        add(skipRowsLabel);
 
-    }
+        skipRowsCount = new NumberField<>(new NumberPropertyEditor.IntegerPropertyEditor());
+        skipRowsCount.setWidth(30);
+        skipRowsCount.setValue(0);
+        skipRowsCount.setAllowNegative(false);
+        skipRowsCount.setAllowDecimals(false);
+        skipRowsCount.addValueChangeHandler(new ValueChangeHandler<Integer>() {
 
-    @Override
-    public void refresh() {
-        view.refresh();
+            @Override
+            public void onValueChange(ValueChangeEvent<Integer> event) {
+                view.skipRows(getSkipRowCount());
+                skipRowsCount.setValue(getSkipRowCount());
+            }
+        });
+        add(skipRowsCount);
     }
 
     private void buildLineNumberButton() {
         lineNumberCbx = new CheckBox();
         lineNumberCbx.setBoxLabel("Line Numbers");
-    }
-
-    public void addLineNumberCbxChangeHandleer(ValueChangeHandler<Boolean> valueChangeHandler) {
-        lineNumberCbx.addValueChangeHandler(valueChangeHandler);
-
     }
 
 }

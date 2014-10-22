@@ -18,15 +18,16 @@ import com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer;
  */
 public class ImageViewerImpl extends AbstractFileViewer {
 
-    private static ImageViewerUiBinder uiBinder = GWT.create(ImageViewerUiBinder.class);
-
-    private final Widget widget;
-
-    @UiField(provided = true)
-    Image img;
+    @UiTemplate("ImageViewer.ui.xml")
+    interface ImageViewerUiBinder extends UiBinder<Widget, ImageViewerImpl> { }
 
     @UiField
     VerticalLayoutContainer con;
+    @UiField(provided = true)
+    Image img;
+
+    private static ImageViewerUiBinder uiBinder = GWT.create(ImageViewerUiBinder.class);
+    private final Widget widget;
 
     public ImageViewerImpl(File file) {
         super(file, null);
@@ -36,21 +37,17 @@ public class ImageViewerImpl extends AbstractFileViewer {
         con.setScrollMode(ScrollMode.AUTO);
     }
 
-    @UiTemplate("ImageViewer.ui.xml")
-    interface ImageViewerUiBinder extends UiBinder<Widget, ImageViewerImpl> {
-    }
-
     @Override
     public Widget asWidget() {
         return widget;
     }
 
     @Override
-    public void setData(Object data) { /* Do nothing intentionally */ }
-
-    @Override
     public void loadData() {  /* Do nothing intentionally */ }
 
     @Override
     public void refresh() { /* Do nothing intentionally */ }
+
+    @Override
+    public void setData(Object data) { /* Do nothing intentionally */ }
 }

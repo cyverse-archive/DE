@@ -18,14 +18,14 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.sencha.gxt.widget.core.client.button.TextButton;
 import com.sencha.gxt.widget.core.client.container.HtmlLayoutContainer;
-import com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer;
 import com.sencha.gxt.widget.core.client.event.SelectEvent;
 import com.sencha.gxt.widget.core.client.event.SelectEvent.SelectHandler;
 import com.sencha.gxt.widget.core.client.toolbar.ToolBar;
 
 public class MarkDownRendererViewImpl extends AbstractFileViewer {
 
-    private VerticalLayoutContainer vlc;
+    @UiTemplate("MarkDownRendererView.ui.xml")
+    interface MarkDownRendererViewUiBinder extends UiBinder<Widget, MarkDownRendererViewImpl> { }
 
     @UiField
     HtmlLayoutContainer panel;
@@ -34,18 +34,10 @@ public class MarkDownRendererViewImpl extends AbstractFileViewer {
     ToolBar toolbar;
 
     private static MarkDownRendererViewUiBinder uiBinder = GWT.create(MarkDownRendererViewUiBinder.class);
-
-    @UiTemplate("MarkDownRendererView.ui.xml")
-    interface MarkDownRendererViewUiBinder extends UiBinder<Widget, MarkDownRendererViewImpl> {
-    }
-    
-    private final Widget widget;
-
-    private final TextButton saveBtn;
-
-    private String renderHtml;
-
     private final String previewData;
+    private final TextButton saveBtn;
+    private final Widget widget;
+    private String renderHtml;
 
     public MarkDownRendererViewImpl(File file, String infoType, String previewData) {
         super(file, infoType);
@@ -55,7 +47,7 @@ public class MarkDownRendererViewImpl extends AbstractFileViewer {
         panel.getElement().getStyle().setOverflow(Overflow.SCROLL);
         saveBtn = new TextButton(I18N.DISPLAY.save(), IplantResources.RESOURCES.save());
         saveBtn.addSelectHandler(new SelectHandler() {
-            
+
             @Override
             public void onSelect(SelectEvent event) {
                 panel.mask();
@@ -67,7 +59,7 @@ public class MarkDownRendererViewImpl extends AbstractFileViewer {
                                                            new FileSaveCallback(destination,
                                                                                 true,
                                                                                 MarkDownRendererViewImpl.this.panel));
-                
+
             }
         });
         toolbar.add(saveBtn);
@@ -78,24 +70,14 @@ public class MarkDownRendererViewImpl extends AbstractFileViewer {
         }
     }
 
+    public static native String render(String val) /*-{
+        var markdown = $wnd.Markdown.getSanitizingConverter();
+        return markdown.makeHtml(val);
+    }-*/;
 
     @Override
-    public HandlerRegistration addFileSavedEventHandler(final FileSavedEvent.FileSavedEventHandler handler){
+    public HandlerRegistration addFileSavedEventHandler(final FileSavedEvent.FileSavedEventHandler handler) {
         return asWidget().addHandler(handler, FileSavedEvent.TYPE);
-    }
-
-
-    @Override
-    public void refresh() {
-        // TODO Auto-generated method stub
-
-    }
-
-    @UiFactory
-    HtmlLayoutContainer buildHtmlContainer() {
-        renderHtml = render(previewData);
-        return new HtmlLayoutContainer("<link href=\"./markdown.css\" rel=\"stylesheet\"></link><div class=\"markdown\">"
-                + renderHtml + "</div>");
     }
 
     @Override
@@ -104,19 +86,19 @@ public class MarkDownRendererViewImpl extends AbstractFileViewer {
     }
 
     @Override
-    public void setData(Object data) {
-
-    }
+    public void loadData() {/* Do nothing intentionally */}
 
     @Override
-    public void loadData() {
-        // TODO Auto-generated method stub
+    public void refresh() {/* Do nothing intentionally */}
 
+    @Override
+    public void setData(Object data) {/* Do nothing intentionally */}
+
+    @UiFactory
+    HtmlLayoutContainer buildHtmlContainer() {
+        renderHtml = render(previewData);
+        return new HtmlLayoutContainer("<link href=\"./markdown.css\" rel=\"stylesheet\"></link><div class=\"markdown\">"
+                                           + renderHtml + "</div>");
     }
-
-    public static native String render(String val) /*-{
-		var markdown = $wnd.Markdown.getSanitizingConverter();
-		return markdown.makeHtml(val);
-    }-*/;
 
 }

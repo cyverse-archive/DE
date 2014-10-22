@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package org.iplantc.de.client.viewer.factory;
 
@@ -31,7 +31,6 @@ public class MimeTypeViewerResolverFactory {
         modeMap.put(MimeType.X_PERL, "perl");
         modeMap.put(MimeType.X_RSRC, "r");
         modeMap.put(MimeType.X_WEB_MARKDOWN, "markdown");
-
     }
 
     public static ViewCommand getViewerCommand(MimeType type) {

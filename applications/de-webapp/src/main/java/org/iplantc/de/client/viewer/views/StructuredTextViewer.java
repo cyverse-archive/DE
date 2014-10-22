@@ -8,12 +8,12 @@ public abstract class StructuredTextViewer extends AbstractFileViewer implements
         super(file, infoType);
     }
 
-    public abstract void loadDataWithHeader(boolean header);
-
-    public abstract void skipRows(int val);
-
     public abstract void addRow();
 
     public abstract void deleteRow();
+
+    public abstract void loadDataWithHeader(boolean header);
+
+    public abstract void skipRows(int val);
 
 }

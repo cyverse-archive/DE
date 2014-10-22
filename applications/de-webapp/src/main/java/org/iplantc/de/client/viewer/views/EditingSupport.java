@@ -2,9 +2,9 @@ package org.iplantc.de.client.viewer.views;
 
 public interface EditingSupport {
 
-    void save();
+    boolean isDirty();
 
     void setDirty(Boolean dirty);
 
-    boolean isDirty();
+    void save();
 }

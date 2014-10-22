@@ -2,7 +2,7 @@ package org.iplantc.de.client.viewer.commands;
 
 import org.iplantc.de.client.models.diskResources.File;
 import org.iplantc.de.client.models.diskResources.Folder;
-import org.iplantc.de.client.viewer.views.ExternalVizualizationURLViwerImpl;
+import org.iplantc.de.client.viewer.views.ExternalVisualizationURLViewerImpl;
 import org.iplantc.de.client.viewer.views.FileViewer;
 
 import com.google.gwt.json.client.JSONObject;
@@ -12,7 +12,6 @@ import java.util.List;
 
 /**
  * @author sriram, jstroot
- * 
  */
 public class VizURLViewerCommand implements ViewCommand {
 
@@ -23,7 +22,7 @@ public class VizURLViewerCommand implements ViewCommand {
                                     final Folder parentFolder,
                                     final JSONObject manifest,
                                     final FileViewer.Presenter presenter) {
-        FileViewer viewer = new ExternalVizualizationURLViwerImpl(file, infoType);
+        FileViewer viewer = new ExternalVisualizationURLViewerImpl(file, infoType);
         return Arrays.asList(viewer);
     }
 

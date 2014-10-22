@@ -20,15 +20,15 @@ import com.sencha.gxt.widget.core.client.toolbar.ToolBar;
 
 public class ViewerPagingToolBar extends ToolBar {
 
-    GrayPagingToolBarAppearance appearance = new GrayPagingToolBarAppearance();
-    protected TextButton first, prev, next, last;
     protected LabelToolItem beforePage, afterText;
-    protected NumberField<Integer> pageText;
+    protected TextButton first, prev, next, last;
     protected Slider pageSize;
-    private int totalPages;
+    protected NumberField<Integer> pageText;
+    GrayPagingToolBarAppearance appearance = new GrayPagingToolBarAppearance();
     long fileSize;
     private final AbstractFileViewer view;
-    
+    private int totalPages;
+
     public ViewerPagingToolBar(AbstractFileViewer view, long fileSize) {
         this.view = view;
         this.fileSize = fileSize;
@@ -65,94 +65,91 @@ public class ViewerPagingToolBar extends ToolBar {
         computeTotalPages();
     }
 
-    private void addToolbarItems() {
-        add(new FillToolItem());
-        add(new LabelToolItem(org.iplantc.de.resources.client.messages.I18N.DISPLAY.pageSize()));
-        add(pageSize);
-        add(first);
-        add(prev);
-        add(new SeparatorToolItem());
-        add(beforePage);
-        add(pageText);
-        add(afterText);
-        add(new SeparatorToolItem());
-        add(next);
-        add(last);
-        add(new SeparatorToolItem());
-        add(new FillToolItem());
-    }
-
-    private void initPageSizeSlider() {
-        pageSize = new Slider();
-        pageSize.setMinValue(FileViewer.MIN_PAGE_SIZE_KB);
-        pageSize.setMaxValue(FileViewer.MAX_PAGE_SIZE_KB);
-        pageSize.setIncrement(FileViewer.PAGE_INCREMENT_SIZE_KB);
-        pageSize.setValue(FileViewer.MIN_PAGE_SIZE_KB);
-        pageSize.setWidth(100);
-    }
-
-    /**
-     * 
-     * @return page size in bytes
-     */
-    public long getPageSize() {
-        return pageSize.getValue() * 1024;
-    }
-
     public void addFirstSelectHandler(SelectHandler handler) {
         first.addSelectHandler(handler);
-    }
-
-    public void addPrevSelectHandler(SelectHandler handler) {
-        prev.addSelectHandler(handler);
-    }
-
-    public void addNextSelectHandler(SelectHandler handler) {
-        next.addSelectHandler(handler);
     }
 
     public void addLastSelectHandler(SelectHandler handler) {
         last.addSelectHandler(handler);
     }
 
+    public void addNextSelectHandler(SelectHandler handler) {
+        next.addSelectHandler(handler);
+    }
+
+    public void addPageSizeChangeHandler(ValueChangeHandler<Integer> changeHandler) {
+        pageSize.addValueChangeHandler(changeHandler);
+    }
+
+    public void addPrevSelectHandler(SelectHandler handler) {
+        prev.addSelectHandler(handler);
+    }
+
     public void addSelectPageKeyHandler(KeyDownHandler handler) {
         pageText.addKeyDownHandler(handler);
-    }
-
-    public void setPrevEnabled(boolean enabled) {
-        prev.setEnabled(enabled);
-    }
-
-    public void setFirstEnabled(boolean enabled) {
-        first.setEnabled(enabled);
-    }
-
-    public void setNextEnabled(boolean enabled) {
-        next.setEnabled(enabled);
-    }
-
-    public void setLastEnabled(boolean enabled) {
-        last.setEnabled(enabled);
-    }
-
-    public void setPageNumber(int i) {
-        pageText.setValue(i);
     }
 
     public int getPageNumber() {
         return pageText.getCurrentValue();
     }
 
-    public void setTotalPagesText() {
-        afterText.setLabel("of " + totalPages);
+    public void setPageNumber(int i) {
+        pageText.setValue(i);
+    }
+
+    /**
+     * @return page size in bytes
+     */
+    public long getPageSize() {
+        return pageSize.getValue() * 1024;
     }
 
     public int getToltalPages() {
         return totalPages;
     }
 
-    public void addPageSizeChangeHandler(ValueChangeHandler<Integer> changeHandler) {
-        pageSize.addValueChangeHandler(changeHandler);
+    public void onFirst() {
+        view.loadData();
+    }
+
+    public void onLast() {
+        view.loadData();
+    }
+
+    public void onNext() {
+        view.loadData();
+    }
+
+    public void onPageSelect() {
+        view.loadData();
+    }
+
+    public void onPageSizeChange() {
+        view.loadData();
+    }
+
+    public void onPrev() {
+        view.loadData();
+    }
+
+    public void setFirstEnabled(boolean enabled) {
+        first.setEnabled(enabled);
+    }
+
+    public void setLastEnabled(boolean enabled) {
+        last.setEnabled(enabled);
+    }
+
+    public void setNextEnabled(boolean enabled) {
+        next.setEnabled(enabled);
+    }
+
+    public void setPrevEnabled(boolean enabled) {
+        prev.setEnabled(enabled);
+    }
+
+    public void setTotalPagesText() {
+        afterText.setLabel("of " + totalPages);
     }
 
     private void addFirstHandler() {
@@ -206,6 +203,18 @@ public class ViewerPagingToolBar extends ToolBar {
         });
     }
 
+    private void addPageSizeChangeHandler() {
+        addPageSizeChangeHandler(new ValueChangeHandler<Integer>() {
+
+            @Override
+            public void onValueChange(ValueChangeEvent<Integer> event) {
+                computeTotalPages();
+                setPageNumber(1);
+                onPageSizeChange();
+            }
+        });
+    }
+
     private void addPrevHandler() {
         addPrevSelectHandler(new SelectHandler() {
 
@@ -225,18 +234,6 @@ public class ViewerPagingToolBar extends ToolBar {
                     setPrevEnabled(true);
                 }
                 onPrev();
-            }
-        });
-    }
-
-    private void addPageSizeChangeHandler() {
-        addPageSizeChangeHandler(new ValueChangeHandler<Integer>() {
-
-            @Override
-            public void onValueChange(ValueChangeEvent<Integer> event) {
-                computeTotalPages();
-                setPageNumber(1);
-                onPageSizeChange();
             }
         });
     }
@@ -272,13 +269,30 @@ public class ViewerPagingToolBar extends ToolBar {
         });
     }
 
+    private void addToolbarItems() {
+        add(new FillToolItem());
+        add(new LabelToolItem(org.iplantc.de.resources.client.messages.I18N.DISPLAY.pageSize()));
+        add(pageSize);
+        add(first);
+        add(prev);
+        add(new SeparatorToolItem());
+        add(beforePage);
+        add(pageText);
+        add(afterText);
+        add(new SeparatorToolItem());
+        add(next);
+        add(last);
+        add(new SeparatorToolItem());
+        add(new FillToolItem());
+    }
+
     private void computeTotalPages() {
         long pageSize = getPageSize();
         totalPages = 0;
         if (fileSize < pageSize) {
             totalPages = 1;
         } else {
-            totalPages = (int)((fileSize / pageSize));
+            totalPages = (int) ((fileSize / pageSize));
             if (fileSize % pageSize > 0) {
                 totalPages++;
             }
@@ -286,6 +300,15 @@ public class ViewerPagingToolBar extends ToolBar {
         }
         setTotalPagesText();
         setPageNavButtonState();
+    }
+
+    private void initPageSizeSlider() {
+        pageSize = new Slider();
+        pageSize.setMinValue(FileViewer.MIN_PAGE_SIZE_KB);
+        pageSize.setMaxValue(FileViewer.MAX_PAGE_SIZE_KB);
+        pageSize.setIncrement(FileViewer.PAGE_INCREMENT_SIZE_KB);
+        pageSize.setValue(FileViewer.MIN_PAGE_SIZE_KB);
+        pageSize.setWidth(100);
     }
 
     private void setPageNavButtonState() {
@@ -300,34 +323,6 @@ public class ViewerPagingToolBar extends ToolBar {
             setPrevEnabled(false);
             setLastEnabled(false);
         }
-    }
-
-    public void onFirst() {
-        view.loadData();
-
-    }
-
-    public void onLast() {
-        view.loadData();
-    }
-
-    public void onPrev() {
-        view.loadData();
-
-    }
-
-    public void onNext() {
-        view.loadData();
-
-    }
-
-    public void onPageSizeChange() {
-        view.loadData();
-    }
-
-    public void onPageSelect() {
-        view.loadData();
-
     }
 
 }

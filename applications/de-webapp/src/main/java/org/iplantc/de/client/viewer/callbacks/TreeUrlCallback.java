@@ -17,16 +17,24 @@ import java.util.List;
 
 public class TreeUrlCallback implements AsyncCallback<String> {
 
-    private final IsMaskable container;
-    private final FileViewer viewer;
-    private final File file;
-
     private final static TreeUrlAutoBeanFactory factory = GWT.create(TreeUrlAutoBeanFactory.class);
+    private final IsMaskable container;
+    private final File file;
+    private final FileViewer viewer;
 
     public TreeUrlCallback(File file, IsMaskable container, FileViewer viewer) {
         this.file = file;
         this.container = container;
         this.viewer = viewer;
+    }
+
+    public static List<VizUrl> getTreeUrls(String urls) {
+        if (urls == null) {
+            return null;
+        }
+
+        AutoBean<VizUrlList> bean = AutoBeanCodex.decode(factory, VizUrlList.class, urls);
+        return bean.as().getUrls();
     }
 
     @Override
@@ -37,7 +45,6 @@ public class TreeUrlCallback implements AsyncCallback<String> {
 
         String errMsg = org.iplantc.de.resources.client.messages.I18N.ERROR.unableToRetrieveTreeUrls(file.getName());
         ErrorHandler.post(errMsg, caught);
-
     }
 
     @Override
@@ -60,15 +67,6 @@ public class TreeUrlCallback implements AsyncCallback<String> {
             container.unmask();
         }
 
-    }
-
-    public static List<VizUrl> getTreeUrls(String urls) {
-        if (urls != null) {
-            AutoBean<VizUrlList> bean = AutoBeanCodex.decode(factory, VizUrlList.class, urls.toString());
-            return bean.as().getUrls();
-        }
-
-        return null;
     }
 
 }

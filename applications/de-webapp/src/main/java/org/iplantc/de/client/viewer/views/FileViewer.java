@@ -15,11 +15,6 @@ import com.google.gwt.user.client.ui.IsWidget;
  */
 public interface FileViewer extends IsWidget, FileSavedEvent.HasFileSavedEventHandlers {
 
-    int MIN_PAGE_SIZE_KB = 8;
-    int MAX_PAGE_SIZE_KB = 1024;
-    int PAGE_INCREMENT_SIZE_KB = 8;
-    String COLUMNS_KEY = "columns";
-
     public interface Presenter extends DirtyStateChangedEvent.HasDirtyStateChangedEventHandlers {
         String getTitle();
 
@@ -29,6 +24,8 @@ public interface FileViewer extends IsWidget, FileSavedEvent.HasFileSavedEventHa
                 boolean editing,
                 boolean isVizTabFirst,
                 AsyncCallback<String> asyncCallback);
+
+        boolean isDirty();
 
         void newFileGo(HasOneWidget container,
                        String title,
@@ -42,18 +39,19 @@ public interface FileViewer extends IsWidget, FileSavedEvent.HasFileSavedEventHa
         void saveFile();
 
         void setViewDirtyState(boolean dirty);
-
-        boolean isDirty();
-        
-        void setTitle(String windowTitle);
     }
 
-    void setData(Object data);
+    String COLUMNS_KEY = "columns";
+    int MAX_PAGE_SIZE_KB = 1024;
+    int MIN_PAGE_SIZE_KB = 8;
+    int PAGE_INCREMENT_SIZE_KB = 8;
 
     String getInfoType();
 
     String getViewName();
-    
+
     void refresh();
+
+    void setData(Object data);
 
 }

@@ -20,9 +20,9 @@ import java.util.logging.Logger;
  */
 public class TextDataViewCommand implements ViewCommand {
 
-    private Folder parentFolder;
-    private final String mode;
     Logger LOG = Logger.getLogger(TextDataViewCommand.class.getName());
+    private final String mode;
+    private Folder parentFolder;
 
     public TextDataViewCommand(String mode) {
         this.mode = mode;
@@ -37,7 +37,7 @@ public class TextDataViewCommand implements ViewCommand {
                                     final FileViewer.Presenter presenter) {
         this.parentFolder = parentFolder;
         Integer columns = null;
-        if(manifest.containsKey(FileViewer.COLUMNS_KEY)){
+        if (manifest.containsKey(FileViewer.COLUMNS_KEY)) {
             columns = JsonUtil.getNumber(manifest, FileViewer.COLUMNS_KEY).intValue();
             LOG.info("Columns are defined: " + columns);
         }

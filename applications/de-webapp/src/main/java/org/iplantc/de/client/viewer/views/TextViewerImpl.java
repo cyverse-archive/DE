@@ -1,6 +1,3 @@
-/**
- *
- */
 package org.iplantc.de.client.viewer.views;
 
 import org.iplantc.de.client.callbacks.FileSaveCallback;
@@ -41,77 +38,31 @@ import java.util.logging.Logger;
 
 /**
  * @author sriram
- * 
  */
 public class TextViewerImpl extends AbstractFileViewer implements EditingSupport {
 
-    private static TextViewerUiBinder uiBinder = GWT.create(TextViewerUiBinder.class);
-
-    private final class SaveAsDialogHandlerImpl implements SelectHandler {
-        private final SaveAsDialog saveDialog;
-
-        private SaveAsDialogHandlerImpl(SaveAsDialog saveDialog) {
-            this.saveDialog = saveDialog;
-        }
-
-        @Override
-        public void onSelect(SelectEvent event) {
-            if (saveDialog.isVaild()) {
-                con.mask(I18N.DISPLAY.savingMask());
-                String destination = saveDialog.getSelectedFolder().getPath() + "/"
-                        + saveDialog.getFileName();
-                ServicesInjector.INSTANCE.getFileEditorServiceFacade()
-                                         .uploadTextAsFile(destination,
-                                                           getEditorContent(jso),
-                                                           true,
-                                                           new FileSaveCallback(destination,
-                                                                                true,
-                                                                                con));
-                saveDialog.hide();
-            }
-        }
-    }
-
     private final class GetDataCallbackImpl implements AsyncCallback<String> {
         @Override
-         public void onSuccess(String result) {
-             data = JsonUtil.getString(JsonUtil.getObject(result),
-                                       "chunk");
-             setData(data);
-             con.unmask();
-         }
+        public void onFailure(Throwable caught) {
+            ErrorHandler.post(org.iplantc.de.resources.client.messages.I18N.ERROR.unableToRetrieveFileData(file.getName()),
+                              caught);
+            con.unmask();
+        }
 
         @Override
-         public void onFailure(Throwable caught) {
-             ErrorHandler.post(org.iplantc.de.resources.client.messages.I18N.ERROR.unableToRetrieveFileData(file.getName()),
-                               caught);
-             con.unmask();
-         }
-    }
-
-    private final class ResizeViewHandlerImpl implements ResizeHandler {
-        @Override
-        public void onResize(ResizeEvent event) {
-            if (jso != null) {
-                resizeDisplay(jso, center.getElement().getOffsetWidth(), center.getElement()
-                                                                               .getOffsetHeight());
-            }
+        public void onSuccess(String result) {
+            data = JsonUtil.getString(JsonUtil.getObject(result),
+                                      "chunk");
+            setData(data);
+            con.unmask();
         }
     }
-
-//    private final class SaveFileHandlerImpl implements SaveFileEventHandler {
-//        @Override
-//        public void onSave(SaveFileEvent event) {
-//            save();
-//
-//        }
-//    }
 
     private final class PreviewSelectHandlerImpl implements SelectHandler {
         @Override
         public void onSelect(SelectEvent event) {
             // do not support preview if content cannot be fit in one page.
-            if(pagingToolbar.getToltalPages() > 1) {
+            if (pagingToolbar.getToltalPages() > 1) {
                 AlertMessageBox amb = new AlertMessageBox("Preview",
                                                           "Unable to generate preview. Please adjust page size to fit  file contents in 1 page and try again!");
                 amb.show();
@@ -133,41 +84,65 @@ public class TextViewerImpl extends AbstractFileViewer implements EditingSupport
         }
     }
 
-    @UiTemplate("TextViewer.ui.xml")
-    interface TextViewerUiBinder extends UiBinder<Widget, TextViewerImpl> {
+    private final class ResizeViewHandlerImpl implements ResizeHandler {
+        @Override
+        public void onResize(ResizeEvent event) {
+            if (jso != null) {
+                resizeDisplay(jso, center.getElement().getOffsetWidth(), center.getElement()
+                                                                               .getOffsetHeight());
+            }
+        }
     }
 
-    private final Widget widget;
+    private final class SaveAsDialogHandlerImpl implements SelectHandler {
+        private final SaveAsDialog saveDialog;
+
+        private SaveAsDialogHandlerImpl(SaveAsDialog saveDialog) {
+            this.saveDialog = saveDialog;
+        }
+
+        @Override
+        public void onSelect(SelectEvent event) {
+            if (saveDialog.isVaild()) {
+                con.mask(I18N.DISPLAY.savingMask());
+                String destination = saveDialog.getSelectedFolder().getPath() + "/"
+                                         + saveDialog.getFileName();
+                ServicesInjector.INSTANCE.getFileEditorServiceFacade()
+                                         .uploadTextAsFile(destination,
+                                                           getEditorContent(jso),
+                                                           true,
+                                                           new FileSaveCallback(destination,
+                                                                                true,
+                                                                                con));
+                saveDialog.hide();
+            }
+        }
+    }
+
+    @UiTemplate("TextViewer.ui.xml")
+    interface TextViewerUiBinder extends UiBinder<Widget, TextViewerImpl> { }
+
+    static Logger LOG = Logger.getLogger(TextViewerImpl.class.getName());
 
     @UiField
     SimpleContainer center;
-
     @UiField
     BorderLayoutContainer con;
-
+    @UiField(provided = true)
+    ViewerPagingToolBar pagingToolbar;
     @UiField(provided = true)
     TextViewToolBar toolbar;
 
-    @UiField(provided = true)
-    ViewerPagingToolBar pagingToolbar;
-
-    private long file_size;
-
-    private int totalPages;
-
-    private String data;
-
     protected boolean editing;
-
-    private final Folder parentFolder;
-
-    private final FileViewer.Presenter presenter;
-
     protected JavaScriptObject jso;
-
+    private static TextViewerUiBinder uiBinder = GWT.create(TextViewerUiBinder.class);
     private final String mode;
-
-    static Logger LOG = Logger.getLogger(TextViewerImpl.class.getName());
+    private final Folder parentFolder;
+    private final FileViewer.Presenter presenter;
+    private final Widget widget;
+    private String data;
+    private long file_size;
+    private int totalPages;
 
     public TextViewerImpl(File file,
                           final String infoType,
@@ -204,57 +179,88 @@ public class TextViewerImpl extends AbstractFileViewer implements EditingSupport
 
     }
 
+    public static native JavaScriptObject displayData(final TextViewerImpl instance,
+                                                      XElement textArea,
+                                                      String editorMode,
+                                                      String val,
+                                                      int width,
+                                                      int height,
+                                                      boolean wrap,
+                                                      boolean editing) /*-{
+
+        if (editorMode == "python") {
+            editorMode = {
+                name: "python",
+                version: 3,
+                singleLineStringErrors: false
+            }
+        }
+        var myCodeMirror = $wnd.CodeMirror(textArea, {
+            value: val,
+            mode: editorMode,
+            matchBrackets: true,
+            autoCloseBrackets: true
+
+        });
+        myCodeMirror.setSize(width, height);
+        myCodeMirror.setOption("readOnly", !editing);
+        myCodeMirror
+            .on(
+            "change",
+            $entry(function () {
+                instance.@org.iplantc.de.client.viewer.views.TextViewerImpl::setDirty(Ljava/lang/Boolean;)(@java.lang.Boolean::TRUE);
+            }));
+        return myCodeMirror;
+    }-*/;
+
+    public static native String getEditorContent(JavaScriptObject jso) /*-{
+        return jso.getValue();
+    }-*/;
+
+    public static native boolean isClean(JavaScriptObject jso) /*-{
+        return jso.isClean();
+    }-*/;
+
+    public static native void resizeDisplay(JavaScriptObject jso, int width, int height) /*-{
+        jso.setSize(width, height);
+    }-*/;
+
+    public static native void setEditing(JavaScriptObject jso, boolean editing) /*-{
+        jso.setOption("readOnly", !editing);
+    }-*/;
+
+    public static native void showLineNumbersInEditor(JavaScriptObject jso, boolean show) /*-{
+        jso.setOption("lineNumbers", show);
+    }-*/;
+
+    public static native void updateData(JavaScriptObject jso, String val) /*-{
+        jso.setValue(val);
+    }-*/;
+
+    public static native void wrapText(JavaScriptObject jso, boolean wrap) /*-{
+        jso.setOption("lineWrapping", wrap);
+    }-*/;
+
     @Override
-    public HandlerRegistration addFileSavedEventHandler(final FileSavedEvent.FileSavedEventHandler handler){
+    public HandlerRegistration addFileSavedEventHandler(final FileSavedEvent.FileSavedEventHandler handler) {
         return con.addHandler(handler, FileSavedEvent.TYPE);
     }
 
-    TextViewToolBar initToolBar() {
-        TextViewToolBar textViewPagingToolBar;
-        if (mode != null && mode == "markdown") {
-             textViewPagingToolBar = new TextViewToolBar(this, editing, true);
-        } else {
-             textViewPagingToolBar = new TextViewToolBar(this, editing, false);
+    @Override
+    public Widget asWidget() {
+        return widget;
+    }
+
+    @Override
+    public boolean isDirty() {
+        return isClean(jso);
+    }
+
+    @Override
+    public void setDirty(Boolean dirty) {
+        if (presenter.isDirty() != dirty) {
+            presenter.setViewDirtyState(dirty);
         }
-        return textViewPagingToolBar;
-    }
-
-    ViewerPagingToolBar initPagingToolbar() {
-        return new ViewerPagingToolBar(this, getFileSize());
-    }
-
-    private void addWrapHandler() {
-        toolbar.addWrapCbxChangeHandler(new ValueChangeHandler<Boolean>() {
-
-            @Override
-            public void onValueChange(ValueChangeEvent<Boolean> event) {
-                wrapText(jso, event.getValue());
-            }
-        });
-    }
-
-    private void addLineNumberHandler() {
-        toolbar.addLineNumberCbxChangeHandler(new ValueChangeHandler<Boolean>() {
-
-            @Override
-            public void onValueChange(ValueChangeEvent<Boolean> event) {
-                showLineNumbersInEditor(jso, event.getValue());
-            }
-
-        });
-    }
-
-    private JSONObject getRequestBody() {
-        if (file == null) {
-            return null;
-        }
-        JSONObject obj = new JSONObject();
-        obj.put("path", new JSONString(file.getPath()));
-        // position starts at 0
-        obj.put("position",
-                new JSONString("" + pagingToolbar.getPageSize() * (pagingToolbar.getPageNumber() - 1)));
-        obj.put("chunk-size", new JSONString("" + pagingToolbar.getPageSize()));
-        return obj;
     }
 
     @Override
@@ -270,108 +276,9 @@ public class TextViewerImpl extends AbstractFileViewer implements EditingSupport
     }
 
     @Override
-    public Widget asWidget() {
-        return widget;
+    public void refresh() {
+        loadData();
     }
-
-    @Override
-    public void setData(Object data) {
-        boolean allowEditing = pagingToolbar.getToltalPages() == 1 && editing;
-        if (jso == null) {
-            clearDisplay();
-            jso = displayData(this,
-                              center.getElement(),
-                              mode,
-                              (String)data,
-                              center.getElement().getOffsetWidth(),
-                              center.getElement().getOffsetHeight(),
-                              toolbar.isWrapText(),
-                              allowEditing);
-        } else {
-            updateData(jso, (String)data);
-            setEditing(jso, allowEditing);
-            setDirty(false);
-        }
-        toolbar.setEditing(allowEditing);
-
-        /**
-         * XXX - SS - support editing for files with only one page
-         */
-    }
-
-    protected void clearDisplay() {
-        center.getElement().removeChildren();
-        center.forceLayout();
-    }
-
-    @Override
-    public void setDirty(Boolean dirty) {
-        if (presenter.isDirty() != dirty) {
-            presenter.setViewDirtyState(dirty);
-        }
-    }
-
-    public static native void updateData(JavaScriptObject jso, String val) /*-{
-		jso.setValue(val);
-    }-*/;
-
-    public static native void setEditing(JavaScriptObject jso, boolean editing) /*-{
-		jso.setOption("readOnly", !editing);
-    }-*/;
-
-    public static native JavaScriptObject displayData(final TextViewerImpl instance,
-                                                      XElement textArea,
-                                                      String editorMode,
-                                                      String val,
-                                                      int width,
-                                                      int height,
-                                                      boolean wrap,
-                                                      boolean editing) /*-{
-
-		if (editorMode == "python") {
-			editorMode = {
-				name : "python",
-				version : 3,
-				singleLineStringErrors : false
-			}
-		}
-		var myCodeMirror = $wnd.CodeMirror(textArea, {
-			value : val,
-			mode : editorMode,
-			matchBrackets : true,
-			autoCloseBrackets : true
-
-		});
-		myCodeMirror.setSize(width, height);
-		myCodeMirror.setOption("readOnly", !editing);
-		myCodeMirror
-				.on(
-						"change",
-						$entry(function() {
-							instance.@org.iplantc.de.client.viewer.views.TextViewerImpl::setDirty(Ljava/lang/Boolean;)(@java.lang.Boolean::TRUE);
-						}));
-		return myCodeMirror;
-    }-*/;
-
-    public static native String getEditorContent(JavaScriptObject jso) /*-{
-		return jso.getValue();
-    }-*/;
-
-    public static native boolean isClean(JavaScriptObject jso) /*-{
-		return jso.isClean();
-    }-*/;
-
-    public static native void resizeDisplay(JavaScriptObject jso, int width, int height) /*-{
-		jso.setSize(width, height);
-    }-*/;
-
-    public static native void showLineNumbersInEditor(JavaScriptObject jso, boolean show) /*-{
-		jso.setOption("lineNumbers", show);
-    }-*/;
-
-    public static native void wrapText(JavaScriptObject jso, boolean wrap) /*-{
-		jso.setOption("lineWrapping", wrap);
-    }-*/;
 
     @Override
     public void save() {
@@ -399,13 +306,80 @@ public class TextViewerImpl extends AbstractFileViewer implements EditingSupport
     }
 
     @Override
-    public boolean isDirty() {
-        return isClean(jso);
+    public void setData(Object data) {
+        boolean allowEditing = pagingToolbar.getToltalPages() == 1 && editing;
+        if (jso == null) {
+            clearDisplay();
+            jso = displayData(this,
+                              center.getElement(),
+                              mode,
+                              (String) data,
+                              center.getElement().getOffsetWidth(),
+                              center.getElement().getOffsetHeight(),
+                              toolbar.isWrapText(),
+                              allowEditing);
+        } else {
+            updateData(jso, (String) data);
+            setEditing(jso, allowEditing);
+            setDirty(false);
+        }
+        toolbar.setEditing(allowEditing);
+
+        /**
+         * XXX - SS - support editing for files with only one page
+         */
     }
 
-    @Override
-    public void refresh() {
-        loadData();
+    protected void clearDisplay() {
+        center.getElement().removeChildren();
+        center.forceLayout();
+    }
 
+    ViewerPagingToolBar initPagingToolbar() {
+        return new ViewerPagingToolBar(this, getFileSize());
+    }
+
+    TextViewToolBar initToolBar() {
+        TextViewToolBar textViewPagingToolBar;
+        if (mode != null && mode.equals("markdown")) {
+            textViewPagingToolBar = new TextViewToolBar(this, editing, true);
+        } else {
+            textViewPagingToolBar = new TextViewToolBar(this, editing, false);
+        }
+        return textViewPagingToolBar;
+    }
+
+    private void addLineNumberHandler() {
+        toolbar.addLineNumberCbxChangeHandler(new ValueChangeHandler<Boolean>() {
+
+            @Override
+            public void onValueChange(ValueChangeEvent<Boolean> event) {
+                showLineNumbersInEditor(jso, event.getValue());
+            }
+
+        });
+    }
+
+    private void addWrapHandler() {
+        toolbar.addWrapCbxChangeHandler(new ValueChangeHandler<Boolean>() {
+
+            @Override
+            public void onValueChange(ValueChangeEvent<Boolean> event) {
+                wrapText(jso, event.getValue());
+            }
+        });
+    }
+
+    private JSONObject getRequestBody() {
+        if (file == null) {
+            return null;
+        }
+        JSONObject obj = new JSONObject();
+        obj.put("path", new JSONString(file.getPath()));
+        // position starts at 0
+        obj.put("position",
+                new JSONString("" + pagingToolbar.getPageSize() * (pagingToolbar.getPageNumber() - 1)));
+        obj.put("chunk-size", new JSONString("" + pagingToolbar.getPageSize()));
+        return obj;
     }
 }

@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package org.iplantc.de.client.viewer.views;
 
@@ -11,7 +11,6 @@ import com.google.gwt.user.client.ui.Widget;
 
 /**
  * @author sriram, jstroot
- * 
  */
 public abstract class AbstractFileViewer implements FileViewer {
 
@@ -25,26 +24,13 @@ public abstract class AbstractFileViewer implements FileViewer {
     }
 
     @Override
-    public abstract Widget asWidget();
-
-    @Override
-    public HandlerRegistration addFileSavedEventHandler(final FileSavedEventHandler handler){
+    public HandlerRegistration addFileSavedEventHandler(final FileSavedEventHandler handler) {
         // Subclasses which use the FileSaveCallback, or otherwise fire a FileSavedEvent will override this method
         return null;
     }
 
     @Override
-    public abstract void setData(Object data);
-
-    public abstract void loadData();
-    
-    protected long getFileSize() {
-        if (file != null) {
-            return file.getSize();
-        }
-
-        return 0;
-    }
+    public abstract Widget asWidget();
 
     @Override
     public String getInfoType() {
@@ -58,6 +44,19 @@ public abstract class AbstractFileViewer implements FileViewer {
         } else {
             return "Untitled-" + Math.random();
         }
+    }
+
+    public abstract void loadData();
+
+    @Override
+    public abstract void setData(Object data);
+
+    protected long getFileSize() {
+        if (file != null) {
+            return file.getSize();
+        }
+
+        return 0;
     }
 
 }

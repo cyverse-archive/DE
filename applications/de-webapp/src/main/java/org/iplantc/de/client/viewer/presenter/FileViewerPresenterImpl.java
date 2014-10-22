@@ -47,25 +47,24 @@ import java.util.logging.Logger;
 
 /**
  * @author sriram, jstroot
- * 
  */
 public class FileViewerPresenterImpl implements FileViewer.Presenter, FileSavedEvent.FileSavedEventHandler {
     private class GetManifestCallback implements AsyncCallback<String> {
-        private final FileViewerPresenterImpl presenter;
-        private final File file;
-        private final Folder parentFolder;
-        private final boolean editing;
-        private final boolean isVizTabFirst;
         private final AsyncCallback<String> asyncCallback;
+        private final boolean editing;
         private final IplantErrorStrings errorStrings;
+        private final File file;
+        private final boolean isVizTabFirst;
+        private final Folder parentFolder;
+        private final FileViewerPresenterImpl presenter;
 
-        public GetManifestCallback(FileViewerPresenterImpl presenter,
-                                   File file,
-                                   Folder parentFolder,
-                                   boolean editing,
-                                   boolean isVizTabFirst,
-                                   AsyncCallback<String> asyncCallback,
-                                   IplantErrorStrings errorStrings) {
+        public GetManifestCallback(final FileViewerPresenterImpl presenter,
+                                   final File file,
+                                   final Folder parentFolder,
+                                   final boolean editing,
+                                   final boolean isVizTabFirst,
+                                   final AsyncCallback<String> asyncCallback,
+                                   final IplantErrorStrings errorStrings) {
 
             this.presenter = presenter;
             this.file = file;
@@ -109,28 +108,24 @@ public class FileViewerPresenterImpl implements FileViewer.Presenter, FileSavedE
         }
     }
 
+    Logger LOG = Logger.getLogger(FileViewerPresenterImpl.class.getName());
     private final IplantDisplayStrings displayStrings;
     private final IplantErrorStrings errorStrings;
     private final FileEditorServiceFacade fileEditorService;
     private MimeType contentType;
-    private JSONObject manifest;
-    private Folder parentFolder;
-
-    // A presenter can handle more than one view of the same data at a time
-    private List<FileViewer> viewers;
-
-    private PlainTabPanel tabPanel;
-
     /**
      * The file shown in the window.
      */
     private File file;
-
     private boolean isDirty;
-
+    private JSONObject manifest;
+    private Folder parentFolder;
+    private PlainTabPanel tabPanel;
     private String title;
-
-    Logger LOG = Logger.getLogger(FileViewerPresenterImpl.class.getName());
+    /**
+     * A presenter can handle more than one view of the same data at a time
+     */
+    private List<FileViewer> viewers;
     private boolean vizTabFirst;
 
     @Inject
@@ -154,13 +149,17 @@ public class FileViewerPresenterImpl implements FileViewer.Presenter, FileSavedE
         return title;
     }
 
+    void setTitle(String windowTitle) {
+        this.title = windowTitle;
+    }
+
     @Override
     public void go(final HasOneWidget container,
                    final File file,
                    final Folder parentFolder,
                    final boolean editing,
                    final boolean isVizTabFirst,
-                   final AsyncCallback<String> asyncCallback){
+                   final AsyncCallback<String> asyncCallback) {
         this.parentFolder = parentFolder;
         checkState(!tabPanel.isAttached(), "You cannot 'go' this presenter more than once.");
         checkArgument(file != null, "File cannot be null.\n" +
@@ -180,6 +179,11 @@ public class FileViewerPresenterImpl implements FileViewer.Presenter, FileSavedE
     }
 
     @Override
+    public boolean isDirty() {
+        return isDirty;
+    }
+
+    @Override
     public void newFileGo(final HasOneWidget container,
                           final String title,
                           final MimeType contentType,
@@ -195,7 +199,6 @@ public class FileViewerPresenterImpl implements FileViewer.Presenter, FileSavedE
         container.setWidget(tabPanel);
         tabPanel.mask(displayStrings.loadingMask());
         this.vizTabFirst = vizTabFirst;
-
 
         // Assemble manifest
         JSONObject manifest = new JSONObject();
@@ -225,22 +228,13 @@ public class FileViewerPresenterImpl implements FileViewer.Presenter, FileSavedE
     }
 
     @Override
-    public void saveFile() {
-        for(FileViewer fileViewer : viewers){
-            if(fileViewer instanceof EditingSupport){
-                ((EditingSupport)fileViewer).save();
-            }
-        }
-    }
-
-    @Override
     public void onFileSaved(FileSavedEvent event) {
-        if(file == null) {
+        if (file == null) {
             file = event.getFile();
             /* Iterate through tab collection and individually remove. TabPanel.clear() does not
              * correctly clear the tabs.
              */
-            for(int i = tabPanel.getWidgetCount() - 1; i >= 0; i--){
+            for (int i = tabPanel.getWidgetCount() - 1; i >= 0; i--) {
                 tabPanel.remove(i);
             }
             viewers.clear();
@@ -250,12 +244,42 @@ public class FileViewerPresenterImpl implements FileViewer.Presenter, FileSavedE
         setViewDirtyState(false);
     }
 
-    void setContentType(MimeType contentType) {
-        this.contentType = contentType;
+    @Override
+    public void saveFile() {
+        for (FileViewer fileViewer : viewers) {
+            if (fileViewer instanceof EditingSupport) {
+                ((EditingSupport) fileViewer).save();
+            }
+        }
     }
 
-    void setManifest(JSONObject manifest) {
-        this.manifest = manifest;
+    @Override
+    public void setViewDirtyState(boolean dirty) {
+        this.isDirty = dirty;
+        tabPanel.fireEvent(new DirtyStateChangedEvent(dirty));
+    }
+
+    /**
+     * Calls the tree URL service to fetch the URLs to display in the grid.
+     */
+    void callTreeCreateService(final FileViewer viewer, File file) {
+        tabPanel.mask(displayStrings.loadingMask());
+        IsMaskable maskable = new IsMaskable() {
+            @Override
+            public void mask(String loadingMask) {
+                tabPanel.mask(loadingMask);
+            }
+
+            @Override
+            public void unmask() {
+                tabPanel.unmask();
+            }
+        };
+        fileEditorService.getTreeUrl(file.getPath(),
+                                     false,
+                                     new TreeUrlCallback(file,
+                                                         maskable,
+                                                         viewer));
     }
 
     void composeView(final File file,
@@ -266,6 +290,7 @@ public class FileViewerPresenterImpl implements FileViewer.Presenter, FileSavedE
                      final boolean editing,
                      final boolean isVizTabFirst) {
         checkNotNull(contentType);
+
         ViewCommand cmd = MimeTypeViewerResolverFactory.getViewerCommand(contentType);
         List<? extends FileViewer> viewers_list = cmd.execute(file, infoType, editing, parentFolder, manifest, this);
 
@@ -302,7 +327,7 @@ public class FileViewerPresenterImpl implements FileViewer.Presenter, FileSavedE
             }
         }
 
-        for(FileSavedEvent.HasFileSavedEventHandlers hasHandlers : viewers){
+        for (FileSavedEvent.HasFileSavedEventHandlers hasHandlers : viewers) {
             // Add ourselves as FileSaved handlers
             hasHandlers.addFileSavedEventHandler(this);
         }
@@ -313,6 +338,14 @@ public class FileViewerPresenterImpl implements FileViewer.Presenter, FileSavedE
         tabPanel.unmask();
     }
 
+    void setContentType(MimeType contentType) {
+        this.contentType = contentType;
+    }
+
+    void setManifest(JSONObject manifest) {
+        this.manifest = manifest;
+    }
+
     /**
      * Gets the tree-urls json array from the manifest.
      *
@@ -321,45 +354,6 @@ public class FileViewerPresenterImpl implements FileViewer.Presenter, FileSavedE
      */
     private List<VizUrl> getManifestVizUrls(JSONObject manifest) {
         return TreeUrlCallback.getTreeUrls(manifest.toString());
-    }
-
-    /**
-     * Calls the tree URL service to fetch the URLs to display in the grid.
-     */
-    void callTreeCreateService(final FileViewer viewer, File file) {
-        tabPanel.mask(displayStrings.loadingMask());
-        IsMaskable maskable = new IsMaskable() {
-            @Override
-            public void mask(String loadingMask) {
-                tabPanel.mask(loadingMask);
-            }
-
-            @Override
-            public void unmask() {
-                tabPanel.unmask();
-            }
-        };
-        fileEditorService.getTreeUrl(file.getPath(),
-                                     false,
-                                     new TreeUrlCallback(file,
-                                                         maskable,
-                                                         viewer));
-    }
-
-    @Override
-    public void setViewDirtyState(boolean dirty) {
-        this.isDirty = dirty;
-        tabPanel.fireEvent(new DirtyStateChangedEvent(dirty));
-    }
-
-    @Override
-    public boolean isDirty() {
-        return isDirty;
-    }
-
-    @Override
-    public void setTitle(String windowTitle) {
-        this.title = windowTitle;
     }
 
 }

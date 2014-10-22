@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package org.iplantc.de.client.viewer.commands;
 
@@ -18,7 +18,6 @@ import java.util.List;
 
 /**
  * @author sriram, jstroot
- * 
  */
 public class ImageDataViewCommand implements ViewCommand {
 
@@ -35,8 +34,7 @@ public class ImageDataViewCommand implements ViewCommand {
         AbstractFileViewer view = null;
 
         if (editing) {
-            ErrorAnnouncementConfig config = new ErrorAnnouncementConfig(
-                    "Editing is not supported for this type of file!");
+            ErrorAnnouncementConfig config = new ErrorAnnouncementConfig("Editing is not supported for this type of file!");
             announcer.schedule(config);
         }
 

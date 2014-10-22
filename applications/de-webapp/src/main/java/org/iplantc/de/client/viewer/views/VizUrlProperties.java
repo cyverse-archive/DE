@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package org.iplantc.de.client.viewer.views;
 
@@ -10,7 +10,6 @@ import com.sencha.gxt.data.shared.PropertyAccess;
 
 /**
  * @author sriram
- * 
  */
 public interface VizUrlProperties extends PropertyAccess<VizUrl> {
 

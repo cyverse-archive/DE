@@ -72,14 +72,6 @@ public class EnsemblUtil {
                                           new AsyncCallback<FastMap<DiskResource>>() {
 
                                               @Override
-                                              public void onSuccess(FastMap<DiskResource> result) {
-
-                                                  diskResourceServiceFacade.shareWithAnonymous(diskResourcePaths,
-                                                                                               new ShareAnonymousCallback(file,
-                                                                                                                          container));
-                                              }
-
-                                              @Override
                                               public void onFailure(Throwable caught) {
                                                   IplantInfoBox info = new IplantInfoBox(I18N.DISPLAY.indexFileMissing(),
                                                                                          I18N.ERROR.indexFileMissing());
@@ -87,6 +79,14 @@ public class EnsemblUtil {
                                                   if (container != null) {
                                                       container.unmask();
                                                   }
+                                              }
+
+                                              @Override
+                                              public void onSuccess(FastMap<DiskResource> result) {
+
+                                                  diskResourceServiceFacade.shareWithAnonymous(diskResourcePaths,
+                                                                                               new ShareAnonymousCallback(file,
+                                                                                                                          container));
                                               }
                                           });
     }

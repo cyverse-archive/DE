@@ -31,7 +31,7 @@ public class TextViewToolBar extends AbstractToolBar {
         setEditingStatus(editing);
         buildLineNumberButton();
         add(lineNumberCbx);
-        if(preview) {
+        if (preview) {
             add(new SeparatorToolItem());
             previewMDBtn = new TextButton("Preview Markdown");
             add(previewMDBtn);
@@ -40,19 +40,10 @@ public class TextViewToolBar extends AbstractToolBar {
         add(new FillToolItem());
         add(editStatus);
         setEditingStatus(editing);
-
     }
 
-    private void buildLineNumberButton() {
-        lineNumberCbx = new CheckBox();
-        lineNumberCbx.setBoxLabel("Line Numbers");
-    }
-    protected void setEditingStatus(boolean editing) {
-        if (editing) {
-            editStatus.setText("Editable");
-        } else {
-            editStatus.setText("Not Editable");
-        }
+    public void addLineNumberCbxChangeHandler(ValueChangeHandler<Boolean> changeHandler) {
+        lineNumberCbx.addValueChangeHandler(changeHandler);
     }
 
     public void addPreviewHandler(SelectHandler handler) {
@@ -65,12 +56,18 @@ public class TextViewToolBar extends AbstractToolBar {
         cbxWrap.addValueChangeHandler(changeHandler);
     }
 
-    public void addLineNumberCbxChangeHandler(ValueChangeHandler<Boolean> changeHandler) {
-        lineNumberCbx.addValueChangeHandler(changeHandler);
-    }
-
     public boolean isWrapText() {
         return cbxWrap.getValue();
+    }
+
+    @Override
+    public void refresh() {
+        view.refresh();
+    }
+
+    @Override
+    public void save() {
+        ((TextViewerImpl) view).save();
     }
 
     @Override
@@ -79,14 +76,17 @@ public class TextViewToolBar extends AbstractToolBar {
         setEditingStatus(editing);
     }
 
-    @Override
-    public void save() {
-        ((TextViewerImpl)view).save();
+    protected void setEditingStatus(boolean editing) {
+        if (editing) {
+            editStatus.setText("Editable");
+        } else {
+            editStatus.setText("Not Editable");
+        }
     }
 
-    @Override
-    public void refresh() {
-        view.refresh();
+    private void buildLineNumberButton() {
+        lineNumberCbx = new CheckBox();
+        lineNumberCbx.setBoxLabel("Line Numbers");
     }
 
 }

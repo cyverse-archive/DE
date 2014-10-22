@@ -30,11 +30,10 @@ public class ShareAnonymousCallback implements AsyncCallback<String> {
         SafeHtml notificationWithContextHelp(SafeHtml label, SafeUri img, String toolTip);
     }
 
-    private final EnsemblPopupTemplate template = GWT.create(EnsemblPopupTemplate.class);
-
     private final IsMaskable container;
     private final File file;
-    
+    private final EnsemblPopupTemplate template = GWT.create(EnsemblPopupTemplate.class);
+
     public ShareAnonymousCallback(File file, IsMaskable container) {
         this.container = container;
         this.file = file;

@@ -10,9 +10,8 @@ import java.util.List;
 
 /**
  * Basic interface for command pattern
- * 
+ *
  * @author sriram, jstroot
- * 
  */
 public interface ViewCommand {
     /**

@@ -20,7 +20,6 @@ import java.util.logging.Logger;
 
 /**
  * @author sriram, jstroot
- * 
  */
 public class FileViewerWindow extends IplantWindowBase implements IsMaskable,
                                                                   DirtyStateChangedEvent.DirtyStateChangedEventHandler {
@@ -31,17 +30,16 @@ public class FileViewerWindow extends IplantWindowBase implements IsMaskable,
         }
 
         @Override
-        public void onSuccess(String result) { }
+        public void onSuccess(String result) {
+        }
     }
 
-    private final IplantDisplayStrings displayStrings;
-
-    protected JSONObject manifest;
     protected File file;
-    private final FileViewerWindowConfig configAB;
-    private FileViewer.Presenter presenter;
-
+    protected JSONObject manifest;
     Logger LOG = Logger.getLogger(FileViewerWindow.class.getName());
+    private final FileViewerWindowConfig configAB;
+    private final IplantDisplayStrings displayStrings;
+    private FileViewer.Presenter presenter;
 
     public FileViewerWindow(final FileViewerWindowConfig config,
                             final IplantDisplayStrings displayStrings,
@@ -57,7 +55,7 @@ public class FileViewerWindow extends IplantWindowBase implements IsMaskable,
 
         setSize("800", "480");
 
-        if(file != null){
+        if (file != null) {
             setHeadingText(file.getName());
             presenter.go(this,
                          file,
@@ -69,8 +67,8 @@ public class FileViewerWindow extends IplantWindowBase implements IsMaskable,
             String title = "Untitled-" + Math.random();
             setHeadingText(title);
             boolean isTabularFile = config instanceof TabularFileViewerWindowConfig;
-            String delimiter = isTabularFile ? ((TabularFileViewerWindowConfig)config).getSeparator() : "";
-            Integer columns = isTabularFile ? ((TabularFileViewerWindowConfig)config).getColumns() : null;
+            String delimiter = isTabularFile ? ((TabularFileViewerWindowConfig) config).getSeparator() : "";
+            Integer columns = isTabularFile ? ((TabularFileViewerWindowConfig) config).getColumns() : null;
             presenter.newFileGo(this,
                                 title,
                                 config.getContentType(),
@@ -80,15 +78,6 @@ public class FileViewerWindow extends IplantWindowBase implements IsMaskable,
                                 isTabularFile,
                                 columns,
                                 delimiter);
-        }
-    }
-
-    @Override
-    public void onEditorDirtyStateChanged(DirtyStateChangedEvent event) {
-        if(event.isDirty()){
-            setHeadingText(getHeader().getText() + "<span style='color:red; vertical-align: super'> * </span>");
-        } else {
-            setHeadingText(presenter.getTitle());
         }
     }
 
@@ -117,6 +106,15 @@ public class FileViewerWindow extends IplantWindowBase implements IsMaskable,
     @Override
     public WindowState getWindowState() {
         return createWindowState(configAB);
+    }
+
+    @Override
+    public void onEditorDirtyStateChanged(DirtyStateChangedEvent event) {
+        if (event.isDirty()) {
+            setHeadingText(getHeader().getText() + "<span style='color:red; vertical-align: super'> * </span>");
+        } else {
+            setHeadingText(presenter.getTitle());
+        }
     }
 
 }

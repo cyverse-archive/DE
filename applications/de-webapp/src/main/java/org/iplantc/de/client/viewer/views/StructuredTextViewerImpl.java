@@ -74,6 +74,11 @@ public class StructuredTextViewerImpl extends StructuredTextViewer {
         }
 
         @Override
+        public String getPath() {
+            return index + "";
+        }
+
+        @Override
         public String getValue(JSONObject object) {
             JSONValue val = object.get(index + "");
             if (val != null) {
@@ -89,46 +94,38 @@ public class StructuredTextViewerImpl extends StructuredTextViewer {
                 value = "";
             }
             object.put(index + "", new JSONString(value));
-
-        }
-
-        @Override
-        public String getPath() {
-            return index + "";
         }
     }
 
-    private final IplantDisplayStrings displayStrings = DISPLAY;
-    private final IplantErrorStrings errorStrings = ERROR;
-    private final FileEditorServiceFacade fileEditorService = ServicesInjector.INSTANCE.getFileEditorServiceFacade();
-    private final FileViewer.Presenter presenter;
-
-    private Grid<JSONObject> grid;
-    private StructuredTextViewToolBar toolbar;
-    private ViewerPagingToolBar pagingToolbar;
-    private ListStore<JSONObject> store;
-
-    private BorderLayoutContainer container;
-    private ContentPanel north;
-    private ContentPanel south;
-    private VerticalLayoutContainer center;
+    Logger LOG = Logger.getLogger(StructuredTextViewerImpl.class.getName());
 
     private final String COMMA_SEPARATOR = ",";
-    private final String TAB_SEPARATOR = "\t";
     private final String NEW_LINE = "\n";
+    private final String TAB_SEPARATOR = "\t";
 
+    private final IplantDisplayStrings displayStrings = DISPLAY;
+    private final IplantErrorStrings errorStrings = ERROR;
     private final StructuredTextAutoBeanFactory factory = GWT.create(StructuredTextAutoBeanFactory.class);
+    private final FileEditorServiceFacade fileEditorService = ServicesInjector.INSTANCE.getFileEditorServiceFacade();
 
-    private StructuredText text_bean;
-    private List<JSONObject> skippedRows;
+    private final Folder parentFolder;
+    private final FileViewer.Presenter presenter;
+    private VerticalLayoutContainer center;
+    private int columns;
+    private BorderLayoutContainer container;
     private boolean dirty;
+    private Grid<JSONObject> grid;
     private boolean hasHeader;
     private JSONObject headerRow;
-    private GridInlineEditing<JSONObject> rowEditing;
-    private int columns;
-    private final Folder parentFolder;
+    private ContentPanel north;
     private RowNumberer<JSONObject> numberer;
-    Logger LOG = Logger.getLogger(StructuredTextViewerImpl.class.getName());
+    private ViewerPagingToolBar pagingToolbar;
+    private GridInlineEditing<JSONObject> rowEditing;
+    private List<JSONObject> skippedRows;
+    private ContentPanel south;
+    private ListStore<JSONObject> store;
+    private StructuredText text_bean;
+    private StructuredTextViewToolBar toolbar;
 
     public StructuredTextViewerImpl(final File file,
                                     final String infoType,
@@ -142,7 +139,7 @@ public class StructuredTextViewerImpl extends StructuredTextViewer {
         initToolbar();
         initPagingToolbar();
         loadData();
-        if(columns != null){
+        if (columns != null) {
             LOG.info("Columns: " + columns);
             initGrid(columns);
             setEditing(true);
@@ -153,68 +150,62 @@ public class StructuredTextViewerImpl extends StructuredTextViewer {
 
 
     @Override
-    public HandlerRegistration addFileSavedEventHandler(final FileSavedEvent.FileSavedEventHandler handler){
+    public HandlerRegistration addFileSavedEventHandler(final FileSavedEvent.FileSavedEventHandler handler) {
         return asWidget().addHandler(handler, FileSavedEvent.TYPE);
     }
 
-    private void initLayout() {
-        container = new BorderLayoutContainer();
-        north = new ContentPanel();
-        north.setCollapsible(false);
-        north.setHeaderVisible(false);
-
-        south = new ContentPanel();
-        south.setCollapsible(false);
-        south.setHeaderVisible(false);
-
-        center = new VerticalLayoutContainer();
-        center.setScrollMode(ScrollMode.AUTO);
-
-        container.setNorthWidget(north, getNorthData());
-        container.setCenterWidget(center, getCenterData());
-        container.setSouthWidget(south, getSouthData());
+    @Override
+    public void addRow() {
+        JSONObject obj = new JSONObject();
+        for (int i = 0; i < columns; i++) {
+            obj.put(i + "", new JSONString("col" + i));
+        }
+        if (rowEditing != null) {
+            rowEditing.cancelEditing();
+            getStore().add(obj);
+            int row = getStore().indexOf(obj);
+            setDirty(true);
+            rowEditing.startEditing(new GridCell(row, 1));
+        }
     }
 
-    private void initToolbar() {
-        toolbar = new StructuredTextViewToolBar(this, false);
-        north.add(toolbar);
+    @Override
+    public Widget asWidget() {
+        return container;
     }
 
-    private void initPagingToolbar() {
-        pagingToolbar = new ViewerPagingToolBar(this, getFileSize());
-        south.add(pagingToolbar);
-    }
-
-    private BorderLayoutData getNorthData() {
-        BorderLayoutData northData = new BorderLayoutData(30);
-        northData.setMargins(new Margins(5));
-        northData.setCollapsible(false);
-        northData.setSplit(false);
-        return northData;
-    }
-
-    private BorderLayoutData getSouthData() {
-        BorderLayoutData southData = new BorderLayoutData(30);
-        southData.setMargins(new Margins(5));
-        southData.setCollapsible(false);
-        southData.setSplit(false);
-        return southData;
-    }
-
-    private MarginData getCenterData() {
-        return new MarginData();
-    }
-
-    private void addLineNumberHandler() {
-        toolbar.addLineNumberCbxChangeHandleer(new ValueChangeHandler<Boolean>() {
-
-            @Override
-            public void onValueChange(ValueChangeEvent<Boolean> event) {
-                numberer.setHidden(!event.getValue());
-                grid.getView().refresh(false);
+    @Override
+    public void deleteRow() {
+        List<JSONObject> selectedRows = grid.getSelectionModel().getSelectedItems();
+        if (selectedRows != null && selectedRows.size() > 0) {
+            for (JSONObject obj : selectedRows) {
+                getStore().remove(obj);
             }
+            setDirty(true);
+        }
+    }
 
-        });
+    @Override
+    public String getViewName() {
+        if (file != null) {
+            return "Tabular View: " + file.getName();
+        } else {
+            return "Tabular View";
+        }
+    }
+
+    @Override
+    public boolean isDirty() {
+        return dirty;
+    }
+
+    @Override
+    public void setDirty(Boolean dirty) {
+        this.dirty = dirty;
+        if (presenter.isDirty() == dirty) {
+            return;
+        }
+        presenter.setViewDirtyState(dirty);
     }
 
     @Override
@@ -249,142 +240,64 @@ public class StructuredTextViewerImpl extends StructuredTextViewer {
         }
     }
 
-    @SuppressWarnings("unchecked")
-    private void setEditing(boolean editing) {
-        if (grid == null) {
-            return;
-        }
-
-        toolbar.setEditing(editing);
-
-        if(editing){
-            if(rowEditing == null) {
-                // Initialize row editing
-                grid.setToolTip("Double click to edit...");
-                rowEditing = new GridInlineEditing<>(grid);
-                rowEditing.setClicksToEdit(ClicksToEdit.TWO);
-                rowEditing.addCompleteEditHandler(new CompleteEditHandler<JSONObject>() {
-
-                    @Override
-                    public void onCompleteEdit(CompleteEditEvent<JSONObject> event) {
-                        dirty = true;
-                        store.commitChanges();
-                    }
-                });
-
-                List<ColumnConfig<JSONObject, ?>> cols = grid.getColumnModel().getColumns();
-                for (ColumnConfig<JSONObject, ?> cc : cols) {
-                    TextField field = new TextField();
-                    field.setClearValueOnParseError(false);
-                    rowEditing.addEditor((ColumnConfig<JSONObject, String>) cc, field);
-                }
-            }
-        } else {
-            rowEditing = null;
-            grid.removeToolTip();
-        }
+    @Override
+    public void loadDataWithHeader(boolean header) {
+        hasHeader = header;
+        defineColumnHeader();
     }
 
-    private String getEditorContent() {
-        StringBuilder sw = new StringBuilder();
-        Joiner joiner = Joiner.on(getSeparator()).skipNulls();
-        if (skippedRows != null && skippedRows.size() > 0) {
-            for (JSONObject skipr : skippedRows) {
-                joiner.appendTo(sw, jsonToStringList(skipr));
-                sw.append(NEW_LINE);
-            }
-        }
-        if (headerRow != null) {
-            joiner.appendTo(sw, jsonToStringList(headerRow));
-            sw.append(NEW_LINE);
-        }
-        for (JSONObject obj : getStore().getAll()) {
-            joiner.appendTo(sw, jsonToStringList(obj));
-            sw.append(NEW_LINE);
-        }
-        return sw.toString();
+    @Override
+    public void refresh() {
+        loadData();
     }
 
-    private List<String> jsonToStringList(JSONObject obj) {
-        List<String> strList = new ArrayList<>();
-        for (String key : obj.keySet()) {
-            JSONValue val = obj.get(key);
-            if (val != null && val.isString() != null) {
-                strList.add(val.isString().stringValue());
-            }
-        }
-
-        return strList;
-    }
-
-    private void initGrid(int columns) {
-        List<ColumnConfig<JSONObject, ?>> configs = new ArrayList<>();
-        numberer = new RowNumberer<>();
-        numberer.setHidden(true);
-        configs.add(numberer);
-        GridFilters<JSONObject> filters = new GridFilters<>();
-        if (columns > 0) {
-            this.columns = columns;
-            for (int i = 0; i < columns; i++) {
-                StructuredTextValueProvider valueProvider = new StructuredTextValueProvider(i);
-                ColumnConfig<JSONObject, String> col = new ColumnConfig<>(valueProvider);
-                col.setHeader(i + "");
-                StringFilter<JSONObject> strFilter = new StringFilter<>(valueProvider);
-                filters.addFilter(strFilter);
-                configs.add(col);
-            }
-        }
-
-        grid = new Grid<>(getStore(), new ColumnModel<>(configs));
-        grid.setSelectionModel(new CellSelectionModel<JSONObject>());
-        grid.getView().setStripeRows(true);
-        grid.getView().setTrackMouseOver(true);
-        filters.initPlugin(grid);
-        filters.setLocal(true);
-        grid.setHeight(center.getOffsetHeight(true));
-        center.add(grid, new VerticalLayoutData(1, 1, new Margins(0)));
-    }
-
-    private ListStore<JSONObject> getStore() {
-        if (store == null) {
-            store = new ListStore<>(new ModelKeyProvider<JSONObject>() {
-
-                private int index;
+    @Override
+    public void save() {
+        store.commitChanges();
+        container.mask(displayStrings.savingMask());
+        if (file == null) {
+            final SaveAsDialog saveDialog = new SaveAsDialog(parentFolder);
+            saveDialog.addOkButtonSelectHandler(new SelectHandler() {
 
                 @Override
-                public String getKey(JSONObject item) {
-                    return index++ + "";
+                public void onSelect(SelectEvent event) {
+                    if (saveDialog.isVaild()) {
+
+                        String destination = saveDialog.getSelectedFolder().getPath() + "/"
+                                                 + saveDialog.getFileName();
+                        fileEditorService.uploadTextAsFile(destination,
+                                                           getEditorContent(),
+                                                           true,
+                                                           new FileSaveCallback(destination,
+                                                                                true,
+                                                                                container));
+                        saveDialog.hide();
+                    }
                 }
-
             });
-        }
+            saveDialog.addCancelButtonSelectHandler(new SelectHandler() {
 
-        return store;
-    }
-
-    private JSONObject getRequestBody() {
-        JSONObject obj = new JSONObject();
-        obj.put("path", new JSONString(file.getPath()));
-        obj.put("separator", new JSONString(URL.encode(getSeparator())));
-        obj.put("page", new JSONString(pagingToolbar.getPageNumber() + ""));
-        obj.put("chunk-size", new JSONString("" + pagingToolbar.getPageSize()));
-        return obj;
-    }
-
-    private String getSeparator() {
-        if (infoType.equalsIgnoreCase("csv")) {
-            return COMMA_SEPARATOR;
-        } else if (infoType.equalsIgnoreCase("tsv") || infoType.equalsIgnoreCase("vcf")
-                || infoType.equalsIgnoreCase("gff")) {
-            return TAB_SEPARATOR;
+                @Override
+                public void onSelect(SelectEvent event) {
+                    saveDialog.hide();
+                    container.unmask();
+                }
+            });
+            saveDialog.show();
+            saveDialog.toFront();
         } else {
-            return " ";
+            fileEditorService.uploadTextAsFile(file.getPath(),
+                                               getEditorContent(),
+                                               false,
+                                               new FileSaveCallback(file.getPath(),
+                                                                    false,
+                                                                    container));
         }
     }
 
     @Override
     public void setData(Object data) {
-        Splittable textData = (Splittable)data;
+        Splittable textData = (Splittable) data;
         JSONObject obj = JsonUtil.getObject(textData.getPayload());
         JSONArray arr = obj.get("csv").isArray();
 
@@ -407,61 +320,6 @@ public class StructuredTextViewerImpl extends StructuredTextViewer {
             }
         }
 
-    }
-
-    private void defineColumnHeader() {
-        ColumnModel<JSONObject> cm = grid.getColumnModel();
-        List<ColumnConfig<JSONObject, ?>> configs = cm.getColumns();
-        JSONObject firstRow = store.get(0);
-        int index = 0;
-        for (ColumnConfig<JSONObject, ?> conf : configs) {
-            if (cm.indexOf(conf) != 0) { // col 0 is numberer
-                JSONString string = (firstRow.get(index + "") != null) ? firstRow.get(index + "")
-                                                                                 .isString() : null;
-                if (hasHeader) {
-                    conf.setHeader((string != null) ? string.stringValue() : index + "");
-                } else {
-                    conf.setHeader(index + "");
-                }
-                index++;
-            }
-
-        }
-
-        // converted first row to header. so remove first row
-        if (hasHeader) {
-            store.remove(firstRow);
-            headerRow = firstRow;
-        } else {
-            if (headerRow != null) {
-                // if it was removed prev, add the back row at 1st position
-                store.add(0, headerRow);
-                headerRow = null;
-            }
-        }
-
-        grid.reconfigure(store, cm);
-        grid.getView().refresh(true);
-    }
-
-    @Override
-    public Widget asWidget() {
-        return container;
-    }
-
-    @Override
-    public void loadDataWithHeader(boolean header) {
-        hasHeader = header;
-        defineColumnHeader();
-    }
-
-    @Override
-    public String getViewName() {
-        if (file != null) {
-            return "Tabular View: " + file.getName();
-        } else {
-            return "Tabular View";
-        }
     }
 
     @Override
@@ -502,92 +360,231 @@ public class StructuredTextViewerImpl extends StructuredTextViewer {
 
     }
 
-    @Override
-    public void refresh() {
-        loadData();
-    }
+    private void addLineNumberHandler() {
+        toolbar.addLineNumberCbxChangeHandler(new ValueChangeHandler<Boolean>() {
 
-    @Override
-    public void addRow() {
-        JSONObject obj = new JSONObject();
-        for (int i = 0; i < columns; i++) {
-            obj.put(i + "", new JSONString("col" + i));
-        }
-        if (rowEditing != null) {
-            rowEditing.cancelEditing();
-            getStore().add(obj);
-            int row = getStore().indexOf(obj);
-            setDirty(true);
-            rowEditing.startEditing(new GridCell(row, 1));
-        }
-    }
-
-    @Override
-    public void deleteRow() {
-        List<JSONObject> selectedRows = grid.getSelectionModel().getSelectedItems();
-        if (selectedRows != null && selectedRows.size() > 0) {
-            for (JSONObject obj : selectedRows) {
-                getStore().remove(obj);
+            @Override
+            public void onValueChange(ValueChangeEvent<Boolean> event) {
+                numberer.setHidden(!event.getValue());
+                grid.getView().refresh(false);
             }
-            setDirty(true);
-        }
+
+        });
     }
 
-    @Override
-    public void save() {
-        store.commitChanges();
-        container.mask(displayStrings.savingMask());
-        if (file == null) {
-            final SaveAsDialog saveDialog = new SaveAsDialog(parentFolder);
-            saveDialog.addOkButtonSelectHandler(new SelectHandler() {
-
-                @Override
-                public void onSelect(SelectEvent event) {
-                    if (saveDialog.isVaild()) {
-
-                        String destination = saveDialog.getSelectedFolder().getPath() + "/"
-                                + saveDialog.getFileName();
-                        fileEditorService.uploadTextAsFile(destination,
-                                                           getEditorContent(),
-                                                           true,
-                                                           new FileSaveCallback(destination,
-                                                                                true,
-                                                                                container));
-                        saveDialog.hide();
-                    }
+    private void defineColumnHeader() {
+        ColumnModel<JSONObject> cm = grid.getColumnModel();
+        List<ColumnConfig<JSONObject, ?>> configs = cm.getColumns();
+        JSONObject firstRow = store.get(0);
+        int index = 0;
+        for (ColumnConfig<JSONObject, ?> conf : configs) {
+            if (cm.indexOf(conf) != 0) { // col 0 is numberer
+                JSONString string = (firstRow.get(index + "") != null) ? firstRow.get(index + "")
+                                                                                 .isString() : null;
+                if (hasHeader) {
+                    conf.setHeader((string != null) ? string.stringValue() : index + "");
+                } else {
+                    conf.setHeader(index + "");
                 }
-            });
-            saveDialog.addCancelButtonSelectHandler(new SelectHandler() {
+                index++;
+            }
 
-                @Override
-                public void onSelect(SelectEvent event) {
-                    saveDialog.hide();
-                    container.unmask();
-                }
-            });
-            saveDialog.show();
-            saveDialog.toFront();
+        }
+
+        // converted first row to header. so remove first row
+        if (hasHeader) {
+            store.remove(firstRow);
+            headerRow = firstRow;
         } else {
-            fileEditorService.uploadTextAsFile(file.getPath(),
-                                               getEditorContent(),
-                                               false,
-                                               new FileSaveCallback(file.getPath(),
-                                                                    false,
-                                                                    container));
+            if (headerRow != null) {
+                // if it was removed prev, add the back row at 1st position
+                store.add(0, headerRow);
+                headerRow = null;
+            }
+        }
+
+        grid.reconfigure(store, cm);
+        grid.getView().refresh(true);
+    }
+
+    private MarginData getCenterData() {
+        return new MarginData();
+    }
+
+    private String getEditorContent() {
+        StringBuilder sw = new StringBuilder();
+        Joiner joiner = Joiner.on(getSeparator()).skipNulls();
+        if (skippedRows != null && skippedRows.size() > 0) {
+            for (JSONObject skipr : skippedRows) {
+                joiner.appendTo(sw, jsonToStringList(skipr));
+                sw.append(NEW_LINE);
+            }
+        }
+        if (headerRow != null) {
+            joiner.appendTo(sw, jsonToStringList(headerRow));
+            sw.append(NEW_LINE);
+        }
+        for (JSONObject obj : getStore().getAll()) {
+            joiner.appendTo(sw, jsonToStringList(obj));
+            sw.append(NEW_LINE);
+        }
+        return sw.toString();
+    }
+
+    private BorderLayoutData getNorthData() {
+        BorderLayoutData northData = new BorderLayoutData(30);
+        northData.setMargins(new Margins(5));
+        northData.setCollapsible(false);
+        northData.setSplit(false);
+        return northData;
+    }
+
+    private JSONObject getRequestBody() {
+        JSONObject obj = new JSONObject();
+        obj.put("path", new JSONString(file.getPath()));
+        obj.put("separator", new JSONString(URL.encode(getSeparator())));
+        obj.put("page", new JSONString(pagingToolbar.getPageNumber() + ""));
+        obj.put("chunk-size", new JSONString("" + pagingToolbar.getPageSize()));
+        return obj;
+    }
+
+    private String getSeparator() {
+        if (infoType.equalsIgnoreCase("csv")) {
+            return COMMA_SEPARATOR;
+        } else if (infoType.equalsIgnoreCase("tsv") || infoType.equalsIgnoreCase("vcf")
+                       || infoType.equalsIgnoreCase("gff")) {
+            return TAB_SEPARATOR;
+        } else {
+            return " ";
         }
     }
 
-    @Override
-    public void setDirty(Boolean dirty) {
-        this.dirty = dirty;
-        if (presenter.isDirty() == dirty) {
+    private BorderLayoutData getSouthData() {
+        BorderLayoutData southData = new BorderLayoutData(30);
+        southData.setMargins(new Margins(5));
+        southData.setCollapsible(false);
+        southData.setSplit(false);
+        return southData;
+    }
+
+    private ListStore<JSONObject> getStore() {
+        if (store == null) {
+            store = new ListStore<>(new ModelKeyProvider<JSONObject>() {
+
+                private int index;
+
+                @Override
+                public String getKey(JSONObject item) {
+                    return index++ + "";
+                }
+
+            });
+        }
+
+        return store;
+    }
+
+    private void initGrid(int columns) {
+        List<ColumnConfig<JSONObject, ?>> configs = new ArrayList<>();
+        numberer = new RowNumberer<>();
+        numberer.setHidden(true);
+        configs.add(numberer);
+        GridFilters<JSONObject> filters = new GridFilters<>();
+        if (columns > 0) {
+            this.columns = columns;
+            for (int i = 0; i < columns; i++) {
+                StructuredTextValueProvider valueProvider = new StructuredTextValueProvider(i);
+                ColumnConfig<JSONObject, String> col = new ColumnConfig<>(valueProvider);
+                col.setHeader(i + "");
+                StringFilter<JSONObject> strFilter = new StringFilter<>(valueProvider);
+                filters.addFilter(strFilter);
+                configs.add(col);
+            }
+        }
+
+        grid = new Grid<>(getStore(), new ColumnModel<>(configs));
+        grid.setSelectionModel(new CellSelectionModel<JSONObject>());
+        grid.getView().setStripeRows(true);
+        grid.getView().setTrackMouseOver(true);
+        filters.initPlugin(grid);
+        filters.setLocal(true);
+        grid.setHeight(center.getOffsetHeight(true));
+        center.add(grid, new VerticalLayoutData(1, 1, new Margins(0)));
+    }
+
+    private void initLayout() {
+        container = new BorderLayoutContainer();
+        north = new ContentPanel();
+        north.setCollapsible(false);
+        north.setHeaderVisible(false);
+
+        south = new ContentPanel();
+        south.setCollapsible(false);
+        south.setHeaderVisible(false);
+
+        center = new VerticalLayoutContainer();
+        center.setScrollMode(ScrollMode.AUTO);
+
+        container.setNorthWidget(north, getNorthData());
+        container.setCenterWidget(center, getCenterData());
+        container.setSouthWidget(south, getSouthData());
+    }
+
+    private void initPagingToolbar() {
+        pagingToolbar = new ViewerPagingToolBar(this, getFileSize());
+        south.add(pagingToolbar);
+    }
+
+    private void initToolbar() {
+        toolbar = new StructuredTextViewToolBar(this, false);
+        north.add(toolbar);
+    }
+
+    private List<String> jsonToStringList(JSONObject obj) {
+        List<String> strList = new ArrayList<>();
+        for (String key : obj.keySet()) {
+            JSONValue val = obj.get(key);
+            if (val != null && val.isString() != null) {
+                strList.add(val.isString().stringValue());
+            }
+        }
+
+        return strList;
+    }
+
+    @SuppressWarnings("unchecked")
+    private void setEditing(boolean editing) {
+        if (grid == null) {
             return;
         }
-        presenter.setViewDirtyState(dirty);
-    }
 
-    @Override
-    public boolean isDirty() {
-        return dirty;
+        toolbar.setEditing(editing);
+
+        if (editing) {
+            if (rowEditing == null) {
+                // Initialize row editing
+                grid.setToolTip("Double click to edit...");
+                rowEditing = new GridInlineEditing<>(grid);
+                rowEditing.setClicksToEdit(ClicksToEdit.TWO);
+                rowEditing.addCompleteEditHandler(new CompleteEditHandler<JSONObject>() {
+
+                    @Override
+                    public void onCompleteEdit(CompleteEditEvent<JSONObject> event) {
+                        dirty = true;
+                        store.commitChanges();
+                    }
+                });
+
+                List<ColumnConfig<JSONObject, ?>> cols = grid.getColumnModel().getColumns();
+                for (ColumnConfig<JSONObject, ?> cc : cols) {
+                    TextField field = new TextField();
+                    field.setClearValueOnParseError(false);
+                    rowEditing.addEditor((ColumnConfig<JSONObject, String>) cc, field);
+                }
+            }
+        } else {
+            rowEditing = null;
+            grid.removeToolTip();
+        }
     }
 }

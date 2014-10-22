@@ -16,7 +16,6 @@ import java.util.List;
 
 /**
  * @author sriram
- * 
  */
 public class HtmlDataViewCommand implements ViewCommand {
 
@@ -31,8 +30,7 @@ public class HtmlDataViewCommand implements ViewCommand {
                                     final JSONObject manifest,
                                     final FileViewer.Presenter presenter) {
         if (editing) {
-            ErrorAnnouncementConfig config = new ErrorAnnouncementConfig(
-                    "Editing is not supported for this type of file!");
+            ErrorAnnouncementConfig config = new ErrorAnnouncementConfig("Editing is not supported for this type of file!");
             announcer.schedule(config);
         }
         WindowUtil.open(fileEditorService.getServletDownloadUrl(file.getPath())
