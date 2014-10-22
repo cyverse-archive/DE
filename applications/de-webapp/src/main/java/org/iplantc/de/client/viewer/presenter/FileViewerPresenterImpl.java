@@ -14,7 +14,6 @@ import org.iplantc.de.client.util.JsonUtil;
 import org.iplantc.de.client.viewer.callbacks.TreeUrlCallback;
 import org.iplantc.de.client.viewer.commands.ViewCommand;
 import org.iplantc.de.client.viewer.events.DirtyStateChangedEvent;
-import org.iplantc.de.client.viewer.factory.MimeTypeViewerResolverFactory;
 import org.iplantc.de.client.viewer.views.EditingSupport;
 import org.iplantc.de.client.viewer.views.FileViewer;
 import org.iplantc.de.commons.client.ErrorHandler;

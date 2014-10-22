@@ -1,7 +1,7 @@
 /**
  *
  */
-package org.iplantc.de.client.viewer.factory;
+package org.iplantc.de.client.viewer.presenter;
 
 import org.iplantc.de.client.models.viewer.MimeType;
 import org.iplantc.de.client.viewer.commands.HtmlDataViewCommand;
