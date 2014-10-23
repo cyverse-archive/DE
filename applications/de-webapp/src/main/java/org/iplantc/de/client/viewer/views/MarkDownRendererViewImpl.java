@@ -4,8 +4,7 @@ import org.iplantc.de.client.callbacks.FileSaveCallback;
 import org.iplantc.de.client.events.FileSavedEvent;
 import org.iplantc.de.client.gin.ServicesInjector;
 import org.iplantc.de.client.models.diskResources.File;
-import org.iplantc.de.resources.client.IplantResources;
-import org.iplantc.de.resources.client.messages.I18N;
+import org.iplantc.de.client.services.FileEditorServiceFacade;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Overflow;
@@ -13,13 +12,13 @@ import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiFactory;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.uibinder.client.UiTemplate;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.sencha.gxt.widget.core.client.button.TextButton;
 import com.sencha.gxt.widget.core.client.container.HtmlLayoutContainer;
 import com.sencha.gxt.widget.core.client.event.SelectEvent;
-import com.sencha.gxt.widget.core.client.event.SelectEvent.SelectHandler;
 import com.sencha.gxt.widget.core.client.toolbar.ToolBar;
 
 public class MarkDownRendererViewImpl extends AbstractFileViewer {
@@ -33,9 +32,12 @@ public class MarkDownRendererViewImpl extends AbstractFileViewer {
     @UiField
     ToolBar toolbar;
 
+    @UiField
+    TextButton saveBtn;
+
     private static MarkDownRendererViewUiBinder uiBinder = GWT.create(MarkDownRendererViewUiBinder.class);
+    private final FileEditorServiceFacade fileEditorService;
     private final String previewData;
-    private final TextButton saveBtn;
     private final Widget widget;
     private String renderHtml;
 
@@ -45,29 +47,25 @@ public class MarkDownRendererViewImpl extends AbstractFileViewer {
         widget = uiBinder.createAndBindUi(this);
         panel.getElement().getStyle().setBackgroundColor("#ffffff");
         panel.getElement().getStyle().setOverflow(Overflow.SCROLL);
-        saveBtn = new TextButton(I18N.DISPLAY.save(), IplantResources.RESOURCES.save());
-        saveBtn.addSelectHandler(new SelectHandler() {
-
-            @Override
-            public void onSelect(SelectEvent event) {
-                panel.mask();
-                String destination = MarkDownRendererViewImpl.this.file.getPath() + ".html";
-                ServicesInjector.INSTANCE.getFileEditorServiceFacade()
-                                         .uploadTextAsFile(destination,
-                                                           renderHtml,
-                                                           true,
-                                                           new FileSaveCallback(destination,
-                                                                                true,
-                                                                                MarkDownRendererViewImpl.this.panel));
-
-            }
-        });
-        toolbar.add(saveBtn);
+        fileEditorService = ServicesInjector.INSTANCE.getFileEditorServiceFacade();
         if (file == null) {
             saveBtn.disable();
         } else {
             saveBtn.enable();
         }
+    }
+
+    @UiHandler("saveBtn")
+    void onSaveBtnSelect(SelectEvent event){
+        panel.mask();
+        String destination = file.getPath() + ".html";
+        fileEditorService.uploadTextAsFile(destination,
+                                           renderHtml,
+                                           true,
+                                           new FileSaveCallback(destination,
+                                                                true,
+                                                                panel));
+
     }
 
     public static native String render(String val) /*-{

@@ -23,6 +23,7 @@ import org.iplantc.de.client.sysmsgs.presenter.NewMessagePresenter;
 import org.iplantc.de.client.sysmsgs.view.NewMessageView;
 import org.iplantc.de.client.utils.NotifyInfo;
 import org.iplantc.de.client.viewer.presenter.FileViewerPresenterImpl;
+import org.iplantc.de.client.viewer.presenter.MimeTypeViewerResolverFactory;
 import org.iplantc.de.client.viewer.views.FileViewer;
 import org.iplantc.de.client.windows.util.WindowFactory;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
@@ -114,6 +115,7 @@ public class DEGinModule extends AbstractGinModule {
         bind(DesktopWindowManager.class).in(Singleton.class);
 
         bind(FileViewer.Presenter.class).to(FileViewerPresenterImpl.class);
+        bind(MimeTypeViewerResolverFactory.class);
 
         bind(WindowFactory.class);
         bind(PreferencesDialog.class);

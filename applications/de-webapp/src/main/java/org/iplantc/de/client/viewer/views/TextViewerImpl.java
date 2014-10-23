@@ -5,10 +5,12 @@ import org.iplantc.de.client.events.FileSavedEvent;
 import org.iplantc.de.client.gin.ServicesInjector;
 import org.iplantc.de.client.models.diskResources.File;
 import org.iplantc.de.client.models.diskResources.Folder;
+import org.iplantc.de.client.services.FileEditorServiceFacade;
 import org.iplantc.de.client.util.JsonUtil;
 import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.diskResource.client.views.dialogs.SaveAsDialog;
 import org.iplantc.de.resources.client.messages.I18N;
+import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
@@ -104,16 +106,15 @@ public class TextViewerImpl extends AbstractFileViewer implements EditingSupport
         @Override
         public void onSelect(SelectEvent event) {
             if (saveDialog.isVaild()) {
-                con.mask(I18N.DISPLAY.savingMask());
+                con.mask(displayStrings.savingMask());
                 String destination = saveDialog.getSelectedFolder().getPath() + "/"
                                          + saveDialog.getFileName();
-                ServicesInjector.INSTANCE.getFileEditorServiceFacade()
-                                         .uploadTextAsFile(destination,
-                                                           getEditorContent(jso),
-                                                           true,
-                                                           new FileSaveCallback(destination,
-                                                                                true,
-                                                                                con));
+                fileEditorService.uploadTextAsFile(destination,
+                                                   getEditorContent(jso),
+                                                    true,
+                                                    new FileSaveCallback(destination,
+                                                                         true,
+                                                                         con));
                 saveDialog.hide();
             }
         }
@@ -136,6 +137,8 @@ public class TextViewerImpl extends AbstractFileViewer implements EditingSupport
     protected boolean editing;
     protected JavaScriptObject jso;
     private static TextViewerUiBinder uiBinder = GWT.create(TextViewerUiBinder.class);
+    private final IplantDisplayStrings displayStrings;
+    private final FileEditorServiceFacade fileEditorService;
     private final String mode;
     private final Folder parentFolder;
     private final FileViewer.Presenter presenter;
@@ -153,9 +156,11 @@ public class TextViewerImpl extends AbstractFileViewer implements EditingSupport
         super(file, infoType);
         this.editing = editing;
         this.mode = mode;
-        LOG.log(Level.INFO, "in viewer-->" + mode);
         this.parentFolder = parentFolder;
         this.presenter = presenter;
+        fileEditorService = ServicesInjector.INSTANCE.getFileEditorServiceFacade();
+        displayStrings = I18N.DISPLAY;
+        LOG.log(Level.INFO, "in viewer-->" + mode);
         toolbar = initToolBar();
         pagingToolbar = initPagingToolbar();
 
@@ -268,9 +273,8 @@ public class TextViewerImpl extends AbstractFileViewer implements EditingSupport
         String url = "read-chunk";
         JSONObject requestBody = getRequestBody();
         if (requestBody != null) {
-            con.mask(org.iplantc.de.resources.client.messages.I18N.DISPLAY.loadingMask());
-            ServicesInjector.INSTANCE.getFileEditorServiceFacade()
-                                     .getDataChunk(url, requestBody, new GetDataCallbackImpl());
+            con.mask(displayStrings.loadingMask());
+            fileEditorService.getDataChunk(url, requestBody, new GetDataCallbackImpl());
         }
 
     }
@@ -296,12 +300,11 @@ public class TextViewerImpl extends AbstractFileViewer implements EditingSupport
             saveDialog.show();
             saveDialog.toFront();
         } else {
-            con.mask(I18N.DISPLAY.savingMask());
-            ServicesInjector.INSTANCE.getFileEditorServiceFacade()
-                                     .uploadTextAsFile(file.getPath(),
-                                                       getEditorContent(jso),
-                                                       false,
-                                                       new FileSaveCallback(file.getPath(), false, con));
+            con.mask(displayStrings.savingMask());
+            fileEditorService.uploadTextAsFile(file.getPath(),
+                                               getEditorContent(jso),
+                                                false,
+                                                new FileSaveCallback(file.getPath(), false, con));
         }
     }
 

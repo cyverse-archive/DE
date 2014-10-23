@@ -12,9 +12,9 @@ import org.iplantc.de.client.services.FileEditorServiceFacade;
 import org.iplantc.de.client.util.DiskResourceUtil;
 import org.iplantc.de.client.util.JsonUtil;
 import org.iplantc.de.client.viewer.callbacks.TreeUrlCallback;
-import org.iplantc.de.client.viewer.commands.ViewCommand;
 import org.iplantc.de.client.viewer.events.DirtyStateChangedEvent;
 import org.iplantc.de.client.viewer.views.EditingSupport;
+import org.iplantc.de.client.viewer.views.ExternalVisualizationURLViewerImpl;
 import org.iplantc.de.client.viewer.views.FileViewer;
 import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
@@ -32,14 +32,12 @@ import com.google.gwt.json.client.JSONString;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasOneWidget;
-import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 import com.google.web.bindery.autobean.shared.AutoBean;
 import com.google.web.bindery.autobean.shared.AutoBeanCodex;
 import com.google.web.bindery.autobean.shared.Splittable;
 
 import com.sencha.gxt.widget.core.client.PlainTabPanel;
-import com.sencha.gxt.widget.core.client.TabItemConfig;
 
 import java.util.List;
 import java.util.logging.Logger;
@@ -110,6 +108,7 @@ public class FileViewerPresenterImpl implements FileViewer.Presenter, FileSavedE
     Logger LOG = Logger.getLogger(FileViewerPresenterImpl.class.getName());
     private final IplantDisplayStrings displayStrings;
     private final IplantErrorStrings errorStrings;
+    private final MimeTypeViewerResolverFactory mimeFactory;
     private final FileEditorServiceFacade fileEditorService;
     private MimeType contentType;
     /**
@@ -130,10 +129,12 @@ public class FileViewerPresenterImpl implements FileViewer.Presenter, FileSavedE
     @Inject
     public FileViewerPresenterImpl(final FileEditorServiceFacade fileEditorService,
                                    final IplantDisplayStrings displayStrings,
-                                   final IplantErrorStrings errorStrings) {
+                                   final IplantErrorStrings errorStrings,
+                                   final MimeTypeViewerResolverFactory mimeFactory) {
         this.fileEditorService = fileEditorService;
         this.displayStrings = displayStrings;
         this.errorStrings = errorStrings;
+        this.mimeFactory = mimeFactory;
         viewers = Lists.newArrayList();
         tabPanel = new PlainTabPanel();
     }
@@ -290,15 +291,9 @@ public class FileViewerPresenterImpl implements FileViewer.Presenter, FileSavedE
                      final boolean isVizTabFirst) {
         checkNotNull(contentType);
 
-        ViewCommand cmd = MimeTypeViewerResolverFactory.getViewerCommand(contentType);
-        List<? extends FileViewer> viewers_list = cmd.execute(file, infoType, editing, parentFolder, manifest, this);
+        List<? extends FileViewer> viewers_list = mimeFactory.getViewerCommand(file, infoType, editing, parentFolder, manifest, this, contentType);
 
-        if (viewers_list != null && viewers_list.size() > 0) {
-            viewers.addAll(viewers_list);
-            for (FileViewer view : viewers) {
-                tabPanel.add(view.asWidget(), view.getViewName());
-            }
-        }
+        viewers.addAll(viewers_list);
 
         Splittable infoTypeSplittable = DiskResourceUtil.createInfoTypeSplittable(infoType);
         boolean treeViewer = DiskResourceUtil.isTreeTab(infoTypeSplittable);
@@ -306,29 +301,25 @@ public class FileViewerPresenterImpl implements FileViewer.Presenter, FileSavedE
         boolean ensembleViewer = DiskResourceUtil.isEnsemblVizTab(infoTypeSplittable);
 
         if (treeViewer || cogeViewer || ensembleViewer) {
-            cmd = MimeTypeViewerResolverFactory.getViewerCommand(MimeType.fromTypeString("viz"));
-            List<? extends FileViewer> vizViewers = cmd.execute(file, infoType, editing, parentFolder, manifest, this);
+            FileViewer vizViewer = new ExternalVisualizationURLViewerImpl(file, infoType);
             List<VizUrl> urls = getManifestVizUrls(manifest);
-            FileViewer vizViewer = vizViewers.get(0);
 
-            if (urls != null && urls.size() > 0) {
+            if (urls != null && !urls.isEmpty()) {
                 vizViewer.setData(urls);
             } else if (treeViewer) {
                 callTreeCreateService(vizViewer, file);
             }
-            viewers.add(vizViewer);
             if (isVizTabFirst) {
-                Widget asWidget = vizViewer.asWidget();
-                tabPanel.insert(asWidget, 0, new TabItemConfig(vizViewer.getViewName()));
-                tabPanel.setActiveWidget(asWidget);
+                viewers.add(0, vizViewer);
             } else {
-                tabPanel.add(vizViewer.asWidget(), vizViewer.getViewName());
+                viewers.add(vizViewer);
             }
         }
 
-        for (FileSavedEvent.HasFileSavedEventHandlers hasHandlers : viewers) {
+        for (FileViewer view : viewers) {
             // Add ourselves as FileSaved handlers
-            hasHandlers.addFileSavedEventHandler(this);
+            view.addFileSavedEventHandler(this);
+            tabPanel.add(view.asWidget(), view.getViewName());
         }
 
         if (viewers.size() == 0) {

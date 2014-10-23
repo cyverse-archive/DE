@@ -7,6 +7,7 @@ import org.iplantc.de.client.gin.ServicesInjector;
 import org.iplantc.de.client.models.IsMaskable;
 import org.iplantc.de.client.models.diskResources.File;
 import org.iplantc.de.client.models.viewer.VizUrl;
+import org.iplantc.de.client.services.FileEditorServiceFacade;
 import org.iplantc.de.client.util.DiskResourceUtil;
 import org.iplantc.de.client.viewer.callbacks.EnsemblUtil;
 import org.iplantc.de.client.viewer.callbacks.LoadGenomeInCoGeCallback;
@@ -14,18 +15,20 @@ import org.iplantc.de.client.viewer.callbacks.TreeUrlCallback;
 import org.iplantc.de.client.viewer.views.cells.TreeUrlCell;
 import org.iplantc.de.resources.client.IplantResources;
 import org.iplantc.de.resources.client.messages.I18N;
+import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONString;
 import com.google.gwt.uibinder.client.UiBinder;
+import com.google.gwt.uibinder.client.UiFactory;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiTemplate;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.web.bindery.autobean.shared.Splittable;
 
 import com.sencha.gxt.core.client.IdentityValueProvider;
-import com.sencha.gxt.core.client.dom.ScrollSupport.ScrollMode;
 import com.sencha.gxt.data.shared.ListStore;
 import com.sencha.gxt.data.shared.ModelKeyProvider;
 import com.sencha.gxt.widget.core.client.button.TextButton;
@@ -75,16 +78,20 @@ public class ExternalVisualizationURLViewerImpl extends AbstractFileViewer imple
     ToolBar toolbar;
 
     private static TreeViewerUiBinder uiBinder = GWT.create(TreeViewerUiBinder.class);
+    private final IplantDisplayStrings displayStrings;
+    private final FileEditorServiceFacade fileEditorService;
+    private final IplantResources iplantResources;
     private final Widget widget;
 
-    public ExternalVisualizationURLViewerImpl(File file, String infoType) {
+    public ExternalVisualizationURLViewerImpl(final File file,
+                                              final String infoType) {
         super(file, infoType);
-        this.cm = buildColumnModel();
-        this.listStore = new ListStore<>(new TreeUrlKeyProvider());
+        this.displayStrings = I18N.DISPLAY;
+        this.iplantResources = IplantResources.RESOURCES;
+        this.fileEditorService = ServicesInjector.INSTANCE.getFileEditorServiceFacade();
         this.widget = uiBinder.createAndBindUi(this);
-        con.setScrollMode(ScrollMode.AUTOY);
         gridView.setAutoExpandColumn(cm.getColumn(1));
-        buildToolBar(infoType);
+        buildToolBar(DiskResourceUtil.createInfoTypeSplittable(infoType));
     }
 
     @Override
@@ -94,7 +101,7 @@ public class ExternalVisualizationURLViewerImpl extends AbstractFileViewer imple
 
     @Override
     public String getViewName() {
-        return org.iplantc.de.resources.client.messages.I18N.DISPLAY.visualization() + ":" + file.getName();
+        return displayStrings.visualization() + ":" + file.getName();
     }
 
     @Override
@@ -122,28 +129,32 @@ public class ExternalVisualizationURLViewerImpl extends AbstractFileViewer imple
     }
 
     private TextButton buildCogeButton() {
-        TextButton button = new TextButton(I18N.DISPLAY.sendToCogeMenuItem(), IplantResources.RESOURCES.arrowUp());
+        TextButton button = new TextButton(displayStrings.sendToCogeMenuItem(), iplantResources.arrowUp());
         button.addSelectHandler(new SelectHandler() {
 
             @Override
             public void onSelect(SelectEvent event) {
-                mask(I18N.DISPLAY.loadingMask());
+                mask(displayStrings.loadingMask());
                 JSONObject obj = new JSONObject();
                 JSONArray pathArr = new JSONArray();
                 pathArr.set(0, new JSONString(file.getPath()));
                 obj.put("paths", pathArr);
-                ServicesInjector.INSTANCE.getFileEditorServiceFacade().viewGenomes(obj, new LoadGenomeInCoGeCallback(ExternalVisualizationURLViewerImpl.this));
-
+                fileEditorService.viewGenomes(obj, new LoadGenomeInCoGeCallback(ExternalVisualizationURLViewerImpl.this));
             }
         });
         return button;
     }
 
-    private ColumnModel<VizUrl> buildColumnModel() {
+    @UiFactory
+    ListStore<VizUrl> buildListStore() {
+        return new ListStore<>(new TreeUrlKeyProvider());
+    }
+    @UiFactory
+    ColumnModel<VizUrl> buildColumnModel() {
         VizUrlProperties props = GWT.create(VizUrlProperties.class);
         List<ColumnConfig<VizUrl, ?>> configs = new LinkedList<>();
         ColumnConfig<VizUrl, String> label = new ColumnConfig<>(props.label(), 75);
-        label.setHeader(org.iplantc.de.resources.client.messages.I18N.DISPLAY.label());
+        label.setHeader(displayStrings.label());
         configs.add(label);
 
         ColumnConfig<VizUrl, VizUrl> url = new ColumnConfig<>(new IdentityValueProvider<VizUrl>(), 280);
@@ -156,12 +167,12 @@ public class ExternalVisualizationURLViewerImpl extends AbstractFileViewer imple
     }
 
     private TextButton buildEnsemblButton() {
-        TextButton button = new TextButton(I18N.DISPLAY.sendToEnsemblMenuItem(), IplantResources.RESOURCES.arrowUp());
+        TextButton button = new TextButton(displayStrings.sendToEnsemblMenuItem(), iplantResources.arrowUp());
         button.addSelectHandler(new SelectHandler() {
 
             @Override
             public void onSelect(SelectEvent event) {
-                mask(I18N.DISPLAY.loadingMask());
+                mask(displayStrings.loadingMask());
                 EnsemblUtil util = new EnsemblUtil(file, infoType, ExternalVisualizationURLViewerImpl.this);
                 util.sendToEnsembl();
             }
@@ -169,30 +180,29 @@ public class ExternalVisualizationURLViewerImpl extends AbstractFileViewer imple
         return button;
     }
 
-    private void buildToolBar(String infoType) {
-        if (DiskResourceUtil.isTreeTab(DiskResourceUtil.createInfoTypeSplittable(infoType))) {
+    private void buildToolBar(Splittable infoTypeSplittable) {
+        if (DiskResourceUtil.isTreeTab(infoTypeSplittable)) {
             TextButton button = buildTreeViewerButton();
             toolbar.add(button);
-        } else if (DiskResourceUtil.isGenomeVizTab(DiskResourceUtil.createInfoTypeSplittable(infoType))) {
+        } else if (DiskResourceUtil.isGenomeVizTab(infoTypeSplittable)) {
             TextButton button = buildCogeButton();
             toolbar.add(button);
-        } else if (DiskResourceUtil.isEnsemblVizTab(DiskResourceUtil.createInfoTypeSplittable(infoType))) {
+        } else if (DiskResourceUtil.isEnsemblVizTab(infoTypeSplittable)) {
             TextButton button = buildEnsemblButton();
             toolbar.add(button);
         }
     }
 
     private TextButton buildTreeViewerButton() {
-        TextButton button = new TextButton(I18N.DISPLAY.sendToTreeViewerMenuItem(), IplantResources.RESOURCES.arrowUp());
+        TextButton button = new TextButton(displayStrings.sendToTreeViewerMenuItem(), iplantResources.arrowUp());
         button.addSelectHandler(new SelectHandler() {
 
             @Override
             public void onSelect(SelectEvent event) {
-                mask(I18N.DISPLAY.loadingMask());
-                ServicesInjector.INSTANCE.getFileEditorServiceFacade()
-                                         .getTreeUrl(file.getPath(),
-                                                     true,
-                                                     new TreeUrlCallback(file, ExternalVisualizationURLViewerImpl.this, ExternalVisualizationURLViewerImpl.this));
+                mask(displayStrings.loadingMask());
+                fileEditorService.getTreeUrl(file.getPath(),
+                                             true,
+                                              new TreeUrlCallback(file, ExternalVisualizationURLViewerImpl.this, ExternalVisualizationURLViewerImpl.this));
 
             }
         });

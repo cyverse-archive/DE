@@ -1,6 +1,5 @@
 package org.iplantc.de.client.viewer.views;
 
-import org.iplantc.de.client.gin.ServicesInjector;
 import org.iplantc.de.client.models.diskResources.File;
 
 import com.google.gwt.core.client.GWT;
@@ -10,7 +9,6 @@ import com.google.gwt.uibinder.client.UiTemplate;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Widget;
 
-import com.sencha.gxt.core.client.dom.ScrollSupport.ScrollMode;
 import com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer;
 
 /**
@@ -29,12 +27,11 @@ public class ImageViewerImpl extends AbstractFileViewer {
     private static ImageViewerUiBinder uiBinder = GWT.create(ImageViewerUiBinder.class);
     private final Widget widget;
 
-    public ImageViewerImpl(File file) {
+    public ImageViewerImpl(final File file,
+                           final String imageUrl) {
         super(file, null);
-        img = new Image(ServicesInjector.INSTANCE.getFileEditorServiceFacade()
-                                                 .getServletDownloadUrl(this.file.getPath()));
+        img = new Image(imageUrl);
         widget = uiBinder.createAndBindUi(this);
-        con.setScrollMode(ScrollMode.AUTO);
     }
 
     @Override

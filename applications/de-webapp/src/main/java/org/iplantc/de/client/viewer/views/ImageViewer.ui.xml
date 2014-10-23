@@ -3,6 +3,7 @@
              xmlns:container="urn:import:com.sencha.gxt.widget.core.client.container"
              xmlns:g="urn:import:com.google.gwt.user.client.ui">
     <container:VerticalLayoutContainer ui:field="con"
+                                       scrollMode="AUTO"
                                        height="380px">
         <g:Image ui:field="img"/>
     </container:VerticalLayoutContainer>

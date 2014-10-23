@@ -1,7 +1,11 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
              xmlns:container="urn:import:com.sencha.gxt.widget.core.client.container"
+             xmlns:button="urn:import:com.sencha.gxt.widget.core.client.button"
              xmlns:toolbar="urn:import:com.sencha.gxt.widget.core.client.toolbar">
+
+    <ui:with type="org.iplantc.de.resources.client.messages.IplantDisplayStrings" field="display"/>
+    <ui:with type="org.iplantc.de.resources.client.IplantResources" field="icons"/>
 
     <ui:with field="toolBarLayoutData"
              type="com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer.VerticalLayoutData">
@@ -15,7 +19,11 @@
 
     <container:VerticalLayoutContainer ui:field="con">
         <container:child layoutData="{toolBarLayoutData}">
-            <toolbar:ToolBar ui:field="toolbar" height="30"/>
+            <toolbar:ToolBar ui:field="toolbar" height="30">
+                <button:TextButton ui:field="saveBtn"
+                                   text="{display.save}"
+                                   icon="{icons.save}"/>
+            </toolbar:ToolBar>
         </container:child>
         <container:child layoutData="{layoutData}">
             <container:HtmlLayoutContainer ui:field="panel"/>

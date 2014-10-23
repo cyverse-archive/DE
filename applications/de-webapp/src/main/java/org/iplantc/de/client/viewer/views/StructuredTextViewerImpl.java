@@ -64,6 +64,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
+/**
+ * FIXME JDS Need to extract this into a ui.xml
+ * @author sriram, jstroot
+ */
 public class StructuredTextViewerImpl extends StructuredTextViewer {
 
     private final class StructuredTextValueProvider implements ValueProvider<JSONObject, String> {
