@@ -1,7 +1,7 @@
 package org.iplantc.de.pipelines.client.views;
 
 import org.iplantc.de.client.models.pipelines.Pipeline;
-import org.iplantc.de.client.models.pipelines.PipelineApp;
+import org.iplantc.de.client.models.pipelines.PipelineTask;
 import org.iplantc.de.pipelineBuilder.client.builder.PipelineCreator;
 
 import com.google.gwt.editor.client.Editor;
@@ -96,9 +96,9 @@ public interface PipelineView extends IsWidget, Editor<Pipeline> {
     @Editor.Ignore
     public PipelineAppMappingView getMappingPanel();
 
-    public ListStore<PipelineApp> getPipelineAppStore();
+    public ListStore<PipelineTask> getPipelineAppStore();
 
-    public PipelineApp getOrderGridSelectedApp();
+    public PipelineTask getOrderGridSelectedApp();
 
     @Editor.Ignore
     public ToggleButton getInfoBtn();

@@ -1,7 +1,7 @@
 package org.iplantc.de.pipelines.client.views;
 
 import org.iplantc.de.client.models.pipelines.Pipeline;
-import org.iplantc.de.client.models.pipelines.PipelineApp;
+import org.iplantc.de.client.models.pipelines.PipelineTask;
 import org.iplantc.de.pipelineBuilder.client.builder.PipelineCreator;
 import org.iplantc.de.resources.client.IplantResources;
 import org.iplantc.de.resources.client.messages.I18N;
@@ -149,7 +149,7 @@ public class PipelineViewImpl implements PipelineView {
     @Override
     public void setPipeline(Pipeline pipeline) {
         if (pipeline.getApps() == null) {
-            pipeline.setApps(new ArrayList<PipelineApp>());
+            pipeline.setApps(new ArrayList<PipelineTask>());
         }
 
         driver.edit(pipeline);
@@ -258,12 +258,12 @@ public class PipelineViewImpl implements PipelineView {
     }
 
     @Override
-    public ListStore<PipelineApp> getPipelineAppStore() {
+    public ListStore<PipelineTask> getPipelineAppStore() {
         return appOrderPanel.getPipelineAppStore();
     }
 
     @Override
-    public PipelineApp getOrderGridSelectedApp() {
+    public PipelineTask getOrderGridSelectedApp() {
         return appOrderPanel.getOrderGridSelectedApp();
     }
 

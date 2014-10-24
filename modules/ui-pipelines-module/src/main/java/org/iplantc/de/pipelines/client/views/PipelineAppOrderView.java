@@ -1,6 +1,6 @@
 package org.iplantc.de.pipelines.client.views;
 
-import org.iplantc.de.client.models.pipelines.PipelineApp;
+import org.iplantc.de.client.models.pipelines.PipelineTask;
 
 import com.google.gwt.user.client.ui.IsWidget;
 
@@ -29,12 +29,12 @@ public interface PipelineAppOrderView extends IsWidget {
          * @param app
          * @return the PipelineApp's step name.
          */
-        public String getStepName(PipelineApp app);
+        public String getStepName(PipelineTask app);
     }
 
     public void setPresenter(Presenter presenter);
 
-    public ListStore<PipelineApp> getPipelineAppStore();
+    public ListStore<PipelineTask> getPipelineAppStore();
 
-    public PipelineApp getOrderGridSelectedApp();
+    public PipelineTask getOrderGridSelectedApp();
 }

@@ -1,6 +1,6 @@
 package org.iplantc.de.pipelines.client.views;
 
-import org.iplantc.de.client.models.pipelines.PipelineApp;
+import org.iplantc.de.client.models.pipelines.PipelineTask;
 
 import com.google.gwt.editor.client.ValueAwareEditor;
 import com.google.gwt.user.client.ui.IsWidget;
@@ -13,7 +13,7 @@ import java.util.List;
  * @author psarando
  * 
  */
-public interface PipelineAppMappingView extends IsWidget, ValueAwareEditor<List<PipelineApp>> {
+public interface PipelineAppMappingView extends IsWidget, ValueAwareEditor<List<PipelineTask>> {
 
     public interface Presenter {
         /**
@@ -26,10 +26,10 @@ public interface PipelineAppMappingView extends IsWidget, ValueAwareEditor<List<
          * @param sourceStep
          * @param sourceOutputId
          */
-        public void setInputOutputMapping(PipelineApp targetStep, String targetInputId,
-                PipelineApp sourceStep, String sourceOutputId);
+        public void setInputOutputMapping(PipelineTask targetStep, String targetInputId,
+                PipelineTask sourceStep, String sourceOutputId);
 
-        public boolean isMappingValid(PipelineApp targetStep);
+        public boolean isMappingValid(PipelineTask targetStep);
     }
 
     public void setPresenter(Presenter presenter);

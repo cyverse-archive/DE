@@ -11,12 +11,12 @@ import java.util.List;
  * @author psarando
  *
  */
-public interface PipelineApp extends HasName {
+public interface PipelineTask extends HasName {
 
-    @PropertyName("task_id")
+    @PropertyName("id")
     public String getTaskId();
 
-    @PropertyName("task_id")
+    @PropertyName("id")
     public void setTaskId(String task_id);
 
     @PropertyName("app_type")

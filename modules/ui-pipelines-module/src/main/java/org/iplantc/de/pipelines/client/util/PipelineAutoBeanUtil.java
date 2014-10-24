@@ -4,12 +4,11 @@ import org.iplantc.de.client.gin.ServicesInjector;
 import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.models.apps.AppFileParameters;
 import org.iplantc.de.client.models.pipelines.Pipeline;
-import org.iplantc.de.client.models.pipelines.PipelineApp;
 import org.iplantc.de.client.models.pipelines.PipelineAppData;
 import org.iplantc.de.client.models.pipelines.PipelineAppMapping;
 import org.iplantc.de.client.models.pipelines.PipelineAutoBeanFactory;
+import org.iplantc.de.client.models.pipelines.PipelineTask;
 import org.iplantc.de.client.models.pipelines.ServicePipeline;
-import org.iplantc.de.client.models.pipelines.ServicePipelineApp;
 import org.iplantc.de.client.models.pipelines.ServicePipelineAutoBeanFactory;
 import org.iplantc.de.client.models.pipelines.ServicePipelineMapping;
 import org.iplantc.de.client.models.pipelines.ServicePipelineStep;
@@ -31,21 +30,19 @@ import com.sencha.gxt.core.client.util.Format;
 import com.sencha.gxt.core.shared.FastMap;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
 /**
  * A Utility class for Pipeline AutoBeans and converting them to/from the service JSON.
- *
+ * 
  * @author psarando
- *
+ * 
  */
 public class PipelineAutoBeanUtil {
 
     private final PipelineAutoBeanFactory factory = GWT.create(PipelineAutoBeanFactory.class);
-    private final ServicePipelineAutoBeanFactory serviceFactory = GWT
-            .create(ServicePipelineAutoBeanFactory.class);
+    private final ServicePipelineAutoBeanFactory serviceFactory = GWT.create(ServicePipelineAutoBeanFactory.class);
 
     /**
      * @return A singleton instance of the PipelineAutoBeanFactory.
@@ -57,12 +54,12 @@ public class PipelineAutoBeanUtil {
     /**
      * Clones the data contained in the given App into a PipelineApp, calling the App service to fetch
      * the input and output data objects for inclusion in the PipelineApp result.
-     *
+     * 
      * @param app Must be eligible for pipelines, otherwise the callback's onFailure method is called.
      * @param callback Receives the PipelineApp result on success, cloned from the data contained in the
      *            given app plus the data objects returned from the App service.
      */
-    public void appToPipelineApp(final App app, final AsyncCallback<PipelineApp> callback) {
+    public void appToPipelineApp(final App app, final AsyncCallback<PipelineTask> callback) {
         if (app == null) {
             callback.onFailure(new NullPointerException());
             return;
@@ -73,67 +70,28 @@ public class PipelineAutoBeanUtil {
             return;
         }
 
-        ServicesInjector.INSTANCE.getAppUserServiceFacade().getDataObjectsForApp(app.getId(), new AsyncCallback<String>() {
+        ServicesInjector.INSTANCE.getAppUserServiceFacade()
+                                 .getDataObjectsForApp(app.getId(), new AsyncCallback<String>() {
 
-            @Override
-            public void onSuccess(String result) {
-                AutoBean<App> appBean = AutoBeanUtils.getAutoBean(app);
+                                     @Override
+                                     public void onSuccess(String result) {
+                                         Splittable res = StringQuoter.split(result);
+                                         Splittable tasks = res.get("tasks");
+                                         Splittable task = tasks.get(0);
+                                         PipelineTask ret = AutoBeanCodex.decode(factory,
+                                                                                 PipelineTask.class,
+                                                                                 task.getPayload())
+                                                                         .as();
+                                         ret.setAppType(app.getAppType());
+                                         callback.onSuccess(ret);
+                                     }
 
-                // Clone the App AutoBean so we don't modify the original.
-                Splittable appJson = AutoBeanCodex.encode(appBean);
-                appBean = AutoBeanCodex.decode(appBean.getFactory(), App.class, appJson.getPayload());
-
-                Splittable json = StringQuoter.split(result);
-                AutoBeanCodex.decodeInto(json, appBean);
-
-                callback.onSuccess(appBeanToPipelineApp(appBean));
-            }
-
-            @Override
-            public void onFailure(Throwable caught) {
-                ErrorHandler.post(I18N.ERROR.dataObjectsRetrieveError(), caught);
-                callback.onFailure(caught);
-            }
-        });
-    }
-
-    /**
-     * Converts an App AutoBean into a PipelineApp.
-     *
-     * @param appBean
-     * @return A PipelineApp cloned from the data contained in the given appBean.
-     */
-    private PipelineApp appBeanToPipelineApp(AutoBean<App> appBean) {
-        if (appBean == null) {
-            return null;
-        }
-
-        App app = appBean.as();
-
-        PipelineApp ret = AutoBeanCodex.decode(factory, PipelineApp.class,
-                AutoBeanCodex.encode(appBean).getPayload()).as();
-
-        ret.setTaskId(app.getId());
-
-        ret.setInputs(appDataObjectsToPipelineAppData(app.getInputs()));
-        ret.setOutputs(appDataObjectsToPipelineAppData(app.getOutputs()));
-
-        return ret;
-    }
-
-    private List<PipelineAppData> appDataObjectsToPipelineAppData(List<AppFileParameters> appDataObjs) {
-        List<PipelineAppData> ret = new ArrayList<PipelineAppData>();
-        if (appDataObjs != null) {
-            for (AppFileParameters appDataObj : appDataObjs) {
-                PipelineAppData appData = dataObjectToPipelineAppData(appDataObj);
-
-                if (appData != null) {
-                    ret.add(appData);
-                }
-            }
-        }
-
-        return ret;
+                                     @Override
+                                     public void onFailure(Throwable caught) {
+                                         ErrorHandler.post(I18N.ERROR.dataObjectsRetrieveError(), caught);
+                                         callback.onFailure(caught);
+                                     }
+                                 });
     }
 
     private PipelineAppData dataObjectToPipelineAppData(AppFileParameters dataObject) {
@@ -143,8 +101,8 @@ public class PipelineAutoBeanUtil {
         }
 
         PipelineAppData pad = AutoBeanCodex.decode(factory,
-                                    PipelineAppData.class,
-                AutoBeanCodex.encode(dataBean).getPayload()).as();
+                                                   PipelineAppData.class,
+                                                   AutoBeanCodex.encode(dataBean).getPayload()).as();
 
         if (pad != null) {
             pad.setId(dataObject.getId());
@@ -157,7 +115,7 @@ public class PipelineAutoBeanUtil {
 
     /**
      * Get the JSON of the given pipeline required for publishing.
-     *
+     * 
      * @return JSON string required for publishing the given pipeline.
      */
     public String getPublishJson(Pipeline pipeline) {
@@ -165,22 +123,22 @@ public class PipelineAutoBeanUtil {
             return null;
         }
 
-        List<PipelineApp> steps = pipeline.getApps();
+        List<PipelineTask> steps = pipeline.getApps();
 
         if (steps == null) {
             return null;
         }
 
         String id = pipeline.getId();
-        ServicePipelineApp pipelineApp = serviceFactory.servicePipelineAnalysis().as();
+        ServicePipeline pipelineApp = serviceFactory.servicePipeline().as();
         pipelineApp.setId(id);
-        pipelineApp.setAppName(pipeline.getName());
+        pipelineApp.setName(pipeline.getName());
         pipelineApp.setDescription(pipeline.getDescription());
 
         List<ServicePipelineStep> publishSteps = new ArrayList<ServicePipelineStep>();
         List<ServicePipelineMapping> publishMappings = new ArrayList<ServicePipelineMapping>();
 
-        for (PipelineApp app : pipeline.getApps()) {
+        for (PipelineTask app : pipeline.getApps()) {
             // Convert the Pipeline step to a service step.
             ServicePipelineStep step = getServiceStep(app);
 
@@ -197,7 +155,7 @@ public class PipelineAutoBeanUtil {
 
                         for (PipelineAppMapping mapping : appMappings) {
                             ServicePipelineMapping publishMapping = getServiceMapping(targetStepId,
-                                    mapping);
+                                                                                      mapping);
 
                             if (publishMapping != null) {
                                 publishMappings.add(publishMapping);
@@ -211,18 +169,15 @@ public class PipelineAutoBeanUtil {
         pipelineApp.setSteps(publishSteps);
         pipelineApp.setMappings(publishMappings);
 
-        AutoBean<ServicePipeline> servicePipeline = serviceFactory.servicePipeline();
-        servicePipeline.as().setApps(Collections.singletonList(pipelineApp));
-
-        return AutoBeanCodex.encode(servicePipeline).getPayload();
+        return AutoBeanCodex.encode(AutoBeanUtils.getAutoBean(pipelineApp)).getPayload();
     }
 
     /**
      * Gets a ServicePipelineStep representing the given PipelineApp step.
-     *
+     * 
      * @return The PipelineApp as a workflow ServicePipelineStep.
      */
-    private ServicePipelineStep getServiceStep(PipelineApp app) {
+    private ServicePipelineStep getServiceStep(PipelineTask app) {
         ServicePipelineStep step = serviceFactory.servicePipelineStep().as();
         step.setTaskId(app.getTaskId());
         step.setAppType(app.getAppType());
@@ -232,18 +187,8 @@ public class PipelineAutoBeanUtil {
     }
 
     /**
-     * Gets the given App's workflow step name, based on its position in the workflow and its ID.
-     *
-     * @param app
-     * @return the PipelineApp's step name.
-     */
-    // public String getStepName(PipelineApp app) {
-    //        return app == null ? "" : getStepName(app.getStep(), app.getTaskId()); //$NON-NLS-1$
-    // }
-
-    /**
      * Gets a workflow step name, based on the given workflow step position and App ID.
-     *
+     * 
      * @param step A position in the workflow.
      * @param id An App ID.
      * @return A workflow step name.
@@ -255,11 +200,11 @@ public class PipelineAutoBeanUtil {
     /**
      * Formats the output->input mappings for the given source PipelineAppMapping to the targetStepName,
      * as a ServicePipelineMapping for the Import Workflow service.
-     *
+     * 
      * @return A ServicePipelineMapping of input->output mappings.
      */
     private ServicePipelineMapping getServiceMapping(int targetStepId,
-            PipelineAppMapping sourceStepMapping) {
+                                                     PipelineAppMapping sourceStepMapping) {
         if (sourceStepMapping != null) {
             Map<String, String> stepMap = sourceStepMapping.getMap();
             if (stepMap != null) {
@@ -301,7 +246,8 @@ public class PipelineAutoBeanUtil {
      */
     public String parseServiceSaveResponseId(String response) {
         AutoBean<ServiceSaveResponse> responseBean = AutoBeanCodex.decode(serviceFactory,
-                ServiceSaveResponse.class, response);
+                                                                          ServiceSaveResponse.class,
+                                                                          response);
 
         if (responseBean != null) {
             ServiceSaveResponse saveResponse = responseBean.as();
@@ -317,38 +263,38 @@ public class PipelineAutoBeanUtil {
 
     /**
      * Converts a workflow JSON object into a Pipeline object.
-     *
+     * 
      * @param serviceJson A JSON object representing a workflow.
      * @return A Pipeline object representing the workflow.
      */
     public Pipeline serviceJsonToPipeline(Splittable serviceJson) {
         AutoBean<ServicePipeline> serviceBean = AutoBeanCodex.decode(serviceFactory,
-                ServicePipeline.class, serviceJson);
+                                                                     ServicePipeline.class,
+                                                                     serviceJson);
 
         if (serviceBean != null) {
             ServicePipeline servicePipeline = serviceBean.as();
 
-            List<ServicePipelineApp> analyses = servicePipeline.getApps();
-            if (analyses != null && !analyses.isEmpty()) {
-                return serviceAnalysisToPipeline(analyses.get(0), servicePipeline.getTasks());
+            if (servicePipeline != null) {
+                return serviceAnalysisToPipeline(servicePipeline, servicePipeline.getTasks());
             }
         }
 
         return null;
     }
 
-    private Pipeline serviceAnalysisToPipeline(ServicePipelineApp app, List<ServicePipelineTask> tasks) {
+    private Pipeline serviceAnalysisToPipeline(ServicePipeline app, List<ServicePipelineTask> tasks) {
         Pipeline ret = factory.pipeline().as();
 
         // Set high-level details.
         ret.setId(app.getId());
-        ret.setName(app.getAppName());
+        ret.setName(app.getName());
         ret.setDescription(app.getDescription());
-        ret.setApps(new ArrayList<PipelineApp>());
+        ret.setApps(new ArrayList<PipelineTask>());
 
         // Create quick lookups for each template and PipelineApp created.
         FastMap<ServicePipelineTask> taskLookUp = new FastMap<ServicePipelineTask>();
-        FastMap<PipelineApp> stepLookup = new FastMap<PipelineApp>();
+        FastMap<PipelineTask> stepLookup = new FastMap<PipelineTask>();
 
         if (tasks != null) {
             for (ServicePipelineTask task : tasks) {
@@ -361,7 +307,7 @@ public class PipelineAutoBeanUtil {
         if (steps != null) {
             int stepPosition = 0;
             for (ServicePipelineStep step : steps) {
-                PipelineApp pipelineApp = serviceStepToPipelineApp(step, stepPosition, taskLookUp);
+                PipelineTask pipelineApp = serviceStepToPipelineApp(step, stepPosition, taskLookUp);
 
                 ret.getApps().add(pipelineApp);
                 stepLookup.put(stepPosition + "", pipelineApp);
@@ -380,12 +326,16 @@ public class PipelineAutoBeanUtil {
         return ret;
     }
 
-    private PipelineApp serviceStepToPipelineApp(ServicePipelineStep step, int stepPosition,
-            FastMap<ServicePipelineTask> templateLookup) {
-        PipelineApp ret = AutoBeanCodex.decode(factory, PipelineApp.class,
-                AutoBeanCodex.encode(AutoBeanUtils.getAutoBean(step)).getPayload()).as();
+    private PipelineTask serviceStepToPipelineApp(ServicePipelineStep step,
+                                                  int stepPosition,
+                                                  FastMap<ServicePipelineTask> templateLookup) {
+        PipelineTask ret = AutoBeanCodex.decode(factory,
+                                                PipelineTask.class,
+                                                AutoBeanCodex.encode(AutoBeanUtils.getAutoBean(step))
+                                                             .getPayload()).as();
 
         ret.setStep(stepPosition);
+        ret.setTaskId(step.getTaskId());
 
         ServicePipelineTask template = templateLookup.get(ret.getTaskId());
         if (template != null) {
@@ -415,12 +365,12 @@ public class PipelineAutoBeanUtil {
     }
 
     private void convertServicePipelineMapping(ServicePipelineMapping svcMapping,
-            FastMap<PipelineApp> stepLookup) {
+                                               FastMap<PipelineTask> stepLookup) {
         Map<String, String> map = svcMapping.getMap();
 
         if (map != null) {
-            PipelineApp targetStep = stepLookup.get(svcMapping.getTargetStep() + "");
-            PipelineApp sourceStep = stepLookup.get(svcMapping.getSourceStep() + "");
+            PipelineTask targetStep = stepLookup.get(svcMapping.getTargetStep() + "");
+            PipelineTask sourceStep = stepLookup.get(svcMapping.getSourceStep() + "");
 
             for (String inputId : map.keySet()) {
                 String outputId = map.get(inputId);
@@ -433,18 +383,19 @@ public class PipelineAutoBeanUtil {
      * Sets a mapping for targetStep's Input DataObject, with the given targetInputId, to sourceStep's
      * Output DataObject with the given sourceOutputId. A null sourceOutputId will clear the mapping for
      * the given targetInputId.
-     *
+     * 
      * @param targetStep
      * @param targetInputId
      * @param sourceStep
      * @param sourceOutputId
      */
-    public void setInputOutputMapping(PipelineApp targetStep, String targetInputId,
-            PipelineApp sourceStep, String sourceOutputId) {
+    public void setInputOutputMapping(PipelineTask targetStep,
+                                      String targetInputId,
+                                      PipelineTask sourceStep,
+                                      String sourceOutputId) {
         if (targetStep == null || sourceStep == null) {
             return;
         }
-
 
         // Find the output->input mappings for sourceStepName.
         FastMap<PipelineAppMapping> mapInputsOutputs = getTargetMappings(targetStep);
@@ -479,8 +430,8 @@ public class PipelineAutoBeanUtil {
         targetStep.setMappings(new ArrayList<PipelineAppMapping>(mapInputsOutputs.values()));
     }
 
-    private FastMap<PipelineAppMapping> getTargetMappings(PipelineApp targetStep) {
-        AutoBean<PipelineApp> targetBean = AutoBeanUtils.getAutoBean(targetStep);
+    private FastMap<PipelineAppMapping> getTargetMappings(PipelineTask targetStep) {
+        AutoBean<PipelineTask> targetBean = AutoBeanUtils.getAutoBean(targetStep);
         FastMap<PipelineAppMapping> mapInputsOutputs = targetBean.getTag("stepMappings"); //$NON-NLS-1$
 
         if (mapInputsOutputs == null) {
@@ -500,11 +451,11 @@ public class PipelineAutoBeanUtil {
 
     /**
      * Removes all output to input mappings to the given PipelineApp step.
-     *
+     * 
      * @param targetStep
      */
-    public void resetAppMappings(PipelineApp targetStep) {
-        AutoBean<PipelineApp> targetBean = AutoBeanUtils.getAutoBean(targetStep);
+    public void resetAppMappings(PipelineTask targetStep) {
+        AutoBean<PipelineTask> targetBean = AutoBeanUtils.getAutoBean(targetStep);
         targetBean.setTag("stepMappings", null); //$NON-NLS-1$
 
         targetStep.setMappings(null);

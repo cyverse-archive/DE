@@ -15,7 +15,7 @@
  */
 package org.iplantc.de.pipelineBuilder.client.builder;
 
-import org.iplantc.de.client.models.pipelines.PipelineApp;
+import org.iplantc.de.client.models.pipelines.PipelineTask;
 import org.iplantc.de.client.models.pipelines.PipelineAppMapping;
 import org.iplantc.de.client.models.pipelines.PipelineAutoBeanFactory;
 import org.iplantc.de.pipelineBuilder.client.Resources;
@@ -71,7 +71,7 @@ public class PipelineCreator extends Composite {
 
     private Pipeline buildPipeline(org.iplantc.de.client.models.pipelines.Pipeline json) {
         Pipeline ret = new Pipeline();
-        List<PipelineApp> apps = json.getApps();
+        List<PipelineTask> apps = json.getApps();
 
         ret.setWorkflowId(json.getId());
         ret.setDescription(json.getDescription());
@@ -79,7 +79,7 @@ public class PipelineCreator extends Composite {
 
         if (apps != null) {
             int i = 0;
-            for (PipelineApp appObj : apps) {
+            for (PipelineTask appObj : apps) {
                 App app = DragCreator.createApp(appObj);
 
                 List<PipelineAppMapping> mappingsA = appObj.getMappings();
@@ -115,7 +115,7 @@ public class PipelineCreator extends Composite {
         return ret;
     }
 
-    public void appendApp(PipelineApp app) {
+    public void appendApp(PipelineTask app) {
         workspace.appendApp(DragCreator.createApp(app));
     }
 
@@ -132,12 +132,12 @@ public class PipelineCreator extends Composite {
         ret.setName(pipeline.getName());
         ret.setDescription(pipeline.getDescription());
 
-        List<PipelineApp> apps = new ArrayList<PipelineApp>();
+        List<PipelineTask> apps = new ArrayList<PipelineTask>();
         Vector<PipeComponent> steps = pipeline.getSteps();
         for (PipeComponent step : steps) {
             App app = ((PipeApp)step).getApp();
 
-            PipelineApp jsonApp = factory.app().as();
+            PipelineTask jsonApp = factory.app().as();
             jsonApp.setTaskId(app.getTemplateId());
             jsonApp.setAppType(app.getAppType());
             jsonApp.setName(app.getName());

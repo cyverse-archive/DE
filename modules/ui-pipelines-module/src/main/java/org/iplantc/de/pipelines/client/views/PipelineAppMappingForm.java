@@ -1,6 +1,6 @@
 package org.iplantc.de.pipelines.client.views;
 
-import org.iplantc.de.client.models.pipelines.PipelineApp;
+import org.iplantc.de.client.models.pipelines.PipelineTask;
 import org.iplantc.de.client.models.pipelines.PipelineAppData;
 import org.iplantc.de.client.models.pipelines.PipelineAppMapping;
 import org.iplantc.de.resources.client.messages.I18N;
@@ -39,10 +39,10 @@ import java.util.List;
  *
  */
 public class PipelineAppMappingForm implements PipelineAppMappingView {
-    List<PipelineApp> apps;
+    List<PipelineTask> apps;
 
     private Presenter presenter;
-    private EditorDelegate<List<PipelineApp>> delegate;
+    private EditorDelegate<List<PipelineTask>> delegate;
 
     private final List<MappingFieldSet> mappingFields;
     private final VerticalLayoutContainer container;
@@ -79,7 +79,7 @@ public class PipelineAppMappingForm implements PipelineAppMappingView {
     }
 
     @Override
-    public void setDelegate(EditorDelegate<List<PipelineApp>> delegate) {
+    public void setDelegate(EditorDelegate<List<PipelineTask>> delegate) {
         this.delegate = delegate;
     }
 
@@ -90,7 +90,7 @@ public class PipelineAppMappingForm implements PipelineAppMappingView {
             // output-to-input mapping
             if (mappingFields.size() > 1) {
                 for (MappingFieldSet mappingStep : mappingFields) {
-                    PipelineApp app = mappingStep.getApp();
+                    PipelineTask app = mappingStep.getApp();
                     mappingStep.clearInvalid();
                     if (!mappingStep.isValid()) {
                         String err = I18N.ERROR.mappingStepError();
@@ -112,7 +112,7 @@ public class PipelineAppMappingForm implements PipelineAppMappingView {
     }
 
     @Override
-    public void setValue(List<PipelineApp> value) {
+    public void setValue(List<PipelineTask> value) {
         apps = value;
         mappingFields.clear();
         container.clear();
@@ -125,7 +125,7 @@ public class PipelineAppMappingForm implements PipelineAppMappingView {
         List<PipelineMappingOutputWrapper> outputs = new ArrayList<PipelineMappingOutputWrapper>();
 
         // Build a FieldSet for each step.
-        for (PipelineApp app : apps) {
+        for (PipelineTask app : apps) {
             FieldSet step = buildStepFieldSet(app);
             container.add(step);
 
@@ -155,7 +155,7 @@ public class PipelineAppMappingForm implements PipelineAppMappingView {
         }
     }
 
-    private List<PipelineMappingOutputWrapper> wrapOutputs(PipelineApp app) {
+    private List<PipelineMappingOutputWrapper> wrapOutputs(PipelineTask app) {
         List<PipelineMappingOutputWrapper> outputWrappers = null;
 
         List<PipelineAppData> appOutputs = app.getOutputs();
@@ -170,14 +170,14 @@ public class PipelineAppMappingForm implements PipelineAppMappingView {
         return outputWrappers;
     }
 
-    private FieldSet buildStepFieldSet(PipelineApp app) {
+    private FieldSet buildStepFieldSet(PipelineTask app) {
         MappingFieldSet step = new MappingFieldSet(app);
         mappingFields.add(step);
 
         return step;
     }
 
-    private ComboBox<PipelineMappingOutputWrapper> buildOutputCombo(PipelineApp app,
+    private ComboBox<PipelineMappingOutputWrapper> buildOutputCombo(PipelineTask app,
             PipelineAppData input, List<PipelineMappingOutputWrapper> outputs) {
         String targetInputId = input.getId();
 
@@ -241,10 +241,10 @@ public class PipelineAppMappingForm implements PipelineAppMappingView {
      *
      */
     private class PipelineMappingOutputWrapper {
-        private final PipelineApp sourceApp;
+        private final PipelineTask sourceApp;
         private final PipelineAppData sourceOutput;
 
-        public PipelineMappingOutputWrapper(PipelineApp sourceApp, PipelineAppData sourceOutput) {
+        public PipelineMappingOutputWrapper(PipelineTask sourceApp, PipelineAppData sourceOutput) {
             this.sourceApp = sourceApp;
             this.sourceOutput = sourceOutput;
         }
@@ -252,7 +252,7 @@ public class PipelineAppMappingForm implements PipelineAppMappingView {
         /**
          * @return the sourceApp
          */
-        public PipelineApp getApp() {
+        public PipelineTask getApp() {
             return sourceApp;
         }
 
@@ -273,10 +273,10 @@ public class PipelineAppMappingForm implements PipelineAppMappingView {
     private class OutputComboSelectionHandler implements SelectionHandler<PipelineMappingOutputWrapper> {
 
         private final Presenter presenter;
-        private final PipelineApp targetApp;
+        private final PipelineTask targetApp;
         private final String targetInputId;
 
-        OutputComboSelectionHandler(Presenter presenter, PipelineApp targetApp, String targetInputId) {
+        OutputComboSelectionHandler(Presenter presenter, PipelineTask targetApp, String targetInputId) {
             this.presenter = presenter;
             this.targetApp = targetApp;
             this.targetInputId = targetInputId;
@@ -287,7 +287,7 @@ public class PipelineAppMappingForm implements PipelineAppMappingView {
             PipelineMappingOutputWrapper selectedWrapper = event.getSelectedItem();
 
             if (selectedWrapper != null) {
-                PipelineApp sourceApp = selectedWrapper.getApp();
+                PipelineTask sourceApp = selectedWrapper.getApp();
                 String sourceOutputId = selectedWrapper.getOutput().getId();
 
                 presenter.setInputOutputMapping(targetApp, targetInputId, sourceApp, sourceOutputId);
@@ -337,9 +337,9 @@ public class PipelineAppMappingForm implements PipelineAppMappingView {
      */
     public class MappingFieldSet extends FieldSet {
         private final SideErrorHandler errorHandler;
-        private final PipelineApp app;
+        private final PipelineTask app;
 
-        public MappingFieldSet(PipelineApp app) {
+        public MappingFieldSet(PipelineTask app) {
             this.app = app;
             errorHandler = new SideErrorHandler(this);
 
@@ -353,7 +353,7 @@ public class PipelineAppMappingForm implements PipelineAppMappingView {
             setWidth(400);
         }
 
-        public PipelineApp getApp() {
+        public PipelineTask getApp() {
             return app;
         }
 

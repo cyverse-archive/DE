@@ -1,6 +1,6 @@
 package org.iplantc.de.pipelines.client.views;
 
-import org.iplantc.de.client.models.pipelines.PipelineApp;
+import org.iplantc.de.client.models.pipelines.PipelineTask;
 
 import com.google.gwt.editor.client.Editor.Path;
 
@@ -14,13 +14,13 @@ import com.sencha.gxt.data.shared.PropertyAccess;
  * @author psarando
  * 
  */
-public interface PipelineAppProperties extends PropertyAccess<PipelineApp> {
+public interface PipelineAppProperties extends PropertyAccess<PipelineTask> {
     @Path("name")
-    LabelProvider<PipelineApp> label();
+    LabelProvider<PipelineTask> label();
 
-    ValueProvider<PipelineApp, String> name();
+    ValueProvider<PipelineTask, String> name();
 
-    ValueProvider<PipelineApp, String> description();
+    ValueProvider<PipelineTask, String> description();
 
-    ValueProvider<PipelineApp, Integer> step();
+    ValueProvider<PipelineTask, Integer> step();
 }

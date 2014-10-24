@@ -15,7 +15,7 @@
  */
 package org.iplantc.de.pipelineBuilder.client.dnd;
 
-import org.iplantc.de.client.models.pipelines.PipelineApp;
+import org.iplantc.de.client.models.pipelines.PipelineTask;
 import org.iplantc.de.client.models.pipelines.PipelineAppData;
 import org.iplantc.de.pipelineBuilder.client.json.App;
 import org.iplantc.de.pipelineBuilder.client.json.IPCType;
@@ -178,7 +178,7 @@ public class DragCreator {
 		return draggedRecord;
 	}
 
-    public static App createApp(PipelineApp json) {
+    public static App createApp(PipelineTask json) {
         App app = new App();
         app.setName(json.getName());
         app.setDescription(json.getDescription());

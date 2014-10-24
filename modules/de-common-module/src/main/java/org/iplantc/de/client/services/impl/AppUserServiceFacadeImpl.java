@@ -103,7 +103,7 @@ public class AppUserServiceFacadeImpl implements AppUserServiceFacade {
 
     @Override
     public void getDataObjectsForApp(String appId, AsyncCallback<String> callback) {
-        String address = APPS + "/" + appId + "/file-parameters";
+        String address = APPS + "/" + appId + "/tasks";
 
         ServiceCallWrapper wrapper = new ServiceCallWrapper(address);
         deServiceFacade.getServiceData(wrapper, callback);

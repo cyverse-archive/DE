@@ -12,8 +12,6 @@ import com.google.web.bindery.autobean.shared.AutoBeanFactory;
 public interface ServicePipelineAutoBeanFactory extends AutoBeanFactory {
     AutoBean<ServicePipeline> servicePipeline();
 
-    AutoBean<ServicePipelineApp> servicePipelineAnalysis();
-
     AutoBean<ServicePipelineStep> servicePipelineStep();
 
     AutoBean<ServicePipelineMapping> servicePipelineMapping();

@@ -1,7 +1,7 @@
 package org.iplantc.de.pipelines.client.views;
 
 import org.iplantc.de.client.models.pipelines.Pipeline;
-import org.iplantc.de.client.models.pipelines.PipelineApp;
+import org.iplantc.de.client.models.pipelines.PipelineTask;
 import org.iplantc.de.resources.client.messages.I18N;
 
 import com.google.gwt.core.client.GWT;
@@ -43,7 +43,7 @@ public class PipelineAppOrderViewImpl implements PipelineAppOrderView, Editor<Pi
     private final Widget widget;
     private Presenter presenter;
 
-    ListStoreEditor<PipelineApp> apps;
+    ListStoreEditor<PipelineTask> apps;
 
     public PipelineAppOrderViewImpl() {
         widget = uiBinder.createAndBindUi(this);
@@ -53,28 +53,28 @@ public class PipelineAppOrderViewImpl implements PipelineAppOrderView, Editor<Pi
     }
 
     @UiField
-    Grid<PipelineApp> appOrderGrid;
+    Grid<PipelineTask> appOrderGrid;
 
     @UiField
-    ListStore<PipelineApp> pipelineAppStore;
+    ListStore<PipelineTask> pipelineAppStore;
 
     @UiFactory
-    ListStore<PipelineApp> createListStore() {
-        ListStore<PipelineApp> store = new ListStore<PipelineApp>(new ModelKeyProvider<PipelineApp>() {
+    ListStore<PipelineTask> createListStore() {
+        ListStore<PipelineTask> store = new ListStore<PipelineTask>(new ModelKeyProvider<PipelineTask>() {
 
             @Override
-            public String getKey(PipelineApp item) {
+            public String getKey(PipelineTask item) {
                 return presenter.getStepName(item);
             }
         });
 
-        store.addSortInfo(new StoreSortInfo<PipelineApp>(pipelineAppProps.step(), SortDir.ASC));
+        store.addSortInfo(new StoreSortInfo<PipelineTask>(pipelineAppProps.step(), SortDir.ASC));
 
         return store;
     }
 
     @UiFactory
-    ColumnModel<PipelineApp> createColumnModel() {
+    ColumnModel<PipelineTask> createColumnModel() {
         return new AppColumnModel(pipelineAppProps);
     }
 
@@ -109,18 +109,18 @@ public class PipelineAppOrderViewImpl implements PipelineAppOrderView, Editor<Pi
     }
 
     @Override
-    public ListStore<PipelineApp> getPipelineAppStore() {
+    public ListStore<PipelineTask> getPipelineAppStore() {
         return pipelineAppStore;
     }
 
     @Override
-    public PipelineApp getOrderGridSelectedApp() {
+    public PipelineTask getOrderGridSelectedApp() {
         return appOrderGrid.getSelectionModel().getSelectedItem();
     }
 
-    public class AppListStoreEditor extends ListStoreEditor<PipelineApp> {
+    public class AppListStoreEditor extends ListStoreEditor<PipelineTask> {
         private final PipelineAppOrderView view;
-        private EditorDelegate<List<PipelineApp>> delegate;
+        private EditorDelegate<List<PipelineTask>> delegate;
 
         public AppListStoreEditor(PipelineAppOrderView view) {
             super(view.getPipelineAppStore());
@@ -130,7 +130,7 @@ public class PipelineAppOrderViewImpl implements PipelineAppOrderView, Editor<Pi
 
         @Override
         public void flush() {
-            ListStore<PipelineApp> pipelineAppStore = view.getPipelineAppStore();
+            ListStore<PipelineTask> pipelineAppStore = view.getPipelineAppStore();
             if (delegate != null && pipelineAppStore.size() < 2) {
                 delegate.recordError(I18N.DISPLAY.selectOrderPnlTip(), pipelineAppStore.getAll(), view);
             }
@@ -144,7 +144,7 @@ public class PipelineAppOrderViewImpl implements PipelineAppOrderView, Editor<Pi
         }
 
         @Override
-        public void setDelegate(EditorDelegate<List<PipelineApp>> delegate) {
+        public void setDelegate(EditorDelegate<List<PipelineTask>> delegate) {
             this.delegate = delegate;
         }
     }

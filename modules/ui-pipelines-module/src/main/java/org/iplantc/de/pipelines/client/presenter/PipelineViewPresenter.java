@@ -8,7 +8,7 @@ import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.gin.ServicesInjector;
 import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.models.pipelines.Pipeline;
-import org.iplantc.de.client.models.pipelines.PipelineApp;
+import org.iplantc.de.client.models.pipelines.PipelineTask;
 import org.iplantc.de.client.models.pipelines.PipelineAppMapping;
 import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.commons.client.info.ErrorAnnouncementConfig;
@@ -210,8 +210,8 @@ public class PipelineViewPresenter implements Presenter, PipelineView.Presenter,
         if (pipeline.getApps() == null || pipeline.getApps().size() < 2) {
             errorList.add(new DefaultEditorError(null, I18N.DISPLAY.selectOrderPnlTip(), null));
         } else {
-            List<PipelineApp> apps = pipeline.getApps();
-            for (PipelineApp app : apps) {
+            List<PipelineTask> apps = pipeline.getApps();
+            for (PipelineTask app : apps) {
                 if (!isMappingValid(app)) {
                     errorList.add(new DefaultEditorError(null, I18N.DISPLAY.inputsOutputsPnlTip(), null));
                     break;
@@ -330,9 +330,9 @@ public class PipelineViewPresenter implements Presenter, PipelineView.Presenter,
         loadPipeline(pipeline);
     }
 
-    private void reconfigurePipelineAppMappingView(int startingStep, List<PipelineApp> apps) {
+    private void reconfigurePipelineAppMappingView(int startingStep, List<PipelineTask> apps) {
         if (apps != null) {
-            for (PipelineApp app : apps) {
+            for (PipelineTask app : apps) {
                 if (app.getStep() >= startingStep) {
                     utils.resetAppMappings(app);
                 }
@@ -395,17 +395,17 @@ public class PipelineViewPresenter implements Presenter, PipelineView.Presenter,
 
     @Override
     public void onMoveUpClicked() {
-        PipelineApp selectedApp = view.getOrderGridSelectedApp();
+        PipelineTask selectedApp = view.getOrderGridSelectedApp();
         if (selectedApp == null) {
             return;
         }
 
-        ListStore<PipelineApp> store = view.getPipelineAppStore();
+        ListStore<PipelineTask> store = view.getPipelineAppStore();
 
         int selectedStep = selectedApp.getStep();
         if (selectedStep > 1) {
             int stepUp = selectedStep - 1;
-            PipelineApp prevApp = store.get(stepUp - 1);
+            PipelineTask prevApp = store.get(stepUp - 1);
             prevApp.setStep(selectedStep);
             selectedApp.setStep(stepUp);
 
@@ -420,17 +420,17 @@ public class PipelineViewPresenter implements Presenter, PipelineView.Presenter,
 
     @Override
     public void onMoveDownClicked() {
-        PipelineApp selectedApp = view.getOrderGridSelectedApp();
+        PipelineTask selectedApp = view.getOrderGridSelectedApp();
         if (selectedApp == null) {
             return;
         }
 
-        ListStore<PipelineApp> store = view.getPipelineAppStore();
+        ListStore<PipelineTask> store = view.getPipelineAppStore();
 
         int selectedStep = selectedApp.getStep();
         if (selectedStep < store.size()) {
             int stepDown = selectedStep + 1;
-            PipelineApp nextApp = store.get(stepDown - 1);
+            PipelineTask nextApp = store.get(stepDown - 1);
             nextApp.setStep(selectedStep);
             selectedApp.setStep(stepDown);
 
@@ -445,15 +445,15 @@ public class PipelineViewPresenter implements Presenter, PipelineView.Presenter,
 
     @Override
     public void onRemoveAppClicked() {
-        PipelineApp selectedApp = view.getOrderGridSelectedApp();
+        PipelineTask selectedApp = view.getOrderGridSelectedApp();
 
         if (selectedApp != null) {
-            ListStore<PipelineApp> store = view.getPipelineAppStore();
+            ListStore<PipelineTask> store = view.getPipelineAppStore();
 
             store.remove(selectedApp);
 
             for (int step = 1; step <= store.size(); step++) {
-                PipelineApp app = store.get(step - 1);
+                PipelineTask app = store.get(step - 1);
                 app.setStep(step);
                 store.update(app);
             }
@@ -466,12 +466,12 @@ public class PipelineViewPresenter implements Presenter, PipelineView.Presenter,
     public void onAddAppClick() {
         App selectedApp = appsPresenter.getSelectedApp();
         if (!selectedApp.isDisabled()) {
-            utils.appToPipelineApp(selectedApp, new AsyncCallback<PipelineApp>() {
+            utils.appToPipelineApp(selectedApp, new AsyncCallback<PipelineTask>() {
 
                 @Override
-                public void onSuccess(PipelineApp result) {
+                public void onSuccess(PipelineTask result) {
                     if (result != null) {
-                        ListStore<PipelineApp> store = view.getPipelineAppStore();
+                        ListStore<PipelineTask> store = view.getPipelineAppStore();
 
                         result.setStep(store.size());
                         store.add(result);
@@ -498,10 +498,10 @@ public class PipelineViewPresenter implements Presenter, PipelineView.Presenter,
 
     @Override
     public void addAppToPipeline(final App app) {
-        utils.appToPipelineApp(app, new AsyncCallback<PipelineApp>() {
+        utils.appToPipelineApp(app, new AsyncCallback<PipelineTask>() {
 
             @Override
-            public void onSuccess(PipelineApp result) {
+            public void onSuccess(PipelineTask result) {
                 if (result != null) {
                     view.getPipelineCreator().appendApp(result);
                     unmaskPipelineBuilder();
@@ -529,7 +529,7 @@ public class PipelineViewPresenter implements Presenter, PipelineView.Presenter,
      * {@inheritDoc}
      */
     @Override
-    public String getStepName(PipelineApp app) {
+    public String getStepName(PipelineTask app) {
         return app.getStep() + "";
     }
 
@@ -537,12 +537,12 @@ public class PipelineViewPresenter implements Presenter, PipelineView.Presenter,
      * {@inheritDoc}
      */
     @Override
-    public void setInputOutputMapping(PipelineApp targetStep, String targetInputId, PipelineApp sourceStep, String sourceOutputId) {
+    public void setInputOutputMapping(PipelineTask targetStep, String targetInputId, PipelineTask sourceStep, String sourceOutputId) {
         utils.setInputOutputMapping(targetStep, targetInputId, sourceStep, sourceOutputId);
     }
 
     @Override
-    public boolean isMappingValid(PipelineApp targetStep) {
+    public boolean isMappingValid(PipelineTask targetStep) {
         if (targetStep == null) {
             return false;
         }

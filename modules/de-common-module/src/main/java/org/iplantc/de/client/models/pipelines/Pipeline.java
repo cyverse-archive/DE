@@ -20,7 +20,7 @@ public interface Pipeline extends HasName {
 
     public void setDescription(String description);
 
-    public List<PipelineApp> getApps();
+    public List<PipelineTask> getApps();
 
-    public void setApps(List<PipelineApp> apps);
+    public void setApps(List<PipelineTask> apps);
 }
