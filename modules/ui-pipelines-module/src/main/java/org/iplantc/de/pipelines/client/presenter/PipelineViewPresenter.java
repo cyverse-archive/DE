@@ -8,8 +8,8 @@ import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.gin.ServicesInjector;
 import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.models.pipelines.Pipeline;
-import org.iplantc.de.client.models.pipelines.PipelineTask;
 import org.iplantc.de.client.models.pipelines.PipelineAppMapping;
+import org.iplantc.de.client.models.pipelines.PipelineTask;
 import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.commons.client.info.ErrorAnnouncementConfig;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
@@ -403,9 +403,9 @@ public class PipelineViewPresenter implements Presenter, PipelineView.Presenter,
         ListStore<PipelineTask> store = view.getPipelineAppStore();
 
         int selectedStep = selectedApp.getStep();
-        if (selectedStep > 1) {
+        if (selectedStep > 0) {
             int stepUp = selectedStep - 1;
-            PipelineTask prevApp = store.get(stepUp - 1);
+            PipelineTask prevApp = store.get(stepUp);
             prevApp.setStep(selectedStep);
             selectedApp.setStep(stepUp);
 
@@ -428,9 +428,9 @@ public class PipelineViewPresenter implements Presenter, PipelineView.Presenter,
         ListStore<PipelineTask> store = view.getPipelineAppStore();
 
         int selectedStep = selectedApp.getStep();
-        if (selectedStep < store.size()) {
+        if (selectedStep < store.size() - 1) {
             int stepDown = selectedStep + 1;
-            PipelineTask nextApp = store.get(stepDown - 1);
+            PipelineTask nextApp = store.get(stepDown);
             nextApp.setStep(selectedStep);
             selectedApp.setStep(stepDown);
 
