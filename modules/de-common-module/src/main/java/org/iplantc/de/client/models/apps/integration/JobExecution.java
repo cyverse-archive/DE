@@ -12,10 +12,10 @@ import com.google.web.bindery.autobean.shared.AutoBean.PropertyName;
  */
 public interface JobExecution extends HasName, HasDescription {
 
-    @PropertyName("analysis_id")
+    @PropertyName("app_id")
     String getAppTemplateId();
 
-    @PropertyName("analysis_id")
+    @PropertyName("app_id")
     void setAppTemplateId(String appTemplateId);
 
     AppTemplate getAppTemplate();
