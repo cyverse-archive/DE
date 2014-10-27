@@ -64,7 +64,7 @@ public class ExternalVisualizationURLViewerImpl extends AbstractFileViewer imple
 
     Logger logger = Logger.getLogger("Viz");
 
-    @UiField(provided = true)
+    @UiField
     ColumnModel<VizUrl> cm;
     @UiField
     VerticalLayoutContainer con;
@@ -72,7 +72,7 @@ public class ExternalVisualizationURLViewerImpl extends AbstractFileViewer imple
     Grid<VizUrl> grid;
     @UiField
     GridView<VizUrl> gridView;
-    @UiField(provided = true)
+    @UiField
     ListStore<VizUrl> listStore;
     @UiField
     ToolBar toolbar;
