@@ -37,3 +37,5 @@ project( ':ui-pipeline-builder-module').projectDir = new File( rootProject.proje
 include ':ui-pipelines-module'
 project( ':ui-pipelines-module').projectDir = new File( rootProject.projectDir, uiPipelinesModuleSubtreePrefix)
 
+include ':file-viewers'
+project(':file-viewers').projectDir = new File(rootProject.projectDir, fileViewersSubtreePrefix)

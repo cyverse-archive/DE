@@ -5,13 +5,18 @@ import org.iplantc.de.client.models.diskResources.File;
 
 import com.google.gwt.event.shared.EventHandler;
 import com.google.gwt.event.shared.GwtEvent;
+import com.google.gwt.event.shared.HandlerRegistration;
 
 public class FileSavedEvent extends GwtEvent<FileSavedEventHandler> {
     public interface FileSavedEventHandler extends EventHandler {
         void onFileSaved(FileSavedEvent event);
     }
 
-    public static final Type<FileSavedEventHandler> TYPE = new Type<FileSavedEventHandler>();
+    public static interface HasFileSavedEventHandlers {
+        HandlerRegistration addFileSavedEventHandler(FileSavedEventHandler handler);
+    }
+
+    public static final GwtEvent.Type<FileSavedEventHandler> TYPE = new Type<>();
     private File file;
 
     public FileSavedEvent(File file) {
@@ -19,7 +24,7 @@ public class FileSavedEvent extends GwtEvent<FileSavedEventHandler> {
     }
 
     @Override
-    public com.google.gwt.event.shared.GwtEvent.Type<FileSavedEventHandler> getAssociatedType() {
+    public GwtEvent.Type<FileSavedEventHandler> getAssociatedType() {
         return TYPE;
     }
 

@@ -8,7 +8,7 @@ import org.iplantc.de.resources.client.uiapps.widgets.AppsWidgetsContextualHelpM
 import org.iplantc.de.resources.client.uiapps.widgets.AppsWidgetsDisplayMessages;
 import org.iplantc.de.resources.client.uiapps.widgets.AppsWidgetsPropertyPanelLabels;
 
-import com.google.gwt.core.shared.GWT;
+import com.google.gwt.core.client.GWT;
 
 /**
  * @author sriram

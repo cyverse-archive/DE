@@ -4,6 +4,7 @@ import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.POST;
 import org.iplantc.de.client.DEClientConstants;
 import org.iplantc.de.client.models.DEProperties;
 import org.iplantc.de.client.models.UserInfo;
+import org.iplantc.de.client.models.diskResources.File;
 import org.iplantc.de.client.services.FileEditorServiceFacade;
 import org.iplantc.de.shared.services.DiscEnvApiService;
 import org.iplantc.de.shared.services.ServiceCallWrapper;
@@ -38,9 +39,9 @@ public class FileEditorServiceFacadeImpl implements FileEditorServiceFacade {
     }
 
     @Override
-    public void getManifest(String pathToFile, AsyncCallback<String> callback) {
+    public void getManifest(File file, AsyncCallback<String> callback) {
         String address = deProperties.getDataMgmtBaseUrl() + "file/manifest?path=" //$NON-NLS-1$
-                + URL.encodeQueryString(pathToFile);
+                + URL.encodeQueryString(file.getPath());
 
         ServiceCallWrapper wrapper = new ServiceCallWrapper(address);
         callService(wrapper, callback);
