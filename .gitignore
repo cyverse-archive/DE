@@ -34,3 +34,8 @@ out/
 applications/config*
 .idea/
 
+#ignore class files
+*.class
+
+$ignore bin
+bin/
