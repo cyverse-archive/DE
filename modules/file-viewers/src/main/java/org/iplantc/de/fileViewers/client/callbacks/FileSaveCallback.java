@@ -1,7 +1,7 @@
-package org.iplantc.de.client.callbacks;
+package org.iplantc.de.fileViewers.client.callbacks;
 
 import static org.iplantc.de.resources.client.messages.I18N.ERROR;
-import org.iplantc.de.client.events.DefaultUploadCompleteHandler;
+import org.iplantc.de.diskResource.client.events.DefaultUploadCompleteHandler;
 import org.iplantc.de.client.events.FileSavedEvent;
 import org.iplantc.de.client.models.diskResources.DiskResourceAutoBeanFactory;
 import org.iplantc.de.client.models.diskResources.File;

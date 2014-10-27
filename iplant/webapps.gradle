@@ -24,6 +24,7 @@ project(':de') {
         gwt project(':ui-apps-integration')
         gwt project(':analyses-module')
         gwt project(':de-common-module')
+        gwt project(':file-viewers')
 
         compile "com.sencha.gxt:gxt:$gxtVersion"
         compile "com.google.gwt.inject:gin:$gwtGinVer"
@@ -66,6 +67,7 @@ project(':de') {
         src += files(project(':ui-pipeline-builder-module').sourceSets.main.allJava.srcDirs) + files(project(':ui-pipeline-builder-module').sourceSets.main.output.resourcesDir)
         src += files(project(':ui-apps-integration').sourceSets.main.allJava.srcDirs) + files(project(':ui-apps-integration').sourceSets.main.output.resourcesDir)
         src += files(project(':analyses-module').sourceSets.main.allJava.srcDirs) + files(project(':analyses-module').sourceSets.main.output.resourcesDir)
+        src += files(project(':file-viewers').sourceSets.main.allJava.srcDirs) + files(project(':file-viewers').sourceSets.main.output.resourcesDir)
         src += files(project(':de-common-module').sourceSets.main.allJava.srcDirs) + files(project(':de-common-module').sourceSets.main.output.resourcesDir)
 
         superDev { noPrecompile = true }

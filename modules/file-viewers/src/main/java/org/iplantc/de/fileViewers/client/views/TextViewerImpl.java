@@ -1,6 +1,5 @@
 package org.iplantc.de.fileViewers.client.views;
 
-import org.iplantc.de.client.callbacks.FileSaveCallback;
 import org.iplantc.de.client.events.FileSavedEvent;
 import org.iplantc.de.client.gin.ServicesInjector;
 import org.iplantc.de.client.models.diskResources.File;
@@ -9,6 +8,7 @@ import org.iplantc.de.client.services.FileEditorServiceFacade;
 import org.iplantc.de.client.util.JsonUtil;
 import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.diskResource.client.views.dialogs.SaveAsDialog;
+import org.iplantc.de.fileViewers.client.callbacks.FileSaveCallback;
 import org.iplantc.de.resources.client.messages.I18N;
 import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 

@@ -1,6 +1,6 @@
 package org.iplantc.de.client.desktop.presenter;
 
-import org.iplantc.de.client.events.DefaultUploadCompleteHandler;
+import org.iplantc.de.diskResource.client.events.DefaultUploadCompleteHandler;
 import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.events.NotificationCountUpdateEvent;
 import org.iplantc.de.client.models.UserSettings;

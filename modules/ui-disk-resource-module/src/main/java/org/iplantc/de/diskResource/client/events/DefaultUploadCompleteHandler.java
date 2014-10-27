@@ -1,4 +1,4 @@
-package org.iplantc.de.client.events;
+package org.iplantc.de.diskResource.client.events;
 
 import org.iplantc.de.client.gin.ServicesInjector;
 import org.iplantc.de.client.models.UserInfo;
