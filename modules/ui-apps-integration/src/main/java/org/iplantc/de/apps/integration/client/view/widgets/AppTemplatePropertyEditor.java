@@ -4,7 +4,7 @@ import org.iplantc.de.apps.integration.client.dialogs.DCListingDialog;
 import org.iplantc.de.apps.integration.client.events.UpdateCommandLinePreviewEvent;
 import org.iplantc.de.apps.integration.client.events.UpdateCommandLinePreviewEvent.HasUpdateCommandLinePreviewEventHandlers;
 import org.iplantc.de.apps.integration.client.events.UpdateCommandLinePreviewEvent.UpdateCommandLinePreviewEventHandler;
-import org.iplantc.de.apps.integration.client.view.deployedComponents.DCSearchField;
+import org.iplantc.de.apps.integration.client.view.tools.ToolSearchField;
 import org.iplantc.de.apps.integration.shared.AppIntegrationModule;
 import org.iplantc.de.apps.widgets.client.events.AppTemplateSelectedEvent.AppTemplateSelectedEventHandler;
 import org.iplantc.de.apps.widgets.client.events.AppTemplateSelectedEvent.HasAppTemplateSelectedEventHandlers;
@@ -69,7 +69,7 @@ public class AppTemplatePropertyEditor extends Composite implements ValueAwareEd
     TextButton searchBtn;
     @UiField
     @Ignore
-    DCSearchField tool;
+    ToolSearchField tool;
     @UiField
     FieldLabel toolLabel, appNameLabel, appDescriptionLabel;
     private static AppTemplatePropertyEditorUiBinder BINDER = GWT.create(AppTemplatePropertyEditorUiBinder.class);

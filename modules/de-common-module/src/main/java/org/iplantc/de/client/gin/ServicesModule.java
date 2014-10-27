@@ -25,7 +25,7 @@ final class ServicesModule extends AbstractGinModule {
         bind(AppServiceFacade.class).to(AppUserServiceFacadeImpl.class);
         bind(CollaboratorsServiceFacade.class).to(CollaboratorsServiceFacadeImpl.class);
         bind(DEFeedbackServiceFacade.class).to(DEFeedbackServiceFacadeImpl.class);
-        bind(DeployedComponentServices.class).to(DeployedComponentServicesImpl.class);
+        bind(ToolServices.class).to(ToolServicesImpl.class);
         bind(FileEditorServiceFacade.class).to(FileEditorServiceFacadeImpl.class);
         bind(MessageServiceFacade.class).to(MessageServiceFacadeImpl.class);
         bind(SearchServiceFacade.class).to(SearchServiceFacadeImpl.class);
@@ -43,7 +43,7 @@ final class ServicesModule extends AbstractGinModule {
         bind(AppServiceFacade.class).annotatedWith(Stub.class).to(AppServiceFacadeStub.class);
         bind(CollaboratorsServiceFacade.class).annotatedWith(Stub.class).to(CollaboratorsServiceFacadeStub.class);
         bind(DEFeedbackServiceFacade.class).annotatedWith(Stub.class).to(DEFeedbackServiceFacadeStub.class);
-        bind(DeployedComponentServices.class).annotatedWith(Stub.class).to(DeployedComponentServicesStub.class);
+        bind(ToolServices.class).annotatedWith(Stub.class).to(ToolServicesStub.class);
         bind(FileEditorServiceFacade.class).annotatedWith(Stub.class).to(FileEditorServiceFacadeStub.class);
         bind(MessageServiceFacade.class).annotatedWith(Stub.class).to(MessageServiceFacadeStub.class);
         bind(SearchServiceFacade.class).annotatedWith(Stub.class).to(SearchServiceFacadeStub.class);

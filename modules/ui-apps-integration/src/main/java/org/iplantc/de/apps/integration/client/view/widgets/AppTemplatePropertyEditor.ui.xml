@@ -3,7 +3,7 @@
              xmlns:con="urn:import:com.sencha.gxt.widget.core.client.container"
              xmlns:button="urn:import:com.sencha.gxt.widget.core.client.button"
              xmlns:form="urn:import:com.sencha.gxt.widget.core.client.form"
-             xmlns:srh="urn:import:org.iplantc.de.apps.integration.client.view.deployedComponents"
+             xmlns:srh="urn:import:org.iplantc.de.apps.integration.client.view.tools"
              xmlns:viewWidgets="urn:import:org.iplantc.de.apps.integration.client.view.widgets">
 
     <ui:with field="icons"
@@ -46,7 +46,7 @@
                         <form:widget>
                             <con:HBoxLayoutContainer>
                                 <con:child layoutData="{boxLayoutDataMargins0Flex1}">
-                                    <srh:DCSearchField ui:field="tool"/>
+                                    <srh:ToolSearchField ui:field="tool"/>
                                 </con:child>
                                 <con:child>
                                     <button:TextButton ui:field="searchBtn"

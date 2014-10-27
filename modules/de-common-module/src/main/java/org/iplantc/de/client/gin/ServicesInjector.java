@@ -7,7 +7,7 @@ import org.iplantc.de.client.services.AppTemplateServices;
 import org.iplantc.de.client.services.AppUserServiceFacade;
 import org.iplantc.de.client.services.CollaboratorsServiceFacade;
 import org.iplantc.de.client.services.DEFeedbackServiceFacade;
-import org.iplantc.de.client.services.DeployedComponentServices;
+import org.iplantc.de.client.services.ToolServices;
 import org.iplantc.de.client.services.DiskResourceServiceFacade;
 import org.iplantc.de.client.services.FileEditorServiceFacade;
 import org.iplantc.de.client.services.MetadataServiceFacade;
@@ -42,7 +42,7 @@ public interface ServicesInjector extends Ginjector {
 
     DEFeedbackServiceFacade getDeFeedbackServiceFacade();
 
-    DeployedComponentServices getDeployedComponentServices();
+    ToolServices getDeployedComponentServices();
 
     DiskResourceServiceFacade getDiskResourceServiceFacade();
 

@@ -3,7 +3,7 @@
  */
 package org.iplantc.de.apps.integration.client.presenter;
 
-import org.iplantc.de.apps.integration.client.view.deployedComponents.DeployedComponentsListingView;
+import org.iplantc.de.apps.integration.client.view.tools.DeployedComponentsListingView;
 import org.iplantc.de.apps.integration.shared.AppIntegrationModule;
 import org.iplantc.de.client.models.tool.Tool;
 

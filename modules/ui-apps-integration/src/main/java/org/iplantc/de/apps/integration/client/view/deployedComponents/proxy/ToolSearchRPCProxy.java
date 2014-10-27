@@ -2,7 +2,7 @@ package org.iplantc.de.apps.integration.client.view.deployedComponents.proxy;
 
 import org.iplantc.de.client.gin.ServicesInjector;
 import org.iplantc.de.client.models.tool.Tool;
-import org.iplantc.de.client.services.DeployedComponentServices;
+import org.iplantc.de.client.services.ToolServices;
 import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.resources.client.messages.I18N;
 
@@ -17,10 +17,10 @@ import com.sencha.gxt.data.shared.loader.PagingLoadResultBean;
 
 import java.util.List;
 
-public class DCSearchRPCProxy extends
+public class ToolSearchRPCProxy extends
         RpcProxy<FilterPagingLoadConfig, PagingLoadResult<Tool>> {
 
-    DeployedComponentServices dcService = ServicesInjector.INSTANCE.getDeployedComponentServices();
+    ToolServices dcService = ServicesInjector.INSTANCE.getDeployedComponentServices();
 
     private String lastQueryText = ""; //$NON-NLS-1$
 

@@ -1,4 +1,4 @@
-package org.iplantc.de.apps.integration.client.view.deployedComponents;
+package org.iplantc.de.apps.integration.client.view.tools;
 
 import org.iplantc.de.client.models.tool.Tool;
 

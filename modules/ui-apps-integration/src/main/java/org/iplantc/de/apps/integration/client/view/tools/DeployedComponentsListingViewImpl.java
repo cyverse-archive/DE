@@ -1,11 +1,11 @@
 /**
  *
  */
-package org.iplantc.de.apps.integration.client.view.deployedComponents;
+package org.iplantc.de.apps.integration.client.view.tools;
 
 import org.iplantc.de.apps.client.views.dialogs.NewToolRequestDialog;
 import org.iplantc.de.apps.integration.client.view.deployedComponents.cells.DCNameHyperlinkCell;
-import org.iplantc.de.apps.integration.client.view.deployedComponents.proxy.DCSearchRPCProxy;
+import org.iplantc.de.apps.integration.client.view.deployedComponents.proxy.ToolSearchRPCProxy;
 import org.iplantc.de.apps.integration.shared.AppIntegrationModule;
 import org.iplantc.de.client.models.tool.Tool;
 import org.iplantc.de.commons.client.widgets.SearchField;
@@ -74,7 +74,7 @@ public class DeployedComponentsListingViewImpl extends Composite implements
     @UiField
     SearchField<Tool> searchField;
 
-    DCSearchRPCProxy searchProxy;
+    ToolSearchRPCProxy searchProxy;
 
     @UiField(provided = true)
     ListStore<Tool> store;
@@ -83,7 +83,7 @@ public class DeployedComponentsListingViewImpl extends Composite implements
     public DeployedComponentsListingViewImpl(ListStore<Tool> listStore,
                                              SelectionChangedHandler<Tool> handler) {
         this.store = listStore;
-        searchProxy = new DCSearchRPCProxy();
+        searchProxy = new ToolSearchRPCProxy();
         loader = buildLoader();
         initWidget(uiBinder.createAndBindUi(this));
         searchField.setEmptyText(I18N.DISPLAY.searchEmptyText());

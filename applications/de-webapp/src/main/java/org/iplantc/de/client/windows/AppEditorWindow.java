@@ -17,7 +17,7 @@ import org.iplantc.de.client.models.apps.integration.Argument;
 import org.iplantc.de.client.models.apps.integration.ArgumentGroup;
 import org.iplantc.de.client.models.errorHandling.SimpleServiceError;
 import org.iplantc.de.client.services.AppTemplateServices;
-import org.iplantc.de.client.services.DeployedComponentServices;
+import org.iplantc.de.client.services.ToolServices;
 import org.iplantc.de.client.services.converters.AppTemplateCallbackConverter;
 import org.iplantc.de.client.util.AppTemplateUtils;
 import org.iplantc.de.client.util.CommonModelUtils;
@@ -108,7 +108,7 @@ public class AppEditorWindow extends IplantWindowBase implements AppPublishedEve
     final AppEditorAppearance appearance;
     final ContextualHelpToolButton editPublicAppContextHlpTool = new ContextualHelpToolButton(new HTML(org.iplantc.de.resources.client.messages.I18N.APPS_HELP.editPublicAppHelp()));
     private final IplantAnnouncer announcer;
-    private final DeployedComponentServices dcServices;
+    private final ToolServices dcServices;
     private final AppTemplateAutoBeanFactory factory;
     private final AppsEditorView.Presenter presenter;
     private final RenameWindowHeaderCmdImpl renameCmd;

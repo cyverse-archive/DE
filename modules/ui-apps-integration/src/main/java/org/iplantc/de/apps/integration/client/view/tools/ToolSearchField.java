@@ -1,6 +1,6 @@
-package org.iplantc.de.apps.integration.client.view.deployedComponents;
+package org.iplantc.de.apps.integration.client.view.tools;
 
-import org.iplantc.de.apps.integration.client.view.deployedComponents.proxy.DCSearchRPCProxy;
+import org.iplantc.de.apps.integration.client.view.deployedComponents.proxy.ToolSearchRPCProxy;
 import org.iplantc.de.client.models.tool.Tool;
 import org.iplantc.de.resources.client.messages.I18N;
 
@@ -39,7 +39,7 @@ import com.sencha.gxt.widget.core.client.form.ComboBox;
 
 import java.util.List;
 
-public class DCSearchField extends Composite implements HasSelectionHandlers<Tool>, HasValueChangeHandlers<Tool> {
+public class ToolSearchField extends Composite implements HasSelectionHandlers<Tool>, HasValueChangeHandlers<Tool> {
 
     interface DCTemplate extends XTemplates {
         @XTemplate(source = "DCSearchResult.html")
@@ -48,10 +48,10 @@ public class DCSearchField extends Composite implements HasSelectionHandlers<Too
 
     ComboBox<Tool> combo;
     
-    private final DCSearchRPCProxy searchProxy;
+    private final ToolSearchRPCProxy searchProxy;
 
-    public DCSearchField() {
-        searchProxy = new DCSearchRPCProxy();
+    public ToolSearchField() {
+        searchProxy = new ToolSearchRPCProxy();
         PagingLoader<FilterPagingLoadConfig, PagingLoadResult<Tool>> loader = buildLoader();
 
         ListStore<Tool> store = buildStore();
