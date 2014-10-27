@@ -32,7 +32,7 @@ import org.iplantc.de.client.sysmsgs.view.NewMessageView;
 import org.iplantc.de.client.util.CommonModelUtils;
 import org.iplantc.de.client.util.DiskResourceUtil;
 import org.iplantc.de.client.utils.NotifyInfo;
-import org.iplantc.de.client.viewer.callbacks.LoadGenomeInCoGeCallback;
+import org.iplantc.de.fileViewers.client.callbacks.LoadGenomeInCoGeCallback;
 import org.iplantc.de.client.windows.IPlantWindowInterface;
 import org.iplantc.de.commons.client.CommonUiConstants;
 import org.iplantc.de.commons.client.ErrorHandler;

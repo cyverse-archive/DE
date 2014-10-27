@@ -22,7 +22,7 @@ import org.iplantc.de.client.models.diskResources.TYPE;
 import org.iplantc.de.client.services.DiskResourceServiceFacade;
 import org.iplantc.de.client.util.CommonModelUtils;
 import org.iplantc.de.client.util.DiskResourceUtil;
-import org.iplantc.de.client.viewer.callbacks.EnsemblUtil;
+import org.iplantc.de.fileViewers.client.callbacks.EnsemblUtil;
 import org.iplantc.de.commons.client.util.WindowUtil;
 import org.iplantc.de.commons.client.views.window.configs.AppWizardConfig;
 import org.iplantc.de.commons.client.views.window.configs.AppsIntegrationWindowConfig;

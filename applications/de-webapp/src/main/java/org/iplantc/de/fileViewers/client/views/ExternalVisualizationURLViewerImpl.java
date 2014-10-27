@@ -1,7 +1,7 @@
 /**
  *
  */
-package org.iplantc.de.client.viewer.views;
+package org.iplantc.de.fileViewers.client.views;
 
 import org.iplantc.de.client.gin.ServicesInjector;
 import org.iplantc.de.client.models.IsMaskable;
@@ -9,10 +9,10 @@ import org.iplantc.de.client.models.diskResources.File;
 import org.iplantc.de.client.models.viewer.VizUrl;
 import org.iplantc.de.client.services.FileEditorServiceFacade;
 import org.iplantc.de.client.util.DiskResourceUtil;
-import org.iplantc.de.client.viewer.callbacks.EnsemblUtil;
-import org.iplantc.de.client.viewer.callbacks.LoadGenomeInCoGeCallback;
-import org.iplantc.de.client.viewer.callbacks.TreeUrlCallback;
-import org.iplantc.de.client.viewer.views.cells.TreeUrlCell;
+import org.iplantc.de.fileViewers.client.callbacks.EnsemblUtil;
+import org.iplantc.de.fileViewers.client.callbacks.LoadGenomeInCoGeCallback;
+import org.iplantc.de.fileViewers.client.callbacks.TreeUrlCallback;
+import org.iplantc.de.fileViewers.client.views.cells.TreeUrlCell;
 import org.iplantc.de.resources.client.IplantResources;
 import org.iplantc.de.resources.client.messages.I18N;
 import org.iplantc.de.resources.client.messages.IplantDisplayStrings;

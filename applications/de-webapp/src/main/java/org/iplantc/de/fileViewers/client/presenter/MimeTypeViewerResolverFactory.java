@@ -1,7 +1,7 @@
 /**
  *
  */
-package org.iplantc.de.client.viewer.presenter;
+package org.iplantc.de.fileViewers.client.presenter;
 
 import static org.iplantc.de.client.models.viewer.InfoType.*;
 import org.iplantc.de.client.models.diskResources.File;
@@ -9,12 +9,12 @@ import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.client.models.viewer.MimeType;
 import org.iplantc.de.client.services.FileEditorServiceFacade;
 import org.iplantc.de.client.util.JsonUtil;
-import org.iplantc.de.client.viewer.views.AbstractFileViewer;
-import org.iplantc.de.client.viewer.views.ExternalVisualizationURLViewerImpl;
-import org.iplantc.de.client.viewer.views.FileViewer;
-import org.iplantc.de.client.viewer.views.ImageViewerImpl;
-import org.iplantc.de.client.viewer.views.StructuredTextViewerImpl;
-import org.iplantc.de.client.viewer.views.TextViewerImpl;
+import org.iplantc.de.fileViewers.client.views.AbstractFileViewer;
+import org.iplantc.de.fileViewers.client.views.ExternalVisualizationURLViewerImpl;
+import org.iplantc.de.fileViewers.client.views.FileViewer;
+import org.iplantc.de.fileViewers.client.views.ImageViewerImpl;
+import org.iplantc.de.fileViewers.client.views.StructuredTextViewerImpl;
+import org.iplantc.de.fileViewers.client.views.TextViewerImpl;
 import org.iplantc.de.commons.client.info.ErrorAnnouncementConfig;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
 import org.iplantc.de.commons.client.util.WindowUtil;

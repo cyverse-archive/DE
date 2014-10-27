@@ -1,4 +1,4 @@
-package org.iplantc.de.client.viewer.views;
+package org.iplantc.de.fileViewers.client.views;
 
 import org.iplantc.de.client.callbacks.FileSaveCallback;
 import org.iplantc.de.client.events.FileSavedEvent;
@@ -213,7 +213,7 @@ public class TextViewerImpl extends AbstractFileViewer implements EditingSupport
             .on(
             "change",
             $entry(function () {
-                instance.@org.iplantc.de.client.viewer.views.TextViewerImpl::setDirty(Ljava/lang/Boolean;)(@java.lang.Boolean::TRUE);
+                instance.@org.iplantc.de.fileViewers.client.views.TextViewerImpl::setDirty(Ljava/lang/Boolean;)(@java.lang.Boolean::TRUE);
             }));
         return myCodeMirror;
     }-*/;

@@ -1,4 +1,4 @@
-package org.iplantc.de.client.viewer.callbacks;
+package org.iplantc.de.fileViewers.client.callbacks;
 
 import org.iplantc.de.client.models.IsMaskable;
 import org.iplantc.de.client.util.JsonUtil;

@@ -2,7 +2,7 @@ package org.iplantc.de.client.windows.util;
 
 import org.iplantc.de.client.DEClientConstants;
 import org.iplantc.de.client.events.EventBus;
-import org.iplantc.de.client.viewer.views.FileViewer;
+import org.iplantc.de.fileViewers.client.views.FileViewer;
 import org.iplantc.de.client.windows.*;
 import org.iplantc.de.commons.client.util.WindowUtil;
 import org.iplantc.de.commons.client.views.window.configs.*;

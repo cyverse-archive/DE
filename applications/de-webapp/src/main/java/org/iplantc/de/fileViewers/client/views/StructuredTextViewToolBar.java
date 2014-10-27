@@ -1,4 +1,4 @@
-package org.iplantc.de.client.viewer.views;
+package org.iplantc.de.fileViewers.client.views;
 
 import org.iplantc.de.resources.client.IplantResources;
 import org.iplantc.de.resources.client.messages.I18N;

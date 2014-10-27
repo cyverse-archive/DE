@@ -1,4 +1,4 @@
-package org.iplantc.de.client.viewer.events;
+package org.iplantc.de.fileViewers.client.events;
 
 import com.google.gwt.event.shared.EventHandler;
 import com.google.gwt.event.shared.GwtEvent;

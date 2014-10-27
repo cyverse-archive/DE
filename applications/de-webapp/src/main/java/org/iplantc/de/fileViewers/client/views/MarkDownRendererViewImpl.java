@@ -1,4 +1,4 @@
-package org.iplantc.de.client.viewer.views;
+package org.iplantc.de.fileViewers.client.views;
 
 import org.iplantc.de.client.callbacks.FileSaveCallback;
 import org.iplantc.de.client.events.FileSavedEvent;

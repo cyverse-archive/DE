@@ -1,7 +1,7 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
              xmlns:container="urn:import:com.sencha.gxt.widget.core.client.container"
-             xmlns:toolbar="urn:import:org.iplantc.de.client.viewer.views">
+             xmlns:toolbar="urn:import:org.iplantc.de.fileViewers.client.views">
 
     <ui:with field="strings"
              type="org.iplantc.de.resources.client.messages.IplantDisplayStrings"/>

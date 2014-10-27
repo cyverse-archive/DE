@@ -1,4 +1,4 @@
-package org.iplantc.de.client.viewer.presenter;
+package org.iplantc.de.fileViewers.client.presenter;
 
 import org.iplantc.de.client.events.FileSavedEvent;
 import org.iplantc.de.client.models.IsMaskable;
@@ -11,11 +11,11 @@ import org.iplantc.de.client.models.viewer.VizUrl;
 import org.iplantc.de.client.services.FileEditorServiceFacade;
 import org.iplantc.de.client.util.DiskResourceUtil;
 import org.iplantc.de.client.util.JsonUtil;
-import org.iplantc.de.client.viewer.callbacks.TreeUrlCallback;
-import org.iplantc.de.client.viewer.events.DirtyStateChangedEvent;
-import org.iplantc.de.client.viewer.views.EditingSupport;
-import org.iplantc.de.client.viewer.views.ExternalVisualizationURLViewerImpl;
-import org.iplantc.de.client.viewer.views.FileViewer;
+import org.iplantc.de.fileViewers.client.callbacks.TreeUrlCallback;
+import org.iplantc.de.fileViewers.client.events.DirtyStateChangedEvent;
+import org.iplantc.de.fileViewers.client.views.EditingSupport;
+import org.iplantc.de.fileViewers.client.views.ExternalVisualizationURLViewerImpl;
+import org.iplantc.de.fileViewers.client.views.FileViewer;
 import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 import org.iplantc.de.resources.client.messages.IplantErrorStrings;

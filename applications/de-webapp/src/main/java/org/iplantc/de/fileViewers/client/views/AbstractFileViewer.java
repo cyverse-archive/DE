@@ -1,7 +1,7 @@
 /**
  *
  */
-package org.iplantc.de.client.viewer.views;
+package org.iplantc.de.fileViewers.client.views;
 
 import static org.iplantc.de.client.events.FileSavedEvent.FileSavedEventHandler;
 import org.iplantc.de.client.models.diskResources.File;

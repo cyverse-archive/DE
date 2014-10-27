@@ -1,4 +1,4 @@
-package org.iplantc.de.client.viewer.callbacks;
+package org.iplantc.de.fileViewers.client.callbacks;
 
 import org.iplantc.de.client.gin.ServicesInjector;
 import org.iplantc.de.client.models.HasPath;

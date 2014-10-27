@@ -1,4 +1,4 @@
-package org.iplantc.de.client.viewer.views;
+package org.iplantc.de.fileViewers.client.views;
 
 import static org.iplantc.de.resources.client.messages.I18N.DISPLAY;
 import static org.iplantc.de.resources.client.messages.I18N.ERROR;

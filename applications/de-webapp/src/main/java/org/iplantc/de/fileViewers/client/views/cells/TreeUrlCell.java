@@ -1,7 +1,7 @@
 /**
  *
  */
-package org.iplantc.de.client.viewer.views.cells;
+package org.iplantc.de.fileViewers.client.views.cells;
 
 import org.iplantc.de.client.models.viewer.VizUrl;
 import org.iplantc.de.commons.client.util.WindowUtil;

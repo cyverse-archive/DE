@@ -1,4 +1,4 @@
-package org.iplantc.de.client.viewer.views;
+package org.iplantc.de.fileViewers.client.views;
 
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 
