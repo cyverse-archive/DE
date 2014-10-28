@@ -1,0 +1,46 @@
+buildscript { 
+    repositories {
+        maven {
+            url 'http://dl.bintray.com/steffenschaefer/maven'
+        }
+    }
+    dependencies {
+        classpath 'de.richsource.gradle.plugins:gwt-gradle-plugin:0.5'
+    }
+}
+
+apply from: '../../versions.gradle'
+apply plugin: 'java'
+apply plugin: 'war'
+apply plugin: 'gwt'
+apply plugin: 'jetty'
+
+group = 'org.iplantc.de.test.fileViewers'
+
+description = """gwt-basic-3x"""
+
+sourceCompatibility = 1.7
+targetCompatibility = 1.7
+
+gwt {
+    gwtVersion="$gwtVer"
+    modules 'org.iplantc.de.test.fileViewers.FileSetViewerTest'
+
+    src += files(project(':ui-commons-module').sourceSets.main.allJava.srcDirs) + files(project(':ui-commons-module').sourceSets.main.output.resourcesDir)
+    src += files(project(':ui-resources-module').sourceSets.main.allJava.srcDirs) + files(project(':ui-resources-module').sourceSets.main.output.resourcesDir) + files(project(':ui-resources-module').sourceSets.main.resources.srcDirs)
+    src += files(project(':ui-disk-resource-module').sourceSets.main.allJava.srcDirs) + files(project(':ui-disk-resource-module').sourceSets.main.output.resourcesDir)
+    src += files(project(':de-common-module').sourceSets.main.allJava.srcDirs) + files(project(':de-common-module').sourceSets.main.output.resourcesDir)
+    src += files(project(':file-viewers').sourceSets.main.allJava.srcDirs) + files(project(':file-viewers').sourceSets.main.output.resourcesDir)
+}
+
+dependencies {
+    gwt project(':file-viewers')
+    compile project(':file-viewers')
+    testCompile "com.google.gwt.gwtmockito:gwtmockito:$gwtMockitoVer"
+}
+
+task jettyDraftWar(type: JettyRunWar) {
+    dependsOn draftWar
+    dependsOn.remove('war')
+    webApp=draftWar.archivePath
+}

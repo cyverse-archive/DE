@@ -1,0 +1,43 @@
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
+             xmlns:gxt='urn:import:com.sencha.gxt.widget.core.client'
+             xmlns:toolbar='urn:import:com.sencha.gxt.widget.core.client.toolbar'
+             xmlns:button='urn:import:com.sencha.gxt.widget.core.client.button'
+             xmlns:container='urn:import:com.sencha.gxt.widget.core.client.container'>
+
+    <ui:with field="appearance"
+             type="org.iplantc.de.fileViewers.client.views.FileSetViewer.FileSetEditorAppearance"/>
+
+    <ui:with field="listStore"
+             type="com.sencha.gxt.data.shared.ListStore" />
+
+    <ui:with field="northData"
+             type="com.sencha.gxt.widget.core.client.container.BorderLayoutContainer.BorderLayoutData">
+        <ui:attributes size="30" maxSize="30" />
+    </ui:with>
+
+    <container:BorderLayoutContainer>
+        <container:north layoutData="{northData}">
+            <toolbar:ToolBar>
+                <toolbar:child>
+                    <button:TextButton ui:field="saveBtn"
+                                       text="{appearance.saveBtnText}"
+                                       icon="{appearance.saveBtnIcon}"/>
+                </toolbar:child>
+                <toolbar:child>
+                    <toolbar:FillToolItem/>
+                </toolbar:child>
+                <toolbar:child>
+                    <gxt:Status ui:field="editingStatus"/>
+                </toolbar:child>
+            </toolbar:ToolBar>
+        </container:north>
+
+        <!-- File navigator and contents -->
+        <container:west></container:west>
+
+        <!-- File set -->
+        <container:center>
+            <gxt:ListView ui:field="fileSet"/>
+        </container:center>
+    </container:BorderLayoutContainer>
+</ui:UiBinder>
