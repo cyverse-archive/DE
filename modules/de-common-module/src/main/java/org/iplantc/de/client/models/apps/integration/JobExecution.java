@@ -32,12 +32,6 @@ public interface JobExecution extends HasName, HasDescription {
     @PropertyName("debug")
     void setRetainInputs(Boolean retainInputs);
 
-    @PropertyName("workspace_id")
-    String getWorkspaceId();
-
-    @PropertyName("workspace_id")
-    void setWorkspaceId(String workspaceId);
-
     @PropertyName("notify")
     Boolean isEmailNotificationEnabled();
 
@@ -48,7 +42,9 @@ public interface JobExecution extends HasName, HasDescription {
 
     void setCreateOutputSubfolder(Boolean createOutputSubfolder);
 
+    @PropertyName("output_dir")
     String getOutputDirectory();
 
+    @PropertyName("output_dir")
     void setOutputDirectory(String outputDirectory);
 }
