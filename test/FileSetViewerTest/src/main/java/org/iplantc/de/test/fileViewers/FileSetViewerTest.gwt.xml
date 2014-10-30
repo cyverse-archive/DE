@@ -15,9 +15,12 @@
   <stylesheet src="reset.css" />
 
   <!-- GXT Theme -->
-  <!-- <inherits name='com.sencha.gxt.theme.blue.Blue'/> -->
-  <inherits name='com.sencha.gxt.theme.gray.Gray' /> 
-  <!-- <inherits name="com.sencha.gxt.theme.neptune.Theme" /> -->
+  <inherits name='com.sencha.gxt.theme.gray.Gray' />
+
+  <!-- Deferred Binding rules -->
+  <replace-with class="org.iplantc.de.test.fileViewers.client.appearance.FileSetViewerAppearanceTestImpl">
+      <when-type-is class="org.iplantc.de.fileViewers.client.views.FileSetViewer.FileSetEditorAppearance"/>
+  </replace-with>
 
   <!-- Specify the app entry point class. -->
   <entry-point class='org.iplantc.de.test.fileViewers.client.FileSetViewerTestEntryPoint' />

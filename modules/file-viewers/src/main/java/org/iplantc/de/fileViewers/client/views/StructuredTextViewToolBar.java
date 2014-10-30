@@ -84,7 +84,7 @@ public class StructuredTextViewToolBar extends AbstractToolBar {
         setEditingStatus(editing);
     }
 
-    protected void setEditingStatus(boolean editing) {
+    private void setEditingStatus(boolean editing) {
         if (editing) {
             editStatus.setText("Editable");
         } else {

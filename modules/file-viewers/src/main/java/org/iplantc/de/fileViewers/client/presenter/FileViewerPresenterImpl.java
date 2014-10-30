@@ -13,7 +13,6 @@ import org.iplantc.de.client.util.DiskResourceUtil;
 import org.iplantc.de.client.util.JsonUtil;
 import org.iplantc.de.fileViewers.client.callbacks.TreeUrlCallback;
 import org.iplantc.de.fileViewers.client.events.DirtyStateChangedEvent;
-import org.iplantc.de.fileViewers.client.views.EditingSupport;
 import org.iplantc.de.fileViewers.client.views.ExternalVisualizationURLViewerImpl;
 import org.iplantc.de.fileViewers.client.views.FileViewer;
 import org.iplantc.de.commons.client.ErrorHandler;
@@ -247,8 +246,8 @@ public class FileViewerPresenterImpl implements FileViewer.Presenter, FileSavedE
     @Override
     public void saveFile() {
         for (FileViewer fileViewer : viewers) {
-            if (fileViewer instanceof EditingSupport) {
-                ((EditingSupport) fileViewer).save();
+            if (fileViewer instanceof FileViewer.EditingSupport) {
+                ((FileViewer.EditingSupport) fileViewer).save();
             }
         }
     }

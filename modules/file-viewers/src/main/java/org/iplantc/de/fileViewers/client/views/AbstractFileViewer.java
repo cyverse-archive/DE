@@ -33,11 +33,6 @@ public abstract class AbstractFileViewer implements FileViewer {
     public abstract Widget asWidget();
 
     @Override
-    public String getInfoType() {
-        return infoType;
-    }
-
-    @Override
     public String getViewName() {
         if (file != null) {
             return file.getName();

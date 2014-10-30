@@ -15,7 +15,7 @@
         <ui:attributes size="30" maxSize="30" />
     </ui:with>
 
-    <container:BorderLayoutContainer>
+    <container:BorderLayoutContainer ui:field="blc">
         <container:north layoutData="{northData}">
             <toolbar:ToolBar>
                 <toolbar:child>

@@ -9,12 +9,15 @@ import org.iplantc.de.client.services.FileEditorServiceFacade;
 import org.iplantc.de.shared.services.DiscEnvApiService;
 import org.iplantc.de.shared.services.ServiceCallWrapper;
 
+import com.google.common.base.Preconditions;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONString;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.inject.Inject;
+import com.google.web.bindery.autobean.shared.Splittable;
+import com.google.web.bindery.autobean.shared.impl.StringQuoter;
 
 import com.sencha.gxt.core.client.util.Format;
 
@@ -56,17 +59,36 @@ public class FileEditorServiceFacadeImpl implements FileEditorServiceFacade {
     }
 
     @Override
-    public void getData(String url, AsyncCallback<String> callback) {
-        String address = deProperties.getDataMgmtBaseUrl() + url;
+    public void readChunk(final File file, final long chunkPosition, final long chunkSize, final AsyncCallback<String> callback){
+        Preconditions.checkNotNull(file);
+        Preconditions.checkNotNull(file.getPath());
+        String address = deProperties.getDataMgmtBaseUrl() + "read-chunk";
 
-        ServiceCallWrapper wrapper = new ServiceCallWrapper(address);
+        Splittable splittable = StringQuoter.createSplittable();
+        StringQuoter.create(file.getPath()).assign(splittable, "path");
+        StringQuoter.create(chunkPosition).assign(splittable, "position");
+        StringQuoter.create(chunkSize).assign(splittable, "chunk-size");
+        ServiceCallWrapper wrapper = new ServiceCallWrapper(POST, address, splittable.getPayload());
         callService(wrapper, callback);
     }
 
     @Override
-    public void getDataChunk(String url, JSONObject body, AsyncCallback<String> callback) {
-        String address = deProperties.getDataMgmtBaseUrl() + url;
-        ServiceCallWrapper wrapper = new ServiceCallWrapper(POST, address, body.toString());
+    public void readCsvChunk(File file, String delimiter, int pageNumber, long chunkSize,
+                             AsyncCallback<String> callback) {
+        Preconditions.checkNotNull(file);
+        Preconditions.checkNotNull(file.getPath());
+        Preconditions.checkArgument(COMMA_DELIMITER.equals(delimiter)
+                                        || TAB_DELIMITER.equals(delimiter)
+                                        || SPACE_DELIMITER.equals(delimiter), "Unsupported delimiter: '" + delimiter + "'");
+        String address = deProperties.getDataMgmtBaseUrl() + "read-csv-chunk";
+
+        Splittable splittable = StringQuoter.createSplittable();
+        StringQuoter.create(file.getPath()).assign(splittable, "path");
+        StringQuoter.create(URL.encode(delimiter)).assign(splittable, "separator");
+        StringQuoter.create(pageNumber).assign(splittable, "page");
+        StringQuoter.create(chunkSize).assign(splittable, "chunk-size");
+
+        ServiceCallWrapper wrapper = new ServiceCallWrapper(POST, address, splittable.getPayload());
         callService(wrapper, callback);
     }
 

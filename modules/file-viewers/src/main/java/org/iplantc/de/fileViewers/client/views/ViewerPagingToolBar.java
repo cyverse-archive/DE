@@ -1,12 +1,12 @@
 package org.iplantc.de.fileViewers.client.views;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyDownEvent;
 import com.google.gwt.event.dom.client.KeyDownHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 
-import com.sencha.gxt.theme.gray.client.toolbar.GrayPagingToolBarAppearance;
 import com.sencha.gxt.widget.core.client.Slider;
 import com.sencha.gxt.widget.core.client.button.TextButton;
 import com.sencha.gxt.widget.core.client.event.SelectEvent;
@@ -15,6 +15,7 @@ import com.sencha.gxt.widget.core.client.form.NumberField;
 import com.sencha.gxt.widget.core.client.form.NumberPropertyEditor;
 import com.sencha.gxt.widget.core.client.toolbar.FillToolItem;
 import com.sencha.gxt.widget.core.client.toolbar.LabelToolItem;
+import com.sencha.gxt.widget.core.client.toolbar.PagingToolBar;
 import com.sencha.gxt.widget.core.client.toolbar.SeparatorToolItem;
 import com.sencha.gxt.widget.core.client.toolbar.ToolBar;
 
@@ -24,7 +25,7 @@ public class ViewerPagingToolBar extends ToolBar {
     protected TextButton first, prev, next, last;
     protected Slider pageSize;
     protected NumberField<Integer> pageText;
-    GrayPagingToolBarAppearance appearance = new GrayPagingToolBarAppearance();
+    protected PagingToolBar.PagingToolBarAppearance pagingToolBarAppearance = GWT.create(PagingToolBar.PagingToolBarAppearance.class);
     long fileSize;
     private final AbstractFileViewer view;
     private int totalPages;
@@ -34,23 +35,24 @@ public class ViewerPagingToolBar extends ToolBar {
         this.fileSize = fileSize;
         initPageSizeSlider();
 
+
         first = new TextButton();
-        first.setIcon(appearance.first());
+        first.setIcon(pagingToolBarAppearance.first());
 
         prev = new TextButton();
-        prev.setIcon(appearance.prev());
+        prev.setIcon(pagingToolBarAppearance.prev());
 
         next = new TextButton();
-        next.setIcon(appearance.next());
+        next.setIcon(pagingToolBarAppearance.next());
 
         last = new TextButton();
-        last.setIcon(appearance.last());
+        last.setIcon(pagingToolBarAppearance.last());
 
         beforePage = new LabelToolItem();
 
         afterText = new LabelToolItem();
 
-        pageText = new NumberField<Integer>(new NumberPropertyEditor.IntegerPropertyEditor());
+        pageText = new NumberField<>(new NumberPropertyEditor.IntegerPropertyEditor());
         pageText.setWidth("30px");
 
         addToolbarItems();
@@ -104,7 +106,7 @@ public class ViewerPagingToolBar extends ToolBar {
         return pageSize.getValue() * 1024;
     }
 
-    public int getToltalPages() {
+    public int getTotalPages() {
         return totalPages;
     }
 

@@ -47,6 +47,7 @@ project(':de') {
         compile project(':ui-apps-integration')
         compile project(':analyses-module')
         compile project(':de-common-module')
+        compile project(':file-viewers')
 
         testCompile "com.google.gwt.gwtmockito:gwtmockito:$gwtMockitoVer"
         testCompile project(':de-common-module').sourceSets.test.output

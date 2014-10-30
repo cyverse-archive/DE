@@ -3,6 +3,7 @@ package org.iplantc.de.fileViewers.client.views;
 import org.iplantc.de.client.events.FileSavedEvent;
 import org.iplantc.de.client.models.diskResources.File;
 import org.iplantc.de.client.models.diskResources.Folder;
+import org.iplantc.de.client.models.viewer.InfoType;
 import org.iplantc.de.client.models.viewer.MimeType;
 import org.iplantc.de.fileViewers.client.events.DirtyStateChangedEvent;
 
@@ -11,10 +12,41 @@ import com.google.gwt.user.client.ui.HasOneWidget;
 import com.google.gwt.user.client.ui.IsWidget;
 
 /**
+ * An interface for views which display files by {@link MimeType} and {@link InfoType}. Additionally,
+ * some of these views may allow for editing/creation of the specific filetype.
+ *
+ * <h3>File Creation</h3>
+ * For viewers capable of editing/creating files, new file creation is handled at view construction
+ * time.
+ * FIXME Viewers should no be responsible for 'creating' new files.
+ *
+ * FIXME Viewers should not be performing any service calls.
+ *
  * @author sriram, jstroot
  */
 public interface FileViewer extends IsWidget, FileSavedEvent.HasFileSavedEventHandlers {
 
+    interface EditingSupport {
+
+        boolean isDirty();
+
+        void setDirty(Boolean dirty);
+
+        void save();
+    }
+
+    /**
+     * Responsible for initializing the appropriate view(s) for an existing file, or initializing
+     * the specified view(s) for the creation of a new file.
+     * <p/>
+     * It will listen for {@link FileSavedEvent}s from the initialized views. When this occurs, it
+     * will refresh all current views and fire a {@link DirtyStateChangedEvent}.
+     * <p/>
+     * Views will update notify this presenter of updates to their 'dirty' state via the
+     * {@link #setViewDirtyState(boolean)} method.
+     * <p/>
+     * FIXME JDS Views should not be responsible for saving their contents. Saving should be performed by the presenter.
+     */
     public interface Presenter extends DirtyStateChangedEvent.HasDirtyStateChangedEventHandlers {
         String getTitle();
 
@@ -46,12 +78,9 @@ public interface FileViewer extends IsWidget, FileSavedEvent.HasFileSavedEventHa
     int MIN_PAGE_SIZE_KB = 8;
     int PAGE_INCREMENT_SIZE_KB = 8;
 
-    String getInfoType();
-
     String getViewName();
 
     void refresh();
 
     void setData(Object data);
-
 }

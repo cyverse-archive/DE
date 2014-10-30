@@ -13,6 +13,9 @@ import com.sencha.gxt.widget.core.client.event.SelectEvent;
 import com.sencha.gxt.widget.core.client.event.SelectEvent.SelectHandler;
 import com.sencha.gxt.widget.core.client.toolbar.ToolBar;
 
+/**
+ *
+ */
 public abstract class AbstractToolBar extends ToolBar {
 
     protected boolean editing;

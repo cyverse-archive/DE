@@ -2,6 +2,7 @@ package org.iplantc.de.test.fileViewers.client.appearance;
 
 import org.iplantc.de.fileViewers.client.views.FileSetViewer;
 import org.iplantc.de.resources.client.IplantResources;
+import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 
 import com.google.gwt.resources.client.ImageResource;
 import com.google.inject.Inject;
@@ -14,6 +15,8 @@ public class FileSetViewerAppearanceTestImpl implements FileSetViewer.FileSetEdi
     IplantResources resources;
     @Inject
     Status.BoxStatusAppearance boxStatusAppearance;
+    @Inject
+    IplantDisplayStrings displayStrings;
 
     @Inject
     public FileSetViewerAppearanceTestImpl(){ }
@@ -21,6 +24,21 @@ public class FileSetViewerAppearanceTestImpl implements FileSetViewer.FileSetEdi
     @Override
     public Status.StatusAppearance getStatusAppearance() {
         return boxStatusAppearance;
+    }
+
+    @Override
+    public String isEditingText() {
+        return "Editable";
+    }
+
+    @Override
+    public String loadingMask() {
+        return displayStrings.loadingMask();
+    }
+
+    @Override
+    public String notEditingText() {
+        return "Non-editable";
     }
 
     @Override

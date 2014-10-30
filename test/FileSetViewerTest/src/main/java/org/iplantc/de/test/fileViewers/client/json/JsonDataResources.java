@@ -11,4 +11,6 @@ public interface JsonDataResources extends ClientBundle {
     @Source("fileSet.json")
     TextResource fileSetJson();
 
+    @Source("ReadCsvChunk_Response.json")
+    TextResource readCsvChunkResponse();
 }
