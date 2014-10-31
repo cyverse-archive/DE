@@ -2,7 +2,7 @@ package org.iplantc.de.client.services.stubs;
 
 import org.iplantc.de.client.models.apps.integration.DataSource;
 import org.iplantc.de.client.models.apps.integration.FileInfoType;
-import org.iplantc.de.client.models.apps.integration.ReferenceGenome;
+import org.iplantc.de.client.models.apps.refGenome.ReferenceGenome;
 import org.iplantc.de.client.services.AppMetadataServiceFacade;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;

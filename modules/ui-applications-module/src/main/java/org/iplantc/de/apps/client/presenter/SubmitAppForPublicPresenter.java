@@ -70,7 +70,9 @@ public class SubmitAppForPublicPresenter implements SubmitAppForPublicUseView.Pr
                 addAppCategory(null, result);
                 view.expandAppCategories();
                 // remove workspace node from store
-                view.getTreeStore().remove(view.getTreeStore().findModelWithKey(DEProperties.getInstance().getDefaultBetaCategoryId()));
+                view.getTreeStore()
+                    .remove(view.getTreeStore()
+                                .findModelWithKey(DEProperties.getInstance().getDefaultBetaCategoryId()));
             }
 
             private void addAppCategory(AppCategory parent, List<AppCategory> children) {
@@ -100,7 +102,8 @@ public class SubmitAppForPublicPresenter implements SubmitAppForPublicUseView.Pr
         if (view.validate()) {
             createDocumentationPage(view.toJson());
         } else {
-            AlertMessageBox amb = new AlertMessageBox(displayStrings.warning(), displayStrings.publicSubmitTip());
+            AlertMessageBox amb = new AlertMessageBox(displayStrings.warning(),
+                                                      displayStrings.publicSubmitTip());
             amb.show();
         }
     }
@@ -125,41 +128,50 @@ public class SubmitAppForPublicPresenter implements SubmitAppForPublicUseView.Pr
     }
 
     private void createDocumentationPage(final JSONObject obj) {
-        final AutoProgressMessageBox pmb = new AutoProgressMessageBox(displayStrings.submitForPublicUse(), displayStrings.submitRequest());
+        final AutoProgressMessageBox pmb = new AutoProgressMessageBox(displayStrings.submitForPublicUse(),
+                                                                      displayStrings.submitRequest());
         pmb.setProgressText(displayStrings.submitting());
         pmb.setClosable(false);
         pmb.getProgressBar().setInterval(100);
         pmb.auto();
         pmb.show();
-        confluenceService.addPage(JsonUtil.getString(obj, "name"), JsonUtil.getString(obj, "desc"), new AsyncCallback<String>() {
-            @Override
-            public void onFailure(Throwable caught) {
-                pmb.hide();
-                ErrorHandler.post(errorStrings.cantCreateConfluencePage(JsonUtil.getString(obj, "name")), caught);
+        confluenceService.addPage(JsonUtil.getString(obj, "name"),
+                                  JsonUtil.getString(obj, "desc"),
+                                  new AsyncCallback<String>() {
+                                      @Override
+                                      public void onFailure(Throwable caught) {
+                                          pmb.hide();
+                                          ErrorHandler.post(errorStrings.cantCreateConfluencePage(JsonUtil.getString(obj,
+                                                                                                                     "name")),
+                                                            caught);
 
-                // SS:uncomment this for testing purposes only...
-                // onSuccess("http://test.com/url");
-            }
+                                          // SS:uncomment this for testing purposes only...
+                                          // onSuccess("http://test.com/url");
+                                      }
 
-            @Override
-            public void onSuccess(final String url) {
-                obj.put("wiki_url", new JSONString(url));
-                appService.publishToWorld(obj, new AsyncCallback<String>() {
-                    @Override
-                    public void onSuccess(String result) {
-                        pmb.hide();
-                        eventBus.fireEvent(new AppPublishedEvent(view.getSelectedApp()));
-                        callback.onSuccess(url);
-                    }
+                                      @Override
+                                      public void onSuccess(final String url) {
+                                          obj.put("wiki_url", new JSONString(url));
+                                          appService.publishToWorld(obj,
+                                                                    JsonUtil.getString(obj, "id"),
+                                                                    new AsyncCallback<String>() {
+                                                                        @Override
+                                                                        public void
+                                                                                onSuccess(String result) {
+                                                                            pmb.hide();
+                                                                            eventBus.fireEvent(new AppPublishedEvent(view.getSelectedApp()));
+                                                                            callback.onSuccess(url);
+                                                                        }
 
-                    @Override
-                    public void onFailure(Throwable caught) {
-                        pmb.hide();
-                        callback.onFailure(caught);
-                    }
-                });
-            }
-        });
+                                                                        @Override
+                                                                        public void
+                                                                                onFailure(Throwable caught) {
+                                                                            pmb.hide();
+                                                                            callback.onFailure(caught);
+                                                                        }
+                                                                    });
+                                      }
+                                  });
     }
 
     private List<AppRefLink> parseRefLinks(JSONArray arr) {

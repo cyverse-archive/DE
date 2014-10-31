@@ -248,6 +248,9 @@ public class SubmitAppForPublicUseViewImpl implements SubmitAppForPublicUseView 
 
 			@Override
 			public String getKey(AppCategory item) {
+                if (item == null) {
+                    return null;
+                }
 				return item.getId();
 			}
 		});
@@ -297,6 +300,9 @@ public class SubmitAppForPublicUseViewImpl implements SubmitAppForPublicUseView 
 
 			@Override
 			public String getKey(AppRefLink item) {
+                if (item == null) {
+                    return null;
+                }
 				return item.getId();
 			}
 		});
@@ -404,10 +410,10 @@ public class SubmitAppForPublicUseViewImpl implements SubmitAppForPublicUseView 
 	public JSONObject toJson() {
 		JSONObject json = new JSONObject();
 
-		json.put("analysis_id", getJsonString(selectedApp.getId())); //$NON-NLS-1$
+        json.put("id", getJsonString(selectedApp.getId())); //$NON-NLS-1$
 		json.put("name", getJsonString(appName.getValue()));
-		json.put("desc", getJsonString(appDesc.getValue())); //$NON-NLS-1$
-		json.put("groups", buildSelectedCategoriesAsJson()); //$NON-NLS-1$
+        json.put("description", getJsonString(appDesc.getValue())); //$NON-NLS-1$
+        json.put("categories", buildSelectedCategoriesAsJson()); //$NON-NLS-1$
 		json.put("references", buildRefLinksAsJson()); //$NON-NLS-1$
 
 		return json;

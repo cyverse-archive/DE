@@ -1,5 +1,7 @@
 package org.iplantc.de.client.models.apps.integration;
 
+import org.iplantc.de.client.models.apps.refGenome.ReferenceGenome;
+import org.iplantc.de.client.models.apps.refGenome.ReferenceGenomeList;
 import org.iplantc.de.client.models.errorHandling.SimpleServiceError;
 
 import com.google.web.bindery.autobean.shared.AutoBean;

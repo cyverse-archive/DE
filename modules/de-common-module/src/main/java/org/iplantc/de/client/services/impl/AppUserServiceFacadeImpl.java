@@ -110,8 +110,8 @@ public class AppUserServiceFacadeImpl implements AppUserServiceFacade {
     }
 
     @Override
-    public void publishToWorld(JSONObject application, AsyncCallback<String> callback) {
-        String address = deProperties.getMuleServiceBaseUrl() + "make-analysis-public"; //$NON-NLS-1$
+    public void publishToWorld(JSONObject application, String appId, AsyncCallback<String> callback) {
+        String address = APPS + "/" + appId + "/publish"; //$NON-NLS-1$
 
         ServiceCallWrapper wrapper = new ServiceCallWrapper(POST, address, application.toString());
 

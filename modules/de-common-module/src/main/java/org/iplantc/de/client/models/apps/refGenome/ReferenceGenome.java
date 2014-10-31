@@ -43,8 +43,6 @@ public interface ReferenceGenome extends HasId, HasName, HasPath {
 
     void setDeleted(boolean deleted);
 
-    String getUuid();
-
     void setPath(String path);
 
 }

@@ -1,6 +1,9 @@
 package org.iplantc.admin.belphegor.client.refGenome.service.impl;
 
-import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.*;
+import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.GET;
+import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.PATCH;
+import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.PUT;
+
 import org.iplantc.admin.belphegor.client.refGenome.service.ReferenceGenomeServiceFacade;
 import org.iplantc.de.client.models.apps.refGenome.ReferenceGenome;
 import org.iplantc.de.client.models.apps.refGenome.ReferenceGenomeAutoBeanFactory;
@@ -17,6 +20,7 @@ import java.util.List;
 public class ReferenceGenomeServiceFacadeImpl implements ReferenceGenomeServiceFacade {
 
     private final String REFERENCE_GENOMES = "org.iplantc.services.referenceGenomes";
+    private final String REFERENCE_GENOMES_ADMIN = "org.iplantc.services.admin.referenceGenomes";
     @Inject private ReferenceGenomeAutoBeanFactory factory;
     @Inject private DiscEnvApiService deService;
 
@@ -32,23 +36,23 @@ public class ReferenceGenomeServiceFacadeImpl implements ReferenceGenomeServiceF
 
     @Override
     public void editReferenceGenomes(ReferenceGenome referenceGenome, AsyncCallback<List<ReferenceGenome>> callback) {
-        String address = REFERENCE_GENOMES + "/" + referenceGenome.getId();
+        String address = REFERENCE_GENOMES_ADMIN + "/" + referenceGenome.getId();
         Splittable body = StringQuoter.createSplittable();
         StringQuoter.create(referenceGenome.getName()).assign(body, ReferenceGenome.NAME);
         StringQuoter.create(referenceGenome.getPath()).assign(body, ReferenceGenome.PATH);
         StringQuoter.create(referenceGenome.isDeleted()).assign(body, ReferenceGenome.DELETED);
-        StringQuoter.create(referenceGenome.getUuid()).assign(body, ReferenceGenome.UUID);
+        StringQuoter.create(referenceGenome.getId()).assign(body, "id");
         ServiceCallWrapper wrapper = new ServiceCallWrapper(PATCH, address, body.getPayload());
         deService.getServiceData(wrapper, new ReferenceGenomeListCallbackConverter(callback, factory));
     }
 
     @Override
     public void createReferenceGenomes(ReferenceGenome referenceGenome, AsyncCallback<List<ReferenceGenome>> callback) {
-        String address = REFERENCE_GENOMES;
+        String address = REFERENCE_GENOMES_ADMIN;
         Splittable body = StringQuoter.createSplittable();
         StringQuoter.create(referenceGenome.getName()).assign(body, ReferenceGenome.NAME);
         StringQuoter.create(referenceGenome.getPath()).assign(body, ReferenceGenome.PATH);
-        ServiceCallWrapper wrapper = new ServiceCallWrapper(POST, address, body.getPayload());
+        ServiceCallWrapper wrapper = new ServiceCallWrapper(PUT, address, body.getPayload());
         deService.getServiceData(wrapper, new ReferenceGenomeListCallbackConverter(callback, factory));
     }
 }

@@ -141,11 +141,12 @@ public interface AppUserServiceFacade extends AppServiceFacade {
 
     /**
      * Adds an app to the given public categories.
-     *
+     * 
      * @param json
+     * @param appId
      * @param callback
      */
-    void publishToWorld(JSONObject json, AsyncCallback<String> callback);
+    void publishToWorld(JSONObject json, String appId, AsyncCallback<String> callback);
 
 
     /**

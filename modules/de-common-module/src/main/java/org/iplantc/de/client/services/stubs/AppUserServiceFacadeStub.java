@@ -98,7 +98,7 @@ public class AppUserServiceFacadeStub implements AppUserServiceFacade {
     }
 
     @Override
-    public void publishToWorld(JSONObject json, AsyncCallback<String> asyncCallback) {
+    public void publishToWorld(JSONObject json, String appId, AsyncCallback<String> asyncCallback) {
 
     }
 

@@ -1,6 +1,6 @@
 package org.iplantc.de.apps.widgets.client.view.editors;
 
-import org.iplantc.de.client.models.apps.integration.ReferenceGenome;
+import org.iplantc.de.client.models.apps.refGenome.ReferenceGenome;
 
 import com.google.gwt.editor.client.Editor.Path;
 

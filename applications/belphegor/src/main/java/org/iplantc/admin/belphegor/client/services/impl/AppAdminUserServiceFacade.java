@@ -102,7 +102,7 @@ public class AppAdminUserServiceFacade implements AppUserServiceFacade {
     }
 
     @Override
-    public void publishToWorld(JSONObject json, AsyncCallback<String> asyncCallback) {
+    public void publishToWorld(JSONObject json, String appId, AsyncCallback<String> asyncCallback) {
         assert false : "Dummy Class to satisfy deferred-binding, this class not used in this module.";
     }
 
