@@ -61,16 +61,6 @@ public class TextViewToolBar extends AbstractToolBar {
     }
 
     @Override
-    public void refresh() {
-        view.refresh();
-    }
-
-    @Override
-    public void save() {
-        ((TextViewerImpl) view).save();
-    }
-
-    @Override
     public void setEditing(boolean editing) {
         super.setEditing(editing);
         setEditingStatus(editing);

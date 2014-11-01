@@ -41,8 +41,6 @@ public abstract class AbstractFileViewer implements FileViewer {
         }
     }
 
-    public abstract void loadData();
-
     @Override
     public abstract void setData(Object data);
 

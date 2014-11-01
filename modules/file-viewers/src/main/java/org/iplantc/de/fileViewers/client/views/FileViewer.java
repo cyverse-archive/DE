@@ -1,12 +1,14 @@
 package org.iplantc.de.fileViewers.client.views;
 
 import org.iplantc.de.client.events.FileSavedEvent;
+import org.iplantc.de.client.models.IsMaskable;
 import org.iplantc.de.client.models.diskResources.File;
 import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.client.models.viewer.InfoType;
 import org.iplantc.de.client.models.viewer.MimeType;
 import org.iplantc.de.fileViewers.client.events.DirtyStateChangedEvent;
 
+import com.google.gwt.event.shared.HasHandlers;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HasOneWidget;
 import com.google.gwt.user.client.ui.IsWidget;
@@ -24,7 +26,7 @@ import com.google.gwt.user.client.ui.IsWidget;
  *
  * @author sriram, jstroot
  */
-public interface FileViewer extends IsWidget, FileSavedEvent.HasFileSavedEventHandlers {
+public interface FileViewer extends IsWidget, IsMaskable, HasHandlers, FileSavedEvent.HasFileSavedEventHandlers {
 
     interface EditingSupport {
 
@@ -59,6 +61,10 @@ public interface FileViewer extends IsWidget, FileSavedEvent.HasFileSavedEventHa
 
         boolean isDirty();
 
+        void loadStructuredData(Integer pageNumber, Integer pageSize, String separator);
+
+        void loadTextData(Integer pageNumber, Integer pageSize);
+
         void newFileGo(HasOneWidget container,
                        String title,
                        MimeType contentType,
@@ -68,15 +74,14 @@ public interface FileViewer extends IsWidget, FileSavedEvent.HasFileSavedEventHa
                        boolean isTabularFile,
                        Integer columns, String separator);
 
-        void saveFile();
+        void saveFile(FileViewer fileViewer, String viewerContent);
+
+        void saveFile(FileViewer fileViewer, String viewerContent, String fileExtension);
 
         void setViewDirtyState(boolean dirty);
     }
 
     String COLUMNS_KEY = "columns";
-    int MAX_PAGE_SIZE_KB = 1024;
-    int MIN_PAGE_SIZE_KB = 8;
-    int PAGE_INCREMENT_SIZE_KB = 8;
 
     String getViewName();
 

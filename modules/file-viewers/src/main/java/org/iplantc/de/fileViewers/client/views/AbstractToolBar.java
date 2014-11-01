@@ -9,7 +9,6 @@ import com.sencha.gxt.widget.core.client.Status;
 import com.sencha.gxt.widget.core.client.Status.BoxStatusAppearance;
 import com.sencha.gxt.widget.core.client.Status.StatusAppearance;
 import com.sencha.gxt.widget.core.client.button.TextButton;
-import com.sencha.gxt.widget.core.client.event.SelectEvent;
 import com.sencha.gxt.widget.core.client.event.SelectEvent.SelectHandler;
 import com.sencha.gxt.widget.core.client.toolbar.ToolBar;
 
@@ -31,8 +30,6 @@ public abstract class AbstractToolBar extends ToolBar {
         add(refreshBtn);
         editStatus = new Status(GWT.<StatusAppearance>create(BoxStatusAppearance.class));
         editStatus.setWidth(100);
-        addSaveHandler();
-        addRefreshHandler();
     }
 
     /**
@@ -46,30 +43,12 @@ public abstract class AbstractToolBar extends ToolBar {
         saveBtn.setEnabled(editing);
     }
 
-    public abstract void refresh();
-
-    public abstract void save();
-
-    private void addRefreshHandler() {
-        refreshBtn.addSelectHandler(new SelectHandler() {
-
-            @Override
-            public void onSelect(SelectEvent event) {
-                refresh();
-
-            }
-        });
+    public void addRefreshHandler(final SelectHandler handler) {
+        refreshBtn.addSelectHandler(handler);
     }
 
-    private void addSaveHandler() {
-        saveBtn.addSelectHandler(new SelectHandler() {
-
-            @Override
-            public void onSelect(SelectEvent event) {
-                save();
-
-            }
-        });
+    public void addSaveHandler(final SelectHandler handler) {
+        saveBtn.addSelectHandler(handler);
     }
 
 }

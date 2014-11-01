@@ -3,6 +3,7 @@ package org.iplantc.de.test.fileViewers.client.appearance;
 import org.iplantc.de.fileViewers.client.views.FileSetViewer;
 import org.iplantc.de.resources.client.IplantResources;
 import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
+import org.iplantc.de.resources.client.messages.IplantErrorStrings;
 
 import com.google.gwt.resources.client.ImageResource;
 import com.google.inject.Inject;
@@ -17,9 +18,16 @@ public class FileSetViewerAppearanceTestImpl implements FileSetViewer.FileSetEdi
     Status.BoxStatusAppearance boxStatusAppearance;
     @Inject
     IplantDisplayStrings displayStrings;
+    @Inject
+    IplantErrorStrings errorStrings;
 
     @Inject
     public FileSetViewerAppearanceTestImpl(){ }
+
+    @Override
+    public String failedToRetrieveFileData(String fileName) {
+        return errorStrings.unableToRetrieveFileData(fileName);
+    }
 
     @Override
     public Status.StatusAppearance getStatusAppearance() {

@@ -10,14 +10,14 @@ import org.iplantc.de.client.models.viewer.StructuredTextAutoBeanFactory;
 import org.iplantc.de.client.services.FileEditorServiceFacade;
 import org.iplantc.de.client.util.JsonUtil;
 import org.iplantc.de.commons.client.ErrorHandler;
-import org.iplantc.de.diskResource.client.views.dialogs.SaveAsDialog;
-import org.iplantc.de.fileViewers.client.callbacks.FileSaveCallback;
+import org.iplantc.de.fileViewers.client.events.ViewerPagingToolbarUpdatedEvent;
 import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 import org.iplantc.de.resources.client.messages.IplantErrorStrings;
 
 import com.google.common.base.Joiner;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONObject;
@@ -44,6 +44,7 @@ import com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer;
 import com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer.VerticalLayoutData;
 import com.sencha.gxt.widget.core.client.event.CompleteEditEvent;
 import com.sencha.gxt.widget.core.client.event.CompleteEditEvent.CompleteEditHandler;
+import com.sencha.gxt.widget.core.client.event.SelectEvent;
 import com.sencha.gxt.widget.core.client.form.TextField;
 import com.sencha.gxt.widget.core.client.grid.CellSelectionModel;
 import com.sencha.gxt.widget.core.client.grid.ColumnConfig;
@@ -64,7 +65,7 @@ import java.util.logging.Logger;
  * FIXME JDS Need to extract this into a ui.xml
  * @author sriram, jstroot
  */
-public class StructuredTextViewerImpl extends StructuredTextViewer {
+public class StructuredTextViewerImpl extends StructuredTextViewer implements ViewerPagingToolbarUpdatedEvent.ViewerPagingToolbarUpdatedEventHandler {
 
     private class ReadCsvChunkCallback implements AsyncCallback<String> {
 
@@ -194,7 +195,7 @@ public class StructuredTextViewerImpl extends StructuredTextViewer {
         initLayout();
         initToolbar();
         initPagingToolbar();
-        loadData();
+//        loadData();
         if (columns != null) {
             LOG.info("Columns: " + columns);
             initGrid(columns);
@@ -242,6 +243,11 @@ public class StructuredTextViewerImpl extends StructuredTextViewer {
     }
 
     @Override
+    public void fireEvent(GwtEvent<?> event) {
+        container.fireEvent(event);
+    }
+
+    @Override
     public String getViewName() {
         if (file != null) {
             return "Tabular View: " + file.getName();
@@ -250,13 +256,32 @@ public class StructuredTextViewerImpl extends StructuredTextViewer {
         }
     }
 
+//    @Override
+//    public boolean isDirty() {
+//        return dirty;
+//    }
+
     @Override
-    public boolean isDirty() {
-        return dirty;
+    public void mask(String loadingMask) {
+        container.mask(loadingMask);
     }
 
     @Override
-    public void setDirty(Boolean dirty) {
+    public void unmask() {
+        container.unmask();
+    }
+
+    @Override
+    public void onViewerPagingToolbarUpdated(ViewerPagingToolbarUpdatedEvent event) {
+        // Tell presenter to do it
+//        loadData();
+        presenter.loadStructuredData(event.getPageNumber(),
+                                     event.getPageSize(),
+                                     getSeparator());
+    }
+
+//    @Override
+    void setDirty(Boolean dirty) {
         this.dirty = dirty;
         if (presenter.isDirty() == dirty) {
             return;
@@ -264,8 +289,7 @@ public class StructuredTextViewerImpl extends StructuredTextViewer {
         presenter.setViewDirtyState(dirty);
     }
 
-    @Override
-    public void loadData() {
+    /*void loadData() {
         if (file == null) {
             return;
         }
@@ -280,7 +304,7 @@ public class StructuredTextViewerImpl extends StructuredTextViewer {
                                                                 container,
                                                                 file.getName(),
                                                                 errorStrings));
-    }
+    }*/
 
     @Override
     public void loadDataWithHeader(boolean header) {
@@ -290,12 +314,17 @@ public class StructuredTextViewerImpl extends StructuredTextViewer {
 
     @Override
     public void refresh() {
-        loadData();
+//        loadData();
+        presenter.loadStructuredData(pagingToolbar.getPageNumber(),
+                                     (int) pagingToolbar.getPageSize(),
+                                     getSeparator());
     }
 
-    @Override
+    /*@Override
     public void save() {
+        // FIXME this should occur in a handler of the toolbar
         store.commitChanges();
+        presenter.saveFile();
         if (file == null) {
             final SaveAsDialog saveDialog = new SaveAsDialog(parentFolder);
             SaveAsDialogOkSelectHandler okSelectHandler = new SaveAsDialogOkSelectHandler(container,
@@ -318,10 +347,12 @@ public class StructuredTextViewerImpl extends StructuredTextViewer {
                                                                     false,
                                                                     container));
         }
-    }
+    }*/
 
     @Override
     public void setData(Object data) {
+        // FIXME initGrid here
+        // FIXME
         Splittable textData = (Splittable) data;
         JSONObject obj = JsonUtil.getObject(textData.getPayload());
         JSONArray arr = obj.get("csv").isArray();
@@ -549,12 +580,28 @@ public class StructuredTextViewerImpl extends StructuredTextViewer {
     }
 
     private void initPagingToolbar() {
-        pagingToolbar = new ViewerPagingToolBar(this, getFileSize());
+        pagingToolbar = new ViewerPagingToolBar(getFileSize());
+        pagingToolbar.addPagingToolbarChangedHandler(this);
         south.add(pagingToolbar);
     }
 
     private void initToolbar() {
         toolbar = new StructuredTextViewToolBar(this, false);
+        toolbar.addRefreshHandler(new SelectEvent.SelectHandler() {
+            @Override
+            public void onSelect(SelectEvent event) {
+                presenter.loadStructuredData(pagingToolbar.getPageNumber(),
+                                             (int) pagingToolbar.getPageSize(),
+                                             getSeparator());
+            }
+        });
+        toolbar.addSaveHandler(new SelectEvent.SelectHandler() {
+            @Override
+            public void onSelect(SelectEvent event) {
+                store.commitChanges();
+                presenter.saveFile(StructuredTextViewerImpl.this, getEditorContent());
+            }
+        });
         north.add(toolbar);
     }
 

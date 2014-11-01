@@ -4,10 +4,10 @@ import org.iplantc.de.client.events.FileSavedEvent;
 import org.iplantc.de.client.gin.ServicesInjector;
 import org.iplantc.de.client.models.diskResources.File;
 import org.iplantc.de.client.services.FileEditorServiceFacade;
-import org.iplantc.de.fileViewers.client.callbacks.FileSaveCallback;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Overflow;
+import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiFactory;
@@ -18,6 +18,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.sencha.gxt.widget.core.client.button.TextButton;
 import com.sencha.gxt.widget.core.client.container.HtmlLayoutContainer;
+import com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer;
 import com.sencha.gxt.widget.core.client.event.SelectEvent;
 import com.sencha.gxt.widget.core.client.toolbar.ToolBar;
 
@@ -34,16 +35,23 @@ public class MarkDownRendererViewImpl extends AbstractFileViewer {
 
     @UiField
     TextButton saveBtn;
+    @UiField
+    VerticalLayoutContainer con;
 
     private static MarkDownRendererViewUiBinder uiBinder = GWT.create(MarkDownRendererViewUiBinder.class);
     private final FileEditorServiceFacade fileEditorService;
     private final String previewData;
+    private final Presenter presenter;
     private final Widget widget;
     private String renderHtml;
 
-    public MarkDownRendererViewImpl(File file, String infoType, String previewData) {
+    public MarkDownRendererViewImpl(final File file,
+                                    final String infoType,
+                                    final String previewData,
+                                    final Presenter presenter) {
         super(file, infoType);
         this.previewData = previewData;
+        this.presenter = presenter;
         widget = uiBinder.createAndBindUi(this);
         panel.getElement().getStyle().setBackgroundColor("#ffffff");
         panel.getElement().getStyle().setOverflow(Overflow.SCROLL);
@@ -55,16 +63,34 @@ public class MarkDownRendererViewImpl extends AbstractFileViewer {
         }
     }
 
+    @Override
+    public void fireEvent(GwtEvent<?> event) {
+        con.fireEvent(event);
+    }
+
+    @Override
+    public void mask(String loadingMask) {
+        con.mask(loadingMask);
+    }
+
+    @Override
+    public void unmask() {
+        con.unmask();
+    }
+
     @UiHandler("saveBtn")
     void onSaveBtnSelect(SelectEvent event){
-        panel.mask();
-        String destination = file.getPath() + ".html";
-        fileEditorService.uploadTextAsFile(destination,
-                                           renderHtml,
-                                           true,
-                                           new FileSaveCallback(destination,
-                                                                true,
-                                                                panel));
+        presenter.saveFile(this, renderHtml, ".html");
+//        panel.mask();
+
+//        String destination = file.getPath() + ".html";
+
+//        fileEditorService.uploadTextAsFile(destination,
+//                                           renderHtml,
+//                                           true,
+//                                           new FileSaveCallback(destination,
+//                                                                true,
+//                                                                panel));
 
     }
 
@@ -83,8 +109,8 @@ public class MarkDownRendererViewImpl extends AbstractFileViewer {
         return widget;
     }
 
-    @Override
-    public void loadData() {/* Do nothing intentionally */}
+//    @Override
+//    public void loadData() {/* Do nothing intentionally */}
 
     @Override
     public void refresh() {/* Do nothing intentionally */}

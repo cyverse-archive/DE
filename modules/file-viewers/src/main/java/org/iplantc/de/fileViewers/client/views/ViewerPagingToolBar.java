@@ -1,291 +1,182 @@
 package org.iplantc.de.fileViewers.client.views;
 
+import org.iplantc.de.fileViewers.client.events.ViewerPagingToolbarUpdatedEvent;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyDownEvent;
-import com.google.gwt.event.dom.client.KeyDownHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.uibinder.client.UiBinder;
+import com.google.gwt.uibinder.client.UiFactory;
+import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.uibinder.client.UiTemplate;
+import com.google.gwt.user.client.ui.Widget;
 
+import com.sencha.gxt.widget.core.client.Composite;
 import com.sencha.gxt.widget.core.client.Slider;
 import com.sencha.gxt.widget.core.client.button.TextButton;
 import com.sencha.gxt.widget.core.client.event.SelectEvent;
-import com.sencha.gxt.widget.core.client.event.SelectEvent.SelectHandler;
-import com.sencha.gxt.widget.core.client.form.NumberField;
-import com.sencha.gxt.widget.core.client.form.NumberPropertyEditor;
-import com.sencha.gxt.widget.core.client.toolbar.FillToolItem;
+import com.sencha.gxt.widget.core.client.form.IntegerField;
 import com.sencha.gxt.widget.core.client.toolbar.LabelToolItem;
-import com.sencha.gxt.widget.core.client.toolbar.PagingToolBar;
-import com.sencha.gxt.widget.core.client.toolbar.SeparatorToolItem;
-import com.sencha.gxt.widget.core.client.toolbar.ToolBar;
 
-public class ViewerPagingToolBar extends ToolBar {
+public class ViewerPagingToolBar extends Composite {
 
-    protected LabelToolItem beforePage, afterText;
-    protected TextButton first, prev, next, last;
-    protected Slider pageSize;
-    protected NumberField<Integer> pageText;
-    protected PagingToolBar.PagingToolBarAppearance pagingToolBarAppearance = GWT.create(PagingToolBar.PagingToolBarAppearance.class);
+    @UiTemplate("ViewerPagingToolBar.ui.xml")
+    interface ViewerPagingToolBarUiBinder extends UiBinder<Widget, ViewerPagingToolBar> { }
+
+    public interface ViewerPagingToolBarAppearance {
+        int MAX_PAGE_SIZE_KB = 1024;
+        int MIN_PAGE_SIZE_KB = 8;
+        int PAGE_INCREMENT_SIZE_KB = 8;
+
+        String afterTextLabel(int totalPages); // "of " + total pages
+
+        String invalidPage();
+
+        String pageNumberFieldWidth(); // 30px
+
+        int getMaxPageSizeKb();
+
+        int getMinPageSizeKb();
+
+        int getPageIncrementSizeKb();
+
+        int sliderWidth(); // 100
+
+        String pageSizeLabel(); // DISPLAY.pageSize()
+    }
+
+    private static ViewerPagingToolBarUiBinder BINDER = GWT.create(ViewerPagingToolBarUiBinder.class);
+
+    @UiField
+    LabelToolItem afterText;
+    @UiField
+    TextButton first, prev, next, last;
+    @UiField
+    Slider pageSizeSlider;
+    @UiField
+    IntegerField pageNumber;
+    @UiField
+    ViewerPagingToolBarAppearance appearance;
+
     long fileSize;
-    private final AbstractFileViewer view;
     private int totalPages;
 
-    public ViewerPagingToolBar(AbstractFileViewer view, long fileSize) {
-        this.view = view;
+    public ViewerPagingToolBar(long fileSize) {
         this.fileSize = fileSize;
-        initPageSizeSlider();
 
+        initWidget(BINDER.createAndBindUi(this));
+        pageNumber.setValue(1, false);
 
-        first = new TextButton();
-        first.setIcon(pagingToolBarAppearance.first());
-
-        prev = new TextButton();
-        prev.setIcon(pagingToolBarAppearance.prev());
-
-        next = new TextButton();
-        next.setIcon(pagingToolBarAppearance.next());
-
-        last = new TextButton();
-        last.setIcon(pagingToolBarAppearance.last());
-
-        beforePage = new LabelToolItem();
-
-        afterText = new LabelToolItem();
-
-        pageText = new NumberField<>(new NumberPropertyEditor.IntegerPropertyEditor());
-        pageText.setWidth("30px");
-
-        addToolbarItems();
-        pageText.setValue(1);
-
-        addFirstHandler();
-        addLastHandler();
-        addNextHandler();
-        addPrevHandler();
-        addPageSizeChangeHandler();
-        addSelectPageKeyHandler();
         computeTotalPages();
     }
 
-    public void addFirstSelectHandler(SelectHandler handler) {
-        first.addSelectHandler(handler);
-    }
-
-    public void addLastSelectHandler(SelectHandler handler) {
-        last.addSelectHandler(handler);
-    }
-
-    public void addNextSelectHandler(SelectHandler handler) {
-        next.addSelectHandler(handler);
-    }
-
-    public void addPageSizeChangeHandler(ValueChangeHandler<Integer> changeHandler) {
-        pageSize.addValueChangeHandler(changeHandler);
-    }
-
-    public void addPrevSelectHandler(SelectHandler handler) {
-        prev.addSelectHandler(handler);
-    }
-
-    public void addSelectPageKeyHandler(KeyDownHandler handler) {
-        pageText.addKeyDownHandler(handler);
+    public void addPagingToolbarChangedHandler(ViewerPagingToolbarUpdatedEvent.ViewerPagingToolbarUpdatedEventHandler changeHandler) {
+        addHandler(changeHandler, ViewerPagingToolbarUpdatedEvent.TYPE);
     }
 
     public int getPageNumber() {
-        return pageText.getCurrentValue();
-    }
-
-    public void setPageNumber(int i) {
-        pageText.setValue(i);
+        return pageNumber.getCurrentValue();
     }
 
     /**
      * @return page size in bytes
      */
     public long getPageSize() {
-        return pageSize.getValue() * 1024;
+        return pageSizeSlider.getValue() * 1024;
     }
 
     public int getTotalPages() {
         return totalPages;
     }
 
-    public void onFirst() {
-        view.loadData();
+    @UiHandler("pageNumber")
+    void onPageNumberValueChange(ValueChangeEvent<Integer> event){
+        fireEvent(new ViewerPagingToolbarUpdatedEvent(pageNumber.getValue(), pageSizeSlider.getValue()));
     }
 
-    public void onLast() {
-        view.loadData();
+    @UiHandler("pageSizeSlider")
+    void onPageSizeSliderValueChange(ValueChangeEvent<Integer> event){
+        computeTotalPages();
+        pageNumber.setValue(1, false);
+        fireEvent(new ViewerPagingToolbarUpdatedEvent(pageNumber.getValue(), pageSizeSlider.getValue()));
     }
 
-    public void onNext() {
-        view.loadData();
+    @UiHandler("first")
+    void onFirstSelect(SelectEvent event){
+        pageNumber.setValue(1);
+        first.setEnabled(false);
+        prev.setEnabled(false);
+        last.setEnabled(true);
+        next.setEnabled(true);
     }
 
-    public void onPageSelect() {
-        view.loadData();
+    @UiHandler("last")
+    void onLastSelect(SelectEvent event){
+        pageNumber.setValue(totalPages);
+        last.setEnabled(false);
+        next.setEnabled(false);
+
+        first.setEnabled(true);
+        prev.setEnabled(true);
     }
 
-    public void onPageSizeChange() {
-        view.loadData();
+    @UiHandler("next")
+    void onNextSelect(SelectEvent event){
+        int temp = getPageNumber() + 1;
+        pageNumber.setValue(temp);
+
+        if (temp == totalPages) {
+            last.setEnabled(false);
+            next.setEnabled(false);
+        }
+
+        first.setEnabled(true);
+        prev.setEnabled(true);
     }
 
-    public void onPrev() {
-        view.loadData();
+    @UiHandler("prev")
+    void onPrevSelect(SelectEvent event){
+        int temp = getPageNumber() - 1;
+        pageNumber.setValue(temp);
+        last.setEnabled(true);
+        next.setEnabled(true);
+
+        // chk first page
+        if (temp - 1 == 0) {
+            first.setEnabled(false);
+            prev.setEnabled(false);
+        } else {
+            first.setEnabled(true);
+            prev.setEnabled(true);
+        }
     }
 
-    public void setFirstEnabled(boolean enabled) {
-        first.setEnabled(enabled);
-    }
+    @UiHandler("pageNumber")
+    void onPageNumberKeyDown(KeyDownEvent event){
+        if (event.getNativeKeyCode() != KeyCodes.KEY_ENTER) {
+            return;
+        }
 
-    public void setLastEnabled(boolean enabled) {
-        last.setEnabled(enabled);
-    }
-
-    public void setNextEnabled(boolean enabled) {
-        next.setEnabled(enabled);
-    }
-
-    public void setPrevEnabled(boolean enabled) {
-        prev.setEnabled(enabled);
-    }
-
-    public void setTotalPagesText() {
-        afterText.setLabel("of " + totalPages);
-    }
-
-    private void addFirstHandler() {
-        addFirstSelectHandler(new SelectHandler() {
-
-            @Override
-            public void onSelect(SelectEvent event) {
-                setPageNumber(1);
-                setFirstEnabled(false);
-                setPrevEnabled(false);
-                setLastEnabled(true);
-                setNextEnabled(true);
-                onFirst();
+        int currPageNumber = getPageNumber();
+        if (currPageNumber <= totalPages && currPageNumber > 0) {
+            pageNumber.clearInvalid();
+            if (currPageNumber == 1) {
+                first.setEnabled(false);
+                prev.setEnabled(false);
+                last.setEnabled(true);
+                next.setEnabled(true);
+            } else if (currPageNumber == totalPages) {
+                last.setEnabled(false);
+                next.setEnabled(false);
+            } else {
+                prev.setEnabled(true);
+                next.setEnabled(true);
             }
-        });
-    }
-
-    private void addLastHandler() {
-        addLastSelectHandler(new SelectHandler() {
-
-            @Override
-            public void onSelect(SelectEvent event) {
-                setPageNumber(totalPages);
-                setLastEnabled(false);
-                setNextEnabled(false);
-
-                setFirstEnabled(true);
-                setPrevEnabled(true);
-                onLast();
-            }
-        });
-    }
-
-    private void addNextHandler() {
-        addNextSelectHandler(new SelectHandler() {
-
-            @Override
-            public void onSelect(SelectEvent event) {
-                int temp = getPageNumber() + 1;
-                setPageNumber(temp);
-
-                if (temp == totalPages) {
-                    setLastEnabled(false);
-                    setNextEnabled(false);
-                }
-
-                setFirstEnabled(true);
-                setPrevEnabled(true);
-                onNext();
-            }
-        });
-    }
-
-    private void addPageSizeChangeHandler() {
-        addPageSizeChangeHandler(new ValueChangeHandler<Integer>() {
-
-            @Override
-            public void onValueChange(ValueChangeEvent<Integer> event) {
-                computeTotalPages();
-                setPageNumber(1);
-                onPageSizeChange();
-            }
-        });
-    }
-
-    private void addPrevHandler() {
-        addPrevSelectHandler(new SelectHandler() {
-
-            @Override
-            public void onSelect(SelectEvent event) {
-                int temp = getPageNumber() - 1;
-                setPageNumber(temp);
-                setLastEnabled(true);
-                setNextEnabled(true);
-
-                // chk first page
-                if (temp - 1 == 0) {
-                    setFirstEnabled(false);
-                    setPrevEnabled(false);
-                } else {
-                    setFirstEnabled(true);
-                    setPrevEnabled(true);
-                }
-                onPrev();
-            }
-        });
-    }
-
-    private void addSelectPageKeyHandler() {
-        addSelectPageKeyHandler(new KeyDownHandler() {
-
-            @Override
-            public void onKeyDown(KeyDownEvent event) {
-                if (event.getNativeKeyCode() == KeyCodes.KEY_ENTER) {
-                    int pageNumber = getPageNumber();
-                    if (pageNumber <= totalPages && pageNumber > 0) {
-                        pageText.clearInvalid();
-                        onPageSelect();
-                        if (pageNumber == 1) {
-                            setFirstEnabled(false);
-                            setPrevEnabled(false);
-                            setLastEnabled(true);
-                            setNextEnabled(true);
-                        } else if (pageNumber == totalPages) {
-                            setLastEnabled(false);
-                            setNextEnabled(false);
-                        } else {
-                            setPrevEnabled(true);
-                            setNextEnabled(true);
-                        }
-                    } else {
-                        pageText.markInvalid(org.iplantc.de.resources.client.messages.I18N.DISPLAY.inValidPage());
-                    }
-                }
-
-            }
-        });
-    }
-
-    private void addToolbarItems() {
-        add(new FillToolItem());
-        add(new LabelToolItem(org.iplantc.de.resources.client.messages.I18N.DISPLAY.pageSize()));
-        add(pageSize);
-        add(first);
-        add(prev);
-        add(new SeparatorToolItem());
-        add(beforePage);
-        add(pageText);
-        add(afterText);
-        add(new SeparatorToolItem());
-        add(next);
-        add(last);
-        add(new SeparatorToolItem());
-        add(new FillToolItem());
+        } else {
+            pageNumber.markInvalid(appearance.invalidPage());
+        }
     }
 
     private void computeTotalPages() {
@@ -300,30 +191,32 @@ public class ViewerPagingToolBar extends ToolBar {
             }
 
         }
-        setTotalPagesText();
+        afterText.setLabel(appearance.afterTextLabel(totalPages));
         setPageNavButtonState();
     }
 
-    private void initPageSizeSlider() {
-        pageSize = new Slider();
-        pageSize.setMinValue(FileViewer.MIN_PAGE_SIZE_KB);
-        pageSize.setMaxValue(FileViewer.MAX_PAGE_SIZE_KB);
-        pageSize.setIncrement(FileViewer.PAGE_INCREMENT_SIZE_KB);
-        pageSize.setValue(FileViewer.MIN_PAGE_SIZE_KB);
-        pageSize.setWidth(100);
+    @UiFactory
+    Slider createPageSizeSlider() {
+        Slider slider = new Slider();
+        slider.setMinValue(appearance.getMinPageSizeKb());
+        slider.setMaxValue(appearance.getMaxPageSizeKb());
+        slider.setIncrement(appearance.getPageIncrementSizeKb());
+        slider.setValue(appearance.getMinPageSizeKb());
+        slider.setWidth(appearance.sliderWidth());
+        return slider;
     }
 
     private void setPageNavButtonState() {
         if (totalPages > 1) {
-            setFirstEnabled(false);
-            setPrevEnabled(false);
-            setLastEnabled(true);
-            setNextEnabled(true);
+            first.setEnabled(false);
+            prev.setEnabled(false);
+            last.setEnabled(true);
+            next.setEnabled(true);
         } else {
-            setFirstEnabled(false);
-            setNextEnabled(false);
-            setPrevEnabled(false);
-            setLastEnabled(false);
+            first.setEnabled(false);
+            next.setEnabled(false);
+            prev.setEnabled(false);
+            last.setEnabled(false);
         }
     }
 

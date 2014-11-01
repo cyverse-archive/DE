@@ -1,15 +1,15 @@
 package org.iplantc.de.fileViewers.client.views;
 
+import org.iplantc.de.client.models.IsMaskable;
 import org.iplantc.de.diskResource.client.views.dialogs.SaveAsDialog;
 
-import com.sencha.gxt.widget.core.client.Component;
 import com.sencha.gxt.widget.core.client.event.SelectEvent;
 
-final class SaveAsDialogCancelSelectHandler implements SelectEvent.SelectHandler {
-    private final Component maskable;
+public final class SaveAsDialogCancelSelectHandler implements SelectEvent.SelectHandler {
+    private final IsMaskable maskable;
     private final SaveAsDialog saveDialog;
 
-    public SaveAsDialogCancelSelectHandler(final Component maskable,
+    public SaveAsDialogCancelSelectHandler(final IsMaskable maskable,
                                            final SaveAsDialog saveDialog) {
         this.maskable = maskable;
         this.saveDialog = saveDialog;

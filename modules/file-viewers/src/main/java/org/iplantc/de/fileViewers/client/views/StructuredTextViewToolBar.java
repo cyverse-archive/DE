@@ -64,16 +64,6 @@ public class StructuredTextViewToolBar extends AbstractToolBar {
     }
 
     @Override
-    public void refresh() {
-        view.refresh();
-    }
-
-    @Override
-    public void save() {
-        view.save();
-    }
-
-    @Override
     public void setEditing(boolean editing) {
         super.setEditing(editing);
         if (editing) {

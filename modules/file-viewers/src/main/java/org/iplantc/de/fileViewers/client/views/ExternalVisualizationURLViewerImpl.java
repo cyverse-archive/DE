@@ -18,6 +18,7 @@ import org.iplantc.de.resources.client.messages.I18N;
 import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONString;
@@ -100,12 +101,17 @@ public class ExternalVisualizationURLViewerImpl extends AbstractFileViewer imple
     }
 
     @Override
+    public void fireEvent(GwtEvent<?> event) {
+        con.fireEvent(event);
+    }
+
+    @Override
     public String getViewName() {
         return displayStrings.visualization() + ":" + file.getName();
     }
 
-    @Override
-    public void loadData() {/* do nothing intentionally */}
+//    @Override
+//    public void loadData() {/* do nothing intentionally */}
 
     @Override
     public void mask(String loadingMask) {

@@ -1,25 +1,30 @@
 package org.iplantc.de.fileViewers.client.views;
 
+import org.iplantc.de.client.models.IsMaskable;
 import org.iplantc.de.client.services.FileEditorServiceFacade;
 import org.iplantc.de.diskResource.client.views.dialogs.SaveAsDialog;
 import org.iplantc.de.fileViewers.client.callbacks.FileSaveCallback;
 
-import com.sencha.gxt.widget.core.client.Component;
+import com.google.gwt.event.shared.HasHandlers;
+
 import com.sencha.gxt.widget.core.client.event.SelectEvent;
 
-final class SaveAsDialogOkSelectHandler implements SelectEvent.SelectHandler {
-    private final Component maskable;
+public final class SaveAsDialogOkSelectHandler implements SelectEvent.SelectHandler {
+    private final IsMaskable maskable;
+    private final HasHandlers hasHandlers;
     private final SaveAsDialog saveAsDialog;
     private final String savingMaskText;
     private final String editorContent;
     private final FileEditorServiceFacade fileEditorService;
 
-    SaveAsDialogOkSelectHandler(final Component maskable,
-                                final SaveAsDialog saveAsDialog,
-                                final String savingMaskText,
-                                final String editorContent,
-                                final FileEditorServiceFacade fileEditorService) {
+    public SaveAsDialogOkSelectHandler(final IsMaskable maskable,
+                                       final HasHandlers hasHandlers,
+                                       final SaveAsDialog saveAsDialog,
+                                       final String savingMaskText,
+                                       final String editorContent,
+                                       final FileEditorServiceFacade fileEditorService) {
         this.maskable = maskable;
+        this.hasHandlers = hasHandlers;
         this.saveAsDialog = saveAsDialog;
         this.savingMaskText = savingMaskText;
         this.editorContent = editorContent;
@@ -40,7 +45,8 @@ final class SaveAsDialogOkSelectHandler implements SelectEvent.SelectHandler {
                                            true,
                                            new FileSaveCallback(destination,
                                                                 true,
-                                                                maskable));
+                                                                maskable,
+                                                                hasHandlers));
         saveAsDialog.hide();
     }
 }

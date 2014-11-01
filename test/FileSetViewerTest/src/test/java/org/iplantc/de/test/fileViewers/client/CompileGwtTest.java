@@ -6,7 +6,7 @@ public class CompileGwtTest extends GWTTestCase {
   
   @Override
   public String getModuleName() {
-    return "org.iplantc.de.fileViewers.FileSetViewerTest";
+    return "org.iplantc.de.test.fileViewers.FileSetViewerTest";
   }
 
   public void testSandbox() {

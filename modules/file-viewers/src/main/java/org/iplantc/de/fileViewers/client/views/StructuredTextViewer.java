@@ -2,7 +2,7 @@ package org.iplantc.de.fileViewers.client.views;
 
 import org.iplantc.de.client.models.diskResources.File;
 
-public abstract class StructuredTextViewer extends AbstractFileViewer implements FileViewer.EditingSupport {
+public abstract class StructuredTextViewer extends AbstractFileViewer {
 
     public StructuredTextViewer(File file, String infoType) {
         super(file, infoType);
