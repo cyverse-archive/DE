@@ -45,7 +45,7 @@ public interface FileViewer extends IsWidget, IsMaskable, HasHandlers, FileSaved
      * will refresh all current views and fire a {@link DirtyStateChangedEvent}.
      * <p/>
      * Views will update notify this presenter of updates to their 'dirty' state via the
-     * {@link #setViewDirtyState(boolean)} method.
+     * {@link #setViewDirtyState(boolean, FileViewer)} method.
      * <p/>
      * FIXME JDS Views should not be responsible for saving their contents. Saving should be performed by the presenter.
      */
@@ -74,14 +74,21 @@ public interface FileViewer extends IsWidget, IsMaskable, HasHandlers, FileSaved
                        boolean isTabularFile,
                        Integer columns, String separator);
 
-        void saveFile(FileViewer fileViewer, String viewerContent);
+        void saveFile(FileViewer fileViewer);
 
-        void saveFile(FileViewer fileViewer, String viewerContent, String fileExtension);
+        void saveFile();
 
-        void setViewDirtyState(boolean dirty);
+        void saveFileWithExtension(FileViewer fileViewer, String viewerContent,
+                                   String fileExtension);
+
+        void setViewDirtyState(boolean dirty, FileViewer dirtyViewer);
     }
 
     String COLUMNS_KEY = "columns";
+
+    String getEditorContent();
+
+    boolean isDirty();
 
     String getViewName();
 

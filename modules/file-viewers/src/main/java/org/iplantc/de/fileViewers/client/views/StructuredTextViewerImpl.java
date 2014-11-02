@@ -4,15 +4,11 @@ import static org.iplantc.de.client.models.viewer.InfoType.*;
 import static org.iplantc.de.client.services.FileEditorServiceFacade.*;
 import org.iplantc.de.client.events.FileSavedEvent;
 import org.iplantc.de.client.models.diskResources.File;
-import org.iplantc.de.client.models.diskResources.Folder;
+import org.iplantc.de.client.models.viewer.InfoType;
 import org.iplantc.de.client.models.viewer.StructuredText;
-import org.iplantc.de.client.models.viewer.StructuredTextAutoBeanFactory;
-import org.iplantc.de.client.services.FileEditorServiceFacade;
 import org.iplantc.de.client.util.JsonUtil;
-import org.iplantc.de.commons.client.ErrorHandler;
+import org.iplantc.de.fileViewers.client.events.LineNumberCheckboxChangeEvent;
 import org.iplantc.de.fileViewers.client.events.ViewerPagingToolbarUpdatedEvent;
-import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
-import org.iplantc.de.resources.client.messages.IplantErrorStrings;
 
 import com.google.common.base.Joiner;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
@@ -23,19 +19,13 @@ import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONString;
 import com.google.gwt.json.client.JSONValue;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
-import com.google.web.bindery.autobean.shared.AutoBean;
-import com.google.web.bindery.autobean.shared.AutoBeanCodex;
-import com.google.web.bindery.autobean.shared.Splittable;
-import com.google.web.bindery.autobean.shared.impl.StringQuoter;
 
 import com.sencha.gxt.core.client.ValueProvider;
 import com.sencha.gxt.core.client.dom.ScrollSupport.ScrollMode;
 import com.sencha.gxt.core.client.util.Margins;
 import com.sencha.gxt.data.shared.ListStore;
 import com.sencha.gxt.data.shared.ModelKeyProvider;
-import com.sencha.gxt.widget.core.client.Component;
 import com.sencha.gxt.widget.core.client.ContentPanel;
 import com.sencha.gxt.widget.core.client.container.BorderLayoutContainer;
 import com.sencha.gxt.widget.core.client.container.BorderLayoutContainer.BorderLayoutData;
@@ -63,60 +53,10 @@ import java.util.logging.Logger;
 
 /**
  * FIXME JDS Need to extract this into a ui.xml
+ *
  * @author sriram, jstroot
  */
 public class StructuredTextViewerImpl extends StructuredTextViewer implements ViewerPagingToolbarUpdatedEvent.ViewerPagingToolbarUpdatedEventHandler {
-
-    private class ReadCsvChunkCallback implements AsyncCallback<String> {
-
-        private final Grid<JSONObject> grid;
-        private final ViewerPagingToolBar pagingToolBar;
-        private final StructuredTextAutoBeanFactory structuredTextAutoBeanFactory;
-        private final Component maskable;
-        private final String fileName;
-        private final IplantErrorStrings errorStrings1;
-
-        ReadCsvChunkCallback(final Grid<JSONObject> grid,
-                             final ViewerPagingToolBar pagingToolBar,
-                             final StructuredTextAutoBeanFactory structuredTextAutoBeanFactory,
-                             final Component maskable,
-                             final String fileName,
-                             final IplantErrorStrings errorStrings1){
-            this.grid = grid;
-            this.pagingToolBar = pagingToolBar;
-            this.structuredTextAutoBeanFactory = structuredTextAutoBeanFactory;
-            this.maskable = maskable;
-            this.fileName = fileName;
-            this.errorStrings1 = errorStrings1;
-        }
-
-        @Override
-        public void onSuccess(String result) {
-            StructuredText textBean = decodeStructuredText(result);
-            if (grid == null) {
-                initGrid(Integer.parseInt(textBean.getMaxColumns()));
-            }
-            Splittable sp = StringQuoter.split(result);
-            setData(sp);
-            setEditing(pagingToolBar.getTotalPages() == 1);
-            maskable.unmask();
-        }
-
-        StructuredText decodeStructuredText(final String result){
-
-            AutoBean<StructuredText> bean = AutoBeanCodex.decode(structuredTextAutoBeanFactory,
-                                                                 StructuredText.class,
-                                                                 result);
-            return bean.as();
-        }
-
-        @Override
-        public void onFailure(Throwable caught) {
-            ErrorHandler.post(errorStrings1.unableToRetrieveFileData(fileName),
-                              caught);
-            maskable.unmask();
-        }
-    }
 
     private final class StructuredTextValueProvider implements ValueProvider<JSONObject, String> {
         private final int index;
@@ -151,51 +91,33 @@ public class StructuredTextViewerImpl extends StructuredTextViewer implements Vi
 
     Logger LOG = Logger.getLogger(StructuredTextViewerImpl.class.getName());
 
-    private final IplantDisplayStrings displayStrings;
-    private final IplantErrorStrings errorStrings;
-    private final StructuredTextAutoBeanFactory factory;
-    private final FileEditorServiceFacade fileEditorService;
-
-    private final Folder parentFolder;
     private final FileViewer.Presenter presenter;
 
     private VerticalLayoutContainer center;
+    private int columns;
     private BorderLayoutContainer container;
+    private boolean dirty;
     private Grid<JSONObject> grid;
+    private boolean hasHeader;
+    private JSONObject headerRow;
     private ContentPanel north;
     private RowNumberer<JSONObject> numberer;
     private ViewerPagingToolBar pagingToolbar;
     private GridInlineEditing<JSONObject> rowEditing;
-    private ContentPanel south;
-    private StructuredTextViewToolBar toolbar;
-    private ListStore<JSONObject> store;
-
-    private int columns;
-    private boolean dirty;
-    private boolean hasHeader;
-    private JSONObject headerRow;
     private List<JSONObject> skippedRows;
+    private ContentPanel south;
+    private ListStore<JSONObject> store;
+    private StructuredTextViewToolBar toolbar;
 
     public StructuredTextViewerImpl(final File file,
                                     final String infoType,
                                     final Integer columns,
-                                    final Folder parentFolder,
-                                    final FileViewer.Presenter presenter,
-                                    final IplantDisplayStrings displayStrings,
-                                    final IplantErrorStrings errorStrings,
-                                    final StructuredTextAutoBeanFactory factory,
-                                    final FileEditorServiceFacade fileEditorService) {
+                                    final FileViewer.Presenter presenter) {
         super(file, infoType);
-        this.parentFolder = parentFolder;
         this.presenter = presenter;
-        this.displayStrings = displayStrings;
-        this.errorStrings = errorStrings;
-        this.factory = factory;
-        this.fileEditorService = fileEditorService;
         initLayout();
         initToolbar();
         initPagingToolbar();
-//        loadData();
         if (columns != null) {
             LOG.info("Columns: " + columns);
             initGrid(columns);
@@ -248,6 +170,28 @@ public class StructuredTextViewerImpl extends StructuredTextViewer implements Vi
     }
 
     @Override
+    public String getEditorContent() {
+        StringBuilder sw = new StringBuilder();
+        Joiner joiner = Joiner.on(getSeparator()).skipNulls();
+        String NEW_LINE = "\n";
+        if (skippedRows != null && skippedRows.size() > 0) {
+            for (JSONObject skipr : skippedRows) {
+                joiner.appendTo(sw, jsonToStringList(skipr));
+                sw.append(NEW_LINE);
+            }
+        }
+        if (headerRow != null) {
+            joiner.appendTo(sw, jsonToStringList(headerRow));
+            sw.append(NEW_LINE);
+        }
+        for (JSONObject obj : getStore().getAll()) {
+            joiner.appendTo(sw, jsonToStringList(obj));
+            sw.append(NEW_LINE);
+        }
+        return sw.toString();
+    }
+
+    @Override
     public String getViewName() {
         if (file != null) {
             return "Tabular View: " + file.getName();
@@ -256,55 +200,18 @@ public class StructuredTextViewerImpl extends StructuredTextViewer implements Vi
         }
     }
 
-//    @Override
-//    public boolean isDirty() {
-//        return dirty;
-//    }
-
     @Override
-    public void mask(String loadingMask) {
-        container.mask(loadingMask);
+    public boolean isDirty() {
+        return dirty;
     }
 
-    @Override
-    public void unmask() {
-        container.unmask();
-    }
-
-    @Override
-    public void onViewerPagingToolbarUpdated(ViewerPagingToolbarUpdatedEvent event) {
-        // Tell presenter to do it
-//        loadData();
-        presenter.loadStructuredData(event.getPageNumber(),
-                                     event.getPageSize(),
-                                     getSeparator());
-    }
-
-//    @Override
     void setDirty(Boolean dirty) {
         this.dirty = dirty;
         if (presenter.isDirty() == dirty) {
             return;
         }
-        presenter.setViewDirtyState(dirty);
+        presenter.setViewDirtyState(dirty, this);
     }
-
-    /*void loadData() {
-        if (file == null) {
-            return;
-        }
-        container.mask(displayStrings.loadingMask());
-        fileEditorService.readCsvChunk(file,
-                                       getSeparator(),
-                                       pagingToolbar.getPageNumber(),
-                                       pagingToolbar.getPageSize(),
-                                       new ReadCsvChunkCallback(grid,
-                                                                pagingToolbar,
-                                                                factory,
-                                                                container,
-                                                                file.getName(),
-                                                                errorStrings));
-    }*/
 
     @Override
     public void loadDataWithHeader(boolean header) {
@@ -313,47 +220,32 @@ public class StructuredTextViewerImpl extends StructuredTextViewer implements Vi
     }
 
     @Override
+    public void mask(String loadingMask) {
+        container.mask(loadingMask);
+    }
+
+    @Override
+    public void onViewerPagingToolbarUpdated(ViewerPagingToolbarUpdatedEvent event) {
+        presenter.loadStructuredData(event.getPageNumber(),
+                                     event.getPageSize(),
+                                     getSeparator());
+    }
+
+    @Override
     public void refresh() {
-//        loadData();
         presenter.loadStructuredData(pagingToolbar.getPageNumber(),
                                      (int) pagingToolbar.getPageSize(),
                                      getSeparator());
     }
 
-    /*@Override
-    public void save() {
-        // FIXME this should occur in a handler of the toolbar
-        store.commitChanges();
-        presenter.saveFile();
-        if (file == null) {
-            final SaveAsDialog saveDialog = new SaveAsDialog(parentFolder);
-            SaveAsDialogOkSelectHandler okSelectHandler = new SaveAsDialogOkSelectHandler(container,
-                                                                                          saveDialog,
-                                                                                          displayStrings.savingMask(),
-                                                                                          getEditorContent(),
-                                                                                          fileEditorService);
-            SaveAsDialogCancelSelectHandler cancelSelectHandler = new SaveAsDialogCancelSelectHandler(container,
-                                                                                                      saveDialog);
-            saveDialog.addOkButtonSelectHandler(okSelectHandler);
-            saveDialog.addCancelButtonSelectHandler(cancelSelectHandler);
-            saveDialog.show();
-            saveDialog.toFront();
-        } else {
-            container.mask(displayStrings.savingMask());
-            fileEditorService.uploadTextAsFile(file.getPath(),
-                                               getEditorContent(),
-                                               false,
-                                               new FileSaveCallback(file.getPath(),
-                                                                    false,
-                                                                    container));
-        }
-    }*/
-
     @Override
     public void setData(Object data) {
+        if(!(data instanceof StructuredText)){
+            return;
+        }
         // FIXME initGrid here
         // FIXME
-        Splittable textData = (Splittable) data;
+        StructuredText textData = (StructuredText) data;
         JSONObject obj = JsonUtil.getObject(textData.getPayload());
         JSONArray arr = obj.get("csv").isArray();
 
@@ -376,6 +268,7 @@ public class StructuredTextViewerImpl extends StructuredTextViewer implements Vi
             }
         }
 
+        dirty = false;
     }
 
     @Override
@@ -416,15 +309,18 @@ public class StructuredTextViewerImpl extends StructuredTextViewer implements Vi
 
     }
 
-    private void addLineNumberHandler() {
-        toolbar.addLineNumberCbxChangeHandler(new ValueChangeHandler<Boolean>() {
+    @Override
+    public void unmask() {
+        container.unmask();
+    }
 
+    private void addLineNumberHandler() {
+        toolbar.addLineNumberCheckboxChangeHandler(new LineNumberCheckboxChangeEvent.LineNumberCheckboxChangeEventHandler() {
             @Override
-            public void onValueChange(ValueChangeEvent<Boolean> event) {
+            public void onLineNumberCheckboxChange(LineNumberCheckboxChangeEvent event) {
                 numberer.setHidden(!event.getValue());
                 grid.getView().refresh(false);
             }
-
         });
     }
 
@@ -467,27 +363,6 @@ public class StructuredTextViewerImpl extends StructuredTextViewer implements Vi
         return new MarginData();
     }
 
-    private String getEditorContent() {
-        StringBuilder sw = new StringBuilder();
-        Joiner joiner = Joiner.on(getSeparator()).skipNulls();
-        String NEW_LINE = "\n";
-        if (skippedRows != null && skippedRows.size() > 0) {
-            for (JSONObject skipr : skippedRows) {
-                joiner.appendTo(sw, jsonToStringList(skipr));
-                sw.append(NEW_LINE);
-            }
-        }
-        if (headerRow != null) {
-            joiner.appendTo(sw, jsonToStringList(headerRow));
-            sw.append(NEW_LINE);
-        }
-        for (JSONObject obj : getStore().getAll()) {
-            joiner.appendTo(sw, jsonToStringList(obj));
-            sw.append(NEW_LINE);
-        }
-        return sw.toString();
-    }
-
     private BorderLayoutData getNorthData() {
         BorderLayoutData northData = new BorderLayoutData(30);
         northData.setMargins(new Margins(5));
@@ -497,11 +372,12 @@ public class StructuredTextViewerImpl extends StructuredTextViewer implements Vi
     }
 
     private String getSeparator() {
-        if (CSV.toString().equalsIgnoreCase(infoType)) {
+        InfoType fromTypeString = InfoType.fromTypeString(infoType);
+        if (CSV.equals(fromTypeString)) {
             return COMMA_DELIMITER;
-        } else if (TSV.toString().equalsIgnoreCase(infoType)
-                    || VCF.toString().equalsIgnoreCase(infoType)
-                    || GFF.toString().equalsIgnoreCase(infoType)) {
+        } else if (TSV.equals(fromTypeString)
+                       || VCF.equals(fromTypeString)
+                       || GFF.equals(fromTypeString)) {
             return TAB_DELIMITER;
         } else {
             return SPACE_DELIMITER;
@@ -581,7 +457,7 @@ public class StructuredTextViewerImpl extends StructuredTextViewer implements Vi
 
     private void initPagingToolbar() {
         pagingToolbar = new ViewerPagingToolBar(getFileSize());
-        pagingToolbar.addPagingToolbarChangedHandler(this);
+        pagingToolbar.addViewerPagingToolbarUpdatedEventHandler(this);
         south.add(pagingToolbar);
     }
 
@@ -599,7 +475,7 @@ public class StructuredTextViewerImpl extends StructuredTextViewer implements Vi
             @Override
             public void onSelect(SelectEvent event) {
                 store.commitChanges();
-                presenter.saveFile(StructuredTextViewerImpl.this, getEditorContent());
+                presenter.saveFile(StructuredTextViewerImpl.this);
             }
         });
         north.add(toolbar);

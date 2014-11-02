@@ -80,7 +80,7 @@ public class MarkDownRendererViewImpl extends AbstractFileViewer {
 
     @UiHandler("saveBtn")
     void onSaveBtnSelect(SelectEvent event){
-        presenter.saveFile(this, renderHtml, ".html");
+        presenter.saveFileWithExtension(this, renderHtml, ".html");
 //        panel.mask();
 
 //        String destination = file.getPath() + ".html";

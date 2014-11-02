@@ -1,35 +1,93 @@
 package org.iplantc.de.fileViewers.client.views;
 
-import org.iplantc.de.resources.client.IplantResources;
-import org.iplantc.de.resources.client.messages.I18N;
+import org.iplantc.de.fileViewers.client.events.LineNumberCheckboxChangeEvent;
+import org.iplantc.de.fileViewers.client.events.RefreshSelectedEvent;
+import org.iplantc.de.fileViewers.client.events.SaveSelectedEvent;
 
-import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.resources.client.ImageResource;
+import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.uibinder.client.UiHandler;
 
+import com.sencha.gxt.widget.core.client.Composite;
 import com.sencha.gxt.widget.core.client.Status;
-import com.sencha.gxt.widget.core.client.Status.BoxStatusAppearance;
 import com.sencha.gxt.widget.core.client.Status.StatusAppearance;
 import com.sencha.gxt.widget.core.client.button.TextButton;
-import com.sencha.gxt.widget.core.client.event.SelectEvent.SelectHandler;
-import com.sencha.gxt.widget.core.client.toolbar.ToolBar;
+import com.sencha.gxt.widget.core.client.event.SelectEvent;
+import com.sencha.gxt.widget.core.client.form.CheckBox;
 
 /**
- *
+ * @author jstroot
  */
-public abstract class AbstractToolBar extends ToolBar {
+public abstract class AbstractToolBar extends Composite {
+
+    public interface AbstractToolBarAppearance {
+        String editingStatusText();
+
+        String notEditingStatusText();
+
+        String saveButtonText(); // DISPLAY.save()
+
+        ImageResource saveButtonIcon(); // RESOURCES.save()
+
+        String refreshButtonText(); // DISPLAY.refresh()
+
+        ImageResource refreshButtonIcon(); // RESOURCES.refresh()
+
+        String lineNumberCheckboxLabel(); // "Line Numbers"
+
+        StatusAppearance editStatusAppearance(); // BoxStatusAppearance
+
+        int editStatusWidth(); // 100
+    }
 
     protected boolean editing;
-    protected TextButton refreshBtn;
-    protected TextButton saveBtn;
-    final Status editStatus;
 
-    public AbstractToolBar(boolean editing) {
+    @UiField
+    AbstractToolBarAppearance appearance;
+    @UiField
+    TextButton refreshBtn;
+    @UiField
+    TextButton saveBtn;
+    @UiField
+    CheckBox lineNumberCheckbox;
+    @UiField(provided = true)
+    Status editStatus;
+
+    public AbstractToolBar(boolean editing, final AbstractToolBarAppearance appearance) {
         this.editing = editing;
-        saveBtn = new TextButton(I18N.DISPLAY.save(), IplantResources.RESOURCES.save());
-        refreshBtn = new TextButton(I18N.DISPLAY.refresh(), IplantResources.RESOURCES.refresh());
-        add(saveBtn);
-        add(refreshBtn);
-        editStatus = new Status(GWT.<StatusAppearance>create(BoxStatusAppearance.class));
-        editStatus.setWidth(100);
+        this.appearance = appearance;
+        saveBtn = new TextButton(appearance.saveButtonText(), appearance.saveButtonIcon());
+        refreshBtn = new TextButton(appearance.refreshButtonText(), appearance.refreshButtonIcon());
+        lineNumberCheckbox = new CheckBox();
+        lineNumberCheckbox.setBoxLabel(appearance.lineNumberCheckboxLabel());
+
+//        lineNumberCheckbox.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
+//            @Override
+//            public void onValueChange(ValueChangeEvent<Boolean> event) {
+//                fireEvent(new LineNumberCheckboxChangeEvent(event.getValue()));
+//            }
+//        });
+        editStatus = new Status(appearance.editStatusAppearance());
+        editStatus.setWidth(appearance.editStatusWidth());
+        setEditing(editing);
+
+    }
+
+    @UiHandler("lineNumberCheckbox")
+    void onLineNumberCheckboxValueChange(ValueChangeEvent<Boolean> event){
+        fireEvent(new LineNumberCheckboxChangeEvent(event.getValue()));
+    }
+
+    @UiHandler("saveBtn")
+    void onSaveSelect(SelectEvent event){
+        fireEvent(new SaveSelectedEvent());
+    }
+
+    @UiHandler("refreshBtn")
+    void onRefreshSelect(SelectEvent event){
+        fireEvent(new RefreshSelectedEvent());
     }
 
     /**
@@ -41,14 +99,19 @@ public abstract class AbstractToolBar extends ToolBar {
 
     public void setEditing(boolean editing) {
         saveBtn.setEnabled(editing);
+        String editingText = editing ? appearance.editingStatusText() : appearance.notEditingStatusText();
     }
 
-    public void addRefreshHandler(final SelectHandler handler) {
-        refreshBtn.addSelectHandler(handler);
+    public HandlerRegistration addRefreshHandler(final RefreshSelectedEvent.RefreshSelectedEventHandler handler) {
+        return addHandler(handler, RefreshSelectedEvent.TYPE);
     }
 
-    public void addSaveHandler(final SelectHandler handler) {
-        saveBtn.addSelectHandler(handler);
+    public HandlerRegistration addSaveHandler(final SaveSelectedEvent.SaveSelectedEventHandler handler) {
+        return addHandler(handler, SaveSelectedEvent.TYPE);
+    }
+
+    public HandlerRegistration addLineNumberCheckboxChangeHandler(final LineNumberCheckboxChangeEvent.LineNumberCheckboxChangeEventHandler handler){
+        return addHandler(handler, LineNumberCheckboxChangeEvent.TYPE);
     }
 
 }

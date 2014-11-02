@@ -2,11 +2,9 @@ package org.iplantc.de.fileViewers.client.views;
 
 import org.iplantc.de.client.events.FileSavedEvent;
 import org.iplantc.de.client.models.diskResources.File;
-import org.iplantc.de.client.models.diskResources.Folder;
-import org.iplantc.de.client.services.FileEditorServiceFacade;
+import org.iplantc.de.client.models.viewer.StructuredText;
+import org.iplantc.de.fileViewers.client.events.LineNumberCheckboxChangeEvent;
 import org.iplantc.de.fileViewers.client.events.ViewerPagingToolbarUpdatedEvent;
-import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
-import org.iplantc.de.resources.client.messages.IplantErrorStrings;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
@@ -34,9 +32,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * @author sriram
+ * @author sriram, jstroot
  */
-//public class TextViewerImpl extends AbstractFileViewer implements FileViewer.EditingSupport, ViewerPagingToolbarUpdatedEvent.ViewerPagingToolbarUpdatedEventHandler {
 public class TextViewerImpl extends AbstractFileViewer implements ViewerPagingToolbarUpdatedEvent.ViewerPagingToolbarUpdatedEventHandler {
 
     private final class PreviewSelectHandlerImpl implements SelectHandler {
@@ -81,9 +78,9 @@ public class TextViewerImpl extends AbstractFileViewer implements ViewerPagingTo
     @UiTemplate("TextViewer.ui.xml")
     interface TextViewerUiBinder extends UiBinder<Widget, TextViewerImpl> { }
 
+    protected boolean editing;
+    protected JavaScriptObject jso;
     static Logger LOG = Logger.getLogger(TextViewerImpl.class.getName());
-    private static TextViewerUiBinder uiBinder = GWT.create(TextViewerUiBinder.class);
-
     @UiField
     SimpleContainer center;
     @UiField
@@ -92,55 +89,33 @@ public class TextViewerImpl extends AbstractFileViewer implements ViewerPagingTo
     ViewerPagingToolBar pagingToolbar;
     @UiField
     TextViewToolBar toolbar;
-
-    protected boolean editing;
-    protected JavaScriptObject jso;
-    private final IplantDisplayStrings displayStrings;
-    private final FileEditorServiceFacade fileEditorService;
+    private static TextViewerUiBinder uiBinder = GWT.create(TextViewerUiBinder.class);
     private final String mode;
-    private final Folder parentFolder;
     private final FileViewer.Presenter presenter;
     private final Widget widget;
-    private IplantErrorStrings errorStrings;
+    private boolean dirty;
 
     public TextViewerImpl(final File file,
                           final String infoType,
                           final String mode,
                           final boolean editing,
-                          final Folder parentFolder,
-                          final FileViewer.Presenter presenter,
-                          final IplantDisplayStrings displayStrings,
-                          final IplantErrorStrings errorStrings,
-                          final FileEditorServiceFacade fileEditorService) {
+                          final FileViewer.Presenter presenter) {
         super(file, infoType);
         this.editing = editing;
         this.mode = mode;
-        this.parentFolder = parentFolder;
         this.presenter = presenter;
-        this.displayStrings = displayStrings;
-        this.errorStrings = errorStrings;
-        this.fileEditorService = fileEditorService;
         LOG.log(Level.INFO, "in viewer-->" + mode);
 
         widget = uiBinder.createAndBindUi(this);
 
-        if (mode != null && mode.equals("markdown")) {
-            toolbar.addPreviewHandler(new PreviewSelectHandlerImpl());
-        }
-
-        addWrapHandler();
-        addLineNumberHandler();
-
-        if (file != null) {
-//            loadData();
-        } else {
+        if (file == null) {
             /* when u start editing a new file, data is empty but the new file
              * is yet to be saved. */
             setData("");
         }
 
         center.addResizeHandler(new ResizeViewHandlerImpl());
-        pagingToolbar.addPagingToolbarChangedHandler(this);
+        pagingToolbar.addViewerPagingToolbarUpdatedEventHandler(this);
     }
 
     public static native JavaScriptObject displayData(final TextViewerImpl instance,
@@ -220,19 +195,26 @@ public class TextViewerImpl extends AbstractFileViewer implements ViewerPagingTo
         con.fireEvent(event);
     }
 
-//    @Override
-//    public boolean isDirty() {
-//        return isClean(jso);
-//    }
+    @Override
+    public String getEditorContent() {
+        return getEditorContent(jso);
+    }
+
+    @Override
+    public boolean isDirty() {
+        return dirty;
+    }
+
+    void setDirty(Boolean dirty) {
+        this.dirty = dirty;
+        if (presenter.isDirty() != dirty) {
+            presenter.setViewDirtyState(dirty, this);
+        }
+    }
 
     @Override
     public void mask(String loadingMask) {
         con.mask(loadingMask);
-    }
-
-    @Override
-    public void unmask() {
-        con.unmask();
     }
 
     @Override
@@ -241,46 +223,16 @@ public class TextViewerImpl extends AbstractFileViewer implements ViewerPagingTo
         presenter.loadTextData(event.getPageNumber(), event.getPageSize());
     }
 
-    void setDirty(Boolean dirty) {
-        if (presenter.isDirty() != dirty) {
-            presenter.setViewDirtyState(dirty);
-        }
-    }
-
     @Override
     public void refresh() {
         presenter.loadTextData(pagingToolbar.getPageNumber(), (int) pagingToolbar.getPageSize());
     }
 
-//    @Override
-//    public void save() {
-//        presenter.saveFile(this, getEditorContent(jso));
-        /*if (file == null) {
-            final SaveAsDialog saveDialog = new SaveAsDialog(parentFolder);
-            SaveAsDialogOkSelectHandler okSelectHandler = new SaveAsDialogOkSelectHandler(con,
-                                                                                          saveDialog,
-                                                                                          displayStrings.savingMask(),
-                                                                                          getEditorContent(jso),
-                                                                                          fileEditorService);
-            SaveAsDialogCancelSelectHandler cancelSelectHandler = new SaveAsDialogCancelSelectHandler(con,
-                                                                                                      saveDialog);
-            saveDialog.addOkButtonSelectHandler(okSelectHandler);
-            saveDialog.addCancelButtonSelectHandler(cancelSelectHandler);
-            saveDialog.show();
-            saveDialog.toFront();
-        } else {
-            con.mask(displayStrings.savingMask());
-            fileEditorService.uploadTextAsFile(file.getPath(),
-                                               getEditorContent(jso),
-                                               false,
-                                               new FileSaveCallback(file.getPath(),
-                                                                    false,
-                                                                    con));
-        }*/
-//    }
-
     @Override
     public void setData(Object data) {
+        if(data instanceof StructuredText){
+            return;
+        }
         boolean allowEditing = pagingToolbar.getTotalPages() == 1 && editing;
         if (jso == null) {
             clearDisplay();
@@ -302,6 +254,12 @@ public class TextViewerImpl extends AbstractFileViewer implements ViewerPagingTo
         /**
          * XXX - SS - support editing for files with only one page
          */
+        dirty = false;
+    }
+
+    @Override
+    public void unmask() {
+        con.unmask();
     }
 
     protected void clearDisplay() {
@@ -320,6 +278,7 @@ public class TextViewerImpl extends AbstractFileViewer implements ViewerPagingTo
         TextViewToolBar textViewPagingToolBar;
         if (mode != null && mode.equals("markdown")) {
             textViewPagingToolBar = new TextViewToolBar(this, editing, true);
+            textViewPagingToolBar.addPreviewHandler(new PreviewSelectHandlerImpl());
         } else {
             textViewPagingToolBar = new TextViewToolBar(this, editing, false);
         }
@@ -332,30 +291,24 @@ public class TextViewerImpl extends AbstractFileViewer implements ViewerPagingTo
         textViewPagingToolBar.addSaveHandler(new SelectHandler() {
             @Override
             public void onSelect(SelectEvent event) {
-                presenter.saveFile(TextViewerImpl.this, getEditorContent(jso));
+                presenter.saveFile(TextViewerImpl.this);
             }
         });
-        return textViewPagingToolBar;
-    }
 
-    private void addLineNumberHandler() {
-        toolbar.addLineNumberCbxChangeHandler(new ValueChangeHandler<Boolean>() {
-
-            @Override
-            public void onValueChange(ValueChangeEvent<Boolean> event) {
-                showLineNumbersInEditor(jso, event.getValue());
-            }
-
-        });
-    }
-
-    private void addWrapHandler() {
-        toolbar.addWrapCbxChangeHandler(new ValueChangeHandler<Boolean>() {
-
+        textViewPagingToolBar.addWrapCbxChangeHandler(new ValueChangeHandler<Boolean>() {
             @Override
             public void onValueChange(ValueChangeEvent<Boolean> event) {
                 wrapText(jso, event.getValue());
             }
         });
+        textViewPagingToolBar.addLineNumberCheckboxChangeHandler(new LineNumberCheckboxChangeEvent.LineNumberCheckboxChangeEventHandler() {
+            @Override
+            public void onLineNumberCheckboxChange(LineNumberCheckboxChangeEvent event) {
+                showLineNumbersInEditor(jso, event.getValue());
+            }
+        });
+
+        return textViewPagingToolBar;
     }
+
 }

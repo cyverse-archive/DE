@@ -3,15 +3,23 @@
              xmlns:view='urn:import:org.iplantc.de.fileViewers.client.views'
              xmlns:container='urn:import:com.sencha.gxt.widget.core.client.container'>
 
-    <ui:with field="appearance"
-             type="org.iplantc.de.fileViewers.client.views.AbstractStructuredTextViewer.StructuredTextViewerAppearance"/>
-
     <ui:with field="listStore"
              type="com.sencha.gxt.data.shared.ListStore" />
     <ui:with field="columnModel"
              type="com.sencha.gxt.widget.core.client.grid.ColumnModel"/>
     <ui:with field="gridView"
-             type="com.sencha.gxt.widget.core.client.grid.GridView"/>
+             type="com.sencha.gxt.widget.core.client.grid.GridView">
+        <ui:attributes stripeRows="true"
+                       trackMouseOver="true"/>
+    </ui:with>
+    <ui:with field="rowNumberer"
+             type="com.sencha.gxt.widget.core.client.grid.RowNumberer">
+        <ui:attributes hidden="true"/>
+    </ui:with>
+    <ui:with field="gridFilters"
+             type="com.sencha.gxt.widget.core.client.grid.filters.GridFilters">
+        <ui:attributes local="true"/>
+    </ui:with>
 
     <ui:with field="margins5" type="com.sencha.gxt.core.client.util.Margins">
         <ui:attributes top="5" right="5" bottom="5" left="5" />

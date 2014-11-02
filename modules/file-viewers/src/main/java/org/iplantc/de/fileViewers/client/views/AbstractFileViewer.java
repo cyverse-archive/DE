@@ -52,4 +52,8 @@ public abstract class AbstractFileViewer implements FileViewer {
         return 0;
     }
 
+    @Override
+    public boolean isDirty() {
+        return false;
+    }
 }

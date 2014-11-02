@@ -1,12 +1,14 @@
 package org.iplantc.de.fileViewers.client.presenter;
 
 import org.iplantc.de.client.events.FileSavedEvent;
+import org.iplantc.de.client.models.CommonModelAutoBeanFactory;
 import org.iplantc.de.client.models.IsMaskable;
 import org.iplantc.de.client.models.diskResources.File;
 import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.client.models.errors.diskResources.DiskResourceErrorAutoBeanFactory;
 import org.iplantc.de.client.models.errors.diskResources.ErrorGetManifest;
 import org.iplantc.de.client.models.viewer.MimeType;
+import org.iplantc.de.client.models.viewer.StructuredText;
 import org.iplantc.de.client.models.viewer.VizUrl;
 import org.iplantc.de.client.services.FileEditorServiceFacade;
 import org.iplantc.de.client.util.DiskResourceUtil;
@@ -111,10 +113,12 @@ public class FileViewerPresenterImpl implements FileViewer.Presenter, FileSavedE
     }
 
     Logger LOG = Logger.getLogger(FileViewerPresenterImpl.class.getName());
-    private final IplantDisplayStrings displayStrings;
-    private final IplantErrorStrings errorStrings;
-    private final MimeTypeViewerResolverFactory mimeFactory;
-    private final FileEditorServiceFacade fileEditorService;
+    @Inject IplantDisplayStrings displayStrings;
+    @Inject IplantErrorStrings errorStrings;
+    @Inject MimeTypeViewerResolverFactory mimeFactory;
+    @Inject CommonModelAutoBeanFactory factory;
+    @Inject FileEditorServiceFacade fileEditorService;
+
     private MimeType contentType;
     /**
      * The file shown in the window.
@@ -132,14 +136,7 @@ public class FileViewerPresenterImpl implements FileViewer.Presenter, FileSavedE
     private boolean vizTabFirst;
 
     @Inject
-    public FileViewerPresenterImpl(final FileEditorServiceFacade fileEditorService,
-                                   final IplantDisplayStrings displayStrings,
-                                   final IplantErrorStrings errorStrings,
-                                   final MimeTypeViewerResolverFactory mimeFactory) {
-        this.fileEditorService = fileEditorService;
-        this.displayStrings = displayStrings;
-        this.errorStrings = errorStrings;
-        this.mimeFactory = mimeFactory;
+    public FileViewerPresenterImpl() {
         viewers = Lists.newArrayList();
         tabPanel = new PlainTabPanel();
     }
@@ -206,11 +203,16 @@ public class FileViewerPresenterImpl implements FileViewer.Presenter, FileSavedE
             public void onSuccess(String result) {
                 // TODO unmask view
                 // Get data from result
-                Splittable splitResult = StringQuoter.split(result);
+                StructuredText structuredText = getStructuredText(result);
                 for(FileViewer view : viewers){
                     // FIXME Possible issue with data compatibility between views
-                    view.setData(splitResult);
+                    view.setData(structuredText);
                 }
+            }
+
+            private StructuredText getStructuredText(String result) {
+                AutoBean<StructuredText> textAutoBean = AutoBeanCodex.decode(factory, StructuredText.class, result);
+                return textAutoBean.as();
             }
         });
     }
@@ -299,18 +301,29 @@ public class FileViewerPresenterImpl implements FileViewer.Presenter, FileSavedE
             setTitle(file.getName());
             composeView(file, parentFolder, manifest, contentType, file.getInfoType(), true, vizTabFirst);
         }
-        setViewDirtyState(false);
+        setViewDirtyState(false, null);
     }
 
     @Override
-    public void saveFile(final FileViewer fileViewer, final String viewerContent) {
+    public void saveFile() {
+        // Locate any dirty editors
+        for(FileViewer viewer : viewers){
+            // First viewer wins
+            if(viewer.isDirty()){
+                saveFile(viewer);
+            }
+        }
+    }
+
+    @Override
+    public void saveFile(final FileViewer fileViewer) {
         if(file == null) {
             final SaveAsDialog saveDialog = new SaveAsDialog(parentFolder);
             SaveAsDialogOkSelectHandler okSelectHandler = new SaveAsDialogOkSelectHandler(fileViewer,
                                                                                           fileViewer,
                                                                                           saveDialog,
                                                                                           displayStrings.savingMask(),
-                                                                                          viewerContent,
+                                                                                          fileViewer.getEditorContent(),
                                                                                           fileEditorService);
             SaveAsDialogCancelSelectHandler cancelSelectHandler = new SaveAsDialogCancelSelectHandler(fileViewer,
                                                                                                       saveDialog);
@@ -320,7 +333,7 @@ public class FileViewerPresenterImpl implements FileViewer.Presenter, FileSavedE
             saveDialog.toFront();
         } else {
             fileEditorService.uploadTextAsFile(file.getPath(),
-                                               viewerContent,
+                                               fileViewer.getEditorContent(),
                                                false,
                                                new FileSaveCallback(file.getPath(),
                                                                     false,
@@ -330,7 +343,8 @@ public class FileViewerPresenterImpl implements FileViewer.Presenter, FileSavedE
     }
 
     @Override
-    public void saveFile(FileViewer fileViewer, String viewerContent, String fileExtension) {
+    public void saveFileWithExtension(FileViewer fileViewer, String viewerContent,
+                                      String fileExtension) {
         Preconditions.checkState(file != null, "File should not be null when calling this method.");
 
         String destination = file.getPath() + fileExtension;
@@ -344,9 +358,28 @@ public class FileViewerPresenterImpl implements FileViewer.Presenter, FileSavedE
     }
 
     @Override
-    public void setViewDirtyState(boolean dirty) {
+    public void setViewDirtyState(boolean dirty, FileViewer dirtyViewer) {
+        // Return if state has not changed
+        if(this.isDirty == dirty){
+            return;
+        }
         this.isDirty = dirty;
         tabPanel.fireEvent(new DirtyStateChangedEvent(dirty));
+
+        // Exit if there is not dirtyViewer
+        if(dirtyViewer == null){
+            return;
+        }
+        // Update other viewers with dirty viewer contents
+        for(FileViewer viewer : viewers){
+            // Don't update the dirty viewer
+            if(viewer == dirtyViewer){
+                continue;
+            }
+            /* FIXME Update other viewers with dirtyViewer contents
+             * This implies being able to convert back and forth with text and structured text
+             */
+        }
     }
 
     /**
@@ -381,7 +414,7 @@ public class FileViewerPresenterImpl implements FileViewer.Presenter, FileSavedE
                      final boolean isVizTabFirst) {
         checkNotNull(contentType);
 
-        List<? extends FileViewer> viewers_list = mimeFactory.getViewerCommand(file, infoType, editing, parentFolder, manifest, this, contentType);
+        List<? extends FileViewer> viewers_list = mimeFactory.getViewerCommand(file, infoType, editing, manifest, this, contentType);
 
         viewers.addAll(viewers_list);
 
@@ -410,6 +443,7 @@ public class FileViewerPresenterImpl implements FileViewer.Presenter, FileSavedE
             // Add ourselves as FileSaved handlers
             view.addFileSavedEventHandler(this);
             tabPanel.add(view.asWidget(), view.getViewName());
+
         }
 
         if (viewers.size() == 0) {

@@ -1,11 +1,13 @@
 package org.iplantc.de.fileViewers.client.views;
 
+import static org.iplantc.de.fileViewers.client.events.ViewerPagingToolbarUpdatedEvent.ViewerPagingToolbarUpdatedEventHandler;
 import org.iplantc.de.fileViewers.client.events.ViewerPagingToolbarUpdatedEvent;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyDownEvent;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiFactory;
 import com.google.gwt.uibinder.client.UiField;
@@ -72,8 +74,8 @@ public class ViewerPagingToolBar extends Composite {
         computeTotalPages();
     }
 
-    public void addPagingToolbarChangedHandler(ViewerPagingToolbarUpdatedEvent.ViewerPagingToolbarUpdatedEventHandler changeHandler) {
-        addHandler(changeHandler, ViewerPagingToolbarUpdatedEvent.TYPE);
+    public HandlerRegistration addViewerPagingToolbarUpdatedEventHandler(ViewerPagingToolbarUpdatedEventHandler changeHandler) {
+        return addHandler(changeHandler, ViewerPagingToolbarUpdatedEvent.TYPE);
     }
 
     public int getPageNumber() {

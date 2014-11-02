@@ -3,48 +3,75 @@ package org.iplantc.de.fileViewers.client.views;
 import org.iplantc.de.resources.client.IplantResources;
 import org.iplantc.de.resources.client.messages.I18N;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.resources.client.ImageResource;
+import com.google.gwt.uibinder.client.UiBinder;
+import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.uibinder.client.UiTemplate;
 
 import com.sencha.gxt.widget.core.client.button.TextButton;
 import com.sencha.gxt.widget.core.client.event.SelectEvent;
 import com.sencha.gxt.widget.core.client.event.SelectEvent.SelectHandler;
 import com.sencha.gxt.widget.core.client.form.CheckBox;
+import com.sencha.gxt.widget.core.client.form.IntegerField;
 import com.sencha.gxt.widget.core.client.form.NumberField;
 import com.sencha.gxt.widget.core.client.form.NumberPropertyEditor;
 import com.sencha.gxt.widget.core.client.toolbar.FillToolItem;
 import com.sencha.gxt.widget.core.client.toolbar.LabelToolItem;
 import com.sencha.gxt.widget.core.client.toolbar.SeparatorToolItem;
+import com.sencha.gxt.widget.core.client.toolbar.ToolBar;
 
 public class StructuredTextViewToolBar extends AbstractToolBar {
 
-    private final StructuredTextViewer view;
-    private TextButton addRowBtn;
-    private CheckBox cbxHeaderRows;
-    private TextButton deleteRowBtn;
-    private CheckBox lineNumberCbx;
-    private NumberField<Integer> skipRowsCount;
-    private LabelToolItem skipRowsLabel;
+    public interface StructureTextViewerToolbarAppearance extends AbstractToolBarAppearance {
+        ImageResource addRowButtonIcon();
+        String addRowButtonText();
+        ImageResource deleteRowButtonIcon();
+        String deleteRowButtonText();
 
-    public StructuredTextViewToolBar(StructuredTextViewer view, boolean editing) {
-        super(editing);
-        this.view = view;
-        this.editing = editing;
-        add(new SeparatorToolItem());
-        addAddRowBtn();
-        addDeleteRowBtn();
-        add(new SeparatorToolItem());
-        buildLineNumberButton();
-        add(lineNumberCbx);
-        addSkipRowsFields();
-        addHeaderRowChkBox();
-        add(new FillToolItem());
-        add(editStatus);
-        setEditingStatus(editing);
+        String skipRowsLabelText();
+
+        String skipRowsCountWidth();
+
+        String cbxHeaderRowsLabel();
     }
 
-    public void addLineNumberCbxChangeHandler(ValueChangeHandler<Boolean> valueChangeHandler) {
-        lineNumberCbx.addValueChangeHandler(valueChangeHandler);
+
+    interface StructuredTextViewTooBarUiBinder extends UiBinder<ToolBar, StructuredTextViewToolBar>{}
+
+    private static final StructuredTextViewTooBarUiBinder BINDER = GWT.create(StructuredTextViewTooBarUiBinder.class);
+
+    private final StructuredTextViewer view;
+    @UiField
+    TextButton addRowBtn;
+    @UiField
+    CheckBox cbxHeaderRows;
+    @UiField
+    TextButton deleteRowBtn;
+    @UiField
+    IntegerField skipRowsCount;
+    @UiField
+    LabelToolItem skipRowsLabel;
+    @UiField(provided = true)
+    StructureTextViewerToolbarAppearance appearance;
+
+
+    StructuredTextViewToolBar(final StructuredTextViewer view,
+                                     final boolean editing,
+                                     final StructureTextViewerToolbarAppearance appearance) {
+         super(editing, appearance);
+        this.appearance = appearance;
+        this.view = view;
+        initWidget(BINDER.createAndBindUi(this));
+
+    }
+    public StructuredTextViewToolBar(final StructuredTextViewer view,
+                                     final boolean editing) {
+        this(view,
+             editing,
+             GWT.<StructureTextViewerToolbarAppearance>create(StructureTextViewerToolbarAppearance.class));
     }
 
     public void disableAdd() {
@@ -140,11 +167,6 @@ public class StructuredTextViewToolBar extends AbstractToolBar {
             }
         });
         add(skipRowsCount);
-    }
-
-    private void buildLineNumberButton() {
-        lineNumberCbx = new CheckBox();
-        lineNumberCbx.setBoxLabel("Line Numbers");
     }
 
 }
