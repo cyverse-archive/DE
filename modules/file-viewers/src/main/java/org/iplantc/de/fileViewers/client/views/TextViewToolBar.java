@@ -1,9 +1,13 @@
 package org.iplantc.de.fileViewers.client.views;
 
+import org.iplantc.de.fileViewers.client.events.WrapTextCheckboxChangeEvent;
+
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.uibinder.client.UiHandler;
 
 import com.sencha.gxt.widget.core.client.button.TextButton;
 import com.sencha.gxt.widget.core.client.event.SelectEvent.SelectHandler;
@@ -19,8 +23,7 @@ public class TextViewToolBar extends AbstractToolBar {
         String previewMarkdownBtnText();
     }
 
-    interface TextViewToolBarUiBinder extends UiBinder<ToolBar, TextViewToolBar> {
-    }
+    interface TextViewToolBarUiBinder extends UiBinder<ToolBar, TextViewToolBar> { }
 
     @UiField(provided = true)
     TextViewToolBarAppearance appearance;
@@ -45,6 +48,7 @@ public class TextViewToolBar extends AbstractToolBar {
 
         previewSeparator.setVisible(preview);
         previewMDBtn.setVisible(preview);
+        setEditing(editing);
     }
 
     public TextViewToolBar(final AbstractFileViewer view,
@@ -56,18 +60,24 @@ public class TextViewToolBar extends AbstractToolBar {
              GWT.<TextViewToolBarAppearance>create(TextViewToolBarAppearance.class));
     }
 
-    public void addPreviewHandler(SelectHandler handler) {
-        if (previewMDBtn != null) {
-            previewMDBtn.addSelectHandler(handler);
+    public HandlerRegistration addPreviewHandler(SelectHandler handler) {
+        if (previewMDBtn == null) {
+            return null;
         }
+        return previewMDBtn.addSelectHandler(handler);
     }
 
-    public void addWrapCbxChangeHandler(ValueChangeHandler<Boolean> changeHandler) {
-        cbxWrap.addValueChangeHandler(changeHandler);
+    public HandlerRegistration addWrapCbxChangeHandler(WrapTextCheckboxChangeEvent.WrapTextCheckboxChangeEventHandler handler) {
+        return addHandler(handler, WrapTextCheckboxChangeEvent.TYPE);
     }
 
     public boolean isWrapText() {
         return cbxWrap.getValue();
+    }
+
+    @UiHandler("cbxWrap")
+    void onCbxWrapChanged(ValueChangeEvent<Boolean> event) {
+        fireEvent(new WrapTextCheckboxChangeEvent(event.getValue()));
     }
 
 }

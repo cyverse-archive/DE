@@ -163,6 +163,11 @@ public class FileSetViewer extends Composite implements FileViewer, FileViewer.E
     }
 
     @Override
+    public String getEditorContent() {
+        return null;
+    }
+
+    @Override
     public boolean isDirty() {
         return dirty;
     }
@@ -195,9 +200,6 @@ public class FileSetViewer extends Composite implements FileViewer, FileViewer.E
     public String getViewName() {
         return file == null ? "Untitled-" + Math.random() : file.getName();
     }
-
-    @Override
-    public void refresh() {/* Do nothing intentionally */ }
 
     @Override
     public void setData(Object data) {

@@ -80,18 +80,9 @@ public class MarkDownRendererViewImpl extends AbstractFileViewer {
 
     @UiHandler("saveBtn")
     void onSaveBtnSelect(SelectEvent event){
-        presenter.saveFileWithExtension(this, renderHtml, ".html");
-//        panel.mask();
-
-//        String destination = file.getPath() + ".html";
-
-//        fileEditorService.uploadTextAsFile(destination,
-//                                           renderHtml,
-//                                           true,
-//                                           new FileSaveCallback(destination,
-//                                                                true,
-//                                                                panel));
-
+        presenter.saveFileWithExtension(this,
+                                        renderHtml,
+                                        ".html");
     }
 
     public static native String render(String val) /*-{
@@ -109,11 +100,10 @@ public class MarkDownRendererViewImpl extends AbstractFileViewer {
         return widget;
     }
 
-//    @Override
-//    public void loadData() {/* Do nothing intentionally */}
-
     @Override
-    public void refresh() {/* Do nothing intentionally */}
+    public String getEditorContent() {
+        return null;
+    }
 
     @Override
     public void setData(Object data) {/* Do nothing intentionally */}

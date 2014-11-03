@@ -33,11 +33,6 @@
                        split="false"/>
     </ui:with>
 
-    <ui:with field="centerData"
-             type="com.sencha.gxt.widget.core.client.container.BorderLayoutContainer.BorderLayoutData">
-        <ui:attributes margins="{margins5}"/>
-    </ui:with>
-
     <ui:with field="southData"
              type="com.sencha.gxt.widget.core.client.container.BorderLayoutContainer.BorderLayoutData">
         <ui:attributes size="30"
@@ -49,11 +44,12 @@
 
     <container:BorderLayoutContainer>
         <container:north layoutData="{northData}">
-            <view:AbstractToolBar ui:field="toolBar"/>
+            <view:StructuredTextViewToolBar ui:field="toolbar"/>
         </container:north>
 
         <!-- Structured Text -->
-        <container:center layoutData="{centerData}">
+        <container:center>
+            <!-- May have to wrap in VLC if scrolling/resizing becomes an issue -->
             <grid:Grid ui:field="grid"
                        store="{listStore}"
                        cm="{columnModel}"

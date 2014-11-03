@@ -44,4 +44,16 @@
         <when-type-is class="org.iplantc.de.client.windows.AppEditorWindow.AppEditorAppearance"/>
     </replace-with>
 
+    <!-- FileViewers -->
+    <replace-with class="org.iplantc.de.theme.base.client.fileViewers.ViewerPagingToolBarDefaultAppearance">
+        <when-type-is class="org.iplantc.de.fileViewers.client.views.ViewerPagingToolBar.ViewerPagingToolBarAppearance"/>
+    </replace-with>
+
+    <replace-with class="org.iplantc.de.theme.base.client.fileViewers.StructuredTextViewToolbarDefaultAppearance">
+        <when-type-is class="org.iplantc.de.fileViewers.client.views.StructuredTextViewToolBar.StructureTextViewerToolbarAppearance"/>
+    </replace-with>
+
+    <replace-with class="org.iplantc.de.theme.base.client.fileViewers.TextViewToolBarDefaultAppearance">
+        <when-type-is class="org.iplantc.de.fileViewers.client.views.TextViewToolBar.TextViewToolBarAppearance"/>
+    </replace-with>
 </module>

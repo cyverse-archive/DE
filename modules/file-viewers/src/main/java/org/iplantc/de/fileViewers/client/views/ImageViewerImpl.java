@@ -56,7 +56,9 @@ public class ImageViewerImpl extends AbstractFileViewer {
     }
 
     @Override
-    public void refresh() { /* Do nothing intentionally */ }
+    public String getEditorContent() {
+        return null;
+    }
 
     @Override
     public void setData(Object data) { /* Do nothing intentionally */ }

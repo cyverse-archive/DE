@@ -447,6 +447,8 @@ public class FileViewerPresenterImpl implements FileViewer.Presenter, FileSavedE
         }
 
         if (viewers.size() == 0) {
+            // FIXME This add method not supported
+            // Need to wrap in a simple container and add to that, or add this as a tab.
             tabPanel.add(new HTML(displayStrings.fileOpenMsg()));
         }
         tabPanel.unmask();

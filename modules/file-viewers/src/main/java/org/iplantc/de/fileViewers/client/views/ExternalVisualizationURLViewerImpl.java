@@ -106,20 +106,19 @@ public class ExternalVisualizationURLViewerImpl extends AbstractFileViewer imple
     }
 
     @Override
+    public String getEditorContent() {
+        return null;
+    }
+
+    @Override
     public String getViewName() {
         return displayStrings.visualization() + ":" + file.getName();
     }
-
-//    @Override
-//    public void loadData() {/* do nothing intentionally */}
 
     @Override
     public void mask(String loadingMask) {
         con.mask(loadingMask);
     }
-
-    @Override
-    public void refresh() {/* do nothing intentionally */}
 
     @SuppressWarnings("unchecked")
     @Override

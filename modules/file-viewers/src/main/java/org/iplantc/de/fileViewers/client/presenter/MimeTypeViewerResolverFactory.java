@@ -142,6 +142,7 @@ public class MimeTypeViewerResolverFactory {
                     || GFF.toString().equals(infoType)){
                     StructuredTextViewerImpl structuredTextViewer = new StructuredTextViewerImpl(file,
                                                                                                  infoType,
+                                                                                                 editing,
                                                                                                  columns,
                                                                                                  presenter);
                     viewers.add(structuredTextViewer);

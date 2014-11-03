@@ -4,19 +4,21 @@ import org.iplantc.de.client.events.FileSavedEvent;
 import org.iplantc.de.client.models.diskResources.File;
 import org.iplantc.de.client.models.viewer.StructuredText;
 import org.iplantc.de.fileViewers.client.events.LineNumberCheckboxChangeEvent;
+import org.iplantc.de.fileViewers.client.events.RefreshSelectedEvent;
+import org.iplantc.de.fileViewers.client.events.SaveSelectedEvent;
 import org.iplantc.de.fileViewers.client.events.ViewerPagingToolbarUpdatedEvent;
+import org.iplantc.de.fileViewers.client.events.WrapTextCheckboxChangeEvent;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.event.logical.shared.ResizeEvent;
 import com.google.gwt.event.logical.shared.ResizeHandler;
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiFactory;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.uibinder.client.UiTemplate;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -111,7 +113,8 @@ public class TextViewerImpl extends AbstractFileViewer implements ViewerPagingTo
         if (file == null) {
             /* when u start editing a new file, data is empty but the new file
              * is yet to be saved. */
-            setData("");
+           // FIXME Presenter should be performing this initialization
+             setData("");
         }
 
         center.addResizeHandler(new ResizeViewHandlerImpl());
@@ -205,13 +208,6 @@ public class TextViewerImpl extends AbstractFileViewer implements ViewerPagingTo
         return dirty;
     }
 
-    void setDirty(Boolean dirty) {
-        this.dirty = dirty;
-        if (presenter.isDirty() != dirty) {
-            presenter.setViewDirtyState(dirty, this);
-        }
-    }
-
     @Override
     public void mask(String loadingMask) {
         con.mask(loadingMask);
@@ -219,18 +215,12 @@ public class TextViewerImpl extends AbstractFileViewer implements ViewerPagingTo
 
     @Override
     public void onViewerPagingToolbarUpdated(ViewerPagingToolbarUpdatedEvent event) {
-        // TODO Update presenter to load data instead
         presenter.loadTextData(event.getPageNumber(), event.getPageSize());
     }
 
     @Override
-    public void refresh() {
-        presenter.loadTextData(pagingToolbar.getPageNumber(), (int) pagingToolbar.getPageSize());
-    }
-
-    @Override
     public void setData(Object data) {
-        if(data instanceof StructuredText){
+        if (data instanceof StructuredText) {
             return;
         }
         boolean allowEditing = pagingToolbar.getTotalPages() == 1 && editing;
@@ -282,33 +272,36 @@ public class TextViewerImpl extends AbstractFileViewer implements ViewerPagingTo
         } else {
             textViewPagingToolBar = new TextViewToolBar(this, editing, false);
         }
-        textViewPagingToolBar.addRefreshHandler(new SelectHandler() {
-            @Override
-            public void onSelect(SelectEvent event) {
-                presenter.loadTextData(pagingToolbar.getPageNumber(), (int) pagingToolbar.getPageSize());
-            }
-        });
-        textViewPagingToolBar.addSaveHandler(new SelectHandler() {
-            @Override
-            public void onSelect(SelectEvent event) {
-                presenter.saveFile(TextViewerImpl.this);
-            }
-        });
-
-        textViewPagingToolBar.addWrapCbxChangeHandler(new ValueChangeHandler<Boolean>() {
-            @Override
-            public void onValueChange(ValueChangeEvent<Boolean> event) {
-                wrapText(jso, event.getValue());
-            }
-        });
-        textViewPagingToolBar.addLineNumberCheckboxChangeHandler(new LineNumberCheckboxChangeEvent.LineNumberCheckboxChangeEventHandler() {
-            @Override
-            public void onLineNumberCheckboxChange(LineNumberCheckboxChangeEvent event) {
-                showLineNumbersInEditor(jso, event.getValue());
-            }
-        });
 
         return textViewPagingToolBar;
+    }
+
+    @UiHandler("toolbar")
+    void onLineNumberCheckboxChanged(LineNumberCheckboxChangeEvent event) {
+        showLineNumbersInEditor(jso, event.getValue());
+    }
+
+    @UiHandler("toolbar")
+    void onRefreshClick(RefreshSelectedEvent event) {
+        presenter.loadTextData(pagingToolbar.getPageNumber(),
+                               (int) pagingToolbar.getPageSize());
+    }
+
+    @UiHandler("toolbar")
+    void onSaveClick(SaveSelectedEvent event) {
+        presenter.saveFile(TextViewerImpl.this);
+    }
+
+    @UiHandler("toolbar")
+    void onWrapCheckboxChanged(WrapTextCheckboxChangeEvent event) {
+        wrapText(jso, event.getValue());
+    }
+
+    void setDirty(Boolean dirty) {
+        this.dirty = dirty;
+        if (presenter.isDirty() != dirty) {
+            presenter.setViewDirtyState(dirty, this);
+        }
     }
 
 }

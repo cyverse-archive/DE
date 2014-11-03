@@ -92,7 +92,5 @@ public interface FileViewer extends IsWidget, IsMaskable, HasHandlers, FileSaved
 
     String getViewName();
 
-    void refresh();
-
     void setData(Object data);
 }

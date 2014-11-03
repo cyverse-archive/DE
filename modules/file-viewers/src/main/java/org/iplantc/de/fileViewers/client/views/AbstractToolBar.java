@@ -27,24 +27,23 @@ public abstract class AbstractToolBar extends Composite {
 
         String notEditingStatusText();
 
-        String saveButtonText(); // DISPLAY.save()
+        String saveButtonText();
 
-        ImageResource saveButtonIcon(); // RESOURCES.save()
+        ImageResource saveButtonIcon();
 
-        String refreshButtonText(); // DISPLAY.refresh()
+        String refreshButtonText();
 
-        ImageResource refreshButtonIcon(); // RESOURCES.refresh()
+        ImageResource refreshButtonIcon();
 
-        String lineNumberCheckboxLabel(); // "Line Numbers"
+        String lineNumberCheckboxLabel();
 
-        StatusAppearance editStatusAppearance(); // BoxStatusAppearance
+        StatusAppearance editStatusAppearance();
 
-        int editStatusWidth(); // 100
+        String editStatusWidth();
     }
 
     protected boolean editing;
 
-    @UiField
     AbstractToolBarAppearance appearance;
     @UiField
     TextButton refreshBtn;
@@ -71,7 +70,6 @@ public abstract class AbstractToolBar extends Composite {
 //        });
         editStatus = new Status(appearance.editStatusAppearance());
         editStatus.setWidth(appearance.editStatusWidth());
-        setEditing(editing);
 
     }
 
@@ -100,6 +98,7 @@ public abstract class AbstractToolBar extends Composite {
     public void setEditing(boolean editing) {
         saveBtn.setEnabled(editing);
         String editingText = editing ? appearance.editingStatusText() : appearance.notEditingStatusText();
+        editStatus.setText(editingText);
     }
 
     public HandlerRegistration addRefreshHandler(final RefreshSelectedEvent.RefreshSelectedEventHandler handler) {

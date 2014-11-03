@@ -1503,19 +1503,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     String fileUploadSuccess(String arg0);
     
     /**
-     * 
-     * Translate fileViewerHeaderRow
-     * @return
-     */
-    String fileViewerHeaderRow();
-    
-    /**
-     * Translate fileViewerSkipLines
-     * @return
-     */
-    String fileViewerSkipLines();
-
-    /**
      * Translated "File(s)".
      *
      * @return translated "File(s)"
@@ -1730,17 +1717,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     String importRequestSubmit(String arg0);
 
     String indexFileMissing();
-
-
-    /**
-     * Translated "Select a valid page".
-     *
-     * @return translated "Select a valid page"
-     */
-    @DefaultMessage("Select a valid page")
-    @Key("inValidPage")
-    String inValidPage();
-
 
     /**
      * Translated "This field requires a valid url".
@@ -2815,15 +2791,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     @DefaultMessage("Owner")
     @Key("owner")
     String owner();
-
-    /**
-     * Translated "page size".
-     *
-     * @return translated "page size"
-     */
-    @DefaultMessage("Page Size (KB)")
-    @Key("pageSize")
-    String pageSize();
 
     /**
      * Translated "Name".
@@ -4656,15 +4623,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     @DefaultMessage("Workflow Information")
     @Key("workflowInfo")
     String workflowInfo();
-
-    /**
-     * Translated "Wrap Text".
-     *
-     * @return translated "Wrap Text"
-     */
-    @DefaultMessage("Wrap Text")
-    @Key("wrap")
-    String wrap();
 
     /**
      * Translated "write".

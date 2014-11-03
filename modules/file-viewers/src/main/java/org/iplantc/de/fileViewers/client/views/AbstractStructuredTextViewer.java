@@ -5,6 +5,7 @@ import static org.iplantc.de.client.services.FileEditorServiceFacade.*;
 import org.iplantc.de.client.models.diskResources.File;
 import org.iplantc.de.client.models.viewer.InfoType;
 import org.iplantc.de.client.models.viewer.StructuredText;
+import org.iplantc.de.fileViewers.client.events.LineNumberCheckboxChangeEvent;
 import org.iplantc.de.fileViewers.client.events.RefreshSelectedEvent;
 import org.iplantc.de.fileViewers.client.events.SaveSelectedEvent;
 import org.iplantc.de.fileViewers.client.events.ViewerPagingToolbarUpdatedEvent;
@@ -12,11 +13,9 @@ import org.iplantc.de.fileViewers.client.events.ViewerPagingToolbarUpdatedEvent;
 import com.google.common.base.Joiner;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
-import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiFactory;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.client.ui.Widget;
 import com.google.web.bindery.autobean.shared.Splittable;
 import com.google.web.bindery.autobean.shared.impl.StringQuoter;
 
@@ -37,7 +36,7 @@ import java.util.logging.Logger;
 /**
  * An abstract class which performs general layout and functionality for structured viewers.
  * All structured viewers consist of a top-level toolbar, a grid, and a paging toolbar. Implementing
- * classes are responsible for providing (either manually or via {@link UiFactory}) the {@link #toolBar}.
+ * classes are responsible for providing (either manually or via {@link UiFactory}) the {@link #toolbar}.
  *
  * This class defines how the {@link Grid} and {@link ColumnModel} are initialized via the
  * {@link #setData(Object)} method.
@@ -82,11 +81,6 @@ public abstract class AbstractStructuredTextViewer extends AbstractFileViewer {
         }
     }
 
-    interface AbstractStructuredTextViewerUiBinder extends UiBinder<Widget, AbstractStructuredTextViewer> {
-    }
-
-    @UiField
-    AbstractToolBar toolBar;
     @UiField
     GridView gridView;
     @UiField
@@ -102,15 +96,18 @@ public abstract class AbstractStructuredTextViewer extends AbstractFileViewer {
     RowNumberer<Splittable> rowNumberer = new RowNumberer<>();
     @UiField
     GridFilters<Splittable> gridFilters = new GridFilters<>();
-    private final FileViewer.Presenter presenter;
+    private final boolean editing;
+    protected final FileViewer.Presenter presenter;
 
     protected Logger LOG;
     private boolean dirty;
 
     public AbstractStructuredTextViewer(final File file,
                                         final String infoType,
+                                        final boolean editing,
                                         final FileViewer.Presenter presenter) {
         super(file, infoType);
+        this.editing = editing;
 
         this.presenter = presenter;
         initLogger();
@@ -144,14 +141,17 @@ public abstract class AbstractStructuredTextViewer extends AbstractFileViewer {
         return new ViewerPagingToolBar(getFileSize());
     }
 
+    @UiFactory ColumnModel<Splittable> createColumnModel() {
+        return new ColumnModel<>(Lists.<ColumnConfig<Splittable, ?>>newArrayList());
+    }
 
-    @UiHandler("toolBar")
+    @UiHandler("toolbar")
     void onSaveSelected(SaveSelectedEvent event){
         listStore.commitChanges();
         presenter.saveFile(this);
     }
 
-    @UiHandler("toolBar")
+    @UiHandler("toolbar")
     void onRefreshSelected(RefreshSelectedEvent event){
         presenter.loadStructuredData(pagingToolBar.getPageNumber(),
                                      (int) pagingToolBar.getPageSize(),
@@ -163,6 +163,12 @@ public abstract class AbstractStructuredTextViewer extends AbstractFileViewer {
         presenter.loadStructuredData(event.getPageNumber(),
                                      event.getPageSize(),
                                      getSeparator());
+    }
+
+    @UiHandler("toolbar")
+    void onLineNumberCheckboxValueChangeEvent(LineNumberCheckboxChangeEvent event){
+        rowNumberer.setHidden(!event.getValue());
+        grid.getView().refresh(false);
     }
 
     @Override
