@@ -29,7 +29,7 @@ public class ReferenceGenomeServiceFacadeImpl implements ReferenceGenomeServiceF
 
     @Override
     public void getReferenceGenomes(AsyncCallback<List<ReferenceGenome>> callback) {
-        String address = REFERENCE_GENOMES;
+        String address = REFERENCE_GENOMES + "?deleted=true";
         ServiceCallWrapper wrapper = new ServiceCallWrapper(GET, address);
         deService.getServiceData(wrapper, new ReferenceGenomeListCallbackConverter(callback, factory));
     }
