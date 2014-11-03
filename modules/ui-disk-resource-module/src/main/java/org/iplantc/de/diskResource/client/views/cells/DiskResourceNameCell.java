@@ -96,7 +96,12 @@ public class DiskResourceNameCell extends AbstractCell<DiskResource> {
 
         boolean inTrash = value.getPath().startsWith(UserInfo.getInstance().getBaseTrashPath());
 
-        SafeHtml name = SafeHtmlUtils.fromString(value.getName());
+        SafeHtml name;
+        if (Strings.isNullOrEmpty(value.getName())) {
+            name = SafeHtmlUtils.EMPTY_SAFE_HTML;
+        } else {
+            name = SafeHtmlUtils.fromString(value.getName());
+        }
         String nameStyle = CSS.nameStyle();
         String imgClassName = ""; //$NON-NLS-1$
         if (value instanceof File) {
