@@ -14,13 +14,24 @@ public class PublicAppCategoryProxy extends RpcProxy<AppCategory, List<AppCatego
 
     private final AppUserServiceFacade appService;
 
+    private boolean loadHpc;
+
     @Inject
     public PublicAppCategoryProxy(AppUserServiceFacade appService) {
         this.appService = appService;
     }
 
+
     @Override
     public void load(AppCategory loadConfig, final AsyncCallback<List<AppCategory>> callback) {
-        appService.getPublicAppCategories(callback);
+        appService.getPublicAppCategories(callback, loadHpc);
+    }
+
+    public boolean isLoadHpc() {
+        return loadHpc;
+    }
+
+    public void setLoadHpc(boolean loadHpc) {
+        this.loadHpc = loadHpc;
     }
 }

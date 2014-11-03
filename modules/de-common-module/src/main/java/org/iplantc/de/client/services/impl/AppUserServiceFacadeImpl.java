@@ -22,7 +22,6 @@ import org.iplantc.de.shared.services.ServiceCallWrapper;
 
 import com.google.common.base.Strings;
 import com.google.gwt.http.client.URL;
-import com.google.gwt.json.client.JSONBoolean;
 import com.google.gwt.json.client.JSONNumber;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONParser;
@@ -69,8 +68,8 @@ public class AppUserServiceFacadeImpl implements AppUserServiceFacade {
     }
 
     @Override
-    public void getPublicAppCategories(AsyncCallback<List<AppCategory>> callback) {
-        String address = CATEGORIES + "?public=true";
+    public void getPublicAppCategories(AsyncCallback<List<AppCategory>> callback, boolean loadHpc) {
+        String address = CATEGORIES + "?public=true&hpc=" + loadHpc;
         ServiceCallWrapper wrapper = new ServiceCallWrapper(address);
         deServiceFacade.getServiceData(wrapper, new AppCategoryListCallbackConverter(callback, errorStrings));
     }
@@ -213,7 +212,7 @@ public class AppUserServiceFacadeImpl implements AppUserServiceFacade {
             final AsyncCallback<?> callback) {
         JSONObject json = JSONParser.parseStrict(avgJson).isObject();
         if (json != null) {
-            Number avg = JsonUtil.getNumber(json, "avg"); //$NON-NLS-1$
+            Number avg = JsonUtil.getNumber(json, "average"); //$NON-NLS-1$
             int avgRounded = (int)Math.round(avg.doubleValue());
             String appName = parsePageName(appWikiPageUrl);
             confluenceService.updatePage(appName, avgRounded, new AsyncCallback<Void>() {
@@ -306,14 +305,16 @@ public class AppUserServiceFacadeImpl implements AppUserServiceFacade {
 
     @Override
     public void favoriteApp(String workspaceId, String appId, boolean fav, AsyncCallback<String> callback) {
-        String address = deProperties.getMuleServiceBaseUrl() + "update-favorites";
+        String address = APPS + "/" + appId + "/favorite";
 
         JSONObject body = new JSONObject();
-        body.put("workspace_id", new JSONString(workspaceId));
-        body.put("analysis_id", new JSONString(appId));
-        body.put("user_favorite", JSONBoolean.getInstance(fav));
+        ServiceCallWrapper wrapper = null;
 
-        ServiceCallWrapper wrapper = new ServiceCallWrapper(POST, address, body.toString());
+        if (fav) {
+            wrapper = new ServiceCallWrapper(Type.PUT, address, body.toString());
+        } else {
+            wrapper = new ServiceCallWrapper(DELETE, address, body.toString());
+        }
         deServiceFacade.getServiceData(wrapper, callback);
     }
 
@@ -338,13 +339,10 @@ public class AppUserServiceFacadeImpl implements AppUserServiceFacade {
 
     @Override
     public void deleteAppFromWorkspace(String user, String fullUsername, List<String> appIds, AsyncCallback<String> callback) {
-        String address = deProperties.getMuleServiceBaseUrl() + "delete-workflow"; //$NON-NLS-1$
+        String address = APPS + "/" + "shredder"; //$NON-NLS-1$
 
         JSONObject body = new JSONObject();
-        body.put("analysis_ids", JsonUtil.buildArrayFromStrings(appIds)); //$NON-NLS-1$
-        body.put("user", new JSONString(user)); //$NON-NLS-1$
-        body.put("full_username", new JSONString(fullUsername)); //$NON-NLS-1$
-
+        body.put("app_ids", JsonUtil.buildArrayFromStrings(appIds)); //$NON-NLS-1$
         ServiceCallWrapper wrapper = new ServiceCallWrapper(POST, address, body.toString());
         deServiceFacade.getServiceData(wrapper, callback);
     }

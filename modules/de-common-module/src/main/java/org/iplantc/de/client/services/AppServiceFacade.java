@@ -39,8 +39,9 @@ public interface AppServiceFacade {
      * Retrieves a hierarchy of public App Groups.
      *
      * @param callback
+     * @param loadHpc TODO
      */
-    void getPublicAppCategories(AsyncCallback<List<AppCategory>> callback);
+    void getPublicAppCategories(AsyncCallback<List<AppCategory>> callback, boolean loadHpc);
 
     /**
      * Retrieves a hierarchy of all <code>AppCategory</code>s via a secured endpoint.

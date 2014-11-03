@@ -31,7 +31,7 @@ public class AppAdminUserServiceFacade implements AppUserServiceFacade {
     }
 
     @Override
-    public void getPublicAppCategories(AsyncCallback<List<AppCategory>> callback) {
+    public void getPublicAppCategories(AsyncCallback<List<AppCategory>> callback, boolean loadHpc) {
         assert false : "Dummy Class to satisfy deferred-binding, this class not used in this module.";
     }
 

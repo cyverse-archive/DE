@@ -21,7 +21,7 @@ public class AppServiceFacadeStub implements AppServiceFacade {
     }
 
     @Override
-    public void getPublicAppCategories(AsyncCallback<List<AppCategory>> callback) {
+    public void getPublicAppCategories(AsyncCallback<List<AppCategory>> callback, boolean loadHpc) {
 
     }
 

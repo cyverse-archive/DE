@@ -1,6 +1,16 @@
 package org.iplantc.de.apps.client.presenter;
 
-import org.iplantc.de.apps.client.events.*;
+import org.iplantc.de.apps.client.events.AppCategorySelectionChangedEvent;
+import org.iplantc.de.apps.client.events.AppCommentSelectedEvent;
+import org.iplantc.de.apps.client.events.AppDeleteEvent;
+import org.iplantc.de.apps.client.events.AppFavoritedEvent;
+import org.iplantc.de.apps.client.events.AppNameSelectedEvent;
+import org.iplantc.de.apps.client.events.AppUpdatedEvent;
+import org.iplantc.de.apps.client.events.CreateNewAppEvent;
+import org.iplantc.de.apps.client.events.CreateNewWorkflowEvent;
+import org.iplantc.de.apps.client.events.EditAppEvent;
+import org.iplantc.de.apps.client.events.EditWorkflowEvent;
+import org.iplantc.de.apps.client.events.RunAppEvent;
 import org.iplantc.de.apps.client.presenter.proxy.AppCategoryProxy;
 import org.iplantc.de.apps.client.views.AppsView;
 import org.iplantc.de.apps.client.views.cells.AppFavoriteCell;
@@ -30,12 +40,12 @@ import org.iplantc.de.shared.exceptions.HttpRedirectException;
 import org.iplantc.de.shared.services.ConfluenceServiceAsync;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.json.client.JSONArray;
-import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.regexp.shared.RegExp;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
@@ -389,29 +399,12 @@ public class AppsViewPresenterImpl implements AppsView.Presenter {
     @Override
     public void copySelectedApp() {
         final App selectedApp = getSelectedApp();
-        appUserService.appExportable(selectedApp.getId(), new AsyncCallback<String>() {
 
-            @Override
-            public void onSuccess(String result) {
-                JSONObject exportable = JsonUtil.getObject(result);
-
-                if (JsonUtil.getBoolean(exportable, "can-export", false)) { //$NON-NLS-1$
-                    if (selectedApp.getStepCount() > 1) {
-                        copyWorkflow(selectedApp);
-                    } else {
-                        copyApp(selectedApp);
-                    }
-                } else {
-                    ErrorHandler.post(JsonUtil.getString(exportable, "cause")); //$NON-NLS-1$
-                }
-            }
-
-            @Override
-            public void onFailure(Throwable caught) {
-                // TODO Add error message for the user.
-                ErrorHandler.post(caught);
-            }
-        });
+        if (selectedApp.getStepCount() > 1) {
+            copyWorkflow(selectedApp);
+        } else {
+            copyApp(selectedApp);
+        }
 
     }
 

@@ -64,6 +64,7 @@ public class SubmitAppForPublicPresenter implements SubmitAppForPublicUseView.Pr
     public void go(HasOneWidget container) {
         container.setWidget(view);
         // Fetch AppCategories
+        appGroupProxy.setLoadHpc(false);
         appGroupProxy.load(null, new AsyncCallback<List<AppCategory>>() {
             @Override
             public void onSuccess(List<AppCategory> result) {
