@@ -1,20 +1,23 @@
 package org.iplantc.de.fileViewers.client.views;
 
 import org.iplantc.de.client.events.FileSavedEvent;
+import org.iplantc.de.client.models.CommonModelAutoBeanFactory;
 import org.iplantc.de.client.models.diskResources.File;
+import org.iplantc.de.client.models.viewer.StructuredText;
 import org.iplantc.de.fileViewers.client.events.AddRowSelectedEvent;
 import org.iplantc.de.fileViewers.client.events.DeleteRowSelectedEvent;
 import org.iplantc.de.fileViewers.client.events.HeaderRowCheckboxChangedEvent;
 import org.iplantc.de.fileViewers.client.events.SkipRowsCountValueChangeEvent;
 
+import com.google.common.base.Preconditions;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.uibinder.client.UiTemplate;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.web.bindery.autobean.shared.AutoBeanCodex;
 import com.google.web.bindery.autobean.shared.Splittable;
 import com.google.web.bindery.autobean.shared.impl.StringQuoter;
 
@@ -36,40 +39,54 @@ import java.util.logging.Logger;
  *
  * @author sriram, jstroot
  */
-public class StructuredTextViewerImpl extends AbstractStructuredTextViewer {
+public class StructuredTextViewer extends AbstractStructuredTextViewer {
 
-    @UiTemplate("AbstractStructuredTextViewer.ui.xml")
-    interface StructuredTextViewerUiBinder extends UiBinder<Widget, StructuredTextViewerImpl> {}
+    public interface StructuredTextViewerAppearance extends AbstractStructuredTextViewerAppearance {
 
+        String createNewDefaultColumnValue(int column);
+
+        String defaultViewName();
+
+        String gridToolTip();
+
+        String viewName(String fileName);
+    }
+
+    @UiTemplate("StructuredTextViewer.ui.xml")
+    interface StructuredTextViewerUiBinder extends UiBinder<Widget, StructuredTextViewer> { }
+
+    final StructuredTextViewerAppearance appearance = GWT.create(StructuredTextViewerAppearance.class);
+    Logger LOG = Logger.getLogger(StructuredTextViewer.class.getName());
+
+    @UiField(provided = true)
+    StructuredTextViewToolBar toolbar;
     private static final StructuredTextViewerUiBinder BINDER = GWT.create(StructuredTextViewerUiBinder.class);
-
-    Logger LOG = Logger.getLogger(StructuredTextViewerImpl.class.getName());
-
     private int columns;
     private boolean dirty;
     private boolean hasHeader;
     private Splittable headerRow;
     private GridInlineEditing<Splittable> rowEditing;
     private List<Splittable> skippedRows;
-    private Widget widget;
 
-    @UiField(provided = true)
-    StructuredTextViewToolBar toolbar;
-
-    public StructuredTextViewerImpl(final File file,
-                                    final String infoType,
-                                    final boolean editing,
-                                    final Integer columns,
-                                    final FileViewer.Presenter presenter) {
+    public StructuredTextViewer(final File file,
+                                final String infoType,
+                                final boolean editing,
+                                final Integer columns,
+                                final FileViewer.Presenter presenter) {
         super(file, infoType, editing, presenter);
         toolbar = new StructuredTextViewToolBar(this, editing);
-        widget = BINDER.createAndBindUi(this);
-        if (columns != null) {
-            // FIXME This initialization should be done in the presenter
+        initWidget(BINDER.createAndBindUi(this));
+        if (file != null) {
+            presenter.loadStructuredData(pagingToolBar.getPageNumber(),
+                                         (int) pagingToolBar.getPageSize(),
+                                         getSeparator());
+        } else {
+            Preconditions.checkNotNull(columns, "Columns can't be null if file is null");
+            Preconditions.checkArgument(columns > 0, "Columns must be greater than 0.");
+            this.columns = columns;
             LOG.info("Columns: " + columns);
-//            initGrid(columns);
             setEditing(true);
-//            addRow();
+            setData(createNewStructuredText(columns));
         }
     }
 
@@ -79,21 +96,11 @@ public class StructuredTextViewerImpl extends AbstractStructuredTextViewer {
     }
 
     @Override
-    public Widget asWidget() {
-        return widget;
-    }
-
-    @Override
-    public void fireEvent(GwtEvent<?> event) {
-        asWidget().fireEvent(event);
-    }
-
-    @Override
     public String getViewName() {
         if (file != null) {
-            return "Tabular View: " + file.getName();
+            return appearance.viewName(file.getName());
         } else {
-            return "Tabular View";
+            return appearance.defaultViewName();
         }
     }
 
@@ -102,26 +109,30 @@ public class StructuredTextViewerImpl extends AbstractStructuredTextViewer {
         return dirty;
     }
 
-    @Override
-    public void mask(String loadingMask) {
-
+    Splittable createNewRow(int columns) {
+        Splittable obj = StringQuoter.createSplittable();
+        for (int i = 0; i < columns; i++) {
+            StringQuoter.create(appearance.createNewDefaultColumnValue(i)).assign(obj, String.valueOf(i));
+        }
+        return obj;
     }
 
-    @Override
-    public void unmask() {
-//        container.unmask();
+    StructuredText createNewStructuredText(int columns) {
+        Splittable ret = StringQuoter.createSplittable();
+        StringQuoter.create(String.valueOf(columns)).assign(ret, StructuredText.COL_KEY);
+        Splittable indexed = StringQuoter.createIndexed();
+        createNewRow(columns).assign(indexed, 0);
+        CommonModelAutoBeanFactory factory = GWT.create(CommonModelAutoBeanFactory.class);
+        return AutoBeanCodex.decode(factory, StructuredText.class, ret).as();
     }
 
     @UiHandler("toolbar")
     void onAddRowSelected(AddRowSelectedEvent event) {
-        Splittable obj = StringQuoter.createSplittable();
-        for (int i = 0; i < columns; i++) {
-            StringQuoter.create("col" + i).assign(obj, String.valueOf(i));
-        }
+        Splittable newRow = createNewRow(columns);
         if (rowEditing != null) {
             rowEditing.cancelEditing();
-            listStore.add(obj);
-            int row = listStore.indexOf(obj);
+            listStore.add(newRow);
+            int row = listStore.indexOf(newRow);
             setDirty(true);
             rowEditing.startEditing(new GridCell(row, 1));
         }
@@ -198,9 +209,10 @@ public class StructuredTextViewerImpl extends AbstractStructuredTextViewer {
         int index = 0;
         for (ColumnConfig<Splittable, ?> conf : configs) {
             if (cm.indexOf(conf) != 0) { // col 0 is numberer
-                Splittable splittable = firstRow.get(String.valueOf(index));
-                Splittable string = (splittable != null) ? splittable : null;
                 if (hasHeader) {
+                    Preconditions.checkNotNull(firstRow);
+                    Splittable splittable = firstRow.get(String.valueOf(index));
+                    Splittable string = (splittable != null) ? splittable : null;
                     conf.setHeader((string != null) ? string.asString() : index + "");
                 } else {
                     conf.setHeader(index + "");
@@ -223,7 +235,6 @@ public class StructuredTextViewerImpl extends AbstractStructuredTextViewer {
         }
 
         grid.reconfigure(listStore, cm);
-        grid.getView().refresh(true);
     }
 
 
@@ -238,7 +249,7 @@ public class StructuredTextViewerImpl extends AbstractStructuredTextViewer {
         if (editing) {
             if (rowEditing == null) {
                 // Initialize row editing
-                grid.setToolTip("Double click to edit...");
+                grid.setToolTip(appearance.gridToolTip());
                 rowEditing = new GridInlineEditing<>(grid);
                 rowEditing.setClicksToEdit(ClicksToEdit.TWO);
                 rowEditing.addCompleteEditHandler(new CompleteEditHandler<Splittable>() {

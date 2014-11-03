@@ -15,7 +15,7 @@ import org.iplantc.de.fileViewers.client.views.AbstractFileViewer;
 import org.iplantc.de.fileViewers.client.views.ExternalVisualizationURLViewerImpl;
 import org.iplantc.de.fileViewers.client.views.FileViewer;
 import org.iplantc.de.fileViewers.client.views.ImageViewerImpl;
-import org.iplantc.de.fileViewers.client.views.StructuredTextViewerImpl;
+import org.iplantc.de.fileViewers.client.views.StructuredTextViewer;
 import org.iplantc.de.fileViewers.client.views.TextViewerImpl;
 
 import com.google.common.base.Preconditions;
@@ -140,7 +140,7 @@ public class MimeTypeViewerResolverFactory {
                     || TSV.toString().equals(infoType)
                     || VCF.toString().equals(infoType)
                     || GFF.toString().equals(infoType)){
-                    StructuredTextViewerImpl structuredTextViewer = new StructuredTextViewerImpl(file,
+                    StructuredTextViewer structuredTextViewer = new StructuredTextViewer(file,
                                                                                                  infoType,
                                                                                                  editing,
                                                                                                  columns,

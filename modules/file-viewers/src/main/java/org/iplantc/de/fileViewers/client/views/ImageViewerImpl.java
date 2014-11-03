@@ -26,33 +26,17 @@ public class ImageViewerImpl extends AbstractFileViewer {
     Image img;
 
     private static ImageViewerUiBinder uiBinder = GWT.create(ImageViewerUiBinder.class);
-    private final Widget widget;
 
     public ImageViewerImpl(final File file,
                            final String imageUrl) {
         super(file, null);
         img = new Image(imageUrl);
-        widget = uiBinder.createAndBindUi(this);
-    }
-
-    @Override
-    public Widget asWidget() {
-        return widget;
+        initWidget(uiBinder.createAndBindUi(this));
     }
 
     @Override
     public void fireEvent(GwtEvent<?> event) {
         con.fireEvent(event);
-    }
-
-    @Override
-    public void mask(String loadingMask) {
-        con.mask(loadingMask);
-    }
-
-    @Override
-    public void unmask() {
-        con.unmask();
     }
 
     @Override

@@ -20,9 +20,6 @@ import com.google.gwt.user.client.ui.IsWidget;
  * <h3>File Creation</h3>
  * For viewers capable of editing/creating files, new file creation is handled at view construction
  * time.
- * FIXME Viewers should no be responsible for 'creating' new files.
- *
- * FIXME Viewers should not be performing any service calls.
  *
  * @author sriram, jstroot
  */
@@ -47,7 +44,6 @@ public interface FileViewer extends IsWidget, IsMaskable, HasHandlers, FileSaved
      * Views will update notify this presenter of updates to their 'dirty' state via the
      * {@link #setViewDirtyState(boolean, FileViewer)} method.
      * <p/>
-     * FIXME JDS Views should not be responsible for saving their contents. Saving should be performed by the presenter.
      */
     public interface Presenter extends DirtyStateChangedEvent.HasDirtyStateChangedEventHandlers {
         String getTitle();

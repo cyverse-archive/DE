@@ -1,13 +1,10 @@
 package org.iplantc.de.fileViewers.client.views;
 
 import org.iplantc.de.client.events.FileSavedEvent;
-import org.iplantc.de.client.gin.ServicesInjector;
 import org.iplantc.de.client.models.diskResources.File;
-import org.iplantc.de.client.services.FileEditorServiceFacade;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Overflow;
-import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiFactory;
@@ -39,10 +36,8 @@ public class MarkDownRendererViewImpl extends AbstractFileViewer {
     VerticalLayoutContainer con;
 
     private static MarkDownRendererViewUiBinder uiBinder = GWT.create(MarkDownRendererViewUiBinder.class);
-    private final FileEditorServiceFacade fileEditorService;
     private final String previewData;
     private final Presenter presenter;
-    private final Widget widget;
     private String renderHtml;
 
     public MarkDownRendererViewImpl(final File file,
@@ -52,30 +47,14 @@ public class MarkDownRendererViewImpl extends AbstractFileViewer {
         super(file, infoType);
         this.previewData = previewData;
         this.presenter = presenter;
-        widget = uiBinder.createAndBindUi(this);
+        initWidget(uiBinder.createAndBindUi(this));
         panel.getElement().getStyle().setBackgroundColor("#ffffff");
         panel.getElement().getStyle().setOverflow(Overflow.SCROLL);
-        fileEditorService = ServicesInjector.INSTANCE.getFileEditorServiceFacade();
         if (file == null) {
             saveBtn.disable();
         } else {
             saveBtn.enable();
         }
-    }
-
-    @Override
-    public void fireEvent(GwtEvent<?> event) {
-        con.fireEvent(event);
-    }
-
-    @Override
-    public void mask(String loadingMask) {
-        con.mask(loadingMask);
-    }
-
-    @Override
-    public void unmask() {
-        con.unmask();
     }
 
     @UiHandler("saveBtn")
@@ -93,11 +72,6 @@ public class MarkDownRendererViewImpl extends AbstractFileViewer {
     @Override
     public HandlerRegistration addFileSavedEventHandler(final FileSavedEvent.FileSavedEventHandler handler) {
         return asWidget().addHandler(handler, FileSavedEvent.TYPE);
-    }
-
-    @Override
-    public Widget asWidget() {
-        return widget;
     }
 
     @Override

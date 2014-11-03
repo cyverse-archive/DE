@@ -66,8 +66,11 @@ public class FileEditorServiceFacadeImpl implements FileEditorServiceFacade {
 
         Splittable splittable = StringQuoter.createSplittable();
         StringQuoter.create(file.getPath()).assign(splittable, "path");
-        StringQuoter.create(chunkPosition).assign(splittable, "position");
-        StringQuoter.create(chunkSize).assign(splittable, "chunk-size");
+
+        // Endpoint has to take these numbers as strings
+        StringQuoter.create(String.valueOf(chunkPosition)).assign(splittable, "position");
+        StringQuoter.create(String.valueOf(chunkSize)).assign(splittable, "chunk-size");
+
         ServiceCallWrapper wrapper = new ServiceCallWrapper(POST, address, splittable.getPayload());
         callService(wrapper, callback);
     }
@@ -85,8 +88,10 @@ public class FileEditorServiceFacadeImpl implements FileEditorServiceFacade {
         Splittable splittable = StringQuoter.createSplittable();
         StringQuoter.create(file.getPath()).assign(splittable, "path");
         StringQuoter.create(URL.encode(delimiter)).assign(splittable, "separator");
-        StringQuoter.create(pageNumber).assign(splittable, "page");
-        StringQuoter.create(chunkSize).assign(splittable, "chunk-size");
+
+        // Endpoint has to take these numbers as strings
+        StringQuoter.create(String.valueOf(pageNumber)).assign(splittable, "page");
+        StringQuoter.create(String.valueOf(chunkSize)).assign(splittable, "chunk-size");
 
         ServiceCallWrapper wrapper = new ServiceCallWrapper(POST, address, splittable.getPayload());
         callService(wrapper, callback);

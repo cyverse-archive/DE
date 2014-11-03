@@ -13,7 +13,6 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.event.logical.shared.ResizeEvent;
 import com.google.gwt.event.logical.shared.ResizeHandler;
-import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiFactory;
@@ -94,7 +93,6 @@ public class TextViewerImpl extends AbstractFileViewer implements ViewerPagingTo
     private static TextViewerUiBinder uiBinder = GWT.create(TextViewerUiBinder.class);
     private final String mode;
     private final FileViewer.Presenter presenter;
-    private final Widget widget;
     private boolean dirty;
 
     public TextViewerImpl(final File file,
@@ -108,13 +106,16 @@ public class TextViewerImpl extends AbstractFileViewer implements ViewerPagingTo
         this.presenter = presenter;
         LOG.log(Level.INFO, "in viewer-->" + mode);
 
-        widget = uiBinder.createAndBindUi(this);
+        initWidget(uiBinder.createAndBindUi(this));
 
         if (file == null) {
             /* when u start editing a new file, data is empty but the new file
              * is yet to be saved. */
            // FIXME Presenter should be performing this initialization
              setData("");
+        } else {
+            presenter.loadTextData(pagingToolbar.getPageNumber(),
+                                   (int) pagingToolbar.getPageSize());
         }
 
         center.addResizeHandler(new ResizeViewHandlerImpl());
@@ -189,16 +190,6 @@ public class TextViewerImpl extends AbstractFileViewer implements ViewerPagingTo
     }
 
     @Override
-    public Widget asWidget() {
-        return widget;
-    }
-
-    @Override
-    public void fireEvent(GwtEvent<?> event) {
-        con.fireEvent(event);
-    }
-
-    @Override
     public String getEditorContent() {
         return getEditorContent(jso);
     }
@@ -206,11 +197,6 @@ public class TextViewerImpl extends AbstractFileViewer implements ViewerPagingTo
     @Override
     public boolean isDirty() {
         return dirty;
-    }
-
-    @Override
-    public void mask(String loadingMask) {
-        con.mask(loadingMask);
     }
 
     @Override
@@ -245,11 +231,6 @@ public class TextViewerImpl extends AbstractFileViewer implements ViewerPagingTo
          * XXX - SS - support editing for files with only one page
          */
         dirty = false;
-    }
-
-    @Override
-    public void unmask() {
-        con.unmask();
     }
 
     protected void clearDisplay() {

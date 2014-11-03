@@ -21,14 +21,10 @@
         <ui:attributes local="true"/>
     </ui:with>
 
-    <ui:with field="margins5" type="com.sencha.gxt.core.client.util.Margins">
-        <ui:attributes top="5" right="5" bottom="5" left="5" />
-    </ui:with>
     <ui:with field="northData"
              type="com.sencha.gxt.widget.core.client.container.BorderLayoutContainer.BorderLayoutData">
         <ui:attributes size="30"
                        maxSize="30"
-                       margins="{margins5}"
                        collapsible="false"
                        split="false"/>
     </ui:with>
@@ -37,7 +33,6 @@
              type="com.sencha.gxt.widget.core.client.container.BorderLayoutContainer.BorderLayoutData">
         <ui:attributes size="30"
                        maxSize="30"
-                       margins="{margins5}"
                        collapsible="false"
                        split="false"/>
     </ui:with>

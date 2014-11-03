@@ -6,12 +6,13 @@ import com.google.web.bindery.autobean.shared.Splittable;
 public interface StructuredText {
 
     String DATA_KEY = "csv";
+    String COL_KEY = "max-cols";
 
     @PropertyName("chunk-size")
     String getChunkSize();
 
     @PropertyName("max-cols")
-    int getMaxColumns();
+    String getMaxColumns();
 
     @PropertyName("page")
     String getPage();

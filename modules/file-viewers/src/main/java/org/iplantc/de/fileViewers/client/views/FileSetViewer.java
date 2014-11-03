@@ -36,7 +36,7 @@ import java.util.logging.Logger;
  * -- DnD re-ordering of items within this widget
  * -- Line numbers
  *
- * This view differs from the {@link TextViewerImpl} and {@link StructuredTextViewerImpl} views by
+ * This view differs from the {@link TextViewerImpl} and {@link StructuredTextViewer} views by
  * integrating the toolbar with the view in lieu of implementing the toolbar in a separate class.
  *
  * This view is a list which will contain all available {@code FileSet} items, so a paging-style

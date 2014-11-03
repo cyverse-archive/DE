@@ -7,12 +7,13 @@ import static org.iplantc.de.client.events.FileSavedEvent.FileSavedEventHandler;
 import org.iplantc.de.client.models.diskResources.File;
 
 import com.google.gwt.event.shared.HandlerRegistration;
-import com.google.gwt.user.client.ui.Widget;
+
+import com.sencha.gxt.widget.core.client.Composite;
 
 /**
  * @author sriram, jstroot
  */
-public abstract class AbstractFileViewer implements FileViewer {
+public abstract class AbstractFileViewer extends Composite implements FileViewer {
 
     protected File file;
 
@@ -28,9 +29,6 @@ public abstract class AbstractFileViewer implements FileViewer {
         // Subclasses which use the FileSaveCallback, or otherwise fire a FileSavedEvent will override this method
         return null;
     }
-
-    @Override
-    public abstract Widget asWidget();
 
     @Override
     public String getViewName() {

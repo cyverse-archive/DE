@@ -12,6 +12,7 @@ import org.iplantc.de.fileViewers.client.events.ViewerPagingToolbarUpdatedEvent;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Preconditions;
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.gwt.uibinder.client.UiFactory;
 import com.google.gwt.uibinder.client.UiField;
@@ -48,6 +49,10 @@ import java.util.logging.Logger;
  * @author jstroot
  */
 public abstract class AbstractStructuredTextViewer extends AbstractFileViewer {
+    public interface AbstractStructuredTextViewerAppearance {
+
+    }
+
     static final class StructuredTextValueProvider implements ValueProvider<Splittable, String> {
 
         private final Integer columnIndex;
@@ -58,13 +63,17 @@ public abstract class AbstractStructuredTextViewer extends AbstractFileViewer {
 
         @Override
         public String getValue(Splittable object) {
+            if(object.isUndefined(columnIndex.toString())){
+                return "";
+            }
             Splittable value = object.get(columnIndex.toString());
             return value.asString();
         }
 
         @Override
         public void setValue(Splittable object, String value) {
-            StringQuoter.create(value).assign(object, columnIndex.toString());
+            String val = Strings.nullToEmpty(value);
+            StringQuoter.create(val).assign(object, columnIndex.toString());
         }
 
         @Override
@@ -145,28 +154,24 @@ public abstract class AbstractStructuredTextViewer extends AbstractFileViewer {
         return new ColumnModel<>(Lists.<ColumnConfig<Splittable, ?>>newArrayList());
     }
 
-    @UiHandler("toolbar")
-    void onSaveSelected(SaveSelectedEvent event){
+    @UiHandler("toolbar") void onSaveSelected(SaveSelectedEvent event){
         listStore.commitChanges();
         presenter.saveFile(this);
     }
 
-    @UiHandler("toolbar")
-    void onRefreshSelected(RefreshSelectedEvent event){
+    @UiHandler("toolbar") void onRefreshSelected(RefreshSelectedEvent event){
         presenter.loadStructuredData(pagingToolBar.getPageNumber(),
                                      (int) pagingToolBar.getPageSize(),
                                      getSeparator());
     }
 
-    @UiHandler("pagingToolBar")
-    void onPagingToolbarChanged(ViewerPagingToolbarUpdatedEvent event) {
+    @UiHandler("pagingToolBar") void onPagingToolbarChanged(ViewerPagingToolbarUpdatedEvent event) {
         presenter.loadStructuredData(event.getPageNumber(),
                                      event.getPageSize(),
                                      getSeparator());
     }
 
-    @UiHandler("toolbar")
-    void onLineNumberCheckboxValueChangeEvent(LineNumberCheckboxChangeEvent event){
+    @UiHandler("toolbar") void onLineNumberCheckboxValueChangeEvent(LineNumberCheckboxChangeEvent event){
         rowNumberer.setHidden(!event.getValue());
         grid.getView().refresh(false);
     }
@@ -191,8 +196,9 @@ public abstract class AbstractStructuredTextViewer extends AbstractFileViewer {
         gridFilters.removeAll();
 
         ColumnModel<Splittable> newColumnModel = createColumnModel(structuredText);
-        grid.reconfigure(listStore, newColumnModel);
         gridFilters.initPlugin(grid);
+        grid.reconfigure(listStore, newColumnModel);
+        grid.getView().refresh(true);
     }
 
     ColumnModel<Splittable> createColumnModel(final StructuredText structuredText){
@@ -200,7 +206,7 @@ public abstract class AbstractStructuredTextViewer extends AbstractFileViewer {
 
         // Add RowNumberer first
         configs.add(rowNumberer);
-        int columns = structuredText.getMaxColumns();
+        int columns = Integer.valueOf(structuredText.getMaxColumns());
 
         for(int c = 0; c < columns; c++){
             StructuredTextValueProvider valueProvider = new StructuredTextValueProvider(c);

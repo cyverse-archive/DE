@@ -62,15 +62,8 @@ public abstract class AbstractToolBar extends Composite {
         lineNumberCheckbox = new CheckBox();
         lineNumberCheckbox.setBoxLabel(appearance.lineNumberCheckboxLabel());
 
-//        lineNumberCheckbox.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
-//            @Override
-//            public void onValueChange(ValueChangeEvent<Boolean> event) {
-//                fireEvent(new LineNumberCheckboxChangeEvent(event.getValue()));
-//            }
-//        });
         editStatus = new Status(appearance.editStatusAppearance());
         editStatus.setWidth(appearance.editStatusWidth());
-
     }
 
     @UiHandler("lineNumberCheckbox")

@@ -54,9 +54,9 @@ public class StructuredTextViewToolBar extends AbstractToolBar {
     @UiField
     LabelToolItem skipRowsLabel;
     private static final StructuredTextViewTooBarUiBinder BINDER = GWT.create(StructuredTextViewTooBarUiBinder.class);
-    private final StructuredTextViewerImpl view;
+    private final StructuredTextViewer view;
 
-    StructuredTextViewToolBar(final StructuredTextViewerImpl view,
+    StructuredTextViewToolBar(final StructuredTextViewer view,
                               final boolean editing,
                               final StructureTextViewerToolbarAppearance appearance) {
         super(editing, appearance);
@@ -67,7 +67,7 @@ public class StructuredTextViewToolBar extends AbstractToolBar {
         setEditing(editing);
     }
 
-    public StructuredTextViewToolBar(final StructuredTextViewerImpl view,
+    public StructuredTextViewToolBar(final StructuredTextViewer view,
                                      final boolean editing) {
         this(view,
              editing,

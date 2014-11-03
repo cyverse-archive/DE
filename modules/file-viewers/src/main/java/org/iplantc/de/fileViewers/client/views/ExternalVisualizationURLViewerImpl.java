@@ -82,7 +82,6 @@ public class ExternalVisualizationURLViewerImpl extends AbstractFileViewer imple
     private final IplantDisplayStrings displayStrings;
     private final FileEditorServiceFacade fileEditorService;
     private final IplantResources iplantResources;
-    private final Widget widget;
 
     public ExternalVisualizationURLViewerImpl(final File file,
                                               final String infoType) {
@@ -90,14 +89,9 @@ public class ExternalVisualizationURLViewerImpl extends AbstractFileViewer imple
         this.displayStrings = I18N.DISPLAY;
         this.iplantResources = IplantResources.RESOURCES;
         this.fileEditorService = ServicesInjector.INSTANCE.getFileEditorServiceFacade();
-        this.widget = uiBinder.createAndBindUi(this);
+        initWidget(uiBinder.createAndBindUi(this));
         gridView.setAutoExpandColumn(cm.getColumn(1));
         buildToolBar(DiskResourceUtil.createInfoTypeSplittable(infoType));
-    }
-
-    @Override
-    public Widget asWidget() {
-        return widget;
     }
 
     @Override
@@ -115,22 +109,12 @@ public class ExternalVisualizationURLViewerImpl extends AbstractFileViewer imple
         return displayStrings.visualization() + ":" + file.getName();
     }
 
-    @Override
-    public void mask(String loadingMask) {
-        con.mask(loadingMask);
-    }
-
     @SuppressWarnings("unchecked")
     @Override
     public void setData(Object data) {
         listStore.clear();
         List<VizUrl> urls = (List<VizUrl>) data;
         listStore.addAll(urls);
-    }
-
-    @Override
-    public void unmask() {
-        con.unmask();
     }
 
     private TextButton buildCogeButton() {
