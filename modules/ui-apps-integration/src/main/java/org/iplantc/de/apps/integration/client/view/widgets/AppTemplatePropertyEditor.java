@@ -90,7 +90,6 @@ public class AppTemplatePropertyEditor extends Composite implements ValueAwareEd
         name.addKeyDownHandler(new PreventEntryAfterLimitHandler(name));
         name.addValidator(new MaxLengthValidator(PreventEntryAfterLimitHandler.DEFAULT_LIMIT));
         name.addValidator(new AppNameValidator());
-        description.addValidator(new MaxLengthValidator(PreventEntryAfterLimitHandler.DEFAULT_LIMIT));
         description.addKeyDownHandler(new PreventEntryAfterLimitHandler(description));
 
         initLabels();
