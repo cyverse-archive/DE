@@ -76,6 +76,8 @@ public interface FileViewer extends IsWidget, IsMaskable, HasHandlers, FileSaved
 
         boolean isDirty();
 
+        void loadFileSetData(Integer pageNumber, Integer pageSize, String separator);
+
         void loadStructuredData(Integer pageNumber, Integer pageSize, String separator);
 
         void loadTextData(Integer pageNumber, Integer pageSize);

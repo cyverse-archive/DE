@@ -82,6 +82,7 @@ public class StructuredTextViewer extends AbstractStructuredTextViewer {
                                          (int) pagingToolBar.getPageSize(),
                                          getSeparator());
         } else {
+            Preconditions.checkArgument(editing, "New files must be editable");
             Preconditions.checkNotNull(columns, "Columns can't be null if file is null");
             Preconditions.checkArgument(columns > 0, "Columns must be greater than 0.");
             this.columns = columns;
