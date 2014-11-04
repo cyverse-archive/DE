@@ -1,8 +1,10 @@
 package org.iplantc.de.client.services.impl;
 
-import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.*;
-import org.iplantc.de.client.models.DEProperties;
-import org.iplantc.de.client.models.UserInfo;
+import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.DELETE;
+import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.GET;
+import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.PATCH;
+import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.PUT;
+
 import org.iplantc.de.client.models.analysis.AnalysesAutoBeanFactory;
 import org.iplantc.de.client.models.analysis.AnalysesList;
 import org.iplantc.de.client.models.analysis.Analysis;
@@ -119,31 +121,22 @@ public class AnalysisServiceFacadeImpl implements AnalysisServiceFacade {
         }
     }
 
-    private final DEProperties deProperties;
-    private final UserInfo userInfo;
     private final AnalysesAutoBeanFactory factory;
     private final DiscEnvApiService deServiceFacade;
+    public static final String ANALYSES = "org.iplantc.services.analyses";
 
 
     @Inject
     public AnalysisServiceFacadeImpl(final DiscEnvApiService deServiceFacade,
-                                     final DEProperties deProperties,
-                                     final UserInfo userInfo,
                                      final AnalysesAutoBeanFactory factory) {
         this.deServiceFacade = deServiceFacade;
-        this.deProperties = deProperties;
-        this.userInfo = userInfo;
         this.factory = factory;
     }
 
     @Override
     public void getAnalyses(final FilterPagingLoadConfig loadConfig, AsyncCallback<PagingLoadResultBean<Analysis>> callback) {
-        final String workspaceId = userInfo.getWorkspaceId();
-        StringBuilder address = new StringBuilder(deProperties.getMuleServiceBaseUrl());
+        StringBuilder address = new StringBuilder(ANALYSES);
 
-        address.append("workspaces/"); //$NON-NLS-1$
-        address.append(workspaceId);
-        address.append("/executions/list"); //$NON-NLS-1$
 
         if (loadConfig != null) {
             address.append("?limit="); //$NON-NLS-1$
@@ -209,8 +202,7 @@ public class AnalysisServiceFacadeImpl implements AnalysisServiceFacade {
 
     @Override
     public void deleteAnalyses(List<Analysis> analysesToBeDeleted, AsyncCallback<String> callback) {
-        String address = deProperties.getMuleServiceBaseUrl() + "workspaces/" //$NON-NLS-1$
-                                 + userInfo.getWorkspaceId() + "/executions" + "/delete"; //$NON-NLS-1$ //$NON-NLS-2$
+        String address = ANALYSES + "/shredder"; //$NON-NLS-1$ //$NON-NLS-2$
         final Splittable stringIdListSplittable = DiskResourceUtil.createStringIdListSplittable(analysesToBeDeleted);
         final Splittable payload = StringQuoter.createSplittable();
         stringIdListSplittable.assign(payload, "executions");
@@ -221,7 +213,7 @@ public class AnalysisServiceFacadeImpl implements AnalysisServiceFacade {
 
     @Override
     public void renameAnalysis(Analysis analysis, String newName, AsyncCallback<Void> callback) {
-        String address = deProperties.getMuleServiceBaseUrl() + "analysis/" + analysis.getId();
+        String address = ANALYSES + "/" + analysis.getId();
         Splittable body = StringQuoter.createSplittable();
         StringQuoter.create(newName).assign(body, "name");
 
@@ -231,7 +223,7 @@ public class AnalysisServiceFacadeImpl implements AnalysisServiceFacade {
 
     @Override
     public void stopAnalysis(Analysis analysis, AsyncCallback<String> callback) {
-        String address = deProperties.getMuleServiceBaseUrl() + "stop-analysis/"
+        String address = ANALYSES + "/stop-analysis/"
                                  + analysis.getId();
         ServiceCallWrapper wrapper = new ServiceCallWrapper(DELETE, address);
 
@@ -240,8 +232,7 @@ public class AnalysisServiceFacadeImpl implements AnalysisServiceFacade {
 
     @Override
     public void getAnalysisParams(Analysis analysis, AsyncCallback<List<AnalysisParameter>> callback) {
-        String address = deProperties.getMuleServiceBaseUrl()
-                                 + "get-property-values/" + analysis.getId();
+        String address = ANALYSES + "/get-property-values/" + analysis.getId();
         ServiceCallWrapper wrapper = new ServiceCallWrapper(GET, address);
 
         deServiceFacade.getServiceData(wrapper, new StringListAsyncCallbackConverter(callback, factory));
@@ -249,7 +240,7 @@ public class AnalysisServiceFacadeImpl implements AnalysisServiceFacade {
 
     @Override
     public void updateAnalysisComments(final Analysis analysis, final String newComment, AsyncCallback<Void> callback) {
-        String address = deProperties.getMuleServiceBaseUrl() + "analysis/" + analysis.getId();
+        String address = ANALYSES + "/" + analysis.getId();
         Splittable body = StringQuoter.createSplittable();
         StringQuoter.create(newComment).assign(body, "description");
 

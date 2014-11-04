@@ -25,14 +25,14 @@ public interface Analysis extends HasId, HasName {
     @PropertyName("enddate")
     public long getEndDate();
 
-    @PropertyName("analysis_id")
+    @PropertyName("app_id")
     public String getAppId();
 
-    @PropertyName("analysis_name")
+    @PropertyName("app_name")
     public String getAppName();
 
-    @PropertyName("analysis_details")
-    public String getAnalysisDetails();
+    @PropertyName("app_description")
+    public String getAppDescription();
 
     public String getStatus();
 
@@ -45,11 +45,11 @@ public interface Analysis extends HasId, HasName {
     @PropertyName("analysis_id")
     public void setAppId(String appId);
 
-    @PropertyName("analysis_name")
+    @PropertyName("app_name")
     public void setAppName(String appName);
 
-    @PropertyName("analysis_details")
-    public void setAnalysisDetails(String analysis_details);
+    @PropertyName("app_description")
+    public void setAppDescription(String analysis_details);
 
     public void setStatus(String status);
 
