@@ -1,4 +1,4 @@
-package org.iplantc.de.fileViewers.client.views;
+package org.iplantc.de.fileViewers.client;
 
 import org.iplantc.de.client.events.FileSavedEvent;
 import org.iplantc.de.client.models.IsMaskable;
@@ -32,6 +32,25 @@ public interface FileViewer extends IsWidget, IsMaskable, HasHandlers, FileSaved
         void setDirty(Boolean dirty);
 
         void save();
+    }
+
+    interface FileViewerPresenterAppearance {
+
+        String fileOpenMsg(); // display strings with same name
+
+        String initializingFileViewer();
+
+        String retrieveFileManifestFailed(); // retrieveStatFailed
+
+        String retrieveFileManifestMask();
+
+        String retrieveTreeUrlsMask();
+
+        String retrievingFileContentsMask();
+
+        String savingMask(); // display string with same name
+
+        String unableToRetrieveFileData(String fileName);// display strings with same name
     }
 
     /**
@@ -82,6 +101,8 @@ public interface FileViewer extends IsWidget, IsMaskable, HasHandlers, FileSaved
 
     String COLUMNS_KEY = "columns";
 
+    String INFO_TYPE_KEY = "info-type";
+
     String getEditorContent();
 
     boolean isDirty();
@@ -89,4 +110,5 @@ public interface FileViewer extends IsWidget, IsMaskable, HasHandlers, FileSaved
     String getViewName();
 
     void setData(Object data);
+
 }

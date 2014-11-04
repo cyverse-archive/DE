@@ -3,6 +3,7 @@ package org.iplantc.de.fileViewers.client.views;
 import org.iplantc.de.client.events.FileSavedEvent;
 import org.iplantc.de.client.models.diskResources.File;
 import org.iplantc.de.client.models.viewer.StructuredText;
+import org.iplantc.de.fileViewers.client.FileViewer;
 import org.iplantc.de.fileViewers.client.events.LineNumberCheckboxChangeEvent;
 import org.iplantc.de.fileViewers.client.events.RefreshSelectedEvent;
 import org.iplantc.de.fileViewers.client.events.SaveSelectedEvent;

@@ -6,33 +6,33 @@ import com.google.gwt.core.client.GWT;
 
 public class StructuredTextViewerDefaultAppearance extends AbstractStructuredTextViewerDefaultAppearance implements StructuredTextViewer.StructuredTextViewerAppearance{
 
-    private final StructuredTextViewerMessages messages;
+    private final FileViewerStrings displayStrings;
 
     public StructuredTextViewerDefaultAppearance() {
-        this(GWT.<StructuredTextViewerMessages> create(StructuredTextViewerMessages.class));
+        this(GWT.<FileViewerStrings> create(FileViewerStrings.class));
     }
 
-    StructuredTextViewerDefaultAppearance(final StructuredTextViewerMessages messages){
-        this.messages = messages;
+    StructuredTextViewerDefaultAppearance(final FileViewerStrings displayStrings){
+        this.displayStrings = displayStrings;
     }
 
     @Override
     public String createNewDefaultColumnValue(int column) {
-        return messages.sampleColumnText(column);
+        return displayStrings.sampleColumnText(column);
     }
 
     @Override
     public String defaultViewName() {
-        return messages.defaultViewName();
+        return displayStrings.defaultViewName();
     }
 
     @Override
     public String gridToolTip() {
-        return messages.gridToolTip();
+        return displayStrings.gridToolTip();
     }
 
     @Override
     public String viewName(String fileName) {
-        return messages.viewName(fileName);
+        return displayStrings.viewName(fileName);
     }
 }

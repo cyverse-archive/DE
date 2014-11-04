@@ -7,6 +7,7 @@ public interface StructuredText {
 
     String DATA_KEY = "csv";
     String COL_KEY = "max-cols";
+    String TEXT_CHUNK_KEY = "chunk";
 
     @PropertyName("chunk-size")
     String getChunkSize();

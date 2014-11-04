@@ -5,6 +5,7 @@ import org.iplantc.de.client.models.diskResources.File;
 import org.iplantc.de.client.models.viewer.InfoType;
 import org.iplantc.de.client.services.FileEditorServiceFacade;
 import org.iplantc.de.commons.client.ErrorHandler;
+import org.iplantc.de.fileViewers.client.FileViewer;
 
 import com.google.common.base.Preconditions;
 import com.google.gwt.core.client.GWT;

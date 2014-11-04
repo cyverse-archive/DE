@@ -946,7 +946,7 @@ public interface IplantErrorStrings extends com.google.gwt.i18n.client.Messages,
 
     /**
      * Translated "Unable to retrieve details.".
-     * 
+     *
      * @return translated "Unable to retrieve details."
      */
     @DefaultMessage("Unable to retrieve details.")
@@ -1076,15 +1076,6 @@ public interface IplantErrorStrings extends com.google.gwt.i18n.client.Messages,
     @DefaultMessage("Unable to build workspace.")
     @Key("unableToBuildWorkspace")
     String unableToBuildWorkspace();
-
-    /**
-     * Translated "Unable to retrieve contents for file {0}.".
-     * 
-     * @return translated "Unable to retrieve contents for file {0}."
-     */
-    @DefaultMessage("Unable to retrieve contents for file {0}.")
-    @Key("unableToRetrieveFileData")
-    String unableToRetrieveFileData(String arg0);
 
     /**
      * Translated "Unable to retrieve manifest for file {0}.".

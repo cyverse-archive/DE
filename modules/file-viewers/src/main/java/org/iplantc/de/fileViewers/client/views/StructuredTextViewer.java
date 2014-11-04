@@ -4,6 +4,7 @@ import org.iplantc.de.client.events.FileSavedEvent;
 import org.iplantc.de.client.models.CommonModelAutoBeanFactory;
 import org.iplantc.de.client.models.diskResources.File;
 import org.iplantc.de.client.models.viewer.StructuredText;
+import org.iplantc.de.fileViewers.client.FileViewer;
 import org.iplantc.de.fileViewers.client.events.AddRowSelectedEvent;
 import org.iplantc.de.fileViewers.client.events.DeleteRowSelectedEvent;
 import org.iplantc.de.fileViewers.client.events.HeaderRowCheckboxChangedEvent;

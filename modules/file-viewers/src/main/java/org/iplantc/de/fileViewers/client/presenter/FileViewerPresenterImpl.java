@@ -1,5 +1,7 @@
 package org.iplantc.de.fileViewers.client.presenter;
 
+import static org.iplantc.de.client.services.FileEditorServiceFacade.COMMA_DELIMITER;
+import static org.iplantc.de.client.services.FileEditorServiceFacade.TAB_DELIMITER;
 import org.iplantc.de.client.events.FileSavedEvent;
 import org.iplantc.de.client.models.CommonModelAutoBeanFactory;
 import org.iplantc.de.client.models.IsMaskable;
@@ -7,6 +9,7 @@ import org.iplantc.de.client.models.diskResources.File;
 import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.client.models.errors.diskResources.DiskResourceErrorAutoBeanFactory;
 import org.iplantc.de.client.models.errors.diskResources.ErrorGetManifest;
+import org.iplantc.de.client.models.viewer.InfoType;
 import org.iplantc.de.client.models.viewer.MimeType;
 import org.iplantc.de.client.models.viewer.StructuredText;
 import org.iplantc.de.client.models.viewer.VizUrl;
@@ -19,11 +22,9 @@ import org.iplantc.de.fileViewers.client.callbacks.FileSaveCallback;
 import org.iplantc.de.fileViewers.client.callbacks.TreeUrlCallback;
 import org.iplantc.de.fileViewers.client.events.DirtyStateChangedEvent;
 import org.iplantc.de.fileViewers.client.views.ExternalVisualizationURLViewerImpl;
-import org.iplantc.de.fileViewers.client.views.FileViewer;
+import org.iplantc.de.fileViewers.client.FileViewer;
 import org.iplantc.de.fileViewers.client.views.SaveAsDialogCancelSelectHandler;
 import org.iplantc.de.fileViewers.client.views.SaveAsDialogOkSelectHandler;
-import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
-import org.iplantc.de.resources.client.messages.IplantErrorStrings;
 
 import static com.google.common.base.Preconditions.*;
 import com.google.common.base.Preconditions;
@@ -45,6 +46,7 @@ import com.google.web.bindery.autobean.shared.Splittable;
 import com.google.web.bindery.autobean.shared.impl.StringQuoter;
 
 import com.sencha.gxt.widget.core.client.PlainTabPanel;
+import com.sencha.gxt.widget.core.client.container.SimpleContainer;
 
 import java.util.List;
 import java.util.logging.Logger;
@@ -55,28 +57,31 @@ import java.util.logging.Logger;
 public class FileViewerPresenterImpl implements FileViewer.Presenter, FileSavedEvent.FileSavedEventHandler {
     private class GetManifestCallback implements AsyncCallback<String> {
         private final AsyncCallback<String> asyncCallback;
+        private final FileViewer.FileViewerPresenterAppearance presenterAppearance;
         private final boolean editing;
-        private final IplantErrorStrings errorStrings;
+        private final SimpleContainer simpleContainer;
         private final File file;
         private final boolean isVizTabFirst;
         private final Folder parentFolder;
         private final FileViewerPresenterImpl presenter;
 
         public GetManifestCallback(final FileViewerPresenterImpl presenter,
+                                   final SimpleContainer simpleContainer,
                                    final File file,
                                    final Folder parentFolder,
                                    final boolean editing,
                                    final boolean isVizTabFirst,
                                    final AsyncCallback<String> asyncCallback,
-                                   final IplantErrorStrings errorStrings) {
+                                   final FileViewer.FileViewerPresenterAppearance presenterAppearance) {
 
             this.presenter = presenter;
+            this.simpleContainer = simpleContainer;
             this.file = file;
             this.parentFolder = parentFolder;
             this.editing = editing;
             this.isVizTabFirst = isVizTabFirst;
             this.asyncCallback = asyncCallback;
-            this.errorStrings = errorStrings;
+            this.presenterAppearance = presenterAppearance;
         }
 
         @Override
@@ -91,8 +96,7 @@ public class FileViewerPresenterImpl implements FileViewer.Presenter, FileSavedE
                                                                             message);
                 ErrorHandler.post(errorBean.as(), caught);
             } else {
-                ErrorHandler.post(errorStrings.retrieveStatFailed(),
-                                  caught);
+                ErrorHandler.post(presenterAppearance.retrieveFileManifestFailed(), caught);
             }
         }
 
@@ -101,7 +105,7 @@ public class FileViewerPresenterImpl implements FileViewer.Presenter, FileSavedE
             asyncCallback.onSuccess(null);
 
             JSONObject manifest = JsonUtil.getObject(result);
-            String infoType = JsonUtil.getString(manifest, "info-type");
+            String infoType = JsonUtil.getString(manifest, FileViewer.INFO_TYPE_KEY);
             MimeType contentType = MimeType.fromTypeString(JsonUtil.getString(manifest, "content-type"));
             checkNotNull(contentType);
             presenter.setTitle(file.getName());
@@ -109,15 +113,15 @@ public class FileViewerPresenterImpl implements FileViewer.Presenter, FileSavedE
             presenter.setContentType(contentType);
             presenter.composeView(file, parentFolder, manifest, contentType, infoType, editing, isVizTabFirst);
             LOG.info("Manifest retrieved: " + file.getName());
+            simpleContainer.unmask();
         }
     }
 
     Logger LOG = Logger.getLogger(FileViewerPresenterImpl.class.getName());
-    @Inject IplantDisplayStrings displayStrings;
-    @Inject IplantErrorStrings errorStrings;
     @Inject MimeTypeViewerResolverFactory mimeFactory;
     @Inject CommonModelAutoBeanFactory factory;
     @Inject FileEditorServiceFacade fileEditorService;
+    @Inject FileViewer.FileViewerPresenterAppearance appearance;
 
     private MimeType contentType;
     /**
@@ -129,6 +133,7 @@ public class FileViewerPresenterImpl implements FileViewer.Presenter, FileSavedE
     private Folder parentFolder;
     private PlainTabPanel tabPanel;
     private String title;
+    private SimpleContainer simpleContainer;
     /**
      * A presenter can handle more than one view of the same data at a time
      */
@@ -139,6 +144,8 @@ public class FileViewerPresenterImpl implements FileViewer.Presenter, FileSavedE
     public FileViewerPresenterImpl() {
         viewers = Lists.newArrayList();
         tabPanel = new PlainTabPanel();
+        simpleContainer = new SimpleContainer();
+        simpleContainer.setWidget(tabPanel);
     }
 
     @Override
@@ -166,18 +173,19 @@ public class FileViewerPresenterImpl implements FileViewer.Presenter, FileSavedE
         checkState(!tabPanel.isAttached(), "You cannot 'go' this presenter more than once.");
         checkArgument(file != null, "File cannot be null.\n" +
                                         "To create new files, user 'newFileGo(..)'.");
-        container.setWidget(tabPanel);
-        tabPanel.mask(displayStrings.loadingMask());
+        container.setWidget(simpleContainer);
+        simpleContainer.mask(appearance.retrieveFileManifestMask());
         this.file = file;
         this.vizTabFirst = isVizTabFirst;
 
         fileEditorService.getManifest(file, new GetManifestCallback(this,
+                                                                    simpleContainer,
                                                                     file,
                                                                     parentFolder,
                                                                     editing,
                                                                     isVizTabFirst,
                                                                     asyncCallback,
-                                                                    errorStrings));
+                                                                    appearance));
     }
 
     @Override
@@ -191,17 +199,17 @@ public class FileViewerPresenterImpl implements FileViewer.Presenter, FileSavedE
             return;
         }
 
-        // Todo MaskView
+        simpleContainer.mask(appearance.retrievingFileContentsMask());
         fileEditorService.readCsvChunk(file, separator, pageNumber, pageSize, new AsyncCallback<String>() {
             @Override
             public void onFailure(Throwable caught) {
-                // TODO unmask view
-                ErrorHandler.post(errorStrings.unableToRetrieveFileData(file.getName()));
+                simpleContainer.unmask();
+                ErrorHandler.post(appearance.unableToRetrieveFileData(file.getName()));
             }
 
             @Override
             public void onSuccess(String result) {
-                // TODO unmask view
+                simpleContainer.unmask();
                 // Get data from result
                 StructuredText structuredText = getStructuredText(result);
                 for(FileViewer view : viewers){
@@ -222,20 +230,21 @@ public class FileViewerPresenterImpl implements FileViewer.Presenter, FileSavedE
         if(file == null){
             return;
         }
-        // TODO MaskView
+
+        simpleContainer.mask(appearance.retrievingFileContentsMask());
         long chunkPosition = pageSize * (pageNumber - 1);
         fileEditorService.readChunk(file, chunkPosition, pageSize, new AsyncCallback<String>() {
             @Override
             public void onFailure(Throwable caught) {
-                // TODO unmask view
-                ErrorHandler.post(errorStrings.unableToRetrieveFileData(file.getName()));
+                simpleContainer.unmask();
+                ErrorHandler.post(appearance.unableToRetrieveFileData(file.getName()));
             }
 
             @Override
             public void onSuccess(String result) {
-                // TODO unmask view
+                simpleContainer.unmask();
                 // Get Data from result
-                String data = StringQuoter.split(result).get("chunk").asString();
+                String data = StringQuoter.split(result).get(StructuredText.TEXT_CHUNK_KEY).asString();
                 for(FileViewer view : viewers){
                     view.setData(data);
                 }
@@ -256,8 +265,8 @@ public class FileViewerPresenterImpl implements FileViewer.Presenter, FileSavedE
         this.parentFolder = parentFolder;
         checkNotNull(contentType);
         checkState(!tabPanel.isAttached(), "You cannot 'go' this presenter more than once.");
-        container.setWidget(tabPanel);
-        tabPanel.mask(displayStrings.loadingMask());
+        container.setWidget(simpleContainer);
+        simpleContainer.mask(appearance.initializingFileViewer());
         this.vizTabFirst = vizTabFirst;
 
         // Assemble manifest
@@ -271,19 +280,19 @@ public class FileViewerPresenterImpl implements FileViewer.Presenter, FileSavedE
             checkArgument(columns >= 1, "Must specify a non-zero, positive number of columns.");
 
             JSONString infoType = null;
-            if (",".equals(delimiter)) {
-                infoType = new JSONString("csv");
-            } else if ("\t".equals(delimiter)) {
-                infoType = new JSONString("tsv");
+            if (COMMA_DELIMITER.equals(delimiter)) {
+                infoType = new JSONString(InfoType.CSV.toString());
+            } else if (TAB_DELIMITER.equals(delimiter)) {
+                infoType = new JSONString(InfoType.TSV.toString());
             }
-            manifest.put("info-type", infoType);
+            manifest.put(FileViewer.INFO_TYPE_KEY, infoType);
 
             manifest.put(FileViewer.COLUMNS_KEY, new JSONNumber(columns));
         }
         setTitle(title);
         setManifest(manifest);
         setContentType(contentType);
-        String infoType = JsonUtil.getString(manifest, "info-type");
+        String infoType = JsonUtil.getString(manifest, FileViewer.INFO_TYPE_KEY);
         composeView(null, parentFolder, manifest, contentType, infoType, editing, vizTabFirst);
     }
 
@@ -322,7 +331,7 @@ public class FileViewerPresenterImpl implements FileViewer.Presenter, FileSavedE
             SaveAsDialogOkSelectHandler okSelectHandler = new SaveAsDialogOkSelectHandler(fileViewer,
                                                                                           fileViewer,
                                                                                           saveDialog,
-                                                                                          displayStrings.savingMask(),
+                                                                                          appearance.savingMask(),
                                                                                           fileViewer.getEditorContent(),
                                                                                           fileEditorService);
             SaveAsDialogCancelSelectHandler cancelSelectHandler = new SaveAsDialogCancelSelectHandler(fileViewer,
@@ -386,16 +395,16 @@ public class FileViewerPresenterImpl implements FileViewer.Presenter, FileSavedE
      * Calls the tree URL service to fetch the URLs to display in the grid.
      */
     void callTreeCreateService(final FileViewer viewer, File file) {
-        tabPanel.mask(displayStrings.loadingMask());
+        simpleContainer.mask(appearance.retrieveTreeUrlsMask());
         IsMaskable maskable = new IsMaskable() {
             @Override
             public void mask(String loadingMask) {
-                tabPanel.mask(loadingMask);
+                simpleContainer.mask(loadingMask);
             }
 
             @Override
             public void unmask() {
-                tabPanel.unmask();
+                simpleContainer.unmask();
             }
         };
         fileEditorService.getTreeUrl(file.getPath(),
@@ -447,11 +456,9 @@ public class FileViewerPresenterImpl implements FileViewer.Presenter, FileSavedE
         }
 
         if (viewers.size() == 0) {
-            // FIXME This add method not supported
-            // Need to wrap in a simple container and add to that, or add this as a tab.
-            tabPanel.add(new HTML(displayStrings.fileOpenMsg()));
+            tabPanel.add(new HTML(appearance.fileOpenMsg()), "");
         }
-        tabPanel.unmask();
+        simpleContainer.unmask();
     }
 
     void setContentType(MimeType contentType) {

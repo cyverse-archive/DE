@@ -13,7 +13,7 @@ import org.iplantc.de.commons.client.info.IplantAnnouncer;
 import org.iplantc.de.commons.client.util.WindowUtil;
 import org.iplantc.de.fileViewers.client.views.AbstractFileViewer;
 import org.iplantc.de.fileViewers.client.views.ExternalVisualizationURLViewerImpl;
-import org.iplantc.de.fileViewers.client.views.FileViewer;
+import org.iplantc.de.fileViewers.client.FileViewer;
 import org.iplantc.de.fileViewers.client.views.ImageViewerImpl;
 import org.iplantc.de.fileViewers.client.views.StructuredTextViewer;
 import org.iplantc.de.fileViewers.client.views.TextViewerImpl;

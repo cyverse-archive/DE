@@ -5,6 +5,7 @@ import static org.iplantc.de.client.services.FileEditorServiceFacade.*;
 import org.iplantc.de.client.models.diskResources.File;
 import org.iplantc.de.client.models.viewer.InfoType;
 import org.iplantc.de.client.models.viewer.StructuredText;
+import org.iplantc.de.fileViewers.client.FileViewer;
 import org.iplantc.de.fileViewers.client.events.LineNumberCheckboxChangeEvent;
 import org.iplantc.de.fileViewers.client.events.RefreshSelectedEvent;
 import org.iplantc.de.fileViewers.client.events.SaveSelectedEvent;

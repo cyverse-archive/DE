@@ -60,4 +60,8 @@
     <replace-with class="org.iplantc.de.theme.base.client.fileViewers.StructuredTextViewerDefaultAppearance">
         <when-type-is class="org.iplantc.de.fileViewers.client.views.StructuredTextViewer.StructuredTextViewerAppearance"/>
     </replace-with>
+
+    <replace-with class="org.iplantc.de.theme.base.client.fileViewers.FileViewerPresenterDefaultAppearance">
+        <when-type-is class="org.iplantc.de.fileViewers.client.FileViewer.FileViewerPresenterAppearance"/>
+    </replace-with>
 </module>
