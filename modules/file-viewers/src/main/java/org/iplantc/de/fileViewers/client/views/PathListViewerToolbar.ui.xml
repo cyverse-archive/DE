@@ -18,9 +18,6 @@
                            text="{appearance.refreshButtonText}"/>
 
         <toolbar:SeparatorToolItem />
-        <button:TextButton ui:field="addPathsBtn"
-                           icon="{appearance.addPathsButtonIcon}"
-                           toolTip="{appearance.addPathsButtonTooltip}"/>
         <button:TextButton ui:field="deleteSelectedPathsBtn"
                            icon="{appearance.deleteSelectedPathsButtonIcon}"
                            toolTip="{appearance.deleteSelectedPathsButtonTooltip}"/>

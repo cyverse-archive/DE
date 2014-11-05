@@ -94,7 +94,7 @@ public class StructuredTextViewer extends AbstractStructuredTextViewer {
 
     @Override
     public HandlerRegistration addFileSavedEventHandler(final FileSavedEvent.FileSavedEventHandler handler) {
-        return asWidget().addHandler(handler, FileSavedEvent.TYPE);
+        return addHandler(handler, FileSavedEvent.TYPE);
     }
 
     @Override

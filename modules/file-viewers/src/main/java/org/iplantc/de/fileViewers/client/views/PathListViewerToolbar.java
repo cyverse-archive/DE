@@ -1,6 +1,5 @@
 package org.iplantc.de.fileViewers.client.views;
 
-import org.iplantc.de.fileViewers.client.events.AddPathsSelectedEvent;
 import org.iplantc.de.fileViewers.client.events.DeleteSelectedPathsSelectedEvent;
 
 import com.google.gwt.core.client.GWT;
@@ -33,8 +32,6 @@ public class PathListViewerToolbar extends AbstractToolBar {
     @UiField(provided = true)
     PathListViewerToolbarAppearance appearance;
     @UiField
-    TextButton addPathsBtn;
-    @UiField
     TextButton deleteSelectedPathsBtn;
 
     public PathListViewerToolbar(boolean editing){
@@ -51,14 +48,6 @@ public class PathListViewerToolbar extends AbstractToolBar {
 
     public HandlerRegistration addDeleteSelectedPathsSelectedEventHandler(DeleteSelectedPathsSelectedEvent.DeleteSelectedPathsSelectedEventHandler handler){
         return addHandler(handler, DeleteSelectedPathsSelectedEvent.TYPE);
-    }
-
-    public HandlerRegistration addAddPathsSelectedEventHandler(AddPathsSelectedEvent.AddPathsSelectedEventHandler handler){
-        return addHandler(handler, AddPathsSelectedEvent.TYPE);
-    }
-
-    @UiHandler("addPathsBtn") void onAddPathsBtnSelected(SelectEvent event){
-        fireEvent(new AddPathsSelectedEvent());
     }
 
     @UiHandler("deleteSelectedPathsBtn") void onDeleteSelectedPathsBtnSelected(SelectEvent event){
