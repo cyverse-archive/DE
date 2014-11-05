@@ -1119,13 +1119,13 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter, Di
 
     @Override
     public void onInfoTypeClick(final DiskResource dr, final String type) {
-        final InfoTypeEditorDialog dialog = new InfoTypeEditorDialog(type);
+        final InfoTypeEditorDialog dialog = new InfoTypeEditorDialog(type, diskResourceService);
         dialog.show();
         dialog.addOkButtonSelectHandler(new SelectHandler() {
 
             @Override
             public void onSelect(SelectEvent event) {
-                String newType = dialog.getSelectedValue();
+                String newType = dialog.getSelectedValue().toString();
                 setInfoType(dr, newType);
             }
         });
