@@ -3,8 +3,8 @@ package org.iplantc.de.test.fileViewers.client;
 import org.iplantc.de.client.models.CommonModelAutoBeanFactory;
 import org.iplantc.de.client.models.HasPaths;
 import org.iplantc.de.client.models.diskResources.File;
-import org.iplantc.de.client.services.FileEditorServiceFacade;
-import org.iplantc.de.fileViewers.client.views.FileSetViewer;
+import org.iplantc.de.client.models.viewer.InfoType;
+import org.iplantc.de.fileViewers.client.views.PathListViewer;
 import org.iplantc.de.test.fileViewers.client.gin.FileSetViewerTestGinInjector;
 import org.iplantc.de.test.fileViewers.client.json.JsonDataResources;
 
@@ -21,7 +21,6 @@ public class FileSetViewerTestEntryPoint implements EntryPoint {
 
     @Inject CommonModelAutoBeanFactory factory;
     @Inject JsonDataResources jsonData;
-    @Inject FileEditorServiceFacade fileEditorServiceFacade;
 
     FileSetViewerTestGinInjector injector = GWT.create(FileSetViewerTestGinInjector.class);
 
@@ -45,7 +44,7 @@ public class FileSetViewerTestEntryPoint implements EntryPoint {
          */
         File testFile = null;
         boolean isEdititng = true;
-        FileSetViewer fileSetViewer = new FileSetViewer(testFile, isEdititng, fileEditorServiceFacade);
+        PathListViewer fileSetViewer = new PathListViewer(testFile, InfoType.PATH_LIST.toString(), isEdititng, null);
         String fileSetJson = jsonData.fileSetJson().getText();
 
         final HasPaths hasPaths = AutoBeanCodex.decode(factory, HasPaths.class, fileSetJson).as();

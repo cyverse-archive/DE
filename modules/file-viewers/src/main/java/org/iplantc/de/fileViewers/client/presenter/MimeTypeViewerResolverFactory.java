@@ -14,6 +14,7 @@ import org.iplantc.de.commons.client.util.WindowUtil;
 import org.iplantc.de.fileViewers.client.views.AbstractFileViewer;
 import org.iplantc.de.fileViewers.client.views.ExternalVisualizationURLViewerImpl;
 import org.iplantc.de.fileViewers.client.FileViewer;
+import org.iplantc.de.fileViewers.client.views.PathListViewer;
 import org.iplantc.de.fileViewers.client.views.ImageViewerImpl;
 import org.iplantc.de.fileViewers.client.views.StructuredTextViewer;
 import org.iplantc.de.fileViewers.client.views.TextViewerImpl;
@@ -141,11 +142,17 @@ public class MimeTypeViewerResolverFactory {
                     || VCF.toString().equals(infoType)
                     || GFF.toString().equals(infoType)){
                     StructuredTextViewer structuredTextViewer = new StructuredTextViewer(file,
-                                                                                                 infoType,
-                                                                                                 editing,
-                                                                                                 columns,
-                                                                                                 presenter);
+                                                                                         infoType,
+                                                                                         editing,
+                                                                                         columns,
+                                                                                         presenter);
                     viewers.add(structuredTextViewer);
+                } else if(PATH_LIST.toString().equals(infoType)){
+                    PathListViewer pathListViewer = new PathListViewer(file,
+                                                                     infoType,
+                                                                     editing,
+                                                                     presenter);
+                    viewers.add(pathListViewer);
                 }
                 TextViewerImpl textViewer1 = new TextViewerImpl(file,
                                                                 infoType,

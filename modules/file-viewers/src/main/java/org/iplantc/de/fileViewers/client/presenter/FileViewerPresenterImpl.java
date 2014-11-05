@@ -150,7 +150,7 @@ public class FileViewerPresenterImpl implements FileViewer.Presenter, FileSavedE
 
     @Override
     public HandlerRegistration addDirtyStateChangedEventHandler(DirtyStateChangedEvent.DirtyStateChangedEventHandler handler) {
-        return tabPanel.addHandler(handler, DirtyStateChangedEvent.TYPE);
+        return simpleContainer.addHandler(handler, DirtyStateChangedEvent.TYPE);
     }
 
     @Override
@@ -191,6 +191,11 @@ public class FileViewerPresenterImpl implements FileViewer.Presenter, FileSavedE
     @Override
     public boolean isDirty() {
         return isDirty;
+    }
+
+    @Override
+    public void loadPathListData(Integer pageNumber, Integer pageSize, String separator) {
+
     }
 
     @Override
@@ -260,7 +265,7 @@ public class FileViewerPresenterImpl implements FileViewer.Presenter, FileSavedE
                           final boolean editing,
                           final boolean vizTabFirst,
                           final boolean isTabularFile,
-                          final Integer columns,
+                          boolean isPathListFile, final Integer columns,
                           final String delimiter) {
         this.parentFolder = parentFolder;
         checkNotNull(contentType);
@@ -288,6 +293,10 @@ public class FileViewerPresenterImpl implements FileViewer.Presenter, FileSavedE
             manifest.put(FileViewer.INFO_TYPE_KEY, infoType);
 
             manifest.put(FileViewer.COLUMNS_KEY, new JSONNumber(columns));
+        }
+        if(isPathListFile){
+            manifest.put(FileViewer.INFO_TYPE_KEY, new JSONString(InfoType.PATH_LIST.toString()));
+            manifest.put(FileViewer.PATH_LIST_KEY, new JSONString("true"));
         }
         setTitle(title);
         setManifest(manifest);
@@ -373,7 +382,7 @@ public class FileViewerPresenterImpl implements FileViewer.Presenter, FileSavedE
             return;
         }
         this.isDirty = dirty;
-        tabPanel.fireEvent(new DirtyStateChangedEvent(dirty));
+        simpleContainer.fireEvent(new DirtyStateChangedEvent(dirty));
 
         // Exit if there is not dirtyViewer
         if(dirtyViewer == null){

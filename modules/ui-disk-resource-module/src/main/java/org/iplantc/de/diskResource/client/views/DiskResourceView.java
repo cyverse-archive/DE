@@ -9,6 +9,7 @@ import org.iplantc.de.client.models.tags.IplantTag;
 import org.iplantc.de.client.services.DiskResourceServiceFacade;
 import org.iplantc.de.commons.client.tags.Taggable;
 import org.iplantc.de.commons.client.views.window.configs.FileViewerWindowConfig;
+import org.iplantc.de.commons.client.views.window.configs.PathListWindowConfig;
 import org.iplantc.de.commons.client.views.window.configs.TabularFileViewerWindowConfig;
 import org.iplantc.de.diskResource.client.events.DiskResourceSelectionChangedEvent;
 import org.iplantc.de.diskResource.client.events.FolderSelectionEvent;
@@ -27,6 +28,7 @@ import org.iplantc.de.diskResource.client.views.cells.events.RequestDiskResource
 import org.iplantc.de.diskResource.client.views.cells.events.ShareByDataLinkEvent;
 
 import com.google.gwt.dom.client.Element;
+import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.user.client.ui.HasOneWidget;
 import com.google.gwt.user.client.ui.IsWidget;
 
@@ -209,6 +211,8 @@ public interface DiskResourceView extends IsWidget,
 
         void onNewMdFile(FileViewerWindowConfig config);
 
+        void onNewPathListFileClicked(PathListWindowConfig config);
+
         void createNewPlainTextFile(FileViewerWindowConfig config);
         
         void doSearchTaggedWithResources(Set<IplantTag> tags);
@@ -335,6 +339,13 @@ public interface DiskResourceView extends IsWidget,
     void maskSendToTreeViewer();
 
     void unmaskSendToTreeViewer();
+
+    interface DiskResourceViewToolbarAppearance {
+
+        String newPathListMenuText();
+
+        ImageResource newPathListMenuIcon();
+    }
 
     interface DiskResourceViewToolbar extends IsWidget {
 

@@ -10,6 +10,7 @@ public interface FileEditorServiceFacade {
     String COMMA_DELIMITER = ",";
     String TAB_DELIMITER = "\t";
     String SPACE_DELIMITER = " ";
+    String PATH_LIST_FILE_IDENTIFIER = "data:pathList";
 
     /**
      * Call service to retrieve the manifest for a requested file

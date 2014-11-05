@@ -19,7 +19,7 @@
 
   <!-- Deferred Binding rules -->
   <replace-with class="org.iplantc.de.test.fileViewers.client.appearance.FileSetViewerAppearanceTestImpl">
-      <when-type-is class="org.iplantc.de.fileViewers.client.views.FileSetViewer.FileSetEditorAppearance"/>
+      <when-type-is class="org.iplantc.de.fileViewers.client.views.PathListViewer.FileSetEditorAppearance"/>
   </replace-with>
 
   <!-- Specify the app entry point class. -->

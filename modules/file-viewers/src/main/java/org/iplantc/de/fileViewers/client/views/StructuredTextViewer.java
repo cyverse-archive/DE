@@ -124,6 +124,7 @@ public class StructuredTextViewer extends AbstractStructuredTextViewer {
         StringQuoter.create(String.valueOf(columns)).assign(ret, StructuredText.COL_KEY);
         Splittable indexed = StringQuoter.createIndexed();
         createNewRow(columns).assign(indexed, 0);
+        indexed.assign(ret, StructuredText.DATA_KEY);
         CommonModelAutoBeanFactory factory = GWT.create(CommonModelAutoBeanFactory.class);
         return AutoBeanCodex.decode(factory, StructuredText.class, ret).as();
     }

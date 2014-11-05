@@ -45,7 +45,7 @@ public enum InfoType {
     TCSH("tcsh"),
     TSV("tsv"),
     VCF("vcf"),
-    FILE_SET("file-set");
+    PATH_LIST("file-set");
 
     private String info_type;
 

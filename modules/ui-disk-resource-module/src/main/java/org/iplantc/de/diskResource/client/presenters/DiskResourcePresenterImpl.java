@@ -35,6 +35,7 @@ import org.iplantc.de.commons.client.info.IplantAnnouncer;
 import org.iplantc.de.commons.client.info.SuccessAnnouncementConfig;
 import org.iplantc.de.commons.client.views.gxt3.dialogs.IPlantDialog;
 import org.iplantc.de.commons.client.views.window.configs.FileViewerWindowConfig;
+import org.iplantc.de.commons.client.views.window.configs.PathListWindowConfig;
 import org.iplantc.de.commons.client.views.window.configs.TabularFileViewerWindowConfig;
 import org.iplantc.de.diskResource.client.dataLink.presenter.DataLinkPresenter;
 import org.iplantc.de.diskResource.client.dataLink.view.DataLinkPanel;
@@ -735,6 +736,11 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter, Di
         eventBus.fireEvent(event);
     }
 
+    @Override
+    public void onNewPathListFileClicked(PathListWindowConfig config){
+        config.setParentFolder(getSelectedUploadFolder());
+        eventBus.fireEvent(new CreateNewFileEvent(config));
+    }
     @Override
     public void doCreateNewFolder(Folder parentFolder, final String newFolderName) {
         view.mask(displayStrings.loadingMask());

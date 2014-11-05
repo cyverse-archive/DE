@@ -152,6 +152,10 @@ public abstract class AbstractStructuredTextViewer extends AbstractFileViewer {
     }
 
     @UiFactory ColumnModel<Splittable> createColumnModel() {
+        return doFactoryCreateColumnModel();
+    }
+
+    ColumnModel<Splittable> doFactoryCreateColumnModel() {
         return new ColumnModel<>(Lists.<ColumnConfig<Splittable, ?>>newArrayList());
     }
 
@@ -174,7 +178,7 @@ public abstract class AbstractStructuredTextViewer extends AbstractFileViewer {
 
     @UiHandler("toolbar") void onLineNumberCheckboxValueChangeEvent(LineNumberCheckboxChangeEvent event){
         rowNumberer.setHidden(!event.getValue());
-        grid.getView().refresh(false);
+        grid.getView().refresh(true);
     }
 
     @Override
@@ -201,6 +205,8 @@ public abstract class AbstractStructuredTextViewer extends AbstractFileViewer {
         grid.reconfigure(listStore, newColumnModel);
         grid.getView().refresh(true);
     }
+
+
 
     ColumnModel<Splittable> createColumnModel(final StructuredText structuredText){
         List<ColumnConfig<Splittable, ?>> configs = Lists.newArrayList();

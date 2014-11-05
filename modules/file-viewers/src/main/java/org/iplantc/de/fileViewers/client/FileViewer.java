@@ -76,7 +76,7 @@ public interface FileViewer extends IsWidget, IsMaskable, HasHandlers, FileSaved
 
         boolean isDirty();
 
-        void loadFileSetData(Integer pageNumber, Integer pageSize, String separator);
+        void loadPathListData(Integer pageNumber, Integer pageSize, String separator);
 
         void loadStructuredData(Integer pageNumber, Integer pageSize, String separator);
 
@@ -89,7 +89,7 @@ public interface FileViewer extends IsWidget, IsMaskable, HasHandlers, FileSaved
                        boolean editing,
                        boolean vizTabFirst,
                        boolean isTabularFile,
-                       Integer columns, String separator);
+                       boolean isPathListFile, Integer columns, String separator);
 
         void saveFile(FileViewer fileViewer);
 
@@ -104,6 +104,7 @@ public interface FileViewer extends IsWidget, IsMaskable, HasHandlers, FileSaved
     String COLUMNS_KEY = "columns";
 
     String INFO_TYPE_KEY = "info-type";
+    String PATH_LIST_KEY = "is-path-list";
 
     String getEditorContent();
 

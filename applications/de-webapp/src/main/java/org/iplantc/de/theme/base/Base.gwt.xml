@@ -64,4 +64,17 @@
     <replace-with class="org.iplantc.de.theme.base.client.fileViewers.FileViewerPresenterDefaultAppearance">
         <when-type-is class="org.iplantc.de.fileViewers.client.FileViewer.FileViewerPresenterAppearance"/>
     </replace-with>
+
+    <replace-with class="org.iplantc.de.theme.base.client.fileViewers.PathListViewerToolbarDefaultAppearance">
+        <when-type-is class="org.iplantc.de.fileViewers.client.views.PathListViewerToolbar.PathListViewerToolbarAppearance"/>
+    </replace-with>
+
+    <replace-with class="org.iplantc.de.theme.base.client.fileViewers.PathListViewerDefaultAppearance">
+        <when-type-is class="org.iplantc.de.fileViewers.client.views.PathListViewer.PathListViewerAppearance"/>
+    </replace-with>
+
+    <!-- Disk Resource Module -->
+    <replace-with class="org.iplantc.de.theme.base.client.diskResource.DiskResourceViewToolbarDefaultAppearance">
+        <when-type-is class="org.iplantc.de.diskResource.client.views.DiskResourceView.DiskResourceViewToolbarAppearance"/>
+    </replace-with>
 </module>

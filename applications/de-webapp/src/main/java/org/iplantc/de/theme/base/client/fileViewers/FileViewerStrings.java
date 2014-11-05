@@ -7,6 +7,12 @@ import com.google.gwt.i18n.client.Messages;
  */
 public interface FileViewerStrings extends Messages {
 
+    @Key("addPathsButtonTooltip")
+    String addPathsButtonTooltip();
+
+    @Key("deleteSelectedPathsButtonTooltip")
+    String deleteSelectedPathsButtonTooltip();
+
     @Key("initializingFileViewer")
     String initializingFileViewer();
 
@@ -52,6 +58,12 @@ public interface FileViewerStrings extends Messages {
 
     @Key("headerRowsLabel")
     String headerRowsLabel();
+
+    @Key("pathListColumnHeaderText")
+    String pathListColumnHeaderText();
+
+    @Key("pathListViewName")
+    String pathListViewName(String fileName);
 
     @Key("retrieveFileManifestMask")
     String retrieveFileManifestMask();

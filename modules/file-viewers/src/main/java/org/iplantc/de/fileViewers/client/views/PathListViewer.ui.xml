@@ -10,7 +10,8 @@
     <ui:with field="gridView"
              type="com.sencha.gxt.widget.core.client.grid.GridView">
         <ui:attributes stripeRows="true"
-                       trackMouseOver="true"/>
+                       trackMouseOver="true"
+                       autoFill="true"/>
     </ui:with>
     <ui:with field="rowNumberer"
              type="com.sencha.gxt.widget.core.client.grid.RowNumberer">
@@ -39,7 +40,7 @@
 
     <container:BorderLayoutContainer>
         <container:north layoutData="{northData}">
-            <view:StructuredTextViewToolBar ui:field="toolbar"/>
+            <view:PathListViewerToolbar ui:field="toolbar"/>
         </container:north>
 
         <!-- Structured Text -->
@@ -48,7 +49,7 @@
             <grid:Grid ui:field="grid"
                        store="{listStore}"
                        cm="{columnModel}"
-                       view="{gridView}" />
+                       view="{gridView}"/>
         </container:center>
 
         <container:south layoutData="{southData}">
