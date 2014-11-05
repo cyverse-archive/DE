@@ -65,6 +65,8 @@ public interface FileViewer extends IsWidget, IsMaskable, HasHandlers, FileSaved
      * <p/>
      */
     public interface Presenter extends DirtyStateChangedEvent.HasDirtyStateChangedEventHandlers {
+        String getPathListFileIdentifier();
+
         String getTitle();
 
         void go(HasOneWidget container,

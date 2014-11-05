@@ -13,6 +13,11 @@ public class FileEditorServiceFacadeStub implements FileEditorServiceFacade {
     }
 
     @Override
+    public String getPathListFileIdentifier() {
+        return null;
+    }
+
+    @Override
     public String getServletDownloadUrl(String path) {
         return null;
     }

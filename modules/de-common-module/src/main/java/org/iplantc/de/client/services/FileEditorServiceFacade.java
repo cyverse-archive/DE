@@ -20,6 +20,11 @@ public interface FileEditorServiceFacade {
     void getManifest(File file, AsyncCallback<String> callback);
 
     /**
+     * @return the file identifier string for path-list files.
+     */
+    String getPathListFileIdentifier();
+
+    /**
      * Construct a servlet download URL for the given file ID.
      * 
      * @param path the desired file path to be used in the return URL

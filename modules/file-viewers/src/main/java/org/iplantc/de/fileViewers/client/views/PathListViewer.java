@@ -177,11 +177,10 @@ public class PathListViewer extends AbstractStructuredTextViewer implements Stor
         return getWidget().addHandler(handler, FileSavedEvent.TYPE);
     }
 
-    @UiHandler("toolbar") void onDeleteSelectedItemClicked(DeleteSelectedPathsSelectedEvent event){
-        List<Splittable> selectedItems = grid.getSelectionModel().getSelectedItems();
-        for(Splittable item : selectedItems){
-            listStore.remove(item);
-        }
+    @Override
+    public String getEditorContent() {
+        String pathListFileIdentifier = presenter.getPathListFileIdentifier() + "\n";
+        return pathListFileIdentifier + super.getEditorContent();
     }
 
     @Override
@@ -219,6 +218,14 @@ public class PathListViewer extends AbstractStructuredTextViewer implements Stor
         ColumnModel<Splittable> splittableColumnModel = new ColumnModel<>(configs);
 
         return splittableColumnModel;
+    }
+
+    @UiHandler("toolbar")
+    void onDeleteSelectedItemClicked(DeleteSelectedPathsSelectedEvent event) {
+        List<Splittable> selectedItems = grid.getSelectionModel().getSelectedItems();
+        for (Splittable item : selectedItems) {
+            listStore.remove(item);
+        }
     }
 
     List<String> splittableToStringList(Splittable split) {

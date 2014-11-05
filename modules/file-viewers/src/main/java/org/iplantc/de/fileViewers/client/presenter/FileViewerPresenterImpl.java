@@ -4,6 +4,7 @@ import static org.iplantc.de.client.services.FileEditorServiceFacade.COMMA_DELIM
 import static org.iplantc.de.client.services.FileEditorServiceFacade.TAB_DELIMITER;
 import org.iplantc.de.client.events.FileSavedEvent;
 import org.iplantc.de.client.models.CommonModelAutoBeanFactory;
+import org.iplantc.de.client.models.DEProperties;
 import org.iplantc.de.client.models.IsMaskable;
 import org.iplantc.de.client.models.diskResources.File;
 import org.iplantc.de.client.models.diskResources.Folder;
@@ -151,6 +152,11 @@ public class FileViewerPresenterImpl implements FileViewer.Presenter, FileSavedE
     @Override
     public HandlerRegistration addDirtyStateChangedEventHandler(DirtyStateChangedEvent.DirtyStateChangedEventHandler handler) {
         return simpleContainer.addHandler(handler, DirtyStateChangedEvent.TYPE);
+    }
+
+    @Override
+    public String getPathListFileIdentifier() {
+        return fileEditorService.getPathListFileIdentifier();
     }
 
     @Override

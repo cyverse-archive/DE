@@ -51,6 +51,11 @@ public class FileEditorServiceFacadeImpl implements FileEditorServiceFacade {
     }
 
     @Override
+    public String getPathListFileIdentifier() {
+        return deProperties.getPathListFileIdentifier();
+    }
+
+    @Override
     public String getServletDownloadUrl(final String path) {
         String address = Format.substitute("{0}{1}?url=display-download&user={2}&path={3}", //$NON-NLS-1$
                 GWT.getModuleBaseURL(), constants.fileDownloadServlet(), userInfo.getUsername(), path);
