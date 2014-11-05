@@ -67,10 +67,10 @@ public class AppColumnModel extends ColumnModel<App> implements
                                                                  displayStrings.name());
 
         ColumnConfig<App, String> integrator = new ColumnConfig<>(props.integratorName(),
-                                                                             130,
+                                                                  115,
                                                                              displayStrings.integratedby());
 
-        ColumnConfig<App, App> rating = new ColumnConfig<>(new IdentityValueProvider<App>("rating"), 105, displayStrings.rating()); //$NON-NLS-1$
+        ColumnConfig<App, App> rating = new ColumnConfig<>(new IdentityValueProvider<App>("rating"), 125, displayStrings.rating()); //$NON-NLS-1$
 
         ColumnConfig<App, App> comment = new ColumnConfig<>(new IdentityValueProvider<App>("comment"), 30); //$NON-NLS-1$
 
@@ -85,7 +85,7 @@ public class AppColumnModel extends ColumnModel<App> implements
         info.setHideable(false);
         info.setResizable(false);
         name.setResizable(true);
-        rating.setResizable(false);
+        // rating.setResizable(false);
         comment.setResizable(false);
 
         info.setFixed(true);

@@ -232,7 +232,7 @@ public class AnalysisServiceFacadeImpl implements AnalysisServiceFacade {
 
     @Override
     public void getAnalysisParams(Analysis analysis, AsyncCallback<List<AnalysisParameter>> callback) {
-        String address = ANALYSES + "/get-property-values/" + analysis.getId();
+        String address = ANALYSES + "/" + analysis.getId() + "/parameters";
         ServiceCallWrapper wrapper = new ServiceCallWrapper(GET, address);
 
         deServiceFacade.getServiceData(wrapper, new StringListAsyncCallbackConverter(callback, factory));
