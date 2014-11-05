@@ -154,7 +154,7 @@ public class AppTemplateServicesImpl implements AppTemplateServices, AppMetadata
 
     @Override
     public void rerunAnalysis(HasId analysisId, AsyncCallback<AppTemplate> callback) {
-        String address = deProperties.getMuleServiceBaseUrl() + "app-rerun-info/" + analysisId.getId();
+        String address = ANALYSES + "/" + analysisId.getId() + "/relaunch-info";
 
         ServiceCallWrapper wrapper = new ServiceCallWrapper(GET, address);
 
