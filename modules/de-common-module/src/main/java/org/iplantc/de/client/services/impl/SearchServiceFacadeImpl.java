@@ -187,7 +187,11 @@ public class SearchServiceFacadeImpl implements SearchServiceFacade {
         List<DiskResourceQueryTemplate> getQueryTemplateList(String object) {
             // Expecting the string to be JSON list
             Splittable split = StringQuoter.createSplittable();
-            StringQuoter.split(object).assign(split, DiskResourceQueryTemplateList.LIST_KEY);
+            Splittable splitList = StringQuoter.split(object);
+            if(!splitList.isIndexed()){
+                return Collections.emptyList();
+            }
+            splitList.assign(split, DiskResourceQueryTemplateList.LIST_KEY);
             AutoBean<DiskResourceQueryTemplateList> decode = AutoBeanCodex.decode(factory, DiskResourceQueryTemplateList.class, split);
             return decode.as().getQueryTemplateList();
         }

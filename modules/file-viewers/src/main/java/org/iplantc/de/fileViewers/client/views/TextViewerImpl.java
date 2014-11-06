@@ -1,30 +1,25 @@
 package org.iplantc.de.fileViewers.client.views;
 
 import org.iplantc.de.client.events.FileSavedEvent;
-import org.iplantc.de.client.gin.ServicesInjector;
 import org.iplantc.de.client.models.diskResources.File;
-import org.iplantc.de.client.models.diskResources.Folder;
-import org.iplantc.de.client.services.FileEditorServiceFacade;
-import org.iplantc.de.client.util.JsonUtil;
-import org.iplantc.de.commons.client.ErrorHandler;
-import org.iplantc.de.diskResource.client.views.dialogs.SaveAsDialog;
-import org.iplantc.de.fileViewers.client.callbacks.FileSaveCallback;
-import org.iplantc.de.resources.client.messages.I18N;
-import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
+import org.iplantc.de.client.models.viewer.StructuredText;
+import org.iplantc.de.fileViewers.client.FileViewer;
+import org.iplantc.de.fileViewers.client.events.LineNumberCheckboxChangeEvent;
+import org.iplantc.de.fileViewers.client.events.RefreshSelectedEvent;
+import org.iplantc.de.fileViewers.client.events.SaveSelectedEvent;
+import org.iplantc.de.fileViewers.client.events.ViewerPagingToolbarUpdatedEvent;
+import org.iplantc.de.fileViewers.client.events.WrapTextCheckboxChangeEvent;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.event.logical.shared.ResizeEvent;
 import com.google.gwt.event.logical.shared.ResizeHandler;
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
-import com.google.gwt.json.client.JSONObject;
-import com.google.gwt.json.client.JSONString;
 import com.google.gwt.uibinder.client.UiBinder;
+import com.google.gwt.uibinder.client.UiFactory;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.uibinder.client.UiTemplate;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.sencha.gxt.core.client.dom.XElement;
@@ -39,32 +34,15 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * @author sriram
+ * @author sriram, jstroot
  */
-public class TextViewerImpl extends AbstractFileViewer implements EditingSupport {
-
-    private final class GetDataCallbackImpl implements AsyncCallback<String> {
-        @Override
-        public void onFailure(Throwable caught) {
-            ErrorHandler.post(org.iplantc.de.resources.client.messages.I18N.ERROR.unableToRetrieveFileData(file.getName()),
-                              caught);
-            con.unmask();
-        }
-
-        @Override
-        public void onSuccess(String result) {
-            data = JsonUtil.getString(JsonUtil.getObject(result),
-                                      "chunk");
-            setData(data);
-            con.unmask();
-        }
-    }
+public class TextViewerImpl extends AbstractFileViewer implements ViewerPagingToolbarUpdatedEvent.ViewerPagingToolbarUpdatedEventHandler {
 
     private final class PreviewSelectHandlerImpl implements SelectHandler {
         @Override
         public void onSelect(SelectEvent event) {
             // do not support preview if content cannot be fit in one page.
-            if (pagingToolbar.getToltalPages() > 1) {
+            if (pagingToolbar.getTotalPages() > 1) {
                 AlertMessageBox amb = new AlertMessageBox("Preview",
                                                           "Unable to generate preview. Please adjust page size to fit  file contents in 1 page and try again!");
                 amb.show();
@@ -80,7 +58,8 @@ public class TextViewerImpl extends AbstractFileViewer implements EditingSupport
             d.setSize("600", "500");
             MarkDownRendererViewImpl renderer = new MarkDownRendererViewImpl(fileObj,
                                                                              TextViewerImpl.this.infoType,
-                                                                             getEditorContent(jso));
+                                                                             getEditorContent(jso),
+                                                                             presenter);
             d.add(renderer.asWidget());
             d.show();
         }
@@ -89,99 +68,59 @@ public class TextViewerImpl extends AbstractFileViewer implements EditingSupport
     private final class ResizeViewHandlerImpl implements ResizeHandler {
         @Override
         public void onResize(ResizeEvent event) {
-            if (jso != null) {
-                resizeDisplay(jso, center.getElement().getOffsetWidth(), center.getElement()
-                                                                               .getOffsetHeight());
+            if (jso == null) {
+                return;
             }
-        }
-    }
-
-    private final class SaveAsDialogHandlerImpl implements SelectHandler {
-        private final SaveAsDialog saveDialog;
-
-        private SaveAsDialogHandlerImpl(SaveAsDialog saveDialog) {
-            this.saveDialog = saveDialog;
-        }
-
-        @Override
-        public void onSelect(SelectEvent event) {
-            if (saveDialog.isVaild()) {
-                con.mask(displayStrings.savingMask());
-                String destination = saveDialog.getSelectedFolder().getPath() + "/"
-                                         + saveDialog.getFileName();
-                fileEditorService.uploadTextAsFile(destination,
-                                                   getEditorContent(jso),
-                                                    true,
-                                                    new FileSaveCallback(destination,
-                                                                         true,
-                                                                         con));
-                saveDialog.hide();
-            }
+            resizeDisplay(jso,
+                          center.getElement().getOffsetWidth(),
+                          center.getElement().getOffsetHeight());
         }
     }
 
     @UiTemplate("TextViewer.ui.xml")
     interface TextViewerUiBinder extends UiBinder<Widget, TextViewerImpl> { }
 
+    protected boolean editing;
+    protected JavaScriptObject jso;
     static Logger LOG = Logger.getLogger(TextViewerImpl.class.getName());
-
     @UiField
     SimpleContainer center;
     @UiField
     BorderLayoutContainer con;
-    @UiField(provided = true)
+    @UiField
     ViewerPagingToolBar pagingToolbar;
-    @UiField(provided = true)
+    @UiField
     TextViewToolBar toolbar;
-
-    protected boolean editing;
-    protected JavaScriptObject jso;
     private static TextViewerUiBinder uiBinder = GWT.create(TextViewerUiBinder.class);
-    private final IplantDisplayStrings displayStrings;
-    private final FileEditorServiceFacade fileEditorService;
     private final String mode;
-    private final Folder parentFolder;
     private final FileViewer.Presenter presenter;
-    private final Widget widget;
-    private String data;
-    private long file_size;
-    private int totalPages;
+    private boolean dirty;
 
-    public TextViewerImpl(File file,
+    public TextViewerImpl(final File file,
                           final String infoType,
                           final String mode,
                           final boolean editing,
-                          final Folder parentFolder,
                           final FileViewer.Presenter presenter) {
         super(file, infoType);
         this.editing = editing;
         this.mode = mode;
-        this.parentFolder = parentFolder;
         this.presenter = presenter;
-        fileEditorService = ServicesInjector.INSTANCE.getFileEditorServiceFacade();
-        displayStrings = I18N.DISPLAY;
         LOG.log(Level.INFO, "in viewer-->" + mode);
-        toolbar = initToolBar();
-        pagingToolbar = initPagingToolbar();
 
-        if (mode != null && mode.equals("markdown")) {
-            toolbar.addPreviewHandler(new PreviewSelectHandlerImpl());
-        }
-        widget = uiBinder.createAndBindUi(this);
+        initWidget(uiBinder.createAndBindUi(this));
 
-        addWrapHandler();
-        addLineNumberHandler();
-
-        if (file != null) {
-            loadData();
+        if (file == null) {
+            /* when u start editing a new file, data is empty but the new file
+             * is yet to be saved. */
+           // FIXME Presenter should be performing this initialization
+             setData("");
         } else {
-            // when u start editing a new file, data is empty but the new file
-            // is yet to be saved.
-            setData("");
+            presenter.loadTextData(pagingToolbar.getPageNumber(),
+                                   (int) pagingToolbar.getPageSize());
         }
 
         center.addResizeHandler(new ResizeViewHandlerImpl());
-
+        pagingToolbar.addViewerPagingToolbarUpdatedEventHandler(this);
     }
 
     public static native JavaScriptObject displayData(final TextViewerImpl instance,
@@ -252,65 +191,26 @@ public class TextViewerImpl extends AbstractFileViewer implements EditingSupport
     }
 
     @Override
-    public Widget asWidget() {
-        return widget;
+    public String getEditorContent() {
+        return getEditorContent(jso);
     }
 
     @Override
     public boolean isDirty() {
-        return isClean(jso);
+        return dirty;
     }
 
     @Override
-    public void setDirty(Boolean dirty) {
-        if (presenter.isDirty() != dirty) {
-            presenter.setViewDirtyState(dirty);
-        }
-    }
-
-    @Override
-    public void loadData() {
-        String url = "read-chunk";
-        JSONObject requestBody = getRequestBody();
-        if (requestBody != null) {
-            con.mask(displayStrings.loadingMask());
-            fileEditorService.getDataChunk(url, requestBody, new GetDataCallbackImpl());
-        }
-
-    }
-
-    @Override
-    public void refresh() {
-        loadData();
-    }
-
-    @Override
-    public void save() {
-        if (file == null) {
-            final SaveAsDialog saveDialog = new SaveAsDialog(parentFolder);
-            saveDialog.addOkButtonSelectHandler(new SaveAsDialogHandlerImpl(saveDialog));
-            saveDialog.addCancelButtonSelectHandler(new SelectHandler() {
-
-                @Override
-                public void onSelect(SelectEvent event) {
-                    saveDialog.hide();
-                    con.unmask();
-                }
-            });
-            saveDialog.show();
-            saveDialog.toFront();
-        } else {
-            con.mask(displayStrings.savingMask());
-            fileEditorService.uploadTextAsFile(file.getPath(),
-                                               getEditorContent(jso),
-                                                false,
-                                                new FileSaveCallback(file.getPath(), false, con));
-        }
+    public void onViewerPagingToolbarUpdated(ViewerPagingToolbarUpdatedEvent event) {
+        presenter.loadTextData(event.getPageNumber(), event.getPageSize());
     }
 
     @Override
     public void setData(Object data) {
-        boolean allowEditing = pagingToolbar.getToltalPages() == 1 && editing;
+        if (data instanceof StructuredText) {
+            return;
+        }
+        boolean allowEditing = pagingToolbar.getTotalPages() == 1 && editing;
         if (jso == null) {
             clearDisplay();
             jso = displayData(this,
@@ -331,6 +231,7 @@ public class TextViewerImpl extends AbstractFileViewer implements EditingSupport
         /**
          * XXX - SS - support editing for files with only one page
          */
+        dirty = false;
     }
 
     protected void clearDisplay() {
@@ -338,51 +239,51 @@ public class TextViewerImpl extends AbstractFileViewer implements EditingSupport
         center.forceLayout();
     }
 
+    @UiFactory
     ViewerPagingToolBar initPagingToolbar() {
-        return new ViewerPagingToolBar(this, getFileSize());
+        return new ViewerPagingToolBar(getFileSize());
     }
 
+    @UiFactory
     TextViewToolBar initToolBar() {
+
         TextViewToolBar textViewPagingToolBar;
         if (mode != null && mode.equals("markdown")) {
             textViewPagingToolBar = new TextViewToolBar(this, editing, true);
+            textViewPagingToolBar.addPreviewHandler(new PreviewSelectHandlerImpl());
         } else {
             textViewPagingToolBar = new TextViewToolBar(this, editing, false);
         }
+
         return textViewPagingToolBar;
     }
 
-    private void addLineNumberHandler() {
-        toolbar.addLineNumberCbxChangeHandler(new ValueChangeHandler<Boolean>() {
-
-            @Override
-            public void onValueChange(ValueChangeEvent<Boolean> event) {
-                showLineNumbersInEditor(jso, event.getValue());
-            }
-
-        });
+    @UiHandler("toolbar")
+    void onLineNumberCheckboxChanged(LineNumberCheckboxChangeEvent event) {
+        showLineNumbersInEditor(jso, event.getValue());
     }
 
-    private void addWrapHandler() {
-        toolbar.addWrapCbxChangeHandler(new ValueChangeHandler<Boolean>() {
-
-            @Override
-            public void onValueChange(ValueChangeEvent<Boolean> event) {
-                wrapText(jso, event.getValue());
-            }
-        });
+    @UiHandler("toolbar")
+    void onRefreshClick(RefreshSelectedEvent event) {
+        presenter.loadTextData(pagingToolbar.getPageNumber(),
+                               (int) pagingToolbar.getPageSize());
     }
 
-    private JSONObject getRequestBody() {
-        if (file == null) {
-            return null;
+    @UiHandler("toolbar")
+    void onSaveClick(SaveSelectedEvent event) {
+        presenter.saveFile(TextViewerImpl.this);
+    }
+
+    @UiHandler("toolbar")
+    void onWrapCheckboxChanged(WrapTextCheckboxChangeEvent event) {
+        wrapText(jso, event.getValue());
+    }
+
+    void setDirty(Boolean dirty) {
+        this.dirty = dirty;
+        if (presenter.isDirty() != dirty) {
+            presenter.setViewDirtyState(dirty, this);
         }
-        JSONObject obj = new JSONObject();
-        obj.put("path", new JSONString(file.getPath()));
-        // position starts at 0
-        obj.put("position",
-                new JSONString("" + pagingToolbar.getPageSize() * (pagingToolbar.getPageNumber() - 1)));
-        obj.put("chunk-size", new JSONString("" + pagingToolbar.getPageSize()));
-        return obj;
     }
+
 }

@@ -4,6 +4,8 @@ import org.iplantc.de.client.models.WindowState;
 import org.iplantc.de.client.models.WindowType;
 import org.iplantc.de.client.models.diskResources.File;
 import org.iplantc.de.client.models.notifications.NotificationCategory;
+import org.iplantc.de.client.models.viewer.MimeType;
+import org.iplantc.de.client.services.FileEditorServiceFacade;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.i18n.client.DateTimeFormat;
@@ -79,6 +81,19 @@ public class ConfigFactory {
 
     public static TabularFileViewerWindowConfig newTabularFileViewerWindowConfig() {
         AutoBean<TabularFileViewerWindowConfig> ab = applyWindowType(WindowType.DATA_VIEWER, factory.newTabularFileViewerWindowConfig());
+        applyTag("Tabular File-" + DateTimeFormat.getFormat(PredefinedFormat.DATE_SHORT).format(new Date()),
+                 ab);
+        return ab.as();
+    }
+
+    public static PathListWindowConfig newPathListWindowConfig() {
+        AutoBean<PathListWindowConfig> ab = applyWindowType(WindowType.DATA_VIEWER, factory.pathListWindowConfig());
+        ab.as().setContentType(MimeType.PLAIN);
+        ab.as().setVizTabFirst(true);
+        ab.as().setSeparator(FileEditorServiceFacade.COMMA_DELIMITER);
+        ab.as().setColumns(1);
+        applyTag("Path List-" + DateTimeFormat.getFormat(PredefinedFormat.DATE_SHORT).format(new Date()),
+                 ab);
         return ab.as();
     }
 
