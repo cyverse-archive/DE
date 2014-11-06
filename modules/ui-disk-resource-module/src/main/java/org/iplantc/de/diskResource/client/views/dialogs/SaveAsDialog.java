@@ -95,7 +95,7 @@ public class SaveAsDialog extends IPlantDialog {
 
 			@Override
 			public void onKeyDown(KeyDownEvent event) {
-				boolean vaild = isValid();
+				boolean vaild = isVaild();
 				if (vaild) {
 					if (event.getNativeKeyCode() == KeyCodes.KEY_ENTER) {
 						onButtonPressed(okBtn);
@@ -120,7 +120,7 @@ public class SaveAsDialog extends IPlantDialog {
 		cleanUp();
 	}
 
-	public boolean isValid() {
+	public boolean isVaild() {
 		return selectedFolderField.isValid() & fileNameField.isValid();
 	}
 

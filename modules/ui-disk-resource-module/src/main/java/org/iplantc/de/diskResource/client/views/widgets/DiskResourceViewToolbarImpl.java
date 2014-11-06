@@ -8,7 +8,6 @@ import org.iplantc.de.client.models.viewer.MimeType;
 import org.iplantc.de.client.util.DiskResourceUtil;
 import org.iplantc.de.commons.client.views.window.configs.ConfigFactory;
 import org.iplantc.de.commons.client.views.window.configs.FileViewerWindowConfig;
-import org.iplantc.de.commons.client.views.window.configs.PathListWindowConfig;
 import org.iplantc.de.commons.client.views.window.configs.TabularFileViewerWindowConfig;
 import org.iplantc.de.diskResource.client.events.DiskResourceSelectionChangedEvent;
 import org.iplantc.de.diskResource.client.events.FolderSelectionEvent;
@@ -36,9 +35,7 @@ import com.sencha.gxt.widget.core.client.menu.MenuItem;
 
 import java.util.List;
 
-public class DiskResourceViewToolbarImpl extends Composite implements DiskResourceView.DiskResourceViewToolbar,
-                                                                      DiskResourceSelectionChangedEvent.DiskResourceSelectionChangedEventHandler,
-                                                                      FolderSelectionEvent.FolderSelectionEventHandler {
+public class DiskResourceViewToolbarImpl extends Composite implements DiskResourceView.DiskResourceViewToolbar, DiskResourceSelectionChangedEvent.DiskResourceSelectionChangedEventHandler, FolderSelectionEvent.FolderSelectionEventHandler {
 
     @UiTemplate("DiskResourceViewToolbar.ui.xml")
     interface DiskResourceViewToolbarUiBinder extends UiBinder<Widget, DiskResourceViewToolbarImpl> { }
@@ -80,8 +77,6 @@ public class DiskResourceViewToolbarImpl extends Composite implements DiskResour
     TextButton uploadMenu;
     @UiField
     MenuItem shareFolderLocationMi;
-    @UiField
-    MenuItem newPathListMi;
     private static DiskResourceViewToolbarUiBinder BINDER = GWT.create(DiskResourceViewToolbarUiBinder.class);
     private final UserInfo userInfo;
     private DiskResourceView.Presenter presenter;
@@ -238,7 +233,6 @@ public class DiskResourceViewToolbarImpl extends Composite implements DiskResour
         newRFileMi.ensureDebugId(baseID + Ids.FILE_MENU + Ids.MENU_ITEM_NEW_R_DATA);
         newShellScriptFileMi.ensureDebugId(baseID + Ids.FILE_MENU + Ids.MENU_ITEM_NEW_SHELL_DATA);
         newMdFileMi.ensureDebugId(baseID + Ids.FILE_MENU + Ids.MENU_ITEM_NEW_MD_DATA);
-        newPathListMi.ensureDebugId(baseID + Ids.FILE_MENU + Ids.MENU_ITEM_NEW_PATH_LIST);
 
         moveToTrashMi.ensureDebugId(baseID + Ids.FILE_MENU + Ids.MENU_ITEM_MOVE_TO_TRASH);
 
@@ -449,13 +443,6 @@ public class DiskResourceViewToolbarImpl extends Composite implements DiskResour
         d.setHideOnButtonClick(true);;
         d.setSize("300px", "150px");
         d.show();
-    }
-
-    @UiHandler("newPathListMi")
-    void onNewPathListFileClicked(SelectionEvent<Item> event){
-        PathListWindowConfig config = ConfigFactory.newPathListWindowConfig();
-        config.setEditing(true);
-        presenter.onNewPathListFileClicked(config);
     }
 
     @UiHandler("newWindowAtLocMi")

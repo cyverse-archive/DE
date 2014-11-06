@@ -5,16 +5,14 @@ package org.iplantc.de.fileViewers.client.views;
 
 import static org.iplantc.de.client.events.FileSavedEvent.FileSavedEventHandler;
 import org.iplantc.de.client.models.diskResources.File;
-import org.iplantc.de.fileViewers.client.FileViewer;
 
 import com.google.gwt.event.shared.HandlerRegistration;
-
-import com.sencha.gxt.widget.core.client.Composite;
+import com.google.gwt.user.client.ui.Widget;
 
 /**
  * @author sriram, jstroot
  */
-public abstract class AbstractFileViewer extends Composite implements FileViewer {
+public abstract class AbstractFileViewer implements FileViewer {
 
     protected File file;
 
@@ -32,6 +30,14 @@ public abstract class AbstractFileViewer extends Composite implements FileViewer
     }
 
     @Override
+    public abstract Widget asWidget();
+
+    @Override
+    public String getInfoType() {
+        return infoType;
+    }
+
+    @Override
     public String getViewName() {
         if (file != null) {
             return file.getName();
@@ -39,6 +45,8 @@ public abstract class AbstractFileViewer extends Composite implements FileViewer
             return "Untitled-" + Math.random();
         }
     }
+
+    public abstract void loadData();
 
     @Override
     public abstract void setData(Object data);
@@ -51,8 +59,4 @@ public abstract class AbstractFileViewer extends Composite implements FileViewer
         return 0;
     }
 
-    @Override
-    public boolean isDirty() {
-        return false;
-    }
 }

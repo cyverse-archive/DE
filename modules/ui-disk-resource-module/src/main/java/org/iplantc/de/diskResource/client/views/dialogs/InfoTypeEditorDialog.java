@@ -1,45 +1,50 @@
 /**
- *
+ * 
  */
 package org.iplantc.de.diskResource.client.views.dialogs;
 
-import org.iplantc.de.client.models.viewer.InfoType;
+import org.iplantc.de.client.gin.ServicesInjector;
 import org.iplantc.de.client.services.DiskResourceServiceFacade;
+import org.iplantc.de.client.util.JsonUtil;
 import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.commons.client.views.gxt3.dialogs.IPlantDialog;
 
+import com.google.gwt.json.client.JSONArray;
+import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import com.sencha.gxt.cell.core.client.form.ComboBoxCell.TriggerAction;
 import com.sencha.gxt.data.shared.LabelProvider;
 import com.sencha.gxt.widget.core.client.form.SimpleComboBox;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @author sriram, jstroot
+ * @author sriram
+ *
  */
 public class InfoTypeEditorDialog extends IPlantDialog {
+    
+    private DiskResourceServiceFacade facade;
+    
+    private SimpleComboBox<String> infoTypeCbo;
 
-    private final DiskResourceServiceFacade diskResourceService;
+    private String type;
 
-    private SimpleComboBox<InfoType> infoTypeCbo;
 
-    private final InfoType type;
-
-    public InfoTypeEditorDialog(final String currentType,
-                                final DiskResourceServiceFacade diskResourceService) {
-        this.diskResourceService = diskResourceService;
+    public InfoTypeEditorDialog(String currentType) {
         setSize("300", "100");
-        this.type = InfoType.fromTypeString(currentType);
+        this.type = currentType;
         setHeadingText("Select Type");
-        infoTypeCbo = new SimpleComboBox<>(new LabelProvider<InfoType>() {
+        this.facade = ServicesInjector.INSTANCE.getDiskResourceServiceFacade();
+        infoTypeCbo = new SimpleComboBox<String>(new LabelProvider<String>() {
 
             @Override
-            public String getLabel(InfoType item) {
-                return item.toString();
+            public String getLabel(String item) {
+                return item;
             }
-
+            
         });
         infoTypeCbo.setAllowBlank(true);
         infoTypeCbo.setEmptyText("-");
@@ -47,28 +52,36 @@ public class InfoTypeEditorDialog extends IPlantDialog {
         infoTypeCbo.setEditable(false);
         loadInfoTypes();
         add(infoTypeCbo);
-
+        
     }
-
-    public InfoType getSelectedValue() {
+    
+    public String getSelectedValue() {
         return infoTypeCbo.getCurrentValue();
     }
-
-
+    
+    
     private void loadInfoTypes() {
-        diskResourceService.getInfoTypes(new AsyncCallback<List<InfoType>>() {
-
+        facade.getFileTypes(new AsyncCallback<String>() {
+            
+            @Override
+            public void onSuccess(String result) {
+               JSONObject obj = JsonUtil.getObject(result);
+               JSONArray typesArr = JsonUtil.getArray(obj, "types");
+               List<String> types = new ArrayList<String>();
+               if(typesArr != null && typesArr.size() >0) {
+                  
+                   for (int i = 0;i < typesArr.size(); i++) {
+                      types.add(typesArr.get(i).isString().stringValue());
+                   }
+               }
+               infoTypeCbo.add(types);
+               infoTypeCbo.setValue(type);
+            }
+            
             @Override
             public void onFailure(Throwable arg0) {
-                ErrorHandler.post(arg0);
-            }
-
-            @Override
-            public void onSuccess(List<InfoType> infoTypes) {
-                // Skip Path list, it should not be displayed
-                infoTypes.remove(InfoType.PATH_LIST);
-                infoTypeCbo.add(infoTypes);
-                infoTypeCbo.setValue(type);
+               ErrorHandler.post(arg0);
+                
             }
         });
     }

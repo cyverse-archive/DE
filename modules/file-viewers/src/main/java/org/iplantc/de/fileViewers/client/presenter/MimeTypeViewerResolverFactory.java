@@ -5,19 +5,19 @@ package org.iplantc.de.fileViewers.client.presenter;
 
 import static org.iplantc.de.client.models.viewer.InfoType.*;
 import org.iplantc.de.client.models.diskResources.File;
+import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.client.models.viewer.MimeType;
 import org.iplantc.de.client.services.FileEditorServiceFacade;
 import org.iplantc.de.client.util.JsonUtil;
+import org.iplantc.de.fileViewers.client.views.AbstractFileViewer;
+import org.iplantc.de.fileViewers.client.views.ExternalVisualizationURLViewerImpl;
+import org.iplantc.de.fileViewers.client.views.FileViewer;
+import org.iplantc.de.fileViewers.client.views.ImageViewerImpl;
+import org.iplantc.de.fileViewers.client.views.StructuredTextViewerImpl;
+import org.iplantc.de.fileViewers.client.views.TextViewerImpl;
 import org.iplantc.de.commons.client.info.ErrorAnnouncementConfig;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
 import org.iplantc.de.commons.client.util.WindowUtil;
-import org.iplantc.de.fileViewers.client.views.AbstractFileViewer;
-import org.iplantc.de.fileViewers.client.views.ExternalVisualizationURLViewerImpl;
-import org.iplantc.de.fileViewers.client.FileViewer;
-import org.iplantc.de.fileViewers.client.views.PathListViewer;
-import org.iplantc.de.fileViewers.client.views.ImageViewerImpl;
-import org.iplantc.de.fileViewers.client.views.StructuredTextViewer;
-import org.iplantc.de.fileViewers.client.views.TextViewerImpl;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
@@ -37,13 +37,14 @@ public class MimeTypeViewerResolverFactory {
 
     public final Map<MimeType, String> modeMap = new HashMap<>();
     Logger LOG = Logger.getLogger(MimeTypeViewerResolverFactory.class.getName());
-    @Inject
-    IplantAnnouncer announcer;
-    @Inject
-    FileEditorServiceFacade fileEditorService;
+    private final IplantAnnouncer announcer;
+    private final FileEditorServiceFacade fileEditorService;
 
     @Inject
-    public MimeTypeViewerResolverFactory() {
+    public MimeTypeViewerResolverFactory(final IplantAnnouncer announcer,
+                                         final FileEditorServiceFacade fileEditorService) {
+        this.announcer = announcer;
+        this.fileEditorService = fileEditorService;
         modeMap.put(MimeType.X_SH, "shell");
         modeMap.put(MimeType.X_PYTHON, "python");
         modeMap.put(MimeType.X_PERL, "perl");
@@ -54,6 +55,7 @@ public class MimeTypeViewerResolverFactory {
     public List<? extends FileViewer> getViewerCommand(final File file,
                                         final String infoType,
                                         final boolean editing,
+                                        final Folder parentFolder,
                                         final JSONObject manifest,
                                         final FileViewer.Presenter presenter,
                                         MimeType type) {
@@ -121,11 +123,7 @@ public class MimeTypeViewerResolverFactory {
                 Preconditions.checkArgument(!Strings.isNullOrEmpty(textViewerMode),
                                             "Text viewer mode should not be empty or null.");
                 LOG.fine("mode-->" + textViewerMode);
-                TextViewerImpl textViewer = new TextViewerImpl(file,
-                                                               infoType,
-                                                               textViewerMode,
-                                                               editing,
-                                                               presenter);
+                TextViewerImpl textViewer = new TextViewerImpl(file, infoType, textViewerMode, editing, parentFolder, presenter);
                 viewers.add(textViewer);
                 break;
 
@@ -141,24 +139,10 @@ public class MimeTypeViewerResolverFactory {
                     || TSV.toString().equals(infoType)
                     || VCF.toString().equals(infoType)
                     || GFF.toString().equals(infoType)){
-                    StructuredTextViewer structuredTextViewer = new StructuredTextViewer(file,
-                                                                                         infoType,
-                                                                                         editing,
-                                                                                         columns,
-                                                                                         presenter);
+                    StructuredTextViewerImpl structuredTextViewer = new StructuredTextViewerImpl(file, infoType, columns, parentFolder, presenter);
                     viewers.add(structuredTextViewer);
-                } else if(PATH_LIST.toString().equals(infoType)){
-                    PathListViewer pathListViewer = new PathListViewer(file,
-                                                                     infoType,
-                                                                     editing,
-                                                                     presenter);
-                    viewers.add(pathListViewer);
                 }
-                TextViewerImpl textViewer1 = new TextViewerImpl(file,
-                                                                infoType,
-                                                                null,
-                                                                editing,
-                                                                presenter);
+                TextViewerImpl textViewer1 = new TextViewerImpl(file, infoType, null, editing, parentFolder, presenter);
                 viewers.add(textViewer1);
                 break;
 

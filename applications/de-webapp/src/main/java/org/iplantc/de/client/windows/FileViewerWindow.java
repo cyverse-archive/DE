@@ -3,9 +3,8 @@ package org.iplantc.de.client.windows;
 import org.iplantc.de.client.models.IsMaskable;
 import org.iplantc.de.client.models.WindowState;
 import org.iplantc.de.client.models.diskResources.File;
-import org.iplantc.de.commons.client.views.window.configs.PathListWindowConfig;
 import org.iplantc.de.fileViewers.client.events.DirtyStateChangedEvent;
-import org.iplantc.de.fileViewers.client.FileViewer;
+import org.iplantc.de.fileViewers.client.views.FileViewer;
 import org.iplantc.de.commons.client.views.window.configs.FileViewerWindowConfig;
 import org.iplantc.de.commons.client.views.window.configs.TabularFileViewerWindowConfig;
 import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
@@ -68,7 +67,6 @@ public class FileViewerWindow extends IplantWindowBase implements IsMaskable,
             String title = "Untitled-" + Math.random();
             setHeadingText(title);
             boolean isTabularFile = config instanceof TabularFileViewerWindowConfig;
-            boolean isPathListFile = config instanceof PathListWindowConfig;
             String delimiter = isTabularFile ? ((TabularFileViewerWindowConfig) config).getSeparator() : "";
             Integer columns = isTabularFile ? ((TabularFileViewerWindowConfig) config).getColumns() : null;
             presenter.newFileGo(this,
@@ -78,7 +76,6 @@ public class FileViewerWindow extends IplantWindowBase implements IsMaskable,
                                 config.isEditing(),
                                 config.isVizTabFirst(),
                                 isTabularFile,
-                                isPathListFile,
                                 columns,
                                 delimiter);
         }

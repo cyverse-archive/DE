@@ -50,9 +50,3 @@
 	padding-bottom: 2px;
 	color: black;
 }
-
-@sprite .pathList {
-    gwt-image: "pathList";
-    cursor: pointer;
-    float: left;
-}

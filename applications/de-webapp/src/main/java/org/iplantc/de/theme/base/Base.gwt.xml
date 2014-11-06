@@ -44,37 +44,4 @@
         <when-type-is class="org.iplantc.de.client.windows.AppEditorWindow.AppEditorAppearance"/>
     </replace-with>
 
-    <!-- FileViewers -->
-    <replace-with class="org.iplantc.de.theme.base.client.fileViewers.ViewerPagingToolBarDefaultAppearance">
-        <when-type-is class="org.iplantc.de.fileViewers.client.views.ViewerPagingToolBar.ViewerPagingToolBarAppearance"/>
-    </replace-with>
-
-    <replace-with class="org.iplantc.de.theme.base.client.fileViewers.StructuredTextViewToolbarDefaultAppearance">
-        <when-type-is class="org.iplantc.de.fileViewers.client.views.StructuredTextViewToolBar.StructureTextViewerToolbarAppearance"/>
-    </replace-with>
-
-    <replace-with class="org.iplantc.de.theme.base.client.fileViewers.TextViewToolBarDefaultAppearance">
-        <when-type-is class="org.iplantc.de.fileViewers.client.views.TextViewToolBar.TextViewToolBarAppearance"/>
-    </replace-with>
-
-    <replace-with class="org.iplantc.de.theme.base.client.fileViewers.StructuredTextViewerDefaultAppearance">
-        <when-type-is class="org.iplantc.de.fileViewers.client.views.StructuredTextViewer.StructuredTextViewerAppearance"/>
-    </replace-with>
-
-    <replace-with class="org.iplantc.de.theme.base.client.fileViewers.FileViewerPresenterDefaultAppearance">
-        <when-type-is class="org.iplantc.de.fileViewers.client.FileViewer.FileViewerPresenterAppearance"/>
-    </replace-with>
-
-    <replace-with class="org.iplantc.de.theme.base.client.fileViewers.PathListViewerToolbarDefaultAppearance">
-        <when-type-is class="org.iplantc.de.fileViewers.client.views.PathListViewerToolbar.PathListViewerToolbarAppearance"/>
-    </replace-with>
-
-    <replace-with class="org.iplantc.de.theme.base.client.fileViewers.PathListViewerDefaultAppearance">
-        <when-type-is class="org.iplantc.de.fileViewers.client.views.PathListViewer.PathListViewerAppearance"/>
-    </replace-with>
-
-    <!-- Disk Resource Module -->
-    <replace-with class="org.iplantc.de.theme.base.client.diskResource.DiskResourceViewToolbarDefaultAppearance">
-        <when-type-is class="org.iplantc.de.diskResource.client.views.DiskResourceView.DiskResourceViewToolbarAppearance"/>
-    </replace-with>
 </module>

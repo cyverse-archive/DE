@@ -21,9 +21,4 @@ public interface AppFeedback {
 
     @PropertyName("comment_id")
     void setCommentId(long commentId);
-
-    void setTotal(int total);
-
-    int getTotal();
-
 }

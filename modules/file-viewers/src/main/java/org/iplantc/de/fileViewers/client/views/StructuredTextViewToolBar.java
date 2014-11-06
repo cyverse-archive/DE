@@ -1,93 +1,76 @@
 package org.iplantc.de.fileViewers.client.views;
 
-import org.iplantc.de.fileViewers.client.events.AddRowSelectedEvent;
-import org.iplantc.de.fileViewers.client.events.DeleteRowSelectedEvent;
-import org.iplantc.de.fileViewers.client.events.HeaderRowCheckboxChangedEvent;
-import org.iplantc.de.fileViewers.client.events.SkipRowsCountValueChangeEvent;
+import org.iplantc.de.resources.client.IplantResources;
+import org.iplantc.de.resources.client.messages.I18N;
 
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.shared.HandlerRegistration;
-import com.google.gwt.resources.client.ImageResource;
-import com.google.gwt.uibinder.client.UiBinder;
-import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 
 import com.sencha.gxt.widget.core.client.button.TextButton;
 import com.sencha.gxt.widget.core.client.event.SelectEvent;
+import com.sencha.gxt.widget.core.client.event.SelectEvent.SelectHandler;
 import com.sencha.gxt.widget.core.client.form.CheckBox;
-import com.sencha.gxt.widget.core.client.form.IntegerField;
+import com.sencha.gxt.widget.core.client.form.NumberField;
+import com.sencha.gxt.widget.core.client.form.NumberPropertyEditor;
+import com.sencha.gxt.widget.core.client.toolbar.FillToolItem;
 import com.sencha.gxt.widget.core.client.toolbar.LabelToolItem;
-import com.sencha.gxt.widget.core.client.toolbar.ToolBar;
+import com.sencha.gxt.widget.core.client.toolbar.SeparatorToolItem;
 
 public class StructuredTextViewToolBar extends AbstractToolBar {
 
-    public interface StructureTextViewerToolbarAppearance extends AbstractToolBarAppearance {
-        ImageResource addRowButtonIcon();
-
-        String addRowButtonTooltip();
-
-        String cbxHeaderRowsLabel();
-
-        ImageResource deleteRowButtonIcon();
-
-        String deleteRowButtonTooltip();
-
-        String skipRowsCountWidth();
-
-        String skipRowsLabelText();
-    }
-
-    interface StructuredTextViewTooBarUiBinder extends UiBinder<ToolBar, StructuredTextViewToolBar> {
-    }
-
-    @UiField
-    TextButton addRowBtn;
-    @UiField(provided = true)
-    StructureTextViewerToolbarAppearance appearance;
-    @UiField
-    CheckBox cbxHeaderRows;
-    @UiField
-    TextButton deleteRowBtn;
-    @UiField
-    IntegerField skipRowsCount;
-    @UiField
-    LabelToolItem skipRowsLabel;
-    private static final StructuredTextViewTooBarUiBinder BINDER = GWT.create(StructuredTextViewTooBarUiBinder.class);
     private final StructuredTextViewer view;
+    private TextButton addRowBtn;
+    private CheckBox cbxHeaderRows;
+    private TextButton deleteRowBtn;
+    private CheckBox lineNumberCbx;
+    private NumberField<Integer> skipRowsCount;
+    private LabelToolItem skipRowsLabel;
 
-    StructuredTextViewToolBar(final StructuredTextViewer view,
-                              final boolean editing,
-                              final StructureTextViewerToolbarAppearance appearance) {
-        super(editing, appearance);
-        this.appearance = appearance;
+    public StructuredTextViewToolBar(StructuredTextViewer view, boolean editing) {
+        super(editing);
         this.view = view;
-        initWidget(BINDER.createAndBindUi(this));
-        skipRowsCount.setValue(0);
-        setEditing(editing);
+        this.editing = editing;
+        add(new SeparatorToolItem());
+        addAddRowBtn();
+        addDeleteRowBtn();
+        add(new SeparatorToolItem());
+        buildLineNumberButton();
+        add(lineNumberCbx);
+        addSkipRowsFields();
+        addHeaderRowChkBox();
+        add(new FillToolItem());
+        add(editStatus);
+        setEditingStatus(editing);
     }
 
-    public StructuredTextViewToolBar(final StructuredTextViewer view,
-                                     final boolean editing) {
-        this(view,
-             editing,
-             GWT.<StructureTextViewerToolbarAppearance>create(StructureTextViewerToolbarAppearance.class));
+    public void addLineNumberCbxChangeHandler(ValueChangeHandler<Boolean> valueChangeHandler) {
+        lineNumberCbx.addValueChangeHandler(valueChangeHandler);
     }
 
-    public HandlerRegistration addAddRowSelectedEventHandler(AddRowSelectedEvent.AddRowSelectedEventHandler handler) {
-        return addHandler(handler, AddRowSelectedEvent.TYPE);
+    public void disableAdd() {
+        addRowBtn.disable();
     }
 
-    public HandlerRegistration addDeleteRowSelectedEventHandler(DeleteRowSelectedEvent.DeleteRowSelectedEventHandler handler) {
-        return addHandler(handler, DeleteRowSelectedEvent.TYPE);
+    public void enableAdd() {
+        addRowBtn.enable();
     }
 
-    public HandlerRegistration addHeaderRowCheckbowChangeEventHandler(HeaderRowCheckboxChangedEvent.HeaderRowCheckboxChangedEventHandler handler){
-        return addHandler(handler, HeaderRowCheckboxChangedEvent.TYPE);
+    public int getSkipRowCount() {
+        if (skipRowsCount.getValue() == null) {
+            return 0;
+        } else {
+            return skipRowsCount.getValue();
+        }
     }
 
-    public HandlerRegistration addSkipRowsCountValueChangeEventHandler(SkipRowsCountValueChangeEvent.SkipRowsCountValueChangeEventHandler handler){
-        return addHandler(handler, SkipRowsCountValueChangeEvent.TYPE);
+    @Override
+    public void refresh() {
+        view.refresh();
+    }
+
+    @Override
+    public void save() {
+        view.save();
     }
 
     @Override
@@ -98,45 +81,80 @@ public class StructuredTextViewToolBar extends AbstractToolBar {
         } else {
             disableAdd();
         }
+        setEditingStatus(editing);
     }
 
-    void disableAdd() {
-        addRowBtn.disable();
-    }
-
-    void enableAdd() {
-        addRowBtn.enable();
-    }
-
-    int getSkipRowCount() {
-        if (skipRowsCount.getValue() == null) {
-            return 0;
+    protected void setEditingStatus(boolean editing) {
+        if (editing) {
+            editStatus.setText("Editable");
         } else {
-            return skipRowsCount.getValue();
+            editStatus.setText("Not Editable");
         }
     }
 
-    @UiHandler("addRowBtn")
-    void onAddRowBtnSelected(SelectEvent event) {
-        fireEvent(new AddRowSelectedEvent());
+    private void addAddRowBtn() {
+        addRowBtn = new TextButton("", IplantResources.RESOURCES.add());
+        addRowBtn.addSelectHandler(new SelectHandler() {
+
+            @Override
+            public void onSelect(SelectEvent event) {
+                view.addRow();
+            }
+        });
+        addRowBtn.setToolTip("Add Row");
+        add(addRowBtn);
     }
 
-    @UiHandler("deleteRowBtn")
-    void onDeleteRowBtnSelected(SelectEvent event) {
-        fireEvent(new DeleteRowSelectedEvent());
+    private void addDeleteRowBtn() {
+        deleteRowBtn = new TextButton("", IplantResources.RESOURCES.delete());
+        deleteRowBtn.addSelectHandler(new SelectHandler() {
+            @Override
+            public void onSelect(SelectEvent event) {
+                view.deleteRow();
+            }
+        });
+        deleteRowBtn.setToolTip("Delete Row");
+        add(deleteRowBtn);
     }
 
-    @UiHandler("cbxHeaderRows")
-    void onHeaderRowCheckboxChanged(ValueChangeEvent<Boolean> event) {
-        Boolean hasHeader = event.getValue();
-        skipRowsCount.setEnabled(!hasHeader);
-        fireEvent(new HeaderRowCheckboxChangedEvent(event.getValue()));
+    private void addHeaderRowChkBox() {
+        cbxHeaderRows = new CheckBox();
+        cbxHeaderRows.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
+
+            @Override
+            public void onValueChange(ValueChangeEvent<Boolean> event) {
+                Boolean hasHeader = event.getValue();
+                view.loadDataWithHeader(hasHeader);
+                skipRowsCount.setEnabled(!hasHeader);
+            }
+        });
+        cbxHeaderRows.setBoxLabel(I18N.DISPLAY.fileViewerHeaderRow());
+        add(cbxHeaderRows);
     }
 
-    @UiHandler("skipRowsCount")
-    void onSkipRowsCountValueChange(ValueChangeEvent<Integer> event) {
-        skipRowsCount.setValue(getSkipRowCount());
-        fireEvent(new SkipRowsCountValueChangeEvent(getSkipRowCount()));
+    private void addSkipRowsFields() {
+        skipRowsLabel = new LabelToolItem(I18N.DISPLAY.fileViewerSkipLines());
+        add(skipRowsLabel);
+
+        skipRowsCount = new NumberField<>(new NumberPropertyEditor.IntegerPropertyEditor());
+        skipRowsCount.setWidth(30);
+        skipRowsCount.setValue(0);
+        skipRowsCount.setAllowNegative(false);
+        skipRowsCount.setAllowDecimals(false);
+        skipRowsCount.addValueChangeHandler(new ValueChangeHandler<Integer>() {
+
+            @Override
+            public void onValueChange(ValueChangeEvent<Integer> event) {
+                view.skipRows(getSkipRowCount());
+                skipRowsCount.setValue(getSkipRowCount());
+            }
+        });
+        add(skipRowsCount);
+    }
+
+    private void buildLineNumberButton() {
+        lineNumberCbx = new CheckBox();
+        lineNumberCbx.setBoxLabel("Line Numbers");
     }
 
 }

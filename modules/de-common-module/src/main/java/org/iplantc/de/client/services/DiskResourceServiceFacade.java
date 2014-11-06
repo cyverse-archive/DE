@@ -11,7 +11,6 @@ import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.client.models.diskResources.RootFolders;
 import org.iplantc.de.client.models.diskResources.TYPE;
 import org.iplantc.de.client.models.services.DiskResourceMove;
-import org.iplantc.de.client.models.viewer.InfoType;
 
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -320,7 +319,7 @@ public interface DiskResourceServiceFacade {
      *
      * @param callback
      */
-	void getInfoTypes(AsyncCallback<List<InfoType>> callback);
+	void getFileTypes(AsyncCallback<String> callback);
 
 	/**
 	 *set type to a file
