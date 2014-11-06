@@ -1,0 +1,35 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+             xmlns:toolbar="urn:import:com.sencha.gxt.widget.core.client.toolbar"
+             xmlns:gxt="urn:import:com.sencha.gxt.widget.core.client"
+             xmlns:form="urn:import:com.sencha.gxt.widget.core.client.form"
+             xmlns:button="urn:import:com.sencha.gxt.widget.core.client.button">
+
+    <ui:with field="appearance"
+             type="org.iplantc.de.fileViewers.client.views.ViewerPagingToolBar.ViewerPagingToolBarAppearance"/>
+    <ui:with field="pagingToolBarAppearance"
+             type="com.sencha.gxt.widget.core.client.toolbar.PagingToolBar.PagingToolBarAppearance"/>
+
+    <toolbar:ToolBar>
+        <toolbar:FillToolItem />
+
+        <toolbar:LabelToolItem label="{appearance.pageSizeLabel}"/>
+        <gxt:Slider ui:field="pageSizeSlider"/>
+        <button:TextButton ui:field="first"
+                           icon="{pagingToolBarAppearance.first}"/>
+        <button:TextButton ui:field="prev"
+                           icon="{pagingToolBarAppearance.prev}"/>
+        <toolbar:SeparatorToolItem />
+        <form:IntegerField ui:field="pageNumber"
+                           width="{appearance.pageNumberFieldWidth}"/>
+        <toolbar:LabelToolItem ui:field="afterText"/>
+        <toolbar:SeparatorToolItem />
+        <button:TextButton ui:field="next"
+                           icon="{pagingToolBarAppearance.next}"/>
+        <button:TextButton ui:field="last"
+                           icon="{pagingToolBarAppearance.last}"/>
+        <toolbar:SeparatorToolItem />
+        <toolbar:FillToolItem />
+
+    </toolbar:ToolBar>
+</ui:UiBinder>

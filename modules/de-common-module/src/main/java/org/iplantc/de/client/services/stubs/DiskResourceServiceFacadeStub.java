@@ -10,6 +10,7 @@ import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.client.models.diskResources.RootFolders;
 import org.iplantc.de.client.models.diskResources.TYPE;
 import org.iplantc.de.client.models.services.DiskResourceMove;
+import org.iplantc.de.client.models.viewer.InfoType;
 import org.iplantc.de.client.services.DiskResourceServiceFacade;
 
 import com.google.gwt.json.client.JSONObject;
@@ -203,7 +204,7 @@ public class DiskResourceServiceFacadeStub implements DiskResourceServiceFacade 
     }
 
     @Override
-    public void getFileTypes(AsyncCallback<String> callback) {
+    public void getInfoTypes(AsyncCallback<List<InfoType>> callback) {
 
     }
 

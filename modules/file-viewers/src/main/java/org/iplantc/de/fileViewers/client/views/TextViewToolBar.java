@@ -1,92 +1,83 @@
 package org.iplantc.de.fileViewers.client.views;
 
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import org.iplantc.de.fileViewers.client.events.WrapTextCheckboxChangeEvent;
+
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.uibinder.client.UiBinder;
+import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.uibinder.client.UiHandler;
 
 import com.sencha.gxt.widget.core.client.button.TextButton;
 import com.sencha.gxt.widget.core.client.event.SelectEvent.SelectHandler;
 import com.sencha.gxt.widget.core.client.form.CheckBox;
-import com.sencha.gxt.widget.core.client.toolbar.FillToolItem;
 import com.sencha.gxt.widget.core.client.toolbar.SeparatorToolItem;
+import com.sencha.gxt.widget.core.client.toolbar.ToolBar;
 
 public class TextViewToolBar extends AbstractToolBar {
 
-    private final CheckBox cbxWrap;
+    public interface TextViewToolBarAppearance extends AbstractToolBarAppearance {
+        String cbxWrapBoxLabel();
 
+        String previewMarkdownBtnText();
+    }
+
+    interface TextViewToolBarUiBinder extends UiBinder<ToolBar, TextViewToolBar> { }
+
+    @UiField(provided = true)
+    TextViewToolBarAppearance appearance;
+    @UiField
+    CheckBox cbxWrap;
+    // for markdown preview
+    @UiField
+    TextButton previewMDBtn;
+    @UiField
+    SeparatorToolItem previewSeparator;
+    private static final TextViewToolBarUiBinder BINDER = GWT.create(TextViewToolBarUiBinder.class);
     private final AbstractFileViewer view;
 
-    private CheckBox lineNumberCbx;
-
-    // for markdown preview
-    private TextButton previewMDBtn;
-
-    public TextViewToolBar(AbstractFileViewer view, boolean editing, boolean preview) {
-        super(editing);
+    TextViewToolBar(final AbstractFileViewer view,
+                    final boolean editing,
+                    final boolean preview,
+                    final TextViewToolBarAppearance appearance) {
+        super(editing, appearance);
+        this.appearance = appearance;
         this.view = view;
-        this.editing = editing;
-        add(new SeparatorToolItem());
-        cbxWrap = new CheckBox();
-        cbxWrap.setBoxLabel(org.iplantc.de.resources.client.messages.I18N.DISPLAY.wrap());
-        add(cbxWrap);
-        saveBtn.setEnabled(editing);
-        setEditingStatus(editing);
-        buildLineNumberButton();
-        add(lineNumberCbx);
-        if (preview) {
-            add(new SeparatorToolItem());
-            previewMDBtn = new TextButton("Preview Markdown");
-            add(previewMDBtn);
+        initWidget(BINDER.createAndBindUi(this));
+
+        previewSeparator.setVisible(preview);
+        previewMDBtn.setVisible(preview);
+        setEditing(editing);
+    }
+
+    public TextViewToolBar(final AbstractFileViewer view,
+                           final boolean editing,
+                           final boolean preview) {
+        this(view,
+             editing,
+             preview,
+             GWT.<TextViewToolBarAppearance>create(TextViewToolBarAppearance.class));
+    }
+
+    public HandlerRegistration addPreviewHandler(SelectHandler handler) {
+        if (previewMDBtn == null) {
+            return null;
         }
-
-        add(new FillToolItem());
-        add(editStatus);
-        setEditingStatus(editing);
+        return previewMDBtn.addSelectHandler(handler);
     }
 
-    public void addLineNumberCbxChangeHandler(ValueChangeHandler<Boolean> changeHandler) {
-        lineNumberCbx.addValueChangeHandler(changeHandler);
-    }
-
-    public void addPreviewHandler(SelectHandler handler) {
-        if (previewMDBtn != null) {
-            previewMDBtn.addSelectHandler(handler);
-        }
-    }
-
-    public void addWrapCbxChangeHandler(ValueChangeHandler<Boolean> changeHandler) {
-        cbxWrap.addValueChangeHandler(changeHandler);
+    public HandlerRegistration addWrapCbxChangeHandler(WrapTextCheckboxChangeEvent.WrapTextCheckboxChangeEventHandler handler) {
+        return addHandler(handler, WrapTextCheckboxChangeEvent.TYPE);
     }
 
     public boolean isWrapText() {
         return cbxWrap.getValue();
     }
 
-    @Override
-    public void refresh() {
-        view.refresh();
-    }
-
-    @Override
-    public void save() {
-        ((TextViewerImpl) view).save();
-    }
-
-    @Override
-    public void setEditing(boolean editing) {
-        super.setEditing(editing);
-        setEditingStatus(editing);
-    }
-
-    protected void setEditingStatus(boolean editing) {
-        if (editing) {
-            editStatus.setText("Editable");
-        } else {
-            editStatus.setText("Not Editable");
-        }
-    }
-
-    private void buildLineNumberButton() {
-        lineNumberCbx = new CheckBox();
-        lineNumberCbx.setBoxLabel("Line Numbers");
+    @UiHandler("cbxWrap")
+    void onCbxWrapChanged(ValueChangeEvent<Boolean> event) {
+        fireEvent(new WrapTextCheckboxChangeEvent(event.getValue()));
     }
 
 }

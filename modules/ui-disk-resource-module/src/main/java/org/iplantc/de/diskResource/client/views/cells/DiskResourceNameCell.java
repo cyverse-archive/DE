@@ -4,6 +4,7 @@ import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.client.models.diskResources.File;
 import org.iplantc.de.client.models.diskResources.Folder;
+import org.iplantc.de.client.models.viewer.InfoType;
 import org.iplantc.de.diskResource.client.views.cells.events.DiskResourceNameSelectedEvent;
 import org.iplantc.de.diskResource.share.DiskResourceModule;
 import org.iplantc.de.resources.client.DiskResourceNameCellStyle;
@@ -104,7 +105,10 @@ public class DiskResourceNameCell extends AbstractCell<DiskResource> {
         }
         String nameStyle = CSS.nameStyle();
         String imgClassName = ""; //$NON-NLS-1$
-        if (value instanceof File) {
+        InfoType infoType = InfoType.fromTypeString(value.getInfoType());
+        if(InfoType.PATH_LIST.equals(infoType)){
+           imgClassName = CSS.pathList();
+        } else if (value instanceof File) {
             if (!previewEnabled) {
                 nameStyle = CSS.nameStyleNoPointer();
             }
