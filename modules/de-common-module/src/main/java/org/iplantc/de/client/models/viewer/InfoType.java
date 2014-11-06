@@ -24,12 +24,15 @@ public enum InfoType {
     GENSCAN("genscan"),
     GFF("gff"),
     HMMER("hmmer"),
+    JAR("jar"),
     MASE("mase"),
-    MEGG("mega"),
+    MEGA("mega"),
     MSF("msf"),
     NEWICK("newick"),
     NEXML("nexml"),
     NEXUS("nexus"),
+    PDF("pdf"),
+    PATH_LIST("path-list"),
     PERL("perl"),
     PHYLIP("phylip"),
     PHYLOXML("phyloxml"),
@@ -45,7 +48,7 @@ public enum InfoType {
     TCSH("tcsh"),
     TSV("tsv"),
     VCF("vcf"),
-    PATH_LIST("path-list");
+    ZIP("zip");
 
     private String info_type;
 
