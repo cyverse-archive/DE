@@ -1451,10 +1451,7 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     @Key("fileName")
     String fileName();
 
-    @Key("fileOpenMsg")
-    @DefaultMessage("Your file was opened in separate browser tab / window. You can close this window.")
-    String fileOpenMsg();
-    
+
     /**
      * Translated
      * "Only 8K of the selected file is displayed. For full view of data, please download file.".
@@ -1502,19 +1499,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     @Key("fileUploadSuccess")
     String fileUploadSuccess(String arg0);
     
-    /**
-     * 
-     * Translate fileViewerHeaderRow
-     * @return
-     */
-    String fileViewerHeaderRow();
-    
-    /**
-     * Translate fileViewerSkipLines
-     * @return
-     */
-    String fileViewerSkipLines();
-
     /**
      * Translated "File(s)".
      *
@@ -1730,17 +1714,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     String importRequestSubmit(String arg0);
 
     String indexFileMissing();
-
-
-    /**
-     * Translated "Select a valid page".
-     *
-     * @return translated "Select a valid page"
-     */
-    @DefaultMessage("Select a valid page")
-    @Key("inValidPage")
-    String inValidPage();
-
 
     /**
      * Translated "This field requires a valid url".
@@ -2817,15 +2790,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     String owner();
 
     /**
-     * Translated "page size".
-     *
-     * @return translated "page size"
-     */
-    @DefaultMessage("Page Size (KB)")
-    @Key("pageSize")
-    String pageSize();
-
-    /**
      * Translated "Name".
      *
      * @return translated "Name"
@@ -3629,15 +3593,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     @DefaultMessage("Setting saved.")
     @Key("saveSettings")
     String saveSettings();
-
-    /**
-     * Translated "Saving...".
-     *
-     * @return translated "Saving..."
-     */
-    @DefaultMessage("Saving...")
-    @Key("savingMask")
-    String savingMask();
 
     /**
      * Translated "Saving file...".
@@ -4656,15 +4611,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     @DefaultMessage("Workflow Information")
     @Key("workflowInfo")
     String workflowInfo();
-
-    /**
-     * Translated "Wrap Text".
-     *
-     * @return translated "Wrap Text"
-     */
-    @DefaultMessage("Wrap Text")
-    @Key("wrap")
-    String wrap();
 
     /**
      * Translated "write".

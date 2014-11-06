@@ -34,8 +34,7 @@ import com.sencha.gxt.data.shared.SortDir;
 import java.util.List;
 
 /**
- * Provides access to remote services for operations related to analysis
- * submission templates.
+ * Provides access to remote services for operations related to analysis submission templates.
  * 
  * @author Dennis Roberts
  */
@@ -71,14 +70,16 @@ public class AppUserServiceFacadeImpl implements AppUserServiceFacade {
     public void getPublicAppCategories(AsyncCallback<List<AppCategory>> callback, boolean loadHpc) {
         String address = CATEGORIES + "?public=true&hpc=" + loadHpc;
         ServiceCallWrapper wrapper = new ServiceCallWrapper(address);
-        deServiceFacade.getServiceData(wrapper, new AppCategoryListCallbackConverter(callback, errorStrings));
+        deServiceFacade.getServiceData(wrapper, new AppCategoryListCallbackConverter(callback,
+                                                                                     errorStrings));
     }
 
     @Override
     public void getAppCategories(AsyncCallback<List<AppCategory>> callback) {
         String address = CATEGORIES;
         ServiceCallWrapper wrapper = new ServiceCallWrapper(address);
-        deServiceFacade.getServiceData(wrapper, new AppCategoryListCallbackConverter(callback, errorStrings));
+        deServiceFacade.getServiceData(wrapper, new AppCategoryListCallbackConverter(callback,
+                                                                                     errorStrings));
     }
 
     @Override
@@ -88,14 +89,15 @@ public class AppUserServiceFacadeImpl implements AppUserServiceFacade {
         deServiceFacade.getServiceData(wrapper, callback);
     }
 
-
     @Override
-    public void getPagedApps(String appCategoryId, int limit, String sortField, int offset, SortDir sortDir, AsyncCallback<String> asyncCallback) {
-        String address = CATEGORIES + "/" + appCategoryId
-                             + "?limit=" + limit
-                             + "&sort-field=" + sortField
-                             + "&sort-dir=" + sortDir.toString()
-                             + "&offset=" + offset;
+    public void getPagedApps(String appCategoryId,
+                             int limit,
+                             String sortField,
+                             int offset,
+                             SortDir sortDir,
+                             AsyncCallback<String> asyncCallback) {
+        String address = CATEGORIES + "/" + appCategoryId + "?limit=" + limit + "&sort-field="
+                + sortField + "&sort-dir=" + sortDir.toString() + "&offset=" + offset;
         ServiceCallWrapper wrapper = new ServiceCallWrapper(address);
         deServiceFacade.getServiceData(wrapper, asyncCallback);
     }
@@ -127,8 +129,12 @@ public class AppUserServiceFacadeImpl implements AppUserServiceFacade {
     }
 
     @Override
-    public void addAppComment(final String appId, final int rating, final String appWikiPageUrl,
-            final String comment, final String authorEmail, final AsyncCallback<String> callback) {
+    public void addAppComment(final String appId,
+                              final int rating,
+                              final String appWikiPageUrl,
+                              final String comment,
+                              final String authorEmail,
+                              final AsyncCallback<String> callback) {
         // add comment to wiki page, then call rating service, then update avg
         // on wiki page
         String username = userInfo.getUsername();
@@ -140,7 +146,11 @@ public class AppUserServiceFacadeImpl implements AppUserServiceFacade {
                 try {
                     long commentId = Long.valueOf(commentIdString);
                     // wrap the callback so it returns the comment id on success
-                    rateApp(appWikiPageUrl, appId, rating, commentId, authorEmail,
+                    rateApp(appWikiPageUrl,
+                            appId,
+                            rating,
+                            commentId,
+                            authorEmail,
                             new AsyncCallback<String>() {
                                 @Override
                                 public void onSuccess(String result) {
@@ -166,12 +176,15 @@ public class AppUserServiceFacadeImpl implements AppUserServiceFacade {
     }
 
     /**
-     * calls /rate-analysis and if that is successful, calls
-     * updateDocumentationPage()
+     * calls /rate-analysis and if that is successful, calls updateDocumentationPage()
      */
     @Override
-    public void rateApp(final String appWikiPageUrl, String appId, int rating,
-            final long commentId, final String authorEmail, final AsyncCallback<String> callback) {
+    public void rateApp(final String appWikiPageUrl,
+                        String appId,
+                        int rating,
+                        final long commentId,
+                        final String authorEmail,
+                        final AsyncCallback<String> callback) {
         String address = APPS + "/" + appId + "/rating";
 
         JSONObject body = new JSONObject();
@@ -182,8 +195,11 @@ public class AppUserServiceFacadeImpl implements AppUserServiceFacade {
         deServiceFacade.getServiceData(wrapper, new AsyncCallback<String>() {
             @Override
             public void onSuccess(String result) {
-                sendRatingEmail(appWikiPageUrl, authorEmail);
-                updateDocumentationPage(appWikiPageUrl, result, this);
+                final String appName = parsePageName(appWikiPageUrl);
+                if (!Strings.isNullOrEmpty(appName)) {
+                    sendRatingEmail(appName, authorEmail);
+                    updateDocumentationPage(appName, result, commentId, this);
+                }
                 callback.onSuccess(result);
             }
 
@@ -194,27 +210,30 @@ public class AppUserServiceFacadeImpl implements AppUserServiceFacade {
         });
     }
 
-    private void sendRatingEmail(final String appWikiPageUrl, final String emailAddress) {
-        String appName = parsePageName(appWikiPageUrl);
-        emailService.sendEmail(displayStrings.ratingEmailSubject(appName), displayStrings.ratingEmailText(appName), "noreply@iplantcollaborative.org", emailAddress, //$NON-NLS-1$
-                new AsyncCallback<Void>() {
-                    @Override
-                    public void onSuccess(Void arg0) {}
+    private void sendRatingEmail(final String appName, final String emailAddress) {
+        emailService.sendEmail(displayStrings.ratingEmailSubject(appName),
+                               displayStrings.ratingEmailText(appName),
+                               "noreply@iplantcollaborative.org", emailAddress, //$NON-NLS-1$
+                               new AsyncCallback<Void>() {
+                                   @Override
+                                   public void onSuccess(Void arg0) {
+                                   }
 
-                    @Override
-                    public void onFailure(Throwable arg0) {
-                        // don't bother the user if email sending fails
-                    }
-                });
+                                   @Override
+                                   public void onFailure(Throwable arg0) {
+                                       // don't bother the user if email sending fails
+                                   }
+                               });
     }
 
-    private void updateDocumentationPage(String appWikiPageUrl, String avgJson,
-            final AsyncCallback<?> callback) {
+    private void updateDocumentationPage(final String appName,
+                                         String avgJson,
+                                         final Long commentId,
+                                         final AsyncCallback<?> callback) {
         JSONObject json = JSONParser.parseStrict(avgJson).isObject();
         if (json != null) {
             Number avg = JsonUtil.getNumber(json, "average"); //$NON-NLS-1$
             int avgRounded = (int)Math.round(avg.doubleValue());
-            String appName = parsePageName(appWikiPageUrl);
             confluenceService.updatePage(appName, avgRounded, new AsyncCallback<Void>() {
 
                 @Override
@@ -225,32 +244,53 @@ public class AppUserServiceFacadeImpl implements AppUserServiceFacade {
                 @Override
                 public void onSuccess(Void result) {
                     // Do nothing intentionally
+                    if (commentId != null && commentId > 0) {
+                        try {
+                            removeComment(appName, commentId, this);
+                        } catch (Exception e) {
+                            onFailure(e);
+                        }
+                    }
                 }
             });
         }
     }
 
     @Override
-    public void editAppComment(final String appId, final int rating, final String appWikiPageUrl,
-            final Long commentId, final String comment, final String authorEmail,
-            final AsyncCallback<String> callback) {
+    public void editAppComment(final String appId,
+                               final int rating,
+                               final String appWikiPageUrl,
+                               final Long commentId,
+                               final String comment,
+                               final String authorEmail,
+                               final AsyncCallback<String> callback) {
         // update comment on wiki page, then call rating service, then update avg on wiki page
         String appName = parsePageName(appWikiPageUrl);
-        confluenceService.editComment(appName, rating, userInfo.getUsername(), commentId, comment, new AsyncCallback<Void>() {
-            @Override
-            public void onSuccess(Void result) {
-                callback.onSuccess(commentId.toString());
-            }
+        if (!Strings.isNullOrEmpty(appName)) {
+            confluenceService.editComment(appName,
+                                          rating,
+                                          userInfo.getUsername(),
+                                          commentId,
+                                          comment,
+                                          new AsyncCallback<Void>() {
+                                              @Override
+                                              public void onSuccess(Void result) {
+                                                  callback.onSuccess(commentId.toString());
+                                              }
 
-            @Override
-            public void onFailure(Throwable caught) {
-                callback.onFailure(caught);
-            }
-        });
+                                              @Override
+                                              public void onFailure(Throwable caught) {
+                                                  callback.onFailure(caught);
+                                              }
+                                          });
+        }
     }
 
     @Override
-    public void deleteRating(final String appId, final String toolName, final Long commentId, final AsyncCallback<String> callback) {
+    public void deleteRating(final String appId,
+                             final String appWikiPageUrl,
+                             final Long commentId,
+                             final AsyncCallback<String> callback) {
         // call rating service, then delete comment from wiki page
         String address = APPS + "/" + appId + "/rating";
 
@@ -261,15 +301,10 @@ public class AppUserServiceFacadeImpl implements AppUserServiceFacade {
         deServiceFacade.getServiceData(wrapper, new AsyncCallback<String>() {
             @Override
             public void onSuccess(String result) {
-                updateDocumentationPage(toolName, result, this);
-                if (commentId != null) {
-                    try {
-                        removeComment(toolName, commentId, this);
-                    } catch (Exception e) {
-                        onFailure(e);
-                    }
+                String appName = parsePageName(appWikiPageUrl);
+                if (!Strings.isNullOrEmpty(appName)) {
+                    updateDocumentationPage(appName, result, commentId, this);
                 }
-
                 callback.onSuccess(result);
 
             }
@@ -304,7 +339,8 @@ public class AppUserServiceFacadeImpl implements AppUserServiceFacade {
     }
 
     @Override
-    public void favoriteApp(String workspaceId, String appId, boolean fav, AsyncCallback<String> callback) {
+    public void
+            favoriteApp(String workspaceId, String appId, boolean fav, AsyncCallback<String> callback) {
         String address = APPS + "/" + appId + "/favorite";
 
         JSONObject body = new JSONObject();
@@ -338,7 +374,10 @@ public class AppUserServiceFacadeImpl implements AppUserServiceFacade {
     }
 
     @Override
-    public void deleteAppFromWorkspace(String user, String fullUsername, List<String> appIds, AsyncCallback<String> callback) {
+    public void deleteAppFromWorkspace(String user,
+                                       String fullUsername,
+                                       List<String> appIds,
+                                       AsyncCallback<String> callback) {
         String address = APPS + "/" + "shredder"; //$NON-NLS-1$
 
         JSONObject body = new JSONObject();

@@ -31,5 +31,7 @@ public interface ConfigAutoBeanFactory extends AutoBeanFactory {
     AutoBean<SystemMessagesWindowConfig> systemMessagesWindowConfig();
     
     AutoBean<TabularFileViewerWindowConfig> newTabularFileViewerWindowConfig();
+
+    AutoBean<PathListWindowConfig> pathListWindowConfig();
     
 }

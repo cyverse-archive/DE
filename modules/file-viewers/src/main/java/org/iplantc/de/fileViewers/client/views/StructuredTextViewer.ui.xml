@@ -1,0 +1,58 @@
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
+             xmlns:grid='urn:import:com.sencha.gxt.widget.core.client.grid'
+             xmlns:view='urn:import:org.iplantc.de.fileViewers.client.views'
+             xmlns:container='urn:import:com.sencha.gxt.widget.core.client.container'>
+
+    <ui:with field="listStore"
+             type="com.sencha.gxt.data.shared.ListStore" />
+    <ui:with field="columnModel"
+             type="com.sencha.gxt.widget.core.client.grid.ColumnModel"/>
+    <ui:with field="gridView"
+             type="com.sencha.gxt.widget.core.client.grid.GridView">
+        <ui:attributes stripeRows="true"
+                       trackMouseOver="true"/>
+    </ui:with>
+    <ui:with field="rowNumberer"
+             type="com.sencha.gxt.widget.core.client.grid.RowNumberer">
+        <ui:attributes hidden="true"/>
+    </ui:with>
+    <ui:with field="gridFilters"
+             type="com.sencha.gxt.widget.core.client.grid.filters.GridFilters">
+        <ui:attributes local="true"/>
+    </ui:with>
+
+    <ui:with field="northData"
+             type="com.sencha.gxt.widget.core.client.container.BorderLayoutContainer.BorderLayoutData">
+        <ui:attributes size="30"
+                       maxSize="30"
+                       collapsible="false"
+                       split="false"/>
+    </ui:with>
+
+    <ui:with field="southData"
+             type="com.sencha.gxt.widget.core.client.container.BorderLayoutContainer.BorderLayoutData">
+        <ui:attributes size="30"
+                       maxSize="30"
+                       collapsible="false"
+                       split="false"/>
+    </ui:with>
+
+    <container:BorderLayoutContainer>
+        <container:north layoutData="{northData}">
+            <view:StructuredTextViewToolBar ui:field="toolbar"/>
+        </container:north>
+
+        <!-- Structured Text -->
+        <container:center>
+            <!-- May have to wrap in VLC if scrolling/resizing becomes an issue -->
+            <grid:Grid ui:field="grid"
+                       store="{listStore}"
+                       cm="{columnModel}"
+                       view="{gridView}" />
+        </container:center>
+
+        <container:south layoutData="{southData}">
+            <view:ViewerPagingToolBar ui:field="pagingToolBar"/>
+        </container:south>
+    </container:BorderLayoutContainer>
+</ui:UiBinder>

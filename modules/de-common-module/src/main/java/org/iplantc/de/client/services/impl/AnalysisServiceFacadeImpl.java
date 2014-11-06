@@ -71,7 +71,7 @@ public class AnalysisServiceFacadeImpl implements AnalysisServiceFacade {
             for (AnalysisParameter ap : paramList) {
                 if (AppTemplateUtils.isTextType(ap.getType()) || ap.getType().equals(ArgumentType.Flag)) {
                     parsedList.addAll(parseStringValue(ap));
-                } else if (isInputType(ap.getType())) {
+                } else if (isInputType(ap.getType()) || isReferenceGenomeType(ap.getType().toString())) {
                     if (!isReferenceGenomeType(ap.getInfoType())) {
                         parsedList.addAll(parseStringValue(ap));
                     } else {
@@ -232,7 +232,7 @@ public class AnalysisServiceFacadeImpl implements AnalysisServiceFacade {
 
     @Override
     public void getAnalysisParams(Analysis analysis, AsyncCallback<List<AnalysisParameter>> callback) {
-        String address = ANALYSES + "/get-property-values/" + analysis.getId();
+        String address = ANALYSES + "/" + analysis.getId() + "/parameters";
         ServiceCallWrapper wrapper = new ServiceCallWrapper(GET, address);
 
         deServiceFacade.getServiceData(wrapper, new StringListAsyncCallbackConverter(callback, factory));

@@ -3,6 +3,7 @@ package org.iplantc.de.fileViewers.client.views;
 import org.iplantc.de.client.models.diskResources.File;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiTemplate;
@@ -25,25 +26,23 @@ public class ImageViewerImpl extends AbstractFileViewer {
     Image img;
 
     private static ImageViewerUiBinder uiBinder = GWT.create(ImageViewerUiBinder.class);
-    private final Widget widget;
 
     public ImageViewerImpl(final File file,
                            final String imageUrl) {
         super(file, null);
         img = new Image(imageUrl);
-        widget = uiBinder.createAndBindUi(this);
+        initWidget(uiBinder.createAndBindUi(this));
     }
 
     @Override
-    public Widget asWidget() {
-        return widget;
+    public void fireEvent(GwtEvent<?> event) {
+        con.fireEvent(event);
     }
 
     @Override
-    public void loadData() {  /* Do nothing intentionally */ }
-
-    @Override
-    public void refresh() { /* Do nothing intentionally */ }
+    public String getEditorContent() {
+        return null;
+    }
 
     @Override
     public void setData(Object data) { /* Do nothing intentionally */ }

@@ -4,6 +4,7 @@ import java.util.Map;
 
 @SuppressWarnings("nls")
 public class DEProperties {
+    private static final String PATH_LIST_FILE_IDENTIFIER = "org.iplantc.pathList.fileIdentifier";
     /**
      * The prefix used in each of the property names.
      */
@@ -130,6 +131,12 @@ public class DEProperties {
      */
     private String defaultOutputFolderName;
 
+    private String pathListFileIdentifier;
+
+    public String getPathListFileIdentifier() {
+        return pathListFileIdentifier;
+    }
+
     /**
      * @return the contextClickEnabled
      */
@@ -200,6 +207,7 @@ public class DEProperties {
         notificationPollInterval = getInt(properties, NOTIFICATION_POLL_INTERVAL, 60);
         keepaliveTarget = properties.get(KEEPALIVE_TARGET);
         keepaliveInterval = getInt(properties, KEEPALIVE_INTERVAL, -1);
+        pathListFileIdentifier = properties.get(PATH_LIST_FILE_IDENTIFIER);
     }
 
     /**

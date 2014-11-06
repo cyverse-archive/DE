@@ -34,11 +34,47 @@ import java.util.List;
 
 /**
  * FIXME Create appearance
- *
+ * 
  * @author jstroot
- *
+ * 
  */
 public class AppRatingCell extends AbstractCell<App> {
+
+    private final class DeleteRatingCallBack implements AsyncCallback<String> {
+        private App value;
+        private final Element parent;
+
+        private DeleteRatingCallBack(App value, Element parent) {
+            this.value = value;
+            this.parent = parent;
+        }
+
+        @Override
+         public void
+                 onSuccess(String result) {
+             value.getRating()
+                  .setUserRating(0);
+             value.getRating()
+                  .setCommentId(0);
+
+             if (result == null
+                     || result.isEmpty()) {
+                 value.getRating()
+                      .setAverageRating(0);
+             } else {
+                value = getUpdateRating(value, result);
+             }
+
+            resetRatingStarColors(parent, value);
+         }
+
+        @Override
+         public void
+                 onFailure(Throwable caught) {
+             ErrorHandler.post(caught.getMessage(),
+                               caught);
+         }
+    }
 
     interface MyCss extends CssResource {
         @ClassName("apps_icon")
@@ -58,14 +94,17 @@ public class AppRatingCell extends AbstractCell<App> {
      */
     interface Templates extends SafeHtmlTemplates {
         @SafeHtmlTemplates.Template("<img name=\"{0}\" title=\"{1}\" class=\"{2}\" src=\"{3}\"></img>")
-        SafeHtml imgCell(String name, String toolTip, String className, SafeUri imgSrc);
+                SafeHtml
+ imgCell(String name, String toolTip, String className, SafeUri imgSrc);
     }
 
     public static enum RATING_CONSTANT {
 
-        HATE_IT(I18N.DISPLAY.hateIt()), DID_NOT_LIKE_IT(I18N.DISPLAY.didNotLike()), LIKED_IT(
-        		I18N.DISPLAY.likedIt()), REALLY_LIKED_IT(I18N.DISPLAY.reallyLikedIt()), LOVED_IT(
-        				I18N.DISPLAY.lovedIt());
+        HATE_IT(I18N.DISPLAY.hateIt()),
+        DID_NOT_LIKE_IT(I18N.DISPLAY.didNotLike()),
+        LIKED_IT(I18N.DISPLAY.likedIt()),
+        REALLY_LIKED_IT(I18N.DISPLAY.reallyLikedIt()),
+        LOVED_IT(I18N.DISPLAY.lovedIt());
 
         private String displayText;
 
@@ -75,7 +114,7 @@ public class AppRatingCell extends AbstractCell<App> {
 
         /**
          * Returns a string that identifies the RATING_CONSTANT.
-         *
+         * 
          * @return
          */
         public String getTypeString() {
@@ -84,7 +123,7 @@ public class AppRatingCell extends AbstractCell<App> {
 
         /**
          * Null-safe and case insensitive variant of valueOf(String)
-         *
+         * 
          * @param typeString name of an EXECUTION_STATUS constant
          * @return
          */
@@ -109,7 +148,6 @@ public class AppRatingCell extends AbstractCell<App> {
     private static final Resources resources = GWT.create(Resources.class);
     private final List<String> ratings;
 
-
     public AppRatingCell() {
         super(CLICK, MOUSEOVER, MOUSEOUT);
         resources.css().ensureInjected();
@@ -130,36 +168,47 @@ public class AppRatingCell extends AbstractCell<App> {
         }
 
         int rating = (int)((value.getRating().getUserRating() != 0) ? value.getRating().getUserRating()
-                : Math.floor(value.getRating()
-                .getAverageRating()));
+                                                                   : Math.floor(value.getRating()
+                                                                                     .getAverageRating()));
+        int total = value.getRating().getTotal();
         // Build five rating stars
         for (int i = 0; i < ratings.size(); i++) {
             if (i < rating) {
                 if (value.getRating().getUserRating() != 0) {
-                    sb.append(templates.imgCell("Rating-" + i, ratings.get(i), resources.css()
-                            .appsIcon(), IplantResources.RESOURCES
-                            .goldStar().getSafeUri()));
+                    sb.append(templates.imgCell("Rating-" + i,
+                                                ratings.get(i),
+                                                resources.css().appsIcon(),
+                                                IplantResources.RESOURCES.goldStar().getSafeUri()));
                 } else {
-                    sb.append(templates.imgCell("Rating-" + i, ratings.get(i), resources.css()
-                            .appsIcon(), IplantResources.RESOURCES
-                            .redStar().getSafeUri()));
+                    sb.append(templates.imgCell("Rating-" + i,
+                                                ratings.get(i),
+                                                resources.css().appsIcon(),
+                                                IplantResources.RESOURCES.redStar().getSafeUri()));
                 }
             } else {
-                sb.append(templates.imgCell("Rating-" + i, ratings.get(i), resources.css().appsIcon(),
-                		IplantResources.RESOURCES.whiteStar().getSafeUri()));
+                sb.append(templates.imgCell("Rating-" + i,
+                                            ratings.get(i),
+                                            resources.css().appsIcon(),
+                                            IplantResources.RESOURCES.whiteStar().getSafeUri()));
             }
         }
 
         // Determine if user has rated the app, and if so, add the unrate icon/button
         if (value.getRating().getUserRating() > 0) {
             // Add unrate icon
-            sb.append(templates.imgCell("Unrate", "Unrate", resources.css().appsIcon(), IplantResources.RESOURCES.
-                    deleteRating().getSafeUri()));
+            sb.append(templates.imgCell("Unrate",
+                                        "Unrate",
+                                        resources.css().appsIcon(),
+                                        IplantResources.RESOURCES.deleteRating().getSafeUri()));
         } else {
-            sb.append(templates.imgCell("Unrate", "Unrate", resources.css().disabledUnrateButton(),
-            		IplantResources.RESOURCES.deleteRating().getSafeUri()));
+            sb.append(templates.imgCell("Unrate",
+                                        "Unrate",
+                                        resources.css().disabledUnrateButton(),
+                                        IplantResources.RESOURCES.deleteRating().getSafeUri()));
         }
 
+        // append total ratings
+        sb.appendHtmlConstant("<span name='total' title='No.of ratings'>(" + total + ")</span>");
     }
 
     @Override
@@ -168,8 +217,11 @@ public class AppRatingCell extends AbstractCell<App> {
     }
 
     @Override
-    public void onBrowserEvent(Cell.Context context, Element parent, App value, NativeEvent event,
-            ValueUpdater<App> valueUpdater) {
+    public void onBrowserEvent(Cell.Context context,
+                               Element parent,
+                               App value,
+                               NativeEvent event,
+                               ValueUpdater<App> valueUpdater) {
         if (value == null) {
             return;
         }
@@ -195,7 +247,9 @@ public class AppRatingCell extends AbstractCell<App> {
 
     private void resetRatingStarColors(Element parent, App value) {
         int rating = (int)((value.getRating().getUserRating() != 0) ? value.getRating().getUserRating()
-                : Math.floor(value.getRating().getAverageRating()));
+                                                                   : Math.floor(value.getRating()
+                                                                                     .getAverageRating()));
+        int total = value.getRating().getTotal();
 
         for (int i = 0; i < parent.getChildCount(); i++) {
             Element child = Element.as(parent.getChild(i));
@@ -203,24 +257,35 @@ public class AppRatingCell extends AbstractCell<App> {
             if (child.getAttribute("name").startsWith("Rating")) {
                 if (i < rating) {
                     if (value.getRating().getUserRating() != 0) {
-                        child.setAttribute("src", IplantResources.RESOURCES.goldStar().getSafeUri().asString());
+                        child.setAttribute("src", IplantResources.RESOURCES.goldStar()
+                                                                           .getSafeUri()
+                                                                           .asString());
                     } else {
-                        child.setAttribute("src", IplantResources.RESOURCES.redStar().getSafeUri().asString());
+                        child.setAttribute("src", IplantResources.RESOURCES.redStar()
+                                                                           .getSafeUri()
+                                                                           .asString());
                     }
                 } else {
-                    child.setAttribute("src", IplantResources.RESOURCES.whiteStar().getSafeUri().asString());
+                    child.setAttribute("src", IplantResources.RESOURCES.whiteStar()
+                                                                       .getSafeUri()
+                                                                       .asString());
                 }
             } else if (child.getAttribute("name").equalsIgnoreCase("unrate")) {
                 // Show/Hide unrate button
                 if (value.getRating().getUserRating() != 0) {
                     child.getStyle().setDisplay(Display.BLOCK);
-                    child.setAttribute("src", IplantResources.RESOURCES.deleteRating().getSafeUri().asString());
+                    child.setAttribute("src", IplantResources.RESOURCES.deleteRating()
+                                                                       .getSafeUri()
+                                                                       .asString());
                 } else {
                     // if there is no rating, hide the cell.
                     child.getStyle().setDisplay(Display.NONE);
                 }
+            } else if (child.getAttribute("name").equalsIgnoreCase("total")) {
+                child.setInnerText("(" + total + ")");
             }
         }
+
     }
 
     private void onRatingMouseOver(Element parent, Element eventTarget) {
@@ -230,9 +295,13 @@ public class AppRatingCell extends AbstractCell<App> {
                 Element child = Element.as(parent.getChild(i));
                 if (child.getAttribute("name").startsWith("Rating")) {
                     if (setWhiteStar) {
-                        child.setAttribute("src", IplantResources.RESOURCES.whiteStar().getSafeUri().asString());
+                        child.setAttribute("src", IplantResources.RESOURCES.whiteStar()
+                                                                           .getSafeUri()
+                                                                           .asString());
                     } else {
-                        child.setAttribute("src", IplantResources.RESOURCES.goldStar().getSafeUri().asString());
+                        child.setAttribute("src", IplantResources.RESOURCES.goldStar()
+                                                                           .getSafeUri()
+                                                                           .asString());
                     }
                     if (child.getAttribute("name").equals(eventTarget.getAttribute("name"))) {
                         setWhiteStar = true;
@@ -240,7 +309,9 @@ public class AppRatingCell extends AbstractCell<App> {
                 }
             }
         } else if (eventTarget.getAttribute("name").equalsIgnoreCase("unrate")) {
-            eventTarget.setAttribute("src", IplantResources.RESOURCES.deleteRatingHover().getSafeUri().asString());
+            eventTarget.setAttribute("src", IplantResources.RESOURCES.deleteRatingHover()
+                                                                     .getSafeUri()
+                                                                     .asString());
         }
     }
 
@@ -269,30 +340,10 @@ public class AppRatingCell extends AbstractCell<App> {
         }
 
         ServicesInjector.INSTANCE.getAppUserServiceFacade().deleteRating(value.getId(),
-                value.getWikiUrl(), commentId, new AsyncCallback<String>() {
-                    @Override
-                    public void onSuccess(String result) {
-                        value.getRating().setUserRating(0);
-                        value.getRating().setCommentId(0);
-
-                        if (result == null || result.isEmpty()) {
-                            value.getRating().setAverageRating(0);
-                        } else {
-                            JSONObject jsonObj = JsonUtil.getObject(result);
-                            if (jsonObj != null) {
-                                double newAverage = JsonUtil.getNumber(jsonObj, "avg").doubleValue(); //$NON-NLS-1$
-                                value.getRating().setAverageRating(newAverage);
-                            }
-                        }
-
-                        resetRatingStarColors(parent, value);
-                    }
-
-                    @Override
-                    public void onFailure(Throwable caught) {
-                        ErrorHandler.post(caught.getMessage(), caught);
-                    }
-                });
+                                                                         value.getWikiUrl(),
+                                                                         commentId,
+                                                                         new DeleteRatingCallBack(value,
+                                                                                                 parent));
 
     }
 
@@ -303,7 +354,7 @@ public class AppRatingCell extends AbstractCell<App> {
             @Override
             public void onSuccess(String result) {
                 app.getRating().setUserRating(score);
-                resetRatingStarColors(parent, app);
+                resetRatingStarColors(parent, getUpdateRating(app, result));
             }
 
             @Override
@@ -313,8 +364,24 @@ public class AppRatingCell extends AbstractCell<App> {
             }
         };
 
-        ServicesInjector.INSTANCE.getAppUserServiceFacade().rateApp(app.getWikiUrl(), app.getId(),
-                score, app.getRating().getCommentId(), app.getIntegratorEmail(), callback);
+        ServicesInjector.INSTANCE.getAppUserServiceFacade().rateApp(app.getWikiUrl(),
+                                                                    app.getId(),
+                                                                    score,
+                                                                    app.getRating().getCommentId(),
+                                                                    app.getIntegratorEmail(),
+                                                                    callback);
+    }
+
+    private App getUpdateRating(final App app, String result) {
+        JSONObject jsonObj = JsonUtil.getObject(result);
+        if (jsonObj != null) {
+            double newAverage = JsonUtil.getNumber(jsonObj, "average").doubleValue(); //$NON-NLS-1$
+            app.getRating().setAverageRating(newAverage);
+            int total = JsonUtil.getNumber(jsonObj, "total").intValue();
+            app.getRating().setTotal(total);
+        }
+
+        return app;
     }
 
 }

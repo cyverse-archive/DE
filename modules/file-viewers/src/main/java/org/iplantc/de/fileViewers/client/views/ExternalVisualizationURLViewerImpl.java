@@ -18,6 +18,7 @@ import org.iplantc.de.resources.client.messages.I18N;
 import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONString;
@@ -81,7 +82,6 @@ public class ExternalVisualizationURLViewerImpl extends AbstractFileViewer imple
     private final IplantDisplayStrings displayStrings;
     private final FileEditorServiceFacade fileEditorService;
     private final IplantResources iplantResources;
-    private final Widget widget;
 
     public ExternalVisualizationURLViewerImpl(final File file,
                                               final String infoType) {
@@ -89,14 +89,19 @@ public class ExternalVisualizationURLViewerImpl extends AbstractFileViewer imple
         this.displayStrings = I18N.DISPLAY;
         this.iplantResources = IplantResources.RESOURCES;
         this.fileEditorService = ServicesInjector.INSTANCE.getFileEditorServiceFacade();
-        this.widget = uiBinder.createAndBindUi(this);
+        initWidget(uiBinder.createAndBindUi(this));
         gridView.setAutoExpandColumn(cm.getColumn(1));
         buildToolBar(DiskResourceUtil.createInfoTypeSplittable(infoType));
     }
 
     @Override
-    public Widget asWidget() {
-        return widget;
+    public void fireEvent(GwtEvent<?> event) {
+        con.fireEvent(event);
+    }
+
+    @Override
+    public String getEditorContent() {
+        return null;
     }
 
     @Override
@@ -104,28 +109,12 @@ public class ExternalVisualizationURLViewerImpl extends AbstractFileViewer imple
         return displayStrings.visualization() + ":" + file.getName();
     }
 
-    @Override
-    public void loadData() {/* do nothing intentionally */}
-
-    @Override
-    public void mask(String loadingMask) {
-        con.mask(loadingMask);
-    }
-
-    @Override
-    public void refresh() {/* do nothing intentionally */}
-
     @SuppressWarnings("unchecked")
     @Override
     public void setData(Object data) {
         listStore.clear();
         List<VizUrl> urls = (List<VizUrl>) data;
         listStore.addAll(urls);
-    }
-
-    @Override
-    public void unmask() {
-        con.unmask();
     }
 
     private TextButton buildCogeButton() {
