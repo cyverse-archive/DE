@@ -52,7 +52,7 @@ public class BelphegorAppsToolbarImplTest {
     private void mockMenuItems(BelphegorAppsToolbarImpl uut){
         uut.addCategory = mockAddCategory;
         uut.categorizeApp = mockCategorizeApp;
-        uut.delete = mockDelete;
+        uut.deleteCat = mockDelete;
         uut.renameCategory = mockRenameCategory;
         uut.restoreApp = mockRestoreApp;
     }

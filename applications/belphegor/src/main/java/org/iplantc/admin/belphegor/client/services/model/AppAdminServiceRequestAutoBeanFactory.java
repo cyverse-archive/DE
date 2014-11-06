@@ -8,6 +8,4 @@ public interface AppAdminServiceRequestAutoBeanFactory extends AutoBeanFactory {
     AutoBean<AppCategorizeRequest> appCategorizeRequest();
 
     AutoBean<AppCategorizeRequest.CategoryRequest> categoryRequest();
-
-    AutoBean<AppCategorizeRequest.CategoryPath> categoryPath();
 }

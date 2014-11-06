@@ -46,11 +46,14 @@ public interface AppAdminServiceFacade extends AppServiceFacade {
 
     /**
      * Updates an app with the given values in application.
-     *
+     * 
+     * @param application id
      * @param application
      * @param callback
      */
-    public abstract void updateApplication(JSONObject application, AsyncCallback<String> callback);
+    public abstract void updateApplication(String appId,
+                                           JSONObject application,
+                                           AsyncCallback<String> callback);
 
     /**
      * Moves an App with the given applicationId to the category with the given groupId.

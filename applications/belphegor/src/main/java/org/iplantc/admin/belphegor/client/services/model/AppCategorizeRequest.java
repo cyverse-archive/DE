@@ -1,36 +1,28 @@
 package org.iplantc.admin.belphegor.client.services.model;
 
-import org.iplantc.de.client.models.HasId;
-
 import com.google.web.bindery.autobean.shared.AutoBean.PropertyName;
 
 import java.util.List;
 
 public interface AppCategorizeRequest {
 
-    public interface CategoryPath {
-        String getUsername();
-
-        void setUsername(String username);
-
-        List<String> getPath();
-
-        void setPath(List<String> path);
-    }
-
     public interface CategoryRequest {
-        HasId getAnalysis();
+        @PropertyName("app_id")
+        String getAppId();
 
-        void setAnalysis(HasId analysis);
+        @PropertyName("app_id")
+        void setAppId(String id);
 
-        @PropertyName("category_path")
-        CategoryPath getCategoryPath();
+        @PropertyName("category_ids")
+        List<String> getCategories();
 
-        @PropertyName("category_path")
-        void setCategoryPath(CategoryPath category_path);
+        @PropertyName("category_ids")
+        void setCategories(List<String> categories);
     }
 
     List<CategoryRequest> getCategories();
 
     void setCategories(List<CategoryRequest> categories);
+
+
 }

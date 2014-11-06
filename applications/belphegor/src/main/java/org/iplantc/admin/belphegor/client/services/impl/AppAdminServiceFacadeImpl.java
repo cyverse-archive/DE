@@ -24,10 +24,11 @@ import com.google.web.bindery.autobean.shared.AutoBeanUtils;
 import java.util.List;
 
 public class AppAdminServiceFacadeImpl implements AppAdminServiceFacade {
+
+    private final String APPS = "org.iplantc.services.apps";
     private final String APPS_ADMIN = "org.iplantc.services.admin.apps";
     private final String CATEGORIES_ADMIN = "org.iplantc.services.admin.apps.categories";
 
-    private final String APPS = "org.iplantc.services.apps";
     private final String CATEGORIES = "org.iplantc.services.apps.categories";
 
     @Inject private DiscEnvApiService deService;
@@ -41,7 +42,7 @@ public class AppAdminServiceFacadeImpl implements AppAdminServiceFacade {
         String address = CATEGORIES_ADMIN;
 
         JSONObject body = new JSONObject();
-        body.put("parentCategoryId", new JSONString(destCategoryId));
+        body.put("parent_id", new JSONString(destCategoryId));
         body.put("name", new JSONString(name));
 
         ServiceCallWrapper wrapper = new ServiceCallWrapper(POST, address, body.toString());
@@ -75,7 +76,7 @@ public class AppAdminServiceFacadeImpl implements AppAdminServiceFacade {
 
     @Override
     public void getAppDetails(String appId, AsyncCallback<String> callback) {
-        String address = APPS_ADMIN + "/" + appId + "/details";
+        String address = APPS + "/" + appId + "/details";
 
         ServiceCallWrapper wrapper = new ServiceCallWrapper(GET, address);
         deService.getServiceData(wrapper, callback);
@@ -83,7 +84,7 @@ public class AppAdminServiceFacadeImpl implements AppAdminServiceFacade {
 
     @Override
     public void getAppCategories(AsyncCallback<List<AppCategory>> callback) {
-        String address = CATEGORIES + "?public=true";
+        String address = CATEGORIES + "?public=true&hpc=false";
         ServiceCallWrapper wrapper = new ServiceCallWrapper(GET, address);
         deService.getServiceData(wrapper, new AppCategoryListCallbackConverter(callback, errorStrings));
     }
@@ -126,11 +127,10 @@ public class AppAdminServiceFacadeImpl implements AppAdminServiceFacade {
     @Override
     public void moveCategory(String categoryId, String parentCategoryId,
                              AsyncCallback<String> callback) {
-        String address = CATEGORIES_ADMIN;
+        String address = CATEGORIES_ADMIN + "/" + categoryId;
 
         JSONObject body = new JSONObject();
-        body.put("categoryId", new JSONString(categoryId));
-        body.put("parentCategoryId", new JSONString(parentCategoryId));
+        body.put("parent_id", new JSONString(parentCategoryId));
 
         ServiceCallWrapper wrapper = new ServiceCallWrapper(PATCH, address,
                                                             body.toString());
@@ -139,10 +139,9 @@ public class AppAdminServiceFacadeImpl implements AppAdminServiceFacade {
 
     @Override
     public void renameAppCategory(String categoryId, String name, AsyncCallback<String> callback) {
-        String address = CATEGORIES_ADMIN;
+        String address = CATEGORIES_ADMIN + "/" + categoryId;
 
         JSONObject body = new JSONObject();
-        body.put("categoryId", new JSONString(categoryId));
         body.put("name", new JSONString(name));
 
         ServiceCallWrapper wrapper = new ServiceCallWrapper(PATCH, address,
@@ -160,15 +159,15 @@ public class AppAdminServiceFacadeImpl implements AppAdminServiceFacade {
 
     @Override
     public void searchApp(String search, AsyncCallback<String> callback) {
-        String address = APPS_ADMIN + "?search=" + URL.encodeQueryString(search);
+        String address = APPS + "?search=" + URL.encodeQueryString(search);
 
         ServiceCallWrapper wrapper = new ServiceCallWrapper(address);
         deService.getServiceData(wrapper, callback);
     }
 
     @Override
-    public void updateApplication(JSONObject application, AsyncCallback<String> callback) {
-        String address = APPS_ADMIN;
+    public void updateApplication(String appId, JSONObject application, AsyncCallback<String> callback) {
+        String address = APPS_ADMIN + "/" + appId;
 
         ServiceCallWrapper wrapper = new ServiceCallWrapper(PATCH, address,
                                                             application.toString());

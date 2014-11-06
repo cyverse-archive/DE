@@ -1,10 +1,10 @@
 package org.iplantc.admin.belphegor.client.apps.views.widgets;
 
-import static org.iplantc.de.apps.client.events.AppSelectionChangedEvent.AppSelectionChangedEventHandler;
-import static org.iplantc.de.apps.client.events.AppSelectionChangedEvent.HasAppSelectionChangedEventHandlers;
 import org.iplantc.admin.belphegor.client.apps.views.AdminAppsView;
 import org.iplantc.de.apps.client.events.AppCategorySelectionChangedEvent;
 import org.iplantc.de.apps.client.events.AppSelectionChangedEvent;
+import org.iplantc.de.apps.client.events.AppSelectionChangedEvent.AppSelectionChangedEventHandler;
+import org.iplantc.de.apps.client.events.AppSelectionChangedEvent.HasAppSelectionChangedEventHandlers;
 import org.iplantc.de.apps.client.views.widgets.AppSearchField;
 import org.iplantc.de.apps.client.views.widgets.events.AppSearchResultLoadEvent;
 import org.iplantc.de.apps.client.views.widgets.proxy.AppSearchRpcProxy;
@@ -19,7 +19,11 @@ import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.HandlerRegistration;
-import com.google.gwt.uibinder.client.*;
+import com.google.gwt.uibinder.client.UiBinder;
+import com.google.gwt.uibinder.client.UiFactory;
+import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.uibinder.client.UiTemplate;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 
@@ -52,13 +56,17 @@ public class BelphegorAppsToolbarImpl implements AdminAppsView.Toolbar,
     @UiField
     TextButton categorizeApp;
     @UiField
-    TextButton delete;
+    TextButton deleteCat;
     @UiField
     PagingLoader<FilterPagingLoadConfig, PagingLoadResult<App>> loader;
     @UiField
     TextButton renameCategory;
     @UiField
+    TextButton moveCategory;
+    @UiField
     TextButton restoreApp;
+    @UiField
+    TextButton deleteApp;
     @UiField
     ToolBar toolBar;
 
@@ -103,9 +111,19 @@ public class BelphegorAppsToolbarImpl implements AdminAppsView.Toolbar,
         presenter.onCategorizeAppClicked();
     }
 
-    @UiHandler("delete")
-    public void deleteClicked(SelectEvent event) {
-        presenter.onDeleteClicked();
+    @UiHandler("deleteCat")
+    public void deleteCatClicked(SelectEvent event) {
+        presenter.onDeleteCatClicked();
+    }
+
+    @UiHandler("deleteApp")
+    public void deleteAppClicked(SelectEvent event) {
+        presenter.onDeleteAppClicked();
+    }
+
+    @UiHandler("moveCategory")
+    public void moveCategory(SelectEvent event) {
+        presenter.onMoveCategoryClicked();
     }
 
     @Override
@@ -148,9 +166,8 @@ public class BelphegorAppsToolbarImpl implements AdminAppsView.Toolbar,
         }
         addCategory.setEnabled(true);
         renameCategory.setEnabled(renameCategoryEnabled);
-        delete.setEnabled(deleteEnabled);
+        deleteCat.setEnabled(deleteEnabled);
         restoreApp.setEnabled(false);
-        categorizeApp.setEnabled(false);
     }
 
     @Override
@@ -160,8 +177,8 @@ public class BelphegorAppsToolbarImpl implements AdminAppsView.Toolbar,
         boolean deleteEnabled, restoreAppEnabled, categorizeAppEnabled;
         switch (appSelection.size()){
             case 1:
-                deleteEnabled = true;
                 final boolean isDeleted = appSelection.get(0).isDeleted();
+                deleteEnabled = !isDeleted;
                 restoreAppEnabled = isDeleted;
                 categorizeAppEnabled = !isDeleted;
                 break;
@@ -173,7 +190,7 @@ public class BelphegorAppsToolbarImpl implements AdminAppsView.Toolbar,
         }
         addCategory.setEnabled(false);
         renameCategory.setEnabled(false);
-        delete.setEnabled(deleteEnabled);
+        deleteApp.setEnabled(deleteEnabled);
         restoreApp.setEnabled(restoreAppEnabled);
         categorizeApp.setEnabled(categorizeAppEnabled);
     }

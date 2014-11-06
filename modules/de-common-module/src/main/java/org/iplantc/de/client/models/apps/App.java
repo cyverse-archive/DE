@@ -29,6 +29,8 @@ public interface App extends HasId, HasName, HasDescription {
     
     AppFeedback getRating();
     
+    void setRating(AppFeedback fb);
+
     @PropertyName("integration_date")
     Date getIntegrationDate();
     
@@ -36,14 +38,14 @@ public interface App extends HasId, HasName, HasDescription {
     Date getEditedDate();
     
     @PropertyName("is_public")
-    boolean isPublic();
+    Boolean isPublic();
     
     @PropertyName("integrator_email")
     String getIntegratorEmail();
     
-    boolean isDisabled();
+    Boolean isDisabled();
 
-    boolean isDeleted();
+    Boolean isDeleted();
 
     @PropertyName("pipeline_eligibility")
     PipelineEligibility getPipelineEligibility();
@@ -71,24 +73,24 @@ public interface App extends HasId, HasName, HasDescription {
 
     void setId(String id);
 
-    void setDisabled(boolean disabled);
+    void setDisabled(Boolean disabled);
 
-    void setDeleted(boolean deleted);
+    void setDeleted(Boolean deleted);
 
     @PropertyName("pipeline_eligibility")
     void setPipelineEligibility(PipelineEligibility pipelineEligibility);
 
     @PropertyName("step_count")
-    int getStepCount();
+    Integer getStepCount();
 
     @PropertyName("step_count")
-    void setStepCount(int step_count);
+    void setStepCount(Integer step_count);
 
     @PropertyName("can_run")
-    boolean isRunnable();
+    Boolean isRunnable();
 
     @PropertyName("can_run")
-    void setRunnable(boolean can_run);
+    void setRunnable(Boolean can_run);
 
     List<String> getReferences();
 

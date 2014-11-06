@@ -1,7 +1,7 @@
 package org.iplantc.admin.belphegor.client.apps.views;
 
-import static org.iplantc.de.apps.client.events.AppSelectionChangedEvent.HasAppSelectionChangedEventHandlers;
 import org.iplantc.de.apps.client.events.AppCategorySelectionChangedEvent;
+import org.iplantc.de.apps.client.events.AppSelectionChangedEvent.HasAppSelectionChangedEventHandlers;
 import org.iplantc.de.apps.client.views.AppsView;
 import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.models.apps.AppCategory;
@@ -26,7 +26,11 @@ public interface AdminAppsView extends AppsView {
 
         void onRenameAppCategoryClicked();
 
-        void onDeleteClicked();
+        void onMoveCategoryClicked();
+
+        void onDeleteCatClicked();
+
+        void onDeleteAppClicked();
 
         void onRestoreAppClicked();
 
