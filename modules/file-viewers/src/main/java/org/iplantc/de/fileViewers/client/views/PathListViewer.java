@@ -6,7 +6,6 @@ import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.client.models.diskResources.File;
 import org.iplantc.de.client.models.viewer.InfoType;
 import org.iplantc.de.client.models.viewer.StructuredText;
-import org.iplantc.de.client.services.FileEditorServiceFacade;
 import org.iplantc.de.fileViewers.client.FileViewer;
 import org.iplantc.de.fileViewers.client.events.DeleteSelectedPathsSelectedEvent;
 
@@ -228,9 +227,4 @@ public class PathListViewer extends AbstractStructuredTextViewer implements Stor
         }
     }
 
-    List<String> splittableToStringList(Splittable split) {
-        List<String> ret = super.splittableToStringList(split);
-        ret.add(0, FileEditorServiceFacade.PATH_LIST_FILE_IDENTIFIER);
-        return ret;
-    }
 }

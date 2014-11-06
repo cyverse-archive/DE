@@ -132,7 +132,8 @@ public abstract class AbstractStructuredTextViewer extends AbstractFileViewer {
 
     String getSeparator() {
         InfoType fromTypeString = InfoType.fromTypeString(infoType);
-        if (CSV.equals(fromTypeString)) {
+        if (CSV.equals(fromTypeString)
+            || PATH_LIST.equals(fromTypeString)) {
             return COMMA_DELIMITER;
         } else if (TSV.equals(fromTypeString)
                        || VCF.equals(fromTypeString)
@@ -244,8 +245,8 @@ public abstract class AbstractStructuredTextViewer extends AbstractFileViewer {
 
     List<String> splittableToStringList(Splittable split){
         List<String> ret = Lists.newArrayList();
-        for(int i = 0; i < split.size(); i++){
-            ret.add(split.get(i).asString());
+        for(String key : split.getPropertyKeys()){
+            ret.add(split.get(key).asString());
         }
         return ret;
     }

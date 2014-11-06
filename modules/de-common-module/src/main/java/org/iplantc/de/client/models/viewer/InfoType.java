@@ -45,7 +45,7 @@ public enum InfoType {
     TCSH("tcsh"),
     TSV("tsv"),
     VCF("vcf"),
-    PATH_LIST("file-set");
+    PATH_LIST("path-list");
 
     private String info_type;
 
@@ -68,7 +68,7 @@ public enum InfoType {
             return null;
         }
 
-        return valueOf(typeString.toUpperCase());
+        return valueOf(typeString.toUpperCase().replaceAll("[-.+]", "_"));
     }
 
     @Override
