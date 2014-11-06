@@ -34,7 +34,6 @@ public interface DiskResourceModule {
         String MENU_ITEM_NEW_PERL_DATA = ".newPerlData";
         String MENU_ITEM_NEW_SHELL_DATA = ".newShellData";
         String MENU_ITEM_NEW_MD_DATA = ".newMdData";
-        String MENU_ITEM_NEW_PATH_LIST = ".newPathList";
         String MENU_ITEM_MOVE_TO_TRASH = ".moveToTrash";
         String MENU_ITEM_RENAME = ".rename";
         String MENU_ITEM_MOVE = ".move";

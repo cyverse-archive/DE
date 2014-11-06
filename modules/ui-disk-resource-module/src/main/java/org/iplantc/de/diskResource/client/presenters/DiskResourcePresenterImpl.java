@@ -35,7 +35,6 @@ import org.iplantc.de.commons.client.info.IplantAnnouncer;
 import org.iplantc.de.commons.client.info.SuccessAnnouncementConfig;
 import org.iplantc.de.commons.client.views.gxt3.dialogs.IPlantDialog;
 import org.iplantc.de.commons.client.views.window.configs.FileViewerWindowConfig;
-import org.iplantc.de.commons.client.views.window.configs.PathListWindowConfig;
 import org.iplantc.de.commons.client.views.window.configs.TabularFileViewerWindowConfig;
 import org.iplantc.de.diskResource.client.dataLink.presenter.DataLinkPresenter;
 import org.iplantc.de.diskResource.client.dataLink.view.DataLinkPanel;
@@ -737,11 +736,6 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter, Di
     }
 
     @Override
-    public void onNewPathListFileClicked(PathListWindowConfig config){
-        config.setParentFolder(getSelectedUploadFolder());
-        eventBus.fireEvent(new CreateNewFileEvent(config));
-    }
-    @Override
     public void doCreateNewFolder(Folder parentFolder, final String newFolderName) {
         view.mask(displayStrings.loadingMask());
         diskResourceService.createFolder(parentFolder, newFolderName, new CreateFolderCallback(parentFolder, view));
@@ -1119,13 +1113,13 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter, Di
 
     @Override
     public void onInfoTypeClick(final DiskResource dr, final String type) {
-        final InfoTypeEditorDialog dialog = new InfoTypeEditorDialog(type, diskResourceService);
+        final InfoTypeEditorDialog dialog = new InfoTypeEditorDialog(type);
         dialog.show();
         dialog.addOkButtonSelectHandler(new SelectHandler() {
 
             @Override
             public void onSelect(SelectEvent event) {
-                String newType = dialog.getSelectedValue().toString();
+                String newType = dialog.getSelectedValue();
                 setInfoType(dr, newType);
             }
         });

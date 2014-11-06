@@ -105,7 +105,7 @@ public class AnalysisParamView implements IsWidget, SaveAnalysisParametersEvent.
 
             @Override
             public void onSelect(SelectEvent event) {
-                if(saveDialog.isValid()) {
+                if(saveDialog.isVaild()) {
                     String fileContents = writeTabFile();
                     saveFile(saveDialog.getSelectedFolder().getPath() + "/" + saveDialog.getFileName(),
                                     fileContents, saveDialog, saveDialog);

@@ -9,15 +9,12 @@ import org.iplantc.de.client.services.FileEditorServiceFacade;
 import org.iplantc.de.shared.services.DiscEnvApiService;
 import org.iplantc.de.shared.services.ServiceCallWrapper;
 
-import com.google.common.base.Preconditions;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONString;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.inject.Inject;
-import com.google.web.bindery.autobean.shared.Splittable;
-import com.google.web.bindery.autobean.shared.impl.StringQuoter;
 
 import com.sencha.gxt.core.client.util.Format;
 
@@ -51,11 +48,6 @@ public class FileEditorServiceFacadeImpl implements FileEditorServiceFacade {
     }
 
     @Override
-    public String getPathListFileIdentifier() {
-        return deProperties.getPathListFileIdentifier();
-    }
-
-    @Override
     public String getServletDownloadUrl(final String path) {
         String address = Format.substitute("{0}{1}?url=display-download&user={2}&path={3}", //$NON-NLS-1$
                 GWT.getModuleBaseURL(), constants.fileDownloadServlet(), userInfo.getUsername(), path);
@@ -64,41 +56,17 @@ public class FileEditorServiceFacadeImpl implements FileEditorServiceFacade {
     }
 
     @Override
-    public void readChunk(final File file, final long chunkPosition, final long chunkSize, final AsyncCallback<String> callback){
-        Preconditions.checkNotNull(file);
-        Preconditions.checkNotNull(file.getPath());
-        String address = deProperties.getDataMgmtBaseUrl() + "read-chunk";
+    public void getData(String url, AsyncCallback<String> callback) {
+        String address = deProperties.getDataMgmtBaseUrl() + url;
 
-        Splittable splittable = StringQuoter.createSplittable();
-        StringQuoter.create(file.getPath()).assign(splittable, "path");
-
-        // Endpoint has to take these numbers as strings
-        StringQuoter.create(String.valueOf(chunkPosition)).assign(splittable, "position");
-        StringQuoter.create(String.valueOf(chunkSize)).assign(splittable, "chunk-size");
-
-        ServiceCallWrapper wrapper = new ServiceCallWrapper(POST, address, splittable.getPayload());
+        ServiceCallWrapper wrapper = new ServiceCallWrapper(address);
         callService(wrapper, callback);
     }
 
     @Override
-    public void readCsvChunk(File file, String delimiter, int pageNumber, long chunkSize,
-                             AsyncCallback<String> callback) {
-        Preconditions.checkNotNull(file);
-        Preconditions.checkNotNull(file.getPath());
-        Preconditions.checkArgument(COMMA_DELIMITER.equals(delimiter)
-                                        || TAB_DELIMITER.equals(delimiter)
-                                        || SPACE_DELIMITER.equals(delimiter), "Unsupported delimiter: '" + delimiter + "'");
-        String address = deProperties.getDataMgmtBaseUrl() + "read-csv-chunk";
-
-        Splittable splittable = StringQuoter.createSplittable();
-        StringQuoter.create(file.getPath()).assign(splittable, "path");
-        StringQuoter.create(URL.encode(delimiter)).assign(splittable, "separator");
-
-        // Endpoint has to take these numbers as strings
-        StringQuoter.create(String.valueOf(pageNumber)).assign(splittable, "page");
-        StringQuoter.create(String.valueOf(chunkSize)).assign(splittable, "chunk-size");
-
-        ServiceCallWrapper wrapper = new ServiceCallWrapper(POST, address, splittable.getPayload());
+    public void getDataChunk(String url, JSONObject body, AsyncCallback<String> callback) {
+        String address = deProperties.getDataMgmtBaseUrl() + url;
+        ServiceCallWrapper wrapper = new ServiceCallWrapper(POST, address, body.toString());
         callService(wrapper, callback);
     }
 

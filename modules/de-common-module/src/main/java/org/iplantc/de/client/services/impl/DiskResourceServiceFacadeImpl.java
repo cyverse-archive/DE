@@ -1,6 +1,9 @@
 package org.iplantc.de.client.services.impl;
 
-import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.*;
+import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.DELETE;
+import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.GET;
+import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.POST;
+
 import org.iplantc.de.client.DEClientConstants;
 import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.events.diskResources.FolderRefreshEvent;
@@ -8,10 +11,18 @@ import org.iplantc.de.client.events.diskResources.FolderRefreshEvent.FolderRefre
 import org.iplantc.de.client.models.DEProperties;
 import org.iplantc.de.client.models.HasPaths;
 import org.iplantc.de.client.models.UserInfo;
-import org.iplantc.de.client.models.diskResources.*;
+import org.iplantc.de.client.models.diskResources.DiskResource;
+import org.iplantc.de.client.models.diskResources.DiskResourceAutoBeanFactory;
+import org.iplantc.de.client.models.diskResources.DiskResourceExistMap;
+import org.iplantc.de.client.models.diskResources.DiskResourceMetadata;
+import org.iplantc.de.client.models.diskResources.DiskResourceMetadataTemplate;
+import org.iplantc.de.client.models.diskResources.DiskResourceMetadataTemplateList;
+import org.iplantc.de.client.models.diskResources.File;
+import org.iplantc.de.client.models.diskResources.Folder;
+import org.iplantc.de.client.models.diskResources.RootFolders;
+import org.iplantc.de.client.models.diskResources.TYPE;
 import org.iplantc.de.client.models.services.DiskResourceMove;
 import org.iplantc.de.client.models.services.DiskResourceRename;
-import org.iplantc.de.client.models.viewer.InfoType;
 import org.iplantc.de.client.services.DiskResourceServiceFacade;
 import org.iplantc.de.client.services.converters.AsyncCallbackConverter;
 import org.iplantc.de.client.services.impl.models.DiskResourceMetadataBatchRequest;
@@ -790,24 +801,11 @@ public class DiskResourceServiceFacadeImpl extends TreeStore<Folder> implements
     }
 
     @Override
-    public void getInfoTypes(AsyncCallback<List<InfoType>> callback) {
+    public void getFileTypes(AsyncCallback<String> callback) {
         String address = deProperties.getMuleServiceBaseUrl() + "filetypes/type-list";
 
         ServiceCallWrapper wrapper = new ServiceCallWrapper(GET, address);
-        deServiceFacade.getServiceData(wrapper, new AsyncCallbackConverter<String, List<InfoType>>(callback) {
-            @Override
-            protected List<InfoType> convertFrom(String object) {
-                Splittable split = StringQuoter.split(object);
-                Splittable types = split.get("types");
-                List<InfoType> infoTypes = Lists.newArrayList();
-                for(int i = 0; i < types.size(); i++){
-                    InfoType infoType = InfoType.fromTypeString(types.get(i).asString());
-                    infoTypes.add(infoType);
-                }
-
-                return infoTypes;
-            }
-        });
+        deServiceFacade.getServiceData(wrapper, callback);
     }
 
     @Override

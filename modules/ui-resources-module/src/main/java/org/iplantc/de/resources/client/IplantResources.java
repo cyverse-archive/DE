@@ -388,8 +388,6 @@ public interface IplantResources extends ClientBundle, AppResources, DiskResourc
     @Source("DiskResourceNameCell.css")
     DiskResourceNameCellStyle diskResourceNameCss();
 
-    @Source("list-ingredients-16.png")
-    ImageResource pathList();
     /**
      * Image resource.
      * 

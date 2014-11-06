@@ -13,24 +13,17 @@ public class FileEditorServiceFacadeStub implements FileEditorServiceFacade {
     }
 
     @Override
-    public String getPathListFileIdentifier() {
-        return null;
-    }
-
-    @Override
     public String getServletDownloadUrl(String path) {
         return null;
     }
 
     @Override
-    public void readCsvChunk(File file, String delimiter, int pageNumber, long chunkSize,
-                             AsyncCallback<String> callback) {
+    public void getData(String url, AsyncCallback<String> callback) {
 
     }
 
     @Override
-    public void readChunk(File file, long chunkPosition, long chunkSize,
-                          AsyncCallback<String> callback) {
+    public void getDataChunk(String url, JSONObject body, AsyncCallback<String> callback) {
 
     }
 

@@ -5,8 +5,6 @@
 	xmlns:menu="urn:import:com.sencha.gxt.widget.core.client.menu"
 	xmlns:search="urn:import:org.iplantc.de.diskResource.client.search.views">
 
-    <ui:with field="appearance"
-             type="org.iplantc.de.diskResource.client.views.DiskResourceView.DiskResourceViewToolbarAppearance"/>
 	<ui:with field="res"
 		type="org.iplantc.de.resources.client.IplantResources" />
 	<ui:with field="display"
@@ -72,10 +70,6 @@
 
 									<menu:MenuItem ui:field="newMdFileMi" text="New Markdown file..."
 										visible="true" icon="{res.fileRename}" />
-
-                                    <menu:MenuItem ui:field="newPathListMi"
-                                                   text="{appearance.newPathListMenuText}"
-                                                   icon="{appearance.newPathListMenuIcon}"/>
 								</menu:Menu>
 							</menu:submenu>
 						</menu:MenuItem>

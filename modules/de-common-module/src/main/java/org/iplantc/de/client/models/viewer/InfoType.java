@@ -2,50 +2,14 @@ package org.iplantc.de.client.models.viewer;
 
 public enum InfoType {
 
-    ACE("ace"),
-    BAM("bam"),
-    BASH("bash"),
-    BLAST("blast"),
-    BOWTIE("bowtie"),
-    CLUSTALW("clustalw"),
-    CODATA("codata"),
-    CSH("csh"),
-    CSV("csv"),
-    EMBL("embl"),
-    FASTA("fasta"),
-    FASTQ("fastq"),
-    FASTXY("fastxy"),
-    GAME("game"),
-    GCG("gcg"),
-    GCGBLAST("gcgblast"),
-    GCGFASTA("gcgfasta"),
-    GDE("gde"),
-    GENBANK("genbank"),
-    GENSCAN("genscan"),
-    GFF("gff"),
-    HMMER("hmmer"),
-    MASE("mase"),
-    MEGG("mega"),
-    MSF("msf"),
-    NEWICK("newick"),
-    NEXML("nexml"),
-    NEXUS("nexus"),
-    PERL("perl"),
-    PHYLIP("phylip"),
-    PHYLOXML("phyloxml"),
-    PIR("pir"),
-    PRODOM("prodom"),
-    PYTHON("python"),
-    RAW("raw"),
-    RSF("rsf"),
-    SELEX("selex"),
-    SH("sh"),
-    STOCKHOLM("stockholm"),
-    SWISS("swiss"),
-    TCSH("tcsh"),
-    TSV("tsv"),
-    VCF("vcf"),
-    PATH_LIST("path-list");
+    ACE("ace"), BAM("bam"), BASH("bash"), BLAST("blast"), BOWTIE("bowtie"), CLUSTALW("clustalw"), CODATA("codata"), CSH(
+            "csh"), CSV("csv"), EMBL("embl"), FASTA("fasta"), FASTQ("fastq"), FASTXY("fastxy"), GAME(
+            "game"), GCG("gcg"), GCGBLAST("gcgblast"), GCGFASTA("gcgfasta"), GDE("gde"), GENBANK(
+            "genbank"), GENSCAN("genscan"), GFF("gff"), HMMER("hmmer"), MASE("mase"), MEGG("mega"), MSF(
+            "msf"), NEWICK("newick"), NEXML("nexml"), NEXUS("nexus"), PERL("perl"), PHYLIP("phylip"), PHYLOXML(
+            "phyloxml"), PIR("pir"), PRODOM("prodom"), PYTHON("python"), RAW("raw"), RSF("rsf"), SELEX(
+            "selex"), SH("sh"), STOCKHOLM("stockholm"), SWISS("swiss"), TCSH("tcsh"), TSV("tsv"), VCF(
+            "vcf");
 
     private String info_type;
 
@@ -68,7 +32,7 @@ public enum InfoType {
             return null;
         }
 
-        return valueOf(typeString.toUpperCase().replaceAll("[-.+]", "_"));
+        return valueOf(typeString.toUpperCase());
     }
 
     @Override

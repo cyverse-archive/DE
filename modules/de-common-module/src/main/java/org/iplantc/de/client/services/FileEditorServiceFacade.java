@@ -7,21 +7,12 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public interface FileEditorServiceFacade {
 
-    String COMMA_DELIMITER = ",";
-    String TAB_DELIMITER = "\t";
-    String SPACE_DELIMITER = " ";
-
     /**
      * Call service to retrieve the manifest for a requested file
      *  @param file desired manifest's file ID (path).
      * @param callback executes when RPC call is complete.
      */
     void getManifest(File file, AsyncCallback<String> callback);
-
-    /**
-     * @return the file identifier string for path-list files.
-     */
-    String getPathListFileIdentifier();
 
     /**
      * Construct a servlet download URL for the given file ID.
@@ -32,24 +23,18 @@ public interface FileEditorServiceFacade {
     String getServletDownloadUrl(String path);
 
     /**
-     * Reads a chunk of the given file. The file must be a CSV or TSV file.
-     * @param file the CSV file to be read
-     * @param delimiter the file's delimiter type
-     * @param pageNumber the page number where the requested chunk will begin
-     * @param chunkSize the size of the chunk to be read
-     * @param callback Where you will find your stuff.
-     *                 FIXME improve callback to return a data type. Clients currently have to parse content themselves.
+     * Call service to retrieve data for a requested file
+     * 
+     * @param idFile file to retrieve raw data from.
+     * @param callback executes when RPC call is complete.
      */
-    void readCsvChunk(File file, String delimiter, int pageNumber, long chunkSize, AsyncCallback<String> callback);
-
-    /**
-     * Reads a chunk of the given file.
-     * @param file the file to be read
-     * @param chunkPosition the position where the requested chunk will begin
-     * @param chunkSize the size of the chunk to be read
-     * @param callback Where you will find your stuff.
-     */
-    void readChunk(File file, long chunkPosition, long chunkSize, AsyncCallback<String> callback);
+    void getData(String url, AsyncCallback<String> callback);
+    
+   /** Call service to retrieve data chunks for a requested file
+    * 
+    * @param callback executes when RPC call is complete.
+    */
+    void  getDataChunk(String url, JSONObject body, AsyncCallback<String> callback);
 
     /**
      * Get Tree URLs for the given tree's file ID.

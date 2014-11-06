@@ -10,8 +10,6 @@ import java.util.Date;
 
 public interface DiskResource extends HasId, HasName, HasPath {
 
-    String getInfoType();
-
     void setId(String id);
 
     void setPath(String path);

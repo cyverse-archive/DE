@@ -5,7 +5,7 @@ import org.iplantc.de.client.models.diskResources.File;
 import org.iplantc.de.client.models.viewer.TreeUrlAutoBeanFactory;
 import org.iplantc.de.client.models.viewer.VizUrl;
 import org.iplantc.de.client.models.viewer.VizUrlList;
-import org.iplantc.de.fileViewers.client.FileViewer;
+import org.iplantc.de.fileViewers.client.views.FileViewer;
 import org.iplantc.de.commons.client.ErrorHandler;
 
 import com.google.gwt.core.shared.GWT;

@@ -1,31 +1,25 @@
 package org.iplantc.de.client.models.viewer;
 
 import com.google.web.bindery.autobean.shared.AutoBean.PropertyName;
-import com.google.web.bindery.autobean.shared.Splittable;
 
 public interface StructuredText {
 
-    String DATA_KEY = "csv";
-    String COL_KEY = "max-cols";
-    String TEXT_CHUNK_KEY = "chunk";
+    @PropertyName("chunk-size")
+    public void setChunkSize(String size);
 
     @PropertyName("chunk-size")
-    String getChunkSize();
+    public String getChunkSize();
 
     @PropertyName("max-cols")
-    String getMaxColumns();
+    public void setMaxColumns(String maxCols);
+
+    @PropertyName("max-cols")
+    public String getMaxColumns();
 
     @PropertyName("page")
-    String getPage();
+    public String getPage();
 
-    String getPath();
+    @PropertyName("page")
+    public void setPage(String page);
 
-    @PropertyName("number-pages")
-    int getNumberPages();
-
-    @PropertyName("file-size")
-    long getFileSize();
-
-    @PropertyName("csv")
-    Splittable getData();
 }
