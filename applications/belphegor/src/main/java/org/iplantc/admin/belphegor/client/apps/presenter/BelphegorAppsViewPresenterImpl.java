@@ -38,6 +38,7 @@ import org.iplantc.de.resources.client.messages.IplantErrorStrings;
 import org.iplantc.de.shared.services.ConfluenceServiceAsync;
 
 import com.google.common.collect.Lists;
+import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -349,12 +350,24 @@ public class BelphegorAppsViewPresenterImpl extends AppsViewPresenterImpl implem
 
             @Override
             public void onSuccess(String result) {
+                JSONObject obj = JSONParser.parseStrict(result).isObject();
+                JSONArray arr = obj.get("categories").isArray();
+                if (arr != null && arr.size() > 0) {
+                    StringBuilder names_display = new StringBuilder("");
+                    for (int i = 0; i < arr.size(); i++) {
+                        names_display.append(JsonUtil.trim(arr.get(0).isObject().get("name").toString()));
+                        if (i != arr.size() - 1) {
+                            names_display.append(",");
+                        }
+                    }
+
                     MessageBox msgBox = new MessageBox(displayStrings.restoreAppSucessMsgTitle(),
                                                        displayStrings.restoreAppSucessMsg(selectedApp.getName(),
-                                                                                      "Public"));
+                                                                                          names_display.toString()));
                     msgBox.setIcon(MessageBox.ICONS.info());
                     msgBox.setPredefinedButtons(PredefinedButton.OK);
                     msgBox.show();
+                }
                 eventBus.fireEvent(new CatalogCategoryRefreshEvent());
             }
 
@@ -620,10 +633,10 @@ public class BelphegorAppsViewPresenterImpl extends AppsViewPresenterImpl implem
         }
 
         // Don't allow a category drop into its own parent.
-        if(childCategory.getCategories() != null) {
+        if (childCategory.getCategories() != null) {
             return !parentCategory.getCategories().contains(childCategory);
         }
-        
+
         return true;
 
     }
