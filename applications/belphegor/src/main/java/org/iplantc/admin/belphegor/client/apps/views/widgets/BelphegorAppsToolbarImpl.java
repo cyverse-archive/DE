@@ -167,7 +167,6 @@ public class BelphegorAppsToolbarImpl implements AdminAppsView.Toolbar,
         addCategory.setEnabled(true);
         renameCategory.setEnabled(renameCategoryEnabled);
         deleteCat.setEnabled(deleteEnabled);
-        restoreApp.setEnabled(false);
     }
 
     @Override

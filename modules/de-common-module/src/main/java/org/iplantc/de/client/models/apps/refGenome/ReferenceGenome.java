@@ -15,10 +15,10 @@ public interface ReferenceGenome extends HasId, HasName, HasPath {
     String DELETED = "deleted";
     String UUID = "uuid";
 
-    @PropertyName("last_modified")
+    @PropertyName("last_modified_on")
     Date getLastModifiedDate();
 
-    @PropertyName("last_modified")
+    @PropertyName("last_modified_on")
     void setLastModifiedDate(Date lastModifiedDate);
 
     @PropertyName("last_modified_by")

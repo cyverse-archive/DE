@@ -84,7 +84,7 @@ public class AppAdminServiceFacadeImpl implements AppAdminServiceFacade {
 
     @Override
     public void getAppCategories(AsyncCallback<List<AppCategory>> callback) {
-        String address = CATEGORIES + "?public=true&hpc=false";
+        String address = CATEGORIES_ADMIN + "?public=true&hpc=false";
         ServiceCallWrapper wrapper = new ServiceCallWrapper(GET, address);
         deService.getServiceData(wrapper, new AppCategoryListCallbackConverter(callback, errorStrings));
     }
@@ -146,14 +146,6 @@ public class AppAdminServiceFacadeImpl implements AppAdminServiceFacade {
 
         ServiceCallWrapper wrapper = new ServiceCallWrapper(PATCH, address,
                                                             body.toString());
-        deService.getServiceData(wrapper, callback);
-    }
-
-    @Override
-    public void restoreApplication(String applicationId, AsyncCallback<String> callback) {
-        String address = APPS_ADMIN + "/" + applicationId + "/restore";
-
-        ServiceCallWrapper wrapper = new ServiceCallWrapper(POST, address);
         deService.getServiceData(wrapper, callback);
     }
 

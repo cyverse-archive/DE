@@ -38,7 +38,6 @@ import org.iplantc.de.resources.client.messages.IplantErrorStrings;
 import org.iplantc.de.shared.services.ConfluenceServiceAsync;
 
 import com.google.common.collect.Lists;
-import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -338,29 +337,24 @@ public class BelphegorAppsViewPresenterImpl extends AppsViewPresenterImpl implem
             return;
         }
         final App selectedApp = getSelectedApp();
+        final App appClone = AutoBeanCodex.decode(factory, App.class, "{}").as();
+        appClone.setDeleted(false);
 
-        adminAppService.restoreApplication(selectedApp.getId(), new AsyncCallback<String>() {
+        // Serialize App to JSON object
+        String jsonString = AutoBeanCodex.encode(AutoBeanUtils.getAutoBean(appClone)).getPayload();
+
+        final JSONObject jsonObj = JsonUtil.getObject(jsonString);
+
+        adminAppService.updateApplication(selectedApp.getId(), jsonObj, new AsyncCallback<String>() {
 
             @Override
             public void onSuccess(String result) {
-                JSONObject obj = JSONParser.parseStrict(result).isObject();
-                JSONArray arr = obj.get("categories").isArray();
-                if (arr != null && arr.size() > 0) {
-                    StringBuilder names_display = new StringBuilder("");
-                    for (int i = 0; i < arr.size(); i++) {
-                        names_display.append(JsonUtil.trim(arr.get(0).isObject().get("name").toString()));
-                        if (i != arr.size() - 1) {
-                            names_display.append(",");
-                        }
-                    }
-
                     MessageBox msgBox = new MessageBox(displayStrings.restoreAppSucessMsgTitle(),
                                                        displayStrings.restoreAppSucessMsg(selectedApp.getName(),
-                                                                                          names_display.toString()));
+                                                                                      "Public"));
                     msgBox.setIcon(MessageBox.ICONS.info());
                     msgBox.setPredefinedButtons(PredefinedButton.OK);
                     msgBox.show();
-                }
                 eventBus.fireEvent(new CatalogCategoryRefreshEvent());
             }
 

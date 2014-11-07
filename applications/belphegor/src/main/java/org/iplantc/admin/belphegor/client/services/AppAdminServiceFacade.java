@@ -72,14 +72,6 @@ public interface AppAdminServiceFacade extends AppServiceFacade {
      */
     public abstract void deleteApplication(String applicationId, AsyncCallback<String> callback);
 
-    /**
-     * Deletes an App with the given applicationId.
-     *
-     * @param applicationId
-     * @param callback
-     */
-    public abstract void restoreApplication(String applicationId, AsyncCallback<String> callback);
-
     public abstract void categorizeApp(AppCategorizeRequest request, AsyncCallback<String> callback);
 
     public abstract void getAppDetails(String appId, AsyncCallback<String> callback);
