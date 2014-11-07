@@ -153,20 +153,23 @@ public class BelphegorAppsToolbarImpl implements AdminAppsView.Toolbar,
     public void onAppCategorySelectionChanged(AppCategorySelectionChangedEvent event) {
         final List<AppCategory> appCategorySelection = event.getAppCategorySelection();
 
-        boolean renameCategoryEnabled, deleteEnabled;
+        boolean renameCategoryEnabled, deleteEnabled, moveCatEnabled;
         switch (appCategorySelection.size()){
             case 1:
                 renameCategoryEnabled = true;
                 deleteEnabled = true;
+                moveCatEnabled = true;
                 break;
             default:
                 renameCategoryEnabled = false;
                 deleteEnabled = false;
+                moveCatEnabled = false;
 
         }
         addCategory.setEnabled(true);
         renameCategory.setEnabled(renameCategoryEnabled);
         deleteCat.setEnabled(deleteEnabled);
+        moveCategory.setEnabled(moveCatEnabled);
     }
 
     @Override
