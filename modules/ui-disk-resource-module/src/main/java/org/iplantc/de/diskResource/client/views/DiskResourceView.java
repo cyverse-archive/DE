@@ -13,12 +13,13 @@ import org.iplantc.de.commons.client.views.window.configs.PathListWindowConfig;
 import org.iplantc.de.commons.client.views.window.configs.TabularFileViewerWindowConfig;
 import org.iplantc.de.diskResource.client.events.DiskResourceSelectionChangedEvent;
 import org.iplantc.de.diskResource.client.events.FolderSelectionEvent;
+import org.iplantc.de.diskResource.client.events.SavedSearchesRetrievedEvent;
+import org.iplantc.de.diskResource.client.presenters.proxy.FolderContentsLoadConfig;
 import org.iplantc.de.diskResource.client.presenters.proxy.SelectFolderByPathLoadHandler;
-import org.iplantc.de.diskResource.client.search.events.DeleteSavedSearchEvent;
-import org.iplantc.de.diskResource.client.search.events.SaveDiskResourceQueryEvent;
+import org.iplantc.de.diskResource.client.search.events.DeleteSavedSearchClickedEvent;
+import org.iplantc.de.diskResource.client.search.events.SaveDiskResourceQueryClickedEvent;
 import org.iplantc.de.diskResource.client.search.events.SubmitDiskResourceQueryEvent;
 import org.iplantc.de.diskResource.client.search.events.SubmitDiskResourceQueryEvent.HasSubmitDiskResourceQueryEventHandlers;
-import org.iplantc.de.diskResource.client.search.presenter.DataSearchPresenter;
 import org.iplantc.de.diskResource.client.search.views.DiskResourceSearchField;
 import org.iplantc.de.diskResource.client.views.cells.events.DiskResourceNameSelectedEvent;
 import org.iplantc.de.diskResource.client.views.cells.events.ManageCommentsEvent;
@@ -29,12 +30,14 @@ import org.iplantc.de.diskResource.client.views.cells.events.ShareByDataLinkEven
 
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.resources.client.ImageResource;
+import com.google.gwt.safehtml.client.HasSafeHtml;
 import com.google.gwt.user.client.ui.HasOneWidget;
 import com.google.gwt.user.client.ui.IsWidget;
 
 import com.sencha.gxt.data.shared.ListStore;
 import com.sencha.gxt.data.shared.TreeStore;
 import com.sencha.gxt.data.shared.loader.DataProxy;
+import com.sencha.gxt.data.shared.loader.PagingLoadResult;
 import com.sencha.gxt.data.shared.loader.TreeLoader;
 import com.sencha.gxt.widget.core.client.tree.Tree.TreeNode;
 
@@ -49,8 +52,9 @@ import java.util.Set;
 public interface DiskResourceView extends IsWidget,
                                           IsMaskable,
                                           FolderSelectionEvent.HasFolderSelectionEventHandlers,
-                                          DeleteSavedSearchEvent.HasDeleteSavedSearchEventHandlers,
-        DiskResourceSelectionChangedEvent.HasDiskResourceSelectionChangedEventHandlers, Taggable {
+                                          DeleteSavedSearchClickedEvent.HasDeleteSavedSearchClickedEventHandlers,
+                                          DiskResourceSelectionChangedEvent.HasDiskResourceSelectionChangedEventHandlers,
+                                          Taggable {
 
     interface Presenter extends org.iplantc.de.commons.client.presenter.Presenter,
                                 IsMaskable,
@@ -62,11 +66,11 @@ public interface DiskResourceView extends IsWidget,
                                 DiskResourceSelectionChangedEvent.HasDiskResourceSelectionChangedEventHandlers,
                                 FolderSelectionEvent.HasFolderSelectionEventHandlers,
                                 DiskResourceSelectionChangedEvent.DiskResourceSelectionChangedEventHandler,
-                                SaveDiskResourceQueryEvent.SaveDiskResourceQueryEventHandler,
+                                SaveDiskResourceQueryClickedEvent.SaveDiskResourceQueryClickedEventHandler,
                                 SubmitDiskResourceQueryEvent.SubmitDiskResourceQueryEventHandler,
                                 ShareByDataLinkEvent.ShareByDataLinkEventHandler,
                                 RequestDiskResourceFavoriteEvent.RequestDiskResourceFavoriteEventHandler,
-                       ManageCommentsEvent.ManageCommentsEventHandler {
+                                ManageCommentsEvent.ManageCommentsEventHandler {
 
         void manageSelectedResourceComments();
 
@@ -160,7 +164,7 @@ public interface DiskResourceView extends IsWidget,
          * view, a {@link SelectFolderByPathLoadHandler} is added to the view's corresponding
          * {@link TreeLoader}, then a remote load is triggered.
          * 
-         * @param folderToSelect
+         * @param folderToSelect the folder to be selected
          */
         void setSelectedFolderByPath(HasPath folderToSelect);
 
@@ -170,10 +174,6 @@ public interface DiskResourceView extends IsWidget,
 
         /**
          * A convenience method for looking up drop target folders for View components
-         * 
-         * @param widget
-         * @param el
-         * @return
          */
         Folder getDropTargetFolder(IsWidget widget, Element el);
 
@@ -228,15 +228,18 @@ public interface DiskResourceView extends IsWidget,
      * @author jstroot
      * 
      */
-    public interface Proxy extends DataProxy<Folder, List<Folder>>, HasSubmitDiskResourceQueryEventHandlers {
-        void init(DataSearchPresenter presenter, IsMaskable isMaskable);
+    public interface FolderRpcProxy extends DataProxy<Folder, List<Folder>>,
+                                            HasSubmitDiskResourceQueryEventHandlers,
+                                            SavedSearchesRetrievedEvent.HasSavedSearchesRetrievedEventHandlers{ }
+
+    interface FolderContentsRpcProxy extends DataProxy<FolderContentsLoadConfig, PagingLoadResult<DiskResource>>{
+        void setHasSafeHtml(HasSafeHtml centerHeader);
     }
 
+    HasSafeHtml getCenterHeader();
+
+
     void loadFolder(Folder folder);
-
-    void setPresenter(Presenter presenter);
-
-    void setTreeLoader(TreeLoader<Folder> treeLoader);
 
     Folder getSelectedFolder();
 
@@ -264,7 +267,7 @@ public interface DiskResourceView extends IsWidget,
      * Selects the given Folder.
      * This method will also ensure that the Data listing widget is shown.
      * 
-     * @param folder
+     * @param folder the folder to be selected
      */
     void setSelectedFolder(Folder folder);
 
@@ -289,18 +292,13 @@ public interface DiskResourceView extends IsWidget,
     DiskResourceViewToolbar getToolbar();
 
     /**
-     * Determines if the given widget is this view's <code>Tree</code> object.
-     * 
-     * @param widget
-     * @return
+     * @return true if the given widget is this view's <code>Tree</code> object, false otherwise.
      */
     boolean isViewTree(IsWidget widget);
 
     /**
-     * Determines if the given widget is this view's <code>Grid</code> object.
+     * @return true if the given widget is this view's <code>Grid</code> object, false otherwise.
      * 
-     * @param widget
-     * @return
      */
     boolean isViewGrid(IsWidget widget);
 

@@ -5,7 +5,9 @@ import org.iplantc.de.client.models.search.SearchAutoBeanFactory;
 import org.iplantc.de.commons.client.events.SubmitTextSearchEvent;
 import org.iplantc.de.commons.client.events.SubmitTextSearchEvent.SubmitTextSearchEventHandler;
 import org.iplantc.de.commons.client.widgets.search.SearchFieldDecorator;
-import org.iplantc.de.diskResource.client.search.events.SaveDiskResourceQueryEvent;
+import org.iplantc.de.diskResource.client.events.FolderSelectionEvent;
+import org.iplantc.de.diskResource.client.search.events.SaveDiskResourceQueryClickedEvent;
+import org.iplantc.de.diskResource.client.search.events.SavedSearchDeletedEvent;
 import org.iplantc.de.diskResource.client.search.events.SubmitDiskResourceQueryEvent;
 import org.iplantc.de.diskResource.client.search.events.SubmitDiskResourceQueryEvent.HasSubmitDiskResourceQueryEventHandlers;
 import org.iplantc.de.diskResource.client.search.events.SubmitDiskResourceQueryEvent.SubmitDiskResourceQueryEventHandler;
@@ -31,8 +33,13 @@ import java.text.ParseException;
  * @author jstroot
  * 
  */
-public class DiskResourceSearchField extends TriggerField<String> implements HasExpandHandlers, HasCollapseHandlers, SaveDiskResourceQueryEvent.HasSaveDiskResourceQueryEventHandlers, HasSubmitDiskResourceQueryEventHandlers,
-        SubmitDiskResourceQueryEventHandler, SubmitTextSearchEventHandler {
+public class DiskResourceSearchField extends TriggerField<String> implements HasExpandHandlers,
+                                                                             HasCollapseHandlers,
+                                                                             SaveDiskResourceQueryClickedEvent.HasSaveDiskResourceQueryClickedEventHandlers,
+                                                                             FolderSelectionEvent.FolderSelectionEventHandler,
+                                                                             HasSubmitDiskResourceQueryEventHandlers,
+                                                                             SubmitDiskResourceQueryEventHandler,
+                                                                             SubmitTextSearchEventHandler, SavedSearchDeletedEvent.SavedSearchDeletedEventHandler {
 
     public final class QueryStringPropertyEditor extends PropertyEditor<String> {
         private final SearchAutoBeanFactory factory = GWT.create(SearchAutoBeanFactory.class);
@@ -40,7 +47,7 @@ public class DiskResourceSearchField extends TriggerField<String> implements Has
         public String parse(CharSequence text) throws ParseException {
             clearInvalid();
 
-            if (text == null || text.length() < 3) {
+            if (text.length() < 3) {
                 return text.toString();
             }
 
@@ -80,8 +87,8 @@ public class DiskResourceSearchField extends TriggerField<String> implements Has
     }
 
     @Override
-    public HandlerRegistration addSaveDiskResourceQueryEventHandler(SaveDiskResourceQueryEvent.SaveDiskResourceQueryEventHandler handler) {
-        return getCell().addSaveDiskResourceQueryEventHandler(handler);
+    public HandlerRegistration addSaveDiskResourceQueryClickedEventHandler(SaveDiskResourceQueryClickedEvent.SaveDiskResourceQueryClickedEventHandler handler) {
+        return getCell().addSaveDiskResourceQueryClickedEventHandler(handler);
     }
 
     @Override
@@ -89,8 +96,20 @@ public class DiskResourceSearchField extends TriggerField<String> implements Has
         return getCell().addSubmitDiskResourceQueryEventHandler(handler);
     }
 
-    public void updateSearch(DiskResourceQueryTemplate query) {
-        getCell().fireEvent(new SubmitDiskResourceQueryEvent(query));
+    @Override
+    public void onFolderSelected(FolderSelectionEvent event) {
+        if (event.getSelectedFolder() instanceof DiskResourceQueryTemplate) {
+            final DiskResourceQueryTemplate selectedQuery = (DiskResourceQueryTemplate)event.getSelectedFolder();
+            edit(selectedQuery);
+        } else {
+            // Clear search form
+            clearSearch();
+        }
+    }
+
+    @Override
+    public void onSavedSearchDeleted(SavedSearchDeletedEvent event) {
+        clearSearch();
     }
 
     public void clearSearch() {

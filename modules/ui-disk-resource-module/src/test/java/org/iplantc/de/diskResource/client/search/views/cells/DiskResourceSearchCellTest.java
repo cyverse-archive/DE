@@ -1,7 +1,7 @@
 package org.iplantc.de.diskResource.client.search.views.cells;
 
 import org.iplantc.de.client.models.search.DiskResourceQueryTemplate;
-import org.iplantc.de.diskResource.client.search.events.SaveDiskResourceQueryEvent;
+import org.iplantc.de.diskResource.client.search.events.SaveDiskResourceQueryClickedEvent;
 import org.iplantc.de.diskResource.client.search.events.SubmitDiskResourceQueryEvent;
 
 import com.google.gwtmockito.GxtMockitoTestRunner;
@@ -50,13 +50,13 @@ public class DiskResourceSearchCellTest {
     }
 
     @Test public void testDoSaveDiskResourceQueryTemplate_Case1() {
-        SaveDiskResourceQueryEvent mockEvent = mock(SaveDiskResourceQueryEvent.class);
+        SaveDiskResourceQueryClickedEvent mockEvent = mock(SaveDiskResourceQueryClickedEvent.class);
 
         DiskResourceSearchCell spy = spy(unitUnderTest);
 
-        spy.doSaveDiskResourceQueryTemplate(mockEvent);
+        spy.onSaveDiskResourceQueryClicked(mockEvent);
         // Verify for record keeping
-        verify(spy).doSaveDiskResourceQueryTemplate(any(SaveDiskResourceQueryEvent.class));
+        verify(spy).onSaveDiskResourceQueryClicked(any(SaveDiskResourceQueryClickedEvent.class));
 
         verify(spy).fireEvent(eq(mockEvent));
         verifyNoMoreInteractions(spy, mockEvent);

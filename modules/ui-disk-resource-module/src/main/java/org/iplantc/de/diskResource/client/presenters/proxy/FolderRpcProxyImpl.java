@@ -12,9 +12,9 @@ import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.commons.client.info.ErrorAnnouncementConfig;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
 import org.iplantc.de.diskResource.client.events.RequestAttachDiskResourceFavoritesFolderEvent;
+import org.iplantc.de.diskResource.client.events.SavedSearchesRetrievedEvent;
 import org.iplantc.de.diskResource.client.search.events.SubmitDiskResourceQueryEvent;
 import org.iplantc.de.diskResource.client.search.events.SubmitDiskResourceQueryEvent.SubmitDiskResourceQueryEventHandler;
-import org.iplantc.de.diskResource.client.search.presenter.DataSearchPresenter;
 import org.iplantc.de.diskResource.client.views.DiskResourceView;
 import org.iplantc.de.resources.client.messages.I18N;
 
@@ -26,43 +26,19 @@ import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
 
 import com.sencha.gxt.data.client.loader.RpcProxy;
 
 import java.util.Collections;
 import java.util.List;
 
-public class FolderRpcProxy extends RpcProxy<Folder, List<Folder>> implements DiskResourceView.Proxy {
-
-    class SubFoldersCallback implements AsyncCallback<List<Folder>> {
-        final AsyncCallback<List<Folder>> callback;
-
-        public SubFoldersCallback(AsyncCallback<List<Folder>> callback) {
-            this.callback = callback;
-        }
-
-        @Override
-        public void onSuccess(List<Folder> result) {
-            if (callback != null) {
-                callback.onSuccess(result);
-            }
-        }
-
-        @Override
-        public void onFailure(Throwable caught) {
-            ErrorHandler.post(I18N.ERROR.retrieveFolderInfoFailed(), caught);
-            if (callback != null) {
-                callback.onFailure(caught);
-            }
-        }
-    }
+public class FolderRpcProxyImpl extends RpcProxy<Folder, List<Folder>> implements DiskResourceView.FolderRpcProxy {
 
     class GetSavedQueryTemplatesCallback implements AsyncCallback<List<DiskResourceQueryTemplate>> {
         final IplantAnnouncer ipAnnouncer2;
-        final DataSearchPresenter searchPresenter2;
 
-        public GetSavedQueryTemplatesCallback(DataSearchPresenter searchPresenter1, IplantAnnouncer ipAnnouncer) {
-            this.searchPresenter2 = searchPresenter1;
+        public GetSavedQueryTemplatesCallback(IplantAnnouncer ipAnnouncer) {
             this.ipAnnouncer2 = ipAnnouncer;
         }
 
@@ -74,43 +50,25 @@ public class FolderRpcProxy extends RpcProxy<Folder, List<Folder>> implements Di
         @Override
         public void onSuccess(List<DiskResourceQueryTemplate> result) {
             // Save result
-            searchPresenter2.loadSavedQueries(result);
+            fireEvent(new SavedSearchesRetrievedEvent(result));
         }
     }
 
     class RootFolderCallback implements AsyncCallback<RootFolders> {
 
         final AsyncCallback<List<Folder>> callback;
-        final SearchServiceFacade searchSvc;
         final IplantAnnouncer ipAnnouncer;
-        final DataSearchPresenter searchPresenter1;
         final IsMaskable maskable;
+        final SearchServiceFacade searchSvc;
 
-        public RootFolderCallback(final SearchServiceFacade searchService, final DataSearchPresenter searchPresenter, final AsyncCallback<List<Folder>> callback, final IplantAnnouncer announcer,
-                final IsMaskable isMaskable) {
+        public RootFolderCallback(final SearchServiceFacade searchService,
+                                  final AsyncCallback<List<Folder>> callback,
+                                  final IplantAnnouncer announcer,
+                                  final IsMaskable isMaskable) {
             this.searchSvc = searchService;
-            this.searchPresenter1 = searchPresenter;
             this.callback = callback;
             this.ipAnnouncer = announcer;
             this.maskable = isMaskable;
-        }
-
-        @Override
-        public void onSuccess(final RootFolders rootFolders) {
-            if (callback != null) {
-                List<Folder> roots = rootFolders.getRoots();
-                callback.onSuccess(roots);
-            }
-            // Retrieve any saved searches.
-            searchSvc.getSavedQueryTemplates(new GetSavedQueryTemplatesCallback(searchPresenter1, ipAnnouncer));
-            Scheduler.get().scheduleFinally(new ScheduledCommand() {
-
-                @Override
-                public void execute() {
-                    eventbus.fireEvent(new RequestAttachDiskResourceFavoritesFolderEvent());
-                }
-            });
-            maskable.unmask();
         }
 
         @Override
@@ -122,23 +80,80 @@ public class FolderRpcProxy extends RpcProxy<Folder, List<Folder>> implements Di
             }
             maskable.unmask();
         }
+
+        @Override
+        public void onSuccess(final RootFolders rootFolders) {
+            if (callback != null) {
+                List<Folder> roots = rootFolders.getRoots();
+                callback.onSuccess(roots);
+            }
+            // Retrieve any saved searches.
+            searchSvc.getSavedQueryTemplates(new GetSavedQueryTemplatesCallback(ipAnnouncer));
+            Scheduler.get().scheduleFinally(new ScheduledCommand() {
+
+                @Override
+                public void execute() {
+                    eventbus.fireEvent(new RequestAttachDiskResourceFavoritesFolderEvent());
+                }
+            });
+            maskable.unmask();
+        }
     }
 
-    private final DiskResourceServiceFacade drService;
-    private final SearchServiceFacade searchService;
+    class SubFoldersCallback implements AsyncCallback<List<Folder>> {
+        final AsyncCallback<List<Folder>> callback;
+
+        public SubFoldersCallback(AsyncCallback<List<Folder>> callback) {
+            this.callback = callback;
+        }
+
+        @Override
+        public void onFailure(Throwable caught) {
+            ErrorHandler.post(I18N.ERROR.retrieveFolderInfoFailed(), caught);
+            if (callback != null) {
+                callback.onFailure(caught);
+            }
+        }
+
+        @Override
+        public void onSuccess(List<Folder> result) {
+            if (callback != null) {
+                callback.onSuccess(result);
+            }
+        }
+    }
+
     private final IplantAnnouncer announcer;
-    private DataSearchPresenter searchPresenter;
-    private IsMaskable isMaskable;
-    private final HandlerManager handlerManager;
+    private final DiskResourceServiceFacade drService;
     private final EventBus eventbus;
+    private final HandlerManager handlerManager;
+    private final SearchServiceFacade searchService;
+    private IsMaskable isMaskable;
 
     @Inject
-    public FolderRpcProxy(final DiskResourceServiceFacade drService, final SearchServiceFacade searchService, final IplantAnnouncer announcer, final EventBus eventbus) {
+    FolderRpcProxyImpl(final DiskResourceServiceFacade drService,
+                       final SearchServiceFacade searchService,
+                       final IplantAnnouncer announcer,
+                       final EventBus eventbus,
+                       @Assisted final IsMaskable isMaskable) {
+
         this.drService = drService;
         this.searchService = searchService;
         this.announcer = announcer;
         this.eventbus = eventbus;
+        this.isMaskable = isMaskable;
+
         handlerManager = new HandlerManager(this);
+    }
+
+    @Override
+    public HandlerRegistration addSavedSearchedRetrievedEventHandler(SavedSearchesRetrievedEvent.SavedSearchesRetrievedEventHandler handler) {
+        return handlerManager.addHandler(SavedSearchesRetrievedEvent.TYPE, handler);
+    }
+
+    @Override
+    public HandlerRegistration addSubmitDiskResourceQueryEventHandler(SubmitDiskResourceQueryEventHandler handler) {
+        return handlerManager.addHandler(SubmitDiskResourceQueryEvent.TYPE, handler);
     }
 
     @Override
@@ -146,36 +161,20 @@ public class FolderRpcProxy extends RpcProxy<Folder, List<Folder>> implements Di
         if (parentFolder == null) {
             // Performing initial load of root folders and saved searches
             isMaskable.mask("");
-            drService.getRootFolders(new RootFolderCallback(searchService, searchPresenter, callback, announcer, isMaskable));
+            drService.getRootFolders(new RootFolderCallback(searchService, callback, announcer, isMaskable));
         } else if (parentFolder.isFilter() || parentFolder instanceof DiskResourceFavorite) {
             if (callback != null) {
-                callback.onSuccess(Collections.<Folder> emptyList());
+                callback.onSuccess(Collections.<Folder>emptyList());
             }
-            return;
-
         } else if (parentFolder instanceof DiskResourceQueryTemplate) {
-            fireEvent(new SubmitDiskResourceQueryEvent((DiskResourceQueryTemplate)parentFolder));
+            fireEvent(new SubmitDiskResourceQueryEvent((DiskResourceQueryTemplate) parentFolder));
         } else {
             drService.getSubFolders(parentFolder, new SubFoldersCallback(callback));
         }
     }
 
-    @Override
-    public void init(final DataSearchPresenter presenter, final IsMaskable isMaskable) {
-        this.searchPresenter = presenter;
-        this.isMaskable = isMaskable;
-        addSubmitDiskResourceQueryEventHandler(searchPresenter);
-    }
-
     void fireEvent(GwtEvent<?> event) {
-        if (handlerManager != null) {
-            handlerManager.fireEvent(event);
-        }
-    }
-
-    @Override
-    public HandlerRegistration addSubmitDiskResourceQueryEventHandler(SubmitDiskResourceQueryEventHandler handler) {
-        return handlerManager.addHandler(SubmitDiskResourceQueryEvent.TYPE, handler);
+        handlerManager.fireEvent(event);
     }
 
 }

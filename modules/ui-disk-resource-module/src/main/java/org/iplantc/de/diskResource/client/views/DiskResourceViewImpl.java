@@ -19,8 +19,7 @@ import org.iplantc.de.commons.client.widgets.IPlantAnchor;
 import org.iplantc.de.diskResource.client.events.DiskResourceSelectionChangedEvent;
 import org.iplantc.de.diskResource.client.events.FolderSelectionEvent;
 import org.iplantc.de.diskResource.client.presenters.proxy.FolderContentsLoadConfig;
-import org.iplantc.de.diskResource.client.presenters.proxy.FolderContentsRpcProxy;
-import org.iplantc.de.diskResource.client.search.events.DeleteSavedSearchEvent;
+import org.iplantc.de.diskResource.client.search.events.DeleteSavedSearchClickedEvent;
 import org.iplantc.de.diskResource.share.DiskResourceModule;
 import org.iplantc.de.resources.client.DataCollapseStyle;
 import org.iplantc.de.resources.client.IplantResources;
@@ -43,6 +42,7 @@ import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.i18n.client.DateTimeFormat;
+import com.google.gwt.safehtml.client.HasSafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiFactory;
@@ -56,6 +56,7 @@ import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
 import com.google.web.bindery.autobean.shared.Splittable;
 
 import com.sencha.gxt.core.client.Style.SelectionMode;
@@ -251,31 +252,42 @@ public class DiskResourceViewImpl extends Composite implements DiskResourceView,
     Logger LOG = Logger.getLogger("DRV");
 
     @Inject
-    public DiskResourceViewImpl(final Tree<Folder, Folder> tree,
-                                final FolderContentsRpcProxy folderRpcProxy,
-                                final DiskResourceViewToolbar viewToolbar,
-                                final DiskResourceAutoBeanFactory factory,
-                                final UserInfo userInfo,
-                                final IplantDisplayStrings displayStrings) {
+    DiskResourceViewImpl(final Tree<Folder, Folder> tree,
+                         final DiskResourceViewToolbar viewToolbar,
+                         final DiskResourceAutoBeanFactory factory,
+                         final UserInfo userInfo,
+                         final IplantDisplayStrings displayStrings,
+                         @Assisted final DiskResourceView.Presenter presenter,
+                         @Assisted final TreeLoader<Folder> treeLoader,
+                         @Assisted final PagingLoader<FolderContentsLoadConfig, PagingLoadResult<DiskResource>> gridLoader) {
         this.tree = tree;
         this.toolbar = viewToolbar;
         this.userInfo = userInfo;
         this.displayStrings = displayStrings;
+        this.presenter = presenter;
+        this.treeLoader = treeLoader;
         this.treeStore = tree.getStore();
         this.drFactory = factory;
-        tree.setView(new CustomTreeView());
-
+        this.gridLoader = gridLoader;
         sm = new LiveGridCheckBoxSelectionModel();
 
         initWidget(BINDER.createAndBindUi(this));
 
+        ((DiskResourceColumnModel)cm).addDiskResourceNameSelectedEventHandler(presenter);
+        ((DiskResourceColumnModel)cm).addManageSharingEventHandler(presenter);
+        ((DiskResourceColumnModel)cm).addManageMetadataEventHandler(presenter);
+        ((DiskResourceColumnModel)cm).addShareByDataLinkEventHandler(presenter);
+        ((DiskResourceColumnModel)cm).addManageFavoritesEventHandler(presenter);
+        ((DiskResourceColumnModel)cm).addManageCommentsEventHandler(presenter);
+        toolbar.init(presenter, this);
+        initDragAndDrop();
+        tree.setView(new CustomTreeView());
+
         detailsPanel.setScrollMode(ScrollMode.AUTO);
 
-        folderRpcProxy.init(centerCp.getHeader());
-        gridLoader = new PagingLoader<>(folderRpcProxy);
-        gridLoader.setReuseLoadConfig(true);
-        gridLoader.setRemoteSort(true);
-        gridLoader.addBeforeLoadHandler(this);
+        tree.setLoader(treeLoader);
+
+        this.gridLoader.addBeforeLoadHandler(this);
         grid.setLoader(gridLoader);
         grid.setSelectionModel(sm);
         grid.getSelectionModel().addSelectionChangedHandler(this);
@@ -386,6 +398,11 @@ public class DiskResourceViewImpl extends Composite implements DiskResourceView,
     }
 
     @Override
+    public HasSafeHtml getCenterHeader() {
+        return centerCp.getHeader();
+    }
+
+    @Override
     public void loadFolder(Folder folder) {
         sm.clear();
         sm.setShowSelectAll(!(folder instanceof DiskResourceQueryTemplate));
@@ -482,22 +499,6 @@ public class DiskResourceViewImpl extends Composite implements DiskResourceView,
         return (DiskResourceColumnModel)cm;
     }
 
-    @Override
-    public void setPresenter(Presenter presenter) {
-        this.presenter = presenter;
-        addFolderSelectedEventHandler(presenter);
-        addDiskResourceSelectionChangedEventHandler(presenter);
-
-        ((DiskResourceColumnModel)cm).addDiskResourceNameSelectedEventHandler(presenter);
-        ((DiskResourceColumnModel)cm).addManageSharingEventHandler(presenter);
-        ((DiskResourceColumnModel)cm).addManageMetadataEventHandler(presenter);
-        ((DiskResourceColumnModel)cm).addShareByDataLinkEventHandler(presenter);
-        ((DiskResourceColumnModel)cm).addManageFavoritesEventHandler(presenter);
-        ((DiskResourceColumnModel)cm).addManageCommentsEventHandler(presenter);
-        toolbar.init(presenter, this);
-        initDragAndDrop();
-    }
-
     private void initDragAndDrop() {
         DiskResourceViewDnDHandler dndHandler = new DiskResourceViewDnDHandler(this, presenter);
 
@@ -530,12 +531,6 @@ public class DiskResourceViewImpl extends Composite implements DiskResourceView,
         grid.ensureDebugId(baseID + DiskResourceModule.Ids.GRID);
         tree.ensureDebugId(baseID + DiskResourceModule.Ids.NAVIGATION);
         ((DiskResourceColumnModel)cm).ensureDebugId(baseID);
-    }
-
-    @Override
-    public void setTreeLoader(TreeLoader<Folder> treeLoader) {
-        tree.setLoader(treeLoader);
-        this.treeLoader = treeLoader;
     }
 
     @Override
@@ -1124,8 +1119,8 @@ public class DiskResourceViewImpl extends Composite implements DiskResourceView,
     }
 
     @Override
-    public HandlerRegistration addDeleteSavedSearchEventHandler(DeleteSavedSearchEvent.DeleteSavedSearchEventHandler handler) {
-        return tree.addHandler(handler, DeleteSavedSearchEvent.TYPE);
+    public HandlerRegistration addDeleteSavedSearchClickedEventHandler(DeleteSavedSearchClickedEvent.DeleteSavedSearchEventHandler handler) {
+        return tree.addHandler(handler, DeleteSavedSearchClickedEvent.TYPE);
     }
 
     @Override

@@ -1,14 +1,13 @@
 package org.iplantc.de.diskResource.client.search.presenter;
 
 
-import org.iplantc.de.client.models.search.DiskResourceQueryTemplate;
 import org.iplantc.de.diskResource.client.events.FolderSelectionEvent;
-import org.iplantc.de.diskResource.client.search.events.DeleteSavedSearchEvent;
-import org.iplantc.de.diskResource.client.search.events.SaveDiskResourceQueryEvent;
+import org.iplantc.de.diskResource.client.events.SavedSearchesRetrievedEvent;
+import org.iplantc.de.diskResource.client.search.events.DeleteSavedSearchClickedEvent;
+import org.iplantc.de.diskResource.client.search.events.SaveDiskResourceQueryClickedEvent;
+import org.iplantc.de.diskResource.client.search.events.SavedSearchDeletedEvent;
 import org.iplantc.de.diskResource.client.search.events.SubmitDiskResourceQueryEvent;
-import org.iplantc.de.diskResource.client.search.views.DiskResourceSearchField;
-
-import java.util.List;
+import org.iplantc.de.diskResource.client.search.events.UpdateSavedSearchesEvent;
 
 /**
  * An interface definition for the "search" sub-system.
@@ -49,43 +48,11 @@ import java.util.List;
  * @author jstroot
  * 
  */
-public interface DataSearchPresenter extends SaveDiskResourceQueryEvent.SaveDiskResourceQueryEventHandler, SubmitDiskResourceQueryEvent.SubmitDiskResourceQueryEventHandler, FolderSelectionEvent.HasFolderSelectionEventHandlers, FolderSelectionEvent.FolderSelectionEventHandler,
-        DeleteSavedSearchEvent.DeleteSavedSearchEventHandler {
-
-    /**
-     * Initializes this presenter's contract with the given input parameters.
-     * 
-     * Adds itself as a listener for {@code SubmitDiskResourceQueryEvent} and
-     * {@code SaveDiskResourceQueryEvent}s on the given view's toolbar, and
-     * {@code SubmitDiskResourceQueryEvent}s on the view itself.
-     * 
-     * @param hasFolderSelectedHandlers
-     * @param hasDeleteSavedSearchEventHandlers
-     * @param folderSelectedHandler
-     * @param treeStore
-     * @param searchField
-     */
-    void searchInit(FolderSelectionEvent.HasFolderSelectionEventHandlers hasFolderSelectedHandlers,
-            DeleteSavedSearchEvent.HasDeleteSavedSearchEventHandlers hasDeleteSavedSearchEventHandlers,
-            FolderSelectionEvent.FolderSelectionEventHandler folderSelectedHandler,
-            DiskResourceSearchField searchField);
-
-    /**
-     * @return the current active query, or null if there is not active query.
-     */
-    DiskResourceQueryTemplate getActiveQuery();
-
-    /**
-     * Loads the list of given queries.
-     * 
-     * Checks that the given query templates have unique name.
-     * 
-     * This method should only be called from the proxy which loads the root folders into the data window
-     * navigation pane.
-     * 
-     * @param savedQueries
-     */
-    void loadSavedQueries(List<DiskResourceQueryTemplate> savedQueries);
-
-    void refreshQuery();
+public interface DataSearchPresenter extends SaveDiskResourceQueryClickedEvent.SaveDiskResourceQueryClickedEventHandler,
+                                             SubmitDiskResourceQueryEvent.SubmitDiskResourceQueryEventHandler,
+                                             FolderSelectionEvent.HasFolderSelectionEventHandlers,
+                                             DeleteSavedSearchClickedEvent.DeleteSavedSearchEventHandler,
+                                             SavedSearchDeletedEvent.HasSavedSearchDeletedEventHandlers,
+                                             SavedSearchesRetrievedEvent.SavedSearchesRetrievedEventHandler,
+                                             UpdateSavedSearchesEvent.HasUpdateSavedSearchesEventHandlers {
 }

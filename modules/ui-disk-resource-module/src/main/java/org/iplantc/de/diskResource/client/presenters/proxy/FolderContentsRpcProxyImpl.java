@@ -9,7 +9,9 @@ import org.iplantc.de.client.services.MetadataServiceFacade;
 import org.iplantc.de.client.services.SearchServiceFacade;
 import org.iplantc.de.commons.client.info.ErrorAnnouncementConfig;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
+import org.iplantc.de.diskResource.client.views.DiskResourceView;
 import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
+import org.iplantc.de.resources.client.messages.IplantErrorStrings;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Iterables;
@@ -22,7 +24,6 @@ import com.google.inject.Inject;
 import com.sencha.gxt.data.client.loader.RpcProxy;
 import com.sencha.gxt.data.shared.loader.PagingLoadResult;
 import com.sencha.gxt.data.shared.loader.PagingLoadResultBean;
-import org.iplantc.de.resources.client.messages.IplantErrorStrings;
 
 import java.util.List;
 
@@ -30,8 +31,8 @@ import java.util.List;
  * This proxy is responsible for retrieving directory listings and search requests from the server.
  * 
  */
-public class FolderContentsRpcProxy extends RpcProxy<FolderContentsLoadConfig,
-                                            PagingLoadResult<DiskResource>> {
+public class FolderContentsRpcProxyImpl extends RpcProxy<FolderContentsLoadConfig, PagingLoadResult<DiskResource>>
+                                        implements DiskResourceView.FolderContentsRpcProxy {
 
     /**
      * Constructs a valid {@link PagingLoadResultBean} from the given search results.
@@ -204,12 +205,12 @@ public class FolderContentsRpcProxy extends RpcProxy<FolderContentsLoadConfig,
     private HasSafeHtml hasSafeHtml;
 
     @Inject
-    public FolderContentsRpcProxy(final DiskResourceServiceFacade drService,
-                                  final SearchServiceFacade searchService,
-                                  final MetadataServiceFacade metadataService,
-                                  final IplantAnnouncer announcer,
-                                  final IplantDisplayStrings displayStrings,
-                                  final IplantErrorStrings errorStrings) {
+    FolderContentsRpcProxyImpl(final DiskResourceServiceFacade drService,
+                               final SearchServiceFacade searchService,
+                               final MetadataServiceFacade metadataService,
+                               final IplantAnnouncer announcer,
+                               final IplantDisplayStrings displayStrings,
+                               final IplantErrorStrings errorStrings) {
         this.drService = drService;
         this.searchService = searchService;
         this.announcer = announcer;
@@ -236,8 +237,8 @@ public class FolderContentsRpcProxy extends RpcProxy<FolderContentsLoadConfig,
 
     }
 
-    public void init(final HasSafeHtml hasSafeHtml) {
-        this.hasSafeHtml = hasSafeHtml;
+    @Override
+    public void setHasSafeHtml(HasSafeHtml centerHeader) {
+        this.hasSafeHtml = centerHeader;
     }
-
 }
