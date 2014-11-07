@@ -418,7 +418,7 @@ public class AppUserServiceFacadeImpl implements AppUserServiceFacade {
     @Override
     public void copyWorkflow(String workflowId, AsyncCallback<String> callback) {
         String address = PIPELINES + "/" + workflowId + "/copy";
-        ServiceCallWrapper wrapper = new ServiceCallWrapper(address);
+        ServiceCallWrapper wrapper = new ServiceCallWrapper(POST, address, "{}");
         deServiceFacade.getServiceData(wrapper, callback);
     }
 }
