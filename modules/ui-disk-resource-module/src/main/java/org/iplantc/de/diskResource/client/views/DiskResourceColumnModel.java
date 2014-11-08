@@ -35,9 +35,9 @@ import java.util.List;
 public class DiskResourceColumnModel extends ColumnModel<DiskResource> implements DiskResourceNameSelectedEvent.HasDiskResourceNameSelectedEventHandlers,
                                                                                   ShareByDataLinkEvent.HasShareByDataLinkEventHandlers,
                                                                                   ManageSharingEvent.HasManageSharingEventHandlers,
- ManageMetadataEvent.HasManageMetadataEventHandlers,
-                                                                      RequestDiskResourceFavoriteEvent.HasManageFavoritesEventHandlers,
-                                                                      ManageCommentsEvent.HasManageCommentsEventHandlers {
+                                                                                  ManageMetadataEvent.HasManageMetadataEventHandlers,
+                                                                                  RequestDiskResourceFavoriteEvent.HasManageFavoritesEventHandlers,
+                                                                                  ManageCommentsEvent.HasManageCommentsEventHandlers {
 
     public DiskResourceColumnModel(@SuppressWarnings("rawtypes") CheckBoxSelectionModel sm,
                                    IplantDisplayStrings displayStrings) {
@@ -53,29 +53,32 @@ public class DiskResourceColumnModel extends ColumnModel<DiskResource> implement
     }
 
     @SuppressWarnings("unchecked")
-    public static List<ColumnConfig<DiskResource, ?>>
-            createColumnConfigList(@SuppressWarnings("rawtypes") CheckBoxSelectionModel sm,
-                                   IplantDisplayStrings displayStrings) {
-        List<ColumnConfig<DiskResource, ?>> list = new ArrayList<ColumnConfig<DiskResource, ?>>();
+    public static List<ColumnConfig<DiskResource, ?>> createColumnConfigList(@SuppressWarnings("rawtypes") CheckBoxSelectionModel sm,
+                                                                             IplantDisplayStrings displayStrings) {
+        List<ColumnConfig<DiskResource, ?>> list = new ArrayList<>();
 
         DiskResourceProperties props = GWT.create(DiskResourceProperties.class);
 
-        ColumnConfig<DiskResource, DiskResource> name = new ColumnConfig<DiskResource, DiskResource>(new IdentityValueProvider<DiskResource>("name"),
-                                                                                                     100,
-                                                                                                     displayStrings.name());
-        ColumnConfig<DiskResource, Date> lastModified = new ColumnConfig<DiskResource, Date>(props.lastModified(),
-                                                                                             100,
-                                                                                             displayStrings.lastModified());
-        ColumnConfig<DiskResource, Long> size = new ColumnConfig<DiskResource, Long>(new DiskResourceSizeValueProvider(), 50, displayStrings.size());
-        ColumnConfig<DiskResource, DiskResource> path = new ColumnConfig<DiskResource, DiskResource>(new IdentityValueProvider<DiskResource>("path"),
-                                                                                                     100,
-                                                                                         displayStrings.path());
-        ColumnConfig<DiskResource, Date> created = new ColumnConfig<DiskResource, Date>(props.dateSubmitted(),
-                                                                                        100,
-                                                                                        displayStrings.dateSubmitted());
-        ColumnConfig<DiskResource, DiskResource> actions = new ColumnConfig<DiskResource, DiskResource>(new IdentityValueProvider<DiskResource>("actions"),
-                                                                                                        90,
-                                                                                                        "");
+        ColumnConfig<DiskResource, DiskResource> name = new ColumnConfig<>(new IdentityValueProvider<DiskResource>("name"),
+                                                                           100,
+                                                                           displayStrings.name());
+        ColumnConfig<DiskResource, Date> lastModified = new ColumnConfig<>(props.lastModified(),
+                                                                           130,
+                                                                           displayStrings.lastModified());
+        ColumnConfig<DiskResource, Long> size = new ColumnConfig<>(new DiskResourceSizeValueProvider(), 70, displayStrings.size());
+        ColumnConfig<DiskResource, DiskResource> path = new ColumnConfig<>(new IdentityValueProvider<DiskResource>("path"),
+                                                                           100,
+                                                                           displayStrings.path());
+        ColumnConfig<DiskResource, Date> created = new ColumnConfig<>(props.dateSubmitted(),
+                                                                      130,
+                                                                      displayStrings.dateSubmitted());
+        ColumnConfig<DiskResource, DiskResource> actions = new ColumnConfig<>(new IdentityValueProvider<DiskResource>("actions"),
+                                                                              90,
+                                                                              "");
+        lastModified.setFixed(true);
+        size.setFixed(true);
+        created.setFixed(true);
+        actions.setFixed(true);
 
         name.setCell(new DiskResourceNameCell());
         lastModified.setCell(new DateCell(DateTimeFormat.getFormat(DateTimeFormat.PredefinedFormat.DATE_TIME_MEDIUM)));
@@ -87,13 +90,12 @@ public class DiskResourceColumnModel extends ColumnModel<DiskResource> implement
         name.setComparator(new DiskResourceNameComparator());
         name.setHideable(false);
 
-        path.setHidden(false);
+        path.setHidden(true);
         created.setHidden(true);
         actions.setHidden(false);
 
         actions.setMenuDisabled(true);
         actions.setSortable(false);
-        actions.setFixed(true);
         actions.setHideable(false);
         
         list.add(sm.getColumn());
@@ -160,12 +162,11 @@ public class DiskResourceColumnModel extends ColumnModel<DiskResource> implement
      * @author jstroot
      * 
      */
-    private static final class DiskResourceSizeValueProvider implements
-            ValueProvider<DiskResource, Long> {
+    private static final class DiskResourceSizeValueProvider implements ValueProvider<DiskResource, Long> {
         @Override
         public Long getValue(DiskResource object) {
             if (object instanceof File) {
-                return new Long(((File)object).getSize());
+                return ((File) object).getSize();
             } else {
                 return null;
             }
@@ -185,7 +186,6 @@ public class DiskResourceColumnModel extends ColumnModel<DiskResource> implement
      * A <code>Cell</code> for converting bytes as integers into human readable <code>File</code> sizes.
      * 
      * @author psarando
-     * 
      */
     private static final class DiskResourceSizeCell extends AbstractCell<Long> {
 
