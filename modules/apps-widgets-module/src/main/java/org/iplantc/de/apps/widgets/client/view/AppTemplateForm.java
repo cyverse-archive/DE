@@ -41,18 +41,30 @@ import java.util.List;
 
 /**
  */
-public interface AppTemplateForm extends IsWidget, Editor<AppTemplate>, ArgumentGroupSelectedEventHandler, ArgumentSelectedEventHandler, AppTemplateSelectedEventHandler,
-        HasAppTemplateSelectedEventHandlers, HasArgumentGroupSelectedHandlers, HasArgumentGroupAddedEventHandlers {
+public interface AppTemplateForm extends Editor<AppTemplate>,
+                                         IsWidget,
+                                         ArgumentGroupSelectedEventHandler,
+                                         ArgumentSelectedEventHandler,
+                                         AppTemplateSelectedEventHandler,
+                                         HasAppTemplateSelectedEventHandlers,
+                                         HasArgumentGroupSelectedHandlers,
+                                         HasArgumentGroupAddedEventHandlers {
 
-    public interface ArgumentEditor extends ValueAwareEditor<Argument>, IsWidget, HasLabelOnlyEditMode, HasDisabledOnNotVisible, HasDisableValidations, HasArgumentSelectedEventHandlers, HasEnabled,
-            HasVisibility, HasArgumentRequiredChangedHandlers {
+    public interface ArgumentEditor extends ValueAwareEditor<Argument>,
+                                            IsWidget,
+                                            HasLabelOnlyEditMode,
+                                            HasDisabledOnNotVisible,
+                                            HasDisableValidations,
+                                            HasArgumentSelectedEventHandlers,
+                                            HasEnabled,
+                                            HasVisibility,
+                                            HasArgumentRequiredChangedHandlers {
 
         LeafValueEditor<String> descriptionEditor();
 
         /**
          * Exposes the {@code EditorDelegate} which is used to bridge separate {@code EditorDriver}s
          * 
-         * @return
          */
         EditorDelegate<Argument> getEditorDelegate();
 
@@ -74,7 +86,8 @@ public interface AppTemplateForm extends IsWidget, Editor<AppTemplate>, Argument
 
     }
 
-    public interface ArgumentEditorFactory extends CompositeEditor<Argument, Argument, ArgumentEditor>, IsWidget {
+    public interface ArgumentEditorFactory extends CompositeEditor<Argument, Argument, ArgumentEditor>,
+                                                   IsWidget {
 
         @Ignore
         AppTemplateForm.ArgumentEditor getSubEditor();
@@ -86,9 +99,19 @@ public interface AppTemplateForm extends IsWidget, Editor<AppTemplate>, Argument
      * @author jstroot
      * 
      */
-    public interface ArgumentGroupEditor extends ValueAwareEditor<ArgumentGroup>, IsWidget, HasDisabledOnNotVisible, HasEditorErrors<ArgumentGroup>, HasCollapseHandlers, HasExpandHandlers,
-            ArgumentGroupSelectedEventHandler, ArgumentSelectedEventHandler, AppTemplateSelectedEventHandler, HasArgumentGroupSelectedHandlers, HasArgumentAddedEventHandlers,
-            ArgumentRequiredChangedEventHandler, HasLabelOnlyEditMode {
+    public interface ArgumentGroupEditor extends ValueAwareEditor<ArgumentGroup>,
+                                                 IsWidget,
+                                                 HasDisabledOnNotVisible,
+                                                 HasEditorErrors<ArgumentGroup>,
+                                                 HasCollapseHandlers,
+                                                 HasExpandHandlers,
+                                                 ArgumentGroupSelectedEventHandler,
+                                                 ArgumentSelectedEventHandler,
+                                                 AppTemplateSelectedEventHandler,
+                                                 HasArgumentGroupSelectedHandlers,
+                                                 HasArgumentAddedEventHandlers,
+                                                 ArgumentRequiredChangedEventHandler,
+                                                 HasLabelOnlyEditMode {
 
         ListEditor<Argument, ArgumentEditorFactory> argumentsEditor();
 
@@ -113,11 +136,15 @@ public interface AppTemplateForm extends IsWidget, Editor<AppTemplate>, Argument
     public interface HasDisableValidations {
         void disableValidations();
 
-        boolean isValidationDisabled();
+        void enableValidations();
 
+        boolean isValidationDisabled();
     }
 
-    public interface IArgumentEditorConverter extends IsField<Splittable>, ValueAwareEditor<Splittable>, HasEnabled, HasValueChangeHandlers<Splittable> {
+    public interface IArgumentEditorConverter extends ValueAwareEditor<Splittable>,
+                                                      IsField<Splittable>,
+                                                      HasEnabled,
+                                                      HasValueChangeHandlers<Splittable> {
 
         void applyValidators(List<ArgumentValidator> validators, boolean validationDisabled);
 

@@ -51,6 +51,11 @@ public class SampleArgumentEditor implements AppTemplateForm.ArgumentEditor {
     }
 
     @Override
+    public void enableValidations() {
+
+    }
+
+    @Override
     public void flush() {
 
     }

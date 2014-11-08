@@ -47,9 +47,11 @@ public class AppLaunchViewImpl extends Composite implements AppLaunchView {
     private final LaunchAnalysisView law;
 
     @Inject
-    public AppLaunchViewImpl(AppWizardViewUIUiBinder binder, LaunchAnalysisView law, AppTemplateForm wizard) {
-    	this.law = law;
-    	this.wizard = wizard;
+    public AppLaunchViewImpl(final AppWizardViewUIUiBinder binder,
+                             final LaunchAnalysisView law,
+                             final AppTemplateForm wizard) {
+        this.law = law;
+        this.wizard = wizard;
         initWidget(binder.createAndBindUi(this));
         editorDriver.initialize(this);
     }
@@ -72,9 +74,6 @@ public class AppLaunchViewImpl extends Composite implements AppLaunchView {
         wizard.insertFirstInAccordion(law);
     }
 
-    /**
-     * @param event
-     */
     @UiHandler("launchButton")
     void onLaunchButtonClicked(SelectEvent event) {
 
