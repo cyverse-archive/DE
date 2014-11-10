@@ -60,7 +60,7 @@ public abstract class AbstractArgumentEditor extends Composite implements AppTem
                 return;
             }
 
-            argEditor.valueEditor().setRequired(value.booleanValue(), isValidationDisabled());
+            argEditor.valueEditor().setRequired(value, isValidationDisabled());
             argEditor.asWidget().fireEvent(new ArgumentRequiredChangedEvent(value));
         }
 
@@ -100,7 +100,7 @@ public abstract class AbstractArgumentEditor extends Composite implements AppTem
                 // array of two integers
                 int minInt = Double.valueOf(av.getParams().get(0).asNumber()).intValue();
                 int maxInt = Double.valueOf(av.getParams().get(1).asNumber()).intValue();
-                validator = new NumberRangeValidator<Integer>(minInt, maxInt);
+                validator = new NumberRangeValidator<>(minInt, maxInt);
                 break;
             case IntAbove:
                 // array of one integer
@@ -114,18 +114,18 @@ public abstract class AbstractArgumentEditor extends Composite implements AppTem
                 break;
             case DoubleRange:
                 // Array of two doubles
-                double minDbl = Double.valueOf(av.getParams().get(0).asNumber());
-                double maxDbl = Double.valueOf(av.getParams().get(1).asNumber());
-                validator = new NumberRangeValidator<Double>(minDbl, maxDbl);
+                double minDbl = av.getParams().get(0).asNumber();
+                double maxDbl = av.getParams().get(1).asNumber();
+                validator = new NumberRangeValidator<>(minDbl, maxDbl);
                 break;
             case DoubleAbove:
                 // Array of one double
-                double minDbl2 = Double.valueOf(av.getParams().get(0).asNumber());
+                double minDbl2 = av.getParams().get(0).asNumber();
                 validator = new DoubleAboveValidator(minDbl2);
                 break;
             case DoubleBelow:
                 // Array of one double
-                double maxDbl2 = Double.valueOf(av.getParams().get(0).asNumber());
+                double maxDbl2 = av.getParams().get(0).asNumber();
                 validator = new DoubleBelowValidator(maxDbl2);
                 break;
             case CharacterLimit:
@@ -189,11 +189,11 @@ public abstract class AbstractArgumentEditor extends Composite implements AppTem
         init();
         validatorListEditor = new ValidatorListEditor(this);
 
-        labelLeafEditor = new LabelLeafEditor<String>(argumentLabel, this, appearance);
-        idEditor = SimpleEditor.<String> of();
-        typeEditor = SimpleEditor.<ArgumentType> of();
+        labelLeafEditor = new LabelLeafEditor<>(argumentLabel, this, appearance);
+        idEditor = SimpleEditor.of();
+        typeEditor = SimpleEditor.of();
         requiredEditor = new RequiredLeafEditor(argumentLabel, this, appearance);
-        descriptionEditor = new LabelLeafEditor<String>(argumentLabel, this, appearance);
+        descriptionEditor = new LabelLeafEditor<>(argumentLabel, this, appearance);
         visibilityEditor = new VisibilityEditor(this);
     }
 
@@ -228,6 +228,14 @@ public abstract class AbstractArgumentEditor extends Composite implements AppTem
             valueEditor().clearInvalid();
         }
 
+        // Refresh the isRequired editor
+        Boolean value = requiredEditor.getValue();
+        requiredEditor.setValue(value);
+    }
+
+    @Override
+    public void enableValidations() {
+        validationDisabled = false;
         // Refresh the isRequired editor
         Boolean value = requiredEditor.getValue();
         requiredEditor.setValue(value);
@@ -328,8 +336,6 @@ public abstract class AbstractArgumentEditor extends Composite implements AppTem
 
     /**
      * Applies the given validators to an {@code ArgumentEditor}'s valueEditor.
-     * 
-     * @param validators
      */
     protected void applyValidators(List<ArgumentValidator> validators) {
 

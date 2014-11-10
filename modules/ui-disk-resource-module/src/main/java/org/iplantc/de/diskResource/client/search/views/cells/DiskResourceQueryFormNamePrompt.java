@@ -2,7 +2,7 @@ package org.iplantc.de.diskResource.client.search.views.cells;
 
 import org.iplantc.de.client.models.search.DiskResourceQueryTemplate;
 import org.iplantc.de.commons.client.validators.DiskResourceNameValidator;
-import org.iplantc.de.diskResource.client.search.events.SaveDiskResourceQueryEvent;
+import org.iplantc.de.diskResource.client.search.events.SaveDiskResourceQueryClickedEvent;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
@@ -24,7 +24,7 @@ import com.sencha.gxt.widget.core.client.button.TextButton;
 import com.sencha.gxt.widget.core.client.event.SelectEvent;
 import com.sencha.gxt.widget.core.client.form.TextField;
 
-public class DiskResourceQueryFormNamePrompt extends Composite implements Editor<DiskResourceQueryTemplate>, SaveDiskResourceQueryEvent.HasSaveDiskResourceQueryEventHandlers {
+public class DiskResourceQueryFormNamePrompt extends Composite implements Editor<DiskResourceQueryTemplate>, SaveDiskResourceQueryClickedEvent.HasSaveDiskResourceQueryClickedEventHandlers {
 
     interface DiskResourceQueryFormNamePromptUiBinder extends UiBinder<Widget, DiskResourceQueryFormNamePrompt> {}
 
@@ -63,8 +63,8 @@ public class DiskResourceQueryFormNamePrompt extends Composite implements Editor
     }
 
     @Override
-    public HandlerRegistration addSaveDiskResourceQueryEventHandler(SaveDiskResourceQueryEvent.SaveDiskResourceQueryEventHandler handler) {
-        return addHandler(handler, SaveDiskResourceQueryEvent.TYPE);
+    public HandlerRegistration addSaveDiskResourceQueryClickedEventHandler(SaveDiskResourceQueryClickedEvent.SaveDiskResourceQueryClickedEventHandler handler) {
+        return addHandler(handler, SaveDiskResourceQueryClickedEvent.TYPE);
     }
 
     @Override
@@ -77,10 +77,6 @@ public class DiskResourceQueryFormNamePrompt extends Composite implements Editor
             showing = false;
             hidden = true;
         }
-    }
-
-    public boolean isShowing() {
-        return showing;
     }
 
     public void show(DiskResourceQueryTemplate filter, Element element, AnchorAlignment alignment) {
@@ -124,7 +120,7 @@ public class DiskResourceQueryFormNamePrompt extends Composite implements Editor
         }
 
         // Set the filter name field to allow blank values when hidden.
-        fireEvent(new SaveDiskResourceQueryEvent(flushedQueryTemplate, originalName));
+        fireEvent(new SaveDiskResourceQueryClickedEvent(flushedQueryTemplate, originalName));
         hide();
     }
 

@@ -1,6 +1,6 @@
 package org.iplantc.de.diskResource.client.search.views.cells;
 
-import org.iplantc.de.diskResource.client.search.events.SaveDiskResourceQueryEvent;
+import org.iplantc.de.diskResource.client.search.events.SaveDiskResourceQueryClickedEvent;
 import org.iplantc.de.diskResource.client.search.events.SubmitDiskResourceQueryEvent;
 import org.iplantc.de.diskResource.client.search.events.SubmitDiskResourceQueryEvent.HasSubmitDiskResourceQueryEventHandlers;
 import org.iplantc.de.diskResource.client.search.events.SubmitDiskResourceQueryEvent.SubmitDiskResourceQueryEventHandler;
@@ -37,8 +37,8 @@ import com.sencha.gxt.widget.core.client.event.HideEvent.HideHandler;
  * @author jstroot
  * 
  */
-public class DiskResourceSearchCell extends TriggerFieldCell<String> implements HasExpandHandlers, HasCollapseHandlers, HasSubmitDiskResourceQueryEventHandlers, SaveDiskResourceQueryEvent.HasSaveDiskResourceQueryEventHandlers,
-        SubmitDiskResourceQueryEventHandler, SaveDiskResourceQueryEvent.SaveDiskResourceQueryEventHandler, HideHandler {
+public class DiskResourceSearchCell extends TriggerFieldCell<String> implements HasExpandHandlers, HasCollapseHandlers, HasSubmitDiskResourceQueryEventHandlers, SaveDiskResourceQueryClickedEvent.HasSaveDiskResourceQueryClickedEventHandlers,
+        SubmitDiskResourceQueryEventHandler, SaveDiskResourceQueryClickedEvent.SaveDiskResourceQueryClickedEventHandler, HideHandler {
 
     public interface DiskResourceSearchCellAppearance extends TriggerFieldAppearance {}
 
@@ -72,8 +72,8 @@ public class DiskResourceSearchCell extends TriggerFieldCell<String> implements 
     }
 
     @Override
-    public HandlerRegistration addSaveDiskResourceQueryEventHandler(SaveDiskResourceQueryEvent.SaveDiskResourceQueryEventHandler handler) {
-        return addHandler(handler, SaveDiskResourceQueryEvent.TYPE);
+    public HandlerRegistration addSaveDiskResourceQueryClickedEventHandler(SaveDiskResourceQueryClickedEvent.SaveDiskResourceQueryClickedEventHandler handler) {
+        return addHandler(handler, SaveDiskResourceQueryClickedEvent.TYPE);
     }
 
     @Override
@@ -94,7 +94,7 @@ public class DiskResourceSearchCell extends TriggerFieldCell<String> implements 
     }
 
     @Override
-    public void doSaveDiskResourceQueryTemplate(SaveDiskResourceQueryEvent event) {
+    public void onSaveDiskResourceQueryClicked(SaveDiskResourceQueryClickedEvent event) {
         // Refire
         fireEvent(event);
     }
@@ -147,7 +147,7 @@ public class DiskResourceSearchCell extends TriggerFieldCell<String> implements 
             searchForm = new DiskResourceQueryForm();
             searchForm.addHideHandler(this);
             searchForm.addSubmitDiskResourceQueryEventHandler(this);
-            searchForm.addSaveDiskResourceQueryEventHandler(this);
+            searchForm.addSaveDiskResourceQueryClickedEventHandler(this);
         }
         return searchForm;
     }

@@ -39,7 +39,9 @@ public class DeDiskResourceWindow extends IplantWindowBase implements FolderSele
         final String uniqueWindowTag = (config.getTag() == null) ? "" : "." + config.getTag();
         ensureDebugId(DeModule.WindowIds.DISK_RESOURCE_WINDOW + uniqueWindowTag);
         setHeadingText(displayStrings.data());
-        setSize("800", "480");
+        setSize("900", "480");
+        setMinWidth(900);
+        setMinHeight(480);
 
         // Create an empty
         List<HasId> resourcesToSelect = Lists.newArrayList();

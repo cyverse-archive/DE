@@ -61,11 +61,8 @@ import java.util.List;
 public class DiskResourceQueryFormTest_NoEditorErrors {
 
     @Mock DiskResourceQueryFormNamePrompt namePrompt;
-
     @Mock DiskResourceQueryTemplate mockedTemplate;
-
-    @Mock
-    HtmlLayoutContainer con;
+    @Mock HtmlLayoutContainer con;
 
     private DiskResourceQueryForm form;
 
@@ -255,7 +252,7 @@ public class DiskResourceQueryFormTest_NoEditorErrors {
 
         spy.init(namePrompt);
         /* Verify that the class under test adds itself as a save DRQE handler */
-        verify(namePrompt).addSaveDiskResourceQueryEventHandler(eq(spy));
+        verify(namePrompt).addSaveDiskResourceQueryClickedEventHandler(eq(spy));
     }
 
     /**

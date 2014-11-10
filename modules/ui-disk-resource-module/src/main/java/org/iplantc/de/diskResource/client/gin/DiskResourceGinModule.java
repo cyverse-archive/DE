@@ -6,12 +6,14 @@ import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.client.services.DiskResourceServiceFacade;
 import org.iplantc.de.client.services.MetadataServiceFacade;
-import org.iplantc.de.client.services.TagsServiceFacade;
 import org.iplantc.de.client.services.SearchServiceFacade;
+import org.iplantc.de.client.services.TagsServiceFacade;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
+import org.iplantc.de.diskResource.client.gin.factory.DiskResourceViewFactory;
+import org.iplantc.de.diskResource.client.gin.factory.FolderRpcProxyFactory;
 import org.iplantc.de.diskResource.client.presenters.DiskResourcePresenterImpl;
-import org.iplantc.de.diskResource.client.presenters.proxy.FolderContentsRpcProxy;
-import org.iplantc.de.diskResource.client.presenters.proxy.FolderRpcProxy;
+import org.iplantc.de.diskResource.client.presenters.proxy.FolderContentsRpcProxyImpl;
+import org.iplantc.de.diskResource.client.presenters.proxy.FolderRpcProxyImpl;
 import org.iplantc.de.diskResource.client.search.presenter.DataSearchPresenter;
 import org.iplantc.de.diskResource.client.search.presenter.impl.DataSearchPresenterImpl;
 import org.iplantc.de.diskResource.client.views.DiskResourceView;
@@ -19,6 +21,7 @@ import org.iplantc.de.diskResource.client.views.DiskResourceViewImpl;
 import org.iplantc.de.diskResource.client.views.widgets.DiskResourceViewToolbarImpl;
 
 import com.google.gwt.inject.client.AbstractGinModule;
+import com.google.gwt.inject.client.assistedinject.GinFactoryModuleBuilder;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import com.google.inject.TypeLiteral;
@@ -32,14 +35,19 @@ public class DiskResourceGinModule extends AbstractGinModule {
     protected void configure() {
         bind(new TypeLiteral<TreeStore<Folder>>() {}).toProvider(DiskResourceTreeStoreProvider.class);
         bind(new TypeLiteral<Tree<Folder, Folder>>() {}).toProvider(DiskResourceTreeProvider.class);
-        bind(DiskResourceView.class).to(DiskResourceViewImpl.class);
         bind(DiskResourceView.Presenter.class).to(DiskResourcePresenterImpl.class);
         bind(DiskResourceView.DiskResourceViewToolbar.class).to(DiskResourceViewToolbarImpl.class);
-        bind(DiskResourceView.Proxy.class).to(FolderRpcProxy.class);
-        bind(FolderContentsRpcProxy.class);
         bind(DiskResourceServiceFacade.class).toProvider(DiskResourceServiceFacadeProvider.class);
-
         bind(DataSearchPresenter.class).to(DataSearchPresenterImpl.class);
+
+        bind(DiskResourceView.FolderContentsRpcProxy.class).to(FolderContentsRpcProxyImpl.class);
+        install(new GinFactoryModuleBuilder()
+                    .implement(DiskResourceView.FolderRpcProxy.class, FolderRpcProxyImpl.class)
+                    .build(FolderRpcProxyFactory.class));
+        install(new GinFactoryModuleBuilder()
+                    .implement(DataSearchPresenter.class, DataSearchPresenterImpl.class)
+                    .implement(DiskResourceView.class, DiskResourceViewImpl.class)
+                    .build(DiskResourceViewFactory.class));
     }
 
     @Provides

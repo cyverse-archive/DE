@@ -38,23 +38,9 @@ import org.iplantc.de.commons.client.views.window.configs.FileViewerWindowConfig
 import org.iplantc.de.commons.client.views.window.configs.TabularFileViewerWindowConfig;
 import org.iplantc.de.diskResource.client.dataLink.presenter.DataLinkPresenter;
 import org.iplantc.de.diskResource.client.dataLink.view.DataLinkPanel;
-import org.iplantc.de.diskResource.client.events.CreateNewFileEvent;
-import org.iplantc.de.diskResource.client.events.DiskResourceRenamedEvent;
-import org.iplantc.de.diskResource.client.events.DiskResourceSelectionChangedEvent;
-import org.iplantc.de.diskResource.client.events.DiskResourcesDeletedEvent;
-import org.iplantc.de.diskResource.client.events.DiskResourcesMovedEvent;
-import org.iplantc.de.diskResource.client.events.FolderCreatedEvent;
-import org.iplantc.de.diskResource.client.events.FolderSelectionEvent;
-import org.iplantc.de.diskResource.client.events.RequestAttachDiskResourceFavoritesFolderEvent;
-import org.iplantc.de.diskResource.client.events.RequestBulkDownloadEvent;
-import org.iplantc.de.diskResource.client.events.RequestBulkUploadEvent;
-import org.iplantc.de.diskResource.client.events.RequestImportFromUrlEvent;
-import org.iplantc.de.diskResource.client.events.RequestSendToCoGeEvent;
-import org.iplantc.de.diskResource.client.events.RequestSendToEnsemblEvent;
-import org.iplantc.de.diskResource.client.events.RequestSendToTreeViewerEvent;
-import org.iplantc.de.diskResource.client.events.RequestSimpleDownloadEvent;
-import org.iplantc.de.diskResource.client.events.RequestSimpleUploadEvent;
-import org.iplantc.de.diskResource.client.events.ShowFilePreviewEvent;
+import org.iplantc.de.diskResource.client.events.*;
+import org.iplantc.de.diskResource.client.gin.factory.DiskResourceViewFactory;
+import org.iplantc.de.diskResource.client.gin.factory.FolderRpcProxyFactory;
 import org.iplantc.de.diskResource.client.metadata.presenter.DiskResourceMetadataUpdateCallback;
 import org.iplantc.de.diskResource.client.metadata.presenter.MetadataPresenter;
 import org.iplantc.de.diskResource.client.metadata.view.DiskResourceMetadataView;
@@ -66,12 +52,14 @@ import org.iplantc.de.diskResource.client.presenters.callbacks.GetDiskResourceDe
 import org.iplantc.de.diskResource.client.presenters.callbacks.RenameDiskResourceCallback;
 import org.iplantc.de.diskResource.client.presenters.handlers.CachedFolderTreeStoreBinding;
 import org.iplantc.de.diskResource.client.presenters.handlers.DiskResourcesEventHandler;
+import org.iplantc.de.diskResource.client.presenters.proxy.FolderContentsLoadConfig;
 import org.iplantc.de.diskResource.client.presenters.proxy.SelectDiskResourceByIdStoreAddHandler;
 import org.iplantc.de.diskResource.client.presenters.proxy.SelectFolderByPathLoadHandler;
-import org.iplantc.de.diskResource.client.search.events.SaveDiskResourceQueryEvent;
+import org.iplantc.de.diskResource.client.search.events.SaveDiskResourceQueryClickedEvent;
 import org.iplantc.de.diskResource.client.search.events.SubmitDiskResourceQueryEvent;
 import org.iplantc.de.diskResource.client.search.events.UpdateSavedSearchesEvent;
 import org.iplantc.de.diskResource.client.search.presenter.DataSearchPresenter;
+import org.iplantc.de.diskResource.client.search.views.DiskResourceSearchField;
 import org.iplantc.de.diskResource.client.sharing.views.DataSharingDialog;
 import org.iplantc.de.diskResource.client.views.DiskResourceView;
 import org.iplantc.de.diskResource.client.views.cells.events.DiskResourceNameSelectedEvent;
@@ -92,7 +80,6 @@ import org.iplantc.de.resources.client.messages.IplantErrorStrings;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
-
 import com.google.common.base.Strings;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
@@ -111,7 +98,10 @@ import com.google.inject.Inject;
 import com.google.web.bindery.autobean.shared.AutoBean;
 import com.google.web.bindery.autobean.shared.AutoBeanCodex;
 
+import com.sencha.gxt.data.shared.TreeStore;
 import com.sencha.gxt.data.shared.loader.LoadHandler;
+import com.sencha.gxt.data.shared.loader.PagingLoadResult;
+import com.sencha.gxt.data.shared.loader.PagingLoader;
 import com.sencha.gxt.data.shared.loader.TreeLoader;
 import com.sencha.gxt.widget.core.client.Dialog.PredefinedButton;
 import com.sencha.gxt.widget.core.client.Window;
@@ -139,7 +129,8 @@ import java.util.Set;
  * @author jstroot
  * 
  */
-public class DiskResourcePresenterImpl implements DiskResourceView.Presenter, DiskResourceSelectionChangedEvent.DiskResourceSelectionChangedEventHandler {
+public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
+                                                  DiskResourceSelectionChangedEvent.DiskResourceSelectionChangedEventHandler, UpdateSavedSearchesEvent.UpdateSavedSearchesHandler {
 
     final DiskResourceView view;
     private final IplantErrorStrings errorStrings;
@@ -160,20 +151,20 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter, Di
     private DataSearchPresenter dataSearchPresenter;
 
     @Inject
-    public DiskResourcePresenterImpl(final DiskResourceView view,
-                                     final DiskResourceView.Proxy proxy,
-                                     final DiskResourceServiceFacade diskResourceService,
-                                     final MetadataServiceFacade fsmDataService,
-                                     final IplantDisplayStrings display,
-                                     final IplantErrorStrings errorStrings,
-                                     final IplantContextualHelpStrings helpStrings,
-                                     final DiskResourceAutoBeanFactory factory,
-                                     final DataLinkFactory dlFactory,
-                                     final UserInfo userInfo,
-                                     final DataSearchPresenter dataSearchPresenter,
-                                     final EventBus eventBus,
-                                     final IplantAnnouncer announcer) {
-        this.view = view;
+    DiskResourcePresenterImpl(final DiskResourceViewFactory diskResourceViewFactory,
+                              final FolderRpcProxyFactory folderRpcProxyFactory,
+                              final DiskResourceView.FolderContentsRpcProxy folderContentsRpcProxy,
+                              final DiskResourceServiceFacade diskResourceService,
+                              final MetadataServiceFacade fsmDataService,
+                              final IplantDisplayStrings display,
+                              final IplantErrorStrings errorStrings,
+                              final IplantContextualHelpStrings helpStrings,
+                              final DiskResourceAutoBeanFactory factory,
+                              final DataLinkFactory dlFactory,
+                              final UserInfo userInfo,
+                              final DataSearchPresenter dataSearchPresenter,
+                              final EventBus eventBus,
+                              final IplantAnnouncer announcer) {
         this.diskResourceService = diskResourceService;
         this.displayStrings = display;
         this.errorStrings = errorStrings;
@@ -188,18 +179,52 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter, Di
 
         builder = new MyBuilder(this);
 
-        treeLoader = new TreeLoader<Folder>(proxy) {
+        // Initialize View's grid and tree loaders
+        DiskResourceView.FolderRpcProxy folderRpcProxy = folderRpcProxyFactory.create(this);
+        PagingLoader<FolderContentsLoadConfig, PagingLoadResult<DiskResource>> gridLoader = new PagingLoader<>(folderContentsRpcProxy);
+        treeLoader = new TreeLoader<Folder>(folderRpcProxy) {
             @Override
             public boolean hasChildren(Folder parent) {
                 return parent.hasSubDirs();
             }
         };
+        gridLoader.setReuseLoadConfig(true);
+        gridLoader.setRemoteSort(true);
+        this.view = diskResourceViewFactory.create(this, treeLoader, gridLoader);
 
-        proxy.init(this.dataSearchPresenter, this);
-        this.dataSearchPresenter.searchInit(view, view, this, view.getToolbar().getSearchField());
+        folderContentsRpcProxy.setHasSafeHtml(view.getCenterHeader());
 
-        this.view.setTreeLoader(treeLoader);
-        this.view.setPresenter(this);
+        DiskResourceSearchField searchField = this.view.getToolbar().getSearchField();
+
+        // Wire up DiskResourceSelectionChangedEventHandlers
+        this.view.addDiskResourceSelectionChangedEventHandler(this);
+
+        // Wire up FolderSelectedEventHandlers
+        this.view.addFolderSelectedEventHandler(this);
+        this.view.addFolderSelectedEventHandler(searchField);
+        this.dataSearchPresenter.addFolderSelectedEventHandler(this); // FIXME JDS This is a little backwards
+
+        // Wire up SavedSearchDeletedEventHandlers
+        this.dataSearchPresenter.addSavedSearchDeletedEventHandler(searchField);
+
+        // Wire up SubmitDiskResourceQueryEventHandlers
+        folderRpcProxy.addSubmitDiskResourceQueryEventHandler(dataSearchPresenter);
+
+        // Wire up SavedSearchedRetrievedEventHandlers
+        folderRpcProxy.addSavedSearchedRetrievedEventHandler(dataSearchPresenter);
+
+        // Wire up DeleteSavedSearchClickedEventHandlers
+        this.view.addDeleteSavedSearchClickedEventHandler(this.dataSearchPresenter);
+
+        // Wire up SaveDiskResourceQueryClickedEventHandlers
+        searchField.addSaveDiskResourceQueryClickedEventHandler(this.dataSearchPresenter);
+
+        // Wire up SubmitDiskResourceQueryEventHandlers
+        searchField.addSubmitDiskResourceQueryEventHandler(this.dataSearchPresenter);
+
+        // Wire up UpdateSavedSearchesEventHandlers
+        this.dataSearchPresenter.addUpdateSavedSearchesEventHandler(this);
+
         initHandlers();
     }
 
@@ -294,6 +319,44 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter, Di
         doManageDiskResourceComments(Iterables.getFirst(getSelectedDiskResources(), null));
     }
 
+    /**
+     * Ensures that the navigation window shows the given templates. These show up in the navigation
+     * window as "magic folders".
+     * <p/>
+     * This method ensures that the only the given list of queryTemplates will be displayed in the
+     * navigation pane.
+     *
+     * Only objects which are instances of {@link DiskResourceQueryTemplate} will be operated on. Items
+     * which can't be found in the tree store will be added, and items which are already in the store and
+     * are marked as dirty will be updated.
+     *
+     */
+    @Override
+    public void onUpdateSavedSearches(UpdateSavedSearchesEvent event) {
+        TreeStore<Folder> treeStore = view.getTreeStore();
+
+        List<DiskResourceQueryTemplate> removedSearches = event.getRemovedSearches();
+        if (removedSearches != null) {
+            for (DiskResourceQueryTemplate qt : removedSearches) {
+                treeStore.remove(qt);
+            }
+        }
+
+        List<DiskResourceQueryTemplate> savedSearches = event.getSavedSearches();
+        if (savedSearches != null) {
+            for (DiskResourceQueryTemplate qt : savedSearches) {
+                // If the item already exists in the store and the template is dirty, update it
+                if (treeStore.findModelWithKey(qt.getId()) != null) {
+                    if (qt.isDirty()) {
+                        treeStore.update(qt);
+                    }
+                } else {
+                    treeStore.add(qt);
+                }
+            }
+        }
+    }
+
     void doManageDiskResourceComments(final DiskResource dr){
         checkNotNull(dr);
         // call to retrieve comments...and show dialog
@@ -378,7 +441,6 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter, Di
         dreventHandlers.add(eventBus.addHandler(FolderCreatedEvent.TYPE, diskResourcesEventHandler));
         dreventHandlers.add(eventBus.addHandler(DiskResourceRenamedEvent.TYPE, diskResourcesEventHandler));
         dreventHandlers.add(eventBus.addHandler(DiskResourcesMovedEvent.TYPE, diskResourcesEventHandler));
-        dreventHandlers.add(eventBus.addHandler(UpdateSavedSearchesEvent.TYPE, diskResourcesEventHandler));
         dreventHandlers.add(eventBus.addHandler(RequestAttachDiskResourceFavoritesFolderEvent.TYPE, diskResourcesEventHandler));
     }
 
@@ -999,7 +1061,7 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter, Di
     }
 
     @Override
-    public void doSaveDiskResourceQueryTemplate(SaveDiskResourceQueryEvent event) {
+    public void onSaveDiskResourceQueryClicked(SaveDiskResourceQueryClickedEvent event) {
 
     }
 

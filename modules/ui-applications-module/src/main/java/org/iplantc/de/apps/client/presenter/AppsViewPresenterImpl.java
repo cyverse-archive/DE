@@ -451,7 +451,7 @@ public class AppsViewPresenterImpl implements AppsView.Presenter {
                 if (usersAppsGrp != null) {
                     view.updateAppCategoryAppCount(usersAppsGrp, usersAppsGrp.getAppCount() + 1);
                 }
-                HasId hasId = CommonModelUtils.createHasIdFromString(StringQuoter.split(result).get("analysis_id").asString());
+                HasId hasId = CommonModelUtils.createHasIdFromString(StringQuoter.split(result).get("id").asString());
                 if (!hasId.getId().isEmpty()) {
                     AppCategory selectedAppCategory = getSelectedAppCategory();
                     if (selectedAppCategory != null) {

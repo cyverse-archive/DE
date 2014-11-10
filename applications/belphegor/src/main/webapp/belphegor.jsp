@@ -12,8 +12,6 @@ response.setDateHeader("Expires", 0);
 
 <script type="text/javascript" language="javascript"
 	src="belphegor/belphegor.nocache.js"></script>
-<script type="text/javascript" language="javascript"
-	src="scripts/json2.js"></script>
 </head>
 
 <body>

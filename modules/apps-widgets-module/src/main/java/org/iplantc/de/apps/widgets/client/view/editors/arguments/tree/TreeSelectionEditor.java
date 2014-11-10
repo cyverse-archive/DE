@@ -51,10 +51,11 @@ import java.util.List;
 /**
  * A Panel that contains a SelectionItemTree and a filtering field that filters the tree items.
  *
- * @author psarando
+ * @author psarando, jstroot
  * 
  */
-public class TreeSelectionEditor extends Composite implements AppTemplateForm.ArgumentEditor, HasValueChangeHandlers<List<SelectionItem>> {
+public class TreeSelectionEditor extends Composite implements AppTemplateForm.ArgumentEditor,
+                                                              HasValueChangeHandlers<List<SelectionItem>> {
 
     /**
      * Restores the CheckState of the tree, and expand any Group that is checked or has checked children.
@@ -196,7 +197,7 @@ public class TreeSelectionEditor extends Composite implements AppTemplateForm.Ar
     private ArgumentEditorConverter<List<SelectionItem>> valueEditor;
 
     public TreeSelectionEditor(AppTemplateWizardAppearance appearance, SelectionItemProperties props) {
-        TreeStore<SelectionItem> store = new TreeStore<SelectionItem>(props.id());
+        TreeStore<SelectionItem> store = new TreeStore<>(props.id());
 
         tree = new SelectionItemTree(store, props.display());
 //        if (presenter.isEditingMode()) {
@@ -211,7 +212,7 @@ public class TreeSelectionEditor extends Composite implements AppTemplateForm.Ar
 
         tree.addValueChangeHandler(new TreeValueChangeHandler());
         selectionItemsEditor = new MyTreeStoreEditor(store, this);
-        valueEditor = new ArgumentEditorConverter<List<SelectionItem>>(new TreeAdapterField(tree), new SplittableToSelectionArgListConverter());
+        valueEditor = new ArgumentEditorConverter<>(new TreeAdapterField(tree), new SplittableToSelectionArgListConverter());
 
         // This handler must be added after the store is added to the tree, since the tree adds its own
         // handlers that must trigger before this one.
@@ -232,11 +233,11 @@ public class TreeSelectionEditor extends Composite implements AppTemplateForm.Ar
             }
         }, ClickEvent.getType());
 
-        labelLeafEditor = new LabelLeafEditor<String>(argumentLabel, this, appearance);
-        idEditor = SimpleEditor.<String> of();
-        typeEditor = SimpleEditor.<ArgumentType> of();
-        requiredEditor = new LabelLeafEditor<Boolean>(argumentLabel, this, appearance);
-        descriptionEditor = new LabelLeafEditor<String>(argumentLabel, this, appearance);
+        labelLeafEditor = new LabelLeafEditor<>(argumentLabel, this, appearance);
+        idEditor = SimpleEditor.of();
+        typeEditor = SimpleEditor.of();
+        requiredEditor = new LabelLeafEditor<>(argumentLabel, this, appearance);
+        descriptionEditor = new LabelLeafEditor<>(argumentLabel, this, appearance);
 
         initWidget(argumentLabel);
         visibilityEditor = new VisibilityEditor(this);
@@ -269,6 +270,11 @@ public class TreeSelectionEditor extends Composite implements AppTemplateForm.Ar
 
     @Override
     public void disableValidations() {
+        // Tree selector does not currently support validations
+    }
+
+    @Override
+    public void enableValidations() {
         // Tree selector does not currently support validations
     }
 

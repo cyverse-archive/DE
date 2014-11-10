@@ -46,20 +46,14 @@ public interface AppAdminServiceFacade extends AppServiceFacade {
 
     /**
      * Updates an app with the given values in application.
-     *
+     * 
+     * @param application id
      * @param application
      * @param callback
      */
-    public abstract void updateApplication(JSONObject application, AsyncCallback<String> callback);
-
-    /**
-     * Moves an App with the given applicationId to the category with the given groupId.
-     *
-     * @param applicationId
-     * @param groupId
-     * @param callback
-     */
-    public abstract void moveApplication(String applicationId, String groupId, AsyncCallback<String> callback);
+    public abstract void updateApplication(String appId,
+                                           JSONObject application,
+                                           AsyncCallback<String> callback);
 
     /**
      * Deletes an App with the given applicationId.
@@ -68,14 +62,6 @@ public interface AppAdminServiceFacade extends AppServiceFacade {
      * @param callback
      */
     public abstract void deleteApplication(String applicationId, AsyncCallback<String> callback);
-
-    /**
-     * Deletes an App with the given applicationId.
-     *
-     * @param applicationId
-     * @param callback
-     */
-    public abstract void restoreApplication(String applicationId, AsyncCallback<String> callback);
 
     public abstract void categorizeApp(AppCategorizeRequest request, AsyncCallback<String> callback);
 

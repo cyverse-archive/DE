@@ -40,13 +40,20 @@
                              text="{strings.rename}"
                              icon="{icons.fileRename}"
                              debugId="idRenameBtn"/>
+      </toolbar:child>
+       <toolbar:child layoutData="{boxDataNoFlex}">
+          <button:TextButton ui:field="moveCategory"
+                             text="Move"
+                             icon="{icons.fileRename}"
+                             debugId="idMoveBtn"/>
       </toolbar:child>   
+      
       <toolbar:child layoutData="{boxDataNoFlex}">
-          <button:TextButton ui:field="delete"
-                             text="{strings.delete}"
+          <button:TextButton ui:field="deleteCat"
+                             text="Delete Category"
                              icon="{icons.delete}"
-                             debugId="idDeleteBtn"/>
-      </toolbar:child>   
+                             debugId="idDeleteCatBtn"/>
+      </toolbar:child>
       <toolbar:child>
           <toolbar:SeparatorToolItem />
       </toolbar:child>
@@ -60,8 +67,16 @@
           <button:TextButton ui:field="categorizeApp"
                              text="{strings.categorize}"
                              icon="{icons.category}"
+                             enabled="false"
                              debugId="idCategorizeBtn"/>
       </toolbar:child>
+       <toolbar:child layoutData="{boxDataNoFlex}">
+          <button:TextButton ui:field="deleteApp"
+                             text="Delete App"
+                             icon="{icons.delete}"
+                             enabled="false"
+                             debugId="idDeleteAppBtn"/>
+      </toolbar:child>   
       <toolbar:child layoutData="{boxData}">
           <MyWidgets:AppSearchField ui:field="appSearch" debugId="idSearchFld"/>
       </toolbar:child>   

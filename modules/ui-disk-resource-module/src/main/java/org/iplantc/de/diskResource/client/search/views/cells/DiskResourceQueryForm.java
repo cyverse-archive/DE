@@ -15,7 +15,7 @@ import org.iplantc.de.commons.client.tags.views.TagSearchField;
 import org.iplantc.de.commons.client.tags.views.TagView;
 import org.iplantc.de.commons.client.tags.views.TagsPanel;
 import org.iplantc.de.commons.client.widgets.IPlantAnchor;
-import org.iplantc.de.diskResource.client.search.events.SaveDiskResourceQueryEvent;
+import org.iplantc.de.diskResource.client.search.events.SaveDiskResourceQueryClickedEvent;
 import org.iplantc.de.diskResource.client.search.events.SubmitDiskResourceQueryEvent;
 import org.iplantc.de.diskResource.client.search.events.SubmitDiskResourceQueryEvent.HasSubmitDiskResourceQueryEventHandlers;
 import org.iplantc.de.diskResource.client.search.events.SubmitDiskResourceQueryEvent.SubmitDiskResourceQueryEventHandler;
@@ -78,13 +78,13 @@ import java.util.logging.Logger;
 
 /**
  * This form is used to construct, edit and/or save "search filters".
- * 
- * <p>
+ * <p/>
+ * <p/>
  * This form may be constructed with or without an existing query template. If a query template is
  * supplied to the constructor, the form will be initialized with given query template. If the default
  * constructor is used, a new template will be created.
- * 
- * <p>
+ * <p/>
+ * <p/>
  * When the user clicks the "Search" button;
  * <ol>
  * <li>The form will be validated
@@ -96,8 +96,8 @@ import java.util.logging.Logger;
  * </ol>
  * </li>
  * </ol>
- * 
- * <p>
+ * <p/>
+ * <p/>
  * When the user clicks the "" hyperlink;
  * <ol>
  * <li>The form will be validated
@@ -105,99 +105,120 @@ import java.util.logging.Logger;
  * <li>If the form is <b>invalid</b>, the validation errors will appear in the form and not other action
  * will occur.</li>
  * <li>Else, the user will be presented with a text field allowing them to set a name. Then, if the user
- * clicks "Save", a {@link org.iplantc.de.diskResource.client.search.events.SaveDiskResourceQueryEvent}
+ * clicks "Save", a {@link org.iplantc.de.diskResource.client.search.events.SaveDiskResourceQueryClickedEvent}
  * will be fired with the form's current query template and this form will be hidden.</li>
  * </ol>
  * </li>
  * </ol>
- * 
- * 
+ *
  * @author jstroot
- * 
  */
 public class DiskResourceQueryForm extends Composite implements
-                                                    Editor<DiskResourceQueryTemplate>,
-                                                    SaveDiskResourceQueryEvent.HasSaveDiskResourceQueryEventHandlers,
-                                                    HasSubmitDiskResourceQueryEventHandlers,
-                                                    SaveDiskResourceQueryEvent.SaveDiskResourceQueryEventHandler {
+                                                     Editor<DiskResourceQueryTemplate>,
+                                                     SaveDiskResourceQueryClickedEvent.HasSaveDiskResourceQueryClickedEventHandlers,
+                                                     HasSubmitDiskResourceQueryEventHandlers,
+                                                     SaveDiskResourceQueryClickedEvent.SaveDiskResourceQueryClickedEventHandler {
 
-    interface SearchFormEditorDriver extends
-                                    SimpleBeanEditorDriver<DiskResourceQueryTemplate, DiskResourceQueryForm> {
+    class SearchTagListHandler implements TagListHandlers {
+
+        final CustomIplantTagResources r = GWT.create(CustomIplantTagResources.class);
+
+        public SearchTagListHandler() {
+            r.style().ensureInjected();
+        }
+
+        @Override
+        public void onAddTag(IplantTag tag) {
+            for (int i = 0; i < tagPanel.getWidgetCount(); i++) {
+                TagView test = (TagView) tagPanel.getWidget(i);
+                if (test.getTag().getValue().equals(tag.getValue())) {
+                    return;
+                }
+            }
+            TagView tv = new TagView(r, tag);
+            tv.setUiHandlers(this);
+            tv.setRemoveable(true);
+            tv.setEditable(true);
+            tagPanel.add(tv);
+            tagQuery.getValue().add(tv.getTag());
+        }
+
+        @Override
+        public void onBlur() { /* Do nothing intentionally */ }
+
+        @Override
+        public void onCreateTag(IplantTag tag) { /* Do nothing intentionally */ }
+
+        @Override
+        public void onEditTag(TagView tagView) { /* Do nothing intentionally */ }
+
+        @Override
+        public void onFocus() { /* Do nothing intentionally */ }
+
+        @Override
+        public void onRelocateTag(TagView tagViewToRelocate,
+                                  TagView tagViewRelocationRef,
+                                  InsertionPoint insertionPoint) { /* Do nothing intentionally */}
+
+        @Override
+        public void onRemoveTag(TagView tagView) {
+            if (tagPanel.getWidgetIndex(tagView) != -1) {
+                tagPanel.remove(tagPanel.getWidgetIndex(tagView));
+                tagQuery.getValue().remove(tagView.getTag());
+            }
+        }
+
+        @Override
+        public void onSelectTag(TagView tagView) {/* Do nothing intentionally */ }
     }
-
-    protected BaseEventPreview eventPreview;
-
-    TextField ownedBy;
-
-    @Path("createdWithin")
-    SimpleComboBox<DateInterval> createdWithinCombo;
-
-    IPlantAnchor createFilterLink;
-
-    final SearchFormEditorDriver editorDriver = GWT.create(SearchFormEditorDriver.class);
-
-    TextField fileQuery;
-
-    @Path("fileSizeRange.min")
-    NumberField<Double> fileSizeGreaterThan;
-
-    @Path("fileSizeRange.max")
-    NumberField<Double> fileSizeLessThan;
-
-    @Path("fileSizeRange.minUnit")
-    SimpleComboBox<FileSizeUnit> greaterThanComboBox;
-
-    @Path("fileSizeRange.maxUnit")
-    SimpleComboBox<FileSizeUnit> lessThanComboBox;
-
-    TextField metadataAttributeQuery;
-
-    @Path("modifiedWithin")
-    SimpleComboBox<DateInterval> modifiedWithinCombo;
-
-    @Ignore
-    DiskResourceQueryFormNamePrompt namePrompt;
-
-    TextField negatedFileQuery;
-
-    TextField metadataValueQuery;
-
-    TextField sharedWith;
-
-    CheckBox includeTrashItems;
-
-    @Ignore
-    TextButton searchButton;
-
-    @Ignore
-    private boolean showing;
-
-    private final SearchAutoBeanFactory factory = GWT.create(SearchAutoBeanFactory.class);
-
-    @Ignore
-    private final HtmlLayoutContainer con;
-
-    static final int COLUMN_FORM_WIDTH = 600;
-
-    static final int cw = ((COLUMN_FORM_WIDTH - 30) / 2) - 12;
-
-    FieldLabel greaterField;
-
-    FieldLabel lesserField;
-
-    SimpleEditor<Set<IplantTag>> tagQuery;
-
-    @Ignore
-    TagsPanel tagPanel;
-
-    static Logger LOG = Logger.getLogger("Adv Search");
-
-    private SearchTagListHandler tagListHandlers;
 
     public interface HtmlLayoutContainerTemplate extends XTemplates {
         @XTemplate(source = "DiskResourceQueryFormTemplate.html")
         SafeHtml getTemplate();
     }
+
+    interface SearchFormEditorDriver extends SimpleBeanEditorDriver<DiskResourceQueryTemplate, DiskResourceQueryForm> { }
+
+    protected BaseEventPreview eventPreview;
+    static final int COLUMN_FORM_WIDTH = 600;
+    static final int cw = ((COLUMN_FORM_WIDTH - 30) / 2) - 12;
+    static Logger LOG = Logger.getLogger("Adv Search");
+    final SearchFormEditorDriver editorDriver = GWT.create(SearchFormEditorDriver.class);
+    IPlantAnchor createFilterLink;
+    @Path("createdWithin")
+    SimpleComboBox<DateInterval> createdWithinCombo;
+    TextField fileQuery;
+    @Path("fileSizeRange.min")
+    NumberField<Double> fileSizeGreaterThan;
+    @Path("fileSizeRange.max")
+    NumberField<Double> fileSizeLessThan;
+    FieldLabel greaterField;
+    @Path("fileSizeRange.minUnit")
+    SimpleComboBox<FileSizeUnit> greaterThanComboBox;
+    CheckBox includeTrashItems;
+    @Path("fileSizeRange.maxUnit")
+    SimpleComboBox<FileSizeUnit> lessThanComboBox;
+    FieldLabel lesserField;
+    TextField metadataAttributeQuery;
+    TextField metadataValueQuery;
+    @Path("modifiedWithin")
+    SimpleComboBox<DateInterval> modifiedWithinCombo;
+    @Ignore
+    DiskResourceQueryFormNamePrompt namePrompt;
+    TextField negatedFileQuery;
+    TextField ownedBy;
+    @Ignore
+    TextButton searchButton;
+    TextField sharedWith;
+    @Ignore
+    TagsPanel tagPanel;
+    SimpleEditor<Set<IplantTag>> tagQuery;
+    @Ignore
+    private final HtmlLayoutContainer con;
+    private final SearchAutoBeanFactory factory = GWT.create(SearchAutoBeanFactory.class);
+    @Ignore
+    private boolean showing;
+    private SearchTagListHandler tagListHandlers;
 
     /**
      * Creates the form with a new filter.
@@ -206,9 +227,6 @@ public class DiskResourceQueryForm extends Composite implements
         this(SearchModelUtils.createDefaultFilter());
     }
 
-    /**
-     * @param filter
-     */
     protected DiskResourceQueryForm(final DiskResourceQueryTemplate filter) {
         VerticalPanel vp = new VerticalPanel();
         HtmlLayoutContainerTemplate templates = GWT.create(HtmlLayoutContainerTemplate.class);
@@ -217,7 +235,7 @@ public class DiskResourceQueryForm extends Composite implements
         vp.getElement().getStyle().setBackgroundColor("#fff");
         initWidget(vp);
 
-        tagQuery = SimpleEditor.<Set<IplantTag>> of();
+        tagQuery = SimpleEditor.of();
         init(new DiskResourceQueryFormNamePrompt());
         editorDriver.initialize(this);
         editorDriver.edit(filter);
@@ -251,15 +269,40 @@ public class DiskResourceQueryForm extends Composite implements
         }
     }
 
-    @Override
-    public HandlerRegistration
-            addSaveDiskResourceQueryEventHandler(SaveDiskResourceQueryEvent.SaveDiskResourceQueryEventHandler handler) {
-        return addHandler(handler, SaveDiskResourceQueryEvent.TYPE);
+    static boolean isEmptyQuery(DiskResourceQueryTemplate template) {
+        if (Strings.isNullOrEmpty(template.getOwnedBy())
+                && Strings.isNullOrEmpty(template.getFileQuery())
+                && Strings.isNullOrEmpty(template.getMetadataAttributeQuery())
+                && Strings.isNullOrEmpty(template.getMetadataValueQuery())
+                && Strings.isNullOrEmpty(template.getNegatedFileQuery())
+                && Strings.isNullOrEmpty(template.getSharedWith())
+                && (template.getDateCreated() == null)
+                && (template.getLastModified() == null)
+                && ((template.getCreatedWithin() == null) || (template.getCreatedWithin().getFrom() == null && template.getCreatedWithin()
+                                                                                                                       .getTo() == null))
+                && ((template.getModifiedWithin() == null) || (template.getModifiedWithin().getFrom() == null && template.getModifiedWithin()
+                                                                                                                         .getTo() == null))
+                && ((template.getFileSizeRange() == null) || (template.getFileSizeRange().getMax() == null && template.getFileSizeRange()
+                                                                                                                      .getMin() == null))
+                && (template.getTagQuery() == null || template.getTagQuery().size() == 0)) {
+
+            LOG.log(Level.SEVERE, "tags size==>" + template.getTagQuery());
+
+            // TODO Implement user error feedback
+            IplantAnnouncer.getInstance()
+                           .schedule(new ErrorAnnouncementConfig("You must select at least one filter."));
+            return true;
+        }
+        return false;
     }
 
     @Override
-    public HandlerRegistration
-            addSubmitDiskResourceQueryEventHandler(SubmitDiskResourceQueryEventHandler handler) {
+    public HandlerRegistration addSaveDiskResourceQueryClickedEventHandler(SaveDiskResourceQueryClickedEvent.SaveDiskResourceQueryClickedEventHandler handler) {
+        return addHandler(handler, SaveDiskResourceQueryClickedEvent.TYPE);
+    }
+
+    @Override
+    public HandlerRegistration addSubmitDiskResourceQueryEventHandler(SubmitDiskResourceQueryEventHandler handler) {
         return addHandler(handler, SubmitDiskResourceQueryEvent.TYPE);
     }
 
@@ -269,12 +312,6 @@ public class DiskResourceQueryForm extends Composite implements
     public void clearSearch() {
         tagPanel.clear();
         editorDriver.edit(SearchModelUtils.createDefaultFilter());
-    }
-
-    @Override
-    public void doSaveDiskResourceQueryTemplate(SaveDiskResourceQueryEvent event) {
-        // Re-fire event
-        fireEvent(event);
     }
 
     public void edit(DiskResourceQueryTemplate queryTemplate) {
@@ -299,6 +336,12 @@ public class DiskResourceQueryForm extends Composite implements
         }
     }
 
+    @Override
+    public void onSaveDiskResourceQueryClicked(SaveDiskResourceQueryClickedEvent event) {
+        // Re-fire event
+        fireEvent(event);
+    }
+
     public void show(Element parent, AnchorAlignment anchorAlignment) {
         getElement().makePositionable(true);
         RootPanel.get().add(this);
@@ -318,11 +361,11 @@ public class DiskResourceQueryForm extends Composite implements
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.sencha.gxt.widget.core.client.menu.Menu#onHide()
-     * 
+     *
      * When this container becomes hidden, ensure that save filter container is hidden as well.
-     * 
+     *
      * Additionally, this will perform any desired animations when this form is hidden.
      */
     @Override
@@ -348,15 +391,33 @@ public class DiskResourceQueryForm extends Composite implements
 
                 if (!getElement().isOrHasChild(target) && !namePrompt.getElement().isOrHasChild(target)) {
                     hide();
-                    return;
                 }
         }
-        return;
+    }
+
+    void addTrashAndFilter() {
+        VerticalPanel vp = new VerticalPanel();
+        vp.add(includeTrashItems);
+        vp.add(createFilterLink);
+        vp.setSpacing(5);
+        con.add(vp, new HtmlData(".trashandfilter"));
+    }
+
+    DateInterval createDateInterval(Date from, Date to, String label) {
+        DateInterval ret = factory.dateInterval().as();
+        ret.setFrom(from);
+        ret.setTo(to);
+        ret.setLabel(label);
+        return ret;
+    }
+
+    List<FileSizeUnit> createFileSizeUnits() {
+        return SearchModelUtils.createFileSizeUnits();
     }
 
     void init(DiskResourceQueryFormNamePrompt namePrompt) {
         this.namePrompt = namePrompt;
-        this.namePrompt.addSaveDiskResourceQueryEventHandler(this);
+        this.namePrompt.addSaveDiskResourceQueryClickedEventHandler(this);
         initFileQuery();
         initNegatedFileQuery();
         initMetadataSearchFields();
@@ -372,55 +433,162 @@ public class DiskResourceQueryForm extends Composite implements
         initSearchButton();
     }
 
-    void initTagField() {
-        final TagSearchField tagSearchField = CommonsInjector.INSTANCE.getTagSearchField();
-
-        tagListHandlers = new SearchTagListHandler();
-
-        VerticalPanel vp = new VerticalPanel();
-        FieldLabel fl = new FieldLabel();
-        fl.setText("Tagged with");
-
-        vp.add(fl);
-        vp.add(tagSearchField);
-
-        tagPanel = new TagsPanel();
-        tagPanel.setSize("200px", "50px");
-        vp.add(tagPanel);
-
-        con.add(vp, new HtmlData(".tags"));
-
-        tagSearchField.addSelectionHandler(new SelectionHandler<IplantTag>() {
+    void initCreateFilter() {
+        createFilterLink = new IPlantAnchor("Create filter with this search...", -1);
+        createFilterLink.addClickHandler(new ClickHandler() {
 
             @Override
-            public void onSelection(SelectionEvent<IplantTag> event) {
-                tagSearchField.setValue(event.getSelectedItem());
+            public void onClick(ClickEvent event) {
+                // Flush to perform local validations
+                DiskResourceQueryTemplate flushedFilter = editorDriver.flush();
+                if (editorDriver.hasErrors()) {
+                    return;
+                }
+                showNamePrompt(flushedFilter);
 
-            }
-        });
-        tagSearchField.addValueChangeHandler(new ValueChangeHandler<IplantTag>() {
-
-            @Override
-            public void onValueChange(ValueChangeEvent<IplantTag> event) {
-                tagListHandlers.onAddTag(event.getValue());
-                tagSearchField.clear();
-                tagSearchField.asWidget().getElement().focus();
             }
         });
     }
 
-    void populateTags(Set<IplantTag> tags) {
-        for (IplantTag it : tags) {
-            tagListHandlers.onAddTag(it);
-        }
+    void initDateRangeCombos() {
+        List<DateInterval> timeIntervals = Lists.newArrayList();
+        Date now = new Date();
+
+        DateInterval interval = createDateInterval(null, null, "---");
+        timeIntervals.add(interval);
+
+        final DateWrapper dateWrapper = new DateWrapper(now).clearTime();
+        interval = createDateInterval(dateWrapper.addDays(-1).asDate(), now, "1 day");
+        timeIntervals.add(interval);
+
+        interval = createDateInterval(dateWrapper.addDays(-3).asDate(), now, "3 days");
+        timeIntervals.add(interval);
+
+        interval = createDateInterval(dateWrapper.addDays(-7).asDate(), now, "1 week");
+        timeIntervals.add(interval);
+
+        interval = createDateInterval(dateWrapper.addDays(-14).asDate(), now, "2 weeks");
+        timeIntervals.add(interval);
+
+        interval = createDateInterval(dateWrapper.addMonths(-1).asDate(), now, "1 month");
+        timeIntervals.add(interval);
+
+        interval = createDateInterval(dateWrapper.addMonths(-2).asDate(), now, "2 months");
+        timeIntervals.add(interval);
+
+        interval = createDateInterval(dateWrapper.addMonths(-6).asDate(), now, "6 months");
+        timeIntervals.add(interval);
+
+        interval = createDateInterval(dateWrapper.addYears(-1).asDate(), now, "1 year");
+        timeIntervals.add(interval);
+
+        // Data range combos
+        LabelProvider<DateInterval> dateIntervalLabelProvider = new LabelProvider<DateInterval>() {
+
+            @Override
+            public String getLabel(DateInterval item) {
+                return item.getLabel();
+            }
+        };
+        createdWithinCombo = new SimpleComboBox<>(dateIntervalLabelProvider);
+        modifiedWithinCombo = new SimpleComboBox<>(dateIntervalLabelProvider);
+        createdWithinCombo.add(timeIntervals);
+        modifiedWithinCombo.add(timeIntervals);
+
+        createdWithinCombo.setEmptyText("---");
+        modifiedWithinCombo.setEmptyText("---");
+
+        createdWithinCombo.setWidth(cw);
+        modifiedWithinCombo.setWidth(cw);
+
+        con.add(new FieldLabel(createdWithinCombo, "Created within"), new HtmlData(".createwithin"));
+        con.add(new FieldLabel(modifiedWithinCombo, "Modified within"), new HtmlData(".modifiedwithin"));
+
     }
 
-    void addTrashAndFilter() {
-        VerticalPanel vp = new VerticalPanel();
-        vp.add(includeTrashItems);
-        vp.add(createFilterLink);
-        vp.setSpacing(5);
-        con.add(vp, new HtmlData(".trashandfilter"));
+    void initExcludeTrashField() {
+        includeTrashItems = new CheckBox();
+        includeTrashItems.setBoxLabel("Include items in Trash");
+    }
+
+    void initFileQuery() {
+        fileQuery = new TextField();
+        fileQuery.setWidth(cw);
+        fileQuery.setEmptyText("Enter values...");
+        con.add(new FieldLabel(fileQuery, "File/Folder name has the words"), new HtmlData(".filename"));
+    }
+
+    void initFileSizeComboBoxes() {
+        // File Size ComboBoxes
+        LabelProvider<FileSizeUnit> fileSizeUnitLabelProvider = new LabelProvider<FileSizeUnit>() {
+
+            @Override
+            public String getLabel(FileSizeUnit item) {
+                return item.getLabel();
+            }
+
+        };
+        greaterThanComboBox = new SimpleComboBox<>(fileSizeUnitLabelProvider);
+        lessThanComboBox = new SimpleComboBox<>(fileSizeUnitLabelProvider);
+        greaterThanComboBox.setWidth("64px");
+        lessThanComboBox.setWidth("64px");
+
+        greaterThanComboBox.setTriggerAction(TriggerAction.ALL);
+        greaterThanComboBox.setForceSelection(true);
+
+        lessThanComboBox.setTriggerAction(TriggerAction.ALL);
+        lessThanComboBox.setForceSelection(true);
+
+        List<FileSizeUnit> fileSizeUnitList = createFileSizeUnits();
+        greaterThanComboBox.add(fileSizeUnitList);
+        lessThanComboBox.add(fileSizeUnitList);
+
+    }
+
+    void initFileSizeNumberFields() {
+        // File Size Number fields
+        NumberPropertyEditor.DoublePropertyEditor doublePropertyEditor = new NumberPropertyEditor.DoublePropertyEditor();
+        fileSizeGreaterThan = new NumberField<>(doublePropertyEditor);
+        fileSizeLessThan = new NumberField<>(doublePropertyEditor);
+
+        fileSizeGreaterThan.setAllowNegative(false);
+        fileSizeLessThan.setAllowNegative(false);
+
+    }
+
+    void initMetadataSearchFields() {
+        metadataAttributeQuery = new TextField();
+        metadataAttributeQuery.setEmptyText("Enter values...");
+        metadataAttributeQuery.setWidth(cw);
+        con.add(new FieldLabel(metadataAttributeQuery, "Metadata attribute has the words"),
+                new HtmlData(".metadataattrib"));
+
+        metadataValueQuery = new TextField();
+        metadataValueQuery.setEmptyText("Enter values...");
+        metadataValueQuery.setWidth(cw);
+        con.add(new FieldLabel(metadataValueQuery, "Metadata value has the words"),
+                new HtmlData(".metadataval"));
+
+    }
+
+    void initNegatedFileQuery() {
+        negatedFileQuery = new TextField();
+        negatedFileQuery.setEmptyText("Enter values...");
+        negatedFileQuery.setWidth(cw);
+        con.add(new FieldLabel(negatedFileQuery, "File/Folder name doesn't have"),
+                new HtmlData(".negatefilename"));
+    }
+
+    void initOwnerSharedSearchField() {
+        ownedBy = new TextField();
+        ownedBy.setEmptyText("Enter iPlant user name");
+        ownedBy.setWidth(cw);
+        con.add(new FieldLabel(ownedBy, "Owned by"), new HtmlData(".owner"));
+
+        sharedWith = new TextField();
+        sharedWith.setEmptyText("Enter iPlant user name");
+        sharedWith.setWidth(cw);
+        con.add(new FieldLabel(sharedWith, "Shared with"), new HtmlData(".shared"));
     }
 
     void initSearchButton() {
@@ -464,68 +632,41 @@ public class DiskResourceQueryForm extends Composite implements
 
     }
 
-    void initCreateFilter() {
-        createFilterLink = new IPlantAnchor("Create filter with this search...", -1);
-        createFilterLink.addClickHandler(new ClickHandler() {
+    void initTagField() {
+        final TagSearchField tagSearchField = CommonsInjector.INSTANCE.getTagSearchField();
+
+        tagListHandlers = new SearchTagListHandler();
+
+        VerticalPanel vp = new VerticalPanel();
+        FieldLabel fl = new FieldLabel();
+        fl.setText("Tagged with");
+
+        vp.add(fl);
+        vp.add(tagSearchField);
+
+        tagPanel = new TagsPanel();
+        tagPanel.setSize("200px", "50px");
+        vp.add(tagPanel);
+
+        con.add(vp, new HtmlData(".tags"));
+
+        tagSearchField.addSelectionHandler(new SelectionHandler<IplantTag>() {
 
             @Override
-            public void onClick(ClickEvent event) {
-                // Flush to perform local validations
-                DiskResourceQueryTemplate flushedFilter = editorDriver.flush();
-                if (editorDriver.hasErrors()) {
-                    return;
-                }
-                showNamePrompt(flushedFilter);
+            public void onSelection(SelectionEvent<IplantTag> event) {
+                tagSearchField.setValue(event.getSelectedItem());
 
             }
         });
-    }
+        tagSearchField.addValueChangeHandler(new ValueChangeHandler<IplantTag>() {
 
-    void initExcludeTrashField() {
-        includeTrashItems = new CheckBox();
-        includeTrashItems.setBoxLabel("Include items in Trash");
-    }
-
-    void initFileQuery() {
-        fileQuery = new TextField();
-        fileQuery.setWidth(cw);
-        fileQuery.setEmptyText("Enter values...");
-        con.add(new FieldLabel(fileQuery, "File/Folder name has the words"), new HtmlData(".filename"));
-    }
-
-    void initNegatedFileQuery() {
-        negatedFileQuery = new TextField();
-        negatedFileQuery.setEmptyText("Enter values...");
-        negatedFileQuery.setWidth(cw);
-        con.add(new FieldLabel(negatedFileQuery, "File/Folder name doesn't have"),
-                new HtmlData(".negatefilename"));
-    }
-
-    void initMetadataSearchFields() {
-        metadataAttributeQuery = new TextField();
-        metadataAttributeQuery.setEmptyText("Enter values...");
-        metadataAttributeQuery.setWidth(cw);
-        con.add(new FieldLabel(metadataAttributeQuery, "Metadata attribute has the words"),
-                new HtmlData(".metadataattrib"));
-
-        metadataValueQuery = new TextField();
-        metadataValueQuery.setEmptyText("Enter values...");
-        metadataValueQuery.setWidth(cw);
-        con.add(new FieldLabel(metadataValueQuery, "Metadata value has the words"),
-                new HtmlData(".metadataval"));
-
-    }
-
-    void initOwnerSharedSearchField() {
-        ownedBy = new TextField();
-        ownedBy.setEmptyText("Enter iPlant user name");
-        ownedBy.setWidth(cw);
-        con.add(new FieldLabel(ownedBy, "Owned by"), new HtmlData(".owner"));
-
-        sharedWith = new TextField();
-        sharedWith.setEmptyText("Enter iPlant user name");
-        sharedWith.setWidth(cw);
-        con.add(new FieldLabel(sharedWith, "Shared with"), new HtmlData(".shared"));
+            @Override
+            public void onValueChange(ValueChangeEvent<IplantTag> event) {
+                tagListHandlers.onAddTag(event.getValue());
+                tagSearchField.clear();
+                tagSearchField.asWidget().getElement().focus();
+            }
+        });
     }
 
     @UiHandler("createFilterLink")
@@ -536,145 +677,6 @@ public class DiskResourceQueryForm extends Composite implements
             return;
         }
         showNamePrompt(flushedFilter);
-    }
-
-    static boolean isEmptyQuery(DiskResourceQueryTemplate template) {
-        if (Strings.isNullOrEmpty(template.getOwnedBy())
-                && Strings.isNullOrEmpty(template.getFileQuery())
-                && Strings.isNullOrEmpty(template.getMetadataAttributeQuery())
-                && Strings.isNullOrEmpty(template.getMetadataValueQuery())
-                && Strings.isNullOrEmpty(template.getNegatedFileQuery())
-                && Strings.isNullOrEmpty(template.getSharedWith())
-                && (template.getDateCreated() == null)
-                && (template.getLastModified() == null)
-                && ((template.getCreatedWithin() == null) || (template.getCreatedWithin().getFrom() == null && template.getCreatedWithin()
-                                                                                                                       .getTo() == null))
-                && ((template.getModifiedWithin() == null) || (template.getModifiedWithin().getFrom() == null && template.getModifiedWithin()
-                                                                                                                         .getTo() == null))
-                && ((template.getFileSizeRange() == null) || (template.getFileSizeRange().getMax() == null && template.getFileSizeRange()
-                                                                                                                      .getMin() == null))
-                && (template.getTagQuery() == null || template.getTagQuery().size() == 0)) {
-
-            LOG.log(Level.SEVERE, "tags size==>" + template.getTagQuery());
-
-            // TODO Implement user error feedback
-            IplantAnnouncer.getInstance()
-                           .schedule(new ErrorAnnouncementConfig("You must select at least one filter."));
-            return true;
-        }
-        return false;
-    }
-
-    void showNamePrompt(DiskResourceQueryTemplate filter) {
-        namePrompt.show(filter, getElement(), new AnchorAlignment(Anchor.BOTTOM_LEFT,
-                                                                  Anchor.BOTTOM_LEFT,
-                                                                  true));
-    }
-
-    void initDateRangeCombos() {
-        List<DateInterval> timeIntervals = Lists.newArrayList();
-        Date now = new Date();
-
-        DateInterval interval = createDateInterval(null, null, "---");
-        timeIntervals.add(interval);
-
-        final DateWrapper dateWrapper = new DateWrapper(now).clearTime();
-        interval = createDateInterval(dateWrapper.addDays(-1).asDate(), now, "1 day");
-        timeIntervals.add(interval);
-
-        interval = createDateInterval(dateWrapper.addDays(-3).asDate(), now, "3 days");
-        timeIntervals.add(interval);
-
-        interval = createDateInterval(dateWrapper.addDays(-7).asDate(), now, "1 week");
-        timeIntervals.add(interval);
-
-        interval = createDateInterval(dateWrapper.addDays(-14).asDate(), now, "2 weeks");
-        timeIntervals.add(interval);
-
-        interval = createDateInterval(dateWrapper.addMonths(-1).asDate(), now, "1 month");
-        timeIntervals.add(interval);
-
-        interval = createDateInterval(dateWrapper.addMonths(-2).asDate(), now, "2 months");
-        timeIntervals.add(interval);
-
-        interval = createDateInterval(dateWrapper.addMonths(-6).asDate(), now, "6 months");
-        timeIntervals.add(interval);
-
-        interval = createDateInterval(dateWrapper.addYears(-1).asDate(), now, "1 year");
-        timeIntervals.add(interval);
-
-        // Data range combos
-        LabelProvider<DateInterval> dateIntervalLabelProvider = new LabelProvider<DateInterval>() {
-
-            @Override
-            public String getLabel(DateInterval item) {
-                return item.getLabel();
-            }
-        };
-        createdWithinCombo = new SimpleComboBox<DateInterval>(dateIntervalLabelProvider);
-        modifiedWithinCombo = new SimpleComboBox<DateInterval>(dateIntervalLabelProvider);
-        createdWithinCombo.add(timeIntervals);
-        modifiedWithinCombo.add(timeIntervals);
-
-        createdWithinCombo.setEmptyText("---");
-        modifiedWithinCombo.setEmptyText("---");
-
-        createdWithinCombo.setWidth(cw);
-        modifiedWithinCombo.setWidth(cw);
-
-        con.add(new FieldLabel(createdWithinCombo, "Created within"), new HtmlData(".createwithin"));
-        con.add(new FieldLabel(modifiedWithinCombo, "Modified within"), new HtmlData(".modifiedwithin"));
-
-    }
-
-    DateInterval createDateInterval(Date from, Date to, String label) {
-        DateInterval ret = factory.dateInterval().as();
-        ret.setFrom(from);
-        ret.setTo(to);
-        ret.setLabel(label);
-        return ret;
-    }
-
-    void initFileSizeComboBoxes() {
-        // File Size ComboBoxes
-        LabelProvider<FileSizeUnit> fileSizeUnitLabelProvider = new LabelProvider<FileSizeUnit>() {
-
-            @Override
-            public String getLabel(FileSizeUnit item) {
-                return item.getLabel();
-            }
-
-        };
-        greaterThanComboBox = new SimpleComboBox<FileSizeUnit>(fileSizeUnitLabelProvider);
-        lessThanComboBox = new SimpleComboBox<FileSizeUnit>(fileSizeUnitLabelProvider);
-        greaterThanComboBox.setWidth("64px");
-        lessThanComboBox.setWidth("64px");
-
-        greaterThanComboBox.setTriggerAction(TriggerAction.ALL);
-        greaterThanComboBox.setForceSelection(true);
-
-        lessThanComboBox.setTriggerAction(TriggerAction.ALL);
-        lessThanComboBox.setForceSelection(true);
-
-        List<FileSizeUnit> fileSizeUnitList = createFileSizeUnits();
-        greaterThanComboBox.add(fileSizeUnitList);
-        lessThanComboBox.add(fileSizeUnitList);
-
-    }
-
-    List<FileSizeUnit> createFileSizeUnits() {
-        return SearchModelUtils.createFileSizeUnits();
-    }
-
-    void initFileSizeNumberFields() {
-        // File Size Number fields
-        NumberPropertyEditor.DoublePropertyEditor doublePropertyEditor = new NumberPropertyEditor.DoublePropertyEditor();
-        fileSizeGreaterThan = new NumberField<Double>(doublePropertyEditor);
-        fileSizeLessThan = new NumberField<Double>(doublePropertyEditor);
-
-        fileSizeGreaterThan.setAllowNegative(false);
-        fileSizeLessThan.setAllowNegative(false);
-
     }
 
     void onEscape(NativePreviewEvent pe) {
@@ -696,78 +698,17 @@ public class DiskResourceQueryForm extends Composite implements
         fireEvent(new SubmitDiskResourceQueryEvent(flushedQueryTemplate));
         hide();
     }
-    
-    class SearchTagListHandler implements TagListHandlers {
-        
-        final CustomIplantTagResources r = GWT.create(CustomIplantTagResources.class);
 
-        public SearchTagListHandler() {
-            r.style().ensureInjected();
+    void populateTags(Set<IplantTag> tags) {
+        for (IplantTag it : tags) {
+            tagListHandlers.onAddTag(it);
         }
+    }
 
-        @Override
-        public void onCreateTag(IplantTag tag) {
-            // do nothing intentionally
-
-        }
-
-        @Override
-        public void onAddTag(IplantTag tag) {
-            for (int i = 0; i < tagPanel.getWidgetCount(); i++) {
-                TagView test = (TagView)tagPanel.getWidget(i);
-                if (test.getTag().getValue().equals(tag.getValue())) {
-                    return;
-                }
-            }
-            TagView tv = new TagView(r, tag);
-            tv.setUiHandlers(this);
-            tv.setRemoveable(true);
-            tv.setEditable(true);
-            tagPanel.add(tv);
-            tagQuery.getValue().add(tv.getTag());
-        }
-
-        @Override
-        public void onRemoveTag(TagView tagView) {
-            if (tagPanel.getWidgetIndex(tagView) != -1) {
-                tagPanel.remove(tagPanel.getWidgetIndex(tagView));
-                tagQuery.getValue().remove(tagView.getTag());
-            }
-        }
-
-        @Override
-        public void onEditTag(TagView tagView) {
-            // do nothing intentionally
-
-        }
-
-        @Override
-        public void onRelocateTag(TagView tagViewToRelocate,
-                                  TagView tagViewRelocationRef,
-                                  InsertionPoint insertionPoint) {
-            // do nothing intentionally
-
-        }
-
-        @Override
-        public void onFocus() {
-            // do nothing intentionally
-
-        }
-
-        @Override
-        public void onBlur() {
-            // do nothing intentionally
-
-        }
-
-        @Override
-        public void onSelectTag(TagView tagView) {
-            // do nothing intentionally
-
-        }
-        
-        
+    void showNamePrompt(DiskResourceQueryTemplate filter) {
+        namePrompt.show(filter, getElement(), new AnchorAlignment(Anchor.BOTTOM_LEFT,
+                                                                  Anchor.BOTTOM_LEFT,
+                                                                  true));
     }
 
 }

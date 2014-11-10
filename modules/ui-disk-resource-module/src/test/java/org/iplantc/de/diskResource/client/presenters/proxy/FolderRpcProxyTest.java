@@ -9,9 +9,9 @@ import org.iplantc.de.client.services.DiskResourceServiceFacade;
 import org.iplantc.de.client.services.SearchServiceFacade;
 import org.iplantc.de.commons.client.info.ErrorAnnouncementConfig;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
-import org.iplantc.de.diskResource.client.presenters.proxy.FolderRpcProxy.GetSavedQueryTemplatesCallback;
-import org.iplantc.de.diskResource.client.presenters.proxy.FolderRpcProxy.RootFolderCallback;
-import org.iplantc.de.diskResource.client.presenters.proxy.FolderRpcProxy.SubFoldersCallback;
+import org.iplantc.de.diskResource.client.presenters.proxy.FolderRpcProxyImpl.GetSavedQueryTemplatesCallback;
+import org.iplantc.de.diskResource.client.presenters.proxy.FolderRpcProxyImpl.RootFolderCallback;
+import org.iplantc.de.diskResource.client.presenters.proxy.FolderRpcProxyImpl.SubFoldersCallback;
 import org.iplantc.de.diskResource.client.search.events.SubmitDiskResourceQueryEvent;
 import org.iplantc.de.diskResource.client.search.presenter.DataSearchPresenter;
 
@@ -58,14 +58,16 @@ public class FolderRpcProxyTest {
     
     @Captor ArgumentCaptor<List<Folder>> folderListCaptor;
 
-    @Mock
-    EventBus mockEventBus;
+    @Mock EventBus mockEventBus;
 
-    private FolderRpcProxy proxyUnderTest;
+    private FolderRpcProxyImpl proxyUnderTest;
 
     @Before public void setUp() {
-        proxyUnderTest = new FolderRpcProxy(drServiceMock, searchServiceMock, announcerMock, mockEventBus);
-        proxyUnderTest.init(searchPresenterMock, maskableMock);
+        proxyUnderTest = new FolderRpcProxyImpl(drServiceMock,
+                                                searchServiceMock,
+                                                announcerMock,
+                                                mockEventBus,
+                                                maskableMock);
     }
 
     /**
@@ -78,7 +80,7 @@ public class FolderRpcProxyTest {
         verify(maskableMock).mask(any(String.class));
 
         /* Verify that the DiskResourceService getRootFolders(..) method is called */
-        ArgumentCaptor<RootFolderCallback> rootFolderCallbackCaptor = ArgumentCaptor.forClass(FolderRpcProxy.RootFolderCallback.class);
+        ArgumentCaptor<RootFolderCallback> rootFolderCallbackCaptor = ArgumentCaptor.forClass(FolderRpcProxyImpl.RootFolderCallback.class);
         verify(drServiceMock).getRootFolders(rootFolderCallbackCaptor.capture());
 
         /* Verify that no other methods are called in DiskResourceService */
@@ -167,7 +169,7 @@ public class FolderRpcProxyTest {
         final String stubPath = "stubPath";
         when(parentFolderMock.getPath()).thenReturn(stubPath);
 
-        FolderRpcProxy spy = spy(proxyUnderTest);
+        FolderRpcProxyImpl spy = spy(proxyUnderTest);
         spy.load(parentFolderMock, folderCallbackMock);
         // Verify for record keeping
         verify(spy).load(any(Folder.class), eq(folderCallbackMock));
@@ -189,11 +191,11 @@ public class FolderRpcProxyTest {
         verify(maskableMock).mask(any(String.class));
 
         /* Verify that the DiskResourceService getRootFolders(..) method is called */
-        ArgumentCaptor<RootFolderCallback> rootFolderCallbackCaptor = ArgumentCaptor.forClass(FolderRpcProxy.RootFolderCallback.class);
+        ArgumentCaptor<RootFolderCallback> rootFolderCallbackCaptor = ArgumentCaptor.forClass(FolderRpcProxyImpl.RootFolderCallback.class);
         verify(drServiceMock).getRootFolders(rootFolderCallbackCaptor.capture());
 
         final RootFolders rootFoldersMock = mock(RootFolders.class);
-        final ArrayList<Folder> newArrayList = Lists.<Folder> newArrayList(mock(Folder.class), mock(Folder.class));
+        final ArrayList<Folder> newArrayList = Lists.newArrayList(mock(Folder.class), mock(Folder.class));
         when(rootFoldersMock.getRoots()).thenReturn(newArrayList);
 
         rootFolderCallbackCaptor.getValue().onSuccess(rootFoldersMock);
@@ -207,15 +209,11 @@ public class FolderRpcProxyTest {
 
         verify(maskableMock).unmask();
 
-        assertEquals(searchPresenterMock, savedQueriesCaptor.getValue().searchPresenter2);
-
         verifyNoMoreInteractions(drServiceMock, searchServiceMock);
 
         /* Verify savedQueriesCallback onSuccess */
         final List<DiskResourceQueryTemplate> qtList = Lists.newArrayList(mock(DiskResourceQueryTemplate.class), mock(DiskResourceQueryTemplate.class));
         savedQueriesCaptor.getValue().onSuccess(qtList);
-
-        verify(searchPresenterMock).loadSavedQueries(eq(qtList));
 
         /* Verify savedQueriesCallback onFailure */
         savedQueriesCaptor.getValue().onFailure(null);
@@ -234,7 +232,7 @@ public class FolderRpcProxyTest {
         verify(maskableMock).mask(any(String.class));
         
         /* Verify that the DiskResourceService getRootFolders(..) method is called */
-        ArgumentCaptor<RootFolderCallback> rootFolderCallbackCaptor = ArgumentCaptor.forClass(FolderRpcProxy.RootFolderCallback.class);
+        ArgumentCaptor<RootFolderCallback> rootFolderCallbackCaptor = ArgumentCaptor.forClass(FolderRpcProxyImpl.RootFolderCallback.class);
         verify(drServiceMock).getRootFolders(rootFolderCallbackCaptor.capture());
         
         final RootFolders rootFoldersMock = mock(RootFolders.class);
@@ -246,9 +244,7 @@ public class FolderRpcProxyTest {
         verify(searchServiceMock).getSavedQueryTemplates(savedQueriesCaptor.capture());
         
         verify(maskableMock).unmask();
-        
-        assertEquals(searchPresenterMock, savedQueriesCaptor.getValue().searchPresenter2);
-        
+
         verifyNoMoreInteractions(drServiceMock, searchServiceMock);
     }
 

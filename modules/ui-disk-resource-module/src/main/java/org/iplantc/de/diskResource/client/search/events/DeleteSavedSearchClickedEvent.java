@@ -1,26 +1,26 @@
 package org.iplantc.de.diskResource.client.search.events;
 
 import org.iplantc.de.client.models.search.DiskResourceQueryTemplate;
-import org.iplantc.de.diskResource.client.search.events.DeleteSavedSearchEvent.DeleteSavedSearchEventHandler;
+import org.iplantc.de.diskResource.client.search.events.DeleteSavedSearchClickedEvent.DeleteSavedSearchEventHandler;
 
 import com.google.gwt.event.shared.EventHandler;
 import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.event.shared.HandlerRegistration;
 
-public class DeleteSavedSearchEvent extends GwtEvent<DeleteSavedSearchEventHandler> {
+public class DeleteSavedSearchClickedEvent extends GwtEvent<DeleteSavedSearchEventHandler> {
 
     public interface DeleteSavedSearchEventHandler extends EventHandler {
-        void onDeleteSavedSearch(DeleteSavedSearchEvent deleteSavedSearchEvent);
+        void onDeleteSavedSearchClicked(DeleteSavedSearchClickedEvent deleteSavedSearchClickedEvent);
     }
 
-    public static interface HasDeleteSavedSearchEventHandlers {
-        HandlerRegistration addDeleteSavedSearchEventHandler(DeleteSavedSearchEventHandler handler);
+    public static interface HasDeleteSavedSearchClickedEventHandlers {
+        HandlerRegistration addDeleteSavedSearchClickedEventHandler(DeleteSavedSearchEventHandler handler);
     }
 
     public static final GwtEvent.Type<DeleteSavedSearchEventHandler> TYPE = new GwtEvent.Type<DeleteSavedSearchEventHandler>();
     private final DiskResourceQueryTemplate savedSearch;
 
-    public DeleteSavedSearchEvent(DiskResourceQueryTemplate savedSearch) {
+    public DeleteSavedSearchClickedEvent(DiskResourceQueryTemplate savedSearch) {
         this.savedSearch = savedSearch;
     }
 
@@ -35,6 +35,6 @@ public class DeleteSavedSearchEvent extends GwtEvent<DeleteSavedSearchEventHandl
 
     @Override
     protected void dispatch(DeleteSavedSearchEventHandler handler) {
-        handler.onDeleteSavedSearch(this);
+        handler.onDeleteSavedSearchClicked(this);
     }
 }

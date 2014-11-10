@@ -15,9 +15,7 @@ import com.google.gwtmockito.GxtMockitoTestRunner;
 import com.sencha.gxt.widget.core.client.button.TextButton;
 
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -34,9 +32,14 @@ public class BelphegorAppsToolbarImplTest {
 
     @Mock TextButton mockAddCategory;
     @Mock TextButton mockCategorizeApp;
-    @Mock TextButton mockDelete;
+    @Mock
+    TextButton mockDeleteCat;
     @Mock TextButton mockRenameCategory;
     @Mock TextButton mockRestoreApp;
+    @Mock
+    TextButton mockDeleteApp;
+    @Mock
+    TextButton mockMoveCategory;
 
     @Mock AppSelectionChangedEvent mockAppSelectionChangedEvent;
     @Mock
@@ -52,20 +55,20 @@ public class BelphegorAppsToolbarImplTest {
     private void mockMenuItems(BelphegorAppsToolbarImpl uut){
         uut.addCategory = mockAddCategory;
         uut.categorizeApp = mockCategorizeApp;
-        uut.delete = mockDelete;
+        uut.deleteCat = mockDeleteCat;
+        uut.deleteApp = mockDeleteApp;
         uut.renameCategory = mockRenameCategory;
         uut.restoreApp = mockRestoreApp;
+        uut.moveCategory = mockMoveCategory;
     }
 
     @Test public void testOnAppSelectionChanged_zeroSelected() {
         when(mockAppSelectionChangedEvent.getAppSelection()).thenReturn(Collections.<App>emptyList());
         uut.onAppSelectionChanged(mockAppSelectionChangedEvent);
 
-        verify(mockAddCategory).setEnabled(eq(false));
-        verify(mockCategorizeApp).setEnabled(eq(false));
-        verify(mockDelete).setEnabled(eq(false));
-        verify(mockRenameCategory).setEnabled(eq(false));
         verify(mockRestoreApp).setEnabled(eq(false));
+        verify(mockDeleteApp).setEnabled(eq(false));
+        verify(mockCategorizeApp).setEnabled(eq(false));
     }
 
     @Test public void testOnAppSelectionChanged_oneSelected_notDeleted() {
@@ -74,11 +77,9 @@ public class BelphegorAppsToolbarImplTest {
         when(mockAppSelectionChangedEvent.getAppSelection()).thenReturn(Lists.newArrayList(mock));
         uut.onAppSelectionChanged(mockAppSelectionChangedEvent);
 
-        verify(mockAddCategory).setEnabled(eq(false));
-        verify(mockCategorizeApp).setEnabled(eq(true));
-        verify(mockDelete).setEnabled(eq(true));
-        verify(mockRenameCategory).setEnabled(eq(false));
         verify(mockRestoreApp).setEnabled(eq(false));
+        verify(mockDeleteApp).setEnabled(eq(true));
+        verify(mockCategorizeApp).setEnabled(eq(true));
     }
 
     @Test public void testOnAppSelectionChanged_oneSelected_isDeleted() {
@@ -87,11 +88,10 @@ public class BelphegorAppsToolbarImplTest {
         when(mockAppSelectionChangedEvent.getAppSelection()).thenReturn(Lists.newArrayList(mock));
         uut.onAppSelectionChanged(mockAppSelectionChangedEvent);
 
-        verify(mockAddCategory).setEnabled(eq(false));
-        verify(mockCategorizeApp).setEnabled(eq(false));
-        verify(mockDelete).setEnabled(eq(true));
-        verify(mockRenameCategory).setEnabled(eq(false));
         verify(mockRestoreApp).setEnabled(eq(true));
+        verify(mockDeleteApp).setEnabled(eq(false));
+        verify(mockCategorizeApp).setEnabled(eq(false));
+
     }
 
     @Test public void testOnAppCategorySelectionChanged_zeroSelected() {
@@ -99,10 +99,9 @@ public class BelphegorAppsToolbarImplTest {
         uut.onAppCategorySelectionChanged(mockAppGrpSelectionChangedEvent);
 
         verify(mockAddCategory).setEnabled(eq(true));
-        verify(mockCategorizeApp).setEnabled(eq(false));
-        verify(mockDelete).setEnabled(eq(false));
+        verify(mockDeleteCat).setEnabled(eq(false));
         verify(mockRenameCategory).setEnabled(eq(false));
-        verify(mockRestoreApp).setEnabled(eq(false));
+        verify(mockMoveCategory).setEnabled(eq(false));
     }
 
     @Test public void testOnAppCategorySelectionChanged_oneSelected() {
@@ -110,9 +109,8 @@ public class BelphegorAppsToolbarImplTest {
         uut.onAppCategorySelectionChanged(mockAppGrpSelectionChangedEvent);
 
         verify(mockAddCategory).setEnabled(eq(true));
-        verify(mockCategorizeApp).setEnabled(eq(false));
-        verify(mockDelete).setEnabled(eq(true));
+        verify(mockDeleteCat).setEnabled(eq(true));
         verify(mockRenameCategory).setEnabled(eq(true));
-        verify(mockRestoreApp).setEnabled(eq(false));
+        verify(mockMoveCategory).setEnabled(eq(true));
     }
 }

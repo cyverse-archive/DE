@@ -45,6 +45,7 @@ import com.sencha.gxt.widget.core.client.container.SimpleContainer;
 import java.util.List;
 
 /**
+ * @author jstroot
  */
 public class ArgumentEditorFactoryImpl implements AppTemplateForm.ArgumentEditorFactory {
     protected AppTemplateForm.ArgumentEditor subEditor;
@@ -69,7 +70,7 @@ public class ArgumentEditorFactoryImpl implements AppTemplateForm.ArgumentEditor
 
     @Inject
     public ArgumentEditorFactoryImpl() {
-    	con = new SimpleContainer();
+        con = new SimpleContainer();
         referenceGenomeProperties = GWT.create(ReferenceGenomeProperties.class);
     }
 
@@ -84,10 +85,11 @@ public class ArgumentEditorFactoryImpl implements AppTemplateForm.ArgumentEditor
         return new SampleArgumentEditor();
     }
 
-
     @Override
     public void flush() {
 
+        String tmp = "Temp flush string";
+        com.google.gwt.core.client.GWT.log("tmp");
     }
 
     @Override
@@ -189,12 +191,14 @@ public class ArgumentEditorFactoryImpl implements AppTemplateForm.ArgumentEditor
         if ((parent != null) && (parent instanceof ResizeContainer)) {
             ((ResizeContainer)parent).forceLayout();
         }
+        subEditor.disableValidations();
         chain.attach(value, subEditor);
+        subEditor.enableValidations();
     }
 
     private ListStore<ReferenceGenome> getReferenceGenomeStore() {
         if (refGenomeListStore == null) {
-            refGenomeListStore = new ListStore<ReferenceGenome>(referenceGenomeProperties.id());
+            refGenomeListStore = new ListStore<>(referenceGenomeProperties.id());
 
             appMetadataService.getReferenceGenomes(new AsyncCallback<List<ReferenceGenome>>() {
 
@@ -207,7 +211,7 @@ public class ArgumentEditorFactoryImpl implements AppTemplateForm.ArgumentEditor
                 public void onSuccess(List<ReferenceGenome> result) {
                     if (refGenomeListStore.getAll().isEmpty()) {
                         refGenomeListStore.addAll(result);
-                        refGenomeListStore.addSortInfo(new Store.StoreSortInfo<ReferenceGenome>(referenceGenomeProperties.nameValue(), SortDir.ASC));
+                        refGenomeListStore.addSortInfo(new Store.StoreSortInfo<>(referenceGenomeProperties.nameValue(), SortDir.ASC));
                     }
                 }
             });

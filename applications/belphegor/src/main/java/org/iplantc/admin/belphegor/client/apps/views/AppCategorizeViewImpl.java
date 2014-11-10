@@ -47,9 +47,8 @@ public class AppCategorizeViewImpl implements AppCategorizeView {
 
     final private Widget widget;
 
-    public AppCategorizeViewImpl() {
-        initCategoryTree();
-
+    public AppCategorizeViewImpl(boolean singleSelect) {
+        initCategoryTree(singleSelect);
         widget = uiBinder.createAndBindUi(this);
 
         addClearButton();
@@ -72,7 +71,7 @@ public class AppCategorizeViewImpl implements AppCategorizeView {
         return widget;
     }
 
-    private void initCategoryTree() {
+    private void initCategoryTree(boolean single) {
         treeStore = new TreeStore<>(new ModelKeyProvider<AppCategory>() {
 
             @Override
@@ -102,7 +101,7 @@ public class AppCategorizeViewImpl implements AppCategorizeView {
         });
 
         setTreeIcons();
-        tree.setCheckable(true);
+        tree.setCheckable(!single);
         tree.setCheckNodes(CheckNodes.LEAF);
     }
 
@@ -166,7 +165,10 @@ public class AppCategorizeViewImpl implements AppCategorizeView {
 
     @Override
     public List<AppCategory> getSelectedCategories() {
-        return tree.getCheckedSelection();
+        if (tree.isCheckable()) {
+            return tree.getCheckedSelection();
+        }
+        return tree.getSelectionModel().getSelection();
     }
 
     @Override
