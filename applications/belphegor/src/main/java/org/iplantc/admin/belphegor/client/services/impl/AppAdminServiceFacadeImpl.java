@@ -110,21 +110,6 @@ public class AppAdminServiceFacadeImpl implements AppAdminServiceFacade {
     }
 
     @Override
-    public void moveApplication(String applicationId, String groupId,
-                                AsyncCallback<String> callback) {
-        String address = APPS_ADMIN + "/" + applicationId;
-
-        JSONObject body = new JSONObject();
-        // XXX JDS - is this key necessary?
-        body.put("id", new JSONString(applicationId));
-        body.put("categoryId", new JSONString(groupId));
-
-        ServiceCallWrapper wrapper = new ServiceCallWrapper(PATCH, address,
-                                                            body.toString());
-        deService.getServiceData(wrapper, callback);
-    }
-
-    @Override
     public void moveCategory(String categoryId, String parentCategoryId,
                              AsyncCallback<String> callback) {
         String address = CATEGORIES_ADMIN + "/" + categoryId;

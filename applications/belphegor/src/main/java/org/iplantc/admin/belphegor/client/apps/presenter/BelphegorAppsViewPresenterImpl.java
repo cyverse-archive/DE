@@ -57,6 +57,7 @@ import com.sencha.gxt.widget.core.client.event.SelectEvent;
 import com.sencha.gxt.widget.core.client.event.SelectEvent.SelectHandler;
 import com.sencha.gxt.widget.core.client.form.TextField;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -589,25 +590,26 @@ public class BelphegorAppsViewPresenterImpl extends AppsViewPresenterImpl implem
 
     @Override
     public void moveApp(final AppCategory parentCategory, final App app) {
-        adminAppService.moveApplication(app.getId(),
-                                        parentCategory.getId(),
-                                        new AsyncCallback<String>() {
-
-                                            @Override
-                                            public void onSuccess(String result) {
-                                                // Refresh the catalog, so that the proper category
-                                                // counts
-                                                // display.
-                                                // FIXME JDS These events need to be common to
-                                                // ui-applications.
-                                                eventBus.fireEvent(new CatalogCategoryRefreshEvent());
-                                            }
-
-                                            @Override
-                                            public void onFailure(Throwable caught) {
-                                                ErrorHandler.post(errorStrings.moveApplicationError(app.getName()));
-                                            }
-                                        });
+        // adminAppService.categorizeApp(app.getId(),
+        // parentCategory.getId(),
+        // new AsyncCallback<String>() {
+        //
+        // @Override
+        // public void onSuccess(String result) {
+        // // Refresh the catalog, so that the proper category
+        // // counts
+        // // display.
+        // // FIXME JDS These events need to be common to
+        // // ui-applications.
+        // eventBus.fireEvent(new CatalogCategoryRefreshEvent());
+        // }
+        //
+        // @Override
+        // public void onFailure(Throwable caught) {
+        // ErrorHandler.post(errorStrings.moveApplicationError(app.getName()));
+        // }
+        // });
+        doCategorizeSelectedApp(app, Arrays.asList(parentCategory));
     }
 
     @Override

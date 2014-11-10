@@ -56,15 +56,6 @@ public interface AppAdminServiceFacade extends AppServiceFacade {
                                            AsyncCallback<String> callback);
 
     /**
-     * Moves an App with the given applicationId to the category with the given groupId.
-     *
-     * @param applicationId
-     * @param groupId
-     * @param callback
-     */
-    public abstract void moveApplication(String applicationId, String groupId, AsyncCallback<String> callback);
-
-    /**
      * Deletes an App with the given applicationId.
      *
      * @param applicationId
