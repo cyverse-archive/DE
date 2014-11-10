@@ -1,9 +1,6 @@
 package org.iplantc.de.client.services.impl;
 
-import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.DELETE;
-import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.GET;
-import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.POST;
-
+import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.*;
 import org.iplantc.de.client.models.DEProperties;
 import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.client.models.apps.AppCategory;
@@ -28,6 +25,8 @@ import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.json.client.JSONString;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.inject.Inject;
+import com.google.web.bindery.autobean.shared.Splittable;
+import com.google.web.bindery.autobean.shared.impl.StringQuoter;
 
 import com.sencha.gxt.data.shared.SortDir;
 
@@ -369,7 +368,9 @@ public class AppUserServiceFacadeImpl implements AppUserServiceFacade {
     public void copyApp(String appId, AsyncCallback<String> callback) {
         String address = APPS + "/" + appId + "/copy";
 
-        ServiceCallWrapper wrapper = new ServiceCallWrapper(GET, address);
+        // KLUDGE Have to send empty JSON body with POST request
+        Splittable split = StringQuoter.createSplittable();
+        ServiceCallWrapper wrapper = new ServiceCallWrapper(POST, address, split.getPayload());
         deServiceFacade.getServiceData(wrapper, callback);
     }
 
