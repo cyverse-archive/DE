@@ -22,7 +22,6 @@ import com.google.gwt.http.client.URL;
 import com.google.gwt.json.client.JSONNumber;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONParser;
-import com.google.gwt.json.client.JSONString;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.inject.Inject;
 import com.google.web.bindery.autobean.shared.Splittable;
@@ -293,9 +292,8 @@ public class AppUserServiceFacadeImpl implements AppUserServiceFacade {
         // call rating service, then delete comment from wiki page
         String address = APPS + "/" + appId + "/rating";
 
-        JSONObject body = new JSONObject();
-        body.put("analysis_id", new JSONString(appId)); //$NON-NLS-1$
-
+        // KLUDGE Have to send empty JSON body with POST request
+        Splittable body = StringQuoter.createSplittable();
         ServiceCallWrapper wrapper = new ServiceCallWrapper(DELETE, address, body.toString());
         deServiceFacade.getServiceData(wrapper, new AsyncCallback<String>() {
             @Override
@@ -350,17 +348,6 @@ public class AppUserServiceFacadeImpl implements AppUserServiceFacade {
         } else {
             wrapper = new ServiceCallWrapper(DELETE, address, body.toString());
         }
-        deServiceFacade.getServiceData(wrapper, callback);
-    }
-
-    @Override
-    public void appExportable(String appId, AsyncCallback<String> callback) {
-        String address = deProperties.getUnproctedMuleServiceBaseUrl() + "can-export-analysis";
-
-        JSONObject body = new JSONObject();
-        body.put("analysis_id", new JSONString(appId));
-
-        ServiceCallWrapper wrapper = new ServiceCallWrapper(POST, address, body.toString());
         deServiceFacade.getServiceData(wrapper, callback);
     }
 
