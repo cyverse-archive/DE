@@ -13,11 +13,11 @@ import org.iplantc.de.commons.client.views.window.configs.PathListWindowConfig;
 import org.iplantc.de.commons.client.views.window.configs.TabularFileViewerWindowConfig;
 import org.iplantc.de.diskResource.client.events.DiskResourceSelectionChangedEvent;
 import org.iplantc.de.diskResource.client.events.FolderSelectionEvent;
+import org.iplantc.de.diskResource.client.events.RootFoldersRetrievedEvent;
 import org.iplantc.de.diskResource.client.events.SavedSearchesRetrievedEvent;
 import org.iplantc.de.diskResource.client.presenters.proxy.FolderContentsLoadConfig;
 import org.iplantc.de.diskResource.client.presenters.proxy.SelectFolderByPathLoadHandler;
 import org.iplantc.de.diskResource.client.search.events.DeleteSavedSearchClickedEvent;
-import org.iplantc.de.diskResource.client.search.events.SaveDiskResourceQueryClickedEvent;
 import org.iplantc.de.diskResource.client.search.events.SubmitDiskResourceQueryEvent;
 import org.iplantc.de.diskResource.client.search.events.SubmitDiskResourceQueryEvent.HasSubmitDiskResourceQueryEventHandlers;
 import org.iplantc.de.diskResource.client.search.views.DiskResourceSearchField;
@@ -66,11 +66,13 @@ public interface DiskResourceView extends IsWidget,
                                 DiskResourceSelectionChangedEvent.HasDiskResourceSelectionChangedEventHandlers,
                                 FolderSelectionEvent.HasFolderSelectionEventHandlers,
                                 DiskResourceSelectionChangedEvent.DiskResourceSelectionChangedEventHandler,
-                                SaveDiskResourceQueryClickedEvent.SaveDiskResourceQueryClickedEventHandler,
                                 SubmitDiskResourceQueryEvent.SubmitDiskResourceQueryEventHandler,
                                 ShareByDataLinkEvent.ShareByDataLinkEventHandler,
                                 RequestDiskResourceFavoriteEvent.RequestDiskResourceFavoriteEventHandler,
                                 ManageCommentsEvent.ManageCommentsEventHandler {
+
+        String FAVORITES_FOLDER_PATH = "/favorites";
+        String FAVORITES_FOLDER_NAME = "Favorites";
 
         void manageSelectedResourceComments();
 
@@ -230,6 +232,7 @@ public interface DiskResourceView extends IsWidget,
      */
     public interface FolderRpcProxy extends DataProxy<Folder, List<Folder>>,
                                             HasSubmitDiskResourceQueryEventHandlers,
+                                            RootFoldersRetrievedEvent.HasRootFoldersRetrievedEventHandlers,
                                             SavedSearchesRetrievedEvent.HasSavedSearchesRetrievedEventHandlers{ }
 
     interface FolderContentsRpcProxy extends DataProxy<FolderContentsLoadConfig, PagingLoadResult<DiskResource>>{
