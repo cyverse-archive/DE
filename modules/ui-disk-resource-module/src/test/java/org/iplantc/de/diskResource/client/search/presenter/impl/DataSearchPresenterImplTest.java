@@ -384,7 +384,7 @@ public class DataSearchPresenterImplTest {
 
         verify(mockEvent).getSavedSearch();
 
-        verify(searchService).deleteQueryTemplates(eq(Collections.<DiskResourceQueryTemplate> emptyList()),
+        verify(searchService).deleteQueryTemplates(eq(Lists.newArrayList(mockSavedSearch)),
                                                    drqtListAsyncCaptor.capture());
 
         verifyNoMoreInteractions(searchService);
