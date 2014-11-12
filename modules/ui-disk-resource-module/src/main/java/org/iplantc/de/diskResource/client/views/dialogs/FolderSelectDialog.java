@@ -1,55 +1,120 @@
 package org.iplantc.de.diskResource.client.views.dialogs;
 
 import org.iplantc.de.client.models.HasPath;
+import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.client.models.diskResources.Folder;
+import org.iplantc.de.client.models.viewer.InfoType;
 import org.iplantc.de.commons.client.views.gxt3.dialogs.IPlantDialog;
+import org.iplantc.de.diskResource.client.events.DiskResourceSelectionChangedEvent;
 import org.iplantc.de.diskResource.client.events.FolderSelectionEvent;
 import org.iplantc.de.diskResource.client.gin.factory.DiskResourcePresenterFactory;
 import org.iplantc.de.diskResource.client.views.DiskResourceView;
-import org.iplantc.de.resources.client.messages.I18N;
 
+import com.google.common.base.Preconditions;
 import com.google.gwt.user.client.TakesValue;
-import com.google.gwt.user.client.ui.HasEnabled;
-import com.google.gwt.user.client.ui.HasValue;
 import com.google.inject.assistedinject.Assisted;
 import com.google.inject.assistedinject.AssistedInject;
 
 import com.sencha.gxt.widget.core.client.form.FieldLabel;
 import com.sencha.gxt.widget.core.client.form.TextField;
 
+import java.util.List;
+
 /**
  * An <code>IPlantDialog</code> which wraps the standard <code>DiskResourceView</code> for folder
  * selection.
- *
+ * <p/>
  * Users of this class are responsible adding hide handlers to get the selected folder.
  *
  * @author jstroot
- *
  */
 public class FolderSelectDialog extends IPlantDialog implements TakesValue<Folder> {
 
-    private final DiskResourceView.Presenter presenter;
+    public interface FolderSelectDialogAppearance {
+        String headerText();
 
+        String selectorFieldLabel();
+    }
+
+    private static final class DiskResourceSelectionChangedHandler implements DiskResourceSelectionChangedEvent.DiskResourceSelectionChangedEventHandler {
+        private final DiskResourceView.Presenter presenter;
+        private final TakesValue<Folder> dlg;
+
+        public DiskResourceSelectionChangedHandler(DiskResourceView.Presenter presenter,
+                                                   TakesValue<Folder> dlg) {
+            this.presenter = presenter;
+            this.dlg = dlg;
+        }
+
+        @Override
+        public void onDiskResourceSelectionChanged(DiskResourceSelectionChangedEvent event) {
+            Preconditions.checkNotNull(event.getSelection());
+            Preconditions.checkArgument(event.getSelection().size() == 1);
+
+            List<DiskResource> selection = event.getSelection();
+            Folder selectedFolder;
+            if (selection.isEmpty()) {
+                selectedFolder = null;
+            }else if(selection.get(0) instanceof Folder){
+                // good to go
+                selectedFolder = (Folder) selection.get(0);
+            } else if(isSupportedInfoType(selection.get(0))){
+                // Make path list item look like a folder
+                selectedFolder = presenter.convertToFolder(selection.get(0));
+            } else {
+                selectedFolder = null;
+            }
+
+            dlg.setValue(selectedFolder);
+        }
+
+        boolean isSupportedInfoType(DiskResource selectedItem){
+            if(selectedItem == null){
+                return false;
+            }
+            InfoType infoType = InfoType.fromTypeString(selectedItem.getInfoType());
+            return InfoType.PATH_LIST.equals(infoType);
+        }
+    }
+
+    private static final class FolderSelectionChangedHandler implements FolderSelectionEvent.FolderSelectionEventHandler {
+        private final TakesValue<Folder> dlg;
+
+        private FolderSelectionChangedHandler(final TakesValue<Folder> dlg) {
+            this.dlg = dlg;
+        }
+
+        @Override
+        public void onFolderSelected(FolderSelectionEvent event) {
+            Folder diskResource = event.getSelectedFolder();
+            dlg.setValue(diskResource);
+        }
+    }
+
+    private final DiskResourceView.Presenter presenter;
     private Folder selectedFolder;
+    private TextField selectedFolderTextField;
 
     @AssistedInject
-    FolderSelectDialog(final DiskResourcePresenterFactory presenterFactory){
-        this(presenterFactory, null);
+    FolderSelectDialog(final DiskResourcePresenterFactory presenterFactory,
+                       final FolderSelectDialogAppearance appearance) {
+        this(presenterFactory, appearance, null);
     }
 
     @AssistedInject
     FolderSelectDialog(final DiskResourcePresenterFactory presenterFactory,
-                       @Assisted final HasPath folderToSelect){
+                       final FolderSelectDialogAppearance appearance,
+                       @Assisted final HasPath folderToSelect) {
 
         // Disable Ok button by default.
         getOkButton().setEnabled(false);
 
         setResizable(true);
         setSize("640", "480");
-        setHeadingText(I18N.DISPLAY.selectAFolder());
+        setHeadingText(appearance.headerText());
 
-        TextField selectedFolderField = new TextField();
-        final FieldLabel fl = new FieldLabel(selectedFolderField, I18N.DISPLAY.selectedFolder());
+        selectedFolderTextField = new TextField();
+        final FieldLabel fl = new FieldLabel(selectedFolderTextField, appearance.selectorFieldLabel());
         // Tell the presenter to add the view with the toolbar and details panel hidden, etc.
         presenter = presenterFactory.createSelector(true,
                                                     true,
@@ -58,55 +123,38 @@ public class FolderSelectDialog extends IPlantDialog implements TakesValue<Folde
                                                     folderToSelect,
                                                     fl);
 
-        presenter.addFolderSelectedEventHandler(new FolderSelectionChangedHandler(this, selectedFolderField, getOkButton()));
+        presenter.addFolderSelectedEventHandler(new FolderSelectionChangedHandler(this));
+        presenter.addDiskResourceSelectionChangedEventHandler(new DiskResourceSelectionChangedHandler(presenter,
+                                                                                                      this));
         presenter.go(this);
     }
 
     public void cleanUp() {
         presenter.cleanUp();
     }
-    
-    private final class FolderSelectionChangedHandler implements FolderSelectionEvent.FolderSelectionEventHandler {
-        private final HasValue<String> textBox;
-        private final HasEnabled okButton;
-        private final TakesValue<Folder> dlg;
 
-        private FolderSelectionChangedHandler(final TakesValue<Folder> dlg, final HasValue<String> textBox, final HasEnabled okButton) {
-            this.textBox = textBox;
-            this.okButton = okButton;
-            this.dlg = dlg;
-        }
-
-        @Override
-        public void onFolderSelected(FolderSelectionEvent event) {
-            Folder diskResource = event.getSelectedFolder();
-            if (diskResource == null) {
-                // Disable the okButton
-                okButton.setEnabled(false);
-                return;
-            }
-
-            dlg.setValue(diskResource);
-            textBox.setValue(diskResource.getName());
-            // Enable the okButton
-            okButton.setEnabled(true);
-        }
-    }
-
-    
-    @Override
-    public void onHide() {
-        presenter.cleanUp();
-    }
-    
     @Override
     public Folder getValue() {
         return selectedFolder;
     }
 
     @Override
+    public void onHide() {
+        presenter.cleanUp();
+    }
+
+    @Override
     public void setValue(Folder value) {
         this.selectedFolder = value;
+        if(value == null){
+            selectedFolderTextField.clear();
+            getOkButton().setEnabled(false);
+            return;
+        }
+
+        selectedFolderTextField.setValue(value.getName());
+        getOkButton().setEnabled(true);
+
     }
 
 }

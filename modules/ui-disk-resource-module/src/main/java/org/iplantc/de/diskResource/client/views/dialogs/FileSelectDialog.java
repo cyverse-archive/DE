@@ -9,7 +9,6 @@ import org.iplantc.de.diskResource.client.events.DiskResourceSelectionChangedEve
 import org.iplantc.de.diskResource.client.gin.factory.DiskResourcePresenterFactory;
 import org.iplantc.de.diskResource.client.views.DiskResourceView;
 import org.iplantc.de.diskResource.client.views.DiskResourceView.Presenter;
-import org.iplantc.de.resources.client.messages.I18N;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
@@ -41,31 +40,41 @@ import java.util.Set;
  */
 public class FileSelectDialog extends IPlantDialog implements TakesValue<List<File>> {
 
+    public interface FileSelectDialogAppearance {
+        String headerText();
+        String selectorFieldLabel();
+    }
+
+
     private final DiskResourceView.Presenter presenter;
     private List<File> selectedFileIds;
 
     @AssistedInject
     FileSelectDialog(final DiskResourcePresenterFactory presenterFactory,
+                     final FileSelectDialogAppearance appearance,
                      @Assisted boolean singleSelect){
-        this(presenterFactory, singleSelect, null, null);
+        this(presenterFactory, appearance, singleSelect, null, null);
     }
 
     @AssistedInject
     FileSelectDialog(final DiskResourcePresenterFactory presenterFactory,
+                     final FileSelectDialogAppearance appearance,
                      @Assisted boolean singleSelect,
                      @Assisted List<DiskResource> diskResourcesToSelect) {
-        this(presenterFactory, singleSelect, null, diskResourcesToSelect);
+        this(presenterFactory, appearance, singleSelect, null, diskResourcesToSelect);
     }
 
     @AssistedInject
     FileSelectDialog(final DiskResourcePresenterFactory presenterFactory,
+                     final FileSelectDialogAppearance appearance,
                      @Assisted boolean singleSelect,
                      @Assisted HasPath folderToSelect) {
-        this(presenterFactory, singleSelect, folderToSelect, null);
+        this(presenterFactory, appearance, singleSelect, folderToSelect, null);
     }
 
     @AssistedInject
     FileSelectDialog(final DiskResourcePresenterFactory presenterFactory,
+                     final FileSelectDialogAppearance appearance,
                      @Assisted boolean singleSelect,
                      @Assisted HasPath folderToSelect,
                      @Assisted List<DiskResource> diskResourcesToSelect) {
@@ -75,10 +84,10 @@ public class FileSelectDialog extends IPlantDialog implements TakesValue<List<Fi
 
         setResizable(true);
         setSize("640", "480");
-        setHeadingText(I18N.DISPLAY.selectAFile());
+        setHeadingText(appearance.headerText());
 
         TextField selectedFileField = new TextField();
-        final FieldLabel fl = new FieldLabel(selectedFileField, I18N.DISPLAY.selectedFile());
+        final FieldLabel fl = new FieldLabel(selectedFileField, appearance.selectorFieldLabel());
         // Tell the presenter to add the view with the north and east widgets hidden.
         presenter = presenterFactory.createSelector(true,
                                                     true,

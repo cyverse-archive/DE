@@ -102,6 +102,8 @@ import com.google.inject.assistedinject.Assisted;
 import com.google.inject.assistedinject.AssistedInject;
 import com.google.web.bindery.autobean.shared.AutoBean;
 import com.google.web.bindery.autobean.shared.AutoBeanCodex;
+import com.google.web.bindery.autobean.shared.AutoBeanUtils;
+import com.google.web.bindery.autobean.shared.Splittable;
 
 import com.sencha.gxt.data.shared.TreeStore;
 import com.sencha.gxt.data.shared.loader.LoadHandler;
@@ -130,9 +132,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 /**
- * 
  * @author jstroot
- * 
  */
 public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
                                                   DiskResourceSelectionChangedEvent.DiskResourceSelectionChangedEventHandler,
@@ -156,7 +156,6 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
     final List<HandlerRegistration> dreventHandlers = new ArrayList<>();
 
     private final HashMap<EventHandler, HandlerRegistration> registeredHandlers = new HashMap<>();
-    private final Builder builder;
     protected boolean isFilePreviewEnabled = true;
     private final IplantDisplayStrings displayStrings;
     private final EventBus eventBus;
@@ -260,8 +259,6 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
         this.displayStrings = displayStrings;
         this.eventBus = eventBus;
         this.dataSearchPresenter = dataSearchPresenter;
-
-        builder = new MyBuilder(this);
 
         // Initialize View's grid and tree loaders
         DiskResourceView.FolderRpcProxy folderRpcProxy = folderRpcProxyFactory.create(this);
@@ -405,6 +402,14 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
     @Override
     public void onManageComments(ManageCommentsEvent event) {
         doManageDiskResourceComments(event.getDiskResource());
+    }
+
+    @Override
+    public Folder convertToFolder(DiskResource selectedItem) {
+        AutoBean<DiskResource> autoBean = AutoBeanUtils.getAutoBean(selectedItem);
+        Splittable encode = AutoBeanCodex.encode(autoBean);
+        AutoBean<Folder> decode = AutoBeanCodex.decode(drFactory, Folder.class, encode);
+        return decode.as();
     }
 
     @Override
@@ -1155,64 +1160,8 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
     }
 
     @Override
-    public Builder builder() {
-        return builder;
-    }
-
-    @Override
     public void doSubmitDiskResourceQuery(SubmitDiskResourceQueryEvent event) {
         doSelectFolder(event.getQueryTemplate());
-    }
-
-    private class MyBuilder implements Builder {
-
-        private final DiskResourceView.Presenter presenter;
-
-        public MyBuilder(DiskResourceView.Presenter presenter) {
-            this.presenter = presenter;
-        }
-
-        @Override
-        public void go(HasOneWidget container) {
-            presenter.go(container);
-        }
-
-        @Override
-        public Builder hideNorth() {
-            presenter.getView().setNorthWidgetHidden(true);
-            return this;
-        }
-
-        @Override
-        public Builder hideWest() {
-            presenter.getView().setWestWidgetHidden(true);
-            return this;
-        }
-
-        @Override
-        public Builder hideCenter() {
-            presenter.getView().setCenterWidgetHidden(true);
-            return this;
-        }
-
-        @Override
-        public Builder hideEast() {
-            presenter.getView().setEastWidgetHidden(true);
-            return this;
-        }
-
-        @Override
-        public Builder singleSelect() {
-            presenter.getView().setSingleSelect();
-            return this;
-        }
-
-        @Override
-        public Builder disableFilePreview() {
-            presenter.disableFilePreview();
-            return this;
-        }
-
     }
 
     @Override

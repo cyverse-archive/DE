@@ -74,23 +74,11 @@ public interface DiskResourceView extends IsWidget,
         String FAVORITES_FOLDER_PATH = "/favorites";
         String FAVORITES_FOLDER_NAME = "Favorites";
 
+        Folder convertToFolder(DiskResource selectedItem);
+
         void manageSelectedResourceComments();
 
         void setViewDebugId(String baseID);
-
-        interface Builder extends org.iplantc.de.commons.client.presenter.Presenter {
-            Builder hideNorth();
-
-            Builder hideWest();
-
-            Builder hideCenter();
-
-            Builder hideEast();
-
-            Builder singleSelect();
-
-            Builder disableFilePreview();
-        }
 
         void createNewFolder();
 
@@ -132,8 +120,6 @@ public interface DiskResourceView extends IsWidget,
          * Method to clean up all the events when it is no longer required.
          */
         void cleanUp();
-
-        Builder builder();
 
         void manageSelectedResourceCollaboratorSharing();
 

@@ -482,7 +482,13 @@ public abstract class AbstractDiskResourceSelector<R extends DiskResource> exten
         permissionEditorError = null;
         existsEditorError = null;
         final IplantErrorStrings errorStrings = I18N.ERROR;
-        drServiceFacade.getStat(DiskResourceUtil.asStringPathTypeMap(Arrays.asList(value), TYPE.FILE),
+        FastMap<TYPE> asStringPathTypeMap = DiskResourceUtil.asStringPathTypeMap(Arrays.asList(value), TYPE.FILE);
+        if(Strings.isNullOrEmpty(value.getPath())
+               || asStringPathTypeMap.isEmpty()){
+            // Do not make service call if there are no paths
+            return;
+        }
+        drServiceFacade.getStat(asStringPathTypeMap,
                                 new AsyncCallback<FastMap<DiskResource>>() {
 
                                     @Override

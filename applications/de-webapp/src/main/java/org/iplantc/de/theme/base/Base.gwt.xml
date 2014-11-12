@@ -77,4 +77,10 @@
     <replace-with class="org.iplantc.de.theme.base.client.diskResource.DiskResourceViewToolbarDefaultAppearance">
         <when-type-is class="org.iplantc.de.diskResource.client.views.DiskResourceView.DiskResourceViewToolbarAppearance"/>
     </replace-with>
+    <replace-with class="org.iplantc.de.theme.base.client.diskResource.dialogs.FolderSelectDialogDefaultAppearance">
+        <when-type-is class="org.iplantc.de.diskResource.client.views.dialogs.FolderSelectDialog.FolderSelectDialogAppearance"/>
+    </replace-with>
+    <replace-with class="org.iplantc.de.theme.base.client.diskResource.dialogs.FileSelectDialogDefaultAppearance">
+        <when-type-is class="org.iplantc.de.diskResource.client.views.dialogs.FileSelectDialog.FileSelectDialogAppearance"/>
+    </replace-with>
 </module>
