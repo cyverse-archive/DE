@@ -13,11 +13,22 @@ import com.google.common.collect.Lists;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwtmockito.GxtMockitoTestRunner;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyListOf;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.atLeastOnce;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.when;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -373,7 +384,8 @@ public class DataSearchPresenterImplTest {
 
         verify(mockEvent).getSavedSearch();
 
-        verify(searchService).saveQueryTemplates(eq(Collections.<DiskResourceQueryTemplate> emptyList()), drqtListAsyncCaptor.capture());
+        verify(searchService).deleteQueryTemplates(eq(Collections.<DiskResourceQueryTemplate> emptyList()),
+                                                   drqtListAsyncCaptor.capture());
 
         verifyNoMoreInteractions(searchService);
     }
