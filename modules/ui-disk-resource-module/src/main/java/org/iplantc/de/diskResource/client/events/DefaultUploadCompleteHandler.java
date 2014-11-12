@@ -1,15 +1,14 @@
 package org.iplantc.de.diskResource.client.events;
 
-import org.iplantc.de.client.gin.ServicesInjector;
 import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.client.models.diskResources.DiskResourceAutoBeanFactory;
 import org.iplantc.de.client.models.diskResources.File;
+import org.iplantc.de.client.services.UserSessionServiceFacade;
 import org.iplantc.de.client.util.JsonUtil;
 import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.resources.client.messages.I18N;
 
 import com.google.common.collect.Lists;
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.json.client.JSONBoolean;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONString;
@@ -26,6 +25,7 @@ import com.google.web.bindery.autobean.shared.AutoBeanCodex;
  */
 public class DefaultUploadCompleteHandler extends UploadCompleteHandler {
 
+    private final UserSessionServiceFacade userSessionService;
     private final DiskResourceAutoBeanFactory drFactory;
 
     /**
@@ -33,9 +33,12 @@ public class DefaultUploadCompleteHandler extends UploadCompleteHandler {
      *
      * @param idParent the parent identifier to upload the file
      */
-    public DefaultUploadCompleteHandler(String idParent) {
+    public DefaultUploadCompleteHandler(final UserSessionServiceFacade userSessionService,
+                                        final DiskResourceAutoBeanFactory drFactory,
+                                        String idParent) {
         super(idParent);
-        drFactory = GWT.create(DiskResourceAutoBeanFactory.class);
+        this.userSessionService = userSessionService;
+        this.drFactory = drFactory;
     }
 
     public JSONObject build(final JSONObject json) {
@@ -84,7 +87,7 @@ public class DefaultUploadCompleteHandler extends UploadCompleteHandler {
             json.put("user", new JSONString(UserInfo.getInstance().getUsername()));
             json.put("email", JSONBoolean.getInstance(false));
 
-            ServicesInjector.INSTANCE.getUserSessionServiceFacade().postClientNotification(json, new AsyncCallback<String>() {
+            userSessionService.postClientNotification(json, new AsyncCallback<String>() {
 
                 @Override
                 public void onSuccess(String result) {

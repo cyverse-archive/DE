@@ -9,14 +9,15 @@ import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.client.util.CommonModelUtils;
 import org.iplantc.de.client.util.DiskResourceUtil;
 import org.iplantc.de.commons.client.events.LastSelectedPathChangedEvent;
+import org.iplantc.de.diskResource.client.gin.factory.DiskResourceSelectorDialogFactory;
 import org.iplantc.de.diskResource.client.views.dialogs.FolderSelectDialog;
-import org.iplantc.de.resources.client.messages.I18N;
 import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 
 import com.google.common.base.Strings;
 import com.google.gwt.core.shared.GWT;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.user.client.TakesValue;
+import com.google.inject.Inject;
 import com.google.web.bindery.autobean.shared.AutoBeanCodex;
 
 import com.sencha.gxt.dnd.core.client.DndDropEvent;
@@ -51,13 +52,15 @@ public class FolderSelectorField extends AbstractDiskResourceSelector<Folder> {
         }
     }
 
-    UserSettings userSettings = UserSettings.getInstance();
-    private final IplantDisplayStrings displayStrings;
-    private final EventBus eventBus;
+    @Inject UserSettings userSettings;
+    @Inject EventBus eventBus;
+    @Inject DiskResourceSelectorDialogFactory selectorDialogFactory;
 
-    public FolderSelectorField() {
-        displayStrings = I18N.DISPLAY;
-        eventBus = EventBus.getInstance();
+    final IplantDisplayStrings displayStrings;
+
+    @Inject
+    FolderSelectorField(final IplantDisplayStrings displayStrings) {
+        this.displayStrings = displayStrings;
         setEmptyText(displayStrings.selectAFolder());
     }
 
@@ -97,7 +100,7 @@ public class FolderSelectorField extends AbstractDiskResourceSelector<Folder> {
                 value = CommonModelUtils.createHasPathFromString(path);
             }
         }
-        folderSD = new FolderSelectDialog(value);
+        folderSD = selectorDialogFactory.createFolderSelector(value);
         folderSD.addHideHandler(new FolderDialogHideHandler(folderSD));
         folderSD.show();
     }

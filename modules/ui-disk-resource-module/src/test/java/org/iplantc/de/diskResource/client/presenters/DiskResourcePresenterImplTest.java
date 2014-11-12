@@ -73,12 +73,13 @@ public class DiskResourcePresenterImplTest {
     @Before public void setUp() {
         setupMocks();
         uut = new DiskResourcePresenterImpl(mockViewFactory,
-                                            mockFolderRpcFactory, mockFolderContentsRpcProxy,
-                                            mockDiskResourceService, mockFileSystemMetadataService,
-                                            mockDisplayStrings, errorStringsMock, helpStringsMock,
-                                            mockFactory, mockDlFactory,
-                                            mockUserInfo, mockDataSearchPresenter,
-                                            mockEventBus, mockAnnouncer);
+                                            mockFolderRpcFactory,
+                                            mockFolderContentsRpcProxy,
+                                            mockFactory,
+                                            mockDataSearchPresenter,
+                                            mockDisplayStrings,
+                                            mockEventBus);
+        uut.announcer = mockAnnouncer;
     }
 
     /**

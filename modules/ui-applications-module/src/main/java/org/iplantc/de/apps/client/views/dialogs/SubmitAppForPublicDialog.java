@@ -4,8 +4,7 @@
 package org.iplantc.de.apps.client.views.dialogs;
 
 import org.iplantc.de.apps.client.events.AppCategoryCountUpdateEvent;
-import org.iplantc.de.apps.client.gin.AppsInjector;
-import org.iplantc.de.apps.client.views.SubmitAppForPublicUseView.Presenter;
+import org.iplantc.de.apps.client.views.SubmitAppForPublicUseView;
 import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.util.JsonUtil;
@@ -65,16 +64,16 @@ public class SubmitAppForPublicDialog extends IPlantDialog {
         return  "";
     }
     
-    public SubmitAppForPublicDialog(final App selectedApp) {
+    public SubmitAppForPublicDialog(final App selectedApp,
+                                    final SubmitAppForPublicUseView.Presenter presenter) {
         initDialog();
-        final Presenter p = AppsInjector.INSTANCE.getSubmitAppForPublixUsePresenter();
-        p.go(this, selectedApp, new SubmitAppForPublicCallbackImpl());
+        presenter.go(this, selectedApp, new SubmitAppForPublicCallbackImpl());
         setOkButtonText(I18N.DISPLAY.submit());
         addOkButtonSelectHandler(new SelectHandler() {
 
             @Override
             public void onSelect(SelectEvent event) {
-                p.onSubmit();
+                presenter.onSubmit();
             }
         });
         addCancelButtonSelectHandler(new SelectHandler() {

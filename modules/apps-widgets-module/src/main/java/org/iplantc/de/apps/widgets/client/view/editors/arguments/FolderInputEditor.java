@@ -7,14 +7,19 @@ import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.diskResource.client.views.widgets.DiskResourceSelector.HasDisableBrowseButtons;
 import org.iplantc.de.diskResource.client.views.widgets.FolderSelectorField;
 
+import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
+
 public class FolderInputEditor extends AbstractArgumentEditor implements HasDisableBrowseButtons {
     private final ArgumentEditorConverter<Folder> editorAdapter;
     private final FolderSelectorField folderSelector;
 
-    public FolderInputEditor(AppTemplateWizardAppearance appearance) {
+    @Inject
+    FolderInputEditor(final FolderSelectorField folderSelector,
+                      @Assisted AppTemplateWizardAppearance appearance) {
         super(appearance);
-        folderSelector = new FolderSelectorField();
-        editorAdapter = new ArgumentEditorConverter<Folder>(folderSelector, new SplittableToFolderConverter());
+        this.folderSelector = folderSelector;
+        editorAdapter = new ArgumentEditorConverter<>(folderSelector, new SplittableToFolderConverter());
 
         argumentLabel.setWidget(editorAdapter);
     }

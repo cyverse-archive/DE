@@ -2,7 +2,6 @@ package org.iplantc.de.pipelines.client.presenter;
 
 import org.iplantc.de.apps.client.events.AppCategoryCountUpdateEvent;
 import org.iplantc.de.apps.client.events.AppUpdatedEvent;
-import org.iplantc.de.apps.client.gin.AppsInjector;
 import org.iplantc.de.apps.client.views.AppsView;
 import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.gin.ServicesInjector;
@@ -103,9 +102,11 @@ public class PipelineViewPresenter implements Presenter, PipelineView.Presenter,
     private final Command onPublishCallback;
     private final PipelineAutoBeanUtil utils = new PipelineAutoBeanUtil();
 
-    public PipelineViewPresenter(PipelineView view, Command onPublishCallback) {
+    public PipelineViewPresenter(PipelineView view, Command onPublishCallback,
+                                 AppsView.Presenter appsPresenter) {
         this.view = view;
         this.onPublishCallback = onPublishCallback;
+        this.appsPresenter = appsPresenter;
 
         toolbar = new PipelineViewToolbarImpl();
 
@@ -126,8 +127,6 @@ public class PipelineViewPresenter implements Presenter, PipelineView.Presenter,
     private void initAppsView() {
         appSelectView = new AppSelectionDialog();
         appSelectView.setPresenter(this);
-
-        appsPresenter = AppsInjector.INSTANCE.getAppsViewPresenter();
 
         initAppsGridDragHandler(appsPresenter.getAppsGrid());
         initPipelineBuilderDropHandler(view.getBuilderDropContainer());

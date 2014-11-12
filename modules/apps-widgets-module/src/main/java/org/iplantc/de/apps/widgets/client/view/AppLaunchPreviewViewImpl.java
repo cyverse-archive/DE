@@ -17,21 +17,22 @@ import com.google.inject.Inject;
 import com.sencha.gxt.widget.core.client.Window;
 import com.sencha.gxt.widget.core.client.event.SelectEvent;
 
+/**
+ * @author jstroot
+ */
 public class AppLaunchPreviewViewImpl extends Window implements AppLaunchPreviewView {
     
     @UiTemplate("AppLaunchView.ui.xml")
     interface AppWizardPreviewUiBinder extends UiBinder<Widget, AppLaunchPreviewViewImpl> {}
-    interface EditorDriver extends SimpleBeanEditorDriver<AppTemplate, AppLaunchPreviewView> {
-    }
+    interface EditorDriver extends SimpleBeanEditorDriver<AppTemplate, AppLaunchPreviewView> { }
 
     @Ignore
-    @UiField(provided = true)
-    AppTemplateForm wizard;
+    @UiField(provided = true) AppTemplateForm wizard;
 
     private final EditorDriver editorDriver = GWT.create(EditorDriver.class);
 
     @Inject
-    public AppLaunchPreviewViewImpl(final AppWizardPreviewUiBinder binder, final AppTemplateForm wizard) {
+    AppLaunchPreviewViewImpl(final AppWizardPreviewUiBinder binder, final AppTemplateForm wizard) {
         this.wizard = wizard;
         setWidget(binder.createAndBindUi(this));
         setSize("640", "375");

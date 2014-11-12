@@ -4,8 +4,8 @@ import org.iplantc.de.analysis.client.events.SaveAnalysisParametersEvent;
 import org.iplantc.de.client.models.IsHideable;
 import org.iplantc.de.client.models.IsMaskable;
 import org.iplantc.de.client.models.analysis.AnalysisParameter;
-import org.iplantc.de.client.services.FileEditorServiceFacade;
 import org.iplantc.de.commons.client.views.gxt3.dialogs.IPlantDialog;
+import org.iplantc.de.diskResource.client.gin.factory.DiskResourceSelectorDialogFactory;
 import org.iplantc.de.diskResource.client.views.dialogs.SaveAsDialog;
 import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 
@@ -16,6 +16,8 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
 
 import com.sencha.gxt.data.shared.ListStore;
 import com.sencha.gxt.widget.core.client.button.TextButton;
@@ -39,39 +41,28 @@ public class AnalysisParamView implements IsWidget, SaveAnalysisParametersEvent.
     interface AnalysisParamViewUiBinder extends UiBinder<Widget, AnalysisParamView> {
     }
 
-    @UiField(provided = true)
-    final ListStore<AnalysisParameter> listStore;
     private final IplantDisplayStrings displayStrings;
-    private final FileEditorServiceFacade fileEditorService;
 
-    @UiField(provided = true)
-    final ColumnModel<AnalysisParameter> cm;
-
-    @UiField
-    Grid<AnalysisParameter> grid;
-
-    @UiField
-    BorderLayoutContainer con;
-
-    @UiField
-    ToolBar menuToolBar;
-
-    @UiField
-    BorderLayoutData northData;
-
-    @UiField
-    IPlantDialog dialog;
-
-    @UiField
-    TextButton btnSave;
+    @UiField(provided = true) final ListStore<AnalysisParameter> listStore;
+    @UiField(provided = true) final ColumnModel<AnalysisParameter> cm;
+    @UiField Grid<AnalysisParameter> grid;
+    @UiField BorderLayoutContainer con;
+    @UiField ToolBar menuToolBar;
+    @UiField BorderLayoutData northData;
+    @UiField IPlantDialog dialog;
+    @UiField TextButton btnSave;
 
     private final Widget widget;
 
-    public AnalysisParamView(ListStore<AnalysisParameter> listStore, ColumnModel<AnalysisParameter> cm, IplantDisplayStrings displayStrings, final FileEditorServiceFacade fileEditorService) {
+    @Inject DiskResourceSelectorDialogFactory dialogFactory;
+
+    @Inject
+    AnalysisParamView(final IplantDisplayStrings displayStrings,
+                      @Assisted final AnalysisParamViewColumnModel cm,
+                      @Assisted final ListStore<AnalysisParameter> listStore) {
         this.cm = cm;
         this.listStore = listStore;
         this.displayStrings = displayStrings;
-        this.fileEditorService = fileEditorService;
         this.widget = uiBinder.createAndBindUi(this);
         grid.getView().setEmptyText(displayStrings.noParameters());
     }
@@ -100,28 +91,28 @@ public class AnalysisParamView implements IsWidget, SaveAnalysisParametersEvent.
 
     @UiHandler("btnSave")
     void onSaveClick(SelectEvent event) {
-        final SaveAsDialog saveDialog = new SaveAsDialog(null);
-        saveDialog.addOkButtonSelectHandler(new SelectHandler() {
+        final SaveAsDialog saveAsDialog = dialogFactory.createSaveAsDialog(null);
+        saveAsDialog.addOkButtonSelectHandler(new SelectHandler() {
 
             @Override
             public void onSelect(SelectEvent event) {
-                if(saveDialog.isValid()) {
+                if (saveAsDialog.isValid()) {
                     String fileContents = writeTabFile();
-                    saveFile(saveDialog.getSelectedFolder().getPath() + "/" + saveDialog.getFileName(),
-                                    fileContents, saveDialog, saveDialog);
+                    saveFile(saveAsDialog.getSelectedFolder().getPath() + "/" + saveAsDialog.getFileName(),
+                             fileContents, saveAsDialog, saveAsDialog);
                 }
             }
         });
 
-        saveDialog.addCancelButtonSelectHandler(new SelectHandler() {
+        saveAsDialog.addCancelButtonSelectHandler(new SelectHandler() {
 
             @Override
             public void onSelect(SelectEvent event) {
-                saveDialog.hide();
+                saveAsDialog.hide();
             }
         });
-        saveDialog.show();
-        saveDialog.toFront();
+        saveAsDialog.show();
+        saveAsDialog.toFront();
     }
 
     public void mask() {

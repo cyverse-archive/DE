@@ -18,49 +18,46 @@ import com.sencha.gxt.widget.core.client.tree.Tree.CheckState;
 
 import java.util.List;
 
-public class CreateDataLinkCallback<M> implements AsyncCallback<String> {
+public class CreateDataLinkCallback implements AsyncCallback<String> {
 
-    @SuppressWarnings("rawtypes")
-    private final DataLinkPanel view;
     private final DataLinkFactory factory;
-    private final Tree<M, M> tree;
+    private final Tree<DiskResource, DiskResource> tree;
+    private final DataLinkPanel view;
 
-    @SuppressWarnings("unchecked")
     public CreateDataLinkCallback(final DataLinkFactory factory,
-            @SuppressWarnings("rawtypes") final DataLinkPanel view) {
+                                  final DataLinkPanel view) {
         this.factory = factory;
         this.view = view;
         this.tree = this.view.getTree();
     }
 
-    @SuppressWarnings("unchecked")
+    @Override
+    public void onFailure(Throwable caught) {
+        ErrorHandler.post(I18N.ERROR.createDataLinksError(), caught);
+        view.unmask();
+    }
+
     @Override
     public void onSuccess(String result) {
         AutoBean<DataLinkList> tickets = AutoBeanCodex.decode(factory, DataLinkList.class, result);
         List<DataLink> dlList = tickets.as().getTickets();
 
-        TreeStore<M> treeStore = tree.getStore();
-        M parent = null;
+        TreeStore<DiskResource> treeStore = tree.getStore();
+        DiskResource parent = null;
         for (DataLink dl : dlList) {
             // manually find the item since id's wont work
-            for (M item : tree.getStore().getAll()) {
-                if (((DiskResource)item).getPath().equals(dl.getPath())) {
+            for (DiskResource item : tree.getStore().getAll()) {
+                if (item.getPath().equals(dl.getPath())) {
                     parent = item;
                     break;
                 }
             }
             if (parent != null) {
-                treeStore.add(parent, (M)dl);
+                treeStore.add(parent, dl);
                 tree.setExpanded(parent, true);
-                tree.setChecked((M)dl, CheckState.CHECKED);
+                tree.setChecked(dl, CheckState.CHECKED);
             }
         }
-        view.unmask();
-    }
-
-    @Override
-    public void onFailure(Throwable caught) {
-        ErrorHandler.post(I18N.ERROR.createDataLinksError(), caught);
         view.unmask();
     }
 

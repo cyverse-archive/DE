@@ -1,7 +1,12 @@
 package org.iplantc.de.client.windows.util;
 
+import org.iplantc.de.analysis.client.views.AnalysesView;
+import org.iplantc.de.apps.client.views.AppsView;
+import org.iplantc.de.apps.integration.client.view.AppsEditorView;
+import org.iplantc.de.apps.widgets.client.view.AppLaunchView;
 import org.iplantc.de.client.DEClientConstants;
 import org.iplantc.de.client.events.EventBus;
+import org.iplantc.de.diskResource.client.gin.factory.DiskResourcePresenterFactory;
 import org.iplantc.de.fileViewers.client.FileViewer;
 import org.iplantc.de.client.windows.*;
 import org.iplantc.de.commons.client.util.WindowUtil;
@@ -21,8 +26,12 @@ public class WindowFactory {
     private EventBus eventBus;
     private final IplantDisplayStrings displayStrings;
 
-    @Inject
-    Provider<FileViewer.Presenter> fileViewerPresenterProvider;
+    @Inject Provider<FileViewer.Presenter> fileViewerPresenterProvider;
+    @Inject Provider<AppLaunchView.Presenter> appLaunchPresenterProvider;
+    @Inject Provider<AppsEditorView.Presenter> appsEditorViewPresenterProvider;
+    @Inject Provider<AppsView.Presenter> appsViewPresenterProvider;
+    @Inject Provider<AnalysesView.Presenter> analysesViewPresenterProvider;
+    @Inject DiskResourcePresenterFactory diskResourcePresenterFactory;
 
     @Inject
     public WindowFactory(final DEClientConstants constants,
@@ -47,19 +56,27 @@ public class WindowFactory {
                 ret = new AboutApplicationWindow((AboutWindowConfig)config);
                 break;
             case ANALYSES:
-                ret = new MyAnalysesWindow((AnalysisWindowConfig)config);
+                ret = new MyAnalysesWindow((AnalysisWindowConfig)config,
+                                           analysesViewPresenterProvider.get(),
+                                           displayStrings);
                 break;
             case APP_INTEGRATION:
-                ret = new AppEditorWindow((AppsIntegrationWindowConfig)config, eventBus);
+                ret = new AppEditorWindow((AppsIntegrationWindowConfig)config,
+                                          appsEditorViewPresenterProvider.get(),
+                                          eventBus);
                 break;
             case APP_WIZARD:
-                ret = new AppLaunchWindow((AppWizardConfig)config);
+                ret = new AppLaunchWindow((AppWizardConfig)config,
+                                          appLaunchPresenterProvider.get());
                 break;
             case APPS:
-                ret = new DEAppsWindow((AppsWindowConfig)config);
+                ret = new DEAppsWindow((AppsWindowConfig)config,
+                                       appsViewPresenterProvider.get());
                 break;
             case DATA:
-                ret = new DeDiskResourceWindow((DiskResourceWindowConfig)config);
+                ret = new DeDiskResourceWindow((DiskResourceWindowConfig)config,
+                                               diskResourcePresenterFactory,
+                                               displayStrings);
                 break;
             case DATA_VIEWER:
                 ret = new FileViewerWindow((FileViewerWindowConfig)config,
@@ -80,7 +97,7 @@ public class WindowFactory {
                 ret = new SimpleDownloadWindow((SimpleDownloadWindowConfig)config);
                 break;
             case WORKFLOW_INTEGRATION:
-                ret = new PipelineEditorWindow(config);
+                ret = new PipelineEditorWindow(config, appsViewPresenterProvider.get());
                 break;
             case SYSTEM_MESSAGES:
                 ret = new SystemMessagesWindow((SystemMessagesWindowConfig)config);

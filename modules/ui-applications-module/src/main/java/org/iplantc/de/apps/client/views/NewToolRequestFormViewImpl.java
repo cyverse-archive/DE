@@ -1,6 +1,8 @@
 package org.iplantc.de.apps.client.views;
 
 import org.iplantc.de.apps.client.presenter.NewToolRequestFormPresenterImpl.SELECTION_MODE;
+import org.iplantc.de.client.models.toolRequests.Architecture;
+import org.iplantc.de.client.models.toolRequests.YesNoMaybe;
 import org.iplantc.de.commons.client.validators.DiskResourceNameValidator;
 import org.iplantc.de.commons.client.validators.LengthRangeValidator;
 import org.iplantc.de.commons.client.validators.UrlValidator;
@@ -16,6 +18,9 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.uibinder.client.UiTemplate;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.inject.Inject;
+import com.google.inject.Provider;
+import com.google.inject.assistedinject.Assisted;
 
 import com.sencha.gxt.core.client.dom.ScrollSupport.ScrollMode;
 import com.sencha.gxt.core.client.util.ToggleGroup;
@@ -40,10 +45,10 @@ import com.sencha.gxt.widget.core.client.form.TextField;
  * @author sriram
  *
  */
-public final class NewToolRequestFormViewImpl<A, Y> extends Composite implements NewToolRequestFormView<A, Y> {
+public final class NewToolRequestFormViewImpl extends Composite implements NewToolRequestFormView {
 
     @UiTemplate("NewToolRequestFormView.ui.xml")
-    interface NewToolRequestFormViewUiBinder extends UiBinder<Widget, NewToolRequestFormViewImpl<?, ?>> {
+    interface NewToolRequestFormViewUiBinder extends UiBinder<Widget, NewToolRequestFormViewImpl> {
     }
 
     private static final NewToolRequestFormViewUiBinder uiBinder = GWT.create(NewToolRequestFormViewUiBinder.class);
@@ -56,125 +61,56 @@ public final class NewToolRequestFormViewImpl<A, Y> extends Composite implements
         return "<span style='color:red; top:-5px;' >*</span> " + label; //$NON-NLS-1$
     }
 
-    @UiField
-    VerticalLayoutContainer container;
-
-    @UiField
-    FieldLabel toolNameLbl;
-
-    @UiField
-    FieldLabel toolDescLbl;
-
-    @UiField
-    FieldLabel srcLbl;
-
-    @UiField
-    Radio toolLink;
-
-    @UiField
-    Radio toolUpld;
-
-    @UiField
-    Radio toolSlt;
-
-    @UiField
-    Radio testUpld;
-
-    @UiField
-    Radio testSlt;
-
-    @UiField
-    Radio otherUpld;
-
-    @UiField
-    Radio otherSlt;
-
-    @UiField
-    FieldLabel docUrlLbl;
-
-    @UiField
-    FieldLabel versionLbl;
-
-    @UiField
-    FieldLabel archLbl;
-
-    @UiField
-    FieldLabel multiLbl;
-
-    @UiField
-    FieldLabel cmdLineLbl;
-
-    @UiField
-    TextField toolName;
-
-    @UiField
-    TextArea toolDesc;
-
-    @UiField
-    TextArea toolAttrib;
-
-    @UiField
-    TextField binLink;
-
-    @UiField
-    TextField toolDoc;
-
-    @UiField
-    TextField toolVersion;
-
-    @UiField
-    TextArea runInfo;
-
-    @UiField
-    TextArea otherInfo;
-
-    @UiField(provided = true)
-    final ComboBox<A> archCbo;
-
-    @UiField(provided = true)
-    final ComboBox<Y> multiThreadCbo;
-
-    @UiField
-    UploadForm binUpld;
-
-    @UiField
-    UploadForm testDataUpld;
-
-    @UiField
-    UploadForm otherDataUpld;
-
-    @UiField
-    FileSelectorField binSelect;
-
-    @UiField
-    FileSelectorField testDataSelect;
-
-    @UiField
-    FileSelectorField otherDataSelect;
-
-    @UiField
-    FieldLabel testLbl;
-
-    @UiField
-    FieldLabel otherLbl;
-
-    @UiField
-    CardLayoutContainer binOptions;
-
-    @UiField
-    CardLayoutContainer testDataOptions;
-
-    @UiField
-    CardLayoutContainer otherDataOptions;
-
-    @UiField
-    HtmlLayoutContainer intro;
+    @UiField VerticalLayoutContainer container;
+    @UiField FieldLabel toolNameLbl;
+    @UiField FieldLabel toolDescLbl;
+    @UiField FieldLabel srcLbl;
+    @UiField Radio toolLink;
+    @UiField Radio toolUpld;
+    @UiField Radio toolSlt;
+    @UiField Radio testUpld;
+    @UiField Radio testSlt;
+    @UiField Radio otherUpld;
+    @UiField Radio otherSlt;
+    @UiField FieldLabel docUrlLbl;
+    @UiField FieldLabel versionLbl;
+    @UiField FieldLabel archLbl;
+    @UiField FieldLabel multiLbl;
+    @UiField FieldLabel cmdLineLbl;
+    @UiField TextField toolName;
+    @UiField TextArea toolDesc;
+    @UiField TextArea toolAttrib;
+    @UiField TextField binLink;
+    @UiField TextField toolDoc;
+    @UiField TextField toolVersion;
+    @UiField TextArea runInfo;
+    @UiField TextArea otherInfo;
+    @UiField(provided = true) final ComboBox<Architecture> archCbo;
+    @UiField(provided = true) final ComboBox<YesNoMaybe> multiThreadCbo;
+    @UiField UploadForm binUpld;
+    @UiField UploadForm testDataUpld;
+    @UiField UploadForm otherDataUpld;
+    @UiField(provided = true) FileSelectorField binSelect;
+    @UiField(provided = true) FileSelectorField testDataSelect;
+    @UiField(provided = true) FileSelectorField otherDataSelect;
+    @UiField FieldLabel testLbl;
+    @UiField FieldLabel otherLbl;
+    @UiField CardLayoutContainer binOptions;
+    @UiField CardLayoutContainer testDataOptions;
+    @UiField CardLayoutContainer otherDataOptions;
+    @UiField HtmlLayoutContainer intro;
     
     private final AutoProgressMessageBox submissionProgressBox;
 
     private Presenter presenter;
 
-    public NewToolRequestFormViewImpl(final ComboBox<A> archChooser, final ComboBox<Y> multithreadChooser) {
+    @Inject
+    NewToolRequestFormViewImpl(final Provider<FileSelectorField> fileSelectorFieldProvider,
+                               @Assisted final ComboBox<Architecture> archChooser,
+                               @Assisted final ComboBox<YesNoMaybe> multithreadChooser) {
+        this.binSelect = fileSelectorFieldProvider.get();
+        this.testDataSelect = fileSelectorFieldProvider.get();
+        this.otherDataSelect = fileSelectorFieldProvider.get();
         archCbo = archChooser;
         multiThreadCbo = multithreadChooser;
         initWidget(uiBinder.createAndBindUi(this));
@@ -389,7 +325,7 @@ public final class NewToolRequestFormViewImpl<A, Y> extends Composite implements
     }
 
     @Override
-    public IsField<Y> getMultithreadedField() {
+    public IsField<YesNoMaybe> getMultithreadedField() {
         return multiThreadCbo;
     }
 
@@ -404,7 +340,7 @@ public final class NewToolRequestFormViewImpl<A, Y> extends Composite implements
     }
 
     @Override
-    public IsField<A> getArchitectureField() {
+    public IsField<Architecture> getArchitectureField() {
         return archCbo;
     }
 

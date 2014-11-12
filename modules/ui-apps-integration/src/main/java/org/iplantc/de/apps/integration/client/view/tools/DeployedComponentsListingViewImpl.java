@@ -20,6 +20,9 @@ import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.uibinder.client.UiTemplate;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.inject.Inject;
+import com.google.inject.Provider;
+import com.google.inject.assistedinject.Assisted;
 
 import com.sencha.gxt.core.client.IdentityValueProvider;
 import com.sencha.gxt.core.client.XTemplates;
@@ -50,7 +53,7 @@ import java.util.List;
 /**
  * A grid that displays list of available deployed components (bin/tools) in Condor
  *
- * @author sriram
+ * @author sriram, jstroot
  */
 public class DeployedComponentsListingViewImpl extends Composite implements
                                                                  DeployedComponentsListingView {
@@ -61,27 +64,23 @@ public class DeployedComponentsListingViewImpl extends Composite implements
     }
 
     @UiTemplate("DeployedComponentsListingView.ui.xml")
-    interface MyUiBinder extends UiBinder<Widget, DeployedComponentsListingViewImpl> {
-    }
+    interface MyUiBinder extends UiBinder<Widget, DeployedComponentsListingViewImpl> { }
 
-    @UiField
-    VerticalLayoutContainer container;
-    @UiField
-    Grid<Tool> grid;
+    @UiField VerticalLayoutContainer container;
+    @UiField Grid<Tool> grid;
+    @UiField TextButton newToolBtn;
+    @UiField SearchField<Tool> searchField;
+    @UiField(provided = true) ListStore<Tool> store;
+
     PagingLoader<FilterPagingLoadConfig, PagingLoadResult<Tool>> loader;
-    @UiField
-    TextButton newToolBtn;
-    @UiField
-    SearchField<Tool> searchField;
-
     ToolSearchRPCProxy searchProxy;
 
-    @UiField(provided = true)
-    ListStore<Tool> store;
     private static MyUiBinder uiBinder = GWT.create(MyUiBinder.class);
+    @Inject Provider<NewToolRequestDialog> newToolRequestDialogProvider;
 
-    public DeployedComponentsListingViewImpl(ListStore<Tool> listStore,
-                                             SelectionChangedHandler<Tool> handler) {
+    @Inject
+    DeployedComponentsListingViewImpl(@Assisted ListStore<Tool> listStore,
+                                      @Assisted SelectionChangedHandler<Tool> handler) {
         this.store = listStore;
         searchProxy = new ToolSearchRPCProxy();
         loader = buildLoader();
@@ -183,8 +182,7 @@ public class DeployedComponentsListingViewImpl extends Composite implements
 
     @UiHandler({"newToolBtn"})
     void onNewToolRequestBtnClick(@SuppressWarnings("unused") SelectEvent event) {
-        NewToolRequestDialog dialog = new NewToolRequestDialog();
-        dialog.show();
+       newToolRequestDialogProvider.get().show();
     }
 
     private Dialog buildDetailsDialog(String heading) {

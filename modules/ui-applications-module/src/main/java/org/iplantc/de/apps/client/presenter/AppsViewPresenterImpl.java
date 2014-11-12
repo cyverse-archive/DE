@@ -13,6 +13,7 @@ import org.iplantc.de.apps.client.events.EditWorkflowEvent;
 import org.iplantc.de.apps.client.events.RunAppEvent;
 import org.iplantc.de.apps.client.presenter.proxy.AppCategoryProxy;
 import org.iplantc.de.apps.client.views.AppsView;
+import org.iplantc.de.apps.client.views.SubmitAppForPublicUseView;
 import org.iplantc.de.apps.client.views.cells.AppFavoriteCell;
 import org.iplantc.de.apps.client.views.dialogs.AppCommentDialog;
 import org.iplantc.de.apps.client.views.dialogs.NewToolRequestDialog;
@@ -54,6 +55,7 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HasOneWidget;
 import com.google.inject.Inject;
+import com.google.inject.Provider;
 import com.google.web.bindery.autobean.shared.AutoBean;
 import com.google.web.bindery.autobean.shared.AutoBeanCodex;
 import com.google.web.bindery.autobean.shared.Splittable;
@@ -115,6 +117,9 @@ public class AppsViewPresenterImpl implements AppsView.Presenter {
     private final IplantDisplayStrings displayStrings;
     private final IplantErrorStrings errorStrings;
     private RegExp searchRegex;
+
+    @Inject Provider<NewToolRequestDialog> newToolRequestDialogProvider;
+    @Inject Provider<SubmitAppForPublicUseView.Presenter> submitAppForPublicPresenterProvider;
 
     @Inject
     public AppsViewPresenterImpl(final AppsView view,
@@ -393,7 +398,7 @@ public class AppsViewPresenterImpl implements AppsView.Presenter {
 
     @Override
     public void onRequestToolClicked() {
-        new NewToolRequestDialog().show();
+        newToolRequestDialogProvider.get().show();
     }
 
     @Override
@@ -539,7 +544,7 @@ public class AppsViewPresenterImpl implements AppsView.Presenter {
     @Override
     public void submitClicked() {
         App selectedApp = getSelectedApp();
-        SubmitAppForPublicDialog dialog = new SubmitAppForPublicDialog(selectedApp);
+        SubmitAppForPublicDialog dialog = new SubmitAppForPublicDialog(selectedApp, submitAppForPublicPresenterProvider.get());
         dialog.show();
 
     }

@@ -5,14 +5,18 @@ package org.iplantc.de.diskResource.client.sharing.views;
 
 
 import org.iplantc.de.client.models.diskResources.DiskResource;
+import org.iplantc.de.client.services.DiskResourceServiceFacade;
 import org.iplantc.de.commons.client.views.gxt3.dialogs.IPlantDialog;
 import org.iplantc.de.diskResource.client.sharing.presenter.DataSharingPresenter;
 import org.iplantc.de.diskResource.client.views.DiskResourceModelKeyProvider;
 import org.iplantc.de.diskResource.client.views.DiskResourceNameComparator;
 import org.iplantc.de.diskResource.client.views.cells.DiskResourceNameCell;
-import org.iplantc.de.resources.client.messages.I18N;
+import org.iplantc.de.resources.client.messages.IplantContextualHelpStrings;
+import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 
 import com.google.gwt.user.client.ui.HTML;
+import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
 
 import com.sencha.gxt.core.client.IdentityValueProvider;
 import com.sencha.gxt.data.shared.ListStore;
@@ -27,23 +31,32 @@ import java.util.Set;
 
 /**
  * @author sriram
- *
  */
 public class DataSharingDialog extends IPlantDialog {
 
-    public DataSharingDialog(Set<DiskResource> resources) {
+    private final IplantDisplayStrings displayStrings;
+    private final IplantContextualHelpStrings helpStrings;
+
+    @Inject
+    DataSharingDialog(final DiskResourceServiceFacade diskResourceService,
+                      final IplantDisplayStrings displayStrings,
+                      final IplantContextualHelpStrings helpStrings,
+                      @Assisted final Set<DiskResource> resources) {
         super(true);
+        this.displayStrings = displayStrings;
+        this.helpStrings = helpStrings;
         setPixelSize(600, 500);
         setHideOnButtonClick(true);
         setModal(true);
         setResizable(false);
         addHelp();
-        setHeadingText(I18N.DISPLAY.manageSharing());
-        ListStore<DiskResource> drStore = new ListStore<DiskResource>(new DiskResourceModelKeyProvider());
+        setHeadingText(displayStrings.manageSharing());
+        ListStore<DiskResource> drStore = new ListStore<>(new DiskResourceModelKeyProvider());
         DataSharingView view = new DataSharingViewImpl(buildDiskResourceColumnModel(), drStore);
-        final DataSharingView.Presenter p = new DataSharingPresenter(getSelectedResourcesAsList(resources), view);
+        final DataSharingView.Presenter p = new DataSharingPresenter(diskResourceService,
+                                                                     getSelectedResourcesAsList(resources), view);
         p.go(this);
-        setOkButtonText(I18N.DISPLAY.done());
+        setOkButtonText(displayStrings.done());
         addOkButtonSelectHandler(new SelectHandler() {
 
             @Override
@@ -55,24 +68,24 @@ public class DataSharingDialog extends IPlantDialog {
     }
 
     private void addHelp() {
-        addHelp(new HTML(I18N.HELP.sharePermissionsHelp()));
+        addHelp(new HTML(helpStrings.sharePermissionsHelp()));
     }
 
     private ColumnModel<DiskResource> buildDiskResourceColumnModel() {
-        List<ColumnConfig<DiskResource, ?>> list = new ArrayList<ColumnConfig<DiskResource, ?>>();
+        List<ColumnConfig<DiskResource, ?>> list = new ArrayList<>();
 
-        ColumnConfig<DiskResource, DiskResource> name = new ColumnConfig<DiskResource, DiskResource>(new IdentityValueProvider<DiskResource>("name"), 100, I18N.DISPLAY.name());
+        ColumnConfig<DiskResource, DiskResource> name = new ColumnConfig<>(new IdentityValueProvider<DiskResource>("name"), 100, displayStrings.name());
         name.setCell(new DiskResourceNameCell());
         name.setComparator(new DiskResourceNameComparator());
         name.setWidth(130);
 
         list.add(name);
 
-        return new ColumnModel<DiskResource>(list);
+        return new ColumnModel<>(list);
     }
 
     private List<DiskResource> getSelectedResourcesAsList(Set<DiskResource> models) {
-        List<DiskResource> dr = new ArrayList<DiskResource>();
+        List<DiskResource> dr = new ArrayList<>();
 
         for (DiskResource item : models) {
             dr.add(item);

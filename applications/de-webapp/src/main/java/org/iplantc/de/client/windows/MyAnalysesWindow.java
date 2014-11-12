@@ -2,7 +2,6 @@ package org.iplantc.de.client.windows;
 
 import org.iplantc.de.analysis.client.views.AnalysesView;
 import org.iplantc.de.analysis.shared.AnalysisModule;
-import org.iplantc.de.client.gin.DEInjector;
 import org.iplantc.de.client.models.WindowState;
 import org.iplantc.de.client.models.analysis.Analysis;
 import org.iplantc.de.commons.client.views.window.configs.AnalysisWindowConfig;
@@ -16,17 +15,17 @@ import com.google.common.collect.Lists;
 import java.util.List;
 
 /**
- * @author sriram
+ * @author sriram, jstroot
  */
 public class MyAnalysesWindow extends IplantWindowBase {
 
-    private final IplantDisplayStrings displayStrings;
     private final AnalysesView.Presenter presenter;
 
-    public MyAnalysesWindow(AnalysisWindowConfig config) {
+    public MyAnalysesWindow(AnalysisWindowConfig config,
+                            final AnalysesView.Presenter presenter,
+                            final IplantDisplayStrings displayStrings) {
         super(null, config);
-        displayStrings = org.iplantc.de.resources.client.messages.I18N.DISPLAY;
-        presenter = DEInjector.INSTANCE.getAnalysesViewPresenter();
+        this.presenter = presenter;
 
         ensureDebugId(DeModule.WindowIds.ANALYSES_WINDOW);
         setHeadingText(displayStrings.analyses());

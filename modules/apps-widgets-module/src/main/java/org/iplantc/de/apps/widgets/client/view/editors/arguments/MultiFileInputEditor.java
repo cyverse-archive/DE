@@ -7,17 +7,22 @@ import org.iplantc.de.client.models.HasPath;
 import org.iplantc.de.diskResource.client.views.widgets.DiskResourceSelector.HasDisableBrowseButtons;
 import org.iplantc.de.diskResource.client.views.widgets.MultiFileSelectorField;
 
+import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
+
 import java.util.List;
 
 public class MultiFileInputEditor extends AbstractArgumentEditor implements HasDisableBrowseButtons{
     private final ArgumentEditorConverter<List<HasPath>> editorAdapter;
     private final MultiFileSelectorField multiFileSelector;
 
-    public MultiFileInputEditor(AppTemplateWizardAppearance appearance) {
+    @Inject
+    MultiFileInputEditor(final MultiFileSelectorField multiFileSelector,
+                         @Assisted AppTemplateWizardAppearance appearance) {
         super(appearance);
-        multiFileSelector = new MultiFileSelectorField();
-        editorAdapter = new ArgumentEditorConverter<List<HasPath>>(multiFileSelector,
-                                                                   new SplittableToHasPathListConverter());
+        this.multiFileSelector = multiFileSelector;
+        editorAdapter = new ArgumentEditorConverter<>(multiFileSelector,
+                                                      new SplittableToHasPathListConverter());
 
         argumentLabel.setWidget(editorAdapter);
     }

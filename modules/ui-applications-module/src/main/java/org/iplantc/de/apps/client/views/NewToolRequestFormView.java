@@ -1,6 +1,8 @@
 package org.iplantc.de.apps.client.views;
 
 import org.iplantc.de.apps.client.presenter.NewToolRequestFormPresenterImpl.SELECTION_MODE;
+import org.iplantc.de.client.models.toolRequests.Architecture;
+import org.iplantc.de.client.models.toolRequests.YesNoMaybe;
 import org.iplantc.de.diskResource.client.views.widgets.FileSelectorField;
 
 import com.google.gwt.user.client.ui.IsWidget;
@@ -8,10 +10,8 @@ import com.google.gwt.user.client.ui.IsWidget;
 import com.sencha.gxt.widget.core.client.form.IsField;
 
 /**
- * @param <A> the type representing tool architecture
- * @param <Y> the type representing yes/no/maybe responses
  */
-public interface NewToolRequestFormView<A, Y> extends IsWidget {
+public interface NewToolRequestFormView extends IsWidget {
 
     public interface Presenter extends org.iplantc.de.commons.client.presenter.Presenter {
         /**
@@ -135,7 +135,7 @@ public interface NewToolRequestFormView<A, Y> extends IsWidget {
     /**
      * @return the field indicating if the tool is multi-threaded
      */
-    IsField<Y> getMultithreadedField();
+    IsField<YesNoMaybe> getMultithreadedField();
 
     /**
      * @return the command line usage instructions field
@@ -150,7 +150,7 @@ public interface NewToolRequestFormView<A, Y> extends IsWidget {
     /**
      * @return the architecture field
      */
-    IsField<A> getArchitectureField();
+    IsField<Architecture> getArchitectureField();
 
     /**
      * 

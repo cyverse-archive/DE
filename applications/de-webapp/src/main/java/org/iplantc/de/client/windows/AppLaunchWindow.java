@@ -2,7 +2,6 @@ package org.iplantc.de.client.windows;
 
 import org.iplantc.de.apps.widgets.client.events.AnalysisLaunchEvent;
 import org.iplantc.de.apps.widgets.client.events.AnalysisLaunchEvent.AnalysisLaunchEventHandler;
-import org.iplantc.de.apps.widgets.client.gin.AppLaunchInjector;
 import org.iplantc.de.apps.widgets.client.view.AppLaunchView;
 import org.iplantc.de.client.events.WindowHeadingUpdatedEvent;
 import org.iplantc.de.client.gin.ServicesInjector;
@@ -72,11 +71,12 @@ public class AppLaunchWindow extends IplantWindowBase implements AnalysisLaunchE
     private final AppTemplateServices templateService;
     private final IplantErrorStrings errorStrings;
 
-    public AppLaunchWindow(AppWizardConfig config) {
+    public AppLaunchWindow(AppWizardConfig config,
+                           final AppLaunchView.Presenter presenter) {
         super(null, config);
+        this.presenter = presenter;
         templateService = ServicesInjector.INSTANCE.getAppTemplateServices();
         factory = GWT.create(AppTemplateAutoBeanFactory.class);
-        presenter = AppLaunchInjector.INSTANCE.getAppLaunchPresenter();
         displayStrings = I18N.DISPLAY;
         errorStrings = I18N.ERROR;
 
