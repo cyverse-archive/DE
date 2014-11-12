@@ -30,6 +30,7 @@ import com.google.inject.Inject;
 import com.google.web.bindery.autobean.shared.AutoBean;
 import com.google.web.bindery.autobean.shared.AutoBeanUtils;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -83,7 +84,7 @@ public class DataSearchPresenterImpl implements DataSearchPresenter {
         if (queryTemplates.remove(savedSearch)) {
             announcer.schedule(new SuccessAnnouncementConfig("Successfully deleted saved search: "
                                                                  + savedSearch.getName()));
-            searchService.saveQueryTemplates(queryTemplates,
+            searchService.deleteQueryTemplates(Arrays.asList(savedSearch),
                                              new AsyncCallback<List<DiskResourceQueryTemplate>>() {
 
                                                  @Override
@@ -97,6 +98,7 @@ public class DataSearchPresenterImpl implements DataSearchPresenter {
                                                          GWT.log("Failed to save query templates after delete of saved search");
                                                      }
                                                      fireEvent(new SavedSearchDeletedEvent(savedSearch));
+                                                     updateDataNavigationWindow(null, savedTemplates);
                                                  }
                                              });
         } else {

@@ -30,4 +30,11 @@ public class SearchServiceFacadeStub implements SearchServiceFacade {
     public void submitSearchFromQueryTemplate(DiskResourceQueryTemplate queryTemplate, FilterPagingLoadConfigBean loadConfig, SearchType searchType, AsyncCallback<List<DiskResource>> callback) {
 
     }
+
+    @Override
+    public void deleteQueryTemplates(List<DiskResourceQueryTemplate> queryTemplates,
+                                     AsyncCallback<List<DiskResourceQueryTemplate>> callback) {
+
+
+    }
 }

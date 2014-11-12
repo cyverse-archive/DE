@@ -70,6 +70,8 @@ public interface SearchServiceFacade {
      */
     void saveQueryTemplates(List<DiskResourceQueryTemplate> queryTemplates, AsyncCallback<List<DiskResourceQueryTemplate>> callback);
 
+    void deleteQueryTemplates(List<DiskResourceQueryTemplate> queryTemplates,
+                              AsyncCallback<List<DiskResourceQueryTemplate>> callback);
     /**
      * Submits a search query build from the given filter.
      * 

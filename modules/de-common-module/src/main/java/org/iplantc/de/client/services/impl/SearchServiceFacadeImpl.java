@@ -14,13 +14,13 @@ import org.iplantc.de.client.models.search.DiskResourceQueryTemplateList;
 import org.iplantc.de.client.models.search.SearchAutoBeanFactory;
 import org.iplantc.de.client.services.SearchServiceFacade;
 import org.iplantc.de.client.services.converters.AsyncCallbackConverter;
+import org.iplantc.de.shared.services.BaseServiceCallWrapper.Type;
 import org.iplantc.de.shared.services.DiscEnvApiService;
 import org.iplantc.de.shared.services.ServiceCallWrapper;
 
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
-import com.google.gwt.core.shared.GWT;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.inject.Inject;
@@ -222,15 +222,6 @@ public class SearchServiceFacadeImpl implements SearchServiceFacade {
 
         @Override
         protected List<DiskResourceQueryTemplate> convertFrom(String object) {
-            final Splittable split = StringQuoter.split(object);
-            if (split.isUndefined("success")) {
-                GWT.log("saveQueryTemplates callback return is missing \"success\" json key:\n\t" + split.getPayload());
-                return Collections.emptyList();
-            }
-            if (!split.get("success").isBoolean()) {
-                GWT.log("saveQueryTemplates callback \"success\" json key is not a boolean but should be:\n\t" + split.getPayload());
-                return Collections.emptyList();
-            }
             List<DiskResourceQueryTemplate> savedTemplates = Lists.newArrayList();
 
             for (DiskResourceQueryTemplate qt : submittedTemplates) {
@@ -302,6 +293,22 @@ public class SearchServiceFacadeImpl implements SearchServiceFacade {
         String payload = templateListToIndexedSplittablePayload(queryTemplates);
         ServiceCallWrapper wrapper = new ServiceCallWrapper(POST, address, payload);
         deServiceFacade.getServiceData(wrapper, new SavedSearchCallbackConverter(callback, queryTemplates, searchAbFactory));
+    }
+
+    @Override
+    public void deleteQueryTemplates(List<DiskResourceQueryTemplate> queryTemplates,
+                                     AsyncCallback<List<DiskResourceQueryTemplate>> callback) {
+        String address = deProperties.getMuleServiceBaseUrl() + "saved-searches";
+
+        /*
+         * TODO check to see if query templates all have names, and that they are unique.throw illegal
+         * argument exception
+         */
+        String payload = templateListToIndexedSplittablePayload(queryTemplates);
+        ServiceCallWrapper wrapper = new ServiceCallWrapper(Type.DELETE, address, payload);
+        deServiceFacade.getServiceData(wrapper, new SavedSearchCallbackConverter(callback,
+                                                                                 queryTemplates,
+                                                                                 searchAbFactory));
     }
 
     @Override
