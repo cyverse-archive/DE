@@ -4,13 +4,15 @@ import org.iplantc.de.client.models.HasPath;
 import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.commons.client.views.gxt3.dialogs.IPlantDialog;
 import org.iplantc.de.diskResource.client.events.FolderSelectionEvent;
-import org.iplantc.de.diskResource.client.gin.DiskResourceInjector;
+import org.iplantc.de.diskResource.client.gin.factory.DiskResourcePresenterFactory;
 import org.iplantc.de.diskResource.client.views.DiskResourceView;
 import org.iplantc.de.resources.client.messages.I18N;
 
 import com.google.gwt.user.client.TakesValue;
 import com.google.gwt.user.client.ui.HasEnabled;
 import com.google.gwt.user.client.ui.HasValue;
+import com.google.inject.assistedinject.Assisted;
+import com.google.inject.assistedinject.AssistedInject;
 
 import com.sencha.gxt.widget.core.client.form.FieldLabel;
 import com.sencha.gxt.widget.core.client.form.TextField;
@@ -27,15 +29,18 @@ import com.sencha.gxt.widget.core.client.form.TextField;
 public class FolderSelectDialog extends IPlantDialog implements TakesValue<Folder> {
 
     private final DiskResourceView.Presenter presenter;
-    private final TextField selectedFolderField = new TextField();
 
     private Folder selectedFolder;
 
-    public FolderSelectDialog() {
-        this(null);
+    @AssistedInject
+    FolderSelectDialog(final DiskResourcePresenterFactory presenterFactory){
+        this(presenterFactory, null);
     }
 
-    public FolderSelectDialog(HasPath folderToSelect) {
+    @AssistedInject
+    FolderSelectDialog(final DiskResourcePresenterFactory presenterFactory,
+                       @Assisted final HasPath folderToSelect){
+
         // Disable Ok button by default.
         getOkButton().setEnabled(false);
 
@@ -43,16 +48,18 @@ public class FolderSelectDialog extends IPlantDialog implements TakesValue<Folde
         setSize("640", "480");
         setHeadingText(I18N.DISPLAY.selectAFolder());
 
-        presenter = DiskResourceInjector.INSTANCE.getDiskResourceViewPresenter();
-
+        TextField selectedFolderField = new TextField();
         final FieldLabel fl = new FieldLabel(selectedFolderField, I18N.DISPLAY.selectedFolder());
+        // Tell the presenter to add the view with the toolbar and details panel hidden, etc.
+        presenter = presenterFactory.createSelector(true,
+                                                    true,
+                                                    true,
+                                                    true,
+                                                    folderToSelect,
+                                                    fl);
 
-        presenter.getView().setSouthWidget(fl);
         presenter.addFolderSelectedEventHandler(new FolderSelectionChangedHandler(this, selectedFolderField, getOkButton()));
-
-        // Tell the presenter to add the view with the north, east, and center widgets hidden.
-        presenter.builder().hideNorth().hideCenter().hideEast().singleSelect().go(this);
-        presenter.setSelectedFolderByPath(folderToSelect);
+        presenter.go(this);
     }
 
     public void cleanUp() {
@@ -83,7 +90,6 @@ public class FolderSelectDialog extends IPlantDialog implements TakesValue<Folde
             textBox.setValue(diskResource.getName());
             // Enable the okButton
             okButton.setEnabled(true);
-
         }
     }
 
@@ -92,8 +98,6 @@ public class FolderSelectDialog extends IPlantDialog implements TakesValue<Folde
     public void onHide() {
         presenter.cleanUp();
     }
-    
-    
     
     @Override
     public Folder getValue() {

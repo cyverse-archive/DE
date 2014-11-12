@@ -7,14 +7,20 @@ import org.iplantc.de.client.models.diskResources.File;
 import org.iplantc.de.diskResource.client.views.widgets.DiskResourceSelector.HasDisableBrowseButtons;
 import org.iplantc.de.diskResource.client.views.widgets.FileSelectorField;
 
+import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
+
 public class FileInputEditor extends AbstractArgumentEditor implements HasDisableBrowseButtons {
     private final ArgumentEditorConverter<File> editorAdapter;
     private final FileSelectorField fileSelector;
 
-    public FileInputEditor(AppTemplateWizardAppearance appearance) {
+    @Inject
+    FileInputEditor(final FileSelectorField fileSelector,
+                    @Assisted AppTemplateWizardAppearance appearance) {
+
         super(appearance);
-        fileSelector = new FileSelectorField();
-        editorAdapter = new ArgumentEditorConverter<File>(fileSelector, new SplittableToFileConverter());
+        this.fileSelector = fileSelector;
+        editorAdapter = new ArgumentEditorConverter<>(fileSelector, new SplittableToFileConverter());
 
         argumentLabel.setWidget(editorAdapter);
     }

@@ -1,5 +1,7 @@
 package org.iplantc.de.client.gin;
 
+import org.iplantc.de.apps.client.views.AppsView;
+import org.iplantc.de.apps.client.views.AppsViewImpl;
 import org.iplantc.de.client.desktop.DesktopView;
 import org.iplantc.de.client.desktop.presenter.DesktopPresenterEventHandler;
 import org.iplantc.de.client.desktop.presenter.DesktopPresenterImpl;
@@ -13,12 +15,7 @@ import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.models.DEProperties;
 import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.client.models.UserSettings;
-import org.iplantc.de.client.services.AnalysisServiceFacade;
-import org.iplantc.de.client.services.DEFeedbackServiceFacade;
-import org.iplantc.de.client.services.DiskResourceServiceFacade;
-import org.iplantc.de.client.services.FileEditorServiceFacade;
-import org.iplantc.de.client.services.MessageServiceFacade;
-import org.iplantc.de.client.services.UserSessionServiceFacade;
+import org.iplantc.de.client.services.*;
 import org.iplantc.de.client.sysmsgs.presenter.NewMessagePresenter;
 import org.iplantc.de.client.sysmsgs.view.NewMessageView;
 import org.iplantc.de.client.utils.NotifyInfo;
@@ -59,6 +56,23 @@ public class DEGinModule extends AbstractGinModule {
     @Provides public MessageServiceFacade createMessageServiceFacade () {
         return ServicesInjector.INSTANCE.getMessageServiceFacade();
     }
+
+    @Provides @Singleton public AppTemplateServices createAppTemplateServices() {
+        return ServicesInjector.INSTANCE.getAppTemplateServices();
+    }
+
+    @Provides @Singleton public AppMetadataServiceFacade createAppMetadataServiceFacade() {
+        return ServicesInjector.INSTANCE.getAppMetadataService();
+    }
+
+    @Provides @Singleton public AppUserServiceFacade createAppUserServiceFacade(){
+        return ServicesInjector.INSTANCE.getAppUserServiceFacade();
+    }
+
+    @Provides @Singleton public AppServiceFacade createAppServiceFacade() {
+        return ServicesInjector.INSTANCE.getAppServiceFacade();
+    }
+
     //</editor-fold>
 
     @Provides @Singleton public NotifyInfo createNotifyInfo() {
@@ -101,6 +115,7 @@ public class DEGinModule extends AbstractGinModule {
         return IplantAnnouncer.getInstance();
     }
 
+
     @Override
     protected void configure() {
         bind(DesktopView.class).to(DesktopViewImpl.class);
@@ -114,6 +129,10 @@ public class DEGinModule extends AbstractGinModule {
         bind(WindowFactory.class);
         bind(PreferencesDialog.class);
         bind(DEFeedbackDialog.class);
+
+
+        // KLUDGE Bind AppsView here to get around Gin double-binding with Belphegor
+        bind(AppsView.class).to(AppsViewImpl.class);
 
     }
 }

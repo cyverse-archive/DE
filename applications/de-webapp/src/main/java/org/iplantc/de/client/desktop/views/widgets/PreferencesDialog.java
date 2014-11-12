@@ -56,36 +56,23 @@ public class PreferencesDialog extends IPlantDialog implements Editor<UserSettin
 
     interface EditorDriver extends SimpleBeanEditorDriver<UserSettings, PreferencesDialog>{}
 
-    static UserSettings us = UserSettings.getInstance();
 
-    @UiField
     @Ignore
-    VerticalLayoutContainer container;
-    @UiField
+    @UiField VerticalLayoutContainer container;
     @Ignore
-    VerticalLayoutContainer kbContainer;
-    @UiField
+    @UiField VerticalLayoutContainer kbContainer;
     @Ignore
-    VerticalLayoutContainer prefContainer;
+    @UiField VerticalLayoutContainer prefContainer;
 
-    @UiField
-    TextField analysesShortCut;
-    @UiField
-    TextField appsShortCut;
-    @UiField
-    CheckBox rememberLastPath;
-    @UiField
-    CheckBox enableEmailNotification;
-    @UiField
-    CheckBox saveSession;
-    @UiField
-    TextField closeShortCut;
-    @UiField
-    TextField dataShortCut;
-    @UiField
-    FolderSelectorField defaultOutputFolder;
-    @UiField
-    TextField notifyShortCut;
+    @UiField TextField analysesShortCut;
+    @UiField TextField appsShortCut;
+    @UiField CheckBox rememberLastPath;
+    @UiField CheckBox enableEmailNotification;
+    @UiField CheckBox saveSession;
+    @UiField TextField closeShortCut;
+    @UiField TextField dataShortCut;
+    @UiField(provided = true) FolderSelectorField defaultOutputFolder;
+    @UiField TextField notifyShortCut;
     private final IplantDisplayStrings displayStrings;
     private final IplantContextualHelpStrings helpStrings;
     private final KeyBoardShortcutConstants KB_CONSTANTS;
@@ -98,11 +85,15 @@ public class PreferencesDialog extends IPlantDialog implements Editor<UserSettin
     private UserSettings flushedValue;
     private UserSettings usValue;
 
+    @Inject UserSettings us;
+
     @Inject
-    public PreferencesDialog(final IplantDisplayStrings displayStrings,
-                             final IplantContextualHelpStrings helpStrings,
-                             final KeyBoardShortcutConstants kbConstants) {
+    PreferencesDialog(final FolderSelectorField defaultOutputFolder,
+                      final IplantDisplayStrings displayStrings,
+                      final IplantContextualHelpStrings helpStrings,
+                      final KeyBoardShortcutConstants kbConstants) {
         super(true);
+        this.defaultOutputFolder = defaultOutputFolder;
         this.displayStrings = displayStrings;
         this.helpStrings = helpStrings;
         this.KB_CONSTANTS = kbConstants;
@@ -288,7 +279,6 @@ public class PreferencesDialog extends IPlantDialog implements Editor<UserSettin
         for (TextField ks : kbMap.keySet()) {
             ks.clearInvalid();
         }
-
     }
 
 }

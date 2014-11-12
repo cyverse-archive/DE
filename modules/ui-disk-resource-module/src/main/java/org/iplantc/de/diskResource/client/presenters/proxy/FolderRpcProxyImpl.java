@@ -1,6 +1,5 @@
 package org.iplantc.de.diskResource.client.presenters.proxy;
 
-import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.models.IsMaskable;
 import org.iplantc.de.client.models.diskResources.DiskResourceFavorite;
 import org.iplantc.de.client.models.diskResources.Folder;
@@ -11,7 +10,7 @@ import org.iplantc.de.client.services.SearchServiceFacade;
 import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.commons.client.info.ErrorAnnouncementConfig;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
-import org.iplantc.de.diskResource.client.events.RequestAttachDiskResourceFavoritesFolderEvent;
+import org.iplantc.de.diskResource.client.events.RootFoldersRetrievedEvent;
 import org.iplantc.de.diskResource.client.events.SavedSearchesRetrievedEvent;
 import org.iplantc.de.diskResource.client.search.events.SubmitDiskResourceQueryEvent;
 import org.iplantc.de.diskResource.client.search.events.SubmitDiskResourceQueryEvent.SubmitDiskResourceQueryEventHandler;
@@ -93,7 +92,7 @@ public class FolderRpcProxyImpl extends RpcProxy<Folder, List<Folder>> implement
 
                 @Override
                 public void execute() {
-                    eventbus.fireEvent(new RequestAttachDiskResourceFavoritesFolderEvent());
+                    fireEvent(new RootFoldersRetrievedEvent());
                 }
             });
             maskable.unmask();
@@ -125,7 +124,6 @@ public class FolderRpcProxyImpl extends RpcProxy<Folder, List<Folder>> implement
 
     private final IplantAnnouncer announcer;
     private final DiskResourceServiceFacade drService;
-    private final EventBus eventbus;
     private final HandlerManager handlerManager;
     private final SearchServiceFacade searchService;
     private IsMaskable isMaskable;
@@ -134,16 +132,19 @@ public class FolderRpcProxyImpl extends RpcProxy<Folder, List<Folder>> implement
     FolderRpcProxyImpl(final DiskResourceServiceFacade drService,
                        final SearchServiceFacade searchService,
                        final IplantAnnouncer announcer,
-                       final EventBus eventbus,
                        @Assisted final IsMaskable isMaskable) {
 
         this.drService = drService;
         this.searchService = searchService;
         this.announcer = announcer;
-        this.eventbus = eventbus;
         this.isMaskable = isMaskable;
 
         handlerManager = new HandlerManager(this);
+    }
+
+    @Override
+    public HandlerRegistration addRootFoldersRetrievedEventHandler(RootFoldersRetrievedEvent.RootFoldersRetrievedEventHandler handler) {
+        return handlerManager.addHandler(RootFoldersRetrievedEvent.TYPE, handler);
     }
 
     @Override

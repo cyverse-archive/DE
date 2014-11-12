@@ -48,40 +48,31 @@ public class LaunchAnalysisViewImpl implements LaunchAnalysisView {
     }
 
     @UiTemplate("LaunchAnalysisView.ui.xml")
-    interface LaunchAnalysisWidgetUiBinder extends UiBinder<Widget, LaunchAnalysisViewImpl> {
-    }
-
-    @UiField(provided = true)
-    AppsWidgetsDisplayMessages appWidgetStrings;
+    interface LaunchAnalysisWidgetUiBinder extends UiBinder<Widget, LaunchAnalysisViewImpl> { }
 
     @Ignore
-    @UiField
-    FolderSelectorField awFolderSel;
-
+    @UiField(provided = true) FolderSelectorField awFolderSel;
     @Ignore
-    @UiField
-    ContentPanel contentPanel;
-
-    @UiField
-    TextArea description;
-
-    @UiField
-    TextField name;
+    @UiField ContentPanel contentPanel;
+    @UiField(provided = true) AppsWidgetsDisplayMessages appWidgetStrings;
+    @UiField TextArea description;
+    @UiField TextField name;
+    @UiField CheckBox retainInputs;
 
     @Path("outputDirectory")
     ConverterEditorAdapter<String, Folder, FolderSelectorField> outputDirectory;
 
-    @UiField
-    CheckBox retainInputs;
 
-    @Inject
-    private AppTemplateWizardAppearance appearance;
+    @Inject AppTemplateWizardAppearance appearance;
 
     private final EditorDriver editorDriver = GWT.create(EditorDriver.class);
 
     @Inject
-    public LaunchAnalysisViewImpl(LaunchAnalysisWidgetUiBinder binder, AppsWidgetsDisplayMessages appWidgetStrings) {
+    public LaunchAnalysisViewImpl(final LaunchAnalysisWidgetUiBinder binder,
+                                  final AppsWidgetsDisplayMessages appWidgetStrings,
+                                  final FolderSelectorField folderSelectorField) {
         this.appWidgetStrings = appWidgetStrings;
+        this.awFolderSel = folderSelectorField;
         binder.createAndBindUi(this);
         name.addValidator(new DiskResourceNameValidator());
         name.addKeyDownHandler(new PreventEntryAfterLimitHandler(name));

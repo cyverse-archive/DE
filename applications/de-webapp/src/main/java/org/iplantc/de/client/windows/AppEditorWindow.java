@@ -2,7 +2,6 @@ package org.iplantc.de.client.windows;
 
 import org.iplantc.de.apps.client.events.AppPublishedEvent;
 import org.iplantc.de.apps.client.events.AppPublishedEvent.AppPublishedEventHandler;
-import org.iplantc.de.apps.integration.client.gin.AppsEditorInjector;
 import org.iplantc.de.apps.integration.client.view.AppsEditorView;
 import org.iplantc.de.apps.integration.shared.AppIntegrationModule;
 import org.iplantc.de.apps.widgets.client.view.AppLaunchView.RenameWindowHeaderCommand;
@@ -114,13 +113,15 @@ public class AppEditorWindow extends IplantWindowBase implements AppPublishedEve
     private final RenameWindowHeaderCmdImpl renameCmd;
     private final AppTemplateServices templateService;
 
-    public AppEditorWindow(AppsIntegrationWindowConfig config, final EventBus eventBus) {
+    public AppEditorWindow(AppsIntegrationWindowConfig config,
+                           final AppsEditorView.Presenter presenter,
+                           final EventBus eventBus) {
         super(null, config);
+        this.presenter = presenter;
         appearance = GWT.create(AppEditorAppearance.class);
 
         announcer = IplantAnnouncer.getInstance();
         templateService = ServicesInjector.INSTANCE.getAppTemplateServices();
-        presenter = AppsEditorInjector.INSTANCE.getAppEditorPresenter();
         dcServices = ServicesInjector.INSTANCE.getDeployedComponentServices();
         factory = GWT.create(AppTemplateAutoBeanFactory.class);
         renameCmd = new RenameWindowHeaderCmdImpl(this);

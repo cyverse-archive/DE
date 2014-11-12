@@ -3,11 +3,10 @@ package org.iplantc.de.diskResource.client.views.dialogs;
 import org.iplantc.de.client.models.HasPath;
 import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.client.models.diskResources.File;
-import org.iplantc.de.client.util.CommonModelUtils;
 import org.iplantc.de.client.util.DiskResourceUtil;
 import org.iplantc.de.commons.client.views.gxt3.dialogs.IPlantDialog;
 import org.iplantc.de.diskResource.client.events.DiskResourceSelectionChangedEvent;
-import org.iplantc.de.diskResource.client.gin.DiskResourceInjector;
+import org.iplantc.de.diskResource.client.gin.factory.DiskResourcePresenterFactory;
 import org.iplantc.de.diskResource.client.views.DiskResourceView;
 import org.iplantc.de.diskResource.client.views.DiskResourceView.Presenter;
 import org.iplantc.de.resources.client.messages.I18N;
@@ -20,6 +19,8 @@ import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.user.client.TakesValue;
 import com.google.gwt.user.client.ui.HasEnabled;
 import com.google.gwt.user.client.ui.HasValue;
+import com.google.inject.assistedinject.Assisted;
+import com.google.inject.assistedinject.AssistedInject;
 
 import com.sencha.gxt.widget.core.client.form.FieldLabel;
 import com.sencha.gxt.widget.core.client.form.TextField;
@@ -41,55 +42,33 @@ import java.util.Set;
 public class FileSelectDialog extends IPlantDialog implements TakesValue<List<File>> {
 
     private final DiskResourceView.Presenter presenter;
-    private final TextField selectedFileField = new TextField();
     private List<File> selectedFileIds;
 
-    public static FileSelectDialog singleSelect(List<DiskResource> diskResourcesToSelect) {
-        return new FileSelectDialog(diskResourcesToSelect, true);
+    @AssistedInject
+    FileSelectDialog(final DiskResourcePresenterFactory presenterFactory,
+                     @Assisted boolean singleSelect){
+        this(presenterFactory, singleSelect, null, null);
     }
 
-    public static FileSelectDialog selectParentFolderByPath(String folderPath, boolean singleSelect) {
-        return new FileSelectDialog(folderPath, singleSelect);
+    @AssistedInject
+    FileSelectDialog(final DiskResourcePresenterFactory presenterFactory,
+                     @Assisted boolean singleSelect,
+                     @Assisted List<DiskResource> diskResourcesToSelect) {
+        this(presenterFactory, singleSelect, null, diskResourcesToSelect);
     }
 
-    protected FileSelectDialog(String folderPath, boolean singleSelect) {
-        presenter = DiskResourceInjector.INSTANCE.getDiskResourceViewPresenter();
-        init(singleSelect);
-
-        HasPath folderToSelect = null;
-        if (folderPath != null) {
-            folderToSelect = CommonModelUtils.createHasPathFromString(folderPath);
-        }
-
-        presenter.go(this, folderToSelect, null);
+    @AssistedInject
+    FileSelectDialog(final DiskResourcePresenterFactory presenterFactory,
+                     @Assisted boolean singleSelect,
+                     @Assisted HasPath folderToSelect) {
+        this(presenterFactory, singleSelect, folderToSelect, null);
     }
 
-    protected FileSelectDialog(List<DiskResource> diskResourcesToSelect, boolean singleSelect) {
-
-        presenter = DiskResourceInjector.INSTANCE.getDiskResourceViewPresenter();
-        init(singleSelect);
-
-        HasPath folderToSelect = null;
-        if (diskResourcesToSelect != null && !diskResourcesToSelect.isEmpty()) {
-            String parentPath = DiskResourceUtil.parseParent(diskResourcesToSelect.get(0).getPath());
-            folderToSelect = CommonModelUtils.createHasPathFromString(parentPath);
-        }
-
-        presenter.go(this, folderToSelect, diskResourcesToSelect);
-    }
-
-    
-    public void cleanUp() {
-        presenter.cleanUp();
-    }
-    
-    @Override
-    public void onHide(){
-        cleanUp();
-    }
-    
-    
-    private void init(boolean singleSelect) {
+    @AssistedInject
+    FileSelectDialog(final DiskResourcePresenterFactory presenterFactory,
+                     @Assisted boolean singleSelect,
+                     @Assisted HasPath folderToSelect,
+                     @Assisted List<DiskResource> diskResourcesToSelect) {
 
         // Disable Ok button by default.
         getOkButton().setEnabled(false);
@@ -98,21 +77,29 @@ public class FileSelectDialog extends IPlantDialog implements TakesValue<List<Fi
         setSize("640", "480");
         setHeadingText(I18N.DISPLAY.selectAFile());
 
+        TextField selectedFileField = new TextField();
         final FieldLabel fl = new FieldLabel(selectedFileField, I18N.DISPLAY.selectedFile());
+        // Tell the presenter to add the view with the north and east widgets hidden.
+        presenter = presenterFactory.createSelector(true,
+                                                    true,
+                                                    singleSelect,
+                                                    true,
+                                                    folderToSelect,
+                                                    fl);
 
-        selectedFileField
-                .addKeyUpHandler(new SelectedFileFieldKeyUpHandler(presenter, selectedFileField));
-
-        presenter.getView().setSouthWidget(fl);
+        selectedFileField.addKeyUpHandler(new SelectedFileFieldKeyUpHandler(presenter, selectedFileField));
         presenter.addDiskResourceSelectionChangedEventHandler(new FileSelectionChangedHandler(this, selectedFileField,
                                                                                                      getOkButton()));
+        presenter.go(this, folderToSelect, diskResourcesToSelect);
+    }
 
-        // Tell the presenter to add the view with the north and east widgets hidden.
-        DiskResourceView.Presenter.Builder b = presenter.builder().hideNorth().hideEast()
-                .disableFilePreview();
-        if (singleSelect) {
-            b.singleSelect();
-        }
+    public void cleanUp() {
+        presenter.cleanUp();
+    }
+    
+    @Override
+    public void onHide(){
+        cleanUp();
     }
 
     @Override

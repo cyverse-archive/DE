@@ -1,14 +1,16 @@
 package org.iplantc.de.diskResource.client.gin;
 
-import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.gin.ServicesInjector;
-import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.client.models.diskResources.Folder;
-import org.iplantc.de.client.services.DiskResourceServiceFacade;
 import org.iplantc.de.client.services.MetadataServiceFacade;
 import org.iplantc.de.client.services.SearchServiceFacade;
 import org.iplantc.de.client.services.TagsServiceFacade;
-import org.iplantc.de.commons.client.info.IplantAnnouncer;
+import org.iplantc.de.diskResource.client.dataLink.presenter.DataLinkPresenterImpl;
+import org.iplantc.de.diskResource.client.dataLink.view.DataLinkPanel;
+import org.iplantc.de.diskResource.client.gin.factory.DataLinkPanelFactory;
+import org.iplantc.de.diskResource.client.gin.factory.DataSharingDialogFactory;
+import org.iplantc.de.diskResource.client.gin.factory.DiskResourcePresenterFactory;
+import org.iplantc.de.diskResource.client.gin.factory.DiskResourceSelectorDialogFactory;
 import org.iplantc.de.diskResource.client.gin.factory.DiskResourceViewFactory;
 import org.iplantc.de.diskResource.client.gin.factory.FolderRpcProxyFactory;
 import org.iplantc.de.diskResource.client.presenters.DiskResourcePresenterImpl;
@@ -35,9 +37,7 @@ public class DiskResourceGinModule extends AbstractGinModule {
     protected void configure() {
         bind(new TypeLiteral<TreeStore<Folder>>() {}).toProvider(DiskResourceTreeStoreProvider.class);
         bind(new TypeLiteral<Tree<Folder, Folder>>() {}).toProvider(DiskResourceTreeProvider.class);
-        bind(DiskResourceView.Presenter.class).to(DiskResourcePresenterImpl.class);
         bind(DiskResourceView.DiskResourceViewToolbar.class).to(DiskResourceViewToolbarImpl.class);
-        bind(DiskResourceServiceFacade.class).toProvider(DiskResourceServiceFacadeProvider.class);
         bind(DataSearchPresenter.class).to(DataSearchPresenterImpl.class);
 
         bind(DiskResourceView.FolderContentsRpcProxy.class).to(FolderContentsRpcProxyImpl.class);
@@ -48,28 +48,23 @@ public class DiskResourceGinModule extends AbstractGinModule {
                     .implement(DataSearchPresenter.class, DataSearchPresenterImpl.class)
                     .implement(DiskResourceView.class, DiskResourceViewImpl.class)
                     .build(DiskResourceViewFactory.class));
+        // DiskResource Selectors
+        install(new GinFactoryModuleBuilder()
+                    .build(DiskResourceSelectorDialogFactory.class));
+        install(new GinFactoryModuleBuilder()
+                    .implement(DiskResourceView.Presenter.class, DiskResourcePresenterImpl.class)
+                    .build(DiskResourcePresenterFactory.class));
+        install(new GinFactoryModuleBuilder()
+                    .implement(DataLinkPanel.Presenter.class, DataLinkPresenterImpl.class)
+                    .build(DataLinkPanelFactory.class));
+        install(new GinFactoryModuleBuilder()
+                    .build(DataSharingDialogFactory.class));
     }
 
     @Provides
     @Singleton
     public SearchServiceFacade createSearchServiceFacade() {
         return ServicesInjector.INSTANCE.getSearchServiceFacade();
-    }
-
-    @Provides
-    @Singleton
-    public IplantAnnouncer createIplantAnnouncer() {
-        return IplantAnnouncer.getInstance();
-    }
-
-    @Provides
-    public EventBus createEventBus() {
-        return EventBus.getInstance();
-    }
-
-    @Provides
-    public UserInfo createUserInfo() {
-        return UserInfo.getInstance();
     }
 
     @Provides

@@ -31,6 +31,7 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
+import com.google.inject.Provider;
 
 import com.sencha.gxt.widget.core.client.Composite;
 import com.sencha.gxt.widget.core.client.button.TextButton;
@@ -54,24 +55,17 @@ public class AppTemplatePropertyEditor extends Composite implements ValueAwareEd
 
     interface AppTemplatePropertyEditorUiBinder extends UiBinder<Widget, AppTemplatePropertyEditor> { }
 
-    @UiField
-    AppTemplateContentPanel cp;
-    @UiField
-    @Path("description")
-    TextArea description;
-    @UiField
-    @Path("name")
-    TextField name;
+    @UiField AppTemplateContentPanel cp;
+    @UiField TextArea description;
+    @UiField TextField name;
+
     @Path("name")
     HasHTMLEditor nameEditor;
     @Ignore
-    @UiField
-    TextButton searchBtn;
-    @UiField
+    @UiField TextButton searchBtn;
     @Ignore
-    ToolSearchField tool;
-    @UiField
-    FieldLabel toolLabel, appNameLabel, appDescriptionLabel;
+    @UiField ToolSearchField tool;
+    @UiField FieldLabel toolLabel, appNameLabel, appDescriptionLabel;
     private static AppTemplatePropertyEditorUiBinder BINDER = GWT.create(AppTemplatePropertyEditorUiBinder.class);
     private final AppTemplateWizardAppearance appearance;
 
@@ -79,6 +73,8 @@ public class AppTemplatePropertyEditor extends Composite implements ValueAwareEd
 
     private AppTemplate model;
     Logger LOG = Logger.getLogger("App template");
+
+    @Inject Provider<DCListingDialog> dcListingDialogProvider;
 
     @Inject
     public AppTemplatePropertyEditor(AppTemplateWizardAppearance appearance) {
@@ -178,7 +174,7 @@ public class AppTemplatePropertyEditor extends Composite implements ValueAwareEd
      */
     @UiHandler("searchBtn")
     void onSearchBtnClick(SelectEvent event) {
-        final DCListingDialog dialog = new DCListingDialog();
+        final DCListingDialog dialog = dcListingDialogProvider.get();
         dialog.addHideHandler(new HideHandler() {
 
             @Override

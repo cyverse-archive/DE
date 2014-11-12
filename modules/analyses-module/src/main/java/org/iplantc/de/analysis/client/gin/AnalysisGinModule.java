@@ -1,6 +1,7 @@
 package org.iplantc.de.analysis.client.gin;
 
 
+import org.iplantc.de.analysis.client.gin.factory.AnalysisParamViewFactory;
 import org.iplantc.de.analysis.client.presenter.AnalysesPresenterImpl;
 import org.iplantc.de.analysis.client.presenter.proxy.AnalysisRpcProxy;
 import org.iplantc.de.analysis.client.views.*;
@@ -8,6 +9,7 @@ import org.iplantc.de.analysis.client.views.widget.AnalysisParamViewColumnModel;
 import org.iplantc.de.client.models.analysis.Analysis;
 
 import com.google.gwt.inject.client.AbstractGinModule;
+import com.google.gwt.inject.client.assistedinject.GinFactoryModuleBuilder;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import com.google.inject.TypeLiteral;
@@ -28,12 +30,15 @@ public class AnalysisGinModule extends AbstractGinModule {
         bind(AnalysisParamViewColumnModel.class);
         bind(AnalysesView.Presenter.class).to(AnalysesPresenterImpl.class);
         bind(AnalysisRpcProxy.class);
+
+        install(new GinFactoryModuleBuilder()
+                    .build(AnalysisParamViewFactory.class));
     }
 
     @Provides
     @Singleton
     public CheckBoxSelectionModel<Analysis> createCheckboxSelectionModel(){
-        return new CheckBoxSelectionModel<Analysis>(new IdentityValueProvider<Analysis>());
+        return new CheckBoxSelectionModel<>(new IdentityValueProvider<Analysis>());
     }
 
 }

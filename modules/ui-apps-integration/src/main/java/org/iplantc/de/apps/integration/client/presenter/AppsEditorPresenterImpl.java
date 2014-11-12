@@ -6,7 +6,6 @@ import org.iplantc.de.apps.integration.client.events.DeleteArgumentEvent;
 import org.iplantc.de.apps.integration.client.events.DeleteArgumentEvent.DeleteArgumentEventHandler;
 import org.iplantc.de.apps.integration.client.events.DeleteArgumentGroupEvent;
 import org.iplantc.de.apps.integration.client.events.UpdateCommandLinePreviewEvent;
-import org.iplantc.de.apps.integration.client.gin.AppsEditorInjector;
 import org.iplantc.de.apps.integration.client.presenter.visitors.DeleteArgumentGroup;
 import org.iplantc.de.apps.integration.client.presenter.visitors.GatherAllEventProviders;
 import org.iplantc.de.apps.integration.client.presenter.visitors.InitLabelOnlyEditMode;
@@ -20,7 +19,7 @@ import org.iplantc.de.apps.widgets.client.events.ArgumentAddedEvent.ArgumentAdde
 import org.iplantc.de.apps.widgets.client.events.ArgumentGroupAddedEvent;
 import org.iplantc.de.apps.widgets.client.events.ArgumentGroupAddedEvent.ArgumentGroupAddedEventHandler;
 import org.iplantc.de.apps.widgets.client.events.ArgumentSelectedEvent;
-import org.iplantc.de.apps.widgets.client.view.AppLaunchPreviewViewImpl;
+import org.iplantc.de.apps.widgets.client.view.AppLaunchPreviewView;
 import org.iplantc.de.apps.widgets.client.view.AppLaunchView.RenameWindowHeaderCommand;
 import org.iplantc.de.apps.widgets.client.view.editors.style.AppTemplateWizardAppearance;
 import org.iplantc.de.client.events.EventBus;
@@ -55,6 +54,7 @@ import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HasOneWidget;
 import com.google.inject.Inject;
+import com.google.inject.Provider;
 import com.google.web.bindery.autobean.shared.AutoBean;
 import com.google.web.bindery.autobean.shared.AutoBeanCodex;
 import com.google.web.bindery.autobean.shared.AutoBeanUtils;
@@ -383,16 +383,18 @@ public class AppsEditorPresenterImpl implements AppsEditorView.Presenter,
 
     Logger LOG = Logger.getLogger("App Editor");
 
+    @Inject Provider<AppLaunchPreviewView> previewViewProvider;
+
     @Inject
-    public AppsEditorPresenterImpl(final AppsEditorView view,
-                                   final EventBus eventBus,
-                                   final AppTemplateServices atService,
-                                   final AppIntegrationErrorMessages errorMessages,
-                                   final IplantDisplayStrings messages,
-                                   final UUIDServiceAsync uuidService,
-                                   final AppTemplateWizardAppearance appearance,
-                                   final IplantAnnouncer announcer,
-                                   final IplantErrorStrings errorStrings) {
+    AppsEditorPresenterImpl(final AppsEditorView view,
+                            final EventBus eventBus,
+                            final AppTemplateServices atService,
+                            final AppIntegrationErrorMessages errorMessages,
+                            final IplantDisplayStrings messages,
+                            final UUIDServiceAsync uuidService,
+                            final AppTemplateWizardAppearance appearance,
+                            final IplantAnnouncer announcer,
+                            final IplantErrorStrings errorStrings) {
         this.view = view;
         this.eventBus = eventBus;
         this.atService = atService;
@@ -621,7 +623,7 @@ public class AppsEditorPresenterImpl implements AppsEditorView.Presenter,
 
     @Override
     public void onPreviewUiClicked() {
-        AppLaunchPreviewViewImpl preview = AppsEditorInjector.INSTANCE.getAppLaunchPreviewView();
+        AppLaunchPreviewView preview = previewViewProvider.get();
         preview.edit(flushViewAndClean(), null);
         preview.show();
     }
