@@ -22,6 +22,7 @@ import com.google.web.bindery.autobean.shared.impl.StringQuoter;
 
 import static com.sencha.gxt.dnd.core.client.DND.Feedback.INSERT;
 import static com.sencha.gxt.dnd.core.client.DND.Operation.MOVE;
+
 import com.sencha.gxt.data.shared.event.StoreAddEvent;
 import com.sencha.gxt.data.shared.event.StoreRemoveEvent;
 import com.sencha.gxt.dnd.core.client.DndDragEnterEvent;
@@ -135,7 +136,7 @@ public class PathListViewer extends AbstractStructuredTextViewer implements Stor
     PathListViewerToolbar toolbar;
     private static FileListViewerUiBinder ourUiBinder = GWT.create(FileListViewerUiBinder.class);
     private final File file;
-    private PathListViewerAppearance appearance = GWT.create(PathListViewerAppearance.class);
+    private final PathListViewerAppearance appearance = GWT.create(PathListViewerAppearance.class);
 
     public PathListViewer(final File file,
                           final String infoType,
@@ -145,7 +146,7 @@ public class PathListViewer extends AbstractStructuredTextViewer implements Stor
         if (file != null) {
             Preconditions.checkArgument(InfoType.PATH_LIST.toString().equals(file.getInfoType()));
             presenter.loadPathListData(pagingToolBar.getPageNumber(),
-                                       (int) pagingToolBar.getPageSize(),
+                                       pagingToolBar.getPageSize(),
                                        getSeparator());
         } else {
             Preconditions.checkArgument(editing, "New files must be editable");
@@ -199,11 +200,13 @@ public class PathListViewer extends AbstractStructuredTextViewer implements Stor
         setDirty(true);
     }
 
+    @Override
     ColumnModel<Splittable> createColumnModel(final StructuredText structuredText) {
         // Do nothing
         return columnModel;
     }
 
+    @Override
     ColumnModel<Splittable> doFactoryCreateColumnModel() {
         List<ColumnConfig<Splittable, ?>> configs = Lists.newArrayList();
         StructuredTextValueProvider valueProvider = new StructuredTextValueProvider(0);

@@ -13,14 +13,15 @@ public class ViewerPagingToolbarUpdatedEvent extends GwtEvent<ViewerPagingToolba
 
     public static Type<ViewerPagingToolbarUpdatedEventHandler> TYPE = new Type<>();
     private final Integer pageNumber;
-    private final Integer pageSize;
+    private final Long pageSize;
 
     public ViewerPagingToolbarUpdatedEvent(Integer pageNumber,
-                                           Integer pageSize) {
+ Long pageSize) {
         this.pageNumber = pageNumber;
         this.pageSize = pageSize;
     }
 
+    @Override
     public Type<ViewerPagingToolbarUpdatedEventHandler> getAssociatedType() {
         return TYPE;
     }
@@ -29,10 +30,11 @@ public class ViewerPagingToolbarUpdatedEvent extends GwtEvent<ViewerPagingToolba
         return pageNumber;
     }
 
-    public Integer getPageSize() {
+    public Long getPageSize() {
         return pageSize;
     }
 
+    @Override
     protected void dispatch(ViewerPagingToolbarUpdatedEventHandler handler) {
         handler.onViewerPagingToolbarUpdated(this);
     }

@@ -79,7 +79,7 @@ public class StructuredTextViewer extends AbstractStructuredTextViewer {
         initWidget(BINDER.createAndBindUi(this));
         if (file != null) {
             presenter.loadStructuredData(pagingToolBar.getPageNumber(),
-                                         (int) pagingToolBar.getPageSize(),
+                                         pagingToolBar.getPageSize(),
                                          getSeparator());
         } else {
             Preconditions.checkArgument(editing, "New files must be editable");

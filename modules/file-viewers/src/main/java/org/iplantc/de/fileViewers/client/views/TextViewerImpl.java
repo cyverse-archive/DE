@@ -36,7 +36,8 @@ import java.util.logging.Logger;
 /**
  * @author sriram, jstroot
  */
-public class TextViewerImpl extends AbstractFileViewer implements ViewerPagingToolbarUpdatedEvent.ViewerPagingToolbarUpdatedEventHandler {
+public class TextViewerImpl extends AbstractFileViewer implements
+                                                      ViewerPagingToolbarUpdatedEvent.ViewerPagingToolbarUpdatedEventHandler {
 
     private final class PreviewSelectHandlerImpl implements SelectHandler {
         @Override
@@ -71,14 +72,14 @@ public class TextViewerImpl extends AbstractFileViewer implements ViewerPagingTo
             if (jso == null) {
                 return;
             }
-            resizeDisplay(jso,
-                          center.getElement().getOffsetWidth(),
-                          center.getElement().getOffsetHeight());
+            resizeDisplay(jso, center.getElement().getOffsetWidth(), center.getElement()
+                                                                           .getOffsetHeight());
         }
     }
 
     @UiTemplate("TextViewer.ui.xml")
-    interface TextViewerUiBinder extends UiBinder<Widget, TextViewerImpl> { }
+    interface TextViewerUiBinder extends UiBinder<Widget, TextViewerImpl> {
+    }
 
     protected boolean editing;
     protected JavaScriptObject jso;
@@ -110,13 +111,13 @@ public class TextViewerImpl extends AbstractFileViewer implements ViewerPagingTo
         initWidget(uiBinder.createAndBindUi(this));
 
         if (file == null) {
-            /* when u start editing a new file, data is empty but the new file
-             * is yet to be saved. */
-           // FIXME Presenter should be performing this initialization
-             setData("");
+            /*
+             * when u start editing a new file, data is empty but the new file is yet to be saved.
+             */
+            // FIXME Presenter should be performing this initialization
+            setData("");
         } else {
-            presenter.loadTextData(pagingToolbar.getPageNumber(),
-                                   (int) pagingToolbar.getPageSize());
+            presenter.loadTextData(pagingToolbar.getPageNumber(), pagingToolbar.getPageSize());
         }
 
         center.addResizeHandler(new ResizeViewHandlerImpl());
@@ -132,61 +133,62 @@ public class TextViewerImpl extends AbstractFileViewer implements ViewerPagingTo
                                                       boolean wrap,
                                                       boolean editing) /*-{
 
-        if (editorMode == "python") {
-            editorMode = {
-                name: "python",
-                version: 3,
-                singleLineStringErrors: false
-            }
-        }
-        var myCodeMirror = $wnd.CodeMirror(textArea, {
-            value: val,
-            mode: editorMode,
-            matchBrackets: true,
-            autoCloseBrackets: true
+		if (editorMode == "python") {
+			editorMode = {
+				name : "python",
+				version : 3,
+				singleLineStringErrors : false
+			}
+		}
+		var myCodeMirror = $wnd.CodeMirror(textArea, {
+			value : val,
+			mode : editorMode,
+			matchBrackets : true,
+			autoCloseBrackets : true
 
-        });
-        myCodeMirror.setSize(width, height);
-        myCodeMirror.setOption("readOnly", !editing);
-        myCodeMirror
-            .on(
-            "change",
-            $entry(function () {
-                instance.@org.iplantc.de.fileViewers.client.views.TextViewerImpl::setDirty(Ljava/lang/Boolean;)(@java.lang.Boolean::TRUE);
-            }));
-        return myCodeMirror;
+		});
+		myCodeMirror.setSize(width, height);
+		myCodeMirror.setOption("readOnly", !editing);
+		myCodeMirror
+				.on(
+						"change",
+						$entry(function() {
+							instance.@org.iplantc.de.fileViewers.client.views.TextViewerImpl::setDirty(Ljava/lang/Boolean;)(@java.lang.Boolean::TRUE);
+						}));
+		return myCodeMirror;
     }-*/;
 
     public static native String getEditorContent(JavaScriptObject jso) /*-{
-        return jso.getValue();
+		return jso.getValue();
     }-*/;
 
     public static native boolean isClean(JavaScriptObject jso) /*-{
-        return jso.isClean();
+		return jso.isClean();
     }-*/;
 
     public static native void resizeDisplay(JavaScriptObject jso, int width, int height) /*-{
-        jso.setSize(width, height);
+		jso.setSize(width, height);
     }-*/;
 
     public static native void setEditing(JavaScriptObject jso, boolean editing) /*-{
-        jso.setOption("readOnly", !editing);
+		jso.setOption("readOnly", !editing);
     }-*/;
 
     public static native void showLineNumbersInEditor(JavaScriptObject jso, boolean show) /*-{
-        jso.setOption("lineNumbers", show);
+		jso.setOption("lineNumbers", show);
     }-*/;
 
     public static native void updateData(JavaScriptObject jso, String val) /*-{
-        jso.setValue(val);
+		jso.setValue(val);
     }-*/;
 
     public static native void wrapText(JavaScriptObject jso, boolean wrap) /*-{
-        jso.setOption("lineWrapping", wrap);
+		jso.setOption("lineWrapping", wrap);
     }-*/;
 
     @Override
-    public HandlerRegistration addFileSavedEventHandler(final FileSavedEvent.FileSavedEventHandler handler) {
+    public HandlerRegistration
+            addFileSavedEventHandler(final FileSavedEvent.FileSavedEventHandler handler) {
         return con.addHandler(handler, FileSavedEvent.TYPE);
     }
 
@@ -216,13 +218,13 @@ public class TextViewerImpl extends AbstractFileViewer implements ViewerPagingTo
             jso = displayData(this,
                               center.getElement(),
                               mode,
-                              (String) data,
+                              (String)data,
                               center.getElement().getOffsetWidth(),
                               center.getElement().getOffsetHeight(),
                               toolbar.isWrapText(),
                               allowEditing);
         } else {
-            updateData(jso, (String) data);
+            updateData(jso, (String)data);
             setEditing(jso, allowEditing);
             setDirty(false);
         }
@@ -265,8 +267,7 @@ public class TextViewerImpl extends AbstractFileViewer implements ViewerPagingTo
 
     @UiHandler("toolbar")
     void onRefreshClick(RefreshSelectedEvent event) {
-        presenter.loadTextData(pagingToolbar.getPageNumber(),
-                               (int) pagingToolbar.getPageSize());
+        presenter.loadTextData(pagingToolbar.getPageNumber(), pagingToolbar.getPageSize());
     }
 
     @UiHandler("toolbar")

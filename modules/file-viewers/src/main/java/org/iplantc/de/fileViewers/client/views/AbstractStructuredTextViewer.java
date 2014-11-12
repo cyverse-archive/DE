@@ -1,7 +1,14 @@
 package org.iplantc.de.fileViewers.client.views;
 
-import static org.iplantc.de.client.models.viewer.InfoType.*;
-import static org.iplantc.de.client.services.FileEditorServiceFacade.*;
+import static org.iplantc.de.client.models.viewer.InfoType.CSV;
+import static org.iplantc.de.client.models.viewer.InfoType.GFF;
+import static org.iplantc.de.client.models.viewer.InfoType.PATH_LIST;
+import static org.iplantc.de.client.models.viewer.InfoType.TSV;
+import static org.iplantc.de.client.models.viewer.InfoType.VCF;
+import static org.iplantc.de.client.services.FileEditorServiceFacade.COMMA_DELIMITER;
+import static org.iplantc.de.client.services.FileEditorServiceFacade.SPACE_DELIMITER;
+import static org.iplantc.de.client.services.FileEditorServiceFacade.TAB_DELIMITER;
+
 import org.iplantc.de.client.models.diskResources.File;
 import org.iplantc.de.client.models.viewer.InfoType;
 import org.iplantc.de.client.models.viewer.StructuredText;
@@ -167,7 +174,7 @@ public abstract class AbstractStructuredTextViewer extends AbstractFileViewer {
 
     @UiHandler("toolbar") void onRefreshSelected(RefreshSelectedEvent event){
         presenter.loadStructuredData(pagingToolBar.getPageNumber(),
-                                     (int) pagingToolBar.getPageSize(),
+                                     pagingToolBar.getPageSize(),
                                      getSeparator());
     }
 

@@ -2,9 +2,9 @@ package org.iplantc.de.fileViewers.client.presenter;
 
 import static org.iplantc.de.client.services.FileEditorServiceFacade.COMMA_DELIMITER;
 import static org.iplantc.de.client.services.FileEditorServiceFacade.TAB_DELIMITER;
+
 import org.iplantc.de.client.events.FileSavedEvent;
 import org.iplantc.de.client.models.CommonModelAutoBeanFactory;
-import org.iplantc.de.client.models.DEProperties;
 import org.iplantc.de.client.models.IsMaskable;
 import org.iplantc.de.client.models.diskResources.File;
 import org.iplantc.de.client.models.diskResources.Folder;
@@ -19,15 +19,18 @@ import org.iplantc.de.client.util.DiskResourceUtil;
 import org.iplantc.de.client.util.JsonUtil;
 import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.diskResource.client.views.dialogs.SaveAsDialog;
+import org.iplantc.de.fileViewers.client.FileViewer;
 import org.iplantc.de.fileViewers.client.callbacks.FileSaveCallback;
 import org.iplantc.de.fileViewers.client.callbacks.TreeUrlCallback;
 import org.iplantc.de.fileViewers.client.events.DirtyStateChangedEvent;
 import org.iplantc.de.fileViewers.client.views.ExternalVisualizationURLViewerImpl;
-import org.iplantc.de.fileViewers.client.FileViewer;
 import org.iplantc.de.fileViewers.client.views.SaveAsDialogCancelSelectHandler;
 import org.iplantc.de.fileViewers.client.views.SaveAsDialogOkSelectHandler;
 
-import static com.google.common.base.Preconditions.*;
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkState;
+
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
@@ -132,13 +135,13 @@ public class FileViewerPresenterImpl implements FileViewer.Presenter, FileSavedE
     private boolean isDirty;
     private JSONObject manifest;
     private Folder parentFolder;
-    private PlainTabPanel tabPanel;
+    private final PlainTabPanel tabPanel;
     private String title;
-    private SimpleContainer simpleContainer;
+    private final SimpleContainer simpleContainer;
     /**
      * A presenter can handle more than one view of the same data at a time
      */
-    private List<FileViewer> viewers;
+    private final List<FileViewer> viewers;
     private boolean vizTabFirst;
 
     @Inject
@@ -200,12 +203,12 @@ public class FileViewerPresenterImpl implements FileViewer.Presenter, FileSavedE
     }
 
     @Override
-    public void loadPathListData(Integer pageNumber, Integer pageSize, String separator) {
+    public void loadPathListData(Integer pageNumber, Long pageSize, String separator) {
 
     }
 
     @Override
-    public void loadStructuredData(Integer pageNumber, Integer pageSize, String separator) {
+    public void loadStructuredData(Integer pageNumber, Long pageSize, String separator) {
         if(file == null){
             return;
         }
@@ -237,7 +240,7 @@ public class FileViewerPresenterImpl implements FileViewer.Presenter, FileSavedE
     }
 
     @Override
-    public void loadTextData(Integer pageNumber, Integer pageSize) {
+    public void loadTextData(Integer pageNumber, Long pageSize) {
         if(file == null){
             return;
         }

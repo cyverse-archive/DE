@@ -1,7 +1,7 @@
 package org.iplantc.de.fileViewers.client.views;
 
-import static org.iplantc.de.fileViewers.client.events.ViewerPagingToolbarUpdatedEvent.ViewerPagingToolbarUpdatedEventHandler;
 import org.iplantc.de.fileViewers.client.events.ViewerPagingToolbarUpdatedEvent;
+import org.iplantc.de.fileViewers.client.events.ViewerPagingToolbarUpdatedEvent.ViewerPagingToolbarUpdatedEventHandler;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.KeyCodes;
@@ -94,20 +94,20 @@ public class ViewerPagingToolBar extends Composite {
     }
 
     @UiHandler("pageNumber")
-    void onPageNumberValueChange(ValueChangeEvent<Integer> event){
-        fireEvent(new ViewerPagingToolbarUpdatedEvent(pageNumber.getValue(), pageSizeSlider.getValue()));
+    void onPageNumberValueChange(ValueChangeEvent<Integer> event) {
+        fireEvent(new ViewerPagingToolbarUpdatedEvent(pageNumber.getValue(), getPageSize()));
     }
 
     @UiHandler("pageSizeSlider")
-    void onPageSizeSliderValueChange(ValueChangeEvent<Integer> event){
+    void onPageSizeSliderValueChange(ValueChangeEvent<Integer> event) {
         computeTotalPages();
         pageNumber.setValue(1, false);
-        fireEvent(new ViewerPagingToolbarUpdatedEvent(pageNumber.getValue(), pageSizeSlider.getValue()));
+        fireEvent(new ViewerPagingToolbarUpdatedEvent(pageNumber.getValue(), getPageSize()));
     }
 
     @UiHandler("first")
     void onFirstSelect(SelectEvent event){
-        pageNumber.setValue(1);
+        pageNumber.setValue(1, true);
         first.setEnabled(false);
         prev.setEnabled(false);
         last.setEnabled(true);
@@ -116,7 +116,7 @@ public class ViewerPagingToolBar extends Composite {
 
     @UiHandler("last")
     void onLastSelect(SelectEvent event){
-        pageNumber.setValue(totalPages);
+        pageNumber.setValue(totalPages, true);
         last.setEnabled(false);
         next.setEnabled(false);
 
@@ -127,7 +127,7 @@ public class ViewerPagingToolBar extends Composite {
     @UiHandler("next")
     void onNextSelect(SelectEvent event){
         int temp = getPageNumber() + 1;
-        pageNumber.setValue(temp);
+        pageNumber.setValue(temp, true);
 
         if (temp == totalPages) {
             last.setEnabled(false);
@@ -141,7 +141,7 @@ public class ViewerPagingToolBar extends Composite {
     @UiHandler("prev")
     void onPrevSelect(SelectEvent event){
         int temp = getPageNumber() - 1;
-        pageNumber.setValue(temp);
+        pageNumber.setValue(temp, true);
         last.setEnabled(true);
         next.setEnabled(true);
 
