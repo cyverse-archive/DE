@@ -3,16 +3,17 @@
  */
 package org.iplantc.de.apps.client.views.dialogs;
 
-import org.iplantc.de.apps.client.presenter.NewToolRequestFormPresenterImpl;
+import org.iplantc.de.apps.client.gin.factory.NewToolRequestFormPresenterFactory;
+import org.iplantc.de.apps.client.gin.factory.NewToolRequestFormViewFactory;
 import org.iplantc.de.apps.client.views.NewToolRequestFormView;
 import org.iplantc.de.apps.client.views.NewToolRequestFormView.Presenter;
-import org.iplantc.de.apps.client.views.NewToolRequestFormViewImpl;
 import org.iplantc.de.client.models.toolRequests.Architecture;
 import org.iplantc.de.client.models.toolRequests.YesNoMaybe;
 import org.iplantc.de.commons.client.views.gxt3.dialogs.IPlantDialog;
 import org.iplantc.de.resources.client.messages.I18N;
 
 import com.google.gwt.user.client.Command;
+import com.google.inject.Inject;
 
 import com.sencha.gxt.data.shared.LabelProvider;
 import com.sencha.gxt.widget.core.client.event.SelectEvent;
@@ -53,7 +54,7 @@ public class NewToolRequestDialog extends IPlantDialog {
                 }
             }
         };
-        final SimpleComboBox<Architecture> chooser = new SimpleComboBox<Architecture>(labeler);
+        final SimpleComboBox<Architecture> chooser = new SimpleComboBox<>(labeler);
         chooser.add(Arrays.asList(Architecture.GENERIC_32, Architecture.GENERIC_64, Architecture.VM_OR_INTERPRETED, Architecture.UNKNOWN));
         chooser.setValue(Architecture.GENERIC_64);
         return chooser;
@@ -74,13 +75,16 @@ public class NewToolRequestDialog extends IPlantDialog {
                 }
             }
         };
-        final SimpleComboBox<YesNoMaybe> chooser = new SimpleComboBox<YesNoMaybe>(labeler);
+        final SimpleComboBox<YesNoMaybe> chooser = new SimpleComboBox<>(labeler);
         chooser.add(Arrays.asList(YesNoMaybe.TRUE, YesNoMaybe.FALSE, YesNoMaybe.MAYBE));
         chooser.setValue(YesNoMaybe.MAYBE);
         return chooser;
     }
 
-    public NewToolRequestDialog() {
+
+    @Inject
+    NewToolRequestDialog(final NewToolRequestFormViewFactory viewFactory,
+                         final NewToolRequestFormPresenterFactory presenterFactory) {
         setHeadingText(I18N.DISPLAY.requestNewTool());
         setPixelSize(480, 400);
         this.setResizable(false);
@@ -89,8 +93,8 @@ public class NewToolRequestDialog extends IPlantDialog {
         setOkButtonText(I18N.DISPLAY.submit());
         final ComboBox<Architecture> archChooser = makeArchitectureChooser();
         final ComboBox<YesNoMaybe> multithreadChooser = makeMultithreadChooser();
-        final NewToolRequestFormView<Architecture, YesNoMaybe> view = new NewToolRequestFormViewImpl<Architecture, YesNoMaybe>(archChooser, multithreadChooser);
-        final Presenter p = new NewToolRequestFormPresenterImpl(view, new Command() {
+        final NewToolRequestFormView view = viewFactory.createNewToolRequestFormView(archChooser, multithreadChooser);
+        final Presenter p = presenterFactory.createPresenter(view, new Command() {
 
             @Override
             public void execute() {

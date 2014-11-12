@@ -1,6 +1,5 @@
 package org.iplantc.de.diskResource.client.dataLink.presenter;
 
-import org.iplantc.de.client.gin.ServicesInjector;
 import org.iplantc.de.client.models.dataLink.DataLink;
 import org.iplantc.de.client.models.dataLink.DataLinkFactory;
 import org.iplantc.de.client.models.diskResources.DiskResource;
@@ -12,27 +11,34 @@ import org.iplantc.de.diskResource.client.dataLink.presenter.callbacks.CreateDat
 import org.iplantc.de.diskResource.client.dataLink.presenter.callbacks.DeleteDataLinksCallback;
 import org.iplantc.de.diskResource.client.dataLink.presenter.callbacks.ListDataLinksCallback;
 import org.iplantc.de.diskResource.client.dataLink.view.DataLinkPanel;
+import org.iplantc.de.diskResource.client.gin.factory.DataLinkPanelFactory;
 
 import com.google.common.collect.Lists;
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.HasOneWidget;
+import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
 
 import java.util.List;
 
 
-public class DataLinkPresenter<M extends DiskResource> implements DataLinkPanel.Presenter<M> {
+public class DataLinkPresenterImpl implements DataLinkPanel.Presenter {
 
-    private final DataLinkPanel<M> view;
-    private final DiskResourceServiceFacade drService = ServicesInjector.INSTANCE.getDiskResourceServiceFacade();
-    private final DataLinkFactory dlFactory = GWT.create(DataLinkFactory.class);
+    private final DataLinkPanel view;
+    private final DiskResourceServiceFacade drService;
+    private final DataLinkFactory dlFactory;
 
-    public DataLinkPresenter(List<M> resources) {
-        view = new DataLinkPanel<M>(resources);
-        view.setPresenter(this);
+    @Inject
+    DataLinkPresenterImpl(final DiskResourceServiceFacade drService,
+                          final DataLinkPanelFactory dlPanelGinFactory,
+                          final DataLinkFactory dlFactory,
+                          @Assisted List<DiskResource> resources) {
+        this.drService = drService;
+        this.dlFactory = dlFactory;
+        view = dlPanelGinFactory.createDataLinkPanel(this, resources);
 
         // Remove Folders
-        List<M> allowedResources = Lists.newArrayList();
-        for(M m : resources){
+        List<DiskResource> allowedResources = Lists.newArrayList();
+        for(DiskResource m : resources){
             if(!(m instanceof Folder)){
                 allowedResources.add(m);
             }
@@ -42,7 +48,7 @@ public class DataLinkPresenter<M extends DiskResource> implements DataLinkPanel.
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
-    private void getExistingDataLinks(List<M> resources) {
+    private void getExistingDataLinks(List<DiskResource> resources) {
         view.addRoots(resources);
         drService.listDataLinks(DiskResourceUtil.asStringPathList(resources),
                                 new ListDataLinksCallback(
@@ -71,9 +77,9 @@ public class DataLinkPresenter<M extends DiskResource> implements DataLinkPanel.
 
     @SuppressWarnings({"rawtypes", "unchecked"})
     @Override
-    public void createDataLinks(List<M> selectedItems) {
+    public void createDataLinks(List<DiskResource> selectedItems) {
         final List<String> drResourceIds = Lists.newArrayList();
-        for(M dr : selectedItems){
+        for(DiskResource dr : selectedItems){
             if(!(dr instanceof DataLink)){
                 drResourceIds.add(dr.getPath());
             }
@@ -85,7 +91,7 @@ public class DataLinkPresenter<M extends DiskResource> implements DataLinkPanel.
 
     @Override
     public String getSelectedDataLinkDownloadPage() {
-        M model = view.getTree().getSelectionModel().getSelectedItem();
+        DiskResource model = view.getTree().getSelectionModel().getSelectedItem();
         if(model instanceof DataLink){
             return ((DataLink)model).getDownloadPageUrl();
         }
@@ -94,7 +100,7 @@ public class DataLinkPresenter<M extends DiskResource> implements DataLinkPanel.
 
     @Override
     public String getSelectedDataLinkDownloadUrl() {
-        M model = view.getTree().getSelectionModel().getSelectedItem();
+        DiskResource model = view.getTree().getSelectionModel().getSelectedItem();
         if (model instanceof DataLink) {
             return ((DataLink)model).getDownloadUrl();
         }
@@ -103,7 +109,7 @@ public class DataLinkPresenter<M extends DiskResource> implements DataLinkPanel.
 
     @Override
     public void openSelectedDataLinkDownloadPage() {
-        M model = view.getTree().getSelectionModel().getSelectedItem();
+        DiskResource model = view.getTree().getSelectionModel().getSelectedItem();
         if (model instanceof DataLink) {
             String url = ((DataLink)model).getDownloadPageUrl();
             WindowUtil.open(url);

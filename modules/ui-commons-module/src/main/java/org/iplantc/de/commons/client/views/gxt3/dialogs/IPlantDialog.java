@@ -27,8 +27,8 @@ public class IPlantDialog extends Dialog implements IsHideable, IsMaskable {
 
     protected ContextualHelpToolButton helpTool;
 
-    private final ArrayList<SelectHandler> okButtonSelectHandlers = new ArrayList<SelectHandler>();
-    private final ArrayList<SelectHandler> cancelButtonSelectHandlers = new ArrayList<SelectHandler>();
+    private final ArrayList<SelectHandler> okButtonSelectHandlers = new ArrayList<>();
+    private final ArrayList<SelectHandler> cancelButtonSelectHandlers = new ArrayList<>();
     
     public IPlantDialog() {
         // no contextual help tool icon by default

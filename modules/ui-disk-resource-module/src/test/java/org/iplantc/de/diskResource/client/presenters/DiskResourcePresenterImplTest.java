@@ -77,8 +77,8 @@ public class DiskResourcePresenterImplTest {
                                             mockFolderContentsRpcProxy,
                                             mockFactory,
                                             mockDataSearchPresenter,
+                                            mockDisplayStrings,
                                             mockEventBus);
-        uut.displayStrings = mockDisplayStrings;
         uut.announcer = mockAnnouncer;
     }
 

@@ -3,7 +3,7 @@ package org.iplantc.de.diskResource.client.dataLink.view;
 import org.iplantc.de.client.models.dataLink.DataLink;
 import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.commons.client.views.gxt3.dialogs.IPlantDialog;
-import org.iplantc.de.resources.client.messages.I18N;
+import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.logical.shared.SelectionEvent;
@@ -19,6 +19,8 @@ import com.google.gwt.user.client.ui.HasEnabled;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
 
 import com.sencha.gxt.core.client.IdentityValueProvider;
 import com.sencha.gxt.core.client.ValueProvider;
@@ -33,168 +35,26 @@ import com.sencha.gxt.widget.core.client.tree.Tree;
 
 import java.util.List;
 
-public class DataLinkPanel<M extends DiskResource> implements IsWidget {
-
-    public interface Presenter<M> extends org.iplantc.de.commons.client.presenter.Presenter {
-
-        void deleteDataLink(DataLink dataLink);
-
-        void deleteDataLinks(List<DataLink> dataLinks);
-
-        void createDataLinks(List<M> selectedItems);
-
-        String getSelectedDataLinkDownloadPage();
-
-        String getSelectedDataLinkDownloadUrl();
-
-        void openSelectedDataLinkDownloadPage();
-    }
-
-    @UiTemplate("DataLinkPanel.ui.xml")
-    interface DataLinkPanelUiBinder extends UiBinder<Widget, DataLinkPanel<?>> {
-    }
-
-    private static DataLinkPanelUiBinder uiBinder = GWT.create(DataLinkPanelUiBinder.class);
-
-    @UiField
-    TreeStore<M> store;
-
-    @UiField
-    Tree<M, M> tree;
-
-    @UiField
-    TextButton createDataLinksBtn;
-
-    @UiField
-    TextButton expandAll;
-
-    @UiField
-    TextButton collapseAll;
-
-    @UiField
-    TextButton copyDataLinkButton;
-
-    @UiField
-    TextButton advancedDataLinkButton;
-
-    private final Widget widget;
-
-    private Presenter<M> presenter;
-
-    public DataLinkPanel(List<M> sharedResources) {
-        widget = uiBinder.createAndBindUi(this);
-        widget.setHeight("300");
-
-        // Set the tree's node close/open icons to an empty image. Images for our tree will be controlled
-        // from the cell.
-        ImageResourcePrototype emptyImgResource = new ImageResourcePrototype("",
-                UriUtils.fromString(""), 0, 0, 0, 0, false, false);
-        tree.getStyle().setNodeCloseIcon(emptyImgResource);
-        tree.getStyle().setNodeOpenIcon(emptyImgResource);
-
-        tree.getSelectionModel().addSelectionHandler(
-                new TreeSelectionHandler(createDataLinksBtn, copyDataLinkButton, advancedDataLinkButton,
-                        tree));
-        new QuickTip(widget);
-
-    }
-
-    public void setPresenter(Presenter<M> presenter) {
-        this.presenter = presenter;
-        tree.setCell(new DataLinkPanelCell<M>(this.presenter));
-    }
-
-    public void addRoots(List<M> roots) {
-        store.add(roots);
-    }
-
-    @UiFactory
-    ValueProvider<M, M> createValueProvider() {
-        return new IdentityValueProvider<M>();
-    }
-
-    @UiFactory
-    TreeStore<M> createTreeStore() {
-        return new TreeStore<M>(new ModelKeyProvider<M>() {
-
-            @Override
-            public String getKey(M item) {
-                return item.getId();
-            }
-        });
-    }
-
-    @UiHandler("createDataLinksBtn")
-    void onCreateDataLinksSelected(SelectEvent event) {
-        presenter.createDataLinks(tree.getSelectionModel().getSelectedItems());
-
-    }
-
-    @UiHandler("expandAll")
-    void onExpandAllSelected(SelectEvent event) {
-        tree.expandAll();
-    }
-
-    @UiHandler("collapseAll")
-    void onCollapseAllSelected(SelectEvent event) {
-        tree.collapseAll();
-    }
-
-    @UiHandler("copyDataLinkButton")
-    void onCopyDataLinkButtonSelected(SelectEvent event) {
-        // Open dialog window with text selected.
-        IPlantDialog dlg = new IPlantDialog();
-        dlg.setHeadingText(I18N.DISPLAY.copy());
-        dlg.setHideOnButtonClick(true);
-        dlg.setResizable(false);
-        dlg.setSize("535", "130");
-        TextField textBox = new TextField();
-        textBox.setWidth(500);
-        textBox.setReadOnly(true);
-        textBox.setValue(presenter.getSelectedDataLinkDownloadUrl());
-        VerticalLayoutContainer container = new VerticalLayoutContainer();
-        dlg.setWidget(container);
-        container.add(textBox);
-        container.add(new Label(I18N.DISPLAY.copyPasteInstructions()));
-        dlg.setFocusWidget(textBox);
-        dlg.show();
-        textBox.selectAll();
-    }
-
-    @UiHandler("advancedDataLinkButton")
-    void onAdvancedDataLinkSelected(SelectEvent event) {
-        presenter.openSelectedDataLinkDownloadPage();
-    }
-
-    @Override
-    public Widget asWidget() {
-        return widget;
-    }
-
-    public void mask() {
-        tree.mask(I18N.DISPLAY.loadingMask());
-    }
-
-    public void unmask() {
-        tree.unmask();
-    }
-
+/**
+ * @author jstroot
+ */
+public class DataLinkPanel implements IsWidget {
 
     /**
      * A handler who controls this widgets button visibility based on tree check selection.
      *
      * @author jstroot
-     *
      */
-    private final class TreeSelectionHandler implements SelectionHandler<M> {
+    private final class TreeSelectionHandler implements SelectionHandler<DiskResource> {
 
-        private final HasEnabled createBtn;
-        private final HasEnabled copyDataLinkButton;
         private final HasEnabled advancedDataLinkButton;
-        private final Tree<M, M> tree;
+        private final HasEnabled copyDataLinkButton;
+        private final HasEnabled createBtn;
+        private final Tree<DiskResource, DiskResource> tree;
 
         public TreeSelectionHandler(HasEnabled createBtn, HasEnabled copyDataLinkButton,
-                HasEnabled advancedDataLinkButton, Tree<M, M> tree) {
+                                    HasEnabled advancedDataLinkButton,
+                                    Tree<DiskResource, DiskResource> tree) {
             this.createBtn = createBtn;
             this.copyDataLinkButton = copyDataLinkButton;
             this.advancedDataLinkButton = advancedDataLinkButton;
@@ -202,13 +62,13 @@ public class DataLinkPanel<M extends DiskResource> implements IsWidget {
         }
 
         @Override
-        public void onSelection(SelectionEvent<M> event) {
-            List<M> selectedItems = tree.getSelectionModel().getSelectedItems();
+        public void onSelection(SelectionEvent<DiskResource> event) {
+            List<DiskResource> selectedItems = tree.getSelectionModel().getSelectedItems();
             boolean createBtnEnabled = selectedItems.size() > 0;
             boolean dataLinkSelected = selectedItems.size() == 1
-                    && (selectedItems.get(0) instanceof DataLink);
+                                           && (selectedItems.get(0) instanceof DataLink);
 
-            for (M item : selectedItems) {
+            for (DiskResource item : selectedItems) {
                 if (item instanceof DataLink) {
                     createBtnEnabled = false;
                     break;
@@ -222,8 +82,136 @@ public class DataLinkPanel<M extends DiskResource> implements IsWidget {
 
     }
 
-    public Tree<M, M> getTree() {
+    @UiTemplate("DataLinkPanel.ui.xml")
+    interface DataLinkPanelUiBinder extends UiBinder<Widget, DataLinkPanel> { }
+
+    public interface Presenter extends org.iplantc.de.commons.client.presenter.Presenter {
+
+        void createDataLinks(List<DiskResource> selectedItems);
+
+        void deleteDataLink(DataLink dataLink);
+
+        void deleteDataLinks(List<DataLink> dataLinks);
+
+        String getSelectedDataLinkDownloadPage();
+
+        String getSelectedDataLinkDownloadUrl();
+
+        void openSelectedDataLinkDownloadPage();
+    }
+
+    @UiField TextButton advancedDataLinkButton;
+    @UiField TextButton collapseAll;
+    @UiField TextButton copyDataLinkButton;
+    @UiField TextButton createDataLinksBtn;
+    @UiField TextButton expandAll;
+    @UiField TreeStore<DiskResource> store;
+    @UiField Tree<DiskResource, DiskResource> tree;
+
+    private static DataLinkPanelUiBinder uiBinder = GWT.create(DataLinkPanelUiBinder.class);
+    private final Widget widget;
+    private final IplantDisplayStrings displayStrings;
+    private Presenter presenter;
+
+    @Inject
+    DataLinkPanel(final IplantDisplayStrings displayStrings,
+                  @Assisted final Presenter presenter,
+                  @Assisted final List<DiskResource> sharedResources) {
+        this.displayStrings = displayStrings;
+        this.presenter = presenter;
+        widget = uiBinder.createAndBindUi(this);
+        widget.setHeight("300");
+
+        // Set the tree's node close/open icons to an empty image. Images for our tree will be controlled
+        // from the cell.
+        ImageResourcePrototype emptyImgResource = new ImageResourcePrototype("", UriUtils.fromString(""), 0, 0, 0, 0, false, false);
+        tree.getStyle().setNodeCloseIcon(emptyImgResource);
+        tree.getStyle().setNodeOpenIcon(emptyImgResource);
+
+        tree.getSelectionModel().addSelectionHandler(new TreeSelectionHandler(createDataLinksBtn,
+                                                                              copyDataLinkButton,
+                                                                              advancedDataLinkButton,
+                                                                              tree));
+        tree.setCell(new DataLinkPanelCell(this.presenter));
+        new QuickTip(widget);
+
+    }
+
+    public void addRoots(List<DiskResource> roots) {
+        store.add(roots);
+    }
+
+    @Override
+    public Widget asWidget() {
+        return widget;
+    }
+
+    public Tree<DiskResource, DiskResource> getTree() {
         return tree;
+    }
+
+    public void mask() {
+        tree.mask(displayStrings.loadingMask());
+    }
+
+    public void unmask() {
+        tree.unmask();
+    }
+
+    @UiFactory TreeStore<DiskResource> createTreeStore() {
+        return new TreeStore<>(new ModelKeyProvider<DiskResource>() {
+
+            @Override
+            public String getKey(DiskResource item) {
+                return item.getId();
+            }
+        });
+    }
+
+    @UiFactory ValueProvider<DiskResource, DiskResource> createValueProvider() {
+        return new IdentityValueProvider<>();
+    }
+
+    @UiHandler("advancedDataLinkButton")
+    void onAdvancedDataLinkSelected(SelectEvent event) {
+        presenter.openSelectedDataLinkDownloadPage();
+    }
+
+    @UiHandler("collapseAll")
+    void onCollapseAllSelected(SelectEvent event) {
+        tree.collapseAll();
+    }
+
+    @UiHandler("copyDataLinkButton")
+    void onCopyDataLinkButtonSelected(SelectEvent event) {
+        // Open dialog window with text selected.
+        IPlantDialog dlg = new IPlantDialog();
+        dlg.setHeadingText(displayStrings.copy());
+        dlg.setHideOnButtonClick(true);
+        dlg.setResizable(false);
+        dlg.setSize("535", "130");
+        TextField textBox = new TextField();
+        textBox.setWidth(500);
+        textBox.setReadOnly(true);
+        textBox.setValue(presenter.getSelectedDataLinkDownloadUrl());
+        VerticalLayoutContainer container = new VerticalLayoutContainer();
+        dlg.setWidget(container);
+        container.add(textBox);
+        container.add(new Label(displayStrings.copyPasteInstructions()));
+        dlg.setFocusWidget(textBox);
+        dlg.show();
+        textBox.selectAll();
+    }
+
+    @UiHandler("createDataLinksBtn")
+    void onCreateDataLinksSelected(SelectEvent event) {
+        presenter.createDataLinks(tree.getSelectionModel().getSelectedItems());
+
+    }
+
+    @UiHandler("expandAll")
+    void onExpandAllSelected(SelectEvent event) {
+        tree.expandAll();
     }
 
 }

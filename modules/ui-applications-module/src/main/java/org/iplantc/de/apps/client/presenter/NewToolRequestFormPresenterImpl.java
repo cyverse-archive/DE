@@ -11,7 +11,6 @@ import org.iplantc.de.client.models.HasPaths;
 import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.client.models.diskResources.DiskResourceAutoBeanFactory;
 import org.iplantc.de.client.models.diskResources.DiskResourceExistMap;
-import org.iplantc.de.client.models.toolRequests.Architecture;
 import org.iplantc.de.client.models.toolRequests.NewToolRequest;
 import org.iplantc.de.client.models.toolRequests.RequestedToolDetails;
 import org.iplantc.de.client.models.toolRequests.ToolRequestFactory;
@@ -29,6 +28,8 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HasOneWidget;
+import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
 
 import java.util.List;
 import java.util.Set;
@@ -45,7 +46,7 @@ public class NewToolRequestFormPresenterImpl implements Presenter {
     private final DiskResourceServiceFacade fsServices = ServicesInjector.INSTANCE.getDiskResourceServiceFacade();
     private final ToolRequestServiceFacade reqServices = ServicesInjector.INSTANCE.getToolRequestServiceProvider();
 
-    private final NewToolRequestFormView<Architecture, YesNoMaybe> view;
+    private final NewToolRequestFormView view;
     private final Command callback;
     private SELECTION_MODE toolSelectionMode;
     private SELECTION_MODE testDataSelectionMode;
@@ -54,8 +55,10 @@ public class NewToolRequestFormPresenterImpl implements Presenter {
     public static enum SELECTION_MODE {
         UPLOAD, LINK, SELECT;
     }
-    
-    public NewToolRequestFormPresenterImpl(final NewToolRequestFormView<Architecture, YesNoMaybe> view, final Command callbackCmd) {
+
+    @Inject
+    NewToolRequestFormPresenterImpl(@Assisted final NewToolRequestFormView view,
+                                    @Assisted final Command callbackCmd) {
         this.view = view;
         this.callback = callbackCmd;
         view.setPresenter(this);

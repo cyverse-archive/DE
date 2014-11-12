@@ -38,9 +38,11 @@ import org.iplantc.de.commons.client.views.gxt3.dialogs.IPlantDialog;
 import org.iplantc.de.commons.client.views.window.configs.FileViewerWindowConfig;
 import org.iplantc.de.commons.client.views.window.configs.PathListWindowConfig;
 import org.iplantc.de.commons.client.views.window.configs.TabularFileViewerWindowConfig;
-import org.iplantc.de.diskResource.client.dataLink.presenter.DataLinkPresenter;
 import org.iplantc.de.diskResource.client.dataLink.view.DataLinkPanel;
 import org.iplantc.de.diskResource.client.events.*;
+import org.iplantc.de.diskResource.client.gin.factory.DataLinkPanelFactory;
+import org.iplantc.de.diskResource.client.gin.factory.DataSharingDialogFactory;
+import org.iplantc.de.diskResource.client.gin.factory.DiskResourceSelectorDialogFactory;
 import org.iplantc.de.diskResource.client.gin.factory.DiskResourceViewFactory;
 import org.iplantc.de.diskResource.client.gin.factory.FolderRpcProxyFactory;
 import org.iplantc.de.diskResource.client.metadata.presenter.DiskResourceMetadataUpdateCallback;
@@ -96,6 +98,8 @@ import com.google.gwt.user.client.ui.HasOneWidget;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Label;
 import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
+import com.google.inject.assistedinject.AssistedInject;
 import com.google.web.bindery.autobean.shared.AutoBean;
 import com.google.web.bindery.autobean.shared.AutoBeanCodex;
 
@@ -135,23 +139,18 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
                                                   UpdateSavedSearchesEvent.UpdateSavedSearchesHandler,
                                                   RootFoldersRetrievedEvent.RootFoldersRetrievedEventHandler {
 
+    @Inject IplantErrorStrings errorStrings;
+    @Inject IplantContextualHelpStrings helpStrings;
+    @Inject DataLinkFactory dlFactory;
+    @Inject DiskResourceServiceFacade diskResourceService;
+    @Inject MetadataServiceFacade fsmdataService;
+    @Inject IplantAnnouncer announcer;
+    @Inject UserInfo userInfo;
+    @Inject DiskResourceSelectorDialogFactory selectorDialogFactory;
+    @Inject DataLinkPanelFactory dataLinkPanelFactory;
+    @Inject DataSharingDialogFactory dataSharingDialogFactory;
+
     final DiskResourceView view;
-    @Inject
-    IplantErrorStrings errorStrings;
-    @Inject
-    IplantContextualHelpStrings helpStrings;
-    @Inject
-    IplantDisplayStrings displayStrings;
-    @Inject
-    DataLinkFactory dlFactory;
-    @Inject
-    DiskResourceServiceFacade diskResourceService;
-    @Inject
-    MetadataServiceFacade fsmdataService;
-    @Inject
-    IplantAnnouncer announcer;
-    @Inject
-    UserInfo userInfo;
     final DiskResourceAutoBeanFactory drFactory;
     final TreeLoader<Folder> treeLoader;
     final List<HandlerRegistration> dreventHandlers = new ArrayList<>();
@@ -159,17 +158,106 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
     private final HashMap<EventHandler, HandlerRegistration> registeredHandlers = new HashMap<>();
     private final Builder builder;
     protected boolean isFilePreviewEnabled = true;
+    private final IplantDisplayStrings displayStrings;
     private final EventBus eventBus;
     private DataSearchPresenter dataSearchPresenter;
 
-    @Inject
+    @AssistedInject
     DiskResourcePresenterImpl(final DiskResourceViewFactory diskResourceViewFactory,
                               final FolderRpcProxyFactory folderRpcProxyFactory,
                               final DiskResourceView.FolderContentsRpcProxy folderContentsRpcProxy,
                               final DiskResourceAutoBeanFactory drFactory,
                               final DataSearchPresenter dataSearchPresenter,
+                              final IplantDisplayStrings displayStrings,
+                              final EventBus eventBus,
+                              @Assisted("hideToolbar") boolean hideToolbar,
+                              @Assisted("hideDetailsPanel") boolean hideDetailsPanel,
+                              @Assisted("singleSelect") boolean singleSelect,
+                              @Assisted("disableFilePreview") boolean disableFilePreview,
+                              @Assisted HasPath folderToSelect,
+                              @Assisted IsWidget southWidget) {
+        this(diskResourceViewFactory, folderRpcProxyFactory, folderContentsRpcProxy,
+             drFactory, dataSearchPresenter, displayStrings, eventBus);
+        view.setNorthWidgetHidden(hideToolbar);
+        view.setEastWidgetHidden(hideDetailsPanel);
+        if(singleSelect) {
+            view.setSingleSelect();
+        }
+        if(disableFilePreview) {
+            disableFilePreview();
+        }
+        setSelectedFolderByPath(folderToSelect);
+        view.setSouthWidget(southWidget);
+    }
+
+    @AssistedInject
+    DiskResourcePresenterImpl(final DiskResourceViewFactory diskResourceViewFactory,
+                              final FolderRpcProxyFactory folderRpcProxyFactory,
+                              final DiskResourceView.FolderContentsRpcProxy folderContentsRpcProxy,
+                              final DiskResourceAutoBeanFactory drFactory,
+                              final DataSearchPresenter dataSearchPresenter,
+                              final IplantDisplayStrings displayStrings,
+                              final EventBus eventBus,
+                              @Assisted("hideToolbar") boolean hideToolbar,
+                              @Assisted("hideDetailsPanel") boolean hideDetailsPanel,
+                              @Assisted("singleSelect") boolean singleSelect,
+                              @Assisted("disableFilePreview") boolean disableFilePreview,
+                              @Assisted HasPath folderToSelect,
+                              @Assisted IsWidget southWidget,
+                              @Assisted int southWidgetHeight) {
+        this(diskResourceViewFactory, folderRpcProxyFactory, folderContentsRpcProxy,
+             drFactory, dataSearchPresenter, displayStrings, eventBus);
+        view.setNorthWidgetHidden(hideToolbar);
+        view.setEastWidgetHidden(hideDetailsPanel);
+        if(singleSelect) {
+            view.setSingleSelect();
+        }
+        if(disableFilePreview) {
+            disableFilePreview();
+        }
+        setSelectedFolderByPath(folderToSelect);
+        view.setSouthWidget(southWidget, southWidgetHeight);
+    }
+
+    @AssistedInject
+    DiskResourcePresenterImpl(final DiskResourceViewFactory diskResourceViewFactory,
+                              final FolderRpcProxyFactory folderRpcProxyFactory,
+                              final DiskResourceView.FolderContentsRpcProxy folderContentsRpcProxy,
+                              final DiskResourceAutoBeanFactory drFactory,
+                              final DataSearchPresenter dataSearchPresenter,
+                              final IplantDisplayStrings displayStrings,
+                              final EventBus eventBus,
+                              @Assisted("hideToolbar") boolean hideToolbar,
+                              @Assisted("hideDetailsPanel") boolean hideDetailsPanel,
+                              @Assisted("singleSelect") boolean singleSelect,
+                              @Assisted("disableFilePreview") boolean disableFilePreview,
+                              @Assisted HasPath folderToSelect,
+                              @Assisted List<HasId> selectedResources) {
+        this(diskResourceViewFactory, folderRpcProxyFactory, folderContentsRpcProxy,
+             drFactory, dataSearchPresenter, displayStrings, eventBus);
+        view.setNorthWidgetHidden(hideToolbar);
+        view.setEastWidgetHidden(hideDetailsPanel);
+        if(singleSelect) {
+            view.setSingleSelect();
+        }
+        if(disableFilePreview) {
+            disableFilePreview();
+        }
+        // FIXME needs logic
+        setSelectedFolderByPath(folderToSelect);
+        setSelectedDiskResourcesById(selectedResources);
+    }
+
+    @AssistedInject
+    DiskResourcePresenterImpl(final DiskResourceViewFactory diskResourceViewFactory,
+                              final FolderRpcProxyFactory folderRpcProxyFactory,
+                              final DiskResourceView.FolderContentsRpcProxy folderContentsRpcProxy,
+                              final DiskResourceAutoBeanFactory drFactory,
+                              final DataSearchPresenter dataSearchPresenter,
+                              final IplantDisplayStrings displayStrings,
                               final EventBus eventBus) {
         this.drFactory = drFactory;
+        this.displayStrings = displayStrings;
         this.eventBus = eventBus;
         this.dataSearchPresenter = dataSearchPresenter;
 
@@ -856,7 +944,7 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
     }
 
     private void doShareWithCollaborators(final Iterable<DiskResource> resourcesToBeShared){
-        DataSharingDialog dlg = new DataSharingDialog(Sets.newHashSet(resourcesToBeShared));
+        DataSharingDialog dlg = dataSharingDialogFactory.createDataSharingDialog(Sets.newHashSet(resourcesToBeShared));
         dlg.show();
         dlg.addDialogHideHandler(new DialogHideEvent.DialogHideHandler() {
             @Override
@@ -1178,7 +1266,7 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
         dlg.setHideOnButtonClick(true);
         dlg.setWidth(550);
         dlg.setOkButtonText(displayStrings.done());
-        DataLinkPanel.Presenter<DiskResource> dlPresenter = new DataLinkPresenter<>(new ArrayList<>(getSelectedDiskResources()));
+        DataLinkPanel.Presenter dlPresenter = dataLinkPanelFactory.createDataLinkPresenter(Lists.newArrayList(getSelectedDiskResources()));
         dlPresenter.go(dlg);
         dlg.addHelp(new HTML(helpStrings.manageDataLinksHelp()));
         dlg.show();
@@ -1201,7 +1289,7 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
 
     @Override
     public void moveSelectedDiskResources() {
-        final FolderSelectDialog fsd = new FolderSelectDialog();
+        final FolderSelectDialog fsd = selectorDialogFactory.createFolderSelector();
         fsd.show();
         fsd.addOkButtonSelectHandler(new SelectHandler() {
 

@@ -111,6 +111,7 @@ project(':belphegor') {
         gwt project(':ui-applications-module')
         gwt project(':ui-resources-module')
         gwt project(':confluence-client')
+        gwt project(':ui-disk-resource-module')
         gwt project(':de-common-module')
 
         compile "com.sencha.gxt:gxt:$gxtVersion"
@@ -128,6 +129,7 @@ project(':belphegor') {
         compile project(':ui-applications-module')
         compile project(':ui-resources-module')
         compile project(':confluence-client')
+        compile project(':ui-disk-resource-module')
         compile project(':de-common-module')
 
         testCompile "com.google.gwt.gwtmockito:gwtmockito:$gwtMockitoVer"
@@ -142,6 +144,7 @@ project(':belphegor') {
         src += files(project(':ui-commons-module').sourceSets.main.allJava.srcDirs) + files(project(':ui-commons-module').sourceSets.main.output.resourcesDir)
         src += files(project(':ui-applications-module').sourceSets.main.allJava.srcDirs) + files(project(':ui-applications-module').sourceSets.main.output.resourcesDir)
         src += files(project(':ui-resources-module').sourceSets.main.allJava.srcDirs) + files(project(':ui-resources-module').sourceSets.main.output.resourcesDir) + files(project(':ui-resources-module').sourceSets.main.resources.srcDirs)
+        src += files(project(':ui-disk-resource-module').sourceSets.main.allJava.srcDirs) + files(project(':ui-disk-resource-module').sourceSets.main.output.resourcesDir)
         src += files(project(':de-common-module').sourceSets.main.allJava.srcDirs) + files(project(':de-common-module').sourceSets.main.output.resourcesDir)
         src += files(project(':confluence-client').sourceSets.main.allJava.srcDirs) + files(project(':confluence-client').sourceSets.main.output.resourcesDir)
 

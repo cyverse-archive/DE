@@ -1,5 +1,6 @@
 package org.iplantc.de.client.windows;
 
+import org.iplantc.de.apps.client.views.AppsView;
 import org.iplantc.de.client.models.WindowState;
 import org.iplantc.de.client.models.pipelines.Pipeline;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
@@ -39,7 +40,8 @@ public class PipelineEditorWindow extends IplantWindowBase {
     private boolean close_after_save;
     private String initPipelineJson;
 
-    public PipelineEditorWindow(WindowConfig config) {
+    public PipelineEditorWindow(WindowConfig config,
+                                final AppsView.Presenter appsViewPresenter) {
         super(null, config);
 
         displayStrings = org.iplantc.de.resources.client.messages.I18N.DISPLAY;
@@ -49,7 +51,7 @@ public class PipelineEditorWindow extends IplantWindowBase {
         setMinHeight(440);
 
         PipelineView view = new PipelineViewImpl();
-        presenter = new PipelineViewPresenter(view, new PublishCallbackCommand());
+        presenter = new PipelineViewPresenter(view, new PublishCallbackCommand(), appsViewPresenter);
         ensureDebugId(DeModule.WindowIds.WORKFLOW_EDITOR);
 
         if (config instanceof PipelineEditorWindowConfig) {

@@ -1,18 +1,20 @@
 package org.iplantc.de.diskResource.client.views.widgets;
 
 import org.iplantc.de.client.events.EventBus;
-import org.iplantc.de.client.gin.ServicesInjector;
 import org.iplantc.de.client.models.HasPath;
 import org.iplantc.de.client.models.UserSettings;
 import org.iplantc.de.client.models.diskResources.DiskResource;
+import org.iplantc.de.client.models.diskResources.DiskResourceAutoBeanFactory;
 import org.iplantc.de.client.models.diskResources.File;
 import org.iplantc.de.client.models.diskResources.TYPE;
 import org.iplantc.de.client.models.errorHandling.ServiceErrorCode;
 import org.iplantc.de.client.models.errorHandling.SimpleServiceError;
 import org.iplantc.de.client.services.DiskResourceServiceFacade;
+import org.iplantc.de.client.util.CommonModelUtils;
 import org.iplantc.de.client.util.DiskResourceUtil;
 import org.iplantc.de.commons.client.events.LastSelectedPathChangedEvent;
 import org.iplantc.de.commons.client.widgets.IPlantSideErrorHandler;
+import org.iplantc.de.diskResource.client.gin.factory.DiskResourceSelectorDialogFactory;
 import org.iplantc.de.diskResource.client.views.DiskResourceModelKeyProvider;
 import org.iplantc.de.diskResource.client.views.DiskResourceProperties;
 import org.iplantc.de.diskResource.client.views.dialogs.FileSelectDialog;
@@ -38,6 +40,7 @@ import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.inject.Inject;
 import com.google.web.bindery.autobean.shared.AutoBeanCodex;
 
 import com.sencha.gxt.core.shared.FastMap;
@@ -113,46 +116,40 @@ public class MultiFileSelectorField extends Composite implements IsField<List<Ha
         }
     }
 
-    interface MultiFileSelectorFieldUiBinder extends UiBinder<Widget, MultiFileSelectorField> {
-    }
+    interface MultiFileSelectorFieldUiBinder extends UiBinder<Widget, MultiFileSelectorField> { }
 
+    private static MultiFileSelectorFieldUiBinder BINDER = GWT.create(MultiFileSelectorFieldUiBinder.class);
     protected List<EditorError> errors = Lists.newArrayList();
     protected List<EditorError> existsErrors = Lists.newArrayList();
     protected List<EditorError> permissionErrors = Lists.newArrayList();
-    @UiField
-    TextButton addButton;
-    @UiField
-    ColumnModel<DiskResource> cm;
-    @UiField
-    TextButton deleteButton;
-    @UiField
-    Grid<DiskResource> grid;
-    @UiField
-    GridView<DiskResource> gridView;
-    @UiField
-    ListStore<DiskResource> listStore;
-    @UiField
-    ToolBar toolbar;
-    UserSettings userSettings = UserSettings.getInstance();
-    @UiField
-    HTML warnInfo;
-    private static MultiFileSelectorFieldUiBinder BINDER = GWT.create(MultiFileSelectorFieldUiBinder.class);
-    private final IplantDisplayStrings displayStrings;
-    private final DiskResourceServiceFacade drServiceFacade;
+
+    @UiField TextButton addButton;
+    @UiField ColumnModel<DiskResource> cm;
+    @UiField TextButton deleteButton;
+    @UiField Grid<DiskResource> grid;
+    @UiField GridView<DiskResource> gridView;
+    @UiField ListStore<DiskResource> listStore;
+    @UiField ToolBar toolbar;
+    @UiField HTML warnInfo;
     private final SideErrorHandler errorSupport;
-    private final EventBus eventBus;
     // by default do not validate permissions
     private final boolean validatePermissions = false;
-    private final IplantValidationConstants validationConstants;
     private boolean addDeleteButtonsEnabled = true;
     private boolean required;
 
-    public MultiFileSelectorField() {
-        drServiceFacade = ServicesInjector.INSTANCE.getDiskResourceServiceFacade();
+    private final IplantDisplayStrings displayStrings;
+    @Inject UserSettings userSettings;
+    @Inject IplantErrorStrings errorStrings;
+    @Inject DiskResourceAutoBeanFactory factory;
+    @Inject DiskResourceServiceFacade drServiceFacade;
+    @Inject IplantValidationConstants validationConstants;
+    @Inject EventBus eventBus;
+    @Inject DiskResourceSelectorDialogFactory dialogFactory;
+
+    @Inject
+    MultiFileSelectorField(final IplantDisplayStrings displayStrings) {
         this.errorSupport = new IPlantSideErrorHandler(this);
-        eventBus = EventBus.getInstance();
-        validationConstants = I18N.V_CONSTANTS;
-        displayStrings = I18N.DISPLAY;
+        this.displayStrings = displayStrings;
 
         initWidget(BINDER.createAndBindUi(this));
         grid.getSelectionModel().addSelectionChangedHandler(this);
@@ -267,12 +264,10 @@ public class MultiFileSelectorField extends Composite implements IsField<List<Ha
     }
 
     @Override
-    public void reset() {
-    }
+    public void reset() {/* Do Nothing */ }
 
     @Override
-    public void setDelegate(EditorDelegate<List<HasPath>> delegate) {/* Do Nothing */
-    }
+    public void setDelegate(EditorDelegate<List<HasPath>> delegate) {/* Do Nothing */ }
 
     public void setEmptyText(String emptyText) {
         gridView.setEmptyText(emptyText);
@@ -330,8 +325,7 @@ public class MultiFileSelectorField extends Composite implements IsField<List<Ha
         return true;
     }
 
-    @UiFactory
-    ColumnModel<DiskResource> createColumnModel() {
+    @UiFactory ColumnModel<DiskResource> createColumnModel() {
         List<ColumnConfig<DiskResource, ?>> list = Lists.newArrayList();
         DiskResourceProperties props = GWT.create(DiskResourceProperties.class);
 
@@ -340,13 +334,11 @@ public class MultiFileSelectorField extends Composite implements IsField<List<Ha
         return new ColumnModel<>(list);
     }
 
-    @UiFactory
-    ListStore<DiskResource> createListStore() {
+    @UiFactory ListStore<DiskResource> createListStore() {
         return new ListStore<>(new DiskResourceModelKeyProvider());
     }
 
-    @UiHandler("addButton")
-    void onAddButtonSelected(SelectEvent event) {
+    @UiHandler("addButton") void onAddButtonSelected(SelectEvent event) {
         if (!addDeleteButtonsEnabled) {
             return;
         }
@@ -356,13 +348,13 @@ public class MultiFileSelectorField extends Composite implements IsField<List<Ha
             path = userSettings.getLastPath();
         }
 
-        FileSelectDialog dlg = FileSelectDialog.selectParentFolderByPath(path, false);
+        HasPath hasPath = CommonModelUtils.createHasPathFromString(path);
+        FileSelectDialog dlg = dialogFactory.fileSelectDialogWithSelectedFolder(false, hasPath);
         dlg.addHideHandler(new FileSelectDialogHideHandler(dlg, listStore));
         dlg.show();
     }
 
-    @UiHandler("deleteButton")
-    void onDeleteButtonSelected(SelectEvent event) {
+    @UiHandler("deleteButton") void onDeleteButtonSelected(SelectEvent event) {
         if (!addDeleteButtonsEnabled) {
             return;
         }
@@ -412,8 +404,7 @@ public class MultiFileSelectorField extends Composite implements IsField<List<Ha
                                     @Override
                                     public void onFailure(Throwable caught) {
                                         // Assuming that if there are any non-existent files, that this will kick off.
-                                        final IplantErrorStrings errorStrings = I18N.ERROR;
-                                        SimpleServiceError serviceError = AutoBeanCodex.decode(drServiceFacade.getDiskResourceFactory(), SimpleServiceError.class, caught.getMessage()).as();
+                                        SimpleServiceError serviceError = AutoBeanCodex.decode(factory, SimpleServiceError.class, caught.getMessage()).as();
                                         if (serviceError.getErrorCode().equals(ServiceErrorCode.ERR_DOES_NOT_EXIST.toString())) {
                                             String reason = serviceError.getReason();
                                             GWT.log("The Reason: " + reason);

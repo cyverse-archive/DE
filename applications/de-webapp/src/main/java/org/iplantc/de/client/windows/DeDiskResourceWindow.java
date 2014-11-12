@@ -7,10 +7,9 @@ import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.commons.client.views.window.configs.DiskResourceWindowConfig;
 import org.iplantc.de.commons.client.views.window.configs.WindowConfig;
 import org.iplantc.de.diskResource.client.events.FolderSelectionEvent;
-import org.iplantc.de.diskResource.client.gin.DiskResourceInjector;
+import org.iplantc.de.diskResource.client.gin.factory.DiskResourcePresenterFactory;
 import org.iplantc.de.diskResource.client.views.DiskResourceView;
 import org.iplantc.de.diskResource.share.DiskResourceModule;
-import org.iplantc.de.resources.client.messages.I18N;
 import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 import org.iplantc.de.shared.DeModule;
 
@@ -31,13 +30,13 @@ public class DeDiskResourceWindow extends IplantWindowBase implements FolderSele
     private final IplantDisplayStrings displayStrings;
     private final DiskResourceView.Presenter presenter;
 
-    public DeDiskResourceWindow(final DiskResourceWindowConfig config) {
+    public DeDiskResourceWindow(final DiskResourceWindowConfig config,
+                                final DiskResourcePresenterFactory presenterFactory,
+                                final IplantDisplayStrings displayStrings) {
         super(config.getTag(), config);
-        presenter = DiskResourceInjector.INSTANCE.getDiskResourceViewPresenter();
-        displayStrings = I18N.DISPLAY;
+        this.displayStrings = displayStrings;
 
         final String uniqueWindowTag = (config.getTag() == null) ? "" : "." + config.getTag();
-        ensureDebugId(DeModule.WindowIds.DISK_RESOURCE_WINDOW + uniqueWindowTag);
         setHeadingText(displayStrings.data());
         setSize("900", "480");
         setMinWidth(900);
@@ -48,7 +47,14 @@ public class DeDiskResourceWindow extends IplantWindowBase implements FolderSele
         if (config.getSelectedDiskResources() != null) {
             resourcesToSelect.addAll(config.getSelectedDiskResources());
         }
-        presenter.go(this, config.getSelectedFolder(), resourcesToSelect);
+        this.presenter = presenterFactory.withSelectedResources(false,
+                                                                false,
+                                                                false,
+                                                                false,
+                                                                config.getSelectedFolder(),
+                                                                resourcesToSelect);
+        ensureDebugId(DeModule.WindowIds.DISK_RESOURCE_WINDOW + uniqueWindowTag);
+        presenter.go(this);
 
         initHandlers();
     }

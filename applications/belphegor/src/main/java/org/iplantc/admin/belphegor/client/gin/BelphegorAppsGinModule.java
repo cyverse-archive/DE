@@ -26,36 +26,26 @@ import org.iplantc.admin.belphegor.client.toolRequest.service.impl.ToolRequestSe
 import org.iplantc.admin.belphegor.client.toolRequest.view.ToolRequestViewImpl;
 import org.iplantc.admin.belphegor.client.views.BelphegorView;
 import org.iplantc.admin.belphegor.client.views.BelphegorViewImpl;
-import org.iplantc.de.apps.client.gin.AppCategoryTreeProvider;
-import org.iplantc.de.apps.client.gin.AppCategoryTreeStoreProvider;
 import org.iplantc.de.apps.client.views.AppsView;
 import org.iplantc.de.client.events.EventBus;
+import org.iplantc.de.client.gin.ServicesInjector;
 import org.iplantc.de.client.models.DEProperties;
 import org.iplantc.de.client.models.UserInfo;
-import org.iplantc.de.client.models.apps.AppCategory;
+import org.iplantc.de.client.models.UserSettings;
 import org.iplantc.de.client.services.AppServiceFacade;
 import org.iplantc.de.client.services.AppUserServiceFacade;
+import org.iplantc.de.client.services.DiskResourceServiceFacade;
 import org.iplantc.de.shared.services.DiscEnvApiService;
 
 import com.google.gwt.inject.client.AbstractGinModule;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
-import com.google.inject.TypeLiteral;
-
-import com.sencha.gxt.data.shared.TreeStore;
-import com.sencha.gxt.widget.core.client.tree.Tree;
 
 public class BelphegorAppsGinModule extends AbstractGinModule {
     @Override
     protected void configure() {
         bind(BelphegorView.class).to(BelphegorViewImpl.class);
         bind(BelphegorView.Presenter.class).to(BelphegorPresenterImpl.class).in(Singleton.class);
-
-        bind(new TypeLiteral<TreeStore<AppCategory>>() {
-        }).toProvider(AppCategoryTreeStoreProvider.class).in(Singleton.class);
-
-        bind(new TypeLiteral<Tree<AppCategory, String>>() {
-        }).toProvider(AppCategoryTreeProvider.class).in(Singleton.class);
 
         bind(AppsView.class).to(AdminAppViewImpl.class);
         bind(AdminAppsView.Toolbar.class).to(BelphegorAppsToolbarImpl.class);
@@ -81,6 +71,10 @@ public class BelphegorAppsGinModule extends AbstractGinModule {
         bind(DiscEnvApiService.class).in(Singleton.class);
     }
 
+    @Provides @Singleton public DiskResourceServiceFacade createDiskResourceService() {
+        return ServicesInjector.INSTANCE.getDiskResourceServiceFacade();
+    }
+
     @Provides
     public EventBus createEventBus(){
         return EventBus.getInstance();
@@ -89,6 +83,10 @@ public class BelphegorAppsGinModule extends AbstractGinModule {
     @Provides
     public UserInfo createUserInfo() {
         return UserInfo.getInstance();
+    }
+
+    @Provides public UserSettings createUserSettings(){
+        return UserSettings.getInstance();
     }
 
     @Provides

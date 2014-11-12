@@ -4,12 +4,13 @@
 package org.iplantc.de.apps.integration.client.dialogs;
 
 import static org.iplantc.de.apps.integration.shared.AppIntegrationModule.Ids.*;
-
+import org.iplantc.de.apps.integration.client.gin.factory.DeployedComponentListingViewFactory;
 import org.iplantc.de.apps.integration.client.presenter.DeployedComponentPresenterImpl;
 import org.iplantc.de.apps.integration.client.view.tools.DeployedComponentsListingView;
-import org.iplantc.de.apps.integration.client.view.tools.DeployedComponentsListingViewImpl;
 import org.iplantc.de.client.models.tool.Tool;
 import org.iplantc.de.commons.client.views.gxt3.dialogs.IPlantDialog;
+
+import com.google.inject.Inject;
 
 import com.sencha.gxt.data.shared.ListStore;
 import com.sencha.gxt.data.shared.ModelKeyProvider;
@@ -51,7 +52,8 @@ public class DCListingDialog extends IPlantDialog {
 
     private Tool selectedComponent = null;
 
-    public DCListingDialog() {
+    @Inject
+    DCListingDialog(final DeployedComponentListingViewFactory viewFactory) {
         setPixelSize(600, 500);
         setResizable(false);
         setModal(true);
@@ -74,8 +76,8 @@ public class DCListingDialog extends IPlantDialog {
             }
         });
 
-        ListStore<Tool> listStore = new ListStore<Tool>(new DCKeyProvider());
-        DeployedComponentsListingView view = new DeployedComponentsListingViewImpl(listStore, new DCSelectionChangedHandler());
+        ListStore<Tool> listStore = new ListStore<>(new DCKeyProvider());
+        DeployedComponentsListingView view = viewFactory.createDcListingView(listStore, new DCSelectionChangedHandler());
         DeployedComponentsListingView.Presenter p = new DeployedComponentPresenterImpl(view);
         getButton(PredefinedButton.OK).ensureDebugId(INSTALLED_TOOLS_DLG + OK);
         getButton(PredefinedButton.CANCEL).ensureDebugId(INSTALLED_TOOLS_DLG + CANCEL);

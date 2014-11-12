@@ -7,19 +7,18 @@ import org.iplantc.de.analysis.client.events.AnalysisAppSelectedEvent;
 import org.iplantc.de.analysis.client.events.AnalysisCommentSelectedEvent;
 import org.iplantc.de.analysis.client.events.AnalysisNameSelectedEvent;
 import org.iplantc.de.analysis.client.events.AnalysisParamValueSelectedEvent;
+import org.iplantc.de.analysis.client.gin.factory.AnalysisParamViewFactory;
 import org.iplantc.de.analysis.client.presenter.proxy.AnalysisRpcProxy;
 import org.iplantc.de.analysis.client.views.widget.AnalysisParamView;
 import org.iplantc.de.analysis.client.views.widget.AnalysisParamViewColumnModel;
 import org.iplantc.de.analysis.shared.AnalysisModule;
 import org.iplantc.de.client.models.analysis.Analysis;
 import org.iplantc.de.client.models.analysis.AnalysisParameter;
-import org.iplantc.de.client.services.FileEditorServiceFacade;
 import org.iplantc.de.resources.client.messages.I18N;
 import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -54,8 +53,7 @@ import com.sencha.gxt.widget.core.client.toolbar.ToolBar;
 import java.util.List;
 
 /**
- * @author sriram
- * 
+ * @author sriram, jstroot
  */
 public class AnalysesViewImpl extends Composite implements AnalysesView {
 
@@ -76,52 +74,49 @@ public class AnalysesViewImpl extends Composite implements AnalysesView {
     }
 
     @UiTemplate("AnalysesViewImpl.ui.xml")
-    interface MyUiBinder extends UiBinder<Widget, AnalysesViewImpl> {
-    }
-    @UiField(provided = true)
-    final ColumnModel<Analysis> cm;
-    @UiField(provided = true)
-    final ListStore<Analysis> listStore;
-    @UiField
-    BorderLayoutContainer con;
-    @UiField
-    Grid<Analysis> grid;
-    @UiField
-    LiveGridView<Analysis> gridView;
-    @UiField
-    BorderLayoutData northData;
-    @UiField
-    ToolBar toolBar;
+    interface MyUiBinder extends UiBinder<Widget, AnalysesViewImpl> { }
+
+    @UiField(provided = true) final ColumnModel<Analysis> cm;
+    @UiField(provided = true) final ListStore<Analysis> listStore;
+    @UiField BorderLayoutContainer con;
+    @UiField Grid<Analysis> grid;
+    @UiField LiveGridView<Analysis> gridView;
+    @UiField BorderLayoutData northData;
+    @UiField ToolBar toolBar;
 
     ViewMenu viewMenu;
     private static MyUiBinder uiBinder = GWT.create(MyUiBinder.class);
     private final IplantDisplayStrings displayStrings;
-    private final FileEditorServiceFacade fileEditorService;
     private final AnalysisParamViewColumnModel paramViewColumnModel;
     private final PagingLoader<FilterPagingLoadConfig, PagingLoadResult<Analysis>> loader;
 
     private Presenter presenter;
     private final Status selectionStatus;
 
+    @Inject AnalysisParamViewFactory analysisParamViewFactory;
+
     @Inject
-    public AnalysesViewImpl(final ListStore<Analysis> listStore, final AnalysisColumnModel cm, final AnalysisParamViewColumnModel paramViewColumnModel,
-                            final CheckBoxSelectionModel<Analysis> checkBoxModel, final ViewMenu menuBar, final AnalysisRpcProxy proxy, final IplantDisplayStrings displayStrings, final FileEditorServiceFacade fileEditorService) {
+    public AnalysesViewImpl(final ListStore<Analysis> listStore,
+                            final AnalysisColumnModel cm,
+                            final AnalysisParamViewColumnModel paramViewColumnModel,
+                            final CheckBoxSelectionModel<Analysis> checkBoxModel,
+                            final ViewMenu menuBar,
+                            final AnalysisRpcProxy proxy,
+                            final IplantDisplayStrings displayStrings) {
         this.listStore = listStore;
         this.cm = cm;
         this.paramViewColumnModel = paramViewColumnModel;
         this.viewMenu = menuBar;
         this.displayStrings = displayStrings;
-        this.fileEditorService = fileEditorService;
         initWidget(uiBinder.createAndBindUi(this));
         con.setNorthWidget(menuBar, northData);
         selectionStatus = new Status();
 
-        loader = new PagingLoader<FilterPagingLoadConfig, PagingLoadResult<Analysis>>(proxy);
+        loader = new PagingLoader<>(proxy);
         initLoader();
 
         toolBar.addStyleName(ThemeStyles.get().style().borderTop());
         toolBar.getElement().getStyle().setProperty("borderBottom", "none");
-
 
         initGrid(checkBoxModel);
         initGridView();
@@ -229,7 +224,6 @@ public class AnalysesViewImpl extends Composite implements AnalysesView {
         for (Analysis a : items) {
             grid.getStore().remove(a);
         }
-
     }
 
     @SuppressWarnings("unchecked")
@@ -242,8 +236,8 @@ public class AnalysesViewImpl extends Composite implements AnalysesView {
     @Override
     public void viewParams() {
         for (Analysis ana : getSelectedAnalyses()) {
-            ListStore<AnalysisParameter> listStore = new ListStore<AnalysisParameter>( new AnalysisParameterKeyProvider());
-            final AnalysisParamView apv = new AnalysisParamView(listStore, paramViewColumnModel, displayStrings, fileEditorService);
+            ListStore<AnalysisParameter> listStore = new ListStore<>( new AnalysisParameterKeyProvider());
+            final AnalysisParamView apv = analysisParamViewFactory.createParamView(paramViewColumnModel, listStore);
             apv.setHeading(displayStrings.viewParameters(ana.getName()));
             apv.addSaveAnalysisParametersEventHandler(presenter);
             apv.show();
@@ -256,7 +250,6 @@ public class AnalysesViewImpl extends Composite implements AnalysesView {
     protected void onEnsureDebugId(String baseID) {
         super.onEnsureDebugId(baseID);
         viewMenu.asWidget().ensureDebugId(baseID + AnalysisModule.Ids.MENUBAR);
-
     }
 
     private void setSelectionCount(int count) {

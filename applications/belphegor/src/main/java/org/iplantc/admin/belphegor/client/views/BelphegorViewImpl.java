@@ -44,7 +44,7 @@ public class BelphegorViewImpl extends Composite implements BelphegorView {
     @UiTemplate("BelphegorView.ui.xml")
     interface BelphegorViewUiBinder extends UiBinder<Widget, BelphegorViewImpl> {}
 
-    interface MyTemplate extends XTemplates {
+    public interface MyTemplate extends XTemplates {
         @XTemplate("<div class='{style.iplantcHeader}'>" + "<table><tbody><tr>"
                 + "<td role='presentation' align='LEFT' valign='TOP'><a style='outline-style: none;' href='{iplantHome}' target='_blank'><div class='{style.iplantcLogo}'></div></a></td>"
                 + "<td role='presentation' align='LEFT' valign='TOP'><div class='{style.iplantcHeaderMenu}'></div>" 
@@ -64,17 +64,15 @@ public class BelphegorViewImpl extends Composite implements BelphegorView {
     @UiField
     SimpleContainer appsPanel, refGenomePanel, toolRequestPanel, systemMessagesPanel;
 
-    private final MyTemplate template;
+    private final MyTemplate template = GWT.create(MyTemplate.class);
 
     @Inject
-    public BelphegorViewImpl(MyTemplate template,
-                             final BelphegorAppsViewPresenterImpl presenter,
+    public BelphegorViewImpl(final BelphegorAppsViewPresenterImpl presenter,
                              final RefGenomeView.Presenter refGenPresenter,
                              final ToolRequestView.Presenter toolReqPresenter,
                              final SystemMessageView.Presenter sysMsgPresenter,
                              final BelphegorAdminProperties toolIntProps,
                              final BelphegorResources resources) {
-        this.template = template;
         this.res = resources;
         res.css().ensureInjected();
         initWidget(uiBinder.createAndBindUi(this));

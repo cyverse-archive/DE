@@ -5,6 +5,7 @@ import org.iplantc.de.client.events.FileSavedEvent;
 import org.iplantc.de.client.models.IsMaskable;
 import org.iplantc.de.client.models.diskResources.DiskResourceAutoBeanFactory;
 import org.iplantc.de.client.models.diskResources.File;
+import org.iplantc.de.client.services.UserSessionServiceFacade;
 import org.iplantc.de.client.util.DiskResourceUtil;
 import org.iplantc.de.client.util.JsonUtil;
 import org.iplantc.de.commons.client.ErrorHandler;
@@ -28,11 +29,17 @@ public class FileSaveCallback implements AsyncCallback<String> {
     private final String fileName;
     private final IsMaskable maskingContainer;
     private final boolean newFile;
+    private DiskResourceAutoBeanFactory drFactory;
+    private UserSessionServiceFacade userSessionService;
 
-    public FileSaveCallback(final String path,
+    public FileSaveCallback(final UserSessionServiceFacade userSessionService,
+                            final DiskResourceAutoBeanFactory drFactory,
+                            final String path,
                             final boolean newFile,
                             final IsMaskable container,
                             final HasHandlers hasHandlers) {
+        this.userSessionService = userSessionService;
+        this.drFactory = drFactory;
         this.hasHandlers = hasHandlers;
         this.fileName = DiskResourceUtil.parseNameFromPath(path);
         this.parentFolder = DiskResourceUtil.parseParent(path);
@@ -45,7 +52,9 @@ public class FileSaveCallback implements AsyncCallback<String> {
     public void onSuccess(String result) {
         maskingContainer.unmask();
         JSONObject obj = JSONParser.parseStrict(result).isObject();
-        DefaultUploadCompleteHandler uch = new DefaultUploadCompleteHandler(parentFolder);
+        DefaultUploadCompleteHandler uch = new DefaultUploadCompleteHandler(userSessionService,
+                                                                            drFactory,
+                                                                            parentFolder);
         String fileJson = JsonUtil.getObject(obj, "file").toString();
         if (newFile) {
             uch.onCompletion(fileName, fileJson);

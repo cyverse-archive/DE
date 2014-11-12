@@ -45,54 +45,37 @@ import com.sencha.gxt.widget.core.client.event.UnregisterEvent;
 
 /**
  * Created by jstroot on 7/6/14.
+ * @author jstroot
  */
 public class DesktopViewImpl implements DesktopView, UnregisterEvent.UnregisterHandler<Widget>, RegisterEvent.RegisterHandler<Widget> {
 
     interface DesktopViewImplUiBinder extends UiBinder<Widget, DesktopViewImpl> { }
 
-    @UiField
-    IconButton analysisWinBtn;
-    @UiField
-    IconButton appsWinBtn;
-    @UiField
-    IconButton dataWinBtn;
-    @UiField
-    IconButton feedbackBtn;
-    @UiField
-    IconButton forumsBtn;
-    @UiField
-    IconButton notificationsBtn;
-    @UiField
-    TaskBar taskBar;
-    @UiField
-    DesktopIconButton userSettingsBtn;
-    @UiField
-    IPlantAnchor preferencesBtn;
-    @UiField
-    IPlantAnchor collaboratorsBtn;
-    @UiField
-    IPlantAnchor systemMsgsBtn;
-    @UiField
-    IPlantAnchor documentationBtn;
-    @UiField
-    IPlantAnchor introBtn;
-    @UiField
-    IPlantAnchor contactSupportBtn;
-    @UiField
-    IPlantAnchor aboutBtn;
-    @UiField
-    IPlantAnchor logoutBtn;
-    @UiField(provided = true)
-    UnseenNotificationsView notificationsListView;
-    @UiField
-    DivElement desktopContainer;
-    @UiField
-    DesktopAppearance appearance;
+    @UiField IconButton analysisWinBtn;
+    @UiField IconButton appsWinBtn;
+    @UiField IconButton dataWinBtn;
+    @UiField IconButton feedbackBtn;
+    @UiField IconButton forumsBtn;
+    @UiField IconButton notificationsBtn;
+    @UiField TaskBar taskBar;
+    @UiField DesktopIconButton userSettingsBtn;
+    @UiField IPlantAnchor preferencesBtn;
+    @UiField IPlantAnchor collaboratorsBtn;
+    @UiField IPlantAnchor systemMsgsBtn;
+    @UiField IPlantAnchor documentationBtn;
+    @UiField IPlantAnchor introBtn;
+    @UiField IPlantAnchor contactSupportBtn;
+    @UiField IPlantAnchor aboutBtn;
+    @UiField IPlantAnchor logoutBtn;
+    @UiField(provided = true) UnseenNotificationsView notificationsListView;
+    @UiField DivElement desktopContainer;
+    @UiField DesktopAppearance appearance;
 
     @Inject Provider<PreferencesDialog> preferencesDialogProvider;
     @Inject Provider<DEFeedbackDialog> deFeedbackDialogProvider;
     @Inject UserSettings userSettings;
     @Inject IplantDisplayStrings displayStrings;
+
     private static DesktopViewImplUiBinder ourUiBinder = GWT.create(DesktopViewImplUiBinder.class);
     private final Widget widget;
     private final SpanElement notificationCountElement;
@@ -102,8 +85,8 @@ public class DesktopViewImpl implements DesktopView, UnregisterEvent.UnregisterH
 
 
     @Inject
-    public DesktopViewImpl(final IplantNewUserTourStrings tourStrings,
-                           final WindowManager windowManager) {
+    DesktopViewImpl(final IplantNewUserTourStrings tourStrings,
+                    final WindowManager windowManager) {
         this.windowManager = windowManager;
         notificationsListView = new UnseenNotificationsView();
         widget = ourUiBinder.createAndBindUi(this);
