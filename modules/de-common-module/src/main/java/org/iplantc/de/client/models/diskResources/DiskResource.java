@@ -33,10 +33,10 @@ public interface DiskResource extends HasId, HasName, HasPath {
     @PropertyName("permission")
     PermissionValue getPermission();
 
-    @PropertyName("filter")
+    @PropertyName("badName")
     boolean isFilter();
 
-    @PropertyName("filter")
+    @PropertyName("badName")
     void setFilter(boolean filter);
 
     @PropertyName("isFavorite")

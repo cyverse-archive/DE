@@ -35,13 +35,10 @@ import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.HTML;
 
 import com.sencha.gxt.widget.core.client.Popup;
-import com.sencha.gxt.widget.core.client.tips.Tip;
 
 /**
  * A cell for displaying the icons and names for <code>DiskResource</code> list items.
  * 
- * TODO JDS Implement preview tooltip. Tooltip will probably have to be {@link Tip}, since this is a cell
- * and not a widget.
  *
  * FIXME REFACTOR This cell needs an appearance
  * @author jstroot
@@ -61,11 +58,16 @@ public class DiskResourceNameCell extends AbstractCell<DiskResource> {
      */
     interface Templates extends SafeHtmlTemplates {
 
-        @SafeHtmlTemplates.Template("<span></span><span class='{0}'> </span>&nbsp;<span name=\"drName\" class='{1}' >{2}</span></span>")
-        SafeHtml cell(String imgClassName, String diskResourceClassName, SafeHtml diskResourceName);
+        @SafeHtmlTemplates.Template("<span></span><span class='{0}'> </span>&nbsp;<span name=\"drName\" title='{2}' class='{1}' >{2}</span></span>")
+                SafeHtml
+                cell(String imgClassName, String diskResourceClassName, String diskResourceName);
 
-        @SafeHtmlTemplates.Template("<span><span class='{0}'> </span>&nbsp;<span id='{3}' name=\"drName\" class='{1}' >{2}</span></span>")
-        SafeHtml debugCell(String imgClassName, String diskResourceClassName, SafeHtml diskResourceName, String id);
+        @SafeHtmlTemplates.Template("<span><span class='{0}'> </span>&nbsp;<span id='{3}' name=\"drName\" title='{2}' class='{1}' >{2}</span></span>")
+                SafeHtml
+                debugCell(String imgClassName,
+                          String diskResourceClassName,
+                          String diskResourceName,
+                          String id);
     }
 
     final Templates templates = GWT.create(Templates.class);
@@ -130,9 +132,9 @@ public class DiskResourceNameCell extends AbstractCell<DiskResource> {
 
         if(DebugInfo.isDebugIdEnabled() && !Strings.isNullOrEmpty(baseID)) {
             final String debugId = baseID + "." + value.getPath() + DiskResourceModule.Ids.NAME_CELL;
-            sb.append(templates.debugCell(imgClassName, nameStyle, name, debugId));
+            sb.append(templates.debugCell(imgClassName, nameStyle, name.asString(), debugId));
         }else {
-            sb.append(templates.cell(imgClassName, nameStyle, name));
+            sb.append(templates.cell(imgClassName, nameStyle, name.asString()));
         }
     }
 
