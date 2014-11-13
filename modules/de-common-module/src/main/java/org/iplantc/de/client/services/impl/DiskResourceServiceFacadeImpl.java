@@ -107,14 +107,6 @@ public class DiskResourceServiceFacadeImpl extends TreeStore<Folder> implements
     }
 
     @Override
-    public void getHomeFolder(AsyncCallback<String> callback) {
-        String address = deProperties.getDataMgmtBaseUrl() + "home"; //$NON-NLS-1$
-
-        ServiceCallWrapper wrapper = new ServiceCallWrapper(address);
-        callService(wrapper, callback);
-    }
-
-    @Override
     public final void getRootFolders(final AsyncCallback<RootFolders> callback) {
         if (getRootCount() > 0) {
             RootFolders result = factory.rootFolders().as();
@@ -139,22 +131,6 @@ public class DiskResourceServiceFacadeImpl extends TreeStore<Folder> implements
     private void setRootFolders(List<Folder> rootNodes) {
         clear();
         add(rootNodes);
-    }
-
-    @Override
-    public void getDefaultOutput(final String folderName, AsyncCallback<String> callback) {
-        String address = deProperties.getMuleServiceBaseUrl() + "default-output-dir?name=" + folderName;
-        ServiceCallWrapper wrapper = new ServiceCallWrapper(GET, address);
-        deServiceFacade.getServiceData(wrapper, callback);
-    }
-
-    @Override
-    public void putDefaultOutput(AsyncCallback<String> callback) {
-        String address = deProperties.getMuleServiceBaseUrl() + "default-output-dir?name="
-                + deProperties.getDefaultOutputFolderName();
-        ServiceCallWrapper wrapper = new ServiceCallWrapper(POST, address, "{\"path\":\""
-                + deProperties.getDefaultOutputFolderName() + "\"}");
-        deServiceFacade.getServiceData(wrapper, callback);
     }
 
     @Override
@@ -331,16 +307,6 @@ public class DiskResourceServiceFacadeImpl extends TreeStore<Folder> implements
                 return decode(DiskResourceExistMap.class, json);
             }
         });
-    }
-
-    @Override
-    public void previewFile(final String path, AsyncCallback<String> callback) {
-        String address = deProperties.getDataMgmtBaseUrl() + "file/preview"; //$NON-NLS-1$
-        JSONObject body = new JSONObject();
-        body.put("source", new JSONString(path)); //$NON-NLS-1$
-
-        ServiceCallWrapper wrapper = new ServiceCallWrapper(POST, address, body.toString());
-        callService(wrapper, callback);
     }
 
     @Override
@@ -620,24 +586,6 @@ public class DiskResourceServiceFacadeImpl extends TreeStore<Folder> implements
     }
 
     @Override
-    public void setFolderMetaData(String folderId, String body, AsyncCallback<String> callback) {
-        // String fullAddress = serviceNamePrefix
-        //                + ".folder-metadata-batch" + "?path=" + URL.encodePathSegment(folderId); //$NON-NLS-1$
-        // ServiceCallWrapper wrapper = new ServiceCallWrapper(ServiceCallWrapper.Type.POST, fullAddress,
-        // body);
-        // callService(callback, wrapper);
-    }
-
-    @Override
-    public void setFileMetaData(String fileId, String body, AsyncCallback<String> callback) {
-        // String fullAddress = serviceNamePrefix
-        //                + ".file-metadata-batch" + "?path=" + URL.encodePathSegment(fileId); //$NON-NLS-1$
-        // ServiceCallWrapper wrapper = new ServiceCallWrapper(ServiceCallWrapper.Type.POST, fullAddress,
-        // body);
-        // callService(callback, wrapper);
-    }
-
-    @Override
     public void shareDiskResource(JSONObject body, AsyncCallback<String> callback) {
         String address = deProperties.getMuleServiceBaseUrl() + "share"; //$NON-NLS-1$
 
@@ -709,21 +657,6 @@ public class DiskResourceServiceFacadeImpl extends TreeStore<Folder> implements
     }
 
     @Override
-    public void getDataSearchHistory(AsyncCallback<String> callback) {
-        String address = deProperties.getMuleServiceBaseUrl() + "search-history";
-        ServiceCallWrapper wrapper = new ServiceCallWrapper(GET, address);
-        deServiceFacade.getServiceData(wrapper, callback);
-    }
-
-    @Override
-    public void saveDataSearchHistory(String body, AsyncCallback<String> callback) {
-        String address = deProperties.getMuleServiceBaseUrl() + "search-history";
-        ServiceCallWrapper wrapper = new ServiceCallWrapper(POST, address, body);
-        deServiceFacade.getServiceData(wrapper, callback);
-
-    }
-
-    @Override
     public void restoreDiskResource(HasPaths request, AsyncCallback<String> callback) {
         final String fullAddress = deProperties.getDataMgmtBaseUrl() + "restore"; //$NON-NLS-1$
         final String body = encode(request);
@@ -735,14 +668,6 @@ public class DiskResourceServiceFacadeImpl extends TreeStore<Folder> implements
     public void emptyTrash(String user, AsyncCallback<String> callback) {
         String address = deProperties.getDataMgmtBaseUrl() + "trash"; //$NON-NLS-1$
         ServiceCallWrapper wrapper = new ServiceCallWrapper(DELETE, address);
-        callService(wrapper, callback);
-    }
-
-    @Override
-    public void getUserTrashPath(String userName, AsyncCallback<String> callback) {
-        String fullAddress = deProperties.getDataMgmtBaseUrl() + "user-trash-dir" //$NON-NLS-1$
-                + "?path=" + URL.encodePathSegment(userName); //$NON-NLS-1$
-        ServiceCallWrapper wrapper = new ServiceCallWrapper(GET, fullAddress);
         callService(wrapper, callback);
     }
 

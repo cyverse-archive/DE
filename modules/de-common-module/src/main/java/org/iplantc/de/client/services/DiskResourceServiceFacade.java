@@ -28,68 +28,6 @@ import java.util.Set;
 public interface DiskResourceServiceFacade {
 
     /**
-     * call service to set file metadata
-     *
-     * @param fileId id of file resource
-     * @param body metadata in json format
-     * @param callback execute when RPC call complete
-     */
-    void setFileMetaData(String fileId, String body, AsyncCallback<String> callback);
-
-    /**
-     * get data search history
-     *
-     * @param callback callback object
-     *
-     */
-    void getDataSearchHistory(AsyncCallback<String> callback);
-
-    /**
-     * save users data search history
-     *
-     * @param body json object search history
-     * @param callback callback object
-     */
-    void saveDataSearchHistory(String body, AsyncCallback<String> callback);
-
-    /**
-    * get users trash path
-    *
-    */
-    public void getUserTrashPath(String userName, AsyncCallback<String> callback);
-
-    /**
-     * call service to set folder metadata
-     *
-     * @param folderId id of folder resource
-     * @param body metadata in json format
-     * @param callback execute when RPC call complete
-     */
-    void setFolderMetaData(String folderId, String body, AsyncCallback<String> callback);
-
-    /**
-     * Fetch preview data for a file.
-     *
-     * @param path path to desired file.
-     * @param callback callback executed when RPC call completes.
-     */
-    void previewFile(String path, AsyncCallback<String> callback);
-
-    void getHomeFolder(AsyncCallback<String> callback);
-
-    /**
-     * get user's default analyses output folder
-     *
-     */
-    void getDefaultOutput(String folderName, AsyncCallback<String> callback);
-
-    /**
-     * set user's default analyses output folder
-     *
-     */
-    void putDefaultOutput(AsyncCallback<String> callback);
-
-    /**
      * Call service to retrieve the root folder info for the current user
      *
      * @param callback executed when RPC call completes.

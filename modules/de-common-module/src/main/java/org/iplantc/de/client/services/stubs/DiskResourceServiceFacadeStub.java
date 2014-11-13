@@ -26,23 +26,9 @@ import java.util.Set;
  * @author jstroot
  */
 public class DiskResourceServiceFacadeStub implements DiskResourceServiceFacade {
-    @Override
-    public void getHomeFolder(AsyncCallback<String> callback) {
-
-    }
 
     @Override
     public void getRootFolders(AsyncCallback<RootFolders> callback) {
-
-    }
-
-    @Override
-    public void getDefaultOutput(String folderName, AsyncCallback<String> callback) {
-
-    }
-
-    @Override
-    public void putDefaultOutput(AsyncCallback<String> callback) {
 
     }
 
@@ -65,11 +51,6 @@ public class DiskResourceServiceFacadeStub implements DiskResourceServiceFacade 
 
     @Override
     public void diskResourcesExist(HasPaths diskResourcePaths, AsyncCallback<DiskResourceExistMap> callback) {
-
-    }
-
-    @Override
-    public void previewFile(String path, AsyncCallback<String> callback) {
 
     }
 
@@ -134,16 +115,6 @@ public class DiskResourceServiceFacadeStub implements DiskResourceServiceFacade 
     }
 
     @Override
-    public void setFolderMetaData(String folderId, String body, AsyncCallback<String> callback) {
-
-    }
-
-    @Override
-    public void setFileMetaData(String fileId, String body, AsyncCallback<String> callback) {
-
-    }
-
-    @Override
     public void shareDiskResource(JSONObject body, AsyncCallback<String> callback) {
 
     }
@@ -169,22 +140,7 @@ public class DiskResourceServiceFacadeStub implements DiskResourceServiceFacade 
     }
 
     @Override
-    public void getDataSearchHistory(AsyncCallback<String> callback) {
-
-    }
-
-    @Override
-    public void saveDataSearchHistory(String body, AsyncCallback<String> callback) {
-
-    }
-
-    @Override
     public void emptyTrash(String user, AsyncCallback<String> callback) {
-
-    }
-
-    @Override
-    public void getUserTrashPath(String userName, AsyncCallback<String> callback) {
 
     }
 
