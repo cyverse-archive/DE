@@ -4,21 +4,27 @@ import org.iplantc.de.apps.widgets.client.view.editors.arguments.converters.Argu
 import org.iplantc.de.apps.widgets.client.view.editors.arguments.converters.SplittableToFolderConverter;
 import org.iplantc.de.apps.widgets.client.view.editors.style.AppTemplateWizardAppearance;
 import org.iplantc.de.client.models.diskResources.Folder;
+import org.iplantc.de.client.models.viewer.InfoType;
+import org.iplantc.de.diskResource.client.gin.factory.FolderSelectorFieldFactory;
 import org.iplantc.de.diskResource.client.views.widgets.DiskResourceSelector.HasDisableBrowseButtons;
 import org.iplantc.de.diskResource.client.views.widgets.FolderSelectorField;
 
+import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 
+/**
+ * @author jstroot
+ */
 public class FolderInputEditor extends AbstractArgumentEditor implements HasDisableBrowseButtons {
     private final ArgumentEditorConverter<Folder> editorAdapter;
     private final FolderSelectorField folderSelector;
 
     @Inject
-    FolderInputEditor(final FolderSelectorField folderSelector,
+    FolderInputEditor(final FolderSelectorFieldFactory folderSelectorFieldFactory,
                       @Assisted AppTemplateWizardAppearance appearance) {
         super(appearance);
-        this.folderSelector = folderSelector;
+        this.folderSelector = folderSelectorFieldFactory.create(Lists.newArrayList(InfoType.PATH_LIST));
         editorAdapter = new ArgumentEditorConverter<>(folderSelector, new SplittableToFolderConverter());
 
         argumentLabel.setWidget(editorAdapter);

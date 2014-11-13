@@ -44,6 +44,7 @@ import org.iplantc.de.diskResource.client.gin.factory.DataLinkPanelFactory;
 import org.iplantc.de.diskResource.client.gin.factory.DataSharingDialogFactory;
 import org.iplantc.de.diskResource.client.gin.factory.DiskResourceSelectorDialogFactory;
 import org.iplantc.de.diskResource.client.gin.factory.DiskResourceViewFactory;
+import org.iplantc.de.diskResource.client.gin.factory.FolderContentsRpcProxyFactory;
 import org.iplantc.de.diskResource.client.gin.factory.FolderRpcProxyFactory;
 import org.iplantc.de.diskResource.client.metadata.presenter.DiskResourceMetadataUpdateCallback;
 import org.iplantc.de.diskResource.client.metadata.presenter.MetadataPresenter;
@@ -124,6 +125,7 @@ import com.sencha.gxt.widget.core.client.tree.Tree.TreeNode;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -164,7 +166,7 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
     @AssistedInject
     DiskResourcePresenterImpl(final DiskResourceViewFactory diskResourceViewFactory,
                               final FolderRpcProxyFactory folderRpcProxyFactory,
-                              final DiskResourceView.FolderContentsRpcProxy folderContentsRpcProxy,
+                              final FolderContentsRpcProxyFactory folderContentsRpcProxyFactory,
                               final DiskResourceAutoBeanFactory drFactory,
                               final DataSearchPresenter dataSearchPresenter,
                               final IplantDisplayStrings displayStrings,
@@ -174,9 +176,12 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
                               @Assisted("singleSelect") boolean singleSelect,
                               @Assisted("disableFilePreview") boolean disableFilePreview,
                               @Assisted HasPath folderToSelect,
+                              @Assisted List<InfoType> infoTypeFilters,
+                              @Assisted TYPE entityType,
                               @Assisted IsWidget southWidget) {
-        this(diskResourceViewFactory, folderRpcProxyFactory, folderContentsRpcProxy,
-             drFactory, dataSearchPresenter, displayStrings, eventBus);
+        this(diskResourceViewFactory, folderRpcProxyFactory, folderContentsRpcProxyFactory,
+             drFactory, dataSearchPresenter, displayStrings, eventBus,
+             infoTypeFilters, entityType);
         view.setNorthWidgetHidden(hideToolbar);
         view.setEastWidgetHidden(hideDetailsPanel);
         if(singleSelect) {
@@ -192,7 +197,7 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
     @AssistedInject
     DiskResourcePresenterImpl(final DiskResourceViewFactory diskResourceViewFactory,
                               final FolderRpcProxyFactory folderRpcProxyFactory,
-                              final DiskResourceView.FolderContentsRpcProxy folderContentsRpcProxy,
+                              final FolderContentsRpcProxyFactory folderContentsRpcProxyFactory,
                               final DiskResourceAutoBeanFactory drFactory,
                               final DataSearchPresenter dataSearchPresenter,
                               final IplantDisplayStrings displayStrings,
@@ -204,8 +209,10 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
                               @Assisted HasPath folderToSelect,
                               @Assisted IsWidget southWidget,
                               @Assisted int southWidgetHeight) {
-        this(diskResourceViewFactory, folderRpcProxyFactory, folderContentsRpcProxy,
-             drFactory, dataSearchPresenter, displayStrings, eventBus);
+        this(diskResourceViewFactory, folderRpcProxyFactory, folderContentsRpcProxyFactory,
+             drFactory, dataSearchPresenter, displayStrings, eventBus,
+             Collections.<InfoType>emptyList(),
+             null);
         view.setNorthWidgetHidden(hideToolbar);
         view.setEastWidgetHidden(hideDetailsPanel);
         if(singleSelect) {
@@ -221,7 +228,7 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
     @AssistedInject
     DiskResourcePresenterImpl(final DiskResourceViewFactory diskResourceViewFactory,
                               final FolderRpcProxyFactory folderRpcProxyFactory,
-                              final DiskResourceView.FolderContentsRpcProxy folderContentsRpcProxy,
+                              final FolderContentsRpcProxyFactory folderContentsRpcProxyFactory,
                               final DiskResourceAutoBeanFactory drFactory,
                               final DataSearchPresenter dataSearchPresenter,
                               final IplantDisplayStrings displayStrings,
@@ -232,8 +239,10 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
                               @Assisted("disableFilePreview") boolean disableFilePreview,
                               @Assisted HasPath folderToSelect,
                               @Assisted List<HasId> selectedResources) {
-        this(diskResourceViewFactory, folderRpcProxyFactory, folderContentsRpcProxy,
-             drFactory, dataSearchPresenter, displayStrings, eventBus);
+        this(diskResourceViewFactory, folderRpcProxyFactory, folderContentsRpcProxyFactory,
+             drFactory, dataSearchPresenter, displayStrings, eventBus,
+             Collections.<InfoType>emptyList(),
+             null);
         view.setNorthWidgetHidden(hideToolbar);
         view.setEastWidgetHidden(hideDetailsPanel);
         if(singleSelect) {
@@ -247,14 +256,15 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
         setSelectedDiskResourcesById(selectedResources);
     }
 
-    @AssistedInject
     DiskResourcePresenterImpl(final DiskResourceViewFactory diskResourceViewFactory,
                               final FolderRpcProxyFactory folderRpcProxyFactory,
-                              final DiskResourceView.FolderContentsRpcProxy folderContentsRpcProxy,
+                              final FolderContentsRpcProxyFactory folderContentsRpcProxyFactory,
                               final DiskResourceAutoBeanFactory drFactory,
                               final DataSearchPresenter dataSearchPresenter,
                               final IplantDisplayStrings displayStrings,
-                              final EventBus eventBus) {
+                              final EventBus eventBus,
+                              final List<InfoType> infoTypeFilters,
+                              final TYPE entityType) {
         this.drFactory = drFactory;
         this.displayStrings = displayStrings;
         this.eventBus = eventBus;
@@ -262,6 +272,7 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
 
         // Initialize View's grid and tree loaders
         DiskResourceView.FolderRpcProxy folderRpcProxy = folderRpcProxyFactory.create(this);
+        DiskResourceView.FolderContentsRpcProxy folderContentsRpcProxy = folderContentsRpcProxyFactory.createWithEntityType(infoTypeFilters, entityType);
         PagingLoader<FolderContentsLoadConfig, PagingLoadResult<DiskResource>> gridLoader = new PagingLoader<>(folderContentsRpcProxy);
         treeLoader = new TreeLoader<Folder>(folderRpcProxy) {
             @Override
@@ -1238,7 +1249,7 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
 
     @Override
     public void moveSelectedDiskResources() {
-        final FolderSelectDialog fsd = selectorDialogFactory.createFolderSelector();
+        final FolderSelectDialog fsd = selectorDialogFactory.createFolderSelector(getSelectedFolder());
         fsd.show();
         fsd.addOkButtonSelectHandler(new SelectHandler() {
 
@@ -1264,7 +1275,6 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
 
     @Override
     public void moveSelectedDiskResourcesToTrash() {
-
         checkState(!getSelectedDiskResources().isEmpty(), "Selected resources should not be empty");
         delete(getSelectedDiskResources(), displayStrings.deleteMsg());
     }

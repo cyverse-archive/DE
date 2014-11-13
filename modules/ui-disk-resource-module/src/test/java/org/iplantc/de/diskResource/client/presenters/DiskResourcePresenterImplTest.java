@@ -7,11 +7,13 @@ import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.client.models.dataLink.DataLinkFactory;
 import org.iplantc.de.client.models.diskResources.DiskResourceAutoBeanFactory;
 import org.iplantc.de.client.models.diskResources.Folder;
+import org.iplantc.de.client.models.diskResources.TYPE;
 import org.iplantc.de.client.models.search.DiskResourceQueryTemplate;
 import org.iplantc.de.client.services.DiskResourceServiceFacade;
 import org.iplantc.de.client.services.MetadataServiceFacade;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
 import org.iplantc.de.diskResource.client.gin.factory.DiskResourceViewFactory;
+import org.iplantc.de.diskResource.client.gin.factory.FolderContentsRpcProxyFactory;
 import org.iplantc.de.diskResource.client.gin.factory.FolderRpcProxyFactory;
 import org.iplantc.de.diskResource.client.presenters.proxy.SelectFolderByPathLoadHandler;
 import org.iplantc.de.diskResource.client.search.events.UpdateSavedSearchesEvent;
@@ -47,6 +49,7 @@ public class DiskResourcePresenterImplTest {
     @Mock DiskResourceViewFactory mockViewFactory;
     @Mock FolderRpcProxyFactory mockFolderRpcFactory;
     @Mock DiskResourceView.FolderContentsRpcProxy mockFolderContentsRpcProxy;
+    @Mock FolderContentsRpcProxyFactory mockFolderContentsRpcFactory;
     @Mock DiskResourceView.FolderRpcProxy mockFolderRpcProxy;
     @Mock DiskResourceServiceFacade mockDiskResourceService;
     @Mock IplantDisplayStrings mockDisplayStrings;
@@ -74,12 +77,15 @@ public class DiskResourcePresenterImplTest {
         setupMocks();
         uut = new DiskResourcePresenterImpl(mockViewFactory,
                                             mockFolderRpcFactory,
-                                            mockFolderContentsRpcProxy,
+                                            mockFolderContentsRpcFactory,
                                             mockFactory,
                                             mockDataSearchPresenter,
                                             mockDisplayStrings,
-                                            mockEventBus);
+                                            mockEventBus,
+                                            null,
+                                            null);
         uut.announcer = mockAnnouncer;
+
     }
 
     /**
@@ -164,6 +170,7 @@ public class DiskResourcePresenterImplTest {
     }
 
     private void setupMocks() {
+        when(mockFolderContentsRpcFactory.createWithEntityType(anyList(), any(TYPE.class))).thenReturn(mockFolderContentsRpcProxy);
         when(mockViewFactory.create(any(DiskResourceView.Presenter.class), any(TreeLoader.class), any(PagingLoader.class))).thenReturn(mockView);
         when(mockFolderRpcFactory.create(any(IsMaskable.class))).thenReturn(mockFolderRpcProxy);
         when(mockView.getTreeStore()).thenReturn(mockTreeStore);

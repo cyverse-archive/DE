@@ -8,7 +8,16 @@ import org.iplantc.de.client.events.diskResources.FolderRefreshEvent.FolderRefre
 import org.iplantc.de.client.models.DEProperties;
 import org.iplantc.de.client.models.HasPaths;
 import org.iplantc.de.client.models.UserInfo;
-import org.iplantc.de.client.models.diskResources.*;
+import org.iplantc.de.client.models.diskResources.DiskResource;
+import org.iplantc.de.client.models.diskResources.DiskResourceAutoBeanFactory;
+import org.iplantc.de.client.models.diskResources.DiskResourceExistMap;
+import org.iplantc.de.client.models.diskResources.DiskResourceMetadata;
+import org.iplantc.de.client.models.diskResources.DiskResourceMetadataTemplate;
+import org.iplantc.de.client.models.diskResources.DiskResourceMetadataTemplateList;
+import org.iplantc.de.client.models.diskResources.File;
+import org.iplantc.de.client.models.diskResources.Folder;
+import org.iplantc.de.client.models.diskResources.RootFolders;
+import org.iplantc.de.client.models.diskResources.TYPE;
 import org.iplantc.de.client.models.services.DiskResourceMove;
 import org.iplantc.de.client.models.services.DiskResourceRename;
 import org.iplantc.de.client.models.viewer.InfoType;
@@ -45,11 +54,12 @@ import com.sencha.gxt.data.shared.loader.FilterPagingLoadConfigBean;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Logger;
 
 /**
  * Provides access to remote services for folder operations.
  * 
- * @author amuir
+ * @author amuir, jstroot
  * 
  */
 public class DiskResourceServiceFacadeImpl extends TreeStore<Folder> implements
@@ -61,6 +71,8 @@ public class DiskResourceServiceFacadeImpl extends TreeStore<Folder> implements
     private final DiscEnvApiService deServiceFacade;
     private final DEClientConstants constants;
     private final UserInfo userInfo;
+
+    Logger LOG = Logger.getLogger(DiskResourceServiceFacadeImpl.class.getName());
 
     @Inject
     public DiskResourceServiceFacadeImpl(final DiscEnvApiService deServiceFacade,
@@ -147,9 +159,37 @@ public class DiskResourceServiceFacadeImpl extends TreeStore<Folder> implements
 
     @Override
     public void getFolderContents(final Folder folder,
+                                  final List<InfoType> infoTypeFilterList,
+                                  final TYPE entityType,
                                   final FilterPagingLoadConfigBean loadConfig,
                                   final AsyncCallback<Folder> callback) {
-        String address = getDirectoryListingEndpoint(folder, loadConfig);
+        String address = deProperties.getDataMgmtBaseUrl() + "paged-directory?";
+
+        SortInfoBean sortInfo = Iterables.getFirst(loadConfig.getSortInfo(),
+                                                   new SortInfoBean("NAME", SortDir.ASC));
+        if (!Strings.isNullOrEmpty(folder.getPath())) {
+            address += "path=" + URL.encodeQueryString(folder.getPath())
+                            + "&sort-col=" + sortInfo.getSortField()
+                            + "&limit=" + loadConfig.getLimit()
+                            + "&offset=" + loadConfig.getOffset()
+                            + "&sort-order=" + sortInfo.getSortDir().toString();
+        }
+
+        // Apply entity type query parameter if applicable
+        if(entityType != null){
+            address += "&entity-type=" + entityType.toString();
+        }
+
+        // Apply InfoType filters if applicable
+        if((infoTypeFilterList != null)){
+            String infoTypeUrlParameters = "";
+            for(InfoType infoType : infoTypeFilterList){
+                infoTypeUrlParameters += "&info-type=" + infoType.toString();
+            }
+            if(!Strings.isNullOrEmpty(infoTypeUrlParameters)){
+                address += infoTypeUrlParameters;
+            }
+        }
         ServiceCallWrapper wrapper = new ServiceCallWrapper(address);
         callService(wrapper, new AsyncCallbackConverter<String, Folder>(callback) {
 
@@ -232,30 +272,6 @@ public class DiskResourceServiceFacadeImpl extends TreeStore<Folder> implements
             address += "&path=" + URL.encodeQueryString(path); //$NON-NLS-1$
         }
 
-        return address;
-    }
-
-    /**
-     * This method constructs the address for the paged-directory listing endpoint.
-     * 
-     * If the sort info contained in the configBean parameter is null, then a default sort info object
-     * will be used in its place.
-     * 
-     * @param folder the folder whose path will be used to create the endpoint
-     * @param configBean contains the parameters for paging
-     * @return the fully constructed address for the paged-directory listing endpoint.
-     */
-    private String getDirectoryListingEndpoint(final Folder folder,
-                                               final FilterPagingLoadConfigBean configBean) {
-        String address = deProperties.getDataMgmtBaseUrl() + "paged-directory?";
-
-        SortInfoBean sortInfo = Iterables.getFirst(configBean.getSortInfo(),
-                                                   new SortInfoBean("NAME", SortDir.ASC));
-        if (!Strings.isNullOrEmpty(folder.getPath())) {
-            address += "path=" + URL.encodeQueryString(folder.getPath()) + "&sort-col="
-                    + sortInfo.getSortField() + "&limit=" + configBean.getLimit() + "&offset="
-                    + configBean.getOffset() + "&sort-order=" + sortInfo.getSortDir().toString();
-        }
         return address;
     }
 

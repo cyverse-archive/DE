@@ -35,6 +35,9 @@ import org.iplantc.de.client.models.UserSettings;
 import org.iplantc.de.client.services.AppServiceFacade;
 import org.iplantc.de.client.services.AppUserServiceFacade;
 import org.iplantc.de.client.services.DiskResourceServiceFacade;
+import org.iplantc.de.client.services.MetadataServiceFacade;
+import org.iplantc.de.client.services.SearchServiceFacade;
+import org.iplantc.de.client.services.TagsServiceFacade;
 import org.iplantc.de.shared.services.DiscEnvApiService;
 
 import com.google.gwt.inject.client.AbstractGinModule;
@@ -74,6 +77,18 @@ public class BelphegorAppsGinModule extends AbstractGinModule {
     @Provides @Singleton public DiskResourceServiceFacade createDiskResourceService() {
         return ServicesInjector.INSTANCE.getDiskResourceServiceFacade();
     }
+    @Provides @Singleton public SearchServiceFacade createSearchServiceFacade() {
+        return ServicesInjector.INSTANCE.getSearchServiceFacade();
+    }
+
+    @Provides public TagsServiceFacade createMetadataServiceFacade() {
+        return ServicesInjector.INSTANCE.getMetadataService();
+    }
+
+    @Provides public MetadataServiceFacade createFileSystemMetadataServiceFacade() {
+        return ServicesInjector.INSTANCE.getFileSysteMetadataServiceFacade();
+    }
+
 
     @Provides
     public EventBus createEventBus(){

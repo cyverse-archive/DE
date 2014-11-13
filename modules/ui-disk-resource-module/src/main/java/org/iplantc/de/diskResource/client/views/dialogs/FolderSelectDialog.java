@@ -3,6 +3,7 @@ package org.iplantc.de.diskResource.client.views.dialogs;
 import org.iplantc.de.client.models.HasPath;
 import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.client.models.diskResources.Folder;
+import org.iplantc.de.client.models.diskResources.TYPE;
 import org.iplantc.de.client.models.viewer.InfoType;
 import org.iplantc.de.commons.client.views.gxt3.dialogs.IPlantDialog;
 import org.iplantc.de.diskResource.client.events.DiskResourceSelectionChangedEvent;
@@ -18,6 +19,7 @@ import com.google.inject.assistedinject.AssistedInject;
 import com.sencha.gxt.widget.core.client.form.FieldLabel;
 import com.sencha.gxt.widget.core.client.form.TextField;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -49,7 +51,7 @@ public class FolderSelectDialog extends IPlantDialog implements TakesValue<Folde
         @Override
         public void onDiskResourceSelectionChanged(DiskResourceSelectionChangedEvent event) {
             Preconditions.checkNotNull(event.getSelection());
-            Preconditions.checkArgument(event.getSelection().size() == 1);
+            Preconditions.checkArgument(event.getSelection().size() <= 1, "Only single select is supported for FolderSelectDialog");
 
             List<DiskResource> selection = event.getSelection();
             Folder selectedFolder;
@@ -105,6 +107,14 @@ public class FolderSelectDialog extends IPlantDialog implements TakesValue<Folde
     FolderSelectDialog(final DiskResourcePresenterFactory presenterFactory,
                        final FolderSelectDialogAppearance appearance,
                        @Assisted final HasPath folderToSelect) {
+        this(presenterFactory, appearance, folderToSelect, Collections.<InfoType>emptyList());
+    }
+
+    @AssistedInject
+    FolderSelectDialog(final DiskResourcePresenterFactory presenterFactory,
+                       final FolderSelectDialogAppearance appearance,
+                       @Assisted final HasPath folderToSelect,
+                       @Assisted final List<InfoType> infoTypeFilters) {
 
         // Disable Ok button by default.
         getOkButton().setEnabled(false);
@@ -115,13 +125,16 @@ public class FolderSelectDialog extends IPlantDialog implements TakesValue<Folde
 
         selectedFolderTextField = new TextField();
         final FieldLabel fl = new FieldLabel(selectedFolderTextField, appearance.selectorFieldLabel());
+        TYPE entityType = infoTypeFilters.isEmpty() ? TYPE.FOLDER : null;
         // Tell the presenter to add the view with the toolbar and details panel hidden, etc.
-        presenter = presenterFactory.createSelector(true,
-                                                    true,
-                                                    true,
-                                                    true,
-                                                    folderToSelect,
-                                                    fl);
+        presenter = presenterFactory.filtered(true,
+                                              true,
+                                              true,
+                                              true,
+                                              folderToSelect,
+                                              infoTypeFilters,
+                                              entityType,
+                                              fl);
 
         presenter.addFolderSelectedEventHandler(new FolderSelectionChangedHandler(this));
         presenter.addDiskResourceSelectionChangedEventHandler(new DiskResourceSelectionChangedHandler(presenter,
@@ -154,7 +167,6 @@ public class FolderSelectDialog extends IPlantDialog implements TakesValue<Folde
 
         selectedFolderTextField.setValue(value.getName());
         getOkButton().setEnabled(true);
-
     }
 
 }

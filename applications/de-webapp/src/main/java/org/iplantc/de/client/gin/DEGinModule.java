@@ -30,6 +30,9 @@ import com.google.inject.Singleton;
 
 import com.sencha.gxt.widget.core.client.WindowManager;
 
+/**
+ * @author jstroot
+ */
 public class DEGinModule extends AbstractGinModule {
 
     //<editor-fold desc="Services">
@@ -71,6 +74,18 @@ public class DEGinModule extends AbstractGinModule {
 
     @Provides @Singleton public AppServiceFacade createAppServiceFacade() {
         return ServicesInjector.INSTANCE.getAppServiceFacade();
+    }
+
+    @Provides @Singleton public SearchServiceFacade createSearchServiceFacade() {
+        return ServicesInjector.INSTANCE.getSearchServiceFacade();
+    }
+
+    @Provides public TagsServiceFacade createMetadataServiceFacade() {
+        return ServicesInjector.INSTANCE.getMetadataService();
+    }
+
+    @Provides public MetadataServiceFacade createFileSystemMetadataServiceFacade() {
+        return ServicesInjector.INSTANCE.getFileSysteMetadataServiceFacade();
     }
 
     //</editor-fold>

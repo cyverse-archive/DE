@@ -8,6 +8,7 @@ import org.iplantc.de.client.models.diskResources.DiskResourceAutoBeanFactory;
 import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.commons.client.validators.DiskResourceNameValidator;
 import org.iplantc.de.commons.client.widgets.PreventEntryAfterLimitHandler;
+import org.iplantc.de.diskResource.client.gin.factory.FolderSelectorFieldFactory;
 import org.iplantc.de.diskResource.client.views.widgets.FolderSelectorField;
 import org.iplantc.de.resources.client.uiapps.widgets.AppsWidgetsDisplayMessages;
 
@@ -40,20 +41,16 @@ import java.util.List;
 
 /**
  * @author jstroot
- * 
  */
 public class LaunchAnalysisViewImpl implements LaunchAnalysisView {
 
-    interface EditorDriver extends SimpleBeanEditorDriver<JobExecution, LaunchAnalysisViewImpl> {
-    }
+    interface EditorDriver extends SimpleBeanEditorDriver<JobExecution, LaunchAnalysisViewImpl> { }
 
     @UiTemplate("LaunchAnalysisView.ui.xml")
     interface LaunchAnalysisWidgetUiBinder extends UiBinder<Widget, LaunchAnalysisViewImpl> { }
 
-    @Ignore
-    @UiField(provided = true) FolderSelectorField awFolderSel;
-    @Ignore
-    @UiField ContentPanel contentPanel;
+    @UiField(provided = true) @Ignore FolderSelectorField awFolderSel;
+    @UiField @Ignore ContentPanel contentPanel;
     @UiField(provided = true) AppsWidgetsDisplayMessages appWidgetStrings;
     @UiField TextArea description;
     @UiField TextField name;
@@ -70,9 +67,9 @@ public class LaunchAnalysisViewImpl implements LaunchAnalysisView {
     @Inject
     public LaunchAnalysisViewImpl(final LaunchAnalysisWidgetUiBinder binder,
                                   final AppsWidgetsDisplayMessages appWidgetStrings,
-                                  final FolderSelectorField folderSelectorField) {
+                                  final FolderSelectorFieldFactory folderSelectorFieldFactory) {
         this.appWidgetStrings = appWidgetStrings;
-        this.awFolderSel = folderSelectorField;
+        this.awFolderSel = folderSelectorFieldFactory.defaultFolderSelector();
         binder.createAndBindUi(this);
         name.addValidator(new DiskResourceNameValidator());
         name.addKeyDownHandler(new PreventEntryAfterLimitHandler(name));
@@ -137,26 +134,17 @@ public class LaunchAnalysisViewImpl implements LaunchAnalysisView {
         return ((editorDriver.getErrors() != null) && editorDriver.hasErrors()) || !awFolderSel.getErrors().isEmpty();
     }
 
-    @UiHandler("awFolderSel")
-    void onFolderChanged(ValueChangeEvent<Folder> event) {
+    @UiHandler("awFolderSel") void onFolderChanged(ValueChangeEvent<Folder> event) {
         // core-5450 remove warning message about contents being over written
         awFolderSel.setInfoErrorText(null);
         flushJobExecution();
     }
 
-    /**
-     * @param event
-     */
-    @UiHandler("awFolderSel")
-    void onInvalid(InvalidEvent event) {
+    @UiHandler("awFolderSel") void onInvalid(InvalidEvent event) {
         updateHeader(name.getCurrentValue());
     }
 
-    /**
-     * @param event
-     */
-    @UiHandler("name")
-    void onNameChange(ValueChangeEvent<String> event) {
+    @UiHandler("name") void onNameChange(ValueChangeEvent<String> event) {
         updateHeader(name.getCurrentValue());
     }
 

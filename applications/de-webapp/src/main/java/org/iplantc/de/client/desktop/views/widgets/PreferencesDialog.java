@@ -7,6 +7,7 @@ import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.commons.client.info.ErrorAnnouncementConfig;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
 import org.iplantc.de.commons.client.views.gxt3.dialogs.IPlantDialog;
+import org.iplantc.de.diskResource.client.gin.factory.FolderSelectorFieldFactory;
 import org.iplantc.de.diskResource.client.views.widgets.FolderSelectorField;
 import org.iplantc.de.resources.client.messages.IplantContextualHelpStrings;
 import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
@@ -41,8 +42,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- *
- * @author sriram
+ * @author sriram, jstroot
  */
 public class PreferencesDialog extends IPlantDialog implements Editor<UserSettings> {
 
@@ -56,13 +56,9 @@ public class PreferencesDialog extends IPlantDialog implements Editor<UserSettin
 
     interface EditorDriver extends SimpleBeanEditorDriver<UserSettings, PreferencesDialog>{}
 
-
-    @Ignore
-    @UiField VerticalLayoutContainer container;
-    @Ignore
-    @UiField VerticalLayoutContainer kbContainer;
-    @Ignore
-    @UiField VerticalLayoutContainer prefContainer;
+    @UiField @Ignore VerticalLayoutContainer container;
+    @UiField @Ignore VerticalLayoutContainer kbContainer;
+    @UiField @Ignore VerticalLayoutContainer prefContainer;
 
     @UiField TextField analysesShortCut;
     @UiField TextField appsShortCut;
@@ -88,12 +84,12 @@ public class PreferencesDialog extends IPlantDialog implements Editor<UserSettin
     @Inject UserSettings us;
 
     @Inject
-    PreferencesDialog(final FolderSelectorField defaultOutputFolder,
+    PreferencesDialog(final FolderSelectorFieldFactory folderSelectorFieldFactory,
                       final IplantDisplayStrings displayStrings,
                       final IplantContextualHelpStrings helpStrings,
                       final KeyBoardShortcutConstants kbConstants) {
         super(true);
-        this.defaultOutputFolder = defaultOutputFolder;
+        this.defaultOutputFolder = folderSelectorFieldFactory.defaultFolderSelector();
         this.displayStrings = displayStrings;
         this.helpStrings = helpStrings;
         this.KB_CONSTANTS = kbConstants;

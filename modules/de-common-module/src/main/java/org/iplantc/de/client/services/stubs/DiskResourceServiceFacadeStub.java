@@ -22,6 +22,9 @@ import com.sencha.gxt.data.shared.loader.FilterPagingLoadConfigBean;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * @author jstroot
+ */
 public class DiskResourceServiceFacadeStub implements DiskResourceServiceFacade {
     @Override
     public void getHomeFolder(AsyncCallback<String> callback) {
@@ -44,7 +47,9 @@ public class DiskResourceServiceFacadeStub implements DiskResourceServiceFacade 
     }
 
     @Override
-    public void getFolderContents(Folder folder, FilterPagingLoadConfigBean loadConfig, AsyncCallback<Folder> callback) {
+    public void getFolderContents(Folder folder, List<InfoType> infoTypeFilterList,
+                                  TYPE entityType, FilterPagingLoadConfigBean loadConfig,
+                                  AsyncCallback<Folder> callback) {
 
     }
 

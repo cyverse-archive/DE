@@ -17,6 +17,8 @@
 	<inherits name="org.iplantc.de.apps.Apps"/>
 	<inherits name="org.iplantc.de.resources.ui-resources"/>
 
+    <inherits name="org.iplantc.admin.belphegor.theme.base.Base"/>
+
 	<replace-with class="org.iplantc.de.commons.client.appearance.widgets.IPlantAnchorDefaultAppearance">
 		<when-type-is class="org.iplantc.de.commons.client.widgets.IPlantAnchorAppearance" />
 	</replace-with>

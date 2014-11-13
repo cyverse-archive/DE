@@ -3,7 +3,9 @@ package org.iplantc.de.diskResource.client.presenters.proxy;
 import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.client.models.diskResources.DiskResourceFavorite;
 import org.iplantc.de.client.models.diskResources.Folder;
+import org.iplantc.de.client.models.diskResources.TYPE;
 import org.iplantc.de.client.models.search.DiskResourceQueryTemplate;
+import org.iplantc.de.client.models.viewer.InfoType;
 import org.iplantc.de.client.services.DiskResourceServiceFacade;
 import org.iplantc.de.client.services.MetadataServiceFacade;
 import org.iplantc.de.client.services.SearchServiceFacade;
@@ -19,7 +21,8 @@ import com.google.common.collect.Lists;
 import com.google.gwt.safehtml.client.HasSafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
+import com.google.inject.assistedinject.AssistedInject;
 
 import com.sencha.gxt.data.client.loader.RpcProxy;
 import com.sencha.gxt.data.shared.loader.PagingLoadResult;
@@ -29,7 +32,8 @@ import java.util.List;
 
 /**
  * This proxy is responsible for retrieving directory listings and search requests from the server.
- * 
+ *
+ * @author jstroot, psarando
  */
 public class FolderContentsRpcProxyImpl extends RpcProxy<FolderContentsLoadConfig, PagingLoadResult<DiskResource>>
                                         implements DiskResourceView.FolderContentsRpcProxy {
@@ -202,21 +206,28 @@ public class FolderContentsRpcProxyImpl extends RpcProxy<FolderContentsLoadConfi
     private final IplantAnnouncer announcer;
     private final IplantDisplayStrings displayStrings;
     private final IplantErrorStrings errorStrings;
+    private TYPE entityType = null;
     private HasSafeHtml hasSafeHtml;
+    private List<InfoType> infoTypeFilterList;
 
-    @Inject
+
+    @AssistedInject
     FolderContentsRpcProxyImpl(final DiskResourceServiceFacade drService,
                                final SearchServiceFacade searchService,
                                final MetadataServiceFacade metadataService,
                                final IplantAnnouncer announcer,
                                final IplantDisplayStrings displayStrings,
-                               final IplantErrorStrings errorStrings) {
+                               final IplantErrorStrings errorStrings,
+                               @Assisted final List<InfoType> infoTypeFilterList,
+                               @Assisted final TYPE entityType){
         this.drService = drService;
         this.searchService = searchService;
         this.announcer = announcer;
         this.displayStrings = displayStrings;
         this.metadataService = metadataService;
         this.errorStrings = errorStrings;
+        this.infoTypeFilterList = infoTypeFilterList;
+        this.entityType = entityType;
     }
 
     @Override
@@ -232,7 +243,7 @@ public class FolderContentsRpcProxyImpl extends RpcProxy<FolderContentsLoadConfi
         } else if (folder instanceof DiskResourceQueryTemplate) {
             searchService.submitSearchFromQueryTemplate((DiskResourceQueryTemplate)folder, loadConfig, null, new SearchResultsCallback(announcer, loadConfig, callback, displayStrings, hasSafeHtml));
         } else {
-            drService.getFolderContents(folder, loadConfig, new FolderContentsCallback(announcer, loadConfig, callback, hasSafeHtml));
+            drService.getFolderContents(folder, infoTypeFilterList, entityType, loadConfig, new FolderContentsCallback(announcer, loadConfig, callback, hasSafeHtml));
         }
 
     }

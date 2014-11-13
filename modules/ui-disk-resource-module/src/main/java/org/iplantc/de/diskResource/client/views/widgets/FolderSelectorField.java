@@ -6,6 +6,7 @@ import org.iplantc.de.client.models.UserSettings;
 import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.client.models.diskResources.DiskResourceAutoBeanFactory;
 import org.iplantc.de.client.models.diskResources.Folder;
+import org.iplantc.de.client.models.viewer.InfoType;
 import org.iplantc.de.client.util.CommonModelUtils;
 import org.iplantc.de.client.util.DiskResourceUtil;
 import org.iplantc.de.commons.client.events.LastSelectedPathChangedEvent;
@@ -18,6 +19,8 @@ import com.google.gwt.core.shared.GWT;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.user.client.TakesValue;
 import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
+import com.google.inject.assistedinject.AssistedInject;
 import com.google.web.bindery.autobean.shared.AutoBeanCodex;
 
 import com.sencha.gxt.dnd.core.client.DndDropEvent;
@@ -25,8 +28,13 @@ import com.sencha.gxt.dnd.core.client.StatusProxy;
 import com.sencha.gxt.widget.core.client.event.HideEvent;
 import com.sencha.gxt.widget.core.client.event.HideEvent.HideHandler;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Set;
 
+/**
+ * @author jstroot
+ */
 public class FolderSelectorField extends AbstractDiskResourceSelector<Folder> {
 
     private class FolderDialogHideHandler implements HideHandler {
@@ -57,10 +65,18 @@ public class FolderSelectorField extends AbstractDiskResourceSelector<Folder> {
     @Inject DiskResourceSelectorDialogFactory selectorDialogFactory;
 
     final IplantDisplayStrings displayStrings;
+    private final List<InfoType> infoTypeFilters;
 
-    @Inject
-    FolderSelectorField(final IplantDisplayStrings displayStrings) {
+    @AssistedInject
+    FolderSelectorField(final IplantDisplayStrings displayStrings){
+        this(displayStrings, Collections.<InfoType>emptyList());
+    }
+
+    @AssistedInject
+    FolderSelectorField(final IplantDisplayStrings displayStrings,
+                        @Assisted List<InfoType> infoTypeFilters) {
         this.displayStrings = displayStrings;
+        this.infoTypeFilters = infoTypeFilters;
         setEmptyText(displayStrings.selectAFolder());
     }
 
@@ -100,7 +116,7 @@ public class FolderSelectorField extends AbstractDiskResourceSelector<Folder> {
                 value = CommonModelUtils.createHasPathFromString(path);
             }
         }
-        folderSD = selectorDialogFactory.createFolderSelector(value);
+        folderSD = selectorDialogFactory.createFolderSelector(value, infoTypeFilters);
         folderSD.addHideHandler(new FolderDialogHideHandler(folderSD));
         folderSD.show();
     }

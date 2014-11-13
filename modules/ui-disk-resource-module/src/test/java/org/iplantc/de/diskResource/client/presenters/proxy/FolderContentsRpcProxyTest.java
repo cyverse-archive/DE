@@ -2,6 +2,7 @@ package org.iplantc.de.diskResource.client.presenters.proxy;
 
 import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.client.models.diskResources.Folder;
+import org.iplantc.de.client.models.diskResources.TYPE;
 import org.iplantc.de.client.models.search.DiskResourceQueryTemplate;
 import org.iplantc.de.client.services.DiskResourceServiceFacade;
 import org.iplantc.de.client.services.MetadataServiceFacade;
@@ -70,7 +71,9 @@ public class FolderContentsRpcProxyTest {
                                                                 mockFileSystemMetadataService,
                                                                 announcer,
                                                                 displayStringsMock,
-                                                                errorStringsMock);
+                                                                errorStringsMock,
+                                                                null,
+                                                                null);
         folderContentsRpcProxy.setHasSafeHtml(mockHasSafeHtml);
     }
 
@@ -95,7 +98,7 @@ public class FolderContentsRpcProxyTest {
 
         ArgumentCaptor<FolderContentsRpcProxyImpl.FolderContentsCallback> callBackCaptor
             = ArgumentCaptor.forClass(FolderContentsRpcProxyImpl.FolderContentsCallback.class);
-        verify(diskResourceService).getFolderContents(eq(mockFolder), eq(loadConfigMock), callBackCaptor.capture());
+        verify(diskResourceService).getFolderContents(eq(mockFolder), anyList(), any(TYPE.class), eq(loadConfigMock), callBackCaptor.capture());
 
         assertEquals(loadConfigMock, callBackCaptor.getValue().getLoadConfig());
         assertEquals(pagingAsyncMock, callBackCaptor.getValue().getCallback());
@@ -165,7 +168,7 @@ public class FolderContentsRpcProxyTest {
 
         ArgumentCaptor<FolderContentsRpcProxyImpl.FolderContentsCallback> callBackCaptor
             = ArgumentCaptor.forClass(FolderContentsRpcProxyImpl.FolderContentsCallback.class);
-        verify(diskResourceService).getFolderContents(any(Folder.class), eq(loadConfigMock), callBackCaptor.capture());
+        verify(diskResourceService).getFolderContents(any(Folder.class), anyList(), any(TYPE.class), eq(loadConfigMock), callBackCaptor.capture());
 
         // Call method under test
         Folder f = mock(Folder.class);
@@ -194,7 +197,7 @@ public class FolderContentsRpcProxyTest {
 
         ArgumentCaptor<FolderContentsRpcProxyImpl.FolderContentsCallback> callBackCaptor
             = ArgumentCaptor.forClass(FolderContentsRpcProxyImpl.FolderContentsCallback.class);
-        verify(diskResourceService).getFolderContents(any(Folder.class), eq(loadConfigMock), callBackCaptor.capture());
+        verify(diskResourceService).getFolderContents(any(Folder.class), anyList(), any(TYPE.class), eq(loadConfigMock), callBackCaptor.capture());
 
         callBackCaptor.getValue().onSuccess(null);
         verify(pagingAsyncMock).onFailure(any(Throwable.class));
@@ -215,7 +218,7 @@ public class FolderContentsRpcProxyTest {
 
         ArgumentCaptor<FolderContentsRpcProxyImpl.FolderContentsCallback> callBackCaptor
             = ArgumentCaptor.forClass(FolderContentsRpcProxyImpl.FolderContentsCallback.class);
-        verify(diskResourceService).getFolderContents(any(Folder.class), eq(loadConfigMock), callBackCaptor.capture());
+        verify(diskResourceService).getFolderContents(any(Folder.class), anyList(), any(TYPE.class), eq(loadConfigMock), callBackCaptor.capture());
 
         callBackCaptor.getValue().onFailure(mock(Throwable.class));
         verify(pagingAsyncMock).onFailure(any(Throwable.class));
