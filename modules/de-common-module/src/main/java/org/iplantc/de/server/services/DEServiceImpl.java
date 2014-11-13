@@ -1,5 +1,7 @@
 package org.iplantc.de.server.services;
 
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
 import org.iplantc.de.server.DEServiceInputStream;
 import org.iplantc.de.server.MultipartBodyFactory;
 import org.iplantc.de.server.ServiceCallResolver;
@@ -500,7 +502,7 @@ public class DEServiceImpl extends RemoteServiceServlet implements DEService {
         String json = null;
 
         if (isValidServiceCall(wrapper)) {
-            HttpClient client = new DefaultHttpClient();
+            CloseableHttpClient client = HttpClients.createDefault();
             try {
                 json = getResponseBody(getResponse(client, wrapper));
             } catch (AuthenticationException | HttpRedirectException ex) {
@@ -513,7 +515,7 @@ public class DEServiceImpl extends RemoteServiceServlet implements DEService {
                 LOGGER.error("", ex);
                 throw new SerializationException(ex);
             } finally {
-                client.getConnectionManager().shutdown();
+                IOUtils.closeQuietly(client);
             }
         }
 
@@ -548,20 +550,19 @@ public class DEServiceImpl extends RemoteServiceServlet implements DEService {
     public DEServiceInputStream getServiceStream(ServiceCallWrapper wrapper)
             throws SerializationException, IOException {
         if (isValidServiceCall(wrapper)) {
-            HttpClient client = new DefaultHttpClient();
+            CloseableHttpClient client = HttpClients.createDefault();
             try {
                 HttpResponse response = getResponse(client, wrapper);
                 checkResponse(response);
                 return new DEServiceInputStream(client, response);
             } catch (HttpRedirectException | AuthenticationException ex) {
+                client.close();
                 doLogError(ex);
                 throw ex;
             } catch (Exception ex) {
+                client.close();
                 doLogError(ex);
                 throw new SerializationException(ex);
-            }
-            finally {
-                client.getConnectionManager().shutdown();
             }
         }
 
@@ -597,7 +598,7 @@ public class DEServiceImpl extends RemoteServiceServlet implements DEService {
         String json = null;
 
         if (isValidServiceCall(wrapper)) {
-            HttpClient client = new DefaultHttpClient();
+            CloseableHttpClient client = HttpClients.createDefault();
             try {
                 json = getResponseBody(getResponse(client, wrapper));
             } catch (AuthenticationException | HttpRedirectException ex) {
@@ -610,7 +611,7 @@ public class DEServiceImpl extends RemoteServiceServlet implements DEService {
                 doLogError(ex);
                 throw new SerializationException(ex);
             } finally {
-                client.getConnectionManager().shutdown();
+                IOUtils.closeQuietly(client);
             }
         }
 

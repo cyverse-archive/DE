@@ -2,7 +2,7 @@ package org.iplantc.de.server;
 
 import org.apache.http.Header;
 import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
+import org.apache.http.impl.client.CloseableHttpClient;
 
 import java.io.FilterInputStream;
 import java.io.IOException;
@@ -16,7 +16,7 @@ public class DEServiceInputStream extends FilterInputStream {
     /**
      * The HTTP client.
      */
-    private final HttpClient client;
+    private final CloseableHttpClient client;
 
     /**
      * The MIME content type.
@@ -46,7 +46,7 @@ public class DEServiceInputStream extends FilterInputStream {
      * @param response the HTTP response.
      * @throws IOException if an I/O error occurs.
      */
-    public DEServiceInputStream(HttpClient client, HttpResponse response) throws IOException {
+    public DEServiceInputStream(CloseableHttpClient client, HttpResponse response) throws IOException {
         super(response.getEntity().getContent());
         this.client = client;
         contentType = extractContentType(response);
@@ -102,6 +102,6 @@ public class DEServiceInputStream extends FilterInputStream {
     @Override
     public void close() throws IOException {
         super.close();
-        client.getConnectionManager().shutdown();
+        client.close();
     }
 }

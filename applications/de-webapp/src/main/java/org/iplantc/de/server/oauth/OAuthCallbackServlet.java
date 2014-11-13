@@ -1,5 +1,7 @@
 package org.iplantc.de.server.oauth;
 
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
 import org.iplantc.de.server.auth.UrlConnector;
 
 import com.google.common.base.Strings;
@@ -110,7 +112,7 @@ public abstract class OAuthCallbackServlet extends HttpServlet implements HttpRe
                                      final HttpServletRequest req,
                                      final HttpServletResponse resp)
             throws IOException {
-        final HttpClient client = new DefaultHttpClient();
+        final CloseableHttpClient client = HttpClients.createDefault();
         try {
             final HttpGet request = urlConnector.getRequest(req, serviceCallbackUrl(authResponse));
             final HttpResponse response = client.execute(request);
@@ -123,7 +125,7 @@ public abstract class OAuthCallbackServlet extends HttpServlet implements HttpRe
                 resp.sendRedirect(authorizationSuccessRedirectUrl(req, responseBody));
             }
         } finally {
-            client.getConnectionManager().shutdown();
+            IOUtils.closeQuietly(client);
         }
     }
 

@@ -2,9 +2,12 @@ package org.iplantc.de.server.services;
 
 import net.sf.json.JSONObject;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.client.HttpClients;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.context.WebApplicationContext;
@@ -60,7 +63,7 @@ public class IplantEmailClient {
      * @throws ServiceCallFailedException if the request fails.
      */
     public void sendMessage(MessageRequest request) {
-        DefaultHttpClient client = new DefaultHttpClient();
+        CloseableHttpClient client = HttpClients.createDefault();
         HttpPost post = new HttpPost(baseUrl);
         try {
             post.setEntity(new StringEntity(request.toString()));
@@ -76,7 +79,7 @@ public class IplantEmailClient {
             throw e;
         }
         finally {
-            client.getConnectionManager().shutdown();
+            IOUtils.closeQuietly(client);
         }
     }
 
