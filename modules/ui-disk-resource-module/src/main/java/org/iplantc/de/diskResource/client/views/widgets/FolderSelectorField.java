@@ -7,6 +7,7 @@ import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.client.models.diskResources.DiskResourceAutoBeanFactory;
 import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.client.models.viewer.InfoType;
+import org.iplantc.de.client.services.DiskResourceServiceFacade;
 import org.iplantc.de.client.util.CommonModelUtils;
 import org.iplantc.de.client.util.DiskResourceUtil;
 import org.iplantc.de.commons.client.events.LastSelectedPathChangedEvent;
@@ -65,17 +66,23 @@ public class FolderSelectorField extends AbstractDiskResourceSelector<Folder> {
     @Inject DiskResourceSelectorDialogFactory selectorDialogFactory;
 
     final IplantDisplayStrings displayStrings;
+    private final DiskResourceServiceFacade diskResourceService;
     private final List<InfoType> infoTypeFilters;
 
     @AssistedInject
-    FolderSelectorField(final IplantDisplayStrings displayStrings){
-        this(displayStrings, Collections.<InfoType>emptyList());
+    FolderSelectorField(final IplantDisplayStrings displayStrings,
+                        final DiskResourceServiceFacade diskResourceService){
+        this(displayStrings,
+             diskResourceService,
+             Collections.<InfoType>emptyList());
     }
 
     @AssistedInject
     FolderSelectorField(final IplantDisplayStrings displayStrings,
+                        final DiskResourceServiceFacade diskResourceService,
                         @Assisted List<InfoType> infoTypeFilters) {
         this.displayStrings = displayStrings;
+        this.diskResourceService = diskResourceService;
         this.infoTypeFilters = infoTypeFilters;
         setEmptyText(displayStrings.selectAFolder());
     }
@@ -85,9 +92,16 @@ public class FolderSelectorField extends AbstractDiskResourceSelector<Folder> {
         Set<DiskResource> dropData = getDropData(event.getData());
 
         if (validateDropStatus(dropData, event.getStatusProxy())) {
-            Folder selectedFolder = (Folder) dropData.iterator().next();
-            setSelectedResource(selectedFolder);
-            ValueChangeEvent.fire(this, selectedFolder);
+            DiskResource diskResource = dropData.iterator().next();
+            Folder selectedItem;
+            if(!(diskResource instanceof Folder)){
+                // It's valid, it just needs to look like a folder
+                selectedItem = diskResourceService.convertToFolder(diskResource);
+            } else {
+                selectedItem =  (Folder) diskResource;
+            }
+            setSelectedResource(selectedItem);
+            ValueChangeEvent.fire(this, selectedItem);
         }
     }
 
@@ -103,7 +117,6 @@ public class FolderSelectorField extends AbstractDiskResourceSelector<Folder> {
         }
         DiskResourceAutoBeanFactory factory = GWT.create(DiskResourceAutoBeanFactory.class);
         setValue(AutoBeanCodex.decode(factory, Folder.class, "{\"path\":\"" + path + "\"}").as());
-
     }
 
     @Override
@@ -116,23 +129,40 @@ public class FolderSelectorField extends AbstractDiskResourceSelector<Folder> {
                 value = CommonModelUtils.createHasPathFromString(path);
             }
         }
-        folderSD = selectorDialogFactory.createFolderSelector(value, infoTypeFilters);
+        folderSD = selectorDialogFactory.createFilteredFolderSelector(value, infoTypeFilters);
         folderSD.addHideHandler(new FolderDialogHideHandler(folderSD));
         folderSD.show();
     }
 
     @Override
     protected boolean validateDropStatus(Set<DiskResource> dropData, StatusProxy status) {
+        boolean isValid = false;
         // Only allow 1 folder to be dropped in this field.
-        if (dropData == null || dropData.size() != 1 || !(DiskResourceUtil.containsFolder(dropData))) {
-            status.setStatus(false);
-            return false;
+        if ((dropData == null)
+                || dropData.size() != 1) {
+            isValid = false;
+        } else if (DiskResourceUtil.containsFolder(dropData)){
+            isValid = true;
+        } else {
+            DiskResource droppedResource = dropData.iterator().next();
+            InfoType infoType = InfoType.fromTypeString(droppedResource.getInfoType());
+            for (InfoType it : infoTypeFilters) {
+                // If the filter list is empty, this code will not be executed
+                if (it.equals(infoType)) {
+                    // Reset status message
+                    status.setStatus(true);
+                    status.update(displayStrings.dataDragDropStatusText(dropData.size()));
+                    return true;
+                }
+            }
         }
 
         // Reset status message
-        status.setStatus(true);
-        status.update(displayStrings.dataDragDropStatusText(dropData.size()));
+        status.setStatus(isValid);
+        if(isValid){
+            status.update(displayStrings.dataDragDropStatusText(dropData.size()));
+        }
 
-        return true;
+        return isValid;
     }
 }

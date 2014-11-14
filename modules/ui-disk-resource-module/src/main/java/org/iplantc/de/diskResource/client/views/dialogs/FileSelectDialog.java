@@ -92,17 +92,29 @@ public class FileSelectDialog extends IPlantDialog implements TakesValue<List<Fi
     @AssistedInject
     FileSelectDialog(final DiskResourcePresenterFactory presenterFactory,
                      final FileSelectDialogAppearance appearance,
-                     @Assisted boolean singleSelect) {
+                     @Assisted final boolean singleSelect,
+                     @Assisted final HasPath folderToSelect) {
         this(presenterFactory, appearance, singleSelect,
-             null, null,
+             folderToSelect, null,
              Collections.<InfoType>emptyList());
     }
 
     @AssistedInject
     FileSelectDialog(final DiskResourcePresenterFactory presenterFactory,
                      final FileSelectDialogAppearance appearance,
-                     @Assisted boolean singleSelect,
-                     @Assisted List<DiskResource> diskResourcesToSelect) {
+                     @Assisted final boolean singleSelect,
+                     @Assisted final HasPath folderToSelect,
+                     @Assisted final List<InfoType> infoTypeFilters) {
+        this(presenterFactory, appearance, singleSelect,
+             folderToSelect, null,
+             infoTypeFilters);
+    }
+
+    @AssistedInject
+    FileSelectDialog(final DiskResourcePresenterFactory presenterFactory,
+                     final FileSelectDialogAppearance appearance,
+                     @Assisted final boolean singleSelect,
+                     @Assisted final List<DiskResource> diskResourcesToSelect) {
         this(presenterFactory, appearance, singleSelect,
              null, diskResourcesToSelect,
              Collections.<InfoType>emptyList());
@@ -111,11 +123,12 @@ public class FileSelectDialog extends IPlantDialog implements TakesValue<List<Fi
     @AssistedInject
     FileSelectDialog(final DiskResourcePresenterFactory presenterFactory,
                      final FileSelectDialogAppearance appearance,
-                     @Assisted boolean singleSelect,
-                     @Assisted HasPath folderToSelect) {
+                     @Assisted final boolean singleSelect,
+                     @Assisted final List<DiskResource> diskResourcesToSelect,
+                     @Assisted final List<InfoType> infoTypeFilters) {
         this(presenterFactory, appearance, singleSelect,
-             folderToSelect, null,
-             Collections.<InfoType>emptyList());
+             null, diskResourcesToSelect,
+             infoTypeFilters);
     }
 
     FileSelectDialog(final DiskResourcePresenterFactory presenterFactory,

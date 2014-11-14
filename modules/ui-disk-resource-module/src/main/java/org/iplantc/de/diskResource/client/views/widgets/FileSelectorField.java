@@ -6,6 +6,7 @@ import org.iplantc.de.client.models.UserSettings;
 import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.client.models.diskResources.DiskResourceAutoBeanFactory;
 import org.iplantc.de.client.models.diskResources.File;
+import org.iplantc.de.client.models.viewer.InfoType;
 import org.iplantc.de.client.util.CommonModelUtils;
 import org.iplantc.de.client.util.DiskResourceUtil;
 import org.iplantc.de.commons.client.events.LastSelectedPathChangedEvent;
@@ -19,6 +20,8 @@ import com.google.gwt.core.shared.GWT;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.user.client.TakesValue;
 import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
+import com.google.inject.assistedinject.AssistedInject;
 import com.google.web.bindery.autobean.shared.AutoBeanCodex;
 
 import com.sencha.gxt.dnd.core.client.DndDropEvent;
@@ -26,6 +29,7 @@ import com.sencha.gxt.dnd.core.client.StatusProxy;
 import com.sencha.gxt.widget.core.client.event.HideEvent;
 import com.sencha.gxt.widget.core.client.event.HideEvent.HideHandler;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -60,10 +64,19 @@ public class FileSelectorField extends AbstractDiskResourceSelector<File> {
     @Inject DiskResourceSelectorDialogFactory dialogFactory;
 
     final IplantDisplayStrings displayStrings;
+    final List<InfoType> infoTypeFilters;
 
-    @Inject
-    FileSelectorField(final IplantDisplayStrings displayStrings){
+    @AssistedInject
+    FileSelectorField(final IplantDisplayStrings displayStrings,
+                      @Assisted final List<InfoType> infoTypeFilters){
         this.displayStrings = displayStrings;
+        this.infoTypeFilters = infoTypeFilters;
+    }
+
+    @AssistedInject
+    FileSelectorField(final IplantDisplayStrings displayStrings){
+        this(displayStrings,
+             Collections.<InfoType>emptyList());
         setEmptyText(displayStrings.selectAFile());
     }
 
@@ -85,7 +98,6 @@ public class FileSelectorField extends AbstractDiskResourceSelector<File> {
         }
         DiskResourceAutoBeanFactory factory = GWT.create(DiskResourceAutoBeanFactory.class);
         setValue(AutoBeanCodex.decode(factory, File.class, "{\"path\":\"" + path + "\"}").as());
-
     }
 
     @Override
@@ -99,18 +111,19 @@ public class FileSelectorField extends AbstractDiskResourceSelector<File> {
         }
         FileSelectDialog fileSD;
         if (selected != null && selected.size() > 0) {
-            fileSD = dialogFactory.fileSelectDialogWithSelectedResources(true, selected);
+            fileSD = dialogFactory.createFilteredFileSelectorWithResources(true, selected, infoTypeFilters);
         } else {
             if (userSettings.isRememberLastPath()) {
                 String path = userSettings.getLastPath();
                 if (path != null) {
                     HasPath hasPath = CommonModelUtils.createHasPathFromString(path);
-                    fileSD = dialogFactory.fileSelectDialogWithSelectedFolder(true, hasPath);
+                    fileSD = dialogFactory.createFilteredFileSelectorWithFolder(true, hasPath, infoTypeFilters);
                 } else {
-                    fileSD = dialogFactory.createFileSelector(true);
+                    fileSD = dialogFactory.createFilteredFileSelectorWithFolder(true, null, infoTypeFilters);
                 }
             } else {
-                fileSD = dialogFactory.createFileSelector(true);
+                fileSD = dialogFactory.createFilteredFileSelectorWithFolder(true, null, infoTypeFilters);
+
             }
         }
         fileSD.addHideHandler(new FileDialogHideHandler(fileSD));

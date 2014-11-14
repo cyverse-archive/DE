@@ -9,6 +9,7 @@ import org.iplantc.de.client.models.diskResources.File;
 import org.iplantc.de.client.models.diskResources.TYPE;
 import org.iplantc.de.client.models.errorHandling.ServiceErrorCode;
 import org.iplantc.de.client.models.errorHandling.SimpleServiceError;
+import org.iplantc.de.client.models.viewer.InfoType;
 import org.iplantc.de.client.services.DiskResourceServiceFacade;
 import org.iplantc.de.client.util.CommonModelUtils;
 import org.iplantc.de.client.util.DiskResourceUtil;
@@ -349,7 +350,7 @@ public class MultiFileSelectorField extends Composite implements IsField<List<Ha
         }
 
         HasPath hasPath = CommonModelUtils.createHasPathFromString(path);
-        FileSelectDialog dlg = dialogFactory.fileSelectDialogWithSelectedFolder(false, hasPath);
+        FileSelectDialog dlg = dialogFactory.createFilteredFileSelectorWithFolder(false, hasPath, Collections.<InfoType>emptyList());
         dlg.addHideHandler(new FileSelectDialogHideHandler(dlg, listStore));
         dlg.show();
     }

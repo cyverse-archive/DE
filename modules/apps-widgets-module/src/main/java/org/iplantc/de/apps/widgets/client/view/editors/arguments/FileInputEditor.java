@@ -4,6 +4,7 @@ import org.iplantc.de.apps.widgets.client.view.editors.arguments.converters.Argu
 import org.iplantc.de.apps.widgets.client.view.editors.arguments.converters.SplittableToFileConverter;
 import org.iplantc.de.apps.widgets.client.view.editors.style.AppTemplateWizardAppearance;
 import org.iplantc.de.client.models.diskResources.File;
+import org.iplantc.de.diskResource.client.gin.factory.DiskResourceSelectorFieldFactory;
 import org.iplantc.de.diskResource.client.views.widgets.DiskResourceSelector.HasDisableBrowseButtons;
 import org.iplantc.de.diskResource.client.views.widgets.FileSelectorField;
 
@@ -15,11 +16,11 @@ public class FileInputEditor extends AbstractArgumentEditor implements HasDisabl
     private final FileSelectorField fileSelector;
 
     @Inject
-    FileInputEditor(final FileSelectorField fileSelector,
+    FileInputEditor(final DiskResourceSelectorFieldFactory fileSelectorFactory,
                     @Assisted AppTemplateWizardAppearance appearance) {
 
         super(appearance);
-        this.fileSelector = fileSelector;
+        this.fileSelector = fileSelectorFactory.defaultFileSelector();
         editorAdapter = new ArgumentEditorConverter<>(fileSelector, new SplittableToFileConverter());
 
         argumentLabel.setWidget(editorAdapter);

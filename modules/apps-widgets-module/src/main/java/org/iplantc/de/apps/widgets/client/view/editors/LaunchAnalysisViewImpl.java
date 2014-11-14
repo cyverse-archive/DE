@@ -8,7 +8,7 @@ import org.iplantc.de.client.models.diskResources.DiskResourceAutoBeanFactory;
 import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.commons.client.validators.DiskResourceNameValidator;
 import org.iplantc.de.commons.client.widgets.PreventEntryAfterLimitHandler;
-import org.iplantc.de.diskResource.client.gin.factory.FolderSelectorFieldFactory;
+import org.iplantc.de.diskResource.client.gin.factory.DiskResourceSelectorFieldFactory;
 import org.iplantc.de.diskResource.client.views.widgets.FolderSelectorField;
 import org.iplantc.de.resources.client.uiapps.widgets.AppsWidgetsDisplayMessages;
 
@@ -67,7 +67,7 @@ public class LaunchAnalysisViewImpl implements LaunchAnalysisView {
     @Inject
     public LaunchAnalysisViewImpl(final LaunchAnalysisWidgetUiBinder binder,
                                   final AppsWidgetsDisplayMessages appWidgetStrings,
-                                  final FolderSelectorFieldFactory folderSelectorFieldFactory) {
+                                  final DiskResourceSelectorFieldFactory folderSelectorFieldFactory) {
         this.appWidgetStrings = appWidgetStrings;
         this.awFolderSel = folderSelectorFieldFactory.defaultFolderSelector();
         binder.createAndBindUi(this);

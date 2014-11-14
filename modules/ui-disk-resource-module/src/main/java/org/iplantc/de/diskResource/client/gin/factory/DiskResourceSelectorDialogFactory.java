@@ -13,13 +13,19 @@ import java.util.List;
  * @author jstroot
  */
 public interface DiskResourceSelectorDialogFactory {
-    FolderSelectDialog createFolderSelector(HasPath value, List<InfoType> infoTypeFilters);
     FolderSelectDialog createFolderSelector(HasPath folderToSelect);
+    FolderSelectDialog createFilteredFolderSelector(HasPath value,
+                                                    List<InfoType> infoTypeFilters);
 
-    FileSelectDialog createFileSelector(boolean singleSelect);
-    FileSelectDialog fileSelectDialogWithSelectedFolder(boolean singleSelect,
-                                                        HasPath folderToSelect);
-    FileSelectDialog fileSelectDialogWithSelectedResources(boolean singleSelect,
-                                                           List<DiskResource> diskResourcesToSelect);
+    FileSelectDialog createFileSelector(boolean singleSelect,
+                                        HasPath folderToSelect);
+    FileSelectDialog createFilteredFileSelectorWithFolder(boolean singleSelect,
+                                                          HasPath folderToSelect,
+                                                          List<InfoType> infoTypeFilters);
+    FileSelectDialog createFileSelectDialog(boolean singleSelect,
+                                            List<DiskResource> diskResourcesToSelect);
+    FileSelectDialog createFilteredFileSelectorWithResources(boolean singleSelect,
+                                                             List<DiskResource> diskResourcesToSelect,
+                                                             List<InfoType> infoTypeFilters);
     SaveAsDialog createSaveAsDialog(HasPath folderToSelect);
 }

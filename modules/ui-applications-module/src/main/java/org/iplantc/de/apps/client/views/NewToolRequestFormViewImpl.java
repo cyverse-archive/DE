@@ -7,6 +7,7 @@ import org.iplantc.de.commons.client.validators.DiskResourceNameValidator;
 import org.iplantc.de.commons.client.validators.LengthRangeValidator;
 import org.iplantc.de.commons.client.validators.UrlValidator;
 import org.iplantc.de.commons.client.views.gxt3.dialogs.IplantInfoBox;
+import org.iplantc.de.diskResource.client.gin.factory.DiskResourceSelectorFieldFactory;
 import org.iplantc.de.diskResource.client.views.widgets.FileSelectorField;
 import org.iplantc.de.resources.client.messages.I18N;
 
@@ -19,7 +20,6 @@ import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.uibinder.client.UiTemplate;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
-import com.google.inject.Provider;
 import com.google.inject.assistedinject.Assisted;
 
 import com.sencha.gxt.core.client.dom.ScrollSupport.ScrollMode;
@@ -105,12 +105,12 @@ public final class NewToolRequestFormViewImpl extends Composite implements NewTo
     private Presenter presenter;
 
     @Inject
-    NewToolRequestFormViewImpl(final Provider<FileSelectorField> fileSelectorFieldProvider,
+    NewToolRequestFormViewImpl(final DiskResourceSelectorFieldFactory fileSelectorFieldFactory,
                                @Assisted final ComboBox<Architecture> archChooser,
                                @Assisted final ComboBox<YesNoMaybe> multithreadChooser) {
-        this.binSelect = fileSelectorFieldProvider.get();
-        this.testDataSelect = fileSelectorFieldProvider.get();
-        this.otherDataSelect = fileSelectorFieldProvider.get();
+        this.binSelect = fileSelectorFieldFactory.defaultFileSelector();
+        this.testDataSelect = fileSelectorFieldFactory.defaultFileSelector();
+        this.otherDataSelect = fileSelectorFieldFactory.defaultFileSelector();
         archCbo = archChooser;
         multiThreadCbo = multithreadChooser;
         initWidget(uiBinder.createAndBindUi(this));

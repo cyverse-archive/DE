@@ -116,6 +116,14 @@ public class DiskResourceServiceFacadeImpl extends TreeStore<Folder> implements
     }
 
     @Override
+    public Folder convertToFolder(DiskResource diskResource) {
+        AutoBean<DiskResource> autoBean = AutoBeanUtils.getAutoBean(diskResource);
+        Splittable encode = AutoBeanCodex.encode(autoBean);
+        AutoBean<Folder> decode = AutoBeanCodex.decode(factory, Folder.class, encode);
+        return decode.as();
+    }
+
+    @Override
     public final void getRootFolders(final AsyncCallback<RootFolders> callback) {
         if (getRootCount() > 0) {
             RootFolders result = factory.rootFolders().as();

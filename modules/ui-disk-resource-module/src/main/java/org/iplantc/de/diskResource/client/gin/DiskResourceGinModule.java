@@ -7,10 +7,10 @@ import org.iplantc.de.diskResource.client.gin.factory.DataLinkPanelFactory;
 import org.iplantc.de.diskResource.client.gin.factory.DataSharingDialogFactory;
 import org.iplantc.de.diskResource.client.gin.factory.DiskResourcePresenterFactory;
 import org.iplantc.de.diskResource.client.gin.factory.DiskResourceSelectorDialogFactory;
+import org.iplantc.de.diskResource.client.gin.factory.DiskResourceSelectorFieldFactory;
 import org.iplantc.de.diskResource.client.gin.factory.DiskResourceViewFactory;
 import org.iplantc.de.diskResource.client.gin.factory.FolderContentsRpcProxyFactory;
 import org.iplantc.de.diskResource.client.gin.factory.FolderRpcProxyFactory;
-import org.iplantc.de.diskResource.client.gin.factory.FolderSelectorFieldFactory;
 import org.iplantc.de.diskResource.client.presenters.DiskResourcePresenterImpl;
 import org.iplantc.de.diskResource.client.presenters.proxy.FolderContentsRpcProxyImpl;
 import org.iplantc.de.diskResource.client.presenters.proxy.FolderRpcProxyImpl;
@@ -66,7 +66,7 @@ public class DiskResourceGinModule extends AbstractGinModule {
         install(new GinFactoryModuleBuilder()
                     .build(DataSharingDialogFactory.class));
         install(new GinFactoryModuleBuilder()
-                    .build(FolderSelectorFieldFactory.class));
+                    .build(DiskResourceSelectorFieldFactory.class));
     }
 
 

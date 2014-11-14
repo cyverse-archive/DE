@@ -104,8 +104,6 @@ import com.google.inject.assistedinject.Assisted;
 import com.google.inject.assistedinject.AssistedInject;
 import com.google.web.bindery.autobean.shared.AutoBean;
 import com.google.web.bindery.autobean.shared.AutoBeanCodex;
-import com.google.web.bindery.autobean.shared.AutoBeanUtils;
-import com.google.web.bindery.autobean.shared.Splittable;
 
 import com.sencha.gxt.data.shared.TreeStore;
 import com.sencha.gxt.data.shared.loader.LoadHandler;
@@ -418,10 +416,7 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
 
     @Override
     public Folder convertToFolder(DiskResource selectedItem) {
-        AutoBean<DiskResource> autoBean = AutoBeanUtils.getAutoBean(selectedItem);
-        Splittable encode = AutoBeanCodex.encode(autoBean);
-        AutoBean<Folder> decode = AutoBeanCodex.decode(drFactory, Folder.class, encode);
-        return decode.as();
+        return diskResourceService.convertToFolder(selectedItem);
     }
 
     @Override

@@ -5,7 +5,7 @@ import org.iplantc.de.apps.widgets.client.view.editors.arguments.converters.Spli
 import org.iplantc.de.apps.widgets.client.view.editors.style.AppTemplateWizardAppearance;
 import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.client.models.viewer.InfoType;
-import org.iplantc.de.diskResource.client.gin.factory.FolderSelectorFieldFactory;
+import org.iplantc.de.diskResource.client.gin.factory.DiskResourceSelectorFieldFactory;
 import org.iplantc.de.diskResource.client.views.widgets.DiskResourceSelector.HasDisableBrowseButtons;
 import org.iplantc.de.diskResource.client.views.widgets.FolderSelectorField;
 
@@ -21,10 +21,10 @@ public class FolderInputEditor extends AbstractArgumentEditor implements HasDisa
     private final FolderSelectorField folderSelector;
 
     @Inject
-    FolderInputEditor(final FolderSelectorFieldFactory folderSelectorFieldFactory,
+    FolderInputEditor(final DiskResourceSelectorFieldFactory folderSelectorFieldFactory,
                       @Assisted AppTemplateWizardAppearance appearance) {
         super(appearance);
-        this.folderSelector = folderSelectorFieldFactory.create(Lists.newArrayList(InfoType.PATH_LIST));
+        this.folderSelector = folderSelectorFieldFactory.createFilteredFolderSelector(Lists.newArrayList(InfoType.PATH_LIST));
         editorAdapter = new ArgumentEditorConverter<>(folderSelector, new SplittableToFolderConverter());
 
         argumentLabel.setWidget(editorAdapter);

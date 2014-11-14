@@ -29,6 +29,8 @@ public interface DiskResourceServiceFacade {
 
     DiskResource combineDiskResources(DiskResource from, DiskResource into);
 
+    Folder convertToFolder(DiskResource diskResource);
+
     /**
      * Call service to retrieve the root folder info for the current user
      *

@@ -33,6 +33,11 @@ public class DiskResourceServiceFacadeStub implements DiskResourceServiceFacade 
     }
 
     @Override
+    public Folder convertToFolder(DiskResource diskResource) {
+        return null;
+    }
+
+    @Override
     public void getRootFolders(AsyncCallback<RootFolders> callback) {
 
     }
