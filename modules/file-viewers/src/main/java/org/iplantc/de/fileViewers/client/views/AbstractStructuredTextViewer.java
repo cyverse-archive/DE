@@ -161,6 +161,10 @@ public abstract class AbstractStructuredTextViewer extends AbstractFileViewer {
     }
 
     @UiHandler("toolbar") void onSaveSelected(SaveSelectedEvent event){
+        doSave();
+    }
+
+    void doSave() {
         listStore.commitChanges();
         presenter.saveFile(this);
     }
@@ -274,6 +278,10 @@ public abstract class AbstractStructuredTextViewer extends AbstractFileViewer {
     }
 
     void setDirty(boolean dirty){
+        doSetDirty(dirty);
+    }
+
+    void doSetDirty(boolean dirty) {
         this.dirty = dirty;
         presenter.setViewDirtyState(dirty, this);
     }

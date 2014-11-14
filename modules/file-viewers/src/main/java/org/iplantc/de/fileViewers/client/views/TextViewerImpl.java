@@ -10,6 +10,7 @@ import org.iplantc.de.fileViewers.client.events.SaveSelectedEvent;
 import org.iplantc.de.fileViewers.client.events.ViewerPagingToolbarUpdatedEvent;
 import org.iplantc.de.fileViewers.client.events.WrapTextCheckboxChangeEvent;
 
+import com.google.common.base.Strings;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.event.logical.shared.ResizeEvent;
@@ -272,6 +273,10 @@ public class TextViewerImpl extends AbstractFileViewer implements
 
     @UiHandler("toolbar")
     void onSaveClick(SaveSelectedEvent event) {
+        if(Strings.isNullOrEmpty(getEditorContent())){
+            toolbar.setSaveEnabled(false);
+            return;
+        }
         presenter.saveFile(TextViewerImpl.this);
     }
 
@@ -284,6 +289,9 @@ public class TextViewerImpl extends AbstractFileViewer implements
         this.dirty = dirty;
         if (presenter.isDirty() != dirty) {
             presenter.setViewDirtyState(dirty, this);
+        }
+        if(dirty){
+            toolbar.setSaveEnabled(true);
         }
     }
 

@@ -66,6 +66,10 @@ public abstract class AbstractToolBar extends Composite {
         editStatus.setWidth(appearance.editStatusWidth());
     }
 
+    public void setSaveEnabled(boolean enabled) {
+        saveBtn.setEnabled(enabled);
+    }
+
     @UiHandler("lineNumberCheckbox")
     void onLineNumberCheckboxValueChange(ValueChangeEvent<Boolean> event){
         fireEvent(new LineNumberCheckboxChangeEvent(event.getValue()));

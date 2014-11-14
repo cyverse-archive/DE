@@ -258,6 +258,23 @@ public class PathListViewer extends AbstractStructuredTextViewer implements Stor
     }
 
     @Override
+    void doSetDirty(boolean dirty) {
+        super.doSetDirty(dirty);
+        if(dirty){
+            toolbar.setSaveEnabled(true);
+        }
+    }
+
+    @Override
+    void doSave() {
+        if(listStore.size() == 0){
+            toolbar.setSaveEnabled(false);
+            return;
+        }
+        super.doSave();
+    }
+
+    @Override
     void loadStructuredData(StructuredText structuredText) {
         // Update ListStore
         listStore.clear();

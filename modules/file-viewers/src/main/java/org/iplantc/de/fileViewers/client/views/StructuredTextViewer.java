@@ -106,14 +106,14 @@ public class StructuredTextViewer extends AbstractStructuredTextViewer {
     }
 
     @Override
-    public void setData(Object data){
-        super.setData(data);
-        this.columns = columnModel.getColumnCount();
+    public boolean isDirty() {
+        return dirty;
     }
 
     @Override
-    public boolean isDirty() {
-        return dirty;
+    public void setData(Object data) {
+        super.setData(data);
+        this.columns = columnModel.getColumnCount();
     }
 
     Splittable createNewRow(int columns) {
@@ -133,6 +133,23 @@ public class StructuredTextViewer extends AbstractStructuredTextViewer {
         indexed.assign(ret, StructuredText.DATA_KEY);
         CommonModelAutoBeanFactory factory = GWT.create(CommonModelAutoBeanFactory.class);
         return AutoBeanCodex.decode(factory, StructuredText.class, ret).as();
+    }
+
+    @Override
+    void doSave() {
+        if (listStore.size() == 0) {
+            toolbar.setSaveEnabled(false);
+            return;
+        }
+        super.doSave();
+    }
+
+    @Override
+    void doSetDirty(boolean dirty) {
+        super.doSetDirty(dirty);
+        if (dirty) {
+            toolbar.setSaveEnabled(true);
+        }
     }
 
     @UiHandler("toolbar")
@@ -211,42 +228,6 @@ public class StructuredTextViewer extends AbstractStructuredTextViewer {
         presenter.setViewDirtyState(dirty, this);
     }
 
-    private void defineColumnHeader() {
-        ColumnModel<Splittable> cm = grid.getColumnModel();
-        List<ColumnConfig<Splittable, ?>> configs = cm.getColumns();
-        Splittable firstRow = listStore.get(0);
-        int index = 0;
-        for (ColumnConfig<Splittable, ?> conf : configs) {
-            if (cm.indexOf(conf) != 0) { // col 0 is numberer
-                if (hasHeader) {
-                    Preconditions.checkNotNull(firstRow);
-                    Splittable splittable = firstRow.get(String.valueOf(index));
-                    Splittable string = (splittable != null) ? splittable : null;
-                    conf.setHeader((string != null) ? string.asString() : index + "");
-                } else {
-                    conf.setHeader(index + "");
-                }
-                index++;
-            }
-
-        }
-
-        // converted first row to header. so remove first row
-        if (hasHeader) {
-            listStore.remove(firstRow);
-            headerRow = firstRow;
-        } else {
-            if (headerRow != null) {
-                // if it was removed prev, add the back row at 1st position
-                listStore.add(0, headerRow);
-                headerRow = null;
-            }
-        }
-
-        grid.reconfigure(listStore, cm);
-    }
-
-
     @SuppressWarnings("unchecked")
     void setEditing(boolean editing) {
         if (grid == null) {
@@ -282,5 +263,40 @@ public class StructuredTextViewer extends AbstractStructuredTextViewer {
             rowEditing = null;
             grid.removeToolTip();
         }
+    }
+
+    private void defineColumnHeader() {
+        ColumnModel<Splittable> cm = grid.getColumnModel();
+        List<ColumnConfig<Splittable, ?>> configs = cm.getColumns();
+        Splittable firstRow = listStore.get(0);
+        int index = 0;
+        for (ColumnConfig<Splittable, ?> conf : configs) {
+            if (cm.indexOf(conf) != 0) { // col 0 is numberer
+                if (hasHeader) {
+                    Preconditions.checkNotNull(firstRow);
+                    Splittable splittable = firstRow.get(String.valueOf(index));
+                    Splittable string = (splittable != null) ? splittable : null;
+                    conf.setHeader((string != null) ? string.asString() : index + "");
+                } else {
+                    conf.setHeader(index + "");
+                }
+                index++;
+            }
+
+        }
+
+        // converted first row to header. so remove first row
+        if (hasHeader) {
+            listStore.remove(firstRow);
+            headerRow = firstRow;
+        } else {
+            if (headerRow != null) {
+                // if it was removed prev, add the back row at 1st position
+                listStore.add(0, headerRow);
+                headerRow = null;
+            }
+        }
+
+        grid.reconfigure(listStore, cm);
     }
 }
