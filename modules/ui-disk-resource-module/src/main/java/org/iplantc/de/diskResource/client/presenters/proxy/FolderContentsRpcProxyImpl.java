@@ -242,20 +242,41 @@ public class FolderContentsRpcProxyImpl extends RpcProxy<FolderContentsLoadConfi
                 callback.onSuccess(new PagingLoadResultBean<>(emptyResult, 0, 0));
             }
         } else if (folder instanceof DiskResourceFavorite) {
-            metadataService.getFavorites(loadConfig, new FavoritesCallback(callback, loadConfig, announcer, errorStrings));
+            metadataService.getFavorites(infoTypeFilterList,
+                                         entityType,
+                                         loadConfig,
+                                         new FavoritesCallback(callback,
+                                                               loadConfig,
+                                                               announcer,
+                                                               errorStrings));
         } else if (folder instanceof DiskResourceQueryTemplate) {
             DiskResourceQueryTemplate qt = (DiskResourceQueryTemplate)folder;
             String infoTypeFilterQueryString = Joiner.on(" ").join(infoTypeFilterList);
-            String newMetadataValueQuery = Joiner.on(" ").join(Strings.nullToEmpty(qt.getMetadataValueQuery()),
-                                                  infoTypeFilterQueryString)
-                                    .trim()                              // Trim the results
-                                    .replaceAll("-", "\\\\-");           // Escape all hyphens
+            String newMetadataValueQuery = Joiner.on(" ")
+                                                 .join(Strings.nullToEmpty(qt.getMetadataValueQuery()),
+                                                       infoTypeFilterQueryString)
+                                               .trim()                              // Trim the results
+                                               .replaceAll("-", "\\\\-");           // Escape all hyphens
 
             qt.setMetadataValueQuery(newMetadataValueQuery);
 
-            searchService.submitSearchFromQueryTemplate((DiskResourceQueryTemplate)folder, loadConfig, null, new SearchResultsCallback(announcer, loadConfig, callback, displayStrings, hasSafeHtml));
+            searchService.submitSearchFromQueryTemplate((DiskResourceQueryTemplate)folder,
+                                                        loadConfig,
+                                                        null,
+                                                        new SearchResultsCallback(announcer,
+                                                                                  loadConfig,
+                                                                                  callback,
+                                                                                  displayStrings,
+                                                                                  hasSafeHtml));
         } else {
-            drService.getFolderContents(folder, infoTypeFilterList, entityType, loadConfig, new FolderContentsCallback(announcer, loadConfig, callback, hasSafeHtml));
+            drService.getFolderContents(folder,
+                                        infoTypeFilterList,
+                                        entityType,
+                                        loadConfig,
+                                        new FolderContentsCallback(announcer,
+                                                                   loadConfig,
+                                                                   callback,
+                                                                   hasSafeHtml));
         }
 
     }

@@ -1,6 +1,8 @@
 package org.iplantc.de.client.services.stubs;
 
 import org.iplantc.de.client.models.diskResources.Folder;
+import org.iplantc.de.client.models.diskResources.TYPE;
+import org.iplantc.de.client.models.viewer.InfoType;
 import org.iplantc.de.client.services.MetadataServiceFacade;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -12,8 +14,9 @@ import java.util.List;
 public class FileSystemMetadataServiceFacadeStub implements MetadataServiceFacade {
 
     @Override
-    public void
-            getFavorites(final FilterPagingLoadConfigBean configBean, AsyncCallback<Folder> callback) {
+    public void getFavorites(final List<InfoType> infoTypeFilters,
+                             final TYPE entityType,
+                             final FilterPagingLoadConfigBean configBean, AsyncCallback<Folder> callback) {
         // TODO Auto-generated method stub
 
     }
