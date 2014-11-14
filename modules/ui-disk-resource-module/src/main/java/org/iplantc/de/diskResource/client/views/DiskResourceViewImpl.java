@@ -460,9 +460,6 @@ public class DiskResourceViewImpl extends Composite implements DiskResourceView,
             }
         };
 
-        liveGridView.setAutoFill(true);
-        liveGridView.setForceFit(true);
-
         return liveGridView;
     }
 
