@@ -18,6 +18,7 @@ import org.iplantc.de.shared.services.BaseServiceCallWrapper.Type;
 import org.iplantc.de.shared.services.DiscEnvApiService;
 import org.iplantc.de.shared.services.ServiceCallWrapper;
 
+import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
@@ -37,6 +38,7 @@ import com.sencha.gxt.data.shared.loader.FilterPagingLoadConfigBean;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.logging.Logger;
 
 @SuppressWarnings("nls")
 public class SearchServiceFacadeImpl implements SearchServiceFacade {
@@ -73,6 +75,7 @@ public class SearchServiceFacadeImpl implements SearchServiceFacade {
 
                     reMapDateKeys(entity);
                     reMapPermissions(entity);
+                    reMapInfoType(entity);
 
                     if (asString.equals("folder")) {
                         ret.add(decodeFolderIntoQueryTemplate(entity, queryTemplate, factory));
@@ -80,11 +83,34 @@ public class SearchServiceFacadeImpl implements SearchServiceFacade {
                         reMapFileSize(entity);
                         ret.add(decodeFileIntoQueryTemplate(entity, queryTemplate, factory));
                     }
+
+
                 }
             }
 
+
             return ret;
         }
+
+        void reMapInfoType(Splittable entity) {
+            // If infotype is already defined, return
+            if(!entity.isUndefined("infoType")){
+                LOG.info("Search results are returning entities with 'infoType' keys.");
+                // If this code is hit consistenly, this code is probably no longer necessary.
+                return;
+            }
+
+            Splittable metadata = entity.get("metadata");
+            Preconditions.checkArgument(metadata.isIndexed(), "'metadata key is not indexed.");
+            for(int i = 0; i < metadata.size(); i++){
+                Splittable metadataItem = metadata.get(i);
+                if(metadataItem.get("attribute").asString().equals("ipc-filetype")){
+                    // Then forward value to infoType
+                    metadataItem.get("value").assign(entity, "infoType");
+                }
+            }
+        }
+
 
         File decodeFileIntoQueryTemplate(Splittable entity, DiskResourceQueryTemplate queryTemplate, DiskResourceAutoBeanFactory factory) {
             // KLUDGE Re-map JSON keys until service JSON is unified.
@@ -251,6 +277,7 @@ public class SearchServiceFacadeImpl implements SearchServiceFacade {
     private final SearchAutoBeanFactory searchAbFactory;
     private final UserInfo userInfo;
     private final DEProperties deProperties;
+    final Logger LOG = Logger.getLogger(SearchServiceFacadeImpl.class.getName());
 
     @Inject
     public SearchServiceFacadeImpl(final DiscEnvApiService deServiceFacade,
