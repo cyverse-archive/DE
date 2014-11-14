@@ -22,12 +22,15 @@ import com.google.web.bindery.autobean.shared.impl.StringQuoter;
 
 import static com.sencha.gxt.dnd.core.client.DND.Feedback.INSERT;
 import static com.sencha.gxt.dnd.core.client.DND.Operation.MOVE;
+import com.sencha.gxt.core.shared.event.CancellableEvent;
 import com.sencha.gxt.data.shared.event.StoreAddEvent;
 import com.sencha.gxt.data.shared.event.StoreRemoveEvent;
 import com.sencha.gxt.dnd.core.client.DndDragEnterEvent;
+import com.sencha.gxt.dnd.core.client.DndDragMoveEvent;
 import com.sencha.gxt.dnd.core.client.DndDropEvent;
 import com.sencha.gxt.dnd.core.client.GridDragSource;
 import com.sencha.gxt.dnd.core.client.GridDropTarget;
+import com.sencha.gxt.dnd.core.client.StatusProxy;
 import com.sencha.gxt.widget.core.client.container.BorderLayoutContainer;
 import com.sencha.gxt.widget.core.client.grid.ColumnConfig;
 import com.sencha.gxt.widget.core.client.grid.ColumnModel;
@@ -80,17 +83,24 @@ public class PathListViewer extends AbstractStructuredTextViewer implements Stor
         }
 
         @Override
-        protected void onDragEnter(DndDragEnterEvent e) {
-            boolean validDropData = isValidData(e.getDragSource().getData());
-            // TODO Check to see if any items are pathlists. If they are, prevent drop
-            e.setCancelled(!validDropData);
-            e.getStatusProxy().setStatus(validDropData);
+        protected void onDragEnter(DndDragEnterEvent event) {
+            handleDropStatus(event.getDragSource().getData(),
+                             event,
+                             event.getStatusProxy());
+        }
+
+        @Override
+        protected void onDragMove(DndDragMoveEvent event) {
+            super.onDragMove(event);
+            handleDropStatus(event.getDragSource().getData(),
+                             event,
+                             event.getStatusProxy());
         }
 
         @Override
         protected List<Object> prepareDropData(Object data, boolean convertTreeStoreModel) {
             // If drop data does not look like it came from DiskResource window
-            if (!isValidData(data)) {
+            if (!hasCorrectData(data)) {
                 List<Object> elements = super.prepareDropData(data, convertTreeStoreModel);
                 if (elements == null) {
                     elements = Collections.emptyList();
@@ -108,11 +118,31 @@ public class PathListViewer extends AbstractStructuredTextViewer implements Stor
             return dropData;
         }
 
-        /**
-         * @param data DnD data to be validated
-         * @return true if data came from a DiskResource view, false otherwise
-         */
-        boolean isValidData(Object data) {
+        void handleDropStatus(Object o,
+                              CancellableEvent cancellableEvent,
+                              StatusProxy statusProxy) {
+
+            if(!hasCorrectData(o)){
+                cancellableEvent.setCancelled(true);
+                statusProxy.setStatus(false);
+            }
+            // TODO Check to see if any items are pathlists. If they are, prevent drop
+            Iterable<DiskResource> iterable = (Iterable<DiskResource>) o;
+            for(DiskResource dr : iterable){
+                InfoType infoType1 = InfoType.fromTypeString(dr.getInfoType());
+                if(InfoType.PATH_LIST.equals(infoType1)){
+                    cancellableEvent.setCancelled(true);
+                    statusProxy.update(appearance.preventPathListDrop());
+                    statusProxy.setStatus(false);
+                    return;
+                }
+            }
+            cancellableEvent.setCancelled(false);
+            statusProxy.setStatus(true);
+        }
+
+        boolean hasCorrectData(Object data){
+
             boolean isCollection = data instanceof Collection<?>;
             boolean isEmpty = ((Collection<?>) data).isEmpty();
             boolean hasDiskResources = ((Collection<?>) data).iterator().next() instanceof DiskResource;
@@ -129,6 +159,8 @@ public class PathListViewer extends AbstractStructuredTextViewer implements Stor
         String columnHeaderText();
 
         String pathListViewName(String name);
+
+        String preventPathListDrop();
     }
 
     @UiField(provided = true) PathListViewerToolbar toolbar;

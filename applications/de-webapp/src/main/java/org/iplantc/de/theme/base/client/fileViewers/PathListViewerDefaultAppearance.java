@@ -12,4 +12,9 @@ public class PathListViewerDefaultAppearance extends AbstractToolBarDefaultAppea
     public String pathListViewName(String name) {
         return fileViewerStrings.pathListViewName(name);
     }
+
+    @Override
+    public String preventPathListDrop() {
+        return fileViewerStrings.preventPathListDrop();
+    }
 }

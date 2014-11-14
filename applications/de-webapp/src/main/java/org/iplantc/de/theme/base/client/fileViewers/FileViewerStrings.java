@@ -65,6 +65,9 @@ public interface FileViewerStrings extends Messages {
     @Key("pathListViewName")
     String pathListViewName(String fileName);
 
+    @Key("preventPathListDrop")
+    String preventPathListDrop();
+
     @Key("retrieveFileManifestMask")
     String retrieveFileManifestMask();
 
