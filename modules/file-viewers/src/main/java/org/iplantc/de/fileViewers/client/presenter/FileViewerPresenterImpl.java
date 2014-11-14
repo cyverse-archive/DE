@@ -46,13 +46,16 @@ import com.google.gwt.json.client.JSONString;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasOneWidget;
+import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 import com.google.web.bindery.autobean.shared.AutoBean;
 import com.google.web.bindery.autobean.shared.AutoBeanCodex;
 import com.google.web.bindery.autobean.shared.Splittable;
 import com.google.web.bindery.autobean.shared.impl.StringQuoter;
 
+import com.sencha.gxt.widget.core.client.Component;
 import com.sencha.gxt.widget.core.client.PlainTabPanel;
+import com.sencha.gxt.widget.core.client.TabItemConfig;
 import com.sencha.gxt.widget.core.client.container.SimpleContainer;
 
 import java.util.List;
@@ -209,15 +212,8 @@ public class FileViewerPresenterImpl implements FileViewer.Presenter, FileSavedE
     }
 
     @Override
-    public void loadPathListData(Integer pageNumber, Long pageSize, String separator) {
-
-    }
-
-    @Override
     public void loadStructuredData(Integer pageNumber, Long pageSize, String separator) {
-        if(file == null){
-            return;
-        }
+        Preconditions.checkNotNull(file, "Cannot have null file if attempting to load its contents");
 
         simpleContainer.mask(appearance.retrievingFileContentsMask());
         fileEditorService.readCsvChunk(file, separator, pageNumber, pageSize, new AsyncCallback<String>() {
@@ -229,13 +225,13 @@ public class FileViewerPresenterImpl implements FileViewer.Presenter, FileSavedE
 
             @Override
             public void onSuccess(String result) {
-                simpleContainer.unmask();
                 // Get data from result
                 StructuredText structuredText = getStructuredText(result);
                 for(FileViewer view : viewers){
                     // FIXME Possible issue with data compatibility between views
                     view.setData(structuredText);
                 }
+                simpleContainer.unmask();
             }
 
             private StructuredText getStructuredText(String result) {
@@ -247,9 +243,7 @@ public class FileViewerPresenterImpl implements FileViewer.Presenter, FileSavedE
 
     @Override
     public void loadTextData(Integer pageNumber, Long pageSize) {
-        if(file == null){
-            return;
-        }
+        Preconditions.checkNotNull(file, "Cannot have null file if attempting to load its contents");
 
         simpleContainer.mask(appearance.retrievingFileContentsMask());
         long chunkPosition = pageSize * (pageNumber - 1);
@@ -262,12 +256,12 @@ public class FileViewerPresenterImpl implements FileViewer.Presenter, FileSavedE
 
             @Override
             public void onSuccess(String result) {
-                simpleContainer.unmask();
                 // Get Data from result
                 String data = StringQuoter.split(result).get(StructuredText.TEXT_CHUNK_KEY).asString();
                 for(FileViewer view : viewers){
                     view.setData(data);
                 }
+                simpleContainer.unmask();
             }
         } );
     }
@@ -324,16 +318,19 @@ public class FileViewerPresenterImpl implements FileViewer.Presenter, FileSavedE
     public void onFileSaved(FileSavedEvent event) {
         if (file == null) {
             file = event.getFile();
-            /* Iterate through tab collection and individually remove. TabPanel.clear() does not
-             * correctly clear the tabs.
-             */
+            // Update tab panel names
             for (int i = tabPanel.getWidgetCount() - 1; i >= 0; i--) {
-                tabPanel.remove(i);
+                Widget widget = tabPanel.getWidget(i);
+                tabPanel.update(widget, new TabItemConfig(viewers.get(i).getViewName(file.getName())));
             }
-            viewers.clear();
             setTitle(file.getName());
-            composeView(file, parentFolder, manifest, contentType, file.getInfoType(), true, vizTabFirst);
+            for(FileViewer viewer : viewers){
+                viewer.refresh();
+            }
+        } else {
+            simpleContainer.unmask();
         }
+
         setViewDirtyState(false, null);
     }
 
@@ -354,7 +351,7 @@ public class FileViewerPresenterImpl implements FileViewer.Presenter, FileSavedE
             final SaveAsDialog saveAsDialog = dialogFactory.createSaveAsDialog(parentFolder);
             SaveAsDialogOkSelectHandler okSelectHandler = new SaveAsDialogOkSelectHandler(userSessionService,
                                                                                           drFactory,
-                                                                                          fileViewer,
+                                                                                          asMaskable(simpleContainer),
                                                                                           fileViewer,
                                                                                           saveAsDialog,
                                                                                           appearance.savingMask(),
@@ -367,6 +364,7 @@ public class FileViewerPresenterImpl implements FileViewer.Presenter, FileSavedE
             saveAsDialog.show();
             saveAsDialog.toFront();
         } else {
+            simpleContainer.mask(appearance.savingMask());
             fileEditorService.uploadTextAsFile(file.getPath(),
                                                fileViewer.getEditorContent(),
                                                false,
@@ -374,9 +372,24 @@ public class FileViewerPresenterImpl implements FileViewer.Presenter, FileSavedE
                                                                     drFactory,
                                                                     file.getPath(),
                                                                     false,
-                                                                    fileViewer,
+                                                                    asMaskable(simpleContainer),
                                                                     fileViewer));
         }
+    }
+
+    private IsMaskable asMaskable(final Component component) {
+        IsMaskable ret = new IsMaskable() {
+            @Override
+            public void mask(String loadingMask) {
+                component.mask(loadingMask);
+            }
+
+            @Override
+            public void unmask() {
+                component.unmask();
+            }
+        };
+        return ret;
     }
 
     @Override
@@ -481,7 +494,8 @@ public class FileViewerPresenterImpl implements FileViewer.Presenter, FileSavedE
         for (FileViewer view : viewers) {
             // Add ourselves as FileSaved handlers
             view.addFileSavedEventHandler(this);
-            tabPanel.add(view.asWidget(), view.getViewName());
+            String fileName = file != null ? file.getName() : null;
+            tabPanel.add(view.asWidget(), view.getViewName(fileName));
 
         }
 

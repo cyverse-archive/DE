@@ -27,6 +27,8 @@ import java.util.Set;
  */
 public interface DiskResourceServiceFacade {
 
+    DiskResource combineDiskResources(DiskResource from, DiskResource into);
+
     /**
      * Call service to retrieve the root folder info for the current user
      *

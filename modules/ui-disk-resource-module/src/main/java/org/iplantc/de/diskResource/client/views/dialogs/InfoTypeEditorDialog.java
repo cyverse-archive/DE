@@ -15,6 +15,7 @@ import com.sencha.gxt.data.shared.LabelProvider;
 import com.sencha.gxt.widget.core.client.form.SimpleComboBox;
 
 import java.util.List;
+import java.util.logging.Logger;
 
 /**
  * @author sriram, jstroot
@@ -26,6 +27,8 @@ public class InfoTypeEditorDialog extends IPlantDialog {
     private SimpleComboBox<InfoType> infoTypeCbo;
 
     private final InfoType type;
+
+    final Logger LOG = Logger.getLogger(InfoTypeEditorDialog.class.getName());
 
     public InfoTypeEditorDialog(final String currentType,
                                 final DiskResourceServiceFacade diskResourceService) {
@@ -66,9 +69,11 @@ public class InfoTypeEditorDialog extends IPlantDialog {
             @Override
             public void onSuccess(List<InfoType> infoTypes) {
                 // Skip Path list, it should not be displayed
-                infoTypes.remove(InfoType.PATH_LIST);
+//                infoTypes.remove(InfoType.PATH_LIST);
                 infoTypeCbo.add(infoTypes);
                 infoTypeCbo.setValue(type);
+                LOG.fine("InfoTypes retrieved: " + infoTypes);
+
             }
         });
     }

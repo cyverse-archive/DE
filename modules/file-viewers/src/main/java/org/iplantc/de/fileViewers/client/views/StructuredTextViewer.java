@@ -59,8 +59,8 @@ public class StructuredTextViewer extends AbstractStructuredTextViewer {
     final StructuredTextViewerAppearance appearance = GWT.create(StructuredTextViewerAppearance.class);
     Logger LOG = Logger.getLogger(StructuredTextViewer.class.getName());
 
-    @UiField(provided = true)
-    StructuredTextViewToolBar toolbar;
+    @UiField(provided = true) StructuredTextViewToolBar toolbar;
+
     private static final StructuredTextViewerUiBinder BINDER = GWT.create(StructuredTextViewerUiBinder.class);
     private int columns;
     private boolean dirty;
@@ -87,7 +87,6 @@ public class StructuredTextViewer extends AbstractStructuredTextViewer {
             Preconditions.checkArgument(columns > 0, "Columns must be greater than 0.");
             this.columns = columns;
             LOG.info("Columns: " + columns);
-            setEditing(true);
             setData(createNewStructuredText(columns));
         }
     }
@@ -98,12 +97,18 @@ public class StructuredTextViewer extends AbstractStructuredTextViewer {
     }
 
     @Override
-    public String getViewName() {
-        if (file != null) {
-            return appearance.viewName(file.getName());
+    public String getViewName(String fileName) {
+        if (fileName != null) {
+            return appearance.viewName(fileName);
         } else {
             return appearance.defaultViewName();
         }
+    }
+
+    @Override
+    public void setData(Object data){
+        super.setData(data);
+        this.columns = columnModel.getColumnCount();
     }
 
     @Override
@@ -112,9 +117,10 @@ public class StructuredTextViewer extends AbstractStructuredTextViewer {
     }
 
     Splittable createNewRow(int columns) {
-        Splittable obj = StringQuoter.createSplittable();
+        Splittable obj = StringQuoter.createIndexed();
         for (int i = 0; i < columns; i++) {
-            StringQuoter.create(appearance.createNewDefaultColumnValue(i)).assign(obj, String.valueOf(i));
+            String newDefaultColumnValue = appearance.createNewDefaultColumnValue(i);
+            StringQuoter.create(newDefaultColumnValue).assign(obj, String.valueOf(i));
         }
         return obj;
     }
@@ -242,7 +248,7 @@ public class StructuredTextViewer extends AbstractStructuredTextViewer {
 
 
     @SuppressWarnings("unchecked")
-    private void setEditing(boolean editing) {
+    void setEditing(boolean editing) {
         if (grid == null) {
             return;
         }
@@ -259,17 +265,18 @@ public class StructuredTextViewer extends AbstractStructuredTextViewer {
 
                     @Override
                     public void onCompleteEdit(CompleteEditEvent<Splittable> event) {
-                        dirty = true;
+                        setDirty(true);
                         listStore.commitChanges();
                     }
                 });
 
-                List<ColumnConfig<Splittable, ?>> cols = grid.getColumnModel().getColumns();
-                for (ColumnConfig<Splittable, ?> cc : cols) {
-                    TextField field = new TextField();
-                    field.setClearValueOnParseError(false);
-                    rowEditing.addEditor((ColumnConfig<Splittable, String>) cc, field);
-                }
+            }
+            rowEditing.clearEditors();
+            List<ColumnConfig<Splittable, ?>> cols = grid.getColumnModel().getColumns();
+            for (ColumnConfig<Splittable, ?> cc : cols) {
+                TextField field = new TextField();
+                field.setClearValueOnParseError(false);
+                rowEditing.addEditor((ColumnConfig<Splittable, String>) cc, field);
             }
         } else {
             rowEditing = null;

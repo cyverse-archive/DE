@@ -84,6 +84,7 @@ import org.iplantc.de.resources.client.messages.IplantErrorStrings;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
+import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
@@ -1326,11 +1327,16 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
 
     @Override
     public void displayAndCacheDiskResourceInfo(DiskResource info) {
-        if (info == null) {
+        Preconditions.checkNotNull(info, "This object cannot be null at this point.");
+        DiskResource modelWithKey = view.getListStore().findModelWithKey(info.getId());
+        if(modelWithKey == null){
             return;
         }
 
-        view.displayAndCacheDiskResourceInfo(info);
+        DiskResource combineDiskResource = diskResourceService.combineDiskResources(info, modelWithKey);
+
+        view.getListStore().update(combineDiskResource);
+        view.updateDetails(combineDiskResource);
     }
 
     @Override

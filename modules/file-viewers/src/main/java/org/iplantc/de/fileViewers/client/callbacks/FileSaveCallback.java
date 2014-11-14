@@ -21,6 +21,9 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.web.bindery.autobean.shared.AutoBean;
 import com.google.web.bindery.autobean.shared.AutoBeanCodex;
 
+/**
+ * @author jstroot
+ */
 public class FileSaveCallback implements AsyncCallback<String> {
 
     private final IplantErrorStrings errorStrings;
@@ -50,7 +53,6 @@ public class FileSaveCallback implements AsyncCallback<String> {
 
     @Override
     public void onSuccess(String result) {
-        maskingContainer.unmask();
         JSONObject obj = JSONParser.parseStrict(result).isObject();
         DefaultUploadCompleteHandler uch = new DefaultUploadCompleteHandler(userSessionService,
                                                                             drFactory,

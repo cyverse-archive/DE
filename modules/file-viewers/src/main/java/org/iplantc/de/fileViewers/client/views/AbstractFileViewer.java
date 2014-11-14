@@ -32,9 +32,9 @@ public abstract class AbstractFileViewer extends Composite implements FileViewer
     }
 
     @Override
-    public String getViewName() {
-        if (file != null) {
-            return file.getName();
+    public String getViewName(String fileName) {
+        if (fileName != null) {
+            return fileName;
         } else {
             return "Untitled-" + Math.random();
         }
@@ -49,6 +49,11 @@ public abstract class AbstractFileViewer extends Composite implements FileViewer
         }
 
         return 0;
+    }
+
+    @Override
+    public void refresh() {
+
     }
 
     @Override

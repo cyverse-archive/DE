@@ -38,6 +38,7 @@ import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONString;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.inject.Inject;
+import com.google.web.bindery.autobean.shared.AutoBean;
 import com.google.web.bindery.autobean.shared.AutoBeanCodex;
 import com.google.web.bindery.autobean.shared.AutoBeanUtils;
 import com.google.web.bindery.autobean.shared.Splittable;
@@ -104,6 +105,14 @@ public class DiskResourceServiceFacadeImpl extends TreeStore<Folder> implements
 
     private <T> T decode(Class<T> clazz, String payload) {
         return AutoBeanCodex.decode(factory, clazz, payload).as();
+    }
+
+    @Override
+    public DiskResource combineDiskResources(DiskResource from, DiskResource into) {
+        Splittable splitFrom = AutoBeanCodex.encode(AutoBeanUtils.getAutoBean(from));
+        AutoBean<DiskResource> autoBeanInto = AutoBeanUtils.getAutoBean(into);
+        AutoBeanCodex.decodeInto(splitFrom, autoBeanInto);
+        return autoBeanInto.as();
     }
 
     @Override

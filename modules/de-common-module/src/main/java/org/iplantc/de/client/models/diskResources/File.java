@@ -15,10 +15,8 @@ public interface File extends DiskResource {
     @PropertyName("content-type")
     String getContentType();
 
-    @PropertyName("info-type")
     String getInfoType();
 
-    @PropertyName("info-type")
     void setInfoType(String infoType);
 
 }

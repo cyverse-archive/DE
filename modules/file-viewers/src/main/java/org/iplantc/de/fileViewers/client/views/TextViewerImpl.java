@@ -78,20 +78,16 @@ public class TextViewerImpl extends AbstractFileViewer implements
     }
 
     @UiTemplate("TextViewer.ui.xml")
-    interface TextViewerUiBinder extends UiBinder<Widget, TextViewerImpl> {
-    }
+    interface TextViewerUiBinder extends UiBinder<Widget, TextViewerImpl> { }
+
+    @UiField SimpleContainer center;
+    @UiField BorderLayoutContainer con;
+    @UiField ViewerPagingToolBar pagingToolbar;
+    @UiField TextViewToolBar toolbar;
 
     protected boolean editing;
     protected JavaScriptObject jso;
     static Logger LOG = Logger.getLogger(TextViewerImpl.class.getName());
-    @UiField
-    SimpleContainer center;
-    @UiField
-    BorderLayoutContainer con;
-    @UiField
-    ViewerPagingToolBar pagingToolbar;
-    @UiField
-    TextViewToolBar toolbar;
     private static TextViewerUiBinder uiBinder = GWT.create(TextViewerUiBinder.class);
     private final String mode;
     private final FileViewer.Presenter presenter;
@@ -187,9 +183,8 @@ public class TextViewerImpl extends AbstractFileViewer implements
     }-*/;
 
     @Override
-    public HandlerRegistration
-            addFileSavedEventHandler(final FileSavedEvent.FileSavedEventHandler handler) {
-        return con.addHandler(handler, FileSavedEvent.TYPE);
+    public HandlerRegistration addFileSavedEventHandler(final FileSavedEvent.FileSavedEventHandler handler) {
+        return addHandler(handler, FileSavedEvent.TYPE);
     }
 
     @Override
@@ -200,6 +195,11 @@ public class TextViewerImpl extends AbstractFileViewer implements
     @Override
     public boolean isDirty() {
         return dirty;
+    }
+
+    @Override
+    public void refresh() {
+        presenter.loadTextData(pagingToolbar.getPageNumber(), pagingToolbar.getPageSize());
     }
 
     @Override

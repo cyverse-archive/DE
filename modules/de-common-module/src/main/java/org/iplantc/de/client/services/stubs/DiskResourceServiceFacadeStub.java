@@ -28,6 +28,11 @@ import java.util.Set;
 public class DiskResourceServiceFacadeStub implements DiskResourceServiceFacade {
 
     @Override
+    public DiskResource combineDiskResources(DiskResource from, DiskResource into) {
+        return null;
+    }
+
+    @Override
     public void getRootFolders(AsyncCallback<RootFolders> callback) {
 
     }

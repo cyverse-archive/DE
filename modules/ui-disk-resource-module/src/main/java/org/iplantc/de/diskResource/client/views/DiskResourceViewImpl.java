@@ -1124,16 +1124,6 @@ public class DiskResourceViewImpl extends Composite implements DiskResourceView,
     }
 
     @Override
-    public void displayAndCacheDiskResourceInfo(DiskResource info) {
-        DiskResource dr = listStore.findModelWithKey(info.getId());
-        if (dr == null) {
-            return;
-        }
-        listStore.update(info);
-        updateDetails(info);
-    }
-
-    @Override
     public void maskSendToCoGe() {
         toolbar.maskSendToCoGe();
     }

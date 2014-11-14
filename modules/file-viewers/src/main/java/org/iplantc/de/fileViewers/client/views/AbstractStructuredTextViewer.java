@@ -98,22 +98,15 @@ public abstract class AbstractStructuredTextViewer extends AbstractFileViewer {
         }
     }
 
-    @UiField
-    GridView gridView;
-    @UiField
-    ColumnModel columnModel;
-    @UiField
-    ListStore<Splittable> listStore;
-    @UiField
-    ViewerPagingToolBar pagingToolBar;
-    @UiField
-    Grid<Splittable> grid;
+    @UiField GridView gridView;
+    @UiField ColumnModel columnModel;
+    @UiField ListStore<Splittable> listStore;
+    @UiField ViewerPagingToolBar pagingToolBar;
+    @UiField Grid<Splittable> grid;
+    @UiField RowNumberer<Splittable> rowNumberer = new RowNumberer<>();
+    @UiField GridFilters<Splittable> gridFilters = new GridFilters<>();
 
-    @UiField
-    RowNumberer<Splittable> rowNumberer = new RowNumberer<>();
-    @UiField
-    GridFilters<Splittable> gridFilters = new GridFilters<>();
-    private final boolean editing;
+    final boolean editing;
     protected final FileViewer.Presenter presenter;
 
     protected Logger LOG;
@@ -190,6 +183,13 @@ public abstract class AbstractStructuredTextViewer extends AbstractFileViewer {
     }
 
     @Override
+    public void refresh() {
+        presenter.loadStructuredData(pagingToolBar.getPageNumber(),
+                                     pagingToolBar.getPageSize(),
+                                     getSeparator());
+    }
+
+    @Override
     public void setData(Object data){
         Preconditions.checkNotNull(data);
         // Only accept StructuredText types
@@ -199,21 +199,31 @@ public abstract class AbstractStructuredTextViewer extends AbstractFileViewer {
         StructuredText structuredText = (StructuredText)data;
         Preconditions.checkArgument(structuredText.getData().isIndexed(), "Structured text does not contain indexed data!");
 
+        loadStructuredData(structuredText);
+
+        // Create new column model, clear previous grid filters
+        gridFilters.removeAll();
+
+        columnModel = createColumnModel(structuredText);
+        gridFilters.initPlugin(grid);
+        grid.reconfigure(listStore, columnModel);
+        grid.getView().refresh(true);
+        setEditing(editing);
+        setDirty(false);
+    }
+
+    void setEditing(boolean editing) {
+
+
+    }
+
+    void loadStructuredData(StructuredText structuredText){
         // Update ListStore
         listStore.clear();
         for (int i = 0; i < structuredText.getData().size(); i++){
             listStore.add(structuredText.getData().get(i));
         }
-
-        // Create new column model, clear previous grid filters
-        gridFilters.removeAll();
-
-        ColumnModel<Splittable> newColumnModel = createColumnModel(structuredText);
-        gridFilters.initPlugin(grid);
-        grid.reconfigure(listStore, newColumnModel);
-        grid.getView().refresh(true);
     }
-
 
 
     ColumnModel<Splittable> createColumnModel(final StructuredText structuredText){

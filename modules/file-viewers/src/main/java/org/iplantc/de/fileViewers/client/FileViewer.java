@@ -78,8 +78,6 @@ public interface FileViewer extends IsWidget, IsMaskable, HasHandlers, FileSaved
 
         boolean isDirty();
 
-        void loadPathListData(Integer pageNumber, Long pageSize, String separator);
-
         void loadStructuredData(Integer pageNumber, Long pageSize, String separator);
 
         void loadTextData(Integer pageNumber, Long pageSize);
@@ -112,7 +110,9 @@ public interface FileViewer extends IsWidget, IsMaskable, HasHandlers, FileSaved
 
     boolean isDirty();
 
-    String getViewName();
+    String getViewName(String fileName);
+
+    void refresh();
 
     void setData(Object data);
 

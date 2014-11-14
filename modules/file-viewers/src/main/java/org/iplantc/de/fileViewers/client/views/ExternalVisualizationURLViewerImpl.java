@@ -17,6 +17,7 @@ import org.iplantc.de.resources.client.IplantResources;
 import org.iplantc.de.resources.client.messages.I18N;
 import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 
+import com.google.common.base.Preconditions;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.json.client.JSONArray;
@@ -47,7 +48,7 @@ import java.util.List;
 import java.util.logging.Logger;
 
 /**
- * @author sriram
+ * @author sriram, jstroot
  */
 public class ExternalVisualizationURLViewerImpl extends AbstractFileViewer implements IsMaskable {
 
@@ -65,18 +66,12 @@ public class ExternalVisualizationURLViewerImpl extends AbstractFileViewer imple
 
     Logger logger = Logger.getLogger("Viz");
 
-    @UiField
-    ColumnModel<VizUrl> cm;
-    @UiField
-    VerticalLayoutContainer con;
-    @UiField
-    Grid<VizUrl> grid;
-    @UiField
-    GridView<VizUrl> gridView;
-    @UiField
-    ListStore<VizUrl> listStore;
-    @UiField
-    ToolBar toolbar;
+    @UiField ColumnModel<VizUrl> cm;
+    @UiField VerticalLayoutContainer con;
+    @UiField Grid<VizUrl> grid;
+    @UiField GridView<VizUrl> gridView;
+    @UiField ListStore<VizUrl> listStore;
+    @UiField ToolBar toolbar;
 
     private static TreeViewerUiBinder uiBinder = GWT.create(TreeViewerUiBinder.class);
     private final IplantDisplayStrings displayStrings;
@@ -105,8 +100,9 @@ public class ExternalVisualizationURLViewerImpl extends AbstractFileViewer imple
     }
 
     @Override
-    public String getViewName() {
-        return displayStrings.visualization() + ":" + file.getName();
+    public String getViewName(String fileName) {
+        Preconditions.checkNotNull(fileName, "Filename cannot be null for this viewer");
+        return displayStrings.visualization() + ":" + fileName;
     }
 
     @SuppressWarnings("unchecked")

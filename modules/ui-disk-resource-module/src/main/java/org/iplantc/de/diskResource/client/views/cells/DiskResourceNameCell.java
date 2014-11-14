@@ -107,7 +107,8 @@ public class DiskResourceNameCell extends AbstractCell<DiskResource> {
         }
         String nameStyle = CSS.nameStyle();
         String imgClassName = ""; //$NON-NLS-1$
-        InfoType infoType = InfoType.fromTypeString(value.getInfoType());
+        String infoType1 = value.getInfoType();
+        InfoType infoType = InfoType.fromTypeString(infoType1);
         if(InfoType.PATH_LIST.equals(infoType)){
            imgClassName = CSS.pathList();
         } else if (value instanceof File) {

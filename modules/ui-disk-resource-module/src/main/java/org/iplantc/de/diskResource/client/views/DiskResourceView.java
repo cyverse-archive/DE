@@ -353,8 +353,6 @@ public interface DiskResourceView extends IsWidget,
         void unmaskSendToTreeViewer();
     }
 
-    void displayAndCacheDiskResourceInfo(DiskResource info);
-
     void updateTags(List<IplantTag> tags);
 
     void updateStore(DiskResource item);
