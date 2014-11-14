@@ -4,6 +4,7 @@ import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.client.models.diskResources.TYPE;
 import org.iplantc.de.client.models.search.DiskResourceQueryTemplate;
+import org.iplantc.de.client.models.viewer.InfoType;
 import org.iplantc.de.client.services.DiskResourceServiceFacade;
 import org.iplantc.de.client.services.MetadataServiceFacade;
 import org.iplantc.de.client.services.SearchServiceFacade;
@@ -39,6 +40,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -72,7 +74,7 @@ public class FolderContentsRpcProxyTest {
                                                                 announcer,
                                                                 displayStringsMock,
                                                                 errorStringsMock,
-                                                                null,
+                                                                Collections.<InfoType>emptyList(),
                                                                 null);
         folderContentsRpcProxy.setHasSafeHtml(mockHasSafeHtml);
     }

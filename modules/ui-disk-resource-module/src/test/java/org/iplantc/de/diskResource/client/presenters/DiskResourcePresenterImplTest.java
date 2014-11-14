@@ -81,10 +81,10 @@ public class DiskResourcePresenterImplTest {
                                             mockFactory,
                                             mockDataSearchPresenter,
                                             mockDisplayStrings,
+                                            mockAnnouncer,
                                             mockEventBus,
                                             null,
                                             null);
-        uut.announcer = mockAnnouncer;
 
     }
 

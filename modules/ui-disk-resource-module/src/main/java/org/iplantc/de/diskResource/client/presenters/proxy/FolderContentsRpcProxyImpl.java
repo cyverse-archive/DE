@@ -15,6 +15,7 @@ import org.iplantc.de.diskResource.client.views.DiskResourceView;
 import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 import org.iplantc.de.resources.client.messages.IplantErrorStrings;
 
+import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
@@ -29,6 +30,7 @@ import com.sencha.gxt.data.shared.loader.PagingLoadResult;
 import com.sencha.gxt.data.shared.loader.PagingLoadResultBean;
 
 import java.util.List;
+import java.util.logging.Logger;
 
 /**
  * This proxy is responsible for retrieving directory listings and search requests from the server.
@@ -210,6 +212,7 @@ public class FolderContentsRpcProxyImpl extends RpcProxy<FolderContentsLoadConfi
     private HasSafeHtml hasSafeHtml;
     private List<InfoType> infoTypeFilterList;
 
+    final Logger LOG = Logger.getLogger(FolderContentsRpcProxyImpl.class.getName());
 
     @AssistedInject
     FolderContentsRpcProxyImpl(final DiskResourceServiceFacade drService,
@@ -241,6 +244,15 @@ public class FolderContentsRpcProxyImpl extends RpcProxy<FolderContentsLoadConfi
         } else if (folder instanceof DiskResourceFavorite) {
             metadataService.getFavorites(loadConfig, new FavoritesCallback(callback, loadConfig, announcer, errorStrings));
         } else if (folder instanceof DiskResourceQueryTemplate) {
+            DiskResourceQueryTemplate qt = (DiskResourceQueryTemplate)folder;
+            String infoTypeFilterQueryString = Joiner.on(" ").join(infoTypeFilterList);
+            String newMetadataValueQuery = Joiner.on(" ").join(Strings.nullToEmpty(qt.getMetadataValueQuery()),
+                                                  infoTypeFilterQueryString)
+                                    .trim()                              // Trim the results
+                                    .replaceAll("-", "\\\\-");           // Escape all hyphens
+
+            qt.setMetadataValueQuery(newMetadataValueQuery);
+
             searchService.submitSearchFromQueryTemplate((DiskResourceQueryTemplate)folder, loadConfig, null, new SearchResultsCallback(announcer, loadConfig, callback, displayStrings, hasSafeHtml));
         } else {
             drService.getFolderContents(folder, infoTypeFilterList, entityType, loadConfig, new FolderContentsCallback(announcer, loadConfig, callback, hasSafeHtml));

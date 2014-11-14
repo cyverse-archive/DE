@@ -145,12 +145,12 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
     @Inject DataLinkFactory dlFactory;
     @Inject DiskResourceServiceFacade diskResourceService;
     @Inject MetadataServiceFacade fsmdataService;
-    @Inject IplantAnnouncer announcer;
     @Inject UserInfo userInfo;
     @Inject DiskResourceSelectorDialogFactory selectorDialogFactory;
     @Inject DataLinkPanelFactory dataLinkPanelFactory;
     @Inject DataSharingDialogFactory dataSharingDialogFactory;
 
+    final IplantAnnouncer announcer;
     final DiskResourceView view;
     final DiskResourceAutoBeanFactory drFactory;
     final TreeLoader<Folder> treeLoader;
@@ -169,17 +169,18 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
                               final DiskResourceAutoBeanFactory drFactory,
                               final DataSearchPresenter dataSearchPresenter,
                               final IplantDisplayStrings displayStrings,
+                              final IplantAnnouncer announcer,
                               final EventBus eventBus,
-                              @Assisted("hideToolbar") boolean hideToolbar,
-                              @Assisted("hideDetailsPanel") boolean hideDetailsPanel,
-                              @Assisted("singleSelect") boolean singleSelect,
-                              @Assisted("disableFilePreview") boolean disableFilePreview,
-                              @Assisted HasPath folderToSelect,
-                              @Assisted List<InfoType> infoTypeFilters,
-                              @Assisted TYPE entityType,
-                              @Assisted IsWidget southWidget) {
+                              @Assisted("hideToolbar") final boolean hideToolbar,
+                              @Assisted("hideDetailsPanel") final boolean hideDetailsPanel,
+                              @Assisted("singleSelect") final boolean singleSelect,
+                              @Assisted("disableFilePreview") final boolean disableFilePreview,
+                              @Assisted final HasPath folderToSelect,
+                              @Assisted final List<InfoType> infoTypeFilters,
+                              @Assisted final TYPE entityType,
+                              @Assisted final IsWidget southWidget) {
         this(diskResourceViewFactory, folderRpcProxyFactory, folderContentsRpcProxyFactory,
-             drFactory, dataSearchPresenter, displayStrings, eventBus,
+             drFactory, dataSearchPresenter, displayStrings, announcer, eventBus,
              infoTypeFilters, entityType);
         view.setNorthWidgetHidden(hideToolbar);
         view.setEastWidgetHidden(hideDetailsPanel);
@@ -200,16 +201,17 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
                               final DiskResourceAutoBeanFactory drFactory,
                               final DataSearchPresenter dataSearchPresenter,
                               final IplantDisplayStrings displayStrings,
+                              final IplantAnnouncer announcer,
                               final EventBus eventBus,
-                              @Assisted("hideToolbar") boolean hideToolbar,
-                              @Assisted("hideDetailsPanel") boolean hideDetailsPanel,
-                              @Assisted("singleSelect") boolean singleSelect,
-                              @Assisted("disableFilePreview") boolean disableFilePreview,
-                              @Assisted HasPath folderToSelect,
-                              @Assisted IsWidget southWidget,
-                              @Assisted int southWidgetHeight) {
+                              @Assisted("hideToolbar") final boolean hideToolbar,
+                              @Assisted("hideDetailsPanel") final boolean hideDetailsPanel,
+                              @Assisted("singleSelect") final boolean singleSelect,
+                              @Assisted("disableFilePreview") final boolean disableFilePreview,
+                              @Assisted final HasPath folderToSelect,
+                              @Assisted final IsWidget southWidget,
+                              @Assisted final int southWidgetHeight) {
         this(diskResourceViewFactory, folderRpcProxyFactory, folderContentsRpcProxyFactory,
-             drFactory, dataSearchPresenter, displayStrings, eventBus,
+             drFactory, dataSearchPresenter, displayStrings, announcer, eventBus,
              Collections.<InfoType>emptyList(),
              null);
         view.setNorthWidgetHidden(hideToolbar);
@@ -231,15 +233,16 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
                               final DiskResourceAutoBeanFactory drFactory,
                               final DataSearchPresenter dataSearchPresenter,
                               final IplantDisplayStrings displayStrings,
+                              final IplantAnnouncer announcer,
                               final EventBus eventBus,
-                              @Assisted("hideToolbar") boolean hideToolbar,
-                              @Assisted("hideDetailsPanel") boolean hideDetailsPanel,
-                              @Assisted("singleSelect") boolean singleSelect,
-                              @Assisted("disableFilePreview") boolean disableFilePreview,
-                              @Assisted HasPath folderToSelect,
-                              @Assisted List<HasId> selectedResources) {
+                              @Assisted("hideToolbar") final boolean hideToolbar,
+                              @Assisted("hideDetailsPanel") final boolean hideDetailsPanel,
+                              @Assisted("singleSelect") final boolean singleSelect,
+                              @Assisted("disableFilePreview") final boolean disableFilePreview,
+                              @Assisted final HasPath folderToSelect,
+                              @Assisted final List<HasId> selectedResources) {
         this(diskResourceViewFactory, folderRpcProxyFactory, folderContentsRpcProxyFactory,
-             drFactory, dataSearchPresenter, displayStrings, eventBus,
+             drFactory, dataSearchPresenter, displayStrings, announcer, eventBus,
              Collections.<InfoType>emptyList(),
              null);
         view.setNorthWidgetHidden(hideToolbar);
@@ -261,11 +264,13 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
                               final DiskResourceAutoBeanFactory drFactory,
                               final DataSearchPresenter dataSearchPresenter,
                               final IplantDisplayStrings displayStrings,
+                              final IplantAnnouncer announcer,
                               final EventBus eventBus,
                               final List<InfoType> infoTypeFilters,
                               final TYPE entityType) {
         this.drFactory = drFactory;
         this.displayStrings = displayStrings;
+        this.announcer = announcer;
         this.eventBus = eventBus;
         this.dataSearchPresenter = dataSearchPresenter;
 
