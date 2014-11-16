@@ -3,7 +3,11 @@ package org.iplantc.de.analysis.client.views.widget;
 import org.iplantc.de.client.models.analysis.Analysis;
 import org.iplantc.de.commons.client.widgets.SearchField;
 
-import com.sencha.gxt.data.shared.loader.*;
+import com.sencha.gxt.data.shared.loader.FilterConfig;
+import com.sencha.gxt.data.shared.loader.FilterConfigBean;
+import com.sencha.gxt.data.shared.loader.FilterPagingLoadConfig;
+import com.sencha.gxt.data.shared.loader.PagingLoadResult;
+import com.sencha.gxt.data.shared.loader.PagingLoader;
 
 import java.util.List;
 
@@ -18,6 +22,7 @@ public class AnalysisSearchField extends SearchField<Analysis> {
     private final FilterConfig idFilter;
     private final FilterConfig nameFilter;
     private final FilterConfig appNameFilter;
+    private final FilterConfig idParentFilter;
 
     public AnalysisSearchField(PagingLoader<FilterPagingLoadConfig, PagingLoadResult<Analysis>> loader) {
         super(loader);
@@ -25,10 +30,12 @@ public class AnalysisSearchField extends SearchField<Analysis> {
         idFilter = new FilterConfigBean();
         nameFilter = new FilterConfigBean();
         appNameFilter = new FilterConfigBean();
+        idParentFilter = new FilterConfigBean();
 
         idFilter.setField("id"); //$NON-NLS-1$
         nameFilter.setField("name"); //$NON-NLS-1$
-        appNameFilter.setField("analysis_name"); //$NON-NLS-1$
+        appNameFilter.setField("app_name"); //$NON-NLS-1$
+        idParentFilter.setField("parent_id"); //$NON-NLS-1$
     }
 
     /**
@@ -49,6 +56,24 @@ public class AnalysisSearchField extends SearchField<Analysis> {
         filters.add(idFilter);
 
         loader.load(loadConfig);
+    }
+
+    /**
+     * Loads the loader with a FilterConfig with the given parent analysisId of the HT Analysis, This
+     * filter will be cleared once this field is cleared or another query is triggered.
+     * 
+     * @param analysisId
+     * 
+     */
+    public void filterByParentId(String analysisId) {
+        FilterPagingLoadConfig loadConfig = getLoaderConfig();
+        List<FilterConfig> filters = super.getConfigFilters(loadConfig);
+        filters.clear();
+        idParentFilter.setValue(analysisId);
+        filters.add(idParentFilter);
+
+        loader.load(loadConfig);
+
     }
 
     @Override

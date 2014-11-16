@@ -1,0 +1,11 @@
+@sprite .htList {
+    gwt-image: "htList";
+    cursor: pointer;
+    float: left;
+ }
+ .hasResultFolder {
+    cursor: pointer;
+}
+.noResultFolder {
+    cursor: default;
+}

@@ -1,11 +1,3 @@
-.hasResultFolder {
-	cursor: pointer;
-}
-
-.noResultFolder {
-	cursor: default;
-}
-
 .disabledApp {
 	color: red;
 	cursor: default;

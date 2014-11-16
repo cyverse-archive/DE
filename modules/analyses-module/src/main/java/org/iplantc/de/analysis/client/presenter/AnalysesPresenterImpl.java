@@ -4,6 +4,7 @@ import org.iplantc.de.analysis.client.events.AnalysisAppSelectedEvent;
 import org.iplantc.de.analysis.client.events.AnalysisCommentSelectedEvent;
 import org.iplantc.de.analysis.client.events.AnalysisNameSelectedEvent;
 import org.iplantc.de.analysis.client.events.AnalysisParamValueSelectedEvent;
+import org.iplantc.de.analysis.client.events.HTAnalysisExpandEvent;
 import org.iplantc.de.analysis.client.events.OpenAppForRelaunchEvent;
 import org.iplantc.de.analysis.client.events.SaveAnalysisParametersEvent;
 import org.iplantc.de.analysis.client.views.AnalysesView;
@@ -81,7 +82,8 @@ public class AnalysesPresenterImpl implements
                                   AnalysisNameSelectedEvent.AnalysisNameSelectedEventHandler,
                                   AnalysisParamValueSelectedEvent.AnalysisParamValueSelectedEventHandler,
                                   AnalysisCommentSelectedEvent.AnalysisCommentSelectedEventHandler,
-                                  AnalysisAppSelectedEvent.AnalysisAppSelectedEventHandler {
+                                  AnalysisAppSelectedEvent.AnalysisAppSelectedEventHandler,
+                                  HTAnalysisExpandEvent.HTAnalysisExpandEventHandler {
 
     private static class AnalysisCommentsDialog extends IPlantDialog {
 
@@ -173,7 +175,7 @@ public class AnalysesPresenterImpl implements
         public void onSuccess(String result) {
             SafeHtml msg = SafeHtmlUtils.fromString(displayStrings.analysisStopSuccess(ae.getName()));
             announcer.schedule(new SuccessAnnouncementConfig(msg, true, 3000));
-            loadAnalyses();
+            loadAnalyses(false);
         }
 
     }
@@ -197,7 +199,7 @@ public class AnalysesPresenterImpl implements
 
                     @Override
                     public void onSuccess(String arg0) {
-                        loadAnalyses();
+                        loadAnalyses(false);
                     }
                 });
             }
@@ -330,6 +332,7 @@ public class AnalysesPresenterImpl implements
         this.view.addAnalysisParamValueSelectedEventHandler(this);
         this.view.addAnalysisCommentSelectedEventHandler(this);
         this.view.addAnalysisAppSelectedEventHandler(this);
+        this.view.addHTAnalysisExpandEventHandler(this);
         this.view.setPresenter(this);
     }
 
@@ -457,7 +460,7 @@ public class AnalysesPresenterImpl implements
     @Override
     public void go(final HasOneWidget container, final List<Analysis> selectedAnalyses) {
         container.setWidget(view.asWidget());
-        loadAnalyses();
+        loadAnalyses(false);
 
         if (selectedAnalyses != null && !selectedAnalyses.isEmpty()) {
             handlerFirstLoad = view.addLoadHandler(new FirstLoadHandler(selectedAnalyses));
@@ -465,8 +468,8 @@ public class AnalysesPresenterImpl implements
     }
 
     @Override
-    public void loadAnalyses() {
-        view.loadAnalyses();
+    public void loadAnalyses(boolean clearfilters) {
+        view.loadAnalyses(clearfilters);
     }
 
     @Override
@@ -596,5 +599,10 @@ public class AnalysesPresenterImpl implements
             }
         });
         d.show();
+    }
+
+    @Override
+    public void onHTAnalysisExpanded(HTAnalysisExpandEvent event) {
+        view.filerByParentAnalysisId(event.getValue().getId());
     }
 }

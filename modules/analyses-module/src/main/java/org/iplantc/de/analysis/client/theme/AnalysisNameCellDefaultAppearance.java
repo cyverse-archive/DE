@@ -11,6 +11,7 @@ import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.resources.client.ClientBundle;
 import com.google.gwt.resources.client.CssResource;
+import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.safehtml.client.SafeHtmlTemplates;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
@@ -18,27 +19,41 @@ import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 
 public class AnalysisNameCellDefaultAppearance implements AnalysisNameCell.AnalysisNameCellAppearance {
 
-    public interface AnalysisNameCellStyles extends CssResource {
+    public interface AnalysisNameCellStyle extends CssResource {
+
+        String htList();
 
         String hasResultFolder();
 
         String noResultFolder();
 
-        String disabledApp();
-
-        String enabledApp();
     }
 
     public interface AnalysisNameCellResources extends ClientBundle {
-        @Source("AnalysisAppNameCell.css")
-        AnalysisNameCellStyles styles();
+
+        @Source("AnalysisNameCell.css")
+        AnalysisNameCellStyle getAnalysisNameStyleCss();
+
+        @Source("htlist.png")
+        ImageResource htList();
 
     }
 
     interface Templates extends SafeHtmlTemplates {
 
         @SafeHtmlTemplates.Template("<span name=\"{0}\" title=\" {3}\" class=\"{1}\">{2}</span>")
-        SafeHtml cell(String elementName, String className, SafeHtml analysisName, String tooltip);
+        SafeHtml analysis(String elementName, String className, SafeHtml analysisName, String tooltip);
+
+        @SafeHtmlTemplates.Template("<span name='{5}' title='{6}' class=\"{4}\" style=\"float:right;\"></span>&nbsp;<span name=\"{0}\" title=\" {3}\" class=\"{1}\">{2}</span> ")
+                SafeHtml
+                htAnalysis(String elementName,
+                               String className,
+                               SafeHtml analysisName,
+                           String tooltip,
+                           String hticon,
+                           String htElementName,
+                           String batch_Status);
+
     }
 
     private final AnalysisNameCellResources resources;
@@ -50,7 +65,7 @@ public class AnalysisNameCellDefaultAppearance implements AnalysisNameCell.Analy
 
     public AnalysisNameCellDefaultAppearance(AnalysisNameCellResources resources){
         this.resources = resources;
-        resources.styles().ensureInjected();
+        resources.getAnalysisNameStyleCss().ensureInjected();
         this.template = GWT.create(Templates.class);
     }
 
@@ -75,11 +90,21 @@ public class AnalysisNameCellDefaultAppearance implements AnalysisNameCell.Analy
         if (model == null)
             return;
 
-        final AnalysisNameCellStyles styles = resources.styles();
-        String style = Strings.isNullOrEmpty(model.getResultFolderId()) ? styles.noResultFolder()
-                               : styles.hasResultFolder();
+        final AnalysisNameCellStyle nameStyles = resources.getAnalysisNameStyleCss();
+        String style = Strings.isNullOrEmpty(model.getResultFolderId()) ? nameStyles.noResultFolder()
+                               : nameStyles.hasResultFolder();
         String tooltip = I18N.DISPLAY.goToOutputFolder() + " of " + model.getName();
-        sb.append(template.cell(ELEMENT_NAME, style, SafeHtmlUtils.fromString(model.getName()), tooltip));
+        if(model.isBatch()) {
+            sb.append(template.htAnalysis(ELEMENT_NAME,
+                                          style,
+                                          SafeHtmlUtils.fromString(model.getName()),
+                                          tooltip,
+                                          nameStyles.htList(),
+                                          HT_ELEMENT_NAME,
+                                          "Click to see individual analysis status."));
+        } else {
+            sb.append(template.analysis(ELEMENT_NAME, style, SafeHtmlUtils.fromString(model.getName()), tooltip));
+        }
 
     }
 }

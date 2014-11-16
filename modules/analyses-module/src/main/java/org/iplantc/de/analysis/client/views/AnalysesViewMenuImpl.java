@@ -75,6 +75,8 @@ public class AnalysesViewMenuImpl extends Composite implements AnalysesView.View
     TextButton editTb;
     @UiField
     TextButton refreshTb;
+    @UiField
+    TextButton showAllTb;
 
     private static AnalysesToolbarUiBinder uiBinder = GWT.create(AnalysesToolbarUiBinder.class);
     private AnalysesView parent;
@@ -95,6 +97,12 @@ public class AnalysesViewMenuImpl extends Composite implements AnalysesView.View
     @Override
     public void filterByAnalysisId(String analysisId, String name) {
         searchField.filterByAnalysisId(analysisId, name);
+    }
+
+    @Override
+    public void filerByParentAnalysisId(String analysisId) {
+        searchField.filterByParentId(analysisId);
+        showAllTb.enable();
     }
 
     @Override
@@ -274,7 +282,13 @@ public class AnalysesViewMenuImpl extends Composite implements AnalysesView.View
 
     @UiHandler("refreshTb")
     void onRefreshSelected(SelectEvent event) {
-        presenter.loadAnalyses();
+        presenter.loadAnalyses(false);
+    }
+
+    @UiHandler("showAllTb")
+    void onShowAllSelected(SelectEvent event) {
+        presenter.loadAnalyses(true);
+        showAllTb.setEnabled(false);
     }
 
 }

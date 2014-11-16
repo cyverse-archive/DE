@@ -3,6 +3,7 @@ package org.iplantc.de.analysis.client.views;
 import org.iplantc.de.analysis.client.events.AnalysisAppSelectedEvent;
 import org.iplantc.de.analysis.client.events.AnalysisCommentSelectedEvent;
 import org.iplantc.de.analysis.client.events.AnalysisNameSelectedEvent;
+import org.iplantc.de.analysis.client.events.HTAnalysisExpandEvent;
 import org.iplantc.de.analysis.client.views.cells.AnalysisAppNameCell;
 import org.iplantc.de.analysis.client.views.cells.AnalysisCommentCell;
 import org.iplantc.de.analysis.client.views.cells.AnalysisNameCell;
@@ -24,7 +25,8 @@ import com.sencha.gxt.widget.core.client.grid.ColumnModel;
 import java.util.List;
 
 public class AnalysisColumnModel extends ColumnModel<Analysis> implements AnalysisNameSelectedEvent.HasAnalysisNameSelectedEventHandlers, AnalysisAppSelectedEvent.HasAnalysisAppSelectedEventHandlers,
-        AnalysisCommentSelectedEvent.HasAnalysisCommentSelectedEventHandlers {
+                                                              AnalysisCommentSelectedEvent.HasAnalysisCommentSelectedEventHandlers,
+                                                              HTAnalysisExpandEvent.HasHTAnalysisExpandEventHandlers {
 
     @Inject
     public AnalysisColumnModel(final CheckBoxSelectionModel<Analysis> checkBoxSelectionModel, final IplantDisplayStrings displayStrings) {
@@ -114,5 +116,11 @@ public class AnalysisColumnModel extends ColumnModel<Analysis> implements Analys
     @Override
     public HandlerRegistration addAnalysisNameSelectedEventHandler(AnalysisNameSelectedEvent.AnalysisNameSelectedEventHandler handler) {
         return ensureHandlers().addHandler(AnalysisNameSelectedEvent.TYPE, handler);
+    }
+
+    @Override
+    public HandlerRegistration
+            addHTAnalysisExpandEventHandler(HTAnalysisExpandEvent.HTAnalysisExpandEventHandler handler) {
+        return ensureHandlers().addHandler(HTAnalysisExpandEvent.TYPE, handler);
     }
 }

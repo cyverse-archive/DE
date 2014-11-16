@@ -66,4 +66,16 @@ public interface Analysis extends HasId, HasName {
 
     @PropertyName("app_disabled")
     public void setAppDisabled(boolean disabled);
+
+    @PropertyName("batch")
+    public void setBatch(boolean isBatch);
+
+    @PropertyName("batch")
+    public boolean isBatch();
+
+    @PropertyName("batch_status")
+    BatchStatus getBatchStatus();
+
+    @PropertyName("batch_status")
+    void setBatchStatus(BatchStatus status);
 }

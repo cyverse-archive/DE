@@ -4,6 +4,7 @@ import org.iplantc.de.analysis.client.events.AnalysisAppSelectedEvent;
 import org.iplantc.de.analysis.client.events.AnalysisCommentSelectedEvent;
 import org.iplantc.de.analysis.client.events.AnalysisNameSelectedEvent;
 import org.iplantc.de.analysis.client.events.AnalysisParamValueSelectedEvent;
+import org.iplantc.de.analysis.client.events.HTAnalysisExpandEvent;
 import org.iplantc.de.analysis.client.events.SaveAnalysisParametersEvent;
 import org.iplantc.de.analysis.client.views.widget.AnalysisParamView;
 import org.iplantc.de.client.models.analysis.Analysis;
@@ -27,7 +28,14 @@ import java.util.List;
  * 
  */
 @SuppressWarnings("rawtypes")
-public interface AnalysesView extends IsWidget, SelectionChangedEvent.HasSelectionChangedHandlers, AnalysisParamValueSelectedEvent.HasAnalysisParamValueSelectedEventHandlers, AnalysisAppSelectedEvent.HasAnalysisAppSelectedEventHandlers, AnalysisCommentSelectedEvent.HasAnalysisCommentSelectedEventHandlers, AnalysisNameSelectedEvent.HasAnalysisNameSelectedEventHandlers {
+public interface AnalysesView extends
+                             IsWidget,
+                             SelectionChangedEvent.HasSelectionChangedHandlers,
+                             AnalysisParamValueSelectedEvent.HasAnalysisParamValueSelectedEventHandlers,
+                             AnalysisAppSelectedEvent.HasAnalysisAppSelectedEventHandlers,
+                             AnalysisCommentSelectedEvent.HasAnalysisCommentSelectedEventHandlers,
+                             AnalysisNameSelectedEvent.HasAnalysisNameSelectedEventHandlers,
+                             HTAnalysisExpandEvent.HasHTAnalysisExpandEventHandlers {
 
     public interface Presenter extends SaveAnalysisParametersEvent.SaveAnalysisParametersEventHandler {
 
@@ -53,7 +61,7 @@ public interface AnalysesView extends IsWidget, SelectionChangedEvent.HasSelecti
 
         void updateComments();
 
-        void loadAnalyses();
+        void loadAnalyses(boolean clearFilters);
 
     }
 
@@ -61,12 +69,16 @@ public interface AnalysesView extends IsWidget, SelectionChangedEvent.HasSelecti
 
         void filterByAnalysisId(String analysisId, String name);
 
+        void filerByParentAnalysisId(String id);
+
         void init(Presenter presenter, AnalysesView parent, PagingLoader<FilterPagingLoadConfig, PagingLoadResult<Analysis>> loader);
     }
 
     void filterByAnalysisId(String id, String name);
 
-    public void loadAnalyses();
+    void filerByParentAnalysisId(String id);
+
+    public void loadAnalyses(boolean clearFilters);
 
     public List<Analysis> getSelectedAnalyses();
 

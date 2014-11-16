@@ -7,6 +7,7 @@ import org.iplantc.de.analysis.client.events.AnalysisAppSelectedEvent;
 import org.iplantc.de.analysis.client.events.AnalysisCommentSelectedEvent;
 import org.iplantc.de.analysis.client.events.AnalysisNameSelectedEvent;
 import org.iplantc.de.analysis.client.events.AnalysisParamValueSelectedEvent;
+import org.iplantc.de.analysis.client.events.HTAnalysisExpandEvent.HTAnalysisExpandEventHandler;
 import org.iplantc.de.analysis.client.gin.factory.AnalysisParamViewFactory;
 import org.iplantc.de.analysis.client.presenter.proxy.AnalysisRpcProxy;
 import org.iplantc.de.analysis.client.views.widget.AnalysisParamView;
@@ -19,6 +20,7 @@ import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -212,7 +214,10 @@ public class AnalysesViewImpl extends Composite implements AnalysesView {
     }
 
     @Override
-    public void loadAnalyses() {
+    public void loadAnalyses(boolean clearFilters) {
+        if (clearFilters) {
+            loader.getLastLoadConfig().setFilters(null);
+        }
         loader.load(0, 200);
     }
 
@@ -254,5 +259,16 @@ public class AnalysesViewImpl extends Composite implements AnalysesView {
 
     private void setSelectionCount(int count) {
         selectionStatus.setText(count + " item(s)");
+    }
+
+    @Override
+    public void filerByParentAnalysisId(String id) {
+        viewMenu.filerByParentAnalysisId(id);
+
+    }
+
+    @Override
+    public HandlerRegistration addHTAnalysisExpandEventHandler(HTAnalysisExpandEventHandler handler) {
+        return ((AnalysisColumnModel)cm).addHTAnalysisExpandEventHandler(handler);
     }
 }
