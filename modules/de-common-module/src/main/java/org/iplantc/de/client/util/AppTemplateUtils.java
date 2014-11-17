@@ -45,6 +45,8 @@ public class AppTemplateUtils {
             EMPTY_GROUP_ARG.setType(ArgumentType.Info);
             EMPTY_GROUP_ARG.setLabel(displayMessages.emptyArgumentGroupBgText());
             EMPTY_GROUP_ARG.setDescription(displayMessages.emptyArgumentGroupBgText());
+            EMPTY_GROUP_ARG.setRequired(false);
+            EMPTY_GROUP_ARG.setOmitIfBlank(false);
         }
         return EMPTY_GROUP_ARG;
     }

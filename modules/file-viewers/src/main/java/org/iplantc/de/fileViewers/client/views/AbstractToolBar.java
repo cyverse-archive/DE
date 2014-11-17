@@ -45,16 +45,14 @@ public abstract class AbstractToolBar extends Composite {
     protected boolean editing;
 
     AbstractToolBarAppearance appearance;
-    @UiField
-    TextButton refreshBtn;
-    @UiField
-    TextButton saveBtn;
-    @UiField
-    CheckBox lineNumberCheckbox;
-    @UiField(provided = true)
-    Status editStatus;
 
-    public AbstractToolBar(boolean editing, final AbstractToolBarAppearance appearance) {
+    @UiField TextButton refreshBtn;
+    @UiField TextButton saveBtn;
+    @UiField CheckBox lineNumberCheckbox;
+    @UiField(provided = true) Status editStatus;
+
+    public AbstractToolBar(boolean editing,
+                           final AbstractToolBarAppearance appearance) {
         this.editing = editing;
         this.appearance = appearance;
         saveBtn = new TextButton(appearance.saveButtonText(), appearance.saveButtonIcon());

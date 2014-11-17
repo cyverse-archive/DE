@@ -25,25 +25,19 @@ public class TextViewToolBar extends AbstractToolBar {
 
     interface TextViewToolBarUiBinder extends UiBinder<ToolBar, TextViewToolBar> { }
 
-    @UiField(provided = true)
-    TextViewToolBarAppearance appearance;
-    @UiField
-    CheckBox cbxWrap;
+    @UiField(provided = true) TextViewToolBarAppearance appearance;
+    @UiField CheckBox cbxWrap;
     // for markdown preview
-    @UiField
-    TextButton previewMDBtn;
-    @UiField
-    SeparatorToolItem previewSeparator;
-    private static final TextViewToolBarUiBinder BINDER = GWT.create(TextViewToolBarUiBinder.class);
-    private final AbstractFileViewer view;
+    @UiField TextButton previewMDBtn;
+    @UiField SeparatorToolItem previewSeparator;
 
-    TextViewToolBar(final AbstractFileViewer view,
-                    final boolean editing,
+    private static final TextViewToolBarUiBinder BINDER = GWT.create(TextViewToolBarUiBinder.class);
+
+    TextViewToolBar(final boolean editing,
                     final boolean preview,
                     final TextViewToolBarAppearance appearance) {
         super(editing, appearance);
         this.appearance = appearance;
-        this.view = view;
         initWidget(BINDER.createAndBindUi(this));
 
         previewSeparator.setVisible(preview);
@@ -51,11 +45,9 @@ public class TextViewToolBar extends AbstractToolBar {
         setEditing(editing);
     }
 
-    public TextViewToolBar(final AbstractFileViewer view,
-                           final boolean editing,
+    public TextViewToolBar(final boolean editing,
                            final boolean preview) {
-        this(view,
-             editing,
+        this(editing,
              preview,
              GWT.<TextViewToolBarAppearance>create(TextViewToolBarAppearance.class));
     }

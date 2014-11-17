@@ -75,7 +75,7 @@ public class StructuredTextViewer extends AbstractStructuredTextViewer {
                                 final Integer columns,
                                 final FileViewer.Presenter presenter) {
         super(file, infoType, editing, presenter);
-        toolbar = new StructuredTextViewToolBar(this, editing);
+        toolbar = new StructuredTextViewToolBar(editing);
         initWidget(BINDER.createAndBindUi(this));
         if (file != null) {
             presenter.loadStructuredData(pagingToolBar.getPageNumber(),

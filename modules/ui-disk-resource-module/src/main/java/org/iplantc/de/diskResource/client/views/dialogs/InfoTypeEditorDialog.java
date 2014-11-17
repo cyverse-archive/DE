@@ -69,11 +69,10 @@ public class InfoTypeEditorDialog extends IPlantDialog {
             @Override
             public void onSuccess(List<InfoType> infoTypes) {
                 // Skip Path list, it should not be displayed
-//                infoTypes.remove(InfoType.PATH_LIST);
+                infoTypes.remove(InfoType.HT_ANALYSIS_PATH_LIST);
                 infoTypeCbo.add(infoTypes);
                 infoTypeCbo.setValue(type);
                 LOG.fine("InfoTypes retrieved: " + infoTypes);
-
             }
         });
     }

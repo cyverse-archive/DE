@@ -167,6 +167,8 @@ public interface DesktopView extends IsWidget {
 
     ListStore<NotificationMessage> getNotificationStore();
 
+    int getUnseenNotificationCount();
+
     void setPresenter(Presenter presenter);
 
     void setUnseenNotificationCount(int count);

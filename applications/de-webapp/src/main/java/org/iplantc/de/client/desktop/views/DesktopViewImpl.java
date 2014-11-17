@@ -221,6 +221,11 @@ public class DesktopViewImpl implements DesktopView, UnregisterEvent.UnregisterH
     }
 
     @Override
+    public int getUnseenNotificationCount() {
+        return unseenNotificationCount;
+    }
+
+    @Override
     public void setPresenter(final DesktopView.Presenter presenter) {
         this.presenter = presenter;
         notificationsListView.setPresenter(presenter);

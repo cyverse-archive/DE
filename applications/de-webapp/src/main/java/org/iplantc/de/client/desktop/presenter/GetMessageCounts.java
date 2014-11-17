@@ -44,8 +44,8 @@ final class GetMessageCounts implements Runnable {
 
     private void fireEvents(final Counts counts) {
         final int unseenNoteCnt = counts.getUnseenNotificationCount();
+        presenter.fetchRecentNotifications(unseenNoteCnt);
         view.setUnseenNotificationCount(unseenNoteCnt);
-        presenter.fetchRecentNotifications();
 
         final int unseenSysMsgCnt = counts.getUnseenSystemMessageCount();
         view.setUnseenSystemMessageCount(unseenSysMsgCnt);
