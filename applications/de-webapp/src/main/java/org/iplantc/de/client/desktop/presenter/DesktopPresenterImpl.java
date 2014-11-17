@@ -450,9 +450,15 @@ public class DesktopPresenterImpl implements DesktopView.Presenter {
     /**
      * This method is called by the periodic message task. It updates the store used by the
      * user notification menu, and displays notification popups
+     * @param unseenNotificationCount
      */
-    void fetchRecentNotifications() {
-        messageServiceFacade.getRecentMessages(new RuntimeCallbacks.GetRecentNotificationsCallback(displayStrings, notificationFactory, view, notifyInfo));
+    void fetchRecentNotifications(int unseenNotificationCount) {
+        int currentUnseen = view.getUnseenNotificationCount();
+        if((unseenNotificationCount > 0)
+            && (unseenNotificationCount > currentUnseen)){
+            // Only fetch messages if necessary
+            messageServiceFacade.getRecentMessages(new RuntimeCallbacks.GetRecentNotificationsCallback(displayStrings, notificationFactory, view, notifyInfo));
+        }
     }
 
     void postBootstrap(final Panel panel) {
