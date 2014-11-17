@@ -252,10 +252,10 @@ public class TextViewerImpl extends AbstractFileViewer implements
 
         TextViewToolBar textViewPagingToolBar;
         if (mode != null && mode.equals("markdown")) {
-            textViewPagingToolBar = new TextViewToolBar(this, editing, true);
+            textViewPagingToolBar = new TextViewToolBar(editing, true);
             textViewPagingToolBar.addPreviewHandler(new PreviewSelectHandlerImpl());
         } else {
-            textViewPagingToolBar = new TextViewToolBar(this, editing, false);
+            textViewPagingToolBar = new TextViewToolBar(editing, false);
         }
 
         return textViewPagingToolBar;
