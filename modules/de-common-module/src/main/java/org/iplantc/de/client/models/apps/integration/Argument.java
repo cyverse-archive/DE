@@ -22,7 +22,8 @@ public interface Argument extends HasId, HasName, HasLabel, HasDescription {
      * {@link AutoBean#setTag(String, Object)}.
      */
     String IS_NEW = "new argument";
-    String TREE_STORE = "tree store thing";
+    String TYPE_KEY = "type";
+    String SELECTION_ITEMS_KEY = "arguments";
 
     ArgumentType getType();
 
@@ -69,10 +70,10 @@ public interface Argument extends HasId, HasName, HasLabel, HasDescription {
     @PropertyName("isVisible")
     void setVisible(Boolean visible);
 
-    @PropertyName("arguments")
+    @PropertyName(SELECTION_ITEMS_KEY)
     List<SelectionItem> getSelectionItems();
 
-    @PropertyName("arguments")
+    @PropertyName(SELECTION_ITEMS_KEY)
     void setSelectionItems(List<SelectionItem> arguments);
 
     @PropertyName("file_parameters")

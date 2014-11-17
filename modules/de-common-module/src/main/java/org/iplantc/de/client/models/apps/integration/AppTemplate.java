@@ -19,11 +19,13 @@ import java.util.List;
  * 
  */
 public interface AppTemplate extends HasId, HasLabel, HasName, HasDescription {
-    
-    @PropertyName("groups")
+
+    String GROUPS_KEY = "groups";
+
+    @PropertyName(GROUPS_KEY)
     List<ArgumentGroup> getArgumentGroups();
     
-    @PropertyName("groups")
+    @PropertyName(GROUPS_KEY)
     void setArgumentGroups(List<ArgumentGroup> argumentGroups);
 
     List<Tool> getTools();

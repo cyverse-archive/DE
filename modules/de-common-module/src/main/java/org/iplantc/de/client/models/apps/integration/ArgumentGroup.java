@@ -15,11 +15,13 @@ public interface ArgumentGroup extends HasId, HasLabel, HasName{
      * {@link AutoBean#setTag(String, Object)}.
      */
     String IS_NEW = "new argument group";
+
+    String ARGUMENTS_KEY = "parameters";
     
-    @PropertyName("parameters")
+    @PropertyName(ARGUMENTS_KEY)
     List<Argument> getArguments();
     
-    @PropertyName("parameters")
+    @PropertyName(ARGUMENTS_KEY)
     void setArguments(List<Argument> arguments);
 
 }

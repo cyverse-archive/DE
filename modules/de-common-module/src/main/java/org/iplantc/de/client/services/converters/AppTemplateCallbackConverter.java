@@ -29,7 +29,6 @@ public class AppTemplateCallbackConverter extends AsyncCallbackConverter<String,
     public void onSuccess(String result) {
         final Splittable split = StringQuoter.split(result);
         super.onSuccess(split.getPayload());
-        return;
     }
 
     @Override
@@ -45,18 +44,18 @@ public class AppTemplateCallbackConverter extends AsyncCallbackConverter<String,
          * JDS Grab TreeSelection argument type's original selectionItems, decode them as
          * SelectionItemGroup, and place them back in the Argument's selection items.
          */
-        Splittable atGroups = split.get("groups");
+        Splittable atGroups = split.get(AppTemplate.GROUPS_KEY);
         for (int i = 0; i < atGroups.size(); i++) {
             Splittable grp = atGroups.get(i);
-            Splittable properties = grp.get("properties");
+            Splittable properties = grp.get(ArgumentGroup.ARGUMENTS_KEY);
             if (properties == null) {
                 continue;
             }
             for (int j = 0; j < properties.size(); j++) {
                 Splittable arg = properties.get(j);
-                Splittable type = arg.get("type");
+                Splittable type = arg.get(Argument.TYPE_KEY);
                 if (type.asString().equals(ArgumentType.TreeSelection.name())) {
-                    Splittable arguments = arg.get("arguments");
+                    Splittable arguments = arg.get(Argument.SELECTION_ITEMS_KEY);
                     if ((arguments != null) && (arguments.isIndexed()) && (arguments.size() > 0)) {
                         SelectionItemGroup sig = AutoBeanCodex.decode(factory,
                                                                       SelectionItemGroup.class,
@@ -80,6 +79,14 @@ public class AppTemplateCallbackConverter extends AsyncCallbackConverter<String,
                 for (Argument arg : ag.getArguments()) {
                     if (arg.getDefaultValue() != null) {
                         arg.setValue(arg.getDefaultValue());
+                    }
+                    // Check for null 'isRequired' flag
+                    if(arg.getRequired() == null){
+                        arg.setRequired(false);
+                    }
+                    // Check for null 'omitIfBlank' flag
+                    if(arg.isOmitIfBlank() == null){
+                        arg.setOmitIfBlank(false);
                     }
                 }
             }
