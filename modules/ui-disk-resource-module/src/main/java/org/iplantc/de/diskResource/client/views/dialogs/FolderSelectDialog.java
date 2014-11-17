@@ -75,7 +75,7 @@ public class FolderSelectDialog extends IPlantDialog implements TakesValue<Folde
                 return false;
             }
             InfoType infoType = InfoType.fromTypeString(selectedItem.getInfoType());
-            return InfoType.PATH_LIST.equals(infoType);
+            return InfoType.HT_ANALYSIS_PATH_LIST.equals(infoType);
         }
     }
 

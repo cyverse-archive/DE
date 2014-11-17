@@ -130,7 +130,7 @@ public class PathListViewer extends AbstractStructuredTextViewer implements Stor
             Iterable<DiskResource> iterable = (Iterable<DiskResource>) o;
             for(DiskResource dr : iterable){
                 InfoType infoType1 = InfoType.fromTypeString(dr.getInfoType());
-                if(InfoType.PATH_LIST.equals(infoType1)){
+                if(InfoType.HT_ANALYSIS_PATH_LIST.equals(infoType1)){
                     cancellableEvent.setCancelled(true);
                     statusProxy.update(appearance.preventPathListDrop());
                     statusProxy.setStatus(false);
@@ -176,7 +176,7 @@ public class PathListViewer extends AbstractStructuredTextViewer implements Stor
                           final FileViewer.Presenter presenter) {
         super(file, infoType, editing, presenter);
         if (file != null) {
-            Preconditions.checkArgument(InfoType.PATH_LIST.toString().equals(file.getInfoType()));
+            Preconditions.checkArgument(InfoType.HT_ANALYSIS_PATH_LIST.toString().equals(file.getInfoType()));
         } else {
             Preconditions.checkArgument(editing, "New files must be editable");
         }

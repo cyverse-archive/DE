@@ -2,7 +2,7 @@ package org.iplantc.de.fileViewers.client.views;
 
 import static org.iplantc.de.client.models.viewer.InfoType.CSV;
 import static org.iplantc.de.client.models.viewer.InfoType.GFF;
-import static org.iplantc.de.client.models.viewer.InfoType.PATH_LIST;
+import static org.iplantc.de.client.models.viewer.InfoType.HT_ANALYSIS_PATH_LIST;
 import static org.iplantc.de.client.models.viewer.InfoType.TSV;
 import static org.iplantc.de.client.models.viewer.InfoType.VCF;
 import static org.iplantc.de.client.services.FileEditorServiceFacade.COMMA_DELIMITER;
@@ -133,7 +133,7 @@ public abstract class AbstractStructuredTextViewer extends AbstractFileViewer {
     String getSeparator() {
         InfoType fromTypeString = InfoType.fromTypeString(infoType);
         if (CSV.equals(fromTypeString)
-            || PATH_LIST.equals(fromTypeString)) {
+            || HT_ANALYSIS_PATH_LIST.equals(fromTypeString)) {
             return COMMA_DELIMITER;
         } else if (TSV.equals(fromTypeString)
                        || VCF.equals(fromTypeString)

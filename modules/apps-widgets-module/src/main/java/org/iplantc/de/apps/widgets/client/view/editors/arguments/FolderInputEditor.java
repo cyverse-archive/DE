@@ -24,7 +24,7 @@ public class FolderInputEditor extends AbstractArgumentEditor implements HasDisa
     FolderInputEditor(final DiskResourceSelectorFieldFactory folderSelectorFieldFactory,
                       @Assisted AppTemplateWizardAppearance appearance) {
         super(appearance);
-        this.folderSelector = folderSelectorFieldFactory.createFilteredFolderSelector(Lists.newArrayList(InfoType.PATH_LIST));
+        this.folderSelector = folderSelectorFieldFactory.createFilteredFolderSelector(Lists.newArrayList(InfoType.HT_ANALYSIS_PATH_LIST));
         editorAdapter = new ArgumentEditorConverter<>(folderSelector, new SplittableToFolderConverter());
 
         argumentLabel.setWidget(editorAdapter);

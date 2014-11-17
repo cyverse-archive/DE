@@ -304,7 +304,7 @@ public class FileViewerPresenterImpl implements FileViewer.Presenter, FileSavedE
             manifest.put(FileViewer.COLUMNS_KEY, new JSONNumber(columns));
         }
         if(isPathListFile){
-            manifest.put(FileViewer.INFO_TYPE_KEY, new JSONString(InfoType.PATH_LIST.toString()));
+            manifest.put(FileViewer.INFO_TYPE_KEY, new JSONString(InfoType.HT_ANALYSIS_PATH_LIST.toString()));
             manifest.put(FileViewer.PATH_LIST_KEY, new JSONString("true"));
         }
         setTitle(title);

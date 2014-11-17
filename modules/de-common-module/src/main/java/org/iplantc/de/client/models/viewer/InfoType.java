@@ -32,7 +32,7 @@ public enum InfoType {
     NEXML("nexml"),
     NEXUS("nexus"),
     PDF("pdf"),
-    PATH_LIST("path-list"),
+    HT_ANALYSIS_PATH_LIST("ht-analysis-path-list"),
     PERL("perl"),
     PHYLIP("phylip"),
     PHYLOXML("phyloxml"),

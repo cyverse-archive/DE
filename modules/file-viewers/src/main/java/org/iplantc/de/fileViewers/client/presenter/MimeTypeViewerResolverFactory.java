@@ -147,7 +147,7 @@ public class MimeTypeViewerResolverFactory {
                                                                                          columns,
                                                                                          presenter);
                     viewers.add(structuredTextViewer);
-                } else if(PATH_LIST.toString().equals(infoType)){
+                } else if(HT_ANALYSIS_PATH_LIST.toString().equals(infoType)){
                     PathListViewer pathListViewer = new PathListViewer(file,
                                                                      infoType,
                                                                      editing,
