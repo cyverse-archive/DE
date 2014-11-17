@@ -253,7 +253,6 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
         if(disableFilePreview) {
             disableFilePreview();
         }
-        // FIXME needs logic
         setSelectedFolderByPath(folderToSelect);
         setSelectedDiskResourcesById(selectedResources);
     }

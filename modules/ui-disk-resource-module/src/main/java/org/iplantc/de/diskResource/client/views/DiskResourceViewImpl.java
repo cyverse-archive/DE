@@ -492,6 +492,10 @@ public class DiskResourceViewImpl extends Composite implements DiskResourceView,
         return new DiskResourceColumnModel(sm, displayStrings);
     }
 
+    /**
+     * Convenience accessor
+     * @return the column model cast as a {@link DiskResourceColumnModel}
+     */
     private DiskResourceColumnModel getDiskResourceColumnModel() {
         return (DiskResourceColumnModel)cm;
     }
