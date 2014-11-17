@@ -19,6 +19,10 @@ import java.util.List;
  * 
  */
 public class AnalysisSearchField extends SearchField<Analysis> {
+    public static final String PARENT_ID = "parent_id";
+    public static final String APP_NAME = "app_name";
+    public static final String NAME = "name";
+    public static final String ID = "id";
     private final FilterConfig idFilter;
     private final FilterConfig nameFilter;
     private final FilterConfig appNameFilter;
@@ -32,10 +36,10 @@ public class AnalysisSearchField extends SearchField<Analysis> {
         appNameFilter = new FilterConfigBean();
         idParentFilter = new FilterConfigBean();
 
-        idFilter.setField("id"); //$NON-NLS-1$
-        nameFilter.setField("name"); //$NON-NLS-1$
-        appNameFilter.setField("app_name"); //$NON-NLS-1$
-        idParentFilter.setField("parent_id"); //$NON-NLS-1$
+        idFilter.setField(ID); //$NON-NLS-1$
+        nameFilter.setField(NAME); //$NON-NLS-1$
+        appNameFilter.setField(APP_NAME); //$NON-NLS-1$
+        idParentFilter.setField(PARENT_ID); //$NON-NLS-1$
     }
 
     /**

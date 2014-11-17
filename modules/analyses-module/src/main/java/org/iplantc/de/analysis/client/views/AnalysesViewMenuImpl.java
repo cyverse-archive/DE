@@ -100,7 +100,7 @@ public class AnalysesViewMenuImpl extends Composite implements AnalysesView.View
     }
 
     @Override
-    public void filerByParentAnalysisId(String analysisId) {
+    public void filterByParentAnalysisId(String analysisId) {
         searchField.filterByParentId(analysisId);
         showAllTb.enable();
     }

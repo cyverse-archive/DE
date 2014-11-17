@@ -460,7 +460,7 @@ public class AnalysesPresenterImpl implements
     @Override
     public void go(final HasOneWidget container, final List<Analysis> selectedAnalyses) {
         container.setWidget(view.asWidget());
-        loadAnalyses(false);
+        loadAnalyses(true);
 
         if (selectedAnalyses != null && !selectedAnalyses.isEmpty()) {
             handlerFirstLoad = view.addLoadHandler(new FirstLoadHandler(selectedAnalyses));
@@ -468,8 +468,8 @@ public class AnalysesPresenterImpl implements
     }
 
     @Override
-    public void loadAnalyses(boolean clearfilters) {
-        view.loadAnalyses(clearfilters);
+    public void loadAnalyses(boolean resetFilters) {
+        view.loadAnalyses(resetFilters);
     }
 
     @Override
@@ -603,6 +603,6 @@ public class AnalysesPresenterImpl implements
 
     @Override
     public void onHTAnalysisExpanded(HTAnalysisExpandEvent event) {
-        view.filerByParentAnalysisId(event.getValue().getId());
+        view.filterByParentAnalysisId(event.getValue().getId());
     }
 }

@@ -171,7 +171,7 @@ public class AnalysisServiceFacadeImpl implements AnalysisServiceFacade {
                     String field = filter.getField();
                     String value = filter.getValue();
 
-                    if (!Strings.isNullOrEmpty(field) && !Strings.isNullOrEmpty(value)) {
+                    if (!Strings.isNullOrEmpty(field) && value != null) {
                         JSONObject jsonFilter = new JSONObject();
 
                         jsonFilter.put("field", new JSONString(field)); //$NON-NLS-1$

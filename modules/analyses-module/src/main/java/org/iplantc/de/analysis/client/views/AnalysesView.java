@@ -61,7 +61,7 @@ public interface AnalysesView extends
 
         void updateComments();
 
-        void loadAnalyses(boolean clearFilters);
+        void loadAnalyses(boolean resetFilters);
 
     }
 
@@ -69,16 +69,16 @@ public interface AnalysesView extends
 
         void filterByAnalysisId(String analysisId, String name);
 
-        void filerByParentAnalysisId(String id);
+        void filterByParentAnalysisId(String id);
 
         void init(Presenter presenter, AnalysesView parent, PagingLoader<FilterPagingLoadConfig, PagingLoadResult<Analysis>> loader);
     }
 
     void filterByAnalysisId(String id, String name);
 
-    void filerByParentAnalysisId(String id);
+    void filterByParentAnalysisId(String id);
 
-    public void loadAnalyses(boolean clearFilters);
+    public void loadAnalyses(boolean resetFilters);
 
     public List<Analysis> getSelectedAnalyses();
 

@@ -12,6 +12,7 @@ import org.iplantc.de.analysis.client.gin.factory.AnalysisParamViewFactory;
 import org.iplantc.de.analysis.client.presenter.proxy.AnalysisRpcProxy;
 import org.iplantc.de.analysis.client.views.widget.AnalysisParamView;
 import org.iplantc.de.analysis.client.views.widget.AnalysisParamViewColumnModel;
+import org.iplantc.de.analysis.client.views.widget.AnalysisSearchField;
 import org.iplantc.de.analysis.shared.AnalysisModule;
 import org.iplantc.de.client.models.analysis.Analysis;
 import org.iplantc.de.client.models.analysis.AnalysisParameter;
@@ -33,6 +34,7 @@ import com.sencha.gxt.core.client.Style.SelectionMode;
 import com.sencha.gxt.core.client.resources.ThemeStyles;
 import com.sencha.gxt.data.shared.ListStore;
 import com.sencha.gxt.data.shared.ModelKeyProvider;
+import com.sencha.gxt.data.shared.loader.FilterConfigBean;
 import com.sencha.gxt.data.shared.loader.FilterPagingLoadConfig;
 import com.sencha.gxt.data.shared.loader.FilterPagingLoadConfigBean;
 import com.sencha.gxt.data.shared.loader.LoadHandler;
@@ -214,11 +216,19 @@ public class AnalysesViewImpl extends Composite implements AnalysesView {
     }
 
     @Override
-    public void loadAnalyses(boolean clearFilters) {
-        if (clearFilters) {
-            loader.getLastLoadConfig().setFilters(null);
+    public void loadAnalyses(boolean resetFilters) {
+        FilterPagingLoadConfig config = loader.getLastLoadConfig();
+        if (resetFilters) {
+            // add only default filter
+            FilterConfigBean idParentFilter = new FilterConfigBean();
+            idParentFilter.setField(AnalysisSearchField.PARENT_ID);
+            idParentFilter.setValue("");
+            config.getFilters().clear();
+            config.getFilters().add(idParentFilter);
         }
-        loader.load(0, 200);
+        config.setLimit(200);
+        config.setOffset(0);
+        loader.load(config);
     }
 
     @Override
@@ -262,8 +272,8 @@ public class AnalysesViewImpl extends Composite implements AnalysesView {
     }
 
     @Override
-    public void filerByParentAnalysisId(String id) {
-        viewMenu.filerByParentAnalysisId(id);
+    public void filterByParentAnalysisId(String id) {
+        viewMenu.filterByParentAnalysisId(id);
 
     }
 
