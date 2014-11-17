@@ -51,7 +51,7 @@ public class SaveAsDialog extends IPlantDialog {
         setHideOnButtonClick(false);
 
         setResizable(true);
-        setSize("480", "425");
+        setSize("640", "480");
         setHeadingText(this.displayStrings.saveAs());
 
         addKeyHandlers(getOkButton());
