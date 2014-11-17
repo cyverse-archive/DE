@@ -33,10 +33,10 @@ public interface Argument extends HasId, HasName, HasLabel, HasDescription {
     void setOrder(Integer order);
 
     @PropertyName("omit_if_blank")
-    boolean isOmitIfBlank();
+    Boolean isOmitIfBlank();
 
     @PropertyName("omit_if_blank")
-    void setOmitIfBlank(boolean omitIfBlank);
+    void setOmitIfBlank(Boolean omitIfBlank);
 
     Splittable getDefaultValue();
 
@@ -54,10 +54,10 @@ public interface Argument extends HasId, HasName, HasLabel, HasDescription {
     void setValue(Splittable value);
 
     @PropertyName("required")
-    boolean getRequired();
+    Boolean getRequired();
 
     @PropertyName("required")
-    void setRequired(boolean required);
+    void setRequired(Boolean required);
 
     List<ArgumentValidator> getValidators();
 

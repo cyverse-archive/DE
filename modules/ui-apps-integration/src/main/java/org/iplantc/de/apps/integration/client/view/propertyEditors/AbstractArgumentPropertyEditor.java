@@ -179,6 +179,8 @@ public abstract class AbstractArgumentPropertyEditor extends Composite implement
     public void edit(Argument argument) {
         clean();
         this.model = argument;
+        updateFileInfoTypeSelection(model);
+        updateDataSourceSelection(model);
         if (quickTip == null) {
             quickTip = new QuickTip(getWidget());
         }
@@ -335,7 +337,14 @@ public abstract class AbstractArgumentPropertyEditor extends Composite implement
     }
 
     private void updateDataSourceSelection(Argument model) {
-        if ((model != null) && (model.getFileParameters() != null) && (model.getFileParameters().getDataSource() != null)) {
+        if(model == null){
+            return;
+        }
+        if(getDataSourceComboBox() == null){
+            return;
+        }
+        boolean fileParametersNotEqualNull = model.getFileParameters() != null;
+        if (fileParametersNotEqualNull && (model.getFileParameters().getDataSource() != null)) {
             List<DataSource> dataSourceList = getDataSourceComboBox().getStore().getAll();
             if ((dataSourceStoreAddHandlerReg != null) && !dataSourceList.isEmpty()) {
                 dataSourceStoreAddHandlerReg.removeHandler();
@@ -352,7 +361,14 @@ public abstract class AbstractArgumentPropertyEditor extends Composite implement
     }
 
     private void updateFileInfoTypeSelection(Argument model) {
-        if ((model != null) && (model.getFileParameters() != null) && (model.getFileParameters().getFileInfoType() != null)) {
+        if(model == null){
+            return;
+        }
+        if(getFileInfoTypeComboBox() == null){
+            return;
+        }
+        boolean fileParamsNotEqualNull = model.getFileParameters() != null;
+        if (fileParamsNotEqualNull && (model.getFileParameters().getFileInfoType() != null)) {
     
             List<FileInfoType> fileInfoTypeList = getFileInfoTypeComboBox().getStore().getAll();
             if ((fileInfoTypeStoreAddHandlerReg != null) && !fileInfoTypeList.isEmpty()) {
