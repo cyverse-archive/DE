@@ -38,39 +38,27 @@ public class StructuredTextViewToolBar extends AbstractToolBar {
         String skipRowsLabelText();
     }
 
-    interface StructuredTextViewTooBarUiBinder extends UiBinder<ToolBar, StructuredTextViewToolBar> {
-    }
+    interface StructuredTextViewTooBarUiBinder extends UiBinder<ToolBar, StructuredTextViewToolBar> { }
 
-    @UiField
-    TextButton addRowBtn;
-    @UiField(provided = true)
-    StructureTextViewerToolbarAppearance appearance;
-    @UiField
-    CheckBox cbxHeaderRows;
-    @UiField
-    TextButton deleteRowBtn;
-    @UiField
-    IntegerField skipRowsCount;
-    @UiField
-    LabelToolItem skipRowsLabel;
+    @UiField TextButton addRowBtn;
+    @UiField(provided = true) StructureTextViewerToolbarAppearance appearance;
+    @UiField CheckBox cbxHeaderRows;
+    @UiField TextButton deleteRowBtn;
+    @UiField IntegerField skipRowsCount;
+    @UiField LabelToolItem skipRowsLabel;
     private static final StructuredTextViewTooBarUiBinder BINDER = GWT.create(StructuredTextViewTooBarUiBinder.class);
-    private final StructuredTextViewer view;
 
-    StructuredTextViewToolBar(final StructuredTextViewer view,
-                              final boolean editing,
+    StructuredTextViewToolBar(final boolean editing,
                               final StructureTextViewerToolbarAppearance appearance) {
         super(editing, appearance);
         this.appearance = appearance;
-        this.view = view;
         initWidget(BINDER.createAndBindUi(this));
         skipRowsCount.setValue(0);
         setEditing(editing);
     }
 
-    public StructuredTextViewToolBar(final StructuredTextViewer view,
-                                     final boolean editing) {
-        this(view,
-             editing,
+    public StructuredTextViewToolBar(final boolean editing) {
+        this(editing,
              GWT.<StructureTextViewerToolbarAppearance>create(StructureTextViewerToolbarAppearance.class));
     }
 
