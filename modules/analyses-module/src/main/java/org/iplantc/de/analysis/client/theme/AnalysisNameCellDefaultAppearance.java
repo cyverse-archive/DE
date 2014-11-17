@@ -2,6 +2,7 @@ package org.iplantc.de.analysis.client.theme;
 
 import org.iplantc.de.analysis.client.views.cells.AnalysisNameCell;
 import org.iplantc.de.client.models.analysis.Analysis;
+import org.iplantc.de.client.models.analysis.BatchStatus;
 import org.iplantc.de.resources.client.messages.I18N;
 
 import com.google.common.base.Strings;
@@ -95,13 +96,22 @@ public class AnalysisNameCellDefaultAppearance implements AnalysisNameCell.Analy
                                : nameStyles.hasResultFolder();
         String tooltip = I18N.DISPLAY.goToOutputFolder() + " of " + model.getName();
         if(model.isBatch()) {
+            BatchStatus bs = model.getBatchStatus();
+            StringBuilder httooltipSB = new StringBuilder("Click to see individual analysis status.");
+            if (bs != null) {
+                httooltipSB.append("Completed:" + bs.getCompleted() + ", ");
+                httooltipSB.append("Running:" + bs.getRunning() + ", ");
+                httooltipSB.append("Failed:" + bs.getFailed() + ", ");
+                httooltipSB.append("Submitted:" + bs.getSubmitted() + ".");
+
+            }
             sb.append(template.htAnalysis(ELEMENT_NAME,
                                           style,
                                           SafeHtmlUtils.fromString(model.getName()),
                                           tooltip,
                                           nameStyles.htList(),
                                           HT_ELEMENT_NAME,
-                                          "Click to see individual analysis status."));
+                                          httooltipSB.toString()));
         } else {
             sb.append(template.analysis(ELEMENT_NAME, style, SafeHtmlUtils.fromString(model.getName()), tooltip));
         }

@@ -81,6 +81,12 @@ public class AnalysisSearchField extends SearchField<Analysis> {
     }
 
     @Override
+    protected void clearFilter() {
+        // by default we need parent id to be empty
+        filterByParentId("");
+    }
+
+    @Override
     protected List<FilterConfig> getConfigFilters(FilterPagingLoadConfig config) {
         List<FilterConfig> filters = super.getConfigFilters(config);
 

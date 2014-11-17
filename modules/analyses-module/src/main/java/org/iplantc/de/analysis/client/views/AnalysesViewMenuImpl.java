@@ -16,7 +16,10 @@ import org.iplantc.de.client.models.analysis.Analysis;
 import org.iplantc.de.resources.client.IplantResources;
 import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 
+import com.google.common.base.Strings;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.KeyUpEvent;
+import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -90,7 +93,6 @@ public class AnalysesViewMenuImpl extends Composite implements AnalysesView.View
                                 final IplantResources resources) {
         this.strings = displayStrings;
         this.icons = resources;
-
         initWidget(uiBinder.createAndBindUi(this));
     }
 
@@ -115,6 +117,19 @@ public class AnalysesViewMenuImpl extends Composite implements AnalysesView.View
         searchField = new AnalysisSearchField(loader);
         searchField.setEmptyText(strings.filterAnalysesList());
         menuBar.add(searchField);
+        searchField.addKeyUpHandler(new KeyUpHandler() {
+
+            @Override
+            public void onKeyUp(KeyUpEvent event) {
+                if (Strings.isNullOrEmpty(searchField.getCurrentValue())) {
+                    // disable show all since an empty search field would fire load all.
+                    showAllTb.disable();
+                } else {
+                    showAllTb.enable();
+                }
+
+            }
+        });
     }
 
     @Override
