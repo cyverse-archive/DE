@@ -125,7 +125,7 @@ public class FolderSelectDialog extends IPlantDialog implements TakesValue<Folde
 
         selectedFolderTextField = new TextField();
         final FieldLabel fl = new FieldLabel(selectedFolderTextField, appearance.selectorFieldLabel());
-        TYPE entityType = infoTypeFilters.isEmpty() ? TYPE.FOLDER : null;
+        TYPE entityType = infoTypeFilters.isEmpty() ? TYPE.FOLDER : TYPE.ANY;
         // Tell the presenter to add the view with the toolbar and details panel hidden, etc.
         presenter = presenterFactory.filtered(true,
                                               true,

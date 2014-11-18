@@ -6,5 +6,7 @@ package org.iplantc.de.client.models.diskResources;
  * @author sriram, jstroot
  */
 public enum TYPE {
-    FILE, FOLDER, ALL;
+    FILE,
+    FOLDER,
+    ANY;
 }

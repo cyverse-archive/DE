@@ -8,7 +8,6 @@ import org.iplantc.de.client.models.viewer.InfoType;
 import org.iplantc.de.client.services.DiskResourceServiceFacade;
 import org.iplantc.de.client.services.MetadataServiceFacade;
 import org.iplantc.de.client.services.SearchServiceFacade;
-import org.iplantc.de.client.services.SearchServiceFacade.SearchType;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
 import org.iplantc.de.diskResource.client.presenters.proxy.FolderContentsRpcProxyImpl.FolderContentsCallback;
 import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
@@ -32,6 +31,7 @@ import static org.mockito.Matchers.anyDouble;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.anyList;
 import static org.mockito.Mockito.*;
 import org.junit.Before;
 import org.junit.Test;
@@ -143,7 +143,7 @@ public class FolderContentsRpcProxyTest {
 
 
         ArgumentCaptor<FolderContentsRpcProxyImpl.SearchResultsCallback> callBackCaptor = ArgumentCaptor.forClass(FolderContentsRpcProxyImpl.SearchResultsCallback.class);
-        verify(searchServiceMock).submitSearchFromQueryTemplate(eq(mockQueryTemplate), eq(loadConfigMock), any(SearchType.class), callBackCaptor.capture());
+        verify(searchServiceMock).submitSearchFromQueryTemplate(eq(mockQueryTemplate), eq(loadConfigMock), any(TYPE.class), callBackCaptor.capture());
 
         assertEquals(loadConfigMock, callBackCaptor.getValue().getLoadConfig());
         assertEquals(pagingAsyncMock, callBackCaptor.getValue().getCallback());
@@ -248,7 +248,7 @@ public class FolderContentsRpcProxyTest {
         folderContentsRpcProxy.load(loadConfigMock, pagingAsyncMock);
 
         ArgumentCaptor<FolderContentsRpcProxyImpl.SearchResultsCallback> callBackCaptor = ArgumentCaptor.forClass(FolderContentsRpcProxyImpl.SearchResultsCallback.class);
-        verify(searchServiceMock).submitSearchFromQueryTemplate(any(DiskResourceQueryTemplate.class), eq(loadConfigMock), any(SearchType.class), callBackCaptor.capture());
+        verify(searchServiceMock).submitSearchFromQueryTemplate(any(DiskResourceQueryTemplate.class), eq(loadConfigMock), any(TYPE.class), callBackCaptor.capture());
         when(displayStringsMock.searchDataResultsHeader(anyString(), anyInt(), anyDouble())).thenReturn(searchText);
 
         // Call method under test
