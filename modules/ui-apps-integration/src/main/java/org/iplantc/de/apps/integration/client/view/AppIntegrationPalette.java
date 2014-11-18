@@ -226,6 +226,8 @@ public class AppIntegrationPalette extends Composite {
         argument.setType(type);
         argument.setName("");
         argument.setVisible(true);
+        argument.setRequired(false);
+        argument.setOmitIfBlank(false);
 
         if (AppTemplateUtils.isSimpleSelectionArgumentType(type)) {
             argument.setSelectionItems(Lists.<SelectionItem> newArrayList());
