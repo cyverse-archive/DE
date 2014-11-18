@@ -1,6 +1,7 @@
 package org.iplantc.de.client.services.impl;
 
 import org.iplantc.de.client.models.DEProperties;
+import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.client.models.diskResources.DiskResourceAutoBeanFactory;
 import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.client.models.diskResources.TYPE;
@@ -36,6 +37,7 @@ public class FileSystemMetadataServiceFacadeImpl implements MetadataServiceFacad
 
     static class FavoritesCallbackConverter extends AsyncCallbackConverter<String, Folder> {
         private final DiskResourceAutoBeanFactory drFactory;
+        final String BAD_INFO_TYPE_KEY = "info-type";
 
         public FavoritesCallbackConverter(final AsyncCallback<Folder> callback,
                                           final DiskResourceAutoBeanFactory drFactory) {
@@ -46,8 +48,26 @@ public class FileSystemMetadataServiceFacadeImpl implements MetadataServiceFacad
         @Override
         protected Folder convertFrom(String object) {
             Splittable splitContents = StringQuoter.split(object);
-            Splittable toDecode = splitContents.get("filesystem");
-            return AutoBeanCodex.decode(drFactory, Folder.class, toDecode).as();
+            Splittable filesystem = splitContents.get("filesystem");
+
+            KLUDGE_CORE_6143(filesystem);
+            return AutoBeanCodex.decode(drFactory, Folder.class, filesystem).as();
+        }
+
+        /**
+         * KLUDGE CORE-6143: Massage "info-type" keys into "infoType" keys
+         * @param fileSystem
+         * @return
+         */
+        void KLUDGE_CORE_6143(Splittable fileSystem){
+            Splittable fileSystemFiles = fileSystem.get("files");
+            for(int i = 0; i < fileSystemFiles.size(); i++){
+                Splittable file = fileSystemFiles.get(i);
+                if(file.isUndefined(BAD_INFO_TYPE_KEY)){
+                    continue;
+                }
+                file.get(BAD_INFO_TYPE_KEY).assign(file, DiskResource.INFO_TYPE_KEY);
+            }
         }
     }
 

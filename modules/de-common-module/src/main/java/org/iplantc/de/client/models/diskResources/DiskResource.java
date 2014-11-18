@@ -10,6 +10,8 @@ import java.util.Date;
 
 public interface DiskResource extends HasId, HasName, HasPath {
 
+    String INFO_TYPE_KEY = "infoType";
+
     String getInfoType();
 
     void setId(String id);
