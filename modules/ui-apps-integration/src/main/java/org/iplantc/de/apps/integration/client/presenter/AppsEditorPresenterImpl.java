@@ -30,6 +30,7 @@ import org.iplantc.de.client.models.apps.integration.Argument;
 import org.iplantc.de.client.models.apps.integration.ArgumentGroup;
 import org.iplantc.de.client.models.apps.integration.ArgumentType;
 import org.iplantc.de.client.models.apps.integration.FileParameters;
+import org.iplantc.de.client.models.tool.Tool;
 import org.iplantc.de.client.services.AppTemplateServices;
 import org.iplantc.de.client.services.UUIDServiceAsync;
 import org.iplantc.de.client.util.AppTemplateUtils;
@@ -218,43 +219,7 @@ public class AppsEditorPresenterImpl implements AppsEditorView.Presenter,
             hide();
         }
     }
-    /**
-     * This callback is used to apply any necessary UUIDs to an AppTemplate's arguments before
-     * updating/saving the AppTemplate.
-     * 
-     * @author jstroot
-     * 
-     */
-    private final class GetUuidThenDoSaveCallback implements AsyncCallback<List<String>> {
-        private final List<Argument> argNeedUuid;
-        private final AsyncCallback<Void> onSaveCallback;
-        private final AppTemplate toBeSaved;
 
-        private GetUuidThenDoSaveCallback(List<Argument> argNeedUuid,
-                                          AppTemplate toBeSaved,
-                                          AsyncCallback<Void> onSaveCallback) {
-            this.argNeedUuid = argNeedUuid;
-            this.toBeSaved = toBeSaved;
-            this.onSaveCallback = onSaveCallback;
-        }
-
-        @Override
-        public void onFailure(Throwable caught) {
-            ErrorHandler.post(caught);
-        }
-
-        @Override
-        public void onSuccess(List<String> result) {
-            if ((result == null) || (result.size() != argNeedUuid.size())) {
-                return;
-            }
-            // Apply UUIDs
-            for (Argument arg : argNeedUuid) {
-                arg.setId(result.remove(0));
-            }
-            doSave(toBeSaved, onSaveCallback);
-        }
-    }
     /**
      * This dialog is used when the user attempts to close the view or click "Save" when the current
      * AppTemplate contains unsaved changes.
@@ -617,7 +582,10 @@ public class AppsEditorPresenterImpl implements AppsEditorView.Presenter,
         dlg.setSize("500", "350");
         dlg.setResizable(false);
         dlg.show();
-        doJsonFormattting(dlg.getBody(),JsonUtil.prettyPrint(split.getPayload(), null, 4), dlg.getBody().getOffsetWidth(),dlg.getBody().getOffsetHeight());
+        doJsonFormattting(dlg.getBody(),
+                          JsonUtil.prettyPrint(split.getPayload(), null, 4),
+                          dlg.getBody().getOffsetWidth(),
+                          dlg.getBody().getOffsetHeight());
         dlg.forceLayout();
     }
 
@@ -657,7 +625,8 @@ public class AppsEditorPresenterImpl implements AppsEditorView.Presenter,
     
         FileParameters dataObject = arg.getFileParameters();
         boolean isOutput = ArgumentType.FileOutput.equals(type)
-                || ArgumentType.FolderOutput.equals(type) || ArgumentType.MultiFileOutput.equals(type);
+                               || ArgumentType.FolderOutput.equals(type)
+                               || ArgumentType.MultiFileOutput.equals(type);
         return !(isOutput && (dataObject != null) && dataObject.isImplicit());
     }
 
@@ -675,36 +644,20 @@ public class AppsEditorPresenterImpl implements AppsEditorView.Presenter,
     private void doOnSaveClicked(AsyncCallback<Void> onSaveCallback) {
         AppTemplate toBeSaved = flushViewAndClean();
         doSave(toBeSaved, onSaveCallback);
-
-        // // Update the AppTemplate's edited and published date.
-        // Date currentTime = new Date();
-        // toBeSaved.setEditedDate(currentTime);
-        // toBeSaved.setPublishedDate(currentTime);
-        //
-        // final List<Argument> argNeedUuid = Lists.newArrayList();
-        // // First loop over AppTemplate and look for UUIDs which need to be applied
-        // for (ArgumentGroup ag : toBeSaved.getArgumentGroups()) {
-        // for (Argument arg : ag.getArguments()) {
-        // if (Strings.isNullOrEmpty(arg.getId())) {
-        // argNeedUuid.add(arg);
-        // }
-        // }
-        // }
-        //
-        // // Check if we have anything which needs a UUID
-        // if (argNeedUuid.size() > 0) {
-        // uuidService.getUUIDs(argNeedUuid.size(), new GetUuidThenDoSaveCallback(argNeedUuid, toBeSaved,
-        // onSaveCallback));
-        // } else {
-        // doSave(toBeSaved, onSaveCallback);
-        // }
     }
 
     private void doSave(AppTemplate toBeSaved, final AsyncCallback<Void> onSaveCallback) {
         // JDS Make a copy so we can check for differences on exit
         lastSave = AppTemplateUtils.removeDateFields((AppTemplateUtils.copyAppTemplate(toBeSaved)));
         
-        DoSaveCallback saveCallback = new DoSaveCallback(onSaveCallback, appTemplate, announcer, eventBus, renameCmd, this, appIntMessages.saveSuccessful(), errorMessages.unableToSave());
+        DoSaveCallback saveCallback = new DoSaveCallback(onSaveCallback,
+                                                         appTemplate,
+                                                         announcer,
+                                                         eventBus,
+                                                         renameCmd,
+                                                         this,
+                                                         appIntMessages.saveSuccessful(),
+                                                         errorMessages.unableToSave());
 
         if (isLabelOnlyEditMode()) {
             atService.updateAppLabels(lastSave, saveCallback);
@@ -761,9 +714,11 @@ public class AppsEditorPresenterImpl implements AppsEditorView.Presenter,
                  * JDS If the given AppTemplate has a valid DeployedComponent, prepend the
                  * DeployedComponent name to the command line preview
                  */
-                if (at.getTools() != null 
- && at.getTools().size() > 0) {
-                    cmdLinePrev = at.getTools().get(0).getName() + " " + cmdLinePrev;
+                final List<Tool> tools = at.getTools();
+                if ((tools != null)
+                        && !tools.isEmpty()
+                        && (tools.get(0) != null)) {
+                    cmdLinePrev = tools.get(0).getName() + " " + cmdLinePrev;
                 }
                 view.setCmdLinePreview(cmdLinePrev);
             }
