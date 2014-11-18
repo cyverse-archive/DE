@@ -1,9 +1,7 @@
 package org.iplantc.de.client.services.impl;
 
-import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.DELETE;
 import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.GET;
 import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.PATCH;
-import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.PUT;
 
 import org.iplantc.de.client.models.analysis.AnalysesAutoBeanFactory;
 import org.iplantc.de.client.models.analysis.AnalysesList;
@@ -18,6 +16,7 @@ import org.iplantc.de.client.services.converters.AsyncCallbackConverter;
 import org.iplantc.de.client.services.converters.StringToVoidCallbackConverter;
 import org.iplantc.de.client.util.AppTemplateUtils;
 import org.iplantc.de.client.util.DiskResourceUtil;
+import org.iplantc.de.shared.services.BaseServiceCallWrapper.Type;
 import org.iplantc.de.shared.services.DiscEnvApiService;
 import org.iplantc.de.shared.services.ServiceCallWrapper;
 
@@ -205,8 +204,8 @@ public class AnalysisServiceFacadeImpl implements AnalysisServiceFacade {
         String address = ANALYSES + "/shredder"; //$NON-NLS-1$ //$NON-NLS-2$
         final Splittable stringIdListSplittable = DiskResourceUtil.createStringIdListSplittable(analysesToBeDeleted);
         final Splittable payload = StringQuoter.createSplittable();
-        stringIdListSplittable.assign(payload, "executions");
-        ServiceCallWrapper wrapper = new ServiceCallWrapper(PUT, address, payload.getPayload());
+        stringIdListSplittable.assign(payload, "analyses");
+        ServiceCallWrapper wrapper = new ServiceCallWrapper(Type.POST, address, payload.getPayload());
 
         deServiceFacade.getServiceData(wrapper, callback);
     }
@@ -223,9 +222,9 @@ public class AnalysisServiceFacadeImpl implements AnalysisServiceFacade {
 
     @Override
     public void stopAnalysis(Analysis analysis, AsyncCallback<String> callback) {
-        String address = ANALYSES + "/stop-analysis/"
-                                 + analysis.getId();
-        ServiceCallWrapper wrapper = new ServiceCallWrapper(DELETE, address);
+        String address = ANALYSES + "/" + analysis.getId() + "/stop";
+
+        ServiceCallWrapper wrapper = new ServiceCallWrapper(Type.POST, address);
 
         deServiceFacade.getServiceData(wrapper, callback);
     }
