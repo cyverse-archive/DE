@@ -1,6 +1,7 @@
 package org.iplantc.de.client.services;
 
 import org.iplantc.de.client.models.diskResources.DiskResource;
+import org.iplantc.de.client.models.diskResources.TYPE;
 import org.iplantc.de.client.models.search.DiskResourceQueryTemplate;
 import org.iplantc.de.client.services.impl.DataSearchQueryBuilder;
 
@@ -83,7 +84,7 @@ public interface SearchServiceFacade {
      * @param callback executed when RPC call completes. The resulting list is in the same order as it is
      *            returned from the endpoint.
      */
-    void submitSearchFromQueryTemplate(final DiskResourceQueryTemplate queryTemplate, final FilterPagingLoadConfigBean loadConfig, final SearchType searchType,
+    void submitSearchFromQueryTemplate(final DiskResourceQueryTemplate queryTemplate, final FilterPagingLoadConfigBean loadConfig, final TYPE searchType,
             final AsyncCallback<List<DiskResource>> callback);
 
 }

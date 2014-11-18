@@ -9,6 +9,7 @@ import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.client.models.diskResources.DiskResourceAutoBeanFactory;
 import org.iplantc.de.client.models.diskResources.File;
 import org.iplantc.de.client.models.diskResources.Folder;
+import org.iplantc.de.client.models.diskResources.TYPE;
 import org.iplantc.de.client.models.search.DiskResourceQueryTemplate;
 import org.iplantc.de.client.models.search.DiskResourceQueryTemplateList;
 import org.iplantc.de.client.models.search.SearchAutoBeanFactory;
@@ -339,7 +340,7 @@ public class SearchServiceFacadeImpl implements SearchServiceFacade {
     }
 
     @Override
-    public void submitSearchFromQueryTemplate(DiskResourceQueryTemplate queryTemplate, FilterPagingLoadConfigBean loadConfig, SearchType searchType, AsyncCallback<List<DiskResource>> callback) {
+    public void submitSearchFromQueryTemplate(DiskResourceQueryTemplate queryTemplate, FilterPagingLoadConfigBean loadConfig, TYPE searchType, AsyncCallback<List<DiskResource>> callback) {
         DataSearchQueryBuilder builder = new DataSearchQueryBuilder(queryTemplate, userInfo);
         String queryParameter = "";
         String tags = "";
@@ -350,7 +351,7 @@ public class SearchServiceFacadeImpl implements SearchServiceFacade {
         }
         String limitParameter = "&limit=" + loadConfig.getLimit();
         String offsetParameter = "&offset=" + loadConfig.getOffset();
-        String typeParameter = "&type=" + ((searchType == null) ? SearchType.ANY.toString() : searchType.toString());
+        String typeParameter = "&type=" + ((searchType == null) ? TYPE.ANY.toString() : searchType.toString());
         if (!Strings.isNullOrEmpty(builder.taggedWith())) {
             tags = "tags=" + URL.encodeQueryString(builder.taggedWith());
         }

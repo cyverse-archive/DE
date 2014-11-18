@@ -1,6 +1,7 @@
 package org.iplantc.de.client.services.stubs;
 
 import org.iplantc.de.client.models.diskResources.DiskResource;
+import org.iplantc.de.client.models.diskResources.TYPE;
 import org.iplantc.de.client.models.search.DiskResourceQueryTemplate;
 import org.iplantc.de.client.services.SearchServiceFacade;
 
@@ -27,7 +28,7 @@ public class SearchServiceFacadeStub implements SearchServiceFacade {
     }
 
     @Override
-    public void submitSearchFromQueryTemplate(DiskResourceQueryTemplate queryTemplate, FilterPagingLoadConfigBean loadConfig, SearchType searchType, AsyncCallback<List<DiskResource>> callback) {
+    public void submitSearchFromQueryTemplate(DiskResourceQueryTemplate queryTemplate, FilterPagingLoadConfigBean loadConfig, TYPE searchType, AsyncCallback<List<DiskResource>> callback) {
 
     }
 

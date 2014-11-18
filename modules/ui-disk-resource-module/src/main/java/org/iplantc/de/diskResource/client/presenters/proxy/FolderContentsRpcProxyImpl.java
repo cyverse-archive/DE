@@ -262,7 +262,7 @@ public class FolderContentsRpcProxyImpl extends RpcProxy<FolderContentsLoadConfi
 
             searchService.submitSearchFromQueryTemplate((DiskResourceQueryTemplate)folder,
                                                         loadConfig,
-                                                        null,
+                                                        entityType,
                                                         new SearchResultsCallback(announcer,
                                                                                   loadConfig,
                                                                                   callback,
