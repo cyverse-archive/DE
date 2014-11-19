@@ -514,13 +514,16 @@ public class AnalysesPresenterImpl implements
 
         final AnalysisParameter value = event.getValue();
 
-        if (!ArgumentType.Input.equals(value.getType()))
+        if (!((ArgumentType.Input.equals(value.getType())
+                || ArgumentType.FileInput.equals(value.getType()) || ArgumentType.FolderInput.equals(value.getType())))) {
             return;
+        }
         String infoType = value.getInfoType();
         if (infoType.equalsIgnoreCase("ReferenceGenome")
                 || infoType.equalsIgnoreCase("ReferenceSequence")
-                || infoType.equalsIgnoreCase("ReferenceAnnotation"))
+                || infoType.equalsIgnoreCase("ReferenceAnnotation")) {
             return;
+        }
 
         final DiskResourceAutoBeanFactory factory = GWT.create(DiskResourceAutoBeanFactory.class);
         final File hasPath = factory.file().as();

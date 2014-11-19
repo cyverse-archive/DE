@@ -58,7 +58,9 @@ public class AnalysisParamValueCellDefaultAppearance implements AnalysisParamVal
             SafeHtmlBuilder builder = new SafeHtmlBuilder();
             displayValue = builder.appendEscaped("").toSafeHtml();
         }
-        if (ArgumentType.Input.equals(value.getType()) && valid_info_type) {
+        if ((ArgumentType.Input.equals(value.getType())
+                || ArgumentType.FileInput.equals(value.getType()) || ArgumentType.FolderInput.equals(value.getType()))
+                && valid_info_type) {
             sb.append(template.cell(resources.styles().inputType(), displayValue));
         } else {
             sb.append(template.cell(resources.styles().other(), displayValue));
