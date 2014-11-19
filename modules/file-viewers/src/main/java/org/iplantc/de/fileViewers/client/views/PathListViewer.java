@@ -22,6 +22,7 @@ import com.google.web.bindery.autobean.shared.impl.StringQuoter;
 
 import static com.sencha.gxt.dnd.core.client.DND.Feedback.INSERT;
 import static com.sencha.gxt.dnd.core.client.DND.Operation.MOVE;
+
 import com.sencha.gxt.core.shared.event.CancellableEvent;
 import com.sencha.gxt.data.shared.event.StoreAddEvent;
 import com.sencha.gxt.data.shared.event.StoreRemoveEvent;
@@ -194,6 +195,8 @@ public class PathListViewer extends AbstractStructuredTextViewer implements Stor
         dropTarget.setAllowSelfAsSource(true);
         dropTarget.setOperation(MOVE);
         dropTarget.setFeedback(INSERT);
+
+        grid.getView().setEmptyText("Drag and drop file(s) and folder(s)...");
 
         PathListViewerGridDropTarget diskResourceDropTarget = new PathListViewerGridDropTarget(grid);
         diskResourceDropTarget.setOperation(MOVE);
