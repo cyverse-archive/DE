@@ -29,6 +29,7 @@ import org.iplantc.de.fileViewers.client.events.DirtyStateChangedEvent;
 import org.iplantc.de.fileViewers.client.views.ExternalVisualizationURLViewerImpl;
 import org.iplantc.de.fileViewers.client.views.SaveAsDialogCancelSelectHandler;
 import org.iplantc.de.fileViewers.client.views.SaveAsDialogOkSelectHandler;
+import org.iplantc.de.fileViewers.client.views.TextViewerImpl;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -259,7 +260,10 @@ public class FileViewerPresenterImpl implements FileViewer.Presenter, FileSavedE
                 // Get Data from result
                 String data = StringQuoter.split(result).get(StructuredText.TEXT_CHUNK_KEY).asString();
                 for(FileViewer view : viewers){
-                    view.setData(data);
+                    // set text data only to TextViewer.
+                    if (view instanceof TextViewerImpl) {
+                        view.setData(data);
+                    }
                 }
                 simpleContainer.unmask();
             }
