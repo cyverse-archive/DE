@@ -62,6 +62,7 @@ public final class ArgGrpListEditorDropTarget extends ContainerDropTarget<Accord
         if (isNewArgGrp) {
             String defaultGroupLabel = appsWidgetsDisplay.groupDefaultLabel(grpCountInt++);
             newArgGrp.setLabel(defaultGroupLabel);
+            newArgGrp.setName(defaultGroupLabel);
         }
 
         if (list != null) {
