@@ -515,7 +515,8 @@ public class AnalysesPresenterImpl implements
         final AnalysisParameter value = event.getValue();
 
         if (!((ArgumentType.Input.equals(value.getType())
-                || ArgumentType.FileInput.equals(value.getType()) || ArgumentType.FolderInput.equals(value.getType())))) {
+                || ArgumentType.FileInput.equals(value.getType())
+                || ArgumentType.FolderInput.equals(value.getType()) || ArgumentType.MultiFileSelector.equals(value.getType())))) {
             return;
         }
         String infoType = value.getInfoType();
