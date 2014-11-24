@@ -117,29 +117,17 @@ public abstract class AbstractArgumentPropertyEditor extends Composite implement
 
     protected final AppTemplateWizardAppearance appearance;
 
-    @Ignore
-    protected ArgumentEditor argumentEditor;
-
+    @Ignore protected ArgumentEditor argumentEditor;
     protected Argument model;
-
     final PrefixedHasTextEditor labelEditor;
-
     private final ContentPanel contentPanel;
-
     private HandlerRegistration dataSourceStoreAddHandlerReg;
-
     private HandlerRegistration defaultValueUpdaterReg;
-
     private HandlerRegistration fileInfoTypeStoreAddHandlerReg;
-
     private boolean labelOnlyEditMode = false;
-
     private final DataSourceProperties props;
-
     private final FileInfoTypeProperties props2;
-
     private final ReferenceGenomeProperties referenceGenomeProperties;
-
     private QuickTip quickTip = null;
 
     public AbstractArgumentPropertyEditor(AppTemplateWizardAppearance appearance) {
@@ -170,8 +158,7 @@ public abstract class AbstractArgumentPropertyEditor extends Composite implement
     }
 
     @Override
-    @UiFactory
-    public ContentPanel createContentPanel() {
+    @UiFactory public ContentPanel createContentPanel() {
         return contentPanel;
     }
 
@@ -216,7 +203,7 @@ public abstract class AbstractArgumentPropertyEditor extends Composite implement
     }
 
     protected ComboBox<DataSource> createDataSourceComboBox(AppMetadataServiceFacade appMetadataService) {
-        final ListStore<DataSource> store = new ListStore<DataSource>(props.id());
+        final ListStore<DataSource> store = new ListStore<>(props.id());
         dataSourceStoreAddHandlerReg = store.addStoreAddHandler(new StoreAddHandler<DataSource>() {
             @Override
             public void onAdd(StoreAddEvent<DataSource> event) {
@@ -233,11 +220,11 @@ public abstract class AbstractArgumentPropertyEditor extends Composite implement
             public void onSuccess(List<DataSource> result) {
                 if (store.getAll().isEmpty()) {
                     store.addAll(result);
-                    store.addSortInfo(new StoreSortInfo<DataSource>(props.type(), SortDir.ASC));
+                    store.addSortInfo(new StoreSortInfo<>(props.type(), SortDir.ASC));
                 }
             }
         });
-        ComboBox<DataSource> comboBox = new ComboBox<DataSource>(store, new LabelProvider<DataSource>() {
+        ComboBox<DataSource> comboBox = new ComboBox<>(store, new LabelProvider<DataSource>() {
     
             @Override
             public String getLabel(DataSource src) {
@@ -255,7 +242,7 @@ public abstract class AbstractArgumentPropertyEditor extends Composite implement
     }
 
     protected ComboBox<FileInfoType> createFileInfoTypeComboBox(AppMetadataServiceFacade appMetadataService) {
-        final ListStore<FileInfoType> store = new ListStore<FileInfoType>(props2.id());
+        final ListStore<FileInfoType> store = new ListStore<>(props2.id());
         fileInfoTypeStoreAddHandlerReg = store.addStoreAddHandler(new StoreAddHandler<FileInfoType>() {
             @Override
             public void onAdd(StoreAddEvent<FileInfoType> event) {
@@ -273,11 +260,11 @@ public abstract class AbstractArgumentPropertyEditor extends Composite implement
             public void onSuccess(List<FileInfoType> result) {
                 if (store.getAll().isEmpty()) {
                     store.addAll(result);
-                    store.addSortInfo(new StoreSortInfo<FileInfoType>(props2.labelValue(), SortDir.ASC));
+                    store.addSortInfo(new StoreSortInfo<>(props2.labelValue(), SortDir.ASC));
                 }
             }
         });
-        ComboBox<FileInfoType> comboBox = new ComboBox<FileInfoType>(store, props2.label());
+        ComboBox<FileInfoType> comboBox = new ComboBox<>(store, props2.label());
         comboBox.setTriggerAction(TriggerAction.ALL);
         // JDS Add valueChangeHandler manually since there are errors if you try to do it with UIBinder
         comboBox.addValueChangeHandler(new ValueChangeHandler<FileInfoType>() {
@@ -290,7 +277,7 @@ public abstract class AbstractArgumentPropertyEditor extends Composite implement
     }
 
     protected ComboBox<ReferenceGenome> createReferenceGenomeStore(AppMetadataServiceFacade appMetadataService) {
-        final ListStore<ReferenceGenome> refGenomeListStore = new ListStore<ReferenceGenome>(referenceGenomeProperties.id());
+        final ListStore<ReferenceGenome> refGenomeListStore = new ListStore<>(referenceGenomeProperties.id());
 
         appMetadataService.getReferenceGenomes(new AsyncCallback<List<ReferenceGenome>>() {
 
@@ -303,36 +290,32 @@ public abstract class AbstractArgumentPropertyEditor extends Composite implement
             public void onSuccess(List<ReferenceGenome> result) {
                 if (refGenomeListStore.getAll().isEmpty()) {
                     refGenomeListStore.addAll(result);
-                    refGenomeListStore.addSortInfo(new Store.StoreSortInfo<ReferenceGenome>(referenceGenomeProperties.nameValue(), SortDir.ASC));
+                    refGenomeListStore.addSortInfo(new Store.StoreSortInfo<>(referenceGenomeProperties.nameValue(), SortDir.ASC));
                 }
             }
         });
 
-        ComboBox<ReferenceGenome> cb = new ComboBox<ReferenceGenome>(refGenomeListStore, referenceGenomeProperties.name());
+        ComboBox<ReferenceGenome> cb = new ComboBox<>(refGenomeListStore, referenceGenomeProperties.name());
         cb.setTriggerAction(ALL);
 
         return cb;
     }
 
-    @Ignore
-    protected ComboBox<DataSource> getDataSourceComboBox() {
+    @Ignore protected ComboBox<DataSource> getDataSourceComboBox() {
         return null;
     }
 
-    @Ignore
-    protected LeafValueEditor<Splittable> getDefaultValueEditor() {
+    @Ignore protected LeafValueEditor<Splittable> getDefaultValueEditor() {
         return null;
     }
 
-    @Ignore
-    protected ComboBox<FileInfoType> getFileInfoTypeComboBox() {
+    @Ignore protected ComboBox<FileInfoType> getFileInfoTypeComboBox() {
         return null;
     }
 
     protected abstract void initLabelOnlyEditMode(boolean isLabelOnlyEditMode);
 
-    @UiHandler("label")
-    void onLabelChanged(ValueChangeEvent<String> event) {
+    @UiHandler("label") void onLabelChanged(ValueChangeEvent<String> event) {
         labelEditor.setValue(event.getValue());
     }
 

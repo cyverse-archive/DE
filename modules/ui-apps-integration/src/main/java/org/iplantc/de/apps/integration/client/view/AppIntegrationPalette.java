@@ -207,6 +207,7 @@ public class AppIntegrationPalette extends Composite {
                 ArgumentGroup ag = argGrpAb.as();
                 ag.setArguments(Lists.<Argument> newArrayList());
                 ag.setLabel("DEFAULT");
+                ag.setName("DEFAULT");
                 return ag;
             }
         });

@@ -17,6 +17,7 @@ import org.iplantc.de.client.models.apps.integration.ArgumentGroup;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.Editor;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
+import com.google.gwt.editor.client.adapters.SimpleEditor;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -39,15 +40,11 @@ public class ArgumentGroupPropertyEditor extends Composite implements Editor<Arg
     interface EditorDriver extends SimpleBeanEditorDriver<ArgumentGroup, ArgumentGroupPropertyEditor> { }
 
     final PrefixedHasTextEditor labelEditor;
-    @UiField
-    ContentPanel cp;
 
-    @Ignore
-    @UiField
-    TextButton deleteButton;
-
-    @UiField
-    TextField label;
+    @UiField ContentPanel cp;
+    @UiField @Ignore TextButton deleteButton;
+    @UiField TextField label;
+    SimpleEditor<String> name;
     private static ArgumentGroupPropertyEditorUiBinder BINDER = GWT.create(ArgumentGroupPropertyEditorUiBinder.class);
     private final EditorDriver editorDriver = GWT.create(EditorDriver.class);
     private String absoluteEditorPath;
@@ -58,6 +55,7 @@ public class ArgumentGroupPropertyEditor extends Composite implements Editor<Arg
     @Inject
     public ArgumentGroupPropertyEditor(AppTemplateWizardAppearance appearance) {
         initWidget(BINDER.createAndBindUi(this));
+        name = SimpleEditor.of();
         labelEditor = new PrefixedHasTextEditor(cp.getHeader(), appearance);
         editorDriver.initialize(this);
         ensureDebugId(Ids.PROPERTY_EDITOR + Ids.GROUP);
@@ -128,6 +126,7 @@ public class ArgumentGroupPropertyEditor extends Composite implements Editor<Arg
     @UiHandler("label")
     void onStringValueChanged(ValueChangeEvent<String> event) {
         labelEditor.setValue(event.getValue());
+        name.setValue(event.getValue());
         editorDriver.flush();
         if ((argumentGroupEditor != null) && (argumentGroupEditor.labelEditor() != null)) {
             argumentGroupEditor.labelEditor().setValue(event.getValue());
