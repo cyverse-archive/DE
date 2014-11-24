@@ -21,7 +21,7 @@ public interface ReferenceGenomeServiceFacade {
      * @param referenceGenome
      * @param callback
      */
-    void editReferenceGenomes(ReferenceGenome referenceGenome, AsyncCallback<List<ReferenceGenome>> callback);
+    void editReferenceGenomes(ReferenceGenome referenceGenome, AsyncCallback<ReferenceGenome> callback);
 
     /**
      * https://github.com/iPlantCollaborativeOpenSource/Conrad#creating-a-new-genome-reference
@@ -29,5 +29,7 @@ public interface ReferenceGenomeServiceFacade {
      * @param referenceGenome
      * @param callback
      */
-    void createReferenceGenomes(ReferenceGenome referenceGenome, AsyncCallback<List<ReferenceGenome>> callback);
+            void
+            createReferenceGenomes(ReferenceGenome referenceGenome,
+                                   AsyncCallback<ReferenceGenome> callback);
 }

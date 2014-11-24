@@ -51,11 +51,11 @@ public class RefGenomePresenterImpl implements RefGenomeView.Presenter {
 
     @Override
     public void addReferenceGenome(final ReferenceGenome referenceGenome) {
-        refGenService.createReferenceGenomes(referenceGenome, new AsyncCallback<List<ReferenceGenome>>() {
+        refGenService.createReferenceGenomes(referenceGenome, new AsyncCallback<ReferenceGenome>() {
 
             @Override
-            public void onSuccess(List<ReferenceGenome> result) {
-                view.addReferenceGenome(result.get(0));
+            public void onSuccess(ReferenceGenome result) {
+                view.addReferenceGenome(result);
                 IplantAnnouncer.getInstance().schedule(new SuccessAnnouncementConfig(I18N.DISPLAY.addRefGenome()));
             }
 
@@ -69,11 +69,11 @@ public class RefGenomePresenterImpl implements RefGenomeView.Presenter {
 
     @Override
     public void editReferenceGenome(ReferenceGenome referenceGenome) {
-        refGenService.editReferenceGenomes(referenceGenome, new AsyncCallback<List<ReferenceGenome>>() {
+        refGenService.editReferenceGenomes(referenceGenome, new AsyncCallback<ReferenceGenome>() {
 
             @Override
-            public void onSuccess(List<ReferenceGenome> result) {
-                view.updateReferenceGenome(result.get(0));
+            public void onSuccess(ReferenceGenome result) {
+                view.updateReferenceGenome(result);
                 IplantAnnouncer.getInstance().schedule(new SuccessAnnouncementConfig(I18N.DISPLAY.updateRefGenome()));
             }
 
