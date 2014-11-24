@@ -64,7 +64,7 @@ public class ShareAnonymousCallback implements AsyncCallback<String> {
         dlg.setHeadingText(I18N.DISPLAY.sendToEnsemblMenuItem());
         dlg.setHideOnButtonClick(true);
         dlg.setResizable(false);
-        dlg.setSize("535", "150");
+        dlg.setSize("535", "175");
 
         FieldLabel fl = new FieldLabel();
         fl.setHTML(I18N.DISPLAY.ensemblUrl());
