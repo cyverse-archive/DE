@@ -224,7 +224,7 @@ public class AnalysisServiceFacadeImpl implements AnalysisServiceFacade {
     public void stopAnalysis(Analysis analysis, AsyncCallback<String> callback) {
         String address = ANALYSES + "/" + analysis.getId() + "/stop";
 
-        ServiceCallWrapper wrapper = new ServiceCallWrapper(Type.POST, address);
+        ServiceCallWrapper wrapper = new ServiceCallWrapper(Type.POST, address, "{}");
 
         deServiceFacade.getServiceData(wrapper, callback);
     }
