@@ -1,9 +1,9 @@
 package org.iplantc.de.apps.widgets.client.view.editors.arguments.converters;
 
+import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.client.models.diskResources.DiskResourceAutoBeanFactory;
-import org.iplantc.de.client.models.diskResources.File;
 
-import com.google.gwt.core.shared.GWT;
+import com.google.gwt.core.client.GWT;
 import com.google.web.bindery.autobean.shared.AutoBean;
 import com.google.web.bindery.autobean.shared.AutoBeanCodex;
 import com.google.web.bindery.autobean.shared.AutoBeanUtils;
@@ -15,11 +15,12 @@ import com.sencha.gxt.data.shared.Converter;
 /**
  * @author jstroot
  */
-public class SplittableToFileConverter implements Converter<Splittable, File> {
+public class SplittableToDiskResourceConverter implements Converter<Splittable, DiskResource> {
 
     private final DiskResourceAutoBeanFactory factory = GWT.create(DiskResourceAutoBeanFactory.class);
+
     @Override
-    public Splittable convertFieldValue(File object) {
+    public Splittable convertFieldValue(DiskResource object) {
         if (object == null)
             return StringQuoter.create("");
 
@@ -27,18 +28,18 @@ public class SplittableToFileConverter implements Converter<Splittable, File> {
     }
 
     @Override
-    public File convertModelValue(Splittable object) {
-        if (object == null) {
+    public DiskResource convertModelValue(Splittable object) {
+        if(object == null){
             return null;
-          }
+        }
         if(object.isString()){
-            AutoBean<File> fileBean = factory.file();
-            File file = fileBean.as();
-            file.setPath(object.asString());
-            return file;
-        } else {
+
+            AutoBean<DiskResource> drBean = factory.diskResource();
+            DiskResource dr = drBean.as();
+            dr.setPath(object.asString());
+            return dr;
+        }else {
             return null;
         }
     }
-
 }

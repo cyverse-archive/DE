@@ -1,5 +1,6 @@
 package org.iplantc.de.analysis.client.presenter;
 
+import static org.iplantc.de.client.models.apps.integration.ArgumentType.*;
 import org.iplantc.de.analysis.client.events.AnalysisAppSelectedEvent;
 import org.iplantc.de.analysis.client.events.AnalysisCommentSelectedEvent;
 import org.iplantc.de.analysis.client.events.AnalysisNameSelectedEvent;
@@ -16,7 +17,6 @@ import org.iplantc.de.client.models.IsMaskable;
 import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.client.models.analysis.Analysis;
 import org.iplantc.de.client.models.analysis.AnalysisParameter;
-import org.iplantc.de.client.models.apps.integration.ArgumentType;
 import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.client.models.diskResources.DiskResourceAutoBeanFactory;
 import org.iplantc.de.client.models.diskResources.File;
@@ -41,7 +41,6 @@ import org.iplantc.de.resources.client.messages.IplantErrorStrings;
 import static com.google.common.base.Preconditions.checkState;
 
 import com.google.common.collect.Lists;
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.event.shared.HasHandlers;
 import com.google.gwt.safehtml.shared.SafeHtml;
@@ -70,20 +69,16 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * 
  * A presenter for analyses view
  * 
- * @author sriram
- * 
+ * @author sriram, jstroot
  */
-@SuppressWarnings("unused")
-public class AnalysesPresenterImpl implements
-                                  AnalysesView.Presenter,
-                                  AnalysisNameSelectedEvent.AnalysisNameSelectedEventHandler,
-                                  AnalysisParamValueSelectedEvent.AnalysisParamValueSelectedEventHandler,
-                                  AnalysisCommentSelectedEvent.AnalysisCommentSelectedEventHandler,
-                                  AnalysisAppSelectedEvent.AnalysisAppSelectedEventHandler,
-                                  HTAnalysisExpandEvent.HTAnalysisExpandEventHandler {
+public class AnalysesPresenterImpl implements AnalysesView.Presenter,
+                                              AnalysisNameSelectedEvent.AnalysisNameSelectedEventHandler,
+                                              AnalysisParamValueSelectedEvent.AnalysisParamValueSelectedEventHandler,
+                                              AnalysisCommentSelectedEvent.AnalysisCommentSelectedEventHandler,
+                                              AnalysisAppSelectedEvent.AnalysisAppSelectedEventHandler,
+                                              HTAnalysisExpandEvent.HTAnalysisExpandEventHandler {
 
     private static class AnalysisCommentsDialog extends IPlantDialog {
 
@@ -132,13 +127,10 @@ public class AnalysesPresenterImpl implements
 
     private class AnalysisParamSelectedStatCallback implements AsyncCallback<FastMap<DiskResource>> {
 
-        private final DiskResourceAutoBeanFactory factory;
         private final AnalysisParameter value;
 
-        public AnalysisParamSelectedStatCallback(AnalysisParameter value,
-                                                 DiskResourceAutoBeanFactory factory) {
+        public AnalysisParamSelectedStatCallback(AnalysisParameter value) {
             this.value = value;
-            this.factory = factory;
         }
 
         @Override
@@ -219,8 +211,7 @@ public class AnalysesPresenterImpl implements
      * @author psarando
      * 
      */
-    private class FirstLoadHandler implements
-                                  LoadHandler<FilterPagingLoadConfig, PagingLoadResult<Analysis>> {
+    private class FirstLoadHandler implements LoadHandler<FilterPagingLoadConfig, PagingLoadResult<Analysis>> {
 
         private final List<Analysis> selectedAnalyses;
 
@@ -292,42 +283,24 @@ public class AnalysesPresenterImpl implements
         }
     }
 
-    private final AnalysisServiceFacade analysisService;
-    private final IplantAnnouncer announcer;
-    private final DiskResourceServiceFacade diskResourceService;
-    private final FileEditorServiceFacade fileEditorService;
-    private final IplantDisplayStrings displayStrings;
-    private final IplantErrorStrings errorStrings;
+    @Inject AnalysisServiceFacade analysisService;
+    @Inject IplantAnnouncer announcer;
+    @Inject DiskResourceServiceFacade diskResourceService;
+    @Inject FileEditorServiceFacade fileEditorService;
+    @Inject IplantDisplayStrings displayStrings;
+    @Inject IplantErrorStrings errorStrings;
+    @Inject AnalysesView view;
+    @Inject DiskResourceAutoBeanFactory drFactory;
+    @Inject UserSessionServiceFacade userSessionService;
+    @Inject UserInfo userInfo;
     private final HasHandlers eventBus;
-    private final AnalysesView view;
-    private final DiskResourceAutoBeanFactory drFactory;
-    private final UserSessionServiceFacade userSessionService;
-    private final UserInfo userInfo;
     private HandlerRegistration handlerFirstLoad;
 
     @Inject
     public AnalysesPresenterImpl(final AnalysesView view,
-                                 final EventBus eventBus,
-                                 final AnalysisServiceFacade analysisService,
-                                 final IplantAnnouncer announcer,
-                                 final IplantDisplayStrings displayStrings,
-                                 final IplantErrorStrings errorStrings,
-                                 final DiskResourceServiceFacade diskResourceService,
-                                 final FileEditorServiceFacade fileEditorService,
-                                 final DiskResourceAutoBeanFactory drFactory,
-                                 final UserSessionServiceFacade userSessionService,
-                                 final UserInfo userInfo) {
+                                 final EventBus eventBus) {
         this.view = view;
         this.eventBus = eventBus;
-        this.analysisService = analysisService;
-        this.announcer = announcer;
-        this.displayStrings = displayStrings;
-        this.errorStrings = errorStrings;
-        this.diskResourceService = diskResourceService;
-        this.fileEditorService = fileEditorService;
-        this.drFactory = drFactory;
-        this.userSessionService = userSessionService;
-        this.userInfo = userInfo;
         this.view.addAnalysisNameSelectedEventHandler(this);
         this.view.addAnalysisParamValueSelectedEventHandler(this);
         this.view.addAnalysisCommentSelectedEventHandler(this);
@@ -514,9 +487,11 @@ public class AnalysesPresenterImpl implements
 
         final AnalysisParameter value = event.getValue();
 
-        if (!((ArgumentType.Input.equals(value.getType())
-                || ArgumentType.FileInput.equals(value.getType())
-                || ArgumentType.FolderInput.equals(value.getType()) || ArgumentType.MultiFileSelector.equals(value.getType())))) {
+        if (!((Input.equals(value.getType())
+                   || FileInput.equals(value.getType())
+                   || FolderInput.equals(value.getType())
+                   || FileFolderInput.equals(value.getType())
+                   || MultiFileSelector.equals(value.getType())))) {
             return;
         }
         String infoType = value.getInfoType();
@@ -526,13 +501,12 @@ public class AnalysesPresenterImpl implements
             return;
         }
 
-        final DiskResourceAutoBeanFactory factory = GWT.create(DiskResourceAutoBeanFactory.class);
-        final File hasPath = factory.file().as();
+        final File hasPath = drFactory.file().as();
         String path = value.getDisplayValue();
         hasPath.setPath(path);
         diskResourceService.getStat(DiskResourceUtil.asStringPathTypeMap(Arrays.asList(hasPath),
                                                                          TYPE.FILE),
-                                    new AnalysisParamSelectedStatCallback(value, factory));
+                                    new AnalysisParamSelectedStatCallback(value));
     }
 
     @Override

@@ -24,6 +24,7 @@ import java.util.List;
 
 /**
  * FIXME Convert methods to non-static methods.
+ * @author jstroot
  */
 public class AppTemplateUtils {
     private static final AppTemplateAutoBeanFactory factory = GWT.create(AppTemplateAutoBeanFactory.class);
@@ -106,7 +107,7 @@ public class AppTemplateUtils {
     /**
      * Determines if the given items are equal by serializing them and comparing their
      * <code>Splittable</code> payloads.
-     * 
+     *
      * @param a
      * @param b
      * @return
@@ -174,12 +175,12 @@ public class AppTemplateUtils {
     }
 
     public static boolean isDiskResourceArgumentType(ArgumentType type) {
-        return type.equals(ArgumentType.FileInput) || type.equals(ArgumentType.FolderInput) || type.equals(ArgumentType.MultiFileSelector);
+        return type.equals(ArgumentType.FileInput) || type.equals(ArgumentType.FolderInput) || type.equals(ArgumentType.MultiFileSelector) || type.equals(ArgumentType.FileFolderInput);
     }
 
     public static boolean isDiskResourceOutputType(ArgumentType type) {
         return type.equals(ArgumentType.FileOutput)
-                || type.equals(ArgumentType.FolderOutput) || type.equals(ArgumentType.MultiFileOutput);
+                   || type.equals(ArgumentType.FolderOutput) || type.equals(ArgumentType.MultiFileOutput) || type.equals(ArgumentType.FileFolderInput);
     }
 
     public static boolean isTextType(ArgumentType type) {

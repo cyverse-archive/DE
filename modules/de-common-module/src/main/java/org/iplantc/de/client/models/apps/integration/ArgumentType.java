@@ -1,10 +1,14 @@
 package org.iplantc.de.client.models.apps.integration;
 
+/**
+ * @author jstroot
+ */
 public enum ArgumentType {
     Input,
     FileInput,
     FolderInput,
     MultiFileSelector,
+    FileFolderInput,
     EnvironmentVariable,
     Flag,
     Info,

@@ -41,11 +41,14 @@ public class FolderSelectDialog extends IPlantDialog implements TakesValue<Folde
     private static final class DiskResourceSelectionChangedHandler implements DiskResourceSelectionChangedEvent.DiskResourceSelectionChangedEventHandler {
         private final DiskResourceView.Presenter presenter;
         private final TakesValue<Folder> dlg;
+        private final List<InfoType> infoTypeFilters;
 
-        public DiskResourceSelectionChangedHandler(DiskResourceView.Presenter presenter,
-                                                   TakesValue<Folder> dlg) {
+        public DiskResourceSelectionChangedHandler(final DiskResourceView.Presenter presenter,
+                                                   final TakesValue<Folder> dlg,
+                                                   final List<InfoType> infoTypeFilters) {
             this.presenter = presenter;
             this.dlg = dlg;
+            this.infoTypeFilters = infoTypeFilters;
         }
 
         @Override
@@ -74,8 +77,13 @@ public class FolderSelectDialog extends IPlantDialog implements TakesValue<Folde
             if(selectedItem == null){
                 return false;
             }
-            InfoType infoType = InfoType.fromTypeString(selectedItem.getInfoType());
-            return InfoType.HT_ANALYSIS_PATH_LIST.equals(infoType);
+            InfoType selectedInfoType = InfoType.fromTypeString(selectedItem.getInfoType());
+            for(InfoType infoType : infoTypeFilters){
+                if(selectedInfoType.equals(infoType)){
+                    return true;
+                }
+            }
+            return false;
         }
     }
 
@@ -138,12 +146,9 @@ public class FolderSelectDialog extends IPlantDialog implements TakesValue<Folde
 
         presenter.addFolderSelectedEventHandler(new FolderSelectionChangedHandler(this));
         presenter.addDiskResourceSelectionChangedEventHandler(new DiskResourceSelectionChangedHandler(presenter,
-                                                                                                      this));
+                                                                                                      this,
+                                                                                                      infoTypeFilters));
         presenter.go(this);
-    }
-
-    public void cleanUp() {
-        presenter.cleanUp();
     }
 
     @Override

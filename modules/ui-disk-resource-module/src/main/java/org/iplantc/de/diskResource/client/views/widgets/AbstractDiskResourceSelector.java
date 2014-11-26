@@ -71,12 +71,8 @@ import java.util.Set;
 
 /**
  * Abstract class for single select DiskResource fields.
- * 
- * TODO JDS All Diskresource selectors (incl multi) need to have a "file_info_type". This will be passed
- * to the DiskResource presenter, which will filter outputs.
- * 
+ * FIXME Implement appearance
  * @author jstroot
- * 
  */
 public abstract class AbstractDiskResourceSelector<R extends DiskResource> extends Component implements
                                                                                             IsField<R>,
@@ -383,13 +379,6 @@ public abstract class AbstractDiskResourceSelector<R extends DiskResource> exten
         doGetStat(value);
     }
 
-    /**
-     * Convenience method which creates a HasId object from a given string id.
-     * 
-     * @param path
-     */
-    public abstract void setValueFromStringId(String path);
-
     @Override
     public void showErrors(List<EditorError> errors) {/* Do Nothing */
     }
@@ -441,10 +430,7 @@ public abstract class AbstractDiskResourceSelector<R extends DiskResource> exten
             return null;
         }
 
-        Set<DiskResource> dropData = null;
-        dropData = Sets.newHashSet((Collection<DiskResource>)dataColl);
-
-        return dropData;
+        return Sets.newHashSet((Collection<DiskResource>)dataColl);
     }
 
     @Override

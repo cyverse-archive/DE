@@ -108,6 +108,9 @@ public class ArgumentEditorFactoryImpl implements AppTemplateForm.ArgumentEditor
             case MultiFileSelector:
                 subEditor = argumentEditorGinFactory.multiFileInputEditor(appearance);
                 break;
+            case FileFolderInput:
+                subEditor = argumentEditorGinFactory.fileFolderInputEditor(appearance);
+                break;
             case EnvironmentVariable:
                 subEditor = new EnvironmentVariableEditor(appearance, appsWidgetsLabels);
                 break;
