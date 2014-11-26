@@ -64,8 +64,6 @@ public class ArgumentEditorFactoryImpl implements AppTemplateForm.ArgumentEditor
     @Override
     public void flush() {
 
-        String tmp = "Temp flush string";
-        com.google.gwt.core.client.GWT.log("tmp");
     }
 
     @Override

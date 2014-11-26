@@ -21,7 +21,7 @@ public enum ArgumentType {
     DoubleSelection, // For selecting from a list of doubles
     TreeSelection,
     Output,
- FileOutput, FolderOutput, MultiFileOutput,
+    FileOutput, FolderOutput, MultiFileOutput,
     ReferenceGenome,
     ReferenceSequence, 
     ReferenceAnnotation,
