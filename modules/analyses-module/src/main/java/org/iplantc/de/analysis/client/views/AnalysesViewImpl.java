@@ -88,7 +88,7 @@ public class AnalysesViewImpl extends Composite implements AnalysesView {
     @UiField BorderLayoutData northData;
     @UiField ToolBar toolBar;
 
-    ViewMenu viewMenu;
+    AnalysesView.ViewMenu viewMenu;
     private static MyUiBinder uiBinder = GWT.create(MyUiBinder.class);
     private final IplantDisplayStrings displayStrings;
     private final AnalysisParamViewColumnModel paramViewColumnModel;
@@ -104,7 +104,7 @@ public class AnalysesViewImpl extends Composite implements AnalysesView {
                             final AnalysisColumnModel cm,
                             final AnalysisParamViewColumnModel paramViewColumnModel,
                             final CheckBoxSelectionModel<Analysis> checkBoxModel,
-                            final ViewMenu menuBar,
+                            final AnalysesView.ViewMenu menuBar,
                             final AnalysisRpcProxy proxy,
                             final IplantDisplayStrings displayStrings) {
         this.listStore = listStore;

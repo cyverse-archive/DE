@@ -289,10 +289,11 @@ public class AnalysesPresenterImpl implements AnalysesView.Presenter,
     @Inject FileEditorServiceFacade fileEditorService;
     @Inject IplantDisplayStrings displayStrings;
     @Inject IplantErrorStrings errorStrings;
-    @Inject AnalysesView view;
     @Inject DiskResourceAutoBeanFactory drFactory;
     @Inject UserSessionServiceFacade userSessionService;
     @Inject UserInfo userInfo;
+
+    private final AnalysesView view;
     private final HasHandlers eventBus;
     private HandlerRegistration handlerFirstLoad;
 
