@@ -45,7 +45,7 @@ public class AnalysisNameCellDefaultAppearance implements AnalysisNameCell.Analy
         @SafeHtmlTemplates.Template("<span name=\"{0}\" title=\" {3}\" class=\"{1}\">{2}</span>")
         SafeHtml analysis(String elementName, String className, SafeHtml analysisName, String tooltip);
 
-        @SafeHtmlTemplates.Template("<span name='{5}' title='{6}' class=\"{4}\" style=\"float:right;\"></span>&nbsp;<span name=\"{0}\" title=\" {3}\" class=\"{1}\">{2}</span> ")
+        @SafeHtmlTemplates.Template("<span name='{5}' title='{6}' class=\"{4}\"></span>&nbsp;<span name=\"{0}\" title=\" {3}\" class=\"{1}\">{2}</span> ")
                 SafeHtml
                 htAnalysis(String elementName,
                                String className,
