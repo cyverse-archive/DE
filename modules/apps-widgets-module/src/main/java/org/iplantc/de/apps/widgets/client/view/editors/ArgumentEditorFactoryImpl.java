@@ -64,8 +64,6 @@ public class ArgumentEditorFactoryImpl implements AppTemplateForm.ArgumentEditor
     @Override
     public void flush() {
 
-        String tmp = "Temp flush string";
-        com.google.gwt.core.client.GWT.log("tmp");
     }
 
     @Override
@@ -107,6 +105,9 @@ public class ArgumentEditorFactoryImpl implements AppTemplateForm.ArgumentEditor
                 break;
             case MultiFileSelector:
                 subEditor = argumentEditorGinFactory.multiFileInputEditor(appearance);
+                break;
+            case FileFolderInput:
+                subEditor = argumentEditorGinFactory.fileFolderInputEditor(appearance);
                 break;
             case EnvironmentVariable:
                 subEditor = new EnvironmentVariableEditor(appearance, appsWidgetsLabels);

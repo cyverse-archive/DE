@@ -83,4 +83,10 @@
     <replace-with class="org.iplantc.de.theme.base.client.diskResource.dialogs.FileSelectDialogDefaultAppearance">
         <when-type-is class="org.iplantc.de.diskResource.client.views.dialogs.FileSelectDialog.FileSelectDialogAppearance"/>
     </replace-with>
+    <replace-with class="org.iplantc.de.theme.base.client.diskResource.dialogs.FileFolderSelectDialogDefaultAppearance">
+        <when-type-is class="org.iplantc.de.diskResource.client.views.dialogs.FileFolderSelectDialog.FileFolderSelectDialogAppearance"/>
+    </replace-with>
+    <replace-with class="org.iplantc.de.theme.base.client.diskResource.FileFolderSelectorFieldDefaultAppearance">
+        <when-type-is class="org.iplantc.de.diskResource.client.views.widgets.FileFolderSelectorField.FileFolderSelectorFieldAppearance"/>
+    </replace-with>
 </module>

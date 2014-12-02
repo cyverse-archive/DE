@@ -9,8 +9,11 @@ import org.iplantc.de.client.models.errorHandling.SimpleServiceError;
 import org.iplantc.de.client.services.DiskResourceServiceFacade;
 import org.iplantc.de.client.util.DiskResourceUtil;
 import org.iplantc.de.commons.client.widgets.IPlantSideErrorHandler;
+import org.iplantc.de.resources.client.constants.IplantValidationConstants;
 import org.iplantc.de.resources.client.messages.I18N;
+import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 import org.iplantc.de.resources.client.messages.IplantErrorStrings;
+import org.iplantc.de.resources.client.uiapps.widgets.AppsWidgetsDisplayMessages;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
@@ -71,50 +74,26 @@ import java.util.Set;
 
 /**
  * Abstract class for single select DiskResource fields.
- * 
- * TODO JDS All Diskresource selectors (incl multi) need to have a "file_info_type". This will be passed
- * to the DiskResource presenter, which will filter outputs.
- * 
+ * FIXME Implement appearance
+ *
  * @author jstroot
- * 
  */
 public abstract class AbstractDiskResourceSelector<R extends DiskResource> extends Component implements
-                                                                                            IsField<R>,
-                                                                                            ValueAwareEditor<R>,
-                                                                                            HasValueChangeHandlers<R>,
-                                                                                            HasEditorErrors<R>,
-                                                                                            DndDragEnterHandler,
-                                                                                            DndDragMoveHandler,
-                                                                                            DndDropHandler,
-                                                                                            HasInvalidHandlers,
-                                                                                            DiskResourceSelector,
-                                                                                            DiskResourceSelector.HasDisableBrowseButtons {
-
-    public interface FileUploadTemplate extends XTemplates {
-        @XTemplate("<div class='{style.wrap}'></div>")
-        SafeHtml render(FileFolderSelectorStyle style);
-    }
-
-    interface FileFolderSelectorStyle extends CssResource {
-        String buttonWrap();
-
-        String errorText();
-
-        String inputWrap();
-
-        String wrap();
-    }
-
-    interface Resources extends ClientBundle {
-        @Source("AbstractDiskResourceSelector.css")
-        FileFolderSelectorStyle style();
-    }
+                                                                                             IsField<R>,
+                                                                                             ValueAwareEditor<R>,
+                                                                                             HasValueChangeHandlers<R>,
+                                                                                             HasEditorErrors<R>,
+                                                                                             DndDragEnterHandler,
+                                                                                             DndDragMoveHandler,
+                                                                                             DndDropHandler,
+                                                                                             HasInvalidHandlers,
+                                                                                             DiskResourceSelector,
+                                                                                             DiskResourceSelector.HasDisableBrowseButtons {
 
     /**
      * XXX CORE-4671, FYI EXTGWT-1788,2518,3037 have been fixed, and this class MAY no longer be necessary
      *
      * @author jstroot
-     * 
      */
     private final class DrSideErrorHandler extends IPlantSideErrorHandler {
         private final Widget button1;
@@ -151,28 +130,54 @@ public abstract class AbstractDiskResourceSelector<R extends DiskResource> exten
         }
     }
 
-    private boolean browseButtonEnabled = true;
+    interface FileFolderSelectorStyle extends CssResource {
+        String buttonWrap();
+
+        String errorText();
+
+        String inputWrap();
+
+        String wrap();
+    }
+
+    public interface FileUploadTemplate extends XTemplates {
+        @XTemplate("<div class='{style.wrap}'></div>")
+        SafeHtml render(FileFolderSelectorStyle style);
+    }
+
+    interface Resources extends ClientBundle {
+        @Source("AbstractDiskResourceSelector.css")
+        FileFolderSelectorStyle style();
+    }
+
+    private final AppsWidgetsDisplayMessages appsMessages;
     private final TextButton button;
-
     private final int buttonOffset = 3;
+    private final IplantDisplayStrings displayStrings;
     private final DiskResourceServiceFacade drServiceFacade;
-    private IPlantSideErrorHandler errorHandler;
+    private final IplantErrorStrings errorStrings;
     private final List<EditorError> errors = Lists.newArrayList();
-    private DefaultEditorError existsEditorError = null;
     private final Element infoText;
-
-    private String infoTextString;
     private final TextField input = new TextField();
-    private R model;
-
-    private DefaultEditorError permissionEditorError = null;
     private final Resources res = GWT.create(Resources.class);
     private final FileUploadTemplate template = GWT.create(FileUploadTemplate.class);
+    private final IplantValidationConstants vConstants;
+    private boolean browseButtonEnabled = true;
+    private IPlantSideErrorHandler errorHandler;
+    private DefaultEditorError existsEditorError = null;
+    private String infoTextString;
+    private R model;
+    private DefaultEditorError permissionEditorError = null;
     // by default do not validate permissions
     private boolean validatePermissions = false;
 
     protected AbstractDiskResourceSelector() {
         res.style().ensureInjected();
+        displayStrings = I18N.DISPLAY;
+        errorStrings = I18N.ERROR;
+        appsMessages = I18N.APPS_MESSAGES;
+        vConstants = I18N.V_CONSTANTS;
+        drServiceFacade = ServicesInjector.INSTANCE.getDiskResourceServiceFacade();
 
         SafeHtmlBuilder builder = new SafeHtmlBuilder();
         builder.append(template.render(res.style()));
@@ -184,7 +189,7 @@ public abstract class AbstractDiskResourceSelector<R extends DiskResource> exten
 
         sinkEvents(Event.ONCHANGE | Event.ONCLICK | Event.MOUSEEVENTS);
 
-        button = new TextButton(I18N.DISPLAY.browse());
+        button = new TextButton(displayStrings.browse());
         button.getElement().addClassName(res.style().buttonWrap());
         getElement().appendChild(button.getElement());
         button.addSelectHandler(new SelectHandler() {
@@ -198,7 +203,6 @@ public abstract class AbstractDiskResourceSelector<R extends DiskResource> exten
             }
         });
 
-        drServiceFacade = ServicesInjector.INSTANCE.getDiskResourceServiceFacade();
 
         infoText = DOM.createDiv();
         infoText.getStyle().setDisplay(Display.NONE);
@@ -223,11 +227,6 @@ public abstract class AbstractDiskResourceSelector<R extends DiskResource> exten
     }
 
     @Override
-    public void finishEditing() {
-        input.finishEditing();
-    }
-
-    @Override
     public HandlerRegistration addValueChangeHandler(ValueChangeHandler<R> handler) {
         return addHandler(handler, ValueChangeEvent.getType());
     }
@@ -246,6 +245,11 @@ public abstract class AbstractDiskResourceSelector<R extends DiskResource> exten
     @Override
     public void disableBrowseButtons() {
         browseButtonEnabled = false;
+    }
+
+    @Override
+    public void finishEditing() {
+        input.finishEditing();
     }
 
     @Override
@@ -314,7 +318,7 @@ public abstract class AbstractDiskResourceSelector<R extends DiskResource> exten
 
     /**
      * set id to browse button
-     * 
+     *
      * @param id id to be set for browse button
      */
     public void setBrowseButtonId(String id) {
@@ -335,7 +339,6 @@ public abstract class AbstractDiskResourceSelector<R extends DiskResource> exten
     }
 
     /**
-     * 
      * @param text the text to be shown in the info text element. Passing in null will hide the element.
      */
     public void setInfoText(String text) {
@@ -383,13 +386,6 @@ public abstract class AbstractDiskResourceSelector<R extends DiskResource> exten
         doGetStat(value);
     }
 
-    /**
-     * Convenience method which creates a HasId object from a given string id.
-     * 
-     * @param path
-     */
-    public abstract void setValueFromStringId(String path);
-
     @Override
     public void showErrors(List<EditorError> errors) {/* Do Nothing */
     }
@@ -436,15 +432,12 @@ public abstract class AbstractDiskResourceSelector<R extends DiskResource> exten
         if (!(data instanceof Collection<?>)) {
             return null;
         }
-        Collection<?> dataColl = (Collection<?>)data;
+        Collection<?> dataColl = (Collection<?>) data;
         if (dataColl.isEmpty() || !(dataColl.iterator().next() instanceof DiskResource)) {
             return null;
         }
 
-        Set<DiskResource> dropData = null;
-        dropData = Sets.newHashSet((Collection<DiskResource>)dataColl);
-
-        return dropData;
+        return Sets.newHashSet((Collection<DiskResource>) dataColl);
     }
 
     @Override
@@ -474,6 +467,28 @@ public abstract class AbstractDiskResourceSelector<R extends DiskResource> exten
 
     abstract protected boolean validateDropStatus(Set<DiskResource> dropData, StatusProxy status);
 
+    private StringBuilder checkForSplChar(String diskResourceId) {
+        char[] restrictedChars = (vConstants.warnedDiskResourceNameChars()).toCharArray(); //$NON-NLS-1$
+        StringBuilder restrictedFound = new StringBuilder();
+
+        for (char restricted : restrictedChars) {
+            for (char next : diskResourceId.toCharArray()) {
+                if (next == restricted && next != '/') {
+                    restrictedFound.append(restricted);
+                }
+            }
+        }
+
+        // validate '/' only on label
+        for (char next : DiskResourceUtil.parseNameFromPath(diskResourceId).toCharArray()) {
+            if (next == '/') {
+                restrictedFound.append('/');
+            }
+        }
+
+        return restrictedFound;
+    }
+
     private void doGetStat(final R value) {
         final String diskResourcePath = value.getPath();
         HasPaths diskResourcePaths = drServiceFacade.getDiskResourceFactory().pathsList().as();
@@ -481,10 +496,9 @@ public abstract class AbstractDiskResourceSelector<R extends DiskResource> exten
 
         permissionEditorError = null;
         existsEditorError = null;
-        final IplantErrorStrings errorStrings = I18N.ERROR;
         FastMap<TYPE> asStringPathTypeMap = DiskResourceUtil.asStringPathTypeMap(Arrays.asList(value), TYPE.FILE);
-        if(Strings.isNullOrEmpty(value.getPath())
-               || asStringPathTypeMap.isEmpty()){
+        if (Strings.isNullOrEmpty(value.getPath())
+                || asStringPathTypeMap.isEmpty()) {
             // Do not make service call if there are no paths
             return;
         }
@@ -521,53 +535,33 @@ public abstract class AbstractDiskResourceSelector<R extends DiskResource> exten
                                             String infoText = getInfoText();
                                             if (diskResource == null) {
                                                 permissionEditorError = new DefaultEditorError(input,
-                                                                                               I18N.DISPLAY.permissionSelectErrorMessage(),
+                                                                                               displayStrings.permissionSelectErrorMessage(),
                                                                                                diskResourcePath);
                                                 errors.add(permissionEditorError);
-                                                input.showErrors(Lists.<EditorError> newArrayList(permissionEditorError));
-                                                setInfoErrorText(I18N.DISPLAY.permissionSelectErrorMessage());
+                                                input.showErrors(Lists.<EditorError>newArrayList(permissionEditorError));
+                                                setInfoErrorText(displayStrings.permissionSelectErrorMessage());
                                             } else if (!(DiskResourceUtil.isWritable(diskResource) || DiskResourceUtil.isOwner(diskResource))) {
                                                 permissionEditorError = new DefaultEditorError(input,
-                                                                                               I18N.DISPLAY.permissionSelectErrorMessage(),
+                                                                                               displayStrings.permissionSelectErrorMessage(),
                                                                                                diskResourcePath);
                                                 errors.add(permissionEditorError);
-                                                input.showErrors(Lists.<EditorError> newArrayList(permissionEditorError));
-                                                setInfoErrorText(I18N.DISPLAY.permissionSelectErrorMessage());
-                                            } else if (!Strings.isNullOrEmpty(infoText)
-                                                    && (!infoText.equalsIgnoreCase(I18N.APPS_MESSAGES.nonDefaultFolderWarning()))) {
-                                                // clear only permission related errors on success
-                                                setInfoErrorText(null);
+                                                input.showErrors(Lists.<EditorError>newArrayList(permissionEditorError));
+                                                setInfoErrorText(displayStrings.permissionSelectErrorMessage());
+                                            } else {
+                                                if (!Strings.isNullOrEmpty(infoText)
+                                                        && (!infoText.equalsIgnoreCase(appsMessages.nonDefaultFolderWarning()))) {
+                                                    // clear only permission related errors on success
+                                                    setInfoErrorText(null);
+                                                }
                                             }
                                         }
 
                                         if (checkForSplChar(input.getValue()).length() > 0) {
-                                            setInfoErrorText(I18N.DISPLAY.analysisFailureWarning(I18N.V_CONSTANTS.warnedDiskResourceNameChars()));
+                                            setInfoErrorText(displayStrings.analysisFailureWarning(vConstants.warnedDiskResourceNameChars()));
                                         }
                                     }
                                 });
 
-    }
-
-    private StringBuilder checkForSplChar(String diskResourceId) {
-        char[] restrictedChars = (I18N.V_CONSTANTS.warnedDiskResourceNameChars()).toCharArray(); //$NON-NLS-1$
-        StringBuilder restrictedFound = new StringBuilder();
-
-        for (char restricted : restrictedChars) {
-            for (char next : diskResourceId.toCharArray()) {
-                if (next == restricted && next != '/') {
-                    restrictedFound.append(restricted);
-                }
-            }
-        }
-
-        // validate '/' only on label
-        for (char next : DiskResourceUtil.parseNameFromPath(diskResourceId).toCharArray()) {
-            if (next == '/') {
-                restrictedFound.append('/');
-            }
-        }
-
-        return restrictedFound;
     }
 
     private void initDragAndDrop() {

@@ -1,10 +1,14 @@
 package org.iplantc.de.client.models.apps.integration;
 
+/**
+ * @author jstroot
+ */
 public enum ArgumentType {
     Input,
     FileInput,
     FolderInput,
     MultiFileSelector,
+    FileFolderInput,
     EnvironmentVariable,
     Flag,
     Info,
@@ -17,7 +21,7 @@ public enum ArgumentType {
     DoubleSelection, // For selecting from a list of doubles
     TreeSelection,
     Output,
- FileOutput, FolderOutput, MultiFileOutput,
+    FileOutput, FolderOutput, MultiFileOutput,
     ReferenceGenome,
     ReferenceSequence, 
     ReferenceAnnotation,

@@ -24,15 +24,12 @@ import java.util.List;
 
 /**
  * FIXME Convert methods to non-static methods.
+ * @author jstroot
  */
 public class AppTemplateUtils {
     private static final AppTemplateAutoBeanFactory factory = GWT.create(AppTemplateAutoBeanFactory.class);
     private static final AppsWidgetsDisplayMessages displayMessages = I18N.APPS_MESSAGES;
 
-    private static final String SELECTION_ITEM_GROUP_ARGUMENTS = "arguments";
-    private static final String SELECTION_ITEM_GROUP_GROUPS = "groups";
-    private static final String SELECTION_ITEM_GROUP_SINGLE_SELECT = "isSingleSelect";
-    private static final String SELECTION_ITEM_GROUP_CASCASE = "selectionCascade";
     private static Argument EMPTY_GROUP_ARG;
 
     public static final String EMPTY_GROUP_ARG_ID = "emptyArgumentGroupInfoArgumentId"; //$NON-NLS-1$
@@ -70,13 +67,6 @@ public class AppTemplateUtils {
                 .convertFrom(payload, false);
     }
 
-    public static Argument copyArgument(Argument value) {
-        AutoBean<Argument> argAb = AutoBeanUtils.getAutoBean(value);
-        Splittable splitCopy = AutoBeanCodex.encode(argAb);
-
-        return AutoBeanCodex.decode(factory, Argument.class, splitCopy.getPayload()).as();
-    }
-
     public static ArgumentGroup copyArgumentGroup(ArgumentGroup value) {
         AutoBean<ArgumentGroup> argGrpAb = AutoBeanUtils.getAutoBean(value);
         Splittable splitCopy = AutoBeanCodex.encode(argGrpAb);
@@ -88,28 +78,9 @@ public class AppTemplateUtils {
         return ret;
     }
 
-    public static Argument reserializeTreeSelectionArguments(Argument arg) {
-        if (!arg.getType().equals(ArgumentType.TreeSelection)) {
-            return arg;
-        }
-        // JDS Sanity check, there should only be one item in the list, and it should have the following
-        // keys. Also, fail fast.
-        Splittable firstItemCheck = AutoBeanCodex.encode(AutoBeanUtils.getAutoBean(arg.getSelectionItems().get(0)));
-        if ((arg.getSelectionItems().size() == 1)
-                && firstItemCheck.getPropertyKeys().contains(SELECTION_ITEM_GROUP_CASCASE)
-                && firstItemCheck.getPropertyKeys().contains(SELECTION_ITEM_GROUP_SINGLE_SELECT)) {
-            arg.setSelectionItems(recastSelectionItems(arg.getSelectionItems()));
-        }
-        return arg;
-    }
-
     /**
      * Determines if the given items are equal by serializing them and comparing their
      * <code>Splittable</code> payloads.
-     * 
-     * @param a
-     * @param b
-     * @return
      */
     public static boolean areEqual(SelectionItem a, SelectionItem b) {
         Splittable aSplit = getSplittable(AutoBeanUtils.getAutoBean(a));
@@ -133,66 +104,34 @@ public class AppTemplateUtils {
         return AutoBeanCodex.encode(autoBean);
     }
 
-    /**
-     * Takes a list of {@link SelectionItem}s and re-serializes them to {@link SelectionItemGroup}s as
-     * necessary.
-     * This is to provide some level of type safety for the operations in Hierarchical List Fields and
-     * Editors (e.g. for instanceof checks).
-     * 
-     * @param selectionItems the list of {@linkplain SelectionItem}s to be operated on.
-     * @return
-     */
-    private static List<SelectionItem> recastSelectionItems(List<SelectionItem> selectionItems) {
-        if ((selectionItems == null) || selectionItems.isEmpty()) {
-            return Collections.<SelectionItem> emptyList();
-        }
-
-        List<SelectionItem> selectionItemsRet = Lists.newArrayList();
-        for (SelectionItem si : selectionItems) {
-            Splittable siSplit = AutoBeanCodex.encode(AutoBeanUtils.getAutoBean(si));
-            // JDS Check keys.
-            List<String> propertyKeys = siSplit.getPropertyKeys();
-            if (propertyKeys.contains(SELECTION_ITEM_GROUP_ARGUMENTS)
-                    || propertyKeys.contains(SELECTION_ITEM_GROUP_GROUPS)
-                    || propertyKeys.contains(SELECTION_ITEM_GROUP_SINGLE_SELECT)
-                    || propertyKeys.contains(SELECTION_ITEM_GROUP_CASCASE)) {
-                // JDS Re-serialize the node as a SelectionItemGroup and add it to the return list.
-                SelectionItemGroup sig = AutoBeanCodex.decode(factory, SelectionItemGroup.class, siSplit).as();
-                selectionItemsRet.add(sig);
-            } else {
-                selectionItemsRet.add(si);
-            }
-        }
-
-        // JDS Sanity check. Not sure what to do if this is actually met.
-        if (selectionItemsRet.size() != selectionItems.size()) {
-            GWT.log("HOUSTON!!! WE HAVE A PROBLEM!!!");
-            return null;
-        }
-        return selectionItemsRet;
-
-    }
-
     public static boolean isDiskResourceArgumentType(ArgumentType type) {
-        return type.equals(ArgumentType.FileInput) || type.equals(ArgumentType.FolderInput) || type.equals(ArgumentType.MultiFileSelector);
+        return type.equals(ArgumentType.FileInput)
+                   || type.equals(ArgumentType.FolderInput)
+                   || type.equals(ArgumentType.MultiFileSelector)
+                   || type.equals(ArgumentType.FileFolderInput);
     }
 
     public static boolean isDiskResourceOutputType(ArgumentType type) {
         return type.equals(ArgumentType.FileOutput)
-                || type.equals(ArgumentType.FolderOutput) || type.equals(ArgumentType.MultiFileOutput);
+                   || type.equals(ArgumentType.FolderOutput)
+                   || type.equals(ArgumentType.MultiFileOutput)
+                   || type.equals(ArgumentType.FileFolderInput);
     }
 
     public static boolean isTextType(ArgumentType type) {
-        return type.equals(ArgumentType.Text) || type.equals(ArgumentType.MultiLineText) || type.equals(ArgumentType.EnvironmentVariable) || type.equals(ArgumentType.Output)
-                || type.equals(ArgumentType.Number) || type.equals(ArgumentType.Integer) || type.equals(ArgumentType.Double);
-    }
-
-    public static boolean isReferenceType(ArgumentType type) {
-        return type.equals(ArgumentType.ReferenceAnnotation) || type.equals(ArgumentType.ReferenceGenome) || type.equals(ArgumentType.ReferenceSequence);
+        return type.equals(ArgumentType.Text)
+                   || type.equals(ArgumentType.MultiLineText)
+                   || type.equals(ArgumentType.EnvironmentVariable)
+                   || type.equals(ArgumentType.Output)
+                   || type.equals(ArgumentType.Number)
+                   || type.equals(ArgumentType.Integer)
+                   || type.equals(ArgumentType.Double);
     }
 
     public static boolean typeSupportsValidators(ArgumentType type) {
-        return type.equals(ArgumentType.Text) || type.equals(ArgumentType.Double) || type.equals(ArgumentType.Integer);
+        return type.equals(ArgumentType.Text)
+                   || type.equals(ArgumentType.Double)
+                   || type.equals(ArgumentType.Integer);
     }
 
     public static List<SelectionItem> getSelectedTreeItems(SelectionItemGroup sig) {
@@ -229,8 +168,7 @@ public class AppTemplateUtils {
 
     public static SelectionItemGroup selectionItemToSelectionItemGroup(SelectionItem selectionItem) {
         Splittable split = AutoBeanCodex.encode(AutoBeanUtils.getAutoBean(selectionItem));
-        SelectionItemGroup ret = AutoBeanCodex.decode(factory, SelectionItemGroup.class, split).as();
-        return ret;
+        return AutoBeanCodex.decode(factory, SelectionItemGroup.class, split).as();
     }
 
     public static AppTemplate removeDateFields(AppTemplate at) {
