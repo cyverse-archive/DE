@@ -99,6 +99,7 @@ public class AnalysesViewMenuImpl extends Composite implements AnalysesView.View
     @Override
     public void filterByAnalysisId(String analysisId, String name) {
         searchField.filterByAnalysisId(analysisId, name);
+        showAllTb.enable();
     }
 
     @Override
@@ -302,8 +303,9 @@ public class AnalysesViewMenuImpl extends Composite implements AnalysesView.View
 
     @UiHandler("showAllTb")
     void onShowAllSelected(SelectEvent event) {
-        presenter.loadAnalyses(true);
+        searchField.clear();
         showAllTb.setEnabled(false);
+        presenter.loadAnalyses(true);
     }
 
 }

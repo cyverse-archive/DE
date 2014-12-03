@@ -84,6 +84,7 @@ public class AnalysisSearchField extends SearchField<Analysis> {
     protected void clearFilter() {
         // by default we need parent id to be empty
         filterByParentId("");
+        setValue("");
     }
 
     @Override
