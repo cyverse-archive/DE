@@ -29,7 +29,6 @@ import com.google.gwt.event.shared.HasHandlers;
 import com.google.gwt.safehtml.client.SafeHtmlTemplates;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
-import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.HTML;
@@ -99,11 +98,11 @@ public class DiskResourceNameCell extends AbstractCell<DiskResource> {
 
         boolean inTrash = value.getPath().startsWith(UserInfo.getInstance().getBaseTrashPath());
 
-        SafeHtml name;
+        String name = null;;
         if (Strings.isNullOrEmpty(value.getName())) {
-            name = SafeHtmlUtils.EMPTY_SAFE_HTML;
+            name = "";
         } else {
-            name = SafeHtmlUtils.fromString(value.getName());
+            name = value.getName();
         }
         String nameStyle = CSS.nameStyle();
         String imgClassName = ""; //$NON-NLS-1$
@@ -133,9 +132,9 @@ public class DiskResourceNameCell extends AbstractCell<DiskResource> {
 
         if(DebugInfo.isDebugIdEnabled() && !Strings.isNullOrEmpty(baseID)) {
             final String debugId = baseID + "." + value.getPath() + DiskResourceModule.Ids.NAME_CELL;
-            sb.append(templates.debugCell(imgClassName, nameStyle, name.asString(), debugId));
+            sb.append(templates.debugCell(imgClassName, nameStyle, name, debugId));
         }else {
-            sb.append(templates.cell(imgClassName, nameStyle, name.asString()));
+            sb.append(templates.cell(imgClassName, nameStyle, name));
         }
     }
 
