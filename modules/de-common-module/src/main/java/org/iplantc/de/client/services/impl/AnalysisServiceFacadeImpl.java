@@ -1,22 +1,19 @@
 package org.iplantc.de.client.services.impl;
 
-import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.GET;
-import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.PATCH;
-
+import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.*;
 import org.iplantc.de.client.models.analysis.AnalysesAutoBeanFactory;
 import org.iplantc.de.client.models.analysis.AnalysesList;
 import org.iplantc.de.client.models.analysis.Analysis;
 import org.iplantc.de.client.models.analysis.AnalysisParameter;
 import org.iplantc.de.client.models.analysis.AnalysisParametersList;
-import org.iplantc.de.client.models.analysis.SelectionValue;
 import org.iplantc.de.client.models.analysis.SimpleValue;
 import org.iplantc.de.client.models.apps.integration.ArgumentType;
+import org.iplantc.de.client.models.apps.integration.SelectionItem;
 import org.iplantc.de.client.services.AnalysisServiceFacade;
 import org.iplantc.de.client.services.converters.AsyncCallbackConverter;
 import org.iplantc.de.client.services.converters.StringToVoidCallbackConverter;
 import org.iplantc.de.client.util.AppTemplateUtils;
 import org.iplantc.de.client.util.DiskResourceUtil;
-import org.iplantc.de.shared.services.BaseServiceCallWrapper.Type;
 import org.iplantc.de.shared.services.DiscEnvApiService;
 import org.iplantc.de.shared.services.ServiceCallWrapper;
 
@@ -47,6 +44,7 @@ import java.util.Set;
 
 /**
  * Provides access to remote services for analyses management operations.
+ * @author jstroot
  */
 public class AnalysisServiceFacadeImpl implements AnalysisServiceFacade {
 
@@ -105,7 +103,7 @@ public class AnalysisServiceFacadeImpl implements AnalysisServiceFacade {
             if ((val != null) && (Strings.isNullOrEmpty(val.getPayload()) || !val.isKeyed())) {
                 return Collections.emptyList();
             }
-            AutoBean<SelectionValue> ab = AutoBeanCodex.decode(factory, SelectionValue.class, val);
+            AutoBean<SelectionItem> ab = AutoBeanCodex.decode(factory, SelectionItem.class, val);
             ap.setDisplayValue(ab.as().getDisplay());
             return Lists.newArrayList(ap);
         }
@@ -205,7 +203,7 @@ public class AnalysisServiceFacadeImpl implements AnalysisServiceFacade {
         final Splittable stringIdListSplittable = DiskResourceUtil.createStringIdListSplittable(analysesToBeDeleted);
         final Splittable payload = StringQuoter.createSplittable();
         stringIdListSplittable.assign(payload, "analyses");
-        ServiceCallWrapper wrapper = new ServiceCallWrapper(Type.POST, address, payload.getPayload());
+        ServiceCallWrapper wrapper = new ServiceCallWrapper(POST, address, payload.getPayload());
 
         deServiceFacade.getServiceData(wrapper, callback);
     }
@@ -224,7 +222,7 @@ public class AnalysisServiceFacadeImpl implements AnalysisServiceFacade {
     public void stopAnalysis(Analysis analysis, AsyncCallback<String> callback) {
         String address = ANALYSES + "/" + analysis.getId() + "/stop";
 
-        ServiceCallWrapper wrapper = new ServiceCallWrapper(Type.POST, address, "{}");
+        ServiceCallWrapper wrapper = new ServiceCallWrapper(POST, address, "{}");
 
         deServiceFacade.getServiceData(wrapper, callback);
     }

@@ -79,7 +79,7 @@ public class SelectionItemTreePropertyEditor extends Composite implements HasVal
     private final class IsDefaultColumnValueProvider implements ValueProvider<SelectionItem, Boolean> {
         @Override
         public String getPath() {
-            return LIST_RULE_ARG_IS_DEFAULT;
+            return SelectionItem.IS_DEFAULT_KEY;
         }
 
         @Override
@@ -161,16 +161,12 @@ public class SelectionItemTreePropertyEditor extends Composite implements HasVal
 
     interface SelectionItemTreePropertyEditorUiBinder extends UiBinder<Widget, SelectionItemTreePropertyEditor> { }
 
-    @UiField
-    SimpleComboBox<CheckCascade> cascadeOptionsCombo;
-    @UiField
-    CheckBox forceSingleSelectCheckBox;
+    @UiField SimpleComboBox<CheckCascade> cascadeOptionsCombo;
+    @UiField CheckBox forceSingleSelectCheckBox;
+    @UiField(provided = true) TreeGrid<SelectionItem> treeGrid;
     SelectionItemTreeStoreEditor selectionItemsEditor;
     TreeStore<SelectionItem> store;
-    @UiField(provided = true)
-    TreeGrid<SelectionItem> treeGrid;
 
-    private static final String LIST_RULE_ARG_IS_DEFAULT = "isDefault"; //$NON-NLS-1$
     private static SelectionItemTreePropertyEditorUiBinder BINDER = GWT.create(SelectionItemTreePropertyEditorUiBinder.class);
     private final AppTemplateAutoBeanFactory factory = GWT.create(AppTemplateAutoBeanFactory.class);
     private final AppsWidgetsPropertyPanelLabels labels = GWT.create(AppsWidgetsPropertyPanelLabels.class);
