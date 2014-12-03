@@ -11,12 +11,14 @@ import com.google.web.bindery.autobean.shared.AutoBean.PropertyName;
 public interface SelectionItem extends HasId, HasName, HasDescription, TakesValue<String>, HasDisplayText {
 
     String TO_BE_REMOVED = "List of sub items to be removed";
+    String ARGUMENT_OPTION_KEY = "name";
+    String IS_DEFAULT_KEY = "isDefault";
 
     void setId(String id);
 
-    @PropertyName("isDefault")
+    @PropertyName(IS_DEFAULT_KEY)
     boolean isDefault();
 
-    @PropertyName("isDefault")
+    @PropertyName(IS_DEFAULT_KEY)
     void setDefault(boolean isDefault);
 }
