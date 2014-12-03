@@ -36,8 +36,6 @@ import java.util.List;
 import java.util.logging.Logger;
 
 /**
- * FIXME JDS Need to extract this into a ui.xml
- *
  * @author sriram, jstroot
  */
 public class StructuredTextViewer extends AbstractStructuredTextViewer {
@@ -113,7 +111,8 @@ public class StructuredTextViewer extends AbstractStructuredTextViewer {
     @Override
     public void setData(Object data) {
         super.setData(data);
-        this.columns = columnModel.getColumnCount();
+        // Need to subtract 1 from the column count to account for the row numberer column
+        this.columns = columnModel.getColumnCount() - 1;
     }
 
     Splittable createNewRow(int columns) {
