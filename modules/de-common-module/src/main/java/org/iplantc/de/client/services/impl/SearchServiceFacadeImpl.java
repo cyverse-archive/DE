@@ -349,7 +349,7 @@ public class SearchServiceFacadeImpl implements SearchServiceFacade {
         if (!Strings.isNullOrEmpty(buildFullQuery)) {
             queryParameter = "q=" + URL.encodeQueryString(buildFullQuery);
         }
-        String limitParameter = "&limit=" + loadConfig.getLimit();
+        String limitParameter = "limit=" + loadConfig.getLimit();
         String offsetParameter = "&offset=" + loadConfig.getOffset();
         String typeParameter = "&type=" + ((searchType == null) ? TYPE.ANY.toString() : searchType.toString());
         if (!Strings.isNullOrEmpty(builder.taggedWith())) {

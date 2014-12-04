@@ -76,8 +76,10 @@ public class DataSearchQueryBuilder {
                  .modifiedWithin()
                  .negatedFile()
                  .sharedWith()
+                 .excludeTrash()
                  .taggedWith();
-        LOG.log(Level.SEVERE, "==>" + toString());
+               
+        LOG.log(Level.INFO, "search query==>" + toString());
         return toString();
     }
 
@@ -361,13 +363,16 @@ public class DataSearchQueryBuilder {
         mustList.assign(bool, "must");
         mustNotList.assign(bool, "must_not");
 
+        return query.getPayload();
+    }
+
+    public DataSearchQueryBuilder excludeTrash() {
         // CORE-5182 exclude Trash items by default
         String baseTrashPath = userinfo.getBaseTrashPath();
         if (!dsf.isIncludeTrashItems() && !Strings.isNullOrEmpty(baseTrashPath)) {
                 appendArrayItem(mustNotList, createWildcard(PATH, baseTrashPath + "/*"));
         }
-
-        return query.getPayload();
+        return this;
     }
 
     private Splittable createWildcard(String field, String content) {
