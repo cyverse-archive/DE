@@ -1,9 +1,25 @@
 package org.iplantc.de.client.services.impl;
 
-import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.*;
+import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.GET;
+import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.PATCH;
+import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.POST;
+import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.PUT;
+
 import org.iplantc.de.client.models.DEProperties;
 import org.iplantc.de.client.models.HasId;
-import org.iplantc.de.client.models.apps.integration.*;
+import org.iplantc.de.client.models.apps.integration.AppTemplate;
+import org.iplantc.de.client.models.apps.integration.AppTemplateAutoBeanFactory;
+import org.iplantc.de.client.models.apps.integration.Argument;
+import org.iplantc.de.client.models.apps.integration.ArgumentGroup;
+import org.iplantc.de.client.models.apps.integration.ArgumentType;
+import org.iplantc.de.client.models.apps.integration.ArgumentValidator;
+import org.iplantc.de.client.models.apps.integration.DataSource;
+import org.iplantc.de.client.models.apps.integration.DataSourceList;
+import org.iplantc.de.client.models.apps.integration.FileInfoType;
+import org.iplantc.de.client.models.apps.integration.FileInfoTypeList;
+import org.iplantc.de.client.models.apps.integration.JobExecution;
+import org.iplantc.de.client.models.apps.integration.SelectionItem;
+import org.iplantc.de.client.models.apps.integration.SelectionItemGroup;
 import org.iplantc.de.client.models.apps.refGenome.ReferenceGenome;
 import org.iplantc.de.client.models.apps.refGenome.ReferenceGenomeList;
 import org.iplantc.de.client.models.tool.Tool;
@@ -172,7 +188,7 @@ public class AppTemplateServicesImpl implements AppTemplateServices, AppMetadata
     }
 
     Splittable appTemplateToSplittable(AppTemplate at) {
-        AutoBean<AppTemplate> autoBean = AutoBeanUtils.getAutoBean(at);
+        AutoBean<AppTemplate> autoBean = AutoBeanUtils.getAutoBean(cleanTempIdFromValidators(at));
         Splittable ret = AutoBeanCodex.encode(autoBean);
         if (at.getTools() != null && at.getTools().size() > 0) {
             Splittable tools = StringQuoter.createIndexed();
@@ -188,6 +204,7 @@ public class AppTemplateServicesImpl implements AppTemplateServices, AppMetadata
         }
         // JDS Convert Argument.getValue() which contain any selected/checked *Selection types to only
         // contain their value.
+        // SS clear temp id for the validators if any
         for (ArgumentGroup ag : at.getArgumentGroups()) {
             for (Argument arg : ag.getArguments()) {
                 if (arg.getType().equals(ArgumentType.TreeSelection)) {
@@ -197,10 +214,28 @@ public class AppTemplateServicesImpl implements AppTemplateServices, AppMetadata
                         arg.setValue(split);
                     }
                 }
+
             }
         }
         LOG.info("template from bean-->" + ret.getPayload() + "");
         return ret;
+    }
+
+    AppTemplate cleanTempIdFromValidators(AppTemplate at) {
+        for (ArgumentGroup ag : at.getArgumentGroups()) {
+            for (Argument arg : ag.getArguments()) {
+                if (arg.getValidators() != null && arg.getValidators().size() > 0) {
+                    for (ArgumentValidator av : arg.getValidators()) {
+                        String id = av.getId();
+                        if (id != null && id.contains("TEMP_ID_")) {
+                            av.setId(null);
+                        }
+                    }
+                }
+            }
+        }
+
+        return at;
     }
 
     Splittable doAssembleLaunchAnalysisPayload(AppTemplate at, JobExecution je) {
