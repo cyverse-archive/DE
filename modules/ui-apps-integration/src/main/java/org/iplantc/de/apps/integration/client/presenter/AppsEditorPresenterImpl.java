@@ -254,6 +254,7 @@ public class AppsEditorPresenterImpl implements AppsEditorView.Presenter,
                 component.hide();
             }
             hide();
+            appTemplate = null;
         }
     }
     /**
@@ -569,6 +570,8 @@ public class AppsEditorPresenterImpl implements AppsEditorView.Presenter,
                 new ContainsErrorsOnHideDialog(messages, errorStrings, component,
                         beforeHideHandlerRegistration).show();
             }
+        } else {
+            appTemplate = null;
         }
     }
 

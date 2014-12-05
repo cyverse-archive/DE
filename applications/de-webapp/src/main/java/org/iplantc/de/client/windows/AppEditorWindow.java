@@ -150,7 +150,7 @@ public class AppEditorWindow extends IplantWindowBase implements AppPublishedEve
         App publishedApp = appPublishedEvent.getPublishedApp();
         AppTemplate currentAt = presenter.getAppTemplate();
         // JDS If the published App is the current edited AppTemplate, refetch app Template
-        if (publishedApp.getId().equalsIgnoreCase(currentAt.getId())) {
+        if (currentAt != null && publishedApp.getId().equalsIgnoreCase(currentAt.getId())) {
 
             if (presenter.isEditorDirty()) {
                 // JDS If the editor has unsaved changes, inform user that they will be thrown away.
