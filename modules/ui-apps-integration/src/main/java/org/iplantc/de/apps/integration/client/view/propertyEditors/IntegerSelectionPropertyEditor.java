@@ -48,33 +48,26 @@ import com.sencha.gxt.widget.core.client.form.TextField;
 
 import java.util.Collection;
 
+/**
+ * @author jstroot
+ */
 public class IntegerSelectionPropertyEditor extends AbstractArgumentPropertyEditor {
 
-    interface EditorDriver extends SimpleBeanEditorDriver<Argument, IntegerSelectionPropertyEditor> {
-    }
+    interface EditorDriver extends SimpleBeanEditorDriver<Argument, IntegerSelectionPropertyEditor> { }
 
-    interface IntegerSelectionPropertyEditorUiBinder extends UiBinder<Widget, IntegerSelectionPropertyEditor> {
-    }
+    interface IntegerSelectionPropertyEditorUiBinder extends UiBinder<Widget, IntegerSelectionPropertyEditor> { }
 
     final ListStoreEditor<SelectionItem> selectionItemsEditor;
-    @UiField(provided = true)
-    AppsWidgetsPropertyPanelLabels appLabels;
-    @UiField(provided = true)
-    ArgumentEditorConverter<SelectionItem> defaultValueEditor;
-    @Ignore
-    @UiField
-    TextButton editSimpleListBtn;
-    @UiField(provided = true)
-    IntegerSelectionLabels integerSelectionLabels;
-    @UiField
-    TextField label;
-    @UiField
-    CheckBoxAdapter omitIfBlank, requiredEditor;
-    @UiField
-    @Path("description")
-    TextField toolTipEditor;
-    @UiField
-    FieldLabel toolTipLabel, selectionItemDefaultValueLabel;
+
+    @UiField(provided = true) AppsWidgetsPropertyPanelLabels appLabels;
+    @UiField(provided = true) ArgumentEditorConverter<SelectionItem> defaultValueEditor;
+    @UiField @Ignore TextButton editSimpleListBtn;
+    @UiField(provided = true) IntegerSelectionLabels integerSelectionLabels;
+    @UiField TextField label;
+    @UiField CheckBoxAdapter omitIfBlank, requiredEditor;
+    @UiField @Path("description") TextField toolTipEditor;
+    @UiField FieldLabel toolTipLabel, selectionItemDefaultValueLabel;
+
     private static IntegerSelectionPropertyEditorUiBinder uiBinder = GWT.create(IntegerSelectionPropertyEditorUiBinder.class);
     private final EditorDriver editorDriver = GWT.create(EditorDriver.class);
 
@@ -90,16 +83,16 @@ public class IntegerSelectionPropertyEditor extends AbstractArgumentPropertyEdit
         this.appLabels = appLabels;
         this.integerSelectionLabels = appLabels;
 
-        selectionItemsEditor = new ListStoreEditor<SelectionItem>(new ListStore<SelectionItem>(new SelectionItemModelKeyProvider()));
+        selectionItemsEditor = new ListStoreEditor<>(new ListStore<>(new SelectionItemModelKeyProvider()));
 
-        selectionItemsComboBox = new ComboBox<SelectionItem>(selectionItemsEditor.getStore(), props.displayLabel());
+        selectionItemsComboBox = new ComboBox<>(selectionItemsEditor.getStore(), props.displayLabel());
         selectionItemsComboBox.setEmptyText(appsWidgetsMessages.emptyListSelectionText());
         selectionItemsComboBox.setTriggerAction(ALL);
         selectionItemsComboBox.setMinChars(1);
         ClearComboBoxSelectionKeyDownHandler handler = new ClearComboBoxSelectionKeyDownHandler(selectionItemsComboBox);
         selectionItemsComboBox.addKeyDownHandler(handler);
 
-        defaultValueEditor = new ArgumentEditorConverter<SelectionItem>(selectionItemsComboBox, new SplittableToSelectionArgConverter());
+        defaultValueEditor = new ArgumentEditorConverter<>(selectionItemsComboBox, new SplittableToSelectionArgConverter());
 
         initWidget(uiBinder.createAndBindUi(this));
 

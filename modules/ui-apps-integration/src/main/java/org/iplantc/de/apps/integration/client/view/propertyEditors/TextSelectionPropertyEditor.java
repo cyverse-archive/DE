@@ -48,37 +48,26 @@ import com.sencha.gxt.widget.core.client.form.TextField;
 
 import java.util.Collection;
 
+/**
+ * @author jstroot
+ */
 public class TextSelectionPropertyEditor extends AbstractArgumentPropertyEditor {
 
-    interface EditorDriver extends SimpleBeanEditorDriver<Argument, TextSelectionPropertyEditor> {
-    }
+    interface EditorDriver extends SimpleBeanEditorDriver<Argument, TextSelectionPropertyEditor> { }
 
-    interface TextSelectionPropertyEditorUiBinder extends UiBinder<Widget, TextSelectionPropertyEditor> {
-    }
+    interface TextSelectionPropertyEditorUiBinder extends UiBinder<Widget, TextSelectionPropertyEditor> { }
 
     final ListStoreEditor<SelectionItem> selectionItemsEditor;
-    @UiField(provided = true)
-    AppsWidgetsPropertyPanelLabels appLabels;
 
-    @UiField(provided = true)
-    ArgumentEditorConverter<SelectionItem> defaultValueEditor;
+    @UiField(provided = true) AppsWidgetsPropertyPanelLabels appLabels;
+    @UiField(provided = true) ArgumentEditorConverter<SelectionItem> defaultValueEditor;
+    @UiField @Ignore TextButton editSimpleListBtn;
+    @UiField TextField label;
+    @UiField CheckBoxAdapter omitIfBlank, requiredEditor;
+    @UiField(provided = true) TextSelectionLabels textSelectionLabels;
+    @UiField @Path("description") TextField toolTipEditor;
+    @UiField FieldLabel toolTipLabel, selectionItemDefaultValueLabel;
 
-    @Ignore
-    @UiField
-    TextButton editSimpleListBtn;
-
-    @UiField
-    TextField label;
-
-    @UiField
-    CheckBoxAdapter omitIfBlank, requiredEditor;
-    @UiField(provided = true)
-    TextSelectionLabels textSelectionLabels;
-    @UiField
-    @Path("description")
-    TextField toolTipEditor;
-    @UiField
-    FieldLabel toolTipLabel, selectionItemDefaultValueLabel;
     private static TextSelectionPropertyEditorUiBinder uiBinder = GWT.create(TextSelectionPropertyEditorUiBinder.class);
     private final EditorDriver editorDriver = GWT.create(EditorDriver.class);
 
@@ -95,16 +84,16 @@ public class TextSelectionPropertyEditor extends AbstractArgumentPropertyEditor 
         this.textSelectionLabels = appLabels;
 
         // Setup selectionItems and defaultValue editors
-        selectionItemsEditor = new ListStoreEditor<SelectionItem>(new ListStore<SelectionItem>(new SelectionItemModelKeyProvider()));
+        selectionItemsEditor = new ListStoreEditor<>(new ListStore<>(new SelectionItemModelKeyProvider()));
 
-        selectionItemsComboBox = new ComboBox<SelectionItem>(selectionItemsEditor.getStore(), props.displayLabel());
+        selectionItemsComboBox = new ComboBox<>(selectionItemsEditor.getStore(), props.displayLabel());
         selectionItemsComboBox.setEmptyText(appsWidgetsMessages.emptyListSelectionText());
         selectionItemsComboBox.setTriggerAction(ALL);
         selectionItemsComboBox.setMinChars(1);
         ClearComboBoxSelectionKeyDownHandler handler = new ClearComboBoxSelectionKeyDownHandler(selectionItemsComboBox);
         selectionItemsComboBox.addKeyDownHandler(handler);
 
-        defaultValueEditor = new ArgumentEditorConverter<SelectionItem>(selectionItemsComboBox, new SplittableToSelectionArgConverter());
+        defaultValueEditor = new ArgumentEditorConverter<>(selectionItemsComboBox, new SplittableToSelectionArgConverter());
 
         initWidget(uiBinder.createAndBindUi(this));
 

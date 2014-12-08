@@ -38,12 +38,8 @@ import java.util.List;
  */
 public class AppWizardComboBox extends AbstractArgumentEditor implements HasValueChangeHandlers<Splittable> {
 
-    private final AppsWidgetsDisplayMessages appsWidgetsMessages = I18N.APPS_MESSAGES;
-
     private final AppTemplateAutoBeanFactory factory = GWT.create(AppTemplateAutoBeanFactory.class);
     private final ListStore<SelectionItem> listStore;
-
-    private final SelectionItemProperties props = GWT.<SelectionItemProperties> create(SelectionItemProperties.class);
 
     private final ComboBox<SelectionItem> selectionItemsEditor;
 
@@ -53,17 +49,19 @@ public class AppWizardComboBox extends AbstractArgumentEditor implements HasValu
     public AppWizardComboBox(AppTemplateWizardAppearance appearance) {
         super(appearance);
         // JDS Initialize list store, and its editor
-        listStore = new ListStore<SelectionItem>(new SelectionItemModelKeyProvider());
-        selectionItemsStoreBinder = new ListStoreEditor<SelectionItem>(listStore);
+        listStore = new ListStore<>(new SelectionItemModelKeyProvider());
+        selectionItemsStoreBinder = new ListStoreEditor<>(listStore);
+        SelectionItemProperties props = GWT.create(SelectionItemProperties.class);
+        AppsWidgetsDisplayMessages appsWidgetsMessages = I18N.APPS_MESSAGES;
 
         // JDS Initialize combobox and its editor converter
-        selectionItemsEditor = new ComboBox<SelectionItem>(listStore, props.displayLabel());
+        selectionItemsEditor = new ComboBox<>(listStore, props.displayLabel());
         selectionItemsEditor.setEmptyText(appsWidgetsMessages.emptyListSelectionText());
         selectionItemsEditor.setMinChars(1);
         selectionItemsEditor.setTriggerAction(TriggerAction.ALL);
         ClearComboBoxSelectionKeyDownHandler handler = new ClearComboBoxSelectionKeyDownHandler(selectionItemsEditor);
         selectionItemsEditor.addKeyDownHandler(handler);
-        valueEditor = new ArgumentEditorConverter<SelectionItem>(selectionItemsEditor, new SplittableToSelectionArgConverter());
+        valueEditor = new ArgumentEditorConverter<>(selectionItemsEditor, new SplittableToSelectionArgConverter());
 
         argumentLabel.setWidget(valueEditor);
     }
@@ -89,7 +87,7 @@ public class AppWizardComboBox extends AbstractArgumentEditor implements HasValu
         Splittable currSiSplittable = AutoBeanCodex.encode(AutoBeanUtils.getAutoBean(currSi));
 
         // JDS Set value, if the current value payload does not equal the model's value payload
-        if ((model.getValue() == null) || ((model.getValue() != null) && !model.getValue().getPayload().equals(currSiSplittable.getPayload()))) {
+        if ((model.getValue() == null) || (!model.getValue().getPayload().equals(currSiSplittable.getPayload()))) {
             currSiSplittable = AutoBeanCodex.encode(AutoBeanUtils.getAutoBean(currSi));
             model.setValue(currSiSplittable);
             model.setDefaultValue(currSiSplittable);
@@ -109,6 +107,7 @@ public class AppWizardComboBox extends AbstractArgumentEditor implements HasValu
     public void setValue(final Argument value) {
         super.setValue(value);
         if (AppTemplateUtils.isSelectionArgumentType(value.getType()) || value.getType().equals(ArgumentType.TreeSelection)) {
+            // FIXME JDS This logic makes it impossible for code being executed!!
             return;
         }
 

@@ -48,33 +48,26 @@ import com.sencha.gxt.widget.core.client.form.TextField;
 
 import java.util.Collection;
 
+/**
+ * @author jstroot
+ */
 public class DecimalSelectionPropertyEditor extends AbstractArgumentPropertyEditor {
 
-    interface DecimalSelectionPropertyEditorUiBinder extends UiBinder<Widget, DecimalSelectionPropertyEditor> {
-    }
+    interface DecimalSelectionPropertyEditorUiBinder extends UiBinder<Widget, DecimalSelectionPropertyEditor> { }
 
-    interface EditorDriver extends SimpleBeanEditorDriver<Argument, DecimalSelectionPropertyEditor> {
-    }
+    interface EditorDriver extends SimpleBeanEditorDriver<Argument, DecimalSelectionPropertyEditor> { }
 
     final ListStoreEditor<SelectionItem> selectionItemsEditor;
-    @UiField(provided = true)
-    AppsWidgetsPropertyPanelLabels appLabels;
-    @UiField(provided = true)
-    ArgumentEditorConverter<SelectionItem> defaultValueEditor;
-    @UiField(provided = true)
-    DoubleSelectionLabels doubleSelectionLabels;
-    @Ignore
-    @UiField
-    TextButton editSimpleListBtn;
-    @UiField
-    TextField label;
-    @UiField
-    CheckBoxAdapter omitIfBlank, requiredEditor;
-    @UiField
-    @Path("description")
-    TextField toolTipEditor;
-    @UiField
-    FieldLabel toolTipLabel, selectionItemDefaultValueLabel;
+
+    @UiField(provided = true) AppsWidgetsPropertyPanelLabels appLabels;
+    @UiField(provided = true) ArgumentEditorConverter<SelectionItem> defaultValueEditor;
+    @UiField(provided = true) DoubleSelectionLabels doubleSelectionLabels;
+    @UiField @Ignore TextButton editSimpleListBtn;
+    @UiField TextField label;
+    @UiField CheckBoxAdapter omitIfBlank, requiredEditor;
+    @UiField @Path("description") TextField toolTipEditor;
+    @UiField FieldLabel toolTipLabel, selectionItemDefaultValueLabel;
+
     private static DecimalSelectionPropertyEditorUiBinder uiBinder = GWT.create(DecimalSelectionPropertyEditorUiBinder.class);
     private final EditorDriver editorDriver = GWT.create(EditorDriver.class);
     private final ComboBox<SelectionItem> selectionItemsComboBox;
@@ -90,15 +83,15 @@ public class DecimalSelectionPropertyEditor extends AbstractArgumentPropertyEdit
         this.doubleSelectionLabels = appLabels;
 
         // Setup selectionItems and defaultValue editors
-        selectionItemsEditor = new ListStoreEditor<SelectionItem>(new ListStore<SelectionItem>(new SelectionItemModelKeyProvider()));
+        selectionItemsEditor = new ListStoreEditor<>(new ListStore<>(new SelectionItemModelKeyProvider()));
 
-        selectionItemsComboBox = new ComboBox<SelectionItem>(selectionItemsEditor.getStore(), props.displayLabel());
+        selectionItemsComboBox = new ComboBox<>(selectionItemsEditor.getStore(), props.displayLabel());
         selectionItemsComboBox.setEmptyText(appsWidgetsMessages.emptyListSelectionText());
         selectionItemsComboBox.setTriggerAction(ALL);
         selectionItemsComboBox.setMinChars(1);
         ClearComboBoxSelectionKeyDownHandler handler = new ClearComboBoxSelectionKeyDownHandler(selectionItemsComboBox);
         selectionItemsComboBox.addKeyDownHandler(handler);
-        defaultValueEditor = new ArgumentEditorConverter<SelectionItem>(selectionItemsComboBox, new SplittableToSelectionArgConverter());
+        defaultValueEditor = new ArgumentEditorConverter<>(selectionItemsComboBox, new SplittableToSelectionArgConverter());
 
         initWidget(uiBinder.createAndBindUi(this));
 

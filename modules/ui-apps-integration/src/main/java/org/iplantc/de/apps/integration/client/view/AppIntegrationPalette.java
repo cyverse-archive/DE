@@ -83,10 +83,10 @@ public class AppIntegrationPalette extends Composite {
     @Inject
     public AppIntegrationPalette(final AppTemplateWizardAppearance appearance, final AppsWidgetsDefaultLabels defaultLabels, final AppTemplateAutoBeanFactory factory,
             final IplantContextualHelpAccessStyle style) {
-    	this.appearance = appearance;
-    	this.defaultLabels = defaultLabels;
-    	this.factory = factory;
-    	this.style = style;
+        this.appearance = appearance;
+        this.defaultLabels = defaultLabels;
+        this.factory = factory;
+        this.style = style;
         style.ensureInjected();
         initWidget(uiBinder.createAndBindUi(this));
 

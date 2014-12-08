@@ -60,12 +60,13 @@ import java.util.List;
 public class SelectionItemPropertyEditor extends Composite implements HasValueChangeHandlers<List<SelectionItem>>, HasEventSuppression {
 
     interface SelectionListEditorUiBinder extends UiBinder<Widget, SelectionItemPropertyEditor> {}
+
     private final class GridSelectionChangedHandler implements SelectionChangedHandler<SelectionItem> {
         @Override
         public void onSelectionChanged(SelectionChangedEvent<SelectionItem> event) {
             if ((event.getSelection() == null) || event.getSelection().isEmpty()) {
                 delete.setEnabled(false);
-            } else if ((event.getSelection() != null) && (event.getSelection().size() >= 1)) {
+            } else if (event.getSelection().size() >= 1) {
                 delete.setEnabled(true);
             }
         }
@@ -139,22 +140,12 @@ public class SelectionItemPropertyEditor extends Composite implements HasValueCh
 
     protected int selectionItemCount = 1;
 
-    @Ignore
-    @UiField
-    TextButton add;
-
-    @UiField
-    NorthSouthContainer con;
-
-    @Ignore
-    @UiField
-    TextButton delete;
-
-    @UiField
-    Grid<SelectionItem> grid;
-
-     @UiField
-    ListStore<SelectionItem> selectionArgStore;
+    @UiField @Ignore TextButton add;
+    @UiField NorthSouthContainer con;
+    @UiField @Ignore TextButton delete;
+    @UiField Grid<SelectionItem> grid;
+    @UiField ListStore<SelectionItem> selectionArgStore;
+    @UiField(provided = true) AppsWidgetsPropertyPanelLabels labels;
 
     // The Editor for Argument.getSelectionItems()
     ListStoreEditor<SelectionItem> selectionItemsEditor;
@@ -162,8 +153,6 @@ public class SelectionItemPropertyEditor extends Composite implements HasValueCh
     private ColumnConfig<SelectionItem, String> displayCol;
 
     private final GridRowEditing<SelectionItem> editing;
-    @UiField(provided = true)
-    AppsWidgetsPropertyPanelLabels labels;
 
     private ColumnConfig<SelectionItem, String> nameCol;
     
@@ -246,21 +235,20 @@ public class SelectionItemPropertyEditor extends Composite implements HasValueCh
     ColumnModel<SelectionItem> createColumnModel() {
         List<ColumnConfig<SelectionItem, ?>> list = Lists.newArrayList();
         SelectionItemProperties props = GWT.create(SelectionItemProperties.class);
-        displayCol = new ColumnConfig<SelectionItem, String>(props.display(), 120, labels.singleSelectDisplayColumnHeader());
-        nameCol = new ColumnConfig<SelectionItem, String>(props.name(), 150, labels.singleSelectNameColumnHeader());
-        valueCol = new ColumnConfig<SelectionItem, String>(props.value(), 150, labels.singleSelectValueColumnHeader());
+        displayCol = new ColumnConfig<>(props.display(), 120, labels.singleSelectDisplayColumnHeader());
+        nameCol = new ColumnConfig<>(props.name(), 150, labels.singleSelectNameColumnHeader());
+        valueCol = new ColumnConfig<>(props.value(), 150, labels.singleSelectValueColumnHeader());
 
         list.add(displayCol);
         list.add(nameCol);
         list.add(valueCol);
-        return new ColumnModel<SelectionItem>(list);
+        return new ColumnModel<>(list);
     }
 
 
     @UiFactory
     ListStore<SelectionItem> createListStore() {
-        ListStore<SelectionItem> listStore = new ListStore<>(new SelectionItemModelKeyProvider());
-         return listStore;
+        return new ListStore<>(new SelectionItemModelKeyProvider());
     }
 
     @UiHandler("add")
@@ -335,13 +323,13 @@ public class SelectionItemPropertyEditor extends Composite implements HasValueCh
                     break;
 
                 case DoubleSelection:
-                    NumberField<Double> dblField = new NumberField<Double>(new NumberPropertyEditor.DoublePropertyEditor());
+                    NumberField<Double> dblField = new NumberField<>(new NumberPropertyEditor.DoublePropertyEditor());
                     dblField.setSelectOnFocus(true);
                     editing.addEditor(displayCol, new StringToDoubleConverter(), dblField);
                     break;
 
                 case IntegerSelection:
-                    NumberField<Integer> intField = new NumberField<Integer>(new NumberPropertyEditor.IntegerPropertyEditor());
+                    NumberField<Integer> intField = new NumberField<>(new NumberPropertyEditor.IntegerPropertyEditor());
                     intField.setSelectOnFocus(true);
                     editing.addEditor(displayCol, new StringToIntegerConverter(), intField);
                     break;

@@ -117,7 +117,7 @@ public abstract class SelectionItemTreeStoreEditor implements ValueAwareEditor<L
         }
         setSuppressEvent(true);
         model = value;
-        SelectionItemGroup newRoot = null;
+        SelectionItemGroup newRoot;
 
         /*
          * JDS This list of SelectionItems is for TreeSelection, and therefore, should only consist of
