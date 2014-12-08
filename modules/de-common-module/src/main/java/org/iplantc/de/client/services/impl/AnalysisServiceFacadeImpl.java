@@ -1,6 +1,9 @@
 package org.iplantc.de.client.services.impl;
 
-import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.*;
+import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.GET;
+import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.PATCH;
+import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.POST;
+
 import org.iplantc.de.client.models.analysis.AnalysesAutoBeanFactory;
 import org.iplantc.de.client.models.analysis.AnalysesList;
 import org.iplantc.de.client.models.analysis.Analysis;
@@ -91,7 +94,8 @@ public class AnalysisServiceFacadeImpl implements AnalysisServiceFacade {
         }
 
         final Set<ArgumentType> INPUT_TYPES = Sets.immutableEnumSet(ArgumentType.Input, ArgumentType.FileInput, ArgumentType.FolderInput,
-                                                                           ArgumentType.MultiFileSelector);
+                                                                    ArgumentType.MultiFileSelector,
+                                                                    ArgumentType.FileFolderInput);
 
         boolean isInputType(ArgumentType type) {
             return INPUT_TYPES.contains(type);

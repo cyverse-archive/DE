@@ -60,7 +60,8 @@ public class AnalysisParamValueCellDefaultAppearance implements AnalysisParamVal
         }
         if ((ArgumentType.Input.equals(value.getType())
                 || ArgumentType.FileInput.equals(value.getType())
-                || ArgumentType.FolderInput.equals(value.getType()) || ArgumentType.MultiFileSelector.equals(value.getType()))
+                || ArgumentType.FolderInput.equals(value.getType())
+                || ArgumentType.MultiFileSelector.equals(value.getType()) || ArgumentType.FileFolderInput.equals(value.getType()))
                 && valid_info_type) {
             sb.append(template.cell(resources.styles().inputType(), displayValue));
         } else {
