@@ -72,7 +72,7 @@ public class AnalysisServiceFacadeImpl implements AnalysisServiceFacade {
                 if (AppTemplateUtils.isTextType(ap.getType()) || ap.getType().equals(ArgumentType.Flag)) {
                     parsedList.addAll(parseStringValue(ap));
                 } else if (isInputType(ap.getType()) || isReferenceGenomeType(ap.getType().toString())) {
-                    if (!isReferenceGenomeType(ap.getInfoType())) {
+                    if (!isReferenceGenomeType(ap.getType().toString())) {
                         parsedList.addAll(parseStringValue(ap));
                     } else {
                         parsedList.addAll(parseSelectionValue(ap));
