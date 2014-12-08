@@ -5,6 +5,7 @@ import org.iplantc.de.client.models.apps.integration.AppTemplateAutoBeanFactory;
 import org.iplantc.de.client.models.apps.integration.Argument;
 import org.iplantc.de.client.models.apps.integration.ArgumentGroup;
 import org.iplantc.de.client.models.apps.integration.ArgumentType;
+import org.iplantc.de.client.models.apps.integration.ArgumentValidator;
 import org.iplantc.de.client.models.apps.integration.SelectionItem;
 import org.iplantc.de.client.models.apps.integration.SelectionItemGroup;
 import org.iplantc.de.client.util.AppTemplateUtils;
@@ -19,6 +20,9 @@ import com.google.web.bindery.autobean.shared.impl.StringQuoter;
 
 import java.util.List;
 
+/**
+ * @author jstroot
+ */
 public class AppTemplateCallbackConverter extends AsyncCallbackConverter<String, AppTemplate> {
 
     private final AppTemplateAutoBeanFactory factory;
@@ -79,10 +83,32 @@ public class AppTemplateCallbackConverter extends AsyncCallbackConverter<String,
             forwardDefaults(atAb);
         }
         setSelectionItemAutoBeanId(atAb.as());
+        setArgumentValidatorUniqueAutoBeanId(atAb.as());
 
         return atAb.as();
     }
 
+    /**
+     * Adds context unique IDs (only unique within the argument) to any incoming ArgumentValidators.
+     */
+    private void setArgumentValidatorUniqueAutoBeanId(AppTemplate at){
+        for(ArgumentGroup ag : at.getArgumentGroups()) {
+            int uniqueIdNum = 0;
+            for (Argument arg : ag.getArguments()) {
+                if(arg.getValidators() == null){
+                    continue;
+                }
+                for(ArgumentValidator av : arg.getValidators()){
+                    AutoBean<ArgumentValidator> autoBean = AutoBeanUtils.getAutoBean(av);
+                    autoBean.setTag(ArgumentValidator.TMP_ID_TAG, "tmpId-" + uniqueIdNum++);
+                }
+            }
+        }
+    }
+
+    /**
+     * Sets a unique AutoBean tag from a given SelectionItem's ID.
+     */
     private void setSelectionItemAutoBeanId(AppTemplate at){
         for(ArgumentGroup ag : at.getArgumentGroups()){
             for(Argument arg : ag.getArguments()){

@@ -326,9 +326,6 @@ class AddValidatorDialog extends IPlantDialog implements ValidHandler, InvalidHa
                 break;
         }
         AutoBean<ArgumentValidator> avAutobean = factory.argumentValidator();
-        // JDS Set a temporary id for this client-created validator. This is for client purposes, and
-        // will be ignored if submitted to the server.
-        avAutobean.as().setId("TEMP_ID_" + System.currentTimeMillis());
         avAutobean.as().setType(validatorTypeCB.getCurrentValue());
         avAutobean.as().setParams(params);
 

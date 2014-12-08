@@ -23,6 +23,8 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
+import com.google.web.bindery.autobean.shared.AutoBean;
+import com.google.web.bindery.autobean.shared.AutoBeanUtils;
 import com.google.web.bindery.autobean.shared.Splittable;
 
 import com.sencha.gxt.core.client.ValueProvider;
@@ -45,12 +47,7 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * 
- * FIXME JDS Need to create simple test to validate Number-based validators with simplified range
- * testing. Should inform user that the newest validator conflicts with existing validators.
- * 
  * @author jstroot
- * 
  */
 public class ArgumentValidatorEditor extends Composite implements ValueAwareEditor<Argument>, HasValueChangeHandlers<List<ArgumentValidator>> {
     
@@ -81,8 +78,9 @@ public class ArgumentValidatorEditor extends Composite implements ValueAwareEdit
         @Override
         public void onSelect(SelectEvent event) {
             // When ok button is selected, fetch the current argument validator and add it to the store.
-            ArgumentValidator arg = dlg.getArgumentValidator();
-            validators.getStore().add(arg);
+            final AutoBean<ArgumentValidator> autoBean = AutoBeanUtils.getAutoBean(dlg.getArgumentValidator());
+            autoBean.setTag(ArgumentValidator.TMP_ID_TAG, "tmpId-" + uniqueIdNum++);
+            validators.getStore().add(autoBean.as());
             ValueChangeEvent.fire(ArgumentValidatorEditor.this, validators.getStore().getAll());
         }
     }
@@ -187,6 +185,7 @@ public class ArgumentValidatorEditor extends Composite implements ValueAwareEdit
     private Argument model;
 
     private final Set<ArgumentValidatorType> supportedValidatorTypes;
+    private int uniqueIdNum = 0;
 
     @Inject
     public ArgumentValidatorEditor(AppTemplateWizardAppearance appearance, ArgumentValidatorMessages avMessages) {
@@ -250,10 +249,10 @@ public class ArgumentValidatorEditor extends Composite implements ValueAwareEdit
             return;
         }
 
+        if (value.getValidators() == null) {
+            value.setValidators(Lists.<ArgumentValidator> newArrayList());
+        }
         if (model == null) {
-            if (value.getValidators() == null) {
-                value.setValidators(Lists.<ArgumentValidator> newArrayList());
-            }
             // Selectively instantiate the sub editor based on argument type
             // Set supported validator types here.
             switch (value.getType()) {
@@ -284,6 +283,7 @@ public class ArgumentValidatorEditor extends Composite implements ValueAwareEdit
         }
 
         this.model = value;
+        uniqueIdNum = model.getValidators().size();
     }
 
     @UiFactory
@@ -299,7 +299,9 @@ public class ArgumentValidatorEditor extends Composite implements ValueAwareEdit
         return new ListStore<ArgumentValidator>(new ModelKeyProvider<ArgumentValidator>() {
             @Override
             public String getKey(ArgumentValidator item) {
-                return item.getId();
+                final AutoBean<ArgumentValidator> autoBean = AutoBeanUtils.getAutoBean(item);
+                final Object tag = autoBean.getTag(ArgumentValidator.TMP_ID_TAG);
+                return tag.toString();
             }
         });
     }

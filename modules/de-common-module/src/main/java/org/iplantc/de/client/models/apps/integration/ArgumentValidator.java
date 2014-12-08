@@ -9,6 +9,7 @@ public interface ArgumentValidator extends HasId {
     String VALIDATOR = "validator";
     String KEY_DOWN_HANDLER_REG = "keyDownHandlerRegistration";
     String KEY_DOWN_HANDLER = "keyDownHandler";
+    String TMP_ID_TAG = "TMP_ID";
 
     void setId(String id);
 
