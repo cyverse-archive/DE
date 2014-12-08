@@ -376,9 +376,17 @@ public class AppsViewImpl extends Composite implements AppsView, IsMaskable, App
             tree.getSelectionModel().deselectAll();
         } else {
             AppCategory ag = treeStore.findModelWithKey(appGroupId);
+
             if (ag != null) {
-                tree.getSelectionModel().select(ag, false);
-                tree.scrollIntoView(ag);
+                if(tree.getSelectionModel().isSelected(ag)){
+                    /* if category is already selected, then manually fire event since selection
+                     * model won't fire selection changed
+                     */
+                    fireEvent(new AppCategorySelectionChangedEvent(Collections.singletonList(ag)));
+                } else {
+                    tree.getSelectionModel().select(ag, false);
+                    tree.scrollIntoView(ag);
+                }
             } else {
                 // Try to find app group by name if ID could not locate the
                 for (AppCategory appGrp : treeStore.getAll()) {
