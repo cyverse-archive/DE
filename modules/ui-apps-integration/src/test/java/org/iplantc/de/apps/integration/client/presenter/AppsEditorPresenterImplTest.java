@@ -1,9 +1,7 @@
 package org.iplantc.de.apps.integration.client.presenter;
 
 import org.iplantc.de.apps.integration.client.events.DeleteArgumentGroupEvent;
-import org.iplantc.de.apps.integration.client.presenter.AppsEditorPresenterImpl.DoSaveCallback;
 import org.iplantc.de.apps.integration.client.view.AppsEditorView;
-import org.iplantc.de.apps.widgets.client.view.AppLaunchView.RenameWindowHeaderCommand;
 import org.iplantc.de.apps.widgets.client.view.editors.style.AppTemplateWizardAppearance;
 import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.models.apps.integration.AppTemplate;
@@ -21,15 +19,8 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwtmockito.GxtMockitoTestRunner;
 
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.verifyZeroInteractions;
-import static org.mockito.Mockito.when;
-
+import static org.mockito.Mockito.*;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -73,35 +64,5 @@ public class AppsEditorPresenterImplTest {
         verifyNoMoreInteractions(mockAnnouncer);
     }
     
-    /**
-     * CORE-5314. Ignore added by SS
-     */
-    @Ignore
-    @Test public void testDoSave() {
-        AppTemplate mockAppTemplate = mock(AppTemplate.class);
-        RenameWindowHeaderCommand mockCmd = mock(RenameWindowHeaderCommand.class);
-        AppsEditorPresenterImpl mockPresenter = mock(AppsEditorPresenterImpl.class);
-        DoSaveCallback doSaveCallback = uut.new DoSaveCallback(mockVoidCallback, mockAppTemplate, mockAnnouncer, mockEventBus, mockCmd, mockPresenter, "Success", "FAIL") {
-
-            @Override
-            AppTemplate copyAppTemplate(AppTemplate templateToCopy) {
-                return mock(AppTemplate.class);
-            }
-        };
-
-        when(mockAppTemplate.getId()).thenReturn(null);
-
-        String payLoad = "{\n" + 
-                "    \"id\": \"\",\n" + 
-                "    \"name\": \"\",\n" + 
-                "    \"description\": \"\",\n" + 
-                "    \"integration_date\": \"\",\n" + 
-                "    \"edited_date\": \"\"\n" + 
- "}";
-
-        doSaveCallback.onSuccess(payLoad);
-        verify(mockAppTemplate).setId(eq("sampleId"));
-    }
-
 
 }
