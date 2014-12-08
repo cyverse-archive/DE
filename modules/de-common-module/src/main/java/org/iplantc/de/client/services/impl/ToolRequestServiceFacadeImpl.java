@@ -30,7 +30,7 @@ public final class ToolRequestServiceFacadeImpl implements ToolRequestServiceFac
     public void requestInstallation(final NewToolRequest request, final AsyncCallback<RequestedToolDetails> callback) {
         final String address = TOOL_REQUESTS;
         final String body = AutoBeanCodex.encode(AutoBeanUtils.getAutoBean(request)).getPayload();
-        final ServiceCallWrapper wrapper = new ServiceCallWrapper(Type.PUT, address, body);
+        final ServiceCallWrapper wrapper = new ServiceCallWrapper(Type.POST, address, body);
         final AsyncCallback<String> convCB = new AsyncCallbackConverter<String, RequestedToolDetails>(callback) {
             @Override
             protected RequestedToolDetails convertFrom(final String json) {
