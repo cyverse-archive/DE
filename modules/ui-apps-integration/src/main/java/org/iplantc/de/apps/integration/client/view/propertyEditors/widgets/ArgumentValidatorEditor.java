@@ -68,10 +68,10 @@ public class ArgumentValidatorEditor extends Composite implements ValueAwareEdit
         }
     }
 
-    private final class AddValidatorOkBtnSelectHndlr implements SelectHandler {
+    private final class AddValidatorOkBtnSelectHandler implements SelectHandler {
         private final AddValidatorDialog dlg;
     
-        public AddValidatorOkBtnSelectHndlr(final AddValidatorDialog dlg) {
+        public AddValidatorOkBtnSelectHandler(final AddValidatorDialog dlg) {
             this.dlg = dlg;
         }
     
@@ -155,35 +155,18 @@ public class ArgumentValidatorEditor extends Composite implements ValueAwareEdit
 
     private static MyUiBinder BINDER = GWT.create(MyUiBinder.class);
 
-    @Ignore
-    @UiField
-    TextButton add;
-
-    @Ignore
-    @UiField
-    TextButton delete;
-
-    @Ignore
-    @UiField
-    TextButton edit;
-
-    @UiField
-    Grid<ArgumentValidator> grid;
-
-    @UiField
-    FieldLabel validatorEditorLabel;
+    @UiField @Ignore TextButton add;
+    @UiField @Ignore TextButton delete;
+    @UiField @Ignore TextButton edit;
+    @UiField Grid<ArgumentValidator> grid;
+    @UiField FieldLabel validatorEditorLabel;
+    @UiField ListStore<ArgumentValidator> validatorStore;
 
     // The Editor for Argument.getValidators()
     ListStoreEditor<ArgumentValidator> validators;
 
-    @UiField
-    ListStore<ArgumentValidator> validatorStore;
-
-
     private final ArgumentValidatorMessages avMessages;
-
     private Argument model;
-
     private final Set<ArgumentValidatorType> supportedValidatorTypes;
     private int uniqueIdNum = 0;
 
@@ -201,7 +184,7 @@ public class ArgumentValidatorEditor extends Composite implements ValueAwareEdit
                 if ((event.getSelection() == null) || event.getSelection().isEmpty()) {
                     edit.setEnabled(false);
                     delete.setEnabled(false);
-                } else if ((event.getSelection() != null) && (event.getSelection().size() == 1)) {
+                } else if ((event.getSelection().size() == 1)) {
                     edit.setEnabled(true);
                     delete.setEnabled(true);
                 } else if ((event.getSelection() != null) && (event.getSelection().size() > 1)) {
@@ -210,7 +193,7 @@ public class ArgumentValidatorEditor extends Composite implements ValueAwareEdit
                 }
             }
         });
-        validators = new ListStoreEditor<ArgumentValidator>(validatorStore);
+        validators = new ListStoreEditor<>(validatorStore);
         supportedValidatorTypes = Sets.newHashSet();
         QuickTip quickTip = new QuickTip(validatorEditorLabel);
         quickTip.getToolTipConfig().setDismissDelay(0);
@@ -288,15 +271,15 @@ public class ArgumentValidatorEditor extends Composite implements ValueAwareEdit
 
     @UiFactory
     ColumnModel<ArgumentValidator> createColumnModel() {
-        ColumnConfig<ArgumentValidator, String> nameCol = new ColumnConfig<ArgumentValidator, String>(new ValidatorValueProvider(), 50, "Validation Rules");
+        ColumnConfig<ArgumentValidator, String> nameCol = new ColumnConfig<>(new ValidatorValueProvider(), 50, "Validation Rules");
         List<ColumnConfig<ArgumentValidator, ?>> list = Lists.newArrayList();
         list.add(nameCol);
-        return new ColumnModel<ArgumentValidator>(list);
+        return new ColumnModel<>(list);
     }
 
     @UiFactory
     ListStore<ArgumentValidator> createListStore() {
-        return new ListStore<ArgumentValidator>(new ModelKeyProvider<ArgumentValidator>() {
+        return new ListStore<>(new ModelKeyProvider<ArgumentValidator>() {
             @Override
             public String getKey(ArgumentValidator item) {
                 final AutoBean<ArgumentValidator> autoBean = AutoBeanUtils.getAutoBean(item);
@@ -309,7 +292,7 @@ public class ArgumentValidatorEditor extends Composite implements ValueAwareEdit
     @UiHandler("add")
     void onAddButtonSelected(@SuppressWarnings("unused") SelectEvent event) {
        final  AddValidatorDialog dlg = new AddValidatorDialog(supportedValidatorTypes, avMessages);
-        dlg.addOkButtonSelectHandler(new AddValidatorOkBtnSelectHndlr(dlg));
+        dlg.addOkButtonSelectHandler(new AddValidatorOkBtnSelectHandler(dlg));
         dlg.addCancelButtonSelectHandler(new SelectHandler() {
             
             @Override
@@ -344,7 +327,7 @@ public class ArgumentValidatorEditor extends Composite implements ValueAwareEdit
         validators.getStore().remove(selectedItem);
         ValueChangeEvent.fire(this, Lists.newArrayList(selectedItem));
         AddValidatorDialog dlg = new AddValidatorDialog(supportedValidatorTypes, avMessages);
-        dlg.addOkButtonSelectHandler(new AddValidatorOkBtnSelectHndlr(dlg));
+        dlg.addOkButtonSelectHandler(new AddValidatorOkBtnSelectHandler(dlg));
         dlg.addCancelButtonSelectHandler(new AddValidatorCancelBtnSelectHandler(selectedItemIndex, selectedItem));
 
         dlg.setArgumentValidator(selectedItem);

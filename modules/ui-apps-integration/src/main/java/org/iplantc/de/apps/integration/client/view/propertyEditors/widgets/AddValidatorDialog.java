@@ -58,8 +58,7 @@ import java.util.Set;
  */
 class AddValidatorDialog extends IPlantDialog implements ValidHandler, InvalidHandler {
 
-    interface AddValidatorDialogUiBinder extends UiBinder<Widget, AddValidatorDialog> {
-    }
+    interface AddValidatorDialogUiBinder extends UiBinder<Widget, AddValidatorDialog> { }
 
     private final class AVTLabelKeyProvider implements LabelProvider<ArgumentValidatorType>,
             ModelKeyProvider<ArgumentValidatorType> {
@@ -70,7 +69,7 @@ class AddValidatorDialog extends IPlantDialog implements ValidHandler, InvalidHa
 
         @Override
         public String getLabel(ArgumentValidatorType item) {
-            String retVal = "";
+            String retVal;
             switch (item) {
                 case Regex:
                     retVal = avMessages.regexLabel();
@@ -152,45 +151,32 @@ class AddValidatorDialog extends IPlantDialog implements ValidHandler, InvalidHa
                     intRangeFieldChanged(eventSource,
                             aboveFieldCurVal + (sign * intField.getIncrement(null).intValue()));
                 }
-
             }
-
         }
     }
 
     private static AddValidatorDialogUiBinder BINDER = GWT.create(AddValidatorDialogUiBinder.class);
 
-    @UiField
-    CardLayoutContainer cardLC;
-    @UiField(provided = true)
-    NumberField<Integer> charLimitField;
-    @UiField(provided = true)
-    SpinnerField<Double> dblAboveField, dblBelowField, dblRangeAboveField, dblRangeBelowField;
+    @UiField CardLayoutContainer cardLC;
+    @UiField(provided = true) NumberField<Integer> charLimitField;
 
     // Double validators
-    @UiField
-    VerticalLayoutContainer dblAboveValidatorCon, dblBelowValidatorCon, dblRangeValidatorCon;
-
-    @UiField(provided = true)
-    SpinnerField<Integer> intAboveField, intBelowField, intRangeAboveField, intRangeBelowField;
+    @UiField(provided = true) SpinnerField<Double> dblAboveField, dblBelowField, dblRangeAboveField, dblRangeBelowField;
+    @UiField VerticalLayoutContainer dblAboveValidatorCon, dblBelowValidatorCon, dblRangeValidatorCon;
 
     // Integer validators
-    @UiField
-    VerticalLayoutContainer intAboveValidatorCon, intBelowValidatorCon, intRangeValidatorCon;
+    @UiField(provided = true) SpinnerField<Integer> intAboveField, intBelowField, intRangeAboveField, intRangeBelowField;
+    @UiField VerticalLayoutContainer intAboveValidatorCon, intBelowValidatorCon, intRangeValidatorCon;
 
-    @UiField
-    TextField regexField;
+    @UiField TextField regexField;
 
     // Text validators
-    @UiField
-    VerticalLayoutContainer regexValidatorCon, characterLimitValidatorCon;
-    @UiField(provided = true)
-    ComboBox<ArgumentValidatorType> validatorTypeCB;
+    @UiField VerticalLayoutContainer regexValidatorCon, characterLimitValidatorCon;
+    @UiField(provided = true) ComboBox<ArgumentValidatorType> validatorTypeCB;
+
     private final ArgumentValidatorMessages avMessages;
 
     private final AppTemplateAutoBeanFactory factory = GWT.create(AppTemplateAutoBeanFactory.class);
-
-    private final ListStore<ArgumentValidatorType> validatorTypes;
 
     // Need a way of associating validator type with a card
     private final Map<ArgumentValidatorType, VerticalLayoutContainer> validatorTypeToCardMap;
@@ -205,12 +191,12 @@ class AddValidatorDialog extends IPlantDialog implements ValidHandler, InvalidHa
         setHeadingText(avMessages.validatorDialogHeading());
         setAutoHide(false);
         setSize("400", "250");
-        // Initalize the ComboBox list store with the given Set<..>
-        validatorTypes = new ListStore<ArgumentValidatorType>(new AVTLabelKeyProvider());
+        // Initialize the ComboBox list store with the given Set<..>
+        ListStore<ArgumentValidatorType> validatorTypes = new ListStore<>(new AVTLabelKeyProvider());
         validatorTypes.addAll(supportedValidatorTypes);
 
-        // Initialize the Combobox
-        validatorTypeCB = new ComboBox<ArgumentValidatorType>(validatorTypes, new AVTLabelKeyProvider());
+        // Initialize the ComboBox
+        validatorTypeCB = new ComboBox<>(validatorTypes, new AVTLabelKeyProvider());
         validatorTypeCB.setForceSelection(true);
         validatorTypeCB.setAllowBlank(false);
         validatorTypeCB.setTriggerAction(TriggerAction.ALL);
@@ -218,7 +204,7 @@ class AddValidatorDialog extends IPlantDialog implements ValidHandler, InvalidHa
         // Construct all "provided" fields.
         constructDoubleSpinnerFields();
         constructIntegerSpinnerFields();
-        charLimitField = new NumberField<Integer>(new NumberPropertyEditor.IntegerPropertyEditor());
+        charLimitField = new NumberField<>(new NumberPropertyEditor.IntegerPropertyEditor());
         charLimitField.setAllowBlank(false);
         charLimitField.addValidHandler(this);
         charLimitField.addInvalidHandler(this);
@@ -275,8 +261,6 @@ class AddValidatorDialog extends IPlantDialog implements ValidHandler, InvalidHa
 
     /**
      * This method should be called when after okButton is clicked.
-     * 
-     * @return
      */
     ArgumentValidator getArgumentValidator() {
         Splittable params = StringQuoter.createIndexed();
@@ -344,10 +328,9 @@ class AddValidatorDialog extends IPlantDialog implements ValidHandler, InvalidHa
     /**
      * This method is used to update this widget to reflect the given argument validator
      * 
-     * @param selectedItem
      */
     void setArgumentValidator(final ArgumentValidator av) {
-        // Set the combobox item and corresponding card.
+        // Set the comboBox item and corresponding card.
         validatorTypeCB.setValue(av.getType(), true);
         cardLC.setActiveWidget(validatorTypeToCardMap.get(av.getType()));
         Splittable params = av.getParams();
@@ -378,17 +361,17 @@ class AddValidatorDialog extends IPlantDialog implements ValidHandler, InvalidHa
                 break;
 
             case DoubleAbove:
-                double dblAbove = Double.valueOf(params.get(0).asNumber());
+                double dblAbove = params.get(0).asNumber();
                 dblAboveField.setValue(dblAbove);
                 break;
             case DoubleBelow:
-                double dblBelow = Double.valueOf(params.get(0).asNumber());
+                double dblBelow = params.get(0).asNumber();
                 dblBelowField.setValue(dblBelow);
                 break;
 
             case DoubleRange:
-                double dblRangeAbove = Double.valueOf(params.get(0).asNumber());
-                double dblRangeBelow = Double.valueOf(params.get(1).asNumber());
+                double dblRangeAbove = params.get(0).asNumber();
+                double dblRangeBelow = params.get(1).asNumber();
                 dblRangeAboveField.setValue(dblRangeAbove);
                 dblRangeBelowField.setValue(dblRangeBelow);
                 break;
@@ -404,10 +387,10 @@ class AddValidatorDialog extends IPlantDialog implements ValidHandler, InvalidHa
     private void constructDoubleSpinnerFields() {
         NumberPropertyEditor.DoublePropertyEditor dblPropEditor = new NumberPropertyEditor.DoublePropertyEditor();
         dblPropEditor.setIncrement(0.1);
-        dblAboveField = new SpinnerField<Double>(dblPropEditor);
-        dblBelowField = new SpinnerField<Double>(dblPropEditor);
-        dblRangeAboveField = new SpinnerField<Double>(dblPropEditor);
-        dblRangeBelowField = new SpinnerField<Double>(dblPropEditor);
+        dblAboveField = new SpinnerField<>(dblPropEditor);
+        dblBelowField = new SpinnerField<>(dblPropEditor);
+        dblRangeAboveField = new SpinnerField<>(dblPropEditor);
+        dblRangeBelowField = new SpinnerField<>(dblPropEditor);
 
         dblAboveField.setMinValue(-Double.MAX_VALUE);
         dblBelowField.setMinValue(-Double.MAX_VALUE);
@@ -451,10 +434,10 @@ class AddValidatorDialog extends IPlantDialog implements ValidHandler, InvalidHa
      */
     private void constructIntegerSpinnerFields() {
         NumberPropertyEditor.IntegerPropertyEditor intPropEditor = new NumberPropertyEditor.IntegerPropertyEditor();
-        intAboveField = new SpinnerField<Integer>(intPropEditor);
-        intBelowField = new SpinnerField<Integer>(intPropEditor);
-        intRangeAboveField = new SpinnerField<Integer>(intPropEditor);
-        intRangeBelowField = new SpinnerField<Integer>(intPropEditor);
+        intAboveField = new SpinnerField<>(intPropEditor);
+        intBelowField = new SpinnerField<>(intPropEditor);
+        intRangeAboveField = new SpinnerField<>(intPropEditor);
+        intRangeBelowField = new SpinnerField<>(intPropEditor);
 
         intAboveField.setMinValue(-Integer.MAX_VALUE);
         intBelowField.setMinValue(-Integer.MAX_VALUE);
