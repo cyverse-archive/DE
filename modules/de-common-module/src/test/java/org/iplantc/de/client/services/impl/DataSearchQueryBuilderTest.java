@@ -27,9 +27,6 @@ import java.util.Set;
 
 /**
  * 
- * TODO Verify that if a field in the given {@link DiskResourceQueryTemplate} is null or empty, that its
- * corresponding term will be ommitted.
- * 
  * @author jstroot
  * 
  */
@@ -45,8 +42,7 @@ public class DataSearchQueryBuilderTest {
         when(userInfoMock.getUsername()).thenReturn("test_user");
     }
 
-    @Test
-    public void testApplyOROperator_case1() {
+    @Test public void testApplyOROperator_case1() {
         DataSearchQueryBuilder uut = new DataSearchQueryBuilder(dsf, userInfoMock);
         String searchText = "one two three";
         final String applyOROperator = uut.applyOROperator(searchText);
@@ -55,8 +51,7 @@ public class DataSearchQueryBuilderTest {
         assertEquals("Verify OR operator applied", expected, applyOROperator);
     }
 
-    @Test
-    public void testApplyOROperator_case2() {
+    @Test public void testApplyOROperator_case2() {
         DataSearchQueryBuilder uut = new DataSearchQueryBuilder(dsf, userInfoMock);
         String searchText = "one ";
         final String applyOROperator = uut.applyOROperator(searchText);
@@ -116,13 +111,12 @@ public class DataSearchQueryBuilderTest {
                 .asDate());
         final String expectedCreatedWithin = setCreatedWithin(new Date(), new DateWrapper().addMonths(1)
                 .asDate());
-        final String expectedNegatedFile = setNegatedFileQuery(
-"term1*" + " " + "term2*" + " "
-                + "term3*");
+        final String expectedNegatedFile = setNegatedFileQuery("term1*" + " " + "term2*" + " "
+                                                                   + "term3*");
         final String expectedMetadataAttributeQuery = setMetadataAttributeQuery(
                 "some* metadata* query*");
         final String expectedMetadataValueQuery = setMetadataValueQuery("some* metadata* query*");
-		final String expectedOwnedBy = setOwnedBy("someuser");
+        final String expectedOwnedBy = setOwnedBy("someuser");
         final String expectedFileSizeRange = setFileSizeRange(0.1, 100.78763);
         final String expectedSharedWith = setSharedWith("some users who were shared with");
 
@@ -153,16 +147,14 @@ public class DataSearchQueryBuilderTest {
         assertEquals(wrappedQuery(expectedValue), result);
     }
     
-    @Test
-    public void testCreatedWithinFromNull() {
+    @Test public void testCreatedWithinFromNull() {
         final String expectedValue = setCreatedWithin(null, new DateWrapper().addDays(1).asDate());
 
         String result = new DataSearchQueryBuilder(dsf, userInfoMock).createdWithin().toString();
         assertEquals(wrappedQuery(expectedValue), result);
     }
 
-    @Test
-    public void testCreatedWithinToNull() {
+    @Test public void testCreatedWithinToNull() {
         final String expectedValue = setCreatedWithin(new Date(), null);
 
         String result = new DataSearchQueryBuilder(dsf, userInfoMock).createdWithin().toString();
@@ -183,16 +175,14 @@ public class DataSearchQueryBuilderTest {
         assertEquals(wrappedQuery(expectedValue), result);
     }
 
-    @Test
-    public void testFileSizeRangeMinNull() {
+    @Test public void testFileSizeRangeMinNull() {
         final String expectedValue = setFileSizeRange(null, 100.0);
 
         String result = new DataSearchQueryBuilder(dsf, userInfoMock).fileSizeRange().toString();
         assertEquals(wrappedQuery(expectedValue), result);
     }
 
-    @Test
-    public void testFileSizeRangeMaxNul() {
+    @Test public void testFileSizeRangeMaxNul() {
         final String expectedValue = setFileSizeRange(1.0, null);
 
         String result = new DataSearchQueryBuilder(dsf, userInfoMock).fileSizeRange().toString();
@@ -222,8 +212,7 @@ public class DataSearchQueryBuilderTest {
         assertEquals(wrappedQuery(expectedValue), result);
     }
 
-    @Test
-    public void testModifiedWithinFromNull() {
+    @Test public void testModifiedWithinFromNull() {
         final Date fromDate = null;
         final Date toDate = new DateWrapper(new Date()).addDays(2).asDate();
         final String expectedValue = setModifiedWithin(fromDate, toDate);
@@ -232,8 +221,7 @@ public class DataSearchQueryBuilderTest {
         assertEquals(wrappedQuery(expectedValue), result);
     }
 
-    @Test
-    public void testModifiedWithinToNull() {
+    @Test public void testModifiedWithinToNull() {
         final Date fromDate = new Date();
         final Date toDate = null;
         final String expectedValue = setModifiedWithin(fromDate, toDate);
@@ -269,8 +257,7 @@ public class DataSearchQueryBuilderTest {
         assertEquals(wrappedQueryExcludingTrash(expectedValue), result);
     }
 
-    @Test
-    public void testTaggedWith() {
+    @Test public void testTaggedWith() {
         when(dsf.isIncludeTrashItems()).thenReturn(false);
         Set<IplantTag> tags = new LinkedHashSet<>();
 
@@ -301,8 +288,6 @@ public class DataSearchQueryBuilderTest {
     }
 
     /**
-     * @param givenValue
-     * @param drqt
      * @return the expected value
      */
     private String setOwnedBy(final String givenValue) {
@@ -312,9 +297,6 @@ public class DataSearchQueryBuilderTest {
     }
 
     /**
-     * @param fromDate
-     * @param toDate
-     * @param drqt
      * @return the expected value
      */
     private String setCreatedWithin(final Date fromDate, final Date toDate) {
@@ -339,8 +321,6 @@ public class DataSearchQueryBuilderTest {
     }
 
     /**
-     * @param givenQuery
-     * @param drqt
      * @return the expected value
      */
     private String setFileQuery(final String givenQuery) {
@@ -350,9 +330,6 @@ public class DataSearchQueryBuilderTest {
     }
 
     /**
-     * @param min
-     * @param max
-     * @param drqt
      * @return the expected value
      */
     private String setFileSizeRange(final Double min, final Double max) {
@@ -374,8 +351,6 @@ public class DataSearchQueryBuilderTest {
     }
 
     /**
-     * @param givenQuery
-     * @param drqt
      * @return the expected value
      */
     private String setMetadataAttributeQuery(final String givenQuery) {
@@ -387,8 +362,6 @@ public class DataSearchQueryBuilderTest {
     }
 
     /**
-     * @param givenQuery
-     * @param drqt
      * @return the expected value
      */
     private String setMetadataValueQuery(final String givenQuery) {
@@ -400,9 +373,6 @@ public class DataSearchQueryBuilderTest {
     }
 
     /**
-     * @param from
-     * @param to
-     * @param drqt
      * @return the expected value
      */
     private String setModifiedWithin(final Date from, final Date to) {
@@ -425,8 +395,6 @@ public class DataSearchQueryBuilderTest {
     }
 
     /**
-     * @param givenSearchTerms
-     * @param drqt
      * @return the expected value
      */
     private String setNegatedFileQuery(final String givenSearchTerms) {
@@ -437,8 +405,6 @@ public class DataSearchQueryBuilderTest {
     }
 
     /**
-     * @param givenValue
-     * @param drqt
      * @return the expected value
      */
     private String setSharedWith(final String givenValue) {
@@ -464,8 +430,6 @@ public class DataSearchQueryBuilderTest {
     }
 
     private String wrappedQueryExcludingTrash(String query) {
-        return Format.substitute(
-                "{\"bool\":{\"must_not\":[{\"wildcard\":{\"path\":\"/iplant/trash/*\"}}],\"must\":[{0}]}}",
-                query);
+        return Format.substitute("{\"bool\":{\"must_not\":[],\"must\":[{0}]}}", query);
     }
 }
