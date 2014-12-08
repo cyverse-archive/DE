@@ -233,7 +233,8 @@ public class AppIntegrationPalette extends Composite {
         if (AppTemplateUtils.isSimpleSelectionArgumentType(type)) {
             argument.setSelectionItems(Lists.<SelectionItem> newArrayList());
         } else if (type.equals(ArgumentType.TreeSelection)) {
-            SelectionItemGroup sig = factory.selectionItemGroup().as();
+            SelectionItemGroup sig = AppTemplateUtils.addSelectionItemAutoBeanIdTag(factory.selectionItemGroup().as(), "rootId");
+
             sig.setSingleSelect(false);
             sig.setSelectionCascade(CheckCascade.CHILDREN);
             sig.setArguments(Lists.<SelectionItem> newArrayList());

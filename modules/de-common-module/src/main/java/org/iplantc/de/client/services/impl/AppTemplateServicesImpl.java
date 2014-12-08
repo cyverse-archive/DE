@@ -162,28 +162,28 @@ public class AppTemplateServicesImpl implements AppTemplateServices, AppMetadata
     }
 
     @Override
-    public void saveAndPublishAppTemplate(AppTemplate at, AsyncCallback<String> callback) {
+    public void saveAndPublishAppTemplate(AppTemplate at, AsyncCallback<AppTemplate> callback) {
         String address = APPS + "/" + at.getId();
         Splittable split = appTemplateToSplittable(at);
         ServiceCallWrapper wrapper = new ServiceCallWrapper(PUT, address, split.getPayload());
-        deServiceFacade.getServiceData(wrapper, callback);
+        deServiceFacade.getServiceData(wrapper, new AppTemplateCallbackConverter(factory, callback));
     }
 
     @Override
-    public void createAppTemplate(AppTemplate at, AsyncCallback<String> callback) {
+    public void createAppTemplate(AppTemplate at, AsyncCallback<AppTemplate> callback) {
         String address = APPS;
         Splittable split = appTemplateToSplittable(at);
         ServiceCallWrapper wrapper = new ServiceCallWrapper(POST, address, split.getPayload());
-        deServiceFacade.getServiceData(wrapper, callback);
+        deServiceFacade.getServiceData(wrapper, new AppTemplateCallbackConverter(factory, callback));
 
     }
 
     @Override
-    public void updateAppLabels(AppTemplate at, AsyncCallback<String> callback) {
+    public void updateAppLabels(AppTemplate at, AsyncCallback<AppTemplate> callback) {
         String address = APPS +  "/" + at.getId();
         Splittable split = appTemplateToSplittable(at);
         ServiceCallWrapper wrapper = new ServiceCallWrapper(PATCH, address, split.getPayload());
-        deServiceFacade.getServiceData(wrapper, callback);
+        deServiceFacade.getServiceData(wrapper, new AppTemplateCallbackConverter(factory, callback));
 
     }
 

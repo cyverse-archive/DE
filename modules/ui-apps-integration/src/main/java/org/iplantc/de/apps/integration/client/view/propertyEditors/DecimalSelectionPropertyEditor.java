@@ -3,6 +3,7 @@ package org.iplantc.de.apps.integration.client.view.propertyEditors;
 import static org.iplantc.de.apps.integration.shared.AppIntegrationModule.Ids;
 import static org.iplantc.de.apps.integration.shared.AppIntegrationModule.PropertyPanelIds;
 import org.iplantc.de.apps.integration.client.view.propertyEditors.widgets.SelectionItemPropertyEditor;
+import org.iplantc.de.apps.widgets.client.view.editors.SelectionItemModelKeyProvider;
 import org.iplantc.de.apps.widgets.client.view.editors.SelectionItemProperties;
 import org.iplantc.de.apps.widgets.client.view.editors.arguments.ClearComboBoxSelectionKeyDownHandler;
 import org.iplantc.de.apps.widgets.client.view.editors.arguments.converters.ArgumentEditorConverter;
@@ -11,7 +12,6 @@ import org.iplantc.de.apps.widgets.client.view.editors.style.AppTemplateWizardAp
 import org.iplantc.de.apps.widgets.client.view.editors.widgets.CheckBoxAdapter;
 import org.iplantc.de.client.models.apps.integration.Argument;
 import org.iplantc.de.client.models.apps.integration.SelectionItem;
-import org.iplantc.de.client.services.UUIDServiceAsync;
 import org.iplantc.de.commons.client.views.gxt3.dialogs.IPlantDialog;
 import org.iplantc.de.commons.client.widgets.ContextualHelpPopup;
 import org.iplantc.de.resources.client.IplantResources;
@@ -78,22 +78,19 @@ public class DecimalSelectionPropertyEditor extends AbstractArgumentPropertyEdit
     private static DecimalSelectionPropertyEditorUiBinder uiBinder = GWT.create(DecimalSelectionPropertyEditorUiBinder.class);
     private final EditorDriver editorDriver = GWT.create(EditorDriver.class);
     private final ComboBox<SelectionItem> selectionItemsComboBox;
-    private final UUIDServiceAsync uuidService;
 
     @Inject
     public DecimalSelectionPropertyEditor(AppTemplateWizardAppearance appearance,
                                           AppsWidgetsPropertyPanelLabels appLabels,
                                           AppsWidgetsContextualHelpMessages help,
                                           AppsWidgetsDisplayMessages appsWidgetsMessages,
-                                          SelectionItemProperties props,
-                                          UUIDServiceAsync uuidService) {
+                                          SelectionItemProperties props) {
         super(appearance);
         this.appLabels = appLabels;
         this.doubleSelectionLabels = appLabels;
-        this.uuidService = uuidService;
 
         // Setup selectionItems and defaultValue editors
-        selectionItemsEditor = new ListStoreEditor<SelectionItem>(new ListStore<SelectionItem>(props.id()));
+        selectionItemsEditor = new ListStoreEditor<SelectionItem>(new ListStore<SelectionItem>(new SelectionItemModelKeyProvider()));
 
         selectionItemsComboBox = new ComboBox<SelectionItem>(selectionItemsEditor.getStore(), props.displayLabel());
         selectionItemsComboBox.setEmptyText(appsWidgetsMessages.emptyListSelectionText());
@@ -167,17 +164,16 @@ public class DecimalSelectionPropertyEditor extends AbstractArgumentPropertyEdit
         dlg.setModal(true);
         dlg.setOkButtonText(I18N.DISPLAY.done());
         dlg.setAutoHide(false);
-        final SelectionItemPropertyEditor selectionItemListEditor = new SelectionItemPropertyEditor(model.getSelectionItems(), model.getType(), uuidService);
+        final SelectionItemPropertyEditor selectionItemListEditor = new SelectionItemPropertyEditor(model.getSelectionItems(), model.getType());
         dlg.setSize("640", "480");
         dlg.add(selectionItemListEditor);
         dlg.addOkButtonSelectHandler(new SelectHandler() {
 
             @Override
             public void onSelect(SelectEvent event) {
-                model.getSelectionItems().clear();
+                selectionItemsEditor.getStore().clear();
                 Collection<? extends SelectionItem> values = selectionItemListEditor.getValues();
                 selectionItemsEditor.getStore().addAll(values);
-                model.getSelectionItems().addAll(values);
                 /*
                  * The backing model is updated, now firing an arbitrary VCE which we know will be picked
                  * up in the InitializeTwoWayBinding. This will cause the corresponding center panel

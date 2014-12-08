@@ -65,7 +65,7 @@ public abstract class SelectionItemTreeStoreEditor implements ValueAwareEditor<L
     }
 
     public SelectionItemGroup getCurrentTree() {
-        SelectionItemGroup root = factory.selectionItemGroup().as();
+        SelectionItemGroup root = AppTemplateUtils.addSelectionItemAutoBeanIdTag(factory.selectionItemGroup().as(), "rootId");
 
         CheckCascade checkStyle = getCheckStyle();
         boolean singleSelect = getSingleSelect();
@@ -125,22 +125,14 @@ public abstract class SelectionItemTreeStoreEditor implements ValueAwareEditor<L
          * and selection cascade modes of the tree.
          */
         if (value.size() == 1) {
-            /*
-             * JDS Have to deserialize the root SelectionItem and reserialize it to a SelectionItemGroup
-             * since it is illegal to "downcast" types (we can't directly cast from SelectionItem to
-             * SelectionItemGroup
-             */
-            Splittable newSplit = AutoBeanCodex.encode(AutoBeanUtils.getAutoBean(value.get(0)));
-            newRoot = AutoBeanCodex.decode(factory, SelectionItemGroup.class, newSplit).as();
+            newRoot = (SelectionItemGroup) value.get(0);
             if (store.getRootItems().size() == 1) {
                 // Then we want to compare the new with the old
                 Splittable currSplit = AutoBeanCodex.encode(AutoBeanUtils.getAutoBean(store.getRootItems().get(0)));
                 SelectionItemGroup currRoot = AutoBeanCodex.decode(factory, SelectionItemGroup.class, currSplit).as();
                 if (!hasChanged(currRoot, newRoot)) {
-
                     return;
                 }
-
             }
 
         } else {

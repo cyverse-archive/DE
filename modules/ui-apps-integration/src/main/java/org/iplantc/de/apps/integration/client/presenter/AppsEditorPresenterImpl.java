@@ -25,7 +25,6 @@ import org.iplantc.de.apps.widgets.client.view.editors.style.AppTemplateWizardAp
 import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.models.IsMinimizable;
 import org.iplantc.de.client.models.apps.integration.AppTemplate;
-import org.iplantc.de.client.models.apps.integration.AppTemplateAutoBeanFactory;
 import org.iplantc.de.client.models.apps.integration.Argument;
 import org.iplantc.de.client.models.apps.integration.ArgumentGroup;
 import org.iplantc.de.client.models.apps.integration.ArgumentType;
@@ -82,7 +81,7 @@ public class AppsEditorPresenterImpl implements AppsEditorView.Presenter,
                                                 ArgumentAddedEventHandler,
                                                 ArgumentGroupAddedEventHandler {
 
-    class DoSaveCallback implements AsyncCallback<String> {
+    class DoSaveCallback implements AsyncCallback<AppTemplate> {
         private final AsyncCallback<Void> onSaveCallback;
         private final IplantAnnouncer announcer1;
         private final EventBus eventBus1;
@@ -108,7 +107,6 @@ public class AppsEditorPresenterImpl implements AppsEditorView.Presenter,
             this.presenterImpl = presenterImpl;
             this.successfulSaveMsg = successfulSaveMsg;
             this.failedSaveMsg = failedSaveMsg;
-
         }
 
         @Override
@@ -120,16 +118,16 @@ public class AppsEditorPresenterImpl implements AppsEditorView.Presenter,
         }
 
         @Override
-        public void onSuccess(String result) {
-            AppTemplateAutoBeanFactory factory = GWT.create(AppTemplateAutoBeanFactory.class);
-            AppTemplate savedTemplate = AutoBeanCodex.decode(factory, AppTemplate.class, result).as();
+        public void onSuccess(AppTemplate savedTemplate) {
             String atId = at.getId();
             if (Strings.isNullOrEmpty(atId)) {
                 at.setId(savedTemplate.getId());
-            } else if (atId.equalsIgnoreCase(savedTemplate.getId())) {
+            } else if (!atId.equalsIgnoreCase(savedTemplate.getId())) {
                 // JDS There was an app ID, but now we are changing it. This is undesired.
-                GWT.log("Attempt to change app ID from \"" + atId + "\" to \"" + result + "\"");
+                LOG.warning("Attempt to change app ID from \"" + atId + "\" to \"" + savedTemplate.getId() + "\"");
             }
+            // Update editor with new template from server
+            presenterImpl.view.getEditorDriver().edit(savedTemplate);
             presenterImpl.lastSave = copyAppTemplate(presenterImpl.flushViewAndClean());
 
             if (renameCommand != null) {
@@ -347,7 +345,7 @@ public class AppsEditorPresenterImpl implements AppsEditorView.Presenter,
     private final AppsEditorView view;
     private final IplantAnnouncer announcer;
 
-    Logger LOG = Logger.getLogger("App Editor");
+    Logger LOG = Logger.getLogger(AppsEditorPresenterImpl.class.getName());
 
     @Inject Provider<AppLaunchPreviewView> previewViewProvider;
 

@@ -4,6 +4,7 @@ import org.iplantc.de.apps.widgets.client.events.ArgumentRequiredChangedEvent;
 import org.iplantc.de.apps.widgets.client.events.ArgumentRequiredChangedEvent.ArgumentRequiredChangedEventHandler;
 import org.iplantc.de.apps.widgets.client.events.ArgumentSelectedEvent;
 import org.iplantc.de.apps.widgets.client.view.AppTemplateForm;
+import org.iplantc.de.apps.widgets.client.view.editors.SelectionItemModelKeyProvider;
 import org.iplantc.de.apps.widgets.client.view.editors.SelectionItemProperties;
 import org.iplantc.de.apps.widgets.client.view.editors.arguments.LabelLeafEditor;
 import org.iplantc.de.apps.widgets.client.view.editors.arguments.VisibilityEditor;
@@ -11,7 +12,13 @@ import org.iplantc.de.apps.widgets.client.view.editors.arguments.converters.Argu
 import org.iplantc.de.apps.widgets.client.view.editors.arguments.converters.SplittableToSelectionArgListConverter;
 import org.iplantc.de.apps.widgets.client.view.editors.style.AppTemplateWizardAppearance;
 import org.iplantc.de.apps.widgets.client.view.util.SelectionItemTreeStoreEditor;
-import org.iplantc.de.client.models.apps.integration.*;
+import org.iplantc.de.client.models.apps.integration.AppTemplateAutoBeanFactory;
+import org.iplantc.de.client.models.apps.integration.Argument;
+import org.iplantc.de.client.models.apps.integration.ArgumentType;
+import org.iplantc.de.client.models.apps.integration.ArgumentValidator;
+import org.iplantc.de.client.models.apps.integration.SelectionItem;
+import org.iplantc.de.client.models.apps.integration.SelectionItemGroup;
+import org.iplantc.de.client.models.apps.integration.SelectionItemList;
 import org.iplantc.de.resources.client.messages.I18N;
 
 import com.google.common.collect.Lists;
@@ -197,17 +204,9 @@ public class TreeSelectionEditor extends Composite implements AppTemplateForm.Ar
     private ArgumentEditorConverter<List<SelectionItem>> valueEditor;
 
     public TreeSelectionEditor(AppTemplateWizardAppearance appearance, SelectionItemProperties props) {
-        TreeStore<SelectionItem> store = new TreeStore<>(props.id());
+        TreeStore<SelectionItem> store = new TreeStore<>(new SelectionItemModelKeyProvider());
 
         tree = new SelectionItemTree(store, props.display());
-//        if (presenter.isEditingMode()) {
-//            /*
-//             * KLUDGE CORE-4653 JDS Set selection model to locked. This is to prevent the user from
-//             * making any selections due to the issue described in CORE-4653.
-//             */
-//            tree.getSelectionModel().setLocked(true);
-//            tree.setCore4653Kludge();
-//        }
         tree.setHeight(appearance.getDefaultTreeSelectionHeight());
 
         tree.addValueChangeHandler(new TreeValueChangeHandler());

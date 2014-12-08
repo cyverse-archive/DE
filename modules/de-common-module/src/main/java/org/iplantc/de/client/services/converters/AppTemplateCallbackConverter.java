@@ -7,13 +7,17 @@ import org.iplantc.de.client.models.apps.integration.ArgumentGroup;
 import org.iplantc.de.client.models.apps.integration.ArgumentType;
 import org.iplantc.de.client.models.apps.integration.SelectionItem;
 import org.iplantc.de.client.models.apps.integration.SelectionItemGroup;
+import org.iplantc.de.client.util.AppTemplateUtils;
 
 import com.google.common.collect.Lists;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.web.bindery.autobean.shared.AutoBean;
 import com.google.web.bindery.autobean.shared.AutoBeanCodex;
+import com.google.web.bindery.autobean.shared.AutoBeanUtils;
 import com.google.web.bindery.autobean.shared.Splittable;
 import com.google.web.bindery.autobean.shared.impl.StringQuoter;
+
+import java.util.List;
 
 public class AppTemplateCallbackConverter extends AsyncCallbackConverter<String, AppTemplate> {
 
@@ -72,25 +76,61 @@ public class AppTemplateCallbackConverter extends AsyncCallbackConverter<String,
         }
 
         if (forwardDefaults) {
-            /*
-             * JDS If any argument has a "defaultValue", forward it to the "value" field
-             */
-            for (ArgumentGroup ag : atAb.as().getArgumentGroups()) {
-                for (Argument arg : ag.getArguments()) {
-                    if (arg.getDefaultValue() != null) {
-                        arg.setValue(arg.getDefaultValue());
-                    }
-                    // Check for null 'isRequired' flag
-                    if(arg.getRequired() == null){
-                        arg.setRequired(false);
-                    }
-                    // Check for null 'omitIfBlank' flag
-                    if(arg.isOmitIfBlank() == null){
-                        arg.setOmitIfBlank(false);
-                    }
+            forwardDefaults(atAb);
+        }
+        setSelectionItemAutoBeanId(atAb.as());
+
+        return atAb.as();
+    }
+
+    private void setSelectionItemAutoBeanId(AppTemplate at){
+        for(ArgumentGroup ag : at.getArgumentGroups()){
+            for(Argument arg : ag.getArguments()){
+                if(AppTemplateUtils.isSelectionArgumentType(arg.getType())){
+                    tagSelectionItemListItems(arg.getSelectionItems());
                 }
             }
         }
-        return atAb.as();
+    }
+
+    void tagSelectionItemListItems(final List<? extends SelectionItem> selectionItems){
+        if(selectionItems == null){
+            return;
+        }
+        for(SelectionItem si : selectionItems){
+            final AutoBean<SelectionItem> autoBean = AutoBeanUtils.getAutoBean(si);
+            autoBean.setTag(SelectionItem.TMP_ID_TAG, si.getId());
+
+            if(si instanceof SelectionItemGroup){
+                final SelectionItemGroup selectionItemGroup = (SelectionItemGroup) si;
+                tagSelectionItemListItems(selectionItemGroup.getArguments());
+                tagSelectionItemListItems(selectionItemGroup.getGroups());
+            }
+        }
+    }
+
+    /**
+     * Forwards items in the "defaultValue" key to the "value" key.
+     * @param atAb the bean to be operated on.
+     */
+    private void forwardDefaults(AutoBean<AppTemplate> atAb) {
+    /*
+     * JDS If any argument has a "defaultValue", forward it to the "value" field
+     */
+        for (ArgumentGroup ag : atAb.as().getArgumentGroups()) {
+            for (Argument arg : ag.getArguments()) {
+                if (arg.getDefaultValue() != null) {
+                    arg.setValue(arg.getDefaultValue());
+                }
+                // Check for null 'isRequired' flag
+                if(arg.getRequired() == null){
+                    arg.setRequired(false);
+                }
+                // Check for null 'omitIfBlank' flag
+                if(arg.isOmitIfBlank() == null){
+                    arg.setOmitIfBlank(false);
+                }
+            }
+        }
     }
 }

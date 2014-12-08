@@ -177,4 +177,10 @@ public class AppTemplateUtils {
         return at;
     }
 
+    public static <M extends SelectionItem> M addSelectionItemAutoBeanIdTag(M model, String id){
+        AutoBean<M> autoBean = AutoBeanUtils.getAutoBean(model);
+        autoBean.setTag(SelectionItem.TMP_ID_TAG, id);
+        return autoBean.as();
+    }
+
 }

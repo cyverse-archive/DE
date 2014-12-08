@@ -1,12 +1,12 @@
 package org.iplantc.de.apps.integration.client.view.propertyEditors.widgets;
 
+import org.iplantc.de.apps.widgets.client.view.editors.SelectionItemModelKeyProvider;
 import org.iplantc.de.apps.widgets.client.view.editors.SelectionItemProperties;
 import org.iplantc.de.apps.widgets.client.view.util.SelectionItemValueChangeStoreHandler.HasEventSuppression;
 import org.iplantc.de.client.models.apps.integration.AppTemplateAutoBeanFactory;
 import org.iplantc.de.client.models.apps.integration.ArgumentType;
 import org.iplantc.de.client.models.apps.integration.SelectionItem;
-import org.iplantc.de.client.services.UUIDServiceAsync;
-import org.iplantc.de.commons.client.ErrorHandler;
+import org.iplantc.de.client.util.AppTemplateUtils;
 import org.iplantc.de.commons.client.validators.CmdLineArgCharacterValidator;
 import org.iplantc.de.resources.client.messages.I18N;
 import org.iplantc.de.resources.client.uiapps.widgets.AppsWidgetsPropertyPanelLabels;
@@ -23,14 +23,12 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiFactory;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.sencha.gxt.core.client.Style.Side;
 import com.sencha.gxt.data.client.editor.ListStoreEditor;
 import com.sencha.gxt.data.shared.Converter;
 import com.sencha.gxt.data.shared.ListStore;
-import com.sencha.gxt.data.shared.ModelKeyProvider;
 import com.sencha.gxt.widget.core.client.Composite;
 import com.sencha.gxt.widget.core.client.button.TextButton;
 import com.sencha.gxt.widget.core.client.container.NorthSouthContainer;
@@ -164,19 +162,20 @@ public class SelectionItemPropertyEditor extends Composite implements HasValueCh
     private ColumnConfig<SelectionItem, String> displayCol;
 
     private final GridRowEditing<SelectionItem> editing;
-    private final AppsWidgetsPropertyPanelLabels labels = GWT.create(AppsWidgetsPropertyPanelLabels.class);
+    @UiField(provided = true)
+    AppsWidgetsPropertyPanelLabels labels;
 
     private ColumnConfig<SelectionItem, String> nameCol;
     
     
     private boolean suppressEvent = false;
 
-    private final UUIDServiceAsync uuidService;
+    private int uniqeIdNum = 0;
 
     private ColumnConfig<SelectionItem, String> valueCol;
 
-    public SelectionItemPropertyEditor(final List<SelectionItem> selectionItems, final ArgumentType type, final UUIDServiceAsync uuidService) {
-        this.uuidService = uuidService;
+    public SelectionItemPropertyEditor(final List<SelectionItem> selectionItems, final ArgumentType type) {
+        labels = GWT.create(AppsWidgetsPropertyPanelLabels.class);
         initWidget(BINDER.createAndBindUi(this));
         grid.getView().setEmptyText(labels.selectionCreateWidgetEmptyText());
 
@@ -215,7 +214,11 @@ public class SelectionItemPropertyEditor extends Composite implements HasValueCh
         selectionItemsEditor = new MyListStoreEditor(selectionArgStore);
 
         initColumns(type);
-        selectionItemsEditor.setValue(selectionItems);
+        List<SelectionItem> taggedItems = Lists.newArrayList();
+        for(SelectionItem si : selectionItems){
+            taggedItems.add(AppTemplateUtils.addSelectionItemAutoBeanIdTag(si, "tmpId-" + uniqeIdNum++));
+        }
+        selectionItemsEditor.setValue(taggedItems);
     }
 
     @Override
@@ -256,58 +259,38 @@ public class SelectionItemPropertyEditor extends Composite implements HasValueCh
 
     @UiFactory
     ListStore<SelectionItem> createListStore() {
-        ListStore<SelectionItem> listStore = new ListStore<SelectionItem>(new ModelKeyProvider<SelectionItem>() {
-            @Override
-            public String getKey(SelectionItem item) {
-                return item.getId();
-            }
-        });
+        ListStore<SelectionItem> listStore = new ListStore<>(new SelectionItemModelKeyProvider());
          return listStore;
     }
 
     @UiHandler("add")
     void onAddButtonClicked(@SuppressWarnings("unused") SelectEvent event) {
         AppTemplateAutoBeanFactory factory = GWT.create(AppTemplateAutoBeanFactory.class);
-        final SelectionItem sa = factory.selectionItem().as();
+        final SelectionItem sa = AppTemplateUtils.addSelectionItemAutoBeanIdTag(factory.selectionItem().as(), "tmpId-" + uniqeIdNum++);
 
-        uuidService.getUUIDs(1, new AsyncCallback<List<String>>() {
 
-            @Override
-            public void onFailure(Throwable caught) {
-                ErrorHandler.post(caught);
-            }
+        // JDS Set up a default id to satisfy ListStore's ModelKeyProvider
+        sa.setValue("Value " + selectionItemCount++);
+        sa.setDisplay("" + selectionItemCount);
+        sa.setName("Default" + selectionItemCount);
 
-            @Override
-            public void onSuccess(List<String> result) {
-
-                // JDS Set up a default id to satisfy ListStore's ModelKeyProvider
-                sa.setId(result.get(0));
-                sa.setValue("Value " + selectionItemCount++);
-                sa.setDisplay("" + selectionItemCount);
-                sa.setName("Default" + selectionItemCount);
-
-                /*
-                 * JDS Suppress ValueChange event, then manually fire afterward.
-                 * This is to prevent a race condition in the GridView which essentially adds the same
-                 * item twice
-                 * to the view. This is a result of the StoreAdd events firing as a result of this method
-                 * and
-                 * then as part of the Editor hierarchy refresh. Both of those events are listened to by
-                 * the
-                 * GridView, but in dev mode, the GridView was getting those events one after the other,
-                 * resulting in a view which does not reflect the actual bound ListStore.<br>
-                 * By suppressing the ValueChange events from firing, we are preventing the Editor
-                 * hierarchy from
-                 * doing its refresh, thus allowing the GridView to "catch up". Then, we manually fire
-                 * the
-                 * ValueChange event in order to propagate these changes throughout the editor hierarchy.
-                 */
-                setSuppressEvent(true);
-                selectionItemsEditor.getStore().add(sa);
-                setSuppressEvent(false);
-                ValueChangeEvent.fire(SelectionItemPropertyEditor.this, selectionArgStore.getAll());
-            }
-        });
+        /*
+         * JDS Suppress ValueChange event, then manually fire afterward.
+         * This is to prevent a race condition in the GridView which essentially adds the same
+         * item twice to the view. This is a result of the StoreAdd events firing as a result of
+         * this method and then as part of the Editor hierarchy refresh. Both of those events are
+         * listened to by the GridView, but in dev mode, the GridView was getting those events one
+         * after the other, resulting in a view which does not reflect the actual bound ListStore.
+         * <br>
+         * By suppressing the ValueChange events from firing, we are preventing the Editor
+         * hierarchy from doing its refresh, thus allowing the GridView to "catch up". Then, we
+         * manually fire the ValueChange event in order to propagate these changes throughout the
+         * editor hierarchy.
+         */
+        setSuppressEvent(true);
+        selectionItemsEditor.getStore().add(sa);
+        setSuppressEvent(false);
+        ValueChangeEvent.fire(SelectionItemPropertyEditor.this, selectionArgStore.getAll());
 
     }
 

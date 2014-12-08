@@ -1,13 +1,12 @@
 package org.iplantc.de.apps.integration.client.view.propertyEditors.widgets;
 
+import org.iplantc.de.apps.widgets.client.view.editors.SelectionItemModelKeyProvider;
 import org.iplantc.de.apps.widgets.client.view.editors.SelectionItemProperties;
 import org.iplantc.de.apps.widgets.client.view.util.SelectionItemTreeStoreEditor;
-import org.iplantc.de.client.gin.ServicesInjector;
 import org.iplantc.de.client.models.apps.integration.AppTemplateAutoBeanFactory;
 import org.iplantc.de.client.models.apps.integration.SelectionItem;
 import org.iplantc.de.client.models.apps.integration.SelectionItemGroup;
-import org.iplantc.de.client.services.UUIDServiceAsync;
-import org.iplantc.de.commons.client.ErrorHandler;
+import org.iplantc.de.client.util.AppTemplateUtils;
 import org.iplantc.de.commons.client.validators.CmdLineArgCharacterValidator;
 import org.iplantc.de.resources.client.messages.I18N;
 import org.iplantc.de.resources.client.uiapps.widgets.AppsWidgetsPropertyPanelLabels;
@@ -27,9 +26,9 @@ import com.google.gwt.uibinder.client.UiFactory;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Event;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.web.bindery.autobean.shared.AutoBean;
+import com.google.web.bindery.autobean.shared.AutoBeanUtils;
 
 import com.sencha.gxt.cell.core.client.form.CheckBoxCell;
 import com.sencha.gxt.core.client.Style.SelectionMode;
@@ -172,9 +171,9 @@ public class SelectionItemTreePropertyEditor extends Composite implements HasVal
     private final AppsWidgetsPropertyPanelLabels labels = GWT.create(AppsWidgetsPropertyPanelLabels.class);
     private final SelectionItemProperties siProps = GWT.create(SelectionItemProperties.class);
     private final List<SelectionItem> toBeRemoved = Lists.newArrayList();
-    private final UUIDServiceAsync uuidService = ServicesInjector.INSTANCE.getUUIDService();
     private int countArgLabel = 1;
     private int countGroupLabel = 1;
+    private int uniqueIdNum = 0;
 
     public SelectionItemTreePropertyEditor(List<SelectionItem> selectionItems) {
         buildTreeGrid();
@@ -216,7 +215,8 @@ public class SelectionItemTreePropertyEditor extends Composite implements HasVal
             }
         }
 
-        AutoBean<SelectionItemGroup> rootAb = factory.selectionItemGroup();
+        final SelectionItemGroup selectionItemGroup = AppTemplateUtils.addSelectionItemAutoBeanIdTag(factory.selectionItemGroup().as(), "tmpId-" + uniqueIdNum++);
+        AutoBean<SelectionItemGroup> rootAb = AutoBeanUtils.getAutoBean(selectionItemGroup);
         rootAb.as().setGroups(groups);
         rootAb.as().setArguments(arguments);
         rootAb.as().setSingleSelect(isSingleSelect());
@@ -257,7 +257,8 @@ public class SelectionItemTreePropertyEditor extends Composite implements HasVal
 
             if (root.getArguments() != null) {
                 for (SelectionItem ruleArg : root.getArguments()) {
-                    store.add(ruleArg);
+                    SelectionItem tagged = AppTemplateUtils.addSelectionItemAutoBeanIdTag(ruleArg, "tmpId-" + uniqueIdNum++);
+                    store.add(tagged);
                 }
             }
         }
@@ -293,32 +294,12 @@ public class SelectionItemTreePropertyEditor extends Composite implements HasVal
 
     @UiHandler("addArgBtn")
     void onAddArgumentClicked(@SuppressWarnings("unused") SelectEvent event) {
-        uuidService.getUUIDs(1, new AsyncCallback<List<String>>() {
-            @Override
-            public void onFailure(Throwable caught) {
-                ErrorHandler.post("Unable to generate a UUID", caught);
-            }
-
-            @Override
-            public void onSuccess(List<String> uuids) {
-                addArgument(uuids.get(0));
-            }
-        });
+        addArgument();
     }
 
     @UiHandler("addGrpBtn")
     void onAddGroupClicked(@SuppressWarnings("unused") SelectEvent event) {
-        uuidService.getUUIDs(1, new AsyncCallback<List<String>>() {
-            @Override
-            public void onFailure(Throwable caught) {
-                ErrorHandler.post("Unable to generate a UUID", caught);
-            }
-
-            @Override
-            public void onSuccess(List<String> uuids) {
-                addGroup(uuids.get(0));
-            }
-        });
+        addGroup();
     }
 
     @UiHandler("deleteBtn")
@@ -390,8 +371,8 @@ public class SelectionItemTreePropertyEditor extends Composite implements HasVal
         }
     }
 
-    private void addArgument(String uuid) {
-        SelectionItem ruleArg = createArgument(uuid);
+    private void addArgument() {
+        SelectionItem ruleArg = createArgument();
 
         SelectionItemGroup selectedGroup = getSelectedGroup();
         if (selectedGroup != null) {
@@ -408,8 +389,8 @@ public class SelectionItemTreePropertyEditor extends Composite implements HasVal
         addRuleArgument(selectedGroup, ruleArg);
     }
 
-    private void addGroup(String uuid) {
-        SelectionItemGroup group = createGroup(uuid);
+    private void addGroup() {
+        SelectionItemGroup group = createGroup();
 
         SelectionItemGroup selectedGroup = getSelectedGroup();
         if (selectedGroup != null) {
@@ -492,7 +473,7 @@ public class SelectionItemTreePropertyEditor extends Composite implements HasVal
 
     private void buildTreeGrid() {
         // Build treeStore
-        store = new TreeStore<>(siProps.id());
+        store = new TreeStore<>(new SelectionItemModelKeyProvider());
         store.setAutoCommit(true);
 
         // Build ColumnModel
@@ -562,18 +543,16 @@ public class SelectionItemTreePropertyEditor extends Composite implements HasVal
         treeGrid.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
     }
 
-    private SelectionItem createArgument(String uuid) {
-        SelectionItem argString = factory.selectionItem().as();
-        argString.setId(uuid);
+    private SelectionItem createArgument() {
+        SelectionItem argString = AppTemplateUtils.addSelectionItemAutoBeanIdTag(factory.selectionItem().as(), "tmpId-" + uniqueIdNum++);
 
         argString.setDisplay("Argument" + countArgLabel++);
 
         return argString;
     }
 
-    private SelectionItemGroup createGroup(String uuid) {
-        SelectionItemGroup group = factory.selectionItemGroup().as();
-        group.setId(uuid);
+    private SelectionItemGroup createGroup() {
+        SelectionItemGroup group = AppTemplateUtils.addSelectionItemAutoBeanIdTag(factory.selectionItemGroup().as(), "tmpId-" + uniqueIdNum++);
 
         group.setDisplay("Group " + countGroupLabel++);
 

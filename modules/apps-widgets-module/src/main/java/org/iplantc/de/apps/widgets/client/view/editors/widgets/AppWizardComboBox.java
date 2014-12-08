@@ -1,6 +1,7 @@
 package org.iplantc.de.apps.widgets.client.view.editors.widgets;
 
 import org.iplantc.de.apps.widgets.client.events.ArgumentSelectedEvent;
+import org.iplantc.de.apps.widgets.client.view.editors.SelectionItemModelKeyProvider;
 import org.iplantc.de.apps.widgets.client.view.editors.SelectionItemProperties;
 import org.iplantc.de.apps.widgets.client.view.editors.arguments.AbstractArgumentEditor;
 import org.iplantc.de.apps.widgets.client.view.editors.arguments.ClearComboBoxSelectionKeyDownHandler;
@@ -52,7 +53,7 @@ public class AppWizardComboBox extends AbstractArgumentEditor implements HasValu
     public AppWizardComboBox(AppTemplateWizardAppearance appearance) {
         super(appearance);
         // JDS Initialize list store, and its editor
-        listStore = new ListStore<SelectionItem>(props.id());
+        listStore = new ListStore<SelectionItem>(new SelectionItemModelKeyProvider());
         selectionItemsStoreBinder = new ListStoreEditor<SelectionItem>(listStore);
 
         // JDS Initialize combobox and its editor converter

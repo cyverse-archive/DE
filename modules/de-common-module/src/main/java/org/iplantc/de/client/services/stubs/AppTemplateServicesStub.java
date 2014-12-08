@@ -45,17 +45,17 @@ public class AppTemplateServicesStub implements AppTemplateServices {
     }
 
     @Override
-    public void saveAndPublishAppTemplate(AppTemplate at, AsyncCallback<String> callback) {
+    public void saveAndPublishAppTemplate(AppTemplate at, AsyncCallback<AppTemplate> callback) {
 
     }
 
     @Override
-    public void updateAppLabels(AppTemplate at, AsyncCallback<String> callback) {
+    public void updateAppLabels(AppTemplate at, AsyncCallback<AppTemplate> callback) {
 
     }
 
     @Override
-    public void createAppTemplate(AppTemplate at, AsyncCallback<String> callback) {
+    public void createAppTemplate(AppTemplate at, AsyncCallback<AppTemplate> callback) {
         // TODO Auto-generated method stub
 
     }
