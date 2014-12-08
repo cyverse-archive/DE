@@ -10,7 +10,6 @@ import org.iplantc.de.apps.widgets.client.view.editors.arguments.converters.Spli
 import org.iplantc.de.apps.widgets.client.view.editors.style.AppTemplateWizardAppearance;
 import org.iplantc.de.client.models.apps.integration.AppTemplateAutoBeanFactory;
 import org.iplantc.de.client.models.apps.integration.Argument;
-import org.iplantc.de.client.models.apps.integration.ArgumentType;
 import org.iplantc.de.client.models.apps.integration.SelectionItem;
 import org.iplantc.de.client.util.AppTemplateUtils;
 import org.iplantc.de.resources.client.messages.I18N;
@@ -80,10 +79,17 @@ public class AppWizardComboBox extends AbstractArgumentEditor implements HasValu
     public void flush() {
         selectionItemsEditor.flush();
         selectionItemsEditor.validate(false);
+        // Unset all previous defaults
+        for(SelectionItem si : selectionItemsEditor.getStore().getAll()){
+            si.setDefault(false);
+        }
+
         SelectionItem currSi = selectionItemsEditor.getCurrentValue();
         if (currSi == null) {
             return;
         }
+        // Set new default selected item
+        currSi.setDefault(true);
         Splittable currSiSplittable = AutoBeanCodex.encode(AutoBeanUtils.getAutoBean(currSi));
 
         // JDS Set value, if the current value payload does not equal the model's value payload
@@ -106,8 +112,7 @@ public class AppWizardComboBox extends AbstractArgumentEditor implements HasValu
     @Override
     public void setValue(final Argument value) {
         super.setValue(value);
-        if (AppTemplateUtils.isSelectionArgumentType(value.getType()) || value.getType().equals(ArgumentType.TreeSelection)) {
-            // FIXME JDS This logic makes it impossible for code being executed!!
+        if (!AppTemplateUtils.isSimpleSelectionArgumentType(value.getType())) {
             return;
         }
 
@@ -131,7 +136,6 @@ public class AppWizardComboBox extends AbstractArgumentEditor implements HasValu
                     }
                 }
             }
-
         }
     }
 
