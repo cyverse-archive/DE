@@ -29,6 +29,9 @@ import com.google.web.bindery.autobean.shared.AutoBeanUtils;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * @author jstroot
+ */
 public class RegisterEventHandlers extends EditorVisitor {
 
     /**
@@ -61,9 +64,12 @@ public class RegisterEventHandlers extends EditorVisitor {
     private final List<HasArgumentSelectedEventHandlers> hasArgSelectedHandlers;
     private final List<HasDeleteArgumentEventHandlers> hasDeleteArgHandlers;
     private final Map<String, List<HasValueChangeHandlers<?>>> hasValChangeHandlerMap;
+    private List<HandlerRegistration> handlerRegistrations = Lists.newArrayList();
 
-    public RegisterEventHandlers(DeleteArgumentEventHandler deleteArgumentEventHandler,
-            ArgumentGroupAddedEventHandler argumentGroupAddedEventHandler, ArgumentAddedEventHandler argumentAddedEventHandler, GatherAllEventProviders eventProviders) {
+    public RegisterEventHandlers(final DeleteArgumentEventHandler deleteArgumentEventHandler,
+                                 final ArgumentGroupAddedEventHandler argumentGroupAddedEventHandler,
+                                 final ArgumentAddedEventHandler argumentAddedEventHandler,
+                                 final GatherAllEventProviders eventProviders) {
 
         this.hasAppTemplateSelectedHandlers = eventProviders.getHasAppTemplateSelectedHandlers();
 
@@ -76,14 +82,22 @@ public class RegisterEventHandlers extends EditorVisitor {
         this.hasValChangeHandlerMap = eventProviders.getHasValChangeHandlerMap();
 
         for (HasArgumentGroupAddedEventHandlers hasHandlers : hasArgGrpAddedHandlers) {
-            hasHandlers.addArgumentGroupAddedEventHandler(argumentGroupAddedEventHandler);
+            handlerRegistrations.add(hasHandlers.addArgumentGroupAddedEventHandler(argumentGroupAddedEventHandler));
         }
         for (HasArgumentAddedEventHandlers hasHandlers : hasArgAddedHandlers) {
-            hasHandlers.addArgumentAddedEventHandler(argumentAddedEventHandler);
+            handlerRegistrations.add(hasHandlers.addArgumentAddedEventHandler(argumentAddedEventHandler));
         }
         for (HasDeleteArgumentEventHandlers hasHandlers : hasDeleteArgHandlers) {
-            hasHandlers.addDeleteArgumentEventHandler(deleteArgumentEventHandler);
+            handlerRegistrations.add(hasHandlers.addDeleteArgumentEventHandler(deleteArgumentEventHandler));
         }
+    }
+
+    /**
+     *
+     * @return handlers registered during construction.
+     */
+    public List<HandlerRegistration> getHandlerRegistrations(){
+        return handlerRegistrations;
     }
 
     @Override
@@ -97,6 +111,8 @@ public class RegisterEventHandlers extends EditorVisitor {
          * If the current editor handles any events we have gathered, add the current editor to the
          * Has*Handlers, and save the registration on the current autobean.
          */
+        // Clean previous handlers before adding new ones.
+        cleanAutoBeanHandlers(autoBean);
 
         Editor<T> editorAsHandler = ctx.getEditor();
         // Register handler with AppTemplate-related event providers
@@ -155,6 +171,18 @@ public class RegisterEventHandlers extends EditorVisitor {
         return ctx.asLeafValueEditor() == null;
     }
 
+    void cleanAutoBeanHandlers(AutoBean<?> autoBean) {
+        if(autoBean == null){
+            return;
+        }
+        final Object tag = autoBean.getTag(AppsEditorView.Presenter.HANDLERS);
+        if ((tag != null) && (tag instanceof List)) {
+            List<HandlerRegistration> handlerRegistrationList = (List<HandlerRegistration>) tag;
+            for(HandlerRegistration hr : handlerRegistrationList){
+                hr.removeHandler();
+            }
+        }
+    }
     private List<HandlerRegistration> getAutobeanHandlers(AutoBean<?> autobean) {
         if (autobean.getTag(AppsEditorView.Presenter.HANDLERS) == null) {
             autobean.setTag(AppsEditorView.Presenter.HANDLERS, Lists.<HandlerRegistration> newArrayList());

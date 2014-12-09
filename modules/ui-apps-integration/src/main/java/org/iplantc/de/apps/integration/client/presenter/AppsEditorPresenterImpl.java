@@ -172,6 +172,7 @@ public class AppsEditorPresenterImpl implements AppsEditorView.Presenter,
         protected void onButtonPressed(TextButton button) {
             if (button == getButtonBar().getItemByItemId(PredefinedButton.YES.name())) {
                 // JDS Abort current AppTemplate and hide.
+                clearRegisteredHandlers();
                 beforeHideHndlrReg.removeHandler();
                 component.hide();
             }
@@ -244,10 +245,12 @@ public class AppsEditorPresenterImpl implements AppsEditorView.Presenter,
             if (button == getButtonBar().getItemByItemId(PredefinedButton.YES.name())) {
                 // JDS Do save and let window close
                 beforeHideHndlrReg.removeHandler();
+                clearRegisteredHandlers();
                 doOnSaveClicked(null);
                 component.hide();
             } else if (button == getButtonBar().getItemByItemId(PredefinedButton.NO.name())) {
                 // JDS Just let window close
+                clearRegisteredHandlers();
                 beforeHideHndlrReg.removeHandler();
                 component.hide();
             }
@@ -310,6 +313,7 @@ public class AppsEditorPresenterImpl implements AppsEditorView.Presenter,
     }
 
     private final IplantErrorStrings errorStrings;
+    private List<HandlerRegistration> handlerRegistrations = Lists.newArrayList();
 
     public static native void doJsonFormattting(XElement textArea,String val,int width, int height) /*-{
 		var myCodeMirror = $wnd.CodeMirror(textArea, {
@@ -411,6 +415,8 @@ public class AppsEditorPresenterImpl implements AppsEditorView.Presenter,
 
     @Override
     public void go(HasOneWidget container) {
+        clearRegisteredHandlers();
+
         setLabelOnlyEditMode(appTemplate.isPublic());
 
         view.getEditorDriver().edit(appTemplate);
@@ -426,7 +432,10 @@ public class AppsEditorPresenterImpl implements AppsEditorView.Presenter,
         view.getEditorDriver().accept(new InitializeDragAndDrop(this));
         GatherAllEventProviders gatherAllEventProviders = new GatherAllEventProviders(appearance, this, this);
         view.getEditorDriver().accept(gatherAllEventProviders);
-        view.getEditorDriver().accept(new RegisterEventHandlers(this, this, this, gatherAllEventProviders));
+        final RegisterEventHandlers registerEventHandlers = new RegisterEventHandlers(this, this, this, gatherAllEventProviders);
+        view.getEditorDriver().accept(registerEventHandlers);
+        // Grab handler registrations related to this class
+        this.handlerRegistrations.addAll(registerEventHandlers.getHandlerRegistrations());
 
         /*
          * JDS Make a copy so we can check for differences on exit.
@@ -569,6 +578,7 @@ public class AppsEditorPresenterImpl implements AppsEditorView.Presenter,
                         beforeHideHandlerRegistration).show();
             }
         } else {
+            clearRegisteredHandlers();
             appTemplate = null;
         }
     }
@@ -724,6 +734,13 @@ public class AppsEditorPresenterImpl implements AppsEditorView.Presenter,
                 view.setCmdLinePreview(cmdLinePrev);
             }
         });
+    }
+
+    void clearRegisteredHandlers(){
+        for(HandlerRegistration hr : handlerRegistrations){
+            hr.removeHandler();
+        }
+        handlerRegistrations.clear();
     }
 
 }
