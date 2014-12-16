@@ -60,7 +60,7 @@ public class EnsemblUtil {
 
         if (indexFile != null) {
             indexFilePath = parent + "/" + indexFile;
-            list.add(CommonModelUtils.createHasPathFromString((indexFilePath)));
+            list.add(CommonModelUtils.getInstance().createHasPathFromString((indexFilePath)));
 
         }
 

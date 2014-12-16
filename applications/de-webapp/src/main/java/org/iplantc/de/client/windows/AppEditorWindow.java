@@ -239,7 +239,7 @@ public class AppEditorWindow extends IplantWindowBase implements AppPublishedEve
         } else {
             mask(appearance.loadingMask());
             templateService.getAppTemplateForEdit(
-                                                     CommonModelUtils.createHasIdFromString(config.getAppId()),
+                                                     CommonModelUtils.getInstance().createHasIdFromString(config.getAppId()),
                                                      new AsyncCallback<AppTemplate>() {
                                                          @Override
                                                          public void onFailure(Throwable caught) {

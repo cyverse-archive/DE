@@ -350,7 +350,7 @@ public class MultiFileSelectorField extends Composite implements IsField<List<Ha
             path = userSettings.getLastPath();
         }
 
-        HasPath hasPath = CommonModelUtils.createHasPathFromString(path);
+        HasPath hasPath = CommonModelUtils.getInstance().createHasPathFromString(path);
         FileSelectDialog dlg = dialogFactory.createFilteredFileSelectorWithFolder(false, hasPath, Collections.<InfoType>emptyList());
         dlg.addHideHandler(new FileSelectDialogHideHandler(dlg, listStore));
         dlg.show();

@@ -28,7 +28,7 @@ public class SplittableToHasPathListConverter implements Converter<Splittable, L
         List<HasPath> hasPathList = Lists.newArrayList();
         for (int i = 0; i < object.size(); i++) {
             String asString = object.get(i).asString();
-            hasPathList.add(CommonModelUtils.createHasPathFromString((asString)));
+            hasPathList.add(CommonModelUtils.getInstance().createHasPathFromString((asString)));
         }
 
         return hasPathList;

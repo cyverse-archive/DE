@@ -186,7 +186,7 @@ public class DesktopPresenterWindowEventHandler implements EditAppEvent.EditAppE
 
     @Override
     public void onRequestOpenFolder(OpenFolderEvent event) {
-        final HasPath path = CommonModelUtils.createHasPathFromString(event.getFolderPath());
+        final HasPath path = CommonModelUtils.getInstance().createHasPathFromString(event.getFolderPath());
         DiskResourceWindowConfig config = ConfigFactory.diskResourceWindowConfig(event.newViewRequested());
         config.setSelectedFolder(path);
 

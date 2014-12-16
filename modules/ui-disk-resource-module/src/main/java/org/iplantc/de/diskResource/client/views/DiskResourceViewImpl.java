@@ -124,7 +124,7 @@ public class DiskResourceViewImpl extends Composite implements DiskResourceView,
         public void onKeyPress(KeyPressEvent event) {
             if (event.getNativeEvent().getKeyCode() == KeyCodes.KEY_ENTER && !Strings.isNullOrEmpty(pathField.getCurrentValue())) {
                 String path = pathField.getCurrentValue();
-                HasPath folderToSelect = CommonModelUtils.createHasPathFromString(path);
+                HasPath folderToSelect = CommonModelUtils.getInstance().createHasPathFromString(path);
                 presenter.setSelectedFolderByPath(folderToSelect);
             }
         }

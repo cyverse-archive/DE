@@ -109,7 +109,7 @@ public class FolderSelectorField extends AbstractDiskResourceSelector<Folder> {
         if (value == null && userSettings.isRememberLastPath()) {
             String path = userSettings.getLastPath();
             if (path != null) {
-                value = CommonModelUtils.createHasPathFromString(path);
+                value = CommonModelUtils.getInstance().createHasPathFromString(path);
             }
         }
         folderSD = selectorDialogFactory.createFilteredFolderSelector(value, infoTypeFilters);

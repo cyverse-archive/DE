@@ -69,7 +69,7 @@ public class SaveAsDialog extends IPlantDialog {
         boolean remember = userSettings.isRememberLastPath();
         HasPath hasPath = selectedFolder;
         if(hasPath == null && remember && !Strings.isNullOrEmpty(path)) {
-            hasPath = CommonModelUtils.createHasPathFromString(path);
+            hasPath = CommonModelUtils.getInstance().createHasPathFromString(path);
         }
 
         presenter = presenterFactory.createSelectorWithSouthWidgetHeight(true,

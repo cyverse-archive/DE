@@ -285,7 +285,7 @@ public class DiskResourceUtil {
 
     public HasPath getFolderPathFromFile(File file) {
         if (file != null) {
-            return CommonModelUtils.createHasPathFromString(parseParent(file.getPath()));
+            return CommonModelUtils.getInstance().createHasPathFromString(parseParent(file.getPath()));
         }
         return null;
     }

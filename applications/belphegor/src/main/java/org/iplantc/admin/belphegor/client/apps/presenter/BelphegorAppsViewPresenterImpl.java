@@ -472,7 +472,7 @@ public class BelphegorAppsViewPresenterImpl extends AppsViewPresenterImpl implem
 
     private AppCategorizeRequest buildAppCategorizeRequest(App selectedApp,
                                                            List<AppCategory> appCategories) {
-        HasId appId = CommonModelUtils.createHasIdFromString(selectedApp.getId());
+        HasId appId = CommonModelUtils.getInstance().createHasIdFromString(selectedApp.getId());
         List<CategoryRequest> categories = Lists.newArrayList();
         List<String> cat_ids = Lists.newArrayList();
         for (AppCategory group : appCategories) {

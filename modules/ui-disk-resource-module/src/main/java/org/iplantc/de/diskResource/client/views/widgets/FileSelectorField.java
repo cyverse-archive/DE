@@ -107,7 +107,7 @@ public class FileSelectorField extends AbstractDiskResourceSelector<File> {
             if (userSettings.isRememberLastPath()) {
                 String path = userSettings.getLastPath();
                 if (path != null) {
-                    HasPath hasPath = CommonModelUtils.createHasPathFromString(path);
+                    HasPath hasPath = CommonModelUtils.getInstance().createHasPathFromString(path);
                     fileSD = dialogFactory.createFilteredFileSelectorWithFolder(true, hasPath, infoTypeFilters);
                 } else {
                     fileSD = dialogFactory.createFilteredFileSelectorWithFolder(true, null, infoTypeFilters);

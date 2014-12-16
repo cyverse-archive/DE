@@ -12,9 +12,21 @@ import com.google.web.bindery.autobean.shared.impl.StringQuoter;
 
 @SuppressWarnings("nls")
 public class CommonModelUtils {
-    private static final CommonModelAutoBeanFactory factory = GWT.create(CommonModelAutoBeanFactory.class);
+    private final CommonModelAutoBeanFactory factory;
+    private static CommonModelUtils INSTANCE;
 
-    public static HasId createHasIdFromString(String id) {
+    CommonModelUtils() {
+        factory = GWT.create(CommonModelAutoBeanFactory.class);
+    }
+
+    public static CommonModelUtils getInstance(){
+        if(INSTANCE == null){
+            INSTANCE = new CommonModelUtils();
+        }
+        return INSTANCE;
+    }
+
+    public HasId createHasIdFromString(String id) {
         Splittable hasIdSplittable = createHasIdSplittableFromString(id);
 
         if (hasIdSplittable == null) {
@@ -24,7 +36,7 @@ public class CommonModelUtils {
         return AutoBeanCodex.decode(factory, HasId.class, hasIdSplittable).as();
     }
 
-    public static Splittable createHasIdSplittableFromString(String id) {
+    public Splittable createHasIdSplittableFromString(String id) {
         if (Strings.isNullOrEmpty(id)) {
             return null;
         }
@@ -35,7 +47,7 @@ public class CommonModelUtils {
         return hasIdSplittable;
     }
 
-    public static HasId createHasIdFromSplittable(Splittable value) {
+    public HasId createHasIdFromSplittable(Splittable value) {
         if ((value == null) || !value.isKeyed()) {
             return null;
         }
@@ -47,7 +59,7 @@ public class CommonModelUtils {
         return AutoBeanCodex.decode(factory, HasId.class, value).as();
     }
 
-    public static HasPath createHasPathFromString(String path) {
+    public HasPath createHasPathFromString(String path) {
         Splittable pathSplittable = createHasPathSplittableFromString(path);
 
         if (pathSplittable == null) {
@@ -57,7 +69,7 @@ public class CommonModelUtils {
         return AutoBeanCodex.decode(factory, HasPath.class, pathSplittable).as();
     }
 
-    public static Splittable createHasPathSplittableFromString(String path) {
+    public Splittable createHasPathSplittableFromString(String path) {
         if (Strings.isNullOrEmpty(path)) {
             return null;
         }

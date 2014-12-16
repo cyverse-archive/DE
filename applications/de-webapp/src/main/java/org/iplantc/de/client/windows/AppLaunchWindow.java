@@ -136,7 +136,7 @@ public class AppLaunchWindow extends IplantWindowBase implements AnalysisLaunchE
         } else if (config.isRelaunchAnalysis()) {
             templateService.rerunAnalysis(config.getAnalysisId(), new AppTemplateCallback(presenter, errorStrings));
         } else {
-            templateService.getAppTemplate(CommonModelUtils.createHasIdFromString(config.getAppId()),
+            templateService.getAppTemplate(CommonModelUtils.getInstance().createHasIdFromString(config.getAppId()),
                                            new AppTemplateCallback(presenter, errorStrings));
         }
     }

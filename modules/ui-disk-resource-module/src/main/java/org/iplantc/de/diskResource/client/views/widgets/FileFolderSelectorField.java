@@ -106,7 +106,7 @@ public class FileFolderSelectorField extends AbstractDiskResourceSelector<DiskRe
         if(value == null && userSettings.isRememberLastPath()){
             String path = userSettings.getLastPath();
             if(path != null) {
-                folderToSelect = CommonModelUtils.createHasPathFromString(path);
+                folderToSelect = CommonModelUtils.getInstance().createHasPathFromString(path);
                 // get dialog from factory
             }
         }else if(value instanceof Folder){

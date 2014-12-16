@@ -28,7 +28,7 @@ public class SplittableToHasIdListConverter implements Converter<Splittable, Lis
         List<HasId> hasIdList = Lists.newArrayList();
         for (int i = 0; i < object.size(); i++) {
             String asString = object.get(i).asString();
-            hasIdList.add(CommonModelUtils.createHasIdFromString(asString));
+            hasIdList.add(CommonModelUtils.getInstance().createHasIdFromString(asString));
         }
 
         return hasIdList;

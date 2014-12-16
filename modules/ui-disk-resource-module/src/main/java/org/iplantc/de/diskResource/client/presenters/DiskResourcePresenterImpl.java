@@ -777,7 +777,7 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
 
     @Override
     public void selectTrashFolder() {
-        final HasPath hasPath = CommonModelUtils.createHasPathFromString(userInfo.getTrashPath());
+        final HasPath hasPath = CommonModelUtils.getInstance().createHasPathFromString(userInfo.getTrashPath());
         setSelectedFolderByPath(hasPath);
     }
 

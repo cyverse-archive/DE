@@ -555,7 +555,7 @@ public class DesktopPresenterImpl implements DesktopView.Presenter {
                     if (TypeQueryValues.APPS.equalsIgnoreCase(paramValue)) {
                         final AppsWindowConfig appsConfig = ConfigFactory.appsWindowConfig();
                         final String appCategoryId = Window.Location.getParameter(QueryStrings.APP_CATEGORY);
-                        appsConfig.setSelectedAppCategory(CommonModelUtils.createHasIdFromString(appCategoryId));
+                        appsConfig.setSelectedAppCategory(CommonModelUtils.getInstance().createHasIdFromString(appCategoryId));
                         windowConfig = appsConfig;
                     } else if (TypeQueryValues.DATA.equalsIgnoreCase(paramValue)) {
                         hasDataTypeParameter = true;
@@ -566,7 +566,7 @@ public class DesktopPresenterImpl implements DesktopView.Presenter {
                         String selectedFolder = URL.decode(Strings.nullToEmpty(folderParameter));
 
                         if (!Strings.isNullOrEmpty(selectedFolder)) {
-                            HasPath folder = CommonModelUtils.createHasPathFromString(selectedFolder);
+                            HasPath folder = CommonModelUtils.getInstance().createHasPathFromString(selectedFolder);
                             drConfig.setSelectedFolder(folder);
                         }
                         windowConfig = drConfig;
