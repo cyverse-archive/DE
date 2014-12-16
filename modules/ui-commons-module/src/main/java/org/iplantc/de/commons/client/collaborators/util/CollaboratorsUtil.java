@@ -41,12 +41,13 @@ public class CollaboratorsUtil {
     private static List<Collaborator> searchResutls;
     private static CollaboratorAutoBeanFactory factory = GWT.create(CollaboratorAutoBeanFactory.class);
     private static CollaboratorsServiceFacade facade = ServicesInjector.INSTANCE.getCollaboratorsServiceFacade();
+    private static JsonUtil jsonUtil = JsonUtil.getInstance();
 
     private static List<Collaborator> parseResults(String result) {
         AutoBean<CollaboratorsList> bean = AutoBeanCodex
                 .decode(factory, CollaboratorsList.class, result);
-        JSONObject obj = JsonUtil.getObject(result);
-        boolean truncated = JsonUtil.getBoolean(obj, "truncated", false);
+        JSONObject obj = jsonUtil.getObject(result);
+        boolean truncated = jsonUtil.getBoolean(obj, "truncated", false);
         if (truncated) {
             IplantAnnouncer.getInstance().schedule(
                     new ErrorAnnouncementConfig(SafeHtmlUtils.fromString(I18N.DISPLAY.collaboratorSearchTruncated()), false));
@@ -273,11 +274,11 @@ public class CollaboratorsUtil {
             if (superCallback != null) {
                 FastMap<Collaborator> userResults = new FastMap<Collaborator>();
 
-                JSONObject users = JsonUtil.getObject(result);
+                JSONObject users = jsonUtil.getObject(result);
                 if (result != null) {
 
                     for (String username : users.keySet()) {
-                        JSONObject userJson = JsonUtil.getObject(users, username);
+                        JSONObject userJson = jsonUtil.getObject(users, username);
                         AutoBean<Collaborator> bean = AutoBeanCodex.decode(factory, Collaborator.class,
                                 userJson.toString());
                         userResults.put(username, bean.as());

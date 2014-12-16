@@ -27,6 +27,7 @@ public class DefaultUploadCompleteHandler extends UploadCompleteHandler {
 
     private final UserSessionServiceFacade userSessionService;
     private final DiskResourceAutoBeanFactory drFactory;
+    private final JsonUtil jsonUtil;
 
     /**
      * Construct a new instance of the default handler.
@@ -39,6 +40,7 @@ public class DefaultUploadCompleteHandler extends UploadCompleteHandler {
         super(idParent);
         this.userSessionService = userSessionService;
         this.drFactory = drFactory;
+        this.jsonUtil = JsonUtil.getInstance();
     }
 
     public JSONObject build(final JSONObject json) {
@@ -107,7 +109,7 @@ public class DefaultUploadCompleteHandler extends UploadCompleteHandler {
     }
 
     protected JSONObject buildPayload(String sourceUrl, String json) throws Exception {
-        JSONObject jsonObj = JsonUtil.getObject(JsonUtil.formatString(json));
+        JSONObject jsonObj = jsonUtil.getObject(jsonUtil.formatString(json));
         if (jsonObj == null) {
             throw new Exception(I18N.ERROR.fileUploadsFailed(Lists.newArrayList(sourceUrl)) + ": " + json); //$NON-NLS-1$
         }
@@ -131,7 +133,7 @@ public class DefaultUploadCompleteHandler extends UploadCompleteHandler {
             return I18N.DISPLAY.fileUploadSuccess(filename);
         }
 
-        String sourceUrl = JsonUtil.getString(jsonObj, "sourceUrl"); //$NON-NLS-1$
+        String sourceUrl = jsonUtil.getString(jsonObj, "sourceUrl"); //$NON-NLS-1$
 
         return I18N.ERROR.importFailed(sourceUrl);
     }

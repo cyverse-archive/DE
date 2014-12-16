@@ -31,6 +31,7 @@ public class DesktopPresenterEventHandler implements LastSelectedPathChangedEven
     @Inject EventBus eventBus;
     @Inject UserSessionServiceFacade userSessionService;
     @Inject DiskResourceAutoBeanFactory drFactory;
+    @Inject JsonUtil jsonUtil;
     private final UserSettings userSettings;
 
     private DesktopPresenterImpl presenter;
@@ -52,8 +53,8 @@ public class DesktopPresenterEventHandler implements LastSelectedPathChangedEven
         DefaultUploadCompleteHandler duc = new DefaultUploadCompleteHandler(userSessionService,
                                                                             drFactory,
                                                                             event.getUploadDestFolderFolder().toString());
-        JSONObject obj = JsonUtil.getObject(event.getResponse());
-        String fileJson = JsonUtil.getObject(obj, "file").toString();
+        JSONObject obj = jsonUtil.getObject(event.getResponse());
+        String fileJson = jsonUtil.getObject(obj, "file").toString();
         duc.onCompletion(event.getFilepath(), fileJson);
         // FIXME REFACTOR JDS move user notification posting from DefaultUpload...Handler into desktop presenter
         // FIXME REFACTOR JDS Have diskResource presenter listen to this and perform refresh

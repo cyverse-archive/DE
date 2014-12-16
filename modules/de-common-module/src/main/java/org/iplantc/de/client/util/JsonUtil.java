@@ -20,6 +20,21 @@ import java.util.List;
  * Provides JSON utility operations.
  */
 public class JsonUtil {
+
+    private static JsonUtil INSTANCE;
+
+    JsonUtil() {
+
+    }
+
+    public static JsonUtil getInstance(){
+        if(INSTANCE == null) {
+            INSTANCE = new JsonUtil();
+        }
+
+        return INSTANCE;
+    }
+
     /**
      * Returns a JavaScript array representation of JSON argument data.
      * 
@@ -38,7 +53,7 @@ public class JsonUtil {
      * @param value string with quotes.
      * @return a string without quotes.
      */
-    public static String trim(String value) {
+    public String trim(String value) {
         StringBuilder temp = null;
         if (value != null && !value.isEmpty()) {
             final String QUOTE = "\"";
@@ -66,7 +81,7 @@ public class JsonUtil {
      * @param value string to escape quotes on
      * @return string after escaping quotes
      */
-    public static String escapeQuotes(String value) {
+    public String escapeQuotes(String value) {
         if (value == null || value.isEmpty()) {
             return value;
         } else {
@@ -80,7 +95,7 @@ public class JsonUtil {
      * @param value string to escape.
      * @return escaped string.
      */
-    public static String escapeNewLine(String value) {
+    public String escapeNewLine(String value) {
         if (value == null || value.isEmpty()) {
             return value;
         } else {
@@ -94,7 +109,7 @@ public class JsonUtil {
      * @param value string to format.
      * @return formatted string.
      */
-    public static String formatString(String value) {
+    public String formatString(String value) {
         if (value == null || value.isEmpty()) {
             return value;
         } else {
@@ -113,7 +128,7 @@ public class JsonUtil {
      * @param in json value to test
      * @return true if value is empty else returns false
      */
-    public static boolean isEmpty(JSONValue in) {
+    public boolean isEmpty(JSONValue in) {
         boolean ret = true; // assume we have an empty value
 
         if (in != null) {
@@ -134,7 +149,7 @@ public class JsonUtil {
      * @param key key for the requested JSONArray
      * @return JSONArray for the give key. null if the key or jsonObj is null
      */
-    public static JSONArray getArray(final JSONObject jsonObj, final String key) {
+    public JSONArray getArray(final JSONObject jsonObj, final String key) {
         JSONArray ret = null; // assume failure
 
         if (jsonObj != null && key != null) {
@@ -155,7 +170,7 @@ public class JsonUtil {
      * @param json
      * @return
      */
-    public static JSONObject getObject(final String json) {
+    public JSONObject getObject(final String json) {
         try {
             JSONValue val = JSONParser.parseStrict(json);
             if (val == null) {
@@ -176,7 +191,7 @@ public class JsonUtil {
      * @param key key for string to retrieve.
      * @return desired string. Empty string on failure.
      */
-    public static String getString(final JSONObject jsonObj, final String key) {
+    public String getString(final JSONObject jsonObj, final String key) {
         String ret = ""; // assume failure
 
         if (jsonObj != null && key != null) {
@@ -200,7 +215,7 @@ public class JsonUtil {
      * @param key
      * @return
      */
-    public static JSONObject getObject(final JSONObject jsonObj, final String key) {
+    public JSONObject getObject(final JSONObject jsonObj, final String key) {
         JSONObject ret = null; // assume failure
 
         if (jsonObj != null && key != null) {
@@ -221,7 +236,7 @@ public class JsonUtil {
      * @param index
      * @return
      */
-    public static JSONObject getObjectAt(JSONArray array, int index) {
+    public JSONObject getObjectAt(JSONArray array, int index) {
         JSONValue element = array.get(index);
 
         if (element == null) {
@@ -238,7 +253,7 @@ public class JsonUtil {
      * @param items items to add to the array
      * @return Correct JSON array.
      */
-    public static String buildStringArray(final String key, List<String> items) {
+    public String buildStringArray(final String key, List<String> items) {
         StringBuffer ret = new StringBuffer();
         ret.append("\"" + key + "\": ");
         String temp = buildJsonArrayString(items);
@@ -257,7 +272,7 @@ public class JsonUtil {
      * @param items items to add to the array
      * @return JSON array as a string.
      */
-    public static String buildJsonArrayString(List<String> items) {
+    public String buildJsonArrayString(List<String> items) {
         JSONArray arr = buildArrayFromStrings(items);
         if (arr != null) {
             return arr.toString();
@@ -272,7 +287,7 @@ public class JsonUtil {
      * @param in string to be quoted.
      * @return quoted string (if input is not null).
      */
-    public static String quoteString(String in) {
+    public String quoteString(String in) {
         String ret = null; // assume failure
 
         if (in != null) {
@@ -291,7 +306,7 @@ public class JsonUtil {
      * @param key for desired value.
      * @return string representation of value associated with key.
      */
-    public static String parseStringValue(String json, String key) {
+    public String parseStringValue(String json, String key) {
         JSONObject jsonObj = getObject(json);
 
         return getString(jsonObj, key);
@@ -303,7 +318,7 @@ public class JsonUtil {
      * @param items items to add to the array
      * @return Correct JSON array.
      */
-    public static JSONArray buildArray(List<JSONValue> items) {
+    public JSONArray buildArray(List<JSONValue> items) {
         JSONArray ret = new JSONArray();
 
         if (items != null) {
@@ -323,7 +338,7 @@ public class JsonUtil {
      * @param items
      * @return a JSON string array, null if the argument is null
      */
-    public static JSONArray buildArrayFromStrings(List<?> items) {
+    public JSONArray buildArrayFromStrings(List<?> items) {
         if (items == null) {
             return null;
         }
@@ -344,7 +359,7 @@ public class JsonUtil {
      * @param arr
      * @return a list of strings, null if arr=null
      */
-    public static List<String> buildStringList(JSONArray arr) {
+    public List<String> buildStringList(JSONArray arr) {
         if (arr == null) {
             return null;
         }
@@ -356,7 +371,7 @@ public class JsonUtil {
         return list;
     }
     
-    public static List<String> buildStringArray(List<JSONValue> items) {
+    public List<String> buildStringArray(List<JSONValue> items) {
         List<String> list = new ArrayList<String>();
 
         if (items == null) {
@@ -377,7 +392,7 @@ public class JsonUtil {
      * @param json to validate.
      * @return true if string is valid JSON.
      */
-    public static boolean isValidJson(String json) {
+    public boolean isValidJson(String json) {
         return (json != null && json.trim().length() > 0);
     }
 
@@ -388,7 +403,7 @@ public class JsonUtil {
      * @param json
      * @return the JSON value as a string
      */
-    public static String getRawValueAsString(JSONValue json) {
+    public String getRawValueAsString(JSONValue json) {
         if (json == null) {
             return null;
         }
@@ -410,7 +425,7 @@ public class JsonUtil {
      * @param defaultValue
      * @return
      */
-    public static boolean getBoolean(JSONObject json, String key, boolean defaultValue) {
+    public boolean getBoolean(JSONObject json, String key, boolean defaultValue) {
         if (json == null || key == null) {
             return defaultValue;
         }
@@ -435,7 +450,7 @@ public class JsonUtil {
      * @return Number value for the given key; null if the key or jsonObj is null, or the key is not in
      *         jsonObj, or key does not contain a numeric value.
      */
-    public static Number getNumber(JSONObject jsonObj, String key) {
+    public Number getNumber(JSONObject jsonObj, String key) {
         Number ret = null; // assume failure
 
         if (jsonObj != null && key != null) {
@@ -461,7 +476,7 @@ public class JsonUtil {
      * @return a hash based on the input
      */
 
-    public static byte[] generateHash(String json) {
+    public byte[] generateHash(String json) {
         try {
             MessageDigest md = MessageDigest.getInstance("MD5"); //$NON-NLS-1$
             md.reset();
@@ -481,7 +496,7 @@ public class JsonUtil {
      * @param split the splittable whose payload will be pretty printed
      * @return
      */
-    public static String prettyPrint(Splittable split){
+    public String prettyPrint(Splittable split){
         return prettyPrint(split.getPayload(), "", 4);
     }
     
@@ -493,7 +508,7 @@ public class JsonUtil {
      * @param space
      * @return
      */
-    public static String prettyPrint(Splittable split, int space) {
+    public String prettyPrint(Splittable split, int space) {
         return prettyPrint(split.getPayload(), "", space);
     }
 

@@ -49,6 +49,7 @@ public class AppTemplateServicesImpl implements AppTemplateServices, AppMetadata
     private final DiscEnvApiService deServiceFacade;
     private final DEProperties deProperties;
     private final AppTemplateUtils appTemplateUtils;
+    private final JsonUtil jsonUtil;
 
     private static final Logger LOG = Logger.getLogger(AppTemplateServicesImpl.class.getName());
 
@@ -56,11 +57,13 @@ public class AppTemplateServicesImpl implements AppTemplateServices, AppMetadata
     public AppTemplateServicesImpl(final DiscEnvApiService deServiceFacade,
                                    final DEProperties deProperties,
                                    final AppTemplateAutoBeanFactory factory,
-                                   final AppTemplateUtils appTemplateUtils) {
+                                   final AppTemplateUtils appTemplateUtils,
+                                   final JsonUtil jsonUtil) {
         this.deServiceFacade = deServiceFacade;
         this.deProperties = deProperties;
         this.factory = factory;
         this.appTemplateUtils = appTemplateUtils;
+        this.jsonUtil = jsonUtil;
     }
 
     @Override
@@ -134,7 +137,7 @@ public class AppTemplateServicesImpl implements AppTemplateServices, AppMetadata
     public void launchAnalysis(AppTemplate at, JobExecution je, AsyncCallback<String> callback) {
         String address = ANALYSES;
         Splittable assembledPayload = doAssembleLaunchAnalysisPayload(at, je);
-        LOG.info("LaunchAnalysis Json:\n" + JsonUtil.prettyPrint(assembledPayload));
+        LOG.info("LaunchAnalysis Json:\n" + jsonUtil.prettyPrint(assembledPayload));
 
         ServiceCallWrapper wrapper = new ServiceCallWrapper(POST, address, assembledPayload.getPayload());
         deServiceFacade.getServiceData(wrapper, callback);

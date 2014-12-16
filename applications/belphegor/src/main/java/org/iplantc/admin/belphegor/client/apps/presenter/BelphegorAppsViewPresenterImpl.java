@@ -92,6 +92,7 @@ public class BelphegorAppsViewPresenterImpl extends AppsViewPresenterImpl implem
     private final IplantErrorStrings errorStrings;
     @Inject
     private BelphegorAdminProperties properties;
+    @Inject JsonUtil jsonUtil;
 
     @Inject
     public BelphegorAppsViewPresenterImpl(final AppsView view,
@@ -345,7 +346,7 @@ public class BelphegorAppsViewPresenterImpl extends AppsViewPresenterImpl implem
         // Serialize App to JSON object
         String jsonString = AutoBeanCodex.encode(AutoBeanUtils.getAutoBean(appClone)).getPayload();
 
-        final JSONObject jsonObj = JsonUtil.getObject(jsonString);
+        final JSONObject jsonObj = jsonUtil.getObject(jsonString);
 
         adminAppService.updateApplication(selectedApp.getId(), jsonObj, new AsyncCallback<String>() {
 
@@ -356,7 +357,7 @@ public class BelphegorAppsViewPresenterImpl extends AppsViewPresenterImpl implem
                 if (arr != null && arr.size() > 0) {
                     StringBuilder names_display = new StringBuilder("");
                     for (int i = 0; i < arr.size(); i++) {
-                        names_display.append(JsonUtil.trim(arr.get(0).isObject().get("name").toString()));
+                        names_display.append(jsonUtil.trim(arr.get(0).isObject().get("name").toString()));
                         if (i != arr.size() - 1) {
                             names_display.append(",");
                         }
@@ -375,7 +376,7 @@ public class BelphegorAppsViewPresenterImpl extends AppsViewPresenterImpl implem
             @Override
             public void onFailure(Throwable caught) {
                 JSONObject obj = JSONParser.parseStrict(caught.getMessage()).isObject();
-                String reason = JsonUtil.trim(obj.get("reason").toString());
+                String reason = jsonUtil.trim(obj.get("reason").toString());
                 if (reason.contains("orphaned")) {
                     AlertMessageBox alertBox = new AlertMessageBox(displayStrings.restoreAppFailureMsgTitle(),
                                                                    displayStrings.restoreAppFailureMsg(selectedApp.getName()));
@@ -518,7 +519,7 @@ public class BelphegorAppsViewPresenterImpl extends AppsViewPresenterImpl implem
         // Serialize App to JSON object
         String jsonString = AutoBeanCodex.encode(AutoBeanUtils.getAutoBean(appClone)).getPayload();
 
-        final JSONObject jsonObj = JsonUtil.getObject(jsonString);
+        final JSONObject jsonObj = jsonUtil.getObject(jsonString);
 
         if (app.getName() != null) {
             confluenceService.movePage(appClone.getName(),

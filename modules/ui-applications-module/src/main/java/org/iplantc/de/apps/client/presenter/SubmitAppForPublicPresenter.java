@@ -42,6 +42,7 @@ public class SubmitAppForPublicPresenter implements SubmitAppForPublicUseView.Pr
     private final IplantDisplayStrings displayStrings;
     private final IplantErrorStrings errorStrings;
     private final ConfluenceServiceAsync confluenceService;
+    @Inject JsonUtil jsonUtil;
 
     @Inject
     public SubmitAppForPublicPresenter(SubmitAppForPublicUseView view,
@@ -119,8 +120,8 @@ public class SubmitAppForPublicPresenter implements SubmitAppForPublicUseView.Pr
 
             @Override
             public void onSuccess(String result) {
-                JSONObject obj = JsonUtil.getObject(result);
-                JSONArray arr = JsonUtil.getArray(obj, "references");
+                JSONObject obj = jsonUtil.getObject(result);
+                JSONArray arr = jsonUtil.getArray(obj, "references");
                 if (arr != null && arr.size() > 0) {
                     view.loadReferences(parseRefLinks(arr));
                 }
@@ -136,13 +137,13 @@ public class SubmitAppForPublicPresenter implements SubmitAppForPublicUseView.Pr
         pmb.getProgressBar().setInterval(100);
         pmb.auto();
         pmb.show();
-        confluenceService.addPage(JsonUtil.getString(obj, "name"),
-                                  JsonUtil.getString(obj, "desc"),
+        confluenceService.addPage(jsonUtil.getString(obj, "name"),
+                                  jsonUtil.getString(obj, "desc"),
                                   new AsyncCallback<String>() {
                                       @Override
                                       public void onFailure(Throwable caught) {
                                           pmb.hide();
-                                          ErrorHandler.post(errorStrings.cantCreateConfluencePage(JsonUtil.getString(obj,
+                                          ErrorHandler.post(errorStrings.cantCreateConfluencePage(jsonUtil.getString(obj,
                                                                                                                      "name")),
                                                             caught);
 
@@ -154,7 +155,7 @@ public class SubmitAppForPublicPresenter implements SubmitAppForPublicUseView.Pr
                                       public void onSuccess(final String url) {
                                           obj.put("wiki_url", new JSONString(url));
                                           appService.publishToWorld(obj,
-                                                                    JsonUtil.getString(obj, "id"),
+                                                                    jsonUtil.getString(obj, "id"),
                                                                     new AsyncCallback<String>() {
                                                                         @Override
                                                                         public void

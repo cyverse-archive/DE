@@ -33,10 +33,12 @@ public class ShareAnonymousCallback implements AsyncCallback<String> {
     private final IsMaskable container;
     private final File file;
     private final EnsemblPopupTemplate template = GWT.create(EnsemblPopupTemplate.class);
+    private final JsonUtil jsonUtil;
 
     public ShareAnonymousCallback(File file, IsMaskable container) {
         this.container = container;
         this.file = file;
+        this.jsonUtil = JsonUtil.getInstance();
     }
 
     @Override
@@ -52,9 +54,9 @@ public class ShareAnonymousCallback implements AsyncCallback<String> {
         if (container != null) {
             container.unmask();
         }
-        JSONObject obj = JsonUtil.getObject(result);
-        JSONObject paths = JsonUtil.getObject(obj, "paths");
-        showShareLink(JsonUtil.getString(paths, file.getPath()));
+        JSONObject obj = jsonUtil.getObject(result);
+        JSONObject paths = jsonUtil.getObject(obj, "paths");
+        showShareLink(jsonUtil.getString(paths, file.getPath()));
     }
 
 

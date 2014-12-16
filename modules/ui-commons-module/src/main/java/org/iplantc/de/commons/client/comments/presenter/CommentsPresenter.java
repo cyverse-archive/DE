@@ -31,12 +31,14 @@ public class CommentsPresenter implements CommentsView.Presenter {
     final MetadataServiceFacade facade;
     CommentsAutoBeanFactory cabf = GWT.create(CommentsAutoBeanFactory.class);
     private final boolean isResourceOwner;
+    private final JsonUtil jsonUtil;
 
     public CommentsPresenter(CommentsView cv, String resourceID, boolean owner, MetadataServiceFacade facade) {
         this.view = cv;
         this.resourceID = resourceID;
         this.facade = facade;
         this.isResourceOwner = owner;
+        this.jsonUtil = JsonUtil.getInstance();
         getComments();
     }
 
@@ -85,8 +87,8 @@ public class CommentsPresenter implements CommentsView.Presenter {
             @Override
             public void onSuccess(String result) {
                 IplantAnnouncer.getInstance().schedule(new SuccessAnnouncementConfig(I18N.DISPLAY.addComment()));
-                JSONObject obj = JsonUtil.getObject(result);
-                JSONObject comObj = JsonUtil.getObject(obj, "comment");
+                JSONObject obj = jsonUtil.getObject(result);
+                JSONObject comObj = jsonUtil.getObject(obj, "comment");
                 AutoBean<Comment> cl = AutoBeanCodex.decode(cabf, Comment.class, comObj.toString());
                 view.addComment(cl.as());
             }

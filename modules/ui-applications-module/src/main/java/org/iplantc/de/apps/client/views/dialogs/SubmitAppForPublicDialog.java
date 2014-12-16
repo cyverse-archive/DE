@@ -57,15 +57,18 @@ public class SubmitAppForPublicDialog extends IPlantDialog {
     }
 
     private String getErrorMessage(Throwable caught) {
-        JSONObject obj = JsonUtil.getObject(caught.getMessage());
+        JSONObject obj = jsonUtil.getObject(caught.getMessage());
         if(obj != null) {
-            return JsonUtil.getString(obj, "reason");
+            return jsonUtil.getString(obj, "reason");
         }
         return  "";
     }
+
+    private final JsonUtil jsonUtil;
     
     public SubmitAppForPublicDialog(final App selectedApp,
                                     final SubmitAppForPublicUseView.Presenter presenter) {
+        jsonUtil = JsonUtil.getInstance();
         initDialog();
         presenter.go(this, selectedApp, new SubmitAppForPublicCallbackImpl());
         setOkButtonText(I18N.DISPLAY.submit());

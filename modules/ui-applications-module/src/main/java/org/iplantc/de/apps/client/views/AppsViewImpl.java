@@ -127,6 +127,8 @@ public class AppsViewImpl extends Composite implements AppsView, IsMaskable, App
 
     Logger logger = Logger.getLogger("App View");
 
+    @Inject JsonUtil jsonUtil;
+
     @Inject
     public AppsViewImpl(final Tree<AppCategory, String> tree, final DEProperties properties, final AppsView.ViewMenu toolbar, final IplantResources resources, final UserInfo userInfo,
             final IplantDisplayStrings displayStrings, final AppUserServiceFacade appUserService) {
@@ -194,8 +196,8 @@ public class AppsViewImpl extends Composite implements AppsView, IsMaskable, App
 
         if (properties.getPrivateWorkspaceItems() != null) {
             JSONArray items = JSONParser.parseStrict(properties.getPrivateWorkspaceItems()).isArray();
-            USER_APPS_GROUP = JsonUtil.getRawValueAsString(items.get(0));
-            FAVORITES = JsonUtil.getRawValueAsString(items.get(1));
+            USER_APPS_GROUP = jsonUtil.getRawValueAsString(items.get(0));
+            FAVORITES = jsonUtil.getRawValueAsString(items.get(1));
         }
 
     }

@@ -293,6 +293,7 @@ public class AnalysesPresenterImpl implements AnalysesView.Presenter,
     @Inject UserSessionServiceFacade userSessionService;
     @Inject UserInfo userInfo;
     @Inject DiskResourceUtil diskResourceUtil;
+    @Inject JsonUtil jsonUtil;
 
     private final AnalysesView view;
     private final HasHandlers eventBus;
@@ -385,7 +386,7 @@ public class AnalysesPresenterImpl implements AnalysesView.Presenter,
                                                                .assign(notificationMsg, "user");
 
                                                    final String notificationMsgPayload = notificationMsg.getPayload();
-                                                   userSessionService.postClientNotification(JsonUtil.getObject(notificationMsgPayload),
+                                                   userSessionService.postClientNotification(jsonUtil.getObject(notificationMsgPayload),
                                                                                              new AsyncCallback<String>() {
                                                                                                  @Override
                                                                                                  public void

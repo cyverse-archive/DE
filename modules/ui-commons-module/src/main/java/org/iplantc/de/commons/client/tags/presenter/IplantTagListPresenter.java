@@ -30,6 +30,7 @@ import java.util.List;
 
 public class IplantTagListPresenter implements TagListHandlers {
 
+    private final JsonUtil jsonUtil;
     private final CustomIplantTagResources resources;
     private final IplantTagListView tagListView;
     private final List<TagItem> tagItems = new ArrayList<TagItem>();
@@ -135,6 +136,7 @@ public class IplantTagListPresenter implements TagListHandlers {
         this.tagListView = CommonsInjector.INSTANCE.getIplantTagListView();
         this.getTagListView().setUiHandlers(this);
         this.mdataService = ServicesInjector.INSTANCE.getMetadataService();
+        this.jsonUtil = JsonUtil.getInstance();
     }
 
     /**
@@ -371,8 +373,8 @@ public class IplantTagListPresenter implements TagListHandlers {
 
             @Override
             public void onSuccess(String result) {
-                JSONObject resultObj = JsonUtil.getObject(result);
-                tag.setId(JsonUtil.getString(resultObj, "id"));
+                JSONObject resultObj = jsonUtil.getObject(result);
+                tag.setId(jsonUtil.getString(resultObj, "id"));
                 // this is a side-effect ?!?
                 onAddTag(tag);
             }

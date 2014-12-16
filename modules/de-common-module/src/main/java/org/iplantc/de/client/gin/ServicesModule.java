@@ -8,6 +8,7 @@ import org.iplantc.de.client.services.impl.*;
 import org.iplantc.de.client.services.stubs.*;
 import org.iplantc.de.client.util.AppTemplateUtils;
 import org.iplantc.de.client.util.DiskResourceUtil;
+import org.iplantc.de.client.util.JsonUtil;
 import org.iplantc.de.shared.services.DiscEnvApiService;
 
 import com.google.gwt.inject.client.AbstractGinModule;
@@ -54,6 +55,11 @@ final class ServicesModule extends AbstractGinModule {
         bind(TagsServiceFacade.class).annotatedWith(Stub.class).to(MetadataServiceFacadeStub.class);
 
         bind(DiscEnvApiService.class).in(Singleton.class);
+    }
+
+    @Provides
+    public JsonUtil createJsonUtil() {
+        return JsonUtil.getInstance();
     }
 
     @Provides

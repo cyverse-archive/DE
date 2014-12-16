@@ -147,10 +147,12 @@ public class AppRatingCell extends AbstractCell<App> {
     private static Templates templates = GWT.create(Templates.class);
     private static final Resources resources = GWT.create(Resources.class);
     private final List<String> ratings;
+    private final JsonUtil jsonUtil;
 
     public AppRatingCell() {
         super(CLICK, MOUSEOVER, MOUSEOUT);
         resources.css().ensureInjected();
+        jsonUtil = JsonUtil.getInstance();
 
         ratings = new ArrayList<String>();
         ratings.add(0, RATING_CONSTANT.HATE_IT.displayText);
@@ -373,11 +375,11 @@ public class AppRatingCell extends AbstractCell<App> {
     }
 
     private App getUpdateRating(final App app, String result) {
-        JSONObject jsonObj = JsonUtil.getObject(result);
+        JSONObject jsonObj = jsonUtil.getObject(result);
         if (jsonObj != null) {
-            double newAverage = JsonUtil.getNumber(jsonObj, "average").doubleValue(); //$NON-NLS-1$
+            double newAverage = jsonUtil.getNumber(jsonObj, "average").doubleValue(); //$NON-NLS-1$
             app.getRating().setAverageRating(newAverage);
-            int total = JsonUtil.getNumber(jsonObj, "total").intValue();
+            int total = jsonUtil.getNumber(jsonObj, "total").intValue();
             app.getRating().setTotal(total);
         }
 

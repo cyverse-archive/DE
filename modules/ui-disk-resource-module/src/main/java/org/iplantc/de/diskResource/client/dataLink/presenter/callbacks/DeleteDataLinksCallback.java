@@ -16,10 +16,12 @@ public class DeleteDataLinksCallback implements AsyncCallback<String> {
 
     private final Tree<DiskResource, DiskResource> tree;
     private DataLinkPanel view;
+    private final JsonUtil jsonUtil;
 
     public DeleteDataLinksCallback(DataLinkPanel view) {
         this.view = view;
         this.tree = view.getTree();
+        this.jsonUtil = JsonUtil.getInstance();
     }
 
     @Override
@@ -30,8 +32,8 @@ public class DeleteDataLinksCallback implements AsyncCallback<String> {
 
     @Override
     public void onSuccess(String result) {
-        JSONObject response = JsonUtil.getObject(result);
-        JSONArray tickets = JsonUtil.getArray(response, "tickets");
+        JSONObject response = jsonUtil.getObject(result);
+        JSONArray tickets = jsonUtil.getArray(response, "tickets");
 
         for (int i = 0; i < tickets.size(); i++) {
             String ticketId = tickets.get(i).isString().toString().replace("\"", "");

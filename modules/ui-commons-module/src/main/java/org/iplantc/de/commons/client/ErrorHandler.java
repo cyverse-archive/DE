@@ -128,14 +128,14 @@ public class ErrorHandler {
 
         JSONObject jsonError = null;
         try {
-            jsonError = JsonUtil.getObject(exceptionMessage);
+            jsonError = JsonUtil.getInstance().getObject(exceptionMessage);
         } catch (Exception ignoreParseErrors) {
             // intentionally ignore JSON parse errors
         }
 
         if (jsonError != null) {
-            String name = JsonUtil.getString(jsonError, "name"); //$NON-NLS-1$
-            String message = JsonUtil.getString(jsonError, "message"); //$NON-NLS-1$
+            String name = JsonUtil.getInstance().getString(jsonError, "name"); //$NON-NLS-1$
+            String message = JsonUtil.getInstance().getString(jsonError, "message"); //$NON-NLS-1$
 
             if (!message.isEmpty() || !name.isEmpty()) {
                 exceptionMessage = I18N.ERROR.errorReport(name, message);

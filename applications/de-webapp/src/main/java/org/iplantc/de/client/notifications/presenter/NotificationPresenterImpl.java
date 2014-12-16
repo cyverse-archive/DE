@@ -102,8 +102,8 @@ public class NotificationPresenterImpl implements NotificationView.Presenter, No
 
                 @Override
                 public void onSuccess(String result1) {
-                    JSONObject obj = JsonUtil.getObject(result1);
-                    int new_count = Integer.parseInt(JsonUtil.getString(obj, "count"));
+                    JSONObject obj = jsonUtil.getObject(result1);
+                    int new_count = Integer.parseInt(jsonUtil.getString(obj, "count"));
                     // fire update of the new unseen count;
                     eventBus.fireEvent(new NotificationCountUpdateEvent(new_count));
                 }
@@ -121,6 +121,7 @@ public class NotificationPresenterImpl implements NotificationView.Presenter, No
     private final NotificationView view;
     private PagingLoadResult<NotificationMessage> callbackResult;
     private NotificationCategory currentCategory;
+    private final JsonUtil jsonUtil;
 
     public NotificationPresenterImpl(NotificationView view) {
         this.view = view;
@@ -130,6 +131,7 @@ public class NotificationPresenterImpl implements NotificationView.Presenter, No
         this.eventBus = EventBus.getInstance();
         currentCategory = NotificationCategory.ALL;
         toolbar = new NotificationToolbarViewImpl();
+        this.jsonUtil = JsonUtil.getInstance();
         toolbar.setPresenter(this);
         view.setNorthWidget(toolbar);
         this.view.setPresenter(this);

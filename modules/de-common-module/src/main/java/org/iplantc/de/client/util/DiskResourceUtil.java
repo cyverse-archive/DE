@@ -37,8 +37,10 @@ import java.util.Set;
 public class DiskResourceUtil {
 
     private static DiskResourceUtil INSTANCE;
+    private final JsonUtil jsonUtil;
 
     DiskResourceUtil() {
+        this.jsonUtil = JsonUtil.getInstance();
 
     }
 
@@ -274,13 +276,13 @@ public class DiskResourceUtil {
     }
 
     public <R extends HasId> Splittable createStringIdListSplittable(Iterable<R> hasIdList) {
-        JSONArray jArr = JsonUtil.buildArrayFromStrings(asStringIdList(hasIdList));
+        JSONArray jArr = jsonUtil.buildArrayFromStrings(asStringIdList(hasIdList));
 
         return StringQuoter.split(jArr.toString());
     }
 
     public Splittable createSplittableFromStringList(List<String> strings) {
-        return StringQuoter.split(JsonUtil.buildArrayFromStrings(strings).toString());
+        return StringQuoter.split(jsonUtil.buildArrayFromStrings(strings).toString());
     }
 
     public HasPath getFolderPathFromFile(File file) {
@@ -417,7 +419,7 @@ public class DiskResourceUtil {
     }
 
     public Splittable createStringPathListSplittable(List<HasPath> hasPathList) {
-        JSONArray jArr = JsonUtil.buildArrayFromStrings(asStringPathList(hasPathList));
+        JSONArray jArr = jsonUtil.buildArrayFromStrings(asStringPathList(hasPathList));
 
         return StringQuoter.split(jArr.toString());
     }

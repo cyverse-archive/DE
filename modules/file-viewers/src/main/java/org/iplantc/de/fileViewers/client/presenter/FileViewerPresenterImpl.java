@@ -115,9 +115,9 @@ public class FileViewerPresenterImpl implements FileViewer.Presenter, FileSavedE
         public void onSuccess(String result) {
             asyncCallback.onSuccess(null);
 
-            JSONObject manifest = JsonUtil.getObject(result);
-            String infoType = JsonUtil.getString(manifest, FileViewer.INFO_TYPE_KEY);
-            MimeType contentType = MimeType.fromTypeString(JsonUtil.getString(manifest, "content-type"));
+            JSONObject manifest = jsonUtil.getObject(result);
+            String infoType = jsonUtil.getString(manifest, FileViewer.INFO_TYPE_KEY);
+            MimeType contentType = MimeType.fromTypeString(jsonUtil.getString(manifest, "content-type"));
             checkNotNull(contentType);
             presenter.setTitle(file.getName());
             presenter.setManifest(manifest);
@@ -137,6 +137,7 @@ public class FileViewerPresenterImpl implements FileViewer.Presenter, FileSavedE
     @Inject DiskResourceSelectorDialogFactory dialogFactory;
     @Inject UserSessionServiceFacade userSessionService;
     @Inject DiskResourceUtil diskResourceUtil;
+    @Inject JsonUtil jsonUtil;
 
     private MimeType contentType;
     /**
@@ -315,7 +316,7 @@ public class FileViewerPresenterImpl implements FileViewer.Presenter, FileSavedE
         setTitle(title);
         setManifest(manifest);
         setContentType(contentType);
-        String infoType = JsonUtil.getString(manifest, FileViewer.INFO_TYPE_KEY);
+        String infoType = jsonUtil.getString(manifest, FileViewer.INFO_TYPE_KEY);
         composeView(null, parentFolder, manifest, contentType, infoType, editing, vizTabFirst);
     }
 

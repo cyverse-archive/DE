@@ -12,6 +12,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 public class LoadGenomeInCoGeCallback implements AsyncCallback<String> {
 
     private final IsMaskable container;
+    private final JsonUtil jsonUtil = JsonUtil.getInstance();
 
     public LoadGenomeInCoGeCallback(IsMaskable container) {
         this.container = container;
@@ -27,8 +28,8 @@ public class LoadGenomeInCoGeCallback implements AsyncCallback<String> {
 
     @Override
     public void onSuccess(String result) {
-        JSONObject resultObj = JsonUtil.getObject(result);
-        String url = JsonUtil.getString(resultObj, "coge_genome_url");
+        JSONObject resultObj = jsonUtil.getObject(result);
+        String url = jsonUtil.getString(resultObj, "coge_genome_url");
         if (!Strings.isNullOrEmpty(url)) {
             IplantInfoBox iib = new IplantInfoBox(org.iplantc.de.resources.client.messages.I18N.DISPLAY.coge(), org.iplantc.de.resources.client.messages.I18N.DISPLAY.cogeResponse(url));
             iib.show();

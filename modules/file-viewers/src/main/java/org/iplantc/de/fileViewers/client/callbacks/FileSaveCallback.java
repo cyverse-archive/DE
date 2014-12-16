@@ -34,6 +34,7 @@ public class FileSaveCallback implements AsyncCallback<String> {
     private final boolean newFile;
     private DiskResourceAutoBeanFactory drFactory;
     private UserSessionServiceFacade userSessionService;
+    private final JsonUtil jsonUtil;
 
     public FileSaveCallback(final UserSessionServiceFacade userSessionService,
                             final DiskResourceAutoBeanFactory drFactory,
@@ -49,6 +50,7 @@ public class FileSaveCallback implements AsyncCallback<String> {
         this.maskingContainer = container;
         this.newFile = newFile;
         errorStrings = ERROR;
+        this.jsonUtil = JsonUtil.getInstance();
     }
 
     @Override
@@ -57,7 +59,7 @@ public class FileSaveCallback implements AsyncCallback<String> {
         DefaultUploadCompleteHandler uch = new DefaultUploadCompleteHandler(userSessionService,
                                                                             drFactory,
                                                                             parentFolder);
-        String fileJson = JsonUtil.getObject(obj, "file").toString();
+        String fileJson = jsonUtil.getObject(obj, "file").toString();
         if (newFile) {
             uch.onCompletion(fileName, fileJson);
         }

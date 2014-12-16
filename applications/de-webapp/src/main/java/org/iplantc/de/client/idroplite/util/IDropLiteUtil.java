@@ -21,14 +21,15 @@ public class IDropLiteUtil {
     public static int DISPLAY_MODE_UPLOAD = 2;
     public static int DISPLAY_MODE_DOWNLOAD = 3;
     static final DEClientConstants constants = GWT.create(DEClientConstants.class);
+    static final JsonUtil jsonUtil = JsonUtil.getInstance();
 
     public static HtmlLayoutContainer getAppletForUpload(JSONObject jsonAppletParams, int width,
             int height) {
         StringBuilder htmlAppletTag = buildAppletTagCommon(jsonAppletParams, width, height);
 
-        htmlAppletTag.append(buildAppletParam("absPath", JsonUtil.getString(jsonAppletParams, "home")));
+        htmlAppletTag.append(buildAppletParam("absPath", jsonUtil.getString(jsonAppletParams, "home")));
         htmlAppletTag.append(buildAppletParam("uploadDest",
-                JsonUtil.getString(jsonAppletParams, "uploadDest")));
+                jsonUtil.getString(jsonAppletParams, "uploadDest")));
         htmlAppletTag.append(buildAppletParam("displayMode", String.valueOf(DISPLAY_MODE_UPLOAD)));
 
         if (GXT.isIE()) {
@@ -77,16 +78,16 @@ public class IDropLiteUtil {
         }
 
         htmlAppletTag.append(buildAppletParam("mode", "2"));
-        htmlAppletTag.append(buildAppletParam("user", JsonUtil.getString(jsonAppletParams, "user")));
+        htmlAppletTag.append(buildAppletParam("user", jsonUtil.getString(jsonAppletParams, "user")));
         htmlAppletTag.append(buildAppletParam("password",
-                JsonUtil.getString(jsonAppletParams, "password")));
-        htmlAppletTag.append(buildAppletParam("host", JsonUtil.getString(jsonAppletParams, "host")));
+                jsonUtil.getString(jsonAppletParams, "password")));
+        htmlAppletTag.append(buildAppletParam("host", jsonUtil.getString(jsonAppletParams, "host")));
         htmlAppletTag.append(buildAppletParam("port",
-                String.valueOf(JsonUtil.getNumber(jsonAppletParams, "port").intValue())));
-        htmlAppletTag.append(buildAppletParam("zone", JsonUtil.getString(jsonAppletParams, "zone")));
+                String.valueOf(jsonUtil.getNumber(jsonAppletParams, "port").intValue())));
+        htmlAppletTag.append(buildAppletParam("zone", jsonUtil.getString(jsonAppletParams, "zone")));
         htmlAppletTag.append(buildAppletParam("defaultStorageResource",
-                JsonUtil.getString(jsonAppletParams, "defaultStorageResource")));
-        htmlAppletTag.append(buildAppletParam("key", JsonUtil.getString(jsonAppletParams, "key")));
+                jsonUtil.getString(jsonAppletParams, "defaultStorageResource")));
+        htmlAppletTag.append(buildAppletParam("key", jsonUtil.getString(jsonAppletParams, "key")));
 
         return htmlAppletTag;
     }

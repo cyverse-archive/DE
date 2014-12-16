@@ -39,12 +39,14 @@ public class IDropLitePresenter implements Presenter {
     private final int CONTENT_PADDING = 12;
     private final IDropLiteWindowConfig idlwc;
     private final DiskResourceUtil diskResourceUtil;
+    private final JsonUtil jsonUtil;
 
     public IDropLitePresenter(IDropLiteView view, IDropLiteWindowConfig config) {
         this.view = view;
         view.setPresenter(this);
         this.idlwc = config;
         this.diskResourceUtil = DiskResourceUtil.getInstance();
+        this.jsonUtil = JsonUtil.getInstance();
     }
 
     @Override
@@ -116,7 +118,7 @@ public class IDropLitePresenter implements Presenter {
 
         @Override
         public void onSuccess(String response) {
-            view.setApplet(buildAppletHtml(JsonUtil.getObject(JsonUtil.getObject(response), "data"))); //$NON-NLS-1$
+            view.setApplet(buildAppletHtml(jsonUtil.getObject(jsonUtil.getObject(response), "data"))); //$NON-NLS-1$
             view.unmask();
         }
 

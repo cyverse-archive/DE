@@ -120,6 +120,7 @@ public class AppsViewPresenterImpl implements AppsView.Presenter {
 
     @Inject Provider<NewToolRequestDialog> newToolRequestDialogProvider;
     @Inject Provider<SubmitAppForPublicUseView.Presenter> submitAppForPublicPresenterProvider;
+    @Inject JsonUtil jsonUtil;
 
     @Inject
     public AppsViewPresenterImpl(final AppsView view,
@@ -268,8 +269,8 @@ public class AppsViewPresenterImpl implements AppsView.Presenter {
 
         if (props.getPrivateWorkspaceItems() != null) {
             JSONArray items = JSONParser.parseStrict(props.getPrivateWorkspaceItems()).isArray();
-            USER_APPS_GROUP = JsonUtil.getRawValueAsString(items.get(0));
-            FAVORITES = JsonUtil.getRawValueAsString(items.get(1));
+            USER_APPS_GROUP = jsonUtil.getRawValueAsString(items.get(0));
+            FAVORITES = jsonUtil.getRawValueAsString(items.get(1));
         }
     }
 

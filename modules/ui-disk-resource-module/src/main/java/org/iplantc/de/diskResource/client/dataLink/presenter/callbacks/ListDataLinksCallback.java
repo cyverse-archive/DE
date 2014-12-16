@@ -25,18 +25,20 @@ public class ListDataLinksCallback<M> implements AsyncCallback<String> {
 
     private final Tree<M, M> tree;
     private final DataLinkFactory dlFactory;
+    private final JsonUtil jsonUtil;
 
     public ListDataLinksCallback(Tree<M, M> tree, DataLinkFactory dlFactory) {
         this.tree = tree;
         this.dlFactory = dlFactory;
+        this.jsonUtil = JsonUtil.getInstance();
     }
 
     @SuppressWarnings("unchecked")
     @Override
     public void onSuccess(String result) {
         // Get tickets by resource id, add them to the tree.
-        JSONObject response = JsonUtil.getObject(result);
-        JSONObject tickets = JsonUtil.getObject(response, "tickets");
+        JSONObject response = jsonUtil.getObject(result);
+        JSONObject tickets = jsonUtil.getObject(response, "tickets");
 
         Splittable placeHolder;
         for (String key : tickets.keySet()) {
@@ -50,7 +52,7 @@ public class ListDataLinksCallback<M> implements AsyncCallback<String> {
                 }
             }
 
-            JSONArray dlIds = JsonUtil.getArray(tickets, key);
+            JSONArray dlIds = jsonUtil.getArray(tickets, key);
             Splittable splittable = StringQuoter.split(dlIds.toString());
             splittable.assign(placeHolder, "tickets");
             AutoBean<DataLinkList> ticketsAB = AutoBeanCodex.decode(dlFactory,

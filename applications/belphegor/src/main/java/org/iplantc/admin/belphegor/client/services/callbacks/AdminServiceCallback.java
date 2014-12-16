@@ -19,6 +19,7 @@ public abstract class AdminServiceCallback implements AsyncCallback<String> {
     public static final String SUCCESS = "success"; //$NON-NLS-1$
 
     protected Component maskedCaller;
+    private final JsonUtil jsonUtil = JsonUtil.getInstance();
 
     /**
      * Sets a reference to a caller that is masked during the service call, and should be unmasked after
@@ -87,12 +88,12 @@ public abstract class AdminServiceCallback implements AsyncCallback<String> {
      */
     protected JSONObject getJsonResponse(String result) throws Throwable {
 
-        JSONObject ret = JsonUtil.getObject(result);
+        JSONObject ret = jsonUtil.getObject(result);
         if (ret == null) {
             throw new Exception(result);
         }
 
-        if (!JsonUtil.getBoolean(ret, SUCCESS, true)) {
+        if (!jsonUtil.getBoolean(ret, SUCCESS, true)) {
             throw new Exception(result);
         }
 

@@ -49,6 +49,7 @@ public class AppUserServiceFacadeImpl implements AppUserServiceFacade {
     @Inject IplantErrorStrings errorStrings;
     @Inject IplantDisplayStrings displayStrings;
     @Inject DiskResourceUtil diskResourceUtil;
+    @Inject JsonUtil jsonUtil;
 
     @Inject
     public AppUserServiceFacadeImpl(final DiscEnvApiService deServiceFacade,
@@ -229,7 +230,7 @@ public class AppUserServiceFacadeImpl implements AppUserServiceFacade {
                                          final AsyncCallback<?> callback) {
         JSONObject json = JSONParser.parseStrict(avgJson).isObject();
         if (json != null) {
-            Number avg = JsonUtil.getNumber(json, "average"); //$NON-NLS-1$
+            Number avg = jsonUtil.getNumber(json, "average"); //$NON-NLS-1$
             int avgRounded = (int)Math.round(avg.doubleValue());
             confluenceService.updatePage(appName, avgRounded, new AsyncCallback<Void>() {
 
@@ -368,7 +369,7 @@ public class AppUserServiceFacadeImpl implements AppUserServiceFacade {
         String address = APPS + "/" + "shredder"; //$NON-NLS-1$
 
         JSONObject body = new JSONObject();
-        body.put("app_ids", JsonUtil.buildArrayFromStrings(appIds)); //$NON-NLS-1$
+        body.put("app_ids", jsonUtil.buildArrayFromStrings(appIds)); //$NON-NLS-1$
         ServiceCallWrapper wrapper = new ServiceCallWrapper(POST, address, body.toString());
         deServiceFacade.getServiceData(wrapper, callback);
     }
