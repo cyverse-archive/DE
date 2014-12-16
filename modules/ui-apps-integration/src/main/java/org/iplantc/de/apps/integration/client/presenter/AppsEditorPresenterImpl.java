@@ -143,7 +143,7 @@ public class AppsEditorPresenterImpl implements AppsEditorView.Presenter,
         }
 
         AppTemplate copyAppTemplate(AppTemplate templateToCopy) {
-            return AppTemplateUtils.copyAppTemplate(templateToCopy);
+            return appTemplateUtils.copyAppTemplate(templateToCopy);
         }
     }
     /**
@@ -313,6 +313,7 @@ public class AppsEditorPresenterImpl implements AppsEditorView.Presenter,
     }
 
     private final IplantErrorStrings errorStrings;
+    private final AppTemplateUtils appTemplateUtils;
     private List<HandlerRegistration> handlerRegistrations = Lists.newArrayList();
 
     public static native void doJsonFormattting(XElement textArea,String val,int width, int height) /*-{
@@ -362,7 +363,8 @@ public class AppsEditorPresenterImpl implements AppsEditorView.Presenter,
                             final UUIDServiceAsync uuidService,
                             final AppTemplateWizardAppearance appearance,
                             final IplantAnnouncer announcer,
-                            final IplantErrorStrings errorStrings) {
+                            final IplantErrorStrings errorStrings,
+                            final AppTemplateUtils appTemplateUtils) {
         this.view = view;
         this.eventBus = eventBus;
         this.atService = atService;
@@ -372,6 +374,7 @@ public class AppsEditorPresenterImpl implements AppsEditorView.Presenter,
         this.appearance = appearance;
         this.announcer = announcer;
         this.errorStrings = errorStrings;
+        this.appTemplateUtils = appTemplateUtils;
         view.setPresenter(this);
     }
 
@@ -440,7 +443,7 @@ public class AppsEditorPresenterImpl implements AppsEditorView.Presenter,
         /*
          * JDS Make a copy so we can check for differences on exit.
          */
-        lastSave = AppTemplateUtils.copyAppTemplate(flushViewAndClean());
+        lastSave = appTemplateUtils.copyAppTemplate(flushViewAndClean());
 
         updateCommandLinePreview(lastSave);
         if (container.getWidget() == null) {
@@ -494,7 +497,7 @@ public class AppsEditorPresenterImpl implements AppsEditorView.Presenter,
         try {
             // Determine if there are any changes, variables are broken out for readability
             AutoBean<AppTemplate> lastSaveAb = AutoBeanUtils.getAutoBean(lastSave);
-            AutoBean<AppTemplate> currentAb = AutoBeanUtils.getAutoBean(AppTemplateUtils.copyAppTemplate(flushViewAndClean()));
+            AutoBean<AppTemplate> currentAb = AutoBeanUtils.getAutoBean(appTemplateUtils.copyAppTemplate(flushViewAndClean()));
             String lastSavePayload = AutoBeanCodex.encode(lastSaveAb).getPayload();
             String currentPayload = AutoBeanCodex.encode(currentAb).getPayload();
             return !lastSavePayload.equals(currentPayload);
@@ -586,7 +589,7 @@ public class AppsEditorPresenterImpl implements AppsEditorView.Presenter,
     @Override
     public void onPreviewJsonClicked() {
         AppTemplate appTemplate = flushViewAndClean();
-        Splittable split = AutoBeanCodex.encode(AutoBeanUtils.getAutoBean(AppTemplateUtils.removeEmptyGroupArguments(appTemplate)));
+        Splittable split = AutoBeanCodex.encode(AutoBeanUtils.getAutoBean(appTemplateUtils.removeEmptyGroupArguments(appTemplate)));
         IPlantDialog dlg = new IPlantDialog();
         dlg.setHeadingText(appIntMessages.previewJSON());
         dlg.setPredefinedButtons(PredefinedButton.OK);
@@ -659,7 +662,7 @@ public class AppsEditorPresenterImpl implements AppsEditorView.Presenter,
 
     private void doSave(AppTemplate toBeSaved, final AsyncCallback<Void> onSaveCallback) {
         // JDS Make a copy so we can check for differences on exit
-        lastSave = AppTemplateUtils.removeDateFields((AppTemplateUtils.copyAppTemplate(toBeSaved)));
+        lastSave = appTemplateUtils.removeDateFields((appTemplateUtils.copyAppTemplate(toBeSaved)));
         
         DoSaveCallback saveCallback = new DoSaveCallback(onSaveCallback,
                                                          appTemplate,
@@ -683,7 +686,7 @@ public class AppsEditorPresenterImpl implements AppsEditorView.Presenter,
     }
 
     AppTemplate flushViewAndClean() {
-        return AppTemplateUtils.removeEmptyGroupArguments(view.flush());
+        return appTemplateUtils.removeEmptyGroupArguments(view.flush());
     }
 
     private List<Argument> getAllTemplateArguments(AppTemplate at) {
@@ -703,7 +706,7 @@ public class AppsEditorPresenterImpl implements AppsEditorView.Presenter,
     }
 
     private void updateCommandLinePreview(final AppTemplate at) {
-        AppTemplate cleaned = AppTemplateUtils.removeEmptyGroupArguments(at);
+        AppTemplate cleaned = appTemplateUtils.removeEmptyGroupArguments(at);
 
         // do not send id for new App Template
         if (Strings.isNullOrEmpty(cleaned.getId())) {

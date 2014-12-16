@@ -35,7 +35,6 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 
 import static com.sencha.gxt.core.client.dom.ScrollSupport.ScrollMode.AUTOY;
-
 import com.sencha.gxt.core.client.util.Margins;
 import com.sencha.gxt.widget.core.client.ContentPanel;
 import com.sencha.gxt.widget.core.client.container.MarginData;
@@ -139,6 +138,7 @@ public class ArgumentGroupEditorImpl extends ContentPanel implements AppTemplate
     }
 
     private final AppTemplateWizardAppearance appAppearance;
+    private final AppTemplateUtils appTemplateUtils;
 
     private final VerticalLayoutContainer argumentsContainer;
 
@@ -157,9 +157,13 @@ public class ArgumentGroupEditorImpl extends ContentPanel implements AppTemplate
     private boolean visibleWhenEmptyOrNoChildVisible = false;
 
     @Inject
-    public ArgumentGroupEditorImpl(ContentPanelAppearance cpAppearance, AppTemplateWizardAppearance appearance, Provider<AppTemplateForm.ArgumentEditorFactory> argumentEditorProvider) {
+    public ArgumentGroupEditorImpl(ContentPanelAppearance cpAppearance,
+                                   AppTemplateWizardAppearance appearance,
+                                   Provider<AppTemplateForm.ArgumentEditorFactory> argumentEditorProvider,
+                                   AppTemplateUtils appTemplateUtils) {
         super(cpAppearance);
         this.appAppearance = appearance;
+        this.appTemplateUtils = appTemplateUtils;
         argumentsContainer = new VerticalLayoutContainer();
         argumentsContainer.setAdjustForScroll(true);
         argumentsContainer.setScrollMode(AUTOY);
@@ -256,7 +260,7 @@ public class ArgumentGroupEditorImpl extends ContentPanel implements AppTemplate
              * This argument should be removed if it still exists when this app gets saved.
              */
             if (visibleWhenEmptyOrNoChildVisible) {
-                value.getArguments().add(AppTemplateUtils.getEmptyGroupArgument());
+                value.getArguments().add(appTemplateUtils.getEmptyGroupArgument());
             } else {
                 setVisible(false);
             }
@@ -287,7 +291,7 @@ public class ArgumentGroupEditorImpl extends ContentPanel implements AppTemplate
         setVisible(true);
 
         if ((model != null) && model.getArguments().isEmpty()) {
-            editor.getList().add(AppTemplateUtils.getEmptyGroupArgument());
+            editor.getList().add(appTemplateUtils.getEmptyGroupArgument());
         }
     }
 
@@ -314,8 +318,7 @@ public class ArgumentGroupEditorImpl extends ContentPanel implements AppTemplate
         for (AppTemplateForm.ArgumentEditorFactory ae : editor.getEditors()) {
             if (ae.getSubEditor() == object) {
                 ae.getSubEditor().asWidget().addStyleName(appAppearance.getStyle().argumentSelect());
-            } else {
-                ae.getSubEditor().asWidget().removeStyleName(appAppearance.getStyle().argumentSelect());
+            } else { ae.getSubEditor().asWidget().removeStyleName(appAppearance.getStyle().argumentSelect());
             }
         }
     }

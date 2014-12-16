@@ -26,11 +26,13 @@ import java.util.List;
 public class AppTemplateCallbackConverter extends AsyncCallbackConverter<String, AppTemplate> {
 
     private final AppTemplateAutoBeanFactory factory;
+    private final AppTemplateUtils appTemplateUtils;
 
     public AppTemplateCallbackConverter(AppTemplateAutoBeanFactory factory,
                                         AsyncCallback<AppTemplate> callback) {
         super(callback);
         this.factory = factory;
+        appTemplateUtils = AppTemplateUtils.getInstance();
     }
 
     @Override
@@ -112,7 +114,7 @@ public class AppTemplateCallbackConverter extends AsyncCallbackConverter<String,
     private void setSelectionItemAutoBeanId(AppTemplate at){
         for(ArgumentGroup ag : at.getArgumentGroups()){
             for(Argument arg : ag.getArguments()){
-                if(AppTemplateUtils.isSelectionArgumentType(arg.getType())){
+                if(appTemplateUtils.isSelectionArgumentType(arg.getType())){
                     tagSelectionItemListItems(arg.getSelectionItems());
                 }
             }

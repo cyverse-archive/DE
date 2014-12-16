@@ -174,8 +174,10 @@ public class SelectionItemTreePropertyEditor extends Composite implements HasVal
     private int countArgLabel = 1;
     private int countGroupLabel = 1;
     private int uniqueIdNum = 0;
+    private final AppTemplateUtils appTemplateUtils;
 
     public SelectionItemTreePropertyEditor(List<SelectionItem> selectionItems) {
+        this.appTemplateUtils = AppTemplateUtils.getInstance();
         buildTreeGrid();
         initWidget(BINDER.createAndBindUi(this));
         treeGrid.getView().setEmptyText(labels.selectionCreateWidgetEmptyText());
@@ -215,7 +217,7 @@ public class SelectionItemTreePropertyEditor extends Composite implements HasVal
             }
         }
 
-        final SelectionItemGroup selectionItemGroup = AppTemplateUtils.addSelectionItemAutoBeanIdTag(factory.selectionItemGroup().as(), "tmpId-" + uniqueIdNum++);
+        final SelectionItemGroup selectionItemGroup = appTemplateUtils.addSelectionItemAutoBeanIdTag(factory.selectionItemGroup().as(), "tmpId-" + uniqueIdNum++);
         AutoBean<SelectionItemGroup> rootAb = AutoBeanUtils.getAutoBean(selectionItemGroup);
         rootAb.as().setGroups(groups);
         rootAb.as().setArguments(arguments);
@@ -257,7 +259,7 @@ public class SelectionItemTreePropertyEditor extends Composite implements HasVal
 
             if (root.getArguments() != null) {
                 for (SelectionItem ruleArg : root.getArguments()) {
-                    SelectionItem tagged = AppTemplateUtils.addSelectionItemAutoBeanIdTag(ruleArg, "tmpId-" + uniqueIdNum++);
+                    SelectionItem tagged = appTemplateUtils.addSelectionItemAutoBeanIdTag(ruleArg, "tmpId-" + uniqueIdNum++);
                     store.add(tagged);
                 }
             }
@@ -544,7 +546,7 @@ public class SelectionItemTreePropertyEditor extends Composite implements HasVal
     }
 
     private SelectionItem createArgument() {
-        SelectionItem argString = AppTemplateUtils.addSelectionItemAutoBeanIdTag(factory.selectionItem().as(), "tmpId-" + uniqueIdNum++);
+        SelectionItem argString = appTemplateUtils.addSelectionItemAutoBeanIdTag(factory.selectionItem().as(), "tmpId-" + uniqueIdNum++);
 
         argString.setDisplay("Argument" + countArgLabel++);
 
@@ -552,7 +554,7 @@ public class SelectionItemTreePropertyEditor extends Composite implements HasVal
     }
 
     private SelectionItemGroup createGroup() {
-        SelectionItemGroup group = AppTemplateUtils.addSelectionItemAutoBeanIdTag(factory.selectionItemGroup().as(), "tmpId-" + uniqueIdNum++);
+        SelectionItemGroup group = appTemplateUtils.addSelectionItemAutoBeanIdTag(factory.selectionItemGroup().as(), "tmpId-" + uniqueIdNum++);
 
         group.setDisplay("Group " + countGroupLabel++);
 

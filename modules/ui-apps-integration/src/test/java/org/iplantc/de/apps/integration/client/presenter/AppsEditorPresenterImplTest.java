@@ -8,6 +8,7 @@ import org.iplantc.de.client.models.apps.integration.AppTemplate;
 import org.iplantc.de.client.models.apps.integration.ArgumentGroup;
 import org.iplantc.de.client.services.AppTemplateServices;
 import org.iplantc.de.client.services.UUIDServiceAsync;
+import org.iplantc.de.client.util.AppTemplateUtils;
 import org.iplantc.de.commons.client.info.ErrorAnnouncementConfig;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
 import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
@@ -41,13 +42,23 @@ public class AppsEditorPresenterImplTest {
     @Mock private UUIDServiceAsync mockUuidService;
     @Mock private AppTemplateWizardAppearance mockAppearance;
     @Mock private IplantAnnouncer mockAnnouncer;
+    @Mock AppTemplateUtils mockAppTemplateUtils;
 
     @Mock private AsyncCallback<Void> mockVoidCallback;
 
     private AppsEditorPresenterImpl uut;
 
     @Before public void setUp() {
-        uut = new AppsEditorPresenterImpl(mockView, mockEventBus, mockAppTemplateService, mockErrorMessages, mockDisplayStrings, mockUuidService, mockAppearance, mockAnnouncer, errorStringsMock);
+        uut = new AppsEditorPresenterImpl(mockView,
+                                          mockEventBus,
+                                          mockAppTemplateService,
+                                          mockErrorMessages,
+                                          mockDisplayStrings,
+                                          mockUuidService,
+                                          mockAppearance,
+                                          mockAnnouncer,
+                                          errorStringsMock,
+                                          mockAppTemplateUtils);
     }
 
     @Test public void testDoArgumentGroupDelete() {

@@ -162,8 +162,11 @@ public class SelectionItemPropertyEditor extends Composite implements HasValueCh
     private int uniqeIdNum = 0;
 
     private ColumnConfig<SelectionItem, String> valueCol;
+    private final AppTemplateUtils appTemplateUtils;
 
-    public SelectionItemPropertyEditor(final List<SelectionItem> selectionItems, final ArgumentType type) {
+    public SelectionItemPropertyEditor(final List<SelectionItem> selectionItems,
+                                       final ArgumentType type) {
+        this.appTemplateUtils = AppTemplateUtils.getInstance();
         labels = GWT.create(AppsWidgetsPropertyPanelLabels.class);
         initWidget(BINDER.createAndBindUi(this));
         grid.getView().setEmptyText(labels.selectionCreateWidgetEmptyText());
@@ -205,7 +208,7 @@ public class SelectionItemPropertyEditor extends Composite implements HasValueCh
         initColumns(type);
         List<SelectionItem> taggedItems = Lists.newArrayList();
         for(SelectionItem si : selectionItems){
-            taggedItems.add(AppTemplateUtils.addSelectionItemAutoBeanIdTag(si, "tmpId-" + uniqeIdNum++));
+            taggedItems.add(appTemplateUtils.addSelectionItemAutoBeanIdTag(si, "tmpId-" + uniqeIdNum++));
         }
         selectionItemsEditor.setValue(taggedItems);
     }
@@ -254,7 +257,7 @@ public class SelectionItemPropertyEditor extends Composite implements HasValueCh
     @UiHandler("add")
     void onAddButtonClicked(@SuppressWarnings("unused") SelectEvent event) {
         AppTemplateAutoBeanFactory factory = GWT.create(AppTemplateAutoBeanFactory.class);
-        final SelectionItem sa = AppTemplateUtils.addSelectionItemAutoBeanIdTag(factory.selectionItem().as(), "tmpId-" + uniqeIdNum++);
+        final SelectionItem sa = appTemplateUtils.addSelectionItemAutoBeanIdTag(factory.selectionItem().as(), "tmpId-" + uniqeIdNum++);
 
 
         // JDS Set up a default id to satisfy ListStore's ModelKeyProvider

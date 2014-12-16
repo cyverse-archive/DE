@@ -44,9 +44,13 @@ public final class ArgGrpListEditorDropTarget extends ContainerDropTarget<Accord
     private final HasLabelOnlyEditMode hasLabelOnlyEditMode;
     private Header header;
     private final ListEditor<ArgumentGroup, AppTemplateForm.ArgumentGroupEditor> listEditor;
+    private final AppTemplateUtils appTemplateUtils;
 
-    public ArgGrpListEditorDropTarget(HasLabelOnlyEditMode hasLabelOnlyEditMode, AccordionLayoutContainer container, ListEditor<ArgumentGroup, AppTemplateForm.ArgumentGroupEditor> editor) {
+    public ArgGrpListEditorDropTarget(final HasLabelOnlyEditMode hasLabelOnlyEditMode,
+                                      final AccordionLayoutContainer container,
+                                      final ListEditor<ArgumentGroup, AppTemplateForm.ArgumentGroupEditor> editor) {
         super(container);
+        this.appTemplateUtils = AppTemplateUtils.getInstance();
         this.hasLabelOnlyEditMode = hasLabelOnlyEditMode;
         this.listEditor = editor;
     }
@@ -56,7 +60,7 @@ public final class ArgGrpListEditorDropTarget extends ContainerDropTarget<Accord
         super.onDragDrop(event);
         List<ArgumentGroup> list = listEditor.getList();
         boolean isNewArgGrp = AutoBeanUtils.getAutoBean((ArgumentGroup) event.getData()).getTag(ArgumentGroup.IS_NEW) != null;
-        ArgumentGroup newArgGrp = AppTemplateUtils.copyArgumentGroup((ArgumentGroup) event.getData());
+        ArgumentGroup newArgGrp = appTemplateUtils.copyArgumentGroup((ArgumentGroup) event.getData());
 
         // Update new group label, if needed
         if (isNewArgGrp) {

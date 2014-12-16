@@ -43,9 +43,14 @@ public final class ArgumentWYSIWYGDeleteHandler implements MouseOverHandler, Mou
     private final HasLabelOnlyEditMode hasLabelOnlyEditMode;
     private final VerticalLayoutContainer layoutContainer;
     private final ListEditor<Argument, AppTemplateForm.ArgumentEditorFactory> listEditor;
+    private final AppTemplateUtils appTemplateUtils;
 
-    public ArgumentWYSIWYGDeleteHandler(AppTemplateWizardAppearance appearance, ListEditor<Argument, AppTemplateForm.ArgumentEditorFactory> listEditor, VerticalLayoutContainer layoutContainer,
-            IconButton button, HasLabelOnlyEditMode hasLabelOnlyEditMode) {
+    public ArgumentWYSIWYGDeleteHandler(final AppTemplateWizardAppearance appearance,
+                                        final ListEditor<Argument, AppTemplateForm.ArgumentEditorFactory> listEditor,
+                                        final VerticalLayoutContainer layoutContainer,
+                                        final IconButton button,
+                                        final HasLabelOnlyEditMode hasLabelOnlyEditMode) {
+        this.appTemplateUtils = AppTemplateUtils.getInstance();
         this.appearance = appearance;
         this.listEditor = listEditor;
         this.layoutContainer = layoutContainer;
@@ -135,7 +140,7 @@ public final class ArgumentWYSIWYGDeleteHandler implements MouseOverHandler, Mou
                  * the selection should be cleared, or the previous argument selected, if possible. *
                  * argument.
                  */
-                listEditor.getList().add(AppTemplateUtils.getEmptyGroupArgument());
+                listEditor.getList().add(appTemplateUtils.getEmptyGroupArgument());
                 layoutContainer.forceLayout();
                 ensureHandlers().fireEvent(new ArgumentSelectedEvent(null));
             }

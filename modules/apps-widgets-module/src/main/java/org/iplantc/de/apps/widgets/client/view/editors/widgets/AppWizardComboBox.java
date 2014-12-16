@@ -44,9 +44,11 @@ public class AppWizardComboBox extends AbstractArgumentEditor implements HasValu
 
     private final ListStoreEditor<SelectionItem> selectionItemsStoreBinder;
     private final ArgumentEditorConverter<SelectionItem> valueEditor;
+    private final AppTemplateUtils appTemplateUtils;
 
     public AppWizardComboBox(AppTemplateWizardAppearance appearance) {
         super(appearance);
+        this.appTemplateUtils = AppTemplateUtils.getInstance();
         // JDS Initialize list store, and its editor
         listStore = new ListStore<>(new SelectionItemModelKeyProvider());
         selectionItemsStoreBinder = new ListStoreEditor<>(listStore);
@@ -112,7 +114,7 @@ public class AppWizardComboBox extends AbstractArgumentEditor implements HasValu
     @Override
     public void setValue(final Argument value) {
         super.setValue(value);
-        if (!AppTemplateUtils.isSimpleSelectionArgumentType(value.getType())) {
+        if (!appTemplateUtils.isSimpleSelectionArgumentType(value.getType())) {
             return;
         }
 

@@ -37,9 +37,11 @@ public abstract class SelectionItemTreeStoreEditor implements ValueAwareEditor<L
     private final AppTemplateAutoBeanFactory factory = GWT.create(AppTemplateAutoBeanFactory.class);
     private List<SelectionItem> model;
     private final TreeStore<SelectionItem> store;
+    private final AppTemplateUtils appTemplateUtils;
 
     public SelectionItemTreeStoreEditor(TreeStore<SelectionItem> store, HasValueChangeHandlers<List<SelectionItem>> valueChangeTarget) {
         this.store = store;
+        this.appTemplateUtils = AppTemplateUtils.getInstance();
         store.addStoreHandlers(new SelectionItemValueChangeStoreHandler(this, valueChangeTarget) {
 
             @Override
@@ -65,7 +67,7 @@ public abstract class SelectionItemTreeStoreEditor implements ValueAwareEditor<L
     }
 
     public SelectionItemGroup getCurrentTree() {
-        SelectionItemGroup root = AppTemplateUtils.addSelectionItemAutoBeanIdTag(factory.selectionItemGroup().as(), "rootId");
+        SelectionItemGroup root = appTemplateUtils.addSelectionItemAutoBeanIdTag(factory.selectionItemGroup().as(), "rootId");
 
         CheckCascade checkStyle = getCheckStyle();
         boolean singleSelect = getSingleSelect();
@@ -175,7 +177,7 @@ public abstract class SelectionItemTreeStoreEditor implements ValueAwareEditor<L
                 return true;
             }
             for (int i = 0; i < currSig.getArguments().size(); i++) {
-                if (!AppTemplateUtils.areEqual(currSig.getArguments().get(i), newSig.getArguments().get(i))) {
+                if (!appTemplateUtils.areEqual(currSig.getArguments().get(i), newSig.getArguments().get(i))) {
                     return true;
                 }
             }

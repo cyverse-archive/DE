@@ -112,11 +112,13 @@ public class AppEditorWindow extends IplantWindowBase implements AppPublishedEve
     private final AppsEditorView.Presenter presenter;
     private final RenameWindowHeaderCmdImpl renameCmd;
     private final AppTemplateServices templateService;
+    private final AppTemplateUtils appTemplateUtils;
 
     public AppEditorWindow(AppsIntegrationWindowConfig config,
                            final AppsEditorView.Presenter presenter,
                            final EventBus eventBus) {
         super(null, config);
+        this.appTemplateUtils = AppTemplateUtils.getInstance();
         this.presenter = presenter;
         appearance = GWT.create(AppEditorAppearance.class);
 
@@ -229,7 +231,7 @@ public class AppEditorWindow extends IplantWindowBase implements AppPublishedEve
              * JDS Set the id of the AppTemplate passed to the rename command to newAppTemplate. This is
              * to ensure that the window title is not changed until a new app has been saved.
              */
-            final AppTemplate copyAppTemplate = AppTemplateUtils.copyAppTemplate(newAppTemplate);
+            final AppTemplate copyAppTemplate = appTemplateUtils.copyAppTemplate(newAppTemplate);
             renameCmd.setAppTemplate(copyAppTemplate);
 
             presenter.go(this, newAppTemplate, renameCmd);

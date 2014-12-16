@@ -41,6 +41,7 @@ public class AppLaunchViewImpl extends Composite implements AppLaunchView {
     @UiField(provided = true)
     @Path("")
     AppTemplateForm wizard;
+    private final AppTemplateUtils appTemplateUtils;
 
     private final EditorDriver editorDriver = GWT.create(EditorDriver.class);
 
@@ -49,9 +50,11 @@ public class AppLaunchViewImpl extends Composite implements AppLaunchView {
     @Inject
     public AppLaunchViewImpl(final AppWizardViewUIUiBinder binder,
                              final LaunchAnalysisView law,
-                             final AppTemplateForm wizard) {
+                             final AppTemplateForm wizard,
+                             final AppTemplateUtils appTemplateUtils) {
         this.law = law;
         this.wizard = wizard;
+        this.appTemplateUtils = appTemplateUtils;
         initWidget(binder.createAndBindUi(this));
         editorDriver.initialize(this);
     }
@@ -78,7 +81,7 @@ public class AppLaunchViewImpl extends Composite implements AppLaunchView {
     void onLaunchButtonClicked(SelectEvent event) {
 
         // Flush the editor driver to perform validations before calling back to presenter.
-        AppTemplate cleaned = AppTemplateUtils.removeEmptyGroupArguments(editorDriver.flush());
+        AppTemplate cleaned = appTemplateUtils.removeEmptyGroupArguments(editorDriver.flush());
         JobExecution je = law.flushJobExecution();
         if (editorDriver.hasErrors() || law.hasErrors()) {
             GWT.log("Editor has errors");

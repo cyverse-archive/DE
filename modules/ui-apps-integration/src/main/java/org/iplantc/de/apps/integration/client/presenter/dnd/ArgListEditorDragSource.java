@@ -27,9 +27,13 @@ public final class ArgListEditorDragSource extends DragSource {
     private int dragArgumentIndex = -1;
     private final HasLabelOnlyEditMode hasLabelOnlyEditMode;
     private final ListEditor<Argument, AppTemplateForm.ArgumentEditorFactory> listEditor;
+    private final AppTemplateUtils appTemplateUtils;
 
-    public ArgListEditorDragSource(VerticalLayoutContainer container, ListEditor<Argument, AppTemplateForm.ArgumentEditorFactory> listEditor, HasLabelOnlyEditMode hasLabelOnlyEditMode) {
+    public ArgListEditorDragSource(final VerticalLayoutContainer container,
+                                   final ListEditor<Argument, AppTemplateForm.ArgumentEditorFactory> listEditor,
+                                   final HasLabelOnlyEditMode hasLabelOnlyEditMode) {
         super(container);
+        this.appTemplateUtils = AppTemplateUtils.getInstance();
         this.container = container;
         this.listEditor = listEditor;
         this.hasLabelOnlyEditMode = hasLabelOnlyEditMode;
@@ -105,7 +109,7 @@ public final class ArgListEditorDragSource extends DragSource {
 
                         if (listEditor.getList().isEmpty()) {
                             // If it is empty, add the empty group argument
-                            listEditor.getList().add(AppTemplateUtils.getEmptyGroupArgument());
+                            listEditor.getList().add(appTemplateUtils.getEmptyGroupArgument());
                         }
                         event.setData(dragArgument);
                         return;

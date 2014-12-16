@@ -166,13 +166,17 @@ public class ArgumentValidatorEditor extends Composite implements ValueAwareEdit
     ListStoreEditor<ArgumentValidator> validators;
 
     private final ArgumentValidatorMessages avMessages;
+    private final AppTemplateUtils appTemplateUtils;
     private Argument model;
     private final Set<ArgumentValidatorType> supportedValidatorTypes;
     private int uniqueIdNum = 0;
 
     @Inject
-    public ArgumentValidatorEditor(AppTemplateWizardAppearance appearance, ArgumentValidatorMessages avMessages) {
+    public ArgumentValidatorEditor(final AppTemplateWizardAppearance appearance,
+                                   final ArgumentValidatorMessages avMessages,
+                                   final AppTemplateUtils appTemplateUtils) {
         this.avMessages = avMessages;
+        this.appTemplateUtils = appTemplateUtils;
         initWidget(BINDER.createAndBindUi(this));
         grid.setHeight(300);
 
@@ -228,7 +232,7 @@ public class ArgumentValidatorEditor extends Composite implements ValueAwareEdit
      */
     @Override
     public void setValue(Argument value) {
-        if ((value == null) || !AppTemplateUtils.typeSupportsValidators(value.getType())) {
+        if ((value == null) || !appTemplateUtils.typeSupportsValidators(value.getType())) {
             return;
         }
 
