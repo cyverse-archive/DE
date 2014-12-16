@@ -149,6 +149,7 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
     @Inject DiskResourceSelectorDialogFactory selectorDialogFactory;
     @Inject DataLinkPanelFactory dataLinkPanelFactory;
     @Inject DataSharingDialogFactory dataSharingDialogFactory;
+    @Inject DiskResourceUtil diskResourceUtil;
 
     final IplantAnnouncer announcer;
     final DiskResourceView view;
@@ -644,7 +645,7 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
 
     private void getDetails(DiskResource path) {
         
-        diskResourceService.getStat(DiskResourceUtil.asStringPathTypeMap(Arrays.asList(path), path instanceof File ? TYPE.FILE
+        diskResourceService.getStat(diskResourceUtil.asStringPathTypeMap(Arrays.asList(path), path instanceof File ? TYPE.FILE
                                                                                              : TYPE.FOLDER),
                                     new GetDiskResourceDetailsCallback(this, path.getPath(), drFactory));
         view.maskSendToCoGe();
@@ -769,7 +770,7 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
             diskResourceService.restoreAll(callback);
         } else {
             HasPaths request = drFactory.pathsList().as();
-            request.setPaths(DiskResourceUtil.asStringPathList(selectedResources));
+            request.setPaths(diskResourceUtil.asStringPathList(selectedResources));
             diskResourceService.restoreDiskResource(request, callback);
         }
     }
@@ -790,7 +791,7 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
             showInfoTypeError(errorStrings.unsupportedEnsemblInfoType());
             return;
         }
-        if (DiskResourceUtil.isEnsemblVizTab(DiskResourceUtil.createInfoTypeSplittable(infoType))) {
+        if (diskResourceUtil.isEnsemblVizTab(diskResourceUtil.createInfoTypeSplittable(infoType))) {
             eventBus.fireEvent(new RequestSendToEnsemblEvent((File)next, InfoType.fromTypeString(infoType)));
         } else {
             showInfoTypeError(errorStrings.unsupportedEnsemblInfoType());
@@ -807,7 +808,7 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
             showInfoTypeError(errorStrings.unsupportedCogeInfoType());
             return;
         }
-        if (DiskResourceUtil.isGenomeVizTab(DiskResourceUtil.createInfoTypeSplittable(infoType))) {
+        if (diskResourceUtil.isGenomeVizTab(diskResourceUtil.createInfoTypeSplittable(infoType))) {
             eventBus.fireEvent(new RequestSendToCoGeEvent((File)next));
         } else {
             showInfoTypeError(errorStrings.unsupportedCogeInfoType());
@@ -824,7 +825,7 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
             showInfoTypeError(errorStrings.unsupportedTreeInfoType());
             return;
         }
-        if (DiskResourceUtil.isTreeTab(DiskResourceUtil.createInfoTypeSplittable(infoType))) {
+        if (diskResourceUtil.isTreeTab(diskResourceUtil.createInfoTypeSplittable(infoType))) {
             eventBus.fireEvent(new RequestSendToTreeViewerEvent((File)next));
         } else {
             showInfoTypeError(errorStrings.unsupportedTreeInfoType());
@@ -978,10 +979,10 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
     @Override
     public void deleteSelectedResources() {
         Set<DiskResource> selectedResources = getSelectedDiskResources();
-        if (!selectedResources.isEmpty() && DiskResourceUtil.isOwner(selectedResources)) {
+        if (!selectedResources.isEmpty() && diskResourceUtil.isOwner(selectedResources)) {
             HashSet<DiskResource> drSet = Sets.newHashSet(selectedResources);
 
-            if (DiskResourceUtil.containsTrashedResource(drSet)) {
+            if (diskResourceUtil.containsTrashedResource(drSet)) {
                 confirmDelete(drSet);
             } else {
                 delete(drSet, displayStrings.deleteMsg());
@@ -1034,7 +1035,7 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
 
         mdPresenter.go(ipd);
 
-        if (DiskResourceUtil.isWritable(selected)) {
+        if (diskResourceUtil.isWritable(selected)) {
             ipd.setHideOnButtonClick(false);
             ipd.addOkButtonSelectHandler(new SelectHandler() {
 
@@ -1086,7 +1087,7 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
         // Assuming that ownership is of no concern.
         for (DiskResource dr : dropData) {
             // if the resource is a direct child of target folder
-            if (DiskResourceUtil.isChildOfFolder(targetFolder, dr)) {
+            if (diskResourceUtil.isChildOfFolder(targetFolder, dr)) {
                 return false;
             }
 
@@ -1097,7 +1098,7 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
 
                 // cannot drag an ancestor (parent, grandparent, etc) onto a
                 // child and/or descendant
-                if (DiskResourceUtil.isDescendantOfFolder((Folder)dr, targetFolder)) {
+                if (diskResourceUtil.isDescendantOfFolder((Folder)dr, targetFolder)) {
                     return false;
                 }
             }
@@ -1257,7 +1258,7 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
             public void onSelect(SelectEvent event) {
                 Folder targetFolder = fsd.getValue();
                 final Set<DiskResource> selectedResources = getSelectedDiskResources();
-                if (DiskResourceUtil.isMovable(targetFolder, selectedResources)) {
+                if (diskResourceUtil.isMovable(targetFolder, selectedResources)) {
                     if (canDragDataToTargetFolder(targetFolder, selectedResources)) {
                         doMoveDiskResources(targetFolder, selectedResources);
                     } else {

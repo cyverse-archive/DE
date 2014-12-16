@@ -77,6 +77,7 @@ public class ExternalVisualizationURLViewerImpl extends AbstractFileViewer imple
     private final IplantDisplayStrings displayStrings;
     private final FileEditorServiceFacade fileEditorService;
     private final IplantResources iplantResources;
+    private final DiskResourceUtil diskResourceUtil;
 
     public ExternalVisualizationURLViewerImpl(final File file,
                                               final String infoType) {
@@ -84,9 +85,10 @@ public class ExternalVisualizationURLViewerImpl extends AbstractFileViewer imple
         this.displayStrings = I18N.DISPLAY;
         this.iplantResources = IplantResources.RESOURCES;
         this.fileEditorService = ServicesInjector.INSTANCE.getFileEditorServiceFacade();
+        this.diskResourceUtil = DiskResourceUtil.getInstance();
         initWidget(uiBinder.createAndBindUi(this));
         gridView.setAutoExpandColumn(cm.getColumn(1));
-        buildToolBar(DiskResourceUtil.createInfoTypeSplittable(infoType));
+        buildToolBar(diskResourceUtil.createInfoTypeSplittable(infoType));
     }
 
     @Override
@@ -166,13 +168,13 @@ public class ExternalVisualizationURLViewerImpl extends AbstractFileViewer imple
     }
 
     private void buildToolBar(Splittable infoTypeSplittable) {
-        if (DiskResourceUtil.isTreeTab(infoTypeSplittable)) {
+        if (diskResourceUtil.isTreeTab(infoTypeSplittable)) {
             TextButton button = buildTreeViewerButton();
             toolbar.add(button);
-        } else if (DiskResourceUtil.isGenomeVizTab(infoTypeSplittable)) {
+        } else if (diskResourceUtil.isGenomeVizTab(infoTypeSplittable)) {
             TextButton button = buildCogeButton();
             toolbar.add(button);
-        } else if (DiskResourceUtil.isEnsemblVizTab(infoTypeSplittable)) {
+        } else if (diskResourceUtil.isEnsemblVizTab(infoTypeSplittable)) {
             TextButton button = buildEnsemblButton();
             toolbar.add(button);
         }

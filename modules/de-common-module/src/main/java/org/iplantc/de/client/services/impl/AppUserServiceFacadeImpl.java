@@ -34,7 +34,7 @@ import java.util.List;
 /**
  * Provides access to remote services for operations related to analysis submission templates.
  * 
- * @author Dennis Roberts
+ * @author Dennis Roberts, jstroot
  */
 public class AppUserServiceFacadeImpl implements AppUserServiceFacade {
 
@@ -46,10 +46,9 @@ public class AppUserServiceFacadeImpl implements AppUserServiceFacade {
     private final ConfluenceServiceAsync confluenceService;
     private final UserInfo userInfo;
     private final EmailServiceAsync emailService;
-    @Inject
-    IplantErrorStrings errorStrings;
-    @Inject
-    IplantDisplayStrings displayStrings;
+    @Inject IplantErrorStrings errorStrings;
+    @Inject IplantDisplayStrings displayStrings;
+    @Inject DiskResourceUtil diskResourceUtil;
 
     @Inject
     public AppUserServiceFacadeImpl(final DiscEnvApiService deServiceFacade,
@@ -332,7 +331,7 @@ public class AppUserServiceFacadeImpl implements AppUserServiceFacade {
         if (Strings.isNullOrEmpty(url)) {
             return url;
         }
-        return URL.decode(DiskResourceUtil.parseNameFromPath(url));
+        return URL.decode(diskResourceUtil.parseNameFromPath(url));
     }
 
     @Override

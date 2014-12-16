@@ -22,10 +22,12 @@ public final class DiskResourcesEventHandler implements DiskResourcesDeletedEven
                                                         FolderRefreshEventHandler {
     final DiskResourceView.Presenter presenter;
     final DiskResourceView view;
+    final DiskResourceUtil diskResourceUtil;
 
     public DiskResourcesEventHandler(final DiskResourceView.Presenter presenter) {
         this.presenter=presenter;
         this.view=presenter.getView();
+        this.diskResourceUtil = DiskResourceUtil.getInstance();
     }
 
     @Override
@@ -63,11 +65,11 @@ public final class DiskResourcesEventHandler implements DiskResourcesDeletedEven
         // setting it as the selected folder.
         Folder parentFolder = view.getParentFolder(selectedFolder);
 
-        if (DiskResourceUtil.isDescendantOfFolder(parentFolder, destinationFolder)) {
+        if (diskResourceUtil.isDescendantOfFolder(parentFolder, destinationFolder)) {
             // The destination is under the parent, so if we prune the parent and set the destination
             // as the selected folder, the parent will lazy-load down to the destination.
             view.removeChildren(parentFolder);
-        } else if (DiskResourceUtil.isDescendantOfFolder(destinationFolder, parentFolder)) {
+        } else if (diskResourceUtil.isDescendantOfFolder(destinationFolder, parentFolder)) {
             // The parent is under the destination, so we only need to view the destination folder's
             // contents and refresh its children.
             presenter.doRefreshFolder(destinationFolder);
@@ -84,9 +86,9 @@ public final class DiskResourcesEventHandler implements DiskResourcesDeletedEven
 
     private void diskResourcesMovedFromGrid(Set<DiskResource> resourcesToMove, Folder selectedFolder,
             Folder destinationFolder) {
-        if (DiskResourceUtil.containsFolder(resourcesToMove)) {
+        if (diskResourceUtil.containsFolder(resourcesToMove)) {
             // Refresh the destination folder, since it has gained a child.
-            if (DiskResourceUtil.isDescendantOfFolder(destinationFolder, selectedFolder)) {
+            if (diskResourceUtil.isDescendantOfFolder(destinationFolder, selectedFolder)) {
                 view.removeChildren(destinationFolder);
             } else {
                 // Refresh the selected folder since it has lost a child. This will also reload the
@@ -104,7 +106,7 @@ public final class DiskResourcesEventHandler implements DiskResourcesDeletedEven
 
     @Override
     public void onRename(DiskResource originalDr, DiskResource newDr) {
-        Folder parent = view.getFolderByPath(DiskResourceUtil.parseParent(newDr.getPath()));
+        Folder parent = view.getFolderByPath(diskResourceUtil.parseParent(newDr.getPath()));
         if (parent != null) {
             presenter.doRefreshFolder(parent);
         }

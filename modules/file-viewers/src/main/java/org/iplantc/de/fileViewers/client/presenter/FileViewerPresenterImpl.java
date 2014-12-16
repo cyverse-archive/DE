@@ -136,6 +136,7 @@ public class FileViewerPresenterImpl implements FileViewer.Presenter, FileSavedE
     @Inject FileViewer.FileViewerPresenterAppearance appearance;
     @Inject DiskResourceSelectorDialogFactory dialogFactory;
     @Inject UserSessionServiceFacade userSessionService;
+    @Inject DiskResourceUtil diskResourceUtil;
 
     private MimeType contentType;
     /**
@@ -474,10 +475,10 @@ public class FileViewerPresenterImpl implements FileViewer.Presenter, FileSavedE
 
         viewers.addAll(viewers_list);
 
-        Splittable infoTypeSplittable = DiskResourceUtil.createInfoTypeSplittable(infoType);
-        boolean treeViewer = DiskResourceUtil.isTreeTab(infoTypeSplittable);
-        boolean cogeViewer = DiskResourceUtil.isGenomeVizTab(infoTypeSplittable);
-        boolean ensembleViewer = DiskResourceUtil.isEnsemblVizTab(infoTypeSplittable);
+        Splittable infoTypeSplittable = diskResourceUtil.createInfoTypeSplittable(infoType);
+        boolean treeViewer = diskResourceUtil.isTreeTab(infoTypeSplittable);
+        boolean cogeViewer = diskResourceUtil.isGenomeVizTab(infoTypeSplittable);
+        boolean ensembleViewer = diskResourceUtil.isEnsemblVizTab(infoTypeSplittable);
 
         if (treeViewer || cogeViewer || ensembleViewer) {
             FileViewer vizViewer = new ExternalVisualizationURLViewerImpl(file, infoType);

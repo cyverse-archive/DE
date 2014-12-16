@@ -39,8 +39,8 @@ public class DiskResourceColumnModel extends ColumnModel<DiskResource> implement
                                                                                   RequestDiskResourceFavoriteEvent.HasManageFavoritesEventHandlers,
                                                                                   ManageCommentsEvent.HasManageCommentsEventHandlers {
 
-    public DiskResourceColumnModel(@SuppressWarnings("rawtypes") CheckBoxSelectionModel sm,
-                                   IplantDisplayStrings displayStrings) {
+    public DiskResourceColumnModel(@SuppressWarnings("rawtypes") final CheckBoxSelectionModel sm,
+                                   final IplantDisplayStrings displayStrings) {
         super(createColumnConfigList(sm, displayStrings));
 
         for(ColumnConfig<DiskResource, ?> cc : configs){
@@ -188,11 +188,12 @@ public class DiskResourceColumnModel extends ColumnModel<DiskResource> implement
      * @author psarando
      */
     private static final class DiskResourceSizeCell extends AbstractCell<Long> {
+        final DiskResourceUtil diskResourceUtil = DiskResourceUtil.getInstance();
 
         @Override
         public void render(Context context, Long value, SafeHtmlBuilder sb) {
             if (value != null) {
-                sb.appendEscaped(DiskResourceUtil.formatFileSize(value.toString()));
+                sb.appendEscaped(diskResourceUtil.formatFileSize(value.toString()));
             }
         }
     }

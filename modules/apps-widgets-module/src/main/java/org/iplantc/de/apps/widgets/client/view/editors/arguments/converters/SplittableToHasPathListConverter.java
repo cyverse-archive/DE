@@ -16,7 +16,7 @@ public class SplittableToHasPathListConverter implements Converter<Splittable, L
 
     @Override
     public Splittable convertFieldValue(List<HasPath> object) {
-        return DiskResourceUtil.createStringPathListSplittable(object);
+        return DiskResourceUtil.getInstance().createStringPathListSplittable(object);
     }
 
     @Override

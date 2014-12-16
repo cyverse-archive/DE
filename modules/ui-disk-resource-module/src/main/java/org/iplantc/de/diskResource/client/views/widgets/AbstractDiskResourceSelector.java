@@ -170,6 +170,7 @@ public abstract class AbstractDiskResourceSelector<R extends DiskResource> exten
     private DefaultEditorError permissionEditorError = null;
     // by default do not validate permissions
     private boolean validatePermissions = false;
+    private final DiskResourceUtil diskResourceUtil;
 
     protected AbstractDiskResourceSelector() {
         res.style().ensureInjected();
@@ -178,6 +179,7 @@ public abstract class AbstractDiskResourceSelector<R extends DiskResource> exten
         appsMessages = I18N.APPS_MESSAGES;
         vConstants = I18N.V_CONSTANTS;
         drServiceFacade = ServicesInjector.INSTANCE.getDiskResourceServiceFacade();
+        diskResourceUtil = DiskResourceUtil.getInstance();
 
         SafeHtmlBuilder builder = new SafeHtmlBuilder();
         builder.append(template.render(res.style()));
@@ -480,7 +482,7 @@ public abstract class AbstractDiskResourceSelector<R extends DiskResource> exten
         }
 
         // validate '/' only on label
-        for (char next : DiskResourceUtil.parseNameFromPath(diskResourceId).toCharArray()) {
+        for (char next : diskResourceUtil.parseNameFromPath(diskResourceId).toCharArray()) {
             if (next == '/') {
                 restrictedFound.append('/');
             }
@@ -496,7 +498,7 @@ public abstract class AbstractDiskResourceSelector<R extends DiskResource> exten
 
         permissionEditorError = null;
         existsEditorError = null;
-        FastMap<TYPE> asStringPathTypeMap = DiskResourceUtil.asStringPathTypeMap(Arrays.asList(value), TYPE.FILE);
+        FastMap<TYPE> asStringPathTypeMap = diskResourceUtil.asStringPathTypeMap(Arrays.asList(value), TYPE.FILE);
         if (Strings.isNullOrEmpty(value.getPath())
                 || asStringPathTypeMap.isEmpty()) {
             // Do not make service call if there are no paths
@@ -540,7 +542,7 @@ public abstract class AbstractDiskResourceSelector<R extends DiskResource> exten
                                                 errors.add(permissionEditorError);
                                                 input.showErrors(Lists.<EditorError>newArrayList(permissionEditorError));
                                                 setInfoErrorText(displayStrings.permissionSelectErrorMessage());
-                                            } else if (!(DiskResourceUtil.isWritable(diskResource) || DiskResourceUtil.isOwner(diskResource))) {
+                                            } else if (!(diskResourceUtil.isWritable(diskResource) || diskResourceUtil.isOwner(diskResource))) {
                                                 permissionEditorError = new DefaultEditorError(input,
                                                                                                displayStrings.permissionSelectErrorMessage(),
                                                                                                diskResourcePath);

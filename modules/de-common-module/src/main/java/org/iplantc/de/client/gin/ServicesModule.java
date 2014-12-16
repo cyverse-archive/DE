@@ -7,6 +7,7 @@ import org.iplantc.de.client.services.*;
 import org.iplantc.de.client.services.impl.*;
 import org.iplantc.de.client.services.stubs.*;
 import org.iplantc.de.client.util.AppTemplateUtils;
+import org.iplantc.de.client.util.DiskResourceUtil;
 import org.iplantc.de.shared.services.DiscEnvApiService;
 
 import com.google.gwt.inject.client.AbstractGinModule;
@@ -58,6 +59,11 @@ final class ServicesModule extends AbstractGinModule {
     @Provides
     public AppTemplateUtils createAppTemplateUtils() {
         return AppTemplateUtils.getInstance();
+    }
+
+    @Provides
+    public DiskResourceUtil createDiskResourceUtil() {
+        return DiskResourceUtil.getInstance();
     }
 
     @Provides

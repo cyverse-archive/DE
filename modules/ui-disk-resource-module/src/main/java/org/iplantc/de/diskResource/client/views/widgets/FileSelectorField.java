@@ -51,7 +51,7 @@ public class FileSelectorField extends AbstractDiskResourceSelector<File> {
             setSelectedResource(selectedResource);
             // cache the last used path
             if (userSettings.isRememberLastPath()) {
-                userSettings.setLastPath(DiskResourceUtil.parseParent(selectedResource.getPath()));
+                userSettings.setLastPath(diskResourceUtil.parseParent(selectedResource.getPath()));
                 eventBus.fireEvent(new LastSelectedPathChangedEvent(true));
             }
             ValueChangeEvent.fire(FileSelectorField.this, selectedResource);
@@ -61,6 +61,7 @@ public class FileSelectorField extends AbstractDiskResourceSelector<File> {
     @Inject UserSettings userSettings;
     @Inject EventBus eventBus;
     @Inject DiskResourceSelectorDialogFactory dialogFactory;
+    @Inject DiskResourceUtil diskResourceUtil;
 
     final IplantDisplayStrings displayStrings;
     final List<InfoType> infoTypeFilters;
@@ -123,7 +124,7 @@ public class FileSelectorField extends AbstractDiskResourceSelector<File> {
     @Override
     protected boolean validateDropStatus(Set<DiskResource> dropData, StatusProxy status) {
         // Only allow 1 file to be dropped in this field.
-        if (dropData == null || dropData.size() != 1 || !(DiskResourceUtil.containsFile(dropData))) {
+        if (dropData == null || dropData.size() != 1 || !(diskResourceUtil.containsFile(dropData))) {
             status.setStatus(false);
             return false;
         }

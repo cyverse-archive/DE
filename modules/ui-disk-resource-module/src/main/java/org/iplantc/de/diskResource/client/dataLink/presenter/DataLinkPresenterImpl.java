@@ -26,14 +26,17 @@ public class DataLinkPresenterImpl implements DataLinkPanel.Presenter {
     private final DataLinkPanel view;
     private final DiskResourceServiceFacade drService;
     private final DataLinkFactory dlFactory;
+    private final DiskResourceUtil diskResourceUtil;
 
     @Inject
     DataLinkPresenterImpl(final DiskResourceServiceFacade drService,
                           final DataLinkPanelFactory dlPanelGinFactory,
                           final DataLinkFactory dlFactory,
+                          final DiskResourceUtil diskResourceUtil,
                           @Assisted List<DiskResource> resources) {
         this.drService = drService;
         this.dlFactory = dlFactory;
+        this.diskResourceUtil = diskResourceUtil;
         view = dlPanelGinFactory.createDataLinkPanel(this, resources);
 
         // Remove Folders
@@ -50,7 +53,7 @@ public class DataLinkPresenterImpl implements DataLinkPanel.Presenter {
     @SuppressWarnings({"unchecked", "rawtypes"})
     private void getExistingDataLinks(List<DiskResource> resources) {
         view.addRoots(resources);
-        drService.listDataLinks(DiskResourceUtil.asStringPathList(resources),
+        drService.listDataLinks(diskResourceUtil.asStringPathList(resources),
                                 new ListDataLinksCallback(
                 view.getTree(),dlFactory));
     }

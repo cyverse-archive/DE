@@ -76,6 +76,7 @@ public class DiskResourceActionsCell extends AbstractCell<DiskResource> {
     private final String SHARE_BY_DE_ACTION;
     private final String MANAGE_METADATA_ACTION;
     private final String COMMENTS_ACTION;
+    private final DiskResourceUtil diskResourceUtil;
 
 
 
@@ -85,6 +86,7 @@ public class DiskResourceActionsCell extends AbstractCell<DiskResource> {
         resources.css().ensureInjected();
         displayStrings = I18N.DISPLAY;
         iplantResources = IplantResources.RESOURCES;
+        diskResourceUtil = DiskResourceUtil.getInstance();
 
         SHARE_FOLDER_BY_LINK_ACTION = displayStrings.share() + " " + displayStrings.path();
         SHARE_FILE_BY_LINK_ACTION = displayStrings.share() + " " + displayStrings.viaPublicLink();
@@ -99,7 +101,7 @@ public class DiskResourceActionsCell extends AbstractCell<DiskResource> {
         if(value == null){
             return;
         }
-        if (value.isFilter() || DiskResourceUtil.inTrash(value)) {
+        if (value.isFilter() || diskResourceUtil.inTrash(value)) {
             return;
         }
 
@@ -116,7 +118,7 @@ public class DiskResourceActionsCell extends AbstractCell<DiskResource> {
             imgSrc = iplantResources.dataLink().getSafeUri();
             debugId = baseID + "." + value.getPath() + DiskResourceModule.Ids.ACTION_CELL_DATA_LINK;
         }
-        if ((value instanceof File) && DiskResourceUtil.isOwner(value)) {
+        if ((value instanceof File) && diskResourceUtil.isOwner(value)) {
             name = SHARE_FILE_BY_LINK_ACTION;
             toolTip = SHARE_FILE_BY_LINK_ACTION;
             className = resources.css().actionIcon();
@@ -135,7 +137,7 @@ public class DiskResourceActionsCell extends AbstractCell<DiskResource> {
         }
 
         debugId = null;
-        if (DiskResourceUtil.isOwner(value)) {
+        if (diskResourceUtil.isOwner(value)) {
             name = SHARE_BY_DE_ACTION;
             toolTip = SHARE_BY_DE_ACTION;
             className = resources.css().actionIcon();

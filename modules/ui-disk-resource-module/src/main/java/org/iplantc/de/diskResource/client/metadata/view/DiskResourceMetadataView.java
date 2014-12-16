@@ -278,7 +278,7 @@ public class DiskResourceMetadataView extends Composite {
         iplantResources = IplantResources.RESOURCES;
         diskResourceAutoBeanFactory = GWT.create(DiskResourceAutoBeanFactory.class);
         appearance = GWT.create(AccordionLayoutAppearance.class);
-        writable = DiskResourceUtil.isWritable(dr);
+        writable = DiskResourceUtil.getInstance().isWritable(dr);
         alc = new AccordionLayoutContainer();
         centerPanel = new VerticalLayoutContainer();
         valid = true;

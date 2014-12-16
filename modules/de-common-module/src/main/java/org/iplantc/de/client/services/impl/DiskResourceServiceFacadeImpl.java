@@ -72,6 +72,7 @@ public class DiskResourceServiceFacadeImpl extends TreeStore<Folder> implements
     private final DiscEnvApiService deServiceFacade;
     private final DEClientConstants constants;
     private final UserInfo userInfo;
+    @Inject DiskResourceUtil diskResourceUtil;
 
     Logger LOG = Logger.getLogger(DiskResourceServiceFacadeImpl.class.getName());
 
@@ -335,7 +336,7 @@ public class DiskResourceServiceFacadeImpl extends TreeStore<Folder> implements
 
         DiskResourceMove request = factory.diskResourceMove().as();
         request.setDest(destFolder.getPath());
-        request.setSources(DiskResourceUtil.asStringPathList(diskResources));
+        request.setSources(diskResourceUtil.asStringPathList(diskResources));
 
         ServiceCallWrapper wrapper = new ServiceCallWrapper(POST, address, encode(request));
 
@@ -410,7 +411,7 @@ public class DiskResourceServiceFacadeImpl extends TreeStore<Folder> implements
         DiskResourceRename request = factory.diskResourceRename().as();
         String srcId = src.getPath();
         request.setSource(srcId);
-        request.setDest(DiskResourceUtil.appendNameToPath(DiskResourceUtil.parseParent(srcId), destName));
+        request.setDest(diskResourceUtil.appendNameToPath(diskResourceUtil.parseParent(srcId), destName));
 
         ServiceCallWrapper wrapper = new ServiceCallWrapper(POST, fullAddress, encode(request));
         callService(wrapper, new AsyncCallbackConverter<String, DiskResource>(callback) {
@@ -428,7 +429,7 @@ public class DiskResourceServiceFacadeImpl extends TreeStore<Folder> implements
 
                 String newPath = response.getDest();
                 newDr.setPath(newPath);
-                newDr.setName(DiskResourceUtil.parseNameFromPath(newPath));
+                newDr.setName(diskResourceUtil.parseNameFromPath(newPath));
 
                 if (newDr instanceof Folder) {
                     renameFolder((Folder)src, (Folder)newDr);
@@ -539,7 +540,7 @@ public class DiskResourceServiceFacadeImpl extends TreeStore<Folder> implements
     public <T extends DiskResource> void deleteDiskResources(final Set<T> diskResources,
                                                              final AsyncCallback<HasPaths> callback) {
         final HasPaths dto = factory.pathsList().as();
-        dto.setPaths(DiskResourceUtil.asStringPathList(diskResources));
+        dto.setPaths(diskResourceUtil.asStringPathList(diskResources));
         deleteDiskResources(dto, callback);
     }
 

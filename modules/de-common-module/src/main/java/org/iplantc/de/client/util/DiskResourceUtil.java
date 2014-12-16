@@ -31,17 +31,31 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * @author sriram
+ * @author sriram, jstroot
  * 
  */
 public class DiskResourceUtil {
+
+    private static DiskResourceUtil INSTANCE;
+
+    DiskResourceUtil() {
+
+    }
+
+    public static DiskResourceUtil getInstance(){
+        if(INSTANCE == null) {
+            INSTANCE = new DiskResourceUtil();
+        }
+        return INSTANCE;
+    }
+
     /**
      * Parse the parent folder from a path.
      * 
      * @param path the path to parse.
      * @return the parent folder.
      */
-    public static String parseParent(String path) {
+    public String parseParent(String path) {
         if (Strings.isNullOrEmpty(path)) {
             return path;
         }
@@ -60,7 +74,7 @@ public class DiskResourceUtil {
      * @param path the path to parse.
      * @return the display name.
      */
-    public static String parseNameFromPath(String path) {
+    public String parseNameFromPath(String path) {
         if (Strings.isNullOrEmpty(path)) {
             return path;
         }
@@ -71,7 +85,7 @@ public class DiskResourceUtil {
         return split.removeLast();
     }
 
-    public static List<String> parseNamesFromIdList(Iterable<String> idList) {
+    public List<String> parseNamesFromIdList(Iterable<String> idList) {
         if (idList == null) {
             return null;
         }
@@ -91,14 +105,14 @@ public class DiskResourceUtil {
      * 
      * @return the member folder or file path
      */
-    public static final String appendNameToPath(final String basePath, final String name) {
+    public final String appendNameToPath(final String basePath, final String name) {
         if (Strings.isNullOrEmpty(name) || Strings.isNullOrEmpty(basePath)) {
             return null;
         }
         return basePath + "/" + name;
     }
 
-    public static String asCommaSeperatedNameList(Iterable<String> idList) {
+    public String asCommaSeperatedNameList(Iterable<String> idList) {
         if (idList == null) {
             return null;
         }
@@ -107,7 +121,7 @@ public class DiskResourceUtil {
     }
 
 
-    public static boolean isOwner(Iterable<DiskResource> resources) {
+    public boolean isOwner(Iterable<DiskResource> resources) {
         if (resources == null) {
             return false;
         }
@@ -128,7 +142,7 @@ public class DiskResourceUtil {
      * @param resources
      * @return
      */
-    public static boolean hasOwner(Iterable<DiskResource> resources) {
+    public boolean hasOwner(Iterable<DiskResource> resources) {
         if (resources == null) {
             return false;
         }
@@ -150,7 +164,7 @@ public class DiskResourceUtil {
      * @param resource
      * @return
      */
-    public static boolean isChildOfFolder(Folder parent, DiskResource resource) {
+    public boolean isChildOfFolder(Folder parent, DiskResource resource) {
         return parseParent(resource.getPath()).equals(parent.getPath());
     }
 
@@ -162,26 +176,26 @@ public class DiskResourceUtil {
      * @param folder the folder whose ancestry is verified.
      * @return true if the folder is a descendant of the given ancestor, false otherwise.
      */
-    public static boolean isDescendantOfFolder(Folder ancestor, Folder folder) {
+    public boolean isDescendantOfFolder(Folder ancestor, Folder folder) {
         return folder.getPath().startsWith(ancestor.getPath() + "/"); //$NON-NLS-1$
     }
 
-    public static boolean isMovable(Folder targetFolder, Iterable<DiskResource> dropData) {
+    public boolean isMovable(Folder targetFolder, Iterable<DiskResource> dropData) {
         return isOwner(dropData) && isWritable(targetFolder);
     }
 
-    public static boolean canUploadTo(DiskResource resource) {
+    public boolean canUploadTo(DiskResource resource) {
         return (isOwner(resource)|| isWritable(resource))
                        && (resource instanceof Folder)
                        && !(resource instanceof DiskResourceQueryTemplate)
                        && !inTrash(resource);
     }
 
-    public static boolean inTrash(DiskResource resource) {
+    public boolean inTrash(DiskResource resource) {
         return resource != null && resource.getPath().startsWith(UserInfo.getInstance().getTrashPath());
     }
 
-    public static boolean containsTrashedResource(Set<DiskResource> selectedResources) {
+    public boolean containsTrashedResource(Set<DiskResource> selectedResources) {
         if (selectedResources != null) {
             for (DiskResource resource : selectedResources) {
                 if (inTrash(resource)) {
@@ -193,7 +207,7 @@ public class DiskResourceUtil {
         return false;
     }
 
-    public static <R extends DiskResource> boolean containsFolder(Iterable<R> selection) {
+    public <R extends DiskResource> boolean containsFolder(Iterable<R> selection) {
         for (DiskResource resource : selection) {
             if (resource instanceof Folder) {
                 return true;
@@ -202,7 +216,7 @@ public class DiskResourceUtil {
         return false;
     }
 
-    public static <R extends DiskResource> boolean containsFile(Iterable<R> selection) {
+    public <R extends DiskResource> boolean containsFile(Iterable<R> selection) {
         for (DiskResource resource : selection) {
             if (resource instanceof File) {
                 return true;
@@ -211,7 +225,7 @@ public class DiskResourceUtil {
         return false;
     }
 
-    public static <R extends DiskResource> Iterable<File> extractFiles(Iterable<R> diskresources) {
+    public <R extends DiskResource> Iterable<File> extractFiles(Iterable<R> diskresources) {
         List<File> files = Lists.newArrayList();
         for (DiskResource dr : diskresources) {
             if (dr instanceof File) {
@@ -221,7 +235,7 @@ public class DiskResourceUtil {
         return files;
     }
 
-    public static <R extends DiskResource> Iterable<Folder> extractFolders(Iterable<R> diskresources) {
+    public <R extends DiskResource> Iterable<Folder> extractFolders(Iterable<R> diskresources) {
         List<Folder> folders = Lists.newArrayList();
         for (DiskResource dr : diskresources) {
             if (dr instanceof Folder) {
@@ -231,7 +245,7 @@ public class DiskResourceUtil {
         return folders;
     }
 
-    public static <R extends HasId> List<String> asStringIdList(Iterable<R> diskResourceList) {
+    public <R extends HasId> List<String> asStringIdList(Iterable<R> diskResourceList) {
         List<String> ids = Lists.newArrayList();
         for (R dr : diskResourceList) {
             ids.add(dr.getId());
@@ -240,7 +254,7 @@ public class DiskResourceUtil {
         return ids;
     }
 
-    public static <R extends HasPath> List<String> asStringPathList(Iterable<R> diskResourceList) {
+    public <R extends HasPath> List<String> asStringPathList(Iterable<R> diskResourceList) {
         List<String> paths = Lists.newArrayList();
         for (R dr : diskResourceList) {
             paths.add(dr.getPath());
@@ -249,7 +263,7 @@ public class DiskResourceUtil {
         return paths;
     }
 
-    public static <R extends HasPath> FastMap<TYPE> asStringPathTypeMap(Iterable<R> diskResourceList,
+    public <R extends HasPath> FastMap<TYPE> asStringPathTypeMap(Iterable<R> diskResourceList,
                                                                         TYPE type) {
         FastMap<TYPE> pathMap = new FastMap<>();
         for (R dr : diskResourceList) {
@@ -259,24 +273,24 @@ public class DiskResourceUtil {
 
     }
 
-    public static <R extends HasId> Splittable createStringIdListSplittable(Iterable<R> hasIdList) {
+    public <R extends HasId> Splittable createStringIdListSplittable(Iterable<R> hasIdList) {
         JSONArray jArr = JsonUtil.buildArrayFromStrings(asStringIdList(hasIdList));
 
         return StringQuoter.split(jArr.toString());
     }
 
-    public static Splittable createSplittableFromStringList(List<String> strings) {
+    public Splittable createSplittableFromStringList(List<String> strings) {
         return StringQuoter.split(JsonUtil.buildArrayFromStrings(strings).toString());
     }
 
-    public static HasPath getFolderPathFromFile(File file) {
+    public HasPath getFolderPathFromFile(File file) {
         if (file != null) {
             return CommonModelUtils.createHasPathFromString(parseParent(file.getPath()));
         }
         return null;
     }
 
-    public static String formatFileSize(String strSize) {
+    public String formatFileSize(String strSize) {
         if (strSize != null && !strSize.isEmpty()) {
             Double size = Double.parseDouble(strSize);
             if (size < 1024) {
@@ -303,7 +317,7 @@ public class DiskResourceUtil {
      * @return A Set containing all Files found in the given DiskResource Set, or an empty Set if the
      *         given Set is null or empty.
      */
-    public static Set<File> filterFiles(Set<DiskResource> diskResources) {
+    public Set<File> filterFiles(Set<DiskResource> diskResources) {
         Set<File> files = Sets.newHashSet();
 
         if (diskResources != null) {
@@ -324,7 +338,7 @@ public class DiskResourceUtil {
      * @return A Set containing all Folders found in the given DiskResource Set, or an empty Set if the
      *         given Set is null or empty.
      */
-    public static Set<Folder> filterFolders(Set<DiskResource> diskResources) {
+    public Set<Folder> filterFolders(Set<DiskResource> diskResources) {
         Set<Folder> folders = Sets.newHashSet();
 
         if (diskResources != null) {
@@ -338,7 +352,7 @@ public class DiskResourceUtil {
         return folders;
     }
 
-    public static boolean isOwner(DiskResource dr) {
+    public boolean isOwner(DiskResource dr) {
         if (dr == null) {
             return false;
         }
@@ -346,7 +360,7 @@ public class DiskResourceUtil {
         return dr.getPermission().equals(PermissionValue.own);
     }
 
-    public static boolean isReadable(DiskResource dr) {
+    public boolean isReadable(DiskResource dr) {
         if (dr == null) {
             return false;
         }
@@ -354,7 +368,7 @@ public class DiskResourceUtil {
         return dr.getPermission().equals(PermissionValue.own) || dr.getPermission().equals(PermissionValue.write) || dr.getPermission().equals(PermissionValue.read);
     }
 
-    public static boolean isWritable(DiskResource dr) {
+    public boolean isWritable(DiskResource dr) {
         if (dr == null) {
             return false;
         }
@@ -362,7 +376,7 @@ public class DiskResourceUtil {
         return dr.getPermission().equals(PermissionValue.own) || dr.getPermission().equals(PermissionValue.write);
     }
 
-    public static boolean checkManifest(Splittable obj) {
+    public boolean checkManifest(Splittable obj) {
         if (obj == null) {
             return false;
         }
@@ -374,7 +388,7 @@ public class DiskResourceUtil {
         return true;
     }
 
-    public static boolean isTreeTab(Splittable obj) {
+    public boolean isTreeTab(Splittable obj) {
         if (checkManifest(obj)) {
             String infoType = obj.get("info-type").asString();
             return (infoType.equals(InfoType.NEXUS.toString()) || infoType.equals(InfoType.NEXML.toString()) || infoType.equals(InfoType.NEWICK.toString()) || infoType.equals(InfoType.PHYLOXML
@@ -385,7 +399,7 @@ public class DiskResourceUtil {
 
     }
 
-    public static boolean isGenomeVizTab(Splittable obj) {
+    public boolean isGenomeVizTab(Splittable obj) {
         if (checkManifest(obj)) {
             String infoType = obj.get("info-type").asString();
             return (infoType.equals(InfoType.FASTA.toString()));
@@ -394,7 +408,7 @@ public class DiskResourceUtil {
         return false;
     }
 
-    public static boolean isEnsemblVizTab(Splittable obj) {
+    public boolean isEnsemblVizTab(Splittable obj) {
         if (checkManifest(obj)) {
             String infoType = obj.get("info-type").asString();
             return (infoType.equals(InfoType.BAM.toString()) || infoType.equals(InfoType.VCF.toString()) || infoType.equals(InfoType.GFF.toString()));
@@ -402,13 +416,13 @@ public class DiskResourceUtil {
         return false;
     }
 
-    public static Splittable createStringPathListSplittable(List<HasPath> hasPathList) {
+    public Splittable createStringPathListSplittable(List<HasPath> hasPathList) {
         JSONArray jArr = JsonUtil.buildArrayFromStrings(asStringPathList(hasPathList));
 
         return StringQuoter.split(jArr.toString());
     }
 
-    public static Splittable createInfoTypeSplittable(String infoType) {
+    public Splittable createInfoTypeSplittable(String infoType) {
         Splittable s = StringQuoter.createSplittable();
         StringQuoter.create(infoType).assign(s, "info-type");
         return s;

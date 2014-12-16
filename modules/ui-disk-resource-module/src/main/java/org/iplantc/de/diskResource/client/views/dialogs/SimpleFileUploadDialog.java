@@ -96,12 +96,18 @@ public class SimpleFileUploadDialog extends IPlantDialog {
     private final SafeUri fileUploadServlet;
     private final String userName;
     private final EventBus eventBus;
+    private final DiskResourceUtil diskResourceUtil;
 
-    public SimpleFileUploadDialog(Folder uploadDest, DiskResourceServiceFacade drService,
-            EventBus eventBus, SafeUri fileUploadServlet, String userName) {
+    public SimpleFileUploadDialog(Folder uploadDest,
+                                  DiskResourceServiceFacade drService,
+                                  EventBus eventBus,
+                                  DiskResourceUtil diskResourceUtil,
+                                  SafeUri fileUploadServlet,
+                                  String userName) {
         this.uploadDest = uploadDest;
         this.drService = drService;
         this.eventBus = eventBus;
+        this.diskResourceUtil = diskResourceUtil;
         this.fileUploadServlet = fileUploadServlet;
         this.userName = userName;
         setAutoHide(false);
@@ -135,7 +141,7 @@ public class SimpleFileUploadDialog extends IPlantDialog {
         String destPath = uploadDest.getPath();
 
         htmlDestText.setHTML("<div title='" + destPath + "' style='color: #0098AA;width:100%;padding:5px;text-overflow:ellipsis;'>"
-                + Format.ellipse(I18N.DISPLAY.uploadingToFolder(DiskResourceUtil.parseNameFromPath(destPath)), 50) + "</div>");
+                + Format.ellipse(I18N.DISPLAY.uploadingToFolder(diskResourceUtil.parseNameFromPath(destPath)), 50) + "</div>");
     }
 
     @UiFactory

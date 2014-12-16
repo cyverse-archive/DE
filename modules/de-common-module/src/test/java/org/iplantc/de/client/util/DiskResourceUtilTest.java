@@ -16,6 +16,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -32,76 +33,83 @@ public class DiskResourceUtilTest {
     @Mock
     File file1, file2, file3;
 
+    private DiskResourceUtil diskResourceUtil;
+
+    @Before public void setup(){
+        diskResourceUtil = diskResourceUtil.getInstance();
+
+    }
+
     @Test
     public void testParseParent() {
-        assertEquals("/home/iplant/ipctest", DiskResourceUtil.parseParent("/home/iplant/ipctest/test"));
-        assertNull(DiskResourceUtil.parseParent(null));
-        assertEquals("", DiskResourceUtil.parseParent(""));
+        assertEquals("/home/iplant/ipctest", diskResourceUtil.parseParent("/home/iplant/ipctest/test"));
+        assertNull(diskResourceUtil.parseParent(null));
+        assertEquals("", diskResourceUtil.parseParent(""));
     }
 
     @Test
     public void testParseNameFromPath() {
-        assertNull(DiskResourceUtil.parseNameFromPath(null));
-        assertEquals("", DiskResourceUtil.parseNameFromPath(""));
-        assertEquals("test", DiskResourceUtil.parseNameFromPath("/home/iplant/ipctest/test"));
+        assertNull(diskResourceUtil.parseNameFromPath(null));
+        assertEquals("", diskResourceUtil.parseNameFromPath(""));
+        assertEquals("test", diskResourceUtil.parseNameFromPath("/home/iplant/ipctest/test"));
     }
 
     @Test
     public void testParseNamesFromIdList() {
-        assertNull(DiskResourceUtil.parseNamesFromIdList(null));
+        assertNull(diskResourceUtil.parseNamesFromIdList(null));
     }
 
     @Test
     public void testAppendNameToPath() {
-        assertNull(DiskResourceUtil.appendNameToPath(null, null));
-        assertNull(DiskResourceUtil.appendNameToPath("", null));
-        assertNull(DiskResourceUtil.appendNameToPath(null, ""));
-        assertNull(DiskResourceUtil.appendNameToPath("", ""));
-        assertEquals("/home/iplant/ipctest/test", DiskResourceUtil.appendNameToPath("/home/iplant/ipctest", "test"));
+        assertNull(diskResourceUtil.appendNameToPath(null, null));
+        assertNull(diskResourceUtil.appendNameToPath("", null));
+        assertNull(diskResourceUtil.appendNameToPath(null, ""));
+        assertNull(diskResourceUtil.appendNameToPath("", ""));
+        assertEquals("/home/iplant/ipctest/test", diskResourceUtil.appendNameToPath("/home/iplant/ipctest", "test"));
     }
 
     @Test
     public void testAsCommaSeperatedNameList() {
-        assertNull(DiskResourceUtil.asCommaSeperatedNameList(null));
+        assertNull(diskResourceUtil.asCommaSeperatedNameList(null));
         ArrayList<String> empty = new ArrayList<String>();
-        assertEquals("", DiskResourceUtil.asCommaSeperatedNameList(empty));
+        assertEquals("", diskResourceUtil.asCommaSeperatedNameList(empty));
     }
 
     @Test
     public void testTreeTab() {
         Splittable s = createInfoTypeSplittable(InfoType.ACE.toString());
-        boolean expected = DiskResourceUtil.isTreeTab(s);
+        boolean expected = diskResourceUtil.isTreeTab(s);
         assertFalse(expected);
 
         s = createInfoTypeSplittable(InfoType.NEXUS.toString());
-        expected = DiskResourceUtil.isTreeTab(s);
+        expected = diskResourceUtil.isTreeTab(s);
         assertTrue(expected);
 
         s = createInfoTypeSplittable(InfoType.PHYLIP.toString());
-        expected = DiskResourceUtil.isTreeTab(s);
+        expected = diskResourceUtil.isTreeTab(s);
         assertFalse(expected);
 
         s = createInfoTypeSplittable(InfoType.PHYLOXML.toString());
-        expected = DiskResourceUtil.isTreeTab(s);
+        expected = diskResourceUtil.isTreeTab(s);
         assertTrue(expected);
 
         s = createInfoTypeSplittable(InfoType.NEWICK.toString());
-        expected = DiskResourceUtil.isTreeTab(s);
+        expected = diskResourceUtil.isTreeTab(s);
         assertTrue(expected);
 
         s = createInfoTypeSplittable("");
-        expected = DiskResourceUtil.isTreeTab(s);
+        expected = diskResourceUtil.isTreeTab(s);
         assertFalse(expected);
     }
 
     @Test
     public void testGenomeTab() {
         Splittable s = createInfoTypeSplittable(InfoType.ACE.toString());
-        boolean expected = DiskResourceUtil.isGenomeVizTab(s);
+        boolean expected = diskResourceUtil.isGenomeVizTab(s);
         assertFalse(expected);
 
         s = createInfoTypeSplittable(InfoType.FASTA.toString());
-        expected = DiskResourceUtil.isGenomeVizTab(s);
+        expected = diskResourceUtil.isGenomeVizTab(s);
         assertTrue(expected);
 
     }
@@ -109,51 +117,51 @@ public class DiskResourceUtilTest {
     @Test
     public void testEnsemblTab() {
         Splittable s = createInfoTypeSplittable(InfoType.ACE.toString());
-        boolean expected = DiskResourceUtil.isEnsemblVizTab(s);
+        boolean expected = diskResourceUtil.isEnsemblVizTab(s);
         assertFalse(expected);
 
         s = createInfoTypeSplittable(InfoType.BAM.toString());
-        expected = DiskResourceUtil.isEnsemblVizTab(s);
+        expected = diskResourceUtil.isEnsemblVizTab(s);
         assertTrue(expected);
 
         s = createInfoTypeSplittable(InfoType.VCF.toString());
-        expected = DiskResourceUtil.isEnsemblVizTab(s);
+        expected = diskResourceUtil.isEnsemblVizTab(s);
         assertTrue(expected);
 
         s = createInfoTypeSplittable(InfoType.GFF.toString());
-        expected = DiskResourceUtil.isEnsemblVizTab(s);
+        expected = diskResourceUtil.isEnsemblVizTab(s);
         assertTrue(expected);
     }
 
     @Test
     public void testExtractFolders() {
         List<DiskResource> resources = Arrays.asList(folder1, file1);
-        ArrayList<Folder> expected = Lists.newArrayList(DiskResourceUtil.extractFolders(resources));
+        ArrayList<Folder> expected = Lists.newArrayList(diskResourceUtil.extractFolders(resources));
         assertTrue(expected.size() == 1);
 
-        expected = Lists.newArrayList(DiskResourceUtil.extractFolders(Arrays.asList(file1)));
+        expected = Lists.newArrayList(diskResourceUtil.extractFolders(Arrays.asList(file1)));
         assertTrue(expected.size() == 0);
     }
 
     @Test
     public void testExtractFiles() {
         List<DiskResource> resources = Arrays.asList(folder1, file1);
-        ArrayList<File> expected = Lists.newArrayList(DiskResourceUtil.extractFiles(resources));
+        ArrayList<File> expected = Lists.newArrayList(diskResourceUtil.extractFiles(resources));
         assertTrue(expected.size() == 1);
 
-        expected = Lists.newArrayList(DiskResourceUtil.extractFiles(Arrays.asList(folder1)));
+        expected = Lists.newArrayList(diskResourceUtil.extractFiles(Arrays.asList(folder1)));
         assertTrue(expected.size() == 0);
     }
 
     @Test
     public void testFormatFileSize() {
-        String expected = DiskResourceUtil.formatFileSize(null);
+        String expected = diskResourceUtil.formatFileSize(null);
         assertNull(expected);
-        expected = DiskResourceUtil.formatFileSize("");
+        expected = diskResourceUtil.formatFileSize("");
         assertNull(expected);
         
         try {
-            expected = DiskResourceUtil.formatFileSize("foo");
+            expected = diskResourceUtil.formatFileSize("foo");
             fail("Cannot parse this string into Double");
         } catch (NumberFormatException nfe) {
             System.out.println("failed with exception");

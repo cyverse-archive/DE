@@ -181,6 +181,7 @@ public class DiskResourceViewImpl extends Composite implements DiskResourceView,
     private static DiskResourceViewUiBinder BINDER = GWT.create(DiskResourceViewUiBinder.class);
     private final PagingLoader<FolderContentsLoadConfig, PagingLoadResult<DiskResource>> gridLoader;
 
+    private final DiskResourceUtil diskResourceUtil;
     private Presenter presenter;
 
     DiskResourceViewToolbar toolbar;
@@ -257,6 +258,7 @@ public class DiskResourceViewImpl extends Composite implements DiskResourceView,
                          final DiskResourceAutoBeanFactory factory,
                          final UserInfo userInfo,
                          final IplantDisplayStrings displayStrings,
+                         final DiskResourceUtil diskResourceUtil,
                          @Assisted final DiskResourceView.Presenter presenter,
                          @Assisted final TreeLoader<Folder> treeLoader,
                          @Assisted final PagingLoader<FolderContentsLoadConfig, PagingLoadResult<DiskResource>> gridLoader) {
@@ -264,6 +266,7 @@ public class DiskResourceViewImpl extends Composite implements DiskResourceView,
         this.toolbar = viewToolbar;
         this.userInfo = userInfo;
         this.displayStrings = displayStrings;
+        this.diskResourceUtil = diskResourceUtil;
         this.presenter = presenter;
         this.treeLoader = treeLoader;
         this.treeStore = tree.getStore();
@@ -860,13 +863,13 @@ public class DiskResourceViewImpl extends Composite implements DiskResourceView,
                 detailsPanel.add(getDateLabel(displayStrings.lastModified(), info.getLastModified()));
                 detailsPanel.add(getDateLabel(displayStrings.createdDate(), info.getDateCreated()));
                 detailsPanel.add(getPermissionsLabel(displayStrings.permissions(), info.getPermission()));
-                if (!DiskResourceUtil.inTrash(next)) {
+                if (!diskResourceUtil.inTrash(next)) {
                     detailsPanel.add(getSharingLabel(displayStrings.share(),
                                                      info.getShareCount(),
                                                      info.getPermission()));
                 }
                 if (info instanceof File) {
-                    addFileDetails((File)info, !DiskResourceUtil.inTrash(next));
+                    addFileDetails((File)info, !diskResourceUtil.inTrash(next));
 
                 } else {
                     addFolderDetails((Folder)info);
@@ -948,7 +951,7 @@ public class DiskResourceViewImpl extends Composite implements DiskResourceView,
     }
 
     private void addFileDetails(File info, boolean addViewerInfo) {
-        detailsPanel.add(getStringLabel(displayStrings.size(), DiskResourceUtil.formatFileSize(info.getSize() + ""))); //$NON-NLS-1$
+        detailsPanel.add(getStringLabel(displayStrings.size(), diskResourceUtil.formatFileSize(info.getSize() + ""))); //$NON-NLS-1$
         detailsPanel.add(getStringLabel("Type", info.getContentType()));
         detailsPanel.add(getInfoTypeLabel("Info-Type", info));
         if (addViewerInfo) {
@@ -965,12 +968,12 @@ public class DiskResourceViewImpl extends Composite implements DiskResourceView,
         IPlantAnchor link = null;
         String infoType = info.getInfoType();
         if (infoType != null && !infoType.isEmpty()) {
-            Splittable manifest = DiskResourceUtil.createInfoTypeSplittable(infoType);
-            if (DiskResourceUtil.isTreeTab(manifest)) {
+            Splittable manifest = diskResourceUtil.createInfoTypeSplittable(infoType);
+            if (diskResourceUtil.isTreeTab(manifest)) {
                 link = new IPlantAnchor(displayStrings.treeViewer(), 100, new TreeViewerInfoClickHandler());
-            } else if (DiskResourceUtil.isGenomeVizTab(manifest)) {
+            } else if (diskResourceUtil.isGenomeVizTab(manifest)) {
                 link = new IPlantAnchor(displayStrings.coge(), 100, new CogeViewerInfoClickHandler());
-            } else if (DiskResourceUtil.isEnsemblVizTab(manifest)) {
+            } else if (diskResourceUtil.isEnsemblVizTab(manifest)) {
                 link = new IPlantAnchor(displayStrings.ensembl(), 100, new EnsemblViewerInfoClickHandler());
             }
         }

@@ -19,13 +19,15 @@ public class DataSharing extends Sharing {
     private String path;
     private PermissionValue displayPermission;
     private PermissionValue permission;
+    private final DiskResourceUtil diskResourceUtil;
 
     public static enum TYPE {
         FILE, FOLDER
-    };
+    }
 
     public DataSharing(Collaborator c, PermissionValue p, String path) {
         super(c);
+        this.diskResourceUtil = DiskResourceUtil.getInstance();
         setPath(path);
         if (p != null) {
             permission = p;
@@ -39,7 +41,7 @@ public class DataSharing extends Sharing {
     }
 
     public String getResourceName() {
-        return DiskResourceUtil.parseNameFromPath(path);
+        return diskResourceUtil.parseNameFromPath(path);
     }
 
     public boolean isReadable() {

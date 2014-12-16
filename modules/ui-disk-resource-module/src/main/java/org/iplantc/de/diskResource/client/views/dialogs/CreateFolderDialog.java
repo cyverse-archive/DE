@@ -15,9 +15,11 @@ import com.sencha.gxt.widget.core.client.event.SelectEvent.SelectHandler;
 
 public class CreateFolderDialog extends IPlantPromptDialog {
 
+    private final DiskResourceUtil diskResourceUtil;
     public CreateFolderDialog(final Folder parentFolder,
-            final DiskResourceView.Presenter presenter) {
+                              final DiskResourceView.Presenter presenter) {
         super(I18N.DISPLAY.folderName(), -1, "", new DiskResourceNameValidator());
+        diskResourceUtil = DiskResourceUtil.getInstance();
         setWidth("300px");
         setHeadingText(I18N.DISPLAY.newFolder());
         initDestPathLabel(parentFolder.getPath());
@@ -34,7 +36,7 @@ public class CreateFolderDialog extends IPlantPromptDialog {
 
     private void initDestPathLabel(String destPath) {
         HTML htmlDestText = new HTML("<div title='" + destPath + "'style='color: #0098AA;width:100%;padding:5px;text-overflow:ellipsis;'>"
-                + Format.ellipse(I18N.DISPLAY.createIn(DiskResourceUtil.parseNameFromPath(destPath)), 50) + "</div>");
+                + Format.ellipse(I18N.DISPLAY.createIn(diskResourceUtil.parseNameFromPath(destPath)), 50) + "</div>");
         insert(htmlDestText, 0);
     }
 }

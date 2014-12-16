@@ -98,6 +98,8 @@ public class DesktopPresenterWindowEventHandler implements EditAppEvent.EditAppE
     @Inject
     UserInfo userInfo;
     private DesktopWindowManager desktopWindowManager;
+    @Inject
+    DiskResourceUtil diskResourceUtil;
     private DesktopPresenterImpl presenter;
 
     @Inject
@@ -238,6 +240,7 @@ public class DesktopPresenterWindowEventHandler implements EditAppEvent.EditAppE
             new SimpleFileUploadDialog(uploadDest,
                                        diskResourceServiceProvider.get(),
                                        eventBus,
+                                       diskResourceUtil,
                                        UriUtils.fromTrustedString(clientConstants.fileUploadServlet()),
                                        userInfo.getUsername()).show();
         }
@@ -282,7 +285,7 @@ public class DesktopPresenterWindowEventHandler implements EditAppEvent.EditAppE
         } else {
             fileViewerWindowConfig = event.getConfig();
         }
-        fileViewerWindowConfig.setEditing(DiskResourceUtil.isWritable(event.getFile()));
+        fileViewerWindowConfig.setEditing(diskResourceUtil.isWritable(event.getFile()));
         presenter.show(fileViewerWindowConfig);
     }
 
@@ -301,7 +304,7 @@ public class DesktopPresenterWindowEventHandler implements EditAppEvent.EditAppE
     }
 
     boolean canUpload(Folder uploadDest) {
-        if (uploadDest != null && DiskResourceUtil.canUploadTo(uploadDest)) {
+        if (uploadDest != null && diskResourceUtil.canUploadTo(uploadDest)) {
             return true;
         } else {
             showErrorMsg();
@@ -326,7 +329,7 @@ public class DesktopPresenterWindowEventHandler implements EditAppEvent.EditAppE
         }
 
         for (DiskResource dr : resources) {
-            if (!DiskResourceUtil.isReadable(dr)) {
+            if (!diskResourceUtil.isReadable(dr)) {
                 return false;
             }
         }
@@ -341,7 +344,7 @@ public class DesktopPresenterWindowEventHandler implements EditAppEvent.EditAppE
     void showFile(final File file) {
         FileViewerWindowConfig fileViewerConfig = ConfigFactory.fileViewerWindowConfig(file);
         fileViewerConfig.setVizTabFirst(true);
-        fileViewerConfig.setEditing(DiskResourceUtil.isWritable(file));
+        fileViewerConfig.setEditing(diskResourceUtil.isWritable(file));
         presenter.show(fileViewerConfig);
     }
 

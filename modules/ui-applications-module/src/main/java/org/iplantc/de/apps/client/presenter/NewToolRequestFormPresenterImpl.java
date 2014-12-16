@@ -56,6 +56,8 @@ public class NewToolRequestFormPresenterImpl implements Presenter {
         UPLOAD, LINK, SELECT;
     }
 
+    @Inject DiskResourceUtil diskResourceUtil;
+
     @Inject
     NewToolRequestFormPresenterImpl(@Assisted final NewToolRequestFormView view,
                                     @Assisted final Command callbackCmd) {
@@ -341,7 +343,7 @@ public class NewToolRequestFormPresenterImpl implements Presenter {
     }
 
     private String makeDestinationPath(final String file) {
-        return DiskResourceUtil.appendNameToPath(UserInfo.getInstance().getHomePath(), file);
+        return diskResourceUtil.appendNameToPath(UserInfo.getInstance().getHomePath(), file);
     }
 
     private List<Uploader> getUploadersToSubmit() {

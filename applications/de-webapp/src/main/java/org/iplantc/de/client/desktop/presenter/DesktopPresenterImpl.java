@@ -146,6 +146,7 @@ public class DesktopPresenterImpl implements DesktopView.Presenter {
     UserSettings userSettings;
     @Inject
     NotifyInfo notifyInfo;
+    @Inject DiskResourceUtil diskResourceUtil;
     private final EventBus eventBus;
     private final KeepaliveTimer keepaliveTimer;
     private final MessagePoller messagePoller;
@@ -331,7 +332,7 @@ public class DesktopPresenterImpl implements DesktopView.Presenter {
                 selectedResources.add(file);
 
                 DiskResourceWindowConfig dataWindowConfig = ConfigFactory.diskResourceWindowConfig(false);
-                HasPath folder = DiskResourceUtil.getFolderPathFromFile(file);
+                HasPath folder = diskResourceUtil.getFolderPathFromFile(file);
                 dataWindowConfig.setSelectedFolder(folder);
                 dataWindowConfig.setSelectedDiskResources(selectedResources);
                 show(dataWindowConfig, true);

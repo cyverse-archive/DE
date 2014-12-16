@@ -35,9 +35,11 @@ import java.util.List;
 public class ShareBreakDownDialog extends Dialog {
 
     private Grid<DataSharing> grid;
+    private final DiskResourceUtil diskResourceUtil;
 
     public ShareBreakDownDialog(List<DataSharing> shares) {
         init();
+        diskResourceUtil = DiskResourceUtil.getInstance();
 
         ToolBar toolbar = new ToolBar();
         toolbar.setHeight(30);
@@ -118,7 +120,7 @@ public class ShareBreakDownDialog extends Dialog {
 
             @Override
             public String getValue(DataSharing object) {
-                return DiskResourceUtil.parseNameFromPath((object.getPath()));
+                return diskResourceUtil.parseNameFromPath((object.getPath()));
             }
 
             @Override

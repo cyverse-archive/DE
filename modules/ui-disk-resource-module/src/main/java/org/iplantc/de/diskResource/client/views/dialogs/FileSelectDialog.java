@@ -18,6 +18,7 @@ import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.user.client.TakesValue;
 import com.google.gwt.user.client.ui.HasValue;
+import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import com.google.inject.assistedinject.AssistedInject;
 
@@ -51,7 +52,7 @@ public class FileSelectDialog extends IPlantDialog implements TakesValue<List<Fi
         public void onDiskResourceSelectionChanged(DiskResourceSelectionChangedEvent event) {
             Preconditions.checkNotNull(event.getSelection(), "Selection should not be null");
 
-            ArrayList<File> newArrayList = Lists.newArrayList(DiskResourceUtil.extractFiles(event.getSelection()));
+            ArrayList<File> newArrayList = Lists.newArrayList(diskResourceUtil.extractFiles(event.getSelection()));
             dlg.setValue(newArrayList);
         }
     }
@@ -88,6 +89,7 @@ public class FileSelectDialog extends IPlantDialog implements TakesValue<List<Fi
     private final DiskResourceView.Presenter presenter;
     private TextField selectedFileField;
     private List<File> selectedFileIds;
+    @Inject DiskResourceUtil diskResourceUtil;
 
     @AssistedInject
     FileSelectDialog(final DiskResourcePresenterFactory presenterFactory,
@@ -189,8 +191,8 @@ public class FileSelectDialog extends IPlantDialog implements TakesValue<List<Fi
             return;
         }
 
-        List<String> pathList = DiskResourceUtil.asStringPathList(value);
-        String fileNames = DiskResourceUtil.asCommaSeperatedNameList(pathList);
+        List<String> pathList = diskResourceUtil.asStringPathList(value);
+        String fileNames = diskResourceUtil.asCommaSeperatedNameList(pathList);
         selectedFileField.setValue(fileNames);
         getOkButton().setEnabled(true);
     }

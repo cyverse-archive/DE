@@ -48,6 +48,7 @@ public class NotificationMessageCell extends AbstractCell<NotificationMessage> {
     private final DiskResourceAutoBeanFactory drFactory = GWT.create(DiskResourceAutoBeanFactory.class);
     private final AnalysesAutoBeanFactory analysesFactory = GWT.create(AnalysesAutoBeanFactory.class);
     private final NotificationAutoBeanFactory notificationFactory = GWT.create(NotificationAutoBeanFactory.class);
+    private final DiskResourceUtil diskResourceUtil = DiskResourceUtil.getInstance();
     public NotificationMessageCell() {
         super("click"); //$NON-NLS-1$
     }
@@ -90,7 +91,7 @@ public class NotificationMessageCell extends AbstractCell<NotificationMessage> {
 
                         DiskResourceWindowConfig dataWindowConfig = ConfigFactory
                                 .diskResourceWindowConfig(false);
-                        HasPath folder = DiskResourceUtil.getFolderPathFromFile(file);
+                        HasPath folder = diskResourceUtil.getFolderPathFromFile(file);
                         dataWindowConfig.setSelectedFolder(folder);
                         dataWindowConfig.setSelectedDiskResources(selectedResources);
                         EventBus.getInstance().fireEvent(new WindowShowRequestEvent(dataWindowConfig, true));

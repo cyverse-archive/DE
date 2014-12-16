@@ -7,6 +7,7 @@ import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.web.bindery.autobean.shared.AutoBean;
 
 public class ErrorDiskResourceDeleteCategory {
+    private static DiskResourceUtil diskResourceUtil = DiskResourceUtil.getInstance();
 
     public static SafeHtml generateErrorMsg(AutoBean<ErrorDiskResourceDelete> instance) {
         ErrorDiskResourceDelete error = instance.as();
@@ -16,7 +17,7 @@ public class ErrorDiskResourceDeleteCategory {
         } else {
         return ErrorDiskResourceCategory.getErrorMessage(
                 ErrorDiskResourceCategory.getDiskResourceErrorCode(error.getErrorCode()),
-                DiskResourceUtil.asCommaSeperatedNameList(error.getPaths()));
+                diskResourceUtil.asCommaSeperatedNameList(error.getPaths()));
         }
     }
 }

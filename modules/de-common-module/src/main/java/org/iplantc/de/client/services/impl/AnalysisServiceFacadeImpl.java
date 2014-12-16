@@ -124,6 +124,7 @@ public class AnalysisServiceFacadeImpl implements AnalysisServiceFacade {
 
     private final AnalysesAutoBeanFactory factory;
     private final AppTemplateUtils appTemplateUtils;
+    private final DiskResourceUtil diskResourceUtil;
     private final DiscEnvApiService deServiceFacade;
     public static final String ANALYSES = "org.iplantc.services.analyses";
 
@@ -131,10 +132,12 @@ public class AnalysisServiceFacadeImpl implements AnalysisServiceFacade {
     @Inject
     public AnalysisServiceFacadeImpl(final DiscEnvApiService deServiceFacade,
                                      final AnalysesAutoBeanFactory factory,
-                                     final AppTemplateUtils appTemplateUtils) {
+                                     final AppTemplateUtils appTemplateUtils,
+                                     final DiskResourceUtil diskResourceUtil) {
         this.deServiceFacade = deServiceFacade;
         this.factory = factory;
         this.appTemplateUtils = appTemplateUtils;
+        this.diskResourceUtil = diskResourceUtil;
     }
 
     @Override
@@ -207,7 +210,7 @@ public class AnalysisServiceFacadeImpl implements AnalysisServiceFacade {
     @Override
     public void deleteAnalyses(List<Analysis> analysesToBeDeleted, AsyncCallback<String> callback) {
         String address = ANALYSES + "/shredder"; //$NON-NLS-1$ //$NON-NLS-2$
-        final Splittable stringIdListSplittable = DiskResourceUtil.createStringIdListSplittable(analysesToBeDeleted);
+        final Splittable stringIdListSplittable = diskResourceUtil.createStringIdListSplittable(analysesToBeDeleted);
         final Splittable payload = StringQuoter.createSplittable();
         stringIdListSplittable.assign(payload, "analyses");
         ServiceCallWrapper wrapper = new ServiceCallWrapper(POST, address, payload.getPayload());

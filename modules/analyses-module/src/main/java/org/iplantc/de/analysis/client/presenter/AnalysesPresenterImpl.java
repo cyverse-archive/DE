@@ -292,6 +292,7 @@ public class AnalysesPresenterImpl implements AnalysesView.Presenter,
     @Inject DiskResourceAutoBeanFactory drFactory;
     @Inject UserSessionServiceFacade userSessionService;
     @Inject UserInfo userInfo;
+    @Inject DiskResourceUtil diskResourceUtil;
 
     private final AnalysesView view;
     private final HasHandlers eventBus;
@@ -362,7 +363,7 @@ public class AnalysesPresenterImpl implements AnalysesView.Presenter,
                                                    eventBus.fireEvent(new FileSavedEvent(file));
 
                                                    final Splittable annotatedFile = split.get("file");
-                                                   StringQuoter.create(DiskResourceUtil.parseParent(file.getPath()))
+                                                   StringQuoter.create(diskResourceUtil.parseParent(file.getPath()))
                                                                .assign(annotatedFile, "parentFolderId");
                                                    StringQuoter.create(event.getPath())
                                                                .assign(annotatedFile, "sourceUrl");
@@ -505,7 +506,7 @@ public class AnalysesPresenterImpl implements AnalysesView.Presenter,
         final File hasPath = drFactory.file().as();
         String path = value.getDisplayValue();
         hasPath.setPath(path);
-        diskResourceService.getStat(DiskResourceUtil.asStringPathTypeMap(Arrays.asList(hasPath),
+        diskResourceService.getStat(diskResourceUtil.asStringPathTypeMap(Arrays.asList(hasPath),
                                                                          TYPE.FILE),
                                     new AnalysisParamSelectedStatCallback(value));
     }

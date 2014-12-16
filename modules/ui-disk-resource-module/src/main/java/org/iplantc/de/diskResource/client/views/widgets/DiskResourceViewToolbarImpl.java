@@ -86,6 +86,7 @@ public class DiskResourceViewToolbarImpl extends Composite implements DiskResour
     private final UserInfo userInfo;
     private DiskResourceView.Presenter presenter;
     private DiskResourceView view;
+    @Inject DiskResourceUtil diskResourceUtil;
 
     @Inject
     public DiskResourceViewToolbarImpl(final UserInfo userInfo) {
@@ -270,11 +271,11 @@ public class DiskResourceViewToolbarImpl extends Composite implements DiskResour
     }
 
     boolean canUploadTo(DiskResource folder){
-        return DiskResourceUtil.canUploadTo(folder);
+        return diskResourceUtil.canUploadTo(folder);
     }
 
     boolean containsFile(final List<DiskResource> selection) {
-        return DiskResourceUtil.containsFile(selection);
+        return diskResourceUtil.containsFile(selection);
     }
 
     boolean containsOnlyFolders(List<DiskResource> selection) {
@@ -286,11 +287,11 @@ public class DiskResourceViewToolbarImpl extends Composite implements DiskResour
     }
 
     boolean isOwner(final List<DiskResource> selection){
-        return DiskResourceUtil.isOwner(selection);
+        return diskResourceUtil.isOwner(selection);
     }
 
     boolean isReadable(final DiskResource item){
-        return DiskResourceUtil.isReadable(item);
+        return diskResourceUtil.isReadable(item);
     }
 
     boolean isSelectionInTrash(final List<DiskResource> selection){

@@ -16,7 +16,7 @@ public class SplittableToHasIdListConverter implements Converter<Splittable, Lis
 
     @Override
     public Splittable convertFieldValue(List<HasId> object) {
-        return DiskResourceUtil.createStringIdListSplittable(object);
+        return DiskResourceUtil.getInstance().createStringIdListSplittable(object);
     }
 
     @Override

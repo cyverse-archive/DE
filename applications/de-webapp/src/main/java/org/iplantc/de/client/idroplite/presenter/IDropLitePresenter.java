@@ -38,11 +38,13 @@ public class IDropLitePresenter implements Presenter {
     private final IDropLiteView view;
     private final int CONTENT_PADDING = 12;
     private final IDropLiteWindowConfig idlwc;
+    private final DiskResourceUtil diskResourceUtil;
 
     public IDropLitePresenter(IDropLiteView view, IDropLiteWindowConfig config) {
         this.view = view;
         view.setPresenter(this);
         this.idlwc = config;
+        this.diskResourceUtil = DiskResourceUtil.getInstance();
     }
 
     @Override
@@ -80,7 +82,7 @@ public class IDropLitePresenter implements Presenter {
 
         } else {
             HasPaths request = drFactory.pathsList().as();
-            request.setPaths(DiskResourceUtil.asStringPathList(idlwc.getResourcesToDownload()));
+            request.setPaths(diskResourceUtil.asStringPathList(idlwc.getResourcesToDownload()));
 
             ServicesInjector.INSTANCE.getDiskResourceServiceFacade().download(request, new IDropLiteServiceCallback() {
                 @Override
@@ -152,7 +154,7 @@ public class IDropLitePresenter implements Presenter {
         List<DiskResource> resourcesToDownload = idlwc.getResourcesToDownload();
         boolean foldersOnly = true;
         if (mode == IDropLiteUtil.DISPLAY_MODE_DOWNLOAD
-                && !DiskResourceUtil.containsFile(Sets.newHashSet(resourcesToDownload))) {
+                && !diskResourceUtil.containsFile(Sets.newHashSet(resourcesToDownload))) {
             Map<String, String> typeMap = idlwc.getTypeMap();
             if (typeMap != null) {
                 for (String id : typeMap.keySet()) {

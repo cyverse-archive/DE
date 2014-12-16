@@ -64,9 +64,12 @@ public class FileUploadByUrlDialog extends IPlantDialog implements HasPending<En
     @UiField
     Status formStatus0, formStatus1, formStatus2, formStatus3, formStatus4;
 
+    private final DiskResourceUtil diskResourceUtil;
+
     public FileUploadByUrlDialog(Folder uploadDest, DiskResourceServiceFacade drService, String userName) {
         this.uploadDest = uploadDest;
         this.drService = drService;
+        this.diskResourceUtil = DiskResourceUtil.getInstance();
         setAutoHide(false);
         setHideOnButtonClick(false);
         // Reset the "OK" button text.
@@ -91,7 +94,7 @@ public class FileUploadByUrlDialog extends IPlantDialog implements HasPending<En
         String destPath = uploadDest.getPath();
 
         htmlDestText.setHTML("<div title='" + destPath + "' style='color: #0098AA;width:100%;padding:5px;text-overflow:ellipsis;'>"
-                + Format.ellipse(I18N.DISPLAY.uploadingToFolder(DiskResourceUtil.parseNameFromPath(destPath)), 50) + "</div>");
+                + Format.ellipse(I18N.DISPLAY.uploadingToFolder(diskResourceUtil.parseNameFromPath(destPath)), 50) + "</div>");
     }
 
     @UiFactory
@@ -154,7 +157,7 @@ public class FileUploadByUrlDialog extends IPlantDialog implements HasPending<En
                 status.setBusy("");
                 status.show();
                 field.setValue(url);
-                String resourceId = uploadDest.getPath() + "/" + DiskResourceUtil.parseNameFromPath(url);
+                String resourceId = uploadDest.getPath() + "/" + diskResourceUtil.parseNameFromPath(url);
                 destResourceMap.put(resourceId, field);
             } else {
                 field.setEnabled(false);

@@ -28,11 +28,13 @@ public class EnsemblUtil {
     private final IsMaskable container;
     private final File file;
     private final String infoType;
+    private final DiskResourceUtil diskResourceUtil;
 
     public EnsemblUtil(File file, String infoType, IsMaskable container) {
         this.file = file;
         this.container = container;
         this.infoType = infoType;
+        this.diskResourceUtil = DiskResourceUtil.getInstance();
     }
 
     public void sendToEnsembl() {
@@ -42,8 +44,8 @@ public class EnsemblUtil {
                                                                     .pathsList()
                                                                     .as();
         final String path = file.getPath();
-        String filename = DiskResourceUtil.parseNameFromPath(path);
-        String parent = DiskResourceUtil.parseParent(path);
+        String filename = diskResourceUtil.parseNameFromPath(path);
+        String parent = diskResourceUtil.parseParent(path);
         String indexFile = null;
         String indexFilePath = null;
         if (infoType.equals(InfoType.BAM.toString())) {
@@ -68,7 +70,7 @@ public class EnsemblUtil {
             diskResourcePaths.setPaths(Arrays.asList(path));
         }
 
-        diskResourceServiceFacade.getStat(DiskResourceUtil.asStringPathTypeMap(list, TYPE.FILE),
+        diskResourceServiceFacade.getStat(diskResourceUtil.asStringPathTypeMap(list, TYPE.FILE),
                                           new AsyncCallback<FastMap<DiskResource>>() {
 
                                               @Override

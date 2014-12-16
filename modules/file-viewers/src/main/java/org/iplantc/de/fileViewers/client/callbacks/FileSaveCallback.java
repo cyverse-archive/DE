@@ -44,8 +44,8 @@ public class FileSaveCallback implements AsyncCallback<String> {
         this.userSessionService = userSessionService;
         this.drFactory = drFactory;
         this.hasHandlers = hasHandlers;
-        this.fileName = DiskResourceUtil.parseNameFromPath(path);
-        this.parentFolder = DiskResourceUtil.parseParent(path);
+        this.fileName = DiskResourceUtil.getInstance().parseNameFromPath(path);
+        this.parentFolder = DiskResourceUtil.getInstance().parseParent(path);
         this.maskingContainer = container;
         this.newFile = newFile;
         errorStrings = ERROR;

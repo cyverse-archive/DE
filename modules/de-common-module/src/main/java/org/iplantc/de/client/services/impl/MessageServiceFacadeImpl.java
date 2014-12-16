@@ -54,6 +54,7 @@ public class MessageServiceFacadeImpl implements MessageServiceFacade {
     private final DEProperties deProperties;
     private final DiscEnvApiService deServiceFacade;
     private final UserInfo userInfo;
+    @Inject DiskResourceUtil diskResourceUtil;
 
     @Inject
     public MessageServiceFacadeImpl(final DiscEnvApiService deServiceFacade,
@@ -103,7 +104,7 @@ public class MessageServiceFacadeImpl implements MessageServiceFacade {
     public void markAsSeen(final List<HasId> seenIds, AsyncCallback<String> callback) {
         String address = deProperties.getMuleServiceBaseUrl() + "notifications/seen"; //$NON-NLS-1$
         Splittable payload = StringQuoter.createSplittable();
-        DiskResourceUtil.createStringIdListSplittable(seenIds).assign(payload, "uuids");
+        diskResourceUtil.createStringIdListSplittable(seenIds).assign(payload, "uuids");
 
         ServiceCallWrapper wrapper = new ServiceCallWrapper(POST, address, payload.getPayload());
 

@@ -7,6 +7,7 @@ import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.web.bindery.autobean.shared.AutoBean;
 
 public class ErrorDiskResourceMoveCategory {
+    private static DiskResourceUtil diskResourceUtil = DiskResourceUtil.getInstance();
 
     public static SafeHtml generateErrorMsg(AutoBean<ErrorDiskResourceMove> instance) {
         ErrorDiskResourceMove error = instance.as();
@@ -18,7 +19,7 @@ public class ErrorDiskResourceMoveCategory {
         
         return ErrorDiskResourceCategory.getErrorMessage(
                 ErrorDiskResourceCategory.getDiskResourceErrorCode(error.getErrorCode()),
-                DiskResourceUtil.asCommaSeperatedNameList(error.getPaths()));
+                diskResourceUtil.asCommaSeperatedNameList(error.getPaths()));
         }
     }
 }

@@ -8,6 +8,8 @@ import com.google.web.bindery.autobean.shared.AutoBean;
 
 public class ErrorDiskResourceRenameCategory {
 
+    static DiskResourceUtil diskResourceUtil = DiskResourceUtil.getInstance();
+
     public static SafeHtml generateErrorMsg(AutoBean<ErrorDiskResourceRename> instance) {
         ErrorDiskResourceRename error = instance.as();
 
@@ -17,7 +19,7 @@ public class ErrorDiskResourceRenameCategory {
         } else {
         return ErrorDiskResourceCategory.getErrorMessage(
                 ErrorDiskResourceCategory.getDiskResourceErrorCode(error.getErrorCode()),
-                DiskResourceUtil.parseNameFromPath(error.getPath()));
+                diskResourceUtil.parseNameFromPath(error.getPath()));
         }
     }
 }

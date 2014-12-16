@@ -102,13 +102,13 @@ public class MultiFileSelectorField extends Composite implements IsField<List<Ha
 
         @Override
         public void onHide(HideEvent event) {
-            Set<File> files = DiskResourceUtil.filterFiles(dlg.getDiskResources());
+            Set<File> files = diskResourceUtil.filterFiles(dlg.getDiskResources());
             if (files.isEmpty()) {
                 return;
             }
             store.addAll(files);
             if (userSettings.isRememberLastPath() && store.size() > 0) {
-                userSettings.setLastPath(DiskResourceUtil.parseParent(store.get(0).getPath()));
+                userSettings.setLastPath(diskResourceUtil.parseParent(store.get(0).getPath()));
                 eventBus.fireEvent(new LastSelectedPathChangedEvent(true));
             }
             ValueChangeEvent.fire(MultiFileSelectorField.this,
@@ -146,6 +146,7 @@ public class MultiFileSelectorField extends Composite implements IsField<List<Ha
     @Inject IplantValidationConstants validationConstants;
     @Inject EventBus eventBus;
     @Inject DiskResourceSelectorDialogFactory dialogFactory;
+    @Inject DiskResourceUtil diskResourceUtil;
 
     @Inject
     MultiFileSelectorField(final IplantDisplayStrings displayStrings) {
@@ -384,7 +385,7 @@ public class MultiFileSelectorField extends Composite implements IsField<List<Ha
                 }
             }
             // validate '/' only on label
-            for (char next : DiskResourceUtil.parseNameFromPath(diskResourceId).toCharArray()) {
+            for (char next : diskResourceUtil.parseNameFromPath(diskResourceId).toCharArray()) {
                 if (next == '/') {
                     restrictedFound.append('/');
                 }
@@ -399,7 +400,7 @@ public class MultiFileSelectorField extends Composite implements IsField<List<Ha
         // JDS Clear permissions and existence errors since we are about to recheck
         permissionErrors.clear();
         existsErrors.clear();
-        drServiceFacade.getStat(DiskResourceUtil.asStringPathTypeMap(value, TYPE.FILE),
+        drServiceFacade.getStat(diskResourceUtil.asStringPathTypeMap(value, TYPE.FILE),
                                 new AsyncCallback<FastMap<DiskResource>>() {
 
                                     @Override
@@ -410,7 +411,7 @@ public class MultiFileSelectorField extends Composite implements IsField<List<Ha
                                             String reason = serviceError.getReason();
                                             GWT.log("The Reason: " + reason);
                                             List<String> errorMessageValues = Lists.newArrayList();
-                                            String drErrList = DiskResourceUtil.asCommaSeperatedNameList(errorMessageValues);
+                                            String drErrList = diskResourceUtil.asCommaSeperatedNameList(errorMessageValues);
                                             DefaultEditorError existsErr = new DefaultEditorError(MultiFileSelectorField.this, errorStrings.diskResourceDoesNotExist(drErrList), null);
                                             existsErrors.add(existsErr);
                                             errors.add(existsErr);
@@ -433,7 +434,7 @@ public class MultiFileSelectorField extends Composite implements IsField<List<Ha
                                                     permissionErrors.add(permError);
                                                     errors.add(permError);
                                                     errorSupport.markInvalid(errors);
-                                                } else if (!(DiskResourceUtil.isWritable(entryValue) || DiskResourceUtil.isOwner(entryValue))) {
+                                                } else if (!(diskResourceUtil.isWritable(entryValue) || diskResourceUtil.isOwner(entryValue))) {
                                                     permissionErrors.add(permError);
                                                     errors.add(permError);
                                                     errorSupport.markInvalid(errors);
