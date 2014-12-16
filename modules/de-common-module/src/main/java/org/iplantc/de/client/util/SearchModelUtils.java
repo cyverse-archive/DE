@@ -14,10 +14,22 @@ import java.util.List;
 
 public class SearchModelUtils {
 
-    private final static List<String> fileSizeUnits = Lists.newArrayList("KB", "MB", "GB", "TB");
-    private final static SearchAutoBeanFactory factory = GWT.create(SearchAutoBeanFactory.class);
+    private final List<String> fileSizeUnits = Lists.newArrayList("KB", "MB", "GB", "TB");
+    private final SearchAutoBeanFactory factory = GWT.create(SearchAutoBeanFactory.class);
+    private static SearchModelUtils INSTANCE;
 
-    public static DiskResourceQueryTemplate createDefaultFilter() {
+    SearchModelUtils(){
+
+    }
+
+    public static SearchModelUtils getInstance(){
+        if(INSTANCE == null){
+            INSTANCE = new SearchModelUtils();
+        }
+        return INSTANCE;
+    }
+
+    public DiskResourceQueryTemplate createDefaultFilter() {
         Splittable defFilter = StringQuoter.createSplittable();
         // Need to create full permissions by default in order to function as a "smart folder"
         Splittable permissions = StringQuoter.createSplittable();
@@ -37,7 +49,7 @@ public class SearchModelUtils {
         return dataSearchFilter;
     }
 
-    public static Double convertFileSizeToBytes(Double size, FileSizeUnit unit) {
+    public Double convertFileSizeToBytes(Double size, FileSizeUnit unit) {
         if (size != null && unit != null && unit.getUnit() > 0) {
             return size * Math.pow(1024, unit.getUnit());
         }
@@ -45,7 +57,7 @@ public class SearchModelUtils {
         return size;
     }
 
-    public static List<FileSizeUnit> createFileSizeUnits() {
+    public List<FileSizeUnit> createFileSizeUnits() {
         List<FileSizeUnit> ret = Lists.newArrayList();
 
         int unit = 0;
@@ -57,11 +69,11 @@ public class SearchModelUtils {
         return ret;
     }
 
-    private static FileSizeUnit createDefaultFileSizeUnit() {
+    private FileSizeUnit createDefaultFileSizeUnit() {
         return createFileSizeUnit(1, fileSizeUnits.get(0));
     }
 
-    private static FileSizeUnit createFileSizeUnit(int unit, String label) {
+    private FileSizeUnit createFileSizeUnit(int unit, String label) {
         FileSizeUnit fsUnit = factory.fileSizeUnit().as();
         fsUnit.setUnit(unit);
         fsUnit.setLabel(label);

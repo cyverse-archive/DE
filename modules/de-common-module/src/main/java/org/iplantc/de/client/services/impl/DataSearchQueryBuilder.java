@@ -54,6 +54,7 @@ public class DataSearchQueryBuilder {
     private final UserInfo userinfo;
     private final Splittable mustList;
     private final Splittable mustNotList;
+    private final SearchModelUtils searchModelUtils;
 
     Splittable query = StringQuoter.createSplittable();
     Splittable bool = addChild(query, BOOL);
@@ -63,6 +64,7 @@ public class DataSearchQueryBuilder {
     public DataSearchQueryBuilder(DiskResourceQueryTemplate dsf, UserInfo userinfo) {
         this.dsf = dsf;
         this.userinfo = userinfo;
+        this.searchModelUtils = SearchModelUtils.getInstance();
         mustList = StringQuoter.createIndexed();
         mustNotList = StringQuoter.createIndexed();
     }
@@ -168,9 +170,9 @@ public class DataSearchQueryBuilder {
     public DataSearchQueryBuilder fileSizeRange() {
         FileSizeRange fileSizeRange = dsf.getFileSizeRange();
         if (fileSizeRange != null) {
-            Double minSize = SearchModelUtils.convertFileSizeToBytes(fileSizeRange.getMin(),
+            Double minSize = searchModelUtils.convertFileSizeToBytes(fileSizeRange.getMin(),
                                                                      fileSizeRange.getMinUnit());
-            Double maxSize = SearchModelUtils.convertFileSizeToBytes(fileSizeRange.getMax(),
+            Double maxSize = searchModelUtils.convertFileSizeToBytes(fileSizeRange.getMax(),
                                                                      fileSizeRange.getMaxUnit());
 
             if ((minSize != null) && (maxSize != null)) {
