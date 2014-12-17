@@ -32,18 +32,35 @@ import com.sencha.gxt.core.shared.FastMap;
 import java.util.List;
 
 /**
+ * FIXME Utility classes shouldn't be calling service facades. Factor this class out.
  * @author sriram
  *
  */
 public class CollaboratorsUtil {
 
-    private static List<Collaborator> currentCollaborators;
-    private static List<Collaborator> searchResutls;
-    private static CollaboratorAutoBeanFactory factory = GWT.create(CollaboratorAutoBeanFactory.class);
-    private static CollaboratorsServiceFacade facade = ServicesInjector.INSTANCE.getCollaboratorsServiceFacade();
-    private static JsonUtil jsonUtil = JsonUtil.getInstance();
+    private List<Collaborator> currentCollaborators;
+    private List<Collaborator> searchResutls;
+    private final CollaboratorAutoBeanFactory factory = GWT.create(CollaboratorAutoBeanFactory.class);
+    private final CollaboratorsServiceFacade facade = ServicesInjector.INSTANCE.getCollaboratorsServiceFacade();
+    private final JsonUtil jsonUtil = JsonUtil.getInstance();
 
-    private static List<Collaborator> parseResults(String result) {
+    private static CollaboratorsUtil INSTANCE;
+
+    CollaboratorsUtil() {
+
+        currentCollaborators = null;
+        searchResutls = null;
+    }
+
+    public static CollaboratorsUtil getInstance(){
+        if(INSTANCE == null) {
+            INSTANCE = new CollaboratorsUtil();
+        }
+
+        return INSTANCE;
+    }
+
+    private List<Collaborator> parseResults(String result) {
         AutoBean<CollaboratorsList> bean = AutoBeanCodex
                 .decode(factory, CollaboratorsList.class, result);
         JSONObject obj = jsonUtil.getObject(result);
@@ -58,18 +75,18 @@ public class CollaboratorsUtil {
     /**
      * @return the currentCollaborators
      */
-    public static List<Collaborator> getCurrentCollaborators() {
+    public List<Collaborator> getCurrentCollaborators() {
         return currentCollaborators;
     }
 
     /**
      * @param currentCollaborators the currentCollaborators to set
      */
-    public static void setCurrentCollaborators(List<Collaborator> currentCollaborators) {
-        CollaboratorsUtil.currentCollaborators = currentCollaborators;
+    public void setCurrentCollaborators(List<Collaborator> currentCollaborators) {
+        this.currentCollaborators = currentCollaborators;
     }
 
-    public static void getCollaborators(final AsyncCallback<Void> superCallback) {
+    public void getCollaborators(final AsyncCallback<Void> superCallback) {
         if (getCurrentCollaborators() == null) {
             facade.getCollaborators(new GetCollaboratorsCallback(superCallback));
         } else {
@@ -77,11 +94,11 @@ public class CollaboratorsUtil {
         }
     }
 
-    public static void search(final String term, final AsyncCallback<Void> superCallback) {
+    public void search(final String term, final AsyncCallback<Void> superCallback) {
         facade.searchCollaborators(term, new SearchCallback(superCallback));
     }
 
-    public static boolean checkCurrentUser(Collaborator model) {
+    public boolean checkCurrentUser(Collaborator model) {
         return model.getUserName().equalsIgnoreCase(UserInfo.getInstance().getUsername());
 
     }
@@ -89,11 +106,11 @@ public class CollaboratorsUtil {
     /**
      * @return the searchResutls
      */
-    public static List<Collaborator> getSearchResutls() {
+    public List<Collaborator> getSearchResutls() {
         return searchResutls;
     }
 
-    public static Collaborator findCollaboratorByUserName(String userName) {
+    public Collaborator findCollaboratorByUserName(String userName) {
         List<Collaborator> collabs = getCurrentCollaborators();
         for (Collaborator c : collabs) {
             if (c.getUserName().equals(userName)) {
@@ -103,7 +120,7 @@ public class CollaboratorsUtil {
         return getDummyCollaborator(userName);
     }
 
-    public static Collaborator getDummyCollaborator(String userName) {
+    public Collaborator getDummyCollaborator(String userName) {
         JSONObject obj = new JSONObject();
         obj.put("username", new JSONString(userName));
         AutoBean<Collaborator> bean = AutoBeanCodex.decode(factory, Collaborator.class,
@@ -111,11 +128,11 @@ public class CollaboratorsUtil {
         return bean.as();
     }
 
-    public static boolean isCollaborator(Collaborator c) {
+    public boolean isCollaborator(Collaborator c) {
         return getCurrentCollaborators().contains(c);
     }
 
-    public static void getUserInfo(List<String> usernames,
+    public void getUserInfo(List<String> usernames,
             final AsyncCallback<FastMap<Collaborator>> superCallback) {
         facade.getUserInfo(usernames, new GetUserInfoCallback(superCallback));
     }
@@ -123,11 +140,11 @@ public class CollaboratorsUtil {
     /**
      * @param searchResutls the searchResutls to set
      */
-    public static void setSearchResutls(List<Collaborator> searchResutls) {
-        CollaboratorsUtil.searchResutls = searchResutls;
+    public void setSearchResutls(List<Collaborator> searchResutls) {
+        this.searchResutls = searchResutls;
     }
 
-    private static final class GetCollaboratorsCallback implements AsyncCallback<String> {
+    private final class GetCollaboratorsCallback implements AsyncCallback<String> {
         private final AsyncCallback<Void> callback;
 
         public GetCollaboratorsCallback(final AsyncCallback<Void> callback) {
@@ -153,7 +170,7 @@ public class CollaboratorsUtil {
         }
     }
 
-    public static boolean isCurrentCollaborator(Collaborator c) {
+    public boolean isCurrentCollaborator(Collaborator c) {
         for (Collaborator current : getCurrentCollaborators()) {
             if (current.getId().equals(c.getId())) {
                 return true;
@@ -163,19 +180,19 @@ public class CollaboratorsUtil {
         return false;
     }
 
-    public static void addCollaborators(final List<Collaborator> models,
+    public void addCollaborators(final List<Collaborator> models,
             final AsyncCallback<Void> supercallback) {
         JSONObject obj = buildJSONModel(models);
         facade.addCollaborators(obj, new AddCollaboratorCallback(models, supercallback));
     }
 
-    public static void removeCollaborators(final List<Collaborator> models,
+    public void removeCollaborators(final List<Collaborator> models,
             final AsyncCallback<Void> supercallback) {
         JSONObject obj = buildJSONModel(models);
         facade.removeCollaborators(obj, new RemoveCollaboratorCallback(models, supercallback));
     }
 
-    private static JSONObject buildJSONModel(final List<Collaborator> models) {
+    private JSONObject buildJSONModel(final List<Collaborator> models) {
         JSONArray arr = new JSONArray();
         int count = 0;
         for (Collaborator model : models) {
@@ -189,7 +206,7 @@ public class CollaboratorsUtil {
         return obj;
     }
 
-    private static final class SearchCallback implements AsyncCallback<String> {
+    private final class SearchCallback implements AsyncCallback<String> {
 
         private final AsyncCallback<Void> callback;
 
@@ -214,7 +231,7 @@ public class CollaboratorsUtil {
         }
     }
 
-    private static final class AddCollaboratorCallback implements AsyncCallback<String> {
+    private final class AddCollaboratorCallback implements AsyncCallback<String> {
         private final AsyncCallback<Void> callback;
         private final List<Collaborator> models;
 
@@ -254,7 +271,7 @@ public class CollaboratorsUtil {
         }
     }
 
-    private static class GetUserInfoCallback implements AsyncCallback<String> {
+    private class GetUserInfoCallback implements AsyncCallback<String> {
 
         private final AsyncCallback<FastMap<Collaborator>> superCallback;
 
@@ -292,7 +309,7 @@ public class CollaboratorsUtil {
 
     }
 
-    private static final class RemoveCollaboratorCallback implements AsyncCallback<String> {
+    private final class RemoveCollaboratorCallback implements AsyncCallback<String> {
         private final AsyncCallback<Void> callback;
         private final List<Collaborator> models;
 

@@ -42,7 +42,7 @@ public class ManageCollaboratorsPresenter implements Presenter {
                    if (!UserInfo.getInstance()
                                 .getUsername()
                                 .equals(collaborator.getUserName())) {
-                       if (!CollaboratorsUtil.isCurrentCollaborator(collaborator)) {
+                       if (!collaboratorsUtil.isCurrentCollaborator(collaborator)) {
                            addAsCollaborators(Arrays.asList(collaborator));
                        }
                    } else {
@@ -57,8 +57,11 @@ public class ManageCollaboratorsPresenter implements Presenter {
         MANAGE, SELECT
     };
 
+    private final CollaboratorsUtil collaboratorsUtil;
+
     public ManageCollaboratorsPresenter(ManageCollaboratorsView view) {
         this.view = view;
+        this.collaboratorsUtil = CollaboratorsUtil.getInstance();
         view.setPresenter(this);
         loadCurrentCollaborators();
         addEventHandlers();
@@ -90,7 +93,7 @@ public class ManageCollaboratorsPresenter implements Presenter {
      */
     @Override
     public void addAsCollaborators(final List<Collaborator> models) {
-        CollaboratorsUtil.addCollaborators(models, new AsyncCallback<Void>() {
+        collaboratorsUtil.addCollaborators(models, new AsyncCallback<Void>() {
 
             @Override
             public void onSuccess(Void result) {
@@ -115,7 +118,7 @@ public class ManageCollaboratorsPresenter implements Presenter {
      */
     @Override
     public void removeFromCollaborators(final List<Collaborator> models) {
-        CollaboratorsUtil.removeCollaborators(models, new AsyncCallback<Void>() {
+        collaboratorsUtil.removeCollaborators(models, new AsyncCallback<Void>() {
 
             @Override
             public void onSuccess(Void result) {
@@ -141,7 +144,7 @@ public class ManageCollaboratorsPresenter implements Presenter {
     @Override
     public void loadCurrentCollaborators() {
         view.mask(null);
-        CollaboratorsUtil.getCollaborators(new AsyncCallback<Void>() {
+        collaboratorsUtil.getCollaborators(new AsyncCallback<Void>() {
 
             @Override
             public void onFailure(Throwable caught) {
@@ -151,7 +154,7 @@ public class ManageCollaboratorsPresenter implements Presenter {
             @Override
             public void onSuccess(Void result) {
                 view.unmask();
-                view.loadData(CollaboratorsUtil.getCurrentCollaborators());
+                view.loadData(collaboratorsUtil.getCurrentCollaborators());
             }
 
         });

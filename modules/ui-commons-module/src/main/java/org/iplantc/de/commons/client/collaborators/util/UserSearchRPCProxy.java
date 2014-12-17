@@ -20,9 +20,11 @@ import com.sencha.gxt.data.shared.loader.PagingLoadResultBean;
 public class UserSearchRPCProxy extends
  RpcProxy<UsersLoadConfig, PagingLoadResult<Collaborator>> {
 
+    private final CollaboratorsUtil collaboratorsUtil;
     private String lastQueryText = ""; //$NON-NLS-1$
 
     public UserSearchRPCProxy() {
+        this.collaboratorsUtil = CollaboratorsUtil.getInstance();
     }
 
     public String getLastQueryText() {
@@ -40,11 +42,11 @@ public class UserSearchRPCProxy extends
             return;
         }
 
-        CollaboratorsUtil.search(lastQueryText, new AsyncCallback<Void>() {
+        collaboratorsUtil.search(lastQueryText, new AsyncCallback<Void>() {
             @Override
             public void onSuccess(Void result) {
-                callback.onSuccess(new PagingLoadResultBean<Collaborator>(CollaboratorsUtil
-                        .getSearchResutls(), CollaboratorsUtil.getSearchResutls().size(), 0));
+                callback.onSuccess(new PagingLoadResultBean<Collaborator>(collaboratorsUtil
+                        .getSearchResutls(), collaboratorsUtil.getSearchResutls().size(), 0));
             }
 
             @Override

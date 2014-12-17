@@ -54,7 +54,7 @@ public class DataSharingPresenter implements DataSharingView.Presenter {
                 for (String userName : usernames) {
                     Collaborator user = results.get(userName);
                     if (user == null) {
-                        user = CollaboratorsUtil.getDummyCollaborator(userName);
+                        user = collaboratorsUtil.getDummyCollaborator(userName);
                     }
 
                     List<DataSharing> dataShares = new ArrayList<>();
@@ -95,7 +95,7 @@ public class DataSharingPresenter implements DataSharingView.Presenter {
 
                 final List<String> usernames = new ArrayList<>();
                 usernames.addAll(sharingList.keySet());
-                CollaboratorsUtil.getUserInfo(usernames, new GetUserInfoCallback(usernames));
+                collaboratorsUtil.getUserInfo(usernames, new GetUserInfoCallback(usernames));
             }
         }
     }
@@ -107,6 +107,7 @@ public class DataSharingPresenter implements DataSharingView.Presenter {
     private FastMap<List<DataSharing>> dataSharingMap;
     private FastMap<List<JSONObject>> sharingList;
     private final JsonUtil jsonUtil;
+    private final CollaboratorsUtil collaboratorsUtil;
 
 
     public DataSharingPresenter(final DiskResourceServiceFacade diskResourceService,
@@ -115,6 +116,7 @@ public class DataSharingPresenter implements DataSharingView.Presenter {
         this.view = view;
         this.selectedResources = selectedResources;
         this.jsonUtil = JsonUtil.getInstance();
+        this.collaboratorsUtil = CollaboratorsUtil.getInstance();
         view.setPresenter(this);
         permissionsPanel = new DataSharingPermissionsPanel(this, getSelectedResourcesAsMap(selectedResources));
         view.addShareWidget(permissionsPanel.asWidget());
