@@ -1,7 +1,7 @@
 package org.iplantc.de.client.desktop.presenter;
 
 import org.iplantc.de.client.events.EventBus;
-import org.iplantc.de.client.events.NewSystemMessagesEvent;
+import org.iplantc.de.systemMessages.client.events.NewSystemMessagesEvent;
 import org.iplantc.de.client.models.notifications.Counts;
 import org.iplantc.de.client.desktop.DesktopView;
 import org.iplantc.de.client.services.MessageServiceFacade;

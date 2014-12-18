@@ -50,6 +50,8 @@
     <inherits name="org.iplantc.de.pipelines.pipelines"/>
     <inherits name="org.iplantc.de.analysis.Analysis"/>
     <inherits name="org.iplantc.de.fileViewers.FileViewers" />
+    <inherits name="org.iplantc.de.notifications.Notifications"/>
+    <inherits name="org.iplantc.de.systemMessages.SystemMessages"/>
 
     <!-- iPlant Theme -->
     <inherits name="org.iplantc.de.theme.base.Base" />
@@ -66,8 +68,8 @@
     <replace-with class="org.iplantc.de.client.sysmsgs.services.RemoteServices">
         <when-type-is class="org.iplantc.de.client.sysmsgs.services.Services"/>
     </replace-with>
-    <replace-with class="org.iplantc.de.client.sysmsgs.view.DefaultFactory">
-        <when-type-is class="org.iplantc.de.client.sysmsgs.view.Factory"/>
+    <replace-with class="org.iplantc.de.systemMessages.client.view.DefaultFactory">
+        <when-type-is class="org.iplantc.de.systemMessages.client.view.Factory"/>
     </replace-with>
 
     <!-- Specify the app entry point class.                         -->

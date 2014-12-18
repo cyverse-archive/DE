@@ -1,12 +1,12 @@
 package org.iplantc.de.client.windows;
 
 import org.iplantc.de.client.models.WindowState;
-import org.iplantc.de.client.sysmsgs.presenter.MessagesPresenter;
 import org.iplantc.de.commons.client.views.window.configs.ConfigFactory;
 import org.iplantc.de.commons.client.views.window.configs.SystemMessagesWindowConfig;
 import org.iplantc.de.resources.client.messages.I18N;
 import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 import org.iplantc.de.shared.DeModule;
+import org.iplantc.de.systemMessages.client.presenter.MessagesPresenter;
 
 import com.google.gwt.user.client.Window;
 

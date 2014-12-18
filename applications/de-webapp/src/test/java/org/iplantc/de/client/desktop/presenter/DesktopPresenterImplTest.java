@@ -1,11 +1,11 @@
 package org.iplantc.de.client.desktop.presenter;
 
-import org.iplantc.de.client.events.EventBus;
-import org.iplantc.de.client.models.WindowType;
 import org.iplantc.de.client.desktop.DesktopView;
 import org.iplantc.de.client.desktop.presenter.util.MessagePoller;
-import org.iplantc.de.client.sysmsgs.view.NewMessageView;
+import org.iplantc.de.client.events.EventBus;
+import org.iplantc.de.client.models.WindowType;
 import org.iplantc.de.commons.client.requests.KeepaliveTimer;
+import org.iplantc.de.systemMessages.client.view.NewMessageView;
 
 import com.google.gwt.dom.client.Element;
 import com.google.gwtmockito.GxtMockitoTestRunner;

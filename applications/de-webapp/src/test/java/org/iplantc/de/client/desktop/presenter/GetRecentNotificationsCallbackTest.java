@@ -5,7 +5,7 @@ import org.iplantc.de.client.models.notifications.Notification;
 import org.iplantc.de.client.models.notifications.NotificationAutoBeanFactory;
 import org.iplantc.de.client.models.notifications.NotificationCategory;
 import org.iplantc.de.client.models.notifications.NotificationMessage;
-import org.iplantc.de.client.utils.NotifyInfo;
+import org.iplantc.de.notifications.client.utils.NotifyInfo;
 import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 
 import com.google.common.collect.Lists;

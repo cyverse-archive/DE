@@ -1,7 +1,6 @@
 package org.iplantc.de.client.desktop.presenter;
 
 import static org.iplantc.de.commons.client.collaborators.presenter.ManageCollaboratorsPresenter.MODE.MANAGE;
-
 import org.iplantc.de.client.DEClientConstants;
 import org.iplantc.de.client.desktop.DesktopView;
 import org.iplantc.de.client.desktop.presenter.util.MessagePoller;
@@ -23,16 +22,13 @@ import org.iplantc.de.client.models.notifications.NotificationCategory;
 import org.iplantc.de.client.models.notifications.NotificationMessage;
 import org.iplantc.de.client.models.notifications.payload.PayloadToolRequest;
 import org.iplantc.de.client.models.toolRequest.ToolRequestHistory;
-import org.iplantc.de.client.notifications.views.dialogs.ToolRequestHistoryDialog;
 import org.iplantc.de.client.services.DEFeedbackServiceFacade;
 import org.iplantc.de.client.services.FileEditorServiceFacade;
 import org.iplantc.de.client.services.MessageServiceFacade;
 import org.iplantc.de.client.services.UserSessionServiceFacade;
-import org.iplantc.de.client.sysmsgs.view.NewMessageView;
 import org.iplantc.de.client.util.CommonModelUtils;
 import org.iplantc.de.client.util.DiskResourceUtil;
-import org.iplantc.de.client.utils.NotifyInfo;
-import org.iplantc.de.fileViewers.client.callbacks.LoadGenomeInCoGeCallback;
+import org.iplantc.de.notifications.client.utils.NotifyInfo;
 import org.iplantc.de.client.windows.IPlantWindowInterface;
 import org.iplantc.de.commons.client.CommonUiConstants;
 import org.iplantc.de.commons.client.ErrorHandler;
@@ -47,13 +43,15 @@ import org.iplantc.de.commons.client.views.window.configs.AppsWindowConfig;
 import org.iplantc.de.commons.client.views.window.configs.ConfigFactory;
 import org.iplantc.de.commons.client.views.window.configs.DiskResourceWindowConfig;
 import org.iplantc.de.commons.client.views.window.configs.WindowConfig;
+import org.iplantc.de.fileViewers.client.callbacks.LoadGenomeInCoGeCallback;
+import org.iplantc.de.notifications.client.views.dialogs.ToolRequestHistoryDialog;
 import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 import org.iplantc.de.resources.client.messages.IplantErrorStrings;
 import org.iplantc.de.shared.DeModule;
 import org.iplantc.de.shared.services.PropertyServiceAsync;
+import org.iplantc.de.systemMessages.client.view.NewMessageView;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-
 import com.google.common.base.Strings;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;

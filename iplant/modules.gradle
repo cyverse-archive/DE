@@ -321,3 +321,19 @@ project(':ui-resources-module') {
     }
 }
 
+project(':notifications') {
+    apply plugin: 'gwt-base'
+
+    gwt {
+        gwtVersion = "$gwtVer"
+    }
+
+    dependencies {
+        gwt "com.sencha.gxt:gxt:$gxtVersion"
+        gwt project(':de-common-module')
+        gwt project(':ui-commons-module')
+        compile "com.sencha.gxt:gxt:$gxtVersion"
+        compile project(':de-common-module')
+        compile project(':ui-commons-module')
+    }
+}

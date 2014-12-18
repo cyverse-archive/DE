@@ -1,19 +1,19 @@
 package org.iplantc.de.client.desktop.presenter;
 
+import org.iplantc.de.client.desktop.DesktopView;
+import org.iplantc.de.client.desktop.presenter.util.MessagePoller;
+import org.iplantc.de.client.desktop.views.widgets.UnseenNotificationsView;
 import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.models.DEProperties;
 import org.iplantc.de.client.models.notifications.NotificationCategory;
 import org.iplantc.de.client.models.notifications.NotificationMessage;
-import org.iplantc.de.client.desktop.DesktopView;
-import org.iplantc.de.client.desktop.presenter.util.MessagePoller;
-import org.iplantc.de.client.desktop.views.widgets.UnseenNotificationsView;
 import org.iplantc.de.client.services.MessageServiceFacade;
-import org.iplantc.de.client.sysmsgs.view.NewMessageView;
-import org.iplantc.de.client.utils.NotifyInfo;
+import org.iplantc.de.notifications.client.utils.NotifyInfo;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
 import org.iplantc.de.commons.client.requests.KeepaliveTimer;
 import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 import org.iplantc.de.resources.client.messages.IplantNewUserTourStrings;
+import org.iplantc.de.systemMessages.client.view.NewMessageView;
 
 import com.google.common.collect.Lists;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -37,7 +37,7 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 
 /**
- * Created by jstroot on 7/23/14.
+ * @author jstroot
  */
 @RunWith(GxtMockitoTestRunner.class)
 public class DesktopNotifications_PresenterTest {

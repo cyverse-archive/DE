@@ -16,13 +16,13 @@ import org.iplantc.de.client.models.DEProperties;
 import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.client.models.UserSettings;
 import org.iplantc.de.client.services.*;
-import org.iplantc.de.client.sysmsgs.presenter.NewMessagePresenter;
-import org.iplantc.de.client.sysmsgs.view.NewMessageView;
-import org.iplantc.de.client.utils.NotifyInfo;
+import org.iplantc.de.notifications.client.utils.NotifyInfo;
 import org.iplantc.de.client.windows.util.WindowFactory;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
 import org.iplantc.de.commons.client.requests.KeepaliveTimer;
 import org.iplantc.de.resources.client.IplantResources;
+import org.iplantc.de.systemMessages.client.presenter.NewMessagePresenter;
+import org.iplantc.de.systemMessages.client.view.NewMessageView;
 
 import com.google.gwt.inject.client.AbstractGinModule;
 import com.google.inject.Provides;
