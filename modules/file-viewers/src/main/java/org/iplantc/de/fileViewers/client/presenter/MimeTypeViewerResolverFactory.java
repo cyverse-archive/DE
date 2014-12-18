@@ -37,10 +37,8 @@ public class MimeTypeViewerResolverFactory {
 
     public final Map<MimeType, String> modeMap = new HashMap<>();
     Logger LOG = Logger.getLogger(MimeTypeViewerResolverFactory.class.getName());
-    @Inject
-    IplantAnnouncer announcer;
-    @Inject
-    FileEditorServiceFacade fileEditorService;
+    @Inject IplantAnnouncer announcer;
+    @Inject FileEditorServiceFacade fileEditorService;
     @Inject JsonUtil jsonUtil;
 
     @Inject

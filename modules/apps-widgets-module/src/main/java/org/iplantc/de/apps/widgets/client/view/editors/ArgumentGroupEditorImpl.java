@@ -157,10 +157,10 @@ public class ArgumentGroupEditorImpl extends ContentPanel implements AppTemplate
     private boolean visibleWhenEmptyOrNoChildVisible = false;
 
     @Inject
-    public ArgumentGroupEditorImpl(ContentPanelAppearance cpAppearance,
-                                   AppTemplateWizardAppearance appearance,
-                                   Provider<AppTemplateForm.ArgumentEditorFactory> argumentEditorProvider,
-                                   AppTemplateUtils appTemplateUtils) {
+    public ArgumentGroupEditorImpl(final ContentPanelAppearance cpAppearance,
+                                   final AppTemplateWizardAppearance appearance,
+                                   final Provider<AppTemplateForm.ArgumentEditorFactory> argumentEditorProvider,
+                                   final AppTemplateUtils appTemplateUtils) {
         super(cpAppearance);
         this.appAppearance = appearance;
         this.appTemplateUtils = appTemplateUtils;
@@ -324,11 +324,8 @@ public class ArgumentGroupEditorImpl extends ContentPanel implements AppTemplate
     }
 
     boolean containsRequiredArguments() {
-        if (model == null) {
-            return false;
-        }
+        return model != null && containsRequiredArguments(model);
 
-        return containsRequiredArguments(model);
     }
 
     private boolean allChildrenInvisible(List<Argument> list) {

@@ -45,7 +45,7 @@ public class SubmitAppForPublicPresenter implements SubmitAppForPublicUseView.Pr
     @Inject JsonUtil jsonUtil;
 
     @Inject
-    public SubmitAppForPublicPresenter(SubmitAppForPublicUseView view,
+    public SubmitAppForPublicPresenter(final SubmitAppForPublicUseView view,
                                        final AppUserServiceFacade appService,
                                        final PublicAppCategoryProxy appGroupProxy,
                                        final EventBus eventBus,

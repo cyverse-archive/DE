@@ -69,9 +69,13 @@ import java.util.logging.Logger;
  * @author jstroot
  * 
  */
-public class AppsViewImpl extends Composite implements AppsView, IsMaskable, AppCategorySelectionChangedEvent.HasAppCategorySelectionChangedEventHandlers,
-        AppSelectionChangedEvent.HasAppSelectionChangedEventHandlers, AppInfoCell.AppInfoClickedEventHandler, AppFavoritedEvent.HasAppFavoritedEventHandlers,
-        AppFavoriteCell.RequestAppFavoriteEventHandler {
+public class AppsViewImpl extends Composite implements AppsView,
+                                                       IsMaskable,
+                                                       AppCategorySelectionChangedEvent.HasAppCategorySelectionChangedEventHandlers,
+                                                       AppSelectionChangedEvent.HasAppSelectionChangedEventHandlers,
+                                                       AppInfoCell.AppInfoClickedEventHandler,
+                                                       AppFavoritedEvent.HasAppFavoritedEventHandlers,
+                                                       AppFavoriteCell.RequestAppFavoriteEventHandler {
     private static String WEST_COLLAPSE_BTN_ID = "idCategoryCollapseBtn"; //$NON-NLS-1$
     private static MyUiBinder uiBinder = GWT.create(MyUiBinder.class);
 
@@ -85,38 +89,18 @@ public class AppsViewImpl extends Composite implements AppsView, IsMaskable, App
 
     protected Presenter presenter;
 
-    @UiField(provided = true)
-    protected Tree<AppCategory, String> tree;
-
-    @UiField(provided = true)
-    TreeStore<AppCategory> treeStore;
-
-    @UiField
-    protected Grid<App> grid;
-
-    @UiField
-    GridView<App> gridView;
-
-    @UiField
-    ListStore<App> listStore;
-
-    @UiField
-    protected ColumnModel<App> cm;
-
-    @UiField
-    BorderLayoutContainer con;
-
-    @UiField
-    ContentPanel westPanel;
-    @UiField
-    ContentPanel centerPanel;
-    @UiField
-    ContentPanel eastPanel;
-
-    @UiField
-    BorderLayoutData northData;
-    @UiField
-    BorderLayoutData eastData;
+    @UiField(provided = true) protected Tree<AppCategory, String> tree;
+    @UiField protected Grid<App> grid;
+    @UiField protected ColumnModel<App> cm;
+    @UiField(provided = true) TreeStore<AppCategory> treeStore;
+    @UiField GridView<App> gridView;
+    @UiField ListStore<App> listStore;
+    @UiField BorderLayoutContainer con;
+    @UiField ContentPanel westPanel;
+    @UiField ContentPanel centerPanel;
+    @UiField ContentPanel eastPanel;
+    @UiField BorderLayoutData northData;
+    @UiField BorderLayoutData eastData;
 
     final DEProperties properties;
     private final AppsView.ViewMenu toolbar;
@@ -130,8 +114,13 @@ public class AppsViewImpl extends Composite implements AppsView, IsMaskable, App
     @Inject JsonUtil jsonUtil;
 
     @Inject
-    public AppsViewImpl(final Tree<AppCategory, String> tree, final DEProperties properties, final AppsView.ViewMenu toolbar, final IplantResources resources, final UserInfo userInfo,
-            final IplantDisplayStrings displayStrings, final AppUserServiceFacade appUserService) {
+    public AppsViewImpl(final Tree<AppCategory, String> tree,
+                        final DEProperties properties,
+                        final AppsView.ViewMenu toolbar,
+                        final IplantResources resources,
+                        final UserInfo userInfo,
+                        final IplantDisplayStrings displayStrings,
+                        final AppUserServiceFacade appUserService) {
         this.tree = tree;
         this.properties = properties;
         this.toolbar = toolbar;
@@ -285,7 +274,7 @@ public class AppsViewImpl extends Composite implements AppsView, IsMaskable, App
 
     @UiFactory
     ListStore<App> createListStore() {
-        return new ListStore<App>(new ModelKeyProvider<App>() {
+        return new ListStore<>(new ModelKeyProvider<App>() {
             @Override
             public String getKey(App item) {
                 return item.getId();
@@ -319,7 +308,7 @@ public class AppsViewImpl extends Composite implements AppsView, IsMaskable, App
             }
         };
 
-        treeStore.addSortInfo(new StoreSortInfo<AppCategory>(comparator, SortDir.ASC));
+        treeStore.addSortInfo(new StoreSortInfo<>(comparator, SortDir.ASC));
     }
 
     @Override
@@ -582,7 +571,7 @@ public class AppsViewImpl extends Composite implements AppsView, IsMaskable, App
 
     List<AppCategory> getGroupHierarchy(AppCategory grp, List<AppCategory> groups) {
         if (groups == null) {
-            groups = new ArrayList<AppCategory>();
+            groups = new ArrayList<>();
         }
         groups.add(grp);
         for (AppCategory ap : treeStore.getRootItems()) {

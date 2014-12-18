@@ -120,14 +120,15 @@ public class IplantTagListPresenter implements TagListHandlers {
      * Use {@link TagList#setEditable(boolean)} to enable/disable tag creation on an existing TagList.
      * You have to set a {@link TagCreationCodex} to successfully enable tag creation.
      */
-    public IplantTagListPresenter(Taggable taggable) {
+    public IplantTagListPresenter(final Taggable taggable) {
         this(taggable, CustomIplantTagResources.INSTANCE);
     }
 
     /**
      * Creates a TagList with custom styles.
      */
-    public IplantTagListPresenter(Taggable taggable, CustomIplantTagResources resources) {
+    public IplantTagListPresenter(final Taggable taggable,
+                                  final CustomIplantTagResources resources) {
         super();
         this.taggable = taggable;
         this.resources = resources;
@@ -143,7 +144,6 @@ public class IplantTagListPresenter implements TagListHandlers {
      * A method t build view containing tags for selected resource. No associated call backs and events
      * will be called.
      * 
-     * @param tags
      */
     public void buildTagCloudForSelectedResource(List<IplantTag> tags) {
         if (tags != null) {
@@ -314,8 +314,7 @@ public class IplantTagListPresenter implements TagListHandlers {
 
     @Override
     public void onEditTag(TagView tagView) {
-        for (Iterator<TagItem> tagItemIt = this.tagItems.iterator(); tagItemIt.hasNext();) {
-            TagItem tagItem = tagItemIt.next();
+        for (TagItem tagItem : this.tagItems) {
             if (tagItem.getTagView().equals(tagView)) {
                 final IplantTag tag = tagItem.tag;
                 final String tagId = tag.getId();
@@ -398,8 +397,7 @@ public class IplantTagListPresenter implements TagListHandlers {
 
     @Override
     public void onSelectTag(TagView tagView) {
-        for (Iterator<TagItem> tagItemIt = this.tagItems.iterator(); tagItemIt.hasNext();) {
-            TagItem tagItem = tagItemIt.next();
+        for (TagItem tagItem : this.tagItems) {
             if (tagItem.getTagView().equals(tagView)) {
                 taggable.selectTag(tagItem.getTag());
                 break;

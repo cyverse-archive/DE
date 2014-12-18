@@ -14,7 +14,7 @@ public class LoadGenomeInCoGeCallback implements AsyncCallback<String> {
     private final IsMaskable container;
     private final JsonUtil jsonUtil = JsonUtil.getInstance();
 
-    public LoadGenomeInCoGeCallback(IsMaskable container) {
+    public LoadGenomeInCoGeCallback(final IsMaskable container) {
         this.container = container;
     }
 

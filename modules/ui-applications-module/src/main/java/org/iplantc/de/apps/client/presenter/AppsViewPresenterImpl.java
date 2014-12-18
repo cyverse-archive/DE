@@ -276,8 +276,6 @@ public class AppsViewPresenterImpl implements AppsView.Presenter {
 
     /**
      * Sets a string which is a place holder for selection after a call to {@link #fetchApps(org.iplantc.de.client.models.apps.AppCategory)}
-     * 
-     * @param selectedApp
      */
     private void setDesiredSelectedApp(HasId selectedApp) {
         this.desiredSelectedAppId = selectedApp;
@@ -299,8 +297,6 @@ public class AppsViewPresenterImpl implements AppsView.Presenter {
 
     /**
      * Retrieves the apps for the given group by updating and executing the list loader
-     * 
-     * @param ag
      */
     protected void fetchApps(final AppCategory ag) {
         view.maskCenterPanel(displayStrings.loadingMask());

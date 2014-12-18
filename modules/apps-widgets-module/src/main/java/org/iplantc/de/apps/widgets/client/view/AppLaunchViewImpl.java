@@ -34,13 +34,9 @@ public class AppLaunchViewImpl extends Composite implements AppLaunchView {
 
     interface EditorDriver extends SimpleBeanEditorDriver<AppTemplate, AppLaunchViewImpl> {}
 
-    @UiField
-    @Ignore
-    TextButton launchButton;
+    @UiField @Ignore TextButton launchButton;
+    @UiField(provided = true) @Path("") AppTemplateForm wizard;
 
-    @UiField(provided = true)
-    @Path("")
-    AppTemplateForm wizard;
     private final AppTemplateUtils appTemplateUtils;
 
     private final EditorDriver editorDriver = GWT.create(EditorDriver.class);

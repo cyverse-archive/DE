@@ -20,6 +20,9 @@ import com.sencha.gxt.dnd.core.client.DragSource;
 import com.sencha.gxt.widget.core.client.container.SimpleContainer;
 import com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer;
 
+/**
+ * @author jstroot
+ */
 public final class ArgListEditorDragSource extends DragSource {
 
     private final VerticalLayoutContainer container;

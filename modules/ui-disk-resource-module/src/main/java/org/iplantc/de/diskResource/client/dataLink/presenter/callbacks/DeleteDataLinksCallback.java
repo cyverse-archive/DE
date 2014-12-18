@@ -12,13 +12,16 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import com.sencha.gxt.widget.core.client.tree.Tree;
 
+/**
+ * @author jstroot
+ */
 public class DeleteDataLinksCallback implements AsyncCallback<String> {
 
     private final Tree<DiskResource, DiskResource> tree;
     private DataLinkPanel view;
     private final JsonUtil jsonUtil;
 
-    public DeleteDataLinksCallback(DataLinkPanel view) {
+    public DeleteDataLinksCallback(final DataLinkPanel view) {
         this.view = view;
         this.tree = view.getTree();
         this.jsonUtil = JsonUtil.getInstance();

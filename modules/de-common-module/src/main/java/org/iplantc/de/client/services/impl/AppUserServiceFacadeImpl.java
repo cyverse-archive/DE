@@ -341,7 +341,7 @@ public class AppUserServiceFacadeImpl implements AppUserServiceFacade {
         String address = APPS + "/" + appId + "/favorite";
 
         JSONObject body = new JSONObject();
-        ServiceCallWrapper wrapper = null;
+        ServiceCallWrapper wrapper;
 
         if (fav) {
             wrapper = new ServiceCallWrapper(Type.PUT, address, body.toString());

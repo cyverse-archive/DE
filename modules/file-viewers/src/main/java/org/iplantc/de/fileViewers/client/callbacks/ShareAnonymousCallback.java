@@ -35,7 +35,8 @@ public class ShareAnonymousCallback implements AsyncCallback<String> {
     private final EnsemblPopupTemplate template = GWT.create(EnsemblPopupTemplate.class);
     private final JsonUtil jsonUtil;
 
-    public ShareAnonymousCallback(File file, IsMaskable container) {
+    public ShareAnonymousCallback(final File file,
+                                  final IsMaskable container) {
         this.container = container;
         this.file = file;
         this.jsonUtil = JsonUtil.getInstance();

@@ -87,19 +87,14 @@ public class DesktopPresenterWindowEventHandler implements EditAppEvent.EditAppE
                                                            RequestSimpleDownloadEvent.RequestSimpleDownloadEventHandler,
                                                            RequestSimpleUploadEvent.RequestSimpleUploadEventHandler {
 
-    @Inject
-    DEClientConstants clientConstants;
-    @Inject
-    Provider<DiskResourceServiceFacade> diskResourceServiceProvider;
-    @Inject
-    IplantDisplayStrings displayStrings;
-    @Inject
-    EventBus eventBus;
-    @Inject
-    UserInfo userInfo;
+    @Inject DEClientConstants clientConstants;
+    @Inject Provider<DiskResourceServiceFacade> diskResourceServiceProvider;
+    @Inject IplantDisplayStrings displayStrings;
+    @Inject EventBus eventBus;
+    @Inject UserInfo userInfo;
+    @Inject DiskResourceUtil diskResourceUtil;
+
     private DesktopWindowManager desktopWindowManager;
-    @Inject
-    DiskResourceUtil diskResourceUtil;
     private DesktopPresenterImpl presenter;
 
     @Inject

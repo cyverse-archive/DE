@@ -114,7 +114,7 @@ public class DiskResourceUtil {
         return basePath + "/" + name;
     }
 
-    public String asCommaSeperatedNameList(Iterable<String> idList) {
+    public String asCommaSeparatedNameList(Iterable<String> idList) {
         if (idList == null) {
             return null;
         }
@@ -140,9 +140,6 @@ public class DiskResourceUtil {
 
     /**
      * Determines if the user is an owner of one item in the given resources.
-     * 
-     * @param resources
-     * @return
      */
     public boolean hasOwner(Iterable<DiskResource> resources) {
         if (resources == null) {
@@ -161,10 +158,6 @@ public class DiskResourceUtil {
     /**
      * Determines if the given <code>DiskResource</code> is a direct child of the given parent
      * <code>Folder</code>.
-     * 
-     * @param parent
-     * @param resource
-     * @return
      */
     public boolean isChildOfFolder(Folder parent, DiskResource resource) {
         return parseParent(resource.getPath()).equals(parent.getPath());
@@ -315,7 +308,6 @@ public class DiskResourceUtil {
     /**
      * Returns a Set containing all Files found in the given DiskResource Set.
      * 
-     * @param diskResources
      * @return A Set containing all Files found in the given DiskResource Set, or an empty Set if the
      *         given Set is null or empty.
      */
@@ -336,7 +328,6 @@ public class DiskResourceUtil {
     /**
      * Returns a Set containing all Folders found in the given DiskResource Set.
      * 
-     * @param diskResources
      * @return A Set containing all Folders found in the given DiskResource Set, or an empty Set if the
      *         given Set is null or empty.
      */

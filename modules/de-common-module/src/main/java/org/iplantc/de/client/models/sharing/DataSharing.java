@@ -25,7 +25,9 @@ public class DataSharing extends Sharing {
         FILE, FOLDER
     }
 
-    public DataSharing(Collaborator c, PermissionValue p, String path) {
+    public DataSharing(final Collaborator c,
+                       final PermissionValue p,
+                       final String path) {
         super(c);
         this.diskResourceUtil = DiskResourceUtil.getInstance();
         setPath(path);

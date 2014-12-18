@@ -55,7 +55,7 @@ public class ManageCollaboratorsPresenter implements Presenter {
 
     public static enum MODE {
         MANAGE, SELECT
-    };
+    }
 
     private final CollaboratorsUtil collaboratorsUtil;
 

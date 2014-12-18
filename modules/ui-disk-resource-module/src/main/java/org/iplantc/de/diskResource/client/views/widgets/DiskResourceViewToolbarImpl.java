@@ -36,52 +36,39 @@ import com.sencha.gxt.widget.core.client.menu.MenuItem;
 
 import java.util.List;
 
+/**
+ * @author jstroot
+ */
 public class DiskResourceViewToolbarImpl extends Composite implements DiskResourceView.DiskResourceViewToolbar,
                                                                       DiskResourceSelectionChangedEvent.DiskResourceSelectionChangedEventHandler,
                                                                       FolderSelectionEvent.FolderSelectionEventHandler {
 
     @UiTemplate("DiskResourceViewToolbar.ui.xml")
     interface DiskResourceViewToolbarUiBinder extends UiBinder<Widget, DiskResourceViewToolbarImpl> { }
-    @UiField
-    TextButton downloadMenu;
-    @UiField
-    TextButton editMenu;
-    @UiField
-    TextButton fileMenu;
-    @UiField
-    MenuItem newFileMi;
+    @UiField TextButton downloadMenu;
+    @UiField TextButton editMenu;
+    @UiField TextButton fileMenu;
+    @UiField MenuItem newFileMi;
 
-    @UiField
-    MenuItem newWindowMi, newWindowAtLocMi, newFolderMi,
- duplicateMi, newPlainTextFileMi,
-            newTabularDataFileMi, moveToTrashMi, newRFileMi, newPerlFileMi, newPythonFileMi,
-            newShellScriptFileMi, newMdFileMi;
-    @UiField
-    MenuItem openTrashMi, restoreMi, emptyTrashMi;
-    @UiField
-    TextButton refreshButton;
-    @UiField
-    MenuItem renameMi, moveMi, deleteMi,
-            editFileMi, editCommentsMi, editInfoTypeMi, metadataMi;
-    @UiField
-    DiskResourceSearchField searchField;
-    @UiField
-    TextButton shareMenu;
-    @UiField
-    MenuItem shareWithCollaboratorsMi, createPublicLinkMi, sendToCogeMi,
-            sendToEnsemblMi, sendToTreeViewerMi;
-    @UiField
-    MenuItem simpleDownloadMi, bulkDownloadMi;
-    @UiField
-    MenuItem simpleUploadMi, bulkUploadMi, importFromUrlMi;
-    @UiField
-    TextButton trashMenu;
-    @UiField
-    TextButton uploadMenu;
-    @UiField
-    MenuItem shareFolderLocationMi;
-    @UiField
-    MenuItem newPathListMi;
+    @UiField MenuItem newWindowMi, newWindowAtLocMi, newFolderMi,
+        duplicateMi, newPlainTextFileMi,
+        newTabularDataFileMi, moveToTrashMi, newRFileMi, newPerlFileMi, newPythonFileMi,
+        newShellScriptFileMi, newMdFileMi;
+    @UiField MenuItem openTrashMi, restoreMi, emptyTrashMi;
+    @UiField TextButton refreshButton;
+    @UiField MenuItem renameMi, moveMi, deleteMi,
+        editFileMi, editCommentsMi, editInfoTypeMi, metadataMi;
+    @UiField DiskResourceSearchField searchField;
+    @UiField TextButton shareMenu;
+    @UiField MenuItem shareWithCollaboratorsMi, createPublicLinkMi, sendToCogeMi,
+        sendToEnsemblMi, sendToTreeViewerMi;
+    @UiField MenuItem simpleDownloadMi, bulkDownloadMi;
+    @UiField MenuItem simpleUploadMi, bulkUploadMi, importFromUrlMi;
+    @UiField TextButton trashMenu;
+    @UiField TextButton uploadMenu;
+    @UiField MenuItem shareFolderLocationMi;
+    @UiField MenuItem newPathListMi;
+
     private static DiskResourceViewToolbarUiBinder BINDER = GWT.create(DiskResourceViewToolbarUiBinder.class);
     private final UserInfo userInfo;
     private DiskResourceView.Presenter presenter;

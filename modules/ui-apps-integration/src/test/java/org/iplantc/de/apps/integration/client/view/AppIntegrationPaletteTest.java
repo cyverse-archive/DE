@@ -51,10 +51,9 @@ public class AppIntegrationPaletteTest {
             }
             
         };
-	}
+    }
 
-    @Test
-    public void testCreateNewArgument_FileOutput() {
+    @Test public void testCreateNewArgument_FileOutput() {
         when(mockFactory.argument()).thenReturn(mockAbArgument);
         when(mockFactory.fileParameters()).thenReturn(mockAbDataObject);
 
@@ -71,10 +70,9 @@ public class AppIntegrationPaletteTest {
         verify(mockLabels).defFileOutput();
 
         verifyNoMoreInteractions(mockFactory, mockLabels);
-	}
+    }
 
-    @Test
-    public void testCreateNewArgument_FolderOutput() {
+    @Test public void testCreateNewArgument_FolderOutput() {
         when(mockFactory.argument()).thenReturn(mockAbArgument);
         when(mockFactory.fileParameters()).thenReturn(mockAbDataObject);
 
@@ -93,8 +91,7 @@ public class AppIntegrationPaletteTest {
         verifyNoMoreInteractions(mockFactory, mockLabels);
     }
 
-    @Test
-    public void testCreateNewArgument_MultiFileOutput() {
+    @Test public void testCreateNewArgument_MultiFileOutput() {
         when(mockFactory.argument()).thenReturn(mockAbArgument);
         when(mockFactory.fileParameters()).thenReturn(mockAbDataObject);
 

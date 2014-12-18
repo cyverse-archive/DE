@@ -115,7 +115,6 @@ public class AppRatingCell extends AbstractCell<App> {
         /**
          * Returns a string that identifies the RATING_CONSTANT.
          * 
-         * @return
          */
         public String getTypeString() {
             return toString().toLowerCase();
@@ -125,7 +124,6 @@ public class AppRatingCell extends AbstractCell<App> {
          * Null-safe and case insensitive variant of valueOf(String)
          * 
          * @param typeString name of an EXECUTION_STATUS constant
-         * @return
          */
         public static RATING_CONSTANT fromTypeString(String typeString) {
             if (typeString == null || typeString.isEmpty()) {
@@ -154,7 +152,7 @@ public class AppRatingCell extends AbstractCell<App> {
         resources.css().ensureInjected();
         jsonUtil = JsonUtil.getInstance();
 
-        ratings = new ArrayList<String>();
+        ratings = new ArrayList<>();
         ratings.add(0, RATING_CONSTANT.HATE_IT.displayText);
         ratings.add(1, RATING_CONSTANT.DID_NOT_LIKE_IT.displayText);
         ratings.add(2, RATING_CONSTANT.LIKED_IT.displayText);

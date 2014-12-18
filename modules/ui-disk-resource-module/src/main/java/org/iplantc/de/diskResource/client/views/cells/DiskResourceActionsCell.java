@@ -34,6 +34,7 @@ import com.google.gwt.user.client.Event;
 
 /**
  * FIXME REFACTOR This cell needs an appearance
+ * @author jstroot
  */
 public class DiskResourceActionsCell extends AbstractCell<DiskResource> {
 

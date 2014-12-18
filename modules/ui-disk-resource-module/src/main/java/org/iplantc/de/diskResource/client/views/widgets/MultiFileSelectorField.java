@@ -411,7 +411,7 @@ public class MultiFileSelectorField extends Composite implements IsField<List<Ha
                                             String reason = serviceError.getReason();
                                             GWT.log("The Reason: " + reason);
                                             List<String> errorMessageValues = Lists.newArrayList();
-                                            String drErrList = diskResourceUtil.asCommaSeperatedNameList(errorMessageValues);
+                                            String drErrList = diskResourceUtil.asCommaSeparatedNameList(errorMessageValues);
                                             DefaultEditorError existsErr = new DefaultEditorError(MultiFileSelectorField.this, errorStrings.diskResourceDoesNotExist(drErrList), null);
                                             existsErrors.add(existsErr);
                                             errors.add(existsErr);

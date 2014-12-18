@@ -28,6 +28,9 @@ import com.google.web.bindery.autobean.shared.AutoBeanUtils;
 
 import com.sencha.gxt.widget.core.client.container.SimpleContainer;
 
+/**
+ * @author jstroot
+ */
 public class AppLaunchWindow extends IplantWindowBase implements AnalysisLaunchEventHandler {
 
     private final class AppTemplateCallback implements AsyncCallback<AppTemplate> {

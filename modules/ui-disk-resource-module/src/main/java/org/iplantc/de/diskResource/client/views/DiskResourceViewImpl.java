@@ -186,60 +186,30 @@ public class DiskResourceViewImpl extends Composite implements DiskResourceView,
 
     DiskResourceViewToolbar toolbar;
 
-    @UiField
-    BorderLayoutContainer con;
+    @UiField BorderLayoutContainer con;
+    @UiField ContentPanel westPanel;
+    @UiField(provided = true) Tree<Folder, Folder> tree;
 
-    @UiField
-    ContentPanel westPanel;
-
-    @UiField(provided = true)
-    Tree<Folder, Folder> tree;
     private final UserInfo userInfo;
     private final IplantDisplayStrings displayStrings;
 
-    @UiField(provided = true)
-    final TreeStore<Folder> treeStore;
+    @UiField(provided = true) TreeStore<Folder> treeStore;
+    @UiField VerticalLayoutContainer centerPanel;
+    @UiField Grid<DiskResource> grid;
+    @UiField ColumnModel<DiskResource> cm;
+    @UiField ListStore<DiskResource> listStore;
+    @UiField LiveGridView<DiskResource> gridView;
+    @UiField VerticalLayoutContainer detailsPanel;
+    @UiField BorderLayoutData westData;
+    @UiField BorderLayoutData centerData;
+    @UiField BorderLayoutData eastData;
+    @UiField BorderLayoutData northData;
+    @UiField BorderLayoutData southData;
 
-    @UiField
-    VerticalLayoutContainer centerPanel;
-
-    @UiField
-    Grid<DiskResource> grid;
-
-    @UiField
-    ColumnModel<DiskResource> cm;
-
-    @UiField
-    ListStore<DiskResource> listStore;
-
-    @UiField
-    LiveGridView<DiskResource> gridView;
-
-    @UiField
-    VerticalLayoutContainer detailsPanel;
-
-    @UiField
-    BorderLayoutData westData;
-    @UiField
-    BorderLayoutData centerData;
-    @UiField
-    BorderLayoutData eastData;
-    @UiField
-    BorderLayoutData northData;
-    @UiField
-    BorderLayoutData southData;
-
-    @UiField
-    VerticalLayoutData centerLayoutData;
-
-    @UiField
-    ToolBar pagingToolBar;
-
-    @UiField
-    ContentPanel centerCp;
-
-    @UiField
-    TextField pathField;
+    @UiField VerticalLayoutData centerLayoutData;
+    @UiField ToolBar pagingToolBar;
+    @UiField ContentPanel centerCp;
+    @UiField TextField pathField;
 
     private TreeLoader<Folder> treeLoader;
 

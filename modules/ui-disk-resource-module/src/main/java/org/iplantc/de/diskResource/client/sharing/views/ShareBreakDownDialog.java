@@ -37,7 +37,7 @@ public class ShareBreakDownDialog extends Dialog {
     private Grid<DataSharing> grid;
     private final DiskResourceUtil diskResourceUtil;
 
-    public ShareBreakDownDialog(List<DataSharing> shares) {
+    public ShareBreakDownDialog(final List<DataSharing> shares) {
         init();
         diskResourceUtil = DiskResourceUtil.getInstance();
 

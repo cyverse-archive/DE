@@ -33,7 +33,10 @@ public class CommentsPresenter implements CommentsView.Presenter {
     private final boolean isResourceOwner;
     private final JsonUtil jsonUtil;
 
-    public CommentsPresenter(CommentsView cv, String resourceID, boolean owner, MetadataServiceFacade facade) {
+    public CommentsPresenter(final CommentsView cv,
+                             final String resourceID,
+                             final boolean owner,
+                             final MetadataServiceFacade facade) {
         this.view = cv;
         this.resourceID = resourceID;
         this.facade = facade;

@@ -90,6 +90,9 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * @author jstroot
+ */
 public class DesktopPresenterImpl implements DesktopView.Presenter {
 
     interface AuthErrors {
@@ -110,43 +113,26 @@ public class DesktopPresenterImpl implements DesktopView.Presenter {
     }
 
     final DesktopWindowManager desktopWindowManager;
-    @Inject
-    IplantAnnouncer announcer;
-    @Inject
-    CommonUiConstants commonUiConstants;
-    @Inject
-    DEClientConstants deClientConstants;
-    @Inject
-    DEProperties deProperties;
-    @Inject
-    IplantDisplayStrings displayStrings;
-    @Inject
-    Provider<ErrorHandler> errorHandlerProvider;
-    @Inject
-    IplantErrorStrings errorStrings;
-    @Inject
-    Provider<DEFeedbackServiceFacade> feedbackServiceProvider;
-    @Inject
-    Provider<FileEditorServiceFacade> fileEditorServiceProvider;
-    @Inject
-    MessageServiceFacade messageServiceFacade;
-    @Inject
-    NotificationAutoBeanFactory notificationFactory;
-    @Inject
-    DiskResourceAutoBeanFactory diskResourceFactory;
-    @Inject
-    AnalysesAutoBeanFactory analysesFactory;
-    @Inject
-    PropertyServiceAsync propertyServiceFacade;
-    @Inject
-    UserInfo userInfo;
-    @Inject
-    UserSessionServiceFacade userSessionService;
-    @Inject
-    UserSettings userSettings;
-    @Inject
-    NotifyInfo notifyInfo;
+    @Inject IplantAnnouncer announcer;
+    @Inject CommonUiConstants commonUiConstants;
+    @Inject DEClientConstants deClientConstants;
+    @Inject DEProperties deProperties;
+    @Inject IplantDisplayStrings displayStrings;
+    @Inject Provider<ErrorHandler> errorHandlerProvider;
+    @Inject IplantErrorStrings errorStrings;
+    @Inject Provider<DEFeedbackServiceFacade> feedbackServiceProvider;
+    @Inject Provider<FileEditorServiceFacade> fileEditorServiceProvider;
+    @Inject MessageServiceFacade messageServiceFacade;
+    @Inject NotificationAutoBeanFactory notificationFactory;
+    @Inject DiskResourceAutoBeanFactory diskResourceFactory;
+    @Inject AnalysesAutoBeanFactory analysesFactory;
+    @Inject PropertyServiceAsync propertyServiceFacade;
+    @Inject UserInfo userInfo;
+    @Inject UserSessionServiceFacade userSessionService;
+    @Inject UserSettings userSettings;
+    @Inject NotifyInfo notifyInfo;
     @Inject DiskResourceUtil diskResourceUtil;
+
     private final EventBus eventBus;
     private final KeepaliveTimer keepaliveTimer;
     private final MessagePoller messagePoller;
@@ -315,7 +301,6 @@ public class DesktopPresenterImpl implements DesktopView.Presenter {
 
     /**
      * FIXME REFACTOR JDS Create notifications module and move this implementation there
-     * @param selectedItem
      */
     @Override
     public void onNotificationSelected(final NotificationMessage selectedItem) {
@@ -451,7 +436,6 @@ public class DesktopPresenterImpl implements DesktopView.Presenter {
     /**
      * This method is called by the periodic message task. It updates the store used by the
      * user notification menu, and displays notification popups
-     * @param unseenNotificationCount
      */
     void fetchRecentNotifications(int unseenNotificationCount) {
         int currentUnseen = view.getUnseenNotificationCount();

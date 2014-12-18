@@ -24,8 +24,13 @@ import com.sencha.gxt.fx.client.DragMoveEvent;
 import java.util.Collection;
 import java.util.Set;
 
-class DiskResourceViewDnDHandler implements DndDragStartHandler, DndDropHandler, DndDragMoveHandler,
-        DndDragEnterHandler {
+/**
+ * @author jstroot
+ */
+class DiskResourceViewDnDHandler implements DndDragStartHandler,
+                                            DndDropHandler,
+                                            DndDragMoveHandler,
+                                            DndDragEnterHandler {
 
     private final Presenter presenter;
     private final DiskResourceView view;
@@ -173,7 +178,7 @@ class DiskResourceViewDnDHandler implements DndDragStartHandler, DndDropHandler,
                 && ((Collection<?>)data).iterator().next() instanceof DiskResource)) {
             return null;
         }
-        Set<DiskResource> dropData = null;
+        Set<DiskResource> dropData;
         dropData = Sets.newHashSet((Collection<DiskResource>)data);
 
         return dropData;

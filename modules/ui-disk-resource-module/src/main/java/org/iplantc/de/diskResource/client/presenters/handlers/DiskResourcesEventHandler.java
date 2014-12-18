@@ -15,6 +15,9 @@ import org.iplantc.de.diskResource.client.views.DiskResourceView;
 import java.util.Collection;
 import java.util.Set;
 
+/**
+ * @author jstroot
+ */
 public final class DiskResourcesEventHandler implements DiskResourcesDeletedEvent.DiskResourcesDeletedEventHandler,
                                                         DiskResourcesMovedEventHandler,
                                                         DiskResourceRenamedEventHandler,

@@ -27,6 +27,7 @@ import com.google.gwt.user.client.Event;
 /**
  * FIXME Factor out appearance
  * FIXME Consolidate with DiskResourceNameCell, CORE-5959
+ * @author jstroot
  */
 public class DiskResourcePathCell extends AbstractCell<DiskResource> {
     /**

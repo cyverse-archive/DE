@@ -140,6 +140,11 @@ public class AnalysisServiceFacadeImpl implements AnalysisServiceFacade {
         this.diskResourceUtil = diskResourceUtil;
     }
 
+    /**
+     * FIXME move service call into service facade.
+     * @param loadConfig optional remote paging and sorting configs.
+     * @param callback executed when RPC call completes.
+     */
     @Override
     public void getAnalyses(final FilterPagingLoadConfig loadConfig, AsyncCallback<PagingLoadResultBean<Analysis>> callback) {
         StringBuilder address = new StringBuilder(ANALYSES);

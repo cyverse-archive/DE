@@ -192,7 +192,7 @@ public class FileSelectDialog extends IPlantDialog implements TakesValue<List<Fi
         }
 
         List<String> pathList = diskResourceUtil.asStringPathList(value);
-        String fileNames = diskResourceUtil.asCommaSeperatedNameList(pathList);
+        String fileNames = diskResourceUtil.asCommaSeparatedNameList(pathList);
         selectedFileField.setValue(fileNames);
         getOkButton().setEnabled(true);
     }

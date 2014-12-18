@@ -20,7 +20,9 @@ import com.google.inject.assistedinject.Assisted;
 
 import java.util.List;
 
-
+/**
+ * @author jstroot
+ */
 public class DataLinkPresenterImpl implements DataLinkPanel.Presenter {
 
     private final DataLinkPanel view;

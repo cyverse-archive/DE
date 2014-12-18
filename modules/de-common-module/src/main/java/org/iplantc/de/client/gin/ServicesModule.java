@@ -57,36 +57,27 @@ final class ServicesModule extends AbstractGinModule {
         bind(DiscEnvApiService.class).in(Singleton.class);
     }
 
-    @Provides
-    public JsonUtil createJsonUtil() {
+    @Provides public JsonUtil createJsonUtil() {
         return JsonUtil.getInstance();
     }
 
-    @Provides
-    public AppTemplateUtils createAppTemplateUtils() {
+    @Provides public AppTemplateUtils createAppTemplateUtils() {
         return AppTemplateUtils.getInstance();
     }
 
-    @Provides
-    public DiskResourceUtil createDiskResourceUtil() {
+    @Provides public DiskResourceUtil createDiskResourceUtil() {
         return DiskResourceUtil.getInstance();
     }
 
-    @Provides
-    @Singleton
-    public DEProperties createDeProperties() {
+    @Provides @Singleton public DEProperties createDeProperties() {
         return DEProperties.getInstance();
     }
 
-    @Provides
-    @Singleton
-    public UserInfo createUserInfo() {
+    @Provides @Singleton public UserInfo createUserInfo() {
         return UserInfo.getInstance();
     }
 
-    @Provides
-    @Singleton
-    public EventBus createEventBus() {
+    @Provides @Singleton public EventBus createEventBus() {
         return EventBus.getInstance();
     }
 

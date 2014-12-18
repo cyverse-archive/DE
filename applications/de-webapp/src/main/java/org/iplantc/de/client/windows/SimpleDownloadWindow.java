@@ -28,7 +28,7 @@ public class SimpleDownloadWindow extends IplantWindowBase {
     private final DiskResourceServiceFacade diskResourceServiceFacade;
     private final IplantDisplayStrings displayStrings;
 
-    public SimpleDownloadWindow(SimpleDownloadWindowConfig config) {
+    public SimpleDownloadWindow(final SimpleDownloadWindowConfig config) {
         super(null, true, config);
         displayStrings = org.iplantc.de.resources.client.messages.I18N.DISPLAY;
         diskResourceServiceFacade = ServicesInjector.INSTANCE.getDiskResourceServiceFacade();

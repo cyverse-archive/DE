@@ -39,7 +39,7 @@ import java.util.List;
 public class CollaboratorsUtil {
 
     private List<Collaborator> currentCollaborators;
-    private List<Collaborator> searchResutls;
+    private List<Collaborator> searchResults;
     private final CollaboratorAutoBeanFactory factory = GWT.create(CollaboratorAutoBeanFactory.class);
     private final CollaboratorsServiceFacade facade = ServicesInjector.INSTANCE.getCollaboratorsServiceFacade();
     private final JsonUtil jsonUtil = JsonUtil.getInstance();
@@ -49,7 +49,7 @@ public class CollaboratorsUtil {
     CollaboratorsUtil() {
 
         currentCollaborators = null;
-        searchResutls = null;
+        searchResults = null;
     }
 
     public static CollaboratorsUtil getInstance(){
@@ -104,10 +104,10 @@ public class CollaboratorsUtil {
     }
 
     /**
-     * @return the searchResutls
+     * @return the searchResults
      */
-    public List<Collaborator> getSearchResutls() {
-        return searchResutls;
+    public List<Collaborator> getSearchResults() {
+        return searchResults;
     }
 
     public Collaborator findCollaboratorByUserName(String userName) {
@@ -138,10 +138,10 @@ public class CollaboratorsUtil {
     }
 
     /**
-     * @param searchResutls the searchResutls to set
+     * @param searchResults the searchResults to set
      */
-    public void setSearchResutls(List<Collaborator> searchResutls) {
-        this.searchResutls = searchResutls;
+    public void setSearchResults(List<Collaborator> searchResults) {
+        this.searchResults = searchResults;
     }
 
     private final class GetCollaboratorsCallback implements AsyncCallback<String> {
@@ -224,7 +224,7 @@ public class CollaboratorsUtil {
 
         @Override
         public void onSuccess(String result) {
-            setSearchResutls(parseResults(result));
+            setSearchResults(parseResults(result));
             if (callback != null) {
                 callback.onSuccess(null);
             }
@@ -289,7 +289,7 @@ public class CollaboratorsUtil {
         @Override
         public void onSuccess(String result) {
             if (superCallback != null) {
-                FastMap<Collaborator> userResults = new FastMap<Collaborator>();
+                FastMap<Collaborator> userResults = new FastMap<>();
 
                 JSONObject users = jsonUtil.getObject(result);
                 if (result != null) {

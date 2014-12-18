@@ -24,8 +24,6 @@ public abstract class AdminServiceCallback implements AsyncCallback<String> {
     /**
      * Sets a reference to a caller that is masked during the service call, and should be unmasked after
      * a response is received.
-     * 
-     * @param maskedCaller
      */
     public void setMaskedCaller(Component maskedCaller) {
         this.maskedCaller = maskedCaller;

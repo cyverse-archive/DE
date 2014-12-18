@@ -18,6 +18,9 @@ import com.sencha.gxt.widget.core.client.container.AccordionLayoutContainer;
 
 import java.util.List;
 
+/**
+ * @author jstroot
+ */
 public final class ArgGrpListDragSource extends DragSource {
 
     private final AccordionLayoutContainer container;

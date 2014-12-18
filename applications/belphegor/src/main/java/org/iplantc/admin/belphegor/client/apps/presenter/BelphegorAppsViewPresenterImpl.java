@@ -90,8 +90,7 @@ public class BelphegorAppsViewPresenterImpl extends AppsViewPresenterImpl implem
     private final IplantAnnouncer announcer;
     private final IplantDisplayStrings displayStrings;
     private final IplantErrorStrings errorStrings;
-    @Inject
-    private BelphegorAdminProperties properties;
+    @Inject BelphegorAdminProperties properties;
     @Inject JsonUtil jsonUtil;
 
     @Inject

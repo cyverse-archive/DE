@@ -41,6 +41,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+/**
+ * @author jstroot
+ */
 public class FileUploadByUrlDialog extends IPlantDialog implements HasPending<Entry<Field<String>, Status>> {
 
     private static final DiskResourceAutoBeanFactory FS_FACTORY = GWT.create(DiskResourceAutoBeanFactory.class);
@@ -57,16 +60,15 @@ public class FileUploadByUrlDialog extends IPlantDialog implements HasPending<En
     private final Set<Entry<Field<String>, Status>> pendingList = Sets.newHashSet();
     private final Map<Field<String>, Status> fieldToStatusMap = Maps.newHashMap();
 
-    @UiField
-    HTML htmlDestText;
-    @UiField
-    TextArea url0, url1, url2, url3, url4;
-    @UiField
-    Status formStatus0, formStatus1, formStatus2, formStatus3, formStatus4;
+    @UiField HTML htmlDestText;
+    @UiField TextArea url0, url1, url2, url3, url4;
+    @UiField Status formStatus0, formStatus1, formStatus2, formStatus3, formStatus4;
 
     private final DiskResourceUtil diskResourceUtil;
 
-    public FileUploadByUrlDialog(Folder uploadDest, DiskResourceServiceFacade drService, String userName) {
+    public FileUploadByUrlDialog(final Folder uploadDest,
+                                 final DiskResourceServiceFacade drService,
+                                 final String userName) {
         this.uploadDest = uploadDest;
         this.drService = drService;
         this.diskResourceUtil = DiskResourceUtil.getInstance();
@@ -141,11 +143,9 @@ public class FileUploadByUrlDialog extends IPlantDialog implements HasPending<En
 
     @Override
     protected void onOkButtonClicked() {
-//        formStatus.setBusy(I18N.DISPLAY.uploadingToFolder(uploadDest.getId()));
-//        formStatus.show();
         getOkButton().setEnabled(false);
 
-        final FastMap<Field<String>> destResourceMap = new FastMap<Field<String>>();
+        final FastMap<Field<String>> destResourceMap = new FastMap<>();
 
         for (Entry<Field<String>, Status> entry : fieldToStatusMap.entrySet()) {
             Field<String> field = entry.getKey();
@@ -167,7 +167,7 @@ public class FileUploadByUrlDialog extends IPlantDialog implements HasPending<En
         if (!destResourceMap.isEmpty()) {
             final HasPaths dto = FS_FACTORY.pathsList().as();
             dto.setPaths(Lists.newArrayList(destResourceMap.keySet()));
-            drService.diskResourcesExist(dto, new CheckDuplicatesCallback<FileUploadByUrlDialog>(destResourceMap, fieldToStatusMap, uploadDest, drService, this));
+            drService.diskResourcesExist(dto, new CheckDuplicatesCallback<>(destResourceMap, fieldToStatusMap, uploadDest, drService, this));
         }
     }
 
@@ -219,7 +219,7 @@ public class FileUploadByUrlDialog extends IPlantDialog implements HasPending<En
                 }else{
                     Entry<Field<String>, Status> e = getEntry(formStatus);
                     dlg.addPending(e);
-                    drService.importFromUrl(urlField.getValue(), uploadDest, new ImportFromUrlCallback<D>(dlg, e));
+                    drService.importFromUrl(urlField.getValue(), uploadDest, new ImportFromUrlCallback<>(dlg, e));
                 }
             }
         }

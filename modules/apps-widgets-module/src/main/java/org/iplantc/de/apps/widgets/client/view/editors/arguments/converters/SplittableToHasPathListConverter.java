@@ -12,6 +12,9 @@ import com.sencha.gxt.data.shared.Converter;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * @author jstroot
+ */
 public class SplittableToHasPathListConverter implements Converter<Splittable, List<HasPath>> {
 
     @Override

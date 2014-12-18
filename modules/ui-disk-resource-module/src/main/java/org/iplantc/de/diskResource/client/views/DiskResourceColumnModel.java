@@ -32,6 +32,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * @author jstroot
+ */
 public class DiskResourceColumnModel extends ColumnModel<DiskResource> implements DiskResourceNameSelectedEvent.HasDiskResourceNameSelectedEventHandlers,
                                                                                   ShareByDataLinkEvent.HasShareByDataLinkEventHandlers,
                                                                                   ManageSharingEvent.HasManageSharingEventHandlers,

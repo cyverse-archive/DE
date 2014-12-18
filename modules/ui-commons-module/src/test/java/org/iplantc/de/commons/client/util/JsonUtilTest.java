@@ -36,42 +36,37 @@ public class JsonUtilTest {
 
     }
 
-	@Test
-    public void testTrimNull() {
+
+    @Test public void testTrimNull() {
         assertNull(jsonUtil.trim(null));
     }
 
-	@Test
-    public void testTrimEmpty() {
+    @Test public void testTrimEmpty() {
         String empty = jsonUtil.trim("");
         assertNotNull(empty);
         assertTrue("".equals(empty));
     }
 
-	@Test
-    public void testTrimNoQuotes() {
+    @Test public void testTrimNoQuotes() {
         String tmp = jsonUtil.trim("test");
         assertNotNull(tmp);
         assertTrue("test".equals(tmp));
 
     }
 
-	@Test
-    public void testTrimLeftUnbalanced() {
+    @Test public void testTrimLeftUnbalanced() {
         String tmp = jsonUtil.trim("\"test");
         assertNotNull(tmp);
         assertTrue("test".equals(tmp));
     }
 
-	@Test
-    public void testTrimRightUnbalanced() {
+    @Test public void testTrimRightUnbalanced() {
         String tmp = jsonUtil.trim("test\"");
         assertNotNull(tmp);
         assertTrue("test".equals(tmp));
     }
 
-	@Test
-    public void testTrimQuoteinMiddle() {
+    @Test public void testTrimQuoteinMiddle() {
         String str = "\"te\"st\"";
         String tmp = jsonUtil.trim(str);
         assertNotNull(tmp);
@@ -79,83 +74,67 @@ public class JsonUtilTest {
 
     }
 
-	@Test
-    public void testTrim() {
+    @Test public void testTrim() {
         String tmp = jsonUtil.trim("\"test\"");
         assertNotNull(tmp);
         assertTrue("test".equals(tmp));
     }
 
-	@Test
-    public void testEscapeNewLine() {
+    @Test public void testEscapeNewLine() {
         String tmp = "this is a string with newline\n";
         assertEquals(jsonUtil.escapeNewLine(tmp), "this is a string with newline\\n");
     }
 
-	@Test
-    public void testEscapeNewLineNull() {
+    @Test public void testEscapeNewLineNull() {
         String tmp = null;
         assertNull(jsonUtil.escapeNewLine(tmp));
     }
 
-	@Test
-    public void testEscapeNewLineEmpty() {
+    @Test public void testEscapeNewLineEmpty() {
         String tmp = "";
         assertEquals("", jsonUtil.escapeNewLine(tmp));
 
     }
 
-	@Test
-    public void testFormatString() {
+    @Test public void testFormatString() {
         String tmp = "this is a string with newline\\n";
         assertEquals(jsonUtil.formatString(tmp), "this is a string with newline\n");
     }
 
-	@Test
-    public void testtestFormatStringNull() {
+    @Test public void testtestFormatStringNull() {
         String tmp = null;
         assertNull(jsonUtil.formatString(tmp));
     }
 
-	@Test
-    public void testFormatStringEmpty() {
+    @Test public void testFormatStringEmpty() {
         String tmp = "";
         assertEquals("", jsonUtil.formatString(tmp));
 
     }
 
-	@Test
-    public void testNullIsEmpty() {
+    @Test public void testNullIsEmpty() {
         assertEquals(true, jsonUtil.isEmpty(null));
     }
 
-	@Test
-	@Ignore
-    public void testEmptyIsEmpty1() {
+    @Test @Ignore public void testEmptyIsEmpty1() {
         String tmp = "{}";
         JSONValue val = JSONParser.parseStrict(tmp);
         assertEquals(true, jsonUtil.isEmpty(val));
     }
 
-	@Test
-	@Ignore
-    public void testEmptyIsEmpty2() {
+    @Test @Ignore public void testEmptyIsEmpty2() {
         String tmp = "[]";
         JSONValue val = JSONParser.parseStrict(tmp);
         assertEquals(true, jsonUtil.isEmpty(val));
     }
 
-	@Test
-	@Ignore
-    public void testNonEmptyIsEmpty() {
+    @Test @Ignore public void testNonEmptyIsEmpty() {
         String tmp = "{\"testkey\": \"testvalue\"}";
         JSONValue val = JSONParser.parseStrict(tmp);
         assertEquals(false, jsonUtil.isEmpty(val));
     }
 
-	@Test
-	@Ignore
-    public void testGetRawValueAsString() {
+    @Test @Ignore public void testGetRawValueAsString() {
         JSONNumber number = new JSONNumber(12345);
         assertEquals("12345", jsonUtil.getRawValueAsString(number));
 
@@ -166,9 +145,7 @@ public class JsonUtilTest {
         assertEquals("true", jsonUtil.getRawValueAsString(bool));
     }
 
-	@Test
-	@Ignore
-    public void testBuildStringArray() {
+    @Test @Ignore public void testBuildStringArray() {
         // test buildStringArray(String, List)
         assertEquals("\"test 123\": []", jsonUtil.buildStringArray("test 123", null));
         String exp = "\"blah\": [\"asdf\",\"2324523\",\"lkjlkjlkj\"]";
@@ -188,9 +165,7 @@ public class JsonUtilTest {
         assertEquals("false", stringList.get(2));
     }
 
-	@Test
-	@Ignore
-    public void testBuildJsonArrayString() {
+    @Test @Ignore public void testBuildJsonArrayString() {
         assertNull(jsonUtil.buildJsonArrayString(null));
         assertEquals("[\"asdf\",\"2324523\",\"lkjlkjlkj\"]",
                 jsonUtil.buildJsonArrayString(Arrays.asList("asdf", "2324523", "lkjlkjlkj")));

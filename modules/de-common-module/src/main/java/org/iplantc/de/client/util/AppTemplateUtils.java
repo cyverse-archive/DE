@@ -65,7 +65,9 @@ public class AppTemplateUtils {
         AppTemplate copy = copyAppTemplate(at);
         for (ArgumentGroup ag : copy.getArgumentGroups()) {
             List<Argument> arguments = ag.getArguments();
-            if ((arguments.size() == 1) && (arguments.get(0).getId() != null) && (arguments.get(0).getId().equals(EMPTY_GROUP_ARG_ID))) {
+            if ((arguments.size() == 1)
+                    && (arguments.get(0).getId() != null)
+                    && (arguments.get(0).getId().equals(EMPTY_GROUP_ARG_ID))) {
                 arguments.clear();
             }
         }
@@ -76,8 +78,7 @@ public class AppTemplateUtils {
         AutoBean<AppTemplate> argAb = AutoBeanUtils.getAutoBean(value);
 
         final String payload = AutoBeanCodex.encode(argAb).getPayload();
-        return new AppTemplateCallbackConverter(factory, null)
-                .convertFrom(payload, false);
+        return new AppTemplateCallbackConverter(factory, null).convertFrom(payload, false);
     }
 
     public ArgumentGroup copyArgumentGroup(ArgumentGroup value) {
@@ -102,7 +103,8 @@ public class AppTemplateUtils {
     }
     
     public boolean isSelectionArgumentType(ArgumentType type) {
-        return isSimpleSelectionArgumentType(type) || type.equals(ArgumentType.TreeSelection);
+        return isSimpleSelectionArgumentType(type)
+                   || type.equals(ArgumentType.TreeSelection);
     }
     
     public boolean isSimpleSelectionArgumentType(ArgumentType t) {

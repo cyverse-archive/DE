@@ -176,7 +176,7 @@ public class SelectionItemTreePropertyEditor extends Composite implements HasVal
     private int uniqueIdNum = 0;
     private final AppTemplateUtils appTemplateUtils;
 
-    public SelectionItemTreePropertyEditor(List<SelectionItem> selectionItems) {
+    public SelectionItemTreePropertyEditor(final List<SelectionItem> selectionItems) {
         this.appTemplateUtils = AppTemplateUtils.getInstance();
         buildTreeGrid();
         initWidget(BINDER.createAndBindUi(this));

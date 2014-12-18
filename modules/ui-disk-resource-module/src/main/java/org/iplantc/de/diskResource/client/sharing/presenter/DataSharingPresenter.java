@@ -111,7 +111,8 @@ public class DataSharingPresenter implements DataSharingView.Presenter {
 
 
     public DataSharingPresenter(final DiskResourceServiceFacade diskResourceService,
-                                List<DiskResource> selectedResources, DataSharingView view) {
+                                final List<DiskResource> selectedResources,
+                                final DataSharingView view) {
         this.diskResourceService = diskResourceService;
         this.view = view;
         this.selectedResources = selectedResources;

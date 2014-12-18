@@ -27,7 +27,8 @@ public class ListDataLinksCallback<M> implements AsyncCallback<String> {
     private final DataLinkFactory dlFactory;
     private final JsonUtil jsonUtil;
 
-    public ListDataLinksCallback(Tree<M, M> tree, DataLinkFactory dlFactory) {
+    public ListDataLinksCallback(final Tree<M, M> tree,
+                                 final DataLinkFactory dlFactory) {
         this.tree = tree;
         this.dlFactory = dlFactory;
         this.jsonUtil = JsonUtil.getInstance();

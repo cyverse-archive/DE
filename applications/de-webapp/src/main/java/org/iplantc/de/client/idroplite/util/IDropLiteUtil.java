@@ -66,7 +66,7 @@ public class IDropLiteUtil {
 
     private static StringBuilder buildAppletTagCommon(JSONObject jsonAppletParams, int width, int height) {
 
-        StringBuilder htmlAppletTag = null;
+        StringBuilder htmlAppletTag;
 
         if (GXT.isIE()) {
             htmlAppletTag = buildIEAppletTagCommon(jsonAppletParams, width, height);

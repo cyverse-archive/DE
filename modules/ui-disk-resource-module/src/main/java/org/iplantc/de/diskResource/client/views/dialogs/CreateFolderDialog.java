@@ -13,6 +13,9 @@ import com.sencha.gxt.core.client.util.Format;
 import com.sencha.gxt.widget.core.client.event.SelectEvent;
 import com.sencha.gxt.widget.core.client.event.SelectEvent.SelectHandler;
 
+/**
+ * @author jstroot
+ */
 public class CreateFolderDialog extends IPlantPromptDialog {
 
     private final DiskResourceUtil diskResourceUtil;

@@ -28,10 +28,8 @@ import java.util.List;
 @RunWith(GwtMockitoTestRunner.class)
 public class DiskResourceUtilTest {
 
-    @Mock
-    Folder folder1, folder2, folder3;
-    @Mock
-    File file1, file2, file3;
+    @Mock Folder folder1, folder2, folder3;
+    @Mock File file1, file2, file3;
 
     private DiskResourceUtil diskResourceUtil;
 
@@ -40,27 +38,23 @@ public class DiskResourceUtilTest {
 
     }
 
-    @Test
-    public void testParseParent() {
+    @Test public void testParseParent() {
         assertEquals("/home/iplant/ipctest", diskResourceUtil.parseParent("/home/iplant/ipctest/test"));
         assertNull(diskResourceUtil.parseParent(null));
         assertEquals("", diskResourceUtil.parseParent(""));
     }
 
-    @Test
-    public void testParseNameFromPath() {
+    @Test public void testParseNameFromPath() {
         assertNull(diskResourceUtil.parseNameFromPath(null));
         assertEquals("", diskResourceUtil.parseNameFromPath(""));
         assertEquals("test", diskResourceUtil.parseNameFromPath("/home/iplant/ipctest/test"));
     }
 
-    @Test
-    public void testParseNamesFromIdList() {
+    @Test public void testParseNamesFromIdList() {
         assertNull(diskResourceUtil.parseNamesFromIdList(null));
     }
 
-    @Test
-    public void testAppendNameToPath() {
+    @Test public void testAppendNameToPath() {
         assertNull(diskResourceUtil.appendNameToPath(null, null));
         assertNull(diskResourceUtil.appendNameToPath("", null));
         assertNull(diskResourceUtil.appendNameToPath(null, ""));
@@ -68,15 +62,13 @@ public class DiskResourceUtilTest {
         assertEquals("/home/iplant/ipctest/test", diskResourceUtil.appendNameToPath("/home/iplant/ipctest", "test"));
     }
 
-    @Test
-    public void testAsCommaSeperatedNameList() {
-        assertNull(diskResourceUtil.asCommaSeperatedNameList(null));
+    @Test public void testAsCommaSeperatedNameList() {
+        assertNull(diskResourceUtil.asCommaSeparatedNameList(null));
         ArrayList<String> empty = new ArrayList<String>();
-        assertEquals("", diskResourceUtil.asCommaSeperatedNameList(empty));
+        assertEquals("", diskResourceUtil.asCommaSeparatedNameList(empty));
     }
 
-    @Test
-    public void testTreeTab() {
+    @Test public void testTreeTab() {
         Splittable s = createInfoTypeSplittable(InfoType.ACE.toString());
         boolean expected = diskResourceUtil.isTreeTab(s);
         assertFalse(expected);
@@ -102,8 +94,7 @@ public class DiskResourceUtilTest {
         assertFalse(expected);
     }
 
-    @Test
-    public void testGenomeTab() {
+    @Test public void testGenomeTab() {
         Splittable s = createInfoTypeSplittable(InfoType.ACE.toString());
         boolean expected = diskResourceUtil.isGenomeVizTab(s);
         assertFalse(expected);
@@ -114,8 +105,7 @@ public class DiskResourceUtilTest {
 
     }
 
-    @Test
-    public void testEnsemblTab() {
+    @Test public void testEnsemblTab() {
         Splittable s = createInfoTypeSplittable(InfoType.ACE.toString());
         boolean expected = diskResourceUtil.isEnsemblVizTab(s);
         assertFalse(expected);
@@ -133,8 +123,7 @@ public class DiskResourceUtilTest {
         assertTrue(expected);
     }
 
-    @Test
-    public void testExtractFolders() {
+    @Test public void testExtractFolders() {
         List<DiskResource> resources = Arrays.asList(folder1, file1);
         ArrayList<Folder> expected = Lists.newArrayList(diskResourceUtil.extractFolders(resources));
         assertTrue(expected.size() == 1);
@@ -143,8 +132,7 @@ public class DiskResourceUtilTest {
         assertTrue(expected.size() == 0);
     }
 
-    @Test
-    public void testExtractFiles() {
+    @Test public void testExtractFiles() {
         List<DiskResource> resources = Arrays.asList(folder1, file1);
         ArrayList<File> expected = Lists.newArrayList(diskResourceUtil.extractFiles(resources));
         assertTrue(expected.size() == 1);
@@ -153,8 +141,7 @@ public class DiskResourceUtilTest {
         assertTrue(expected.size() == 0);
     }
 
-    @Test
-    public void testFormatFileSize() {
+    @Test public void testFormatFileSize() {
         String expected = diskResourceUtil.formatFileSize(null);
         assertNull(expected);
         expected = diskResourceUtil.formatFileSize("");

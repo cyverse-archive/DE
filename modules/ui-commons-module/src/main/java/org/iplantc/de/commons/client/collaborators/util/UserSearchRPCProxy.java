@@ -17,8 +17,7 @@ import com.sencha.gxt.data.shared.loader.PagingLoadResultBean;
  * @author sriram
  *
  */
-public class UserSearchRPCProxy extends
- RpcProxy<UsersLoadConfig, PagingLoadResult<Collaborator>> {
+public class UserSearchRPCProxy extends RpcProxy<UsersLoadConfig, PagingLoadResult<Collaborator>> {
 
     private final CollaboratorsUtil collaboratorsUtil;
     private String lastQueryText = ""; //$NON-NLS-1$
@@ -45,8 +44,8 @@ public class UserSearchRPCProxy extends
         collaboratorsUtil.search(lastQueryText, new AsyncCallback<Void>() {
             @Override
             public void onSuccess(Void result) {
-                callback.onSuccess(new PagingLoadResultBean<Collaborator>(collaboratorsUtil
-                        .getSearchResutls(), collaboratorsUtil.getSearchResutls().size(), 0));
+                callback.onSuccess(new PagingLoadResultBean<>(collaboratorsUtil
+                        .getSearchResults(), collaboratorsUtil.getSearchResults().size(), 0));
             }
 
             @Override

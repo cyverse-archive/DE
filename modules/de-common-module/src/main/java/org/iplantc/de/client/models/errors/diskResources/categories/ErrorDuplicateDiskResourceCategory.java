@@ -14,6 +14,6 @@ public class ErrorDuplicateDiskResourceCategory {
 
         return ErrorDiskResourceCategory.getErrorMessage(
                 ErrorDiskResourceCategory.getDiskResourceErrorCode(error.getErrorCode()),
-                diskResourceUtil.asCommaSeperatedNameList(error.getPaths()));
+                diskResourceUtil.asCommaSeparatedNameList(error.getPaths()));
     }
 }

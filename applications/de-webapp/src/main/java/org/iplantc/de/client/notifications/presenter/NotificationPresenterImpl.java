@@ -123,7 +123,7 @@ public class NotificationPresenterImpl implements NotificationView.Presenter, No
     private NotificationCategory currentCategory;
     private final JsonUtil jsonUtil;
 
-    public NotificationPresenterImpl(NotificationView view) {
+    public NotificationPresenterImpl(final NotificationView view) {
         this.view = view;
         this.errorStrings = I18N.ERROR;
         this.displayStrings = I18N.DISPLAY;

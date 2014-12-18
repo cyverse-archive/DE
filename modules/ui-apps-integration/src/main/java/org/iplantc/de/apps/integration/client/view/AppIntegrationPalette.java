@@ -56,17 +56,37 @@ public class AppIntegrationPalette extends Composite {
 
     interface AppIntegrationPaletteUiBinder extends UiBinder<Widget, AppIntegrationPalette> {}
 
-    @UiField
-    ToolButton fileFolderCategoryHelpBtn, listsCategoryHelpBtn, textNumericalInputCategoryHelpBtn, outputCategoryHelpBtn, referenceGenomeCategoryHelpBtn;
+    @UiField ToolButton fileFolderCategoryHelpBtn,
+        listsCategoryHelpBtn,
+        textNumericalInputCategoryHelpBtn,
+        outputCategoryHelpBtn,
+        referenceGenomeCategoryHelpBtn;
 
-    @UiField
-    Image flag, environmentVariable, multiFileSelector, fileInput, group, integerInput, treeSelection, singleSelect, multiLineText, text;
+    @UiField Image flag,
+        environmentVariable,
+        multiFileSelector,
+        fileInput,
+        group,
+        integerInput,
+        treeSelection,
+        singleSelect,
+        multiLineText,
+        text;
 
     // Expose group drag source for special case handling in AppsIntegrationViewImpl
     DragSource grpDragSource;
 
-    @UiField
-    Image info, folderInput, integerSelection, doubleSelection, doubleInput, fileOutput, folderOutput, multiFileOutput, referenceGenome, referenceSequence, referenceAnnotation;
+    @UiField Image info,
+        folderInput,
+        integerSelection,
+        doubleSelection,
+        doubleInput,
+        fileOutput,
+        folderOutput,
+        multiFileOutput,
+        referenceGenome,
+        referenceSequence,
+        referenceAnnotation;
 
     private final AppTemplateWizardAppearance appearance;
 

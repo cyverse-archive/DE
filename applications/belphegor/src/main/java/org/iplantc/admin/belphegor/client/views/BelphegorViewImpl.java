@@ -52,17 +52,13 @@ public class BelphegorViewImpl extends Composite implements BelphegorView {
         SafeHtml getTemplate(BelphegorStyle style, SafeUri iplantHome);
     }
 
-    @UiField(provided = true)
-    BelphegorResources res;
-
-    @UiField(provided = true)
-    IplantDisplayStrings strings = I18N.DISPLAY;
-
-    @UiField
-    HtmlLayoutContainer northCon;
-
-    @UiField
-    SimpleContainer appsPanel, refGenomePanel, toolRequestPanel, systemMessagesPanel;
+    @UiField(provided = true) BelphegorResources res;
+    @UiField(provided = true) IplantDisplayStrings strings = I18N.DISPLAY;
+    @UiField HtmlLayoutContainer northCon;
+    @UiField SimpleContainer appsPanel,
+        refGenomePanel,
+        toolRequestPanel,
+        systemMessagesPanel;
 
     private final MyTemplate template = GWT.create(MyTemplate.class);
 

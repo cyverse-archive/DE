@@ -109,8 +109,6 @@ public class DataSearchQueryBuilder {
     /**
      * {"nested":{"path":"userPermissions", "query":{"bool":{"must":[{"term":{"permission":"own"}},
      * {"wildcard":{"user":(some query)}}]}}}}
-     * 
-     * @return
      */
     public DataSearchQueryBuilder ownedBy() {
         String queryContent = dsf.getOwnedBy();
@@ -122,8 +120,6 @@ public class DataSearchQueryBuilder {
 
     /**
      * {"range": {"dateModified": {"gte":(some query),"lte":(some query)}}}
-     * 
-     * @return
      */
     public DataSearchQueryBuilder createdWithin() {
         if ((dsf.getCreatedWithin() != null)) {
@@ -148,8 +144,6 @@ public class DataSearchQueryBuilder {
 
     /**
      * {"wildcard":{"label":(some query)}}
-     * 
-     * @return
      */
     public DataSearchQueryBuilder file() {
         String content = dsf.getFileQuery();
@@ -164,8 +158,6 @@ public class DataSearchQueryBuilder {
 
     /**
      * {"range": {"fileSize": {"gte":(some query),"lte":(some query)}}}
-     * 
-     * @return
      */
     public DataSearchQueryBuilder fileSizeRange() {
         FileSizeRange fileSizeRange = dsf.getFileSizeRange();
@@ -199,9 +191,6 @@ public class DataSearchQueryBuilder {
         return toString();
     }
 
-    /**
-     * @return
-     */
     public DataSearchQueryBuilder metadataAttribute() {
         String content = dsf.getMetadataAttributeQuery();
         if (!Strings.isNullOrEmpty(content)) {
@@ -236,8 +225,6 @@ public class DataSearchQueryBuilder {
 
     /**
      * {"range": {"dateModified": {"gte":(some query),"lte":(some query)}}}
-     * 
-     * @return
      */
     public DataSearchQueryBuilder modifiedWithin() {
         if ((dsf.getModifiedWithin() != null)) {
@@ -261,11 +248,6 @@ public class DataSearchQueryBuilder {
         return this;
     }
 
-    /**
-     * 
-     * 
-     * @return
-     */
     public DataSearchQueryBuilder negatedFile() {
         String content = dsf.getNegatedFileQuery();
         if (!Strings.isNullOrEmpty(content)) {
@@ -312,7 +294,6 @@ public class DataSearchQueryBuilder {
      * \
      * </pre>
      * 
-     * @param searchText
      * @return a string whose space-delimited terms are prepended and appended with "*" if the given
      *         string does not contain *, ?, nor /.
      */
@@ -341,9 +322,6 @@ public class DataSearchQueryBuilder {
 
     /**
      * Join multiple search text using '|'
-     * 
-     * @param searchText
-     * @return
      */
     String applyOROperator(final String searchText) {
         String implicitSearchText = "";

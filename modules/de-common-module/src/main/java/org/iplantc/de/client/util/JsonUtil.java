@@ -54,7 +54,7 @@ public class JsonUtil {
      * @return a string without quotes.
      */
     public String trim(String value) {
-        StringBuilder temp = null;
+        StringBuilder temp;
         if (value != null && !value.isEmpty()) {
             final String QUOTE = "\"";
 
@@ -166,9 +166,6 @@ public class JsonUtil {
     /**
      * Creates a JSON object from a string. If the string parses, but doesn't contain a JSON object, null
      * is returned.
-     * 
-     * @param json
-     * @return
      */
     public JSONObject getObject(final String json) {
         try {
@@ -209,12 +206,6 @@ public class JsonUtil {
         return ret;
     }
 
-    /**
-     * 
-     * @param jsonObj
-     * @param key
-     * @return
-     */
     public JSONObject getObject(final JSONObject jsonObj, final String key) {
         JSONObject ret = null; // assume failure
 
@@ -231,10 +222,6 @@ public class JsonUtil {
 
     /**
      * Returns the JSONObject at a given array index, or null if there is no JSONObject at that index.
-     * 
-     * @param array
-     * @param index
-     * @return
      */
     public JSONObject getObjectAt(JSONArray array, int index) {
         JSONValue element = array.get(index);
@@ -335,7 +322,6 @@ public class JsonUtil {
      * Builds a JSON array from a list of objects. Each object's toString() value is added to the array
      * as a JSON String.
      * 
-     * @param items
      * @return a JSON string array, null if the argument is null
      */
     public JSONArray buildArrayFromStrings(List<?> items) {
@@ -356,7 +342,6 @@ public class JsonUtil {
 
     /**
      * Builds a string List from a JSON array.
-     * @param arr
      * @return a list of strings, null if arr=null
      */
     public List<String> buildStringList(JSONArray arr) {
@@ -400,7 +385,6 @@ public class JsonUtil {
      * Returns a String representation of a JSONValue without adding quotes. Only suitable for simple
      * JSON types, not JSONObjects or JSONArrays.
      * 
-     * @param json
      * @return the JSON value as a string
      */
     public String getRawValueAsString(JSONValue json) {
@@ -419,11 +403,6 @@ public class JsonUtil {
     /**
      * Returns a field value as a boolean. If the key doesn't exist or if there is no boolean value for
      * that key, defaultValue is returned.
-     * 
-     * @param json
-     * @param key
-     * @param defaultValue
-     * @return
      */
     public boolean getBoolean(JSONObject json, String key, boolean defaultValue) {
         if (json == null || key == null) {
@@ -460,7 +439,7 @@ public class JsonUtil {
                 JSONNumber number = val.isNumber();
 
                 if (number != null) {
-                    ret = new Double(number.doubleValue());
+                    ret = number.doubleValue();
                 }
             }
         }
@@ -494,7 +473,6 @@ public class JsonUtil {
      * {@link #prettyPrint(String, String, int)} method with default values.
      * 
      * @param split the splittable whose payload will be pretty printed
-     * @return
      */
     public String prettyPrint(Splittable split){
         return prettyPrint(split.getPayload(), "", 4);
@@ -505,8 +483,6 @@ public class JsonUtil {
      * spaces.
      * 
      * @param split the splittable whose payload will be pretty printed
-     * @param space
-     * @return
      */
     public String prettyPrint(Splittable split, int space) {
         return prettyPrint(split.getPayload(), "", space);
@@ -517,7 +493,6 @@ public class JsonUtil {
      * A native method that calls java script method to pretty print json.
      * 
      * @param json the json to pretty print
-     * @param replacer
      * @param space the char to used for formatting
      * @return the pretty print version of json
      */

@@ -41,7 +41,8 @@ public class IDropLitePresenter implements Presenter {
     private final DiskResourceUtil diskResourceUtil;
     private final JsonUtil jsonUtil;
 
-    public IDropLitePresenter(IDropLiteView view, IDropLiteWindowConfig config) {
+    public IDropLitePresenter(final IDropLiteView view,
+                              final IDropLiteWindowConfig config) {
         this.view = view;
         view.setPresenter(this);
         this.idlwc = config;
@@ -111,7 +112,6 @@ public class IDropLitePresenter implements Presenter {
          * Builds the Html for the idrop-lite applet from the given JSON applet data returned by the
          * service call.
          * 
-         * @param appletData
          * @return Html applet with the given applet params.
          */
         protected abstract HtmlLayoutContainer buildAppletHtml(JSONObject appletData);

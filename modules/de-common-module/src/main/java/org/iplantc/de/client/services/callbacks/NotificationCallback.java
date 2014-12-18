@@ -104,7 +104,7 @@ public abstract class NotificationCallback implements AsyncCallback<String> {
 
     protected List<Notification> getNotifications() {
         if (notifications == null) {
-            return Collections.<Notification> emptyList();
+            return Collections.emptyList();
         } else {
             return notifications;
         }
