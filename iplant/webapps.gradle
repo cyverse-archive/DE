@@ -14,18 +14,6 @@ project(':de') {
         gwt "com.google.gwt.inject:gin:$gwtGinVer"
         gwt "com.google.guava:guava-gwt:$guavaGwtVer"
 
-        gwt project(':ui-commons-module')
-        gwt project(':ui-applications-module')
-        gwt project(':ui-resources-module')
-        gwt project(':confluence-client')
-        gwt project(':ui-disk-resource-module')
-        gwt project(':ui-apps-widgets-module')
-        gwt project(':ui-pipelines-module')
-        gwt project(':ui-apps-integration')
-        gwt project(':analyses-module')
-        gwt project(':de-common-module')
-        gwt project(':file-viewers')
-        gwt project(':notifications')
         gwt project(':de-desktop')
 
         compile "com.sencha.gxt:gxt:$gxtVersion"
@@ -39,18 +27,6 @@ project(':de') {
         compile "org.slf4j:jcl-over-slf4j:$slf4jVersion"
         compile "org.slf4j:log4j-over-slf4j:$slf4jVersion"
 
-        compile project(':ui-commons-module')
-        compile project(':ui-applications-module')
-        compile project(':ui-resources-module')
-        compile project(':confluence-client')
-        compile project(':ui-disk-resource-module')
-        compile project(':ui-apps-widgets-module')
-        compile project(':ui-pipelines-module')
-        compile project(':ui-apps-integration')
-        compile project(':analyses-module')
-        compile project(':de-common-module')
-        compile project(':file-viewers')
-        compile project(':notifications')
         compile project(':de-desktop')
 
         testCompile "com.google.gwt.gwtmockito:gwtmockito:$gwtMockitoVer"
@@ -119,6 +95,7 @@ project(':belphegor') {
         gwt project(':confluence-client')
         gwt project(':ui-disk-resource-module')
         gwt project(':de-common-module')
+        gwt project(':belphegor-desktop')
 
         compile "com.sencha.gxt:gxt:$gxtVersion"
         compile "com.google.gwt.inject:gin:$gwtGinVer"
@@ -137,6 +114,7 @@ project(':belphegor') {
         compile project(':confluence-client')
         compile project(':ui-disk-resource-module')
         compile project(':de-common-module')
+        compile project(':belphegor-desktop')
 
         testCompile "com.google.gwt.gwtmockito:gwtmockito:$gwtMockitoVer"
         testCompile project(':de-common-module').sourceSets.test.output
@@ -153,6 +131,7 @@ project(':belphegor') {
         src += files(project(':ui-disk-resource-module').sourceSets.main.allJava.srcDirs) + files(project(':ui-disk-resource-module').sourceSets.main.output.resourcesDir)
         src += files(project(':de-common-module').sourceSets.main.allJava.srcDirs) + files(project(':de-common-module').sourceSets.main.output.resourcesDir)
         src += files(project(':confluence-client').sourceSets.main.allJava.srcDirs) + files(project(':confluence-client').sourceSets.main.output.resourcesDir)
+        src += files(project(':belphegor-desktop').sourceSets.main.allJava.srcDirs) + files(project(':belphegor-desktop').sourceSets.main.output.resourcesDir)
 
         superDev { noPrecompile = true }
         maxHeapSize = '1024M'

@@ -45,3 +45,6 @@ project(':notifications').projectDir = new File(rootProject.projectDir, notifica
 
 include ':de-desktop'
 project(':de-desktop').projectDir = new File(rootProject.projectDir, deDesktopSubtreePrefix)
+
+include ':belphegor-desktop'
+project(':belphegor-desktop').projectDir = new File(rootProject.projectDir, belphegorDesktopSubtreePrefix)

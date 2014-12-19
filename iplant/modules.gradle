@@ -391,3 +391,46 @@ project(':de-desktop') {
         testCompile project(':de-common-module').sourceSets.test.output
     }
 }
+
+project(':belphegor-desktop') {
+    apply plugin: 'gwt-base'
+
+    gwt {
+        gwtVersion = "$gwtVer"
+    }
+
+    dependencies {
+        gwt "com.sencha.gxt:gxt:$gxtVersion"
+        gwt "com.google.gwt.inject:gin:$gwtGinVer"
+        gwt "com.google.guava:guava-gwt:$guavaGwtVer"
+
+        gwt project(':ui-commons-module')
+        gwt project(':ui-applications-module')
+        gwt project(':ui-resources-module')
+        gwt project(':confluence-client')
+        gwt project(':ui-disk-resource-module')
+        gwt project(':de-common-module')
+
+        compile "com.sencha.gxt:gxt:$gxtVersion"
+        compile "com.google.gwt.inject:gin:$gwtGinVer"
+        compile "com.google.guava:guava-gwt:$guavaGwtVer"
+
+        compile "org.slf4j:slf4j-api:$slf4jVersion"
+        compile "ch.qos.logback:logback-core:$logbackVersion"
+        compile "ch.qos.logback:logback-classic:$logbackVersion"
+
+        compile "org.slf4j:jcl-over-slf4j:$slf4jVersion"
+        compile "org.slf4j:log4j-over-slf4j:$slf4jVersion"
+
+        compile project(':ui-commons-module')
+        compile project(':ui-applications-module')
+        compile project(':ui-resources-module')
+        compile project(':confluence-client')
+        compile project(':ui-disk-resource-module')
+        compile project(':de-common-module')
+
+        testCompile "com.google.gwt.gwtmockito:gwtmockito:$gwtMockitoVer"
+        testCompile project(':de-common-module').sourceSets.test.output
+    }
+}
+

@@ -1,10 +1,11 @@
 package org.iplantc.admin.belphegor.client;
 
-import org.iplantc.admin.belphegor.client.gin.BelphegorAppInjector;
-import org.iplantc.admin.belphegor.client.models.BelphegorAdminProperties;
-import org.iplantc.admin.belphegor.client.views.BelphegorView;
+import org.iplantc.de.admin.desktop.client.gin.BelphegorAppInjector;
+import org.iplantc.de.admin.desktop.client.models.BelphegorAdminProperties;
+import org.iplantc.de.admin.desktop.client.views.BelphegorView;
 import org.iplantc.admin.belphegor.shared.services.BelphegorPropertyService;
 import org.iplantc.admin.belphegor.shared.services.BelphegorPropertyServiceAsync;
+import org.iplantc.de.admin.desktop.client.I18N;
 import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.commons.client.requests.KeepaliveTimer;

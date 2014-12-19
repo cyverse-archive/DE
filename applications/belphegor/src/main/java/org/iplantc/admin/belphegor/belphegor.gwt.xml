@@ -7,15 +7,12 @@
 	<!-- Inherit the core Web Toolkit stuff. -->
 	<inherits name='com.google.gwt.user.theme.standard.Standard' />
 
-	<inherits name="com.google.gwt.editor.Editor" />
 	<inherits name='com.sencha.gxt.ui.GXT' />
 	<stylesheet src="reset.css" />
 	<inherits name='com.sencha.gxt.theme.gray.Gray' />
     <inherits name="com.google.common.collect.Collect"/>
 
-	<inherits name='org.iplantc.de.DiscoveryEnvironmentCommon' />
-	<inherits name="org.iplantc.de.apps.Apps"/>
-	<inherits name="org.iplantc.de.resources.ui-resources"/>
+	<inherits name="org.iplantc.de.admin.desktop.AdminDesktop" />
 
     <inherits name="org.iplantc.admin.belphegor.theme.base.Base"/>
 
