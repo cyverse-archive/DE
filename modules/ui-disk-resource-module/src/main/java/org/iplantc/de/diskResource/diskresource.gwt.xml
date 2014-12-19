@@ -8,6 +8,7 @@
 <module>
     <!-- iPlant module inherits -->
     <inherits name="org.iplantc.de.commons.ui-commons"/>
+    <inherits name="org.iplantc.de.collaborators.Collaborators" />
         <!-- Deferred binding rules -->
     <replace-with class="org.iplantc.de.diskResource.client.views.widgets.DiskResourceViewToolbarImpl">
        <when-type-is class="org.iplantc.de.diskResource.client.views.DiskResourceView.DiskResourceViewToolbar"/>

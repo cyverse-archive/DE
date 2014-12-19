@@ -9,11 +9,10 @@ import org.iplantc.de.client.models.collaborators.Collaborator;
 import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.client.models.diskResources.PermissionValue;
 import org.iplantc.de.client.models.sharing.DataSharing;
-import org.iplantc.de.commons.client.collaborators.events.UserSearchResultSelected;
-import org.iplantc.de.commons.client.collaborators.events.UserSearchResultSelected.USER_SEARCH_EVENT_TAG;
-import org.iplantc.de.commons.client.collaborators.presenter.ManageCollaboratorsPresenter.MODE;
-import org.iplantc.de.commons.client.collaborators.util.UserSearchField;
-import org.iplantc.de.commons.client.collaborators.views.ManageCollaboratorsDialog;
+import org.iplantc.de.collaborators.client.events.UserSearchResultSelected;
+import org.iplantc.de.collaborators.client.util.UserSearchField;
+import org.iplantc.de.collaborators.client.views.ManageCollaboratorsDialog;
+import org.iplantc.de.collaborators.client.views.ManageCollaboratorsView;
 import org.iplantc.de.diskResource.client.sharing.views.DataSharingView.Presenter;
 import org.iplantc.de.resources.client.IplantResources;
 import org.iplantc.de.resources.client.messages.I18N;
@@ -121,7 +120,7 @@ public class DataSharingPermissionsPanel implements IsWidget {
     private void initToolbar() {
         toolbar.setHorizontalSpacing(5);
         addExplainPanel();
-        toolbar.add(new UserSearchField(USER_SEARCH_EVENT_TAG.SHARING).asWidget());
+        toolbar.add(new UserSearchField(UserSearchResultSelected.USER_SEARCH_EVENT_TAG.SHARING).asWidget());
         toolbar.add(new FillToolItem());
         toolbar.add(buildChooseCollabButton());
     }
@@ -133,7 +132,7 @@ public class DataSharingPermissionsPanel implements IsWidget {
 
             @Override
             public void onSelect(SelectEvent event) {
-                final ManageCollaboratorsDialog dialog = new ManageCollaboratorsDialog(MODE.SELECT);
+                final ManageCollaboratorsDialog dialog = new ManageCollaboratorsDialog(ManageCollaboratorsView.MODE.SELECT);
                 dialog.setModal(true);
                 dialog.show();
                 dialog.addOkButtonSelectHandler(new SelectHandler() {

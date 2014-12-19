@@ -34,6 +34,7 @@
     <inherits name="org.iplantc.de.fileViewers.FileViewers"/>
     <inherits name="org.iplantc.de.notifications.Notifications"/>
     <inherits name="org.iplantc.de.systemMessages.SystemMessages"/>
+    <inherits name="org.iplantc.de.collaborators.Collaborators" />
 
     <source path="client"/>
     <source path="shared"/>

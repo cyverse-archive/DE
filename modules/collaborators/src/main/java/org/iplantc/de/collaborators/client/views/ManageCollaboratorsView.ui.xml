@@ -7,7 +7,7 @@
 	xmlns:grid="urn:import:com.sencha.gxt.widget.core.client.grid"
 	xmlns:button="urn:import:com.sencha.gxt.widget.core.client.button"
 	xmlns:toolbar="urn:import:com.sencha.gxt.widget.core.client.toolbar"
-	xmlns:userSearch = "urn:import:org.iplantc.de.commons.client.collaborators.util"
+	xmlns:userSearch = "urn:import:org.iplantc.de.collaborators.client.util"
 	xmlns:form="urn:import:com.sencha.gxt.widget.core.client.form">
 
    <ui:with type="org.iplantc.de.resources.client.IplantResources" field="icons"/>

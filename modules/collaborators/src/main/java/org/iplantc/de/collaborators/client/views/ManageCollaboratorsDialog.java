@@ -1,9 +1,8 @@
-package org.iplantc.de.commons.client.collaborators.views;
+package org.iplantc.de.collaborators.client.views;
 
 import org.iplantc.de.client.models.collaborators.Collaborator;
-import org.iplantc.de.commons.client.collaborators.presenter.ManageCollaboratorsPresenter;
-import org.iplantc.de.commons.client.collaborators.presenter.ManageCollaboratorsPresenter.MODE;
-import org.iplantc.de.commons.client.collaborators.views.ManageCollaboratorsView.Presenter;
+import org.iplantc.de.collaborators.client.presenter.ManageCollaboratorsPresenter;
+import org.iplantc.de.collaborators.client.views.ManageCollaboratorsView.MODE;
 import org.iplantc.de.commons.client.views.gxt3.dialogs.IPlantDialog;
 import org.iplantc.de.resources.client.messages.I18N;
 
@@ -71,7 +70,7 @@ public class ManageCollaboratorsDialog extends IPlantDialog {
 
     private CheckBoxSelectionModel<Collaborator> checkBoxModel;
     private CollaboratorProperties properties;
-    private final Presenter p;
+    private final ManageCollaboratorsView.Presenter p;
 
     public ManageCollaboratorsDialog(MODE mode) {
         super(true);

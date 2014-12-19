@@ -1,11 +1,11 @@
 /**
  * 
  */
-package org.iplantc.de.commons.client.collaborators.util;
+package org.iplantc.de.collaborators.client.util;
 
 import org.iplantc.de.client.models.collaborators.Collaborator;
 import org.iplantc.de.commons.client.ErrorHandler;
-import org.iplantc.de.commons.client.collaborators.util.UserSearchField.UsersLoadConfig;
+import org.iplantc.de.collaborators.client.util.UserSearchField.UsersLoadConfig;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 

@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.iplantc.de.commons.client.collaborators.views;
+package org.iplantc.de.collaborators.client.views;
 
 import org.iplantc.de.client.models.collaborators.Collaborator;
 

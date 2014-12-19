@@ -54,3 +54,6 @@ project(':themes').projectDir = new File(rootProject.projectDir, themesSubtreePr
 
 include ':newToolRequests'
 project(':newToolRequests').projectDir = new File(rootProject.projectDir, newToolRequestsSubtreePrefix)
+
+include ':collaborators'
+project(':collaborators').projectDir = new File(rootProject.projectDir, collaboratorsSubtreePrefix)

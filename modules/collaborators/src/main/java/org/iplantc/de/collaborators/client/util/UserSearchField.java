@@ -1,11 +1,11 @@
 /**
  *
  */
-package org.iplantc.de.commons.client.collaborators.util;
+package org.iplantc.de.collaborators.client.util;
 
 import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.models.collaborators.Collaborator;
-import org.iplantc.de.commons.client.collaborators.events.UserSearchResultSelected;
+import org.iplantc.de.collaborators.client.events.UserSearchResultSelected;
 import org.iplantc.de.resources.client.messages.I18N;
 
 import com.google.gwt.cell.client.AbstractCell;

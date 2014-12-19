@@ -1,6 +1,5 @@
 package org.iplantc.de.desktop.client.presenter;
 
-import static org.iplantc.de.commons.client.collaborators.presenter.ManageCollaboratorsPresenter.MODE.MANAGE;
 import org.iplantc.de.client.DEClientConstants;
 import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.models.DEProperties;
@@ -26,9 +25,10 @@ import org.iplantc.de.client.services.MessageServiceFacade;
 import org.iplantc.de.client.services.UserSessionServiceFacade;
 import org.iplantc.de.client.util.CommonModelUtils;
 import org.iplantc.de.client.util.DiskResourceUtil;
+import org.iplantc.de.collaborators.client.views.ManageCollaboratorsDialog;
+import org.iplantc.de.collaborators.client.views.ManageCollaboratorsView;
 import org.iplantc.de.commons.client.CommonUiConstants;
 import org.iplantc.de.commons.client.ErrorHandler;
-import org.iplantc.de.commons.client.collaborators.views.ManageCollaboratorsDialog;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
 import org.iplantc.de.commons.client.info.SuccessAnnouncementConfig;
 import org.iplantc.de.commons.client.requests.KeepaliveTimer;
@@ -274,7 +274,7 @@ public class DesktopPresenterImpl implements DesktopView.Presenter {
      */
     @Override
     public void onCollaboratorsClick() {
-        new ManageCollaboratorsDialog(MANAGE).show();
+        new ManageCollaboratorsDialog(ManageCollaboratorsView.MODE.MANAGE).show();
     }
 
     @Override

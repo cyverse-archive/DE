@@ -1,10 +1,8 @@
-package org.iplantc.de.commons.client.collaborators.views;
+package org.iplantc.de.collaborators.client.views;
 
 import org.iplantc.de.client.models.collaborators.Collaborator;
-import org.iplantc.de.commons.client.collaborators.events.UserSearchResultSelected.USER_SEARCH_EVENT_TAG;
-import org.iplantc.de.commons.client.collaborators.presenter.ManageCollaboratorsPresenter;
-import org.iplantc.de.commons.client.collaborators.presenter.ManageCollaboratorsPresenter.MODE;
-import org.iplantc.de.commons.client.collaborators.util.UserSearchField;
+import org.iplantc.de.collaborators.client.events.UserSearchResultSelected.USER_SEARCH_EVENT_TAG;
+import org.iplantc.de.collaborators.client.util.UserSearchField;
 import org.iplantc.de.resources.client.messages.I18N;
 
 import com.google.gwt.core.client.GWT;
@@ -72,7 +70,7 @@ public class ManageCollaboratorsViewImpl extends Composite implements ManageColl
 
     private static MyUiBinder uiBinder = GWT.create(MyUiBinder.class);
 
-    private ManageCollaboratorsPresenter.MODE mode;
+    private MODE mode;
 
     @UiTemplate("ManageCollaboratorsView.ui.xml")
     interface MyUiBinder extends UiBinder<Widget, ManageCollaboratorsViewImpl> {
@@ -119,7 +117,7 @@ public class ManageCollaboratorsViewImpl extends Composite implements ManageColl
 
 
     @Override
-    public void setMode(ManageCollaboratorsPresenter.MODE mode) {
+    public void setMode(MODE mode) {
         this.mode = mode;
         switch (mode) {
             case MANAGE:

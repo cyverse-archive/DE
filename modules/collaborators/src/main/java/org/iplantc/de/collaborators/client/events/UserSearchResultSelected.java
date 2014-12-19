@@ -1,7 +1,7 @@
-package org.iplantc.de.commons.client.collaborators.events;
+package org.iplantc.de.collaborators.client.events;
 
 import org.iplantc.de.client.models.collaborators.Collaborator;
-import org.iplantc.de.commons.client.collaborators.events.UserSearchResultSelected.UserSearchResultSelectedEventHandler;
+import org.iplantc.de.collaborators.client.events.UserSearchResultSelected.UserSearchResultSelectedEventHandler;
 
 import com.google.gwt.event.shared.EventHandler;
 import com.google.gwt.event.shared.GwtEvent;

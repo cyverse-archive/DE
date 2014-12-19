@@ -1,7 +1,7 @@
 /**
  *
  */
-package org.iplantc.de.commons.client.collaborators.util;
+package org.iplantc.de.collaborators.client.util;
 
 import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.gin.ServicesInjector;

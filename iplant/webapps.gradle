@@ -56,6 +56,7 @@ project(':de') {
         src += files(project(':de-desktop').sourceSets.main.allJava.srcDirs) + files(project(':de-desktop').sourceSets.main.output.resourcesDir)
         src += files(project(':themes').sourceSets.main.allJava.srcDirs) + files(project(':themes').sourceSets.main.output.resourcesDir)
         src += files(project(':newToolRequests').sourceSets.main.allJava.srcDirs) + files(project(':newToolRequests').sourceSets.main.output.resourcesDir)
+        src += files(project(':collaborators').sourceSets.main.allJava.srcDirs) + files(project(':collaborators').sourceSets.main.output.resourcesDir)
 
         superDev { noPrecompile = true }
         maxHeapSize = '1024M'
@@ -128,6 +129,7 @@ project(':belphegor') {
         src += files(project(':belphegor-desktop').sourceSets.main.allJava.srcDirs) + files(project(':belphegor-desktop').sourceSets.main.output.resourcesDir)
         src += files(project(':themes').sourceSets.main.allJava.srcDirs) + files(project(':themes').sourceSets.main.output.resourcesDir)
         src += files(project(':newToolRequests').sourceSets.main.allJava.srcDirs) + files(project(':newToolRequests').sourceSets.main.output.resourcesDir)
+        src += files(project(':collaborators').sourceSets.main.allJava.srcDirs) + files(project(':collaborators').sourceSets.main.output.resourcesDir)
 
         superDev { noPrecompile = true }
         maxHeapSize = '1024M'

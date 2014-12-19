@@ -156,6 +156,7 @@ project(':ui-disk-resource-module') {
         gwt project(':ui-resources-module')
         gwt project(':de-common-module')
         gwt project(':ui-commons-module')
+        gwt project(':collaborators')
 
         compile "com.sencha.gxt:gxt:$gxtVersion"
         compile "com.google.gwt.inject:gin:$gwtGinVer"
@@ -163,6 +164,7 @@ project(':ui-disk-resource-module') {
         compile project(':ui-resources-module')
         compile project(':de-common-module')
         compile project(':ui-commons-module')
+        compile project(':collaborators')
 
         testCompile "com.google.gwt.gwtmockito:gwtmockito:$gwtMockitoVer"
         testCompile project(':de-common-module').sourceSets.test.output
@@ -364,6 +366,7 @@ project(':de-desktop') {
         gwt project(':de-common-module')
         gwt project(':file-viewers')
         gwt project(':notifications')
+        gwt project(':collaborators')
 
         compile "com.sencha.gxt:gxt:$gxtVersion"
         compile "com.google.gwt.inject:gin:$gwtGinVer"
@@ -388,6 +391,7 @@ project(':de-desktop') {
         compile project(':de-common-module')
         compile project(':file-viewers')
         compile project(':notifications')
+        compile project(':collaborators')
 
         testCompile "com.google.gwt.gwtmockito:gwtmockito:$gwtMockitoVer"
         testCompile project(':de-common-module').sourceSets.test.output
@@ -487,8 +491,19 @@ project(':newToolRequests') {
     dependencies {
         gwt project(':ui-disk-resource-module')
         compile project(':ui-disk-resource-module')
+    }
+}
 
+project(':collaborators') {
+    apply plugin: 'gwt-base'
 
+    gwt {
+        gwtVersion = "$gwtVer"
+    }
+
+    dependencies {
+        gwt project(':ui-commons-module')
+        compile project(':ui-commons-module')
     }
 }
 
