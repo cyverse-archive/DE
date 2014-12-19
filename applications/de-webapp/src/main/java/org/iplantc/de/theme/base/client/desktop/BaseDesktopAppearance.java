@@ -1,6 +1,6 @@
 package org.iplantc.de.theme.base.client.desktop;
 
-import org.iplantc.de.client.desktop.DesktopView.DesktopAppearance;
+import org.iplantc.de.desktop.client.DesktopView;
 
 import static com.google.gwt.resources.client.ImageResource.ImageOptions;
 import static com.google.gwt.resources.client.ImageResource.RepeatStyle.Both;
@@ -11,7 +11,7 @@ import com.google.gwt.resources.client.ImageResource;
 
 import com.sencha.gxt.widget.core.client.button.IconButton.IconConfig;
 
-public class BaseDesktopAppearance implements DesktopAppearance {
+public class BaseDesktopAppearance implements DesktopView.DesktopAppearance {
 
     public interface DesktopResources extends ClientBundle {
         @Source("analyses.png")

@@ -42,16 +42,7 @@
     <extend-property name="user.agent.os" values="unknown"/>
 
     <!-- Common Service Interfaces -->
-    <inherits name='org.iplantc.de.DiscoveryEnvironmentCommon'/>
-    <inherits name="org.iplantc.de.apps.Apps"/>
-    <inherits name="org.iplantc.de.apps.widgets.Widgets"/>
-    <inherits name="org.iplantc.de.apps.integration.AppsIntegration"/>
-    <inherits name="org.iplantc.de.diskResource.diskresource"/>
-    <inherits name="org.iplantc.de.pipelines.pipelines"/>
-    <inherits name="org.iplantc.de.analysis.Analysis"/>
-    <inherits name="org.iplantc.de.fileViewers.FileViewers" />
-    <inherits name="org.iplantc.de.notifications.Notifications"/>
-    <inherits name="org.iplantc.de.systemMessages.SystemMessages"/>
+    <inherits name="org.iplantc.de.desktop.Desktop"/>
 
     <!-- iPlant Theme -->
     <inherits name="org.iplantc.de.theme.base.Base" />

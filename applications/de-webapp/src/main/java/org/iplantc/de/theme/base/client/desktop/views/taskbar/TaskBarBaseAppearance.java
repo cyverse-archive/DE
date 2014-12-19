@@ -1,6 +1,6 @@
 package org.iplantc.de.theme.base.client.desktop.views.taskbar;
 
-import org.iplantc.de.client.desktop.views.widgets.TaskBar;
+import org.iplantc.de.desktop.client.views.widgets.TaskBar;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.resources.client.ClientBundle;

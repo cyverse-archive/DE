@@ -42,3 +42,6 @@ project(':file-viewers').projectDir = new File(rootProject.projectDir, fileViewe
 
 include ':notifications'
 project(':notifications').projectDir = new File(rootProject.projectDir, notificationsSubtreePrefix)
+
+include ':de-desktop'
+project(':de-desktop').projectDir = new File(rootProject.projectDir, deDesktopSubtreePrefix)

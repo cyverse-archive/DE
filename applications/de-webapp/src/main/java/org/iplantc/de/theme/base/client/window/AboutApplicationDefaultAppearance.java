@@ -1,7 +1,7 @@
 package org.iplantc.de.theme.base.client.window;
 
 import org.iplantc.de.client.models.AboutApplicationData;
-import org.iplantc.de.client.windows.AboutApplicationWindow;
+import org.iplantc.de.desktop.client.views.windows.AboutApplicationWindow;
 import org.iplantc.de.resources.client.messages.I18N;
 
 import com.google.common.base.Strings;

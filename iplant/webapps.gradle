@@ -26,6 +26,7 @@ project(':de') {
         gwt project(':de-common-module')
         gwt project(':file-viewers')
         gwt project(':notifications')
+        gwt project(':de-desktop')
 
         compile "com.sencha.gxt:gxt:$gxtVersion"
         compile "com.google.gwt.inject:gin:$gwtGinVer"
@@ -50,6 +51,7 @@ project(':de') {
         compile project(':de-common-module')
         compile project(':file-viewers')
         compile project(':notifications')
+        compile project(':de-desktop')
 
         testCompile "com.google.gwt.gwtmockito:gwtmockito:$gwtMockitoVer"
         testCompile project(':de-common-module').sourceSets.test.output
@@ -73,6 +75,7 @@ project(':de') {
         src += files(project(':file-viewers').sourceSets.main.allJava.srcDirs) + files(project(':file-viewers').sourceSets.main.output.resourcesDir)
         src += files(project(':de-common-module').sourceSets.main.allJava.srcDirs) + files(project(':de-common-module').sourceSets.main.output.resourcesDir)
         src += files(project(':notifications').sourceSets.main.allJava.srcDirs) + files(project(':notifications').sourceSets.main.output.resourcesDir)
+        src += files(project(':de-desktop').sourceSets.main.allJava.srcDirs) + files(project(':de-desktop').sourceSets.main.output.resourcesDir)
 
         superDev { noPrecompile = true }
         maxHeapSize = '1024M'

@@ -1,7 +1,7 @@
 package org.iplantc.de.theme.base.client.desktop.views;
 
 import org.iplantc.de.client.models.notifications.NotificationMessage;
-import org.iplantc.de.client.desktop.views.widgets.UnseenNotificationsView;
+import org.iplantc.de.desktop.client.views.widgets.UnseenNotificationsView;
 
 import com.google.gwt.cell.client.Cell;
 import com.google.gwt.core.client.GWT;

@@ -1,7 +1,7 @@
 package org.iplantc.de.client;
 
-import org.iplantc.de.client.desktop.DesktopView;
 import org.iplantc.de.client.gin.DEInjector;
+import org.iplantc.de.desktop.client.DesktopView;
 import org.iplantc.de.resources.client.messages.I18N;
 
 import com.google.gwt.core.client.EntryPoint;

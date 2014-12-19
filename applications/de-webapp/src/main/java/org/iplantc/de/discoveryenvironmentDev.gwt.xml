@@ -21,6 +21,6 @@
     <!-- Turn on CssResource pretty printing -->
     <set-configuration-property name="CssResource.style" value="pretty"/>
     <replace-with class="org.iplantc.de.theme.base.client.window.AboutApplicationDevAppearance">
-        <when-type-is class="org.iplantc.de.client.windows.AboutApplicationWindow.AboutApplicationAppearance" />
+        <when-type-is class="org.iplantc.de.desktop.client.views.windows.AboutApplicationWindow.AboutApplicationAppearance" />
     </replace-with>
 </module>
