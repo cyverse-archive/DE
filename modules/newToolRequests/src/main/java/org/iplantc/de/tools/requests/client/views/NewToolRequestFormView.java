@@ -1,6 +1,5 @@
-package org.iplantc.de.apps.client.views;
+package org.iplantc.de.tools.requests.client.views;
 
-import org.iplantc.de.apps.client.presenter.NewToolRequestFormPresenterImpl.SELECTION_MODE;
 import org.iplantc.de.client.models.toolRequests.Architecture;
 import org.iplantc.de.client.models.toolRequests.YesNoMaybe;
 import org.iplantc.de.diskResource.client.views.widgets.FileSelectorField;
@@ -55,6 +54,10 @@ public interface NewToolRequestFormView extends IsWidget {
         void onTestDataSelectionModeChange();
 
         void onOtherDataSeelctionModeChange();
+    }
+
+    enum SELECTION_MODE {
+        UPLOAD, LINK, SELECT
     }
 
     void setPresenter(Presenter p);

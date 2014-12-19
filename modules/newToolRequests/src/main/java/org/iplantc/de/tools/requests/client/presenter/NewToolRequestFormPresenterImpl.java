@@ -1,11 +1,8 @@
 /**
  * 
  */
-package org.iplantc.de.apps.client.presenter;
+package org.iplantc.de.tools.requests.client.presenter;
 
-import org.iplantc.de.apps.client.views.NewToolRequestFormView;
-import org.iplantc.de.apps.client.views.NewToolRequestFormView.Presenter;
-import org.iplantc.de.apps.client.views.Uploader;
 import org.iplantc.de.client.gin.ServicesInjector;
 import org.iplantc.de.client.models.HasPaths;
 import org.iplantc.de.client.models.UserInfo;
@@ -19,6 +16,9 @@ import org.iplantc.de.client.services.DiskResourceServiceFacade;
 import org.iplantc.de.client.services.ToolRequestServiceFacade;
 import org.iplantc.de.client.util.DiskResourceUtil;
 import org.iplantc.de.resources.client.messages.I18N;
+import org.iplantc.de.tools.requests.client.views.NewToolRequestFormView;
+import org.iplantc.de.tools.requests.client.views.NewToolRequestFormView.Presenter;
+import org.iplantc.de.tools.requests.client.views.Uploader;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
@@ -48,13 +48,9 @@ public class NewToolRequestFormPresenterImpl implements Presenter {
 
     private final NewToolRequestFormView view;
     private final Command callback;
-    private SELECTION_MODE toolSelectionMode;
-    private SELECTION_MODE testDataSelectionMode;
-    private SELECTION_MODE otherDataSelectionMode;
-    
-    public static enum SELECTION_MODE {
-        UPLOAD, LINK, SELECT;
-    }
+    private NewToolRequestFormView.SELECTION_MODE toolSelectionMode;
+    private NewToolRequestFormView.SELECTION_MODE testDataSelectionMode;
+    private NewToolRequestFormView.SELECTION_MODE otherDataSelectionMode;
 
     @Inject DiskResourceUtil diskResourceUtil;
 
@@ -64,9 +60,9 @@ public class NewToolRequestFormPresenterImpl implements Presenter {
         this.view = view;
         this.callback = callbackCmd;
         view.setPresenter(this);
-        setToolMode(SELECTION_MODE.UPLOAD);
-        setTestDataMode(SELECTION_MODE.UPLOAD);
-        setOtherDataMode(SELECTION_MODE.UPLOAD);
+        setToolMode(NewToolRequestFormView.SELECTION_MODE.UPLOAD);
+        setTestDataMode(NewToolRequestFormView.SELECTION_MODE.UPLOAD);
+        setOtherDataMode(NewToolRequestFormView.SELECTION_MODE.UPLOAD);
     }
 
     /* (non-Javadoc)
@@ -99,18 +95,18 @@ public class NewToolRequestFormPresenterImpl implements Presenter {
     }
     
     @Override
-    public void setToolMode(SELECTION_MODE mode) {
+    public void setToolMode(NewToolRequestFormView.SELECTION_MODE mode) {
         toolSelectionMode = mode;
     }
     
     
     @Override
-    public void setTestDataMode(SELECTION_MODE mode) {
+    public void setTestDataMode(NewToolRequestFormView.SELECTION_MODE mode) {
        testDataSelectionMode = mode;
     }
     
     @Override
-    public void setOtherDataMode(SELECTION_MODE mode) {
+    public void setOtherDataMode(NewToolRequestFormView.SELECTION_MODE mode) {
         otherDataSelectionMode = mode;
     }
     
@@ -233,32 +229,32 @@ public class NewToolRequestFormPresenterImpl implements Presenter {
             return false;
         }
         
-        if(toolSelectionMode.equals(SELECTION_MODE.UPLOAD)) {
-            if(testDataSelectionMode.equals(SELECTION_MODE.UPLOAD)) {
+        if(toolSelectionMode.equals(NewToolRequestFormView.SELECTION_MODE.UPLOAD)) {
+            if(testDataSelectionMode.equals(NewToolRequestFormView.SELECTION_MODE.UPLOAD)) {
                 valid = !areUploadsSame(view.getToolBinaryUploader(), view.getTestDataUploader()) && valid;
             }
             
-            if(otherDataSelectionMode.equals(SELECTION_MODE.UPLOAD)) {
+            if(otherDataSelectionMode.equals(NewToolRequestFormView.SELECTION_MODE.UPLOAD)) {
                 valid = !areUploadsSame(view.getToolBinaryUploader(), view.getOtherDataUploader()) && valid;
             }
         }
       
-        if(testDataSelectionMode.equals(SELECTION_MODE.UPLOAD)) {
-            if(toolSelectionMode.equals(SELECTION_MODE.UPLOAD)) {
+        if(testDataSelectionMode.equals(NewToolRequestFormView.SELECTION_MODE.UPLOAD)) {
+            if(toolSelectionMode.equals(NewToolRequestFormView.SELECTION_MODE.UPLOAD)) {
                 valid = !areUploadsSame(view.getToolBinaryUploader(), view.getTestDataUploader()) && valid;
             }
             
-            if(otherDataSelectionMode.equals(SELECTION_MODE.UPLOAD)) {
+            if(otherDataSelectionMode.equals(NewToolRequestFormView.SELECTION_MODE.UPLOAD)) {
                 valid = !areUploadsSame(view.getTestDataUploader(), view.getOtherDataUploader()) && valid;
             }
         }
         
-        if(otherDataSelectionMode.equals(SELECTION_MODE.UPLOAD)) {
-            if(toolSelectionMode.equals(SELECTION_MODE.UPLOAD)) {
+        if(otherDataSelectionMode.equals(NewToolRequestFormView.SELECTION_MODE.UPLOAD)) {
+            if(toolSelectionMode.equals(NewToolRequestFormView.SELECTION_MODE.UPLOAD)) {
                 valid = !areUploadsSame(view.getToolBinaryUploader(), view.getOtherDataUploader()) && valid;
             }
             
-            if(testDataSelectionMode.equals(SELECTION_MODE.UPLOAD)) {
+            if(testDataSelectionMode.equals(NewToolRequestFormView.SELECTION_MODE.UPLOAD)) {
                 valid = !areUploadsSame(view.getTestDataUploader(), view.getOtherDataUploader()) && valid;
             }
         }
@@ -296,11 +292,11 @@ public class NewToolRequestFormPresenterImpl implements Presenter {
         req.setName(view.getNameField().getValue());
         req.setDescription(view.getDescriptionField().getValue());
         req.setAttribution(view.getAttributionField().getValue());
-        if (toolSelectionMode.equals(SELECTION_MODE.UPLOAD)) {
+        if (toolSelectionMode.equals(NewToolRequestFormView.SELECTION_MODE.UPLOAD)) {
             req.setSourceFile(makeDestinationPath(getToolBinaryName()));
-        } else if(toolSelectionMode.equals(SELECTION_MODE.LINK)) {
+        } else if(toolSelectionMode.equals(NewToolRequestFormView.SELECTION_MODE.LINK)) {
             req.setSourceURL(view.getSourceURLField().getValue());
-        } else if (toolSelectionMode.equals(SELECTION_MODE.SELECT)) {
+        } else if (toolSelectionMode.equals(NewToolRequestFormView.SELECTION_MODE.SELECT)) {
             req.setSourceFile(view.getBinSelectField().getValue().getPath());
         }
         req.setDocURL(view.getDocURLField().getValue());
@@ -309,15 +305,15 @@ public class NewToolRequestFormPresenterImpl implements Presenter {
         if (view.getMultithreadedField().getValue() != YesNoMaybe.MAYBE) {
             req.setMultithreaded(Boolean.parseBoolean(view.getMultithreadedField().getValue().toString()));
         }
-        if(testDataSelectionMode.equals(SELECTION_MODE.UPLOAD)) {
+        if(testDataSelectionMode.equals(NewToolRequestFormView.SELECTION_MODE.UPLOAD)) {
             req.setTestDataFile(makeDestinationPath(getTestDataName()));
-        } else if(testDataSelectionMode.equals(SELECTION_MODE.SELECT)) {
+        } else if(testDataSelectionMode.equals(NewToolRequestFormView.SELECTION_MODE.SELECT)) {
             req.setTestDataFile(view.getTestDataSelectField().getValue().getPath());
         }
         req.setInstructions(view.getInstructionsField().getValue());
-        if (otherDataSelectionMode.equals(SELECTION_MODE.UPLOAD) && !view.getOtherDataUploader().getValue().isEmpty()) {
+        if (otherDataSelectionMode.equals(NewToolRequestFormView.SELECTION_MODE.UPLOAD) && !view.getOtherDataUploader().getValue().isEmpty()) {
             req.setAdditionalDataFile(makeDestinationPath(getOtherDataName()));
-        } else if (otherDataSelectionMode.equals(SELECTION_MODE.SELECT) && !(view.getOtherDataSelectField().getValue() == null)) {
+        } else if (otherDataSelectionMode.equals(NewToolRequestFormView.SELECTION_MODE.SELECT) && !(view.getOtherDataSelectField().getValue() == null)) {
             req.setAdditionalDataFile(view.getOtherDataSelectField().getValue().getPath());
         }    
         req.setAdditionaInfo(view.getAdditionalInfoField().getValue());
@@ -348,13 +344,13 @@ public class NewToolRequestFormPresenterImpl implements Presenter {
 
     private List<Uploader> getUploadersToSubmit() {
         final List<Uploader> uploaders = Lists.newArrayList();
-        if (toolSelectionMode.equals(SELECTION_MODE.UPLOAD)) {
+        if (toolSelectionMode.equals(NewToolRequestFormView.SELECTION_MODE.UPLOAD)) {
             uploaders.add(view.getToolBinaryUploader());
         }
-        if(testDataSelectionMode.equals(SELECTION_MODE.UPLOAD)) {
+        if(testDataSelectionMode.equals(NewToolRequestFormView.SELECTION_MODE.UPLOAD)) {
             uploaders.add(view.getTestDataUploader());
         }
-        if (otherDataSelectionMode.equals(SELECTION_MODE.UPLOAD) && !view.getOtherDataUploader().getValue().isEmpty()) {
+        if (otherDataSelectionMode.equals(NewToolRequestFormView.SELECTION_MODE.UPLOAD) && !view.getOtherDataUploader().getValue().isEmpty()) {
             uploaders.add(view.getOtherDataUploader());
         }
         return uploaders;

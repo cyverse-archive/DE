@@ -1,6 +1,6 @@
-package org.iplantc.de.apps.client.gin.factory;
+package org.iplantc.de.tools.requests.client.gin.factory;
 
-import org.iplantc.de.apps.client.views.NewToolRequestFormView;
+import org.iplantc.de.tools.requests.client.views.NewToolRequestFormView;
 
 import com.google.gwt.user.client.Command;
 

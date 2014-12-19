@@ -1,4 +1,4 @@
-package org.iplantc.de.apps.client.views;
+package org.iplantc.de.tools.requests.client.views;
 
 import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.commons.client.widgets.IPCFileUploadField;

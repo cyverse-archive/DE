@@ -1,4 +1,4 @@
-package org.iplantc.de.apps.client.views;
+package org.iplantc.de.tools.requests.client.views;
 
 import com.sencha.gxt.widget.core.client.event.SubmitCompleteEvent.HasSubmitCompleteHandlers;
 import com.sencha.gxt.widget.core.client.form.IsField;

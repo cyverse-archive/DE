@@ -16,7 +16,7 @@ import org.iplantc.de.apps.client.views.AppsView;
 import org.iplantc.de.apps.client.views.SubmitAppForPublicUseView;
 import org.iplantc.de.apps.client.views.cells.AppFavoriteCell;
 import org.iplantc.de.apps.client.views.dialogs.AppCommentDialog;
-import org.iplantc.de.apps.client.views.dialogs.NewToolRequestDialog;
+import org.iplantc.de.tools.requests.client.views.dialogs.NewToolRequestDialog;
 import org.iplantc.de.apps.client.views.dialogs.SubmitAppForPublicDialog;
 import org.iplantc.de.apps.client.views.widgets.events.AppSearchResultLoadEvent;
 import org.iplantc.de.client.events.EventBus;

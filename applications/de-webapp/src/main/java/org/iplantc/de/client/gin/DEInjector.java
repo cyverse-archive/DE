@@ -8,6 +8,7 @@ import org.iplantc.de.desktop.client.DesktopView;
 import org.iplantc.de.desktop.client.gin.DEGinModule;
 import org.iplantc.de.diskResource.client.gin.DiskResourceGinModule;
 import org.iplantc.de.fileViewers.client.gin.FileViewerGinModule;
+import org.iplantc.de.tools.requests.client.gin.ToolRequestGinModule;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.inject.client.GinModules;
@@ -15,12 +16,13 @@ import com.google.gwt.inject.client.Ginjector;
 
 /**
  * Discovery Environment GinJector
- * Created by jstroot on 4/9/14.
+ * @author jstroot
  */
 @GinModules({DEGinModule.class,
                 AnalysisGinModule.class,
                 AppLaunchGinModule.class,
                 AppsGinModule.class,
+                ToolRequestGinModule.class,
                 AppEditorGinModule.class,
                 DiskResourceGinModule.class,
                 FileViewerGinModule.class})

@@ -1,16 +1,16 @@
 /**
  *
  */
-package org.iplantc.de.apps.client.views.dialogs;
+package org.iplantc.de.tools.requests.client.views.dialogs;
 
-import org.iplantc.de.apps.client.gin.factory.NewToolRequestFormPresenterFactory;
-import org.iplantc.de.apps.client.gin.factory.NewToolRequestFormViewFactory;
-import org.iplantc.de.apps.client.views.NewToolRequestFormView;
-import org.iplantc.de.apps.client.views.NewToolRequestFormView.Presenter;
 import org.iplantc.de.client.models.toolRequests.Architecture;
 import org.iplantc.de.client.models.toolRequests.YesNoMaybe;
 import org.iplantc.de.commons.client.views.gxt3.dialogs.IPlantDialog;
 import org.iplantc.de.resources.client.messages.I18N;
+import org.iplantc.de.tools.requests.client.gin.factory.NewToolRequestFormPresenterFactory;
+import org.iplantc.de.tools.requests.client.gin.factory.NewToolRequestFormViewFactory;
+import org.iplantc.de.tools.requests.client.views.NewToolRequestFormView;
+import org.iplantc.de.tools.requests.client.views.NewToolRequestFormView.Presenter;
 
 import com.google.gwt.user.client.Command;
 import com.google.inject.Inject;

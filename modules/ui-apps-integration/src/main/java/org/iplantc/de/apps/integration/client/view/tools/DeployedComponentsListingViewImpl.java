@@ -3,7 +3,7 @@
  */
 package org.iplantc.de.apps.integration.client.view.tools;
 
-import org.iplantc.de.apps.client.views.dialogs.NewToolRequestDialog;
+import org.iplantc.de.tools.requests.client.views.dialogs.NewToolRequestDialog;
 import org.iplantc.de.apps.integration.client.view.deployedComponents.cells.DCNameHyperlinkCell;
 import org.iplantc.de.apps.integration.client.view.deployedComponents.proxy.ToolSearchRPCProxy;
 import org.iplantc.de.apps.integration.shared.AppIntegrationModule;

@@ -41,6 +41,7 @@
     <inherits name="org.iplantc.de.theme.base.Desktop" />
     <inherits name="org.iplantc.de.theme.base.FileViewers" />
     <inherits name="org.iplantc.de.theme.base.DiskResource" />
+    <inherits name="org.iplantc.de.tools.requests.ToolRequests"/>
 
 
     <replace-with class="org.iplantc.de.client.desktop.theme.shortcut.ShortcutCellDefaultAppearance">

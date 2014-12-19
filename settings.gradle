@@ -51,3 +51,6 @@ project(':belphegor-desktop').projectDir = new File(rootProject.projectDir, belp
 
 include ':themes'
 project(':themes').projectDir = new File(rootProject.projectDir, themesSubtreePrefix)
+
+include ':newToolRequests'
+project(':newToolRequests').projectDir = new File(rootProject.projectDir, newToolRequestsSubtreePrefix)

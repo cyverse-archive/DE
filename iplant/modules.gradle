@@ -229,6 +229,7 @@ project(':ui-applications-module') {
         gwt project(':ui-disk-resource-module')
         gwt project(':de-common-module')
         gwt project(':ui-commons-module')
+        gwt project(':newToolRequests')
 
         compile "com.google.gwt.inject:gin:$gwtGinVer"
         compile "com.sencha.gxt:gxt:$gxtVersion"
@@ -237,6 +238,7 @@ project(':ui-applications-module') {
         compile project(':ui-disk-resource-module')
         compile project(':de-common-module')
         compile project(':ui-commons-module')
+        compile project(':newToolRequests')
 
         testCompile "com.google.gwt.gwtmockito:gwtmockito:$gwtMockitoVer"
         testCompile project(':de-common-module').sourceSets.test.output
@@ -435,7 +437,7 @@ project(':belphegor-desktop') {
 }
 
 project(':themes'){
-     apply plugin: 'gwt-base'
+    apply plugin: 'gwt-base'
 
     gwt {
         gwtVersion = "$gwtVer"
@@ -474,3 +476,19 @@ project(':themes'){
 
     }
 }
+
+project(':newToolRequests') {
+    apply plugin: 'gwt-base'
+
+    gwt {
+        gwtVersion = "$gwtVer"
+    }
+
+    dependencies {
+        gwt project(':ui-disk-resource-module')
+        compile project(':ui-disk-resource-module')
+
+
+    }
+}
+

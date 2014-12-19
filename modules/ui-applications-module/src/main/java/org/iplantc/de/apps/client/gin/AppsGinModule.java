@@ -1,20 +1,14 @@
 package org.iplantc.de.apps.client.gin;
 
-import org.iplantc.de.apps.client.gin.factory.NewToolRequestFormPresenterFactory;
-import org.iplantc.de.apps.client.gin.factory.NewToolRequestFormViewFactory;
 import org.iplantc.de.apps.client.presenter.AppsViewPresenterImpl;
-import org.iplantc.de.apps.client.presenter.NewToolRequestFormPresenterImpl;
 import org.iplantc.de.apps.client.presenter.SubmitAppForPublicPresenter;
 import org.iplantc.de.apps.client.views.AppsView;
-import org.iplantc.de.apps.client.views.NewToolRequestFormView;
-import org.iplantc.de.apps.client.views.NewToolRequestFormViewImpl;
 import org.iplantc.de.apps.client.views.SubmitAppForPublicUseView;
 import org.iplantc.de.apps.client.views.SubmitAppForPublicUseViewImpl;
 import org.iplantc.de.apps.client.views.widgets.AppsViewToolbarImpl;
 import org.iplantc.de.client.models.apps.AppCategory;
 
 import com.google.gwt.inject.client.AbstractGinModule;
-import com.google.gwt.inject.client.assistedinject.GinFactoryModuleBuilder;
 import com.google.inject.TypeLiteral;
 
 import com.sencha.gxt.data.shared.TreeStore;
@@ -36,13 +30,7 @@ public class AppsGinModule extends AbstractGinModule {
         bind(AppsView.ViewMenu.class).to(AppsViewToolbarImpl.class);
         bind(SubmitAppForPublicUseView.class).to(SubmitAppForPublicUseViewImpl.class);
         bind(SubmitAppForPublicUseView.Presenter.class).to(SubmitAppForPublicPresenter.class);
-        install(new GinFactoryModuleBuilder()
-                    .implement(NewToolRequestFormView.class, NewToolRequestFormViewImpl.class)
-                    .build(NewToolRequestFormViewFactory.class));
 
-        install(new GinFactoryModuleBuilder()
-                    .implement(NewToolRequestFormView.Presenter.class, NewToolRequestFormPresenterImpl.class)
-                    .build(NewToolRequestFormPresenterFactory.class));
     }
 
 }
