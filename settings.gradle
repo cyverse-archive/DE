@@ -48,3 +48,6 @@ project(':de-desktop').projectDir = new File(rootProject.projectDir, deDesktopSu
 
 include ':belphegor-desktop'
 project(':belphegor-desktop').projectDir = new File(rootProject.projectDir, belphegorDesktopSubtreePrefix)
+
+include ':themes'
+project(':themes').projectDir = new File(rootProject.projectDir, themesSubtreePrefix)

@@ -1,11 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!--
-  When updating your version of GWT, you should also update this DTD reference,
-  so that your app can take advantage of the latest GWT module capabilities.
--->
-<!DOCTYPE module PUBLIC "-//Google Inc.//DTD Google Web Toolkit 2.5.0//EN"
-  "http://google-web-toolkit.googlecode.com/svn/tags/2.5.0/distro-source/core/src/gwt-module.dtd">
-<module rename-to='discoveryenvironment'>
+<module rename-to="discoveryenvironment">
     <inherits name="org.iplantc.de.discoveryenvironment" />
 
     <!-- Super Dev Mode -->
@@ -20,7 +13,7 @@
 
     <!-- Turn on CssResource pretty printing -->
     <set-configuration-property name="CssResource.style" value="pretty"/>
-    <replace-with class="org.iplantc.de.theme.base.client.window.AboutApplicationDevAppearance">
+    <replace-with class="org.iplantc.de.theme.base.client.desktop.window.AboutApplicationDevAppearance">
         <when-type-is class="org.iplantc.de.desktop.client.views.windows.AboutApplicationWindow.AboutApplicationAppearance" />
     </replace-with>
 </module>

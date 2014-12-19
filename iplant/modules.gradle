@@ -434,3 +434,43 @@ project(':belphegor-desktop') {
     }
 }
 
+project(':themes'){
+     apply plugin: 'gwt-base'
+
+    gwt {
+        gwtVersion = "$gwtVer"
+    }
+
+    dependencies {
+        gwt project(':ui-commons-module')
+        gwt project(':ui-applications-module')
+        gwt project(':ui-resources-module')
+        gwt project(':confluence-client')
+        gwt project(':ui-disk-resource-module')
+        gwt project(':ui-apps-widgets-module')
+        gwt project(':ui-pipelines-module')
+        gwt project(':ui-apps-integration')
+        gwt project(':analyses-module')
+        gwt project(':de-common-module')
+        gwt project(':file-viewers')
+        gwt project(':notifications')
+        gwt project(':de-desktop')
+        gwt project(':belphegor-desktop')
+
+        compile project(':ui-commons-module')
+        compile project(':ui-applications-module')
+        compile project(':ui-resources-module')
+        compile project(':confluence-client')
+        compile project(':ui-disk-resource-module')
+        compile project(':ui-apps-widgets-module')
+        compile project(':ui-pipelines-module')
+        compile project(':ui-apps-integration')
+        compile project(':analyses-module')
+        compile project(':de-common-module')
+        compile project(':file-viewers')
+        compile project(':notifications')
+        compile project(':de-desktop')
+        compile project(':belphegor-desktop')
+
+    }
+}
