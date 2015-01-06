@@ -107,6 +107,7 @@ public interface App extends HasId, HasName, HasDescription {
 
     void setOutputs(List<AppFileParameters> outputs);
 
+    @PropertyName("categories")
     List<AppCategory> getGroups();
 
     @PropertyName("suggested_groups")
