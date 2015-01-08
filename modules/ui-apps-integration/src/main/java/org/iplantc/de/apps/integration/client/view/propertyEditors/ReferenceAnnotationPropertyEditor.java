@@ -11,8 +11,9 @@ import org.iplantc.de.client.models.apps.integration.Argument;
 import org.iplantc.de.client.models.apps.refGenome.ReferenceGenome;
 import org.iplantc.de.client.services.AppMetadataServiceFacade;
 import org.iplantc.de.commons.client.validators.CmdLineArgCharacterValidator;
-import org.iplantc.de.resources.client.messages.I18N;
+import org.iplantc.de.resources.client.constants.IplantValidationConstants;
 import org.iplantc.de.resources.client.uiapps.widgets.AppsWidgetsContextualHelpMessages;
+import org.iplantc.de.resources.client.uiapps.widgets.AppsWidgetsDisplayMessages;
 import org.iplantc.de.resources.client.uiapps.widgets.AppsWidgetsPropertyPanelLabels;
 import org.iplantc.de.resources.client.uiapps.widgets.argumentTypes.ReferenceSelectorLabels;
 
@@ -32,6 +33,9 @@ import com.sencha.gxt.widget.core.client.form.ComboBox;
 import com.sencha.gxt.widget.core.client.form.FieldLabel;
 import com.sencha.gxt.widget.core.client.form.TextField;
 
+/**
+ * @author jstroot
+ */
 public class ReferenceAnnotationPropertyEditor extends AbstractArgumentPropertyEditor {
 
     interface EditorDriver extends SimpleBeanEditorDriver<Argument, ReferenceAnnotationPropertyEditor> {
@@ -40,46 +44,38 @@ public class ReferenceAnnotationPropertyEditor extends AbstractArgumentPropertyE
     interface ReferenceAnnotationPropertyEditorUiBinder extends UiBinder<Widget, ReferenceAnnotationPropertyEditor> {
     }
 
-    @UiField(provided = true)
-    AppsWidgetsPropertyPanelLabels appLabels;
-    @UiField
-    @Path("name")
-    TextField argumentOptionEditor;
-    @UiField(provided = true)
-    ArgumentEditorConverter<ReferenceGenome> defaultValueEditor;
-    @UiField
-    TextField label;
-    @UiField
-    CheckBoxAdapter omitIfBlank, requiredEditor;
-    @UiField(provided = true)
-    ReferenceSelectorLabels referenceAnnotationSelectorLabels;
-    @UiField
-    @Path("description")
-    TextField toolTipEditor;
-    @UiField
-    FieldLabel toolTipLabel, argumentOptionLabel, selectionItemDefaultValueLabel;
+    @UiField(provided = true) AppsWidgetsPropertyPanelLabels appLabels;
+    @UiField @Path("name") TextField argumentOptionEditor;
+    @UiField(provided = true) ArgumentEditorConverter<ReferenceGenome> defaultValueEditor;
+    @UiField TextField label;
+    @UiField CheckBoxAdapter omitIfBlank, requiredEditor;
+    @UiField(provided = true) ReferenceSelectorLabels referenceAnnotationSelectorLabels;
+    @UiField @Path("description") TextField toolTipEditor;
+    @UiField FieldLabel toolTipLabel, argumentOptionLabel, selectionItemDefaultValueLabel;
+
     private static ReferenceAnnotationPropertyEditorUiBinder uiBinder = GWT.create(ReferenceAnnotationPropertyEditorUiBinder.class);
     private final EditorDriver editorDriver = GWT.create(EditorDriver.class);
 
     @Inject
-    public ReferenceAnnotationPropertyEditor(AppTemplateWizardAppearance appearance,
-                                             AppsWidgetsPropertyPanelLabels appLabels,
-                                             AppsWidgetsContextualHelpMessages help,
-                                             AppMetadataServiceFacade appMetadataService) {
+    public ReferenceAnnotationPropertyEditor(final AppTemplateWizardAppearance appearance,
+                                             final AppsWidgetsPropertyPanelLabels appLabels,
+                                             final AppsWidgetsContextualHelpMessages help,
+                                             final AppMetadataServiceFacade appMetadataService,
+                                             final AppsWidgetsDisplayMessages appsWidgetsDisplayMessages,
+                                             final IplantValidationConstants validationConstants) {
         super(appearance);
         this.appLabels = appLabels;
         this.referenceAnnotationSelectorLabels = appLabels;
         ComboBox<ReferenceGenome> comboBox = createReferenceGenomeStore(appMetadataService);
-        comboBox.setEmptyText(I18N.APPS_MESSAGES.emptyListSelectionText());
+        comboBox.setEmptyText(appsWidgetsDisplayMessages.emptyListSelectionText());
         comboBox.setMinChars(1);
         ClearComboBoxSelectionKeyDownHandler handler = new ClearComboBoxSelectionKeyDownHandler(comboBox);
         comboBox.addKeyDownHandler(handler);
-        defaultValueEditor = new ArgumentEditorConverter<ReferenceGenome>(comboBox, new SplittableToReferenceGenomeConverter());
+        defaultValueEditor = new ArgumentEditorConverter<>(comboBox, new SplittableToReferenceGenomeConverter());
 
         initWidget(uiBinder.createAndBindUi(this));
 
-        argumentOptionEditor.addValidator(new CmdLineArgCharacterValidator(I18N.V_CONSTANTS
-                                                                               .restrictedCmdLineChars()));
+        argumentOptionEditor.addValidator(new CmdLineArgCharacterValidator(validationConstants.restrictedCmdLineChars()));
 
         selectionItemDefaultValueLabel.setHTML(appearance.createContextualHelpLabel(appLabels.singleSelectionDefaultValue(), help.singleSelectDefaultItem()));
 

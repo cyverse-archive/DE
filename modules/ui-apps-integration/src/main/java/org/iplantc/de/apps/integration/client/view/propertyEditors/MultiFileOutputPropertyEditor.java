@@ -11,7 +11,7 @@ import org.iplantc.de.client.models.apps.integration.FileInfoType;
 import org.iplantc.de.client.services.AppMetadataServiceFacade;
 import org.iplantc.de.commons.client.validators.CmdLineArgCharacterValidator;
 import org.iplantc.de.commons.client.validators.DiskResourceUnixGlobValidator;
-import org.iplantc.de.resources.client.messages.I18N;
+import org.iplantc.de.resources.client.constants.IplantValidationConstants;
 import org.iplantc.de.resources.client.uiapps.widgets.AppsWidgetsContextualHelpMessages;
 import org.iplantc.de.resources.client.uiapps.widgets.AppsWidgetsPropertyPanelLabels;
 import org.iplantc.de.resources.client.uiapps.widgets.argumentTypes.MultiFileOutputLabels;
@@ -32,6 +32,9 @@ import com.sencha.gxt.widget.core.client.form.ComboBox;
 import com.sencha.gxt.widget.core.client.form.FieldLabel;
 import com.sencha.gxt.widget.core.client.form.TextField;
 
+/**
+ * @author jstroot
+ */
 public class MultiFileOutputPropertyEditor extends AbstractArgumentPropertyEditor {
 
     interface EditorDriver extends SimpleBeanEditorDriver<Argument, MultiFileOutputPropertyEditor> {
@@ -40,43 +43,31 @@ public class MultiFileOutputPropertyEditor extends AbstractArgumentPropertyEdito
     interface MultiFileOutputPropertyEditorUiBinder extends UiBinder<Widget, MultiFileOutputPropertyEditor> {
     }
 
+    @UiField(provided = true) AppsWidgetsPropertyPanelLabels appLabels;
+    @UiField @Path("name") TextField argumentOptionEditor;
+    @UiField(provided = true) ArgumentEditorConverter<String> defaultValueEditor;
+    @UiField @Path("visible") CheckBoxAdapter doNotDisplay;
     @UiField(provided = true)
-    AppsWidgetsPropertyPanelLabels appLabels;
-    @UiField
-    @Path("name")
-    TextField argumentOptionEditor;
-    @UiField(provided = true)
-    ArgumentEditorConverter<String> defaultValueEditor;
-    @UiField
-    @Path("visible")
-    CheckBoxAdapter doNotDisplay;
-    @Ignore
-    @UiField(provided = true)
+    @Ignore // FIXME Why is this ignored but still has a path annotation?
     @Path("fileParameters.fileInfoType")
     ComboBox<FileInfoType> fileInfoTypeComboBox;
-    @UiField
-    FieldLabel fileInfoTypeLabel, toolTipLabel, argumentOptionLabel, argLabelLabel, defaultValueLabel;
-    @UiField
-    @Path("fileParameters.implicit")
-    CheckBoxAdapter isImplicit;
-    @UiField
-    TextField label;
-    @UiField(provided = true)
-    MultiFileOutputLabels multiFileOutputLabels;
-    @UiField
-    CheckBoxAdapter omitIfBlank, requiredEditor;
-    @UiField
-    @Path("description")
-    TextField toolTipEditor;
+    @UiField FieldLabel fileInfoTypeLabel, toolTipLabel, argumentOptionLabel, argLabelLabel, defaultValueLabel;
+    @UiField @Path("fileParameters.implicit") CheckBoxAdapter isImplicit;
+    @UiField TextField label;
+    @UiField(provided = true) MultiFileOutputLabels multiFileOutputLabels;
+    @UiField CheckBoxAdapter omitIfBlank, requiredEditor;
+    @UiField @Path("description") TextField toolTipEditor;
+
     private static MultiFileOutputPropertyEditorUiBinder uiBinder = GWT.create(MultiFileOutputPropertyEditorUiBinder.class);
     private final EditorDriver editorDriver = GWT.create(EditorDriver.class);
 
 
     @Inject
-    public MultiFileOutputPropertyEditor(AppTemplateWizardAppearance appearance,
-                                         AppsWidgetsPropertyPanelLabels appLabels,
-                                         AppsWidgetsContextualHelpMessages help,
-                                         AppMetadataServiceFacade appMetadataService) {
+    public MultiFileOutputPropertyEditor(final AppTemplateWizardAppearance appearance,
+                                         final AppsWidgetsPropertyPanelLabels appLabels,
+                                         final AppsWidgetsContextualHelpMessages help,
+                                         final AppMetadataServiceFacade appMetadataService,
+                                         final IplantValidationConstants validationConstants) {
         super(appearance);
         this.appLabels = appLabels;
         this.multiFileOutputLabels = appLabels;
@@ -84,13 +75,12 @@ public class MultiFileOutputPropertyEditor extends AbstractArgumentPropertyEdito
         TextField textField = new TextField();
         textField.addValidator(new DiskResourceUnixGlobValidator());
         textField.setEmptyText(multiFileOutputLabels.multiFileOutputEmptyText());
-        defaultValueEditor = new ArgumentEditorConverter<String>(textField, new SplittableToStringConverter());
+        defaultValueEditor = new ArgumentEditorConverter<>(textField, new SplittableToStringConverter());
         fileInfoTypeComboBox = createFileInfoTypeComboBox(appMetadataService);
 
         initWidget(uiBinder.createAndBindUi(this));
 
-        argumentOptionEditor.addValidator(new CmdLineArgCharacterValidator(I18N.V_CONSTANTS
-                                                                               .restrictedCmdLineChars()));
+        argumentOptionEditor.addValidator(new CmdLineArgCharacterValidator(validationConstants.restrictedCmdLineChars()));
 
         defaultValueLabel.setHTML(appearance.createContextualHelpLabel(multiFileOutputLabels.multiFileOutputDefaultLabel(), help.multiFileOutputDefaultValue()));
         toolTipLabel.setHTML(appearance.createContextualHelpLabel(appLabels.toolTipText(), help.toolTip()));

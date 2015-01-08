@@ -11,7 +11,7 @@ import org.iplantc.de.client.models.apps.integration.FileInfoType;
 import org.iplantc.de.client.services.AppMetadataServiceFacade;
 import org.iplantc.de.commons.client.validators.CmdLineArgCharacterValidator;
 import org.iplantc.de.commons.client.validators.DiskResourceNameValidator;
-import org.iplantc.de.resources.client.messages.I18N;
+import org.iplantc.de.resources.client.constants.IplantValidationConstants;
 import org.iplantc.de.resources.client.uiapps.widgets.AppsWidgetsContextualHelpMessages;
 import org.iplantc.de.resources.client.uiapps.widgets.AppsWidgetsPropertyPanelLabels;
 import org.iplantc.de.resources.client.uiapps.widgets.argumentTypes.FolderOutputLabels;
@@ -32,6 +32,9 @@ import com.sencha.gxt.widget.core.client.form.ComboBox;
 import com.sencha.gxt.widget.core.client.form.FieldLabel;
 import com.sencha.gxt.widget.core.client.form.TextField;
 
+/**
+ * @author jstroot
+ */
 public class FolderOutputPropertyEditor extends AbstractArgumentPropertyEditor {
 
     interface EditorDriver extends SimpleBeanEditorDriver<Argument, FolderOutputPropertyEditor> {
@@ -40,42 +43,30 @@ public class FolderOutputPropertyEditor extends AbstractArgumentPropertyEditor {
     interface FolderOutputPropertyEditorUiBinder extends UiBinder<Widget, FolderOutputPropertyEditor> {
     }
 
+    @UiField(provided = true) AppsWidgetsPropertyPanelLabels appLabels;
+    @UiField @Path("name") TextField argumentOptionEditor;
+    @UiField(provided = true) ArgumentEditorConverter<String> defaultValueEditor;
+    @UiField @Path("visible") CheckBoxAdapter doNotDisplay;
     @UiField(provided = true)
-    AppsWidgetsPropertyPanelLabels appLabels;
-    @UiField
-    @Path("name")
-    TextField argumentOptionEditor;
-    @UiField(provided = true)
-    ArgumentEditorConverter<String> defaultValueEditor;
-    @UiField
-    @Path("visible")
-    CheckBoxAdapter doNotDisplay;
-    @Ignore
-    @UiField(provided = true)
+    @Ignore // FIXME Why is this ignored but still has a path annotation?
     @Path("fileParameters.fileInfoType")
     ComboBox<FileInfoType> fileInfoTypeComboBox;
-    @UiField(provided = true)
-    FolderOutputLabels folderOutputLabels;
-    @UiField
-    @Path("fileParameters.implicit")
-    CheckBoxAdapter isImplicit;
-    @UiField
-    TextField label;
-    @UiField
-    CheckBoxAdapter omitIfBlank, requiredEditor;
-    @UiField
-    @Path("description")
-    TextField toolTipEditor;
-    @UiField
-    FieldLabel toolTipLabel, argumentOptionLabel, defaultValueLabel;
+    @UiField(provided = true) FolderOutputLabels folderOutputLabels;
+    @UiField @Path("fileParameters.implicit") CheckBoxAdapter isImplicit;
+    @UiField TextField label;
+    @UiField CheckBoxAdapter omitIfBlank, requiredEditor;
+    @UiField @Path("description") TextField toolTipEditor;
+    @UiField FieldLabel toolTipLabel, argumentOptionLabel, defaultValueLabel;
+
     private static FolderOutputPropertyEditorUiBinder uiBinder = GWT.create(FolderOutputPropertyEditorUiBinder.class);
     private final EditorDriver editorDriver = GWT.create(EditorDriver.class);
 
     @Inject
-    public FolderOutputPropertyEditor(AppTemplateWizardAppearance appearance,
-                                      AppsWidgetsPropertyPanelLabels appLabels,
-                                      AppsWidgetsContextualHelpMessages help,
-                                      AppMetadataServiceFacade appMetadataService) {
+    public FolderOutputPropertyEditor(final AppTemplateWizardAppearance appearance,
+                                      final AppsWidgetsPropertyPanelLabels appLabels,
+                                      final AppsWidgetsContextualHelpMessages help,
+                                      final AppMetadataServiceFacade appMetadataService,
+                                      final IplantValidationConstants validationConstants) {
         super(appearance);
         this.appLabels = appLabels;
         this.folderOutputLabels = appLabels;
@@ -83,13 +74,12 @@ public class FolderOutputPropertyEditor extends AbstractArgumentPropertyEditor {
         TextField textField = new TextField();
         textField.addValidator(new DiskResourceNameValidator());
         textField.setEmptyText(folderOutputLabels.folderOutputEmptyText());
-        defaultValueEditor = new ArgumentEditorConverter<String>(textField, new SplittableToStringConverter());
+        defaultValueEditor = new ArgumentEditorConverter<>(textField, new SplittableToStringConverter());
         fileInfoTypeComboBox = createFileInfoTypeComboBox(appMetadataService);
 
         initWidget(uiBinder.createAndBindUi(this));
 
-        argumentOptionEditor.addValidator(new CmdLineArgCharacterValidator(I18N.V_CONSTANTS
-                                                                               .restrictedCmdLineChars()));
+        argumentOptionEditor.addValidator(new CmdLineArgCharacterValidator(validationConstants.restrictedCmdLineChars()));
 
         defaultValueLabel.setHTML(appearance.createContextualHelpLabel(folderOutputLabels.folderOutputDefaultLabel(), help.folderOutputDefaultValue()));
         toolTipLabel.setHTML(appearance.createContextualHelpLabel(appLabels.toolTipText(), help.toolTip()));

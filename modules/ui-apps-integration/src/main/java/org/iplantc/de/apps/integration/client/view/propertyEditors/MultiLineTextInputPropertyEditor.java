@@ -8,7 +8,7 @@ import org.iplantc.de.apps.widgets.client.view.editors.style.AppTemplateWizardAp
 import org.iplantc.de.apps.widgets.client.view.editors.widgets.CheckBoxAdapter;
 import org.iplantc.de.client.models.apps.integration.Argument;
 import org.iplantc.de.commons.client.validators.CmdLineArgCharacterValidator;
-import org.iplantc.de.resources.client.messages.I18N;
+import org.iplantc.de.resources.client.constants.IplantValidationConstants;
 import org.iplantc.de.resources.client.uiapps.widgets.AppsWidgetsContextualHelpMessages;
 import org.iplantc.de.resources.client.uiapps.widgets.AppsWidgetsPropertyPanelLabels;
 import org.iplantc.de.resources.client.uiapps.widgets.argumentTypes.MultiLineTextLabels;
@@ -29,6 +29,9 @@ import com.sencha.gxt.widget.core.client.form.FieldLabel;
 import com.sencha.gxt.widget.core.client.form.TextArea;
 import com.sencha.gxt.widget.core.client.form.TextField;
 
+/**
+ * @author jstroot
+ */
 public class MultiLineTextInputPropertyEditor extends AbstractArgumentPropertyEditor {
 
     interface EditorDriver extends SimpleBeanEditorDriver<Argument, MultiLineTextInputPropertyEditor> {
@@ -37,47 +40,36 @@ public class MultiLineTextInputPropertyEditor extends AbstractArgumentPropertyEd
     interface MultiLineTextInputPropertyEditorUiBinder extends UiBinder<Widget, MultiLineTextInputPropertyEditor> {
     }
 
-    @UiField(provided = true)
-    AppsWidgetsPropertyPanelLabels appLabels;
-    @UiField
-    @Path("name")
-    TextField argumentOptionEditor;
-    @UiField(provided = true)
-    ArgumentEditorConverter<String> defaultValueEditor;
-    @UiField
-    FieldLabel defaultValueLabel, toolTipLabel, argumentOptionLabel;
-    @UiField
-    @Path("visible")
-    CheckBoxAdapter doNotDisplay;
-    @UiField
-    TextField label;
-    @UiField(provided = true)
-    MultiLineTextLabels multiLineTextInputLabels;
-    @UiField
-    CheckBoxAdapter omitIfBlank, requiredEditor;
-    @UiField
-    @Path("description")
-    TextField toolTipEditor;
+    @UiField(provided = true) AppsWidgetsPropertyPanelLabels appLabels;
+    @UiField @Path("name") TextField argumentOptionEditor;
+    @UiField(provided = true) ArgumentEditorConverter<String> defaultValueEditor;
+    @UiField FieldLabel defaultValueLabel, toolTipLabel, argumentOptionLabel;
+    @UiField @Path("visible") CheckBoxAdapter doNotDisplay;
+    @UiField TextField label;
+    @UiField(provided = true) MultiLineTextLabels multiLineTextInputLabels;
+    @UiField CheckBoxAdapter omitIfBlank, requiredEditor;
+    @UiField @Path("description") TextField toolTipEditor;
+
     private static MultiLineTextInputPropertyEditorUiBinder uiBinder = GWT.create(MultiLineTextInputPropertyEditorUiBinder.class);
     private final EditorDriver editorDriver = GWT.create(EditorDriver.class);
 
     @Inject
-    public MultiLineTextInputPropertyEditor(AppTemplateWizardAppearance appearance,
-                                            AppsWidgetsPropertyPanelLabels appLabels,
-                                            AppsWidgetsContextualHelpMessages help) {
+    public MultiLineTextInputPropertyEditor(final AppTemplateWizardAppearance appearance,
+                                            final AppsWidgetsPropertyPanelLabels appLabels,
+                                            final AppsWidgetsContextualHelpMessages help,
+                                            final IplantValidationConstants validationConstants) {
         super(appearance);
         this.appLabels = appLabels;
         this.multiLineTextInputLabels = appLabels;
 
         TextArea textArea = new TextArea();
         textArea.setEmptyText(appLabels.textInputWidgetEmptyEditText());
-        textArea.addValidator(new CmdLineArgCharacterValidator(true));
-        defaultValueEditor = new ArgumentEditorConverter<String>(textArea, new SplittableToStringConverter());
+        textArea.addValidator(new CmdLineArgCharacterValidator(validationConstants.restrictedCmdLineArgCharsExclNewline()));
+        defaultValueEditor = new ArgumentEditorConverter<>(textArea, new SplittableToStringConverter());
 
         initWidget(uiBinder.createAndBindUi(this));
 
-        argumentOptionEditor.addValidator(new CmdLineArgCharacterValidator(I18N.V_CONSTANTS
-                                                                               .restrictedCmdLineChars()));
+        argumentOptionEditor.addValidator(new CmdLineArgCharacterValidator(validationConstants.restrictedCmdLineChars()));
 
         defaultValueLabel.setHTML(appearance.createContextualHelpLabel(appLabels.textInputDefaultLabel(), help.textInputDefaultText()));
 

@@ -9,49 +9,29 @@ import org.iplantc.de.apps.widgets.client.view.editors.style.AppTemplateWizardAp
 import org.iplantc.de.apps.widgets.client.view.editors.widgets.CheckBoxAdapter;
 import org.iplantc.de.client.models.apps.integration.Argument;
 import org.iplantc.de.commons.client.validators.CmdLineArgCharacterValidator;
-import org.iplantc.de.resources.client.messages.I18N;
+import org.iplantc.de.resources.client.constants.IplantValidationConstants;
 import org.iplantc.de.resources.client.uiapps.widgets.AppsWidgetsContextualHelpMessages;
 import org.iplantc.de.resources.client.uiapps.widgets.AppsWidgetsPropertyPanelLabels;
 import org.iplantc.de.resources.client.uiapps.widgets.argumentTypes.CheckboxInputLabels;
 
-import com.google.common.base.Joiner;
-import com.google.common.base.Splitter;
-import com.google.common.base.Strings;
-import com.google.common.collect.Lists;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.editor.client.Editor;
-import com.google.gwt.editor.client.EditorDelegate;
-import com.google.gwt.editor.client.EditorError;
 import com.google.gwt.editor.client.LeafValueEditor;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
-import com.google.gwt.editor.client.ValueAwareEditor;
-import com.google.gwt.event.logical.shared.HasValueChangeHandlers;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
-import com.google.gwt.event.shared.GwtEvent;
-import com.google.gwt.event.shared.HandlerManager;
-import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.client.TakesValue;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 import com.google.web.bindery.autobean.shared.Splittable;
 
-import com.sencha.gxt.widget.core.client.event.InvalidEvent;
-import com.sencha.gxt.widget.core.client.event.InvalidEvent.InvalidHandler;
 import com.sencha.gxt.widget.core.client.form.FieldLabel;
-import com.sencha.gxt.widget.core.client.form.IsField;
 import com.sencha.gxt.widget.core.client.form.TextField;
-import com.sencha.gxt.widget.core.client.form.Validator;
-import com.sencha.gxt.widget.core.client.form.error.DefaultEditorError;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-
+/**
+ * @author jstroot
+ */
 public class FlagArgumentPropertyEditor extends AbstractArgumentPropertyEditor {
 
     public final class FlagArgumentOptionEditor implements ValueAwareEditor<String>, LeafValueEditor<String>, InvalidHandler, ValueChangeHandler<String>, HasValueChangeHandlers<String> {
@@ -245,36 +225,26 @@ public class FlagArgumentPropertyEditor extends AbstractArgumentPropertyEditor {
 
     interface FlagArgumentPropertyEditorUiBinder extends UiBinder<Widget, FlagArgumentPropertyEditor> { }
 
-    @UiField(provided = true)
-    AppsWidgetsPropertyPanelLabels appLabels;
-    @UiField
-    FieldLabel argLabelLabel;
-    @Path("name")
-    FlagArgumentOptionEditor argumentOptionEditor;
-    @UiField(provided = true)
-    CheckboxInputLabels checkBoxLabels;
-    @Ignore
-    @UiField
-    TextField checkedArgOption, checkedValue, unCheckedArgOption, unCheckedValue;
-    @UiField(provided = true)
-    ArgumentEditorConverter<Boolean> defaultValueEditor;
-    @UiField
-    @Path("visible")
-    CheckBoxAdapter doNotDisplay;
-    @UiField
-    TextField label;
-    @UiField
-    @Path("description")
-    TextField toolTipEditor;
-    @UiField
-    FieldLabel toolTipLabel;
+    @UiField(provided = true) AppsWidgetsPropertyPanelLabels appLabels;
+    @UiField FieldLabel argLabelLabel;
+    @UiField(provided = true) CheckboxInputLabels checkBoxLabels;
+    @UiField @Ignore TextField checkedArgOption, checkedValue, unCheckedArgOption, unCheckedValue;
+    @UiField(provided = true) ArgumentEditorConverter<Boolean> defaultValueEditor;
+    @UiField @Path("visible") CheckBoxAdapter doNotDisplay;
+    @UiField TextField label;
+    @UiField @Path("description") TextField toolTipEditor;
+    @UiField FieldLabel toolTipLabel;
+
+    @Path("name") FlagArgumentOptionEditor argumentOptionEditor;
+
     private static FlagArgumentPropertyEditorUiBinder uiBinder = GWT.create(FlagArgumentPropertyEditorUiBinder.class);
     private final EditorDriver editorDriver = GWT.create(EditorDriver.class);
 
     @Inject
-    public FlagArgumentPropertyEditor(AppTemplateWizardAppearance appearance,
-                                      AppsWidgetsPropertyPanelLabels appLabels,
-                                      AppsWidgetsContextualHelpMessages help) {
+    public FlagArgumentPropertyEditor(final AppTemplateWizardAppearance appearance,
+                                      final AppsWidgetsPropertyPanelLabels appLabels,
+                                      final AppsWidgetsContextualHelpMessages help,
+                                      final IplantValidationConstants validationConstants) {
         super(appearance);
         this.appLabels = appLabels;
         this.checkBoxLabels = appLabels;
@@ -285,8 +255,8 @@ public class FlagArgumentPropertyEditor extends AbstractArgumentPropertyEditor {
 
         initWidget(uiBinder.createAndBindUi(this));
 
-        CmdLineArgCharacterValidator argOptValidator = new CmdLineArgCharacterValidator(I18N.V_CONSTANTS.restrictedCmdLineChars());
-        CmdLineArgCharacterValidator argValueValidator = new CmdLineArgCharacterValidator();
+        CmdLineArgCharacterValidator argOptValidator = new CmdLineArgCharacterValidator(validationConstants.restrictedCmdLineChars());
+        CmdLineArgCharacterValidator argValueValidator = new CmdLineArgCharacterValidator(validationConstants.restrictedCmdLineChars());
 
         checkedArgOption.addValidator(argOptValidator);
         checkedValue.addValidator(argValueValidator);
@@ -296,7 +266,8 @@ public class FlagArgumentPropertyEditor extends AbstractArgumentPropertyEditor {
         toolTipLabel.setHTML(appearance.createContextualHelpLabel(appLabels.toolTipText(), help.toolTip()));
         doNotDisplay.setHTML(new SafeHtmlBuilder().appendHtmlConstant("&nbsp;").append(appLabels.doNotDisplay()).toSafeHtml());
 
-        argumentOptionEditor = new FlagArgumentOptionEditor(checkedArgOption, checkedValue, unCheckedArgOption, unCheckedValue);
+        argumentOptionEditor = new FlagArgumentOptionEditor(checkedArgOption, checkedValue, unCheckedArgOption, unCheckedValue,
+                                                            validationConstants);
 
         editorDriver.initialize(this);
         editorDriver.accept(new InitializeTwoWayBinding(this));

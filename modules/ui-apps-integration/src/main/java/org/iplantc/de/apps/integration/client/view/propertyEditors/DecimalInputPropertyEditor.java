@@ -13,7 +13,7 @@ import org.iplantc.de.client.models.apps.integration.Argument;
 import org.iplantc.de.client.models.apps.integration.ArgumentValidator;
 import org.iplantc.de.commons.client.validators.CmdLineArgCharacterValidator;
 import org.iplantc.de.commons.client.widgets.IPlantSideErrorHandler;
-import org.iplantc.de.resources.client.messages.I18N;
+import org.iplantc.de.resources.client.constants.IplantValidationConstants;
 import org.iplantc.de.resources.client.uiapps.widgets.AppsWidgetsContextualHelpMessages;
 import org.iplantc.de.resources.client.uiapps.widgets.AppsWidgetsPropertyPanelLabels;
 import org.iplantc.de.resources.client.uiapps.widgets.argumentTypes.DoubleInputLabels;
@@ -38,59 +38,49 @@ import com.sencha.gxt.widget.core.client.form.TextField;
 
 import java.util.List;
 
+/**
+ * @author jstroot
+ */
 public class DecimalInputPropertyEditor extends AbstractArgumentPropertyEditor {
 
     interface DecimalInputPropertyEditorUiBinder extends UiBinder<Widget, DecimalInputPropertyEditor> { }
 
     interface EditorDriver extends SimpleBeanEditorDriver<Argument, DecimalInputPropertyEditor> { }
 
-    @UiField(provided = true)
-    AppsWidgetsPropertyPanelLabels appLabels;
-    @UiField
-    @Path("name")
-    TextField argumentOptionEditor;
-    @UiField(provided = true)
-    ArgumentEditorConverter<Double> defaultValueEditor;
-    @UiField
-    @Path("visible")
-    CheckBoxAdapter doNotDisplay;
-    @UiField(provided = true)
-    DoubleInputLabels doubleInputLabels;
-    @UiField
-    TextField label;
-    @UiField
-    CheckBoxAdapter omitIfBlank, requiredEditor;
-    @UiField
-    @Path("description")
-    TextField toolTipEditor;
-    @UiField
-    FieldLabel toolTipLabel, argumentOptionLabel, defaultValueLabel;
-    @Path("")
-    @UiField(provided = true)
-    ArgumentValidatorEditor validatorsEditor;
+    @UiField(provided = true) AppsWidgetsPropertyPanelLabels appLabels;
+    @UiField @Path("name") TextField argumentOptionEditor;
+    @UiField(provided = true) ArgumentEditorConverter<Double> defaultValueEditor;
+    @UiField @Path("visible") CheckBoxAdapter doNotDisplay;
+    @UiField(provided = true) DoubleInputLabels doubleInputLabels;
+    @UiField TextField label;
+    @UiField CheckBoxAdapter omitIfBlank, requiredEditor;
+    @UiField @Path("description") TextField toolTipEditor;
+    @UiField FieldLabel toolTipLabel, argumentOptionLabel, defaultValueLabel;
+    @UiField(provided = true) @Path("") ArgumentValidatorEditor validatorsEditor;
+
     private static DecimalInputPropertyEditorUiBinder uiBinder = GWT.create(DecimalInputPropertyEditorUiBinder.class);
     private final EditorDriver editorDriver = GWT.create(EditorDriver.class);
 
     @Inject
-    public DecimalInputPropertyEditor(AppTemplateWizardAppearance appearance,
-                                      AppsWidgetsPropertyPanelLabels appLabels,
-                                      AppsWidgetsContextualHelpMessages help,
-                                      ArgumentValidatorEditor validatorsEditor) {
+    public DecimalInputPropertyEditor(final AppTemplateWizardAppearance appearance,
+                                      final AppsWidgetsPropertyPanelLabels appLabels,
+                                      final AppsWidgetsContextualHelpMessages help,
+                                      final ArgumentValidatorEditor validatorsEditor,
+                                      final IplantValidationConstants validationConstants) {
         super(appearance);
         this.appLabels = appLabels;
         this.doubleInputLabels = appLabels;
         this.validatorsEditor = validatorsEditor;
 
-        SpinnerField<Double> dblSpinnerField = new SpinnerField<Double>(new NumberPropertyEditor.DoublePropertyEditor());
+        SpinnerField<Double> dblSpinnerField = new SpinnerField<>(new NumberPropertyEditor.DoublePropertyEditor());
         dblSpinnerField.setErrorSupport(new IPlantSideErrorHandler(dblSpinnerField));
         dblSpinnerField.setMinValue(-Double.MAX_VALUE);
         dblSpinnerField.setEmptyText(doubleInputLabels.doubleInputWidgetEmptyEditText());
-        defaultValueEditor = new ArgumentEditorConverter<Double>(dblSpinnerField, new SplittableToDoubleConverter());
+        defaultValueEditor = new ArgumentEditorConverter<>(dblSpinnerField, new SplittableToDoubleConverter());
 
         initWidget(uiBinder.createAndBindUi(this));
 
-        argumentOptionEditor.addValidator(new CmdLineArgCharacterValidator(I18N.V_CONSTANTS
-                                                                               .restrictedCmdLineChars()));
+        argumentOptionEditor.addValidator(new CmdLineArgCharacterValidator(validationConstants.restrictedCmdLineChars()));
 
         defaultValueLabel.setHTML(appearance.createContextualHelpLabel(appLabels.integerInputDefaultLabel(), help.integerInputDefaultValue()));
         omitIfBlank.setHTML(new SafeHtmlBuilder().appendHtmlConstant("&nbsp;")

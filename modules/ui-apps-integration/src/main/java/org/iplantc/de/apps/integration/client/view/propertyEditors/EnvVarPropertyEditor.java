@@ -10,6 +10,7 @@ import org.iplantc.de.apps.widgets.client.view.editors.widgets.CheckBoxAdapter;
 import org.iplantc.de.client.models.apps.integration.Argument;
 import org.iplantc.de.client.util.AppTemplateUtils;
 import org.iplantc.de.commons.client.validators.CmdLineArgCharacterValidator;
+import org.iplantc.de.resources.client.constants.IplantValidationConstants;
 import org.iplantc.de.resources.client.uiapps.widgets.AppsWidgetsContextualHelpMessages;
 import org.iplantc.de.resources.client.uiapps.widgets.AppsWidgetsPropertyPanelLabels;
 import org.iplantc.de.resources.client.uiapps.widgets.argumentTypes.EnvironmentVariableLabels;
@@ -30,51 +31,43 @@ import com.google.web.bindery.autobean.shared.Splittable;
 import com.sencha.gxt.widget.core.client.form.FieldLabel;
 import com.sencha.gxt.widget.core.client.form.TextField;
 
+/**
+ * @author jstroot
+ */
 public class EnvVarPropertyEditor extends AbstractArgumentPropertyEditor {
 
     interface EditorDriver extends SimpleBeanEditorDriver<Argument, EnvVarPropertyEditor> { }
 
     interface EnvVarPropertyEditorUiBinder extends UiBinder<Widget, EnvVarPropertyEditor> { }
 
-    @UiField(provided = true)
-    AppsWidgetsPropertyPanelLabels appLabels;
-    @UiField
-    FieldLabel argLabelLabel;
-    @UiField(provided = true)
-    ArgumentEditorConverter<String> defaultValueEditor;
-    @UiField
-    FieldLabel defaultValueLabel;
-    @UiField
-    @Path("visible")
-    CheckBoxAdapter doNotDisplay;
-    @UiField(provided = true)
-    EnvironmentVariableLabels envVarLabels;
-    @UiField
-    TextField label, name;
-    @UiField
-    FieldLabel nameLabel;
-    @UiField
-    CheckBoxAdapter requiredEditor;
-    @UiField
-    @Path("description")
-    TextField toolTipEditor;
-    @UiField
-    FieldLabel toolTipLabel;
+    @UiField(provided = true) AppsWidgetsPropertyPanelLabels appLabels;
+    @UiField FieldLabel argLabelLabel;
+    @UiField(provided = true) ArgumentEditorConverter<String> defaultValueEditor;
+    @UiField FieldLabel defaultValueLabel;
+    @UiField @Path("visible") CheckBoxAdapter doNotDisplay;
+    @UiField(provided = true) EnvironmentVariableLabels envVarLabels;
+    @UiField TextField label, name;
+    @UiField FieldLabel nameLabel;
+    @UiField CheckBoxAdapter requiredEditor;
+    @UiField @Path("description") TextField toolTipEditor;
+    @UiField FieldLabel toolTipLabel;
+
     private static EnvVarPropertyEditorUiBinder uiBinder = GWT.create(EnvVarPropertyEditorUiBinder.class);
     private final EditorDriver editorDriver = GWT.create(EditorDriver.class);
 
     @Inject
-    public EnvVarPropertyEditor(AppTemplateWizardAppearance appearance,
-                                AppsWidgetsPropertyPanelLabels appLabels,
-                                AppsWidgetsContextualHelpMessages help) {
+    public EnvVarPropertyEditor(final AppTemplateWizardAppearance appearance,
+                                final AppsWidgetsPropertyPanelLabels appLabels,
+                                final AppsWidgetsContextualHelpMessages help,
+                                final IplantValidationConstants validationConstants) {
         super(appearance);
         this.appLabels = appLabels;
         this.envVarLabels = appLabels;
 
         TextField textField = new TextField();
         textField.setEmptyText(envVarLabels.envVarWidgetEmptyEditText());
-        textField.addValidator(new CmdLineArgCharacterValidator());
-        defaultValueEditor = new ArgumentEditorConverter<String>(textField, new SplittableToStringConverter());
+        textField.addValidator(new CmdLineArgCharacterValidator(validationConstants.restrictedCmdLineChars()));
+        defaultValueEditor = new ArgumentEditorConverter<>(textField, new SplittableToStringConverter());
 
         initWidget(uiBinder.createAndBindUi(this));
 

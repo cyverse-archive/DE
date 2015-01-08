@@ -8,7 +8,7 @@ import org.iplantc.de.client.models.apps.integration.Argument;
 import org.iplantc.de.client.models.apps.integration.FileInfoType;
 import org.iplantc.de.client.services.AppMetadataServiceFacade;
 import org.iplantc.de.commons.client.validators.CmdLineArgCharacterValidator;
-import org.iplantc.de.resources.client.messages.I18N;
+import org.iplantc.de.resources.client.constants.IplantValidationConstants;
 import org.iplantc.de.resources.client.uiapps.widgets.AppsWidgetsContextualHelpMessages;
 import org.iplantc.de.resources.client.uiapps.widgets.AppsWidgetsPropertyPanelLabels;
 import org.iplantc.de.resources.client.uiapps.widgets.argumentTypes.FileInputTypeLabels;
@@ -25,42 +25,39 @@ import com.sencha.gxt.widget.core.client.form.ComboBox;
 import com.sencha.gxt.widget.core.client.form.FieldLabel;
 import com.sencha.gxt.widget.core.client.form.TextField;
 
+/**
+ * @author jstroot
+ */
 public class FileInputPropertyEditor extends AbstractArgumentPropertyEditor {
 
     interface EditorDriver extends SimpleBeanEditorDriver<Argument, FileInputPropertyEditor> { }
 
     interface FileInputPropertyEditorUiBinder extends UiBinder<Widget, FileInputPropertyEditor> { }
 
+    @UiField(provided = true) AppsWidgetsPropertyPanelLabels appLabels;
+    @UiField @Path("name") TextField argumentOptionEditor;
+    @UiField FieldLabel argumentOptionLabel;
+
     @UiField(provided = true)
-    AppsWidgetsPropertyPanelLabels appLabels;
-    @UiField
-    @Path("name")
-    TextField argumentOptionEditor;
-    @UiField
-    FieldLabel argumentOptionLabel;
-    @Ignore
-    @UiField(provided = true)
+    @Ignore // FIXME Why is this ignored by still has a path annotation?
     @Path("dataObject.fileInfoType")
     ComboBox<FileInfoType> fileInfoTypeComboBox;
-    @UiField(provided = true)
-    FileInputTypeLabels fileInputLabels;
-    @UiField
-    TextField label;
-    @UiField
-    CheckBoxAdapter requiredEditor, omitIfBlank;
-    @UiField
-    @Path("description")
-    TextField toolTipEditor;
-    @UiField
-    FieldLabel toolTipLabel;
+
+    @UiField(provided = true) FileInputTypeLabels fileInputLabels;
+    @UiField TextField label;
+    @UiField CheckBoxAdapter requiredEditor, omitIfBlank;
+    @UiField @Path("description") TextField toolTipEditor;
+    @UiField FieldLabel toolTipLabel;
+
     private static FileInputPropertyEditorUiBinder uiBinder = GWT.create(FileInputPropertyEditorUiBinder.class);
     private final EditorDriver editorDriver = GWT.create(EditorDriver.class);
 
     @Inject
-    public FileInputPropertyEditor(AppTemplateWizardAppearance appearance,
-                                   AppsWidgetsPropertyPanelLabels appLabels,
-                                   AppsWidgetsContextualHelpMessages help,
-                                   AppMetadataServiceFacade appMetadataService) {
+    public FileInputPropertyEditor(final AppTemplateWizardAppearance appearance,
+                                   final AppsWidgetsPropertyPanelLabels appLabels,
+                                   final AppsWidgetsContextualHelpMessages help,
+                                   final AppMetadataServiceFacade appMetadataService,
+                                   final IplantValidationConstants validationConstants) {
         super(appearance);
         this.appLabels = appLabels;
         this.fileInputLabels = appLabels;
@@ -68,8 +65,7 @@ public class FileInputPropertyEditor extends AbstractArgumentPropertyEditor {
 
         initWidget(uiBinder.createAndBindUi(this));
 
-        argumentOptionEditor.addValidator(new CmdLineArgCharacterValidator(I18N.V_CONSTANTS
-                                                                               .restrictedCmdLineChars()));
+        argumentOptionEditor.addValidator(new CmdLineArgCharacterValidator(validationConstants.restrictedCmdLineChars()));
 
         toolTipLabel.setHTML(appearance.createContextualHelpLabel(appLabels.toolTipText(), help.toolTip()));
         argumentOptionLabel.setHTML(appearance.createContextualHelpLabel(appLabels.argumentOption(), help.argumentOption()));

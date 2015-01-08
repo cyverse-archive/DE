@@ -11,7 +11,7 @@ import org.iplantc.de.client.models.apps.integration.Argument;
 import org.iplantc.de.client.models.apps.integration.ArgumentValidator;
 import org.iplantc.de.commons.client.validators.CmdLineArgCharacterValidator;
 import org.iplantc.de.commons.client.widgets.IPlantSideErrorHandler;
-import org.iplantc.de.resources.client.messages.I18N;
+import org.iplantc.de.resources.client.constants.IplantValidationConstants;
 import org.iplantc.de.resources.client.uiapps.widgets.AppsWidgetsContextualHelpMessages;
 import org.iplantc.de.resources.client.uiapps.widgets.AppsWidgetsPropertyPanelLabels;
 import org.iplantc.de.resources.client.uiapps.widgets.argumentTypes.IntegerInputLabels;
@@ -36,7 +36,9 @@ import com.sencha.gxt.widget.core.client.form.TextField;
 
 import java.util.List;
 
-
+/**
+ * @author jstroot
+ */
 public class IntegerInputPropertyEditor extends AbstractArgumentPropertyEditor {
 
     interface EditorDriver extends SimpleBeanEditorDriver<Argument, IntegerInputPropertyEditor> {
@@ -45,54 +47,41 @@ public class IntegerInputPropertyEditor extends AbstractArgumentPropertyEditor {
     interface IntegerInputPropertyEditorUiBinder extends UiBinder<Widget, IntegerInputPropertyEditor> {
     }
 
-    @UiField(provided = true)
-    AppsWidgetsPropertyPanelLabels appLabels;
-    @UiField
-    @Path("name")
-    TextField argumentOptionEditor;
-    @UiField(provided = true)
-    ArgumentEditorConverter<Integer> defaultValueEditor;
-    @UiField
-    @Path("visible")
-    CheckBoxAdapter doNotDisplay;
-    @UiField(provided = true)
-    IntegerInputLabels integerInputLabels;
-    @UiField
-    TextField label;
-    @UiField
-    CheckBoxAdapter omitIfBlank, requiredEditor;
-    @UiField
-    @Path("description")
-    TextField toolTipEditor;
-    @UiField
-    FieldLabel toolTipLabel, argumentOptionLabel, defaultValueLabel;
-    @Path("")
-    @UiField(provided = true)
-    ArgumentValidatorEditor validatorsEditor;
+    @UiField(provided = true) AppsWidgetsPropertyPanelLabels appLabels;
+    @UiField @Path("name") TextField argumentOptionEditor;
+    @UiField(provided = true) ArgumentEditorConverter<Integer> defaultValueEditor;
+    @UiField @Path("visible") CheckBoxAdapter doNotDisplay;
+    @UiField(provided = true) IntegerInputLabels integerInputLabels;
+    @UiField TextField label;
+    @UiField CheckBoxAdapter omitIfBlank, requiredEditor;
+    @UiField @Path("description") TextField toolTipEditor;
+    @UiField FieldLabel toolTipLabel, argumentOptionLabel, defaultValueLabel;
+    @UiField(provided = true) @Path("") ArgumentValidatorEditor validatorsEditor;
+
     private static IntegerInputPropertyEditorUiBinder uiBinder = GWT.create(IntegerInputPropertyEditorUiBinder.class);
     private final EditorDriver editorDriver = GWT.create(EditorDriver.class);
 
     @Inject
-    public IntegerInputPropertyEditor(AppTemplateWizardAppearance appearance,
-                                      AppsWidgetsPropertyPanelLabels appLabels,
-                                      AppsWidgetsContextualHelpMessages help,
-                                      ArgumentValidatorEditor validatorsEditor) {
+    public IntegerInputPropertyEditor(final AppTemplateWizardAppearance appearance,
+                                      final AppsWidgetsPropertyPanelLabels appLabels,
+                                      final AppsWidgetsContextualHelpMessages help,
+                                      final ArgumentValidatorEditor validatorsEditor,
+                                      final IplantValidationConstants validationConstants) {
         super(appearance);
         this.appLabels = appLabels;
         this.integerInputLabels = appLabels;
         this.validatorsEditor = validatorsEditor;
 
-        SpinnerField<Integer> spinnerField = new SpinnerField<Integer>(new NumberPropertyEditor.IntegerPropertyEditor());
+        SpinnerField<Integer> spinnerField = new SpinnerField<>(new NumberPropertyEditor.IntegerPropertyEditor());
         spinnerField.setEmptyText(integerInputLabels.integerInputWidgetEmptyEditText());
         spinnerField.setErrorSupport(new IPlantSideErrorHandler(spinnerField));
         spinnerField.setMinValue(Integer.MIN_VALUE);
-        defaultValueEditor = new ArgumentEditorConverter<Integer>(spinnerField, new SplittableToIntegerConverter());
+        defaultValueEditor = new ArgumentEditorConverter<>(spinnerField, new SplittableToIntegerConverter());
 
 
         initWidget(uiBinder.createAndBindUi(this));
 
-        argumentOptionEditor.addValidator(new CmdLineArgCharacterValidator(I18N.V_CONSTANTS
-                                                                         .restrictedCmdLineChars()));
+        argumentOptionEditor.addValidator(new CmdLineArgCharacterValidator(validationConstants.restrictedCmdLineChars()));
 
         defaultValueLabel.setHTML(appearance.createContextualHelpLabel(integerInputLabels.integerInputDefaultLabel(), help.integerInputDefaultValue()));
 

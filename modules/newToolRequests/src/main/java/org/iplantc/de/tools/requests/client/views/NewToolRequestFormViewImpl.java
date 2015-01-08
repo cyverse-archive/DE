@@ -8,6 +8,7 @@ import org.iplantc.de.commons.client.validators.UrlValidator;
 import org.iplantc.de.commons.client.views.gxt3.dialogs.IplantInfoBox;
 import org.iplantc.de.diskResource.client.gin.factory.DiskResourceSelectorFieldFactory;
 import org.iplantc.de.diskResource.client.views.widgets.FileSelectorField;
+import org.iplantc.de.resources.client.constants.IplantValidationConstants;
 import org.iplantc.de.resources.client.messages.I18N;
 
 import com.google.gwt.core.client.GWT;
@@ -51,6 +52,7 @@ public final class NewToolRequestFormViewImpl extends Composite implements NewTo
     }
 
     private static final NewToolRequestFormViewUiBinder uiBinder = GWT.create(NewToolRequestFormViewUiBinder.class);
+    private final IplantValidationConstants validationConstants;
 
     private static String buildRequiredFieldLabel(final String label) {
         if (label == null) {
@@ -105,8 +107,10 @@ public final class NewToolRequestFormViewImpl extends Composite implements NewTo
 
     @Inject
     NewToolRequestFormViewImpl(final DiskResourceSelectorFieldFactory fileSelectorFieldFactory,
+                               final IplantValidationConstants validationConstants,
                                @Assisted final ComboBox<Architecture> archChooser,
                                @Assisted final ComboBox<YesNoMaybe> multithreadChooser) {
+        this.validationConstants = validationConstants;
         this.binSelect = fileSelectorFieldFactory.defaultFileSelector();
         this.testDataSelect = fileSelectorFieldFactory.defaultFileSelector();
         this.otherDataSelect = fileSelectorFieldFactory.defaultFileSelector();
@@ -154,7 +158,7 @@ public final class NewToolRequestFormViewImpl extends Composite implements NewTo
     }
 
     private void initValidators() {
-        toolName.addValidator(new LengthRangeValidator(I18N.DISPLAY.toolName(), 1, I18N.V_CONSTANTS.maxToolNameLength()));
+        toolName.addValidator(new LengthRangeValidator(I18N.DISPLAY.toolName(), 1, validationConstants.maxToolNameLength()));
         toolName.addValidator(new DiskResourceNameValidator());
         binLink.addValidator(new UrlValidator());
         toolDoc.addValidator(new UrlValidator());

@@ -1,7 +1,8 @@
 package org.iplantc.de.commons.client.validators;
 
-import org.iplantc.de.resources.client.messages.I18N;
+import org.iplantc.de.resources.client.messages.IplantValidationMessages;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.Editor;
 import com.google.gwt.editor.client.EditorError;
 
@@ -11,21 +12,17 @@ import com.sencha.gxt.widget.core.client.form.validator.AbstractValidator;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * @author jstroot
+ */
 public class CmdLineArgCharacterValidator extends AbstractValidator<String> implements
         IPlantDefaultValidator {
 
     private final String restrictedChars;
+    IplantValidationMessages validationMessages = GWT.create(IplantValidationMessages.class);
 
     public CmdLineArgCharacterValidator(String restrictedChars) {
         this.restrictedChars = restrictedChars;
-    }
-
-    public CmdLineArgCharacterValidator() {
-        this(I18N.V_CONSTANTS.restrictedCmdLineArgChars());
-    }
-
-    public CmdLineArgCharacterValidator(boolean excludeReturnChar) {
-        this(I18N.V_CONSTANTS.restrictedCmdLineArgCharsExclNewline());
     }
 
     @Override
@@ -47,8 +44,8 @@ public class CmdLineArgCharacterValidator extends AbstractValidator<String> impl
         }
 
         if (restrictedFound.length() > 0) {
-            String errorMsg = I18N.VALIDATION.unsupportedChars(restrictedChars) + " " //$NON-NLS-1$
-                    + I18N.VALIDATION.invalidChars(restrictedFound.toString());
+            String errorMsg = validationMessages.unsupportedChars(restrictedChars) + " " //$NON-NLS-1$
+                    + validationMessages.invalidChars(restrictedFound.toString());
             return createError(new DefaultEditorError(editor, errorMsg, value));
         }
 

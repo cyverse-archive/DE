@@ -8,7 +8,7 @@ import org.iplantc.de.client.models.apps.integration.ArgumentType;
 import org.iplantc.de.client.models.apps.integration.SelectionItem;
 import org.iplantc.de.client.util.AppTemplateUtils;
 import org.iplantc.de.commons.client.validators.CmdLineArgCharacterValidator;
-import org.iplantc.de.resources.client.messages.I18N;
+import org.iplantc.de.resources.client.constants.IplantValidationConstants;
 import org.iplantc.de.resources.client.uiapps.widgets.AppsWidgetsPropertyPanelLabels;
 
 import com.google.common.collect.Lists;
@@ -196,9 +196,10 @@ public class SelectionItemPropertyEditor extends Composite implements HasValueCh
         };
         
         editing.setClicksToEdit(ClicksToEdit.TWO);
-  
-        editing.addEditor(valueCol, buildEditorField(new CmdLineArgCharacterValidator(I18N.V_CONSTANTS.restrictedCmdLineArgCharsExclNewline())));
-        editing.addEditor(nameCol, buildEditorField(new CmdLineArgCharacterValidator(I18N.V_CONSTANTS.restrictedCmdLineChars())));
+
+        IplantValidationConstants validationConstants = GWT.create(IplantValidationConstants.class);
+        editing.addEditor(valueCol, buildEditorField(new CmdLineArgCharacterValidator(validationConstants.restrictedCmdLineArgCharsExclNewline())));
+        editing.addEditor(nameCol, buildEditorField(new CmdLineArgCharacterValidator(validationConstants.restrictedCmdLineChars())));
         
 
         // Add selection handler to grid to control enabled state of "delete" button

@@ -8,6 +8,7 @@ import org.iplantc.de.client.models.apps.integration.SelectionItem;
 import org.iplantc.de.client.models.apps.integration.SelectionItemGroup;
 import org.iplantc.de.client.util.AppTemplateUtils;
 import org.iplantc.de.commons.client.validators.CmdLineArgCharacterValidator;
+import org.iplantc.de.resources.client.constants.IplantValidationConstants;
 import org.iplantc.de.resources.client.messages.I18N;
 import org.iplantc.de.resources.client.uiapps.widgets.AppsWidgetsPropertyPanelLabels;
 
@@ -170,6 +171,7 @@ public class SelectionItemTreePropertyEditor extends Composite implements HasVal
     private final AppTemplateAutoBeanFactory factory = GWT.create(AppTemplateAutoBeanFactory.class);
     private final AppsWidgetsPropertyPanelLabels labels = GWT.create(AppsWidgetsPropertyPanelLabels.class);
     private final SelectionItemProperties siProps = GWT.create(SelectionItemProperties.class);
+    private final IplantValidationConstants validationConstants = GWT.create(IplantValidationConstants.class);
     private final List<SelectionItem> toBeRemoved = Lists.newArrayList();
     private int countArgLabel = 1;
     private int countGroupLabel = 1;
@@ -536,8 +538,8 @@ public class SelectionItemTreePropertyEditor extends Composite implements HasVal
         };
         editing.addEditor(defaultColumn, new CheckBox());
         editing.addEditor(displayConfig, buildEditorField(null));
-        editing.addEditor(nameConfig, buildEditorField(new CmdLineArgCharacterValidator(I18N.V_CONSTANTS.restrictedCmdLineChars())));
-        editing.addEditor(valueConfig, buildEditorField(new CmdLineArgCharacterValidator(I18N.V_CONSTANTS.restrictedCmdLineArgCharsExclNewline())));
+        editing.addEditor(nameConfig, buildEditorField(new CmdLineArgCharacterValidator(validationConstants.restrictedCmdLineChars())));
+        editing.addEditor(valueConfig, buildEditorField(new CmdLineArgCharacterValidator(validationConstants.restrictedCmdLineArgCharsExclNewline())));
         editing.addEditor(descriptionConfig, buildEditorField(null));
         editing.setClicksToEdit(ClicksToEdit.TWO);
 
