@@ -11,6 +11,7 @@ import org.iplantc.de.commons.client.events.LastSelectedPathChangedEvent;
 import org.iplantc.de.diskResource.client.gin.factory.DiskResourceSelectorDialogFactory;
 import org.iplantc.de.diskResource.client.views.dialogs.FileFolderSelectDialog;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.gwt.event.logical.shared.HasValueChangeHandlers;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
@@ -103,7 +104,8 @@ public class FileFolderSelectorField extends AbstractDiskResourceSelector<DiskRe
         final DiskResource value = getValue();
         HasPath folderToSelect = null;
         List<DiskResource> diskResourcesToSelect = Lists.newArrayList();
-        if(value == null && userSettings.isRememberLastPath()){
+        if ((value == null || Strings.isNullOrEmpty(value.getPath()))
+                && userSettings.isRememberLastPath()) {
             String path = userSettings.getLastPath();
             if(path != null) {
                 folderToSelect = CommonModelUtils.getInstance().createHasPathFromString(path);
