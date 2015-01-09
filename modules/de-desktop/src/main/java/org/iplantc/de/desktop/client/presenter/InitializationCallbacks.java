@@ -13,8 +13,6 @@ import org.iplantc.de.commons.client.info.IplantAnnouncer;
 import org.iplantc.de.resources.client.messages.I18N;
 import org.iplantc.de.resources.client.messages.IplantErrorStrings;
 
-import com.google.gwt.http.client.Request;
-import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.inject.Provider;
@@ -39,17 +37,23 @@ class InitializationCallbacks {
         private final IplantErrorStrings errorStrings;
         private final UserInfo userInfo;
         private final DesktopPresenterImpl presenter;
+        private final UserSessionServiceFacade userSessionService;
+        private final UserPreferencesCallback userPreferencesCallback;
         Logger LOG = Logger.getLogger("desktop presenter");
 
         public BootstrapCallback(DesktopPresenterImpl presenter,
                                  UserInfo userInfo,
                                  Provider<ErrorHandler> errorHandlerProvider,
-                                 IplantErrorStrings errorStrings) {
+                                 IplantErrorStrings errorStrings,
+                                 UserSessionServiceFacade userSessionService,
+                                 UserPreferencesCallback userPreferencesCallback) {
 
             this.presenter = presenter;
             this.userInfo = userInfo;
             this.errorHandlerProvider = errorHandlerProvider;
             this.errorStrings = errorStrings;
+            this.userSessionService = userSessionService;
+            this.userPreferencesCallback = userPreferencesCallback;
         }
 
         @Override
@@ -75,7 +79,7 @@ class InitializationCallbacks {
                 });
                 box.show();
             }
-
+            userSessionService.getUserPreferences(userPreferencesCallback);
         }
     }
 
@@ -140,36 +144,34 @@ class InitializationCallbacks {
         @Override
         public void onSuccess(Map<String, String> result) {
             deProps.initialize(result);
-            final Request bootstrapReq = userSessionService.bootstrap(new BootstrapCallback(presenter,
-                                                                                            userInfo,
-                                                                                            errorHandlerProvider,
-                                                                                            errorStrings));
-            final Request userPrefReq = userSessionService.getUserPreferences(new UserPreferencesCallback(userSettings,
-                                                                                                          errorHandlerProvider,
-                                                                                                          errorStrings));
-
-            Timer t = new Timer() {
-                @Override
-                public void run() {
-                    if (!bootstrapReq.isPending() && !userPrefReq.isPending()) {
-                        // Cancel timer
-                        cancel();
-                        presenter.postBootstrap(panel);
-                    }
-                }
-            };
-            t.scheduleRepeating(1);
+            final UserPreferencesCallback userPreferencesCallback = new UserPreferencesCallback(presenter,
+                                                                                                panel,
+                                                                                                userSettings,
+                                                                                                errorHandlerProvider,
+                                                                                                errorStrings);
+            userSessionService.bootstrap(new BootstrapCallback(presenter,
+                                                               userInfo,
+                                                               errorHandlerProvider,
+                                                               errorStrings,
+                                                               userSessionService,
+                                                               userPreferencesCallback));
         }
     }
 
     private static class UserPreferencesCallback implements AsyncCallback<String> {
+        private final DesktopPresenterImpl presenter;
+        private final Panel panel;
         private final Provider<ErrorHandler> errorHandlerProvider;
         private final IplantErrorStrings errorStrings;
         private final UserSettings userSettings;
 
-        public UserPreferencesCallback(UserSettings userSettings,
+        public UserPreferencesCallback(DesktopPresenterImpl presenter,
+                                       Panel panel,
+                                       UserSettings userSettings,
                                        Provider<ErrorHandler> errorHandlerProvider,
                                        IplantErrorStrings errorStrings) {
+            this.presenter = presenter;
+            this.panel = panel;
             this.userSettings = userSettings;
             this.errorHandlerProvider = errorHandlerProvider;
             this.errorStrings = errorStrings;
@@ -183,6 +185,7 @@ class InitializationCallbacks {
         @Override
         public void onSuccess(String result) {
             userSettings.setValues(StringQuoter.split(result));
+            presenter.postBootstrap(panel);
         }
     }
 }
