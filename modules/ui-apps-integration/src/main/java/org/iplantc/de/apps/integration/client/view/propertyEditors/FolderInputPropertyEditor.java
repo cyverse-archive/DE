@@ -39,14 +39,12 @@ public class FolderInputPropertyEditor extends AbstractArgumentPropertyEditor {
     @UiField(provided = true) AppsWidgetsPropertyPanelLabels appLabels;
     @UiField @Path("name") TextField argumentOptionEditor;
     @UiField FieldLabel argumentOptionLabel, toolTipLabel, fileInfoTypeLabel;
-    @UiField(provided = true)
-    @Ignore // FIXME Why is this ignored but still has a path annotation?
-    @Path("dataObject.fileInfoType")
-    ComboBox<FileInfoType> fileInfoTypeComboBox;
+    @UiField(provided = true) @Ignore ComboBox<FileInfoType> fileInfoTypeComboBox;
     @UiField(provided = true) FolderInputTypeLabels folderInputLabels;
     @UiField TextField label;
     @UiField CheckBoxAdapter requiredEditor, omitIfBlank;
     @UiField @Path("description") TextField toolTipEditor;
+    @UiField @Path("fileParameters.implicit") CheckBoxAdapter isImplicit;
 
     private static FolderInputPropertyEditorUiBinder uiBinder = GWT.create(FolderInputPropertyEditorUiBinder.class);
     private final EditorDriver editorDriver = GWT.create(EditorDriver.class);
@@ -70,6 +68,8 @@ public class FolderInputPropertyEditor extends AbstractArgumentPropertyEditor {
         argumentOptionLabel.setHTML(appearance.createContextualHelpLabel(appLabels.argumentOption(), help.argumentOption()));
         toolTipLabel.setHTML(appearance.createContextualHelpLabel(appLabels.toolTipText(), help.toolTip()));
         requiredEditor.setHTML(new SafeHtmlBuilder().appendHtmlConstant("&nbsp;").append(appLabels.isRequired()).toSafeHtml());
+        isImplicit.setHTML(new SafeHtmlBuilder().appendHtmlConstant("&nbsp;").append(appearance.createContextualHelpLabelNoFloat(appLabels.isImplicit(), help.fileInputIsImplicit())).toSafeHtml());
+
         editorDriver.initialize(this);
         editorDriver.accept(new InitializeTwoWayBinding(this));
         ensureDebugId(Ids.PROPERTY_EDITOR + Ids.FOLDER_INPUT);
