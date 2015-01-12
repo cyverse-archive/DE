@@ -21,6 +21,9 @@ import org.iplantc.de.resources.client.uiapps.widgets.help.TreeSelectionHelp;
 
 import com.google.gwt.i18n.client.Messages;
 
+/**
+ * @author jstroot
+ */
 public interface AppsWidgetsContextualHelpMessages extends Messages, AppContextHelp, MultiFileInputHelp, FileInputHelp, FolderInputHelp, TextSelectionHelp, IntegerSelectionHelp, DoubleSelectionHelp,
         TreeSelectionHelp, TextInputHelp, CheckboxInputHelp, EnvironmentVariableHelp, IntegerInputHelp, DoubleInputHelp, FileOutputHelp, FolderOutputHelp, MultiFileOutputHelp, AppItemCategoryHelp,
         InfoContextHelp {
