@@ -744,6 +744,20 @@ public class AppsEditorPresenterImpl implements AppsEditorView.Presenter,
             hr.removeHandler();
         }
         handlerRegistrations.clear();
+
+        // If 'lastSave' is null, then the view's editorDrive.edit() has not been called yet
+        if(lastSave == null){
+            return;
+        }
+        // Clean any handlers from the AppTemplate
+        final AutoBean<Object> autoBean = AutoBeanUtils.getAutoBean(view.flush());
+        final Object tag = autoBean.getTag(AppsEditorView.Presenter.HANDLERS);
+        if ((tag != null) && (tag instanceof List)) {
+            List<HandlerRegistration> handlerRegistrationList = (List<HandlerRegistration>) tag;
+            for(HandlerRegistration hr : handlerRegistrationList){
+                hr.removeHandler();
+            }
+        }
     }
 
 }

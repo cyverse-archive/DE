@@ -103,16 +103,17 @@ public class RegisterEventHandlers extends EditorVisitor {
     @Override
     public <T> boolean visit(EditorContext<T> ctx) {
 
+        /* Get the edited autobean.
+         * NOTE: This is the top-most model in the editor driver! NOT the model
+         *       which corresponds to the current editor!!!!
+         */
         T fromModel = ctx.getFromModel();
         AutoBean<T> autoBean = AutoBeanUtils.getAutoBean(fromModel);
 
-        // Find out which events the current editor handles, and register them
         /*
          * If the current editor handles any events we have gathered, add the current editor to the
          * Has*Handlers, and save the registration on the current autobean.
          */
-        // Clean previous handlers before adding new ones.
-        cleanAutoBeanHandlers(autoBean);
 
         Editor<T> editorAsHandler = ctx.getEditor();
         // Register handler with AppTemplate-related event providers
@@ -171,18 +172,6 @@ public class RegisterEventHandlers extends EditorVisitor {
         return ctx.asLeafValueEditor() == null;
     }
 
-    void cleanAutoBeanHandlers(AutoBean<?> autoBean) {
-        if(autoBean == null){
-            return;
-        }
-        final Object tag = autoBean.getTag(AppsEditorView.Presenter.HANDLERS);
-        if ((tag != null) && (tag instanceof List)) {
-            List<HandlerRegistration> handlerRegistrationList = (List<HandlerRegistration>) tag;
-            for(HandlerRegistration hr : handlerRegistrationList){
-                hr.removeHandler();
-            }
-        }
-    }
     private List<HandlerRegistration> getAutobeanHandlers(AutoBean<?> autobean) {
         if (autobean.getTag(AppsEditorView.Presenter.HANDLERS) == null) {
             autobean.setTag(AppsEditorView.Presenter.HANDLERS, Lists.<HandlerRegistration> newArrayList());
