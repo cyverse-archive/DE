@@ -8,18 +8,15 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import java.util.List;
 
+/**
+ * @author jstroot
+ */
 public interface AppMetadataServiceFacade {
-
-    // DataSourceProperties getDataSourceProperties();
 
     void getDataSources(AsyncCallback<List<DataSource>> callback);
 
-    // FileInfoTypeProperties getFileInfoTypeProperties();
-
     void getFileInfoTypes(AsyncCallback<List<FileInfoType>> callback);
     
-    // ReferenceGenomeProperties getReferenceGenomeProperties();
-
     void getReferenceGenomes(AsyncCallback<List<ReferenceGenome>> callback);
 
 }
