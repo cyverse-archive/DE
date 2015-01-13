@@ -77,7 +77,9 @@ public class AppLaunchPresenterImpl implements AppLaunchView.Presenter, RequestA
         je.setAppTemplateId(appTemplate.getId());
         je.setEmailNotificationEnabled(userSettings.isEnableEmailNotification());
         // JDS Replace all Cmd Line restricted chars with underscores
-        String regex = Format.substitute("[{0}]", RegExp.escapeCharacterClassSet(valConstants.restrictedCmdLineChars()));
+        String regex = Format.substitute("[{0}]",
+                                         RegExp.escapeCharacterClassSet(valConstants.restrictedCmdLineChars()
+                                                 + " "));
         String newName = appTemplate.getName().replaceAll(regex, "_");
         je.setName(newName + "_" + appsWidgetsDisplayMessages.defaultAnalysisName()); //$NON-NLS-1$
 

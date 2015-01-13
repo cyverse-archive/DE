@@ -40,7 +40,7 @@
         <form:FieldSet headingText="{strings.preferences}"
                        collapsible="true">
             <container:VerticalLayoutContainer ui:field="prefContainer"
-                                               height="130">
+                                               height="150">
                 <container:child layoutData="{preferenceLayoutData}">
                     <form:CheckBox ui:field="enableEmailNotification"
                                    debugId="idCboNotifyEmail"
