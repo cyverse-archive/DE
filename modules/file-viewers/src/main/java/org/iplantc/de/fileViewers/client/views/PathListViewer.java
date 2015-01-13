@@ -6,8 +6,12 @@ import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.client.models.diskResources.File;
 import org.iplantc.de.client.models.viewer.InfoType;
 import org.iplantc.de.client.models.viewer.StructuredText;
+import org.iplantc.de.client.util.DiskResourceUtil;
+import org.iplantc.de.commons.client.info.ErrorAnnouncementConfig;
+import org.iplantc.de.commons.client.info.IplantAnnouncer;
 import org.iplantc.de.fileViewers.client.FileViewer;
 import org.iplantc.de.fileViewers.client.events.DeleteSelectedPathsSelectedEvent;
+import org.iplantc.de.resources.client.messages.I18N;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
@@ -17,6 +21,7 @@ import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.inject.Inject;
 import com.google.web.bindery.autobean.shared.Splittable;
 import com.google.web.bindery.autobean.shared.impl.StringQuoter;
 
@@ -81,6 +86,13 @@ public class PathListViewer extends AbstractStructuredTextViewer implements Stor
         @Override
         protected void onDragDrop(DndDropEvent e) {
             super.onDragDrop(e);
+            if (checkForSplChar(grid.getStore().getAll()).length() > 0) {
+                IplantAnnouncer.getInstance()
+                               .schedule(new ErrorAnnouncementConfig(I18N.DISPLAY.analysisFailureWarning(I18N.V_CONSTANTS.warnedDiskResourceNameChars()),
+                                                                     true,
+                                                                     5000));
+            }
+
         }
 
         @Override
@@ -151,6 +163,31 @@ public class PathListViewer extends AbstractStructuredTextViewer implements Stor
                        && !isEmpty
                        && hasDiskResources;
         }
+
+        private StringBuilder checkForSplChar(List<Splittable> idSet) {
+            char[] restrictedChars = (I18N.V_CONSTANTS.warnedDiskResourceNameChars()).toCharArray(); //$NON-NLS-1$
+            StringBuilder restrictedFound = new StringBuilder();
+
+            for (Splittable path : idSet) {
+                String diskResourceId = path.get(0).asString();
+                for (char restricted : restrictedChars) {
+                    for (char next : diskResourceId.toCharArray()) {
+                        if (next == restricted && next != '/') {
+                            restrictedFound.append(restricted);
+                        }
+                    }
+                }
+                // validate '/' only on label
+                for (char next : diskResourceUtil.parseNameFromPath(diskResourceId).toCharArray()) {
+                    if (next == '/') {
+                        restrictedFound.append('/');
+                    }
+                }
+
+            }
+            return restrictedFound;
+        }
+
     }
 
     interface FileListViewerUiBinder extends UiBinder<BorderLayoutContainer, PathListViewer> {
@@ -171,13 +208,17 @@ public class PathListViewer extends AbstractStructuredTextViewer implements Stor
     private final PathListViewerAppearance appearance = GWT.create(PathListViewerAppearance.class);
     private final File file;
 
+
+    @Inject
+    DiskResourceUtil diskResourceUtil;
+
     public PathListViewer(final File file,
                           final String infoType,
                           final boolean editing,
                           final FileViewer.Presenter presenter) {
         super(file, infoType, editing, presenter);
         if (file != null) {
-            Preconditions.checkArgument(InfoType.HT_ANALYSIS_PATH_LIST.toString().equals(file.getInfoType()));
+            Preconditions.checkArgument(InfoType.HT_ANALYSIS_PATH_LIST.toString().equals(infoType));
         } else {
             Preconditions.checkArgument(editing, "New files must be editable");
         }

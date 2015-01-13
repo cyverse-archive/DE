@@ -354,7 +354,7 @@ public abstract class AbstractDiskResourceSelector<R extends DiskResource> exten
         infoText.getStyle().setWidth(100, Unit.PCT);
         infoText.getStyle().setDisplay(Display.BLOCK);
         // JDS Escape the text as a precaution.
-        SafeHtml safeText = SafeHtmlUtils.fromString(text);
+        SafeHtml safeText = SafeHtmlUtils.fromSafeConstant(text);
         infoText.setInnerSafeHtml(safeText);
     }
 
@@ -504,6 +504,7 @@ public abstract class AbstractDiskResourceSelector<R extends DiskResource> exten
             // Do not make service call if there are no paths
             return;
         }
+
         drServiceFacade.getStat(asStringPathTypeMap,
                                 new AsyncCallback<FastMap<DiskResource>>() {
 

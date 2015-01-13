@@ -28,12 +28,12 @@
     </ui:with>
        <ui:with type="com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer.VerticalLayoutData" field="infoBarData">
         <ui:attributes width="1"
-                       height="20" />
+                       height="30" />
     </ui:with>
 
-   <container:VerticalLayoutContainer height="300">
+   <container:VerticalLayoutContainer height="320">
        <container:child layoutData="{infoBarData}">
-             <g:HTML ui:field="warnInfo">
+             <g:HTML ui:field="warnInfo" >
              </g:HTML>
        </container:child>
       <container:child layoutData="{toolBarData}">
