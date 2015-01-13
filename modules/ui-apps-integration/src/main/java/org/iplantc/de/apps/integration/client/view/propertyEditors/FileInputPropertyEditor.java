@@ -37,17 +37,13 @@ public class FileInputPropertyEditor extends AbstractArgumentPropertyEditor {
     @UiField(provided = true) AppsWidgetsPropertyPanelLabels appLabels;
     @UiField @Path("name") TextField argumentOptionEditor;
     @UiField FieldLabel argumentOptionLabel;
-
-    @UiField(provided = true)
-    @Ignore // FIXME Why is this ignored by still has a path annotation?
-    @Path("dataObject.fileInfoType")
-    ComboBox<FileInfoType> fileInfoTypeComboBox;
-
+    @UiField(provided = true) @Ignore ComboBox<FileInfoType> fileInfoTypeComboBox;
     @UiField(provided = true) FileInputTypeLabels fileInputLabels;
     @UiField TextField label;
     @UiField CheckBoxAdapter requiredEditor, omitIfBlank;
     @UiField @Path("description") TextField toolTipEditor;
     @UiField FieldLabel toolTipLabel;
+    @UiField @Path("fileParameters.implicit") CheckBoxAdapter isImplicit;
 
     private static FileInputPropertyEditorUiBinder uiBinder = GWT.create(FileInputPropertyEditorUiBinder.class);
     private final EditorDriver editorDriver = GWT.create(EditorDriver.class);
@@ -73,6 +69,7 @@ public class FileInputPropertyEditor extends AbstractArgumentPropertyEditor {
         requiredEditor.setHTML(new SafeHtmlBuilder().appendHtmlConstant("&nbsp;").append(appLabels.isRequired()).toSafeHtml());
         omitIfBlank.setHTML(new SafeHtmlBuilder().appendHtmlConstant("&nbsp;").append(appearance.createContextualHelpLabelNoFloat(appLabels.excludeWhenEmpty(), help.fileInputExcludeArgument()))
                                                  .toSafeHtml());
+        isImplicit.setHTML(new SafeHtmlBuilder().appendHtmlConstant("&nbsp;").append(appearance.createContextualHelpLabelNoFloat(appLabels.isImplicit(), help.fileInputIsImplicit())).toSafeHtml());
         editorDriver.initialize(this);
         editorDriver.accept(new InitializeTwoWayBinding(this));
         ensureDebugId(Ids.PROPERTY_EDITOR + Ids.FILE_INPUT);

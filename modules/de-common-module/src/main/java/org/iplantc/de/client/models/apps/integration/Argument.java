@@ -24,6 +24,10 @@ public interface Argument extends HasId, HasName, HasLabel, HasDescription {
     String IS_NEW = "new argument";
     String TYPE_KEY = "type";
     String SELECTION_ITEMS_KEY = "arguments";
+    String OMIT_IF_BLANK_KEY = "omit_if_blank";
+    String REQUIRED_KEY = "required";
+    String VISIBLE_KEY = "isVisible";
+    String FILE_PARAMETERS_KEY = "file_parameters";
 
     ArgumentType getType();
 
@@ -33,10 +37,10 @@ public interface Argument extends HasId, HasName, HasLabel, HasDescription {
 
     void setOrder(Integer order);
 
-    @PropertyName("omit_if_blank")
+    @PropertyName(OMIT_IF_BLANK_KEY)
     Boolean isOmitIfBlank();
 
-    @PropertyName("omit_if_blank")
+    @PropertyName(OMIT_IF_BLANK_KEY)
     void setOmitIfBlank(Boolean omitIfBlank);
 
     Splittable getDefaultValue();
@@ -54,20 +58,20 @@ public interface Argument extends HasId, HasName, HasLabel, HasDescription {
 
     void setValue(Splittable value);
 
-    @PropertyName("required")
+    @PropertyName(REQUIRED_KEY)
     Boolean getRequired();
 
-    @PropertyName("required")
+    @PropertyName(REQUIRED_KEY)
     void setRequired(Boolean required);
 
     List<ArgumentValidator> getValidators();
 
     void setValidators(List<ArgumentValidator> validators);
 
-    @PropertyName("isVisible")
+    @PropertyName(VISIBLE_KEY)
     Boolean isVisible();
 
-    @PropertyName("isVisible")
+    @PropertyName(VISIBLE_KEY)
     void setVisible(Boolean visible);
 
     @PropertyName(SELECTION_ITEMS_KEY)
@@ -76,10 +80,10 @@ public interface Argument extends HasId, HasName, HasLabel, HasDescription {
     @PropertyName(SELECTION_ITEMS_KEY)
     void setSelectionItems(List<SelectionItem> arguments);
 
-    @PropertyName("file_parameters")
+    @PropertyName(FILE_PARAMETERS_KEY)
     FileParameters getFileParameters();
 
-    @PropertyName("file_parameters")
+    @PropertyName(FILE_PARAMETERS_KEY)
     void setFileParameters(FileParameters dataObject);
 
     void setId(String id);

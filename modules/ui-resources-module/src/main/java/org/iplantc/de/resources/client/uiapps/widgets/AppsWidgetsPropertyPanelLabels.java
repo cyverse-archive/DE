@@ -48,6 +48,8 @@ public interface AppsWidgetsPropertyPanelLabels extends Messages, ArgumentGroupL
 
     String excludeWhenEmpty();
 
+    String isImplicit();
+
     SafeHtml isRequired();
 
     SafeHtml isVisible();
