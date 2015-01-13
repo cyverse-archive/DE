@@ -177,7 +177,7 @@ public class PathListViewer extends AbstractStructuredTextViewer implements Stor
                           final FileViewer.Presenter presenter) {
         super(file, infoType, editing, presenter);
         if (file != null) {
-            Preconditions.checkArgument(InfoType.HT_ANALYSIS_PATH_LIST.toString().equals(file.getInfoType()));
+            Preconditions.checkArgument(InfoType.HT_ANALYSIS_PATH_LIST.toString().equals(infoType));
         } else {
             Preconditions.checkArgument(editing, "New files must be editable");
         }
