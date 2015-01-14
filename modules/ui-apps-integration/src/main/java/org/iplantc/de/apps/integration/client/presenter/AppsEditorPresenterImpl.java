@@ -751,11 +751,15 @@ public class AppsEditorPresenterImpl implements AppsEditorView.Presenter,
         }
         // Clean any handlers from the AppTemplate
         final AutoBean<Object> autoBean = AutoBeanUtils.getAutoBean(view.flush());
-        final Object tag = autoBean.getTag(AppsEditorView.Presenter.HANDLERS);
-        if ((tag != null) && (tag instanceof List)) {
-            List<HandlerRegistration> handlerRegistrationList = (List<HandlerRegistration>) tag;
-            for(HandlerRegistration hr : handlerRegistrationList){
-                hr.removeHandler();
+        final Object tag;
+        if (autoBean != null) {
+            tag = autoBean.getTag(AppsEditorView.Presenter.HANDLERS);
+            if ((tag != null)
+                    && (tag instanceof List)) {
+                @SuppressWarnings("unchecked") List<HandlerRegistration> handlerRegistrationList = (List<HandlerRegistration>) tag;
+                for(HandlerRegistration hr : handlerRegistrationList){
+                    hr.removeHandler();
+                }
             }
         }
     }

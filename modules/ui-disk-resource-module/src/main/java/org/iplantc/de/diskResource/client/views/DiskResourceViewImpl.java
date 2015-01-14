@@ -105,7 +105,6 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -1145,7 +1144,7 @@ public class DiskResourceViewImpl extends Composite implements DiskResourceView,
 
     @Override
     public void selectTag(IplantTag tag) {
-        LOG.log(Level.SEVERE, "==>" + tag.getValue());
+        LOG.fine("tag selected ==>" + tag.getValue());
         presenter.doSearchTaggedWithResources(Sets.newHashSet(tag));
     }
 

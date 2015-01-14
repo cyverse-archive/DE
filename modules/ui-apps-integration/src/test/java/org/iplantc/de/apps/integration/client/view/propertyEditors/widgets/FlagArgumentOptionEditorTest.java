@@ -13,6 +13,7 @@ import static org.mockito.Mockito.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Matchers;
 import org.mockito.Mock;
 
 /**
@@ -37,22 +38,24 @@ public class FlagArgumentOptionEditorTest {
                                            unCheckedArgOptionMock,
                                            unCheckedValueMock,
                                            validationConstantsMock);
-        // Perform initialization verifications
-        verify(checkedArgOptionMock, times(2)).addValidator(any(Validator.class));
-        verify(unCheckedArgOptionMock, times(2)).addValidator(any(Validator.class));
 
-        verify(checkedValueMock).addValidator(any(Validator.class));
-        verify(unCheckedValueMock).addValidator(any(Validator.class));
+        // Perform initialization verifications
+        verify(checkedArgOptionMock, times(2)).addValidator(Matchers.<Validator<String>>any());
+
+        verify(unCheckedArgOptionMock, times(2)).addValidator(Matchers.<Validator<String>>any());
+
+        verify(checkedValueMock).addValidator(Matchers.<Validator<String>>any());
+        verify(unCheckedValueMock).addValidator(Matchers.<Validator<String>>any());
 
         verify(checkedArgOptionMock).addInvalidHandler(any(InvalidEvent.InvalidHandler.class));
         verify(checkedValueMock).addInvalidHandler(any(InvalidEvent.InvalidHandler.class));
         verify(unCheckedArgOptionMock).addInvalidHandler(any(InvalidEvent.InvalidHandler.class));
         verify(unCheckedValueMock).addInvalidHandler(any(InvalidEvent.InvalidHandler.class));
 
-        verify(checkedArgOptionMock).addValueChangeHandler(any(ValueChangeHandler.class));
-        verify(checkedValueMock).addValueChangeHandler(any(ValueChangeHandler.class));
-        verify(unCheckedArgOptionMock).addValueChangeHandler(any(ValueChangeHandler.class));
-        verify(unCheckedValueMock).addValueChangeHandler(any(ValueChangeHandler.class));
+        verify(checkedArgOptionMock).addValueChangeHandler(Matchers.<ValueChangeHandler<String>>any());
+        verify(checkedValueMock).addValueChangeHandler(Matchers.<ValueChangeHandler<String>>any());
+        verify(unCheckedArgOptionMock).addValueChangeHandler(Matchers.<ValueChangeHandler<String>>any());
+        verify(unCheckedValueMock).addValueChangeHandler(Matchers.<ValueChangeHandler<String>>any());
     }
 
     /**

@@ -16,7 +16,6 @@ import com.google.web.bindery.autobean.shared.impl.StringQuoter;
 
 import java.util.Date;
 import java.util.Set;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -59,7 +58,7 @@ public class DataSearchQueryBuilder {
     Splittable query = StringQuoter.createSplittable();
     Splittable bool = addChild(query, BOOL);
 
-    Logger LOG = Logger.getLogger("Query builder");
+    Logger LOG = Logger.getLogger(DataSearchQueryBuilder.class.getName());
 
     public DataSearchQueryBuilder(DiskResourceQueryTemplate dsf, UserInfo userinfo) {
         this.dsf = dsf;
@@ -81,7 +80,7 @@ public class DataSearchQueryBuilder {
                  .excludeTrash()
                  .taggedWith();
                
-        LOG.log(Level.INFO, "search query==>" + toString());
+        LOG.fine("search query==>" + toString());
         return toString();
     }
 

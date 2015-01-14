@@ -17,7 +17,6 @@ import com.sencha.gxt.data.client.loader.RpcProxy;
 import com.sencha.gxt.data.shared.loader.ListLoadResult;
 
 import java.util.List;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class TagSuggestionRpcProxy extends RpcProxy<TagSuggestionLoadConfig, ListLoadResult<IplantTag>> implements TagsView.TagSuggestionProxy {
@@ -25,7 +24,7 @@ public class TagSuggestionRpcProxy extends RpcProxy<TagSuggestionLoadConfig, Lis
     private final int LIMIT = 10;
     private final TagsServiceFacade mService;
     IplantTagAutoBeanFactory factory;
-    Logger logger = Logger.getLogger("Tag Proxy Logger");
+    Logger logger = Logger.getLogger(TagSuggestionRpcProxy.class.getName());
 
     @Inject
     TagSuggestionRpcProxy(final TagsServiceFacade mService,
@@ -53,7 +52,7 @@ public class TagSuggestionRpcProxy extends RpcProxy<TagSuggestionLoadConfig, Lis
                         public List<IplantTag> getData() {
                             AutoBean<IplantTagList> tagListBean = AutoBeanCodex.decode(factory, IplantTagList.class, result);
                             List<IplantTag> tagList = tagListBean.as().getTagList();
-                            logger.log(Level.SEVERE, tagList.size() + "<--");
+                            logger.fine(tagList.size() + "<--");
                             return tagList;
                         }
                     });

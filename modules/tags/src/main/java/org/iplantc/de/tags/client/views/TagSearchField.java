@@ -34,7 +34,6 @@ import com.sencha.gxt.data.shared.loader.LoadResultListStoreBinding;
 import com.sencha.gxt.widget.core.client.ListView;
 import com.sencha.gxt.widget.core.client.form.ComboBox;
 
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -54,7 +53,7 @@ public class TagSearchField implements IsWidget {
     private ComboBox<IplantTag> tagSearchCbo;
     private ListStore<IplantTag> store;
 
-    Logger logger = Logger.getLogger("list view logger");
+    Logger logger = Logger.getLogger(TagSearchField.class.getName());
 
     private final TagsView.TagSuggestionProxy proxy;
     private Command createTagCommand;
@@ -141,7 +140,7 @@ public class TagSearchField implements IsWidget {
                                           NativeEvent event,
                                           ValueUpdater<IplantTag> valueUpdater) {
                 IplantTag tag = tagSearchCbo.getCurrentValue();
-                logger.log(Level.SEVERE, "from enter key -->" + tagSearchCbo.getText() + "<--"
+                logger.fine("from enter key -->" + tagSearchCbo.getText() + "<--"
                         + "value before=>" + tagSearchCbo.getValue());
                 TagSearchField.this.setValue(tag);
             }

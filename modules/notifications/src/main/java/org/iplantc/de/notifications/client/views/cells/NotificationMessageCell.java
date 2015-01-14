@@ -33,8 +33,6 @@ import com.sencha.gxt.core.client.util.Format;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * 
@@ -113,9 +111,6 @@ public class NotificationMessageCell extends AbstractCell<NotificationMessage> {
                                                                               context1).as();
 
                         List<ToolRequestHistory> history = toolRequest.getHistory();
-
-                        Logger logger = Logger.getLogger("NameOfYourLogger");
-                        logger.log(Level.SEVERE, "history size==>" + history.size());
 
                         ToolRequestHistoryDialog dlg = new ToolRequestHistoryDialog(toolRequest.getName(),
                                 history);

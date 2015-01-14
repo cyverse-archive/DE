@@ -13,15 +13,17 @@ import com.google.web.bindery.autobean.shared.impl.StringQuoter;
 
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * @author jstroot
+ */
 public class SearchModelUtils {
 
     private final static List<String> fileSizeUnits = Lists.newArrayList("KB", "MB", "GB", "TB");
     private final static SearchAutoBeanFactory factory = GWT.create(SearchAutoBeanFactory.class);
 
-    static Logger LOG = Logger.getLogger("Search Utils");
+    static Logger LOG = Logger.getLogger(SearchModelUtils.class.getName());
 
     public static DiskResourceQueryTemplate createDefaultFilter() {
         Splittable defFilter = StringQuoter.createSplittable();
@@ -89,7 +91,7 @@ public class SearchModelUtils {
                                                               DiskResourceQueryTemplate.class,
                 AutoBeanCodex.encode(queryBean).getPayload()).as();
 
-        LOG.log(Level.SEVERE, temp.getTagQuery().toString());
+        LOG.fine(temp.getTagQuery().toString());
         return temp;
     }
 }
