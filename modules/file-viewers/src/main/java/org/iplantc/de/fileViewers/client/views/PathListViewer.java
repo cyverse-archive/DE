@@ -173,6 +173,7 @@ public class PathListViewer extends AbstractStructuredTextViewer implements Stor
 
             for (Splittable path : idSet) {
                 String diskResourceId = path.get(0).asString();
+                LOG.log(Level.SEVERE, "filename=" + diskResourceId);
                 for (char restricted : restrictedChars) {
                     for (char next : diskResourceId.toCharArray()) {
                         LOG.log(Level.SEVERE, "char:" + next + "$$$$restricted char:" + restricted);
@@ -189,6 +190,7 @@ public class PathListViewer extends AbstractStructuredTextViewer implements Stor
                 }
 
             }
+            LOG.log(Level.SEVERE, "restricted chars found=" + restrictedFound);
             return restrictedFound;
         }
 
