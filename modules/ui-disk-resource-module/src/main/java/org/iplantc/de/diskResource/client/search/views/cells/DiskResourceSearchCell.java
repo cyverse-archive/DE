@@ -7,7 +7,6 @@ import org.iplantc.de.diskResource.client.search.events.SubmitDiskResourceQueryE
 import org.iplantc.de.resources.client.messages.I18N;
 
 import com.google.gwt.cell.client.ValueUpdater;
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.dom.client.Element;
@@ -15,6 +14,8 @@ import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.dom.client.Style.Cursor;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.inject.Inject;
+import com.google.inject.Provider;
 
 import com.sencha.gxt.cell.core.client.form.DateCell;
 import com.sencha.gxt.cell.core.client.form.TriggerFieldCell;
@@ -44,20 +45,15 @@ public class DiskResourceSearchCell extends TriggerFieldCell<String> implements 
 
     private boolean expanded;
     private DiskResourceQueryForm searchForm;
+    @Inject Provider<DiskResourceQueryForm> queryFormProvider;
 
     /**
      * Creates a new date cell.
-     */
-    public DiskResourceSearchCell() {
-        this(GWT.<DiskResourceSearchCellAppearance> create(DiskResourceSearchCellAppearance.class));
-    }
-
-    /**
-     * Creates a new date cell.
-     * 
+     *
      * @param appearance the date cell appearance
      */
-    public DiskResourceSearchCell(DiskResourceSearchCellAppearance appearance) {
+    @Inject
+    public DiskResourceSearchCell(final DiskResourceSearchCellAppearance appearance) {
         super(appearance);
     }
 
@@ -144,7 +140,7 @@ public class DiskResourceSearchCell extends TriggerFieldCell<String> implements 
 
     public DiskResourceQueryForm getSearchForm() {
         if (searchForm == null) {
-            searchForm = new DiskResourceQueryForm();
+            searchForm = queryFormProvider.get();
             searchForm.addHideHandler(this);
             searchForm.addSubmitDiskResourceQueryEventHandler(this);
             searchForm.addSaveDiskResourceQueryClickedEventHandler(this);

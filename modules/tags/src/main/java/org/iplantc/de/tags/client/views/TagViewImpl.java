@@ -9,41 +9,26 @@
  * implied. See the License for the specific language governing permissions and limitations under the
  * License.
  */
-package org.iplantc.de.commons.client.tags.views;
+package org.iplantc.de.tags.client.views;
 
+import static org.iplantc.de.tags.client.TagsView.TagListHandlers.InsertionPoint;
 import org.iplantc.de.client.models.tags.IplantTag;
-import org.iplantc.de.commons.client.tags.presenter.TagListHandlers;
-import org.iplantc.de.commons.client.tags.presenter.TagListHandlers.InsertionPoint;
-import org.iplantc.de.commons.client.tags.resources.CustomIplantTagResources;
 import org.iplantc.de.resources.client.messages.I18N;
+import org.iplantc.de.tags.client.TagsView;
+import org.iplantc.de.tags.client.resources.CustomIplantTagResources;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.DivElement;
 import com.google.gwt.dom.client.Element;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.dom.client.DragEndEvent;
-import com.google.gwt.event.dom.client.DragEndHandler;
-import com.google.gwt.event.dom.client.DragEnterEvent;
-import com.google.gwt.event.dom.client.DragEnterHandler;
-import com.google.gwt.event.dom.client.DragLeaveEvent;
-import com.google.gwt.event.dom.client.DragLeaveHandler;
-import com.google.gwt.event.dom.client.DragOverEvent;
-import com.google.gwt.event.dom.client.DragOverHandler;
-import com.google.gwt.event.dom.client.DragStartEvent;
-import com.google.gwt.event.dom.client.DragStartHandler;
-import com.google.gwt.event.dom.client.DropEvent;
-import com.google.gwt.event.dom.client.DropHandler;
-import com.google.gwt.event.dom.client.MouseOutEvent;
-import com.google.gwt.event.dom.client.MouseOutHandler;
-import com.google.gwt.event.dom.client.MouseOverEvent;
-import com.google.gwt.event.dom.client.MouseOverHandler;
+import com.google.gwt.event.dom.client.*;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
 import com.google.web.bindery.event.shared.HandlerRegistration;
 
 import java.util.ArrayList;
@@ -51,48 +36,31 @@ import java.util.List;
 import java.util.logging.Logger;
 
 /**
- * 
  * @author cbopp
- * 
  */
-public class TagView extends Composite {
-    interface Binder extends UiBinder<Widget, TagView> {
+public class TagViewImpl extends Composite implements TagsView {
+    interface Binder extends UiBinder<Widget, TagViewImpl> {
     }
 
-    private static Binder uiBinder = GWT.create(Binder.class);
-
-    @UiField
-    HTMLPanel tagPanel;
-    @UiField
-    DivElement tagDiv;
-    @UiField
-    Label value;
-    private TagListHandlers uiHandlers;
-
-    @UiField
-    DivElement editOption;
-
-    @UiField
-    DivElement deleteOption;
-
-    private final List<HandlerRegistration> dndHandlers = new ArrayList<HandlerRegistration>();
-
-    private boolean editable;
-
-    private final CustomIplantTagResources resources;
-    private static TagView draggedElement;
+    @UiField DivElement deleteOption;
+    @UiField DivElement editOption;
+    @UiField DivElement tagDiv;
+    @UiField HTMLPanel tagPanel;
+    @UiField Label value;
 
     Logger logger = Logger.getLogger("tags");
-
-    private boolean removeable;
-
+    private static TagViewImpl draggedElement;
+    private static Binder uiBinder = GWT.create(Binder.class);
+    private final List<HandlerRegistration> dndHandlers = new ArrayList<>();
+    private final CustomIplantTagResources resources;
     private final IplantTag tag;
+    private boolean editable;
+    private boolean removable;
+    private TagsView.TagListHandlers uiHandlers;
 
-    public void setUiHandlers(TagListHandlers tagListHandlers) {
-        this.uiHandlers = tagListHandlers;
-    }
-
-    public TagView(CustomIplantTagResources resources, IplantTag tag) {
+    @Inject
+    TagViewImpl(final CustomIplantTagResources resources,
+                @Assisted final IplantTag tag) {
         this.resources = resources;
         this.tag = tag;
 
@@ -109,11 +77,11 @@ public class TagView extends Composite {
             public void onClick(ClickEvent event) {
                 Element e = Element.as(event.getNativeEvent().getEventTarget());
                 if (e.getAttribute("name").contains("tagEdit")) {
-                    uiHandlers.onEditTag(TagView.this);
+                    uiHandlers.onEditTag(TagViewImpl.this);
                 } else if (e.getAttribute("name").contains("tagDelete")) {
-                    uiHandlers.onRemoveTag(TagView.this);
+                    uiHandlers.onRemoveTag(TagViewImpl.this);
                 } else {
-                    uiHandlers.onSelectTag(TagView.this);
+                    uiHandlers.onSelectTag(TagViewImpl.this);
                 }
 
             }
@@ -123,6 +91,21 @@ public class TagView extends Composite {
 
     }
 
+    public void deactivateDnD() {
+        this.tagPanel.removeStyleName(resources.style().tagEditable());
+
+        for (HandlerRegistration dndHandler : this.dndHandlers)
+            dndHandler.removeHandler();
+
+        this.dndHandlers.clear();
+    }
+
+    @Override
+    public IplantTag getTag() {
+        return tag;
+    }
+
+    @Override
     public void setEditable(boolean editable) {
         if (this.editable != editable) {
             this.editable = editable;
@@ -135,32 +118,21 @@ public class TagView extends Composite {
 
     }
 
-    public void setRemoveable(boolean removeable) {
-        if (this.removeable != removeable) {
-            this.removeable = removeable;
+    @Override
+    public void setRemovable(boolean removable) {
+        if (this.removable != removable) {
+            this.removable = removable;
 
-            if (removeable) {
+            if (removable) {
                 activateDeleteButton();
                 deleteOption.setTitle(I18N.DISPLAY.remove());
             }
         }
     }
 
-    private void activateEditButton() {
-
-        tagPanel.addDomHandler(new MouseOverHandler() {
-            @Override
-            public void onMouseOver(MouseOverEvent event) {
-                editOption.addClassName(resources.style().tagEdit());
-            }
-        }, MouseOverEvent.getType());
-
-        tagPanel.addDomHandler(new MouseOutHandler() {
-            @Override
-            public void onMouseOut(MouseOutEvent event) {
-                editOption.removeClassName(resources.style().tagEdit());
-            }
-        }, MouseOutEvent.getType());
+    @Override
+    public void setUiHandlers(TagsView.TagListHandlers tagListHandlers) {
+        this.uiHandlers = tagListHandlers;
     }
 
     private void activateDeleteButton() {
@@ -194,7 +166,7 @@ public class TagView extends Composite {
             @Override
             public void onDragStart(DragStartEvent event) {
                 event.setData("text", "");
-                draggedElement = TagView.this;
+                draggedElement = TagViewImpl.this;
                 uiHandlers.onFocus();
             }
         }, DragStartEvent.getType()));
@@ -202,13 +174,13 @@ public class TagView extends Composite {
         this.dndHandlers.add(this.addDomHandler(new DragEnterHandler() {
             @Override
             public void onDragEnter(DragEnterEvent event) {
-                if (draggedElement.equals(TagView.this))
+                if (draggedElement.equals(TagViewImpl.this))
                     return;
 
                 // Calculate the mouse's percentage X position relative to the drag over element
                 // 0 = left border; 100 = right border
                 int percentagePositionX = (event.getNativeEvent().getClientX() - getAbsoluteLeft())
-                        * 100 / getElement().getClientWidth();
+                                              * 100 / getElement().getClientWidth();
                 if (percentagePositionX < 50) {
                     tagPanel.addStyleName(resources.style().previewLeft());
                     tagPanel.removeStyleName(resources.style().previewRight());
@@ -223,13 +195,13 @@ public class TagView extends Composite {
         this.dndHandlers.add(this.addDomHandler(new DragOverHandler() {
             @Override
             public void onDragOver(DragOverEvent event) {
-                if (draggedElement.equals(TagView.this))
+                if (draggedElement.equals(TagViewImpl.this))
                     return;
 
                 // Calculate the mouse's percentage X position relative to the drag over element
                 // 0 = left border; 100 = right border
                 int percentagePositionX = (event.getNativeEvent().getClientX() - getAbsoluteLeft())
-                        * 100 / getElement().getClientWidth();
+                                              * 100 / getElement().getClientWidth();
                 if (percentagePositionX < 50) {
                     tagPanel.addStyleName(resources.style().previewLeft());
                     tagPanel.removeStyleName(resources.style().previewRight());
@@ -244,7 +216,7 @@ public class TagView extends Composite {
         this.dndHandlers.add(this.addDomHandler(new DragLeaveHandler() {
             @Override
             public void onDragLeave(DragLeaveEvent event) {
-                if (draggedElement.equals(TagView.this))
+                if (draggedElement.equals(TagViewImpl.this))
                     return;
 
                 tagPanel.removeStyleName(resources.style().previewLeft());
@@ -253,21 +225,21 @@ public class TagView extends Composite {
         }, DragLeaveEvent.getType()));
 
         this.dndHandlers.add(this.addDomHandler(new DropHandler() {
-            @Override
-            public void onDrop(DropEvent event) {
-                if (draggedElement.equals(TagView.this))
-                    return;
+                                                    @Override
+                                                    public void onDrop(DropEvent event) {
+                                                        if (draggedElement.equals(TagViewImpl.this))
+                                                            return;
 
-                event.preventDefault();
-                uiHandlers.onRelocateTag(draggedElement,
-                                         TagView.this,
-                                         tagPanel.getStyleName().contains(resources.style()
-                                                                                   .previewLeft()) ? InsertionPoint.BEFORE
-                                                                                                  : InsertionPoint.AFTER);
-                tagPanel.removeStyleName(resources.style().previewLeft());
-                tagPanel.removeStyleName(resources.style().previewRight());
-            }
-        },
+                                                        event.preventDefault();
+                                                        uiHandlers.onRelocateTag(draggedElement,
+                                                                                 TagViewImpl.this,
+                                                                                 tagPanel.getStyleName().contains(resources.style()
+                                                                                                                           .previewLeft()) ? InsertionPoint.BEFORE
+                                                                                     : InsertionPoint.AFTER);
+                                                        tagPanel.removeStyleName(resources.style().previewLeft());
+                                                        tagPanel.removeStyleName(resources.style().previewRight());
+                                                    }
+                                                },
                                                 DropEvent.getType()));
 
         this.dndHandlers.add(this.addDomHandler(new DragEndHandler() {
@@ -278,16 +250,20 @@ public class TagView extends Composite {
         }, DragEndEvent.getType()));
     }
 
-    public void deactivateDnD() {
-        this.tagPanel.removeStyleName(resources.style().tagEditable());
+    private void activateEditButton() {
 
-        for (HandlerRegistration dndHandler : this.dndHandlers)
-            dndHandler.removeHandler();
+        tagPanel.addDomHandler(new MouseOverHandler() {
+            @Override
+            public void onMouseOver(MouseOverEvent event) {
+                editOption.addClassName(resources.style().tagEdit());
+            }
+        }, MouseOverEvent.getType());
 
-        this.dndHandlers.clear();
-    }
-
-    public IplantTag getTag() {
-        return tag;
+        tagPanel.addDomHandler(new MouseOutHandler() {
+            @Override
+            public void onMouseOut(MouseOutEvent event) {
+                editOption.removeClassName(resources.style().tagEdit());
+            }
+        }, MouseOutEvent.getType());
     }
 }

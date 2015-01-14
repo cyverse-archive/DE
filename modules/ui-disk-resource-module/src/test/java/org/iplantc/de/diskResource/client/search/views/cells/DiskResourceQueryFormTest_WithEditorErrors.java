@@ -4,8 +4,9 @@ import org.iplantc.de.client.models.search.DateInterval;
 import org.iplantc.de.client.models.search.DiskResourceQueryTemplate;
 import org.iplantc.de.client.models.search.FileSizeRange.FileSizeUnit;
 import org.iplantc.de.client.models.tags.IplantTag;
-import org.iplantc.de.commons.client.tags.views.TagSearchField;
-import org.iplantc.de.commons.client.tags.views.TagsPanel;
+import org.iplantc.de.tags.client.gin.factory.TagsViewFactory;
+import org.iplantc.de.tags.client.views.TagSearchField;
+import org.iplantc.de.tags.client.views.TagsPanel;
 import org.iplantc.de.commons.client.widgets.IPlantAnchor;
 
 import com.google.common.collect.Lists;
@@ -62,12 +63,14 @@ public class DiskResourceQueryFormTest_WithEditorErrors {
     @Mock DiskResourceQueryFormNamePrompt namePrompt;
 
     @Mock DiskResourceQueryTemplate mockedTemplate;
+    @Mock TagsViewFactory tagsViewFactoryMock;
+    @Mock TagSearchField searchFieldMock;
 
     private DiskResourceQueryForm form;
 
     @Before public void setUp() {
         GwtMockito.useProviderForType(SimpleBeanEditorDriver.class, new FakeSimpleBeanEditorDriverProvider(true));
-        form = new DiskResourceQueryForm(mockedTemplate) {
+        form = new DiskResourceQueryForm(tagsViewFactoryMock, searchFieldMock, mockedTemplate) {
 
             @Override
             DateInterval createDateInterval(Date from, Date to, String label) {

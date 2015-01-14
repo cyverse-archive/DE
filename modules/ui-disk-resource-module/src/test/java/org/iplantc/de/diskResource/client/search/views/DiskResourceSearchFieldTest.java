@@ -3,6 +3,7 @@ package org.iplantc.de.diskResource.client.search.views;
 import org.iplantc.de.client.models.search.DiskResourceQueryTemplate;
 import org.iplantc.de.commons.client.events.SubmitTextSearchEvent;
 import org.iplantc.de.diskResource.client.search.events.SubmitDiskResourceQueryEvent;
+import org.iplantc.de.diskResource.client.search.views.cells.DiskResourceSearchCell;
 
 import com.google.gwtmockito.GxtMockitoTestRunner;
 
@@ -20,12 +21,11 @@ import org.mockito.Mock;
 @RunWith(GxtMockitoTestRunner.class)
 public class DiskResourceSearchFieldTest {
 
-    @Mock
-    SubmitDiskResourceQueryEvent submitQueryEventMock;
+    @Mock SubmitDiskResourceQueryEvent submitQueryEventMock;
+    @Mock DiskResourceSearchCell searchCellMock;
 
-    @Test
-    public void testDoSubmitDiskResourceQuery_FileQuery() {
-        DiskResourceSearchField spy = spy(new DiskResourceSearchField());
+    @Test public void testDoSubmitDiskResourceQuery_FileQuery() {
+        DiskResourceSearchField spy = spy(new DiskResourceSearchField(searchCellMock));
 
         DiskResourceQueryTemplate queryMock = mock(DiskResourceQueryTemplate.class);
         String testFileQuery = "example";
@@ -40,9 +40,8 @@ public class DiskResourceSearchFieldTest {
         assertEquals(null, spy.getValue());
     }
 
-    @Test
-    public void testDoSubmitDiskResourceQuery_NoFileQuery() {
-        DiskResourceSearchField spy = spy(new DiskResourceSearchField());
+    @Test public void testDoSubmitDiskResourceQuery_NoFileQuery() {
+        DiskResourceSearchField spy = spy(new DiskResourceSearchField(searchCellMock));
 
         // Call method under test
         spy.doSubmitDiskResourceQuery(submitQueryEventMock);
@@ -51,7 +50,7 @@ public class DiskResourceSearchFieldTest {
     }
 
     @Test public void testOnSubmitTextSearch() {
-        DiskResourceSearchField spy = spy(new DiskResourceSearchField());
+        DiskResourceSearchField spy = spy(new DiskResourceSearchField(searchCellMock));
 
         // Call method under test
         spy.onSubmitTextSearch(any(SubmitTextSearchEvent.class));

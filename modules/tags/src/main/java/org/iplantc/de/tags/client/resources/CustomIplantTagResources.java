@@ -11,9 +11,8 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.iplantc.de.commons.client.tags.resources;
+package org.iplantc.de.tags.client.resources;
 
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.resources.client.ClientBundle;
 import com.google.gwt.resources.client.CssResource;
 
@@ -23,7 +22,6 @@ import com.google.gwt.resources.client.CssResource;
  *
  */
 public interface CustomIplantTagResources extends ClientBundle {
-    public static final CustomIplantTagResources INSTANCE = GWT.create( CustomIplantTagResources.class );
 
     public interface CustomStyle extends CssResource {
         //Widget style

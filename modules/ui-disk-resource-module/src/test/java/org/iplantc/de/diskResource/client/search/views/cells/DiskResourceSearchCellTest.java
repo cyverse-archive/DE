@@ -17,6 +17,7 @@ import static org.mockito.Mockito.when;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 
 /**
  * @author jstroot
@@ -27,8 +28,10 @@ public class DiskResourceSearchCellTest {
 
     private DiskResourceSearchCell unitUnderTest;
 
+    @Mock DiskResourceSearchCell.DiskResourceSearchCellAppearance appearanceMock;
+
     @Before public void setUp() {
-        unitUnderTest = new DiskResourceSearchCell();
+        unitUnderTest = new DiskResourceSearchCell(appearanceMock);
 
     }
 

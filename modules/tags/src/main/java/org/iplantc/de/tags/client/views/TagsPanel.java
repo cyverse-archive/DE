@@ -11,7 +11,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.iplantc.de.commons.client.tags.views;
+package org.iplantc.de.tags.client.views;
 
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -22,8 +22,6 @@ import com.google.gwt.user.client.ui.Widget;
  * 
  */
 public class TagsPanel extends FlowPanel {
-
-
 
     @Override
     public boolean remove( Widget widget ) {

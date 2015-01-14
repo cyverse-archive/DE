@@ -57,3 +57,6 @@ project(':newToolRequests').projectDir = new File(rootProject.projectDir, newToo
 
 include ':collaborators'
 project(':collaborators').projectDir = new File(rootProject.projectDir, collaboratorsSubtreePrefix)
+
+include ':tags'
+project(':tags').projectDir = new File(rootProject.projectDir, tagsSubtreePrefix)

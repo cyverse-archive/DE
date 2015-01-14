@@ -58,7 +58,7 @@ public class DiskResourceViewToolbarImpl extends Composite implements DiskResour
     @UiField TextButton refreshButton;
     @UiField MenuItem renameMi, moveMi, deleteMi,
         editFileMi, editCommentsMi, editInfoTypeMi, metadataMi;
-    @UiField DiskResourceSearchField searchField;
+    @UiField(provided = true) DiskResourceSearchField searchField;
     @UiField TextButton shareMenu;
     @UiField MenuItem shareWithCollaboratorsMi, createPublicLinkMi, sendToCogeMi,
         sendToEnsemblMi, sendToTreeViewerMi;
@@ -76,7 +76,9 @@ public class DiskResourceViewToolbarImpl extends Composite implements DiskResour
     @Inject DiskResourceUtil diskResourceUtil;
 
     @Inject
-    public DiskResourceViewToolbarImpl(final UserInfo userInfo) {
+    public DiskResourceViewToolbarImpl(final DiskResourceSearchField searchField,
+                                       final UserInfo userInfo) {
+        this.searchField = searchField;
         this.userInfo = userInfo;
         initWidget(BINDER.createAndBindUi(this));
     }

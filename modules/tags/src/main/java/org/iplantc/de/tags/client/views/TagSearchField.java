@@ -1,9 +1,9 @@
-package org.iplantc.de.commons.client.tags.views;
+package org.iplantc.de.tags.client.views;
 
 import org.iplantc.de.client.models.tags.IplantTag;
-import org.iplantc.de.commons.client.tags.proxy.TagSuggestionLoadConfig;
-import org.iplantc.de.commons.client.tags.proxy.TagSuggestionRpcProxy;
 import org.iplantc.de.resources.client.messages.I18N;
+import org.iplantc.de.tags.client.TagsView;
+import org.iplantc.de.tags.client.proxy.TagSuggestionLoadConfig;
 
 import com.google.common.base.Strings;
 import com.google.gwt.cell.client.AbstractCell;
@@ -56,11 +56,11 @@ public class TagSearchField implements IsWidget {
 
     Logger logger = Logger.getLogger("list view logger");
 
-    private final TagSuggestionRpcProxy proxy;
+    private final TagsView.TagSuggestionProxy proxy;
     private Command createTagCommand;
 
     @Inject
-    public TagSearchField(TagSuggestionRpcProxy proxy) {
+    public TagSearchField(final TagsView.TagSuggestionProxy proxy) {
         this.proxy = proxy;
         initStore();
 
@@ -99,7 +99,7 @@ public class TagSearchField implements IsWidget {
     }
 
     private void initStore() {
-        store = new ListStore<IplantTag>(new ModelKeyProvider<IplantTag>() {
+        store = new ListStore<>(new ModelKeyProvider<IplantTag>() {
             @Override
             public String getKey(IplantTag item) {
                 return item.getId();
@@ -108,7 +108,7 @@ public class TagSearchField implements IsWidget {
     }
 
     private ListLoader<TagSuggestionLoadConfig, ListLoadResult<IplantTag>> initLoader() {
-        ListLoader<TagSuggestionLoadConfig, ListLoadResult<IplantTag>> loader = new ListLoader<TagSuggestionLoadConfig, ListLoadResult<IplantTag>>(proxy);
+        ListLoader<TagSuggestionLoadConfig, ListLoadResult<IplantTag>> loader = new ListLoader<>(proxy);
         loader.useLoadConfig(new TagSuggestionLoadConfig());
         loader.addBeforeLoadHandler(new BeforeLoadHandler<TagSuggestionLoadConfig>() {
             @Override
@@ -150,7 +150,7 @@ public class TagSearchField implements IsWidget {
     }
 
     private ListView<IplantTag, IplantTag> initView(final TagTemplate template) {
-        ListView<IplantTag, IplantTag> view = new ListView<IplantTag, IplantTag>(store,
+        ListView<IplantTag, IplantTag> view = new ListView<>(store,
                                                                                  new IdentityValueProvider<IplantTag>());
 
         view.setCell(new AbstractCell<IplantTag>() {
