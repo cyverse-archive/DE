@@ -21,7 +21,6 @@ import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
-import com.google.inject.Inject;
 import com.google.web.bindery.autobean.shared.Splittable;
 import com.google.web.bindery.autobean.shared.impl.StringQuoter;
 
@@ -216,7 +215,7 @@ public class PathListViewer extends AbstractStructuredTextViewer implements Stor
     private final File file;
 
 
-    @Inject DiskResourceUtil diskResourceUtil;
+    private final DiskResourceUtil diskResourceUtil = DiskResourceUtil.getInstance();
 
     public PathListViewer(final File file,
                           final String infoType,
