@@ -8,10 +8,6 @@
 
     <ui:with field="appearance"
              type="org.iplantc.de.desktop.client.DesktopView.DesktopAppearance"/>
-    <ui:with field="display"
-             type="org.iplantc.de.resources.client.messages.IplantDisplayStrings"/>
-    <ui:with field="help"
-             type="org.iplantc.de.resources.client.messages.IplantContextualHelpStrings"/>
 
     <g:HTMLPanel addStyleNames="{appearance.styles.deBody}">
         <!--Header-->
@@ -22,7 +18,7 @@
             </div>
             <nav class="{appearance.styles.userMenuContainer}">
                 <desktopBtn:DesktopIconButton ui:field="notificationsBtn"
-                                              toolTip="{display.notifications}"
+                                              toolTip="{appearance.notifications}"
                                               config="{appearance.notificationsConfig}">
                     <desktopBtn:contextmenu>
                         <menu:Menu styleName="{appearance.styles.userContextMenu}">
@@ -31,33 +27,33 @@
                     </desktopBtn:contextmenu>
                 </desktopBtn:DesktopIconButton>
                 <desktopBtn:DesktopIconButton ui:field="userSettingsBtn"
-                                              toolTip="{display.preferences}"
+                                              toolTip="{appearance.preferences}"
                                               config="{appearance.userPrefsConfig}">
                     <desktopBtn:contextmenu>
                         <menu:Menu styleName="{appearance.styles.userContextMenu}">
                             <anchors:IPlantAnchor ui:field="preferencesBtn"
-                                                  text="{display.preferences}"/>
+                                                  text="{appearance.preferences}"/>
                             <anchors:IPlantAnchor ui:field="collaboratorsBtn"
-                                                  text="{display.collaborators}"/>
+                                                  text="{appearance.collaborators}"/>
                             <anchors:IPlantAnchor ui:field="systemMsgsBtn"
-                                                  text="{display.systemMessagesLabel}"/>
+                                                  text="{appearance.systemMessagesLabel}"/>
                             <menu:SeparatorMenuItem />
                             <anchors:IPlantAnchor ui:field="documentationBtn"
-                                                  text="{display.documentation}"/>
+                                                  text="{appearance.documentation}"/>
                             <anchors:IPlantAnchor ui:field="introBtn"
-                                                  text="{display.introduction}"/>
+                                                  text="{appearance.introduction}"/>
                             <anchors:IPlantAnchor ui:field="contactSupportBtn"
-                                                  text="{display.contactSupport}"/>
+                                                  text="{appearance.contactSupport}"/>
                             <anchors:IPlantAnchor ui:field="aboutBtn"
-                                                  text="{display.about}"/>
+                                                  text="{appearance.about}"/>
                             <menu:SeparatorMenuItem />
                             <anchors:IPlantAnchor ui:field="logoutBtn"
-                                                  text="{display.logout}"/>
+                                                  text="{appearance.logout}"/>
                         </menu:Menu>
                     </desktopBtn:contextmenu>
                 </desktopBtn:DesktopIconButton>
                 <button:IconButton ui:field="forumsBtn"
-                                   toolTip="{display.forums}"
+                                   toolTip="{appearance.forums}"
                                    config="{appearance.forumsConfig}"/>
             </nav>
         </div>
@@ -67,13 +63,13 @@
         <div class="{appearance.styles.desktopBackground}">
             <nav class="{appearance.styles.windowBtnNav}">
                 <button:IconButton ui:field="dataWinBtn"
-                                   toolTip="{help.iconHomepageDataTip}"
+                                   toolTip="{appearance.iconHomepageDataTip}"
                                    config="{appearance.dataConfig}"/>
                 <button:IconButton ui:field="appsWinBtn"
-                                   toolTip="{help.iconHomepageAppsTip}"
+                                   toolTip="{appearance.iconHomepageAppsTip}"
                                    config="{appearance.appsConfig}"/>
                 <button:IconButton ui:field="analysisWinBtn"
-                                   toolTip="{help.iconHomepageAnalysesTip}"
+                                   toolTip="{appearance.iconHomepageAnalysesTip}"
                                    config="{appearance.analysisConfig}"/>
             </nav>
             <button:IconButton ui:field="feedbackBtn"

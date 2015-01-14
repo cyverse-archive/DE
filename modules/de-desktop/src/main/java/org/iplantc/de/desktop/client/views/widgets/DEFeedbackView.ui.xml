@@ -4,10 +4,6 @@
              xmlns:con="urn:import:com.sencha.gxt.widget.core.client.container"
              xmlns:form="urn:import:com.sencha.gxt.widget.core.client.form">
 
-    <ui:with field="icons"
-             type="org.iplantc.de.resources.client.IplantResources"/>
-    <ui:with field="strings"
-             type="org.iplantc.de.resources.client.messages.IplantDisplayStrings"/>
     <ui:with field="appearance"
              type="org.iplantc.de.desktop.client.views.widgets.DEFeedbackDialog.FeedbackAppearance"/>
 

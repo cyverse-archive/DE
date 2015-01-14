@@ -81,15 +81,49 @@ public interface DesktopView extends IsWidget {
 
         IconButton.IconConfig dataConfig();
 
+        String feedbackAlertValidationWarning();
+
         IconButton.IconConfig feedbackBtnConfig();
 
         IconButton.IconConfig forumsConfig();
 
         IconButton.IconConfig notificationsConfig();
 
+        String publicSubmitTip();
+
+        String rootApplicationTitle(int count);
+
+        String rootApplicationTitle();
+
         DesktopStyles styles();
 
         IconButton.IconConfig userPrefsConfig();
+
+        String notifications();
+
+        String preferences();
+
+        String collaborators();
+
+        String systemMessagesLabel();
+
+        String introduction();
+
+        String documentation();
+
+        String contactSupport();
+
+        String about();
+
+        String logout();
+
+        String iconHomepageDataTip();
+
+        String forums();
+
+        String iconHomepageAnalysesTip();
+
+        String iconHomepageAppsTip();
     }
 
     /**
@@ -103,7 +137,6 @@ public interface DesktopView extends IsWidget {
      * TODO JDS Eventually, certain injected parameters will be injected via an AsyncProvider
      *           This will provide us with split points through injection. Only items which are not
      *           immediately necessary should be provided this way.
-     * TODO Pull strings from IplantDisplayStrings into a desktop appearance
      */
     interface Presenter extends UserSettingsMenuPresenter, UnseenNotificationsPresenter{
 
