@@ -176,12 +176,13 @@ public class PathListViewer extends AbstractStructuredTextViewer implements Stor
                 LOG.log(Level.SEVERE, "filename=" + diskResourceId);
                 for (char restricted : restrictedChars) {
                     for (char next : diskResourceId.toCharArray()) {
-                        LOG.log(Level.SEVERE, "char:" + next + "$$$$restricted char:" + restricted);
                         if (next == restricted && next != '/') {
                             restrictedFound.append(restricted);
                         }
                     }
                 }
+                LOG.log(Level.SEVERE, "DiskresourceUtil:" + diskResourceUtil.toString());
+                LOG.log(Level.SEVERE, "restricted chars found 1 =" + restrictedFound);
                 // validate '/' only on label
                 for (char next : diskResourceUtil.parseNameFromPath(diskResourceId).toCharArray()) {
                     if (next == '/') {
@@ -190,7 +191,7 @@ public class PathListViewer extends AbstractStructuredTextViewer implements Stor
                 }
 
             }
-            LOG.log(Level.SEVERE, "restricted chars found=" + restrictedFound);
+            LOG.log(Level.SEVERE, "restricted chars found 2=" + restrictedFound);
             return restrictedFound;
         }
 
