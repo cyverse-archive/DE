@@ -4,8 +4,7 @@
              xmlns:button="urn:import:com.sencha.gxt.widget.core.client.button"
              xmlns:toolbar="urn:import:com.sencha.gxt.widget.core.client.toolbar">
 
-    <ui:with type="org.iplantc.de.resources.client.messages.IplantDisplayStrings" field="display"/>
-    <ui:with type="org.iplantc.de.resources.client.IplantResources" field="icons"/>
+    <ui:with field="appearance" type="org.iplantc.de.fileViewers.client.views.MarkDownRendererViewImpl.MarkdownRendererViewAppearance" />
 
     <ui:with field="toolBarLayoutData"
              type="com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer.VerticalLayoutData">
@@ -21,8 +20,8 @@
         <container:child layoutData="{toolBarLayoutData}">
             <toolbar:ToolBar ui:field="toolbar" height="30">
                 <button:TextButton ui:field="saveBtn"
-                                   text="{display.save}"
-                                   icon="{icons.save}"/>
+                                   text="{appearance.saveBtnText}"
+                                   icon="{appearance.saveBtnIcon}"/>
             </toolbar:ToolBar>
         </container:child>
         <container:child layoutData="{layoutData}">

@@ -209,8 +209,7 @@ public class PathListViewer extends AbstractStructuredTextViewer implements Stor
     private final File file;
 
 
-    @Inject
-    DiskResourceUtil diskResourceUtil;
+    @Inject DiskResourceUtil diskResourceUtil;
 
     public PathListViewer(final File file,
                           final String infoType,
@@ -296,9 +295,7 @@ public class PathListViewer extends AbstractStructuredTextViewer implements Stor
         configs.add(rowNumberer);
         configs.add(col);
 
-        ColumnModel<Splittable> splittableColumnModel = new ColumnModel<>(configs);
-
-        return splittableColumnModel;
+        return new ColumnModel<>(configs);
     }
 
     @Override

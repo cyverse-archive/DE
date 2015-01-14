@@ -6,6 +6,9 @@ import org.iplantc.de.fileViewers.client.FileViewer;
 
 import com.google.gwt.inject.client.AbstractGinModule;
 
+/**
+ * @author jstroot
+ */
 public class FileViewerGinModule extends AbstractGinModule {
     @Override
     protected void configure() {

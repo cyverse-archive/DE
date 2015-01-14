@@ -108,7 +108,7 @@ public class MimeTypeViewerResolverFactory {
                 break;
 
             case VIZ:
-                ExternalVisualizationURLViewerImpl vizUrlViewer = new ExternalVisualizationURLViewerImpl(file, infoType);
+                ExternalVisualizationURLViewerImpl vizUrlViewer = new ExternalVisualizationURLViewerImpl(file, infoType, fileEditorService);
                 viewers.add(vizUrlViewer);
                 break;
 

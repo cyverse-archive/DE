@@ -132,6 +132,7 @@ project(':belphegor') {
         src += files(project(':newToolRequests').sourceSets.main.allJava.srcDirs) + files(project(':newToolRequests').sourceSets.main.output.resourcesDir)
         src += files(project(':collaborators').sourceSets.main.allJava.srcDirs) + files(project(':collaborators').sourceSets.main.output.resourcesDir)
         src += files(project(':tags').sourceSets.main.allJava.srcDirs) + files(project(':tags').sourceSets.main.output.resourcesDir)
+        src += files(project(':file-viewers').sourceSets.main.allJava.srcDirs) + files(project(':file-viewers').sourceSets.main.output.resourcesDir)
 
         superDev { noPrecompile = true }
         maxHeapSize = '1024M'

@@ -6,6 +6,7 @@ import org.iplantc.de.client.models.diskResources.File;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Overflow;
 import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiFactory;
 import com.google.gwt.uibinder.client.UiField;
@@ -19,23 +20,29 @@ import com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer;
 import com.sencha.gxt.widget.core.client.event.SelectEvent;
 import com.sencha.gxt.widget.core.client.toolbar.ToolBar;
 
+/**
+ * @author jstroot
+ */
 public class MarkDownRendererViewImpl extends AbstractFileViewer {
+
+    public interface MarkdownRendererViewAppearance {
+        String backgroundColor();
+
+        ImageResource saveBtnIcon();
+
+        String saveBtnText();
+    }
 
     @UiTemplate("MarkDownRendererView.ui.xml")
     interface MarkDownRendererViewUiBinder extends UiBinder<Widget, MarkDownRendererViewImpl> { }
 
-    @UiField
-    HtmlLayoutContainer panel;
-
-    @UiField
-    ToolBar toolbar;
-
-    @UiField
-    TextButton saveBtn;
-    @UiField
-    VerticalLayoutContainer con;
+    @UiField HtmlLayoutContainer panel;
+    @UiField ToolBar toolbar;
+    @UiField TextButton saveBtn;
+    @UiField VerticalLayoutContainer con;
 
     private static MarkDownRendererViewUiBinder uiBinder = GWT.create(MarkDownRendererViewUiBinder.class);
+    @UiField(provided = true) MarkdownRendererViewAppearance appearance = GWT.create(MarkdownRendererViewAppearance.class);
     private final String previewData;
     private final Presenter presenter;
     private String renderHtml;
@@ -48,7 +55,7 @@ public class MarkDownRendererViewImpl extends AbstractFileViewer {
         this.previewData = previewData;
         this.presenter = presenter;
         initWidget(uiBinder.createAndBindUi(this));
-        panel.getElement().getStyle().setBackgroundColor("#ffffff");
+        panel.getElement().getStyle().setBackgroundColor(appearance.backgroundColor());
         panel.getElement().getStyle().setOverflow(Overflow.SCROLL);
         if (file == null) {
             saveBtn.disable();
@@ -84,6 +91,7 @@ public class MarkDownRendererViewImpl extends AbstractFileViewer {
 
     @UiFactory
     HtmlLayoutContainer buildHtmlContainer() {
+        // FIXME Roll into appearance
         renderHtml = render(previewData);
         return new HtmlLayoutContainer("<link href=\"./markdown.css\" rel=\"stylesheet\"></link><div class=\"markdown\">"
                                            + renderHtml + "</div>");

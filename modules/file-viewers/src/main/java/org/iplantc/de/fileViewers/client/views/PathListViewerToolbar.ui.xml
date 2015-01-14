@@ -24,8 +24,8 @@
         <toolbar:SeparatorToolItem />
         <form:CheckBox ui:field="lineNumberCheckbox"
                        boxLabel="{appearance.lineNumberCheckboxLabel}"/>
-        <!--Move up-->
-        <!--Move down-->
+        <!--Move up : not implemented -->
+        <!--Move down : not implemented -->
         <toolbar:FillToolItem />
 
         <gxt:Status ui:field="editStatus"

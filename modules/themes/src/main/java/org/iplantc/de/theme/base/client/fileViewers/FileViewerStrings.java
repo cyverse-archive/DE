@@ -10,8 +10,14 @@ public interface FileViewerStrings extends Messages {
     @Key("addPathsButtonTooltip")
     String addPathsButtonTooltip();
 
+    @Key("defaultViewName")
+    String defaultViewName(double defaultName);
+
     @Key("deleteSelectedPathsButtonTooltip")
     String deleteSelectedPathsButtonTooltip();
+
+    @Key("externalVizUrlColumnHeaderLabel")
+    String externalVizUrlColumnHeaderLabel();
 
     @Key("initializingFileViewer")
     String initializingFileViewer();
@@ -24,6 +30,12 @@ public interface FileViewerStrings extends Messages {
     @DefaultMessage("Select a valid page")
     @Key("invalidPage")
     String invalidPage();
+
+    @Key("label")
+    String label();
+
+    @Key("markdownPreviewWindowHeader")
+    String markdownPreviewWindowHeader();
 
     /**
      * @param totalPages the total number of pages to display
@@ -83,6 +95,15 @@ public interface FileViewerStrings extends Messages {
     @Key("previewMarkdownLabel")
     String previewMarkdownLabel();
 
+    @Key("unsupportedPreviewAlertMsg")
+    String unsupportedPreviewAlertMsg();
+
+    @Key("unsupportedPreviewAlertTitle")
+    String unsupportedPreviewAlertTitle();
+
+    @Key("visualizationView")
+    String visualizationView(String fileName);
+
     /**
      * Translated "Wrap Text".
      *
@@ -95,8 +116,8 @@ public interface FileViewerStrings extends Messages {
     @Key("sampleColumnText")
     String sampleColumnText(int i);
 
-    @Key("defaultViewName")
-    String defaultViewName();
+    @Key("defaultTabularViewName")
+    String defaultTabularViewName();
 
     @Key("viewName")
     String viewName(String fileName);

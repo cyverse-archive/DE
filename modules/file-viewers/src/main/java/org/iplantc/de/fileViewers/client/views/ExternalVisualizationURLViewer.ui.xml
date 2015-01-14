@@ -4,6 +4,7 @@
              xmlns:grid="urn:import:com.sencha.gxt.widget.core.client.grid"
              xmlns:toolbar="urn:import:com.sencha.gxt.widget.core.client.toolbar">
 
+    <ui:with field="appearance" type="org.iplantc.de.fileViewers.client.views.ExternalVisualizationURLViewerImpl.ExternalVisualizationURLViewerAppearance" />
     <ui:with field="toolBarLayoutData"
              type="com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer.VerticalLayoutData">
         <ui:attributes width="1" height="-1"/>
@@ -23,10 +24,10 @@
     </ui:with>
     <container:VerticalLayoutContainer ui:field="con"
                                        scrollMode="AUTOY"
-                                       height="380px">
+                                       height="{appearance.containerHeight}">
         <container:child layoutData="{toolBarLayoutData}">
             <toolbar:ToolBar ui:field="toolbar"
-                             height="30"/>
+                             height="{appearance.toolbarHeight}"/>
         </container:child>
         <container:child layoutData="{gridLayoutData}">
             <grid:Grid ui:field="grid"
