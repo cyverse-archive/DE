@@ -1006,13 +1006,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     String dataWindowTitle(String folderName);
 
     /**
-     * 
-     * @return
-     */
-    @DefaultMessage("Visualization")
-    String visualization();
-
-    /**
      * Translated "Date".
      *
      * @return translated "Date"
@@ -1873,15 +1866,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     @DefaultMessage("Keyboard Shortcuts")
     @Key("keyboadSc")
     String keyboadSc();
-
-    /**
-     * Translated "Label".
-     *
-     * @return translated "Label"
-     */
-    @DefaultMessage("Label")
-    @Key("label")
-    String label();
 
     /**
      * Translated "Last: {0}".
@@ -3699,7 +3683,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     /**
      * search threshold msg
      *
-     * @return
      */
     String searchThresholdMsg(int limit);
 
@@ -4624,7 +4607,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     /**
      * Translated "Pending verification that {0} exists."
      * 
-     * @param path
      * @return translated "Pending verification that {0} exists."
      */
     @DefaultMessage("Pending verification that {0} exists.")
@@ -4645,7 +4627,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     /**
      * Translated "Disk resource not available."
      * 
-     * @return
      */
     String diskResourceNotAvailable();
     

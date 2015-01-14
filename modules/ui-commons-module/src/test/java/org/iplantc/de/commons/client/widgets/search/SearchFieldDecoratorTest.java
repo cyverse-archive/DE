@@ -1,7 +1,6 @@
 package org.iplantc.de.commons.client.widgets.search;
 
 import org.iplantc.de.commons.client.events.SubmitTextSearchEvent;
-import org.iplantc.de.commons.client.widgets.search.SearchFieldDecorator.SearchFieldDelayedTask;
 
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyUpEvent;
@@ -15,21 +14,24 @@ import com.sencha.gxt.widget.core.client.form.TextField;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.*;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 
+/**
+ * @author jstroot
+ */
 @RunWith(GxtMockitoTestRunner.class)
 public class SearchFieldDecoratorTest {
 
     @Mock TextField textFieldMock;
+    @Mock SearchFieldDecorator<TextField>.SearchFieldDelayedTask delayedTaskMock;
 
     private SearchFieldDecorator<TextField> unitUnderTest;
 
     @Before public void setUp() {
-        unitUnderTest = new SearchFieldDecorator<TextField>(textFieldMock);
+        unitUnderTest = new SearchFieldDecorator<>(textFieldMock);
     }
 
     @Test public void testSearchFieldDecoratorConstructor() {
@@ -41,8 +43,7 @@ public class SearchFieldDecoratorTest {
      * Modifier key
      */
     @Test public void testOnKeyUp_Case1() {
-        final SearchFieldDecorator<TextField>.SearchFieldDelayedTask delayedTaskMock = mock(SearchFieldDelayedTask.class);
-        unitUnderTest = new SearchFieldDecorator<TextField>(textFieldMock, delayedTaskMock);
+        unitUnderTest = new SearchFieldDecorator<>(textFieldMock, delayedTaskMock);
 
         KeyUpEvent mockEvent = mock(KeyUpEvent.class);
         when(mockEvent.getNativeKeyCode()).thenReturn(KeyCodes.KEY_ENTER);
@@ -55,8 +56,7 @@ public class SearchFieldDecoratorTest {
      * arrow key
      */
     @Test public void testOnKeyUp_Case2() {
-        final SearchFieldDecorator<TextField>.SearchFieldDelayedTask delayedTaskMock = mock(SearchFieldDelayedTask.class);
-        unitUnderTest = new SearchFieldDecorator<TextField>(textFieldMock, delayedTaskMock);
+        unitUnderTest = new SearchFieldDecorator<>(textFieldMock, delayedTaskMock);
 
         KeyUpEvent mockEvent = mock(KeyUpEvent.class);
         when(mockEvent.getNativeKeyCode()).thenReturn(KeyCodes.KEY_DOWN);
@@ -69,8 +69,7 @@ public class SearchFieldDecoratorTest {
      * non-arrow, non-modifier
      */
     @Test public void testOnKeyUp_Case3() {
-        final SearchFieldDecorator<TextField>.SearchFieldDelayedTask delayedTaskMock = mock(SearchFieldDelayedTask.class);
-        unitUnderTest = new SearchFieldDecorator<TextField>(textFieldMock, delayedTaskMock);
+        unitUnderTest = new SearchFieldDecorator<>(textFieldMock, delayedTaskMock);
 
         KeyUpEvent mockEvent = mock(KeyUpEvent.class);
         // Send 'e'

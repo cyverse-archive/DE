@@ -29,4 +29,23 @@
         <when-type-is class="org.iplantc.de.fileViewers.client.views.PathListViewer.PathListViewerAppearance"/>
     </replace-with>
 
+    <replace-with class="org.iplantc.de.theme.base.client.fileViewers.TextViewerDefaultAppearance">
+        <when-type-is class="org.iplantc.de.fileViewers.client.views.TextViewerImpl.TextViewerAppearance" />
+    </replace-with>
+
+    <replace-with class="org.iplantc.de.theme.base.client.fileViewers.MarkdownRendererViewDefaultAppearance">
+        <when-type-is class="org.iplantc.de.fileViewers.client.views.MarkDownRendererViewImpl.MarkdownRendererViewAppearance" />
+    </replace-with>
+
+    <replace-with class="org.iplantc.de.theme.base.client.fileViewers.ExternalVisualizationURLViewerDefaultAppearance" >
+        <when-type-is class="org.iplantc.de.fileViewers.client.views.ExternalVisualizationURLViewerImpl.ExternalVisualizationURLViewerAppearance" />
+    </replace-with>
+
+    <replace-with class="org.iplantc.de.theme.base.client.fileViewers.AbstractFileViewerDefaultAppearance">
+        <when-type-is class="org.iplantc.de.fileViewers.client.views.AbstractFileViewer.AbstractFileViewerAppearance" />
+    </replace-with>
+
+    <replace-with class="org.iplantc.de.theme.base.client.fileViewers.cells.TreeUrlCellDefaultAppearance">
+        <when-type-is class="org.iplantc.de.fileViewers.client.views.cells.TreeUrlCell.TreeUrlCellAppearance" />
+    </replace-with>
 </module>

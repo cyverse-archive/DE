@@ -15,6 +15,9 @@ import com.sencha.gxt.widget.core.client.form.CheckBox;
 import com.sencha.gxt.widget.core.client.toolbar.SeparatorToolItem;
 import com.sencha.gxt.widget.core.client.toolbar.ToolBar;
 
+/**
+ * @author jstroot
+ */
 public class TextViewToolBar extends AbstractToolBar {
 
     public interface TextViewToolBarAppearance extends AbstractToolBarAppearance {

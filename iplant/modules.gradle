@@ -157,6 +157,7 @@ project(':ui-disk-resource-module') {
         gwt project(':de-common-module')
         gwt project(':ui-commons-module')
         gwt project(':collaborators')
+        gwt project(':tags')
 
         compile "com.sencha.gxt:gxt:$gxtVersion"
         compile "com.google.gwt.inject:gin:$gwtGinVer"
@@ -165,6 +166,7 @@ project(':ui-disk-resource-module') {
         compile project(':de-common-module')
         compile project(':ui-commons-module')
         compile project(':collaborators')
+        compile project(':tags')
 
         testCompile "com.google.gwt.gwtmockito:gwtmockito:$gwtMockitoVer"
         testCompile project(':de-common-module').sourceSets.test.output
@@ -504,6 +506,26 @@ project(':collaborators') {
     dependencies {
         gwt project(':ui-commons-module')
         compile project(':ui-commons-module')
+    }
+}
+
+project(':tags') {
+    apply plugin: 'gwt-base'
+
+    gwt { 
+        gwtVersion = "$gwtVer"
+    }
+
+    dependencies {
+        gwt project(':de-common-module')
+        gwt project(':ui-commons-module')
+        gwt "com.google.gwt.inject:gin:$gwtGinVer"
+        gwt "com.google.guava:guava-gwt:$guavaGwtVer"
+
+        compile project(':de-common-module')
+        compile project(':ui-commons-module')
+        compile "com.google.gwt.inject:gin:$gwtGinVer"
+        compile "com.google.guava:guava-gwt:$guavaGwtVer"
     }
 }
 

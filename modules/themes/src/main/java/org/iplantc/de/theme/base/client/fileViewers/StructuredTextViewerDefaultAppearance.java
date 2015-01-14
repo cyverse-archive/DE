@@ -4,6 +4,9 @@ import org.iplantc.de.fileViewers.client.views.StructuredTextViewer;
 
 import com.google.gwt.core.client.GWT;
 
+/**
+ * @author jstroot
+ */
 public class StructuredTextViewerDefaultAppearance extends AbstractStructuredTextViewerDefaultAppearance implements StructuredTextViewer.StructuredTextViewerAppearance{
 
     private final FileViewerStrings displayStrings;
@@ -23,7 +26,7 @@ public class StructuredTextViewerDefaultAppearance extends AbstractStructuredTex
 
     @Override
     public String defaultViewName() {
-        return displayStrings.defaultViewName();
+        return displayStrings.defaultTabularViewName();
     }
 
     @Override

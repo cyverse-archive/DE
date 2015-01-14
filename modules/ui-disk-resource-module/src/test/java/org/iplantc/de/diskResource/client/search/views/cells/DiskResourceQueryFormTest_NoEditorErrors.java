@@ -4,10 +4,11 @@ import org.iplantc.de.client.models.search.DateInterval;
 import org.iplantc.de.client.models.search.DiskResourceQueryTemplate;
 import org.iplantc.de.client.models.search.FileSizeRange.FileSizeUnit;
 import org.iplantc.de.client.models.tags.IplantTag;
-import org.iplantc.de.commons.client.tags.views.TagSearchField;
-import org.iplantc.de.commons.client.tags.views.TagsPanel;
 import org.iplantc.de.commons.client.widgets.IPlantAnchor;
 import org.iplantc.de.diskResource.client.search.events.SubmitDiskResourceQueryEvent;
+import org.iplantc.de.tags.client.gin.factory.TagsViewFactory;
+import org.iplantc.de.tags.client.views.TagSearchField;
+import org.iplantc.de.tags.client.views.TagsPanel;
 
 import com.google.common.collect.Lists;
 import com.google.gwt.dom.client.Element;
@@ -38,10 +39,7 @@ import com.sencha.gxt.widget.core.client.form.TextField;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.verify;
-
+import static org.mockito.Mockito.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -63,12 +61,14 @@ public class DiskResourceQueryFormTest_NoEditorErrors {
     @Mock DiskResourceQueryFormNamePrompt namePrompt;
     @Mock DiskResourceQueryTemplate mockedTemplate;
     @Mock HtmlLayoutContainer con;
+    @Mock TagsViewFactory tagsViewFactoryMock;
+    @Mock TagSearchField searchFieldMock;
 
     private DiskResourceQueryForm form;
 
     @Before public void setUp() {
         GwtMockito.useProviderForType(SimpleBeanEditorDriver.class, new FakeSimpleBeanEditorDriverProvider(false));
-        form = new DiskResourceQueryForm(mockedTemplate) {
+        form = new DiskResourceQueryForm(tagsViewFactoryMock, searchFieldMock, mockedTemplate) {
 
             @Override
             DateInterval createDateInterval(Date from, Date to, String label) {

@@ -482,7 +482,7 @@ public class FileViewerPresenterImpl implements FileViewer.Presenter, FileSavedE
         boolean ensembleViewer = diskResourceUtil.isEnsemblVizTab(infoTypeSplittable);
 
         if (treeViewer || cogeViewer || ensembleViewer) {
-            FileViewer vizViewer = new ExternalVisualizationURLViewerImpl(file, infoType);
+            FileViewer vizViewer = new ExternalVisualizationURLViewerImpl(file, infoType, fileEditorService);
             List<VizUrl> urls = getManifestVizUrls(manifest);
 
             if (urls != null && !urls.isEmpty()) {

@@ -66,8 +66,6 @@ public class TestDefaultServiceCallResolver {
         assertNotNull(testProps);
         assertNotNull(resolver);
         String valid = resolver.resolveAddress(wrapper(srvKey));
-        String prop = testProps.getProperty(srvKey);
-        System.out.println(prop);
         // expected should equal the returned value
         assertEquals(expected, valid);
         // we should be able to parse the result as a valid URL
@@ -104,8 +102,7 @@ public class TestDefaultServiceCallResolver {
         verifyURLParses(actual);
     }
 
-    @Test
-    public void testKnownURLPassesThroughCorrectly() {
+    @Test public void testKnownURLPassesThroughCorrectly() {
         String srvUrl = "http://ndy.sixfifty.org/accountmanagementv2/fetch-states";
         String expected = srvUrl;
         assertNotNull(testProps);
@@ -116,8 +113,7 @@ public class TestDefaultServiceCallResolver {
         verifyURLParses(actual);
     }
 
-    @Test
-    public void testGarbageValuePassesThrough() {
+    @Test public void testGarbageValuePassesThrough() {
         String garbage = "@$@&(!&@!(*&*&*(**!#!#!#!$!%";
         String expected = garbage;
         assertNotNull(testProps);

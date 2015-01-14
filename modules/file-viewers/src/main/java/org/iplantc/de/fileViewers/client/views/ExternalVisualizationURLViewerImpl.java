@@ -3,7 +3,6 @@
  */
 package org.iplantc.de.fileViewers.client.views;
 
-import org.iplantc.de.client.gin.ServicesInjector;
 import org.iplantc.de.client.models.IsMaskable;
 import org.iplantc.de.client.models.diskResources.File;
 import org.iplantc.de.client.models.viewer.VizUrl;
@@ -13,9 +12,6 @@ import org.iplantc.de.fileViewers.client.callbacks.EnsemblUtil;
 import org.iplantc.de.fileViewers.client.callbacks.LoadGenomeInCoGeCallback;
 import org.iplantc.de.fileViewers.client.callbacks.TreeUrlCallback;
 import org.iplantc.de.fileViewers.client.views.cells.TreeUrlCell;
-import org.iplantc.de.resources.client.IplantResources;
-import org.iplantc.de.resources.client.messages.I18N;
-import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 
 import com.google.common.base.Preconditions;
 import com.google.gwt.core.client.GWT;
@@ -23,6 +19,7 @@ import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONString;
+import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiFactory;
 import com.google.gwt.uibinder.client.UiField;
@@ -52,6 +49,37 @@ import java.util.logging.Logger;
  */
 public class ExternalVisualizationURLViewerImpl extends AbstractFileViewer implements IsMaskable {
 
+    public interface ExternalVisualizationURLViewerAppearance {
+
+        ImageResource arrowUp();
+
+        String containerHeight();
+
+        String label();
+
+        int labelColumnWidth();
+
+        String sendToCogeLoadingMask();
+
+        String sendToCogeMenuItem();
+
+        String sendToEnsemblMenuItem();
+
+        String sendToEnsemblLoadingMask();
+
+        String sendToTreeViewerMenuItem();
+
+        String sentToTreeViewerLoadingMask();
+
+        String toolbarHeight();
+
+        String urlColumnHeaderLabel();
+
+        int urlColumnHeaderWidth();
+
+        String viewName(String fileName);
+    }
+
     private class TreeUrlKeyProvider implements ModelKeyProvider<VizUrl> {
         private int index;
 
@@ -72,19 +100,17 @@ public class ExternalVisualizationURLViewerImpl extends AbstractFileViewer imple
     @UiField GridView<VizUrl> gridView;
     @UiField ListStore<VizUrl> listStore;
     @UiField ToolBar toolbar;
+    @UiField(provided = true) ExternalVisualizationURLViewerAppearance appearance = GWT.create(ExternalVisualizationURLViewerAppearance.class);
 
     private static TreeViewerUiBinder uiBinder = GWT.create(TreeViewerUiBinder.class);
-    private final IplantDisplayStrings displayStrings;
     private final FileEditorServiceFacade fileEditorService;
-    private final IplantResources iplantResources;
     private final DiskResourceUtil diskResourceUtil;
 
     public ExternalVisualizationURLViewerImpl(final File file,
-                                              final String infoType) {
+                                              final String infoType,
+                                              final FileEditorServiceFacade fileEditorService) {
         super(file, infoType);
-        this.displayStrings = I18N.DISPLAY;
-        this.iplantResources = IplantResources.RESOURCES;
-        this.fileEditorService = ServicesInjector.INSTANCE.getFileEditorServiceFacade();
+        this.fileEditorService = fileEditorService;
         this.diskResourceUtil = DiskResourceUtil.getInstance();
         initWidget(uiBinder.createAndBindUi(this));
         gridView.setAutoExpandColumn(cm.getColumn(1));
@@ -104,7 +130,7 @@ public class ExternalVisualizationURLViewerImpl extends AbstractFileViewer imple
     @Override
     public String getViewName(String fileName) {
         Preconditions.checkNotNull(fileName, "Filename cannot be null for this viewer");
-        return displayStrings.visualization() + ":" + fileName;
+        return appearance.viewName(fileName);
     }
 
     @SuppressWarnings("unchecked")
@@ -116,12 +142,12 @@ public class ExternalVisualizationURLViewerImpl extends AbstractFileViewer imple
     }
 
     private TextButton buildCogeButton() {
-        TextButton button = new TextButton(displayStrings.sendToCogeMenuItem(), iplantResources.arrowUp());
+        TextButton button = new TextButton(appearance.sendToCogeMenuItem(), appearance.arrowUp());
         button.addSelectHandler(new SelectHandler() {
 
             @Override
             public void onSelect(SelectEvent event) {
-                mask(displayStrings.loadingMask());
+                mask(appearance.sendToCogeLoadingMask());
                 JSONObject obj = new JSONObject();
                 JSONArray pathArr = new JSONArray();
                 pathArr.set(0, new JSONString(file.getPath()));
@@ -140,12 +166,12 @@ public class ExternalVisualizationURLViewerImpl extends AbstractFileViewer imple
     ColumnModel<VizUrl> buildColumnModel() {
         VizUrlProperties props = GWT.create(VizUrlProperties.class);
         List<ColumnConfig<VizUrl, ?>> configs = new LinkedList<>();
-        ColumnConfig<VizUrl, String> label = new ColumnConfig<>(props.label(), 75);
-        label.setHeader(displayStrings.label());
+        ColumnConfig<VizUrl, String> label = new ColumnConfig<>(props.label(), appearance.labelColumnWidth());
+        label.setHeader(appearance.label());
         configs.add(label);
 
-        ColumnConfig<VizUrl, VizUrl> url = new ColumnConfig<>(new IdentityValueProvider<VizUrl>(), 280);
-        url.setHeader("URL");
+        ColumnConfig<VizUrl, VizUrl> url = new ColumnConfig<>(new IdentityValueProvider<VizUrl>(), appearance.urlColumnHeaderWidth());
+        url.setHeader(appearance.urlColumnHeaderLabel());
         url.setCell(new TreeUrlCell());
         configs.add(url);
 
@@ -154,12 +180,12 @@ public class ExternalVisualizationURLViewerImpl extends AbstractFileViewer imple
     }
 
     private TextButton buildEnsemblButton() {
-        TextButton button = new TextButton(displayStrings.sendToEnsemblMenuItem(), iplantResources.arrowUp());
+        TextButton button = new TextButton(appearance.sendToEnsemblMenuItem(), appearance.arrowUp());
         button.addSelectHandler(new SelectHandler() {
 
             @Override
             public void onSelect(SelectEvent event) {
-                mask(displayStrings.loadingMask());
+                mask(appearance.sendToEnsemblLoadingMask());
                 EnsemblUtil util = new EnsemblUtil(file, infoType, ExternalVisualizationURLViewerImpl.this);
                 util.sendToEnsembl();
             }
@@ -181,12 +207,12 @@ public class ExternalVisualizationURLViewerImpl extends AbstractFileViewer imple
     }
 
     private TextButton buildTreeViewerButton() {
-        TextButton button = new TextButton(displayStrings.sendToTreeViewerMenuItem(), iplantResources.arrowUp());
+        TextButton button = new TextButton(appearance.sendToTreeViewerMenuItem(), appearance.arrowUp());
         button.addSelectHandler(new SelectHandler() {
 
             @Override
             public void onSelect(SelectEvent event) {
-                mask(displayStrings.loadingMask());
+                mask(appearance.sentToTreeViewerLoadingMask());
                 fileEditorService.getTreeUrl(file.getPath(),
                                              true,
                                               new TreeUrlCallback(file, ExternalVisualizationURLViewerImpl.this, ExternalVisualizationURLViewerImpl.this));

@@ -3,9 +3,6 @@
              xmlns:container="urn:import:com.sencha.gxt.widget.core.client.container"
              xmlns:toolbar="urn:import:org.iplantc.de.fileViewers.client.views">
 
-    <ui:with field="strings"
-             type="org.iplantc.de.resources.client.messages.IplantDisplayStrings"/>
-
     <ui:with field="outerMargins"
              type="com.sencha.gxt.core.client.util.Margins">
         <ui:attributes top="10" right="10" bottom="10" left="10"/>

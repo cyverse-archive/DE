@@ -1,10 +1,9 @@
-package org.iplantc.de.commons.client.tags.views;
+package org.iplantc.de.tags.client.views;
 
 import org.iplantc.de.client.models.tags.IplantTag;
 import org.iplantc.de.client.models.tags.IplantTagAutoBeanFactory;
-import org.iplantc.de.commons.client.gin.CommonsInjector;
-import org.iplantc.de.commons.client.tags.presenter.TagListHandlers;
-import org.iplantc.de.commons.client.tags.resources.CustomIplantTagResources;
+import org.iplantc.de.tags.client.TagsView;
+import org.iplantc.de.tags.client.resources.CustomIplantTagResources;
 import org.iplantc.de.resources.client.messages.I18N;
 
 import com.google.common.base.Strings;
@@ -42,31 +41,29 @@ public class IplantTagListView extends Composite implements IsWidget {
         SafeHtml render(IplantTag tag);
     }
 
-    private TagListHandlers uiHandlers;
+    private TagsView.TagListHandlers uiHandlers;
 
-    @UiField
-    VerticalLayoutContainer tagListPanel;
+    @UiField VerticalLayoutContainer tagListPanel;
+    @UiField(provided = true) TagSearchField tagSearchField;
+    @UiField TagsPanel tagsPanel;
+    @UiField FieldLabel taglbl;
 
-    @UiField(provided = true)
-    TagSearchField tagSearchField;
+    private final CustomIplantTagResources resources;
 
-    @UiField
-    TagsPanel tagsPanel;
-
-    @UiField
-    FieldLabel taglbl;
 
     Logger logger = Logger.getLogger("list view logger");
 
     IplantTagAutoBeanFactory factory = GWT.create(IplantTagAutoBeanFactory.class);
 
     @Inject
-    public IplantTagListView() {
-        tagSearchField = CommonsInjector.INSTANCE.getTagSearchField();
+    public IplantTagListView(final TagSearchField tagSearchField,
+                             final CustomIplantTagResources resources) {
+        this.tagSearchField = tagSearchField;
+        this.resources = resources;
         initWidget(uiBinder.createAndBindUi(this));
         taglbl.setHTML("<span style='font-size:10px; font-weight:bold;'>" + I18N.DISPLAY.tags()
                 + "</span>");
-        tagsPanel.setStyleName(CustomIplantTagResources.INSTANCE.style().tagPanel());
+        tagsPanel.setStyleName(resources.style().tagPanel());
         tagSearchField.addSelectionHandler(new SelectionHandler<IplantTag>() {
 
             @Override
@@ -92,7 +89,7 @@ public class IplantTagListView extends Composite implements IsWidget {
         });
     }
 
-    public void setUiHandlers(TagListHandlers tagListHandlers) {
+    public void setUiHandlers(TagsView.TagListHandlers tagListHandlers) {
         this.uiHandlers = tagListHandlers;
     }
 
@@ -112,14 +109,13 @@ public class IplantTagListView extends Composite implements IsWidget {
         this.tagListPanel.getElement().setPropertyBoolean("disabled", !editable);
 
         if (editable) {
-            this.tagListPanel.addStyleName(CustomIplantTagResources.INSTANCE.style().tagListEditable());
+            this.tagListPanel.addStyleName(resources.style().tagListEditable());
         } else {
-            this.tagListPanel.removeStyleName(CustomIplantTagResources.INSTANCE.style()
-                                                                               .tagListEditable());
+            this.tagListPanel.removeStyleName(resources.style().tagListEditable());
         }
 
     }
-    
+
     private void createTag() {
         String text = tagSearchField.getText();
         if (!Strings.isNullOrEmpty(text)) {

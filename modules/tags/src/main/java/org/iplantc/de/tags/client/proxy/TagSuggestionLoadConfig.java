@@ -1,4 +1,4 @@
-package org.iplantc.de.commons.client.tags.proxy;
+package org.iplantc.de.tags.client.proxy;
 
 import com.sencha.gxt.data.shared.loader.ListLoadConfigBean;
 

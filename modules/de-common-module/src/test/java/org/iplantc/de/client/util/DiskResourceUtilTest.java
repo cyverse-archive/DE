@@ -141,18 +141,14 @@ public class DiskResourceUtilTest {
         assertTrue(expected.size() == 0);
     }
 
-    @Test public void testFormatFileSize() {
+    @Test(expected = NumberFormatException.class) public void testFormatFileSize() {
         String expected = diskResourceUtil.formatFileSize(null);
         assertNull(expected);
         expected = diskResourceUtil.formatFileSize("");
         assertNull(expected);
-        
-        try {
-            expected = diskResourceUtil.formatFileSize("foo");
-            fail("Cannot parse this string into Double");
-        } catch (NumberFormatException nfe) {
-            System.out.println("failed with exception");
-        }
+
+        expected = diskResourceUtil.formatFileSize("foo");
+        fail("Cannot parse this string into Double");
 
     }
 

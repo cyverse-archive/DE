@@ -20,6 +20,9 @@ import com.sencha.gxt.widget.core.client.form.IntegerField;
 import com.sencha.gxt.widget.core.client.toolbar.LabelToolItem;
 import com.sencha.gxt.widget.core.client.toolbar.ToolBar;
 
+/**
+ * @author jstroot
+ */
 public class StructuredTextViewToolBar extends AbstractToolBar {
 
     public interface StructureTextViewerToolbarAppearance extends AbstractToolBarAppearance {

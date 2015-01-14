@@ -61,7 +61,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -575,7 +574,7 @@ public class AppsViewImpl extends Composite implements AppsView,
         }
         groups.add(grp);
         for (AppCategory ap : treeStore.getRootItems()) {
-            logger.log(Level.SEVERE, ap.getName());
+            logger.fine(ap.getName());
             if (ap.getId().equals(grp.getId())) {
                 return groups;
             }

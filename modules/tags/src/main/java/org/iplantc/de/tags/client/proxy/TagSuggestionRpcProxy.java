@@ -1,13 +1,13 @@
-package org.iplantc.de.commons.client.tags.proxy;
+package org.iplantc.de.tags.client.proxy;
 
-import org.iplantc.de.client.models.tags.IplantTagAutoBeanFactory;
 import org.iplantc.de.client.models.tags.IplantTag;
+import org.iplantc.de.client.models.tags.IplantTagAutoBeanFactory;
 import org.iplantc.de.client.models.tags.IplantTagList;
 import org.iplantc.de.client.services.TagsServiceFacade;
 import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.resources.client.messages.I18N;
+import org.iplantc.de.tags.client.TagsView;
 
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.inject.Inject;
 import com.google.web.bindery.autobean.shared.AutoBean;
@@ -17,19 +17,20 @@ import com.sencha.gxt.data.client.loader.RpcProxy;
 import com.sencha.gxt.data.shared.loader.ListLoadResult;
 
 import java.util.List;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class TagSuggestionRpcProxy extends RpcProxy<TagSuggestionLoadConfig, ListLoadResult<IplantTag>> {
+public class TagSuggestionRpcProxy extends RpcProxy<TagSuggestionLoadConfig, ListLoadResult<IplantTag>> implements TagsView.TagSuggestionProxy {
 
     private final int LIMIT = 10;
     private final TagsServiceFacade mService;
-    IplantTagAutoBeanFactory factory = GWT.create(IplantTagAutoBeanFactory.class);
-    Logger logger = Logger.getLogger("Tag Proxy Logger");
+    IplantTagAutoBeanFactory factory;
+    Logger logger = Logger.getLogger(TagSuggestionRpcProxy.class.getName());
 
     @Inject
-    public TagSuggestionRpcProxy(final TagsServiceFacade mService) {
+    TagSuggestionRpcProxy(final TagsServiceFacade mService,
+                          final IplantTagAutoBeanFactory factory) {
         this.mService = mService;
+        this.factory = factory;
     }
 
     @Override
@@ -40,7 +41,6 @@ public class TagSuggestionRpcProxy extends RpcProxy<TagSuggestionLoadConfig, Lis
                 @Override
                 public void onFailure(Throwable caught) {
                     ErrorHandler.post(I18N.ERROR.tagRetrieveError(), caught);
-
                 }
 
                 @SuppressWarnings("serial")
@@ -52,7 +52,7 @@ public class TagSuggestionRpcProxy extends RpcProxy<TagSuggestionLoadConfig, Lis
                         public List<IplantTag> getData() {
                             AutoBean<IplantTagList> tagListBean = AutoBeanCodex.decode(factory, IplantTagList.class, result);
                             List<IplantTag> tagList = tagListBean.as().getTagList();
-                            logger.log(Level.SEVERE, tagList.size() + "<--");
+                            logger.fine(tagList.size() + "<--");
                             return tagList;
                         }
                     });

@@ -85,8 +85,6 @@ import com.sencha.gxt.widget.core.client.event.DialogHideEvent;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * @author jstroot
@@ -336,9 +334,6 @@ public class DesktopPresenterImpl implements DesktopView.Presenter {
                                                                       context).as();
 
                 List<ToolRequestHistory> history = toolRequest.getHistory();
-
-                Logger logger = Logger.getLogger("NameOfYourLogger");
-                logger.log(Level.SEVERE, "history size==>" + history.size());
 
                 ToolRequestHistoryDialog dlg = new ToolRequestHistoryDialog(toolRequest.getName(),
                         history);

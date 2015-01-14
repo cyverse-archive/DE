@@ -1,4 +1,4 @@
-package org.iplantc.de.commons.client.tags;
+package org.iplantc.de.tags.client;
 
 import org.iplantc.de.client.models.tags.IplantTag;
 

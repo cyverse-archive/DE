@@ -8,6 +8,7 @@ import org.iplantc.de.desktop.client.DesktopView;
 import org.iplantc.de.desktop.client.gin.DEGinModule;
 import org.iplantc.de.diskResource.client.gin.DiskResourceGinModule;
 import org.iplantc.de.fileViewers.client.gin.FileViewerGinModule;
+import org.iplantc.de.tags.client.gin.TagsGinModule;
 import org.iplantc.de.tools.requests.client.gin.ToolRequestGinModule;
 
 import com.google.gwt.core.client.GWT;
@@ -15,7 +16,7 @@ import com.google.gwt.inject.client.GinModules;
 import com.google.gwt.inject.client.Ginjector;
 
 /**
- * Discovery Environment GinJector
+ * Discovery Environment Ginjector
  * @author jstroot
  */
 @GinModules({DEGinModule.class,
@@ -25,6 +26,7 @@ import com.google.gwt.inject.client.Ginjector;
                 ToolRequestGinModule.class,
                 AppEditorGinModule.class,
                 DiskResourceGinModule.class,
+                TagsGinModule.class,
                 FileViewerGinModule.class})
 public interface DEInjector extends Ginjector {
     public static final DEInjector INSTANCE = GWT.create(DEInjector.class);

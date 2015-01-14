@@ -1,6 +1,5 @@
 package org.iplantc.de.desktop.client.presenter;
 
-import org.iplantc.de.desktop.client.DesktopView;
 import org.iplantc.de.client.models.DEProperties;
 import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.client.models.UserSettings;
@@ -10,6 +9,7 @@ import org.iplantc.de.client.services.UserSessionServiceFacade;
 import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.commons.client.info.ErrorAnnouncementConfig;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
+import org.iplantc.de.desktop.client.DesktopView;
 import org.iplantc.de.resources.client.messages.I18N;
 import org.iplantc.de.resources.client.messages.IplantErrorStrings;
 
@@ -25,7 +25,6 @@ import com.sencha.gxt.widget.core.client.event.DialogHideEvent.DialogHideHandler
 
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -39,7 +38,7 @@ class InitializationCallbacks {
         private final DesktopPresenterImpl presenter;
         private final UserSessionServiceFacade userSessionService;
         private final UserPreferencesCallback userPreferencesCallback;
-        Logger LOG = Logger.getLogger("desktop presenter");
+        Logger LOG = Logger.getLogger(BootstrapCallback.class.getName());
 
         public BootstrapCallback(DesktopPresenterImpl presenter,
                                  UserInfo userInfo,
@@ -71,7 +70,7 @@ class InitializationCallbacks {
                     @Override
                     public void onDialogHide(DialogHideEvent event) {
                         if (event.getHideButton().toString().equalsIgnoreCase("yes")) {
-                            LOG.log(Level.SEVERE, "new user tour");
+                            LOG.fine("new user tour");
                             presenter.onIntroClick();
                         }
 

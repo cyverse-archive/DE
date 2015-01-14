@@ -15,6 +15,7 @@ import org.iplantc.de.diskResource.client.search.views.cells.DiskResourceSearchC
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.inject.Inject;
 
 import com.sencha.gxt.widget.core.client.event.CollapseEvent.CollapseHandler;
 import com.sencha.gxt.widget.core.client.event.CollapseEvent.HasCollapseHandlers;
@@ -66,8 +67,9 @@ public class DiskResourceSearchField extends TriggerField<String> implements Has
     /**
      * Creates a new iPlant Search field.
      */
-    public DiskResourceSearchField() {
-        super(new DiskResourceSearchCell());
+    @Inject
+    public DiskResourceSearchField(final DiskResourceSearchCell searchCell) {
+        super(searchCell);
 
         setPropertyEditor(new QueryStringPropertyEditor());
         getCell().addSubmitDiskResourceQueryEventHandler(this);
