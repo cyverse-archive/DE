@@ -31,7 +31,7 @@ public class DiskResourceNameValidator extends AbstractValidator<String> impleme
             return createError(new DefaultEditorError(editor, I18N.VALIDATION.drNameValidationMsg(), value));
         }
 
-        char[] restrictedChars = (I18N.V_CONSTANTS.warnedDiskResourceNameChars()).toCharArray(); //$NON-NLS-1$
+        char[] restrictedChars = (I18N.V_CONSTANTS.restrictedDiskResourceNameChars()).toCharArray(); //$NON-NLS-1$
         StringBuilder restrictedFound = new StringBuilder();
 
         for (char restricted : restrictedChars) {
