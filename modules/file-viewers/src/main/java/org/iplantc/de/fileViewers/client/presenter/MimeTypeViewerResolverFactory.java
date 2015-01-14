@@ -3,19 +3,25 @@
  */
 package org.iplantc.de.fileViewers.client.presenter;
 
-import static org.iplantc.de.client.models.viewer.InfoType.*;
+import static org.iplantc.de.client.models.viewer.InfoType.CSV;
+import static org.iplantc.de.client.models.viewer.InfoType.GFF;
+import static org.iplantc.de.client.models.viewer.InfoType.HT_ANALYSIS_PATH_LIST;
+import static org.iplantc.de.client.models.viewer.InfoType.TSV;
+import static org.iplantc.de.client.models.viewer.InfoType.VCF;
+
 import org.iplantc.de.client.models.diskResources.File;
 import org.iplantc.de.client.models.viewer.MimeType;
 import org.iplantc.de.client.services.FileEditorServiceFacade;
+import org.iplantc.de.client.util.DiskResourceUtil;
 import org.iplantc.de.client.util.JsonUtil;
 import org.iplantc.de.commons.client.info.ErrorAnnouncementConfig;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
 import org.iplantc.de.commons.client.util.WindowUtil;
+import org.iplantc.de.fileViewers.client.FileViewer;
 import org.iplantc.de.fileViewers.client.views.AbstractFileViewer;
 import org.iplantc.de.fileViewers.client.views.ExternalVisualizationURLViewerImpl;
-import org.iplantc.de.fileViewers.client.FileViewer;
-import org.iplantc.de.fileViewers.client.views.PathListViewer;
 import org.iplantc.de.fileViewers.client.views.ImageViewerImpl;
+import org.iplantc.de.fileViewers.client.views.PathListViewer;
 import org.iplantc.de.fileViewers.client.views.StructuredTextViewer;
 import org.iplantc.de.fileViewers.client.views.TextViewerImpl;
 
@@ -40,6 +46,8 @@ public class MimeTypeViewerResolverFactory {
     @Inject IplantAnnouncer announcer;
     @Inject FileEditorServiceFacade fileEditorService;
     @Inject JsonUtil jsonUtil;
+    @Inject
+    DiskResourceUtil diskResourceUtil;
 
     @Inject
     public MimeTypeViewerResolverFactory() {
@@ -150,7 +158,8 @@ public class MimeTypeViewerResolverFactory {
                     PathListViewer pathListViewer = new PathListViewer(file,
                                                                      infoType,
                                                                      editing,
-                                                                     presenter);
+                                                                       presenter,
+                                                                       diskResourceUtil);
                     viewers.add(pathListViewer);
                 }
                 TextViewerImpl textViewer1 = new TextViewerImpl(file,

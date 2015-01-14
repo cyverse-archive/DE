@@ -214,14 +214,15 @@ public class PathListViewer extends AbstractStructuredTextViewer implements Stor
     private final PathListViewerAppearance appearance = GWT.create(PathListViewerAppearance.class);
     private final File file;
 
-
-    private final DiskResourceUtil diskResourceUtil = DiskResourceUtil.getInstance();
+    private final DiskResourceUtil diskResourceUtil;
 
     public PathListViewer(final File file,
                           final String infoType,
                           final boolean editing,
-                          final FileViewer.Presenter presenter) {
+                          final FileViewer.Presenter presenter,
+                          DiskResourceUtil diskResourceUtil) {
         super(file, infoType, editing, presenter);
+        this.diskResourceUtil = diskResourceUtil;
         if (file != null) {
             Preconditions.checkArgument(InfoType.HT_ANALYSIS_PATH_LIST.toString().equals(infoType));
         } else {
