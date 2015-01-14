@@ -35,6 +35,7 @@ import com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer;
  * Presenter will have to listen for deletes and update the store
  * Created by jstroot on 7/24/14.
  * FIXME REFACTOR JDS Fold all strings into appearance
+ * @author jstroot
  */
 public class UnseenNotificationsView extends Composite implements StoreClearEvent.StoreClearHandler<NotificationMessage>,
                                                                   StoreAddEvent.StoreAddHandler<NotificationMessage>,
@@ -52,22 +53,21 @@ public class UnseenNotificationsView extends Composite implements StoreClearEven
         String markAllAsSeen();
 
         String noNewNotifications();
+
+        String unseenNotificationsViewWidth();
+
+        String unseenNotificationsViewHeight();
     }
 
     interface UnseenNotificationsViewUiBinder extends UiBinder<VerticalLayoutContainer, UnseenNotificationsView> { }
 
-    @UiField
-    HTML emptyNotificationsText;
-    @UiField
-    ListView<NotificationMessage, NotificationMessage> listView;
-    @UiField
-    IPlantAnchor markAllSeenLink;
-    @UiField
-    IPlantAnchor notificationsLink;
+    @UiField HTML emptyNotificationsText;
+    @UiField ListView<NotificationMessage, NotificationMessage> listView;
+    @UiField IPlantAnchor markAllSeenLink;
+    @UiField IPlantAnchor notificationsLink;
     ListStore<NotificationMessage> store;
 
-    @UiField(provided = true)
-    UnseenNotificationsAppearance appearance;
+    @UiField(provided = true) UnseenNotificationsAppearance appearance;
     private DesktopView.UnseenNotificationsPresenter presenter;
 
     private static UnseenNotificationsViewUiBinder ourUiBinder = GWT.create(UnseenNotificationsViewUiBinder.class);
