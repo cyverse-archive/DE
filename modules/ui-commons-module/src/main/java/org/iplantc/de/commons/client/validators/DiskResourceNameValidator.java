@@ -26,12 +26,15 @@ public class DiskResourceNameValidator extends AbstractValidator<String> impleme
             return Collections.emptyList();
         }
 
+        char[] restrictedChars = (I18N.V_CONSTANTS.restrictedDiskResourceNameChars()).toCharArray();
         // check for spaces at the beginning and at the end of the file name
         if (value.startsWith(" ") || value.endsWith(" ")) { //$NON-NLS-1$ //$NON-NLS-2$
-            return createError(new DefaultEditorError(editor, I18N.VALIDATION.drNameValidationMsg(), value));
+            return createError(new DefaultEditorError(editor,
+                                                      I18N.VALIDATION.drNameValidationMsg(new String(restrictedChars)),
+                                                      value));
         }
 
-        char[] restrictedChars = (I18N.V_CONSTANTS.restrictedDiskResourceNameChars()).toCharArray(); //$NON-NLS-1$
+        //$NON-NLS-1$
         StringBuilder restrictedFound = new StringBuilder();
 
         for (char restricted : restrictedChars) {
@@ -44,7 +47,7 @@ public class DiskResourceNameValidator extends AbstractValidator<String> impleme
         }
 
         if (restrictedFound.length() > 0) {
-            String errorMsg = I18N.VALIDATION.drNameValidationMsg() + " " //$NON-NLS-1$
+            String errorMsg = I18N.VALIDATION.drNameValidationMsg(new String(restrictedChars)) + " " //$NON-NLS-1$
                     + I18N.VALIDATION.invalidChars(restrictedFound.toString());
 
             return createError(new DefaultEditorError(editor, errorMsg, value));

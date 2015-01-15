@@ -45,7 +45,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -88,7 +87,7 @@ public class PathListViewer extends AbstractStructuredTextViewer implements Stor
             super.onDragDrop(e);
             StringBuilder splChars = checkForSplChar(grid.getStore().getAll());
             if (splChars.length() > 0) {
-                LOG.log(Level.SEVERE, "splChars:" + splChars + ":");
+                LOG.fine("splChars:" + splChars + ":");
                 IplantAnnouncer.getInstance()
                                .schedule(new ErrorAnnouncementConfig(I18N.DISPLAY.analysisFailureWarning(I18N.V_CONSTANTS.warnedDiskResourceNameChars()),
                                                                      true,
@@ -172,7 +171,7 @@ public class PathListViewer extends AbstractStructuredTextViewer implements Stor
 
             for (Splittable path : idSet) {
                 String diskResourceId = path.get(0).asString();
-                LOG.log(Level.SEVERE, "filename=" + diskResourceId);
+                LOG.fine("filename=" + diskResourceId);
                 for (char restricted : restrictedChars) {
                     for (char next : diskResourceId.toCharArray()) {
                         if (next == restricted && next != '/') {
@@ -180,8 +179,8 @@ public class PathListViewer extends AbstractStructuredTextViewer implements Stor
                         }
                     }
                 }
-                LOG.log(Level.SEVERE, "DiskresourceUtil:" + diskResourceUtil.toString());
-                LOG.log(Level.SEVERE, "restricted chars found 1 =" + restrictedFound);
+                LOG.fine("DiskresourceUtil:" + diskResourceUtil.toString());
+                LOG.fine("restricted chars found 1 =" + restrictedFound);
                 // validate '/' only on label
                 for (char next : diskResourceUtil.parseNameFromPath(diskResourceId).toCharArray()) {
                     if (next == '/') {
@@ -190,7 +189,7 @@ public class PathListViewer extends AbstractStructuredTextViewer implements Stor
                 }
 
             }
-            LOG.log(Level.SEVERE, "restricted chars found 2=" + restrictedFound);
+            LOG.fine("restricted chars found 2=" + restrictedFound);
             return restrictedFound;
         }
 
