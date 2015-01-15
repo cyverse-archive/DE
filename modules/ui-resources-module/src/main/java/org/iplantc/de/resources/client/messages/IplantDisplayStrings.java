@@ -1368,9 +1368,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     @Key("feedbackTitle")
     String feedbackTitle();
 
-    @Key("feedbackSubmitted")
-    String feedbackSubmitted();
-
     /**
      * Translated "This field is required".
      *
@@ -1911,24 +1908,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     String loadingMask();
 
     /**
-     * Translated "Loading Session".
-     *
-     * @return translated "Loading Session"
-     */
-    @DefaultMessage("Loading Session")
-    @Key("loadingSession")
-    String loadingSession();
-
-    /**
-     * Translated "Loading last session, please wait...".
-     *
-     * @return translated "Loading last session, please wait..."
-     */
-    @DefaultMessage("Loading last session, please wait...")
-    @Key("loadingSessionWaitNotice")
-    String loadingSessionWaitNotice();
-
-    /**
      * Translated "Logout".
      *
      * @return translated "Logout"
@@ -2051,15 +2030,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     @DefaultMessage("Map Outputs to Inputs")
     @Key("mapOutputsToInputs")
     String mapOutputsToInputs();
-
-    /**
-     * Translated "All new notifications were marked as read.".
-     *
-     * @return translated "All new notifications were marked as read."
-     */
-    @DefaultMessage("All new notifications were marked as read.")
-    @Key("markAllasSeenSuccess")
-    String markAllasSeenSuccess();
 
     /**
      * Translated "Mark as favorite".
@@ -2360,18 +2330,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     @DefaultMessage("New Folder")
     @Key("newFolder")
     String newFolder();
-
-    /**
-     * Translated
-     * "You have new notifications. Please select 'Notifications' link from top level menu to view them."
-     * .
-     *
-     * @return translated
-     *         "You have new notifications. Please select 'Notifications' link from top level menu to view them."
-     */
-    @DefaultMessage("You have new notifications. Please select 'Notifications' link from top level menu to view them.")
-    @Key("newNotificationsAlert")
-    String newNotificationsAlert();
 
     /**
      * Translated "New Value".
@@ -2696,25 +2654,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     @DefaultMessage("Path")
     @Key("path")
     String path();
-
-    /**
-     * Translated "You do not have the permission to perform this operation on the selected item(s).".
-     *
-     * @return translated
-     *         "You do not have the permission to perform this operation on the selected item(s)."
-     */
-    @DefaultMessage("You do not have the permission to perform this operation on the selected item(s).")
-    @Key("permissionErrorMessage")
-    String permissionErrorMessage();
-
-    /**
-     * Translated "Permission Error".
-     *
-     * @return translated "Permission Error"
-     */
-    @DefaultMessage("Permission Error")
-    @Key("permissionErrorTitle")
-    String permissionErrorTitle();
 
     /**
      * 
@@ -3387,15 +3326,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     String saveSessionHelp();
 
     /**
-     * Translated "Setting saved.".
-     *
-     * @return translated "Setting saved."
-     */
-    @DefaultMessage("Setting saved.")
-    @Key("saveSettings")
-    String saveSettings();
-
-    /**
      * Translated "Saving file...".
      *
      * @return translated "Saving file..."
@@ -3403,23 +3333,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     @DefaultMessage("Saving file...")
     @Key("savingFileMask")
     String savingFileMask();
-    /**
-     * Translated "Saving Session".
-     *
-     * @return translated "Saving Session"
-     */
-    @DefaultMessage("Saving Session")
-    @Key("savingSession")
-    String savingSession();
-
-    /**
-     * Translated "Saving current session, please wait...".
-     *
-     * @return translated "Saving current session, please wait..."
-     */
-    @DefaultMessage("Saving current session, please wait...")
-    @Key("savingSessionWaitNotice")
-    String savingSessionWaitNotice();
 
     /**
      * Translated "Search".

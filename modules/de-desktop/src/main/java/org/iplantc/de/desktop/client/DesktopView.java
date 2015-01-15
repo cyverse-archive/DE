@@ -8,6 +8,7 @@ import org.iplantc.de.commons.client.views.window.configs.WindowConfig;
 
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.resources.client.CssResource;
+import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.web.bindery.autobean.shared.Splittable;
@@ -139,6 +140,45 @@ public interface DesktopView extends IsWidget {
      *           immediately necessary should be provided this way.
      */
     interface Presenter extends UserSettingsMenuPresenter, UnseenNotificationsPresenter{
+
+        interface DesktopPresenterAppearance {
+
+            String feedbackServiceFailure();
+
+            String feedbackSubmitted();
+
+            String fetchNotificationsError();
+
+            String introWelcome();
+
+            String loadSessionFailed();
+
+            String loadingSession();
+
+            String loadingSessionWaitNotice();
+
+            String markAllAsSeenSuccess();
+
+            String newNotificationsAlert();
+
+            String permissionErrorMessage();
+
+            String permissionErrorTitle();
+
+            String saveSessionFailed();
+
+            String saveSettings();
+
+            String savingSession();
+
+            String savingSessionWaitNotice();
+
+            SafeHtml sessionRestoreCancelled();
+
+            String systemInitializationError();
+
+            String welcome();
+        }
 
         List<WindowState> getOrderedWindowStates();
 

@@ -1,6 +1,7 @@
 package org.iplantc.de.theme.base.client.desktop;
 
 import com.google.gwt.i18n.client.Messages;
+import com.google.gwt.safehtml.shared.SafeHtml;
 
 /**
  * Created by jstroot on 1/14/15.
@@ -23,6 +24,9 @@ public interface DesktopMessages extends Messages {
     @Key("duplicateShortCutKey")
     String duplicateShortCutKey(String key);
 
+    @Key("feedbackSubmitted")
+    String feedbackSubmitted();
+
     @Key("forums")
     String forums();
 
@@ -34,6 +38,18 @@ public interface DesktopMessages extends Messages {
 
     @Key("keyboardShortcuts")
     String keyboardShortcuts();
+
+    @Key("loadingSession")
+    String loadingSession();
+
+    @Key("loadingSessionWaitNotice")
+    String loadingSessionWaitNotice();
+
+    @Key("markAllAsSeenSuccess")
+    String markAllAsSeenSuccess();
+
+    @Key("newNotificationsAlert")
+    String newNotificationsAlert();
 
     @Key("notifyEmail")
     String notifyEmail();
@@ -64,4 +80,19 @@ public interface DesktopMessages extends Messages {
 
     @Key("saveSession")
     String saveSession();
+
+    @Key("saveSettings")
+    String saveSettings();
+
+    @Key("savingSession")
+    String savingSession();
+
+    @Key("savingSessionWaitNotice")
+    String savingSessionWaitNotice();
+
+    @Key("sessionRestoreCancelled")
+    SafeHtml sessionRestoreCancelled();
+
+    @Key("welcome")
+    String welcome();
 }

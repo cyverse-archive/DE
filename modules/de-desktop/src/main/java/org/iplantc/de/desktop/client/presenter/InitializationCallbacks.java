@@ -10,8 +10,6 @@ import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.commons.client.info.ErrorAnnouncementConfig;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
 import org.iplantc.de.desktop.client.DesktopView;
-import org.iplantc.de.resources.client.messages.I18N;
-import org.iplantc.de.resources.client.messages.IplantErrorStrings;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Panel;
@@ -29,11 +27,12 @@ import java.util.logging.Logger;
 
 /**
  * This class contains the callbacks used by the {@link DesktopPresenterImpl} during DE initialization.
+ * @author jstroot
  */
 class InitializationCallbacks {
     private static class BootstrapCallback implements AsyncCallback<String> {
         private final Provider<ErrorHandler> errorHandlerProvider;
-        private final IplantErrorStrings errorStrings;
+        private final DesktopView.Presenter.DesktopPresenterAppearance appearance;
         private final UserInfo userInfo;
         private final DesktopPresenterImpl presenter;
         private final UserSessionServiceFacade userSessionService;
@@ -43,28 +42,28 @@ class InitializationCallbacks {
         public BootstrapCallback(DesktopPresenterImpl presenter,
                                  UserInfo userInfo,
                                  Provider<ErrorHandler> errorHandlerProvider,
-                                 IplantErrorStrings errorStrings,
+                                 DesktopView.Presenter.DesktopPresenterAppearance appearance,
                                  UserSessionServiceFacade userSessionService,
                                  UserPreferencesCallback userPreferencesCallback) {
 
             this.presenter = presenter;
             this.userInfo = userInfo;
             this.errorHandlerProvider = errorHandlerProvider;
-            this.errorStrings = errorStrings;
+            this.appearance = appearance;
             this.userSessionService = userSessionService;
             this.userPreferencesCallback = userPreferencesCallback;
         }
 
         @Override
         public void onFailure(Throwable caught) {
-            errorHandlerProvider.get().post(errorStrings.systemInitializationError(), caught);
+            errorHandlerProvider.get().post(appearance.systemInitializationError(), caught);
         }
 
         @Override
         public void onSuccess(String result) {
             userInfo.init(result);
             if (userInfo.isNewUser()) {
-                ConfirmMessageBox box = new ConfirmMessageBox("Welcome", I18N.TOUR.introWelcome());
+                ConfirmMessageBox box = new ConfirmMessageBox(appearance.welcome(), appearance.introWelcome());
                 box.addDialogHideHandler(new DialogHideHandler() {
 
                     @Override
@@ -84,16 +83,20 @@ class InitializationCallbacks {
 
     static class GetInitialNotificationsCallback implements AsyncCallback<List<Notification>> {
         private final DesktopView view;
+        private final DesktopView.Presenter.DesktopPresenterAppearance appearance;
         private final IplantAnnouncer announcer;
 
-        public GetInitialNotificationsCallback(final DesktopView view, final IplantAnnouncer announcer) {
+        public GetInitialNotificationsCallback(final DesktopView view,
+                                               final DesktopView.Presenter.DesktopPresenterAppearance appearance,
+                                               final IplantAnnouncer announcer) {
             this.view = view;
+            this.appearance = appearance;
             this.announcer = announcer;
         }
 
         @Override
         public void onFailure(Throwable caught) {
-            announcer.schedule(new ErrorAnnouncementConfig("There was a problem fetching your current notifications",
+            announcer.schedule(new ErrorAnnouncementConfig(appearance.fetchNotificationsError(),
                                                            true,
                                                            3000));
         }
@@ -110,7 +113,7 @@ class InitializationCallbacks {
     static class PropertyServiceCallback implements AsyncCallback<Map<String, String>> {
         private final DEProperties deProps;
         private final Provider<ErrorHandler> errorHandlerProvider;
-        private final IplantErrorStrings errorStrings;
+        private final DesktopView.Presenter.DesktopPresenterAppearance appearance;
         private final Panel panel;
         private final DesktopPresenterImpl presenter;
         private final UserInfo userInfo;
@@ -122,7 +125,7 @@ class InitializationCallbacks {
                                        UserSettings userSettings,
                                        UserSessionServiceFacade userSessionService,
                                        Provider<ErrorHandler> errorHandlerProvider,
-                                       IplantErrorStrings errorStrings,
+                                       DesktopView.Presenter.DesktopPresenterAppearance appearance,
                                        Panel panel,
                                        DesktopPresenterImpl presenter) {
             this.deProps = deProperties;
@@ -130,14 +133,14 @@ class InitializationCallbacks {
             this.userSettings = userSettings;
             this.userSessionService = userSessionService;
             this.errorHandlerProvider = errorHandlerProvider;
-            this.errorStrings = errorStrings;
+            this.appearance = appearance;
             this.panel = panel;
             this.presenter = presenter;
         }
 
         @Override
         public void onFailure(Throwable caught) {
-            errorHandlerProvider.get().post(errorStrings.systemInitializationError(), caught);
+            errorHandlerProvider.get().post(appearance.systemInitializationError(), caught);
         }
 
         @Override
@@ -147,11 +150,11 @@ class InitializationCallbacks {
                                                                                                 panel,
                                                                                                 userSettings,
                                                                                                 errorHandlerProvider,
-                                                                                                errorStrings);
+                                                                                                appearance);
             userSessionService.bootstrap(new BootstrapCallback(presenter,
                                                                userInfo,
                                                                errorHandlerProvider,
-                                                               errorStrings,
+                                                               appearance,
                                                                userSessionService,
                                                                userPreferencesCallback));
         }
@@ -161,24 +164,24 @@ class InitializationCallbacks {
         private final DesktopPresenterImpl presenter;
         private final Panel panel;
         private final Provider<ErrorHandler> errorHandlerProvider;
-        private final IplantErrorStrings errorStrings;
+        private final DesktopView.Presenter.DesktopPresenterAppearance appearance;
         private final UserSettings userSettings;
 
         public UserPreferencesCallback(DesktopPresenterImpl presenter,
                                        Panel panel,
                                        UserSettings userSettings,
                                        Provider<ErrorHandler> errorHandlerProvider,
-                                       IplantErrorStrings errorStrings) {
+                                       DesktopView.Presenter.DesktopPresenterAppearance appearance) {
             this.presenter = presenter;
             this.panel = panel;
             this.userSettings = userSettings;
             this.errorHandlerProvider = errorHandlerProvider;
-            this.errorStrings = errorStrings;
+            this.appearance = appearance;
         }
 
         @Override
         public void onFailure(Throwable caught) {
-            errorHandlerProvider.get().post(errorStrings.systemInitializationError(), caught);
+            errorHandlerProvider.get().post(appearance.systemInitializationError(), caught);
         }
 
         @Override

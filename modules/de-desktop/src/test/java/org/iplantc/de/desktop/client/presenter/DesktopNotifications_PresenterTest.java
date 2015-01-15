@@ -1,17 +1,17 @@
 package org.iplantc.de.desktop.client.presenter;
 
-import org.iplantc.de.desktop.client.DesktopView;
-import org.iplantc.de.desktop.client.presenter.util.MessagePoller;
-import org.iplantc.de.desktop.client.views.widgets.UnseenNotificationsView;
 import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.models.DEProperties;
+import org.iplantc.de.client.models.notifications.Notification;
 import org.iplantc.de.client.models.notifications.NotificationCategory;
 import org.iplantc.de.client.models.notifications.NotificationMessage;
 import org.iplantc.de.client.services.MessageServiceFacade;
-import org.iplantc.de.notifications.client.utils.NotifyInfo;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
 import org.iplantc.de.commons.client.requests.KeepaliveTimer;
-import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
+import org.iplantc.de.desktop.client.DesktopView;
+import org.iplantc.de.desktop.client.presenter.util.MessagePoller;
+import org.iplantc.de.desktop.client.views.widgets.UnseenNotificationsView;
+import org.iplantc.de.notifications.client.utils.NotifyInfo;
 import org.iplantc.de.resources.client.messages.IplantNewUserTourStrings;
 import org.iplantc.de.systemMessages.client.view.NewMessageView;
 
@@ -26,7 +26,6 @@ import com.google.web.bindery.autobean.shared.impl.StringQuoter;
 import com.sencha.gxt.data.shared.ListStore;
 import com.sencha.gxt.widget.core.client.WindowManager;
 
-import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.*;
 import org.junit.Before;
@@ -34,7 +33,10 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
+import org.mockito.Matchers;
 import org.mockito.Mock;
+
+import java.util.List;
 
 /**
  * @author jstroot
@@ -94,7 +96,7 @@ public class DesktopNotifications_PresenterTest {
         uut.messageServiceFacade = mock(MessageServiceFacade.class);
         uut.deProperties = mock(DEProperties.class);
         uut.postBootstrap(mock(Panel.class));
-        verify(uut.messageServiceFacade).getRecentMessages(any(AsyncCallback.class));
+        verify(uut.messageServiceFacade).getRecentMessages(Matchers.<AsyncCallback<List<Notification>>>any());
         // TODO JDS Expand test to verify that notification store is updated
     }
 
@@ -139,8 +141,8 @@ public class DesktopNotifications_PresenterTest {
                                                                             keepAliveTimerMock));
         testPresenter.messageServiceFacade = mock(MessageServiceFacade.class);
         testPresenter.announcer = mock(IplantAnnouncer.class);
-        testPresenter.displayStrings = mock(IplantDisplayStrings.class);
-        when(testPresenter.displayStrings.markAllasSeenSuccess()).thenReturn("Mock success");
+        testPresenter.appearance = mock(DesktopView.Presenter.DesktopPresenterAppearance.class);
+        when(testPresenter.appearance.markAllAsSeenSuccess()).thenReturn("Mock success");
 
         when(viewMock.getNotificationStore()).thenReturn(msgStoreMock);
         when(msgStoreMock.getAll()).thenReturn(Lists.<NotificationMessage>newArrayList());
