@@ -13,15 +13,6 @@ import java.util.List;
 public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Messages {
 
     /**
-     * Translated "About".
-     *
-     * @return translated "About"
-     */
-    @DefaultMessage("About")
-    @Key("about")
-    String about();
-
-    /**
      * Translated "About Discovery Environment".
      *
      * @return translated "About Discovery Environment"
@@ -610,15 +601,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     String close();
 
     /**
-     * Translated "Close Active window".
-     *
-     * @return translated "Close Active window"
-     */
-    @DefaultMessage("Close Active window")
-    @Key("closeActivewindow")
-    String closeActivewindow();
-
-    /**
      * Translated "There are unsaved changes. Do you still want to close the window ?".
      *
      * @return translated "There are unsaved changes. Do you still want to close the window ?"
@@ -808,15 +790,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     @DefaultMessage("You have selected a non-empty folder. This may cause files in the folder to be overwritten. Continue?")
     @Key("confirmOutputFolder")
     String confirmOutputFolder();
-
-    /**
-     * Translated "Support".
-     *
-     * @return translated "Support"
-     */
-    @DefaultMessage("Support")
-    @Key("contactSupport")
-    String contactSupport();
 
     /**
      * Translated "Contact Information".
@@ -1036,16 +1009,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     String debug();
 
     /**
-     * Translated "<b> Default analysis output folder </b>".
-     *
-     * @return translated "<b> Default analysis output folder </b>"
-     */
-    @DefaultMessage("<b> Default analysis output folder </b>")
-    @Key("defaultOutputFolder")
-    String defaultOutputFolder();
-
-
-    /**
      * Translated "Go to output folder".
      *
      * @return translated "Go to output folder"
@@ -1258,15 +1221,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     String dragDropAppsToCreator();
     
     /**
-     * Translate "Duplicate shortcut key"
-     * 
-     * @return translated "Duplicate shortcut key"
-     */
-    @DefaultMessage("This keyboard shortcut is already in use. Please choose another shortcut.")
-    @Key("duplicateShortCutKey")
-    String duplicateShortCutKey(String key);
-
-    /**
      * Translated "Edit".
      *
      * @return translated "Edit"
@@ -1414,9 +1368,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     @Key("feedbackTitle")
     String feedbackTitle();
 
-    @Key("feedbackSubmitted")
-    String feedbackSubmitted();
-
     /**
      * Translated "This field is required".
      *
@@ -1536,15 +1487,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     @DefaultMessage("Folder(s)")
     @Key("folders")
     String folders();
-
-    /**
-     * Translated "Forums".
-     *
-     * @return translated "Forums"
-     */
-    @DefaultMessage("Forums")
-    @Key("forums")
-    String forums();
 
     /**
      * Translated "Group by Data".
@@ -1811,15 +1753,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     String integratorName();
     
     /**
-     * Translated "Introduction".
-     *
-     * @return translated "Introduction"
-     */
-    @DefaultMessage("Introduction")
-    @Key("Introduction")
-    String introduction();
-
-    /**
      * Translated
      * "A valid URL must begin with either ftp or http or https and cannot end with a space or a /. It must contain a valid path to a file after the domain name."
      * .
@@ -1857,15 +1790,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     @DefaultMessage("You do not have Java enabled!")
     @Key("javaError")
     String javaError();
-
-    /**
-     * Translated "Keyboard Shortcuts".
-     *
-     * @return translated "Keyboard Shortcuts"
-     */
-    @DefaultMessage("Keyboard Shortcuts")
-    @Key("keyboadSc")
-    String keyboadSc();
 
     /**
      * Translated "Last: {0}".
@@ -1982,24 +1906,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     @DefaultMessage("Loading...")
     @Key("loadingMask")
     String loadingMask();
-
-    /**
-     * Translated "Loading Session".
-     *
-     * @return translated "Loading Session"
-     */
-    @DefaultMessage("Loading Session")
-    @Key("loadingSession")
-    String loadingSession();
-
-    /**
-     * Translated "Loading last session, please wait...".
-     *
-     * @return translated "Loading last session, please wait..."
-     */
-    @DefaultMessage("Loading last session, please wait...")
-    @Key("loadingSessionWaitNotice")
-    String loadingSessionWaitNotice();
 
     /**
      * Translated "Logout".
@@ -2124,15 +2030,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     @DefaultMessage("Map Outputs to Inputs")
     @Key("mapOutputsToInputs")
     String mapOutputsToInputs();
-
-    /**
-     * Translated "All new notifications were marked as read.".
-     *
-     * @return translated "All new notifications were marked as read."
-     */
-    @DefaultMessage("All new notifications were marked as read.")
-    @Key("markAllasSeenSuccess")
-    String markAllasSeenSuccess();
 
     /**
      * Translated "Mark as favorite".
@@ -2435,18 +2332,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     String newFolder();
 
     /**
-     * Translated
-     * "You have new notifications. Please select 'Notifications' link from top level menu to view them."
-     * .
-     *
-     * @return translated
-     *         "You have new notifications. Please select 'Notifications' link from top level menu to view them."
-     */
-    @DefaultMessage("You have new notifications. Please select 'Notifications' link from top level menu to view them.")
-    @Key("newNotificationsAlert")
-    String newNotificationsAlert();
-
-    /**
      * Translated "New Value".
      * 
      * @return translated "New Value"
@@ -2619,15 +2504,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     String notifications();
 
     /**
-     * Translated "Notify me by email when my analysis status changes.".
-     *
-     * @return translated "Notify me by email when my analysis status changes."
-     */
-    @DefaultMessage("Notify me by email when my analysis status changes.")
-    @Key("notifyemail")
-    String notifyemail();
-
-    /**
      * Translated "
      * <p>
      * This option will send you an email when the status of your analysis changes (running, completed,
@@ -2675,33 +2551,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     SafeHtml nsfProjectText();
 
     /**
-     * Translated "Open Analyses window".
-     *
-     * @return translated "Open Analyses window"
-     */
-    @DefaultMessage("Open Analyses window")
-    @Key("openAnalyseswindow")
-    String openAnalyseswindow();
-
-    /**
-     * Translated "Open Apps window".
-     *
-     * @return translated "Open Apps window"
-     */
-    @DefaultMessage("Open Apps window")
-    @Key("openAppswindow")
-    String openAppswindow();
-
-    /**
-     * Translated "Open Data window".
-     *
-     * @return translated "Open Data window"
-     */
-    @DefaultMessage("Open Data window")
-    @Key("openDatawindow")
-    String openDatawindow();
-
-    /**
      * The open system messages window link text
      *
      * @return the text
@@ -2709,15 +2558,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     @DefaultMessage("Read it.")
     @Key("openMessage")
     String openMessage();
-
-    /**
-     * Translated "Open Notifications window".
-     *
-     * @return translated "Open Notifications window"
-     */
-    @DefaultMessage("Open Notifications window")
-    @Key("openNotificationswindow")
-    String openNotificationswindow();
 
     /**
      * Translated "Other Information".
@@ -2816,25 +2656,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     String path();
 
     /**
-     * Translated "You do not have the permission to perform this operation on the selected item(s).".
-     *
-     * @return translated
-     *         "You do not have the permission to perform this operation on the selected item(s)."
-     */
-    @DefaultMessage("You do not have the permission to perform this operation on the selected item(s).")
-    @Key("permissionErrorMessage")
-    String permissionErrorMessage();
-
-    /**
-     * Translated "Permission Error".
-     *
-     * @return translated "Permission Error"
-     */
-    @DefaultMessage("Permission Error")
-    @Key("permissionErrorTitle")
-    String permissionErrorTitle();
-
-    /**
      * 
      * Tranlated "You must make a selection you own or have write permissions to."
      * 
@@ -2910,15 +2731,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     @DefaultMessage("You have your pop-up blocker enabled. Please click the Ok button to complete your action. Please disable your pop-up blocker in the future.")
     @Key("popWarningMsg")
     String popWarningMsg();
-
-    /**
-     * Translated "Preferences".
-     *
-     * @return translated "Preferences"
-     */
-    @DefaultMessage("Preferences")
-    @Key("preferences")
-    String preferences();
 
     /**
      * Translated "Preview".
@@ -3294,44 +3106,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     String remAppFromFav();
 
     /**
-     * Translated "Remember last file path for Apps.".
-     *
-     * @return translated "Remember last file path for Apps."
-     */
-    @DefaultMessage("Remember last file path for Apps.")
-    @Key("rememberFileSectorPath")
-    String rememberFileSectorPath();
-
-    /**
-     * Translated "
-     * <p>
-     * This option allows the Data Manager to automatically navigate the file tree to the file location
-     * that was used the last time you ran that app.
-     * </p>
-     * <br/>
-     * <p>
-     * This option is helpful if you have an extensive file tree or often use the same input file
-     * location.
-     * </p>
-     * ".
-     *
-     * @return translated "
-     *         <p>
-     *         This option allows the Data Manager to automatically navigate the file tree to the file
-     *         location that was used the last time you ran that app.
-     *         </p>
-     * <br/>
-     *         <p>
-     *         This option is helpful if you have an extensive file tree or often use the same input file
-     *         location.
-     *         </p>
-     *         "
-     */
-    @DefaultMessage("<p>This option allows the Data Manager to automatically navigate the file tree to the file location that was used the last time you ran that app.</p> <br/> <p> This option is helpful if you have an extensive file tree or often use the same input file location.</p>")
-    @Key("rememberFileSectorPathHelp")
-    String rememberFileSectorPathHelp();
-
-    /**
      * Translated "Remove".
      *
      * @return translated "Remove"
@@ -3479,15 +3253,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     String restoreAppSucessMsgTitle();
 
     /**
-     * Translated "Restore Defaults".
-     *
-     * @return translated "Restore Defaults"
-     */
-    @DefaultMessage("Restore Defaults")
-    @Key("restoreDefaults")
-    String restoreDefaults();
-
-    /**
      * Translated "Selected files and folders are restored to their original location.".
      *
      * @return translated "Selected files and folders are restored to their original location."
@@ -3542,15 +3307,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     String saveAs();
 
     /**
-     * Translated "<b> Save session </b>".
-     *
-     * @return translated "<b> Save session </b>"
-     */
-    @DefaultMessage("<b> Save session </b>")
-    @Key("saveSession")
-    String saveSession();
-
-    /**
      * Translated "
      * <p>
      * Enabling the Save session option will restore your Discovery Environment desktop to exactly how
@@ -3570,15 +3326,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     String saveSessionHelp();
 
     /**
-     * Translated "Setting saved.".
-     *
-     * @return translated "Setting saved."
-     */
-    @DefaultMessage("Setting saved.")
-    @Key("saveSettings")
-    String saveSettings();
-
-    /**
      * Translated "Saving file...".
      *
      * @return translated "Saving file..."
@@ -3586,23 +3333,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     @DefaultMessage("Saving file...")
     @Key("savingFileMask")
     String savingFileMask();
-    /**
-     * Translated "Saving Session".
-     *
-     * @return translated "Saving Session"
-     */
-    @DefaultMessage("Saving Session")
-    @Key("savingSession")
-    String savingSession();
-
-    /**
-     * Translated "Saving current session, please wait...".
-     *
-     * @return translated "Saving current session, please wait..."
-     */
-    @DefaultMessage("Saving current session, please wait...")
-    @Key("savingSessionWaitNotice")
-    String savingSessionWaitNotice();
 
     /**
      * Translated "Search".
@@ -4866,7 +4596,4 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
 
     String retract();
 
-    String oneCharMax();
-
-    String kbShortcutMetaKey();
 }

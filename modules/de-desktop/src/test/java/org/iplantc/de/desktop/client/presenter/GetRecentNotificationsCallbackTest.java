@@ -23,6 +23,9 @@ import org.mockito.Mock;
 
 import java.util.List;
 
+/**
+ * @author jstroot
+ */
 @RunWith(GwtMockitoTestRunner.class)
 public class GetRecentNotificationsCallbackTest {
 
@@ -31,12 +34,13 @@ public class GetRecentNotificationsCallbackTest {
     @Mock DesktopView viewMock;
     @Mock NotifyInfo notifyInfoMock;
     @Mock ListStore<NotificationMessage> storeMock;
+    @Mock DesktopView.Presenter.DesktopPresenterAppearance appearanceMock;
 
     private RuntimeCallbacks.GetRecentNotificationsCallback uut;
 
     @Before public void setUp()  {
 
-        uut = new RuntimeCallbacks.GetRecentNotificationsCallback(displayStringsMock,
+        uut = new RuntimeCallbacks.GetRecentNotificationsCallback(appearanceMock,
                                                                   factoryMock,
                                                                   viewMock,
                                                                   notifyInfoMock);

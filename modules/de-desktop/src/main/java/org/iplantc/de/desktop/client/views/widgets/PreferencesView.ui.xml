@@ -4,8 +4,8 @@
              xmlns:g="urn:import:com.google.gwt.user.client.ui"
              xmlns:selector="urn:import:org.iplantc.de.diskResource.client.views.widgets"
              xmlns:form="urn:import:com.sencha.gxt.widget.core.client.form">
-    <ui:with field="strings"
-             type="org.iplantc.de.resources.client.messages.IplantDisplayStrings"/>
+
+    <ui:with field="appearance" type="org.iplantc.de.desktop.client.views.widgets.PreferencesDialog.PreferencesViewAppearance" />
 
     <ui:style>
         .user_pref {
@@ -37,27 +37,27 @@
                                        adjustForScroll="true"
                                        scrollMode="AUTOY"
                                        styleName="{style.user_pref}">
-        <form:FieldSet headingText="{strings.preferences}"
+        <form:FieldSet headingText="{appearance.preferences}"
                        collapsible="true">
             <container:VerticalLayoutContainer ui:field="prefContainer"
                                                height="150">
                 <container:child layoutData="{preferenceLayoutData}">
                     <form:CheckBox ui:field="enableEmailNotification"
                                    debugId="idCboNotifyEmail"
-                                   boxLabel="{strings.notifyemail}"/>
+                                   boxLabel="{appearance.notifyEmail}"/>
                 </container:child>
                 <container:child layoutData="{preferenceLayoutData}">
                     <form:CheckBox ui:field="rememberLastPath"
                                    debugId="cboLastPath"
-                                   boxLabel="{strings.rememberFileSectorPath}"/>
+                                   boxLabel="{appearance.rememberFileSectorPath}"/>
                 </container:child>
                 <container:child layoutData="{preferenceLayoutData}">
                     <form:CheckBox ui:field="saveSession"
                                    debugId="cboSaveSession"
-                                   boxLabel="{strings.saveSession}"/>
+                                   boxLabel="{appearance.saveSession}"/>
                 </container:child>
                 <container:child layoutData="{fileSelLabel}">
-                    <g:HTML HTML="{strings.defaultOutputFolder}"/>
+                    <g:HTML HTML="{appearance.defaultOutputFolder}"/>
                 </container:child>
                 <container:child layoutData="{preferenceLayoutData}">
                     <selector:FolderSelectorField ui:field="defaultOutputFolder"
@@ -66,16 +66,16 @@
                 </container:child>
             </container:VerticalLayoutContainer>
         </form:FieldSet>
-        <form:FieldSet headingText="{strings.keyboadSc}"
+        <form:FieldSet headingText="{appearance.keyboardShortCut}"
                        collapsible="true">
             <container:VerticalLayoutContainer ui:field="kbContainer">
                 <form:FieldLabel labelWidth="150"
-                                 text="{strings.openAppswindow}">
+                                 text="{appearance.openAppsWindow}">
                     <form:widget>
                         <g:HorizontalPanel spacing="5">
-                            <g:Label text="{strings.kbShortcutMetaKey}"/>
+                            <g:Label text="{appearance.kbShortcutMetaKey}"/>
                             <form:TextField ui:field="appsShortCut"
-                                            toolTip="{strings.oneCharMax}"
+                                            toolTip="{appearance.oneCharMax}"
                                             debugId="appKbSc"
                                             allowBlank="false"
                                             width="50"/>
@@ -83,12 +83,12 @@
                     </form:widget>
                 </form:FieldLabel>
                 <form:FieldLabel labelWidth="150"
-                                 text="{strings.openDatawindow}">
+                                 text="{appearance.openDataWindow}">
                     <form:widget>
                         <g:HorizontalPanel spacing="5">
-                            <g:Label text="{strings.kbShortcutMetaKey}"/>
+                            <g:Label text="{appearance.kbShortcutMetaKey}"/>
                             <form:TextField ui:field="dataShortCut"
-                                            toolTip="{strings.oneCharMax}"
+                                            toolTip="{appearance.oneCharMax}"
                                             debugId="dataKbSc"
                                             allowBlank="false"
                                             width="50"/>
@@ -96,12 +96,12 @@
                     </form:widget>
                 </form:FieldLabel>
                 <form:FieldLabel labelWidth="150"
-                                 text="{strings.openAnalyseswindow}">
+                                 text="{appearance.openAnalysesWindow}">
                     <form:widget>
                         <g:HorizontalPanel spacing="5">
-                            <g:Label text="{strings.kbShortcutMetaKey}"/>
+                            <g:Label text="{appearance.kbShortcutMetaKey}"/>
                             <form:TextField ui:field="analysesShortCut"
-                                            toolTip="{strings.oneCharMax}"
+                                            toolTip="{appearance.oneCharMax}"
                                             debugId="anaKbSc"
                                             allowBlank="false"
                                             width="50"/>
@@ -109,12 +109,12 @@
                     </form:widget>
                 </form:FieldLabel>
                 <form:FieldLabel labelWidth="150"
-                                 text="{strings.openNotificationswindow}">
+                                 text="{appearance.openNotificationsWindow}">
                     <form:widget>
                         <g:HorizontalPanel spacing="5">
-                            <g:Label text="{strings.kbShortcutMetaKey}"/>
+                            <g:Label text="{appearance.kbShortcutMetaKey}"/>
                             <form:TextField ui:field="notifyShortCut"
-                                            toolTip="{strings.oneCharMax}"
+                                            toolTip="{appearance.oneCharMax}"
                                             debugId="notKbSc"
                                             allowBlank="false"
                                             width="50"/>
@@ -122,12 +122,12 @@
                     </form:widget>
                 </form:FieldLabel>
                 <form:FieldLabel labelWidth="150"
-                                 text="{strings.closeActivewindow}">
+                                 text="{appearance.closeActiveWindow}">
                     <form:widget>
                         <g:HorizontalPanel spacing="5">
-                            <g:Label text="{strings.kbShortcutMetaKey}"/>
+                            <g:Label text="{appearance.kbShortcutMetaKey}"/>
                             <form:TextField ui:field="closeShortCut"
-                                            toolTip="{strings.oneCharMax}"
+                                            toolTip="{appearance.oneCharMax}"
                                             debugId="closeKbSc"
                                             allowBlank="false"
                                             width="50"/>

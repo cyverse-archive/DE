@@ -37,4 +37,11 @@
         <when-type-is class="org.iplantc.de.desktop.client.views.windows.AppEditorWindow.AppEditorAppearance"/>
     </replace-with>
 
+    <replace-with class="org.iplantc.de.theme.base.client.desktop.PreferencesViewDefaultAppearance">
+        <when-type-is class="org.iplantc.de.desktop.client.views.widgets.PreferencesDialog.PreferencesViewAppearance" />
+    </replace-with>
+
+    <replace-with class="org.iplantc.de.theme.base.client.desktop.presenter.DesktopPresenterDefaultAppearance">
+        <when-type-is class="org.iplantc.de.desktop.client.DesktopView.Presenter.DesktopPresenterAppearance" />
+    </replace-with>
 </module>

@@ -10,8 +10,6 @@ import org.iplantc.de.commons.client.views.gxt3.dialogs.IPlantDialog;
 import org.iplantc.de.desktop.shared.DeModule;
 import org.iplantc.de.diskResource.client.gin.factory.DiskResourceSelectorFieldFactory;
 import org.iplantc.de.diskResource.client.views.widgets.FolderSelectorField;
-import org.iplantc.de.resources.client.messages.IplantContextualHelpStrings;
-import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.Editor;
@@ -46,6 +44,51 @@ import java.util.Map;
  */
 public class PreferencesDialog extends IPlantDialog implements Editor<UserSettings> {
 
+    public interface PreferencesViewAppearance {
+
+        String defaultOutputFolderHelp();
+
+        String done();
+
+        String duplicateShortCutKey(String key);
+
+        String notifyEmailHelp();
+
+        String preferences();
+
+        String notifyEmail();
+
+        String publicSubmitTip();
+
+        String rememberFileSectorPath();
+
+        String rememberFileSectorPathHelp();
+
+        String restoreDefaults();
+
+        String saveSession();
+
+        String defaultOutputFolder();
+
+        String keyboardShortCut();
+
+        String openAppsWindow();
+
+        String kbShortcutMetaKey();
+
+        String oneCharMax();
+
+        String openDataWindow();
+
+        String openAnalysesWindow();
+
+        String openNotificationsWindow();
+
+        String closeActiveWindow();
+
+        String saveSessionHelp();
+    }
+
     public interface HtmlLayoutContainerTemplate extends XTemplates {
         @XTemplate(source = "PreferencesHelpTemplate.html")
         SafeHtml getTemplate();
@@ -69,8 +112,8 @@ public class PreferencesDialog extends IPlantDialog implements Editor<UserSettin
     @UiField TextField dataShortCut;
     @UiField(provided = true) FolderSelectorField defaultOutputFolder;
     @UiField TextField notifyShortCut;
-    private final IplantDisplayStrings displayStrings;
-    private final IplantContextualHelpStrings helpStrings;
+    @UiField(provided = true) PreferencesViewAppearance appearance;
+
     private final KeyBoardShortcutConstants KB_CONSTANTS;
     private final TextButton defaultsBtn;
     private final Map<TextField, String> kbMap;
@@ -85,15 +128,13 @@ public class PreferencesDialog extends IPlantDialog implements Editor<UserSettin
 
     @Inject
     PreferencesDialog(final DiskResourceSelectorFieldFactory folderSelectorFieldFactory,
-                      final IplantDisplayStrings displayStrings,
-                      final IplantContextualHelpStrings helpStrings,
+                      final PreferencesViewAppearance appearance,
                       final KeyBoardShortcutConstants kbConstants) {
         super(true);
+        this.appearance = appearance;
         this.defaultOutputFolder = folderSelectorFieldFactory.defaultFolderSelector();
-        this.displayStrings = displayStrings;
-        this.helpStrings = helpStrings;
         this.KB_CONSTANTS = kbConstants;
-        setHeadingText(displayStrings.preferences());
+        setHeadingText(appearance.preferences());
         VerticalLayoutContainer vlc = uiBinder.createAndBindUi(this);
         kbMap = new HashMap<>();
         appsShortCut.addValidator(new MaxLengthValidator(1));
@@ -112,8 +153,8 @@ public class PreferencesDialog extends IPlantDialog implements Editor<UserSettin
         populateKbMap();
 
 
-        getButton(PredefinedButton.OK).setText(displayStrings.done());
-        defaultsBtn = new TextButton(displayStrings.restoreDefaults());
+        getButton(PredefinedButton.OK).setText(appearance.done());
+        defaultsBtn = new TextButton(appearance.restoreDefaults());
         defaultsBtn.addSelectHandler(new SelectEvent.SelectHandler() {
             @Override
             public void onSelect(SelectEvent event) {
@@ -164,8 +205,8 @@ public class PreferencesDialog extends IPlantDialog implements Editor<UserSettin
                 for (TextField sc : kbMap.keySet()) {
                     if (ks != sc) {
                         if (kbMap.get(ks).equals(kbMap.get(sc))) {
-                            ks.markInvalid(displayStrings.duplicateShortCutKey(kbMap.get(ks)));
-                            sc.markInvalid(displayStrings.duplicateShortCutKey(kbMap.get(ks)));
+                            ks.markInvalid(appearance.duplicateShortCutKey(kbMap.get(ks)));
+                            sc.markInvalid(appearance.duplicateShortCutKey(kbMap.get(ks)));
                             valid = false;
                         }
                     }
@@ -184,7 +225,7 @@ public class PreferencesDialog extends IPlantDialog implements Editor<UserSettin
                 super.onButtonPressed(button);
             } else {
                 IplantAnnouncer.getInstance()
-                               .schedule(new ErrorAnnouncementConfig(displayStrings.publicSubmitTip()));
+                               .schedule(new ErrorAnnouncementConfig(appearance.publicSubmitTip()));
             }
 
 
@@ -252,14 +293,14 @@ public class PreferencesDialog extends IPlantDialog implements Editor<UserSettin
     private Widget constructHelpView() {
         HtmlLayoutContainerTemplate templates = GWT.create(HtmlLayoutContainerTemplate.class);
         HtmlLayoutContainer c = new HtmlLayoutContainer(templates.getTemplate());
-        c.add(new HTML(displayStrings.notifyemail()), new HtmlData(".emailHeader"));
-        c.add(new HTML(helpStrings.notifyemailHelp()), new HtmlData(".emailHelp"));
-        c.add(new HTML(displayStrings.rememberFileSectorPath()), new HtmlData(".filePathHeader"));
-        c.add(new HTML(helpStrings.rememberFileSectorPathHelp()), new HtmlData(".filePathHelp"));
-        c.add(new HTML(displayStrings.saveSession()), new HtmlData(".saveSessionHeader"));
-        c.add(new HTML(helpStrings.saveSessionHelp()), new HtmlData(".saveSessionHelp"));
-        c.add(new HTML(displayStrings.defaultOutputFolder()), new HtmlData(".defaultOp"));
-        c.add(new HTML(helpStrings.defaultOutputFolderHelp()), new HtmlData(".defaultOpHelp"));
+        c.add(new HTML(appearance.notifyEmail()), new HtmlData(".emailHeader"));
+        c.add(new HTML(appearance.notifyEmailHelp()), new HtmlData(".emailHelp"));
+        c.add(new HTML(appearance.rememberFileSectorPath()), new HtmlData(".filePathHeader"));
+        c.add(new HTML(appearance.rememberFileSectorPathHelp()), new HtmlData(".filePathHelp"));
+        c.add(new HTML(appearance.saveSession()), new HtmlData(".saveSessionHeader"));
+        c.add(new HTML(appearance.saveSessionHelp()), new HtmlData(".saveSessionHelp"));
+        c.add(new HTML(appearance.defaultOutputFolder()), new HtmlData(".defaultOp"));
+        c.add(new HTML(appearance.defaultOutputFolderHelp()), new HtmlData(".defaultOpHelp"));
         return c.asWidget();
     }
 

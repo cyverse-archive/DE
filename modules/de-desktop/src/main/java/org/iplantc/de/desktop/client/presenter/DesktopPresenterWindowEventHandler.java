@@ -28,13 +28,13 @@ import org.iplantc.de.commons.client.views.window.configs.FileViewerWindowConfig
 import org.iplantc.de.commons.client.views.window.configs.IDropLiteWindowConfig;
 import org.iplantc.de.commons.client.views.window.configs.PipelineEditorWindowConfig;
 import org.iplantc.de.commons.client.views.window.configs.SimpleDownloadWindowConfig;
+import org.iplantc.de.desktop.client.DesktopView;
 import org.iplantc.de.desktop.client.util.IDropLiteUtil;
 import org.iplantc.de.diskResource.client.events.*;
 import org.iplantc.de.diskResource.client.views.dialogs.FileUploadByUrlDialog;
 import org.iplantc.de.diskResource.client.views.dialogs.SimpleFileUploadDialog;
 import org.iplantc.de.fileViewers.client.callbacks.EnsemblUtil;
 import org.iplantc.de.notifications.client.events.WindowShowRequestEvent;
-import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 import org.iplantc.de.systemMessages.client.events.ShowSystemMessagesEvent;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -79,10 +79,10 @@ public class DesktopPresenterWindowEventHandler implements EditAppEvent.EditAppE
 
     @Inject DEClientConstants clientConstants;
     @Inject Provider<DiskResourceServiceFacade> diskResourceServiceProvider;
-    @Inject IplantDisplayStrings displayStrings;
     @Inject EventBus eventBus;
     @Inject UserInfo userInfo;
     @Inject DiskResourceUtil diskResourceUtil;
+    @Inject DesktopView.Presenter.DesktopPresenterAppearance appearance;
 
     private DesktopWindowManager desktopWindowManager;
     private DesktopPresenterImpl presenter;
@@ -322,8 +322,8 @@ public class DesktopPresenterWindowEventHandler implements EditAppEvent.EditAppE
     }
 
     void showErrorMsg() {
-        new AlertMessageBox(displayStrings.permissionErrorTitle(),
-                            displayStrings.permissionErrorMessage()).show();
+        new AlertMessageBox(appearance.permissionErrorTitle(),
+                            appearance.permissionErrorMessage()).show();
     }
 
     void showFile(final File file) {

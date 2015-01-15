@@ -486,9 +486,6 @@ public interface IplantErrorStrings extends com.google.gwt.i18n.client.Messages,
     @Key("favServiceFailure")
     String favServiceFailure();
 
-    @Key("feedbackServiceFailure")
-    String feedbackServiceFailure();
-
     /**
      * Translated "The following file(s) do not exist:<br />
      * {0}".
@@ -739,15 +736,6 @@ public interface IplantErrorStrings extends com.google.gwt.i18n.client.Messages,
     String loadReferencesError();
 
     /**
-     * Translated "Could not load session.".
-     * 
-     * @return translated "Could not load session."
-     */
-    @DefaultMessage("Could not load session.")
-    @Key("loadSessionFailed")
-    String loadSessionFailed();
-
-    /**
      * Translated "Could not load the previous session, however, you may continue working safely.".
      * 
      * @return translated
@@ -981,15 +969,6 @@ public interface IplantErrorStrings extends com.google.gwt.i18n.client.Messages,
     String saveParamFailed();
 
     /**
-     * Translated "Could not save session.".
-     * 
-     * @return translated "Could not save session."
-     */
-    @DefaultMessage("Could not save session.")
-    @Key("saveSessionFailed")
-    String saveSessionFailed();
-
-    /**
      * Error msg to show when search fails
      * 
      * @return
@@ -1049,15 +1028,6 @@ public interface IplantErrorStrings extends com.google.gwt.i18n.client.Messages,
     @DefaultMessage("Unable to stop execution of analysis \"{0}\".")
     @Key("stopAnalysisError")
     String stopAnalysisError(String arg0);
-
-    /**
-     * Translated "Unable to retrieve the configuration settings from the server.".
-     * 
-     * @return translated "Unable to retrieve the configuration settings from the server."
-     */
-    @DefaultMessage("Unable to retrieve the configuration settings from the server.")
-    @Key("systemInitializationError")
-    String systemInitializationError();
 
     /**
      * Translated "Tree retrieval failed.".

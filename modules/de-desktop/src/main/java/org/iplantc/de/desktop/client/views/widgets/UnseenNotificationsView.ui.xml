@@ -15,8 +15,8 @@
         <container:child>
             <widget:ListView ui:field="listView"
                              borders="false"
-                             height="220px"
-                             width="250px"/>
+                             height="{appearance.unseenNotificationsViewHeight}"
+                             width="{appearance.unseenNotificationsViewWidth}"/>
         </container:child>
         <container:child>
             <g:HorizontalPanel spacing="2">
