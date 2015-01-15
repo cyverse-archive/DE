@@ -110,15 +110,6 @@ public interface IplantErrorStrings extends com.google.gwt.i18n.client.Messages,
     String confluenceError();
 
     /**
-     * 
-     * 
-     * @return translated String
-     */
-    @DefaultMessage("Unable to load genome in CoGe. Please try again later.")
-    String cogeError();
-    
-    
-    /**
      * Error msg shown when an attempt to create some data links goes awry!!
      * 
      * @return
@@ -1057,15 +1048,6 @@ public interface IplantErrorStrings extends com.google.gwt.i18n.client.Messages,
     String unableToRetrieveFileManifest(String arg0);
 
     /**
-     * Translated "Unable to retrieve URLs for the tree file {0}.".
-     * 
-     * @return translated "Unable to retrieve URLs for the tree file {0}."
-     */
-    @DefaultMessage("Unable to retrieve URLs for the tree file {0}.")
-    @Key("unableToRetrieveTreeUrls")
-    String unableToRetrieveTreeUrls(String arg0);
-
-    /**
      * Translated "Unable to open the selected App".
      * 
      * @return translated "Unable to open the selected App"
@@ -1134,8 +1116,6 @@ public interface IplantErrorStrings extends com.google.gwt.i18n.client.Messages,
     String unsupportedEnsemblInfoType();
 
     String unsupportedTreeInfoType();
-
-    String indexFileMissing();
 
     SafeHtml analysisRenameFailed();
 

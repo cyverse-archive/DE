@@ -11,6 +11,7 @@ import static org.iplantc.de.client.models.viewer.InfoType.VCF;
 
 import org.iplantc.de.client.models.diskResources.File;
 import org.iplantc.de.client.models.viewer.MimeType;
+import org.iplantc.de.client.services.DiskResourceServiceFacade;
 import org.iplantc.de.client.services.FileEditorServiceFacade;
 import org.iplantc.de.client.util.DiskResourceUtil;
 import org.iplantc.de.client.util.JsonUtil;
@@ -46,8 +47,8 @@ public class MimeTypeViewerResolverFactory {
     @Inject IplantAnnouncer announcer;
     @Inject FileEditorServiceFacade fileEditorService;
     @Inject JsonUtil jsonUtil;
-    @Inject
-    DiskResourceUtil diskResourceUtil;
+    @Inject DiskResourceUtil diskResourceUtil;
+    @Inject DiskResourceServiceFacade diskResourceServiceFacade;
 
     @Inject
     public MimeTypeViewerResolverFactory() {
@@ -116,7 +117,7 @@ public class MimeTypeViewerResolverFactory {
                 break;
 
             case VIZ:
-                ExternalVisualizationURLViewerImpl vizUrlViewer = new ExternalVisualizationURLViewerImpl(file, infoType, fileEditorService);
+                ExternalVisualizationURLViewerImpl vizUrlViewer = new ExternalVisualizationURLViewerImpl(file, infoType, fileEditorService, diskResourceServiceFacade);
                 viewers.add(vizUrlViewer);
                 break;
 

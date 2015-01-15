@@ -11,7 +11,6 @@ import org.iplantc.de.commons.client.info.ErrorAnnouncementConfig;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
 import org.iplantc.de.fileViewers.client.FileViewer;
 import org.iplantc.de.fileViewers.client.events.DeleteSelectedPathsSelectedEvent;
-import org.iplantc.de.resources.client.messages.I18N;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
@@ -89,7 +88,7 @@ public class PathListViewer extends AbstractStructuredTextViewer implements Stor
             if (splChars.length() > 0) {
                 LOG.fine("splChars:" + splChars + ":");
                 IplantAnnouncer.getInstance()
-                               .schedule(new ErrorAnnouncementConfig(I18N.DISPLAY.analysisFailureWarning(I18N.V_CONSTANTS.warnedDiskResourceNameChars()),
+                               .schedule(new ErrorAnnouncementConfig(appearance.analysisFailureWarning(appearance.warnedDiskResourceNameChars()),
                                                                      true,
                                                                      5000));
             }
@@ -166,7 +165,7 @@ public class PathListViewer extends AbstractStructuredTextViewer implements Stor
         }
 
         private StringBuilder checkForSplChar(List<Splittable> idSet) {
-            char[] restrictedChars = (I18N.V_CONSTANTS.warnedDiskResourceNameChars()).toCharArray(); //$NON-NLS-1$
+            char[] restrictedChars = (appearance.warnedDiskResourceNameChars()).toCharArray(); //$NON-NLS-1$
             StringBuilder restrictedFound = new StringBuilder();
 
             for (Splittable path : idSet) {
@@ -199,11 +198,15 @@ public class PathListViewer extends AbstractStructuredTextViewer implements Stor
     }
 
     public interface PathListViewerAppearance extends AbstractStructuredTextViewerAppearance {
+        String analysisFailureWarning(String warnedNameCharacters);
+
         String columnHeaderText();
 
         String pathListViewName(String name);
 
         String preventPathListDrop();
+
+        String warnedDiskResourceNameChars();
     }
 
     @UiField(provided = true) PathListViewerToolbar toolbar;

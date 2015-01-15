@@ -6,6 +6,7 @@ package org.iplantc.de.fileViewers.client.views;
 import org.iplantc.de.client.models.IsMaskable;
 import org.iplantc.de.client.models.diskResources.File;
 import org.iplantc.de.client.models.viewer.VizUrl;
+import org.iplantc.de.client.services.DiskResourceServiceFacade;
 import org.iplantc.de.client.services.FileEditorServiceFacade;
 import org.iplantc.de.client.util.DiskResourceUtil;
 import org.iplantc.de.fileViewers.client.callbacks.EnsemblUtil;
@@ -104,13 +105,16 @@ public class ExternalVisualizationURLViewerImpl extends AbstractFileViewer imple
 
     private static TreeViewerUiBinder uiBinder = GWT.create(TreeViewerUiBinder.class);
     private final FileEditorServiceFacade fileEditorService;
+    private final DiskResourceServiceFacade diskResourceServiceFacade;
     private final DiskResourceUtil diskResourceUtil;
 
     public ExternalVisualizationURLViewerImpl(final File file,
                                               final String infoType,
-                                              final FileEditorServiceFacade fileEditorService) {
+                                              final FileEditorServiceFacade fileEditorService,
+                                              final DiskResourceServiceFacade diskResourceServiceFacade) {
         super(file, infoType);
         this.fileEditorService = fileEditorService;
+        this.diskResourceServiceFacade = diskResourceServiceFacade;
         this.diskResourceUtil = DiskResourceUtil.getInstance();
         initWidget(uiBinder.createAndBindUi(this));
         gridView.setAutoExpandColumn(cm.getColumn(1));
@@ -186,8 +190,10 @@ public class ExternalVisualizationURLViewerImpl extends AbstractFileViewer imple
             @Override
             public void onSelect(SelectEvent event) {
                 mask(appearance.sendToEnsemblLoadingMask());
-                EnsemblUtil util = new EnsemblUtil(file, infoType, ExternalVisualizationURLViewerImpl.this);
-                util.sendToEnsembl();
+                EnsemblUtil util = new EnsemblUtil(file,
+                                                   infoType,
+                                                   ExternalVisualizationURLViewerImpl.this);
+                util.sendToEnsembl(diskResourceServiceFacade);
             }
         });
         return button;

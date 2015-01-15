@@ -174,7 +174,7 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     
     /**
      * Waring that analysis may fail if input with spl chars is used
-     * 
+     *
      * @param splChars
      * @return
      */
@@ -633,12 +633,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     String cogePrompt();
     
     /**
-     * 
-     * @return
-     */
-    String cogeResponse(String url);
-    
-    /**
      * Translated "Search for users".
      *
      * @return translated "Search for users"
@@ -725,14 +719,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     @DefaultMessage("Comments")
     @Key("comments")
     String comments();
-
-    /**
-     * Translated "Note: Anyone with access to this file''s URL can access the file."
-     * @return translated "Note: Anyone with access to this file''s URL can access the file."
-     */
-    @DefaultMessage("Note: Anyone with access to this file''s URL can access the file.")
-    @Key("sendToEnsemblePopupNote")
-    SafeHtml sendToEnsemblePopupNote();
 
     /**
      * Translated "Update Comments...".
@@ -1280,8 +1266,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     String emptyTrashWarning();
 
     String ensembl();
-
-    String ensemblUrl();
 
     /**
      * Translated "Enabled".

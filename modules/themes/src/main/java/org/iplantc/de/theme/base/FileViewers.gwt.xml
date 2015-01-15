@@ -48,4 +48,20 @@
     <replace-with class="org.iplantc.de.theme.base.client.fileViewers.cells.TreeUrlCellDefaultAppearance">
         <when-type-is class="org.iplantc.de.fileViewers.client.views.cells.TreeUrlCell.TreeUrlCellAppearance" />
     </replace-with>
+
+    <replace-with class="org.iplantc.de.theme.base.client.fileViewers.callbacks.EnsemblUtilDefaultAppearance">
+        <when-type-is class="org.iplantc.de.fileViewers.client.callbacks.EnsemblUtil.EnsemblUtilAppearance" />
+    </replace-with>
+
+    <replace-with class="org.iplantc.de.theme.base.client.fileViewers.callbacks.LoadGenomeInCogeCallbackDefaultAppearance">
+        <when-type-is class="org.iplantc.de.fileViewers.client.callbacks.LoadGenomeInCoGeCallback.LoadGenomeInCogeCallbackAppearance" />
+    </replace-with>
+
+    <replace-with class="org.iplantc.de.theme.base.client.fileViewers.callbacks.ShareAnonymousCallbackDefaultAppearance">
+        <when-type-is class="org.iplantc.de.fileViewers.client.callbacks.ShareAnonymousCallback.ShareAnonymousCallbackAppearance" />
+    </replace-with>
+
+    <replace-with class="org.iplantc.de.theme.base.client.fileViewers.callbacks.TreeUrlCallbackDefaultAppearance">
+        <when-type-is class="org.iplantc.de.fileViewers.client.callbacks.TreeUrlCallback.TreeUrlCallbackAppearance"/>
+    </replace-with>
 </module>
