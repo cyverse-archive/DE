@@ -6,15 +6,29 @@ import com.google.web.bindery.autobean.shared.AutoBean.PropertyName;
 
 import java.util.Date;
 
+/**
+ * @author jstroot
+ */
 public interface SystemMessage extends Message {
 
-    @PropertyName("date_created")
+    enum Type {
+        warning,
+        announcement,
+        maintenance
+    }
+
+    String DATE_CREATED_KEY = "date_created";
+    String ACTIVATION_DATE_KEY = "activation_date";
+    String DEACTIVATION_DATE_KEY = "deactivation_date";
+
+
+    @PropertyName(DATE_CREATED_KEY)
     void setCreationTime(Date creationTime);
 
-    @PropertyName("activation_date")
+    @PropertyName(ACTIVATION_DATE_KEY)
     void setActivationTime(Date activationTime);
 
-    @PropertyName("deactivation_date")
+    @PropertyName(DEACTIVATION_DATE_KEY)
     void setDeactivationTime(Date deactivationTime);
 
     void setType(String type);

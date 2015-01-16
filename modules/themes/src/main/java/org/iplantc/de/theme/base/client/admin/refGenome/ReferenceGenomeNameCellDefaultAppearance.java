@@ -40,6 +40,9 @@ public class ReferenceGenomeNameCellDefaultAppearance implements ReferenceGenome
         this.iplantResources = iplantResources;
         this.favoriteCellStyle = iplantResources.favoriteCss();
         this.diskResourceNameCellStyle = iplantResources.diskResourceNameCss();
+
+        this.favoriteCellStyle.ensureInjected();
+        this.diskResourceNameCellStyle.ensureInjected();
     }
 
     @Override

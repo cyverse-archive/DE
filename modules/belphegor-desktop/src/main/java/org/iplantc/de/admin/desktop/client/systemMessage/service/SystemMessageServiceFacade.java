@@ -6,6 +6,9 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import java.util.List;
 
+/**
+ * @author jstroot
+ */
 public interface SystemMessageServiceFacade {
 
     /**

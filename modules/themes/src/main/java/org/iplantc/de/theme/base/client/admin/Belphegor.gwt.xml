@@ -42,4 +42,17 @@
    <replace-with class="org.iplantc.de.theme.base.client.admin.refGenome.RefGenomePresenterDefaultAppearance">
       <when-type-is class="org.iplantc.de.admin.desktop.client.refGenome.RefGenomeView.Presenter.RefGenomePresenterAppearance" />
    </replace-with>
+
+   <!-- System Messages -->
+   <replace-with class="org.iplantc.de.theme.base.client.admin.systemMessage.SystemMessageViewDefaultAppearance">
+      <when-type-is class="org.iplantc.de.admin.desktop.client.systemMessage.SystemMessageView.SystemMessageViewAppearance" />
+   </replace-with>
+
+   <replace-with class="org.iplantc.de.theme.base.client.admin.systemMessage.cells.SystemMessageNameCellDefaultAppearance">
+      <when-type-is class="org.iplantc.de.admin.desktop.client.systemMessage.view.cells.SystemMessageNameCell.SystemMessageNameCellAppearance" />
+   </replace-with>
+
+   <replace-with class="org.iplantc.de.theme.base.client.admin.systemMessage.presenter.SystemMessagePresenterDefaultAppearance">
+      <when-type-is class="org.iplantc.de.admin.desktop.client.systemMessage.SystemMessageView.Presenter.SystemMessagePresenterAppearance" />
+   </replace-with>
 </module>

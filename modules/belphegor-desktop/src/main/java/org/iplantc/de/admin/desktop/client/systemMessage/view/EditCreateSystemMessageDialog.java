@@ -32,6 +32,9 @@ import com.sencha.gxt.widget.core.client.form.TimeField;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * @author jstroot
+ */
 class EditCreateSystemMessageDialog extends Composite implements ValueAwareEditor<SystemMessage>, TakesValue<SystemMessage> {
 
     @UiTemplate("SystemMessageDialogPanel.ui.xml")
@@ -39,54 +42,31 @@ class EditCreateSystemMessageDialog extends Composite implements ValueAwareEdito
 
     interface EditorDriver extends SimpleBeanEditorDriver<SystemMessage, EditCreateSystemMessageDialog> { }
 
-    @UiField
-    @Path("activationTime")
-    DateField activationDateField;
+    @UiField @Path("activationTime") DateField activationDateField;
+    @UiField @Ignore TimeField activationTimeField;
 
-    @UiField
-    @Ignore
-    TimeField activationTimeField;
+    @UiField @Path("deactivationTime") DateField deActivationDateField;
+    @UiField @Ignore TimeField deActivationTimeField;
 
-    @UiField
-    @Path("deactivationTime")
-    DateField deActivationDateField;
+    @UiField CheckBox dismissible;
+    @UiField CheckBox loginsDisabled;
 
-    @UiField
-    @Ignore
-    TimeField deActivationTimeField;
+    @UiField(provided = true) @Ignore Date maxTime = new DateWrapper().clearTime().addHours(23).addSeconds(46).asDate();
 
-    @UiField
-    @Path("dismissible")
-    CheckBox dismissibleField;
+    @UiField @Path("body") TextArea messageField;
 
-    @UiField
-    @Path("loginsDisabled")
-    CheckBox loginsDisabledField;
-
-    @UiField(provided = true)
-    @Ignore
-    Date maxTime = new DateWrapper().clearTime().addHours(23).addSeconds(46).asDate();
-
-    @UiField
-    @Path("body")
-    TextArea messageField;
-
-    @UiField(provided = true)
-    @Ignore
-    Date minTime = new DateWrapper().clearTime().asDate();
-
-    @UiField
-    @Path("type")
-    SimpleComboBox<String> typeCombo;
-
-    @UiField
-    VerticalLayoutContainer vlc;
+    @UiField(provided = true) @Ignore Date minTime = new DateWrapper().clearTime().asDate();
+    @UiField SimpleComboBox<String> type;
+    @UiField VerticalLayoutContainer vlc;
 
     private static CreateSystemMessageDialogUiBinder uiBinder = GWT.create(CreateSystemMessageDialogUiBinder.class);
-    private final List<String> announcementTypes = Lists.newArrayList("warning", "announcement", "maintenance");
+    private final List<String> announcementTypes = Lists.newArrayList(SystemMessage.Type.warning.name(),
+                                                                      SystemMessage.Type.announcement.name(),
+                                                                      SystemMessage.Type.maintenance.name());
     private final EditorDriver editorDriver = GWT.create(EditorDriver.class);
 
-    private EditCreateSystemMessageDialog(SystemMessage message, List<String> announcementTypes) {
+    private EditCreateSystemMessageDialog(final SystemMessage message,
+                                          final List<String> announcementTypes) {
         // If the announcement types are not empty, clear local defaults and add them.
         if (!announcementTypes.isEmpty()) {
             this.announcementTypes.clear();
@@ -104,12 +84,12 @@ class EditCreateSystemMessageDialog extends Composite implements ValueAwareEdito
         final Date date = new Date();
         final String currentDateAsEpochString = Long.toString(date.getTime());
 
-        StringQuoter.create(currentDateAsEpochString).assign(createSplittable, "date_created");
-        StringQuoter.create(currentDateAsEpochString).assign(createSplittable, "activation_date");
+        StringQuoter.create(currentDateAsEpochString).assign(createSplittable, SystemMessage.DATE_CREATED_KEY);
+        StringQuoter.create(currentDateAsEpochString).assign(createSplittable, SystemMessage.ACTIVATION_DATE_KEY);
 
         final DateWrapper addDays = new DateWrapper().addDays(7);
         final String oneWeekFromNowAsEpochString = Long.toString(addDays.getTime());
-        StringQuoter.create(oneWeekFromNowAsEpochString).assign(createSplittable, "deactivation_date");
+        StringQuoter.create(oneWeekFromNowAsEpochString).assign(createSplittable, SystemMessage.DEACTIVATION_DATE_KEY);
         SystemMessage newSysMessage = factory.systemMessage().as();
         newSysMessage.setCreationTime(new Date());
         newSysMessage.setActivationTime(new Date());
@@ -124,14 +104,11 @@ class EditCreateSystemMessageDialog extends Composite implements ValueAwareEdito
     }
 
     @Override
-    public void flush() {
-        // TODO Auto-generated method stub
-
-    }
+    public void flush() { /* Do Nothing Intentionally */ }
 
     @Override
     public SystemMessage getValue() {
-        typeCombo.finishEditing();
+        type.finishEditing();
         editorDriver.flush();
         return editorDriver.flush();
     }
@@ -140,7 +117,6 @@ class EditCreateSystemMessageDialog extends Composite implements ValueAwareEdito
     public void setValue(SystemMessage value) {
         activationTimeField.setValue(value.getActivationTime(), false);
         deActivationTimeField.setValue(value.getDeactivationTime(), false);
-
     }
 
     public boolean hasErrors() {
@@ -148,16 +124,10 @@ class EditCreateSystemMessageDialog extends Composite implements ValueAwareEdito
     }
 
     @Override
-    public void onPropertyChange(String... paths) {
-        // TODO Auto-generated method stub
-
-    }
+    public void onPropertyChange(String... paths) { /* Do Nothing Intentionally */ }
 
     @Override
-    public void setDelegate(EditorDelegate<SystemMessage> delegate) {
-        // TODO Auto-generated method stub
-
-    }
+    public void setDelegate(EditorDelegate<SystemMessage> delegate) { /* Do Nothing Intentionally */ }
 
     @UiFactory
     @Ignore
