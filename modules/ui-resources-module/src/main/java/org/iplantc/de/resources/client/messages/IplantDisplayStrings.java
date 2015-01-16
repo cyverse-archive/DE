@@ -821,15 +821,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     String createNewWorkflow();
 
     /**
-     * Translated "Created By".
-     *
-     * @return translated "Created By"
-     */
-    @DefaultMessage("Created By")
-    @Key("createdBy")
-    String createdBy();
-
-    /**
      * Translated "Date Submitted".
      *
      * @return translated "Date Submitted"
@@ -846,15 +837,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     @DefaultMessage("Created Date")
     @Key("createdDateGridHeader")
     String createdDateGridHeader();
-
-    /**
-     * Translated "Created On".
-     *
-     * @return translated "Created On"
-     */
-    @DefaultMessage("Created On")
-    @Key("createdOn")
-    String createdOn();
 
     /**
      * Translated "show current collaborators".
@@ -1370,15 +1352,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     String filterAnalysesList();
 
     /**
-     * Translated "Filter by name".
-     *
-     * @return translated "Filter by name"
-     */
-    @DefaultMessage("Filter by name")
-    @Key("filterDataList")
-    String filterDataList();
-
-    /**
      * Translated "Folder Name".
      *
      * @return translated "Folder Name"
@@ -1716,15 +1689,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     @DefaultMessage("N/A")
     @Key("lastAppNotDefined")
     String lastAppNotDefined();
-
-    /**
-     * Translated "Last Modified By".
-     *
-     * @return translated "Last Modified By"
-     */
-    @DefaultMessage("Last Modified By")
-    @Key("lastModBy")
-    String lastModBy();
 
     /**
      * Translated "Last Modified On".
@@ -2933,15 +2897,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     String reallyLikedIt();
 
     /**
-     * Translated "Delete this Reference Genome".
-     *
-     * @return translated "Delete this Reference Genome"
-     */
-    @DefaultMessage("Delete this Reference Genome")
-    @Key("refDeletePrompt")
-    String refDeletePrompt();
-
-    /**
      * Translated "Name".
      *
      * @return translated "Name"
@@ -3846,15 +3801,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     String up();
 
     /**
-     * Translated "Reference Genome updated.".
-     *
-     * @return translated "Reference Genome updated."
-     */
-    @DefaultMessage("Reference Genome updated.")
-    @Key("updateRefGenome")
-    String updateRefGenome();
-
-    /**
      * Translated "Select test data file to upload".
      *
      * @return translated "Select test data file to upload"
@@ -4174,15 +4120,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
      * 
      */
     String diskResourceNotAvailable();
-
-    /**
-     * Translated "Add New Reference Genome"
-     * 
-     * @return translated "Add New Reference Genome"
-     */
-    @DefaultMessage("Add New Reference Genome")
-    @Key("addReferenceGenome")
-    String addReferenceGenome();
 
     /**
      * Translated "Import From URL..."

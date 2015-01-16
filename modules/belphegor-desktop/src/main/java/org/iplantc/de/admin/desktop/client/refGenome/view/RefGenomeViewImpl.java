@@ -1,12 +1,9 @@
 package org.iplantc.de.admin.desktop.client.refGenome.view;
 
-import org.iplantc.de.admin.desktop.client.I18N;
 import org.iplantc.de.admin.desktop.client.refGenome.RefGenomeView;
 import org.iplantc.de.admin.desktop.client.refGenome.view.cells.ReferenceGenomeNameCell;
 import org.iplantc.de.client.models.apps.refGenome.ReferenceGenome;
 import org.iplantc.de.commons.client.views.gxt3.dialogs.IPlantDialog;
-import org.iplantc.de.resources.client.IplantResources;
-import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
@@ -35,11 +32,14 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * @author jstroot
+ */
 public class RefGenomeViewImpl extends Composite implements RefGenomeView {
 
-    private static RefGenomeViewImpleUiBinder uiBinder = GWT.create(RefGenomeViewImpleUiBinder.class);
+    private static RefGenomeViewImplUiBinder uiBinder = GWT.create(RefGenomeViewImplUiBinder.class);
 
-    private final class NameColumnComparatory implements Comparator<ReferenceGenome> {
+    private final class NameColumnComparator implements Comparator<ReferenceGenome> {
         @Override
         public int compare(ReferenceGenome arg0, ReferenceGenome arg1) {
             return arg0.getName().compareToIgnoreCase(arg1.getName());
@@ -63,64 +63,55 @@ public class RefGenomeViewImpl extends Composite implements RefGenomeView {
         }
     }
 
-    interface RefGenomeViewImpleUiBinder extends UiBinder<Widget, RefGenomeViewImpl> {}
+    interface RefGenomeViewImplUiBinder extends UiBinder<Widget, RefGenomeViewImpl> {}
 
-    @UiField(provided = true)
-    IplantResources res;
-    @UiField(provided = true)
-    IplantDisplayStrings strings;
-
-    @UiField
-    TextButton addBtn;
-
-    @UiField
-    Grid<ReferenceGenome> grid;
-
-    @UiField
-    ListStore<ReferenceGenome> store;
+    @UiField TextButton addBtn;
+    @UiField Grid<ReferenceGenome> grid;
+    @UiField ListStore<ReferenceGenome> store;
+    @UiField(provided = true) RefGenomeAppearance appearance;
 
     private final ReferenceGenomeProperties rgProps;
     private final FilterByNameStoreFilter nameFilter;
     private RefGenomeView.Presenter presenter;
 
     @Inject
-    public RefGenomeViewImpl(IplantResources res, IplantDisplayStrings strings, ReferenceGenomeProperties rgProps) {
-        this.res = res;
-        this.strings = strings;
+    RefGenomeViewImpl(final ReferenceGenomeProperties rgProps,
+                      final RefGenomeAppearance appearance) {
         this.rgProps = rgProps;
+        this.appearance = appearance;
         initWidget(uiBinder.createAndBindUi(this));
         nameFilter = new FilterByNameStoreFilter();
     }
 
     @UiFactory
     ListStore<ReferenceGenome> createListStore() {
-        final ListStore<ReferenceGenome> listStore = new ListStore<ReferenceGenome>(rgProps.id());
+        final ListStore<ReferenceGenome> listStore = new ListStore<>(rgProps.id());
         listStore.setEnableFilters(true);
         return listStore;
     }
 
     @UiFactory
     ColumnModel<ReferenceGenome> createColumnModel() {
-        ColumnConfig<ReferenceGenome, ReferenceGenome> nameCol = new ColumnConfig<ReferenceGenome, ReferenceGenome>(new IdentityValueProvider<ReferenceGenome>("name"), 300, strings.name());
-        ColumnConfig<ReferenceGenome, String> pathCol = new ColumnConfig<ReferenceGenome, String>(rgProps.path(), 300, strings.path());
-        ColumnConfig<ReferenceGenome, Date> createdOnCol = new ColumnConfig<ReferenceGenome, Date>(rgProps.createdDate(), 192, strings.createdOn());
-        ColumnConfig<ReferenceGenome, String> createdByCol = new ColumnConfig<ReferenceGenome, String>(rgProps.createdBy(), 160, strings.createdBy());
+        ColumnConfig<ReferenceGenome, ReferenceGenome> nameCol = new ColumnConfig<>(new IdentityValueProvider<ReferenceGenome>("name"), 300, appearance.nameColumn());
+        ColumnConfig<ReferenceGenome, String> pathCol = new ColumnConfig<>(rgProps.path(), 300, appearance.pathColumn());
+        ColumnConfig<ReferenceGenome, Date> createdOnCol = new ColumnConfig<>(rgProps.createdDate(), 192, appearance.createdOnColumn());
+        ColumnConfig<ReferenceGenome, String> createdByCol = new ColumnConfig<>(rgProps.createdBy(), 160, appearance.createdByColumn());
 
         nameCol.setCell(new ReferenceGenomeNameCell(this));
-        nameCol.setComparator(new NameColumnComparatory());
+        nameCol.setComparator(new NameColumnComparator());
         createdOnCol.setFixed(true);
 
         @SuppressWarnings("unchecked")
-        List<ColumnConfig<ReferenceGenome, ?>> colList = Lists.<ColumnConfig<ReferenceGenome, ?>> newArrayList(nameCol, pathCol, createdByCol, createdOnCol);
-        return new ColumnModel<ReferenceGenome>(colList);
+        List<ColumnConfig<ReferenceGenome, ?>> colList = Lists.newArrayList(nameCol, pathCol, createdByCol, createdOnCol);
+        return new ColumnModel<>(colList);
     }
 
     @UiHandler("addBtn")
     void addButtonClicked(SelectEvent event) {
         final IPlantDialog iDlg = new IPlantDialog();
         iDlg.setHideOnButtonClick(false);
-        iDlg.setHeadingText(I18N.DISPLAY.addReferenceGenome());
-        iDlg.getOkButton().setText("Save");
+        iDlg.setHeadingText(appearance.addReferenceGenomeDialogHeading());
+        iDlg.getOkButton().setText(appearance.saveBtnText());
         final EditReferenceGenomeDialog addRefGenomePanel = EditReferenceGenomeDialog.addNewReferenceGenome();
         iDlg.add(addRefGenomePanel);
         iDlg.addOkButtonSelectHandler(new SelectHandler() {
@@ -147,8 +138,8 @@ public class RefGenomeViewImpl extends Composite implements RefGenomeView {
     public void editReferenceGenome(ReferenceGenome refGenome) {
         final IPlantDialog iDlg = new IPlantDialog();
         iDlg.setHideOnButtonClick(false);
-        iDlg.setHeadingText(I18N.DISPLAY.edit() + ": " + refGenome.getName());
-        iDlg.getOkButton().setText("Save");
+        iDlg.setHeadingText(appearance.editReferenceGenomeDialogHeading(refGenome.getName()));
+        iDlg.getOkButton().setText(appearance.saveBtnText());
         final EditReferenceGenomeDialog addRefGenomePanel = EditReferenceGenomeDialog.editReferenceGenome(refGenome);
         iDlg.add(addRefGenomePanel);
         iDlg.addOkButtonSelectHandler(new SelectHandler() {

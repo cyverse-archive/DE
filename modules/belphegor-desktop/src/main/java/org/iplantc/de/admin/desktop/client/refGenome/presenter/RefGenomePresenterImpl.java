@@ -6,8 +6,6 @@ import org.iplantc.de.client.models.apps.refGenome.ReferenceGenome;
 import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
 import org.iplantc.de.commons.client.info.SuccessAnnouncementConfig;
-import org.iplantc.de.resources.client.messages.I18N;
-import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HasOneWidget;
@@ -15,23 +13,28 @@ import com.google.inject.Inject;
 
 import java.util.List;
 
+/**
+ * @author jstroot
+ */
 public class RefGenomePresenterImpl implements RefGenomeView.Presenter {
 
     private final RefGenomeView view;
     private final ReferenceGenomeServiceFacade refGenService;
-    private final IplantDisplayStrings strings;
+    private final RefGenomePresenterAppearance appearance;
 
     @Inject
-    public RefGenomePresenterImpl(RefGenomeView view, ReferenceGenomeServiceFacade refGenService, IplantDisplayStrings strings) {
+    RefGenomePresenterImpl(final RefGenomeView view,
+                           final ReferenceGenomeServiceFacade refGenService,
+                           final RefGenomePresenterAppearance appearance) {
         this.view = view;
         this.refGenService = refGenService;
-        this.strings = strings;
+        this.appearance = appearance;
         this.view.setPresenter(this);
     }
 
     @Override
     public void go(HasOneWidget container) {
-        view.mask(strings.loadingMask());
+        view.mask(appearance.getReferenceGenomesLoadingMask());
         container.setWidget(view);
         refGenService.getReferenceGenomes(new AsyncCallback<List<ReferenceGenome>>() {
 
@@ -56,7 +59,7 @@ public class RefGenomePresenterImpl implements RefGenomeView.Presenter {
             @Override
             public void onSuccess(ReferenceGenome result) {
                 view.addReferenceGenome(result);
-                IplantAnnouncer.getInstance().schedule(new SuccessAnnouncementConfig(I18N.DISPLAY.addRefGenome()));
+                IplantAnnouncer.getInstance().schedule(new SuccessAnnouncementConfig(appearance.addReferenceGenomeSuccess()));
             }
 
             @Override
@@ -74,7 +77,7 @@ public class RefGenomePresenterImpl implements RefGenomeView.Presenter {
             @Override
             public void onSuccess(ReferenceGenome result) {
                 view.updateReferenceGenome(result);
-                IplantAnnouncer.getInstance().schedule(new SuccessAnnouncementConfig(I18N.DISPLAY.updateRefGenome()));
+                IplantAnnouncer.getInstance().schedule(new SuccessAnnouncementConfig(appearance.updateReferenceGenomeSuccess()));
             }
 
             @Override

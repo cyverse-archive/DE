@@ -1,6 +1,7 @@
 <module>
    <inherits name="org.iplantc.de.admin.desktop.AdminDesktop" />
 
+   <!-- Desktop -->
    <replace-with class="org.iplantc.de.theme.base.client.admin.desktop.BelphegorViewDefaultAppearance">
       <when-type-is class="org.iplantc.de.admin.desktop.client.views.BelphegorView.BelphegorViewAppearance" />
    </replace-with>
@@ -27,5 +28,18 @@
 
    <replace-with class="org.iplantc.de.theme.base.client.admin.apps.AdminPresenterDefaultAppearance">
       <when-type-is class="org.iplantc.de.admin.desktop.client.apps.views.AdminAppsView.AdminPresenter.AdminPresenterAppearance" />
+   </replace-with>
+
+   <!-- RefGenome -->
+   <replace-with class="org.iplantc.de.theme.base.client.admin.refGenome.RefGenomeDefaultAppearance">
+      <when-type-is class="org.iplantc.de.admin.desktop.client.refGenome.RefGenomeView.RefGenomeAppearance" />
+   </replace-with>
+
+   <replace-with class="org.iplantc.de.theme.base.client.admin.refGenome.ReferenceGenomeNameCellDefaultAppearance">
+      <when-type-is class="org.iplantc.de.admin.desktop.client.refGenome.view.cells.ReferenceGenomeNameCell.ReferenceGenomeNameCellAppearance" />
+   </replace-with>
+
+   <replace-with class="org.iplantc.de.theme.base.client.admin.refGenome.RefGenomePresenterDefaultAppearance">
+      <when-type-is class="org.iplantc.de.admin.desktop.client.refGenome.RefGenomeView.Presenter.RefGenomePresenterAppearance" />
    </replace-with>
 </module>
