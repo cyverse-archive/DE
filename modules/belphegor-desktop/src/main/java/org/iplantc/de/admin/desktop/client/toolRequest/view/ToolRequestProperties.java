@@ -8,6 +8,9 @@ import com.sencha.gxt.data.shared.PropertyAccess;
 
 import java.util.Date;
 
+/**
+ * @author jstroot
+ */
 public interface ToolRequestProperties extends PropertyAccess<ToolRequest> {
 
     ModelKeyProvider<ToolRequest> id();

@@ -30,6 +30,9 @@ import com.sencha.gxt.widget.core.client.selection.SelectionChangedEvent.Selecti
 import java.util.Date;
 import java.util.List;
 
+/**
+ * @author jstroot
+ */
 public class ToolRequestViewImpl extends Composite implements ToolRequestView, SelectionChangedHandler<ToolRequest> {
 
     private static ToolRequestViewImplUiBinder uiBinder = GWT.create(ToolRequestViewImplUiBinder.class);
@@ -37,17 +40,11 @@ public class ToolRequestViewImpl extends Composite implements ToolRequestView, S
     interface ToolRequestViewImplUiBinder extends UiBinder<Widget, ToolRequestViewImpl> {
     }
 
-    @UiField
-    TextButton updateBtn;
-
-    @UiField
-    Grid<ToolRequest> grid;
-
-    @UiField
-    ListStore<ToolRequest> store;
-
-    @UiField
-    ToolRequestDetailsPanel detailsPanel;
+    @UiField TextButton updateBtn;
+    @UiField Grid<ToolRequest> grid;
+    @UiField ListStore<ToolRequest> store;
+    @UiField ToolRequestDetailsPanel detailsPanel;
+    @UiField(provided = true) ToolRequestViewAppearance appearance;
 
     private final ToolRequestProperties trProps;
     private ToolRequestView.Presenter presenter;
@@ -55,9 +52,12 @@ public class ToolRequestViewImpl extends Composite implements ToolRequestView, S
     private final ToolRequestAutoBeanFactory factory;
 
     @Inject
-    public ToolRequestViewImpl(ToolRequestProperties trProps, ToolRequestAutoBeanFactory factory) {
+    public ToolRequestViewImpl(final ToolRequestProperties trProps,
+                               final ToolRequestAutoBeanFactory factory,
+                               final ToolRequestViewAppearance appearance) {
         this.trProps = trProps;
         this.factory = factory;
+        this.appearance = appearance;
         initWidget(uiBinder.createAndBindUi(this));
         grid.getSelectionModel().addSelectionChangedHandler(this);
         grid.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
@@ -70,19 +70,30 @@ public class ToolRequestViewImpl extends Composite implements ToolRequestView, S
 
     @UiFactory
     ListStore<ToolRequest> createListStore() {
-        ListStore<ToolRequest> listStore = new ListStore<ToolRequest>(trProps.id());
-        return listStore;
+        return new ListStore<>(trProps.id());
     }
 
     @UiFactory
     ColumnModel<ToolRequest> createColumnModel() {
         List<ColumnConfig<ToolRequest, ?>> list = Lists.newArrayList();
-        ColumnConfig<ToolRequest, String> nameCol = new ColumnConfig<ToolRequest, String>(trProps.name(), 90, "Name");
-        ColumnConfig<ToolRequest, String> statusCol = new ColumnConfig<ToolRequest, String>(trProps.status(), 90, "Status");
-        ColumnConfig<ToolRequest, Date> dateSubmittedCol = new ColumnConfig<ToolRequest, Date>(trProps.dateSubmitted(), 90, "Date Submitted");
-        ColumnConfig<ToolRequest, Date> dateUpdatedCol = new ColumnConfig<ToolRequest, Date>(trProps.dateUpdated(), 90, "Date Updated");
-        ColumnConfig<ToolRequest, String> updatedByCol = new ColumnConfig<ToolRequest, String>(trProps.updatedBy(), 90, "Updated By");
-        ColumnConfig<ToolRequest, String> versionCol = new ColumnConfig<ToolRequest, String>(trProps.version(), 90, "Version");
+        ColumnConfig<ToolRequest, String> nameCol = new ColumnConfig<>(trProps.name(),
+                                                                       appearance.nameColumnWidth(),
+                                                                       appearance.nameColumnLabel());
+        ColumnConfig<ToolRequest, String> statusCol = new ColumnConfig<>(trProps.status(),
+                                                                         appearance.statusColumnWidth(),
+                                                                         appearance.statusColumnLabel());
+        ColumnConfig<ToolRequest, Date> dateSubmittedCol = new ColumnConfig<>(trProps.dateSubmitted(),
+                                                                              appearance.dateSubmittedColumnWidth(),
+                                                                              appearance.dateSubmittedColumnLabel());
+        ColumnConfig<ToolRequest, Date> dateUpdatedCol = new ColumnConfig<>(trProps.dateUpdated(),
+                                                                            appearance.dateUpdatedColumnWidth(),
+                                                                            appearance.dateUpdatedColumnLabel());
+        ColumnConfig<ToolRequest, String> updatedByCol = new ColumnConfig<>(trProps.updatedBy(),
+                                                                            appearance.updatedByColumnWidth(),
+                                                                            appearance.updatedByColumnLabel());
+        ColumnConfig<ToolRequest, String> versionCol = new ColumnConfig<>(trProps.version(),
+                                                                          appearance.versionColumnWidth(),
+                                                                          appearance.versionColumnLabel());
 
         list.add(nameCol);
         list.add(statusCol);
@@ -90,7 +101,7 @@ public class ToolRequestViewImpl extends Composite implements ToolRequestView, S
         list.add(dateUpdatedCol);
         list.add(updatedByCol);
         list.add(versionCol);
-        return new ColumnModel<ToolRequest>(list);
+        return new ColumnModel<>(list);
     }
 
     @UiHandler("updateBtn")
@@ -104,7 +115,7 @@ public class ToolRequestViewImpl extends Composite implements ToolRequestView, S
                 presenter.updateToolRequest(grid.getSelectionModel().getSelectedItem().getId(), tru);
             }
         });
-        updateToolRequestDialog.setSize("350px", "400px");
+        updateToolRequestDialog.setSize(appearance.updateToolRequestDlgWidth(), appearance.updateToolRequestDlgHeight());
         updateToolRequestDialog.show();
     }
 

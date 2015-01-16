@@ -43,15 +43,6 @@ public interface IplantErrorStrings extends com.google.gwt.i18n.client.Messages,
     String analysisFailedToLaunch(String arg0);
 
     /**
-     * Translated "Failed to load App categories.".
-     * 
-     * @return translated "Failed to load App categories."
-     */
-    @DefaultMessage("Failed to load App categories.")
-    @Key("appCategoriesLoadFailure")
-    String appCategoriesLoadFailure();
-
-    /**
      * Translated "No application exists for the specified ID.".
      * 
      * @return translated "No application exists for the specified ID."
@@ -848,15 +839,6 @@ public interface IplantErrorStrings extends com.google.gwt.i18n.client.Messages,
     @DefaultMessage("Unable to retrieve details.")
     @Key("retrieveStatFailed")
     String retrieveStatFailed();
-
-    /**
-     * Translated "Unable to retrieve user info.".
-     * 
-     * @return translated "Unable to retrieve user info."
-     */
-    @DefaultMessage("Unable to retrieve user info.")
-    @Key("retrieveUserInfoFailed")
-    String retrieveUserInfoFailed();
 
     /**
      * Translated "Failed to retrieve saved filters.".

@@ -1,4 +1,4 @@
-package org.iplantc.de.admin.desktop.client;
+package org.iplantc.de.theme.base.client.admin;
 
 import org.iplantc.de.commons.client.CommonUiConstants;
 

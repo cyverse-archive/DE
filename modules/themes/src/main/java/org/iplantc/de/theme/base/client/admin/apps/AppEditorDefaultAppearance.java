@@ -1,6 +1,6 @@
 package org.iplantc.de.theme.base.client.admin.apps;
 
-import org.iplantc.de.admin.desktop.client.BelphegorConstants;
+import org.iplantc.de.theme.base.client.admin.BelphegorConstants;
 import org.iplantc.de.admin.desktop.client.apps.views.editors.AppEditor;
 import org.iplantc.de.commons.client.CommonUiConstants;
 import org.iplantc.de.resources.client.messages.IplantDisplayStrings;

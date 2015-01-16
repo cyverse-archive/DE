@@ -58,15 +58,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     String addnlData();
 
     /**
-     * Translated "Tool Integration Administration".
-     *
-     * @return translated "Tool Integration Administration"
-     */
-    @DefaultMessage("Tool Integration Administration")
-    @Key("adminApp")
-    String adminApp();
-
-    /**
      * Translated
      * "&nbsp;Click on the app name to edit. To re-categorize an app, drag and drop it into appropriate category in the categories tree."
      * .
@@ -471,15 +462,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     @DefaultMessage("Cancel")
     @Key("cancelAnalysis")
     String cancelAnalysis();
-
-    /**
-     * Translated "Unable to load user info".
-     *
-     * @return translated "Unable to load user info"
-     */
-    @DefaultMessage("Unable to load user info")
-    @Key("cantLoadUserInfo")
-    String cantLoadUserInfo();
 
     /**
      * Translated "Category".

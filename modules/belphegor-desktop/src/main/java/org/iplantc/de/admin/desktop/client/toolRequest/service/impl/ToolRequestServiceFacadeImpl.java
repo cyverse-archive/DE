@@ -22,6 +22,9 @@ import com.sencha.gxt.data.shared.SortInfo;
 
 import java.util.List;
 
+/**
+ * @author jstroot
+ */
 public class ToolRequestServiceFacadeImpl implements ToolRequestServiceFacade {
 
     @Inject private ToolRequestAdminAutoBeanFactory factory;

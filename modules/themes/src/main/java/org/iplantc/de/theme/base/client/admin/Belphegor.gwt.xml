@@ -55,4 +55,13 @@
    <replace-with class="org.iplantc.de.theme.base.client.admin.systemMessage.presenter.SystemMessagePresenterDefaultAppearance">
       <when-type-is class="org.iplantc.de.admin.desktop.client.systemMessage.SystemMessageView.Presenter.SystemMessagePresenterAppearance" />
    </replace-with>
+
+   <!-- Tool Requests -->
+   <replace-with class="org.iplantc.de.theme.base.client.admin.toolRequest.ToolRequestViewDefaultAppearance">
+      <when-type-is class="org.iplantc.de.admin.desktop.client.toolRequest.ToolRequestView.ToolRequestViewAppearance" />
+   </replace-with>
+
+   <replace-with class="org.iplantc.de.theme.base.client.admin.toolRequest.presenter.ToolRequestPresenterDefaultAppearance">
+      <when-type-is class="org.iplantc.de.admin.desktop.client.toolRequest.ToolRequestView.Presenter.ToolRequestPresenterAppearance" />
+   </replace-with>
 </module>
