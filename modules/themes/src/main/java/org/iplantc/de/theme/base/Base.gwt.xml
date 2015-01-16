@@ -1,0 +1,6 @@
+<module>
+    <inherits name="org.iplantc.de.theme.base.client.desktop.Desktop"/>
+    <inherits name="org.iplantc.de.theme.base.client.diskResource.DiskResource"/>
+    <inherits name="org.iplantc.de.theme.base.client.fileViewers.FileViewers"/>
+    <inherits name="org.iplantc.de.theme.base.client.admin.Belphegor"/>
+</module>

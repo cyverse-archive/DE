@@ -12,8 +12,6 @@ import com.google.gwt.core.client.GWT;
  *
  */
 public class I18N {
-    // public static final IplantDisplayStrings DISPLAY =
-    // org.iplantc.de.resources.client.messages.I18N.DISPLAY;
     public static final IplantDisplayStrings DISPLAY = GWT.create(IplantDisplayStrings.class);
     public static final IplantErrorStrings ERROR = org.iplantc.de.resources.client.messages.I18N.ERROR;
 }

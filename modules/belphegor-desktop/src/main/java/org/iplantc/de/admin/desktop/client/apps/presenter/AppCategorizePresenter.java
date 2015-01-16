@@ -9,6 +9,9 @@ import com.google.gwt.user.client.ui.HasOneWidget;
 
 import java.util.List;
 
+/**
+ * @author jstroot
+ */
 public class AppCategorizePresenter implements AppCategorizeView.Presenter {
 
     private final BelphegorAdminProperties properties;

@@ -1,19 +1,13 @@
 package org.iplantc.de.admin.desktop.client;
 
+import org.iplantc.de.admin.desktop.client.views.BelphegorView;
+
 import com.google.gwt.resources.client.ClientBundle;
-import com.google.gwt.resources.client.ImageResource;
-import com.google.gwt.resources.client.ImageResource.ImageOptions;
-import com.google.gwt.resources.client.ImageResource.RepeatStyle;
 
 public interface BelphegorResources extends ClientBundle {
 
-    @Source("BelphegorStyle.css")
-    BelphegorStyle css();
+    @Source("../../../../../../../../../../themes/src/main/java/org/iplantc/de/theme/base/client/admin/desktop/BelphegorStyle.css")
+    BelphegorView.BelphegorStyle css();
 
-    @Source("headerlogo.png")
-    ImageResource headerLogo();
 
-    @Source("headerlogo-fill.png")
-    @ImageOptions(repeatStyle = RepeatStyle.Horizontal)
-    ImageResource headerLogoFill();
 }

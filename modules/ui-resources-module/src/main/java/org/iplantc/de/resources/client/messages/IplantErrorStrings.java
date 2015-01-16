@@ -16,24 +16,6 @@ public interface IplantErrorStrings extends com.google.gwt.i18n.client.Messages,
         AppIntegrationErrorMessages {
 
     /**
-     * Translated "Could not add Category \"{0}\".".
-     * 
-     * @return translated "Could not add Category \"{0}\"."
-     */
-    @DefaultMessage("Could not add Category \"{0}\".")
-    @Key("addAppCategoryError")
-    String addAppCategoryError(String arg0);
-
-    /**
-     * Translated "Can not add a Category under a Category that only contains Applications.".
-     * 
-     * @return translated "Can not add a Category under a Category that only contains Applications."
-     */
-    @DefaultMessage("Can not add a Category under a Category that only contains Applications.")
-    @Key("addCategoryPermissionError")
-    String addCategoryPermissionError();
-
-    /**
      * Translated "Unable to add collaborator(s). Please try again later.".
      * 
      * @return translated "Unable to add collaborator(s). Please try again later."
@@ -212,33 +194,6 @@ public interface IplantErrorStrings extends com.google.gwt.i18n.client.Messages,
     @DefaultMessage("Error deleting analysis.")
     @Key("deleteAnalysisError")
     String deleteAnalysisError();
-
-    /**
-     * Translated "Could not delete Category \"{0}\".".
-     * 
-     * @return translated "Could not delete Category \"{0}\"."
-     */
-    @DefaultMessage("Could not delete Category \"{0}\".")
-    @Key("deleteAppCategoryError")
-    String deleteAppCategoryError(String arg0);
-
-    /**
-     * Translated "Could not delete Application \"{0}\".".
-     * 
-     * @return translated "Could not delete Application \"{0}\"."
-     */
-    @DefaultMessage("Could not delete Application \"{0}\".")
-    @Key("deleteApplicationError")
-    String deleteApplicationError(String arg0);
-
-    /**
-     * Translated "Can not delete a Category that has sub-categories or contains Applications.".
-     * 
-     * @return translated "Can not delete a Category that has sub-categories or contains Applications."
-     */
-    @DefaultMessage("Can not delete a Category that has sub-categories or contains Applications.")
-    @Key("deleteCategoryPermissionError")
-    String deleteCategoryPermissionError();
 
     /**
      * Error msg shown when an attempt to delete some data links failed.
@@ -674,17 +629,6 @@ public interface IplantErrorStrings extends com.google.gwt.i18n.client.Messages,
     String invalidToolRequest();
 
     /**
-     * Translated
-     * "App or workflow name cannot start with the characters {0} and cannot contain the characters {1}".
-     * 
-     * @return translated
-     *         "App or workflow name cannot start with the characters {0} and cannot contain the characters {1}"
-     */
-    @DefaultMessage("App or workflow name cannot start with the characters {0} and cannot contain the characters {1}")
-    @Key("invalidAppNameMsg")
-    String invalidAppNameMsg(String arg0, String arg1);
-
-    /**
      * Translated "Invalid file name entered.".
      * 
      * @return translated "Invalid file name entered."
@@ -787,15 +731,6 @@ public interface IplantErrorStrings extends com.google.gwt.i18n.client.Messages,
     String moveApplicationError(String arg0);
 
     /**
-     * Translated "Could not move Category \"{0}\".".
-     * 
-     * @return translated "Could not move Category \"{0}\"."
-     */
-    @DefaultMessage("Could not move Category \"{0}\".")
-    @Key("moveCategoryError")
-    String moveCategoryError(String arg0);
-
-    /**
      * Translated "Move Failed.".
      * 
      * @return translated "Move Failed."
@@ -815,15 +750,6 @@ public interface IplantErrorStrings extends com.google.gwt.i18n.client.Messages,
     @DefaultMessage("An error occurred while processing your request. Please contact iPlant support at support@iplantcollaborative.org.")
     @Key("newToolRequestError")
     String newToolRequestError();
-
-    /**
-     * Translated "No categories selected.".
-     * 
-     * @return translated "No categories selected."
-     */
-    @DefaultMessage("No categories selected.")
-    @Key("noCategoriesSelected")
-    String noCategoriesSelected();
 
     /**
      * Translated "No folder selected.".
@@ -870,15 +796,6 @@ public interface IplantErrorStrings extends com.google.gwt.i18n.client.Messages,
     @DefaultMessage("Unable to remove collaborator(s). Please try again later.")
     @Key("removeCollabErrorMsg")
     String removeCollabErrorMsg();
-
-    /**
-     * Translated "Could not rename Category \"{0}\".".
-     * 
-     * @return translated "Could not rename Category \"{0}\"."
-     */
-    @DefaultMessage("Could not rename Category \"{0}\".")
-    @Key("renameCategoryError")
-    String renameCategoryError(String arg0);
 
     /**
      * Error message displayed when rename fails.
@@ -1055,15 +972,6 @@ public interface IplantErrorStrings extends com.google.gwt.i18n.client.Messages,
     @DefaultMessage("Unable to open the selected App")
     @Key("unableToRetrieveWorkflowGuide")
     String unableToRetrieveWorkflowGuide();
-
-    /**
-     * Translated "Could not update Application.".
-     * 
-     * @return translated "Could not update Application."
-     */
-    @DefaultMessage("Could not update Application.")
-    @Key("updateApplicationError")
-    String updateApplicationError();
 
     /**
      * Translated "Could not update Reference Genome.".

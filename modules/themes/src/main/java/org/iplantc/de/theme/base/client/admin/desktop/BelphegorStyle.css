@@ -7,20 +7,20 @@
 	gwt-image: "headerLogoFill";
 }
 
-.iplantcHeaderMenu {
+.headerMenu {
 	position: fixed;
 	top: 15px;
 	right: 40px;	
 }
 
-.iplantcHeaderMenuBody {
+.headerMenuBody {
 	background-color: white;
 	outline: none;
 	border-color: #0098AA;
 	border-width: 3px;
 }
 
-.iplantcFooter {
+.footer {
 	background-color: #FEFDDD;
 }
 

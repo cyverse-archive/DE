@@ -1,0 +1,31 @@
+<module>
+   <inherits name="org.iplantc.de.admin.desktop.AdminDesktop" />
+
+   <replace-with class="org.iplantc.de.theme.base.client.admin.desktop.BelphegorViewDefaultAppearance">
+      <when-type-is class="org.iplantc.de.admin.desktop.client.views.BelphegorView.BelphegorViewAppearance" />
+   </replace-with>
+
+   <replace-with class="org.iplantc.de.theme.base.client.admin.apps.AdminAppsViewDefaultAppearance">
+      <when-type-is class="org.iplantc.de.admin.desktop.client.apps.views.AdminAppsView.AdminAppsViewAppearance" />
+   </replace-with>
+
+   <replace-with class="org.iplantc.de.theme.base.client.admin.apps.AppCategorizeViewDefaultAppearance">
+      <when-type-is class="org.iplantc.de.admin.desktop.client.apps.views.AppCategorizeView.AppCategorizeViewAppearance" />
+   </replace-with>
+
+   <replace-with class="org.iplantc.de.theme.base.client.admin.apps.ToolbarDefaultAppearance">
+      <when-type-is class="org.iplantc.de.admin.desktop.client.apps.views.AdminAppsView.Toolbar.ToolbarAppearance" />
+   </replace-with>
+
+   <replace-with class="org.iplantc.de.theme.base.client.admin.apps.AppEditorDefaultAppearance">
+      <when-type-is class="org.iplantc.de.admin.desktop.client.apps.views.editors.AppEditor.AppEditorAppearance" />
+   </replace-with>
+
+   <replace-with class="org.iplantc.de.theme.base.client.admin.apps.AppNameCellDefaultAppearance">
+      <when-type-is class="org.iplantc.de.admin.desktop.client.apps.views.cells.AppNameCell.AppNameCellAppearance" />
+   </replace-with>
+
+   <replace-with class="org.iplantc.de.theme.base.client.admin.apps.AdminPresenterDefaultAppearance">
+      <when-type-is class="org.iplantc.de.admin.desktop.client.apps.views.AdminAppsView.AdminPresenter.AdminPresenterAppearance" />
+   </replace-with>
+</module>
