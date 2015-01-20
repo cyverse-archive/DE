@@ -16,7 +16,7 @@ public class RenameFileDialog extends IPlantPromptDialog {
         super(I18N.DISPLAY.fileName(), -1, file.getName(), new DiskResourceNameValidator());
 
         setHeadingText(I18N.DISPLAY.rename());
-        addValidator(new DiskResourceSameNameValidator(file));
+        addValidator(new DiskResourceSameNameValidator(file, validationMessages));
 
         addOkButtonSelectHandler(new SelectHandler() {
 

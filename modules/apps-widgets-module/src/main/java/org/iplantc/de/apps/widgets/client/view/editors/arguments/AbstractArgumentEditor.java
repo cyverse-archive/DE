@@ -121,7 +121,7 @@ public abstract class AbstractArgumentEditor extends Composite implements AppTem
             case DoubleAbove:
                 // Array of one double
                 double minDbl2 = av.getParams().get(0).asNumber();
-                validator = new DoubleAboveValidator(minDbl2);
+                validator = new DoubleAboveValidator(minDbl2, validationMessages);
                 break;
             case DoubleBelow:
                 // Array of one double

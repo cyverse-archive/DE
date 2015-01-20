@@ -109,7 +109,7 @@ public class FileUploadByUrlDialog extends IPlantDialog implements HasPending<En
     @UiFactory
     TextArea buildUrlField() {
         TextArea urlField = new TextArea();
-        urlField.addValidator(new ImportUrlValidator());
+        urlField.addValidator(new ImportUrlValidator(validationMessages));
         urlField.setAutoValidate(true);
         return urlField;
     }
