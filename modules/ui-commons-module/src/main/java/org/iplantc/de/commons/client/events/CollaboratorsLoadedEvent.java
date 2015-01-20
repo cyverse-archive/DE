@@ -3,13 +3,14 @@
  */
 package org.iplantc.de.commons.client.events;
 
+import com.google.gwt.event.shared.EventHandler;
 import com.google.gwt.event.shared.GwtEvent;
 
 /**
  * @author sriram
  * 
  */
-public class CollaboratorsLoadedEvent extends GwtEvent<CollaboratorsLoadedEventHandler> {
+public class CollaboratorsLoadedEvent extends GwtEvent<CollaboratorsLoadedEvent.CollaboratorsLoadedEventHandler> {
 
     /**
      * Defines the GWT Event Type.
@@ -29,4 +30,16 @@ public class CollaboratorsLoadedEvent extends GwtEvent<CollaboratorsLoadedEventH
 
     }
 
+    /**
+     *
+     * Defines handler for Collaborators laoded event
+     *
+     * @author sriram
+     *
+     */
+    public static interface CollaboratorsLoadedEventHandler extends EventHandler {
+
+        public void onLoad(CollaboratorsLoadedEvent event);
+
+    }
 }

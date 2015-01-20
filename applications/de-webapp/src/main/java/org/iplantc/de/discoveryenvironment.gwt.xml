@@ -37,10 +37,6 @@
         <when-type-is class="org.iplantc.de.client.desktop.widget.ShortcutCell.ShortcutCellAppearance"/>
     </replace-with>
 
-    <replace-with class="org.iplantc.de.commons.client.appearance.widgets.IPlantAnchorDefaultAppearance">
-        <when-type-is class="org.iplantc.de.commons.client.widgets.IPlantAnchorAppearance"/>
-    </replace-with>
-
     <!--  system messages deferred binding rules -->
     <replace-with class="org.iplantc.de.client.sysmsgs.services.RemoteServices">
         <when-type-is class="org.iplantc.de.client.sysmsgs.services.Services"/>

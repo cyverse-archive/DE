@@ -1,4 +1,4 @@
-package org.iplantc.de.commons.client.appearance.widgets;
+package org.iplantc.de.theme.base.client.commons.widgets;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.resources.client.ClientBundle;

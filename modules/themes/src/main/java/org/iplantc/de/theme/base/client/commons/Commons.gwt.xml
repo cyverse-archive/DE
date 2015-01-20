@@ -1,0 +1,14 @@
+<module>
+
+    <inherits name="org.iplantc.de.commons.ui-commons" />
+
+    <!-- Default Appearances -->
+    <replace-with class="org.iplantc.de.theme.base.client.commons.widgets.InternalAnchorDefaultAppearance">
+        <when-type-is class="org.iplantc.de.commons.client.widgets.InternalAnchor.Appearance"/>
+    </replace-with>
+
+    <replace-with class="org.iplantc.de.theme.base.client.commons.widgets.IPlantAnchorDefaultAppearance">
+        <when-type-is class="org.iplantc.de.commons.client.widgets.IPlantAnchorAppearance"/>
+    </replace-with>
+
+</module>

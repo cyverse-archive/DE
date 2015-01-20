@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.iplantc.de.commons.client.appearance.widgets;
+package org.iplantc.de.theme.base.client.commons.widgets;
 
 import org.iplantc.de.commons.client.widgets.IPlantAnchorAppearance;
 
