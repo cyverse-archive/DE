@@ -8,16 +8,20 @@ import com.google.gwt.user.client.TakesValue;
 
 import com.sencha.gxt.widget.core.client.form.ValueBaseField;
 
+/**
+ * @author jstroot
+ */
 public class PreventEntryAfterLimitHandler implements KeyDownHandler {
     public static final int DEFAULT_LIMIT = 255;
     private final TakesValue<String> hasText;
     private final int limit;
 
-    public PreventEntryAfterLimitHandler(TakesValue<String> hasText) {
+    public PreventEntryAfterLimitHandler(final TakesValue<String> hasText) {
         this(hasText, DEFAULT_LIMIT);
     }
 
-    public PreventEntryAfterLimitHandler(TakesValue<String> hasText, int limit) {
+    public PreventEntryAfterLimitHandler(final TakesValue<String> hasText,
+                                         final int limit) {
         this.hasText = hasText;
         this.limit = limit;
     }

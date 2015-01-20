@@ -23,7 +23,7 @@
     <set-property name="gwt.logging.consoleHandler" value="DISABLED"/>
 
     <replace-with class="org.iplantc.de.theme.base.client.commons.widgets.IPlantAnchorDefaultAppearance">
-        <when-type-is class="org.iplantc.de.commons.client.widgets.IPlantAnchorAppearance" />
+        <when-type-is class="org.iplantc.de.commons.client.widgets.IPlantAnchor.IPlantAnchorAppearance" />
     </replace-with>
 
     <!-- Specify the app entry point class. -->

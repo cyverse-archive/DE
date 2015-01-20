@@ -8,7 +8,18 @@
     </replace-with>
 
     <replace-with class="org.iplantc.de.theme.base.client.commons.widgets.IPlantAnchorDefaultAppearance">
-        <when-type-is class="org.iplantc.de.commons.client.widgets.IPlantAnchorAppearance"/>
+        <when-type-is class="org.iplantc.de.commons.client.widgets.IPlantAnchor.IPlantAnchorAppearance"/>
     </replace-with>
 
+    <replace-with class="org.iplantc.de.theme.base.client.commons.widgets.PushButtonDefaultAppearance">
+        <when-type-is class="org.iplantc.de.commons.client.widgets.PushButton.PushButtonAppearance" />
+    </replace-with>
+
+    <replace-with class="org.iplantc.de.theme.base.client.commons.widgets.ContextualHelpPopupDefaultAppearance">
+        <when-type-is class="org.iplantc.de.commons.client.widgets.ContextualHelpPopup.ContextualHelpPopupAppearance" />
+    </replace-with>
+
+    <replace-with class="org.iplantc.de.theme.base.client.commons.widgets.ContextualHelpToolButtonDefaultAppearance">
+        <when-type-is class="org.iplantc.de.commons.client.widgets.ContextualHelpToolButton.ContextualHelpToolButtonAppearance" />
+    </replace-with>
 </module>

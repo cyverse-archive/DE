@@ -3,7 +3,7 @@
  */
 package org.iplantc.de.theme.base.client.commons.widgets;
 
-import org.iplantc.de.commons.client.widgets.IPlantAnchorAppearance;
+import org.iplantc.de.commons.client.widgets.IPlantAnchor;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.safehtml.shared.SafeHtml;
@@ -16,7 +16,7 @@ import com.sencha.gxt.core.client.dom.XElement;
  * @author sriram
  *
  */
-public class IPlantAnchorDefaultAppearance implements IPlantAnchorAppearance {
+public class IPlantAnchorDefaultAppearance implements IPlantAnchor.IPlantAnchorAppearance {
     
     public interface Template extends XTemplates {
         @XTemplate(source = "IPlantAnchorDefaultAppearance.html")
