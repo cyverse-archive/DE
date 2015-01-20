@@ -1370,24 +1370,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     String groupByUser();
 
     /**
-     * Translated "GWT Version:".
-     *
-     * @return translated "GWT Version:"
-     */
-    @DefaultMessage("GWT Version:")
-    @Key("gwtVersion")
-    String gwtVersion();
-
-    /**
-     * Translated "GXT Version:".
-     *
-     * @return translated "GXT Version:"
-     */
-    @DefaultMessage("GXT Version:")
-    @Key("gxtVersion")
-    String gxtVersion();
-
-    /**
      * Translated "Not useful".
      *
      * @return translated "Not useful"
@@ -1413,15 +1395,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     @DefaultMessage("Hide")
     @Key("hide")
     String hide();
-
-    /**
-     * Translated "Host".
-     *
-     * @return translated "Host"
-     */
-    @DefaultMessage("Host")
-    @Key("host")
-    String host();
 
     /**
      * Translated "Argument, idParent, must have a valid value provided.".
@@ -3848,15 +3821,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     @DefaultMessage("Enter URLs below (HTTP(S) or FTP only):")
     @Key("urlPrompt")
     String urlPrompt();
-
-    /**
-     * Translated "User-Agent:".
-     *
-     * @return translated "User-Agent:"
-     */
-    @DefaultMessage("User-Agent:")
-    @Key("userAgent")
-    String userAgent();
 
     /**
      * Translated "User Name".

@@ -17,6 +17,9 @@ import com.sencha.gxt.widget.core.client.form.TextField;
 import com.sencha.gxt.widget.core.client.form.Validator;
 import com.sencha.gxt.widget.core.client.form.validator.MaxLengthValidator;
 
+/**
+ * @author jstroot
+ */
 public class IPlantPromptDialog extends IPlantDialog {
 
     private static IPlantPromptDialogUiBinder uiBinder = GWT.create(IPlantPromptDialogUiBinder.class);
@@ -24,16 +27,15 @@ public class IPlantPromptDialog extends IPlantDialog {
     interface IPlantPromptDialogUiBinder extends UiBinder<Widget, IPlantPromptDialog> {
     }
 
-    @UiField
-    FieldLabel fieldLabel;
-
-    @UiField
-    TextField textField;
+    @UiField FieldLabel fieldLabel;
+    @UiField TextField textField;
 
     private final TextButton okButton;
 
-    public IPlantPromptDialog(String caption, int maxLength, String initialText,
-            Validator<String> validator) {
+    public IPlantPromptDialog(final String caption,
+                              final int maxLength,
+                              final String initialText,
+                              final Validator<String> validator) {
         add(uiBinder.createAndBindUi(this));
         okButton = getButton(PredefinedButton.OK);
         okButton.setEnabled(false);
@@ -47,7 +49,6 @@ public class IPlantPromptDialog extends IPlantDialog {
                 textField.selectAll();
             }
         });
-        ;
 
     }
 

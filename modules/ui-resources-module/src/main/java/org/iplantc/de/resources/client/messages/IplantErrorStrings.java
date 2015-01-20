@@ -388,24 +388,6 @@ public interface IplantErrorStrings extends com.google.gwt.i18n.client.Messages,
     String emptyTrashError();
 
     /**
-     * Translated "Error".
-     * 
-     * @return translated "Error"
-     */
-    @DefaultMessage("Error")
-    @Key("error")
-    String error();
-
-    /**
-     * Translated "Error: {0}\nMessage: {1}".
-     * 
-     * @return translated "Error: {0}\nMessage: {1}"
-     */
-    @DefaultMessage("Error: {0}\nMessage: {1}")
-    @Key("errorReport")
-    String errorReport(String arg0, String arg1);
-
-    /**
      * Translated "Unable to retrieve App display information.".
      * 
      * @return translated "Unable to retrieve App display information."
@@ -873,33 +855,6 @@ public interface IplantErrorStrings extends com.google.gwt.i18n.client.Messages,
     @DefaultMessage("Unable to save search history.")
     @Key("searchHistoryError")
     String searchHistoryError();
-
-    /**
-     * Translated "Code: {0}".
-     * 
-     * @return translated "Code: {0}"
-     */
-    @DefaultMessage("Code: {0}")
-    @Key("serviceErrorCode")
-    String serviceErrorCode(String arg0);
-
-    /**
-     * Translated "Reason: {0}".
-     * 
-     * @return translated "Reason: {0}"
-     */
-    @DefaultMessage("Reason: {0}")
-    @Key("serviceErrorReason")
-    String serviceErrorReason(String arg0);
-
-    /**
-     * Translated "Status: {0}".
-     * 
-     * @return translated "Status: {0}"
-     */
-    @DefaultMessage("Status: {0}")
-    @Key("serviceErrorStatus")
-    String serviceErrorStatus(String arg0);
 
     /**
      * Translated "Unable to complete this request. Please try again later.".

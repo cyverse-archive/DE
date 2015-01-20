@@ -2,8 +2,7 @@ package org.iplantc.de.commons.client;
 
 import org.iplantc.de.client.models.errorHandling.ServiceError;
 import org.iplantc.de.client.util.JsonUtil;
-import org.iplantc.de.commons.client.views.gxt3.dialogs.ErrorDialog3;
-import org.iplantc.de.resources.client.messages.I18N;
+import org.iplantc.de.commons.client.views.gxt3.dialogs.ErrorDialog;
 
 import com.google.common.base.Strings;
 import com.google.gwt.core.client.GWT;
@@ -19,10 +18,39 @@ import java.util.Date;
 /**
  * Provides a uniform manner for posting errors to the user.
  *
- * @author amuir
+ * @author amuir, jstroot
  *
  */
 public class ErrorHandler {
+    public interface ErrorHandlerAppearance {
+
+        String date();
+
+        String error();
+
+        String errorReport(String name, String message);
+
+        String gwtVersion();
+
+        String gxtVersion();
+
+        String host();
+
+        String serviceErrorCode(String errorCode);
+
+        String serviceErrorReason(String reason);
+
+        String serviceErrorStatus(String status);
+
+        String userAgent();
+    }
+
+
+    private static final ErrorHandlerAppearance appearance;
+    static {
+        appearance = GWT.create(ErrorHandlerAppearance.class);
+    }
+
     private static final String NEWLINE = "\n"; //$NON-NLS-1$
 
     /**
@@ -41,7 +69,7 @@ public class ErrorHandler {
      * @param caught
      */
     public static void post(Throwable caught) {
-        post(I18N.ERROR.error(), caught);
+        post(appearance.error(), caught);
     }
 
     /**
@@ -53,7 +81,7 @@ public class ErrorHandler {
      */
     public static void post(String errorSummary, Throwable caught) {
         if (Strings.isNullOrEmpty(errorSummary)) {
-            errorSummary = I18N.ERROR.error();
+            errorSummary = appearance.error();
         }
 
         post(SafeHtmlUtils.fromString(errorSummary), caught);
@@ -70,7 +98,7 @@ public class ErrorHandler {
         String errorDetails = getSystemDescription();
 
         if (errorSummary == null) {
-            errorSummary = SafeHtmlUtils.fromString(I18N.ERROR.error());
+            errorSummary = SafeHtmlUtils.fromString(appearance.error());
         }
 
         if (caught != null) {
@@ -79,7 +107,7 @@ public class ErrorHandler {
             errorDetails = parseExceptionJson(caught) + NEWLINE + NEWLINE + errorDetails;
         }
 
-        ErrorDialog3 ed3 = new ErrorDialog3(errorSummary, errorDetails);
+        ErrorDialog ed3 = new ErrorDialog(errorSummary, errorDetails);
         ed3.show();
     }
 
@@ -96,10 +124,10 @@ public class ErrorHandler {
         String errDetails = ""; //$NON-NLS-1$
         SafeHtml errorMsg = SafeHtmlUtils.fromString("");
         if (!Strings.isNullOrEmpty(error.getStatus())) {
-            errDetails += I18N.ERROR.serviceErrorStatus(error.getStatus());
+            errDetails += appearance.serviceErrorStatus(error.getStatus());
         }
         if (!Strings.isNullOrEmpty(error.getErrorCode())) {
-            errDetails += "\n" + I18N.ERROR.serviceErrorCode(error.getErrorCode()); //$NON-NLS-1$
+            errDetails += "\n" + appearance.serviceErrorCode(error.getErrorCode()); //$NON-NLS-1$
         }
 
         if(error != null) {
@@ -113,9 +141,9 @@ public class ErrorHandler {
          * TODO JDS Need to determine what the default error fields are, and if they include a "Reason" field.
          */
         if (!Strings.isNullOrEmpty(error.getReason())) {
-            errDetails += "\n" + I18N.ERROR.serviceErrorReason(error.getReason()); //$NON-NLS-1$
+            errDetails += "\n" + appearance.serviceErrorReason(error.getReason()); //$NON-NLS-1$
         } else if (errorMsg != null && !Strings.isNullOrEmpty(errorMsg.asString())) {
-            errDetails += "\n" + I18N.ERROR.serviceErrorReason(errorMsg.asString()); //$NON-NLS-1$
+            errDetails += "\n" + appearance.serviceErrorReason(errorMsg.asString()); //$NON-NLS-1$
         }
 
 
@@ -138,7 +166,7 @@ public class ErrorHandler {
             String message = JsonUtil.getInstance().getString(jsonError, "message"); //$NON-NLS-1$
 
             if (!message.isEmpty() || !name.isEmpty()) {
-                exceptionMessage = I18N.ERROR.errorReport(name, message);
+                exceptionMessage = appearance.errorReport(name, message);
             }
         }
 
@@ -151,16 +179,16 @@ public class ErrorHandler {
      * @return A system description string.
      */
     private static String getSystemDescription() {
-        String gwtVersion = I18N.DISPLAY.gwtVersion() + " " + GWT.getVersion(); //$NON-NLS-1$
+        String gwtVersion = appearance.gwtVersion() + " " + GWT.getVersion(); //$NON-NLS-1$
 
-        String gxtVersion = I18N.DISPLAY.gxtVersion() + 
+        String gxtVersion = appearance.gxtVersion() +
                  ": " + GXT.getVersion().getRelease();
 
-        String userAgent = I18N.DISPLAY.userAgent() + " " + Window.Navigator.getUserAgent(); //$NON-NLS-1$
+        String userAgent = appearance.userAgent() + " " + Window.Navigator.getUserAgent(); //$NON-NLS-1$
 
-        String date = I18N.DISPLAY.date() + ": " + new Date().toString(); //$NON-NLS-1$
+        String date = appearance.date() + ": " + new Date().toString(); //$NON-NLS-1$
 
-        String host = I18N.DISPLAY.host() + ": " + GWT.getHostPageBaseURL();
+        String host = appearance.host() + ": " + GWT.getHostPageBaseURL();
 
         return gwtVersion + NEWLINE + gxtVersion + NEWLINE + userAgent + NEWLINE + date + NEWLINE + host;
     }

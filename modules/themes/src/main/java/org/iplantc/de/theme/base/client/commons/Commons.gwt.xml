@@ -22,4 +22,16 @@
     <replace-with class="org.iplantc.de.theme.base.client.commons.widgets.ContextualHelpToolButtonDefaultAppearance">
         <when-type-is class="org.iplantc.de.commons.client.widgets.ContextualHelpToolButton.ContextualHelpToolButtonAppearance" />
     </replace-with>
+
+    <replace-with class="org.iplantc.de.theme.base.client.commons.error.IplantErrorDialogDefaultAppearance">
+        <when-type-is class="org.iplantc.de.commons.client.views.gxt3.dialogs.IplantErrorDialog.IplantErrorDialogAppearance" />
+    </replace-with>
+
+    <replace-with class="org.iplantc.de.theme.base.client.commons.error.ErrorDialogDefaultAppearance">
+        <when-type-is class="org.iplantc.de.commons.client.views.gxt3.dialogs.ErrorDialog.ErrorDialogAppearance" />
+    </replace-with>
+
+    <replace-with class="org.iplantc.de.theme.base.client.commons.error.ErrorHandlerDefaultAppearance">
+        <when-type-is class="org.iplantc.de.commons.client.ErrorHandler.ErrorHandlerAppearance" />
+    </replace-with>
 </module>

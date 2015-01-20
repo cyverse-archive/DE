@@ -1,7 +1,6 @@
 package org.iplantc.de.theme.base.client.commons.widgets;
 
 import org.iplantc.de.commons.client.widgets.ContextualHelpToolButton;
-import org.iplantc.de.resources.client.IplantContextualHelpAccessStyle;
 
 import com.google.gwt.core.client.GWT;
 
@@ -10,19 +9,19 @@ import com.google.gwt.core.client.GWT;
  */
 public class ContextualHelpToolButtonDefaultAppearance implements ContextualHelpToolButton.ContextualHelpToolButtonAppearance {
 
-    private final IplantContextualHelpAccessStyle style;
+    private ContextualHelp.Resources resources;
 
     public ContextualHelpToolButtonDefaultAppearance() {
-        this(GWT.<IplantContextualHelpAccessStyle> create(IplantContextualHelpAccessStyle.class));
+        this(GWT.<ContextualHelp.Resources> create(ContextualHelp.Resources.class));
     }
 
-    ContextualHelpToolButtonDefaultAppearance(final IplantContextualHelpAccessStyle style) {
-        this.style = style;
-        this.style.ensureInjected();
+    ContextualHelpToolButtonDefaultAppearance(final ContextualHelp.Resources resources) {
+        this.resources = resources;
+        this.resources.css().ensureInjected();
     }
 
     @Override
     public String contextualHelpStyle() {
-        return style.contextualHelp();
+        return resources.css().contextualHelp();
     }
 }

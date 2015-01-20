@@ -248,9 +248,6 @@ public interface IplantResources extends ClientBundle, AppResources, DiskResourc
     @Source("trash_can_close.png")
     DataResource trashClose();
 
-    @Source("icon-error.gif")
-    ImageResource iconError();
-
     @Source("information.png")
     ImageResource info();
 
