@@ -28,8 +28,8 @@ import org.iplantc.de.client.services.MetadataServiceFacade;
 import org.iplantc.de.client.util.CommonModelUtils;
 import org.iplantc.de.client.util.DiskResourceUtil;
 import org.iplantc.de.commons.client.ErrorHandler;
-import org.iplantc.de.commons.client.comments.presenter.CommentsPresenter;
-import org.iplantc.de.commons.client.comments.view.CommentsView;
+import org.iplantc.de.commons.client.comments.presenter.CommentsPresenterImpl;
+import org.iplantc.de.commons.client.comments.CommentsView;
 import org.iplantc.de.commons.client.comments.view.CommentsViewImpl;
 import org.iplantc.de.commons.client.info.ErrorAnnouncementConfig;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
@@ -488,7 +488,7 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
         d.remove(d.getButtonBar());
         d.setSize("600px", "450px");
         CommentsView cv = new CommentsViewImpl();
-        CommentsPresenter cp = new CommentsPresenter(cv,
+        CommentsPresenterImpl cp = new CommentsPresenterImpl(cv,
                                                      dr.getId(),
                                                      dr.getPermission() == PermissionValue.own,
                                                      fsmdataService);

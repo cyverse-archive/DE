@@ -7,12 +7,11 @@ import org.iplantc.de.client.models.comments.CommentsAutoBeanFactory;
 import org.iplantc.de.client.services.MetadataServiceFacade;
 import org.iplantc.de.client.util.JsonUtil;
 import org.iplantc.de.commons.client.ErrorHandler;
-import org.iplantc.de.commons.client.comments.view.CommentsView;
+import org.iplantc.de.commons.client.comments.CommentsView;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
 import org.iplantc.de.commons.client.info.SuccessAnnouncementConfig;
-import org.iplantc.de.resources.client.messages.I18N;
 
-import com.google.gwt.core.shared.GWT;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HasOneWidget;
@@ -25,22 +24,35 @@ import com.sencha.gxt.widget.core.client.event.DialogHideEvent.DialogHideHandler
 
 import java.util.List;
 
-public class CommentsPresenter implements CommentsView.Presenter {
+/**
+ * @author jstroot
+ */
+public class CommentsPresenterImpl implements CommentsView.Presenter {
     final CommentsView view;
     final String resourceID;
     final MetadataServiceFacade facade;
     CommentsAutoBeanFactory cabf = GWT.create(CommentsAutoBeanFactory.class);
     private final boolean isResourceOwner;
+    private final CommentsPresenterAppearance appearance;
     private final JsonUtil jsonUtil;
 
-    public CommentsPresenter(final CommentsView cv,
-                             final String resourceID,
-                             final boolean owner,
-                             final MetadataServiceFacade facade) {
+    public CommentsPresenterImpl(final CommentsView cv,
+                                 final String resourceID,
+                                 final boolean owner,
+                                 final MetadataServiceFacade facade) {
+        this(cv, resourceID, owner, facade, GWT.<CommentsPresenterAppearance>create(CommentsPresenterAppearance.class));
+
+    }
+    public CommentsPresenterImpl(final CommentsView cv,
+                                 final String resourceID,
+                                 final boolean owner,
+                                 final MetadataServiceFacade facade,
+                                 final CommentsPresenterAppearance appearance) {
         this.view = cv;
         this.resourceID = resourceID;
         this.facade = facade;
         this.isResourceOwner = owner;
+        this.appearance = appearance;
         this.jsonUtil = JsonUtil.getInstance();
         getComments();
     }
@@ -58,8 +70,8 @@ public class CommentsPresenter implements CommentsView.Presenter {
 
     @Override
     public void onDelete(final Comment c) {
-        ConfirmMessageBox mbox = new ConfirmMessageBox(I18N.DISPLAY.confirmAction(),
-                                                       I18N.DISPLAY.retractCommentConfirm());
+        ConfirmMessageBox mbox = new ConfirmMessageBox(appearance.confirmAction(),
+                                                       appearance.retractCommentConfirm());
         mbox.addDialogHideHandler(new DialogHideHandler() {
 
             @Override
@@ -84,14 +96,14 @@ public class CommentsPresenter implements CommentsView.Presenter {
 
             @Override
             public void onFailure(Throwable caught) {
-                ErrorHandler.post(I18N.ERROR.addCommentError(), caught);
+                ErrorHandler.post(appearance.addCommentError(), caught);
             }
 
             @Override
             public void onSuccess(String result) {
-                IplantAnnouncer.getInstance().schedule(new SuccessAnnouncementConfig(I18N.DISPLAY.addComment()));
+                IplantAnnouncer.getInstance().schedule(new SuccessAnnouncementConfig(appearance.addComment()));
                 JSONObject obj = jsonUtil.getObject(result);
-                JSONObject comObj = jsonUtil.getObject(obj, "comment");
+                JSONObject comObj = jsonUtil.getObject(obj, Comment.COMMENT_TEXT_KEY);
                 AutoBean<Comment> cl = AutoBeanCodex.decode(cabf, Comment.class, comObj.toString());
                 view.addComment(cl.as());
             }
@@ -105,16 +117,16 @@ public class CommentsPresenter implements CommentsView.Presenter {
 
             @Override
             public void onFailure(Throwable caught) {
-                ErrorHandler.post(I18N.ERROR.retractCommentEorror(), caught);
+                ErrorHandler.post(appearance.retractCommentError(), caught);
 
             }
 
             @Override
             public void onSuccess(String result) {
-                comment.setCommentText(I18N.DISPLAY.commentRetracted());
+                comment.setCommentText(appearance.commentRetracted());
                 comment.setRetracted(true);
                 view.retractComment(comment);
-                IplantAnnouncer.getInstance().schedule(new SuccessAnnouncementConfig(I18N.DISPLAY.commentRetracted()));
+                IplantAnnouncer.getInstance().schedule(new SuccessAnnouncementConfig(appearance.commentRetracted()));
                 onSelect(comment);
             }
 
@@ -126,7 +138,7 @@ public class CommentsPresenter implements CommentsView.Presenter {
 
             @Override
             public void onFailure(Throwable caught) {
-                ErrorHandler.post(I18N.ERROR.commentsError(), caught);
+                ErrorHandler.post(appearance.commentsError(), caught);
 
             }
 

@@ -1,48 +1,35 @@
 package org.iplantc.de.commons.client.comments.view.cells;
 
-
-
 import org.iplantc.de.client.models.comments.Comment;
 
 import com.google.gwt.cell.client.AbstractCell;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.i18n.client.DateTimeFormat;
-import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
-import com.google.gwt.safehtml.client.SafeHtmlTemplates;
-import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 
-import java.util.Date;
-
+/**
+ * @author jstroot
+ */
 public class CommentsCell extends AbstractCell<Comment> {
 
-    /**
-     * The HTML templates used to render the cell.
-     */
-    interface Templates extends SafeHtmlTemplates {
+    public interface CommentsCellAppearance {
 
-        @SafeHtmlTemplates.Template("<div style='white-space: normal;'> <p>On <b>{1}</b>, <i>{0} </i> wrote: </p> <p>{2}</p> </dvi>")
-        SafeHtml commentCell(String user, String timestamp, String comment);
-
-        @SafeHtmlTemplates.Template("<div style='white-space: normal;'> <p>On <b>{1}</b>, <i>{0} </i> wrote: </p> <p style='color:red;'>{2}</p> </dvi>")
-        SafeHtml retractedCommentCell(String user, String timestamp, String comment);
-
+        void render(SafeHtmlBuilder sb, Comment value);
     }
 
-    private static Templates templates = GWT.create(Templates.class);
+    private final CommentsCellAppearance appearance;
 
     public CommentsCell() {
+        this(GWT.<CommentsCellAppearance> create(CommentsCellAppearance.class));
+    }
 
+    CommentsCell(final CommentsCellAppearance appearance) {
+        this.appearance = appearance;
     }
 
     @Override
     public void render(com.google.gwt.cell.client.Cell.Context context, Comment value, SafeHtmlBuilder sb) {
-        if (value.isRetracted()) {
-            value.setCommentText("This comment is retracted!");
-            sb.append(templates.retractedCommentCell(value.getCommentedBy(), DateTimeFormat.getFormat(PredefinedFormat.DATE_TIME_MEDIUM).format(new Date(value.getTimestamp())), value.getCommentText()));
-        } else {
-            sb.append(templates.commentCell(value.getCommentedBy(), DateTimeFormat.getFormat(PredefinedFormat.DATE_TIME_MEDIUM).format(new Date(value.getTimestamp())), value.getCommentText()));
-        }
+        appearance.render(sb, value);
+
     }
 
 }

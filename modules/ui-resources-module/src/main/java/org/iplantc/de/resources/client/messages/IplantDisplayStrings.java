@@ -4276,12 +4276,4 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
 
     String removeFromFavorites(String resource_name);
 
-    String addComment();
-
-    String retractCommentConfirm();
-
-    String commentRetracted();
-
-    String retract();
-
 }

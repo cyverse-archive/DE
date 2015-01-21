@@ -982,10 +982,4 @@ public interface IplantErrorStrings extends com.google.gwt.i18n.client.Messages,
 
     String removeFavoriteError();
 
-    // Comments
-    String commentsError();
-
-    String addCommentError();
-
-    String retractCommentEorror();
 }

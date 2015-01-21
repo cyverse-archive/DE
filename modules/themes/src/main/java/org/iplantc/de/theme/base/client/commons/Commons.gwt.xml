@@ -2,7 +2,6 @@
 
     <inherits name="org.iplantc.de.commons.ui-commons" />
 
-    <!-- Default Appearances -->
     <replace-with class="org.iplantc.de.theme.base.client.commons.widgets.InternalAnchorDefaultAppearance">
         <when-type-is class="org.iplantc.de.commons.client.widgets.InternalAnchor.Appearance"/>
     </replace-with>
@@ -23,6 +22,7 @@
         <when-type-is class="org.iplantc.de.commons.client.widgets.ContextualHelpToolButton.ContextualHelpToolButtonAppearance" />
     </replace-with>
 
+    <!-- Dialogs -->
     <replace-with class="org.iplantc.de.theme.base.client.commons.error.IplantErrorDialogDefaultAppearance">
         <when-type-is class="org.iplantc.de.commons.client.views.gxt3.dialogs.IplantErrorDialog.IplantErrorDialogAppearance" />
     </replace-with>
@@ -35,7 +35,21 @@
         <when-type-is class="org.iplantc.de.commons.client.ErrorHandler.ErrorHandlerAppearance" />
     </replace-with>
 
+    <!-- Announcer -->
     <replace-with class="org.iplantc.de.theme.base.client.commons.announcer.IplantAnnouncementConfigDefaultAppearance">
         <when-type-is class="org.iplantc.de.commons.client.info.IplantAnnouncementConfig.IplantAnnouncementConfigAppearance" />
+    </replace-with>
+
+    <!-- Comments -->
+    <replace-with class="org.iplantc.de.theme.base.client.commons.comments.CommentsViewDefaultAppearance">
+        <when-type-is class="org.iplantc.de.commons.client.comments.CommentsView.CommentsViewAppearance" />
+    </replace-with>
+
+    <replace-with class="org.iplantc.de.theme.base.client.commons.comments.cells.CommentsCellDefaultAppearance">
+        <when-type-is class="org.iplantc.de.commons.client.comments.view.cells.CommentsCell.CommentsCellAppearance" />
+    </replace-with>
+
+    <replace-with class="org.iplantc.de.theme.base.client.commons.comments.presenter.CommentsPresenterDefaultAppearance">
+        <when-type-is class="org.iplantc.de.commons.client.comments.CommentsView.Presenter.CommentsPresenterAppearance" />
     </replace-with>
 </module>
