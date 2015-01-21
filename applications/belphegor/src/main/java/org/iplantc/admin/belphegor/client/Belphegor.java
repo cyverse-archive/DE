@@ -1,16 +1,13 @@
 package org.iplantc.admin.belphegor.client;
 
+import org.iplantc.admin.belphegor.shared.services.BelphegorPropertyService;
+import org.iplantc.admin.belphegor.shared.services.BelphegorPropertyServiceAsync;
 import org.iplantc.de.admin.desktop.client.gin.BelphegorAppInjector;
 import org.iplantc.de.admin.desktop.client.models.BelphegorAdminProperties;
 import org.iplantc.de.admin.desktop.client.views.BelphegorView;
-import org.iplantc.admin.belphegor.shared.services.BelphegorPropertyService;
-import org.iplantc.admin.belphegor.shared.services.BelphegorPropertyServiceAsync;
-import org.iplantc.de.admin.desktop.client.I18N;
 import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.commons.client.requests.KeepaliveTimer;
-import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
-import org.iplantc.de.resources.client.messages.IplantErrorStrings;
 import org.iplantc.de.shared.services.DiscEnvApiService;
 import org.iplantc.de.shared.services.ServiceCallWrapper;
 
@@ -27,14 +24,18 @@ import java.util.Map;
  */
 public class Belphegor implements EntryPoint {
     private final String BOOTSTRAP = "org.iplantc.services.admin.bootstrap";
-    private final IplantDisplayStrings displayStrings = I18N.DISPLAY;
-    private final IplantErrorStrings errorStrings = I18N.ERROR;
     private final BelphegorAppInjector injector = GWT.create(BelphegorAppInjector.class);
     private final KeepaliveTimer keepaliveTimer = KeepaliveTimer.getInstance();
     private final BelphegorPropertyServiceAsync propertyService = GWT.create(BelphegorPropertyService.class);
     private final DiscEnvApiService deService = injector.getApiService();
     private final BelphegorAdminProperties adminProperties = BelphegorAdminProperties.getInstance();
     private final UserInfo userInfo = UserInfo.getInstance();
+
+    private final String APP_NAME = "Tool Integration Administration";
+    private final String CANT_LOAD_USER_INFO_ERROR = "Unable to load user info";
+    private final String RETRIEVE_USER_INFO_ERROR = "There has been an unexpected error. " +
+                                                        "Please log out of your iPlant account or close your browser window and try again. " +
+                                                        "If you continue to experience problems, contact us at support@iplantcollaborative.org.";
 
     /**
      * This is the entry point method.
@@ -47,14 +48,14 @@ public class Belphegor implements EntryPoint {
     }
 
     private void setEntryPointTitle() {
-        Window.setTitle(displayStrings.adminApp());
+        Window.setTitle(APP_NAME);
     }
 
     private void initProperties() {
         propertyService.getProperties(new AsyncCallback<Map<String, String>>() {
             @Override
             public void onFailure(Throwable caught) {
-                ErrorHandler.post(displayStrings.cantLoadUserInfo(), caught);
+                ErrorHandler.post(CANT_LOAD_USER_INFO_ERROR, caught);
             }
 
             @Override
@@ -72,7 +73,7 @@ public class Belphegor implements EntryPoint {
 
             @Override
             public void onFailure(Throwable caught) {
-                ErrorHandler.post(errorStrings.retrieveUserInfoFailed(), caught);
+                ErrorHandler.post(RETRIEVE_USER_INFO_ERROR, caught);
             }
 
             @Override

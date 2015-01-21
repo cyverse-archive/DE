@@ -7,7 +7,6 @@ import org.iplantc.de.client.models.apps.AppAutoBeanFactory;
 import org.iplantc.de.client.models.apps.AppCategory;
 import org.iplantc.de.client.models.apps.proxy.AppSearchAutoBeanFactory;
 import org.iplantc.de.client.services.AppServiceFacade;
-import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 
 import com.google.common.collect.Lists;
 import com.google.gwtmockito.GxtMockitoTestRunner;
@@ -23,32 +22,30 @@ import org.mockito.Mock;
 
 import java.util.Collections;
 
+/**
+ * @author jstroot
+ */
 @RunWith(GxtMockitoTestRunner.class)
 public class BelphegorAppsToolbarImplTest {
     @Mock AppAutoBeanFactory mockAppFactory;
     @Mock AppSearchAutoBeanFactory mockAppSearchFactory;
     @Mock AppServiceFacade mockAppService;
-    @Mock IplantDisplayStrings mockDisplayStrings;
 
     @Mock TextButton mockAddCategory;
     @Mock TextButton mockCategorizeApp;
-    @Mock
-    TextButton mockDeleteCat;
+    @Mock TextButton mockDeleteCat;
     @Mock TextButton mockRenameCategory;
     @Mock TextButton mockRestoreApp;
-    @Mock
-    TextButton mockDeleteApp;
-    @Mock
-    TextButton mockMoveCategory;
+    @Mock TextButton mockDeleteApp;
+    @Mock TextButton mockMoveCategory;
 
     @Mock AppSelectionChangedEvent mockAppSelectionChangedEvent;
-    @Mock
-    AppCategorySelectionChangedEvent mockAppGrpSelectionChangedEvent;
+    @Mock AppCategorySelectionChangedEvent mockAppGrpSelectionChangedEvent;
 
     private BelphegorAppsToolbarImpl uut;
 
     @Before public void setUp(){
-        uut = new BelphegorAppsToolbarImpl(mockAppService, mockAppSearchFactory, mockAppFactory, mockDisplayStrings);
+        uut = new BelphegorAppsToolbarImpl(mockAppService, mockAppSearchFactory, mockAppFactory);
         mockMenuItems(uut);
     }
 

@@ -40,15 +40,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     String addAppToFav();
 
     /**
-     * Translated "New Category".
-     *
-     * @return translated "New Category"
-     */
-    @DefaultMessage("New Category")
-    @Key("addCategoryPrompt")
-    String addCategoryPrompt();
-
-    /**
      * Translated "Reference Genome added.".
      *
      * @return translated "Reference Genome added."
@@ -65,15 +56,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     @DefaultMessage("Select additional data")
     @Key("addnlData")
     String addnlData();
-
-    /**
-     * Translated "Tool Integration Administration".
-     *
-     * @return translated "Tool Integration Administration"
-     */
-    @DefaultMessage("Tool Integration Administration")
-    @Key("adminApp")
-    String adminApp();
 
     /**
      * Translated
@@ -164,17 +146,8 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     String analysesRetrievalFailure();
 
     /**
-     * Translated "Enter a description for your application".
-     *
-     * @return translated "Enter a description for your application"
-     */
-    @DefaultMessage("Enter a description for your application")
-    @Key("analysisDesc")
-    String analysisDesc();
-    
-    /**
      * Waring that analysis may fail if input with spl chars is used
-     * 
+     *
      * @param splChars
      * @return
      */
@@ -218,17 +191,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     @DefaultMessage("Your analysis has been submitted. You will be notified about its progress through notifications.")
     @Key("analysisSubmittedMsg")
     String analysisSubmittedMsg();
-
-    /**
-     * A message indicating that an app was added to one or more categories.
-     * 
-     * @param app The name of the app that was categorized.
-     * @param categories The list of category names.
-     */
-    @DefaultMessage("Successfully added {0} to the following Categories: {1,list}.")
-    @AlternateMessage({"=1", "Successfully added {0} to the following Category: {1,list}."})
-    @Key("appCategorizeSuccess")
-    String appCategorizeSuccess(String app, @PluralCount List<String> categories);
 
     /**
      * Translated "Rating Comment".
@@ -502,24 +464,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     String cancelAnalysis();
 
     /**
-     * Translated "Unable to load user info".
-     *
-     * @return translated "Unable to load user info"
-     */
-    @DefaultMessage("Unable to load user info")
-    @Key("cantLoadUserInfo")
-    String cantLoadUserInfo();
-
-    /**
-     * Translated "Categorize".
-     * 
-     * @return translated "Categorize"
-     */
-    @DefaultMessage("Categorize")
-    @Key("categorize")
-    String categorize();
-
-    /**
      * Translated "Category".
      * 
      * @return translated "Category"
@@ -563,15 +507,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     @DefaultMessage("Choose from collaborators")
     @Key("chooseFromCollab")
     String chooseFromCollab();
-
-    /**
-     * Translated "Clear Selection".
-     * 
-     * @return translated "Clear Selection"
-     */
-    @DefaultMessage("Clear Selection")
-    @Key("clearSelection")
-    String clearSelection();
 
     /**
      * Translated "Click to view app info.".
@@ -631,12 +566,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
      */
     @DefaultMessage("Would you like to load this genome in CoGe ?")
     String cogePrompt();
-    
-    /**
-     * 
-     * @return
-     */
-    String cogeResponse(String url);
     
     /**
      * Translated "Search for users".
@@ -727,14 +656,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     String comments();
 
     /**
-     * Translated "Note: Anyone with access to this file''s URL can access the file."
-     * @return translated "Note: Anyone with access to this file''s URL can access the file."
-     */
-    @DefaultMessage("Note: Anyone with access to this file''s URL can access the file.")
-    @Key("sendToEnsemblePopupNote")
-    SafeHtml sendToEnsemblePopupNote();
-
-    /**
      * Translated "Update Comments...".
      *
      * @return translated "Update Comments..."
@@ -760,24 +681,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     @DefaultMessage("Do you want to delete the app \"{0}\"?")
     @Key("confirmDeleteApp")
     String confirmDeleteApp(String arg0);
-
-    /**
-     * Translated "Do you want to delete the category \"{0}\"?".
-     *
-     * @return translated "Do you want to delete the category \"{0}\"?"
-     */
-    @DefaultMessage("Do you want to delete the category \"{0}\"?")
-    @Key("confirmDeleteAppCategory")
-    String confirmDeleteAppCategory(String arg0);
-
-    /**
-     * Translated "Delete App".
-     *
-     * @return translated "Delete App"
-     */
-    @DefaultMessage("Delete App")
-    @Key("confirmDeleteAppTitle")
-    String confirmDeleteAppTitle();
 
     /**
      * Translated
@@ -900,15 +803,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     String createNewWorkflow();
 
     /**
-     * Translated "Created By".
-     *
-     * @return translated "Created By"
-     */
-    @DefaultMessage("Created By")
-    @Key("createdBy")
-    String createdBy();
-
-    /**
      * Translated "Date Submitted".
      *
      * @return translated "Date Submitted"
@@ -925,15 +819,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     @DefaultMessage("Created Date")
     @Key("createdDateGridHeader")
     String createdDateGridHeader();
-
-    /**
-     * Translated "Created On".
-     *
-     * @return translated "Created On"
-     */
-    @DefaultMessage("Created On")
-    @Key("createdOn")
-    String createdOn();
 
     /**
      * Translated "show current collaborators".
@@ -1241,17 +1126,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     @DefaultMessage("Edit File...")
     String editFile();
 
-    
-    /**
-     * Translated "Edit app...".
-     * 
-     * @return translated "Edit app..."
-     */
-    @DefaultMessage("Edit app...")
-    @Key("editApp")
-    String editApp();
-    
-
     /**
      * Translated "Email".
      *
@@ -1280,8 +1154,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     String emptyTrashWarning();
 
     String ensembl();
-
-    String ensemblUrl();
 
     /**
      * Translated "Enabled".
@@ -1462,15 +1334,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     String filterAnalysesList();
 
     /**
-     * Translated "Filter by name".
-     *
-     * @return translated "Filter by name"
-     */
-    @DefaultMessage("Filter by name")
-    @Key("filterDataList")
-    String filterDataList();
-
-    /**
      * Translated "Folder Name".
      *
      * @return translated "Folder Name"
@@ -1507,24 +1370,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     String groupByUser();
 
     /**
-     * Translated "GWT Version:".
-     *
-     * @return translated "GWT Version:"
-     */
-    @DefaultMessage("GWT Version:")
-    @Key("gwtVersion")
-    String gwtVersion();
-
-    /**
-     * Translated "GXT Version:".
-     *
-     * @return translated "GXT Version:"
-     */
-    @DefaultMessage("GXT Version:")
-    @Key("gxtVersion")
-    String gxtVersion();
-
-    /**
      * Translated "Not useful".
      *
      * @return translated "Not useful"
@@ -1550,15 +1395,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     @DefaultMessage("Hide")
     @Key("hide")
     String hide();
-
-    /**
-     * Translated "Host".
-     *
-     * @return translated "Host"
-     */
-    @DefaultMessage("Host")
-    @Key("host")
-    String host();
 
     /**
      * Translated "Argument, idParent, must have a valid value provided.".
@@ -1808,15 +1644,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     @DefaultMessage("N/A")
     @Key("lastAppNotDefined")
     String lastAppNotDefined();
-
-    /**
-     * Translated "Last Modified By".
-     *
-     * @return translated "Last Modified By"
-     */
-    @DefaultMessage("Last Modified By")
-    @Key("lastModBy")
-    String lastModBy();
 
     /**
      * Translated "Last Modified On".
@@ -2348,15 +2175,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     @DefaultMessage("New Tool Request")
     @Key("newToolReq")
     String newToolReq();
-
-    /**
-     * Translated "Tool Requests".
-     * 
-     * @return translated "Tool Requests"
-     */
-    @DefaultMessage("Tool Requests")
-    @Key("toolRequests")
-    String toolRequests();
 
     /**
      * Translated
@@ -3034,15 +2852,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     String reallyLikedIt();
 
     /**
-     * Translated "Delete this Reference Genome".
-     *
-     * @return translated "Delete this Reference Genome"
-     */
-    @DefaultMessage("Delete this Reference Genome")
-    @Key("refDeletePrompt")
-    String refDeletePrompt();
-
-    /**
      * Translated "Name".
      *
      * @return translated "Name"
@@ -3059,15 +2868,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     @DefaultMessage("Path")
     @Key("refGenPath")
     String refGenPath();
-
-    /**
-     * Translated "Reference Genome(s)".
-     *
-     * @return translated "Reference Genome(s)"
-     */
-    @DefaultMessage("Reference Genome(s)")
-    @Key("referenceGenomes")
-    String referenceGenomes();
 
     /**
      * Translated "Attach any relevant links or references for this app".
@@ -3148,15 +2948,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     String renameMenuItem();
 
     /**
-     * Translated "New Name".
-     *
-     * @return translated "New Name"
-     */
-    @DefaultMessage("New Name")
-    @Key("renamePrompt")
-    String renamePrompt();
-
-    /**
      * Translated
      * "Your request for new tool deployment has been submitted. You will receive an email confirmation."
      * .
@@ -3203,54 +2994,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     @DefaultMessage("Restore")
     @Key("restore")
     String restore();
-
-    /**
-     * Translated "Restore App".
-     *
-     * @return translated "Restore App"
-     */
-    @DefaultMessage("Restore App")
-    @Key("restoreApp")
-    String restoreApp();
-
-    /**
-     * Translated
-     * "\"{0}\" cannot be restored automatically since it is orphaned. Please drag and drop it into appropriate category."
-     * .
-     *
-     * @return translated
-     *         "\"{0}\" cannot be restored automatically since it is orphaned. Please drag and drop it into appropriate category."
-     */
-    @DefaultMessage("\"{0}\" cannot be restored automatically since it is orphaned. Please drag and drop it into appropriate category.")
-    @Key("restoreAppFailureMsg")
-    String restoreAppFailureMsg(String arg0);
-
-    /**
-     * Translated "App Restore Failed".
-     *
-     * @return translated "App Restore Failed"
-     */
-    @DefaultMessage("App Restore Failed")
-    @Key("restoreAppFailureMsgTitle")
-    String restoreAppFailureMsgTitle();
-
-    /**
-     * Translated "\"{0}\" is restored into following categorie(s): \"{1}\"".
-     *
-     * @return translated "\"{0}\" is restored into following categorie(s): \"{1}\""
-     */
-    @DefaultMessage("\"{0}\" is restored into following categorie(s): \"{1}\"")
-    @Key("restoreAppSucessMsg")
-    String restoreAppSucessMsg(String arg0, String arg1);
-
-    /**
-     * Translated "App Restored".
-     *
-     * @return translated "App Restored"
-     */
-    @DefaultMessage("App Restored")
-    @Key("restoreAppSucessMsgTitle")
-    String restoreAppSucessMsgTitle();
 
     /**
      * Translated "Selected files and folders are restored to their original location.".
@@ -3481,15 +3224,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     @DefaultMessage("Select & Order Apps")
     @Key("selectAndOrderApps")
     String selectAndOrderApps();
-
-    /**
-     * Translated "Select Categories for {0}.".
-     * 
-     * @return translated "Select Categories for {0}."
-     */
-    @DefaultMessage("Select Categories for {0}.")
-    @Key("selectCategories")
-    String selectCategories(String appName);
 
     /**
      * Translated "Select Collaborator(s)".
@@ -3839,15 +3573,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     String systemMessagesLabel();
 
     /**
-     * Translated "Disable this app temporarily".
-     *
-     * @return translated "Disable this app temporarily"
-     */
-    @DefaultMessage("Disable this app temporarily")
-    @Key("tempDisable")
-    String tempDisable();
-
-    /**
      * the name of the current day
      */
     @DefaultMessage("Today")
@@ -4031,15 +3756,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     String up();
 
     /**
-     * Translated "Reference Genome updated.".
-     *
-     * @return translated "Reference Genome updated."
-     */
-    @DefaultMessage("Reference Genome updated.")
-    @Key("updateRefGenome")
-    String updateRefGenome();
-
-    /**
      * Translated "Select test data file to upload".
      *
      * @return translated "Select test data file to upload"
@@ -4105,15 +3821,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     @DefaultMessage("Enter URLs below (HTTP(S) or FTP only):")
     @Key("urlPrompt")
     String urlPrompt();
-
-    /**
-     * Translated "User-Agent:".
-     *
-     * @return translated "User-Agent:"
-     */
-    @DefaultMessage("User-Agent:")
-    @Key("userAgent")
-    String userAgent();
 
     /**
      * Translated "User Name".
@@ -4359,25 +4066,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
      * 
      */
     String diskResourceNotAvailable();
-    
-
-    /**
-     * Translated "System Messages"
-     * 
-     * @return translated "System Messages"
-     */
-    @DefaultMessage("System Messages")
-    @Key("systemMessages")
-    String systemMessages();
-
-    /**
-     * Translated "Add New Reference Genome"
-     * 
-     * @return translated "Add New Reference Genome"
-     */
-    @DefaultMessage("Add New Reference Genome")
-    @Key("addReferenceGenome")
-    String addReferenceGenome();
 
     /**
      * Translated "Import From URL..."
@@ -4587,13 +4275,5 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     String addToFavorites(String resource_name);
 
     String removeFromFavorites(String resource_name);
-
-    String addComment();
-
-    String retractCommentConfirm();
-
-    String commentRetracted();
-
-    String retract();
 
 }

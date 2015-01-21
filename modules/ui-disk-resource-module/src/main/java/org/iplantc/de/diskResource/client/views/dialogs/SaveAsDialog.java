@@ -6,7 +6,7 @@ import org.iplantc.de.client.models.UserSettings;
 import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.client.util.CommonModelUtils;
 import org.iplantc.de.commons.client.validators.DiskResourceNameValidator;
-import org.iplantc.de.commons.client.views.gxt3.dialogs.IPlantDialog;
+import org.iplantc.de.commons.client.views.dialogs.IPlantDialog;
 import org.iplantc.de.diskResource.client.events.FolderSelectionEvent;
 import org.iplantc.de.diskResource.client.gin.factory.DiskResourcePresenterFactory;
 import org.iplantc.de.diskResource.client.views.DiskResourceView;

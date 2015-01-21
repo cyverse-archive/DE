@@ -1,19 +1,17 @@
 package org.iplantc.de.commons.client.info;
 
-import org.iplantc.de.resources.client.IplantResources;
-
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.ImageElement;
-import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.IsWidget;
 
+/**
+ * @author jstroot
+ */
 public class ErrorAnnouncementConfig extends IplantAnnouncementConfig {
-
-    private final ImageResource errIcon = IplantResources.RESOURCES.exclamation();
 
     public ErrorAnnouncementConfig(final String message) {
         this(SafeHtmlUtils.fromString(message));
@@ -37,7 +35,7 @@ public class ErrorAnnouncementConfig extends IplantAnnouncementConfig {
 
     @Override
     public String getPanelStyle() {
-        return STYLE.panelError();
+        return appearance.panelErrorStyle();
     }
 
     /**
@@ -47,7 +45,7 @@ public class ErrorAnnouncementConfig extends IplantAnnouncementConfig {
     @Override
     public IsWidget getWidget() {
         ImageElement imgEl = Document.get().createImageElement();
-        imgEl.setSrc(errIcon.getSafeUri().asString());
+        imgEl.setSrc(appearance.errorIcon().getSafeUri().asString());
 
         SafeHtmlBuilder sb = new SafeHtmlBuilder();
         sb.appendHtmlConstant(imgEl.getString());

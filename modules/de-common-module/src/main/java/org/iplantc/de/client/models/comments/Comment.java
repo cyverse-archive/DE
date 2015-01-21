@@ -4,7 +4,11 @@ import org.iplantc.de.client.models.HasId;
 
 import com.google.web.bindery.autobean.shared.AutoBean.PropertyName;
 
+/**
+ * @author jstroot
+ */
 public interface Comment extends HasId {
+    String COMMENT_TEXT_KEY = "comment";
 
     @PropertyName("post_time")
     long getTimestamp();
@@ -18,11 +22,11 @@ public interface Comment extends HasId {
     @PropertyName("commenter")
     void setCommentedBy(String user);
 
-    @PropertyName("comment")
+    @PropertyName(COMMENT_TEXT_KEY)
     String getCommentText();
 
-    @PropertyName("comment")
-    void setCommentText(String commenttext);
+    @PropertyName(COMMENT_TEXT_KEY)
+    void setCommentText(String commentText);
 
     @PropertyName("retracted")
     void setRetracted(boolean retracted);

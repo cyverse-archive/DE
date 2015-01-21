@@ -49,32 +49,21 @@ public class BelphegorAppsToolbarImpl implements AdminAppsView.Toolbar,
     @UiTemplate("BelphegorAppsViewToolbar.ui.xml")
     interface BelphegorAppsViewToolbarUiBinder extends UiBinder<Widget, BelphegorAppsToolbarImpl> { }
 
-    @UiField
-    TextButton addCategory;
-    @UiField
-    AppSearchField appSearch;
-    @UiField
-    TextButton categorizeApp;
-    @UiField
-    TextButton deleteCat;
-    @UiField
-    PagingLoader<FilterPagingLoadConfig, PagingLoadResult<App>> loader;
-    @UiField
-    TextButton renameCategory;
-    @UiField
-    TextButton moveCategory;
-    @UiField
-    TextButton restoreApp;
-    @UiField
-    TextButton deleteApp;
-    @UiField
-    ToolBar toolBar;
+    @UiField TextButton addCategory;
+    @UiField AppSearchField appSearch;
+    @UiField TextButton categorizeApp;
+    @UiField TextButton deleteCat;
+    @UiField PagingLoader<FilterPagingLoadConfig, PagingLoadResult<App>> loader;
+    @UiField TextButton renameCategory;
+    @UiField TextButton moveCategory;
+    @UiField TextButton restoreApp;
+    @UiField TextButton deleteApp;
+    @UiField ToolBar toolBar;
 
     private static BelphegorAppsViewToolbarUiBinder uiBinder = GWT.create(BelphegorAppsViewToolbarUiBinder.class);
     private final AppAutoBeanFactory appFactory;
     private final AppSearchAutoBeanFactory appSearchFactory;
     private final AppServiceFacade appService;
-    private final IplantDisplayStrings displayStrings;
     private final Widget widget;
     private AdminAppsView.AdminPresenter presenter;
     private AppSearchRpcProxy proxy;
@@ -82,12 +71,10 @@ public class BelphegorAppsToolbarImpl implements AdminAppsView.Toolbar,
     @Inject
     public BelphegorAppsToolbarImpl(final AppServiceFacade appService,
                                     final AppSearchAutoBeanFactory appSearchFactory,
-                                    final AppAutoBeanFactory appFactory,
-                                    final IplantDisplayStrings displayStrings) {
+                                    final AppAutoBeanFactory appFactory) {
         this.appService = appService;
         this.appSearchFactory = appSearchFactory;
         this.appFactory = appFactory;
-        this.displayStrings = displayStrings;
         widget = uiBinder.createAndBindUi(this);
     }
 
@@ -214,8 +201,10 @@ public class BelphegorAppsToolbarImpl implements AdminAppsView.Toolbar,
 
     @UiFactory
     PagingLoader<FilterPagingLoadConfig, PagingLoadResult<App>> createPagingLoader() {
+        IplantDisplayStrings displayStrings = GWT.create(IplantDisplayStrings.class);
+        // FIXME Fix this with injection
         proxy = new AppSearchRpcProxy(appService, appSearchFactory, appFactory, displayStrings);
-        PagingLoader<FilterPagingLoadConfig, PagingLoadResult<App>> loader = new PagingLoader<FilterPagingLoadConfig, PagingLoadResult<App>>(
+        PagingLoader<FilterPagingLoadConfig, PagingLoadResult<App>> loader = new PagingLoader<>(
                 proxy);
 
         AppLoadConfig appLoadConfig = appSearchFactory.loadConfig().as();

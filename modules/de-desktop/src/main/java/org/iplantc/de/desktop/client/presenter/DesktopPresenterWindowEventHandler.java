@@ -82,6 +82,7 @@ public class DesktopPresenterWindowEventHandler implements EditAppEvent.EditAppE
     @Inject EventBus eventBus;
     @Inject UserInfo userInfo;
     @Inject DiskResourceUtil diskResourceUtil;
+    @Inject DiskResourceServiceFacade diskResourceServiceFacade;
     @Inject DesktopView.Presenter.DesktopPresenterAppearance appearance;
 
     private DesktopWindowManager desktopWindowManager;
@@ -189,7 +190,7 @@ public class DesktopPresenterWindowEventHandler implements EditAppEvent.EditAppE
     public void onRequestSendToEnsembl(RequestSendToEnsemblEvent event) {
         checkNotNull(event.getFile());
         showFile(event.getFile());
-        new EnsemblUtil(event.getFile(), event.getInfoType().toString(), null).sendToEnsembl();
+        new EnsemblUtil(event.getFile(), event.getInfoType().toString(), null).sendToEnsembl(diskResourceServiceFacade);
     }
 
     @Override

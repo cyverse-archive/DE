@@ -1,6 +1,5 @@
 package org.iplantc.de.systemMessages.client.view;
 
-import org.iplantc.de.commons.client.appearance.widgets.InternalAnchorDefaultAppearance;
 import org.iplantc.de.commons.client.widgets.InternalAnchor;
 import org.iplantc.de.resources.client.messages.I18N;
 
@@ -15,34 +14,35 @@ import com.sencha.gxt.core.client.dom.XElement;
 
 /**
  * An object of this class can display a new message announcement as HTML.
+ *
+ * @author jstroot
  */
 final class DefaultNewMessageView extends InlineHTML implements NewMessageView {
 
-	interface Templates extends XTemplates {
-		@XTemplate("<div>You have an important announcement. {anchor}</div>")
-		SafeHtml make(SafeHtml anchor);
-	}
-	
-	private static final Templates FACTORY = GWT.create(Templates.class);
-    private static final InternalAnchorDefaultAppearance ANCHOR_APPEARANCE
-			= new InternalAnchorDefaultAppearance(true);
-	
-	private final InternalAnchor<Void> anchor;
+    interface Templates extends XTemplates {
+        @XTemplate("<div>You have an important announcement. {anchor}</div>")
+        SafeHtml make(SafeHtml anchor);
+    }
+
+    private static final InternalAnchor.Appearance ANCHOR_APPEARANCE = GWT.create(InternalAnchor.Appearance.class);
+    private static final Templates FACTORY = GWT.create(Templates.class);
+    private final InternalAnchor<Void> anchor;
 
     /**
      * the constructor
-     * 
+     *
      * @param presenter the presenter managing the view
      */
     DefaultNewMessageView(final Presenter presenter) {
         super(FACTORY.make(ANCHOR_APPEARANCE.render(I18N.DISPLAY.openMessage())));
         final XElement elmt = ANCHOR_APPEARANCE.getAnchorElement(XElement.as(getElement()));
         anchor = InternalAnchor.wrap(null, elmt);
-		anchor.addOpenHandler(new OpenHandler<Void>() {
-			@Override
-			public void onOpen(final OpenEvent<Void> event) {
+        anchor.addOpenHandler(new OpenHandler<Void>() {
+            @Override
+            public void onOpen(final OpenEvent<Void> event) {
                 presenter.handleDisplayMessages();
-			}});			
- 	}
+            }
+        });
+    }
 
 }

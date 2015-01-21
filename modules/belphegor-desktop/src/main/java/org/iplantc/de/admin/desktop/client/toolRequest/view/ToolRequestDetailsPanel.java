@@ -14,6 +14,9 @@ import com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer;
 import com.sencha.gxt.widget.core.client.form.CheckBox;
 import com.sencha.gxt.widget.core.client.form.TextField;
 
+/**
+ * @author jstroot
+ */
 public class ToolRequestDetailsPanel extends Composite implements Editor<ToolRequestDetails> {
 
     interface EditorDriver extends SimpleBeanEditorDriver<ToolRequestDetails, ToolRequestDetailsPanel> {}
@@ -23,33 +26,20 @@ public class ToolRequestDetailsPanel extends Composite implements Editor<ToolReq
     interface ToolRequestDetailsPanelUiBinder extends UiBinder<Widget, ToolRequestDetailsPanel> {
     }
 
-    @UiField
-    VerticalLayoutContainer con;
+    @UiField VerticalLayoutContainer con;
 
-    @UiField
-    TextField additionalDataFileEditor;
-    @UiField
-    TextField additionalInfoEditor;
-    @UiField
-    TextField architectureEditor;
-    @UiField
-    TextField attributionEditor;
-    @UiField
-    TextField cmdLineDescriptionEditor;
-    @UiField
-    TextField documentationUrlEditor;
-    @UiField
-    CheckBox multiThreadedEditor;
-    @UiField
-    TextField phoneEditor;
-    @UiField
-    TextField sourceUrlEditor;
-    @UiField
-    TextField submittedByEditor;
-    @UiField
-    TextField testDataPathEditor;
-    @UiField
-    TextField versionEditor;
+    @UiField TextField additionalDataFileEditor;
+    @UiField TextField additionalInfoEditor;
+    @UiField TextField architectureEditor;
+    @UiField TextField attributionEditor;
+    @UiField TextField cmdLineDescriptionEditor;
+    @UiField TextField documentationUrlEditor;
+    @UiField CheckBox multiThreadedEditor;
+    @UiField TextField phoneEditor;
+    @UiField TextField sourceUrlEditor;
+    @UiField TextField submittedByEditor;
+    @UiField TextField testDataPathEditor;
+    @UiField TextField versionEditor;
 
 
     public ToolRequestDetailsPanel() {

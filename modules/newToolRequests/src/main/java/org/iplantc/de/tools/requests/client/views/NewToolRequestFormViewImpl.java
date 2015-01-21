@@ -5,7 +5,7 @@ import org.iplantc.de.client.models.toolRequests.YesNoMaybe;
 import org.iplantc.de.commons.client.validators.DiskResourceNameValidator;
 import org.iplantc.de.commons.client.validators.LengthRangeValidator;
 import org.iplantc.de.commons.client.validators.UrlValidator;
-import org.iplantc.de.commons.client.views.gxt3.dialogs.IplantInfoBox;
+import org.iplantc.de.commons.client.views.dialogs.IplantInfoBox;
 import org.iplantc.de.diskResource.client.gin.factory.DiskResourceSelectorFieldFactory;
 import org.iplantc.de.diskResource.client.views.widgets.FileSelectorField;
 import org.iplantc.de.resources.client.constants.IplantValidationConstants;

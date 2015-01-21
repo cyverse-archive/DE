@@ -1,6 +1,6 @@
 package org.iplantc.de.systemMessages.client.view;
 
-import org.iplantc.de.commons.client.views.gxt3.dialogs.IPlantDialog;
+import org.iplantc.de.commons.client.views.dialogs.IPlantDialog;
 import org.iplantc.de.resources.client.messages.I18N;
 
 import com.google.gwt.user.client.Command;

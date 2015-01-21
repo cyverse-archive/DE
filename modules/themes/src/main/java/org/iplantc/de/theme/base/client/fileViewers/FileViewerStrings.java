@@ -1,6 +1,7 @@
 package org.iplantc.de.theme.base.client.fileViewers;
 
 import com.google.gwt.i18n.client.Messages;
+import com.google.gwt.safehtml.shared.SafeHtml;
 
 /**
  * @author jstroot
@@ -10,11 +11,17 @@ public interface FileViewerStrings extends Messages {
     @Key("addPathsButtonTooltip")
     String addPathsButtonTooltip();
 
+    @Key("cogeResponse")
+    String cogeResponse(String url);
+
     @Key("defaultViewName")
     String defaultViewName(double defaultName);
 
     @Key("deleteSelectedPathsButtonTooltip")
     String deleteSelectedPathsButtonTooltip();
+
+    @Key("ensemblUrl")
+    String ensemblUrl();
 
     @Key("externalVizUrlColumnHeaderLabel")
     String externalVizUrlColumnHeaderLabel();
@@ -88,6 +95,9 @@ public interface FileViewerStrings extends Messages {
 
     @Key("retrievingFileContentsMask")
     String retrievingFileContentsMask();
+
+    @Key("sendToEnsemblePopupNote")
+    SafeHtml sendToEnsemblePopupNote();
 
     @Key("skipLinesLabel")
     String skipLinesLabel();

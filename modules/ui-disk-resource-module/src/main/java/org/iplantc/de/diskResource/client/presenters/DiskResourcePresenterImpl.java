@@ -28,13 +28,12 @@ import org.iplantc.de.client.services.MetadataServiceFacade;
 import org.iplantc.de.client.util.CommonModelUtils;
 import org.iplantc.de.client.util.DiskResourceUtil;
 import org.iplantc.de.commons.client.ErrorHandler;
-import org.iplantc.de.commons.client.comments.presenter.CommentsPresenter;
-import org.iplantc.de.commons.client.comments.view.CommentsView;
-import org.iplantc.de.commons.client.comments.view.CommentsViewImpl;
+import org.iplantc.de.commons.client.comments.CommentsView;
+import org.iplantc.de.commons.client.comments.gin.factory.CommentsPresenterFactory;
 import org.iplantc.de.commons.client.info.ErrorAnnouncementConfig;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
 import org.iplantc.de.commons.client.info.SuccessAnnouncementConfig;
-import org.iplantc.de.commons.client.views.gxt3.dialogs.IPlantDialog;
+import org.iplantc.de.commons.client.views.dialogs.IPlantDialog;
 import org.iplantc.de.commons.client.views.window.configs.FileViewerWindowConfig;
 import org.iplantc.de.commons.client.views.window.configs.PathListWindowConfig;
 import org.iplantc.de.commons.client.views.window.configs.TabularFileViewerWindowConfig;
@@ -150,6 +149,7 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
     @Inject DataLinkPanelFactory dataLinkPanelFactory;
     @Inject DataSharingDialogFactory dataSharingDialogFactory;
     @Inject DiskResourceUtil diskResourceUtil;
+    @Inject CommentsPresenterFactory commentsPresenterFactory;
 
     final IplantAnnouncer announcer;
     final DiskResourceView view;
@@ -487,12 +487,8 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
         d.setHeadingText(displayStrings.comments());
         d.remove(d.getButtonBar());
         d.setSize("600px", "450px");
-        CommentsView cv = new CommentsViewImpl();
-        CommentsPresenter cp = new CommentsPresenter(cv,
-                                                     dr.getId(),
-                                                     dr.getPermission() == PermissionValue.own,
-                                                     fsmdataService);
-        cv.setPresenter(cp);
+        CommentsView.Presenter cp = commentsPresenterFactory.createCommentsPresenter(dr.getId(),
+                                                                                     dr.getPermission() == PermissionValue.own);
         cp.go(d);
         d.show();
 

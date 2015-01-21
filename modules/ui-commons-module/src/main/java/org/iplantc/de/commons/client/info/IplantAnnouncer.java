@@ -25,12 +25,13 @@ import java.util.Queue;
  * first one times out.
  * 
  * When a messages is removed from the schedule, an AnnouncementRemovedEvent is fired.
+ * @author jstroot
  */
 public class IplantAnnouncer {
 
     private static IplantAnnouncer instance;
 
-    protected final Queue<IplantAnnouncement> announcements = new LinkedList<IplantAnnouncement>();
+    protected final Queue<IplantAnnouncement> announcements = new LinkedList<>();
     private final Timer timer;
 
     protected IplantAnnouncer() {
@@ -101,7 +102,7 @@ public class IplantAnnouncer {
         @Override
         public void run() {
             removeCurrentAnnouncement();
-        };
+        }
     }
 
     protected void positionAnnouncer() {

@@ -58,6 +58,7 @@ project(':de') {
         src += files(project(':newToolRequests').sourceSets.main.allJava.srcDirs) + files(project(':newToolRequests').sourceSets.main.output.resourcesDir)
         src += files(project(':collaborators').sourceSets.main.allJava.srcDirs) + files(project(':collaborators').sourceSets.main.output.resourcesDir)
         src += files(project(':tags').sourceSets.main.allJava.srcDirs) + files(project(':tags').sourceSets.main.output.resourcesDir)
+        src += files(project(':belphegor-desktop').sourceSets.main.allJava.srcDirs) + files(project(':belphegor-desktop').sourceSets.main.output.resourcesDir)
 
         superDev { noPrecompile = true }
         maxHeapSize = '1024M'
@@ -121,18 +122,26 @@ project(':belphegor') {
         modules 'org.iplantc.admin.belphegor.belphegor'
         devModules 'org.iplantc.admin.belphegor.belphegorDev'
 
+        src += files(project(':belphegor-desktop').sourceSets.main.allJava.srcDirs) + files(project(':belphegor-desktop').sourceSets.main.output.resourcesDir)
+
         src += files(project(':ui-commons-module').sourceSets.main.allJava.srcDirs) + files(project(':ui-commons-module').sourceSets.main.output.resourcesDir)
         src += files(project(':ui-applications-module').sourceSets.main.allJava.srcDirs) + files(project(':ui-applications-module').sourceSets.main.output.resourcesDir)
         src += files(project(':ui-resources-module').sourceSets.main.allJava.srcDirs) + files(project(':ui-resources-module').sourceSets.main.output.resourcesDir) + files(project(':ui-resources-module').sourceSets.main.resources.srcDirs)
-        src += files(project(':ui-disk-resource-module').sourceSets.main.allJava.srcDirs) + files(project(':ui-disk-resource-module').sourceSets.main.output.resourcesDir)
-        src += files(project(':de-common-module').sourceSets.main.allJava.srcDirs) + files(project(':de-common-module').sourceSets.main.output.resourcesDir)
         src += files(project(':confluence-client').sourceSets.main.allJava.srcDirs) + files(project(':confluence-client').sourceSets.main.output.resourcesDir)
-        src += files(project(':belphegor-desktop').sourceSets.main.allJava.srcDirs) + files(project(':belphegor-desktop').sourceSets.main.output.resourcesDir)
+        src += files(project(':ui-disk-resource-module').sourceSets.main.allJava.srcDirs) + files(project(':ui-disk-resource-module').sourceSets.main.output.resourcesDir)
+        src += files(project(':ui-apps-widgets-module').sourceSets.main.allJava.srcDirs) + files(project(':ui-apps-widgets-module').sourceSets.main.output.resourcesDir)
+        src += files(project(':ui-pipelines-module').sourceSets.main.allJava.srcDirs) + files(project(':ui-pipelines-module').sourceSets.main.output.resourcesDir)
+        src += files(project(':ui-pipeline-builder-module').sourceSets.main.allJava.srcDirs) + files(project(':ui-pipeline-builder-module').sourceSets.main.output.resourcesDir)
+        src += files(project(':ui-apps-integration').sourceSets.main.allJava.srcDirs) + files(project(':ui-apps-integration').sourceSets.main.output.resourcesDir)
+        src += files(project(':analyses-module').sourceSets.main.allJava.srcDirs) + files(project(':analyses-module').sourceSets.main.output.resourcesDir)
+        src += files(project(':file-viewers').sourceSets.main.allJava.srcDirs) + files(project(':file-viewers').sourceSets.main.output.resourcesDir)
+        src += files(project(':de-common-module').sourceSets.main.allJava.srcDirs) + files(project(':de-common-module').sourceSets.main.output.resourcesDir)
+        src += files(project(':notifications').sourceSets.main.allJava.srcDirs) + files(project(':notifications').sourceSets.main.output.resourcesDir)
+        src += files(project(':de-desktop').sourceSets.main.allJava.srcDirs) + files(project(':de-desktop').sourceSets.main.output.resourcesDir)
         src += files(project(':themes').sourceSets.main.allJava.srcDirs) + files(project(':themes').sourceSets.main.output.resourcesDir)
         src += files(project(':newToolRequests').sourceSets.main.allJava.srcDirs) + files(project(':newToolRequests').sourceSets.main.output.resourcesDir)
         src += files(project(':collaborators').sourceSets.main.allJava.srcDirs) + files(project(':collaborators').sourceSets.main.output.resourcesDir)
         src += files(project(':tags').sourceSets.main.allJava.srcDirs) + files(project(':tags').sourceSets.main.output.resourcesDir)
-        src += files(project(':file-viewers').sourceSets.main.allJava.srcDirs) + files(project(':file-viewers').sourceSets.main.output.resourcesDir)
 
         superDev { noPrecompile = true }
         maxHeapSize = '1024M'

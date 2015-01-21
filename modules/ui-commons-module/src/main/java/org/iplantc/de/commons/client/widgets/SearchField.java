@@ -163,7 +163,7 @@ public class SearchField<T> extends TextField {
     protected List<FilterConfig> getConfigFilters(FilterPagingLoadConfig config) {
         List<FilterConfig> filters = config.getFilters();
         if (filters == null) {
-            filters = new ArrayList<FilterConfig>();
+            filters = new ArrayList<>();
             config.setFilters(filters);
         }
 

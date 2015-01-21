@@ -5,7 +5,7 @@ import org.iplantc.de.client.models.errors.diskResources.ErrorUpdateMetadata;
 import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
 import org.iplantc.de.commons.client.info.SuccessAnnouncementConfig;
-import org.iplantc.de.commons.client.views.gxt3.dialogs.IPlantDialog;
+import org.iplantc.de.commons.client.views.dialogs.IPlantDialog;
 import org.iplantc.de.diskResource.client.presenters.callbacks.DiskResourceServiceCallback;
 import org.iplantc.de.resources.client.messages.I18N;
 

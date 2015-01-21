@@ -1,6 +1,5 @@
 package org.iplantc.de.fileViewers.client.callbacks;
 
-import org.iplantc.de.client.gin.ServicesInjector;
 import org.iplantc.de.client.models.HasPath;
 import org.iplantc.de.client.models.HasPaths;
 import org.iplantc.de.client.models.IsMaskable;
@@ -11,10 +10,10 @@ import org.iplantc.de.client.models.viewer.InfoType;
 import org.iplantc.de.client.services.DiskResourceServiceFacade;
 import org.iplantc.de.client.util.CommonModelUtils;
 import org.iplantc.de.client.util.DiskResourceUtil;
-import org.iplantc.de.commons.client.views.gxt3.dialogs.IplantInfoBox;
-import org.iplantc.de.resources.client.messages.I18N;
+import org.iplantc.de.commons.client.views.dialogs.IplantInfoBox;
 
 import com.google.common.base.Strings;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import com.sencha.gxt.core.shared.FastMap;
@@ -25,20 +24,37 @@ import java.util.List;
 
 public class EnsemblUtil {
 
+    public interface EnsemblUtilAppearance {
+
+        String indexFileMissing();
+
+        String indexFileMissingError();
+    }
+
     private final IsMaskable container;
     private final File file;
     private final String infoType;
+    private final EnsemblUtilAppearance appearance;
     private final DiskResourceUtil diskResourceUtil;
 
-    public EnsemblUtil(File file, String infoType, IsMaskable container) {
+    public EnsemblUtil(final File file,
+                       final String infoType,
+                       final IsMaskable container) {
+        this(file, infoType, container, GWT.<EnsemblUtilAppearance> create(EnsemblUtilAppearance.class));
+    }
+
+    EnsemblUtil(final File file,
+                final String infoType,
+                final IsMaskable container,
+                final EnsemblUtilAppearance appearance) {
         this.file = file;
         this.container = container;
         this.infoType = infoType;
+        this.appearance = appearance;
         this.diskResourceUtil = DiskResourceUtil.getInstance();
     }
 
-    public void sendToEnsembl() {
-        final DiskResourceServiceFacade diskResourceServiceFacade = ServicesInjector.INSTANCE.getDiskResourceServiceFacade();
+    public void sendToEnsembl(final DiskResourceServiceFacade diskResourceServiceFacade) {
         List<HasPath> list = new ArrayList<>();
         final HasPaths diskResourcePaths = diskResourceServiceFacade.getDiskResourceFactory()
                                                                     .pathsList()
@@ -75,8 +91,8 @@ public class EnsemblUtil {
 
                                               @Override
                                               public void onFailure(Throwable caught) {
-                                                  IplantInfoBox info = new IplantInfoBox(I18N.DISPLAY.indexFileMissing(),
-                                                                                         I18N.ERROR.indexFileMissing());
+                                                  IplantInfoBox info = new IplantInfoBox(appearance.indexFileMissing(),
+                                                                                         appearance.indexFileMissingError());
                                                   info.show();
                                                   if (container != null) {
                                                       container.unmask();

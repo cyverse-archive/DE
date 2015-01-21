@@ -3,9 +3,7 @@ package org.iplantc.de.admin.desktop.client.systemMessage.view;
 import org.iplantc.de.admin.desktop.client.systemMessage.SystemMessageView;
 import org.iplantc.de.admin.desktop.client.systemMessage.view.cells.SystemMessageNameCell;
 import org.iplantc.de.client.models.systemMessages.SystemMessage;
-import org.iplantc.de.commons.client.views.gxt3.dialogs.IPlantDialog;
-import org.iplantc.de.resources.client.IplantResources;
-import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
+import org.iplantc.de.commons.client.views.dialogs.IPlantDialog;
 
 import com.google.common.collect.Lists;
 import com.google.gwt.core.client.GWT;
@@ -34,6 +32,9 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * @author jstroot
+ */
 public class SystemMessageViewImpl extends Composite implements SystemMessageView, SelectionChangedHandler<SystemMessage> {
 
     private final class MsgColComparator implements Comparator<SystemMessage> {
@@ -45,31 +46,20 @@ public class SystemMessageViewImpl extends Composite implements SystemMessageVie
 
     interface SystemMessageViewImplUiBinder extends UiBinder<Widget, SystemMessageViewImpl> { }
 
-    @UiField
-    TextButton addBtn, deleteBtn;
-
-    @UiField
-    Grid<SystemMessage> grid;
-
-    @UiField(provided = true)
-    IplantResources res;
-
-    @UiField
-    ListStore<SystemMessage> store;
-
-    @UiField(provided = true)
-    IplantDisplayStrings strings;
+    @UiField TextButton addBtn, deleteBtn;
+    @UiField Grid<SystemMessage> grid;
+    @UiField ListStore<SystemMessage> store;
+    @UiField(provided = true) SystemMessageViewAppearance appearance;
 
     private static SystemMessageViewImplUiBinder uiBinder = GWT.create(SystemMessageViewImplUiBinder.class);
     private final MessageProperties msgProps;
     private SystemMessageView.Presenter presenter;
 
     @Inject
-    public SystemMessageViewImpl(IplantResources res, IplantDisplayStrings strings,
-                                 MessageProperties msgProps) {
-        this.res = res;
-        this.strings = strings;
+    public SystemMessageViewImpl(final MessageProperties msgProps,
+                                 final SystemMessageViewAppearance appearance) {
         this.msgProps = msgProps;
+        this.appearance = appearance;
         initWidget(uiBinder.createAndBindUi(this));
 
         grid.getSelectionModel().addSelectionChangedHandler(this);
@@ -89,10 +79,10 @@ public class SystemMessageViewImpl extends Composite implements SystemMessageVie
     @Override
     public void editSystemMessage(SystemMessage sysMsgToEdit) {
         final IPlantDialog editSystemMessageDlg = new IPlantDialog();
-        editSystemMessageDlg.setHeadingText("Edit System Message");
+        editSystemMessageDlg.setHeadingText(appearance.editSystemMsgDlgHeading());
         editSystemMessageDlg.setHideOnButtonClick(false);
-        editSystemMessageDlg.getOkButton().setText("Submit");
-        editSystemMessageDlg.setWidth("500");
+        editSystemMessageDlg.getOkButton().setText(appearance.submitButtonText());
+        editSystemMessageDlg.setWidth(appearance.editSystemMsgDlgWidth());
         editSystemMessageDlg.addCancelButtonSelectHandler(new SelectHandler() {
             @Override
             public void onSelect(SelectEvent event) {
@@ -140,10 +130,10 @@ public class SystemMessageViewImpl extends Composite implements SystemMessageVie
     @UiHandler("addBtn")
     void addButtonClicked(SelectEvent event) {
         final IPlantDialog createSystemMessageDlg = new IPlantDialog();
-        createSystemMessageDlg.setHeadingText("Create System Message");
+        createSystemMessageDlg.setHeadingText(appearance.createSystemMsgDlgHeading());
         createSystemMessageDlg.setHideOnButtonClick(false);
-        createSystemMessageDlg.getOkButton().setText("Submit");
-        createSystemMessageDlg.setWidth("500");
+        createSystemMessageDlg.getOkButton().setText(appearance.submitButtonText());
+        createSystemMessageDlg.setWidth(appearance.editSystemMsgDlgWidth());
         createSystemMessageDlg.addCancelButtonSelectHandler(new SelectHandler() {
             @Override
             public void onSelect(SelectEvent event) {
@@ -172,11 +162,21 @@ public class SystemMessageViewImpl extends Composite implements SystemMessageVie
 
     @UiFactory
     ColumnModel<SystemMessage> createColumnModel() {
-        ColumnConfig<SystemMessage, Date> activationDateCol = new ColumnConfig<>(msgProps.activationTime(), 200, "Activation Date");
-        ColumnConfig<SystemMessage, Date> deactivationDateCol = new ColumnConfig<>(msgProps.deactivationTime(), 200, "Deactivation Date");
-        ColumnConfig<SystemMessage, SystemMessage> msgCol = new ColumnConfig<>(new IdentityValueProvider<SystemMessage>("body"), 400, "Message");
-        ColumnConfig<SystemMessage, String> typeCol = new ColumnConfig<>(msgProps.type(), 90, "Type");
-        ColumnConfig<SystemMessage, Boolean> dismissibleColumn = new ColumnConfig<>(msgProps.dismissible(), 90, "Is Dismissible?");
+        ColumnConfig<SystemMessage, Date> activationDateCol = new ColumnConfig<>(msgProps.activationTime(),
+                                                                                 appearance.activationDateColumnWidth(),
+                                                                                 appearance.activationDateColumnLabel());
+        ColumnConfig<SystemMessage, Date> deactivationDateCol = new ColumnConfig<>(msgProps.deactivationTime(),
+                                                                                   appearance.deactivationDateColumnWidth(),
+                                                                                   appearance.deactivationDateColumnLabel());
+        ColumnConfig<SystemMessage, SystemMessage> msgCol = new ColumnConfig<>(new IdentityValueProvider<SystemMessage>("body"),
+                                                                               appearance.messageColumnWidth(),
+                                                                               appearance.messageColumnLabel());
+        ColumnConfig<SystemMessage, String> typeCol = new ColumnConfig<>(msgProps.type(),
+                                                                         appearance.typeColumnWidth(),
+                                                                         appearance.typeColumnLabel());
+        ColumnConfig<SystemMessage, Boolean> dismissibleColumn = new ColumnConfig<>(msgProps.dismissible(),
+                                                                                    appearance.dismissibleColumnWidth(),
+                                                                                    appearance.dismissibleColumnLabel());
         activationDateCol.setFixed(true);
         deactivationDateCol.setFixed(true);
         msgCol.setCell(new SystemMessageNameCell(this));
@@ -192,8 +192,7 @@ public class SystemMessageViewImpl extends Composite implements SystemMessageVie
 
     @UiFactory
     ListStore<SystemMessage> createListStore() {
-        ListStore<SystemMessage> listStore = new ListStore<>(msgProps.id());
-        return listStore;
+        return new ListStore<>(msgProps.id());
     }
 
     @UiHandler("deleteBtn")

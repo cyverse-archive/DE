@@ -3,7 +3,6 @@ package org.iplantc.de.client.services.converters;
 import org.iplantc.de.client.models.apps.AppAutoBeanFactory;
 import org.iplantc.de.client.models.apps.AppCategory;
 import org.iplantc.de.client.models.apps.AppCategoryList;
-import org.iplantc.de.resources.client.messages.IplantErrorStrings;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -12,6 +11,9 @@ import com.google.web.bindery.autobean.shared.AutoBeanCodex;
 
 import java.util.List;
 
+/**
+ * @author jstroot
+ */
 public class AppCategoryListCallbackConverter extends AsyncCallbackConverter<String, List<AppCategory>> {
 
     public class AppCategoryListLoadException extends Exception {
@@ -19,24 +21,20 @@ public class AppCategoryListCallbackConverter extends AsyncCallbackConverter<Str
 
         public AppCategoryListLoadException() { }
 
-        public AppCategoryListLoadException(IplantErrorStrings errorStrings, Throwable caught) {
-            super(errorStrings.appCategoriesLoadFailure(), caught);
+        public AppCategoryListLoadException(Throwable caught) {
+            super("Failed to load App categories.", caught);
         }
     }
 
-    private final IplantErrorStrings errorStrings;
-
     private final AppAutoBeanFactory factory = GWT.create(AppAutoBeanFactory.class);
 
-    public AppCategoryListCallbackConverter(AsyncCallback<List<AppCategory>> callback,
-                                            final IplantErrorStrings errorStrings) {
+    public AppCategoryListCallbackConverter(AsyncCallback<List<AppCategory>> callback) {
         super(callback);
-        this.errorStrings = errorStrings;
     }
 
     @Override
     public void onFailure(Throwable caught) {
-        super.onFailure(new AppCategoryListLoadException(errorStrings, caught));
+        super.onFailure(new AppCategoryListLoadException(caught));
     }
 
     @Override

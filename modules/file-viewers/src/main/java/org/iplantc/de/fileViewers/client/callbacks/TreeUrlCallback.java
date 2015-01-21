@@ -15,9 +15,18 @@ import com.google.web.bindery.autobean.shared.AutoBeanCodex;
 
 import java.util.List;
 
+/**
+ * @author jstroot
+ */
 public class TreeUrlCallback implements AsyncCallback<String> {
 
+    public interface TreeUrlCallbackAppearance {
+
+        String unableToRetrieveTreeUrls(String fileName);
+    }
+
     private final static TreeUrlAutoBeanFactory factory = GWT.create(TreeUrlAutoBeanFactory.class);
+    private final TreeUrlCallbackAppearance appearance = GWT.create(TreeUrlCallbackAppearance.class);
     private final IsMaskable container;
     private final File file;
     private final FileViewer viewer;
@@ -43,7 +52,7 @@ public class TreeUrlCallback implements AsyncCallback<String> {
             container.unmask();
         }
 
-        String errMsg = org.iplantc.de.resources.client.messages.I18N.ERROR.unableToRetrieveTreeUrls(file.getName());
+        String errMsg = appearance.unableToRetrieveTreeUrls(file.getName());
         ErrorHandler.post(errMsg, caught);
     }
 
