@@ -15,6 +15,7 @@ import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.uibinder.client.UiTemplate;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.inject.Inject;
 import com.google.web.bindery.autobean.shared.AutoBeanCodex;
 
 import com.sencha.gxt.core.client.IdentityValueProvider;
@@ -56,13 +57,15 @@ public class CommentsViewImpl extends Composite implements CommentsView {
     @UiField GridView<Comment> view;
     @UiField(provided = true) CommentsViewAppearance appearance;
 
+    @Inject CommentsAutoBeanFactory factory;
+
     private static CommentsViewUiBinder uiBinder = GWT.create(CommentsViewUiBinder.class);
-    private final CommentsAutoBeanFactory factory = GWT.create(CommentsAutoBeanFactory.class);
     private CommentsComparator commentComparator;
     private Presenter presenter;
 
-    public CommentsViewImpl() {
-        appearance = GWT.create(CommentsViewAppearance.class);
+    @Inject
+    CommentsViewImpl(final CommentsViewAppearance appearance) {
+        this.appearance = appearance;
         commentComparator = new CommentsComparator();
         buildColumnModel();
         buildStore();

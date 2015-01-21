@@ -11,10 +11,11 @@ import org.iplantc.de.commons.client.comments.CommentsView;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
 import org.iplantc.de.commons.client.info.SuccessAnnouncementConfig;
 
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HasOneWidget;
+import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
 import com.google.web.bindery.autobean.shared.AutoBean;
 import com.google.web.bindery.autobean.shared.AutoBeanCodex;
 
@@ -29,31 +30,32 @@ import java.util.List;
  */
 public class CommentsPresenterImpl implements CommentsView.Presenter {
     final CommentsView view;
+    private final UserInfo userInfo;
     final String resourceID;
     final MetadataServiceFacade facade;
-    CommentsAutoBeanFactory cabf = GWT.create(CommentsAutoBeanFactory.class);
+    final CommentsAutoBeanFactory factory;
     private final boolean isResourceOwner;
     private final CommentsPresenterAppearance appearance;
     private final JsonUtil jsonUtil;
 
-    public CommentsPresenterImpl(final CommentsView cv,
-                                 final String resourceID,
-                                 final boolean owner,
-                                 final MetadataServiceFacade facade) {
-        this(cv, resourceID, owner, facade, GWT.<CommentsPresenterAppearance>create(CommentsPresenterAppearance.class));
-
-    }
-    public CommentsPresenterImpl(final CommentsView cv,
-                                 final String resourceID,
-                                 final boolean owner,
-                                 final MetadataServiceFacade facade,
-                                 final CommentsPresenterAppearance appearance) {
+    @Inject
+    CommentsPresenterImpl(final CommentsView cv,
+                          final MetadataServiceFacade facade,
+                          final CommentsPresenterAppearance appearance,
+                          final CommentsAutoBeanFactory factory,
+                          final JsonUtil jsonUtil,
+                          final UserInfo userInfo,
+                          @Assisted final String resourceID,
+                          @Assisted final boolean owner) {
         this.view = cv;
+        this.jsonUtil = jsonUtil;
+        this.userInfo = userInfo;
         this.resourceID = resourceID;
         this.facade = facade;
         this.isResourceOwner = owner;
+        this.factory = factory;
         this.appearance = appearance;
-        this.jsonUtil = JsonUtil.getInstance();
+        this.view.setPresenter(this);
         getComments();
     }
 
@@ -65,7 +67,6 @@ public class CommentsPresenterImpl implements CommentsView.Presenter {
     @Override
     public void onAdd(Comment c) {
         addComment(c);
-
     }
 
     @Override
@@ -104,7 +105,7 @@ public class CommentsPresenterImpl implements CommentsView.Presenter {
                 IplantAnnouncer.getInstance().schedule(new SuccessAnnouncementConfig(appearance.addComment()));
                 JSONObject obj = jsonUtil.getObject(result);
                 JSONObject comObj = jsonUtil.getObject(obj, Comment.COMMENT_TEXT_KEY);
-                AutoBean<Comment> cl = AutoBeanCodex.decode(cabf, Comment.class, comObj.toString());
+                AutoBean<Comment> cl = AutoBeanCodex.decode(factory, Comment.class, comObj.toString());
                 view.addComment(cl.as());
             }
 
@@ -144,7 +145,7 @@ public class CommentsPresenterImpl implements CommentsView.Presenter {
 
             @Override
             public void onSuccess(String result) {
-                AutoBean<CommentList> cl = AutoBeanCodex.decode(cabf, CommentList.class, result);
+                AutoBean<CommentList> cl = AutoBeanCodex.decode(factory, CommentList.class, result);
                 loadComments(cl.as().getComments());
             }
         });
@@ -152,7 +153,7 @@ public class CommentsPresenterImpl implements CommentsView.Presenter {
 
     @Override
     public void onSelect(Comment comment) {
-        if ((comment.getCommentedBy().equalsIgnoreCase(UserInfo.getInstance().getUsername()) || isResourceOwner) && !(comment.isRetracted())) {
+        if ((comment.getCommentedBy().equalsIgnoreCase(userInfo.getUsername()) || isResourceOwner) && !(comment.isRetracted())) {
             view.enableDelete();
         } else {
             view.disableDelete();
