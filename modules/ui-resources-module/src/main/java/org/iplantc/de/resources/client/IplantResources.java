@@ -215,22 +215,6 @@ public interface IplantResources extends ClientBundle, AppResources, DiskResourc
     @Source("group_key.png")
     ImageResource share();
 
-    /**
-	 * the close window icon
-	 * 
-	 * @return image.
-	 */
-    @Source("close.png")
-    ImageResource close();
-
-    /**
-	 * the close window icon to show when the mouse is over the closer
-	 * 
-	 * @return image.
-	 */
-	@Source("close_hover.png")
-	ImageResource closeHover();
-
 	/**
 	 * Image resource.
 	 * 
@@ -661,14 +645,6 @@ public interface IplantResources extends ClientBundle, AppResources, DiskResourc
     @Source("forums.png")
     ImageResource forums();
     
-    /**
-     * Accesses the style for the Announcer widget
-     * 
-     * @return the CSS resource associated with the style
-     */
-	@Source("Announcer.css")
-	AnnouncerStyle getAnnouncerStyle();
-
     @Source("ToolRequestStatusHelp.css")
     ToolRequestStatusHelpStyle getToolRequestStatusHelpCss();
 

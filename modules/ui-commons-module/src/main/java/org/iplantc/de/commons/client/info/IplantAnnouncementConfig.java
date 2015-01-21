@@ -1,8 +1,7 @@
 package org.iplantc.de.commons.client.info;
 
-import org.iplantc.de.resources.client.AnnouncerStyle;
-import org.iplantc.de.resources.client.IplantResources;
-
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.user.client.ui.HTML;
@@ -15,23 +14,36 @@ import com.sencha.gxt.widget.core.client.button.IconButton.IconConfig;
  * text message to be displayed by the Announcement. By default, the message is closable by the user and
  * will close automatically after 5 seconds.
  * 
- * @author psarando
+ * @author psarando, jstroot
  * 
  */
 public class IplantAnnouncementConfig {
 
     // SS updated to 5s from 10s since 5s is seems too long
     protected static final int DEFAULT_TIMEOUT_ms = 5000;
-    protected static final AnnouncerStyle STYLE;
-    protected static final IconConfig CLOSER_CFG;
+    protected final IconConfig CLOSER_CFG;
 
-    static {
-        STYLE = IplantResources.RESOURCES.getAnnouncerStyle();
-        STYLE.ensureInjected();
-        CLOSER_CFG = new IconConfig(STYLE.closeButton(), STYLE.closeButtonOver());
+    public interface IplantAnnouncementConfigAppearance {
+
+        String closeButton();
+
+        String closeButtonOver();
+
+        String contentStyle();
+
+        ImageResource errorIcon();
+
+        ImageResource okIcon();
+
+        String panelErrorStyle();
+
+        String panelMultipleStyle();
+
+        String panelStyle();
     }
 
     protected final SafeHtml message;
+    protected final IplantAnnouncementConfigAppearance appearance;
     private final boolean closable;
     private final int timeout_ms;
 
@@ -59,10 +71,17 @@ public class IplantAnnouncementConfig {
      * @param message
      * @param closable
      */
-    public IplantAnnouncementConfig(final SafeHtml message, boolean closable) {
+    protected IplantAnnouncementConfig(final SafeHtml message,
+                                       final boolean closable) {
         this(message, closable, DEFAULT_TIMEOUT_ms);
     }
 
+    public IplantAnnouncementConfig(final SafeHtml message,
+                                    final boolean closable,
+                                    final int timeout_ms) {
+        this(message, closable, timeout_ms,
+             GWT.<IplantAnnouncementConfigAppearance> create(IplantAnnouncementConfigAppearance.class));
+    }
     /**
      * Constructs an announcement config. Setting a timeout of 0 or less will cause the message to not
      * close automatically.
@@ -74,10 +93,15 @@ public class IplantAnnouncementConfig {
      * @param closable
      * @param timeout_ms
      */
-    public IplantAnnouncementConfig(final SafeHtml message, boolean closable, int timeout_ms) {
+    public IplantAnnouncementConfig(final SafeHtml message,
+                                    final boolean closable,
+                                    final int timeout_ms,
+                                    final IplantAnnouncementConfigAppearance appearance) {
         this.closable = closable;
         this.timeout_ms = timeout_ms;
         this.message = message;
+        this.appearance = appearance;
+        CLOSER_CFG = new IconConfig(appearance.closeButton(), appearance.closeButtonOver());
     }
 
     public boolean isClosable() {
@@ -89,15 +113,15 @@ public class IplantAnnouncementConfig {
     }
 
     public String getPanelStyle() {
-        return STYLE.panel();
+        return appearance.panelStyle();
     }
 
     public String getContentStyle() {
-        return STYLE.content();
+        return appearance.contentStyle();
     }
 
     public String getPanelMultipleStyle() {
-        return STYLE.panelMultiple();
+        return appearance.panelMultipleStyle();
     }
 
     public IconConfig getCloseIconConfig() {

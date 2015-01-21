@@ -34,4 +34,8 @@
     <replace-with class="org.iplantc.de.theme.base.client.commons.error.ErrorHandlerDefaultAppearance">
         <when-type-is class="org.iplantc.de.commons.client.ErrorHandler.ErrorHandlerAppearance" />
     </replace-with>
+
+    <replace-with class="org.iplantc.de.theme.base.client.commons.announcer.IplantAnnouncementConfigDefaultAppearance">
+        <when-type-is class="org.iplantc.de.commons.client.info.IplantAnnouncementConfig.IplantAnnouncementConfigAppearance" />
+    </replace-with>
 </module>
