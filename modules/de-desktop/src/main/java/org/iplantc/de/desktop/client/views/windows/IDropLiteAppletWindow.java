@@ -4,7 +4,7 @@ import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.events.diskResources.FolderRefreshEvent;
 import org.iplantc.de.client.models.WindowState;
 import org.iplantc.de.client.models.diskResources.Folder;
-import org.iplantc.de.commons.client.views.gxt3.dialogs.IplantInfoBox;
+import org.iplantc.de.commons.client.views.dialogs.IplantInfoBox;
 import org.iplantc.de.commons.client.views.window.configs.IDropLiteWindowConfig;
 import org.iplantc.de.desktop.client.idroplite.presenter.IDropLitePresenter;
 import org.iplantc.de.desktop.client.idroplite.views.IDropLiteView;

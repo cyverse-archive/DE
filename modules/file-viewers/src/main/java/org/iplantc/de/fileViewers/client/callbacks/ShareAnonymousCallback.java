@@ -4,7 +4,7 @@ import org.iplantc.de.client.models.IsMaskable;
 import org.iplantc.de.client.models.diskResources.File;
 import org.iplantc.de.client.util.JsonUtil;
 import org.iplantc.de.commons.client.ErrorHandler;
-import org.iplantc.de.commons.client.views.gxt3.dialogs.IPlantDialog;
+import org.iplantc.de.commons.client.views.dialogs.IPlantDialog;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.json.client.JSONObject;

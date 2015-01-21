@@ -6,7 +6,7 @@ package org.iplantc.de.diskResource.client.views.dialogs;
 import org.iplantc.de.client.models.viewer.InfoType;
 import org.iplantc.de.client.services.DiskResourceServiceFacade;
 import org.iplantc.de.commons.client.ErrorHandler;
-import org.iplantc.de.commons.client.views.gxt3.dialogs.IPlantDialog;
+import org.iplantc.de.commons.client.views.dialogs.IPlantDialog;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 

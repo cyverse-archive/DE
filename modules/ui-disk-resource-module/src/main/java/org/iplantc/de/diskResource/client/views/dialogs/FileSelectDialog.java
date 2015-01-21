@@ -5,7 +5,7 @@ import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.client.models.diskResources.File;
 import org.iplantc.de.client.models.viewer.InfoType;
 import org.iplantc.de.client.util.DiskResourceUtil;
-import org.iplantc.de.commons.client.views.gxt3.dialogs.IPlantDialog;
+import org.iplantc.de.commons.client.views.dialogs.IPlantDialog;
 import org.iplantc.de.diskResource.client.events.DiskResourceSelectionChangedEvent;
 import org.iplantc.de.diskResource.client.gin.factory.DiskResourcePresenterFactory;
 import org.iplantc.de.diskResource.client.views.DiskResourceView;

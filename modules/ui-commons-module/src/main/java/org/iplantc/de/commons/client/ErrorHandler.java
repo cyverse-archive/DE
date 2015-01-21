@@ -2,7 +2,7 @@ package org.iplantc.de.commons.client;
 
 import org.iplantc.de.client.models.errorHandling.ServiceError;
 import org.iplantc.de.client.util.JsonUtil;
-import org.iplantc.de.commons.client.views.gxt3.dialogs.ErrorDialog;
+import org.iplantc.de.commons.client.views.dialogs.ErrorDialog;
 
 import com.google.common.base.Strings;
 import com.google.gwt.core.client.GWT;

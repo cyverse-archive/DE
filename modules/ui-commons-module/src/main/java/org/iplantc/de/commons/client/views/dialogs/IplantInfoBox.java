@@ -1,4 +1,4 @@
-package org.iplantc.de.commons.client.views.gxt3.dialogs;
+package org.iplantc.de.commons.client.views.dialogs;
 
 import com.sencha.gxt.widget.core.client.box.MessageBox;
 

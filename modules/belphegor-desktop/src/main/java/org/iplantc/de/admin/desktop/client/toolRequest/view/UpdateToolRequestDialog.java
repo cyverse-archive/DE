@@ -5,7 +5,7 @@ import org.iplantc.de.client.models.toolRequest.ToolRequest;
 import org.iplantc.de.client.models.toolRequest.ToolRequestAutoBeanFactory;
 import org.iplantc.de.client.models.toolRequest.ToolRequestStatus;
 import org.iplantc.de.client.models.toolRequest.ToolRequestUpdate;
-import org.iplantc.de.commons.client.views.gxt3.dialogs.IPlantDialog;
+import org.iplantc.de.commons.client.views.dialogs.IPlantDialog;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.KeyPressEvent;

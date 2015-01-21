@@ -24,11 +24,11 @@
 
     <!-- Dialogs -->
     <replace-with class="org.iplantc.de.theme.base.client.commons.error.IplantErrorDialogDefaultAppearance">
-        <when-type-is class="org.iplantc.de.commons.client.views.gxt3.dialogs.IplantErrorDialog.IplantErrorDialogAppearance" />
+        <when-type-is class="org.iplantc.de.commons.client.views.dialogs.IplantErrorDialog.IplantErrorDialogAppearance" />
     </replace-with>
 
     <replace-with class="org.iplantc.de.theme.base.client.commons.error.ErrorDialogDefaultAppearance">
-        <when-type-is class="org.iplantc.de.commons.client.views.gxt3.dialogs.ErrorDialog.ErrorDialogAppearance" />
+        <when-type-is class="org.iplantc.de.commons.client.views.dialogs.ErrorDialog.ErrorDialogAppearance" />
     </replace-with>
 
     <replace-with class="org.iplantc.de.theme.base.client.commons.error.ErrorHandlerDefaultAppearance">

@@ -6,7 +6,7 @@
              xmlns:gxtForm="urn:import:com.sencha.gxt.widget.core.client.form">
 
     <ui:with field="appearance"
-             type="org.iplantc.de.commons.client.views.gxt3.dialogs.ErrorDialog.ErrorDialogAppearance" />
+             type="org.iplantc.de.commons.client.views.dialogs.ErrorDialog.ErrorDialogAppearance" />
 
     <ui:with field="topData"
              type="com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer.VerticalLayoutData">

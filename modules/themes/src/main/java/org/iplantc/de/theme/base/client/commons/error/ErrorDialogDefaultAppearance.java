@@ -1,6 +1,6 @@
 package org.iplantc.de.theme.base.client.commons.error;
 
-import org.iplantc.de.commons.client.views.gxt3.dialogs.ErrorDialog;
+import org.iplantc.de.commons.client.views.dialogs.ErrorDialog;
 import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 
 import com.google.gwt.core.client.GWT;

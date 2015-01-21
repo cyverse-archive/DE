@@ -7,7 +7,7 @@ import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.client.services.DiskResourceServiceFacade;
 import org.iplantc.de.client.util.DiskResourceUtil;
 import org.iplantc.de.commons.client.validators.ImportUrlValidator;
-import org.iplantc.de.commons.client.views.gxt3.dialogs.IPlantDialog;
+import org.iplantc.de.commons.client.views.dialogs.IPlantDialog;
 import org.iplantc.de.resources.client.messages.I18N;
 
 import com.google.common.collect.Lists;

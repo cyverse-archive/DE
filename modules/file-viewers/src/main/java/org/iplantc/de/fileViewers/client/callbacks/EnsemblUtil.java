@@ -10,7 +10,7 @@ import org.iplantc.de.client.models.viewer.InfoType;
 import org.iplantc.de.client.services.DiskResourceServiceFacade;
 import org.iplantc.de.client.util.CommonModelUtils;
 import org.iplantc.de.client.util.DiskResourceUtil;
-import org.iplantc.de.commons.client.views.gxt3.dialogs.IplantInfoBox;
+import org.iplantc.de.commons.client.views.dialogs.IplantInfoBox;
 
 import com.google.common.base.Strings;
 import com.google.gwt.core.client.GWT;

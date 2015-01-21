@@ -33,7 +33,7 @@ import org.iplantc.de.commons.client.comments.gin.factory.CommentsPresenterFacto
 import org.iplantc.de.commons.client.info.ErrorAnnouncementConfig;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
 import org.iplantc.de.commons.client.info.SuccessAnnouncementConfig;
-import org.iplantc.de.commons.client.views.gxt3.dialogs.IPlantDialog;
+import org.iplantc.de.commons.client.views.dialogs.IPlantDialog;
 import org.iplantc.de.commons.client.views.window.configs.FileViewerWindowConfig;
 import org.iplantc.de.commons.client.views.window.configs.PathListWindowConfig;
 import org.iplantc.de.commons.client.views.window.configs.TabularFileViewerWindowConfig;
