@@ -3,7 +3,7 @@ package org.iplantc.de.admin.desktop.client.systemMessage.view;
 import org.iplantc.de.admin.desktop.client.systemMessage.SystemMessageView;
 import org.iplantc.de.admin.desktop.client.systemMessage.view.cells.SystemMessageNameCell;
 import org.iplantc.de.client.models.systemMessages.SystemMessage;
-import org.iplantc.de.commons.client.views.gxt3.dialogs.IPlantDialog;
+import org.iplantc.de.commons.client.views.dialogs.IPlantDialog;
 
 import com.google.common.collect.Lists;
 import com.google.gwt.core.client.GWT;

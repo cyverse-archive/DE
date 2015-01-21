@@ -3,7 +3,7 @@ package org.iplantc.de.fileViewers.client.callbacks;
 import org.iplantc.de.client.models.IsMaskable;
 import org.iplantc.de.client.util.JsonUtil;
 import org.iplantc.de.commons.client.ErrorHandler;
-import org.iplantc.de.commons.client.views.gxt3.dialogs.IplantInfoBox;
+import org.iplantc.de.commons.client.views.dialogs.IplantInfoBox;
 
 import com.google.common.base.Strings;
 import com.google.gwt.core.client.GWT;

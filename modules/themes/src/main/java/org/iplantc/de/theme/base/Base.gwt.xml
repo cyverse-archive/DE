@@ -3,4 +3,5 @@
     <inherits name="org.iplantc.de.theme.base.client.diskResource.DiskResource"/>
     <inherits name="org.iplantc.de.theme.base.client.fileViewers.FileViewers"/>
     <inherits name="org.iplantc.de.theme.base.client.admin.Belphegor"/>
+    <inherits name="org.iplantc.de.theme.base.client.commons.Commons" />
 </module>

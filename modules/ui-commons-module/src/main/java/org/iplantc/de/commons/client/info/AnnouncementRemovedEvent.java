@@ -25,7 +25,7 @@ public final class AnnouncementRemovedEvent extends GwtEvent<Handler> {
     /**
      * The single type object associated with this event
      */
-    public static final Type<Handler> TYPE = new Type<Handler>();
+    public static final Type<Handler> TYPE = new Type<>();
 
     private final AnnouncementId announcement;
     private final boolean announced;

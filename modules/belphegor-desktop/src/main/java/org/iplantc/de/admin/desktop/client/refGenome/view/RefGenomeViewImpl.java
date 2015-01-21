@@ -3,7 +3,7 @@ package org.iplantc.de.admin.desktop.client.refGenome.view;
 import org.iplantc.de.admin.desktop.client.refGenome.RefGenomeView;
 import org.iplantc.de.admin.desktop.client.refGenome.view.cells.ReferenceGenomeNameCell;
 import org.iplantc.de.client.models.apps.refGenome.ReferenceGenome;
-import org.iplantc.de.commons.client.views.gxt3.dialogs.IPlantDialog;
+import org.iplantc.de.commons.client.views.dialogs.IPlantDialog;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;

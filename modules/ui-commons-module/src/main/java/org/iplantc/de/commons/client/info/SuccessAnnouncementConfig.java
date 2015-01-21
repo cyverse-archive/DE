@@ -1,19 +1,17 @@
 package org.iplantc.de.commons.client.info;
 
-import org.iplantc.de.resources.client.IplantResources;
-
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.ImageElement;
-import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.IsWidget;
 
+/**
+ * @author jstroot
+ */
 public class SuccessAnnouncementConfig extends IplantAnnouncementConfig {
-
-    private final ImageResource okIcon = IplantResources.RESOURCES.tick();
 
     public SuccessAnnouncementConfig(final String message) {
         this(SafeHtmlUtils.fromString(message));
@@ -42,7 +40,7 @@ public class SuccessAnnouncementConfig extends IplantAnnouncementConfig {
     @Override
     public IsWidget getWidget() {
         ImageElement imgEl = Document.get().createImageElement();
-        imgEl.setSrc(okIcon.getSafeUri().asString());
+        imgEl.setSrc(appearance.okIcon().getSafeUri().asString());
 
         SafeHtmlBuilder sb = new SafeHtmlBuilder();
         sb.appendHtmlConstant(imgEl.getString());

@@ -1,0 +1,68 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+             xmlns:g="urn:import:com.google.gwt.user.client.ui"
+             xmlns:gxt="urn:import:com.sencha.gxt.widget.core.client"
+             xmlns:container="urn:import:com.sencha.gxt.widget.core.client.container"
+             xmlns:gxtForm="urn:import:com.sencha.gxt.widget.core.client.form">
+
+    <ui:with field="appearance"
+             type="org.iplantc.de.commons.client.views.dialogs.ErrorDialog.ErrorDialogAppearance" />
+
+    <ui:with field="topData"
+             type="com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer.VerticalLayoutData">
+        <ui:attributes width="1" height="1"/>
+    </ui:with>
+
+    <ui:with field="outerMargins"
+             type="com.sencha.gxt.core.client.util.Margins">
+        <ui:attributes top="1" right="1" bottom="1" left="1"/>
+    </ui:with>
+    <ui:with field="northMargins"
+             type="com.sencha.gxt.core.client.util.Margins">
+        <ui:attributes top="1" right="1" bottom="1" left="1"/>
+    </ui:with>
+    <ui:with field="centerMargins"
+             type="com.sencha.gxt.core.client.util.Margins">
+        <ui:attributes top="0" right="0" bottom="0" left="0"/>
+    </ui:with>
+
+    <ui:with field="outerData"
+             type="com.sencha.gxt.widget.core.client.container.MarginData">
+        <ui:attributes margins="{outerMargins}"/>
+    </ui:with>
+    <ui:with field="northData"
+             type="com.sencha.gxt.widget.core.client.container.BorderLayoutContainer.BorderLayoutData">
+        <ui:attributes size="80" margins="{northMargins}"/>
+    </ui:with>
+    <ui:with field="centerData"
+             type="com.sencha.gxt.widget.core.client.container.MarginData">
+        <ui:attributes margins="{centerMargins}"/>
+    </ui:with>
+
+    <container:SimpleContainer>
+        <container:child layoutData="{outerData}">
+            <container:BorderLayoutContainer borders="true">
+                <container:north layoutData="{northData}">
+                    <container:HorizontalLayoutContainer styleName="{appearance.bgColor}">
+                        <g:Image resource="{appearance.errorIcon}"/>
+                        <g:HTML ui:field="errorMsg"
+                                wordWrap="true"/>
+                    </container:HorizontalLayoutContainer>
+                </container:north>
+                <container:center layoutData="{centerData}">
+                    <gxt:FramedPanel ui:field="detailsPanel"
+                                     headerVisible="true"
+                                     collapsible="true">
+                        <container:VerticalLayoutContainer ui:field="detailsContainer">
+                            <container:child layoutData="{topData}">
+                                <gxtForm:TextArea ui:field="descriptionArea"
+                                                  readOnly="true"/>
+                            </container:child>
+                        </container:VerticalLayoutContainer>
+                    </gxt:FramedPanel>
+                </container:center>
+            </container:BorderLayoutContainer>
+        </container:child>
+    </container:SimpleContainer>
+
+</ui:UiBinder>

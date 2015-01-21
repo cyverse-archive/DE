@@ -46,16 +46,17 @@ import java.util.List;
 /**
  * This class is a clone-and-own of the GXT 3.0.1 {@link FileUploadField} in order to apply
  * a "markInvalid" method.
- * 
+ * <p/>
  * A file upload field. When using this field, the containing form panel's
  * encoding must be set to MULTIPART using {@link com.sencha.gxt.widget.core.client.form.FormPanel#setEncoding(Encoding)}. In addition, the
  * method should be
  * set to POST using {@link com.sencha.gxt.widget.core.client.form.FormPanel#setMethod(Method)}
- * 
- * <p />
+ * <p/>
+ * <p/>
  * You must set a name for uploads to work with Firefox.
+ * <p/>
  *
- * KLUDGE CORE-5583 Need to refactor, changes made to remove compile errors.
+ * @author jstroot
  */
 public class IPCFileUploadField extends Component implements IsField<String>, HasChangeHandlers, HasName, HasValidHandlers, HasInvalidHandlers, HasKeyUpHandlers {
 
@@ -69,33 +70,33 @@ public class IPCFileUploadField extends Component implements IsField<String>, Ha
 
     }
 
-    private FileUploadFieldMessages messages;
     private final FileUploadFieldAppearance appearance;
-    private final int buttonOffset = 3;
     private final TextButton button;
-    private XElement file;
-    private String name;
+    private final int buttonOffset = 3;
     private final TextField input;
+    private XElement file;
+    private FileUploadFieldMessages messages;
+    private String name;
 
     /**
      * Creates a new file upload field.
      */
     public IPCFileUploadField() {
-        this(GWT.<FileUploadFieldAppearance> create(FileUploadFieldAppearance.class));
+        this(GWT.<FileUploadFieldAppearance>create(FileUploadFieldAppearance.class));
     }
 
     /**
      * Creates a new file upload field.
-     * 
+     *
      * @param appearance the appearance
      */
-    public IPCFileUploadField(FileUploadFieldAppearance appearance) {
+    public IPCFileUploadField(final FileUploadFieldAppearance appearance) {
         this.appearance = appearance;
 
         SafeHtmlBuilder builder = new SafeHtmlBuilder();
         this.appearance.render(builder);
 
-        setElement(XDOM.create(builder.toSafeHtml()));
+        setElement(Element.as(XDOM.create(builder.toSafeHtml())));
 
         input = new TextField();
         input.setReadOnly(true);
@@ -117,12 +118,31 @@ public class IPCFileUploadField extends Component implements IsField<String>, Ha
         getElement().appendChild(wrapper);
 
         ensureVisibilityOnSizing = true;
-         setWidth(150);
+        setWidth(150);
     }
 
     @Override
     public HandlerRegistration addChangeHandler(ChangeHandler handler) {
         return addDomHandler(handler, ChangeEvent.getType());
+    }
+
+    @Override
+    public HandlerRegistration addInvalidHandler(InvalidHandler handler) {
+        return input.addInvalidHandler(handler);
+    }
+
+    @Override
+    public HandlerRegistration addKeyUpHandler(KeyUpHandler handler) {
+        return input.addKeyUpHandler(handler);
+    }
+
+    @Override
+    public HandlerRegistration addValidHandler(ValidHandler handler) {
+        return input.addValidHandler(handler);
+    }
+
+    public void addValidator(AbstractValidator<String> validator) {
+        input.addValidator(validator);
     }
 
     @Override
@@ -153,7 +173,7 @@ public class IPCFileUploadField extends Component implements IsField<String>, Ha
 
     /**
      * Returns the file upload field messages.
-     * 
+     *
      * @return the messages
      */
     public FileUploadFieldMessages getMessages() {
@@ -171,7 +191,7 @@ public class IPCFileUploadField extends Component implements IsField<String>, Ha
     @Override
     public String getValue() {
         String value = getFileInput().getValue();
-        if( !Strings.isNullOrEmpty(value)) {
+        if (!Strings.isNullOrEmpty(value)) {
             return value.replace("C:\\fakepath\\", "");
         } else {
             return value;
@@ -180,7 +200,7 @@ public class IPCFileUploadField extends Component implements IsField<String>, Ha
 
     /**
      * Returns the field's allow blank state.
-     * 
+     *
      * @return true if blank values are allowed
      */
     public boolean isAllowBlank() {
@@ -189,7 +209,7 @@ public class IPCFileUploadField extends Component implements IsField<String>, Ha
 
     /**
      * Returns the read only state.
-     * 
+     *
      * @return true if read only, otherwise false
      */
     public boolean isReadOnly() {
@@ -198,7 +218,7 @@ public class IPCFileUploadField extends Component implements IsField<String>, Ha
 
     /**
      * Returns whether or not the field value is currently valid.
-     * 
+     *
      * @return true if the value is valid, otherwise false
      */
     public boolean isValid() {
@@ -208,6 +228,10 @@ public class IPCFileUploadField extends Component implements IsField<String>, Ha
     @Override
     public boolean isValid(boolean preventMark) {
         return input.isValid(preventMark);
+    }
+
+    public void markInvalid(String msg) {
+        input.markInvalid(msg);
     }
 
     @Override
@@ -224,7 +248,7 @@ public class IPCFileUploadField extends Component implements IsField<String>, Ha
             onChange(event);
         }
 
-        if ((event.getTypeInt() != Event.ONCLICK) && event.getEventTarget().<Element> cast().isOrHasChild(file)) {
+        if ((event.getTypeInt() != Event.ONCLICK) && event.getEventTarget().<Element>cast().isOrHasChild(file)) {
             button.onBrowserEvent(event);
         }
     }
@@ -236,7 +260,7 @@ public class IPCFileUploadField extends Component implements IsField<String>, Ha
 
     /**
      * Sets whether a field is valid when its value length = 0 (default to true).
-     * 
+     *
      * @param allowBlank true to allow blanks, false otherwise
      */
     public void setAllowBlank(boolean allowBlank) {
@@ -244,8 +268,20 @@ public class IPCFileUploadField extends Component implements IsField<String>, Ha
     }
 
     /**
+     * Set the enabled state of the children as well as itself.
+     *
+     * @see Component#setEnabled(boolean)
+     */
+    @Override
+    public final void setEnabled(final boolean enabled) {
+        super.setEnabled(enabled);
+        button.setEnabled(enabled);
+        input.setEnabled(enabled);
+    }
+
+    /**
      * Sets the file upload field messages.
-     * 
+     *
      * @param messages the messages
      */
     public void setMessages(FileUploadFieldMessages messages) {
@@ -255,12 +291,12 @@ public class IPCFileUploadField extends Component implements IsField<String>, Ha
     @Override
     public void setName(String name) {
         this.name = name;
-        file.<InputElement> cast().setName(name);
+        file.<InputElement>cast().setName(name);
     }
 
     /**
      * Sets the field's read only state.
-     * 
+     *
      * @param readonly the read only state
      */
     public void setReadOnly(boolean readonly) {
@@ -288,11 +324,10 @@ public class IPCFileUploadField extends Component implements IsField<String>, Ha
         file.setId(XDOM.getUniqueId());
         file.addClassName(appearance.fileInputClass());
         file.setTabIndex(-1);
-        ((InputElement)file.cast()).setName(name);
+        ((InputElement) file.cast()).setName(name);
 
         getElement().insertFirst(file);
 
-        // file.setEnabled(isEnabled());
     }
 
     @Override
@@ -314,7 +349,7 @@ public class IPCFileUploadField extends Component implements IsField<String>, Ha
      * When resetting this field the file input will change.
      */
     protected InputElement getFileInput() {
-        return (InputElement)file.cast();
+        return (InputElement) file.cast();
     }
 
     @Override
@@ -336,7 +371,7 @@ public class IPCFileUploadField extends Component implements IsField<String>, Ha
             event.stopPropagation();
             event.preventDefault();
             return;
-    }
+        }
         super.onBlur(event);
     }
 
@@ -347,7 +382,7 @@ public class IPCFileUploadField extends Component implements IsField<String>, Ha
         input.setValue(getFileInput().getValue().replace("C:\\fakepath\\", ""));
         if (GXT.isIE()) {
             input.setReadOnly(true);
-    }
+        }
         input.focus();
         //validate on change
         validate(false);
@@ -362,41 +397,6 @@ public class IPCFileUploadField extends Component implements IsField<String>, Ha
 
     protected void resizeFile() {
         file.setWidth(button.getOffsetWidth());
-    }
-
-    public void markInvalid(String msg) {
-        input.markInvalid(msg);
-    }
-
-    @Override
-    public HandlerRegistration addValidHandler(ValidHandler handler) {
-        return input.addValidHandler(handler);
-    }
-
-    @Override
-    public HandlerRegistration addInvalidHandler(InvalidHandler handler) {
-        return input.addInvalidHandler(handler);
-    }
-
-    @Override
-    public HandlerRegistration addKeyUpHandler(KeyUpHandler handler) {
-        return input.addKeyUpHandler(handler);
-    }
-    
-    /**
-     * Set the enabled state of the children as well as itself.
-     * 
-     * @see Component#setEnabled(boolean)
-     */
-    @Override
-    public final void setEnabled(final boolean enabled) {
-        super.setEnabled(enabled);
-        button.setEnabled(enabled);
-        input.setEnabled(enabled);
-    }
-
-    public void addValidator(AbstractValidator<String> validator) {
-        input.addValidator(validator);
     }
 
 }

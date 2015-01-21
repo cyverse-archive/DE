@@ -2,6 +2,7 @@ package org.iplantc.de.commons.client.comments.view;
 
 import org.iplantc.de.client.models.comments.Comment;
 import org.iplantc.de.client.models.comments.CommentsAutoBeanFactory;
+import org.iplantc.de.commons.client.comments.CommentsView;
 import org.iplantc.de.commons.client.comments.view.cells.CommentsCell;
 
 import com.google.gwt.core.client.GWT;
@@ -14,6 +15,7 @@ import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.uibinder.client.UiTemplate;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.inject.Inject;
 import com.google.web.bindery.autobean.shared.AutoBeanCodex;
 
 import com.sencha.gxt.core.client.IdentityValueProvider;
@@ -36,15 +38,34 @@ import com.sencha.gxt.widget.core.client.selection.SelectionChangedEvent.Selecti
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * @author jstroot
+ */
 public class CommentsViewImpl extends Composite implements CommentsView {
-
-    private static CommentsViewUiBinder uiBinder = GWT.create(CommentsViewUiBinder.class);
 
     @UiTemplate("CommentsView.ui.xml")
     interface CommentsViewUiBinder extends UiBinder<Widget, CommentsViewImpl> {
     }
 
-    public CommentsViewImpl() {
+    @UiField TextButton addBtn;
+    @UiField(provided = true) ColumnModel<Comment> cm;
+    @UiField TextArea commentBox;
+    @UiField VerticalLayoutContainer container;
+    @UiField TextButton deleteBtn;
+    @UiField Grid<Comment> grid;
+    @UiField(provided = true) ListStore<Comment> store;
+    @UiField GridView<Comment> view;
+    @UiField(provided = true) CommentsViewAppearance appearance;
+
+    @Inject CommentsAutoBeanFactory factory;
+
+    private static CommentsViewUiBinder uiBinder = GWT.create(CommentsViewUiBinder.class);
+    private CommentsComparator commentComparator;
+    private Presenter presenter;
+
+    @Inject
+    CommentsViewImpl(final CommentsViewAppearance appearance) {
+        this.appearance = appearance;
         commentComparator = new CommentsComparator();
         buildColumnModel();
         buildStore();
@@ -63,13 +84,12 @@ public class CommentsViewImpl extends Composite implements CommentsView {
                 } else {
                     deleteBtn.disable();
                 }
-                
 
-                
+
             }
         });
         commentBox.addKeyPressHandler(new KeyPressHandler() {
-            
+
             @Override
             public void onKeyPress(KeyPressEvent event) {
                 if (commentBox.getCurrentValue() == null || commentBox.getCurrentValue().length() < 1) {
@@ -80,67 +100,9 @@ public class CommentsViewImpl extends Composite implements CommentsView {
                 if (event.isShiftKeyDown() && event.getNativeEvent().getKeyCode() == KeyCodes.KEY_ENTER) {
                     Comment c = buildComment();
                     presenter.onAdd(c);
-                    return;
                 }
             }
         });
-    }
-
-    private void buildStore() {
-        store = new ListStore<Comment>(new ModelKeyProvider<Comment>() {
-
-            @Override
-            public String getKey(Comment item) {
-                return item.getId();
-            }
-        });
-        store.addSortInfo(new StoreSortInfo<Comment>(commentComparator, SortDir.DESC));
-
-    }
-
-    private void buildColumnModel() {
-        ColumnConfig<Comment, Comment> comcol = new ColumnConfig<Comment, Comment>(new IdentityValueProvider<Comment>("commenttext"), 350, "Comments");
-        comcol.setCell(new CommentsCell());
-        comcol.setComparator(commentComparator);
-        ArrayList<ColumnConfig<Comment,?>> list = new ArrayList<ColumnConfig<Comment,?>>();
-        list.add(comcol);
-        cm = new ColumnModel<Comment>(list);
-    }
-
-    @UiField(provided = true)
-    ColumnModel<Comment> cm;
-
-    @UiField(provided = true)
-    ListStore<Comment> store;
-
-    @UiField
-    GridView<Comment> view;
-
-    @UiField
-    Grid<Comment> grid;
-
-    @UiField
-    TextButton deleteBtn;
-
-    @UiField
-    TextArea commentBox;
-
-    @UiField
-    TextButton addBtn;
-
-    @UiField
-    VerticalLayoutContainer container;
-
-    private Presenter presenter;
-
-    private final CommentsAutoBeanFactory factory = GWT.create(CommentsAutoBeanFactory.class);;
-
-    private CommentsComparator commentComparator;
-
-    @UiHandler("addBtn")
-    void addHandler(SelectEvent event) {
-        Comment c = buildComment();
-        presenter.onAdd(c);
     }
 
     @Override
@@ -152,16 +114,21 @@ public class CommentsViewImpl extends Composite implements CommentsView {
         commentBox.clear();
     }
 
-    private Comment buildComment() {
-        Comment c = AutoBeanCodex.decode(factory, Comment.class, "{}").as();
-        c.setCommentText(commentBox.getCurrentValue());
-        return c;
+    @Override
+    public void disableDelete() {
+        deleteBtn.disable();
+
     }
 
-    @UiHandler("deleteBtn")
-    void deleteBtn(SelectEvent event) {
-        Comment selectedItem = grid.getSelectionModel().getSelectedItem();
-        presenter.onDelete(selectedItem);
+    @Override
+    public void enableDelete() {
+        deleteBtn.enable();
+
+    }
+
+    @Override
+    public Widget getWidget() {
+        return container;
     }
 
     @Override
@@ -172,30 +139,54 @@ public class CommentsViewImpl extends Composite implements CommentsView {
     }
 
     @Override
-    public void setPresenter(Presenter p) {
-        this.presenter = p;
-    }
-
-    @Override
-    public Widget getWidget() {
-        return container;
-    }
-
-    @Override
     public void retractComment(Comment c) {
         store.update(c);
         grid.getView().refresh(false);
     }
 
     @Override
-    public void enableDelete() {
-        deleteBtn.enable();
-
+    public void setPresenter(Presenter p) {
+        this.presenter = p;
     }
 
-    @Override
-    public void disableDelete() {
-        deleteBtn.disable();
+    @UiHandler("addBtn")
+    void addHandler(SelectEvent event) {
+        Comment c = buildComment();
+        presenter.onAdd(c);
+    }
+
+    @UiHandler("deleteBtn")
+    void deleteBtn(SelectEvent event) {
+        Comment selectedItem = grid.getSelectionModel().getSelectedItem();
+        presenter.onDelete(selectedItem);
+    }
+
+    private void buildColumnModel() {
+        ColumnConfig<Comment, Comment> comcol = new ColumnConfig<>(new IdentityValueProvider<Comment>(Comment.COMMENT_TEXT_KEY),
+                                                                   appearance.commentColumnWidth(),
+                                                                   appearance.commentColumnHeader());
+        comcol.setCell(new CommentsCell());
+        comcol.setComparator(commentComparator);
+        ArrayList<ColumnConfig<Comment, ?>> list = new ArrayList<>();
+        list.add(comcol);
+        cm = new ColumnModel<>(list);
+    }
+
+    private Comment buildComment() {
+        Comment c = AutoBeanCodex.decode(factory, Comment.class, "{}").as();
+        c.setCommentText(commentBox.getCurrentValue());
+        return c;
+    }
+
+    private void buildStore() {
+        store = new ListStore<>(new ModelKeyProvider<Comment>() {
+
+            @Override
+            public String getKey(Comment item) {
+                return item.getId();
+            }
+        });
+        store.addSortInfo(new StoreSortInfo<>(commentComparator, SortDir.DESC));
 
     }
 

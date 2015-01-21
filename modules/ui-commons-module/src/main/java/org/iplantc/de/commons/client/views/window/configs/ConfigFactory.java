@@ -17,6 +17,9 @@ import com.google.web.bindery.autobean.shared.impl.StringQuoter;
 
 import java.util.Date;
 
+/**
+ * @author jstroot
+ */
 public class ConfigFactory {
     private static ConfigAutoBeanFactory factory = GWT.create(ConfigAutoBeanFactory.class);
     private static int dataWindowCount = 0;
