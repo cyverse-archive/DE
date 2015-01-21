@@ -269,6 +269,11 @@ public class MultiFileSelectorField extends Composite implements IsField<List<Ha
     public void reset() {/* Do Nothing */ }
 
     @Override
+    public void hideResetButton() {
+        /* Do Nothing */
+    }
+
+    @Override
     public void setDelegate(EditorDelegate<List<HasPath>> delegate) {/* Do Nothing */ }
 
     public void setEmptyText(String emptyText) {

@@ -133,6 +133,7 @@ public class PreferencesDialog extends IPlantDialog implements Editor<UserSettin
         super(true);
         this.appearance = appearance;
         this.defaultOutputFolder = folderSelectorFieldFactory.defaultFolderSelector();
+        this.defaultOutputFolder.hideResetButton();
         this.KB_CONSTANTS = kbConstants;
         setHeadingText(appearance.preferences());
         VerticalLayoutContainer vlc = uiBinder.createAndBindUi(this);
