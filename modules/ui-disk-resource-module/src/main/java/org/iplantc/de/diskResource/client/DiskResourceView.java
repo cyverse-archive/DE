@@ -1,4 +1,4 @@
-package org.iplantc.de.diskResource.client.views;
+package org.iplantc.de.diskResource.client;
 
 import org.iplantc.de.client.models.HasId;
 import org.iplantc.de.client.models.HasPath;
@@ -7,6 +7,7 @@ import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.client.models.tags.IplantTag;
 import org.iplantc.de.client.services.DiskResourceServiceFacade;
+import org.iplantc.de.diskResource.client.views.HasHandlerRegistrationMgmt;
 import org.iplantc.de.tags.client.Taggable;
 import org.iplantc.de.commons.client.views.window.configs.FileViewerWindowConfig;
 import org.iplantc.de.commons.client.views.window.configs.PathListWindowConfig;

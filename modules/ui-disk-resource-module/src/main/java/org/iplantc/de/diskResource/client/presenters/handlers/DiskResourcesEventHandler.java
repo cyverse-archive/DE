@@ -10,7 +10,7 @@ import org.iplantc.de.diskResource.client.events.DiskResourcesDeletedEvent;
 import org.iplantc.de.diskResource.client.events.DiskResourcesMovedEvent;
 import org.iplantc.de.diskResource.client.events.DiskResourcesMovedEvent.DiskResourcesMovedEventHandler;
 import org.iplantc.de.diskResource.client.events.FolderCreatedEvent.FolderCreatedEventHandler;
-import org.iplantc.de.diskResource.client.views.DiskResourceView;
+import org.iplantc.de.diskResource.client.DiskResourceView;
 
 import java.util.Collection;
 import java.util.Set;

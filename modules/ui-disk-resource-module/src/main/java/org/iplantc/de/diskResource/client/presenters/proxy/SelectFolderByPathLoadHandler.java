@@ -4,7 +4,7 @@ import org.iplantc.de.client.models.HasPath;
 import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.commons.client.info.ErrorAnnouncementConfig;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
-import org.iplantc.de.diskResource.client.views.DiskResourceView;
+import org.iplantc.de.diskResource.client.DiskResourceView;
 import org.iplantc.de.diskResource.client.views.HasHandlerRegistrationMgmt;
 import org.iplantc.de.resources.client.messages.I18N;
 

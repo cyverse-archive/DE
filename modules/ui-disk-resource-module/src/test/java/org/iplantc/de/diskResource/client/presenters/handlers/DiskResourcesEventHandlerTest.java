@@ -2,7 +2,7 @@ package org.iplantc.de.diskResource.client.presenters.handlers;
 
 import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.diskResource.client.search.events.UpdateSavedSearchesEvent;
-import org.iplantc.de.diskResource.client.views.DiskResourceView;
+import org.iplantc.de.diskResource.client.DiskResourceView;
 
 import com.google.gwtmockito.GxtMockitoTestRunner;
 

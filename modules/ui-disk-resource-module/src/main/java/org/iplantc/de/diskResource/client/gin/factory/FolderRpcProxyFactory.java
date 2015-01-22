@@ -1,7 +1,7 @@
 package org.iplantc.de.diskResource.client.gin.factory;
 
 import org.iplantc.de.client.models.IsMaskable;
-import org.iplantc.de.diskResource.client.views.DiskResourceView;
+import org.iplantc.de.diskResource.client.DiskResourceView;
 
 /**
  * @author jstroot

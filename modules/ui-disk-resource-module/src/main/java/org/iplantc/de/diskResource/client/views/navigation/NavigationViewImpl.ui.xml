@@ -1,0 +1,8 @@
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
+             xmlns:tree="urn:import:com.sencha.gxt.widget.core.client.tree"
+             xmlns:gxt="urn:import:com.sencha.gxt.widget.core.client"
+             xmlns:g='urn:import:com.google.gwt.user.client.ui'>
+    <gxt:ContentPanel ui:field="container">
+        <tree:Tree ui:field="tree"/>
+    </gxt:ContentPanel>
+</ui:UiBinder>

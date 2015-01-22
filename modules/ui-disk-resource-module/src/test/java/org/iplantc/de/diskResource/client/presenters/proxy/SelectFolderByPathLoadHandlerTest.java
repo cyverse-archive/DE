@@ -3,7 +3,7 @@ package org.iplantc.de.diskResource.client.presenters.proxy;
 import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.commons.client.info.ErrorAnnouncementConfig;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
-import org.iplantc.de.diskResource.client.views.DiskResourceView;
+import org.iplantc.de.diskResource.client.DiskResourceView;
 
 import com.google.common.collect.Lists;
 import com.google.gwt.core.client.Scheduler;

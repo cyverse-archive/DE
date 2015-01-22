@@ -8,8 +8,8 @@ import org.iplantc.de.client.util.DiskResourceUtil;
 import org.iplantc.de.commons.client.views.dialogs.IPlantDialog;
 import org.iplantc.de.diskResource.client.events.DiskResourceSelectionChangedEvent;
 import org.iplantc.de.diskResource.client.gin.factory.DiskResourcePresenterFactory;
-import org.iplantc.de.diskResource.client.views.DiskResourceView;
-import org.iplantc.de.diskResource.client.views.DiskResourceView.Presenter;
+import org.iplantc.de.diskResource.client.DiskResourceView;
+import org.iplantc.de.diskResource.client.DiskResourceView.Presenter;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;

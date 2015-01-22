@@ -19,7 +19,7 @@ import org.iplantc.de.diskResource.client.search.presenter.impl.DataSearchPresen
 import org.iplantc.de.diskResource.client.search.views.DiskResourceSearchField;
 import org.iplantc.de.diskResource.client.search.views.cells.DiskResourceQueryForm;
 import org.iplantc.de.diskResource.client.search.views.cells.DiskResourceSearchCell;
-import org.iplantc.de.diskResource.client.views.DiskResourceView;
+import org.iplantc.de.diskResource.client.DiskResourceView;
 import org.iplantc.de.diskResource.client.views.DiskResourceViewImpl;
 import org.iplantc.de.diskResource.client.views.widgets.DiskResourceViewToolbarImpl;
 

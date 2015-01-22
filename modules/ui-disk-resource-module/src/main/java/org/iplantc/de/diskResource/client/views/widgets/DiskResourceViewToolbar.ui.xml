@@ -6,7 +6,7 @@
 	xmlns:search="urn:import:org.iplantc.de.diskResource.client.search.views">
 
     <ui:with field="appearance"
-             type="org.iplantc.de.diskResource.client.views.DiskResourceView.DiskResourceViewToolbarAppearance"/>
+             type="org.iplantc.de.diskResource.client.DiskResourceView.DiskResourceViewToolbarAppearance"/>
 	<ui:with field="res"
 		type="org.iplantc.de.resources.client.IplantResources" />
 	<ui:with field="display"

@@ -14,6 +14,7 @@ import org.iplantc.de.client.models.tags.IplantTag;
 import org.iplantc.de.client.util.CommonModelUtils;
 import org.iplantc.de.client.util.DiskResourceUtil;
 import org.iplantc.de.commons.client.widgets.IPlantAnchor;
+import org.iplantc.de.diskResource.client.DiskResourceView;
 import org.iplantc.de.diskResource.client.events.DiskResourceSelectionChangedEvent;
 import org.iplantc.de.diskResource.client.events.FolderSelectionEvent;
 import org.iplantc.de.diskResource.client.presenters.proxy.FolderContentsLoadConfig;
@@ -425,7 +426,8 @@ public class DiskResourceViewImpl extends Composite implements DiskResourceView,
     LiveGridView<DiskResource> createLiveGridView() {
         // CORE-5723 KLUDGE for Firefox bug with LiveGridView row height calculation.
         // Always use a row height of 25 for now.
-        LiveGridView<DiskResource> liveGridView = new LiveGridView<DiskResource>() {
+
+        return new LiveGridView<DiskResource>() {
 
             @Override
             protected void insertRows(int firstRow, int lastRow, boolean isUpdate) {
@@ -434,8 +436,6 @@ public class DiskResourceViewImpl extends Composite implements DiskResourceView,
                 setRowHeight(25);
             }
         };
-
-        return liveGridView;
     }
 
     @UiFactory
