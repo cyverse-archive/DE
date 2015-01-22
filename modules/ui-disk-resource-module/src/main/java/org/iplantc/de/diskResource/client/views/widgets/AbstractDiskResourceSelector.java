@@ -98,6 +98,7 @@ public abstract class AbstractDiskResourceSelector<R extends DiskResource> exten
      * @author jstroot
      */
     private final class DrSideErrorHandler extends IPlantSideErrorHandler {
+
         private final Widget button1;
         private final Widget container;
         private final Component input1;
@@ -124,7 +125,7 @@ public abstract class AbstractDiskResourceSelector<R extends DiskResource> exten
                 @Override
                 public void execute() {
                     if (isShowing()) {
-                        int offset = button1.getOffsetWidth() + buttonOffset + 16
+                        int offset = button1.getOffsetWidth() + buttonOffset + OFFSET
                                 + resetBtn.getOffsetWidth();
                         input1.setWidth(container.getOffsetWidth() - offset);
                     }
@@ -171,6 +172,7 @@ public abstract class AbstractDiskResourceSelector<R extends DiskResource> exten
     // by default do not validate permissions
     private boolean validatePermissions = false;
     private final DiskResourceUtil diskResourceUtil;
+    private static final int OFFSET = 24;
 
     protected AbstractDiskResourceSelector() {
         res.style().ensureInjected();
@@ -479,7 +481,7 @@ public abstract class AbstractDiskResourceSelector<R extends DiskResource> exten
     protected void onResize(int width, int height) {
         int offset = button.getOffsetWidth() + buttonOffset * 2 + resetBtn.getOffsetWidth();
         if (errorHandler.isShowing()) {
-            offset += 16;
+            offset += OFFSET;
         }
         // super.onResize(width, height);
         input.setWidth(width - offset);
