@@ -3,6 +3,7 @@ package org.iplantc.de.diskResource.client.gin;
 import org.iplantc.de.client.models.diskResources.DiskResourceFavorite;
 import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.client.models.search.DiskResourceQueryTemplate;
+import org.iplantc.de.diskResource.client.views.navigation.cells.TreeCell;
 import org.iplantc.de.resources.client.IplantResources;
 
 import com.google.gwt.resources.client.ImageResource;

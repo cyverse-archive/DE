@@ -7,8 +7,6 @@ import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.client.models.tags.IplantTag;
 import org.iplantc.de.client.services.DiskResourceServiceFacade;
-import org.iplantc.de.diskResource.client.views.HasHandlerRegistrationMgmt;
-import org.iplantc.de.tags.client.Taggable;
 import org.iplantc.de.commons.client.views.window.configs.FileViewerWindowConfig;
 import org.iplantc.de.commons.client.views.window.configs.PathListWindowConfig;
 import org.iplantc.de.commons.client.views.window.configs.TabularFileViewerWindowConfig;
@@ -22,12 +20,14 @@ import org.iplantc.de.diskResource.client.search.events.DeleteSavedSearchClicked
 import org.iplantc.de.diskResource.client.search.events.SubmitDiskResourceQueryEvent;
 import org.iplantc.de.diskResource.client.search.events.SubmitDiskResourceQueryEvent.HasSubmitDiskResourceQueryEventHandlers;
 import org.iplantc.de.diskResource.client.search.views.DiskResourceSearchField;
+import org.iplantc.de.diskResource.client.views.HasHandlerRegistrationMgmt;
 import org.iplantc.de.diskResource.client.views.cells.events.DiskResourceNameSelectedEvent;
 import org.iplantc.de.diskResource.client.views.cells.events.ManageCommentsEvent;
 import org.iplantc.de.diskResource.client.views.cells.events.ManageMetadataEvent;
 import org.iplantc.de.diskResource.client.views.cells.events.ManageSharingEvent;
 import org.iplantc.de.diskResource.client.views.cells.events.RequestDiskResourceFavoriteEvent;
 import org.iplantc.de.diskResource.client.views.cells.events.ShareByDataLinkEvent;
+import org.iplantc.de.tags.client.Taggable;
 
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.resources.client.ImageResource;
@@ -36,7 +36,6 @@ import com.google.gwt.user.client.ui.HasOneWidget;
 import com.google.gwt.user.client.ui.IsWidget;
 
 import com.sencha.gxt.data.shared.ListStore;
-import com.sencha.gxt.data.shared.TreeStore;
 import com.sencha.gxt.data.shared.loader.DataProxy;
 import com.sencha.gxt.data.shared.loader.PagingLoadResult;
 import com.sencha.gxt.data.shared.loader.TreeLoader;
@@ -53,7 +52,7 @@ import java.util.Set;
 public interface DiskResourceView extends IsWidget,
                                           IsMaskable,
                                           FolderSelectionEvent.HasFolderSelectionEventHandlers,
-                                          DeleteSavedSearchClickedEvent.HasDeleteSavedSearchClickedEventHandlers,
+//                                          DeleteSavedSearchClickedEvent.HasDeleteSavedSearchClickedEventHandlers,
                                           DiskResourceSelectionChangedEvent.HasDiskResourceSelectionChangedEventHandlers,
                                           Taggable {
 
@@ -231,13 +230,13 @@ public interface DiskResourceView extends IsWidget,
 
     void loadFolder(Folder folder);
 
-    Folder getSelectedFolder();
+//    Folder getSelectedFolder();
 
     Set<DiskResource> getSelectedDiskResources();
 
-    TreeStore<Folder> getTreeStore();
+//    TreeStore<Folder> getTreeStore();
 
-    boolean isLoaded(Folder folder);
+//    boolean isLoaded(Folder folder);
 
     void setDiskResources(Set<DiskResource> folderChildren);
 
@@ -259,32 +258,32 @@ public interface DiskResourceView extends IsWidget,
      * 
      * @param folder the folder to be selected
      */
-    void setSelectedFolder(Folder folder);
+//    void setSelectedFolder(Folder folder);
 
     void setSelectedDiskResources(List<? extends HasId> diskResourcesToSelect);
 
-    void addFolder(Folder parent, Folder newChild);
+//    void addFolder(Folder parent, Folder newChild);
 
-    Folder getFolderById(String folderId);
+//    Folder getFolderById(String folderId);
 
-    Folder getFolderByPath(String path);
+//    Folder getFolderByPath(String path);
 
-    Folder getParentFolder(Folder selectedFolder);
+//    Folder getParentFolder(Folder selectedFolder);
 
-    void expandFolder(Folder folder);
+//    void expandFolder(Folder folder);
 
     void deSelectDiskResources();
 
-    void refreshFolder(Folder folder);
+//    void refreshFolder(Folder folder);
 
-    void removeChildren(Folder folder);
+//    void removeChildren(Folder folder);
 
     DiskResourceViewToolbar getToolbar();
 
     /**
      * @return true if the given widget is this view's <code>Tree</code> object, false otherwise.
      */
-    boolean isViewTree(IsWidget widget);
+//    boolean isViewTree(IsWidget widget);
 
     /**
      * @return true if the given widget is this view's <code>Grid</code> object, false otherwise.
@@ -292,7 +291,7 @@ public interface DiskResourceView extends IsWidget,
      */
     boolean isViewGrid(IsWidget widget);
 
-    TreeNode<Folder> findTreeNode(Element el);
+//    TreeNode<Folder> findTreeNode(Element el);
 
     Element findGridRow(Element el);
 
@@ -306,7 +305,7 @@ public interface DiskResourceView extends IsWidget,
 
     void resetDetailsPanel();
 
-    void deSelectNavigationFolder();
+//    void deSelectNavigationFolder();
 
     void unmaskDetailsPanel();
 

@@ -11,6 +11,7 @@ import org.iplantc.de.diskResource.client.gin.factory.DiskResourceSelectorFieldF
 import org.iplantc.de.diskResource.client.gin.factory.DiskResourceViewFactory;
 import org.iplantc.de.diskResource.client.gin.factory.FolderContentsRpcProxyFactory;
 import org.iplantc.de.diskResource.client.gin.factory.FolderRpcProxyFactory;
+import org.iplantc.de.diskResource.client.gin.factory.NavigationViewFactory;
 import org.iplantc.de.diskResource.client.presenters.DiskResourcePresenterImpl;
 import org.iplantc.de.diskResource.client.presenters.proxy.FolderContentsRpcProxyImpl;
 import org.iplantc.de.diskResource.client.presenters.proxy.FolderRpcProxyImpl;
@@ -21,6 +22,8 @@ import org.iplantc.de.diskResource.client.search.views.cells.DiskResourceQueryFo
 import org.iplantc.de.diskResource.client.search.views.cells.DiskResourceSearchCell;
 import org.iplantc.de.diskResource.client.DiskResourceView;
 import org.iplantc.de.diskResource.client.views.DiskResourceViewImpl;
+import org.iplantc.de.diskResource.client.NavigationView;
+import org.iplantc.de.diskResource.client.views.navigation.NavigationViewImpl;
 import org.iplantc.de.diskResource.client.views.widgets.DiskResourceViewToolbarImpl;
 
 import com.google.gwt.inject.client.AbstractGinModule;
@@ -73,6 +76,12 @@ public class DiskResourceGinModule extends AbstractGinModule {
         bind(DiskResourceQueryForm.class);
         bind(DiskResourceSearchCell.class);
         bind(DiskResourceSearchField.class);
+
+
+
+        install(new GinFactoryModuleBuilder()
+                    .implement(NavigationView.class, NavigationViewImpl.class)
+                    .build(NavigationViewFactory.class));
     }
 
 

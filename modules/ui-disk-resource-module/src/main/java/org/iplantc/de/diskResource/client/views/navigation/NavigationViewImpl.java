@@ -2,6 +2,10 @@ package org.iplantc.de.diskResource.client.views.navigation;
 
 import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.diskResource.client.events.FolderSelectionEvent;
+import org.iplantc.de.diskResource.client.search.events.DeleteSavedSearchClickedEvent;
+import org.iplantc.de.diskResource.client.NavigationView;
+import org.iplantc.de.diskResource.client.views.navigation.cells.TreeCell;
+import org.iplantc.de.diskResource.share.DiskResourceModule;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
@@ -14,6 +18,7 @@ import com.google.gwt.uibinder.client.UiFactory;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
 
 import static com.sencha.gxt.core.client.Style.SelectionMode.SINGLE;
 import com.sencha.gxt.core.client.IdentityValueProvider;
@@ -27,6 +32,7 @@ import com.sencha.gxt.widget.core.client.ContentPanel;
 import com.sencha.gxt.widget.core.client.button.IconButton;
 import com.sencha.gxt.widget.core.client.button.ToolButton;
 import com.sencha.gxt.widget.core.client.event.SelectEvent;
+import com.sencha.gxt.widget.core.client.tips.QuickTip;
 import com.sencha.gxt.widget.core.client.tree.Tree;
 import com.sencha.gxt.widget.core.client.tree.TreeSelectionModel;
 import com.sencha.gxt.widget.core.client.tree.TreeView;
@@ -53,6 +59,10 @@ public class NavigationViewImpl extends Composite implements NavigationView {
         @Override
         public void onSelection(SelectionEvent<Folder> event) {
             final Folder selectedItem = event.getSelectedItem();
+            if(!isWidget.asWidget().isAttached()){
+                return;
+            }
+
             if(selectedItem.isFilter()){
                 isWidget.asWidget().fireEvent(new FolderSelectionEvent(selectedItem));
             } else {
@@ -102,12 +112,12 @@ public class NavigationViewImpl extends Composite implements NavigationView {
     private final ToolButton treeCollapseButton;
     private final TreeStore<Folder> treeStore;
     private final TreeLoader<Folder> treeLoader;
-    private final Appearance appearance;
+    @UiField(provided = true) Appearance appearance;
 
     @Inject
-    NavigationViewImpl(final TreeStore<Folder> treeStore,
-                       final TreeLoader<Folder> treeLoader,
-                       final NavigationView.Appearance appearance) {
+    NavigationViewImpl(final NavigationView.Appearance appearance,
+                       @Assisted final TreeStore<Folder> treeStore,
+                       @Assisted final TreeLoader<Folder> treeLoader) {
         this.treeStore = treeStore;
         this.treeLoader = treeLoader;
         this.appearance = appearance;
@@ -131,6 +141,13 @@ public class NavigationViewImpl extends Composite implements NavigationView {
                                                                       appearance.treeCollapseHoverStyle()));
         treeCollapseButton.setToolTip(appearance.treeCollapseToolTip());
         treeCollapseButton.addSelectHandler(new TreeCollapseButtonSelectHandler(tree));
+        container.getHeader().removeTool(container.getHeader().getTool(0));
+        container.getHeader().addTool(treeCollapseButton);
+    }
+
+    @Override
+    public HandlerRegistration addDeleteSavedSearchClickedEventHandler(DeleteSavedSearchClickedEvent.DeleteSavedSearchEventHandler handler) {
+        return addHandler(handler, DeleteSavedSearchClickedEvent.TYPE);
     }
 
     @Override
@@ -142,6 +159,12 @@ public class NavigationViewImpl extends Composite implements NavigationView {
     protected void onEnsureDebugId(String baseID) {
         super.onEnsureDebugId(baseID);
         treeCollapseButton.setId("idTreeCollapse");
+        tree.ensureDebugId(baseID + DiskResourceModule.Ids.NAVIGATION);
+    }
+
+    @Override
+    public Tree<Folder, Folder> getTree() {
+        return tree;
     }
 
     @Override
@@ -154,9 +177,19 @@ public class NavigationViewImpl extends Composite implements NavigationView {
         final Tree<Folder, Folder> folderFolderTree = new Tree<>(treeStore, new IdentityValueProvider<Folder>());
         folderFolderTree.setView(new CustomTreeView());
         folderFolderTree.setLoader(treeLoader);
+        folderFolderTree.setIconProvider(appearance.getIconProvider());
+        tree.setStyle(appearance.getTreeStyle());
         final TreeSelectionModel<Folder> selectionModel = folderFolderTree.getSelectionModel();
         selectionModel.setSelectionMode(SINGLE);
         selectionModel.addSelectionHandler(new FolderSelectionHandler(this, tree));
+
+        final TreeCell treeCell = new TreeCell(tree);
+        treeCell.setHasHandlers(this);
+        treeCell.setSelectionModel(selectionModel);
+
+        folderFolderTree.setCell(treeCell);
+
+        new QuickTip(tree);
         return folderFolderTree;
     }
 }

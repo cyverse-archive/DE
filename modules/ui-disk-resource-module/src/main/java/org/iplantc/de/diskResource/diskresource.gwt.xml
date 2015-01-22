@@ -16,7 +16,7 @@
     </replace-with>
 
     <replace-with class="org.iplantc.de.diskResource.client.gin.appearance.TreeCellDefaultAppearance">
-        <when-type-is class="org.iplantc.de.diskResource.client.gin.TreeCell.TreeCellAppearance" />
+        <when-type-is class="org.iplantc.de.diskResource.client.views.navigation.cells.TreeCell.TreeCellAppearance" />
     </replace-with>
    
 	<source path="client"/>

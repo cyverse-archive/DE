@@ -5,6 +5,7 @@
              xmlns:gxt="urn:import:com.sencha.gxt.widget.core.client"
              xmlns:grid="urn:import:com.sencha.gxt.widget.core.client.grid"
              xmlns:paging="urn:import:com.sencha.gxt.widget.core.client.toolbar"
+             xmlns:navigation="urn:import:org.iplantc.de.diskResource.client.views.navigation"
              xmlns:form="urn:import:com.sencha.gxt.widget.core.client.form">
 
     <ui:with field="DISPLAY"
@@ -95,12 +96,13 @@
 
         <!-- Navigation Panel -->
         <container:west layoutData="{westData}">
-            <gxt:ContentPanel ui:field="westPanel"
-                              headerVisible="true"
-                              headingText="Navigation"
-                              collapsible="false">
-                <tree:Tree ui:field="tree" />
-            </gxt:ContentPanel>
+            <!--<gxt:ContentPanel ui:field="westPanel"-->
+                              <!--headerVisible="true"-->
+                              <!--headingText="Navigation"-->
+                              <!--collapsible="false">-->
+                <!--<tree:Tree ui:field="tree" />-->
+            <!--</gxt:ContentPanel>-->
+            <navigation:NavigationView ui:field="navigationView" />
         </container:west>
 
         <!-- Main Panel -->
