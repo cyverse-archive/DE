@@ -7,6 +7,7 @@ import static org.iplantc.de.client.events.FileSavedEvent.FileSavedEventHandler;
 import org.iplantc.de.client.models.diskResources.File;
 import org.iplantc.de.fileViewers.client.FileViewer;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.HandlerRegistration;
 
 import com.sencha.gxt.widget.core.client.Composite;
@@ -16,9 +17,15 @@ import com.sencha.gxt.widget.core.client.Composite;
  */
 public abstract class AbstractFileViewer extends Composite implements FileViewer {
 
+    public interface AbstractFileViewerAppearance {
+        String defaultViewName(double defaultName);
+    }
+
+
     protected File file;
 
     protected String infoType;
+    private final AbstractFileViewerAppearance appearance = GWT.create(AbstractFileViewerAppearance.class);
 
     public AbstractFileViewer(File file, String infoType) {
         this.file = file;
@@ -36,7 +43,7 @@ public abstract class AbstractFileViewer extends Composite implements FileViewer
         if (fileName != null) {
             return fileName;
         } else {
-            return "Untitled-" + Math.random();
+            return appearance.defaultViewName(Math.random());
         }
     }
 

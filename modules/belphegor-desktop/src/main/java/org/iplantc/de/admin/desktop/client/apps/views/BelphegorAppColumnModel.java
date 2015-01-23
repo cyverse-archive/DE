@@ -1,6 +1,5 @@
 package org.iplantc.de.admin.desktop.client.apps.views;
 
-import org.iplantc.de.admin.desktop.client.I18N;
 import org.iplantc.de.admin.desktop.client.apps.views.cells.AppNameCell;
 import org.iplantc.de.admin.desktop.client.apps.views.cells.AvgAppRatingCell;
 import org.iplantc.de.apps.client.events.AppNameSelectedEvent;
@@ -10,7 +9,6 @@ import org.iplantc.de.apps.client.views.cells.AppHyperlinkCell;
 import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.models.apps.AppFeedback;
 import org.iplantc.de.client.models.apps.AppNameComparator;
-import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 
 import com.google.gwt.cell.client.Cell;
 import com.google.gwt.core.client.GWT;
@@ -25,10 +23,13 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
+/**
+ * @author jstroot
+ */
 public class BelphegorAppColumnModel extends ColumnModel<App> implements AppNameSelectedEvent.HasAppNameSelectedEventHandlers {
 
     public BelphegorAppColumnModel(AppsView view) {
-        super(createColumnConfigList(view, I18N.DISPLAY));
+        super(createColumnConfigList(view, GWT.<AdminAppsView.AdminAppsViewAppearance> create(AdminAppsView.AdminAppsViewAppearance.class)));
 
         for(ColumnConfig<App, ?> colConfig : configs){
             final Cell<?> cell = colConfig.getCell();
@@ -38,18 +39,20 @@ public class BelphegorAppColumnModel extends ColumnModel<App> implements AppName
         }
     }
 
-    public static List<ColumnConfig<App, ?>> createColumnConfigList(AppsView view,
-                                                                    IplantDisplayStrings displayStrings) {
+    public static List<ColumnConfig<App, ?>> createColumnConfigList(final AppsView view,
+                                                                    final AdminAppsView.AdminAppsViewAppearance appearance) {
         AppProperties props = GWT.create(AppProperties.class);
         List<ColumnConfig<App, ?>> list = new ArrayList<>();
 
-        ColumnConfig<App, App> name = new ColumnConfig<>(new IdentityValueProvider<App>("name"), 180,
-                displayStrings.name());
+        ColumnConfig<App, App> name = new ColumnConfig<>(new IdentityValueProvider<App>("name"),
+                                                         appearance.nameColumnWidth(),
+                                                         appearance.nameColumnLabel());
         ColumnConfig<App, String> integrator = new ColumnConfig<>(props.integratorName(),
-                130, displayStrings.integratedby());
-        ColumnConfig<App, AppFeedback> rating = new ColumnConfig<>(props.rating(), 40,
-                "Average User Rating"); //$NON-NLS-1$
-
+                                                                  appearance.integratedByColumnWidth(),
+                                                                  appearance.integratedby());
+        ColumnConfig<App, AppFeedback> rating = new ColumnConfig<>(props.rating(),
+                                                                   appearance.avgUserRatingColumnWidth(),
+                                                                   appearance.avgUserRatingColumnLabel());
         name.setComparator(new AppNameComparator());
 
         name.setSortable(true);

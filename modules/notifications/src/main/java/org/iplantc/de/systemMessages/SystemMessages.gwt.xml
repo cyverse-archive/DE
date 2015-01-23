@@ -3,5 +3,6 @@
 <module>
 
     <inherits name='com.google.gwt.user.User'/>
+    <inherits name="org.iplantc.de.commons.ui-commons" />
 
 </module>

@@ -1,8 +1,6 @@
 package org.iplantc.de.admin.desktop.client.apps.views;
 
-import org.iplantc.de.admin.desktop.client.I18N;
 import org.iplantc.de.client.models.apps.AppCategory;
-import org.iplantc.de.resources.client.IplantResources;
 
 import com.google.common.collect.Lists;
 import com.google.gwt.core.client.GWT;
@@ -22,12 +20,14 @@ import com.sencha.gxt.widget.core.client.event.SelectEvent;
 import com.sencha.gxt.widget.core.client.event.SelectEvent.SelectHandler;
 import com.sencha.gxt.widget.core.client.tree.Tree;
 import com.sencha.gxt.widget.core.client.tree.Tree.CheckNodes;
-import com.sencha.gxt.widget.core.client.tree.Tree.TreeAppearance;
 import com.sencha.gxt.widget.core.client.tree.TreeStyle;
 
 import java.util.Comparator;
 import java.util.List;
 
+/**
+ * @author jstroot
+ */
 public class AppCategorizeViewImpl implements AppCategorizeView {
 
     @UiTemplate("AppCategorizeView.ui.xml")
@@ -36,14 +36,10 @@ public class AppCategorizeViewImpl implements AppCategorizeView {
 
     private static AppCategorizeViewUiBinder uiBinder = GWT.create(AppCategorizeViewUiBinder.class);
 
-    @UiField(provided = true)
-    TreeStore<AppCategory> treeStore;
-
-    @UiField(provided = true)
-    Tree<AppCategory, String> tree;
-
-    @UiField
-    ContentPanel con;
+    @UiField(provided = true) TreeStore<AppCategory> treeStore;
+    @UiField(provided = true) Tree<AppCategory, String> tree;
+    @UiField ContentPanel con;
+    @UiField(provided = true) AppCategorizeViewAppearance appearance = GWT.create(AppCategorizeViewAppearance.class);
 
     final private Widget widget;
 
@@ -55,7 +51,7 @@ public class AppCategorizeViewImpl implements AppCategorizeView {
     }
 
     private void addClearButton() {
-        TextButton btnClear = new TextButton(I18N.DISPLAY.clearSelection(), new SelectHandler() {
+        TextButton btnClear = new TextButton(appearance.clearSelection(), new SelectHandler() {
 
             @Override
             public void onSelect(SelectEvent event) {
@@ -118,13 +114,12 @@ public class AppCategorizeViewImpl implements AppCategorizeView {
     }
 
     /**
-     * FIXME JDS This needs to be implemented in an {@link TreeAppearance}
      */
     private void setTreeIcons() {
         TreeStyle style = tree.getStyle();
-        style.setNodeCloseIcon(IplantResources.RESOURCES.category());
-        style.setNodeOpenIcon(IplantResources.RESOURCES.category_open());
-        style.setLeafIcon(IplantResources.RESOURCES.subCategory());
+        style.setNodeCloseIcon(appearance.category());
+        style.setNodeOpenIcon(appearance.category_open());
+        style.setLeafIcon(appearance.subCategory());
     }
 
     @Override

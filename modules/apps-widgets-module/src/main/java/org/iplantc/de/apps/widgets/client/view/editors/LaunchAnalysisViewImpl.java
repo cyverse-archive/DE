@@ -70,6 +70,7 @@ public class LaunchAnalysisViewImpl implements LaunchAnalysisView {
                                   final DiskResourceSelectorFieldFactory folderSelectorFieldFactory) {
         this.appWidgetStrings = appWidgetStrings;
         this.awFolderSel = folderSelectorFieldFactory.defaultFolderSelector();
+        this.awFolderSel.hideResetButton();
         binder.createAndBindUi(this);
         name.addValidator(new DiskResourceNameValidator());
         name.addKeyDownHandler(new PreventEntryAfterLimitHandler(name));

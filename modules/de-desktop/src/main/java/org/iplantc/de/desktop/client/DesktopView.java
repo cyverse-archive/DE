@@ -8,6 +8,7 @@ import org.iplantc.de.commons.client.views.window.configs.WindowConfig;
 
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.resources.client.CssResource;
+import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.web.bindery.autobean.shared.Splittable;
@@ -81,15 +82,49 @@ public interface DesktopView extends IsWidget {
 
         IconButton.IconConfig dataConfig();
 
+        String feedbackAlertValidationWarning();
+
         IconButton.IconConfig feedbackBtnConfig();
 
         IconButton.IconConfig forumsConfig();
 
         IconButton.IconConfig notificationsConfig();
 
+        String publicSubmitTip();
+
+        String rootApplicationTitle(int count);
+
+        String rootApplicationTitle();
+
         DesktopStyles styles();
 
         IconButton.IconConfig userPrefsConfig();
+
+        String notifications();
+
+        String preferences();
+
+        String collaborators();
+
+        String systemMessagesLabel();
+
+        String introduction();
+
+        String documentation();
+
+        String contactSupport();
+
+        String about();
+
+        String logout();
+
+        String iconHomepageDataTip();
+
+        String forums();
+
+        String iconHomepageAnalysesTip();
+
+        String iconHomepageAppsTip();
     }
 
     /**
@@ -103,9 +138,47 @@ public interface DesktopView extends IsWidget {
      * TODO JDS Eventually, certain injected parameters will be injected via an AsyncProvider
      *           This will provide us with split points through injection. Only items which are not
      *           immediately necessary should be provided this way.
-     * TODO Pull strings from IplantDisplayStrings into a desktop appearance
      */
     interface Presenter extends UserSettingsMenuPresenter, UnseenNotificationsPresenter{
+
+        interface DesktopPresenterAppearance {
+
+            String feedbackServiceFailure();
+
+            String feedbackSubmitted();
+
+            String fetchNotificationsError();
+
+            String introWelcome();
+
+            String loadSessionFailed();
+
+            String loadingSession();
+
+            String loadingSessionWaitNotice();
+
+            String markAllAsSeenSuccess();
+
+            String newNotificationsAlert();
+
+            String permissionErrorMessage();
+
+            String permissionErrorTitle();
+
+            String saveSessionFailed();
+
+            String saveSettings();
+
+            String savingSession();
+
+            String savingSessionWaitNotice();
+
+            SafeHtml sessionRestoreCancelled();
+
+            String systemInitializationError();
+
+            String welcome();
+        }
 
         List<WindowState> getOrderedWindowStates();
 

@@ -5,6 +5,9 @@ import org.iplantc.de.diskResource.client.views.dialogs.SaveAsDialog;
 
 import com.sencha.gxt.widget.core.client.event.SelectEvent;
 
+/**
+ * @author jstroot
+ */
 public final class SaveAsDialogCancelSelectHandler implements SelectEvent.SelectHandler {
     private final IsMaskable maskable;
     private final SaveAsDialog saveDialog;

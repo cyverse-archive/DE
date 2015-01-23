@@ -86,6 +86,13 @@
             </con:child>
 
 
+            <con:child layoutData="{fieldLayoutData}">
+                <fields:CheckBoxAdapter ui:field="isImplicit" />
+            </con:child>
+
+
+
+
         </con:VerticalLayoutContainer>
     </gxt:ContentPanel>
 

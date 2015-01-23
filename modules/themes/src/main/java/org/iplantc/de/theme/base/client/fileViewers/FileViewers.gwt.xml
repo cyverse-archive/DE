@@ -1,0 +1,67 @@
+<module>
+    <inherits name="org.iplantc.de.fileViewers.FileViewers" />
+
+    <replace-with class="org.iplantc.de.theme.base.client.fileViewers.ViewerPagingToolBarDefaultAppearance">
+        <when-type-is class="org.iplantc.de.fileViewers.client.views.ViewerPagingToolBar.ViewerPagingToolBarAppearance"/>
+    </replace-with>
+
+    <replace-with class="org.iplantc.de.theme.base.client.fileViewers.StructuredTextViewToolbarDefaultAppearance">
+        <when-type-is class="org.iplantc.de.fileViewers.client.views.StructuredTextViewToolBar.StructureTextViewerToolbarAppearance"/>
+    </replace-with>
+
+    <replace-with class="org.iplantc.de.theme.base.client.fileViewers.TextViewToolBarDefaultAppearance">
+        <when-type-is class="org.iplantc.de.fileViewers.client.views.TextViewToolBar.TextViewToolBarAppearance"/>
+    </replace-with>
+
+    <replace-with class="org.iplantc.de.theme.base.client.fileViewers.StructuredTextViewerDefaultAppearance">
+        <when-type-is class="org.iplantc.de.fileViewers.client.views.StructuredTextViewer.StructuredTextViewerAppearance"/>
+    </replace-with>
+
+    <replace-with class="org.iplantc.de.theme.base.client.fileViewers.FileViewerPresenterDefaultAppearance">
+        <when-type-is class="org.iplantc.de.fileViewers.client.FileViewer.FileViewerPresenterAppearance"/>
+    </replace-with>
+
+    <replace-with class="org.iplantc.de.theme.base.client.fileViewers.PathListViewerToolbarDefaultAppearance">
+        <when-type-is class="org.iplantc.de.fileViewers.client.views.PathListViewerToolbar.PathListViewerToolbarAppearance"/>
+    </replace-with>
+
+    <replace-with class="org.iplantc.de.theme.base.client.fileViewers.PathListViewerDefaultAppearance">
+        <when-type-is class="org.iplantc.de.fileViewers.client.views.PathListViewer.PathListViewerAppearance"/>
+    </replace-with>
+
+    <replace-with class="org.iplantc.de.theme.base.client.fileViewers.TextViewerDefaultAppearance">
+        <when-type-is class="org.iplantc.de.fileViewers.client.views.TextViewerImpl.TextViewerAppearance" />
+    </replace-with>
+
+    <replace-with class="org.iplantc.de.theme.base.client.fileViewers.MarkdownRendererViewDefaultAppearance">
+        <when-type-is class="org.iplantc.de.fileViewers.client.views.MarkDownRendererViewImpl.MarkdownRendererViewAppearance" />
+    </replace-with>
+
+    <replace-with class="org.iplantc.de.theme.base.client.fileViewers.ExternalVisualizationURLViewerDefaultAppearance" >
+        <when-type-is class="org.iplantc.de.fileViewers.client.views.ExternalVisualizationURLViewerImpl.ExternalVisualizationURLViewerAppearance" />
+    </replace-with>
+
+    <replace-with class="org.iplantc.de.theme.base.client.fileViewers.AbstractFileViewerDefaultAppearance">
+        <when-type-is class="org.iplantc.de.fileViewers.client.views.AbstractFileViewer.AbstractFileViewerAppearance" />
+    </replace-with>
+
+    <replace-with class="org.iplantc.de.theme.base.client.fileViewers.cells.TreeUrlCellDefaultAppearance">
+        <when-type-is class="org.iplantc.de.fileViewers.client.views.cells.TreeUrlCell.TreeUrlCellAppearance" />
+    </replace-with>
+
+    <replace-with class="org.iplantc.de.theme.base.client.fileViewers.callbacks.EnsemblUtilDefaultAppearance">
+        <when-type-is class="org.iplantc.de.fileViewers.client.callbacks.EnsemblUtil.EnsemblUtilAppearance" />
+    </replace-with>
+
+    <replace-with class="org.iplantc.de.theme.base.client.fileViewers.callbacks.LoadGenomeInCogeCallbackDefaultAppearance">
+        <when-type-is class="org.iplantc.de.fileViewers.client.callbacks.LoadGenomeInCoGeCallback.LoadGenomeInCogeCallbackAppearance" />
+    </replace-with>
+
+    <replace-with class="org.iplantc.de.theme.base.client.fileViewers.callbacks.ShareAnonymousCallbackDefaultAppearance">
+        <when-type-is class="org.iplantc.de.fileViewers.client.callbacks.ShareAnonymousCallback.ShareAnonymousCallbackAppearance" />
+    </replace-with>
+
+    <replace-with class="org.iplantc.de.theme.base.client.fileViewers.callbacks.TreeUrlCallbackDefaultAppearance">
+        <when-type-is class="org.iplantc.de.fileViewers.client.callbacks.TreeUrlCallback.TreeUrlCallbackAppearance"/>
+    </replace-with>
+</module>

@@ -13,6 +13,9 @@ import com.google.gwt.text.shared.AbstractSafeHtmlRenderer;
 
 import com.sencha.gxt.cell.core.client.SimpleSafeHtmlCell;
 
+/**
+ * @author jstroot
+ */
 public class BaseUnseenNotificationsAppearance implements UnseenNotificationsView.UnseenNotificationsAppearance {
 
     public interface UnseenNotificationStyles extends CssResource {
@@ -99,4 +102,15 @@ public class BaseUnseenNotificationsAppearance implements UnseenNotificationsVie
     public String noNewNotifications() {
         return strings.noNewNotifications();
     }
+
+    @Override
+    public String unseenNotificationsViewWidth() {
+        return "250px";
+    }
+
+    @Override
+    public String unseenNotificationsViewHeight() {
+        return "220px";
+    }
+
 }

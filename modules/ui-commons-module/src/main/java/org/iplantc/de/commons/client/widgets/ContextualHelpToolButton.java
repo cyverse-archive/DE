@@ -1,7 +1,6 @@
 package org.iplantc.de.commons.client.widgets;
 
-import org.iplantc.de.resources.client.IplantResources;
-
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.sencha.gxt.widget.core.client.button.ToolButton;
@@ -11,23 +10,33 @@ import com.sencha.gxt.widget.core.client.event.SelectEvent.SelectHandler;
 /**
  * A ToolButton that displays a ContextualHelpPopup when clicked.
  * 
- * @author psarando
+ * @author psarando, jstroot
+ *
+ * FIXME Need to hunt down usages of IplantContextualHelpAccessStyle
  * 
  */
 public class ContextualHelpToolButton extends ToolButton {
 
-    static {
-        IplantResources.RESOURCES.getContxtualHelpStyle().ensureInjected();
+    public interface ContextualHelpToolButtonAppearance {
+        String contextualHelpStyle();
     }
 
     private final ContextualHelpPopup helpPopup;
+    private final ContextualHelpToolButtonAppearance appearance;
 
     public ContextualHelpToolButton() {
         this(null);
     }
 
     public ContextualHelpToolButton(Widget help) {
-        super(IplantResources.RESOURCES.getContxtualHelpStyle().contextualHelp());
+        this(help, GWT.<ContextualHelpToolButtonAppearance> create(ContextualHelpToolButtonAppearance.class));
+
+    }
+
+    public ContextualHelpToolButton(final Widget help,
+                                    final ContextualHelpToolButtonAppearance appearance) {
+        super(appearance.contextualHelpStyle());
+        this.appearance = appearance;
 
         helpPopup = new ContextualHelpPopup();
 

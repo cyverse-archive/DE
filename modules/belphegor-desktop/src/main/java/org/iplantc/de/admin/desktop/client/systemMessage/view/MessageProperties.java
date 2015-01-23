@@ -11,6 +11,9 @@ import com.sencha.gxt.data.shared.PropertyAccess;
 
 import java.util.Date;
 
+/**
+ * @author jstroot
+ */
 public interface MessageProperties extends PropertyAccess<Message> {
 
     ModelKeyProvider<Message> id();

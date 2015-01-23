@@ -3,68 +3,79 @@
              xmlns:g='urn:import:com.google.gwt.user.client.ui'
              xmlns:gxt='urn:import:com.sencha.gxt.widget.core.client'
              xmlns:con='urn:import:com.sencha.gxt.widget.core.client.container'>
-	
-	<ui:with type="org.iplantc.de.admin.desktop.client.BelphegorResources" field="res" />
-	<ui:with type="org.iplantc.de.resources.client.messages.IplantDisplayStrings" field="strings" />
+    <ui:with field="appearance"
+             type="org.iplantc.de.admin.desktop.client.views.BelphegorView.BelphegorViewAppearance"/>
 
-	<ui:with type="com.sencha.gxt.core.client.util.Margins" field="centerMargins">
-    	<ui:attributes top="0" right="0" bottom="0" left="0" />
-  	</ui:with>
-	
-	<ui:with type="com.sencha.gxt.widget.core.client.container.BorderLayoutContainer.BorderLayoutData" field="northData">
-		<ui:attributes size="143"/>
-	</ui:with>
-	
-	<ui:with type="com.sencha.gxt.widget.core.client.container.BorderLayoutContainer.BorderLayoutData" field="centerData">
-		<ui:attributes size="1"
-		               margins="{centerMargins}"/>
-	</ui:with>
-	
-	<ui:with type="com.sencha.gxt.widget.core.client.container.BorderLayoutContainer.BorderLayoutData" field="southData">
-		<ui:attributes size="20"/>
-	</ui:with>
-	
-	<ui:with type="com.sencha.gxt.widget.core.client.TabItemConfig" field="appsTabConfig">
-          <ui:attributes text="{strings.applications}" />
-   </ui:with>
-   <ui:with type="com.sencha.gxt.widget.core.client.TabItemConfig" field="refGenTabConfig">
-          <ui:attributes text="{strings.referenceGenomes}" />
-   </ui:with>
-   <ui:with type="com.sencha.gxt.widget.core.client.TabItemConfig" field="toolReqTabConfig">
-          <ui:attributes text="{strings.toolRequests}" />
-   </ui:with>
-   <ui:with type="com.sencha.gxt.widget.core.client.TabItemConfig" field="sysMsgTabConfig">
-          <ui:attributes text="{strings.systemMessages}" />
-   </ui:with>
-	<con:Viewport>
-		<con:BorderLayoutContainer>
-			<con:north layoutData="{northData}">
-				<con:HtmlLayoutContainer ui:field="northCon" />
-			</con:north>
-			
-			<con:center layoutData="{centerData}">
-				<gxt:TabPanel>
-					<gxt:child config="{appsTabConfig}">
-						<con:SimpleContainer ui:field="appsPanel"/>
-					</gxt:child>
-					<gxt:child config="{refGenTabConfig}">
-						<con:SimpleContainer ui:field="refGenomePanel"/>
-					</gxt:child>
-					<gxt:child config="{toolReqTabConfig}">
-						<con:SimpleContainer ui:field="toolRequestPanel"/>
-					</gxt:child>
-					<gxt:child config="{sysMsgTabConfig}">
-						<con:SimpleContainer ui:field="systemMessagesPanel"/>
-					</gxt:child>
-				</gxt:TabPanel>
-			</con:center>
-			
-			<con:south layoutData="{southData}">
-				<g:HTMLPanel styleName="{res.css.iplantcFooter}">
-					<div class="{res.css.nsfText}"><ui:safehtml from="{strings.nsfProjectText}"/></div>
-					<div class="{res.css.copyright}"><ui:safehtml from="{strings.projectCopyrightStatement}"/></div>
-				</g:HTMLPanel>
-			</con:south>
-		</con:BorderLayoutContainer>
-	</con:Viewport>
+    <ui:with field="centerMargins"
+             type="com.sencha.gxt.core.client.util.Margins">
+        <ui:attributes top="0" right="0" bottom="0" left="0"/>
+    </ui:with>
+
+    <ui:with field="northData"
+             type="com.sencha.gxt.widget.core.client.container.BorderLayoutContainer.BorderLayoutData">
+        <ui:attributes size="143"/>
+    </ui:with>
+
+    <ui:with field="centerData"
+             type="com.sencha.gxt.widget.core.client.container.BorderLayoutContainer.BorderLayoutData">
+        <ui:attributes size="1"
+                       margins="{centerMargins}"/>
+    </ui:with>
+
+    <ui:with field="southData"
+             type="com.sencha.gxt.widget.core.client.container.BorderLayoutContainer.BorderLayoutData">
+        <ui:attributes size="20"/>
+    </ui:with>
+
+    <ui:with field="appsTabConfig"
+             type="com.sencha.gxt.widget.core.client.TabItemConfig">
+        <ui:attributes text="{appearance.applications}"/>
+    </ui:with>
+    <ui:with field="refGenTabConfig"
+             type="com.sencha.gxt.widget.core.client.TabItemConfig">
+        <ui:attributes text="{appearance.referenceGenomes}"/>
+    </ui:with>
+    <ui:with field="toolReqTabConfig"
+             type="com.sencha.gxt.widget.core.client.TabItemConfig">
+        <ui:attributes text="{appearance.toolRequests}"/>
+    </ui:with>
+    <ui:with field="sysMsgTabConfig"
+             type="com.sencha.gxt.widget.core.client.TabItemConfig">
+        <ui:attributes text="{appearance.systemMessages}"/>
+    </ui:with>
+    <con:Viewport>
+        <con:BorderLayoutContainer>
+            <con:north layoutData="{northData}">
+                <con:HtmlLayoutContainer ui:field="northCon"/>
+            </con:north>
+
+            <con:center layoutData="{centerData}">
+                <gxt:TabPanel>
+                    <gxt:child config="{appsTabConfig}">
+                        <con:SimpleContainer ui:field="appsPanel"/>
+                    </gxt:child>
+                    <gxt:child config="{refGenTabConfig}">
+                        <con:SimpleContainer ui:field="refGenomePanel"/>
+                    </gxt:child>
+                    <gxt:child config="{toolReqTabConfig}">
+                        <con:SimpleContainer ui:field="toolRequestPanel"/>
+                    </gxt:child>
+                    <gxt:child config="{sysMsgTabConfig}">
+                        <con:SimpleContainer ui:field="systemMessagesPanel"/>
+                    </gxt:child>
+                </gxt:TabPanel>
+            </con:center>
+
+            <con:south layoutData="{southData}">
+                <g:HTMLPanel styleName="{appearance.style.footer}">
+                    <div class="{appearance.style.nsfText}">
+                        <ui:safehtml from="{appearance.nsfProjectText}"/>
+                    </div>
+                    <div class="{appearance.style.copyright}">
+                        <ui:safehtml from="{appearance.projectCopyrightStatement}"/>
+                    </div>
+                </g:HTMLPanel>
+            </con:south>
+        </con:BorderLayoutContainer>
+    </con:Viewport>
 </ui:UiBinder>

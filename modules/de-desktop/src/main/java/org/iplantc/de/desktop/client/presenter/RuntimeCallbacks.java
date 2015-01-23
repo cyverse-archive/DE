@@ -1,7 +1,6 @@
 package org.iplantc.de.desktop.client.presenter;
 
 import org.iplantc.de.client.DEClientConstants;
-import org.iplantc.de.desktop.client.DesktopView;
 import org.iplantc.de.client.models.UserSettings;
 import org.iplantc.de.client.models.WindowState;
 import org.iplantc.de.client.models.notifications.Notification;
@@ -10,12 +9,11 @@ import org.iplantc.de.client.models.notifications.NotificationCategory;
 import org.iplantc.de.client.models.notifications.NotificationMessage;
 import org.iplantc.de.client.models.notifications.payload.PayloadAnalysis;
 import org.iplantc.de.client.services.UserSessionServiceFacade;
-import org.iplantc.de.notifications.client.utils.NotifyInfo;
 import org.iplantc.de.commons.client.info.ErrorAnnouncementConfig;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
 import org.iplantc.de.commons.client.info.SuccessAnnouncementConfig;
-import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
-import org.iplantc.de.resources.client.messages.IplantErrorStrings;
+import org.iplantc.de.desktop.client.DesktopView;
+import org.iplantc.de.notifications.client.utils.NotifyInfo;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.safehtml.shared.SafeHtml;
@@ -31,20 +29,21 @@ import java.util.List;
 
 /**
  * This class contains all runtime callbacks used by the {@link DesktopPresenterImpl}
+ * @author jstroot
  */
 class RuntimeCallbacks {
     static class GetRecentNotificationsCallback implements AsyncCallback<List<Notification>> {
         private static final int NEW_NOTIFICATION_LIMIT = 10;
-        private final IplantDisplayStrings displayStrings;
+        private final DesktopView.Presenter.DesktopPresenterAppearance appearance;
         private final NotificationAutoBeanFactory notificationFactory;
         private final DesktopView view;
         private NotifyInfo notifyInfo;
 
-        public GetRecentNotificationsCallback(final IplantDisplayStrings displayStrings,
-                                       final NotificationAutoBeanFactory notificationFactory,
-                                       final DesktopView view,
-                                       final NotifyInfo notifyInfo) {
-            this.displayStrings = displayStrings;
+        public GetRecentNotificationsCallback(final DesktopView.Presenter.DesktopPresenterAppearance appearance,
+                                              final NotificationAutoBeanFactory notificationFactory,
+                                              final DesktopView view,
+                                              final NotifyInfo notifyInfo) {
+            this.appearance = appearance;
             this.notificationFactory = notificationFactory;
             this.view = view;
             this.notifyInfo = notifyInfo;
@@ -76,7 +75,7 @@ class RuntimeCallbacks {
                 }
             }
             if (numNewMessageNotifications > NEW_NOTIFICATION_LIMIT) {
-                notifyInfo.display(displayStrings.newNotificationsAlert());
+                notifyInfo.display(appearance.newNotificationsAlert());
             }
         }
 
@@ -100,22 +99,22 @@ class RuntimeCallbacks {
     static class GetUserSessionCallback implements AsyncCallback<List<WindowState>> {
         private final IplantAnnouncer announcer;
         private final DesktopPresenterImpl presenter;
-        private final IplantErrorStrings errorStrings;
         private final AutoProgressMessageBox progressMessageBox;
+        private final DesktopView.Presenter.DesktopPresenterAppearance appearance;
 
         public GetUserSessionCallback(final AutoProgressMessageBox progressMessageBox,
-                                      final IplantErrorStrings errorStrings,
+                                      final DesktopView.Presenter.DesktopPresenterAppearance appearance,
                                       final IplantAnnouncer announcer,
                                       final DesktopPresenterImpl presenter) {
             this.progressMessageBox = progressMessageBox;
-            this.errorStrings = errorStrings;
+            this.appearance = appearance;
             this.announcer = announcer;
             this.presenter = presenter;
         }
 
         @Override
         public void onFailure(Throwable caught) {
-            final SafeHtml message = SafeHtmlUtils.fromTrustedString(errorStrings.loadSessionFailed());
+            final SafeHtml message = SafeHtmlUtils.fromTrustedString(appearance.loadSessionFailed());
             announcer.schedule(new ErrorAnnouncementConfig(message, true, 5000));
             presenter.doPeriodicSessionSave();
             progressMessageBox.hide();
@@ -131,23 +130,20 @@ class RuntimeCallbacks {
 
     static class LogoutCallback implements AsyncCallback<String> {
         private final DEClientConstants constants;
-        private final IplantDisplayStrings displayStrings;
-        private final IplantErrorStrings errorStrings;
         private final List<WindowState> orderedWindowStates;
         private final UserSessionServiceFacade userSessionService;
         private final UserSettings userSettings;
+        private final DesktopView.Presenter.DesktopPresenterAppearance appearance;
 
         public LogoutCallback(final UserSessionServiceFacade userSessionService,
                                final DEClientConstants constants,
                                final UserSettings userSettings,
-                               final IplantDisplayStrings displayStrings,
-                               final IplantErrorStrings errorStrings,
+                               final DesktopView.Presenter.DesktopPresenterAppearance appearance,
                                final List<WindowState> orderedWindowStates) {
             this.userSessionService = userSessionService;
             this.constants = constants;
             this.userSettings = userSettings;
-            this.displayStrings = displayStrings;
-            this.errorStrings = errorStrings;
+            this.appearance = appearance;
             this.orderedWindowStates = orderedWindowStates;
         }
 
@@ -167,15 +163,15 @@ class RuntimeCallbacks {
         private void logout() {
             final String redirectUrl = GWT.getHostPageBaseURL() + constants.logoutUrl();
             if (userSettings.isSaveSession()) {
-                final AutoProgressMessageBox progressMessageBox = new AutoProgressMessageBox(displayStrings.savingSession(),
-                                                                                             displayStrings.savingSessionWaitNotice());
+                final AutoProgressMessageBox progressMessageBox = new AutoProgressMessageBox(appearance.savingSession(),
+                                                                                             appearance.savingSessionWaitNotice());
                 progressMessageBox.getProgressBar().setDuration(1000);
                 progressMessageBox.getProgressBar().setInterval(100);
                 progressMessageBox.auto();
                 userSessionService.saveUserSession(orderedWindowStates, new AsyncCallback<Void>() {
                     @Override
                     public void onFailure(Throwable caught) {
-                        GWT.log(errorStrings.saveSessionFailed(), caught);
+                        GWT.log(appearance.saveSessionFailed(), caught);
                         progressMessageBox.hide();
                         Window.Location.assign(redirectUrl);
                     }
@@ -197,7 +193,7 @@ class RuntimeCallbacks {
 
     static class SaveUserSettingsCallback implements AsyncCallback<Void> {
         private final IplantAnnouncer announcer;
-        private final IplantDisplayStrings displayStrings;
+        private final DesktopView.Presenter.DesktopPresenterAppearance appearance;
         private final boolean updateSilently;
         private final UserSettings newValue;
         private final UserSettings userSettings;
@@ -205,12 +201,12 @@ class RuntimeCallbacks {
         public SaveUserSettingsCallback(final UserSettings newValue,
                                         final UserSettings userSettings,
                                         final IplantAnnouncer announcer,
-                                        final IplantDisplayStrings displayStrings,
+                                        final DesktopView.Presenter.DesktopPresenterAppearance appearance,
                                         final boolean updateSilently) {
             this.newValue = newValue;
             this.userSettings = userSettings;
             this.announcer = announcer;
-            this.displayStrings = displayStrings;
+            this.appearance = appearance;
             this.updateSilently = updateSilently;
         }
 
@@ -223,7 +219,7 @@ class RuntimeCallbacks {
         public void onSuccess(Void result) {
             userSettings.setValues(newValue.asSplittable());
             if(!updateSilently){
-                announcer.schedule(new SuccessAnnouncementConfig(displayStrings.saveSettings(), true, 3000));
+                announcer.schedule(new SuccessAnnouncementConfig(appearance.saveSettings(), true, 3000));
             }
         }
     }

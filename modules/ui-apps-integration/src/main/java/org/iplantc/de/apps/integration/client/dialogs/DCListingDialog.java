@@ -8,7 +8,7 @@ import org.iplantc.de.apps.integration.client.gin.factory.DeployedComponentListi
 import org.iplantc.de.apps.integration.client.presenter.DeployedComponentPresenterImpl;
 import org.iplantc.de.apps.integration.client.view.tools.DeployedComponentsListingView;
 import org.iplantc.de.client.models.tool.Tool;
-import org.iplantc.de.commons.client.views.gxt3.dialogs.IPlantDialog;
+import org.iplantc.de.commons.client.views.dialogs.IPlantDialog;
 
 import com.google.inject.Inject;
 

@@ -6,7 +6,7 @@ package org.iplantc.de.diskResource.client.sharing.views;
 
 import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.client.services.DiskResourceServiceFacade;
-import org.iplantc.de.commons.client.views.gxt3.dialogs.IPlantDialog;
+import org.iplantc.de.commons.client.views.dialogs.IPlantDialog;
 import org.iplantc.de.diskResource.client.sharing.presenter.DataSharingPresenter;
 import org.iplantc.de.diskResource.client.views.DiskResourceModelKeyProvider;
 import org.iplantc.de.diskResource.client.views.DiskResourceNameComparator;

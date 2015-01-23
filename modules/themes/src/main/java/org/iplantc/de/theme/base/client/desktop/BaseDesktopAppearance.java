@@ -1,6 +1,7 @@
 package org.iplantc.de.theme.base.client.desktop;
 
 import org.iplantc.de.desktop.client.DesktopView;
+import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 
 import static com.google.gwt.resources.client.ImageResource.ImageOptions;
 import com.google.gwt.core.client.GWT;
@@ -9,6 +10,9 @@ import com.google.gwt.resources.client.ImageResource;
 
 import com.sencha.gxt.widget.core.client.button.IconButton.IconConfig;
 
+/**
+ * @author jstroot
+ */
 public class BaseDesktopAppearance implements DesktopView.DesktopAppearance {
 
     public interface DesktopResources extends ClientBundle {
@@ -61,17 +65,29 @@ public class BaseDesktopAppearance implements DesktopView.DesktopAppearance {
     }
 
     private final DesktopResources resources;
+    private final DesktopMessages desktopMessages;
     private final DesktopStyles style;
+    private final IplantDisplayStrings displayStrings;
+    private final DesktopContextualHelpMessages help;
 
-    public BaseDesktopAppearance(DesktopResources resources) {
+    BaseDesktopAppearance(final DesktopResources resources,
+                          final IplantDisplayStrings iplantDisplayStrings,
+                          final DesktopMessages desktopMessages,
+                          final DesktopContextualHelpMessages desktopContextualHelpMessages) {
         this.resources = resources;
+        displayStrings = iplantDisplayStrings;
+        this.desktopMessages = desktopMessages;
+        this.help = desktopContextualHelpMessages;
         this.style = this.resources.css();
 
         style.ensureInjected();
     }
 
     public BaseDesktopAppearance() {
-        this(GWT.<DesktopResources>create(DesktopResources.class));
+        this(GWT.<DesktopResources>create(DesktopResources.class),
+             GWT.<IplantDisplayStrings> create(IplantDisplayStrings.class),
+             GWT.<DesktopMessages> create(DesktopMessages.class),
+             GWT.<DesktopContextualHelpMessages> create(DesktopContextualHelpMessages.class));
     }
 
     @Override
@@ -90,6 +106,11 @@ public class BaseDesktopAppearance implements DesktopView.DesktopAppearance {
     }
 
     @Override
+    public String feedbackAlertValidationWarning() {
+        return displayStrings.warning();
+    }
+
+    @Override
     public IconConfig feedbackBtnConfig() {
         return new IconConfig(style.feedback());
     }
@@ -105,6 +126,21 @@ public class BaseDesktopAppearance implements DesktopView.DesktopAppearance {
     }
 
     @Override
+    public String publicSubmitTip() {
+        return displayStrings.publicSubmitTip();
+    }
+
+    @Override
+    public String rootApplicationTitle(int count) {
+        return "(" + count + ") " + displayStrings.rootApplicationTitle();
+    }
+
+    @Override
+    public String rootApplicationTitle() {
+        return displayStrings.rootApplicationTitle();
+    }
+
+    @Override
     public DesktopStyles styles() {
         return style;
     }
@@ -112,5 +148,70 @@ public class BaseDesktopAppearance implements DesktopView.DesktopAppearance {
     @Override
     public IconConfig userPrefsConfig() {
         return new IconConfig(style.userPrefs());
+    }
+
+    @Override
+    public String notifications() {
+        return displayStrings.notifications();
+    }
+
+    @Override
+    public String preferences() {
+        return desktopMessages.preferences();
+    }
+
+    @Override
+    public String collaborators() {
+        return displayStrings.collaborators();
+    }
+
+    @Override
+    public String systemMessagesLabel() {
+        return displayStrings.systemMessagesLabel();
+    }
+
+    @Override
+    public String introduction() {
+        return desktopMessages.introduction();
+    }
+
+    @Override
+    public String documentation() {
+        return displayStrings.documentation();
+    }
+
+    @Override
+    public String contactSupport() {
+        return desktopMessages.contactSupport();
+    }
+
+    @Override
+    public String about() {
+        return desktopMessages.about();
+    }
+
+    @Override
+    public String logout() {
+        return displayStrings.logout();
+    }
+
+    @Override
+    public String iconHomepageDataTip() {
+        return help.iconHomepageDataTip();
+    }
+
+    @Override
+    public String forums() {
+        return desktopMessages.forums();
+    }
+
+    @Override
+    public String iconHomepageAnalysesTip() {
+        return help.iconHomepageAnalysesTip();
+    }
+
+    @Override
+    public String iconHomepageAppsTip() {
+        return help.iconHomepageAppsTip();
     }
 }

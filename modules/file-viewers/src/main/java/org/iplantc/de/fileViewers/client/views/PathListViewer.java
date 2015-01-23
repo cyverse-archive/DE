@@ -86,9 +86,11 @@ public class PathListViewer extends AbstractStructuredTextViewer implements Stor
         @Override
         protected void onDragDrop(DndDropEvent e) {
             super.onDragDrop(e);
-            if (checkForSplChar(grid.getStore().getAll()).length() > 0) {
+            StringBuilder splChars = checkForSplChar(grid.getStore().getAll());
+            if (splChars.length() > 0) {
+                LOG.fine("splChars:" + splChars + ":");
                 IplantAnnouncer.getInstance()
-                               .schedule(new ErrorAnnouncementConfig(I18N.DISPLAY.analysisFailureWarning(I18N.V_CONSTANTS.warnedDiskResourceNameChars()),
+                               .schedule(new ErrorAnnouncementConfig(appearance.analysisFailureWarning(appearance.warnedDiskResourceNameChars()),
                                                                      true,
                                                                      5000));
             }
@@ -165,11 +167,12 @@ public class PathListViewer extends AbstractStructuredTextViewer implements Stor
         }
 
         private StringBuilder checkForSplChar(List<Splittable> idSet) {
-            char[] restrictedChars = (I18N.V_CONSTANTS.warnedDiskResourceNameChars()).toCharArray(); //$NON-NLS-1$
+            char[] restrictedChars = (appearance.warnedDiskResourceNameChars()).toCharArray(); //$NON-NLS-1$
             StringBuilder restrictedFound = new StringBuilder();
 
             for (Splittable path : idSet) {
                 String diskResourceId = path.get(0).asString();
+                LOG.fine("filename=" + diskResourceId);
                 for (char restricted : restrictedChars) {
                     for (char next : diskResourceId.toCharArray()) {
                         if (next == restricted && next != '/') {
@@ -177,6 +180,8 @@ public class PathListViewer extends AbstractStructuredTextViewer implements Stor
                         }
                     }
                 }
+                LOG.fine("DiskresourceUtil:" + diskResourceUtil.toString());
+                LOG.fine("restricted chars found 1 =" + restrictedFound);
                 // validate '/' only on label
                 for (char next : diskResourceUtil.parseNameFromPath(diskResourceId).toCharArray()) {
                     if (next == '/') {
@@ -185,6 +190,7 @@ public class PathListViewer extends AbstractStructuredTextViewer implements Stor
                 }
 
             }
+            LOG.fine("restricted chars found 2=" + restrictedFound);
             return restrictedFound;
         }
 
@@ -194,11 +200,15 @@ public class PathListViewer extends AbstractStructuredTextViewer implements Stor
     }
 
     public interface PathListViewerAppearance extends AbstractStructuredTextViewerAppearance {
+        String analysisFailureWarning(String warnedNameCharacters);
+
         String columnHeaderText();
 
         String pathListViewName(String name);
 
         String preventPathListDrop();
+
+        String warnedDiskResourceNameChars();
     }
 
     @UiField(provided = true) PathListViewerToolbar toolbar;
@@ -208,15 +218,15 @@ public class PathListViewer extends AbstractStructuredTextViewer implements Stor
     private final PathListViewerAppearance appearance = GWT.create(PathListViewerAppearance.class);
     private final File file;
 
-
-    @Inject
-    DiskResourceUtil diskResourceUtil;
+    private final DiskResourceUtil diskResourceUtil;
 
     public PathListViewer(final File file,
                           final String infoType,
                           final boolean editing,
-                          final FileViewer.Presenter presenter) {
+                          final FileViewer.Presenter presenter,
+                          final DiskResourceUtil diskResourceUtil) {
         super(file, infoType, editing, presenter);
+        this.diskResourceUtil = diskResourceUtil;
         if (file != null) {
             Preconditions.checkArgument(InfoType.HT_ANALYSIS_PATH_LIST.toString().equals(infoType));
         } else {
@@ -296,9 +306,7 @@ public class PathListViewer extends AbstractStructuredTextViewer implements Stor
         configs.add(rowNumberer);
         configs.add(col);
 
-        ColumnModel<Splittable> splittableColumnModel = new ColumnModel<>(configs);
-
-        return splittableColumnModel;
+        return new ColumnModel<>(configs);
     }
 
     @Override

@@ -3,6 +3,9 @@
              xmlns:form="urn:import:com.sencha.gxt.widget.core.client.form"
              xmlns:container="urn:import:com.sencha.gxt.widget.core.client.container">
 
+    <ui:with field="appearance"
+             type="org.iplantc.de.admin.desktop.client.systemMessage.SystemMessageView.SystemMessageViewAppearance" />
+
     <ui:with field="margins"
              type="com.sencha.gxt.core.client.util.Margins">
         <ui:attributes top="0" right="5" bottom="0" left="5"/>
@@ -12,20 +15,22 @@
         <ui:attributes width="1" height="-1" margins="{margins}"/>
     </ui:with>
 
-    <ui:with type="java.util.Date" field="minTime"/>
-    <ui:with type="java.util.Date" field="maxTime"/>
+    <ui:with field="minTime"
+             type="java.util.Date" />
+    <ui:with field="maxTime"
+             type="java.util.Date" />
     <container:VerticalLayoutContainer ui:field="vlc">
         <container:child layoutData="{layoutData}">
-            <form:FieldLabel text="Type">
+            <form:FieldLabel text="{appearance.systemMsgDlgTypeLabel}">
                 <form:widget>
-                    <form:SimpleComboBox ui:field="typeCombo"
+                    <form:SimpleComboBox ui:field="type"
                                          allowBlank="false"
                                          triggerAction="ALL"/>
                 </form:widget>
             </form:FieldLabel>
         </container:child>
         <container:child layoutData="{layoutData}">
-            <form:FieldLabel text="Message">
+            <form:FieldLabel text="{appearance.systemMsgDlgMessageLabel}">
                 <form:widget>
                     <form:TextArea ui:field="messageField"
                                    allowBlank="false"/>
@@ -33,14 +38,14 @@
             </form:FieldLabel>
         </container:child>
         <container:child layoutData="{layoutData}">
-            <form:FieldLabel text="Activation Date">
+            <form:FieldLabel text="{appearance.systemMsgDlgActivationDateLabel}">
                 <form:widget>
                     <form:DateField ui:field="activationDateField"/>
                 </form:widget>
             </form:FieldLabel>
         </container:child>
         <container:child layoutData="{layoutData}">
-            <form:FieldLabel text="Activation Time">
+            <form:FieldLabel text="{appearance.systemMsgDlgActivationTimeLabel}">
                 <form:widget>
                     <form:TimeField ui:field="activationTimeField"
                                     minValue="{minTime}"
@@ -50,7 +55,7 @@
             </form:FieldLabel>
         </container:child>
         <container:child layoutData="{layoutData}">
-            <form:FieldLabel text="De-Activation Date">
+            <form:FieldLabel text="{appearance.systemMsgDlgDeactivationDateLabel}">
                 <form:widget>
                     <form:DateField ui:field="deActivationDateField"
                                     allowBlank="false"/>
@@ -58,7 +63,7 @@
             </form:FieldLabel>
         </container:child>
         <container:child layoutData="{layoutData}">
-            <form:FieldLabel text="De-Activation Time">
+            <form:FieldLabel text="{appearance.systemMsgDeactivationTimeLabel}">
                 <form:widget>
                     <form:TimeField ui:field="deActivationTimeField"
                                     minValue="{minTime}"
@@ -68,16 +73,16 @@
             </form:FieldLabel>
         </container:child>
         <container:child layoutData="{layoutData}">
-            <form:FieldLabel text="Allow user to delete">
+            <form:FieldLabel text="{appearance.systemMsgDlgDismissibleLabel}">
                 <form:widget>
-                    <form:CheckBox ui:field="dismissibleField"/>
+                    <form:CheckBox ui:field="dismissible"/>
                 </form:widget>
             </form:FieldLabel>
         </container:child>
         <container:child layoutData="{layoutData}">
-            <form:FieldLabel text="Logins Disabled">
+            <form:FieldLabel text="{appearance.systemMsgDlgLoginsDisabledLabel}">
                 <form:widget>
-                    <form:CheckBox ui:field="loginsDisabledField"
+                    <form:CheckBox ui:field="loginsDisabled"
                                    enabled="false"/>
                 </form:widget>
             </form:FieldLabel>

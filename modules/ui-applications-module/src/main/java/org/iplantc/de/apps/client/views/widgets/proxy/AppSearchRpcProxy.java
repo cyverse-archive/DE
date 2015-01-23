@@ -43,7 +43,8 @@ public class AppSearchRpcProxy extends RpcProxy<FilterPagingLoadConfig, PagingLo
 
     public AppSearchRpcProxy(final AppServiceFacade appService,
                              final AppSearchAutoBeanFactory appSearchFactory,
-                             final AppAutoBeanFactory appFactory, IplantDisplayStrings displayStrings) {
+                             final AppAutoBeanFactory appFactory,
+                             final IplantDisplayStrings displayStrings) {
         this.appService = appService;
         this.appSearchFactory = appSearchFactory;
         this.appFactory = appFactory;

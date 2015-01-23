@@ -1,14 +1,12 @@
 package org.iplantc.de.diskResource.client.views.widgets;
 
-import static org.iplantc.de.client.models.diskResources.PermissionValue.own;
-import static org.iplantc.de.client.models.diskResources.PermissionValue.read;
-import static org.iplantc.de.client.models.diskResources.PermissionValue.write;
-
+import static org.iplantc.de.client.models.diskResources.PermissionValue.*;
 import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.client.models.diskResources.File;
 import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.diskResource.client.events.DiskResourceSelectionChangedEvent;
+import org.iplantc.de.diskResource.client.search.views.DiskResourceSearchField;
 
 import com.google.common.collect.Lists;
 import com.google.gwtmockito.GxtMockitoTestRunner;
@@ -17,11 +15,7 @@ import com.sencha.gxt.widget.core.client.button.TextButton;
 import com.sencha.gxt.widget.core.client.menu.MenuItem;
 
 import static org.mockito.Matchers.anyBoolean;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
+import static org.mockito.Mockito.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -74,6 +68,8 @@ public class DiskResourceViewToolbar_onDiskResourceSelectionChangedTest {
             mockShareMenu,
             mockRefreshButton,
             mockTrashMenu;
+    @Mock DiskResourceSearchField searchFieldMock;
+
     private boolean containsFile = false;
     private boolean containsOnlyFolders = false;
     private final boolean isReadable = true;
@@ -82,7 +78,7 @@ public class DiskResourceViewToolbar_onDiskResourceSelectionChangedTest {
     private DiskResourceViewToolbarImpl uut;
 
     @Before public void setup() {
-        uut = new DiskResourceViewToolbarImpl(mock(UserInfo.class)){
+        uut = new DiskResourceViewToolbarImpl(searchFieldMock, mock(UserInfo.class)){
             @Override
             boolean containsFile(List<DiskResource> selection) {
                 return containsFile;

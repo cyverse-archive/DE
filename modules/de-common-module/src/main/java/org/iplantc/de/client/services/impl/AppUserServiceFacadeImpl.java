@@ -68,16 +68,14 @@ public class AppUserServiceFacadeImpl implements AppUserServiceFacade {
     public void getPublicAppCategories(AsyncCallback<List<AppCategory>> callback, boolean loadHpc) {
         String address = CATEGORIES + "?public=true&hpc=" + loadHpc;
         ServiceCallWrapper wrapper = new ServiceCallWrapper(address);
-        deServiceFacade.getServiceData(wrapper, new AppCategoryListCallbackConverter(callback,
-                                                                                     errorStrings));
+        deServiceFacade.getServiceData(wrapper, new AppCategoryListCallbackConverter(callback));
     }
 
     @Override
     public void getAppCategories(AsyncCallback<List<AppCategory>> callback) {
         String address = CATEGORIES;
         ServiceCallWrapper wrapper = new ServiceCallWrapper(address);
-        deServiceFacade.getServiceData(wrapper, new AppCategoryListCallbackConverter(callback,
-                                                                                     errorStrings));
+        deServiceFacade.getServiceData(wrapper, new AppCategoryListCallbackConverter(callback));
     }
 
     @Override

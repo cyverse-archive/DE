@@ -15,6 +15,7 @@ import org.iplantc.de.client.models.viewer.InfoType;
 import org.iplantc.de.client.models.viewer.MimeType;
 import org.iplantc.de.client.models.viewer.StructuredText;
 import org.iplantc.de.client.models.viewer.VizUrl;
+import org.iplantc.de.client.services.DiskResourceServiceFacade;
 import org.iplantc.de.client.services.FileEditorServiceFacade;
 import org.iplantc.de.client.services.UserSessionServiceFacade;
 import org.iplantc.de.client.util.DiskResourceUtil;
@@ -136,6 +137,7 @@ public class FileViewerPresenterImpl implements FileViewer.Presenter, FileSavedE
     @Inject FileViewer.FileViewerPresenterAppearance appearance;
     @Inject DiskResourceSelectorDialogFactory dialogFactory;
     @Inject UserSessionServiceFacade userSessionService;
+    @Inject DiskResourceServiceFacade diskResourceServiceFacade;
     @Inject DiskResourceUtil diskResourceUtil;
     @Inject JsonUtil jsonUtil;
 
@@ -482,7 +484,7 @@ public class FileViewerPresenterImpl implements FileViewer.Presenter, FileSavedE
         boolean ensembleViewer = diskResourceUtil.isEnsemblVizTab(infoTypeSplittable);
 
         if (treeViewer || cogeViewer || ensembleViewer) {
-            FileViewer vizViewer = new ExternalVisualizationURLViewerImpl(file, infoType);
+            FileViewer vizViewer = new ExternalVisualizationURLViewerImpl(file, infoType, fileEditorService, diskResourceServiceFacade);
             List<VizUrl> urls = getManifestVizUrls(manifest);
 
             if (urls != null && !urls.isEmpty()) {

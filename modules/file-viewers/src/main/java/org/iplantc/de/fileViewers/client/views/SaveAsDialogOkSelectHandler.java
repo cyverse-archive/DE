@@ -11,6 +11,9 @@ import com.google.gwt.event.shared.HasHandlers;
 
 import com.sencha.gxt.widget.core.client.event.SelectEvent;
 
+/**
+ * @author jstroot
+ */
 public final class SaveAsDialogOkSelectHandler implements SelectEvent.SelectHandler {
     private final IsMaskable maskable;
     private final HasHandlers hasHandlers;

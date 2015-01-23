@@ -38,8 +38,8 @@ import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.commons.client.info.ErrorAnnouncementConfig;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
 import org.iplantc.de.commons.client.info.SuccessAnnouncementConfig;
-import org.iplantc.de.commons.client.views.gxt3.dialogs.IPlantDialog;
-import org.iplantc.de.commons.client.views.gxt3.dialogs.IplantInfoBox;
+import org.iplantc.de.commons.client.views.dialogs.IPlantDialog;
+import org.iplantc.de.commons.client.views.dialogs.IplantInfoBox;
 import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 import org.iplantc.de.resources.client.messages.IplantErrorStrings;
 import org.iplantc.de.resources.client.uiapps.integration.AppIntegrationErrorMessages;
@@ -744,6 +744,24 @@ public class AppsEditorPresenterImpl implements AppsEditorView.Presenter,
             hr.removeHandler();
         }
         handlerRegistrations.clear();
+
+        // If 'lastSave' is null, then the view's editorDrive.edit() has not been called yet
+        if(lastSave == null){
+            return;
+        }
+        // Clean any handlers from the AppTemplate
+        final AutoBean<Object> autoBean = AutoBeanUtils.getAutoBean(view.flush());
+        final Object tag;
+        if (autoBean != null) {
+            tag = autoBean.getTag(AppsEditorView.Presenter.HANDLERS);
+            if ((tag != null)
+                    && (tag instanceof List)) {
+                @SuppressWarnings("unchecked") List<HandlerRegistration> handlerRegistrationList = (List<HandlerRegistration>) tag;
+                for(HandlerRegistration hr : handlerRegistrationList){
+                    hr.removeHandler();
+                }
+            }
+        }
     }
 
 }

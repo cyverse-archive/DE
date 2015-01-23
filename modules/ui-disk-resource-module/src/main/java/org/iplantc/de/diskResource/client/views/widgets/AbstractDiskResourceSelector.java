@@ -9,6 +9,7 @@ import org.iplantc.de.client.models.errorHandling.SimpleServiceError;
 import org.iplantc.de.client.services.DiskResourceServiceFacade;
 import org.iplantc.de.client.util.DiskResourceUtil;
 import org.iplantc.de.commons.client.widgets.IPlantSideErrorHandler;
+import org.iplantc.de.resources.client.IplantResources;
 import org.iplantc.de.resources.client.constants.IplantValidationConstants;
 import org.iplantc.de.resources.client.messages.I18N;
 import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
@@ -35,16 +36,15 @@ import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.resources.client.ClientBundle;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.safehtml.shared.SafeHtml;
-import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.web.bindery.autobean.shared.AutoBeanCodex;
 
 import com.sencha.gxt.core.client.XTemplates;
-import com.sencha.gxt.core.client.dom.XDOM;
 import com.sencha.gxt.core.client.dom.XElement;
 import com.sencha.gxt.core.shared.FastMap;
 import com.sencha.gxt.dnd.core.client.DND.Operation;
@@ -58,6 +58,8 @@ import com.sencha.gxt.dnd.core.client.StatusProxy;
 import com.sencha.gxt.widget.core.client.Component;
 import com.sencha.gxt.widget.core.client.ComponentHelper;
 import com.sencha.gxt.widget.core.client.button.TextButton;
+import com.sencha.gxt.widget.core.client.container.AbstractHtmlLayoutContainer.HtmlData;
+import com.sencha.gxt.widget.core.client.container.HtmlLayoutContainer;
 import com.sencha.gxt.widget.core.client.event.InvalidEvent.HasInvalidHandlers;
 import com.sencha.gxt.widget.core.client.event.InvalidEvent.InvalidHandler;
 import com.sencha.gxt.widget.core.client.event.SelectEvent;
@@ -96,6 +98,7 @@ public abstract class AbstractDiskResourceSelector<R extends DiskResource> exten
      * @author jstroot
      */
     private final class DrSideErrorHandler extends IPlantSideErrorHandler {
+
         private final Widget button1;
         private final Widget container;
         private final Component input1;
@@ -110,7 +113,7 @@ public abstract class AbstractDiskResourceSelector<R extends DiskResource> exten
         @Override
         public void clearInvalid() {
             super.clearInvalid();
-            int offset = button1.getOffsetWidth() + buttonOffset;
+            int offset = button1.getOffsetWidth() + buttonOffset + +resetBtn.getOffsetWidth();
             input1.setWidth(container.getOffsetWidth() - offset);
         }
 
@@ -122,7 +125,8 @@ public abstract class AbstractDiskResourceSelector<R extends DiskResource> exten
                 @Override
                 public void execute() {
                     if (isShowing()) {
-                        int offset = button1.getOffsetWidth() + buttonOffset + 16;
+                        int offset = button1.getOffsetWidth() + buttonOffset + OFFSET
+                                + resetBtn.getOffsetWidth();
                         input1.setWidth(container.getOffsetWidth() - offset);
                     }
                 }
@@ -131,18 +135,13 @@ public abstract class AbstractDiskResourceSelector<R extends DiskResource> exten
     }
 
     interface FileFolderSelectorStyle extends CssResource {
-        String buttonWrap();
-
         String errorText();
-
-        String inputWrap();
-
-        String wrap();
     }
 
     public interface FileUploadTemplate extends XTemplates {
-        @XTemplate("<div class='{style.wrap}'></div>")
-        SafeHtml render(FileFolderSelectorStyle style);
+        @XTemplate("<table width=\"100%\" height=\"100%\"><tbody><tr><td class=\"cell1\" /><td class=\"cell2\"/><td class=\"cell3\"/></tr></tbody></table>")
+                SafeHtml
+                render();
     }
 
     interface Resources extends ClientBundle {
@@ -152,10 +151,12 @@ public abstract class AbstractDiskResourceSelector<R extends DiskResource> exten
 
     private final AppsWidgetsDisplayMessages appsMessages;
     private final TextButton button;
+    private final TextButton resetBtn;
     private final int buttonOffset = 3;
     private final IplantDisplayStrings displayStrings;
     private final DiskResourceServiceFacade drServiceFacade;
     private final IplantErrorStrings errorStrings;
+    private final IplantResources imgResources;
     private final List<EditorError> errors = Lists.newArrayList();
     private final Element infoText;
     private final TextField input = new TextField();
@@ -171,6 +172,7 @@ public abstract class AbstractDiskResourceSelector<R extends DiskResource> exten
     // by default do not validate permissions
     private boolean validatePermissions = false;
     private final DiskResourceUtil diskResourceUtil;
+    private static final int OFFSET = 24;
 
     protected AbstractDiskResourceSelector() {
         res.style().ensureInjected();
@@ -178,22 +180,35 @@ public abstract class AbstractDiskResourceSelector<R extends DiskResource> exten
         errorStrings = I18N.ERROR;
         appsMessages = I18N.APPS_MESSAGES;
         vConstants = I18N.V_CONSTANTS;
+        imgResources = IplantResources.RESOURCES;
         drServiceFacade = ServicesInjector.INSTANCE.getDiskResourceServiceFacade();
         diskResourceUtil = DiskResourceUtil.getInstance();
 
-        SafeHtmlBuilder builder = new SafeHtmlBuilder();
-        builder.append(template.render(res.style()));
-        setElement(XDOM.create(builder.toSafeHtml()));
+        SimplePanel panel = new SimplePanel();
+        setElement(panel.getElement());
+
+        FileUploadTemplate templates = GWT.create(FileUploadTemplate.class);
+
+        HtmlLayoutContainer c = new HtmlLayoutContainer(templates.render());
+        panel.setWidget(c);
+
+
+        resetBtn = new TextButton("", imgResources.arrowUndo());
+        c.add(resetBtn, new HtmlData(".cell1"));
+        resetBtn.addSelectHandler(new SelectHandler() {
+
+            @Override
+            public void onSelect(SelectEvent event) {
+                clear();
+            }
+        });
 
         input.setReadOnly(true);
-        input.setStyleName(res.style().inputWrap());
-        getElement().appendChild(input.getElement());
+        c.add(input, new HtmlData(".cell2"));
 
-        sinkEvents(Event.ONCHANGE | Event.ONCLICK | Event.MOUSEEVENTS);
 
         button = new TextButton(displayStrings.browse());
-        button.getElement().addClassName(res.style().buttonWrap());
-        getElement().appendChild(button.getElement());
+        c.add(button, new HtmlData(".cell3"));
         button.addSelectHandler(new SelectHandler() {
 
             @Override
@@ -215,6 +230,8 @@ public abstract class AbstractDiskResourceSelector<R extends DiskResource> exten
         errorHandler = new DrSideErrorHandler(input, this, button);
         errorHandler.setAdjustTargetWidth(false);
         input.setErrorSupport(errorHandler);
+        sinkEvents(Event.ONCHANGE | Event.ONCLICK | Event.MOUSEEVENTS);
+
     }
 
     @Override
@@ -247,6 +264,11 @@ public abstract class AbstractDiskResourceSelector<R extends DiskResource> exten
     @Override
     public void disableBrowseButtons() {
         browseButtonEnabled = false;
+    }
+
+    @Override
+    public void hideResetButton() {
+        resetBtn.hide();
     }
 
     @Override
@@ -418,6 +440,7 @@ public abstract class AbstractDiskResourceSelector<R extends DiskResource> exten
     @Override
     protected void doAttachChildren() {
         super.doAttachChildren();
+        ComponentHelper.doAttach(resetBtn);
         ComponentHelper.doAttach(input);
         ComponentHelper.doAttach(button);
     }
@@ -425,6 +448,7 @@ public abstract class AbstractDiskResourceSelector<R extends DiskResource> exten
     @Override
     protected void doDetachChildren() {
         super.doDetachChildren();
+        ComponentHelper.doDetach(resetBtn);
         ComponentHelper.doDetach(input);
         ComponentHelper.doDetach(button);
     }
@@ -455,11 +479,11 @@ public abstract class AbstractDiskResourceSelector<R extends DiskResource> exten
 
     @Override
     protected void onResize(int width, int height) {
-        int offset = button.getOffsetWidth() + buttonOffset;
+        int offset = button.getOffsetWidth() + buttonOffset * 2 + resetBtn.getOffsetWidth();
         if (errorHandler.isShowing()) {
-            offset += 16;
+            offset += OFFSET;
         }
-        super.onResize(width, height);
+        // super.onResize(width, height);
         input.setWidth(width - offset);
     }
 

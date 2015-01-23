@@ -33,7 +33,7 @@ import org.iplantc.de.commons.client.info.IplantAnnouncer;
 import org.iplantc.de.commons.client.info.SuccessAnnouncementConfig;
 import org.iplantc.de.commons.client.requests.KeepaliveTimer;
 import org.iplantc.de.commons.client.util.WindowUtil;
-import org.iplantc.de.commons.client.views.gxt3.dialogs.IplantErrorDialog;
+import org.iplantc.de.commons.client.views.dialogs.IplantErrorDialog;
 import org.iplantc.de.commons.client.views.window.configs.AnalysisWindowConfig;
 import org.iplantc.de.commons.client.views.window.configs.AppsWindowConfig;
 import org.iplantc.de.commons.client.views.window.configs.ConfigFactory;
@@ -46,8 +46,6 @@ import org.iplantc.de.desktop.shared.DeModule;
 import org.iplantc.de.fileViewers.client.callbacks.LoadGenomeInCoGeCallback;
 import org.iplantc.de.notifications.client.utils.NotifyInfo;
 import org.iplantc.de.notifications.client.views.dialogs.ToolRequestHistoryDialog;
-import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
-import org.iplantc.de.resources.client.messages.IplantErrorStrings;
 import org.iplantc.de.shared.services.PropertyServiceAsync;
 import org.iplantc.de.systemMessages.client.view.NewMessageView;
 
@@ -63,7 +61,6 @@ import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONString;
 import com.google.gwt.safehtml.shared.SafeHtml;
-import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Panel;
@@ -85,8 +82,6 @@ import com.sencha.gxt.widget.core.client.event.DialogHideEvent;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * @author jstroot
@@ -115,9 +110,7 @@ public class DesktopPresenterImpl implements DesktopView.Presenter {
     @Inject CommonUiConstants commonUiConstants;
     @Inject DEClientConstants deClientConstants;
     @Inject DEProperties deProperties;
-    @Inject IplantDisplayStrings displayStrings;
     @Inject Provider<ErrorHandler> errorHandlerProvider;
-    @Inject IplantErrorStrings errorStrings;
     @Inject Provider<DEFeedbackServiceFacade> feedbackServiceProvider;
     @Inject Provider<FileEditorServiceFacade> fileEditorServiceProvider;
     @Inject MessageServiceFacade messageServiceFacade;
@@ -130,6 +123,7 @@ public class DesktopPresenterImpl implements DesktopView.Presenter {
     @Inject UserSettings userSettings;
     @Inject NotifyInfo notifyInfo;
     @Inject DiskResourceUtil diskResourceUtil;
+    @Inject DesktopPresenterAppearance appearance;
 
     private final EventBus eventBus;
     private final KeepaliveTimer keepaliveTimer;
@@ -184,8 +178,7 @@ public class DesktopPresenterImpl implements DesktopView.Presenter {
         userSessionService.logout(new RuntimeCallbacks.LogoutCallback(userSessionService,
                                                      deClientConstants,
                                                      userSettings,
-                                                     displayStrings,
-                                                     errorStrings,
+                                                     appearance,
                                                      getOrderedWindowStates()));
     }
 
@@ -207,7 +200,7 @@ public class DesktopPresenterImpl implements DesktopView.Presenter {
                if(!announce){
                    return;
                }
-               announcer.schedule(new SuccessAnnouncementConfig(displayStrings.markAllasSeenSuccess(), true, 3000));
+               announcer.schedule(new SuccessAnnouncementConfig(appearance.markAllAsSeenSuccess(), true, 3000));
            }
        });
     }
@@ -249,7 +242,7 @@ public class DesktopPresenterImpl implements DesktopView.Presenter {
                                                                         userSettings,
                                                                         userSessionService,
                                                                         errorHandlerProvider,
-                                                                        errorStrings,
+                                                                        appearance,
                                                                         panel,
                                                                         this));
     }
@@ -337,9 +330,6 @@ public class DesktopPresenterImpl implements DesktopView.Presenter {
 
                 List<ToolRequestHistory> history = toolRequest.getHistory();
 
-                Logger logger = Logger.getLogger("NameOfYourLogger");
-                logger.log(Level.SEVERE, "history size==>" + history.size());
-
                 ToolRequestHistoryDialog dlg = new ToolRequestHistoryDialog(toolRequest.getName(),
                         history);
                 dlg.show();
@@ -385,7 +375,7 @@ public class DesktopPresenterImpl implements DesktopView.Presenter {
         final RuntimeCallbacks.SaveUserSettingsCallback callback = new RuntimeCallbacks.SaveUserSettingsCallback(value,
                                                                                userSettings,
                                                                                announcer,
-                                                                               displayStrings,
+                                                                               appearance,
                                                                                updateSilently);
         userSessionService.saveUserPreferences(value.asSplittable(), callback);
     }
@@ -408,13 +398,13 @@ public class DesktopPresenterImpl implements DesktopView.Presenter {
         feedbackServiceProvider.get().submitFeedback(splittable, new AsyncCallback<Void>() {
             @Override
             public void onFailure(Throwable caught) {
-                errorHandlerProvider.get().post(errorStrings.feedbackServiceFailure(), caught);
+                errorHandlerProvider.get().post(appearance.feedbackServiceFailure(), caught);
             }
 
             @Override
             public void onSuccess(Void result) {
                 isHideable.hide();
-                announcer.schedule(new SuccessAnnouncementConfig(displayStrings.feedbackSubmitted(), true, 3000));
+                announcer.schedule(new SuccessAnnouncementConfig(appearance.feedbackSubmitted(), true, 3000));
             }
         });
 
@@ -440,7 +430,7 @@ public class DesktopPresenterImpl implements DesktopView.Presenter {
         if((unseenNotificationCount > 0)
             && (unseenNotificationCount > currentUnseen)){
             // Only fetch messages if necessary
-            messageServiceFacade.getRecentMessages(new RuntimeCallbacks.GetRecentNotificationsCallback(displayStrings, notificationFactory, view, notifyInfo));
+            messageServiceFacade.getRecentMessages(new RuntimeCallbacks.GetRecentNotificationsCallback(appearance, notificationFactory, view, notifyInfo));
         }
     }
 
@@ -465,7 +455,7 @@ public class DesktopPresenterImpl implements DesktopView.Presenter {
         initKBShortCuts();
         panel.add(view);
         processQueryStrings();
-        messageServiceFacade.getRecentMessages(new InitializationCallbacks.GetInitialNotificationsCallback(view, announcer));
+        messageServiceFacade.getRecentMessages(new InitializationCallbacks.GetInitialNotificationsCallback(view, appearance, announcer));
     }
 
     void restoreWindows(List<WindowState> windowStates) {
@@ -478,13 +468,13 @@ public class DesktopPresenterImpl implements DesktopView.Presenter {
         // do not attempt to get user session for new user
         if (userSettings.isSaveSession() && !urlHasDataTypeParameter && !userInfo.isNewUser()) {
             // This restoreSession's callback will also init periodic session saving.
-            final AutoProgressMessageBox progressMessageBox = new AutoProgressMessageBox(displayStrings.loadingSession(),
-                                                                                         displayStrings.loadingSessionWaitNotice());
+            final AutoProgressMessageBox progressMessageBox = new AutoProgressMessageBox(appearance.loadingSession(),
+                                                                                         appearance.loadingSessionWaitNotice());
             progressMessageBox.getProgressBar().setDuration(1000);
             progressMessageBox.getProgressBar().setInterval(100);
             progressMessageBox.auto();
             final Request req = userSessionService.getUserSession(new RuntimeCallbacks.GetUserSessionCallback(progressMessageBox,
-                                                                                             errorStrings,
+                                                                                             appearance,
                                                                                              announcer,
                                                                                              this));
             progressMessageBox.addDialogHideHandler(new DialogHideEvent.DialogHideHandler() {
@@ -492,7 +482,7 @@ public class DesktopPresenterImpl implements DesktopView.Presenter {
                 public void onDialogHide(DialogHideEvent event) {
                     if (Dialog.PredefinedButton.CANCEL.equals(event.getHideButton())) {
                         req.cancel();
-                        SafeHtml msg = SafeHtmlUtils.fromString("Session restore cancelled");
+                        SafeHtml msg = appearance.sessionRestoreCancelled();
                         announcer.schedule(new SuccessAnnouncementConfig(msg, true, 5000));
                     }
                 }

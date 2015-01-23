@@ -137,7 +137,6 @@ public class AppTemplateServicesImpl implements AppTemplateServices, AppMetadata
     public void launchAnalysis(AppTemplate at, JobExecution je, AsyncCallback<String> callback) {
         String address = ANALYSES;
         Splittable assembledPayload = doAssembleLaunchAnalysisPayload(at, je);
-        LOG.info("LaunchAnalysis Json:\n" + jsonUtil.prettyPrint(assembledPayload));
 
         ServiceCallWrapper wrapper = new ServiceCallWrapper(POST, address, assembledPayload.getPayload());
         deServiceFacade.getServiceData(wrapper, callback);
@@ -208,7 +207,7 @@ public class AppTemplateServicesImpl implements AppTemplateServices, AppMetadata
 
             }
         }
-        LOG.info("template from bean-->" + ret.getPayload() + "");
+        LOG.fine("template from bean-->" + ret.getPayload() + "");
         return ret;
     }
 

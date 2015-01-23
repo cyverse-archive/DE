@@ -9,6 +9,7 @@ import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.client.models.search.DiskResourceQueryTemplate;
 import org.iplantc.de.diskResource.client.events.FolderSelectionEvent;
+import org.iplantc.de.diskResource.client.search.views.DiskResourceSearchField;
 
 import com.google.gwtmockito.GxtMockitoTestRunner;
 
@@ -70,6 +71,7 @@ public class DiskResourceViewToolbar_onFolderSelectedTest {
             mockShareMenu,
             mockRefreshButton,
             mockTrashMenu;
+    @Mock DiskResourceSearchField searchFieldMock;
     private final boolean containsFile = false;
     private final boolean isReadable = true;
     private boolean isSelectionInTrash = false;
@@ -77,7 +79,7 @@ public class DiskResourceViewToolbar_onFolderSelectedTest {
     private DiskResourceViewToolbarImpl uut;
 
     @Before public void setup() {
-        uut = new DiskResourceViewToolbarImpl(mock(UserInfo.class)){
+        uut = new DiskResourceViewToolbarImpl(searchFieldMock, mock(UserInfo.class)){
             @Override
             boolean containsFile(List<DiskResource> selection) {
                 return containsFile;

@@ -13,6 +13,9 @@ import com.sencha.gxt.widget.core.client.button.TextButton;
 import com.sencha.gxt.widget.core.client.event.SelectEvent;
 import com.sencha.gxt.widget.core.client.toolbar.ToolBar;
 
+/**
+ * @author jstroot
+ */
 public class PathListViewerToolbar extends AbstractToolBar {
     public interface PathListViewerToolbarAppearance extends AbstractToolBarAppearance {
 
@@ -29,10 +32,8 @@ public class PathListViewerToolbar extends AbstractToolBar {
 
     private static final PathListViewerToolbarUiBinder BINDER = GWT.create(PathListViewerToolbarUiBinder.class);
 
-    @UiField(provided = true)
-    PathListViewerToolbarAppearance appearance;
-    @UiField
-    TextButton deleteSelectedPathsBtn;
+    @UiField(provided = true) PathListViewerToolbarAppearance appearance;
+    @UiField TextButton deleteSelectedPathsBtn;
 
     public PathListViewerToolbar(boolean editing){
         this(editing, GWT.<PathListViewerToolbarAppearance> create(PathListViewerToolbarAppearance.class));

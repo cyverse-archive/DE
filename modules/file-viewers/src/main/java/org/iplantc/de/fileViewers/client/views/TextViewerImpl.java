@@ -31,7 +31,6 @@ import com.sencha.gxt.widget.core.client.container.SimpleContainer;
 import com.sencha.gxt.widget.core.client.event.SelectEvent;
 import com.sencha.gxt.widget.core.client.event.SelectEvent.SelectHandler;
 
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -40,13 +39,25 @@ import java.util.logging.Logger;
 public class TextViewerImpl extends AbstractFileViewer implements
                                                       ViewerPagingToolbarUpdatedEvent.ViewerPagingToolbarUpdatedEventHandler {
 
-    private final class PreviewSelectHandlerImpl implements SelectHandler {
+    public interface TextViewerAppearance {
+        String markdownPreviewWindowHeader();
+
+        String markdownPreviewWindowWidth();
+
+        String markdownPreviewWindowHeight();
+
+        String unsupportedPreviewAlertTitle();
+
+        String unsupportedPreviewAlertMsg();
+    }
+
+    private final class MarkdownPreviewSelectHandlerImpl implements SelectHandler {
         @Override
         public void onSelect(SelectEvent event) {
             // do not support preview if content cannot be fit in one page.
             if (pagingToolbar.getTotalPages() > 1) {
-                AlertMessageBox amb = new AlertMessageBox("Preview",
-                                                          "Unable to generate preview. Please adjust page size to fit  file contents in 1 page and try again!");
+                AlertMessageBox amb = new AlertMessageBox(appearance.unsupportedPreviewAlertTitle(),
+                                                          appearance.unsupportedPreviewAlertMsg());
                 amb.show();
                 return;
             }
@@ -55,9 +66,10 @@ public class TextViewerImpl extends AbstractFileViewer implements
             if (fileObj != null) {
                 d.setHeadingHtml(fileObj.getName());
             } else {
-                d.setHeadingHtml("Preview");
+                d.setHeadingHtml(appearance.markdownPreviewWindowHeader());
             }
-            d.setSize("600", "500");
+            d.setSize(appearance.markdownPreviewWindowWidth(),
+                      appearance.markdownPreviewWindowHeight());
             MarkDownRendererViewImpl renderer = new MarkDownRendererViewImpl(fileObj,
                                                                              TextViewerImpl.this.infoType,
                                                                              getEditorContent(jso),
@@ -93,6 +105,7 @@ public class TextViewerImpl extends AbstractFileViewer implements
     private final String mode;
     private final FileViewer.Presenter presenter;
     private boolean dirty;
+    private TextViewerAppearance appearance = GWT.create(TextViewerAppearance.class);
 
     public TextViewerImpl(final File file,
                           final String infoType,
@@ -103,7 +116,7 @@ public class TextViewerImpl extends AbstractFileViewer implements
         this.editing = editing;
         this.mode = mode;
         this.presenter = presenter;
-        LOG.log(Level.INFO, "in viewer-->" + mode);
+        LOG.fine("in viewer-->" + mode);
 
         initWidget(uiBinder.createAndBindUi(this));
 
@@ -253,7 +266,7 @@ public class TextViewerImpl extends AbstractFileViewer implements
         TextViewToolBar textViewPagingToolBar;
         if (mode != null && mode.equals("markdown")) {
             textViewPagingToolBar = new TextViewToolBar(editing, true);
-            textViewPagingToolBar.addPreviewHandler(new PreviewSelectHandlerImpl());
+            textViewPagingToolBar.addPreviewHandler(new MarkdownPreviewSelectHandlerImpl());
         } else {
             textViewPagingToolBar = new TextViewToolBar(editing, false);
         }

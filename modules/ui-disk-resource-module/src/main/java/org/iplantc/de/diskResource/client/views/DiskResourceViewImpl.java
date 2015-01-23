@@ -13,8 +13,6 @@ import org.iplantc.de.client.models.search.DiskResourceQueryTemplate;
 import org.iplantc.de.client.models.tags.IplantTag;
 import org.iplantc.de.client.util.CommonModelUtils;
 import org.iplantc.de.client.util.DiskResourceUtil;
-import org.iplantc.de.commons.client.tags.presenter.IplantTagListPresenter;
-import org.iplantc.de.commons.client.tags.resources.CustomIplantTagResources;
 import org.iplantc.de.commons.client.widgets.IPlantAnchor;
 import org.iplantc.de.diskResource.client.events.DiskResourceSelectionChangedEvent;
 import org.iplantc.de.diskResource.client.events.FolderSelectionEvent;
@@ -24,6 +22,8 @@ import org.iplantc.de.diskResource.share.DiskResourceModule;
 import org.iplantc.de.resources.client.DataCollapseStyle;
 import org.iplantc.de.resources.client.IplantResources;
 import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
+import org.iplantc.de.tags.client.TagsView;
+import org.iplantc.de.tags.client.gin.factory.TagListPresenterFactory;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
@@ -105,7 +105,6 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -182,6 +181,7 @@ public class DiskResourceViewImpl extends Composite implements DiskResourceView,
     private final PagingLoader<FolderContentsLoadConfig, PagingLoadResult<DiskResource>> gridLoader;
 
     private final DiskResourceUtil diskResourceUtil;
+    private final TagListPresenterFactory tagListPresenterFactory;
     private Presenter presenter;
 
     DiskResourceViewToolbar toolbar;
@@ -218,7 +218,7 @@ public class DiskResourceViewImpl extends Composite implements DiskResourceView,
     private Status selectionStatus;
 
     private final DiskResourceAutoBeanFactory drFactory;
-    private IplantTagListPresenter tagPresenter;
+    private TagsView.Presenter tagPresenter;
 
     Logger LOG = Logger.getLogger("DRV");
 
@@ -229,6 +229,7 @@ public class DiskResourceViewImpl extends Composite implements DiskResourceView,
                          final UserInfo userInfo,
                          final IplantDisplayStrings displayStrings,
                          final DiskResourceUtil diskResourceUtil,
+                         final TagListPresenterFactory tagListPresenterFactory,
                          @Assisted final DiskResourceView.Presenter presenter,
                          @Assisted final TreeLoader<Folder> treeLoader,
                          @Assisted final PagingLoader<FolderContentsLoadConfig, PagingLoadResult<DiskResource>> gridLoader) {
@@ -237,6 +238,7 @@ public class DiskResourceViewImpl extends Composite implements DiskResourceView,
         this.userInfo = userInfo;
         this.displayStrings = displayStrings;
         this.diskResourceUtil = diskResourceUtil;
+        this.tagListPresenterFactory = tagListPresenterFactory;
         this.presenter = presenter;
         this.treeLoader = treeLoader;
         this.treeStore = tree.getStore();
@@ -849,8 +851,7 @@ public class DiskResourceViewImpl extends Composite implements DiskResourceView,
         }
 
         presenter.getTagsForSelectedResource();
-        CustomIplantTagResources r = GWT.create(CustomIplantTagResources.class);
-        detailsPanel.add(createTagView("", r, true, true));
+        detailsPanel.add(createTagView("", true, true));
     }
 
     @Override
@@ -859,17 +860,15 @@ public class DiskResourceViewImpl extends Composite implements DiskResourceView,
     }
 
     private Widget createTagView(String containerStyle,
-                                 CustomIplantTagResources resources,
                                  boolean editable,
-                                 boolean removeable) {
+                                 boolean removable) {
         HorizontalPanel hp = new HorizontalPanel();
         SimplePanel boundaryBox = new SimplePanel();
         if (tagPresenter == null) {
-            tagPresenter = createTagListPresenter(resources,
-                                         editable,
-                                         removeable,
-                                         this.createOnFocusCmd(boundaryBox, containerStyle),
-                                         this.createOnBlurCmd(boundaryBox, containerStyle));
+            tagPresenter = createTagListPresenter(editable,
+                                                  removable,
+                                                  createOnFocusCmd(boundaryBox, containerStyle),
+                                                  createOnBlurCmd(boundaryBox, containerStyle));
 
         }
         tagPresenter.removeAll();
@@ -896,19 +895,13 @@ public class DiskResourceViewImpl extends Composite implements DiskResourceView,
         };
     }
 
-    private IplantTagListPresenter createTagListPresenter(CustomIplantTagResources resources,
-                                                 boolean editable,
-                                                 boolean removeable,
-                                                 Command onFocusCmd,
-                                                 Command onBlurCmd) {
-        IplantTagListPresenter tagsPresenter;
-        if (resources == null) {
-            tagsPresenter = new IplantTagListPresenter(this);
-        } else {
-            tagsPresenter = new IplantTagListPresenter(this, resources);
-        }
+    private TagsView.Presenter createTagListPresenter(boolean editable,
+                                                      boolean removeable,
+                                                      Command onFocusCmd,
+                                                      Command onBlurCmd) {
+        TagsView.Presenter tagsPresenter = tagListPresenterFactory.createTagListPresenter(this);
         tagsPresenter.setEditable(editable);
-        tagsPresenter.setRemoveable(removeable);
+        tagsPresenter.setRemovable(removeable);
         tagsPresenter.setOnFocusCmd(onFocusCmd);
         tagsPresenter.setOnBlurCmd(onBlurCmd);
 
@@ -1151,7 +1144,7 @@ public class DiskResourceViewImpl extends Composite implements DiskResourceView,
 
     @Override
     public void selectTag(IplantTag tag) {
-        LOG.log(Level.SEVERE, "==>" + tag.getValue());
+        LOG.fine("tag selected ==>" + tag.getValue());
         presenter.doSearchTaggedWithResources(Sets.newHashSet(tag));
     }
 

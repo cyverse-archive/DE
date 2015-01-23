@@ -1,6 +1,5 @@
 package org.iplantc.de.admin.desktop.client.gin;
 
-import org.iplantc.de.admin.desktop.client.BelphegorResources;
 import org.iplantc.de.admin.desktop.client.apps.views.AdminAppViewImpl;
 import org.iplantc.de.admin.desktop.client.apps.views.AdminAppsView;
 import org.iplantc.de.admin.desktop.client.apps.views.widgets.BelphegorAppsToolbarImpl;
@@ -44,6 +43,9 @@ import com.google.gwt.inject.client.AbstractGinModule;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
 
+/**
+ * @author jstroot
+ */
 public class BelphegorAppsGinModule extends AbstractGinModule {
     @Override
     protected void configure() {
@@ -64,8 +66,6 @@ public class BelphegorAppsGinModule extends AbstractGinModule {
         bind(SystemMessageView.class).to(SystemMessageViewImpl.class);
         bind(SystemMessageView.Presenter.class).to(SystemMessagePresenterImpl.class);
         bind(SystemMessageServiceFacade.class).to(SystemMessageServiceFacadeImpl.class);
-
-        bind(BelphegorResources.class).in(Singleton.class);
 
         bind(AppUserServiceFacade.class).to(AppAdminUserServiceFacade.class);
         bind(AppAdminServiceFacade.class).to(AppAdminServiceFacadeImpl.class);

@@ -22,6 +22,9 @@ import com.sencha.gxt.widget.core.client.event.SelectEvent;
 import com.sencha.gxt.widget.core.client.form.IntegerField;
 import com.sencha.gxt.widget.core.client.toolbar.LabelToolItem;
 
+/**
+ * @author jstroot
+ */
 public class ViewerPagingToolBar extends Composite {
 
     @UiTemplate("ViewerPagingToolBar.ui.xml")
@@ -51,16 +54,11 @@ public class ViewerPagingToolBar extends Composite {
 
     private static ViewerPagingToolBarUiBinder BINDER = GWT.create(ViewerPagingToolBarUiBinder.class);
 
-    @UiField
-    LabelToolItem afterText;
-    @UiField
-    TextButton first, prev, next, last;
-    @UiField
-    Slider pageSizeSlider;
-    @UiField
-    IntegerField pageNumber;
-    @UiField
-    ViewerPagingToolBarAppearance appearance;
+    @UiField LabelToolItem afterText;
+    @UiField TextButton first, prev, next, last;
+    @UiField Slider pageSizeSlider;
+    @UiField IntegerField pageNumber;
+    @UiField ViewerPagingToolBarAppearance appearance;
 
     long fileSize;
     private int totalPages;

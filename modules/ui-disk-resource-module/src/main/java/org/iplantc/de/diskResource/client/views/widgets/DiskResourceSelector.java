@@ -17,4 +17,6 @@ public interface DiskResourceSelector {
     List<EditorError> getErrors();
 
     void setRequired(boolean required);
+
+    void hideResetButton();
 }

@@ -3,7 +3,7 @@ package org.iplantc.de.collaborators.client.views;
 import org.iplantc.de.client.models.collaborators.Collaborator;
 import org.iplantc.de.collaborators.client.presenter.ManageCollaboratorsPresenter;
 import org.iplantc.de.collaborators.client.views.ManageCollaboratorsView.MODE;
-import org.iplantc.de.commons.client.views.gxt3.dialogs.IPlantDialog;
+import org.iplantc.de.commons.client.views.dialogs.IPlantDialog;
 import org.iplantc.de.resources.client.messages.I18N;
 
 import com.google.gwt.cell.client.AbstractCell;

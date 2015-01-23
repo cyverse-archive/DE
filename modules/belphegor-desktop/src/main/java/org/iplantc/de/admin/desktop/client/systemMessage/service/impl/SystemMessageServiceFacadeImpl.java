@@ -16,6 +16,9 @@ import com.google.web.bindery.autobean.shared.Splittable;
 
 import java.util.List;
 
+/**
+ * @author jstroot
+ */
 public class SystemMessageServiceFacadeImpl implements SystemMessageServiceFacade {
 
     private final String SYSTEM_NOTFICATION_TYPES = "org.iplantc.services.admin.notifications.system.types";

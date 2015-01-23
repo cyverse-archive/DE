@@ -2,44 +2,34 @@ package org.iplantc.de.admin.desktop.client.refGenome.view.cells;
 
 import org.iplantc.de.admin.desktop.client.refGenome.RefGenomeView;
 import org.iplantc.de.client.models.apps.refGenome.ReferenceGenome;
-import org.iplantc.de.resources.client.DiskResourceNameCellStyle;
-import org.iplantc.de.resources.client.FavoriteCellStyle;
-import org.iplantc.de.resources.client.IplantResources;
 
 import static com.google.gwt.dom.client.BrowserEvents.CLICK;
-
 import com.google.gwt.cell.client.AbstractCell;
 import com.google.gwt.cell.client.Cell;
 import com.google.gwt.cell.client.ValueUpdater;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NativeEvent;
-import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.client.Event;
 
-import com.sencha.gxt.core.client.XTemplates;
-
+/**
+ * @author jstroot
+ */
 public class ReferenceGenomeNameCell extends AbstractCell<ReferenceGenome> {
 
-    interface Templates extends XTemplates {
-        @XTemplate("<span><span class='{appStyle.unavailable}'> </span>&nbsp;<span name='rgName' class='{style.nameStyle}' >{refGenome.name}</span></span>")
-        SafeHtml genomeDeleted(FavoriteCellStyle appStyle, DiskResourceNameCellStyle style, ReferenceGenome refGenome);
+    public interface ReferenceGenomeNameCellAppearance {
 
-        @XTemplate("<span name='rgName' class='{style.nameStyle}' >{refGenome.name}</span>")
-        SafeHtml genome(DiskResourceNameCellStyle style, ReferenceGenome refGenome);
+        void renderDeletedReferenceGenomeCell(SafeHtmlBuilder sb, ReferenceGenome value);
+
+        void renderReferenceGenomeCell(SafeHtmlBuilder sb, ReferenceGenome value);
     }
 
-    private static final DiskResourceNameCellStyle diskResourceNameStyle = IplantResources.RESOURCES.diskResourceNameCss();
-    private final FavoriteCellStyle appFavStyle = IplantResources.RESOURCES.favoriteCss();
-
-    private final Templates templates = GWT.create(Templates.class);
     private final RefGenomeView view;
+    private final ReferenceGenomeNameCellAppearance appearance = GWT.create(ReferenceGenomeNameCellAppearance.class);
 
     public ReferenceGenomeNameCell(RefGenomeView view) {
         super(CLICK);
-        diskResourceNameStyle.ensureInjected();
-        appFavStyle.ensureInjected();
         this.view = view;
     }
 
@@ -50,9 +40,9 @@ public class ReferenceGenomeNameCell extends AbstractCell<ReferenceGenome> {
         }
 
         if (value.isDeleted()) {
-            sb.append(templates.genomeDeleted(appFavStyle, diskResourceNameStyle, value));
+            appearance.renderDeletedReferenceGenomeCell(sb, value);
         } else {
-            sb.append(templates.genome(diskResourceNameStyle, value));
+            appearance.renderReferenceGenomeCell(sb, value);
         }
     }
 

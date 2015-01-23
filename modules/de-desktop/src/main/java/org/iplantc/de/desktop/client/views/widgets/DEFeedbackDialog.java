@@ -1,6 +1,6 @@
 package org.iplantc.de.desktop.client.views.widgets;
 
-import org.iplantc.de.commons.client.views.gxt3.dialogs.IPlantDialog;
+import org.iplantc.de.commons.client.views.dialogs.IPlantDialog;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.safehtml.shared.SafeHtml;
@@ -20,8 +20,7 @@ import com.sencha.gxt.widget.core.client.form.TextArea;
 import com.sencha.gxt.widget.core.client.form.TextField;
 
 /**
- * -- Externalize strings. Do it in appearance? Yes.
- * -- Validation should still occur here.
+ * @author jstroot
  */
 public class DEFeedbackDialog extends IPlantDialog {
 
@@ -78,76 +77,52 @@ public class DEFeedbackDialog extends IPlantDialog {
 
         }
 
+        String dialogHeight();
+
+        String dialogWidth();
+
         FeedbackStrings displayStrings();
     }
 
-    @UiField
-    Radio vastField;
-    @UiField
-    Radio swsatField;
-    @UiField
-    Radio okField;
-    @UiField
-    Radio swdField;
-    @UiField
-    Radio nsField;
+    @UiField Radio vastField;
+    @UiField Radio swsatField;
+    @UiField Radio okField;
+    @UiField Radio swdField;
+    @UiField Radio nsField;
 
-    @UiField
-    CheckBox expField;
-    @UiField
-    CheckBox mngField;
-    @UiField
-    CheckBox runField;
-    @UiField
-    CheckBox chkField;
-    @UiField
-    CheckBox appField;
-    @UiField
-    CheckBox otrField;
-    @UiField
-    TextField otherField;
+    @UiField CheckBox expField;
+    @UiField CheckBox mngField;
+    @UiField CheckBox runField;
+    @UiField CheckBox chkField;
+    @UiField CheckBox appField;
+    @UiField CheckBox otrField;
+    @UiField TextField otherField;
 
-    @UiField
-    CheckBox yesField;
-    @UiField
-    CheckBox swField;
-    @UiField
-    CheckBox noField;
-    @UiField
-    CheckBox notField;
-    @UiField
-    CheckBox tskOtrField;
-    @UiField
-    TextField otherCompField;
-    @UiField
-    TextArea featureTextArea;
-    @UiField
-    TextArea otherTextArea;
+    @UiField CheckBox yesField;
+    @UiField CheckBox swField;
+    @UiField CheckBox noField;
+    @UiField CheckBox notField;
+    @UiField CheckBox tskOtrField;
+    @UiField TextField otherCompField;
+    @UiField TextArea featureTextArea;
+    @UiField TextArea otherTextArea;
 
-    @UiField
-    FieldLabel reasonField;
+    @UiField FieldLabel reasonField;
 
-    @UiField
-    FieldLabel completeField;
+    @UiField FieldLabel completeField;
 
-    @UiField
-    FieldLabel satisfyField;
+    @UiField FieldLabel satisfyField;
 
-    @UiField
-    FieldLabel featureField;
+    @UiField FieldLabel featureField;
 
-    @UiField
-    FieldLabel anythingField;
+    @UiField FieldLabel anythingField;
     private final ToggleGroup group;
     
-    @UiField(provided = true)
-    FeedbackAppearance appearance;
+    @UiField(provided = true) FeedbackAppearance appearance;
 
-    @UiField
-    TextField otherSatisfiedField;
+    @UiField TextField otherSatisfiedField;
 
-    @UiField
-    Radio otsatField;
+    @UiField Radio otsatField;
 
     @Inject
     public DEFeedbackDialog(final FeedbackAppearance appearance) {
@@ -156,7 +131,7 @@ public class DEFeedbackDialog extends IPlantDialog {
         setPredefinedButtons(PredefinedButton.OK, PredefinedButton.CANCEL);
         getButton(PredefinedButton.OK).setText(appearance.displayStrings().submit());
         setHideOnButtonClick(false);
-        setSize("400", "500");
+        setSize(appearance.dialogWidth(), appearance.dialogHeight());
 
         Widget widget = uiBinder.createAndBindUi(this);
         group = new ToggleGroup();

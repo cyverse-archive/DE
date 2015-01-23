@@ -1,22 +1,23 @@
 package org.iplantc.de.commons.client.widgets;
 
 import com.google.gwt.core.shared.GWT;
-import com.google.gwt.resources.client.ClientBundle;
 
 import com.sencha.gxt.widget.core.client.Popup;
 import com.sencha.gxt.widget.core.client.event.ShowEvent;
 
+/**
+ * @author jstroot
+ */
 public class ContextualHelpPopup extends Popup {
 
-    interface PopupResources extends ClientBundle {
-        @Source("PopupHelpCss.css")
-        PopupHelpCssResources css();
+    public interface ContextualHelpPopupAppearance {
+
+        String help();
     }
 
     public ContextualHelpPopup() {
-        PopupResources res = GWT.create(PopupResources.class);
-        res.css().ensureInjected();
-        addStyleName(res.css().help());
+        ContextualHelpPopupAppearance appearance = GWT.create(ContextualHelpPopupAppearance.class);
+        addStyleName(appearance.help());
         setAutoHide(true);
     }
     

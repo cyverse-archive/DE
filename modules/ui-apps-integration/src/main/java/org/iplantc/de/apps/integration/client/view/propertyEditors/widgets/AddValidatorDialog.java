@@ -4,7 +4,7 @@ import org.iplantc.de.apps.widgets.client.view.editors.arguments.AbstractArgumen
 import org.iplantc.de.client.models.apps.integration.AppTemplateAutoBeanFactory;
 import org.iplantc.de.client.models.apps.integration.ArgumentValidator;
 import org.iplantc.de.client.models.apps.integration.ArgumentValidatorType;
-import org.iplantc.de.commons.client.views.gxt3.dialogs.IPlantDialog;
+import org.iplantc.de.commons.client.views.dialogs.IPlantDialog;
 import org.iplantc.de.resources.client.uiapps.widgets.ArgumentValidatorMessages;
 
 import com.google.common.collect.Maps;

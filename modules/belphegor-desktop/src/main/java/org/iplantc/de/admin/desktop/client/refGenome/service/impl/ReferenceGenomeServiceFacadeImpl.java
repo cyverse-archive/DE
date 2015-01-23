@@ -17,6 +17,9 @@ import com.google.web.bindery.autobean.shared.impl.StringQuoter;
 
 import java.util.List;
 
+/**
+ * @author jstroot
+ */
 public class ReferenceGenomeServiceFacadeImpl implements ReferenceGenomeServiceFacade {
 
     private final String REFERENCE_GENOMES = "org.iplantc.services.referenceGenomes";

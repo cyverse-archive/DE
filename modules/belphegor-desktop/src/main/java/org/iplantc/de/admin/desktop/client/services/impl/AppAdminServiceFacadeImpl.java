@@ -1,15 +1,10 @@
 package org.iplantc.de.admin.desktop.client.services.impl;
 
-import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.DELETE;
-import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.GET;
-import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.PATCH;
-import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.POST;
-
+import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.*;
 import org.iplantc.de.admin.desktop.client.services.AppAdminServiceFacade;
 import org.iplantc.de.admin.desktop.client.services.model.AppCategorizeRequest;
 import org.iplantc.de.client.models.apps.AppCategory;
 import org.iplantc.de.client.services.converters.AppCategoryListCallbackConverter;
-import org.iplantc.de.resources.client.messages.IplantErrorStrings;
 import org.iplantc.de.shared.services.DiscEnvApiService;
 import org.iplantc.de.shared.services.ServiceCallWrapper;
 
@@ -23,6 +18,9 @@ import com.google.web.bindery.autobean.shared.AutoBeanUtils;
 
 import java.util.List;
 
+/**
+ * @author jstroot
+ */
 public class AppAdminServiceFacadeImpl implements AppAdminServiceFacade {
 
     private final String APPS = "org.iplantc.services.apps";
@@ -32,7 +30,6 @@ public class AppAdminServiceFacadeImpl implements AppAdminServiceFacade {
     private final String CATEGORIES = "org.iplantc.services.apps.categories";
 
     @Inject private DiscEnvApiService deService;
-    @Inject private IplantErrorStrings errorStrings;
 
     @Inject
     public AppAdminServiceFacadeImpl() { }
@@ -86,7 +83,7 @@ public class AppAdminServiceFacadeImpl implements AppAdminServiceFacade {
     public void getAppCategories(AsyncCallback<List<AppCategory>> callback) {
         String address = CATEGORIES_ADMIN + "?public=true&hpc=false";
         ServiceCallWrapper wrapper = new ServiceCallWrapper(GET, address);
-        deService.getServiceData(wrapper, new AppCategoryListCallbackConverter(callback, errorStrings));
+        deService.getServiceData(wrapper, new AppCategoryListCallbackConverter(callback));
     }
 
     @Override

@@ -20,6 +20,9 @@ import com.sencha.gxt.dnd.core.client.DropTarget;
 import com.sencha.gxt.widget.core.client.grid.ColumnModel;
 import com.sencha.gxt.widget.core.client.tree.Tree;
 
+/**
+ * @author jstroot
+ */
 public class AdminAppViewImpl extends AppsViewImpl implements AdminAppsView,
                                                                       AppSelectionChangedEvent.AppSelectionChangedEventHandler {
 

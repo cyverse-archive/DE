@@ -12,7 +12,6 @@ import org.iplantc.de.desktop.client.views.widgets.TaskButton;
 import org.iplantc.de.desktop.client.views.widgets.UnseenNotificationsView;
 import org.iplantc.de.desktop.client.views.windows.IPlantWindowInterface;
 import org.iplantc.de.desktop.shared.DeModule;
-import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 import org.iplantc.de.resources.client.messages.IplantNewUserTourStrings;
 
 import com.google.common.base.Preconditions;
@@ -74,7 +73,6 @@ public class DesktopViewImpl implements DesktopView, UnregisterEvent.UnregisterH
     @Inject Provider<PreferencesDialog> preferencesDialogProvider;
     @Inject Provider<DEFeedbackDialog> deFeedbackDialogProvider;
     @Inject UserSettings userSettings;
-    @Inject IplantDisplayStrings displayStrings;
 
     private static DesktopViewImplUiBinder ourUiBinder = GWT.create(DesktopViewImplUiBinder.class);
     private final Widget widget;
@@ -152,6 +150,7 @@ public class DesktopViewImpl implements DesktopView, UnregisterEvent.UnregisterH
     }
 
     private void initIntroAttributes(IplantNewUserTourStrings tourStrings) {
+        // FIXME Need to move intro to themes
         // Feedback Btn
         feedbackBtn.getElement().setAttribute("data-intro", tourStrings.introFeedback());
         feedbackBtn.getElement().setAttribute("data-position", "top");
@@ -237,18 +236,18 @@ public class DesktopViewImpl implements DesktopView, UnregisterEvent.UnregisterH
         if(count > 0){
             notificationCountElement.setInnerText(Integer.toString(count));
             notificationCountElement.removeAttribute("hidden");
-            Window.setTitle("(" + count + ") " + displayStrings.rootApplicationTitle());
+            Window.setTitle(appearance.rootApplicationTitle(count));
         }else {
             notificationCountElement.setAttribute("hidden", "");
             notificationCountElement.setInnerText(null);
-            Window.setTitle(displayStrings.rootApplicationTitle());
+            Window.setTitle(appearance.rootApplicationTitle());
         }
         notificationsListView.onUnseenCountUpdated(count);
     }
 
     @Override
     public void setUnseenSystemMessageCount(int count) {
-        String labelText = displayStrings.systemMessagesLabel();
+        String labelText = appearance.systemMessagesLabel();
         if(count > 0) {
             labelText += " (" + count + ")";
         }
@@ -285,8 +284,8 @@ public class DesktopViewImpl implements DesktopView, UnregisterEvent.UnregisterH
                 if(feedbackDialog.validate()){
                     presenter.submitUserFeedback(feedbackDialog.toJson(), feedbackDialog);
                 } else {
-                    AlertMessageBox amb = new AlertMessageBox(displayStrings.warning(),
-                                                              displayStrings.publicSubmitTip());
+                    AlertMessageBox amb = new AlertMessageBox(appearance.feedbackAlertValidationWarning(),
+                                                              appearance.publicSubmitTip());
                     amb.setModal(true);
                     amb.show();
                 }

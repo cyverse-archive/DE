@@ -20,7 +20,6 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.event.shared.HandlerManager;
 import com.google.gwt.event.shared.HandlerRegistration;
@@ -35,7 +34,11 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Logger;
 
+/**
+ * @author jstroot
+ */
 public class DataSearchPresenterImpl implements DataSearchPresenter {
 
     final List<DiskResourceQueryTemplate> queryTemplates = Lists.newArrayList();
@@ -43,6 +46,7 @@ public class DataSearchPresenterImpl implements DataSearchPresenter {
     private final IplantAnnouncer announcer;
     private final SearchServiceFacade searchService;
     private HandlerManager handlerManager;
+    private final Logger LOG = Logger.getLogger(DataSearchPresenterImpl.class.getName());
 
     @Inject
     DataSearchPresenterImpl(final SearchServiceFacade searchService,
@@ -95,14 +99,14 @@ public class DataSearchPresenterImpl implements DataSearchPresenter {
                                                  @Override
                                                  public void onSuccess(List<DiskResourceQueryTemplate> savedTemplates) {
                                                      if (queryTemplates.size() != savedTemplates.size()) {
-                                                         GWT.log("Failed to save query templates after delete of saved search");
+                                                         LOG.fine("Failed to save query templates after delete of saved search");
                                                      }
                                                      fireEvent(new SavedSearchDeletedEvent(savedSearch));
                                                      updateDataNavigationWindow(null, savedTemplates);
                                                  }
                                              });
         } else {
-            GWT.log("Failed to remove saved search from presenter");
+            LOG.warning("Failed to remove saved search from presenter");
         }
     }
 
@@ -120,7 +124,7 @@ public class DataSearchPresenterImpl implements DataSearchPresenter {
 
         if (Strings.isNullOrEmpty(queryTemplate.getName())) {
             // Given query template has no name, ripple error back to view
-            GWT.log("TODO: User tried to save query with no name, cannot save. Ripple error back to view");
+            LOG.fine("TODO: User tried to save query with no name, cannot save. Ripple error back to view");
             return;
         } else {
             // Check for name uniqueness
@@ -158,7 +162,7 @@ public class DataSearchPresenterImpl implements DataSearchPresenter {
                 // Clear list of saved query templates and re-add result.
                 queryTemplates.clear();
                 if (toBeSaved.size() != savedTemplates.size()) {
-                    GWT.log("Saved templates returned from search service facade is a different size than what we submitted.");
+                    LOG.warning("Saved templates returned from search service facade is a different size than what we submitted.");
                 }
                 queryTemplates.addAll(savedTemplates);
 
@@ -239,7 +243,7 @@ public class DataSearchPresenterImpl implements DataSearchPresenter {
         for (HasName hasName : hasNames) {
             if (queryNameSet.contains(hasName.getName())) {
                 // We have a dupe name!!
-                GWT.log("Duplicate QueryTemplate name found: " + hasName.getName());
+                LOG.warning("Duplicate QueryTemplate name found: " + hasName.getName());
             } else {
                 queryNameSet.add(hasName.getName());
             }

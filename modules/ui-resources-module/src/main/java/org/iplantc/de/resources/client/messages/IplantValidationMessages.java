@@ -205,7 +205,7 @@ public interface IplantValidationMessages extends Messages {
      * 
      * @return a string representing the localized text.
      */
-    String drNameValidationMsg();
+    String drNameValidationMsg(String unsupportedchars);
 
     /**
      * Localized text for display as validation message.

@@ -48,6 +48,10 @@ import com.sencha.gxt.widget.core.client.form.ComboBox;
 import com.sencha.gxt.widget.core.client.tips.QuickTip;
 
 import java.util.List;
+
+/**
+ * @author jstroot
+ */
 public abstract class AbstractArgumentPropertyEditor extends Composite implements ArgumentPropertyEditor {
     
     protected final class InitializeTwoWayBinding extends EditorVisitor {

@@ -31,8 +31,8 @@ import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.commons.client.info.ErrorAnnouncementConfig;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
 import org.iplantc.de.commons.client.info.SuccessAnnouncementConfig;
-import org.iplantc.de.commons.client.views.gxt3.dialogs.IPlantDialog;
-import org.iplantc.de.commons.client.views.gxt3.dialogs.IPlantPromptDialog;
+import org.iplantc.de.commons.client.views.dialogs.IPlantDialog;
+import org.iplantc.de.commons.client.views.dialogs.IPlantPromptDialog;
 import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 import org.iplantc.de.resources.client.messages.IplantErrorStrings;
 import org.iplantc.de.shared.services.ConfluenceServiceAsync;
@@ -81,15 +81,14 @@ public class BelphegorAppsViewPresenterImpl extends AppsViewPresenterImpl implem
                                                                          AdminAppsView.AdminPresenter,
                                                                          AppEditor.Presenter {
 
-    private final AppAutoBeanFactory factory;
-    private final AppAdminServiceRequestAutoBeanFactory serviceFactory;
+    @Inject AppAutoBeanFactory factory;
+    @Inject AppAdminServiceRequestAutoBeanFactory serviceFactory;
     private final AppsView view;
     private final AppAdminServiceFacade adminAppService;
     private final EventBus eventBus;
     private final ConfluenceServiceAsync confluenceService;
     private final IplantAnnouncer announcer;
-    private final IplantDisplayStrings displayStrings;
-    private final IplantErrorStrings errorStrings;
+    @Inject AdminPresenterAppearance appearance;
     @Inject BelphegorAdminProperties properties;
     @Inject JsonUtil jsonUtil;
 
@@ -98,8 +97,6 @@ public class BelphegorAppsViewPresenterImpl extends AppsViewPresenterImpl implem
                                           final AppCategoryProxy proxy,
                                           final AppAdminServiceFacade appService,
                                           final AppUserServiceFacade appUserService,
-                                          final AppAutoBeanFactory factory,
-                                          final AppAdminServiceRequestAutoBeanFactory serviceFactory,
                                           final EventBus eventBus,
                                           final UserInfo userInfo,
                                           final DEProperties props,
@@ -120,13 +117,9 @@ public class BelphegorAppsViewPresenterImpl extends AppsViewPresenterImpl implem
               errorStrings);
         this.view = view;
         this.adminAppService = appService;
-        this.factory = factory;
-        this.serviceFactory = serviceFactory;
         this.eventBus = eventBus;
         this.confluenceService = confluenceService;
         this.announcer = announcer;
-        this.displayStrings = displayStrings;
-        this.errorStrings = errorStrings;
 
         eventBus.addHandler(CatalogCategoryRefreshEvent.TYPE, new CatalogCategoryRefreshEventHandler() {
 
@@ -155,12 +148,12 @@ public class BelphegorAppsViewPresenterImpl extends AppsViewPresenterImpl implem
                 && selectedAppCategory.getCategories().size() == 0
                 || ((properties.getDefaultTrashAppCategoryId().equalsIgnoreCase(selectedAppCategory.getId())) || properties.getDefaultBetaAppCategoryId()
                                                                                                                            .equalsIgnoreCase(selectedAppCategory.getId()))) {
-            ErrorHandler.post(errorStrings.addCategoryPermissionError());
+            ErrorHandler.post(appearance.addCategoryPermissionError());
             return;
         }
 
-        final IPlantPromptDialog dlg = new IPlantPromptDialog(displayStrings.add(), 0, "", null);
-        dlg.setHeadingText(displayStrings.addCategoryPrompt());
+        final IPlantPromptDialog dlg = new IPlantPromptDialog(appearance.add(), 0, "", null);
+        dlg.setHeadingText(appearance.addCategoryPrompt());
         dlg.addOkButtonSelectHandler(new SelectHandler() {
 
             @Override
@@ -168,7 +161,7 @@ public class BelphegorAppsViewPresenterImpl extends AppsViewPresenterImpl implem
 
                 final String name = dlg.getFieldText();
 
-                view.maskCenterPanel(displayStrings.loadingMask());
+                view.maskCenterPanel(appearance.addCategoryLoadingMask());
                 adminAppService.addCategory(name,
                                             selectedAppCategory.getId(),
                                             new AdminServiceCallback() {
@@ -187,7 +180,7 @@ public class BelphegorAppsViewPresenterImpl extends AppsViewPresenterImpl implem
                                                 @Override
                                                 protected String getErrorMessage() {
                                                     view.unMaskCenterPanel();
-                                                    return errorStrings.addAppCategoryError(name);
+                                                    return appearance.addAppCategoryError(name);
                                                 }
                                             });
 
@@ -203,8 +196,8 @@ public class BelphegorAppsViewPresenterImpl extends AppsViewPresenterImpl implem
         }
         final AppCategory selectedAppCategory = getSelectedAppCategory();
 
-        PromptMessageBox msgBox = new PromptMessageBox(displayStrings.rename(),
-                                                       displayStrings.renamePrompt());
+        PromptMessageBox msgBox = new PromptMessageBox(appearance.renameCategory(),
+                                                       appearance.renamePrompt());
         final TextField field = ((TextField)msgBox.getField());
         field.setAutoValidate(true);
         field.setAllowBlank(false);
@@ -213,7 +206,7 @@ public class BelphegorAppsViewPresenterImpl extends AppsViewPresenterImpl implem
             @Override
             public void onDialogHide(DialogHideEvent event) {
                 if (PredefinedButton.OK.equals(event.getHideButton())) {
-                    view.maskWestPanel(displayStrings.loadingMask());
+                    view.maskWestPanel(appearance.renameAppCategoryLoadingMask());
                     adminAppService.renameAppCategory(selectedAppCategory.getId(),
                                                       field.getText(),
                                                       new AsyncCallback<String>() {
@@ -231,7 +224,7 @@ public class BelphegorAppsViewPresenterImpl extends AppsViewPresenterImpl implem
 
                                                           @Override
                                                           public void onFailure(Throwable caught) {
-                                                              ErrorHandler.post(errorStrings.renameCategoryError(selectedAppCategory.getName()));
+                                                              ErrorHandler.post(appearance.renameCategoryError(selectedAppCategory.getName()));
                                                               view.unMaskWestPanel();
                                                           }
                                                       });
@@ -254,17 +247,17 @@ public class BelphegorAppsViewPresenterImpl extends AppsViewPresenterImpl implem
 
             // Determine if the selected AppCategory can be deleted.
             if (selectedAppCategory.getAppCount() > 0) {
-                ErrorHandler.post(errorStrings.deleteCategoryPermissionError());
+                ErrorHandler.post(appearance.deleteCategoryPermissionError());
                 return;
             }
 
-            ConfirmMessageBox msgBox = new ConfirmMessageBox(displayStrings.warning(),
-                                                             displayStrings.confirmDeleteAppCategory(selectedAppCategory.getName()));
+            ConfirmMessageBox msgBox = new ConfirmMessageBox(appearance.confirmDeleteAppCategoryWarning(),
+                                                             appearance.confirmDeleteAppCategory(selectedAppCategory.getName()));
             msgBox.addDialogHideHandler(new DialogHideEvent.DialogHideHandler() {
                 @Override
                 public void onDialogHide(DialogHideEvent event) {
                     if (PredefinedButton.YES.equals(event.getHideButton())) {
-                        view.maskWestPanel(displayStrings.loadingMask());
+                        view.maskWestPanel(appearance.deleteAppCategoryLoadingMask());
                         adminAppService.deleteAppCategory(selectedAppCategory.getId(),
                                                           new AsyncCallback<String>() {
 
@@ -281,7 +274,7 @@ public class BelphegorAppsViewPresenterImpl extends AppsViewPresenterImpl implem
 
                                                               @Override
                                                               public void onFailure(Throwable caught) {
-                                                                  ErrorHandler.post(errorStrings.deleteAppCategoryError(selectedAppCategory.getName()));
+                                                                  ErrorHandler.post(appearance.deleteAppCategoryError(selectedAppCategory.getName()));
                                                                   view.unMaskWestPanel();
                                                               }
                                                           });
@@ -297,13 +290,13 @@ public class BelphegorAppsViewPresenterImpl extends AppsViewPresenterImpl implem
     public void onDeleteAppClicked() {
         if (getSelectedApp() != null) {
             final App selectedApp = getSelectedApp();
-            ConfirmMessageBox msgBox = new ConfirmMessageBox(displayStrings.warning(),
-                                                             displayStrings.confirmDeleteAppTitle());
+            ConfirmMessageBox msgBox = new ConfirmMessageBox(appearance.confirmDeleteAppWarning(),
+                                                             appearance.confirmDeleteAppTitle());
             msgBox.addDialogHideHandler(new DialogHideEvent.DialogHideHandler() {
                 @Override
                 public void onDialogHide(DialogHideEvent event) {
                     if (PredefinedButton.YES.equals(event.getHideButton())) {
-                        view.maskCenterPanel(displayStrings.loadingMask());
+                        view.maskCenterPanel(appearance.deleteAppLoadingMask());
                         adminAppService.deleteApplication(selectedApp.getId(),
                                                           new AsyncCallback<String>() {
 
@@ -316,7 +309,7 @@ public class BelphegorAppsViewPresenterImpl extends AppsViewPresenterImpl implem
 
                                                               @Override
                                                               public void onFailure(Throwable caught) {
-                                                                  ErrorHandler.post(errorStrings.deleteApplicationError(selectedApp.getName()));
+                                                                  ErrorHandler.post(appearance.deleteApplicationError(selectedApp.getName()));
                                                                   view.unMaskCenterPanel();
                                                               }
                                                           });
@@ -362,9 +355,9 @@ public class BelphegorAppsViewPresenterImpl extends AppsViewPresenterImpl implem
                         }
                     }
 
-                    MessageBox msgBox = new MessageBox(displayStrings.restoreAppSucessMsgTitle(),
-                                                       displayStrings.restoreAppSucessMsg(selectedApp.getName(),
-                                                                                          names_display.toString()));
+                    MessageBox msgBox = new MessageBox(appearance.restoreAppSuccessMsgTitle(),
+                                                       appearance.restoreAppSuccessMsg(selectedApp.getName(),
+                                                                                       names_display.toString()));
                     msgBox.setIcon(MessageBox.ICONS.info());
                     msgBox.setPredefinedButtons(PredefinedButton.OK);
                     msgBox.show();
@@ -377,8 +370,8 @@ public class BelphegorAppsViewPresenterImpl extends AppsViewPresenterImpl implem
                 JSONObject obj = JSONParser.parseStrict(caught.getMessage()).isObject();
                 String reason = jsonUtil.trim(obj.get("reason").toString());
                 if (reason.contains("orphaned")) {
-                    AlertMessageBox alertBox = new AlertMessageBox(displayStrings.restoreAppFailureMsgTitle(),
-                                                                   displayStrings.restoreAppFailureMsg(selectedApp.getName()));
+                    AlertMessageBox alertBox = new AlertMessageBox(appearance.restoreAppFailureMsgTitle(),
+                                                                   appearance.restoreAppFailureMsg(selectedApp.getName()));
                     alertBox.show();
                 } else {
                     ErrorHandler.post(reason);
@@ -390,7 +383,7 @@ public class BelphegorAppsViewPresenterImpl extends AppsViewPresenterImpl implem
     @Override
     public void onCategorizeAppClicked() {
         App selectedApp = view.getSelectedApp();
-        view.maskCenterPanel(displayStrings.loadingMask());
+        view.maskCenterPanel(appearance.getAppDetailsLoadingMask());
 
         adminAppService.getAppDetails(selectedApp.getId(), new AsyncCallback<String>() {
 
@@ -420,27 +413,27 @@ public class BelphegorAppsViewPresenterImpl extends AppsViewPresenterImpl implem
 
             @Override
             public void onSelect(SelectEvent event) {
-                List<AppCategory> categoriess = presenter.getSelectedCategories();
-                if (categoriess == null || categoriess.isEmpty()) {
-                    announcer.schedule(new ErrorAnnouncementConfig(errorStrings.noCategoriesSelected()));
+                List<AppCategory> categories = presenter.getSelectedCategories();
+                if (categories == null || categories.isEmpty()) {
+                    announcer.schedule(new ErrorAnnouncementConfig(appearance.noCategoriesSelected()));
                 } else {
-                    doCategorizeSelectedApp(selectedApp, categoriess);
+                    doCategorizeSelectedApp(selectedApp, categories);
                 }
             }
         });
 
-        dlg.setHeadingText(displayStrings.selectCategories(selectedApp.getName()));
+        dlg.setHeadingText(appearance.selectCategories(selectedApp.getName()));
         dlg.setResizable(true);
-        dlg.setOkButtonText(displayStrings.submit());
+        dlg.setOkButtonText(appearance.submit());
 
         presenter.go(dlg);
         dlg.show();
     }
 
     private void doCategorizeSelectedApp(final App selectedApp,
-                                         final List<AppCategory> grouappCategoriess) {
-        view.maskCenterPanel(displayStrings.loadingMask());
-        AppCategorizeRequest request = buildAppCategorizeRequest(selectedApp, grouappCategoriess);
+                                         final List<AppCategory> groupAppCategories) {
+        view.maskCenterPanel(appearance.categorizeAppLoadingMask());
+        AppCategorizeRequest request = buildAppCategorizeRequest(selectedApp, groupAppCategories);
 
         adminAppService.categorizeApp(request, new AsyncCallback<String>() {
 
@@ -449,12 +442,12 @@ public class BelphegorAppsViewPresenterImpl extends AppsViewPresenterImpl implem
                 view.unMaskCenterPanel();
 
                 List<String> groupNames = Lists.newArrayList();
-                for (AppCategory group : grouappCategoriess) {
+                for (AppCategory group : groupAppCategories) {
                     groupNames.add(group.getName());
                 }
                 Collections.sort(groupNames, String.CASE_INSENSITIVE_ORDER);
 
-                String successMsg = displayStrings.appCategorizeSuccess(selectedApp.getName(),
+                String successMsg = appearance.appCategorizeSuccess(selectedApp.getName(),
                                                                         groupNames);
                 announcer.schedule(new SuccessAnnouncementConfig(successMsg));
 
@@ -562,7 +555,7 @@ public class BelphegorAppsViewPresenterImpl extends AppsViewPresenterImpl implem
 
         @Override
         public void onFailure(Throwable caught) {
-            ErrorHandler.post(errorStrings.updateApplicationError());
+            ErrorHandler.post(appearance.updateApplicationError());
         }
     }
 
@@ -583,7 +576,7 @@ public class BelphegorAppsViewPresenterImpl extends AppsViewPresenterImpl implem
 
                                          @Override
                                          public void onFailure(Throwable caught) {
-                                             ErrorHandler.post(errorStrings.moveCategoryError(childCategory.getName()));
+                                             ErrorHandler.post(appearance.moveCategoryError(childCategory.getName()));
                                          }
                                      });
     }
@@ -670,19 +663,19 @@ public class BelphegorAppsViewPresenterImpl extends AppsViewPresenterImpl implem
                 AppCategory sourceCategory = getSelectedAppCategory();
                 if (sourceCategory != null && null != cat_view.getSelectedCategories()
                         && cat_view.getSelectedCategories().size() > 0) {
-                    AppCategory destinaCategory = cat_view.getSelectedCategories().get(0);
-                    if (canMoveAppCategory(destinaCategory, sourceCategory)) {
-                        moveAppCategory(destinaCategory, sourceCategory);
+                    AppCategory destinationCategory = cat_view.getSelectedCategories().get(0);
+                    if (canMoveAppCategory(destinationCategory, sourceCategory)) {
+                        moveAppCategory(destinationCategory, sourceCategory);
                     } else {
-                        ErrorHandler.post("Invalid move. Please choose a different category as target!");
+                        ErrorHandler.post(appearance.invalidMoveMsg());
                     }
                 }
             }
         });
 
-        dlg.setHeadingText("Move");
+        dlg.setHeadingText(appearance.moveCategory());
         dlg.setResizable(true);
-        dlg.setOkButtonText(displayStrings.submit());
+        dlg.setOkButtonText(appearance.submit());
         dlg.add(cat_view.asWidget());
         dlg.show();
 
