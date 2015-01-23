@@ -11,6 +11,7 @@ import org.iplantc.de.commons.client.info.ErrorAnnouncementConfig;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
 import org.iplantc.de.fileViewers.client.FileViewer;
 import org.iplantc.de.fileViewers.client.events.DeleteSelectedPathsSelectedEvent;
+import org.iplantc.de.resources.client.messages.I18N;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
@@ -20,6 +21,7 @@ import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.inject.Inject;
 import com.google.web.bindery.autobean.shared.Splittable;
 import com.google.web.bindery.autobean.shared.impl.StringQuoter;
 
@@ -222,7 +224,7 @@ public class PathListViewer extends AbstractStructuredTextViewer implements Stor
                           final String infoType,
                           final boolean editing,
                           final FileViewer.Presenter presenter,
-                          DiskResourceUtil diskResourceUtil) {
+                          final DiskResourceUtil diskResourceUtil) {
         super(file, infoType, editing, presenter);
         this.diskResourceUtil = diskResourceUtil;
         if (file != null) {
