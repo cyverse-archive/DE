@@ -1,5 +1,6 @@
 package org.iplantc.de.diskResource.client.presenters.callbacks;
 
+import org.iplantc.de.client.models.IsMaskable;
 import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.client.models.diskResources.DiskResourceAutoBeanFactory;
 import org.iplantc.de.client.models.diskResources.RestoreResponse;
@@ -9,7 +10,7 @@ import org.iplantc.de.client.models.errors.diskResources.ErrorDiskResourceMove;
 import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
 import org.iplantc.de.commons.client.info.SuccessAnnouncementConfig;
-import org.iplantc.de.diskResource.client.DiskResourceView;
+import org.iplantc.de.diskResource.client.NavigationView;
 import org.iplantc.de.resources.client.messages.I18N;
 
 import com.google.gwt.core.client.GWT;
@@ -22,21 +23,23 @@ import java.util.Set;
 /**
  * A DiskResourceServiceCallback for data service "restore" endpoint requests.
  * 
- * @author psarando
+ * @author psarando, jstroot
  * 
  */
 public class DiskResourceRestoreCallback extends DiskResourceServiceCallback<String> {
-    private final DiskResourceView.Presenter presenter;
+    private final NavigationView.Presenter navigationPresenter;
     private final DiskResourceAutoBeanFactory drFactory;
     private final Set<DiskResource> selectedResources;
 
-    public DiskResourceRestoreCallback(DiskResourceView.Presenter presenter,
-            DiskResourceAutoBeanFactory drFactory, Set<DiskResource> selectedResources) {
-        super(presenter);
+    public DiskResourceRestoreCallback(final NavigationView.Presenter navigationPresenter,
+                                       final IsMaskable maskable,
+                                       final DiskResourceAutoBeanFactory drFactory,
+                                       final Set<DiskResource> selectedResources) {
+        super(maskable);
 
         this.drFactory = drFactory;
         this.selectedResources = selectedResources;
-        this.presenter = presenter;
+        this.navigationPresenter = navigationPresenter;
     }
 
     @Override
@@ -49,7 +52,7 @@ public class DiskResourceRestoreCallback extends DiskResourceServiceCallback<Str
         super.onSuccess(result);
 
         checkForPartialRestore(result);
-        presenter.doRefreshFolder(presenter.getSelectedFolder());
+        navigationPresenter.refreshFolder(navigationPresenter.getSelectedFolder());
     }
 
     @Override

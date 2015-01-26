@@ -1,4 +1,4 @@
-package org.iplantc.de.diskResource.client.gin.appearance;
+package org.iplantc.de.theme.base.client.diskResource.navigation.cells;
 
 import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.models.diskResources.Folder;

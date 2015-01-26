@@ -1,18 +1,21 @@
 package org.iplantc.de.diskResource.client.presenters.proxy;
 
 import org.iplantc.de.client.models.HasPath;
+import org.iplantc.de.client.models.IsMaskable;
 import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.commons.client.info.ErrorAnnouncementConfig;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
 import org.iplantc.de.diskResource.client.DiskResourceView;
-import org.iplantc.de.diskResource.client.views.HasHandlerRegistrationMgmt;
+import org.iplantc.de.diskResource.client.NavigationView;
 import org.iplantc.de.resources.client.messages.I18N;
+import org.iplantc.de.resources.client.messages.IplantErrorStrings;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 
@@ -32,39 +35,57 @@ import java.util.Stack;
  */
 public class SelectFolderByPathLoadHandler implements LoadHandler<Folder, List<Folder>> {
 
-    private final Stack<String> pathsToLoad = new Stack<String>();
+    private final IplantErrorStrings errorStrings = I18N.ERROR;
+    private final IsMaskable maskable;
+    private final Stack<String> pathsToLoad = new Stack<>();
     private final LinkedList<String> path;
+    HandlerRegistration handlerRegistration;
     private boolean rootsLoaded;
 
     private final HasPath folderToSelect;
 
-    private final DiskResourceView view;
-    private final DiskResourceView.Presenter presenter;
-    private final HasHandlerRegistrationMgmt regMgr;
+    private final NavigationView.Presenter navigationPresenter;
     private final IplantAnnouncer announcer;
     private boolean rootFolderDetected;
 
-    public SelectFolderByPathLoadHandler(final HasPath folderToSelect,
-            final DiskResourceView.Presenter presenter, final IplantAnnouncer announcer) {
-        presenter.mask(""); //$NON-NLS-1$
+    SelectFolderByPathLoadHandler(final HasPath folderToSelect,
+                                  final NavigationView.Presenter navigationPresenter,
+                                  final IsMaskable maskable,
+                                  final IplantAnnouncer announcer,
+                                  final HandlerRegistration handlerRegistration) {
+        this.handlerRegistration = handlerRegistration;
+
+        this.maskable = maskable;
+        maskable.mask(""); //$NON-NLS-1$
         this.folderToSelect = folderToSelect;
-        this.presenter = presenter;
-        this.regMgr = presenter;
-        this.view = presenter.getView();
+        this.navigationPresenter = navigationPresenter;
         this.announcer = announcer;
 
         // Split the string on "/"
-        path = Lists.newLinkedList(Splitter
-                .on("/").trimResults().omitEmptyStrings().split(folderToSelect.getPath())); //$NON-NLS-1$
+        path = Lists.newLinkedList(Splitter.on("/")
+                                           .trimResults()
+                                           .omitEmptyStrings()
+                                           .split(folderToSelect.getPath()));
 
-        rootsLoaded = view.getTreeStore().getRootCount() > 0;
+        rootsLoaded = navigationPresenter.rootsLoaded();
         if (rootsLoaded) {
             initPathsToLoad();
         }
     }
+    public SelectFolderByPathLoadHandler(final HasPath folderToSelect,
+                                         final NavigationView.Presenter navigationPresenter,
+                                         final IsMaskable maskable,
+                                         final IplantAnnouncer announcer) {
+
+        this(folderToSelect, navigationPresenter, maskable, announcer, null);
+    }
+
+    public void setHandlerRegistration(HandlerRegistration handlerRegistration) {
+        this.handlerRegistration = handlerRegistration;
+    }
 
     private String getNextPathToLoad() {
-        return "/".concat(Joiner.on("/").join(path)); //$NON-NLS-1$ //$NON-NLS-2$
+        return "/".concat(Joiner.on("/").join(path));
     }
 
     /**
@@ -94,26 +115,26 @@ public class SelectFolderByPathLoadHandler implements LoadHandler<Folder, List<F
         }
 
         path.add(pathsToLoad.pop());
-        Folder folder = view.getFolderByPath(getNextPathToLoad());
+        Folder folder = navigationPresenter.getFolderByPath(getNextPathToLoad());
 
         if (folder != null) {
             if (pathsToLoad.isEmpty()) {
                 // Exit condition
-                view.setSelectedFolder(folder);
+                navigationPresenter.setSelectedFolder(folder);
                 unmaskView();
             } else {
                 // Trigger remote load by expanding folder
-                view.expandFolder(folder);
+                navigationPresenter.expandFolder(folder);
             }
         } else {
             // This handler has loaded as much as it can, but has encountered a folder along the path
             // that does not exist. Select the last folder loaded, then report the error.
             String folderName = SafeHtmlUtils.htmlEscape(path.getLast());
-            SafeHtml errMsg = SafeHtmlUtils.fromTrustedString(I18N.ERROR
-                    .diskResourceDoesNotExist(folderName));
+            SafeHtml errMsg = SafeHtmlUtils.fromTrustedString(errorStrings
+                                                                  .diskResourceDoesNotExist(folderName));
             announcer.schedule(new ErrorAnnouncementConfig(errMsg));
 
-            view.setSelectedFolder(event.getLoadConfig());
+            navigationPresenter.setSelectedFolder(event.getLoadConfig());
             unmaskView();
         }
     }
@@ -128,7 +149,7 @@ public class SelectFolderByPathLoadHandler implements LoadHandler<Folder, List<F
     private void initPathsToLoad() {
         // Check if the requested folder's path is under a known root path.
         boolean matched = false;
-        for (Folder root : view.getTreeStore().getRootItems()) {
+        for (Folder root : navigationPresenter.getRootItems()) {
             if (folderToSelect.getPath().startsWith(root.getPath())) {
                 matched = true;
                 break;
@@ -136,7 +157,7 @@ public class SelectFolderByPathLoadHandler implements LoadHandler<Folder, List<F
         }
 
         if (!matched) {
-            String errMsg = I18N.ERROR.diskResourceDoesNotExist(folderToSelect.getPath());
+            String errMsg = errorStrings.diskResourceDoesNotExist(folderToSelect.getPath());
             announcer.schedule(new ErrorAnnouncementConfig(SafeHtmlUtils.fromTrustedString(errMsg)));
 
             rootFolderDetected = false;
@@ -144,11 +165,11 @@ public class SelectFolderByPathLoadHandler implements LoadHandler<Folder, List<F
             return;
         }
 
-        Folder folder = view.getFolderByPath(folderToSelect.getPath());
+        Folder folder = navigationPresenter.getFolderByPath(folderToSelect.getPath());
         // Find the paths which are not yet loaded, and push them onto the 'pathsToLoad' stack
         while ((folder == null) && !path.isEmpty()) {
             pathsToLoad.push(path.removeLast());
-            folder = view.getFolderByPath(getNextPathToLoad());
+            folder = navigationPresenter.getFolderByPath(getNextPathToLoad());
         }
 
         if (folder == null) {
@@ -160,18 +181,18 @@ public class SelectFolderByPathLoadHandler implements LoadHandler<Folder, List<F
             // A folder along the path to load has been found.
             if (folder.getPath().equals(folderToSelect.getPath())) {
                 // Exit condition: The target folder has already been loaded, so just select it.
-                if (!folder.equals(presenter.getSelectedFolder())) {
-                    view.setSelectedFolder(folder);
+                if (!folder.equals(navigationPresenter.getSelectedFolder())) {
+                    navigationPresenter.setSelectedFolder(folder);
                 }
                 unmaskView();
-            } else if (view.isLoaded(folder)) {
+            } else if (navigationPresenter.isLoaded(folder)) {
                 // One of the target folder's parents already has its children loaded, but the target
                 // wasn't found, so refresh that parent.
                 refreshFolder(folder);
             } else {
                 // Once a valid folder is found in the view, remotely load the folder, which will add the
                 // next folder in the path to the view's treeStore.
-                view.expandFolder(folder);
+                navigationPresenter.expandFolder(folder);
             }
         }
     }
@@ -186,14 +207,14 @@ public class SelectFolderByPathLoadHandler implements LoadHandler<Folder, List<F
                 // handling other events (such as showing the Data window). This means the
                 // presenter's refresh handler will be deferred and will not handle this
                 // refresh event.
-                presenter.doRefreshFolder(folder);
+                navigationPresenter.refreshFolder(folder);
             }
         });
     }
 
     void unmaskView() {
-        regMgr.unregisterHandler(this);
-        presenter.unmask();
+        handlerRegistration.removeHandler();
+        maskable.unmask();
     }
 
     /**

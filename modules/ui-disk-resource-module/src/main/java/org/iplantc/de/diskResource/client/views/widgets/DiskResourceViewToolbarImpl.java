@@ -93,7 +93,7 @@ public class DiskResourceViewToolbarImpl extends Composite implements DiskResour
         this.presenter = presenter;
         this.view = view;
         this.view.addDiskResourceSelectionChangedEventHandler(this);
-        this.view.addFolderSelectedEventHandler(this);
+        this.presenter.addFolderSelectedEventHandler(this);
     }
 
     @Override

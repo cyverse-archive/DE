@@ -1,3 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE module PUBLIC "-//Google Inc.//DTD Google Web Toolkit 2.6.1//EN"
+        "http://gwtproject.org/doctype/2.6.1/gwt-module.dtd">
 <module>
     <inherits name="org.iplantc.de.diskResource.diskresource" />
     <inherits name="org.iplantc.de.fileViewers.FileViewers"/>
@@ -16,5 +19,14 @@
     </replace-with>
     <replace-with class="org.iplantc.de.theme.base.client.diskResource.FileFolderSelectorFieldDefaultAppearance">
         <when-type-is class="org.iplantc.de.diskResource.client.views.widgets.FileFolderSelectorField.FileFolderSelectorFieldAppearance"/>
+    </replace-with>
+
+    <!-- Navigation -->
+    <replace-with class="org.iplantc.de.theme.base.client.diskResource.navigation.NavigationViewDefaultAppearance">
+        <when-type-is class="org.iplantc.de.diskResource.client.NavigationView.Appearance" />
+    </replace-with>
+
+    <replace-with class="org.iplantc.de.theme.base.client.diskResource.navigation.cells.TreeCellDefaultAppearance">
+        <when-type-is class="org.iplantc.de.diskResource.client.views.navigation.cells.TreeCell.TreeCellAppearance" />
     </replace-with>
 </module>

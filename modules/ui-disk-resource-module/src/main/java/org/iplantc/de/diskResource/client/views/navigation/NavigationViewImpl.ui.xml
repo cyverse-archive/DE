@@ -1,12 +1,4 @@
 <ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
-             xmlns:tree="urn:import:com.sencha.gxt.widget.core.client.tree"
-             xmlns:gxt="urn:import:com.sencha.gxt.widget.core.client">
-    <ui:with field="appearance"
-             type="org.iplantc.de.diskResource.client.NavigationView.Appearance" />
-    <gxt:ContentPanel ui:field="container"
-                      headingText="{appearance.headingText}"
-                      collapsible="false"
-                      headerVisible="true">
-        <tree:Tree ui:field="tree"/>
-    </gxt:ContentPanel>
+             xmlns:tree="urn:import:com.sencha.gxt.widget.core.client.tree">
+    <tree:Tree ui:field="tree"/>
 </ui:UiBinder>

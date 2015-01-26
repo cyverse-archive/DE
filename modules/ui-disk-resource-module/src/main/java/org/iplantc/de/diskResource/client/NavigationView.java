@@ -1,19 +1,26 @@
 package org.iplantc.de.diskResource.client;
 
-import org.iplantc.de.client.models.HasId;
 import org.iplantc.de.client.models.HasPath;
+import org.iplantc.de.client.models.IsMaskable;
+import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.client.models.search.DiskResourceQueryTemplate;
 import org.iplantc.de.diskResource.client.events.FolderSelectionEvent;
+import org.iplantc.de.diskResource.client.events.RootFoldersRetrievedEvent;
+import org.iplantc.de.diskResource.client.events.SavedSearchesRetrievedEvent;
 import org.iplantc.de.diskResource.client.search.events.DeleteSavedSearchClickedEvent;
+import org.iplantc.de.diskResource.client.search.events.SubmitDiskResourceQueryEvent;
 
 import com.google.gwt.dom.client.Element;
+import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.user.client.ui.IsWidget;
 
 import com.sencha.gxt.data.shared.IconProvider;
-import com.sencha.gxt.widget.core.client.button.ToolButton;
 import com.sencha.gxt.widget.core.client.tree.Tree;
 import com.sencha.gxt.widget.core.client.tree.TreeStyle;
+import com.sencha.gxt.widget.core.client.tree.TreeView;
+
+import java.util.Set;
 
 /**
  * Created by jstroot on 1/21/15.
@@ -25,9 +32,15 @@ public interface NavigationView extends IsWidget,
                                         DeleteSavedSearchClickedEvent.HasDeleteSavedSearchClickedEventHandlers {
     interface Appearance {
 
+        String dataDragDropStatusText(int size);
+
         IconProvider<Folder> getIconProvider();
 
-        TreeStyle getTreeStyle();
+        TreeStyle getTreeStyle(Tree.TreeAppearance appearance);
+
+        TreeView<Folder> getTreeView();
+
+        String permissionErrorMessage();
 
         String treeCollapseHoverStyle();
 
@@ -36,19 +49,25 @@ public interface NavigationView extends IsWidget,
         String treeCollapseToolTip();
 
         String headingText();
+
+        SafeHtml treeNodeFilterText(String name);
     }
 
-    interface Presenter {
+    interface Presenter extends SubmitDiskResourceQueryEvent.HasSubmitDiskResourceQueryEventHandlers,
+                                RootFoldersRetrievedEvent.HasRootFoldersRetrievedEventHandlers,
+                                SavedSearchesRetrievedEvent.HasSavedSearchesRetrievedEventHandlers {
 
         void addFolder(Folder folder);
 
         void addFolder(Folder parent, Folder newChild);
 
+        void doMoveDiskResources(Folder targetFolder, Set<DiskResource> dropData);
+
+        Iterable<Folder> getRootItems();
+
         NavigationView getView();
 
         Folder getSelectedFolder();
-
-        Folder getFolderById(HasId hasId);
 
         Folder getFolderByPath(String path);
 
@@ -58,8 +77,28 @@ public interface NavigationView extends IsWidget,
 
         void removeFolder(Folder folder);
 
+        boolean rootsLoaded();
+
+        void setMaskable(IsMaskable maskable);
+
+        void setParentPresenter(DiskResourceView.Presenter parentPresenter);
+
+        /**
+         * Selects the given folder, if the folder exists in the store.
+         * This method should trigger a {@link org.iplantc.de.diskResource.client.events.FolderSelectionEvent},
+         * even if the given folder is already selected.
+         *
+         * @param folder the folder to be selected.
+         */
         void setSelectedFolder(Folder folder);
 
+        /**
+         * Selects the folder which corresponds to the given path, if the folder exists in the store.
+         * This method should trigger a {@link org.iplantc.de.diskResource.client.events.FolderSelectionEvent},
+         * even if the given folder is already selected.
+         *
+         * @param hasPath the path of the folder to be selected.
+         */
         void setSelectedFolder(HasPath hasPath);
 
         void deSelectFolder(Folder folder);
@@ -95,5 +134,4 @@ public interface NavigationView extends IsWidget,
 
     Tree<Folder, Folder> getTree();
 
-    ToolButton getTreeCollapseButton();
 }
