@@ -2,7 +2,7 @@ package org.iplantc.de.diskResource.client.gin.factory;
 
 import org.iplantc.de.client.models.diskResources.TYPE;
 import org.iplantc.de.client.models.viewer.InfoType;
-import org.iplantc.de.diskResource.client.views.DiskResourceView;
+import org.iplantc.de.diskResource.client.DiskResourceView;
 
 import java.util.List;
 

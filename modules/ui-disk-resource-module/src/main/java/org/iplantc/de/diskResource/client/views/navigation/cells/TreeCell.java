@@ -1,4 +1,4 @@
-package org.iplantc.de.diskResource.client.gin;
+package org.iplantc.de.diskResource.client.views.navigation.cells;
 
 import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.client.models.search.DiskResourceQueryTemplate;

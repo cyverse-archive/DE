@@ -3,12 +3,14 @@ package org.iplantc.de.diskResource.client.views;
 import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.client.util.DiskResourceUtil;
-import org.iplantc.de.diskResource.client.views.DiskResourceView.Presenter;
+import org.iplantc.de.diskResource.client.DiskResourceView;
+import org.iplantc.de.diskResource.client.DiskResourceView.Presenter;
 import org.iplantc.de.resources.client.messages.I18N;
 
 import com.google.common.collect.Sets;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.EventTarget;
+import com.google.gwt.user.client.ui.IsWidget;
 
 import com.sencha.gxt.dnd.core.client.DndDragEnterEvent;
 import com.sencha.gxt.dnd.core.client.DndDragEnterEvent.DndDragEnterHandler;
@@ -58,8 +60,8 @@ class DiskResourceViewDnDHandler implements DndDragStartHandler,
 
         // Reset status message
         status.setStatus(true);
-        if(view.isSelectAllChecked()) {
-            status.update(I18N.DISPLAY.dataDragDropStatusText(view.getTotalSelectionCount()));
+        if(isSelectAllChecked()) {
+            status.update(I18N.DISPLAY.dataDragDropStatusText(getTotalSelectionCount()));
         } else {
             status.update(I18N.DISPLAY.dataDragDropStatusText(dropData.size()));
         }
@@ -78,7 +80,7 @@ class DiskResourceViewDnDHandler implements DndDragStartHandler,
         }
 
         // Check if the drop data contains an ancestor folder of the target folder.
-        if (!presenter.canDragDataToTargetFolder(targetFolder, dropData)) {
+        if (!canDragDataToTargetFolder(targetFolder, dropData)) {
             status.setStatus(false);
             return false;
         }
@@ -92,12 +94,12 @@ class DiskResourceViewDnDHandler implements DndDragStartHandler,
 
         Element dragStartEl = event.getDragStartEvent().getStartElement();
 
-        Set<? extends DiskResource> dragData = presenter.getDragSources(event.getTarget(), dragStartEl);
+        Set<? extends DiskResource> dragData = getDragSources(event.getTarget(), dragStartEl);
 
         if ((dragData != null) && !dragData.isEmpty() && (!containsFilteredItems(dragData))) {
             event.setData(dragData);
-            if(view.isSelectAllChecked()) {
-                event.getStatusProxy().update(I18N.DISPLAY.dataDragDropStatusText(view.getTotalSelectionCount()));
+            if(isSelectAllChecked()) {
+                event.getStatusProxy().update(I18N.DISPLAY.dataDragDropStatusText(getTotalSelectionCount()));
             } else {
                 event.getStatusProxy().update(I18N.DISPLAY.dataDragDropStatusText(dragData.size()));
             }
@@ -107,7 +109,7 @@ class DiskResourceViewDnDHandler implements DndDragStartHandler,
             event.setCancelled(true);
         }
     }
-    
+
     private boolean containsFilteredItems(Set<? extends DiskResource> dragData) {
         for (DiskResource dr : dragData) {
             if(dr.isFilter()) {
@@ -125,7 +127,7 @@ class DiskResourceViewDnDHandler implements DndDragStartHandler,
         Set<DiskResource> dropData = getDropData(event.getDragSource().getData());
         DragMoveEvent dragEnterEvent = event.getDragEnterEvent();
         EventTarget target = dragEnterEvent.getNativeEvent().getEventTarget();
-        Folder targetFolder = presenter.getDropTargetFolder(dragEnterEvent.getTarget(),
+        Folder targetFolder = getDropTargetFolder(dragEnterEvent.getTarget(),
                 Element.as(target));
 
         if (!validateDropStatus(targetFolder, dropData, event.getStatusProxy())) {
@@ -133,12 +135,14 @@ class DiskResourceViewDnDHandler implements DndDragStartHandler,
             return;
         }
 
-        if(view.isSelectAllChecked()) {
-            event.getStatusProxy().update(I18N.DISPLAY.dataDragDropStatusText(view.getTotalSelectionCount()));
+        if(isSelectAllChecked()) {
+            event.getStatusProxy().update(I18N.DISPLAY.dataDragDropStatusText(getTotalSelectionCount()));
         } else {
             event.getStatusProxy().update(I18N.DISPLAY.dataDragDropStatusText(dropData.size()));
         }
     }
+
+
 
     @Override
     public void onDragMove(DndDragMoveEvent event) {
@@ -146,7 +150,7 @@ class DiskResourceViewDnDHandler implements DndDragStartHandler,
 
         Set<DiskResource> dropData = getDropData(event.getDragSource().getData());
         EventTarget target = event.getDragMoveEvent().getNativeEvent().getEventTarget();
-        Folder targetFolder = presenter.getDropTargetFolder(event.getDropTarget().getWidget(),
+        Folder targetFolder = getDropTargetFolder(event.getDropTarget().getWidget(),
                 Element.as(target));
 
         if (!validateDropStatus(targetFolder, dropData, event.getStatusProxy())) {
@@ -163,11 +167,11 @@ class DiskResourceViewDnDHandler implements DndDragStartHandler,
 
         Set<DiskResource> dropData = getDropData(event.getData());
         EventTarget target = event.getDragEndEvent().getNativeEvent().getEventTarget();
-        Folder targetFolder = presenter.getDropTargetFolder(event.getDropTarget().getWidget(),
+        Folder targetFolder = getDropTargetFolder(event.getDropTarget().getWidget(),
                 Element.as(target));
 
         if (validateDropStatus(targetFolder, dropData, event.getStatusProxy())) {
-            presenter.doMoveDiskResources(targetFolder, dropData);
+            doMoveDiskResources(targetFolder, dropData);
         }
     }
 
@@ -183,4 +187,28 @@ class DiskResourceViewDnDHandler implements DndDragStartHandler,
 
         return dropData;
     }
+
+    boolean isSelectAllChecked() {
+        return view.isSelectAllChecked();
+    }
+
+    int getTotalSelectionCount() {
+        return view.getTotalSelectionCount();
+    }
+
+    boolean canDragDataToTargetFolder(final Folder targetFolder, final Collection<DiskResource> dropData) {
+        return presenter.canDragDataToTargetFolder(targetFolder, dropData);
+    }
+
+    Set<? extends DiskResource> getDragSources(IsWidget source, Element dragStartEl){
+         return presenter.getDragSources(source, dragStartEl);
+    }
+    Folder getDropTargetFolder(IsWidget target, Element eventTargetElement) {
+        return presenter.getDropTargetFolder(target, eventTargetElement);
+    }
+
+    void doMoveDiskResources(Folder targetFolder, Set<DiskResource> resources) {
+        presenter.doMoveDiskResources(targetFolder, resources);
+    }
+
 }

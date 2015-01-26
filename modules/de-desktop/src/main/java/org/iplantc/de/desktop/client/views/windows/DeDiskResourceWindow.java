@@ -9,7 +9,7 @@ import org.iplantc.de.desktop.client.events.WindowHeadingUpdatedEvent;
 import org.iplantc.de.desktop.shared.DeModule;
 import org.iplantc.de.diskResource.client.events.FolderSelectionEvent;
 import org.iplantc.de.diskResource.client.gin.factory.DiskResourcePresenterFactory;
-import org.iplantc.de.diskResource.client.views.DiskResourceView;
+import org.iplantc.de.diskResource.client.DiskResourceView;
 import org.iplantc.de.diskResource.share.DiskResourceModule;
 import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 

@@ -13,7 +13,7 @@ import org.iplantc.de.diskResource.client.search.events.SavedSearchDeletedEvent;
 import org.iplantc.de.diskResource.client.search.events.SubmitDiskResourceQueryEvent;
 import org.iplantc.de.diskResource.client.search.events.UpdateSavedSearchesEvent;
 import org.iplantc.de.diskResource.client.search.presenter.DataSearchPresenter;
-import org.iplantc.de.diskResource.client.views.DiskResourceView;
+import org.iplantc.de.diskResource.client.DiskResourceView;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;

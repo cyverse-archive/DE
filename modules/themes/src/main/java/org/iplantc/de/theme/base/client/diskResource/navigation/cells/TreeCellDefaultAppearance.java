@@ -1,9 +1,9 @@
-package org.iplantc.de.diskResource.client.gin.appearance;
+package org.iplantc.de.theme.base.client.diskResource.navigation.cells;
 
 import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.client.models.search.DiskResourceQueryTemplate;
-import org.iplantc.de.diskResource.client.gin.TreeCell;
+import org.iplantc.de.diskResource.client.views.navigation.cells.TreeCell;
 import org.iplantc.de.diskResource.client.search.events.DeleteSavedSearchClickedEvent;
 import org.iplantc.de.diskResource.client.search.events.UpdateSavedSearchesEvent;
 

@@ -398,10 +398,6 @@ public interface IplantResources extends ClientBundle, AppResources, DiskResourc
     @Source("file_view.gif")
     ImageResource fileView();
 
-    @Override
-    @Source("folder_view.gif")
-    ImageResource folderView();
-
     /**
      * Image resource.
      * 
@@ -651,9 +647,6 @@ public interface IplantResources extends ClientBundle, AppResources, DiskResourc
     @Source("uiapps/widgets/ArgumentListEditorCss.css")
     ArgumentListEditorCss argumentListEditorCss();
     
-    @Source("DataCollapse.css")
-    DataCollapseStyle getDataCollapseStyle();
-    
     @Source("Feedback.css")
     DEFeedbackStyle getFeedbackStyle();
     
@@ -662,7 +655,4 @@ public interface IplantResources extends ClientBundle, AppResources, DiskResourc
 
     @Source("user_comment.png")
     ImageResource userComment();
-
-    @Source("folder_star.png")
-    ImageResource favoritesFolder();
 }

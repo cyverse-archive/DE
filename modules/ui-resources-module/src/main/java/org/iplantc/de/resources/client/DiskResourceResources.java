@@ -2,6 +2,9 @@ package org.iplantc.de.resources.client;
 
 import com.google.gwt.resources.client.ImageResource;
 
+/**
+ * @author jstroot
+ */
 public interface DiskResourceResources {
 
     /**
@@ -47,13 +50,6 @@ public interface DiskResourceResources {
      * @return image.
      */
     ImageResource fileDelete();
-
-    /**
-     * Image resource
-     * 
-     * @return image.
-     */
-    ImageResource folderView();
 
     /**
      * Image resource.

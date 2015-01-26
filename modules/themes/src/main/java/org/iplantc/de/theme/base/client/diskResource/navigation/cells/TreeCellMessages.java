@@ -1,4 +1,4 @@
-package org.iplantc.de.diskResource.client.gin.appearance;
+package org.iplantc.de.theme.base.client.diskResource.navigation.cells;
 
 import com.google.gwt.i18n.client.Messages;
 

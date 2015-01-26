@@ -5,7 +5,7 @@ import org.iplantc.de.client.models.diskResources.DiskResourceAutoBeanFactory;
 import org.iplantc.de.client.models.errors.diskResources.DiskResourceErrorAutoBeanFactory;
 import org.iplantc.de.client.models.errors.diskResources.ErrorGetManifest;
 import org.iplantc.de.commons.client.ErrorHandler;
-import org.iplantc.de.diskResource.client.views.DiskResourceView;
+import org.iplantc.de.diskResource.client.DiskResourceView;
 import org.iplantc.de.resources.client.messages.I18N;
 
 import com.google.gwt.core.client.JsonUtils;

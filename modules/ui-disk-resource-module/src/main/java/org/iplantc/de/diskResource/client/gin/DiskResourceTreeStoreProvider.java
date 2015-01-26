@@ -7,11 +7,14 @@ import com.google.inject.Provider;
 
 import com.sencha.gxt.data.shared.TreeStore;
 
+/**
+ * @author jstroot
+ */
 public class DiskResourceTreeStoreProvider implements Provider<TreeStore<Folder>> {
 
     @Override
     public TreeStore<Folder> get() {
-        return new TreeStore<Folder>(new DiskResourceModelKeyProvider());
+        return new TreeStore<>(new DiskResourceModelKeyProvider());
     }
 
 }

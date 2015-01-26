@@ -4,7 +4,7 @@ import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.client.util.DiskResourceUtil;
 import org.iplantc.de.commons.client.validators.DiskResourceNameValidator;
 import org.iplantc.de.commons.client.views.dialogs.IPlantPromptDialog;
-import org.iplantc.de.diskResource.client.views.DiskResourceView;
+import org.iplantc.de.diskResource.client.DiskResourceView;
 import org.iplantc.de.resources.client.messages.I18N;
 
 import com.google.gwt.user.client.ui.HTML;

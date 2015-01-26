@@ -13,7 +13,7 @@ import org.iplantc.de.commons.client.views.window.configs.TabularFileViewerWindo
 import org.iplantc.de.diskResource.client.events.DiskResourceSelectionChangedEvent;
 import org.iplantc.de.diskResource.client.events.FolderSelectionEvent;
 import org.iplantc.de.diskResource.client.search.views.DiskResourceSearchField;
-import org.iplantc.de.diskResource.client.views.DiskResourceView;
+import org.iplantc.de.diskResource.client.DiskResourceView;
 import org.iplantc.de.diskResource.share.DiskResourceModule.Ids;
 
 import com.google.common.collect.Lists;
@@ -93,7 +93,7 @@ public class DiskResourceViewToolbarImpl extends Composite implements DiskResour
         this.presenter = presenter;
         this.view = view;
         this.view.addDiskResourceSelectionChangedEventHandler(this);
-        this.view.addFolderSelectedEventHandler(this);
+        this.presenter.addFolderSelectedEventHandler(this);
     }
 
     @Override
