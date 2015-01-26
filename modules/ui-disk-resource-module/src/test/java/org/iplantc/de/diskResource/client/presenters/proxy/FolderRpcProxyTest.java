@@ -56,8 +56,8 @@ public class FolderRpcProxyTest {
     @Before public void setUp() {
         proxyUnderTest = new FolderRpcProxyImpl(drServiceMock,
                                                 searchServiceMock,
-                                                announcerMock,
-                                                maskableMock);
+                                                announcerMock);
+        proxyUnderTest.setMaskable(maskableMock);
     }
 
     /**
