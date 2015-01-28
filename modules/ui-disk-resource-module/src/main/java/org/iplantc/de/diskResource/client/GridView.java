@@ -15,6 +15,7 @@ import org.iplantc.de.diskResource.client.views.cells.events.RequestDiskResource
 import org.iplantc.de.diskResource.client.views.cells.events.ShareByDataLinkEvent;
 import org.iplantc.de.diskResource.client.views.grid.DiskResourceColumnModel;
 
+import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.shared.EventHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
@@ -46,6 +47,8 @@ public interface GridView extends IsWidget,
 
         int createdDateColumnWidth();
 
+        String dataDragDropStatusText(int totalSelectionCount);
+
         String lastModifiedColumnLabel();
 
         int lastModifiedColumnWidth();
@@ -68,6 +71,8 @@ public interface GridView extends IsWidget,
 
         String pathFieldEmptyText();
 
+        String permissionErrorMessage();
+
         int selectionStatusItemWidth();
 
         void setPagingToolBarStyle(ToolBar pagingToolBar);
@@ -88,13 +93,25 @@ public interface GridView extends IsWidget,
 
         void deSelectDiskResources();
 
+        void doMoveDiskResources(Folder targetFolder, List<DiskResource> resources);
+
+        Element findGridRow(Element eventTargetElement);
+
+        int findGridRowIndex(Element targetRow);
+
+        List<DiskResource> getAllDiskResources();
+
         List<DiskResource> getSelectedDiskResources();
+
+        Folder getSelectedUploadFolder();
 
         GridView getView();
 
         boolean isSelectAllChecked();
 
         void loadFolderContents(Folder folderToSelect);
+
+        void setParentPresenter(DiskResourceView.Presenter parentPresenter);
 
         void setSelectedDiskResources(List<? extends HasId> diskResourcesToSelect);
 
@@ -106,6 +123,10 @@ public interface GridView extends IsWidget,
     }
 
     HandlerRegistration addBeforeLoadHandler(BeforeLoadEvent.BeforeLoadHandler<FolderContentsLoadConfig> handler);
+
+    Element findGridRow(Element eventTargetElement);
+
+    int findGridRowIndex(Element targetRow);
 
     DiskResourceColumnModel getColumnModel();
 

@@ -6,6 +6,7 @@ import org.iplantc.de.client.models.diskResources.DiskResourceFavorite;
 import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.client.models.search.DiskResourceQueryTemplate;
 import org.iplantc.de.client.util.CommonModelUtils;
+import org.iplantc.de.client.util.DiskResourceUtil;
 import org.iplantc.de.diskResource.client.DiskResourceView;
 import org.iplantc.de.diskResource.client.GridView;
 import org.iplantc.de.diskResource.client.events.DiskResourceSelectionChangedEvent;
@@ -17,6 +18,7 @@ import org.iplantc.de.diskResource.share.DiskResourceModule;
 import com.google.common.base.Strings;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyPressEvent;
 import com.google.gwt.event.shared.HandlerRegistration;
@@ -52,7 +54,8 @@ import com.sencha.gxt.widget.core.client.toolbar.ToolBar;
  * Created by jstroot on 1/26/15.
  * @author jstroot
  */
-public class GridViewImpl extends ContentPanel implements GridView, BeforeLoadEvent.BeforeLoadHandler<FolderContentsLoadConfig>, SelectionChangedEvent.SelectionChangedHandler<DiskResource> {
+public class GridViewImpl extends ContentPanel implements GridView,
+                                                          SelectionChangedEvent.SelectionChangedHandler<DiskResource> {
     interface GridViewImplUiBinder extends UiBinder<VerticalLayoutContainer, GridViewImpl> {
     }
 
@@ -71,6 +74,8 @@ public class GridViewImpl extends ContentPanel implements GridView, BeforeLoadEv
 
     @Inject
     GridViewImpl(final GridView.Appearance appearance,
+                 final DiskResourceUtil diskResourceUtil,
+                 @Assisted GridView.Presenter presenter,
                  @Assisted final ListStore<DiskResource> listStore,
                  @Assisted final DiskResourceView.FolderContentsRpcProxy folderContentsRpcProxy) {
         this.appearance = appearance;
@@ -86,7 +91,6 @@ public class GridViewImpl extends ContentPanel implements GridView, BeforeLoadEv
         gridLoader.setReuseLoadConfig(true);
         gridLoader.setRemoteSort(true);
         folderContentsRpcProxy.setHasSafeHtml(this.getHeader());
-        gridLoader.addBeforeLoadHandler(this);
 
         VerticalLayoutContainer vlc = ourUiBinder.createAndBindUi(this);
 
@@ -112,13 +116,15 @@ public class GridViewImpl extends ContentPanel implements GridView, BeforeLoadEv
         DropTarget gridDropTarget = new DropTarget(grid);
         gridDropTarget.setAllowSelfAsSource(true);
         gridDropTarget.setOperation(DND.Operation.COPY);
-        // FIXME Migrate DiskResourceViewDndHandler
-//        gridDropTarget.addDragEnterHandler(dndHandler);
-//        gridDropTarget.addDragMoveHandler(dndHandler);
-//        gridDropTarget.addDropHandler(dndHandler);
+        GridViewDnDHandler dndHandler = new GridViewDnDHandler(diskResourceUtil,
+                                                                               presenter,
+                                                                               appearance);
+        gridDropTarget.addDragEnterHandler(dndHandler);
+        gridDropTarget.addDragMoveHandler(dndHandler);
+        gridDropTarget.addDropHandler(dndHandler);
 
         DragSource gridDragSource = new DragSource(grid);
-//        gridDragSource.addDragStartHandler(dndHandler);
+        gridDragSource.addDragStartHandler(dndHandler);
 
         Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
             @Override
@@ -147,6 +153,16 @@ public class GridViewImpl extends ContentPanel implements GridView, BeforeLoadEv
     @Override
     public HandlerRegistration addBeforeLoadHandler(BeforeLoadEvent.BeforeLoadHandler<FolderContentsLoadConfig> handler) {
         return gridLoader.addBeforeLoadHandler(handler);
+    }
+
+    @Override
+    public Element findGridRow(Element eventTargetElement) {
+        return gridView.findRow(eventTargetElement);
+    }
+
+    @Override
+    public int findGridRowIndex(Element targetRow) {
+        return gridView.findRowIndex(targetRow);
     }
 
     @Override
@@ -219,11 +235,6 @@ public class GridViewImpl extends ContentPanel implements GridView, BeforeLoadEv
         // hide Path.
         grid.getColumnModel().getColumn(2).setHidden(true);
         grid.getView().refresh(true);
-    }
-
-    @Override
-    public void onBeforeLoad(BeforeLoadEvent<FolderContentsLoadConfig> event) {
-
     }
 
     @Override

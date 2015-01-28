@@ -87,7 +87,6 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.shared.EventHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -101,7 +100,6 @@ import com.google.inject.assistedinject.AssistedInject;
 import com.google.web.bindery.autobean.shared.AutoBean;
 import com.google.web.bindery.autobean.shared.AutoBeanCodex;
 
-import com.sencha.gxt.data.shared.loader.LoadHandler;
 import com.sencha.gxt.widget.core.client.Dialog.PredefinedButton;
 import com.sencha.gxt.widget.core.client.Window;
 import com.sencha.gxt.widget.core.client.box.ConfirmMessageBox;
@@ -116,10 +114,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map.Entry;
 import java.util.Set;
 
 /**
@@ -147,7 +143,6 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
     final DiskResourceAutoBeanFactory drFactory;
     final List<HandlerRegistration> dreventHandlers = new ArrayList<>();
 
-    private final HashMap<EventHandler, HandlerRegistration> registeredHandlers = new HashMap<>();
     protected boolean isFilePreviewEnabled = true;
     private final NavigationView.Presenter navigationPresenter;
     private final GridView.Presenter gridViewPresenter;
@@ -269,25 +264,23 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
                               final TYPE entityType) {
         this.drFactory = drFactory;
         this.navigationPresenter = navigationPresenter;
-        this.gridViewPresenter = gridViewPresenterFactory.create(infoTypeFilters, entityType);
+        this.gridViewPresenter = gridViewPresenterFactory.create(navigationPresenter,
+                                                                 infoTypeFilters,
+                                                                 entityType);
         this.displayStrings = displayStrings;
         this.announcer = announcer;
         this.eventBus = eventBus;
         this.dataSearchPresenter = dataSearchPresenter;
 
         this.navigationPresenter.setParentPresenter(this);
+        this.gridViewPresenter.setParentPresenter(this);
 
 
         // Initialize View's grid and tree loaders
         DiskResourceView.FolderContentsRpcProxy folderContentsRpcProxy = folderContentsRpcProxyFactory.createWithEntityType(infoTypeFilters, entityType);
-/*        PagingLoader<FolderContentsLoadConfig, PagingLoadResult<DiskResource>> gridLoader = new PagingLoader<>(folderContentsRpcProxy);
-        gridLoader.setReuseLoadConfig(true);
-        gridLoader.setRemoteSort(true);*/
-//        this.view = diskResourceViewFactory.create(this, navigationPresenter, gridLoader);
         this.view = diskResourceViewFactory.create(this, navigationPresenter, gridViewPresenter);
         this.navigationPresenter.setMaskable(view);
 
-//        folderContentsRpcProxy.setHasSafeHtml(view.getCenterHeader());
         this.gridViewPresenter.getView().addFolderPathSelectedEventHandler(new FolderPathSelectedEvent.FolderPathSelectedEventHandler() {
             @Override
             public void onFolderPathSelected(FolderPathSelectedEvent event) {
@@ -594,9 +587,6 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
     @Override
     public void setSelectedDiskResourcesById(final List<? extends HasId> diskResourcesToSelect) {
         gridViewPresenter.setSelectedDiskResourcesById(diskResourcesToSelect);
-//        SelectDiskResourceByIdStoreAddHandler diskResourceStoreAddHandler = new SelectDiskResourceByIdStoreAddHandler(diskResourcesToSelect, this);
-//        HandlerRegistration diskResHandlerReg = view.getListStore().addStoreAddHandler(diskResourceStoreAddHandler);
-//        addEventHandlerRegistration(diskResourceStoreAddHandler, diskResHandlerReg);
     }
 
     @Override
@@ -635,7 +625,6 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
                     @Override
                     public void onFailure(Throwable caught) {
                         ErrorHandler.post("Unable to retrieve tags!", caught);
-
                     }
 
                     @Override
@@ -682,14 +671,9 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
         eventBus.fireEvent(new RequestImportFromUrlEvent(this, getSelectedUploadFolder()));
     }
 
+    // FIXME Inline
     private Folder getSelectedUploadFolder() {
-        Folder selectedFolder = navigationPresenter.getSelectedFolder();
-
-        if (selectedFolder == null) {
-            return navigationPresenter.getFolderByPath(userInfo.getHomePath());
-        }
-
-        return selectedFolder;
+        return navigationPresenter.getSelectedUploadFolder();
     }
 
     @Override
@@ -1014,18 +998,6 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
         ipd.show();
     }
 
-/*    @Override
-    public void unregisterHandler(EventHandler handler) {
-        if (registeredHandlers.containsKey(handler)) {
-            registeredHandlers.remove(handler).removeHandler();
-        }
-    }
-
-    @Override
-    public void addEventHandlerRegistration(EventHandler handler, HandlerRegistration reg) {
-        registeredHandlers.put(handler, reg);
-    }
-*/
     @Override
     public boolean canDragDataToTargetFolder(final Folder targetFolder, final Collection<DiskResource> dropData) {
         if (targetFolder instanceof DiskResourceQueryTemplate) {
@@ -1070,50 +1042,6 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
         }
     }
 
-/*    @Override
-    public Set<? extends DiskResource> getDragSources(IsWidget source, Element dragStartEl) {
-        // Verify the drag started from a valid item in the tree or grid, then
-        // return the selected items.
-        if (view.isViewGrid(source)) {
-            List<DiskResource> selectedResources = getSelectedDiskResources();
-
-            if (!selectedResources.isEmpty()) {
-                // Verify the dragStartEl is a row within the grid.
-                Element targetRow = view.findGridRow(dragStartEl);
-
-                if (targetRow != null) {
-                    int dropIndex = view.findRowIndex(targetRow);
-
-                    DiskResource selDiskResource = view.getListStore().get(dropIndex);
-                    if (selDiskResource != null) {
-                        return Sets.newHashSet(selectedResources);
-                    }
-                }
-            }
-        }
-
-        return null;
-    }
-
-    @Override
-    public Folder getDropTargetFolder(IsWidget target, Element eventTargetElement) {
-        Folder ret = null;
-        if (view.isViewGrid(target)) {
-            Element targetRow = view.findGridRow(eventTargetElement).cast();
-
-            if (targetRow == null) {
-                ret = getSelectedUploadFolder();
-            } else {
-                int dropIndex = view.findRowIndex(targetRow);
-
-                DiskResource selDiskResource = view.getListStore().get(dropIndex);
-                ret = (selDiskResource instanceof Folder) ? (Folder)selDiskResource : null;
-            }
-        }
-        return ret;
-    }
-    */
-
     @Override
     public void doSubmitDiskResourceQuery(SubmitDiskResourceQueryEvent event) {
         doSelectFolder(event.getQueryTemplate());
@@ -1125,7 +1053,7 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
     }
 
     void doSelectFolder(Folder folderToSelect){
-//        view.loadFolder(folderToSelect);
+        // FIXME Not sure if this is needed if other presenter is listening for same events
         gridViewPresenter.loadFolderContents(folderToSelect);
     }
 
@@ -1231,17 +1159,7 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
 
     @Override
     public void unmask() {
-        boolean hasLoadHandlers = false;
-        for (Entry<EventHandler, HandlerRegistration> entry : registeredHandlers.entrySet()) {
-            if (entry.getKey() instanceof LoadHandler<?, ?>) {
-                hasLoadHandlers = true;
-            }
-
-        }
-        if (!hasLoadHandlers) {
-            view.unmask();
-        }
-
+        view.unmask();
     }
 
     @Override
@@ -1272,15 +1190,7 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
     @Override
     public void displayAndCacheDiskResourceInfo(DiskResource info) {
         Preconditions.checkNotNull(info, "This object cannot be null at this point.");
-//        DiskResource modelWithKey = view.getListStore().findModelWithKey(info.getId());
-//        if(modelWithKey == null){
-//            return;
-//        }
-
         DiskResource updatedModel = gridViewPresenter.updateDiskResource(info);
-//        DiskResource combineDiskResource = diskResourceService.combineDiskResources(info, modelWithKey);
-
-//        view.getListStore().update(combineDiskResource);
         view.updateDetails(updatedModel);
     }
 
@@ -1357,7 +1267,6 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
                 final DiskResource next = it.next();
                 if (next.getId().equals(diskResource.getId())) {
                     next.setFavorite(fav);
-//                    view.updateStore(next);
                     gridViewPresenter.updateDiskResource(next);
                 }
             }

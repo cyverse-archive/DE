@@ -8,6 +8,7 @@ import org.iplantc.de.client.models.viewer.InfoType;
 import org.iplantc.de.client.services.DiskResourceServiceFacade;
 import org.iplantc.de.diskResource.client.DiskResourceView;
 import org.iplantc.de.diskResource.client.GridView;
+import org.iplantc.de.diskResource.client.NavigationView;
 import org.iplantc.de.diskResource.client.events.FolderSelectionEvent;
 import org.iplantc.de.diskResource.client.gin.factory.FolderContentsRpcProxyFactory;
 import org.iplantc.de.diskResource.client.gin.factory.GridViewFactory;
@@ -24,6 +25,7 @@ import org.iplantc.de.diskResource.client.views.grid.DiskResourceColumnModel;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
+import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.shared.EventHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.inject.Inject;
@@ -43,17 +45,21 @@ public class GridViewPresenterImpl implements GridView.Presenter {
 
 
     private final DiskResourceServiceFacade diskResourceService;
+    private final NavigationView.Presenter navigationPresenter;
     private final ListStore<DiskResource> listStore;
     private final GridView view;
     private final HashMap<EventHandler, HandlerRegistration> registeredHandlers = Maps.newHashMap();
+    private DiskResourceView.Presenter parentPresenter;
 
     @Inject
     GridViewPresenterImpl(final GridViewFactory gridViewFactory,
                           final FolderContentsRpcProxyFactory folderContentsProxyFactory,
                           final DiskResourceServiceFacade diskResourceService,
+                          @Assisted final NavigationView.Presenter navigationPresenter,
                           @Assisted final List<InfoType> infoTypeFilters,
                           @Assisted final TYPE entityType){
         this.diskResourceService = diskResourceService;
+        this.navigationPresenter = navigationPresenter;
         this.listStore = new ListStore<>(new DiskResourceModelKeyProvider());
         DiskResourceView.FolderContentsRpcProxy folderContentsRpcProxy = folderContentsProxyFactory.createWithEntityType(infoTypeFilters, entityType);
 
@@ -68,8 +74,6 @@ public class GridViewPresenterImpl implements GridView.Presenter {
         cm.addManageFavoritesEventHandler(this);
         cm.addManageCommentsEventHandler(this);
 
-
-
     }
 
     @Override
@@ -78,8 +82,33 @@ public class GridViewPresenterImpl implements GridView.Presenter {
     }
 
     @Override
+    public void doMoveDiskResources(Folder targetFolder, List<DiskResource> resources) {
+        parentPresenter.doMoveDiskResources(targetFolder, resources);
+    }
+
+    @Override
+    public Element findGridRow(Element eventTargetElement) {
+        return view.findGridRow(eventTargetElement);
+    }
+
+    @Override
+    public int findGridRowIndex(Element targetRow) {
+        return view.findGridRowIndex(targetRow);
+    }
+
+    @Override
+    public List<DiskResource> getAllDiskResources() {
+        return listStore.getAll();
+    }
+
+    @Override
     public List<DiskResource> getSelectedDiskResources() {
         return view.getSelectionModel().getSelectedItems();
+    }
+
+    @Override
+    public Folder getSelectedUploadFolder() {
+        return navigationPresenter.getSelectedUploadFolder();
     }
 
     @Override
@@ -95,6 +124,11 @@ public class GridViewPresenterImpl implements GridView.Presenter {
     @Override
     public void loadFolderContents(Folder folderToSelect) {
 
+    }
+
+    @Override
+    public void setParentPresenter(DiskResourceView.Presenter parentPresenter) {
+        this.parentPresenter = parentPresenter;
     }
 
     @Override

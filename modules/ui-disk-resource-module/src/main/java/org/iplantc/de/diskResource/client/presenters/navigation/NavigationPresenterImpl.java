@@ -34,7 +34,7 @@ import com.sencha.gxt.data.shared.loader.BeforeLoadEvent;
 import com.sencha.gxt.data.shared.loader.TreeLoader;
 import com.sencha.gxt.widget.core.client.tree.Tree;
 
-import java.util.Set;
+import java.util.List;
 
 /**
  * @author jstroot
@@ -117,13 +117,21 @@ public class NavigationPresenterImpl implements NavigationView.Presenter {
     }
 
     @Override
-    public void doMoveDiskResources(Folder targetFolder, Set<DiskResource> dropData) {
+    public void doMoveDiskResources(Folder targetFolder, List<DiskResource> dropData) {
         parentPresenter.doMoveDiskResources(targetFolder, dropData);
     }
 
     @Override
     public Iterable<Folder> getRootItems() {
         return treeStore.getRootItems();
+    }
+
+    @Override
+    public Folder getSelectedUploadFolder() {
+        if(getSelectedFolder() == null) {
+            return getFolderByPath(userInfo.getHomePath());
+        }
+        return getSelectedFolder();
     }
 
     @Override

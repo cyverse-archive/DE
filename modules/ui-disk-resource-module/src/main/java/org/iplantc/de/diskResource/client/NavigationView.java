@@ -22,7 +22,7 @@ import com.sencha.gxt.widget.core.client.tree.Tree;
 import com.sencha.gxt.widget.core.client.tree.TreeStyle;
 import com.sencha.gxt.widget.core.client.tree.TreeView;
 
-import java.util.Set;
+import java.util.List;
 
 /**
  * Created by jstroot on 1/21/15.
@@ -64,9 +64,11 @@ public interface NavigationView extends IsWidget,
 
         void addFolder(Folder parent, Folder newChild);
 
-        void doMoveDiskResources(Folder targetFolder, Set<DiskResource> dropData);
+        void doMoveDiskResources(Folder targetFolder, List<DiskResource> dropData);
 
         Iterable<Folder> getRootItems();
+
+        Folder getSelectedUploadFolder();
 
         NavigationView getView();
 
@@ -84,6 +86,7 @@ public interface NavigationView extends IsWidget,
 
         void setMaskable(IsMaskable maskable);
 
+        // FIXME Potentially do this via assisted inject
         void setParentPresenter(DiskResourceView.Presenter parentPresenter);
 
         /**
