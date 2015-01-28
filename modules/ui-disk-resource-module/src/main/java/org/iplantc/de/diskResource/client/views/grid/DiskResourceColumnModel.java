@@ -1,8 +1,11 @@
-package org.iplantc.de.diskResource.client.views;
+package org.iplantc.de.diskResource.client.views.grid;
 
 import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.client.models.diskResources.File;
 import org.iplantc.de.client.util.DiskResourceUtil;
+import org.iplantc.de.diskResource.client.GridView;
+import org.iplantc.de.diskResource.client.views.DiskResourceNameComparator;
+import org.iplantc.de.diskResource.client.views.DiskResourceProperties;
 import org.iplantc.de.diskResource.client.views.cells.DiskResourceActionsCell;
 import org.iplantc.de.diskResource.client.views.cells.DiskResourceNameCell;
 import org.iplantc.de.diskResource.client.views.cells.DiskResourcePathCell;
@@ -13,7 +16,6 @@ import org.iplantc.de.diskResource.client.views.cells.events.ManageSharingEvent;
 import org.iplantc.de.diskResource.client.views.cells.events.RequestDiskResourceFavoriteEvent;
 import org.iplantc.de.diskResource.client.views.cells.events.ShareByDataLinkEvent;
 import org.iplantc.de.diskResource.share.DiskResourceModule;
-import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 
 import com.google.gwt.cell.client.AbstractCell;
 import com.google.gwt.cell.client.DateCell;
@@ -43,8 +45,8 @@ public class DiskResourceColumnModel extends ColumnModel<DiskResource> implement
                                                                                   ManageCommentsEvent.HasManageCommentsEventHandlers {
 
     public DiskResourceColumnModel(@SuppressWarnings("rawtypes") final CheckBoxSelectionModel sm,
-                                   final IplantDisplayStrings displayStrings) {
-        super(createColumnConfigList(sm, displayStrings));
+                                   final GridView.Appearance appearance) {
+        super(createColumnConfigList(sm, appearance));
 
         for(ColumnConfig<DiskResource, ?> cc : configs){
             if(cc.getCell() instanceof DiskResourceNameCell){
@@ -56,28 +58,30 @@ public class DiskResourceColumnModel extends ColumnModel<DiskResource> implement
     }
 
     @SuppressWarnings("unchecked")
-    public static List<ColumnConfig<DiskResource, ?>> createColumnConfigList(@SuppressWarnings("rawtypes") CheckBoxSelectionModel sm,
-                                                                             IplantDisplayStrings displayStrings) {
+    public static List<ColumnConfig<DiskResource, ?>> createColumnConfigList(@SuppressWarnings("rawtypes") final CheckBoxSelectionModel sm,
+                                                                             final GridView.Appearance appearance) {
         List<ColumnConfig<DiskResource, ?>> list = new ArrayList<>();
 
         DiskResourceProperties props = GWT.create(DiskResourceProperties.class);
 
         ColumnConfig<DiskResource, DiskResource> name = new ColumnConfig<>(new IdentityValueProvider<DiskResource>("name"),
-                                                                           100,
-                                                                           displayStrings.name());
+                                                                           appearance.nameColumnWidth(),
+                                                                           appearance.nameColumnLabel());
         ColumnConfig<DiskResource, Date> lastModified = new ColumnConfig<>(props.lastModified(),
-                                                                           130,
-                                                                           displayStrings.lastModified());
-        ColumnConfig<DiskResource, Long> size = new ColumnConfig<>(new DiskResourceSizeValueProvider(), 70, displayStrings.size());
+                                                                           appearance.lastModifiedColumnWidth(),
+                                                                           appearance.lastModifiedColumnLabel());
+        ColumnConfig<DiskResource, Long> size = new ColumnConfig<>(new DiskResourceSizeValueProvider(),
+                                                                   appearance.sizeColumnWidth(),
+                                                                   appearance.sizeColumnLabel());
         ColumnConfig<DiskResource, DiskResource> path = new ColumnConfig<>(new IdentityValueProvider<DiskResource>("path"),
-                                                                           100,
-                                                                           displayStrings.path());
+                                                                           appearance.pathColumnWidth(),
+                                                                           appearance.pathColumnLabel());
         ColumnConfig<DiskResource, Date> created = new ColumnConfig<>(props.dateSubmitted(),
-                                                                      130,
-                                                                      displayStrings.dateSubmitted());
+                                                                      appearance.createdDateColumnWidth(),
+                                                                      appearance.createdDateColumnLabel());
         ColumnConfig<DiskResource, DiskResource> actions = new ColumnConfig<>(new IdentityValueProvider<DiskResource>("actions"),
-                                                                              90,
-                                                                              "");
+                                                                              appearance.actionsColumnWidth(),
+                                                                              appearance.actionsColumnLabel());
         lastModified.setFixed(true);
         size.setFixed(true);
         created.setFixed(true);

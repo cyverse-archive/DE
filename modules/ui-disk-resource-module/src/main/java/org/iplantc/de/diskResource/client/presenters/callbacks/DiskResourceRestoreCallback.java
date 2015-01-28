@@ -18,7 +18,7 @@ import com.google.web.bindery.autobean.shared.AutoBean;
 import com.google.web.bindery.autobean.shared.AutoBeanCodex;
 import com.google.web.bindery.autobean.shared.Splittable;
 
-import java.util.Set;
+import java.util.List;
 
 /**
  * A DiskResourceServiceCallback for data service "restore" endpoint requests.
@@ -29,12 +29,12 @@ import java.util.Set;
 public class DiskResourceRestoreCallback extends DiskResourceServiceCallback<String> {
     private final NavigationView.Presenter navigationPresenter;
     private final DiskResourceAutoBeanFactory drFactory;
-    private final Set<DiskResource> selectedResources;
+    private final List<DiskResource> selectedResources;
 
     public DiskResourceRestoreCallback(final NavigationView.Presenter navigationPresenter,
                                        final IsMaskable maskable,
                                        final DiskResourceAutoBeanFactory drFactory,
-                                       final Set<DiskResource> selectedResources) {
+                                       final List<DiskResource> selectedResources) {
         super(maskable);
 
         this.drFactory = drFactory;

@@ -17,16 +17,23 @@ import com.google.gwt.core.client.GWT;
 import com.google.web.bindery.autobean.shared.AutoBean;
 import com.google.web.bindery.autobean.shared.AutoBeanCodex;
 
-import java.util.Set;
+import java.util.List;
 
+/**
+ * @author jstroot
+ */
 public class DiskResourceMoveCallback extends DiskResourceServiceCallback<DiskResourceMove> {
 
-    private final Set<DiskResource> resourcesToMove;
+    private final List<DiskResource> resourcesToMove;
     private final Folder destFolder;
     private final boolean moveContents;
     private final Folder sourceFolder;
 
-    public DiskResourceMoveCallback(final IsMaskable maskedCaller, final boolean moveContents, final Folder srcFolder, final Folder destFolder, final Set<DiskResource> resourcesToMove) {
+    public DiskResourceMoveCallback(final IsMaskable maskedCaller,
+                                    final boolean moveContents,
+                                    final Folder srcFolder,
+                                    final Folder destFolder,
+                                    final List<DiskResource> resourcesToMove) {
         super(maskedCaller);
         this.destFolder = destFolder;
         this.resourcesToMove = resourcesToMove;

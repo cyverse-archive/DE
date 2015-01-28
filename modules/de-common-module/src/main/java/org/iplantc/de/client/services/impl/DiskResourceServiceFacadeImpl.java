@@ -328,7 +328,7 @@ public class DiskResourceServiceFacadeImpl extends TreeStore<Folder> implements
     }
 
     @Override
-    public void moveDiskResources(final Set<DiskResource> diskResources,
+    public void moveDiskResources(final List<DiskResource> diskResources,
                                   final Folder destFolder,
                                   AsyncCallback<DiskResourceMove> callback) {
 
@@ -537,7 +537,7 @@ public class DiskResourceServiceFacadeImpl extends TreeStore<Folder> implements
     }
 
     @Override
-    public <T extends DiskResource> void deleteDiskResources(final Set<T> diskResources,
+    public <T extends DiskResource> void deleteDiskResources(final List<T> diskResources,
                                                              final AsyncCallback<HasPaths> callback) {
         final HasPaths dto = factory.pathsList().as();
         dto.setPaths(diskResourceUtil.asStringPathList(diskResources));

@@ -1,44 +1,28 @@
 package org.iplantc.de.diskResource.client.views;
 
-import org.iplantc.de.client.models.HasId;
-import org.iplantc.de.client.models.HasPath;
 import org.iplantc.de.client.models.diskResources.DiskResource;
-import org.iplantc.de.client.models.diskResources.DiskResourceFavorite;
 import org.iplantc.de.client.models.diskResources.File;
 import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.client.models.diskResources.PermissionValue;
-import org.iplantc.de.client.models.search.DiskResourceQueryTemplate;
 import org.iplantc.de.client.models.tags.IplantTag;
-import org.iplantc.de.client.util.CommonModelUtils;
 import org.iplantc.de.client.util.DiskResourceUtil;
 import org.iplantc.de.commons.client.widgets.IPlantAnchor;
 import org.iplantc.de.diskResource.client.DiskResourceView;
+import org.iplantc.de.diskResource.client.GridView;
 import org.iplantc.de.diskResource.client.NavigationView;
 import org.iplantc.de.diskResource.client.events.DiskResourceSelectionChangedEvent;
-import org.iplantc.de.diskResource.client.events.FolderSelectionEvent;
-import org.iplantc.de.diskResource.client.presenters.proxy.FolderContentsLoadConfig;
 import org.iplantc.de.diskResource.share.DiskResourceModule;
 import org.iplantc.de.resources.client.IplantResources;
 import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 import org.iplantc.de.tags.client.TagsView;
 import org.iplantc.de.tags.client.gin.factory.TagListPresenterFactory;
 
-import com.google.common.base.Strings;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.core.client.Scheduler;
-import com.google.gwt.core.client.Scheduler.ScheduledCommand;
-import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Style.Cursor;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.dom.client.KeyCodes;
-import com.google.gwt.event.dom.client.KeyPressEvent;
-import com.google.gwt.event.dom.client.KeyPressHandler;
-import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.i18n.client.DateTimeFormat;
-import com.google.gwt.safehtml.client.HasSafeHtml;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiFactory;
 import com.google.gwt.uibinder.client.UiField;
@@ -54,40 +38,18 @@ import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import com.google.web.bindery.autobean.shared.Splittable;
 
-import com.sencha.gxt.core.client.Style.SelectionMode;
 import com.sencha.gxt.core.client.ValueProvider;
 import com.sencha.gxt.core.client.dom.ScrollSupport.ScrollMode;
-import com.sencha.gxt.core.client.resources.ThemeStyles;
-import com.sencha.gxt.data.shared.ListStore;
-import com.sencha.gxt.data.shared.loader.BeforeLoadEvent;
-import com.sencha.gxt.data.shared.loader.PagingLoadResult;
-import com.sencha.gxt.data.shared.loader.PagingLoader;
-import com.sencha.gxt.dnd.core.client.DND.Operation;
-import com.sencha.gxt.dnd.core.client.DragSource;
-import com.sencha.gxt.dnd.core.client.DropTarget;
 import com.sencha.gxt.widget.core.client.Composite;
-import com.sencha.gxt.widget.core.client.ContentPanel;
-import com.sencha.gxt.widget.core.client.Status;
 import com.sencha.gxt.widget.core.client.container.BorderLayoutContainer;
 import com.sencha.gxt.widget.core.client.container.BorderLayoutContainer.BorderLayoutData;
 import com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer;
 import com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer.VerticalLayoutData;
 import com.sencha.gxt.widget.core.client.form.FieldLabel;
-import com.sencha.gxt.widget.core.client.form.TextField;
-import com.sencha.gxt.widget.core.client.grid.ColumnModel;
-import com.sencha.gxt.widget.core.client.grid.Grid;
-import com.sencha.gxt.widget.core.client.grid.LiveGridCheckBoxSelectionModel;
-import com.sencha.gxt.widget.core.client.grid.LiveGridView;
-import com.sencha.gxt.widget.core.client.grid.LiveToolItem;
-import com.sencha.gxt.widget.core.client.selection.SelectionChangedEvent;
-import com.sencha.gxt.widget.core.client.selection.SelectionChangedEvent.SelectionChangedHandler;
-import com.sencha.gxt.widget.core.client.toolbar.FillToolItem;
-import com.sencha.gxt.widget.core.client.toolbar.ToolBar;
 
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 import java.util.logging.Logger;
 
 /**
@@ -96,12 +58,9 @@ import java.util.logging.Logger;
  *
  * @author jstroot, sriram, psarando
  */
-public class DiskResourceViewImpl extends Composite implements DiskResourceView,
-                                                               SelectionChangedHandler<DiskResource>,
-                                                               BeforeLoadEvent.BeforeLoadHandler<FolderContentsLoadConfig>,
-                                                               FolderSelectionEvent.FolderSelectionEventHandler {
+public class DiskResourceViewImpl extends Composite implements DiskResourceView {
 
-    private final class PathFieldKeyPressHandlerImpl implements KeyPressHandler {
+/*    private final class PathFieldKeyPressHandlerImpl implements KeyPressHandler {
         @Override
         public void onKeyPress(KeyPressEvent event) {
             if (event.getNativeEvent().getKeyCode() == KeyCodes.KEY_ENTER && !Strings.isNullOrEmpty(pathField.getCurrentValue())) {
@@ -111,7 +70,7 @@ public class DiskResourceViewImpl extends Composite implements DiskResourceView,
             }
         }
     }
-
+*/
     private final class RemoveInfoTypeClickHandler implements ClickHandler {
         @Override
         public void onClick(ClickEvent event) {
@@ -124,10 +83,11 @@ public class DiskResourceViewImpl extends Composite implements DiskResourceView,
     }
 
     private static DiskResourceViewUiBinder BINDER = GWT.create(DiskResourceViewUiBinder.class);
-    private final PagingLoader<FolderContentsLoadConfig, PagingLoadResult<DiskResource>> gridLoader;
+//    private final PagingLoader<FolderContentsLoadConfig, PagingLoadResult<DiskResource>> gridLoader;
 
     private final DiskResourceUtil diskResourceUtil;
-    private final NavigationView.Presenter navigationPresenter;
+    private final GridView.Presenter gridViewPresenter;
+//    private final NavigationView.Presenter navigationPresenter;
     private final TagListPresenterFactory tagListPresenterFactory;
     private Presenter presenter;
 
@@ -136,11 +96,11 @@ public class DiskResourceViewImpl extends Composite implements DiskResourceView,
     private final IplantDisplayStrings displayStrings;
 
     @UiField BorderLayoutContainer con;
-    @UiField VerticalLayoutContainer centerPanel;
-    @UiField Grid<DiskResource> grid;
-    @UiField ColumnModel<DiskResource> cm;
-    @UiField ListStore<DiskResource> listStore;
-    @UiField LiveGridView<DiskResource> gridView;
+//    @UiField VerticalLayoutContainer centerPanel;
+//    @UiField Grid<DiskResource> grid;
+//    @UiField ColumnModel<DiskResource> cm;
+//    @UiField ListStore<DiskResource> listStore;
+//    @UiField LiveGridView<DiskResource> gridView;
     @UiField VerticalLayoutContainer detailsPanel;
     @UiField BorderLayoutData westData;
     @UiField BorderLayoutData centerData;
@@ -149,14 +109,15 @@ public class DiskResourceViewImpl extends Composite implements DiskResourceView,
     @UiField BorderLayoutData southData;
 
     @UiField VerticalLayoutData centerLayoutData;
-    @UiField ToolBar pagingToolBar;
-    @UiField ContentPanel centerCp;
-    @UiField TextField pathField;
+//    @UiField ToolBar pagingToolBar;
+//    @UiField ContentPanel centerCp;
+//    @UiField TextField pathField;
     @UiField(provided = true) NavigationView navigationView;
+    @UiField(provided = true) GridView centerGridView;
 
-    private final LiveGridCheckBoxSelectionModel sm;
+//    private final LiveGridCheckBoxSelectionModel sm;
 
-    private Status selectionStatus;
+//    private Status selectionStatus;
 
     private TagsView.Presenter tagPresenter;
 
@@ -169,72 +130,86 @@ public class DiskResourceViewImpl extends Composite implements DiskResourceView,
                          final TagListPresenterFactory tagListPresenterFactory,
                          @Assisted final DiskResourceView.Presenter presenter,
                          @Assisted final NavigationView.Presenter navigationPresenter,
-                         @Assisted final PagingLoader<FolderContentsLoadConfig, PagingLoadResult<DiskResource>> gridLoader) {
-        this.navigationPresenter = navigationPresenter;
+                         @Assisted final GridView.Presenter gridViewPresenter) {
+//                         @Assisted final PagingLoader<FolderContentsLoadConfig, PagingLoadResult<DiskResource>> gridLoader) {
+//        this.navigationPresenter = navigationPresenter;
         this.navigationView = navigationPresenter.getView();
+        this.centerGridView = gridViewPresenter.getView();
+        this.gridViewPresenter = gridViewPresenter;
         this.toolbar = viewToolbar;
         this.displayStrings = displayStrings;
         this.diskResourceUtil = diskResourceUtil;
         this.tagListPresenterFactory = tagListPresenterFactory;
         this.presenter = presenter;
-        this.gridLoader = gridLoader;
-        sm = new LiveGridCheckBoxSelectionModel();
+//        this.gridLoader = gridLoader;
+//        sm = new LiveGridCheckBoxSelectionModel();
 
         initWidget(BINDER.createAndBindUi(this));
 
-        ((DiskResourceColumnModel)cm).addDiskResourceNameSelectedEventHandler(presenter);
+
+/*        ((DiskResourceColumnModel)cm).addDiskResourceNameSelectedEventHandler(presenter);
         ((DiskResourceColumnModel)cm).addManageSharingEventHandler(presenter);
         ((DiskResourceColumnModel)cm).addManageMetadataEventHandler(presenter);
         ((DiskResourceColumnModel)cm).addShareByDataLinkEventHandler(presenter);
         ((DiskResourceColumnModel)cm).addManageFavoritesEventHandler(presenter);
-        ((DiskResourceColumnModel)cm).addManageCommentsEventHandler(presenter);
+        ((DiskResourceColumnModel)cm).addManageCommentsEventHandler(presenter);*/
         toolbar.init(presenter, this);
-        initDragAndDrop();
+//        initDragAndDrop();
 
         detailsPanel.setScrollMode(ScrollMode.AUTO);
 
-        this.gridLoader.addBeforeLoadHandler(this);
+/*        this.gridLoader.addBeforeLoadHandler(this);
         grid.setLoader(gridLoader);
         grid.setSelectionModel(sm);
         grid.getSelectionModel().addSelectionChangedHandler(this);
         gridView.setCacheSize(500);
         gridView.setAutoExpandColumn(grid.getColumnModel().getColumn(1));
         initLiveToolbar();
+        */
 
-        navigationPresenter.getView().addFolderSelectedEventHandler(this);
+//        navigationPresenter.getView().addFolderSelectedEventHandler(this);
 
         // by default no details to show...
         resetDetailsPanel();
-        setGridEmptyText();
-        pathField.addKeyPressHandler(new PathFieldKeyPressHandlerImpl());
+//        setGridEmptyText();
+//        pathField.addKeyPressHandler(new PathFieldKeyPressHandlerImpl());
 
         con.setNorthWidget(toolbar, northData);
-        Scheduler.get().scheduleDeferred(new ScheduledCommand() {
+/*        Scheduler.get().scheduleDeferred(new ScheduledCommand() {
             @Override
             public void execute() {
                 final FolderContentsLoadConfig loadConfig = new FolderContentsLoadConfig();
                 loadConfig.setLimit(gridView.getCacheSize());
                 gridLoader.useLoadConfig(loadConfig);
             }
-        });
+        });*/
     }
 
-    @Override
+/*    @Override
     public HandlerRegistration addDiskResourceSelectionChangedEventHandler(DiskResourceSelectionChangedEvent.DiskResourceSelectionChangedEventHandler handler) {
         return asWidget().addHandler(handler, DiskResourceSelectionChangedEvent.TYPE);
     }
+    */
 
     @Override
-    public void onSelectionChanged(SelectionChangedEvent<DiskResource> event) {
-        updateSelectionCount(sm.getSelectedCount());
-
-        asWidget().fireEvent(new DiskResourceSelectionChangedEvent(event.getSelection()));
+    public void onDiskResourceSelectionChanged(DiskResourceSelectionChangedEvent event) {
         if (event.getSelection().isEmpty()) {
             resetDetailsPanel();
         }
     }
 
-    @Override
+/*    @Override
+    public void onSelectionChanged(SelectionChangedEvent<DiskResource> event) {
+//        updateSelectionCount(sm.getSelectedCount());
+
+//        asWidget().fireEvent(new DiskResourceSelectionChangedEvent(event.getSelection()));
+        if (event.getSelection().isEmpty()) {
+            resetDetailsPanel();
+        }
+    }
+    */
+
+/*    @Override
     public void onFolderSelected(FolderSelectionEvent event) {
         final Folder selectedItem = event.getSelectedFolder();
         if (selectedItem == null
@@ -256,10 +231,10 @@ public class DiskResourceViewImpl extends Composite implements DiskResourceView,
                 }
             }
         });
-    }
+    } */
 
 
-    @Override
+/*    @Override
     public void onBeforeLoad(BeforeLoadEvent<FolderContentsLoadConfig> event) {
         if(navigationPresenter.getSelectedFolder() == null){
             return;
@@ -271,8 +246,9 @@ public class DiskResourceViewImpl extends Composite implements DiskResourceView,
             event.setCancelled(true);
         }
     }
+    */
 
-    private void initLiveToolbar() {
+/*    private void initLiveToolbar() {
         grid.setLoadMask(true);
         LiveToolItem toolItem = new LiveToolItem(grid);
         toolItem.setWidth(150);
@@ -288,17 +264,18 @@ public class DiskResourceViewImpl extends Composite implements DiskResourceView,
         pagingToolBar.addStyleName(ThemeStyles.get().style().borderTop());
         pagingToolBar.getElement().getStyle().setProperty("borderBottom", "none");
     }
+*/
 
-    private void updateSelectionCount(int selectionCount) {
+/*    private void updateSelectionCount(int selectionCount) {
         selectionStatus.setText(selectionCount + " item(s)");
-    }
+    } */
 
-    @Override
+/*    @Override
     public HasSafeHtml getCenterHeader() {
         return centerCp.getHeader();
-    }
+    }*/
 
-    @Override
+/*    @Override
     public void loadFolder(Folder folder) {
         sm.clear();
         sm.setShowSelectAll(!(folder instanceof DiskResourceQueryTemplate));
@@ -323,8 +300,9 @@ public class DiskResourceViewImpl extends Composite implements DiskResourceView,
             reconfigureToListingView();
         }
     }
+    */
 
-    @UiFactory
+/*    @UiFactory
     LiveGridView<DiskResource> createLiveGridView() {
         // CORE-5723 KLUDGE for Firefox bug with LiveGridView row height calculation.
         // Always use a row height of 25 for now.
@@ -339,11 +317,13 @@ public class DiskResourceViewImpl extends Composite implements DiskResourceView,
             }
         };
     }
+    */
 
-    @UiFactory
+/*    @UiFactory
     ListStore<DiskResource> createListStore() {
         return new ListStore<>(new DiskResourceModelKeyProvider());
     }
+    */
 
     @UiFactory
     public ValueProvider<Folder, String> createValueProvider() {
@@ -364,20 +344,17 @@ public class DiskResourceViewImpl extends Composite implements DiskResourceView,
         };
     }
 
-    @UiFactory
+/*    @UiFactory
     ColumnModel<DiskResource> createColumnModel() {
         return new DiskResourceColumnModel(sm, displayStrings);
     }
+    */
 
-    /**
-     * Convenience accessor
-     * @return the column model cast as a {@link DiskResourceColumnModel}
-     */
-    private DiskResourceColumnModel getDiskResourceColumnModel() {
+    /*private DiskResourceColumnModel getDiskResourceColumnModel() {
         return (DiskResourceColumnModel)cm;
-    }
+    }*/
 
-    private void initDragAndDrop() {
+/*    private void initDragAndDrop() {
         DiskResourceViewDnDHandler dndHandler = new DiskResourceViewDnDHandler(this, presenter);
 
         DropTarget gridDropTarget = new DropTarget(grid);
@@ -391,30 +368,33 @@ public class DiskResourceViewImpl extends Composite implements DiskResourceView,
         gridDragSource.addDragStartHandler(dndHandler);
 
     }
+    */
 
     @Override
     protected void onEnsureDebugId(String baseID) {
         super.onEnsureDebugId(baseID);
         toolbar.asWidget().ensureDebugId(baseID + DiskResourceModule.Ids.MENU_BAR);
-        grid.ensureDebugId(baseID + DiskResourceModule.Ids.GRID);
-        ((DiskResourceColumnModel)cm).ensureDebugId(baseID);
+//        grid.ensureDebugId(baseID + DiskResourceModule.Ids.GRID);
+//        ((DiskResourceColumnModel)cm).ensureDebugId(baseID);
     }
 
-    @Override
+/*    @Override
     public Set<DiskResource> getSelectedDiskResources() {
         return Sets.newHashSet(grid.getSelectionModel().getSelectedItems());
-    }
+    } */
 
-    @Override
+/*    @Override
     public ListStore<DiskResource> getListStore() {
         return listStore;
     }
+    */
 
-    @Override
+/*    @Override
     public void setDiskResources(Set<DiskResource> folderChildren) {
         grid.getStore().clear();
         grid.getStore().addAll(folderChildren);
     }
+    */
 
     @Override
     public void setEastWidgetHidden(boolean hideEastWidget) {
@@ -439,7 +419,7 @@ public class DiskResourceViewImpl extends Composite implements DiskResourceView,
         con.setSouthWidget(widget, southData);
     }
 
-    @Override
+/*    @Override
     public void setSelectedDiskResources(List<? extends HasId> diskResourcesToSelect) {
         List<DiskResource> resourcesToSelect = Lists.newArrayList();
         for (HasId hi : diskResourcesToSelect) {
@@ -450,16 +430,23 @@ public class DiskResourceViewImpl extends Composite implements DiskResourceView,
         }
         grid.getSelectionModel().select(resourcesToSelect, false);
     }
+    */
 
-    @Override
+    /*@Override
     public void updateStore(DiskResource item) {
         grid.getStore().update(item);
         gridView.refresh();
-    }
+    }*/
 
-    @Override
+/*    @Override
     public void deSelectDiskResources() {
         grid.getSelectionModel().deselectAll();
+    }
+    */
+
+    @Override
+    public List<DiskResource> getSelectedDiskResources() {
+        return gridViewPresenter.getSelectedDiskResources();
     }
 
     @Override
@@ -475,14 +462,15 @@ public class DiskResourceViewImpl extends Composite implements DiskResourceView,
     @Override
     public void unmask() {
         con.unmask();
-        grid.unmask();
+//        grid.unmask();
     }
 
-    private void setGridEmptyText() {
+/*    private void setGridEmptyText() {
         gridView.setEmptyText(displayStrings.noItemsToDisplay());
     }
+    */
 
-    @Override
+/*    @Override
     public boolean isViewGrid(IsWidget widget) {
         return widget.asWidget() == grid;
     }
@@ -503,6 +491,7 @@ public class DiskResourceViewImpl extends Composite implements DiskResourceView,
         // Hide the checkbox column
         getDiskResourceColumnModel().setCheckboxColumnHidden(true);
     }
+*/
 
     @Override
     public void resetDetailsPanel() {
@@ -581,7 +570,7 @@ public class DiskResourceViewImpl extends Composite implements DiskResourceView,
     @Override
     public void updateDetails(DiskResource info) {
         detailsPanel.clear();
-        List<DiskResource> selection = grid.getSelectionModel().getSelectedItems();
+        List<DiskResource> selection = gridViewPresenter.getSelectedDiskResources();
         // guard race condition
         if (selection != null && selection.size() == 1) {
             Iterator<DiskResource> it = selection.iterator();
@@ -783,7 +772,7 @@ public class DiskResourceViewImpl extends Composite implements DiskResourceView,
 
         @Override
         public void onClick(ClickEvent arg0) {
-            List<DiskResource> selection = grid.getSelectionModel().getSelectedItems();
+            List<DiskResource> selection = gridViewPresenter.getSelectedDiskResources();
             Iterator<DiskResource> it = selection.iterator();
             presenter.onInfoTypeClick(it.next(), infoType);
         }
@@ -825,15 +814,17 @@ public class DiskResourceViewImpl extends Composite implements DiskResourceView,
         }
     }
 
-    @Override
+/*    @Override
     public boolean isSelectAllChecked() {
         return sm.isSelectAllChecked();
     }
+    */
 
-    @Override
+/*    @Override
     public int getTotalSelectionCount() {
         return sm.getSelectedItems().size();
     }
+*/
 
     @Override
     public void maskSendToCoGe() {
@@ -875,7 +866,7 @@ public class DiskResourceViewImpl extends Composite implements DiskResourceView,
         presenter.detachTag(tag);
     }
 
-    private void reconfigureToSearchView() {
+/*    private void reconfigureToSearchView() {
         // display Path
         grid.getColumnModel().getColumn(2).setHidden(false);
         grid.getView().refresh(true);
@@ -885,7 +876,7 @@ public class DiskResourceViewImpl extends Composite implements DiskResourceView,
         // hide Path.
         grid.getColumnModel().getColumn(2).setHidden(true);
         grid.getView().refresh(true);
-    }
+    } */
 
     @Override
     public void selectTag(IplantTag tag) {

@@ -82,11 +82,10 @@ public interface DiskResourceServiceFacade {
 
     /**
      * Calls the move folder and move file services for the list of given disk resource ids.
-     *
-     * @param diskResources list of file and folder ids to move.
+     *  @param diskResources list of file and folder ids to move.
      * @param destFolder the destination folder where the disk resources will be moved.
      */
-    void moveDiskResources(final Set<DiskResource> diskResources, final Folder destFolder,
+    void moveDiskResources(final List<DiskResource> diskResources, final Folder destFolder,
             AsyncCallback<DiskResourceMove> callback);
 
     /**
@@ -137,11 +136,10 @@ public interface DiskResourceServiceFacade {
 
     /**
      * Call service to delete disk resources (i.e. {@link File}s and {@link Folder}s)
-     *
-     * @param diskResources a set of <code>DiskResource</code>s to be deleted
+     *  @param diskResources a set of <code>DiskResource</code>s to be deleted
      * @param callback callback executed when service call completes.
      */
-    <T extends DiskResource> void deleteDiskResources(Set<T> diskResources, AsyncCallback<HasPaths> callback);
+    <T extends DiskResource> void deleteDiskResources(List<T> diskResources, AsyncCallback<HasPaths> callback);
 
     /**
      * Call service to delete disk resources in case user selects all items

@@ -19,7 +19,6 @@ import org.iplantc.de.diskResource.client.presenters.proxy.SelectFolderByPathLoa
 import org.iplantc.de.diskResource.client.search.events.SubmitDiskResourceQueryEvent;
 import org.iplantc.de.diskResource.client.search.events.SubmitDiskResourceQueryEvent.HasSubmitDiskResourceQueryEventHandlers;
 import org.iplantc.de.diskResource.client.search.views.DiskResourceSearchField;
-import org.iplantc.de.diskResource.client.views.HasHandlerRegistrationMgmt;
 import org.iplantc.de.diskResource.client.views.cells.events.DiskResourceNameSelectedEvent;
 import org.iplantc.de.diskResource.client.views.cells.events.ManageCommentsEvent;
 import org.iplantc.de.diskResource.client.views.cells.events.ManageMetadataEvent;
@@ -28,13 +27,11 @@ import org.iplantc.de.diskResource.client.views.cells.events.RequestDiskResource
 import org.iplantc.de.diskResource.client.views.cells.events.ShareByDataLinkEvent;
 import org.iplantc.de.tags.client.Taggable;
 
-import com.google.gwt.dom.client.Element;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.safehtml.client.HasSafeHtml;
 import com.google.gwt.user.client.ui.HasOneWidget;
 import com.google.gwt.user.client.ui.IsWidget;
 
-import com.sencha.gxt.data.shared.ListStore;
 import com.sencha.gxt.data.shared.loader.DataProxy;
 import com.sencha.gxt.data.shared.loader.PagingLoadResult;
 import com.sencha.gxt.data.shared.loader.TreeLoader;
@@ -48,8 +45,8 @@ import java.util.Set;
  */
 public interface DiskResourceView extends IsWidget,
                                           IsMaskable,
-                                          DiskResourceSelectionChangedEvent.HasDiskResourceSelectionChangedEventHandlers,
-                                          Taggable {
+                                          Taggable,
+                                          DiskResourceSelectionChangedEvent.DiskResourceSelectionChangedEventHandler {
 
     interface DiskResourceViewToolbar extends IsWidget {
 
@@ -100,7 +97,6 @@ public interface DiskResourceView extends IsWidget,
 
     interface Presenter extends org.iplantc.de.commons.client.presenter.Presenter,
                                 IsMaskable,
-                                HasHandlerRegistrationMgmt,
                                 FolderSelectionEvent.FolderSelectionEventHandler,
                                 DiskResourceNameSelectedEvent.DiskResourceNameSelectedEventHandler,
                                 ManageMetadataEvent.ManageMetadataEventHandler,
@@ -151,7 +147,7 @@ public interface DiskResourceView extends IsWidget,
 
         void doImportFromUrl();
 
-        void doMoveDiskResources(Folder targetFolder, Set<DiskResource> resources);
+        void doMoveDiskResources(Folder targetFolder, List<DiskResource> resources);
 
         void doRenameDiskResource(DiskResource diskResource, String newName);
 
@@ -167,14 +163,11 @@ public interface DiskResourceView extends IsWidget,
 
         void emptyTrash();
 
-        Set<? extends DiskResource> getDragSources(IsWidget source, Element dragStartEl);
+//        Set<? extends DiskResource> getDragSources(IsWidget source, Element dragStartEl);
 
-        /**
-         * A convenience method for looking up drop target folders for View components
-         */
-        Folder getDropTargetFolder(IsWidget widget, Element el);
+//        Folder getDropTargetFolder(IsWidget widget, Element el);
 
-        Set<DiskResource> getSelectedDiskResources();
+        List<DiskResource> getSelectedDiskResources();
 
         Folder getSelectedFolder();
 
@@ -247,30 +240,27 @@ public interface DiskResourceView extends IsWidget,
         void unmaskVizMenuOptions();
     }
 
-    void deSelectDiskResources();
+//    void deSelectDiskResources();
 
-    Element findGridRow(Element el);
+//    Element findGridRow(Element el);
 
-    int findRowIndex(Element targetRow);
+//    int findRowIndex(Element targetRow);
 
-    HasSafeHtml getCenterHeader();
+//    HasSafeHtml getCenterHeader();
 
-    ListStore<DiskResource> getListStore();
+//    ListStore<DiskResource> getListStore();
 
-    Set<DiskResource> getSelectedDiskResources();
+    List<DiskResource> getSelectedDiskResources();
 
     DiskResourceViewToolbar getToolbar();
 
-    int getTotalSelectionCount();
+//    int getTotalSelectionCount();
 
-    boolean isSelectAllChecked();
+//    boolean isSelectAllChecked();
 
-    /**
-     * @return true if the given widget is this view's <code>Grid</code> object, false otherwise.
-     */
-    boolean isViewGrid(IsWidget widget);
+//    boolean isViewGrid(IsWidget widget);
 
-    void loadFolder(Folder folder);
+    //void loadFolder(Folder folder);
 
     void maskDetailsPanel();
 
@@ -282,15 +272,15 @@ public interface DiskResourceView extends IsWidget,
 
     void resetDetailsPanel();
 
-    void setDiskResources(Set<DiskResource> folderChildren);
+//    void setDiskResources(Set<DiskResource> folderChildren);
 
     void setEastWidgetHidden(boolean hideEastWidget);
 
     void setNorthWidgetHidden(boolean hideNorthWidget);
 
-    void setSelectedDiskResources(List<? extends HasId> diskResourcesToSelect);
+//    void setSelectedDiskResources(List<? extends HasId> diskResourcesToSelect);
 
-    void setSingleSelect();
+//    void setSingleSelect();
 
     void setSouthWidget(IsWidget fl);
 
@@ -306,7 +296,7 @@ public interface DiskResourceView extends IsWidget,
 
     void updateDetails(DiskResource info);
 
-    void updateStore(DiskResource item);
+//    void updateStore(DiskResource item);
 
     void updateTags(List<IplantTag> tags);
 }

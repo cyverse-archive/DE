@@ -7,8 +7,11 @@ import org.iplantc.de.diskResource.client.events.RequestSimpleDownloadEvent.Requ
 import com.google.gwt.event.shared.EventHandler;
 import com.google.gwt.event.shared.GwtEvent;
 
-import java.util.Set;
+import java.util.List;
 
+/**
+ * @author jstroot
+ */
 public class RequestSimpleDownloadEvent extends GwtEvent<RequestSimpleDownloadEventHandler> {
     public interface RequestSimpleDownloadEventHandler extends EventHandler {
 
@@ -17,10 +20,12 @@ public class RequestSimpleDownloadEvent extends GwtEvent<RequestSimpleDownloadEv
     }
 
     public static final GwtEvent.Type<RequestSimpleDownloadEventHandler> TYPE = new GwtEvent.Type<RequestSimpleDownloadEventHandler>();
-    private final Set<DiskResource> requestedResources;
+    private final List<DiskResource> requestedResources;
     private final Folder currentFolder;
 
-    public RequestSimpleDownloadEvent(Object source, final Set<DiskResource> requestedResources, final Folder currentFolder) {
+    public RequestSimpleDownloadEvent(final Object source,
+                                      final List<DiskResource> requestedResources,
+                                      final Folder currentFolder) {
         setSource(source);
         this.requestedResources = requestedResources;
         this.currentFolder = currentFolder;
@@ -36,7 +41,7 @@ public class RequestSimpleDownloadEvent extends GwtEvent<RequestSimpleDownloadEv
         handler.onRequestSimpleDownload(this);
     }
 
-    public Set<DiskResource> getRequestedResources() {
+    public List<DiskResource> getRequestedResources() {
         return requestedResources;
     }
 

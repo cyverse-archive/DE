@@ -15,6 +15,7 @@ import org.iplantc.de.diskResource.client.events.RootFoldersRetrievedEvent;
 import org.iplantc.de.diskResource.client.events.SavedSearchesRetrievedEvent;
 import org.iplantc.de.diskResource.client.gin.factory.NavigationViewFactory;
 import org.iplantc.de.diskResource.client.presenters.handlers.CachedFolderTreeStoreBinding;
+import org.iplantc.de.diskResource.client.presenters.proxy.FolderContentsLoadConfig;
 import org.iplantc.de.diskResource.client.presenters.proxy.SelectFolderByPathLoadHandler;
 import org.iplantc.de.diskResource.client.search.events.SubmitDiskResourceQueryEvent;
 import org.iplantc.de.diskResource.client.views.navigation.NavigationViewDnDHandler;
@@ -29,6 +30,7 @@ import com.google.inject.Inject;
 
 import com.sencha.gxt.data.shared.TreeStore;
 import com.sencha.gxt.data.shared.event.StoreDataChangeEvent;
+import com.sencha.gxt.data.shared.loader.BeforeLoadEvent;
 import com.sencha.gxt.data.shared.loader.TreeLoader;
 import com.sencha.gxt.widget.core.client.tree.Tree;
 
@@ -164,6 +166,20 @@ public class NavigationPresenterImpl implements NavigationView.Presenter {
     @Override
     public Folder getParentFolder(Folder child) {
         return treeStore.getParent(child);
+    }
+
+    @Override
+    public void onBeforeLoad(BeforeLoadEvent<FolderContentsLoadConfig> event) {
+        if(getSelectedFolder() == null){
+            return;
+        }
+
+        final Folder folderToBeLoaded = event.getLoadConfig().getFolder();
+
+        // If the loaded contents are not the contents of the currently selected folder, then cancel the load.
+        if(!folderToBeLoaded.getId().equals(getSelectedFolder().getId())){
+            event.setCancelled(true);
+        }
     }
 
     @Override

@@ -2,7 +2,7 @@ package org.iplantc.de.diskResource.client.presenters.proxy;
 
 import org.iplantc.de.client.models.HasId;
 import org.iplantc.de.client.models.diskResources.DiskResource;
-import org.iplantc.de.diskResource.client.DiskResourceView;
+import org.iplantc.de.diskResource.client.GridView;
 
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
@@ -12,11 +12,15 @@ import com.sencha.gxt.data.shared.event.StoreAddEvent.StoreAddHandler;
 
 import java.util.List;
 
+/**
+ * @author jstroot
+ */
 public final class SelectDiskResourceByIdStoreAddHandler implements StoreAddHandler<DiskResource> {
     private final List<? extends HasId> diskResourcesToSelect;
-    private final DiskResourceView.Presenter presenter;
+    private final GridView.Presenter presenter;
 
-    public SelectDiskResourceByIdStoreAddHandler(List<? extends HasId> diskResourcesToSelect, DiskResourceView.Presenter presenter) {
+    public SelectDiskResourceByIdStoreAddHandler(final List<? extends HasId> diskResourcesToSelect,
+                                                 final GridView.Presenter presenter) {
         this.diskResourcesToSelect = diskResourcesToSelect;
         this.presenter = presenter;
     }
@@ -24,7 +28,13 @@ public final class SelectDiskResourceByIdStoreAddHandler implements StoreAddHand
     @Override
     public void onAdd(StoreAddEvent<DiskResource> event) {
         List<DiskResource> items = event.getItems();
-        if(diskResourcesToSelect != null && diskResourcesToSelect.size() > 0 && items!= null & items.size() >0) {
+        if (diskResourcesToSelect == null
+                || diskResourcesToSelect.size() <= 0
+                || items == null
+                || items.size() <= 0) {
+            return;
+        }
+
         for (DiskResource addedItem : items) {
             for (HasId toSelect : diskResourcesToSelect) {
                 // If we match at least one of the disk resources to select, send them
@@ -35,14 +45,13 @@ public final class SelectDiskResourceByIdStoreAddHandler implements StoreAddHand
                     Scheduler.get().scheduleDeferred(new ScheduledCommand() {
                         @Override
                         public void execute() {
-                            presenter.getView().setSelectedDiskResources(diskResourcesToSelect);
+                            presenter.setSelectedDiskResources(diskResourcesToSelect);
                         }
                     });
-                    presenter.unregisterHandler(this);
+                    presenter.unRegisterHandler(this);
                     return;
                 }
             }
         }
-    }
     }
 }

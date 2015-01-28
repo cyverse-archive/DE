@@ -190,7 +190,7 @@ public class DiskResourceUtil {
         return resource != null && resource.getPath().startsWith(UserInfo.getInstance().getTrashPath());
     }
 
-    public boolean containsTrashedResource(Set<DiskResource> selectedResources) {
+    public boolean containsTrashedResource(List<DiskResource> selectedResources) {
         if (selectedResources != null) {
             for (DiskResource resource : selectedResources) {
                 if (inTrash(resource)) {

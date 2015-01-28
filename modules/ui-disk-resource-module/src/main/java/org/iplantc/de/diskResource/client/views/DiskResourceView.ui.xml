@@ -2,16 +2,13 @@
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
              xmlns:container="urn:import:com.sencha.gxt.widget.core.client.container"
              xmlns:gxt="urn:import:com.sencha.gxt.widget.core.client"
-             xmlns:grid="urn:import:com.sencha.gxt.widget.core.client.grid"
-             xmlns:paging="urn:import:com.sencha.gxt.widget.core.client.toolbar"
-             xmlns:navigation="urn:import:org.iplantc.de.diskResource.client"
-             xmlns:form="urn:import:com.sencha.gxt.widget.core.client.form">
+             xmlns:views="urn:import:org.iplantc.de.diskResource.client">
 
     <ui:with field="DISPLAY"
              type="org.iplantc.de.resources.client.messages.IplantDisplayStrings"/>
 
     <!-- Main Panel -->
-    <ui:with field="listStore"
+    <!-- ui:with field="listStore"
              type="com.sencha.gxt.data.shared.ListStore" />
     <ui:with field="cm"
              type="com.sencha.gxt.widget.core.client.grid.ColumnModel" />
@@ -19,7 +16,7 @@
              type="com.sencha.gxt.widget.core.client.grid.LiveGridView">
         <ui:attributes forceFit="true"
                        autoFill="true" />
-    </ui:with>
+    </ui:with -->
 
     <!-- Border Layout Data -->
     <ui:with field="westMargins"
@@ -91,12 +88,12 @@
 
         <!-- Navigation Panel -->
         <container:west layoutData="{westData}">
-            <navigation:NavigationView ui:field="navigationView" />
+            <views:NavigationView ui:field="navigationView" />
         </container:west>
 
         <!-- Main Panel -->
         <container:center layoutData="{centerData}">
-            <gxt:ContentPanel ui:field="centerCp"
+            <!-- gxt:ContentPanel ui:field="centerCp"
                               collapsible="false">
                 <container:VerticalLayoutContainer
                         ui:field="centerPanel">
@@ -120,7 +117,8 @@
                         <paging:ToolBar ui:field="pagingToolBar"/>
                     </container:child>
                 </container:VerticalLayoutContainer>
-            </gxt:ContentPanel>
+            </gxt:ContentPanel -->
+            <views:GridView ui:field="centerGridView" />
         </container:center>
 
         <!-- Details Panel -->

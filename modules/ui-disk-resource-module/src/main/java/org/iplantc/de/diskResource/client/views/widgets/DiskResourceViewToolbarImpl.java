@@ -76,8 +76,8 @@ public class DiskResourceViewToolbarImpl extends Composite implements DiskResour
     @Inject DiskResourceUtil diskResourceUtil;
 
     @Inject
-    public DiskResourceViewToolbarImpl(final DiskResourceSearchField searchField,
-                                       final UserInfo userInfo) {
+    DiskResourceViewToolbarImpl(final DiskResourceSearchField searchField,
+                                final UserInfo userInfo) {
         this.searchField = searchField;
         this.userInfo = userInfo;
         initWidget(BINDER.createAndBindUi(this));
@@ -92,7 +92,7 @@ public class DiskResourceViewToolbarImpl extends Composite implements DiskResour
     public void init(DiskResourceView.Presenter presenter, DiskResourceView view) {
         this.presenter = presenter;
         this.view = view;
-        this.view.addDiskResourceSelectionChangedEventHandler(this);
+        this.presenter.addDiskResourceSelectionChangedEventHandler(this);
         this.presenter.addFolderSelectedEventHandler(this);
     }
 

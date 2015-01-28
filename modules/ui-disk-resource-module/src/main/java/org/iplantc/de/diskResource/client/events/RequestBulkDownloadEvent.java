@@ -7,8 +7,12 @@ import org.iplantc.de.diskResource.client.events.RequestBulkDownloadEvent.Reques
 import com.google.gwt.event.shared.EventHandler;
 import com.google.gwt.event.shared.GwtEvent;
 
+import java.util.List;
 import java.util.Set;
 
+/**
+ * @author jstroot
+ */
 public class RequestBulkDownloadEvent extends GwtEvent<RequestBulkDownloadEventHandler> {
     public interface RequestBulkDownloadEventHandler extends EventHandler {
 
@@ -16,11 +20,14 @@ public class RequestBulkDownloadEvent extends GwtEvent<RequestBulkDownloadEventH
     }
 
     public static final GwtEvent.Type<RequestBulkDownloadEventHandler> TYPE = new GwtEvent.Type<RequestBulkDownloadEventHandler>();
-    private final Set<DiskResource> requestedResources;
+    private final List<DiskResource> requestedResources;
     private final Folder currentFolder;
     private boolean selectAll;
 
-    public RequestBulkDownloadEvent(Object source,boolean selectAll, final Set<DiskResource> requestedResources, final Folder currentFolder) {
+    public RequestBulkDownloadEvent(final Object source,
+                                    final boolean selectAll,
+                                    final List<DiskResource> requestedResources,
+                                    final Folder currentFolder) {
         setSource(source);
         this.setSelectAll(selectAll);
         this.requestedResources = requestedResources;
@@ -37,7 +44,7 @@ public class RequestBulkDownloadEvent extends GwtEvent<RequestBulkDownloadEventH
         handler.onRequestBulkDownload(this);
     }
 
-    public Set<DiskResource> getRequestedResources() {
+    public List<DiskResource> getRequestedResources() {
         return requestedResources;
     }
 

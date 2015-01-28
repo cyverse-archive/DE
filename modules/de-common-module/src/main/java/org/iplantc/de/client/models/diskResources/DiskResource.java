@@ -8,9 +8,13 @@ import com.google.web.bindery.autobean.shared.AutoBean.PropertyName;
 
 import java.util.Date;
 
+/**
+ * @author jstroot
+ */
 public interface DiskResource extends HasId, HasName, HasPath {
 
     String INFO_TYPE_KEY = "infoType";
+    String NAME_KEY = "name";
 
     String getInfoType();
 

@@ -6,10 +6,10 @@ import org.iplantc.de.client.models.diskResources.File;
 import org.iplantc.de.client.models.viewer.InfoType;
 import org.iplantc.de.client.util.DiskResourceUtil;
 import org.iplantc.de.commons.client.views.dialogs.IPlantDialog;
-import org.iplantc.de.diskResource.client.events.DiskResourceSelectionChangedEvent;
-import org.iplantc.de.diskResource.client.gin.factory.DiskResourcePresenterFactory;
 import org.iplantc.de.diskResource.client.DiskResourceView;
 import org.iplantc.de.diskResource.client.DiskResourceView.Presenter;
+import org.iplantc.de.diskResource.client.events.DiskResourceSelectionChangedEvent;
+import org.iplantc.de.diskResource.client.gin.factory.DiskResourcePresenterFactory;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
@@ -28,7 +28,6 @@ import com.sencha.gxt.widget.core.client.form.TextField;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 
 /**
  * An <code>IPlantDialog</code> which wraps the standard <code>DiskResourceView</code> for file
@@ -168,7 +167,7 @@ public class FileSelectDialog extends IPlantDialog implements TakesValue<List<Fi
         presenter.cleanUp();
     }
 
-    public Set<DiskResource> getDiskResources() {
+    public List<DiskResource> getDiskResources() {
         return presenter.getSelectedDiskResources();
     }
 

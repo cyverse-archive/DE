@@ -2252,15 +2252,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     String noFiles();
 
     /**
-     * Translated "No items to display.".
-     *
-     * @return translated "No items to display."
-     */
-    @DefaultMessage("No items to display.")
-    @Key("noItemsToDisplay")
-    String noItemsToDisplay();
-
-    /**
      * Translated "No notifications to display.".
      *
      * @return translated "No notifications to display."

@@ -2,18 +2,13 @@ package org.iplantc.de.diskResource.client.gin;
 
 import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.diskResource.client.DiskResourceView;
+import org.iplantc.de.diskResource.client.GridView;
 import org.iplantc.de.diskResource.client.NavigationView;
 import org.iplantc.de.diskResource.client.dataLink.presenter.DataLinkPresenterImpl;
 import org.iplantc.de.diskResource.client.dataLink.view.DataLinkPanel;
-import org.iplantc.de.diskResource.client.gin.factory.DataLinkPanelFactory;
-import org.iplantc.de.diskResource.client.gin.factory.DataSharingDialogFactory;
-import org.iplantc.de.diskResource.client.gin.factory.DiskResourcePresenterFactory;
-import org.iplantc.de.diskResource.client.gin.factory.DiskResourceSelectorDialogFactory;
-import org.iplantc.de.diskResource.client.gin.factory.DiskResourceSelectorFieldFactory;
-import org.iplantc.de.diskResource.client.gin.factory.DiskResourceViewFactory;
-import org.iplantc.de.diskResource.client.gin.factory.FolderContentsRpcProxyFactory;
-import org.iplantc.de.diskResource.client.gin.factory.NavigationViewFactory;
+import org.iplantc.de.diskResource.client.gin.factory.*;
 import org.iplantc.de.diskResource.client.presenters.DiskResourcePresenterImpl;
+import org.iplantc.de.diskResource.client.presenters.grid.GridViewPresenterImpl;
 import org.iplantc.de.diskResource.client.presenters.navigation.NavigationPresenterImpl;
 import org.iplantc.de.diskResource.client.presenters.proxy.FolderContentsRpcProxyImpl;
 import org.iplantc.de.diskResource.client.presenters.proxy.FolderRpcProxyImpl;
@@ -23,6 +18,7 @@ import org.iplantc.de.diskResource.client.search.views.DiskResourceSearchField;
 import org.iplantc.de.diskResource.client.search.views.cells.DiskResourceQueryForm;
 import org.iplantc.de.diskResource.client.search.views.cells.DiskResourceSearchCell;
 import org.iplantc.de.diskResource.client.views.DiskResourceViewImpl;
+import org.iplantc.de.diskResource.client.views.grid.GridViewImpl;
 import org.iplantc.de.diskResource.client.views.navigation.NavigationViewImpl;
 import org.iplantc.de.diskResource.client.views.widgets.DiskResourceViewToolbarImpl;
 
@@ -80,6 +76,14 @@ public class DiskResourceGinModule extends AbstractGinModule {
                     .implement(NavigationView.class, NavigationViewImpl.class)
                     .build(NavigationViewFactory.class));
 
+
+        // Grid View/Presenter
+        install(new GinFactoryModuleBuilder()
+                    .implement(GridView.Presenter.class, GridViewPresenterImpl.class)
+                    .build(GridViewPresenterFactory.class));
+        install(new GinFactoryModuleBuilder()
+                    .implement(GridView.class, GridViewImpl.class)
+                    .build(GridViewFactory.class));
     }
 
 

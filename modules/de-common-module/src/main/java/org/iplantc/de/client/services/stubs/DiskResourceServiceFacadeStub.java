@@ -65,7 +65,7 @@ public class DiskResourceServiceFacadeStub implements DiskResourceServiceFacade 
     }
 
     @Override
-    public void moveDiskResources(Set<DiskResource> diskResources, Folder destFolder, AsyncCallback<DiskResourceMove> callback) {
+    public void moveDiskResources(List<DiskResource> diskResources, Folder destFolder, AsyncCallback<DiskResourceMove> callback) {
 
     }
 
@@ -100,7 +100,7 @@ public class DiskResourceServiceFacadeStub implements DiskResourceServiceFacade 
     }
 
     @Override
-    public <T extends DiskResource> void deleteDiskResources(Set<T> diskResources, AsyncCallback<HasPaths> callback) {
+    public <T extends DiskResource> void deleteDiskResources(List<T> diskResources, AsyncCallback<HasPaths> callback) {
 
     }
 
