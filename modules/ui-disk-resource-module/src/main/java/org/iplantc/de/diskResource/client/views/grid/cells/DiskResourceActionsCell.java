@@ -1,5 +1,6 @@
 package org.iplantc.de.diskResource.client.views.grid.cells;
 
+import static org.iplantc.de.client.models.diskResources.PermissionValue.own;
 import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.client.models.diskResources.File;
 import org.iplantc.de.client.models.diskResources.Folder;
@@ -9,97 +10,105 @@ import org.iplantc.de.diskResource.client.views.cells.events.ManageMetadataEvent
 import org.iplantc.de.diskResource.client.views.cells.events.ManageSharingEvent;
 import org.iplantc.de.diskResource.client.views.cells.events.ShareByDataLinkEvent;
 import org.iplantc.de.diskResource.share.DiskResourceModule;
-import org.iplantc.de.resources.client.IplantResources;
-import org.iplantc.de.resources.client.messages.I18N;
-import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 
 import static com.google.gwt.dom.client.BrowserEvents.CLICK;
-
-import com.google.common.base.Strings;
 import com.google.gwt.cell.client.AbstractCell;
 import com.google.gwt.cell.client.Cell;
 import com.google.gwt.cell.client.ValueUpdater;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.debug.client.DebugInfo;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.shared.HasHandlers;
-import com.google.gwt.resources.client.ClientBundle;
-import com.google.gwt.resources.client.CssResource;
-import com.google.gwt.safehtml.client.SafeHtmlTemplates;
-import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.safehtml.shared.SafeUri;
 import com.google.gwt.user.client.Event;
 
 /**
- * FIXME REFACTOR This cell needs an appearance
  * @author jstroot
  */
 public class DiskResourceActionsCell extends AbstractCell<DiskResource> {
 
+    public interface Appearance {
+
+        String actionClass();
+
+        String commentsTooltip();
+
+        ImageResource dataLinkIcon();
+
+        ImageResource linkAddIcon();
+
+        ImageResource metadataIcon();
+
+        String metadataTooltip();
+
+        void render(SafeHtmlBuilder sb, String name, String toolTip, String className,
+                    SafeUri imgSrc, String baseID, String debugId);
+
+        String shareByDeTooltip();
+
+        String shareFileByLinkTooltip();
+
+        String shareFolderByLinkTooltip();
+
+        ImageResource shareIcon();
+
+        ImageResource userCommentIcon();
+    }
+
+    private final String COMMENTS_ACTION;
+    private final String MANAGE_METADATA_ACTION;
+    private final String SHARE_BY_DE_ACTION;
+    private final String SHARE_FILE_BY_LINK_ACTION;
+    private final String SHARE_FOLDER_BY_LINK_ACTION;
+    private final Appearance appearance;
+    private final DiskResourceUtil diskResourceUtil;
     private String baseID;
-
-    public void setBaseDebugId(String baseID) {
-        this.baseID = baseID;
-    }
-
-    interface MyCss extends CssResource {
-        @ClassName("actions_icon")
-        String actionIcon();
-    }
-    interface Resource extends ClientBundle {
-
-        @Source("DiskResourceActionsCell.css")
-        MyCss css();
-    }
-    /**
-     * The HTML templates used to render the cell.
-     */
-    interface Templates extends SafeHtmlTemplates {
-
-        @SafeHtmlTemplates.Template("<img name='{0}' title='{1}' class='{2}' src='{3}'></img>")
-        SafeHtml imgCell(String name, String toolTip, String className, SafeUri imgSrc);
-
-        @SafeHtmlTemplates.Template("<img id='{4}' name='{0}' title='{1}' class='{2}' src='{3}'></img>")
-        SafeHtml debugImgCell(String name, String toolTip, String className, SafeUri imgSrc, String id);
-    }
-
-    private final IplantDisplayStrings displayStrings;
-    private final IplantResources iplantResources;
-
-    private static Templates templates = GWT.create(Templates.class);
-    private static final Resource resources = GWT.create(Resource.class);
     private HasHandlers hasHandlers;
 
-    private final String SHARE_FOLDER_BY_LINK_ACTION;
-    private final String SHARE_FILE_BY_LINK_ACTION;
-    private final String SHARE_BY_DE_ACTION;
-    private final String MANAGE_METADATA_ACTION;
-    private final String COMMENTS_ACTION;
-    private final DiskResourceUtil diskResourceUtil;
+    public DiskResourceActionsCell(final DiskResourceUtil diskResourceUtil) {
+        this(diskResourceUtil,
+             GWT.<Appearance>create(Appearance.class));
+    }
 
-
-
-
-    public DiskResourceActionsCell() {
+    public DiskResourceActionsCell(final DiskResourceUtil diskResourceUtil,
+                                   final Appearance appearance) {
         super(CLICK);
-        resources.css().ensureInjected();
-        displayStrings = I18N.DISPLAY;
-        iplantResources = IplantResources.RESOURCES;
-        diskResourceUtil = DiskResourceUtil.getInstance();
+        this.diskResourceUtil = diskResourceUtil;
+        this.appearance = appearance;
 
-        SHARE_FOLDER_BY_LINK_ACTION = displayStrings.share() + " " + displayStrings.path();
-        SHARE_FILE_BY_LINK_ACTION = displayStrings.share() + " " + displayStrings.viaPublicLink();
-        SHARE_BY_DE_ACTION = displayStrings.share() + " " + displayStrings.viaDiscoveryEnvironment();
-        MANAGE_METADATA_ACTION = displayStrings.metadata();
-        COMMENTS_ACTION = displayStrings.comments();
+        SHARE_FOLDER_BY_LINK_ACTION = appearance.shareFolderByLinkTooltip();
+        SHARE_FILE_BY_LINK_ACTION = appearance.shareFileByLinkTooltip();
+        SHARE_BY_DE_ACTION = appearance.shareByDeTooltip();
+        MANAGE_METADATA_ACTION = appearance.metadataTooltip();
+        COMMENTS_ACTION = appearance.commentsTooltip();
 
     }
 
     @Override
+    public void onBrowserEvent(Cell.Context context, Element parent, DiskResource value,
+                               NativeEvent event, ValueUpdater<DiskResource> valueUpdater) {
+        if (value == null) {
+            return;
+        }
+
+        Element eventTarget = Element.as(event.getEventTarget());
+        if (eventTarget.getNodeName().equalsIgnoreCase("img")
+                && parent.isOrHasChild(eventTarget)) {
+            switch (Event.as(event).getTypeInt()) {
+                case Event.ONCLICK:
+                    doOnClick(eventTarget, value);
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+
+    @Override
     public void render(Context context, DiskResource value, SafeHtmlBuilder sb) {
-        if(value == null){
+        if (value == null) {
             return;
         }
         if (value.isFilter() || diskResourceUtil.inTrash(value)) {
@@ -115,34 +124,31 @@ public class DiskResourceActionsCell extends AbstractCell<DiskResource> {
         if (value instanceof Folder) {
             name = SHARE_FOLDER_BY_LINK_ACTION;
             toolTip = SHARE_FOLDER_BY_LINK_ACTION;
-            className = resources.css().actionIcon();
-            imgSrc = iplantResources.dataLink().getSafeUri();
+            className = appearance.actionClass();
+            imgSrc = appearance.dataLinkIcon().getSafeUri();
             debugId = baseID + "." + value.getPath() + DiskResourceModule.Ids.ACTION_CELL_DATA_LINK;
         }
-        if ((value instanceof File) && diskResourceUtil.isOwner(value)) {
+        if ((value instanceof File)
+                && own.equals(value.getPermission())) {
             name = SHARE_FILE_BY_LINK_ACTION;
             toolTip = SHARE_FILE_BY_LINK_ACTION;
-            className = resources.css().actionIcon();
-            imgSrc = iplantResources.linkAdd().getSafeUri();
+            className = appearance.actionClass();
+            imgSrc = appearance.linkAddIcon().getSafeUri();
             debugId = baseID + "." + value.getPath() + DiskResourceModule.Ids.ACTION_CELL_DATA_LINK_ADD;
         }
 
 
         // Append link action
-        if(name != null && className != null && imgSrc != null){
-            if(DebugInfo.isDebugIdEnabled() && !Strings.isNullOrEmpty(baseID) && (debugId != null)){
-                sb.append(templates.debugImgCell(name, toolTip, className, imgSrc, debugId));
-            } else {
-                sb.append(templates.imgCell(name, toolTip, className, imgSrc));
-            }
+        if (name != null && className != null && imgSrc != null) {
+            appearance.render(sb, name, toolTip, className, imgSrc, baseID, debugId);
         }
 
         debugId = null;
-        if (diskResourceUtil.isOwner(value)) {
+        if (own.equals(value.getPermission())) {
             name = SHARE_BY_DE_ACTION;
             toolTip = SHARE_BY_DE_ACTION;
-            className = resources.css().actionIcon();
-            imgSrc = iplantResources.share().getSafeUri();
+            className = appearance.actionClass();
+            imgSrc = appearance.shareIcon().getSafeUri();
             debugId = baseID + "." + value.getPath() + DiskResourceModule.Ids.ACTION_CELL_SHARE;
         } else {
             name = null;
@@ -152,63 +158,36 @@ public class DiskResourceActionsCell extends AbstractCell<DiskResource> {
         }
 
         // Append Share action
-        if((name != null) && (className != null) && (imgSrc != null)){
-            if(DebugInfo.isDebugIdEnabled() && !Strings.isNullOrEmpty(baseID) && (debugId != null)) {
-                sb.append(templates.debugImgCell(name, toolTip, className, imgSrc, debugId));
-            } else {
-                sb.append(templates.imgCell(name, toolTip, className, imgSrc));
-            }
+        if ((name != null) && (className != null) && (imgSrc != null)) {
+            appearance.render(sb, name, toolTip, className, imgSrc, baseID, debugId);
         }
 
         name = MANAGE_METADATA_ACTION;
         toolTip = MANAGE_METADATA_ACTION;
-        className = resources.css().actionIcon();
-        imgSrc = iplantResources.metadata().getSafeUri();
+        className = appearance.actionClass();
+        imgSrc = appearance.metadataIcon().getSafeUri();
         debugId = baseID + "." + value.getPath() + DiskResourceModule.Ids.ACTION_CELL_METADATA;
 
         // Append metadata action
-        if(name != null && className != null && imgSrc != null){
-            if(DebugInfo.isDebugIdEnabled() && !Strings.isNullOrEmpty(baseID) && (debugId != null)) {
-                sb.append(templates.debugImgCell(name, toolTip, className, imgSrc, debugId));
-            } else {
-                sb.append(templates.imgCell(name, toolTip, className, imgSrc));
-            }
+        if (name != null && className != null && imgSrc != null) {
+            appearance.render(sb, name, toolTip, className, imgSrc, baseID, debugId);
         }
 
         name = COMMENTS_ACTION;
         toolTip = COMMENTS_ACTION;
-        className = resources.css().actionIcon();
-        imgSrc = iplantResources.userComment().getSafeUri();
+        className = appearance.actionClass();
+        imgSrc = appearance.userCommentIcon().getSafeUri();
         debugId = baseID + "." + value.getPath() + DiskResourceModule.Ids.ACTION_CELL_COMMENTS;
 
         // append comments action
         if (name != null && className != null && imgSrc != null) {
-            if (DebugInfo.isDebugIdEnabled() && !Strings.isNullOrEmpty(baseID) && (debugId != null)) {
-                sb.append(templates.debugImgCell(name, toolTip, className, imgSrc, debugId));
-            } else {
-                sb.append(templates.imgCell(name, toolTip, className, imgSrc));
-            }
+            appearance.render(sb, name, toolTip, className, imgSrc, baseID, debugId);
         }
 
     }
 
-    @Override
-    public void onBrowserEvent(Cell.Context context, Element parent, DiskResource value, NativeEvent event, ValueUpdater<DiskResource> valueUpdater) {
-        if (value == null) {
-            return;
-        }
-
-        Element eventTarget = Element.as(event.getEventTarget());
-        if (eventTarget.getNodeName().equalsIgnoreCase("img")
-                    && parent.isOrHasChild(eventTarget)) {
-            switch (Event.as(event).getTypeInt()) {
-                case Event.ONCLICK:
-                    doOnClick(eventTarget, value);
-                    break;
-                default:
-                    break;
-            }
-        }
+    public void setBaseDebugId(String baseID) {
+        this.baseID = baseID;
     }
 
     public void setHasHandlers(HasHandlers hasHandlers) {
@@ -216,7 +195,7 @@ public class DiskResourceActionsCell extends AbstractCell<DiskResource> {
     }
 
     private void doOnClick(Element eventTarget, DiskResource value) {
-        if(hasHandlers == null){
+        if (hasHandlers == null) {
             return;
         }
 

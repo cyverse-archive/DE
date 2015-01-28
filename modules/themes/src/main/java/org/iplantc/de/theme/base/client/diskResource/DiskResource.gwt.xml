@@ -29,4 +29,13 @@
     <replace-with class="org.iplantc.de.theme.base.client.diskResource.navigation.cells.TreeCellDefaultAppearance">
         <when-type-is class="org.iplantc.de.diskResource.client.views.navigation.cells.TreeCell.TreeCellAppearance" />
     </replace-with>
+
+    <!-- Grid -->
+    <replace-with class="org.iplantc.de.theme.base.client.diskResource.grid.GridViewDefaultAppearance">
+        <when-type-is class="org.iplantc.de.diskResource.client.GridView.Appearance" />
+    </replace-with>
+
+    <replace-with class="org.iplantc.de.theme.base.client.diskResource.grid.cells.DiskResourceActionsCellDefaultAppearance">
+        <when-type-is class="org.iplantc.de.diskResource.client.views.grid.cells.DiskResourceActionsCell.Appearance" />
+    </replace-with>
 </module>

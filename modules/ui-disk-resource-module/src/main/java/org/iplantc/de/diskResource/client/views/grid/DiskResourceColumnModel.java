@@ -45,8 +45,9 @@ public class DiskResourceColumnModel extends ColumnModel<DiskResource> implement
                                                                                   ManageCommentsEvent.HasManageCommentsEventHandlers {
 
     public DiskResourceColumnModel(@SuppressWarnings("rawtypes") final CheckBoxSelectionModel sm,
-                                   final GridView.Appearance appearance) {
-        super(createColumnConfigList(sm, appearance));
+                                   final GridView.Appearance appearance,
+                                   final DiskResourceUtil diskResourceUtil) {
+        super(createColumnConfigList(sm, appearance, diskResourceUtil));
 
         for(ColumnConfig<DiskResource, ?> cc : configs){
             if(cc.getCell() instanceof DiskResourceNameCell){
@@ -59,7 +60,8 @@ public class DiskResourceColumnModel extends ColumnModel<DiskResource> implement
 
     @SuppressWarnings("unchecked")
     public static List<ColumnConfig<DiskResource, ?>> createColumnConfigList(@SuppressWarnings("rawtypes") final CheckBoxSelectionModel sm,
-                                                                             final GridView.Appearance appearance) {
+                                                                             final GridView.Appearance appearance,
+                                                                             final DiskResourceUtil diskResourceUtil) {
         List<ColumnConfig<DiskResource, ?>> list = new ArrayList<>();
 
         DiskResourceProperties props = GWT.create(DiskResourceProperties.class);
@@ -91,7 +93,7 @@ public class DiskResourceColumnModel extends ColumnModel<DiskResource> implement
         lastModified.setCell(new DateCell(DateTimeFormat.getFormat(DateTimeFormat.PredefinedFormat.DATE_TIME_MEDIUM)));
         size.setCell(new DiskResourceSizeCell());
         created.setCell(new DateCell(DateTimeFormat.getFormat(DateTimeFormat.PredefinedFormat.DATE_TIME_MEDIUM)));
-        actions.setCell(new DiskResourceActionsCell());
+        actions.setCell(new DiskResourceActionsCell(diskResourceUtil));
         path.setCell(new DiskResourcePathCell());
 
         name.setComparator(new DiskResourceNameComparator());

@@ -613,9 +613,6 @@ public interface IplantResources extends ClientBundle, AppResources, DiskResourc
     @Source("tree_expand.png")
     ImageResource treeExpand();
 
-    @Source("link.png")
-    ImageResource dataLink();
-
     @Source("warning_mini.png")
     ImageResource warningMini();
 

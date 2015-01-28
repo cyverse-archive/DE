@@ -65,6 +65,7 @@ public class GridViewImpl extends ContentPanel implements GridView,
     @UiField ToolBar pagingToolBar;
     @UiField Grid<DiskResource> grid;
     @UiField TextField pathField;
+    private final DiskResourceUtil diskResourceUtil;
     @UiField(provided = true) ListStore<DiskResource> listStore;
     @UiField DiskResourceColumnModel cm;
     @UiField LiveGridView gridView;
@@ -79,6 +80,7 @@ public class GridViewImpl extends ContentPanel implements GridView,
                  @Assisted final ListStore<DiskResource> listStore,
                  @Assisted final DiskResourceView.FolderContentsRpcProxy folderContentsRpcProxy) {
         this.appearance = appearance;
+        this.diskResourceUtil = diskResourceUtil;
         this.listStore = listStore;
         this.sm = new LiveGridCheckBoxSelectionModel();
         this.selectionStatus = new Status();
@@ -263,7 +265,7 @@ public class GridViewImpl extends ContentPanel implements GridView,
 
     @UiFactory
     DiskResourceColumnModel createColumnModel() {
-        return new DiskResourceColumnModel(sm, appearance);
+        return new DiskResourceColumnModel(sm, appearance, diskResourceUtil);
     }
 
     @UiHandler("pathField")

@@ -3886,24 +3886,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     String version();
 
     /**
-     * Translated "via Discovery Environment".
-     *
-     * @return translated "via Discovery Environment"
-     */
-    @DefaultMessage("via Discovery Environment")
-    @Key("viaDiscoveryEnvironment")
-    String viaDiscoveryEnvironment();
-
-    /**
-     * Translated "via Public Link".
-     *
-     * @return translated "via Public Link"
-     */
-    @DefaultMessage("via Public Link")
-    @Key("viaPublicLink")
-    String viaPublicLink();
-
-    /**
      * Translated "View".
      *
      * @return translated "View"

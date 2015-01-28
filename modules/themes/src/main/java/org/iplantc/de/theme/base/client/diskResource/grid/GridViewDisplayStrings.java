@@ -8,6 +8,9 @@ import com.google.gwt.safehtml.shared.SafeHtml;
  * @author jstroot
  */
 public interface GridViewDisplayStrings extends Messages{
+    @Key("metadata")
+    String metadata();
+
     @Key("noItemsToDisplay")
     String noItemsToDisplay();
 
@@ -16,4 +19,13 @@ public interface GridViewDisplayStrings extends Messages{
 
     @Key("pathFieldLabel")
     SafeHtml pathFieldLabel();
+
+    @Key("share")
+    String share();
+
+    @Key("viaDiscoveryEnvironment")
+    String viaDiscoveryEnvironment();
+
+    @Key("viaPublicLink")
+    String viaPublicLink();
 }
