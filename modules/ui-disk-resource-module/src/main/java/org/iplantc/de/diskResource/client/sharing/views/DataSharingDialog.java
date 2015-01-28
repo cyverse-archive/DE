@@ -10,7 +10,7 @@ import org.iplantc.de.commons.client.views.dialogs.IPlantDialog;
 import org.iplantc.de.diskResource.client.sharing.presenter.DataSharingPresenter;
 import org.iplantc.de.diskResource.client.views.DiskResourceModelKeyProvider;
 import org.iplantc.de.diskResource.client.views.DiskResourceNameComparator;
-import org.iplantc.de.diskResource.client.views.cells.DiskResourceNameCell;
+import org.iplantc.de.diskResource.client.views.grid.cells.DiskResourceNameCell;
 import org.iplantc.de.resources.client.messages.IplantContextualHelpStrings;
 import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 

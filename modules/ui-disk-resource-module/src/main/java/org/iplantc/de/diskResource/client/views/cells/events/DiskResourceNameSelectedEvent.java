@@ -7,7 +7,7 @@ import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.event.shared.HandlerRegistration;
 
 /**
- * Event fired from the {@link org.iplantc.de.diskResource.client.views.cells.DiskResourceNameCell} to indicate that
+ * Event fired from the {@link org.iplantc.de.diskResource.client.views.grid.cells.DiskResourceNameCell} to indicate that
  * the corresponding DiskResource's name has been selected.
  *
  * @author jstroot

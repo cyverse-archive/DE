@@ -1,4 +1,4 @@
-package org.iplantc.de.diskResource.client.views.cells;
+package org.iplantc.de.diskResource.client.views.grid.cells;
 
 import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.diskResource.client.views.cells.events.RequestDiskResourceFavoriteEvent;
