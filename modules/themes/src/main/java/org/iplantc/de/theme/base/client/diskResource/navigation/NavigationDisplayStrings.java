@@ -9,7 +9,4 @@ import com.google.gwt.i18n.client.Messages;
 public interface NavigationDisplayStrings extends Messages {
     @Key("headingText")
     String headingText();
-
-    @Key("permissionErrorMessage")
-    String permissionErrorMessage();
 }

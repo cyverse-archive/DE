@@ -3,32 +3,19 @@ package org.iplantc.de.diskResource.client.search.presenter.impl;
 import org.iplantc.de.client.models.search.DiskResourceQueryTemplate;
 import org.iplantc.de.client.services.SearchServiceFacade;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
-import org.iplantc.de.diskResource.client.events.FolderSelectionEvent;
 import org.iplantc.de.diskResource.client.search.events.DeleteSavedSearchClickedEvent;
 import org.iplantc.de.diskResource.client.search.events.SaveDiskResourceQueryClickedEvent;
-import org.iplantc.de.diskResource.client.search.events.SubmitDiskResourceQueryEvent;
 import org.iplantc.de.diskResource.client.search.events.UpdateSavedSearchesEvent;
 
 import com.google.common.collect.Lists;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwtmockito.GxtMockitoTestRunner;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyListOf;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.atLeastOnce;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.verifyZeroInteractions;
-import static org.mockito.Mockito.when;
-
+import static org.mockito.Mockito.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -52,6 +39,7 @@ public class DataSearchPresenterImplTest {
     @Mock IplantAnnouncer announcer;
 
     @Captor ArgumentCaptor<List<DiskResourceQueryTemplate>> drqtListCaptor;
+    @Captor ArgumentCaptor<UpdateSavedSearchesEvent> updateSavedSearchesEventCaptor;
     @Captor ArgumentCaptor<AsyncCallback<List<DiskResourceQueryTemplate>>> stringAsyncCbCaptor;
     @Captor ArgumentCaptor<AsyncCallback<List<DiskResourceQueryTemplate>>> drqtListAsyncCaptor;
 
@@ -186,10 +174,6 @@ public class DataSearchPresenterImplTest {
         // Force service success
         drqtListAsyncCaptor.getValue().onSuccess(drqtListCaptor.getValue());
 
-        ArgumentCaptor<SubmitDiskResourceQueryEvent> submitEventCaptor = ArgumentCaptor.forClass(SubmitDiskResourceQueryEvent.class);
-        verify(spy).doSubmitDiskResourceQuery(submitEventCaptor.capture());
-        assertEquals("Verify that a search is requested after a successful persist. ", mockTemplate, submitEventCaptor.getValue().getQueryTemplate());
-
         verify(searchService).createFrozenList(drqtListCaptor.capture());
         assertEquals("Verify that list passed to createFrozenList is expected size", 1, drqtListCaptor.getValue().size());
         assertEquals("Verify that list passed to createFrozenList contains intended template", mockTemplate, drqtListCaptor.getValue().get(0));
@@ -222,13 +206,13 @@ public class DataSearchPresenterImplTest {
         // Force service success
         drqtListAsyncCaptor.getValue().onSuccess(Collections.<DiskResourceQueryTemplate> emptyList());
 
-        verify(spy).updateDataNavigationWindow(eq(Lists.<DiskResourceQueryTemplate> newArrayList()),
-                drqtListCaptor.capture());
-        verify(spy, atLeastOnce()).fireEvent(any(UpdateSavedSearchesEvent.class));
-        assertEquals("Verify that the event's remove list only contains one item", 1, drqtListCaptor
-                .getValue().size());
+        verify(spy).fireEvent(updateSavedSearchesEventCaptor.capture());
+        assertEquals("Verify that the event's remove list only contains one item",
+                     1,
+                     updateSavedSearchesEventCaptor.getValue().getRemovedSearches().size());
         assertEquals("Verify that the intended template was passed to event's remove list",
-                cleanMockTemplate, drqtListCaptor.getValue().get(0));
+                     cleanMockTemplate,
+                     updateSavedSearchesEventCaptor.getValue().getRemovedSearches().get(0));
     }
     
     /**
@@ -254,7 +238,6 @@ public class DataSearchPresenterImplTest {
         drqtListAsyncCaptor.getValue().onFailure(null);
 
         /* Verify that a search is not requested after failure to persist */
-        verify(spy, never()).doSubmitDiskResourceQuery(any(SubmitDiskResourceQueryEvent.class));
         verifyNoMoreInteractions(searchService);
 
         assertEquals("Verify that the query has not been added to the presenter's list after failed persist", 0, spy.getQueryTemplates().size());
@@ -311,39 +294,16 @@ public class DataSearchPresenterImplTest {
         verify(eventMockTemplate).setDirty(eq(true));
 
         /* Verify that the given list only contains the existing and event mock templates */
-        verify(spy).updateDataNavigationWindow(drqtListCaptor.capture(),
-                anyListOf(DiskResourceQueryTemplate.class));
-        assertEquals("verify that the size of the list has not changed", initialSize, drqtListCaptor
-                .getValue().size());
-        assertTrue("verify that the list contains the updated query template", drqtListCaptor.getValue()
-                .contains(eventMockTemplate));
+        verify(spy).fireEvent(updateSavedSearchesEventCaptor.capture());
+        assertEquals("verify that the size of the list has not changed",
+                     initialSize,
+                     drqtListCaptor.getValue().size());
+        assertTrue("verify that the list contains the updated query template",
+                   drqtListCaptor.getValue().contains(eventMockTemplate));
         assertTrue("verify that the list contains the unmodified starting original template",
                 drqtListCaptor.getValue().contains(existingMock2));
         assertFalse("verify that the list does not contain the modified starting original template",
                 drqtListCaptor.getValue().contains(existingMock1));
-    }
-
-    /**
-     * Verifies that the item to be submitted will be fired in a
-     * {@link org.iplantc.de.diskResource.client.events.FolderSelectionEvent}.
-     *
-     * @see org.iplantc.de.diskResource.client.search.presenter.DataSearchPresenter#doSubmitDiskResourceQuery(SubmitDiskResourceQueryEvent)
-     */
-    @Test public void testDoSubmitDiskResourceQuery_Case1() {
-        DataSearchPresenterImpl spy = spy(dsPresenter);
-        DiskResourceQueryTemplate mockedTemplate = mock(DiskResourceQueryTemplate.class);
-        when(mockedTemplate.getName()).thenReturn("mockedTemplateId");
-        SubmitDiskResourceQueryEvent mockEvent = mock(SubmitDiskResourceQueryEvent.class);
-        when(mockEvent.getQueryTemplate()).thenReturn(mockedTemplate);
-
-        spy.setCleanCopyQueryTemplates(Collections.<DiskResourceQueryTemplate> emptyList());
-
-        // Call method under test
-        spy.doSubmitDiskResourceQuery(mockEvent);
-
-        ArgumentCaptor<FolderSelectionEvent> fseCaptor = ArgumentCaptor.forClass(FolderSelectionEvent.class);
-        verify(spy).fireEvent(fseCaptor.capture());
-        assertEquals("Verify that a folder selected event has been fired with the mocked template", mockedTemplate, fseCaptor.getValue().getSelectedFolder());
     }
 
     @Test public void testLoadSavedQueries_Case1() {
@@ -361,8 +321,6 @@ public class DataSearchPresenterImplTest {
         verify(searchService).createFrozenList(eq(newArrayList));
         // Verify for record keeping
         verify(spy).getQueryTemplates();
-        verify(spy).updateDataNavigationWindow(eq(newArrayList),
-                anyListOf(DiskResourceQueryTemplate.class));
         verify(spy).fireEvent(any(UpdateSavedSearchesEvent.class));
 
         verifyNoMoreInteractions(searchService, spy);

@@ -8,16 +8,9 @@ import org.iplantc.de.client.events.diskResources.FolderRefreshEvent.FolderRefre
 import org.iplantc.de.client.models.DEProperties;
 import org.iplantc.de.client.models.HasPaths;
 import org.iplantc.de.client.models.UserInfo;
-import org.iplantc.de.client.models.diskResources.DiskResource;
-import org.iplantc.de.client.models.diskResources.DiskResourceAutoBeanFactory;
-import org.iplantc.de.client.models.diskResources.DiskResourceExistMap;
-import org.iplantc.de.client.models.diskResources.DiskResourceMetadata;
-import org.iplantc.de.client.models.diskResources.DiskResourceMetadataTemplate;
-import org.iplantc.de.client.models.diskResources.DiskResourceMetadataTemplateList;
-import org.iplantc.de.client.models.diskResources.File;
-import org.iplantc.de.client.models.diskResources.Folder;
-import org.iplantc.de.client.models.diskResources.RootFolders;
-import org.iplantc.de.client.models.diskResources.TYPE;
+import org.iplantc.de.client.models.dataLink.DataLink;
+import org.iplantc.de.client.models.dataLink.DataLinkList;
+import org.iplantc.de.client.models.diskResources.*;
 import org.iplantc.de.client.models.services.DiskResourceMove;
 import org.iplantc.de.client.models.services.DiskResourceRename;
 import org.iplantc.de.client.models.viewer.InfoType;
@@ -328,7 +321,7 @@ public class DiskResourceServiceFacadeImpl extends TreeStore<Folder> implements
     }
 
     @Override
-    public void moveDiskResources(final Set<DiskResource> diskResources,
+    public void moveDiskResources(final List<DiskResource> diskResources,
                                   final Folder destFolder,
                                   AsyncCallback<DiskResourceMove> callback) {
 
@@ -537,7 +530,7 @@ public class DiskResourceServiceFacadeImpl extends TreeStore<Folder> implements
     }
 
     @Override
-    public <T extends DiskResource> void deleteDiskResources(final Set<T> diskResources,
+    public <T extends DiskResource> void deleteDiskResources(final List<T> diskResources,
                                                              final AsyncCallback<HasPaths> callback) {
         final HasPaths dto = factory.pathsList().as();
         dto.setPaths(diskResourceUtil.asStringPathList(diskResources));
@@ -690,7 +683,7 @@ public class DiskResourceServiceFacadeImpl extends TreeStore<Folder> implements
     }
 
     @Override
-    public void createDataLinks(List<String> ticketIdList, AsyncCallback<String> callback) {
+    public void createDataLinks(List<String> ticketIdList, AsyncCallback<List<DataLink>> callback) {
         String fullAddress = deProperties.getDataMgmtBaseUrl() + "tickets"; //$NON-NLS-1$
         String args = "public=1";
 
@@ -705,7 +698,13 @@ public class DiskResourceServiceFacadeImpl extends TreeStore<Folder> implements
 
         ServiceCallWrapper wrapper = new ServiceCallWrapper(POST, fullAddress, body.toString());
         wrapper.setArguments(args);
-        callService(wrapper, callback);
+        callService(wrapper, new AsyncCallbackConverter<String, List<DataLink>>(callback) {
+            @Override
+            protected List<DataLink> convertFrom(String object) {
+                AutoBean<DataLinkList> tickets = AutoBeanCodex.decode(factory, DataLinkList.class, object);
+                return tickets.as().getTickets();
+            }
+        });
 
     }
 

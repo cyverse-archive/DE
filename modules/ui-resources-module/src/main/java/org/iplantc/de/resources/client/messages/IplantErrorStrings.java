@@ -677,15 +677,6 @@ public interface IplantErrorStrings extends com.google.gwt.i18n.client.Messages,
     String markMessageSeenFailed();
 
     /**
-     * Translated "Please fix all errors before saving.".
-     * 
-     * @return translated "Please fix all errors before saving."
-     */
-    @DefaultMessage("Please fix all errors before saving.")
-    @Key("metadataFormInvalid")
-    String metadataFormInvalid();
-
-    /**
      * Translated "Error updating metadata.".
      * 
      * @return translated "Error updating metadata."

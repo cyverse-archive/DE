@@ -91,7 +91,7 @@ public class DataLinkPresenterImpl implements DataLinkPanel.Presenter {
         }
 
         view.mask();
-        drService.createDataLinks(drResourceIds, new CreateDataLinkCallback(dlFactory, view));
+        drService.createDataLinks(drResourceIds, new CreateDataLinkCallback(view));
     }
 
     @Override

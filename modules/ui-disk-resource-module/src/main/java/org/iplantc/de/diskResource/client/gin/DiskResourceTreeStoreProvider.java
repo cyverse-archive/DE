@@ -1,7 +1,7 @@
 package org.iplantc.de.diskResource.client.gin;
 
 import org.iplantc.de.client.models.diskResources.Folder;
-import org.iplantc.de.diskResource.client.views.DiskResourceModelKeyProvider;
+import org.iplantc.de.diskResource.client.model.DiskResourceModelKeyProvider;
 
 import com.google.inject.Provider;
 

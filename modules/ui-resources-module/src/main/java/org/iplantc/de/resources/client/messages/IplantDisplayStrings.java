@@ -1909,15 +1909,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     String messagesGridHeader();
 
     /**
-     * Translated "Metadata".
-     *
-     * @return translated "Metadata"
-     */
-    @DefaultMessage("Metadata")
-    @Key("metadata")
-    String metadata();
-
-    /**
      * Translated "Edit Metadata...".
      *
      * @return translated "Edit Metadata..."
@@ -2250,15 +2241,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     @DefaultMessage("No files to display.")
     @Key("noFiles")
     String noFiles();
-
-    /**
-     * Translated "No items to display.".
-     *
-     * @return translated "No items to display."
-     */
-    @DefaultMessage("No items to display.")
-    @Key("noItemsToDisplay")
-    String noItemsToDisplay();
 
     /**
      * Translated "No notifications to display.".
@@ -3895,24 +3877,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     String version();
 
     /**
-     * Translated "via Discovery Environment".
-     *
-     * @return translated "via Discovery Environment"
-     */
-    @DefaultMessage("via Discovery Environment")
-    @Key("viaDiscoveryEnvironment")
-    String viaDiscoveryEnvironment();
-
-    /**
-     * Translated "via Public Link".
-     *
-     * @return translated "via Public Link"
-     */
-    @DefaultMessage("via Public Link")
-    @Key("viaPublicLink")
-    String viaPublicLink();
-
-    /**
      * Translated "View".
      *
      * @return translated "View"
@@ -4060,12 +4024,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     @AlternateMessage({"=1", "Selected item moved to {0}."})
     @Key("diskResourceMoveSuccess")
     String diskResourceMoveSuccess(String destPath, @Optional @PluralCount List<String> srcPaths);
-
-    /**
-     * Translated "Disk resource not available."
-     * 
-     */
-    String diskResourceNotAvailable();
 
     /**
      * Translated "Import From URL..."

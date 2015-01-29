@@ -5,6 +5,7 @@ import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.client.models.search.DiskResourceQueryTemplate;
 import org.iplantc.de.diskResource.client.NavigationView;
 import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
+import org.iplantc.de.theme.base.client.diskResource.DiskResourceErrorMessages;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
@@ -76,6 +77,7 @@ public class NavigationViewDefaultAppearance implements NavigationView.Appearanc
     }
 
     private final IplantDisplayStrings iplantDisplayStrings;
+    private final DiskResourceErrorMessages errorMessages;
     private final NavigationDisplayStrings displayStrings;
     private final NavigationViewResources navigationViewResources;
     private final Templates templates;
@@ -83,16 +85,19 @@ public class NavigationViewDefaultAppearance implements NavigationView.Appearanc
     public NavigationViewDefaultAppearance() {
         this(GWT.<IplantDisplayStrings> create(IplantDisplayStrings.class),
              GWT.<NavigationDisplayStrings> create(NavigationDisplayStrings.class),
+             GWT.<DiskResourceErrorMessages> create(DiskResourceErrorMessages.class),
              GWT.<NavigationViewResources> create(NavigationViewResources.class),
              GWT.<Templates> create(Templates.class));
     }
 
     NavigationViewDefaultAppearance(final IplantDisplayStrings iplantDisplayStrings,
                                     final NavigationDisplayStrings displayStrings,
+                                    final DiskResourceErrorMessages errorMessages,
                                     final NavigationViewResources navigationViewResources,
                                     final Templates templates) {
         this.iplantDisplayStrings = iplantDisplayStrings;
         this.displayStrings = displayStrings;
+        this.errorMessages = errorMessages;
         this.navigationViewResources = navigationViewResources;
         this.templates = templates;
         this.navigationViewResources.dataCollapseStyle().ensureInjected();
@@ -130,7 +135,7 @@ public class NavigationViewDefaultAppearance implements NavigationView.Appearanc
 
     @Override
     public String permissionErrorMessage() {
-        return displayStrings.permissionErrorMessage();
+        return errorMessages.permissionErrorMessage();
     }
 
     @Override

@@ -1,6 +1,7 @@
 package org.iplantc.de.client.services.stubs;
 
 import org.iplantc.de.client.models.HasPaths;
+import org.iplantc.de.client.models.dataLink.DataLink;
 import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.client.models.diskResources.DiskResourceAutoBeanFactory;
 import org.iplantc.de.client.models.diskResources.DiskResourceExistMap;
@@ -65,7 +66,7 @@ public class DiskResourceServiceFacadeStub implements DiskResourceServiceFacade 
     }
 
     @Override
-    public void moveDiskResources(Set<DiskResource> diskResources, Folder destFolder, AsyncCallback<DiskResourceMove> callback) {
+    public void moveDiskResources(List<DiskResource> diskResources, Folder destFolder, AsyncCallback<DiskResourceMove> callback) {
 
     }
 
@@ -100,7 +101,7 @@ public class DiskResourceServiceFacadeStub implements DiskResourceServiceFacade 
     }
 
     @Override
-    public <T extends DiskResource> void deleteDiskResources(Set<T> diskResources, AsyncCallback<HasPaths> callback) {
+    public <T extends DiskResource> void deleteDiskResources(List<T> diskResources, AsyncCallback<HasPaths> callback) {
 
     }
 
@@ -160,7 +161,7 @@ public class DiskResourceServiceFacadeStub implements DiskResourceServiceFacade 
     }
 
     @Override
-    public void createDataLinks(List<String> ticketIdList, AsyncCallback<String> callback) {
+    public void createDataLinks(List<String> ticketIdList, AsyncCallback<List<DataLink>> callback) {
 
     }
 

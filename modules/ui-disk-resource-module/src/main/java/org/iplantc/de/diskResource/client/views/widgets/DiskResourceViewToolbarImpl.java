@@ -12,13 +12,19 @@ import org.iplantc.de.commons.client.views.window.configs.PathListWindowConfig;
 import org.iplantc.de.commons.client.views.window.configs.TabularFileViewerWindowConfig;
 import org.iplantc.de.diskResource.client.events.DiskResourceSelectionChangedEvent;
 import org.iplantc.de.diskResource.client.events.FolderSelectionEvent;
+import org.iplantc.de.diskResource.client.events.ManageCommentsEvent;
+import org.iplantc.de.diskResource.client.events.ManageMetadataEvent;
+import org.iplantc.de.diskResource.client.events.ManageSharingEvent;
+import org.iplantc.de.diskResource.client.events.ShareByDataLinkEvent;
 import org.iplantc.de.diskResource.client.search.views.DiskResourceSearchField;
 import org.iplantc.de.diskResource.client.DiskResourceView;
 import org.iplantc.de.diskResource.share.DiskResourceModule.Ids;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.logical.shared.SelectionEvent;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -72,15 +78,37 @@ public class DiskResourceViewToolbarImpl extends Composite implements DiskResour
     private static DiskResourceViewToolbarUiBinder BINDER = GWT.create(DiskResourceViewToolbarUiBinder.class);
     private final UserInfo userInfo;
     private DiskResourceView.Presenter presenter;
+    private List<DiskResource> selectedDiskResources;
+    private Folder selectedFolder;
     private DiskResourceView view;
     @Inject DiskResourceUtil diskResourceUtil;
 
     @Inject
-    public DiskResourceViewToolbarImpl(final DiskResourceSearchField searchField,
-                                       final UserInfo userInfo) {
+    DiskResourceViewToolbarImpl(final DiskResourceSearchField searchField,
+                                final UserInfo userInfo) {
         this.searchField = searchField;
         this.userInfo = userInfo;
         initWidget(BINDER.createAndBindUi(this));
+    }
+
+    @Override
+    public HandlerRegistration addManageCommentsEventHandler(ManageCommentsEvent.ManageCommentsEventHandler handler) {
+        return addHandler(handler, ManageCommentsEvent.TYPE);
+    }
+
+    @Override
+    public HandlerRegistration addManageMetadataEventHandler(ManageMetadataEvent.ManageMetadataEventHandler handler) {
+        return addHandler(handler, ManageMetadataEvent.TYPE);
+    }
+
+    @Override
+    public HandlerRegistration addManageSharingEventHandler(ManageSharingEvent.ManageSharingEventHandler handler) {
+        return addHandler(handler, ManageSharingEvent.TYPE);
+    }
+
+    @Override
+    public HandlerRegistration addShareByDataLinkEventHandler(ShareByDataLinkEvent.ShareByDataLinkEventHandler handler) {
+        return addHandler(handler, ShareByDataLinkEvent.TYPE);
     }
 
     @Override
@@ -92,7 +120,7 @@ public class DiskResourceViewToolbarImpl extends Composite implements DiskResour
     public void init(DiskResourceView.Presenter presenter, DiskResourceView view) {
         this.presenter = presenter;
         this.view = view;
-        this.view.addDiskResourceSelectionChangedEventHandler(this);
+        this.presenter.addDiskResourceSelectionChangedEventHandler(this);
         this.presenter.addFolderSelectedEventHandler(this);
     }
 
@@ -110,11 +138,11 @@ public class DiskResourceViewToolbarImpl extends Composite implements DiskResour
 
         boolean restoreMiEnabled;
 
-        final List<DiskResource> selection = event.getSelection();
-        final boolean isSelectionEmpty = selection.isEmpty();
-        final boolean isSingleSelection = selection.size() == 1;
-        final boolean isOwner = isOwner(selection);
-        final boolean isSelectionInTrash = isSelectionInTrash(selection);
+        selectedDiskResources = event.getSelection();
+        final boolean isSelectionEmpty = selectedDiskResources.isEmpty();
+        final boolean isSingleSelection = selectedDiskResources.size() == 1;
+        final boolean isOwner = isOwner(selectedDiskResources);
+        final boolean isSelectionInTrash = isSelectionInTrash(selectedDiskResources);
 
         duplicateMiEnabled = !isSelectionEmpty && isOwner && !isSelectionInTrash;
         moveToTrashMiEnabled = !isSelectionEmpty && isOwner && !isSelectionInTrash;
@@ -122,20 +150,20 @@ public class DiskResourceViewToolbarImpl extends Composite implements DiskResour
         renameMiEnabled = !isSelectionEmpty && isSingleSelection && isOwner && !isSelectionInTrash;
         moveMiEnabled = !isSelectionEmpty && isOwner && !isSelectionInTrash;
         deleteMiEnabled = !isSelectionEmpty && isOwner;
-        editFileMiEnabled = !isSelectionEmpty && isSingleSelection && containsFile(selection) && isOwner && !isSelectionInTrash;
-        editCommentsMiEnabled = !isSelectionEmpty && isSingleSelection && !isSelectionInTrash && isReadable(selection.get(0));
-        editInfoTypeMiEnabled = !isSelectionEmpty && isSingleSelection && !isSelectionInTrash && containsFile(selection) && isOwner;
-        metadataMiEnabled = !isSelectionEmpty && isSingleSelection && !isSelectionInTrash && isReadable(selection.get(0));
+        editFileMiEnabled = !isSelectionEmpty && isSingleSelection && containsFile(selectedDiskResources) && isOwner && !isSelectionInTrash;
+        editCommentsMiEnabled = !isSelectionEmpty && isSingleSelection && !isSelectionInTrash && isReadable(selectedDiskResources.get(0));
+        editInfoTypeMiEnabled = !isSelectionEmpty && isSingleSelection && !isSelectionInTrash && containsFile(selectedDiskResources) && isOwner;
+        metadataMiEnabled = !isSelectionEmpty && isSingleSelection && !isSelectionInTrash && isReadable(selectedDiskResources.get(0));
 
-        simpleDownloadMiEnabled = !isSelectionEmpty && containsFile(selection);
+        simpleDownloadMiEnabled = !isSelectionEmpty && containsFile(selectedDiskResources);
         bulkDownloadMiEnabled = !isSelectionEmpty;
-        sendToCogeMiEnabled = !isSelectionEmpty && isSingleSelection && containsFile(selection) && !isSelectionInTrash;
-        sendToEnsemblMiEnabled = !isSelectionEmpty && isSingleSelection && containsFile(selection) && !isSelectionInTrash;
-        sendToTreeViewerMiEnabled = !isSelectionEmpty && isSingleSelection && containsFile(selection) && !isSelectionInTrash;
+        sendToCogeMiEnabled = !isSelectionEmpty && isSingleSelection && containsFile(selectedDiskResources) && !isSelectionInTrash;
+        sendToEnsemblMiEnabled = !isSelectionEmpty && isSingleSelection && containsFile(selectedDiskResources) && !isSelectionInTrash;
+        sendToTreeViewerMiEnabled = !isSelectionEmpty && isSingleSelection && containsFile(selectedDiskResources) && !isSelectionInTrash;
 
         shareWithCollaboratorsMiEnabled = !isSelectionEmpty && isOwner && !isSelectionInTrash;
-        createPublicLinkMiEnabled = !isSelectionEmpty && isOwner && !isSelectionInTrash && containsFile(selection);
-        shareFolderLocationMiEnabled = !isSelectionEmpty && isSingleSelection && !isSelectionInTrash && containsOnlyFolders(selection);
+        createPublicLinkMiEnabled = !isSelectionEmpty && isOwner && !isSelectionInTrash && containsFile(selectedDiskResources);
+        shareFolderLocationMiEnabled = !isSelectionEmpty && isSingleSelection && !isSelectionInTrash && containsOnlyFolders(selectedDiskResources);
 
 
         restoreMiEnabled = !isSelectionEmpty && isSelectionInTrash && isOwner;
@@ -171,7 +199,7 @@ public class DiskResourceViewToolbarImpl extends Composite implements DiskResour
         boolean newFolderMiEnabled, newPlainTextFileMiEnabled, newTabularDataFileMiEnabled;
         boolean refreshButtonEnabled;
 
-        final Folder selectedFolder = event.getSelectedFolder();
+        selectedFolder = event.getSelectedFolder();
         final boolean isFolderInTrash = isSelectionInTrash(Lists.<DiskResource>newArrayList(selectedFolder));
         final boolean isNull = selectedFolder == null;
         final boolean canUploadTo = canUploadTo(selectedFolder);
@@ -328,7 +356,9 @@ public class DiskResourceViewToolbarImpl extends Composite implements DiskResour
 
     @UiHandler("editCommentsMi")
     void onEditCommentClicked(SelectionEvent<Item> event){
-        presenter.manageSelectedResourceComments();
+        Preconditions.checkState(selectedDiskResources != null
+                                     && selectedDiskResources.size() == 1);
+        fireEvent(new ManageCommentsEvent(selectedDiskResources.iterator().next()));
     }
 
     @UiHandler("editFileMi")
@@ -343,7 +373,9 @@ public class DiskResourceViewToolbarImpl extends Composite implements DiskResour
 
     @UiHandler("metadataMi")
     void onEditMetadataClicked(SelectionEvent<Item> event){
-        presenter.manageSelectedResourceMetadata();
+        Preconditions.checkState(selectedDiskResources != null
+                                     && selectedDiskResources.size() == 1);
+        fireEvent(new ManageMetadataEvent(selectedDiskResources.iterator().next()));
     }
 
     @UiHandler("emptyTrashMi")
@@ -436,7 +468,7 @@ public class DiskResourceViewToolbarImpl extends Composite implements DiskResour
                 presenter.createNewTabFile(config);
             }
         });
-        d.setHideOnButtonClick(true);;
+        d.setHideOnButtonClick(true);
         d.setSize("300px", "150px");
         d.show();
     }
@@ -500,12 +532,15 @@ public class DiskResourceViewToolbarImpl extends Composite implements DiskResour
     //--------- Sharing -------------
     @UiHandler("shareWithCollaboratorsMi")
     void onShareWithCollaboratorsClicked(SelectionEvent<Item> event) {
-        presenter.manageSelectedResourceCollaboratorSharing();
+        Preconditions.checkState(selectedDiskResources != null
+                                     && !selectedDiskResources.isEmpty());
+        fireEvent(new ManageSharingEvent(selectedDiskResources));
     }
 
     @UiHandler("shareFolderLocationMi")
     void onShareFolderLocationClicked(SelectionEvent<Item> event){
-        presenter.shareSelectedFolderByDataLink();
+        Preconditions.checkState(selectedFolder != null);
+        fireEvent(new ShareByDataLinkEvent(selectedFolder));
     }
 
     //---------- Download --------------

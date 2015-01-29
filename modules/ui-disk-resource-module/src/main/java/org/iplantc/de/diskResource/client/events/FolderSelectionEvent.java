@@ -7,6 +7,9 @@ import com.google.gwt.event.shared.EventHandler;
 import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.event.shared.HandlerRegistration;
 
+/**
+ * @author jstroot
+ */
 public class FolderSelectionEvent extends GwtEvent<FolderSelectionEventHandler> {
 
     public interface FolderSelectionEventHandler extends EventHandler {

@@ -40,7 +40,8 @@ public class DiskResourceSearchField extends TriggerField<String> implements Has
                                                                              FolderSelectionEvent.FolderSelectionEventHandler,
                                                                              HasSubmitDiskResourceQueryEventHandlers,
                                                                              SubmitDiskResourceQueryEventHandler,
-                                                                             SubmitTextSearchEventHandler, SavedSearchDeletedEvent.SavedSearchDeletedEventHandler {
+                                                                             SubmitTextSearchEventHandler,
+                                                                             SavedSearchDeletedEvent.SavedSearchDeletedEventHandler {
 
     public final class QueryStringPropertyEditor extends PropertyEditor<String> {
         private final SearchAutoBeanFactory factory = GWT.create(SearchAutoBeanFactory.class);
@@ -54,7 +55,7 @@ public class DiskResourceSearchField extends TriggerField<String> implements Has
 
             DiskResourceQueryTemplate qt = factory.dataSearchFilter().as();
             qt.setFileQuery(text.toString());
-            getCell().fireEvent(new SubmitDiskResourceQueryEvent(qt));
+            getCell().getSearchForm().fireEvent(new SubmitDiskResourceQueryEvent(qt));
             return text.toString();
         }
 

@@ -5,15 +5,12 @@ import org.iplantc.de.client.services.SearchServiceFacade;
 import org.iplantc.de.commons.client.info.ErrorAnnouncementConfig;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
 import org.iplantc.de.commons.client.info.SuccessAnnouncementConfig;
-import org.iplantc.de.diskResource.client.events.FolderSelectionEvent;
 import org.iplantc.de.diskResource.client.events.SavedSearchesRetrievedEvent;
 import org.iplantc.de.diskResource.client.search.events.DeleteSavedSearchClickedEvent;
 import org.iplantc.de.diskResource.client.search.events.SaveDiskResourceQueryClickedEvent;
 import org.iplantc.de.diskResource.client.search.events.SavedSearchDeletedEvent;
-import org.iplantc.de.diskResource.client.search.events.SubmitDiskResourceQueryEvent;
 import org.iplantc.de.diskResource.client.search.events.UpdateSavedSearchesEvent;
 import org.iplantc.de.diskResource.client.search.presenter.DataSearchPresenter;
-import org.iplantc.de.diskResource.client.DiskResourceView;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
@@ -55,10 +52,10 @@ public class DataSearchPresenterImpl implements DataSearchPresenter {
         this.announcer = announcer;
     }
 
-    @Override
-    public HandlerRegistration addFolderSelectedEventHandler(FolderSelectionEvent.FolderSelectionEventHandler handler) {
-        return ensureHandlers().addHandler(FolderSelectionEvent.TYPE, handler);
-    }
+//    @Override
+//    public HandlerRegistration addFolderSelectedEventHandler(FolderSelectionEvent.FolderSelectionEventHandler handler) {
+//        return ensureHandlers().addHandler(FolderSelectionEvent.TYPE, handler);
+//    }
 
     @Override
     public HandlerRegistration addSavedSearchDeletedEventHandler(SavedSearchDeletedEvent.SavedSearchDeletedEventHandler handler) {
@@ -70,17 +67,10 @@ public class DataSearchPresenterImpl implements DataSearchPresenter {
         return ensureHandlers().addHandler(UpdateSavedSearchesEvent.TYPE, handler);
     }
 
-    /**
-     * This handler is responsible for submitting a search with the {@link DiskResourceQueryTemplate}
-     * contained in the given {@link SubmitDiskResourceQueryEvent}.
-     * <p/>
-     * Additionally, this method also ensures that this presenter's query template collection is also maintained in the
-     * {@link DiskResourceView#getTreeStore()}, and is responsible for setting the current "active query".
-     */
-    @Override
-    public void doSubmitDiskResourceQuery(final SubmitDiskResourceQueryEvent event) {
-        fireEvent(new FolderSelectionEvent(event.getQueryTemplate()));
-    }
+//    @Override
+//    public void doSubmitDiskResourceQuery(final SubmitDiskResourceQueryEvent event) {
+//        fireEvent(new FolderSelectionEvent(event.getQueryTemplate()));
+//    }
 
     @Override
     public void onDeleteSavedSearchClicked(DeleteSavedSearchClickedEvent event) {
@@ -102,7 +92,7 @@ public class DataSearchPresenterImpl implements DataSearchPresenter {
                                                          LOG.fine("Failed to save query templates after delete of saved search");
                                                      }
                                                      fireEvent(new SavedSearchDeletedEvent(savedSearch));
-                                                     updateDataNavigationWindow(null, savedTemplates);
+                                                     fireEvent(new UpdateSavedSearchesEvent(null, savedTemplates));
                                                  }
                                              });
         } else {
@@ -198,10 +188,7 @@ public class DataSearchPresenterImpl implements DataSearchPresenter {
                 }
 
                 // Performing a search has the effect of setting the given query as the current active query.
-                updateDataNavigationWindow(toUpdate, queriesToRemove);
-
-                // Call our method to perform search with saved template
-                doSubmitDiskResourceQuery(new SubmitDiskResourceQueryEvent(queryTemplate));
+                fireEvent(new UpdateSavedSearchesEvent(toUpdate, queriesToRemove));
             }
         });
 
@@ -260,19 +247,11 @@ public class DataSearchPresenterImpl implements DataSearchPresenter {
         queryTemplates.addAll(savedQueries);
 
         // Update navigation window
-        updateDataNavigationWindow(queryTemplates, queriesToRemove);
+        fireEvent(new UpdateSavedSearchesEvent(queryTemplates, queriesToRemove));
     }
 
     void setCleanCopyQueryTemplates(List<DiskResourceQueryTemplate> cleanCopyQueryTemplates) {
         this.cleanCopyQueryTemplates = cleanCopyQueryTemplates;
-    }
-
-    /**
-     * Fires an {@link UpdateSavedSearchesEvent} with the given {@link DiskResourceQueryTemplate} lists.
-     */
-    void updateDataNavigationWindow(final List<DiskResourceQueryTemplate> queryTemplates,
-                                    final List<DiskResourceQueryTemplate> queriesToRemove) {
-        fireEvent(new UpdateSavedSearchesEvent(queryTemplates, queriesToRemove));
     }
 
     private boolean templateHasChanged(DiskResourceQueryTemplate template,

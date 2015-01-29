@@ -16,6 +16,7 @@ import org.iplantc.de.commons.client.views.window.configs.IDropLiteWindowConfig;
 import org.iplantc.de.diskResource.client.events.RequestSimpleDownloadEvent;
 import org.iplantc.de.diskResource.client.events.RequestSimpleUploadEvent;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.json.client.JSONObject;
@@ -137,7 +138,7 @@ public class IDropLitePresenter implements Presenter {
     @Override
     public void onSimpleDownloadClick() {
         EventBus.getInstance().fireEvent(
-                new RequestSimpleDownloadEvent(this, Sets.newHashSet(idlwc.getResourcesToDownload()),
+                new RequestSimpleDownloadEvent(this, Lists.newArrayList(idlwc.getResourcesToDownload()),
                         idlwc.getCurrentFolder()));
     }
 

@@ -1,0 +1,64 @@
+@sprite .drFile {
+    gwt-image: "file";
+    cursor: pointer;
+    float: left;
+}
+
+@sprite .drFolder {
+    gwt-image: "folder";
+    cursor: pointer;
+    float: left;
+}
+
+@sprite .drFileTrash {
+    gwt-image: "fileDelete";
+    cursor: pointer;
+    float: left;
+}
+
+@sprite .drFolderTrash {
+    gwt-image: "folderDelete";
+    cursor: pointer;
+    float: left;
+}
+
+.nameStyle {
+    cursor: pointer;
+    text-decoration: none;
+    font-size: 12px;
+    height: 15px;
+    padding-top: 2px;
+    padding-bottom: 2px;
+    color: black;
+}
+
+.nameDisabledStyle {
+    cursor: default;
+    text-decoration: none;
+    font-size: 12px;
+    height: 15px;
+    padding-top: 2px;
+    padding-bottom: 2px;
+    color: red;
+    font-style: italic;
+}
+
+.nameStyle:hover {
+    text-decoration: underline;
+}
+
+.nameStyleNoPointer {
+    text-decoration: none;
+    font-size: 12px;
+    height: 15px;
+    padding-top: 2px;
+    padding-bottom: 2px;
+    color: black;
+}
+
+@sprite .pathList {
+    gwt-image: "pathList";
+    cursor: pointer;
+    float: left;
+}
+

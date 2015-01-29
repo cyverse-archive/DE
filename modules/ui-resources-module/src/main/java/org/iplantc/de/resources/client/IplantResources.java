@@ -369,29 +369,25 @@ public interface IplantResources extends ClientBundle, AppResources, DiskResourc
     @Source("DiskResourceNameCell.css")
     DiskResourceNameCellStyle diskResourceNameCss();
 
-    @Source("list-ingredients-16.png")
-    ImageResource pathList();
     /**
      * Image resource.
      * 
      * @return image.
      */
-    @Override
     @Source("file.gif")
     ImageResource file();
 
     /**
      * Image resource.
-     * 
+     *
      * @return image.
      */
-    @Override
     @Source("folder.gif")
     ImageResource folder();
 
     /**
      * Image resource.
-     * 
+     *
      * @return image.
      */
     @Override
@@ -409,11 +405,11 @@ public interface IplantResources extends ClientBundle, AppResources, DiskResourc
 
     /**
      * Image resource.
-     * 
+     *
      * @return image.
      */
     @Override
-    @Source("folder_delete.gif")
+    @Source("../../../../../../../../../themes/src/main/java/org/iplantc/de/theme/base/client/diskResource/folder_delete.gif")
     ImageResource folderDelete();
 
     /**
@@ -422,7 +418,7 @@ public interface IplantResources extends ClientBundle, AppResources, DiskResourc
      * @return image.
      */
     @Override
-    @Source("file_delete.gif")
+    @Source("../../../../../../../../../themes/src/main/java/org/iplantc/de/theme/base/client/diskResource/file_delete.gif")
     ImageResource fileDelete();
 
     /**
@@ -612,9 +608,6 @@ public interface IplantResources extends ClientBundle, AppResources, DiskResourc
     @Override
     @Source("tree_expand.png")
     ImageResource treeExpand();
-
-    @Source("link.png")
-    ImageResource dataLink();
 
     @Source("warning_mini.png")
     ImageResource warningMini();

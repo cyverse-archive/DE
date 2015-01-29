@@ -11,12 +11,17 @@ import org.iplantc.de.client.util.DiskResourceUtil;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
 import org.iplantc.de.diskResource.client.DiskResourceView;
 import org.iplantc.de.diskResource.client.NavigationView;
+import org.iplantc.de.diskResource.client.events.DiskResourcePathSelectedEvent;
+import org.iplantc.de.diskResource.client.events.FolderSelectionEvent;
 import org.iplantc.de.diskResource.client.events.RootFoldersRetrievedEvent;
 import org.iplantc.de.diskResource.client.events.SavedSearchesRetrievedEvent;
 import org.iplantc.de.diskResource.client.gin.factory.NavigationViewFactory;
 import org.iplantc.de.diskResource.client.presenters.handlers.CachedFolderTreeStoreBinding;
+import org.iplantc.de.diskResource.client.presenters.proxy.FolderContentsLoadConfig;
 import org.iplantc.de.diskResource.client.presenters.proxy.SelectFolderByPathLoadHandler;
 import org.iplantc.de.diskResource.client.search.events.SubmitDiskResourceQueryEvent;
+import org.iplantc.de.diskResource.client.events.DiskResourceNameSelectedEvent;
+import org.iplantc.de.diskResource.client.search.events.UpdateSavedSearchesEvent;
 import org.iplantc.de.diskResource.client.views.navigation.NavigationViewDnDHandler;
 
 import com.google.common.base.Preconditions;
@@ -29,15 +34,17 @@ import com.google.inject.Inject;
 
 import com.sencha.gxt.data.shared.TreeStore;
 import com.sencha.gxt.data.shared.event.StoreDataChangeEvent;
+import com.sencha.gxt.data.shared.loader.BeforeLoadEvent;
 import com.sencha.gxt.data.shared.loader.TreeLoader;
 import com.sencha.gxt.widget.core.client.tree.Tree;
 
-import java.util.Set;
+import java.util.List;
 
 /**
  * @author jstroot
  */
-public class NavigationPresenterImpl implements NavigationView.Presenter {
+public class NavigationPresenterImpl implements NavigationView.Presenter,
+                                                FolderSelectionEvent.FolderSelectionEventHandler {
 
     private static class FolderStoreDataChangeHandler implements StoreDataChangeEvent.StoreDataChangeHandler<Folder> {
         private final Tree<Folder, Folder> tree;
@@ -90,6 +97,7 @@ public class NavigationPresenterImpl implements NavigationView.Presenter {
         };
         view = viewFactory.create(treeStore, treeLoader, new NavigationViewDnDHandler(diskResourceUtil, this, appearance));
 
+        view.addFolderSelectedEventHandler(this);
         this.treeStore.addStoreDataChangeHandler(new FolderStoreDataChangeHandler(view.getTree(), appearance));
         this.treeLoader.addLoadHandler(new CachedFolderTreeStoreBinding(treeStore));
     }
@@ -115,13 +123,21 @@ public class NavigationPresenterImpl implements NavigationView.Presenter {
     }
 
     @Override
-    public void doMoveDiskResources(Folder targetFolder, Set<DiskResource> dropData) {
+    public void doMoveDiskResources(Folder targetFolder, List<DiskResource> dropData) {
         parentPresenter.doMoveDiskResources(targetFolder, dropData);
     }
 
     @Override
     public Iterable<Folder> getRootItems() {
         return treeStore.getRootItems();
+    }
+
+    @Override
+    public Folder getSelectedUploadFolder() {
+        if(getSelectedFolder() == null) {
+            return getFolderByPath(userInfo.getHomePath());
+        }
+        return getSelectedFolder();
     }
 
     @Override
@@ -164,6 +180,77 @@ public class NavigationPresenterImpl implements NavigationView.Presenter {
     @Override
     public Folder getParentFolder(Folder child) {
         return treeStore.getParent(child);
+    }
+
+    @Override
+    public void onBeforeLoad(BeforeLoadEvent<FolderContentsLoadConfig> event) {
+        if(getSelectedFolder() == null){
+            return;
+        }
+
+        final Folder folderToBeLoaded = event.getLoadConfig().getFolder();
+
+        /* If the loaded contents are not the contents of the currently selected folder, then cancel the load.
+         */
+        if(!Strings.isNullOrEmpty(folderToBeLoaded.getId())
+               && !folderToBeLoaded.getId().equals(getSelectedFolder().getId())){
+            event.setCancelled(true);
+        }
+    }
+
+    @Override
+    public void onDiskResourceNameSelected(DiskResourceNameSelectedEvent event) {
+
+        if(!(event.getSelectedItem() instanceof Folder)){
+            return;
+        }
+        setSelectedFolder(event.getSelectedItem());
+    }
+
+    @Override
+    public void onDiskResourcePathSelected(DiskResourcePathSelectedEvent event) {
+        setSelectedFolder(event.getSelectedDiskResource());
+    }
+
+    @Override
+    public void onFolderSelected(FolderSelectionEvent event) {
+        if(event.getSelectedFolder() instanceof DiskResourceQueryTemplate) {
+                        // If the given query has not been saved, we need to deselect everything
+            DiskResourceQueryTemplate searchQuery = (DiskResourceQueryTemplate)event.getSelectedFolder();
+            if (!searchQuery.isSaved()) {
+                deSelectAll();
+            }
+        }
+    }
+
+    /**
+     * Ensures that the navigation window shows the given templates. These show up in the navigation
+     * window as "magic folders".
+     * <p/>
+     * This method ensures that the only the given list of queryTemplates will be displayed in the
+     * navigation pane.
+     *
+     * Only objects which are instances of {@link DiskResourceQueryTemplate} will be operated on. Items
+     * which can't be found in the tree store will be added, and items which are already in the store and
+     * are marked as dirty will be updated.
+     *
+     */
+    @Override
+    public void onUpdateSavedSearches(UpdateSavedSearchesEvent event) {
+        List<DiskResourceQueryTemplate> removedSearches = event.getRemovedSearches();
+        if (removedSearches != null) {
+            for (DiskResourceQueryTemplate qt : removedSearches) {
+                removeFolder(qt);
+            }
+        }
+
+        List<DiskResourceQueryTemplate> savedSearches = event.getSavedSearches();
+        if (savedSearches != null) {
+            for (DiskResourceQueryTemplate qt : savedSearches) {
+                // If the item already exists in the store and the template is dirty, update it
+                updateQueryTemplate(qt);
+            }
+        }
     }
 
     @Override
@@ -267,8 +354,7 @@ public class NavigationPresenterImpl implements NavigationView.Presenter {
         view.getTree().setExpanded(folder, true);
     }
 
-    @Override
-    public void deSelectAll() {
+    void deSelectAll() {
         view.getTree().getSelectionModel().deselectAll();
     }
 
@@ -288,8 +374,7 @@ public class NavigationPresenterImpl implements NavigationView.Presenter {
         folder.setFolders(null);
     }
 
-    @Override
-    public void updateQueryTemplate(DiskResourceQueryTemplate queryTemplate) {
+    void updateQueryTemplate(DiskResourceQueryTemplate queryTemplate) {
         Preconditions.checkNotNull(queryTemplate);
 
         if(treeStore.findModel(queryTemplate) == null){

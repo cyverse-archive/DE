@@ -190,7 +190,7 @@ public class DiskResourceUtil {
         return resource != null && resource.getPath().startsWith(UserInfo.getInstance().getTrashPath());
     }
 
-    public boolean containsTrashedResource(Set<DiskResource> selectedResources) {
+    public boolean containsTrashedResource(List<DiskResource> selectedResources) {
         if (selectedResources != null) {
             for (DiskResource resource : selectedResources) {
                 if (inTrash(resource)) {
@@ -311,7 +311,7 @@ public class DiskResourceUtil {
      * @return A Set containing all Files found in the given DiskResource Set, or an empty Set if the
      *         given Set is null or empty.
      */
-    public Set<File> filterFiles(Set<DiskResource> diskResources) {
+    public Set<File> filterFiles(Iterable<DiskResource> diskResources) {
         Set<File> files = Sets.newHashSet();
 
         if (diskResources != null) {

@@ -6,7 +6,7 @@ import org.iplantc.de.client.models.search.DiskResourceQueryTemplate;
 import org.iplantc.de.client.util.DiskResourceUtil;
 import org.iplantc.de.diskResource.client.NavigationView;
 
-import com.google.common.collect.Sets;
+import com.google.common.collect.Lists;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.EventTarget;
 
@@ -19,7 +19,7 @@ import com.sencha.gxt.fx.client.DragMoveEvent;
 import com.sencha.gxt.widget.core.client.tree.Tree;
 
 import java.util.Collection;
-import java.util.Set;
+import java.util.List;
 
 /**
  * @author jstroot
@@ -46,7 +46,7 @@ public class NavigationViewDnDHandler implements DndDragStartEvent.DndDragStartH
     public void onDragEnter(DndDragEnterEvent event) {
         moved = false;
 
-        Set<DiskResource> dropData = getDropData(event.getDragSource().getData());
+        List<DiskResource> dropData = getDropData(event.getDragSource().getData());
         DragMoveEvent dragEnterEvent = event.getDragEnterEvent();
         EventTarget target = dragEnterEvent.getNativeEvent().getEventTarget();
         Folder targetFolder = getDropTargetFolder(Element.as(target));
@@ -63,7 +63,7 @@ public class NavigationViewDnDHandler implements DndDragStartEvent.DndDragStartH
     public void onDragMove(DndDragMoveEvent event) {
         moved = true;
 
-        Set<DiskResource> dropData = getDropData(event.getDragSource().getData());
+        List<DiskResource> dropData = getDropData(event.getDragSource().getData());
         EventTarget target = event.getDragMoveEvent().getNativeEvent().getEventTarget();
         Folder targetFolder = getDropTargetFolder(Element.as(target));
 
@@ -78,9 +78,11 @@ public class NavigationViewDnDHandler implements DndDragStartEvent.DndDragStartH
 
         Element dragStartEl = event.getDragStartEvent().getStartElement();
 
-        Set<? extends DiskResource> dragData = getDragSources(getDropTargetFolder(dragStartEl));
+        List<? extends DiskResource> dragData = getDragSources(getDropTargetFolder(dragStartEl));
 
-        if ((dragData != null) && !dragData.isEmpty() && (!containsFilteredItems(dragData))) {
+        if ((dragData != null)
+                && !dragData.isEmpty()
+                && (!containsFilteredItems(dragData))) {
             event.setData(dragData);
             event.getStatusProxy().update(appearance.dataDragDropStatusText(dragData.size()));
             event.getStatusProxy().setStatus(true);
@@ -97,7 +99,7 @@ public class NavigationViewDnDHandler implements DndDragStartEvent.DndDragStartH
             return;
         }
 
-        Set<DiskResource> dropData = getDropData(event.getData());
+        List<DiskResource> dropData = getDropData(event.getData());
         EventTarget target = event.getDragEndEvent().getNativeEvent().getEventTarget();
         Folder targetFolder = getDropTargetFolder(Element.as(target));
 
@@ -106,7 +108,7 @@ public class NavigationViewDnDHandler implements DndDragStartEvent.DndDragStartH
         }
     }
 
-    private boolean canDragDataToTargetFolder(Folder targetFolder, Set<DiskResource> dropData) {
+    private boolean canDragDataToTargetFolder(Folder targetFolder, List<DiskResource> dropData) {
         if (targetFolder instanceof DiskResourceQueryTemplate) {
             return false;
         }
@@ -135,9 +137,10 @@ public class NavigationViewDnDHandler implements DndDragStartEvent.DndDragStartH
             }
         }
 
-        return true;    }
+        return true;
+    }
 
-    private boolean containsFilteredItems(Set<? extends DiskResource> dragData) {
+    private boolean containsFilteredItems(List<? extends DiskResource> dragData) {
         for (DiskResource dr : dragData) {
             if (dr.isFilter()) {
                 return true;
@@ -147,25 +150,24 @@ public class NavigationViewDnDHandler implements DndDragStartEvent.DndDragStartH
         return false;
     }
 
-    private void doMoveDiskResources(Folder targetFolder, Set<DiskResource> dropData) {
+    private void doMoveDiskResources(Folder targetFolder, List<DiskResource> dropData) {
         navigationPresenter.doMoveDiskResources(targetFolder, dropData);
 
     }
 
-    private Set<? extends DiskResource> getDragSources(Folder srcFolder) {
-        return (srcFolder == null) ? null : Sets.newHashSet(srcFolder);
+    private List<? extends DiskResource> getDragSources(Folder srcFolder) {
+        return (srcFolder == null) ? null : Lists.newArrayList(srcFolder);
     }
 
-    private Set<DiskResource> getDropData(Object data) {
+    private List<DiskResource> getDropData(Object data) {
         if (!((data instanceof Collection<?>)
                 && !((Collection<?>)data).isEmpty()
                 && ((Collection<?>)data).iterator().next() instanceof DiskResource)) {
             return null;
         }
-        Set<DiskResource> dropData;
-        dropData = Sets.newHashSet((Collection<DiskResource>) data);
 
-        return dropData;    }
+        return Lists.newArrayList((Collection<DiskResource>)data);
+    }
 
     private Folder getDropTargetFolder(Element eventTarget) {
         Folder ret = null;
@@ -177,7 +179,7 @@ public class NavigationViewDnDHandler implements DndDragStartEvent.DndDragStartH
     }
 
     private boolean validateDropStatus(final Folder targetFolder,
-                                       final Set<DiskResource> dropData,
+                                       final List<DiskResource> dropData,
                                        final StatusProxy status) {
         // Verify we have drag data.
         if (dropData == null) {

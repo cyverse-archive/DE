@@ -4,23 +4,27 @@ import org.iplantc.de.client.models.HasPath;
 import org.iplantc.de.client.models.IsMaskable;
 import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.client.models.diskResources.Folder;
-import org.iplantc.de.client.models.search.DiskResourceQueryTemplate;
+import org.iplantc.de.diskResource.client.events.DiskResourceNameSelectedEvent;
+import org.iplantc.de.diskResource.client.events.DiskResourcePathSelectedEvent;
 import org.iplantc.de.diskResource.client.events.FolderSelectionEvent;
 import org.iplantc.de.diskResource.client.events.RootFoldersRetrievedEvent;
 import org.iplantc.de.diskResource.client.events.SavedSearchesRetrievedEvent;
+import org.iplantc.de.diskResource.client.presenters.proxy.FolderContentsLoadConfig;
 import org.iplantc.de.diskResource.client.search.events.DeleteSavedSearchClickedEvent;
 import org.iplantc.de.diskResource.client.search.events.SubmitDiskResourceQueryEvent;
+import org.iplantc.de.diskResource.client.search.events.UpdateSavedSearchesEvent;
 
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.user.client.ui.IsWidget;
 
 import com.sencha.gxt.data.shared.IconProvider;
+import com.sencha.gxt.data.shared.loader.BeforeLoadEvent;
 import com.sencha.gxt.widget.core.client.tree.Tree;
 import com.sencha.gxt.widget.core.client.tree.TreeStyle;
 import com.sencha.gxt.widget.core.client.tree.TreeView;
 
-import java.util.Set;
+import java.util.List;
 
 /**
  * Created by jstroot on 1/21/15.
@@ -55,15 +59,21 @@ public interface NavigationView extends IsWidget,
 
     interface Presenter extends SubmitDiskResourceQueryEvent.HasSubmitDiskResourceQueryEventHandlers,
                                 RootFoldersRetrievedEvent.HasRootFoldersRetrievedEventHandlers,
-                                SavedSearchesRetrievedEvent.HasSavedSearchesRetrievedEventHandlers {
+                                SavedSearchesRetrievedEvent.HasSavedSearchesRetrievedEventHandlers,
+                                BeforeLoadEvent.BeforeLoadHandler<FolderContentsLoadConfig>,
+                                DiskResourceNameSelectedEvent.DiskResourceNameSelectedEventHandler,
+                                DiskResourcePathSelectedEvent.DiskResourcePathSelectedEventHandler,
+                                UpdateSavedSearchesEvent.UpdateSavedSearchesHandler {
 
         void addFolder(Folder folder);
 
         void addFolder(Folder parent, Folder newChild);
 
-        void doMoveDiskResources(Folder targetFolder, Set<DiskResource> dropData);
+        void doMoveDiskResources(Folder targetFolder, List<DiskResource> dropData);
 
         Iterable<Folder> getRootItems();
+
+        Folder getSelectedUploadFolder();
 
         NavigationView getView();
 
@@ -81,6 +91,7 @@ public interface NavigationView extends IsWidget,
 
         void setMaskable(IsMaskable maskable);
 
+        // FIXME Potentially do this via assisted inject
         void setParentPresenter(DiskResourceView.Presenter parentPresenter);
 
         /**
@@ -118,8 +129,6 @@ public interface NavigationView extends IsWidget,
          */
         void expandFolder(Folder folder);
 
-        void deSelectAll();
-
         /**
          * @param el the element corresponding to a tree node
          * @return the TreeNode if it exists, null otherwise.
@@ -129,7 +138,6 @@ public interface NavigationView extends IsWidget,
 
         void removeChildren(Folder folder);
 
-        void updateQueryTemplate(DiskResourceQueryTemplate queryTemplate);
     }
 
     Tree<Folder, Folder> getTree();

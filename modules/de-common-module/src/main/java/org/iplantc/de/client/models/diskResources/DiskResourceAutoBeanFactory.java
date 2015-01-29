@@ -1,6 +1,7 @@
 package org.iplantc.de.client.models.diskResources;
 
 import org.iplantc.de.client.models.HasPaths;
+import org.iplantc.de.client.models.dataLink.DataLinkList;
 import org.iplantc.de.client.models.diskResources.RestoreResponse.RestoredResource;
 import org.iplantc.de.client.models.errorHandling.SimpleServiceError;
 import org.iplantc.de.client.models.services.DiskResourceMove;
@@ -56,4 +57,5 @@ public interface DiskResourceAutoBeanFactory extends AutoBeanFactory {
 
     AutoBean<DiskResourceFavorite> getFavortieFolder();
 
+    AutoBean<DataLinkList> dataLinkList();
 }
