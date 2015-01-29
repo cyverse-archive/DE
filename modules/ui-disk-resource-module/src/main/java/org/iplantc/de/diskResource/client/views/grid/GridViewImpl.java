@@ -13,6 +13,7 @@ import org.iplantc.de.diskResource.client.events.DiskResourceSelectionChangedEve
 import org.iplantc.de.diskResource.client.events.FolderPathSelectedEvent;
 import org.iplantc.de.diskResource.client.events.FolderSelectionEvent;
 import org.iplantc.de.diskResource.client.presenters.proxy.FolderContentsLoadConfig;
+import org.iplantc.de.diskResource.client.events.DiskResourceNameSelectedEvent;
 import org.iplantc.de.diskResource.share.DiskResourceModule;
 
 import com.google.common.base.Strings;
@@ -41,6 +42,7 @@ import com.sencha.gxt.widget.core.client.ContentPanel;
 import com.sencha.gxt.widget.core.client.Status;
 import com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer;
 import com.sencha.gxt.widget.core.client.form.TextField;
+import com.sencha.gxt.widget.core.client.grid.ColumnModel;
 import com.sencha.gxt.widget.core.client.grid.Grid;
 import com.sencha.gxt.widget.core.client.grid.LiveGridCheckBoxSelectionModel;
 import com.sencha.gxt.widget.core.client.grid.LiveGridView;
@@ -65,10 +67,12 @@ public class GridViewImpl extends ContentPanel implements GridView,
     @UiField ToolBar pagingToolBar;
     @UiField Grid<DiskResource> grid;
     @UiField TextField pathField;
-    private final DiskResourceUtil diskResourceUtil;
     @UiField(provided = true) ListStore<DiskResource> listStore;
-    @UiField DiskResourceColumnModel cm;
+    @UiField ColumnModel<DiskResource> cm;
     @UiField LiveGridView gridView;
+
+    private final DiskResourceUtil diskResourceUtil;
+    private DiskResourceColumnModel drCm;
     private final Status selectionStatus;
     private final LiveGridCheckBoxSelectionModel sm;
     private final PagingLoader<FolderContentsLoadConfig, PagingLoadResult<DiskResource>> gridLoader;
@@ -84,9 +88,9 @@ public class GridViewImpl extends ContentPanel implements GridView,
         this.listStore = listStore;
         this.sm = new LiveGridCheckBoxSelectionModel();
         this.selectionStatus = new Status();
+        setCollapsible(false);
 
         this.sm.addSelectionChangedHandler(this);
-
 
         // Setup Loader and init proxy
         gridLoader = new PagingLoader<>(folderContentsRpcProxy);
@@ -95,6 +99,9 @@ public class GridViewImpl extends ContentPanel implements GridView,
         folderContentsRpcProxy.setHasSafeHtml(this.getHeader());
 
         VerticalLayoutContainer vlc = ourUiBinder.createAndBindUi(this);
+        this.drCm = (DiskResourceColumnModel) cm;
+        add(vlc);
+
 
         // Complete Grid setup post UIBinder create
         grid.setLoader(gridLoader);
@@ -112,7 +119,6 @@ public class GridViewImpl extends ContentPanel implements GridView,
         appearance.setPagingToolBarStyle(pagingToolBar);
         updateSelectionCount(0);
 
-        add(vlc);
 
         // Initialize Drag and Drop
         DropTarget gridDropTarget = new DropTarget(grid);
@@ -136,6 +142,11 @@ public class GridViewImpl extends ContentPanel implements GridView,
                 gridLoader.useLoadConfig(loadConfig);
             }
         });
+    }
+
+    @Override
+    public HandlerRegistration addDiskResourceNameSelectedEventHandler(DiskResourceNameSelectedEvent.DiskResourceNameSelectedEventHandler handler) {
+        return drCm.addDiskResourceNameSelectedEventHandler(handler);
     }
 
     private void updateSelectionCount(int selectionCount) {
@@ -169,7 +180,7 @@ public class GridViewImpl extends ContentPanel implements GridView,
 
     @Override
     public DiskResourceColumnModel getColumnModel() {
-        return cm;
+        return drCm;
     }
 
     @Override
@@ -217,14 +228,14 @@ public class GridViewImpl extends ContentPanel implements GridView,
     @Override
     public void setSingleSelect() {
         grid.getSelectionModel().setSelectionMode(SINGLE);
-        cm.setCheckboxColumnHidden(true);
+        drCm.setCheckboxColumnHidden(true);
     }
 
     @Override
     protected void onEnsureDebugId(String baseID) {
         super.onEnsureDebugId(baseID);
         grid.ensureDebugId(baseID + DiskResourceModule.Ids.GRID);
-        cm.ensureDebugId(baseID);
+        drCm.ensureDebugId(baseID);
     }
 
     private void reconfigureToSearchView() {
@@ -264,7 +275,7 @@ public class GridViewImpl extends ContentPanel implements GridView,
     }
 
     @UiFactory
-    DiskResourceColumnModel createColumnModel() {
+    ColumnModel<DiskResource> createColumnModel() {
         return new DiskResourceColumnModel(sm, appearance, diskResourceUtil);
     }
 

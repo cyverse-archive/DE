@@ -63,12 +63,11 @@ import org.iplantc.de.diskResource.client.search.events.UpdateSavedSearchesEvent
 import org.iplantc.de.diskResource.client.search.presenter.DataSearchPresenter;
 import org.iplantc.de.diskResource.client.search.views.DiskResourceSearchField;
 import org.iplantc.de.diskResource.client.sharing.views.DataSharingDialog;
-import org.iplantc.de.diskResource.client.views.cells.events.DiskResourceNameSelectedEvent;
-import org.iplantc.de.diskResource.client.views.cells.events.ManageCommentsEvent;
-import org.iplantc.de.diskResource.client.views.cells.events.ManageMetadataEvent;
-import org.iplantc.de.diskResource.client.views.cells.events.ManageSharingEvent;
-import org.iplantc.de.diskResource.client.views.cells.events.RequestDiskResourceFavoriteEvent;
-import org.iplantc.de.diskResource.client.views.cells.events.ShareByDataLinkEvent;
+import org.iplantc.de.diskResource.client.events.ManageCommentsEvent;
+import org.iplantc.de.diskResource.client.events.ManageMetadataEvent;
+import org.iplantc.de.diskResource.client.events.ManageSharingEvent;
+import org.iplantc.de.diskResource.client.events.RequestDiskResourceFavoriteEvent;
+import org.iplantc.de.diskResource.client.events.ShareByDataLinkEvent;
 import org.iplantc.de.diskResource.client.views.dialogs.CreateFolderDialog;
 import org.iplantc.de.diskResource.client.views.dialogs.FolderSelectDialog;
 import org.iplantc.de.diskResource.client.views.dialogs.InfoTypeEditorDialog;
@@ -143,7 +142,6 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
     final DiskResourceAutoBeanFactory drFactory;
     final List<HandlerRegistration> dreventHandlers = new ArrayList<>();
 
-    protected boolean isFilePreviewEnabled = true;
     private final NavigationView.Presenter navigationPresenter;
     private final GridView.Presenter gridViewPresenter;
     private final IplantDisplayStrings displayStrings;
@@ -294,6 +292,7 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
         // Wire up DiskResourceSelectionChangedEventHandlers
         this.gridViewPresenter.getView().addDiskResourceSelectionChangedEventHandler(this.view);
         this.gridViewPresenter.getView().addDiskResourceSelectionChangedEventHandler(this);
+        this.gridViewPresenter.getView().addDiskResourceNameSelectedEventHandler(this.navigationPresenter);
 
         // Wire up FolderSelectedEventHandlers
         this.navigationPresenter.getView().addFolderSelectedEventHandler(this);
@@ -342,18 +341,6 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
     @Override
     public HandlerRegistration addFolderSelectedEventHandler(FolderSelectionEvent.FolderSelectionEventHandler handler) {
         return navigationPresenter.getView().addFolderSelectedEventHandler(handler);
-    }
-
-    @Override
-    public void onDiskResourceNameSelected(DiskResourceNameSelectedEvent event) {
-        checkNotNull(event.getSelectedItem());
-
-        if (event.getSelectedItem() instanceof Folder) {
-            navigationPresenter.setSelectedFolder(event.getSelectedItem());
-        } else if ((event.getSelectedItem() instanceof File) && isFilePreviewEnabled) {
-            // TODO: JDS - Possibly refactor to get stat/manifest before hand
-            eventBus.fireEvent(new ShowFilePreviewEvent((File)event.getSelectedItem(), this));
-        }
     }
 
     @Override
@@ -569,7 +556,7 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
 
     @Override
     public void disableFilePreview() {
-        isFilePreviewEnabled = false;
+        gridViewPresenter.setFilePreviewEnabled(false);
     }
 
     @Override

@@ -19,12 +19,11 @@ import org.iplantc.de.diskResource.client.presenters.proxy.SelectFolderByPathLoa
 import org.iplantc.de.diskResource.client.search.events.SubmitDiskResourceQueryEvent;
 import org.iplantc.de.diskResource.client.search.events.SubmitDiskResourceQueryEvent.HasSubmitDiskResourceQueryEventHandlers;
 import org.iplantc.de.diskResource.client.search.views.DiskResourceSearchField;
-import org.iplantc.de.diskResource.client.views.cells.events.DiskResourceNameSelectedEvent;
-import org.iplantc.de.diskResource.client.views.cells.events.ManageCommentsEvent;
-import org.iplantc.de.diskResource.client.views.cells.events.ManageMetadataEvent;
-import org.iplantc.de.diskResource.client.views.cells.events.ManageSharingEvent;
-import org.iplantc.de.diskResource.client.views.cells.events.RequestDiskResourceFavoriteEvent;
-import org.iplantc.de.diskResource.client.views.cells.events.ShareByDataLinkEvent;
+import org.iplantc.de.diskResource.client.events.ManageCommentsEvent;
+import org.iplantc.de.diskResource.client.events.ManageMetadataEvent;
+import org.iplantc.de.diskResource.client.events.ManageSharingEvent;
+import org.iplantc.de.diskResource.client.events.RequestDiskResourceFavoriteEvent;
+import org.iplantc.de.diskResource.client.events.ShareByDataLinkEvent;
 import org.iplantc.de.tags.client.Taggable;
 
 import com.google.gwt.resources.client.ImageResource;
@@ -98,7 +97,7 @@ public interface DiskResourceView extends IsWidget,
     interface Presenter extends org.iplantc.de.commons.client.presenter.Presenter,
                                 IsMaskable,
                                 FolderSelectionEvent.FolderSelectionEventHandler,
-                                DiskResourceNameSelectedEvent.DiskResourceNameSelectedEventHandler,
+//                                DiskResourceNameSelectedEvent.DiskResourceNameSelectedEventHandler,
                                 ManageMetadataEvent.ManageMetadataEventHandler,
                                 ManageSharingEvent.ManageSharingEventHandler,
                                 DiskResourceSelectionChangedEvent.HasDiskResourceSelectionChangedEventHandlers,

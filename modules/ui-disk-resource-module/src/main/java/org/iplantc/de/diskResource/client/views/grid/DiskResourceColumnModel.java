@@ -4,17 +4,19 @@ import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.client.models.diskResources.File;
 import org.iplantc.de.client.util.DiskResourceUtil;
 import org.iplantc.de.diskResource.client.GridView;
-import org.iplantc.de.diskResource.client.views.DiskResourceNameComparator;
-import org.iplantc.de.diskResource.client.views.DiskResourceProperties;
+import org.iplantc.de.diskResource.client.events.DiskResourcePathSelectedEvent;
+import org.iplantc.de.diskResource.client.model.DiskResourceNameComparator;
+import org.iplantc.de.diskResource.client.model.DiskResourceProperties;
 import org.iplantc.de.diskResource.client.views.grid.cells.DiskResourceActionsCell;
+import org.iplantc.de.diskResource.client.views.grid.cells.DiskResourceFavoriteCell;
 import org.iplantc.de.diskResource.client.views.grid.cells.DiskResourceNameCell;
 import org.iplantc.de.diskResource.client.views.grid.cells.DiskResourcePathCell;
-import org.iplantc.de.diskResource.client.views.cells.events.DiskResourceNameSelectedEvent;
-import org.iplantc.de.diskResource.client.views.cells.events.ManageCommentsEvent;
-import org.iplantc.de.diskResource.client.views.cells.events.ManageMetadataEvent;
-import org.iplantc.de.diskResource.client.views.cells.events.ManageSharingEvent;
-import org.iplantc.de.diskResource.client.views.cells.events.RequestDiskResourceFavoriteEvent;
-import org.iplantc.de.diskResource.client.views.cells.events.ShareByDataLinkEvent;
+import org.iplantc.de.diskResource.client.events.DiskResourceNameSelectedEvent;
+import org.iplantc.de.diskResource.client.events.ManageCommentsEvent;
+import org.iplantc.de.diskResource.client.events.ManageMetadataEvent;
+import org.iplantc.de.diskResource.client.events.ManageSharingEvent;
+import org.iplantc.de.diskResource.client.events.RequestDiskResourceFavoriteEvent;
+import org.iplantc.de.diskResource.client.events.ShareByDataLinkEvent;
 import org.iplantc.de.diskResource.share.DiskResourceModule;
 
 import com.google.gwt.cell.client.AbstractCell;
@@ -42,7 +44,9 @@ public class DiskResourceColumnModel extends ColumnModel<DiskResource> implement
                                                                                   ManageSharingEvent.HasManageSharingEventHandlers,
                                                                                   ManageMetadataEvent.HasManageMetadataEventHandlers,
                                                                                   RequestDiskResourceFavoriteEvent.HasManageFavoritesEventHandlers,
-                                                                                  ManageCommentsEvent.HasManageCommentsEventHandlers {
+                                                                                  ManageCommentsEvent.HasManageCommentsEventHandlers,
+                                                                                  DiskResourcePathSelectedEvent.HasDiskResourcePathSelectedEventHandlers {
+
 
     public DiskResourceColumnModel(@SuppressWarnings("rawtypes") final CheckBoxSelectionModel sm,
                                    final GridView.Appearance appearance,
@@ -89,7 +93,7 @@ public class DiskResourceColumnModel extends ColumnModel<DiskResource> implement
         created.setFixed(true);
         actions.setFixed(true);
 
-        name.setCell(new DiskResourceNameCell());
+        name.setCell(new DiskResourceNameCell(diskResourceUtil));
         lastModified.setCell(new DateCell(DateTimeFormat.getFormat(DateTimeFormat.PredefinedFormat.DATE_TIME_MEDIUM)));
         size.setCell(new DiskResourceSizeCell());
         created.setCell(new DateCell(DateTimeFormat.getFormat(DateTimeFormat.PredefinedFormat.DATE_TIME_MEDIUM)));
@@ -122,6 +126,11 @@ public class DiskResourceColumnModel extends ColumnModel<DiskResource> implement
     @Override
     public HandlerRegistration addDiskResourceNameSelectedEventHandler(DiskResourceNameSelectedEvent.DiskResourceNameSelectedEventHandler handler) {
         return ensureHandlers().addHandler(DiskResourceNameSelectedEvent.TYPE, handler);
+    }
+
+    @Override
+    public HandlerRegistration addDiskResourcePathSelectedEventHandler(DiskResourcePathSelectedEvent.DiskResourcePathSelectedEventHandler handler) {
+        return ensureHandlers().addHandler(DiskResourcePathSelectedEvent.TYPE, handler);
     }
 
     @Override
@@ -159,6 +168,10 @@ public class DiskResourceColumnModel extends ColumnModel<DiskResource> implement
                 ((DiskResourceNameCell)cc.getCell()).setBaseDebugId(baseID + DiskResourceModule.Ids.GRID);
             } else if(cc.getCell() instanceof DiskResourceActionsCell){
                 ((DiskResourceActionsCell)cc.getCell()).setBaseDebugId(baseID + DiskResourceModule.Ids.GRID);
+            } else if(cc.getCell() instanceof DiskResourceFavoriteCell){
+                ((DiskResourceFavoriteCell)cc.getCell()).setBaseDebugId(baseID + DiskResourceModule.Ids.GRID);
+            } else if(cc.getCell() instanceof DiskResourcePathCell) {
+                ((DiskResourcePathCell)cc.getCell()).setBaseDebugId(baseID + DiskResourceModule.Ids.GRID);
             }
         }
     }

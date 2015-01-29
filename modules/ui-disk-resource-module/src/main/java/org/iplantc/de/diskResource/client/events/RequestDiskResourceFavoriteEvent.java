@@ -1,7 +1,7 @@
-package org.iplantc.de.diskResource.client.views.cells.events;
+package org.iplantc.de.diskResource.client.events;
 
 import org.iplantc.de.client.models.diskResources.DiskResource;
-import org.iplantc.de.diskResource.client.views.cells.events.RequestDiskResourceFavoriteEvent.RequestDiskResourceFavoriteEventHandler;
+import org.iplantc.de.diskResource.client.events.RequestDiskResourceFavoriteEvent.RequestDiskResourceFavoriteEventHandler;
 
 import com.google.gwt.event.shared.EventHandler;
 import com.google.gwt.event.shared.GwtEvent;

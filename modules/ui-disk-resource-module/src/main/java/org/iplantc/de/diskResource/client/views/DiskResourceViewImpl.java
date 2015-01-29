@@ -44,7 +44,6 @@ import com.sencha.gxt.widget.core.client.Composite;
 import com.sencha.gxt.widget.core.client.container.BorderLayoutContainer;
 import com.sencha.gxt.widget.core.client.container.BorderLayoutContainer.BorderLayoutData;
 import com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer;
-import com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer.VerticalLayoutData;
 import com.sencha.gxt.widget.core.client.form.FieldLabel;
 
 import java.util.Date;
@@ -90,7 +89,6 @@ public class DiskResourceViewImpl extends Composite implements DiskResourceView 
     @UiField BorderLayoutData northData;
     @UiField BorderLayoutData southData;
 
-    @UiField VerticalLayoutData centerLayoutData;
     @UiField(provided = true) NavigationView navigationView;
     @UiField(provided = true) GridView centerGridView;
 
@@ -125,6 +123,7 @@ public class DiskResourceViewImpl extends Composite implements DiskResourceView 
         resetDetailsPanel();
 
         con.setNorthWidget(toolbar, northData);
+
     }
 
     @Override
@@ -200,7 +199,6 @@ public class DiskResourceViewImpl extends Composite implements DiskResourceView 
     @Override
     public void unmask() {
         con.unmask();
-//        grid.unmask();
     }
 
     @Override

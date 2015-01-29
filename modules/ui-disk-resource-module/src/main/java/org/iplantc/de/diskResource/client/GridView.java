@@ -7,23 +7,23 @@ import org.iplantc.de.diskResource.client.events.DiskResourceSelectionChangedEve
 import org.iplantc.de.diskResource.client.events.FolderPathSelectedEvent;
 import org.iplantc.de.diskResource.client.events.FolderSelectionEvent;
 import org.iplantc.de.diskResource.client.presenters.proxy.FolderContentsLoadConfig;
-import org.iplantc.de.diskResource.client.views.cells.events.DiskResourceNameSelectedEvent;
-import org.iplantc.de.diskResource.client.views.cells.events.ManageCommentsEvent;
-import org.iplantc.de.diskResource.client.views.cells.events.ManageMetadataEvent;
-import org.iplantc.de.diskResource.client.views.cells.events.ManageSharingEvent;
-import org.iplantc.de.diskResource.client.views.cells.events.RequestDiskResourceFavoriteEvent;
-import org.iplantc.de.diskResource.client.views.cells.events.ShareByDataLinkEvent;
+import org.iplantc.de.diskResource.client.events.DiskResourceNameSelectedEvent;
+import org.iplantc.de.diskResource.client.events.ManageCommentsEvent;
+import org.iplantc.de.diskResource.client.events.ManageMetadataEvent;
+import org.iplantc.de.diskResource.client.events.ManageSharingEvent;
+import org.iplantc.de.diskResource.client.events.RequestDiskResourceFavoriteEvent;
+import org.iplantc.de.diskResource.client.events.ShareByDataLinkEvent;
 import org.iplantc.de.diskResource.client.views.grid.DiskResourceColumnModel;
 
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.shared.EventHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
-import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.client.ui.IsWidget;
 
 import com.sencha.gxt.data.shared.loader.BeforeLoadEvent;
 import com.sencha.gxt.data.shared.loader.PagingLoadResult;
 import com.sencha.gxt.data.shared.loader.PagingLoader;
+import com.sencha.gxt.widget.core.client.container.HasLayout;
 import com.sencha.gxt.widget.core.client.grid.LiveGridCheckBoxSelectionModel;
 import com.sencha.gxt.widget.core.client.toolbar.ToolBar;
 
@@ -34,8 +34,10 @@ import java.util.List;
  * @author jstroot
  */
 public interface GridView extends IsWidget,
+                                  HasLayout,
                                   FolderPathSelectedEvent.HasFolderPathSelectedEventHandlers,
                                   FolderSelectionEvent.FolderSelectionEventHandler,
+                                  DiskResourceNameSelectedEvent.HasDiskResourceNameSelectedEventHandlers,
                                   DiskResourceSelectionChangedEvent.HasDiskResourceSelectionChangedEventHandlers {
     interface Appearance {
 
@@ -65,9 +67,9 @@ public interface GridView extends IsWidget,
 
         int pathColumnWidth();
 
-        SafeHtmlBuilder pathFieldLabel();
+        String pathFieldLabel();
 
-        String pathFieldLabelWidth();
+        int pathFieldLabelWidth();
 
         String pathFieldEmptyText();
 
@@ -89,7 +91,8 @@ public interface GridView extends IsWidget,
                                 ManageMetadataEvent.ManageMetadataEventHandler,
                                 ShareByDataLinkEvent.ShareByDataLinkEventHandler,
                                 RequestDiskResourceFavoriteEvent.RequestDiskResourceFavoriteEventHandler,
-                                ManageCommentsEvent.ManageCommentsEventHandler, FolderSelectionEvent.FolderSelectionEventHandler {
+                                ManageCommentsEvent.ManageCommentsEventHandler,
+                                FolderSelectionEvent.FolderSelectionEventHandler {
 
         void deSelectDiskResources();
 
@@ -110,6 +113,8 @@ public interface GridView extends IsWidget,
         boolean isSelectAllChecked();
 
         void loadFolderContents(Folder folderToSelect);
+
+        void setFilePreviewEnabled(boolean filePreviewEnabled);
 
         void setParentPresenter(DiskResourceView.Presenter parentPresenter);
 
@@ -133,9 +138,6 @@ public interface GridView extends IsWidget,
     PagingLoader<FolderContentsLoadConfig,PagingLoadResult<DiskResource>> getGridLoader();
 
     LiveGridCheckBoxSelectionModel getSelectionModel();
-
-    @Override
-    void onFolderSelected(FolderSelectionEvent event);
 
     void setSingleSelect();
 }

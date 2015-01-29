@@ -1,4 +1,4 @@
-package org.iplantc.de.diskResource.client.views.cells.events;
+package org.iplantc.de.diskResource.client.events;
 
 import org.iplantc.de.client.models.diskResources.DiskResource;
 
@@ -6,6 +6,9 @@ import com.google.gwt.event.shared.EventHandler;
 import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.event.shared.HandlerRegistration;
 
+/**
+ * @author jstroot
+ */
 public class ShareByDataLinkEvent extends GwtEvent<ShareByDataLinkEvent.ShareByDataLinkEventHandler> {
 
     public interface ShareByDataLinkEventHandler extends EventHandler {
@@ -16,7 +19,7 @@ public class ShareByDataLinkEvent extends GwtEvent<ShareByDataLinkEvent.ShareByD
         HandlerRegistration addShareByDataLinkEventHandler(ShareByDataLinkEventHandler handler);
     }
 
-    public static final Type<ShareByDataLinkEventHandler> TYPE = new Type<ShareByDataLinkEventHandler>();
+    public static final Type<ShareByDataLinkEventHandler> TYPE = new Type<>();
     private final DiskResource diskResourceToShare;
 
     public ShareByDataLinkEvent(DiskResource diskResourceToShare){

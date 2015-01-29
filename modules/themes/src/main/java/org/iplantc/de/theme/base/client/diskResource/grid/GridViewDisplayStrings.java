@@ -8,6 +8,10 @@ import com.google.gwt.safehtml.shared.SafeHtml;
  * @author jstroot
  */
 public interface GridViewDisplayStrings extends Messages{
+
+    @Key("diskResourceNotAvailable")
+    String diskResourceNotAvailable();
+
     @Key("metadata")
     String metadata();
 

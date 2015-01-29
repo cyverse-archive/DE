@@ -1,26 +1,32 @@
 package org.iplantc.de.diskResource.client.presenters.grid;
 
+import org.iplantc.de.client.events.EventBus;
+import org.iplantc.de.client.events.diskResources.OpenFolderEvent;
 import org.iplantc.de.client.models.HasId;
 import org.iplantc.de.client.models.diskResources.DiskResource;
+import org.iplantc.de.client.models.diskResources.File;
 import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.client.models.diskResources.TYPE;
 import org.iplantc.de.client.models.viewer.InfoType;
 import org.iplantc.de.client.services.DiskResourceServiceFacade;
+import org.iplantc.de.client.util.DiskResourceUtil;
 import org.iplantc.de.diskResource.client.DiskResourceView;
 import org.iplantc.de.diskResource.client.GridView;
 import org.iplantc.de.diskResource.client.NavigationView;
+import org.iplantc.de.diskResource.client.events.DiskResourcePathSelectedEvent;
 import org.iplantc.de.diskResource.client.events.FolderSelectionEvent;
+import org.iplantc.de.diskResource.client.events.ShowFilePreviewEvent;
 import org.iplantc.de.diskResource.client.gin.factory.FolderContentsRpcProxyFactory;
 import org.iplantc.de.diskResource.client.gin.factory.GridViewFactory;
 import org.iplantc.de.diskResource.client.presenters.proxy.FolderContentsLoadConfig;
 import org.iplantc.de.diskResource.client.presenters.proxy.SelectDiskResourceByIdStoreAddHandler;
-import org.iplantc.de.diskResource.client.views.DiskResourceModelKeyProvider;
-import org.iplantc.de.diskResource.client.views.cells.events.DiskResourceNameSelectedEvent;
-import org.iplantc.de.diskResource.client.views.cells.events.ManageCommentsEvent;
-import org.iplantc.de.diskResource.client.views.cells.events.ManageMetadataEvent;
-import org.iplantc.de.diskResource.client.views.cells.events.ManageSharingEvent;
-import org.iplantc.de.diskResource.client.views.cells.events.RequestDiskResourceFavoriteEvent;
-import org.iplantc.de.diskResource.client.views.cells.events.ShareByDataLinkEvent;
+import org.iplantc.de.diskResource.client.model.DiskResourceModelKeyProvider;
+import org.iplantc.de.diskResource.client.events.DiskResourceNameSelectedEvent;
+import org.iplantc.de.diskResource.client.events.ManageCommentsEvent;
+import org.iplantc.de.diskResource.client.events.ManageMetadataEvent;
+import org.iplantc.de.diskResource.client.events.ManageSharingEvent;
+import org.iplantc.de.diskResource.client.events.RequestDiskResourceFavoriteEvent;
+import org.iplantc.de.diskResource.client.events.ShareByDataLinkEvent;
 import org.iplantc.de.diskResource.client.views.grid.DiskResourceColumnModel;
 
 import com.google.common.base.Preconditions;
@@ -41,29 +47,30 @@ import java.util.List;
 /**
  * @author jstroot
  */
-public class GridViewPresenterImpl implements GridView.Presenter {
+public class GridViewPresenterImpl implements GridView.Presenter, DiskResourcePathSelectedEvent.DiskResourcePathSelectedEventHandler {
 
 
-    private final DiskResourceServiceFacade diskResourceService;
+    @Inject DiskResourceServiceFacade diskResourceService;
+    @Inject EventBus eventBus;
+    @Inject DiskResourceUtil diskResourceUtil;
     private final NavigationView.Presenter navigationPresenter;
     private final ListStore<DiskResource> listStore;
     private final GridView view;
     private final HashMap<EventHandler, HandlerRegistration> registeredHandlers = Maps.newHashMap();
+    private boolean filePreviewEnabled = true;
     private DiskResourceView.Presenter parentPresenter;
 
     @Inject
     GridViewPresenterImpl(final GridViewFactory gridViewFactory,
                           final FolderContentsRpcProxyFactory folderContentsProxyFactory,
-                          final DiskResourceServiceFacade diskResourceService,
                           @Assisted final NavigationView.Presenter navigationPresenter,
                           @Assisted final List<InfoType> infoTypeFilters,
                           @Assisted final TYPE entityType){
-        this.diskResourceService = diskResourceService;
         this.navigationPresenter = navigationPresenter;
         this.listStore = new ListStore<>(new DiskResourceModelKeyProvider());
         DiskResourceView.FolderContentsRpcProxy folderContentsRpcProxy = folderContentsProxyFactory.createWithEntityType(infoTypeFilters, entityType);
 
-        this.view = gridViewFactory.create(listStore, folderContentsRpcProxy);
+        this.view = gridViewFactory.create(this, listStore, folderContentsRpcProxy);
 
         // Wire up Column Model events
         DiskResourceColumnModel cm = this.view.getColumnModel();
@@ -73,6 +80,7 @@ public class GridViewPresenterImpl implements GridView.Presenter {
         cm.addShareByDataLinkEventHandler(this);
         cm.addManageFavoritesEventHandler(this);
         cm.addManageCommentsEventHandler(this);
+        cm.addDiskResourcePathSelectedEventHandler(this);
 
     }
 
@@ -127,6 +135,18 @@ public class GridViewPresenterImpl implements GridView.Presenter {
     }
 
     @Override
+    public void setFilePreviewEnabled(boolean filePreviewEnabled) {
+        this.filePreviewEnabled = filePreviewEnabled;
+    }
+
+    @Override
+    public void onDiskResourcePathSelected(DiskResourcePathSelectedEvent event) {
+        final OpenFolderEvent openFolderEvent = new OpenFolderEvent(diskResourceUtil.parseParent(event.getSelectedDiskResource().getPath()));
+        openFolderEvent.requestNewView(true);
+        eventBus.fireEvent(openFolderEvent);
+    }
+
+    @Override
     public void setParentPresenter(DiskResourceView.Presenter parentPresenter) {
         this.parentPresenter = parentPresenter;
     }
@@ -170,6 +190,10 @@ public class GridViewPresenterImpl implements GridView.Presenter {
     @Override
     public void onDiskResourceNameSelected(DiskResourceNameSelectedEvent event) {
 
+        if(!(event.getSelectedItem() instanceof File) || !filePreviewEnabled){
+            return;
+        }
+        eventBus.fireEvent(new ShowFilePreviewEvent((File)event.getSelectedItem(), this));
     }
 
     @Override

@@ -1,39 +1,55 @@
 package org.iplantc.de.diskResource.client.views.grid.cells;
 
 import org.iplantc.de.client.models.diskResources.DiskResource;
-import org.iplantc.de.diskResource.client.views.cells.events.RequestDiskResourceFavoriteEvent;
+import org.iplantc.de.diskResource.client.events.RequestDiskResourceFavoriteEvent;
 import org.iplantc.de.diskResource.share.DiskResourceModule;
-import org.iplantc.de.resources.client.FavoriteCellStyle;
-import org.iplantc.de.resources.client.FavoriteTemplates;
-import org.iplantc.de.resources.client.IplantResources;
-import org.iplantc.de.resources.client.messages.I18N;
 
-import static com.google.gwt.dom.client.BrowserEvents.CLICK;
-import static com.google.gwt.dom.client.BrowserEvents.MOUSEOUT;
-import static com.google.gwt.dom.client.BrowserEvents.MOUSEOVER;
-
-import com.google.common.base.Strings;
+import static com.google.gwt.dom.client.BrowserEvents.*;
 import com.google.gwt.cell.client.AbstractCell;
 import com.google.gwt.cell.client.Cell;
 import com.google.gwt.cell.client.ValueUpdater;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.debug.client.DebugInfo;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.shared.HasHandlers;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.client.Event;
 
+/**
+ * @author jstroot
+ */
 public class DiskResourceFavoriteCell extends AbstractCell<DiskResource> {
 
-    final FavoriteTemplates templates = GWT.create(FavoriteTemplates.class);
-    final FavoriteCellStyle css = IplantResources.RESOURCES.favoriteCss();
+    public interface Appearance {
+
+        String addFavoriteClass();
+
+        String addToFavoriteTooltip();
+
+        String deleteFavoriteClass();
+
+        String favoriteClass();
+
+        String favoriteDisabledClass();
+
+        String removeFromFavoriteTooltip();
+
+        void render(SafeHtmlBuilder sb, String imgName, String imgClassName, String imgToolTip,
+                    String baseID, String debugId);
+    }
+
+    private final Appearance appearance;
+
     private String baseID;
     private HasHandlers hasHandlers;
 
     public DiskResourceFavoriteCell() {
+        this(GWT.<Appearance> create(Appearance.class));
+    }
+
+    public DiskResourceFavoriteCell(final Appearance appearance) {
         super(CLICK, MOUSEOVER, MOUSEOUT);
-        css.ensureInjected();
+        this.appearance = appearance;
     }
 
     @Override
@@ -46,24 +62,19 @@ public class DiskResourceFavoriteCell extends AbstractCell<DiskResource> {
         if (!value.isFilter()) {
             if (value.isFavorite()) {
                 imgName = "fav";
-                imgClassName = css.favorite();
-                imgToolTip = I18N.DISPLAY.remAppFromFav();
+                imgClassName = appearance.favoriteClass();
+                imgToolTip = appearance.removeFromFavoriteTooltip();
             } else {
                 imgName = "fav";
-                imgClassName = css.favoriteDisabled();
-                imgToolTip = I18N.DISPLAY.addAppToFav();
+                imgClassName = appearance.favoriteDisabledClass();
+                imgToolTip = appearance.addToFavoriteTooltip();
             }
 
-            if (DebugInfo.isDebugIdEnabled() && !Strings.isNullOrEmpty(baseID)) {
-                String debugId = baseID + "." + value.getPath()
-                        + DiskResourceModule.Ids.ACTION_CELL_FAVORITE;
-                sb.append(templates.debugCell(imgName, imgClassName, imgToolTip, debugId));
-            } else {
-                sb.append(templates.cell(imgName, imgClassName, imgToolTip));
-            }
 
+            String debugId = baseID + "." + value.getPath()
+                                 + DiskResourceModule.Ids.ACTION_CELL_FAVORITE;
+            appearance.render(sb, imgName, imgClassName, imgToolTip, baseID, debugId);
         }
-
     }
 
     @Override
@@ -103,19 +114,19 @@ public class DiskResourceFavoriteCell extends AbstractCell<DiskResource> {
 
     private void doOnMouseOut(Element eventTarget, DiskResource value) {
         if (value.isFavorite()) {
-            eventTarget.setClassName(css.favorite());
-            eventTarget.setAttribute("qtip", I18N.DISPLAY.remAppFromFav());
+            eventTarget.setClassName(appearance.favoriteClass());
+            eventTarget.setAttribute("qtip", appearance.removeFromFavoriteTooltip());
         } else {
-            eventTarget.setClassName(css.favoriteDisabled());
-            eventTarget.setAttribute("qtip", I18N.DISPLAY.addAppToFav());
+            eventTarget.setClassName(appearance.favoriteDisabledClass());
+            eventTarget.setAttribute("qtip", appearance.addToFavoriteTooltip());
         }
     }
 
     private void doOnMouseOver(Element eventTarget, DiskResource value) {
         if (value.isFavorite()) {
-            eventTarget.setClassName(css.favoriteDelete());
+            eventTarget.setClassName(appearance.deleteFavoriteClass());
         } else {
-            eventTarget.setClassName(css.favoriteAdd());
+            eventTarget.setClassName(appearance.addFavoriteClass());
         }
     }
 

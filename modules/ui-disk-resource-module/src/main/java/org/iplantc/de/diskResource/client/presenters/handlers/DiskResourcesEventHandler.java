@@ -14,7 +14,7 @@ import org.iplantc.de.diskResource.client.events.DiskResourcesMovedEvent.DiskRes
 import org.iplantc.de.diskResource.client.events.FolderCreatedEvent.FolderCreatedEventHandler;
 
 import java.util.Collection;
-import java.util.Set;
+import java.util.List;
 
 /**
  * @author jstroot
@@ -44,7 +44,7 @@ public final class DiskResourcesEventHandler implements DiskResourcesDeletedEven
 
     @Override
     public void onDiskResourcesMoved(DiskResourcesMovedEvent event) {
-        Set<DiskResource> resourcesToMove = event.getResourcesToMove();
+        List<DiskResource> resourcesToMove = event.getResourcesToMove();
         Folder destinationFolder = event.getDestinationFolder();
         Folder selectedFolder = navigationPresenter.getSelectedFolder();
         // moved contents only not the folder itself
@@ -85,7 +85,7 @@ public final class DiskResourcesEventHandler implements DiskResourcesDeletedEven
         navigationPresenter.setSelectedFolder((HasPath)destinationFolder);
     }
 
-    private void diskResourcesMovedFromGrid(Set<DiskResource> resourcesToMove, Folder selectedFolder,
+    private void diskResourcesMovedFromGrid(List<DiskResource> resourcesToMove, Folder selectedFolder,
             Folder destinationFolder) {
         if (diskResourceUtil.containsFolder(resourcesToMove)) {
             // Refresh the destination folder, since it has gained a child.

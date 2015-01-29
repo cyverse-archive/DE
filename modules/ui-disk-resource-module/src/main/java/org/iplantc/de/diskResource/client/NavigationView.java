@@ -11,6 +11,7 @@ import org.iplantc.de.diskResource.client.events.SavedSearchesRetrievedEvent;
 import org.iplantc.de.diskResource.client.presenters.proxy.FolderContentsLoadConfig;
 import org.iplantc.de.diskResource.client.search.events.DeleteSavedSearchClickedEvent;
 import org.iplantc.de.diskResource.client.search.events.SubmitDiskResourceQueryEvent;
+import org.iplantc.de.diskResource.client.events.DiskResourceNameSelectedEvent;
 
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.safehtml.shared.SafeHtml;
@@ -58,7 +59,8 @@ public interface NavigationView extends IsWidget,
     interface Presenter extends SubmitDiskResourceQueryEvent.HasSubmitDiskResourceQueryEventHandlers,
                                 RootFoldersRetrievedEvent.HasRootFoldersRetrievedEventHandlers,
                                 SavedSearchesRetrievedEvent.HasSavedSearchesRetrievedEventHandlers,
-                                BeforeLoadEvent.BeforeLoadHandler<FolderContentsLoadConfig> {
+                                BeforeLoadEvent.BeforeLoadHandler<FolderContentsLoadConfig>,
+                                DiskResourceNameSelectedEvent.DiskResourceNameSelectedEventHandler {
 
         void addFolder(Folder folder);
 

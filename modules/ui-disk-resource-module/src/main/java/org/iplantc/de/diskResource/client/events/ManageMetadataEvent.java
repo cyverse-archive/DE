@@ -1,4 +1,4 @@
-package org.iplantc.de.diskResource.client.views.cells.events;
+package org.iplantc.de.diskResource.client.events;
 
 import org.iplantc.de.client.models.diskResources.DiskResource;
 
@@ -6,6 +6,9 @@ import com.google.gwt.event.shared.EventHandler;
 import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.event.shared.HandlerRegistration;
 
+/**
+ * @author jstroot
+ */
 public class ManageMetadataEvent extends GwtEvent<ManageMetadataEvent.ManageMetadataEventHandler> {
 
     public interface ManageMetadataEventHandler extends EventHandler {
@@ -22,7 +25,7 @@ public class ManageMetadataEvent extends GwtEvent<ManageMetadataEvent.ManageMeta
         this.diskResource = diskResource;
     }
 
-    public static final Type<ManageMetadataEventHandler> TYPE = new Type<ManageMetadataEventHandler>();
+    public static final Type<ManageMetadataEventHandler> TYPE = new Type<>();
 
     @Override
     public Type<ManageMetadataEventHandler> getAssociatedType() {

@@ -311,7 +311,7 @@ public class DiskResourceUtil {
      * @return A Set containing all Files found in the given DiskResource Set, or an empty Set if the
      *         given Set is null or empty.
      */
-    public Set<File> filterFiles(Set<DiskResource> diskResources) {
+    public Set<File> filterFiles(Iterable<DiskResource> diskResources) {
         Set<File> files = Sets.newHashSet();
 
         if (diskResources != null) {

@@ -12,10 +12,11 @@ import org.iplantc.de.client.services.DiskResourceServiceFacade;
 import org.iplantc.de.client.services.MetadataServiceFacade;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
 import org.iplantc.de.diskResource.client.DiskResourceView;
+import org.iplantc.de.diskResource.client.GridView;
 import org.iplantc.de.diskResource.client.NavigationView;
 import org.iplantc.de.diskResource.client.gin.factory.DiskResourceViewFactory;
 import org.iplantc.de.diskResource.client.gin.factory.FolderContentsRpcProxyFactory;
-import org.iplantc.de.diskResource.client.presenters.proxy.SelectFolderByPathLoadHandler;
+import org.iplantc.de.diskResource.client.gin.factory.GridViewPresenterFactory;
 import org.iplantc.de.diskResource.client.search.events.UpdateSavedSearchesEvent;
 import org.iplantc.de.diskResource.client.search.presenter.DataSearchPresenter;
 import org.iplantc.de.diskResource.client.search.views.DiskResourceSearchField;
@@ -24,11 +25,9 @@ import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 import org.iplantc.de.resources.client.messages.IplantErrorStrings;
 
 import com.google.common.collect.Lists;
-import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwtmockito.GxtMockitoTestRunner;
 
 import com.sencha.gxt.data.shared.TreeStore;
-import com.sencha.gxt.data.shared.loader.PagingLoader;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
@@ -72,6 +71,9 @@ public class DiskResourcePresenterImplTest {
     @Mock TreeStore<Folder> mockTreeStore;
     @Mock NavigationView.Presenter mockNavigationPresenter;
     @Mock NavigationView mockNavigationView;
+    @Mock GridViewPresenterFactory mockGridViewPresenterFactory;
+    @Mock GridView.Presenter mockGridViewPresenter;
+    @Mock GridView mockGridView;
 
 
     private DiskResourcePresenterImpl uut;
@@ -83,6 +85,7 @@ public class DiskResourcePresenterImplTest {
                                             mockFolderContentsRpcFactory,
                                             mockFactory,
                                             mockNavigationPresenter,
+                                            mockGridViewPresenterFactory,
                                             mockDataSearchPresenter,
                                             mockDisplayStrings,
                                             mockAnnouncer,
@@ -166,10 +169,12 @@ public class DiskResourcePresenterImplTest {
 
     private void setupMocks() {
         when(mockFolderContentsRpcFactory.createWithEntityType(anyList(), any(TYPE.class))).thenReturn(mockFolderContentsRpcProxy);
-        when(mockViewFactory.create(any(DiskResourceView.Presenter.class), any(NavigationView.Presenter.class), any(PagingLoader.class))).thenReturn(mockView);
+        when(mockViewFactory.create(any(DiskResourceView.Presenter.class), any(NavigationView.Presenter.class), any(GridView.Presenter.class))).thenReturn(mockView);
+        when(mockGridViewPresenterFactory.create(any(NavigationView.Presenter.class), anyList(), any(TYPE.class))).thenReturn(mockGridViewPresenter);
         when(mockView.getToolbar()).thenReturn(mockToolbar);
         when(mockToolbar.getSearchField()).thenReturn(mockSearchField);
         when(mockNavigationPresenter.getView()).thenReturn(mockNavigationView);
+        when(mockGridViewPresenter.getView()).thenReturn(mockGridView);
     }
 
     /**

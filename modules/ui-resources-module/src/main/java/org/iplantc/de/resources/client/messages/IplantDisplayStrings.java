@@ -4035,12 +4035,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     String diskResourceMoveSuccess(String destPath, @Optional @PluralCount List<String> srcPaths);
 
     /**
-     * Translated "Disk resource not available."
-     * 
-     */
-    String diskResourceNotAvailable();
-
-    /**
      * Translated "Import From URL..."
      *
      * @return translated "Import From URL..."

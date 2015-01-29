@@ -1,4 +1,4 @@
-package org.iplantc.de.diskResource.client.views.cells.events;
+package org.iplantc.de.diskResource.client.events;
 
 import org.iplantc.de.client.models.diskResources.DiskResource;
 
@@ -6,15 +6,22 @@ import com.google.gwt.event.shared.EventHandler;
 import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.event.shared.HandlerRegistration;
 
+/**
+ * @author jstroot
+ */
 public class ManageCommentsEvent extends GwtEvent<ManageCommentsEvent.ManageCommentsEventHandler> {
 
-    public static final Type<ManageCommentsEventHandler> TYPE = new Type<ManageCommentsEventHandler>();
-
-    private final DiskResource dr;
-
-    public DiskResource getDiskResource() {
-        return dr;
+    public static interface HasManageCommentsEventHandlers {
+        HandlerRegistration addManageCommentsEventHandler(ManageCommentsEventHandler handler);
     }
+
+    public interface ManageCommentsEventHandler extends EventHandler {
+        void onManageComments(ManageCommentsEvent event);
+
+    }
+
+    public static final Type<ManageCommentsEventHandler> TYPE = new Type<>();
+    private final DiskResource dr;
 
     public ManageCommentsEvent(DiskResource dr) {
         this.dr = dr;
@@ -25,19 +32,14 @@ public class ManageCommentsEvent extends GwtEvent<ManageCommentsEvent.ManageComm
         return TYPE;
     }
 
+    public DiskResource getDiskResource() {
+        return dr;
+    }
+
     @Override
     protected void dispatch(ManageCommentsEventHandler handler) {
         handler.onManageComments(this);
 
-    }
-
-    public interface ManageCommentsEventHandler extends EventHandler {
-        void onManageComments(ManageCommentsEvent event);
-
-    }
-    
-    public static interface HasManageCommentsEventHandlers {
-        HandlerRegistration addManageCommentsEventHandler(ManageCommentsEventHandler handler);
     }
 
 }

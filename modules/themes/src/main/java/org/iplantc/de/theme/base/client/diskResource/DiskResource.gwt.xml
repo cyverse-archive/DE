@@ -38,4 +38,16 @@
     <replace-with class="org.iplantc.de.theme.base.client.diskResource.grid.cells.DiskResourceActionsCellDefaultAppearance">
         <when-type-is class="org.iplantc.de.diskResource.client.views.grid.cells.DiskResourceActionsCell.Appearance" />
     </replace-with>
+
+    <replace-with class="org.iplantc.de.theme.base.client.diskResource.grid.cells.DiskResourceFavoriteCellDefaultAppearance">
+        <when-type-is class="org.iplantc.de.diskResource.client.views.grid.cells.DiskResourceFavoriteCell.Appearance" />
+    </replace-with>
+
+    <replace-with class="org.iplantc.de.theme.base.client.diskResource.grid.cells.DiskResourceNameCellDefaultAppearance">
+        <when-type-is class="org.iplantc.de.diskResource.client.views.grid.cells.DiskResourceNameCell.Appearance" />
+    </replace-with>
+
+    <replace-with class="org.iplantc.de.theme.base.client.diskResource.grid.cells.DiskResourcePathCellDefaultAppearance">
+        <when-type-is class="org.iplantc.de.diskResource.client.views.grid.cells.DiskResourcePathCell.Appearance" />
+    </replace-with>
 </module>

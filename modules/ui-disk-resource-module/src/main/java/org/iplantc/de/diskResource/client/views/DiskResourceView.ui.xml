@@ -7,17 +7,6 @@
     <ui:with field="DISPLAY"
              type="org.iplantc.de.resources.client.messages.IplantDisplayStrings"/>
 
-    <!-- Main Panel -->
-    <!-- ui:with field="listStore"
-             type="com.sencha.gxt.data.shared.ListStore" />
-    <ui:with field="cm"
-             type="com.sencha.gxt.widget.core.client.grid.ColumnModel" />
-    <ui:with field="gridView"
-             type="com.sencha.gxt.widget.core.client.grid.LiveGridView">
-        <ui:attributes forceFit="true"
-                       autoFill="true" />
-    </ui:with -->
-
     <!-- Border Layout Data -->
     <ui:with field="westMargins"
              type="com.sencha.gxt.core.client.util.Margins">
@@ -40,8 +29,7 @@
     </ui:with>
     <ui:with field="centerData"
              type="com.sencha.gxt.widget.core.client.container.BorderLayoutContainer.BorderLayoutData">
-        <ui:attributes margins="{centerMargins}"
-                       size="1"
+        <ui:attributes size="1"
                        hidden="false" />
     </ui:with>
     <ui:with field="eastData"
@@ -60,25 +48,6 @@
              type="com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer.VerticalLayoutData">
         <ui:attributes width="1" height="1" />
     </ui:with>
-    <ui:with field="detailsLayoutDataBottom"
-             type="com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer.VerticalLayoutData">
-        <ui:attributes width="1" height="0.55" />
-    </ui:with>
-
-    <ui:with field="centerLayoutData"
-             type="com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer.VerticalLayoutData">
-        <ui:attributes height="1" width="1" margins="{centerMargins}" />
-    </ui:with>
-
-    <ui:with field="centerPathLayoutData"
-             type="com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer.VerticalLayoutData">
-        <ui:attributes height="25" width="1" margins="{centerMargins}" />
-    </ui:with>
-
-    <ui:with field="centerBottomBarLayoutData"
-             type="com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer.VerticalLayoutData">
-        <ui:attributes height="25" width="1" margins="{centerMargins}" />
-    </ui:with>
 
     <container:BorderLayoutContainer ui:field="con"
                                      borders="true">
@@ -93,31 +62,6 @@
 
         <!-- Main Panel -->
         <container:center layoutData="{centerData}">
-            <!-- gxt:ContentPanel ui:field="centerCp"
-                              collapsible="false">
-                <container:VerticalLayoutContainer
-                        ui:field="centerPanel">
-                    <container:child layoutData="{centerPathLayoutData}">
-                        <form:FieldLabel HTML="&nbsp;Viewing"
-                                         labelWidth="50"
-                                         borders="true">
-                            <form:widget>
-                                <form:TextField ui:field="pathField"
-                                                emptyText="You may enter the path to a folder here..."/>
-                            </form:widget>
-                        </form:FieldLabel>
-                    </container:child>
-                    <container:child layoutData="{centerLayoutData}">
-                        <grid:Grid ui:field="grid"
-                                   cm="{cm}"
-                                   store="{listStore}"
-                                   view="{gridView}" />
-                    </container:child>
-                    <container:child layoutData="{centerBottomBarLayoutData}">
-                        <paging:ToolBar ui:field="pagingToolBar"/>
-                    </container:child>
-                </container:VerticalLayoutContainer>
-            </gxt:ContentPanel -->
             <views:GridView ui:field="centerGridView" />
         </container:center>
 

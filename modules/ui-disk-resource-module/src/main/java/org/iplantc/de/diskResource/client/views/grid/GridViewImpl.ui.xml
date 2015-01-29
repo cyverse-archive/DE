@@ -11,12 +11,12 @@
     <ui:with field="listStore"
              type="com.sencha.gxt.data.shared.ListStore" />
     <ui:with field="cm"
-             type="org.iplantc.de.diskResource.client.views.grid.DiskResourceColumnModel" />
+             type="com.sencha.gxt.widget.core.client.grid.ColumnModel" />
     <ui:with field="gridView"
              type="com.sencha.gxt.widget.core.client.grid.LiveGridView">
         <ui:attributes forceFit="true"
                        autoFill="true"
-                emptyText="{appearance.gridViewEmptyText}"/>
+                       emptyText="{appearance.gridViewEmptyText}"/>
     </ui:with>
 
     <ui:with field="centerMargins"
@@ -44,29 +44,27 @@
     </ui:with>
 
     <container:VerticalLayoutContainer>
-        <container:VerticalLayoutContainer>
-            <container:child layoutData="{centerPathLayoutData}">
-                <form:FieldLabel text="{appearance.pathFieldLabel}"
-                                 labelWidth="{appearance.pathFieldLabelWidth}"
-                                 borders="true">
-                    <form:widget>
-                        <form:TextField ui:field="pathField"
-                                        emptyText="{appearance.pathFieldEmptyText}"/>
-                    </form:widget>
-                </form:FieldLabel>
-            </container:child>
-            <container:child layoutData="{centerLayoutData}">
-                <grid:Grid ui:field="grid"
-                           cm="{cm}"
-                           store="{listStore}"
-                           view="{gridView}"
-                        loadMask="true"/>
-            </container:child>
-            <container:child layoutData="{centerBottomBarLayoutData}">
-                <paging:ToolBar ui:field="pagingToolBar">
-                    <!-- Live tool item added programatically -->
-                </paging:ToolBar>
-            </container:child>
-        </container:VerticalLayoutContainer>
+        <container:child layoutData="{centerPathLayoutData}">
+            <form:FieldLabel HTML="{appearance.pathFieldLabel}"
+                             labelWidth="{appearance.pathFieldLabelWidth}"
+                             borders="true">
+                <form:widget>
+                    <form:TextField ui:field="pathField"
+                                    emptyText="{appearance.pathFieldEmptyText}"/>
+                </form:widget>
+            </form:FieldLabel>
+        </container:child>
+        <container:child layoutData="{centerLayoutData}">
+            <grid:Grid ui:field="grid"
+                       cm="{cm}"
+                       store="{listStore}"
+                       view="{gridView}"
+                       loadMask="true"/>
+        </container:child>
+        <container:child layoutData="{centerBottomBarLayoutData}">
+            <paging:ToolBar ui:field="pagingToolBar">
+                <!-- Live tool item added programatically -->
+            </paging:ToolBar>
+        </container:child>
     </container:VerticalLayoutContainer>
 </ui:UiBinder>

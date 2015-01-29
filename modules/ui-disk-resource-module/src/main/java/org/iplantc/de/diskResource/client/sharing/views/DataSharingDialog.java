@@ -6,10 +6,11 @@ package org.iplantc.de.diskResource.client.sharing.views;
 
 import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.client.services.DiskResourceServiceFacade;
+import org.iplantc.de.client.util.DiskResourceUtil;
 import org.iplantc.de.commons.client.views.dialogs.IPlantDialog;
 import org.iplantc.de.diskResource.client.sharing.presenter.DataSharingPresenter;
-import org.iplantc.de.diskResource.client.views.DiskResourceModelKeyProvider;
-import org.iplantc.de.diskResource.client.views.DiskResourceNameComparator;
+import org.iplantc.de.diskResource.client.model.DiskResourceModelKeyProvider;
+import org.iplantc.de.diskResource.client.model.DiskResourceNameComparator;
 import org.iplantc.de.diskResource.client.views.grid.cells.DiskResourceNameCell;
 import org.iplantc.de.resources.client.messages.IplantContextualHelpStrings;
 import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
@@ -30,21 +31,24 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * @author sriram
+ * @author sriram, jstroot
  */
 public class DataSharingDialog extends IPlantDialog {
 
     private final IplantDisplayStrings displayStrings;
     private final IplantContextualHelpStrings helpStrings;
+    private final DiskResourceUtil diskResourceUtil;
 
     @Inject
     DataSharingDialog(final DiskResourceServiceFacade diskResourceService,
                       final IplantDisplayStrings displayStrings,
                       final IplantContextualHelpStrings helpStrings,
+                      final DiskResourceUtil diskResourceUtil,
                       @Assisted final Set<DiskResource> resources) {
         super(true);
         this.displayStrings = displayStrings;
         this.helpStrings = helpStrings;
+        this.diskResourceUtil = diskResourceUtil;
         setPixelSize(600, 500);
         setHideOnButtonClick(true);
         setModal(true);
@@ -75,7 +79,7 @@ public class DataSharingDialog extends IPlantDialog {
         List<ColumnConfig<DiskResource, ?>> list = new ArrayList<>();
 
         ColumnConfig<DiskResource, DiskResource> name = new ColumnConfig<>(new IdentityValueProvider<DiskResource>("name"), 100, displayStrings.name());
-        name.setCell(new DiskResourceNameCell());
+        name.setCell(new DiskResourceNameCell(diskResourceUtil));
         name.setComparator(new DiskResourceNameComparator());
         name.setWidth(130);
 

@@ -11,6 +11,7 @@ import com.sencha.gxt.data.shared.ListStore;
  * @author jstroot
  */
 public interface GridViewFactory {
-    GridView create(ListStore<DiskResource> listStore,
+    GridView create(GridView.Presenter presenter,
+                    ListStore<DiskResource> listStore,
                     DiskResourceView.FolderContentsRpcProxy folderContentsRpcProxy);
 }

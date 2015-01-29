@@ -5,10 +5,10 @@ import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.client.models.diskResources.File;
 import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.client.util.DiskResourceUtil;
-import org.iplantc.de.diskResource.client.views.cells.events.ManageCommentsEvent;
-import org.iplantc.de.diskResource.client.views.cells.events.ManageMetadataEvent;
-import org.iplantc.de.diskResource.client.views.cells.events.ManageSharingEvent;
-import org.iplantc.de.diskResource.client.views.cells.events.ShareByDataLinkEvent;
+import org.iplantc.de.diskResource.client.events.ManageCommentsEvent;
+import org.iplantc.de.diskResource.client.events.ManageMetadataEvent;
+import org.iplantc.de.diskResource.client.events.ManageSharingEvent;
+import org.iplantc.de.diskResource.client.events.ShareByDataLinkEvent;
 import org.iplantc.de.diskResource.share.DiskResourceModule;
 
 import static com.google.gwt.dom.client.BrowserEvents.CLICK;
@@ -208,7 +208,6 @@ public class DiskResourceActionsCell extends AbstractCell<DiskResource> {
             hasHandlers.fireEvent(new ManageMetadataEvent(value));
         } else if (action.equalsIgnoreCase(COMMENTS_ACTION)) {
             hasHandlers.fireEvent(new ManageCommentsEvent(value));
-
         }
 
     }

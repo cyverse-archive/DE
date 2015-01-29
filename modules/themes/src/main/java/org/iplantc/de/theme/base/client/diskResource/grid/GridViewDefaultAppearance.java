@@ -44,7 +44,8 @@ public class GridViewDefaultAppearance implements GridView.Appearance {
 
     @Override
     public String createdDateColumnLabel() {
-        return null;
+        // FIXME
+        return iplantDisplayStrings.dateSubmitted();
     }
 
     @Override
@@ -59,7 +60,7 @@ public class GridViewDefaultAppearance implements GridView.Appearance {
 
     @Override
     public String lastModifiedColumnLabel() {
-        return null;
+        return iplantDisplayStrings.lastModified();
     }
 
     @Override
@@ -79,7 +80,7 @@ public class GridViewDefaultAppearance implements GridView.Appearance {
 
     @Override
     public String nameColumnLabel() {
-        return null;
+        return iplantDisplayStrings.name();
     }
 
     @Override
@@ -89,7 +90,7 @@ public class GridViewDefaultAppearance implements GridView.Appearance {
 
     @Override
     public String pathColumnLabel() {
-        return null;
+        return iplantDisplayStrings.path();
     }
 
     @Override
@@ -98,13 +99,13 @@ public class GridViewDefaultAppearance implements GridView.Appearance {
     }
 
     @Override
-    public SafeHtmlBuilder pathFieldLabel() {
-        return new SafeHtmlBuilder().appendHtmlConstant("&nbsp;").append(displayStrings.pathFieldLabel());
+    public String pathFieldLabel() {
+        return new SafeHtmlBuilder().appendHtmlConstant("&nbsp;").append(displayStrings.pathFieldLabel()).toSafeHtml().asString();
     }
 
     @Override
-    public String pathFieldLabelWidth() {
-        return "50";
+    public int pathFieldLabelWidth() {
+        return 50;
     }
 
     @Override
@@ -130,7 +131,7 @@ public class GridViewDefaultAppearance implements GridView.Appearance {
 
     @Override
     public String sizeColumnLabel() {
-        return null;
+        return iplantDisplayStrings.size();
     }
 
     @Override

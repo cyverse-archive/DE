@@ -18,6 +18,7 @@ import org.iplantc.de.diskResource.client.presenters.handlers.CachedFolderTreeSt
 import org.iplantc.de.diskResource.client.presenters.proxy.FolderContentsLoadConfig;
 import org.iplantc.de.diskResource.client.presenters.proxy.SelectFolderByPathLoadHandler;
 import org.iplantc.de.diskResource.client.search.events.SubmitDiskResourceQueryEvent;
+import org.iplantc.de.diskResource.client.events.DiskResourceNameSelectedEvent;
 import org.iplantc.de.diskResource.client.views.navigation.NavigationViewDnDHandler;
 
 import com.google.common.base.Preconditions;
@@ -188,6 +189,15 @@ public class NavigationPresenterImpl implements NavigationView.Presenter {
         if(!folderToBeLoaded.getId().equals(getSelectedFolder().getId())){
             event.setCancelled(true);
         }
+    }
+
+    @Override
+    public void onDiskResourceNameSelected(DiskResourceNameSelectedEvent event) {
+
+        if(!(event.getSelectedItem() instanceof Folder)){
+            return;
+        }
+        setSelectedFolder(event.getSelectedItem());
     }
 
     @Override

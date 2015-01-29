@@ -1,4 +1,4 @@
-package org.iplantc.de.diskResource.client.views.cells.events;
+package org.iplantc.de.diskResource.client.events;
 
 import org.iplantc.de.client.models.diskResources.DiskResource;
 
