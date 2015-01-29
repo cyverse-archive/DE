@@ -4,14 +4,15 @@ import org.iplantc.de.client.models.HasPath;
 import org.iplantc.de.client.models.IsMaskable;
 import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.client.models.diskResources.Folder;
-import org.iplantc.de.client.models.search.DiskResourceQueryTemplate;
+import org.iplantc.de.diskResource.client.events.DiskResourceNameSelectedEvent;
+import org.iplantc.de.diskResource.client.events.DiskResourcePathSelectedEvent;
 import org.iplantc.de.diskResource.client.events.FolderSelectionEvent;
 import org.iplantc.de.diskResource.client.events.RootFoldersRetrievedEvent;
 import org.iplantc.de.diskResource.client.events.SavedSearchesRetrievedEvent;
 import org.iplantc.de.diskResource.client.presenters.proxy.FolderContentsLoadConfig;
 import org.iplantc.de.diskResource.client.search.events.DeleteSavedSearchClickedEvent;
 import org.iplantc.de.diskResource.client.search.events.SubmitDiskResourceQueryEvent;
-import org.iplantc.de.diskResource.client.events.DiskResourceNameSelectedEvent;
+import org.iplantc.de.diskResource.client.search.events.UpdateSavedSearchesEvent;
 
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.safehtml.shared.SafeHtml;
@@ -60,7 +61,9 @@ public interface NavigationView extends IsWidget,
                                 RootFoldersRetrievedEvent.HasRootFoldersRetrievedEventHandlers,
                                 SavedSearchesRetrievedEvent.HasSavedSearchesRetrievedEventHandlers,
                                 BeforeLoadEvent.BeforeLoadHandler<FolderContentsLoadConfig>,
-                                DiskResourceNameSelectedEvent.DiskResourceNameSelectedEventHandler {
+                                DiskResourceNameSelectedEvent.DiskResourceNameSelectedEventHandler,
+                                DiskResourcePathSelectedEvent.DiskResourcePathSelectedEventHandler,
+                                UpdateSavedSearchesEvent.UpdateSavedSearchesHandler {
 
         void addFolder(Folder folder);
 
@@ -126,8 +129,6 @@ public interface NavigationView extends IsWidget,
          */
         void expandFolder(Folder folder);
 
-        void deSelectAll();
-
         /**
          * @param el the element corresponding to a tree node
          * @return the TreeNode if it exists, null otherwise.
@@ -137,7 +138,6 @@ public interface NavigationView extends IsWidget,
 
         void removeChildren(Folder folder);
 
-        void updateQueryTemplate(DiskResourceQueryTemplate queryTemplate);
     }
 
     Tree<Folder, Folder> getTree();

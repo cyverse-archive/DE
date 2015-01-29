@@ -25,14 +25,6 @@ public interface IplantContextualHelpStrings extends com.google.gwt.i18n.client.
   String manageDataLinksHelp();
 
   /**
-   * Translated "<p>An attribute is a changeable property or characteristic of the file or folder you have selected that can be set to a value.</p><br/><br/><p>For example, "filetype" is an attribute of a file and "text" would be its value.</p><br/><br/><p>By entering this information, you are describing the contents and context of the data. This can be very useful when you are trying to remember specific information about that data in the future, or sharing a file so collaborators may know the context of the data, and many other instances.</p>" 
-   * @return translated "<p>An attribute is a changeable property or characteristic of the file or folder you have selected that can be set to a value.</p><br/><br/><p>For example, "filetype" is an attribute of a file and "text" would be its value.</p><br/><br/><p>By entering this information, you are describing the contents and context of the data. This can be very useful when you are trying to remember specific information about that data in the future, or sharing a file so collaborators may know the context of the data, and many other instances.</p>"
-   */
-  @DefaultMessage("<p>An attribute is a changeable property or characteristic of the file or folder you have selected that can be set to a value.</p><br/><br/><p>For example, \"filetype\" is an attribute of a file and \"text\" would be its value.</p><br/><br/><p>By entering this information, you are describing the contents and context of the data. This can be very useful when you are trying to remember specific information about that data in the future, or sharing a file so collaborators may know the context of the data, and many other instances.</p>")
-  @Key("metadataHelp")
-  String metadataHelp();
-  
-  /**
    * Translated "For example, you may want to include a link to a paper which referenced your app. ".
    * 
    * @return translated "For example, you may want to include a link to a paper which referenced your app. "

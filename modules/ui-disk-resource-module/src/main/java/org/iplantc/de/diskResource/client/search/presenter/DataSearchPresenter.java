@@ -1,12 +1,10 @@
 package org.iplantc.de.diskResource.client.search.presenter;
 
 
-import org.iplantc.de.diskResource.client.events.FolderSelectionEvent;
 import org.iplantc.de.diskResource.client.events.SavedSearchesRetrievedEvent;
 import org.iplantc.de.diskResource.client.search.events.DeleteSavedSearchClickedEvent;
 import org.iplantc.de.diskResource.client.search.events.SaveDiskResourceQueryClickedEvent;
 import org.iplantc.de.diskResource.client.search.events.SavedSearchDeletedEvent;
-import org.iplantc.de.diskResource.client.search.events.SubmitDiskResourceQueryEvent;
 import org.iplantc.de.diskResource.client.search.events.UpdateSavedSearchesEvent;
 
 /**
@@ -49,8 +47,7 @@ import org.iplantc.de.diskResource.client.search.events.UpdateSavedSearchesEvent
  * 
  */
 public interface DataSearchPresenter extends SaveDiskResourceQueryClickedEvent.SaveDiskResourceQueryClickedEventHandler,
-                                             SubmitDiskResourceQueryEvent.SubmitDiskResourceQueryEventHandler,
-                                             FolderSelectionEvent.HasFolderSelectionEventHandlers,
+//                                             FolderSelectionEvent.HasFolderSelectionEventHandlers,
                                              DeleteSavedSearchClickedEvent.DeleteSavedSearchEventHandler,
                                              SavedSearchDeletedEvent.HasSavedSearchDeletedEventHandlers,
                                              SavedSearchesRetrievedEvent.SavedSearchesRetrievedEventHandler,

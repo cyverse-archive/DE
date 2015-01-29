@@ -1,16 +1,12 @@
 package org.iplantc.de.diskResource.client.dataLink.presenter.callbacks;
 
 import org.iplantc.de.client.models.dataLink.DataLink;
-import org.iplantc.de.client.models.dataLink.DataLinkFactory;
-import org.iplantc.de.client.models.dataLink.DataLinkList;
 import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.diskResource.client.dataLink.view.DataLinkPanel;
 import org.iplantc.de.resources.client.messages.I18N;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.web.bindery.autobean.shared.AutoBean;
-import com.google.web.bindery.autobean.shared.AutoBeanCodex;
 
 import com.sencha.gxt.data.shared.TreeStore;
 import com.sencha.gxt.widget.core.client.tree.Tree;
@@ -18,15 +14,15 @@ import com.sencha.gxt.widget.core.client.tree.Tree.CheckState;
 
 import java.util.List;
 
-public class CreateDataLinkCallback implements AsyncCallback<String> {
+/**
+ * @author jstroot
+ */
+public class CreateDataLinkCallback implements AsyncCallback<List<DataLink>> {
 
-    private final DataLinkFactory factory;
     private final Tree<DiskResource, DiskResource> tree;
     private final DataLinkPanel view;
 
-    public CreateDataLinkCallback(final DataLinkFactory factory,
-                                  final DataLinkPanel view) {
-        this.factory = factory;
+    public CreateDataLinkCallback(final DataLinkPanel view) {
         this.view = view;
         this.tree = this.view.getTree();
     }
@@ -38,9 +34,7 @@ public class CreateDataLinkCallback implements AsyncCallback<String> {
     }
 
     @Override
-    public void onSuccess(String result) {
-        AutoBean<DataLinkList> tickets = AutoBeanCodex.decode(factory, DataLinkList.class, result);
-        List<DataLink> dlList = tickets.as().getTickets();
+    public void onSuccess(List<DataLink> dlList) {
 
         TreeStore<DiskResource> treeStore = tree.getStore();
         DiskResource parent = null;

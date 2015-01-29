@@ -10,7 +10,7 @@ import com.google.gwt.event.shared.HandlerRegistration;
 import java.util.List;
 
 /**
- * @author psarando
+ * @author psarando, jstroot
  * 
  */
 public class UpdateSavedSearchesEvent extends GwtEvent<UpdateSavedSearchesHandler> {
@@ -23,7 +23,7 @@ public class UpdateSavedSearchesEvent extends GwtEvent<UpdateSavedSearchesHandle
         HandlerRegistration addUpdateSavedSearchesEventHandler(UpdateSavedSearchesHandler handler);
     }
 
-    public static final GwtEvent.Type<UpdateSavedSearchesHandler> TYPE = new GwtEvent.Type<UpdateSavedSearchesHandler>();
+    public static final GwtEvent.Type<UpdateSavedSearchesHandler> TYPE = new GwtEvent.Type<>();
     private final List<DiskResourceQueryTemplate> savedSearches;
     private final List<DiskResourceQueryTemplate> removedSearches;
 

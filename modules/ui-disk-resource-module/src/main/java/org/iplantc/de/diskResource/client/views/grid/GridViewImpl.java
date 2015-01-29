@@ -9,11 +9,11 @@ import org.iplantc.de.client.util.CommonModelUtils;
 import org.iplantc.de.client.util.DiskResourceUtil;
 import org.iplantc.de.diskResource.client.DiskResourceView;
 import org.iplantc.de.diskResource.client.GridView;
+import org.iplantc.de.diskResource.client.events.DiskResourceNameSelectedEvent;
+import org.iplantc.de.diskResource.client.events.DiskResourcePathSelectedEvent;
 import org.iplantc.de.diskResource.client.events.DiskResourceSelectionChangedEvent;
-import org.iplantc.de.diskResource.client.events.FolderPathSelectedEvent;
 import org.iplantc.de.diskResource.client.events.FolderSelectionEvent;
 import org.iplantc.de.diskResource.client.presenters.proxy.FolderContentsLoadConfig;
-import org.iplantc.de.diskResource.client.events.DiskResourceNameSelectedEvent;
 import org.iplantc.de.diskResource.share.DiskResourceModule;
 
 import com.google.common.base.Strings;
@@ -149,6 +149,11 @@ public class GridViewImpl extends ContentPanel implements GridView,
         return drCm.addDiskResourceNameSelectedEventHandler(handler);
     }
 
+    @Override
+    public HandlerRegistration addDiskResourcePathSelectedEventHandler(DiskResourcePathSelectedEvent.DiskResourcePathSelectedEventHandler handler) {
+        return addHandler(handler, DiskResourcePathSelectedEvent.TYPE);
+    }
+
     private void updateSelectionCount(int selectionCount) {
         selectionStatus.setText(selectionCount + " item(s)");
     }
@@ -156,11 +161,6 @@ public class GridViewImpl extends ContentPanel implements GridView,
     @Override
     public HandlerRegistration addDiskResourceSelectionChangedEventHandler(DiskResourceSelectionChangedEvent.DiskResourceSelectionChangedEventHandler handler) {
         return addHandler(handler, DiskResourceSelectionChangedEvent.TYPE);
-    }
-
-    @Override
-    public HandlerRegistration addFolderPathSelectedEventHandler(FolderPathSelectedEvent.FolderPathSelectedEventHandler handler) {
-        return addHandler(handler, FolderPathSelectedEvent.TYPE);
     }
 
     @Override
@@ -285,7 +285,7 @@ public class GridViewImpl extends ContentPanel implements GridView,
                 && !Strings.isNullOrEmpty(pathField.getCurrentValue())) {
             String path = pathField.getCurrentValue();
             HasPath folderToSelect = CommonModelUtils.getInstance().createHasPathFromString(path);
-            fireEvent(new FolderPathSelectedEvent(folderToSelect));
+            fireEvent(new DiskResourcePathSelectedEvent(folderToSelect));
         }
     }
 

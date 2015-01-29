@@ -1,6 +1,7 @@
 package org.iplantc.de.client.services;
 
 import org.iplantc.de.client.models.HasPaths;
+import org.iplantc.de.client.models.dataLink.DataLink;
 import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.client.models.diskResources.DiskResourceAutoBeanFactory;
 import org.iplantc.de.client.models.diskResources.DiskResourceExistMap;
@@ -236,7 +237,7 @@ public interface DiskResourceServiceFacade {
      *
      * @param ticketIdList the id of the disk resource for which the ticket will be created.
      */
-    public void createDataLinks(List <String> ticketIdList, AsyncCallback<String> callback);
+    public void createDataLinks(List <String> ticketIdList, AsyncCallback<List<DataLink>> callback);
 
     /**
      * Requests a listing of all the tickets for the given disk resources.

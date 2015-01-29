@@ -1,6 +1,7 @@
 package org.iplantc.de.client.services.stubs;
 
 import org.iplantc.de.client.models.HasPaths;
+import org.iplantc.de.client.models.dataLink.DataLink;
 import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.client.models.diskResources.DiskResourceAutoBeanFactory;
 import org.iplantc.de.client.models.diskResources.DiskResourceExistMap;
@@ -160,7 +161,7 @@ public class DiskResourceServiceFacadeStub implements DiskResourceServiceFacade 
     }
 
     @Override
-    public void createDataLinks(List<String> ticketIdList, AsyncCallback<String> callback) {
+    public void createDataLinks(List<String> ticketIdList, AsyncCallback<List<DataLink>> callback) {
 
     }
 

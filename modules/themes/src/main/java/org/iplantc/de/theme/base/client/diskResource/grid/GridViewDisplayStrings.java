@@ -15,6 +15,12 @@ public interface GridViewDisplayStrings extends Messages{
     @Key("metadata")
     String metadata();
 
+    @Key("metadataFormInvalid")
+    String metadataFormInvalid();
+
+    @Key("metadataHelp")
+    String metadataHelp();
+
     @Key("noItemsToDisplay")
     String noItemsToDisplay();
 

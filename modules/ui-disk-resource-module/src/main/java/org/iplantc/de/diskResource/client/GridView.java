@@ -3,16 +3,9 @@ package org.iplantc.de.diskResource.client;
 import org.iplantc.de.client.models.HasId;
 import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.client.models.diskResources.Folder;
-import org.iplantc.de.diskResource.client.events.DiskResourceSelectionChangedEvent;
-import org.iplantc.de.diskResource.client.events.FolderPathSelectedEvent;
-import org.iplantc.de.diskResource.client.events.FolderSelectionEvent;
+import org.iplantc.de.diskResource.client.events.*;
 import org.iplantc.de.diskResource.client.presenters.proxy.FolderContentsLoadConfig;
-import org.iplantc.de.diskResource.client.events.DiskResourceNameSelectedEvent;
-import org.iplantc.de.diskResource.client.events.ManageCommentsEvent;
-import org.iplantc.de.diskResource.client.events.ManageMetadataEvent;
-import org.iplantc.de.diskResource.client.events.ManageSharingEvent;
-import org.iplantc.de.diskResource.client.events.RequestDiskResourceFavoriteEvent;
-import org.iplantc.de.diskResource.client.events.ShareByDataLinkEvent;
+import org.iplantc.de.diskResource.client.search.events.SubmitDiskResourceQueryEvent;
 import org.iplantc.de.diskResource.client.views.grid.DiskResourceColumnModel;
 
 import com.google.gwt.dom.client.Element;
@@ -35,7 +28,7 @@ import java.util.List;
  */
 public interface GridView extends IsWidget,
                                   HasLayout,
-                                  FolderPathSelectedEvent.HasFolderPathSelectedEventHandlers,
+                                  DiskResourcePathSelectedEvent.HasDiskResourcePathSelectedEventHandlers,
                                   FolderSelectionEvent.FolderSelectionEventHandler,
                                   DiskResourceNameSelectedEvent.HasDiskResourceNameSelectedEventHandlers,
                                   DiskResourceSelectionChangedEvent.HasDiskResourceSelectionChangedEventHandlers {
@@ -92,7 +85,33 @@ public interface GridView extends IsWidget,
                                 ShareByDataLinkEvent.ShareByDataLinkEventHandler,
                                 RequestDiskResourceFavoriteEvent.RequestDiskResourceFavoriteEventHandler,
                                 ManageCommentsEvent.ManageCommentsEventHandler,
-                                FolderSelectionEvent.FolderSelectionEventHandler {
+                                FolderSelectionEvent.FolderSelectionEventHandler,
+                                SubmitDiskResourceQueryEvent.SubmitDiskResourceQueryEventHandler {
+
+        interface Appearance {
+
+            String comments();
+
+            String commentsDialogHeight();
+
+            String commentsDialogWidth();
+
+            String copy();
+
+            String copyPasteInstructions();
+
+            String createDataLinksError();
+
+            String metadata();
+
+            String metadataDialogHeight();
+
+            String metadataDialogWidth();
+
+            String metadataFormInvalid();
+
+            String metadataHelp();
+        }
 
         void deSelectDiskResources();
 
@@ -111,8 +130,6 @@ public interface GridView extends IsWidget,
         GridView getView();
 
         boolean isSelectAllChecked();
-
-        void loadFolderContents(Folder folderToSelect);
 
         void setFilePreviewEnabled(boolean filePreviewEnabled);
 

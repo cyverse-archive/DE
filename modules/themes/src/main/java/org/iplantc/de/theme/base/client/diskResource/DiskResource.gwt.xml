@@ -50,4 +50,8 @@
     <replace-with class="org.iplantc.de.theme.base.client.diskResource.grid.cells.DiskResourcePathCellDefaultAppearance">
         <when-type-is class="org.iplantc.de.diskResource.client.views.grid.cells.DiskResourcePathCell.Appearance" />
     </replace-with>
+
+    <replace-with class="org.iplantc.de.theme.base.client.diskResource.grid.presenter.GridViewPresenterDefaultAppearance">
+        <when-type-is class="org.iplantc.de.diskResource.client.GridView.Presenter.Appearance" />
+    </replace-with>
 </module>

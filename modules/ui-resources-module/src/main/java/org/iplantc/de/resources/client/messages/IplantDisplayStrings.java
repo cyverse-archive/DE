@@ -1909,15 +1909,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     String messagesGridHeader();
 
     /**
-     * Translated "Metadata".
-     *
-     * @return translated "Metadata"
-     */
-    @DefaultMessage("Metadata")
-    @Key("metadata")
-    String metadata();
-
-    /**
      * Translated "Edit Metadata...".
      *
      * @return translated "Edit Metadata..."

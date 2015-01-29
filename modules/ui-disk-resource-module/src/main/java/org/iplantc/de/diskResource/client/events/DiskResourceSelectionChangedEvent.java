@@ -8,6 +8,9 @@ import com.google.gwt.event.shared.HandlerRegistration;
 
 import java.util.List;
 
+/**
+ * @author jstroot
+ */
 public class DiskResourceSelectionChangedEvent extends GwtEvent<DiskResourceSelectionChangedEvent.DiskResourceSelectionChangedEventHandler> {
 
     public interface DiskResourceSelectionChangedEventHandler extends EventHandler {
@@ -18,7 +21,7 @@ public class DiskResourceSelectionChangedEvent extends GwtEvent<DiskResourceSele
         HandlerRegistration addDiskResourceSelectionChangedEventHandler(DiskResourceSelectionChangedEventHandler handler);
     }
 
-    public static final Type<DiskResourceSelectionChangedEventHandler> TYPE = new Type<DiskResourceSelectionChangedEventHandler>();
+    public static final Type<DiskResourceSelectionChangedEventHandler> TYPE = new Type<>();
 
     private final List<DiskResource> selection;
 

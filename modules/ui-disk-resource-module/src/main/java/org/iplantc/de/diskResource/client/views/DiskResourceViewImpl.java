@@ -11,17 +11,20 @@ import org.iplantc.de.diskResource.client.DiskResourceView;
 import org.iplantc.de.diskResource.client.GridView;
 import org.iplantc.de.diskResource.client.NavigationView;
 import org.iplantc.de.diskResource.client.events.DiskResourceSelectionChangedEvent;
+import org.iplantc.de.diskResource.client.events.ManageSharingEvent;
 import org.iplantc.de.diskResource.share.DiskResourceModule;
 import org.iplantc.de.resources.client.IplantResources;
 import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 import org.iplantc.de.tags.client.TagsView;
 import org.iplantc.de.tags.client.gin.factory.TagListPresenterFactory;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Sets;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Cursor;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiFactory;
@@ -124,6 +127,12 @@ public class DiskResourceViewImpl extends Composite implements DiskResourceView 
 
         con.setNorthWidget(toolbar, northData);
 
+    }
+
+    @Override
+    public HandlerRegistration addManageSharingEventHandler(ManageSharingEvent.ManageSharingEventHandler handler) {
+        // FIXME Migrate to details view
+        return addHandler(handler, ManageSharingEvent.TYPE);
     }
 
     @Override
@@ -490,8 +499,10 @@ public class DiskResourceViewImpl extends Composite implements DiskResourceView 
     private class SharingLabelClickHandler implements ClickHandler {
         @Override
         public void onClick(ClickEvent event) {
-            presenter.manageSelectedResourceCollaboratorSharing();
-
+            // FIXME This will be migrated to Details MVP
+            final List<DiskResource> selectedDiskResources = gridViewPresenter.getSelectedDiskResources();
+            Preconditions.checkArgument(selectedDiskResources.size() == 1);
+            fireEvent(new ManageSharingEvent(selectedDiskResources.get(0)));
         }
     }
 

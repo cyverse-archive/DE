@@ -1,6 +1,6 @@
 package org.iplantc.de.diskResource.client.events;
 
-import org.iplantc.de.client.models.diskResources.DiskResource;
+import org.iplantc.de.client.models.HasPath;
 
 import com.google.gwt.event.shared.EventHandler;
 import com.google.gwt.event.shared.GwtEvent;
@@ -21,9 +21,9 @@ public class DiskResourcePathSelectedEvent extends GwtEvent<DiskResourcePathSele
     }
 
     public static Type<DiskResourcePathSelectedEventHandler> TYPE = new Type<>();
-    private final DiskResource selectedDiskResource;
+    private final HasPath selectedDiskResource;
 
-    public DiskResourcePathSelectedEvent(DiskResource selectedDiskResource) {
+    public DiskResourcePathSelectedEvent(HasPath selectedDiskResource) {
         this.selectedDiskResource = selectedDiskResource;
     }
 
@@ -31,7 +31,7 @@ public class DiskResourcePathSelectedEvent extends GwtEvent<DiskResourcePathSele
         return TYPE;
     }
 
-    public DiskResource getSelectedDiskResource() {
+    public HasPath getSelectedDiskResource() {
         return selectedDiskResource;
     }
 
