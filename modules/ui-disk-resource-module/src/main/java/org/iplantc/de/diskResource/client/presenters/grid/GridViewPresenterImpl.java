@@ -345,15 +345,15 @@ public class GridViewPresenterImpl implements GridView.Presenter,
         }
     }
      private void showShareLink(String linkId) {
-         // FIXME Fold into appearance
+         // FIXME Fold into separate view/dlg
         // Open dialog window with text selected.
         IPlantDialog dlg = new IPlantDialog();
         dlg.setHeadingText(appearance.copy());
         dlg.setHideOnButtonClick(true);
         dlg.setResizable(false);
-        dlg.setSize("535", "130");
+         dlg.setSize(appearance.shareLinkDialogWidth(), appearance.shareLinkDialogHeight());
         TextField textBox = new TextField();
-        textBox.setWidth(500);
+         textBox.setWidth(appearance.shareLinkDialogTextBoxWidth());
         textBox.setReadOnly(true);
         textBox.setValue(linkId);
         VerticalLayoutContainer container = new VerticalLayoutContainer();

@@ -100,16 +100,9 @@ public interface DiskResourceView extends IsWidget,
 
     interface Presenter extends org.iplantc.de.commons.client.presenter.Presenter,
                                 IsMaskable,
-//                                FolderSelectionEvent.FolderSelectionEventHandler,
-//                                DiskResourceNameSelectedEvent.DiskResourceNameSelectedEventHandler,
-//                                ManageMetadataEvent.ManageMetadataEventHandler,
-//                                ManageSharingEvent.ManageSharingEventHandler,
                                 DiskResourceSelectionChangedEvent.HasDiskResourceSelectionChangedEventHandlers,
                                 FolderSelectionEvent.HasFolderSelectionEventHandlers,
                                 DiskResourceSelectionChangedEvent.DiskResourceSelectionChangedEventHandler,
-//                                SubmitDiskResourceQueryEvent.SubmitDiskResourceQueryEventHandler,
-//                                ShareByDataLinkEvent.ShareByDataLinkEventHandler,
-//                                ManageCommentsEvent.ManageCommentsEventHandler,
                                 RequestDiskResourceFavoriteEvent.RequestDiskResourceFavoriteEventHandler {
 
         String FAVORITES_FOLDER_NAME = "Favorites";
@@ -168,10 +161,6 @@ public interface DiskResourceView extends IsWidget,
 
         void getDetails(DiskResource next);
 
-//        Set<? extends DiskResource> getDragSources(IsWidget source, Element dragStartEl);
-
-//        Folder getDropTargetFolder(IsWidget widget, Element el);
-
         List<DiskResource> getSelectedDiskResources();
 
         Folder getSelectedFolder();
@@ -183,13 +172,7 @@ public interface DiskResourceView extends IsWidget,
         void go(HasOneWidget container, HasPath folderToSelect,
                 List<? extends HasId> diskResourcesToSelect);
 
-//        void manageSelectedResourceCollaboratorSharing();
-
-//        void manageSelectedResourceComments();
-
         void manageSelectedResourceDataLinks();
-
-//        void manageSelectedResourceMetadata();
 
         void moveSelectedDiskResources();
 
@@ -240,32 +223,11 @@ public interface DiskResourceView extends IsWidget,
 
         void setViewDebugId(String baseID);
 
-//        void shareSelectedFolderByDataLink();
-
         void unmaskVizMenuOptions();
     }
 
-//    void deSelectDiskResources();
-
-//    Element findGridRow(Element el);
-
-//    int findRowIndex(Element targetRow);
-
-//    HasSafeHtml getCenterHeader();
-
-//    ListStore<DiskResource> getListStore();
-
-    List<DiskResource> getSelectedDiskResources();
 
     DiskResourceViewToolbar getToolbar();
-
-//    int getTotalSelectionCount();
-
-//    boolean isSelectAllChecked();
-
-//    boolean isViewGrid(IsWidget widget);
-
-    //void loadFolder(Folder folder);
 
     void maskDetailsPanel();
 
@@ -277,15 +239,9 @@ public interface DiskResourceView extends IsWidget,
 
     void resetDetailsPanel();
 
-//    void setDiskResources(Set<DiskResource> folderChildren);
-
     void setEastWidgetHidden(boolean hideEastWidget);
 
     void setNorthWidgetHidden(boolean hideNorthWidget);
-
-//    void setSelectedDiskResources(List<? extends HasId> diskResourcesToSelect);
-
-//    void setSingleSelect();
 
     void setSouthWidget(IsWidget fl);
 
@@ -300,8 +256,6 @@ public interface DiskResourceView extends IsWidget,
     void unmaskSendToTreeViewer();
 
     void updateDetails(DiskResource info);
-
-//    void updateStore(DiskResource item);
 
     void updateTags(List<IplantTag> tags);
 }

@@ -468,7 +468,7 @@ public class DiskResourceViewToolbarImpl extends Composite implements DiskResour
                 presenter.createNewTabFile(config);
             }
         });
-        d.setHideOnButtonClick(true);;
+        d.setHideOnButtonClick(true);
         d.setSize("300px", "150px");
         d.show();
     }

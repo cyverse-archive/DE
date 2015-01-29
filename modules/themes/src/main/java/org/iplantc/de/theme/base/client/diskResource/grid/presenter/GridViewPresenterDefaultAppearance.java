@@ -83,4 +83,19 @@ public class GridViewPresenterDefaultAppearance implements GridView.Presenter.Ap
     public String metadataHelp() {
         return displayStrings.metadataHelp();
     }
+
+    @Override
+    public String shareLinkDialogHeight() {
+        return "130";
+    }
+
+    @Override
+    public int shareLinkDialogTextBoxWidth() {
+        return 500;
+    }
+
+    @Override
+    public String shareLinkDialogWidth() {
+        return "535";
+    }
 }

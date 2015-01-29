@@ -191,11 +191,6 @@ public class DiskResourceViewImpl extends Composite implements DiskResourceView 
     }
 
     @Override
-    public List<DiskResource> getSelectedDiskResources() {
-        return gridViewPresenter.getSelectedDiskResources();
-    }
-
-    @Override
     public DiskResourceViewToolbar getToolbar() {
         return toolbar;
     }

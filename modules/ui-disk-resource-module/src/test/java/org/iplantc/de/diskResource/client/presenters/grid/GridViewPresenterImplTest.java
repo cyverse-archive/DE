@@ -40,6 +40,7 @@ public class GridViewPresenterImplTest {
     @Mock GridView viewMock;
     @Mock DiskResourceView.FolderContentsRpcProxy folderContentsProxyMock;
     @Mock DiskResourceColumnModel columnModelMock;
+    @Mock GridView.Presenter.Appearance appearanceMock;
 
     private GridViewPresenterImpl uut;
 
@@ -47,7 +48,7 @@ public class GridViewPresenterImplTest {
         when(folderContentsProxyFactoryMock.createWithEntityType(eq(infoTypeFiltersMock), eq(entityTypeMock))).thenReturn(folderContentsProxyMock);
         when(gridViewFactoryMock.create(any(GridView.Presenter.class), any(ListStore.class), eq(folderContentsProxyMock))).thenReturn(viewMock);
         when(viewMock.getColumnModel()).thenReturn(columnModelMock);
-        uut = new GridViewPresenterImpl(gridViewFactoryMock, folderContentsProxyFactoryMock, navigationPresenterMock, infoTypeFiltersMock, entityTypeMock);
+        uut = new GridViewPresenterImpl(gridViewFactoryMock, folderContentsProxyFactoryMock, appearanceMock, navigationPresenterMock, infoTypeFiltersMock, entityTypeMock);
     }
 
     @Test public void placeHolderTest() {

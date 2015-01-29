@@ -111,6 +111,12 @@ public interface GridView extends IsWidget,
             String metadataFormInvalid();
 
             String metadataHelp();
+
+            String shareLinkDialogHeight();
+
+            int shareLinkDialogTextBoxWidth();
+
+            String shareLinkDialogWidth();
         }
 
         void deSelectDiskResources();
