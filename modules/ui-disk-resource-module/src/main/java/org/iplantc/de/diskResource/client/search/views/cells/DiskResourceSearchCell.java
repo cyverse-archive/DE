@@ -1,7 +1,6 @@
 package org.iplantc.de.diskResource.client.search.views.cells;
 
 import org.iplantc.de.diskResource.client.search.events.SaveDiskResourceQueryClickedEvent;
-import org.iplantc.de.diskResource.client.search.events.SubmitDiskResourceQueryEvent;
 import org.iplantc.de.diskResource.client.search.events.SubmitDiskResourceQueryEvent.HasSubmitDiskResourceQueryEventHandlers;
 import org.iplantc.de.diskResource.client.search.events.SubmitDiskResourceQueryEvent.SubmitDiskResourceQueryEventHandler;
 import org.iplantc.de.resources.client.messages.I18N;
@@ -15,7 +14,6 @@ import com.google.gwt.dom.client.Style.Cursor;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.inject.Inject;
-import com.google.inject.Provider;
 
 import com.sencha.gxt.cell.core.client.form.DateCell;
 import com.sencha.gxt.cell.core.client.form.TriggerFieldCell;
@@ -38,14 +36,16 @@ import com.sencha.gxt.widget.core.client.event.HideEvent.HideHandler;
  * @author jstroot
  * 
  */
-public class DiskResourceSearchCell extends TriggerFieldCell<String> implements HasExpandHandlers, HasCollapseHandlers, HasSubmitDiskResourceQueryEventHandlers, SaveDiskResourceQueryClickedEvent.HasSaveDiskResourceQueryClickedEventHandlers,
-        SubmitDiskResourceQueryEventHandler, SaveDiskResourceQueryClickedEvent.SaveDiskResourceQueryClickedEventHandler, HideHandler {
+public class DiskResourceSearchCell extends TriggerFieldCell<String> implements HasExpandHandlers,
+                                                                                HasCollapseHandlers,
+                                                                                HasSubmitDiskResourceQueryEventHandlers,
+                                                                                SaveDiskResourceQueryClickedEvent.HasSaveDiskResourceQueryClickedEventHandlers,
+                                                                                HideHandler {
 
     public interface DiskResourceSearchCellAppearance extends TriggerFieldAppearance {}
 
     private boolean expanded;
-    private DiskResourceQueryForm searchForm;
-    @Inject Provider<DiskResourceQueryForm> queryFormProvider;
+    private final DiskResourceQueryForm searchForm;
 
     /**
      * Creates a new date cell.
@@ -53,8 +53,11 @@ public class DiskResourceSearchCell extends TriggerFieldCell<String> implements 
      * @param appearance the date cell appearance
      */
     @Inject
-    public DiskResourceSearchCell(final DiskResourceSearchCellAppearance appearance) {
+    public DiskResourceSearchCell(final DiskResourceQueryForm searchForm,
+                                  final DiskResourceSearchCellAppearance appearance) {
         super(appearance);
+        this.searchForm = searchForm;
+        searchForm.addHideHandler(this);
     }
 
     @Override
@@ -69,12 +72,12 @@ public class DiskResourceSearchCell extends TriggerFieldCell<String> implements 
 
     @Override
     public HandlerRegistration addSaveDiskResourceQueryClickedEventHandler(SaveDiskResourceQueryClickedEvent.SaveDiskResourceQueryClickedEventHandler handler) {
-        return addHandler(handler, SaveDiskResourceQueryClickedEvent.TYPE);
+        return searchForm.addSaveDiskResourceQueryClickedEventHandler(handler);
     }
 
     @Override
     public HandlerRegistration addSubmitDiskResourceQueryEventHandler(SubmitDiskResourceQueryEventHandler handler) {
-        return addHandler(handler, SubmitDiskResourceQueryEvent.TYPE);
+        return searchForm.addSubmitDiskResourceQueryEventHandler(handler);
     }
 
     public void collapse(final Context context, final XElement parent) {
@@ -87,18 +90,6 @@ public class DiskResourceSearchCell extends TriggerFieldCell<String> implements 
         getSearchForm().hide();
         getInputElement(parent).focus();
         fireEvent(context, new CollapseEvent(context));
-    }
-
-    @Override
-    public void onSaveDiskResourceQueryClicked(SaveDiskResourceQueryClickedEvent event) {
-        // Refire
-        fireEvent(event);
-    }
-
-    @Override
-    public void doSubmitDiskResourceQuery(SubmitDiskResourceQueryEvent event) {
-        // Refire
-        fireEvent(event);
     }
 
     public void expand(final Context context, final XElement parent, String value, ValueUpdater<String> valueUpdater) {
@@ -139,12 +130,6 @@ public class DiskResourceSearchCell extends TriggerFieldCell<String> implements 
     }
 
     public DiskResourceQueryForm getSearchForm() {
-        if (searchForm == null) {
-            searchForm = queryFormProvider.get();
-            searchForm.addHideHandler(this);
-            searchForm.addSubmitDiskResourceQueryEventHandler(this);
-            searchForm.addSaveDiskResourceQueryClickedEventHandler(this);
-        }
         return searchForm;
     }
 
