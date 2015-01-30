@@ -7,7 +7,13 @@
 	xmlns:tree="urn:import:com.sencha.gxt.widget.core.client.tree"
 	xmlns:grid="urn:import:com.sencha.gxt.widget.core.client.grid"
 	xmlns:gwt="urn:import:com.google.gwt.widget.client" xmlns:button="urn:import:com.sencha.gxt.widget.core.client.button"
-	xmlns:toolbar="urn:import:com.sencha.gxt.widget.core.client.toolbar">
+	xmlns:toolbar="urn:import:com.sencha.gxt.widget.core.client.toolbar"
+	xmlns:selector="urn:import:org.iplantc.de.diskResource.client.views.widgets">
+
+
+	<ui:with field="margins5505" type="com.sencha.gxt.core.client.util.Margins">
+		<ui:attributes top="5" right="5" bottom="0" left="5" />
+	</ui:with>
 
 	<ui:with field="icons"
 		type="org.iplantc.de.resources.client.IplantResources" />
@@ -32,6 +38,13 @@
 		type="com.sencha.gxt.widget.core.client.grid.GridView">
 		<ui:attributes forceFit="true" autoFill="true" />
 	</ui:with>
+
+	<ui:with field="fileSelLabel"
+		type="com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer.VerticalLayoutData">
+		<ui:attributes width="1" height="-1" margins="{margins5505}" />
+	</ui:with>
+
+
 	<con:VerticalLayoutContainer ui:field="container">
 		<con:child layoutData="{layoutData}">
 			<con:HtmlLayoutContainer ui:field="intro"></con:HtmlLayoutContainer>
@@ -40,7 +53,7 @@
 			<form:FieldLabel ui:field="appfield" labelAlign="TOP"
 				toolTip="{strings.publicNameNote}">
 				<form:widget>
-					<form:TextField debugId="idTxtAppName" name="{strings.publicName}" 
+					<form:TextField debugId="idTxtAppName" name="{strings.publicName}"
 						ui:field="appName" allowBlank="false" toolTip="{strings.publicNameNote}">
 					</form:TextField>
 				</form:widget>
@@ -52,17 +65,59 @@
 				<form:widget>
 					<form:TextArea debugId="idTxtAppDesc" name="desc"
 						height="100" ui:field="appDesc" allowBlank="false"
-						toolTip="{strings.publicDescriptionNote}">
+						emptyText="{strings.publicDescriptionNote}">
 					</form:TextArea>
 				</form:widget>
 			</form:FieldLabel>
 		</con:child>
 		<con:child layoutData="{layoutData}">
-			<cp:ContentPanel ui:field="catPanel"
-				height="200">
+			<cp:ContentPanel ui:field="catPanel" height="200">
 				<tree:Tree ui:field="tree" autoExpand="true" />
 			</cp:ContentPanel>
 		</con:child>
+		<con:child layoutData="{fileSelLabel}">
+			<g:HTML HTML="Please select the folder containing test data for this App:" />
+		</con:child>
+		<con:child layoutData="{layoutData}">
+			<selector:FolderSelectorField ui:field="dataFolderSelector"
+				debugId="idDataSelector" validatePermissions="false" />
+		</con:child>
+		<con:child layoutData="{layoutData}">
+			<form:FieldLabel ui:field="descInputfield"
+				labelAlign="TOP">
+				<form:widget>
+					<form:TextArea debugId="idInputDesc" name="inputdesc"
+						height="100" ui:field="inputDesc" allowBlank="false"
+						emptyText="Number of files required, file format accepted etc...">
+					</form:TextArea>
+				</form:widget>
+			</form:FieldLabel>
+		</con:child>
+
+		<con:child layoutData="{layoutData}">
+			<form:FieldLabel ui:field="descParamfield"
+				labelAlign="TOP">
+				<form:widget>
+					<form:TextArea debugId="idParamDesc" name="paramdesc"
+						height="100" ui:field="paramDesc" allowBlank="false"
+						emptyText="Description of all required and optional parameters.">
+					</form:TextArea>
+				</form:widget>
+			</form:FieldLabel>
+		</con:child>
+
+		<con:child layoutData="{layoutData}">
+			<form:FieldLabel ui:field="descOutputfield"
+				labelAlign="TOP">
+				<form:widget>
+					<form:TextArea debugId="idOutputDesc" name="outputdesc"
+						height="100" ui:field="outputDesc" allowBlank="false"
+						emptyText="Expected No.of output file(s) and their file format(s).">
+					</form:TextArea>
+				</form:widget>
+			</form:FieldLabel>
+		</con:child>
+
 		<con:child layoutData="{layoutData}">
 			<cp:ContentPanel ui:field="refPanel" height="150">
 				<con:VerticalLayoutContainer>
