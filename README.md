@@ -1,10 +1,6 @@
 # DiscoveryEnvironment
-
-![](http://watson.iplantcollaborative.org/hudson/buildStatus/icon?job=DiscoveryEnvironment%20Dev)
-
-This project contains all of the code necessary to build the Discovery Environment webapp. 
-
-All of the code in this project used to reside in separate repositories, but were consolidated using _git subtree_.
+The Discovery Environment is a web portal for life science research, giving access to the 
+data store and compute of the iPlant cyber-infrastructure.
 
 This project is built with [Gradle](http://www.gradle.org/). Please refer to the Gradle documentation for an intro to the [build script basics](http://www.gradle.org/docs/current/userguide/tutorial_using_tasks.html).
 The top level is itself a gradle project, but there are multiple sub-projects defined within.
