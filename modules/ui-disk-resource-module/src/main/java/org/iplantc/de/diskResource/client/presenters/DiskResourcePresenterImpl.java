@@ -250,6 +250,7 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
         this.view.getToolbar().addManageMetadataEventHandler(this.gridViewPresenter);
         this.view.getToolbar().addManageCommentsEventHandler(this.gridViewPresenter);
 
+
         DiskResourceSearchField searchField = this.view.getToolbar().getSearchField();
         searchField.addSaveDiskResourceQueryClickedEventHandler(this.dataSearchPresenter);
         searchField.addSubmitDiskResourceQueryEventHandler(this.gridViewPresenter);

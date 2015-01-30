@@ -17,6 +17,9 @@ import org.iplantc.de.diskResource.client.events.ManageCommentsEvent;
 import org.iplantc.de.diskResource.client.events.ManageMetadataEvent;
 import org.iplantc.de.diskResource.client.events.ManageSharingEvent;
 import org.iplantc.de.diskResource.client.events.ShareByDataLinkEvent;
+import org.iplantc.de.diskResource.client.events.selection.SendToCogeSelected;
+import org.iplantc.de.diskResource.client.events.selection.SendToEnsemblSelected;
+import org.iplantc.de.diskResource.client.events.selection.SendToTreeViewerSelected;
 import org.iplantc.de.diskResource.client.search.views.DiskResourceSearchField;
 import org.iplantc.de.diskResource.client.DiskResourceView;
 import org.iplantc.de.diskResource.client.views.widgets.TabFileConfigDialog;
@@ -79,7 +82,7 @@ public class DiskResourceViewToolbarImpl extends Composite implements ToolbarVie
 
     private static DiskResourceViewToolbarUiBinder BINDER = GWT.create(DiskResourceViewToolbarUiBinder.class);
     private final UserInfo userInfo;
-    private DiskResourceView.Presenter presenter;
+    private ToolbarView.Presenter presenter;
     private List<DiskResource> selectedDiskResources;
     private Folder selectedFolder;
     @Inject DiskResourceUtil diskResourceUtil;
@@ -108,6 +111,21 @@ public class DiskResourceViewToolbarImpl extends Composite implements ToolbarVie
     }
 
     @Override
+    public HandlerRegistration addSendToCogeSelectedHandler(SendToCogeSelected.SendToCogeSelectedHandler handler) {
+        return addHandler(handler, SendToCogeSelected.TYPE);
+    }
+
+    @Override
+    public HandlerRegistration addSendToEnsemblSelectedHandler(SendToEnsemblSelected.SendToEnsemblSelectedHandler handler) {
+        return addHandler(handler, SendToEnsemblSelected.TYPE);
+    }
+
+    @Override
+    public HandlerRegistration addSendToTreeViewerSelectedHandler(SendToTreeViewerSelected.SendToTreeViewerSelectedHandler handler) {
+        return addHandler(handler, SendToTreeViewerSelected.TYPE);
+    }
+
+    @Override
     public HandlerRegistration addShareByDataLinkEventHandler(ShareByDataLinkEvent.ShareByDataLinkEventHandler handler) {
         return addHandler(handler, ShareByDataLinkEvent.TYPE);
     }
@@ -117,12 +135,12 @@ public class DiskResourceViewToolbarImpl extends Composite implements ToolbarVie
         return searchField;
     }
 
-    @Override
-    public void init(DiskResourceView.Presenter presenter, DiskResourceView view) {
-        this.presenter = presenter;
-        this.presenter.addDiskResourceSelectionChangedEventHandler(this);
-        this.presenter.addFolderSelectedEventHandler(this);
-    }
+//    @Override
+//    public void init(DiskResourceView.Presenter presenter, DiskResourceView view) {
+//        this.presenter = presenter;
+//        this.presenter.addDiskResourceSelectionChangedEventHandler(this);
+//        this.presenter.addFolderSelectedEventHandler(this);
+//    }
 
     @Override
     public void onDiskResourceSelectionChanged(DiskResourceSelectionChangedEvent event) {
@@ -332,12 +350,12 @@ public class DiskResourceViewToolbarImpl extends Composite implements ToolbarVie
 
     @UiHandler("bulkDownloadMi")
     void onBulkDownloadClicked(SelectionEvent<Item> event) {
-        presenter.doBulkDownload();
+        presenter.onBulkDownload();
     }
 
     @UiHandler("bulkUploadMi")
     void onBulkUploadClicked(SelectionEvent<Item> event) {
-        presenter.doBulkUpload();
+        presenter.onBulkUpload();
     }
 
     @UiHandler("createPublicLinkMi")
@@ -385,7 +403,7 @@ public class DiskResourceViewToolbarImpl extends Composite implements ToolbarVie
 
     @UiHandler("importFromUrlMi")
     void onImportFromUrlClicked(SelectionEvent<Item> event) {
-        presenter.doImportFromUrl();
+        presenter.onImportFromUrl();
     }
 
     @UiHandler("moveMi")
@@ -516,17 +534,20 @@ public class DiskResourceViewToolbarImpl extends Composite implements ToolbarVie
 
     @UiHandler("sendToCogeMi")
     void onSendToCogeClicked(SelectionEvent<Item> event) {
-        presenter.sendSelectedResourcesToCoge();
+//        presenter.sendSelectedResourcesToCoge();
+        fireEvent(new SendToCogeSelected(selectedDiskResources));
     }
 
     @UiHandler("sendToEnsemblMi")
     void onSendToEnsemblClicked(SelectionEvent<Item> event){
-        presenter.sendSelectedResourceToEnsembl();
+//        presenter.onSendSelectedResourceToEnsemblSelected();
+        fireEvent(new SendToEnsemblSelected(selectedDiskResources));
     }
 
     @UiHandler("sendToTreeViewerMi")
     void onSendToTreeViewerClicked(SelectionEvent<Item> event){
-        presenter.sendSelectedResourcesToTreeViewer();
+//        presenter.onSendSelectedResourcesToTreeViewerSelected();
+        fireEvent(new SendToTreeViewerSelected(selectedDiskResources));
     }
 
     //--------- Sharing -------------
@@ -546,13 +567,13 @@ public class DiskResourceViewToolbarImpl extends Composite implements ToolbarVie
     //---------- Download --------------
     @UiHandler("simpleDownloadMi")
     void onSimpleDownloadClicked(SelectionEvent<Item> event) {
-        presenter.doSimpleDownload();
+        presenter.onSimpleDownloadSelected();
     }
 
     //-------- Upload ---------------
     @UiHandler("simpleUploadMi")
     void onSimpleUploadClicked(SelectionEvent<Item> event) {
-        presenter.doSimpleUpload();
+        presenter.onSimpleUploadSelected();
     }
 
     @Override
