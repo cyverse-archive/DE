@@ -4,6 +4,10 @@ import org.iplantc.de.client.models.HasId;
 import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.diskResource.client.events.*;
+import org.iplantc.de.diskResource.client.events.selection.ManageCommentsSelectedEvent;
+import org.iplantc.de.diskResource.client.events.selection.ManageMetadataSelectedEvent;
+import org.iplantc.de.diskResource.client.events.selection.ManageSharingSelectedEvent;
+import org.iplantc.de.diskResource.client.events.selection.ShareByDataLinkSelectedEvent;
 import org.iplantc.de.diskResource.client.presenters.proxy.FolderContentsLoadConfig;
 import org.iplantc.de.diskResource.client.search.events.SubmitDiskResourceQueryEvent;
 import org.iplantc.de.diskResource.client.views.grid.DiskResourceColumnModel;
@@ -80,11 +84,11 @@ public interface GridView extends IsWidget,
     }
 
     interface Presenter extends DiskResourceNameSelectedEvent.DiskResourceNameSelectedEventHandler,
-                                ManageSharingEvent.ManageSharingEventHandler,
-                                ManageMetadataEvent.ManageMetadataEventHandler,
-                                ShareByDataLinkEvent.ShareByDataLinkEventHandler,
+                                ManageSharingSelectedEvent.ManageSharingSelectedEventHandler,
+                                ManageMetadataSelectedEvent.ManageMetadataSelectedEventHandler,
+                                ShareByDataLinkSelectedEvent.ShareByDataLinkSelectedEventHandler,
                                 RequestDiskResourceFavoriteEvent.RequestDiskResourceFavoriteEventHandler,
-                                ManageCommentsEvent.ManageCommentsEventHandler,
+                                ManageCommentsSelectedEvent.ManageCommentsSelectedEventHandler,
                                 FolderSelectionEvent.FolderSelectionEventHandler,
                                 SubmitDiskResourceQueryEvent.SubmitDiskResourceQueryEventHandler {
 

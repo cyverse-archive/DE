@@ -12,7 +12,7 @@ import org.iplantc.de.diskResource.client.GridView;
 import org.iplantc.de.diskResource.client.NavigationView;
 import org.iplantc.de.diskResource.client.ToolbarView;
 import org.iplantc.de.diskResource.client.events.DiskResourceSelectionChangedEvent;
-import org.iplantc.de.diskResource.client.events.ManageSharingEvent;
+import org.iplantc.de.diskResource.client.events.selection.ManageSharingSelectedEvent;
 import org.iplantc.de.diskResource.share.DiskResourceModule;
 import org.iplantc.de.resources.client.IplantResources;
 import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
@@ -131,9 +131,9 @@ public class DiskResourceViewImpl extends Composite implements DiskResourceView 
     }
 
     @Override
-    public HandlerRegistration addManageSharingEventHandler(ManageSharingEvent.ManageSharingEventHandler handler) {
+    public HandlerRegistration addManageSharingSelectedEventHandler(ManageSharingSelectedEvent.ManageSharingSelectedEventHandler handler) {
         // FIXME Migrate to details view
-        return addHandler(handler, ManageSharingEvent.TYPE);
+        return addHandler(handler, ManageSharingSelectedEvent.TYPE);
     }
 
     @Override
@@ -498,7 +498,7 @@ public class DiskResourceViewImpl extends Composite implements DiskResourceView 
             // FIXME This will be migrated to Details MVP
             final List<DiskResource> selectedDiskResources = gridViewPresenter.getSelectedDiskResources();
             Preconditions.checkArgument(selectedDiskResources.size() == 1);
-            fireEvent(new ManageSharingEvent(selectedDiskResources.get(0)));
+            fireEvent(new ManageSharingSelectedEvent(selectedDiskResources.get(0)));
         }
     }
 

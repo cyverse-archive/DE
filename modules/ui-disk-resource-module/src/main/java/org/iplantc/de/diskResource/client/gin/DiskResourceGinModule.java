@@ -54,7 +54,7 @@ public class DiskResourceGinModule extends AbstractGinModule {
 
         // Disk Resource Views
         bind(new TypeLiteral<TreeStore<Folder>>() {}).toProvider(DiskResourceTreeStoreProvider.class);
-        bind(ToolbarView.class).to(DiskResourceViewToolbarImpl.class);
+//        bind(ToolbarView.class).to(DiskResourceViewToolbarImpl.class);
         install(new GinFactoryModuleBuilder()
                     .implement(DiskResourceView.class, DiskResourceViewImpl.class)
                     .build(DiskResourceViewFactory.class));
@@ -85,6 +85,11 @@ public class DiskResourceGinModule extends AbstractGinModule {
         install(new GinFactoryModuleBuilder()
                     .implement(GridView.class, GridViewImpl.class)
                     .build(GridViewFactory.class));
+
+        // Toolbar
+        install(new GinFactoryModuleBuilder()
+                    .implement(ToolbarView.class, DiskResourceViewToolbarImpl.class)
+                    .build(ToolbarViewFactory.class));
     }
 
 

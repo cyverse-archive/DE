@@ -12,11 +12,11 @@ import org.iplantc.de.diskResource.client.views.grid.cells.DiskResourceFavoriteC
 import org.iplantc.de.diskResource.client.views.grid.cells.DiskResourceNameCell;
 import org.iplantc.de.diskResource.client.views.grid.cells.DiskResourcePathCell;
 import org.iplantc.de.diskResource.client.events.DiskResourceNameSelectedEvent;
-import org.iplantc.de.diskResource.client.events.ManageCommentsEvent;
-import org.iplantc.de.diskResource.client.events.ManageMetadataEvent;
-import org.iplantc.de.diskResource.client.events.ManageSharingEvent;
+import org.iplantc.de.diskResource.client.events.selection.ManageCommentsSelectedEvent;
+import org.iplantc.de.diskResource.client.events.selection.ManageMetadataSelectedEvent;
+import org.iplantc.de.diskResource.client.events.selection.ManageSharingSelectedEvent;
 import org.iplantc.de.diskResource.client.events.RequestDiskResourceFavoriteEvent;
-import org.iplantc.de.diskResource.client.events.ShareByDataLinkEvent;
+import org.iplantc.de.diskResource.client.events.selection.ShareByDataLinkSelectedEvent;
 import org.iplantc.de.diskResource.share.DiskResourceModule;
 
 import com.google.gwt.cell.client.AbstractCell;
@@ -40,11 +40,11 @@ import java.util.List;
  * @author jstroot
  */
 public class DiskResourceColumnModel extends ColumnModel<DiskResource> implements DiskResourceNameSelectedEvent.HasDiskResourceNameSelectedEventHandlers,
-                                                                                  ShareByDataLinkEvent.HasShareByDataLinkEventHandlers,
-                                                                                  ManageSharingEvent.HasManageSharingEventHandlers,
-                                                                                  ManageMetadataEvent.HasManageMetadataEventHandlers,
+                                                                                  ShareByDataLinkSelectedEvent.HasShareByDataLinkSelectedEventHandlers,
+                                                                                  ManageSharingSelectedEvent.HasManageSharingSelectedEventHandlers,
+                                                                                  ManageMetadataSelectedEvent.HasManageMetadataSelectedEventHandlers,
                                                                                   RequestDiskResourceFavoriteEvent.HasManageFavoritesEventHandlers,
-                                                                                  ManageCommentsEvent.HasManageCommentsEventHandlers,
+                                                                                  ManageCommentsSelectedEvent.HasManageCommentsSelectedEventHandlers,
                                                                                   DiskResourcePathSelectedEvent.HasDiskResourcePathSelectedEventHandlers {
 
 
@@ -134,18 +134,18 @@ public class DiskResourceColumnModel extends ColumnModel<DiskResource> implement
     }
 
     @Override
-    public HandlerRegistration addManageMetadataEventHandler(ManageMetadataEvent.ManageMetadataEventHandler handler) {
-        return ensureHandlers().addHandler(ManageMetadataEvent.TYPE, handler);
+    public HandlerRegistration addManageMetadataSelectedEventHandler(ManageMetadataSelectedEvent.ManageMetadataSelectedEventHandler handler) {
+        return ensureHandlers().addHandler(ManageMetadataSelectedEvent.TYPE, handler);
     }
 
     @Override
-    public HandlerRegistration addManageSharingEventHandler(ManageSharingEvent.ManageSharingEventHandler handler) {
-        return ensureHandlers().addHandler(ManageSharingEvent.TYPE, handler);
+    public HandlerRegistration addManageSharingSelectedEventHandler(ManageSharingSelectedEvent.ManageSharingSelectedEventHandler handler) {
+        return ensureHandlers().addHandler(ManageSharingSelectedEvent.TYPE, handler);
     }
 
     @Override
-    public HandlerRegistration addShareByDataLinkEventHandler(ShareByDataLinkEvent.ShareByDataLinkEventHandler handler) {
-        return ensureHandlers().addHandler(ShareByDataLinkEvent.TYPE, handler);
+    public HandlerRegistration addShareByDataLinkSelectedEventHandler(ShareByDataLinkSelectedEvent.ShareByDataLinkSelectedEventHandler handler) {
+        return ensureHandlers().addHandler(ShareByDataLinkSelectedEvent.TYPE, handler);
     }
     
     @Override
@@ -154,8 +154,8 @@ public class DiskResourceColumnModel extends ColumnModel<DiskResource> implement
     }
 
     @Override
-    public HandlerRegistration addManageCommentsEventHandler(ManageCommentsEvent.ManageCommentsEventHandler handler) {
-        return ensureHandlers().addHandler(ManageCommentsEvent.TYPE, handler);
+    public HandlerRegistration addManageCommentsSelectedEventHandler(ManageCommentsSelectedEvent.ManageCommentsSelectedEventHandler handler) {
+        return ensureHandlers().addHandler(ManageCommentsSelectedEvent.TYPE, handler);
     }
 
     public void setCheckboxColumnHidden(boolean hidden) {

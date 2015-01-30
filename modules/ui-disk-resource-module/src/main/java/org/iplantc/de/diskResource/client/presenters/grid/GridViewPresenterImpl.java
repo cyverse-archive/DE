@@ -24,11 +24,11 @@ import org.iplantc.de.diskResource.client.NavigationView;
 import org.iplantc.de.diskResource.client.events.DiskResourceNameSelectedEvent;
 import org.iplantc.de.diskResource.client.events.DiskResourcePathSelectedEvent;
 import org.iplantc.de.diskResource.client.events.FolderSelectionEvent;
-import org.iplantc.de.diskResource.client.events.ManageCommentsEvent;
-import org.iplantc.de.diskResource.client.events.ManageMetadataEvent;
-import org.iplantc.de.diskResource.client.events.ManageSharingEvent;
+import org.iplantc.de.diskResource.client.events.selection.ManageCommentsSelectedEvent;
+import org.iplantc.de.diskResource.client.events.selection.ManageMetadataSelectedEvent;
+import org.iplantc.de.diskResource.client.events.selection.ManageSharingSelectedEvent;
 import org.iplantc.de.diskResource.client.events.RequestDiskResourceFavoriteEvent;
-import org.iplantc.de.diskResource.client.events.ShareByDataLinkEvent;
+import org.iplantc.de.diskResource.client.events.selection.ShareByDataLinkSelectedEvent;
 import org.iplantc.de.diskResource.client.events.ShowFilePreviewEvent;
 import org.iplantc.de.diskResource.client.gin.factory.DataSharingDialogFactory;
 import org.iplantc.de.diskResource.client.gin.factory.FolderContentsRpcProxyFactory;
@@ -121,11 +121,11 @@ public class GridViewPresenterImpl implements GridView.Presenter,
         // Wire up Column Model events
         DiskResourceColumnModel cm = this.view.getColumnModel();
         cm.addDiskResourceNameSelectedEventHandler(this);
-        cm.addManageSharingEventHandler(this);
-        cm.addManageMetadataEventHandler(this);
-        cm.addShareByDataLinkEventHandler(this);
+        cm.addManageSharingSelectedEventHandler(this);
+        cm.addManageMetadataSelectedEventHandler(this);
+        cm.addShareByDataLinkSelectedEventHandler(this);
         cm.addManageFavoritesEventHandler(this);
-        cm.addManageCommentsEventHandler(this);
+        cm.addManageCommentsSelectedEventHandler(this);
         cm.addDiskResourcePathSelectedEventHandler(this);
 
     }
@@ -261,7 +261,7 @@ public class GridViewPresenterImpl implements GridView.Presenter,
 
 
     @Override
-    public void onManageComments(ManageCommentsEvent event) {
+    public void onManageCommentsSelected(ManageCommentsSelectedEvent event) {
         DiskResource dr = event.getDiskResource();
         // call to retrieve comments...and show dialog
         Window d = new Window();
@@ -276,7 +276,7 @@ public class GridViewPresenterImpl implements GridView.Presenter,
     }
 
     @Override
-    public void onRequestManageMetadata(ManageMetadataEvent event) {
+    public void onRequestManageMetadataSelected(ManageMetadataSelectedEvent event) {
         DiskResource selected = event.getDiskResource();
 
         // FIXME Convert to sovereign dialog
@@ -319,7 +319,7 @@ public class GridViewPresenterImpl implements GridView.Presenter,
     }
 
     @Override
-    public void onRequestManageSharing(ManageSharingEvent event) {
+    public void onRequestManageSharingSelected(ManageSharingSelectedEvent event) {
         DataSharingDialog dlg = dataSharingDialogFactory.createDataSharingDialog(Sets.newHashSet(event.getDiskResourceToShare()));
         dlg.show();
         dlg.addDialogHideHandler(new DialogHideEvent.DialogHideHandler() {
@@ -336,7 +336,7 @@ public class GridViewPresenterImpl implements GridView.Presenter,
     }
 
     @Override
-    public void onRequestShareByDataLink(ShareByDataLinkEvent event) {
+    public void onRequestShareByDataLinkSelected(ShareByDataLinkSelectedEvent event) {
         DiskResource toBeShared = event.getDiskResourceToShare();
         if (toBeShared instanceof Folder) {
             showShareLink(GWT.getHostPageBaseURL() + "?type=data&folder=" + toBeShared.getPath());

@@ -7,15 +7,12 @@ import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.client.models.tags.IplantTag;
 import org.iplantc.de.client.services.DiskResourceServiceFacade;
-import org.iplantc.de.commons.client.views.window.configs.FileViewerWindowConfig;
-import org.iplantc.de.commons.client.views.window.configs.PathListWindowConfig;
-import org.iplantc.de.commons.client.views.window.configs.TabularFileViewerWindowConfig;
 import org.iplantc.de.diskResource.client.events.DiskResourceSelectionChangedEvent;
 import org.iplantc.de.diskResource.client.events.FolderSelectionEvent;
-import org.iplantc.de.diskResource.client.events.ManageSharingEvent;
 import org.iplantc.de.diskResource.client.events.RequestDiskResourceFavoriteEvent;
 import org.iplantc.de.diskResource.client.events.RootFoldersRetrievedEvent;
 import org.iplantc.de.diskResource.client.events.SavedSearchesRetrievedEvent;
+import org.iplantc.de.diskResource.client.events.selection.ManageSharingSelectedEvent;
 import org.iplantc.de.diskResource.client.presenters.proxy.FolderContentsLoadConfig;
 import org.iplantc.de.diskResource.client.presenters.proxy.SelectFolderByPathLoadHandler;
 import org.iplantc.de.diskResource.client.search.events.SubmitDiskResourceQueryEvent.HasSubmitDiskResourceQueryEventHandlers;
@@ -40,7 +37,7 @@ import java.util.Set;
 public interface DiskResourceView extends IsWidget,
                                           IsMaskable,
                                           Taggable,
-                                          ManageSharingEvent.HasManageSharingEventHandlers,
+                                          ManageSharingSelectedEvent.HasManageSharingSelectedEventHandlers,
                                           DiskResourceSelectionChangedEvent.DiskResourceSelectionChangedEventHandler {
 
     interface DiskResourceViewToolbarAppearance {
@@ -92,15 +89,15 @@ public interface DiskResourceView extends IsWidget,
 
         Folder convertToFolder(DiskResource selectedItem);
 
-        void createNewFolder();
+//        void createNewFolder();
 
-        void createNewPlainTextFile(FileViewerWindowConfig config);
+//        void createNewPlainTextFile(FileViewerWindowConfig config);
 
-        void createNewTabFile(TabularFileViewerWindowConfig config);
+//        void createNewTabFile(TabularFileViewerWindowConfig config);
 
         void deSelectDiskResources();
 
-        void deleteSelectedResources();
+//        void deleteSelectedResources();
 
         void detachTag(IplantTag tag);
 
@@ -108,13 +105,13 @@ public interface DiskResourceView extends IsWidget,
 
         void displayAndCacheDiskResourceInfo(DiskResource info);
 
-        void doBulkDownload();
+//        void doBulkDownload();
 
-        void doBulkUpload();
+//        void doBulkUpload();
 
         void doCreateNewFolder(Folder parentFolder, String folderName);
 
-        void doImportFromUrl();
+//        void doImportFromUrl();
 
         void doMoveDiskResources(Folder targetFolder, List<DiskResource> resources);
 
@@ -122,13 +119,13 @@ public interface DiskResourceView extends IsWidget,
 
         void doSearchTaggedWithResources(Set<IplantTag> tags);
 
-        void doSimpleDownload();
+//        void doSimpleDownload();
 
-        void doSimpleUpload();
+//        void doSimpleUpload();
 
-        void editSelectedFile();
+//        void editSelectedFile();
 
-        void editSelectedResourceInfoType();
+//        void editSelectedResourceInfoType();
 
         void emptyTrash();
 
@@ -145,37 +142,37 @@ public interface DiskResourceView extends IsWidget,
         void go(HasOneWidget container, HasPath folderToSelect,
                 List<? extends HasId> diskResourcesToSelect);
 
-        void manageSelectedResourceDataLinks();
+//        void manageSelectedResourceDataLinks();
 
-        void moveSelectedDiskResources();
+//        void moveSelectedDiskResources();
 
-        void moveSelectedDiskResourcesToTrash();
+//        void moveSelectedDiskResourcesToTrash();
 
         void onInfoTypeClick(DiskResource dr, String infoType);
 
-        void onNewMdFile(FileViewerWindowConfig config);
+//        void onNewMdFile(FileViewerWindowConfig config);
 
-        void onNewPathListFileClicked(PathListWindowConfig config);
+//        void onNewPathListFileClicked(PathListWindowConfig config);
 
-        void onNewPerlFile(FileViewerWindowConfig config);
+//        void onNewPerlFile(FileViewerWindowConfig config);
 
-        void onNewPythonFile(FileViewerWindowConfig config);
+//        void onNewPythonFile(FileViewerWindowConfig config);
 
-        void onNewRFile(FileViewerWindowConfig config);
+//        void onNewRFile(FileViewerWindowConfig config);
 
-        void onNewShellScript(FileViewerWindowConfig config);
+//        void onNewShellScript(FileViewerWindowConfig config);
 
-        void openNewWindow(boolean atCurrentLocation);
+//        void openNewWindow(boolean atCurrentLocation);
 
-        void refreshSelectedFolder();
+//        void refreshSelectedFolder();
 
-        void renameSelectedResource();
+//        void renameSelectedResource();
 
         void resetInfoType();
 
-        void restoreSelectedResources();
+//        void restoreSelectedResources();
 
-        void selectTrashFolder();
+//        void selectTrashFolder();
 
         void sendSelectedResourceToEnsembl();
 

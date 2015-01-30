@@ -244,11 +244,11 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
         this.navigationPresenter.setMaskable(view);
 
 
-        this.view.getToolbar().addShareByDataLinkEventHandler(this.gridViewPresenter);
-        this.view.addManageSharingEventHandler(this.gridViewPresenter);
-        this.view.getToolbar().addManageSharingEventHandler(this.gridViewPresenter);
-        this.view.getToolbar().addManageMetadataEventHandler(this.gridViewPresenter);
-        this.view.getToolbar().addManageCommentsEventHandler(this.gridViewPresenter);
+        this.view.getToolbar().addShareByDataLinkSelectedEventHandler(this.gridViewPresenter);
+        this.view.addManageSharingSelectedEventHandler(this.gridViewPresenter);
+        this.view.getToolbar().addManageSharingSelectedEventHandler(this.gridViewPresenter);
+        this.view.getToolbar().addManageMetadataSelectedEventHandler(this.gridViewPresenter);
+        this.view.getToolbar().addManageCommentsSelectedEventHandler(this.gridViewPresenter);
 
 
         DiskResourceSearchField searchField = this.view.getToolbar().getSearchField();
@@ -618,76 +618,77 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
         view.asWidget().ensureDebugId(baseID + DiskResourceModule.Ids.DISK_RESOURCE_VIEW);
     }
 
-    @Override
-    public void createNewFolder() {
-        CreateFolderDialog dlg = new CreateFolderDialog(navigationPresenter.getSelectedUploadFolder(), this);
-        dlg.show();
-    }
+//    @Override
+//    public void createNewFolder() {
+//        CreateFolderDialog dlg = new CreateFolderDialog(navigationPresenter.getSelectedUploadFolder(), this);
+//        dlg.show();
+//    }
 
-    @Override
-    public void createNewPlainTextFile(FileViewerWindowConfig config) {
-        config.setParentFolder(navigationPresenter.getSelectedUploadFolder());
-        CreateNewFileEvent event = new CreateNewFileEvent(config);
-        eventBus.fireEvent(event);
-    }
+//    @Override
+//    public void createNewPlainTextFile(FileViewerWindowConfig config) {
+//        config.setParentFolder(navigationPresenter.getSelectedUploadFolder());
+//        CreateNewFileEvent event = new CreateNewFileEvent(config);
+//        eventBus.fireEvent(event);
+//    }
+//
+//    @Override
+//    public void onNewRFile(FileViewerWindowConfig config) {
+//        config.setParentFolder(navigationPresenter.getSelectedUploadFolder());
+//        CreateNewFileEvent event = new CreateNewFileEvent(config);
+//        eventBus.fireEvent(event);
+//    }
 
-    @Override
-    public void onNewRFile(FileViewerWindowConfig config) {
-        config.setParentFolder(navigationPresenter.getSelectedUploadFolder());
-        CreateNewFileEvent event = new CreateNewFileEvent(config);
-        eventBus.fireEvent(event);
-    }
+//    @Override
+//    public void onNewPerlFile(FileViewerWindowConfig config) {
+//        config.setParentFolder(navigationPresenter.getSelectedUploadFolder());
+//        CreateNewFileEvent event = new CreateNewFileEvent(config);
+//        eventBus.fireEvent(event);
+//    }
+//
+//    @Override
+//    public void onNewPythonFile(FileViewerWindowConfig config) {
+//        config.setParentFolder(navigationPresenter.getSelectedUploadFolder());
+//        CreateNewFileEvent event = new CreateNewFileEvent(config);
+//        eventBus.fireEvent(event);
+//    }
+//
+//    @Override
+//    public void onNewShellScript(FileViewerWindowConfig config) {
+//        config.setParentFolder(navigationPresenter.getSelectedUploadFolder());
+//        CreateNewFileEvent event = new CreateNewFileEvent(config);
+//        eventBus.fireEvent(event);
+//    }
 
-    @Override
-    public void onNewPerlFile(FileViewerWindowConfig config) {
-        config.setParentFolder(navigationPresenter.getSelectedUploadFolder());
-        CreateNewFileEvent event = new CreateNewFileEvent(config);
-        eventBus.fireEvent(event);
-    }
+//    @Override
+//    public void onNewMdFile(FileViewerWindowConfig config) {
+//        config.setParentFolder(navigationPresenter.getSelectedUploadFolder());
+//        CreateNewFileEvent event = new CreateNewFileEvent(config);
+//        eventBus.fireEvent(event);
+//    }
+//
+//    @Override
+//    public void createNewTabFile(TabularFileViewerWindowConfig config) {
+//        config.setParentFolder(navigationPresenter.getSelectedUploadFolder());
+//        CreateNewFileEvent event = new CreateNewFileEvent(config);
+//        eventBus.fireEvent(event);
+//    }
+//
+//    @Override
+//    public void onNewPathListFileClicked(PathListWindowConfig config){
+//        config.setParentFolder(navigationPresenter.getSelectedUploadFolder());
+//        eventBus.fireEvent(new CreateNewFileEvent(config));
+//    }
 
-    @Override
-    public void onNewPythonFile(FileViewerWindowConfig config) {
-        config.setParentFolder(navigationPresenter.getSelectedUploadFolder());
-        CreateNewFileEvent event = new CreateNewFileEvent(config);
-        eventBus.fireEvent(event);
-    }
-
-    @Override
-    public void onNewShellScript(FileViewerWindowConfig config) {
-        config.setParentFolder(navigationPresenter.getSelectedUploadFolder());
-        CreateNewFileEvent event = new CreateNewFileEvent(config);
-        eventBus.fireEvent(event);
-    }
-
-    @Override
-    public void onNewMdFile(FileViewerWindowConfig config) {
-        config.setParentFolder(navigationPresenter.getSelectedUploadFolder());
-        CreateNewFileEvent event = new CreateNewFileEvent(config);
-        eventBus.fireEvent(event);
-    }
-
-    @Override
-    public void createNewTabFile(TabularFileViewerWindowConfig config) {
-        config.setParentFolder(navigationPresenter.getSelectedUploadFolder());
-        CreateNewFileEvent event = new CreateNewFileEvent(config);
-        eventBus.fireEvent(event);
-    }
-
-    @Override
-    public void onNewPathListFileClicked(PathListWindowConfig config){
-        config.setParentFolder(navigationPresenter.getSelectedUploadFolder());
-        eventBus.fireEvent(new CreateNewFileEvent(config));
-    }
     @Override
     public void doCreateNewFolder(Folder parentFolder, final String newFolderName) {
         view.mask(displayStrings.loadingMask());
         diskResourceService.createFolder(parentFolder, newFolderName, new CreateFolderCallback(parentFolder, view));
     }
 
-    @Override
-    public void doSimpleDownload() {
-        eventBus.fireEvent(new RequestSimpleDownloadEvent(this, getSelectedDiskResources(), navigationPresenter.getSelectedFolder()));
-    }
+//    @Override
+//    public void doSimpleDownload() {
+//        eventBus.fireEvent(new RequestSimpleDownloadEvent(this, getSelectedDiskResources(), navigationPresenter.getSelectedFolder()));
+//    }
 
     @Override
     public void doBulkDownload() {
