@@ -145,7 +145,7 @@ public class BelphegorAppsViewPresenterImpl extends AppsViewPresenterImpl implem
         // Check if a new AppCategory can be created in the target AppCategory.
         if ((!selectedAppCategory.getName().contains("Public Apps"))
                 && selectedAppCategory.getAppCount() > 0
-                && selectedAppCategory.getCategories().size() == 0
+                && (selectedAppCategory.getCategories() != null && selectedAppCategory.getCategories().size() == 0)
                 || ((properties.getDefaultTrashAppCategoryId().equalsIgnoreCase(selectedAppCategory.getId())) || properties.getDefaultBetaAppCategoryId()
                                                                                                                            .equalsIgnoreCase(selectedAppCategory.getId()))) {
             ErrorHandler.post(appearance.addCategoryPermissionError());
