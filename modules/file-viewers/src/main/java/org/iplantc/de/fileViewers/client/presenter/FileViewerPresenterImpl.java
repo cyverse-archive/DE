@@ -30,6 +30,7 @@ import org.iplantc.de.fileViewers.client.events.DirtyStateChangedEvent;
 import org.iplantc.de.fileViewers.client.views.ExternalVisualizationURLViewerImpl;
 import org.iplantc.de.fileViewers.client.views.SaveAsDialogCancelSelectHandler;
 import org.iplantc.de.fileViewers.client.views.SaveAsDialogOkSelectHandler;
+import org.iplantc.de.fileViewers.client.views.StructuredTextViewer;
 import org.iplantc.de.fileViewers.client.views.TextViewerImpl;
 
 import static com.google.common.base.Preconditions.checkArgument;
@@ -234,7 +235,9 @@ public class FileViewerPresenterImpl implements FileViewer.Presenter, FileSavedE
                 StructuredText structuredText = getStructuredText(result);
                 for(FileViewer view : viewers){
                     // FIXME Possible issue with data compatibility between views
-                    view.setData(structuredText);
+                                                   if (view instanceof StructuredTextViewer) {
+                        view.setData(structuredText);
+                    }
                 }
                 simpleContainer.unmask();
             }
