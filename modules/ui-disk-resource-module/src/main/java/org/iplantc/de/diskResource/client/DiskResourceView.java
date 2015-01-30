@@ -12,17 +12,13 @@ import org.iplantc.de.commons.client.views.window.configs.PathListWindowConfig;
 import org.iplantc.de.commons.client.views.window.configs.TabularFileViewerWindowConfig;
 import org.iplantc.de.diskResource.client.events.DiskResourceSelectionChangedEvent;
 import org.iplantc.de.diskResource.client.events.FolderSelectionEvent;
-import org.iplantc.de.diskResource.client.events.ManageCommentsEvent;
-import org.iplantc.de.diskResource.client.events.ManageMetadataEvent;
 import org.iplantc.de.diskResource.client.events.ManageSharingEvent;
 import org.iplantc.de.diskResource.client.events.RequestDiskResourceFavoriteEvent;
 import org.iplantc.de.diskResource.client.events.RootFoldersRetrievedEvent;
 import org.iplantc.de.diskResource.client.events.SavedSearchesRetrievedEvent;
-import org.iplantc.de.diskResource.client.events.ShareByDataLinkEvent;
 import org.iplantc.de.diskResource.client.presenters.proxy.FolderContentsLoadConfig;
 import org.iplantc.de.diskResource.client.presenters.proxy.SelectFolderByPathLoadHandler;
 import org.iplantc.de.diskResource.client.search.events.SubmitDiskResourceQueryEvent.HasSubmitDiskResourceQueryEventHandlers;
-import org.iplantc.de.diskResource.client.search.views.DiskResourceSearchField;
 import org.iplantc.de.tags.client.Taggable;
 
 import com.google.gwt.resources.client.ImageResource;
@@ -46,29 +42,6 @@ public interface DiskResourceView extends IsWidget,
                                           Taggable,
                                           ManageSharingEvent.HasManageSharingEventHandlers,
                                           DiskResourceSelectionChangedEvent.DiskResourceSelectionChangedEventHandler {
-
-    interface DiskResourceViewToolbar extends IsWidget,
-                                              ManageCommentsEvent.HasManageCommentsEventHandlers,
-                                              ManageMetadataEvent.HasManageMetadataEventHandlers,
-                                              ManageSharingEvent.HasManageSharingEventHandlers,
-                                              ShareByDataLinkEvent.HasShareByDataLinkEventHandlers {
-
-        DiskResourceSearchField getSearchField();
-
-        void init(DiskResourceView.Presenter presenter, DiskResourceView view);
-
-        void maskSendToCoGe();
-
-        void maskSendToEnsembl();
-
-        void maskSendToTreeViewer();
-
-        void unmaskSendToCoGe();
-
-        void unmaskSendToEnsembl();
-
-        void unmaskSendToTreeViewer();
-    }
 
     interface DiskResourceViewToolbarAppearance {
 
@@ -227,7 +200,7 @@ public interface DiskResourceView extends IsWidget,
     }
 
 
-    DiskResourceViewToolbar getToolbar();
+    ToolbarView getToolbar();
 
     void maskDetailsPanel();
 

@@ -1,4 +1,4 @@
-package org.iplantc.de.diskResource.client.views.widgets;
+package org.iplantc.de.diskResource.client.views.toolbar;
 
 import static org.iplantc.de.client.models.diskResources.PermissionValue.own;
 import static org.iplantc.de.client.models.diskResources.PermissionValue.read;
@@ -10,6 +10,7 @@ import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.client.models.search.DiskResourceQueryTemplate;
 import org.iplantc.de.diskResource.client.events.FolderSelectionEvent;
 import org.iplantc.de.diskResource.client.search.views.DiskResourceSearchField;
+import org.iplantc.de.diskResource.client.views.toolbar.DiskResourceViewToolbarImpl;
 
 import com.google.gwtmockito.GxtMockitoTestRunner;
 

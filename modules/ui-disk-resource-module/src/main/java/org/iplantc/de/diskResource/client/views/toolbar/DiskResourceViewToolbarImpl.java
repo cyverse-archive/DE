@@ -1,4 +1,4 @@
-package org.iplantc.de.diskResource.client.views.widgets;
+package org.iplantc.de.diskResource.client.views.toolbar;
 
 import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.client.models.diskResources.DiskResource;
@@ -10,6 +10,7 @@ import org.iplantc.de.commons.client.views.window.configs.ConfigFactory;
 import org.iplantc.de.commons.client.views.window.configs.FileViewerWindowConfig;
 import org.iplantc.de.commons.client.views.window.configs.PathListWindowConfig;
 import org.iplantc.de.commons.client.views.window.configs.TabularFileViewerWindowConfig;
+import org.iplantc.de.diskResource.client.ToolbarView;
 import org.iplantc.de.diskResource.client.events.DiskResourceSelectionChangedEvent;
 import org.iplantc.de.diskResource.client.events.FolderSelectionEvent;
 import org.iplantc.de.diskResource.client.events.ManageCommentsEvent;
@@ -18,6 +19,7 @@ import org.iplantc.de.diskResource.client.events.ManageSharingEvent;
 import org.iplantc.de.diskResource.client.events.ShareByDataLinkEvent;
 import org.iplantc.de.diskResource.client.search.views.DiskResourceSearchField;
 import org.iplantc.de.diskResource.client.DiskResourceView;
+import org.iplantc.de.diskResource.client.views.widgets.TabFileConfigDialog;
 import org.iplantc.de.diskResource.share.DiskResourceModule.Ids;
 
 import com.google.common.base.Preconditions;
@@ -45,7 +47,7 @@ import java.util.List;
 /**
  * @author jstroot
  */
-public class DiskResourceViewToolbarImpl extends Composite implements DiskResourceView.DiskResourceViewToolbar,
+public class DiskResourceViewToolbarImpl extends Composite implements ToolbarView,
                                                                       DiskResourceSelectionChangedEvent.DiskResourceSelectionChangedEventHandler,
                                                                       FolderSelectionEvent.FolderSelectionEventHandler {
 
@@ -80,7 +82,6 @@ public class DiskResourceViewToolbarImpl extends Composite implements DiskResour
     private DiskResourceView.Presenter presenter;
     private List<DiskResource> selectedDiskResources;
     private Folder selectedFolder;
-    private DiskResourceView view;
     @Inject DiskResourceUtil diskResourceUtil;
 
     @Inject
@@ -119,7 +120,6 @@ public class DiskResourceViewToolbarImpl extends Composite implements DiskResour
     @Override
     public void init(DiskResourceView.Presenter presenter, DiskResourceView view) {
         this.presenter = presenter;
-        this.view = view;
         this.presenter.addDiskResourceSelectionChangedEventHandler(this);
         this.presenter.addFolderSelectedEventHandler(this);
     }

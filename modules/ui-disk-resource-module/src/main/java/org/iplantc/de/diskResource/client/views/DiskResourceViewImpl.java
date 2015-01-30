@@ -10,6 +10,7 @@ import org.iplantc.de.commons.client.widgets.IPlantAnchor;
 import org.iplantc.de.diskResource.client.DiskResourceView;
 import org.iplantc.de.diskResource.client.GridView;
 import org.iplantc.de.diskResource.client.NavigationView;
+import org.iplantc.de.diskResource.client.ToolbarView;
 import org.iplantc.de.diskResource.client.events.DiskResourceSelectionChangedEvent;
 import org.iplantc.de.diskResource.client.events.ManageSharingEvent;
 import org.iplantc.de.diskResource.share.DiskResourceModule;
@@ -80,7 +81,7 @@ public class DiskResourceViewImpl extends Composite implements DiskResourceView 
     private final TagListPresenterFactory tagListPresenterFactory;
     private Presenter presenter;
 
-    DiskResourceViewToolbar toolbar;
+    ToolbarView toolbar;
 
     private final IplantDisplayStrings displayStrings;
 
@@ -100,7 +101,7 @@ public class DiskResourceViewImpl extends Composite implements DiskResourceView 
     Logger LOG = Logger.getLogger("DRV");
 
     @Inject
-    DiskResourceViewImpl(final DiskResourceViewToolbar viewToolbar,
+    DiskResourceViewImpl(final ToolbarView viewToolbar,
                          final IplantDisplayStrings displayStrings,
                          final DiskResourceUtil diskResourceUtil,
                          final TagListPresenterFactory tagListPresenterFactory,
@@ -191,7 +192,7 @@ public class DiskResourceViewImpl extends Composite implements DiskResourceView 
     }
 
     @Override
-    public DiskResourceViewToolbar getToolbar() {
+    public ToolbarView getToolbar() {
         return toolbar;
     }
 

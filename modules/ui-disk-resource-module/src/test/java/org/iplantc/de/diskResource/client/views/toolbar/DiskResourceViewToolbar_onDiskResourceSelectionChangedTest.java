@@ -1,4 +1,4 @@
-package org.iplantc.de.diskResource.client.views.widgets;
+package org.iplantc.de.diskResource.client.views.toolbar;
 
 import static org.iplantc.de.client.models.diskResources.PermissionValue.*;
 import org.iplantc.de.client.models.UserInfo;

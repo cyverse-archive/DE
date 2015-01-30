@@ -13,6 +13,7 @@ import org.iplantc.de.commons.client.info.IplantAnnouncer;
 import org.iplantc.de.diskResource.client.DiskResourceView;
 import org.iplantc.de.diskResource.client.GridView;
 import org.iplantc.de.diskResource.client.NavigationView;
+import org.iplantc.de.diskResource.client.ToolbarView;
 import org.iplantc.de.diskResource.client.gin.factory.DiskResourceViewFactory;
 import org.iplantc.de.diskResource.client.gin.factory.FolderContentsRpcProxyFactory;
 import org.iplantc.de.diskResource.client.gin.factory.GridViewPresenterFactory;
@@ -60,7 +61,8 @@ public class DiskResourcePresenterImplTest {
     @Mock UpdateSavedSearchesEvent eventMock;
 
     @Mock IplantAnnouncer mockAnnouncer;
-    @Mock DiskResourceView.DiskResourceViewToolbar mockToolbar;
+    @Mock
+    ToolbarView mockToolbar;
 
     @Mock DiskResourceSearchField mockSearchField;
     @Mock TreeStore<Folder> mockTreeStore;
