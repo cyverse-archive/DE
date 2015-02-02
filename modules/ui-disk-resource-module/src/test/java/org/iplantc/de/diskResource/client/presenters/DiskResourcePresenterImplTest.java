@@ -172,7 +172,6 @@ public class DiskResourcePresenterImplTest {
         when(mockGridViewPresenterFactory.create(any(NavigationView.Presenter.class),
                                                  anyList(),
                                                  any(TYPE.class))).thenReturn(mockGridViewPresenter);
-        when(mockView.getToolbar()).thenReturn(mockToolbar);
         when(mockToolbar.getSearchField()).thenReturn(mockSearchField);
         when(mockNavigationPresenter.getView()).thenReturn(mockNavigationView);
         when(mockGridViewPresenter.getView()).thenReturn(mockGridView);
