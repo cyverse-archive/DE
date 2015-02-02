@@ -53,6 +53,7 @@
                                      borders="true">
         <!-- Tool Bar -->
         <container:north layoutData="{northData}">
+            <views:ToolbarView ui:field="toolbar" />
         </container:north>
 
         <!-- Navigation Panel -->

@@ -27,58 +27,7 @@ public interface DiskResourceResources {
      *
      * @return image.
      */
-    ImageResource folderDelete();
-
-    /**
-     * Image resource.
-     *
-     * @return image.
-     */
-    ImageResource fileDelete();
-
-    /**
-     * Image resource.
-     *
-     * @return image.
-     */
-    ImageResource folderHome();
-
-    /**
-     * Image resource.
-     *
-     * @return image.
-     */
     ImageResource folderAdd();
-
-    /**
-     * Image resource.
-     *
-     * @return image.
-     */
-    ImageResource folderRename();
-
-    /**
-     * Image resource.
-     *
-     * @return image.
-     */
-    ImageResource importData();
-
-
-    /**
-     * Image resource.
-     *
-     * @return image.
-     */
-    ImageResource download();
-
-
-    /**
-     * Image resource.
-     *
-     * @return image.
-     */
-    ImageResource desktopUpload();
 
     /**
      * Image resource.
@@ -87,21 +36,12 @@ public interface DiskResourceResources {
      */
     ImageResource urlImport();
 
-
     /**
      * Image resource.
      *
      * @return image.
      */
-    ImageResource dataActionMenuIcon();
-
-
-    /**
-     * Image resource.
-     *
-     * @return image.
-     */
-	ImageResource exclamation();
+    ImageResource exclamation();
 
 
 }

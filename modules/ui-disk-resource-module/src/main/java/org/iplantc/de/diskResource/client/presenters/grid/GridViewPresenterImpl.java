@@ -24,11 +24,11 @@ import org.iplantc.de.diskResource.client.NavigationView;
 import org.iplantc.de.diskResource.client.events.DiskResourceNameSelectedEvent;
 import org.iplantc.de.diskResource.client.events.DiskResourcePathSelectedEvent;
 import org.iplantc.de.diskResource.client.events.FolderSelectionEvent;
-import org.iplantc.de.diskResource.client.events.selection.ManageCommentsSelectedEvent;
-import org.iplantc.de.diskResource.client.events.selection.ManageMetadataSelectedEvent;
-import org.iplantc.de.diskResource.client.events.selection.ManageSharingSelectedEvent;
+import org.iplantc.de.diskResource.client.events.selection.ManageCommentsSelected;
+import org.iplantc.de.diskResource.client.events.selection.ManageMetadataSelected;
+import org.iplantc.de.diskResource.client.events.selection.ManageSharingSelected;
 import org.iplantc.de.diskResource.client.events.RequestDiskResourceFavoriteEvent;
-import org.iplantc.de.diskResource.client.events.selection.ShareByDataLinkSelectedEvent;
+import org.iplantc.de.diskResource.client.events.selection.ShareByDataLinkSelected;
 import org.iplantc.de.diskResource.client.events.ShowFilePreviewEvent;
 import org.iplantc.de.diskResource.client.gin.factory.DataSharingDialogFactory;
 import org.iplantc.de.diskResource.client.gin.factory.FolderContentsRpcProxyFactory;
@@ -261,7 +261,7 @@ public class GridViewPresenterImpl implements GridView.Presenter,
 
 
     @Override
-    public void onManageCommentsSelected(ManageCommentsSelectedEvent event) {
+    public void onManageCommentsSelected(ManageCommentsSelected event) {
         DiskResource dr = event.getDiskResource();
         // call to retrieve comments...and show dialog
         Window d = new Window();
@@ -276,7 +276,7 @@ public class GridViewPresenterImpl implements GridView.Presenter,
     }
 
     @Override
-    public void onRequestManageMetadataSelected(ManageMetadataSelectedEvent event) {
+    public void onRequestManageMetadataSelected(ManageMetadataSelected event) {
         DiskResource selected = event.getDiskResource();
 
         // FIXME Convert to sovereign dialog
@@ -319,7 +319,7 @@ public class GridViewPresenterImpl implements GridView.Presenter,
     }
 
     @Override
-    public void onRequestManageSharingSelected(ManageSharingSelectedEvent event) {
+    public void onRequestManageSharingSelected(ManageSharingSelected event) {
         DataSharingDialog dlg = dataSharingDialogFactory.createDataSharingDialog(Sets.newHashSet(event.getDiskResourceToShare()));
         dlg.show();
         dlg.addDialogHideHandler(new DialogHideEvent.DialogHideHandler() {
@@ -336,7 +336,7 @@ public class GridViewPresenterImpl implements GridView.Presenter,
     }
 
     @Override
-    public void onRequestShareByDataLinkSelected(ShareByDataLinkSelectedEvent event) {
+    public void onRequestShareByDataLinkSelected(ShareByDataLinkSelected event) {
         DiskResource toBeShared = event.getDiskResourceToShare();
         if (toBeShared instanceof Folder) {
             showShareLink(GWT.getHostPageBaseURL() + "?type=data&folder=" + toBeShared.getPath());

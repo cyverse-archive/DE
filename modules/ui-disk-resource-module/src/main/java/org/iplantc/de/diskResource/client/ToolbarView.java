@@ -3,13 +3,9 @@ package org.iplantc.de.diskResource.client;
 import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.client.models.viewer.MimeType;
-import org.iplantc.de.diskResource.client.events.selection.ManageCommentsSelectedEvent;
-import org.iplantc.de.diskResource.client.events.selection.ManageMetadataSelectedEvent;
-import org.iplantc.de.diskResource.client.events.selection.ManageSharingSelectedEvent;
-import org.iplantc.de.diskResource.client.events.selection.SendToCogeSelected;
-import org.iplantc.de.diskResource.client.events.selection.SendToEnsemblSelected;
-import org.iplantc.de.diskResource.client.events.selection.SendToTreeViewerSelected;
-import org.iplantc.de.diskResource.client.events.selection.ShareByDataLinkSelectedEvent;
+import org.iplantc.de.diskResource.client.events.DiskResourceSelectionChangedEvent;
+import org.iplantc.de.diskResource.client.events.FolderSelectionEvent;
+import org.iplantc.de.diskResource.client.events.selection.*;
 import org.iplantc.de.diskResource.client.search.views.DiskResourceSearchField;
 
 import com.google.gwt.resources.client.ImageResource;
@@ -17,25 +13,195 @@ import com.google.gwt.user.client.ui.IsWidget;
 
 import java.util.List;
 
+/**
+ * @author jstroot
+ */
 public interface ToolbarView extends IsWidget,
-                                     ManageCommentsSelectedEvent.HasManageCommentsSelectedEventHandlers,
-                                     ManageMetadataSelectedEvent.HasManageMetadataSelectedEventHandlers,
-                                     ManageSharingSelectedEvent.HasManageSharingSelectedEventHandlers,
-                                     ShareByDataLinkSelectedEvent.HasShareByDataLinkSelectedEventHandlers,
+                                     ManageCommentsSelected.HasManageCommentsSelectedEventHandlers,
+                                     ManageMetadataSelected.HasManageMetadataSelectedEventHandlers,
+                                     ManageSharingSelected.HasManageSharingSelectedEventHandlers,
+                                     ShareByDataLinkSelected.HasShareByDataLinkSelectedEventHandlers,
                                      SendToEnsemblSelected.HasSendToEnsemblSelectedHandlers,
                                      SendToCogeSelected.HasSendToCogeSelectedHandlers,
-                                     SendToTreeViewerSelected.HasSendToTreeViewerSelectedHandlers
-{
+                                     SendToTreeViewerSelected.HasSendToTreeViewerSelectedHandlers,
+                                     BulkDownloadSelected.HasBulkDownloadSelectedEventHandlers,
+                                     BulkUploadSelected.HasBulkUploadSelectedEventHandlers,
+                                     DeleteDiskResourcesSelected.HasDeleteDiskResourcesSelectedEventHandlers,
+                                     EditInfoTypeSelected.HasEditInfoTypeSelectedEventHandlers,
+                                     EmptyTrashSelected.HasEmptyTrashSelectedHandlers,
+                                     MoveDiskResourcesSelected.HasMoveDiskResourcesSelectedHandlers,
+                                     RefreshFolderSelected.HasRefreshFolderSelectedHandlers,
+                                     RenameDiskResourceSelected.HasRenameDiskResourceSelectedHandlers,
+                                     RestoreDiskResourcesSelected.HasRestoreDiskResourceSelectedHandlers,
+                                     SimpleUploadSelected.HasSimpleUploadSelectedHandlers,
+                                     SimpleDownloadSelected.HasSimpleDownloadSelectedHandlers,
+                                     FolderSelectionEvent.FolderSelectionEventHandler,
+                                     DiskResourceSelectionChangedEvent.DiskResourceSelectionChangedEventHandler {
     interface Appearance {
 
         String newPathListMenuText();
 
         ImageResource newPathListMenuIcon();
+
+        ImageResource trashIcon();
+
+        String moveToTrashMenuItem();
+
+        ImageResource newMdFileIcon();
+
+        ImageResource newShellFileIcon();
+
+        ImageResource newPythonFileIcon();
+
+        ImageResource newPerlFileIcon();
+
+        ImageResource newRFileIcon();
+
+        ImageResource newDelimitedFileIcon();
+
+        String newTabularDataFileMenuItem();
+
+        ImageResource newPlainTexFileIcon();
+
+        String newPlainTextFileMenuItem();
+
+        ImageResource newFileMenuIcon();
+
+        String newFileMenu();
+
+        String duplicateMenuItem();
+
+        ImageResource newFolderIcon();
+
+        String newFolderMenuItem();
+
+        String newDataWindowAtLocMenuItem();
+
+        ImageResource addIcon();
+
+        String newWindow();
+
+        ImageResource importDataIcon();
+
+        String importFromUrlMenuItem();
+
+        String bulkUploadFromDesktop();
+
+        String simpleUploadFromDesktop();
+
+        String uploadMenu();
+
+        String editMenu();
+
+        String renameMenuItem();
+
+        ImageResource fileRenameIcon();
+
+        String editFileMenuItem();
+
+        String editCommentsMenuItem();
+
+        ImageResource userCommentIcon();
+
+        String editInfoTypeMenuItem();
+
+        ImageResource infoIcon();
+
+        String metadataMenuItem();
+
+        ImageResource metadataIcon();
+
+        String moveMenuItem();
+
+        ImageResource editIcon();
+
+        String downloadMenu();
+
+        String simpleDownloadMenuItem();
+
+        ImageResource downloadIcon();
+
+        String bulkDownloadMenuItem();
+
+        String shareMenu();
+
+        String shareWithCollaboratorsMenuItem();
+
+        ImageResource shareWithCollaboratorsIcon();
+
+        String createPublicLinkMenuItem();
+
+        ImageResource linkAddIcon();
+
+        String shareFolderLocationMenuItem();
+
+        ImageResource shareFolderLocationIcon();
+
+        String sendToCogeMenuItem();
+
+        ImageResource sendToCogeIcon();
+
+        String sendToEnsemblMenuItem();
+
+        ImageResource sendToEnsemblIcon();
+
+        String sendToTreeViewerMenuItem();
+
+        ImageResource sendToTreeViewerIcon();
+
+        String refresh();
+
+        String trashMenu();
+
+        String openTrashMenuItem();
+
+        ImageResource openTrashIcon();
+
+        String restore();
+
+        String emptyTrashMenuItem();
+
+        ImageResource emptyTrashIcon();
+
+        String deleteMenuItem();
+
+        ImageResource deleteIcon();
+
+        ImageResource refreshIcon();
+
+        String newRFileMenuItem();
+
+        String newPerlFileMenuItem();
+
+        String newPythonFileMenuItem();
+
+        String newShellFileMenuItem();
+
+        String newMdFileMenuItem();
     }
 
     interface Presenter {
 
-        void onBulkUploadSelected();
+        interface Appearance {
+
+            String createDelimitedFileDialogHeight();
+
+            String createDelimitedFileDialogWidth();
+
+            String done();
+
+            String emptyTrash();
+
+            String emptyTrashWarning();
+
+            String manageDataLinks();
+
+            int manageDataLinksDialogWidth();
+
+            String manageDataLinksHelp();
+        }
+
+        ToolbarView getView();
 
         void onCreateNewDelimitedFileSelected();
 
@@ -45,43 +211,20 @@ public interface ToolbarView extends IsWidget,
 
         void onCreateNewPathListSelected();
 
-        void onCreatePublicLinkSelected();
+        void onCreatePublicLinkSelected(List<DiskResource> selectedDiskResources);
 
-        void onDeleteResourcesSelected();
+        void onEditFileSelected(List<DiskResource> selectedDiskResources);
 
-        void onEditFileSelected();
+        void onImportFromUrlSelected(Folder selectedFolder);
 
-        void onEditInfoTypeSelected();
-
-        void onEmptyTrashSelected();
-
-        void onImportFromUrlSelected();
-
-        void onMoveDiskResourcesSelected();
-
-        void onMoveToTrashSelected();
-
-        void onOpenNewWindowAtLocationSelected();
+        void onOpenNewWindowAtLocationSelected(Folder selectedFolder);
 
         void onOpenNewWindowSelected();
 
         void onOpenTrashFolderSelected();
-
-        void onRefreshFolderSelected();
-
-        void onRenameResourceSelected();
-
-        void onRestoreResourcesSelected();
-
-        void onSimpleDownloadSelected(Folder selectedFolder,
-                                      List<DiskResource> selectedDiskResources);
-
-        void onSimpleUploadSelected();
     }
 
     DiskResourceSearchField getSearchField();
-
-//    void init(DiskResourceView.Presenter presenter, DiskResourceView view);
 
     void maskSendToCoGe();
 

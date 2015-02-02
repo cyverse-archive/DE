@@ -1,16 +1,13 @@
 package org.iplantc.de.diskResource.client.views.toolbar;
 
-import static org.iplantc.de.client.models.diskResources.PermissionValue.own;
-import static org.iplantc.de.client.models.diskResources.PermissionValue.read;
-import static org.iplantc.de.client.models.diskResources.PermissionValue.write;
-
+import static org.iplantc.de.client.models.diskResources.PermissionValue.*;
 import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.client.models.search.DiskResourceQueryTemplate;
+import org.iplantc.de.diskResource.client.ToolbarView;
 import org.iplantc.de.diskResource.client.events.FolderSelectionEvent;
 import org.iplantc.de.diskResource.client.search.views.DiskResourceSearchField;
-import org.iplantc.de.diskResource.client.views.toolbar.DiskResourceViewToolbarImpl;
 
 import com.google.gwtmockito.GxtMockitoTestRunner;
 
@@ -18,11 +15,7 @@ import com.sencha.gxt.widget.core.client.button.TextButton;
 import com.sencha.gxt.widget.core.client.menu.MenuItem;
 
 import static org.mockito.Matchers.anyBoolean;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
+import static org.mockito.Mockito.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -78,9 +71,11 @@ public class DiskResourceViewToolbar_onFolderSelectedTest {
     private boolean isSelectionInTrash = false;
     private final boolean isSelectionOwner = true;
     private DiskResourceViewToolbarImpl uut;
+    @Mock ToolbarView.Appearance mockAppearance;
+    @Mock ToolbarView.Presenter mockPresenter;
 
     @Before public void setup() {
-        uut = new DiskResourceViewToolbarImpl(searchFieldMock, mock(UserInfo.class)){
+        uut = new DiskResourceViewToolbarImpl(searchFieldMock, mock(UserInfo.class), mockAppearance, mockPresenter){
             @Override
             boolean containsFile(List<DiskResource> selection) {
                 return containsFile;

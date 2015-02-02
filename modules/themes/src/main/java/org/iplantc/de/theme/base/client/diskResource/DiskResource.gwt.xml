@@ -5,9 +5,6 @@
     <inherits name="org.iplantc.de.diskResource.diskresource" />
     <inherits name="org.iplantc.de.fileViewers.FileViewers"/>
 
-    <replace-with class="org.iplantc.de.theme.base.client.diskResource.DiskResourceViewToolbarDefaultAppearance">
-        <when-type-is class="org.iplantc.de.diskResource.client.DiskResourceView.DiskResourceViewToolbarAppearance"/>
-    </replace-with>
     <replace-with class="org.iplantc.de.theme.base.client.diskResource.dialogs.FolderSelectDialogDefaultAppearance">
         <when-type-is class="org.iplantc.de.diskResource.client.views.dialogs.FolderSelectDialog.FolderSelectDialogAppearance"/>
     </replace-with>
@@ -58,5 +55,9 @@
     <!-- Toolbar -->
     <replace-with class="org.iplantc.de.theme.base.client.diskResource.toolbar.ToolbarViewDefaultAppearance">
         <when-type-is class="org.iplantc.de.diskResource.client.ToolbarView.Appearance" />
+    </replace-with>
+
+    <replace-with class="org.iplantc.de.theme.base.client.diskResource.toolbar.presenter.ToolbarViewPresenterDefaultAppearance">
+        <when-type-is class="org.iplantc.de.diskResource.client.ToolbarView.Presenter.Appearance" />
     </replace-with>
 </module>

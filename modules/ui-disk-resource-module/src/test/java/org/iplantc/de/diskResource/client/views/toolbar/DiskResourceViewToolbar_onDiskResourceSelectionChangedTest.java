@@ -5,6 +5,7 @@ import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.client.models.diskResources.File;
 import org.iplantc.de.client.models.diskResources.Folder;
+import org.iplantc.de.diskResource.client.ToolbarView;
 import org.iplantc.de.diskResource.client.events.DiskResourceSelectionChangedEvent;
 import org.iplantc.de.diskResource.client.search.views.DiskResourceSearchField;
 
@@ -75,10 +76,13 @@ public class DiskResourceViewToolbar_onDiskResourceSelectionChangedTest {
     private final boolean isReadable = true;
     private boolean isSelectionInTrash = false;
     private boolean isSelectionOwner = true;
+    @Mock ToolbarView.Appearance mockAppearance;
+    @Mock ToolbarView.Presenter mockPresenter;
+
     private DiskResourceViewToolbarImpl uut;
 
     @Before public void setup() {
-        uut = new DiskResourceViewToolbarImpl(searchFieldMock, mock(UserInfo.class)){
+        uut = new DiskResourceViewToolbarImpl(searchFieldMock, mock(UserInfo.class), mockAppearance, mockPresenter){
             @Override
             boolean containsFile(List<DiskResource> selection) {
                 return containsFile;

@@ -30,4 +30,7 @@ public interface DiskResourceMessages extends Messages {
 
     @Key("selectedItem")
     String selectedItem();
+
+    @Key("share")
+    String share();
 }

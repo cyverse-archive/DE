@@ -9,10 +9,10 @@ import com.google.gwt.event.shared.HandlerRegistration;
 /**
  * @author jstroot
  */
-public class ShareByDataLinkSelectedEvent extends GwtEvent<ShareByDataLinkSelectedEvent.ShareByDataLinkSelectedEventHandler> {
+public class ShareByDataLinkSelected extends GwtEvent<ShareByDataLinkSelected.ShareByDataLinkSelectedEventHandler> {
 
     public interface ShareByDataLinkSelectedEventHandler extends EventHandler {
-        void onRequestShareByDataLinkSelected(ShareByDataLinkSelectedEvent event);
+        void onRequestShareByDataLinkSelected(ShareByDataLinkSelected event);
     }
 
     public static interface HasShareByDataLinkSelectedEventHandlers {
@@ -22,7 +22,7 @@ public class ShareByDataLinkSelectedEvent extends GwtEvent<ShareByDataLinkSelect
     public static final Type<ShareByDataLinkSelectedEventHandler> TYPE = new Type<>();
     private final DiskResource diskResourceToShare;
 
-    public ShareByDataLinkSelectedEvent(DiskResource diskResourceToShare){
+    public ShareByDataLinkSelected(DiskResource diskResourceToShare){
         this.diskResourceToShare = diskResourceToShare;
     }
     @Override

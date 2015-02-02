@@ -6,18 +6,18 @@ import org.iplantc.de.diskResource.client.events.RequestImportFromUrlEvent.Reque
 import com.google.gwt.event.shared.EventHandler;
 import com.google.gwt.event.shared.GwtEvent;
 
+/**
+ * @author jstroot
+ */
 public class RequestImportFromUrlEvent extends GwtEvent<RequestImportFromUrlEventHandler> {
     public interface RequestImportFromUrlEventHandler extends EventHandler {
-
         void onRequestUploadFromUrl(RequestImportFromUrlEvent event);
-
     }
 
-    public static final GwtEvent.Type<RequestImportFromUrlEventHandler> TYPE = new GwtEvent.Type<RequestImportFromUrlEventHandler>();
+    public static final GwtEvent.Type<RequestImportFromUrlEventHandler> TYPE = new GwtEvent.Type<>();
     private final Folder destinationFolder;
 
-    public RequestImportFromUrlEvent(Object source, final Folder destinationFolder) {
-        setSource(source);
+    public RequestImportFromUrlEvent(final Folder destinationFolder) {
         this.destinationFolder = destinationFolder;
     }
 

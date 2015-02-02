@@ -12,10 +12,10 @@ import java.util.List;
 /**
  * @author jstroot
  */
-public class ManageSharingSelectedEvent extends GwtEvent<ManageSharingSelectedEvent.ManageSharingSelectedEventHandler> {
+public class ManageSharingSelected extends GwtEvent<ManageSharingSelected.ManageSharingSelectedEventHandler> {
 
     public interface ManageSharingSelectedEventHandler extends EventHandler {
-        void onRequestManageSharingSelected(ManageSharingSelectedEvent event);
+        void onRequestManageSharingSelected(ManageSharingSelected event);
     }
 
     public static interface HasManageSharingSelectedEventHandlers {
@@ -24,11 +24,11 @@ public class ManageSharingSelectedEvent extends GwtEvent<ManageSharingSelectedEv
 
     private final List<DiskResource> diskResourcesToShare;
 
-    public ManageSharingSelectedEvent(List<DiskResource> diskResourcesToShare) {
+    public ManageSharingSelected(List<DiskResource> diskResourcesToShare) {
         this.diskResourcesToShare = diskResourcesToShare;
     }
 
-    public ManageSharingSelectedEvent(DiskResource diskResourceToShare) {
+    public ManageSharingSelected(DiskResource diskResourceToShare) {
         this(Lists.newArrayList(diskResourceToShare));
     }
 

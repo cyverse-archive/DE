@@ -12,7 +12,8 @@ import org.iplantc.de.diskResource.client.events.FolderSelectionEvent;
 import org.iplantc.de.diskResource.client.events.RequestDiskResourceFavoriteEvent;
 import org.iplantc.de.diskResource.client.events.RootFoldersRetrievedEvent;
 import org.iplantc.de.diskResource.client.events.SavedSearchesRetrievedEvent;
-import org.iplantc.de.diskResource.client.events.selection.ManageSharingSelectedEvent;
+import org.iplantc.de.diskResource.client.events.selection.EditInfoTypeSelected;
+import org.iplantc.de.diskResource.client.events.selection.ManageSharingSelected;
 import org.iplantc.de.diskResource.client.presenters.proxy.FolderContentsLoadConfig;
 import org.iplantc.de.diskResource.client.presenters.proxy.SelectFolderByPathLoadHandler;
 import org.iplantc.de.diskResource.client.search.events.SubmitDiskResourceQueryEvent.HasSubmitDiskResourceQueryEventHandlers;
@@ -37,8 +38,9 @@ import java.util.Set;
 public interface DiskResourceView extends IsWidget,
                                           IsMaskable,
                                           Taggable,
-                                          ManageSharingSelectedEvent.HasManageSharingSelectedEventHandlers,
-                                          DiskResourceSelectionChangedEvent.DiskResourceSelectionChangedEventHandler {
+                                          ManageSharingSelected.HasManageSharingSelectedEventHandlers,
+                                          DiskResourceSelectionChangedEvent.DiskResourceSelectionChangedEventHandler,
+                                          EditInfoTypeSelected.HasEditInfoTypeSelectedEventHandlers {
 
     interface DiskResourceViewToolbarAppearance {
 
@@ -89,15 +91,7 @@ public interface DiskResourceView extends IsWidget,
 
         Folder convertToFolder(DiskResource selectedItem);
 
-//        void createNewFolder();
-
-//        void createNewPlainTextFile(FileViewerWindowConfig config);
-
-//        void createNewTabFile(TabularFileViewerWindowConfig config);
-
         void deSelectDiskResources();
-
-//        void deleteSelectedResources();
 
         void detachTag(IplantTag tag);
 
@@ -105,29 +99,13 @@ public interface DiskResourceView extends IsWidget,
 
         void displayAndCacheDiskResourceInfo(DiskResource info);
 
-//        void doBulkDownload();
-
-//        void doBulkUpload();
-
         void doCreateNewFolder(Folder parentFolder, String folderName);
-
-//        void doImportFromUrl();
 
         void doMoveDiskResources(Folder targetFolder, List<DiskResource> resources);
 
         void doRenameDiskResource(DiskResource diskResource, String newName);
 
         void doSearchTaggedWithResources(Set<IplantTag> tags);
-
-//        void doSimpleDownload();
-
-//        void doSimpleUpload();
-
-//        void editSelectedFile();
-
-//        void editSelectedResourceInfoType();
-
-        void emptyTrash();
 
         void getDetails(DiskResource next);
 
@@ -142,37 +120,9 @@ public interface DiskResourceView extends IsWidget,
         void go(HasOneWidget container, HasPath folderToSelect,
                 List<? extends HasId> diskResourcesToSelect);
 
-//        void manageSelectedResourceDataLinks();
-
-//        void moveSelectedDiskResources();
-
-//        void moveSelectedDiskResourcesToTrash();
-
-        void onInfoTypeClick(DiskResource dr, String infoType);
-
-//        void onNewMdFile(FileViewerWindowConfig config);
-
-//        void onNewPathListFileClicked(PathListWindowConfig config);
-
-//        void onNewPerlFile(FileViewerWindowConfig config);
-
-//        void onNewPythonFile(FileViewerWindowConfig config);
-
-//        void onNewRFile(FileViewerWindowConfig config);
-
-//        void onNewShellScript(FileViewerWindowConfig config);
-
-//        void openNewWindow(boolean atCurrentLocation);
-
-//        void refreshSelectedFolder();
-
-//        void renameSelectedResource();
-
         void resetInfoType();
 
-//        void restoreSelectedResources();
-
-//        void selectTrashFolder();
+        void selectTrashFolder();
 
         void sendSelectedResourceToEnsembl();
 
@@ -196,8 +146,6 @@ public interface DiskResourceView extends IsWidget,
         void unmaskVizMenuOptions();
     }
 
-
-    ToolbarView getToolbar();
 
     void maskDetailsPanel();
 

@@ -9,10 +9,10 @@ import com.google.gwt.event.shared.HandlerRegistration;
 /**
  * @author jstroot
  */
-public class ManageMetadataSelectedEvent extends GwtEvent<ManageMetadataSelectedEvent.ManageMetadataSelectedEventHandler> {
+public class ManageMetadataSelected extends GwtEvent<ManageMetadataSelected.ManageMetadataSelectedEventHandler> {
 
     public interface ManageMetadataSelectedEventHandler extends EventHandler {
-        void onRequestManageMetadataSelected(ManageMetadataSelectedEvent event);
+        void onRequestManageMetadataSelected(ManageMetadataSelected event);
     }
 
     public static interface HasManageMetadataSelectedEventHandlers {
@@ -21,7 +21,7 @@ public class ManageMetadataSelectedEvent extends GwtEvent<ManageMetadataSelected
 
     private final DiskResource diskResource;
 
-    public ManageMetadataSelectedEvent(DiskResource diskResource){
+    public ManageMetadataSelected(DiskResource diskResource){
         this.diskResource = diskResource;
     }
 

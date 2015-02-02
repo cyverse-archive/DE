@@ -13,6 +13,7 @@ import org.iplantc.de.diskResource.client.presenters.grid.GridViewPresenterImpl;
 import org.iplantc.de.diskResource.client.presenters.navigation.NavigationPresenterImpl;
 import org.iplantc.de.diskResource.client.presenters.proxy.FolderContentsRpcProxyImpl;
 import org.iplantc.de.diskResource.client.presenters.proxy.FolderRpcProxyImpl;
+import org.iplantc.de.diskResource.client.presenters.toolbar.ToolbarViewPresenterImpl;
 import org.iplantc.de.diskResource.client.search.presenter.DataSearchPresenter;
 import org.iplantc.de.diskResource.client.search.presenter.impl.DataSearchPresenterImpl;
 import org.iplantc.de.diskResource.client.search.views.DiskResourceSearchField;
@@ -90,6 +91,10 @@ public class DiskResourceGinModule extends AbstractGinModule {
         install(new GinFactoryModuleBuilder()
                     .implement(ToolbarView.class, DiskResourceViewToolbarImpl.class)
                     .build(ToolbarViewFactory.class));
+
+        install(new GinFactoryModuleBuilder()
+                    .implement(ToolbarView.Presenter.class, ToolbarViewPresenterImpl.class)
+                    .build(ToolbarViewPresenterFactory.class));
     }
 
 

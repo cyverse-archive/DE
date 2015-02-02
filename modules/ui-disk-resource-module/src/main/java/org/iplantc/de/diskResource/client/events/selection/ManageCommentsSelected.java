@@ -9,21 +9,21 @@ import com.google.gwt.event.shared.HandlerRegistration;
 /**
  * @author jstroot
  */
-public class ManageCommentsSelectedEvent extends GwtEvent<ManageCommentsSelectedEvent.ManageCommentsSelectedEventHandler> {
+public class ManageCommentsSelected extends GwtEvent<ManageCommentsSelected.ManageCommentsSelectedEventHandler> {
 
     public static interface HasManageCommentsSelectedEventHandlers {
         HandlerRegistration addManageCommentsSelectedEventHandler(ManageCommentsSelectedEventHandler handler);
     }
 
     public interface ManageCommentsSelectedEventHandler extends EventHandler {
-        void onManageCommentsSelected(ManageCommentsSelectedEvent event);
+        void onManageCommentsSelected(ManageCommentsSelected event);
 
     }
 
     public static final Type<ManageCommentsSelectedEventHandler> TYPE = new Type<>();
     private final DiskResource dr;
 
-    public ManageCommentsSelectedEvent(DiskResource dr) {
+    public ManageCommentsSelected(DiskResource dr) {
         this.dr = dr;
     }
 
