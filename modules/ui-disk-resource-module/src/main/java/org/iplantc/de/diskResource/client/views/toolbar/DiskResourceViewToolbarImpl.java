@@ -1,4 +1,4 @@
-package org.iplantc.de.diskResource.client.views.widgets;
+package org.iplantc.de.diskResource.client.views.toolbar;
 
 import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.client.models.diskResources.DiskResource;
@@ -6,18 +6,11 @@ import org.iplantc.de.client.models.diskResources.File;
 import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.client.models.viewer.MimeType;
 import org.iplantc.de.client.util.DiskResourceUtil;
-import org.iplantc.de.commons.client.views.window.configs.ConfigFactory;
-import org.iplantc.de.commons.client.views.window.configs.FileViewerWindowConfig;
-import org.iplantc.de.commons.client.views.window.configs.PathListWindowConfig;
-import org.iplantc.de.commons.client.views.window.configs.TabularFileViewerWindowConfig;
+import org.iplantc.de.diskResource.client.ToolbarView;
 import org.iplantc.de.diskResource.client.events.DiskResourceSelectionChangedEvent;
 import org.iplantc.de.diskResource.client.events.FolderSelectionEvent;
-import org.iplantc.de.diskResource.client.events.ManageCommentsEvent;
-import org.iplantc.de.diskResource.client.events.ManageMetadataEvent;
-import org.iplantc.de.diskResource.client.events.ManageSharingEvent;
-import org.iplantc.de.diskResource.client.events.ShareByDataLinkEvent;
+import org.iplantc.de.diskResource.client.events.selection.*;
 import org.iplantc.de.diskResource.client.search.views.DiskResourceSearchField;
-import org.iplantc.de.diskResource.client.DiskResourceView;
 import org.iplantc.de.diskResource.share.DiskResourceModule.Ids;
 
 import com.google.common.base.Preconditions;
@@ -31,12 +24,11 @@ import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.uibinder.client.UiTemplate;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
 
 import com.sencha.gxt.widget.core.client.Composite;
-import com.sencha.gxt.widget.core.client.Dialog.PredefinedButton;
 import com.sencha.gxt.widget.core.client.button.TextButton;
 import com.sencha.gxt.widget.core.client.event.SelectEvent;
-import com.sencha.gxt.widget.core.client.event.SelectEvent.SelectHandler;
 import com.sencha.gxt.widget.core.client.menu.Item;
 import com.sencha.gxt.widget.core.client.menu.MenuItem;
 
@@ -45,7 +37,7 @@ import java.util.List;
 /**
  * @author jstroot
  */
-public class DiskResourceViewToolbarImpl extends Composite implements DiskResourceView.DiskResourceViewToolbar,
+public class DiskResourceViewToolbarImpl extends Composite implements ToolbarView,
                                                                       DiskResourceSelectionChangedEvent.DiskResourceSelectionChangedEventHandler,
                                                                       FolderSelectionEvent.FolderSelectionEventHandler {
 
@@ -74,54 +66,122 @@ public class DiskResourceViewToolbarImpl extends Composite implements DiskResour
     @UiField TextButton uploadMenu;
     @UiField MenuItem shareFolderLocationMi;
     @UiField MenuItem newPathListMi;
+    @UiField(provided = true) ToolbarView.Appearance appearance;
 
     private static DiskResourceViewToolbarUiBinder BINDER = GWT.create(DiskResourceViewToolbarUiBinder.class);
     private final UserInfo userInfo;
-    private DiskResourceView.Presenter presenter;
+    private ToolbarView.Presenter presenter;
     private List<DiskResource> selectedDiskResources;
     private Folder selectedFolder;
-    private DiskResourceView view;
     @Inject DiskResourceUtil diskResourceUtil;
 
     @Inject
     DiskResourceViewToolbarImpl(final DiskResourceSearchField searchField,
-                                final UserInfo userInfo) {
+                                final UserInfo userInfo,
+                                final ToolbarView.Appearance appearance,
+                                @Assisted final ToolbarView.Presenter presenter) {
         this.searchField = searchField;
         this.userInfo = userInfo;
+        this.appearance = appearance;
+        this.presenter = presenter;
         initWidget(BINDER.createAndBindUi(this));
     }
 
+    //region Handlers
     @Override
-    public HandlerRegistration addManageCommentsEventHandler(ManageCommentsEvent.ManageCommentsEventHandler handler) {
-        return addHandler(handler, ManageCommentsEvent.TYPE);
+    public HandlerRegistration addBulkDownloadSelectedEventHandler(BulkDownloadSelected.BulkDownloadSelectedEventHandler handler) {
+        return addHandler(handler, BulkDownloadSelected.TYPE);
     }
 
     @Override
-    public HandlerRegistration addManageMetadataEventHandler(ManageMetadataEvent.ManageMetadataEventHandler handler) {
-        return addHandler(handler, ManageMetadataEvent.TYPE);
+    public HandlerRegistration addBulkUploadSelectedEventHandler(BulkUploadSelected.BulkUploadSelectedEventHandler handler) {
+        return addHandler(handler, BulkUploadSelected.TYPE);
     }
 
     @Override
-    public HandlerRegistration addManageSharingEventHandler(ManageSharingEvent.ManageSharingEventHandler handler) {
-        return addHandler(handler, ManageSharingEvent.TYPE);
+    public HandlerRegistration addDeleteSelectedDiskResourcesSelectedEventHandler(DeleteDiskResourcesSelected.DeleteDiskResourcesSelectedEventHandler handler) {
+        return addHandler(handler, DeleteDiskResourcesSelected.TYPE);
     }
 
     @Override
-    public HandlerRegistration addShareByDataLinkEventHandler(ShareByDataLinkEvent.ShareByDataLinkEventHandler handler) {
-        return addHandler(handler, ShareByDataLinkEvent.TYPE);
+    public HandlerRegistration addEditInfoTypeSelectedEventHandler(EditInfoTypeSelected.EditInfoTypeSelectedEventHandler handler) {
+        return addHandler(handler, EditInfoTypeSelected.TYPE);
     }
+
+    @Override
+    public HandlerRegistration addEmptyTrashSelectedHandler(EmptyTrashSelected.EmptyTrashSelectedHandler handler) {
+        return addHandler(handler, EmptyTrashSelected.TYPE);
+    }
+
+    @Override
+    public HandlerRegistration addManageCommentsSelectedEventHandler(ManageCommentsSelected.ManageCommentsSelectedEventHandler handler) {
+        return addHandler(handler, ManageCommentsSelected.TYPE);
+    }
+
+    @Override
+    public HandlerRegistration addManageMetadataSelectedEventHandler(ManageMetadataSelected.ManageMetadataSelectedEventHandler handler) {
+        return addHandler(handler, ManageMetadataSelected.TYPE);
+    }
+
+    @Override
+    public HandlerRegistration addManageSharingSelectedEventHandler(ManageSharingSelected.ManageSharingSelectedEventHandler handler) {
+        return addHandler(handler, ManageSharingSelected.TYPE);
+    }
+
+    @Override
+    public HandlerRegistration addMoveDiskResourcesSelectedHandler(MoveDiskResourcesSelected.MoveDiskResourcesSelectedHandler handler) {
+        return addHandler(handler, MoveDiskResourcesSelected.TYPE);
+    }
+
+    @Override
+    public HandlerRegistration addRefreshFolderSelectedHandler(RefreshFolderSelected.RefreshFolderSelectedHandler handler) {
+        return addHandler(handler, RefreshFolderSelected.TYPE);
+    }
+
+    @Override
+    public HandlerRegistration addRenameDiskResourceSelectedHandler(RenameDiskResourceSelected.RenameDiskResourceSelectedHandler handler) {
+        return addHandler(handler, RenameDiskResourceSelected.TYPE);
+    }
+
+    @Override
+    public HandlerRegistration addRestoreDiskResourcesSelectedHandler(RestoreDiskResourcesSelected.RestoreDiskResourcesSelectedHandler handler) {
+        return addHandler(handler, RestoreDiskResourcesSelected.TYPE);
+    }
+
+    @Override
+    public HandlerRegistration addSendToCogeSelectedHandler(SendToCogeSelected.SendToCogeSelectedHandler handler) {
+        return addHandler(handler, SendToCogeSelected.TYPE);
+    }
+
+    @Override
+    public HandlerRegistration addSendToEnsemblSelectedHandler(SendToEnsemblSelected.SendToEnsemblSelectedHandler handler) {
+        return addHandler(handler, SendToEnsemblSelected.TYPE);
+    }
+
+    @Override
+    public HandlerRegistration addSendToTreeViewerSelectedHandler(SendToTreeViewerSelected.SendToTreeViewerSelectedHandler handler) {
+        return addHandler(handler, SendToTreeViewerSelected.TYPE);
+    }
+
+    @Override
+    public HandlerRegistration addShareByDataLinkSelectedEventHandler(ShareByDataLinkSelected.ShareByDataLinkSelectedEventHandler handler) {
+        return addHandler(handler, ShareByDataLinkSelected.TYPE);
+    }
+
+    @Override
+    public HandlerRegistration addSimpleDownloadSelectedHandler(SimpleDownloadSelected.SimpleDownloadSelectedHandler handler) {
+        return addHandler(handler, SimpleDownloadSelected.TYPE);
+    }
+
+    @Override
+    public HandlerRegistration addSimpleUploadSelectedHandler(SimpleUploadSelected.SimpleUploadSelectedHandler handler) {
+        return addHandler(handler, SimpleUploadSelected.TYPE);
+    }
+    //endregion
 
     @Override
     public DiskResourceSearchField getSearchField() {
         return searchField;
-    }
-
-    @Override
-    public void init(DiskResourceView.Presenter presenter, DiskResourceView view) {
-        this.presenter = presenter;
-        this.view = view;
-        this.presenter.addDiskResourceSelectionChangedEventHandler(this);
-        this.presenter.addFolderSelectedEventHandler(this);
     }
 
     @Override
@@ -332,201 +392,165 @@ public class DiskResourceViewToolbarImpl extends Composite implements DiskResour
 
     @UiHandler("bulkDownloadMi")
     void onBulkDownloadClicked(SelectionEvent<Item> event) {
-        presenter.doBulkDownload();
+        fireEvent(new BulkDownloadSelected(selectedFolder, selectedDiskResources));
     }
 
     @UiHandler("bulkUploadMi")
     void onBulkUploadClicked(SelectionEvent<Item> event) {
-        presenter.doBulkUpload();
+        fireEvent(new BulkUploadSelected(selectedFolder));
     }
 
     @UiHandler("createPublicLinkMi")
     void onCreatePublicLinkClicked(SelectionEvent<Item> event){
-        presenter.manageSelectedResourceDataLinks();
+        presenter.onCreatePublicLinkSelected(selectedDiskResources);
     }
 
     @UiHandler("deleteMi")
     void onDeleteClicked(SelectionEvent<Item> event){
-        presenter.deleteSelectedResources();
+        fireEvent(new DeleteDiskResourcesSelected(selectedDiskResources));
     }
 
     @UiHandler("duplicateMi")
-    void onDuplicateClicked(SelectionEvent<Item> event){
-    }
+    void onDuplicateClicked(SelectionEvent<Item> event){/* Do Nothing */ }
 
     @UiHandler("editCommentsMi")
     void onEditCommentClicked(SelectionEvent<Item> event){
         Preconditions.checkState(selectedDiskResources != null
                                      && selectedDiskResources.size() == 1);
-        fireEvent(new ManageCommentsEvent(selectedDiskResources.iterator().next()));
+        fireEvent(new ManageCommentsSelected(selectedDiskResources.iterator().next()));
     }
 
     @UiHandler("editFileMi")
     void onEditFileClicked(SelectionEvent<Item> event){
-        presenter.editSelectedFile();
+        presenter.onEditFileSelected(selectedDiskResources);
     }
 
     @UiHandler("editInfoTypeMi")
     void onEditInfoTypeClicked(SelectionEvent<Item> event){
-        presenter.editSelectedResourceInfoType();
+        fireEvent(new EditInfoTypeSelected(selectedDiskResources));
     }
 
     @UiHandler("metadataMi")
     void onEditMetadataClicked(SelectionEvent<Item> event){
         Preconditions.checkState(selectedDiskResources != null
                                      && selectedDiskResources.size() == 1);
-        fireEvent(new ManageMetadataEvent(selectedDiskResources.iterator().next()));
+        fireEvent(new ManageMetadataSelected(selectedDiskResources.iterator().next()));
     }
 
     @UiHandler("emptyTrashMi")
     void onEmptyTrashClicked(SelectionEvent<Item> event) {
-        presenter.emptyTrash();
+        fireEvent(new EmptyTrashSelected());
     }
 
     @UiHandler("importFromUrlMi")
     void onImportFromUrlClicked(SelectionEvent<Item> event) {
-        presenter.doImportFromUrl();
+        presenter.onImportFromUrlSelected(selectedFolder);
     }
 
     @UiHandler("moveMi")
     void onMoveClicked(SelectionEvent<Item> event){
-        presenter.moveSelectedDiskResources();
+        fireEvent(new MoveDiskResourcesSelected(selectedDiskResources));
     }
 
     @UiHandler("moveToTrashMi")
     void onMoveToTrashClicked(SelectionEvent<Item> event){
-        presenter.moveSelectedDiskResourcesToTrash();
+        fireEvent(new DeleteDiskResourcesSelected(selectedDiskResources, false));
     }
 
     @UiHandler("newFolderMi")
     void onNewFolderClicked(SelectionEvent<Item> event) {
-        presenter.createNewFolder();
+        presenter.onCreateNewFolderSelected(selectedFolder);
     }
 
     @UiHandler("newPlainTextFileMi")
     void onNewPlainTextFileClicked(SelectionEvent<Item> event){
-        FileViewerWindowConfig config = ConfigFactory.fileViewerWindowConfig(null);
-        config.setEditing(true);
-        config.setContentType(MimeType.PLAIN);
-        presenter.createNewPlainTextFile(config);
+        presenter.onCreateNewFileSelected(selectedFolder, MimeType.PLAIN);
     }
 
     @UiHandler("newRFileMi")
     void onNewRFileClicked(SelectionEvent<Item> event) {
-        FileViewerWindowConfig config = ConfigFactory.fileViewerWindowConfig(null);
-        config.setEditing(true);
-        config.setContentType(MimeType.X_RSRC);
-        presenter.onNewRFile(config);
+        presenter.onCreateNewFileSelected(selectedFolder, MimeType.X_RSRC);
     }
 
     @UiHandler("newPerlFileMi")
     void onNewPerlFileClicked(SelectionEvent<Item> event) {
-        FileViewerWindowConfig config = ConfigFactory.fileViewerWindowConfig(null);
-        config.setEditing(true);
-        config.setContentType(MimeType.X_PERL);
-        presenter.onNewPerlFile(config);
+        presenter.onCreateNewFileSelected(selectedFolder, MimeType.X_PERL);
     }
 
     @UiHandler("newPythonFileMi")
     void onNewPythonFileClicked(SelectionEvent<Item> event) {
-        FileViewerWindowConfig config = ConfigFactory.fileViewerWindowConfig(null);
-        config.setEditing(true);
-        config.setContentType(MimeType.X_PYTHON);
-        presenter.onNewPythonFile(config);
+        presenter.onCreateNewFileSelected(selectedFolder, MimeType.X_PYTHON);
     }
 
     @UiHandler("newShellScriptFileMi")
     void onNewShellScript(SelectionEvent<Item> event) {
-        FileViewerWindowConfig config = ConfigFactory.fileViewerWindowConfig(null);
-        config.setEditing(true);
-        config.setContentType(MimeType.X_SH);
-        presenter.onNewShellScript(config);
+        presenter.onCreateNewFileSelected(selectedFolder, MimeType.X_SH);
     }
 
     @UiHandler("newMdFileMi")
     void onNewMdFile(SelectionEvent<Item> event) {
-        FileViewerWindowConfig config = ConfigFactory.fileViewerWindowConfig(null);
-        config.setEditing(true);
-        config.setContentType(MimeType.X_WEB_MARKDOWN);
-        presenter.onNewMdFile(config);
+        presenter.onCreateNewFileSelected(selectedFolder, MimeType.X_WEB_MARKDOWN);
     }
 
     @UiHandler("newTabularDataFileMi")
     void onNewTabularDataFileClicked(SelectionEvent<Item> event){
-        final TabFileConfigDialog d = new TabFileConfigDialog();
-        d.setPredefinedButtons(PredefinedButton.OK, PredefinedButton.CANCEL);
-        d.setModal(true);
-        d.getButton(PredefinedButton.OK).addSelectHandler(new SelectHandler() {
-            @Override
-            public void onSelect(SelectEvent event) {
-                TabularFileViewerWindowConfig config = ConfigFactory.newTabularFileViewerWindowConfig();
-                config.setContentType(MimeType.PLAIN);
-                config.setEditing(true);
-                config.setVizTabFirst(true);
-                config.setSeparator(d.getSeparator());
-                config.setColumns(d.getNumberOfColumns());
-                presenter.createNewTabFile(config);
-            }
-        });
-        d.setHideOnButtonClick(true);
-        d.setSize("300px", "150px");
-        d.show();
+        presenter.onCreateNewDelimitedFileSelected();
     }
 
     @UiHandler("newPathListMi")
     void onNewPathListFileClicked(SelectionEvent<Item> event){
-        PathListWindowConfig config = ConfigFactory.newPathListWindowConfig();
-        config.setEditing(true);
-        presenter.onNewPathListFileClicked(config);
+        presenter.onCreateNewPathListSelected();
     }
 
     @UiHandler("newWindowAtLocMi")
     void onNewWindowAtLocClicked(SelectionEvent<Item> event) {
-        presenter.openNewWindow(true);
+        presenter.onOpenNewWindowAtLocationSelected(selectedFolder);
     }
 
     //---------- File ----------
     @UiHandler("newWindowMi")
     void onNewWindowClicked(SelectionEvent<Item> event) {
-        presenter.openNewWindow(false);
+        presenter.onOpenNewWindowSelected();
     }
 
     //------------- Trash ---------------
     @UiHandler("openTrashMi")
     void onOpenTrashClicked(SelectionEvent<Item> event) {
-        presenter.selectTrashFolder();
+        presenter.onOpenTrashFolderSelected();
     }
 
     //------------ Refresh --------------
     @UiHandler("refreshButton")
     void onRefreshClicked(SelectEvent event) {
-        presenter.refreshSelectedFolder();
+        fireEvent(new RefreshFolderSelected(selectedFolder));
     }
 
     //----------- Edit -----------
     @UiHandler("renameMi")
     void onRenameClicked(SelectionEvent<Item> event){
-        presenter.renameSelectedResource();
+        Preconditions.checkNotNull(selectedDiskResources);
+        Preconditions.checkArgument(selectedDiskResources.size() == 1);
+        fireEvent(new RenameDiskResourceSelected(selectedDiskResources.iterator().next()));
     }
 
     @UiHandler("restoreMi")
     void onRestoreClicked(SelectionEvent<Item> event){
-        presenter.restoreSelectedResources();
+        fireEvent(new RestoreDiskResourcesSelected(selectedDiskResources));
     }
 
     @UiHandler("sendToCogeMi")
     void onSendToCogeClicked(SelectionEvent<Item> event) {
-        presenter.sendSelectedResourcesToCoge();
+        fireEvent(new SendToCogeSelected(selectedDiskResources));
     }
 
     @UiHandler("sendToEnsemblMi")
     void onSendToEnsemblClicked(SelectionEvent<Item> event){
-        presenter.sendSelectedResourceToEnsembl();
+        fireEvent(new SendToEnsemblSelected(selectedDiskResources));
     }
 
     @UiHandler("sendToTreeViewerMi")
     void onSendToTreeViewerClicked(SelectionEvent<Item> event){
-        presenter.sendSelectedResourcesToTreeViewer();
+        fireEvent(new SendToTreeViewerSelected(selectedDiskResources));
     }
 
     //--------- Sharing -------------
@@ -534,25 +558,25 @@ public class DiskResourceViewToolbarImpl extends Composite implements DiskResour
     void onShareWithCollaboratorsClicked(SelectionEvent<Item> event) {
         Preconditions.checkState(selectedDiskResources != null
                                      && !selectedDiskResources.isEmpty());
-        fireEvent(new ManageSharingEvent(selectedDiskResources));
+        fireEvent(new ManageSharingSelected(selectedDiskResources));
     }
 
     @UiHandler("shareFolderLocationMi")
     void onShareFolderLocationClicked(SelectionEvent<Item> event){
         Preconditions.checkState(selectedFolder != null);
-        fireEvent(new ShareByDataLinkEvent(selectedFolder));
+        fireEvent(new ShareByDataLinkSelected(selectedFolder));
     }
 
     //---------- Download --------------
     @UiHandler("simpleDownloadMi")
     void onSimpleDownloadClicked(SelectionEvent<Item> event) {
-        presenter.doSimpleDownload();
+        fireEvent(new SimpleDownloadSelected(selectedFolder, selectedDiskResources));
     }
 
     //-------- Upload ---------------
     @UiHandler("simpleUploadMi")
     void onSimpleUploadClicked(SelectionEvent<Item> event) {
-        presenter.doSimpleUpload();
+        fireEvent(new SimpleUploadSelected(selectedFolder));
     }
 
     @Override

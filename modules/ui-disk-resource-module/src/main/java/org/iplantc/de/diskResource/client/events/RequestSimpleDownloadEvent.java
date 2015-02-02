@@ -23,10 +23,8 @@ public class RequestSimpleDownloadEvent extends GwtEvent<RequestSimpleDownloadEv
     private final List<DiskResource> requestedResources;
     private final Folder currentFolder;
 
-    public RequestSimpleDownloadEvent(final Object source,
-                                      final List<DiskResource> requestedResources,
+    public RequestSimpleDownloadEvent(final List<DiskResource> requestedResources,
                                       final Folder currentFolder) {
-        setSource(source);
         this.requestedResources = requestedResources;
         this.currentFolder = currentFolder;
     }

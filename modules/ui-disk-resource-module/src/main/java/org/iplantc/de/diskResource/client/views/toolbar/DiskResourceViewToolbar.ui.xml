@@ -6,11 +6,7 @@
              xmlns:search="urn:import:org.iplantc.de.diskResource.client.search.views">
 
     <ui:with field="appearance"
-             type="org.iplantc.de.diskResource.client.DiskResourceView.DiskResourceViewToolbarAppearance"/>
-    <ui:with field="res"
-             type="org.iplantc.de.resources.client.IplantResources"/>
-    <ui:with field="display"
-             type="org.iplantc.de.resources.client.messages.IplantDisplayStrings"/>
+             type="org.iplantc.de.diskResource.client.ToolbarView.Appearance"/>
     <ui:with field="flexBoxData"
              type="com.sencha.gxt.widget.core.client.container.BoxLayoutContainer.BoxLayoutData">
         <ui:attributes flex="3"/>
@@ -21,18 +17,18 @@
         <!-- Upload Menu -->
         <toolbar:child>
             <button:TextButton ui:field="uploadMenu"
-                               text="{display.upload}">
+                               text="{appearance.uploadMenu}">
                 <button:menu>
                     <menu:Menu>
                         <menu:MenuItem ui:field="simpleUploadMi"
-                                       icon="{res.importData}"
-                                       text="{display.simpleUploadFromDesktop}"/>
+                                       text="{appearance.simpleUploadFromDesktop}"
+                                       icon="{appearance.importDataIcon}"/>
                         <menu:MenuItem ui:field="bulkUploadMi"
-                                       icon="{res.importData}"
-                                       text="{display.bulkUploadFromDesktop}"/>
+                                       text="{appearance.bulkUploadFromDesktop}"
+                                       icon="{appearance.importDataIcon}"/>
                         <menu:MenuItem ui:field="importFromUrlMi"
-                                       icon="{res.importData}"
-                                       text="{display.importFromUrlMenuItem}"/>
+                                       text="{appearance.importFromUrlMenuItem}"
+                                       icon="{appearance.importDataIcon}"/>
                     </menu:Menu>
                 </button:menu>
             </button:TextButton>
@@ -45,55 +41,56 @@
                 <button:menu>
                     <menu:Menu>
                         <menu:MenuItem ui:field="newWindowMi"
-                                       text="{display.newWindow}"
-                                       icon="{res.add}"/>
+                                       text="{appearance.newWindow}"
+                                       icon="{appearance.addIcon}"/>
                         <menu:MenuItem ui:field="newWindowAtLocMi"
-                                       text="{display.newDataWindowAtLocMenuItem}"
-                                       icon="{res.add}"/>
+                                       text="{appearance.newDataWindowAtLocMenuItem}"
+                                       icon="{appearance.addIcon}"/>
                         <menu:MenuItem ui:field="newFolderMi"
-                                       text="{display.newFolderMenuItem}"
-                                       icon="{res.folderAdd}"/>
+                                       text="{appearance.newFolderMenuItem}"
+                                       icon="{appearance.newFolderIcon}"/>
                         <menu:MenuItem ui:field="duplicateMi"
-                                       text="{display.duplicateMenuItem}"
+                                       text="{appearance.duplicateMenuItem}"
                                        enabled="false"
                                        visible="false"/>
-                        <menu:MenuItem ui:field="newFileMi" text="{display.create}"
-                                       icon="{res.fileRename}">
+                        <menu:MenuItem ui:field="newFileMi"
+                                       text="{appearance.newFileMenu}"
+                                       icon="{appearance.newFileMenuIcon}">
                             <menu:submenu>
                                 <menu:Menu ui:field="newFileMenu">
                                     <menu:MenuItem ui:field="newPlainTextFileMi"
-                                                   text="{display.newPlainTextFileMenuItem}"
-                                                   icon="{res.fileRename}"/>
+                                                   text="{appearance.newPlainTextFileMenuItem}"
+                                                   icon="{appearance.newPlainTexFileIcon}"/>
 
                                     <menu:MenuItem ui:field="newTabularDataFileMi"
-                                                   text="{display.newTabularDataFileMenuItem}"
+                                                   text="{appearance.newTabularDataFileMenuItem}"
                                                    visible="true"
-                                                   icon="{res.fileRename}"/>
+                                                   icon="{appearance.newDelimitedFileIcon}"/>
 
                                     <menu:MenuItem ui:field="newRFileMi"
-                                                   text="New R Script..."
+                                                   text="{appearance.newRFileMenuItem}"
                                                    visible="true"
-                                                   icon="{res.fileRename}"/>
+                                                   icon="{appearance.newRFileIcon}"/>
 
                                     <menu:MenuItem ui:field="newPerlFileMi"
-                                                   text="New Perl Script..."
+                                                   text="{appearance.newPerlFileMenuItem}"
                                                    visible="true"
-                                                   icon="{res.fileRename}"/>
+                                                   icon="{appearance.newPerlFileIcon}"/>
 
                                     <menu:MenuItem ui:field="newPythonFileMi"
-                                                   text="New Python Script..."
+                                                   text="{appearance.newPythonFileMenuItem}"
                                                    visible="true"
-                                                   icon="{res.fileRename}"/>
+                                                   icon="{appearance.newPythonFileIcon}"/>
 
                                     <menu:MenuItem ui:field="newShellScriptFileMi"
-                                                   text="New Shell Script..."
+                                                   text="{appearance.newShellFileMenuItem}"
                                                    visible="true"
-                                                   icon="{res.fileRename}"/>
+                                                   icon="{appearance.newShellFileIcon}"/>
 
                                     <menu:MenuItem ui:field="newMdFileMi"
-                                                   text="New Markdown file..."
+                                                   text="{appearance.newMdFileMenuItem}"
                                                    visible="true"
-                                                   icon="{res.fileRename}"/>
+                                                   icon="{appearance.newMdFileIcon}"/>
 
                                     <menu:MenuItem ui:field="newPathListMi"
                                                    text="{appearance.newPathListMenuText}"
@@ -104,8 +101,8 @@
 
 
                         <menu:MenuItem ui:field="moveToTrashMi"
-                                       text="{display.moveToTrashMenuItem}"
-                                       icon="{res.trash}"
+                                       text="{appearance.moveToTrashMenuItem}"
+                                       icon="{appearance.trashIcon}"
                                        enabled="false"/>
                     </menu:Menu>
                 </button:menu>
@@ -115,32 +112,32 @@
         <!-- Edit Menu -->
         <toolbar:child>
             <button:TextButton ui:field="editMenu"
-                               text="{display.edit}">
+                               text="{appearance.editMenu}">
                 <button:menu>
                     <menu:Menu>
                         <menu:MenuItem ui:field="renameMi"
-                                       text="{display.renameMenuItem}"
-                                       icon="{res.fileRename}"
+                                       text="{appearance.renameMenuItem}"
+                                       icon="{appearance.fileRenameIcon}"
                                        enabled="false"/>
                         <menu:MenuItem ui:field="editFileMi"
-                                       text="{display.editFile}"
-                                       icon="{res.fileRename}"
+                                       text="{appearance.editFileMenuItem}"
+                                       icon="{appearance.fileRenameIcon}"
                                        enabled="false"/>
                         <menu:MenuItem ui:field="editCommentsMi"
-                                       text="{display.editCommentsMenuItem}"
+                                       text="{appearance.editCommentsMenuItem}"
                                        enabled="false"
-                                       icon="{res.userComment}"/>
+                                       icon="{appearance.userCommentIcon}"/>
                         <menu:MenuItem ui:field="editInfoTypeMi"
-                                       text="{display.editInfoTypeMenuItem}"
-                                       icon="{res.info}"
+                                       text="{appearance.editInfoTypeMenuItem}"
+                                       icon="{appearance.infoIcon}"
                                        enabled="false"/>
                         <menu:MenuItem ui:field="metadataMi"
-                                       text="{display.metadataMenuItem}"
-                                       icon="{res.metadata}"
+                                       text="{appearance.metadataMenuItem}"
+                                       icon="{appearance.metadataIcon}"
                                        enabled="false"/>
                         <menu:MenuItem ui:field="moveMi"
-                                       text="{display.moveMenuItem}"
-                                       icon="{res.edit}"
+                                       text="{appearance.moveMenuItem}"
+                                       icon="{appearance.editIcon}"
                                        enabled="false"/>
                     </menu:Menu>
                 </button:menu>
@@ -150,16 +147,16 @@
         <!-- Download Menu -->
         <toolbar:child>
             <button:TextButton ui:field="downloadMenu"
-                               text="{display.download}">
+                               text="{appearance.downloadMenu}">
                 <button:menu>
                     <menu:Menu>
                         <menu:MenuItem ui:field="simpleDownloadMi"
-                                       text="{display.simpleDownloadMenuItem}"
-                                       icon="{res.download}"
+                                       text="{appearance.simpleDownloadMenuItem}"
+                                       icon="{appearance.downloadIcon}"
                                        enabled="false"/>
                         <menu:MenuItem ui:field="bulkDownloadMi"
-                                       text="{display.bulkDownloadMenuItem}"
-                                       icon="{res.download}"
+                                       text="{appearance.bulkDownloadMenuItem}"
+                                       icon="{appearance.downloadIcon}"
                                        enabled="false"/>
                     </menu:Menu>
                 </button:menu>
@@ -169,32 +166,32 @@
         <!-- Share Menu -->
         <toolbar:child>
             <button:TextButton ui:field="shareMenu"
-                               text="{display.share}">
+                               text="{appearance.shareMenu}">
                 <button:menu>
                     <menu:Menu>
                         <menu:MenuItem ui:field="shareWithCollaboratorsMi"
-                                       text="{display.shareWithCollaboratorsMenuItem}"
-                                       icon="{res.share}"
+                                       text="{appearance.shareWithCollaboratorsMenuItem}"
+                                       icon="{appearance.shareWithCollaboratorsIcon}"
                                        enabled="false"/>
                         <menu:MenuItem ui:field="createPublicLinkMi"
-                                       text="{display.createPublicLinkMenuItem}"
-                                       icon="{res.linkAdd}"
+                                       text="{appearance.createPublicLinkMenuItem}"
+                                       icon="{appearance.linkAddIcon}"
                                        enabled="false"/>
                         <menu:MenuItem ui:field="shareFolderLocationMi"
-                                       text="{display.shareFolderLocationMenuItem}"
-                                       icon="{res.folder}"
+                                       text="{appearance.shareFolderLocationMenuItem}"
+                                       icon="{appearance.shareFolderLocationIcon}"
                                        enabled="false"/>
                         <menu:MenuItem ui:field="sendToCogeMi"
-                                       text="{display.sendToCogeMenuItem}"
-                                       icon="{res.arrowUp}"
+                                       text="{appearance.sendToCogeMenuItem}"
+                                       icon="{appearance.sendToCogeIcon}"
                                        enabled="false"/>
                         <menu:MenuItem ui:field="sendToEnsemblMi"
-                                       text="{display.sendToEnsemblMenuItem}"
-                                       icon="{res.arrowUp}"
+                                       text="{appearance.sendToEnsemblMenuItem}"
+                                       icon="{appearance.sendToEnsemblIcon}"
                                        enabled="false"/>
                         <menu:MenuItem ui:field="sendToTreeViewerMi"
-                                       text="{display.sendToTreeViewerMenuItem}"
-                                       icon="{res.arrowUp}"
+                                       text="{appearance.sendToTreeViewerMenuItem}"
+                                       icon="{appearance.sendToTreeViewerIcon}"
                                        enabled="false"/>
                     </menu:Menu>
                 </button:menu>
@@ -204,8 +201,8 @@
         <!-- Refresh button -->
         <toolbar:child>
             <button:TextButton ui:field="refreshButton"
-                               text="{display.refresh}"
-                               icon="{res.refresh}"
+                               text="{appearance.refresh}"
+                               icon="{appearance.refreshIcon}"
                                enabled="false"/>
         </toolbar:child>
 
@@ -219,22 +216,22 @@
         <!-- Trash Menu -->
         <toolbar:child>
             <button:TextButton ui:field="trashMenu"
-                               text="Trash">
+                               text="{appearance.trashMenu}">
                 <button:menu>
                     <menu:Menu>
                         <menu:MenuItem ui:field="openTrashMi"
-                                       text="{display.openTrashMenuItem}"
-                                       icon="{res.trash}"/>
+                                       text="{appearance.openTrashMenuItem}"
+                                       icon="{appearance.openTrashIcon}"/>
                         <menu:MenuItem ui:field="restoreMi"
-                                       text="{display.restore}"
+                                       text="{appearance.restore}"
                                        enabled="false"/>
                         <menu:SeparatorMenuItem/>
                         <menu:MenuItem ui:field="emptyTrashMi"
-                                       text="{display.emptyTrash}"
-                                       icon="{res.trashEmpty}"/>
+                                       text="{appearance.emptyTrashMenuItem}"
+                                       icon="{appearance.emptyTrashIcon}"/>
                         <menu:MenuItem ui:field="deleteMi"
-                                       text="{display.delete}"
-                                       icon="{res.fileDelete}"
+                                       text="{appearance.deleteMenuItem}"
+                                       icon="{appearance.deleteIcon}"
                                        enabled="false"/>
                     </menu:Menu>
                 </button:menu>

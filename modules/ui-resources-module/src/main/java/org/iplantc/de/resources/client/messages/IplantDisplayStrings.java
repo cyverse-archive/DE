@@ -428,24 +428,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     String browseClipperFiles();
 
     /**
-     * Translated "Bulk Download...".
-     *
-     * @return translated "Bulk Download..."
-     */
-    @DefaultMessage("Bulk Download...")
-    @Key("bulkDownloadMenuItem")
-    String bulkDownloadMenuItem();
-
-    /**
-     * Translated "Bulk Upload from Desktop".
-     *
-     * @return translated "Bulk Upload from Desktop"
-     */
-    @DefaultMessage("Bulk Upload from Desktop")
-    @Key("bulkUploadFromDesktop")
-    String bulkUploadFromDesktop();
-
-    /**
      * Translated "Cancel".
      *
      * @return translated "Cancel"
@@ -1122,9 +1104,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     @DefaultMessage("Edit...")
     @Key("editMenuItem")
     String editMenuItem();
-
-    @DefaultMessage("Edit File...")
-    String editFile();
 
     /**
      * Translated "Email".
@@ -1834,13 +1813,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     String manageData();
 
     /**
-     * Menu text for button to Manage Data Link tickets.
-     *
-     * @return
-     */
-    String manageDataLinks();
-
-    /**
      * Translated "Manage Sharing".
      *
      * @return translated "Manage Sharing"
@@ -1909,15 +1881,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     String messagesGridHeader();
 
     /**
-     * Translated "Edit Metadata...".
-     *
-     * @return translated "Edit Metadata..."
-     */
-    @DefaultMessage("Edit Metadata...")
-    @Key("metadataMenuItem")
-    String metadataMenuItem();
-
-    /**
      * Translated "metadataSuccess".
      *
      * @return translated "metadataSuccess"
@@ -1979,16 +1942,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     @DefaultMessage("More Actions")
     @Key("moreActions")
     String moreActions();
-    
-    
-    /**
-     * Translated "Move...".
-     *
-     * @return translated "Move..."
-     */
-    @DefaultMessage("Move...")
-    @Key("moveMenuItem")
-    String moveMenuItem();
     
     /**
      * Translated "Move down".
@@ -2178,15 +2131,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     @DefaultMessage("An error occurred while processing your request. Please contact iPlant support at support@iplantcollaborative.org.")
     @Key("newToolRequestError")
     String newToolRequestError();
-
-    /**
-     * Translated "New Window".
-     * 
-     * @return translated "New Window"
-     */
-    @DefaultMessage("New Window")
-    @Key("newWindow")
-    String newWindow();
 
     /**
      * Translated "No items to display".
@@ -2969,15 +2913,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     String reset();
 
     /**
-     * Translated "Restore".
-     *
-     * @return translated "Restore"
-     */
-    @DefaultMessage("Restore")
-    @Key("restore")
-    String restore();
-
-    /**
      * Translated "Selected files and folders are restored to their original location.".
      *
      * @return translated "Selected files and folders are restored to their original location."
@@ -3358,15 +3293,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     String show();
 
     /**
-     * Translated "Simple Download...".
-     *
-     * @return translated "Simple Download..."
-     */
-    @DefaultMessage("Simple Download...")
-    @Key("simpleDownloadMenuItem")
-    String simpleDownloadMenuItem();
-
-    /**
      * Translated "Switch to Simple Download Links".
      *
      * @return translated "Switch to Simple Download Links"
@@ -3392,15 +3318,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     @DefaultMessage("Switch to Simple Upload Form")
     @Key("simpleUploadForm")
     String simpleUploadForm();
-
-    /**
-     * Translated "Simple Upload from Desktop".
-     *
-     * @return translated "Simple Upload from Desktop"
-     */
-    @DefaultMessage("Simple Upload from Desktop")
-    @Key("simpleUploadFromDesktop")
-    String simpleUploadFromDesktop();
 
     /**
      * Translated "Size".
@@ -4026,43 +3943,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     String diskResourceMoveSuccess(String destPath, @Optional @PluralCount List<String> srcPaths);
 
     /**
-     * Translated "Import From URL..."
-     *
-     * @return translated "Import From URL..."
-     */
-    @DefaultMessage("Import From URL...")
-    @Key("importFromUrlMenuItem")
-    String importFromUrlMenuItem();
-
-    /**
-     * Translated "New Data Window at this location"
-     *
-     * @return translated "New Data Window at this location"
-     */
-    @DefaultMessage("New Data Window at this location")
-    @Key("newDataWindowAtLocMenuItem")
-    String newDataWindowAtLocMenuItem();
-
-    /**
-     * Translated "New Folder..."
-     *
-     * @return translated "New Folder..."
-     */
-    @DefaultMessage("New Folder...")
-    @Key("newFolderMenuItem")
-    String newFolderMenuItem();
-
-    /**
-     * Translated "Duplicate"
-     *
-     * @return translated "Duplicate"
-     */
-    @DefaultMessage("Duplicate")
-    @Key("duplicateMenuItem")
-    String duplicateMenuItem();
-
-
-    /**
      * Translated "Add to Sidebar"
      *
      * @return translated "Add to Sidebar"
@@ -4070,80 +3950,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     @DefaultMessage("Add to Sidebar")
     @Key("addToSideBarMenuItem")
     String addToSideBarMenuItem();
-
-
-    /**
-     * Translated "New Plain Text File..."
-     *
-     * @return translated "New Plain Text File..."
-     */
-    @DefaultMessage("New Plain Text File...")
-    @Key("newPlainTextFileMenuItem")
-    String newPlainTextFileMenuItem();
-
-    /**
-     * Translated "New Tabular Data File..."
-     *
-     * @return translated "New Tabular Data File..."
-     */
-    @DefaultMessage("New Tabular Data File...")
-    @Key("newTabularDataFileMenuItem")
-    String newTabularDataFileMenuItem();
-
-
-    /**
-     * Translated "Move to Trash"
-     *
-     * @return translated "Move to Trash"
-     */
-    @DefaultMessage("New Tabular Data File...")
-    @Key("moveToTrashMenuItem")
-    String moveToTrashMenuItem();
-
-     /**
-     * Translated "Edit File..."
-     *
-     * @return translated "Edit File..."
-     */
-    @DefaultMessage("Edit File...")
-    @Key("editFileMenuItem")
-    String editFileMenuItem();
-
-    /**
-     * Translated "Edit Comments..."
-     *
-     * @return translated "Edit Comments..."
-     */
-    @DefaultMessage("Edit Comments...")
-    @Key("editCommentsMenuItem")
-    String editCommentsMenuItem();
-
-    /**
-     * Translated "Edit Information Type..."
-     *
-     * @return translated "Edit Information Type..."
-     */
-    @DefaultMessage("Edit Information Type...")
-    @Key("editInfoTypeMenuItem")
-    String editInfoTypeMenuItem();
-
-    /**
-     * Translated "Share With Collaborators..."
-     *
-     * @return translated "Share With Collaborators..."
-     */
-    @DefaultMessage("Share With Collaborators...")
-    @Key("shareWithCollaboratorsMenuItem")
-    String shareWithCollaboratorsMenuItem();
-
-    /**
-     * Translated "Create a Public Link..."
-     *
-     * @return translated "Create a Public Link..."
-     */
-    @DefaultMessage("Create a Public Link...")
-    @Key("createPublicLinkMenuItem")
-    String createPublicLinkMenuItem();
 
     /**
      * Translated "Send to CoGE"
@@ -4171,23 +3977,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     @DefaultMessage("Send to Tree Viewer")
     @Key("sendToTreeViewerMenuItem")
     String sendToTreeViewerMenuItem();
-
-    /**
-     * Translated "Open Trash"
-     *
-     * @return translated "Open Trash"
-     */
-    @DefaultMessage("Open Trash")
-    @Key("openTrashMenuItem")
-    String openTrashMenuItem();
-
-    /**
-     * Translated "Share Folder Location..."
-     * @return translated "Share Folder Location..."
-     */
-    @DefaultMessage("Share Folder Location...")
-    @Key("shareFolderLocationMenuItem")
-    String shareFolderLocationMenuItem();
 
     /**
      * Translated "Successfully renamed analysis"

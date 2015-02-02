@@ -13,9 +13,11 @@ import org.iplantc.de.commons.client.info.IplantAnnouncer;
 import org.iplantc.de.diskResource.client.DiskResourceView;
 import org.iplantc.de.diskResource.client.GridView;
 import org.iplantc.de.diskResource.client.NavigationView;
+import org.iplantc.de.diskResource.client.ToolbarView;
 import org.iplantc.de.diskResource.client.gin.factory.DiskResourceViewFactory;
 import org.iplantc.de.diskResource.client.gin.factory.FolderContentsRpcProxyFactory;
 import org.iplantc.de.diskResource.client.gin.factory.GridViewPresenterFactory;
+import org.iplantc.de.diskResource.client.gin.factory.ToolbarViewPresenterFactory;
 import org.iplantc.de.diskResource.client.search.events.UpdateSavedSearchesEvent;
 import org.iplantc.de.diskResource.client.search.presenter.DataSearchPresenter;
 import org.iplantc.de.diskResource.client.search.views.DiskResourceSearchField;
@@ -60,7 +62,8 @@ public class DiskResourcePresenterImplTest {
     @Mock UpdateSavedSearchesEvent eventMock;
 
     @Mock IplantAnnouncer mockAnnouncer;
-    @Mock DiskResourceView.DiskResourceViewToolbar mockToolbar;
+    @Mock
+    ToolbarView mockToolbar;
 
     @Mock DiskResourceSearchField mockSearchField;
     @Mock TreeStore<Folder> mockTreeStore;
@@ -69,6 +72,8 @@ public class DiskResourcePresenterImplTest {
     @Mock GridViewPresenterFactory mockGridViewPresenterFactory;
     @Mock GridView.Presenter mockGridViewPresenter;
     @Mock GridView mockGridView;
+    @Mock ToolbarViewPresenterFactory mockToolbarPresenterFactory;
+    @Mock ToolbarView.Presenter mockToolbarPresenter;
 
 
     private DiskResourcePresenterImpl uut;
@@ -81,6 +86,7 @@ public class DiskResourcePresenterImplTest {
                                             mockNavigationPresenter,
                                             mockGridViewPresenterFactory,
                                             mockDataSearchPresenter,
+                                            mockToolbarPresenterFactory,
                                             mockDisplayStrings,
                                             mockAnnouncer,
                                             mockEventBus,
@@ -159,12 +165,18 @@ public class DiskResourcePresenterImplTest {
     }
 
     private void setupMocks() {
-        when(mockViewFactory.create(any(DiskResourceView.Presenter.class), any(NavigationView.Presenter.class), any(GridView.Presenter.class))).thenReturn(mockView);
-        when(mockGridViewPresenterFactory.create(any(NavigationView.Presenter.class), anyList(), any(TYPE.class))).thenReturn(mockGridViewPresenter);
+        when(mockViewFactory.create(any(DiskResourceView.Presenter.class),
+                                    any(NavigationView.Presenter.class),
+                                    any(GridView.Presenter.class),
+                                    any(ToolbarView.Presenter.class))).thenReturn(mockView);
+        when(mockGridViewPresenterFactory.create(any(NavigationView.Presenter.class),
+                                                 anyList(),
+                                                 any(TYPE.class))).thenReturn(mockGridViewPresenter);
         when(mockView.getToolbar()).thenReturn(mockToolbar);
         when(mockToolbar.getSearchField()).thenReturn(mockSearchField);
         when(mockNavigationPresenter.getView()).thenReturn(mockNavigationView);
         when(mockGridViewPresenter.getView()).thenReturn(mockGridView);
+        when(mockToolbarPresenterFactory.create(any(DiskResourceView.Presenter.class))).thenReturn(mockToolbarPresenter);
     }
 
 

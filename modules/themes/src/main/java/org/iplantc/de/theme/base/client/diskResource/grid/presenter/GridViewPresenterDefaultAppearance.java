@@ -60,6 +60,11 @@ public class GridViewPresenterDefaultAppearance implements GridView.Presenter.Ap
     }
 
     @Override
+    public String markFavoriteError() {
+        return displayStrings.markFavoriteError();
+    }
+
+    @Override
     public String metadata() {
         return displayStrings.metadata();
     }
@@ -82,6 +87,11 @@ public class GridViewPresenterDefaultAppearance implements GridView.Presenter.Ap
     @Override
     public String metadataHelp() {
         return displayStrings.metadataHelp();
+    }
+
+    @Override
+    public String removeFavoriteError() {
+        return displayStrings.removeFavoriteError();
     }
 
     @Override

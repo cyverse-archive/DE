@@ -10,8 +10,10 @@ import org.iplantc.de.commons.client.widgets.IPlantAnchor;
 import org.iplantc.de.diskResource.client.DiskResourceView;
 import org.iplantc.de.diskResource.client.GridView;
 import org.iplantc.de.diskResource.client.NavigationView;
+import org.iplantc.de.diskResource.client.ToolbarView;
 import org.iplantc.de.diskResource.client.events.DiskResourceSelectionChangedEvent;
-import org.iplantc.de.diskResource.client.events.ManageSharingEvent;
+import org.iplantc.de.diskResource.client.events.selection.EditInfoTypeSelected;
+import org.iplantc.de.diskResource.client.events.selection.ManageSharingSelected;
 import org.iplantc.de.diskResource.share.DiskResourceModule;
 import org.iplantc.de.resources.client.IplantResources;
 import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
@@ -80,7 +82,6 @@ public class DiskResourceViewImpl extends Composite implements DiskResourceView 
     private final TagListPresenterFactory tagListPresenterFactory;
     private Presenter presenter;
 
-    DiskResourceViewToolbar toolbar;
 
     private final IplantDisplayStrings displayStrings;
 
@@ -94,31 +95,30 @@ public class DiskResourceViewImpl extends Composite implements DiskResourceView 
 
     @UiField(provided = true) NavigationView navigationView;
     @UiField(provided = true) GridView centerGridView;
+    @UiField(provided = true) ToolbarView toolbar;
 
     private TagsView.Presenter tagPresenter;
 
     Logger LOG = Logger.getLogger("DRV");
 
     @Inject
-    DiskResourceViewImpl(final DiskResourceViewToolbar viewToolbar,
-                         final IplantDisplayStrings displayStrings,
+    DiskResourceViewImpl(final IplantDisplayStrings displayStrings,
                          final DiskResourceUtil diskResourceUtil,
                          final TagListPresenterFactory tagListPresenterFactory,
                          @Assisted final DiskResourceView.Presenter presenter,
                          @Assisted final NavigationView.Presenter navigationPresenter,
-                         @Assisted final GridView.Presenter gridViewPresenter) {
+                         @Assisted final GridView.Presenter gridViewPresenter,
+                         @Assisted final ToolbarView.Presenter toolbarPresenter) {
         this.navigationView = navigationPresenter.getView();
         this.centerGridView = gridViewPresenter.getView();
         this.gridViewPresenter = gridViewPresenter;
-        this.toolbar = viewToolbar;
+        this.toolbar = toolbarPresenter.getView();
         this.displayStrings = displayStrings;
         this.diskResourceUtil = diskResourceUtil;
         this.tagListPresenterFactory = tagListPresenterFactory;
         this.presenter = presenter;
 
         initWidget(BINDER.createAndBindUi(this));
-
-        toolbar.init(presenter, this);
 
         detailsPanel.setScrollMode(ScrollMode.AUTO);
 
@@ -130,9 +130,14 @@ public class DiskResourceViewImpl extends Composite implements DiskResourceView 
     }
 
     @Override
-    public HandlerRegistration addManageSharingEventHandler(ManageSharingEvent.ManageSharingEventHandler handler) {
+    public HandlerRegistration addEditInfoTypeSelectedEventHandler(EditInfoTypeSelected.EditInfoTypeSelectedEventHandler handler) {
+        return addHandler(handler, EditInfoTypeSelected.TYPE);
+    }
+
+    @Override
+    public HandlerRegistration addManageSharingSelectedEventHandler(ManageSharingSelected.ManageSharingSelectedEventHandler handler) {
         // FIXME Migrate to details view
-        return addHandler(handler, ManageSharingEvent.TYPE);
+        return addHandler(handler, ManageSharingSelected.TYPE);
     }
 
     @Override
@@ -188,11 +193,6 @@ public class DiskResourceViewImpl extends Composite implements DiskResourceView 
         southData.setHidden(false);
         southData.setSize(size);
         con.setSouthWidget(widget, southData);
-    }
-
-    @Override
-    public DiskResourceViewToolbar getToolbar() {
-        return toolbar;
     }
 
     @Override
@@ -484,9 +484,7 @@ public class DiskResourceViewImpl extends Composite implements DiskResourceView 
 
         @Override
         public void onClick(ClickEvent arg0) {
-            List<DiskResource> selection = gridViewPresenter.getSelectedDiskResources();
-            Iterator<DiskResource> it = selection.iterator();
-            presenter.onInfoTypeClick(it.next(), infoType);
+            fireEvent(new EditInfoTypeSelected(gridViewPresenter.getSelectedDiskResources()));
         }
 
     }
@@ -497,7 +495,7 @@ public class DiskResourceViewImpl extends Composite implements DiskResourceView 
             // FIXME This will be migrated to Details MVP
             final List<DiskResource> selectedDiskResources = gridViewPresenter.getSelectedDiskResources();
             Preconditions.checkArgument(selectedDiskResources.size() == 1);
-            fireEvent(new ManageSharingEvent(selectedDiskResources.get(0)));
+            fireEvent(new ManageSharingSelected(selectedDiskResources.get(0)));
         }
     }
 

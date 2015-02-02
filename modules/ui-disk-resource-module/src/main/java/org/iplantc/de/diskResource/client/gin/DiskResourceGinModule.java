@@ -4,6 +4,7 @@ import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.diskResource.client.DiskResourceView;
 import org.iplantc.de.diskResource.client.GridView;
 import org.iplantc.de.diskResource.client.NavigationView;
+import org.iplantc.de.diskResource.client.ToolbarView;
 import org.iplantc.de.diskResource.client.dataLink.presenter.DataLinkPresenterImpl;
 import org.iplantc.de.diskResource.client.dataLink.view.DataLinkPanel;
 import org.iplantc.de.diskResource.client.gin.factory.*;
@@ -12,6 +13,7 @@ import org.iplantc.de.diskResource.client.presenters.grid.GridViewPresenterImpl;
 import org.iplantc.de.diskResource.client.presenters.navigation.NavigationPresenterImpl;
 import org.iplantc.de.diskResource.client.presenters.proxy.FolderContentsRpcProxyImpl;
 import org.iplantc.de.diskResource.client.presenters.proxy.FolderRpcProxyImpl;
+import org.iplantc.de.diskResource.client.presenters.toolbar.ToolbarViewPresenterImpl;
 import org.iplantc.de.diskResource.client.search.presenter.DataSearchPresenter;
 import org.iplantc.de.diskResource.client.search.presenter.impl.DataSearchPresenterImpl;
 import org.iplantc.de.diskResource.client.search.views.DiskResourceSearchField;
@@ -20,7 +22,7 @@ import org.iplantc.de.diskResource.client.search.views.cells.DiskResourceSearchC
 import org.iplantc.de.diskResource.client.views.DiskResourceViewImpl;
 import org.iplantc.de.diskResource.client.views.grid.GridViewImpl;
 import org.iplantc.de.diskResource.client.views.navigation.NavigationViewImpl;
-import org.iplantc.de.diskResource.client.views.widgets.DiskResourceViewToolbarImpl;
+import org.iplantc.de.diskResource.client.views.toolbar.DiskResourceViewToolbarImpl;
 
 import com.google.gwt.inject.client.AbstractGinModule;
 import com.google.gwt.inject.client.assistedinject.GinFactoryModuleBuilder;
@@ -53,7 +55,7 @@ public class DiskResourceGinModule extends AbstractGinModule {
 
         // Disk Resource Views
         bind(new TypeLiteral<TreeStore<Folder>>() {}).toProvider(DiskResourceTreeStoreProvider.class);
-        bind(DiskResourceView.DiskResourceViewToolbar.class).to(DiskResourceViewToolbarImpl.class);
+//        bind(ToolbarView.class).to(DiskResourceViewToolbarImpl.class);
         install(new GinFactoryModuleBuilder()
                     .implement(DiskResourceView.class, DiskResourceViewImpl.class)
                     .build(DiskResourceViewFactory.class));
@@ -84,6 +86,15 @@ public class DiskResourceGinModule extends AbstractGinModule {
         install(new GinFactoryModuleBuilder()
                     .implement(GridView.class, GridViewImpl.class)
                     .build(GridViewFactory.class));
+
+        // Toolbar
+        install(new GinFactoryModuleBuilder()
+                    .implement(ToolbarView.class, DiskResourceViewToolbarImpl.class)
+                    .build(ToolbarViewFactory.class));
+
+        install(new GinFactoryModuleBuilder()
+                    .implement(ToolbarView.Presenter.class, ToolbarViewPresenterImpl.class)
+                    .build(ToolbarViewPresenterFactory.class));
     }
 
 

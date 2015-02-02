@@ -16,15 +16,6 @@ public interface IplantContextualHelpStrings extends com.google.gwt.i18n.client.
   String collaboratorsHelp();
 
   /**
-   * Translated "<p>Manage Data Links allows you to create and manage links generated for your data, allowing you to copy the links and share them with others. </p><p> To create a new link, select the file and click Create.</p> <br/><p>To create links for multiple files, hold the Shift key, select the multiple files, then click Create.</p><br/><p>To break a link, click the link icon with the red \"-\" sign to the left of the file. No one will be able to further use that  link and it will not be public. It is good practice to break a link once it is no longer needed.</p> </br><p>Links can not be generated for folders. The files within the folder must be linked individually.</p>".
-   * 
-   * @return translated "<p>Manage Data Links allows you to create and manage links generated for your data, allowing you to copy the links and share them with others. </p><p> To create a new link, select the file and click Create.</p> <br/><p>To create links for multiple files, hold the Shift key, select the multiple files, then click Create.</p><br/><p>To break a link, click the link icon with the red \"-\" sign to the left of the file. No one will be able to further use that  link and it will not be public. It is good practice to break a link once it is no longer needed.</p> </br><p>Links can not be generated for folders. The files within the folder must be linked individually.</p>"
-   */
-  @DefaultMessage("<p>Manage Data Links allows you to create and manage links generated for your data, allowing you to copy the links and share them with others. </p><p> To create a new link, select the file and click Create.</p> <br/><p>To create links for multiple files, hold the Shift key, select the multiple files, then click Create.</p><br/><p>To break a link, click the link icon with the red \"-\" sign to the left of the file. No one will be able to further use that  link and it will not be public. It is good practice to break a link once it is no longer needed.</p> </br><p>Links can not be generated for folders. The files within the folder must be linked individually.</p>")
-  @Key("manageDataLinksHelp")
-  String manageDataLinksHelp();
-
-  /**
    * Translated "For example, you may want to include a link to a paper which referenced your app. ".
    * 
    * @return translated "For example, you may want to include a link to a paper which referenced your app. "

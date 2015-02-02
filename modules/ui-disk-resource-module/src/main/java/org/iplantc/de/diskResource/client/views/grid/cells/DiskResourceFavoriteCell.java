@@ -22,11 +22,7 @@ public class DiskResourceFavoriteCell extends AbstractCell<DiskResource> {
 
     public interface Appearance {
 
-        String addFavoriteClass();
-
         String addToFavoriteTooltip();
-
-        String deleteFavoriteClass();
 
         String favoriteClass();
 
@@ -48,7 +44,7 @@ public class DiskResourceFavoriteCell extends AbstractCell<DiskResource> {
     }
 
     public DiskResourceFavoriteCell(final Appearance appearance) {
-        super(CLICK, MOUSEOVER, MOUSEOUT);
+        super(CLICK);
         this.appearance = appearance;
     }
 
@@ -92,12 +88,6 @@ public class DiskResourceFavoriteCell extends AbstractCell<DiskResource> {
                         hasHandlers.fireEvent(new RequestDiskResourceFavoriteEvent(value));
                     }
                     break;
-                case Event.ONMOUSEOVER:
-                    doOnMouseOver(eventTarget, value);
-                    break;
-                case Event.ONMOUSEOUT:
-                    doOnMouseOut(eventTarget, value);
-                    break;
                 default:
                     break;
             }
@@ -110,24 +100,6 @@ public class DiskResourceFavoriteCell extends AbstractCell<DiskResource> {
 
     public void setHasHandlers(HasHandlers hasHandlers) {
         this.hasHandlers = hasHandlers;
-    }
-
-    private void doOnMouseOut(Element eventTarget, DiskResource value) {
-        if (value.isFavorite()) {
-            eventTarget.setClassName(appearance.favoriteClass());
-            eventTarget.setAttribute("qtip", appearance.removeFromFavoriteTooltip());
-        } else {
-            eventTarget.setClassName(appearance.favoriteDisabledClass());
-            eventTarget.setAttribute("qtip", appearance.addToFavoriteTooltip());
-        }
-    }
-
-    private void doOnMouseOver(Element eventTarget, DiskResource value) {
-        if (value.isFavorite()) {
-            eventTarget.setClassName(appearance.deleteFavoriteClass());
-        } else {
-            eventTarget.setClassName(appearance.addFavoriteClass());
-        }
     }
 
 }

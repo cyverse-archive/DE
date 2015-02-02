@@ -5,10 +5,10 @@ import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.client.models.diskResources.File;
 import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.client.util.DiskResourceUtil;
-import org.iplantc.de.diskResource.client.events.ManageCommentsEvent;
-import org.iplantc.de.diskResource.client.events.ManageMetadataEvent;
-import org.iplantc.de.diskResource.client.events.ManageSharingEvent;
-import org.iplantc.de.diskResource.client.events.ShareByDataLinkEvent;
+import org.iplantc.de.diskResource.client.events.selection.ManageCommentsSelected;
+import org.iplantc.de.diskResource.client.events.selection.ManageMetadataSelected;
+import org.iplantc.de.diskResource.client.events.selection.ManageSharingSelected;
+import org.iplantc.de.diskResource.client.events.selection.ShareByDataLinkSelected;
 import org.iplantc.de.diskResource.share.DiskResourceModule;
 
 import static com.google.gwt.dom.client.BrowserEvents.CLICK;
@@ -201,13 +201,13 @@ public class DiskResourceActionsCell extends AbstractCell<DiskResource> {
 
         String action = eventTarget.getAttribute("name");
         if (action.equals(SHARE_FOLDER_BY_LINK_ACTION) || action.equals(SHARE_FILE_BY_LINK_ACTION)) {
-            hasHandlers.fireEvent(new ShareByDataLinkEvent(value));
+            hasHandlers.fireEvent(new ShareByDataLinkSelected(value));
         } else if (action.equalsIgnoreCase(SHARE_BY_DE_ACTION)) {
-            hasHandlers.fireEvent(new ManageSharingEvent(value));
+            hasHandlers.fireEvent(new ManageSharingSelected(value));
         } else if (action.equalsIgnoreCase(MANAGE_METADATA_ACTION)) {
-            hasHandlers.fireEvent(new ManageMetadataEvent(value));
+            hasHandlers.fireEvent(new ManageMetadataSelected(value));
         } else if (action.equalsIgnoreCase(COMMENTS_ACTION)) {
-            hasHandlers.fireEvent(new ManageCommentsEvent(value));
+            hasHandlers.fireEvent(new ManageCommentsSelected(value));
         }
 
     }

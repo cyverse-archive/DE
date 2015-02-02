@@ -969,8 +969,4 @@ public interface IplantErrorStrings extends com.google.gwt.i18n.client.Messages,
     // favorites
     String favoritesError(String caughtMessage);
 
-    String markFavoriteError();
-
-    String removeFavoriteError();
-
 }

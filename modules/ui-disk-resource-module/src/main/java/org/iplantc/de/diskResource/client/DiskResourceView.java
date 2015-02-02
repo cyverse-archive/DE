@@ -7,22 +7,15 @@ import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.client.models.tags.IplantTag;
 import org.iplantc.de.client.services.DiskResourceServiceFacade;
-import org.iplantc.de.commons.client.views.window.configs.FileViewerWindowConfig;
-import org.iplantc.de.commons.client.views.window.configs.PathListWindowConfig;
-import org.iplantc.de.commons.client.views.window.configs.TabularFileViewerWindowConfig;
 import org.iplantc.de.diskResource.client.events.DiskResourceSelectionChangedEvent;
 import org.iplantc.de.diskResource.client.events.FolderSelectionEvent;
-import org.iplantc.de.diskResource.client.events.ManageCommentsEvent;
-import org.iplantc.de.diskResource.client.events.ManageMetadataEvent;
-import org.iplantc.de.diskResource.client.events.ManageSharingEvent;
-import org.iplantc.de.diskResource.client.events.RequestDiskResourceFavoriteEvent;
 import org.iplantc.de.diskResource.client.events.RootFoldersRetrievedEvent;
 import org.iplantc.de.diskResource.client.events.SavedSearchesRetrievedEvent;
-import org.iplantc.de.diskResource.client.events.ShareByDataLinkEvent;
+import org.iplantc.de.diskResource.client.events.selection.EditInfoTypeSelected;
+import org.iplantc.de.diskResource.client.events.selection.ManageSharingSelected;
 import org.iplantc.de.diskResource.client.presenters.proxy.FolderContentsLoadConfig;
 import org.iplantc.de.diskResource.client.presenters.proxy.SelectFolderByPathLoadHandler;
 import org.iplantc.de.diskResource.client.search.events.SubmitDiskResourceQueryEvent.HasSubmitDiskResourceQueryEventHandlers;
-import org.iplantc.de.diskResource.client.search.views.DiskResourceSearchField;
 import org.iplantc.de.tags.client.Taggable;
 
 import com.google.gwt.resources.client.ImageResource;
@@ -44,31 +37,9 @@ import java.util.Set;
 public interface DiskResourceView extends IsWidget,
                                           IsMaskable,
                                           Taggable,
-                                          ManageSharingEvent.HasManageSharingEventHandlers,
-                                          DiskResourceSelectionChangedEvent.DiskResourceSelectionChangedEventHandler {
-
-    interface DiskResourceViewToolbar extends IsWidget,
-                                              ManageCommentsEvent.HasManageCommentsEventHandlers,
-                                              ManageMetadataEvent.HasManageMetadataEventHandlers,
-                                              ManageSharingEvent.HasManageSharingEventHandlers,
-                                              ShareByDataLinkEvent.HasShareByDataLinkEventHandlers {
-
-        DiskResourceSearchField getSearchField();
-
-        void init(DiskResourceView.Presenter presenter, DiskResourceView view);
-
-        void maskSendToCoGe();
-
-        void maskSendToEnsembl();
-
-        void maskSendToTreeViewer();
-
-        void unmaskSendToCoGe();
-
-        void unmaskSendToEnsembl();
-
-        void unmaskSendToTreeViewer();
-    }
+                                          ManageSharingSelected.HasManageSharingSelectedEventHandlers,
+                                          DiskResourceSelectionChangedEvent.DiskResourceSelectionChangedEventHandler,
+                                          EditInfoTypeSelected.HasEditInfoTypeSelectedEventHandlers {
 
     interface DiskResourceViewToolbarAppearance {
 
@@ -102,8 +73,7 @@ public interface DiskResourceView extends IsWidget,
                                 IsMaskable,
                                 DiskResourceSelectionChangedEvent.HasDiskResourceSelectionChangedEventHandlers,
                                 FolderSelectionEvent.HasFolderSelectionEventHandlers,
-                                DiskResourceSelectionChangedEvent.DiskResourceSelectionChangedEventHandler,
-                                RequestDiskResourceFavoriteEvent.RequestDiskResourceFavoriteEventHandler {
+                                DiskResourceSelectionChangedEvent.DiskResourceSelectionChangedEventHandler {
 
         String FAVORITES_FOLDER_NAME = "Favorites";
         String FAVORITES_FOLDER_PATH = "/favorites";
@@ -119,15 +89,7 @@ public interface DiskResourceView extends IsWidget,
 
         Folder convertToFolder(DiskResource selectedItem);
 
-        void createNewFolder();
-
-        void createNewPlainTextFile(FileViewerWindowConfig config);
-
-        void createNewTabFile(TabularFileViewerWindowConfig config);
-
         void deSelectDiskResources();
-
-        void deleteSelectedResources();
 
         void detachTag(IplantTag tag);
 
@@ -135,29 +97,13 @@ public interface DiskResourceView extends IsWidget,
 
         void displayAndCacheDiskResourceInfo(DiskResource info);
 
-        void doBulkDownload();
-
-        void doBulkUpload();
-
         void doCreateNewFolder(Folder parentFolder, String folderName);
-
-        void doImportFromUrl();
 
         void doMoveDiskResources(Folder targetFolder, List<DiskResource> resources);
 
         void doRenameDiskResource(DiskResource diskResource, String newName);
 
         void doSearchTaggedWithResources(Set<IplantTag> tags);
-
-        void doSimpleDownload();
-
-        void doSimpleUpload();
-
-        void editSelectedFile();
-
-        void editSelectedResourceInfoType();
-
-        void emptyTrash();
 
         void getDetails(DiskResource next);
 
@@ -172,35 +118,7 @@ public interface DiskResourceView extends IsWidget,
         void go(HasOneWidget container, HasPath folderToSelect,
                 List<? extends HasId> diskResourcesToSelect);
 
-        void manageSelectedResourceDataLinks();
-
-        void moveSelectedDiskResources();
-
-        void moveSelectedDiskResourcesToTrash();
-
-        void onInfoTypeClick(DiskResource dr, String infoType);
-
-        void onNewMdFile(FileViewerWindowConfig config);
-
-        void onNewPathListFileClicked(PathListWindowConfig config);
-
-        void onNewPerlFile(FileViewerWindowConfig config);
-
-        void onNewPythonFile(FileViewerWindowConfig config);
-
-        void onNewRFile(FileViewerWindowConfig config);
-
-        void onNewShellScript(FileViewerWindowConfig config);
-
-        void openNewWindow(boolean atCurrentLocation);
-
-        void refreshSelectedFolder();
-
-        void renameSelectedResource();
-
         void resetInfoType();
-
-        void restoreSelectedResources();
 
         void selectTrashFolder();
 
@@ -226,8 +144,6 @@ public interface DiskResourceView extends IsWidget,
         void unmaskVizMenuOptions();
     }
 
-
-    DiskResourceViewToolbar getToolbar();
 
     void maskDetailsPanel();
 

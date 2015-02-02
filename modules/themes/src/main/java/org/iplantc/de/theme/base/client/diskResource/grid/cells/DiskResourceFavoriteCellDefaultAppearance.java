@@ -40,20 +40,9 @@ public class DiskResourceFavoriteCellDefaultAppearance implements DiskResourceFa
         this.favoriteCellStyle.ensureInjected();
     }
 
-
-    @Override
-    public String addFavoriteClass() {
-        return favoriteCellStyle.favoriteAdd();
-    }
-
     @Override
     public String addToFavoriteTooltip() {
         return iplantDisplayStrings.addAppToFav();
-    }
-
-    @Override
-    public String deleteFavoriteClass() {
-        return favoriteCellStyle.favoriteDelete();
     }
 
     @Override

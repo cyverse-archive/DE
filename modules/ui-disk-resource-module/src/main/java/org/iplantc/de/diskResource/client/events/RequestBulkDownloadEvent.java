@@ -8,7 +8,6 @@ import com.google.gwt.event.shared.EventHandler;
 import com.google.gwt.event.shared.GwtEvent;
 
 import java.util.List;
-import java.util.Set;
 
 /**
  * @author jstroot
@@ -24,11 +23,9 @@ public class RequestBulkDownloadEvent extends GwtEvent<RequestBulkDownloadEventH
     private final Folder currentFolder;
     private boolean selectAll;
 
-    public RequestBulkDownloadEvent(final Object source,
-                                    final boolean selectAll,
+    public RequestBulkDownloadEvent(final boolean selectAll,
                                     final List<DiskResource> requestedResources,
                                     final Folder currentFolder) {
-        setSource(source);
         this.setSelectAll(selectAll);
         this.requestedResources = requestedResources;
         this.currentFolder = currentFolder;

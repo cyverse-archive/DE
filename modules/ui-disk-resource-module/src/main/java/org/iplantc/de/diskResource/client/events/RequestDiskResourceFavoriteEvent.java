@@ -7,18 +7,24 @@ import com.google.gwt.event.shared.EventHandler;
 import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.event.shared.HandlerRegistration;
 
+/**
+ * @author jstroot
+ */
 public class RequestDiskResourceFavoriteEvent extends GwtEvent<RequestDiskResourceFavoriteEventHandler> {
 
-    public static final GwtEvent.Type<RequestDiskResourceFavoriteEventHandler> TYPE = new GwtEvent.Type<RequestDiskResourceFavoriteEventHandler>();
+    public static interface HasManageFavoritesEventHandlers {
+        HandlerRegistration addManageFavoritesEventHandler(RequestDiskResourceFavoriteEventHandler handler);
+    }
 
+    public interface RequestDiskResourceFavoriteEventHandler extends EventHandler {
+        void onFavoriteRequest(RequestDiskResourceFavoriteEvent event);
+    }
+
+    public static final GwtEvent.Type<RequestDiskResourceFavoriteEventHandler> TYPE = new GwtEvent.Type<RequestDiskResourceFavoriteEventHandler>();
     private final DiskResource dr;
 
     public RequestDiskResourceFavoriteEvent(DiskResource dr) {
         this.dr = dr;
-    }
-
-    public DiskResource getDiskResource() {
-        return dr;
     }
 
     @Override
@@ -26,17 +32,13 @@ public class RequestDiskResourceFavoriteEvent extends GwtEvent<RequestDiskResour
         return TYPE;
     }
 
+    public DiskResource getDiskResource() {
+        return dr;
+    }
+
     @Override
     protected void dispatch(RequestDiskResourceFavoriteEventHandler handler) {
         handler.onFavoriteRequest(this);
-    }
-
-    public interface RequestDiskResourceFavoriteEventHandler extends EventHandler {
-        void onFavoriteRequest(RequestDiskResourceFavoriteEvent event);
-    }
-
-    public static interface HasManageFavoritesEventHandlers {
-        HandlerRegistration addManageFavoritesEventHandler(RequestDiskResourceFavoriteEventHandler handler);
     }
 
 }

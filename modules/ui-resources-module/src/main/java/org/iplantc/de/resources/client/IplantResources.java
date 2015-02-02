@@ -130,14 +130,6 @@ public interface IplantResources extends ClientBundle, AppResources, DiskResourc
      * 
      * @return image.
      */
-    @Source("comments.png")
-    ImageResource metadata();
-
-    /**
-     * Image resource.
-     * 
-     * @return image.
-     */
     @Source("arrow_undo.png")
     ImageResource arrow_undo();
 
@@ -405,33 +397,6 @@ public interface IplantResources extends ClientBundle, AppResources, DiskResourc
 
     /**
      * Image resource.
-     *
-     * @return image.
-     */
-    @Override
-    @Source("../../../../../../../../../themes/src/main/java/org/iplantc/de/theme/base/client/diskResource/folder_delete.gif")
-    ImageResource folderDelete();
-
-    /**
-     * Image resource.
-     * 
-     * @return image.
-     */
-    @Override
-    @Source("../../../../../../../../../themes/src/main/java/org/iplantc/de/theme/base/client/diskResource/file_delete.gif")
-    ImageResource fileDelete();
-
-    /**
-     * Image resource.
-     * 
-     * @return image.
-     */
-    @Override
-    @Source("folder_home.gif")
-    ImageResource folderHome();
-
-    /**
-     * Image resource.
      * 
      * @return image.
      */
@@ -445,53 +410,8 @@ public interface IplantResources extends ClientBundle, AppResources, DiskResourc
      * @return image.
      */
     @Override
-    @Source("folder_rename.gif")
-    ImageResource folderRename();
-
-    /**
-     * Image resource.
-     * 
-     * @return image.
-     */
-    @Override
-    @Source("import.gif")
-    ImageResource importData();
-
-    /**
-     * Image resource.
-     * 
-     * @return image.
-     */
-    @Override
-    @Source("file_download.gif")
-    ImageResource download();
-
-    /**
-     * Image resource.
-     * 
-     * @return image.
-     */
-    @Override
-    @Source("drive_disk.png")
-    ImageResource desktopUpload();
-
-    /**
-     * Image resource.
-     * 
-     * @return image.
-     */
-    @Override
     @Source("drive_web.png")
     ImageResource urlImport();
-
-    /**
-     * Image resource.
-     * 
-     * @return image.
-     */
-    @Override
-    @Source("control_arrow_down.png")
-    ImageResource dataActionMenuIcon();
 
     @Override
     @Source("integrator_checkbox.png")
@@ -590,12 +510,6 @@ public interface IplantResources extends ClientBundle, AppResources, DiskResourc
 
     @Source("DEHeader.css")
     DEHeaderStyle getHeaderStyle();
-
-    @Source("bin_empty.png")
-    ImageResource trashEmpty();
-
-    @Source("bin.png")
-    ImageResource trash();
 
     @Override
     @Source("tree_collapse.png")

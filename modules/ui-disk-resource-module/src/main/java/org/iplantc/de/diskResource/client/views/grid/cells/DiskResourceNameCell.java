@@ -99,6 +99,7 @@ public class DiskResourceNameCell extends AbstractCell<DiskResource> {
             return;
         }
 
+        favCell.setBaseDebugId(baseID);
         favCell.render(context, value, sb);
 
         boolean inTrash = diskResourceUtil.inTrash(value);

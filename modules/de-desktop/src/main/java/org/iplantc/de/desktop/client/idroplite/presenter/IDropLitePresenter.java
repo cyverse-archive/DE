@@ -138,7 +138,7 @@ public class IDropLitePresenter implements Presenter {
     @Override
     public void onSimpleDownloadClick() {
         EventBus.getInstance().fireEvent(
-                new RequestSimpleDownloadEvent(this, Lists.newArrayList(idlwc.getResourcesToDownload()),
+                new RequestSimpleDownloadEvent(Lists.newArrayList(idlwc.getResourcesToDownload()),
                         idlwc.getCurrentFolder()));
     }
 

@@ -7,7 +7,7 @@
     <inherits name="org.iplantc.de.collaborators.Collaborators" />
     <inherits name="org.iplantc.de.tags.Tags" />
         <!-- Deferred binding rules -->
-    <replace-with class="org.iplantc.de.diskResource.client.views.widgets.DiskResourceViewToolbarImpl">
+    <replace-with class="org.iplantc.de.diskResource.client.views.toolbar.DiskResourceViewToolbarImpl">
        <when-type-is class="org.iplantc.de.diskResource.client.DiskResourceView.DiskResourceViewToolbar"/>
     </replace-with>
      <!-- Deferred binding rules -->
