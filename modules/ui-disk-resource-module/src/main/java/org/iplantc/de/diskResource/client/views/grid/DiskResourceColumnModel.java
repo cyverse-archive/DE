@@ -4,19 +4,19 @@ import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.client.models.diskResources.File;
 import org.iplantc.de.client.util.DiskResourceUtil;
 import org.iplantc.de.diskResource.client.GridView;
+import org.iplantc.de.diskResource.client.events.DiskResourceNameSelectedEvent;
 import org.iplantc.de.diskResource.client.events.DiskResourcePathSelectedEvent;
+import org.iplantc.de.diskResource.client.events.RequestDiskResourceFavoriteEvent;
+import org.iplantc.de.diskResource.client.events.selection.ManageCommentsSelected;
+import org.iplantc.de.diskResource.client.events.selection.ManageMetadataSelected;
+import org.iplantc.de.diskResource.client.events.selection.ManageSharingSelected;
+import org.iplantc.de.diskResource.client.events.selection.ShareByDataLinkSelected;
 import org.iplantc.de.diskResource.client.model.DiskResourceNameComparator;
 import org.iplantc.de.diskResource.client.model.DiskResourceProperties;
 import org.iplantc.de.diskResource.client.views.grid.cells.DiskResourceActionsCell;
 import org.iplantc.de.diskResource.client.views.grid.cells.DiskResourceFavoriteCell;
 import org.iplantc.de.diskResource.client.views.grid.cells.DiskResourceNameCell;
 import org.iplantc.de.diskResource.client.views.grid.cells.DiskResourcePathCell;
-import org.iplantc.de.diskResource.client.events.DiskResourceNameSelectedEvent;
-import org.iplantc.de.diskResource.client.events.selection.ManageCommentsSelected;
-import org.iplantc.de.diskResource.client.events.selection.ManageMetadataSelected;
-import org.iplantc.de.diskResource.client.events.selection.ManageSharingSelected;
-import org.iplantc.de.diskResource.client.events.RequestDiskResourceFavoriteEvent;
-import org.iplantc.de.diskResource.client.events.selection.ShareByDataLinkSelected;
 import org.iplantc.de.diskResource.share.DiskResourceModule;
 
 import com.google.gwt.cell.client.AbstractCell;
@@ -58,6 +58,10 @@ public class DiskResourceColumnModel extends ColumnModel<DiskResource> implement
                 ((DiskResourceNameCell)cc.getCell()).setHasHandlers(this);
             } else if(cc.getCell() instanceof DiskResourceActionsCell){
                 ((DiskResourceActionsCell)cc.getCell()).setHasHandlers(this);
+            } else if(cc.getCell() instanceof DiskResourcePathCell) {
+                ((DiskResourcePathCell)cc.getCell()).setHasHandlers(this);
+            } else if(cc.getCell() instanceof DiskResourceFavoriteCell) {
+                ((DiskResourceFavoriteCell)cc.getCell()).setHasHandlers(this);
             }
         }
     }

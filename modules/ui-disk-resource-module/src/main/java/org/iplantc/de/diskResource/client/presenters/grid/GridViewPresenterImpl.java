@@ -11,6 +11,7 @@ import org.iplantc.de.client.models.diskResources.PermissionValue;
 import org.iplantc.de.client.models.diskResources.TYPE;
 import org.iplantc.de.client.models.viewer.InfoType;
 import org.iplantc.de.client.services.DiskResourceServiceFacade;
+import org.iplantc.de.client.services.MetadataServiceFacade;
 import org.iplantc.de.client.util.DiskResourceUtil;
 import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.commons.client.comments.CommentsView;
@@ -96,6 +97,7 @@ public class GridViewPresenterImpl implements GridView.Presenter,
     @Inject DataSharingDialogFactory dataSharingDialogFactory;
     @Inject IplantAnnouncer announcer;
     @Inject CommentsPresenterFactory commentsPresenterFactory;
+    @Inject MetadataServiceFacade metadataService;
     private final Appearance appearance;
     private final NavigationView.Presenter navigationPresenter;
     private final ListStore<DiskResource> listStore;
@@ -244,9 +246,50 @@ public class GridViewPresenterImpl implements GridView.Presenter,
 
     @Override
     public void onFavoriteRequest(RequestDiskResourceFavoriteEvent event) {
+        final DiskResource diskResource = event.getDiskResource();
+        Preconditions.checkNotNull(diskResource);
+        if (!diskResource.isFavorite()) {
+            metadataService.addToFavorites(diskResource.getId(), new AsyncCallback<String>() {
 
+                @Override
+                public void onFailure(Throwable caught) {
+                    ErrorHandler.post(appearance.markFavoriteError(), caught);
+
+                }
+
+                @Override
+                public void onSuccess(String result) {
+                    updateFav(diskResource, true);
+                }
+            });
+        } else {
+            metadataService.removeFromFavorites(diskResource.getId(), new AsyncCallback<String>() {
+
+                @Override
+                public void onFailure(Throwable caught) {
+                    ErrorHandler.post(appearance.removeFavoriteError(), caught);
+                }
+
+                @Override
+                public void onSuccess(String result) {
+                    updateFav(diskResource, false);
+                }
+            });
+        }
     }
 
+    private void updateFav(final DiskResource diskResource, boolean fav) {
+        if (getSelectedDiskResources().size() > 0) {
+            Iterator<DiskResource> it = getSelectedDiskResources().iterator();
+            if (it.hasNext()) {
+                final DiskResource next = it.next();
+                if (next.getId().equals(diskResource.getId())) {
+                    next.setFavorite(fav);
+                    updateDiskResource(next);
+                }
+            }
+        }
+    }
     @Override
     public void onFolderSelected(FolderSelectionEvent event) {
         doFolderSelected(event.getSelectedFolder());

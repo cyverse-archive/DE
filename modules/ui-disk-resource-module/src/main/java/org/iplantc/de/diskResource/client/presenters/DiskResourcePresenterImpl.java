@@ -53,7 +53,6 @@ import org.iplantc.de.diskResource.share.DiskResourceModule;
 import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 import org.iplantc.de.resources.client.messages.IplantErrorStrings;
 
-import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
@@ -385,46 +384,9 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
     }
 
     @Override
-    public void onFavoriteRequest(RequestDiskResourceFavoriteEvent event) {
-        final DiskResource diskResource = event.getDiskResource();
-        checkNotNull(diskResource);
-        if (!diskResource.isFavorite()) {
-            fsmdataService.addToFavorites(diskResource.getId(), new AsyncCallback<String>() {
-
-                @Override
-                public void onFailure(Throwable caught) {
-                    ErrorHandler.post(errorStrings.markFavoriteError(), caught);
-
-                }
-
-                @Override
-                public void onSuccess(String result) {
-                    updateFav(diskResource, true);
-                }
-            });
-        } else {
-            fsmdataService.removeFromFavorites(diskResource.getId(), new AsyncCallback<String>() {
-
-                @Override
-                public void onFailure(Throwable caught) {
-                    ErrorHandler.post(errorStrings.removeFavoriteError(), caught);
-
-                }
-
-                @Override
-                public void onSuccess(String result) {
-                    updateFav(diskResource, false);
-
-                }
-            });
-        }
-    }
-
-    @Override
     public Folder convertToFolder(DiskResource selectedItem) {
         return diskResourceService.convertToFolder(selectedItem);
     }
-
 
     @Override
     public void onRootFoldersRetrieved(RootFoldersRetrievedEvent event) {
@@ -904,19 +866,7 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
 
     }
 
-    private void updateFav(final DiskResource diskResource, boolean fav) {
-        if (getSelectedDiskResources().size() > 0) {
-            Iterator<DiskResource> it = getSelectedDiskResources().iterator();
-            if (it.hasNext()) {
-                final DiskResource next = it.next();
-                if (next.getId().equals(diskResource.getId())) {
-                    next.setFavorite(fav);
-                    gridViewPresenter.updateDiskResource(next);
-                }
-            }
 
-        }
-    }
 
     @Override
     public void doSearchTaggedWithResources(Set<IplantTag> tags) {

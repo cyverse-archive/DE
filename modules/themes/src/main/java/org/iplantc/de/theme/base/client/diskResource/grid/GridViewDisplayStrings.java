@@ -12,6 +12,9 @@ public interface GridViewDisplayStrings extends Messages{
     @Key("diskResourceNotAvailable")
     String diskResourceNotAvailable();
 
+    @Key("markFavoriteError")
+    String markFavoriteError();
+
     @Key("metadata")
     String metadata();
 
@@ -29,6 +32,9 @@ public interface GridViewDisplayStrings extends Messages{
 
     @Key("pathFieldLabel")
     SafeHtml pathFieldLabel();
+
+    @Key("removeFavoriteError")
+    String removeFavoriteError();
 
     @Key("share")
     String share();

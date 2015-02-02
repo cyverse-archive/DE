@@ -8,9 +8,6 @@ import org.iplantc.de.resources.client.IplantResources;
 import org.iplantc.de.resources.client.messages.I18N;
 
 import static com.google.gwt.dom.client.BrowserEvents.CLICK;
-import static com.google.gwt.dom.client.BrowserEvents.MOUSEOUT;
-import static com.google.gwt.dom.client.BrowserEvents.MOUSEOVER;
-
 import com.google.common.base.Strings;
 import com.google.gwt.cell.client.AbstractCell;
 import com.google.gwt.cell.client.Cell;
@@ -28,12 +25,12 @@ import com.google.gwt.user.client.Event;
 
 /**
  * FIXME Create appearance
+ * @author jstroot
  * 
- * @param <FavoriteTemplates>
  */
 public class AppFavoriteCell extends AbstractCell<App> {
 
-    public static final GwtEvent.Type<RequestAppFavoriteEventHandler> REQUEST_APP_FAV_EVNT_TYPE = new GwtEvent.Type<RequestAppFavoriteEventHandler>();
+    public static final GwtEvent.Type<RequestAppFavoriteEventHandler> REQUEST_APP_FAV_EVNT_TYPE = new GwtEvent.Type<>();
     public class RequestAppFavoriteEvent extends GwtEvent<RequestAppFavoriteEventHandler> {
 
         private final App app;
@@ -70,7 +67,7 @@ public class AppFavoriteCell extends AbstractCell<App> {
     private HasHandlers hasHandlers;
 
     public AppFavoriteCell() {
-        super(CLICK, MOUSEOVER, MOUSEOUT);
+        super(CLICK);
         css.ensureInjected();
     }
 
@@ -121,12 +118,6 @@ public class AppFavoriteCell extends AbstractCell<App> {
                         hasHandlers.fireEvent(new RequestAppFavoriteEvent(value));
                     }
                     break;
-                case Event.ONMOUSEOVER:
-                    doOnMouseOver(eventTarget, value);
-                    break;
-                case Event.ONMOUSEOUT:
-                    doOnMouseOut(eventTarget, value);
-                    break;
                 default:
                     break;
             }
@@ -141,22 +132,5 @@ public class AppFavoriteCell extends AbstractCell<App> {
         this.hasHandlers = hasHandlers;
     }
 
-    private void doOnMouseOut(Element eventTarget, App value) {
-        if (value.isFavorite()) {
-            eventTarget.setClassName(css.favorite());
-            eventTarget.setAttribute("qtip", I18N.DISPLAY.remAppFromFav());
-        } else {
-            eventTarget.setClassName(css.favoriteDisabled());
-            eventTarget.setAttribute("qtip", I18N.DISPLAY.addAppToFav());
-        }
-    }
-
-    private void doOnMouseOver(Element eventTarget, App value) {
-        if (value.isFavorite()) {
-            eventTarget.setClassName(css.favoriteDelete());
-        } else {
-            eventTarget.setClassName(css.favoriteAdd());
-        }
-    }
 
 }

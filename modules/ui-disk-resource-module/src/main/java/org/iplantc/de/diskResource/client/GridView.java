@@ -106,6 +106,8 @@ public interface GridView extends IsWidget,
 
             String createDataLinksError();
 
+            String markFavoriteError();
+
             String metadata();
 
             String metadataDialogHeight();
@@ -115,6 +117,8 @@ public interface GridView extends IsWidget,
             String metadataFormInvalid();
 
             String metadataHelp();
+
+            String removeFavoriteError();
 
             String shareLinkDialogHeight();
 

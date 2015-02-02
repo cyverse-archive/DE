@@ -9,7 +9,6 @@ import org.iplantc.de.client.models.tags.IplantTag;
 import org.iplantc.de.client.services.DiskResourceServiceFacade;
 import org.iplantc.de.diskResource.client.events.DiskResourceSelectionChangedEvent;
 import org.iplantc.de.diskResource.client.events.FolderSelectionEvent;
-import org.iplantc.de.diskResource.client.events.RequestDiskResourceFavoriteEvent;
 import org.iplantc.de.diskResource.client.events.RootFoldersRetrievedEvent;
 import org.iplantc.de.diskResource.client.events.SavedSearchesRetrievedEvent;
 import org.iplantc.de.diskResource.client.events.selection.EditInfoTypeSelected;
@@ -74,8 +73,7 @@ public interface DiskResourceView extends IsWidget,
                                 IsMaskable,
                                 DiskResourceSelectionChangedEvent.HasDiskResourceSelectionChangedEventHandlers,
                                 FolderSelectionEvent.HasFolderSelectionEventHandlers,
-                                DiskResourceSelectionChangedEvent.DiskResourceSelectionChangedEventHandler,
-                                RequestDiskResourceFavoriteEvent.RequestDiskResourceFavoriteEventHandler {
+                                DiskResourceSelectionChangedEvent.DiskResourceSelectionChangedEventHandler {
 
         String FAVORITES_FOLDER_NAME = "Favorites";
         String FAVORITES_FOLDER_PATH = "/favorites";

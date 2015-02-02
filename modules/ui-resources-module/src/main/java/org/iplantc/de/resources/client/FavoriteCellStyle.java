@@ -5,9 +5,9 @@ import com.google.gwt.resources.client.CssResource;
 public interface FavoriteCellStyle extends CssResource {
 	 String favorite();
      
-    String favoriteAdd();
+//    String favoriteAdd();
      
-    String favoriteDelete();
+//    String favoriteDelete();
      
     String favoriteDisabled();
      
