@@ -805,15 +805,6 @@ public interface IplantErrorStrings extends com.google.gwt.i18n.client.Messages,
     String retrieveFolderInfoFailed();
 
     /**
-     * Translated "Unable to retrieve details.".
-     *
-     * @return translated "Unable to retrieve details."
-     */
-    @DefaultMessage("Unable to retrieve details.")
-    @Key("retrieveStatFailed")
-    String retrieveStatFailed();
-
-    /**
      * Translated "Failed to retrieve saved filters.".
      * 
      * @return translated "Failed to retrieve saved filters."

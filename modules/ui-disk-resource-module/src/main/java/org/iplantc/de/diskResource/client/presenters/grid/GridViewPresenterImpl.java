@@ -24,9 +24,11 @@ import org.iplantc.de.diskResource.client.GridView;
 import org.iplantc.de.diskResource.client.NavigationView;
 import org.iplantc.de.diskResource.client.events.DiskResourceNameSelectedEvent;
 import org.iplantc.de.diskResource.client.events.DiskResourcePathSelectedEvent;
+import org.iplantc.de.diskResource.client.events.DiskResourceSelectionChangedEvent;
 import org.iplantc.de.diskResource.client.events.FolderSelectionEvent;
 import org.iplantc.de.diskResource.client.events.RequestDiskResourceFavoriteEvent;
 import org.iplantc.de.diskResource.client.events.ShowFilePreviewEvent;
+import org.iplantc.de.diskResource.client.events.selection.EditInfoTypeSelected;
 import org.iplantc.de.diskResource.client.events.selection.ManageCommentsSelected;
 import org.iplantc.de.diskResource.client.events.selection.ManageMetadataSelected;
 import org.iplantc.de.diskResource.client.events.selection.ManageSharingSelected;
@@ -42,6 +44,7 @@ import org.iplantc.de.diskResource.client.presenters.proxy.FolderContentsLoadCon
 import org.iplantc.de.diskResource.client.presenters.proxy.SelectDiskResourceByIdStoreAddHandler;
 import org.iplantc.de.diskResource.client.search.events.SubmitDiskResourceQueryEvent;
 import org.iplantc.de.diskResource.client.sharing.views.DataSharingDialog;
+import org.iplantc.de.diskResource.client.views.dialogs.InfoTypeEditorDialog;
 import org.iplantc.de.diskResource.client.views.grid.DiskResourceColumnModel;
 
 import com.google.common.base.Preconditions;
@@ -50,6 +53,7 @@ import com.google.common.collect.Sets;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.shared.EventHandler;
+import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HTML;
@@ -57,7 +61,9 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 
+import com.sencha.gxt.core.shared.FastMap;
 import com.sencha.gxt.data.shared.ListStore;
+import com.sencha.gxt.data.shared.event.StoreUpdateEvent;
 import com.sencha.gxt.data.shared.loader.PagingLoadResult;
 import com.sencha.gxt.data.shared.loader.PagingLoader;
 import com.sencha.gxt.widget.core.client.Window;
@@ -75,7 +81,7 @@ import java.util.List;
  * @author jstroot
  */
 public class GridViewPresenterImpl implements GridView.Presenter,
-                                              DiskResourcePathSelectedEvent.DiskResourcePathSelectedEventHandler {
+                                              DiskResourcePathSelectedEvent.DiskResourcePathSelectedEventHandler, DiskResourceSelectionChangedEvent.DiskResourceSelectionChangedEventHandler {
 
 
     private class CreateDataLinksCallback implements AsyncCallback<List<DataLink>> {
@@ -97,8 +103,7 @@ public class GridViewPresenterImpl implements GridView.Presenter,
     @Inject DataSharingDialogFactory dataSharingDialogFactory;
     @Inject IplantAnnouncer announcer;
     @Inject CommentsPresenterFactory commentsPresenterFactory;
-    @Inject
-    FileSystemMetadataServiceFacade metadataService;
+    @Inject FileSystemMetadataServiceFacade metadataService;
     private final Appearance appearance;
     private final NavigationView.Presenter navigationPresenter;
     private final ListStore<DiskResource> listStore;
@@ -131,6 +136,14 @@ public class GridViewPresenterImpl implements GridView.Presenter,
         cm.addManageCommentsSelectedEventHandler(this);
         cm.addDiskResourcePathSelectedEventHandler(this);
 
+        // Fetch Details
+        this.view.addDiskResourceSelectionChangedEventHandler(this);
+
+    }
+
+    @Override
+    public HandlerRegistration addStoreUpdateHandler(StoreUpdateEvent.StoreUpdateHandler<DiskResource> handler) {
+        return listStore.addStoreUpdateHandler(handler);
     }
 
     @Override
@@ -159,6 +172,12 @@ public class GridViewPresenterImpl implements GridView.Presenter,
     }
 
     @Override
+    public void fireEvent(GwtEvent<?> event) {
+        // This method is extended by StoreUpdateHandler, so we must implement
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public List<DiskResource> getAllDiskResources() {
         return listStore.getAll();
     }
@@ -184,6 +203,50 @@ public class GridViewPresenterImpl implements GridView.Presenter,
     }
 
     @Override
+    public void onDiskResourceSelectionChanged(DiskResourceSelectionChangedEvent event) {
+        // Fetch details
+
+        final List<DiskResource> selection = event.getSelection();
+        if(selection.size() != 1){
+            // Only call get stat for single selections
+            return;
+        }
+       fetchDetails(selection.iterator().next());
+    }
+
+    @Override
+    public void onEditInfoTypeSelected(final EditInfoTypeSelected event) {
+                Preconditions.checkState(event.getSelectedDiskResources().size() == 1, "Only one Disk Resource should be selected, but there are %i", getSelectedDiskResources().size());
+
+        final InfoTypeEditorDialog dialog = new InfoTypeEditorDialog("", diskResourceService);
+        dialog.show();
+        dialog.addOkButtonSelectHandler(new SelectEvent.SelectHandler() {
+
+            @Override
+            public void onSelect(SelectEvent event1) {
+                String newType = dialog.getSelectedValue().toString();
+                setInfoType(event.getSelectedDiskResources().iterator().next(), newType);
+            }
+        });
+    }
+
+    private void setInfoType(final DiskResource dr, String newType) {
+        diskResourceService.setFileType(dr.getPath(), newType, new AsyncCallback<String>() {
+
+            @Override
+            public void onFailure(Throwable arg0) {
+                ErrorHandler.post(arg0);
+            }
+
+            @Override
+            public void onSuccess(String arg0) {
+                // Fetching the details will update the item in the grid
+                fetchDetails(dr);
+            }
+        });
+    }
+
+    @Override
     public void setFilePreviewEnabled(boolean filePreviewEnabled) {
         this.filePreviewEnabled = filePreviewEnabled;
     }
@@ -198,11 +261,6 @@ public class GridViewPresenterImpl implements GridView.Presenter,
     @Override
     public void setParentPresenter(DiskResourceView.Presenter parentPresenter) {
         this.parentPresenter = parentPresenter;
-    }
-
-    @Override
-    public void setSelectedDiskResources(List<? extends HasId> diskResourcesToSelect) {
-
     }
 
     @Override
@@ -223,8 +281,7 @@ public class GridViewPresenterImpl implements GridView.Presenter,
         registeredHandlers.put(handler, reg);
     }
 
-    @Override
-    public DiskResource updateDiskResource(DiskResource diskResource) {
+    DiskResource updateDiskResource(DiskResource diskResource) {
         Preconditions.checkNotNull(diskResource);
         final DiskResource modelWithKey = listStore.findModelWithKey(diskResource.getId());
         if(modelWithKey == null){
@@ -373,10 +430,43 @@ public class GridViewPresenterImpl implements GridView.Presenter,
                 if (selection != null && selection.size() == 1) {
                     Iterator<DiskResource> it = selection.iterator();
                     DiskResource next = it.next();
-                    parentPresenter.getDetails(next);
+                    fetchDetails(next);
                 }
             }
         });
+    }
+
+    private void fetchDetails(final DiskResource resource) {
+        diskResourceService.getStat(diskResourceUtil.asStringPathTypeMap(Arrays.asList(resource),
+                                                                         resource instanceof File ? TYPE.FILE
+                                                                             : TYPE.FOLDER),
+                                    new AsyncCallback<FastMap<DiskResource>>() {
+                                        @Override
+                                        public void onFailure(Throwable caught) {
+                                            ErrorHandler.post(appearance.retrieveStatFailed(), caught);
+                                            // This unmasks the sendTo.. toolbar buttons
+                                            //        presenter.unmaskVizMenuOptions();
+                                        }
+
+                                        @Override
+                                        public void onSuccess(FastMap<DiskResource> drMap) {
+                                            /* FIXME Fire global event to update diskresource
+                                             * The toolbarview will need to listen
+                                             * The gridviewpresenter will need to listen
+                                             *    -- Fire another event from gridview
+                                             */
+                                            Preconditions.checkNotNull(drMap.get(resource.getPath()), "This object cannot be null at this point.");
+                                            updateDiskResource(resource);
+
+                                            //        presenter.getView().unmaskDetailsPanel();
+                                            //        presenter.unmaskVizMenuOptions();
+                                        }
+                                    });
+        // Need to mask the SendTo... options from the toolbar
+//        view.maskSendToCoGe();
+//        view.maskSendToEnsembl();
+//        view.maskSendToTreeViewer();
+
     }
 
     @Override

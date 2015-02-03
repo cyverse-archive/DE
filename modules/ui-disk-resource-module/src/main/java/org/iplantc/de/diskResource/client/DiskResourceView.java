@@ -11,8 +11,6 @@ import org.iplantc.de.diskResource.client.events.DiskResourceSelectionChangedEve
 import org.iplantc.de.diskResource.client.events.FolderSelectionEvent;
 import org.iplantc.de.diskResource.client.events.RootFoldersRetrievedEvent;
 import org.iplantc.de.diskResource.client.events.SavedSearchesRetrievedEvent;
-import org.iplantc.de.diskResource.client.events.selection.EditInfoTypeSelected;
-import org.iplantc.de.diskResource.client.events.selection.ManageSharingSelected;
 import org.iplantc.de.diskResource.client.presenters.proxy.FolderContentsLoadConfig;
 import org.iplantc.de.diskResource.client.presenters.proxy.SelectFolderByPathLoadHandler;
 import org.iplantc.de.diskResource.client.search.events.SubmitDiskResourceQueryEvent.HasSubmitDiskResourceQueryEventHandlers;
@@ -36,10 +34,7 @@ import java.util.Set;
  */
 public interface DiskResourceView extends IsWidget,
                                           IsMaskable,
-                                          Taggable,
-                                          ManageSharingSelected.HasManageSharingSelectedEventHandlers,
-                                          DiskResourceSelectionChangedEvent.DiskResourceSelectionChangedEventHandler,
-                                          EditInfoTypeSelected.HasEditInfoTypeSelectedEventHandlers {
+                                          Taggable {
 
     interface DiskResourceViewToolbarAppearance {
 
@@ -72,8 +67,9 @@ public interface DiskResourceView extends IsWidget,
     interface Presenter extends org.iplantc.de.commons.client.presenter.Presenter,
                                 IsMaskable,
                                 DiskResourceSelectionChangedEvent.HasDiskResourceSelectionChangedEventHandlers,
-                                FolderSelectionEvent.HasFolderSelectionEventHandlers,
-                                DiskResourceSelectionChangedEvent.DiskResourceSelectionChangedEventHandler {
+                                FolderSelectionEvent.HasFolderSelectionEventHandlers
+//                                DiskResourceSelectionChangedEvent.DiskResourceSelectionChangedEventHandler
+    {
 
         String FAVORITES_FOLDER_NAME = "Favorites";
         String FAVORITES_FOLDER_PATH = "/favorites";
@@ -95,7 +91,7 @@ public interface DiskResourceView extends IsWidget,
 
         void disableFilePreview();
 
-        void displayAndCacheDiskResourceInfo(DiskResource info);
+//        void displayAndCacheDiskResourceInfo(DiskResource info);
 
         void doCreateNewFolder(Folder parentFolder, String folderName);
 
@@ -105,7 +101,7 @@ public interface DiskResourceView extends IsWidget,
 
         void doSearchTaggedWithResources(Set<IplantTag> tags);
 
-        void getDetails(DiskResource next);
+//        void getDetails(DiskResource next);
 
         List<DiskResource> getSelectedDiskResources();
 
@@ -118,7 +114,7 @@ public interface DiskResourceView extends IsWidget,
         void go(HasOneWidget container, HasPath folderToSelect,
                 List<? extends HasId> diskResourcesToSelect);
 
-        void resetInfoType();
+//        void resetInfoType();
 
         void selectTrashFolder();
 
@@ -141,19 +137,19 @@ public interface DiskResourceView extends IsWidget,
 
         void setViewDebugId(String baseID);
 
-        void unmaskVizMenuOptions();
+//        void unmaskVizMenuOptions();
     }
 
 
-    void maskDetailsPanel();
+//    void maskDetailsPanel();
 
-    void maskSendToCoGe();
+//    void maskSendToCoGe();
 
-    void maskSendToEnsembl();
+//    void maskSendToEnsembl();
 
-    void maskSendToTreeViewer();
+//    void maskSendToTreeViewer();
 
-    void resetDetailsPanel();
+//    void resetDetailsPanel();
 
     void setEastWidgetHidden(boolean hideEastWidget);
 
@@ -163,15 +159,15 @@ public interface DiskResourceView extends IsWidget,
 
     void setSouthWidget(IsWidget fl, double size);
 
-    void unmaskDetailsPanel();
+//    void unmaskDetailsPanel();
 
-    void unmaskSendToCoGe();
+//    void unmaskSendToCoGe();
 
-    void unmaskSendToEnsembl();
+//    void unmaskSendToEnsembl();
 
-    void unmaskSendToTreeViewer();
+//    void unmaskSendToTreeViewer();
 
-    void updateDetails(DiskResource info);
+//    void updateDetails(DiskResource info);
 
     void updateTags(List<IplantTag> tags);
 }

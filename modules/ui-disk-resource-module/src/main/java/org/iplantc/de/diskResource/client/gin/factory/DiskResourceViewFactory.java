@@ -1,5 +1,6 @@
 package org.iplantc.de.diskResource.client.gin.factory;
 
+import org.iplantc.de.diskResource.DetailsView;
 import org.iplantc.de.diskResource.client.DiskResourceView;
 import org.iplantc.de.diskResource.client.GridView;
 import org.iplantc.de.diskResource.client.NavigationView;
@@ -12,5 +13,6 @@ public interface DiskResourceViewFactory {
     DiskResourceView create(DiskResourceView.Presenter presenter,
                             NavigationView.Presenter navigationPresenter,
                             GridView.Presenter gridViewPresenter,
-                            ToolbarView.Presenter toolbarPresenter);
+                            ToolbarView.Presenter toolbarPresenter,
+                            DetailsView.Presenter detailsViewPresenter);
 }

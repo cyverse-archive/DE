@@ -45,7 +45,7 @@ public final class SelectDiskResourceByIdStoreAddHandler implements StoreAddHand
                     Scheduler.get().scheduleDeferred(new ScheduledCommand() {
                         @Override
                         public void execute() {
-                            presenter.setSelectedDiskResources(diskResourcesToSelect);
+                            presenter.setSelectedDiskResourcesById(diskResourcesToSelect);
                         }
                     });
                     presenter.unRegisterHandler(this);
