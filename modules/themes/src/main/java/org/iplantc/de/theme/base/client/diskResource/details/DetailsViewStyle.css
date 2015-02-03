@@ -1,0 +1,39 @@
+.label {
+    font-weight: bold;
+    font-size: 10px;
+}
+
+.value {
+    font-size: 10px;
+    padding-left: 2px;
+}
+
+.hidden {
+    display: none;
+}
+
+.hyperlink {
+    font-size: 11px;
+    padding: 4px;
+    cursor: pointer;
+    color: #0098aa;
+}
+
+.hyperlink:hover {
+    text-decoration: underline;
+    background-color: #ededed;
+}
+
+.disabledHyperlink {
+    cursor: default;
+    color: black;
+}
+.disabledHyperlink:hover {
+    text-decoration: none;
+    background-color: inherit;
+}
+
+.deselectIcon {
+    float: right;
+    cursor: pointer;
+}

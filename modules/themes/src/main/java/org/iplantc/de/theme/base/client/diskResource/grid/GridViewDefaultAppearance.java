@@ -3,6 +3,7 @@ package org.iplantc.de.theme.base.client.diskResource.grid;
 import org.iplantc.de.diskResource.client.GridView;
 import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 import org.iplantc.de.theme.base.client.diskResource.DiskResourceErrorMessages;
+import org.iplantc.de.theme.base.client.diskResource.DiskResourceMessages;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
@@ -15,19 +16,23 @@ import com.sencha.gxt.widget.core.client.toolbar.ToolBar;
  */
 public class GridViewDefaultAppearance implements GridView.Appearance {
     private final GridViewDisplayStrings displayStrings;
+    private final DiskResourceMessages diskResourceMessages;
     private final DiskResourceErrorMessages errorMessages;
     private final IplantDisplayStrings iplantDisplayStrings;
 
     public GridViewDefaultAppearance() {
         this(GWT.<GridViewDisplayStrings> create(GridViewDisplayStrings.class),
+             GWT.<DiskResourceMessages> create(DiskResourceMessages.class),
              GWT.<DiskResourceErrorMessages> create(DiskResourceErrorMessages.class),
              GWT.<IplantDisplayStrings> create(IplantDisplayStrings.class));
     }
 
     GridViewDefaultAppearance(final GridViewDisplayStrings displayStrings,
+                              final DiskResourceMessages diskResourceMessages,
                               final DiskResourceErrorMessages errorMessages,
                               final IplantDisplayStrings iplantDisplayStrings) {
         this.displayStrings = displayStrings;
+        this.diskResourceMessages = diskResourceMessages;
         this.errorMessages = errorMessages;
         this.iplantDisplayStrings = iplantDisplayStrings;
     }
@@ -131,7 +136,7 @@ public class GridViewDefaultAppearance implements GridView.Appearance {
 
     @Override
     public String sizeColumnLabel() {
-        return iplantDisplayStrings.size();
+        return diskResourceMessages.size();
     }
 
     @Override

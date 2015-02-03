@@ -1,7 +1,60 @@
 <ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
-             xmlns:g='urn:import:com.google.gwt.user.client.ui'>
-    <!-- Hard code with widgets? Or HTML mixin? -->
-    <div>
+             xmlns:g='urn:import:com.google.gwt.user.client.ui'
+             xmlns:a="urn:import:org.iplantc.de.commons.client.widgets">
 
-    </div>
+    <ui:with field="appearance"
+             type="org.iplantc.de.diskResource.client.DetailsView.Appearance" />
+    <g:HTMLPanel>
+
+        <table ui:field="table">
+            <tr>
+                <td class="{appearance.css.label}">Last Modified:</td>
+                <td class="{appearance.css.value}"><g:DateLabel ui:field="lastModified"/></td>
+            </tr>
+            <tr>
+                <td class="{appearance.css.label}">Date Submitted:</td>
+                <td class="{appearance.css.value}"><g:DateLabel ui:field="dateCreated"/> </td>
+            </tr>
+            <tr>
+                <td class="{appearance.css.label}">Permissions:</td>
+                <td class="{appearance.css.value}"><g:InlineLabel ui:field="permission"/></td>
+            </tr>
+            <!-- If not in trash -->
+            <tr ui:field="shareRow">
+                <td class="{appearance.css.label}">Share:</td>
+                <td class="{appearance.css.value}"><g:InlineHyperlink ui:field="sharing"
+                                                                      styleName="{appearance.css.hyperlink}"/> </td>
+            </tr>
+            <!-- IF it is a File-->
+
+            <tr ui:field="sizeRow">
+                <td class="{appearance.css.label}">Size:</td>
+                <td class="{appearance.css.value}"><g:InlineLabel ui:field="size"/> </td>
+            </tr>
+            <tr ui:field="mimeTypeRow">
+                <td class="{appearance.css.label}">Type:</td>
+                <td class="{appearance.css.value}"><g:InlineLabel ui:field="mimeType"/></td>
+            </tr>
+            <tr ui:field="infoTypeRow">
+                <td class="{appearance.css.label}">Info-Type:</td>
+                <td class="{appearance.css.value}"><g:InlineHyperlink ui:field="infoType"
+                                                                      styleName="{appearance.css.hyperlink}"/><g:Image ui:field="deselectInfoTypeIcon"
+                                                                                                                       resource="{appearance.deselectInfoTypeIcon}"
+                                                                                                                       styleName="{appearance.css.deselectIcon}"
+                                                                                                                       visible="false"/> </td>
+            </tr>
+            <!-- If not in trash -->
+            <tr ui:field="sendToRow">
+                <td class="{appearance.css.label}">Send to:</td>
+                <td class="{appearance.css.value}"><g:InlineHyperlink ui:field="sendTo"
+                                                                      styleName="{appearance.css.hyperlink}"/> </td>
+            </tr>
+
+            <!-- If it is a Folder -->
+            <tr ui:field="fileFolderNumRow">
+                <td class="{appearance.css.label}">File(s)/Folder(s):</td>
+                <td class="{appearance.css.value}"><g:InlineLabel ui:field="fileFolderNum"/></td>
+            </tr>
+        </table>
+    </g:HTMLPanel>
 </ui:UiBinder>

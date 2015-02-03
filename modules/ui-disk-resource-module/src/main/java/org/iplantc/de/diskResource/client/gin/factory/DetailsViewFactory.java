@@ -1,6 +1,6 @@
 package org.iplantc.de.diskResource.client.gin.factory;
 
-import org.iplantc.de.diskResource.DetailsView;
+import org.iplantc.de.diskResource.client.DetailsView;
 
 /**
  * Created by jstroot on 2/2/15.

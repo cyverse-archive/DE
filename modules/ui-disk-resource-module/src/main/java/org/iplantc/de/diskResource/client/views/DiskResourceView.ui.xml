@@ -69,13 +69,15 @@
         <!-- Details Panel -->
         <container:east layoutData="{eastData}">
             <gxt:ContentPanel headingText="{DISPLAY.details}">
-                <container:VerticalLayoutContainer>
+                <views:DetailsView ui:field="detailsView" />
+                <!-- container:VerticalLayoutContainer>
                     <container:child layoutData="{detailsLayoutDataTop}">
                         <container:VerticalLayoutContainer ui:field="detailsPanel"
                                                            adjustForScroll="true"
                                                            scrollMode="AUTOY" />
                     </container:child>
-                </container:VerticalLayoutContainer>
+                </container:VerticalLayoutContainer -->
+
             </gxt:ContentPanel>
         </container:east>
 

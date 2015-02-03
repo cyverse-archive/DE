@@ -27,7 +27,7 @@ import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.commons.client.info.ErrorAnnouncementConfig;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
 import org.iplantc.de.commons.client.info.SuccessAnnouncementConfig;
-import org.iplantc.de.diskResource.DetailsView;
+import org.iplantc.de.diskResource.client.DetailsView;
 import org.iplantc.de.diskResource.client.DiskResourceView;
 import org.iplantc.de.diskResource.client.GridView;
 import org.iplantc.de.diskResource.client.NavigationView;
@@ -264,10 +264,12 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
         this.navigationPresenter.setMaskable(view);
 
 
-        this.view.addManageSharingSelectedEventHandler(this.gridViewPresenter);
+//        this.view.addManageSharingSelectedEventHandler(this.gridViewPresenter);
 //        this.view.addEditInfoTypeSelectedEventHandler(this);
-        this.view.addEditInfoTypeSelectedEventHandler(this.gridViewPresenter);
+//        this.view.addEditInfoTypeSelectedEventHandler(this.gridViewPresenter);
 
+        this.detailsViewPresenter.getView().addManageSharingSelectedEventHandler(this.gridViewPresenter);
+        this.detailsViewPresenter.getView().addEditInfoTypeSelectedEventHandler(this.gridViewPresenter);
 
         DiskResourceSearchField searchField = toolbarPresenter.getView().getSearchField();
         searchField.addSaveDiskResourceQueryClickedEventHandler(this.dataSearchPresenter);

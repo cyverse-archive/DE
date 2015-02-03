@@ -60,4 +60,9 @@
     <replace-with class="org.iplantc.de.theme.base.client.diskResource.toolbar.presenter.ToolbarViewPresenterDefaultAppearance">
         <when-type-is class="org.iplantc.de.diskResource.client.ToolbarView.Presenter.Appearance" />
     </replace-with>
+
+    <!-- Details -->
+    <replace-with class="org.iplantc.de.theme.base.client.diskResource.details.DetailsViewDefaultAppearance">
+        <when-type-is class="org.iplantc.de.diskResource.client.DetailsView.Appearance" />
+    </replace-with>
 </module>

@@ -10,6 +10,7 @@ import org.iplantc.de.client.models.diskResources.TYPE;
 import org.iplantc.de.client.services.DiskResourceServiceFacade;
 import org.iplantc.de.client.services.MetadataServiceFacade;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
+import org.iplantc.de.diskResource.client.DetailsView;
 import org.iplantc.de.diskResource.client.DiskResourceView;
 import org.iplantc.de.diskResource.client.GridView;
 import org.iplantc.de.diskResource.client.NavigationView;
@@ -74,7 +75,7 @@ public class DiskResourcePresenterImplTest {
     @Mock GridView mockGridView;
     @Mock ToolbarViewPresenterFactory mockToolbarPresenterFactory;
     @Mock ToolbarView.Presenter mockToolbarPresenter;
-
+    @Mock DetailsView.Presenter mockDetailsPresenter;
 
     private DiskResourcePresenterImpl uut;
 
@@ -87,6 +88,7 @@ public class DiskResourcePresenterImplTest {
                                             mockGridViewPresenterFactory,
                                             mockDataSearchPresenter,
                                             mockToolbarPresenterFactory,
+                                            mockDetailsPresenter,
                                             mockDisplayStrings,
                                             mockAnnouncer,
                                             mockEventBus,
@@ -168,7 +170,8 @@ public class DiskResourcePresenterImplTest {
         when(mockViewFactory.create(any(DiskResourceView.Presenter.class),
                                     any(NavigationView.Presenter.class),
                                     any(GridView.Presenter.class),
-                                    any(ToolbarView.Presenter.class), detailsViewPresenter)).thenReturn(mockView);
+                                    any(ToolbarView.Presenter.class),
+                                    any(DetailsView.Presenter.class))).thenReturn(mockView);
         when(mockGridViewPresenterFactory.create(any(NavigationView.Presenter.class),
                                                  anyList(),
                                                  any(TYPE.class))).thenReturn(mockGridViewPresenter);

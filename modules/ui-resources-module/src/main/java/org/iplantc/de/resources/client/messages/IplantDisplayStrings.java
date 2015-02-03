@@ -785,15 +785,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     String createNewWorkflow();
 
     /**
-     * Translated "Date Submitted".
-     *
-     * @return translated "Date Submitted"
-     */
-    @DefaultMessage("Date Submitted")
-    @Key("createdDate")
-    String createdDate();
-
-    /**
      * Translated "Created Date".
      *
      * @return translated "Created Date"
@@ -1132,8 +1123,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     @Key("emptyTrashWarning")
     String emptyTrashWarning();
 
-    String ensembl();
-
     /**
      * Translated "Enabled".
      *
@@ -1293,15 +1282,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     @DefaultMessage("{0} uploaded successfully.")
     @Key("fileUploadSuccess")
     String fileUploadSuccess(String arg0);
-    
-    /**
-     * Translated "File(s)".
-     *
-     * @return translated "File(s)"
-     */
-    @DefaultMessage("File(s)")
-    @Key("files")
-    String files();
 
     /**
      * Translated "Filter by Name or App".
@@ -1320,15 +1300,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     @DefaultMessage("Folder Name")
     @Key("folderName")
     String folderName();
-
-    /**
-     * Translated "Folder(s)".
-     *
-     * @return translated "Folder(s)"
-     */
-    @DefaultMessage("Folder(s)")
-    @Key("folders")
-    String folders();
 
     /**
      * Translated "Group by Data".
@@ -2169,15 +2140,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     String noCollaboratorsSearchResult();
 
     /**
-     * Translated "select any one file / folder to view its details".
-     *
-     * @return translated "select any one file / folder to view its details"
-     */
-    @DefaultMessage("select any one file / folder to view its details")
-    @Key("noDetails")
-    String noDetails();
-
-    /**
      * Translated "No files to display.".
      *
      * @return translated "No files to display."
@@ -2210,15 +2172,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
      * @return
      */
     String noSearchResults(String searchTerm);
-
-    /**
-     * Translated "Begin sharing".
-     *
-     * @return translated "Begin sharing"
-     */
-    @DefaultMessage("Begin sharing")
-    @Key("nosharing")
-    String nosharing();
 
 	/**
 	 * The system messages window message indicating that the user has no system messages to view.
@@ -3232,8 +3185,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     @Key("selfShareWarning")
     String selfShareWarning();
 
-    String sendTo();
-
     /**
      * Translated "Settings".
      *
@@ -3242,16 +3193,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     @DefaultMessage("Settings")
     @Key("settings")
     String settings();
-
-    /**
-     * Translated "Share".
-     *
-     * @return translated "Share"
-     */
-    @DefaultMessage("Share")
-    @Key("share")
-    String share();
-
 
     /**
      * Translated "Share...".
@@ -3318,15 +3259,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     @DefaultMessage("Switch to Simple Upload Form")
     @Key("simpleUploadForm")
     String simpleUploadForm();
-
-    /**
-     * Translated "Size".
-     *
-     * @return translated "Size"
-     */
-    @DefaultMessage("Size")
-    @Key("size")
-    String size();
 
     /**
      * Translated "Source / binary".
@@ -3615,17 +3547,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     @DefaultMessage("Filter by name. Clear to review selection.")
     @Key("treeSelectorFilterEmptyText")
     String treeSelectorFilterEmptyText();
-
-    /**
-     * Translated "Tree URL".
-     *
-     * @return translated "Tree URL"
-     */
-    @DefaultMessage("Tree URL")
-    @Key("treeUrl")
-    String treeUrl();
-
-    String treeViewer();
 
     /**
      * Translated "Delete a previous rating".

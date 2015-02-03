@@ -381,6 +381,23 @@ public class DiskResourceUtil {
         return true;
     }
 
+    public boolean isTreeInfoType(InfoType infoType){
+       return InfoType.NEXUS.equals(infoType)
+           || InfoType.NEXML.equals(infoType)
+           || InfoType.NEWICK.equals(infoType)
+           || InfoType.PHYLOXML.equals(infoType);
+    }
+
+    public boolean isGenomeVizInfoType(InfoType infoType){
+        return InfoType.FASTA.equals(infoType);
+    }
+
+    public boolean isEnsemblInfoType(InfoType infoType){
+        return InfoType.BAM.equals(infoType)
+            || InfoType.VCF.equals(infoType)
+            || InfoType.GFF.equals(infoType);
+    }
+
     public boolean isTreeTab(Splittable obj) {
         if (checkManifest(obj)) {
             String infoType = obj.get("info-type").asString();

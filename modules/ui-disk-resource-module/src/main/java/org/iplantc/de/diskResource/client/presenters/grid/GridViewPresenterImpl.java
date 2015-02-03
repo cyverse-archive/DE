@@ -218,7 +218,8 @@ public class GridViewPresenterImpl implements GridView.Presenter,
     public void onEditInfoTypeSelected(final EditInfoTypeSelected event) {
                 Preconditions.checkState(event.getSelectedDiskResources().size() == 1, "Only one Disk Resource should be selected, but there are %i", getSelectedDiskResources().size());
 
-        final InfoTypeEditorDialog dialog = new InfoTypeEditorDialog("", diskResourceService);
+        final String infoType = event.getSelectedDiskResources().iterator().next().getInfoType();
+        final InfoTypeEditorDialog dialog = new InfoTypeEditorDialog(infoType, diskResourceService);
         dialog.show();
         dialog.addOkButtonSelectHandler(new SelectEvent.SelectHandler() {
 
@@ -455,8 +456,9 @@ public class GridViewPresenterImpl implements GridView.Presenter,
                                              * The gridviewpresenter will need to listen
                                              *    -- Fire another event from gridview
                                              */
-                                            Preconditions.checkNotNull(drMap.get(resource.getPath()), "This object cannot be null at this point.");
-                                            updateDiskResource(resource);
+                                            final DiskResource diskResource = drMap.get(resource.getPath());
+                                            Preconditions.checkNotNull(diskResource, "This object cannot be null at this point.");
+                                            updateDiskResource(diskResource);
 
                                             //        presenter.getView().unmaskDetailsPanel();
                                             //        presenter.unmaskVizMenuOptions();

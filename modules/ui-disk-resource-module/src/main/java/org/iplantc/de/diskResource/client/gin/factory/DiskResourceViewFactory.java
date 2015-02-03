@@ -1,6 +1,6 @@
 package org.iplantc.de.diskResource.client.gin.factory;
 
-import org.iplantc.de.diskResource.DetailsView;
+import org.iplantc.de.diskResource.client.DetailsView;
 import org.iplantc.de.diskResource.client.DiskResourceView;
 import org.iplantc.de.diskResource.client.GridView;
 import org.iplantc.de.diskResource.client.NavigationView;

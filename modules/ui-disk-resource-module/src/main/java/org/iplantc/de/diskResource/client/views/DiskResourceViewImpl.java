@@ -3,7 +3,7 @@ package org.iplantc.de.diskResource.client.views;
 import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.client.models.tags.IplantTag;
 import org.iplantc.de.client.util.DiskResourceUtil;
-import org.iplantc.de.diskResource.DetailsView;
+import org.iplantc.de.diskResource.client.DetailsView;
 import org.iplantc.de.diskResource.client.DiskResourceView;
 import org.iplantc.de.diskResource.client.GridView;
 import org.iplantc.de.diskResource.client.NavigationView;
@@ -25,11 +25,9 @@ import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 
 import com.sencha.gxt.core.client.ValueProvider;
-import com.sencha.gxt.core.client.dom.ScrollSupport.ScrollMode;
 import com.sencha.gxt.widget.core.client.Composite;
 import com.sencha.gxt.widget.core.client.container.BorderLayoutContainer;
 import com.sencha.gxt.widget.core.client.container.BorderLayoutContainer.BorderLayoutData;
-import com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer;
 
 import java.util.List;
 import java.util.logging.Logger;
@@ -57,7 +55,7 @@ public class DiskResourceViewImpl extends Composite implements DiskResourceView 
     private final IplantDisplayStrings displayStrings;
 
     @UiField BorderLayoutContainer con;
-    @UiField VerticalLayoutContainer detailsPanel;
+//    @UiField VerticalLayoutContainer detailsPanel;
     @UiField BorderLayoutData westData;
     @UiField BorderLayoutData centerData;
     @UiField BorderLayoutData eastData;
@@ -67,6 +65,7 @@ public class DiskResourceViewImpl extends Composite implements DiskResourceView 
     @UiField(provided = true) NavigationView navigationView;
     @UiField(provided = true) GridView centerGridView;
     @UiField(provided = true) ToolbarView toolbar;
+    @UiField(provided = true) DetailsView detailsView;
 
     private TagsView.Presenter tagPresenter;
 
@@ -83,8 +82,9 @@ public class DiskResourceViewImpl extends Composite implements DiskResourceView 
                          @Assisted final DetailsView.Presenter detailsPresenter) {
         this.navigationView = navigationPresenter.getView();
         this.centerGridView = gridViewPresenter.getView();
-        this.gridViewPresenter = gridViewPresenter;
         this.toolbar = toolbarPresenter.getView();
+        this.detailsView = detailsPresenter.getView();
+        this.gridViewPresenter = gridViewPresenter;
         this.displayStrings = displayStrings;
         this.diskResourceUtil = diskResourceUtil;
         this.tagListPresenterFactory = tagListPresenterFactory;
@@ -93,7 +93,7 @@ public class DiskResourceViewImpl extends Composite implements DiskResourceView 
 
         initWidget(BINDER.createAndBindUi(this));
 
-        detailsPanel.setScrollMode(ScrollMode.AUTO);
+//        detailsPanel.setScrollMode(ScrollMode.AUTO);
 
         // by default no details to show...
 //        resetDetailsPanel();
