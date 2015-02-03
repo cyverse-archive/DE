@@ -1,0 +1,8 @@
+---
+- include: db-migrations.yaml
+
+- include: update-services.yaml
+
+- include: update-condor-tools.yaml
+
+- include: update-porklock.yaml

@@ -1,0 +1,11 @@
+---
+fmode: "{{facepalm_mode|default('update')}}"
+tgz_name: notification-db.tar.gz
+tgz_flag: "-q latest -f {{tgz_name}}"
+curr_db_host: "{{notif_db_host}}"
+curr_db_port: "{{notif_db_port|default(5432)}}"
+curr_db_user: "{{notif_db_user}}"
+curr_db_password: "{{notif_db_password}}"
+curr_db_name: "{{notif_db_name}}"
+curr_db_admin: "{{notif_db_admin}}"
+curr_db_admin_password: "{{notif_db_admin_password}}"

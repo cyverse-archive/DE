@@ -1,0 +1,9 @@
+---
+- hosts: services
+  sudo: False
+
+  roles:
+    - update-database-de
+    - update-database-notifications
+    - update-database-metadata
+    - update-database-jex

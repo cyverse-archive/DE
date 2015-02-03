@@ -1,0 +1,255 @@
+ansible_ssh_port: 
+services_ver: 4.1.5
+
+### WAR Settings
+de_war_name: de.war
+bg_war_name: belphegor.war
+
+de_war_url_prefix:
+bg_war_url_prefix:
+
+de_war_url: "{{ de_war_url_prefix }}/{{ de_war_name }}"
+bg_war_url: "{{ bg_war_url_prefix }}/{{ bg_war_name }}"
+
+de_app_name: de
+bg_app_name: belphegor
+
+################################################################################
+#                         Configuration Settings
+################################################################################
+admin_groups:
+
+agave_base_url: https://agave.iplantc.org
+agave_oauth_refresh_window: 5
+
+agave_client_key:
+agave_client_secret:
+
+amqp_broker_host:
+amqp_broker_port:
+amqp_password:
+amqp_user:
+amqp_de_exchange:
+amqp_de_exchange_durable: true
+amqp_de_exchange_auto_delete: false
+amqp_condor_events_exchange: condor_events
+amqp_condor_events_exchange_type: fanout
+amqp_condor_events_exchange_durable: true
+amqp_condor_events_exchange_routing_key:
+amqp_condor_events_queue_name:
+amqp_condor_events_exchange_auto_delete: false
+amqp_irods_exchange: irods
+amqp_irods_exchange_type: topic
+amqp_irods_exchange_durable: true
+amqp_irods_exchange_auto_delete: false
+amqp_irods_queue_routing_key: "data-object.#"
+amqp_irods_message_auto_ack: true
+amqp_irods_connection_health_check_interval: 5000
+
+anon_files_base_url:
+anon_files_anon_user: anonymous
+anon_files_port:
+anon_files_log_file: /var/log/anon-files/anon-files.log
+
+belphegor_base:
+belphegor_name: the iPlant Tool Administration Utility
+
+belphegor_enable_ctx: "{{ de_enable_ctx }}"
+
+cas_base:
+cas_group_attribute: entitlement
+cas_uid_domain:
+
+cas_no_logout_url: http://user.iplantcollaborative.org
+cas_app_list: all iPlant applications
+
+condor_log_monitor_event_log: /var/log/condor/event_log
+
+coge_genome_load_url: https://genomevolution.org/CoGe/services/service.pl/genome/load
+
+coge_user: coge
+
+confluence_base: https://pods.iplantcollaborative.org/wiki
+confluence_parent_page: List of Applications
+confluence_user:
+confluence_password:
+confluence_space_name:
+confluence_space_url:
+confluence_rating_suffix:
+confluence_valid_wikiurl:
+
+data_info_host: localhost
+data_info_port:
+
+de_base:
+
+de_enable_ctx: false
+
+de_feedback_to_addr: ""
+de_mail_from_addr: "{{ de_feedback_to_addr }}"
+de_mail_to_addr: "{{ de_feedback_to_addr }}"
+
+de_version_name: Phthalo
+de_version: 1.9.5
+de_name: the iPlant Discovery Environment
+
+de_maintenance_file: /etc/de-maintenance
+
+de_notification_poll: 15
+
+dewey_listen_port:
+
+db_driver: org.postgresql.Driver
+db_user:
+db_password:
+db_host:
+db_name:
+db_port:
+db_admin: postgres
+db_admin_password:
+
+db_vendor: postgresql
+
+donkey_host:
+donkey_port:
+donkey_base: http://{{ donkey_host }}:{{ donkey_port }}
+
+email_smtp_host: 127.0.0.1
+email_smtp_from_address:
+email_port:
+email_host:
+email_base: http://{{ email_host }}:{{ email_port }}
+
+environment_name:
+
+es_base: "http://{{ es_host }}:{{ es_port }}"
+es_host:
+es_port:
+es_scroll_size: 1000
+
+fs_max_paths_in_request: 1000
+
+icat_host:
+icat_port:
+icat_user:
+icat_password:
+icat_db:
+
+infosquito_notify_enabled: true
+infosquito_notify_count: 10000
+infosquito_retry_interval: 900
+
+irods_host:
+irods_port: 1247
+irods_user:
+irods_password:
+irods_zone: iplant
+irods_home: /{{irods_zone}}/home
+irods_default_resource: ""
+irods_admin_users:
+irods_temp_dir:
+
+jex_host:
+jex_port:
+jex_base: http://{{ jex_host }}:{{ jex_port }}
+jex_batch_group: batch_processing
+jex_nfs_base:
+jex_icommands_path: /usr/local/icommands/:/usr/local2/icommands/:/usr/local/bin/:/usr/local2/bin/:/usr/bin/
+jex_request_disk: 175000000
+jex_events:
+
+jexdb_driver: org.postgresql.Driver
+jexdb_host:
+jexdb_db: jex
+jexdb_password:
+jexdb_port: 5432
+jexdb_user:
+jexdb_vendor: postgresql
+jex_events_listen_port:
+jex_events_event_url:
+
+job_status_poll_interval: 15
+
+kifshare_de_url: \{\{url\}\}/d/\{\{ticket-id\}\}/\{\{filename\}\}
+kifshare_external_url:
+kifshare_port:
+kifshare_mode: prod
+kifshare_download_buffer_size: 100
+
+max_edit_file_size: 2147483647
+
+metadactyl_base: "http://{{ metadactyl_host }}:{{ metadactyl_port }}"
+metadactyl_host:
+metadactyl_port:
+
+metadactyl_out_dir: analyses
+metadactyl_path_list_max_paths: 16
+metadactyl_path_list_max_size: 1048576
+
+metadactyl_beta_category: 5401bd14-6c14-4470-aedd-57b47ea1b979
+metadactyl_user_root: Workspace
+metadactyl_user_subs: "[\"Apps under development\",\"Favorite Apps\"]"
+metadactyl_trash_category: Trash
+
+metadata_db_driver: "{{ db_driver }}"
+metadata_db_vendor: "{{ db_vendor }}"
+metadata_db_host: "{{ db_host }}"
+metadata_db_port: "{{ db_port }}"
+metadata_db_user: "{{ db_user }}"
+metadata_db_password: "{{ db_password }}"
+metadata_db_name: metadata
+metadata_db_admin: "{{ db_admin }}"
+metadata_db_admin_password: "{{ db_admin_password }}"
+
+nibblonian_perms_filter:
+
+notificationagent_base: "http://{{ notificationagent_host }}:{{ notificationagent_port }}"
+notificationagent_host:
+notificationagent_port:
+
+notification_clean_start: "1:45:00"
+notification_clean_age: 90
+notification_clean_enable: "true"
+notification_db_driver: "{{ db_driver }}"
+notification_db_vendor: "{{ db_vendor }}"
+notification_db_host:
+notification_db_port:
+notification_db_name: notifications
+notification_db_user:
+notification_db_password:
+
+path_list_file_identifier: "# application/vnd.de.path-list+csv; version=1"
+path_list_info_type: ht-analysis-path-list
+
+pgp_keyring_path:
+pgp_key_password:
+
+prod_deployment: false
+
+saved_searches_host:
+saved_searches_port:
+saved_searches_log_file: /var/log/saved-searches/saved-searches.log
+
+search_default_limit: 200
+
+tree_parser_base: http://portnoy.iplantcollaborative.org/parseTree
+
+tree_urls_host:
+tree_urls_port:
+tree_urls_log_file: /var/log/tree-urls/tree-urls.log
+tree_urls_cleanup_age: 30
+tree_urls_cleanup_start: "1:30:00"
+tree_urls_cleanup_enable: "true"
+tree_urls_avu: tree-urls
+
+user_info_base:
+user_info_client_key:
+user_info_client_secret:
+
+user_preferences_host:
+user_preferences_port:
+user_preferences_log_file: /var/log/user-preferences/user-preferences.log
+
+user_sessions_host:
+user_sessions_port:
+user_sessions_log_file: /var/log/user-sessions/user-sessions.log

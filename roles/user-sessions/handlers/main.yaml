@@ -1,0 +1,4 @@
+---
+- name: restart user-sessions
+  sudo: yes
+  supervisorctl: name=user-sessions state=restarted

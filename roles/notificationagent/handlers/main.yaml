@@ -1,0 +1,4 @@
+---
+- name: restart notificationagent
+  sudo: yes
+  supervisorctl: name=notificationagent state=restarted

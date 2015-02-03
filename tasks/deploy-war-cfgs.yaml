@@ -1,0 +1,3 @@
+- name: generate tomcat app config
+  shell: clavin files -f {{cfg_base}}/environments.clj -t {{cfg_base}}/templates -d {{dep}} --dest /tmp/ {{cfg_name}}
+

@@ -1,0 +1,4 @@
+---
+- name: restart monkey
+  sudo: yes
+  supervisorctl: name=monkey state=restarted

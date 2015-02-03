@@ -1,0 +1,4 @@
+---
+- hosts: anon-files
+  roles:
+    - anon-files

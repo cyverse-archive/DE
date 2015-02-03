@@ -1,0 +1,37 @@
+---
+- name: update jex
+  sudo: yes
+  sudo_user: root
+  yum: name=jex state=latest
+  tags:
+    - jex
+
+- name: configure jex
+  sudo: yes
+  sudo_user: root
+  template: src=jex.properties.j2 dest=/etc/iplant/de/jex.properties owner=root group=root mode=0644
+  notify:
+    - restart jex
+  tags:
+    - jex
+
+- name: Copy the /etc/iplant/de/supervisord/jex.ini file
+  sudo: yes
+  sudo_user: root
+  copy: src=jex.ini dest=/etc/iplant/de/supervisord/ owner=root group=root mode=0644
+  notify:
+    - restart jex
+  tags:
+    - jex
+
+- name: jex is present in supervisord
+  sudo: yes
+  supervisorctl: name=jex state=present
+  tags:
+    - jex
+
+- name: jex is running
+  sudo: yes
+  supervisorctl: name=jex state=started
+  tags:
+    - jex

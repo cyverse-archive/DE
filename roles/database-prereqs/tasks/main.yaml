@@ -1,0 +1,21 @@
+- name: facepalm is installed
+  shell: yum install -y facepalm
+
+- name: install postgresql92 yum repo file
+  yum: name=pgdg-centos92 state=latest
+
+- name: postgresql-server is installed
+  yum: name=postgresql92-server state=present
+
+- name: postgresql is installed
+  yum: name=postgresql92 state=present
+
+- name: postgresl-contrib is installed
+  yum: name=postgresql92-contrib state=present
+
+- name: psycopg2 is installed
+  yum: name=python-psycopg2 state=present
+
+- name: place .pgpass
+  sudo: False
+  template: src=postgres.pgpass.j2 dest=~/.pgpass mode=0600 backup=yes

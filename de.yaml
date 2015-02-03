@@ -1,0 +1,6 @@
+---
+- hosts: ui
+  roles:
+    - role: de
+      war_url: "{{ de_war_url }}"
+      context_path: "{{ de_app_name }}"

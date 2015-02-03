@@ -1,0 +1,4 @@
+---
+- name: restart saved-searches
+  sudo: yes
+  supervisorctl: name=saved-searches state=restarted
