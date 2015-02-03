@@ -109,8 +109,6 @@ need to SSH into the fully-qualified domain name of the host. For example:
 You will also need sudo access on those servers for some operations. You should already have this if
 you're in the dev group on the servers.
 
-See the inventory file for the environment you're working in for info on the config loader host.
-
 ## Using vagrant to deploy to local VMs
 
 * This requires `virtualbox 4.3` and `vagrant 1.7` to be installed.
@@ -127,20 +125,11 @@ be run on the VM.
 
     ansible-playbook -i inventories/dev/local.cfg systems.yaml
 
-## Generating configs locally.
-
-   ansible-playbook -i inventories/dev/de-2.cfg -K --extra-vars "configulon_ref=dev deployment=de-2" prepare-configs.yaml
-
-The -K will force a prompt for your sudo password. The 'configulon_ref' extra var tells which branch of configulon to load from. The 'deployment' extra var tells which deployment to generate configs for. The files will be placed in a local directory that is used by the rest of the playbooks.
-
-__NOTE__: Do not pipeline or parallelize deployments to multiple environments. You will accidentally load the incorrect configs into an environment.
-
 ## Updating the entire backend
 
     ansible-playbook -i inventories/dev/de-2.cfg -K deploy-backend.yaml
 
 The playbook will:
-* Load configuration files
 * Deploy database changes
 * Update services
 * Update the condor nodes
@@ -178,20 +167,6 @@ __Development__
     ansible-playbook -i inventories/dev/de-2.cfg -K -u <user> update[-dev]-chinstrap.yaml
     ansible-playbook -i inventories/dev/de-2.cfg -K -u <user> --extra-varsw "chinstrap_jar_file=<local path>" upload-dev-chinstrap.yaml
 
-## Loading configuration files
-
-__Development__
-
-    ansible-playbook -i inventories/dev/de-2.cfg -K load-configs.yaml
-
-This playbook will generate the configuration files locally by downloading clavin from the latest
-drop directory, checking out configulon, and then running the downloaded clavin. Once the config
-files are generated locally, they are put into the /etc/iplant/de/ directory on the systems
-listed in the [config-loader] section of the inventories.
-
-The -K option is needed because the /etc/iplant/de/ directory and all files under it will be
-owned by root, but everyone will have read access to the files.
-
 ## Updating UI wars
 
 Thre are three playbooks for updating UI WAR files: one for the DE, one for Belphegor, and one to
@@ -201,10 +176,6 @@ in Jenkins. For QA environments, the files are obtained from the `latest` QA dro
 the production environment, the files are obtained from the `prod` QA drop symbolic link. For QA and
 production environments, the QA drop can be selected by specifying the value of the `qa_drop`
 variable in the `--extra-vars` command-line option.
-
-* Be sure you have followed the instructions under `Setting Up Your Accounts` so that your ssh keys
-  are setup between the server the wars are being deployed on and `stana`, the configulon repo
-  server.
 
 __All WAR Files__
 
