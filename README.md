@@ -272,10 +272,3 @@ need to be manually updated for now.
 ## Updating the AMQP brokers
 
     ansible-playbook -K -i inventories/dev/de-2.cfg amqp-brokers.yaml
-
-## Deploying a QA Drop
-
-    ansible-playbook -i inventories/qa/<qa-env>.cfg -K deploy-qa-drop.yaml
-
-This playbook just encapsulates and calls other playbooks in the correct order for a QA drop. It
-will deploy the UI and services, re-init the DBs from prod, and perform system updates.
