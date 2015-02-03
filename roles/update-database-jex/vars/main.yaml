@@ -1,7 +1,7 @@
 ---
 fmode: "{{facepalm_mode|default('update')}}"
 tgz_name: jex-db.tar.gz
-tgz_flag: "-q latest -f {{tgz_name}}"
+tgz_flag: "-f {{tgz_name}}"
 curr_db_host: "{{jex_db_host}}"
 curr_db_port: "{{jex_db_port|default(5432)}}"
 curr_db_user: "{{jex_db_user}}"
