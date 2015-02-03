@@ -1,6 +1,8 @@
 ansible_ssh_port: 
 services_ver: 4.1.5
 
+parasitic: false
+
 ### WAR Settings
 de_war_name: de.war
 bg_war_name: belphegor.war
