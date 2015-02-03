@@ -221,32 +221,6 @@ The --extra-vars will allow you to override a couple of vars for this playbook.
 
 You can specify multiple extra-vars at once by separating them with commas.
 
-## Importing data from production
-
-    ansible-playbook -i inventories/dev/de-2.cfg -K [-u <user>] [--extra-vars "de_init_tgz_flag='-q <drop-dir>'"] init-dbs-from-prod.yaml
-
-This playbook will clear the target de and notifications databases, repopulate them with data
-imported from the production databases, then run the latest facepalm updates on the target
-databases.
-The optional `--extra-vars` argument allows you override the same vars as above, in addition to
-some vars specific to this playbook, but the __facepalm_mode__ var is not used in this playbook.
-
-* Overriding the __de_init_tgz_flag__ var (`-q prod` by deafult) or the __de_update_tgz_flag__ var
-  (`-q latest` by deafult) allows you specify the `tgz_flag` used in the init or update steps for
-  the DE database.
-  This makes it possible to use a local database tgz file.
-
-    `--extra-vars "de_init_tgz_flag='-q x.x.x-QAxx'"`
-    `--extra-vars "de_update_tgz_flag='-f database.tar.gz' tgz_file=/path/to/local/database.tar.gz"`
-
-* Overriding the __notif_init_tgz_flag__ var (`-q prod` by deafult) or the __notif_update_tgz_flag__ var
-  (`-q latest` by deafult) allows you specify the `tgz_flag` used in the init or update steps for
-  the notifications database.
-  This makes it possible to use a local database tgz file or the `notification-db.tar.gz` file.
-
-    `--extra-vars "notif_init_tgz_flag='-q x.x.x-QAxx -f notification-db.tar.gz'"`
-    `--extra-vars "notif_update_tgz_flag='-f notification-db.tar.gz' tgz_file=/path/to/local/notification-db.tar.gz"`
-
 ## Initializing or Updating the Notifications database
 
     ansible-playbook -i inventories/dev/de-2.cfg -K [-u <user>] [--extra-vars "tgz_flag=<-q drop-dir>,facepalm_mode=(init|update)"] notifications-database.yaml
