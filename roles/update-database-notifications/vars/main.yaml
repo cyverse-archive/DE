@@ -1,7 +1,7 @@
 ---
 fmode: "{{facepalm_mode|default('update')}}"
 tgz_name: notification-db.tar.gz
-tgz_flag: "-f {{tgz_name}}"
+tgz_flag: "-f {{tgz_name}} --qa-drop-base https://github.com/iPlantCollaborativeOpenSource/DiscoveryEnvironmentBackend/releases/download/1.9.4-RELEASE"
 curr_db_host: "{{notif_db_host}}"
 curr_db_port: "{{notif_db_port|default(5432)}}"
 curr_db_user: "{{notif_db_user}}"
