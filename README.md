@@ -273,15 +273,6 @@ need to be manually updated for now.
 
     ansible-playbook -K -i inventories/dev/de-2.cfg amqp-brokers.yaml
 
-## Updating the Drop Host for a QA Drop
-
-    ansible-playbook -i inventories/dev-support/support.cfg -K --extra-vars "rpm_version=4.1.5 de_version=1.9.5 drop_number=01" update-qa-drop-host.yaml
-
-The `rpm_version` extra var is used to determine which RPMs to copy from the dev to the QA repo,
-required by the `update-yum-repo.yaml` playbook.
-The `de_version` extra var is the DE version number and the `drop_number` extra var is the number of
-the QA drop being created, required by the `drop-dir.yaml` playbook.
-
 ## Deploying a QA Drop
 
     ansible-playbook -i inventories/qa/<qa-env>.cfg -K deploy-qa-drop.yaml
