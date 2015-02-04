@@ -14,7 +14,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath 'de.richsource.gradle.plugins:gwt-gradle-plugin:0.5'
+        classpath 'de.richsource.gradle.plugins:gwt-gradle-plugin:0.6'
     }
 }
 
@@ -66,5 +66,5 @@ apply from: 'iplant/modules.gradle'
 apply from: 'iplant/webappBootstrap.gradle'
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '2.1'
+    gradleVersion = '2.2.1'
 }
