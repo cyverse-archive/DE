@@ -7,25 +7,23 @@ import org.iplantc.de.client.models.diskResources.PermissionValue;
 import org.iplantc.de.client.models.tags.IplantTag;
 import org.iplantc.de.client.models.viewer.InfoType;
 import org.iplantc.de.client.util.DiskResourceUtil;
-import org.iplantc.de.commons.client.widgets.IPlantAnchor;
 import org.iplantc.de.diskResource.client.DetailsView;
 import org.iplantc.de.diskResource.client.events.DiskResourceSelectionChangedEvent;
 import org.iplantc.de.diskResource.client.events.selection.EditInfoTypeSelected;
 import org.iplantc.de.diskResource.client.events.selection.ManageSharingSelected;
-import org.iplantc.de.resources.client.IplantResources;
+import org.iplantc.de.diskResource.client.events.selection.ResetInfoTypeSelected;
 import org.iplantc.de.tags.client.Taggable;
 import org.iplantc.de.tags.client.TagsView;
 import org.iplantc.de.tags.client.gin.factory.TagListPresenterFactory;
+import org.iplantc.de.tags.client.views.IplantTagListView;
 
 import com.google.common.collect.Lists;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.dom.client.Style;
 import com.google.gwt.dom.client.TableElement;
 import com.google.gwt.dom.client.TableRowElement;
 import com.google.gwt.editor.client.Editor;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -35,18 +33,15 @@ import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.DateLabel;
 import com.google.gwt.user.client.ui.HTMLPanel;
-import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.InlineHyperlink;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.SimplePanel;
-import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 
 import com.sencha.gxt.data.shared.event.StoreUpdateEvent;
 import com.sencha.gxt.widget.core.client.Composite;
-import com.sencha.gxt.widget.core.client.form.FieldLabel;
 
 import java.util.Date;
 import java.util.logging.Logger;
@@ -66,33 +61,6 @@ import java.util.logging.Logger;
 public class DetailsViewImpl extends Composite implements DetailsView,
                                                           Editor<DiskResource>,
                                                           Taggable {
-
-    //region Click Handlers
-    private class InfoTypeClickHandler implements ClickHandler {
-
-        private final String infoType;
-
-        public InfoTypeClickHandler(String type) {
-            this.infoType = type;
-        }
-
-        @Override
-        public void onClick(ClickEvent arg0) {
-            DiskResource boundResource = null;
-            fireEvent(new EditInfoTypeSelected(Lists.newArrayList(boundResource)));
-        }
-
-    }
-
-    private final class RemoveInfoTypeClickHandler implements ClickHandler {
-        @Override
-        public void onClick(ClickEvent event) {
-            // FIXME Who listens here?
-//            presenter.resetInfoType();
-        }
-    }
-
-    //endregion
 
     interface EditorDriver extends SimpleBeanEditorDriver<DiskResource, DetailsViewImpl> { }
 
@@ -116,7 +84,8 @@ public class DetailsViewImpl extends Composite implements DetailsView,
     @UiField TableElement table;
     @UiField @Ignore InlineLabel mimeType;
     @UiField @Ignore InlineHyperlink infoType;
-    @UiField Image deselectInfoTypeIcon;
+    @UiField Image resetInfoTypeIcon;
+    @UiField(provided = true) IplantTagListView tagListView;
 
     private static DetailsViewImplUiBinder ourUiBinder = GWT.create(DetailsViewImplUiBinder.class);
     private final EditorDriver editorDriver = GWT.create(EditorDriver.class);
@@ -124,19 +93,31 @@ public class DetailsViewImpl extends Composite implements DetailsView,
     private final Presenter presenter;
     private final TagListPresenterFactory tagListPresenterFactory;
     private DiskResource boundValue;
-    private TagsView.Presenter tagPresenter;
+    private final TagsView.Presenter tagsPresenter;
 
     private final Logger LOG = Logger.getLogger(DetailsViewImpl.class.getSimpleName());
 
     @Inject
     DetailsViewImpl(final TagListPresenterFactory tagListPresenterFactory,
+                    final IplantTagListView tagListView,
                     final DiskResourceUtil diskResourceUtil,
                     final DetailsView.Appearance appearance,
                     @Assisted final DetailsView.Presenter presenter) {
         this.tagListPresenterFactory = tagListPresenterFactory;
+        this.tagListView = tagListView;
         this.diskResourceUtil = diskResourceUtil;
         this.appearance = appearance;
         this.presenter = presenter;
+        this.tagsPresenter = tagListPresenterFactory.createTagListPresenter(this);
+
+        SimplePanel boundaryBox = new SimplePanel();
+        tagsPresenter.setEditable(true);
+        tagsPresenter.setRemovable(true);
+        tagsPresenter.setOnFocusCmd(createOnFocusCmd(boundaryBox, ""));
+        tagsPresenter.setOnBlurCmd(createOnBlurCmd(boundaryBox, ""));
+        this.tagListView = tagsPresenter.getTagListView();
+
+        boundaryBox.setWidget(tagsPresenter.getTagListView());
 
         initWidget(ourUiBinder.createAndBindUi(this));
         dateCreated.setValue(new Date());
@@ -144,6 +125,27 @@ public class DetailsViewImpl extends Composite implements DetailsView,
 
         editorDriver.initialize(this);
     }
+
+//    private Widget createTagView(String containerStyle,
+//                                 boolean editable,
+//                                 boolean removable) {
+//        HorizontalPanel hp = new HorizontalPanel();
+//        SimplePanel boundaryBox = new SimplePanel();
+////        if (tagPresenter == null) {
+//            TagsView.Presenter tagsPresenter = tagListPresenterFactory.createTagListPresenter(this);
+//            tagsPresenter.setEditable(editable);
+//            tagsPresenter.setRemovable(removable);
+//            tagsPresenter.setOnFocusCmd(createOnFocusCmd(boundaryBox, containerStyle));
+//            tagsPresenter.setOnBlurCmd(createOnBlurCmd(boundaryBox, containerStyle));
+//
+////            tagPresenter = tagsPresenter;
+//
+//        }
+//        tagPresenter.removeAll();
+//        boundaryBox.setWidget(tagPresenter.getTagListView());
+//        hp.add(boundaryBox);
+//        return hp;
+//    }
 
     //region Handler Registration
     @Override
@@ -155,22 +157,44 @@ public class DetailsViewImpl extends Composite implements DetailsView,
     public HandlerRegistration addManageSharingSelectedEventHandler(ManageSharingSelected.ManageSharingSelectedEventHandler handler) {
         return addHandler(handler, ManageSharingSelected.TYPE);
     }
+
+    @Override
+    public HandlerRegistration addResetInfoTypeSelectedHandler(ResetInfoTypeSelected.ResetInfoTypeSelectedHandler handler) {
+        return addHandler(handler, ResetInfoTypeSelected.TYPE);
+    }
     //endregion
 
     //region Taggable Methods
     @Override
     public void attachTag(IplantTag tag) {
 
+        // presenter.attachTag
+        /*
+         * For each selected resource
+         *      calls MetadataServiceFacade.attachTags
+         */
+
     }
 
     @Override
     public void detachTag(IplantTag tag) {
+        // presenter.detachTag
+        /*
+         * For each selected resource
+         *      calls MetadataServiceFacade.detachTags
+         */
 
     }
 
     @Override
     public void selectTag(IplantTag tag) {
 
+//        presenter.doSearchTaggedWithResources(tag)
+        /*
+         * Creates a DiskResourceQueryTemplate
+         * adds tags to search
+         * submits search via the data Search presenter
+         */
     }
     //endregion
 
@@ -223,19 +247,19 @@ public class DetailsViewImpl extends Composite implements DetailsView,
          // Update editor
         editorDriver.edit(resource);
 
+        // Clear previous values
+        tagsPresenter.removeAll();
+        permission.setText("");
+        size.setText("");
+        fileFolderNum.setText("");
+        mimeType.setText("");
+        sharing.setText("");
+        infoType.setText("");
+        sendTo.setText("");
+
         if(resource == null){
             return;
         }
-//        if(resource == null){
-            permission.setText("");
-            size.setText("");
-            fileFolderNum.setText("");
-            mimeType.setText("");
-            sharing.setText("");
-            infoType.setText("");
-            sendTo.setText("");
-//            return;
-//        }
         // Manually populate
         permission.setText(resource.getPermission().name());
         if(resource instanceof File){
@@ -290,17 +314,17 @@ public class DetailsViewImpl extends Composite implements DetailsView,
                 if(resInfoType != null) {
                     infoType.setText(resInfoType.toString());
                     // display deselect icon
-                    deselectInfoTypeIcon.setVisible(true);
+                    resetInfoTypeIcon.setVisible(true);
 
                 } else {
                     infoType.setText(appearance.selectInfoType());
                     // hide deselect icon
-                    deselectInfoTypeIcon.setVisible(false);
+                    resetInfoTypeIcon.setVisible(false);
                 }
             } else {
                 infoType.addStyleName(appearance.css().disabledHyperlink());
                 // hide deselect icon
-                deselectInfoTypeIcon.setVisible(false);
+                resetInfoTypeIcon.setVisible(false);
 
                 if(resInfoType != null){
                     infoType.setText(resInfoType.toString());
@@ -310,49 +334,16 @@ public class DetailsViewImpl extends Composite implements DetailsView,
             }
         }
 
-    }
+        // FIXME Get tags for resource
+//        presenter.getTagsForSelectedResource();
+        /*
+         * For each selected resource
+         *      call MetadataServiceFacade.getTags
+         */
 
-    private HorizontalPanel getInfoTypeLabel(String label, File info) {
-        HorizontalPanel panel = buildRow();
-        FieldLabel fl = new FieldLabel();
-        fl.setWidth(100);
-//        fl.setHTML(getDetailAsHtml(label, true));
-        panel.add(fl);
-        String infoType = info.getInfoType();
-
-        IPlantAnchor link;
-        if (infoType != null && !infoType.isEmpty()) {
-            if (info.getPermission().equals(PermissionValue.own) || info.getPermission().equals(PermissionValue.write)) {
-                link = new IPlantAnchor(infoType, 60, new InfoTypeClickHandler(infoType));
-                panel.add(link);
-                Image rmImg = new Image(IplantResources.RESOURCES.deleteIcon());
-                rmImg.addClickHandler(new RemoveInfoTypeClickHandler());
-                rmImg.setTitle(appearance.delete());
-                rmImg.getElement().getStyle().setCursor(Style.Cursor.POINTER);
-                panel.add(rmImg);
-            } else {
-                FieldLabel infoLbl = new FieldLabel();
-                infoLbl.setLabelSeparator("");
-//                infoLbl.setHTML(getDetailAsHtml(infoType, false));
-                panel.add(infoLbl);
-            }
-        } else {
-            if (info.getPermission().equals(PermissionValue.own) || info.getPermission().equals(PermissionValue.write)) {
-                link = new IPlantAnchor("Select", 100, new InfoTypeClickHandler(""));
-                panel.add(link);
-            } else {
-                FieldLabel infoLbl = new FieldLabel();
-                infoLbl.setLabelSeparator("");
-                infoLbl.setHTML("-");
-                panel.add(infoLbl);
-            }
-        }
-
-        return panel;
     }
 
     //region UIHandlers
-
     @UiHandler("sharing")
     void onSharingClicked(ClickEvent event){
         if(boundValue == null){
@@ -395,13 +386,14 @@ public class DetailsViewImpl extends Composite implements DetailsView,
         fireEvent(new EditInfoTypeSelected(Lists.newArrayList(boundValue)));
     }
 
-    @UiHandler("deselectInfoTypeIcon")
-    void onDeselectInfoTypeClicked(ClickEvent event){
-        // FIXME Fire event
+    @UiHandler("resetInfoTypeIcon")
+    void onResetInfoTypeClicked(ClickEvent event){
+        if(boundValue == null){
+            return;
+        }
+        fireEvent(new ResetInfoTypeSelected(boundValue));
 //        presenter.resetInfoType();
-        LOG.fine("Deselect Clicked");
     }
-
     //endregion
 
     @Override
@@ -414,25 +406,10 @@ public class DetailsViewImpl extends Composite implements DetailsView,
         bind(event.getItems().iterator().next());
     }
 
-
-    public void updateDetails(DiskResource info) {
-        // FIXME Who does this? Tags presenter, I think.
-//        presenter.getTagsForSelectedResource();
-        // FIXME
-//        detailsPanel.add(createTagView("", true, true));
-    }
-
     @UiFactory
     @Ignore
     DateLabel createDateLabel() {
         return new DateLabel(DateTimeFormat.getFormat(DateTimeFormat.PredefinedFormat.DATE_MEDIUM));
-    }
-
-    private HorizontalPanel buildRow() {
-        HorizontalPanel panel = new HorizontalPanel();
-        panel.setHeight("25px"); //$NON-NLS-1$
-        panel.setSpacing(1);
-        return panel;
     }
 
     private Command createOnBlurCmd(final SimplePanel boundaryBox, final String defaultStyle) {
@@ -453,35 +430,5 @@ public class DetailsViewImpl extends Composite implements DetailsView,
         };
     }
 
-    private TagsView.Presenter createTagListPresenter(boolean editable,
-                                                      boolean removeable,
-                                                      Command onFocusCmd,
-                                                      Command onBlurCmd) {
-        TagsView.Presenter tagsPresenter = tagListPresenterFactory.createTagListPresenter(this);
-        tagsPresenter.setEditable(editable);
-        tagsPresenter.setRemovable(removeable);
-        tagsPresenter.setOnFocusCmd(onFocusCmd);
-        tagsPresenter.setOnBlurCmd(onBlurCmd);
-
-        return tagsPresenter;
-    }
-
-    private Widget createTagView(String containerStyle,
-                                 boolean editable,
-                                 boolean removable) {
-        HorizontalPanel hp = new HorizontalPanel();
-        SimplePanel boundaryBox = new SimplePanel();
-        if (tagPresenter == null) {
-            tagPresenter = createTagListPresenter(editable,
-                                                  removable,
-                                                  createOnFocusCmd(boundaryBox, containerStyle),
-                                                  createOnBlurCmd(boundaryBox, containerStyle));
-
-        }
-        tagPresenter.removeAll();
-        boundaryBox.setWidget(tagPresenter.getTagListView());
-        hp.add(boundaryBox);
-        return hp;
-    }
 
 }

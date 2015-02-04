@@ -39,4 +39,13 @@ public interface DetailsViewDisplayStrings extends Messages{
 
     @Key("treeViewer")
     String treeViewer();
+
+    @Key("unsupportedCogeInfoType")
+    String unsupportedCogeInfoType();
+
+    @Key("unsupportedEnsemblInfoType")
+    String unsupportedEnsemblInfoType();
+
+    @Key("unsupportedTreeInfoType")
+    String unsupportedTreeInfoType();
 }

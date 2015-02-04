@@ -4,6 +4,7 @@ import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.diskResource.client.events.DiskResourceSelectionChangedEvent;
 import org.iplantc.de.diskResource.client.events.selection.EditInfoTypeSelected;
 import org.iplantc.de.diskResource.client.events.selection.ManageSharingSelected;
+import org.iplantc.de.diskResource.client.events.selection.ResetInfoTypeSelected;
 
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.resources.client.ImageResource;
@@ -19,7 +20,8 @@ public interface DetailsView extends IsWidget,
                                      DiskResourceSelectionChangedEvent.DiskResourceSelectionChangedEventHandler,
                                      StoreUpdateEvent.StoreUpdateHandler<DiskResource>,
                                      ManageSharingSelected.HasManageSharingSelectedEventHandlers,
-                                     EditInfoTypeSelected.HasEditInfoTypeSelectedEventHandlers {
+                                     EditInfoTypeSelected.HasEditInfoTypeSelectedEventHandlers,
+                                     ResetInfoTypeSelected.HasResetInfoTypeSelectedHandlers {
     interface Appearance {
         interface DetailsViewStyle extends CssResource {
 
@@ -78,6 +80,15 @@ public interface DetailsView extends IsWidget,
     }
 
     interface Presenter {
+
+        interface Appearance {
+
+            String unsupportedCogeInfoType();
+
+            String unsupportedEnsemblInfoType();
+
+            String unsupportedTreeInfoType();
+        }
 
         DetailsView getView();
 

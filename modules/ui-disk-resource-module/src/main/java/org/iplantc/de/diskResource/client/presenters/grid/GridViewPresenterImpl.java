@@ -32,6 +32,7 @@ import org.iplantc.de.diskResource.client.events.selection.EditInfoTypeSelected;
 import org.iplantc.de.diskResource.client.events.selection.ManageCommentsSelected;
 import org.iplantc.de.diskResource.client.events.selection.ManageMetadataSelected;
 import org.iplantc.de.diskResource.client.events.selection.ManageSharingSelected;
+import org.iplantc.de.diskResource.client.events.selection.ResetInfoTypeSelected;
 import org.iplantc.de.diskResource.client.events.selection.ShareByDataLinkSelected;
 import org.iplantc.de.diskResource.client.gin.factory.DataSharingDialogFactory;
 import org.iplantc.de.diskResource.client.gin.factory.FolderContentsRpcProxyFactory;
@@ -81,7 +82,8 @@ import java.util.List;
  * @author jstroot
  */
 public class GridViewPresenterImpl implements GridView.Presenter,
-                                              DiskResourcePathSelectedEvent.DiskResourcePathSelectedEventHandler, DiskResourceSelectionChangedEvent.DiskResourceSelectionChangedEventHandler {
+                                              DiskResourcePathSelectedEvent.DiskResourcePathSelectedEventHandler,
+                                              DiskResourceSelectionChangedEvent.DiskResourceSelectionChangedEventHandler {
 
 
     private class CreateDataLinksCallback implements AsyncCallback<List<DataLink>> {
@@ -229,6 +231,11 @@ public class GridViewPresenterImpl implements GridView.Presenter,
                 setInfoType(event.getSelectedDiskResources().iterator().next(), newType);
             }
         });
+    }
+
+    @Override
+    public void onResetInfoTypeSelected(ResetInfoTypeSelected event) {
+        setInfoType(event.getDiskResource(), "");
     }
 
     private void setInfoType(final DiskResource dr, String newType) {

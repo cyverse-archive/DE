@@ -8,6 +8,7 @@ import org.iplantc.de.diskResource.client.events.selection.EditInfoTypeSelected;
 import org.iplantc.de.diskResource.client.events.selection.ManageCommentsSelected;
 import org.iplantc.de.diskResource.client.events.selection.ManageMetadataSelected;
 import org.iplantc.de.diskResource.client.events.selection.ManageSharingSelected;
+import org.iplantc.de.diskResource.client.events.selection.ResetInfoTypeSelected;
 import org.iplantc.de.diskResource.client.events.selection.ShareByDataLinkSelected;
 import org.iplantc.de.diskResource.client.presenters.proxy.FolderContentsLoadConfig;
 import org.iplantc.de.diskResource.client.search.events.SubmitDiskResourceQueryEvent;
@@ -94,7 +95,8 @@ public interface GridView extends IsWidget,
                                 FolderSelectionEvent.FolderSelectionEventHandler,
                                 SubmitDiskResourceQueryEvent.SubmitDiskResourceQueryEventHandler,
                                 StoreUpdateEvent.HasStoreUpdateHandlers<DiskResource>,
-                                EditInfoTypeSelected.EditInfoTypeSelectedEventHandler {
+                                EditInfoTypeSelected.EditInfoTypeSelectedEventHandler,
+                                ResetInfoTypeSelected.ResetInfoTypeSelectedHandler {
 
         interface Appearance {
 

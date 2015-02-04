@@ -938,12 +938,6 @@ public interface IplantErrorStrings extends com.google.gwt.i18n.client.Messages,
     @Key("appLaunchWithoutToolError")
     String appLaunchWithoutToolError();
 
-    String unsupportedCogeInfoType();
-
-    String unsupportedEnsemblInfoType();
-
-    String unsupportedTreeInfoType();
-
     SafeHtml analysisRenameFailed();
 
     SafeHtml analysisCommentUpdateFailed();
