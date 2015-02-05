@@ -1,6 +1,6 @@
 package org.iplantc.de.client.services.stubs;
 
-import org.iplantc.de.client.models.tags.IplantTag;
+import org.iplantc.de.client.models.tags.Tag;
 import org.iplantc.de.client.services.TagsServiceFacade;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -8,7 +8,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 public class MetadataServiceFacadeStub implements TagsServiceFacade {
 
     @Override
-    public void createTag(IplantTag tag, AsyncCallback<String> callback) {
+    public void createTag(String tag, AsyncCallback<Tag> callback) {
         // TODO Auto-generated method stub
 
     }

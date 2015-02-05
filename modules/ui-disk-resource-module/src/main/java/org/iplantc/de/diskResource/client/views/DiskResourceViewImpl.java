@@ -1,7 +1,6 @@
 package org.iplantc.de.diskResource.client.views;
 
 import org.iplantc.de.client.models.diskResources.Folder;
-import org.iplantc.de.client.models.tags.IplantTag;
 import org.iplantc.de.client.util.DiskResourceUtil;
 import org.iplantc.de.diskResource.client.DetailsView;
 import org.iplantc.de.diskResource.client.DiskResourceView;
@@ -10,10 +9,8 @@ import org.iplantc.de.diskResource.client.NavigationView;
 import org.iplantc.de.diskResource.client.ToolbarView;
 import org.iplantc.de.diskResource.share.DiskResourceModule;
 import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
-import org.iplantc.de.tags.client.TagsView;
 import org.iplantc.de.tags.client.gin.factory.TagListPresenterFactory;
 
-import com.google.common.collect.Sets;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiFactory;
@@ -29,7 +26,6 @@ import com.sencha.gxt.widget.core.client.Composite;
 import com.sencha.gxt.widget.core.client.container.BorderLayoutContainer;
 import com.sencha.gxt.widget.core.client.container.BorderLayoutContainer.BorderLayoutData;
 
-import java.util.List;
 import java.util.logging.Logger;
 
 /**
@@ -46,16 +42,8 @@ public class DiskResourceViewImpl extends Composite implements DiskResourceView 
 
     private static DiskResourceViewUiBinder BINDER = GWT.create(DiskResourceViewUiBinder.class);
 
-    private final DiskResourceUtil diskResourceUtil;
-    private final GridView.Presenter gridViewPresenter;
-    private final TagListPresenterFactory tagListPresenterFactory;
-    private Presenter presenter;
-
-
-    private final IplantDisplayStrings displayStrings;
 
     @UiField BorderLayoutContainer con;
-//    @UiField VerticalLayoutContainer detailsPanel;
     @UiField BorderLayoutData westData;
     @UiField BorderLayoutData centerData;
     @UiField BorderLayoutData eastData;
@@ -67,7 +55,6 @@ public class DiskResourceViewImpl extends Composite implements DiskResourceView 
     @UiField(provided = true) ToolbarView toolbar;
     @UiField(provided = true) DetailsView detailsView;
 
-    private TagsView.Presenter tagPresenter;
 
     Logger LOG = Logger.getLogger("DRV");
 
@@ -84,11 +71,6 @@ public class DiskResourceViewImpl extends Composite implements DiskResourceView 
         this.centerGridView = gridViewPresenter.getView();
         this.toolbar = toolbarPresenter.getView();
         this.detailsView = detailsPresenter.getView();
-        this.gridViewPresenter = gridViewPresenter;
-        this.displayStrings = displayStrings;
-        this.diskResourceUtil = diskResourceUtil;
-        this.tagListPresenterFactory = tagListPresenterFactory;
-        this.presenter = presenter;
         // FIXME Wire up details view
 
         initWidget(BINDER.createAndBindUi(this));
@@ -167,26 +149,4 @@ public class DiskResourceViewImpl extends Composite implements DiskResourceView 
     public void unmask() {
         con.unmask();
     }
-
-    @Override
-    public void updateTags(List<IplantTag> tags) {
-        tagPresenter.buildTagCloudForSelectedResource(tags);
-    }
-
-    @Override
-    public void attachTag(IplantTag tag) {
-        presenter.attachTag(tag);
-    }
-
-    @Override
-    public void detachTag(IplantTag tag) {
-        presenter.detachTag(tag);
-    }
-
-    @Override
-    public void selectTag(IplantTag tag) {
-        LOG.fine("tag selected ==>" + tag.getValue());
-        presenter.doSearchTaggedWithResources(Sets.newHashSet(tag));
-    }
-
 }

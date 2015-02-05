@@ -3,6 +3,12 @@
  */
 package org.iplantc.de.client.services;
 
+import org.iplantc.de.client.models.HasId;
+import org.iplantc.de.client.models.diskResources.Folder;
+import org.iplantc.de.client.models.diskResources.TYPE;
+import org.iplantc.de.client.models.tags.Tag;
+import org.iplantc.de.client.models.viewer.InfoType;
+
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import java.util.List;
@@ -27,6 +33,6 @@ public interface MetadataServiceFacade {
 
     public void detachTags(List<String> tagIds, String objectId, AsyncCallback<String> callback);
     
-    public void getTags(String UUID, AsyncCallback<String> callback);
+    public void getTags(HasId hasId, AsyncCallback<List<Tag>> callback);
  
 }

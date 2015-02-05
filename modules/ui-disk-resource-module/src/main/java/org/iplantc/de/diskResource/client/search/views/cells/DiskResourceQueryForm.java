@@ -5,7 +5,7 @@ import org.iplantc.de.client.models.search.DiskResourceQueryTemplate;
 import org.iplantc.de.client.models.search.FileSizeRange.FileSizeUnit;
 import org.iplantc.de.client.models.search.SearchAutoBeanFactory;
 import org.iplantc.de.client.models.search.SearchModelUtils;
-import org.iplantc.de.client.models.tags.IplantTag;
+import org.iplantc.de.client.models.tags.Tag;
 import org.iplantc.de.commons.client.info.ErrorAnnouncementConfig;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
 import org.iplantc.de.commons.client.widgets.IPlantAnchor;
@@ -14,7 +14,7 @@ import org.iplantc.de.diskResource.client.search.events.SubmitDiskResourceQueryE
 import org.iplantc.de.diskResource.client.search.events.SubmitDiskResourceQueryEvent.HasSubmitDiskResourceQueryEventHandlers;
 import org.iplantc.de.diskResource.client.search.events.SubmitDiskResourceQueryEvent.SubmitDiskResourceQueryEventHandler;
 import org.iplantc.de.tags.client.TagsView;
-import org.iplantc.de.tags.client.gin.factory.TagsViewFactory;
+import org.iplantc.de.tags.client.gin.factory.TagItemFactory;
 import org.iplantc.de.tags.client.views.TagSearchField;
 import org.iplantc.de.tags.client.views.TagsPanel;
 
@@ -117,57 +117,58 @@ public class DiskResourceQueryForm extends Composite implements
                                                      HasSubmitDiskResourceQueryEventHandlers,
                                                      SaveDiskResourceQueryClickedEvent.SaveDiskResourceQueryClickedEventHandler {
 
-    class SearchTagListHandler implements TagsView.TagListHandlers {
+//    class SearchTagListHandler implements TagsView.TagListHandlers {
+    class SearchTagListHandler {
 
-        private final TagsViewFactory tagsViewFactory;
+        private final TagItemFactory tagItemFactory;
 
-        public SearchTagListHandler(final TagsViewFactory tagsViewFactory) {
-            this.tagsViewFactory = tagsViewFactory;
+        public SearchTagListHandler(final TagItemFactory tagItemFactory) {
+            this.tagItemFactory = tagItemFactory;
         }
 
-        @Override
-        public void onAddTag(IplantTag tag) {
+//        @Override
+        public void onAddTag(Tag tag) {
             for (int i = 0; i < tagPanel.getWidgetCount(); i++) {
-                TagsView test = (TagsView) tagPanel.getWidget(i);
+                TagsView.TagItem test = (TagsView.TagItem) tagPanel.getWidget(i);
                 if (test.getTag().getValue().equals(tag.getValue())) {
                     return;
                 }
             }
-            TagsView tv = tagsViewFactory.createTagsView(tag);
-            tv.setUiHandlers(this);
+            TagsView.TagItem tv = tagItemFactory.createTagItem(tag);
+//            tv.setUiHandlers(this);
             tv.setRemovable(true);
             tv.setEditable(true);
             tagPanel.add(tv);
             tagQuery.getValue().add(tv.getTag());
         }
 
-        @Override
+//        @Override
         public void onBlur() { /* Do nothing intentionally */ }
 
-        @Override
-        public void onCreateTag(IplantTag tag) { /* Do nothing intentionally */ }
+//        @Override
+        public void onCreateTag(Tag tag) { /* Do nothing intentionally */ }
 
-        @Override
-        public void onEditTag(TagsView tagView) { /* Do nothing intentionally */ }
+//        @Override
+        public void onEditTag(TagsView.TagItem tagView) { /* Do nothing intentionally */ }
 
-        @Override
+//        @Override
         public void onFocus() { /* Do nothing intentionally */ }
 
-        @Override
-        public void onRelocateTag(TagsView tagViewToRelocate,
-                                  TagsView tagViewRelocationRef,
-                                  InsertionPoint insertionPoint) { /* Do nothing intentionally */}
+//        @Override
+//        public void onRelocateTag(TagsView.TagItem tagViewToRelocate,
+//                                  TagsView.TagItem tagViewRelocationRef,
+//                                  TagsView.TagListHandlers.InsertionPoint insertionPoint) { /* Do nothing intentionally */}
 
-        @Override
-        public void onRemoveTag(TagsView tagView) {
+//        @Override
+        public void onRemoveTag(TagsView.TagItem tagView) {
             if (tagPanel.getWidgetIndex(tagView) != -1) {
                 tagPanel.remove(tagPanel.getWidgetIndex(tagView));
                 tagQuery.getValue().remove(tagView.getTag());
             }
         }
 
-        @Override
-        public void onSelectTag(TagsView tagView) {/* Do nothing intentionally */ }
+//        @Override
+        public void onSelectTag(TagsView.TagItem tagView) {/* Do nothing intentionally */ }
     }
 
     public interface HtmlLayoutContainerTemplate extends XTemplates {
@@ -210,11 +211,11 @@ public class DiskResourceQueryForm extends Composite implements
     TextField sharedWith;
     @Ignore
     TagsPanel tagPanel;
-    SimpleEditor<Set<IplantTag>> tagQuery;
+    SimpleEditor<Set<Tag>> tagQuery;
     @Ignore
     private final HtmlLayoutContainer con;
     private final SearchAutoBeanFactory factory = GWT.create(SearchAutoBeanFactory.class);
-    private final TagsViewFactory tagsViewFactory;
+    private final TagItemFactory tagItemFactory;
     private final TagSearchField tagSearchField;
     @Ignore
     private boolean showing;
@@ -224,17 +225,17 @@ public class DiskResourceQueryForm extends Composite implements
      * Creates the form with a new filter.
      */
     @Inject
-    public DiskResourceQueryForm(final TagsViewFactory tagsViewFactory,
+    public DiskResourceQueryForm(final TagItemFactory tagItemFactory,
                                  final TagSearchField tagSearchField) {
-        this(tagsViewFactory,
+        this(tagItemFactory,
              tagSearchField,
              SearchModelUtils.createDefaultFilter());
     }
 
-    DiskResourceQueryForm(final TagsViewFactory tagsViewFactory,
+    DiskResourceQueryForm(final TagItemFactory tagItemFactory,
                           final TagSearchField tagSearchField,
                           final DiskResourceQueryTemplate filter) {
-        this.tagsViewFactory = tagsViewFactory;
+        this.tagItemFactory = tagItemFactory;
         this.tagSearchField = tagSearchField;
         VerticalPanel vp = new VerticalPanel();
         HtmlLayoutContainerTemplate templates = GWT.create(HtmlLayoutContainerTemplate.class);
@@ -247,7 +248,7 @@ public class DiskResourceQueryForm extends Composite implements
         init(new DiskResourceQueryFormNamePrompt());
         editorDriver.initialize(this);
         editorDriver.edit(filter);
-        tagQuery.setValue(new HashSet<IplantTag>());
+        tagQuery.setValue(new HashSet<Tag>());
 
         eventPreview = new BaseEventPreview() {
 
@@ -322,7 +323,7 @@ public class DiskResourceQueryForm extends Composite implements
 
     public void edit(DiskResourceQueryTemplate queryTemplate) {
         if (queryTemplate.getTagQuery() == null) {
-            tagQuery.setValue(new HashSet<IplantTag>());
+            tagQuery.setValue(new HashSet<Tag>());
             tagPanel.clear();
         } else {
             populateTags(queryTemplate.getTagQuery());
@@ -640,7 +641,7 @@ public class DiskResourceQueryForm extends Composite implements
 
     void initTagField() {
 
-        tagListHandlers = new SearchTagListHandler(tagsViewFactory);
+        tagListHandlers = new SearchTagListHandler(tagItemFactory);
 
         VerticalPanel vp = new VerticalPanel();
         FieldLabel fl = new FieldLabel();
@@ -655,18 +656,18 @@ public class DiskResourceQueryForm extends Composite implements
 
         con.add(vp, new HtmlData(".tags"));
 
-        tagSearchField.addSelectionHandler(new SelectionHandler<IplantTag>() {
+        tagSearchField.addSelectionHandler(new SelectionHandler<Tag>() {
 
             @Override
-            public void onSelection(SelectionEvent<IplantTag> event) {
+            public void onSelection(SelectionEvent<Tag> event) {
                 tagSearchField.setValue(event.getSelectedItem());
 
             }
         });
-        tagSearchField.addValueChangeHandler(new ValueChangeHandler<IplantTag>() {
+        tagSearchField.addValueChangeHandler(new ValueChangeHandler<Tag>() {
 
             @Override
-            public void onValueChange(ValueChangeEvent<IplantTag> event) {
+            public void onValueChange(ValueChangeEvent<Tag> event) {
                 tagListHandlers.onAddTag(event.getValue());
                 tagSearchField.clear();
                 tagSearchField.asWidget().getElement().focus();
@@ -704,8 +705,8 @@ public class DiskResourceQueryForm extends Composite implements
         hide();
     }
 
-    void populateTags(Set<IplantTag> tags) {
-        for (IplantTag it : tags) {
+    void populateTags(Set<Tag> tags) {
+        for (Tag it : tags) {
             tagListHandlers.onAddTag(it);
         }
     }

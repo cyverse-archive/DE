@@ -1,11 +1,14 @@
 package org.iplantc.de.client.services.impl;
 
 import org.iplantc.de.client.models.DEProperties;
+import org.iplantc.de.client.models.HasId;
 import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.client.models.diskResources.DiskResourceAutoBeanFactory;
 import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.client.models.diskResources.TYPE;
 import org.iplantc.de.client.models.tags.IplantTagAutoBeanFactory;
+import org.iplantc.de.client.models.tags.IplantTagList;
+import org.iplantc.de.client.models.tags.Tag;
 import org.iplantc.de.client.models.viewer.InfoType;
 import org.iplantc.de.client.services.FileSystemMetadataServiceFacade;
 import org.iplantc.de.client.services.converters.AsyncCallbackConverter;
@@ -20,6 +23,7 @@ import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONString;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.inject.Inject;
+import com.google.web.bindery.autobean.shared.AutoBean;
 import com.google.web.bindery.autobean.shared.AutoBeanCodex;
 import com.google.web.bindery.autobean.shared.Splittable;
 import com.google.web.bindery.autobean.shared.impl.StringQuoter;
@@ -151,10 +155,16 @@ public class FileSystemMetadataServiceFacadeImpl implements FileSystemMetadataSe
     }
 
     @Override
-    public void getTags(String UUID, AsyncCallback<String> callback) {
-        String address = getFileSystemEntryAddress(UUID) + "/tags";
+    public void getTags(HasId hasId, AsyncCallback<List<Tag>> callback) {
+        String address = getFileSystemEntryAddress(hasId.getId()) + "/tags";
         ServiceCallWrapper wrapper = new ServiceCallWrapper(Type.GET, address);
-        callService(wrapper, callback);
+        callService(wrapper, new AsyncCallbackConverter<String, List<Tag>>(callback) {
+            @Override
+            protected List<Tag> convertFrom(String object) {
+                AutoBean<IplantTagList> tagListAutoBean = AutoBeanCodex.decode(factory, IplantTagList.class, object);
+                return tagListAutoBean.as().getTagList();
+            }
+        });
     }
 
     @Override

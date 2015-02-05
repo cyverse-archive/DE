@@ -4,7 +4,7 @@ import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.client.models.search.DateInterval;
 import org.iplantc.de.client.models.search.DiskResourceQueryTemplate;
 import org.iplantc.de.client.models.search.FileSizeRange;
-import org.iplantc.de.client.models.tags.IplantTag;
+import org.iplantc.de.client.models.tags.Tag;
 
 import com.google.gwtmockito.GwtMockitoTestRunner;
 
@@ -259,18 +259,18 @@ public class DataSearchQueryBuilderTest {
 
     @Test public void testTaggedWith() {
         when(dsf.isIncludeTrashItems()).thenReturn(false);
-        Set<IplantTag> tags = new LinkedHashSet<>();
+        Set<Tag> tags = new LinkedHashSet<>();
 
         final String expectedValue = setTaggedWithQuery(tags, dsf);
         assertEquals("", expectedValue);
 
-        IplantTag mock1 = mock(IplantTag.class);
+        Tag mock1 = mock(Tag.class);
         mock1.setId("id1");
         mock1.setValue("tag1");
         
         when(mock1.getId()).thenReturn("id1");
 
-        IplantTag mock2 = mock(IplantTag.class);
+        Tag mock2 = mock(Tag.class);
         mock1.setId("id2");
         mock1.setValue("tag2");
         
@@ -415,7 +415,7 @@ public class DataSearchQueryBuilderTest {
                 + givenValue + "#*\"}},\"path\":\"userPermissions\"}}]}}";
     }
 
-    private String setTaggedWithQuery(final Set<IplantTag> tags, final DiskResourceQueryTemplate drqt) {
+    private String setTaggedWithQuery(final Set<Tag> tags, final DiskResourceQueryTemplate drqt) {
         when(dsf.getTagQuery()).thenReturn(tags);
         DataSearchQueryBuilder uut = new DataSearchQueryBuilder(dsf, userInfoMock);
         return uut.taggedWith();

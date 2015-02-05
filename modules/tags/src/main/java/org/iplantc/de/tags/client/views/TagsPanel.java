@@ -25,7 +25,6 @@ public class TagsPanel extends FlowPanel {
 
     @Override
     public boolean remove( Widget widget ) {
-        boolean removed = super.remove( widget );
-        return removed;
+        return super.remove( widget );
     }
 }

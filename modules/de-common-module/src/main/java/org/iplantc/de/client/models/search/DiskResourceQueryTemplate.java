@@ -1,7 +1,7 @@
 package org.iplantc.de.client.models.search;
 
 import org.iplantc.de.client.models.diskResources.Folder;
-import org.iplantc.de.client.models.tags.IplantTag;
+import org.iplantc.de.client.models.tags.Tag;
 
 import com.google.web.bindery.autobean.shared.AutoBean.PropertyName;
 
@@ -30,7 +30,7 @@ public interface DiskResourceQueryTemplate extends Folder {
 
     FileSizeRange getFileSizeRange();
 
-    Set<IplantTag> getTagQuery();
+    Set<Tag> getTagQuery();
 
     /**
      * Overrides the default property name binding of "id" to "label"
@@ -86,7 +86,7 @@ public interface DiskResourceQueryTemplate extends Folder {
 
     void setFileSizeRange(FileSizeRange fileSizeRange);
 
-    void setTagQuery(Set<IplantTag> tagQuery);
+    void setTagQuery(Set<Tag> tagQuery);
 
     /**
      * Overrides the default property name binding of "id" to "label"

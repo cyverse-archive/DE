@@ -4,7 +4,6 @@ import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.client.models.diskResources.File;
 import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.client.models.diskResources.PermissionValue;
-import org.iplantc.de.client.models.tags.IplantTag;
 import org.iplantc.de.client.models.viewer.InfoType;
 import org.iplantc.de.client.util.DiskResourceUtil;
 import org.iplantc.de.diskResource.client.DetailsView;
@@ -12,10 +11,7 @@ import org.iplantc.de.diskResource.client.events.DiskResourceSelectionChangedEve
 import org.iplantc.de.diskResource.client.events.selection.EditInfoTypeSelected;
 import org.iplantc.de.diskResource.client.events.selection.ManageSharingSelected;
 import org.iplantc.de.diskResource.client.events.selection.ResetInfoTypeSelected;
-import org.iplantc.de.tags.client.Taggable;
 import org.iplantc.de.tags.client.TagsView;
-import org.iplantc.de.tags.client.gin.factory.TagListPresenterFactory;
-import org.iplantc.de.tags.client.views.IplantTagListView;
 
 import com.google.common.collect.Lists;
 import com.google.gwt.core.client.GWT;
@@ -59,8 +55,7 @@ import java.util.logging.Logger;
  * @author jstroot
  */
 public class DetailsViewImpl extends Composite implements DetailsView,
-                                                          Editor<DiskResource>,
-                                                          Taggable {
+                                                          Editor<DiskResource> {
 
     interface EditorDriver extends SimpleBeanEditorDriver<DiskResource, DetailsViewImpl> { }
 
@@ -85,39 +80,31 @@ public class DetailsViewImpl extends Composite implements DetailsView,
     @UiField @Ignore InlineLabel mimeType;
     @UiField @Ignore InlineHyperlink infoType;
     @UiField Image resetInfoTypeIcon;
-    @UiField(provided = true) IplantTagListView tagListView;
+    @UiField(provided = true) TagsView tagListView;
 
     private static DetailsViewImplUiBinder ourUiBinder = GWT.create(DetailsViewImplUiBinder.class);
     private final EditorDriver editorDriver = GWT.create(EditorDriver.class);
     private final DiskResourceUtil diskResourceUtil;
     private final Presenter presenter;
-    private final TagListPresenterFactory tagListPresenterFactory;
     private DiskResource boundValue;
     private final TagsView.Presenter tagsPresenter;
 
     private final Logger LOG = Logger.getLogger(DetailsViewImpl.class.getSimpleName());
 
     @Inject
-    DetailsViewImpl(final TagListPresenterFactory tagListPresenterFactory,
-                    final IplantTagListView tagListView,
-                    final DiskResourceUtil diskResourceUtil,
+    DetailsViewImpl(final DiskResourceUtil diskResourceUtil,
                     final DetailsView.Appearance appearance,
+                    final TagsView.Presenter tagsPresenter,
                     @Assisted final DetailsView.Presenter presenter) {
-        this.tagListPresenterFactory = tagListPresenterFactory;
-        this.tagListView = tagListView;
+        this.tagsPresenter = tagsPresenter;
+        this.tagListView = tagsPresenter.getView();
         this.diskResourceUtil = diskResourceUtil;
         this.appearance = appearance;
         this.presenter = presenter;
-        this.tagsPresenter = tagListPresenterFactory.createTagListPresenter(this);
 
-        SimplePanel boundaryBox = new SimplePanel();
         tagsPresenter.setEditable(true);
         tagsPresenter.setRemovable(true);
-        tagsPresenter.setOnFocusCmd(createOnFocusCmd(boundaryBox, ""));
-        tagsPresenter.setOnBlurCmd(createOnBlurCmd(boundaryBox, ""));
-        this.tagListView = tagsPresenter.getTagListView();
-
-        boundaryBox.setWidget(tagsPresenter.getTagListView());
+        this.tagListView = tagsPresenter.getView();
 
         initWidget(ourUiBinder.createAndBindUi(this));
         dateCreated.setValue(new Date());
@@ -125,27 +112,6 @@ public class DetailsViewImpl extends Composite implements DetailsView,
 
         editorDriver.initialize(this);
     }
-
-//    private Widget createTagView(String containerStyle,
-//                                 boolean editable,
-//                                 boolean removable) {
-//        HorizontalPanel hp = new HorizontalPanel();
-//        SimplePanel boundaryBox = new SimplePanel();
-////        if (tagPresenter == null) {
-//            TagsView.Presenter tagsPresenter = tagListPresenterFactory.createTagListPresenter(this);
-//            tagsPresenter.setEditable(editable);
-//            tagsPresenter.setRemovable(removable);
-//            tagsPresenter.setOnFocusCmd(createOnFocusCmd(boundaryBox, containerStyle));
-//            tagsPresenter.setOnBlurCmd(createOnBlurCmd(boundaryBox, containerStyle));
-//
-////            tagPresenter = tagsPresenter;
-//
-//        }
-//        tagPresenter.removeAll();
-//        boundaryBox.setWidget(tagPresenter.getTagListView());
-//        hp.add(boundaryBox);
-//        return hp;
-//    }
 
     //region Handler Registration
     @Override
@@ -161,40 +127,6 @@ public class DetailsViewImpl extends Composite implements DetailsView,
     @Override
     public HandlerRegistration addResetInfoTypeSelectedHandler(ResetInfoTypeSelected.ResetInfoTypeSelectedHandler handler) {
         return addHandler(handler, ResetInfoTypeSelected.TYPE);
-    }
-    //endregion
-
-    //region Taggable Methods
-    @Override
-    public void attachTag(IplantTag tag) {
-
-        // presenter.attachTag
-        /*
-         * For each selected resource
-         *      calls MetadataServiceFacade.attachTags
-         */
-
-    }
-
-    @Override
-    public void detachTag(IplantTag tag) {
-        // presenter.detachTag
-        /*
-         * For each selected resource
-         *      calls MetadataServiceFacade.detachTags
-         */
-
-    }
-
-    @Override
-    public void selectTag(IplantTag tag) {
-
-//        presenter.doSearchTaggedWithResources(tag)
-        /*
-         * Creates a DiskResourceQueryTemplate
-         * adds tags to search
-         * submits search via the data Search presenter
-         */
     }
     //endregion
 
@@ -239,7 +171,8 @@ public class DetailsViewImpl extends Composite implements DetailsView,
             sendToRow.removeClassName(appearance.css().hidden());
         }
 
-       bind(singleSelection);
+        bind(singleSelection);
+        tagsPresenter.fetchTagsForResource(singleSelection);
     }
 
     void bind(final DiskResource resource){
@@ -334,12 +267,7 @@ public class DetailsViewImpl extends Composite implements DetailsView,
             }
         }
 
-        // FIXME Get tags for resource
-//        presenter.getTagsForSelectedResource();
-        /*
-         * For each selected resource
-         *      call MetadataServiceFacade.getTags
-         */
+
 
     }
 

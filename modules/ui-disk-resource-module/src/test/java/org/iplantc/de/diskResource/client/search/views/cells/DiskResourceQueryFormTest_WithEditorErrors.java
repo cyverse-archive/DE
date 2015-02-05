@@ -3,8 +3,8 @@ package org.iplantc.de.diskResource.client.search.views.cells;
 import org.iplantc.de.client.models.search.DateInterval;
 import org.iplantc.de.client.models.search.DiskResourceQueryTemplate;
 import org.iplantc.de.client.models.search.FileSizeRange.FileSizeUnit;
-import org.iplantc.de.client.models.tags.IplantTag;
-import org.iplantc.de.tags.client.gin.factory.TagsViewFactory;
+import org.iplantc.de.client.models.tags.Tag;
+import org.iplantc.de.tags.client.gin.factory.TagItemFactory;
 import org.iplantc.de.tags.client.views.TagSearchField;
 import org.iplantc.de.tags.client.views.TagsPanel;
 import org.iplantc.de.commons.client.widgets.IPlantAnchor;
@@ -63,14 +63,15 @@ public class DiskResourceQueryFormTest_WithEditorErrors {
     @Mock DiskResourceQueryFormNamePrompt namePrompt;
 
     @Mock DiskResourceQueryTemplate mockedTemplate;
-    @Mock TagsViewFactory tagsViewFactoryMock;
+    @Mock
+    TagItemFactory tagItemFactoryMock;
     @Mock TagSearchField searchFieldMock;
 
     private DiskResourceQueryForm form;
 
     @Before public void setUp() {
         GwtMockito.useProviderForType(SimpleBeanEditorDriver.class, new FakeSimpleBeanEditorDriverProvider(true));
-        form = new DiskResourceQueryForm(tagsViewFactoryMock, searchFieldMock, mockedTemplate) {
+        form = new DiskResourceQueryForm(tagItemFactoryMock, searchFieldMock, mockedTemplate) {
 
             @Override
             DateInterval createDateInterval(Date from, Date to, String label) {
@@ -226,18 +227,18 @@ public class DiskResourceQueryFormTest_WithEditorErrors {
                 tagPanel = mock(TagsPanel.class);
                 tagPanel.setSize("200px", "50px");
 
-                tagSearchField.addSelectionHandler(new SelectionHandler<IplantTag>() {
+                tagSearchField.addSelectionHandler(new SelectionHandler<Tag>() {
 
                     @Override
-                    public void onSelection(SelectionEvent<IplantTag> event) {
+                    public void onSelection(SelectionEvent<Tag> event) {
                         tagSearchField.setValue(event.getSelectedItem());
 
                     }
                 });
-                tagSearchField.addValueChangeHandler(new ValueChangeHandler<IplantTag>() {
+                tagSearchField.addValueChangeHandler(new ValueChangeHandler<Tag>() {
 
                     @Override
-                    public void onValueChange(ValueChangeEvent<IplantTag> event) {
+                    public void onValueChange(ValueChangeEvent<Tag> event) {
                         tagListHandlers.onAddTag(event.getValue());
                         tagSearchField.clear();
                         tagSearchField.asWidget().getElement().focus();

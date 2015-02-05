@@ -5,7 +5,7 @@ import org.iplantc.de.client.models.HasPath;
 import org.iplantc.de.client.models.IsMaskable;
 import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.client.models.diskResources.Folder;
-import org.iplantc.de.client.models.tags.IplantTag;
+import org.iplantc.de.client.models.tags.Tag;
 import org.iplantc.de.client.services.DiskResourceServiceFacade;
 import org.iplantc.de.diskResource.client.events.DiskResourceSelectionChangedEvent;
 import org.iplantc.de.diskResource.client.events.FolderSelectionEvent;
@@ -14,7 +14,6 @@ import org.iplantc.de.diskResource.client.events.SavedSearchesRetrievedEvent;
 import org.iplantc.de.diskResource.client.presenters.proxy.FolderContentsLoadConfig;
 import org.iplantc.de.diskResource.client.presenters.proxy.SelectFolderByPathLoadHandler;
 import org.iplantc.de.diskResource.client.search.events.SubmitDiskResourceQueryEvent.HasSubmitDiskResourceQueryEventHandlers;
-import org.iplantc.de.tags.client.Taggable;
 
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.safehtml.client.HasSafeHtml;
@@ -32,8 +31,7 @@ import java.util.Set;
  * @author jstroot
  */
 public interface DiskResourceView extends IsWidget,
-                                          IsMaskable,
-                                          Taggable {
+                                          IsMaskable {
 
     interface DiskResourceViewToolbarAppearance {
 
@@ -71,7 +69,7 @@ public interface DiskResourceView extends IsWidget,
         String FAVORITES_FOLDER_NAME = "Favorites";
         String FAVORITES_FOLDER_PATH = "/favorites";
 
-        void attachTag(IplantTag tag);
+        void attachTag(Tag tag);
 
         /**
          * Method to clean up all the events when it is no longer required.
@@ -82,7 +80,7 @@ public interface DiskResourceView extends IsWidget,
 
         void deSelectDiskResources();
 
-        void detachTag(IplantTag tag);
+        void detachTag(Tag tag);
 
         void disableFilePreview();
 
@@ -92,13 +90,11 @@ public interface DiskResourceView extends IsWidget,
 
         void doRenameDiskResource(DiskResource diskResource, String newName);
 
-        void doSearchTaggedWithResources(Set<IplantTag> tags);
+        void doSearchTaggedWithResources(Set<Tag> tags);
 
         List<DiskResource> getSelectedDiskResources();
 
         Folder getSelectedFolder();
-
-        void getTagsForSelectedResource();
 
         DiskResourceView getView();
 
@@ -130,5 +126,4 @@ public interface DiskResourceView extends IsWidget,
 
     void setSouthWidget(IsWidget fl, double size);
 
-    void updateTags(List<IplantTag> tags);
 }

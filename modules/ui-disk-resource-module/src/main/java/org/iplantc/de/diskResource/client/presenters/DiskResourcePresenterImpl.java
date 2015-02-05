@@ -14,9 +14,7 @@ import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.client.models.diskResources.TYPE;
 import org.iplantc.de.client.models.search.DiskResourceQueryTemplate;
 import org.iplantc.de.client.models.search.SearchAutoBeanFactory;
-import org.iplantc.de.client.models.tags.IplantTag;
-import org.iplantc.de.client.models.tags.IplantTagAutoBeanFactory;
-import org.iplantc.de.client.models.tags.IplantTagList;
+import org.iplantc.de.client.models.tags.Tag;
 import org.iplantc.de.client.models.viewer.InfoType;
 import org.iplantc.de.client.services.DiskResourceServiceFacade;
 import org.iplantc.de.client.services.FileSystemMetadataServiceFacade;
@@ -66,8 +64,6 @@ import com.google.gwt.user.client.ui.IsWidget;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import com.google.inject.assistedinject.AssistedInject;
-import com.google.web.bindery.autobean.shared.AutoBean;
-import com.google.web.bindery.autobean.shared.AutoBeanCodex;
 
 import com.sencha.gxt.widget.core.client.Dialog.PredefinedButton;
 import com.sencha.gxt.widget.core.client.box.ConfirmMessageBox;
@@ -265,6 +261,7 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
         this.detailsViewPresenter.getView().addEditInfoTypeSelectedEventHandler(this.gridViewPresenter);
         this.detailsViewPresenter.getView().addResetInfoTypeSelectedHandler(this.gridViewPresenter);
 
+
         // Toolbar Search Field
         DiskResourceSearchField searchField = toolbarPresenter.getView().getSearchField();
         searchField.addSaveDiskResourceQueryClickedEventHandler(this.dataSearchPresenter);
@@ -437,31 +434,6 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
     @Override
     public List<DiskResource> getSelectedDiskResources() {
         return gridViewPresenter.getSelectedDiskResources();
-    }
-
-    @Override
-    public void getTagsForSelectedResource() {
-        if (getSelectedDiskResources().size() > 0) {
-            Iterator<DiskResource> it = getSelectedDiskResources().iterator();
-            if (it.hasNext()) {
-                final DiskResource next = it.next();
-                fsmdataService.getTags(next.getId(), new AsyncCallback<String>() {
-
-                    @Override
-                    public void onFailure(Throwable caught) {
-                        ErrorHandler.post("Unable to retrieve tags!", caught);
-                    }
-
-                    @Override
-                    public void onSuccess(String result) {
-                        IplantTagAutoBeanFactory factory = GWT.create(IplantTagAutoBeanFactory.class);
-                        AutoBean<IplantTagList> tagList = AutoBeanCodex.decode(factory, IplantTagList.class, result);
-                        view.updateTags(tagList.as().getTagList());
-
-                    }
-                });
-            }
-        }
     }
 
     @Override
@@ -681,7 +653,7 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
     }
 
     @Override
-    public void attachTag(final IplantTag tag) {
+    public void attachTag(final Tag tag) {
         // FIXME Move to tag presenter?
         if (getSelectedDiskResources().size() > 0) {
             Iterator<DiskResource> it = getSelectedDiskResources().iterator();
@@ -708,7 +680,7 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
     }
 
     @Override
-    public void detachTag(final IplantTag tag) {
+    public void detachTag(final Tag tag) {
         // FIXME Move to tag presenter?
         if (getSelectedDiskResources().size() > 0) {
             Iterator<DiskResource> it = getSelectedDiskResources().iterator();
@@ -733,7 +705,7 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
     }
 
     @Override
-    public void doSearchTaggedWithResources(Set<IplantTag> tags) {
+    public void doSearchTaggedWithResources(Set<Tag> tags) {
         // FIXME Move to tag presenter?
         final SearchAutoBeanFactory factory = GWT.create(SearchAutoBeanFactory.class);
         DiskResourceQueryTemplate qt = factory.dataSearchFilter().as();

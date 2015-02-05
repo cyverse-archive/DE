@@ -11,16 +11,19 @@
  */
 package org.iplantc.de.tags.client.views;
 
-import static org.iplantc.de.tags.client.TagsView.TagListHandlers.InsertionPoint;
-import org.iplantc.de.client.models.tags.IplantTag;
+import org.iplantc.de.client.models.tags.Tag;
 import org.iplantc.de.resources.client.messages.I18N;
 import org.iplantc.de.tags.client.TagsView;
+import org.iplantc.de.tags.client.events.selection.EditTagSelected;
+import org.iplantc.de.tags.client.events.selection.RemoveTagSelected;
 import org.iplantc.de.tags.client.resources.CustomIplantTagResources;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.DivElement;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.dom.client.*;
+import com.google.gwt.event.logical.shared.SelectionEvent;
+import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
@@ -36,10 +39,11 @@ import java.util.List;
 import java.util.logging.Logger;
 
 /**
- * @author cbopp
+ * FIXME CORE-6350 Implement DND event firing
+ * @author cbopp, jstroot
  */
-public class TagViewImpl extends Composite implements TagsView {
-    interface Binder extends UiBinder<Widget, TagViewImpl> {
+public class TagItemImpl extends Composite implements TagsView.TagItem {
+    interface Binder extends UiBinder<Widget, TagItemImpl> {
     }
 
     @UiField DivElement deleteOption;
@@ -49,18 +53,17 @@ public class TagViewImpl extends Composite implements TagsView {
     @UiField Label value;
 
     Logger logger = Logger.getLogger("tags");
-    private static TagViewImpl draggedElement;
+    private static TagItemImpl draggedElement;
     private static Binder uiBinder = GWT.create(Binder.class);
     private final List<HandlerRegistration> dndHandlers = new ArrayList<>();
     private final CustomIplantTagResources resources;
-    private final IplantTag tag;
+    private final Tag tag;
     private boolean editable;
     private boolean removable;
-    private TagsView.TagListHandlers uiHandlers;
 
     @Inject
-    TagViewImpl(final CustomIplantTagResources resources,
-                @Assisted final IplantTag tag) {
+    TagItemImpl(final CustomIplantTagResources resources,
+                @Assisted final Tag tag) {
         this.resources = resources;
         this.tag = tag;
 
@@ -77,18 +80,32 @@ public class TagViewImpl extends Composite implements TagsView {
             public void onClick(ClickEvent event) {
                 Element e = Element.as(event.getNativeEvent().getEventTarget());
                 if (e.getAttribute("name").contains("tagEdit")) {
-                    uiHandlers.onEditTag(TagViewImpl.this);
+                    fireEvent(new EditTagSelected(tag));
                 } else if (e.getAttribute("name").contains("tagDelete")) {
-                    uiHandlers.onRemoveTag(TagViewImpl.this);
+                    fireEvent(new RemoveTagSelected(tag));
                 } else {
-                    uiHandlers.onSelectTag(TagViewImpl.this);
+                    SelectionEvent.fire(TagItemImpl.this, tag);
                 }
 
             }
         }, ClickEvent.getType());
 
         activateDnD();
+    }
 
+    @Override
+    public com.google.gwt.event.shared.HandlerRegistration addEditTagSelectedHandler(EditTagSelected.EditTagSelectedHandler handler) {
+        return addHandler(handler, EditTagSelected.TYPE);
+    }
+
+    @Override
+    public com.google.gwt.event.shared.HandlerRegistration addRemoveTagSelectedHandler(RemoveTagSelected.RemoveTagSelectedHandler handler) {
+        return addHandler(handler, RemoveTagSelected.TYPE);
+    }
+
+    @Override
+    public com.google.gwt.event.shared.HandlerRegistration addSelectionHandler(SelectionHandler<Tag> handler) {
+        return addHandler(handler, SelectionEvent.getType());
     }
 
     public void deactivateDnD() {
@@ -101,17 +118,31 @@ public class TagViewImpl extends Composite implements TagsView {
     }
 
     @Override
-    public IplantTag getTag() {
+    public Tag getTag() {
         return tag;
     }
 
     @Override
     public void setEditable(boolean editable) {
+        // FIXME Implement with appearance
         if (this.editable != editable) {
             this.editable = editable;
 
             if (editable) {
-                activateEditButton();
+
+                tagPanel.addDomHandler(new MouseOverHandler() {
+                    @Override
+                    public void onMouseOver(MouseOverEvent event) {
+                        editOption.addClassName(resources.style().tagEdit());
+                    }
+                }, MouseOverEvent.getType());
+
+                tagPanel.addDomHandler(new MouseOutHandler() {
+                    @Override
+                    public void onMouseOut(MouseOutEvent event) {
+                        editOption.removeClassName(resources.style().tagEdit());
+                    }
+                }, MouseOutEvent.getType());
                 editOption.setTitle(I18N.DISPLAY.edit());
             }
         }
@@ -120,41 +151,32 @@ public class TagViewImpl extends Composite implements TagsView {
 
     @Override
     public void setRemovable(boolean removable) {
+        // FIXME Implement with appearance
         if (this.removable != removable) {
             this.removable = removable;
 
             if (removable) {
-                activateDeleteButton();
+                tagPanel.addDomHandler(new MouseOverHandler() {
+
+                    @Override
+                    public void onMouseOver(MouseOverEvent event) {
+                        deleteOption.addClassName(resources.style().tagDelete());
+
+                    }
+                }, MouseOverEvent.getType());
+
+                tagPanel.addDomHandler(new MouseOutHandler() {
+
+                    @Override
+                    public void onMouseOut(MouseOutEvent event) {
+                        deleteOption.removeClassName(resources.style().tagDelete());
+
+                    }
+                }, MouseOutEvent.getType());
+
                 deleteOption.setTitle(I18N.DISPLAY.remove());
             }
         }
-    }
-
-    @Override
-    public void setUiHandlers(TagsView.TagListHandlers tagListHandlers) {
-        this.uiHandlers = tagListHandlers;
-    }
-
-    private void activateDeleteButton() {
-
-        tagPanel.addDomHandler(new MouseOverHandler() {
-
-            @Override
-            public void onMouseOver(MouseOverEvent event) {
-                deleteOption.addClassName(resources.style().tagDelete());
-
-            }
-        }, MouseOverEvent.getType());
-
-        tagPanel.addDomHandler(new MouseOutHandler() {
-
-            @Override
-            public void onMouseOut(MouseOutEvent event) {
-                deleteOption.removeClassName(resources.style().tagDelete());
-
-            }
-        }, MouseOutEvent.getType());
-
     }
 
     private void activateDnD() {
@@ -166,15 +188,16 @@ public class TagViewImpl extends Composite implements TagsView {
             @Override
             public void onDragStart(DragStartEvent event) {
                 event.setData("text", "");
-                draggedElement = TagViewImpl.this;
-                uiHandlers.onFocus();
+                draggedElement = TagItemImpl.this;
+                // FIXME Fire focus cmd
+//                uiHandlers.onFocus();
             }
         }, DragStartEvent.getType()));
 
         this.dndHandlers.add(this.addDomHandler(new DragEnterHandler() {
             @Override
             public void onDragEnter(DragEnterEvent event) {
-                if (draggedElement.equals(TagViewImpl.this))
+                if (draggedElement.equals(TagItemImpl.this))
                     return;
 
                 // Calculate the mouse's percentage X position relative to the drag over element
@@ -195,7 +218,7 @@ public class TagViewImpl extends Composite implements TagsView {
         this.dndHandlers.add(this.addDomHandler(new DragOverHandler() {
             @Override
             public void onDragOver(DragOverEvent event) {
-                if (draggedElement.equals(TagViewImpl.this))
+                if (draggedElement.equals(TagItemImpl.this))
                     return;
 
                 // Calculate the mouse's percentage X position relative to the drag over element
@@ -216,7 +239,7 @@ public class TagViewImpl extends Composite implements TagsView {
         this.dndHandlers.add(this.addDomHandler(new DragLeaveHandler() {
             @Override
             public void onDragLeave(DragLeaveEvent event) {
-                if (draggedElement.equals(TagViewImpl.this))
+                if (draggedElement.equals(TagItemImpl.this))
                     return;
 
                 tagPanel.removeStyleName(resources.style().previewLeft());
@@ -227,15 +250,16 @@ public class TagViewImpl extends Composite implements TagsView {
         this.dndHandlers.add(this.addDomHandler(new DropHandler() {
                                                     @Override
                                                     public void onDrop(DropEvent event) {
-                                                        if (draggedElement.equals(TagViewImpl.this))
+                                                        if (draggedElement.equals(TagItemImpl.this))
                                                             return;
 
                                                         event.preventDefault();
-                                                        uiHandlers.onRelocateTag(draggedElement,
-                                                                                 TagViewImpl.this,
+                                                        /*uiHandlers.onRelocateTag(draggedElement,
+                                                                                 TagItemImpl.this,
                                                                                  tagPanel.getStyleName().contains(resources.style()
                                                                                                                            .previewLeft()) ? InsertionPoint.BEFORE
-                                                                                     : InsertionPoint.AFTER);
+                                                                                     : InsertionPoint.AFTER);*/
+                                                        // FIXME Fire TagRelocated Command
                                                         tagPanel.removeStyleName(resources.style().previewLeft());
                                                         tagPanel.removeStyleName(resources.style().previewRight());
                                                     }
@@ -245,25 +269,10 @@ public class TagViewImpl extends Composite implements TagsView {
         this.dndHandlers.add(this.addDomHandler(new DragEndHandler() {
             @Override
             public void onDragEnd(DragEndEvent event) {
-                uiHandlers.onBlur();
+                // FIXME Fire Blur command
+//                uiHandlers.onBlur();
             }
         }, DragEndEvent.getType()));
     }
 
-    private void activateEditButton() {
-
-        tagPanel.addDomHandler(new MouseOverHandler() {
-            @Override
-            public void onMouseOver(MouseOverEvent event) {
-                editOption.addClassName(resources.style().tagEdit());
-            }
-        }, MouseOverEvent.getType());
-
-        tagPanel.addDomHandler(new MouseOutHandler() {
-            @Override
-            public void onMouseOut(MouseOutEvent event) {
-                editOption.removeClassName(resources.style().tagEdit());
-            }
-        }, MouseOutEvent.getType());
-    }
 }

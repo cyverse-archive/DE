@@ -1,11 +1,12 @@
 <ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
              xmlns:g='urn:import:com.google.gwt.user.client.ui'
-             xmlns:tags="urn:import:org.iplantc.de.tags.client.views">
+             xmlns:tags="urn:import:org.iplantc.de.tags.client">
 
     <ui:with field="appearance"
              type="org.iplantc.de.diskResource.client.DetailsView.Appearance" />
     <g:HTMLPanel>
-        <table ui:field="table">
+        <table ui:field="table"
+               class="{appearance.css.hidden}"> <!-- -->
             <tr>
                 <td class="{appearance.css.label}">Last Modified:</td>
                 <td class="{appearance.css.value}"><g:DateLabel ui:field="lastModified"/></td>
@@ -56,7 +57,7 @@
                 <td class="{appearance.css.value}"><g:InlineLabel ui:field="fileFolderNum"/></td>
             </tr>
         </table>
-        <tags:IplantTagListView ui:field="tagListView" />
+        <tags:TagsView ui:field="tagListView" />
 
     </g:HTMLPanel>
 </ui:UiBinder>
