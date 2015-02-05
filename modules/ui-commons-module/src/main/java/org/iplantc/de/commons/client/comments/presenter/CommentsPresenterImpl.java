@@ -32,7 +32,7 @@ public class CommentsPresenterImpl implements CommentsView.Presenter {
     final CommentsView view;
     private final UserInfo userInfo;
     final String resourceID;
-    final MetadataServiceFacade facade;
+    MetadataServiceFacade facade;
     final CommentsAutoBeanFactory factory;
     private final boolean isResourceOwner;
     private final CommentsPresenterAppearance appearance;
@@ -40,7 +40,6 @@ public class CommentsPresenterImpl implements CommentsView.Presenter {
 
     @Inject
     CommentsPresenterImpl(final CommentsView cv,
-                          final MetadataServiceFacade facade,
                           final CommentsPresenterAppearance appearance,
                           final CommentsAutoBeanFactory factory,
                           final JsonUtil jsonUtil,
@@ -51,16 +50,16 @@ public class CommentsPresenterImpl implements CommentsView.Presenter {
         this.jsonUtil = jsonUtil;
         this.userInfo = userInfo;
         this.resourceID = resourceID;
-        this.facade = facade;
         this.isResourceOwner = owner;
         this.factory = factory;
         this.appearance = appearance;
         this.view.setPresenter(this);
-        getComments();
     }
 
     @Override
-    public void go(HasOneWidget container) {
+    public void go(HasOneWidget container, final MetadataServiceFacade facade) {
+        this.facade = facade;
+        getComments();
         container.setWidget(view.getWidget());
     }
 
@@ -161,4 +160,9 @@ public class CommentsPresenterImpl implements CommentsView.Presenter {
 
     }
 
+    @Override
+    public void go(HasOneWidget container) {
+        throw new UnsupportedOperationException();
+
+    }
 }

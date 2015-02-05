@@ -13,7 +13,7 @@ import org.iplantc.de.client.models.apps.integration.Argument;
 import org.iplantc.de.client.models.apps.integration.DataSource;
 import org.iplantc.de.client.models.apps.integration.FileInfoType;
 import org.iplantc.de.client.models.apps.refGenome.ReferenceGenome;
-import org.iplantc.de.client.services.AppMetadataServiceFacade;
+import org.iplantc.de.client.services.AppBuilderMetadataServiceFacade;
 import org.iplantc.de.commons.client.ErrorHandler;
 
 import com.google.gwt.core.shared.GWT;
@@ -206,7 +206,7 @@ public abstract class AbstractArgumentPropertyEditor extends Composite implement
         initLabelOnlyEditMode(labelOnlyEditMode);
     }
 
-    protected ComboBox<DataSource> createDataSourceComboBox(AppMetadataServiceFacade appMetadataService) {
+    protected ComboBox<DataSource> createDataSourceComboBox(AppBuilderMetadataServiceFacade appMetadataService) {
         final ListStore<DataSource> store = new ListStore<>(props.id());
         dataSourceStoreAddHandlerReg = store.addStoreAddHandler(new StoreAddHandler<DataSource>() {
             @Override
@@ -245,7 +245,7 @@ public abstract class AbstractArgumentPropertyEditor extends Composite implement
         return comboBox;
     }
 
-    protected ComboBox<FileInfoType> createFileInfoTypeComboBox(AppMetadataServiceFacade appMetadataService) {
+    protected ComboBox<FileInfoType> createFileInfoTypeComboBox(AppBuilderMetadataServiceFacade appMetadataService) {
         final ListStore<FileInfoType> store = new ListStore<>(props2.id());
         fileInfoTypeStoreAddHandlerReg = store.addStoreAddHandler(new StoreAddHandler<FileInfoType>() {
             @Override
@@ -280,7 +280,7 @@ public abstract class AbstractArgumentPropertyEditor extends Composite implement
         return comboBox;
     }
 
-    protected ComboBox<ReferenceGenome> createReferenceGenomeStore(AppMetadataServiceFacade appMetadataService) {
+    protected ComboBox<ReferenceGenome> createReferenceGenomeStore(AppBuilderMetadataServiceFacade appMetadataService) {
         final ListStore<ReferenceGenome> refGenomeListStore = new ListStore<>(referenceGenomeProperties.id());
 
         appMetadataService.getReferenceGenomes(new AsyncCallback<List<ReferenceGenome>>() {

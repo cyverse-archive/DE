@@ -8,7 +8,7 @@ import org.iplantc.de.apps.widgets.client.view.editors.arguments.tree.TreeSelect
 import org.iplantc.de.apps.widgets.client.view.editors.style.AppTemplateWizardAppearance;
 import org.iplantc.de.client.models.apps.integration.Argument;
 import org.iplantc.de.client.models.apps.refGenome.ReferenceGenome;
-import org.iplantc.de.client.services.AppMetadataServiceFacade;
+import org.iplantc.de.client.services.AppBuilderMetadataServiceFacade;
 import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.resources.client.uiapps.widgets.AppsWidgetsPropertyPanelLabels;
 
@@ -32,7 +32,7 @@ public class ArgumentEditorFactoryImpl implements AppTemplateForm.ArgumentEditor
     protected AppTemplateForm.ArgumentEditor subEditor;
 
     @Inject AppTemplateWizardAppearance appearance;
-    @Inject AppMetadataServiceFacade appMetadataService;
+    @Inject AppBuilderMetadataServiceFacade appMetadataService;
 
     @Inject AppsWidgetsPropertyPanelLabels appsWidgetsLabels;
     @Inject ReferenceGenomeProperties refGenomeProps;

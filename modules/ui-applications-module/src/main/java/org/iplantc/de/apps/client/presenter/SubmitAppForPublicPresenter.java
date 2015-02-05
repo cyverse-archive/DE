@@ -42,7 +42,8 @@ public class SubmitAppForPublicPresenter implements SubmitAppForPublicUseView.Pr
     private final IplantDisplayStrings displayStrings;
     private final IplantErrorStrings errorStrings;
     private final ConfluenceServiceAsync confluenceService;
-    @Inject JsonUtil jsonUtil;
+    @Inject
+    JsonUtil jsonUtil;
 
     @Inject
     public SubmitAppForPublicPresenter(final SubmitAppForPublicUseView view,
@@ -102,7 +103,7 @@ public class SubmitAppForPublicPresenter implements SubmitAppForPublicUseView.Pr
     @Override
     public void onSubmit() {
         if (view.validate()) {
-            createDocumentationPage(view.toJson());
+            publishApp(view.toJson());
         } else {
             AlertMessageBox amb = new AlertMessageBox(displayStrings.warning(),
                                                       displayStrings.publicSubmitTip());
@@ -129,7 +130,7 @@ public class SubmitAppForPublicPresenter implements SubmitAppForPublicUseView.Pr
         });
     }
 
-    private void createDocumentationPage(final JSONObject obj) {
+    private void publishApp(final JSONObject obj) {
         final AutoProgressMessageBox pmb = new AutoProgressMessageBox(displayStrings.submitForPublicUse(),
                                                                       displayStrings.submitRequest());
         pmb.setProgressText(displayStrings.submitting());
@@ -137,43 +138,19 @@ public class SubmitAppForPublicPresenter implements SubmitAppForPublicUseView.Pr
         pmb.getProgressBar().setInterval(100);
         pmb.auto();
         pmb.show();
-        confluenceService.addPage(jsonUtil.getString(obj, "name"),
-                                  jsonUtil.getString(obj, "desc"),
-                                  new AsyncCallback<String>() {
-                                      @Override
-                                      public void onFailure(Throwable caught) {
-                                          pmb.hide();
-                                          ErrorHandler.post(errorStrings.cantCreateConfluencePage(jsonUtil.getString(obj,
-                                                                                                                     "name")),
-                                                            caught);
 
-                                          // SS:uncomment this for testing purposes only...
-                                          // onSuccess("http://test.com/url");
-                                      }
+        appService.publishToWorld(obj, jsonUtil.getString(obj, "id"), new AsyncCallback<String>() {
+            @Override
+            public void onSuccess(String result) {
+                pmb.hide();
+                eventBus.fireEvent(new AppPublishedEvent(view.getSelectedApp()));
+            }
 
-                                      @Override
-                                      public void onSuccess(final String url) {
-                                          obj.put("wiki_url", new JSONString(url));
-                                          appService.publishToWorld(obj,
-                                                                    jsonUtil.getString(obj, "id"),
-                                                                    new AsyncCallback<String>() {
-                                                                        @Override
-                                                                        public void
-                                                                                onSuccess(String result) {
-                                                                            pmb.hide();
-                                                                            eventBus.fireEvent(new AppPublishedEvent(view.getSelectedApp()));
-                                                                            callback.onSuccess(url);
-                                                                        }
-
-                                                                        @Override
-                                                                        public void
-                                                                                onFailure(Throwable caught) {
-                                                                            pmb.hide();
-                                                                            callback.onFailure(caught);
-                                                                        }
-                                                                    });
-                                      }
-                                  });
+            @Override
+            public void onFailure(Throwable caught) {
+                pmb.hide();
+            }
+        });
     }
 
     private List<AppRefLink> parseRefLinks(JSONArray arr) {

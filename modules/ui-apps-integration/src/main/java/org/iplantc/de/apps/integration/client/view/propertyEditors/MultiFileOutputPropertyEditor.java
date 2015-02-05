@@ -8,7 +8,7 @@ import org.iplantc.de.apps.widgets.client.view.editors.style.AppTemplateWizardAp
 import org.iplantc.de.apps.widgets.client.view.editors.widgets.CheckBoxAdapter;
 import org.iplantc.de.client.models.apps.integration.Argument;
 import org.iplantc.de.client.models.apps.integration.FileInfoType;
-import org.iplantc.de.client.services.AppMetadataServiceFacade;
+import org.iplantc.de.client.services.AppBuilderMetadataServiceFacade;
 import org.iplantc.de.commons.client.validators.CmdLineArgCharacterValidator;
 import org.iplantc.de.commons.client.validators.DiskResourceUnixGlobValidator;
 import org.iplantc.de.resources.client.constants.IplantValidationConstants;
@@ -66,7 +66,7 @@ public class MultiFileOutputPropertyEditor extends AbstractArgumentPropertyEdito
     public MultiFileOutputPropertyEditor(final AppTemplateWizardAppearance appearance,
                                          final AppsWidgetsPropertyPanelLabels appLabels,
                                          final AppsWidgetsContextualHelpMessages help,
-                                         final AppMetadataServiceFacade appMetadataService,
+                                         final AppBuilderMetadataServiceFacade appMetadataService,
                                          final IplantValidationConstants validationConstants) {
         super(appearance);
         this.appLabels = appLabels;

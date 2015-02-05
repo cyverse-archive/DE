@@ -7,7 +7,20 @@ import org.iplantc.de.client.gin.ServicesInjector;
 import org.iplantc.de.client.models.DEProperties;
 import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.client.models.UserSettings;
-import org.iplantc.de.client.services.*;
+import org.iplantc.de.client.services.AnalysisServiceFacade;
+import org.iplantc.de.client.services.AppBuilderMetadataServiceFacade;
+import org.iplantc.de.client.services.AppMetadataServiceFacade;
+import org.iplantc.de.client.services.AppServiceFacade;
+import org.iplantc.de.client.services.AppTemplateServices;
+import org.iplantc.de.client.services.AppUserServiceFacade;
+import org.iplantc.de.client.services.DEFeedbackServiceFacade;
+import org.iplantc.de.client.services.DiskResourceServiceFacade;
+import org.iplantc.de.client.services.FileEditorServiceFacade;
+import org.iplantc.de.client.services.FileSystemMetadataServiceFacade;
+import org.iplantc.de.client.services.MessageServiceFacade;
+import org.iplantc.de.client.services.SearchServiceFacade;
+import org.iplantc.de.client.services.TagsServiceFacade;
+import org.iplantc.de.client.services.UserSessionServiceFacade;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
 import org.iplantc.de.commons.client.requests.KeepaliveTimer;
 import org.iplantc.de.desktop.client.DesktopView;
@@ -65,7 +78,9 @@ public class DEGinModule extends AbstractGinModule {
         return ServicesInjector.INSTANCE.getAppTemplateServices();
     }
 
-    @Provides @Singleton public AppMetadataServiceFacade createAppMetadataServiceFacade() {
+    @Provides
+    @Singleton
+    public AppBuilderMetadataServiceFacade createAppBuilderMetadataServiceFacade() {
         return ServicesInjector.INSTANCE.getAppMetadataService();
     }
 
@@ -85,8 +100,14 @@ public class DEGinModule extends AbstractGinModule {
         return ServicesInjector.INSTANCE.getMetadataService();
     }
 
-    @Provides public MetadataServiceFacade createFileSystemMetadataServiceFacade() {
+    @Provides
+    public FileSystemMetadataServiceFacade createFileSystemMetadataServiceFacade() {
         return ServicesInjector.INSTANCE.getFileSysteMetadataServiceFacade();
+    }
+
+    @Provides
+    public AppMetadataServiceFacade createAppMetadataServiceFacade() {
+        return ServicesInjector.INSTANCE.getAppMetadataServiceFacade();
     }
 
     //</editor-fold>

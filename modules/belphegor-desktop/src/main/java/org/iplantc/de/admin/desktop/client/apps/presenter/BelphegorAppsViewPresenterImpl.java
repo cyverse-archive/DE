@@ -16,6 +16,7 @@ import org.iplantc.de.apps.client.events.AppNameSelectedEvent;
 import org.iplantc.de.apps.client.presenter.AppsViewPresenterImpl;
 import org.iplantc.de.apps.client.presenter.proxy.AppCategoryProxy;
 import org.iplantc.de.apps.client.views.AppsView;
+import org.iplantc.de.apps.client.views.cells.AppCommentCell.AppCommentCellAppearance;
 import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.models.DEProperties;
 import org.iplantc.de.client.models.HasId;
@@ -23,6 +24,7 @@ import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.models.apps.AppAutoBeanFactory;
 import org.iplantc.de.client.models.apps.AppCategory;
+import org.iplantc.de.client.services.AppMetadataServiceFacade;
 import org.iplantc.de.client.services.AppServiceFacade;
 import org.iplantc.de.client.services.AppUserServiceFacade;
 import org.iplantc.de.client.util.CommonModelUtils;
@@ -103,7 +105,9 @@ public class BelphegorAppsViewPresenterImpl extends AppsViewPresenterImpl implem
                                           final ConfluenceServiceAsync confluenceService,
                                           final IplantAnnouncer announcer,
                                           final IplantDisplayStrings displayStrings,
-                                          final IplantErrorStrings errorStrings) {
+                                          final IplantErrorStrings errorStrings,
+                                          final AppCommentCellAppearance apperance,
+                                          final AppMetadataServiceFacade metadataFacade) {
         super(view,
               proxy,
               appService,
@@ -114,7 +118,9 @@ public class BelphegorAppsViewPresenterImpl extends AppsViewPresenterImpl implem
               confluenceService,
               announcer,
               displayStrings,
-              errorStrings);
+              errorStrings,
+              apperance,
+              metadataFacade);
         this.view = view;
         this.adminAppService = appService;
         this.eventBus = eventBus;

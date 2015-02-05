@@ -14,9 +14,9 @@ import org.iplantc.de.apps.client.events.RunAppEvent;
 import org.iplantc.de.apps.client.presenter.proxy.AppCategoryProxy;
 import org.iplantc.de.apps.client.views.AppsView;
 import org.iplantc.de.apps.client.views.SubmitAppForPublicUseView;
+import org.iplantc.de.apps.client.views.cells.AppCommentCell.AppCommentCellAppearance;
 import org.iplantc.de.apps.client.views.cells.AppFavoriteCell;
-import org.iplantc.de.apps.client.views.dialogs.AppCommentDialog;
-import org.iplantc.de.tools.requests.client.views.dialogs.NewToolRequestDialog;
+import  org.iplantc.de.tools.requests.client.views.dialogs.NewToolRequestDialog;
 import org.iplantc.de.apps.client.views.dialogs.SubmitAppForPublicDialog;
 import org.iplantc.de.apps.client.views.widgets.events.AppSearchResultLoadEvent;
 import org.iplantc.de.client.events.EventBus;
@@ -28,11 +28,14 @@ import org.iplantc.de.client.models.apps.AppAutoBeanFactory;
 import org.iplantc.de.client.models.apps.AppCategory;
 import org.iplantc.de.client.models.apps.AppFeedback;
 import org.iplantc.de.client.models.apps.AppList;
+import org.iplantc.de.client.services.AppMetadataServiceFacade;
 import org.iplantc.de.client.services.AppServiceFacade;
 import org.iplantc.de.client.services.AppUserServiceFacade;
 import org.iplantc.de.client.util.CommonModelUtils;
 import org.iplantc.de.client.util.JsonUtil;
 import org.iplantc.de.commons.client.ErrorHandler;
+import org.iplantc.de.commons.client.comments.CommentsView;
+import org.iplantc.de.commons.client.comments.gin.factory.CommentsPresenterFactory;
 import org.iplantc.de.commons.client.info.ErrorAnnouncementConfig;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
 import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
@@ -50,8 +53,6 @@ import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.regexp.shared.RegExp;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
-import com.google.gwt.user.client.Command;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HasOneWidget;
 import com.google.inject.Inject;
@@ -62,6 +63,7 @@ import com.google.web.bindery.autobean.shared.Splittable;
 import com.google.web.bindery.autobean.shared.impl.StringQuoter;
 
 import com.sencha.gxt.widget.core.client.Dialog.PredefinedButton;
+import com.sencha.gxt.widget.core.client.Window;
 import com.sencha.gxt.widget.core.client.box.ConfirmMessageBox;
 import com.sencha.gxt.widget.core.client.event.DialogHideEvent;
 import com.sencha.gxt.widget.core.client.grid.Grid;
@@ -117,10 +119,14 @@ public class AppsViewPresenterImpl implements AppsView.Presenter {
     private final IplantDisplayStrings displayStrings;
     private final IplantErrorStrings errorStrings;
     private RegExp searchRegex;
+    private final AppCommentCellAppearance appearance;
+    private final AppMetadataServiceFacade metadataFacade;
 
     @Inject Provider<NewToolRequestDialog> newToolRequestDialogProvider;
     @Inject Provider<SubmitAppForPublicUseView.Presenter> submitAppForPublicPresenterProvider;
     @Inject JsonUtil jsonUtil;
+    @Inject
+    CommentsPresenterFactory commentsPresenterFactory;
 
     @Inject
     public AppsViewPresenterImpl(final AppsView view,
@@ -133,7 +139,9 @@ public class AppsViewPresenterImpl implements AppsView.Presenter {
                                  final ConfluenceServiceAsync confluenceService,
                                  final IplantAnnouncer announcer,
                                  final IplantDisplayStrings displayStrings,
-                                 final IplantErrorStrings errorStrings) {
+                                 final IplantErrorStrings errorStrings,
+                                 final AppCommentCellAppearance apperance,
+                                 final AppMetadataServiceFacade metadataFacade) {
         this.view = view;
         this.appService = appService;
         this.appUserService = appUserService;
@@ -144,6 +152,8 @@ public class AppsViewPresenterImpl implements AppsView.Presenter {
         this.announcer = announcer;
         this.displayStrings = displayStrings;
         this.errorStrings = errorStrings;
+        this.appearance = apperance;
+        this.metadataFacade = metadataFacade;
 
         // Initialize AppCategory TreeStore proxy and loader
         this.appCategoryProxy = proxy;
@@ -175,71 +185,16 @@ public class AppsViewPresenterImpl implements AppsView.Presenter {
     @Override
     public void onAppCommentSelectedEvent(AppCommentSelectedEvent event) {
         final App app = event.getApp();
-        final AppFeedback userFeedback = app.getRating();
-        final Long commentId = userFeedback.getCommentId();
-
-        // populate dialog via an async call if previous comment ID exists, otherwise show blank dlg
-        final AppCommentDialog dlg = new AppCommentDialog(app.getName());
-        if ((commentId == null) || (commentId == 0)) {
-            dlg.unmaskDialog();
-        } else {
-            confluenceService.getComment(commentId, new AsyncCallback<String>() {
-                @Override
-                public void onSuccess(String comment) {
-                    dlg.setText(comment);
-                    dlg.unmaskDialog();
-                }
-
-                @Override
-                public void onFailure(Throwable e) {
-                    // ErrorHandler.post(e.getMessage(), e);
-                    dlg.unmaskDialog();
-                }
-            });
-        }
-
-        Command onConfirm = new Command() {
-            @Override
-            public void execute() {
-                putAppComment(app, dlg.getComment());
-            }
-        };
-        dlg.setCommand(onConfirm);
-        dlg.show();
-    }
-
-    private void putAppComment(App app, String comment) {
-        final AppFeedback userFeedback = app.getRating();
-
-        AsyncCallback<String> callback = new AsyncCallback<String>() {
-            @Override
-            public void onSuccess(String result) {
-                try {
-                    userFeedback.setCommentId(Long.valueOf(result));
-                } catch (NumberFormatException e) {
-                    // no comment id, do nothing
-                }
-            }
-
-            @Override
-            public void onFailure(Throwable caught) {
-                ErrorHandler.post(errorStrings.confluenceError(), caught);
-            }
-        };
-
-        String appId = app.getId();
-        int rating = userFeedback.getUserRating();
-        String appWikiUrl = app.getWikiUrl();
-        String authorEmail = app.getIntegratorEmail();
-
-        Long commentId = userFeedback.getCommentId();
-        if ((commentId == null) || (commentId == 0)) {
-            appUserService.addAppComment(appId, rating, appWikiUrl,
-                                         comment, authorEmail, callback);
-        } else {
-            appUserService.editAppComment(appId, rating,
-                                          appWikiUrl, commentId, comment, authorEmail, callback);
-        }
+        Window d = new Window();
+        d.setHeadingText(appearance.comments());
+        d.remove(d.getButtonBar());
+        // FIXME Convert to sovereign dialog?
+        d.setSize(appearance.commentsDialogWidth(), appearance.commentsDialogHeight());
+        CommentsView.Presenter cp = commentsPresenterFactory.createCommentsPresenter(app.getId(),
+                                                                                     app.getIntegratorEmail() == UserInfo.getInstance()
+                                                                                                                         .getEmail());
+        cp.go(d, metadataFacade);
+        d.show();
     }
 
     @Override
@@ -321,7 +276,7 @@ public class AppsViewPresenterImpl implements AppsView.Presenter {
             @Override
             public void onFailure(Throwable caught) {
                 if(caught instanceof HttpRedirectException){
-                    Window.alert(displayStrings.agaveAuthRequiredMsg());
+                    com.google.gwt.user.client.Window.alert(displayStrings.agaveAuthRequiredMsg());
                 } else {
                     ErrorHandler.post(errorStrings.retrieveAppListingFailed(), caught);
                 }

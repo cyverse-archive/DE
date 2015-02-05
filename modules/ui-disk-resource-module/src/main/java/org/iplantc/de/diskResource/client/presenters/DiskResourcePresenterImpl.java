@@ -19,6 +19,7 @@ import org.iplantc.de.client.models.tags.IplantTagAutoBeanFactory;
 import org.iplantc.de.client.models.tags.IplantTagList;
 import org.iplantc.de.client.models.viewer.InfoType;
 import org.iplantc.de.client.services.DiskResourceServiceFacade;
+import org.iplantc.de.client.services.FileSystemMetadataServiceFacade;
 import org.iplantc.de.client.services.MetadataServiceFacade;
 import org.iplantc.de.client.util.CommonModelUtils;
 import org.iplantc.de.client.util.DiskResourceUtil;
@@ -54,6 +55,7 @@ import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 import org.iplantc.de.resources.client.messages.IplantErrorStrings;
 
 import static com.google.common.base.Preconditions.checkState;
+
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.Iterables;
@@ -104,7 +106,8 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
 
     @Inject IplantErrorStrings errorStrings;
     @Inject DiskResourceServiceFacade diskResourceService;
-    @Inject MetadataServiceFacade fsmdataService;
+    @Inject
+    FileSystemMetadataServiceFacade fsmdataService;
     @Inject UserInfo userInfo;
     @Inject DiskResourceSelectorDialogFactory selectorDialogFactory;
     @Inject DiskResourceUtil diskResourceUtil;
@@ -118,7 +121,7 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
     private final GridView.Presenter gridViewPresenter;
     private final IplantDisplayStrings displayStrings;
     private final EventBus eventBus;
-    private DataSearchPresenter dataSearchPresenter;
+    private final DataSearchPresenter dataSearchPresenter;
 
     @AssistedInject
     DiskResourcePresenterImpl(final DiskResourceViewFactory diskResourceViewFactory,

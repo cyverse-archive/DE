@@ -7,7 +7,7 @@ import org.iplantc.de.client.models.apps.integration.*;
 import org.iplantc.de.client.models.apps.refGenome.ReferenceGenome;
 import org.iplantc.de.client.models.apps.refGenome.ReferenceGenomeList;
 import org.iplantc.de.client.models.tool.Tool;
-import org.iplantc.de.client.services.AppMetadataServiceFacade;
+import org.iplantc.de.client.services.AppBuilderMetadataServiceFacade;
 import org.iplantc.de.client.services.AppTemplateServices;
 import org.iplantc.de.client.services.converters.AppTemplateCallbackConverter;
 import org.iplantc.de.client.util.AppTemplateUtils;
@@ -29,7 +29,7 @@ import java.util.List;
 import java.util.Queue;
 import java.util.logging.Logger;
 
-public class AppTemplateServicesImpl implements AppTemplateServices, AppMetadataServiceFacade {
+public class AppTemplateServicesImpl implements AppTemplateServices, AppBuilderMetadataServiceFacade {
 
     private final String APPS = "org.iplantc.services.apps";
     private final String ARG_PREVIEW = "org.iplantc.services.apps.argPreview";

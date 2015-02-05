@@ -1,8 +1,10 @@
 package org.iplantc.de.commons.client.comments;
 
 import org.iplantc.de.client.models.comments.Comment;
+import org.iplantc.de.client.services.MetadataServiceFacade;
 
 import com.google.gwt.resources.client.ImageResource;
+import com.google.gwt.user.client.ui.HasOneWidget;
 import com.google.gwt.user.client.ui.Widget;
 
 import java.util.List;
@@ -50,6 +52,8 @@ public interface CommentsView {
 
             String retractCommentError();
         }
+
+        void go(final HasOneWidget container, MetadataServiceFacade facade);
 
         void onAdd(Comment c);
 

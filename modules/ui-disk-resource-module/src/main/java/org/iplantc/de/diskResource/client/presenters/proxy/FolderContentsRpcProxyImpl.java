@@ -7,7 +7,7 @@ import org.iplantc.de.client.models.diskResources.TYPE;
 import org.iplantc.de.client.models.search.DiskResourceQueryTemplate;
 import org.iplantc.de.client.models.viewer.InfoType;
 import org.iplantc.de.client.services.DiskResourceServiceFacade;
-import org.iplantc.de.client.services.MetadataServiceFacade;
+import org.iplantc.de.client.services.FileSystemMetadataServiceFacade;
 import org.iplantc.de.client.services.SearchServiceFacade;
 import org.iplantc.de.commons.client.info.ErrorAnnouncementConfig;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
@@ -204,20 +204,20 @@ public class FolderContentsRpcProxyImpl extends RpcProxy<FolderContentsLoadConfi
 
     private final DiskResourceServiceFacade drService;
     private final SearchServiceFacade searchService;
-    private final MetadataServiceFacade metadataService;
+    private final FileSystemMetadataServiceFacade metadataService;
     private final IplantAnnouncer announcer;
     private final IplantDisplayStrings displayStrings;
     private final IplantErrorStrings errorStrings;
     private TYPE entityType = null;
     private HasSafeHtml hasSafeHtml;
-    private List<InfoType> infoTypeFilterList;
+    private final List<InfoType> infoTypeFilterList;
 
     final Logger LOG = Logger.getLogger(FolderContentsRpcProxyImpl.class.getName());
 
     @AssistedInject
     FolderContentsRpcProxyImpl(final DiskResourceServiceFacade drService,
                                final SearchServiceFacade searchService,
-                               final MetadataServiceFacade metadataService,
+                               final FileSystemMetadataServiceFacade metadataService,
                                final IplantAnnouncer announcer,
                                final IplantDisplayStrings displayStrings,
                                final IplantErrorStrings errorStrings,

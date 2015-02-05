@@ -58,4 +58,19 @@ public class AppCommentCellDefaultAppearance implements AppCommentCellAppearance
         SafeUri imgSrc = iplantResources.userComment().getSafeUri();
         sb.append(template.imgCell(comments, comments, className, imgSrc));
     }
+
+    @Override
+    public String comments() {
+        return displayStrings.comments();
+    }
+
+    @Override
+    public String commentsDialogHeight() {
+        return "450px";
+    }
+
+    @Override
+    public String commentsDialogWidth() {
+        return "600px";
+    }
 }

@@ -76,7 +76,7 @@
 			</cp:ContentPanel>
 		</con:child>
 		<con:child layoutData="{fileSelLabel}">
-			<g:HTML HTML="Please select the folder containing test data for this App:" />
+			<g:HTML ui:field="testDataLbl" HTML="Please select the folder containing test data for this App:" />
 		</con:child>
 		<con:child layoutData="{layoutData}">
 			<selector:FolderSelectorField ui:field="dataFolderSelector"

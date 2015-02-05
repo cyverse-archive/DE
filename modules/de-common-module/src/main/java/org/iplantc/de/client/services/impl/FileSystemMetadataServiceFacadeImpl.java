@@ -7,7 +7,7 @@ import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.client.models.diskResources.TYPE;
 import org.iplantc.de.client.models.tags.IplantTagAutoBeanFactory;
 import org.iplantc.de.client.models.viewer.InfoType;
-import org.iplantc.de.client.services.MetadataServiceFacade;
+import org.iplantc.de.client.services.FileSystemMetadataServiceFacade;
 import org.iplantc.de.client.services.converters.AsyncCallbackConverter;
 import org.iplantc.de.shared.services.BaseServiceCallWrapper.Type;
 import org.iplantc.de.shared.services.DiscEnvApiService;
@@ -33,7 +33,7 @@ import java.util.List;
 /**
  * @author jstroot
  */
-public class FileSystemMetadataServiceFacadeImpl implements MetadataServiceFacade {
+public class FileSystemMetadataServiceFacadeImpl implements FileSystemMetadataServiceFacade {
 
     static class FavoritesCallbackConverter extends AsyncCallbackConverter<String, Folder> {
         private final DiskResourceAutoBeanFactory drFactory;

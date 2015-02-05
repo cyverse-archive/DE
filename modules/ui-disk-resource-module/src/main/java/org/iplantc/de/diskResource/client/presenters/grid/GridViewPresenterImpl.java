@@ -11,7 +11,7 @@ import org.iplantc.de.client.models.diskResources.PermissionValue;
 import org.iplantc.de.client.models.diskResources.TYPE;
 import org.iplantc.de.client.models.viewer.InfoType;
 import org.iplantc.de.client.services.DiskResourceServiceFacade;
-import org.iplantc.de.client.services.MetadataServiceFacade;
+import org.iplantc.de.client.services.FileSystemMetadataServiceFacade;
 import org.iplantc.de.client.util.DiskResourceUtil;
 import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.commons.client.comments.CommentsView;
@@ -25,12 +25,12 @@ import org.iplantc.de.diskResource.client.NavigationView;
 import org.iplantc.de.diskResource.client.events.DiskResourceNameSelectedEvent;
 import org.iplantc.de.diskResource.client.events.DiskResourcePathSelectedEvent;
 import org.iplantc.de.diskResource.client.events.FolderSelectionEvent;
+import org.iplantc.de.diskResource.client.events.RequestDiskResourceFavoriteEvent;
+import org.iplantc.de.diskResource.client.events.ShowFilePreviewEvent;
 import org.iplantc.de.diskResource.client.events.selection.ManageCommentsSelected;
 import org.iplantc.de.diskResource.client.events.selection.ManageMetadataSelected;
 import org.iplantc.de.diskResource.client.events.selection.ManageSharingSelected;
-import org.iplantc.de.diskResource.client.events.RequestDiskResourceFavoriteEvent;
 import org.iplantc.de.diskResource.client.events.selection.ShareByDataLinkSelected;
-import org.iplantc.de.diskResource.client.events.ShowFilePreviewEvent;
 import org.iplantc.de.diskResource.client.gin.factory.DataSharingDialogFactory;
 import org.iplantc.de.diskResource.client.gin.factory.FolderContentsRpcProxyFactory;
 import org.iplantc.de.diskResource.client.gin.factory.GridViewFactory;
@@ -97,7 +97,8 @@ public class GridViewPresenterImpl implements GridView.Presenter,
     @Inject DataSharingDialogFactory dataSharingDialogFactory;
     @Inject IplantAnnouncer announcer;
     @Inject CommentsPresenterFactory commentsPresenterFactory;
-    @Inject MetadataServiceFacade metadataService;
+    @Inject
+    FileSystemMetadataServiceFacade metadataService;
     private final Appearance appearance;
     private final NavigationView.Presenter navigationPresenter;
     private final ListStore<DiskResource> listStore;
@@ -314,7 +315,7 @@ public class GridViewPresenterImpl implements GridView.Presenter,
         d.setSize(appearance.commentsDialogWidth(), appearance.commentsDialogHeight());
         CommentsView.Presenter cp = commentsPresenterFactory.createCommentsPresenter(dr.getId(),
                                                                                      PermissionValue.own.equals(dr.getPermission()));
-        cp.go(d);
+        cp.go(d, metadataService);
         d.show();
     }
 

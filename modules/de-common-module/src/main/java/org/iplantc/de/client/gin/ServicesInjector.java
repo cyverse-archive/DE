@@ -1,21 +1,22 @@
 package org.iplantc.de.client.gin;
 
 import org.iplantc.de.client.services.AnalysisServiceFacade;
+import org.iplantc.de.client.services.AppBuilderMetadataServiceFacade;
 import org.iplantc.de.client.services.AppMetadataServiceFacade;
 import org.iplantc.de.client.services.AppServiceFacade;
 import org.iplantc.de.client.services.AppTemplateServices;
 import org.iplantc.de.client.services.AppUserServiceFacade;
 import org.iplantc.de.client.services.CollaboratorsServiceFacade;
 import org.iplantc.de.client.services.DEFeedbackServiceFacade;
-import org.iplantc.de.client.services.ToolServices;
 import org.iplantc.de.client.services.DiskResourceServiceFacade;
 import org.iplantc.de.client.services.FileEditorServiceFacade;
-import org.iplantc.de.client.services.MetadataServiceFacade;
+import org.iplantc.de.client.services.FileSystemMetadataServiceFacade;
 import org.iplantc.de.client.services.MessageServiceFacade;
-import org.iplantc.de.client.services.TagsServiceFacade;
 import org.iplantc.de.client.services.SearchServiceFacade;
 import org.iplantc.de.client.services.SystemMessageServiceFacade;
+import org.iplantc.de.client.services.TagsServiceFacade;
 import org.iplantc.de.client.services.ToolRequestServiceFacade;
+import org.iplantc.de.client.services.ToolServices;
 import org.iplantc.de.client.services.UUIDServiceAsync;
 import org.iplantc.de.client.services.UserSessionServiceFacade;
 
@@ -34,7 +35,7 @@ public interface ServicesInjector extends Ginjector {
 
     AppTemplateServices getAppTemplateServices();
 
-    AppMetadataServiceFacade getAppMetadataService();
+    AppBuilderMetadataServiceFacade getAppMetadataService();
 
     AppUserServiceFacade getAppUserServiceFacade();
 
@@ -62,7 +63,7 @@ public interface ServicesInjector extends Ginjector {
 
     TagsServiceFacade getMetadataService();
 
-    MetadataServiceFacade getFileSysteMetadataServiceFacade();
+    FileSystemMetadataServiceFacade getFileSysteMetadataServiceFacade();
 
-
+    AppMetadataServiceFacade getAppMetadataServiceFacade();
 }
