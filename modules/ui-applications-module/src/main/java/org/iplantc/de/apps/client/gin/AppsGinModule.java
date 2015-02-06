@@ -7,6 +7,8 @@ import org.iplantc.de.apps.client.views.SubmitAppForPublicUseView;
 import org.iplantc.de.apps.client.views.SubmitAppForPublicUseViewImpl;
 import org.iplantc.de.apps.client.views.widgets.AppsViewToolbarImpl;
 import org.iplantc.de.client.models.apps.AppCategory;
+import org.iplantc.de.client.services.AppMetadataServiceFacade;
+import org.iplantc.de.client.services.impl.AppMetadataServiceFacadeImpl;
 
 import com.google.gwt.inject.client.AbstractGinModule;
 import com.google.inject.TypeLiteral;
@@ -30,7 +32,7 @@ public class AppsGinModule extends AbstractGinModule {
         bind(AppsView.ViewMenu.class).to(AppsViewToolbarImpl.class);
         bind(SubmitAppForPublicUseView.class).to(SubmitAppForPublicUseViewImpl.class);
         bind(SubmitAppForPublicUseView.Presenter.class).to(SubmitAppForPublicPresenter.class);
-
+        bind(AppMetadataServiceFacade.class).to(AppMetadataServiceFacadeImpl.class);
     }
 
 }

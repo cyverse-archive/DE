@@ -6,6 +6,7 @@ import org.iplantc.de.client.models.diskResources.TYPE;
 import org.iplantc.de.client.models.search.DiskResourceQueryTemplate;
 import org.iplantc.de.client.models.viewer.InfoType;
 import org.iplantc.de.client.services.DiskResourceServiceFacade;
+import org.iplantc.de.client.services.FileSystemMetadataServiceFacade;
 import org.iplantc.de.client.services.MetadataServiceFacade;
 import org.iplantc.de.client.services.SearchServiceFacade;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
@@ -31,8 +32,8 @@ import static org.mockito.Matchers.anyDouble;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.anyList;
 import static org.mockito.Mockito.*;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -58,7 +59,8 @@ public class FolderContentsRpcProxyTest {
     @Mock IplantErrorStrings errorStringsMock;
 
     @Mock AsyncCallback<PagingLoadResult<DiskResource>> pagingAsyncMock;
-    @Mock MetadataServiceFacade mockFileSystemMetadataService;
+    @Mock
+    FileSystemMetadataServiceFacade mockFileSystemMetadataService;
     @Mock HasSafeHtml mockHasSafeHtml;
 
     @Captor ArgumentCaptor<AsyncCallback<PagingLoadResult<DiskResource>>> pagingAsyncCaptor;

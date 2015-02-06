@@ -34,6 +34,7 @@ import org.iplantc.de.client.models.UserSettings;
 import org.iplantc.de.client.services.AppServiceFacade;
 import org.iplantc.de.client.services.AppUserServiceFacade;
 import org.iplantc.de.client.services.DiskResourceServiceFacade;
+import org.iplantc.de.client.services.FileSystemMetadataServiceFacade;
 import org.iplantc.de.client.services.MetadataServiceFacade;
 import org.iplantc.de.client.services.SearchServiceFacade;
 import org.iplantc.de.client.services.TagsServiceFacade;
@@ -85,7 +86,8 @@ public class BelphegorAppsGinModule extends AbstractGinModule {
         return ServicesInjector.INSTANCE.getMetadataService();
     }
 
-    @Provides public MetadataServiceFacade createFileSystemMetadataServiceFacade() {
+    @Provides
+    public FileSystemMetadataServiceFacade createFileSystemMetadataServiceFacade() {
         return ServicesInjector.INSTANCE.getFileSysteMetadataServiceFacade();
     }
 

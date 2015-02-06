@@ -105,10 +105,10 @@ public class DEGinModule extends AbstractGinModule {
         return ServicesInjector.INSTANCE.getFileSysteMetadataServiceFacade();
     }
 
-    @Provides
-    public AppMetadataServiceFacade createAppMetadataServiceFacade() {
-        return ServicesInjector.INSTANCE.getAppMetadataServiceFacade();
-    }
+    // @Provides
+    // public AppMetadataServiceFacade createAppMetadataServiceFacade() {
+    // return ServicesInjector.INSTANCE.getAppMetadataServiceFacade();
+    // }
 
     //</editor-fold>
 
