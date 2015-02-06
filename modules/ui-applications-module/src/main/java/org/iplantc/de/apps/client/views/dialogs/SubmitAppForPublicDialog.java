@@ -30,11 +30,11 @@ public class SubmitAppForPublicDialog extends IPlantDialog {
 
     private final class SubmitAppForPublicCallbackImpl implements AsyncCallback<String> {
         @Override
-        public void onSuccess(String url) {
+        public void onSuccess(String appName) {
             hide();
 
             IplantAnnouncer.getInstance().schedule(
-                    new SuccessAnnouncementConfig(SafeHtmlUtils.fromTrustedString(I18N.DISPLAY.makePublicSuccessMessage(url))));
+new SuccessAnnouncementConfig(SafeHtmlUtils.fromTrustedString(I18N.DISPLAY.makePublicSuccessMessage(appName))));
 
             // Create and fire event
             AppCategoryCountUpdateEvent event = new AppCategoryCountUpdateEvent(false,

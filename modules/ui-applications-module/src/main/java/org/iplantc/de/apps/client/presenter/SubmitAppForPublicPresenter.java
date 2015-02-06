@@ -144,11 +144,15 @@ public class SubmitAppForPublicPresenter implements SubmitAppForPublicUseView.Pr
             public void onSuccess(String result) {
                 pmb.hide();
                 eventBus.fireEvent(new AppPublishedEvent(view.getSelectedApp()));
+                if (callback != null) {
+                    callback.onSuccess(jsonUtil.getString(obj, "name"));
+                }
             }
 
             @Override
             public void onFailure(Throwable caught) {
                 pmb.hide();
+                callback.onFailure(caught);
             }
         });
     }

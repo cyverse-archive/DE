@@ -7,6 +7,7 @@ import org.iplantc.de.apps.client.views.widgets.AppRatingCellWidget;
 import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.models.apps.AppAutoBeanFactory;
 import org.iplantc.de.client.models.apps.AppCategory;
+import org.iplantc.de.client.models.apps.AppDoc;
 import org.iplantc.de.client.models.tool.Tool;
 import org.iplantc.de.client.services.AppUserServiceFacade;
 import org.iplantc.de.commons.client.ErrorHandler;
@@ -14,6 +15,7 @@ import org.iplantc.de.commons.client.widgets.IPlantAnchor;
 import org.iplantc.de.resources.client.messages.I18N;
 
 import com.google.common.base.Joiner;
+import com.google.common.base.Strings;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -209,7 +211,41 @@ public class AppInfoView implements IsWidget, AppFavoriteCell.RequestAppFavorite
 
             @Override
             public void onClick(ClickEvent arg0) {
-                Window.open(app.getWikiUrl(), "_blank", "");
+                if (!Strings.isNullOrEmpty(app.getWikiUrl())) {
+                    Window.open(app.getWikiUrl(), "_blank", "");
+                } else {
+                    appUserService.getAppDoc(app.getId(), new AsyncCallback<String>() {
+
+                        @Override
+                        public void onFailure(Throwable caught) {
+                            // TODO Auto-generated method stub
+
+                        }
+
+                        @Override
+                        public void onSuccess(String result) {
+                            AppAutoBeanFactory factory = GWT.create(AppAutoBeanFactory.class);
+                            AppDoc doc = AutoBeanCodex.decode(factory, AppDoc.class, result).as();
+                            String docString = doc.getDocumentaion();
+                            showDoc(docString);
+                        }
+
+                        void showDoc(String docString) {
+                            // FIXME Roll into appearance
+                            String renderHtml = render(docString);
+                            HtmlLayoutContainer cont = new HtmlLayoutContainer("<link href=\"./markdown.css\" rel=\"stylesheet\"></link><div style='background-color:white;overflow:scroll;height:375px;' class=\"markdown\">"
+                                    + renderHtml + "</div>");
+                            com.sencha.gxt.widget.core.client.Window d = new com.sencha.gxt.widget.core.client.Window();
+                            d.setHeadingHtml(app.getName());
+                            d.setWidget(cont);
+                            d.setSize("500px", "400px");
+                            d.setResizable(false);
+                            d.show();
+                        }
+
+
+                    });
+                }
 
             }
         });
@@ -217,6 +253,10 @@ public class AppInfoView implements IsWidget, AppFavoriteCell.RequestAppFavorite
         hlc.add(doc, new HtmlData(".cell8"));
     }
 
+    public static native String render(String val) /*-{
+		var markdown = $wnd.Markdown.getSanitizingConverter();
+		return markdown.makeHtml(val);
+    }-*/;
     private void addRating(final App app, HtmlLayoutContainer hlc) {
         hlc.add(new Label(I18N.DISPLAY.rating() + ": "), new HtmlData(".cell9"));
         AppRatingCellWidget rcell = new AppRatingCellWidget();

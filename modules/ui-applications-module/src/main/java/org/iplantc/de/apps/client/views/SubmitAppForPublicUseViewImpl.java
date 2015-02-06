@@ -446,8 +446,7 @@ public class SubmitAppForPublicUseViewImpl implements SubmitAppForPublicUseView 
 			outputFiles : of
 		};
 		var template = $wnd.Handlebars
-				.compile('# {{appName}} \n > ### Description and Quick Start \n >> {{quickStart}} \n ### Test Data \n >> {{testData}} \n ### Input File(s) \n >> {{inputFiles}} \n ### Parameters Used in App \n >> {{params}} \n ### Output File(s) \n >> {{outputFiles}}');
-		$wnd.alert("template", template);
+				.compile('### {{appName}} \n> #### Description and Quick Start \n>> {{quickStart}} \n> #### Test Data \n>> {{testData}} \n> #### Input File(s) \n>> {{inputFiles}} \n> #### Parameters Used in App \n>> {{params}} \n> #### Output File(s) \n>> {{outputFiles}}');
 		var html = template(context);
 		return html;
     }-*/
@@ -456,7 +455,6 @@ public class SubmitAppForPublicUseViewImpl implements SubmitAppForPublicUseView 
     @Override
     public JSONObject toJson() {
         JSONObject json = new JSONObject();
-        JSONObject json1 = new JSONObject();
 
         json.put("id", getJsonString(selectedApp.getId())); //$NON-NLS-1$
         json.put("name", getJsonString(appName.getValue()));

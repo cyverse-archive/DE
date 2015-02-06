@@ -1,6 +1,7 @@
 package org.iplantc.de.client.services.impl;
 
 import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.*;
+
 import org.iplantc.de.client.models.DEProperties;
 import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.client.models.apps.AppCategory;
@@ -405,6 +406,13 @@ public class AppUserServiceFacadeImpl implements AppUserServiceFacade {
     public void copyWorkflow(String workflowId, AsyncCallback<String> callback) {
         String address = PIPELINES + "/" + workflowId + "/copy";
         ServiceCallWrapper wrapper = new ServiceCallWrapper(POST, address, "{}");
+        deServiceFacade.getServiceData(wrapper, callback);
+    }
+
+    @Override
+    public void getAppDoc(String appId, AsyncCallback<String> callback) {
+        String address = APPS + "/" + appId + "/documentation";
+        ServiceCallWrapper wrapper = new ServiceCallWrapper(GET, address);
         deServiceFacade.getServiceData(wrapper, callback);
     }
 }

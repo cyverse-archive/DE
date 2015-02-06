@@ -118,7 +118,13 @@ public class AppAdminUserServiceFacade implements AppUserServiceFacade {
 
     @Override
     public void createWorkflows(String body, AsyncCallback<String> callback) {
-        // TODO Auto-generated method stub
+        assert false : "Dummy Class to satisfy deferred-binding, this class not used in this module.";
+
+    }
+
+    @Override
+    public void getAppDoc(String appId, AsyncCallback<String> callback) {
+        assert false : "Dummy Class to satisfy deferred-binding, this class not used in this module.";
 
     }
 
