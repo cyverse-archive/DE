@@ -10,9 +10,7 @@ import org.iplantc.de.commons.client.info.SuccessAnnouncementConfig;
 import org.iplantc.de.resources.client.messages.I18N;
 import org.iplantc.de.tags.client.TagsView;
 import org.iplantc.de.tags.client.events.RequestCreateTag;
-import org.iplantc.de.tags.client.events.selection.EditTagSelected;
-import org.iplantc.de.tags.client.events.selection.RemoveTagSelected;
-import org.iplantc.de.tags.client.events.selection.TagSelected;
+import org.iplantc.de.tags.client.events.TagCreated;
 import org.iplantc.de.tags.client.gin.factory.TagsViewFactory;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -27,16 +25,15 @@ import java.util.List;
  * @author jstroot
  */
 public class TagsViewPresenterImpl implements TagsView.Presenter,
-                                              RequestCreateTag.RequestCreateTagHandler,
-                                              EditTagSelected.EditTagSelectedHandler,
-                                              RemoveTagSelected.RemoveTagSelectedHandler,
-                                              TagSelected.TagSelectedHandler {
+                                              RequestCreateTag.RequestCreateTagHandler {
 
-    @Inject TagsServiceFacade tagsService;
+    @Inject IplantAnnouncer announcer;
+    @Inject TagsView.Presenter.Appearance appearance;
     @Inject MetadataServiceFacade metadataService;
+    @Inject TagsServiceFacade tagsService;
+    private final ListStore<Tag> listStore;
     private final TagsView view;
     private boolean editable;
-    private final ListStore<Tag> listStore;
     private boolean removable;
 
     /**
@@ -50,11 +47,8 @@ public class TagsViewPresenterImpl implements TagsView.Presenter,
                 return item.getId();
             }
         });
-        view = tagsViewFactory.create(listStore);
+        view = tagsViewFactory.create(listStore, this);
         view.addRequestCreateTagHandler(this);
-        view.addEditTagSelectedHandler(this);
-        view.addRemoveTagSelectedHandler(this);
-        view.addTagSelectedHandler(this);
     }
 
     public void addTag(Tag tag) {
@@ -63,7 +57,6 @@ public class TagsViewPresenterImpl implements TagsView.Presenter,
 
     @Override
     public void fetchTagsForResource(DiskResource resource) {
-
         listStore.clear();
         metadataService.getTags(resource, new AsyncCallback<List<Tag>>() {
             @Override
@@ -79,23 +72,13 @@ public class TagsViewPresenterImpl implements TagsView.Presenter,
         });
     }
 
-    @Override
-    public TagsView getView() {
-        return view;
-    }
-
     public List<Tag> getTags() {
         return listStore.getAll();
     }
 
     @Override
-    public void onEditTagSelected(EditTagSelected event) {
-
-    }
-
-    @Override
-    public void onRemoveTagSelected(RemoveTagSelected event) {
-        listStore.remove(event.getTag());
+    public TagsView getView() {
+        return view;
     }
 
     @Override
@@ -109,51 +92,52 @@ public class TagsViewPresenterImpl implements TagsView.Presenter,
 
             @Override
             public void onSuccess(Tag result) {
+                view.asWidget().fireEvent(new TagCreated(result));
                 listStore.add(result);
             }
         });
     }
 
-    @Override
-    public void onTagSelected(TagSelected event) {
-
+    public void removeAll() {
+        listStore.clear();
     }
 
-    // Later, if we want to broadcast Tag CRUD events, we can forward them from this service
-    // FIXME Blur, focus needs to be taken care of
-//    @Override
-//    public void onEditTag(TagsView.TagItem tagView) {
-//        for (TagToTagViewEntry tagItem : tagItems) {
-//            if (tagItem.getTagView().equals(tagView)) {
-//                final Tag tag = tagItem.tag;
-//                final String tagId = tag.getId();
-//                final TextArea tb = new TextArea();
-//                tb.setSize("250", "200");
-//                final String description = tag.getDescription();
-//                tb.setValue(description);
-//                Dialog pop = new Dialog();
-//                pop.setHideOnButtonClick(true);
-//                pop.setPredefinedButtons(PredefinedButton.OK, PredefinedButton.CANCEL);
-//                pop.getButton(PredefinedButton.OK).addSelectHandler(new SelectHandler() {
-//
-//                    @Override
-//                    public void onSelect(SelectEvent event) {
-//                        if (tb.getCurrentValue() != null && !tb.getCurrentValue().equals(description)) {
-//                            tag.setDescription(tb.getCurrentValue());
-//                            updateTagDescription(tagId, tb.getCurrentValue());
-//                        }
-//
-//                    }
-//                });
-//                pop.setSize("300", "250");
-//                pop.setHeadingText("Edit Tag Description for " + tagItem.getTag().getValue().toString());
-//                pop.setWidget(tb);
-//                pop.show();
-//            }
-//        }
-//
-//    }
-//
+    @Override
+    public void removeTag(Tag tag) {
+        listStore.remove(tag);
+    }
+
+
+    /**
+     * @param editable the editable to set
+     */
+    public void setEditable(boolean editable) {
+        this.editable = editable;
+
+        view.setEditable(editable);
+    }
+
+    public void setRemovable(boolean removable) {
+        this.removable = removable;
+
+        view.setRemovable(removable);
+    }
+
+    @Override
+    public void updateTagDescription(final Tag tag) {
+        tagsService.updateTagDescription(tag, new AsyncCallback<Void>() {
+            @Override
+            public void onFailure(Throwable caught) {
+                ErrorHandler.post("Unable to update tag description", caught);
+            }
+
+            @Override
+            public void onSuccess(Void result) {
+                announcer.schedule(new SuccessAnnouncementConfig("Tag description updated successfully."));
+            }
+        });
+    }
+
 //    @Override
 //    public void onRelocateTag(TagsView.TagItem tagViewToRelocate,
 //                              TagsView.TagItem tagViewRelocationRef,
@@ -185,46 +169,6 @@ public class TagsViewPresenterImpl implements TagsView.Presenter,
 //            view.getTagsPanel().add(tagItem.getTagView());
 //        }
 //    }
-//
-//    @Override
-//    public void onRemoveTag(TagsView.TagItem tagView) {
-//        for (Iterator<TagToTagViewEntry> tagItemIt = tagItems.iterator(); tagItemIt.hasNext(); ) {
-//            TagToTagViewEntry tagItem = tagItemIt.next();
-//            if (tagItem.getTagView().equals(tagView)) {
-//                view.getTagsPanel().remove(tagItem.getTagView());
-//                tagItemIt.remove();
-//                taggable.detachTag(tagItem.getTag());
-//            }
-//        }
-//
-//        if (onChangeCmd != null) {
-//            onChangeCmd.execute();
-//        }
-//    }
-//
-    // FIXME Fire tag selected events from view
-//    @Override
-//    public void onSelectTag(TagsView.TagItem tagView) {
-//        for (TagToTagViewEntry tagItem : tagItems) {
-//            if (tagItem.getTagView().equals(tagView)) {
-//                taggable.selectTag(tagItem.getTag());
-//                break;
-//            }
-//        }
-//    }
-
-    public void removeAll() {
-        listStore.clear();
-    }
-
-    /**
-     * @param editable the editable to set
-     */
-    public void setEditable(boolean editable) {
-        this.editable = editable;
-
-        view.setEditable(editable);
-    }
 
 //    /**
 //     * @param onBlurCmd the onBlurCmd to set
@@ -240,23 +184,4 @@ public class TagsViewPresenterImpl implements TagsView.Presenter,
 //        this.onFocusCmd = onFocusCmd;
 //    }
 
-    public void setRemovable(boolean removable) {
-        this.removable = removable;
-
-        view.setEditable(removable);
-    }
-
-    private void updateTagDescription(String tagId, String newDesc) {
-        tagsService.updateTagDescription(tagId, newDesc, new AsyncCallback<String>() {
-            @Override
-            public void onFailure(Throwable caught) {
-                ErrorHandler.post("Unable to update tag description", caught);
-            }
-
-            @Override
-            public void onSuccess(String result) {
-                IplantAnnouncer.getInstance().schedule(new SuccessAnnouncementConfig("Tag description updated successfully."));
-            }
-        });
-    }
 }

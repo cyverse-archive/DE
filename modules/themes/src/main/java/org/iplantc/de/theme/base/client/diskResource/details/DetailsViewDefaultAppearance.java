@@ -3,7 +3,6 @@ package org.iplantc.de.theme.base.client.diskResource.details;
 import org.iplantc.de.diskResource.client.DetailsView;
 import org.iplantc.de.resources.client.IplantResources;
 import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
-import org.iplantc.de.resources.client.messages.IplantErrorStrings;
 import org.iplantc.de.theme.base.client.diskResource.DiskResourceMessages;
 
 import com.google.gwt.core.client.GWT;
@@ -23,7 +22,6 @@ public class DetailsViewDefaultAppearance implements DetailsView.Appearance {
     private final IplantDisplayStrings iplantDisplayStrings;
     private final DetailsViewDisplayStrings displayStrings;
     private final DiskResourceMessages diskResourceMessages;
-    private final IplantErrorStrings iplantErrorStrings;
     private final IplantResources iplantResources;
     private final DetailsViewStyle style;
 
@@ -31,26 +29,22 @@ public class DetailsViewDefaultAppearance implements DetailsView.Appearance {
         this(GWT.<IplantDisplayStrings> create(IplantDisplayStrings.class),
              GWT.<DetailsViewDisplayStrings> create(DetailsViewDisplayStrings.class),
              GWT.<DiskResourceMessages> create(DiskResourceMessages.class),
-             GWT.<IplantErrorStrings> create(IplantErrorStrings.class),
              GWT.<IplantResources> create(IplantResources.class),
              GWT.<Resources> create(Resources.class));
     }
     public DetailsViewDefaultAppearance(final IplantDisplayStrings iplantDisplayStrings,
                                         final DetailsViewDisplayStrings displayStrings,
                                         final DiskResourceMessages diskResourceMessages,
-                                        final IplantErrorStrings iplantErrorStrings,
                                         final IplantResources iplantResources,
                                         final Resources resources) {
         this.iplantDisplayStrings = iplantDisplayStrings;
         this.displayStrings = displayStrings;
         this.diskResourceMessages = diskResourceMessages;
-        this.iplantErrorStrings = iplantErrorStrings;
         this.iplantResources = iplantResources;
         this.style = resources.css();
 
         this.style.ensureInjected();
     }
-
 
     @Override
     public String coge() {
@@ -150,5 +144,55 @@ public class DetailsViewDefaultAppearance implements DetailsView.Appearance {
     @Override
     public ImageResource deselectInfoTypeIcon() {
         return iplantResources.deleteIcon();
+    }
+
+    @Override
+    public String tagsLabel() {
+        return displayStrings.tagsLabel();
+    }
+
+    @Override
+    public String filesFoldersLabel() {
+        return displayStrings.files() + "/" + displayStrings.folders() + ":";
+    }
+
+    @Override
+    public String sendToLabel() {
+        return displayStrings.sendTo() + ":";
+    }
+
+    @Override
+    public String infoTypeLabel() {
+        return displayStrings.infoTypeLabel();
+    }
+
+    @Override
+    public String typeLabel() {
+        return displayStrings.typeLabel();
+    }
+
+    @Override
+    public String sizeLabel() {
+        return displayStrings.sizeLabel();
+    }
+
+    @Override
+    public String shareLabel() {
+        return displayStrings.share() + ":";
+    }
+
+    @Override
+    public String permissionsLabel() {
+        return permissions() + ":";
+    }
+
+    @Override
+    public String createdDateLabel() {
+        return createdDate() + ":";
+    }
+
+    @Override
+    public String lastModifiedLabel() {
+        return lastModified() + ":";
     }
 }

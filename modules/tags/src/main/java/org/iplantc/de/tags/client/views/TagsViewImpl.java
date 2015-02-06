@@ -1,9 +1,10 @@
 package org.iplantc.de.tags.client.views;
 
 import org.iplantc.de.client.models.tags.Tag;
-import org.iplantc.de.resources.client.messages.I18N;
 import org.iplantc.de.tags.client.TagsView;
 import org.iplantc.de.tags.client.events.RequestCreateTag;
+import org.iplantc.de.tags.client.events.TagAddedEvent;
+import org.iplantc.de.tags.client.events.TagCreated;
 import org.iplantc.de.tags.client.events.selection.EditTagSelected;
 import org.iplantc.de.tags.client.events.selection.RemoveTagSelected;
 import org.iplantc.de.tags.client.events.selection.TagSelected;
@@ -28,8 +29,10 @@ import com.sencha.gxt.data.shared.event.StoreAddEvent;
 import com.sencha.gxt.data.shared.event.StoreClearEvent;
 import com.sencha.gxt.data.shared.event.StoreRemoveEvent;
 import com.sencha.gxt.widget.core.client.Composite;
+import com.sencha.gxt.widget.core.client.Dialog;
 import com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer;
-import com.sencha.gxt.widget.core.client.form.FieldLabel;
+import com.sencha.gxt.widget.core.client.event.SelectEvent;
+import com.sencha.gxt.widget.core.client.form.TextArea;
 
 import java.util.Map;
 import java.util.logging.Logger;
@@ -52,10 +55,8 @@ public class TagsViewImpl extends Composite implements TagsView,
     private static TagsViewUiBinder uiBinder = GWT.create(TagsViewUiBinder.class);
 
     @UiField VerticalLayoutContainer tagListPanel;
-    @UiField(provided = true) TagSearchField tagSearchField;
+    @UiField(provided = true) TagSearchFieldImpl tagSearchField;
     @UiField TagsPanel tagsPanel;
-    // FIXME This field needs to go away
-    @UiField FieldLabel taglbl;
 
     private final TagItemFactory tagItemFactory;
     private final CustomIplantTagResources resources;
@@ -63,11 +64,12 @@ public class TagsViewImpl extends Composite implements TagsView,
 
     private final Map<Tag, TagItem> tagItemMap = Maps.newHashMap();
 
-
     Logger logger = Logger.getLogger("list view logger");
+    private boolean editable;
+    private boolean removable;
 
     @Inject
-    TagsViewImpl(final TagSearchField tagSearchField,
+    TagsViewImpl(final TagSearchFieldImpl tagSearchField,
                  final TagItemFactory tagItemFactory,
                  final CustomIplantTagResources resources,
                  @Assisted final ListStore<Tag> listStore,
@@ -82,15 +84,8 @@ public class TagsViewImpl extends Composite implements TagsView,
 
         initWidget(uiBinder.createAndBindUi(this));
 
-        taglbl.setHTML("<span style='font-size:10px; font-weight:bold;'>" + I18N.DISPLAY.tags()
-                + "</span>");
         tagsPanel.setStyleName(resources.style().tagPanel());
         tagSearchField.addValueChangeHandler(this);
-    }
-
-    @Override
-    public HandlerRegistration addEditTagSelectedHandler(EditTagSelected.EditTagSelectedHandler handler) {
-        return addHandler(handler, EditTagSelected.TYPE);
     }
 
     @Override
@@ -101,6 +96,16 @@ public class TagsViewImpl extends Composite implements TagsView,
     @Override
     public HandlerRegistration addRequestCreateTagHandler(RequestCreateTag.RequestCreateTagHandler handler) {
         return tagSearchField.addRequestCreateTagHandler(handler);
+    }
+
+    @Override
+    public HandlerRegistration addTagAddedEventHandler(TagAddedEvent.TagAddedEventHandler handler) {
+        return addHandler(handler, TagAddedEvent.TYPE);
+    }
+
+    @Override
+    public HandlerRegistration addTagCreatedHandler(TagCreated.TagCreatedHandler handler) {
+        return addHandler(handler, TagCreated.TYPE);
     }
 
     @Override
@@ -117,6 +122,8 @@ public class TagsViewImpl extends Composite implements TagsView,
             tagItem.addEditTagSelectedHandler(this);
             tagItem.addRemoveTagSelectedHandler(this);
             tagItem.addSelectionHandler(this);
+            tagItem.setEditable(editable);
+            tagItem.setRemovable(removable);
             tagsPanel.add(tagItem);
             tagItemMap.put(tag, tagItem);
         }
@@ -127,12 +134,35 @@ public class TagsViewImpl extends Composite implements TagsView,
     public void onClear(StoreClearEvent<Tag> event) {
         // Clear panel
         tagsPanel.clear();
+        tagSearchField.clear();
     }
 
     @Override
     public void onEditTagSelected(EditTagSelected event) {
         // refire
-        fireEvent(event);
+        final Tag tag = event.getTag();
+        final TextArea tb = new TextArea();
+        tb.setSize("250", "200");
+        final String description = tag.getDescription();
+        tb.setValue(description);
+        Dialog pop = new Dialog();
+        pop.setHideOnButtonClick(true);
+        pop.setPredefinedButtons(Dialog.PredefinedButton.OK, Dialog.PredefinedButton.CANCEL);
+        pop.getButton(Dialog.PredefinedButton.OK).addSelectHandler(new SelectEvent.SelectHandler() {
+
+            @Override
+            public void onSelect(SelectEvent event) {
+                if (tb.getCurrentValue() != null && !tb.getCurrentValue().equals(description)) {
+                    tag.setDescription(tb.getCurrentValue());
+                    presenter.updateTagDescription(tag);
+                }
+
+            }
+        });
+        pop.setSize("300", "250");
+        pop.setHeadingText("Edit Tag Description for " + tag.getValue());
+        pop.setWidget(tb);
+        pop.show();
     }
 
     @Override
@@ -147,6 +177,7 @@ public class TagsViewImpl extends Composite implements TagsView,
     public void onRemoveTagSelected(RemoveTagSelected event) {
         // refire
         fireEvent(event);
+        presenter.removeTag(event.getTag());
     }
 
     /**
@@ -162,10 +193,12 @@ public class TagsViewImpl extends Composite implements TagsView,
     @Override
     public void onValueChange(ValueChangeEvent<Tag> event) {
         // Search field found tag results, and one was selected
+        fireEvent(new TagAddedEvent(event.getValue()));
         presenter.addTag(event.getValue());
     }
 
     public void setEditable(boolean editable) {
+        this.editable = editable;
         this.tagListPanel.getElement().setPropertyBoolean("disabled", !editable);
 
         if (editable) {
@@ -174,6 +207,11 @@ public class TagsViewImpl extends Composite implements TagsView,
             this.tagListPanel.removeStyleName(resources.style().tagListEditable());
         }
 
+    }
+
+    @Override
+    public void setRemovable(boolean removable) {
+        this.removable = removable;
     }
 
 }

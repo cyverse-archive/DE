@@ -19,6 +19,8 @@ public interface DetailsViewDisplayStrings extends Messages{
     @Key("folders")
     String folders();
 
+    String infoTypeLabel();
+
     @Key("noDetails")
     String noDetails();
 
@@ -37,8 +39,22 @@ public interface DetailsViewDisplayStrings extends Messages{
     @Key("sharingDisabled")
     String sharingDisabled();
 
+    String sizeLabel();
+
+    String tagAttachError();
+
+    String tagAttached(String tagName, String to);
+
+    String tagDetachError();
+
+    String tagDetached(String tagName, String from);
+
+    String tagsLabel();
+
     @Key("treeViewer")
     String treeViewer();
+
+    String typeLabel();
 
     @Key("unsupportedCogeInfoType")
     String unsupportedCogeInfoType();

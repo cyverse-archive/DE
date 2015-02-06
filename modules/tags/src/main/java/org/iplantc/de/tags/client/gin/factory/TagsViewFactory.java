@@ -10,5 +10,6 @@ import com.sencha.gxt.data.shared.ListStore;
  * @author jstroot
  */
 public interface TagsViewFactory {
-    TagsView create(ListStore<Tag> listStore);
+    TagsView create(ListStore<Tag> listStore,
+                    TagsView.Presenter presenter);
 }

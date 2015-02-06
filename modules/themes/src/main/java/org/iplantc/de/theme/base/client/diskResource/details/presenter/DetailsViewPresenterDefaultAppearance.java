@@ -20,6 +20,26 @@ public class DetailsViewPresenterDefaultAppearance implements DetailsView.Presen
     }
 
     @Override
+    public String tagAttachError() {
+        return displayStrings.tagAttachError();
+    }
+
+    @Override
+    public String tagAttached(String name, String value) {
+        return displayStrings.tagAttached(name, value);
+    }
+
+    @Override
+    public String tagDetachError() {
+        return displayStrings.tagDetachError();
+    }
+
+    @Override
+    public String tagDetached(String value, String name) {
+        return displayStrings.tagDetached(value, name);
+    }
+
+    @Override
     public String unsupportedCogeInfoType() {
         return displayStrings.unsupportedCogeInfoType();
     }

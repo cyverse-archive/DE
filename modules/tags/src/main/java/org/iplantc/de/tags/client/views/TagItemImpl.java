@@ -65,6 +65,7 @@ public class TagItemImpl extends Composite implements TagsView.TagItem {
     TagItemImpl(final CustomIplantTagResources resources,
                 @Assisted final Tag tag) {
         this.resources = resources;
+        this.resources.style().ensureInjected();
         this.tag = tag;
 
         initWidget(uiBinder.createAndBindUi(this));

@@ -27,6 +27,7 @@ public class TagsGinModule extends AbstractGinModule {
         install(new GinFactoryModuleBuilder()
                     .implement(TagsView.class, TagsViewImpl.class)
                     .build(TagsViewFactory.class));
+        bind(TagsView.Presenter.class).to(TagsViewPresenterImpl.class);
         bind(TagsView.TagSuggestionProxy.class).to(TagSuggestionProxyImpl.class);
     }
 }

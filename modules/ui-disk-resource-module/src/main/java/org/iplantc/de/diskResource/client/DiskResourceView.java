@@ -5,7 +5,6 @@ import org.iplantc.de.client.models.HasPath;
 import org.iplantc.de.client.models.IsMaskable;
 import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.client.models.diskResources.Folder;
-import org.iplantc.de.client.models.tags.Tag;
 import org.iplantc.de.client.services.DiskResourceServiceFacade;
 import org.iplantc.de.diskResource.client.events.DiskResourceSelectionChangedEvent;
 import org.iplantc.de.diskResource.client.events.FolderSelectionEvent;
@@ -15,7 +14,6 @@ import org.iplantc.de.diskResource.client.presenters.proxy.FolderContentsLoadCon
 import org.iplantc.de.diskResource.client.presenters.proxy.SelectFolderByPathLoadHandler;
 import org.iplantc.de.diskResource.client.search.events.SubmitDiskResourceQueryEvent.HasSubmitDiskResourceQueryEventHandlers;
 
-import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.safehtml.client.HasSafeHtml;
 import com.google.gwt.user.client.ui.HasOneWidget;
 import com.google.gwt.user.client.ui.IsWidget;
@@ -25,20 +23,12 @@ import com.sencha.gxt.data.shared.loader.PagingLoadResult;
 import com.sencha.gxt.data.shared.loader.TreeLoader;
 
 import java.util.List;
-import java.util.Set;
 
 /**
  * @author jstroot
  */
 public interface DiskResourceView extends IsWidget,
                                           IsMaskable {
-
-    interface DiskResourceViewToolbarAppearance {
-
-        ImageResource newPathListMenuIcon();
-
-        String newPathListMenuText();
-    }
 
     interface FolderContentsRpcProxy extends DataProxy<FolderContentsLoadConfig, PagingLoadResult<DiskResource>> {
         void setHasSafeHtml(HasSafeHtml centerHeader);
@@ -69,8 +59,6 @@ public interface DiskResourceView extends IsWidget,
         String FAVORITES_FOLDER_NAME = "Favorites";
         String FAVORITES_FOLDER_PATH = "/favorites";
 
-        void attachTag(Tag tag);
-
         /**
          * Method to clean up all the events when it is no longer required.
          */
@@ -80,8 +68,6 @@ public interface DiskResourceView extends IsWidget,
 
         void deSelectDiskResources();
 
-        void detachTag(Tag tag);
-
         void disableFilePreview();
 
         void doCreateNewFolder(Folder parentFolder, String folderName);
@@ -89,8 +75,6 @@ public interface DiskResourceView extends IsWidget,
         void doMoveDiskResources(Folder targetFolder, List<DiskResource> resources);
 
         void doRenameDiskResource(DiskResource diskResource, String newName);
-
-        void doSearchTaggedWithResources(Set<Tag> tags);
 
         List<DiskResource> getSelectedDiskResources();
 

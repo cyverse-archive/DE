@@ -4,18 +4,15 @@ import org.iplantc.de.client.models.search.DateInterval;
 import org.iplantc.de.client.models.search.DiskResourceQueryTemplate;
 import org.iplantc.de.client.models.search.FileSizeRange.FileSizeUnit;
 import org.iplantc.de.client.models.tags.Tag;
-import org.iplantc.de.tags.client.gin.factory.TagItemFactory;
-import org.iplantc.de.tags.client.views.TagSearchField;
-import org.iplantc.de.tags.client.views.TagsPanel;
 import org.iplantc.de.commons.client.widgets.IPlantAnchor;
+import org.iplantc.de.tags.client.TagsView;
+import org.iplantc.de.tags.client.views.TagSearchFieldImpl;
 
 import com.google.common.collect.Lists;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.logical.shared.SelectionEvent;
-import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.GwtEvent;
@@ -32,16 +29,11 @@ import com.sencha.gxt.widget.core.client.button.TextButton;
 import com.sencha.gxt.widget.core.client.event.SelectEvent;
 import com.sencha.gxt.widget.core.client.event.SelectEvent.SelectHandler;
 import com.sencha.gxt.widget.core.client.form.CheckBox;
-import com.sencha.gxt.widget.core.client.form.FieldLabel;
 import com.sencha.gxt.widget.core.client.form.SimpleComboBox;
 import com.sencha.gxt.widget.core.client.form.TextField;
 
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.verify;
-
+import static org.mockito.Mockito.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -63,15 +55,13 @@ public class DiskResourceQueryFormTest_WithEditorErrors {
     @Mock DiskResourceQueryFormNamePrompt namePrompt;
 
     @Mock DiskResourceQueryTemplate mockedTemplate;
-    @Mock
-    TagItemFactory tagItemFactoryMock;
-    @Mock TagSearchField searchFieldMock;
 
+    @Mock TagsView.Presenter tagsViewPresenterMock;
     private DiskResourceQueryForm form;
 
     @Before public void setUp() {
         GwtMockito.useProviderForType(SimpleBeanEditorDriver.class, new FakeSimpleBeanEditorDriverProvider(true));
-        form = new DiskResourceQueryForm(tagItemFactoryMock, searchFieldMock, mockedTemplate) {
+        form = new DiskResourceQueryForm(tagsViewPresenterMock, mockedTemplate) {
 
             @Override
             DateInterval createDateInterval(Date from, Date to, String label) {
@@ -218,28 +208,12 @@ public class DiskResourceQueryFormTest_WithEditorErrors {
 
             @Override
             void initTagField() {
-                final TagSearchField tagSearchField = mock(TagSearchField.class);
+                final TagSearchFieldImpl tagSearchField = mock(TagSearchFieldImpl.class);
 
-                final SearchTagListHandler tagListHandlers = mock(SearchTagListHandler.class);
-
-                FieldLabel fl = mock(FieldLabel.class);
-
-                tagPanel = mock(TagsPanel.class);
-                tagPanel.setSize("200px", "50px");
-
-                tagSearchField.addSelectionHandler(new SelectionHandler<Tag>() {
-
-                    @Override
-                    public void onSelection(SelectionEvent<Tag> event) {
-                        tagSearchField.setValue(event.getSelectedItem());
-
-                    }
-                });
                 tagSearchField.addValueChangeHandler(new ValueChangeHandler<Tag>() {
 
                     @Override
                     public void onValueChange(ValueChangeEvent<Tag> event) {
-                        tagListHandlers.onAddTag(event.getValue());
                         tagSearchField.clear();
                         tagSearchField.asWidget().getElement().focus();
                     }

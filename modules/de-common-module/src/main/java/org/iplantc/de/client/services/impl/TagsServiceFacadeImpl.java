@@ -6,6 +6,7 @@ import org.iplantc.de.client.models.tags.IplantTagAutoBeanFactory;
 import org.iplantc.de.client.models.tags.Tag;
 import org.iplantc.de.client.services.TagsServiceFacade;
 import org.iplantc.de.client.services.converters.AsyncCallbackConverter;
+import org.iplantc.de.client.services.converters.StringToVoidCallbackConverter;
 import org.iplantc.de.shared.services.BaseServiceCallWrapper.Type;
 import org.iplantc.de.shared.services.DiscEnvApiService;
 import org.iplantc.de.shared.services.ServiceCallWrapper;
@@ -71,13 +72,13 @@ public class TagsServiceFacadeImpl implements TagsServiceFacade {
     }
 
     @Override
-    public void updateTagDescription(String tagId, String description, AsyncCallback<String> callback) {
-        String address = deProps.getMuleServiceBaseUrl() + "tags/user/" + tagId;
+    public void updateTagDescription(Tag tag, AsyncCallback<Void> callback) {
+        String address = deProps.getMuleServiceBaseUrl() + "tags/user/" + tag.getId();
         JSONObject obj = new JSONObject();
-        if (description != null) {
-            obj.put("description", new JSONString(description));
+        if (tag.getDescription() != null) {
+            obj.put("description", new JSONString(tag.getDescription()));
             ServiceCallWrapper wrapper = new ServiceCallWrapper(Type.PATCH, address, obj.toString());
-            callService(wrapper, callback);
+            callService(wrapper, new StringToVoidCallbackConverter(callback));
         }
 
     }

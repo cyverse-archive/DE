@@ -3936,10 +3936,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
 
     String tags();
 
-    String tagAttached(String resource_name, String tagName);
-
-    String tagDetached(String tagName, String resource_name);
-
     String addToFavorites(String resource_name);
 
     String removeFromFavorites(String resource_name);

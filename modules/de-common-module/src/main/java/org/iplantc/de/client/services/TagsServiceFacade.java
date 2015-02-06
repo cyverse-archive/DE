@@ -10,5 +10,5 @@ public interface TagsServiceFacade {
 
     public void suggestTag(String text, int limit, AsyncCallback<String> callback);
 
-    public void updateTagDescription(String tagId, String description, AsyncCallback<String> callback);
+    public void updateTagDescription(Tag tag, AsyncCallback<Void> callback);
 }

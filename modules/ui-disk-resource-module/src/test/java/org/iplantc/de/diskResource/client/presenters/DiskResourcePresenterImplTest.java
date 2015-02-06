@@ -167,8 +167,7 @@ public class DiskResourcePresenterImplTest {
     }
 
     private void setupMocks() {
-        when(mockViewFactory.create(any(DiskResourceView.Presenter.class),
-                                    any(NavigationView.Presenter.class),
+        when(mockViewFactory.create(any(NavigationView.Presenter.class),
                                     any(GridView.Presenter.class),
                                     any(ToolbarView.Presenter.class),
                                     any(DetailsView.Presenter.class))).thenReturn(mockView);

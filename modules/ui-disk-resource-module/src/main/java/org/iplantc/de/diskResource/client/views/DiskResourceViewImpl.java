@@ -1,15 +1,12 @@
 package org.iplantc.de.diskResource.client.views;
 
 import org.iplantc.de.client.models.diskResources.Folder;
-import org.iplantc.de.client.util.DiskResourceUtil;
 import org.iplantc.de.diskResource.client.DetailsView;
 import org.iplantc.de.diskResource.client.DiskResourceView;
 import org.iplantc.de.diskResource.client.GridView;
 import org.iplantc.de.diskResource.client.NavigationView;
 import org.iplantc.de.diskResource.client.ToolbarView;
 import org.iplantc.de.diskResource.share.DiskResourceModule;
-import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
-import org.iplantc.de.tags.client.gin.factory.TagListPresenterFactory;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -26,12 +23,7 @@ import com.sencha.gxt.widget.core.client.Composite;
 import com.sencha.gxt.widget.core.client.container.BorderLayoutContainer;
 import com.sencha.gxt.widget.core.client.container.BorderLayoutContainer.BorderLayoutData;
 
-import java.util.logging.Logger;
-
 /**
- * FIXME Factor out appearance. This class is not testable in it's current form.
- * FIXME Factor out details panel.
- *
  * @author jstroot, sriram, psarando
  */
 public class DiskResourceViewImpl extends Composite implements DiskResourceView {
@@ -41,7 +33,6 @@ public class DiskResourceViewImpl extends Composite implements DiskResourceView 
     }
 
     private static DiskResourceViewUiBinder BINDER = GWT.create(DiskResourceViewUiBinder.class);
-
 
     @UiField BorderLayoutContainer con;
     @UiField BorderLayoutData westData;
@@ -55,15 +46,8 @@ public class DiskResourceViewImpl extends Composite implements DiskResourceView 
     @UiField(provided = true) ToolbarView toolbar;
     @UiField(provided = true) DetailsView detailsView;
 
-
-    Logger LOG = Logger.getLogger("DRV");
-
     @Inject
-    DiskResourceViewImpl(final IplantDisplayStrings displayStrings,
-                         final DiskResourceUtil diskResourceUtil,
-                         final TagListPresenterFactory tagListPresenterFactory,
-                         @Assisted final DiskResourceView.Presenter presenter,
-                         @Assisted final NavigationView.Presenter navigationPresenter,
+    DiskResourceViewImpl(@Assisted final NavigationView.Presenter navigationPresenter,
                          @Assisted final GridView.Presenter gridViewPresenter,
                          @Assisted final ToolbarView.Presenter toolbarPresenter,
                          @Assisted final DetailsView.Presenter detailsPresenter) {
@@ -71,26 +55,11 @@ public class DiskResourceViewImpl extends Composite implements DiskResourceView 
         this.centerGridView = gridViewPresenter.getView();
         this.toolbar = toolbarPresenter.getView();
         this.detailsView = detailsPresenter.getView();
-        // FIXME Wire up details view
 
         initWidget(BINDER.createAndBindUi(this));
 
-//        detailsPanel.setScrollMode(ScrollMode.AUTO);
-
-        // by default no details to show...
-//        resetDetailsPanel();
-
         con.setNorthWidget(toolbar, northData);
-
     }
-
-//    @Override
-//    public void onDiskResourceSelectionChanged(DiskResourceSelectionChangedEvent event) {
-//        FIXME Move to Details View
-//        if (event.getSelection().isEmpty()) {
-//            resetDetailsPanel();
-//        }
-//    }
 
     @UiFactory
     public ValueProvider<Folder, String> createValueProvider() {

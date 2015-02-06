@@ -12,14 +12,12 @@ import com.google.gwt.cell.client.ValueUpdater;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NativeEvent;
-import com.google.gwt.event.logical.shared.HasValueChangeHandlers;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
-import com.google.gwt.user.client.ui.IsWidget;
 import com.google.inject.Inject;
 
 import com.sencha.gxt.cell.core.client.form.ComboBoxCell;
@@ -45,21 +43,20 @@ import java.util.logging.Logger;
  *
  * @author sriram
  */
-public class TagSearchField extends Composite implements IsWidget,
-                                                         HasValueChangeHandlers<Tag>,
-                                                         RequestCreateTag.HasRequestCreateTagHandlers, SelectionHandler<Tag> {
+public class TagSearchFieldImpl extends Composite implements TagsView.TagSearchField,
+                                                             SelectionHandler<Tag> {
 
     interface TagTemplate extends XTemplates {
         @XTemplate("<div style='font-size:.75em;color:#DB6619;font-weight:bold;'>{tag.value}</div>")
         SafeHtml render(Tag tag);
     }
-    Logger logger = Logger.getLogger(TagSearchField.class.getName());
+    Logger logger = Logger.getLogger(TagSearchFieldImpl.class.getName());
     private final TagsView.TagSuggestionProxy proxy;
     private ListStore<Tag> store;
     private ComboBox<Tag> tagSearchCbo;
 
     @Inject
-    TagSearchField(final TagsView.TagSuggestionProxy proxy) {
+    TagSearchFieldImpl(final TagsView.TagSuggestionProxy proxy) {
         this.proxy = proxy;
         initStore();
 
@@ -131,7 +128,7 @@ public class TagSearchField extends Composite implements IsWidget,
                 Tag tag = tagSearchCbo.getCurrentValue();
                 logger.fine("from enter key -->" + tagSearchCbo.getText() + "<--"
                                 + "value before=>" + tagSearchCbo.getValue());
-                TagSearchField.this.setValue(tag);
+                TagSearchFieldImpl.this.setValue(tag);
             }
         };
         return cell;

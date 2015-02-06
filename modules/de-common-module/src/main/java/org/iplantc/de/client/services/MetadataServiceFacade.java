@@ -29,9 +29,9 @@ public interface MetadataServiceFacade {
 
     public void markAsRetracted(String UUID, String commentId, boolean retracted, AsyncCallback<String> callback);
 
-    public void attachTags(List<String> tagIds, String objectId, AsyncCallback<String> callback);
+    public void attachTags(List<Tag> tags, HasId hasId, AsyncCallback<Void> callback);
 
-    public void detachTags(List<String> tagIds, String objectId, AsyncCallback<String> callback);
+    public void detachTags(List<Tag> tags, HasId hasId, AsyncCallback<Void> callback);
     
     public void getTags(HasId hasId, AsyncCallback<List<Tag>> callback);
  

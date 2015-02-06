@@ -12,6 +12,8 @@ import org.iplantc.de.client.models.tags.Tag;
 import org.iplantc.de.client.models.viewer.InfoType;
 import org.iplantc.de.client.services.FileSystemMetadataServiceFacade;
 import org.iplantc.de.client.services.converters.AsyncCallbackConverter;
+import org.iplantc.de.client.services.converters.StringToVoidCallbackConverter;
+import org.iplantc.de.client.util.DiskResourceUtil;
 import org.iplantc.de.shared.services.BaseServiceCallWrapper.Type;
 import org.iplantc.de.shared.services.DiscEnvApiService;
 import org.iplantc.de.shared.services.ServiceCallWrapper;
@@ -79,6 +81,7 @@ public class FileSystemMetadataServiceFacadeImpl implements FileSystemMetadataSe
     @Inject DiscEnvApiService deServiceFacade;
     @Inject DiskResourceAutoBeanFactory drFactory;
     @Inject IplantTagAutoBeanFactory factory;
+    @Inject DiskResourceUtil diskResourceUtil;
 
     @Inject
     public FileSystemMetadataServiceFacadeImpl() { }
@@ -100,17 +103,19 @@ public class FileSystemMetadataServiceFacadeImpl implements FileSystemMetadataSe
     }
 
     @Override
-    public void attachTags(List<String> tagIds, String objectId, AsyncCallback<String> callback) {
-        String address = getFileSystemEntryAddress(objectId) + "/tags?type=attach";
-        ServiceCallWrapper wrapper = new ServiceCallWrapper(Type.PATCH, address, arrayToJsonString(tagIds));
-        callService(wrapper, callback);
+    public void attachTags(List<Tag> tags, HasId hasId, AsyncCallback<Void> callback) {
+        String address = getFileSystemEntryAddress(hasId.getId()) + "/tags?type=attach";
+        final List<String> stringIdList = diskResourceUtil.asStringIdList(tags);
+        ServiceCallWrapper wrapper = new ServiceCallWrapper(Type.PATCH, address, arrayToJsonString(stringIdList));
+        callService(wrapper, new StringToVoidCallbackConverter(callback));
     }
 
     @Override
-    public void detachTags(List<String> tagIds, String objectId, AsyncCallback<String> callback) {
-        String address = getFileSystemEntryAddress(objectId) + "/tags?type=detach";
-        ServiceCallWrapper wrapper = new ServiceCallWrapper(Type.PATCH, address, arrayToJsonString(tagIds));
-        callService(wrapper, callback);
+    public void detachTags(List<Tag> tags, HasId hasId, AsyncCallback<Void> callback) {
+        String address = getFileSystemEntryAddress(hasId.getId()) + "/tags?type=detach";
+        final List<String> stringIdList = diskResourceUtil.asStringIdList(tags);
+        ServiceCallWrapper wrapper = new ServiceCallWrapper(Type.PATCH, address, arrayToJsonString(stringIdList));
+        callService(wrapper, new StringToVoidCallbackConverter(callback));
     }
 
     @Override

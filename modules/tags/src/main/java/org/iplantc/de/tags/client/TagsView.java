@@ -3,12 +3,15 @@ package org.iplantc.de.tags.client;
 import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.client.models.tags.Tag;
 import org.iplantc.de.tags.client.events.RequestCreateTag;
+import org.iplantc.de.tags.client.events.TagAddedEvent;
+import org.iplantc.de.tags.client.events.TagCreated;
 import org.iplantc.de.tags.client.events.selection.EditTagSelected;
 import org.iplantc.de.tags.client.events.selection.RemoveTagSelected;
 import org.iplantc.de.tags.client.events.selection.TagSelected;
 import org.iplantc.de.tags.client.proxy.TagSuggestionLoadConfig;
 
 import com.google.gwt.event.logical.shared.HasSelectionHandlers;
+import com.google.gwt.event.logical.shared.HasValueChangeHandlers;
 import com.google.gwt.user.client.ui.IsWidget;
 
 import com.sencha.gxt.data.shared.loader.DataProxy;
@@ -22,10 +25,14 @@ import com.sencha.gxt.data.shared.loader.ListLoadResult;
 public interface TagsView extends IsWidget,
                                   RequestCreateTag.HasRequestCreateTagHandlers,
                                   TagSelected.HasTagSelectedHandlers,
-                                  EditTagSelected.HasEditTagSelectedHandlers,
+                                  TagCreated.HasTagCreatedHandlers,
+                                  TagAddedEvent.HasTagAddedEventHandlers,
                                   RemoveTagSelected.HasRemoveTagSelectedHandlers {
 
     interface Presenter {
+
+        interface Appearance {
+        }
 
         void addTag(Tag tag);
 
@@ -35,9 +42,13 @@ public interface TagsView extends IsWidget,
 
         void removeAll();
 
+        void removeTag(Tag tag);
+
         void setEditable(boolean editable);
 
         void setRemovable(boolean removable);
+
+        void updateTagDescription(Tag tag);
     }
     /**
      * RPC proxy used for the TagViewSearch field.
@@ -62,5 +73,14 @@ public interface TagsView extends IsWidget,
 
     }
 
+    interface TagSearchField extends IsWidget,
+                                     HasValueChangeHandlers<Tag>,
+                                     RequestCreateTag.HasRequestCreateTagHandlers {
+
+    }
+
+
     void setEditable(boolean editable);
+
+    void setRemovable(boolean removable);
 }

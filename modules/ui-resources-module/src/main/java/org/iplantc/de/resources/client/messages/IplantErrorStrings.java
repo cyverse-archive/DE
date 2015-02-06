@@ -945,10 +945,6 @@ public interface IplantErrorStrings extends com.google.gwt.i18n.client.Messages,
     // tags
     String tagCreateError();
 
-    String tagAttachError();
-
-    String tagDetachError();
-
     String tagRetrieveError();
 
     // favorites

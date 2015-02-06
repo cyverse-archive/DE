@@ -4,6 +4,8 @@ import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.client.models.diskResources.File;
 import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.client.models.diskResources.PermissionValue;
+import org.iplantc.de.client.models.search.DiskResourceQueryTemplate;
+import org.iplantc.de.client.models.search.SearchAutoBeanFactory;
 import org.iplantc.de.client.models.viewer.InfoType;
 import org.iplantc.de.client.util.DiskResourceUtil;
 import org.iplantc.de.diskResource.client.DetailsView;
@@ -11,9 +13,17 @@ import org.iplantc.de.diskResource.client.events.DiskResourceSelectionChangedEve
 import org.iplantc.de.diskResource.client.events.selection.EditInfoTypeSelected;
 import org.iplantc.de.diskResource.client.events.selection.ManageSharingSelected;
 import org.iplantc.de.diskResource.client.events.selection.ResetInfoTypeSelected;
+import org.iplantc.de.diskResource.client.search.events.SubmitDiskResourceQueryEvent;
 import org.iplantc.de.tags.client.TagsView;
+import org.iplantc.de.tags.client.events.TagAddedEvent;
+import org.iplantc.de.tags.client.events.TagCreated;
+import org.iplantc.de.tags.client.events.TagCreated.TagCreatedHandler;
+import org.iplantc.de.tags.client.events.selection.RemoveTagSelected;
+import org.iplantc.de.tags.client.events.selection.TagSelected;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.TableElement;
 import com.google.gwt.dom.client.TableRowElement;
@@ -26,13 +36,11 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiFactory;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.DateLabel;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.InlineHyperlink;
 import com.google.gwt.user.client.ui.InlineLabel;
-import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 
@@ -43,19 +51,18 @@ import java.util.Date;
 import java.util.logging.Logger;
 
 /**
- * View will be constructed once, not on every selection.
  * View is updated on grid selection changed.
  * View is updated when a store update event occurs
- * <p/>
- * <p/>
- * <p/>
- * Created by jstroot on 2/2/15.
- * TODO Possibly remove Taggable interface. The tag widget mayber?
+ *
  * FIXME Finish style to match
  * @author jstroot
  */
 public class DetailsViewImpl extends Composite implements DetailsView,
-                                                          Editor<DiskResource> {
+                                                          Editor<DiskResource>,
+                                                          TagSelected.TagSelectedHandler,
+                                                          RemoveTagSelected.RemoveTagSelectedHandler,
+                                                          TagCreatedHandler,
+                                                          TagAddedEvent.TagAddedEventHandler {
 
     interface EditorDriver extends SimpleBeanEditorDriver<DiskResource, DetailsViewImpl> { }
 
@@ -84,27 +91,31 @@ public class DetailsViewImpl extends Composite implements DetailsView,
 
     private static DetailsViewImplUiBinder ourUiBinder = GWT.create(DetailsViewImplUiBinder.class);
     private final EditorDriver editorDriver = GWT.create(EditorDriver.class);
-    private final DiskResourceUtil diskResourceUtil;
-    private final Presenter presenter;
+    @Inject DiskResourceUtil diskResourceUtil;
+    @Inject SearchAutoBeanFactory factory;
+
+    private final DetailsView.Presenter presenter;
     private DiskResource boundValue;
     private final TagsView.Presenter tagsPresenter;
 
     private final Logger LOG = Logger.getLogger(DetailsViewImpl.class.getSimpleName());
 
     @Inject
-    DetailsViewImpl(final DiskResourceUtil diskResourceUtil,
-                    final DetailsView.Appearance appearance,
+    DetailsViewImpl(final DetailsView.Appearance appearance,
                     final TagsView.Presenter tagsPresenter,
                     @Assisted final DetailsView.Presenter presenter) {
         this.tagsPresenter = tagsPresenter;
         this.tagListView = tagsPresenter.getView();
-        this.diskResourceUtil = diskResourceUtil;
         this.appearance = appearance;
         this.presenter = presenter;
 
         tagsPresenter.setEditable(true);
         tagsPresenter.setRemovable(true);
         this.tagListView = tagsPresenter.getView();
+        this.tagListView.addTagSelectedHandler(this);
+        this.tagListView.addRemoveTagSelectedHandler(this);
+        this.tagListView.addTagAddedEventHandler(this);
+        this.tagListView.addTagCreatedHandler(this);
 
         initWidget(ourUiBinder.createAndBindUi(this));
         dateCreated.setValue(new Date());
@@ -127,6 +138,11 @@ public class DetailsViewImpl extends Composite implements DetailsView,
     @Override
     public HandlerRegistration addResetInfoTypeSelectedHandler(ResetInfoTypeSelected.ResetInfoTypeSelectedHandler handler) {
         return addHandler(handler, ResetInfoTypeSelected.TYPE);
+    }
+
+    @Override
+    public HandlerRegistration addSubmitDiskResourceQueryEventHandler(SubmitDiskResourceQueryEvent.SubmitDiskResourceQueryEventHandler handler) {
+        return addHandler(handler, SubmitDiskResourceQueryEvent.TYPE);
     }
     //endregion
 
@@ -173,6 +189,31 @@ public class DetailsViewImpl extends Composite implements DetailsView,
 
         bind(singleSelection);
         tagsPresenter.fetchTagsForResource(singleSelection);
+    }
+
+    @Override
+    public void onRemoveTagSelected(RemoveTagSelected event) {
+        Preconditions.checkNotNull(boundValue, "Bound value should not be null right now");
+        presenter.removeTagFromResource(event.getTag(), boundValue);
+    }
+
+    @Override
+    public void onTagAdded(TagAddedEvent event) {
+        Preconditions.checkNotNull(boundValue, "Bound value should not be null right now");
+        presenter.attachTagToResource(event.getTag(), boundValue);
+    }
+
+    @Override
+    public void onTagCreated(TagCreated event) {
+        Preconditions.checkNotNull(boundValue, "Bound value should not be null right now");
+        presenter.attachTagToResource(event.getTag(), boundValue);
+    }
+
+    @Override
+    public void onTagSelected(TagSelected event) {
+        DiskResourceQueryTemplate queryTemplate = factory.dataSearchFilter().as();
+        queryTemplate.setTagQuery(Sets.newHashSet(event.getTag()));
+        fireEvent(new SubmitDiskResourceQueryEvent(queryTemplate));
     }
 
     void bind(final DiskResource resource){
@@ -266,9 +307,6 @@ public class DetailsViewImpl extends Composite implements DetailsView,
                 }
             }
         }
-
-
-
     }
 
     //region UIHandlers
@@ -320,13 +358,12 @@ public class DetailsViewImpl extends Composite implements DetailsView,
             return;
         }
         fireEvent(new ResetInfoTypeSelected(boundValue));
-//        presenter.resetInfoType();
     }
     //endregion
 
     @Override
     public void onUpdate(StoreUpdateEvent<DiskResource> event) {
-        // MUST MATCH THE CURRENTLY BOUND DISKRESOURCE
+        // Must match the currently bound DiskResource
         if(event.getItems().size() != 1
             || event.getItems().iterator().next() != boundValue){
             return;
@@ -339,24 +376,5 @@ public class DetailsViewImpl extends Composite implements DetailsView,
     DateLabel createDateLabel() {
         return new DateLabel(DateTimeFormat.getFormat(DateTimeFormat.PredefinedFormat.DATE_MEDIUM));
     }
-
-    private Command createOnBlurCmd(final SimplePanel boundaryBox, final String defaultStyle) {
-        return new Command() {
-            @Override
-            public void execute() {
-                boundaryBox.getElement().setAttribute("style", defaultStyle);
-            }
-        };
-    }
-
-    private Command createOnFocusCmd(final SimplePanel boundaryBox, final String defaultStyle) {
-        return new Command() {
-            @Override
-            public void execute() {
-                boundaryBox.getElement().setAttribute("style", defaultStyle + " outline: -webkit-focus-ring-color auto 5px;");
-            }
-        };
-    }
-
 
 }

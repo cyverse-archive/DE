@@ -10,8 +10,7 @@ import org.iplantc.de.diskResource.client.ToolbarView;
  * @author jstroot
  */
 public interface DiskResourceViewFactory {
-    DiskResourceView create(DiskResourceView.Presenter presenter,
-                            NavigationView.Presenter navigationPresenter,
+    DiskResourceView create(NavigationView.Presenter navigationPresenter,
                             GridView.Presenter gridViewPresenter,
                             ToolbarView.Presenter toolbarPresenter,
                             DetailsView.Presenter detailsViewPresenter);

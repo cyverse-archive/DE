@@ -13,18 +13,13 @@ import org.iplantc.de.client.models.diskResources.File;
 import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.client.models.diskResources.TYPE;
 import org.iplantc.de.client.models.search.DiskResourceQueryTemplate;
-import org.iplantc.de.client.models.search.SearchAutoBeanFactory;
-import org.iplantc.de.client.models.tags.Tag;
 import org.iplantc.de.client.models.viewer.InfoType;
 import org.iplantc.de.client.services.DiskResourceServiceFacade;
-import org.iplantc.de.client.services.FileSystemMetadataServiceFacade;
-import org.iplantc.de.client.services.MetadataServiceFacade;
 import org.iplantc.de.client.util.CommonModelUtils;
 import org.iplantc.de.client.util.DiskResourceUtil;
 import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.commons.client.info.ErrorAnnouncementConfig;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
-import org.iplantc.de.commons.client.info.SuccessAnnouncementConfig;
 import org.iplantc.de.diskResource.client.DetailsView;
 import org.iplantc.de.diskResource.client.DiskResourceView;
 import org.iplantc.de.diskResource.client.GridView;
@@ -56,7 +51,6 @@ import static com.google.common.base.Preconditions.checkState;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.Iterables;
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HasOneWidget;
@@ -73,12 +67,9 @@ import com.sencha.gxt.widget.core.client.event.SelectEvent;
 import com.sencha.gxt.widget.core.client.event.SelectEvent.SelectHandler;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
 /**
  * @author jstroot
@@ -98,8 +89,6 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
 
     @Inject IplantErrorStrings errorStrings;
     @Inject DiskResourceServiceFacade diskResourceService;
-    @Inject
-    FileSystemMetadataServiceFacade fsmdataService;
     @Inject UserInfo userInfo;
     @Inject DiskResourceSelectorDialogFactory selectorDialogFactory;
     @Inject DiskResourceUtil diskResourceUtil;
@@ -246,8 +235,7 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
         this.eventBus = eventBus;
         this.dataSearchPresenter = dataSearchPresenter;
         ToolbarView.Presenter toolbarPresenter = toolbarViewPresenterFactory.create(this);
-        this.view = diskResourceViewFactory.create(this,
-                                                   navigationPresenter,
+        this.view = diskResourceViewFactory.create(navigationPresenter,
                                                    gridViewPresenter,
                                                    toolbarPresenter,
                                                    detailsViewPresenter);
@@ -260,6 +248,7 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
         this.detailsViewPresenter.getView().addManageSharingSelectedEventHandler(this.gridViewPresenter);
         this.detailsViewPresenter.getView().addEditInfoTypeSelectedEventHandler(this.gridViewPresenter);
         this.detailsViewPresenter.getView().addResetInfoTypeSelectedHandler(this.gridViewPresenter);
+        this.detailsViewPresenter.getView().addSubmitDiskResourceQueryEventHandler(this.gridViewPresenter);
 
 
         // Toolbar Search Field
@@ -650,67 +639,6 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
     @Override
     public void unmask() {
         view.unmask();
-    }
-
-    @Override
-    public void attachTag(final Tag tag) {
-        // FIXME Move to tag presenter?
-        if (getSelectedDiskResources().size() > 0) {
-            Iterator<DiskResource> it = getSelectedDiskResources().iterator();
-            if (it.hasNext()) {
-                final DiskResource next = it.next();
-                fsmdataService.attachTags(Arrays.asList(tag.getId()),
-                                          next.getId(),
-                                          new AsyncCallback<String>() {
-
-                    @Override
-                    public void onFailure(Throwable caught) {
-                        ErrorHandler.post(errorStrings.tagAttachError(), caught);
-
-                    }
-
-                    @Override
-                    public void onSuccess(String result) {
-                        announcer.schedule(new SuccessAnnouncementConfig(displayStrings.tagAttached(next.getName(), tag.getValue())));
-                    }
-                });
-            }
-        }
-
-    }
-
-    @Override
-    public void detachTag(final Tag tag) {
-        // FIXME Move to tag presenter?
-        if (getSelectedDiskResources().size() > 0) {
-            Iterator<DiskResource> it = getSelectedDiskResources().iterator();
-            if (it.hasNext()) {
-                final DiskResource next = it.next();
-                fsmdataService.detachTags(Arrays.asList(tag.getId()),
-                                          next.getId(),
-                                          new AsyncCallback<String>() {
-
-                    @Override
-                    public void onFailure(Throwable caught) {
-                        ErrorHandler.post(errorStrings.tagDetachError(), caught);
-                    }
-
-                    @Override
-                    public void onSuccess(String result) {
-                        announcer.schedule(new SuccessAnnouncementConfig(displayStrings.tagDetached(tag.getValue(), next.getName())));
-                    }
-                });
-            }
-        }
-    }
-
-    @Override
-    public void doSearchTaggedWithResources(Set<Tag> tags) {
-        // FIXME Move to tag presenter?
-        final SearchAutoBeanFactory factory = GWT.create(SearchAutoBeanFactory.class);
-        DiskResourceQueryTemplate qt = factory.dataSearchFilter().as();
-        qt.setTagQuery(tags);
-        navigationPresenter.setSelectedFolder(qt);
     }
 
 }

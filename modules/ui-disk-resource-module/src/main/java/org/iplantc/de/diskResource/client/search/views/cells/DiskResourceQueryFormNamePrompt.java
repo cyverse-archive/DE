@@ -24,6 +24,9 @@ import com.sencha.gxt.widget.core.client.button.TextButton;
 import com.sencha.gxt.widget.core.client.event.SelectEvent;
 import com.sencha.gxt.widget.core.client.form.TextField;
 
+/**
+ * @author jstroot
+ */
 public class DiskResourceQueryFormNamePrompt extends Composite implements Editor<DiskResourceQueryTemplate>, SaveDiskResourceQueryClickedEvent.HasSaveDiskResourceQueryClickedEventHandlers {
 
     interface DiskResourceQueryFormNamePromptUiBinder extends UiBinder<Widget, DiskResourceQueryFormNamePrompt> {}
@@ -34,16 +37,10 @@ public class DiskResourceQueryFormNamePrompt extends Composite implements Editor
 
     protected BaseEventPreview eventPreview;
 
-    @UiField
-    TextField name;
-
-    @Ignore
-    @UiField
-    TextButton saveFilterBtn;
-
-    @Ignore
-    @UiField
-    Label saveLabel;
+    @UiField TextField name;
+    @UiField @Ignore TextButton saveFilterBtn;
+    @UiField @Ignore Label saveLabel;
+    @UiField @Ignore TextButton cancelSaveFilterBtn;
 
     private final QueryFormNamePromptEditorDriver editorDriver = GWT.create(QueryFormNamePromptEditorDriver.class);
     private boolean showing;

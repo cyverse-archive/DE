@@ -20,7 +20,7 @@ public class MetadataServiceFacadeStub implements TagsServiceFacade {
     }
 
     @Override
-    public void updateTagDescription(String tagId, String description, AsyncCallback<String> callback) {
+    public void updateTagDescription(Tag tag, AsyncCallback<Void> callback) {
         // TODO Auto-generated method stub
 
     }
