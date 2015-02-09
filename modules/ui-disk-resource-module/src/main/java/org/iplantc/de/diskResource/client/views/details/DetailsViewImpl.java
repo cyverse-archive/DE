@@ -25,6 +25,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.DivElement;
 import com.google.gwt.dom.client.TableElement;
 import com.google.gwt.dom.client.TableRowElement;
 import com.google.gwt.editor.client.Editor;
@@ -54,7 +55,6 @@ import java.util.logging.Logger;
  * View is updated on grid selection changed.
  * View is updated when a store update event occurs
  *
- * FIXME Finish style to match
  * @author jstroot
  */
 public class DetailsViewImpl extends Composite implements DetailsView,
@@ -83,11 +83,12 @@ public class DetailsViewImpl extends Composite implements DetailsView,
     @UiField TableRowElement sendToRow;
     @UiField TableRowElement shareRow;
     @UiField TableRowElement sizeRow;
-    @UiField TableElement table;
     @UiField @Ignore InlineLabel mimeType;
     @UiField @Ignore InlineHyperlink infoType;
     @UiField Image resetInfoTypeIcon;
     @UiField(provided = true) TagsView tagListView;
+    @UiField TableElement table;
+    @UiField DivElement emptyDetails;
 
     private static DetailsViewImplUiBinder ourUiBinder = GWT.create(DetailsViewImplUiBinder.class);
     private final EditorDriver editorDriver = GWT.create(EditorDriver.class);
@@ -116,6 +117,7 @@ public class DetailsViewImpl extends Composite implements DetailsView,
         this.tagListView.addRemoveTagSelectedHandler(this);
         this.tagListView.addTagAddedEventHandler(this);
         this.tagListView.addTagCreatedHandler(this);
+        this.tagListView.asWidget().getElement().addClassName(appearance.css().tagSearch());
 
         initWidget(ourUiBinder.createAndBindUi(this));
         dateCreated.setValue(new Date());
@@ -153,9 +155,11 @@ public class DetailsViewImpl extends Composite implements DetailsView,
             bind(null);
             // Hide table
             table.addClassName(appearance.css().hidden());
+            emptyDetails.removeClassName(appearance.css().hidden());
             return;
         }
         table.removeClassName(appearance.css().hidden());
+        emptyDetails.addClassName(appearance.css().hidden());
         // UPDATE ROW VISIBILITIES
         DiskResource singleSelection = event.getSelection().iterator().next();
         if (singleSelection instanceof File) {

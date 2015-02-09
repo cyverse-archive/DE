@@ -23,9 +23,7 @@
             <tags:TagSearchFieldImpl ui:field="tagSearchField"/>
         </container:child>
         <container:child layoutData="{tagsLayoutData}">
-            <tags:TagsPanel ui:field="tagsPanel"
-                            height="150px"
-                            width="160px"/>
+            <tags:TagsPanel ui:field="tagsPanel"/>
         </container:child>
     </container:VerticalLayoutContainer>
 </ui:UiBinder> 

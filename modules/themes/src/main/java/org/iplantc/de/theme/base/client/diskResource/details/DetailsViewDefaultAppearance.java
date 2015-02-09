@@ -195,4 +195,5 @@ public class DetailsViewDefaultAppearance implements DetailsView.Appearance {
     public String lastModifiedLabel() {
         return lastModified() + ":";
     }
+
 }

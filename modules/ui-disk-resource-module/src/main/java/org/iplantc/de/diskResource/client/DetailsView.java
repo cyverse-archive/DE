@@ -39,6 +39,14 @@ public interface DetailsView extends IsWidget,
             String hyperlink();
 
             String deselectIcon();
+
+            String table();
+
+            String tagSearch();
+
+            String row();
+
+            String emptyDetails();
         }
 
         String coge();
@@ -100,6 +108,7 @@ public interface DetailsView extends IsWidget,
         String createdDateLabel();
 
         String lastModifiedLabel();
+
     }
 
     interface Presenter {

@@ -2,20 +2,24 @@
              xmlns:g='urn:import:com.google.gwt.user.client.ui'
              xmlns:tags="urn:import:org.iplantc.de.tags.client">
 
-
     <ui:with field="appearance"
              type="org.iplantc.de.diskResource.client.DetailsView.Appearance" />
-    <g:HTMLPanel>
+    <g:HTMLPanel ui:field="panel">
+        <div ui:field="emptyDetails"
+                class="{appearance.css.emptyDetails}">
+            <ui:text from="{appearance.noDetails}"/>
+        </div>
         <table ui:field="table"
-               class="{appearance.css.hidden}"> <!-- -->
-            <tr> <td class="{appearance.css.label}">
+               class="{appearance.css.table} {appearance.css.hidden}">
+            <tr class="{appearance.css.row}">
+                <td class="{appearance.css.label}">
                     <ui:text from="{appearance.lastModifiedLabel}"/>
                 </td>
                 <td class="{appearance.css.value}">
                     <g:DateLabel ui:field="lastModified"/>
                 </td>
             </tr>
-            <tr>
+            <tr class="{appearance.css.row}">
                 <td class="{appearance.css.label}">
                     <ui:text from="{appearance.createdDateLabel}"/>
                 </td>
@@ -23,7 +27,7 @@
                     <g:DateLabel ui:field="dateCreated"/>
                 </td>
             </tr>
-            <tr>
+            <tr class="{appearance.css.row}">
                 <td class="{appearance.css.label}">
                     <ui:text from="{appearance.permissionsLabel}" />
                 </td>
@@ -32,7 +36,8 @@
                 </td>
             </tr>
             <!-- If not in trash -->
-            <tr ui:field="shareRow">
+            <tr class="{appearance.css.row}"
+                ui:field="shareRow">
                 <td class="{appearance.css.label}">
                     <ui:text from="{appearance.shareLabel}" />
                 </td>
@@ -43,7 +48,8 @@
             </tr>
             <!-- IF it is a File-->
 
-            <tr ui:field="sizeRow">
+            <tr class="{appearance.css.row}"
+                ui:field="sizeRow">
                 <td class="{appearance.css.label}">
                     <ui:text from="{appearance.sizeLabel}" />
                 </td>
@@ -51,7 +57,8 @@
                     <g:InlineLabel ui:field="size"/>
                 </td>
             </tr>
-            <tr ui:field="mimeTypeRow">
+            <tr class="{appearance.css.row}"
+                ui:field="mimeTypeRow">
                 <td class="{appearance.css.label}">
                     <ui:text from="{appearance.typeLabel}"/>
                 </td>
@@ -59,7 +66,8 @@
                     <g:InlineLabel ui:field="mimeType"/>
                 </td>
             </tr>
-            <tr ui:field="infoTypeRow">
+            <tr class="{appearance.css.row}"
+                ui:field="infoTypeRow">
                 <td class="{appearance.css.label}">
                     <ui:text from="{appearance.infoTypeLabel}"/>
                 </td>
@@ -73,7 +81,8 @@
                 </td>
             </tr>
             <!-- If not in trash -->
-            <tr ui:field="sendToRow">
+            <tr class="{appearance.css.row}"
+                ui:field="sendToRow">
                 <td class="{appearance.css.label}">
                     <ui:text from="{appearance.sendToLabel}"/>
                 </td>
@@ -84,7 +93,8 @@
             </tr>
 
             <!-- If it is a Folder -->
-            <tr ui:field="fileFolderNumRow">
+            <tr class="{appearance.css.row}"
+                ui:field="fileFolderNumRow">
                 <td class="{appearance.css.label}">
                     <ui:text from="{appearance.filesFoldersLabel}"/>
                 </td>
@@ -92,11 +102,17 @@
                     <g:InlineLabel ui:field="fileFolderNum"/>
                 </td>
             </tr>
+            <tr>
+                <td class="{appearance.css.label}">
+                    <ui:text from="{appearance.tagsLabel}"/>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <tags:TagsView ui:field="tagListView"/>
+                </td>
+            </tr>
         </table>
-        <label class="{appearance.css.label}">
-            <ui:text from="{appearance.tagsLabel}"/>
-        </label>
-        <tags:TagsView ui:field="tagListView" />
 
     </g:HTMLPanel>
 </ui:UiBinder>
