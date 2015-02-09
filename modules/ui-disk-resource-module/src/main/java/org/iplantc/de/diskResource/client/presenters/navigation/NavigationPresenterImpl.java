@@ -112,17 +112,6 @@ public class NavigationPresenterImpl implements NavigationView.Presenter,
     }
 
     @Override
-    public void addFolder(Folder parent, Folder newChild) {
-        treeStore.add(parent, newChild);
-        if (getSelectedFolder() == null) {
-            Folder request = factory.folder().as();
-            request.setPath(userInfo.getHomePath());
-            // Set selected folder by path
-            setSelectedFolder((HasPath) request);
-        }
-    }
-
-    @Override
     public void doMoveDiskResources(Folder targetFolder, List<DiskResource> dropData) {
         parentPresenter.doMoveDiskResources(targetFolder, dropData);
     }

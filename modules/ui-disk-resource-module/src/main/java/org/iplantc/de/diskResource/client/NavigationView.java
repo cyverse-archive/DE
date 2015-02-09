@@ -67,8 +67,6 @@ public interface NavigationView extends IsWidget,
 
         void addFolder(Folder folder);
 
-        void addFolder(Folder parent, Folder newChild);
-
         void doMoveDiskResources(Folder targetFolder, List<DiskResource> dropData);
 
         Iterable<Folder> getRootItems();

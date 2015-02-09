@@ -115,7 +115,7 @@ public final class DiskResourcesEventHandler implements DiskResourcesDeletedEven
 
     @Override
     public void onFolderCreated(Folder parentFolder, Folder newFolder) {
-        navigationPresenter.addFolder(parentFolder, newFolder);
+        navigationPresenter.refreshFolder(parentFolder);
     }
 
 }

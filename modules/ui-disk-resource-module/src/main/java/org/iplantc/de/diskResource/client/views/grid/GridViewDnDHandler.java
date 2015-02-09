@@ -9,7 +9,6 @@ import org.iplantc.de.diskResource.client.GridView;
 import com.google.common.collect.Lists;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.EventTarget;
-import com.google.gwt.user.client.ui.IsWidget;
 
 import com.sencha.gxt.dnd.core.client.DndDragEnterEvent;
 import com.sencha.gxt.dnd.core.client.DndDragEnterEvent.DndDragEnterHandler;
@@ -87,9 +86,7 @@ class GridViewDnDHandler implements DndDragStartHandler,
     public void onDragStart(DndDragStartEvent event) {
         moved = false;
 
-        Element dragStartEl = event.getDragStartEvent().getStartElement();
-
-        List<? extends DiskResource> dragData = getDragSources(event.getTarget(), dragStartEl);
+        List<? extends DiskResource> dragData = presenter.getSelectedDiskResources();
 
         if ((dragData != null)
                 && !dragData.isEmpty()
@@ -168,29 +165,6 @@ class GridViewDnDHandler implements DndDragStartHandler,
 
     private void doMoveDiskResources(Folder targetFolder, List<DiskResource> resources) {
         presenter.doMoveDiskResources(targetFolder, resources);
-    }
-
-    private List<? extends DiskResource> getDragSources(IsWidget source, Element dragStartEl) {
-        final List<DiskResource> selectedDiskResources = presenter.getSelectedDiskResources();
-
-        return selectedDiskResources;
-        /*
-        if(selectedDiskResources.isEmpty()){
-            return null;
-        }
-
-        Element targetRow = presenter.findGridRow(dragStartEl);
-        if(targetRow != null){
-            int dropIndex = presenter.findGridRowIndex(targetRow);
-
-            DiskResource selDiskResource = presenter.getAllDiskResources().get(dropIndex);
-            if(selDiskResource != null){
-                // FIXME Determine if the checks above are necessary.
-                // Why can't we just return this?
-                return Lists.newArrayList(selectedDiskResources);
-            }
-        }
-        return null;*/
     }
 
     @SuppressWarnings("unchecked")
