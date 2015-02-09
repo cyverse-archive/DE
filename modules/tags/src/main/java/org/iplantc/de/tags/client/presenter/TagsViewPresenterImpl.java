@@ -2,7 +2,7 @@ package org.iplantc.de.tags.client.presenter;
 
 import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.client.models.tags.Tag;
-import org.iplantc.de.client.services.MetadataServiceFacade;
+import org.iplantc.de.client.services.FileSystemMetadataServiceFacade;
 import org.iplantc.de.client.services.TagsServiceFacade;
 import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
@@ -29,7 +29,7 @@ public class TagsViewPresenterImpl implements TagsView.Presenter,
 
     @Inject IplantAnnouncer announcer;
     @Inject TagsView.Presenter.Appearance appearance;
-    @Inject MetadataServiceFacade metadataService;
+    @Inject FileSystemMetadataServiceFacade metadataService;
     @Inject TagsServiceFacade tagsService;
     private final ListStore<Tag> listStore;
     private final TagsView view;

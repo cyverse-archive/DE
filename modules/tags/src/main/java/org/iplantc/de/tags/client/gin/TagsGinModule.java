@@ -1,12 +1,11 @@
 package org.iplantc.de.tags.client.gin;
 
-import org.iplantc.de.tags.client.gin.factory.TagListPresenterFactory;
+import org.iplantc.de.tags.client.TagsView;
 import org.iplantc.de.tags.client.gin.factory.TagItemFactory;
 import org.iplantc.de.tags.client.gin.factory.TagsViewFactory;
 import org.iplantc.de.tags.client.presenter.TagsViewPresenterImpl;
 import org.iplantc.de.tags.client.proxy.TagSuggestionProxyImpl;
 import org.iplantc.de.tags.client.views.TagItemImpl;
-import org.iplantc.de.tags.client.TagsView;
 import org.iplantc.de.tags.client.views.TagsViewImpl;
 
 import com.google.gwt.inject.client.AbstractGinModule;
@@ -21,9 +20,6 @@ public class TagsGinModule extends AbstractGinModule {
         install(new GinFactoryModuleBuilder()
                     .implement(TagsView.TagItem.class, TagItemImpl.class)
                     .build(TagItemFactory.class));
-        install(new GinFactoryModuleBuilder()
-                    .implement(TagsView.Presenter.class, TagsViewPresenterImpl.class)
-                    .build(TagListPresenterFactory.class));
         install(new GinFactoryModuleBuilder()
                     .implement(TagsView.class, TagsViewImpl.class)
                     .build(TagsViewFactory.class));

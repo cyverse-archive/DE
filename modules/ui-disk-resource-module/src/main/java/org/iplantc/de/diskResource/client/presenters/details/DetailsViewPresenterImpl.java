@@ -5,7 +5,7 @@ import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.client.models.diskResources.File;
 import org.iplantc.de.client.models.tags.Tag;
 import org.iplantc.de.client.models.viewer.InfoType;
-import org.iplantc.de.client.services.MetadataServiceFacade;
+import org.iplantc.de.client.services.FileSystemMetadataServiceFacade;
 import org.iplantc.de.client.util.DiskResourceUtil;
 import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.commons.client.info.ErrorAnnouncementConfig;
@@ -29,7 +29,7 @@ public class DetailsViewPresenterImpl implements DetailsView.Presenter {
     @Inject DiskResourceUtil diskResourceUtil;
     @Inject EventBus eventBus;
     @Inject IplantAnnouncer announcer;
-    @Inject MetadataServiceFacade metadataService;
+    @Inject FileSystemMetadataServiceFacade metadataService;
     @Inject DetailsView.Presenter.Appearance appearance;
 
     private final DetailsView view;

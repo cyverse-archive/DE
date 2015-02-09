@@ -4,10 +4,7 @@
 package org.iplantc.de.client.services;
 
 import org.iplantc.de.client.models.HasId;
-import org.iplantc.de.client.models.diskResources.Folder;
-import org.iplantc.de.client.models.diskResources.TYPE;
 import org.iplantc.de.client.models.tags.Tag;
-import org.iplantc.de.client.models.viewer.InfoType;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 

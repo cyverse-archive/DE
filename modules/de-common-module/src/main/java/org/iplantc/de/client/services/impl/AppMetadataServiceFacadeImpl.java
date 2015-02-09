@@ -1,6 +1,8 @@
 package org.iplantc.de.client.services.impl;
 
 import org.iplantc.de.client.models.DEProperties;
+import org.iplantc.de.client.models.HasId;
+import org.iplantc.de.client.models.tags.Tag;
 import org.iplantc.de.client.services.AppMetadataServiceFacade;
 import org.iplantc.de.shared.services.BaseServiceCallWrapper.Type;
 import org.iplantc.de.shared.services.DiscEnvApiService;
@@ -15,21 +17,25 @@ import java.util.List;
 
 public class AppMetadataServiceFacadeImpl implements AppMetadataServiceFacade {
 
-    @Inject
-    DEProperties deProps;
-    @Inject
-    DiscEnvApiService deServiceFacade;
+    @Inject DEProperties deProps;
+    @Inject DiscEnvApiService deServiceFacade;
 
     @Inject
     public AppMetadataServiceFacadeImpl() {
     }
 
+    /**
+     * Duplicated in {@link org.iplantc.de.client.services.AppUserServiceFacade#favoriteApp(String, String, boolean, com.google.gwt.user.client.rpc.AsyncCallback)}
+     */
     @Override
     public void addToFavorites(String UUID, AsyncCallback<String> callback) {
         // TODO Auto-generated method stub
 
     }
 
+    /**
+     * Duplicated in {@link org.iplantc.de.client.services.AppUserServiceFacade#favoriteApp(String, String, boolean, com.google.gwt.user.client.rpc.AsyncCallback)}
+     */
     @Override
     public void removeFromFavorites(String UUID, AsyncCallback<String> callback) {
         // TODO Auto-generated method stub
@@ -44,6 +50,9 @@ public class AppMetadataServiceFacadeImpl implements AppMetadataServiceFacade {
 
     }
 
+    /**
+     * Duplicated in {@link org.iplantc.de.client.services.AppUserServiceFacade#addAppComment(String, int, String, String, String, com.google.gwt.user.client.rpc.AsyncCallback)}
+     */
     @Override
     public void addComment(String UUID, String comment, AsyncCallback<String> callback) {
         String address = getAppsMetadataAddress(UUID) + "/comments";
@@ -66,19 +75,19 @@ public class AppMetadataServiceFacadeImpl implements AppMetadataServiceFacade {
     }
 
     @Override
-    public void attachTags(List<String> tagIds, String objectId, AsyncCallback<String> callback) {
+    public void attachTags(List<Tag> tags, HasId hasId, AsyncCallback<Void> callback) {
         // TODO Auto-generated method stub
 
     }
 
     @Override
-    public void detachTags(List<String> tagIds, String objectId, AsyncCallback<String> callback) {
+    public void detachTags(List<Tag> tags, HasId hasId, AsyncCallback<Void> callback) {
         // TODO Auto-generated method stub
 
     }
 
     @Override
-    public void getTags(String UUID, AsyncCallback<String> callback) {
+    public void getTags(HasId hasId, AsyncCallback<List<Tag>> callback) {
         // TODO Auto-generated method stub
 
     }
