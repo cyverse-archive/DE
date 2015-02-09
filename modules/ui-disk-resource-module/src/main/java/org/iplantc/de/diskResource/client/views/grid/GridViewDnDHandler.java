@@ -9,6 +9,7 @@ import org.iplantc.de.diskResource.client.GridView;
 import com.google.common.collect.Lists;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.EventTarget;
+import com.google.gwt.user.client.ui.IsWidget;
 
 import com.sencha.gxt.dnd.core.client.DndDragEnterEvent;
 import com.sencha.gxt.dnd.core.client.DndDragEnterEvent.DndDragEnterHandler;
@@ -22,6 +23,7 @@ import com.sencha.gxt.dnd.core.client.StatusProxy;
 import com.sencha.gxt.fx.client.DragMoveEvent;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -86,11 +88,15 @@ class GridViewDnDHandler implements DndDragStartHandler,
     public void onDragStart(DndDragStartEvent event) {
         moved = false;
 
-        List<? extends DiskResource> dragData = presenter.getSelectedDiskResources();
+        Element dragStartEl = event.getDragStartEvent().getStartElement();
 
-        if ((dragData != null)
-                && !dragData.isEmpty()
-                && (!containsFilteredItems(dragData))) {
+        List<? extends DiskResource> dragData = getDragSources(event.getTarget(), dragStartEl);
+
+        if (dragData.isEmpty()
+                || containsFilteredItems(dragData)) {
+            // Cancel drag
+            event.setCancelled(true);
+        } else {
             event.setData(dragData);
             if (isSelectAllChecked()) {
                 event.getStatusProxy().update(appearance.dataDragDropStatusText(getTotalSelectionCount()));
@@ -99,8 +105,6 @@ class GridViewDnDHandler implements DndDragStartHandler,
             }
             event.getStatusProxy().setStatus(true);
             event.setCancelled(false);
-        } else {
-            event.setCancelled(true);
         }
     }
 
@@ -165,6 +169,32 @@ class GridViewDnDHandler implements DndDragStartHandler,
 
     private void doMoveDiskResources(Folder targetFolder, List<DiskResource> resources) {
         presenter.doMoveDiskResources(targetFolder, resources);
+    }
+
+    private List<? extends DiskResource> getDragSources(IsWidget source, Element dragStartEl) {
+        final List<DiskResource> selectedDiskResources = presenter.getSelectedDiskResources();
+
+        /*
+         * Return an empty list (empty drag data) if
+         * -- the target row cannot be found in the grid, OR
+         * -- the presenter doesn't have any selections
+         */
+        Element targetRow = presenter.findGridRow(dragStartEl);
+        if(targetRow != presenter.findGridRow(dragStartEl)
+            || selectedDiskResources.isEmpty()){
+            return Collections.emptyList();
+        }
+
+        /*
+         * Return an empty list if the drag start element is not included in current selection
+         */
+        int dropIndex = presenter.findGridRowIndex(targetRow);
+        if (dropIndex == -1
+                || presenter.getAllDiskResources().get(dropIndex) == null) {
+            return Collections.emptyList();
+        }
+
+        return Lists.newArrayList(selectedDiskResources);
     }
 
     @SuppressWarnings("unchecked")
