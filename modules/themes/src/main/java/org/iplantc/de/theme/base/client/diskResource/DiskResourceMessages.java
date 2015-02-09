@@ -33,4 +33,7 @@ public interface DiskResourceMessages extends Messages {
 
     @Key("share")
     String share();
+
+    @Key("size")
+    String size();
 }

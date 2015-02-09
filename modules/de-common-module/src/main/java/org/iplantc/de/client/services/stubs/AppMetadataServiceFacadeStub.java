@@ -1,5 +1,7 @@
 package org.iplantc.de.client.services.stubs;
 
+import org.iplantc.de.client.models.HasId;
+import org.iplantc.de.client.models.tags.Tag;
 import org.iplantc.de.client.services.AppMetadataServiceFacade;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -42,20 +44,17 @@ public class AppMetadataServiceFacadeStub implements AppMetadataServiceFacade {
     }
 
     @Override
-    public void attachTags(List<String> tagIds, String objectId, AsyncCallback<String> callback) {
-        // TODO Auto-generated method stub
+    public void attachTags(List<Tag> tags, HasId hasId, AsyncCallback<Void> callback) {
 
     }
 
     @Override
-    public void detachTags(List<String> tagIds, String objectId, AsyncCallback<String> callback) {
-        // TODO Auto-generated method stub
+    public void detachTags(List<Tag> tags, HasId hasId, AsyncCallback<Void> callback) {
 
     }
 
     @Override
-    public void getTags(String UUID, AsyncCallback<String> callback) {
-        // TODO Auto-generated method stub
+    public void getTags(HasId hasId, AsyncCallback<List<Tag>> callback) {
 
     }
 

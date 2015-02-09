@@ -5,20 +5,15 @@ import org.iplantc.de.client.models.HasPath;
 import org.iplantc.de.client.models.IsMaskable;
 import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.client.models.diskResources.Folder;
-import org.iplantc.de.client.models.tags.IplantTag;
 import org.iplantc.de.client.services.DiskResourceServiceFacade;
 import org.iplantc.de.diskResource.client.events.DiskResourceSelectionChangedEvent;
 import org.iplantc.de.diskResource.client.events.FolderSelectionEvent;
 import org.iplantc.de.diskResource.client.events.RootFoldersRetrievedEvent;
 import org.iplantc.de.diskResource.client.events.SavedSearchesRetrievedEvent;
-import org.iplantc.de.diskResource.client.events.selection.EditInfoTypeSelected;
-import org.iplantc.de.diskResource.client.events.selection.ManageSharingSelected;
 import org.iplantc.de.diskResource.client.presenters.proxy.FolderContentsLoadConfig;
 import org.iplantc.de.diskResource.client.presenters.proxy.SelectFolderByPathLoadHandler;
 import org.iplantc.de.diskResource.client.search.events.SubmitDiskResourceQueryEvent.HasSubmitDiskResourceQueryEventHandlers;
-import org.iplantc.de.tags.client.Taggable;
 
-import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.safehtml.client.HasSafeHtml;
 import com.google.gwt.user.client.ui.HasOneWidget;
 import com.google.gwt.user.client.ui.IsWidget;
@@ -27,26 +22,13 @@ import com.sencha.gxt.data.shared.loader.DataProxy;
 import com.sencha.gxt.data.shared.loader.PagingLoadResult;
 import com.sencha.gxt.data.shared.loader.TreeLoader;
 
-import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
 /**
  * @author jstroot
  */
 public interface DiskResourceView extends IsWidget,
-                                          IsMaskable,
-                                          Taggable,
-                                          ManageSharingSelected.HasManageSharingSelectedEventHandlers,
-                                          DiskResourceSelectionChangedEvent.DiskResourceSelectionChangedEventHandler,
-                                          EditInfoTypeSelected.HasEditInfoTypeSelectedEventHandlers {
-
-    interface DiskResourceViewToolbarAppearance {
-
-        ImageResource newPathListMenuIcon();
-
-        String newPathListMenuText();
-    }
+                                          IsMaskable {
 
     interface FolderContentsRpcProxy extends DataProxy<FolderContentsLoadConfig, PagingLoadResult<DiskResource>> {
         void setHasSafeHtml(HasSafeHtml centerHeader);
@@ -72,15 +54,10 @@ public interface DiskResourceView extends IsWidget,
     interface Presenter extends org.iplantc.de.commons.client.presenter.Presenter,
                                 IsMaskable,
                                 DiskResourceSelectionChangedEvent.HasDiskResourceSelectionChangedEventHandlers,
-                                FolderSelectionEvent.HasFolderSelectionEventHandlers,
-                                DiskResourceSelectionChangedEvent.DiskResourceSelectionChangedEventHandler {
+                                FolderSelectionEvent.HasFolderSelectionEventHandlers {
 
         String FAVORITES_FOLDER_NAME = "Favorites";
         String FAVORITES_FOLDER_PATH = "/favorites";
-
-        void attachTag(IplantTag tag);
-
-        boolean canDragDataToTargetFolder(Folder targetFolder, Collection<DiskResource> dropData);
 
         /**
          * Method to clean up all the events when it is no longer required.
@@ -91,11 +68,7 @@ public interface DiskResourceView extends IsWidget,
 
         void deSelectDiskResources();
 
-        void detachTag(IplantTag tag);
-
         void disableFilePreview();
-
-        void displayAndCacheDiskResourceInfo(DiskResource info);
 
         void doCreateNewFolder(Folder parentFolder, String folderName);
 
@@ -103,30 +76,16 @@ public interface DiskResourceView extends IsWidget,
 
         void doRenameDiskResource(DiskResource diskResource, String newName);
 
-        void doSearchTaggedWithResources(Set<IplantTag> tags);
-
-        void getDetails(DiskResource next);
-
         List<DiskResource> getSelectedDiskResources();
 
         Folder getSelectedFolder();
-
-        void getTagsForSelectedResource();
 
         DiskResourceView getView();
 
         void go(HasOneWidget container, HasPath folderToSelect,
                 List<? extends HasId> diskResourcesToSelect);
 
-        void resetInfoType();
-
         void selectTrashFolder();
-
-        void sendSelectedResourceToEnsembl();
-
-        void sendSelectedResourcesToCoge();
-
-        void sendSelectedResourcesToTreeViewer();
 
         void setSelectedDiskResourcesById(List<? extends HasId> selectedDiskResources);
 
@@ -141,19 +100,7 @@ public interface DiskResourceView extends IsWidget,
 
         void setViewDebugId(String baseID);
 
-        void unmaskVizMenuOptions();
     }
-
-
-    void maskDetailsPanel();
-
-    void maskSendToCoGe();
-
-    void maskSendToEnsembl();
-
-    void maskSendToTreeViewer();
-
-    void resetDetailsPanel();
 
     void setEastWidgetHidden(boolean hideEastWidget);
 
@@ -163,15 +110,4 @@ public interface DiskResourceView extends IsWidget,
 
     void setSouthWidget(IsWidget fl, double size);
 
-    void unmaskDetailsPanel();
-
-    void unmaskSendToCoGe();
-
-    void unmaskSendToEnsembl();
-
-    void unmaskSendToTreeViewer();
-
-    void updateDetails(DiskResource info);
-
-    void updateTags(List<IplantTag> tags);
 }

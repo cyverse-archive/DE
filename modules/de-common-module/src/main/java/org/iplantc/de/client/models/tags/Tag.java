@@ -4,7 +4,10 @@ import org.iplantc.de.client.models.HasId;
 
 import com.google.web.bindery.autobean.shared.AutoBean.PropertyName;
 
-public interface IplantTag extends HasId {
+/**
+ * @author jstroot
+ */
+public interface Tag extends HasId {
 
     @PropertyName("id")
     void setId(String id);

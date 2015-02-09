@@ -7,6 +7,6 @@ public interface IplantTagAutoBeanFactory extends AutoBeanFactory {
 
     AutoBean<IplantTagList> getTagList();
 
-    AutoBean<IplantTag> getTag();
+    AutoBean<Tag> getTag();
 
 }

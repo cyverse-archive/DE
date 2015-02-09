@@ -13,20 +13,14 @@ import org.iplantc.de.client.models.diskResources.File;
 import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.client.models.diskResources.TYPE;
 import org.iplantc.de.client.models.search.DiskResourceQueryTemplate;
-import org.iplantc.de.client.models.search.SearchAutoBeanFactory;
-import org.iplantc.de.client.models.tags.IplantTag;
-import org.iplantc.de.client.models.tags.IplantTagAutoBeanFactory;
-import org.iplantc.de.client.models.tags.IplantTagList;
 import org.iplantc.de.client.models.viewer.InfoType;
 import org.iplantc.de.client.services.DiskResourceServiceFacade;
-import org.iplantc.de.client.services.FileSystemMetadataServiceFacade;
-import org.iplantc.de.client.services.MetadataServiceFacade;
 import org.iplantc.de.client.util.CommonModelUtils;
 import org.iplantc.de.client.util.DiskResourceUtil;
 import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.commons.client.info.ErrorAnnouncementConfig;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
-import org.iplantc.de.commons.client.info.SuccessAnnouncementConfig;
+import org.iplantc.de.diskResource.client.DetailsView;
 import org.iplantc.de.diskResource.client.DiskResourceView;
 import org.iplantc.de.diskResource.client.GridView;
 import org.iplantc.de.diskResource.client.NavigationView;
@@ -41,13 +35,11 @@ import org.iplantc.de.diskResource.client.presenters.callbacks.CreateFolderCallb
 import org.iplantc.de.diskResource.client.presenters.callbacks.DiskResourceDeleteCallback;
 import org.iplantc.de.diskResource.client.presenters.callbacks.DiskResourceMoveCallback;
 import org.iplantc.de.diskResource.client.presenters.callbacks.DiskResourceRestoreCallback;
-import org.iplantc.de.diskResource.client.presenters.callbacks.GetDiskResourceDetailsCallback;
 import org.iplantc.de.diskResource.client.presenters.callbacks.RenameDiskResourceCallback;
 import org.iplantc.de.diskResource.client.presenters.handlers.DiskResourcesEventHandler;
 import org.iplantc.de.diskResource.client.search.presenter.DataSearchPresenter;
 import org.iplantc.de.diskResource.client.search.views.DiskResourceSearchField;
 import org.iplantc.de.diskResource.client.views.dialogs.FolderSelectDialog;
-import org.iplantc.de.diskResource.client.views.dialogs.InfoTypeEditorDialog;
 import org.iplantc.de.diskResource.client.views.dialogs.RenameFileDialog;
 import org.iplantc.de.diskResource.client.views.dialogs.RenameFolderDialog;
 import org.iplantc.de.diskResource.share.DiskResourceModule;
@@ -59,17 +51,13 @@ import static com.google.common.base.Preconditions.checkState;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.Iterables;
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.HandlerRegistration;
-import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HasOneWidget;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import com.google.inject.assistedinject.AssistedInject;
-import com.google.web.bindery.autobean.shared.AutoBean;
-import com.google.web.bindery.autobean.shared.AutoBeanCodex;
 
 import com.sencha.gxt.widget.core.client.Dialog.PredefinedButton;
 import com.sencha.gxt.widget.core.client.box.ConfirmMessageBox;
@@ -79,22 +67,17 @@ import com.sencha.gxt.widget.core.client.event.SelectEvent;
 import com.sencha.gxt.widget.core.client.event.SelectEvent.SelectHandler;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
 /**
  * @author jstroot
  */
 public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
-                                                  DiskResourceSelectionChangedEvent.DiskResourceSelectionChangedEventHandler,
                                                   RootFoldersRetrievedEvent.RootFoldersRetrievedEventHandler,
                                                   BulkDownloadSelected.BulkDownloadSelectedEventHandler,
                                                   DeleteDiskResourcesSelected.DeleteDiskResourcesSelectedEventHandler,
-                                                  EditInfoTypeSelected.EditInfoTypeSelectedEventHandler,
                                                   EmptyTrashSelected.EmptyTrashSelectedHandler,
                                                   MoveDiskResourcesSelected.MoveDiskResourcesSelectedHandler,
                                                   RefreshFolderSelected.RefreshFolderSelectedHandler,
@@ -106,8 +89,6 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
 
     @Inject IplantErrorStrings errorStrings;
     @Inject DiskResourceServiceFacade diskResourceService;
-    @Inject
-    FileSystemMetadataServiceFacade fsmdataService;
     @Inject UserInfo userInfo;
     @Inject DiskResourceSelectorDialogFactory selectorDialogFactory;
     @Inject DiskResourceUtil diskResourceUtil;
@@ -118,6 +99,7 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
     final List<HandlerRegistration> dreventHandlers = new ArrayList<>();
 
     private final NavigationView.Presenter navigationPresenter;
+    private final DetailsView.Presenter detailsViewPresenter;
     private final GridView.Presenter gridViewPresenter;
     private final IplantDisplayStrings displayStrings;
     private final EventBus eventBus;
@@ -130,6 +112,7 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
                               final GridViewPresenterFactory gridViewPresenterFactory,
                               final DataSearchPresenter dataSearchPresenter,
                               final ToolbarViewPresenterFactory toolbarViewPresenterFactory,
+                              final DetailsView.Presenter detailsViewPresenter,
                               final IplantDisplayStrings displayStrings,
                               final IplantAnnouncer announcer,
                               final EventBus eventBus,
@@ -142,7 +125,8 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
                               @Assisted final TYPE entityType,
                               @Assisted final IsWidget southWidget) {
         this(diskResourceViewFactory, drFactory,
-             navigationPresenter, gridViewPresenterFactory, dataSearchPresenter, toolbarViewPresenterFactory,
+             navigationPresenter, gridViewPresenterFactory, dataSearchPresenter,
+             toolbarViewPresenterFactory, detailsViewPresenter,
              displayStrings, announcer, eventBus,
              infoTypeFilters, entityType);
         view.setNorthWidgetHidden(hideToolbar);
@@ -164,6 +148,7 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
                               final GridViewPresenterFactory gridViewPresenterFactory,
                               final DataSearchPresenter dataSearchPresenter,
                               final ToolbarViewPresenterFactory toolbarViewPresenterFactory,
+                              final DetailsView.Presenter detailsViewPresenter,
                               final IplantDisplayStrings displayStrings,
                               final IplantAnnouncer announcer,
                               final EventBus eventBus,
@@ -175,7 +160,8 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
                               @Assisted final IsWidget southWidget,
                               @Assisted final int southWidgetHeight) {
         this(diskResourceViewFactory, drFactory,
-             navigationPresenter, gridViewPresenterFactory, dataSearchPresenter, toolbarViewPresenterFactory,
+             navigationPresenter, gridViewPresenterFactory, dataSearchPresenter,
+             toolbarViewPresenterFactory, detailsViewPresenter,
              displayStrings, announcer, eventBus,
              Collections.<InfoType>emptyList(),
              null);
@@ -198,6 +184,7 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
                               final GridViewPresenterFactory gridViewPresenterFactory,
                               final DataSearchPresenter dataSearchPresenter,
                               final ToolbarViewPresenterFactory toolbarViewPresenterFactory,
+                              final DetailsView.Presenter detailsViewPresenter,
                               final IplantDisplayStrings displayStrings,
                               final IplantAnnouncer announcer,
                               final EventBus eventBus,
@@ -208,7 +195,8 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
                               @Assisted final HasPath folderToSelect,
                               @Assisted final List<HasId> selectedResources) {
         this(diskResourceViewFactory, drFactory,
-             navigationPresenter, gridViewPresenterFactory, dataSearchPresenter, toolbarViewPresenterFactory,
+             navigationPresenter, gridViewPresenterFactory, dataSearchPresenter,
+             toolbarViewPresenterFactory, detailsViewPresenter,
              displayStrings, announcer, eventBus,
              Collections.<InfoType>emptyList(),
              null);
@@ -230,6 +218,7 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
                               final GridViewPresenterFactory gridViewPresenterFactory,
                               final DataSearchPresenter dataSearchPresenter,
                               final ToolbarViewPresenterFactory toolbarViewPresenterFactory,
+                              final DetailsView.Presenter detailsViewPresenter,
                               final IplantDisplayStrings displayStrings,
                               final IplantAnnouncer announcer,
                               final EventBus eventBus,
@@ -237,6 +226,7 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
                               final TYPE entityType) {
         this.drFactory = drFactory;
         this.navigationPresenter = navigationPresenter;
+        this.detailsViewPresenter = detailsViewPresenter;
         this.gridViewPresenter = gridViewPresenterFactory.create(navigationPresenter,
                                                                  infoTypeFilters,
                                                                  entityType);
@@ -245,28 +235,36 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
         this.eventBus = eventBus;
         this.dataSearchPresenter = dataSearchPresenter;
         ToolbarView.Presenter toolbarPresenter = toolbarViewPresenterFactory.create(this);
-        this.view = diskResourceViewFactory.create(this, navigationPresenter, gridViewPresenter, toolbarPresenter);
+        this.view = diskResourceViewFactory.create(navigationPresenter,
+                                                   gridViewPresenter,
+                                                   toolbarPresenter,
+                                                   detailsViewPresenter);
 
         this.navigationPresenter.setParentPresenter(this);
         this.gridViewPresenter.setParentPresenter(this);
         this.navigationPresenter.setMaskable(view);
 
+        // Detail Presenter
+        this.detailsViewPresenter.getView().addManageSharingSelectedEventHandler(this.gridViewPresenter);
+        this.detailsViewPresenter.getView().addEditInfoTypeSelectedEventHandler(this.gridViewPresenter);
+        this.detailsViewPresenter.getView().addResetInfoTypeSelectedHandler(this.gridViewPresenter);
+        this.detailsViewPresenter.getView().addSubmitDiskResourceQueryEventHandler(this.gridViewPresenter);
 
-        this.view.addManageSharingSelectedEventHandler(this.gridViewPresenter);
-        this.view.addEditInfoTypeSelectedEventHandler(this);
 
-
+        // Toolbar Search Field
         DiskResourceSearchField searchField = toolbarPresenter.getView().getSearchField();
         searchField.addSaveDiskResourceQueryClickedEventHandler(this.dataSearchPresenter);
         searchField.addSubmitDiskResourceQueryEventHandler(this.gridViewPresenter);
 
+        // Grid Presenter
         this.gridViewPresenter.getView().addBeforeLoadHandler(this.navigationPresenter);
         this.gridViewPresenter.getView().addDiskResourceNameSelectedEventHandler(this.navigationPresenter);
         this.gridViewPresenter.getView().addDiskResourcePathSelectedEventHandler(this.navigationPresenter);
-        this.gridViewPresenter.getView().addDiskResourceSelectionChangedEventHandler(this);
-        this.gridViewPresenter.getView().addDiskResourceSelectionChangedEventHandler(this.view);
+        this.gridViewPresenter.getView().addDiskResourceSelectionChangedEventHandler(this.detailsViewPresenter.getView());
         this.gridViewPresenter.getView().addDiskResourceSelectionChangedEventHandler(toolbarPresenter.getView());
+        this.gridViewPresenter.addStoreUpdateHandler(this.detailsViewPresenter.getView());
 
+        // Navigation Presenter
         this.navigationPresenter.addSavedSearchedRetrievedEventHandler(this.dataSearchPresenter);
         this.navigationPresenter.addSubmitDiskResourceQueryEventHandler(this.gridViewPresenter);
         this.navigationPresenter.addRootFoldersRetrievedEventHandler(this);
@@ -276,14 +274,15 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
         this.navigationPresenter.getView().addFolderSelectedEventHandler(searchField);
         this.navigationPresenter.getView().addDeleteSavedSearchClickedEventHandler(this.dataSearchPresenter);
 
-
+        // Data Search Presenter
         this.dataSearchPresenter.addUpdateSavedSearchesEventHandler(this.navigationPresenter);
         this.dataSearchPresenter.addSavedSearchDeletedEventHandler(searchField);
 
+        // Toolbar Presenter
         toolbarPresenter.getView().addBulkDownloadSelectedEventHandler(this);
         toolbarPresenter.getView().addBulkUploadSelectedEventHandler(this);
         toolbarPresenter.getView().addDeleteSelectedDiskResourcesSelectedEventHandler(this);
-        toolbarPresenter.getView().addEditInfoTypeSelectedEventHandler(this);
+        toolbarPresenter.getView().addEditInfoTypeSelectedEventHandler(this.gridViewPresenter);
         toolbarPresenter.getView().addEmptyTrashSelectedHandler(this);
         toolbarPresenter.getView().addManageSharingSelectedEventHandler(this.gridViewPresenter);
         toolbarPresenter.getView().addManageMetadataSelectedEventHandler(this.gridViewPresenter);
@@ -337,38 +336,6 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
                 delete(selectedResources, displayStrings.deleteMsg());
             }
         }
-    }
-
-    @Override
-    public void onDiskResourceSelectionChanged(DiskResourceSelectionChangedEvent event) {
-        final List<DiskResource> selection = event.getSelection();
-        if (selection != null && selection.size() == 1) {
-            Iterator<DiskResource> it = selection.iterator();
-            DiskResource next = it.next();
-            if (!next.isStatLoaded()) {
-                getDetails(next);
-            } else {
-                view.updateDetails(next);
-            }
-        } else {
-            view.resetDetailsPanel();
-        }
-    }
-
-    @Override
-    public void onEditInfoTypeSelected(EditInfoTypeSelected event) {
-        checkState(getSelectedDiskResources().size() == 1, "Only one Disk Resource should be selected, but there are %i", getSelectedDiskResources().size());
-        final InfoTypeEditorDialog dialog = new InfoTypeEditorDialog("", diskResourceService);
-        dialog.show();
-        dialog.addOkButtonSelectHandler(new SelectHandler() {
-
-            @Override
-            public void onSelect(SelectEvent event1) {
-                String newType = dialog.getSelectedValue().toString();
-                setInfoType(getSelectedDiskResources().iterator().next(), newType);
-            }
-        });
-
     }
 
     @Override
@@ -459,43 +426,6 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
     }
 
     @Override
-    public void getDetails(DiskResource path) {
-        // FIXME Migrate to Details presenter
-        
-        diskResourceService.getStat(diskResourceUtil.asStringPathTypeMap(Arrays.asList(path), path instanceof File ? TYPE.FILE
-                                                                                             : TYPE.FOLDER),
-                                    new GetDiskResourceDetailsCallback(this, path.getPath(), drFactory));
-        view.maskSendToCoGe();
-        view.maskSendToEnsembl();
-        view.maskSendToTreeViewer();
-    }
-
-    @Override
-    public void getTagsForSelectedResource() {
-        if (getSelectedDiskResources().size() > 0) {
-            Iterator<DiskResource> it = getSelectedDiskResources().iterator();
-            if (it.hasNext()) {
-                final DiskResource next = it.next();
-                fsmdataService.getTags(next.getId(), new AsyncCallback<String>() {
-
-                    @Override
-                    public void onFailure(Throwable caught) {
-                        ErrorHandler.post("Unable to retrieve tags!", caught);
-                    }
-
-                    @Override
-                    public void onSuccess(String result) {
-                        IplantTagAutoBeanFactory factory = GWT.create(IplantTagAutoBeanFactory.class);
-                        AutoBean<IplantTagList> tagList = AutoBeanCodex.decode(factory, IplantTagList.class, result);
-                        view.updateTags(tagList.as().getTagList());
-
-                    }
-                });
-            }
-        }
-    }
-
-    @Override
     public void onBulkUploadSelected(BulkUploadSelected event) {
         eventBus.fireEvent(new RequestBulkUploadEvent(this, navigationPresenter.getSelectedUploadFolder()));
     }
@@ -557,73 +487,6 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
     }
 
     @Override
-    public void sendSelectedResourceToEnsembl() {
-        final List<DiskResource> selection = gridViewPresenter.getSelectedDiskResources();
-        Iterator<DiskResource> it = selection.iterator();
-        DiskResource next = it.next();
-        String infoType = getInfoType(next);
-        if(Strings.isNullOrEmpty(infoType)) {
-            showInfoTypeError(errorStrings.unsupportedEnsemblInfoType());
-            return;
-        }
-        if (diskResourceUtil.isEnsemblVizTab(diskResourceUtil.createInfoTypeSplittable(infoType))) {
-            eventBus.fireEvent(new RequestSendToEnsemblEvent((File)next, InfoType.fromTypeString(infoType)));
-        } else {
-            showInfoTypeError(errorStrings.unsupportedEnsemblInfoType());
-        }
-    }
-
-    @Override
-    public void sendSelectedResourcesToCoge() {
-        final List<DiskResource> selection = gridViewPresenter.getSelectedDiskResources();
-        Iterator<DiskResource> it = selection.iterator();
-        DiskResource next = it.next();
-        String infoType = getInfoType(next);
-        if (Strings.isNullOrEmpty(infoType)) {
-            showInfoTypeError(errorStrings.unsupportedCogeInfoType());
-            return;
-        }
-        if (diskResourceUtil.isGenomeVizTab(diskResourceUtil.createInfoTypeSplittable(infoType))) {
-            eventBus.fireEvent(new RequestSendToCoGeEvent((File)next));
-        } else {
-            showInfoTypeError(errorStrings.unsupportedCogeInfoType());
-        }
-    }
-
-    @Override
-    public void sendSelectedResourcesToTreeViewer() {
-        final List<DiskResource> selection = gridViewPresenter.getSelectedDiskResources();
-        Iterator<DiskResource> it = selection.iterator();
-        DiskResource next = it.next();
-        String infoType = getInfoType(next);
-        if (Strings.isNullOrEmpty(infoType)) {
-            showInfoTypeError(errorStrings.unsupportedTreeInfoType());
-            return;
-        }
-        if (diskResourceUtil.isTreeTab(diskResourceUtil.createInfoTypeSplittable(infoType))) {
-            eventBus.fireEvent(new RequestSendToTreeViewerEvent((File)next));
-        } else {
-            showInfoTypeError(errorStrings.unsupportedTreeInfoType());
-        }
-    }
-
-    private void showInfoTypeError(String msg) {
-        SafeHtmlBuilder builder = new SafeHtmlBuilder();
-        builder.appendEscaped(msg);
-        announcer.schedule(new ErrorAnnouncementConfig(builder.toSafeHtml(), true, 4000));
-    }
-
-
-    private String getInfoType(DiskResource dr) {
-        File diskResourceInfo = ((File)dr);
-        if (diskResourceInfo == null) {
-            ErrorHandler.post("Unable to retrieve information type");
-            return null;
-        }
-        return diskResourceInfo.getInfoType();
-    }
-
-    @Override
     public void setViewDebugId(String baseID) {
         view.asWidget().ensureDebugId(baseID + DiskResourceModule.Ids.DISK_RESOURCE_VIEW);
     }
@@ -676,8 +539,7 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
         }
     }
 
-    @Override
-    public boolean canDragDataToTargetFolder(final Folder targetFolder, final Collection<DiskResource> dropData) {
+    boolean canDragDataToTargetFolder(final Folder targetFolder, final Collection<DiskResource> dropData) {
         if (targetFolder instanceof DiskResourceQueryTemplate) {
             return false;
         }
@@ -777,106 +639,6 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
     @Override
     public void unmask() {
         view.unmask();
-    }
-
-    @Override
-    public void resetInfoType() {
-        if (getSelectedDiskResources().size() > 0) {
-            Iterator<DiskResource> it = getSelectedDiskResources().iterator();
-            if (it.hasNext()) {
-                setInfoType(it.next(), "");
-            }
-        }
-    }
-
-    private void setInfoType(final DiskResource dr, String newType) {
-        diskResourceService.setFileType(dr.getPath(), newType, new AsyncCallback<String>() {
-
-            @Override
-            public void onFailure(Throwable arg0) {
-                ErrorHandler.post(arg0);
-            }
-
-            @Override
-            public void onSuccess(String arg0) {
-                getDetails(dr);
-            }
-        });
-    }
-
-    @Override
-    public void displayAndCacheDiskResourceInfo(DiskResource info) {
-        Preconditions.checkNotNull(info, "This object cannot be null at this point.");
-        DiskResource updatedModel = gridViewPresenter.updateDiskResource(info);
-        view.updateDetails(updatedModel);
-    }
-
-    @Override
-    public void unmaskVizMenuOptions() {
-        view.unmaskSendToCoGe();
-        view.unmaskSendToEnsembl();
-        view.unmaskSendToTreeViewer();
-    }
-
-    @Override
-    public void attachTag(final IplantTag tag) {
-        if (getSelectedDiskResources().size() > 0) {
-            Iterator<DiskResource> it = getSelectedDiskResources().iterator();
-            if (it.hasNext()) {
-                final DiskResource next = it.next();
-                fsmdataService.attachTags(Arrays.asList(tag.getId()),
-                                          next.getId(),
-                                          new AsyncCallback<String>() {
-
-                    @Override
-                    public void onFailure(Throwable caught) {
-                        ErrorHandler.post(errorStrings.tagAttachError(), caught);
-
-                    }
-
-                    @Override
-                    public void onSuccess(String result) {
-                        announcer.schedule(new SuccessAnnouncementConfig(displayStrings.tagAttached(next.getName(), tag.getValue())));
-                    }
-                });
-            }
-        }
-
-    }
-
-    @Override
-    public void detachTag(final IplantTag tag) {
-        if (getSelectedDiskResources().size() > 0) {
-            Iterator<DiskResource> it = getSelectedDiskResources().iterator();
-            if (it.hasNext()) {
-                final DiskResource next = it.next();
-                fsmdataService.detachTags(Arrays.asList(tag.getId()),
-                                          next.getId(),
-                                          new AsyncCallback<String>() {
-
-                    @Override
-                    public void onFailure(Throwable caught) {
-                        ErrorHandler.post(errorStrings.tagDetachError(), caught);
-                    }
-
-                    @Override
-                    public void onSuccess(String result) {
-                        announcer.schedule(new SuccessAnnouncementConfig(displayStrings.tagDetached(tag.getValue(), next.getName())));
-                    }
-                });
-            }
-        }
-
-    }
-
-
-
-    @Override
-    public void doSearchTaggedWithResources(Set<IplantTag> tags) {
-        final SearchAutoBeanFactory factory = GWT.create(SearchAutoBeanFactory.class);
-        DiskResourceQueryTemplate qt = factory.dataSearchFilter().as();
-        qt.setTagQuery(tags);
-        navigationPresenter.setSelectedFolder(qt);
     }
 
 }

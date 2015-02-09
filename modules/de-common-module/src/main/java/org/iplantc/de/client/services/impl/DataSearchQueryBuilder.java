@@ -3,7 +3,7 @@ package org.iplantc.de.client.services.impl;
 import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.client.models.search.DiskResourceQueryTemplate;
 import org.iplantc.de.client.models.search.FileSizeRange;
-import org.iplantc.de.client.models.tags.IplantTag;
+import org.iplantc.de.client.models.tags.Tag;
 import org.iplantc.de.client.util.SearchModelUtils;
 
 import com.google.common.base.Function;
@@ -85,14 +85,14 @@ public class DataSearchQueryBuilder {
     }
 
     public String taggedWith() {
-        Set<IplantTag> tags = dsf.getTagQuery();
+        Set<Tag> tags = dsf.getTagQuery();
 
         if (tags == null) {
             return "";
         }
 
         StringBuilder sb = new StringBuilder();
-        for (IplantTag it : tags) {
+        for (Tag it : tags) {
             sb.append(it.getId());
             sb.append(",");
         }

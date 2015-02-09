@@ -95,6 +95,11 @@ public class GridViewPresenterDefaultAppearance implements GridView.Presenter.Ap
     }
 
     @Override
+    public String retrieveStatFailed() {
+        return displayStrings.retrieveStatError();
+    }
+
+    @Override
     public String shareLinkDialogHeight() {
         return "130";
     }

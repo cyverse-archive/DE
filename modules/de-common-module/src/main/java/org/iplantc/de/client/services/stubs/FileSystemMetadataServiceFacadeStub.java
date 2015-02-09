@@ -1,7 +1,9 @@
 package org.iplantc.de.client.services.stubs;
 
+import org.iplantc.de.client.models.HasId;
 import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.client.models.diskResources.TYPE;
+import org.iplantc.de.client.models.tags.Tag;
 import org.iplantc.de.client.models.viewer.InfoType;
 import org.iplantc.de.client.services.FileSystemMetadataServiceFacade;
 
@@ -52,19 +54,19 @@ public class FileSystemMetadataServiceFacadeStub implements FileSystemMetadataSe
     }
 
     @Override
-    public void attachTags(List<String> tagIds, String objectId, AsyncCallback<String> callback) {
+    public void attachTags(List<Tag> tags, HasId hasId, AsyncCallback<Void> callback) {
         // TODO Auto-generated method stub
 
     }
 
     @Override
-    public void detachTags(List<String> tagIds, String objectId, AsyncCallback<String> callback) {
+    public void detachTags(List<Tag> tags, HasId hasId, AsyncCallback<Void> callback) {
         // TODO Auto-generated method stub
 
     }
 
     @Override
-    public void getTags(String UUID, AsyncCallback<String> callback) {
+    public void getTags(HasId hasId, AsyncCallback<List<Tag>> callback) {
         // TODO Auto-generated method stub
 
     }

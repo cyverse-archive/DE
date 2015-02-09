@@ -4,9 +4,11 @@ import org.iplantc.de.client.models.HasId;
 import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.diskResource.client.events.*;
+import org.iplantc.de.diskResource.client.events.selection.EditInfoTypeSelected;
 import org.iplantc.de.diskResource.client.events.selection.ManageCommentsSelected;
 import org.iplantc.de.diskResource.client.events.selection.ManageMetadataSelected;
 import org.iplantc.de.diskResource.client.events.selection.ManageSharingSelected;
+import org.iplantc.de.diskResource.client.events.selection.ResetInfoTypeSelected;
 import org.iplantc.de.diskResource.client.events.selection.ShareByDataLinkSelected;
 import org.iplantc.de.diskResource.client.presenters.proxy.FolderContentsLoadConfig;
 import org.iplantc.de.diskResource.client.search.events.SubmitDiskResourceQueryEvent;
@@ -17,6 +19,7 @@ import com.google.gwt.event.shared.EventHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.IsWidget;
 
+import com.sencha.gxt.data.shared.event.StoreUpdateEvent;
 import com.sencha.gxt.data.shared.loader.BeforeLoadEvent;
 import com.sencha.gxt.data.shared.loader.PagingLoadResult;
 import com.sencha.gxt.data.shared.loader.PagingLoader;
@@ -90,7 +93,10 @@ public interface GridView extends IsWidget,
                                 RequestDiskResourceFavoriteEvent.RequestDiskResourceFavoriteEventHandler,
                                 ManageCommentsSelected.ManageCommentsSelectedEventHandler,
                                 FolderSelectionEvent.FolderSelectionEventHandler,
-                                SubmitDiskResourceQueryEvent.SubmitDiskResourceQueryEventHandler {
+                                SubmitDiskResourceQueryEvent.SubmitDiskResourceQueryEventHandler,
+                                StoreUpdateEvent.HasStoreUpdateHandlers<DiskResource>,
+                                EditInfoTypeSelected.EditInfoTypeSelectedEventHandler,
+                                ResetInfoTypeSelected.ResetInfoTypeSelectedHandler {
 
         interface Appearance {
 
@@ -119,6 +125,8 @@ public interface GridView extends IsWidget,
             String metadataHelp();
 
             String removeFavoriteError();
+
+            String retrieveStatFailed();
 
             String shareLinkDialogHeight();
 
@@ -149,13 +157,10 @@ public interface GridView extends IsWidget,
 
         void setParentPresenter(DiskResourceView.Presenter parentPresenter);
 
-        void setSelectedDiskResources(List<? extends HasId> diskResourcesToSelect);
-
         void setSelectedDiskResourcesById(List<? extends HasId> diskResourcesToSelect);
 
         void unRegisterHandler(EventHandler handler);
 
-        DiskResource updateDiskResource(DiskResource diskResource);
     }
 
     HandlerRegistration addBeforeLoadHandler(BeforeLoadEvent.BeforeLoadHandler<FolderContentsLoadConfig> handler);

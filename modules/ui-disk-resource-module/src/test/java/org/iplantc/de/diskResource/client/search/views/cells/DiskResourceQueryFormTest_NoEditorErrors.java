@@ -3,20 +3,18 @@ package org.iplantc.de.diskResource.client.search.views.cells;
 import org.iplantc.de.client.models.search.DateInterval;
 import org.iplantc.de.client.models.search.DiskResourceQueryTemplate;
 import org.iplantc.de.client.models.search.FileSizeRange.FileSizeUnit;
-import org.iplantc.de.client.models.tags.IplantTag;
+import org.iplantc.de.client.models.tags.Tag;
 import org.iplantc.de.commons.client.widgets.IPlantAnchor;
 import org.iplantc.de.diskResource.client.search.events.SubmitDiskResourceQueryEvent;
-import org.iplantc.de.tags.client.gin.factory.TagsViewFactory;
-import org.iplantc.de.tags.client.views.TagSearchField;
-import org.iplantc.de.tags.client.views.TagsPanel;
+import org.iplantc.de.tags.client.TagsView;
+import org.iplantc.de.tags.client.gin.factory.TagItemFactory;
+import org.iplantc.de.tags.client.views.TagSearchFieldImpl;
 
 import com.google.common.collect.Lists;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.logical.shared.SelectionEvent;
-import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -61,14 +59,16 @@ public class DiskResourceQueryFormTest_NoEditorErrors {
     @Mock DiskResourceQueryFormNamePrompt namePrompt;
     @Mock DiskResourceQueryTemplate mockedTemplate;
     @Mock HtmlLayoutContainer con;
-    @Mock TagsViewFactory tagsViewFactoryMock;
-    @Mock TagSearchField searchFieldMock;
+    @Mock
+    TagItemFactory tagItemFactoryMock;
+    @Mock TagSearchFieldImpl searchFieldMock;
 
     private DiskResourceQueryForm form;
+    @Mock TagsView.Presenter tagsViewPresenterMock;
 
     @Before public void setUp() {
         GwtMockito.useProviderForType(SimpleBeanEditorDriver.class, new FakeSimpleBeanEditorDriverProvider(false));
-        form = new DiskResourceQueryForm(tagsViewFactoryMock, searchFieldMock, mockedTemplate) {
+        form = new DiskResourceQueryForm(tagsViewPresenterMock, mockedTemplate) {
 
             @Override
             DateInterval createDateInterval(Date from, Date to, String label) {
@@ -215,28 +215,14 @@ public class DiskResourceQueryFormTest_NoEditorErrors {
 
             @Override
             void initTagField() {
-                final TagSearchField tagSearchField = mock(TagSearchField.class);
-
-                final SearchTagListHandler tagListHandlers = mock(SearchTagListHandler.class);
+                final TagSearchFieldImpl tagSearchField = mock(TagSearchFieldImpl.class);
 
                 FieldLabel fl = mock(FieldLabel.class);
 
-                tagPanel = mock(TagsPanel.class);
-                tagPanel.setSize("200px", "50px");
-
-                tagSearchField.addSelectionHandler(new SelectionHandler<IplantTag>() {
+                tagSearchField.addValueChangeHandler(new ValueChangeHandler<Tag>() {
 
                     @Override
-                    public void onSelection(SelectionEvent<IplantTag> event) {
-                        tagSearchField.setValue(event.getSelectedItem());
-
-                    }
-                });
-                tagSearchField.addValueChangeHandler(new ValueChangeHandler<IplantTag>() {
-
-                    @Override
-                    public void onValueChange(ValueChangeEvent<IplantTag> event) {
-                        tagListHandlers.onAddTag(event.getValue());
+                    public void onValueChange(ValueChangeEvent<Tag> event) {
                         tagSearchField.clear();
                         tagSearchField.asWidget().getElement().focus();
                     }

@@ -1,7 +1,6 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
              xmlns:container="urn:import:com.sencha.gxt.widget.core.client.container"
-             xmlns:form="urn:import:com.sencha.gxt.widget.core.client.form"
              xmlns:tags="urn:import:org.iplantc.de.tags.client.views">
 
     <ui:with field="outerMargins"
@@ -21,17 +20,10 @@
 
     <container:VerticalLayoutContainer ui:field="tagListPanel">
         <container:child layoutData="{tagSearchLayoutData}">
-            <form:FieldLabel ui:field="taglbl"
-                             labelWidth="30"
-                             labelAlign="TOP"/>
-        </container:child>
-        <container:child layoutData="{tagSearchLayoutData}">
-            <tags:TagSearchField ui:field="tagSearchField"/>
+            <tags:TagSearchFieldImpl ui:field="tagSearchField"/>
         </container:child>
         <container:child layoutData="{tagsLayoutData}">
-            <tags:TagsPanel ui:field="tagsPanel"
-                            height="150px"
-                            width="160px"/>
+            <tags:TagsPanel ui:field="tagsPanel"/>
         </container:child>
     </container:VerticalLayoutContainer>
 </ui:UiBinder> 

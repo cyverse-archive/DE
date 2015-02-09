@@ -1,6 +1,7 @@
 package org.iplantc.de.diskResource.client.gin;
 
 import org.iplantc.de.client.models.diskResources.Folder;
+import org.iplantc.de.diskResource.client.DetailsView;
 import org.iplantc.de.diskResource.client.DiskResourceView;
 import org.iplantc.de.diskResource.client.GridView;
 import org.iplantc.de.diskResource.client.NavigationView;
@@ -9,6 +10,7 @@ import org.iplantc.de.diskResource.client.dataLink.presenter.DataLinkPresenterIm
 import org.iplantc.de.diskResource.client.dataLink.view.DataLinkPanel;
 import org.iplantc.de.diskResource.client.gin.factory.*;
 import org.iplantc.de.diskResource.client.presenters.DiskResourcePresenterImpl;
+import org.iplantc.de.diskResource.client.presenters.details.DetailsViewPresenterImpl;
 import org.iplantc.de.diskResource.client.presenters.grid.GridViewPresenterImpl;
 import org.iplantc.de.diskResource.client.presenters.navigation.NavigationPresenterImpl;
 import org.iplantc.de.diskResource.client.presenters.proxy.FolderContentsRpcProxyImpl;
@@ -20,6 +22,7 @@ import org.iplantc.de.diskResource.client.search.views.DiskResourceSearchField;
 import org.iplantc.de.diskResource.client.search.views.cells.DiskResourceQueryForm;
 import org.iplantc.de.diskResource.client.search.views.cells.DiskResourceSearchCell;
 import org.iplantc.de.diskResource.client.views.DiskResourceViewImpl;
+import org.iplantc.de.diskResource.client.views.details.DetailsViewImpl;
 import org.iplantc.de.diskResource.client.views.grid.GridViewImpl;
 import org.iplantc.de.diskResource.client.views.navigation.NavigationViewImpl;
 import org.iplantc.de.diskResource.client.views.toolbar.DiskResourceViewToolbarImpl;
@@ -95,6 +98,12 @@ public class DiskResourceGinModule extends AbstractGinModule {
         install(new GinFactoryModuleBuilder()
                     .implement(ToolbarView.Presenter.class, ToolbarViewPresenterImpl.class)
                     .build(ToolbarViewPresenterFactory.class));
+
+        // Details
+        bind(DetailsView.Presenter.class).to(DetailsViewPresenterImpl.class);
+        install(new GinFactoryModuleBuilder()
+                    .implement(DetailsView.class, DetailsViewImpl.class)
+                    .build(DetailsViewFactory.class));
     }
 
 

@@ -36,6 +36,9 @@ public interface GridViewDisplayStrings extends Messages{
     @Key("removeFavoriteError")
     String removeFavoriteError();
 
+    @Key("retrieveStatError")
+    String retrieveStatError();
+
     @Key("share")
     String share();
 
