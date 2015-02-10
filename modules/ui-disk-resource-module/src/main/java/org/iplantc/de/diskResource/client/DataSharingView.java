@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.iplantc.de.diskResource.client.sharing.views;
+package org.iplantc.de.diskResource.client;
 
 import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.client.models.diskResources.PermissionValue;

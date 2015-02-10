@@ -1,7 +1,7 @@
 /**
  *
  */
-package org.iplantc.de.diskResource.client.sharing.views;
+package org.iplantc.de.diskResource.client.views.sharing;
 
 import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.models.UserInfo;
@@ -13,7 +13,9 @@ import org.iplantc.de.collaborators.client.events.UserSearchResultSelected;
 import org.iplantc.de.collaborators.client.util.UserSearchField;
 import org.iplantc.de.collaborators.client.views.ManageCollaboratorsDialog;
 import org.iplantc.de.collaborators.client.views.ManageCollaboratorsView;
-import org.iplantc.de.diskResource.client.sharing.views.DataSharingView.Presenter;
+import org.iplantc.de.diskResource.client.model.DataSharingKeyProvider;
+import org.iplantc.de.diskResource.client.model.DataSharingProperties;
+import org.iplantc.de.diskResource.client.DataSharingView.Presenter;
 import org.iplantc.de.resources.client.IplantResources;
 import org.iplantc.de.resources.client.messages.I18N;
 

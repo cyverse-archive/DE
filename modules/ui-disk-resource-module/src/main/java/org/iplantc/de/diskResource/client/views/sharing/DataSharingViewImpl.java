@@ -1,6 +1,7 @@
-package org.iplantc.de.diskResource.client.sharing.views;
+package org.iplantc.de.diskResource.client.views.sharing;
 
 import org.iplantc.de.client.models.diskResources.DiskResource;
+import org.iplantc.de.diskResource.client.DataSharingView;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;

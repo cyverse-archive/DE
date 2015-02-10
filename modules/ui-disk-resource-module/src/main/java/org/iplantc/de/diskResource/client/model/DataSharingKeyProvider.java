@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.iplantc.de.diskResource.client.sharing.views;
+package org.iplantc.de.diskResource.client.model;
 
 import org.iplantc.de.client.models.sharing.DataSharing;
 

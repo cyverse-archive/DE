@@ -1,14 +1,15 @@
 /**
  *
  */
-package org.iplantc.de.diskResource.client.sharing.views;
+package org.iplantc.de.diskResource.client.views.sharing;
 
 
 import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.client.services.DiskResourceServiceFacade;
 import org.iplantc.de.client.util.DiskResourceUtil;
 import org.iplantc.de.commons.client.views.dialogs.IPlantDialog;
-import org.iplantc.de.diskResource.client.sharing.presenter.DataSharingPresenter;
+import org.iplantc.de.diskResource.client.DataSharingView;
+import org.iplantc.de.diskResource.client.presenters.sharing.DataSharingPresenterImpl;
 import org.iplantc.de.diskResource.client.model.DiskResourceModelKeyProvider;
 import org.iplantc.de.diskResource.client.model.DiskResourceNameComparator;
 import org.iplantc.de.diskResource.client.views.grid.cells.DiskResourceNameCell;
@@ -57,7 +58,7 @@ public class DataSharingDialog extends IPlantDialog {
         setHeadingText(displayStrings.manageSharing());
         ListStore<DiskResource> drStore = new ListStore<>(new DiskResourceModelKeyProvider());
         DataSharingView view = new DataSharingViewImpl(buildDiskResourceColumnModel(), drStore);
-        final DataSharingView.Presenter p = new DataSharingPresenter(diskResourceService,
+        final DataSharingView.Presenter p = new DataSharingPresenterImpl(diskResourceService,
                                                                      getSelectedResourcesAsList(resources), view);
         p.go(this);
         setOkButtonText(displayStrings.done());

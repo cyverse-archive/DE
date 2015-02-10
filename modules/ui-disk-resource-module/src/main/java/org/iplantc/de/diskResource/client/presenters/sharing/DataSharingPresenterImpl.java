@@ -1,7 +1,7 @@
 /**
  *
  */
-package org.iplantc.de.diskResource.client.sharing.presenter;
+package org.iplantc.de.diskResource.client.presenters.sharing;
 
 import org.iplantc.de.client.models.collaborators.Collaborator;
 import org.iplantc.de.client.models.diskResources.DiskResource;
@@ -14,8 +14,8 @@ import org.iplantc.de.client.util.JsonUtil;
 import org.iplantc.de.collaborators.client.util.CollaboratorsUtil;
 import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
-import org.iplantc.de.diskResource.client.sharing.views.DataSharingPermissionsPanel;
-import org.iplantc.de.diskResource.client.sharing.views.DataSharingView;
+import org.iplantc.de.diskResource.client.views.sharing.DataSharingPermissionsPanel;
+import org.iplantc.de.diskResource.client.DataSharingView;
 import org.iplantc.de.resources.client.messages.I18N;
 
 import com.google.gwt.json.client.JSONArray;
@@ -33,7 +33,7 @@ import java.util.List;
 /**
  * @author sriram, jstroot
  */
-public class DataSharingPresenter implements DataSharingView.Presenter {
+public class DataSharingPresenterImpl implements DataSharingView.Presenter {
 
     private final class LoadPermissionsCallback implements AsyncCallback<String> {
         private final class GetUserInfoCallback implements AsyncCallback<FastMap<Collaborator>> {
@@ -110,9 +110,9 @@ public class DataSharingPresenter implements DataSharingView.Presenter {
     private final CollaboratorsUtil collaboratorsUtil;
 
 
-    public DataSharingPresenter(final DiskResourceServiceFacade diskResourceService,
-                                final List<DiskResource> selectedResources,
-                                final DataSharingView view) {
+    public DataSharingPresenterImpl(final DiskResourceServiceFacade diskResourceService,
+                                    final List<DiskResource> selectedResources,
+                                    final DataSharingView view) {
         this.diskResourceService = diskResourceService;
         this.view = view;
         this.selectedResources = selectedResources;

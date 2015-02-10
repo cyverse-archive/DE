@@ -1,11 +1,13 @@
 /**
  *
  */
-package org.iplantc.de.diskResource.client.sharing.views;
+package org.iplantc.de.diskResource.client.views.sharing;
 
 import org.iplantc.de.client.models.diskResources.PermissionValue;
 import org.iplantc.de.client.models.sharing.DataSharing;
 import org.iplantc.de.client.util.DiskResourceUtil;
+import org.iplantc.de.diskResource.client.model.DataSharingKeyProvider;
+import org.iplantc.de.diskResource.client.model.DataSharingProperties;
 import org.iplantc.de.resources.client.IplantResources;
 import org.iplantc.de.resources.client.messages.I18N;
 
