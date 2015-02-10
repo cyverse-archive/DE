@@ -4,6 +4,7 @@ import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.client.models.diskResources.File;
 import org.iplantc.de.client.models.diskResources.Folder;
+import org.iplantc.de.client.models.viewer.InfoType;
 import org.iplantc.de.client.models.viewer.MimeType;
 import org.iplantc.de.client.util.DiskResourceUtil;
 import org.iplantc.de.diskResource.client.ToolbarView;
@@ -217,9 +218,12 @@ public class DiskResourceViewToolbarImpl extends Composite implements ToolbarVie
 
         simpleDownloadMiEnabled = !isSelectionEmpty && containsFile(selectedDiskResources);
         bulkDownloadMiEnabled = !isSelectionEmpty;
-        sendToCogeMiEnabled = !isSelectionEmpty && isSingleSelection && containsFile(selectedDiskResources) && !isSelectionInTrash;
-        sendToEnsemblMiEnabled = !isSelectionEmpty && isSingleSelection && containsFile(selectedDiskResources) && !isSelectionInTrash;
-        sendToTreeViewerMiEnabled = !isSelectionEmpty && isSingleSelection && containsFile(selectedDiskResources) && !isSelectionInTrash;
+        sendToCogeMiEnabled = !isSelectionEmpty && isSingleSelection && containsFile(selectedDiskResources) && !isSelectionInTrash
+                                  && diskResourceUtil.isGenomeVizInfoType(getInfoTypeFromSingletonCollection(selectedDiskResources));
+        sendToEnsemblMiEnabled = !isSelectionEmpty && isSingleSelection && containsFile(selectedDiskResources) && !isSelectionInTrash
+                                     && diskResourceUtil.isEnsemblInfoType(getInfoTypeFromSingletonCollection(selectedDiskResources));
+        sendToTreeViewerMiEnabled = !isSelectionEmpty && isSingleSelection && containsFile(selectedDiskResources) && !isSelectionInTrash
+                                        && diskResourceUtil.isTreeInfoType(getInfoTypeFromSingletonCollection(selectedDiskResources));
 
         shareWithCollaboratorsMiEnabled = !isSelectionEmpty && isOwner && !isSelectionInTrash;
         createPublicLinkMiEnabled = !isSelectionEmpty && isOwner && !isSelectionInTrash && containsFile(selectedDiskResources);
@@ -250,6 +254,11 @@ public class DiskResourceViewToolbarImpl extends Composite implements ToolbarVie
         sendToTreeViewerMi.setEnabled(sendToTreeViewerMiEnabled);
 
         restoreMi.setEnabled(restoreMiEnabled);
+    }
+
+    private InfoType getInfoTypeFromSingletonCollection(List<DiskResource> selectedDiskResources) {
+        Preconditions.checkArgument(selectedDiskResources.size() == 1);
+        return InfoType.fromTypeString(selectedDiskResources.iterator().next().getInfoType());
     }
 
     @Override

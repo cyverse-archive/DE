@@ -56,6 +56,15 @@ public interface DiskResourceView extends IsWidget,
                                 DiskResourceSelectionChangedEvent.HasDiskResourceSelectionChangedEventHandlers,
                                 FolderSelectionEvent.HasFolderSelectionEventHandlers {
 
+        interface Appearance {
+
+            String unsupportedCogeInfoType();
+
+            String unsupportedEnsemblInfoType();
+
+            String unsupportedTreeInfoType();
+        }
+
         String FAVORITES_FOLDER_NAME = "Favorites";
         String FAVORITES_FOLDER_PATH = "/favorites";
 

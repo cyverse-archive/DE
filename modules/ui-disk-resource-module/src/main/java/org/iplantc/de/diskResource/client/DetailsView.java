@@ -7,6 +7,9 @@ import org.iplantc.de.diskResource.client.events.selection.EditInfoTypeSelected;
 import org.iplantc.de.diskResource.client.events.selection.ManageSharingSelected;
 import org.iplantc.de.diskResource.client.events.selection.ResetInfoTypeSelected;
 import org.iplantc.de.diskResource.client.events.search.SubmitDiskResourceQueryEvent;
+import org.iplantc.de.diskResource.client.events.selection.SendToCogeSelected;
+import org.iplantc.de.diskResource.client.events.selection.SendToEnsemblSelected;
+import org.iplantc.de.diskResource.client.events.selection.SendToTreeViewerSelected;
 
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.resources.client.ImageResource;
@@ -24,7 +27,10 @@ public interface DetailsView extends IsWidget,
                                      ManageSharingSelected.HasManageSharingSelectedEventHandlers,
                                      EditInfoTypeSelected.HasEditInfoTypeSelectedEventHandlers,
                                      ResetInfoTypeSelected.HasResetInfoTypeSelectedHandlers,
-                                     SubmitDiskResourceQueryEvent.HasSubmitDiskResourceQueryEventHandlers {
+                                     SubmitDiskResourceQueryEvent.HasSubmitDiskResourceQueryEventHandlers,
+                                     SendToTreeViewerSelected.HasSendToTreeViewerSelectedHandlers,
+                                     SendToCogeSelected.HasSendToCogeSelectedHandlers,
+                                     SendToEnsemblSelected.HasSendToEnsemblSelectedHandlers {
     interface Appearance {
         interface DetailsViewStyle extends CssResource {
 
@@ -122,12 +128,6 @@ public interface DetailsView extends IsWidget,
             String tagDetachError();
 
             String tagDetached(String value, String name);
-
-            String unsupportedCogeInfoType();
-
-            String unsupportedEnsemblInfoType();
-
-            String unsupportedTreeInfoType();
         }
 
         void attachTagToResource(Tag tag, DiskResource resource);
@@ -136,10 +136,5 @@ public interface DetailsView extends IsWidget,
 
         void removeTagFromResource(Tag tag, DiskResource resource);
 
-        void sendSelectedResourceToEnsembl(DiskResource resource);
-
-        void sendSelectedResourcesToCoge(DiskResource resource);
-
-        void sendSelectedResourcesToTreeViewer(DiskResource resource);
     }
 }

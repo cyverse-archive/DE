@@ -14,6 +14,9 @@ import org.iplantc.de.diskResource.client.events.selection.EditInfoTypeSelected;
 import org.iplantc.de.diskResource.client.events.selection.ManageSharingSelected;
 import org.iplantc.de.diskResource.client.events.selection.ResetInfoTypeSelected;
 import org.iplantc.de.diskResource.client.events.search.SubmitDiskResourceQueryEvent;
+import org.iplantc.de.diskResource.client.events.selection.SendToCogeSelected;
+import org.iplantc.de.diskResource.client.events.selection.SendToEnsemblSelected;
+import org.iplantc.de.diskResource.client.events.selection.SendToTreeViewerSelected;
 import org.iplantc.de.tags.client.TagsView;
 import org.iplantc.de.tags.client.events.TagAddedEvent;
 import org.iplantc.de.tags.client.events.TagCreated;
@@ -48,6 +51,7 @@ import com.google.inject.assistedinject.Assisted;
 import com.sencha.gxt.data.shared.event.StoreUpdateEvent;
 import com.sencha.gxt.widget.core.client.Composite;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.logging.Logger;
 
@@ -140,6 +144,21 @@ public class DetailsViewImpl extends Composite implements DetailsView,
     @Override
     public HandlerRegistration addResetInfoTypeSelectedHandler(ResetInfoTypeSelected.ResetInfoTypeSelectedHandler handler) {
         return addHandler(handler, ResetInfoTypeSelected.TYPE);
+    }
+
+    @Override
+    public HandlerRegistration addSendToCogeSelectedHandler(SendToCogeSelected.SendToCogeSelectedHandler handler) {
+        return addHandler(handler, SendToCogeSelected.TYPE);
+    }
+
+    @Override
+    public HandlerRegistration addSendToEnsemblSelectedHandler(SendToEnsemblSelected.SendToEnsemblSelectedHandler handler) {
+        return addHandler(handler, SendToEnsemblSelected.TYPE);
+    }
+
+    @Override
+    public HandlerRegistration addSendToTreeViewerSelectedHandler(SendToTreeViewerSelected.SendToTreeViewerSelectedHandler handler) {
+        return addHandler(handler, SendToTreeViewerSelected.TYPE);
     }
 
     @Override
@@ -336,12 +355,13 @@ public class DetailsViewImpl extends Composite implements DetailsView,
             return;
         }
 
+        final ArrayList<DiskResource> resources = Lists.newArrayList(boundValue);
         if(diskResourceUtil.isTreeInfoType(resInfoType)){
-            presenter.sendSelectedResourcesToTreeViewer(boundValue);
+            fireEvent(new SendToTreeViewerSelected(resources));
         } else if(diskResourceUtil.isGenomeVizInfoType(resInfoType)){
-            presenter.sendSelectedResourcesToCoge(boundValue);
+            fireEvent(new SendToCogeSelected(resources));
         } else if(diskResourceUtil.isEnsemblInfoType(resInfoType)) {
-            presenter.sendSelectedResourceToEnsembl(boundValue);
+            fireEvent(new SendToEnsemblSelected(resources));
         }
 
         LOG.fine("Send to clicked");

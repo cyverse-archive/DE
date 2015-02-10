@@ -84,13 +84,17 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
                                                   RestoreDiskResourcesSelected.RestoreDiskResourcesSelectedHandler,
                                                   SimpleUploadSelected.SimpleUploadSelectedHandler,
                                                   BulkUploadSelected.BulkUploadSelectedEventHandler,
-                                                  SimpleDownloadSelected.SimpleDownloadSelectedHandler {
+                                                  SimpleDownloadSelected.SimpleDownloadSelectedHandler,
+                                                  SendToTreeViewerSelected.SendToTreeViewerSelectedHandler,
+                                                  SendToEnsemblSelected.SendToEnsemblSelectedHandler,
+                                                  SendToCogeSelected.SendToCogeSelectedHandler {
 
     @Inject IplantErrorStrings errorStrings;
     @Inject DiskResourceServiceFacade diskResourceService;
     @Inject UserInfo userInfo;
     @Inject DiskResourceSelectorDialogFactory selectorDialogFactory;
     @Inject DiskResourceUtil diskResourceUtil;
+    @Inject DiskResourceView.Presenter.Appearance appearance;
 
     final IplantAnnouncer announcer;
     final DiskResourceView view;
@@ -248,6 +252,9 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
         this.detailsViewPresenter.getView().addEditInfoTypeSelectedEventHandler(this.gridViewPresenter);
         this.detailsViewPresenter.getView().addResetInfoTypeSelectedHandler(this.gridViewPresenter);
         this.detailsViewPresenter.getView().addSubmitDiskResourceQueryEventHandler(this.gridViewPresenter);
+        this.detailsViewPresenter.getView().addSendToCogeSelectedHandler(this);
+        this.detailsViewPresenter.getView().addSendToEnsemblSelectedHandler(this);
+        this.detailsViewPresenter.getView().addSendToTreeViewerSelectedHandler(this);
 
 
         // Toolbar Search Field
@@ -293,6 +300,10 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
         toolbarPresenter.getView().addShareByDataLinkSelectedEventHandler(this.gridViewPresenter);
         toolbarPresenter.getView().addSimpleUploadSelectedHandler(this);
         toolbarPresenter.getView().addSimpleDownloadSelectedHandler(this);
+        toolbarPresenter.getView().addSendToCogeSelectedHandler(this);
+        toolbarPresenter.getView().addSendToEnsemblSelectedHandler(this);
+        toolbarPresenter.getView().addSendToTreeViewerSelectedHandler(this);
+
 
         // Wire up global event handlers
         DiskResourcesEventHandler diskResourcesEventHandler = new DiskResourcesEventHandler(navigationPresenter);
@@ -401,6 +412,51 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
             container.setWidget(view);
             navigationPresenter.setSelectedFolder(folderToSelect);
             setSelectedDiskResourcesById(diskResourcesToSelect);
+        }
+    }
+
+    @Override
+    public void onSendToCogeSelected(SendToCogeSelected event) {
+        // There is typically only one resource used.
+        for(DiskResource resource : event.getResourcesToSend()){
+            InfoType infoType = InfoType.fromTypeString(resource.getInfoType());
+            if (infoType == null
+                    || !diskResourceUtil.isGenomeVizInfoType(infoType)) {
+
+                announcer.schedule(new ErrorAnnouncementConfig(appearance.unsupportedCogeInfoType()));
+                return;
+            }
+            eventBus.fireEvent(new RequestSendToCoGeEvent((File) resource));
+        }
+    }
+
+    @Override
+    public void onSendToEnsemblSelected(SendToEnsemblSelected event) {
+        // There is typically only one resource used.
+        for(DiskResource resource : event.getResourcesToSend()) {
+            InfoType infoType = InfoType.fromTypeString(resource.getInfoType());
+            if (infoType == null
+                    || !diskResourceUtil.isEnsemblInfoType(infoType)) {
+
+                announcer.schedule(new ErrorAnnouncementConfig(appearance.unsupportedEnsemblInfoType()));
+                return;
+            }
+            eventBus.fireEvent(new RequestSendToEnsemblEvent((File) resource, infoType));
+        }
+    }
+
+    @Override
+    public void onSendToTreeViewerSelected(SendToTreeViewerSelected event) {
+        // There is typically only one resource used.
+        for(DiskResource resource : event.getResourcesToSend()) {
+            InfoType infoType = InfoType.fromTypeString(resource.getInfoType());
+            if (infoType == null
+                    || !diskResourceUtil.isTreeInfoType(infoType)) {
+
+                announcer.schedule(new ErrorAnnouncementConfig(appearance.unsupportedTreeInfoType()));
+                return;
+            }
+            eventBus.fireEvent(new RequestSendToTreeViewerEvent((File) resource));
         }
     }
 

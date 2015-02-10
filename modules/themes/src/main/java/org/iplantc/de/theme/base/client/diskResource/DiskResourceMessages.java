@@ -36,4 +36,13 @@ public interface DiskResourceMessages extends Messages {
 
     @Key("size")
     String size();
+
+    @Key("unsupportedCogeInfoType")
+    String unsupportedCogeInfoType();
+
+    @Key("unsupportedEnsemblInfoType")
+    String unsupportedEnsemblInfoType();
+
+    @Key("unsupportedTreeInfoType")
+    String unsupportedTreeInfoType();
 }

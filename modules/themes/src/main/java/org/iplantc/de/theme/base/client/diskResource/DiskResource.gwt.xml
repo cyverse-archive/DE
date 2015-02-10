@@ -5,6 +5,11 @@
     <inherits name="org.iplantc.de.diskResource.diskresource" />
     <inherits name="org.iplantc.de.fileViewers.FileViewers"/>
 
+    <replace-with class="org.iplantc.de.theme.base.client.diskResource.presenter.DiskResourceViewPresenterDefaultAppearance">
+        <when-type-is class="org.iplantc.de.diskResource.client.DiskResourceView.Presenter.Appearance" />
+    </replace-with>
+
+    <!-- Dialogs -->
     <replace-with class="org.iplantc.de.theme.base.client.diskResource.dialogs.FolderSelectDialogDefaultAppearance">
         <when-type-is class="org.iplantc.de.diskResource.client.views.dialogs.FolderSelectDialog.FolderSelectDialogAppearance"/>
     </replace-with>
