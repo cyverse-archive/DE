@@ -11,9 +11,7 @@ import org.iplantc.de.client.services.FileSystemMetadataServiceFacade;
 import org.iplantc.de.client.services.SearchServiceFacade;
 import org.iplantc.de.commons.client.info.ErrorAnnouncementConfig;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
-import org.iplantc.de.diskResource.client.DiskResourceView;
-import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
-import org.iplantc.de.resources.client.messages.IplantErrorStrings;
+import org.iplantc.de.diskResource.client.GridView;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
@@ -38,7 +36,7 @@ import java.util.logging.Logger;
  * @author jstroot, psarando
  */
 public class FolderContentsRpcProxyImpl extends RpcProxy<FolderContentsLoadConfig, PagingLoadResult<DiskResource>>
-                                        implements DiskResourceView.FolderContentsRpcProxy {
+                                        implements GridView.FolderContentsRpcProxy {
 
     /**
      * Constructs a valid {@link PagingLoadResultBean} from the given search results.
@@ -49,19 +47,19 @@ public class FolderContentsRpcProxyImpl extends RpcProxy<FolderContentsLoadConfi
     static class SearchResultsCallback implements AsyncCallback<List<DiskResource>> {
         private final FolderContentsLoadConfig loadConfig;
         private final AsyncCallback<PagingLoadResult<DiskResource>> callback;
+        private final GridView.Presenter.Appearance appearance;
         private final IplantAnnouncer announcer1;
-        private final IplantDisplayStrings dStrings;
         private final HasSafeHtml hasSafeHtml1;
 
         public SearchResultsCallback(final IplantAnnouncer announcer,
                                      final FolderContentsLoadConfig loadConfig,
                                      final AsyncCallback<PagingLoadResult<DiskResource>> callback,
-                                     final IplantDisplayStrings displayStrings,
+                                     final GridView.Presenter.Appearance appearance,
                                      final HasSafeHtml hasSafeHtml) {
             this.announcer1 = announcer;
             this.loadConfig = loadConfig;
             this.callback = callback;
-            this.dStrings = displayStrings;
+            this.appearance = appearance;
             this.hasSafeHtml1 = hasSafeHtml;
         }
 
@@ -75,7 +73,7 @@ public class FolderContentsRpcProxyImpl extends RpcProxy<FolderContentsLoadConfi
             DiskResourceQueryTemplate query = (DiskResourceQueryTemplate)loadConfig.getFolder();
             String searchText = setSearchText(query.getFileQuery());
 
-            final String searchResultsHeader = dStrings.searchDataResultsHeader(searchText, query.getTotal(), query.getExecutionTime() / 1000.0);
+            final String searchResultsHeader = appearance.searchDataResultsHeader(searchText, query.getTotal(), query.getExecutionTime() / 1000.0);
             hasSafeHtml1.setHTML(SafeHtmlUtils.fromString(searchResultsHeader));
         }
 
@@ -92,7 +90,7 @@ public class FolderContentsRpcProxyImpl extends RpcProxy<FolderContentsLoadConfi
         @Override
         public void onFailure(Throwable caught) {
             if (loadConfig.getFolder() instanceof DiskResourceQueryTemplate) {
-                announcer1.schedule(new ErrorAnnouncementConfig(SafeHtmlUtils.fromString("Unable to search. Please try again later."), true));
+                announcer1.schedule(new ErrorAnnouncementConfig(SafeHtmlUtils.fromString(appearance.searchFailure()), true));
             }
             callback.onFailure(caught);
         }
@@ -118,15 +116,18 @@ public class FolderContentsRpcProxyImpl extends RpcProxy<FolderContentsLoadConfi
         private final AsyncCallback<PagingLoadResult<DiskResource>> callback;
         private final IplantAnnouncer announcer;
         private final HasSafeHtml hasSafeHtml1;
+        private final GridView.Presenter.Appearance appearance;
 
         public FolderContentsCallback(final IplantAnnouncer announcer,
                                       final FolderContentsLoadConfig loadConfig,
                                       final AsyncCallback<PagingLoadResult<DiskResource>> callback,
-                                      final HasSafeHtml hasSafeHtml) {
+                                      final HasSafeHtml hasSafeHtml,
+                                      final GridView.Presenter.Appearance appearance) {
             this.announcer = announcer;
             this.loadConfig = loadConfig;
             this.callback = callback;
             this.hasSafeHtml1 = hasSafeHtml;
+            this.appearance = appearance;
         }
 
         @Override
@@ -150,7 +151,7 @@ public class FolderContentsRpcProxyImpl extends RpcProxy<FolderContentsLoadConfi
         @Override
         public void onFailure(Throwable caught) {
             if (loadConfig.getFolder() instanceof DiskResourceQueryTemplate) {
-                announcer.schedule(new ErrorAnnouncementConfig(SafeHtmlUtils.fromString("Unable to search. Please try again later."), true));
+                announcer.schedule(new ErrorAnnouncementConfig(SafeHtmlUtils.fromString(appearance.searchFailure()), true));
             }
             callback.onFailure(caught);
         }
@@ -170,21 +171,21 @@ public class FolderContentsRpcProxyImpl extends RpcProxy<FolderContentsLoadConfi
         private final AsyncCallback<PagingLoadResult<DiskResource>> callback;
         private final FolderContentsLoadConfig loadConfig;
         private final IplantAnnouncer announcer;
-        private final IplantErrorStrings errorStrings;
+        private final GridView.Presenter.Appearance appearance;
 
         public FavoritesCallback(final AsyncCallback<PagingLoadResult<DiskResource>> callback,
                                  final FolderContentsLoadConfig loadConfig,
                                  final IplantAnnouncer announcer,
-                                 final IplantErrorStrings errorStrings) {
+                                 final GridView.Presenter.Appearance appearance) {
             this.callback = callback;
             this.loadConfig = loadConfig;
             this.announcer = announcer;
-            this.errorStrings = errorStrings;
+            this.appearance = appearance;
         }
 
         @Override
         public void onFailure(Throwable caught) {
-            announcer.schedule(new ErrorAnnouncementConfig(errorStrings.favoritesError(caught.getMessage())));
+            announcer.schedule(new ErrorAnnouncementConfig(appearance.favoritesError(caught.getMessage())));
         }
 
         @Override
@@ -206,8 +207,7 @@ public class FolderContentsRpcProxyImpl extends RpcProxy<FolderContentsLoadConfi
     private final SearchServiceFacade searchService;
     private final FileSystemMetadataServiceFacade metadataService;
     private final IplantAnnouncer announcer;
-    private final IplantDisplayStrings displayStrings;
-    private final IplantErrorStrings errorStrings;
+    private final GridView.Presenter.Appearance appearance;
     private TYPE entityType = null;
     private HasSafeHtml hasSafeHtml;
     private final List<InfoType> infoTypeFilterList;
@@ -219,16 +219,14 @@ public class FolderContentsRpcProxyImpl extends RpcProxy<FolderContentsLoadConfi
                                final SearchServiceFacade searchService,
                                final FileSystemMetadataServiceFacade metadataService,
                                final IplantAnnouncer announcer,
-                               final IplantDisplayStrings displayStrings,
-                               final IplantErrorStrings errorStrings,
+                               final GridView.Presenter.Appearance appearance,
                                @Assisted final List<InfoType> infoTypeFilterList,
                                @Assisted final TYPE entityType){
         this.drService = drService;
         this.searchService = searchService;
         this.announcer = announcer;
-        this.displayStrings = displayStrings;
+        this.appearance = appearance;
         this.metadataService = metadataService;
-        this.errorStrings = errorStrings;
         this.infoTypeFilterList = infoTypeFilterList;
         this.entityType = entityType;
     }
@@ -248,7 +246,7 @@ public class FolderContentsRpcProxyImpl extends RpcProxy<FolderContentsLoadConfi
                                          new FavoritesCallback(callback,
                                                                loadConfig,
                                                                announcer,
-                                                               errorStrings));
+                                                               appearance));
         } else if (folder instanceof DiskResourceQueryTemplate) {
             DiskResourceQueryTemplate qt = (DiskResourceQueryTemplate)folder;
             String infoTypeFilterQueryString = Joiner.on(" ").join(infoTypeFilterList);
@@ -266,7 +264,7 @@ public class FolderContentsRpcProxyImpl extends RpcProxy<FolderContentsLoadConfi
                                                         new SearchResultsCallback(announcer,
                                                                                   loadConfig,
                                                                                   callback,
-                                                                                  displayStrings,
+                                                                                  appearance,
                                                                                   hasSafeHtml));
         } else {
             drService.getFolderContents(folder,
@@ -276,7 +274,8 @@ public class FolderContentsRpcProxyImpl extends RpcProxy<FolderContentsLoadConfi
                                         new FolderContentsCallback(announcer,
                                                                    loadConfig,
                                                                    callback,
-                                                                   hasSafeHtml));
+                                                                   hasSafeHtml,
+                                                                   appearance));
         }
 
     }

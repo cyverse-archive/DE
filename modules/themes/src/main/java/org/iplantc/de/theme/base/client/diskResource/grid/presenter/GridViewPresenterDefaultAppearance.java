@@ -65,6 +65,11 @@ public class GridViewPresenterDefaultAppearance implements GridView.Presenter.Ap
     }
 
     @Override
+    public String favoritesError(String message) {
+        return displayStrings.favoritesError(message);
+    }
+
+    @Override
     public String markFavoriteError() {
         return displayStrings.markFavoriteError();
     }
@@ -102,6 +107,16 @@ public class GridViewPresenterDefaultAppearance implements GridView.Presenter.Ap
     @Override
     public String retrieveStatFailed() {
         return displayStrings.retrieveStatError();
+    }
+
+    @Override
+    public String searchDataResultsHeader(String searchText, int total, double executionTime_ms) {
+        return displayStrings.searchDataResultsHeader(searchText, total, executionTime_ms);
+    }
+
+    @Override
+    public String searchFailure() {
+        return displayStrings.searchFailure();
     }
 
     @Override

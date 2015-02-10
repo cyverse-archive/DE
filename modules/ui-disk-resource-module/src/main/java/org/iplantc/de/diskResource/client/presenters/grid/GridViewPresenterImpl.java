@@ -125,7 +125,7 @@ public class GridViewPresenterImpl implements GridView.Presenter,
         this.appearance = appearance;
         this.navigationPresenter = navigationPresenter;
         this.listStore = new ListStore<>(new DiskResourceModelKeyProvider());
-        DiskResourceView.FolderContentsRpcProxy folderContentsRpcProxy = folderContentsProxyFactory.createWithEntityType(infoTypeFilters, entityType);
+        GridView.FolderContentsRpcProxy folderContentsRpcProxy = folderContentsProxyFactory.createWithEntityType(infoTypeFilters, entityType);
 
         this.view = gridViewFactory.create(this, listStore, folderContentsRpcProxy);
 

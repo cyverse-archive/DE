@@ -7,7 +7,6 @@ import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.client.models.search.DiskResourceQueryTemplate;
 import org.iplantc.de.client.util.CommonModelUtils;
 import org.iplantc.de.client.util.DiskResourceUtil;
-import org.iplantc.de.diskResource.client.DiskResourceView;
 import org.iplantc.de.diskResource.client.GridView;
 import org.iplantc.de.diskResource.client.events.DiskResourceNameSelectedEvent;
 import org.iplantc.de.diskResource.client.events.DiskResourcePathSelectedEvent;
@@ -82,7 +81,7 @@ public class GridViewImpl extends ContentPanel implements GridView,
                  final DiskResourceUtil diskResourceUtil,
                  @Assisted GridView.Presenter presenter,
                  @Assisted final ListStore<DiskResource> listStore,
-                 @Assisted final DiskResourceView.FolderContentsRpcProxy folderContentsRpcProxy) {
+                 @Assisted final FolderContentsRpcProxy folderContentsRpcProxy) {
         this.appearance = appearance;
         this.diskResourceUtil = diskResourceUtil;
         this.listStore = listStore;

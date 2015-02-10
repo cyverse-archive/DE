@@ -2912,15 +2912,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     String searchData();
 
     /**
-     * Translated "Search results ({2} seconds): {1} found for {0}".
-     * 
-     * @return translated "Search results ({2} seconds): {1} found for {0}"
-     */
-    @DefaultMessage("Search results ({2} seconds): {1} found for {0}")
-    @Key("searchDataResultsHeader")
-    String searchDataResultsHeader(String searchText, int total, double seconds);
-
-    /**
      * Translated "Search for users".
      * 
      * @return translated "Search for users"

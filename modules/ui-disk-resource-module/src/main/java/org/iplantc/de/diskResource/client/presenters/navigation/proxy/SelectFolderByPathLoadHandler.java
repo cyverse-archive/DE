@@ -7,8 +7,6 @@ import org.iplantc.de.commons.client.info.ErrorAnnouncementConfig;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
 import org.iplantc.de.diskResource.client.DiskResourceView;
 import org.iplantc.de.diskResource.client.NavigationView;
-import org.iplantc.de.resources.client.messages.I18N;
-import org.iplantc.de.resources.client.messages.IplantErrorStrings;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
@@ -35,10 +33,10 @@ import java.util.Stack;
  */
 public class SelectFolderByPathLoadHandler implements LoadHandler<Folder, List<Folder>> {
 
-    private final IplantErrorStrings errorStrings = I18N.ERROR;
     private final IsMaskable maskable;
     private final Stack<String> pathsToLoad = new Stack<>();
     private final LinkedList<String> path;
+    private final NavigationView.Presenter.Appearance appearance;
     HandlerRegistration handlerRegistration;
     private boolean rootsLoaded;
 
@@ -50,9 +48,11 @@ public class SelectFolderByPathLoadHandler implements LoadHandler<Folder, List<F
 
     SelectFolderByPathLoadHandler(final HasPath folderToSelect,
                                   final NavigationView.Presenter navigationPresenter,
+                                  final NavigationView.Presenter.Appearance appearance,
                                   final IsMaskable maskable,
                                   final IplantAnnouncer announcer,
                                   final HandlerRegistration handlerRegistration) {
+        this.appearance = appearance;
         this.handlerRegistration = handlerRegistration;
 
         this.maskable = maskable;
@@ -74,10 +74,11 @@ public class SelectFolderByPathLoadHandler implements LoadHandler<Folder, List<F
     }
     public SelectFolderByPathLoadHandler(final HasPath folderToSelect,
                                          final NavigationView.Presenter navigationPresenter,
+                                         final NavigationView.Presenter.Appearance appearance,
                                          final IsMaskable maskable,
                                          final IplantAnnouncer announcer) {
 
-        this(folderToSelect, navigationPresenter, maskable, announcer, null);
+        this(folderToSelect, navigationPresenter, appearance, maskable, announcer, null);
     }
 
     public void setHandlerRegistration(HandlerRegistration handlerRegistration) {
@@ -130,8 +131,7 @@ public class SelectFolderByPathLoadHandler implements LoadHandler<Folder, List<F
             // This handler has loaded as much as it can, but has encountered a folder along the path
             // that does not exist. Select the last folder loaded, then report the error.
             String folderName = SafeHtmlUtils.htmlEscape(path.getLast());
-            SafeHtml errMsg = SafeHtmlUtils.fromTrustedString(errorStrings
-                                                                  .diskResourceDoesNotExist(folderName));
+            SafeHtml errMsg = SafeHtmlUtils.fromTrustedString(appearance.diskResourceDoesNotExist(folderName));
             announcer.schedule(new ErrorAnnouncementConfig(errMsg));
 
             navigationPresenter.setSelectedFolder(event.getLoadConfig());
@@ -157,7 +157,7 @@ public class SelectFolderByPathLoadHandler implements LoadHandler<Folder, List<F
         }
 
         if (!matched) {
-            String errMsg = errorStrings.diskResourceDoesNotExist(folderToSelect.getPath());
+            String errMsg = appearance.diskResourceDoesNotExist(folderToSelect.getPath());
             announcer.schedule(new ErrorAnnouncementConfig(SafeHtmlUtils.fromTrustedString(errMsg)));
 
             rootFolderDetected = false;

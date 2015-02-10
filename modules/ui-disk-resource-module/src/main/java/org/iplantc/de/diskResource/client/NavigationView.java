@@ -65,6 +65,15 @@ public interface NavigationView extends IsWidget,
                                 DiskResourcePathSelectedEvent.DiskResourcePathSelectedEventHandler,
                                 UpdateSavedSearchesEvent.UpdateSavedSearchesHandler {
 
+        interface Appearance {
+
+            String diskResourceDoesNotExist(String folderName);
+
+            String retrieveFolderInfoFailed();
+
+            String savedFiltersRetrievalFailure();
+        }
+
         void addFolder(Folder folder);
 
         void doMoveDiskResources(Folder targetFolder, List<DiskResource> dropData);

@@ -9,11 +9,8 @@ import org.iplantc.de.client.services.DiskResourceServiceFacade;
 import org.iplantc.de.client.services.FileSystemMetadataServiceFacade;
 import org.iplantc.de.client.services.SearchServiceFacade;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
-import org.iplantc.de.diskResource.client.presenters.grid.proxy.FolderContentsLoadConfig;
-import org.iplantc.de.diskResource.client.presenters.grid.proxy.FolderContentsRpcProxyImpl;
+import org.iplantc.de.diskResource.client.GridView;
 import org.iplantc.de.diskResource.client.presenters.grid.proxy.FolderContentsRpcProxyImpl.FolderContentsCallback;
-import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
-import org.iplantc.de.resources.client.messages.IplantErrorStrings;
 
 import com.google.common.collect.Lists;
 import com.google.gwt.safehtml.client.HasSafeHtml;
@@ -33,8 +30,8 @@ import static org.mockito.Matchers.anyDouble;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.anyList;
 import static org.mockito.Mockito.*;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -56,13 +53,11 @@ public class FolderContentsRpcProxyTest {
     @Mock DiskResourceServiceFacade diskResourceService;
     @Mock SearchServiceFacade searchServiceMock;
     @Mock IplantAnnouncer announcer;
-    @Mock IplantDisplayStrings displayStringsMock;
-    @Mock IplantErrorStrings errorStringsMock;
 
     @Mock AsyncCallback<PagingLoadResult<DiskResource>> pagingAsyncMock;
-    @Mock
-    FileSystemMetadataServiceFacade mockFileSystemMetadataService;
+    @Mock FileSystemMetadataServiceFacade mockFileSystemMetadataService;
     @Mock HasSafeHtml mockHasSafeHtml;
+    @Mock GridView.Presenter.Appearance appearanceMock;
 
     @Captor ArgumentCaptor<AsyncCallback<PagingLoadResult<DiskResource>>> pagingAsyncCaptor;
     @Captor ArgumentCaptor<PagingLoadResult<DiskResource>> pagingLoadResultArgumentCaptor;
@@ -75,8 +70,7 @@ public class FolderContentsRpcProxyTest {
                                                                 searchServiceMock,
                                                                 mockFileSystemMetadataService,
                                                                 announcer,
-                                                                displayStringsMock,
-                                                                errorStringsMock,
+                                                                appearanceMock,
                                                                 Collections.<InfoType>emptyList(),
                                                                 null);
         folderContentsRpcProxy.setHasSafeHtml(mockHasSafeHtml);
@@ -252,7 +246,7 @@ public class FolderContentsRpcProxyTest {
 
         ArgumentCaptor<FolderContentsRpcProxyImpl.SearchResultsCallback> callBackCaptor = ArgumentCaptor.forClass(FolderContentsRpcProxyImpl.SearchResultsCallback.class);
         verify(searchServiceMock).submitSearchFromQueryTemplate(any(DiskResourceQueryTemplate.class), eq(loadConfigMock), any(TYPE.class), callBackCaptor.capture());
-        when(displayStringsMock.searchDataResultsHeader(anyString(), anyInt(), anyDouble())).thenReturn(searchText);
+        when(appearanceMock.searchDataResultsHeader(anyString(), anyInt(), anyDouble())).thenReturn(searchText);
 
         // Call method under test
         List<DiskResource> onSuccessList = Lists.newArrayList(mock(DiskResource.class), mock(DiskResource.class), mock(DiskResource.class), mock(DiskResource.class));
@@ -261,10 +255,10 @@ public class FolderContentsRpcProxyTest {
         verify(pagingAsyncMock).onSuccess(pagingLoadResultArgumentCaptor.capture());
         assertEquals("Verify that results list is passed to paging load results", onSuccessList, pagingLoadResultArgumentCaptor.getValue().getData());
 
-        verify(displayStringsMock).searchDataResultsHeader(anyString(), eq(totalResults), eq(executionTime / 1000.0));
+        verify(appearanceMock).searchDataResultsHeader(anyString(), eq(totalResults), eq(executionTime / 1000.0));
         verify(mockHasSafeHtml).setHTML(SafeHtmlUtils.fromString(searchText));
 
-        verifyNoMoreInteractions(mockHasSafeHtml, searchServiceMock, pagingAsyncMock, displayStringsMock);
+        verifyNoMoreInteractions(mockHasSafeHtml, searchServiceMock, pagingAsyncMock);
         verifyZeroInteractions(diskResourceService);
     }
 

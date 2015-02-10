@@ -1,7 +1,6 @@
 package org.iplantc.de.diskResource.client.gin.factory;
 
 import org.iplantc.de.client.models.diskResources.DiskResource;
-import org.iplantc.de.diskResource.client.DiskResourceView;
 import org.iplantc.de.diskResource.client.GridView;
 
 import com.sencha.gxt.data.shared.ListStore;
@@ -13,5 +12,5 @@ import com.sencha.gxt.data.shared.ListStore;
 public interface GridViewFactory {
     GridView create(GridView.Presenter presenter,
                     ListStore<DiskResource> listStore,
-                    DiskResourceView.FolderContentsRpcProxy folderContentsRpcProxy);
+                    GridView.FolderContentsRpcProxy folderContentsRpcProxy);
 }

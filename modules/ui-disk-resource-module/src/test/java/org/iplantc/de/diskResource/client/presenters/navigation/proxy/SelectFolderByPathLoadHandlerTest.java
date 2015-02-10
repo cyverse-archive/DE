@@ -5,7 +5,6 @@ import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.commons.client.info.ErrorAnnouncementConfig;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
 import org.iplantc.de.diskResource.client.NavigationView;
-import org.iplantc.de.diskResource.client.presenters.navigation.proxy.SelectFolderByPathLoadHandler;
 
 import com.google.common.collect.Lists;
 import com.google.gwt.core.client.Scheduler;
@@ -41,6 +40,7 @@ public class SelectFolderByPathLoadHandlerTest {
     @Mock LoadEvent<Folder, List<Folder>> eventMock;
     @Mock Scheduler deferredSchedulerMock;
     @Mock IsMaskable maskableMock;
+    @Mock NavigationView.Presenter.Appearance appearanceMock;
 
     private SelectFolderByPathLoadHandler loadHandlerUnderTest;
 
@@ -69,6 +69,7 @@ public class SelectFolderByPathLoadHandlerTest {
         when(folderToSelectMock.getId()).thenReturn(targetFolderPath);
         when(folderToSelectMock.getPath()).thenReturn(targetFolderPath);
         when(presenterMock.rootsLoaded()).thenReturn(true);
+        when(appearanceMock.diskResourceDoesNotExist(anyString())).thenReturn("sample");
     }
 
     private Folder initMockFolder(String path, String mockName) {
@@ -100,6 +101,7 @@ public class SelectFolderByPathLoadHandlerTest {
 
         // The handler's constructor should call viewMock#expandFolder on rootPath.
         loadHandlerUnderTest = spy(new SelectFolderByPathLoadHandler(folderToSelectMock, presenterMock,
+                                                                     appearanceMock,
                                                                      maskableMock, announcerMock));
         loadHandlerUnderTest.setHandlerRegistration(mock(HandlerRegistration.class));
         verifyPresenterInit();
@@ -154,6 +156,7 @@ public class SelectFolderByPathLoadHandlerTest {
         when(presenterMock.getFolderByPath(rootPath)).thenReturn(rootPathFolderMock);
 
         loadHandlerUnderTest = spy(new SelectFolderByPathLoadHandler(folderToSelectMock, presenterMock,
+                                                                     appearanceMock,
                                                                      maskableMock, announcerMock));
         loadHandlerUnderTest.setHandlerRegistration(mock(HandlerRegistration.class));
         verifyPresenterInit();
@@ -203,7 +206,9 @@ public class SelectFolderByPathLoadHandlerTest {
         // Start with no roots loaded in the treeStoreMock. This causes the handler to wait until the
         // first onLoad callback, which means that the roots have just been loaded into the viewMock.
         when(presenterMock.getRootItems()).thenReturn(Collections.<Folder>emptyList());
-        loadHandlerUnderTest = new SelectFolderByPathLoadHandler(folderToSelectMock, presenterMock, maskableMock, announcerMock, mock(HandlerRegistration.class));
+        loadHandlerUnderTest = new SelectFolderByPathLoadHandler(folderToSelectMock, presenterMock,
+                                                                 appearanceMock,
+                                                                 maskableMock, announcerMock, mock(HandlerRegistration.class));
         verify(maskableMock).mask(any(String.class));
         verify(presenterMock).rootsLoaded();
 
@@ -237,7 +242,9 @@ public class SelectFolderByPathLoadHandlerTest {
 
         // Since deferred commands can't be tested, the refreshFolder method will be overridden to ensure
         // the DiskResourceView.Presenter#onRequestFolderRefresh method is called.
-        loadHandlerUnderTest = new SelectFolderByPathLoadHandler(folderToSelectMock, presenterMock, maskableMock, announcerMock) {
+        loadHandlerUnderTest = new SelectFolderByPathLoadHandler(folderToSelectMock, presenterMock,
+                                                                 appearanceMock,
+                                                                 maskableMock, announcerMock) {
             @Override
             void refreshFolder(final Folder folder) {
                 presenterMock.refreshFolder(folder);
@@ -280,7 +287,9 @@ public class SelectFolderByPathLoadHandlerTest {
 
         // Since deferred commands can't be tested, the refreshFolder method will be overridden to ensure
         // the DiskResourceView.Presenter#onRequestFolderRefresh method is called.
-        loadHandlerUnderTest = new SelectFolderByPathLoadHandler(folderToSelectMock, presenterMock, maskableMock, announcerMock) {
+        loadHandlerUnderTest = new SelectFolderByPathLoadHandler(folderToSelectMock, presenterMock,
+                                                                 appearanceMock,
+                                                                 maskableMock, announcerMock) {
             @Override
             void refreshFolder(final Folder folder) {
                 presenterMock.refreshFolder(folder);

@@ -11,11 +11,11 @@ import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.commons.client.info.ErrorAnnouncementConfig;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
 import org.iplantc.de.diskResource.client.DiskResourceView;
+import org.iplantc.de.diskResource.client.NavigationView;
 import org.iplantc.de.diskResource.client.events.RootFoldersRetrievedEvent;
 import org.iplantc.de.diskResource.client.events.SavedSearchesRetrievedEvent;
 import org.iplantc.de.diskResource.client.events.search.SubmitDiskResourceQueryEvent;
 import org.iplantc.de.diskResource.client.events.search.SubmitDiskResourceQueryEvent.SubmitDiskResourceQueryEventHandler;
-import org.iplantc.de.resources.client.messages.I18N;
 
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
@@ -38,14 +38,17 @@ public class FolderRpcProxyImpl extends RpcProxy<Folder, List<Folder>> implement
 
     class GetSavedQueryTemplatesCallback implements AsyncCallback<List<DiskResourceQueryTemplate>> {
         final IplantAnnouncer ipAnnouncer2;
+        private final NavigationView.Presenter.Appearance appearance;
 
-        public GetSavedQueryTemplatesCallback(IplantAnnouncer ipAnnouncer) {
+        public GetSavedQueryTemplatesCallback(IplantAnnouncer ipAnnouncer,
+                                              final NavigationView.Presenter.Appearance appearance) {
             this.ipAnnouncer2 = ipAnnouncer;
+            this.appearance = appearance;
         }
 
         @Override
         public void onFailure(Throwable caught) {
-            ipAnnouncer2.schedule(new ErrorAnnouncementConfig(SafeHtmlUtils.fromString("Failed to retrieve saved filters"), true));
+            ipAnnouncer2.schedule(new ErrorAnnouncementConfig(SafeHtmlUtils.fromString(appearance.savedFiltersRetrievalFailure()), true));
         }
 
         @Override
@@ -60,21 +63,24 @@ public class FolderRpcProxyImpl extends RpcProxy<Folder, List<Folder>> implement
         final AsyncCallback<List<Folder>> callback;
         final IplantAnnouncer ipAnnouncer;
         final IsMaskable maskable;
+        private final NavigationView.Presenter.Appearance appearance;
         final SearchServiceFacade searchSvc;
 
         public RootFolderCallback(final SearchServiceFacade searchService,
                                   final AsyncCallback<List<Folder>> callback,
                                   final IplantAnnouncer announcer,
-                                  final IsMaskable isMaskable) {
+                                  final IsMaskable isMaskable,
+                                  final NavigationView.Presenter.Appearance appearance) {
             this.searchSvc = searchService;
             this.callback = callback;
             this.ipAnnouncer = announcer;
             this.maskable = isMaskable;
+            this.appearance = appearance;
         }
 
         @Override
         public void onFailure(Throwable caught) {
-            ErrorHandler.post(I18N.ERROR.retrieveFolderInfoFailed(), caught);
+            ErrorHandler.post(appearance.retrieveFolderInfoFailed(), caught);
 
             if (callback != null) {
                 callback.onFailure(caught);
@@ -89,7 +95,8 @@ public class FolderRpcProxyImpl extends RpcProxy<Folder, List<Folder>> implement
                 callback.onSuccess(roots);
             }
             // Retrieve any saved searches.
-            searchSvc.getSavedQueryTemplates(new GetSavedQueryTemplatesCallback(ipAnnouncer));
+            searchSvc.getSavedQueryTemplates(new GetSavedQueryTemplatesCallback(ipAnnouncer,
+                                                                                appearance));
             Scheduler.get().scheduleFinally(new ScheduledCommand() {
 
                 @Override
@@ -103,14 +110,17 @@ public class FolderRpcProxyImpl extends RpcProxy<Folder, List<Folder>> implement
 
     class SubFoldersCallback implements AsyncCallback<List<Folder>> {
         final AsyncCallback<List<Folder>> callback;
+        private final NavigationView.Presenter.Appearance appearance;
 
-        public SubFoldersCallback(AsyncCallback<List<Folder>> callback) {
+        public SubFoldersCallback(AsyncCallback<List<Folder>> callback,
+                                  final NavigationView.Presenter.Appearance appearance) {
             this.callback = callback;
+            this.appearance = appearance;
         }
 
         @Override
         public void onFailure(Throwable caught) {
-            ErrorHandler.post(I18N.ERROR.retrieveFolderInfoFailed(), caught);
+            ErrorHandler.post(appearance.retrieveFolderInfoFailed(), caught);
             if (callback != null) {
                 callback.onFailure(caught);
             }
@@ -125,6 +135,7 @@ public class FolderRpcProxyImpl extends RpcProxy<Folder, List<Folder>> implement
     }
 
     private final IplantAnnouncer announcer;
+    private final NavigationView.Presenter.Appearance appearance;
     private final DiskResourceServiceFacade drService;
     private final HandlerManager handlerManager;
     private final SearchServiceFacade searchService;
@@ -133,11 +144,13 @@ public class FolderRpcProxyImpl extends RpcProxy<Folder, List<Folder>> implement
     @Inject
     FolderRpcProxyImpl(final DiskResourceServiceFacade drService,
                        final SearchServiceFacade searchService,
-                       final IplantAnnouncer announcer) {
+                       final IplantAnnouncer announcer,
+                       final NavigationView.Presenter.Appearance appearance) {
 
         this.drService = drService;
         this.searchService = searchService;
         this.announcer = announcer;
+        this.appearance = appearance;
 
         handlerManager = new HandlerManager(this);
     }
@@ -162,7 +175,11 @@ public class FolderRpcProxyImpl extends RpcProxy<Folder, List<Folder>> implement
         if (parentFolder == null) {
             // Performing initial load of root folders and saved searches
             isMaskable.mask("");
-            drService.getRootFolders(new RootFolderCallback(searchService, callback, announcer, isMaskable));
+            drService.getRootFolders(new RootFolderCallback(searchService,
+                                                            callback,
+                                                            announcer,
+                                                            isMaskable,
+                                                            appearance));
         } else if (parentFolder.isFilter() || parentFolder instanceof DiskResourceFavorite) {
             if (callback != null) {
                 callback.onSuccess(Collections.<Folder>emptyList());
@@ -170,7 +187,8 @@ public class FolderRpcProxyImpl extends RpcProxy<Folder, List<Folder>> implement
         } else if (parentFolder instanceof DiskResourceQueryTemplate) {
             fireEvent(new SubmitDiskResourceQueryEvent((DiskResourceQueryTemplate) parentFolder));
         } else {
-            drService.getSubFolders(parentFolder, new SubFoldersCallback(callback));
+            drService.getSubFolders(parentFolder, new SubFoldersCallback(callback,
+                                                                         appearance));
         }
     }
 

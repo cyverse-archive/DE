@@ -45,7 +45,7 @@ public class DiskResourceGinModule extends AbstractGinModule {
         // RPC Proxies
         bind(DiskResourceView.FolderRpcProxy.class).to(FolderRpcProxyImpl.class);
         install(new GinFactoryModuleBuilder()
-                    .implement(DiskResourceView.FolderContentsRpcProxy.class, FolderContentsRpcProxyImpl.class)
+                    .implement(GridView.FolderContentsRpcProxy.class, FolderContentsRpcProxyImpl.class)
                     .build(FolderContentsRpcProxyFactory.class));
 
         // Disk Resource Presenters

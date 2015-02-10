@@ -10,16 +10,13 @@ import org.iplantc.de.diskResource.client.events.DiskResourceSelectionChangedEve
 import org.iplantc.de.diskResource.client.events.FolderSelectionEvent;
 import org.iplantc.de.diskResource.client.events.RootFoldersRetrievedEvent;
 import org.iplantc.de.diskResource.client.events.SavedSearchesRetrievedEvent;
-import org.iplantc.de.diskResource.client.presenters.grid.proxy.FolderContentsLoadConfig;
-import org.iplantc.de.diskResource.client.presenters.navigation.proxy.SelectFolderByPathLoadHandler;
 import org.iplantc.de.diskResource.client.events.search.SubmitDiskResourceQueryEvent.HasSubmitDiskResourceQueryEventHandlers;
+import org.iplantc.de.diskResource.client.presenters.navigation.proxy.SelectFolderByPathLoadHandler;
 
-import com.google.gwt.safehtml.client.HasSafeHtml;
 import com.google.gwt.user.client.ui.HasOneWidget;
 import com.google.gwt.user.client.ui.IsWidget;
 
 import com.sencha.gxt.data.shared.loader.DataProxy;
-import com.sencha.gxt.data.shared.loader.PagingLoadResult;
 import com.sencha.gxt.data.shared.loader.TreeLoader;
 
 import java.util.List;
@@ -29,10 +26,6 @@ import java.util.List;
  */
 public interface DiskResourceView extends IsWidget,
                                           IsMaskable {
-
-    interface FolderContentsRpcProxy extends DataProxy<FolderContentsLoadConfig, PagingLoadResult<DiskResource>> {
-        void setHasSafeHtml(HasSafeHtml centerHeader);
-    }
 
     /**
      * A dataproxy used by the <code>Presenter</code> to fetch <code>DiskResource</code> data from the

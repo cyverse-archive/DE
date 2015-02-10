@@ -17,10 +17,12 @@ import org.iplantc.de.diskResource.client.views.grid.DiskResourceColumnModel;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.shared.EventHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.safehtml.client.HasSafeHtml;
 import com.google.gwt.user.client.ui.IsWidget;
 
 import com.sencha.gxt.data.shared.event.StoreUpdateEvent;
 import com.sencha.gxt.data.shared.loader.BeforeLoadEvent;
+import com.sencha.gxt.data.shared.loader.DataProxy;
 import com.sencha.gxt.data.shared.loader.PagingLoadResult;
 import com.sencha.gxt.data.shared.loader.PagingLoader;
 import com.sencha.gxt.widget.core.client.container.HasLayout;
@@ -86,6 +88,10 @@ public interface GridView extends IsWidget,
         String gridViewEmptyText();
     }
 
+    interface FolderContentsRpcProxy extends DataProxy<FolderContentsLoadConfig, PagingLoadResult<DiskResource>> {
+        void setHasSafeHtml(HasSafeHtml centerHeader);
+    }
+
     interface Presenter extends DiskResourceNameSelectedEvent.DiskResourceNameSelectedEventHandler,
                                 ManageSharingSelected.ManageSharingSelectedEventHandler,
                                 ManageMetadataSelected.ManageMetadataSelectedEventHandler,
@@ -112,6 +118,8 @@ public interface GridView extends IsWidget,
 
             String createDataLinksError();
 
+            String favoritesError(String message);
+
             String markFavoriteError();
 
             String metadata();
@@ -127,6 +135,10 @@ public interface GridView extends IsWidget,
             String removeFavoriteError();
 
             String retrieveStatFailed();
+
+            String searchDataResultsHeader(String searchText, int total, double executionTime_ms);
+
+            String searchFailure();
 
             String shareLinkDialogHeight();
 

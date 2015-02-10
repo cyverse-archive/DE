@@ -2,7 +2,6 @@ package org.iplantc.de.diskResource.client.presenters.grid;
 
 import org.iplantc.de.client.models.diskResources.TYPE;
 import org.iplantc.de.client.models.viewer.InfoType;
-import org.iplantc.de.diskResource.client.DiskResourceView;
 import org.iplantc.de.diskResource.client.GridView;
 import org.iplantc.de.diskResource.client.NavigationView;
 import org.iplantc.de.diskResource.client.gin.factory.FolderContentsRpcProxyFactory;
@@ -38,7 +37,7 @@ public class GridViewPresenterImplTest {
     @Mock NavigationView.Presenter navigationPresenterMock;
     @Mock TYPE entityTypeMock;
     @Mock GridView viewMock;
-    @Mock DiskResourceView.FolderContentsRpcProxy folderContentsProxyMock;
+    @Mock GridView.FolderContentsRpcProxy folderContentsProxyMock;
     @Mock DiskResourceColumnModel columnModelMock;
     @Mock GridView.Presenter.Appearance appearanceMock;
 

@@ -725,15 +725,6 @@ public interface IplantErrorStrings extends com.google.gwt.i18n.client.Messages,
     String retrieveAppListingFailed();
 
     /**
-     * Translated "Failed to retrieve folder contents.".
-     * 
-     * @return translated "Failed to retrieve folder contents."
-     */
-    @DefaultMessage("Failed to retrieve folder contents.")
-    @Key("retrieveFolderInfoFailed")
-    String retrieveFolderInfoFailed();
-
-    /**
      * Translated "Failed to retrieve saved filters.".
      * 
      * @return translated "Failed to retrieve saved filters."
@@ -875,8 +866,5 @@ public interface IplantErrorStrings extends com.google.gwt.i18n.client.Messages,
     String tagCreateError();
 
     String tagRetrieveError();
-
-    // favorites
-    String favoritesError(String caughtMessage);
 
 }

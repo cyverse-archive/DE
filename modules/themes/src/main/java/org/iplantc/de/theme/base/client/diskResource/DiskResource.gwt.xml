@@ -42,6 +42,9 @@
     <replace-with class="org.iplantc.de.theme.base.client.diskResource.navigation.NavigationViewDefaultAppearance">
         <when-type-is class="org.iplantc.de.diskResource.client.NavigationView.Appearance" />
     </replace-with>
+    <replace-with class="org.iplantc.de.theme.base.client.diskResource.navigation.presenter.NavigationViewPresenterDefaultAppearance">
+        <when-type-is class="org.iplantc.de.diskResource.client.NavigationView.Presenter.Appearance" />
+    </replace-with>
 
     <replace-with class="org.iplantc.de.theme.base.client.diskResource.navigation.cells.TreeCellDefaultAppearance">
         <when-type-is class="org.iplantc.de.diskResource.client.views.navigation.cells.TreeCell.TreeCellAppearance" />

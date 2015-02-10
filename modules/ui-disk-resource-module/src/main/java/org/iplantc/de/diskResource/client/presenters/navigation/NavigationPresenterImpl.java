@@ -78,6 +78,7 @@ public class NavigationPresenterImpl implements NavigationView.Presenter,
     @Inject DiskResourceAutoBeanFactory factory;
     @Inject UserInfo userInfo;
     @Inject IplantAnnouncer announcer;
+    @Inject NavigationView.Presenter.Appearance appearance;
     private IsMaskable maskable;
     private DiskResourceView.Presenter parentPresenter;
 
@@ -316,7 +317,7 @@ public class NavigationPresenterImpl implements NavigationView.Presenter,
             setSelectedFolder(folder);
         } else {
             // Create and add the SelectFolderByIdLoadHandler to the treeLoader.
-            final SelectFolderByPathLoadHandler handler = new SelectFolderByPathLoadHandler(hasPath, this, maskable, announcer);
+            final SelectFolderByPathLoadHandler handler = new SelectFolderByPathLoadHandler(hasPath, this, appearance, maskable, announcer);
             /*
              * Only add handler if no root items have been loaded, or the hasPath has a common
              * root with the treestore.
