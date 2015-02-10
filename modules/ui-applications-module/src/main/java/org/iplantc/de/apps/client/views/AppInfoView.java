@@ -108,9 +108,9 @@ public class AppInfoView implements
             com.sencha.gxt.widget.core.client.Window d = new com.sencha.gxt.widget.core.client.Window();
             d.setHeadingHtml(app.getName());
             if (editView != null) {
-                tabs.add(editView.asWidget(), "Edit");
+                tabs.add(editView.asWidget(), I18N.DISPLAY.edit());
             }
-            tabs.add(docWidget, "Documentation");
+            tabs.add(docWidget, I18N.DISPLAY.documentation());
             d.add(tabs);
             d.setSize("700px", "500px");
             d.setResizable(false);
@@ -119,7 +119,7 @@ public class AppInfoView implements
 
         private String buildRefLinkHtml(List<String> refLinks) {
             SafeHtmlBuilder builder = new SafeHtmlBuilder();
-            builder.appendHtmlConstant("<h4> References </h4><ul>");
+            builder.appendHtmlConstant("<h4>" + I18N.DISPLAY.refLbl() + "</h4><ul>");
             if (refLinks != null & refLinks.size() > 0) {
                 for (String ref : refLinks) {
                     builder.appendHtmlConstant("<li>" + ref + "</li>");

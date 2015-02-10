@@ -3940,4 +3940,14 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
 
     String removeFromFavorites(String resource_name);
 
+    String describeInputLbl();
+
+    String describeOutputLbl();
+
+    String describeParamLbl();
+
+    String testdataWarn();
+
+    String refLbl();
+
 }
