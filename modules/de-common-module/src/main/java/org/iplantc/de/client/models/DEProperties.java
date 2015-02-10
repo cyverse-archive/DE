@@ -84,6 +84,12 @@ public class DEProperties {
     private static final String KEEPALIVE_INTERVAL = KEEPALIVE_PREFIX + "interval";
 
     /**
+     * Default community data folder path
+     * 
+     */
+    private static final String COMMUNITY_DATA_PATH = "org.iplantc.communitydata.path";
+
+    /**
      * The single instance of this class.
      */
     private static DEProperties instance;
@@ -172,6 +178,13 @@ public class DEProperties {
     private int keepaliveInterval;
 
     /**
+     * 
+     * Community data path
+     * 
+     */
+    private String communityDataPath;
+
+    /**
      * Force the constructor to be private.
      */
     private DEProperties() {
@@ -208,6 +221,7 @@ public class DEProperties {
         keepaliveTarget = properties.get(KEEPALIVE_TARGET);
         keepaliveInterval = getInt(properties, KEEPALIVE_INTERVAL, -1);
         pathListFileIdentifier = properties.get(PATH_LIST_FILE_IDENTIFIER);
+        communityDataPath = properties.get(COMMUNITY_DATA_PATH);
     }
 
     /**
@@ -318,6 +332,10 @@ public class DEProperties {
      */
     public int getKeepaliveInterval() {
         return keepaliveInterval;
+    }
+
+    public String getCommunityDataPath() {
+        return communityDataPath;
     }
 
 }

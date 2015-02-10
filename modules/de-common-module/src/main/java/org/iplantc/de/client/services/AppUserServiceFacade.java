@@ -144,6 +144,8 @@ public interface AppUserServiceFacade extends AppServiceFacade {
     void getAppDetails(String appId, AsyncCallback<String> callback);
 
     void getAppDoc(String appId, AsyncCallback<String> callback);
+    
+    void saveAppDoc(String appId, String doc, AsyncCallback<String> callback);
 
     void createWorkflows(String body, AsyncCallback<String> callback);
 }

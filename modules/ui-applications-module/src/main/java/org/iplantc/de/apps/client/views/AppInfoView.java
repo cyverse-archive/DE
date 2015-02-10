@@ -4,6 +4,7 @@ import org.iplantc.de.apps.client.events.AppFavoritedEvent;
 import org.iplantc.de.apps.client.views.cells.AppFavoriteCell;
 import org.iplantc.de.apps.client.views.widgets.AppFavoriteCellWidget;
 import org.iplantc.de.apps.client.views.widgets.AppRatingCellWidget;
+import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.models.apps.AppAutoBeanFactory;
 import org.iplantc.de.client.models.apps.AppCategory;
@@ -21,16 +22,23 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.*;
+import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.IsWidget;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.Widget;
 import com.google.web.bindery.autobean.shared.AutoBeanCodex;
 
 import com.sencha.gxt.core.client.XTemplates;
 import com.sencha.gxt.core.client.dom.ScrollSupport.ScrollMode;
 import com.sencha.gxt.widget.core.client.ContentPanel;
+import com.sencha.gxt.widget.core.client.PlainTabPanel;
 import com.sencha.gxt.widget.core.client.TabPanel;
 import com.sencha.gxt.widget.core.client.container.AbstractHtmlLayoutContainer.HtmlData;
 import com.sencha.gxt.widget.core.client.container.AccordionLayoutContainer;
@@ -44,7 +52,91 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-public class AppInfoView implements IsWidget, AppFavoriteCell.RequestAppFavoriteEventHandler, AppFavoriteCell.HasRequestAppFavoriteEventHandlers, AppFavoritedEvent.AppFavoritedEventHandler {
+public class AppInfoView implements
+                        IsWidget,
+                        AppFavoriteCell.RequestAppFavoriteEventHandler,
+                        AppFavoriteCell.HasRequestAppFavoriteEventHandlers,
+                        AppFavoritedEvent.AppFavoritedEventHandler {
+
+    private static final String DIV_CLOSE = "</div>";
+
+    private static final String MARKDOWN_DIV_OPEN = "<link href=\"./markdown.css\" rel=\"stylesheet\"></link><div style='background-color:white;overflow:scroll;height:450px;' class=\"markdown\">";
+
+    private final class DisplayAppDocCallback implements AsyncCallback<String> {
+        private final App app;
+        private HtmlLayoutContainer docWidget;
+        private AppDocEditView editView;
+
+        private DisplayAppDocCallback(App app) {
+            this.app = app;
+        }
+
+        @Override
+        public void onFailure(Throwable caught) {
+            ErrorHandler.post("Unable to retrieve documentation for this app!", caught);
+        }
+
+        @Override
+        public void onSuccess(String result) {
+            AppAutoBeanFactory factory = GWT.create(AppAutoBeanFactory.class);
+            AppDoc doc = AutoBeanCodex.decode(factory, AppDoc.class, result).as();
+            String docString = doc.getDocumentaion();
+            List<String> refLinks = doc.getReferences();
+            showDoc(docString, refLinks);
+        }
+
+        void showDoc(String docString, List<String> refLinks) {
+            // FIXME Roll into appearance
+            String email = app.getIntegratorEmail();
+            PlainTabPanel tabs = new PlainTabPanel();
+            String renderHtml = render(docString);
+            final String ref_link_html = buildRefLinkHtml(refLinks);
+            docWidget = new HtmlLayoutContainer("");
+            setDocHtml(renderHtml + ref_link_html);
+
+            if (UserInfo.getInstance().getEmail().equals(email)) {
+                editView = new AppDocEditView(app.getId(), docString, appUserService, new Command() {
+
+                    @Override
+                    public void execute() {
+                        docWidget.clear();
+                        docWidget.setHTML(render(editView.getDoc() + ref_link_html));
+                    }
+                });
+            }
+
+            com.sencha.gxt.widget.core.client.Window d = new com.sencha.gxt.widget.core.client.Window();
+            d.setHeadingHtml(app.getName());
+            if (editView != null) {
+                tabs.add(editView.asWidget(), "Edit");
+            }
+            tabs.add(docWidget, "Documentation");
+            d.add(tabs);
+            d.setSize("700px", "500px");
+            d.setResizable(false);
+            d.show();
+        }
+
+        private String buildRefLinkHtml(List<String> refLinks) {
+            SafeHtmlBuilder builder = new SafeHtmlBuilder();
+            builder.appendHtmlConstant("<h4> References </h4><ul>");
+            if (refLinks != null & refLinks.size() > 0) {
+                for (String ref : refLinks) {
+                    builder.appendHtmlConstant("<li>" + ref + "</li>");
+                }
+                builder.appendHtmlConstant("</ul>");
+                return builder.toSafeHtml().asString();
+            } else {
+                return null;
+            }
+
+        }
+
+        private void setDocHtml(String renderHtml) {
+            docWidget.setHTML(MARKDOWN_DIV_OPEN + renderHtml + DIV_CLOSE);
+
+        }
+    }
 
     interface AppInfoViewUiBinder extends UiBinder<Widget, AppInfoView> {
     }
@@ -99,7 +191,8 @@ public class AppInfoView implements IsWidget, AppFavoriteCell.RequestAppFavorite
     }
 
     @Override
-    public HandlerRegistration addRequestAppFavoriteEventHandlers(AppFavoriteCell.RequestAppFavoriteEventHandler handler) {
+    public HandlerRegistration
+            addRequestAppFavoriteEventHandlers(AppFavoriteCell.RequestAppFavoriteEventHandler handler) {
         return asWidget().addHandler(handler, AppFavoriteCell.REQUEST_APP_FAV_EVNT_TYPE);
     }
 
@@ -214,37 +307,7 @@ public class AppInfoView implements IsWidget, AppFavoriteCell.RequestAppFavorite
                 if (!Strings.isNullOrEmpty(app.getWikiUrl())) {
                     Window.open(app.getWikiUrl(), "_blank", "");
                 } else {
-                    appUserService.getAppDoc(app.getId(), new AsyncCallback<String>() {
-
-                        @Override
-                        public void onFailure(Throwable caught) {
-                            // TODO Auto-generated method stub
-
-                        }
-
-                        @Override
-                        public void onSuccess(String result) {
-                            AppAutoBeanFactory factory = GWT.create(AppAutoBeanFactory.class);
-                            AppDoc doc = AutoBeanCodex.decode(factory, AppDoc.class, result).as();
-                            String docString = doc.getDocumentaion();
-                            showDoc(docString);
-                        }
-
-                        void showDoc(String docString) {
-                            // FIXME Roll into appearance
-                            String renderHtml = render(docString);
-                            HtmlLayoutContainer cont = new HtmlLayoutContainer("<link href=\"./markdown.css\" rel=\"stylesheet\"></link><div style='background-color:white;overflow:scroll;height:375px;' class=\"markdown\">"
-                                    + renderHtml + "</div>");
-                            com.sencha.gxt.widget.core.client.Window d = new com.sencha.gxt.widget.core.client.Window();
-                            d.setHeadingHtml(app.getName());
-                            d.setWidget(cont);
-                            d.setSize("500px", "400px");
-                            d.setResizable(false);
-                            d.show();
-                        }
-
-
-                    });
+                    appUserService.getAppDoc(app.getId(), new DisplayAppDocCallback(app));
                 }
 
             }
@@ -257,6 +320,7 @@ public class AppInfoView implements IsWidget, AppFavoriteCell.RequestAppFavorite
 		var markdown = $wnd.Markdown.getSanitizingConverter();
 		return markdown.makeHtml(val);
     }-*/;
+
     private void addRating(final App app, HtmlLayoutContainer hlc) {
         hlc.add(new Label(I18N.DISPLAY.rating() + ": "), new HtmlData(".cell9"));
         AppRatingCellWidget rcell = new AppRatingCellWidget();

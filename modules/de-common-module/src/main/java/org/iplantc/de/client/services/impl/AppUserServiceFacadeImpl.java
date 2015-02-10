@@ -415,4 +415,12 @@ public class AppUserServiceFacadeImpl implements AppUserServiceFacade {
         ServiceCallWrapper wrapper = new ServiceCallWrapper(GET, address);
         deServiceFacade.getServiceData(wrapper, callback);
     }
+
+    @Override
+    public void saveAppDoc(String appId, String doc, AsyncCallback<String> callback) {
+        String address = APPS + "/" + appId + "/documentation";
+        ServiceCallWrapper wrapper = new ServiceCallWrapper(PATCH, address, doc);
+        deServiceFacade.getServiceData(wrapper, callback);
+
+    }
 }

@@ -113,4 +113,10 @@ public class AppUserServiceFacadeStub implements AppUserServiceFacade {
         // TODO Auto-generated method stub
 
     }
+
+    @Override
+    public void saveAppDoc(String appId, String doc, AsyncCallback<String> callback) {
+        // TODO Auto-generated method stub
+
+    }
 }

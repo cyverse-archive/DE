@@ -1,9 +1,11 @@
 package org.iplantc.de.apps.client.views;
 
+import org.iplantc.de.client.models.DEProperties;
 import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.models.apps.AppAutoBeanFactory;
 import org.iplantc.de.client.models.apps.AppCategory;
 import org.iplantc.de.client.models.apps.AppRefLink;
+import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.commons.client.validators.UrlValidator;
 import org.iplantc.de.commons.client.widgets.ContextualHelpPopup;
 import org.iplantc.de.diskResource.client.gin.factory.DiskResourceSelectorFieldFactory;
@@ -12,6 +14,8 @@ import org.iplantc.de.resources.client.IplantResources;
 import org.iplantc.de.resources.client.messages.I18N;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONString;
@@ -148,6 +152,8 @@ public class SubmitAppForPublicUseViewImpl implements SubmitAppForPublicUseView 
 
     private App selectedApp;
 
+    private final DEProperties deprops;
+
     @UiField(provided = true)
     final FolderSelectorField dataFolderSelector;
 
@@ -158,14 +164,23 @@ public class SubmitAppForPublicUseViewImpl implements SubmitAppForPublicUseView 
     }
 
     @Inject
-    public SubmitAppForPublicUseViewImpl(final DiskResourceSelectorFieldFactory folderSelectorFieldFactory) {
+    public SubmitAppForPublicUseViewImpl(final DiskResourceSelectorFieldFactory folderSelectorFieldFactory,
+                                         final DEProperties props) {
         this.dataFolderSelector = folderSelectorFieldFactory.defaultFolderSelector();
+        this.deprops = props;
         initCategoryTree();
         widget = uiBinder.createAndBindUi(this);
         initGrid();
         container.setScrollMode(ScrollMode.AUTOY);
         initFieldLabels();
+        dataFolderSelector.addValueChangeHandler(new ValueChangeHandler<Folder>() {
 
+            @Override
+            public void onValueChange(ValueChangeEvent<Folder> event) {
+                validate();
+
+            }
+        });
         addhelp();
     }
 
@@ -425,8 +440,23 @@ public class SubmitAppForPublicUseViewImpl implements SubmitAppForPublicUseView 
 
     @Override
     public boolean validate() {
+        Folder tdFolder = dataFolderSelector.getValue();
+
+        if (tdFolder == null ||  tdFolder.getPath() == null) {
+            return false;
+        }
+        
+        if (!tdFolder.getPath().startsWith(deprops.getCommunityDataPath())) {
+            dataFolderSelector.setInfoErrorText("Test data must be available under Community Data folder.");
+            return false;
+        } else {
+            dataFolderSelector.setInfoErrorText(null);
+        }
+
         return appName.getCurrentValue() != null && appName.getCurrentValue().length() <= 255
-                && appDesc.getCurrentValue() != null && checkRefLinksGrid() && checkAppCategories();
+                && appDesc.getCurrentValue() != null && checkRefLinksGrid() && checkAppCategories()
+                && inputDesc.isValid() && paramDesc.isValid()
+                && outputDesc.isValid();
 
     }
 
