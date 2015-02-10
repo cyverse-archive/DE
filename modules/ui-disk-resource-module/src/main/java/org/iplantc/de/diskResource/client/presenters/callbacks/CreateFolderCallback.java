@@ -7,15 +7,18 @@ import org.iplantc.de.client.models.errors.diskResources.DiskResourceErrorAutoBe
 import org.iplantc.de.client.models.errors.diskResources.ErrorCreateFolder;
 import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.diskResource.client.events.FolderCreatedEvent;
-import org.iplantc.de.resources.client.messages.I18N;
 
 import com.google.gwt.core.client.GWT;
 import com.google.web.bindery.autobean.shared.AutoBean;
 import com.google.web.bindery.autobean.shared.AutoBeanCodex;
 
+/**
+ * @author jstroot
+ */
 public class CreateFolderCallback extends DiskResourceServiceCallback<Folder> {
 
     private final Folder parentFolder;
+    private final DiskResourceCallbackAppearance appearance = GWT.create(DiskResourceCallbackAppearance.class);
 
     public CreateFolderCallback(final Folder parentFolder, final IsMaskable maskable) {
         super(maskable);
@@ -40,7 +43,7 @@ public class CreateFolderCallback extends DiskResourceServiceCallback<Folder> {
 
     @Override
     protected String getErrorMessageDefault() {
-        return I18N.ERROR.createFolderFailed();
+        return appearance.createFolderFailed();
     }
 
 }

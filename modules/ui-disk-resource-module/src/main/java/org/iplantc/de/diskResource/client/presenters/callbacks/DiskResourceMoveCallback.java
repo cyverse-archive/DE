@@ -11,7 +11,6 @@ import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
 import org.iplantc.de.commons.client.info.SuccessAnnouncementConfig;
 import org.iplantc.de.diskResource.client.events.DiskResourcesMovedEvent;
-import org.iplantc.de.resources.client.messages.I18N;
 
 import com.google.gwt.core.client.GWT;
 import com.google.web.bindery.autobean.shared.AutoBean;
@@ -28,6 +27,7 @@ public class DiskResourceMoveCallback extends DiskResourceServiceCallback<DiskRe
     private final Folder destFolder;
     private final boolean moveContents;
     private final Folder sourceFolder;
+    private final DiskResourceCallbackAppearance appearance = GWT.create(DiskResourceCallbackAppearance.class);
 
     public DiskResourceMoveCallback(final IsMaskable maskedCaller,
                                     final boolean moveContents,
@@ -46,7 +46,7 @@ public class DiskResourceMoveCallback extends DiskResourceServiceCallback<DiskRe
         unmaskCaller();
         // FIXME CORE-5300 Round-robin. Fix
 
-        String successMsg = I18N.DISPLAY.diskResourceMoveSuccess(result.getDest(), result.getSources());
+        String successMsg = appearance.diskResourceMoveSuccess(result.getDest(), result.getSources());
         IplantAnnouncer.getInstance().schedule(new SuccessAnnouncementConfig(successMsg));
 
         /*
@@ -69,7 +69,7 @@ public class DiskResourceMoveCallback extends DiskResourceServiceCallback<DiskRe
 
     @Override
     protected String getErrorMessageDefault() {
-        return I18N.ERROR.moveFailed();
+        return appearance.moveFailed();
     }
 
 }

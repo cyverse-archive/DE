@@ -11,7 +11,6 @@ import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
 import org.iplantc.de.commons.client.info.SuccessAnnouncementConfig;
 import org.iplantc.de.diskResource.client.NavigationView;
-import org.iplantc.de.resources.client.messages.I18N;
 
 import com.google.gwt.core.client.GWT;
 import com.google.web.bindery.autobean.shared.AutoBean;
@@ -30,6 +29,7 @@ public class DiskResourceRestoreCallback extends DiskResourceServiceCallback<Str
     private final NavigationView.Presenter navigationPresenter;
     private final DiskResourceAutoBeanFactory drFactory;
     private final List<DiskResource> selectedResources;
+    private final DiskResourceCallbackAppearance appearance = GWT.create(DiskResourceCallbackAppearance.class);
 
     public DiskResourceRestoreCallback(final NavigationView.Presenter navigationPresenter,
                                        final IsMaskable maskable,
@@ -44,7 +44,7 @@ public class DiskResourceRestoreCallback extends DiskResourceServiceCallback<Str
 
     @Override
     protected String getErrorMessageDefault() {
-        return I18N.ERROR.restoreDefaultMsg();
+        return appearance.restoreDefaultMsg();
     }
 
     @Override
@@ -76,10 +76,10 @@ public class DiskResourceRestoreCallback extends DiskResourceServiceCallback<Str
                         RestoredResource.class, restoredResourceJson).as();
 
                 if (restoredResource.isPartialRestore()) {
-                   IplantAnnouncer.getInstance().schedule(I18N.DISPLAY.partialRestore());
+                   IplantAnnouncer.getInstance().schedule(appearance.partialRestore());
                    break;
                 } else {
-                    IplantAnnouncer.getInstance().schedule(new SuccessAnnouncementConfig(I18N.DISPLAY.restoreMsg()));
+                    IplantAnnouncer.getInstance().schedule(new SuccessAnnouncementConfig(appearance.restoreMsg()));
                     break;
                 }
             }

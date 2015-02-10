@@ -6,16 +6,18 @@ import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
 import org.iplantc.de.commons.client.info.SuccessAnnouncementConfig;
 import org.iplantc.de.commons.client.views.dialogs.IPlantDialog;
-import org.iplantc.de.diskResource.client.presenters.callbacks.DiskResourceServiceCallback;
-import org.iplantc.de.resources.client.messages.I18N;
 
 import com.google.gwt.core.shared.GWT;
 import com.google.web.bindery.autobean.shared.AutoBean;
 import com.google.web.bindery.autobean.shared.AutoBeanCodex;
 
+/**
+ * @author jstroot
+ */
 public class DiskResourceMetadataUpdateCallback extends DiskResourceServiceCallback<String> {
 
     private final IPlantDialog dialog;
+    private final DiskResourceCallbackAppearance appearance = GWT.create(DiskResourceCallbackAppearance.class);
 
     public DiskResourceMetadataUpdateCallback(IPlantDialog dialog) {
         super(dialog);
@@ -31,7 +33,7 @@ public class DiskResourceMetadataUpdateCallback extends DiskResourceServiceCallb
             dialog.hide();
         }
 
-        IplantAnnouncer.getInstance().schedule(new SuccessAnnouncementConfig(I18N.DISPLAY.metadataSuccess()));
+        IplantAnnouncer.getInstance().schedule(new SuccessAnnouncementConfig(appearance.metadataSuccess()));
     }
 
     @Override
@@ -47,7 +49,7 @@ public class DiskResourceMetadataUpdateCallback extends DiskResourceServiceCallb
 
     @Override
     protected String getErrorMessageDefault() {
-        return I18N.ERROR.metadataUpdateFailed();
+        return appearance.metadataUpdateFailed();
     }
 
 }

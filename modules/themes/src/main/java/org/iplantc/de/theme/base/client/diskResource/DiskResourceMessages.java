@@ -2,10 +2,25 @@ package org.iplantc.de.theme.base.client.diskResource;
 
 import com.google.gwt.i18n.client.Messages;
 
+import java.util.List;
+
 /**
  * @author jstroot
  */
 public interface DiskResourceMessages extends Messages {
+
+    String createDataLinksError();
+
+    String createFolderFailed();
+
+    String deleteDataLinksError();
+
+    String deleteFailed();
+
+    @DefaultMessage("Selected items moved to {0}.")
+    @AlternateMessage({"=1", "Selected item moved to {0}."})
+    @Key("diskResourceMoveSuccess")
+    String diskResourceMoveSuccess(String destPath, @Optional @PluralCount List<String> srcPaths);
 
     @Key("fileFolderDialogHeaderText")
     String fileFolderDialogHeaderText();
@@ -15,6 +30,22 @@ public interface DiskResourceMessages extends Messages {
 
     @Key("fileSelectDialogHeaderText")
     String fileSelectDialogHeaderText();
+
+    String listDataLinksError();
+
+    String metadataSuccess();
+
+    String metadataUpdateFailed();
+
+    String moveFailed();
+
+    String partialRestore();
+
+    String renameFailed();
+
+    String restoreDefaultMsg();
+
+    String restoreMsg();
 
     @Key("selectedFile")
     String selectedFile();

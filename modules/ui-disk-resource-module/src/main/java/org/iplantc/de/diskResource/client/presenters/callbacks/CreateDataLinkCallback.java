@@ -4,8 +4,8 @@ import org.iplantc.de.client.models.dataLink.DataLink;
 import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.diskResource.client.DataLinkView;
-import org.iplantc.de.resources.client.messages.I18N;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import com.sencha.gxt.data.shared.TreeStore;
@@ -21,6 +21,7 @@ public class CreateDataLinkCallback implements AsyncCallback<List<DataLink>> {
 
     private final Tree<DiskResource, DiskResource> tree;
     private final DataLinkView view;
+    private final DiskResourceCallbackAppearance appearance = GWT.create(DiskResourceCallbackAppearance.class);
 
     public CreateDataLinkCallback(final DataLinkView view) {
         this.view = view;
@@ -29,7 +30,7 @@ public class CreateDataLinkCallback implements AsyncCallback<List<DataLink>> {
 
     @Override
     public void onFailure(Throwable caught) {
-        ErrorHandler.post(I18N.ERROR.createDataLinksError(), caught);
+        ErrorHandler.post(appearance.createDataLinksError(), caught);
         view.unmask();
     }
 

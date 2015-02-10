@@ -6,8 +6,8 @@ import org.iplantc.de.client.models.dataLink.DataLinkList;
 import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.client.util.JsonUtil;
 import org.iplantc.de.commons.client.ErrorHandler;
-import org.iplantc.de.resources.client.messages.I18N;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -21,11 +21,15 @@ import com.sencha.gxt.widget.core.client.tree.Tree.CheckState;
 
 import java.util.List;
 
+/**
+ * @author jstroot
+ */
 public class ListDataLinksCallback<M> implements AsyncCallback<String> {
 
     private final Tree<M, M> tree;
     private final DataLinkFactory dlFactory;
     private final JsonUtil jsonUtil;
+    private final DiskResourceCallbackAppearance appearance = GWT.create(DiskResourceCallbackAppearance.class);
 
     public ListDataLinksCallback(final Tree<M, M> tree,
                                  final DataLinkFactory dlFactory) {
@@ -76,6 +80,6 @@ public class ListDataLinksCallback<M> implements AsyncCallback<String> {
 
     @Override
     public void onFailure(Throwable caught) {
-        ErrorHandler.post(I18N.ERROR.listDataLinksError(), caught);
+        ErrorHandler.post(appearance.listDataLinksError(), caught);
     }
 }

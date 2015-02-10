@@ -11,7 +11,6 @@ import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
 import org.iplantc.de.commons.client.info.SuccessAnnouncementConfig;
 import org.iplantc.de.diskResource.client.events.DiskResourcesDeletedEvent;
-import org.iplantc.de.resources.client.messages.I18N;
 
 import com.google.gwt.core.shared.GWT;
 import com.google.web.bindery.autobean.shared.AutoBean;
@@ -19,11 +18,15 @@ import com.google.web.bindery.autobean.shared.AutoBeanCodex;
 
 import java.util.Collection;
 
+/**
+ * @author jstroot
+ */
 public class DiskResourceDeleteCallback extends DiskResourceServiceCallback<HasPaths> {
 
     private final Collection<DiskResource> resources;
     private final Folder parentFolder;
     private final String announce;
+    private final DiskResourceCallbackAppearance appearance = GWT.create(DiskResourceCallbackAppearance.class);
 
     public DiskResourceDeleteCallback(Collection<DiskResource> resources, Folder parentFolder, IsMaskable maskedCaller, String announce) {
         super(maskedCaller);
@@ -52,7 +55,7 @@ public class DiskResourceDeleteCallback extends DiskResourceServiceCallback<HasP
 
     @Override
     protected String getErrorMessageDefault() {
-        return I18N.ERROR.deleteFailed();
+        return appearance.deleteFailed();
     }
 
 }

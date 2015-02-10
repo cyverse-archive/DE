@@ -83,22 +83,6 @@ public interface IplantErrorStrings extends com.google.gwt.i18n.client.Messages,
     String confluenceError();
 
     /**
-     * Error msg shown when an attempt to create some data links goes awry!!
-     * 
-     * @return
-     */
-    String createDataLinksError();
-
-    /**
-     * Translated "Folder creation has failed.".
-     * 
-     * @return translated "Folder creation has failed."
-     */
-    @DefaultMessage("Folder creation has failed.")
-    @Key("createFolderFailed")
-    String createFolderFailed();
-
-    /**
      * Translated "The server reported a missing or corrupt request parameter. Please try again.".
      * 
      * @return translated "The server reported a missing or corrupt request parameter. Please try again."
@@ -185,20 +169,6 @@ public interface IplantErrorStrings extends com.google.gwt.i18n.client.Messages,
     @DefaultMessage("Error deleting analysis.")
     @Key("deleteAnalysisError")
     String deleteAnalysisError();
-
-    /**
-     * Error msg shown when an attempt to delete some data links failed.
-     * 
-     * @return
-     */
-    String deleteDataLinksError();
-
-    /**
-     * Error message displayed when deletion fails.
-     * 
-     * @return localized error string.
-     */
-    String deleteFailed();
 
     /**
      * Translated "Unable to retrieve list of integrated tools.".
@@ -623,13 +593,6 @@ public interface IplantErrorStrings extends com.google.gwt.i18n.client.Messages,
     String keepaliveRequestFailed();
 
     /**
-     * Error msg shown when an attempt to list datalinks for a set of <code>DiskResource</code>s fails.
-     * 
-     * @return
-     */
-    String listDataLinksError();
-
-    /**
      * The error displayed when system messages cannot be retrieved from storage.
      */
     @DefaultMessage("The system messages could not be loaded.")
@@ -677,15 +640,6 @@ public interface IplantErrorStrings extends com.google.gwt.i18n.client.Messages,
     String markMessageSeenFailed();
 
     /**
-     * Translated "Error updating metadata.".
-     * 
-     * @return translated "Error updating metadata."
-     */
-    @DefaultMessage("Error updating metadata.")
-    @Key("metadataUpdateFailed")
-    String metadataUpdateFailed();
-
-    /**
      * Translated "Could not move Application \"{0}\".".
      * 
      * @return translated "Could not move Application \"{0}\"."
@@ -693,15 +647,6 @@ public interface IplantErrorStrings extends com.google.gwt.i18n.client.Messages,
     @DefaultMessage("Could not move Application \"{0}\".")
     @Key("moveApplicationError")
     String moveApplicationError(String arg0);
-
-    /**
-     * Translated "Move Failed.".
-     * 
-     * @return translated "Move Failed."
-     */
-    @DefaultMessage("Move Failed.")
-    @Key("moveFailed")
-    String moveFailed();
 
     /**
      * Translated
@@ -762,13 +707,6 @@ public interface IplantErrorStrings extends com.google.gwt.i18n.client.Messages,
     String removeCollabErrorMsg();
 
     /**
-     * Error message displayed when rename fails.
-     * 
-     * @return localized error string.
-     */
-    String renameFailed();
-
-    /**
      * Translated "Cannot move an ancestor folder into one of its descendants.".
      * 
      * @return translated "Cannot move an ancestor folder into one of its descendants."
@@ -776,15 +714,6 @@ public interface IplantErrorStrings extends com.google.gwt.i18n.client.Messages,
     @DefaultMessage("Cannot move an ancestor folder into one of its descendants.")
     @Key("resourcesContainAncestors")
     String resourcesContainAncestors();
-
-    /**
-     * Translated "Unable to restore selected files and folders.".
-     * 
-     * @return translated "Unable to restore selected files and folders."
-     */
-    @DefaultMessage("Unable to restore selected files and folders.")
-    @Key("restoreDefaultMsg")
-    String restoreDefaultMsg();
 
     /**
      * Translated "Failed to retrieve app group contents.".

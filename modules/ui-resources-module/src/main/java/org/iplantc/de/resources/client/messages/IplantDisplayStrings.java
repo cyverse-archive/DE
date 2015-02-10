@@ -2,8 +2,6 @@ package org.iplantc.de.resources.client.messages;
 
 import com.google.gwt.safehtml.shared.SafeHtml;
 
-import java.util.List;
-
 /**
  * Interface to represent the messages contained in resource bundle:
  * /Users/sriram/iplant/lib-workspace/ui
@@ -1852,15 +1850,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     String messagesGridHeader();
 
     /**
-     * Translated "metadataSuccess".
-     *
-     * @return translated "metadataSuccess"
-     */
-    @DefaultMessage("Metadata updated successfully.")
-    @Key("metadataSuccess")
-    String metadataSuccess();
-
-    /**
      * Translated "Are you sure you want to remove this template?".
      * 
      * @return translated "Are you sure you want to remove this template?"
@@ -2336,12 +2325,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     @DefaultMessage("Value")
     @Key("paramValue")
     String paramValue();
-
-    /**
-     *
-     * @return
-     */
-    String partialRestore();
 
     /**
      * Translated "Path".
@@ -2864,15 +2847,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     @DefaultMessage("Reset")
     @Key("reset")
     String reset();
-
-    /**
-     * Translated "Selected files and folders are restored to their original location.".
-     *
-     * @return translated "Selected files and folders are restored to their original location."
-     */
-    @DefaultMessage("Selected files and folders are restored to their original location.")
-    @Key("restoreMsg")
-    String restoreMsg();
 
     /**
      * Translated "Discovery Environment".
@@ -3851,17 +3825,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     @DefaultMessage("Pending verification that {0} exists.")
     @Key("diskResourceExistCheckPending")
     String diskResourceExistCheckPending(String path);
-
-    /**
-     * A message indicating that one or more disk resources were moved to a destination folder.
-     * 
-     * @param app The name of the app that was categorized.
-     * @param categories The list of category names.
-     */
-    @DefaultMessage("Selected items moved to {0}.")
-    @AlternateMessage({"=1", "Selected item moved to {0}."})
-    @Key("diskResourceMoveSuccess")
-    String diskResourceMoveSuccess(String destPath, @Optional @PluralCount List<String> srcPaths);
 
     /**
      * Translated "Add to Sidebar"

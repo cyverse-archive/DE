@@ -5,6 +5,12 @@
     <inherits name="org.iplantc.de.diskResource.diskresource" />
     <inherits name="org.iplantc.de.fileViewers.FileViewers"/>
 
+    <!-- Callbacks -->
+    <replace-with class="org.iplantc.de.theme.base.client.diskResource.presenter.DiskResourceCallbackDefaultAppearance">
+        <when-type-is class="org.iplantc.de.diskResource.client.presenters.callbacks.DiskResourceCallbackAppearance" />
+    </replace-with>
+
+    <!-- Presenter -->
     <replace-with class="org.iplantc.de.theme.base.client.diskResource.presenter.DiskResourceViewPresenterDefaultAppearance">
         <when-type-is class="org.iplantc.de.diskResource.client.DiskResourceView.Presenter.Appearance" />
     </replace-with>
