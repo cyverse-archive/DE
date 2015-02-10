@@ -196,6 +196,8 @@ public interface ToolbarView extends IsWidget,
 
             String manageDataLinks();
 
+            int manageDataLinksDialogHeight();
+
             int manageDataLinksDialogWidth();
 
             String manageDataLinksHelp();

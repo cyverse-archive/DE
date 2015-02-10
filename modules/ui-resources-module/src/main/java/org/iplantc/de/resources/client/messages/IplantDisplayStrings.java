@@ -68,15 +68,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     String adminInfo();
 
     /**
-     * Translated "Advanced Sharing".
-     * 
-     * @return translated "Advanced Sharing"
-     */
-    @DefaultMessage("Advanced Sharing")
-    @Key("advancedSharing")
-    String advancedSharing();
-
-    /**
      * 
      * @return
      */
@@ -620,13 +611,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     String collaborators();
 
     /**
-     * Text displayed to collapse all nodes in a tree.
-     *
-     * @return
-     */
-    String collapseAll();
-
-    /**
      * Translated "Comments".
      *
      * @return translated "Comments"
@@ -691,15 +675,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     @DefaultMessage("Copy")
     @Key("copy")
     String copy();
-
-    /**
-     * Translated "Copy Link".
-     * 
-     * @return translated "Copy Link"
-     */
-    @DefaultMessage("Copy Link")
-    @Key("copyLink")
-    String copyLink();
 
     /**
      * Translated "Copy / Paste".
@@ -819,13 +794,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     String dataDragDropStatusText(int i);
 
     /**
-     * Text displayed at top of Manage Data Link window.
-     *
-     * @return
-     */
-    String dataLinkWarning();
-
-    /**
      * Translated "Data: {0}".
      * 
      * @return translated "Data: {0}"
@@ -920,8 +888,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
      * Tool tip text displayed when hovering over the delete button in the Manage Data Links window.
      *
      * @return
-     */
-    String deleteDataLinkToolTip();
 
     /**
      * Translated "All are deleted files and folders are available under trash.".
@@ -1174,13 +1140,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     @DefaultMessage("Click to execute this app.")
     @Key("executeThisAnalysis")
     String executeThisAnalysis();
-
-    /**
-     * Text displayed to expand all nodes in a tree.
-     *
-     * @return
-     */
-    String expandAll();
 
     /**
      * A message telling what day something will expire.

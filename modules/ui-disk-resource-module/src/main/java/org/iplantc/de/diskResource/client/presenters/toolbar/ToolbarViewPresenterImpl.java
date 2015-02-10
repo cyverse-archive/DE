@@ -115,8 +115,8 @@ public class ToolbarViewPresenterImpl implements ToolbarView.Presenter {
         dlg.setPredefinedButtons(OK);
         dlg.setHeadingText(appearance.manageDataLinks());
         dlg.setHideOnButtonClick(true);
-        dlg.setWidth(550);
         dlg.setWidth(appearance.manageDataLinksDialogWidth());
+        dlg.setHeight(appearance.manageDataLinksDialogHeight());
         dlg.setOkButtonText(appearance.done());
         DataLinkView.Presenter dlPresenter = dataLinkPresenterFactory.createDataLinkPresenter(selectedDiskResources);
         dlPresenter.go(dlg);

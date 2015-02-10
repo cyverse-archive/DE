@@ -5,7 +5,6 @@ import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.commons.client.views.dialogs.IPlantDialog;
 import org.iplantc.de.diskResource.client.DataLinkView;
 import org.iplantc.de.diskResource.client.views.dataLink.cells.DataLinkPanelCell;
-import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.logical.shared.SelectionEvent;
@@ -96,17 +95,16 @@ public class DataLinkViewImpl implements DataLinkView {
 
     private static final DataLinkPanelUiBinder uiBinder = GWT.create(DataLinkPanelUiBinder.class);
     private final Widget widget;
-    private final IplantDisplayStrings displayStrings;
-    private final Presenter presenter;
+    @UiField(provided = true) final Appearance appearance;
+    private final DataLinkView.Presenter presenter;
 
     @Inject
-    DataLinkViewImpl(final IplantDisplayStrings displayStrings,
+    DataLinkViewImpl(final DataLinkView.Appearance appearance,
                      @Assisted final Presenter presenter,
                      @Assisted final List<DiskResource> sharedResources) {
-        this.displayStrings = displayStrings;
+        this.appearance = appearance;
         this.presenter = presenter;
         widget = uiBinder.createAndBindUi(this);
-        widget.setHeight("300");
 
         // Set the tree's node close/open icons to an empty image. Images for our tree will be controlled
         // from the cell.
@@ -140,7 +138,7 @@ public class DataLinkViewImpl implements DataLinkView {
 
     @Override
     public void mask() {
-        tree.mask(displayStrings.loadingMask());
+        tree.mask(appearance.loadingMask());
     }
 
     @Override
@@ -176,18 +174,18 @@ public class DataLinkViewImpl implements DataLinkView {
     void onCopyDataLinkButtonSelected(SelectEvent event) {
         // Open dialog window with text selected.
         IPlantDialog dlg = new IPlantDialog();
-        dlg.setHeadingText(displayStrings.copy());
+        dlg.setHeadingText(appearance.copy());
         dlg.setHideOnButtonClick(true);
         dlg.setResizable(false);
-        dlg.setSize("535", "130");
+        dlg.setSize(appearance.copyDataLinkDlgWidth(), appearance.copyDataLinkDlgHeight());
         TextField textBox = new TextField();
-        textBox.setWidth(500);
+        textBox.setWidth(appearance.copyDataLinkDlgTextBoxWidth());
         textBox.setReadOnly(true);
         textBox.setValue(presenter.getSelectedDataLinkDownloadUrl());
         VerticalLayoutContainer container = new VerticalLayoutContainer();
         dlg.setWidget(container);
         container.add(textBox);
-        container.add(new Label(displayStrings.copyPasteInstructions()));
+        container.add(new Label(appearance.copyPasteInstructions()));
         dlg.setFocusWidget(textBox);
         dlg.show();
         textBox.selectAll();

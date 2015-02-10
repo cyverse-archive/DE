@@ -30,8 +30,11 @@ public class DiskResourceActionsCellDefaultAppearance implements DiskResourceAct
         @ClientBundle.Source("DiskResourceActionsCell.css")
         MyCss css();
 
-        @Source("link.png")
+        @Source("../../link.png")
         ImageResource dataLinkIcon();
+
+        @Source("../../link_add.png")
+        ImageResource linkAdd();
 
         @Source("../../comments.png")
         ImageResource metadataIcon();
@@ -94,7 +97,7 @@ public class DiskResourceActionsCellDefaultAppearance implements DiskResourceAct
 
     @Override
     public ImageResource linkAddIcon() {
-        return iplantResources.linkAdd();
+        return resources.linkAdd();
     }
 
     @Override

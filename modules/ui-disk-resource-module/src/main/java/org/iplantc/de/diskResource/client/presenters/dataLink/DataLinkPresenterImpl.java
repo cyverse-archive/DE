@@ -71,17 +71,6 @@ public class DataLinkPresenterImpl implements DataLinkView.Presenter {
 
     @SuppressWarnings({"rawtypes", "unchecked"})
     @Override
-    public void deleteDataLinks(List<DataLink> dataLinks){
-        List<String> dataLinkIds = Lists.newArrayList();
-        for (DataLink dl : dataLinks) {
-            dataLinkIds.add(dl.getId());
-        }
-        view.mask();
-        drService.deleteDataLinks(dataLinkIds, new DeleteDataLinksCallback(view));
-    }
-
-    @SuppressWarnings({"rawtypes", "unchecked"})
-    @Override
     public void createDataLinks(List<DiskResource> selectedItems) {
         final List<String> drResourceIds = Lists.newArrayList();
         for(DiskResource dr : selectedItems){
@@ -92,15 +81,6 @@ public class DataLinkPresenterImpl implements DataLinkView.Presenter {
 
         view.mask();
         drService.createDataLinks(drResourceIds, new CreateDataLinkCallback(view));
-    }
-
-    @Override
-    public String getSelectedDataLinkDownloadPage() {
-        DiskResource model = view.getTree().getSelectionModel().getSelectedItem();
-        if(model instanceof DataLink){
-            return ((DataLink)model).getDownloadPageUrl();
-        }
-        return null;
     }
 
     @Override

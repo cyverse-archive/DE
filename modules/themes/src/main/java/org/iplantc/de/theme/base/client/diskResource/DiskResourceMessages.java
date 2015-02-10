@@ -9,6 +9,8 @@ import java.util.List;
  */
 public interface DiskResourceMessages extends Messages {
 
+    String collapseAll();
+
     String createDataLinksError();
 
     String createFolderFailed();

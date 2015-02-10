@@ -55,8 +55,13 @@ public class ToolbarViewPresenterDefaultAppearance implements ToolbarView.Presen
     }
 
     @Override
+    public int manageDataLinksDialogHeight() {
+        return 300;
+    }
+
+    @Override
     public int manageDataLinksDialogWidth() {
-        return 500;
+        return 550;
     }
 
     @Override
