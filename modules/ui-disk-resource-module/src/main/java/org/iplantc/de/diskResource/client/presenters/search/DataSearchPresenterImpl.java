@@ -203,8 +203,7 @@ public class DataSearchPresenterImpl implements SearchView.Presenter {
         final AutoBean<DiskResourceQueryTemplate> lhsAb = AutoBeanUtils.getAutoBean(lhs);
         final AutoBean<DiskResourceQueryTemplate> rhsAb = AutoBeanUtils.getAutoBean(rhs);
 
-        final boolean deepEquals = AutoBeanUtils.deepEquals(lhsAb, rhsAb);
-        return deepEquals;
+        return AutoBeanUtils.deepEquals(lhsAb, rhsAb);
     }
 
     HandlerManager createHandlerManager() {

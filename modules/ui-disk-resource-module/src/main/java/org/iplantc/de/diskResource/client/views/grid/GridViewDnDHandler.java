@@ -211,7 +211,7 @@ class GridViewDnDHandler implements DndDragStartHandler,
 
     private Folder getDropTargetFolder(Element eventTargetElement) {
         Folder ret;
-        Element targetRow = presenter.findGridRow(eventTargetElement).cast();
+        Element targetRow = presenter.findGridRow(eventTargetElement);
 
         if(targetRow == null){
             ret = getSelectedUploadFolder();

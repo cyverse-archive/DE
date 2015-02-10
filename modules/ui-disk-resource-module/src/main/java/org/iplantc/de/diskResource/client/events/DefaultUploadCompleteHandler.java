@@ -141,8 +141,7 @@ public class DefaultUploadCompleteHandler extends UploadCompleteHandler {
     private String processXMLErrorMsg(String sourceUrl, String message) {
         try {
             Document d = XMLParser.parse(message);
-            String error = d.getElementsByTagName("error").item(0).getFirstChild().getNodeValue(); //$NON-NLS-1$
-            return error;
+            return d.getElementsByTagName("error").item(0).getFirstChild().getNodeValue();
         } catch (Exception e) {
             return I18N.ERROR.fileUploadsFailed(Lists.newArrayList(sourceUrl)) + ": " + message; //$NON-NLS-1$
         }

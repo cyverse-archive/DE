@@ -466,7 +466,7 @@ public class DiskResourceMetadataViewImpl extends Composite implements MetadataV
 
         DiskResourceMetadata avu = templateAttrAvuMap.get(attribute.getName());
         if (avu != null && !Strings.isNullOrEmpty(avu.getValue())) {
-            cb.setValue(new Boolean(avu.getValue()));
+            cb.setValue(Boolean.valueOf(avu.getValue()));
         }
 
         if (attribute.getName().equalsIgnoreCase(METADATA_COMPLETE)) {
@@ -650,8 +650,7 @@ public class DiskResourceMetadataViewImpl extends Composite implements MetadataV
         columns.add(attributeColumn);
         columns.add(valueColumn);
 
-        ColumnModel<DiskResourceMetadata> cm = new ColumnModel<>(columns);
-        return cm;
+        return new ColumnModel<>(columns);
     }
 
     private ListStore<DiskResourceMetadata> createListStore() {
