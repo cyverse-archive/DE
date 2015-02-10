@@ -65,7 +65,7 @@ public final class DataLinkPanelCell extends AbstractCell<DiskResource> {
 
             switch (Event.as(event).getTypeInt()) {
                 case Event.ONCLICK:
-                    doOnClick(eventTarget, value, valueUpdater);
+                    doOnClick(eventTarget, value);
                     break;
                 default:
                     break;
@@ -88,8 +88,7 @@ public final class DataLinkPanelCell extends AbstractCell<DiskResource> {
 
     }
 
-    private void doOnClick(Element eventTarget, DiskResource value,
-                           ValueUpdater<DiskResource> valueUpdater) {
+    private void doOnClick(Element eventTarget, DiskResource value) {
         if (eventTarget.getAttribute("name").equalsIgnoreCase("del")) {
             presenter.deleteDataLink((DataLink) value);
         }

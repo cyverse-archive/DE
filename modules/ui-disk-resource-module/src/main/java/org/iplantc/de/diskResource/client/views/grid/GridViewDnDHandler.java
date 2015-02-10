@@ -9,7 +9,6 @@ import org.iplantc.de.diskResource.client.GridView;
 import com.google.common.collect.Lists;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.EventTarget;
-import com.google.gwt.user.client.ui.IsWidget;
 
 import com.sencha.gxt.dnd.core.client.DndDragEnterEvent;
 import com.sencha.gxt.dnd.core.client.DndDragEnterEvent.DndDragEnterHandler;
@@ -90,7 +89,7 @@ class GridViewDnDHandler implements DndDragStartHandler,
 
         Element dragStartEl = event.getDragStartEvent().getStartElement();
 
-        List<? extends DiskResource> dragData = getDragSources(event.getTarget(), dragStartEl);
+        List<? extends DiskResource> dragData = getDragSources(dragStartEl);
 
         if (dragData.isEmpty()
                 || containsFilteredItems(dragData)) {
@@ -171,7 +170,7 @@ class GridViewDnDHandler implements DndDragStartHandler,
         presenter.doMoveDiskResources(targetFolder, resources);
     }
 
-    private List<? extends DiskResource> getDragSources(IsWidget source, Element dragStartEl) {
+    private List<? extends DiskResource> getDragSources(Element dragStartEl) {
         final List<DiskResource> selectedDiskResources = presenter.getSelectedDiskResources();
 
         /*

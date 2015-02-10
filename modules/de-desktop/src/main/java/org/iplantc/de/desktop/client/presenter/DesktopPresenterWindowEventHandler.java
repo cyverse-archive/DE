@@ -237,8 +237,8 @@ public class DesktopPresenterWindowEventHandler implements EditAppEvent.EditAppE
         Folder uploadDest = event.getDestinationFolder();
         if (canUpload(uploadDest)) {
             new FileUploadByUrlDialog(uploadDest,
-                                      diskResourceServiceProvider.get(),
-                                      userInfo.getUsername()).show();
+                                      diskResourceServiceProvider.get()
+            ).show();
         }
         /* FIXME REFACTOR JDS Possibly move this into where event is fired.
          *                it is merely opening a dialog

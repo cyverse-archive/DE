@@ -67,8 +67,7 @@ public class FileUploadByUrlDialog extends IPlantDialog implements HasPending<En
     private final DiskResourceUtil diskResourceUtil;
 
     public FileUploadByUrlDialog(final Folder uploadDest,
-                                 final DiskResourceServiceFacade drService,
-                                 final String userName) {
+                                 final DiskResourceServiceFacade drService) {
         this.uploadDest = uploadDest;
         this.drService = drService;
         this.diskResourceUtil = DiskResourceUtil.getInstance();

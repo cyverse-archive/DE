@@ -505,7 +505,7 @@ public class DataSharingPermissionsPanel implements IsWidget {
         return unshareList;
     }
 
-    public void mask(String loadingMask) {
+    public void mask() {
         container.mask(I18N.DISPLAY.loadingMask());
     }
 

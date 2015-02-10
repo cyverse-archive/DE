@@ -162,7 +162,7 @@ public class DataSharingPresenterImpl implements DataSharingView.Presenter {
 
     @Override
     public void loadPermissions() {
-        permissionsPanel.mask(I18N.DISPLAY.loadingMask());
+        permissionsPanel.mask();
         diskResourceService.getPermissions(buildPermissionsRequestBody(), new LoadPermissionsCallback());
     }
 
