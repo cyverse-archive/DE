@@ -388,10 +388,6 @@ public class DataSharingPermissionsPanel implements IsWidget {
 
     /**
      * check the list with original to see if things have changed. ignore unchanged records
-     * 
-     * @param userName
-     * @param list
-     * @return
      */
     private List<DataSharing> getUpdatedSharingList(String userName, List<DataSharing> list) {
         List<DataSharing> updateList = new ArrayList<>();
@@ -463,7 +459,6 @@ public class DataSharingPermissionsPanel implements IsWidget {
     }
 
     /**
-     * @param dataShares
      * @return true if the given dataShares list has a different size than the resources list, or if not
      *         every permission in the given dataShares list is the same; false otherwise.
      */

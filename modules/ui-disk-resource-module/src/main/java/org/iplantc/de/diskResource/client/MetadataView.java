@@ -25,7 +25,6 @@ public interface MetadataView extends IsWidget {
          * Retrieves a collection of metadata for the given resource.
          *
          * @param callback the callback
-         * @return a collection of the given resource's metadata.
          */
         void getDiskResourceMetadata(AsyncCallback<String> callback);
 
