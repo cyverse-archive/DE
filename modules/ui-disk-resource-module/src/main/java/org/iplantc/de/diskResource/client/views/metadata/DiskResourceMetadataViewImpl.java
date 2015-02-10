@@ -425,7 +425,7 @@ public class DiskResourceMetadataViewImpl extends Composite implements MetadataV
     ComboBox<MetadataTemplateInfo> buildTemplateCombo() {
         templateStore = new ListStore<>(new TemplateInfoModelKeyProvider());
 
-        templateCombo = new ComboBox<>(templateStore, new TemplateInfoLabelProvider(), new AbstractSafeHtmlRenderer<MetadataTemplateInfo>() {
+        ComboBox<MetadataTemplateInfo> comboBox = new ComboBox<>(templateStore, new TemplateInfoLabelProvider(), new AbstractSafeHtmlRenderer<MetadataTemplateInfo>() {
 
             @Override
             public SafeHtml render(MetadataTemplateInfo object) {
@@ -433,12 +433,12 @@ public class DiskResourceMetadataViewImpl extends Composite implements MetadataV
                 return xtemp.templateInfo(object.getName());
             }
         });
-        templateCombo.setEditable(false);
-        templateCombo.setWidth(250);
-        templateCombo.setEmptyText(displayStrings.metadataTemplateSelect());
-        templateCombo.setTypeAhead(true);
-        templateCombo.addSelectionHandler(new TemplateInfoSelectionHandler());
-        return templateCombo;
+        comboBox.setEditable(false);
+        comboBox.setWidth(250);
+        comboBox.setEmptyText(displayStrings.metadataTemplateSelect());
+        comboBox.setTypeAhead(true);
+        comboBox.addSelectionHandler(new TemplateInfoSelectionHandler());
+        return comboBox;
     }
 
     @UiHandler("addMetadataButton")
