@@ -16,7 +16,7 @@ public class SaveDiskResourceQueryClickedEvent extends GwtEvent<SaveDiskResource
         HandlerRegistration addSaveDiskResourceQueryClickedEventHandler(SaveDiskResourceQueryClickedEventHandler handler);
     }
 
-    public static final GwtEvent.Type<SaveDiskResourceQueryClickedEventHandler> TYPE = new GwtEvent.Type<SaveDiskResourceQueryClickedEventHandler>();
+    public static final GwtEvent.Type<SaveDiskResourceQueryClickedEventHandler> TYPE = new GwtEvent.Type<>();
     private final DiskResourceQueryTemplate queryTemplate;
     private final String originalName;
 

@@ -30,7 +30,7 @@ public class FolderSelectionEvent extends GwtEvent<FolderSelectionEventHandler> 
         return selectedFolder;
     }
 
-    public static final GwtEvent.Type<FolderSelectionEventHandler> TYPE = new GwtEvent.Type<FolderSelectionEventHandler>();
+    public static final GwtEvent.Type<FolderSelectionEventHandler> TYPE = new GwtEvent.Type<>();
 
     @Override
     public GwtEvent.Type<FolderSelectionEventHandler> getAssociatedType() {

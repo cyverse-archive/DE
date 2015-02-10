@@ -12,7 +12,7 @@ public class RequestBulkUploadEvent extends GwtEvent<RequestBulkUploadEventHandl
         void onRequestBulkUpload(RequestBulkUploadEvent event);
     }
 
-    public static final GwtEvent.Type<RequestBulkUploadEventHandler> TYPE = new GwtEvent.Type<RequestBulkUploadEventHandler>();
+    public static final GwtEvent.Type<RequestBulkUploadEventHandler> TYPE = new GwtEvent.Type<>();
     private final Folder destinationFolder;
 
     public RequestBulkUploadEvent(Object source, final Folder destinationFolder) {

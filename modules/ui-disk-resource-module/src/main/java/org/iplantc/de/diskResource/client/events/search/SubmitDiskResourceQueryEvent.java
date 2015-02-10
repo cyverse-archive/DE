@@ -20,7 +20,7 @@ public class SubmitDiskResourceQueryEvent extends GwtEvent<SubmitDiskResourceQue
         HandlerRegistration addSubmitDiskResourceQueryEventHandler(SubmitDiskResourceQueryEventHandler handler);
     }
 
-    public static final GwtEvent.Type<SubmitDiskResourceQueryEventHandler> TYPE = new GwtEvent.Type<SubmitDiskResourceQueryEventHandler>();
+    public static final GwtEvent.Type<SubmitDiskResourceQueryEventHandler> TYPE = new GwtEvent.Type<>();
     private final DiskResourceQueryTemplate queryTemplate;
 
     public SubmitDiskResourceQueryEvent(DiskResourceQueryTemplate queryTemplate) {

@@ -14,7 +14,7 @@ public class CreateNewFileEvent extends GwtEvent<CreateNewFileEventHandler> {
     }
 
     
-    public static final GwtEvent.Type<CreateNewFileEventHandler> TYPE = new GwtEvent.Type<CreateNewFileEventHandler>();
+    public static final GwtEvent.Type<CreateNewFileEventHandler> TYPE = new GwtEvent.Type<>();
     private final Folder parentFolder;
     private FileViewerWindowConfig config;
 

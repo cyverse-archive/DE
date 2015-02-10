@@ -14,7 +14,7 @@ public class DiskResourceRenamedEvent extends GwtEvent<DiskResourceRenamedEventH
 
     }
 
-    public static final GwtEvent.Type<DiskResourceRenamedEventHandler> TYPE = new GwtEvent.Type<DiskResourceRenamedEventHandler>();
+    public static final GwtEvent.Type<DiskResourceRenamedEventHandler> TYPE = new GwtEvent.Type<>();
 
     private final DiskResource originalDr;
     private final DiskResource newDr;

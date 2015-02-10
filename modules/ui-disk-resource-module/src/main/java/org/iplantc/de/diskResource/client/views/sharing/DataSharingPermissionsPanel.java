@@ -105,7 +105,7 @@ public class DataSharingPermissionsPanel implements IsWidget {
     }
 
     private void init() {
-        listStore = new ListStore<DataSharing>(new DataSharingKeyProvider());
+        listStore = new ListStore<>(new DataSharingKeyProvider());
         cm = buildColumnModel();
         EventBus.getInstance().addHandler(UserSearchResultSelected.TYPE, new UserSearchResultSelected.UserSearchResultSelectedEventHandler() {
 
@@ -159,7 +159,7 @@ public class DataSharingPermissionsPanel implements IsWidget {
     }
 
     private ComboBoxCell<PermissionValue> buildPermissionsCombo() {
-        ListStore<PermissionValue> perms = new ListStore<PermissionValue>(new ModelKeyProvider<PermissionValue>() {
+        ListStore<PermissionValue> perms = new ListStore<>(new ModelKeyProvider<PermissionValue>() {
 
             @Override
             public String getKey(PermissionValue item) {
@@ -170,7 +170,7 @@ public class DataSharingPermissionsPanel implements IsWidget {
         perms.add(PermissionValue.write);
         perms.add(PermissionValue.own);
 
-        final ComboBoxCell<PermissionValue> permCombo = new ComboBoxCell<PermissionValue>(perms,
+        final ComboBoxCell<PermissionValue> permCombo = new ComboBoxCell<>(perms,
                                                                                     new StringLabelProvider<PermissionValue>() {
             @Override
             public String getLabel(PermissionValue value) {
@@ -203,7 +203,7 @@ public class DataSharingPermissionsPanel implements IsWidget {
 
             @Override
             public void onSelect(SelectEvent event) {
-                ArrayList<DataSharing> shares = new ArrayList<DataSharing>();
+                ArrayList<DataSharing> shares = new ArrayList<>();
                 for (String user : sharingMap.keySet()) {
                     shares.addAll(sharingMap.get(user));
                 }
@@ -228,7 +228,7 @@ public class DataSharingPermissionsPanel implements IsWidget {
 
         // Only add users not already displayed in the grid.
         if (sharingMap.get(userName) == null) {
-            List<DataSharing> shareList = new ArrayList<DataSharing>();
+            List<DataSharing> shareList = new ArrayList<>();
             DataSharing displayShare = null;
 
             for (String path : resources.keySet()) {
@@ -258,7 +258,7 @@ public class DataSharingPermissionsPanel implements IsWidget {
 
     public void loadSharingData(FastMap<List<DataSharing>> sharingMap) {
         this.sharingMap = sharingMap;
-        originalList = new FastMap<List<DataSharing>>();
+        originalList = new FastMap<>();
 
         listStore.clear();
         explainPanel.setVisible(false);
@@ -267,7 +267,7 @@ public class DataSharingPermissionsPanel implements IsWidget {
             List<DataSharing> dataShares = sharingMap.get(userName);
 
             if (dataShares != null && !dataShares.isEmpty()) {
-                List<DataSharing> newList = new ArrayList<DataSharing>();
+                List<DataSharing> newList = new ArrayList<>();
                 for (DataSharing share : dataShares) {
                     DataSharing copyShare = share.copy();
                     newList.add(copyShare);
@@ -289,10 +289,10 @@ public class DataSharingPermissionsPanel implements IsWidget {
     }
 
     private ColumnModel<DataSharing> buildColumnModel() {
-        List<ColumnConfig<DataSharing, ?>> configs = new ArrayList<ColumnConfig<DataSharing, ?>>();
+        List<ColumnConfig<DataSharing, ?>> configs = new ArrayList<>();
         DataSharingProperties props = GWT.create(DataSharingProperties.class);
 
-        ColumnConfig<DataSharing, String> name = new ColumnConfig<DataSharing, String>(props.name(), 200, I18N.DISPLAY.name());
+        ColumnConfig<DataSharing, String> name = new ColumnConfig<>(props.name(), 200, I18N.DISPLAY.name());
         ColumnConfig<DataSharing, PermissionValue> permission = buildPermissionColumn(props);
         ColumnConfig<DataSharing, String> remove = buildRemoveColumn();
 
@@ -300,11 +300,11 @@ public class DataSharingPermissionsPanel implements IsWidget {
         configs.add(permission);
         configs.add(remove);
 
-        return new ColumnModel<DataSharing>(configs);
+        return new ColumnModel<>(configs);
     }
 
     private ColumnConfig<DataSharing, PermissionValue> buildPermissionColumn(DataSharingProperties props) {
-        ColumnConfig<DataSharing, PermissionValue> permission = new ColumnConfig<DataSharing, PermissionValue>(props.displayPermission(), 170, I18N.DISPLAY.permissions());
+        ColumnConfig<DataSharing, PermissionValue> permission = new ColumnConfig<>(props.displayPermission(), 170, I18N.DISPLAY.permissions());
         SafeStyles permTextStyles = SafeStylesUtils.fromTrustedString("padding: 2px 3px;color:#0098AA;cursor:pointer;");
         permission.setColumnTextStyle(permTextStyles);
         permission.setFixed(true);
@@ -321,7 +321,7 @@ public class DataSharingPermissionsPanel implements IsWidget {
     }
 
     private ColumnConfig<DataSharing, String> buildRemoveColumn() {
-        ColumnConfig<DataSharing, String> remove = new ColumnConfig<DataSharing, String>(new ValueProvider<DataSharing, String>() {
+        ColumnConfig<DataSharing, String> remove = new ColumnConfig<>(new ValueProvider<DataSharing, String>() {
 
             @Override
             public String getValue(DataSharing object) {
@@ -373,7 +373,7 @@ public class DataSharingPermissionsPanel implements IsWidget {
      * @return the sharing list
      */
     public FastMap<List<DataSharing>> getSharingMap() {
-        FastMap<List<DataSharing>> sharingList = new FastMap<List<DataSharing>>();
+        FastMap<List<DataSharing>> sharingList = new FastMap<>();
         for (DataSharing share : grid.getStore().getAll()) {
             String userName = share.getUserName();
             List<DataSharing> dataShares = sharingMap.get(userName);
@@ -394,7 +394,7 @@ public class DataSharingPermissionsPanel implements IsWidget {
      * @return
      */
     private List<DataSharing> getUpdatedSharingList(String userName, List<DataSharing> list) {
-        List<DataSharing> updateList = new ArrayList<DataSharing>();
+        List<DataSharing> updateList = new ArrayList<>();
         if (list != null && userName != null) {
             List<DataSharing> fromOriginal = originalList.get(userName);
 
@@ -488,7 +488,7 @@ public class DataSharingPermissionsPanel implements IsWidget {
      */
     public FastMap<List<DataSharing>> getUnshareList() {
         // Prepare unshared list here
-        FastMap<List<DataSharing>> unshareList = new FastMap<List<DataSharing>>();
+        FastMap<List<DataSharing>> unshareList = new FastMap<>();
 
         for (String userName : originalList.keySet()) {
             if (sharingMap.get(userName) == null) {

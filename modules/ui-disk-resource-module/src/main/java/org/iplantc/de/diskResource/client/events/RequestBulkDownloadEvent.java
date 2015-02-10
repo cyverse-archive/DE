@@ -18,7 +18,7 @@ public class RequestBulkDownloadEvent extends GwtEvent<RequestBulkDownloadEventH
         void onRequestBulkDownload(RequestBulkDownloadEvent event);
     }
 
-    public static final GwtEvent.Type<RequestBulkDownloadEventHandler> TYPE = new GwtEvent.Type<RequestBulkDownloadEventHandler>();
+    public static final GwtEvent.Type<RequestBulkDownloadEventHandler> TYPE = new GwtEvent.Type<>();
     private final List<DiskResource> requestedResources;
     private final Folder currentFolder;
     private boolean selectAll;

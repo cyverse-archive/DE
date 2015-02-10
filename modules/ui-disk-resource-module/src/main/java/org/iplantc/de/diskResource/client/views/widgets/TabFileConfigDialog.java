@@ -49,7 +49,7 @@ public class TabFileConfigDialog extends Dialog {
 
     @UiFactory
     SpinnerField<Integer> buildSpinnerField() {
-        return new SpinnerField<Integer>(new NumberPropertyEditor.IntegerPropertyEditor());
+        return new SpinnerField<>(new NumberPropertyEditor.IntegerPropertyEditor());
     }
 
     public int getNumberOfColumns() {

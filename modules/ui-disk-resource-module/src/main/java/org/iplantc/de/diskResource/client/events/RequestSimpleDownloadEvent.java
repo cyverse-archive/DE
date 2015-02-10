@@ -19,7 +19,7 @@ public class RequestSimpleDownloadEvent extends GwtEvent<RequestSimpleDownloadEv
 
     }
 
-    public static final GwtEvent.Type<RequestSimpleDownloadEventHandler> TYPE = new GwtEvent.Type<RequestSimpleDownloadEventHandler>();
+    public static final GwtEvent.Type<RequestSimpleDownloadEventHandler> TYPE = new GwtEvent.Type<>();
     private final List<DiskResource> requestedResources;
     private final Folder currentFolder;
 

@@ -20,7 +20,7 @@ public class RequestDiskResourceFavoriteEvent extends GwtEvent<RequestDiskResour
         void onFavoriteRequest(RequestDiskResourceFavoriteEvent event);
     }
 
-    public static final GwtEvent.Type<RequestDiskResourceFavoriteEventHandler> TYPE = new GwtEvent.Type<RequestDiskResourceFavoriteEventHandler>();
+    public static final GwtEvent.Type<RequestDiskResourceFavoriteEventHandler> TYPE = new GwtEvent.Type<>();
     private final DiskResource dr;
 
     public RequestDiskResourceFavoriteEvent(DiskResource dr) {

@@ -64,13 +64,13 @@ public class ShareBreakDownDialog extends Dialog {
     }
 
     private Grid<DataSharing> buildGrid() {
-        ListStore<DataSharing> store = new ListStore<DataSharing>(new DataSharingKeyProvider());
+        ListStore<DataSharing> store = new ListStore<>(new DataSharingKeyProvider());
         ColumnModel<DataSharing> cm = buildColumnModel();
-        GroupingView<DataSharing> view = new GroupingView<DataSharing>();
+        GroupingView<DataSharing> view = new GroupingView<>();
         view.groupBy(cm.getColumn(0));
         view.setAutoExpandColumn(cm.getColumn(0));
         view.setShowGroupedColumn(false);
-        grid = new Grid<DataSharing>(store, cm);
+        grid = new Grid<>(store, cm);
         grid.setView(view);
         return grid;
     }
@@ -111,14 +111,14 @@ public class ShareBreakDownDialog extends Dialog {
     }
 
     private ColumnModel<DataSharing> buildColumnModel() {
-        List<ColumnConfig<DataSharing, ?>> configs = new ArrayList<ColumnConfig<DataSharing, ?>>();
+        List<ColumnConfig<DataSharing, ?>> configs = new ArrayList<>();
         DataSharingProperties props = GWT.create(DataSharingProperties.class);
-        ColumnConfig<DataSharing, String> name = new ColumnConfig<DataSharing, String>(props.name());
+        ColumnConfig<DataSharing, String> name = new ColumnConfig<>(props.name());
 
         name.setHeader(I18N.DISPLAY.name());
         name.setWidth(120);
 
-        ColumnConfig<DataSharing, String> diskRsc = new ColumnConfig<DataSharing, String>(new ValueProvider<DataSharing, String>() {
+        ColumnConfig<DataSharing, String> diskRsc = new ColumnConfig<>(new ValueProvider<DataSharing, String>() {
 
             @Override
             public String getValue(DataSharing object) {
@@ -139,7 +139,7 @@ public class ShareBreakDownDialog extends Dialog {
 
         diskRsc.setHeader(I18N.DISPLAY.name());
         diskRsc.setWidth(120);
-        ColumnConfig<DataSharing, PermissionValue> permission = new ColumnConfig<DataSharing, PermissionValue>(new ValueProvider<DataSharing, PermissionValue>() {
+        ColumnConfig<DataSharing, PermissionValue> permission = new ColumnConfig<>(new ValueProvider<DataSharing, PermissionValue>() {
 
             @Override
             public PermissionValue getValue(DataSharing object) {
@@ -163,7 +163,7 @@ public class ShareBreakDownDialog extends Dialog {
         configs.add(name);
         configs.add(diskRsc);
         configs.add(permission);
-        return new ColumnModel<DataSharing>(configs);
+        return new ColumnModel<>(configs);
 
     }
 

@@ -13,7 +13,7 @@ public class RequestSimpleUploadEvent extends GwtEvent<RequestSimpleUploadEventH
 
     }
 
-    public static final GwtEvent.Type<RequestSimpleUploadEventHandler> TYPE = new GwtEvent.Type<RequestSimpleUploadEventHandler>();
+    public static final GwtEvent.Type<RequestSimpleUploadEventHandler> TYPE = new GwtEvent.Type<>();
     private final Folder destinationFolder;
 
     public RequestSimpleUploadEvent(Object source, final Folder destinationFolder) {

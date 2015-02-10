@@ -12,7 +12,7 @@ public class FileUploadedEvent extends GwtEvent<FileUploadedEventHandler> {
         void onFileUploaded(FileUploadedEvent event);
     }
 
-    public static final GwtEvent.Type<FileUploadedEventHandler> TYPE = new GwtEvent.Type<FileUploadedEventHandler>();
+    public static final GwtEvent.Type<FileUploadedEventHandler> TYPE = new GwtEvent.Type<>();
     private final Folder uploadDest;
     private String filepath;
     private String response;
