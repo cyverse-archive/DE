@@ -1,4 +1,4 @@
-package org.iplantc.de.diskResource.client.metadata.presenter;
+package org.iplantc.de.diskResource.client.presenters.callbacks;
 
 import org.iplantc.de.client.models.errors.diskResources.DiskResourceErrorAutoBeanFactory;
 import org.iplantc.de.client.models.errors.diskResources.ErrorUpdateMetadata;

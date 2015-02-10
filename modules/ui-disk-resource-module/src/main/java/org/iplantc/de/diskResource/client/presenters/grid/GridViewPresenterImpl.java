@@ -37,9 +37,10 @@ import org.iplantc.de.diskResource.client.events.selection.ShareByDataLinkSelect
 import org.iplantc.de.diskResource.client.gin.factory.DataSharingDialogFactory;
 import org.iplantc.de.diskResource.client.gin.factory.FolderContentsRpcProxyFactory;
 import org.iplantc.de.diskResource.client.gin.factory.GridViewFactory;
-import org.iplantc.de.diskResource.client.metadata.presenter.DiskResourceMetadataUpdateCallback;
-import org.iplantc.de.diskResource.client.metadata.presenter.MetadataPresenter;
-import org.iplantc.de.diskResource.client.metadata.view.DiskResourceMetadataView;
+import org.iplantc.de.diskResource.client.presenters.callbacks.DiskResourceMetadataUpdateCallback;
+import org.iplantc.de.diskResource.client.presenters.metadata.MetadataPresenterImpl;
+import org.iplantc.de.diskResource.client.views.metadata.DiskResourceMetadataViewImpl;
+import org.iplantc.de.diskResource.client.MetadataView;
 import org.iplantc.de.diskResource.client.model.DiskResourceModelKeyProvider;
 import org.iplantc.de.diskResource.client.presenters.proxy.FolderContentsLoadConfig;
 import org.iplantc.de.diskResource.client.presenters.proxy.SelectDiskResourceByIdStoreAddHandler;
@@ -389,8 +390,8 @@ public class GridViewPresenterImpl implements GridView.Presenter,
         DiskResource selected = event.getDiskResource();
 
         // FIXME Convert to sovereign dialog
-        final DiskResourceMetadataView mdView = new DiskResourceMetadataView(selected);
-        final DiskResourceMetadataView.Presenter mdPresenter = new MetadataPresenter(selected, mdView);
+        final MetadataView mdView = new DiskResourceMetadataViewImpl(selected);
+        final MetadataView.Presenter mdPresenter = new MetadataPresenterImpl(selected, mdView);
         final IPlantDialog ipd = new IPlantDialog(true);
 
         ipd.setSize(appearance.metadataDialogWidth(), appearance.metadataDialogHeight());

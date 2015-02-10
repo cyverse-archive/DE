@@ -1,4 +1,4 @@
-package org.iplantc.de.diskResource.client.metadata.presenter;
+package org.iplantc.de.diskResource.client.presenters.metadata;
 
 import org.iplantc.de.client.gin.ServicesInjector;
 import org.iplantc.de.client.models.diskResources.DiskResource;
@@ -11,8 +11,8 @@ import org.iplantc.de.client.models.diskResources.MetadataTemplateInfo;
 import org.iplantc.de.client.models.diskResources.MetadataTemplateInfoList;
 import org.iplantc.de.client.services.DiskResourceServiceFacade;
 import org.iplantc.de.commons.client.ErrorHandler;
-import org.iplantc.de.diskResource.client.metadata.view.DiskResourceMetadataView;
-import org.iplantc.de.diskResource.client.metadata.view.DiskResourceMetadataView.Presenter;
+import org.iplantc.de.diskResource.client.MetadataView;
+import org.iplantc.de.diskResource.client.presenters.callbacks.DiskResourceMetadataUpdateCallback;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -22,14 +22,14 @@ import com.google.web.bindery.autobean.shared.AutoBeanCodex;
 
 import java.util.List;
 
-public class MetadataPresenter implements Presenter {
+public class MetadataPresenterImpl implements MetadataView.Presenter {
 
     private final DiskResource resource;
-    private final DiskResourceMetadataView view;
+    private final MetadataView view;
     private final DiskResourceServiceFacade drService = ServicesInjector.INSTANCE.getDiskResourceServiceFacade();
     private final DiskResourceAutoBeanFactory autoBeanFactory = GWT.create(DiskResourceAutoBeanFactory.class);
 
-    public MetadataPresenter(DiskResource selected, DiskResourceMetadataView view) {
+    public MetadataPresenterImpl(DiskResource selected, MetadataView view) {
         this.resource = selected;
         this.view = view;
         view.setPresenter(this);

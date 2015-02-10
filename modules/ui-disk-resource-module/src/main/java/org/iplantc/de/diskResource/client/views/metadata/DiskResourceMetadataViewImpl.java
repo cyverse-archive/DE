@@ -1,4 +1,4 @@
-package org.iplantc.de.diskResource.client.metadata.view;
+package org.iplantc.de.diskResource.client.views.metadata;
 
 import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.client.models.diskResources.DiskResourceAutoBeanFactory;
@@ -10,7 +10,7 @@ import org.iplantc.de.client.models.diskResources.MetadataTemplateInfo;
 import org.iplantc.de.client.util.DiskResourceUtil;
 import org.iplantc.de.commons.client.validators.UrlValidator;
 import org.iplantc.de.commons.client.widgets.IPlantAnchor;
-import org.iplantc.de.diskResource.client.metadata.presenter.DiskResourceMetadataUpdateCallback;
+import org.iplantc.de.diskResource.client.MetadataView;
 import org.iplantc.de.diskResource.client.model.DiskResourceMetadataProperties;
 import org.iplantc.de.diskResource.share.DiskResourceModule.MetadataIds;
 import org.iplantc.de.resources.client.IplantResources;
@@ -38,7 +38,6 @@ import com.google.gwt.uibinder.client.UiFactory;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.uibinder.client.UiTemplate;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.web.bindery.autobean.shared.AutoBeanCodex;
@@ -107,7 +106,7 @@ import java.util.Set;
  * FIXME REFACTOR Factor out an appearance for this class
  * @author jstroot
  */
-public class DiskResourceMetadataView extends Composite {
+public class DiskResourceMetadataViewImpl extends Composite implements MetadataView {
 
     private final class AttributeValidationHandler implements ValidHandler, InvalidHandler {
         public AttributeValidationHandler() {
@@ -187,7 +186,7 @@ public class DiskResourceMetadataView extends Composite {
     }
 
     @UiTemplate("DiskResourceMetadataEditorPanel.ui.xml")
-    interface DiskResourceMetadataEditorPanelUiBinder extends UiBinder<Widget, DiskResourceMetadataView> {
+    interface DiskResourceMetadataEditorPanelUiBinder extends UiBinder<Widget, DiskResourceMetadataViewImpl> {
     }
 
     interface MetadataHtmlTemplates extends SafeHtmlTemplates {
@@ -211,25 +210,6 @@ public class DiskResourceMetadataView extends Composite {
     interface MetadataInfoTemplate extends XTemplates {
         @XTemplate("<div style='text-overflow:ellipsis;overflow:hidden;white-space:nowrap;border:none;' qtip='{name}' >{name}</div>")
         SafeHtml templateInfo(String name);
-    }
-
-    public interface Presenter extends org.iplantc.de.commons.client.presenter.Presenter {
-        /**
-         * Retrieves a collection of metadata for the given resource.
-         *
-         * @param callback the callback
-         * @return a collection of the given resource's metadata.
-         */
-        void getDiskResourceMetadata(AsyncCallback<String> callback);
-
-        DiskResource getSelectedResource();
-
-        void getTemplates();
-
-        void onTemplateSelected(String templateId);
-
-        void setDiskResourceMetadata(DiskResourceMetadataUpdateCallback callback);
-
     }
 
     @UiField TextButton addMetadataButton;
@@ -267,7 +247,7 @@ public class DiskResourceMetadataView extends Composite {
     private ContentPanel userMetadataPanel;
     private boolean valid;
 
-    public DiskResourceMetadataView(final DiskResource dr) {
+    public DiskResourceMetadataViewImpl(final DiskResource dr) {
         htmlTemplates = GWT.create(MetadataHtmlTemplates.class);
         autoBeanFactory = GWT.create(DiskResourceAutoBeanFactory.class);
         timestampFormat = DateTimeFormat.getFormat(DateTimeFormat.PredefinedFormat.DATE_TIME_SHORT);
@@ -289,6 +269,7 @@ public class DiskResourceMetadataView extends Composite {
         ensureDebugId(MetadataIds.METADATA_VIEW);
     }
 
+    @Override
     public DiskResourceMetadataTemplate getMetadataTemplateToAdd() {
         if (selectedTemplate == null) {
             return null;
@@ -326,6 +307,7 @@ public class DiskResourceMetadataView extends Composite {
         return metadataTemplate;
     }
 
+    @Override
     public DiskResourceMetadataTemplate getMetadataTemplateToDelete() {
         if (selectedTemplate == null) {
             return currentMetadataTemplate;
@@ -334,6 +316,7 @@ public class DiskResourceMetadataView extends Composite {
         return null;
     }
 
+    @Override
     public Set<DiskResourceMetadata> getMetadataToAdd() {
         HashSet<DiskResourceMetadata> metaDataToAdd = Sets.newHashSet();
         metaDataToAdd.addAll(listStore.getAll());
@@ -341,10 +324,12 @@ public class DiskResourceMetadataView extends Composite {
         return metaDataToAdd;
     }
 
+    @Override
     public Set<DiskResourceMetadata> getMetadataToDelete() {
         return toBeDeleted;
     }
 
+    @Override
     public boolean isValid() {
         if (selectedTemplate != null && templateForm != null) {
             List<IsField<?>> fields = FormPanelHelper.getFields(templateForm);
@@ -358,6 +343,7 @@ public class DiskResourceMetadataView extends Composite {
         return valid;
     }
 
+    @Override
     public void loadMetadata(DiskResourceMetadataList metadataList) {
         List<DiskResourceMetadata> metadata = metadataList.getMetadata();
 
@@ -372,6 +358,7 @@ public class DiskResourceMetadataView extends Composite {
         grid.getStore().setEnableFilters(true);
     }
 
+    @Override
     public void loadMetadataTemplate(DiskResourceMetadataTemplate metadataTemplate) {
         currentMetadataTemplate = metadataTemplate;
         templateAttrAvuMap.clear();
@@ -388,6 +375,7 @@ public class DiskResourceMetadataView extends Composite {
         }
     }
 
+    @Override
     public void loadTemplateAttributes(List<MetadataTemplateAttribute> attributes) {
         templateAttrFieldMap.clear();
         IPlantAnchor removeLink = buildRemoveTemplateLink();
@@ -404,15 +392,18 @@ public class DiskResourceMetadataView extends Composite {
         alc.unmask();
     }
 
+    @Override
     public void populateTemplates(List<MetadataTemplateInfo> templates) {
         templateStore.clear();
         templateStore.addAll(templates);
     }
 
+    @Override
     public void setPresenter(Presenter p) {
         this.presenter = p;
     }
 
+    @Override
     public boolean shouldValidate() {
         if (isCompleteCbx != null) {
             return isCompleteCbx.getValue();
