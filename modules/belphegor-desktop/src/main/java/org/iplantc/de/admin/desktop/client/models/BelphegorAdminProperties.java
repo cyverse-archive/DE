@@ -35,7 +35,6 @@ public class BelphegorAdminProperties {
      */
     private static final String KEEPALIVE_INTERVAL = PROPERTY_NAME_PREFIX + "keepalive.interval";
 
-    private static final String APP_DOC_URL = PROPERTY_NAME_PREFIX + "validAppWikiUrlPath";
 
     /**
      * Properties key of the context click enabled option
@@ -76,7 +75,6 @@ public class BelphegorAdminProperties {
 
         defaultBetaAppCategoryId = getStringProperty(properties, CATEGORY_DEFAULT_BETA_GROUP_ID, "");
         keepaliveTarget = getStringProperty(properties, KEEPALIVE_TARGET, "");
-        validAppWikiUrlPath = getStringList(properties, APP_DOC_URL);
     }
 
     /**
