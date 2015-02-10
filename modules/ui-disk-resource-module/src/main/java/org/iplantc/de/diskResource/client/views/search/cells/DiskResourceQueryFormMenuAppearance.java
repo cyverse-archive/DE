@@ -1,4 +1,4 @@
-package org.iplantc.de.diskResource.client.search.views.cells;
+package org.iplantc.de.diskResource.client.views.search.cells;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.resources.client.ClientBundle;

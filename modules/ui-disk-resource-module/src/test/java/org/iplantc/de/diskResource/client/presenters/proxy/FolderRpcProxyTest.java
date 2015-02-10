@@ -8,11 +8,11 @@ import org.iplantc.de.client.services.DiskResourceServiceFacade;
 import org.iplantc.de.client.services.SearchServiceFacade;
 import org.iplantc.de.commons.client.info.ErrorAnnouncementConfig;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
+import org.iplantc.de.diskResource.client.SearchView;
 import org.iplantc.de.diskResource.client.presenters.proxy.FolderRpcProxyImpl.GetSavedQueryTemplatesCallback;
 import org.iplantc.de.diskResource.client.presenters.proxy.FolderRpcProxyImpl.RootFolderCallback;
 import org.iplantc.de.diskResource.client.presenters.proxy.FolderRpcProxyImpl.SubFoldersCallback;
-import org.iplantc.de.diskResource.client.search.events.SubmitDiskResourceQueryEvent;
-import org.iplantc.de.diskResource.client.search.presenter.DataSearchPresenter;
+import org.iplantc.de.diskResource.client.events.search.SubmitDiskResourceQueryEvent;
 
 import com.google.common.collect.Lists;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -45,7 +45,7 @@ public class FolderRpcProxyTest {
     @Mock SearchServiceFacade searchServiceMock;
     @Mock IplantAnnouncer announcerMock;
     @Mock IsMaskable maskableMock;
-    @Mock DataSearchPresenter searchPresenterMock;
+    @Mock SearchView.Presenter searchPresenterMock;
 
     @Mock AsyncCallback<List<Folder>> folderCallbackMock;
     

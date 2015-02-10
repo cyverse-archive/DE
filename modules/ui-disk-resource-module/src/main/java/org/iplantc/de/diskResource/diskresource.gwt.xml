@@ -11,8 +11,8 @@
        <when-type-is class="org.iplantc.de.diskResource.client.DiskResourceView.DiskResourceViewToolbar"/>
     </replace-with>
      <!-- Deferred binding rules -->
-    <replace-with class="org.iplantc.de.diskResource.client.search.views.cells.DiskResourceSearchCellDefaultAppearance">
-        <when-type-is class="org.iplantc.de.diskResource.client.search.views.cells.DiskResourceSearchCell.DiskResourceSearchCellAppearance"/>
+    <replace-with class="org.iplantc.de.diskResource.client.views.search.cells.DiskResourceSearchCellDefaultAppearance">
+        <when-type-is class="org.iplantc.de.diskResource.client.views.search.cells.DiskResourceSearchCell.DiskResourceSearchCellAppearance"/>
     </replace-with>
 
     <source path="client"/>

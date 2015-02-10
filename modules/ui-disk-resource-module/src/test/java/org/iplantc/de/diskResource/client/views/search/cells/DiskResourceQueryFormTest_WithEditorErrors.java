@@ -1,10 +1,12 @@
-package org.iplantc.de.diskResource.client.search.views.cells;
+package org.iplantc.de.diskResource.client.views.search.cells;
 
 import org.iplantc.de.client.models.search.DateInterval;
 import org.iplantc.de.client.models.search.DiskResourceQueryTemplate;
 import org.iplantc.de.client.models.search.FileSizeRange.FileSizeUnit;
 import org.iplantc.de.client.models.tags.Tag;
 import org.iplantc.de.commons.client.widgets.IPlantAnchor;
+import org.iplantc.de.diskResource.client.views.search.cells.DiskResourceQueryForm;
+import org.iplantc.de.diskResource.client.views.search.cells.DiskResourceQueryFormNamePrompt;
 import org.iplantc.de.tags.client.TagsView;
 import org.iplantc.de.tags.client.views.TagSearchFieldImpl;
 
@@ -43,7 +45,7 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * This test verifies the functionality of the {@link org.iplantc.de.diskResource.client.search.views.cells.DiskResourceQueryForm} class when there are editor
+ * This test verifies the functionality of the {@link org.iplantc.de.diskResource.client.views.search.cells.DiskResourceQueryForm} class when there are editor
  * errors.
  * 
  * @author jstroot

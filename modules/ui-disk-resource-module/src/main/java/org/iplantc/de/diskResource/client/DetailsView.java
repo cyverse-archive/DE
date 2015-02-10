@@ -6,7 +6,7 @@ import org.iplantc.de.diskResource.client.events.DiskResourceSelectionChangedEve
 import org.iplantc.de.diskResource.client.events.selection.EditInfoTypeSelected;
 import org.iplantc.de.diskResource.client.events.selection.ManageSharingSelected;
 import org.iplantc.de.diskResource.client.events.selection.ResetInfoTypeSelected;
-import org.iplantc.de.diskResource.client.search.events.SubmitDiskResourceQueryEvent;
+import org.iplantc.de.diskResource.client.events.search.SubmitDiskResourceQueryEvent;
 
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.resources.client.ImageResource;

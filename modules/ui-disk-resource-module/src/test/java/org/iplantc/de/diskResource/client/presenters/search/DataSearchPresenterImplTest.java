@@ -1,11 +1,12 @@
-package org.iplantc.de.diskResource.client.search.presenter.impl;
+package org.iplantc.de.diskResource.client.presenters.search;
 
 import org.iplantc.de.client.models.search.DiskResourceQueryTemplate;
 import org.iplantc.de.client.services.SearchServiceFacade;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
-import org.iplantc.de.diskResource.client.search.events.DeleteSavedSearchClickedEvent;
-import org.iplantc.de.diskResource.client.search.events.SaveDiskResourceQueryClickedEvent;
-import org.iplantc.de.diskResource.client.search.events.UpdateSavedSearchesEvent;
+import org.iplantc.de.diskResource.client.events.search.DeleteSavedSearchClickedEvent;
+import org.iplantc.de.diskResource.client.events.search.SaveDiskResourceQueryClickedEvent;
+import org.iplantc.de.diskResource.client.events.search.UpdateSavedSearchesEvent;
+import org.iplantc.de.diskResource.client.presenters.search.DataSearchPresenterImpl;
 
 import com.google.common.collect.Lists;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -52,7 +53,7 @@ public class DataSearchPresenterImplTest {
     /**
      * Verifies that nothing will occur if a query template's name is null
      * 
-     * @see org.iplantc.de.diskResource.client.search.presenter.DataSearchPresenter#onSaveDiskResourceQueryClicked(org.iplantc.de.diskResource.client.search.events.SaveDiskResourceQueryClickedEvent)
+     * @see org.iplantc.de.diskResource.client.SearchView.Presenter#onSaveDiskResourceQueryClicked(org.iplantc.de.diskResource.client.events.search.SaveDiskResourceQueryClickedEvent)
      */
     @Test public void testDoSaveDiskResourceQueryTemplate_Case1() {
         DataSearchPresenterImpl spy = spy(dsPresenter);
@@ -73,7 +74,7 @@ public class DataSearchPresenterImplTest {
     /**
      * Verifies that nothing will occur if a query template's name is an empty string.
      * 
-     * @see org.iplantc.de.diskResource.client.search.presenter.DataSearchPresenter#onSaveDiskResourceQueryClicked(org.iplantc.de.diskResource.client.search.events.SaveDiskResourceQueryClickedEvent)
+     * @see org.iplantc.de.diskResource.client.SearchView.Presenter#onSaveDiskResourceQueryClicked(org.iplantc.de.diskResource.client.events.search.SaveDiskResourceQueryClickedEvent)
      */
     @Test public void testDoSaveDiskResourceQueryTemplate_Case2() {
         DataSearchPresenterImpl spy = spy(dsPresenter);
@@ -97,7 +98,7 @@ public class DataSearchPresenterImplTest {
      * Verifies that an existing query template will be replaced when a request to save a template of the
      * same name is received.
      * 
-     * @see org.iplantc.de.diskResource.client.search.presenter.DataSearchPresenter#onSaveDiskResourceQueryClicked(org.iplantc.de.diskResource.client.search.events.SaveDiskResourceQueryClickedEvent)
+     * @see org.iplantc.de.diskResource.client.SearchView.Presenter#onSaveDiskResourceQueryClicked(org.iplantc.de.diskResource.client.events.search.SaveDiskResourceQueryClickedEvent)
      */
     @Test public void testDoSaveDiskResourceQueryTemplate_Case3() {
         DataSearchPresenterImpl spy = spy(dsPresenter);
@@ -157,7 +158,7 @@ public class DataSearchPresenterImplTest {
     /**
      * Verifies that a search of a given query will be requested after it is successfully persisted.
      * 
-     * @see org.iplantc.de.diskResource.client.search.presenter.DataSearchPresenter#onSaveDiskResourceQueryClicked(org.iplantc.de.diskResource.client.search.events.SaveDiskResourceQueryClickedEvent)
+     * @see org.iplantc.de.diskResource.client.SearchView.Presenter#onSaveDiskResourceQueryClicked(org.iplantc.de.diskResource.client.events.search.SaveDiskResourceQueryClickedEvent)
      */
     @Test public void testDoSaveDiskResourceQueryTemplateOnSuccess_Case1() {
         DataSearchPresenterImpl spy = spy(dsPresenter);
@@ -218,7 +219,7 @@ public class DataSearchPresenterImplTest {
     /**
      * Verifies that a search will not be requested after a failure to persist a query.
      *
-     * @see org.iplantc.de.diskResource.client.search.presenter.DataSearchPresenter#onSaveDiskResourceQueryClicked(org.iplantc.de.diskResource.client.search.events.SaveDiskResourceQueryClickedEvent)
+     * @see org.iplantc.de.diskResource.client.SearchView.Presenter#onSaveDiskResourceQueryClicked(org.iplantc.de.diskResource.client.events.search.SaveDiskResourceQueryClickedEvent)
      */
     @Test public void testDoSaveDiskResourceQueryTemplate_Case5() {
         DataSearchPresenterImpl spy = spy(dsPresenter);
@@ -250,7 +251,7 @@ public class DataSearchPresenterImplTest {
      * The list should be equivalent to what was returned by getQueryTemplates() prior to the method
      * call, but with the changed item in place of the non-changed item.
      * 
-     * @see org.iplantc.de.diskResource.client.search.presenter.DataSearchPresenter#onSaveDiskResourceQueryClicked(org.iplantc.de.diskResource.client.search.events.SaveDiskResourceQueryClickedEvent)
+     * @see org.iplantc.de.diskResource.client.SearchView.Presenter#onSaveDiskResourceQueryClicked(org.iplantc.de.diskResource.client.events.search.SaveDiskResourceQueryClickedEvent)
      */
     @Test public void testDoSaveDiskResourceQueryTemplate_Case6() {
         // Create presenter with overridden method to control test execution.

@@ -1,4 +1,4 @@
-package org.iplantc.de.diskResource.client.search.events;
+package org.iplantc.de.diskResource.client.events.search;
 
 import org.iplantc.de.client.models.search.DiskResourceQueryTemplate;
 

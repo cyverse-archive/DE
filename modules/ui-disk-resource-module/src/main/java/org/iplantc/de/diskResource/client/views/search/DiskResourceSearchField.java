@@ -1,4 +1,4 @@
-package org.iplantc.de.diskResource.client.search.views;
+package org.iplantc.de.diskResource.client.views.search;
 
 import org.iplantc.de.client.models.search.DiskResourceQueryTemplate;
 import org.iplantc.de.client.models.search.SearchAutoBeanFactory;
@@ -6,12 +6,12 @@ import org.iplantc.de.commons.client.events.SubmitTextSearchEvent;
 import org.iplantc.de.commons.client.events.SubmitTextSearchEvent.SubmitTextSearchEventHandler;
 import org.iplantc.de.commons.client.widgets.search.SearchFieldDecorator;
 import org.iplantc.de.diskResource.client.events.FolderSelectionEvent;
-import org.iplantc.de.diskResource.client.search.events.SaveDiskResourceQueryClickedEvent;
-import org.iplantc.de.diskResource.client.search.events.SavedSearchDeletedEvent;
-import org.iplantc.de.diskResource.client.search.events.SubmitDiskResourceQueryEvent;
-import org.iplantc.de.diskResource.client.search.events.SubmitDiskResourceQueryEvent.HasSubmitDiskResourceQueryEventHandlers;
-import org.iplantc.de.diskResource.client.search.events.SubmitDiskResourceQueryEvent.SubmitDiskResourceQueryEventHandler;
-import org.iplantc.de.diskResource.client.search.views.cells.DiskResourceSearchCell;
+import org.iplantc.de.diskResource.client.events.search.SaveDiskResourceQueryClickedEvent;
+import org.iplantc.de.diskResource.client.events.search.SavedSearchDeletedEvent;
+import org.iplantc.de.diskResource.client.events.search.SubmitDiskResourceQueryEvent;
+import org.iplantc.de.diskResource.client.events.search.SubmitDiskResourceQueryEvent.HasSubmitDiskResourceQueryEventHandlers;
+import org.iplantc.de.diskResource.client.events.search.SubmitDiskResourceQueryEvent.SubmitDiskResourceQueryEventHandler;
+import org.iplantc.de.diskResource.client.views.search.cells.DiskResourceSearchCell;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.HandlerRegistration;

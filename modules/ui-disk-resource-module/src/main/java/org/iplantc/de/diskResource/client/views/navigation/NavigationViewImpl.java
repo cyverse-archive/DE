@@ -3,7 +3,7 @@ package org.iplantc.de.diskResource.client.views.navigation;
 import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.diskResource.client.NavigationView;
 import org.iplantc.de.diskResource.client.events.FolderSelectionEvent;
-import org.iplantc.de.diskResource.client.search.events.DeleteSavedSearchClickedEvent;
+import org.iplantc.de.diskResource.client.events.search.DeleteSavedSearchClickedEvent;
 import org.iplantc.de.diskResource.client.views.navigation.cells.TreeCell;
 import org.iplantc.de.diskResource.share.DiskResourceModule;
 

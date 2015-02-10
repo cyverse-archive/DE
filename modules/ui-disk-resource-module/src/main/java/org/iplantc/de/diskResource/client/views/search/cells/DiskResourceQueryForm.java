@@ -1,4 +1,4 @@
-package org.iplantc.de.diskResource.client.search.views.cells;
+package org.iplantc.de.diskResource.client.views.search.cells;
 
 import org.iplantc.de.client.models.search.DateInterval;
 import org.iplantc.de.client.models.search.DiskResourceQueryTemplate;
@@ -9,12 +9,11 @@ import org.iplantc.de.client.models.tags.Tag;
 import org.iplantc.de.commons.client.info.ErrorAnnouncementConfig;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
 import org.iplantc.de.commons.client.widgets.IPlantAnchor;
-import org.iplantc.de.diskResource.client.search.events.SaveDiskResourceQueryClickedEvent;
-import org.iplantc.de.diskResource.client.search.events.SubmitDiskResourceQueryEvent;
-import org.iplantc.de.diskResource.client.search.events.SubmitDiskResourceQueryEvent.HasSubmitDiskResourceQueryEventHandlers;
-import org.iplantc.de.diskResource.client.search.events.SubmitDiskResourceQueryEvent.SubmitDiskResourceQueryEventHandler;
+import org.iplantc.de.diskResource.client.events.search.SaveDiskResourceQueryClickedEvent;
+import org.iplantc.de.diskResource.client.events.search.SubmitDiskResourceQueryEvent;
+import org.iplantc.de.diskResource.client.events.search.SubmitDiskResourceQueryEvent.HasSubmitDiskResourceQueryEventHandlers;
+import org.iplantc.de.diskResource.client.events.search.SubmitDiskResourceQueryEvent.SubmitDiskResourceQueryEventHandler;
 import org.iplantc.de.tags.client.TagsView;
-import org.iplantc.de.tags.client.views.TagsPanel;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
@@ -97,7 +96,7 @@ import java.util.logging.Logger;
  * <li>If the form is <b>invalid</b>, the validation errors will appear in the form and not other action
  * will occur.</li>
  * <li>Else, the user will be presented with a text field allowing them to set a name. Then, if the user
- * clicks "Save", a {@link org.iplantc.de.diskResource.client.search.events.SaveDiskResourceQueryClickedEvent}
+ * clicks "Save", a {@link org.iplantc.de.diskResource.client.events.search.SaveDiskResourceQueryClickedEvent}
  * will be fired with the form's current query template and this form will be hidden.</li>
  * </ol>
  * </li>

@@ -1,8 +1,8 @@
-package org.iplantc.de.diskResource.client.search.views.cells;
+package org.iplantc.de.diskResource.client.views.search.cells;
 
-import org.iplantc.de.diskResource.client.search.events.SaveDiskResourceQueryClickedEvent;
-import org.iplantc.de.diskResource.client.search.events.SubmitDiskResourceQueryEvent.HasSubmitDiskResourceQueryEventHandlers;
-import org.iplantc.de.diskResource.client.search.events.SubmitDiskResourceQueryEvent.SubmitDiskResourceQueryEventHandler;
+import org.iplantc.de.diskResource.client.events.search.SaveDiskResourceQueryClickedEvent;
+import org.iplantc.de.diskResource.client.events.search.SubmitDiskResourceQueryEvent.HasSubmitDiskResourceQueryEventHandlers;
+import org.iplantc.de.diskResource.client.events.search.SubmitDiskResourceQueryEvent.SubmitDiskResourceQueryEventHandler;
 import org.iplantc.de.resources.client.messages.I18N;
 
 import com.google.gwt.cell.client.ValueUpdater;

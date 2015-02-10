@@ -1,16 +1,16 @@
-package org.iplantc.de.diskResource.client.search.presenter.impl;
+package org.iplantc.de.diskResource.client.presenters.search;
 
 import org.iplantc.de.client.models.search.DiskResourceQueryTemplate;
 import org.iplantc.de.client.services.SearchServiceFacade;
 import org.iplantc.de.commons.client.info.ErrorAnnouncementConfig;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
 import org.iplantc.de.commons.client.info.SuccessAnnouncementConfig;
+import org.iplantc.de.diskResource.client.SearchView;
 import org.iplantc.de.diskResource.client.events.SavedSearchesRetrievedEvent;
-import org.iplantc.de.diskResource.client.search.events.DeleteSavedSearchClickedEvent;
-import org.iplantc.de.diskResource.client.search.events.SaveDiskResourceQueryClickedEvent;
-import org.iplantc.de.diskResource.client.search.events.SavedSearchDeletedEvent;
-import org.iplantc.de.diskResource.client.search.events.UpdateSavedSearchesEvent;
-import org.iplantc.de.diskResource.client.search.presenter.DataSearchPresenter;
+import org.iplantc.de.diskResource.client.events.search.DeleteSavedSearchClickedEvent;
+import org.iplantc.de.diskResource.client.events.search.SaveDiskResourceQueryClickedEvent;
+import org.iplantc.de.diskResource.client.events.search.SavedSearchDeletedEvent;
+import org.iplantc.de.diskResource.client.events.search.UpdateSavedSearchesEvent;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
@@ -36,7 +36,7 @@ import java.util.logging.Logger;
 /**
  * @author jstroot
  */
-public class DataSearchPresenterImpl implements DataSearchPresenter {
+public class DataSearchPresenterImpl implements SearchView.Presenter {
 
     final List<DiskResourceQueryTemplate> queryTemplates = Lists.newArrayList();
     List<DiskResourceQueryTemplate> cleanCopyQueryTemplates = Lists.newArrayList();
@@ -102,7 +102,7 @@ public class DataSearchPresenterImpl implements DataSearchPresenter {
 
     /**
      * This handler is responsible for saving or updating the {@link DiskResourceQueryTemplate} contained
-     * in the given {@link org.iplantc.de.diskResource.client.search.events.SaveDiskResourceQueryClickedEvent}.
+     * in the given {@link org.iplantc.de.diskResource.client.events.search.SaveDiskResourceQueryClickedEvent}.
      * <p/>
      * After the query has been successfully saved, a search with the given querytemplate will be
      * performed.

@@ -5,6 +5,7 @@ import org.iplantc.de.diskResource.client.DetailsView;
 import org.iplantc.de.diskResource.client.DiskResourceView;
 import org.iplantc.de.diskResource.client.GridView;
 import org.iplantc.de.diskResource.client.NavigationView;
+import org.iplantc.de.diskResource.client.SearchView;
 import org.iplantc.de.diskResource.client.ToolbarView;
 import org.iplantc.de.diskResource.client.presenters.dataLink.DataLinkPresenterImpl;
 import org.iplantc.de.diskResource.client.DataLinkView;
@@ -17,11 +18,10 @@ import org.iplantc.de.diskResource.client.presenters.navigation.NavigationPresen
 import org.iplantc.de.diskResource.client.presenters.proxy.FolderContentsRpcProxyImpl;
 import org.iplantc.de.diskResource.client.presenters.proxy.FolderRpcProxyImpl;
 import org.iplantc.de.diskResource.client.presenters.toolbar.ToolbarViewPresenterImpl;
-import org.iplantc.de.diskResource.client.search.presenter.DataSearchPresenter;
-import org.iplantc.de.diskResource.client.search.presenter.impl.DataSearchPresenterImpl;
-import org.iplantc.de.diskResource.client.search.views.DiskResourceSearchField;
-import org.iplantc.de.diskResource.client.search.views.cells.DiskResourceQueryForm;
-import org.iplantc.de.diskResource.client.search.views.cells.DiskResourceSearchCell;
+import org.iplantc.de.diskResource.client.presenters.search.DataSearchPresenterImpl;
+import org.iplantc.de.diskResource.client.views.search.DiskResourceSearchField;
+import org.iplantc.de.diskResource.client.views.search.cells.DiskResourceQueryForm;
+import org.iplantc.de.diskResource.client.views.search.cells.DiskResourceSearchCell;
 import org.iplantc.de.diskResource.client.views.DiskResourceViewImpl;
 import org.iplantc.de.diskResource.client.views.details.DetailsViewImpl;
 import org.iplantc.de.diskResource.client.views.grid.GridViewImpl;
@@ -49,7 +49,7 @@ public class DiskResourceGinModule extends AbstractGinModule {
                     .build(FolderContentsRpcProxyFactory.class));
 
         // Disk Resource Presenters
-        bind(DataSearchPresenter.class).to(DataSearchPresenterImpl.class);
+        bind(SearchView.Presenter.class).to(DataSearchPresenterImpl.class);
         install(new GinFactoryModuleBuilder()
                     .implement(DiskResourceView.Presenter.class, DiskResourcePresenterImpl.class)
                     .build(DiskResourcePresenterFactory.class));

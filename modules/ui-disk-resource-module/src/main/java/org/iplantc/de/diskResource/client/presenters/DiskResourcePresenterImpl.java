@@ -24,6 +24,7 @@ import org.iplantc.de.diskResource.client.DetailsView;
 import org.iplantc.de.diskResource.client.DiskResourceView;
 import org.iplantc.de.diskResource.client.GridView;
 import org.iplantc.de.diskResource.client.NavigationView;
+import org.iplantc.de.diskResource.client.SearchView;
 import org.iplantc.de.diskResource.client.ToolbarView;
 import org.iplantc.de.diskResource.client.events.*;
 import org.iplantc.de.diskResource.client.events.selection.*;
@@ -37,8 +38,7 @@ import org.iplantc.de.diskResource.client.presenters.callbacks.DiskResourceMoveC
 import org.iplantc.de.diskResource.client.presenters.callbacks.DiskResourceRestoreCallback;
 import org.iplantc.de.diskResource.client.presenters.callbacks.RenameDiskResourceCallback;
 import org.iplantc.de.diskResource.client.presenters.handlers.DiskResourcesEventHandler;
-import org.iplantc.de.diskResource.client.search.presenter.DataSearchPresenter;
-import org.iplantc.de.diskResource.client.search.views.DiskResourceSearchField;
+import org.iplantc.de.diskResource.client.views.search.DiskResourceSearchField;
 import org.iplantc.de.diskResource.client.views.dialogs.FolderSelectDialog;
 import org.iplantc.de.diskResource.client.views.dialogs.RenameFileDialog;
 import org.iplantc.de.diskResource.client.views.dialogs.RenameFolderDialog;
@@ -103,14 +103,14 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
     private final GridView.Presenter gridViewPresenter;
     private final IplantDisplayStrings displayStrings;
     private final EventBus eventBus;
-    private final DataSearchPresenter dataSearchPresenter;
+    private final SearchView.Presenter dataSearchPresenter;
 
     @AssistedInject
     DiskResourcePresenterImpl(final DiskResourceViewFactory diskResourceViewFactory,
                               final DiskResourceAutoBeanFactory drFactory,
                               final NavigationView.Presenter navigationPresenter,
                               final GridViewPresenterFactory gridViewPresenterFactory,
-                              final DataSearchPresenter dataSearchPresenter,
+                              final SearchView.Presenter dataSearchPresenter,
                               final ToolbarViewPresenterFactory toolbarViewPresenterFactory,
                               final DetailsView.Presenter detailsViewPresenter,
                               final IplantDisplayStrings displayStrings,
@@ -146,7 +146,7 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
                               final DiskResourceAutoBeanFactory drFactory,
                               final NavigationView.Presenter navigationPresenter,
                               final GridViewPresenterFactory gridViewPresenterFactory,
-                              final DataSearchPresenter dataSearchPresenter,
+                              final SearchView.Presenter dataSearchPresenter,
                               final ToolbarViewPresenterFactory toolbarViewPresenterFactory,
                               final DetailsView.Presenter detailsViewPresenter,
                               final IplantDisplayStrings displayStrings,
@@ -182,7 +182,7 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
                               final DiskResourceAutoBeanFactory drFactory,
                               final NavigationView.Presenter navigationPresenter,
                               final GridViewPresenterFactory gridViewPresenterFactory,
-                              final DataSearchPresenter dataSearchPresenter,
+                              final SearchView.Presenter dataSearchPresenter,
                               final ToolbarViewPresenterFactory toolbarViewPresenterFactory,
                               final DetailsView.Presenter detailsViewPresenter,
                               final IplantDisplayStrings displayStrings,
@@ -216,7 +216,7 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
                               final DiskResourceAutoBeanFactory drFactory,
                               final NavigationView.Presenter navigationPresenter,
                               final GridViewPresenterFactory gridViewPresenterFactory,
-                              final DataSearchPresenter dataSearchPresenter,
+                              final SearchView.Presenter dataSearchPresenter,
                               final ToolbarViewPresenterFactory toolbarViewPresenterFactory,
                               final DetailsView.Presenter detailsViewPresenter,
                               final IplantDisplayStrings displayStrings,

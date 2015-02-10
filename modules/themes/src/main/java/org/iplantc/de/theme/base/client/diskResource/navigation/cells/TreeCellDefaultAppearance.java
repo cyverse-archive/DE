@@ -4,8 +4,8 @@ import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.client.models.search.DiskResourceQueryTemplate;
 import org.iplantc.de.diskResource.client.views.navigation.cells.TreeCell;
-import org.iplantc.de.diskResource.client.search.events.DeleteSavedSearchClickedEvent;
-import org.iplantc.de.diskResource.client.search.events.UpdateSavedSearchesEvent;
+import org.iplantc.de.diskResource.client.events.search.DeleteSavedSearchClickedEvent;
+import org.iplantc.de.diskResource.client.events.search.UpdateSavedSearchesEvent;
 
 import com.google.common.collect.Lists;
 import com.google.gwt.cell.client.Cell.Context;

@@ -1,7 +1,7 @@
-package org.iplantc.de.diskResource.client.search.events;
+package org.iplantc.de.diskResource.client.events.search;
 
 import org.iplantc.de.client.models.search.DiskResourceQueryTemplate;
-import org.iplantc.de.diskResource.client.search.events.DeleteSavedSearchClickedEvent.DeleteSavedSearchEventHandler;
+import org.iplantc.de.diskResource.client.events.search.DeleteSavedSearchClickedEvent.DeleteSavedSearchEventHandler;
 
 import com.google.gwt.event.shared.EventHandler;
 import com.google.gwt.event.shared.GwtEvent;

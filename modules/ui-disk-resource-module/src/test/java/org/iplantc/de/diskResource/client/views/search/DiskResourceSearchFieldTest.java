@@ -1,9 +1,10 @@
-package org.iplantc.de.diskResource.client.search.views;
+package org.iplantc.de.diskResource.client.views.search;
 
 import org.iplantc.de.client.models.search.DiskResourceQueryTemplate;
 import org.iplantc.de.commons.client.events.SubmitTextSearchEvent;
-import org.iplantc.de.diskResource.client.search.events.SubmitDiskResourceQueryEvent;
-import org.iplantc.de.diskResource.client.search.views.cells.DiskResourceSearchCell;
+import org.iplantc.de.diskResource.client.events.search.SubmitDiskResourceQueryEvent;
+import org.iplantc.de.diskResource.client.views.search.cells.DiskResourceSearchCell;
+import org.iplantc.de.diskResource.client.views.search.DiskResourceSearchField;
 
 import com.google.gwtmockito.GxtMockitoTestRunner;
 

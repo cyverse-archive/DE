@@ -1,8 +1,8 @@
-package org.iplantc.de.diskResource.client.search.views.cells;
+package org.iplantc.de.diskResource.client.views.search.cells;
 
 import org.iplantc.de.client.models.search.DiskResourceQueryTemplate;
 import org.iplantc.de.commons.client.validators.DiskResourceNameValidator;
-import org.iplantc.de.diskResource.client.search.events.SaveDiskResourceQueryClickedEvent;
+import org.iplantc.de.diskResource.client.events.search.SaveDiskResourceQueryClickedEvent;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
