@@ -37,7 +37,6 @@ import org.iplantc.de.commons.client.views.dialogs.IPlantDialog;
 import org.iplantc.de.commons.client.views.dialogs.IPlantPromptDialog;
 import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 import org.iplantc.de.resources.client.messages.IplantErrorStrings;
-import org.iplantc.de.shared.services.ConfluenceServiceAsync;
 
 import com.google.common.collect.Lists;
 import com.google.gwt.json.client.JSONArray;
@@ -83,16 +82,21 @@ public class BelphegorAppsViewPresenterImpl extends AppsViewPresenterImpl implem
                                                                          AdminAppsView.AdminPresenter,
                                                                          AppEditor.Presenter {
 
-    @Inject AppAutoBeanFactory factory;
-    @Inject AppAdminServiceRequestAutoBeanFactory serviceFactory;
+    @Inject
+    AppAutoBeanFactory factory;
+    @Inject
+    AppAdminServiceRequestAutoBeanFactory serviceFactory;
     private final AppsView view;
     private final AppAdminServiceFacade adminAppService;
     private final EventBus eventBus;
-    private final ConfluenceServiceAsync confluenceService;
+
     private final IplantAnnouncer announcer;
-    @Inject AdminPresenterAppearance appearance;
-    @Inject BelphegorAdminProperties properties;
-    @Inject JsonUtil jsonUtil;
+    @Inject
+    AdminPresenterAppearance appearance;
+    @Inject
+    BelphegorAdminProperties properties;
+    @Inject
+    JsonUtil jsonUtil;
 
     @Inject
     public BelphegorAppsViewPresenterImpl(final AppsView view,
@@ -102,7 +106,6 @@ public class BelphegorAppsViewPresenterImpl extends AppsViewPresenterImpl implem
                                           final EventBus eventBus,
                                           final UserInfo userInfo,
                                           final DEProperties props,
-                                          final ConfluenceServiceAsync confluenceService,
                                           final IplantAnnouncer announcer,
                                           final IplantDisplayStrings displayStrings,
                                           final IplantErrorStrings errorStrings,
@@ -115,7 +118,6 @@ public class BelphegorAppsViewPresenterImpl extends AppsViewPresenterImpl implem
               eventBus,
               userInfo,
               props,
-              confluenceService,
               announcer,
               displayStrings,
               errorStrings,
@@ -124,7 +126,6 @@ public class BelphegorAppsViewPresenterImpl extends AppsViewPresenterImpl implem
         this.view = view;
         this.adminAppService = appService;
         this.eventBus = eventBus;
-        this.confluenceService = confluenceService;
         this.announcer = announcer;
 
         eventBus.addHandler(CatalogCategoryRefreshEvent.TYPE, new CatalogCategoryRefreshEventHandler() {
@@ -151,7 +152,8 @@ public class BelphegorAppsViewPresenterImpl extends AppsViewPresenterImpl implem
         // Check if a new AppCategory can be created in the target AppCategory.
         if ((!selectedAppCategory.getName().contains("Public Apps"))
                 && selectedAppCategory.getAppCount() > 0
-                && (selectedAppCategory.getCategories() != null && selectedAppCategory.getCategories().size() == 0)
+                && (selectedAppCategory.getCategories() != null && selectedAppCategory.getCategories()
+                                                                                      .size() == 0)
                 || ((properties.getDefaultTrashAppCategoryId().equalsIgnoreCase(selectedAppCategory.getId())) || properties.getDefaultBetaAppCategoryId()
                                                                                                                            .equalsIgnoreCase(selectedAppCategory.getId()))) {
             ErrorHandler.post(appearance.addCategoryPermissionError());
@@ -453,8 +455,7 @@ public class BelphegorAppsViewPresenterImpl extends AppsViewPresenterImpl implem
                 }
                 Collections.sort(groupNames, String.CASE_INSENSITIVE_ORDER);
 
-                String successMsg = appearance.appCategorizeSuccess(selectedApp.getName(),
-                                                                        groupNames);
+                String successMsg = appearance.appCategorizeSuccess(selectedApp.getName(), groupNames);
                 announcer.schedule(new SuccessAnnouncementConfig(successMsg));
 
                 eventBus.fireEvent(new CatalogCategoryRefreshEvent());
@@ -520,26 +521,6 @@ public class BelphegorAppsViewPresenterImpl extends AppsViewPresenterImpl implem
         final JSONObject jsonObj = jsonUtil.getObject(jsonString);
 
         if (app.getName() != null) {
-            confluenceService.movePage(appClone.getName(),
-                                       appClone.getName(),
-                                       new AsyncCallback<String>() {
-
-                                           @Override
-                                           public void onSuccess(String result) {
-                                               adminAppService.updateApplication(appClone.getId(),
-                                                                                 jsonObj,
-                                                                                 editCompleteCallback);
-                                           }
-
-                                           @Override
-                                           public void onFailure(Throwable caught) {
-                                               ErrorHandler.post(caught.getMessage());
-                                               adminAppService.updateApplication(appClone.getId(),
-                                                                                 jsonObj,
-                                                                                 editCompleteCallback);
-                                           }
-                                       });
-        } else {
             adminAppService.updateApplication(appClone.getId(), jsonObj, editCompleteCallback);
         }
 

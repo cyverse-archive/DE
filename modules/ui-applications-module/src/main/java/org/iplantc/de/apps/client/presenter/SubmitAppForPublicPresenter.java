@@ -14,12 +14,10 @@ import org.iplantc.de.client.util.JsonUtil;
 import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 import org.iplantc.de.resources.client.messages.IplantErrorStrings;
-import org.iplantc.de.shared.services.ConfluenceServiceAsync;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONObject;
-import com.google.gwt.json.client.JSONString;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HasOneWidget;
 import com.google.inject.Inject;
@@ -41,7 +39,7 @@ public class SubmitAppForPublicPresenter implements SubmitAppForPublicUseView.Pr
     private final EventBus eventBus;
     private final IplantDisplayStrings displayStrings;
     private final IplantErrorStrings errorStrings;
-    private final ConfluenceServiceAsync confluenceService;
+
     @Inject
     JsonUtil jsonUtil;
 
@@ -51,15 +49,13 @@ public class SubmitAppForPublicPresenter implements SubmitAppForPublicUseView.Pr
                                        final PublicAppCategoryProxy appGroupProxy,
                                        final EventBus eventBus,
                                        final IplantDisplayStrings displayStrings,
-                                       final IplantErrorStrings errorStrings,
-                                       final ConfluenceServiceAsync confluenceService) {
+                                       final IplantErrorStrings errorStrings) {
         this.view = view;
         this.appService = appService;
         this.appGroupProxy = appGroupProxy;
         this.eventBus = eventBus;
         this.displayStrings = displayStrings;
         this.errorStrings = errorStrings;
-        this.confluenceService = confluenceService;
     }
 
     @Override

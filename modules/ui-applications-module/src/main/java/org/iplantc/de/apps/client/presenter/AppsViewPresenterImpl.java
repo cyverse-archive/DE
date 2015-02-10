@@ -41,7 +41,7 @@ import org.iplantc.de.commons.client.info.IplantAnnouncer;
 import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 import org.iplantc.de.resources.client.messages.IplantErrorStrings;
 import org.iplantc.de.shared.exceptions.HttpRedirectException;
-import org.iplantc.de.shared.services.ConfluenceServiceAsync;
+
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -114,7 +114,6 @@ public class AppsViewPresenterImpl implements AppsView.Presenter {
     private final AppUserServiceFacade appUserService;
     private final UserInfo userInfo;
     private final DEProperties props;
-    private final ConfluenceServiceAsync confluenceService;
     private final IplantAnnouncer announcer;
     private final IplantDisplayStrings displayStrings;
     private final IplantErrorStrings errorStrings;
@@ -136,7 +135,6 @@ public class AppsViewPresenterImpl implements AppsView.Presenter {
                                  final EventBus eventBus,
                                  final UserInfo userInfo,
                                  final DEProperties props,
-                                 final ConfluenceServiceAsync confluenceService,
                                  final IplantAnnouncer announcer,
                                  final IplantDisplayStrings displayStrings,
                                  final IplantErrorStrings errorStrings,
@@ -148,7 +146,6 @@ public class AppsViewPresenterImpl implements AppsView.Presenter {
         this.eventBus = eventBus;
         this.userInfo = userInfo;
         this.props = props;
-        this.confluenceService = confluenceService;
         this.announcer = announcer;
         this.displayStrings = displayStrings;
         this.errorStrings = errorStrings;

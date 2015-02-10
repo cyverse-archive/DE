@@ -45,10 +45,6 @@
         <servlet-class>org.iplantc.de.server.services.AboutApplicationServiceImpl</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>confluenceServlet</servlet-name>
-        <servlet-class>org.iplantc.de.server.ConfluenceServiceImpl</servlet-class>
-    </servlet>
-    <servlet>
         <servlet-name>emailServlet</servlet-name>
         <servlet-class>org.iplantc.de.server.services.EmailServiceImpl</servlet-class>
     </servlet>
@@ -105,10 +101,6 @@
     <servlet-mapping>
         <servlet-name>aboutAppServlet</servlet-name>
         <url-pattern>/discoveryenvironment/about</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>confluenceServlet</servlet-name>
-        <url-pattern>/discoveryenvironment/confluence</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>emailServlet</servlet-name>

@@ -38,10 +38,6 @@
         <servlet-class>org.iplantc.de.server.services.SessionManagementServiceImpl</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>confluenceServlet</servlet-name>
-        <servlet-class>org.iplantc.de.server.ConfluenceServiceImpl</servlet-class>
-    </servlet>
-    <servlet>
         <servlet-name>emptyResponseServlet</servlet-name>
         <servlet-class>org.iplantc.de.server.EmptyResponseServlet</servlet-class>
     </servlet>
@@ -74,11 +70,6 @@
     <servlet-mapping>
         <servlet-name>sessionManagementServlet</servlet-name>
         <url-pattern>/belphegor/sessionmanagement</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>confluenceServlet</servlet-name>
-        <url-pattern>/belphegor/confluence</url-pattern>
-        <url-pattern>/discoveryenvironment/confluence</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>emptyResponseServlet</servlet-name>
