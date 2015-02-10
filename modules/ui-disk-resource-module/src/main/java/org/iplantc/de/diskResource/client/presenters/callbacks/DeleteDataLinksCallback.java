@@ -1,9 +1,9 @@
-package org.iplantc.de.diskResource.client.dataLink.presenter.callbacks;
+package org.iplantc.de.diskResource.client.presenters.callbacks;
 
 import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.client.util.JsonUtil;
 import org.iplantc.de.commons.client.ErrorHandler;
-import org.iplantc.de.diskResource.client.dataLink.view.DataLinkPanel;
+import org.iplantc.de.diskResource.client.DataLinkView;
 import org.iplantc.de.resources.client.messages.I18N;
 
 import com.google.gwt.json.client.JSONArray;
@@ -18,10 +18,10 @@ import com.sencha.gxt.widget.core.client.tree.Tree;
 public class DeleteDataLinksCallback implements AsyncCallback<String> {
 
     private final Tree<DiskResource, DiskResource> tree;
-    private DataLinkPanel view;
+    private DataLinkView view;
     private final JsonUtil jsonUtil;
 
-    public DeleteDataLinksCallback(final DataLinkPanel view) {
+    public DeleteDataLinksCallback(final DataLinkView view) {
         this.view = view;
         this.tree = view.getTree();
         this.jsonUtil = JsonUtil.getInstance();

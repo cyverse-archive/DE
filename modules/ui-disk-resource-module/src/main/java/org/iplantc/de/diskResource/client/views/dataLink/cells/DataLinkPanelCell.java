@@ -1,8 +1,9 @@
-package org.iplantc.de.diskResource.client.dataLink.view;
+package org.iplantc.de.diskResource.client.views.dataLink.cells;
 
 import org.iplantc.de.client.models.dataLink.DataLink;
 import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.client.models.diskResources.File;
+import org.iplantc.de.diskResource.client.DataLinkView;
 import org.iplantc.de.resources.client.DataLinkPanelCellStyle;
 import org.iplantc.de.resources.client.IplantResources;
 import org.iplantc.de.resources.client.messages.I18N;
@@ -20,7 +21,10 @@ import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.user.client.Event;
 
-final class DataLinkPanelCell extends AbstractCell<DiskResource> {
+/**
+ * @author jstroot
+ */
+public final class DataLinkPanelCell extends AbstractCell<DiskResource> {
 
     interface Templates extends SafeHtmlTemplates {
         @SafeHtmlTemplates.Template("<span name=\"del\" class=\"{0}\" qtip=\"{1}\"></span><span style=\"float: left;\">&nbsp; {2} &nbsp;</span>")
@@ -37,10 +41,10 @@ final class DataLinkPanelCell extends AbstractCell<DiskResource> {
     }
 
     private final DataLinkPanelCellStyle dataLinkCss;
-    private final DataLinkPanel.Presenter presenter;
+    private final DataLinkView.Presenter presenter;
     private final Templates templates = GWT.create(Templates.class);
 
-    DataLinkPanelCell(DataLinkPanel.Presenter presenter) {
+    public DataLinkPanelCell(DataLinkView.Presenter presenter) {
         super(CLICK);
         this.presenter = presenter;
         dataLinkCss = IplantResources.RESOURCES.getDataLinkCss();

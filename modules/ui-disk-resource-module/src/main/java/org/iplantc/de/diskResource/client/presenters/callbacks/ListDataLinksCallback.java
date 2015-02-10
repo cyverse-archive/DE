@@ -1,4 +1,4 @@
-package org.iplantc.de.diskResource.client.dataLink.presenter.callbacks;
+package org.iplantc.de.diskResource.client.presenters.callbacks;
 
 import org.iplantc.de.client.models.dataLink.DataLink;
 import org.iplantc.de.client.models.dataLink.DataLinkFactory;

@@ -1,9 +1,9 @@
-package org.iplantc.de.diskResource.client.dataLink.presenter.callbacks;
+package org.iplantc.de.diskResource.client.presenters.callbacks;
 
 import org.iplantc.de.client.models.dataLink.DataLink;
 import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.commons.client.ErrorHandler;
-import org.iplantc.de.diskResource.client.dataLink.view.DataLinkPanel;
+import org.iplantc.de.diskResource.client.DataLinkView;
 import org.iplantc.de.resources.client.messages.I18N;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -20,9 +20,9 @@ import java.util.List;
 public class CreateDataLinkCallback implements AsyncCallback<List<DataLink>> {
 
     private final Tree<DiskResource, DiskResource> tree;
-    private final DataLinkPanel view;
+    private final DataLinkView view;
 
-    public CreateDataLinkCallback(final DataLinkPanel view) {
+    public CreateDataLinkCallback(final DataLinkView view) {
         this.view = view;
         this.tree = this.view.getTree();
     }

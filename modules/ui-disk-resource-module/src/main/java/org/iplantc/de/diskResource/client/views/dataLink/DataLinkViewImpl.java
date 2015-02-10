@@ -1,8 +1,10 @@
-package org.iplantc.de.diskResource.client.dataLink.view;
+package org.iplantc.de.diskResource.client.views.dataLink;
 
 import org.iplantc.de.client.models.dataLink.DataLink;
 import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.commons.client.views.dialogs.IPlantDialog;
+import org.iplantc.de.diskResource.client.DataLinkView;
+import org.iplantc.de.diskResource.client.views.dataLink.cells.DataLinkPanelCell;
 import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 
 import com.google.gwt.core.client.GWT;
@@ -16,7 +18,6 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.uibinder.client.UiTemplate;
 import com.google.gwt.user.client.ui.HasEnabled;
-import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
@@ -38,7 +39,7 @@ import java.util.List;
 /**
  * @author jstroot
  */
-public class DataLinkPanel implements IsWidget {
+public class DataLinkViewImpl implements DataLinkView {
 
     /**
      * A handler who controls this widgets button visibility based on tree check selection.
@@ -82,23 +83,8 @@ public class DataLinkPanel implements IsWidget {
 
     }
 
-    @UiTemplate("DataLinkPanel.ui.xml")
-    interface DataLinkPanelUiBinder extends UiBinder<Widget, DataLinkPanel> { }
-
-    public interface Presenter extends org.iplantc.de.commons.client.presenter.Presenter {
-
-        void createDataLinks(List<DiskResource> selectedItems);
-
-        void deleteDataLink(DataLink dataLink);
-
-        void deleteDataLinks(List<DataLink> dataLinks);
-
-        String getSelectedDataLinkDownloadPage();
-
-        String getSelectedDataLinkDownloadUrl();
-
-        void openSelectedDataLinkDownloadPage();
-    }
+    @UiTemplate("DataLinkViewImpl.ui.xml")
+    interface DataLinkPanelUiBinder extends UiBinder<Widget, DataLinkViewImpl> { }
 
     @UiField TextButton advancedDataLinkButton;
     @UiField TextButton collapseAll;
@@ -114,9 +100,9 @@ public class DataLinkPanel implements IsWidget {
     private Presenter presenter;
 
     @Inject
-    DataLinkPanel(final IplantDisplayStrings displayStrings,
-                  @Assisted final Presenter presenter,
-                  @Assisted final List<DiskResource> sharedResources) {
+    DataLinkViewImpl(final IplantDisplayStrings displayStrings,
+                     @Assisted final Presenter presenter,
+                     @Assisted final List<DiskResource> sharedResources) {
         this.displayStrings = displayStrings;
         this.presenter = presenter;
         widget = uiBinder.createAndBindUi(this);
@@ -137,6 +123,7 @@ public class DataLinkPanel implements IsWidget {
 
     }
 
+    @Override
     public void addRoots(List<DiskResource> roots) {
         store.add(roots);
     }
@@ -146,14 +133,17 @@ public class DataLinkPanel implements IsWidget {
         return widget;
     }
 
+    @Override
     public Tree<DiskResource, DiskResource> getTree() {
         return tree;
     }
 
+    @Override
     public void mask() {
         tree.mask(displayStrings.loadingMask());
     }
 
+    @Override
     public void unmask() {
         tree.unmask();
     }

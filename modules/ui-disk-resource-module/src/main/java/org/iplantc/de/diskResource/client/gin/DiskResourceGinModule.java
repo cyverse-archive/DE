@@ -6,8 +6,9 @@ import org.iplantc.de.diskResource.client.DiskResourceView;
 import org.iplantc.de.diskResource.client.GridView;
 import org.iplantc.de.diskResource.client.NavigationView;
 import org.iplantc.de.diskResource.client.ToolbarView;
-import org.iplantc.de.diskResource.client.dataLink.presenter.DataLinkPresenterImpl;
-import org.iplantc.de.diskResource.client.dataLink.view.DataLinkPanel;
+import org.iplantc.de.diskResource.client.presenters.dataLink.DataLinkPresenterImpl;
+import org.iplantc.de.diskResource.client.DataLinkView;
+import org.iplantc.de.diskResource.client.views.dataLink.DataLinkViewImpl;
 import org.iplantc.de.diskResource.client.gin.factory.*;
 import org.iplantc.de.diskResource.client.presenters.DiskResourcePresenterImpl;
 import org.iplantc.de.diskResource.client.presenters.details.DetailsViewPresenterImpl;
@@ -52,13 +53,17 @@ public class DiskResourceGinModule extends AbstractGinModule {
         install(new GinFactoryModuleBuilder()
                     .implement(DiskResourceView.Presenter.class, DiskResourcePresenterImpl.class)
                     .build(DiskResourcePresenterFactory.class));
+
+        // Data Links
         install(new GinFactoryModuleBuilder()
-                    .implement(DataLinkPanel.Presenter.class, DataLinkPresenterImpl.class)
-                    .build(DataLinkPanelFactory.class));
+                    .implement(DataLinkView.Presenter.class, DataLinkPresenterImpl.class)
+                    .build(DataLinkPresenterFactory.class));
+        install(new GinFactoryModuleBuilder()
+                    .implement(DataLinkView.class, DataLinkViewImpl.class)
+                    .build(DataLinkViewFactory.class));
 
         // Disk Resource Views
         bind(new TypeLiteral<TreeStore<Folder>>() {}).toProvider(DiskResourceTreeStoreProvider.class);
-//        bind(ToolbarView.class).to(DiskResourceViewToolbarImpl.class);
         install(new GinFactoryModuleBuilder()
                     .implement(DiskResourceView.class, DiskResourceViewImpl.class)
                     .build(DiskResourceViewFactory.class));
