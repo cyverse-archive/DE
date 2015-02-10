@@ -19,7 +19,7 @@ public class BulkUploadSelected extends GwtEvent<BulkUploadSelected.BulkUploadSe
         HandlerRegistration addBulkUploadSelectedEventHandler(BulkUploadSelectedEventHandler handler);
     }
 
-    public static Type<BulkUploadSelectedEventHandler> TYPE = new Type<>();
+    public static final Type<BulkUploadSelectedEventHandler> TYPE = new Type<>();
     private final Folder selectedFolder;
 
     public BulkUploadSelected(final Folder selectedFolder) {

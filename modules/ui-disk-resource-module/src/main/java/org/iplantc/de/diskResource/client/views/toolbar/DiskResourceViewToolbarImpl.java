@@ -56,7 +56,7 @@ public class DiskResourceViewToolbarImpl extends Composite implements ToolbarVie
     @UiField TextButton refreshButton;
     @UiField MenuItem renameMi, moveMi, deleteMi,
         editFileMi, editCommentsMi, editInfoTypeMi, metadataMi;
-    @UiField(provided = true) DiskResourceSearchField searchField;
+    @UiField(provided = true) final DiskResourceSearchField searchField;
     @UiField TextButton shareMenu;
     @UiField MenuItem shareWithCollaboratorsMi, createPublicLinkMi, sendToCogeMi,
         sendToEnsemblMi, sendToTreeViewerMi;
@@ -66,11 +66,11 @@ public class DiskResourceViewToolbarImpl extends Composite implements ToolbarVie
     @UiField TextButton uploadMenu;
     @UiField MenuItem shareFolderLocationMi;
     @UiField MenuItem newPathListMi;
-    @UiField(provided = true) ToolbarView.Appearance appearance;
+    @UiField(provided = true) final ToolbarView.Appearance appearance;
 
-    private static DiskResourceViewToolbarUiBinder BINDER = GWT.create(DiskResourceViewToolbarUiBinder.class);
+    private static final DiskResourceViewToolbarUiBinder BINDER = GWT.create(DiskResourceViewToolbarUiBinder.class);
     private final UserInfo userInfo;
-    private ToolbarView.Presenter presenter;
+    private final ToolbarView.Presenter presenter;
     private List<DiskResource> selectedDiskResources;
     private Folder selectedFolder;
     @Inject DiskResourceUtil diskResourceUtil;

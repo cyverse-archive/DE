@@ -164,7 +164,7 @@ public abstract class AbstractDiskResourceSelector<R extends DiskResource> exten
     private final FileUploadTemplate template = GWT.create(FileUploadTemplate.class);
     private final IplantValidationConstants vConstants;
     private boolean browseButtonEnabled = true;
-    private IPlantSideErrorHandler errorHandler;
+    private final IPlantSideErrorHandler errorHandler;
     private DefaultEditorError existsEditorError = null;
     private String infoTextString;
     private R model;

@@ -84,7 +84,7 @@ public class NavigationViewImpl extends ContentPanel implements NavigationView {
 
     interface NavigationViewImplUiBinder extends UiBinder<Tree<Folder, Folder>, NavigationViewImpl> { }
 
-    private static NavigationViewImplUiBinder ourUiBinder = GWT.create(NavigationViewImplUiBinder.class);
+    private static final NavigationViewImplUiBinder ourUiBinder = GWT.create(NavigationViewImplUiBinder.class);
 
     @UiField Tree<Folder, Folder> tree;
 

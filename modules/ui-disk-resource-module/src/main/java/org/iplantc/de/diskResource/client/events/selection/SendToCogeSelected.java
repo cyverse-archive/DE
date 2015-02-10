@@ -21,7 +21,7 @@ public class SendToCogeSelected extends GwtEvent<SendToCogeSelected.SendToCogeSe
         HandlerRegistration addSendToCogeSelectedHandler(SendToCogeSelectedHandler handler);
     }
 
-    public static Type<SendToCogeSelectedHandler> TYPE = new Type<>();
+    public static final Type<SendToCogeSelectedHandler> TYPE = new Type<>();
     private final List<DiskResource> selectedDiskResources;
 
     public SendToCogeSelected(List<DiskResource> selectedDiskResources) {

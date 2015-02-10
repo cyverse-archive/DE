@@ -33,9 +33,9 @@ public class DiskResourceQueryFormNamePrompt extends Composite implements Editor
 
     interface QueryFormNamePromptEditorDriver extends SimpleBeanEditorDriver<DiskResourceQueryTemplate, DiskResourceQueryFormNamePrompt> {}
 
-    private static DiskResourceQueryFormNamePromptUiBinder uiBinder = GWT.create(DiskResourceQueryFormNamePromptUiBinder.class);
+    private static final DiskResourceQueryFormNamePromptUiBinder uiBinder = GWT.create(DiskResourceQueryFormNamePromptUiBinder.class);
 
-    protected BaseEventPreview eventPreview;
+    protected final BaseEventPreview eventPreview;
 
     @UiField TextField name;
     @UiField @Ignore TextButton saveFilterBtn;

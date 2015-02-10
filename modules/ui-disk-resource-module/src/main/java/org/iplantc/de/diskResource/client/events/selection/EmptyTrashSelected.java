@@ -17,7 +17,7 @@ public class EmptyTrashSelected extends GwtEvent<EmptyTrashSelected.EmptyTrashSe
         HandlerRegistration addEmptyTrashSelectedHandler(EmptyTrashSelectedHandler handler);
     }
 
-    public static Type<EmptyTrashSelectedHandler> TYPE = new Type<>();
+    public static final Type<EmptyTrashSelectedHandler> TYPE = new Type<>();
 
     public Type<EmptyTrashSelectedHandler> getAssociatedType() {
         return TYPE;

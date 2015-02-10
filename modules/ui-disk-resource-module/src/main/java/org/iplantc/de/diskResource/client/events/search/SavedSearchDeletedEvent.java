@@ -18,7 +18,7 @@ public class SavedSearchDeletedEvent extends GwtEvent<SavedSearchDeletedEvent.Sa
         HandlerRegistration addSavedSearchDeletedEventHandler(SavedSearchDeletedEventHandler handler);
     }
 
-    public static Type<SavedSearchDeletedEventHandler> TYPE = new Type<>();
+    public static final Type<SavedSearchDeletedEventHandler> TYPE = new Type<>();
     private final DiskResourceQueryTemplate savedSearch;
 
     public SavedSearchDeletedEvent(DiskResourceQueryTemplate savedSearch) {

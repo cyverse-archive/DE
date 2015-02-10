@@ -84,7 +84,7 @@ public class DataSharingPermissionsPanel implements IsWidget {
     private HorizontalPanel explainPanel;
 
     final Widget widget;
-    private static MyUiBinder uiBinder = GWT.create(MyUiBinder.class);
+    private static final MyUiBinder uiBinder = GWT.create(MyUiBinder.class);
 
     @UiTemplate("DataSharingPermissionsView.ui.xml")
     interface MyUiBinder extends UiBinder<Widget, DataSharingPermissionsPanel> {

@@ -32,7 +32,7 @@ public class DiskResourceViewImpl extends Composite implements DiskResourceView 
     interface DiskResourceViewUiBinder extends UiBinder<Widget, DiskResourceViewImpl> {
     }
 
-    private static DiskResourceViewUiBinder BINDER = GWT.create(DiskResourceViewUiBinder.class);
+    private static final DiskResourceViewUiBinder BINDER = GWT.create(DiskResourceViewUiBinder.class);
 
     @UiField BorderLayoutContainer con;
     @UiField BorderLayoutData westData;
@@ -41,10 +41,10 @@ public class DiskResourceViewImpl extends Composite implements DiskResourceView 
     @UiField BorderLayoutData northData;
     @UiField BorderLayoutData southData;
 
-    @UiField(provided = true) NavigationView navigationView;
-    @UiField(provided = true) GridView centerGridView;
-    @UiField(provided = true) ToolbarView toolbar;
-    @UiField(provided = true) DetailsView detailsView;
+    @UiField(provided = true) final NavigationView navigationView;
+    @UiField(provided = true) final GridView centerGridView;
+    @UiField(provided = true) final ToolbarView toolbar;
+    @UiField(provided = true) final DetailsView detailsView;
 
     @Inject
     DiskResourceViewImpl(@Assisted final NavigationView.Presenter navigationPresenter,

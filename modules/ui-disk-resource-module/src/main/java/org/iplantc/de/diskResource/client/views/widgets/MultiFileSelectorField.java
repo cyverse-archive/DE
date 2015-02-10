@@ -119,10 +119,10 @@ public class MultiFileSelectorField extends Composite implements IsField<List<Ha
 
     interface MultiFileSelectorFieldUiBinder extends UiBinder<Widget, MultiFileSelectorField> { }
 
-    private static MultiFileSelectorFieldUiBinder BINDER = GWT.create(MultiFileSelectorFieldUiBinder.class);
-    protected List<EditorError> errors = Lists.newArrayList();
-    protected List<EditorError> existsErrors = Lists.newArrayList();
-    protected List<EditorError> permissionErrors = Lists.newArrayList();
+    private static final MultiFileSelectorFieldUiBinder BINDER = GWT.create(MultiFileSelectorFieldUiBinder.class);
+    protected final List<EditorError> errors = Lists.newArrayList();
+    protected final List<EditorError> existsErrors = Lists.newArrayList();
+    protected final List<EditorError> permissionErrors = Lists.newArrayList();
 
     @UiField TextButton addButton;
     @UiField ColumnModel<DiskResource> cm;

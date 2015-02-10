@@ -18,7 +18,7 @@ import com.sencha.gxt.widget.core.client.tree.Tree;
 public class DeleteDataLinksCallback implements AsyncCallback<String> {
 
     private final Tree<DiskResource, DiskResource> tree;
-    private DataLinkView view;
+    private final DataLinkView view;
     private final JsonUtil jsonUtil;
 
     public DeleteDataLinksCallback(final DataLinkView view) {

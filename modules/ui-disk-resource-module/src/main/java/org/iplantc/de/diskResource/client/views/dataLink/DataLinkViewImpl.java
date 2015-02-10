@@ -94,10 +94,10 @@ public class DataLinkViewImpl implements DataLinkView {
     @UiField TreeStore<DiskResource> store;
     @UiField Tree<DiskResource, DiskResource> tree;
 
-    private static DataLinkPanelUiBinder uiBinder = GWT.create(DataLinkPanelUiBinder.class);
+    private static final DataLinkPanelUiBinder uiBinder = GWT.create(DataLinkPanelUiBinder.class);
     private final Widget widget;
     private final IplantDisplayStrings displayStrings;
-    private Presenter presenter;
+    private final Presenter presenter;
 
     @Inject
     DataLinkViewImpl(final IplantDisplayStrings displayStrings,

@@ -22,7 +22,7 @@ public class BulkDownloadSelected extends GwtEvent<BulkDownloadSelected.BulkDown
         HandlerRegistration addBulkDownloadSelectedEventHandler(BulkDownloadSelectedEventHandler handler);
     }
 
-    public static Type<BulkDownloadSelectedEventHandler> TYPE = new Type<>();
+    public static final Type<BulkDownloadSelectedEventHandler> TYPE = new Type<>();
     private final Folder selectedFolder;
     private final List<DiskResource> selectedDiskResources;
 

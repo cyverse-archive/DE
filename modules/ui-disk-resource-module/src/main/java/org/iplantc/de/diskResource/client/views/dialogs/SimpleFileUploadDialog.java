@@ -67,7 +67,7 @@ public class SimpleFileUploadDialog extends IPlantDialog {
     public static final String HDN_USER_ID_KEY = "user";
     public static final String FILE_TYPE = "type";
     public static final String URL_FIELD = "url";
-    private static SimpleFileUploadPanelUiBinder BINDER = GWT
+    private static final SimpleFileUploadPanelUiBinder BINDER = GWT
             .create(SimpleFileUploadPanelUiBinder.class);
 
     @UiTemplate("SimpleFileUploadPanel.ui.xml")

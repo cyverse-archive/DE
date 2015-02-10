@@ -48,7 +48,7 @@ public class FileUploadByUrlDialog extends IPlantDialog implements HasPending<En
 
     private static final DiskResourceAutoBeanFactory FS_FACTORY = GWT.create(DiskResourceAutoBeanFactory.class);
 
-    private static FileUploadByUrlPanelUiBinder UIBINDER = GWT.create(FileUploadByUrlPanelUiBinder.class);
+    private static final FileUploadByUrlPanelUiBinder UIBINDER = GWT.create(FileUploadByUrlPanelUiBinder.class);
 
     @UiTemplate("FileUploadByUrlPanel.ui.xml")
     interface FileUploadByUrlPanelUiBinder extends UiBinder<Widget, FileUploadByUrlDialog> {}

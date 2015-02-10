@@ -61,18 +61,18 @@ public class GridViewImpl extends ContentPanel implements GridView,
     interface GridViewImplUiBinder extends UiBinder<VerticalLayoutContainer, GridViewImpl> {
     }
 
-    private static GridViewImplUiBinder ourUiBinder = GWT.create(GridViewImplUiBinder.class);
+    private static final GridViewImplUiBinder ourUiBinder = GWT.create(GridViewImplUiBinder.class);
 
-    @UiField(provided = true) GridView.Appearance appearance;
+    @UiField(provided = true) final GridView.Appearance appearance;
     @UiField ToolBar pagingToolBar;
     @UiField Grid<DiskResource> grid;
     @UiField TextField pathField;
-    @UiField(provided = true) ListStore<DiskResource> listStore;
+    @UiField(provided = true) final ListStore<DiskResource> listStore;
     @UiField ColumnModel<DiskResource> cm;
     @UiField LiveGridView gridView;
 
     private final DiskResourceUtil diskResourceUtil;
-    private DiskResourceColumnModel drCm;
+    private final DiskResourceColumnModel drCm;
     private final Status selectionStatus;
     private final LiveGridCheckBoxSelectionModel sm;
     private final PagingLoader<FolderContentsLoadConfig, PagingLoadResult<DiskResource>> gridLoader;

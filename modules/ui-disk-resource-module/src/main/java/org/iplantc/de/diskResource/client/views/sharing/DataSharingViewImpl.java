@@ -26,10 +26,10 @@ public class DataSharingViewImpl implements DataSharingView {
     FramedPanel diskResourceListPnl;
 
  
-    @UiField(provided = true)
+    @UiField(provided = true) final
     ColumnModel<DiskResource> diskResourcesColumnModel;
 
-    @UiField(provided = true)
+    @UiField(provided = true) final
     ListStore<DiskResource> diskResourcesListStore;
 
  
@@ -41,7 +41,7 @@ public class DataSharingViewImpl implements DataSharingView {
 
     final Widget widget;
 
-    private static MyUiBinder uiBinder = GWT.create(MyUiBinder.class);
+    private static final MyUiBinder uiBinder = GWT.create(MyUiBinder.class);
 
     @UiTemplate("DataSharingView.ui.xml")
     interface MyUiBinder extends UiBinder<Widget, DataSharingViewImpl> {

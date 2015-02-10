@@ -68,7 +68,7 @@ public class DetailsViewImpl extends Composite implements DetailsView,
 
     interface DetailsViewImplUiBinder extends UiBinder<HTMLPanel, DetailsViewImpl> { }
 
-    @UiField(provided = true) Appearance appearance;
+    @UiField(provided = true) final Appearance appearance;
     @UiField DateLabel dateCreated;
     @UiField DateLabel lastModified;
     @UiField @Ignore InlineLabel permission;
@@ -90,7 +90,7 @@ public class DetailsViewImpl extends Composite implements DetailsView,
     @UiField TableElement table;
     @UiField DivElement emptyDetails;
 
-    private static DetailsViewImplUiBinder ourUiBinder = GWT.create(DetailsViewImplUiBinder.class);
+    private static final DetailsViewImplUiBinder ourUiBinder = GWT.create(DetailsViewImplUiBinder.class);
     private final EditorDriver editorDriver = GWT.create(EditorDriver.class);
     @Inject DiskResourceUtil diskResourceUtil;
     @Inject SearchAutoBeanFactory factory;

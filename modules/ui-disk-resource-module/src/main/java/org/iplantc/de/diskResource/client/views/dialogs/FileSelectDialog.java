@@ -86,7 +86,7 @@ public class FileSelectDialog extends IPlantDialog implements TakesValue<List<Fi
     }
 
     private final DiskResourceView.Presenter presenter;
-    private TextField selectedFileField;
+    private final TextField selectedFileField;
     private List<File> selectedFileIds;
     @Inject DiskResourceUtil diskResourceUtil;
 

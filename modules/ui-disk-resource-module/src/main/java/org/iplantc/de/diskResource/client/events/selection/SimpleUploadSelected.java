@@ -20,7 +20,7 @@ public class SimpleUploadSelected extends GwtEvent<SimpleUploadSelected.SimpleUp
         HandlerRegistration addSimpleUploadSelectedHandler(SimpleUploadSelectedHandler handler);
     }
 
-    public static Type<SimpleUploadSelectedHandler> TYPE = new Type<>();
+    public static final Type<SimpleUploadSelectedHandler> TYPE = new Type<>();
     private final Folder selectedFolder;
 
     public SimpleUploadSelected(final Folder selectedFolder) {

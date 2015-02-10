@@ -21,7 +21,7 @@ public class SavedSearchesRetrievedEvent extends GwtEvent<SavedSearchesRetrieved
         void onSavedSearchedRetrieved(SavedSearchesRetrievedEvent event);
     }
 
-    public static Type<SavedSearchesRetrievedEventHandler> TYPE = new Type<>();
+    public static final Type<SavedSearchesRetrievedEventHandler> TYPE = new Type<>();
     private final List<DiskResourceQueryTemplate> savedSearches;
 
     public SavedSearchesRetrievedEvent(List<DiskResourceQueryTemplate> savedSearches) {

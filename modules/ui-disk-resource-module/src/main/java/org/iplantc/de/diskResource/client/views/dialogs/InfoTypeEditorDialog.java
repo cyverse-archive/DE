@@ -24,7 +24,7 @@ public class InfoTypeEditorDialog extends IPlantDialog {
 
     private final DiskResourceServiceFacade diskResourceService;
 
-    private SimpleComboBox<InfoType> infoTypeCbo;
+    private final SimpleComboBox<InfoType> infoTypeCbo;
 
     private final InfoType type;
 

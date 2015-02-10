@@ -20,7 +20,7 @@ public class RefreshFolderSelected extends GwtEvent<RefreshFolderSelected.Refres
         HandlerRegistration addRefreshFolderSelectedHandler(RefreshFolderSelectedHandler handler);
     }
 
-    public static Type<RefreshFolderSelectedHandler> TYPE = new Type<>();
+    public static final Type<RefreshFolderSelectedHandler> TYPE = new Type<>();
     private final Folder selectedFolder;
 
     public RefreshFolderSelected(final Folder selectedFolder) {

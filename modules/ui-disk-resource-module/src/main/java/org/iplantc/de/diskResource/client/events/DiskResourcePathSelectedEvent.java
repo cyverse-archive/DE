@@ -20,7 +20,7 @@ public class DiskResourcePathSelectedEvent extends GwtEvent<DiskResourcePathSele
         HandlerRegistration addDiskResourcePathSelectedEventHandler(DiskResourcePathSelectedEventHandler handler);
     }
 
-    public static Type<DiskResourcePathSelectedEventHandler> TYPE = new Type<>();
+    public static final Type<DiskResourcePathSelectedEventHandler> TYPE = new Type<>();
     private final HasPath selectedDiskResource;
 
     public DiskResourcePathSelectedEvent(HasPath selectedDiskResource) {

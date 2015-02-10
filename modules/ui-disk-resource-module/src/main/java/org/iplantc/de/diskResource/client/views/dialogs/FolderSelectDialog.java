@@ -103,7 +103,7 @@ public class FolderSelectDialog extends IPlantDialog implements TakesValue<Folde
 
     private final DiskResourceView.Presenter presenter;
     private Folder selectedFolder;
-    private TextField selectedFolderTextField;
+    private final TextField selectedFolderTextField;
 
     @AssistedInject
     FolderSelectDialog(final DiskResourcePresenterFactory presenterFactory,

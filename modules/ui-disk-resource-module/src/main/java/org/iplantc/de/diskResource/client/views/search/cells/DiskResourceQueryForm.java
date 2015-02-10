@@ -117,10 +117,10 @@ public class DiskResourceQueryForm extends Composite implements
 
     interface SearchFormEditorDriver extends SimpleBeanEditorDriver<DiskResourceQueryTemplate, DiskResourceQueryForm> { }
 
-    protected BaseEventPreview eventPreview;
+    protected final BaseEventPreview eventPreview;
     static final int COLUMN_FORM_WIDTH = 600;
     static final int cw = ((COLUMN_FORM_WIDTH - 30) / 2) - 12;
-    static Logger LOG = Logger.getLogger(DiskResourceQueryForm.class.getName());
+    static final Logger LOG = Logger.getLogger(DiskResourceQueryForm.class.getName());
     final SearchFormEditorDriver editorDriver = GWT.create(SearchFormEditorDriver.class);
     IPlantAnchor createFilterLink;
     @Path("createdWithin")
@@ -147,7 +147,7 @@ public class DiskResourceQueryForm extends Composite implements
     @Ignore
     TextButton searchButton;
     TextField sharedWith;
-    SimpleEditor<Set<Tag>> tagQuery;
+    final SimpleEditor<Set<Tag>> tagQuery;
     @Ignore
     private final HtmlLayoutContainer con;
     private final SearchAutoBeanFactory factory = GWT.create(SearchAutoBeanFactory.class);

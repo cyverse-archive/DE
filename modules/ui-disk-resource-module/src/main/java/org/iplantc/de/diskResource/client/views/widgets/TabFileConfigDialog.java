@@ -15,7 +15,7 @@ import com.sencha.gxt.widget.core.client.form.SpinnerField;
 
 public class TabFileConfigDialog extends Dialog {
 
-    private static TabFileConfigViewUiBinder uiBinder = GWT.create(TabFileConfigViewUiBinder.class);
+    private static final TabFileConfigViewUiBinder uiBinder = GWT.create(TabFileConfigViewUiBinder.class);
 
     @UiTemplate("TabFileConfigView.ui.xml")
     interface TabFileConfigViewUiBinder extends UiBinder<Widget, TabFileConfigDialog> {

@@ -21,7 +21,7 @@ public class SendToTreeViewerSelected extends GwtEvent<SendToTreeViewerSelected.
         HandlerRegistration addSendToTreeViewerSelectedHandler(SendToTreeViewerSelectedHandler handler);
     }
 
-    public static Type<SendToTreeViewerSelectedHandler> TYPE = new Type<>();
+    public static final Type<SendToTreeViewerSelectedHandler> TYPE = new Type<>();
     private final List<DiskResource> selectedDiskResources;
 
     public SendToTreeViewerSelected(List<DiskResource> selectedDiskResources) {

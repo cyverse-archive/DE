@@ -100,7 +100,7 @@ public class DataSharingPresenterImpl implements DataSharingView.Presenter {
         }
     }
 
-    DataSharingView view;
+    final DataSharingView view;
     private final DiskResourceServiceFacade diskResourceService;
     private final DataSharingPermissionsPanel permissionsPanel;
     private final List<DiskResource> selectedResources;

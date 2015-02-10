@@ -219,7 +219,7 @@ public class DiskResourceMetadataViewImpl extends Composite implements MetadataV
     @UiField ToolBar toolbar;
 
     private static final String METADATA_COMPLETE = "Metadata complete"; //$NON-NLS-1$
-    private static DiskResourceMetadataEditorPanelUiBinder uiBinder = GWT.create(DiskResourceMetadataEditorPanelUiBinder.class);
+    private static final DiskResourceMetadataEditorPanelUiBinder uiBinder = GWT.create(DiskResourceMetadataEditorPanelUiBinder.class);
     private final AccordionLayoutContainer alc;
     private final AccordionLayoutAppearance appearance;
     private final DiskResourceAutoBeanFactory autoBeanFactory;
