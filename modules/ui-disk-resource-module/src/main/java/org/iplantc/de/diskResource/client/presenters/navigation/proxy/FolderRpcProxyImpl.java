@@ -1,4 +1,4 @@
-package org.iplantc.de.diskResource.client.presenters.proxy;
+package org.iplantc.de.diskResource.client.presenters.navigation.proxy;
 
 import org.iplantc.de.client.models.IsMaskable;
 import org.iplantc.de.client.models.diskResources.DiskResourceFavorite;

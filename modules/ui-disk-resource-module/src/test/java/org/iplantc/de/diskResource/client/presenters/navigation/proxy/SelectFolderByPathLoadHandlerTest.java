@@ -1,10 +1,11 @@
-package org.iplantc.de.diskResource.client.presenters.proxy;
+package org.iplantc.de.diskResource.client.presenters.navigation.proxy;
 
 import org.iplantc.de.client.models.IsMaskable;
 import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.commons.client.info.ErrorAnnouncementConfig;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
 import org.iplantc.de.diskResource.client.NavigationView;
+import org.iplantc.de.diskResource.client.presenters.navigation.proxy.SelectFolderByPathLoadHandler;
 
 import com.google.common.collect.Lists;
 import com.google.gwt.core.client.Scheduler;

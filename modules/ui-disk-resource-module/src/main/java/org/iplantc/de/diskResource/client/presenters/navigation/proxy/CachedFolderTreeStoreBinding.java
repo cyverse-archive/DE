@@ -1,4 +1,4 @@
-package org.iplantc.de.diskResource.client.presenters.handlers;
+package org.iplantc.de.diskResource.client.presenters.navigation.proxy;
 
 import org.iplantc.de.client.models.diskResources.Folder;
 

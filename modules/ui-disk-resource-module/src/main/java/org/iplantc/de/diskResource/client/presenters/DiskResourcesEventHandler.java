@@ -1,4 +1,4 @@
-package org.iplantc.de.diskResource.client.presenters.handlers;
+package org.iplantc.de.diskResource.client.presenters;
 
 import org.iplantc.de.client.events.diskResources.FolderRefreshEvent;
 import org.iplantc.de.client.events.diskResources.FolderRefreshEvent.FolderRefreshEventHandler;

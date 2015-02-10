@@ -4,6 +4,7 @@ import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.diskResource.client.DiskResourceView;
 import org.iplantc.de.diskResource.client.NavigationView;
 import org.iplantc.de.diskResource.client.events.search.UpdateSavedSearchesEvent;
+import org.iplantc.de.diskResource.client.presenters.DiskResourcesEventHandler;
 
 import com.google.gwtmockito.GxtMockitoTestRunner;
 

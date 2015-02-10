@@ -1,4 +1,4 @@
-package org.iplantc.de.diskResource.client.presenters.proxy;
+package org.iplantc.de.diskResource.client.presenters.grid.proxy;
 
 import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.client.models.diskResources.Folder;
@@ -7,10 +7,11 @@ import org.iplantc.de.client.models.search.DiskResourceQueryTemplate;
 import org.iplantc.de.client.models.viewer.InfoType;
 import org.iplantc.de.client.services.DiskResourceServiceFacade;
 import org.iplantc.de.client.services.FileSystemMetadataServiceFacade;
-import org.iplantc.de.client.services.MetadataServiceFacade;
 import org.iplantc.de.client.services.SearchServiceFacade;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
-import org.iplantc.de.diskResource.client.presenters.proxy.FolderContentsRpcProxyImpl.FolderContentsCallback;
+import org.iplantc.de.diskResource.client.presenters.grid.proxy.FolderContentsLoadConfig;
+import org.iplantc.de.diskResource.client.presenters.grid.proxy.FolderContentsRpcProxyImpl;
+import org.iplantc.de.diskResource.client.presenters.grid.proxy.FolderContentsRpcProxyImpl.FolderContentsCallback;
 import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 import org.iplantc.de.resources.client.messages.IplantErrorStrings;
 
@@ -45,7 +46,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Performs tests on the {@link FolderContentsRpcProxyImpl} and its underlying classes.
+ * Performs tests on the {@link org.iplantc.de.diskResource.client.presenters.grid.proxy.FolderContentsRpcProxyImpl} and its underlying classes.
  *
  * @author jstroot
  */

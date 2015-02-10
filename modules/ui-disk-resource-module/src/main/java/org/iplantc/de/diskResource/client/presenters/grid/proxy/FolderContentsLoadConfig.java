@@ -1,4 +1,4 @@
-package org.iplantc.de.diskResource.client.presenters.proxy;
+package org.iplantc.de.diskResource.client.presenters.grid.proxy;
 
 import org.iplantc.de.client.models.diskResources.Folder;
 

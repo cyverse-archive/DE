@@ -1,4 +1,4 @@
-package org.iplantc.de.diskResource.client.presenters.proxy;
+package org.iplantc.de.diskResource.client.presenters.navigation.proxy;
 
 import org.iplantc.de.client.models.IsMaskable;
 import org.iplantc.de.client.models.diskResources.Folder;
@@ -9,9 +9,10 @@ import org.iplantc.de.client.services.SearchServiceFacade;
 import org.iplantc.de.commons.client.info.ErrorAnnouncementConfig;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
 import org.iplantc.de.diskResource.client.SearchView;
-import org.iplantc.de.diskResource.client.presenters.proxy.FolderRpcProxyImpl.GetSavedQueryTemplatesCallback;
-import org.iplantc.de.diskResource.client.presenters.proxy.FolderRpcProxyImpl.RootFolderCallback;
-import org.iplantc.de.diskResource.client.presenters.proxy.FolderRpcProxyImpl.SubFoldersCallback;
+import org.iplantc.de.diskResource.client.presenters.navigation.proxy.FolderRpcProxyImpl;
+import org.iplantc.de.diskResource.client.presenters.navigation.proxy.FolderRpcProxyImpl.GetSavedQueryTemplatesCallback;
+import org.iplantc.de.diskResource.client.presenters.navigation.proxy.FolderRpcProxyImpl.RootFolderCallback;
+import org.iplantc.de.diskResource.client.presenters.navigation.proxy.FolderRpcProxyImpl.SubFoldersCallback;
 import org.iplantc.de.diskResource.client.events.search.SubmitDiskResourceQueryEvent;
 
 import com.google.common.collect.Lists;
