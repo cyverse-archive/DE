@@ -121,45 +121,7 @@ public class DataLinkViewImpl implements DataLinkView {
 
     }
 
-    @Override
-    public void addRoots(List<DiskResource> roots) {
-        store.add(roots);
-    }
-
-    @Override
-    public Widget asWidget() {
-        return widget;
-    }
-
-    @Override
-    public Tree<DiskResource, DiskResource> getTree() {
-        return tree;
-    }
-
-    @Override
-    public void mask() {
-        tree.mask(appearance.loadingMask());
-    }
-
-    @Override
-    public void unmask() {
-        tree.unmask();
-    }
-
-    @UiFactory TreeStore<DiskResource> createTreeStore() {
-        return new TreeStore<>(new ModelKeyProvider<DiskResource>() {
-
-            @Override
-            public String getKey(DiskResource item) {
-                return item.getId();
-            }
-        });
-    }
-
-    @UiFactory ValueProvider<DiskResource, DiskResource> createValueProvider() {
-        return new IdentityValueProvider<>();
-    }
-
+    //<editor-fold desc="UI Handlers">
     @UiHandler("advancedDataLinkButton")
     void onAdvancedDataLinkSelected(SelectEvent event) {
         presenter.openSelectedDataLinkDownloadPage();
@@ -200,6 +162,46 @@ public class DataLinkViewImpl implements DataLinkView {
     @UiHandler("expandAll")
     void onExpandAllSelected(SelectEvent event) {
         tree.expandAll();
+    }
+    //</editor-fold>
+
+    @Override
+    public void addRoots(List<DiskResource> roots) {
+        store.add(roots);
+    }
+
+    @Override
+    public Widget asWidget() {
+        return widget;
+    }
+
+    @Override
+    public Tree<DiskResource, DiskResource> getTree() {
+        return tree;
+    }
+
+    @Override
+    public void mask() {
+        tree.mask(appearance.loadingMask());
+    }
+
+    @Override
+    public void unmask() {
+        tree.unmask();
+    }
+
+    @UiFactory TreeStore<DiskResource> createTreeStore() {
+        return new TreeStore<>(new ModelKeyProvider<DiskResource>() {
+
+            @Override
+            public String getKey(DiskResource item) {
+                return item.getId();
+            }
+        });
+    }
+
+    @UiFactory ValueProvider<DiskResource, DiskResource> createValueProvider() {
+        return new IdentityValueProvider<>();
     }
 
 }

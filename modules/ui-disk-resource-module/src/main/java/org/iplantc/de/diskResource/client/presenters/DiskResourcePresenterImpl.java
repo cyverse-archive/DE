@@ -86,23 +86,21 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
                                                   SendToEnsemblSelected.SendToEnsemblSelectedHandler,
                                                   SendToCogeSelected.SendToCogeSelectedHandler {
 
-    @Inject IplantErrorStrings errorStrings;
-    @Inject DiskResourceServiceFacade diskResourceService;
-    @Inject UserInfo userInfo;
-    @Inject DiskResourceSelectorDialogFactory selectorDialogFactory;
-    @Inject DiskResourceUtil diskResourceUtil;
-    @Inject DiskResourceView.Presenter.Appearance appearance;
-
     final IplantAnnouncer announcer;
-    final DiskResourceView view;
     final DiskResourceAutoBeanFactory drFactory;
-
-    private final NavigationView.Presenter navigationPresenter;
+    final DiskResourceView view;
+    @Inject DiskResourceView.Presenter.Appearance appearance;
+    @Inject DiskResourceServiceFacade diskResourceService;
+    @Inject DiskResourceUtil diskResourceUtil;
+    @Inject IplantErrorStrings errorStrings;
+    @Inject DiskResourceSelectorDialogFactory selectorDialogFactory;
+    @Inject UserInfo userInfo;
+    private final SearchView.Presenter dataSearchPresenter;
     private final DetailsView.Presenter detailsViewPresenter;
-    private final GridView.Presenter gridViewPresenter;
     private final IplantDisplayStrings displayStrings;
     private final EventBus eventBus;
-    private final SearchView.Presenter dataSearchPresenter;
+    private final GridView.Presenter gridViewPresenter;
+    private final NavigationView.Presenter navigationPresenter;
 
     @AssistedInject
     DiskResourcePresenterImpl(final DiskResourceViewFactory diskResourceViewFactory,
@@ -130,11 +128,11 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
              infoTypeFilters, entityType);
         view.setNorthWidgetHidden(hideToolbar);
         view.setEastWidgetHidden(hideDetailsPanel);
-        if(singleSelect) {
+        if (singleSelect) {
             gridViewPresenter.getView().setSingleSelect();
         }
-        if(disableFilePreview) {
-            disableFilePreview();
+        if (disableFilePreview) {
+            gridViewPresenter.setFilePreviewEnabled(false);
         }
         navigationPresenter.setSelectedFolder(folderToSelect);
         view.setSouthWidget(southWidget);
@@ -166,11 +164,11 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
              null);
         view.setNorthWidgetHidden(hideToolbar);
         view.setEastWidgetHidden(hideDetailsPanel);
-        if(singleSelect) {
+        if (singleSelect) {
             gridViewPresenter.getView().setSingleSelect();
         }
-        if(disableFilePreview) {
-            disableFilePreview();
+        if (disableFilePreview) {
+            gridViewPresenter.setFilePreviewEnabled(false);
         }
         navigationPresenter.setSelectedFolder(folderToSelect);
         view.setSouthWidget(southWidget, southWidgetHeight);
@@ -201,11 +199,11 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
              null);
         view.setNorthWidgetHidden(hideToolbar);
         view.setEastWidgetHidden(hideDetailsPanel);
-        if(singleSelect) {
+        if (singleSelect) {
             gridViewPresenter.getView().setSingleSelect();
         }
-        if(disableFilePreview) {
-            disableFilePreview();
+        if (disableFilePreview) {
+            gridViewPresenter.setFilePreviewEnabled(false);
         }
         navigationPresenter.setSelectedFolder(folderToSelect);
         setSelectedDiskResourcesById(selectedResources);
@@ -302,6 +300,7 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
 
     }
 
+    //<editor-fold desc="Handler Registrations">
     @Override
     public HandlerRegistration addDiskResourceSelectionChangedEventHandler(DiskResourceSelectionChangedEvent.DiskResourceSelectionChangedEventHandler handler) {
         return gridViewPresenter.getView().addDiskResourceSelectionChangedEventHandler(handler);
@@ -311,7 +310,9 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
     public HandlerRegistration addFolderSelectedEventHandler(FolderSelectionEvent.FolderSelectionEventHandler handler) {
         return navigationPresenter.getView().addFolderSelectedEventHandler(handler);
     }
+    //</editor-fold>
 
+    //<editor-fold desc="Event Handlers">
     @Override
     public void onBulkDownloadSelected(BulkDownloadSelected event) {
         Preconditions.checkArgument(Iterables.elementsEqual(event.getSelectedDiskResources(),
@@ -320,6 +321,11 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
         eventBus.fireEvent(new RequestBulkDownloadEvent(gridViewPresenter.isSelectAllChecked(),
                                                         event.getSelectedDiskResources(),
                                                         event.getSelectedFolder()));
+    }
+
+    @Override
+    public void onBulkUploadSelected(BulkUploadSelected event) {
+        eventBus.fireEvent(new RequestBulkUploadEvent(this, navigationPresenter.getSelectedUploadFolder()));
     }
 
     @Override
@@ -342,7 +348,7 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
         cmb.addDialogHideHandler(new DialogHideEvent.DialogHideHandler() {
             @Override
             public void onDialogHide(DialogHideEvent event) {
-                if(PredefinedButton.YES.equals(event.getHideButton())){
+                if (PredefinedButton.YES.equals(event.getHideButton())) {
                     doEmptyTrash();
                 }
             }
@@ -352,128 +358,29 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
     }
 
     @Override
-    public Folder convertToFolder(DiskResource selectedItem) {
-        return diskResourceService.convertToFolder(selectedItem);
-    }
+    public void onMoveDiskResourcesSelected(MoveDiskResourcesSelected event) {
+        final FolderSelectDialog fsd = selectorDialogFactory.createFolderSelector(navigationPresenter.getSelectedFolder());
+        fsd.show();
+        fsd.addOkButtonSelectHandler(new SelectHandler() {
 
-    @Override
-    public void onRootFoldersRetrieved(RootFoldersRetrievedEvent event) {
-        DiskResourceFavorite diskResourceFavorite = drFactory.getFavortieFolder().as();
-        String id = userInfo.getHomePath() + FAVORITES_FOLDER_PATH;
-        diskResourceFavorite.setId(id);
-        diskResourceFavorite.setPath(id);
-        diskResourceFavorite.setName(FAVORITES_FOLDER_NAME);
-        navigationPresenter.addFolder(diskResourceFavorite);
-    }
-
-    @Override
-    public void cleanUp() {
-        navigationPresenter.cleanUp();
-    }
-
-    @Override
-    public DiskResourceView getView() {
-        return view;
-    }
-
-    @Override
-    public void go(HasOneWidget container) {
-        container.setWidget(view);
-        // JDS Re-select currently selected folder in order to load center
-        // panel.
-        navigationPresenter.setSelectedFolder(navigationPresenter.getSelectedFolder());
-    }
-
-    @Override
-    public void disableFilePreview() {
-        gridViewPresenter.setFilePreviewEnabled(false);
-    }
-
-    @Override
-    public void go(HasOneWidget container, HasPath folderToSelect, final List<? extends HasId> diskResourcesToSelect) {
-
-        if ((folderToSelect == null) || Strings.isNullOrEmpty(folderToSelect.getPath())) {
-            go(container);
-        } else {
-            container.setWidget(view);
-            navigationPresenter.setSelectedFolder(folderToSelect);
-            setSelectedDiskResourcesById(diskResourcesToSelect);
-        }
-    }
-
-    @Override
-    public void onSendToCogeSelected(SendToCogeSelected event) {
-        // There is typically only one resource used.
-        for(DiskResource resource : event.getResourcesToSend()){
-            InfoType infoType = InfoType.fromTypeString(resource.getInfoType());
-            if (infoType == null
-                    || !diskResourceUtil.isGenomeVizInfoType(infoType)) {
-
-                announcer.schedule(new ErrorAnnouncementConfig(appearance.unsupportedCogeInfoType()));
-                return;
+            @Override
+            public void onSelect(SelectEvent event) {
+                Folder targetFolder = fsd.getValue();
+                final List<DiskResource> selectedResources = getSelectedDiskResources();
+                if (diskResourceUtil.isMovable(targetFolder, selectedResources)) {
+                    if (canDragDataToTargetFolder(targetFolder, selectedResources)) {
+                        doMoveDiskResources(targetFolder, selectedResources);
+                    } else {
+                        announcer.schedule(new ErrorAnnouncementConfig(errorStrings.diskResourceIncompleteMove()));
+                        view.unmask();
+                    }
+                } else {
+                    announcer.schedule(new ErrorAnnouncementConfig(errorStrings.permissionErrorMessage()));
+                    view.unmask();
+                }
             }
-            eventBus.fireEvent(new RequestSendToCoGeEvent((File) resource));
-        }
-    }
+        });
 
-    @Override
-    public void onSendToEnsemblSelected(SendToEnsemblSelected event) {
-        // There is typically only one resource used.
-        for(DiskResource resource : event.getResourcesToSend()) {
-            InfoType infoType = InfoType.fromTypeString(resource.getInfoType());
-            if (infoType == null
-                    || !diskResourceUtil.isEnsemblInfoType(infoType)) {
-
-                announcer.schedule(new ErrorAnnouncementConfig(appearance.unsupportedEnsemblInfoType()));
-                return;
-            }
-            eventBus.fireEvent(new RequestSendToEnsemblEvent((File) resource, infoType));
-        }
-    }
-
-    @Override
-    public void onSendToTreeViewerSelected(SendToTreeViewerSelected event) {
-        // There is typically only one resource used.
-        for(DiskResource resource : event.getResourcesToSend()) {
-            InfoType infoType = InfoType.fromTypeString(resource.getInfoType());
-            if (infoType == null
-                    || !diskResourceUtil.isTreeInfoType(infoType)) {
-
-                announcer.schedule(new ErrorAnnouncementConfig(appearance.unsupportedTreeInfoType()));
-                return;
-            }
-            eventBus.fireEvent(new RequestSendToTreeViewerEvent((File) resource));
-        }
-    }
-
-    @Override
-    public void setSelectedDiskResourcesById(final List<? extends HasId> diskResourcesToSelect) {
-        gridViewPresenter.setSelectedDiskResourcesById(diskResourcesToSelect);
-    }
-
-    @Override
-    public void setSelectedFolderByPath(final HasPath folderToSelect) {
-        navigationPresenter.setSelectedFolder(folderToSelect);
-    }
-
-    @Override
-    public Folder getSelectedFolder() {
-        return navigationPresenter.getSelectedFolder();
-    }
-
-    @Override
-    public List<DiskResource> getSelectedDiskResources() {
-        return gridViewPresenter.getSelectedDiskResources();
-    }
-
-    @Override
-    public void onBulkUploadSelected(BulkUploadSelected event) {
-        eventBus.fireEvent(new RequestBulkUploadEvent(this, navigationPresenter.getSelectedUploadFolder()));
-    }
-
-    @Override
-    public void onSimpleUploadSelected(SimpleUploadSelected event) {
-        eventBus.fireEvent(new RequestSimpleUploadEvent(this, navigationPresenter.getSelectedUploadFolder()));
     }
 
     @Override
@@ -487,11 +394,11 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
         if (!getSelectedDiskResources().isEmpty() && (getSelectedDiskResources().size() == 1)) {
             DiskResource dr = getSelectedDiskResources().iterator().next();
             if (dr instanceof File) {
-                RenameFileDialog dlg = new RenameFileDialog((File)dr, this);
+                RenameFileDialog dlg = new RenameFileDialog((File) dr, this);
                 dlg.show();
 
             } else {
-                RenameFolderDialog dlg = new RenameFolderDialog((Folder)dr, this);
+                RenameFolderDialog dlg = new RenameFolderDialog((Folder) dr, this);
                 dlg.show();
 
             }
@@ -522,14 +429,85 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
     }
 
     @Override
-    public void selectTrashFolder() {
-        final HasPath hasPath = CommonModelUtils.getInstance().createHasPathFromString(userInfo.getTrashPath());
-        navigationPresenter.setSelectedFolder(hasPath);
+    public void onRootFoldersRetrieved(RootFoldersRetrievedEvent event) {
+        DiskResourceFavorite diskResourceFavorite = drFactory.getFavortieFolder().as();
+        String id = userInfo.getHomePath() + FAVORITES_FOLDER_PATH;
+        diskResourceFavorite.setId(id);
+        diskResourceFavorite.setPath(id);
+        diskResourceFavorite.setName(FAVORITES_FOLDER_NAME);
+        navigationPresenter.addFolder(diskResourceFavorite);
     }
 
     @Override
-    public void setViewDebugId(String baseID) {
-        view.asWidget().ensureDebugId(baseID + DiskResourceModule.Ids.DISK_RESOURCE_VIEW);
+    public void onSendToCogeSelected(SendToCogeSelected event) {
+        // There is typically only one resource used.
+        for (DiskResource resource : event.getResourcesToSend()) {
+            InfoType infoType = InfoType.fromTypeString(resource.getInfoType());
+            if (infoType == null
+                    || !diskResourceUtil.isGenomeVizInfoType(infoType)) {
+
+                announcer.schedule(new ErrorAnnouncementConfig(appearance.unsupportedCogeInfoType()));
+                return;
+            }
+            eventBus.fireEvent(new RequestSendToCoGeEvent((File) resource));
+        }
+    }
+
+    @Override
+    public void onSendToEnsemblSelected(SendToEnsemblSelected event) {
+        // There is typically only one resource used.
+        for (DiskResource resource : event.getResourcesToSend()) {
+            InfoType infoType = InfoType.fromTypeString(resource.getInfoType());
+            if (infoType == null
+                    || !diskResourceUtil.isEnsemblInfoType(infoType)) {
+
+                announcer.schedule(new ErrorAnnouncementConfig(appearance.unsupportedEnsemblInfoType()));
+                return;
+            }
+            eventBus.fireEvent(new RequestSendToEnsemblEvent((File) resource, infoType));
+        }
+    }
+
+    @Override
+    public void onSendToTreeViewerSelected(SendToTreeViewerSelected event) {
+        // There is typically only one resource used.
+        for (DiskResource resource : event.getResourcesToSend()) {
+            InfoType infoType = InfoType.fromTypeString(resource.getInfoType());
+            if (infoType == null
+                    || !diskResourceUtil.isTreeInfoType(infoType)) {
+
+                announcer.schedule(new ErrorAnnouncementConfig(appearance.unsupportedTreeInfoType()));
+                return;
+            }
+            eventBus.fireEvent(new RequestSendToTreeViewerEvent((File) resource));
+        }
+    }
+
+    @Override
+    public void onSimpleDownloadSelected(SimpleDownloadSelected event) {
+        eventBus.fireEvent(new RequestSimpleDownloadEvent(event.getSelectedDiskResources(),
+                                                          event.getSelectedFolder()));
+    }
+
+    @Override
+    public void onSimpleUploadSelected(SimpleUploadSelected event) {
+        eventBus.fireEvent(new RequestSimpleUploadEvent(this, navigationPresenter.getSelectedUploadFolder()));
+    }
+    //</editor-fold>
+
+    @Override
+    public void cleanUp() {
+        navigationPresenter.cleanUp();
+    }
+
+    @Override
+    public Folder convertToFolder(DiskResource selectedItem) {
+        return diskResourceService.convertToFolder(selectedItem);
+    }
+
+    @Override
+    public void deSelectDiskResources() {
+        gridViewPresenter.deSelectDiskResources();
     }
 
     @Override
@@ -539,9 +517,14 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
     }
 
     @Override
-    public void onSimpleDownloadSelected(SimpleDownloadSelected event) {
-        eventBus.fireEvent(new RequestSimpleDownloadEvent(event.getSelectedDiskResources(),
-                                                          event.getSelectedFolder()));
+    public void doMoveDiskResources(Folder targetFolder, List<DiskResource> resources) {
+        Folder parent = navigationPresenter.getSelectedFolder();
+        view.mask(displayStrings.loadingMask());
+        if (gridViewPresenter.isSelectAllChecked()) {
+            diskResourceService.moveContents(parent.getPath(), targetFolder, new DiskResourceMoveCallback(view, true, parent, targetFolder, resources));
+        } else {
+            diskResourceService.moveDiskResources(resources, targetFolder, new DiskResourceMoveCallback(view, false, parent, targetFolder, resources));
+        }
     }
 
     @Override
@@ -552,35 +535,71 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
         }
     }
 
-    private void confirmDelete(final List<DiskResource> drSet) {
-        final MessageBox confirm = new ConfirmMessageBox(displayStrings.warning(), displayStrings.emptyTrashWarning());
-
-        confirm.addDialogHideHandler(new DialogHideEvent.DialogHideHandler() {
-            @Override
-            public void onDialogHide(DialogHideEvent event) {
-                if(PredefinedButton.YES.equals(event.getHideButton())){
-                    delete(drSet, displayStrings.deleteTrash());
-                }
-            }
-        });
-
-        confirm.show();
+    @Override
+    public List<DiskResource> getSelectedDiskResources() {
+        return gridViewPresenter.getSelectedDiskResources();
     }
 
-    private void delete(List<DiskResource> drSet, String announce) {
-        view.mask(displayStrings.loadingMask());
-        Folder selectedFolder = navigationPresenter.getSelectedFolder();
-        final AsyncCallback<HasPaths> callback = new DiskResourceDeleteCallback(drSet, selectedFolder, view, announce);
+    @Override
+    public Folder getSelectedFolder() {
+        return navigationPresenter.getSelectedFolder();
+    }
 
-        if (gridViewPresenter.isSelectAllChecked() && selectedFolder != null) {
-            diskResourceService.deleteContents(selectedFolder.getPath(), callback);
+    @Override
+    public void go(HasOneWidget container) {
+        container.setWidget(view);
+        // JDS Re-select currently selected folder in order to load center
+        // panel.
+        navigationPresenter.setSelectedFolder(navigationPresenter.getSelectedFolder());
+    }
 
+    @Override
+    public void go(HasOneWidget container, HasPath folderToSelect,
+                   final List<? extends HasId> diskResourcesToSelect) {
+
+        if ((folderToSelect == null) || Strings.isNullOrEmpty(folderToSelect.getPath())) {
+            go(container);
         } else {
-            diskResourceService.deleteDiskResources(drSet, callback);
+            container.setWidget(view);
+            navigationPresenter.setSelectedFolder(folderToSelect);
+            setSelectedDiskResourcesById(diskResourcesToSelect);
         }
     }
 
-    boolean canDragDataToTargetFolder(final Folder targetFolder, final Collection<DiskResource> dropData) {
+    @Override
+    public void mask(String loadingMask) {
+        view.mask((Strings.isNullOrEmpty(loadingMask)) ? displayStrings.loadingMask() : loadingMask);
+    }
+
+
+    @Override
+    public void selectTrashFolder() {
+        final HasPath hasPath = CommonModelUtils.getInstance().createHasPathFromString(userInfo.getTrashPath());
+        navigationPresenter.setSelectedFolder(hasPath);
+    }
+
+    @Override
+    public void setSelectedDiskResourcesById(final List<? extends HasId> diskResourcesToSelect) {
+        gridViewPresenter.setSelectedDiskResourcesById(diskResourcesToSelect);
+    }
+
+    @Override
+    public void setSelectedFolderByPath(final HasPath folderToSelect) {
+        navigationPresenter.setSelectedFolder(folderToSelect);
+    }
+
+    @Override
+    public void setViewDebugId(String baseID) {
+        view.asWidget().ensureDebugId(baseID + DiskResourceModule.Ids.DISK_RESOURCE_VIEW);
+    }
+
+    @Override
+    public void unmask() {
+        view.unmask();
+    }
+
+    boolean canDragDataToTargetFolder(final Folder targetFolder,
+                                      final Collection<DiskResource> dropData) {
         if (targetFolder instanceof DiskResourceQueryTemplate) {
             return false;
         }
@@ -603,7 +622,7 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
 
                 // cannot drag an ancestor (parent, grandparent, etc) onto a
                 // child and/or descendant
-                if (diskResourceUtil.isDescendantOfFolder((Folder)dr, targetFolder)) {
+                if (diskResourceUtil.isDescendantOfFolder((Folder) dr, targetFolder)) {
                     return false;
                 }
             }
@@ -612,74 +631,50 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
         return true;
     }
 
-    @Override
-    public void doMoveDiskResources(Folder targetFolder, List<DiskResource> resources) {
-        Folder parent = navigationPresenter.getSelectedFolder();
-        view.mask(displayStrings.loadingMask());
-        if (gridViewPresenter.isSelectAllChecked()) {
-            diskResourceService.moveContents(parent.getPath(), targetFolder, new DiskResourceMoveCallback(view, true, parent, targetFolder, resources));
-        } else {
-            diskResourceService.moveDiskResources(resources, targetFolder, new DiskResourceMoveCallback(view, false, parent, targetFolder, resources));
-        }
-    }
-
-    @Override
-    public void deSelectDiskResources() {
-        gridViewPresenter.deSelectDiskResources();
-    }
-
     void doEmptyTrash() {
         view.mask(displayStrings.loadingMask());
         diskResourceService.emptyTrash(userInfo.getUsername(), new AsyncCallback<String>() {
-
-            @Override
-            public void onSuccess(String result) {
-                navigationPresenter.refreshFolder(navigationPresenter.getFolderByPath(userInfo.getTrashPath()));
-                view.unmask();
-            }
 
             @Override
             public void onFailure(Throwable caught) {
                 ErrorHandler.post(caught);
                 view.unmask();
             }
+
+            @Override
+            public void onSuccess(String result) {
+                navigationPresenter.refreshFolder(navigationPresenter.getFolderByPath(userInfo.getTrashPath()));
+                view.unmask();
+            }
         });
     }
 
-    @Override
-    public void onMoveDiskResourcesSelected(MoveDiskResourcesSelected event) {
-        final FolderSelectDialog fsd = selectorDialogFactory.createFolderSelector(navigationPresenter.getSelectedFolder());
-        fsd.show();
-        fsd.addOkButtonSelectHandler(new SelectHandler() {
+    private void confirmDelete(final List<DiskResource> drSet) {
+        final MessageBox confirm = new ConfirmMessageBox(displayStrings.warning(), displayStrings.emptyTrashWarning());
 
+        confirm.addDialogHideHandler(new DialogHideEvent.DialogHideHandler() {
             @Override
-            public void onSelect(SelectEvent event) {
-                Folder targetFolder = fsd.getValue();
-                final List<DiskResource> selectedResources = getSelectedDiskResources();
-                if (diskResourceUtil.isMovable(targetFolder, selectedResources)) {
-                    if (canDragDataToTargetFolder(targetFolder, selectedResources)) {
-                        doMoveDiskResources(targetFolder, selectedResources);
-                    } else {
-                        announcer.schedule(new ErrorAnnouncementConfig(errorStrings.diskResourceIncompleteMove()));
-                        view.unmask();
-                    }
-                } else {
-                    announcer.schedule(new ErrorAnnouncementConfig(errorStrings.permissionErrorMessage()));
-                    view.unmask();
+            public void onDialogHide(DialogHideEvent event) {
+                if (PredefinedButton.YES.equals(event.getHideButton())) {
+                    delete(drSet, displayStrings.deleteTrash());
                 }
             }
         });
 
+        confirm.show();
     }
 
-    @Override
-    public void mask(String loadingMask) {
-        view.mask((Strings.isNullOrEmpty(loadingMask)) ? displayStrings.loadingMask() : loadingMask);
-    }
+    private void delete(List<DiskResource> drSet, String announce) {
+        view.mask(displayStrings.loadingMask());
+        Folder selectedFolder = navigationPresenter.getSelectedFolder();
+        final AsyncCallback<HasPaths> callback = new DiskResourceDeleteCallback(drSet, selectedFolder, view, announce);
 
-    @Override
-    public void unmask() {
-        view.unmask();
+        if (gridViewPresenter.isSelectAllChecked() && selectedFolder != null) {
+            diskResourceService.deleteContents(selectedFolder.getPath(), callback);
+
+        } else {
+            diskResourceService.deleteDiskResources(drSet, callback);
+        }
     }
 
 }

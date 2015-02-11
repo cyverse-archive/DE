@@ -70,8 +70,6 @@ public interface DiskResourceView extends IsWidget,
 
         void deSelectDiskResources();
 
-        void disableFilePreview();
-
         void doCreateNewFolder(Folder parentFolder, String folderName);
 
         void doMoveDiskResources(Folder targetFolder, List<DiskResource> resources);
@@ -81,8 +79,6 @@ public interface DiskResourceView extends IsWidget,
         List<DiskResource> getSelectedDiskResources();
 
         Folder getSelectedFolder();
-
-        DiskResourceView getView();
 
         void go(HasOneWidget container, HasPath folderToSelect,
                 List<? extends HasId> diskResourcesToSelect);

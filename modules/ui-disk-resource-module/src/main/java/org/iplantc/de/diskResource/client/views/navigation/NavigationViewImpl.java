@@ -35,6 +35,7 @@ import com.sencha.gxt.widget.core.client.tree.TreeSelectionModel;
 
 /**
  * Created by jstroot on 1/21/15.
+ *
  * @author jstroot
  */
 public class NavigationViewImpl extends ContentPanel implements NavigationView {
@@ -54,11 +55,11 @@ public class NavigationViewImpl extends ContentPanel implements NavigationView {
         @Override
         public void onSelection(SelectionEvent<Folder> event) {
             final Folder selectedItem = event.getSelectedItem();
-            if(!isWidget.asWidget().isAttached()){
+            if (!isWidget.asWidget().isAttached()) {
                 return;
             }
 
-            if(selectedItem.isFilter()){
+            if (selectedItem.isFilter()) {
                 tree.getSelectionModel().deselect(selectedItem);
             } else {
                 isWidget.asWidget().fireEvent(new FolderSelectionEvent(selectedItem));
@@ -82,16 +83,14 @@ public class NavigationViewImpl extends ContentPanel implements NavigationView {
         }
     }
 
-    interface NavigationViewImplUiBinder extends UiBinder<Tree<Folder, Folder>, NavigationViewImpl> { }
-
-    private static final NavigationViewImplUiBinder ourUiBinder = GWT.create(NavigationViewImplUiBinder.class);
-
+    interface NavigationViewImplUiBinder extends UiBinder<Tree<Folder, Folder>, NavigationViewImpl> {
+    }
     @UiField Tree<Folder, Folder> tree;
-
+    private static final NavigationViewImplUiBinder ourUiBinder = GWT.create(NavigationViewImplUiBinder.class);
     private final Appearance appearance;
     private final ToolButton treeCollapseButton;
-    private final TreeStore<Folder> treeStore;
     private final TreeLoader<Folder> treeLoader;
+    private final TreeStore<Folder> treeStore;
 
     @Inject
     NavigationViewImpl(final NavigationView.Appearance appearance,
@@ -123,12 +122,13 @@ public class NavigationViewImpl extends ContentPanel implements NavigationView {
                                                                       appearance.treeCollapseHoverStyle()));
         treeCollapseButton.setToolTip(appearance.treeCollapseToolTip());
         treeCollapseButton.addSelectHandler(new TreeCollapseButtonSelectHandler(tree));
-        if(getHeader().getToolCount() > 0){
+        if (getHeader().getToolCount() > 0) {
             getHeader().removeTool(getHeader().getTool(0));
         }
         getHeader().addTool(treeCollapseButton);
     }
 
+    //<editor-fold desc="Handler Registrations">
     @Override
     public HandlerRegistration addDeleteSavedSearchClickedEventHandler(DeleteSavedSearchClickedEvent.DeleteSavedSearchEventHandler handler) {
         return addHandler(handler, DeleteSavedSearchClickedEvent.TYPE);
@@ -138,17 +138,18 @@ public class NavigationViewImpl extends ContentPanel implements NavigationView {
     public HandlerRegistration addFolderSelectedEventHandler(FolderSelectionEvent.FolderSelectionEventHandler handler) {
         return addHandler(handler, FolderSelectionEvent.TYPE);
     }
+    //</editor-fold>
+
+    @Override
+    public Tree<Folder, Folder> getTree() {
+        return tree;
+    }
 
     @Override
     protected void onEnsureDebugId(String baseID) {
         super.onEnsureDebugId(baseID);
         treeCollapseButton.setId("idTreeCollapse");
         tree.ensureDebugId(baseID + DiskResourceModule.Ids.NAVIGATION);
-    }
-
-    @Override
-    public Tree<Folder, Folder> getTree() {
-        return tree;
     }
 
     @UiFactory

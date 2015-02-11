@@ -12,9 +12,9 @@ import org.iplantc.de.commons.client.views.window.configs.ConfigFactory;
 import org.iplantc.de.commons.client.views.window.configs.FileViewerWindowConfig;
 import org.iplantc.de.commons.client.views.window.configs.PathListWindowConfig;
 import org.iplantc.de.commons.client.views.window.configs.TabularFileViewerWindowConfig;
+import org.iplantc.de.diskResource.client.DataLinkView;
 import org.iplantc.de.diskResource.client.DiskResourceView;
 import org.iplantc.de.diskResource.client.ToolbarView;
-import org.iplantc.de.diskResource.client.DataLinkView;
 import org.iplantc.de.diskResource.client.events.CreateNewFileEvent;
 import org.iplantc.de.diskResource.client.events.RequestImportFromUrlEvent;
 import org.iplantc.de.diskResource.client.events.ShowFilePreviewEvent;
@@ -39,9 +39,9 @@ import java.util.List;
  */
 public class ToolbarViewPresenterImpl implements ToolbarView.Presenter {
 
-    @Inject EventBus eventBus;
     @Inject ToolbarView.Presenter.Appearance appearance;
     @Inject DataLinkPresenterFactory dataLinkPresenterFactory;
+    @Inject EventBus eventBus;
     private final DiskResourceView.Presenter parentPresenter;
     private final ToolbarView view;
 

@@ -10,10 +10,10 @@ import org.iplantc.de.client.models.viewer.InfoType;
 import org.iplantc.de.client.util.DiskResourceUtil;
 import org.iplantc.de.diskResource.client.DetailsView;
 import org.iplantc.de.diskResource.client.events.DiskResourceSelectionChangedEvent;
+import org.iplantc.de.diskResource.client.events.search.SubmitDiskResourceQueryEvent;
 import org.iplantc.de.diskResource.client.events.selection.EditInfoTypeSelected;
 import org.iplantc.de.diskResource.client.events.selection.ManageSharingSelected;
 import org.iplantc.de.diskResource.client.events.selection.ResetInfoTypeSelected;
-import org.iplantc.de.diskResource.client.events.search.SubmitDiskResourceQueryEvent;
 import org.iplantc.de.diskResource.client.events.selection.SendToCogeSelected;
 import org.iplantc.de.diskResource.client.events.selection.SendToEnsemblSelected;
 import org.iplantc.de.diskResource.client.events.selection.SendToTreeViewerSelected;
@@ -68,42 +68,39 @@ public class DetailsViewImpl extends Composite implements DetailsView,
                                                           TagCreatedHandler,
                                                           TagAddedEvent.TagAddedEventHandler {
 
-    interface EditorDriver extends SimpleBeanEditorDriver<DiskResource, DetailsViewImpl> { }
+    interface DetailsViewImplUiBinder extends UiBinder<HTMLPanel, DetailsViewImpl> {
+    }
 
-    interface DetailsViewImplUiBinder extends UiBinder<HTMLPanel, DetailsViewImpl> { }
-
+    interface EditorDriver extends SimpleBeanEditorDriver<DiskResource, DetailsViewImpl> {
+    }
     @UiField(provided = true) final Appearance appearance;
     @UiField DateLabel dateCreated;
-    @UiField DateLabel lastModified;
-    @UiField @Ignore InlineLabel permission;
-    @UiField @Ignore InlineLabel size;
+    @Inject DiskResourceUtil diskResourceUtil;
+    @UiField DivElement emptyDetails;
+    @Inject SearchAutoBeanFactory factory;
     @UiField @Ignore InlineLabel fileFolderNum;
-    @UiField InlineHyperlink sharing;
-    @UiField InlineHyperlink sendTo;
-
-    @UiField TableRowElement mimeTypeRow;
-    @UiField TableRowElement infoTypeRow;
     @UiField TableRowElement fileFolderNumRow;
+    @UiField @Ignore InlineHyperlink infoType;
+    @UiField TableRowElement infoTypeRow;
+    @UiField DateLabel lastModified;
+    @UiField @Ignore InlineLabel mimeType;
+    @UiField TableRowElement mimeTypeRow;
+    @UiField @Ignore InlineLabel permission;
+    @UiField Image resetInfoTypeIcon;
+    @UiField InlineHyperlink sendTo;
     @UiField TableRowElement sendToRow;
     @UiField TableRowElement shareRow;
+    @UiField InlineHyperlink sharing;
+    @UiField @Ignore InlineLabel size;
     @UiField TableRowElement sizeRow;
-    @UiField @Ignore InlineLabel mimeType;
-    @UiField @Ignore InlineHyperlink infoType;
-    @UiField Image resetInfoTypeIcon;
-    @UiField(provided = true) TagsView tagListView;
     @UiField TableElement table;
-    @UiField DivElement emptyDetails;
-
+    @UiField(provided = true) TagsView tagListView;
     private static final DetailsViewImplUiBinder ourUiBinder = GWT.create(DetailsViewImplUiBinder.class);
-    private final EditorDriver editorDriver = GWT.create(EditorDriver.class);
-    @Inject DiskResourceUtil diskResourceUtil;
-    @Inject SearchAutoBeanFactory factory;
-
-    private final DetailsView.Presenter presenter;
-    private DiskResource boundValue;
-    private final TagsView.Presenter tagsPresenter;
-
     private final Logger LOG = Logger.getLogger(DetailsViewImpl.class.getSimpleName());
+    private final EditorDriver editorDriver = GWT.create(EditorDriver.class);
+    private final DetailsView.Presenter presenter;
+    private final TagsView.Presenter tagsPresenter;
+    private DiskResource boundValue;
 
     @Inject
     DetailsViewImpl(final DetailsView.Appearance appearance,
@@ -130,7 +127,7 @@ public class DetailsViewImpl extends Composite implements DetailsView,
         editorDriver.initialize(this);
     }
 
-    //region Handler Registration
+    //<editor-fold desc="Handler Registrations">
     @Override
     public HandlerRegistration addEditInfoTypeSelectedEventHandler(EditInfoTypeSelected.EditInfoTypeSelectedEventHandler handler) {
         return addHandler(handler, EditInfoTypeSelected.TYPE);
@@ -165,8 +162,9 @@ public class DetailsViewImpl extends Composite implements DetailsView,
     public HandlerRegistration addSubmitDiskResourceQueryEventHandler(SubmitDiskResourceQueryEvent.SubmitDiskResourceQueryEventHandler handler) {
         return addHandler(handler, SubmitDiskResourceQueryEvent.TYPE);
     }
-    //endregion
+    //</editor-fold>
 
+    //<editor-fold desc="Event Handlers">
     @Override
     public void onDiskResourceSelectionChanged(DiskResourceSelectionChangedEvent event) {
         if (event.getSelection().isEmpty()
@@ -202,7 +200,7 @@ public class DetailsViewImpl extends Composite implements DetailsView,
             sendToRow.addClassName(appearance.css().hidden());
         }
 
-        if(diskResourceUtil.inTrash(singleSelection)){
+        if (diskResourceUtil.inTrash(singleSelection)) {
             shareRow.addClassName(appearance.css().hidden());
             sendToRow.addClassName(appearance.css().hidden());
         } else {
@@ -239,9 +237,73 @@ public class DetailsViewImpl extends Composite implements DetailsView,
         fireEvent(new SubmitDiskResourceQueryEvent(queryTemplate));
     }
 
-    void bind(final DiskResource resource){
+    @Override
+    public void onUpdate(StoreUpdateEvent<DiskResource> event) {
+        // Must match the currently bound DiskResource
+        if (event.getItems().size() != 1
+                || event.getItems().iterator().next() != boundValue) {
+            return;
+        }
+        bind(event.getItems().iterator().next());
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="UI Handlers">
+    @UiHandler("infoType")
+    void onInfoTypeClicked(ClickEvent event) {
+        if (boundValue == null
+                || !(boundValue instanceof File)) {
+            return;
+        }
+        fireEvent(new EditInfoTypeSelected(Lists.newArrayList(boundValue)));
+    }
+
+    @UiHandler("resetInfoTypeIcon")
+    void onResetInfoTypeClicked(ClickEvent event) {
+        if (boundValue == null) {
+            return;
+        }
+        fireEvent(new ResetInfoTypeSelected(boundValue));
+    }
+
+    @UiHandler("sendTo")
+    void onSendToClicked(ClickEvent event) {
+        if (boundValue == null) {
+            return;
+        }
+        InfoType resInfoType = InfoType.fromTypeString(boundValue.getInfoType());
+        if (resInfoType == null) {
+            return;
+        }
+
+        final ArrayList<DiskResource> resources = Lists.newArrayList(boundValue);
+        if (diskResourceUtil.isTreeInfoType(resInfoType)) {
+            fireEvent(new SendToTreeViewerSelected(resources));
+        } else if (diskResourceUtil.isGenomeVizInfoType(resInfoType)) {
+            fireEvent(new SendToCogeSelected(resources));
+        } else if (diskResourceUtil.isEnsemblInfoType(resInfoType)) {
+            fireEvent(new SendToEnsemblSelected(resources));
+        }
+
+        LOG.fine("Send to clicked");
+    }
+
+    @UiHandler("sharing")
+    void onSharingClicked(ClickEvent event) {
+        if (boundValue == null) {
+            return;
+        }
+        fireEvent(new ManageSharingSelected(boundValue));
+        if (boundValue.getShareCount() == 0) {
+            LOG.fine("Begin sharing");
+        }
+        LOG.fine("Sharing clicked");
+    }
+    //</editor-fold>
+
+    void bind(final DiskResource resource) {
         this.boundValue = resource;
-         // Update editor
+        // Update editor
         editorDriver.edit(resource);
 
         // Clear previous values
@@ -254,26 +316,26 @@ public class DetailsViewImpl extends Composite implements DetailsView,
         infoType.setText("");
         sendTo.setText("");
 
-        if(resource == null){
+        if (resource == null) {
             return;
         }
         // Manually populate
         permission.setText(resource.getPermission().name());
-        if(resource instanceof File){
+        if (resource instanceof File) {
             File file = (File) resource;
             size.setText(diskResourceUtil.formatFileSize(file.getSize() + ""));
             mimeType.setText(file.getContentType());
             infoType.setText(file.getInfoType());
-        } else if(resource instanceof Folder){
+        } else if (resource instanceof Folder) {
             Folder folder = (Folder) resource;
             // file/folder count
             fileFolderNum.setText(folder.getFileCount() + " / " + folder.getDirCount());
         }
 
         // Update sharing label
-        if(PermissionValue.own.equals(resource.getPermission())){
+        if (PermissionValue.own.equals(resource.getPermission())) {
             sharing.removeStyleName(appearance.css().disabledHyperlink());
-            if(resource.getShareCount() > 0){
+            if (resource.getShareCount() > 0) {
                 sharing.setText(Integer.toString(resource.getShareCount()));
             } else {
                 sharing.setText(appearance.beginSharing());
@@ -285,13 +347,13 @@ public class DetailsViewImpl extends Composite implements DetailsView,
 
         // Update SendTo
         InfoType resInfoType = InfoType.fromTypeString(resource.getInfoType());
-        if(resInfoType != null){
+        if (resInfoType != null) {
             sendTo.removeStyleName(appearance.css().disabledHyperlink());
-            if(diskResourceUtil.isTreeInfoType(resInfoType)){
+            if (diskResourceUtil.isTreeInfoType(resInfoType)) {
                 sendTo.setText(appearance.treeViewer());
-            } else if(diskResourceUtil.isGenomeVizInfoType(resInfoType)){
+            } else if (diskResourceUtil.isGenomeVizInfoType(resInfoType)) {
                 sendTo.setText(appearance.coge());
-            } else if(diskResourceUtil.isEnsemblInfoType(resInfoType)) {
+            } else if (diskResourceUtil.isEnsemblInfoType(resInfoType)) {
                 sendTo.setText(appearance.ensembl());
             }
 
@@ -302,13 +364,13 @@ public class DetailsViewImpl extends Composite implements DetailsView,
 
         PermissionValue permission = resource.getPermission();
         // Update Infotype
-        if(resource instanceof File) {
-            if(PermissionValue.own.equals(permission)
-                   || PermissionValue.write.equals(permission)){
+        if (resource instanceof File) {
+            if (PermissionValue.own.equals(permission)
+                    || PermissionValue.write.equals(permission)) {
                 infoType.removeStyleName(appearance.css().disabledHyperlink());
 
                 // Display Infotype
-                if(resInfoType != null) {
+                if (resInfoType != null) {
                     infoType.setText(resInfoType.toString());
                     // display deselect icon
                     resetInfoTypeIcon.setVisible(true);
@@ -323,7 +385,7 @@ public class DetailsViewImpl extends Composite implements DetailsView,
                 // hide deselect icon
                 resetInfoTypeIcon.setVisible(false);
 
-                if(resInfoType != null){
+                if (resInfoType != null) {
                     infoType.setText(resInfoType.toString());
                 } else {
                     infoType.setText(appearance.infoTypeDisabled());
@@ -332,73 +394,11 @@ public class DetailsViewImpl extends Composite implements DetailsView,
         }
     }
 
-    //region UIHandlers
-    @UiHandler("sharing")
-    void onSharingClicked(ClickEvent event){
-        if(boundValue == null){
-            return;
-        }
-        fireEvent(new ManageSharingSelected(boundValue));
-        if(boundValue.getShareCount() == 0){
-            LOG.fine("Begin sharing");
-        }
-        LOG.fine("Sharing clicked");
-    }
-
-    @UiHandler("sendTo")
-    void onSendToClicked(ClickEvent event){
-        if(boundValue == null){
-            return;
-        }
-        InfoType resInfoType = InfoType.fromTypeString(boundValue.getInfoType());
-        if (resInfoType == null) {
-            return;
-        }
-
-        final ArrayList<DiskResource> resources = Lists.newArrayList(boundValue);
-        if(diskResourceUtil.isTreeInfoType(resInfoType)){
-            fireEvent(new SendToTreeViewerSelected(resources));
-        } else if(diskResourceUtil.isGenomeVizInfoType(resInfoType)){
-            fireEvent(new SendToCogeSelected(resources));
-        } else if(diskResourceUtil.isEnsemblInfoType(resInfoType)) {
-            fireEvent(new SendToEnsemblSelected(resources));
-        }
-
-        LOG.fine("Send to clicked");
-    }
-
-    @UiHandler("infoType")
-    void onInfoTypeClicked(ClickEvent event){
-        if(boundValue == null
-            || !(boundValue instanceof File)){
-            return;
-        }
-        fireEvent(new EditInfoTypeSelected(Lists.newArrayList(boundValue)));
-    }
-
-    @UiHandler("resetInfoTypeIcon")
-    void onResetInfoTypeClicked(ClickEvent event){
-        if(boundValue == null){
-            return;
-        }
-        fireEvent(new ResetInfoTypeSelected(boundValue));
-    }
-    //endregion
-
-    @Override
-    public void onUpdate(StoreUpdateEvent<DiskResource> event) {
-        // Must match the currently bound DiskResource
-        if(event.getItems().size() != 1
-            || event.getItems().iterator().next() != boundValue){
-            return;
-        }
-        bind(event.getItems().iterator().next());
-    }
-
     @UiFactory
     @Ignore
     DateLabel createDateLabel() {
         return new DateLabel(DateTimeFormat.getFormat(DateTimeFormat.PredefinedFormat.DATE_MEDIUM));
     }
+
 
 }

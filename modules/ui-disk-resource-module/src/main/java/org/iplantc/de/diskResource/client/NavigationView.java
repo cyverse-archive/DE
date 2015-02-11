@@ -9,10 +9,10 @@ import org.iplantc.de.diskResource.client.events.DiskResourcePathSelectedEvent;
 import org.iplantc.de.diskResource.client.events.FolderSelectionEvent;
 import org.iplantc.de.diskResource.client.events.RootFoldersRetrievedEvent;
 import org.iplantc.de.diskResource.client.events.SavedSearchesRetrievedEvent;
-import org.iplantc.de.diskResource.client.presenters.grid.proxy.FolderContentsLoadConfig;
 import org.iplantc.de.diskResource.client.events.search.DeleteSavedSearchClickedEvent;
 import org.iplantc.de.diskResource.client.events.search.SubmitDiskResourceQueryEvent;
 import org.iplantc.de.diskResource.client.events.search.UpdateSavedSearchesEvent;
+import org.iplantc.de.diskResource.client.presenters.grid.proxy.FolderContentsLoadConfig;
 
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.safehtml.shared.SafeHtml;
@@ -44,6 +44,8 @@ public interface NavigationView extends IsWidget,
 
         TreeView<Folder> getTreeView();
 
+        String headingText();
+
         String permissionErrorMessage();
 
         String treeCollapseHoverStyle();
@@ -51,8 +53,6 @@ public interface NavigationView extends IsWidget,
         String treeCollapseStyle();
 
         String treeCollapseToolTip();
-
-        String headingText();
 
         SafeHtml treeNodeFilterText(String name);
     }
@@ -80,15 +80,36 @@ public interface NavigationView extends IsWidget,
 
         void doMoveDiskResources(Folder targetFolder, List<DiskResource> dropData);
 
+        /**
+         * Expands the given folder in the tree.
+         * XXX ********Used by SelectFolderByPathLoadHandler*********
+         *
+         * @param folder the folder to be expanded in the tree.
+         */
+        void expandFolder(Folder folder);
+
+        /**
+         * @param el the element corresponding to a tree node
+         * @return the TreeNode if it exists, null otherwise.
+         */
+        Tree.TreeNode<Folder> findTreeNode(Element el);
+
+        Folder getFolderByPath(String path);
+
         Iterable<Folder> getRootItems();
+
+        Folder getSelectedFolder();
 
         Folder getSelectedUploadFolder();
 
         NavigationView getView();
 
-        Folder getSelectedFolder();
-
-        Folder getFolderByPath(String path);
+        /**
+         * ********Used by SelectFolderByPathLoadHandler*********
+         *
+         * @return true if the given folder is loaded.
+         */
+        boolean isLoaded(Folder folder);
 
         void refreshFolder(Folder folder);
 
@@ -116,27 +137,6 @@ public interface NavigationView extends IsWidget,
          * @param hasPath the path of the folder to be selected.
          */
         void setSelectedFolder(HasPath hasPath);
-
-        /**
-         * ********Used by SelectFolderByPathLoadHandler*********
-         *
-         * @return true if the given folder is loaded.
-         */
-        boolean isLoaded(Folder folder);
-
-        /**
-         * Expands the given folder in the tree.
-         * XXX ********Used by SelectFolderByPathLoadHandler*********
-         *
-         * @param folder the folder to be expanded in the tree.
-         */
-        void expandFolder(Folder folder);
-
-        /**
-         * @param el the element corresponding to a tree node
-         * @return the TreeNode if it exists, null otherwise.
-         */
-        Tree.TreeNode<Folder> findTreeNode(Element el);
     }
 
     Tree<Folder, Folder> getTree();
