@@ -9,9 +9,9 @@ buildscript {
         maven {
             url 'http://dl.bintray.com/steffenschaefer/maven'
         }
-        maven {
-            url 'https://maven.sencha.com/repo/support-commercial-release'
-        }
+//        maven {
+//            url 'https://maven.sencha.com/repo/support-commercial-release'
+//        }
     }
     dependencies {
         classpath 'de.richsource.gradle.plugins:gwt-gradle-plugin:0.6'
@@ -36,12 +36,9 @@ subprojects {
     repositories {
         mavenLocal()
         mavenCentral()
-        maven {
-            url 'https://maven.sencha.com/repo/support-commercial-release'
-        }
-        maven {
-            url 'http://katic.iplantcollaborative.org/archiva/repository/internal/'
-        }
+//        maven {
+//            url 'https://maven.sencha.com/repo/support-commercial-release'
+//        }
     }
 
     group = 'org.iplantc.de'
