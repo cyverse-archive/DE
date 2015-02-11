@@ -12,9 +12,6 @@ import org.iplantc.de.commons.client.widgets.IPlantAnchor;
 import org.iplantc.de.diskResource.client.MetadataView;
 import org.iplantc.de.diskResource.client.model.DiskResourceMetadataProperties;
 import org.iplantc.de.diskResource.share.DiskResourceModule.MetadataIds;
-import org.iplantc.de.resources.client.IplantResources;
-import org.iplantc.de.resources.client.messages.I18N;
-import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
@@ -26,11 +23,8 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
-import com.google.gwt.safehtml.client.SafeHtmlTemplates;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
-import com.google.gwt.safehtml.shared.SafeHtmlUtils;
-import com.google.gwt.safehtml.shared.SafeUri;
 import com.google.gwt.text.shared.AbstractSafeHtmlRenderer;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiFactory;
@@ -41,7 +35,6 @@ import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.web.bindery.autobean.shared.AutoBeanCodex;
 
-import com.sencha.gxt.core.client.XTemplates;
 import com.sencha.gxt.core.client.dom.ScrollSupport.ScrollMode;
 import com.sencha.gxt.core.client.resources.ThemeStyles;
 import com.sencha.gxt.core.shared.FastMap;
@@ -115,9 +108,7 @@ public class DiskResourceMetadataViewImpl extends Composite implements MetadataV
     private final class MetadataCell extends AbstractCell<String> {
         @Override
         public void render(Context context, String value, SafeHtmlBuilder sb) {
-            if (!Strings.isNullOrEmpty(value)) {
-                sb.append(htmlTemplates.cell(value));
-            }
+            appearance.renderMetadataCell(sb, value);
         }
     }
 
@@ -134,7 +125,8 @@ public class DiskResourceMetadataViewImpl extends Composite implements MetadataV
     private final class RemoveTemplateHandlerImpl implements ClickHandler {
         @Override
         public void onClick(ClickEvent event) {
-            ConfirmMessageBox cmb = new ConfirmMessageBox(displayStrings.confirmAction(), displayStrings.metadataTemplateConfirmRemove());
+            ConfirmMessageBox cmb = new ConfirmMessageBox(appearance.confirmAction(),
+                                                          appearance.metadataTemplateConfirmRemove());
             cmb.addDialogHideHandler(new DialogHideEvent.DialogHideHandler() {
                 @Override
                 public void onDialogHide(DialogHideEvent event) {
@@ -178,76 +170,49 @@ public class DiskResourceMetadataViewImpl extends Composite implements MetadataV
     interface DiskResourceMetadataEditorPanelUiBinder extends UiBinder<Widget, DiskResourceMetadataViewImpl> {
     }
 
-    interface MetadataHtmlTemplates extends SafeHtmlTemplates {
-
-        @SafeHtmlTemplates.Template("<b>{0}</b>")
-        SafeHtml boldHeader(String headerText);
-
-        @SafeHtmlTemplates.Template("<span qtip=\"{0}\">{0}</span>")
-        SafeHtml cell(String value);
-
-        @SafeHtmlTemplates.Template("<span> {0}&nbsp;{2}&nbsp;{1}</span>")
-        SafeHtml labelHtml(SafeHtml info, String label, SafeHtml required);
-
-        @SafeHtmlTemplates.Template("<img style='cursor:pointer;' qtip=\"{1}\" src=\"{0}\"/>")
-        SafeHtml labelInfo(SafeUri img, String toolTip);
-
-        @SafeHtmlTemplates.Template("<span style='color:red; top:-5px;'>*</span>")
-        SafeHtml required();
-    }
-
-    interface MetadataInfoTemplate extends XTemplates {
-        @XTemplate("<div style='text-overflow:ellipsis;overflow:hidden;white-space:nowrap;border:none;' qtip='{name}' >{name}</div>")
-        SafeHtml templateInfo(String name);
-    }
-
     @UiField TextButton addMetadataButton;
     @UiField BorderLayoutContainer con;
     @UiField TextButton deleteMetadataButton;
     @UiField ComboBox<MetadataTemplateInfo> templateCombo;
     @UiField ToolBar toolbar;
 
-    private static final String METADATA_COMPLETE = "Metadata complete"; //$NON-NLS-1$
-    private static final DiskResourceMetadataEditorPanelUiBinder uiBinder = GWT.create(DiskResourceMetadataEditorPanelUiBinder.class);
     private final AccordionLayoutContainer alc;
-    private final AccordionLayoutAppearance appearance;
-    private final DiskResourceAutoBeanFactory autoBeanFactory;
+    private final AccordionLayoutAppearance accordionLayoutAppearance = GWT.create(AccordionLayoutAppearance.class);
     private final VerticalLayoutContainer centerPanel;
-    private final DiskResourceAutoBeanFactory diskResourceAutoBeanFactory;
-    private final IplantDisplayStrings displayStrings;
-    private final MetadataHtmlTemplates htmlTemplates;
-    private final IplantResources iplantResources;
-    private final FastMap<DiskResourceMetadata> templateAttrAvuMap = new FastMap<>();
-    private final FastMap<Field<?>> templateAttrFieldMap = new FastMap<>();
     private final DateTimeFormat timestampFormat;
-    private final Set<DiskResourceMetadata> toBeDeleted = Sets.newHashSet();
-    private final boolean writable;
-    private DiskResourceMetadataTemplate currentMetadataTemplate;
     private Grid<DiskResourceMetadata> grid;
     private GridInlineEditing<DiskResourceMetadata> gridInlineEditing;
     private CheckBox isCompleteCbx;
-    private ListStore<DiskResourceMetadata> listStore;
-    private Presenter presenter;
     private MetadataTemplateInfo selectedTemplate;
     private VerticalLayoutContainer templateContainer;
     private ContentPanel templateForm;
+    private ContentPanel userMetadataPanel;
+
+    private static final String METADATA_COMPLETE = "Metadata complete"; //$NON-NLS-1$
+    private static final DiskResourceMetadataEditorPanelUiBinder uiBinder = GWT.create(DiskResourceMetadataEditorPanelUiBinder.class);
+    private final MetadataView.Appearance appearance = GWT.create(MetadataView.Appearance.class);
+
+    private final DiskResourceAutoBeanFactory autoBeanFactory = GWT.create(DiskResourceAutoBeanFactory.class);
+    private final FastMap<DiskResourceMetadata> templateAttrAvuMap = new FastMap<>();
+    private final FastMap<Field<?>> templateAttrFieldMap = new FastMap<>();
+    private final Set<DiskResourceMetadata> toBeDeleted = Sets.newHashSet();
+    private final boolean writable;
+    private DiskResourceMetadataTemplate currentMetadataTemplate;
+    private ListStore<DiskResourceMetadata> listStore;
     private ListStore<MetadataTemplateInfo> templateStore;
     private int unique_avu_id;
-    private ContentPanel userMetadataPanel;
     private boolean valid;
+    private MetadataView.Presenter presenter;
 
     public DiskResourceMetadataViewImpl(final DiskResource dr) {
-        htmlTemplates = GWT.create(MetadataHtmlTemplates.class);
-        autoBeanFactory = GWT.create(DiskResourceAutoBeanFactory.class);
-        timestampFormat = DateTimeFormat.getFormat(DateTimeFormat.PredefinedFormat.DATE_TIME_SHORT);
-        displayStrings = I18N.DISPLAY;
-        iplantResources = IplantResources.RESOURCES;
-        diskResourceAutoBeanFactory = GWT.create(DiskResourceAutoBeanFactory.class);
-        appearance = GWT.create(AccordionLayoutAppearance.class);
-        writable = DiskResourceUtil.getInstance().isWritable(dr);
+
         alc = new AccordionLayoutContainer();
         centerPanel = new VerticalLayoutContainer();
+        timestampFormat = DateTimeFormat.getFormat(DateTimeFormat.PredefinedFormat.DATE_TIME_SHORT);
+
+        writable = DiskResourceUtil.getInstance().isWritable(dr);
         valid = true;
+        templateStore = new ListStore<>(new TemplateInfoModelKeyProvider());
 
         initWidget(uiBinder.createAndBindUi(this));
         con.setCenterWidget(centerPanel);
@@ -268,7 +233,6 @@ public class DiskResourceMetadataViewImpl extends Composite implements MetadataV
         metadataTemplate.setId(selectedTemplate.getId());
 
         ArrayList<DiskResourceMetadata> avus = Lists.newArrayList();
-        metadataTemplate.setAvus(avus);
 
         for (String attr : templateAttrFieldMap.keySet()) {
             DiskResourceMetadata avu = templateAttrAvuMap.get(attr);
@@ -292,6 +256,7 @@ public class DiskResourceMetadataViewImpl extends Composite implements MetadataV
 
             avus.add(avu);
         }
+        metadataTemplate.setAvus(avus);
 
         return metadataTemplate;
     }
@@ -410,19 +375,19 @@ public class DiskResourceMetadataViewImpl extends Composite implements MetadataV
 
     @UiFactory
     ComboBox<MetadataTemplateInfo> buildTemplateCombo() {
-        templateStore = new ListStore<>(new TemplateInfoModelKeyProvider());
 
-        ComboBox<MetadataTemplateInfo> comboBox = new ComboBox<>(templateStore, new TemplateInfoLabelProvider(), new AbstractSafeHtmlRenderer<MetadataTemplateInfo>() {
-
+        final AbstractSafeHtmlRenderer<MetadataTemplateInfo> htmlRenderer = new AbstractSafeHtmlRenderer<MetadataTemplateInfo>() {
             @Override
             public SafeHtml render(MetadataTemplateInfo object) {
-                final MetadataInfoTemplate xtemp = GWT.create(MetadataInfoTemplate.class);
-                return xtemp.templateInfo(object.getName());
+                return appearance.renderComboBoxHtml(object);
             }
-        });
+        };
+        ComboBox<MetadataTemplateInfo> comboBox = new ComboBox<>(templateStore,
+                                                                 new TemplateInfoLabelProvider(),
+                                                                 htmlRenderer);
         comboBox.setEditable(false);
         comboBox.setWidth(250);
-        comboBox.setEmptyText(displayStrings.metadataTemplateSelect());
+        comboBox.setEmptyText(appearance.metadataTemplateSelect());
         comboBox.setTypeAhead(true);
         comboBox.addSelectionHandler(new TemplateInfoSelectionHandler());
         return comboBox;
@@ -431,8 +396,8 @@ public class DiskResourceMetadataViewImpl extends Composite implements MetadataV
     @UiHandler("addMetadataButton")
     void onAddMetadataSelected(SelectEvent event) {
         expandUserMetadataPanel();
-        String attr = getUniqueAttrName(displayStrings.newAttribute(), 0);
-        DiskResourceMetadata md = newMetadata(attr, displayStrings.newValue(), ""); //$NON-NLS-1$
+        String attr = getUniqueAttrName(appearance.newAttribute(), 0);
+        DiskResourceMetadata md = newMetadata(attr, appearance.newValue(), ""); //$NON-NLS-1$
         md.setId(unique_avu_id++ + ""); //$NON-NLS-1$
         listStore.add(0, md);
         gridInlineEditing.startEditing(new GridCell(0, 0));
@@ -489,10 +454,10 @@ public class DiskResourceMetadataViewImpl extends Composite implements MetadataV
                                        boolean allowBlank) {
         FieldLabel fl = new FieldLabel(widget);
         if (!(widget instanceof CheckBox)) {
-            fl.setHTML(buildLabelWithDescription(lbl, description, allowBlank));
+            fl.setHTML(appearance.buildLabelWithDescription(lbl, description, allowBlank));
         } else {
             // always set allow blank to true for checkbox
-            fl.setHTML(buildLabelWithDescription(lbl, description, true));
+            fl.setHTML(appearance.buildLabelWithDescription(lbl, description, true));
         }
         new QuickTip(fl);
         fl.setLabelAlign(LabelAlign.TOP);
@@ -513,19 +478,6 @@ public class DiskResourceMetadataViewImpl extends Composite implements MetadataV
         return nf;
     }
 
-    private String buildLabelWithDescription(final String label, final String description,
-                                             boolean allowBlank) {
-        if (label == null) {
-            return null;
-        }
-        SafeUri infoUri = iplantResources.info().getSafeUri();
-        SafeHtml infoImg = Strings.isNullOrEmpty(description) ? SafeHtmlUtils.fromString("") //$NON-NLS-1$
-                               : htmlTemplates.labelInfo(infoUri, description);
-        SafeHtml required = allowBlank ? SafeHtmlUtils.fromString("") : htmlTemplates.required(); //$NON-NLS-1$
-
-        return htmlTemplates.labelHtml(infoImg, label, required).asString();
-    }
-
     private NumberField<Double> buildNumberField(MetadataTemplateAttribute attribute) {
         NumberField<Double> nf = new NumberField<>(new DoublePropertyEditor());
         nf.setAllowBlank(!attribute.isRequired());
@@ -541,7 +493,7 @@ public class DiskResourceMetadataViewImpl extends Composite implements MetadataV
     }
 
     private IPlantAnchor buildRemoveTemplateLink() {
-        return new IPlantAnchor(displayStrings.metadataTemplateRemove(), 575, new RemoveTemplateHandlerImpl());
+        return new IPlantAnchor(appearance.metadataTemplateRemove(), 575, new RemoveTemplateHandlerImpl());
     }
 
     private void buildTemplateContainer() {
@@ -560,10 +512,10 @@ public class DiskResourceMetadataViewImpl extends Composite implements MetadataV
     }
 
     private void buildTemplatePanel() {
-        templateForm = new ContentPanel(appearance);
+        templateForm = new ContentPanel(accordionLayoutAppearance);
         templateForm.setBodyStyle("background-color: #fff; padding: 5px"); //$NON-NLS-1$
         templateForm.setSize("575", "275"); //$NON-NLS-1$ //$NON-NLS-2$
-        templateForm.setHeadingHtml(htmlTemplates.boldHeader(templateCombo.getCurrentValue().getName()));
+        templateForm.setHeadingHtml(appearance.boldHeader(templateCombo.getCurrentValue().getName()));
         templateForm.getHeader().addStyleName(ThemeStyles.get().style().borderTop());
         templateContainer = new VerticalLayoutContainer();
         templateContainer.setScrollMode(ScrollMode.AUTOY);
@@ -608,16 +560,16 @@ public class DiskResourceMetadataViewImpl extends Composite implements MetadataV
     }
 
     private void buildUserMetadataPanel() {
-        userMetadataPanel = new ContentPanel(appearance);
+        userMetadataPanel = new ContentPanel(accordionLayoutAppearance);
         userMetadataPanel.setSize("575", "275"); //$NON-NLS-1$ //$NON-NLS-2$
         userMetadataPanel.setCollapsible(true);
         userMetadataPanel.getHeader().addStyleName(ThemeStyles.get().style().borderTop());
 
-        userMetadataPanel.setHeadingHtml(htmlTemplates.boldHeader(displayStrings.userMetadata()));
+        userMetadataPanel.setHeadingHtml(appearance.boldHeader(appearance.userMetadata()));
     }
 
     private DiskResourceMetadata copy(DiskResourceMetadata drm) {
-        DiskResourceMetadata temp = AutoBeanCodex.decode(diskResourceAutoBeanFactory, DiskResourceMetadata.class, "{}").as(); //$NON-NLS-1$
+        DiskResourceMetadata temp = AutoBeanCodex.decode(autoBeanFactory, DiskResourceMetadata.class, "{}").as(); //$NON-NLS-1$
         temp.setAttribute(drm.getAttribute());
         temp.setValue(drm.getValue());
         temp.setUnit(drm.getUnit());
@@ -628,8 +580,8 @@ public class DiskResourceMetadataViewImpl extends Composite implements MetadataV
     private ColumnModel<DiskResourceMetadata> createColumnModel() {
         List<ColumnConfig<DiskResourceMetadata, ?>> columns = Lists.newArrayList();
         DiskResourceMetadataProperties props = GWT.create(DiskResourceMetadataProperties.class);
-        ColumnConfig<DiskResourceMetadata, String> attributeColumn = new ColumnConfig<>(props.attribute(), 150, displayStrings.attribute());
-        ColumnConfig<DiskResourceMetadata, String> valueColumn = new ColumnConfig<>(props.value(), 150, displayStrings.paramValue());
+        ColumnConfig<DiskResourceMetadata, String> attributeColumn = new ColumnConfig<>(props.attribute(), 150, appearance.attribute());
+        ColumnConfig<DiskResourceMetadata, String> valueColumn = new ColumnConfig<>(props.value(), 150, appearance.paramValue());
 
         MetadataCell metadataCell = new MetadataCell();
         attributeColumn.setCell(metadataCell);
@@ -751,6 +703,7 @@ public class DiskResourceMetadataViewImpl extends Composite implements MetadataV
     }
 
     private DiskResourceMetadata newMetadata(String attr, String value, String unit) {
+        // FIXME Move to presenter. Autobean factory doesn't belong in view.
         DiskResourceMetadata avu = autoBeanFactory.metadata().as();
 
         avu.setAttribute(attr);
@@ -764,7 +717,7 @@ public class DiskResourceMetadataViewImpl extends Composite implements MetadataV
         templateCombo.setEnabled(false);
         presenter.onTemplateSelected(templateInfo.getId());
         buildTemplateContainer();
-        alc.mask(displayStrings.loadingMask());
+        alc.mask(appearance.templateSelectedLoadingMask());
     }
 
 }

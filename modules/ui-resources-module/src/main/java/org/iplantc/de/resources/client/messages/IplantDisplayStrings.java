@@ -345,15 +345,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     String attachSampleOutput();
 
     /**
-     * Translated "Attribute".
-     * 
-     * @return translated "Attribute"
-     */
-    @DefaultMessage("Attribute")
-    @Key("attribute")
-    String attribute();
-
-    /**
      * Translated "Attribution".
      * 
      * @return translated "Attribution"
@@ -1809,33 +1800,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     String messagesGridHeader();
 
     /**
-     * Translated "Are you sure you want to remove this template?".
-     * 
-     * @return translated "Are you sure you want to remove this template?"
-     */
-    @DefaultMessage("Are you sure you want to remove this template?")
-    @Key("metadataTemplateConfirmRemove")
-    String metadataTemplateConfirmRemove();
-
-    /**
-     * Translated "Remove Template".
-     * 
-     * @return translated "Remove Template"
-     */
-    @DefaultMessage("Remove Template")
-    @Key("metadataTemplateRemove")
-    String metadataTemplateRemove();
-
-    /**
-     * Translated "Select a template...".
-     * 
-     * @return translated "Select a template..."
-     */
-    @DefaultMessage("Select a template...")
-    @Key("metadataTemplateSelect")
-    String metadataTemplateSelect();
-
-    /**
      * Translated "Minimize".
      * 
      * @return translated "Minimize"
@@ -1986,15 +1950,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     String newApp();
 
     /**
-     * Translated "New Attribute".
-     * 
-     * @return translated "New Attribute"
-     */
-    @DefaultMessage("New Attribute")
-    @Key("newAttribute")
-    String newAttribute();
-
-    /**
      * Translated "Create Barcode File".
      * 
      * @return translated "Create Barcode File"
@@ -2020,15 +1975,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     @DefaultMessage("New Folder")
     @Key("newFolder")
     String newFolder();
-
-    /**
-     * Translated "New Value".
-     * 
-     * @return translated "New Value"
-     */
-    @DefaultMessage("New Value")
-    @Key("newValue")
-    String newValue();
 
     /**
      * Translated "New Tool Request".
@@ -3574,15 +3520,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     @DefaultMessage("User Name")
     @Key("userId")
     String userId();
-
-    /**
-     * Translated "User Metadata".
-     * 
-     * @return translated "User Metadata"
-     */
-    @DefaultMessage("User Metadata")
-    @Key("userMetadata")
-    String userMetadata();
 
     /**
      * Translated "User preference saved successfully.".
