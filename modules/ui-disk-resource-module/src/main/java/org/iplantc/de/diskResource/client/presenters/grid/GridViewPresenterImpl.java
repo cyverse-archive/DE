@@ -20,7 +20,6 @@ import org.iplantc.de.commons.client.info.IplantAnnouncer;
 import org.iplantc.de.commons.client.views.dialogs.IPlantDialog;
 import org.iplantc.de.diskResource.client.DiskResourceView;
 import org.iplantc.de.diskResource.client.GridView;
-import org.iplantc.de.diskResource.client.MetadataView;
 import org.iplantc.de.diskResource.client.NavigationView;
 import org.iplantc.de.diskResource.client.events.DiskResourceNameSelectedEvent;
 import org.iplantc.de.diskResource.client.events.DiskResourcePathSelectedEvent;
@@ -39,13 +38,11 @@ import org.iplantc.de.diskResource.client.gin.factory.DataSharingDialogFactory;
 import org.iplantc.de.diskResource.client.gin.factory.FolderContentsRpcProxyFactory;
 import org.iplantc.de.diskResource.client.gin.factory.GridViewFactory;
 import org.iplantc.de.diskResource.client.model.DiskResourceModelKeyProvider;
-import org.iplantc.de.diskResource.client.presenters.callbacks.DiskResourceMetadataUpdateCallback;
 import org.iplantc.de.diskResource.client.presenters.grid.proxy.FolderContentsLoadConfig;
 import org.iplantc.de.diskResource.client.presenters.grid.proxy.SelectDiskResourceByIdStoreAddHandler;
-import org.iplantc.de.diskResource.client.presenters.metadata.MetadataPresenterImpl;
 import org.iplantc.de.diskResource.client.views.dialogs.InfoTypeEditorDialog;
 import org.iplantc.de.diskResource.client.views.grid.DiskResourceColumnModel;
-import org.iplantc.de.diskResource.client.views.metadata.DiskResourceMetadataViewImpl;
+import org.iplantc.de.diskResource.client.views.metadata.dialogs.ManageMetadataDialog;
 import org.iplantc.de.diskResource.client.views.sharing.DataSharingDialog;
 
 import com.google.common.base.Preconditions;
@@ -58,7 +55,6 @@ import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.inject.client.AsyncProvider;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Label;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
@@ -106,6 +102,7 @@ public class GridViewPresenterImpl implements GridView.Presenter,
     @Inject FileSystemMetadataServiceFacade metadataService;
     @Inject AsyncProvider<InfoTypeEditorDialog> infoTypeDialogProvider;
     @Inject AsyncProvider<CommentsDialog> commentDialogProvider;
+    @Inject AsyncProvider<ManageMetadataDialog> metadataDialogProvider;
 
     private final Appearance appearance;
     private final ListStore<DiskResource> listStore;
@@ -271,45 +268,19 @@ public class GridViewPresenterImpl implements GridView.Presenter,
 
     @Override
     public void onRequestManageMetadataSelected(ManageMetadataSelected event) {
-        DiskResource selected = event.getDiskResource();
+        final DiskResource selected = event.getDiskResource();
 
-        // FIXME Convert to sovereign dialog
-        final MetadataView mdView = new DiskResourceMetadataViewImpl(selected);
-        final MetadataView.Presenter mdPresenter = new MetadataPresenterImpl(selected, mdView);
-        final IPlantDialog ipd = new IPlantDialog(true);
+        metadataDialogProvider.get(new AsyncCallback<ManageMetadataDialog>() {
+            @Override
+            public void onFailure(Throwable caught) {
+                announcer.schedule(new ErrorAnnouncementConfig("Something happened while trying to view/manage metadata. Please try again or contact support for help."));
+            }
 
-        ipd.setSize(appearance.metadataDialogWidth(), appearance.metadataDialogHeight());
-        ipd.setHeadingText(appearance.metadata() + ":" + selected.getName()); //$NON-NLS-1u$
-        ipd.setResizable(true);
-        ipd.addHelp(new HTML(appearance.metadataHelp()));
-
-        mdPresenter.go(ipd);
-
-        if (diskResourceUtil.isWritable(selected)) {
-            ipd.setHideOnButtonClick(false);
-            ipd.addOkButtonSelectHandler(new SelectEvent.SelectHandler() {
-
-                @Override
-                public void onSelect(SelectEvent event) {
-                    if (mdView.shouldValidate() && !mdView.isValid()) {
-                        ErrorAnnouncementConfig errNotice = new ErrorAnnouncementConfig(appearance.metadataFormInvalid());
-                        announcer.schedule(errNotice);
-                    } else {
-                        mdPresenter.setDiskResourceMetadata(new DiskResourceMetadataUpdateCallback(ipd));
-                    }
-                }
-            });
-
-            ipd.addCancelButtonSelectHandler(new SelectEvent.SelectHandler() {
-
-                @Override
-                public void onSelect(SelectEvent event) {
-                    ipd.hide();
-                }
-            });
-        }
-
-        ipd.show();
+            @Override
+            public void onSuccess(ManageMetadataDialog result) {
+                result.show(selected);
+            }
+        });
     }
 
     @Override
