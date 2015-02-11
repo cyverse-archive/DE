@@ -27,6 +27,7 @@
     <replace-with class="org.iplantc.de.theme.base.client.diskResource.metadata.MetadataViewDefaultAppearance">
         <when-type-is class="org.iplantc.de.diskResource.client.MetadataView.Appearance" />
     </replace-with>
+
     <!-- Dialogs -->
     <replace-with class="org.iplantc.de.theme.base.client.diskResource.dialogs.FolderSelectDialogDefaultAppearance">
         <when-type-is class="org.iplantc.de.diskResource.client.views.dialogs.FolderSelectDialog.FolderSelectDialogAppearance"/>
@@ -39,6 +40,9 @@
     </replace-with>
     <replace-with class="org.iplantc.de.theme.base.client.diskResource.FileFolderSelectorFieldDefaultAppearance">
         <when-type-is class="org.iplantc.de.diskResource.client.views.widgets.FileFolderSelectorField.FileFolderSelectorFieldAppearance"/>
+    </replace-with>
+    <replace-with class="org.iplantc.de.theme.base.client.diskResource.dialogs.CreateFolderDialogDefaultAppearance">
+        <when-type-is class="org.iplantc.de.diskResource.client.views.dialogs.CreateFolderDialog.Appearance"/>
     </replace-with>
 
     <!-- Navigation -->

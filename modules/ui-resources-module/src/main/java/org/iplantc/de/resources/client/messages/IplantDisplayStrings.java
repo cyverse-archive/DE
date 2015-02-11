@@ -722,15 +722,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     String createClipperFilename();
 
     /**
-     * Translated "Create in {0}.".
-     *
-     * @return translated "Create in {0}."
-     */
-    @DefaultMessage("Create in {0}.")
-    @Key("createIn")
-    String createIn(String path);
-
-    /**
      * Translated "New App".
      *
      * @return translated "New App"
@@ -1966,15 +1957,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     @DefaultMessage("Create 3'' Adapter File")
     @Key("newClipper")
     String newClipper();
-
-    /**
-     * Translated "New Folder".
-     *
-     * @return translated "New Folder"
-     */
-    @DefaultMessage("New Folder")
-    @Key("newFolder")
-    String newFolder();
 
     /**
      * Translated "New Tool Request".

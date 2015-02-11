@@ -15,6 +15,8 @@ public interface DiskResourceMessages extends Messages {
 
     String createFolderFailed();
 
+    String createIn(String path);
+
     String deleteDataLinksError();
 
     String deleteFailed();
@@ -33,6 +35,8 @@ public interface DiskResourceMessages extends Messages {
     @Key("fileSelectDialogHeaderText")
     String fileSelectDialogHeaderText();
 
+    String folderName();
+
     String listDataLinksError();
 
     String metadataSuccess();
@@ -40,6 +44,8 @@ public interface DiskResourceMessages extends Messages {
     String metadataUpdateFailed();
 
     String moveFailed();
+
+    String newFolder();
 
     String partialRestore();
 

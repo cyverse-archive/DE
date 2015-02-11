@@ -4,30 +4,48 @@ import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.client.util.DiskResourceUtil;
 import org.iplantc.de.commons.client.validators.DiskResourceNameValidator;
 import org.iplantc.de.commons.client.views.dialogs.IPlantPromptDialog;
-import org.iplantc.de.resources.client.messages.I18N;
 
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.user.client.ui.HTML;
 
-import com.sencha.gxt.core.client.util.Format;
-
 /**
- * FIXME Create appearance
  * @author jstroot
  */
 public class CreateFolderDialog extends IPlantPromptDialog {
 
+    public interface Appearance {
+
+        String dialogWidth();
+
+        String folderName();
+
+        String newFolder();
+
+        SafeHtml renderDestinationPathLabel(String destPath, String createIn);
+    }
+
+    private final Appearance appearance;
+
     private final DiskResourceUtil diskResourceUtil;
     public CreateFolderDialog(final Folder parentFolder) {
-        super(I18N.DISPLAY.folderName(), -1, "", new DiskResourceNameValidator());
+        this(parentFolder,
+             GWT.<Appearance> create(Appearance.class));
+    }
+
+    public CreateFolderDialog(final Folder parentFolder,
+                              final Appearance appearance) {
+        super(appearance.folderName(), -1, "", new DiskResourceNameValidator());
+        this.appearance = appearance;
         diskResourceUtil = DiskResourceUtil.getInstance();
-        setWidth("300px");
-        setHeadingText(I18N.DISPLAY.newFolder());
+        setWidth(appearance.dialogWidth());
+        setHeadingText(appearance.newFolder());
         initDestPathLabel(parentFolder.getPath());
     }
 
     private void initDestPathLabel(String destPath) {
-        HTML htmlDestText = new HTML("<div title='" + destPath + "'style='color: #0098AA;width:100%;padding:5px;text-overflow:ellipsis;'>"
-                + Format.ellipse(I18N.DISPLAY.createIn(diskResourceUtil.parseNameFromPath(destPath)), 50) + "</div>");
+
+        HTML htmlDestText = new HTML(appearance.renderDestinationPathLabel(destPath, diskResourceUtil.parseNameFromPath(destPath)));
         insert(htmlDestText, 0);
     }
 }
