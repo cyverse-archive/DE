@@ -14,8 +14,7 @@ import org.iplantc.de.client.services.DiskResourceServiceFacade;
 import org.iplantc.de.client.services.FileSystemMetadataServiceFacade;
 import org.iplantc.de.client.util.DiskResourceUtil;
 import org.iplantc.de.commons.client.ErrorHandler;
-import org.iplantc.de.commons.client.comments.CommentsView;
-import org.iplantc.de.commons.client.comments.gin.factory.CommentsPresenterFactory;
+import org.iplantc.de.commons.client.comments.view.dialogs.CommentsDialog;
 import org.iplantc.de.commons.client.info.ErrorAnnouncementConfig;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
 import org.iplantc.de.commons.client.views.dialogs.IPlantDialog;
@@ -69,7 +68,6 @@ import com.sencha.gxt.data.shared.ListStore;
 import com.sencha.gxt.data.shared.event.StoreUpdateEvent;
 import com.sencha.gxt.data.shared.loader.PagingLoadResult;
 import com.sencha.gxt.data.shared.loader.PagingLoader;
-import com.sencha.gxt.widget.core.client.Window;
 import com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer;
 import com.sencha.gxt.widget.core.client.event.DialogHideEvent;
 import com.sencha.gxt.widget.core.client.event.SelectEvent;
@@ -101,13 +99,13 @@ public class GridViewPresenterImpl implements GridView.Presenter,
         }
     }
     @Inject IplantAnnouncer announcer;
-    @Inject CommentsPresenterFactory commentsPresenterFactory;
     @Inject DataSharingDialogFactory dataSharingDialogFactory;
     @Inject DiskResourceServiceFacade diskResourceService;
     @Inject DiskResourceUtil diskResourceUtil;
     @Inject EventBus eventBus;
     @Inject FileSystemMetadataServiceFacade metadataService;
     @Inject AsyncProvider<InfoTypeEditorDialog> infoTypeDialogProvider;
+    @Inject AsyncProvider<CommentsDialog> commentDialogProvider;
 
     private final Appearance appearance;
     private final ListStore<DiskResource> listStore;
@@ -255,17 +253,20 @@ public class GridViewPresenterImpl implements GridView.Presenter,
 
     @Override
     public void onManageCommentsSelected(ManageCommentsSelected event) {
-        DiskResource dr = event.getDiskResource();
-        // call to retrieve comments...and show dialog
-        Window d = new Window();
-        d.setHeadingText(appearance.comments());
-        d.remove(d.getButtonBar());
-        // FIXME Convert to sovereign dialog?
-        d.setSize(appearance.commentsDialogWidth(), appearance.commentsDialogHeight());
-        CommentsView.Presenter cp = commentsPresenterFactory.createCommentsPresenter(dr.getId(),
-                                                                                     PermissionValue.own.equals(dr.getPermission()));
-        cp.go(d, metadataService);
-        d.show();
+        final DiskResource dr = event.getDiskResource();
+        commentDialogProvider.get(new AsyncCallback<CommentsDialog>() {
+            @Override
+            public void onFailure(Throwable caught) {
+                announcer.schedule(new ErrorAnnouncementConfig("Something happened while trying to manage comments. Please try again or contact support for help."));
+            }
+
+            @Override
+            public void onSuccess(CommentsDialog result) {
+                result.show(dr,
+                            PermissionValue.own.equals(dr.getPermission()),
+                            metadataService);
+            }
+        });
     }
 
     @Override
