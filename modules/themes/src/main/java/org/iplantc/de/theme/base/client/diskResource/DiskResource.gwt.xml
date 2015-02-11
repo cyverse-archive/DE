@@ -23,7 +23,10 @@
         <when-type-is class="org.iplantc.de.diskResource.client.views.dataLink.cells.DataLinkPanelCell.Appearance" />
     </replace-with>
 
-
+    <!-- Metadata -->
+    <replace-with class="org.iplantc.de.theme.base.client.diskResource.metadata.MetadataViewDefaultAppearance">
+        <when-type-is class="org.iplantc.de.diskResource.client.MetadataView.Appearance" />
+    </replace-with>
     <!-- Dialogs -->
     <replace-with class="org.iplantc.de.theme.base.client.diskResource.dialogs.FolderSelectDialogDefaultAppearance">
         <when-type-is class="org.iplantc.de.diskResource.client.views.dialogs.FolderSelectDialog.FolderSelectDialogAppearance"/>

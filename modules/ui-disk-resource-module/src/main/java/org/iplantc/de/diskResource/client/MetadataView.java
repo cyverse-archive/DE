@@ -20,6 +20,10 @@ import java.util.Set;
  */
 public interface MetadataView extends IsWidget {
 
+    interface Appearance {
+
+    }
+
     public interface Presenter extends org.iplantc.de.commons.client.presenter.Presenter {
         /**
          * Retrieves a collection of metadata for the given resource.
