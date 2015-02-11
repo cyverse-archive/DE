@@ -1,7 +1,7 @@
 /**
  *
  */
-package org.iplantc.de.diskResource.client.views.sharing;
+package org.iplantc.de.diskResource.client.views.sharing.dialogs;
 
 
 import org.iplantc.de.client.models.diskResources.DiskResource;
@@ -9,16 +9,17 @@ import org.iplantc.de.client.services.DiskResourceServiceFacade;
 import org.iplantc.de.client.util.DiskResourceUtil;
 import org.iplantc.de.commons.client.views.dialogs.IPlantDialog;
 import org.iplantc.de.diskResource.client.DataSharingView;
-import org.iplantc.de.diskResource.client.presenters.sharing.DataSharingPresenterImpl;
 import org.iplantc.de.diskResource.client.model.DiskResourceModelKeyProvider;
 import org.iplantc.de.diskResource.client.model.DiskResourceNameComparator;
+import org.iplantc.de.diskResource.client.presenters.sharing.DataSharingPresenterImpl;
 import org.iplantc.de.diskResource.client.views.grid.cells.DiskResourceNameCell;
+import org.iplantc.de.diskResource.client.views.sharing.DataSharingViewImpl;
 import org.iplantc.de.resources.client.messages.IplantContextualHelpStrings;
 import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 
+import com.google.common.base.Preconditions;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.inject.Inject;
-import com.google.inject.assistedinject.Assisted;
 
 import com.sencha.gxt.core.client.IdentityValueProvider;
 import com.sencha.gxt.data.shared.ListStore;
@@ -29,24 +30,25 @@ import com.sencha.gxt.widget.core.client.grid.ColumnModel;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 /**
  * @author sriram, jstroot
  */
-public class DataSharingDialog extends IPlantDialog {
+public class DataSharingDialog extends IPlantDialog implements SelectHandler {
 
+    private final DiskResourceServiceFacade diskResourceService;
     private final IplantDisplayStrings displayStrings;
     private final IplantContextualHelpStrings helpStrings;
     private final DiskResourceUtil diskResourceUtil;
+    private DataSharingView.Presenter sharingPresenter;
 
     @Inject
     DataSharingDialog(final DiskResourceServiceFacade diskResourceService,
                       final IplantDisplayStrings displayStrings,
                       final IplantContextualHelpStrings helpStrings,
-                      final DiskResourceUtil diskResourceUtil,
-                      @Assisted final Set<DiskResource> resources) {
+                      final DiskResourceUtil diskResourceUtil) {
         super(true);
+        this.diskResourceService = diskResourceService;
         this.displayStrings = displayStrings;
         this.helpStrings = helpStrings;
         this.diskResourceUtil = diskResourceUtil;
@@ -54,26 +56,33 @@ public class DataSharingDialog extends IPlantDialog {
         setHideOnButtonClick(true);
         setModal(true);
         setResizable(false);
-        addHelp();
+        addHelp(new HTML(this.helpStrings.sharePermissionsHelp()));
         setHeadingText(displayStrings.manageSharing());
-        ListStore<DiskResource> drStore = new ListStore<>(new DiskResourceModelKeyProvider());
-        DataSharingView view = new DataSharingViewImpl(buildDiskResourceColumnModel(), drStore);
-        final DataSharingView.Presenter p = new DataSharingPresenterImpl(diskResourceService,
-                                                                     getSelectedResourcesAsList(resources), view);
-        p.go(this);
         setOkButtonText(displayStrings.done());
-        addOkButtonSelectHandler(new SelectHandler() {
-
-            @Override
-            public void onSelect(SelectEvent event) {
-                p.processRequest();
-            }
-        });
+        addOkButtonSelectHandler(this);
 
     }
 
-    private void addHelp() {
-        addHelp(new HTML(helpStrings.sharePermissionsHelp()));
+    @Override
+    public void onSelect(SelectEvent event) {
+        Preconditions.checkNotNull(sharingPresenter);
+        sharingPresenter.processRequest();
+    }
+
+    public void show(final List<DiskResource> resourcesToShare) {
+        ListStore<DiskResource> drStore = new ListStore<>(new DiskResourceModelKeyProvider());
+        DataSharingView view = new DataSharingViewImpl(buildDiskResourceColumnModel(), drStore);
+        sharingPresenter = new DataSharingPresenterImpl(diskResourceService,
+                                                        resourcesToShare,
+                                                        view);
+        sharingPresenter.go(this);
+        super.show();
+    }
+
+    @Override
+    public void show() throws UnsupportedOperationException {
+        throw new UnsupportedOperationException("This method is not supported for this class. " +
+                                                    "Use show(List<DiskResource>) instead.");
     }
 
     private ColumnModel<DiskResource> buildDiskResourceColumnModel() {
@@ -87,17 +96,6 @@ public class DataSharingDialog extends IPlantDialog {
         list.add(name);
 
         return new ColumnModel<>(list);
-    }
-
-    private List<DiskResource> getSelectedResourcesAsList(Set<DiskResource> models) {
-        List<DiskResource> dr = new ArrayList<>();
-
-        for (DiskResource item : models) {
-            dr.add(item);
-        }
-
-        return dr;
-
     }
 
 }

@@ -28,6 +28,8 @@ import org.iplantc.de.diskResource.client.views.DiskResourceViewImpl;
 import org.iplantc.de.diskResource.client.views.details.DetailsViewImpl;
 import org.iplantc.de.diskResource.client.views.grid.GridViewImpl;
 import org.iplantc.de.diskResource.client.views.navigation.NavigationViewImpl;
+import org.iplantc.de.diskResource.client.views.sharing.dialogs.DataSharingDialog;
+import org.iplantc.de.diskResource.client.views.sharing.dialogs.ShareResourceLinkDialog;
 import org.iplantc.de.diskResource.client.views.toolbar.DiskResourceViewToolbarImpl;
 
 import com.google.gwt.inject.client.AbstractGinModule;
@@ -74,8 +76,6 @@ public class DiskResourceGinModule extends AbstractGinModule {
         install(new GinFactoryModuleBuilder()
                     .build(DiskResourceSelectorDialogFactory.class));
         install(new GinFactoryModuleBuilder()
-                    .build(DataSharingDialogFactory.class));
-        install(new GinFactoryModuleBuilder()
                     .build(DiskResourceSelectorFieldFactory.class));
         bind(DiskResourceQueryForm.class);
         bind(DiskResourceSearchCell.class);
@@ -116,6 +116,8 @@ public class DiskResourceGinModule extends AbstractGinModule {
         // Dialogs
         bind(InfoTypeEditorDialog.class);
         bind(ManageMetadataDialog.class);
+        bind(DataSharingDialog.class);
+        bind(ShareResourceLinkDialog.class);
     }
 
 

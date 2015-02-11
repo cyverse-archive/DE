@@ -17,7 +17,6 @@ import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.commons.client.comments.view.dialogs.CommentsDialog;
 import org.iplantc.de.commons.client.info.ErrorAnnouncementConfig;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
-import org.iplantc.de.commons.client.views.dialogs.IPlantDialog;
 import org.iplantc.de.diskResource.client.DiskResourceView;
 import org.iplantc.de.diskResource.client.GridView;
 import org.iplantc.de.diskResource.client.NavigationView;
@@ -34,7 +33,6 @@ import org.iplantc.de.diskResource.client.events.selection.ManageMetadataSelecte
 import org.iplantc.de.diskResource.client.events.selection.ManageSharingSelected;
 import org.iplantc.de.diskResource.client.events.selection.ResetInfoTypeSelected;
 import org.iplantc.de.diskResource.client.events.selection.ShareByDataLinkSelected;
-import org.iplantc.de.diskResource.client.gin.factory.DataSharingDialogFactory;
 import org.iplantc.de.diskResource.client.gin.factory.FolderContentsRpcProxyFactory;
 import org.iplantc.de.diskResource.client.gin.factory.GridViewFactory;
 import org.iplantc.de.diskResource.client.model.DiskResourceModelKeyProvider;
@@ -43,11 +41,11 @@ import org.iplantc.de.diskResource.client.presenters.grid.proxy.SelectDiskResour
 import org.iplantc.de.diskResource.client.views.dialogs.InfoTypeEditorDialog;
 import org.iplantc.de.diskResource.client.views.grid.DiskResourceColumnModel;
 import org.iplantc.de.diskResource.client.views.metadata.dialogs.ManageMetadataDialog;
-import org.iplantc.de.diskResource.client.views.sharing.DataSharingDialog;
+import org.iplantc.de.diskResource.client.views.sharing.dialogs.DataSharingDialog;
+import org.iplantc.de.diskResource.client.views.sharing.dialogs.ShareResourceLinkDialog;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.shared.EventHandler;
@@ -55,7 +53,6 @@ import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.inject.client.AsyncProvider;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.Label;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 
@@ -64,10 +61,8 @@ import com.sencha.gxt.data.shared.ListStore;
 import com.sencha.gxt.data.shared.event.StoreUpdateEvent;
 import com.sencha.gxt.data.shared.loader.PagingLoadResult;
 import com.sencha.gxt.data.shared.loader.PagingLoader;
-import com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer;
 import com.sencha.gxt.widget.core.client.event.DialogHideEvent;
 import com.sencha.gxt.widget.core.client.event.SelectEvent;
-import com.sencha.gxt.widget.core.client.form.TextField;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -90,12 +85,21 @@ public class GridViewPresenterImpl implements GridView.Presenter,
         }
 
         @Override
-        public void onSuccess(List<DataLink> result) {
-            showShareLink(result.get(0).getDownloadUrl());
+        public void onSuccess(final List<DataLink> result) {
+            shareLinkDialogProvider.get(new AsyncCallback<ShareResourceLinkDialog>() {
+                @Override
+                public void onFailure(Throwable caught) {
+
+                }
+
+                @Override
+                public void onSuccess(ShareResourceLinkDialog dlg) {
+                    dlg.show(result.get(0).getDownloadUrl());
+                }
+            });
         }
     }
     @Inject IplantAnnouncer announcer;
-    @Inject DataSharingDialogFactory dataSharingDialogFactory;
     @Inject DiskResourceServiceFacade diskResourceService;
     @Inject DiskResourceUtil diskResourceUtil;
     @Inject EventBus eventBus;
@@ -103,6 +107,8 @@ public class GridViewPresenterImpl implements GridView.Presenter,
     @Inject AsyncProvider<InfoTypeEditorDialog> infoTypeDialogProvider;
     @Inject AsyncProvider<CommentsDialog> commentDialogProvider;
     @Inject AsyncProvider<ManageMetadataDialog> metadataDialogProvider;
+    @Inject AsyncProvider<DataSharingDialog> dataSharingDialogProvider;
+    @Inject AsyncProvider<ShareResourceLinkDialog> shareLinkDialogProvider;
 
     private final Appearance appearance;
     private final ListStore<DiskResource> listStore;
@@ -284,27 +290,46 @@ public class GridViewPresenterImpl implements GridView.Presenter,
     }
 
     @Override
-    public void onRequestManageSharingSelected(ManageSharingSelected event) {
-        DataSharingDialog dlg = dataSharingDialogFactory.createDataSharingDialog(Sets.newHashSet(event.getDiskResourceToShare()));
-        dlg.show();
-        dlg.addDialogHideHandler(new DialogHideEvent.DialogHideHandler() {
+    public void onRequestManageSharingSelected(final ManageSharingSelected event) {
+        dataSharingDialogProvider.get(new AsyncCallback<DataSharingDialog>() {
             @Override
-            public void onDialogHide(DialogHideEvent event) {
-                final List<DiskResource> selection = getSelectedDiskResources();
-                if (selection != null && selection.size() == 1) {
-                    Iterator<DiskResource> it = selection.iterator();
-                    DiskResource next = it.next();
-                    fetchDetails(next);
-                }
+            public void onFailure(Throwable caught) {
+                announcer.schedule(new ErrorAnnouncementConfig("Something happened while trying to manage sharing. Please try again or contact support for help."));
+            }
+
+            @Override
+            public void onSuccess(DataSharingDialog result) {
+                result.show(event.getDiskResourceToShare());
+                result.addDialogHideHandler(new DialogHideEvent.DialogHideHandler() {
+                    @Override
+                    public void onDialogHide(DialogHideEvent event) {
+                        final List<DiskResource> selection = getSelectedDiskResources();
+                        if (selection != null && selection.size() == 1) {
+                            Iterator<DiskResource> it = selection.iterator();
+                            DiskResource next = it.next();
+                            fetchDetails(next);
+                        }
+                    }
+                });
             }
         });
     }
 
     @Override
     public void onRequestShareByDataLinkSelected(ShareByDataLinkSelected event) {
-        DiskResource toBeShared = event.getDiskResourceToShare();
+        final DiskResource toBeShared = event.getDiskResourceToShare();
         if (toBeShared instanceof Folder) {
-            showShareLink(GWT.getHostPageBaseURL() + "?type=data&folder=" + toBeShared.getPath());
+            shareLinkDialogProvider.get(new AsyncCallback<ShareResourceLinkDialog>() {
+                @Override
+                public void onFailure(Throwable caught) {
+                    announcer.schedule(new ErrorAnnouncementConfig("Something happened while trying to generate your link. Please try again or contact support for help."));
+                }
+
+                @Override
+                public void onSuccess(ShareResourceLinkDialog result) {
+                    result.show(GWT.getHostPageBaseURL() + "?type=data&folder=" + toBeShared.getPath());
+                }
+            });
         } else {
             diskResourceService.createDataLinks(Arrays.asList(toBeShared.getPath()), new CreateDataLinksCallback());
         }
@@ -458,27 +483,6 @@ public class GridViewPresenterImpl implements GridView.Presenter,
                 fetchDetails(dr);
             }
         });
-    }
-
-    private void showShareLink(String linkId) {
-        // FIXME Fold into separate view/dlg
-        // Open dialog window with text selected.
-        IPlantDialog dlg = new IPlantDialog();
-        dlg.setHeadingText(appearance.copy());
-        dlg.setHideOnButtonClick(true);
-        dlg.setResizable(false);
-        dlg.setSize(appearance.shareLinkDialogWidth(), appearance.shareLinkDialogHeight());
-        TextField textBox = new TextField();
-        textBox.setWidth(appearance.shareLinkDialogTextBoxWidth());
-        textBox.setReadOnly(true);
-        textBox.setValue(linkId);
-        VerticalLayoutContainer container = new VerticalLayoutContainer();
-        dlg.setWidget(container);
-        container.add(textBox);
-        container.add(new Label(appearance.copyPasteInstructions()));
-        dlg.setFocusWidget(textBox);
-        dlg.show();
-        textBox.selectAll();
     }
 
     private void updateFav(final DiskResource diskResource, boolean fav) {
