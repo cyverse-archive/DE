@@ -9,6 +9,7 @@ import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.commons.client.views.dialogs.IPlantDialog;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.inject.Inject;
 
 import com.sencha.gxt.cell.core.client.form.ComboBoxCell.TriggerAction;
 import com.sencha.gxt.data.shared.LabelProvider;
@@ -26,15 +27,12 @@ public class InfoTypeEditorDialog extends IPlantDialog {
 
     private final SimpleComboBox<InfoType> infoTypeCbo;
 
-    private final InfoType type;
-
     final Logger LOG = Logger.getLogger(InfoTypeEditorDialog.class.getName());
 
-    public InfoTypeEditorDialog(final String currentType,
-                                final DiskResourceServiceFacade diskResourceService) {
+    @Inject
+    InfoTypeEditorDialog(final DiskResourceServiceFacade diskResourceService) {
         this.diskResourceService = diskResourceService;
         setSize("300", "100");
-        this.type = InfoType.fromTypeString(currentType);
         setHeadingText("Select Type");
         infoTypeCbo = new SimpleComboBox<>(new LabelProvider<InfoType>() {
 
@@ -48,7 +46,6 @@ public class InfoTypeEditorDialog extends IPlantDialog {
         infoTypeCbo.setEmptyText("-");
         infoTypeCbo.setTriggerAction(TriggerAction.ALL);
         infoTypeCbo.setEditable(false);
-        loadInfoTypes();
         add(infoTypeCbo);
 
     }
@@ -57,8 +54,17 @@ public class InfoTypeEditorDialog extends IPlantDialog {
         return infoTypeCbo.getCurrentValue();
     }
 
+    public void show(final InfoType currentType){
+        loadInfoTypes(currentType);
+        super.show();
+    }
 
-    private void loadInfoTypes() {
+    @Override
+    public void show() throws UnsupportedOperationException {
+        throw new UnsupportedOperationException("This method is not supported. Instead, you must use show(InfoType) for this class.");
+    }
+
+    private void loadInfoTypes(final InfoType currentType) {
         diskResourceService.getInfoTypes(new AsyncCallback<List<InfoType>>() {
 
             @Override
@@ -71,7 +77,7 @@ public class InfoTypeEditorDialog extends IPlantDialog {
                 // Skip Path list, it should not be displayed
                 infoTypes.remove(InfoType.HT_ANALYSIS_PATH_LIST);
                 infoTypeCbo.add(infoTypes);
-                infoTypeCbo.setValue(type);
+                infoTypeCbo.setValue(currentType);
                 LOG.fine("InfoTypes retrieved: " + infoTypes);
             }
         });

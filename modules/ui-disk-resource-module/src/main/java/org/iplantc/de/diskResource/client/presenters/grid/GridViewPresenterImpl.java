@@ -57,6 +57,7 @@ import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.shared.EventHandler;
 import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.inject.client.AsyncProvider;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Label;
@@ -106,6 +107,8 @@ public class GridViewPresenterImpl implements GridView.Presenter,
     @Inject DiskResourceUtil diskResourceUtil;
     @Inject EventBus eventBus;
     @Inject FileSystemMetadataServiceFacade metadataService;
+    @Inject AsyncProvider<InfoTypeEditorDialog> infoTypeDialogProvider;
+
     private final Appearance appearance;
     private final ListStore<DiskResource> listStore;
     private final NavigationView.Presenter navigationPresenter;
@@ -189,14 +192,24 @@ public class GridViewPresenterImpl implements GridView.Presenter,
         Preconditions.checkState(event.getSelectedDiskResources().size() == 1, "Only one Disk Resource should be selected, but there are %i", getSelectedDiskResources().size());
 
         final String infoType = event.getSelectedDiskResources().iterator().next().getInfoType();
-        final InfoTypeEditorDialog dialog = new InfoTypeEditorDialog(infoType, diskResourceService);
-        dialog.show();
-        dialog.addOkButtonSelectHandler(new SelectEvent.SelectHandler() {
+        infoTypeDialogProvider.get(new AsyncCallback<InfoTypeEditorDialog>() {
+            @Override
+            public void onFailure(Throwable caught) {
+
+                announcer.schedule(new ErrorAnnouncementConfig("AsyncProvider failed"));
+            }
 
             @Override
-            public void onSelect(SelectEvent event1) {
-                String newType = dialog.getSelectedValue().toString();
-                setInfoType(event.getSelectedDiskResources().iterator().next(), newType);
+            public void onSuccess(final InfoTypeEditorDialog result) {
+                result.addOkButtonSelectHandler(new SelectEvent.SelectHandler() {
+
+                    @Override
+                    public void onSelect(SelectEvent event1) {
+                        String newType = result.getSelectedValue().toString();
+                        setInfoType(event.getSelectedDiskResources().iterator().next(), newType);
+                    }
+                });
+                result.show(InfoType.fromTypeString(infoType));
             }
         });
     }
