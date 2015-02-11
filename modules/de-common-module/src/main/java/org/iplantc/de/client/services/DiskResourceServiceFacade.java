@@ -2,15 +2,7 @@ package org.iplantc.de.client.services;
 
 import org.iplantc.de.client.models.HasPaths;
 import org.iplantc.de.client.models.dataLink.DataLink;
-import org.iplantc.de.client.models.diskResources.DiskResource;
-import org.iplantc.de.client.models.diskResources.DiskResourceAutoBeanFactory;
-import org.iplantc.de.client.models.diskResources.DiskResourceExistMap;
-import org.iplantc.de.client.models.diskResources.DiskResourceMetadata;
-import org.iplantc.de.client.models.diskResources.DiskResourceMetadataTemplate;
-import org.iplantc.de.client.models.diskResources.File;
-import org.iplantc.de.client.models.diskResources.Folder;
-import org.iplantc.de.client.models.diskResources.RootFolders;
-import org.iplantc.de.client.models.diskResources.TYPE;
+import org.iplantc.de.client.models.diskResources.*;
 import org.iplantc.de.client.models.services.DiskResourceMove;
 import org.iplantc.de.client.models.viewer.InfoType;
 
@@ -161,7 +153,7 @@ public interface DiskResourceServiceFacade {
      * @param resource the <code>DiskResource</code> for which metadata will be retrieved.
      * @param callback callback executed when service call completes.
      */
-    void getDiskResourceMetaData(DiskResource resource, AsyncCallback<String> callback);
+    void getDiskResourceMetaData(DiskResource resource, AsyncCallback<List<DiskResourceMetadata>> callback);
 
     /**
      * Calls service to set disk resource metadata.
@@ -289,7 +281,7 @@ public interface DiskResourceServiceFacade {
     /**
      * Method  used to retrieve list of metadata templates
      */
-    void getMetadataTemplateListing(AsyncCallback<String> callback);
+    void getMetadataTemplateListing(AsyncCallback<List<MetadataTemplateInfo>> callback);
 
 
     /**
@@ -297,7 +289,7 @@ public interface DiskResourceServiceFacade {
      *
      * @param templateId id of the template
      */
-    void getMetadataTemplate(String templateId, AsyncCallback<String> callback);
+    void getMetadataTemplate(String templateId, AsyncCallback<MetadataTemplate> callback);
 
     /**
      * share with anonymous user selected file(s)

@@ -3,7 +3,6 @@ package org.iplantc.de.diskResource.client.views.metadata;
 import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.client.models.diskResources.DiskResourceAutoBeanFactory;
 import org.iplantc.de.client.models.diskResources.DiskResourceMetadata;
-import org.iplantc.de.client.models.diskResources.DiskResourceMetadataList;
 import org.iplantc.de.client.models.diskResources.DiskResourceMetadataTemplate;
 import org.iplantc.de.client.models.diskResources.MetadataTemplateAttribute;
 import org.iplantc.de.client.models.diskResources.MetadataTemplateInfo;
@@ -70,20 +69,10 @@ import com.sencha.gxt.widget.core.client.event.StartEditEvent;
 import com.sencha.gxt.widget.core.client.event.StartEditEvent.StartEditHandler;
 import com.sencha.gxt.widget.core.client.event.ValidEvent;
 import com.sencha.gxt.widget.core.client.event.ValidEvent.ValidHandler;
-import com.sencha.gxt.widget.core.client.form.CheckBox;
-import com.sencha.gxt.widget.core.client.form.ComboBox;
-import com.sencha.gxt.widget.core.client.form.DateField;
-import com.sencha.gxt.widget.core.client.form.DateTimePropertyEditor;
-import com.sencha.gxt.widget.core.client.form.Field;
-import com.sencha.gxt.widget.core.client.form.FieldLabel;
+import com.sencha.gxt.widget.core.client.form.*;
 import com.sencha.gxt.widget.core.client.form.FormPanel.LabelAlign;
-import com.sencha.gxt.widget.core.client.form.FormPanelHelper;
-import com.sencha.gxt.widget.core.client.form.IsField;
-import com.sencha.gxt.widget.core.client.form.NumberField;
 import com.sencha.gxt.widget.core.client.form.NumberPropertyEditor.DoublePropertyEditor;
 import com.sencha.gxt.widget.core.client.form.NumberPropertyEditor.IntegerPropertyEditor;
-import com.sencha.gxt.widget.core.client.form.TextArea;
-import com.sencha.gxt.widget.core.client.form.TextField;
 import com.sencha.gxt.widget.core.client.grid.ColumnConfig;
 import com.sencha.gxt.widget.core.client.grid.ColumnModel;
 import com.sencha.gxt.widget.core.client.grid.Grid;
@@ -344,16 +333,14 @@ public class DiskResourceMetadataViewImpl extends Composite implements MetadataV
     }
 
     @Override
-    public void loadMetadata(DiskResourceMetadataList metadataList) {
-        List<DiskResourceMetadata> metadata = metadataList.getMetadata();
-
-        for (DiskResourceMetadata avu : metadata) {
+    public void loadMetadata(final List<DiskResourceMetadata> metadataList) {
+        for (DiskResourceMetadata avu : metadataList) {
             avu.setId(unique_avu_id++ + ""); //$NON-NLS-1$
         }
 
         listStore.clear();
         listStore.commitChanges();
-        listStore.addAll(metadata);
+        listStore.addAll(metadataList);
 
         grid.getStore().setEnableFilters(true);
     }

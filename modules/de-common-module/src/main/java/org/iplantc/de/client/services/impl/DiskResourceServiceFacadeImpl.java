@@ -564,11 +564,17 @@ public class DiskResourceServiceFacadeImpl extends TreeStore<Folder> implements
     }
 
     @Override
-    public void getDiskResourceMetaData(DiskResource resource, AsyncCallback<String> callback) {
+    public void getDiskResourceMetaData(DiskResource resource, AsyncCallback<List<DiskResourceMetadata>> callback) {
         String fullAddress = deProperties.getDataMgmtBaseUrl() + "metadata" + "?path=" //$NON-NLS-1$ //$NON-NLS-2$
                 + URL.encodePathSegment(resource.getPath());
         ServiceCallWrapper wrapper = new ServiceCallWrapper(GET, fullAddress);
-        callService(wrapper, callback);
+        callService(wrapper, new AsyncCallbackConverter<String, List<DiskResourceMetadata>>(callback) {
+            @Override
+            protected List<DiskResourceMetadata> convertFrom(String object) {
+                AutoBean<DiskResourceMetadataList> bean = AutoBeanCodex.decode(factory, DiskResourceMetadataList.class, object);
+                return bean.as().getMetadata();
+            }
+        });
 
     }
 
@@ -844,17 +850,29 @@ public class DiskResourceServiceFacadeImpl extends TreeStore<Folder> implements
     }
 
     @Override
-    public void getMetadataTemplateListing(AsyncCallback<String> callback) {
+    public void getMetadataTemplateListing(AsyncCallback<List<MetadataTemplateInfo>> callback) {
         String address = deProperties.getDataMgmtBaseUrl() + "metadata/templates";
         final ServiceCallWrapper wrapper = new ServiceCallWrapper(GET, address);
-        callService(wrapper, callback);
+        callService(wrapper, new AsyncCallbackConverter<String, List<MetadataTemplateInfo>>(callback) {
+            @Override
+            protected List<MetadataTemplateInfo> convertFrom(String object) {
+                AutoBean<MetadataTemplateInfoList> bean = AutoBeanCodex.decode(factory, MetadataTemplateInfoList.class, object);
+                return bean.as().getTemplates();
+            }
+        });
     }
 
     @Override
-    public void getMetadataTemplate(String templateId, AsyncCallback<String> callback) {
+    public void getMetadataTemplate(String templateId, AsyncCallback<MetadataTemplate> callback) {
         String address = deProperties.getDataMgmtBaseUrl() + "metadata/template/" + templateId;
         final ServiceCallWrapper wrapper = new ServiceCallWrapper(GET, address);
-        callService(wrapper, callback);
+        callService(wrapper, new AsyncCallbackConverter<String, MetadataTemplate>(callback) {
+            @Override
+            protected MetadataTemplate convertFrom(String object) {
+                AutoBean<MetadataTemplate> bean = AutoBeanCodex.decode(factory, MetadataTemplate.class, object);
+                return bean.as();
+            }
+        });
 
     }
 
