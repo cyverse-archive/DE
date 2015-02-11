@@ -1,7 +1,6 @@
 package org.iplantc.de.diskResource.client.presenters;
 
 import org.iplantc.de.client.events.EventBus;
-import org.iplantc.de.client.events.diskResources.FolderRefreshEvent;
 import org.iplantc.de.client.models.HasId;
 import org.iplantc.de.client.models.HasPath;
 import org.iplantc.de.client.models.HasPaths;
@@ -37,16 +36,15 @@ import org.iplantc.de.diskResource.client.presenters.callbacks.DiskResourceDelet
 import org.iplantc.de.diskResource.client.presenters.callbacks.DiskResourceMoveCallback;
 import org.iplantc.de.diskResource.client.presenters.callbacks.DiskResourceRestoreCallback;
 import org.iplantc.de.diskResource.client.presenters.callbacks.RenameDiskResourceCallback;
-import org.iplantc.de.diskResource.client.views.search.DiskResourceSearchField;
 import org.iplantc.de.diskResource.client.views.dialogs.FolderSelectDialog;
 import org.iplantc.de.diskResource.client.views.dialogs.RenameFileDialog;
 import org.iplantc.de.diskResource.client.views.dialogs.RenameFolderDialog;
+import org.iplantc.de.diskResource.client.views.search.DiskResourceSearchField;
 import org.iplantc.de.diskResource.share.DiskResourceModule;
 import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 import org.iplantc.de.resources.client.messages.IplantErrorStrings;
 
 import static com.google.common.base.Preconditions.checkState;
-
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.Iterables;
@@ -65,7 +63,6 @@ import com.sencha.gxt.widget.core.client.event.DialogHideEvent;
 import com.sencha.gxt.widget.core.client.event.SelectEvent;
 import com.sencha.gxt.widget.core.client.event.SelectEvent.SelectHandler;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -99,7 +96,6 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
     final IplantAnnouncer announcer;
     final DiskResourceView view;
     final DiskResourceAutoBeanFactory drFactory;
-    final List<HandlerRegistration> dreventHandlers = new ArrayList<>();
 
     private final NavigationView.Presenter navigationPresenter;
     private final DetailsView.Presenter detailsViewPresenter;
@@ -304,14 +300,6 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
         toolbarPresenter.getView().addSendToEnsemblSelectedHandler(this);
         toolbarPresenter.getView().addSendToTreeViewerSelectedHandler(this);
 
-
-        // Wire up global event handlers
-        DiskResourcesEventHandler diskResourcesEventHandler = new DiskResourcesEventHandler(navigationPresenter);
-        dreventHandlers.add(eventBus.addHandler(FolderRefreshEvent.TYPE, diskResourcesEventHandler));
-        dreventHandlers.add(eventBus.addHandler(DiskResourcesDeletedEvent.TYPE, diskResourcesEventHandler));
-        dreventHandlers.add(eventBus.addHandler(FolderCreatedEvent.TYPE, diskResourcesEventHandler));
-        dreventHandlers.add(eventBus.addHandler(DiskResourceRenamedEvent.TYPE, diskResourcesEventHandler));
-        dreventHandlers.add(eventBus.addHandler(DiskResourcesMovedEvent.TYPE, diskResourcesEventHandler));
     }
 
     @Override
@@ -380,9 +368,7 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
 
     @Override
     public void cleanUp() {
-        for (HandlerRegistration hr : dreventHandlers) {
-            eventBus.removeHandler(hr);
-        }
+        navigationPresenter.cleanUp();
     }
 
     @Override

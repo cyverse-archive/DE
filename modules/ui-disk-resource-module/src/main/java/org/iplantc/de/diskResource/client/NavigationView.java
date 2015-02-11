@@ -76,6 +76,8 @@ public interface NavigationView extends IsWidget,
 
         void addFolder(Folder folder);
 
+        void cleanUp();
+
         void doMoveDiskResources(Folder targetFolder, List<DiskResource> dropData);
 
         Iterable<Folder> getRootItems();
@@ -88,11 +90,7 @@ public interface NavigationView extends IsWidget,
 
         Folder getFolderByPath(String path);
 
-        Folder getParentFolder(Folder child);
-
         void refreshFolder(Folder folder);
-
-        void removeFolder(Folder folder);
 
         boolean rootsLoaded();
 
@@ -119,8 +117,6 @@ public interface NavigationView extends IsWidget,
          */
         void setSelectedFolder(HasPath hasPath);
 
-        void deSelectFolder(Folder folder);
-
         /**
          * ********Used by SelectFolderByPathLoadHandler*********
          *
@@ -141,10 +137,6 @@ public interface NavigationView extends IsWidget,
          * @return the TreeNode if it exists, null otherwise.
          */
         Tree.TreeNode<Folder> findTreeNode(Element el);
-
-
-        void removeChildren(Folder folder);
-
     }
 
     Tree<Folder, Folder> getTree();

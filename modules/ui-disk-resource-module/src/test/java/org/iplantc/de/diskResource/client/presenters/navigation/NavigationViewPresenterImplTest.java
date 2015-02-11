@@ -1,5 +1,6 @@
 package org.iplantc.de.diskResource.client.presenters.navigation;
 
+import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.client.util.DiskResourceUtil;
 import org.iplantc.de.diskResource.client.DiskResourceView;
@@ -34,10 +35,11 @@ public class NavigationViewPresenterImplTest {
     @Mock NavigationPresenterImpl uut;
     @Mock NavigationViewFactory viewFactoryMock;
     @Mock NavigationView viewMock;
+    @Mock EventBus eventBusMock;
 
     @Before public void setUp() {
         when(viewFactoryMock.create(any(TreeStore.class), any(TreeLoader.class), any(NavigationViewDnDHandler.class))).thenReturn(viewMock);
-        uut = new NavigationPresenterImpl(viewFactoryMock, treeStoreMock, folderRpcProxyMock, diskResourceUtilMock, appearanceMock);
+        uut = new NavigationPresenterImpl(viewFactoryMock, treeStoreMock, folderRpcProxyMock, diskResourceUtilMock, eventBusMock, appearanceMock);
     }
 
     @Test public void placeHolderTest() {
