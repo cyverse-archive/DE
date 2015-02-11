@@ -85,8 +85,7 @@ public class PipelineCreator extends Composite {
                 List<PipelineAppMapping> mappingsA = appObj.getMappings();
                 if (mappingsA != null) {
                     for (PipelineAppMapping map : mappingsA) {
-                        int step = map.getStep();
-                        PipeComponent stepC = ret.getSteps().get(step);
+                        PipeComponent stepC = ret.getSteps().get(map.getStep());
                         App appM = ((PipeApp)stepC).getApp();
                         Map<String, String> maps = map.getMap();
                         for (String inputId : maps.keySet()) {

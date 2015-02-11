@@ -150,11 +150,11 @@ public class PipelineAutoBeanUtil {
                     List<PipelineAppMapping> appMappings = app.getMappings();
 
                     if (appMappings != null) {
-                        // Convert the Pipeline output->input mappings to service input->output mappings.
-                        int targetStepId = app.getStep();
+                        // Convert the Pipeline mappings to service mappings.
+                        int targetStep = app.getStep();
 
                         for (PipelineAppMapping mapping : appMappings) {
-                            ServicePipelineMapping publishMapping = getServiceMapping(targetStepId,
+                            ServicePipelineMapping publishMapping = getServiceMapping(targetStep,
                                                                                       mapping);
 
                             if (publishMapping != null) {
@@ -198,12 +198,12 @@ public class PipelineAutoBeanUtil {
     }
 
     /**
-     * Formats the output->input mappings for the given source PipelineAppMapping to the targetStepName,
+     * Formats the mappings for the given source PipelineAppMapping to the targetStep,
      * as a ServicePipelineMapping for the Import Workflow service.
      * 
-     * @return A ServicePipelineMapping of input->output mappings.
+     * @return A ServicePipelineMapping of input/output mappings.
      */
-    private ServicePipelineMapping getServiceMapping(int targetStepId,
+    private ServicePipelineMapping getServiceMapping(int targetStep,
                                                      PipelineAppMapping sourceStepMapping) {
         if (sourceStepMapping != null) {
             Map<String, String> stepMap = sourceStepMapping.getMap();
@@ -219,14 +219,14 @@ public class PipelineAutoBeanUtil {
                     }
                 }
 
-                // Ensure at least one input->output is set for sourceStepName in the service mapping.
+                // Ensure at least one mapping is set for the source step in the service mapping.
                 if (!map.keySet().isEmpty()) {
-                    // Return the mappings from sourceStepName to targetStepName.
+                    // Return the mappings from sourceStep to targetStep.
                     ServicePipelineMapping mapping = serviceFactory.servicePipelineMapping().as();
 
                     // check bug for javascript 0
                     mapping.setSourceStep(sourceStepMapping.getStep());
-                    mapping.setTargetStep(targetStepId);
+                    mapping.setTargetStep(targetStep);
                     mapping.setMap(map);
 
                     return mapping;
@@ -397,18 +397,18 @@ public class PipelineAutoBeanUtil {
             return;
         }
 
-        // Find the output->input mappings for sourceStepName.
+        // Find the output->input mappings for sourceStep.
         FastMap<PipelineAppMapping> mapInputsOutputs = getTargetMappings(targetStep);
         PipelineAppMapping targetAppMapping = mapInputsOutputs.get(sourceStep.getStep());
 
         if (targetAppMapping == null) {
-            // There are no output mappings from this sourceStepName yet.
+            // There are no output mappings from this sourceStep yet.
             if (Strings.isNullOrEmpty(sourceOutputId)) {
                 // nothing to do in order to clear this mapping.
                 return;
             }
 
-            // Create a new output->input mapping for sourceStepName.
+            // Create a new output->input mapping for sourceStep.
             targetAppMapping = factory.appMapping().as();
             targetAppMapping.setStep(sourceStep.getStep());
             targetAppMapping.setId(sourceStep.getTaskId());

@@ -299,7 +299,7 @@ public class PipelineAppMappingForm implements PipelineAppMappingView {
 
         @Override
         public String getLabel(PipelineMappingOutputWrapper item) {
-            String stepLabel = I18N.DISPLAY.stepWithValue(item.getApp().getStep());
+            String stepLabel = I18N.DISPLAY.stepWithValue(item.getApp().getStep()+1);
             return Format.substitute("{0}: {1}", stepLabel, item.getOutput().getLabel()); //$NON-NLS-1$
         }
     }
@@ -347,7 +347,7 @@ public class PipelineAppMappingForm implements PipelineAppMappingView {
         }
 
         private void init() {
-            String stepLabel = I18N.DISPLAY.stepWithValue(app.getStep());
+            String stepLabel = I18N.DISPLAY.stepWithValue(app.getStep()+1);
             setHeadingText(Format.substitute("{0}: {1}", stepLabel, app.getName())); //$NON-NLS-1$
             setCollapsible(true);
             setWidth(400);

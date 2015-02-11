@@ -547,7 +547,7 @@ public class PipelineViewPresenter implements Presenter, PipelineView.Presenter,
         }
 
         // Each app after the first one should have at least one output-to-input mapping.
-        if (targetStep.getStep() > 1) {
+        if (targetStep.getStep() > 0) {
             List<PipelineAppMapping> mappings = targetStep.getMappings();
             if (mappings == null || mappings.size() < 1) {
                 return false;
