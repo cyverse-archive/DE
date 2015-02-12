@@ -12,7 +12,6 @@ import org.iplantc.de.client.util.DiskResourceUtil;
 import org.iplantc.de.commons.client.events.LastSelectedPathChangedEvent;
 import org.iplantc.de.diskResource.client.gin.factory.DiskResourceSelectorDialogFactory;
 import org.iplantc.de.diskResource.client.views.dialogs.FolderSelectDialog;
-import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.user.client.TakesValue;
@@ -33,6 +32,11 @@ import java.util.Set;
  * @author jstroot
  */
 public class FolderSelectorField extends AbstractDiskResourceSelector<Folder> {
+
+    public interface FolderSelectorFieldAppearance extends SelectorAppearance {
+
+        String selectAFolder();
+    }
 
     private class FolderDialogHideHandler implements HideHandler {
         private final TakesValue<Folder> takesValue;
@@ -61,27 +65,30 @@ public class FolderSelectorField extends AbstractDiskResourceSelector<Folder> {
     @Inject EventBus eventBus;
     @Inject DiskResourceSelectorDialogFactory selectorDialogFactory;
     @Inject DiskResourceUtil diskResourceUtil;
+    private final CommonModelUtils commonModelUtils;
 
-    final IplantDisplayStrings displayStrings;
     private final DiskResourceServiceFacade diskResourceService;
+    private final FolderSelectorFieldAppearance appearance;
     private final List<InfoType> infoTypeFilters;
 
     @AssistedInject
-    FolderSelectorField(final IplantDisplayStrings displayStrings,
-                        final DiskResourceServiceFacade diskResourceService){
-        this(displayStrings,
-             diskResourceService,
+    FolderSelectorField(final DiskResourceServiceFacade diskResourceService,
+                        final FolderSelectorFieldAppearance appearance){
+        this(diskResourceService,
+             appearance,
              Collections.<InfoType>emptyList());
     }
 
     @AssistedInject
-    FolderSelectorField(final IplantDisplayStrings displayStrings,
-                        final DiskResourceServiceFacade diskResourceService,
+    FolderSelectorField(final DiskResourceServiceFacade diskResourceService,
+                        final FolderSelectorFieldAppearance appearance,
                         @Assisted List<InfoType> infoTypeFilters) {
-        this.displayStrings = displayStrings;
+        super(appearance);
         this.diskResourceService = diskResourceService;
+        this.appearance = appearance;
         this.infoTypeFilters = infoTypeFilters;
-        setEmptyText(displayStrings.selectAFolder());
+        setEmptyText(appearance.selectAFolder());
+        commonModelUtils = CommonModelUtils.getInstance();
     }
 
     @Override
@@ -109,7 +116,7 @@ public class FolderSelectorField extends AbstractDiskResourceSelector<Folder> {
         if (value == null && userSettings.isRememberLastPath()) {
             String path = userSettings.getLastPath();
             if (path != null) {
-                value = CommonModelUtils.getInstance().createHasPathFromString(path);
+                value = commonModelUtils.createHasPathFromString(path);
             }
         }
         folderSD = selectorDialogFactory.createFilteredFolderSelector(value, infoTypeFilters);
@@ -134,7 +141,7 @@ public class FolderSelectorField extends AbstractDiskResourceSelector<Folder> {
                 if (it.equals(infoType)) {
                     // Reset status message
                     status.setStatus(true);
-                    status.update(displayStrings.dataDragDropStatusText(dropData.size()));
+                    status.update(appearance.dataDragDropStatusText(dropData.size()));
                     return true;
                 }
             }
@@ -143,7 +150,7 @@ public class FolderSelectorField extends AbstractDiskResourceSelector<Folder> {
         // Reset status message
         status.setStatus(isValid);
         if(isValid){
-            status.update(displayStrings.dataDragDropStatusText(dropData.size()));
+            status.update(appearance.dataDragDropStatusText(dropData.size()));
         }
 
         return isValid;

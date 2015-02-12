@@ -31,9 +31,7 @@ import java.util.Set;
  */
 public class FileFolderSelectorField extends AbstractDiskResourceSelector<DiskResource> {
 
-    public interface FileFolderSelectorFieldAppearance {
-
-        String dataDragDropStatusText(int size);
+    public interface FileFolderSelectorFieldAppearance extends SelectorAppearance {
 
         String emptyText();
     }
@@ -81,6 +79,7 @@ public class FileFolderSelectorField extends AbstractDiskResourceSelector<DiskRe
     @Inject
     FileFolderSelectorField(final FileFolderSelectorFieldAppearance appearance,
                             @Assisted final List<InfoType> infoTypeFilters){
+        super(appearance);
         this.appearance = appearance;
         this.infoTypeFilters = infoTypeFilters;
         setEmptyText(appearance.emptyText());

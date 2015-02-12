@@ -21,8 +21,6 @@ import org.iplantc.de.diskResource.client.model.DiskResourceProperties;
 import org.iplantc.de.diskResource.client.views.dialogs.FileSelectDialog;
 import org.iplantc.de.resources.client.constants.IplantValidationConstants;
 import org.iplantc.de.resources.client.messages.I18N;
-import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
-import org.iplantc.de.resources.client.messages.IplantErrorStrings;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -34,6 +32,7 @@ import com.google.gwt.event.logical.shared.HasValueChangeHandlers;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiFactory;
 import com.google.gwt.uibinder.client.UiField;
@@ -88,7 +87,25 @@ public class MultiFileSelectorField extends Composite implements IsField<List<Ha
                                                                  DndDragMoveHandler,
                                                                  DndDropHandler,
                                                                  DiskResourceSelector,
-                                                                 DiskResourceSelector.HasDisableBrowseButtons, SelectionChangedHandler<DiskResource> {
+                                                                 DiskResourceSelector.HasDisableBrowseButtons,
+                                                                 SelectionChangedHandler<DiskResource> {
+
+    public interface MultiFileSelectorFieldAppearance {
+
+        String analysisFailureWarning(String s);
+
+        SafeHtml dataDragDropStatusText(int size);
+
+        String diskResourceDoesNotExist(String drErrList);
+
+        String nameColumnLabel();
+
+        String permissionSelectErrorMessage();
+
+        String requiredField();
+
+        String selectMultipleInputs();
+    }
 
     private final class FileSelectDialogHideHandler implements HideHandler {
         private final FileSelectDialog dlg;
@@ -132,15 +149,14 @@ public class MultiFileSelectorField extends Composite implements IsField<List<Ha
     @UiField ListStore<DiskResource> listStore;
     @UiField ToolBar toolbar;
     @UiField HTML warnInfo;
+    private final MultiFileSelectorFieldAppearance appearance;
     private final SideErrorHandler errorSupport;
     // by default do not validate permissions
     private final boolean validatePermissions = false;
     private boolean addDeleteButtonsEnabled = true;
     private boolean required;
 
-    private final IplantDisplayStrings displayStrings;
     @Inject UserSettings userSettings;
-    @Inject IplantErrorStrings errorStrings;
     @Inject DiskResourceAutoBeanFactory factory;
     @Inject DiskResourceServiceFacade drServiceFacade;
     @Inject IplantValidationConstants validationConstants;
@@ -149,14 +165,14 @@ public class MultiFileSelectorField extends Composite implements IsField<List<Ha
     @Inject DiskResourceUtil diskResourceUtil;
 
     @Inject
-    MultiFileSelectorField(final IplantDisplayStrings displayStrings) {
+    MultiFileSelectorField(final MultiFileSelectorFieldAppearance appearance) {
+        this.appearance = appearance;
         this.errorSupport = new IPlantSideErrorHandler(this);
-        this.displayStrings = displayStrings;
 
         initWidget(BINDER.createAndBindUi(this));
         grid.getSelectionModel().addSelectionChangedHandler(this);
         grid.setBorders(true);
-        gridView.setEmptyText(displayStrings.selectMultipleInputs());
+        gridView.setEmptyText(appearance.selectMultipleInputs());
         initDragAndDrop();
     }
 
@@ -296,7 +312,7 @@ public class MultiFileSelectorField extends Composite implements IsField<List<Ha
         errors.addAll(permissionErrors);
         errors.addAll(existsErrors);
         if (required && listStore.getAll().isEmpty()) {
-            errors.add(new DefaultEditorError(this, I18N.ERROR.requiredField(), ""));
+            errors.add(new DefaultEditorError(this, appearance.requiredField(), ""));
         }
         errorSupport.markInvalid(errors);
         return !errors.isEmpty();
@@ -327,7 +343,7 @@ public class MultiFileSelectorField extends Composite implements IsField<List<Ha
 
         // Reset status message
         status.setStatus(true);
-        status.update(displayStrings.dataDragDropStatusText(dropData.size()));
+        status.update(appearance.dataDragDropStatusText(dropData.size()));
 
         return true;
     }
@@ -336,7 +352,7 @@ public class MultiFileSelectorField extends Composite implements IsField<List<Ha
         List<ColumnConfig<DiskResource, ?>> list = Lists.newArrayList();
         DiskResourceProperties props = GWT.create(DiskResourceProperties.class);
 
-        ColumnConfig<DiskResource, String> name = new ColumnConfig<>(props.name(), 130, displayStrings.name());
+        ColumnConfig<DiskResource, String> name = new ColumnConfig<>(props.name(), 130, appearance.nameColumnLabel());
         list.add(name);
         return new ColumnModel<>(list);
     }
@@ -417,7 +433,7 @@ public class MultiFileSelectorField extends Composite implements IsField<List<Ha
                                             GWT.log("The Reason: " + reason);
                                             List<String> errorMessageValues = Lists.newArrayList();
                                             String drErrList = diskResourceUtil.asCommaSeparatedNameList(errorMessageValues);
-                                            DefaultEditorError existsErr = new DefaultEditorError(MultiFileSelectorField.this, errorStrings.diskResourceDoesNotExist(drErrList), null);
+                                            DefaultEditorError existsErr = new DefaultEditorError(MultiFileSelectorField.this, appearance.diskResourceDoesNotExist(drErrList), null);
                                             existsErrors.add(existsErr);
                                             errors.add(existsErr);
                                             ValueChangeEvent.fire(MultiFileSelectorField.this, value);
@@ -433,7 +449,7 @@ public class MultiFileSelectorField extends Composite implements IsField<List<Ha
                                         Set<Entry<String, DiskResource>> entrySet = result.entrySet();
                                         for (Entry<String, DiskResource> entry : entrySet) {
                                             DiskResource entryValue = entry.getValue();
-                                            DefaultEditorError permError = new DefaultEditorError(MultiFileSelectorField.this, displayStrings.permissionSelectErrorMessage(), entryValue.getId());
+                                            DefaultEditorError permError = new DefaultEditorError(MultiFileSelectorField.this, appearance.permissionSelectErrorMessage(), entryValue.getId());
                                             if (validatePermissions) {
                                                 if (entryValue == null) {
                                                     permissionErrors.add(permError);
@@ -459,7 +475,7 @@ public class MultiFileSelectorField extends Composite implements IsField<List<Ha
     }
 
     private String getSplCharWarning() {
-        return "<span style='color:red;width:65%;font-size:9px;'>" + displayStrings.analysisFailureWarning(validationConstants.warnedDiskResourceNameChars()) + "</span>";
+        return "<span style='color:red;width:65%;font-size:9px;'>" + appearance.analysisFailureWarning(validationConstants.warnedDiskResourceNameChars()) + "</span>";
     }
 
     private void initDragAndDrop() {

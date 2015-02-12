@@ -824,15 +824,6 @@ public interface IplantErrorStrings extends com.google.gwt.i18n.client.Messages,
     String workflowValidationError();
 
     /**
-     * Translated "This field is required.".
-     * 
-     * @return translated "This field is required."
-     */
-    @DefaultMessage("This field is required")
-    @Key("requiredField")
-    String requiredField();
-
-    /**
      * @return translated "Selected App does not have a tool assigned, and cannot be opened for launch."
      */
     @DefaultMessage("Selected App does not have a tool assigned, and cannot be opened for launch.")

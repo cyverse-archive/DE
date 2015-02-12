@@ -1,6 +1,5 @@
 package org.iplantc.de.diskResource.client.views.dialogs;
 
-
 import org.iplantc.de.client.models.HasPath;
 import org.iplantc.de.client.models.UserSettings;
 import org.iplantc.de.client.models.diskResources.Folder;
@@ -10,7 +9,6 @@ import org.iplantc.de.commons.client.views.dialogs.IPlantDialog;
 import org.iplantc.de.diskResource.client.events.FolderSelectionEvent;
 import org.iplantc.de.diskResource.client.gin.factory.DiskResourcePresenterFactory;
 import org.iplantc.de.diskResource.client.DiskResourceView;
-import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 
 import com.google.common.base.Strings;
 import com.google.gwt.event.dom.client.KeyCodes;
@@ -25,9 +23,24 @@ import com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer.Verti
 import com.sencha.gxt.widget.core.client.form.FieldLabel;
 import com.sencha.gxt.widget.core.client.form.TextField;
 
+/**
+ * @author jstroot
+ */
 public class SaveAsDialog extends IPlantDialog {
 
-    private final IplantDisplayStrings displayStrings;
+    public interface SaveAsDialogAppearance {
+
+        String dialogHeight();
+
+        String dialogWidth();
+
+        String fileName();
+
+        String saveAsHeadingText();
+
+        String selectedFolder();
+    }
+
     private final DiskResourceView.Presenter presenter;
     private final TextField selectedFolderField = new TextField();
     private final TextField fileNameField = new TextField();
@@ -37,10 +50,9 @@ public class SaveAsDialog extends IPlantDialog {
 
     @Inject
     SaveAsDialog(final DiskResourcePresenterFactory presenterFactory,
-                 final IplantDisplayStrings displayStrings,
                  final UserSettings userSettings,
+                 final SaveAsDialogAppearance appearance,
                  @Assisted HasPath selectedFolder) {
-        this.displayStrings = displayStrings;
         this.userSettings = userSettings;
         selectedFolderField.setAllowBlank(false);
         selectedFolderField.setReadOnly(true);
@@ -51,15 +63,16 @@ public class SaveAsDialog extends IPlantDialog {
         setHideOnButtonClick(false);
 
         setResizable(true);
-        setSize("640", "480");
-        setHeadingText(this.displayStrings.saveAs());
+        setSize(appearance.dialogWidth(),
+                appearance.dialogHeight());
+        setHeadingText(appearance.saveAsHeadingText());
 
         addKeyHandlers(getOkButton());
 
         final FieldLabel fl1 = new FieldLabel(selectedFolderField,
-                                              displayStrings.selectedFolder());
+                                              appearance.selectedFolder());
         final FieldLabel fl2 = new FieldLabel(fileNameField,
-                                              displayStrings.fileName());
+                                              appearance.fileName());
 
         VerticalLayoutContainer vlc = buildLayout(fl1, fl2);
 

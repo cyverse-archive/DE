@@ -2,13 +2,15 @@ package org.iplantc.de.theme.base.client.diskResource;
 
 import org.iplantc.de.diskResource.client.views.widgets.FileFolderSelectorField;
 import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
+import org.iplantc.de.theme.base.client.diskResource.widgets.AbstractDiskResourceSelectorDefaultAppearance;
 
 import com.google.gwt.core.client.GWT;
 
 /**
  * @author jstroot
  */
-public class FileFolderSelectorFieldDefaultAppearance implements FileFolderSelectorField.FileFolderSelectorFieldAppearance {
+public class FileFolderSelectorFieldDefaultAppearance extends AbstractDiskResourceSelectorDefaultAppearance
+                                                       implements FileFolderSelectorField.FileFolderSelectorFieldAppearance {
     private final IplantDisplayStrings displayStrings;
     private final DiskResourceMessages messages;
 
@@ -21,11 +23,6 @@ public class FileFolderSelectorFieldDefaultAppearance implements FileFolderSelec
                                              final DiskResourceMessages messages){
         this.displayStrings = displayStrings;
         this.messages = messages;
-    }
-
-    @Override
-    public String dataDragDropStatusText(int size) {
-        return displayStrings.dataDragDropStatusText(size);
     }
 
     @Override

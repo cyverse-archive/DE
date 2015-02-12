@@ -1,6 +1,7 @@
 package org.iplantc.de.theme.base.client.diskResource;
 
 import com.google.gwt.i18n.client.Messages;
+import com.google.gwt.safehtml.shared.SafeHtml;
 
 import java.util.List;
 
@@ -8,6 +9,8 @@ import java.util.List;
  * @author jstroot
  */
 public interface DiskResourceMessages extends Messages {
+
+    String browse();
 
     String collapseAll();
 
@@ -17,6 +20,8 @@ public interface DiskResourceMessages extends Messages {
 
     String createIn(String path);
 
+    SafeHtml dataDragDropStatusText(int size);
+
     String deleteDataLinksError();
 
     String deleteFailed();
@@ -24,6 +29,8 @@ public interface DiskResourceMessages extends Messages {
     String deleteMsg();
 
     String deleteTrash();
+
+    String diskResourceDoesNotExist(String diskResourcePath);
 
     String diskResourceIncompleteMove();
 
@@ -42,6 +49,8 @@ public interface DiskResourceMessages extends Messages {
     @Key("fileFolderSelectorFieldEmptyText")
     String fileFolderSelectorFieldEmptyText();
 
+    String fileName();
+
     @Key("fileSelectDialogHeaderText")
     String fileSelectDialogHeaderText();
 
@@ -57,17 +66,29 @@ public interface DiskResourceMessages extends Messages {
 
     String newFolder();
 
+    String nonDefaultFolderWarning();
+
     String partialRestore();
 
     String permissionErrorMessage();
+
+    String permissionSelectErrorMessage();
 
     String permissions();
 
     String renameFailed();
 
+    String requiredField();
+
     String restoreDefaultMsg();
 
     String restoreMsg();
+
+    String selectAFile();
+
+    String selectAFolder();
+
+    String selectMultipleInputs();
 
     @Key("selectedFile")
     String selectedFile();

@@ -110,7 +110,7 @@ public class NavigationViewDefaultAppearance implements NavigationView.Appearanc
 
     @Override
     public String dataDragDropStatusText(int size) {
-        return iplantDisplayStrings.dataDragDropStatusText(size);
+        return diskResourceMessages.dataDragDropStatusText(size).asString();
     }
 
     @Override

@@ -44,6 +44,18 @@
     <replace-with class="org.iplantc.de.theme.base.client.diskResource.dialogs.CreateFolderDialogDefaultAppearance">
         <when-type-is class="org.iplantc.de.diskResource.client.views.dialogs.CreateFolderDialog.Appearance"/>
     </replace-with>
+    <replace-with class="org.iplantc.de.theme.base.client.diskResource.dialogs.SaveAsDialogDefaultAppearance">
+        <when-type-is class="org.iplantc.de.diskResource.client.views.dialogs.SaveAsDialog.SaveAsDialogAppearance"/>
+    </replace-with>
+    <replace-with class="org.iplantc.de.theme.base.client.diskResource.widgets.FileSelectorFieldDefaultAppearance">
+        <when-type-is class="org.iplantc.de.diskResource.client.views.widgets.FileSelectorField.FileSelectorFieldAppearance"/>
+    </replace-with>
+    <replace-with class="org.iplantc.de.theme.base.client.diskResource.widgets.FolderSelectorFieldDefaultAppearance">
+        <when-type-is class="org.iplantc.de.diskResource.client.views.widgets.FolderSelectorField.FolderSelectorFieldAppearance"/>
+    </replace-with>
+    <replace-with class="org.iplantc.de.theme.base.client.diskResource.widgets.MultiFileSelectorFieldDefaultAppearance">
+        <when-type-is class="org.iplantc.de.diskResource.client.views.widgets.MultiFileSelectorField.MultiFileSelectorFieldAppearance"/>
+    </replace-with>
 
     <!-- Navigation -->
     <replace-with class="org.iplantc.de.theme.base.client.diskResource.navigation.NavigationViewDefaultAppearance">

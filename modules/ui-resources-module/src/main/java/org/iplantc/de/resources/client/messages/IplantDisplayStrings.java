@@ -375,15 +375,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     String avgUserRating();
 
     /**
-     * Translated "Browse".
-     *
-     * @return translated "Browse"
-     */
-    @DefaultMessage("Browse")
-    @Key("browse")
-    String browse();
-
-    /**
      * Translated "Browse previously created barcode files:".
      *
      * @return translated "Browse previously created barcode files:"
@@ -750,15 +741,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     @DefaultMessage("Data")
     @Key("data")
     String data();
-
-    /**
-     * Translated "{0} items selected".
-     *
-     * @return translated "{0} items selected"
-     */
-    @DefaultMessage("{0} items selected")
-    @Key("dataDragDropStatusText")
-    String dataDragDropStatusText(int i);
 
     /**
      * Translated "Data: {0}".
@@ -2796,26 +2778,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     @DefaultMessage("Select from existing")
     @Key("selectExsisting")
     String selectExsisting();
-    
-    /**
-     * Translated "Select a file".
-     *
-     * @return translated "Select a file"
-     */
-    @DefaultMessage("Select a file")
-    @Key("selectAFile")
-    String selectAFile();
-
-    String selectMultipleInputs();
-
-    /**
-     * Translated "Select a folder".
-     *
-     * @return translated "Select a folder"
-     */
-    @DefaultMessage("Select a folder")
-    @Key("selectAFolder")
-    String selectAFolder();
 
     /**
      * Translated "Select output folder (a sub-folder will created by default when {0} is selected)".
@@ -2898,15 +2860,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     @DefaultMessage("Selected file")
     @Key("selectedFile")
     String selectedFile();
-
-    /**
-     * Translated "Selected folder".
-     *
-     * @return translated "Selected folder"
-     */
-    @DefaultMessage("Selected folder")
-    @Key("selectedFolder")
-    String selectedFolder();
 
     /**
      * Translated "Selected resource".

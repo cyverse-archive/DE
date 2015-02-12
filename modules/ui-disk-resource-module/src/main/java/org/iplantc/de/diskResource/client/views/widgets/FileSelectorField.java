@@ -11,7 +11,6 @@ import org.iplantc.de.client.util.DiskResourceUtil;
 import org.iplantc.de.commons.client.events.LastSelectedPathChangedEvent;
 import org.iplantc.de.diskResource.client.gin.factory.DiskResourceSelectorDialogFactory;
 import org.iplantc.de.diskResource.client.views.dialogs.FileSelectDialog;
-import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 
 import com.google.common.collect.Lists;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
@@ -33,6 +32,12 @@ import java.util.Set;
  * @author jstroot
  */
 public class FileSelectorField extends AbstractDiskResourceSelector<File> {
+
+    public interface FileSelectorFieldAppearance extends SelectorAppearance {
+
+
+        String selectAFile();
+    }
 
     private class FileDialogHideHandler implements HideHandler {
         private final TakesValue<List<File>> takesValue;
@@ -63,21 +68,22 @@ public class FileSelectorField extends AbstractDiskResourceSelector<File> {
     @Inject DiskResourceSelectorDialogFactory dialogFactory;
     @Inject DiskResourceUtil diskResourceUtil;
 
-    final IplantDisplayStrings displayStrings;
+    private final FileSelectorFieldAppearance appearance;
     final List<InfoType> infoTypeFilters;
 
     @AssistedInject
-    FileSelectorField(final IplantDisplayStrings displayStrings,
+    FileSelectorField(final FileSelectorFieldAppearance appearance,
                       @Assisted final List<InfoType> infoTypeFilters){
-        this.displayStrings = displayStrings;
+        super(appearance);
+        this.appearance = appearance;
         this.infoTypeFilters = infoTypeFilters;
     }
 
     @AssistedInject
-    FileSelectorField(final IplantDisplayStrings displayStrings){
-        this(displayStrings,
+    FileSelectorField(final FileSelectorFieldAppearance appearance){
+        this(appearance,
              Collections.<InfoType>emptyList());
-        setEmptyText(displayStrings.selectAFile());
+        setEmptyText(appearance.selectAFile());
     }
 
     @Override
@@ -135,7 +141,7 @@ public class FileSelectorField extends AbstractDiskResourceSelector<File> {
 
         // Reset status message
         status.setStatus(true);
-        status.update(displayStrings.dataDragDropStatusText(dropData.size()));
+        status.update(appearance.dataDragDropStatusText(dropData.size()));
 
         return true;
     }
