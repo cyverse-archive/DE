@@ -56,6 +56,12 @@
     <replace-with class="org.iplantc.de.theme.base.client.diskResource.widgets.MultiFileSelectorFieldDefaultAppearance">
         <when-type-is class="org.iplantc.de.diskResource.client.views.widgets.MultiFileSelectorField.MultiFileSelectorFieldAppearance"/>
     </replace-with>
+    <replace-with class="org.iplantc.de.theme.base.client.diskResource.dialogs.FileUploadByUrlDialogDefaultAppearance">
+        <when-type-is class="org.iplantc.de.diskResource.client.views.dialogs.FileUploadByUrlDialog.FileUploadByUrlDialogAppearance"/>
+    </replace-with>
+    <replace-with class="org.iplantc.de.theme.base.client.diskResource.dialogs.SimpleFileUploadDialogDefaultAppearance">
+        <when-type-is class="org.iplantc.de.diskResource.client.views.dialogs.SimpleFileUploadDialog.SimpleFileUploadDialogAppearance"/>
+    </replace-with>
 
     <!-- Navigation -->
     <replace-with class="org.iplantc.de.theme.base.client.diskResource.navigation.NavigationViewDefaultAppearance">

@@ -160,14 +160,6 @@ public interface IplantResources extends ClientBundle,
      * 
      * @return image.
      */
-    @Source("arrow_undo.png")
-    ImageResource arrowUndo();
-
-    /**
-     * Image resource.
-     * 
-     * @return image.
-     */
     @Source("book.png")
     ImageResource subCategory();
 

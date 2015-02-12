@@ -4,9 +4,8 @@
              xmlns:gxt="urn:import:com.sencha.gxt.widget.core.client"
              xmlns:views="urn:import:org.iplantc.de.diskResource.client">
 
-    <ui:with field="DISPLAY"
-             type="org.iplantc.de.resources.client.messages.IplantDisplayStrings"/>
-
+    <ui:with field="appearance"
+             type="org.iplantc.de.diskResource.client.DiskResourceView.Presenter.Appearance"/>
     <!-- Border Layout Data -->
     <ui:with field="westMargins"
              type="com.sencha.gxt.core.client.util.Margins">
@@ -68,16 +67,8 @@
 
         <!-- Details Panel -->
         <container:east layoutData="{eastData}">
-            <gxt:ContentPanel headingText="{DISPLAY.details}">
+            <gxt:ContentPanel headingText="{appearance.details}">
                 <views:DetailsView ui:field="detailsView" />
-                <!-- container:VerticalLayoutContainer>
-                    <container:child layoutData="{detailsLayoutDataTop}">
-                        <container:VerticalLayoutContainer ui:field="detailsPanel"
-                                                           adjustForScroll="true"
-                                                           scrollMode="AUTOY" />
-                    </container:child>
-                </container:VerticalLayoutContainer -->
-
             </gxt:ContentPanel>
         </container:east>
 

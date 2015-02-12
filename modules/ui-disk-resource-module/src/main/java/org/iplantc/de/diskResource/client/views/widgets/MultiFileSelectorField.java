@@ -20,7 +20,6 @@ import org.iplantc.de.diskResource.client.model.DiskResourceModelKeyProvider;
 import org.iplantc.de.diskResource.client.model.DiskResourceProperties;
 import org.iplantc.de.diskResource.client.views.dialogs.FileSelectDialog;
 import org.iplantc.de.resources.client.constants.IplantValidationConstants;
-import org.iplantc.de.resources.client.messages.I18N;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -32,6 +31,7 @@ import com.google.gwt.event.logical.shared.HasValueChangeHandlers;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiFactory;
@@ -105,6 +105,14 @@ public class MultiFileSelectorField extends Composite implements IsField<List<Ha
         String requiredField();
 
         String selectMultipleInputs();
+
+        String add();
+
+        ImageResource addIcon();
+
+        String delete();
+
+        ImageResource deleteIcon();
     }
 
     private final class FileSelectDialogHideHandler implements HideHandler {
@@ -149,7 +157,7 @@ public class MultiFileSelectorField extends Composite implements IsField<List<Ha
     @UiField ListStore<DiskResource> listStore;
     @UiField ToolBar toolbar;
     @UiField HTML warnInfo;
-    private final MultiFileSelectorFieldAppearance appearance;
+    @UiField(provided = true) final MultiFileSelectorFieldAppearance appearance;
     private final SideErrorHandler errorSupport;
     // by default do not validate permissions
     private final boolean validatePermissions = false;

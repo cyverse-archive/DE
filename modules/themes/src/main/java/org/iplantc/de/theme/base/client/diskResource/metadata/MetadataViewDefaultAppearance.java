@@ -7,6 +7,7 @@ import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 
 import com.google.common.base.Strings;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.safehtml.client.SafeHtmlTemplates;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
@@ -150,5 +151,25 @@ public class MetadataViewDefaultAppearance implements MetadataView.Appearance {
     @Override
     public String userMetadata() {
         return displayStrings.userMetadata();
+    }
+
+    @Override
+    public String add() {
+        return iplantDisplayStrings.add();
+    }
+
+    @Override
+    public ImageResource addIcon() {
+        return iplantResources.add();
+    }
+
+    @Override
+    public String delete() {
+        return iplantDisplayStrings.delete();
+    }
+
+    @Override
+    public ImageResource deleteIcon() {
+        return iplantResources.delete();
     }
 }

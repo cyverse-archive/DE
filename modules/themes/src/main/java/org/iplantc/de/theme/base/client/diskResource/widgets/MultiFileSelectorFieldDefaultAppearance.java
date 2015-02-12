@@ -1,11 +1,13 @@
 package org.iplantc.de.theme.base.client.diskResource.widgets;
 
 import org.iplantc.de.diskResource.client.views.widgets.MultiFileSelectorField;
+import org.iplantc.de.resources.client.IplantResources;
 import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 import org.iplantc.de.resources.client.messages.IplantErrorStrings;
 import org.iplantc.de.theme.base.client.diskResource.DiskResourceMessages;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.safehtml.shared.SafeHtml;
 
 /**
@@ -15,19 +17,23 @@ public class MultiFileSelectorFieldDefaultAppearance implements MultiFileSelecto
     private final DiskResourceMessages diskResourceMessages;
     private final IplantDisplayStrings iplantDisplayStrings;
     private final IplantErrorStrings iplantErrorStrings;
+    private final IplantResources iplantResources;
 
     public MultiFileSelectorFieldDefaultAppearance() {
         this(GWT.<DiskResourceMessages> create(DiskResourceMessages.class),
              GWT.<IplantDisplayStrings> create(IplantDisplayStrings.class),
-             GWT.<IplantErrorStrings> create(IplantErrorStrings.class));
+             GWT.<IplantErrorStrings> create(IplantErrorStrings.class),
+             GWT.<IplantResources> create(IplantResources.class));
     }
 
     MultiFileSelectorFieldDefaultAppearance(final DiskResourceMessages diskResourceMessages,
                                             final IplantDisplayStrings iplantDisplayStrings,
-                                            final IplantErrorStrings iplantErrorStrings) {
+                                            final IplantErrorStrings iplantErrorStrings,
+                                            final IplantResources iplantResources) {
         this.diskResourceMessages = diskResourceMessages;
         this.iplantDisplayStrings = iplantDisplayStrings;
         this.iplantErrorStrings = iplantErrorStrings;
+        this.iplantResources = iplantResources;
     }
 
     @Override
@@ -63,5 +69,25 @@ public class MultiFileSelectorFieldDefaultAppearance implements MultiFileSelecto
     @Override
     public String selectMultipleInputs() {
         return diskResourceMessages.selectMultipleInputs();
+    }
+
+    @Override
+    public String add() {
+        return iplantDisplayStrings.add();
+    }
+
+    @Override
+    public ImageResource addIcon() {
+        return iplantResources.add();
+    }
+
+    @Override
+    public String delete() {
+        return iplantDisplayStrings.delete();
+    }
+
+    @Override
+    public ImageResource deleteIcon() {
+        return iplantResources.delete();
     }
 }

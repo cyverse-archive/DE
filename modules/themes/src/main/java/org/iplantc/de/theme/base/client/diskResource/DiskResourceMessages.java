@@ -39,6 +39,8 @@ public interface DiskResourceMessages extends Messages {
     @Key("diskResourceMoveSuccess")
     String diskResourceMoveSuccess(String destPath, @Optional @PluralCount List<String> srcPaths);
 
+    String duplicateCheckFailed();
+
     String emptyTrash();
 
     String emptyTrashWarning();
@@ -54,7 +56,13 @@ public interface DiskResourceMessages extends Messages {
     @Key("fileSelectDialogHeaderText")
     String fileSelectDialogHeaderText();
 
+    String fileUploadMaxSizeWarning();
+
     String folderName();
+
+    String idParentInvalid();
+
+    String importLabel();
 
     String listDataLinksError();
 
@@ -79,6 +87,8 @@ public interface DiskResourceMessages extends Messages {
     String renameFailed();
 
     String requiredField();
+
+    String reset();
 
     String restoreDefaultMsg();
 
@@ -119,4 +129,10 @@ public interface DiskResourceMessages extends Messages {
 
     @Key("unsupportedTreeInfoType")
     String unsupportedTreeInfoType();
+
+    String uploadingToFolder(String path);
+
+    String urlImport();
+
+    String urlPrompt();
 }

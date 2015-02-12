@@ -324,15 +324,6 @@ public interface IplantErrorStrings extends com.google.gwt.i18n.client.Messages,
     String dismissMessageFailed();
 
     /**
-     * Translated "Unable to check for duplicates.".
-     * 
-     * @return translated "Unable to check for duplicates."
-     */
-    @DefaultMessage("Unable to check for duplicates.")
-    @Key("duplicateCheckFailed")
-    String duplicateCheckFailed();
-
-    /**
      * A message indicating the user has requested to upload the same file more than once.
      */
     @DefaultMessage("Duplicate file to upload")

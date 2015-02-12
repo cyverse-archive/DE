@@ -5,10 +5,8 @@
              xmlns:button="urn:import:com.sencha.gxt.widget.core.client.button"
              xmlns:form="urn:import:com.sencha.gxt.widget.core.client.form">
 
-    <ui:with field="res"
-             type="org.iplantc.de.resources.client.IplantResources"/>
-    <ui:with field="display"
-             type="org.iplantc.de.resources.client.messages.IplantDisplayStrings"/>
+    <ui:with field="appearance"
+             type="org.iplantc.de.diskResource.client.MetadataView.Appearance"/>
 
     <ui:with field="northData"
              type="com.sencha.gxt.widget.core.client.container.BorderLayoutContainer.BorderLayoutData">
@@ -21,13 +19,13 @@
             <toolbar:ToolBar ui:field="toolbar">
                 <toolbar:child>
                     <button:TextButton ui:field="addMetadataButton"
-                                       text="{display.add}"
-                                       icon="{res.add}"/>
+                                       text="{appearance.add}"
+                                       icon="{appearance.addIcon}"/>
                 </toolbar:child>
                 <toolbar:child>
                     <button:TextButton ui:field="deleteMetadataButton"
-                                       text="{display.delete}"
-                                       icon="{res.delete}"/>
+                                       text="{appearance.delete}"
+                                       icon="{appearance.deleteIcon}"/>
                 </toolbar:child>
                 <toolbar:FillToolItem/>
                 <toolbar:child>

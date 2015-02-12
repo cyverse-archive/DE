@@ -2,9 +2,12 @@ package org.iplantc.de.theme.base.client.diskResource.presenter;
 
 import org.iplantc.de.diskResource.client.DiskResourceView;
 import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
+import org.iplantc.de.resources.client.messages.IplantErrorStrings;
 import org.iplantc.de.theme.base.client.diskResource.DiskResourceMessages;
 
 import com.google.gwt.core.client.GWT;
+
+import java.util.ArrayList;
 
 /**
  * @author jstroot
@@ -12,16 +15,20 @@ import com.google.gwt.core.client.GWT;
 public class DiskResourceViewPresenterDefaultAppearance implements DiskResourceView.Presenter.Appearance {
     private final DiskResourceMessages diskResourceMessages;
     private final IplantDisplayStrings iplantDisplayStrings;
+    private final IplantErrorStrings iplantErrorStrings;
 
     public DiskResourceViewPresenterDefaultAppearance() {
         this(GWT.<DiskResourceMessages> create(DiskResourceMessages.class),
-             GWT.<IplantDisplayStrings> create(IplantDisplayStrings.class));
+             GWT.<IplantDisplayStrings> create(IplantDisplayStrings.class),
+             GWT.<IplantErrorStrings> create(IplantErrorStrings.class));
     }
 
     DiskResourceViewPresenterDefaultAppearance(final DiskResourceMessages diskResourceMessages,
-                                               final IplantDisplayStrings iplantDisplayStrings) {
+                                               final IplantDisplayStrings iplantDisplayStrings,
+                                               final IplantErrorStrings iplantErrorStrings) {
         this.diskResourceMessages = diskResourceMessages;
         this.iplantDisplayStrings = iplantDisplayStrings;
+        this.iplantErrorStrings = iplantErrorStrings;
     }
 
     @Override
@@ -45,6 +52,11 @@ public class DiskResourceViewPresenterDefaultAppearance implements DiskResourceV
     }
 
     @Override
+    public String duplicateCheckFailed() {
+        return diskResourceMessages.duplicateCheckFailed();
+    }
+
+    @Override
     public String emptyTrash() {
         return diskResourceMessages.emptyTrash();
     }
@@ -52,6 +64,36 @@ public class DiskResourceViewPresenterDefaultAppearance implements DiskResourceV
     @Override
     public String emptyTrashWarning() {
         return diskResourceMessages.emptyTrashWarning();
+    }
+
+    @Override
+    public String fileName() {
+        return diskResourceMessages.fileName();
+    }
+
+    @Override
+    public String fileUploadSuccess(String filename) {
+        return iplantDisplayStrings.fileUploadSuccess(filename);
+    }
+
+    @Override
+    public String fileUploadsFailed(ArrayList<String> files) {
+        return iplantErrorStrings.fileUploadsFailed(files);
+    }
+
+    @Override
+    public String folderName() {
+        return diskResourceMessages.folderName();
+    }
+
+    @Override
+    public String idParentInvalid() {
+        return diskResourceMessages.idParentInvalid();
+    }
+
+    @Override
+    public String importFailed(String sourceUrl) {
+        return iplantErrorStrings.importFailed(sourceUrl);
     }
 
     @Override
@@ -67,6 +109,11 @@ public class DiskResourceViewPresenterDefaultAppearance implements DiskResourceV
     @Override
     public String permissionErrorMessage() {
         return diskResourceMessages.permissionErrorMessage();
+    }
+
+    @Override
+    public String rename() {
+        return iplantDisplayStrings.rename();
     }
 
     @Override
@@ -92,5 +139,10 @@ public class DiskResourceViewPresenterDefaultAppearance implements DiskResourceV
     @Override
     public String warning() {
         return iplantDisplayStrings.warning();
+    }
+
+    @Override
+    public String details() {
+        return iplantDisplayStrings.details();
     }
 }

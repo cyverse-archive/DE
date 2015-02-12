@@ -190,7 +190,7 @@ public class DiskResourceMetadataViewImpl extends Composite implements MetadataV
 
     private static final String METADATA_COMPLETE = "Metadata complete"; //$NON-NLS-1$
     private static final DiskResourceMetadataEditorPanelUiBinder uiBinder = GWT.create(DiskResourceMetadataEditorPanelUiBinder.class);
-    private final MetadataView.Appearance appearance = GWT.create(MetadataView.Appearance.class);
+    @UiField(provided = true) final MetadataView.Appearance appearance = GWT.create(MetadataView.Appearance.class);
 
     private final DiskResourceAutoBeanFactory autoBeanFactory = GWT.create(DiskResourceAutoBeanFactory.class);
     private final FastMap<DiskResourceMetadata> templateAttrAvuMap = new FastMap<>();

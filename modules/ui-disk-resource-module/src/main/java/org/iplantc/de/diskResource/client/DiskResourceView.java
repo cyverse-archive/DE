@@ -19,6 +19,7 @@ import com.google.gwt.user.client.ui.IsWidget;
 import com.sencha.gxt.data.shared.loader.DataProxy;
 import com.sencha.gxt.data.shared.loader.TreeLoader;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -59,15 +60,31 @@ public interface DiskResourceView extends IsWidget,
 
             String diskResourceIncompleteMove();
 
+            String duplicateCheckFailed();
+
             String emptyTrash();
 
             String emptyTrashWarning();
+
+            String fileName();
+
+            String fileUploadSuccess(String filename);
+
+            String fileUploadsFailed(ArrayList<String> files);
+
+            String folderName();
+
+            String idParentInvalid();
+
+            String importFailed(String sourceUrl);
 
             String loadingMask();
 
             String moveDiskResourcesLoadingMask();
 
             String permissionErrorMessage();
+
+            String rename();
 
             String renameDiskResourcesLoadingMask();
 
@@ -78,6 +95,8 @@ public interface DiskResourceView extends IsWidget,
             String unsupportedTreeInfoType();
 
             String warning();
+
+            String details();
         }
 
         String FAVORITES_FOLDER_NAME = "Favorites";

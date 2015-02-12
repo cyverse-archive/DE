@@ -6,9 +6,10 @@ import org.iplantc.de.client.models.diskResources.File;
 import org.iplantc.de.client.services.UserSessionServiceFacade;
 import org.iplantc.de.client.util.JsonUtil;
 import org.iplantc.de.commons.client.ErrorHandler;
-import org.iplantc.de.resources.client.messages.I18N;
+import org.iplantc.de.diskResource.client.DiskResourceView;
 
 import com.google.common.collect.Lists;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.json.client.JSONBoolean;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONString;
@@ -21,10 +22,11 @@ import com.google.web.bindery.autobean.shared.AutoBeanCodex;
 /**
  * General handler for file upload. Expects to be called after form submission is complete.
  *
- * @author lenards
+ * @author lenards, jstroot
  */
 public class DefaultUploadCompleteHandler extends UploadCompleteHandler {
 
+    private final UserInfo userInfo;
     private final UserSessionServiceFacade userSessionService;
     private final DiskResourceAutoBeanFactory drFactory;
     private final JsonUtil jsonUtil;
@@ -37,10 +39,12 @@ public class DefaultUploadCompleteHandler extends UploadCompleteHandler {
     public DefaultUploadCompleteHandler(final UserSessionServiceFacade userSessionService,
                                         final DiskResourceAutoBeanFactory drFactory,
                                         String idParent) {
-        super(idParent);
+        super(idParent,
+              GWT.<DiskResourceView.Presenter.Appearance> create(DiskResourceView.Presenter.Appearance.class));
         this.userSessionService = userSessionService;
         this.drFactory = drFactory;
         this.jsonUtil = JsonUtil.getInstance();
+        userInfo = UserInfo.getInstance();
     }
 
     public JSONObject build(final JSONObject json) {
@@ -86,7 +90,7 @@ public class DefaultUploadCompleteHandler extends UploadCompleteHandler {
 
             final JSONObject json = build(payload);
 
-            json.put("user", new JSONString(UserInfo.getInstance().getUsername()));
+            json.put("user", new JSONString(userInfo.getUsername()));
             json.put("email", JSONBoolean.getInstance(false));
 
             userSessionService.postClientNotification(json, new AsyncCallback<String>() {
@@ -111,7 +115,7 @@ public class DefaultUploadCompleteHandler extends UploadCompleteHandler {
     protected JSONObject buildPayload(String sourceUrl, String json) throws Exception {
         JSONObject jsonObj = jsonUtil.getObject(jsonUtil.formatString(json));
         if (jsonObj == null) {
-            throw new Exception(I18N.ERROR.fileUploadsFailed(Lists.newArrayList(sourceUrl)) + ": " + json); //$NON-NLS-1$
+            throw new Exception(((DiskResourceView.Presenter.Appearance) GWT.create(DiskResourceView.Presenter.Appearance.class)).fileUploadsFailed(Lists.newArrayList(sourceUrl)) + ": " + json); //$NON-NLS-1$
         }
 
         // since our current file info objects don't have a parent folder id, we have to add it in.
@@ -130,12 +134,12 @@ public class DefaultUploadCompleteHandler extends UploadCompleteHandler {
         String filename = file.as().getName();
 
         if (!filename.isEmpty()) {
-            return I18N.DISPLAY.fileUploadSuccess(filename);
+            return ((DiskResourceView.Presenter.Appearance) GWT.create(DiskResourceView.Presenter.Appearance.class)).fileUploadSuccess(filename);
         }
 
         String sourceUrl = jsonUtil.getString(jsonObj, "sourceUrl"); //$NON-NLS-1$
 
-        return I18N.ERROR.importFailed(sourceUrl);
+        return ((DiskResourceView.Presenter.Appearance) GWT.create(DiskResourceView.Presenter.Appearance.class)).importFailed(sourceUrl);
     }
 
     private String processXMLErrorMsg(String sourceUrl, String message) {
@@ -143,7 +147,7 @@ public class DefaultUploadCompleteHandler extends UploadCompleteHandler {
             Document d = XMLParser.parse(message);
             return d.getElementsByTagName("error").item(0).getFirstChild().getNodeValue();
         } catch (Exception e) {
-            return I18N.ERROR.fileUploadsFailed(Lists.newArrayList(sourceUrl)) + ": " + message; //$NON-NLS-1$
+            return ((DiskResourceView.Presenter.Appearance) GWT.create(DiskResourceView.Presenter.Appearance.class)).fileUploadsFailed(Lists.newArrayList(sourceUrl)) + ": " + message; //$NON-NLS-1$
         }
     }
 }

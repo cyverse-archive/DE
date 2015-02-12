@@ -12,7 +12,6 @@ import org.iplantc.de.commons.client.validators.DiskResourceNameValidator;
 import org.iplantc.de.commons.client.views.dialogs.IPlantDialog;
 import org.iplantc.de.commons.client.widgets.IPCFileUploadField;
 import org.iplantc.de.diskResource.client.events.FileUploadedEvent;
-import org.iplantc.de.resources.client.messages.I18N;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
@@ -20,6 +19,8 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyUpEvent;
+import com.google.gwt.resources.client.ImageResource;
+import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeUri;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiFactory;
@@ -60,15 +61,37 @@ import java.util.List;
  */
 public class SimpleFileUploadDialog extends IPlantDialog {
 
+    public interface SimpleFileUploadDialogAppearance {
+
+        String confirmAction();
+
+        String fileExist();
+
+        String fileUploadMaxSizeWarning();
+
+        ImageResource arrowUndoIcon();
+
+        String fileUploadsFailed(List<String> strings);
+
+        String idropLiteCloseConfirmMessage();
+
+        SafeHtml renderDestinationPathLabel(String destPath, String parentPath);
+
+        String reset();
+
+        String upload();
+    }
+
     private static final String FORM_WIDTH = "475";
     private static final String FORM_HEIGHT = "28";
-    private static final DiskResourceAutoBeanFactory FS_FACTORY = GWT.create(DiskResourceAutoBeanFactory.class);
     public static final String HDN_PARENT_ID_KEY = "dest";
     public static final String HDN_USER_ID_KEY = "user";
     public static final String FILE_TYPE = "type";
     public static final String URL_FIELD = "url";
-    private static final SimpleFileUploadPanelUiBinder BINDER = GWT
-            .create(SimpleFileUploadPanelUiBinder.class);
+
+    private final DiskResourceAutoBeanFactory FS_FACTORY = GWT.create(DiskResourceAutoBeanFactory.class);
+    private final SimpleFileUploadPanelUiBinder BINDER = GWT.create(SimpleFileUploadPanelUiBinder.class);
+    @UiField(provided = true) final SimpleFileUploadDialogAppearance appearance;
 
     @UiTemplate("SimpleFileUploadPanel.ui.xml")
     interface SimpleFileUploadPanelUiBinder extends UiBinder<Widget, SimpleFileUploadDialog> {
@@ -104,12 +127,13 @@ public class SimpleFileUploadDialog extends IPlantDialog {
         this.diskResourceUtil = diskResourceUtil;
         this.fileUploadServlet = fileUploadServlet;
         this.userName = userName;
+        appearance = GWT.create(SimpleFileUploadDialogAppearance.class);
         setAutoHide(false);
         setHideOnButtonClick(false);
         // Reset the "OK" button text
-        getOkButton().setText(I18N.DISPLAY.upload());
+        getOkButton().setText(appearance.upload());
         getOkButton().setEnabled(false);
-        setHeadingText(I18N.DISPLAY.upload());
+        setHeadingText(appearance.upload());
         addCancelButtonSelectHandler(new HideSelectHandler(this));
 
         add(BINDER.createAndBindUi(this));
@@ -133,9 +157,9 @@ public class SimpleFileUploadDialog extends IPlantDialog {
 
     private void initDestPathLabel() {
         String destPath = uploadDest.getPath();
+        final String parentPath = diskResourceUtil.parseNameFromPath(destPath);
 
-        htmlDestText.setHTML("<div title='" + destPath + "' style='color: #0098AA;width:100%;padding:5px;text-overflow:ellipsis;'>"
-                + Format.ellipse(I18N.DISPLAY.uploadingToFolder(diskResourceUtil.parseNameFromPath(destPath)), 50) + "</div>");
+        htmlDestText.setHTML(appearance.renderDestinationPathLabel(destPath, parentPath));
     }
 
     @UiFactory
@@ -199,8 +223,8 @@ public class SimpleFileUploadDialog extends IPlantDialog {
     public void hide() {
         if (submittedForms.size() > 0) {
             final ConfirmMessageBox cmb = new ConfirmMessageBox(
-                    I18N.DISPLAY.confirmAction(),
-                    I18N.DISPLAY.idropLiteCloseConfirmMessage());
+                    appearance.confirmAction(),
+                    appearance.idropLiteCloseConfirmMessage());
 
             cmb.addDialogHideHandler(new DialogHideEvent.DialogHideHandler() {
                 @Override
@@ -229,9 +253,9 @@ public class SimpleFileUploadDialog extends IPlantDialog {
         Splittable split = StringQuoter.split(results);
         IPCFileUploadField field = fufList.get(formList.indexOf(event.getSource()));
         if (split.isUndefined("file") || (split.get("file") == null)) {
-            field.markInvalid(I18N.ERROR.fileUploadsFailed(Lists.newArrayList(field.getValue())));
+            field.markInvalid(appearance.fileUploadsFailed(Lists.newArrayList(field.getValue())));
             IplantAnnouncer.getInstance().schedule(
-                    new ErrorAnnouncementConfig(I18N.ERROR.fileUploadsFailed(Lists.newArrayList(field.getValue()))));
+                    new ErrorAnnouncementConfig(appearance.fileUploadsFailed(Lists.newArrayList(field.getValue()))));
         } else {
             eventBus.fireEvent(new FileUploadedEvent(uploadDest, field.getValue(), results));
         }
@@ -307,7 +331,7 @@ public class SimpleFileUploadDialog extends IPlantDialog {
         public void markDuplicates(Collection<String> duplicates) {
             if ((duplicates != null) && !duplicates.isEmpty()) {
                 for (String id : duplicates) {
-                    destResourceMap.get(id).markInvalid(I18N.ERROR.fileExist());
+                    destResourceMap.get(id).markInvalid(appearance.fileExist());
                 }
             } else {
                 for (IPCFileUploadField field : destResourceMap.values()) {

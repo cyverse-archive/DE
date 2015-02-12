@@ -1083,16 +1083,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     String fileDescription();
 
     /**
-     * Translated "File Name".
-     *
-     * @return translated "File Name"
-     */
-    @DefaultMessage("File Name")
-    @Key("fileName")
-    String fileName();
-
-
-    /**
      * Translated
      * "Only 8K of the selected file is displayed. For full view of data, please download file.".
      *
@@ -1122,15 +1112,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     String fileUploadFolder(String arg0);
 
     /**
-     * Translated "Maximum total file upload size is 1.9GB.".
-     *
-     * @return translated Maximum size of each file is 1.9GB when using simple upload."
-     */
-    @DefaultMessage("Maximum size of each file is 1.9GB when using simple upload.")
-    @Key("fileUploadMaxSizeWarning")
-    String fileUploadMaxSizeWarning();
-
-    /**
      * Translated "{0} uploaded successfully.".
      *
      * @return translated "{0} uploaded successfully."
@@ -1147,15 +1128,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     @DefaultMessage("Filter by Name or App")
     @Key("filterAnalysesList")
     String filterAnalysesList();
-
-    /**
-     * Translated "Folder Name".
-     *
-     * @return translated "Folder Name"
-     */
-    @DefaultMessage("Folder Name")
-    @Key("folderName")
-    String folderName();
 
     /**
      * Translated "Not useful".
@@ -1183,15 +1155,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     @DefaultMessage("Hide")
     @Key("hide")
     String hide();
-
-    /**
-     * Translated "Argument, idParent, must have a valid value provided.".
-     *
-     * @return translated "Argument, idParent, must have a valid value provided."
-     */
-    @DefaultMessage("Argument, idParent, must have a valid value provided.")
-    @Key("idParentInvalid")
-    String idParentInvalid();
 
     /**
      * Translated
@@ -1253,15 +1216,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     @DefaultMessage("Select 3'' Adapter File")
     @Key("importClipper")
     String importClipper();
-
-    /**
-     * Translated "Import".
-     *
-     * @return translated "Import"
-     */
-    @DefaultMessage("Import")
-    @Key("importLabel")
-    String importLabel();
 
     /**
      * Translated "{0} is uploading and will be available shortly.".
@@ -2607,15 +2561,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     String requestTool();
 
     /**
-     * Translated "Reset".
-     *
-     * @return translated "Reset"
-     */
-    @DefaultMessage("Reset")
-    @Key("reset")
-    String reset();
-
-    /**
      * Translated "Discovery Environment".
      *
      * @return translated "Discovery Environment"
@@ -3278,33 +3223,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     @DefaultMessage("Uploaded")
     @Key("uploaded")
     String uploaded();
-
-    /**
-     * Translated "Uploading to {0}.".
-     *
-     * @return translated "Uploading to {0}."
-     */
-    @DefaultMessage("Uploading to {0}.")
-    @Key("uploadingToFolder")
-    String uploadingToFolder(String arg0);
-
-    /**
-     * Translated "Import from URL".
-     *
-     * @return translated "Import from URL"
-     */
-    @DefaultMessage("Import from URL")
-    @Key("urlImport")
-    String urlImport();
-
-    /**
-     * Translated "Enter URLs below (HTTP(S) or FTP only):".
-     *
-     * @return translated "Enter URLs below (HTTP(S) or FTP only):"
-     */
-    @DefaultMessage("Enter URLs below (HTTP(S) or FTP only):")
-    @Key("urlPrompt")
-    String urlPrompt();
 
     /**
      * Translated "User Name".

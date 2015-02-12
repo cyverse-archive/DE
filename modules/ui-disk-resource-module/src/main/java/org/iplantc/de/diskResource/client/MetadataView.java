@@ -7,6 +7,7 @@ import org.iplantc.de.client.models.diskResources.MetadataTemplateAttribute;
 import org.iplantc.de.client.models.diskResources.MetadataTemplateInfo;
 import org.iplantc.de.diskResource.client.presenters.callbacks.DiskResourceMetadataUpdateCallback;
 
+import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.client.ui.IsWidget;
@@ -49,6 +50,14 @@ public interface MetadataView extends IsWidget {
         String templateSelectedLoadingMask();
 
         String userMetadata();
+
+        String add();
+
+        ImageResource addIcon();
+
+        String delete();
+
+        ImageResource deleteIcon();
     }
 
     public interface Presenter extends org.iplantc.de.commons.client.presenter.Presenter {

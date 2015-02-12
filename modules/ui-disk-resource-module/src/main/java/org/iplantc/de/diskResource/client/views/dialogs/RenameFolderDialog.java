@@ -5,7 +5,6 @@ import org.iplantc.de.commons.client.validators.DiskResourceNameValidator;
 import org.iplantc.de.commons.client.validators.DiskResourceSameNameValidator;
 import org.iplantc.de.commons.client.views.dialogs.IPlantPromptDialog;
 import org.iplantc.de.diskResource.client.DiskResourceView;
-import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 
 import com.google.gwt.core.client.GWT;
 
@@ -19,12 +18,12 @@ public class RenameFolderDialog extends IPlantPromptDialog {
 
     public RenameFolderDialog(final Folder folder,
                               final DiskResourceView.Presenter presenter) {
-        this(folder, presenter, GWT.<IplantDisplayStrings> create(IplantDisplayStrings.class));
+        this(folder, presenter, GWT.<DiskResourceView.Presenter.Appearance> create(DiskResourceView.Presenter.Appearance.class));
     }
 
     public RenameFolderDialog(final Folder folder,
                               final DiskResourceView.Presenter presenter,
-                              final IplantDisplayStrings displayStrings) {
+                              final DiskResourceView.Presenter.Appearance displayStrings) {
         super(displayStrings.folderName(), -1, folder.getName(), new DiskResourceNameValidator());
 
         setHeadingText(displayStrings.rename());

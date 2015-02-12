@@ -23,7 +23,6 @@ import org.iplantc.de.diskResource.client.gin.factory.GridViewPresenterFactory;
 import org.iplantc.de.diskResource.client.gin.factory.ToolbarViewPresenterFactory;
 import org.iplantc.de.diskResource.client.views.search.DiskResourceSearchField;
 import org.iplantc.de.resources.client.messages.IplantContextualHelpStrings;
-import org.iplantc.de.resources.client.messages.IplantErrorStrings;
 
 import com.google.common.collect.Lists;
 import com.google.gwtmockito.GxtMockitoTestRunner;
@@ -50,7 +49,6 @@ public class DiskResourcePresenterImplTest {
     @Mock FolderContentsRpcProxyFactory mockFolderContentsRpcFactory;
     @Mock DiskResourceView.FolderRpcProxy mockFolderRpcProxy;
     @Mock DiskResourceServiceFacade mockDiskResourceService;
-    @Mock IplantErrorStrings errorStringsMock;
     @Mock IplantContextualHelpStrings helpStringsMock;
     @Mock DiskResourceAutoBeanFactory mockFactory;
     @Mock DataLinkFactory mockDlFactory;
