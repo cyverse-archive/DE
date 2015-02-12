@@ -12,13 +12,13 @@ import org.iplantc.de.commons.client.views.window.configs.ConfigFactory;
 import org.iplantc.de.commons.client.views.window.configs.FileViewerWindowConfig;
 import org.iplantc.de.commons.client.views.window.configs.PathListWindowConfig;
 import org.iplantc.de.commons.client.views.window.configs.TabularFileViewerWindowConfig;
+import org.iplantc.de.diskResource.client.DataLinkView;
 import org.iplantc.de.diskResource.client.DiskResourceView;
 import org.iplantc.de.diskResource.client.ToolbarView;
-import org.iplantc.de.diskResource.client.dataLink.view.DataLinkPanel;
 import org.iplantc.de.diskResource.client.events.CreateNewFileEvent;
 import org.iplantc.de.diskResource.client.events.RequestImportFromUrlEvent;
 import org.iplantc.de.diskResource.client.events.ShowFilePreviewEvent;
-import org.iplantc.de.diskResource.client.gin.factory.DataLinkPanelFactory;
+import org.iplantc.de.diskResource.client.gin.factory.DataLinkPresenterFactory;
 import org.iplantc.de.diskResource.client.gin.factory.ToolbarViewFactory;
 import org.iplantc.de.diskResource.client.views.dialogs.CreateFolderDialog;
 import org.iplantc.de.diskResource.client.views.widgets.TabFileConfigDialog;
@@ -39,9 +39,9 @@ import java.util.List;
  */
 public class ToolbarViewPresenterImpl implements ToolbarView.Presenter {
 
-    @Inject EventBus eventBus;
     @Inject ToolbarView.Presenter.Appearance appearance;
-    @Inject DataLinkPanelFactory dataLinkPanelFactory;
+    @Inject DataLinkPresenterFactory dataLinkPresenterFactory;
+    @Inject EventBus eventBus;
     private final DiskResourceView.Presenter parentPresenter;
     private final ToolbarView view;
 
@@ -115,10 +115,10 @@ public class ToolbarViewPresenterImpl implements ToolbarView.Presenter {
         dlg.setPredefinedButtons(OK);
         dlg.setHeadingText(appearance.manageDataLinks());
         dlg.setHideOnButtonClick(true);
-        dlg.setWidth(550);
         dlg.setWidth(appearance.manageDataLinksDialogWidth());
+        dlg.setHeight(appearance.manageDataLinksDialogHeight());
         dlg.setOkButtonText(appearance.done());
-        DataLinkPanel.Presenter dlPresenter = dataLinkPanelFactory.createDataLinkPresenter(selectedDiskResources);
+        DataLinkView.Presenter dlPresenter = dataLinkPresenterFactory.createDataLinkPresenter(selectedDiskResources);
         dlPresenter.go(dlg);
         dlg.addHelp(new HTML(appearance.manageDataLinksHelp()));
         dlg.show();

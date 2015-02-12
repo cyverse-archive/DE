@@ -34,15 +34,6 @@ public interface IplantContextualHelpStrings extends com.google.gwt.i18n.client.
   String publicSubmissionFormCategories();
 
   /**
-   * Translated "<p>There are 3 permission levels: Read, Write, and Own. By default, sharees are granted read-only access to shared data items.</p><br/><p>Read permissions allow the selected user(s) to read, download, and save data, as well as view its associated metadata.</p><br/><p>Write permissions allow the selected user(s) to read, download, and save data, as well as add and edit its associated metadata.</p><br/><p>Own permissions allow the selected user(s) to read, download, save, rename, move, delete, and save data, as well as add and edit its associated metadata.</p>".
-   * 
-   * @return translated "<p>There are 3 permission levels: Read, Write, and Own. By default, sharees are granted read-only access to shared data items.</p><br/><p>Read permissions allow the selected user(s) to read, download, and save data, as well as view its associated metadata.</p><br/><p>Write permissions allow the selected user(s) to read, download, and save data, as well as add and edit its associated metadata.</p><br/><p>Own permissions allow the selected user(s) to read, download, save, rename, move, delete, and save data, as well as add and edit its associated metadata.</p>"
-   */
-  @DefaultMessage("<p>There are 3 permission levels: Read, Write, and Own. By default, sharees are granted read-only access to shared data items.</p><br/><p>Read permissions allow the selected user(s) to read, download, and save data, as well as view its associated metadata.</p><br/><p>Write permissions allow the selected user(s) to read, download, and save data, as well as add and edit its associated metadata.</p><br/><p>Own permissions allow the selected user(s) to read, download, save, rename, move, delete, and save data, as well as add and edit its associated metadata.</p>")
-  @Key("sharePermissionsHelp")
-  String sharePermissionsHelp();
-
-  /**
    * Translated "Your requested tool is now available in the Discovery Environment. Please see the Status Comments for more information.".
    * 
    * @return translated "Your requested tool is now available in the Discovery Environment. Please see the Status Comments for more information."

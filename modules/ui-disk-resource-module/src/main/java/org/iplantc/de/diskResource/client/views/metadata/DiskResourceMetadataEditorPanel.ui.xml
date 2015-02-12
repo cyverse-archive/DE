@@ -1,0 +1,44 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+             xmlns:container="urn:import:com.sencha.gxt.widget.core.client.container"
+             xmlns:toolbar="urn:import:com.sencha.gxt.widget.core.client.toolbar"
+             xmlns:button="urn:import:com.sencha.gxt.widget.core.client.button"
+             xmlns:form="urn:import:com.sencha.gxt.widget.core.client.form">
+
+    <ui:with field="appearance"
+             type="org.iplantc.de.diskResource.client.MetadataView.Appearance"/>
+
+    <ui:with field="northData"
+             type="com.sencha.gxt.widget.core.client.container.BorderLayoutContainer.BorderLayoutData">
+        <ui:attributes size="30" maxSize="30"/>
+    </ui:with>
+
+    <container:BorderLayoutContainer ui:field="con"
+                                     borders="true">
+        <container:north layoutData="{northData}">
+            <toolbar:ToolBar ui:field="toolbar">
+                <toolbar:child>
+                    <button:TextButton ui:field="addMetadataButton"
+                                       text="{appearance.add}"
+                                       icon="{appearance.addIcon}"/>
+                </toolbar:child>
+                <toolbar:child>
+                    <button:TextButton ui:field="deleteMetadataButton"
+                                       text="{appearance.delete}"
+                                       icon="{appearance.deleteIcon}"/>
+                </toolbar:child>
+                <toolbar:FillToolItem/>
+                <toolbar:child>
+                    <form:ComboBox ui:field="templateCombo"
+                                   allowBlank="true"
+                                   forceSelection="true"
+                                   triggerAction="ALL"/>
+                </toolbar:child>
+            </toolbar:ToolBar>
+        </container:north>
+
+        <container:center>
+
+        </container:center>
+    </container:BorderLayoutContainer>
+</ui:UiBinder>

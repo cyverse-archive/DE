@@ -22,7 +22,7 @@ public class RestoreDiskResourcesSelected extends GwtEvent<RestoreDiskResourcesS
         HandlerRegistration addRestoreDiskResourcesSelectedHandler(RestoreDiskResourcesSelectedHandler handler);
     }
 
-    public static Type<RestoreDiskResourcesSelectedHandler> TYPE = new Type<>();
+    public static final Type<RestoreDiskResourcesSelectedHandler> TYPE = new Type<>();
     private final List<DiskResource> selectedDiskResources;
 
     public RestoreDiskResourcesSelected(final List<DiskResource> selectedDiskResources) {

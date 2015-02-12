@@ -21,7 +21,7 @@ public class EditInfoTypeSelected extends GwtEvent<EditInfoTypeSelected.EditInfo
         HandlerRegistration addEditInfoTypeSelectedEventHandler(EditInfoTypeSelectedEventHandler handler);
     }
 
-    public static Type<EditInfoTypeSelectedEventHandler> TYPE = new Type<>();
+    public static final Type<EditInfoTypeSelectedEventHandler> TYPE = new Type<>();
     private final List<DiskResource> selectedDiskResources;
 
     public EditInfoTypeSelected(final List<DiskResource> selectedDiskResources) {

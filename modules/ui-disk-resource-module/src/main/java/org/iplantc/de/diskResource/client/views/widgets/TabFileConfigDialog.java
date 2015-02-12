@@ -15,7 +15,7 @@ import com.sencha.gxt.widget.core.client.form.SpinnerField;
 
 public class TabFileConfigDialog extends Dialog {
 
-    private static TabFileConfigViewUiBinder uiBinder = GWT.create(TabFileConfigViewUiBinder.class);
+    private static final TabFileConfigViewUiBinder uiBinder = GWT.create(TabFileConfigViewUiBinder.class);
 
     @UiTemplate("TabFileConfigView.ui.xml")
     interface TabFileConfigViewUiBinder extends UiBinder<Widget, TabFileConfigDialog> {
@@ -49,7 +49,7 @@ public class TabFileConfigDialog extends Dialog {
 
     @UiFactory
     SpinnerField<Integer> buildSpinnerField() {
-        return new SpinnerField<Integer>(new NumberPropertyEditor.IntegerPropertyEditor());
+        return new SpinnerField<>(new NumberPropertyEditor.IntegerPropertyEditor());
     }
 
     public int getNumberOfColumns() {

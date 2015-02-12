@@ -1,6 +1,6 @@
 package org.iplantc.de.diskResource.client.events;
 
-import org.iplantc.de.resources.client.messages.I18N;
+import org.iplantc.de.diskResource.client.DiskResourceView;
 
 import com.google.gwt.event.shared.EventHandler;
 
@@ -12,6 +12,7 @@ import com.google.gwt.event.shared.EventHandler;
  * @see DefaultUploadCompleteHandler
  */
 public abstract class UploadCompleteHandler implements EventHandler {
+    protected final DiskResourceView.Presenter.Appearance appearance;
     private final String idParentFolder;
 
     /**
@@ -19,9 +20,11 @@ public abstract class UploadCompleteHandler implements EventHandler {
      * 
      * @param idParent unique id for parent folder.
      */
-    public UploadCompleteHandler(String idParent) {
+    public UploadCompleteHandler(String idParent,
+                                 DiskResourceView.Presenter.Appearance appearance) {
+        this.appearance = appearance;
         if (idParent == null || idParent.isEmpty()) {
-            throw new IllegalArgumentException(I18N.DISPLAY.idParentInvalid());
+            throw new IllegalArgumentException(appearance.idParentInvalid());
         }
 
         this.idParentFolder = idParent;

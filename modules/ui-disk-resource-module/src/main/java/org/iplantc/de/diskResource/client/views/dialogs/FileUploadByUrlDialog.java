@@ -8,7 +8,6 @@ import org.iplantc.de.client.services.DiskResourceServiceFacade;
 import org.iplantc.de.client.util.DiskResourceUtil;
 import org.iplantc.de.commons.client.validators.ImportUrlValidator;
 import org.iplantc.de.commons.client.views.dialogs.IPlantDialog;
-import org.iplantc.de.resources.client.messages.I18N;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -46,9 +45,22 @@ import java.util.Set;
  */
 public class FileUploadByUrlDialog extends IPlantDialog implements HasPending<Entry<Field<String>, Status>> {
 
+    public interface FileUploadByUrlDialogAppearance {
+
+        String fileExist();
+
+        String importLabel();
+
+        String uploadingToFolder(String path);
+
+        String urlImport();
+
+        String urlPrompt();
+    }
+
     private static final DiskResourceAutoBeanFactory FS_FACTORY = GWT.create(DiskResourceAutoBeanFactory.class);
 
-    private static FileUploadByUrlPanelUiBinder UIBINDER = GWT.create(FileUploadByUrlPanelUiBinder.class);
+    private static final FileUploadByUrlPanelUiBinder UIBINDER = GWT.create(FileUploadByUrlPanelUiBinder.class);
 
     @UiTemplate("FileUploadByUrlPanel.ui.xml")
     interface FileUploadByUrlPanelUiBinder extends UiBinder<Widget, FileUploadByUrlDialog> {}
@@ -65,19 +77,20 @@ public class FileUploadByUrlDialog extends IPlantDialog implements HasPending<En
     @UiField Status formStatus0, formStatus1, formStatus2, formStatus3, formStatus4;
 
     private final DiskResourceUtil diskResourceUtil;
+    @UiField(provided = true) final FileUploadByUrlDialogAppearance appearance;
 
     public FileUploadByUrlDialog(final Folder uploadDest,
-                                 final DiskResourceServiceFacade drService,
-                                 final String userName) {
+                                 final DiskResourceServiceFacade drService) {
         this.uploadDest = uploadDest;
         this.drService = drService;
         this.diskResourceUtil = DiskResourceUtil.getInstance();
+        appearance = GWT.create(FileUploadByUrlDialogAppearance.class);
         setAutoHide(false);
         setHideOnButtonClick(false);
         // Reset the "OK" button text.
-        getOkButton().setText(I18N.DISPLAY.urlImport());
+        getOkButton().setText(appearance.urlImport());
         getOkButton().setEnabled(false);
-        setHeadingText(I18N.DISPLAY.importLabel());
+        setHeadingText(appearance.importLabel());
 
         add(UIBINDER.createAndBindUi(this));
 
@@ -96,7 +109,7 @@ public class FileUploadByUrlDialog extends IPlantDialog implements HasPending<En
         String destPath = uploadDest.getPath();
 
         htmlDestText.setHTML("<div title='" + destPath + "' style='color: #0098AA;width:100%;padding:5px;text-overflow:ellipsis;'>"
-                + Format.ellipse(I18N.DISPLAY.uploadingToFolder(diskResourceUtil.parseNameFromPath(destPath)), 50) + "</div>");
+                + Format.ellipse(appearance.uploadingToFolder(diskResourceUtil.parseNameFromPath(destPath)), 50) + "</div>");
     }
 
     @UiFactory
@@ -214,7 +227,7 @@ public class FileUploadByUrlDialog extends IPlantDialog implements HasPending<En
                 Status formStatus = fieldToStatusMap.get(urlField);
 
                 if(duplicates.contains(entry.getKey())){
-                    urlField.markInvalid(I18N.ERROR.fileExist());
+                    urlField.markInvalid(appearance.fileExist());
                     formStatus.clearStatus("");
                 }else{
                     Entry<Field<String>, Status> e = getEntry(formStatus);

@@ -98,7 +98,7 @@ public class DetailsViewDefaultAppearance implements DetailsView.Appearance {
 
     @Override
     public String permissions() {
-        return iplantDisplayStrings.permissions();
+        return diskResourceMessages.permissions();
     }
 
     @Override

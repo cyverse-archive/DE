@@ -8,7 +8,7 @@ import com.google.gwt.event.shared.GwtEvent;
 
 public class RequestSendToCoGeEvent extends GwtEvent<RequestSendToCoGeEventHandler> {
 
-    public static final GwtEvent.Type<RequestSendToCoGeEventHandler> TYPE = new GwtEvent.Type<RequestSendToCoGeEventHandler>();
+    public static final GwtEvent.Type<RequestSendToCoGeEventHandler> TYPE = new GwtEvent.Type<>();
 
     public interface RequestSendToCoGeEventHandler extends EventHandler {
         void onRequestSendToCoGe(RequestSendToCoGeEvent event);

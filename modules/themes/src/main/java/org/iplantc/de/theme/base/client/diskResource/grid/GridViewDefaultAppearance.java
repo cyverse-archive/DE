@@ -60,7 +60,7 @@ public class GridViewDefaultAppearance implements GridView.Appearance {
 
     @Override
     public String dataDragDropStatusText(int totalSelectionCount) {
-        return iplantDisplayStrings.dataDragDropStatusText(totalSelectionCount);
+        return diskResourceMessages.dataDragDropStatusText(totalSelectionCount).asString();
     }
 
     @Override

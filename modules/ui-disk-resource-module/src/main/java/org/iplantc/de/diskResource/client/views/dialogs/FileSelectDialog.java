@@ -19,14 +19,11 @@ import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.user.client.TakesValue;
 import com.google.gwt.user.client.ui.HasValue;
 import com.google.inject.Inject;
-import com.google.inject.assistedinject.Assisted;
-import com.google.inject.assistedinject.AssistedInject;
 
 import com.sencha.gxt.widget.core.client.form.FieldLabel;
 import com.sencha.gxt.widget.core.client.form.TextField;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -85,60 +82,20 @@ public class FileSelectDialog extends IPlantDialog implements TakesValue<List<Fi
         String selectorFieldLabel();
     }
 
-    private final DiskResourceView.Presenter presenter;
-    private TextField selectedFileField;
+    private final DiskResourcePresenterFactory presenterFactory;
+    private final FileSelectDialogAppearance appearance;
+
+    private DiskResourceView.Presenter presenter;
+    private final TextField selectedFileField;
     private List<File> selectedFileIds;
     @Inject DiskResourceUtil diskResourceUtil;
 
-    @AssistedInject
+    @Inject
     FileSelectDialog(final DiskResourcePresenterFactory presenterFactory,
-                     final FileSelectDialogAppearance appearance,
-                     @Assisted final boolean singleSelect,
-                     @Assisted final HasPath folderToSelect) {
-        this(presenterFactory, appearance, singleSelect,
-             folderToSelect, null,
-             Collections.<InfoType>emptyList());
-    }
+                     final FileSelectDialogAppearance appearance) {
 
-    @AssistedInject
-    FileSelectDialog(final DiskResourcePresenterFactory presenterFactory,
-                     final FileSelectDialogAppearance appearance,
-                     @Assisted final boolean singleSelect,
-                     @Assisted final HasPath folderToSelect,
-                     @Assisted final List<InfoType> infoTypeFilters) {
-        this(presenterFactory, appearance, singleSelect,
-             folderToSelect, null,
-             infoTypeFilters);
-    }
-
-    @AssistedInject
-    FileSelectDialog(final DiskResourcePresenterFactory presenterFactory,
-                     final FileSelectDialogAppearance appearance,
-                     @Assisted final boolean singleSelect,
-                     @Assisted final List<DiskResource> diskResourcesToSelect) {
-        this(presenterFactory, appearance, singleSelect,
-             null, diskResourcesToSelect,
-             Collections.<InfoType>emptyList());
-    }
-
-    @AssistedInject
-    FileSelectDialog(final DiskResourcePresenterFactory presenterFactory,
-                     final FileSelectDialogAppearance appearance,
-                     @Assisted final boolean singleSelect,
-                     @Assisted final List<DiskResource> diskResourcesToSelect,
-                     @Assisted final List<InfoType> infoTypeFilters) {
-        this(presenterFactory, appearance, singleSelect,
-             null, diskResourcesToSelect,
-             infoTypeFilters);
-    }
-
-    FileSelectDialog(final DiskResourcePresenterFactory presenterFactory,
-                     final FileSelectDialogAppearance appearance,
-                     final boolean singleSelect,
-                     final HasPath folderToSelect,
-                     final List<DiskResource> diskResourcesToSelect,
-                     final List<InfoType> infoTypeFilters) {
-
+        this.presenterFactory = presenterFactory;
+        this.appearance = appearance;
         // Disable Ok button by default.
         getOkButton().setEnabled(false);
 
@@ -147,6 +104,12 @@ public class FileSelectDialog extends IPlantDialog implements TakesValue<List<Fi
         setHeadingText(appearance.headerText());
 
         selectedFileField = new TextField();
+    }
+
+    public void show(final boolean singleSelect,
+                     final HasPath folderToSelect,
+                     final List<DiskResource> diskResourcesToSelect,
+                     final List<InfoType> infoTypeFilters){
         final FieldLabel fl = new FieldLabel(selectedFileField, appearance.selectorFieldLabel());
         // Tell the presenter to add the view with the north and east widgets hidden.
         presenter = presenterFactory.filtered(true,
@@ -161,6 +124,12 @@ public class FileSelectDialog extends IPlantDialog implements TakesValue<List<Fi
         selectedFileField.addKeyUpHandler(new SelectedFileFieldKeyUpHandler(presenter, selectedFileField));
         presenter.addDiskResourceSelectionChangedEventHandler(new FileSelectionChangedHandler(this));
         presenter.go(this, folderToSelect, diskResourcesToSelect);
+        super.show();
+    }
+
+    @Override
+    public void show() throws UnsupportedOperationException {
+        throw new UnsupportedOperationException("");
     }
 
     public void cleanUp() {

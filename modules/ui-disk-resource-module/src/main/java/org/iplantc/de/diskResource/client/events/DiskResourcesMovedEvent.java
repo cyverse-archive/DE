@@ -20,7 +20,7 @@ public class DiskResourcesMovedEvent extends GwtEvent<DiskResourcesMovedEventHan
         
     }
 
-    public static final GwtEvent.Type<DiskResourcesMovedEventHandler> TYPE = new GwtEvent.Type<DiskResourcesMovedEventHandler>();
+    public static final GwtEvent.Type<DiskResourcesMovedEventHandler> TYPE = new GwtEvent.Type<>();
     private final Folder destFolder;
     private final List<DiskResource> resourcesToMove;
     private final Folder srcFolder;

@@ -1,22 +1,10 @@
 package org.iplantc.de.apps.client.presenter;
 
-import org.iplantc.de.apps.client.events.AppCategorySelectionChangedEvent;
-import org.iplantc.de.apps.client.events.AppCommentSelectedEvent;
-import org.iplantc.de.apps.client.events.AppDeleteEvent;
-import org.iplantc.de.apps.client.events.AppFavoritedEvent;
-import org.iplantc.de.apps.client.events.AppNameSelectedEvent;
-import org.iplantc.de.apps.client.events.AppUpdatedEvent;
-import org.iplantc.de.apps.client.events.CreateNewAppEvent;
-import org.iplantc.de.apps.client.events.CreateNewWorkflowEvent;
-import org.iplantc.de.apps.client.events.EditAppEvent;
-import org.iplantc.de.apps.client.events.EditWorkflowEvent;
-import org.iplantc.de.apps.client.events.RunAppEvent;
+import org.iplantc.de.apps.client.events.*;
 import org.iplantc.de.apps.client.presenter.proxy.AppCategoryProxy;
 import org.iplantc.de.apps.client.views.AppsView;
 import org.iplantc.de.apps.client.views.SubmitAppForPublicUseView;
-import org.iplantc.de.apps.client.views.cells.AppCommentCell.AppCommentCellAppearance;
 import org.iplantc.de.apps.client.views.cells.AppFavoriteCell;
-import  org.iplantc.de.tools.requests.client.views.dialogs.NewToolRequestDialog;
 import org.iplantc.de.apps.client.views.dialogs.SubmitAppForPublicDialog;
 import org.iplantc.de.apps.client.views.widgets.events.AppSearchResultLoadEvent;
 import org.iplantc.de.client.events.EventBus;
@@ -26,7 +14,6 @@ import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.models.apps.AppAutoBeanFactory;
 import org.iplantc.de.client.models.apps.AppCategory;
-import org.iplantc.de.client.models.apps.AppFeedback;
 import org.iplantc.de.client.models.apps.AppList;
 import org.iplantc.de.client.services.AppMetadataServiceFacade;
 import org.iplantc.de.client.services.AppServiceFacade;
@@ -34,21 +21,20 @@ import org.iplantc.de.client.services.AppUserServiceFacade;
 import org.iplantc.de.client.util.CommonModelUtils;
 import org.iplantc.de.client.util.JsonUtil;
 import org.iplantc.de.commons.client.ErrorHandler;
-import org.iplantc.de.commons.client.comments.CommentsView;
-import org.iplantc.de.commons.client.comments.gin.factory.CommentsPresenterFactory;
+import org.iplantc.de.commons.client.comments.view.dialogs.CommentsDialog;
 import org.iplantc.de.commons.client.info.ErrorAnnouncementConfig;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
 import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 import org.iplantc.de.resources.client.messages.IplantErrorStrings;
 import org.iplantc.de.shared.exceptions.HttpRedirectException;
-
+import org.iplantc.de.tools.requests.client.views.dialogs.NewToolRequestDialog;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.inject.client.AsyncProvider;
 import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.regexp.shared.RegExp;
@@ -63,7 +49,6 @@ import com.google.web.bindery.autobean.shared.Splittable;
 import com.google.web.bindery.autobean.shared.impl.StringQuoter;
 
 import com.sencha.gxt.widget.core.client.Dialog.PredefinedButton;
-import com.sencha.gxt.widget.core.client.Window;
 import com.sencha.gxt.widget.core.client.box.ConfirmMessageBox;
 import com.sencha.gxt.widget.core.client.event.DialogHideEvent;
 import com.sencha.gxt.widget.core.client.grid.Grid;
@@ -118,14 +103,12 @@ public class AppsViewPresenterImpl implements AppsView.Presenter {
     private final IplantDisplayStrings displayStrings;
     private final IplantErrorStrings errorStrings;
     private RegExp searchRegex;
-    private final AppCommentCellAppearance appearance;
     private final AppMetadataServiceFacade metadataFacade;
 
+    @Inject AsyncProvider<CommentsDialog> commentsDialogProvider;
     @Inject Provider<NewToolRequestDialog> newToolRequestDialogProvider;
     @Inject Provider<SubmitAppForPublicUseView.Presenter> submitAppForPublicPresenterProvider;
     @Inject JsonUtil jsonUtil;
-    @Inject
-    CommentsPresenterFactory commentsPresenterFactory;
 
     @Inject
     public AppsViewPresenterImpl(final AppsView view,
@@ -138,7 +121,6 @@ public class AppsViewPresenterImpl implements AppsView.Presenter {
                                  final IplantAnnouncer announcer,
                                  final IplantDisplayStrings displayStrings,
                                  final IplantErrorStrings errorStrings,
-                                 final AppCommentCellAppearance apperance,
                                  final AppMetadataServiceFacade metadataFacade) {
         this.view = view;
         this.appService = appService;
@@ -149,7 +131,6 @@ public class AppsViewPresenterImpl implements AppsView.Presenter {
         this.announcer = announcer;
         this.displayStrings = displayStrings;
         this.errorStrings = errorStrings;
-        this.appearance = apperance;
         this.metadataFacade = metadataFacade;
 
         // Initialize AppCategory TreeStore proxy and loader
@@ -182,16 +163,18 @@ public class AppsViewPresenterImpl implements AppsView.Presenter {
     @Override
     public void onAppCommentSelectedEvent(AppCommentSelectedEvent event) {
         final App app = event.getApp();
-        Window d = new Window();
-        d.setHeadingText(appearance.comments());
-        d.remove(d.getButtonBar());
-        // FIXME Convert to sovereign dialog?
-        d.setSize(appearance.commentsDialogWidth(), appearance.commentsDialogHeight());
-        CommentsView.Presenter cp = commentsPresenterFactory.createCommentsPresenter(app.getId(),
-                                                                                     app.getIntegratorEmail() == UserInfo.getInstance()
-                                                                                                                         .getEmail());
-        cp.go(d, metadataFacade);
-        d.show();
+        commentsDialogProvider.get(new AsyncCallback<CommentsDialog>() {
+            @Override
+            public void onFailure(Throwable caught) {
+                announcer.schedule(new ErrorAnnouncementConfig("Something happened while trying to manage comments. Please try again or contact support for help."));
+            }
+
+            @Override
+            public void onSuccess(CommentsDialog result) {
+                result.show(app,
+                            app.getIntegratorEmail() == userInfo.getEmail(),
+                            metadataFacade);            }
+        });
     }
 
     @Override

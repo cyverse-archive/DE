@@ -38,19 +38,4 @@ public class DetailsViewPresenterDefaultAppearance implements DetailsView.Presen
     public String tagDetached(String value, String name) {
         return displayStrings.tagDetached(value, name);
     }
-
-    @Override
-    public String unsupportedCogeInfoType() {
-        return displayStrings.unsupportedCogeInfoType();
-    }
-
-    @Override
-    public String unsupportedEnsemblInfoType() {
-        return displayStrings.unsupportedEnsemblInfoType();
-    }
-
-    @Override
-    public String unsupportedTreeInfoType() {
-        return displayStrings.unsupportedTreeInfoType();
-    }
 }

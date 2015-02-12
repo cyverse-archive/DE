@@ -22,7 +22,7 @@ public class DiskResourceNameSelectedEvent extends GwtEvent<DiskResourceNameSele
         HandlerRegistration addDiskResourceNameSelectedEventHandler(DiskResourceNameSelectedEventHandler handler);
     }
 
-    public static final Type<DiskResourceNameSelectedEventHandler> TYPE = new Type<DiskResourceNameSelectedEventHandler>();
+    public static final Type<DiskResourceNameSelectedEventHandler> TYPE = new Type<>();
     private final DiskResource selectedItem;
 
     public DiskResourceNameSelectedEvent(final DiskResource selectedItem) {

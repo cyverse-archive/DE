@@ -47,6 +47,7 @@ public class DeDiskResourceWindow extends IplantWindowBase implements FolderSele
         if (config.getSelectedDiskResources() != null) {
             resourcesToSelect.addAll(config.getSelectedDiskResources());
         }
+
         this.presenter = presenterFactory.withSelectedResources(false,
                                                                 false,
                                                                 false,

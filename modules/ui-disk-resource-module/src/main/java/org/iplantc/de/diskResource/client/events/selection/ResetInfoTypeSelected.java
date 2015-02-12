@@ -20,7 +20,7 @@ public class ResetInfoTypeSelected extends GwtEvent<ResetInfoTypeSelected.ResetI
         HandlerRegistration addResetInfoTypeSelectedHandler(ResetInfoTypeSelectedHandler handler);
     }
 
-    public static Type<ResetInfoTypeSelectedHandler> TYPE = new Type<>();
+    public static final Type<ResetInfoTypeSelectedHandler> TYPE = new Type<>();
     private final DiskResource diskResource;
 
     public ResetInfoTypeSelected(final DiskResource diskResource) {

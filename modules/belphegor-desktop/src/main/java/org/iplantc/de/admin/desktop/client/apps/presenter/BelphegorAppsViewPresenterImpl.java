@@ -16,7 +16,6 @@ import org.iplantc.de.apps.client.events.AppNameSelectedEvent;
 import org.iplantc.de.apps.client.presenter.AppsViewPresenterImpl;
 import org.iplantc.de.apps.client.presenter.proxy.AppCategoryProxy;
 import org.iplantc.de.apps.client.views.AppsView;
-import org.iplantc.de.apps.client.views.cells.AppCommentCell.AppCommentCellAppearance;
 import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.models.DEProperties;
 import org.iplantc.de.client.models.HasId;
@@ -82,21 +81,17 @@ public class BelphegorAppsViewPresenterImpl extends AppsViewPresenterImpl implem
                                                                          AdminAppsView.AdminPresenter,
                                                                          AppEditor.Presenter {
 
-    @Inject
-    AppAutoBeanFactory factory;
-    @Inject
-    AppAdminServiceRequestAutoBeanFactory serviceFactory;
     private final AppsView view;
     private final AppAdminServiceFacade adminAppService;
     private final EventBus eventBus;
 
     private final IplantAnnouncer announcer;
-    @Inject
-    AdminPresenterAppearance appearance;
-    @Inject
-    BelphegorAdminProperties properties;
-    @Inject
-    JsonUtil jsonUtil;
+
+    @Inject AppAutoBeanFactory factory;
+    @Inject AppAdminServiceRequestAutoBeanFactory serviceFactory;
+    @Inject AdminPresenterAppearance appearance;
+    @Inject BelphegorAdminProperties properties;
+    @Inject JsonUtil jsonUtil;
 
     @Inject
     public BelphegorAppsViewPresenterImpl(final AppsView view,
@@ -109,7 +104,6 @@ public class BelphegorAppsViewPresenterImpl extends AppsViewPresenterImpl implem
                                           final IplantAnnouncer announcer,
                                           final IplantDisplayStrings displayStrings,
                                           final IplantErrorStrings errorStrings,
-                                          final AppCommentCellAppearance apperance,
                                           final AppMetadataServiceFacade metadataFacade) {
         super(view,
               proxy,
@@ -121,7 +115,6 @@ public class BelphegorAppsViewPresenterImpl extends AppsViewPresenterImpl implem
               announcer,
               displayStrings,
               errorStrings,
-              apperance,
               metadataFacade);
         this.view = view;
         this.adminAppService = appService;

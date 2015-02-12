@@ -3,7 +3,7 @@
              xmlns:toolbar="urn:import:com.sencha.gxt.widget.core.client.toolbar"
              xmlns:button="urn:import:com.sencha.gxt.widget.core.client.button"
              xmlns:menu="urn:import:com.sencha.gxt.widget.core.client.menu"
-             xmlns:search="urn:import:org.iplantc.de.diskResource.client.search.views">
+             xmlns:search="urn:import:org.iplantc.de.diskResource.client.views.search">
 
     <ui:with field="appearance"
              type="org.iplantc.de.diskResource.client.ToolbarView.Appearance"/>

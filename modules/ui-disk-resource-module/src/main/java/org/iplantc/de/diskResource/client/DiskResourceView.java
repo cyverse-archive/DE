@@ -10,18 +10,16 @@ import org.iplantc.de.diskResource.client.events.DiskResourceSelectionChangedEve
 import org.iplantc.de.diskResource.client.events.FolderSelectionEvent;
 import org.iplantc.de.diskResource.client.events.RootFoldersRetrievedEvent;
 import org.iplantc.de.diskResource.client.events.SavedSearchesRetrievedEvent;
-import org.iplantc.de.diskResource.client.presenters.proxy.FolderContentsLoadConfig;
-import org.iplantc.de.diskResource.client.presenters.proxy.SelectFolderByPathLoadHandler;
-import org.iplantc.de.diskResource.client.search.events.SubmitDiskResourceQueryEvent.HasSubmitDiskResourceQueryEventHandlers;
+import org.iplantc.de.diskResource.client.events.search.SubmitDiskResourceQueryEvent.HasSubmitDiskResourceQueryEventHandlers;
+import org.iplantc.de.diskResource.client.presenters.navigation.proxy.SelectFolderByPathLoadHandler;
 
-import com.google.gwt.safehtml.client.HasSafeHtml;
 import com.google.gwt.user.client.ui.HasOneWidget;
 import com.google.gwt.user.client.ui.IsWidget;
 
 import com.sencha.gxt.data.shared.loader.DataProxy;
-import com.sencha.gxt.data.shared.loader.PagingLoadResult;
 import com.sencha.gxt.data.shared.loader.TreeLoader;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -29,10 +27,6 @@ import java.util.List;
  */
 public interface DiskResourceView extends IsWidget,
                                           IsMaskable {
-
-    interface FolderContentsRpcProxy extends DataProxy<FolderContentsLoadConfig, PagingLoadResult<DiskResource>> {
-        void setHasSafeHtml(HasSafeHtml centerHeader);
-    }
 
     /**
      * A dataproxy used by the <code>Presenter</code> to fetch <code>DiskResource</code> data from the
@@ -56,6 +50,55 @@ public interface DiskResourceView extends IsWidget,
                                 DiskResourceSelectionChangedEvent.HasDiskResourceSelectionChangedEventHandlers,
                                 FolderSelectionEvent.HasFolderSelectionEventHandlers {
 
+        interface Appearance {
+
+            String createFolderLoadingMask();
+
+            String deleteMsg();
+
+            String deleteTrash();
+
+            String diskResourceIncompleteMove();
+
+            String duplicateCheckFailed();
+
+            String emptyTrash();
+
+            String emptyTrashWarning();
+
+            String fileName();
+
+            String fileUploadSuccess(String filename);
+
+            String fileUploadsFailed(ArrayList<String> files);
+
+            String folderName();
+
+            String idParentInvalid();
+
+            String importFailed(String sourceUrl);
+
+            String loadingMask();
+
+            String moveDiskResourcesLoadingMask();
+
+            String permissionErrorMessage();
+
+            String rename();
+
+            String renameDiskResourcesLoadingMask();
+
+            String unsupportedCogeInfoType();
+
+            String unsupportedEnsemblInfoType();
+
+            String unsupportedTreeInfoType();
+
+            String warning();
+
+            String details();
+        }
+
         String FAVORITES_FOLDER_NAME = "Favorites";
         String FAVORITES_FOLDER_PATH = "/favorites";
 
@@ -68,8 +111,6 @@ public interface DiskResourceView extends IsWidget,
 
         void deSelectDiskResources();
 
-        void disableFilePreview();
-
         void doCreateNewFolder(Folder parentFolder, String folderName);
 
         void doMoveDiskResources(Folder targetFolder, List<DiskResource> resources);
@@ -79,8 +120,6 @@ public interface DiskResourceView extends IsWidget,
         List<DiskResource> getSelectedDiskResources();
 
         Folder getSelectedFolder();
-
-        DiskResourceView getView();
 
         void go(HasOneWidget container, HasPath folderToSelect,
                 List<? extends HasId> diskResourcesToSelect);

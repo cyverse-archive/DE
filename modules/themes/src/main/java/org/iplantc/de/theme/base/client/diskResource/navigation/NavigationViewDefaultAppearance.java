@@ -6,6 +6,7 @@ import org.iplantc.de.client.models.search.DiskResourceQueryTemplate;
 import org.iplantc.de.diskResource.client.NavigationView;
 import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 import org.iplantc.de.theme.base.client.diskResource.DiskResourceErrorMessages;
+import org.iplantc.de.theme.base.client.diskResource.DiskResourceMessages;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
@@ -80,6 +81,7 @@ public class NavigationViewDefaultAppearance implements NavigationView.Appearanc
     private final DiskResourceErrorMessages errorMessages;
     private final NavigationDisplayStrings displayStrings;
     private final NavigationViewResources navigationViewResources;
+    private final DiskResourceMessages diskResourceMessages;
     private final Templates templates;
 
     public NavigationViewDefaultAppearance() {
@@ -87,6 +89,7 @@ public class NavigationViewDefaultAppearance implements NavigationView.Appearanc
              GWT.<NavigationDisplayStrings> create(NavigationDisplayStrings.class),
              GWT.<DiskResourceErrorMessages> create(DiskResourceErrorMessages.class),
              GWT.<NavigationViewResources> create(NavigationViewResources.class),
+             GWT.<DiskResourceMessages> create(DiskResourceMessages.class),
              GWT.<Templates> create(Templates.class));
     }
 
@@ -94,18 +97,20 @@ public class NavigationViewDefaultAppearance implements NavigationView.Appearanc
                                     final NavigationDisplayStrings displayStrings,
                                     final DiskResourceErrorMessages errorMessages,
                                     final NavigationViewResources navigationViewResources,
+                                    final DiskResourceMessages diskResourceMessages,
                                     final Templates templates) {
         this.iplantDisplayStrings = iplantDisplayStrings;
         this.displayStrings = displayStrings;
         this.errorMessages = errorMessages;
         this.navigationViewResources = navigationViewResources;
+        this.diskResourceMessages = diskResourceMessages;
         this.templates = templates;
         this.navigationViewResources.dataCollapseStyle().ensureInjected();
     }
 
     @Override
     public String dataDragDropStatusText(int size) {
-        return iplantDisplayStrings.dataDragDropStatusText(size);
+        return diskResourceMessages.dataDragDropStatusText(size).asString();
     }
 
     @Override
@@ -150,7 +155,7 @@ public class NavigationViewDefaultAppearance implements NavigationView.Appearanc
 
     @Override
     public String treeCollapseToolTip() {
-        return iplantDisplayStrings.collapseAll();
+        return diskResourceMessages.collapseAll();
     }
 
     @Override

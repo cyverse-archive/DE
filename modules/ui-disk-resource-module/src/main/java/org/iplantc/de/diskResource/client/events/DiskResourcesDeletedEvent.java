@@ -17,7 +17,7 @@ public class DiskResourcesDeletedEvent extends GwtEvent<DiskResourcesDeletedEven
         void onDiskResourcesDeleted(Collection<DiskResource> resources, Folder parentFolder);
     }
 
-    public static final GwtEvent.Type<DiskResourcesDeletedEventHandler> TYPE = new GwtEvent.Type<DiskResourcesDeletedEventHandler>();
+    public static final GwtEvent.Type<DiskResourcesDeletedEventHandler> TYPE = new GwtEvent.Type<>();
     private final Collection<DiskResource> resources;
     private final Folder parentFolder;
 

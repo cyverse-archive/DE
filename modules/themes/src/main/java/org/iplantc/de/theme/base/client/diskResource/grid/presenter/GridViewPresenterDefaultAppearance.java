@@ -3,6 +3,7 @@ package org.iplantc.de.theme.base.client.diskResource.grid.presenter;
 import org.iplantc.de.diskResource.client.GridView;
 import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 import org.iplantc.de.resources.client.messages.IplantErrorStrings;
+import org.iplantc.de.theme.base.client.diskResource.DiskResourceMessages;
 import org.iplantc.de.theme.base.client.diskResource.grid.GridViewDisplayStrings;
 
 import com.google.gwt.core.client.GWT;
@@ -14,19 +15,23 @@ public class GridViewPresenterDefaultAppearance implements GridView.Presenter.Ap
     private final IplantDisplayStrings iplantDisplayStrings;
     private final IplantErrorStrings iplantErrorStrings;
     private final GridViewDisplayStrings displayStrings;
+    private final DiskResourceMessages diskResourceMessages;
 
     public GridViewPresenterDefaultAppearance() {
         this(GWT.<IplantDisplayStrings> create(IplantDisplayStrings.class),
              GWT.<IplantErrorStrings> create(IplantErrorStrings.class),
-             GWT.<GridViewDisplayStrings> create(GridViewDisplayStrings.class));
+             GWT.<GridViewDisplayStrings> create(GridViewDisplayStrings.class),
+             GWT.<DiskResourceMessages> create(DiskResourceMessages.class));
     }
 
     GridViewPresenterDefaultAppearance(final IplantDisplayStrings iplantDisplayStrings,
                                        final IplantErrorStrings iplantErrorStrings,
-                                       final GridViewDisplayStrings displayStrings) {
+                                       final GridViewDisplayStrings displayStrings,
+                                       final DiskResourceMessages diskResourceMessages) {
         this.iplantDisplayStrings = iplantDisplayStrings;
         this.iplantErrorStrings = iplantErrorStrings;
         this.displayStrings = displayStrings;
+        this.diskResourceMessages = diskResourceMessages;
     }
 
     @Override
@@ -56,7 +61,12 @@ public class GridViewPresenterDefaultAppearance implements GridView.Presenter.Ap
 
     @Override
     public String createDataLinksError() {
-        return iplantErrorStrings.createDataLinksError();
+        return diskResourceMessages.createDataLinksError();
+    }
+
+    @Override
+    public String favoritesError(String message) {
+        return displayStrings.favoritesError(message);
     }
 
     @Override
@@ -97,6 +107,16 @@ public class GridViewPresenterDefaultAppearance implements GridView.Presenter.Ap
     @Override
     public String retrieveStatFailed() {
         return displayStrings.retrieveStatError();
+    }
+
+    @Override
+    public String searchDataResultsHeader(String searchText, int total, double executionTime_ms) {
+        return displayStrings.searchDataResultsHeader(searchText, total, executionTime_ms);
+    }
+
+    @Override
+    public String searchFailure() {
+        return displayStrings.searchFailure();
     }
 
     @Override

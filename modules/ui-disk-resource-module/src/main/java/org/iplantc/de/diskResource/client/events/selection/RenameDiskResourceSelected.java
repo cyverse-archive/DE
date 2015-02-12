@@ -19,7 +19,7 @@ public class RenameDiskResourceSelected extends GwtEvent<RenameDiskResourceSelec
         HandlerRegistration addRenameDiskResourceSelectedHandler(RenameDiskResourceSelectedHandler handler);
     }
 
-    public static Type<RenameDiskResourceSelectedHandler> TYPE = new Type<>();
+    public static final Type<RenameDiskResourceSelectedHandler> TYPE = new Type<>();
     private final DiskResource diskResource;
 
     public RenameDiskResourceSelected(final DiskResource diskResource) {

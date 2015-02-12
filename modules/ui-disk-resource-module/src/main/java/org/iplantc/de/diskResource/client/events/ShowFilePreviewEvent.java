@@ -15,7 +15,7 @@ public class ShowFilePreviewEvent extends GwtEvent<ShowFilePreviewEventHandler> 
 
     }
 
-    public static final GwtEvent.Type<ShowFilePreviewEventHandler> TYPE = new GwtEvent.Type<ShowFilePreviewEventHandler>();
+    public static final GwtEvent.Type<ShowFilePreviewEventHandler> TYPE = new GwtEvent.Type<>();
     private final File file;
     private final FileViewerWindowConfig config;
 

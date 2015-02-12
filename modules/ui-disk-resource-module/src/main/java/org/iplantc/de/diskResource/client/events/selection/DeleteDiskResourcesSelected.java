@@ -22,7 +22,7 @@ public class DeleteDiskResourcesSelected extends GwtEvent<DeleteDiskResourcesSel
         HandlerRegistration addDeleteSelectedDiskResourcesSelectedEventHandler(DeleteDiskResourcesSelectedEventHandler handler);
     }
 
-    public static Type<DeleteDiskResourcesSelectedEventHandler> TYPE = new Type<DeleteDiskResourcesSelectedEventHandler>();
+    public static final Type<DeleteDiskResourcesSelectedEventHandler> TYPE = new Type<>();
     private final List<DiskResource> selectedDiskResources;
     private final boolean confirmDelete;
 

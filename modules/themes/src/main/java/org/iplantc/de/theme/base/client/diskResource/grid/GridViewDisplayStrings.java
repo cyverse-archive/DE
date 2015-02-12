@@ -12,6 +12,8 @@ public interface GridViewDisplayStrings extends Messages{
     @Key("diskResourceNotAvailable")
     String diskResourceNotAvailable();
 
+    String favoritesError(String message);
+
     @Key("markFavoriteError")
     String markFavoriteError();
 
@@ -38,6 +40,10 @@ public interface GridViewDisplayStrings extends Messages{
 
     @Key("retrieveStatError")
     String retrieveStatError();
+
+    String searchDataResultsHeader(String searchText, int total, double executionTime_ms);
+
+    String searchFailure();
 
     @Key("share")
     String share();

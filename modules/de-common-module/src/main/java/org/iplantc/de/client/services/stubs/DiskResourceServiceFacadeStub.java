@@ -2,14 +2,7 @@ package org.iplantc.de.client.services.stubs;
 
 import org.iplantc.de.client.models.HasPaths;
 import org.iplantc.de.client.models.dataLink.DataLink;
-import org.iplantc.de.client.models.diskResources.DiskResource;
-import org.iplantc.de.client.models.diskResources.DiskResourceAutoBeanFactory;
-import org.iplantc.de.client.models.diskResources.DiskResourceExistMap;
-import org.iplantc.de.client.models.diskResources.DiskResourceMetadata;
-import org.iplantc.de.client.models.diskResources.DiskResourceMetadataTemplate;
-import org.iplantc.de.client.models.diskResources.Folder;
-import org.iplantc.de.client.models.diskResources.RootFolders;
-import org.iplantc.de.client.models.diskResources.TYPE;
+import org.iplantc.de.client.models.diskResources.*;
 import org.iplantc.de.client.models.services.DiskResourceMove;
 import org.iplantc.de.client.models.viewer.InfoType;
 import org.iplantc.de.client.services.DiskResourceServiceFacade;
@@ -116,7 +109,7 @@ public class DiskResourceServiceFacadeStub implements DiskResourceServiceFacade 
     }
 
     @Override
-    public void getDiskResourceMetaData(DiskResource resource, AsyncCallback<String> callback) {
+    public void getDiskResourceMetaData(DiskResource resource, AsyncCallback<List<DiskResourceMetadata>> callback) {
 
     }
 
@@ -201,12 +194,12 @@ public class DiskResourceServiceFacadeStub implements DiskResourceServiceFacade 
     }
 
     @Override
-    public void getMetadataTemplateListing(AsyncCallback<String> callback) {
+    public void getMetadataTemplateListing(AsyncCallback<List<MetadataTemplateInfo>> callback) {
 
     }
 
     @Override
-    public void getMetadataTemplate(String templateId, AsyncCallback<String> callback) {
+    public void getMetadataTemplate(String templateId, AsyncCallback<MetadataTemplate> callback) {
 
     }
 

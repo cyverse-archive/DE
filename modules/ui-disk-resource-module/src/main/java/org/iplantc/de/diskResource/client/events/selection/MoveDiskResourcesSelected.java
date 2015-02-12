@@ -21,7 +21,7 @@ public class MoveDiskResourcesSelected extends GwtEvent<MoveDiskResourcesSelecte
         HandlerRegistration addMoveDiskResourcesSelectedHandler(MoveDiskResourcesSelectedHandler handler);
     }
 
-    public static Type<MoveDiskResourcesSelectedHandler> TYPE = new Type<>();
+    public static final Type<MoveDiskResourcesSelectedHandler> TYPE = new Type<>();
     private final List<DiskResource> selectedDiskResources;
 
     public MoveDiskResourcesSelected(final List<DiskResource> selectedDiskResources) {

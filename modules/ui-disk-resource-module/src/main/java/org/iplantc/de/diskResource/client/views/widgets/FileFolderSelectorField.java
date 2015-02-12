@@ -7,15 +7,17 @@ import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.client.models.viewer.InfoType;
 import org.iplantc.de.client.util.CommonModelUtils;
+import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.commons.client.events.LastSelectedPathChangedEvent;
-import org.iplantc.de.diskResource.client.gin.factory.DiskResourceSelectorDialogFactory;
 import org.iplantc.de.diskResource.client.views.dialogs.FileFolderSelectDialog;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.gwt.event.logical.shared.HasValueChangeHandlers;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.inject.client.AsyncProvider;
 import com.google.gwt.user.client.TakesValue;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 
@@ -31,9 +33,7 @@ import java.util.Set;
  */
 public class FileFolderSelectorField extends AbstractDiskResourceSelector<DiskResource> {
 
-    public interface FileFolderSelectorFieldAppearance {
-
-        String dataDragDropStatusText(int size);
+    public interface FileFolderSelectorFieldAppearance extends SelectorAppearance {
 
         String emptyText();
     }
@@ -72,7 +72,7 @@ public class FileFolderSelectorField extends AbstractDiskResourceSelector<DiskRe
         }
     }
 
-    @Inject DiskResourceSelectorDialogFactory selectorDialogFactory;
+    @Inject AsyncProvider<FileFolderSelectDialog> fileFolderSelectDialogProvider;
     @Inject UserSettings userSettings;
     @Inject EventBus eventBus;
     private final FileFolderSelectorFieldAppearance appearance;
@@ -81,6 +81,7 @@ public class FileFolderSelectorField extends AbstractDiskResourceSelector<DiskRe
     @Inject
     FileFolderSelectorField(final FileFolderSelectorFieldAppearance appearance,
                             @Assisted final List<InfoType> infoTypeFilters){
+        super(appearance);
         this.appearance = appearance;
         this.infoTypeFilters = infoTypeFilters;
         setEmptyText(appearance.emptyText());
@@ -103,7 +104,7 @@ public class FileFolderSelectorField extends AbstractDiskResourceSelector<DiskRe
     protected void onBrowseSelected() {
         final DiskResource value = getValue();
         HasPath folderToSelect = null;
-        List<DiskResource> diskResourcesToSelect = Lists.newArrayList();
+        final List<DiskResource> diskResourcesToSelect = Lists.newArrayList();
         if ((value == null || Strings.isNullOrEmpty(value.getPath()))
                 && userSettings.isRememberLastPath()) {
             String path = userSettings.getLastPath();
@@ -116,11 +117,22 @@ public class FileFolderSelectorField extends AbstractDiskResourceSelector<DiskRe
         }else {
             diskResourcesToSelect.add(value);
         }
-        FileFolderSelectDialog dlg = selectorDialogFactory.createFileFolderSelectDialog(folderToSelect,
-                                                                                        diskResourcesToSelect,
-                                                                                        infoTypeFilters);
-        dlg.addHideHandler(new HideHandler(dlg, this, userSettings, eventBus));
-        dlg.show();
+        final HasPath finalFolderToSelect = folderToSelect;
+        fileFolderSelectDialogProvider.get(new AsyncCallback<FileFolderSelectDialog>() {
+            @Override
+            public void onFailure(Throwable caught) {
+                ErrorHandler.post(caught);
+            }
+
+            @Override
+            public void onSuccess(FileFolderSelectDialog result) {
+
+                result.addHideHandler(new HideHandler(result, FileFolderSelectorField.this, userSettings, eventBus));
+                result.show(finalFolderToSelect,
+                            diskResourcesToSelect,
+                            infoTypeFilters);
+            }
+        });
     }
 
     @Override

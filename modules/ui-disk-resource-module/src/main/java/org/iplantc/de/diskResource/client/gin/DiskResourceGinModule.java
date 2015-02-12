@@ -5,26 +5,31 @@ import org.iplantc.de.diskResource.client.DetailsView;
 import org.iplantc.de.diskResource.client.DiskResourceView;
 import org.iplantc.de.diskResource.client.GridView;
 import org.iplantc.de.diskResource.client.NavigationView;
+import org.iplantc.de.diskResource.client.SearchView;
 import org.iplantc.de.diskResource.client.ToolbarView;
-import org.iplantc.de.diskResource.client.dataLink.presenter.DataLinkPresenterImpl;
-import org.iplantc.de.diskResource.client.dataLink.view.DataLinkPanel;
+import org.iplantc.de.diskResource.client.presenters.dataLink.DataLinkPresenterImpl;
+import org.iplantc.de.diskResource.client.DataLinkView;
+import org.iplantc.de.diskResource.client.views.dataLink.DataLinkViewImpl;
 import org.iplantc.de.diskResource.client.gin.factory.*;
 import org.iplantc.de.diskResource.client.presenters.DiskResourcePresenterImpl;
 import org.iplantc.de.diskResource.client.presenters.details.DetailsViewPresenterImpl;
 import org.iplantc.de.diskResource.client.presenters.grid.GridViewPresenterImpl;
 import org.iplantc.de.diskResource.client.presenters.navigation.NavigationPresenterImpl;
-import org.iplantc.de.diskResource.client.presenters.proxy.FolderContentsRpcProxyImpl;
-import org.iplantc.de.diskResource.client.presenters.proxy.FolderRpcProxyImpl;
+import org.iplantc.de.diskResource.client.presenters.grid.proxy.FolderContentsRpcProxyImpl;
+import org.iplantc.de.diskResource.client.presenters.navigation.proxy.FolderRpcProxyImpl;
 import org.iplantc.de.diskResource.client.presenters.toolbar.ToolbarViewPresenterImpl;
-import org.iplantc.de.diskResource.client.search.presenter.DataSearchPresenter;
-import org.iplantc.de.diskResource.client.search.presenter.impl.DataSearchPresenterImpl;
-import org.iplantc.de.diskResource.client.search.views.DiskResourceSearchField;
-import org.iplantc.de.diskResource.client.search.views.cells.DiskResourceQueryForm;
-import org.iplantc.de.diskResource.client.search.views.cells.DiskResourceSearchCell;
+import org.iplantc.de.diskResource.client.presenters.search.DataSearchPresenterImpl;
+import org.iplantc.de.diskResource.client.views.dialogs.InfoTypeEditorDialog;
+import org.iplantc.de.diskResource.client.views.metadata.dialogs.ManageMetadataDialog;
+import org.iplantc.de.diskResource.client.views.search.DiskResourceSearchField;
+import org.iplantc.de.diskResource.client.views.search.cells.DiskResourceQueryForm;
+import org.iplantc.de.diskResource.client.views.search.cells.DiskResourceSearchCell;
 import org.iplantc.de.diskResource.client.views.DiskResourceViewImpl;
 import org.iplantc.de.diskResource.client.views.details.DetailsViewImpl;
 import org.iplantc.de.diskResource.client.views.grid.GridViewImpl;
 import org.iplantc.de.diskResource.client.views.navigation.NavigationViewImpl;
+import org.iplantc.de.diskResource.client.views.sharing.dialogs.DataSharingDialog;
+import org.iplantc.de.diskResource.client.views.sharing.dialogs.ShareResourceLinkDialog;
 import org.iplantc.de.diskResource.client.views.toolbar.DiskResourceViewToolbarImpl;
 
 import com.google.gwt.inject.client.AbstractGinModule;
@@ -44,30 +49,30 @@ public class DiskResourceGinModule extends AbstractGinModule {
         // RPC Proxies
         bind(DiskResourceView.FolderRpcProxy.class).to(FolderRpcProxyImpl.class);
         install(new GinFactoryModuleBuilder()
-                    .implement(DiskResourceView.FolderContentsRpcProxy.class, FolderContentsRpcProxyImpl.class)
+                    .implement(GridView.FolderContentsRpcProxy.class, FolderContentsRpcProxyImpl.class)
                     .build(FolderContentsRpcProxyFactory.class));
 
         // Disk Resource Presenters
-        bind(DataSearchPresenter.class).to(DataSearchPresenterImpl.class);
+        bind(SearchView.Presenter.class).to(DataSearchPresenterImpl.class);
         install(new GinFactoryModuleBuilder()
                     .implement(DiskResourceView.Presenter.class, DiskResourcePresenterImpl.class)
                     .build(DiskResourcePresenterFactory.class));
+
+        // Data Links
         install(new GinFactoryModuleBuilder()
-                    .implement(DataLinkPanel.Presenter.class, DataLinkPresenterImpl.class)
-                    .build(DataLinkPanelFactory.class));
+                    .implement(DataLinkView.Presenter.class, DataLinkPresenterImpl.class)
+                    .build(DataLinkPresenterFactory.class));
+        install(new GinFactoryModuleBuilder()
+                    .implement(DataLinkView.class, DataLinkViewImpl.class)
+                    .build(DataLinkViewFactory.class));
 
         // Disk Resource Views
         bind(new TypeLiteral<TreeStore<Folder>>() {}).toProvider(DiskResourceTreeStoreProvider.class);
-//        bind(ToolbarView.class).to(DiskResourceViewToolbarImpl.class);
         install(new GinFactoryModuleBuilder()
                     .implement(DiskResourceView.class, DiskResourceViewImpl.class)
                     .build(DiskResourceViewFactory.class));
 
         // Disk Resource Selectors and Dialogs
-        install(new GinFactoryModuleBuilder()
-                    .build(DiskResourceSelectorDialogFactory.class));
-        install(new GinFactoryModuleBuilder()
-                    .build(DataSharingDialogFactory.class));
         install(new GinFactoryModuleBuilder()
                     .build(DiskResourceSelectorFieldFactory.class));
         bind(DiskResourceQueryForm.class);
@@ -104,6 +109,13 @@ public class DiskResourceGinModule extends AbstractGinModule {
         install(new GinFactoryModuleBuilder()
                     .implement(DetailsView.class, DetailsViewImpl.class)
                     .build(DetailsViewFactory.class));
+
+
+        // Dialogs
+        bind(InfoTypeEditorDialog.class);
+        bind(ManageMetadataDialog.class);
+        bind(DataSharingDialog.class);
+        bind(ShareResourceLinkDialog.class);
     }
 
 

@@ -15,8 +15,12 @@ import com.google.gwt.resources.client.ImageResource;
  * @author sriram
  * 
  */
-public interface IplantResources extends ClientBundle, AppResources, DiskResourceResources,
-        AppIntegrationPaletteImages, DEHeaderResources, DataLinkResources, DataCollapseResources, DEFeedbackResources {
+public interface IplantResources extends ClientBundle,
+                                         AppResources,
+                                         DiskResourceResources,
+                                         AppIntegrationPaletteImages,
+                                         DEHeaderResources,
+                                         DEFeedbackResources {
 
     public static IplantResources RESOURCES = GWT.create(IplantResources.class);
 
@@ -150,14 +154,6 @@ public interface IplantResources extends ClientBundle, AppResources, DiskResourc
 
     @Source("wand.png")
     ImageResource layoutWand();
-
-    /**
-     * Image resource.
-     * 
-     * @return image.
-     */
-    @Source("arrow_undo.png")
-    ImageResource arrowUndo();
 
     /**
      * Image resource.
@@ -363,14 +359,6 @@ public interface IplantResources extends ClientBundle, AppResources, DiskResourc
 
     /**
      * Image resource.
-     * 
-     * @return image.
-     */
-    @Source("file.gif")
-    ImageResource file();
-
-    /**
-     * Image resource.
      *
      * @return image.
      */
@@ -511,35 +499,11 @@ public interface IplantResources extends ClientBundle, AppResources, DiskResourc
     @Source("DEHeader.css")
     DEHeaderStyle getHeaderStyle();
 
-    @Override
-    @Source("tree_collapse.png")
-    ImageResource treeCollapse();
-    
-    @Override
     @Source("tree_collapse_hover.png")
     ImageResource treeCollapseHover();
 
-    @Override
-    @Source("tree_expand.png")
-    ImageResource treeExpand();
-
     @Source("warning_mini.png")
     ImageResource warningMini();
-
-    @Override
-    @Source("link_add.png")
-    ImageResource linkAdd();
-
-    @Override
-    @Source("link_delete.png")
-    ImageResource linkDelete();
-
-    @Override
-    @Source("paste_plain.png")
-    ImageResource paste();
-
-    @Source("DataLinkPanelCell.css")
-    DataLinkPanelCellStyle getDataLinkCss();
 
     @Override
     @Source("de_feedback.png")

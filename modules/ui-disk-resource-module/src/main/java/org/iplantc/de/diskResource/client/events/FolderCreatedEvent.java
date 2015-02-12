@@ -13,7 +13,7 @@ public class FolderCreatedEvent extends GwtEvent<FolderCreatedEventHandler> {
         void onFolderCreated(Folder parentFolder, Folder newFolder);
     }
 
-    public static final GwtEvent.Type<FolderCreatedEventHandler> TYPE = new GwtEvent.Type<FolderCreatedEventHandler>();
+    public static final GwtEvent.Type<FolderCreatedEventHandler> TYPE = new GwtEvent.Type<>();
     private final Folder parentFolder;
     private final Folder newFolder;
 

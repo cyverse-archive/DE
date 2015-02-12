@@ -12,7 +12,7 @@ public class DiskResourceSelectedEvent extends GwtEvent<DiskResourceSelectedEven
         void onSelect(DiskResourceSelectedEvent event);
     }
 
-    public static final GwtEvent.Type<DiskResourceSelectedEventHandler> TYPE = new GwtEvent.Type<DiskResourceSelectedEventHandler>();
+    public static final GwtEvent.Type<DiskResourceSelectedEventHandler> TYPE = new GwtEvent.Type<>();
     private final DiskResource selectedItem;
 
     public DiskResourceSelectedEvent(final DiskResource selectedItem) {

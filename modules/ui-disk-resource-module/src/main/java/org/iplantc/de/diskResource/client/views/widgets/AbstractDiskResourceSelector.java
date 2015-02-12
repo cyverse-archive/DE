@@ -9,19 +9,12 @@ import org.iplantc.de.client.models.errorHandling.SimpleServiceError;
 import org.iplantc.de.client.services.DiskResourceServiceFacade;
 import org.iplantc.de.client.util.DiskResourceUtil;
 import org.iplantc.de.commons.client.widgets.IPlantSideErrorHandler;
-import org.iplantc.de.resources.client.IplantResources;
 import org.iplantc.de.resources.client.constants.IplantValidationConstants;
-import org.iplantc.de.resources.client.messages.I18N;
-import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
-import org.iplantc.de.resources.client.messages.IplantErrorStrings;
-import org.iplantc.de.resources.client.uiapps.widgets.AppsWidgetsDisplayMessages;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import com.google.gwt.core.client.Scheduler;
-import com.google.gwt.core.client.Scheduler.ScheduledCommand;
-import com.google.gwt.core.shared.GWT;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.dom.client.Style.Unit;
@@ -33,8 +26,7 @@ import com.google.gwt.event.logical.shared.HasValueChangeHandlers;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
-import com.google.gwt.resources.client.ClientBundle;
-import com.google.gwt.resources.client.CssResource;
+import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.user.client.DOM;
@@ -44,7 +36,6 @@ import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.web.bindery.autobean.shared.AutoBeanCodex;
 
-import com.sencha.gxt.core.client.XTemplates;
 import com.sencha.gxt.core.client.dom.XElement;
 import com.sencha.gxt.core.shared.FastMap;
 import com.sencha.gxt.dnd.core.client.DND.Operation;
@@ -76,7 +67,6 @@ import java.util.Set;
 
 /**
  * Abstract class for single select DiskResource fields.
- * FIXME Implement appearance
  *
  * @author jstroot
  */
@@ -92,79 +82,53 @@ public abstract class AbstractDiskResourceSelector<R extends DiskResource> exten
                                                                                              DiskResourceSelector,
                                                                                              DiskResourceSelector.HasDisableBrowseButtons {
 
-    /**
-     * XXX CORE-4671, FYI EXTGWT-1788,2518,3037 have been fixed, and this class MAY no longer be necessary
-     *
-     * @author jstroot
-     */
-    private final class DrSideErrorHandler extends IPlantSideErrorHandler {
 
-        private final Widget button1;
-        private final Widget container;
-        private final Component input1;
+    public interface SelectorAppearance {
 
-        private DrSideErrorHandler(Component target, Widget container, Widget button) {
-            super(target);
-            this.input1 = target;
-            this.container = container;
-            this.button1 = button;
-        }
+        String analysisFailureWarning(String s);
 
-        @Override
-        public void clearInvalid() {
-            super.clearInvalid();
-            int offset = button1.getOffsetWidth() + buttonOffset + +resetBtn.getOffsetWidth();
-            input1.setWidth(container.getOffsetWidth() - offset);
-        }
+        ImageResource arrowUndo();
 
-        @Override
-        public void markInvalid(List<EditorError> errors) {
-            super.markInvalid(errors);
-            Scheduler.get().scheduleDeferred(new ScheduledCommand() {
+        String browse();
 
-                @Override
-                public void execute() {
-                    if (isShowing()) {
-                        int offset = button1.getOffsetWidth() + buttonOffset + OFFSET
-                                + resetBtn.getOffsetWidth();
-                        input1.setWidth(container.getOffsetWidth() - offset);
-                    }
-                }
-            });
-        }
+        String cell1();
+
+        String cell2();
+
+        String cell3();
+
+        String diskResourceDoesNotExist(String diskResourcePath);
+
+        String errorTextStyle();
+
+        IPlantSideErrorHandler getSideErrorHandler(TextField input,
+                                                   Widget container,
+                                                   Widget button, Widget resetBtn);
+
+        String nonDefaultFolderWarning();
+
+        void onResize(int width, int offsetWidth1, int offsetWidth2, Component input,
+                      boolean errorHandlerShowing);
+
+        String permissionSelectErrorMessage();
+
+        SafeHtml renderTable();
+
+        SafeHtml dataDragDropStatusText(int size);
     }
 
-    interface FileFolderSelectorStyle extends CssResource {
-        String errorText();
-    }
+    private final SelectorAppearance appearance;
 
-    public interface FileUploadTemplate extends XTemplates {
-        @XTemplate("<table width=\"100%\" height=\"100%\"><tbody><tr><td class=\"cell1\" /><td class=\"cell2\"/><td class=\"cell3\"/></tr></tbody></table>")
-                SafeHtml
-                render();
-    }
-
-    interface Resources extends ClientBundle {
-        @Source("AbstractDiskResourceSelector.css")
-        FileFolderSelectorStyle style();
-    }
-
-    private final AppsWidgetsDisplayMessages appsMessages;
     private final TextButton button;
     private final TextButton resetBtn;
-    private final int buttonOffset = 3;
-    private final IplantDisplayStrings displayStrings;
+
     private final DiskResourceServiceFacade drServiceFacade;
-    private final IplantErrorStrings errorStrings;
-    private final IplantResources imgResources;
     private final List<EditorError> errors = Lists.newArrayList();
     private final Element infoText;
     private final TextField input = new TextField();
-    private final Resources res = GWT.create(Resources.class);
-    private final FileUploadTemplate template = GWT.create(FileUploadTemplate.class);
     private final IplantValidationConstants vConstants;
     private boolean browseButtonEnabled = true;
-    private IPlantSideErrorHandler errorHandler;
+    private final IPlantSideErrorHandler errorHandler;
     private DefaultEditorError existsEditorError = null;
     private String infoTextString;
     private R model;
@@ -172,29 +136,23 @@ public abstract class AbstractDiskResourceSelector<R extends DiskResource> exten
     // by default do not validate permissions
     private boolean validatePermissions = false;
     private final DiskResourceUtil diskResourceUtil;
-    private static final int OFFSET = 24;
 
-    protected AbstractDiskResourceSelector() {
-        res.style().ensureInjected();
-        displayStrings = I18N.DISPLAY;
-        errorStrings = I18N.ERROR;
-        appsMessages = I18N.APPS_MESSAGES;
-        vConstants = I18N.V_CONSTANTS;
-        imgResources = IplantResources.RESOURCES;
+
+    protected AbstractDiskResourceSelector(final SelectorAppearance appearance) {
+        this.appearance = appearance;
         drServiceFacade = ServicesInjector.INSTANCE.getDiskResourceServiceFacade();
         diskResourceUtil = DiskResourceUtil.getInstance();
 
         SimplePanel panel = new SimplePanel();
         setElement(panel.getElement());
 
-        FileUploadTemplate templates = GWT.create(FileUploadTemplate.class);
 
-        HtmlLayoutContainer c = new HtmlLayoutContainer(templates.render());
+        HtmlLayoutContainer c = new HtmlLayoutContainer(appearance.renderTable());
         panel.setWidget(c);
 
 
-        resetBtn = new TextButton("", imgResources.arrowUndo());
-        c.add(resetBtn, new HtmlData(".cell1"));
+        resetBtn = new TextButton("", appearance.arrowUndo());
+        c.add(resetBtn, new HtmlData(appearance.cell1()));
         resetBtn.addSelectHandler(new SelectHandler() {
 
             @Override
@@ -204,11 +162,11 @@ public abstract class AbstractDiskResourceSelector<R extends DiskResource> exten
         });
 
         input.setReadOnly(true);
-        c.add(input, new HtmlData(".cell2"));
+        c.add(input, new HtmlData(appearance.cell2()));
 
 
-        button = new TextButton(displayStrings.browse());
-        c.add(button, new HtmlData(".cell3"));
+        button = new TextButton(appearance.browse());
+        c.add(button, new HtmlData(appearance.cell3()));
         button.addSelectHandler(new SelectHandler() {
 
             @Override
@@ -227,11 +185,14 @@ public abstract class AbstractDiskResourceSelector<R extends DiskResource> exten
 
         initDragAndDrop();
 
-        errorHandler = new DrSideErrorHandler(input, this, button);
+        errorHandler = appearance.getSideErrorHandler(input, this, button,
+                                                      resetBtn);
+
         errorHandler.setAdjustTargetWidth(false);
         input.setErrorSupport(errorHandler);
         sinkEvents(Event.ONCHANGE | Event.ONCLICK | Event.MOUSEEVENTS);
 
+        vConstants = GWT.create(IplantValidationConstants.class);
     }
 
     @Override
@@ -358,7 +319,7 @@ public abstract class AbstractDiskResourceSelector<R extends DiskResource> exten
     }
 
     public void setInfoErrorText(String errorMessage) {
-        setInfoTextClassName(res.style().errorText());
+        setInfoTextClassName(appearance.errorTextStyle());
         setInfoText(errorMessage);
     }
 
@@ -479,12 +440,7 @@ public abstract class AbstractDiskResourceSelector<R extends DiskResource> exten
 
     @Override
     protected void onResize(int width, int height) {
-        int offset = button.getOffsetWidth() + buttonOffset * 2 + resetBtn.getOffsetWidth();
-        if (errorHandler.isShowing()) {
-            offset += OFFSET;
-        }
-        // super.onResize(width, height);
-        input.setWidth(width - offset);
+       appearance.onResize(width, button.getOffsetWidth(), resetBtn.getOffsetWidth(), input, errorHandler.isShowing());
     }
 
     protected void setSelectedResource(R selectedResource) {
@@ -494,7 +450,7 @@ public abstract class AbstractDiskResourceSelector<R extends DiskResource> exten
     abstract protected boolean validateDropStatus(Set<DiskResource> dropData, StatusProxy status);
 
     private StringBuilder checkForSplChar(String diskResourceId) {
-        char[] restrictedChars = (vConstants.warnedDiskResourceNameChars()).toCharArray(); //$NON-NLS-1$
+        char[] restrictedChars = (vConstants.warnedDiskResourceNameChars()).toCharArray();
         StringBuilder restrictedFound = new StringBuilder();
 
         for (char restricted : restrictedChars) {
@@ -542,10 +498,10 @@ public abstract class AbstractDiskResourceSelector<R extends DiskResource> exten
                                         if (serviceError.getErrorCode()
                                                         .equals(ServiceErrorCode.ERR_DOES_NOT_EXIST.toString())) {
                                             existsEditorError = new DefaultEditorError(input,
-                                                                                       errorStrings.diskResourceDoesNotExist(diskResourcePath),
+                                                                                       appearance.diskResourceDoesNotExist(diskResourcePath),
                                                                                        diskResourcePath);
                                             errors.add(existsEditorError);
-                                            setInfoErrorText(errorStrings.diskResourceDoesNotExist(diskResourcePath));
+                                            setInfoErrorText(appearance.diskResourceDoesNotExist(diskResourcePath));
                                             ValueChangeEvent.fire(AbstractDiskResourceSelector.this,
                                                                   value);
                                         }
@@ -562,21 +518,21 @@ public abstract class AbstractDiskResourceSelector<R extends DiskResource> exten
                                             String infoText = getInfoText();
                                             if (diskResource == null) {
                                                 permissionEditorError = new DefaultEditorError(input,
-                                                                                               displayStrings.permissionSelectErrorMessage(),
+                                                                                               appearance.permissionSelectErrorMessage(),
                                                                                                diskResourcePath);
                                                 errors.add(permissionEditorError);
                                                 input.showErrors(Lists.<EditorError>newArrayList(permissionEditorError));
-                                                setInfoErrorText(displayStrings.permissionSelectErrorMessage());
+                                                setInfoErrorText(appearance.permissionSelectErrorMessage());
                                             } else if (!(diskResourceUtil.isWritable(diskResource) || diskResourceUtil.isOwner(diskResource))) {
                                                 permissionEditorError = new DefaultEditorError(input,
-                                                                                               displayStrings.permissionSelectErrorMessage(),
+                                                                                               appearance.permissionSelectErrorMessage(),
                                                                                                diskResourcePath);
                                                 errors.add(permissionEditorError);
                                                 input.showErrors(Lists.<EditorError>newArrayList(permissionEditorError));
-                                                setInfoErrorText(displayStrings.permissionSelectErrorMessage());
+                                                setInfoErrorText(appearance.permissionSelectErrorMessage());
                                             } else {
                                                 if (!Strings.isNullOrEmpty(infoText)
-                                                        && (!infoText.equalsIgnoreCase(appsMessages.nonDefaultFolderWarning()))) {
+                                                        && (!infoText.equalsIgnoreCase(appearance.nonDefaultFolderWarning()))) {
                                                     // clear only permission related errors on success
                                                     setInfoErrorText(null);
                                                 }
@@ -584,7 +540,7 @@ public abstract class AbstractDiskResourceSelector<R extends DiskResource> exten
                                         }
 
                                         if (checkForSplChar(input.getValue()).length() > 0) {
-                                            setInfoErrorText(displayStrings.analysisFailureWarning(vConstants.warnedDiskResourceNameChars()));
+                                            setInfoErrorText(appearance.analysisFailureWarning(vConstants.warnedDiskResourceNameChars()));
                                         }
                                     }
                                 });

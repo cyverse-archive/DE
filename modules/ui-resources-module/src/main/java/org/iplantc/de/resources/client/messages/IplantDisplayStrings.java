@@ -2,8 +2,6 @@ package org.iplantc.de.resources.client.messages;
 
 import com.google.gwt.safehtml.shared.SafeHtml;
 
-import java.util.List;
-
 /**
  * Interface to represent the messages contained in resource bundle:
  * /Users/sriram/iplant/lib-workspace/ui
@@ -68,21 +66,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     @DefaultMessage("&nbsp;Click on the app name to edit. To re-categorize an app, drag and drop it into appropriate category in the categories tree.")
     @Key("adminInfo")
     String adminInfo();
-
-    /**
-     * Translated "Advanced Sharing".
-     * 
-     * @return translated "Advanced Sharing"
-     */
-    @DefaultMessage("Advanced Sharing")
-    @Key("advancedSharing")
-    String advancedSharing();
-
-    /**
-     * 
-     * @return
-     */
-    String advancedSearchToolTip();
 
     /**
      * Translated "Yes".
@@ -356,15 +339,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     String attachSampleOutput();
 
     /**
-     * Translated "Attribute".
-     * 
-     * @return translated "Attribute"
-     */
-    @DefaultMessage("Attribute")
-    @Key("attribute")
-    String attribute();
-
-    /**
      * Translated "Attribution".
      * 
      * @return translated "Attribution"
@@ -399,15 +373,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     @DefaultMessage("Average User Rating")
     @Key("avgUserRating")
     String avgUserRating();
-
-    /**
-     * Translated "Browse".
-     *
-     * @return translated "Browse"
-     */
-    @DefaultMessage("Browse")
-    @Key("browse")
-    String browse();
 
     /**
      * Translated "Browse previously created barcode files:".
@@ -480,15 +445,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     @DefaultMessage("Change Permissions")
     @Key("changePermissions")
     String changePermissions();
-
-    /**
-     * Translated "Choose from collaborators".
-     *
-     * @return translated "Choose from collaborators"
-     */
-    @DefaultMessage("Choose from collaborators")
-    @Key("chooseFromCollab")
-    String chooseFromCollab();
 
     /**
      * Translated "Click to view app info.".
@@ -622,13 +578,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     String collaborators();
 
     /**
-     * Text displayed to collapse all nodes in a tree.
-     *
-     * @return
-     */
-    String collapseAll();
-
-    /**
      * Translated "Comments".
      *
      * @return translated "Comments"
@@ -695,15 +644,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     String copy();
 
     /**
-     * Translated "Copy Link".
-     * 
-     * @return translated "Copy Link"
-     */
-    @DefaultMessage("Copy Link")
-    @Key("copyLink")
-    String copyLink();
-
-    /**
      * Translated "Copy / Paste".
      *
      * @return translated "Copy / Paste"
@@ -758,15 +698,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     String createClipperFilename();
 
     /**
-     * Translated "Create in {0}.".
-     *
-     * @return translated "Create in {0}."
-     */
-    @DefaultMessage("Create in {0}.")
-    @Key("createIn")
-    String createIn(String path);
-
-    /**
      * Translated "New App".
      *
      * @return translated "New App"
@@ -810,22 +741,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     @DefaultMessage("Data")
     @Key("data")
     String data();
-
-    /**
-     * Translated "{0} items selected".
-     *
-     * @return translated "{0} items selected"
-     */
-    @DefaultMessage("{0} items selected")
-    @Key("dataDragDropStatusText")
-    String dataDragDropStatusText(int i);
-
-    /**
-     * Text displayed at top of Manage Data Link window.
-     *
-     * @return
-     */
-    String dataLinkWarning();
 
     /**
      * Translated "Data: {0}".
@@ -918,31 +833,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     @Key("deleteAll")
     String deleteAll();
 
-    /**
-     * Tool tip text displayed when hovering over the delete button in the Manage Data Links window.
-     *
-     * @return
-     */
-    String deleteDataLinkToolTip();
-
-    /**
-     * Translated "All are deleted files and folders are available under trash.".
-     *
-     * @return translated "All are deleted files and folders are available under trash."
-     */
-    @DefaultMessage("All are deleted files and folders are available under trash.")
-    @Key("deleteMsg")
-    String deleteMsg();
-
-    /**
-     * Translated "Selected file(s) / folder(s) deleted successfully."
-     *
-     * @return translated "Selected file(s) / folder(s) deleted successfully."
-     */
-    @DefaultMessage("Selected file(s) / folder(s) deleted successfully.")
-    @Key("deleteTrash")
-    String deleteTrash();
-    
     /**
      * Translated "Delete Selected".
      *
@@ -1106,24 +996,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     String email();
 
     /**
-     * Translated "Empty Trash".
-     *
-     * @return translated "Empty Trash"
-     */
-    @DefaultMessage("Empty Trash")
-    @Key("emptyTrash")
-    String emptyTrash();
-
-    /**
-     * Translated "This action cannot be undone. Do you wish to continue ?".
-     *
-     * @return translated "This action cannot be undone. Do you wish to continue ?"
-     */
-    @DefaultMessage("This action cannot be undone. Do you wish to continue ?")
-    @Key("emptyTrashWarning")
-    String emptyTrashWarning();
-
-    /**
      * Translated "Enabled".
      *
      * @return translated "Enabled"
@@ -1178,13 +1050,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     String executeThisAnalysis();
 
     /**
-     * Text displayed to expand all nodes in a tree.
-     *
-     * @return
-     */
-    String expandAll();
-
-    /**
      * A message telling what day something will expire.
      * 
      * @param expirationDate the date of expiration formatted for the current locale
@@ -1192,15 +1057,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     @DefaultMessage("This message will expire on {0}.")
     @Key("expirationMessage")
     String expirationMessage(String expirationDate);
-
-    /**
-     * Translated "Explain".
-     * 
-     * @return translated "Explain"
-     */
-    @DefaultMessage("Explain")
-    @Key("explain")
-    String explain();
 
     @Key("feedback")
     String feedback();
@@ -1225,16 +1081,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     @DefaultMessage("Description")
     @Key("fileDescription")
     String fileDescription();
-
-    /**
-     * Translated "File Name".
-     *
-     * @return translated "File Name"
-     */
-    @DefaultMessage("File Name")
-    @Key("fileName")
-    String fileName();
-
 
     /**
      * Translated
@@ -1266,15 +1112,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     String fileUploadFolder(String arg0);
 
     /**
-     * Translated "Maximum total file upload size is 1.9GB.".
-     *
-     * @return translated Maximum size of each file is 1.9GB when using simple upload."
-     */
-    @DefaultMessage("Maximum size of each file is 1.9GB when using simple upload.")
-    @Key("fileUploadMaxSizeWarning")
-    String fileUploadMaxSizeWarning();
-
-    /**
      * Translated "{0} uploaded successfully.".
      *
      * @return translated "{0} uploaded successfully."
@@ -1291,33 +1128,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     @DefaultMessage("Filter by Name or App")
     @Key("filterAnalysesList")
     String filterAnalysesList();
-
-    /**
-     * Translated "Folder Name".
-     *
-     * @return translated "Folder Name"
-     */
-    @DefaultMessage("Folder Name")
-    @Key("folderName")
-    String folderName();
-
-    /**
-     * Translated "Group by Data".
-     *
-     * @return translated "Group by Data"
-     */
-    @DefaultMessage("Group by Data")
-    @Key("groupByData")
-    String groupByData();
-
-    /**
-     * Translated "Group by User".
-     *
-     * @return translated "Group by User"
-     */
-    @DefaultMessage("Group by User")
-    @Key("groupByUser")
-    String groupByUser();
 
     /**
      * Translated "Not useful".
@@ -1345,15 +1155,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     @DefaultMessage("Hide")
     @Key("hide")
     String hide();
-
-    /**
-     * Translated "Argument, idParent, must have a valid value provided.".
-     *
-     * @return translated "Argument, idParent, must have a valid value provided."
-     */
-    @DefaultMessage("Argument, idParent, must have a valid value provided.")
-    @Key("idParentInvalid")
-    String idParentInvalid();
 
     /**
      * Translated
@@ -1415,15 +1216,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     @DefaultMessage("Select 3'' Adapter File")
     @Key("importClipper")
     String importClipper();
-
-    /**
-     * Translated "Import".
-     *
-     * @return translated "Import"
-     */
-    @DefaultMessage("Import")
-    @Key("importLabel")
-    String importLabel();
 
     /**
      * Translated "{0} is uploading and will be available shortly.".
@@ -1784,15 +1576,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     String manageData();
 
     /**
-     * Translated "Manage Sharing".
-     *
-     * @return translated "Manage Sharing"
-     */
-    @DefaultMessage("Manage Sharing")
-    @Key("manageSharing")
-    String manageSharing();
-
-    /**
      * Translated "Map Outputs to Inputs".
      *
      * @return translated "Map Outputs to Inputs"
@@ -1850,42 +1633,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     @DefaultMessage("Messages")
     @Key("messagesGridHeader")
     String messagesGridHeader();
-
-    /**
-     * Translated "metadataSuccess".
-     *
-     * @return translated "metadataSuccess"
-     */
-    @DefaultMessage("Metadata updated successfully.")
-    @Key("metadataSuccess")
-    String metadataSuccess();
-
-    /**
-     * Translated "Are you sure you want to remove this template?".
-     * 
-     * @return translated "Are you sure you want to remove this template?"
-     */
-    @DefaultMessage("Are you sure you want to remove this template?")
-    @Key("metadataTemplateConfirmRemove")
-    String metadataTemplateConfirmRemove();
-
-    /**
-     * Translated "Remove Template".
-     * 
-     * @return translated "Remove Template"
-     */
-    @DefaultMessage("Remove Template")
-    @Key("metadataTemplateRemove")
-    String metadataTemplateRemove();
-
-    /**
-     * Translated "Select a template...".
-     * 
-     * @return translated "Select a template..."
-     */
-    @DefaultMessage("Select a template...")
-    @Key("metadataTemplateSelect")
-    String metadataTemplateSelect();
 
     /**
      * Translated "Minimize".
@@ -2038,15 +1785,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     String newApp();
 
     /**
-     * Translated "New Attribute".
-     * 
-     * @return translated "New Attribute"
-     */
-    @DefaultMessage("New Attribute")
-    @Key("newAttribute")
-    String newAttribute();
-
-    /**
      * Translated "Create Barcode File".
      * 
      * @return translated "Create Barcode File"
@@ -2063,24 +1801,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     @DefaultMessage("Create 3'' Adapter File")
     @Key("newClipper")
     String newClipper();
-
-    /**
-     * Translated "New Folder".
-     *
-     * @return translated "New Folder"
-     */
-    @DefaultMessage("New Folder")
-    @Key("newFolder")
-    String newFolder();
-
-    /**
-     * Translated "New Value".
-     * 
-     * @return translated "New Value"
-     */
-    @DefaultMessage("New Value")
-    @Key("newValue")
-    String newValue();
 
     /**
      * Translated "New Tool Request".
@@ -2338,12 +2058,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     String paramValue();
 
     /**
-     *
-     * @return
-     */
-    String partialRestore();
-
-    /**
      * Translated "Path".
      *
      * @return translated "Path"
@@ -2362,16 +2076,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     @Key("permissionSelectErrorMessage")
     String permissionSelectErrorMessage();
     
-    
-    /**
-     * Translated "Permissions".
-     *
-     * @return translated "Permissions"
-     */
-    @DefaultMessage("Permissions")
-    @Key("permissions")
-    String permissions();
-
     /**
      * Translated "Phone".
      *
@@ -2857,24 +2561,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     String requestTool();
 
     /**
-     * Translated "Reset".
-     *
-     * @return translated "Reset"
-     */
-    @DefaultMessage("Reset")
-    @Key("reset")
-    String reset();
-
-    /**
-     * Translated "Selected files and folders are restored to their original location.".
-     *
-     * @return translated "Selected files and folders are restored to their original location."
-     */
-    @DefaultMessage("Selected files and folders are restored to their original location.")
-    @Key("restoreMsg")
-    String restoreMsg();
-
-    /**
      * Translated "Discovery Environment".
      *
      * @return translated "Discovery Environment"
@@ -2979,15 +2665,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     String searchData();
 
     /**
-     * Translated "Search results ({2} seconds): {1} found for {0}".
-     * 
-     * @return translated "Search results ({2} seconds): {1} found for {0}"
-     */
-    @DefaultMessage("Search results ({2} seconds): {1} found for {0}")
-    @Key("searchDataResultsHeader")
-    String searchDataResultsHeader(String searchText, int total, double seconds);
-
-    /**
      * Translated "Search for users".
      * 
      * @return translated "Search for users"
@@ -3046,26 +2723,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     @DefaultMessage("Select from existing")
     @Key("selectExsisting")
     String selectExsisting();
-    
-    /**
-     * Translated "Select a file".
-     *
-     * @return translated "Select a file"
-     */
-    @DefaultMessage("Select a file")
-    @Key("selectAFile")
-    String selectAFile();
-
-    String selectMultipleInputs();
-
-    /**
-     * Translated "Select a folder".
-     *
-     * @return translated "Select a folder"
-     */
-    @DefaultMessage("Select a folder")
-    @Key("selectAFolder")
-    String selectAFolder();
 
     /**
      * Translated "Select output folder (a sub-folder will created by default when {0} is selected)".
@@ -3103,15 +2760,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     @DefaultMessage("Select Collaborator(s)")
     @Key("selectCollabs")
     String selectCollabs();
-
-    /**
-     * Translated "Selected file(s) / folder(s)".
-     *
-     * @return translated "Selected file(s) / folder(s)"
-     */
-    @DefaultMessage("Selected file(s) / folder(s)")
-    @Key("selectFilesFolders")
-    String selectFilesFolders();
 
     /**
      * Translated "Select a folder to view its contents.".
@@ -3159,15 +2807,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     String selectedFile();
 
     /**
-     * Translated "Selected folder".
-     *
-     * @return translated "Selected folder"
-     */
-    @DefaultMessage("Selected folder")
-    @Key("selectedFolder")
-    String selectedFolder();
-
-    /**
      * Translated "Selected resource".
      *
      * @return translated "Selected resource"
@@ -3175,15 +2814,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     @DefaultMessage("Selected resource")
     @Key("selectedResource")
     String selectedResource();
-
-    /**
-     * Translated "Cannot share file(s) / folder(s) with yourself.".
-     *
-     * @return translated "Cannot share file(s) / folder(s) with yourself."
-     */
-    @DefaultMessage("Cannot share file(s) / folder(s) with yourself.")
-    @Key("selfShareWarning")
-    String selfShareWarning();
 
     /**
      * Translated "Settings".
@@ -3211,18 +2841,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     @DefaultMessage("Click Choose Collaborators or search for a user to begin sharing.")
     @Key("sharePrompt")
     String sharePrompt();
-
-
-    /**
-     * Translated
-     * "Your request has been submitted. You will receive notifications when the request is complete.".
-     *
-     * @return translated
-     *         "Your request has been submitted. You will receive notifications when the request is complete."
-     */
-    @DefaultMessage("Your request has been submitted. You will receive notifications when the request is complete.")
-    @Key("sharingCompleteMsg")
-    String sharingCompleteMsg();
 
     /**
      * Translated "Show".
@@ -3558,15 +3176,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     String unrate();
 
     /**
-     * Translated "Unshare".
-     *
-     * @return translated "Unshare"
-     */
-    @DefaultMessage("Unshare")
-    @Key("unshare")
-    SafeHtml unshare();
-
-    /**
      * Translated "Move Up".
      *
      * @return translated "Move Up"
@@ -3616,33 +3225,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     String uploaded();
 
     /**
-     * Translated "Uploading to {0}.".
-     *
-     * @return translated "Uploading to {0}."
-     */
-    @DefaultMessage("Uploading to {0}.")
-    @Key("uploadingToFolder")
-    String uploadingToFolder(String arg0);
-
-    /**
-     * Translated "Import from URL".
-     *
-     * @return translated "Import from URL"
-     */
-    @DefaultMessage("Import from URL")
-    @Key("urlImport")
-    String urlImport();
-
-    /**
-     * Translated "Enter URLs below (HTTP(S) or FTP only):".
-     *
-     * @return translated "Enter URLs below (HTTP(S) or FTP only):"
-     */
-    @DefaultMessage("Enter URLs below (HTTP(S) or FTP only):")
-    @Key("urlPrompt")
-    String urlPrompt();
-
-    /**
      * Translated "User Name".
      *
      * @return translated "User Name"
@@ -3650,15 +3232,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     @DefaultMessage("User Name")
     @Key("userId")
     String userId();
-
-    /**
-     * Translated "User Metadata".
-     * 
-     * @return translated "User Metadata"
-     */
-    @DefaultMessage("User Metadata")
-    @Key("userMetadata")
-    String userMetadata();
 
     /**
      * Translated "User preference saved successfully.".
@@ -3686,15 +3259,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     @DefaultMessage("Value(s)")
     @Key("valueParenS")
     String valueParenS();
-
-    /**
-     * Translated "Visibility Varies".
-     *
-     * @return translated "Visibility Varies"
-     */
-    @DefaultMessage("Visibility Varies")
-    @Key("variablePermissionsNotice")
-    String variablePermissionsNotice();
 
     /**
      * Translated "varies".
@@ -3796,15 +3360,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     String welcome();
 
     /**
-     * Translated "Who has access".
-     *
-     * @return translated "Who has access"
-     */
-    @DefaultMessage("Who has access")
-    @Key("whoHasAccess")
-    String whoHasAccess();
-
-    /**
      * Translated
      * "Enter the URL for the iPlant wiki documentation, created using <a href=\"{0}\" target=\"_blank\">these instructions</a>"
      * .
@@ -3851,17 +3406,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     @DefaultMessage("Pending verification that {0} exists.")
     @Key("diskResourceExistCheckPending")
     String diskResourceExistCheckPending(String path);
-
-    /**
-     * A message indicating that one or more disk resources were moved to a destination folder.
-     * 
-     * @param app The name of the app that was categorized.
-     * @param categories The list of category names.
-     */
-    @DefaultMessage("Selected items moved to {0}.")
-    @AlternateMessage({"=1", "Selected item moved to {0}."})
-    @Key("diskResourceMoveSuccess")
-    String diskResourceMoveSuccess(String destPath, @Optional @PluralCount List<String> srcPaths);
 
     /**
      * Translated "Add to Sidebar"

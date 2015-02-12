@@ -14,8 +14,6 @@ public interface AppsWidgetsDisplayMessages extends Messages {
 
     String launchAnalysisDetailsHeadingPrefix();
 
-    String nonDefaultFolderWarning();
-
     String retainInputs();
 
     String selectOutputFolder();

@@ -16,7 +16,7 @@ public class RootFoldersRetrievedEvent extends GwtEvent<RootFoldersRetrievedEven
         HandlerRegistration addRootFoldersRetrievedEventHandler(RootFoldersRetrievedEventHandler handler);
     }
 
-    public static Type<RootFoldersRetrievedEventHandler> TYPE = new Type<>();
+    public static final Type<RootFoldersRetrievedEventHandler> TYPE = new Type<>();
 
     public Type<RootFoldersRetrievedEventHandler> getAssociatedType() {
         return TYPE;

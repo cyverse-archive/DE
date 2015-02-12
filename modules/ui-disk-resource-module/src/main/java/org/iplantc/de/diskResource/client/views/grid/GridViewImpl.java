@@ -7,13 +7,12 @@ import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.client.models.search.DiskResourceQueryTemplate;
 import org.iplantc.de.client.util.CommonModelUtils;
 import org.iplantc.de.client.util.DiskResourceUtil;
-import org.iplantc.de.diskResource.client.DiskResourceView;
 import org.iplantc.de.diskResource.client.GridView;
 import org.iplantc.de.diskResource.client.events.DiskResourceNameSelectedEvent;
 import org.iplantc.de.diskResource.client.events.DiskResourcePathSelectedEvent;
 import org.iplantc.de.diskResource.client.events.DiskResourceSelectionChangedEvent;
 import org.iplantc.de.diskResource.client.events.FolderSelectionEvent;
-import org.iplantc.de.diskResource.client.presenters.proxy.FolderContentsLoadConfig;
+import org.iplantc.de.diskResource.client.presenters.grid.proxy.FolderContentsLoadConfig;
 import org.iplantc.de.diskResource.share.DiskResourceModule;
 
 import com.google.common.base.Strings;
@@ -54,35 +53,33 @@ import com.sencha.gxt.widget.core.client.toolbar.ToolBar;
 
 /**
  * Created by jstroot on 1/26/15.
+ *
  * @author jstroot
  */
 public class GridViewImpl extends ContentPanel implements GridView,
                                                           SelectionChangedEvent.SelectionChangedHandler<DiskResource> {
     interface GridViewImplUiBinder extends UiBinder<VerticalLayoutContainer, GridViewImpl> {
     }
-
-    private static GridViewImplUiBinder ourUiBinder = GWT.create(GridViewImplUiBinder.class);
-
-    @UiField(provided = true) GridView.Appearance appearance;
-    @UiField ToolBar pagingToolBar;
-    @UiField Grid<DiskResource> grid;
-    @UiField TextField pathField;
-    @UiField(provided = true) ListStore<DiskResource> listStore;
+    @UiField(provided = true) final GridView.Appearance appearance;
+    @UiField(provided = true) final ListStore<DiskResource> listStore;
     @UiField ColumnModel<DiskResource> cm;
+    @UiField Grid<DiskResource> grid;
     @UiField LiveGridView gridView;
-
+    @UiField ToolBar pagingToolBar;
+    @UiField TextField pathField;
+    private static final GridViewImplUiBinder ourUiBinder = GWT.create(GridViewImplUiBinder.class);
     private final DiskResourceUtil diskResourceUtil;
-    private DiskResourceColumnModel drCm;
+    private final DiskResourceColumnModel drCm;
+    private final PagingLoader<FolderContentsLoadConfig, PagingLoadResult<DiskResource>> gridLoader;
     private final Status selectionStatus;
     private final LiveGridCheckBoxSelectionModel sm;
-    private final PagingLoader<FolderContentsLoadConfig, PagingLoadResult<DiskResource>> gridLoader;
 
     @Inject
     GridViewImpl(final GridView.Appearance appearance,
                  final DiskResourceUtil diskResourceUtil,
                  @Assisted GridView.Presenter presenter,
                  @Assisted final ListStore<DiskResource> listStore,
-                 @Assisted final DiskResourceView.FolderContentsRpcProxy folderContentsRpcProxy) {
+                 @Assisted final FolderContentsRpcProxy folderContentsRpcProxy) {
         this.appearance = appearance;
         this.diskResourceUtil = diskResourceUtil;
         this.listStore = listStore;
@@ -125,8 +122,8 @@ public class GridViewImpl extends ContentPanel implements GridView,
         gridDropTarget.setAllowSelfAsSource(true);
         gridDropTarget.setOperation(DND.Operation.COPY);
         GridViewDnDHandler dndHandler = new GridViewDnDHandler(diskResourceUtil,
-                                                                               presenter,
-                                                                               appearance);
+                                                               presenter,
+                                                               appearance);
         gridDropTarget.addDragEnterHandler(dndHandler);
         gridDropTarget.addDragMoveHandler(dndHandler);
         gridDropTarget.addDropHandler(dndHandler);
@@ -144,6 +141,12 @@ public class GridViewImpl extends ContentPanel implements GridView,
         });
     }
 
+    //<editor-fold desc="Handler Registrations">
+    @Override
+    public HandlerRegistration addBeforeLoadHandler(BeforeLoadEvent.BeforeLoadHandler<FolderContentsLoadConfig> handler) {
+        return gridLoader.addBeforeLoadHandler(handler);
+    }
+
     @Override
     public HandlerRegistration addDiskResourceNameSelectedEventHandler(DiskResourceNameSelectedEvent.DiskResourceNameSelectedEventHandler handler) {
         return drCm.addDiskResourceNameSelectedEventHandler(handler);
@@ -154,19 +157,52 @@ public class GridViewImpl extends ContentPanel implements GridView,
         return addHandler(handler, DiskResourcePathSelectedEvent.TYPE);
     }
 
-    private void updateSelectionCount(int selectionCount) {
-        selectionStatus.setText(selectionCount + " item(s)");
-    }
-
     @Override
     public HandlerRegistration addDiskResourceSelectionChangedEventHandler(DiskResourceSelectionChangedEvent.DiskResourceSelectionChangedEventHandler handler) {
         return addHandler(handler, DiskResourceSelectionChangedEvent.TYPE);
     }
+    //</editor-fold>
+
+    //<editor-fold desc="Selection Event Handlers">
+    @Override
+    public void onFolderSelected(FolderSelectionEvent event) {
+        final Folder selectedItem = event.getSelectedFolder();
+        if (selectedItem == null
+                || selectedItem.isFilter()) {
+            return;
+        }
+
+        sm.clear();
+        sm.setShowSelectAll(!(selectedItem instanceof DiskResourceQueryTemplate));
+
+        // Update pathField
+        Scheduler.get().scheduleFinally(new Scheduler.ScheduledCommand() {
+
+            @Override
+            public void execute() {
+                if (selectedItem instanceof DiskResourceQueryTemplate) {
+                    pathField.clear();
+                } else if (!selectedItem.getPath().equals(pathField.getCurrentValue())) {
+                    pathField.setValue(selectedItem.getPath());
+                }
+            }
+        });
+
+        if (selectedItem instanceof DiskResourceFavorite
+                || selectedItem instanceof DiskResourceQueryTemplate) {
+            reconfigureToSearchView();
+        } else {
+            reconfigureToListingView();
+        }
+    }
 
     @Override
-    public HandlerRegistration addBeforeLoadHandler(BeforeLoadEvent.BeforeLoadHandler<FolderContentsLoadConfig> handler) {
-        return gridLoader.addBeforeLoadHandler(handler);
+    public void onSelectionChanged(SelectionChangedEvent<DiskResource> event) {
+        updateSelectionCount(sm.getSelectedCount());
+
+        fireEvent(new DiskResourceSelectionChangedEvent(event.getSelection()));
     }
+    //</editor-fold>
 
     @Override
     public Element findGridRow(Element eventTargetElement) {
@@ -194,38 +230,6 @@ public class GridViewImpl extends ContentPanel implements GridView,
     }
 
     @Override
-    public void onFolderSelected(FolderSelectionEvent event) {
-        final Folder selectedItem = event.getSelectedFolder();
-        if(selectedItem == null
-            || selectedItem.isFilter()) {
-            return;
-        }
-
-        sm.clear();
-        sm.setShowSelectAll(!(selectedItem instanceof DiskResourceQueryTemplate));
-
-        // Update pathField
-        Scheduler.get().scheduleFinally(new Scheduler.ScheduledCommand() {
-
-            @Override
-            public void execute() {
-                if (selectedItem instanceof DiskResourceQueryTemplate) {
-                    pathField.clear();
-                } else if (!selectedItem.getPath().equals(pathField.getCurrentValue())) {
-                    pathField.setValue(selectedItem.getPath());
-                }
-            }
-        });
-
-        if(selectedItem instanceof DiskResourceFavorite
-            || selectedItem instanceof DiskResourceQueryTemplate) {
-            reconfigureToSearchView();
-        } else {
-            reconfigureToListingView();
-        }
-    }
-
-    @Override
     public void setSingleSelect() {
         grid.getSelectionModel().setSelectionMode(SINGLE);
         drCm.setCheckboxColumnHidden(true);
@@ -238,23 +242,9 @@ public class GridViewImpl extends ContentPanel implements GridView,
         drCm.ensureDebugId(baseID);
     }
 
-    private void reconfigureToSearchView() {
-        // display Path
-        grid.getColumnModel().getColumn(2).setHidden(false);
-        grid.getView().refresh(true);
-    }
-
-    private void reconfigureToListingView() {
-        // hide Path.
-        grid.getColumnModel().getColumn(2).setHidden(true);
-        grid.getView().refresh(true);
-    }
-
-    @Override
-    public void onSelectionChanged(SelectionChangedEvent<DiskResource> event) {
-        updateSelectionCount(sm.getSelectedCount());
-
-        fireEvent(new DiskResourceSelectionChangedEvent(event.getSelection()));
+    @UiFactory
+    ColumnModel<DiskResource> createColumnModel() {
+        return new DiskResourceColumnModel(sm, appearance, diskResourceUtil);
     }
 
     @UiFactory
@@ -274,19 +264,30 @@ public class GridViewImpl extends ContentPanel implements GridView,
         return liveGridView;
     }
 
-    @UiFactory
-    ColumnModel<DiskResource> createColumnModel() {
-        return new DiskResourceColumnModel(sm, appearance, diskResourceUtil);
-    }
-
     @UiHandler("pathField")
-    void onPathFieldKeyPress(KeyPressEvent event){
+    void onPathFieldKeyPress(KeyPressEvent event) {
         if (event.getNativeEvent().getKeyCode() == KeyCodes.KEY_ENTER
                 && !Strings.isNullOrEmpty(pathField.getCurrentValue())) {
             String path = pathField.getCurrentValue();
             HasPath folderToSelect = CommonModelUtils.getInstance().createHasPathFromString(path);
             fireEvent(new DiskResourcePathSelectedEvent(folderToSelect));
         }
+    }
+
+    private void reconfigureToListingView() {
+        // hide Path.
+        grid.getColumnModel().getColumn(2).setHidden(true);
+        grid.getView().refresh(true);
+    }
+
+    private void reconfigureToSearchView() {
+        // display Path
+        grid.getColumnModel().getColumn(2).setHidden(false);
+        grid.getView().refresh(true);
+    }
+
+    private void updateSelectionCount(int selectionCount) {
+        selectionStatus.setText(selectionCount + " item(s)");
     }
 
 }

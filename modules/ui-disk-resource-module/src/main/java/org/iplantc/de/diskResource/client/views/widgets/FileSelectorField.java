@@ -8,14 +8,15 @@ import org.iplantc.de.client.models.diskResources.File;
 import org.iplantc.de.client.models.viewer.InfoType;
 import org.iplantc.de.client.util.CommonModelUtils;
 import org.iplantc.de.client.util.DiskResourceUtil;
+import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.commons.client.events.LastSelectedPathChangedEvent;
-import org.iplantc.de.diskResource.client.gin.factory.DiskResourceSelectorDialogFactory;
 import org.iplantc.de.diskResource.client.views.dialogs.FileSelectDialog;
-import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 
 import com.google.common.collect.Lists;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.inject.client.AsyncProvider;
 import com.google.gwt.user.client.TakesValue;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import com.google.inject.assistedinject.AssistedInject;
@@ -33,6 +34,12 @@ import java.util.Set;
  * @author jstroot
  */
 public class FileSelectorField extends AbstractDiskResourceSelector<File> {
+
+    public interface FileSelectorFieldAppearance extends SelectorAppearance {
+
+
+        String selectAFile();
+    }
 
     private class FileDialogHideHandler implements HideHandler {
         private final TakesValue<List<File>> takesValue;
@@ -60,24 +67,27 @@ public class FileSelectorField extends AbstractDiskResourceSelector<File> {
 
     @Inject UserSettings userSettings;
     @Inject EventBus eventBus;
-    @Inject DiskResourceSelectorDialogFactory dialogFactory;
+    @Inject AsyncProvider<FileSelectDialog> fileSelectDialogProvider;
     @Inject DiskResourceUtil diskResourceUtil;
 
-    final IplantDisplayStrings displayStrings;
+    private final FileSelectorFieldAppearance appearance;
     final List<InfoType> infoTypeFilters;
+    private final CommonModelUtils commonModelUtils;
 
     @AssistedInject
-    FileSelectorField(final IplantDisplayStrings displayStrings,
+    FileSelectorField(final FileSelectorFieldAppearance appearance,
                       @Assisted final List<InfoType> infoTypeFilters){
-        this.displayStrings = displayStrings;
+        super(appearance);
+        this.appearance = appearance;
         this.infoTypeFilters = infoTypeFilters;
+        commonModelUtils = CommonModelUtils.getInstance();
     }
 
     @AssistedInject
-    FileSelectorField(final IplantDisplayStrings displayStrings){
-        this(displayStrings,
+    FileSelectorField(final FileSelectorFieldAppearance appearance){
+        this(appearance,
              Collections.<InfoType>emptyList());
-        setEmptyText(displayStrings.selectAFile());
+        setEmptyText(appearance.selectAFile());
     }
 
     @Override
@@ -93,36 +103,48 @@ public class FileSelectorField extends AbstractDiskResourceSelector<File> {
 
     @Override
     protected void onBrowseSelected() {
-        List<DiskResource> selected = null;
 
         DiskResource value = getValue();
+        final List<DiskResource> selected = (value == null) ? null : Lists.<DiskResource>newArrayList();
         if (value != null) {
-            selected = Lists.newArrayList();
             selected.add(value);
         }
-        FileSelectDialog fileSD;
-        if (selected != null && selected.size() > 0) {
-            String folderPath = diskResourceUtil.parseParent(selected.get(0).getPath());
-            fileSD = dialogFactory.createFilteredFileSelectorWithFolder(true,
-                                                                        CommonModelUtils.getInstance()
-                                                                                        .createHasPathFromString(folderPath),
-                                                                        infoTypeFilters);
-        } else {
-            if (userSettings.isRememberLastPath()) {
-                String path = userSettings.getLastPath();
-                if (path != null) {
-                    HasPath hasPath = CommonModelUtils.getInstance().createHasPathFromString(path);
-                    fileSD = dialogFactory.createFilteredFileSelectorWithFolder(true, hasPath, infoTypeFilters);
-                } else {
-                    fileSD = dialogFactory.createFilteredFileSelectorWithFolder(true, null, infoTypeFilters);
-                }
-            } else {
-                fileSD = dialogFactory.createFilteredFileSelectorWithFolder(true, null, infoTypeFilters);
 
+        fileSelectDialogProvider.get(new AsyncCallback<FileSelectDialog>() {
+            @Override
+            public void onFailure(Throwable caught) {
+                ErrorHandler.post(caught);
             }
-        }
-        fileSD.addHideHandler(new FileDialogHideHandler(fileSD));
-        fileSD.show();
+
+            @Override
+            public void onSuccess(FileSelectDialog result) {
+                HasPath folderToSelect = null;
+
+                if (selected != null && selected.size() > 0) {
+                    String folderPath = diskResourceUtil.parseParent(selected.get(0).getPath());
+
+                    folderToSelect = commonModelUtils.createHasPathFromString(folderPath);
+                } else {
+                    if (userSettings.isRememberLastPath()) {
+                        String path = userSettings.getLastPath();
+                        if (path != null) {
+                            folderToSelect = commonModelUtils.createHasPathFromString(path);
+                        } else {
+                            folderToSelect = null;
+                        }
+                    } else {
+                        folderToSelect = null;
+
+                    }
+                }
+                result.addHideHandler(new FileDialogHideHandler(result));
+                result.show(true,
+                            folderToSelect,
+                            null,
+                            infoTypeFilters);
+            }
+        });
+
     }
 
     @Override
@@ -135,7 +157,7 @@ public class FileSelectorField extends AbstractDiskResourceSelector<File> {
 
         // Reset status message
         status.setStatus(true);
-        status.update(displayStrings.dataDragDropStatusText(dropData.size()));
+        status.update(appearance.dataDragDropStatusText(dropData.size()));
 
         return true;
     }

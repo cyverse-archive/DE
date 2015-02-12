@@ -2,6 +2,7 @@ package org.iplantc.de.theme.base.client.diskResource.toolbar.presenter;
 
 import org.iplantc.de.diskResource.client.ToolbarView;
 import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
+import org.iplantc.de.theme.base.client.diskResource.DiskResourceMessages;
 import org.iplantc.de.theme.base.client.diskResource.toolbar.ToolbarDisplayMessages;
 
 import com.google.gwt.core.client.GWT;
@@ -12,16 +13,20 @@ import com.google.gwt.core.client.GWT;
 public class ToolbarViewPresenterDefaultAppearance implements ToolbarView.Presenter.Appearance {
     private final IplantDisplayStrings iplantDisplayStrings;
     private final ToolbarDisplayMessages displayMessages;
+    private final DiskResourceMessages diskResourceMessages;
 
     public ToolbarViewPresenterDefaultAppearance() {
         this(GWT.<IplantDisplayStrings> create(IplantDisplayStrings.class),
-             GWT.<ToolbarDisplayMessages> create(ToolbarDisplayMessages.class));
+             GWT.<ToolbarDisplayMessages> create(ToolbarDisplayMessages.class),
+             GWT.<DiskResourceMessages> create(DiskResourceMessages.class));
     }
 
     ToolbarViewPresenterDefaultAppearance(final IplantDisplayStrings iplantDisplayStrings,
-                                          final ToolbarDisplayMessages displayMessages) {
+                                          final ToolbarDisplayMessages displayMessages,
+                                          final DiskResourceMessages diskResourceMessages) {
         this.iplantDisplayStrings = iplantDisplayStrings;
         this.displayMessages = displayMessages;
+        this.diskResourceMessages = diskResourceMessages;
     }
 
     @Override
@@ -41,12 +46,12 @@ public class ToolbarViewPresenterDefaultAppearance implements ToolbarView.Presen
 
     @Override
     public String emptyTrash() {
-        return iplantDisplayStrings.emptyTrash();
+        return diskResourceMessages.emptyTrash();
     }
 
     @Override
     public String emptyTrashWarning() {
-        return iplantDisplayStrings.emptyTrashWarning();
+        return diskResourceMessages.emptyTrashWarning();
     }
 
     @Override
@@ -55,8 +60,13 @@ public class ToolbarViewPresenterDefaultAppearance implements ToolbarView.Presen
     }
 
     @Override
+    public int manageDataLinksDialogHeight() {
+        return 300;
+    }
+
+    @Override
     public int manageDataLinksDialogWidth() {
-        return 500;
+        return 550;
     }
 
     @Override

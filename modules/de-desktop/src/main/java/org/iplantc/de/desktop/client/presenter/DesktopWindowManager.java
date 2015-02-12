@@ -2,6 +2,7 @@ package org.iplantc.de.desktop.client.presenter;
 
 import org.iplantc.de.client.models.WindowState;
 import org.iplantc.de.client.models.WindowType;
+import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.commons.client.views.window.configs.ConfigFactory;
 import org.iplantc.de.commons.client.views.window.configs.WindowConfig;
 import org.iplantc.de.desktop.client.views.windows.IPlantWindowInterface;
@@ -10,6 +11,8 @@ import org.iplantc.de.desktop.client.views.windows.util.WindowFactory;
 import static com.google.common.base.Preconditions.checkNotNull;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.RunAsyncCallback;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
@@ -52,11 +55,22 @@ public class DesktopWindowManager {
     }
 
     public void show(final WindowState windowState) {
-        final Window window = getOrCreateWindow(getConfig(windowState));
-        checkNotNull(window);
-        window.setPixelSize(windowState.getWidth(), windowState.getHeight());
-        window.setPagePosition(windowState.getWinLeft(), windowState.getWinTop());
-        window.show();
+        GWT.runAsync(new RunAsyncCallback() {
+            @Override
+            public void onFailure(Throwable reason) {
+                ErrorHandler.post(reason);
+            }
+
+            @Override
+            public void onSuccess() {
+                final Window window = getOrCreateWindow(getConfig(windowState));
+                checkNotNull(window);
+                window.setPixelSize(windowState.getWidth(), windowState.getHeight());
+                window.setPagePosition(windowState.getWinLeft(), windowState.getWinTop());
+                window.show();
+            }
+        });
+
     }
 
     /**
@@ -69,54 +83,76 @@ public class DesktopWindowManager {
      *
      * @param windowType the window type to be shown
      */
-    public void show(WindowType windowType) {
-        Stack<Window> multiWindowStack = new Stack<>();
-        // Look for existing window type, then show it
-        boolean wasLast = false;
-        for (Widget w : windowManager.getStack()) {
-            Window window = (Window) w;
-            if (Strings.nullToEmpty(window.getStateId()).startsWith(windowType.toString())) {
-                multiWindowStack.push(window);
-                wasLast = true;
-            } else {
-                wasLast = false;
+    public void show(final WindowType windowType) {
+        GWT.runAsync(new RunAsyncCallback() {
+            @Override
+            public void onFailure(Throwable reason) {
+                ErrorHandler.post(reason);
             }
-        }
-        if(!multiWindowStack.isEmpty()){
-            Window toFront;
-            if((multiWindowStack.size() == 1) || !wasLast){
-                toFront = multiWindowStack.pop();
-            } else {
-                toFront = multiWindowStack.get(0);
+
+            @Override
+            public void onSuccess() {
+                Stack<Window> multiWindowStack = new Stack<>();
+                // Look for existing window type, then show it
+                boolean wasLast = false;
+                for (Widget w : windowManager.getStack()) {
+                    Window window = (Window) w;
+                    if (Strings.nullToEmpty(window.getStateId()).startsWith(windowType.toString())) {
+                        multiWindowStack.push(window);
+                        wasLast = true;
+                    } else {
+                        wasLast = false;
+                    }
+                }
+                if(!multiWindowStack.isEmpty()){
+                    Window toFront;
+                    if((multiWindowStack.size() == 1) || !wasLast){
+                        toFront = multiWindowStack.pop();
+                    } else {
+                        toFront = multiWindowStack.get(0);
+                    }
+                    toFront.show();
+                    windowManager.bringToFront(toFront);
+                } else {
+                    // If window type could not be found, create and show one
+                    show(getDefaultConfig(windowType), false);
+                }
+
             }
-            toFront.show();
-            windowManager.bringToFront(toFront);
-        } else {
-            // If window type could not be found, create and show one
-            show(getDefaultConfig(windowType), false);
-        }
+        });
 
     }
 
     public void show(final WindowConfig config, final boolean updateExistingWindow) {
-        // Creates window if a window matching the given config isn't found.
-        Window window = getOrCreateWindow(config);
-        checkNotNull(window);
-        if (updateExistingWindow && (window instanceof IPlantWindowInterface)) {
-            ((IPlantWindowInterface) window).update(config);
-        }
+        GWT.runAsync(new RunAsyncCallback() {
+            @Override
+            public void onFailure(Throwable reason) {
+                ErrorHandler.post(reason);
+            }
 
-        if (!window.isVisible() && (windowManager.getActive() != null)) {
-            final Point position = ((Window) windowManager.getActive()).getElement().getPosition(true);
-            position.setX(position.getX() + 10);
-            position.setY(position.getY() + 20);
+            @Override
+            public void onSuccess() {
+                // Creates window if a window matching the given config isn't found.
+                Window window = getOrCreateWindow(config);
+                checkNotNull(window);
+                if (updateExistingWindow && (window instanceof IPlantWindowInterface)) {
+                    ((IPlantWindowInterface) window).update(config);
+                }
 
-            final Point adjustedPosition = getAdjustedPosition(position, window);
-            window.setPagePosition(adjustedPosition.getX(), adjustedPosition.getY());
-        }
+                if (!window.isVisible() && (windowManager.getActive() != null)) {
+                    final Point position = ((Window) windowManager.getActive()).getElement().getPosition(true);
+                    position.setX(position.getX() + 10);
+                    position.setY(position.getY() + 20);
 
-        window.show();
-        windowManager.bringToFront(window);
+                    final Point adjustedPosition = getAdjustedPosition(position, window);
+                    window.setPagePosition(adjustedPosition.getX(), adjustedPosition.getY());
+                }
+
+                window.show();
+                windowManager.bringToFront(window);
+            }
+        });
+
     }
 
     String constructWindowId(WindowConfig config) {

@@ -56,12 +56,4 @@ public interface DetailsViewDisplayStrings extends Messages{
 
     String typeLabel();
 
-    @Key("unsupportedCogeInfoType")
-    String unsupportedCogeInfoType();
-
-    @Key("unsupportedEnsemblInfoType")
-    String unsupportedEnsemblInfoType();
-
-    @Key("unsupportedTreeInfoType")
-    String unsupportedTreeInfoType();
 }

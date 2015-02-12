@@ -5,6 +5,30 @@
     <inherits name="org.iplantc.de.diskResource.diskresource" />
     <inherits name="org.iplantc.de.fileViewers.FileViewers"/>
 
+    <!-- Callbacks -->
+    <replace-with class="org.iplantc.de.theme.base.client.diskResource.presenter.DiskResourceCallbackDefaultAppearance">
+        <when-type-is class="org.iplantc.de.diskResource.client.presenters.callbacks.DiskResourceCallbackAppearance" />
+    </replace-with>
+
+    <!-- Presenter -->
+    <replace-with class="org.iplantc.de.theme.base.client.diskResource.presenter.DiskResourceViewPresenterDefaultAppearance">
+        <when-type-is class="org.iplantc.de.diskResource.client.DiskResourceView.Presenter.Appearance" />
+    </replace-with>
+
+    <!-- DataLinks -->
+    <replace-with class="org.iplantc.de.theme.base.client.diskResource.dataLink.DataLinkViewDefaultAppearance">
+        <when-type-is class="org.iplantc.de.diskResource.client.DataLinkView.Appearance" />
+    </replace-with>
+    <replace-with class="org.iplantc.de.theme.base.client.diskResource.dataLink.cells.DataLinkCellDefaultAppearance">
+        <when-type-is class="org.iplantc.de.diskResource.client.views.dataLink.cells.DataLinkPanelCell.Appearance" />
+    </replace-with>
+
+    <!-- Metadata -->
+    <replace-with class="org.iplantc.de.theme.base.client.diskResource.metadata.MetadataViewDefaultAppearance">
+        <when-type-is class="org.iplantc.de.diskResource.client.MetadataView.Appearance" />
+    </replace-with>
+
+    <!-- Dialogs -->
     <replace-with class="org.iplantc.de.theme.base.client.diskResource.dialogs.FolderSelectDialogDefaultAppearance">
         <when-type-is class="org.iplantc.de.diskResource.client.views.dialogs.FolderSelectDialog.FolderSelectDialogAppearance"/>
     </replace-with>
@@ -17,10 +41,34 @@
     <replace-with class="org.iplantc.de.theme.base.client.diskResource.FileFolderSelectorFieldDefaultAppearance">
         <when-type-is class="org.iplantc.de.diskResource.client.views.widgets.FileFolderSelectorField.FileFolderSelectorFieldAppearance"/>
     </replace-with>
+    <replace-with class="org.iplantc.de.theme.base.client.diskResource.dialogs.CreateFolderDialogDefaultAppearance">
+        <when-type-is class="org.iplantc.de.diskResource.client.views.dialogs.CreateFolderDialog.Appearance"/>
+    </replace-with>
+    <replace-with class="org.iplantc.de.theme.base.client.diskResource.dialogs.SaveAsDialogDefaultAppearance">
+        <when-type-is class="org.iplantc.de.diskResource.client.views.dialogs.SaveAsDialog.SaveAsDialogAppearance"/>
+    </replace-with>
+    <replace-with class="org.iplantc.de.theme.base.client.diskResource.widgets.FileSelectorFieldDefaultAppearance">
+        <when-type-is class="org.iplantc.de.diskResource.client.views.widgets.FileSelectorField.FileSelectorFieldAppearance"/>
+    </replace-with>
+    <replace-with class="org.iplantc.de.theme.base.client.diskResource.widgets.FolderSelectorFieldDefaultAppearance">
+        <when-type-is class="org.iplantc.de.diskResource.client.views.widgets.FolderSelectorField.FolderSelectorFieldAppearance"/>
+    </replace-with>
+    <replace-with class="org.iplantc.de.theme.base.client.diskResource.widgets.MultiFileSelectorFieldDefaultAppearance">
+        <when-type-is class="org.iplantc.de.diskResource.client.views.widgets.MultiFileSelectorField.MultiFileSelectorFieldAppearance"/>
+    </replace-with>
+    <replace-with class="org.iplantc.de.theme.base.client.diskResource.dialogs.FileUploadByUrlDialogDefaultAppearance">
+        <when-type-is class="org.iplantc.de.diskResource.client.views.dialogs.FileUploadByUrlDialog.FileUploadByUrlDialogAppearance"/>
+    </replace-with>
+    <replace-with class="org.iplantc.de.theme.base.client.diskResource.dialogs.SimpleFileUploadDialogDefaultAppearance">
+        <when-type-is class="org.iplantc.de.diskResource.client.views.dialogs.SimpleFileUploadDialog.SimpleFileUploadDialogAppearance"/>
+    </replace-with>
 
     <!-- Navigation -->
     <replace-with class="org.iplantc.de.theme.base.client.diskResource.navigation.NavigationViewDefaultAppearance">
         <when-type-is class="org.iplantc.de.diskResource.client.NavigationView.Appearance" />
+    </replace-with>
+    <replace-with class="org.iplantc.de.theme.base.client.diskResource.navigation.presenter.NavigationViewPresenterDefaultAppearance">
+        <when-type-is class="org.iplantc.de.diskResource.client.NavigationView.Presenter.Appearance" />
     </replace-with>
 
     <replace-with class="org.iplantc.de.theme.base.client.diskResource.navigation.cells.TreeCellDefaultAppearance">
@@ -68,5 +116,19 @@
 
     <replace-with class="org.iplantc.de.theme.base.client.diskResource.details.presenter.DetailsViewPresenterDefaultAppearance">
         <when-type-is class="org.iplantc.de.diskResource.client.DetailsView.Presenter.Appearance" />
+    </replace-with>
+
+    <!-- Sharing -->
+    <replace-with class="org.iplantc.de.theme.base.client.diskResource.sharing.DataSharingViewDefaultAppearance">
+        <when-type-is class="org.iplantc.de.diskResource.client.DataSharingView.Appearance" />
+    </replace-with>
+
+    <replace-with class="org.iplantc.de.theme.base.client.diskResource.sharing.presenter.DataSharingPresenterDefaultAppearance">
+        <when-type-is class="org.iplantc.de.diskResource.client.DataSharingView.Presenter.Appearance" />
+    </replace-with>
+
+    <!-- Search -->
+    <replace-with class="org.iplantc.de.theme.base.client.diskResource.search.cells.DiskResourceSearchCellDefaultAppearance">
+        <when-type-is class="org.iplantc.de.diskResource.client.views.search.cells.DiskResourceSearchCell.DiskResourceSearchCellAppearance"/>
     </replace-with>
 </module>

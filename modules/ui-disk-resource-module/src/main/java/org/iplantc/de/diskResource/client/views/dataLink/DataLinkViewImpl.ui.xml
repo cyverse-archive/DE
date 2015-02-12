@@ -1,0 +1,70 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+             xmlns:g="urn:import:com.google.gwt.user.client.ui"
+             xmlns:container="urn:import:com.sencha.gxt.widget.core.client.container"
+             xmlns:tree="urn:import:com.sencha.gxt.widget.core.client.tree"
+             xmlns:toolBar="urn:import:com.sencha.gxt.widget.core.client.toolbar"
+             xmlns:button="urn:import:com.sencha.gxt.widget.core.client.button">
+
+    <ui:with field="appearance"
+             type="org.iplantc.de.diskResource.client.DataLinkView.Appearance"/>
+    <ui:with field="store"
+             type="com.sencha.gxt.data.shared.TreeStore"/>
+    <ui:with field="valueProvider"
+             type="com.sencha.gxt.core.client.ValueProvider"/>
+
+    <ui:with field="margins0500"
+             type="com.sencha.gxt.core.client.util.Margins">
+        <ui:attributes top="0"
+                       right="5"
+                       bottom="0"
+                       left="0"/>
+    </ui:with>
+    <ui:with field="boxLayoutDataMargins0050Flex3"
+             type="com.sencha.gxt.widget.core.client.container.BoxLayoutContainer.BoxLayoutData">
+        <ui:attributes margins="{margins0500}"
+                       flex="3"/>
+    </ui:with>
+
+    <container:VBoxLayoutContainer vBoxLayoutAlign="STRETCH"
+                                   styleName="{appearance.backgroundClass}">
+        <container:child>
+            <toolBar:ToolBar>
+                <button:TextButton ui:field="createDataLinksBtn"
+                                   text="{appearance.create}"
+                                   icon="{appearance.linkAddIcon}"
+                                   enabled="false"/>
+                <button:TextButton ui:field="expandAll"
+                                   text="{appearance.expandAll}"
+                                   icon="{appearance.treeExpandIcon}"/>
+                <button:TextButton ui:field="collapseAll"
+                                   text="{appearance.collapseAll}"
+                                   icon="{appearance.treeCollapseIcon}"/>
+                <button:TextButton ui:field="copyDataLinkButton"
+                                   text="{appearance.copyLink}"
+                                   icon="{appearance.pasteIcon}"
+                                   enabled="false"/>
+                <button:TextButton ui:field="advancedDataLinkButton"
+                                   text="{appearance.advancedSharing}"
+                                   icon="{appearance.infoIcon}"
+                                   enabled="false"/>
+                <toolBar:FillToolItem/>
+            </toolBar:ToolBar>
+        </container:child>
+        <container:child layoutData="{boxLayoutDataMargins0050Flex3}">
+            <tree:Tree ui:field="tree"
+                       valueProvider="{valueProvider}"
+                       store="{store}"/>
+        </container:child>
+        <container:child>
+            <g:HTMLPanel styleName="{appearance.dataLinkWarningClass}">
+                <img src="{appearance.exclamationIcon.getSafeUri}"
+                     class="{appearance.dataLinkInfoImgClass}">
+                    &nbsp;
+                    <ui:text from="{appearance.dataLinkWarning}"/>
+                </img>
+            </g:HTMLPanel>
+        </container:child>
+    </container:VBoxLayoutContainer>
+
+</ui:UiBinder> 

@@ -9,13 +9,14 @@ import org.iplantc.de.client.models.viewer.InfoType;
 import org.iplantc.de.client.services.DiskResourceServiceFacade;
 import org.iplantc.de.client.util.CommonModelUtils;
 import org.iplantc.de.client.util.DiskResourceUtil;
+import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.commons.client.events.LastSelectedPathChangedEvent;
-import org.iplantc.de.diskResource.client.gin.factory.DiskResourceSelectorDialogFactory;
 import org.iplantc.de.diskResource.client.views.dialogs.FolderSelectDialog;
-import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.inject.client.AsyncProvider;
 import com.google.gwt.user.client.TakesValue;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import com.google.inject.assistedinject.AssistedInject;
@@ -33,6 +34,11 @@ import java.util.Set;
  * @author jstroot
  */
 public class FolderSelectorField extends AbstractDiskResourceSelector<Folder> {
+
+    public interface FolderSelectorFieldAppearance extends SelectorAppearance {
+
+        String selectAFolder();
+    }
 
     private class FolderDialogHideHandler implements HideHandler {
         private final TakesValue<Folder> takesValue;
@@ -59,29 +65,33 @@ public class FolderSelectorField extends AbstractDiskResourceSelector<Folder> {
 
     @Inject UserSettings userSettings;
     @Inject EventBus eventBus;
-    @Inject DiskResourceSelectorDialogFactory selectorDialogFactory;
-    @Inject DiskResourceUtil diskResourceUtil;
+    @Inject AsyncProvider<FolderSelectDialog> folderSelectDialogProvider;
 
-    final IplantDisplayStrings displayStrings;
+    @Inject DiskResourceUtil diskResourceUtil;
+    private final CommonModelUtils commonModelUtils;
+
     private final DiskResourceServiceFacade diskResourceService;
+    private final FolderSelectorFieldAppearance appearance;
     private final List<InfoType> infoTypeFilters;
 
     @AssistedInject
-    FolderSelectorField(final IplantDisplayStrings displayStrings,
-                        final DiskResourceServiceFacade diskResourceService){
-        this(displayStrings,
-             diskResourceService,
+    FolderSelectorField(final DiskResourceServiceFacade diskResourceService,
+                        final FolderSelectorFieldAppearance appearance){
+        this(diskResourceService,
+             appearance,
              Collections.<InfoType>emptyList());
     }
 
     @AssistedInject
-    FolderSelectorField(final IplantDisplayStrings displayStrings,
-                        final DiskResourceServiceFacade diskResourceService,
+    FolderSelectorField(final DiskResourceServiceFacade diskResourceService,
+                        final FolderSelectorFieldAppearance appearance,
                         @Assisted List<InfoType> infoTypeFilters) {
-        this.displayStrings = displayStrings;
+        super(appearance);
         this.diskResourceService = diskResourceService;
+        this.appearance = appearance;
         this.infoTypeFilters = infoTypeFilters;
-        setEmptyText(displayStrings.selectAFolder());
+        setEmptyText(appearance.selectAFolder());
+        commonModelUtils = CommonModelUtils.getInstance();
     }
 
     @Override
@@ -104,17 +114,28 @@ public class FolderSelectorField extends AbstractDiskResourceSelector<Folder> {
 
     @Override
     protected void onBrowseSelected() {
-        HasPath value = getValue();
-        FolderSelectDialog folderSD;
-        if (value == null && userSettings.isRememberLastPath()) {
-            String path = userSettings.getLastPath();
-            if (path != null) {
-                value = CommonModelUtils.getInstance().createHasPathFromString(path);
+
+        folderSelectDialogProvider.get(new AsyncCallback<FolderSelectDialog>() {
+            @Override
+            public void onFailure(Throwable caught) {
+                ErrorHandler.post(caught);
             }
-        }
-        folderSD = selectorDialogFactory.createFilteredFolderSelector(value, infoTypeFilters);
-        folderSD.addHideHandler(new FolderDialogHideHandler(folderSD));
-        folderSD.show();
+
+            @Override
+            public void onSuccess(FolderSelectDialog result) {
+                HasPath value = getValue();
+                if (value == null && userSettings.isRememberLastPath()) {
+                    String path = userSettings.getLastPath();
+                    if (path != null) {
+                        value = commonModelUtils.createHasPathFromString(path);
+                    }
+                }
+
+                result.addHideHandler(new FolderDialogHideHandler(result));
+                result.show(value,
+                            infoTypeFilters);
+            }
+        });
     }
 
     @Override
@@ -134,7 +155,7 @@ public class FolderSelectorField extends AbstractDiskResourceSelector<Folder> {
                 if (it.equals(infoType)) {
                     // Reset status message
                     status.setStatus(true);
-                    status.update(displayStrings.dataDragDropStatusText(dropData.size()));
+                    status.update(appearance.dataDragDropStatusText(dropData.size()));
                     return true;
                 }
             }
@@ -143,7 +164,7 @@ public class FolderSelectorField extends AbstractDiskResourceSelector<Folder> {
         // Reset status message
         status.setStatus(isValid);
         if(isValid){
-            status.update(displayStrings.dataDragDropStatusText(dropData.size()));
+            status.update(appearance.dataDragDropStatusText(dropData.size()));
         }
 
         return isValid;

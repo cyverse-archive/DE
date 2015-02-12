@@ -23,7 +23,7 @@ public class SimpleDownloadSelected extends GwtEvent<SimpleDownloadSelected.Simp
         HandlerRegistration addSimpleDownloadSelectedHandler(SimpleDownloadSelectedHandler handler);
     }
 
-    public static Type<SimpleDownloadSelectedHandler> TYPE = new Type<>();
+    public static final Type<SimpleDownloadSelectedHandler> TYPE = new Type<>();
     private final Folder selectedFolder;
     private final List<DiskResource> selectedDiskResources;
 

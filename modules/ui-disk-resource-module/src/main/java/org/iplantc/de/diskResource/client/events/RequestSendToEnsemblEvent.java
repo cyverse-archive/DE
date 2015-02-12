@@ -9,7 +9,7 @@ import com.google.gwt.event.shared.GwtEvent;
 
 public class RequestSendToEnsemblEvent extends GwtEvent<RequestSendToEnsemblEventHandler> {
 
-    public static final GwtEvent.Type<RequestSendToEnsemblEventHandler> TYPE = new GwtEvent.Type<RequestSendToEnsemblEventHandler>();
+    public static final GwtEvent.Type<RequestSendToEnsemblEventHandler> TYPE = new GwtEvent.Type<>();
 
     public interface RequestSendToEnsemblEventHandler extends EventHandler {
 

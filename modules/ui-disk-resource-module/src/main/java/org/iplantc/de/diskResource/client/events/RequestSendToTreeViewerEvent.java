@@ -8,7 +8,7 @@ import com.google.gwt.event.shared.GwtEvent;
 
 public class RequestSendToTreeViewerEvent extends GwtEvent<RequestSendToTreeViewerEventHandler> {
 
-    public static final GwtEvent.Type<RequestSendToTreeViewerEventHandler> TYPE = new GwtEvent.Type<RequestSendToTreeViewerEventHandler>();
+    public static final GwtEvent.Type<RequestSendToTreeViewerEventHandler> TYPE = new GwtEvent.Type<>();
 
     public interface RequestSendToTreeViewerEventHandler extends EventHandler {
         void onRequestSendToTreeViewer(RequestSendToTreeViewerEvent event);

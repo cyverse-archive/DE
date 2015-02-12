@@ -21,7 +21,7 @@ public class SendToEnsemblSelected extends GwtEvent<SendToEnsemblSelected.SendTo
         HandlerRegistration addSendToEnsemblSelectedHandler(SendToEnsemblSelectedHandler handler);
     }
 
-    public static Type<SendToEnsemblSelectedHandler> TYPE = new Type<>();
+    public static final Type<SendToEnsemblSelectedHandler> TYPE = new Type<>();
     private final List<DiskResource> selectedDiskResources;
 
     public SendToEnsemblSelected(List<DiskResource> selectedDiskResources) {
