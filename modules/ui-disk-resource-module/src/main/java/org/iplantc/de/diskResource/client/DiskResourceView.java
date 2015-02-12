@@ -51,11 +51,33 @@ public interface DiskResourceView extends IsWidget,
 
         interface Appearance {
 
+            String createFolderLoadingMask();
+
+            String deleteMsg();
+
+            String deleteTrash();
+
+            String diskResourceIncompleteMove();
+
+            String emptyTrash();
+
+            String emptyTrashWarning();
+
+            String loadingMask();
+
+            String moveDiskResourcesLoadingMask();
+
+            String permissionErrorMessage();
+
+            String renameDiskResourcesLoadingMask();
+
             String unsupportedCogeInfoType();
 
             String unsupportedEnsemblInfoType();
 
             String unsupportedTreeInfoType();
+
+            String warning();
         }
 
         String FAVORITES_FOLDER_NAME = "Favorites";

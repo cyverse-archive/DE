@@ -7,6 +7,8 @@ package org.iplantc.de.diskResource.client.views.sharing.dialogs;
 import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.client.services.DiskResourceServiceFacade;
 import org.iplantc.de.client.util.DiskResourceUtil;
+import org.iplantc.de.client.util.JsonUtil;
+import org.iplantc.de.collaborators.client.util.CollaboratorsUtil;
 import org.iplantc.de.commons.client.views.dialogs.IPlantDialog;
 import org.iplantc.de.diskResource.client.DataSharingView;
 import org.iplantc.de.diskResource.client.model.DiskResourceModelKeyProvider;
@@ -14,8 +16,6 @@ import org.iplantc.de.diskResource.client.model.DiskResourceNameComparator;
 import org.iplantc.de.diskResource.client.presenters.sharing.DataSharingPresenterImpl;
 import org.iplantc.de.diskResource.client.views.grid.cells.DiskResourceNameCell;
 import org.iplantc.de.diskResource.client.views.sharing.DataSharingViewImpl;
-import org.iplantc.de.resources.client.messages.IplantContextualHelpStrings;
-import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 
 import com.google.common.base.Preconditions;
 import com.google.gwt.user.client.ui.HTML;
@@ -37,28 +37,28 @@ import java.util.List;
 public class DataSharingDialog extends IPlantDialog implements SelectHandler {
 
     private final DiskResourceServiceFacade diskResourceService;
-    private final IplantDisplayStrings displayStrings;
-    private final IplantContextualHelpStrings helpStrings;
     private final DiskResourceUtil diskResourceUtil;
+    private final DataSharingView.Appearance appearance;
     private DataSharingView.Presenter sharingPresenter;
+
+    @Inject CollaboratorsUtil collaboratorsUtil;
+    @Inject JsonUtil jsonUtil;
 
     @Inject
     DataSharingDialog(final DiskResourceServiceFacade diskResourceService,
-                      final IplantDisplayStrings displayStrings,
-                      final IplantContextualHelpStrings helpStrings,
-                      final DiskResourceUtil diskResourceUtil) {
+                      final DiskResourceUtil diskResourceUtil,
+                      final DataSharingView.Appearance appearance) {
         super(true);
         this.diskResourceService = diskResourceService;
-        this.displayStrings = displayStrings;
-        this.helpStrings = helpStrings;
         this.diskResourceUtil = diskResourceUtil;
+        this.appearance = appearance;
         setPixelSize(600, 500);
         setHideOnButtonClick(true);
         setModal(true);
         setResizable(false);
-        addHelp(new HTML(this.helpStrings.sharePermissionsHelp()));
-        setHeadingText(displayStrings.manageSharing());
-        setOkButtonText(displayStrings.done());
+        addHelp(new HTML(appearance.sharePermissionsHelp()));
+        setHeadingText(appearance.manageSharing());
+        setOkButtonText(appearance.done());
         addOkButtonSelectHandler(this);
 
     }
@@ -74,7 +74,9 @@ public class DataSharingDialog extends IPlantDialog implements SelectHandler {
         DataSharingView view = new DataSharingViewImpl(buildDiskResourceColumnModel(), drStore);
         sharingPresenter = new DataSharingPresenterImpl(diskResourceService,
                                                         resourcesToShare,
-                                                        view);
+                                                        view,
+                                                        collaboratorsUtil,
+                                                        jsonUtil);
         sharingPresenter.go(this);
         super.show();
     }
@@ -88,11 +90,11 @@ public class DataSharingDialog extends IPlantDialog implements SelectHandler {
     private ColumnModel<DiskResource> buildDiskResourceColumnModel() {
         List<ColumnConfig<DiskResource, ?>> list = new ArrayList<>();
 
-        ColumnConfig<DiskResource, DiskResource> name = new ColumnConfig<>(new IdentityValueProvider<DiskResource>("name"), 100, displayStrings.name());
+        ColumnConfig<DiskResource, DiskResource> name = new ColumnConfig<>(new IdentityValueProvider<DiskResource>("name"),
+                                                                           appearance.dataSharingDlgNameColumnWidth(),
+                                                                           appearance.nameColumnLabel());
         name.setCell(new DiskResourceNameCell(diskResourceUtil));
         name.setComparator(new DiskResourceNameComparator());
-        name.setWidth(130);
-
         list.add(name);
 
         return new ColumnModel<>(list);

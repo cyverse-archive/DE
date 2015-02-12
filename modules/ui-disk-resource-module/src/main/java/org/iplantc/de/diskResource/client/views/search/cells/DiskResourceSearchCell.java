@@ -3,7 +3,6 @@ package org.iplantc.de.diskResource.client.views.search.cells;
 import org.iplantc.de.diskResource.client.events.search.SaveDiskResourceQueryClickedEvent;
 import org.iplantc.de.diskResource.client.events.search.SubmitDiskResourceQueryEvent.HasSubmitDiskResourceQueryEventHandlers;
 import org.iplantc.de.diskResource.client.events.search.SubmitDiskResourceQueryEvent.SubmitDiskResourceQueryEventHandler;
-import org.iplantc.de.resources.client.messages.I18N;
 
 import com.google.gwt.cell.client.ValueUpdater;
 import com.google.gwt.core.client.Scheduler;
@@ -42,10 +41,13 @@ public class DiskResourceSearchCell extends TriggerFieldCell<String> implements 
                                                                                 SaveDiskResourceQueryClickedEvent.HasSaveDiskResourceQueryClickedEventHandlers,
                                                                                 HideHandler {
 
-    public interface DiskResourceSearchCellAppearance extends TriggerFieldAppearance {}
+    public interface DiskResourceSearchCellAppearance extends TriggerFieldAppearance {
+        String advancedSearchToolTip();
+    }
 
     private boolean expanded;
     private final DiskResourceQueryForm searchForm;
+    private final DiskResourceSearchCellAppearance appearance;
 
     /**
      * Creates a new date cell.
@@ -53,10 +55,11 @@ public class DiskResourceSearchCell extends TriggerFieldCell<String> implements 
      * @param appearance the date cell appearance
      */
     @Inject
-    public DiskResourceSearchCell(final DiskResourceQueryForm searchForm,
-                                  final DiskResourceSearchCellAppearance appearance) {
+    DiskResourceSearchCell(final DiskResourceQueryForm searchForm,
+                           final DiskResourceSearchCellAppearance appearance) {
         super(appearance);
         this.searchForm = searchForm;
+        this.appearance = appearance;
         searchForm.addHideHandler(this);
     }
 
@@ -173,7 +176,7 @@ public class DiskResourceSearchCell extends TriggerFieldCell<String> implements 
     protected void onMouseOver(XElement parent, NativeEvent event) {
         super.onMouseOver(parent, event);
         parent.getStyle().setCursor(Cursor.POINTER);
-        parent.setTitle(I18N.DISPLAY.advancedSearchToolTip());
+        parent.setTitle(appearance.advancedSearchToolTip());
     }
 
     @Override

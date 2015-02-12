@@ -41,8 +41,6 @@ import org.iplantc.de.diskResource.client.views.dialogs.RenameFileDialog;
 import org.iplantc.de.diskResource.client.views.dialogs.RenameFolderDialog;
 import org.iplantc.de.diskResource.client.views.search.DiskResourceSearchField;
 import org.iplantc.de.diskResource.share.DiskResourceModule;
-import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
-import org.iplantc.de.resources.client.messages.IplantErrorStrings;
 
 import static com.google.common.base.Preconditions.checkState;
 import com.google.common.base.Preconditions;
@@ -92,12 +90,10 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
     @Inject DiskResourceView.Presenter.Appearance appearance;
     @Inject DiskResourceServiceFacade diskResourceService;
     @Inject DiskResourceUtil diskResourceUtil;
-    @Inject IplantErrorStrings errorStrings;
     @Inject DiskResourceSelectorDialogFactory selectorDialogFactory;
     @Inject UserInfo userInfo;
     private final SearchView.Presenter dataSearchPresenter;
     private final DetailsView.Presenter detailsViewPresenter;
-    private final IplantDisplayStrings displayStrings;
     private final EventBus eventBus;
     private final GridView.Presenter gridViewPresenter;
     private final NavigationView.Presenter navigationPresenter;
@@ -110,7 +106,6 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
                               final SearchView.Presenter dataSearchPresenter,
                               final ToolbarViewPresenterFactory toolbarViewPresenterFactory,
                               final DetailsView.Presenter detailsViewPresenter,
-                              final IplantDisplayStrings displayStrings,
                               final IplantAnnouncer announcer,
                               final EventBus eventBus,
                               @Assisted("hideToolbar") final boolean hideToolbar,
@@ -124,7 +119,7 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
         this(diskResourceViewFactory, drFactory,
              navigationPresenter, gridViewPresenterFactory, dataSearchPresenter,
              toolbarViewPresenterFactory, detailsViewPresenter,
-             displayStrings, announcer, eventBus,
+             announcer, eventBus,
              infoTypeFilters, entityType);
         view.setNorthWidgetHidden(hideToolbar);
         view.setEastWidgetHidden(hideDetailsPanel);
@@ -146,7 +141,6 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
                               final SearchView.Presenter dataSearchPresenter,
                               final ToolbarViewPresenterFactory toolbarViewPresenterFactory,
                               final DetailsView.Presenter detailsViewPresenter,
-                              final IplantDisplayStrings displayStrings,
                               final IplantAnnouncer announcer,
                               final EventBus eventBus,
                               @Assisted("hideToolbar") final boolean hideToolbar,
@@ -159,7 +153,7 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
         this(diskResourceViewFactory, drFactory,
              navigationPresenter, gridViewPresenterFactory, dataSearchPresenter,
              toolbarViewPresenterFactory, detailsViewPresenter,
-             displayStrings, announcer, eventBus,
+             announcer, eventBus,
              Collections.<InfoType>emptyList(),
              null);
         view.setNorthWidgetHidden(hideToolbar);
@@ -182,7 +176,6 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
                               final SearchView.Presenter dataSearchPresenter,
                               final ToolbarViewPresenterFactory toolbarViewPresenterFactory,
                               final DetailsView.Presenter detailsViewPresenter,
-                              final IplantDisplayStrings displayStrings,
                               final IplantAnnouncer announcer,
                               final EventBus eventBus,
                               @Assisted("hideToolbar") final boolean hideToolbar,
@@ -194,7 +187,7 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
         this(diskResourceViewFactory, drFactory,
              navigationPresenter, gridViewPresenterFactory, dataSearchPresenter,
              toolbarViewPresenterFactory, detailsViewPresenter,
-             displayStrings, announcer, eventBus,
+             announcer, eventBus,
              Collections.<InfoType>emptyList(),
              null);
         view.setNorthWidgetHidden(hideToolbar);
@@ -216,7 +209,6 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
                               final SearchView.Presenter dataSearchPresenter,
                               final ToolbarViewPresenterFactory toolbarViewPresenterFactory,
                               final DetailsView.Presenter detailsViewPresenter,
-                              final IplantDisplayStrings displayStrings,
                               final IplantAnnouncer announcer,
                               final EventBus eventBus,
                               final List<InfoType> infoTypeFilters,
@@ -227,7 +219,6 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
         this.gridViewPresenter = gridViewPresenterFactory.create(navigationPresenter,
                                                                  infoTypeFilters,
                                                                  entityType);
-        this.displayStrings = displayStrings;
         this.announcer = announcer;
         this.eventBus = eventBus;
         this.dataSearchPresenter = dataSearchPresenter;
@@ -337,14 +328,14 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
                     && event.isConfirmDelete()) {
                 confirmDelete(selectedResources);
             } else {
-                delete(selectedResources, displayStrings.deleteMsg());
+                delete(selectedResources, appearance.deleteMsg());
             }
         }
     }
 
     @Override
     public void onEmptyTrashSelected(EmptyTrashSelected event) {
-        final ConfirmMessageBox cmb = new ConfirmMessageBox(displayStrings.emptyTrash(), displayStrings.emptyTrashWarning());
+        final ConfirmMessageBox cmb = new ConfirmMessageBox(appearance.emptyTrash(), appearance.emptyTrashWarning());
         cmb.addDialogHideHandler(new DialogHideEvent.DialogHideHandler() {
             @Override
             public void onDialogHide(DialogHideEvent event) {
@@ -371,11 +362,11 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
                     if (canDragDataToTargetFolder(targetFolder, selectedResources)) {
                         doMoveDiskResources(targetFolder, selectedResources);
                     } else {
-                        announcer.schedule(new ErrorAnnouncementConfig(errorStrings.diskResourceIncompleteMove()));
+                        announcer.schedule(new ErrorAnnouncementConfig(appearance.diskResourceIncompleteMove()));
                         view.unmask();
                     }
                 } else {
-                    announcer.schedule(new ErrorAnnouncementConfig(errorStrings.permissionErrorMessage()));
+                    announcer.schedule(new ErrorAnnouncementConfig(appearance.permissionErrorMessage()));
                     view.unmask();
                 }
             }
@@ -512,14 +503,14 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
 
     @Override
     public void doCreateNewFolder(Folder parentFolder, final String newFolderName) {
-        view.mask(displayStrings.loadingMask());
+        view.mask(appearance.createFolderLoadingMask());
         diskResourceService.createFolder(parentFolder, newFolderName, new CreateFolderCallback(parentFolder, view));
     }
 
     @Override
     public void doMoveDiskResources(Folder targetFolder, List<DiskResource> resources) {
         Folder parent = navigationPresenter.getSelectedFolder();
-        view.mask(displayStrings.loadingMask());
+        view.mask(appearance.moveDiskResourcesLoadingMask());
         if (gridViewPresenter.isSelectAllChecked()) {
             diskResourceService.moveContents(parent.getPath(), targetFolder, new DiskResourceMoveCallback(view, true, parent, targetFolder, resources));
         } else {
@@ -530,7 +521,7 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
     @Override
     public void doRenameDiskResource(final DiskResource dr, final String newName) {
         if (dr != null && !dr.getName().equals(newName)) {
-            view.mask(displayStrings.loadingMask());
+            view.mask(appearance.renameDiskResourcesLoadingMask());
             diskResourceService.renameDiskResource(dr, newName, new RenameDiskResourceCallback(dr, view));
         }
     }
@@ -568,7 +559,7 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
 
     @Override
     public void mask(String loadingMask) {
-        view.mask((Strings.isNullOrEmpty(loadingMask)) ? displayStrings.loadingMask() : loadingMask);
+        view.mask((Strings.isNullOrEmpty(loadingMask)) ? appearance.loadingMask() : loadingMask);
     }
 
 
@@ -632,7 +623,7 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
     }
 
     void doEmptyTrash() {
-        view.mask(displayStrings.loadingMask());
+        view.mask(appearance.loadingMask());
         diskResourceService.emptyTrash(userInfo.getUsername(), new AsyncCallback<String>() {
 
             @Override
@@ -650,13 +641,13 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
     }
 
     private void confirmDelete(final List<DiskResource> drSet) {
-        final MessageBox confirm = new ConfirmMessageBox(displayStrings.warning(), displayStrings.emptyTrashWarning());
+        final MessageBox confirm = new ConfirmMessageBox(appearance.warning(), appearance.emptyTrashWarning());
 
         confirm.addDialogHideHandler(new DialogHideEvent.DialogHideHandler() {
             @Override
             public void onDialogHide(DialogHideEvent event) {
                 if (PredefinedButton.YES.equals(event.getHideButton())) {
-                    delete(drSet, displayStrings.deleteTrash());
+                    delete(drSet, appearance.deleteTrash());
                 }
             }
         });
@@ -665,7 +656,7 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
     }
 
     private void delete(List<DiskResource> drSet, String announce) {
-        view.mask(displayStrings.loadingMask());
+        view.mask(appearance.loadingMask());
         Folder selectedFolder = navigationPresenter.getSelectedFolder();
         final AsyncCallback<HasPaths> callback = new DiskResourceDeleteCallback(drSet, selectedFolder, view, announce);
 

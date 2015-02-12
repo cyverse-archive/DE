@@ -99,4 +99,18 @@
     <replace-with class="org.iplantc.de.theme.base.client.diskResource.details.presenter.DetailsViewPresenterDefaultAppearance">
         <when-type-is class="org.iplantc.de.diskResource.client.DetailsView.Presenter.Appearance" />
     </replace-with>
+
+    <!-- Sharing -->
+    <replace-with class="org.iplantc.de.theme.base.client.diskResource.sharing.DataSharingViewDefaultAppearance">
+        <when-type-is class="org.iplantc.de.diskResource.client.DataSharingView.Appearance" />
+    </replace-with>
+
+    <replace-with class="org.iplantc.de.theme.base.client.diskResource.sharing.presenter.DataSharingPresenterDefaultAppearance">
+        <when-type-is class="org.iplantc.de.diskResource.client.DataSharingView.Presenter.Appearance" />
+    </replace-with>
+
+    <!-- Search -->
+    <replace-with class="org.iplantc.de.theme.base.client.diskResource.search.cells.DiskResourceSearchCellDefaultAppearance">
+        <when-type-is class="org.iplantc.de.diskResource.client.views.search.cells.DiskResourceSearchCell.DiskResourceSearchCellAppearance"/>
+    </replace-with>
 </module>

@@ -1,15 +1,11 @@
-/**
- *
- */
 package org.iplantc.de.diskResource.client.views.sharing;
 
 import org.iplantc.de.client.models.diskResources.PermissionValue;
 import org.iplantc.de.client.models.sharing.DataSharing;
 import org.iplantc.de.client.util.DiskResourceUtil;
+import org.iplantc.de.diskResource.client.DataSharingView;
 import org.iplantc.de.diskResource.client.model.DataSharingKeyProvider;
 import org.iplantc.de.diskResource.client.model.DataSharingProperties;
-import org.iplantc.de.resources.client.IplantResources;
-import org.iplantc.de.resources.client.messages.I18N;
 
 import com.google.gwt.core.client.GWT;
 
@@ -31,20 +27,29 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @author sriram
+ * FIXME Implement appearance separate from DataSharingView.Appearance
+ * @author sriram, jstroot
  * 
  */
 public class ShareBreakDownDialog extends Dialog {
 
+    private final DataSharingView.Appearance appearance;
     private Grid<DataSharing> grid;
     private final DiskResourceUtil diskResourceUtil;
 
     public ShareBreakDownDialog(final List<DataSharing> shares) {
+        this(shares,
+             GWT.<DataSharingView.Appearance> create(DataSharingView.Appearance.class));
+    }
+
+    ShareBreakDownDialog(final List<DataSharing> shares,
+                         final DataSharingView.Appearance appearance) {
+        this.appearance = appearance;
         init();
         diskResourceUtil = DiskResourceUtil.getInstance();
 
         ToolBar toolbar = new ToolBar();
-        toolbar.setHeight(30);
+        toolbar.setHeight(appearance.shareBreakDownDlgToolbarHeight());
         toolbar.add(buildGroupByUserButton());
         toolbar.add(buildGroupByDataButton());
         VerticalLayoutContainer container = new VerticalLayoutContainer();
@@ -56,10 +61,11 @@ public class ShareBreakDownDialog extends Dialog {
     }
 
     private void init() {
-        setPixelSize(400, 375);
+        setPixelSize(appearance.shareBreakDownDlgWidth(),
+                     appearance.shareBreakDownDlgHeight());
         setHideOnButtonClick(true);
         setModal(true);
-        setHeadingText(I18N.DISPLAY.whoHasAccess());
+        setHeadingText(appearance.whoHasAccess());
         buildGrid();
     }
 
@@ -81,7 +87,7 @@ public class ShareBreakDownDialog extends Dialog {
     }
 
     private TextButton buildGroupByUserButton() {
-        TextButton button = new TextButton(I18N.DISPLAY.groupByUser());
+        TextButton button = new TextButton(appearance.groupByUser());
         button.addSelectHandler(new SelectHandler() {
 
             @Override
@@ -91,12 +97,12 @@ public class ShareBreakDownDialog extends Dialog {
 
             }
         });
-        button.setIcon(IplantResources.RESOURCES.share());
+        button.setIcon(appearance.shareIcon());
         return button;
     }
 
     private TextButton buildGroupByDataButton() {
-        TextButton button = new TextButton(I18N.DISPLAY.groupByData());
+        TextButton button = new TextButton(appearance.groupByData());
         button.addSelectHandler(new SelectHandler() {
 
             @Override
@@ -106,7 +112,7 @@ public class ShareBreakDownDialog extends Dialog {
 
             }
         });
-        button.setIcon(IplantResources.RESOURCES.folder());
+        button.setIcon(appearance.folderIcon());
         return button;
     }
 
@@ -115,8 +121,8 @@ public class ShareBreakDownDialog extends Dialog {
         DataSharingProperties props = GWT.create(DataSharingProperties.class);
         ColumnConfig<DataSharing, String> name = new ColumnConfig<>(props.name());
 
-        name.setHeader(I18N.DISPLAY.name());
-        name.setWidth(120);
+        name.setHeader(appearance.nameColumnLabel());
+        name.setWidth(appearance.shareBreakDownDlgNameColumnWidth());
 
         ColumnConfig<DataSharing, String> diskRsc = new ColumnConfig<>(new ValueProvider<DataSharing, String>() {
 
@@ -137,8 +143,8 @@ public class ShareBreakDownDialog extends Dialog {
             }
         });
 
-        diskRsc.setHeader(I18N.DISPLAY.name());
-        diskRsc.setWidth(120);
+        diskRsc.setHeader(appearance.nameColumnLabel());
+        diskRsc.setWidth(appearance.shareBreakDownDlgNameColumnWidth());
         ColumnConfig<DataSharing, PermissionValue> permission = new ColumnConfig<>(new ValueProvider<DataSharing, PermissionValue>() {
 
             @Override
@@ -158,13 +164,12 @@ public class ShareBreakDownDialog extends Dialog {
             }
         });
 
-        permission.setHeader(I18N.DISPLAY.permissions());
-        permission.setWidth(80);
+        permission.setHeader(appearance.permissionsColumnLabel());
+        permission.setWidth(appearance.shareBreakDownDlgPermissionColumnWidth());
         configs.add(name);
         configs.add(diskRsc);
         configs.add(permission);
         return new ColumnModel<>(configs);
-
     }
 
 }

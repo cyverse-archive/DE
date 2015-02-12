@@ -68,12 +68,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     String adminInfo();
 
     /**
-     * 
-     * @return
-     */
-    String advancedSearchToolTip();
-
-    /**
      * Translated "Yes".
      *
      * @return translated "Yes"
@@ -460,15 +454,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     @DefaultMessage("Change Permissions")
     @Key("changePermissions")
     String changePermissions();
-
-    /**
-     * Translated "Choose from collaborators".
-     *
-     * @return translated "Choose from collaborators"
-     */
-    @DefaultMessage("Choose from collaborators")
-    @Key("chooseFromCollab")
-    String chooseFromCollab();
 
     /**
      * Translated "Click to view app info.".
@@ -867,29 +852,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     String deleteAll();
 
     /**
-     * Tool tip text displayed when hovering over the delete button in the Manage Data Links window.
-     *
-     * @return
-
-    /**
-     * Translated "All are deleted files and folders are available under trash.".
-     *
-     * @return translated "All are deleted files and folders are available under trash."
-     */
-    @DefaultMessage("All are deleted files and folders are available under trash.")
-    @Key("deleteMsg")
-    String deleteMsg();
-
-    /**
-     * Translated "Selected file(s) / folder(s) deleted successfully."
-     *
-     * @return translated "Selected file(s) / folder(s) deleted successfully."
-     */
-    @DefaultMessage("Selected file(s) / folder(s) deleted successfully.")
-    @Key("deleteTrash")
-    String deleteTrash();
-    
-    /**
      * Translated "Delete Selected".
      *
      * @return translated "Delete Selected"
@@ -1052,24 +1014,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     String email();
 
     /**
-     * Translated "Empty Trash".
-     *
-     * @return translated "Empty Trash"
-     */
-    @DefaultMessage("Empty Trash")
-    @Key("emptyTrash")
-    String emptyTrash();
-
-    /**
-     * Translated "This action cannot be undone. Do you wish to continue ?".
-     *
-     * @return translated "This action cannot be undone. Do you wish to continue ?"
-     */
-    @DefaultMessage("This action cannot be undone. Do you wish to continue ?")
-    @Key("emptyTrashWarning")
-    String emptyTrashWarning();
-
-    /**
      * Translated "Enabled".
      *
      * @return translated "Enabled"
@@ -1131,15 +1075,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     @DefaultMessage("This message will expire on {0}.")
     @Key("expirationMessage")
     String expirationMessage(String expirationDate);
-
-    /**
-     * Translated "Explain".
-     * 
-     * @return translated "Explain"
-     */
-    @DefaultMessage("Explain")
-    @Key("explain")
-    String explain();
 
     @Key("feedback")
     String feedback();
@@ -1239,24 +1174,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     @DefaultMessage("Folder Name")
     @Key("folderName")
     String folderName();
-
-    /**
-     * Translated "Group by Data".
-     *
-     * @return translated "Group by Data"
-     */
-    @DefaultMessage("Group by Data")
-    @Key("groupByData")
-    String groupByData();
-
-    /**
-     * Translated "Group by User".
-     *
-     * @return translated "Group by User"
-     */
-    @DefaultMessage("Group by User")
-    @Key("groupByUser")
-    String groupByUser();
 
     /**
      * Translated "Not useful".
@@ -1721,15 +1638,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     @DefaultMessage("Manage Data")
     @Key("manageData")
     String manageData();
-
-    /**
-     * Translated "Manage Sharing".
-     *
-     * @return translated "Manage Sharing"
-     */
-    @DefaultMessage("Manage Sharing")
-    @Key("manageSharing")
-    String manageSharing();
 
     /**
      * Translated "Map Outputs to Inputs".
@@ -2232,16 +2140,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     @Key("permissionSelectErrorMessage")
     String permissionSelectErrorMessage();
     
-    
-    /**
-     * Translated "Permissions".
-     *
-     * @return translated "Permissions"
-     */
-    @DefaultMessage("Permissions")
-    @Key("permissions")
-    String permissions();
-
     /**
      * Translated "Phone".
      *
@@ -2957,15 +2855,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     String selectCollabs();
 
     /**
-     * Translated "Selected file(s) / folder(s)".
-     *
-     * @return translated "Selected file(s) / folder(s)"
-     */
-    @DefaultMessage("Selected file(s) / folder(s)")
-    @Key("selectFilesFolders")
-    String selectFilesFolders();
-
-    /**
      * Translated "Select a folder to view its contents.".
      *
      * @return translated "Select a folder to view its contents."
@@ -3029,15 +2918,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     String selectedResource();
 
     /**
-     * Translated "Cannot share file(s) / folder(s) with yourself.".
-     *
-     * @return translated "Cannot share file(s) / folder(s) with yourself."
-     */
-    @DefaultMessage("Cannot share file(s) / folder(s) with yourself.")
-    @Key("selfShareWarning")
-    String selfShareWarning();
-
-    /**
      * Translated "Settings".
      *
      * @return translated "Settings"
@@ -3063,18 +2943,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     @DefaultMessage("Click Choose Collaborators or search for a user to begin sharing.")
     @Key("sharePrompt")
     String sharePrompt();
-
-
-    /**
-     * Translated
-     * "Your request has been submitted. You will receive notifications when the request is complete.".
-     *
-     * @return translated
-     *         "Your request has been submitted. You will receive notifications when the request is complete."
-     */
-    @DefaultMessage("Your request has been submitted. You will receive notifications when the request is complete.")
-    @Key("sharingCompleteMsg")
-    String sharingCompleteMsg();
 
     /**
      * Translated "Show".
@@ -3410,15 +3278,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     String unrate();
 
     /**
-     * Translated "Unshare".
-     *
-     * @return translated "Unshare"
-     */
-    @DefaultMessage("Unshare")
-    @Key("unshare")
-    SafeHtml unshare();
-
-    /**
      * Translated "Move Up".
      *
      * @return translated "Move Up"
@@ -3531,15 +3390,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     String valueParenS();
 
     /**
-     * Translated "Visibility Varies".
-     *
-     * @return translated "Visibility Varies"
-     */
-    @DefaultMessage("Visibility Varies")
-    @Key("variablePermissionsNotice")
-    String variablePermissionsNotice();
-
-    /**
      * Translated "varies".
      *
      * @return translated "varies"
@@ -3637,15 +3487,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     @DefaultMessage("Welcome")
     @Key("welcome")
     String welcome();
-
-    /**
-     * Translated "Who has access".
-     *
-     * @return translated "Who has access"
-     */
-    @DefaultMessage("Who has access")
-    @Key("whoHasAccess")
-    String whoHasAccess();
 
     /**
      * Translated

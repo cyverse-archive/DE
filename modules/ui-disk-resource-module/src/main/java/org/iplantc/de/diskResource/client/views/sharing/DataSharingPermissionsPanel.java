@@ -1,6 +1,3 @@
-/**
- *
- */
 package org.iplantc.de.diskResource.client.views.sharing;
 
 import org.iplantc.de.client.events.EventBus;
@@ -13,17 +10,14 @@ import org.iplantc.de.collaborators.client.events.UserSearchResultSelected;
 import org.iplantc.de.collaborators.client.util.UserSearchField;
 import org.iplantc.de.collaborators.client.views.ManageCollaboratorsDialog;
 import org.iplantc.de.collaborators.client.views.ManageCollaboratorsView;
+import org.iplantc.de.diskResource.client.DataSharingView;
+import org.iplantc.de.diskResource.client.DataSharingView.Presenter;
 import org.iplantc.de.diskResource.client.model.DataSharingKeyProvider;
 import org.iplantc.de.diskResource.client.model.DataSharingProperties;
-import org.iplantc.de.diskResource.client.DataSharingView.Presenter;
-import org.iplantc.de.resources.client.IplantResources;
-import org.iplantc.de.resources.client.messages.I18N;
 
 import com.google.gwt.core.shared.GWT;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
-import com.google.gwt.safecss.shared.SafeStyles;
-import com.google.gwt.safecss.shared.SafeStylesUtils;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiTemplate;
@@ -35,7 +29,6 @@ import com.sencha.gxt.cell.core.client.TextButtonCell;
 import com.sencha.gxt.cell.core.client.form.ComboBoxCell;
 import com.sencha.gxt.cell.core.client.form.ComboBoxCell.TriggerAction;
 import com.sencha.gxt.core.client.ValueProvider;
-import com.sencha.gxt.core.client.resources.CommonStyles;
 import com.sencha.gxt.core.shared.FastMap;
 import com.sencha.gxt.data.shared.ListStore;
 import com.sencha.gxt.data.shared.ModelKeyProvider;
@@ -57,28 +50,20 @@ import java.util.Comparator;
 import java.util.List;
 
 /**
- * @author sriram
- * 
+ * @author sriram, jstroot
  */
 public class DataSharingPermissionsPanel implements IsWidget {
 
-    @UiField
-    Grid<DataSharing> grid;
-
-    @UiField
-    ToolBar toolbar;
-
-    @UiField(provided = true)
-    ListStore<DataSharing> listStore;
-
-    @UiField(provided = true)
-    ColumnModel<DataSharing> cm;
-
-    @UiField
-    VerticalLayoutContainer container;
+    @UiField Grid<DataSharing> grid;
+    @UiField ToolBar toolbar;
+    @UiField(provided = true) ListStore<DataSharing> listStore;
+    @UiField(provided = true) ColumnModel<DataSharing> cm;
+    @UiField VerticalLayoutContainer container;
+    private EventBus eventBus;
 
     private FastMap<List<DataSharing>> originalList;
     private final FastMap<DiskResource> resources;
+    @UiField(provided = true) final DataSharingView.Appearance appearance;
     private final Presenter presenter;
     private FastMap<List<DataSharing>> sharingMap;
     private HorizontalPanel explainPanel;
@@ -90,10 +75,21 @@ public class DataSharingPermissionsPanel implements IsWidget {
     interface MyUiBinder extends UiBinder<Widget, DataSharingPermissionsPanel> {
     }
 
-    
-    public DataSharingPermissionsPanel(Presenter dataSharingPresenter, FastMap<DiskResource> resources) {
+
+    public DataSharingPermissionsPanel(final DataSharingView.Presenter dataSharingPresenter,
+                                       final FastMap<DiskResource> resources) {
+        this(dataSharingPresenter,
+             resources,
+             GWT.<DataSharingView.Appearance> create(DataSharingView.Appearance.class));
+    }
+
+    DataSharingPermissionsPanel(final DataSharingView.Presenter dataSharingPresenter,
+                                final FastMap<DiskResource> resources,
+                                final DataSharingView.Appearance appearance) {
         this.presenter = dataSharingPresenter;
         this.resources = resources;
+        this.appearance = appearance;
+        eventBus = EventBus.getInstance();
         init();
         widget = uiBinder.createAndBindUi(this);
         initToolbar();
@@ -107,7 +103,7 @@ public class DataSharingPermissionsPanel implements IsWidget {
     private void init() {
         listStore = new ListStore<>(new DataSharingKeyProvider());
         cm = buildColumnModel();
-        EventBus.getInstance().addHandler(UserSearchResultSelected.TYPE, new UserSearchResultSelected.UserSearchResultSelectedEventHandler() {
+        eventBus.addHandler(UserSearchResultSelected.TYPE, new UserSearchResultSelected.UserSearchResultSelectedEventHandler() {
 
             @Override
             public void onUserSearchResultSelected(UserSearchResultSelected userSearchResultSelected) {
@@ -129,7 +125,7 @@ public class DataSharingPermissionsPanel implements IsWidget {
 
     private TextButton buildChooseCollabButton() {
         TextButton button = new TextButton();
-        button.setText(I18N.DISPLAY.chooseFromCollab());
+        button.setText(appearance.chooseFromCollab());
         button.addSelectHandler(new SelectHandler() {
 
             @Override
@@ -153,8 +149,8 @@ public class DataSharingPermissionsPanel implements IsWidget {
             }
 
         });
-        button.setToolTip(I18N.DISPLAY.chooseFromCollab());
-        button.setIcon(IplantResources.RESOURCES.share());
+        button.setToolTip(appearance.chooseFromCollab());
+        button.setIcon(appearance.shareIcon());
         return button;
     }
 
@@ -199,7 +195,7 @@ public class DataSharingPermissionsPanel implements IsWidget {
 
     private void addExplainPanel() {
         explainPanel = new HorizontalPanel();
-        TextButton explainBtn = new TextButton(I18N.DISPLAY.variablePermissionsNotice() + ":" + I18N.DISPLAY.explain(), new SelectHandler() {
+        TextButton explainBtn = new TextButton(appearance.variablePermissionsNotice() + ":" + appearance.explain(), new SelectHandler() {
 
             @Override
             public void onSelect(SelectEvent event) {
@@ -209,11 +205,11 @@ public class DataSharingPermissionsPanel implements IsWidget {
                 }
 
                 ShareBreakDownDialog explainDlg = new ShareBreakDownDialog(shares);
-                explainDlg.setHeadingText(I18N.DISPLAY.whoHasAccess());
+                explainDlg.setHeadingText(appearance.whoHasAccess());
                 explainDlg.show();
             }
         });
-        explainBtn.setIcon(IplantResources.RESOURCES.help());
+        explainBtn.setIcon(appearance.helpIcon());
         explainPanel.add(explainBtn);
         toolbar.add(explainPanel);
     }
@@ -221,7 +217,7 @@ public class DataSharingPermissionsPanel implements IsWidget {
     private void addCollaborator(Collaborator user) {
         String userName = user.getUserName();
         if (userName != null && userName.equalsIgnoreCase(UserInfo.getInstance().getUsername())) {
-            AlertMessageBox amb = new AlertMessageBox(I18N.DISPLAY.warning(), I18N.DISPLAY.selfShareWarning());
+            AlertMessageBox amb = new AlertMessageBox(appearance.warning(), appearance.selfShareWarning());
             amb.show();
             return;
         }
@@ -292,7 +288,9 @@ public class DataSharingPermissionsPanel implements IsWidget {
         List<ColumnConfig<DataSharing, ?>> configs = new ArrayList<>();
         DataSharingProperties props = GWT.create(DataSharingProperties.class);
 
-        ColumnConfig<DataSharing, String> name = new ColumnConfig<>(props.name(), 200, I18N.DISPLAY.name());
+        ColumnConfig<DataSharing, String> name = new ColumnConfig<>(props.name(),
+                                                                    appearance.nameColumnWidth(),
+                                                                    appearance.nameColumnLabel());
         ColumnConfig<DataSharing, PermissionValue> permission = buildPermissionColumn(props);
         ColumnConfig<DataSharing, String> remove = buildRemoveColumn();
 
@@ -304,9 +302,10 @@ public class DataSharingPermissionsPanel implements IsWidget {
     }
 
     private ColumnConfig<DataSharing, PermissionValue> buildPermissionColumn(DataSharingProperties props) {
-        ColumnConfig<DataSharing, PermissionValue> permission = new ColumnConfig<>(props.displayPermission(), 170, I18N.DISPLAY.permissions());
-        SafeStyles permTextStyles = SafeStylesUtils.fromTrustedString("padding: 2px 3px;color:#0098AA;cursor:pointer;");
-        permission.setColumnTextStyle(permTextStyles);
+        ColumnConfig<DataSharing, PermissionValue> permission = new ColumnConfig<>(props.displayPermission(),
+                                                                                   appearance.permissionsColumnWidth(),
+                                                                                   appearance.permissionsColumnLabel());
+        permission.setColumnTextStyle(appearance.permissionsColumnStyle());
         permission.setFixed(true);
         permission.setCell(buildPermissionsCombo());
         permission.setComparator(new Comparator<PermissionValue>() {
@@ -340,14 +339,13 @@ public class DataSharingPermissionsPanel implements IsWidget {
             }
         });
 
-        remove.setColumnTextClassName(CommonStyles.get().inlineBlock());
+        remove.setColumnTextClassName(appearance.removeColumnTextClass());
         remove.setHeader("");
         remove.setSortable(false);
         remove.setFixed(true);
-        SafeStyles textStyles = SafeStylesUtils.fromTrustedString("padding: 1px 3px;cursor:pointer;");
-        remove.setColumnStyle(textStyles);
-        remove.setWidth(50);
-        remove.setToolTip(I18N.DISPLAY.unshare());
+        remove.setColumnStyle(appearance.removeColumnStyle());
+        remove.setWidth(appearance.removeColumnWidth());
+        remove.setToolTip(appearance.unshare());
         TextButtonCell button = buildRemoveButtonCell();
         remove.setCell(button);
         return remove;
@@ -363,7 +361,7 @@ public class DataSharingPermissionsPanel implements IsWidget {
             }
 
         });
-        button.setIcon(IplantResources.RESOURCES.delete());
+        button.setIcon(appearance.deleteIcon());
         return button;
     }
 
@@ -501,7 +499,7 @@ public class DataSharingPermissionsPanel implements IsWidget {
     }
 
     public void mask() {
-        container.mask(I18N.DISPLAY.loadingMask());
+        container.mask(appearance.loadingMask());
     }
 
     public void unmask() {

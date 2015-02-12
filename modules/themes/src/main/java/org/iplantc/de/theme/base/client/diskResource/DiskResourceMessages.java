@@ -21,10 +21,20 @@ public interface DiskResourceMessages extends Messages {
 
     String deleteFailed();
 
+    String deleteMsg();
+
+    String deleteTrash();
+
+    String diskResourceIncompleteMove();
+
     @DefaultMessage("Selected items moved to {0}.")
     @AlternateMessage({"=1", "Selected item moved to {0}."})
     @Key("diskResourceMoveSuccess")
     String diskResourceMoveSuccess(String destPath, @Optional @PluralCount List<String> srcPaths);
+
+    String emptyTrash();
+
+    String emptyTrashWarning();
 
     @Key("fileFolderDialogHeaderText")
     String fileFolderDialogHeaderText();
@@ -48,6 +58,10 @@ public interface DiskResourceMessages extends Messages {
     String newFolder();
 
     String partialRestore();
+
+    String permissionErrorMessage();
+
+    String permissions();
 
     String renameFailed();
 

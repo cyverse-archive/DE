@@ -16,14 +16,13 @@ import org.iplantc.de.diskResource.client.GridView;
 import org.iplantc.de.diskResource.client.NavigationView;
 import org.iplantc.de.diskResource.client.SearchView;
 import org.iplantc.de.diskResource.client.ToolbarView;
+import org.iplantc.de.diskResource.client.events.search.UpdateSavedSearchesEvent;
 import org.iplantc.de.diskResource.client.gin.factory.DiskResourceViewFactory;
 import org.iplantc.de.diskResource.client.gin.factory.FolderContentsRpcProxyFactory;
 import org.iplantc.de.diskResource.client.gin.factory.GridViewPresenterFactory;
 import org.iplantc.de.diskResource.client.gin.factory.ToolbarViewPresenterFactory;
-import org.iplantc.de.diskResource.client.events.search.UpdateSavedSearchesEvent;
 import org.iplantc.de.diskResource.client.views.search.DiskResourceSearchField;
 import org.iplantc.de.resources.client.messages.IplantContextualHelpStrings;
-import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 import org.iplantc.de.resources.client.messages.IplantErrorStrings;
 
 import com.google.common.collect.Lists;
@@ -51,7 +50,6 @@ public class DiskResourcePresenterImplTest {
     @Mock FolderContentsRpcProxyFactory mockFolderContentsRpcFactory;
     @Mock DiskResourceView.FolderRpcProxy mockFolderRpcProxy;
     @Mock DiskResourceServiceFacade mockDiskResourceService;
-    @Mock IplantDisplayStrings mockDisplayStrings;
     @Mock IplantErrorStrings errorStringsMock;
     @Mock IplantContextualHelpStrings helpStringsMock;
     @Mock DiskResourceAutoBeanFactory mockFactory;
@@ -88,7 +86,6 @@ public class DiskResourcePresenterImplTest {
                                             mockDataSearchPresenter,
                                             mockToolbarPresenterFactory,
                                             mockDetailsPresenter,
-                                            mockDisplayStrings,
                                             mockAnnouncer,
                                             mockEventBus,
                                             null,

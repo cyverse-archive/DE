@@ -365,7 +365,7 @@ public class ToolbarViewDefaultAppearance implements ToolbarView.Appearance {
 
     @Override
     public String emptyTrashMenuItem() {
-        return iplantDisplayStrings.emptyTrash();
+        return diskResourceMessages.emptyTrash();
     }
 
     @Override

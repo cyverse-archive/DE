@@ -17,56 +17,46 @@ import com.sencha.gxt.widget.core.client.grid.Grid;
 
 import java.util.List;
 
+/**
+ * @author jstroot
+ */
 public class DataSharingViewImpl implements DataSharingView {
-
-    @UiField
-    VerticalLayoutContainer container;
-
-     @UiField
-    FramedPanel diskResourceListPnl;
-
- 
-    @UiField(provided = true) final
-    ColumnModel<DiskResource> diskResourcesColumnModel;
-
-    @UiField(provided = true) final
-    ListStore<DiskResource> diskResourcesListStore;
-
- 
-    @UiField
-    Grid<DiskResource> diskResourcesGrid;
-
- 
-    Presenter presenter;
-
-    final Widget widget;
-
-    private static final MyUiBinder uiBinder = GWT.create(MyUiBinder.class);
 
     @UiTemplate("DataSharingView.ui.xml")
     interface MyUiBinder extends UiBinder<Widget, DataSharingViewImpl> {
     }
+    @UiField(provided = true) final ColumnModel<DiskResource> diskResourcesColumnModel;
+    @UiField(provided = true) final ListStore<DiskResource> diskResourcesListStore;
+    final Widget widget;
+    @UiField VerticalLayoutContainer container;
+    @UiField FramedPanel diskResourceListPnl;
+    @UiField Grid<DiskResource> diskResourcesGrid;
+
+    DataSharingView.Presenter presenter;
+
+    private static final MyUiBinder uiBinder = GWT.create(MyUiBinder.class);
 
     public DataSharingViewImpl(ColumnModel<DiskResource> diskReColumnModel,
-            ListStore<DiskResource> drStore) {
+                               ListStore<DiskResource> drStore) {
         this.diskResourcesColumnModel = diskReColumnModel;
         this.diskResourcesListStore = drStore;
         widget = uiBinder.createAndBindUi(this);
     }
 
- 
+    @Override
+    public void addShareWidget(Widget widget) {
+        container.add(widget);
+    }
+
     @Override
     public Widget asWidget() {
         return widget;
     }
 
-  
     @Override
     public void setPresenter(Presenter dataSharingPresenter) {
         this.presenter = dataSharingPresenter;
     }
-
-   
 
     @Override
     public void setSelectedDiskResources(List<DiskResource> models) {
@@ -76,12 +66,6 @@ public class DataSharingViewImpl implements DataSharingView {
         }
 
     }
-
-
-	@Override
-	public void addShareWidget(Widget widget) {
-        container.add(widget);
-	}
 
 
 }

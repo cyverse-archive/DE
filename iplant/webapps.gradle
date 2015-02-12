@@ -62,9 +62,10 @@ project(':de') {
         superDev { noPrecompile = true }
         maxHeapSize = '1024M'
         compiler {
-            enableClosureCompiler = true;
+//            enableClosureCompiler = true;
             disableClassMetadata = true;
             disableCastChecking = true;
+            compileReport = true;
         }
 
     }

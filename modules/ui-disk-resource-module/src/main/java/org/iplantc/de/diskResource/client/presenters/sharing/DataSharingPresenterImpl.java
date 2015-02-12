@@ -5,7 +5,6 @@ package org.iplantc.de.diskResource.client.presenters.sharing;
 
 import org.iplantc.de.client.models.collaborators.Collaborator;
 import org.iplantc.de.client.models.diskResources.DiskResource;
-import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.client.models.diskResources.PermissionValue;
 import org.iplantc.de.client.models.sharing.DataSharing;
 import org.iplantc.de.client.models.sharing.Sharing;
@@ -14,10 +13,10 @@ import org.iplantc.de.client.util.JsonUtil;
 import org.iplantc.de.collaborators.client.util.CollaboratorsUtil;
 import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
-import org.iplantc.de.diskResource.client.views.sharing.DataSharingPermissionsPanel;
 import org.iplantc.de.diskResource.client.DataSharingView;
-import org.iplantc.de.resources.client.messages.I18N;
+import org.iplantc.de.diskResource.client.views.sharing.DataSharingPermissionsPanel;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONString;
@@ -104,6 +103,7 @@ public class DataSharingPresenterImpl implements DataSharingView.Presenter {
     private final DiskResourceServiceFacade diskResourceService;
     private final DataSharingPermissionsPanel permissionsPanel;
     private final List<DiskResource> selectedResources;
+    private final Appearance appearance;
     private FastMap<List<DataSharing>> dataSharingMap;
     private FastMap<List<JSONObject>> sharingList;
     private final JsonUtil jsonUtil;
@@ -112,12 +112,29 @@ public class DataSharingPresenterImpl implements DataSharingView.Presenter {
 
     public DataSharingPresenterImpl(final DiskResourceServiceFacade diskResourceService,
                                     final List<DiskResource> selectedResources,
-                                    final DataSharingView view) {
+                                    final DataSharingView view,
+                                    final CollaboratorsUtil collaboratorsUtil,
+                                    final JsonUtil jsonUtil) {
+        this(diskResourceService,
+             selectedResources,
+             view,
+             collaboratorsUtil,
+             jsonUtil,
+             GWT.<DataSharingView.Presenter.Appearance> create(DataSharingView.Presenter.Appearance.class));
+    }
+
+    DataSharingPresenterImpl(final DiskResourceServiceFacade diskResourceService,
+                             final List<DiskResource> selectedResources,
+                             final DataSharingView view,
+                             final CollaboratorsUtil collaboratorsUtil,
+                             final JsonUtil jsonUtil,
+                             final DataSharingView.Presenter.Appearance appearance) {
         this.diskResourceService = diskResourceService;
         this.view = view;
         this.selectedResources = selectedResources;
-        this.jsonUtil = JsonUtil.getInstance();
-        this.collaboratorsUtil = CollaboratorsUtil.getInstance();
+        this.collaboratorsUtil = collaboratorsUtil;
+        this.jsonUtil = jsonUtil;
+        this.appearance = appearance;
         view.setPresenter(this);
         permissionsPanel = new DataSharingPermissionsPanel(this, getSelectedResourcesAsMap(selectedResources));
         view.addShareWidget(permissionsPanel.asWidget());
@@ -128,26 +145,6 @@ public class DataSharingPresenterImpl implements DataSharingView.Presenter {
     @Override
     public PermissionValue getDefaultPermissions() {
         return PermissionValue.read;
-    }
-
-    @Override
-    public List<DiskResource> getSelectedResources() {
-        return selectedResources;
-    }
-
-    @Override
-    public DataSharing.TYPE getSharingResourceType(String path) {
-        for (DiskResource dr : selectedResources) {
-            if (dr.getPath().equalsIgnoreCase(path)) {
-                if (dr instanceof Folder) {
-                    return DataSharing.TYPE.FOLDER;
-                } else {
-                    return DataSharing.TYPE.FILE;
-                }
-            }
-        }
-
-        return null;
     }
 
     @Override
@@ -179,7 +176,7 @@ public class DataSharingPresenterImpl implements DataSharingView.Presenter {
         }
 
         if (requestBody != null || unshareRequestBody != null) {
-            IplantAnnouncer.getInstance().schedule(I18N.DISPLAY.sharingCompleteMsg());
+            IplantAnnouncer.getInstance().schedule(appearance.sharingCompleteMsg());
         }
 
     }

@@ -220,15 +220,6 @@ public interface IplantErrorStrings extends com.google.gwt.i18n.client.Messages,
     String diskResourceIncompleteDeletion();
 
     /**
-     * Translated "The move request was incomplete. Please try again.".
-     * 
-     * @return translated "The move request was incomplete. Please try again."
-     */
-    @DefaultMessage("The move request was incomplete. Please try again.")
-    @Key("diskResourceIncompleteMove")
-    String diskResourceIncompleteMove();
-
-    /**
      * Translated "The rename request was incomplete. Please try again.".
      * 
      * @return translated "The rename request was incomplete. Please try again."
@@ -677,16 +668,6 @@ public interface IplantErrorStrings extends com.google.gwt.i18n.client.Messages,
     @DefaultMessage("Unable to delete notifications.")
     @Key("notificationDeletFail")
     String notificationDeletFail();
-
-    /**
-     * Translated "You do not have the permission to perform this operation on the selected item(s).".
-     * 
-     * @return translated
-     *         "You do not have the permission to perform this operation on the selected item(s)."
-     */
-    @DefaultMessage("You do not have the permission to perform this operation on the selected item(s).")
-    @Key("permissionErrorMessage")
-    String permissionErrorMessage();
 
     /**
      * Translated "Permission Error".
