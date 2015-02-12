@@ -27,7 +27,6 @@ import org.iplantc.de.diskResource.client.SearchView;
 import org.iplantc.de.diskResource.client.ToolbarView;
 import org.iplantc.de.diskResource.client.events.*;
 import org.iplantc.de.diskResource.client.events.selection.*;
-import org.iplantc.de.diskResource.client.gin.factory.DiskResourceSelectorDialogFactory;
 import org.iplantc.de.diskResource.client.gin.factory.DiskResourceViewFactory;
 import org.iplantc.de.diskResource.client.gin.factory.GridViewPresenterFactory;
 import org.iplantc.de.diskResource.client.gin.factory.ToolbarViewPresenterFactory;
@@ -47,6 +46,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.Iterables;
 import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.inject.client.AsyncProvider;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HasOneWidget;
 import com.google.gwt.user.client.ui.IsWidget;
@@ -90,7 +90,7 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
     @Inject DiskResourceView.Presenter.Appearance appearance;
     @Inject DiskResourceServiceFacade diskResourceService;
     @Inject DiskResourceUtil diskResourceUtil;
-    @Inject DiskResourceSelectorDialogFactory selectorDialogFactory;
+    @Inject AsyncProvider<FolderSelectDialog> folderSelectDialogProvider;
     @Inject UserInfo userInfo;
     private final SearchView.Presenter dataSearchPresenter;
     private final DetailsView.Presenter detailsViewPresenter;
@@ -350,28 +350,38 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
 
     @Override
     public void onMoveDiskResourcesSelected(MoveDiskResourcesSelected event) {
-        final FolderSelectDialog fsd = selectorDialogFactory.createFolderSelector(navigationPresenter.getSelectedFolder());
-        fsd.show();
-        fsd.addOkButtonSelectHandler(new SelectHandler() {
+        folderSelectDialogProvider.get(new AsyncCallback<FolderSelectDialog>() {
+            @Override
+            public void onFailure(Throwable caught) {
+                ErrorHandler.post(caught);
+            }
 
             @Override
-            public void onSelect(SelectEvent event) {
-                Folder targetFolder = fsd.getValue();
-                final List<DiskResource> selectedResources = getSelectedDiskResources();
-                if (diskResourceUtil.isMovable(targetFolder, selectedResources)) {
-                    if (canDragDataToTargetFolder(targetFolder, selectedResources)) {
-                        doMoveDiskResources(targetFolder, selectedResources);
-                    } else {
-                        announcer.schedule(new ErrorAnnouncementConfig(appearance.diskResourceIncompleteMove()));
-                        view.unmask();
+            public void onSuccess(final FolderSelectDialog result) {
+                result.addOkButtonSelectHandler(new SelectHandler() {
+
+                    @Override
+                    public void onSelect(SelectEvent event) {
+                        Folder targetFolder = result.getValue();
+                        final List<DiskResource> selectedResources = getSelectedDiskResources();
+                        if (diskResourceUtil.isMovable(targetFolder, selectedResources)) {
+                            if (canDragDataToTargetFolder(targetFolder, selectedResources)) {
+                                doMoveDiskResources(targetFolder, selectedResources);
+                            } else {
+                                announcer.schedule(new ErrorAnnouncementConfig(appearance.diskResourceIncompleteMove()));
+                                view.unmask();
+                            }
+                        } else {
+                            announcer.schedule(new ErrorAnnouncementConfig(appearance.permissionErrorMessage()));
+                            view.unmask();
+                        }
                     }
-                } else {
-                    announcer.schedule(new ErrorAnnouncementConfig(appearance.permissionErrorMessage()));
-                    view.unmask();
-                }
+                });
+
+                result.show(navigationPresenter.getSelectedFolder(),
+                            Collections.<InfoType> emptyList());
             }
         });
-
     }
 
     @Override

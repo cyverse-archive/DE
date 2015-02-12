@@ -6,16 +6,15 @@ import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.client.util.CommonModelUtils;
 import org.iplantc.de.commons.client.validators.DiskResourceNameValidator;
 import org.iplantc.de.commons.client.views.dialogs.IPlantDialog;
+import org.iplantc.de.diskResource.client.DiskResourceView;
 import org.iplantc.de.diskResource.client.events.FolderSelectionEvent;
 import org.iplantc.de.diskResource.client.gin.factory.DiskResourcePresenterFactory;
-import org.iplantc.de.diskResource.client.DiskResourceView;
 
 import com.google.common.base.Strings;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyDownEvent;
 import com.google.gwt.event.dom.client.KeyDownHandler;
 import com.google.inject.Inject;
-import com.google.inject.assistedinject.Assisted;
 
 import com.sencha.gxt.widget.core.client.button.TextButton;
 import com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer;
@@ -27,6 +26,24 @@ import com.sencha.gxt.widget.core.client.form.TextField;
  * @author jstroot
  */
 public class SaveAsDialog extends IPlantDialog {
+
+    private final class FolderSelectionChangedHandler implements FolderSelectionEvent.FolderSelectionEventHandler {
+
+        private FolderSelectionChangedHandler() {
+        }
+
+        @Override
+        public void onFolderSelected(FolderSelectionEvent event) {
+            if (event.getSelectedFolder() == null) {
+                return;
+            }
+            selectedFolder = event.getSelectedFolder();
+            selectedFolderField.setValue(selectedFolder.getPath(), true);
+            selectedFolderField.validate();
+
+        }
+
+    }
 
     public interface SaveAsDialogAppearance {
 
@@ -41,18 +58,19 @@ public class SaveAsDialog extends IPlantDialog {
         String selectedFolder();
     }
 
-    private final DiskResourceView.Presenter presenter;
-    private final TextField selectedFolderField = new TextField();
-    private final TextField fileNameField = new TextField();
-    private Folder selectedFolder = null;
-
+    private final DiskResourcePresenterFactory presenterFactory;
     final UserSettings userSettings;
+    private final TextField fileNameField = new TextField();
+    private DiskResourceView.Presenter presenter;
+    private final TextField selectedFolderField = new TextField();
+    private Folder selectedFolder = null;
+    private final VerticalLayoutContainer vlc;
 
     @Inject
     SaveAsDialog(final DiskResourcePresenterFactory presenterFactory,
                  final UserSettings userSettings,
-                 final SaveAsDialogAppearance appearance,
-                 @Assisted HasPath selectedFolder) {
+                 final SaveAsDialogAppearance appearance) {
+        this.presenterFactory = presenterFactory;
         this.userSettings = userSettings;
         selectedFolderField.setAllowBlank(false);
         selectedFolderField.setReadOnly(true);
@@ -74,14 +92,17 @@ public class SaveAsDialog extends IPlantDialog {
         final FieldLabel fl2 = new FieldLabel(fileNameField,
                                               appearance.fileName());
 
-        VerticalLayoutContainer vlc = buildLayout(fl1, fl2);
+        vlc = buildLayout(fl1, fl2);
 
+    }
+
+    public void show(final HasPath selectedFolder){
         // if not refresh and currently nothing was selected and remember path is enabled, the go
         // back to last selected folder
         String path = userSettings.getLastPath();
         boolean remember = userSettings.isRememberLastPath();
         HasPath hasPath = selectedFolder;
-        if(hasPath == null && remember && !Strings.isNullOrEmpty(path)) {
+        if (hasPath == null && remember && !Strings.isNullOrEmpty(path)) {
             hasPath = CommonModelUtils.getInstance().createHasPathFromString(path);
         }
 
@@ -94,14 +115,33 @@ public class SaveAsDialog extends IPlantDialog {
                                                                          60);
         presenter.addFolderSelectedEventHandler(new FolderSelectionChangedHandler());
         presenter.go(this);
+        super.show();
     }
 
-    private VerticalLayoutContainer buildLayout(final FieldLabel fl1,
-                                                final FieldLabel fl2) {
-        VerticalLayoutContainer vlc = new VerticalLayoutContainer();
-        vlc.add(fl1, new VerticalLayoutData(.9, -1));
-        vlc.add(fl2, new VerticalLayoutData(.9, -1));
-        return vlc;
+    @Override
+    public void show() throws UnsupportedOperationException {
+        throw new UnsupportedOperationException("");
+    }
+
+    public void cleanUp() {
+        presenter.cleanUp();
+    }
+
+    public String getFileName() {
+        return fileNameField.getCurrentValue();
+    }
+
+    public Folder getSelectedFolder() {
+        return selectedFolder;
+    }
+
+    public boolean isValid() {
+        return selectedFolderField.isValid() & fileNameField.isValid();
+    }
+
+    @Override
+    public void onHide() {
+        cleanUp();
     }
 
     private void addKeyHandlers(final TextButton okBtn) {
@@ -119,43 +159,12 @@ public class SaveAsDialog extends IPlantDialog {
         });
     }
 
-    public void cleanUp() {
-        presenter.cleanUp();
-    }
-
-    @Override
-    public void onHide() {
-        cleanUp();
-    }
-
-    public boolean isValid() {
-        return selectedFolderField.isValid() & fileNameField.isValid();
-    }
-
-    private final class FolderSelectionChangedHandler implements FolderSelectionEvent.FolderSelectionEventHandler {
-
-        private FolderSelectionChangedHandler() {
-        }
-
-        @Override
-        public void onFolderSelected(FolderSelectionEvent event) {
-            if (event.getSelectedFolder() == null) {
-                return;
-            }
-            selectedFolder = event.getSelectedFolder();
-            selectedFolderField.setValue(selectedFolder.getPath(), true);
-            selectedFolderField.validate();
-
-        }
-
-    }
-
-    public String getFileName() {
-        return fileNameField.getCurrentValue();
-    }
-
-    public Folder getSelectedFolder() {
-        return selectedFolder;
+    private VerticalLayoutContainer buildLayout(final FieldLabel fl1,
+                                                final FieldLabel fl2) {
+        VerticalLayoutContainer vlc = new VerticalLayoutContainer();
+        vlc.add(fl1, new VerticalLayoutData(.9, -1));
+        vlc.add(fl2, new VerticalLayoutData(.9, -1));
+        return vlc;
     }
 
 }

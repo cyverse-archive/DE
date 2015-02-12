@@ -6,15 +6,14 @@ import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.client.models.diskResources.TYPE;
 import org.iplantc.de.client.models.viewer.InfoType;
 import org.iplantc.de.commons.client.views.dialogs.IPlantDialog;
+import org.iplantc.de.diskResource.client.DiskResourceView;
 import org.iplantc.de.diskResource.client.events.DiskResourceSelectionChangedEvent;
 import org.iplantc.de.diskResource.client.events.FolderSelectionEvent;
 import org.iplantc.de.diskResource.client.gin.factory.DiskResourcePresenterFactory;
-import org.iplantc.de.diskResource.client.DiskResourceView;
 
 import com.google.common.base.Preconditions;
 import com.google.gwt.user.client.TakesValue;
 import com.google.inject.Inject;
-import com.google.inject.assistedinject.Assisted;
 
 import com.sencha.gxt.widget.core.client.form.FieldLabel;
 import com.sencha.gxt.widget.core.client.form.TextField;
@@ -75,16 +74,18 @@ public class FileFolderSelectDialog extends IPlantDialog implements TakesValue<D
         String selectorFieldLabel();
     }
 
+    private final DiskResourcePresenterFactory presenterFactory;
+    private final FileFolderSelectDialogAppearance appearance;
+
     private final TextField selectedItemTextField;
     private DiskResource selectedDiskResource;
-    private final DiskResourceView.Presenter presenter;
+    private DiskResourceView.Presenter presenter;
 
     @Inject
     FileFolderSelectDialog(final DiskResourcePresenterFactory presenterFactory,
-                           final FileFolderSelectDialogAppearance appearance,
-                           @Assisted final HasPath folderToSelect,
-                           @Assisted final List<DiskResource> diskResourcesToSelect,
-                           @Assisted final List<InfoType> infoTypeFilters){
+                           final FileFolderSelectDialogAppearance appearance){
+        this.presenterFactory = presenterFactory;
+        this.appearance = appearance;
         getOkButton().setEnabled(false);
         setResizable(true);
         setSize(appearance.getWidth(), appearance.getHeight());
@@ -93,8 +94,14 @@ public class FileFolderSelectDialog extends IPlantDialog implements TakesValue<D
         setHeadingText(appearance.getHeaderText());
 
         selectedItemTextField = new TextField();
-        final FieldLabel fl = new FieldLabel(selectedItemTextField, appearance.selectorFieldLabel());
 
+    }
+
+    public void show(final HasPath folderToSelect,
+                     final List<DiskResource> diskResourcesToSelect,
+                     final List<InfoType> infoTypeFilters) {
+
+        final FieldLabel fl = new FieldLabel(selectedItemTextField, appearance.selectorFieldLabel());
         presenter = presenterFactory.filtered(true,
                                               true,
                                               true,// Single select
@@ -106,6 +113,12 @@ public class FileFolderSelectDialog extends IPlantDialog implements TakesValue<D
         presenter.addFolderSelectedEventHandler(new FolderSelectionEventHandler(this));
         presenter.addDiskResourceSelectionChangedEventHandler(new DiskResourceSelectionChangedEventHandler(this));
         presenter.go(this, folderToSelect, diskResourcesToSelect);
+        super.show();
+    }
+
+    @Override
+    public void show() throws UnsupportedOperationException {
+        throw new UnsupportedOperationException("");
     }
 
     @Override

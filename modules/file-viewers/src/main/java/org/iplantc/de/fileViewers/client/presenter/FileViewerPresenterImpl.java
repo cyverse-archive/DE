@@ -2,7 +2,6 @@ package org.iplantc.de.fileViewers.client.presenter;
 
 import static org.iplantc.de.client.services.FileEditorServiceFacade.COMMA_DELIMITER;
 import static org.iplantc.de.client.services.FileEditorServiceFacade.TAB_DELIMITER;
-
 import org.iplantc.de.client.events.FileSavedEvent;
 import org.iplantc.de.client.models.CommonModelAutoBeanFactory;
 import org.iplantc.de.client.models.IsMaskable;
@@ -21,7 +20,8 @@ import org.iplantc.de.client.services.UserSessionServiceFacade;
 import org.iplantc.de.client.util.DiskResourceUtil;
 import org.iplantc.de.client.util.JsonUtil;
 import org.iplantc.de.commons.client.ErrorHandler;
-import org.iplantc.de.diskResource.client.gin.factory.DiskResourceSelectorDialogFactory;
+import org.iplantc.de.commons.client.info.ErrorAnnouncementConfig;
+import org.iplantc.de.commons.client.info.IplantAnnouncer;
 import org.iplantc.de.diskResource.client.views.dialogs.SaveAsDialog;
 import org.iplantc.de.fileViewers.client.FileViewer;
 import org.iplantc.de.fileViewers.client.callbacks.FileSaveCallback;
@@ -33,16 +33,14 @@ import org.iplantc.de.fileViewers.client.views.SaveAsDialogOkSelectHandler;
 import org.iplantc.de.fileViewers.client.views.StructuredTextViewer;
 import org.iplantc.de.fileViewers.client.views.TextViewerImpl;
 
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.base.Preconditions.checkState;
-
+import static com.google.common.base.Preconditions.*;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JsonUtils;
 import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.inject.client.AsyncProvider;
 import com.google.gwt.json.client.JSONNumber;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONString;
@@ -136,11 +134,12 @@ public class FileViewerPresenterImpl implements FileViewer.Presenter, FileSavedE
     @Inject DiskResourceAutoBeanFactory drFactory;
     @Inject FileEditorServiceFacade fileEditorService;
     @Inject FileViewer.FileViewerPresenterAppearance appearance;
-    @Inject DiskResourceSelectorDialogFactory dialogFactory;
+    @Inject AsyncProvider<SaveAsDialog> saveAsDialogProvider;
     @Inject UserSessionServiceFacade userSessionService;
     @Inject DiskResourceServiceFacade diskResourceServiceFacade;
     @Inject DiskResourceUtil diskResourceUtil;
     @Inject JsonUtil jsonUtil;
+    @Inject IplantAnnouncer announcer;
 
     private MimeType contentType;
     /**
@@ -359,21 +358,31 @@ public class FileViewerPresenterImpl implements FileViewer.Presenter, FileSavedE
     @Override
     public void saveFile(final FileViewer fileViewer) {
         if(file == null) {
-            final SaveAsDialog saveAsDialog = dialogFactory.createSaveAsDialog(parentFolder);
-            SaveAsDialogOkSelectHandler okSelectHandler = new SaveAsDialogOkSelectHandler(userSessionService,
-                                                                                          drFactory,
-                                                                                          asMaskable(simpleContainer),
-                                                                                          fileViewer,
-                                                                                          saveAsDialog,
-                                                                                          appearance.savingMask(),
-                                                                                          fileViewer.getEditorContent(),
-                                                                                          fileEditorService);
-            SaveAsDialogCancelSelectHandler cancelSelectHandler = new SaveAsDialogCancelSelectHandler(fileViewer,
-                                                                                                      saveAsDialog);
-            saveAsDialog.addOkButtonSelectHandler(okSelectHandler);
-            saveAsDialog.addCancelButtonSelectHandler(cancelSelectHandler);
-            saveAsDialog.show();
-            saveAsDialog.toFront();
+            saveAsDialogProvider.get(new AsyncCallback<SaveAsDialog>() {
+                @Override
+                public void onFailure(Throwable caught) {
+                    announcer.schedule(new ErrorAnnouncementConfig("Something happened while we tried to save your file. Please try again or contact support."));
+                }
+
+                @Override
+                public void onSuccess(SaveAsDialog result) {
+                    SaveAsDialogOkSelectHandler okSelectHandler = new SaveAsDialogOkSelectHandler(userSessionService,
+                                                                                                  drFactory,
+                                                                                                  asMaskable(simpleContainer),
+                                                                                                  fileViewer,
+                                                                                                  result,
+                                                                                                  appearance.savingMask(),
+                                                                                                  fileViewer.getEditorContent(),
+                                                                                                  fileEditorService);
+                    SaveAsDialogCancelSelectHandler cancelSelectHandler = new SaveAsDialogCancelSelectHandler(fileViewer,
+                                                                                                              result);
+                    result.addOkButtonSelectHandler(okSelectHandler);
+                    result.addCancelButtonSelectHandler(cancelSelectHandler);
+                    result.show(parentFolder);
+                    result.toFront();
+                }
+            });
+
         } else {
             simpleContainer.mask(appearance.savingMask());
             fileEditorService.uploadTextAsFile(file.getPath(),

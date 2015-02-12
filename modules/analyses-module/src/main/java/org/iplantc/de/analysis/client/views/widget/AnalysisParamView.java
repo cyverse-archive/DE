@@ -5,15 +5,16 @@ import org.iplantc.de.client.models.IsHideable;
 import org.iplantc.de.client.models.IsMaskable;
 import org.iplantc.de.client.models.analysis.AnalysisParameter;
 import org.iplantc.de.commons.client.views.dialogs.IPlantDialog;
-import org.iplantc.de.diskResource.client.gin.factory.DiskResourceSelectorDialogFactory;
 import org.iplantc.de.diskResource.client.views.dialogs.SaveAsDialog;
 import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.inject.client.AsyncProvider;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
@@ -54,7 +55,7 @@ public class AnalysisParamView implements IsWidget, SaveAnalysisParametersEvent.
 
     private final Widget widget;
 
-    @Inject DiskResourceSelectorDialogFactory dialogFactory;
+    @Inject AsyncProvider<SaveAsDialog> saveAsDialogProvider;
 
     @Inject
     AnalysisParamView(final IplantDisplayStrings displayStrings,
@@ -91,28 +92,37 @@ public class AnalysisParamView implements IsWidget, SaveAnalysisParametersEvent.
 
     @UiHandler("btnSave")
     void onSaveClick(SelectEvent event) {
-        final SaveAsDialog saveAsDialog = dialogFactory.createSaveAsDialog(null);
-        saveAsDialog.addOkButtonSelectHandler(new SelectHandler() {
+        saveAsDialogProvider.get(new AsyncCallback<SaveAsDialog>() {
+            @Override
+            public void onFailure(Throwable caught) {
+
+            }
 
             @Override
-            public void onSelect(SelectEvent event) {
-                if (saveAsDialog.isValid()) {
-                    String fileContents = writeTabFile();
-                    saveFile(saveAsDialog.getSelectedFolder().getPath() + "/" + saveAsDialog.getFileName(),
-                             fileContents, saveAsDialog, saveAsDialog);
-                }
+            public void onSuccess(final SaveAsDialog result) {
+                result.addOkButtonSelectHandler(new SelectHandler() {
+
+                    @Override
+                    public void onSelect(SelectEvent event) {
+                        if (result.isValid()) {
+                            String fileContents = writeTabFile();
+                            saveFile(result.getSelectedFolder().getPath() + "/" + result.getFileName(),
+                                     fileContents, result, result);
+                        }
+                    }
+                });
+
+                result.addCancelButtonSelectHandler(new SelectHandler() {
+
+                    @Override
+                    public void onSelect(SelectEvent event) {
+                        result.hide();
+                    }
+                });
+                result.show(null);
+                result.toFront();
             }
         });
-
-        saveAsDialog.addCancelButtonSelectHandler(new SelectHandler() {
-
-            @Override
-            public void onSelect(SelectEvent event) {
-                saveAsDialog.hide();
-            }
-        });
-        saveAsDialog.show();
-        saveAsDialog.toFront();
     }
 
     public void mask() {

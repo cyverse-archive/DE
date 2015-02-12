@@ -66,6 +66,8 @@ project(':de') {
             disableClassMetadata = true;
             disableCastChecking = true;
             compileReport = true;
+            // Enable fragment merging
+            fragmentCount = 1;
         }
 
     }
@@ -145,9 +147,12 @@ project(':belphegor') {
         superDev { noPrecompile = true }
         maxHeapSize = '1024M'
         compiler {
-            enableClosureCompiler = true;
+//            enableClosureCompiler = true;
             disableClassMetadata = true;
             disableCastChecking = true;
+            compileReport = true;
+            // Enable fragment merging
+            fragmentCount = 1;
         }
 
 
@@ -165,7 +170,15 @@ configure(subprojects.findAll { it.name == "de" || it.name == "belphegor" }) {
         webApp = draftWar.archivePath
     }
 
-    // Create convenience task for launching sdm
+    task runJetty(type: JettyRunWar) {
+        group 'Web application'
+        description 'Runs Jetty with an exploded prod war'
+        //httpPort = 8888
+        dependsOn war
+        webApp = war.archivePath
+    }
+
+    // Convenience task for launching sdm
     task sdm(dependsOn: 'gwtSuperDev') {
         description 'Short hand task for launching GWT Super Dev Mode'
     }

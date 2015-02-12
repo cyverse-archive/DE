@@ -74,8 +74,6 @@ public class DiskResourceGinModule extends AbstractGinModule {
 
         // Disk Resource Selectors and Dialogs
         install(new GinFactoryModuleBuilder()
-                    .build(DiskResourceSelectorDialogFactory.class));
-        install(new GinFactoryModuleBuilder()
                     .build(DiskResourceSelectorFieldFactory.class));
         bind(DiskResourceQueryForm.class);
         bind(DiskResourceSearchCell.class);

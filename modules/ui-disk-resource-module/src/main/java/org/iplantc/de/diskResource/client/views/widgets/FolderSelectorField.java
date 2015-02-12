@@ -9,12 +9,14 @@ import org.iplantc.de.client.models.viewer.InfoType;
 import org.iplantc.de.client.services.DiskResourceServiceFacade;
 import org.iplantc.de.client.util.CommonModelUtils;
 import org.iplantc.de.client.util.DiskResourceUtil;
+import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.commons.client.events.LastSelectedPathChangedEvent;
-import org.iplantc.de.diskResource.client.gin.factory.DiskResourceSelectorDialogFactory;
 import org.iplantc.de.diskResource.client.views.dialogs.FolderSelectDialog;
 
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.inject.client.AsyncProvider;
 import com.google.gwt.user.client.TakesValue;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import com.google.inject.assistedinject.AssistedInject;
@@ -63,7 +65,8 @@ public class FolderSelectorField extends AbstractDiskResourceSelector<Folder> {
 
     @Inject UserSettings userSettings;
     @Inject EventBus eventBus;
-    @Inject DiskResourceSelectorDialogFactory selectorDialogFactory;
+    @Inject AsyncProvider<FolderSelectDialog> folderSelectDialogProvider;
+
     @Inject DiskResourceUtil diskResourceUtil;
     private final CommonModelUtils commonModelUtils;
 
@@ -111,17 +114,28 @@ public class FolderSelectorField extends AbstractDiskResourceSelector<Folder> {
 
     @Override
     protected void onBrowseSelected() {
-        HasPath value = getValue();
-        FolderSelectDialog folderSD;
-        if (value == null && userSettings.isRememberLastPath()) {
-            String path = userSettings.getLastPath();
-            if (path != null) {
-                value = commonModelUtils.createHasPathFromString(path);
+
+        folderSelectDialogProvider.get(new AsyncCallback<FolderSelectDialog>() {
+            @Override
+            public void onFailure(Throwable caught) {
+                ErrorHandler.post(caught);
             }
-        }
-        folderSD = selectorDialogFactory.createFilteredFolderSelector(value, infoTypeFilters);
-        folderSD.addHideHandler(new FolderDialogHideHandler(folderSD));
-        folderSD.show();
+
+            @Override
+            public void onSuccess(FolderSelectDialog result) {
+                HasPath value = getValue();
+                if (value == null && userSettings.isRememberLastPath()) {
+                    String path = userSettings.getLastPath();
+                    if (path != null) {
+                        value = commonModelUtils.createHasPathFromString(path);
+                    }
+                }
+
+                result.addHideHandler(new FolderDialogHideHandler(result));
+                result.show(value,
+                            infoTypeFilters);
+            }
+        });
     }
 
     @Override

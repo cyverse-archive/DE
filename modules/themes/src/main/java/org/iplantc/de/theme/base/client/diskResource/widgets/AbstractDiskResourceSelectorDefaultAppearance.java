@@ -139,12 +139,12 @@ public class AbstractDiskResourceSelectorDefaultAppearance implements AbstractDi
 
     @Override
     public String cell2() {
-        return null;
+        return ".cell2";
     }
 
     @Override
     public String cell3() {
-        return null;
+        return ".cell3";
     }
 
     @Override

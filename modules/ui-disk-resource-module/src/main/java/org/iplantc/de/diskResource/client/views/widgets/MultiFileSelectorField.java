@@ -13,9 +13,9 @@ import org.iplantc.de.client.models.viewer.InfoType;
 import org.iplantc.de.client.services.DiskResourceServiceFacade;
 import org.iplantc.de.client.util.CommonModelUtils;
 import org.iplantc.de.client.util.DiskResourceUtil;
+import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.commons.client.events.LastSelectedPathChangedEvent;
 import org.iplantc.de.commons.client.widgets.IPlantSideErrorHandler;
-import org.iplantc.de.diskResource.client.gin.factory.DiskResourceSelectorDialogFactory;
 import org.iplantc.de.diskResource.client.model.DiskResourceModelKeyProvider;
 import org.iplantc.de.diskResource.client.model.DiskResourceProperties;
 import org.iplantc.de.diskResource.client.views.dialogs.FileSelectDialog;
@@ -31,6 +31,7 @@ import com.google.gwt.event.logical.shared.HasValueChangeHandlers;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.inject.client.AsyncProvider;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -169,7 +170,7 @@ public class MultiFileSelectorField extends Composite implements IsField<List<Ha
     @Inject DiskResourceServiceFacade drServiceFacade;
     @Inject IplantValidationConstants validationConstants;
     @Inject EventBus eventBus;
-    @Inject DiskResourceSelectorDialogFactory dialogFactory;
+    @Inject AsyncProvider<FileSelectDialog> fileSelectDialogProvider;
     @Inject DiskResourceUtil diskResourceUtil;
 
     @Inject
@@ -374,15 +375,24 @@ public class MultiFileSelectorField extends Composite implements IsField<List<Ha
             return;
         }
         // Open a multi-select file selector
-        String path = null;
-        if (userSettings.isRememberLastPath()) {
-            path = userSettings.getLastPath();
-        }
+        final String path = userSettings.isRememberLastPath() ? userSettings.getLastPath() : null;
+        fileSelectDialogProvider.get(new AsyncCallback<FileSelectDialog>() {
+            @Override
+            public void onFailure(Throwable caught) {
+                ErrorHandler.post(caught);
+            }
 
-        HasPath hasPath = CommonModelUtils.getInstance().createHasPathFromString(path);
-        FileSelectDialog dlg = dialogFactory.createFilteredFileSelectorWithFolder(false, hasPath, Collections.<InfoType>emptyList());
-        dlg.addHideHandler(new FileSelectDialogHideHandler(dlg, listStore));
-        dlg.show();
+            @Override
+            public void onSuccess(FileSelectDialog result) {
+                HasPath hasPath = CommonModelUtils.getInstance().createHasPathFromString(path);
+                result.addHideHandler(new FileSelectDialogHideHandler(result, listStore));
+                result.show(false,
+                            hasPath,
+                            null,
+                            Collections.<InfoType> emptyList());
+            }
+        });
+
     }
 
     @UiHandler("deleteButton") void onDeleteButtonSelected(SelectEvent event) {
