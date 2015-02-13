@@ -20,7 +20,7 @@ public class IplantWindowBaseTest {
     private IplantWindowBase uut;
 
     @Before public void setup() {
-        uut = new IplantWindowBase("test") {
+        uut = new IplantWindowBase() {
             @Override
             public WindowState getWindowState() {
                 return null;
