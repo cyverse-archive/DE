@@ -45,6 +45,7 @@ public class MultiFileInputPropertyEditor extends AbstractArgumentPropertyEditor
     @UiField CheckBoxAdapter requiredEditor, omitIfBlank;
     @UiField @Path("description") TextField toolTipEditor;
     @UiField @Path("fileParameters.implicit") CheckBoxAdapter isImplicit;
+    @UiField @Path("fileParameters.repeatOptionFlag") CheckBoxAdapter repeatOptionFlag;
 
     private static MultiFileInputPropertyEditorUiBinder uiBinder = GWT.create(MultiFileInputPropertyEditorUiBinder.class);
     private final EditorDriver editorDriver = GWT.create(EditorDriver.class);
@@ -69,6 +70,7 @@ public class MultiFileInputPropertyEditor extends AbstractArgumentPropertyEditor
         toolTipLabel.setHTML(appearance.createContextualHelpLabel(appLabels.toolTipText(), help.toolTip()));
         requiredEditor.setHTML(new SafeHtmlBuilder().appendHtmlConstant("&nbsp;").append(appLabels.isRequired()).toSafeHtml());
         isImplicit.setHTML(new SafeHtmlBuilder().appendHtmlConstant("&nbsp;").append(appearance.createContextualHelpLabelNoFloat(appLabels.isImplicit(), help.fileInputIsImplicit())).toSafeHtml());
+        repeatOptionFlag.setHTML(new SafeHtmlBuilder().appendHtmlConstant("&nbsp;").append(appearance.createContextualHelpLabelNoFloat(appLabels.repeatOptionFlag(), help.fileInputRepeatOptionFlag())).toSafeHtml());
 
         editorDriver.initialize(this);
         editorDriver.accept(new InitializeTwoWayBinding(this));

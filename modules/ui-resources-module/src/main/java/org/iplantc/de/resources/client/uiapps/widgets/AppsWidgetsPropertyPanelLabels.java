@@ -50,6 +50,8 @@ public interface AppsWidgetsPropertyPanelLabels extends Messages, ArgumentGroupL
 
     String isImplicit();
 
+    String repeatOptionFlag();
+
     SafeHtml isRequired();
 
     SafeHtml isVisible();
