@@ -127,7 +127,12 @@ public class DesktopWindowManager {
         for (Widget w : windowManager.getWindows()) {
             String currentId = ((Window) w).getStateId();
             if (windowId.equals(currentId)) {
-                ((IPlantWindowInterface) w).asWindow().show();
+                if(updateExistingWindow){
+                    ((IPlantWindowInterface) w).update(config);
+                } else {
+                    // Window already exists, so no need to call other SHOW(config, "", bool) method
+                    ((IPlantWindowInterface) w).asWindow().show();
+                }
                 return;
             }
         }
@@ -139,10 +144,6 @@ public class DesktopWindowManager {
 
             @Override
             public void onSuccess(IPlantWindowInterface window) {
-                if (updateExistingWindow && (window != null)) {
-                    window.update(config);
-                }
-
                 if (!window.isVisible() && (windowManager.getActive() != null)) {
                     final Point position = ((Window) windowManager.getActive()).getElement().getPosition(true);
                     position.setX(position.getX() + 10);

@@ -452,7 +452,7 @@ public class AnalysesPresenterImpl implements AnalysesView.Presenter,
     public void goToSelectedAnalysisFolder() {
         assert view.getSelectedAnalyses().size() == 1 : "There should be 1 and only 1 selected analysis.";
         // Request disk resource window
-        eventBus.fireEvent(new OpenFolderEvent(view.getSelectedAnalyses().get(0).getResultFolderId()));
+        eventBus.fireEvent(new OpenFolderEvent(view.getSelectedAnalyses().get(0).getResultFolderId(), true));
     }
 
     @Override
@@ -482,7 +482,7 @@ public class AnalysesPresenterImpl implements AnalysesView.Presenter,
     @Override
     public void onAnalysisNameSelected(AnalysisNameSelectedEvent event) {
         // Request disk resource window
-        eventBus.fireEvent(new OpenFolderEvent(event.getValue().getResultFolderId()));
+        eventBus.fireEvent(new OpenFolderEvent(event.getValue().getResultFolderId(), true));
     }
 
     @Override

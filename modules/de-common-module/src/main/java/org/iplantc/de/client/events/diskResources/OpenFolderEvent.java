@@ -12,8 +12,9 @@ public class OpenFolderEvent extends GwtEvent<OpenFolderEvent.OpenFolderEventHan
     private final String folderPath;
     private boolean newViewRequested = false;
 
-    public OpenFolderEvent(String folderPath) {
+    public OpenFolderEvent(String folderPath, boolean requestNewView) {
         this.folderPath = folderPath;
+        this.newViewRequested = requestNewView;
     }
 
     @Override
@@ -27,10 +28,6 @@ public class OpenFolderEvent extends GwtEvent<OpenFolderEvent.OpenFolderEventHan
 
     public boolean newViewRequested() {
         return newViewRequested;
-    }
-
-    public void requestNewView(boolean newViewRequested) {
-        this.newViewRequested = newViewRequested;
     }
 
     @Override

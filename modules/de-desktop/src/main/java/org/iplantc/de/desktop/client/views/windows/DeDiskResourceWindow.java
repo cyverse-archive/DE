@@ -68,7 +68,7 @@ public class DeDiskResourceWindow extends IplantWindowBase implements FolderSele
         presenter.go(this);
 
         initHandlers();
-        super.show(windowConfig, uniqueWindowTag, isMaximizable);
+        super.show(windowConfig, tag, isMaximizable);
     }
 
     @Override
@@ -106,8 +106,14 @@ public class DeDiskResourceWindow extends IplantWindowBase implements FolderSele
     @Override
     public <C extends WindowConfig> void update(C config) {
         DiskResourceWindowConfig drConfig = (DiskResourceWindowConfig) config;
+        if(presenter == null){
+            final String uniqueWindowTag = (drConfig.getTag() == null) ? "" : "." + drConfig.getTag();
+            show(config, uniqueWindowTag, true);
+            return;
+        }
         presenter.setSelectedFolderByPath(drConfig.getSelectedFolder());
         presenter.setSelectedDiskResourcesById(drConfig.getSelectedDiskResources());
+        show();
     }
 
     @Override

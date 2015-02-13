@@ -171,8 +171,7 @@ public class GridViewPresenterImpl implements GridView.Presenter,
 
     @Override
     public void onDiskResourcePathSelected(DiskResourcePathSelectedEvent event) {
-        final OpenFolderEvent openFolderEvent = new OpenFolderEvent(diskResourceUtil.parseParent(event.getSelectedDiskResource().getPath()));
-        openFolderEvent.requestNewView(true);
+        final OpenFolderEvent openFolderEvent = new OpenFolderEvent(diskResourceUtil.parseParent(event.getSelectedDiskResource().getPath()), true);
         eventBus.fireEvent(openFolderEvent);
     }
 

@@ -153,15 +153,13 @@ public class ToolbarViewPresenterImpl implements ToolbarView.Presenter, SimpleDo
     @Override
     public void onOpenNewWindowAtLocationSelected(final Folder selectedFolder) {
         final String selectedFolderPath = selectedFolder == null ? null : selectedFolder.getPath();
-        OpenFolderEvent openFolderEvent = new OpenFolderEvent(selectedFolderPath);
-        openFolderEvent.requestNewView(true);
+        OpenFolderEvent openFolderEvent = new OpenFolderEvent(selectedFolderPath, true);
         eventBus.fireEvent(openFolderEvent);
     }
 
     @Override
     public void onOpenNewWindowSelected() {
-        OpenFolderEvent openFolderEvent = new OpenFolderEvent(null);
-        openFolderEvent.requestNewView(true);
+        OpenFolderEvent openFolderEvent = new OpenFolderEvent(null, true);
         eventBus.fireEvent(openFolderEvent);
     }
 
