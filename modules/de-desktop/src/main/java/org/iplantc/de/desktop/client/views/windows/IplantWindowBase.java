@@ -185,7 +185,7 @@ public abstract class IplantWindowBase extends Window implements IPlantWindowInt
             btnMaximize = createMaximizeButton();
             // SRI: if a window is maximizable, then it is restorable.
             btnRestore = createRestoreButton();
-            getHeader().addTool(btnMaximize);
+            getHeader().insertTool(btnMaximize, getHeader().getToolCount() - 1);
 
             getHeader().addDomHandler(new HeaderDoubleClickHandler(), DoubleClickEvent.getType());
         }
