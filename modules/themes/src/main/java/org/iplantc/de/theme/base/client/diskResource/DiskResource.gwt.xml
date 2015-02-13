@@ -70,7 +70,6 @@
     <replace-with class="org.iplantc.de.theme.base.client.diskResource.navigation.presenter.NavigationViewPresenterDefaultAppearance">
         <when-type-is class="org.iplantc.de.diskResource.client.NavigationView.Presenter.Appearance" />
     </replace-with>
-
     <replace-with class="org.iplantc.de.theme.base.client.diskResource.navigation.cells.TreeCellDefaultAppearance">
         <when-type-is class="org.iplantc.de.diskResource.client.views.navigation.cells.TreeCell.TreeCellAppearance" />
     </replace-with>
@@ -79,23 +78,18 @@
     <replace-with class="org.iplantc.de.theme.base.client.diskResource.grid.GridViewDefaultAppearance">
         <when-type-is class="org.iplantc.de.diskResource.client.GridView.Appearance" />
     </replace-with>
-
     <replace-with class="org.iplantc.de.theme.base.client.diskResource.grid.cells.DiskResourceActionsCellDefaultAppearance">
         <when-type-is class="org.iplantc.de.diskResource.client.views.grid.cells.DiskResourceActionsCell.Appearance" />
     </replace-with>
-
     <replace-with class="org.iplantc.de.theme.base.client.diskResource.grid.cells.DiskResourceFavoriteCellDefaultAppearance">
         <when-type-is class="org.iplantc.de.diskResource.client.views.grid.cells.DiskResourceFavoriteCell.Appearance" />
     </replace-with>
-
     <replace-with class="org.iplantc.de.theme.base.client.diskResource.grid.cells.DiskResourceNameCellDefaultAppearance">
         <when-type-is class="org.iplantc.de.diskResource.client.views.grid.cells.DiskResourceNameCell.Appearance" />
     </replace-with>
-
     <replace-with class="org.iplantc.de.theme.base.client.diskResource.grid.cells.DiskResourcePathCellDefaultAppearance">
         <when-type-is class="org.iplantc.de.diskResource.client.views.grid.cells.DiskResourcePathCell.Appearance" />
     </replace-with>
-
     <replace-with class="org.iplantc.de.theme.base.client.diskResource.grid.presenter.GridViewPresenterDefaultAppearance">
         <when-type-is class="org.iplantc.de.diskResource.client.GridView.Presenter.Appearance" />
     </replace-with>
@@ -104,16 +98,17 @@
     <replace-with class="org.iplantc.de.theme.base.client.diskResource.toolbar.ToolbarViewDefaultAppearance">
         <when-type-is class="org.iplantc.de.diskResource.client.ToolbarView.Appearance" />
     </replace-with>
-
     <replace-with class="org.iplantc.de.theme.base.client.diskResource.toolbar.presenter.ToolbarViewPresenterDefaultAppearance">
         <when-type-is class="org.iplantc.de.diskResource.client.ToolbarView.Presenter.Appearance" />
+    </replace-with>
+    <replace-with class="org.iplantc.de.theme.base.client.diskResource.toolbar.dialogs.TabFileConfigDialogDefaultAppearance">
+        <when-type-is class="org.iplantc.de.diskResource.client.views.toolbar.dialogs.TabFileConfigDialog.TabFileConfigDialogAppearance" />
     </replace-with>
 
     <!-- Details -->
     <replace-with class="org.iplantc.de.theme.base.client.diskResource.details.DetailsViewDefaultAppearance">
         <when-type-is class="org.iplantc.de.diskResource.client.DetailsView.Appearance" />
     </replace-with>
-
     <replace-with class="org.iplantc.de.theme.base.client.diskResource.details.presenter.DetailsViewPresenterDefaultAppearance">
         <when-type-is class="org.iplantc.de.diskResource.client.DetailsView.Presenter.Appearance" />
     </replace-with>
@@ -122,7 +117,6 @@
     <replace-with class="org.iplantc.de.theme.base.client.diskResource.sharing.DataSharingViewDefaultAppearance">
         <when-type-is class="org.iplantc.de.diskResource.client.DataSharingView.Appearance" />
     </replace-with>
-
     <replace-with class="org.iplantc.de.theme.base.client.diskResource.sharing.presenter.DataSharingPresenterDefaultAppearance">
         <when-type-is class="org.iplantc.de.diskResource.client.DataSharingView.Presenter.Appearance" />
     </replace-with>
@@ -131,4 +125,5 @@
     <replace-with class="org.iplantc.de.theme.base.client.diskResource.search.cells.DiskResourceSearchCellDefaultAppearance">
         <when-type-is class="org.iplantc.de.diskResource.client.views.search.cells.DiskResourceSearchCell.DiskResourceSearchCellAppearance"/>
     </replace-with>
+
 </module>

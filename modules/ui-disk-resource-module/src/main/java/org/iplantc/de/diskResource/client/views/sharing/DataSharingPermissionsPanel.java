@@ -14,6 +14,7 @@ import org.iplantc.de.diskResource.client.DataSharingView;
 import org.iplantc.de.diskResource.client.DataSharingView.Presenter;
 import org.iplantc.de.diskResource.client.model.DataSharingKeyProvider;
 import org.iplantc.de.diskResource.client.model.DataSharingProperties;
+import org.iplantc.de.diskResource.client.views.sharing.dialogs.ShareBreakDownDialog;
 
 import com.google.gwt.core.shared.GWT;
 import com.google.gwt.event.logical.shared.SelectionEvent;

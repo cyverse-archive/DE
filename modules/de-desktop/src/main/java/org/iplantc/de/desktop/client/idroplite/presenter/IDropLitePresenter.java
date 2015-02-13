@@ -2,6 +2,7 @@ package org.iplantc.de.desktop.client.idroplite.presenter;
 
 import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.gin.ServicesInjector;
+import org.iplantc.de.client.services.DiskResourceServiceFacade;
 import org.iplantc.de.desktop.client.util.IDropLiteUtil;
 import org.iplantc.de.desktop.client.idroplite.views.IDropLiteView;
 import org.iplantc.de.desktop.client.idroplite.views.IDropLiteView.Presenter;
@@ -30,12 +31,13 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * @author sriram
- * 
+ * @author sriram, jstroot
  */
 public class IDropLitePresenter implements Presenter {
 
+    private final DiskResourceServiceFacade diskResourceServiceFacade;
     private final DiskResourceAutoBeanFactory drFactory = GWT.create(DiskResourceAutoBeanFactory.class);
+    private final EventBus eventBus;
     private final IDropLiteView view;
     private final int CONTENT_PADDING = 12;
     private final IDropLiteWindowConfig idlwc;
@@ -49,12 +51,14 @@ public class IDropLitePresenter implements Presenter {
         this.idlwc = config;
         this.diskResourceUtil = DiskResourceUtil.getInstance();
         this.jsonUtil = JsonUtil.getInstance();
+        eventBus = EventBus.getInstance();
+        diskResourceServiceFacade = ServicesInjector.INSTANCE.getDiskResourceServiceFacade();
     }
 
     @Override
     public void buildUploadApplet() {
         view.mask();
-        ServicesInjector.INSTANCE.getDiskResourceServiceFacade().upload(new IDropLiteServiceCallback() {
+        diskResourceServiceFacade.upload(new IDropLiteServiceCallback() {
             @Override
             protected HtmlLayoutContainer buildAppletHtml(JSONObject appletData) {
                 int adjustSize = CONTENT_PADDING * 2;
@@ -62,7 +66,7 @@ public class IDropLitePresenter implements Presenter {
                 appletData.put("uploadDest", new JSONString(idlwc.getUploadFolderDest().getPath())); //$NON-NLS-1$
 
                 return IDropLiteUtil.getAppletForUpload(appletData, view.getViewWidth(),
-                        view.getViewHeight() - adjustSize);
+                                                        view.getViewHeight() - adjustSize);
             }
         });
 
@@ -73,28 +77,28 @@ public class IDropLitePresenter implements Presenter {
         view.mask();
 
         if (idlwc.isSelectAll()) {
-            ServicesInjector.INSTANCE.getDiskResourceServiceFacade().downloadContents(idlwc.getCurrentFolder().getPath(),
-                    new IDropLiteServiceCallback() {
-                        @Override
-                        protected HtmlLayoutContainer buildAppletHtml(JSONObject appletData) {
-                            int adjustSize = CONTENT_PADDING * 3;
+            diskResourceServiceFacade.downloadContents(idlwc.getCurrentFolder().getPath(),
+                                                       new IDropLiteServiceCallback() {
+                                                           @Override
+                                                           protected HtmlLayoutContainer buildAppletHtml(JSONObject appletData) {
+                                                               int adjustSize = CONTENT_PADDING * 3;
 
-                            return IDropLiteUtil.getAppletForDownload(appletData, view.getViewWidth(),
-                                    view.getViewHeight() - adjustSize);
-                        }
-                    });
+                                                               return IDropLiteUtil.getAppletForDownload(appletData, view.getViewWidth(),
+                                                                                                         view.getViewHeight() - adjustSize);
+                                                           }
+                                                       });
 
         } else {
             HasPaths request = drFactory.pathsList().as();
             request.setPaths(diskResourceUtil.asStringPathList(idlwc.getResourcesToDownload()));
 
-            ServicesInjector.INSTANCE.getDiskResourceServiceFacade().download(request, new IDropLiteServiceCallback() {
+            diskResourceServiceFacade.download(request, new IDropLiteServiceCallback() {
                 @Override
                 protected HtmlLayoutContainer buildAppletHtml(JSONObject appletData) {
                     int adjustSize = CONTENT_PADDING * 3;
 
                     return IDropLiteUtil.getAppletForDownload(appletData, view.getViewWidth(),
-                            view.getViewHeight() - adjustSize);
+                                                              view.getViewHeight() - adjustSize);
                 }
             });
 
@@ -131,15 +135,13 @@ public class IDropLitePresenter implements Presenter {
 
     @Override
     public void onSimpleUploadClick() {
-        EventBus.getInstance()
-                .fireEvent(new RequestSimpleUploadEvent(this, idlwc.getUploadFolderDest()));
+        eventBus.fireEvent(new RequestSimpleUploadEvent(idlwc.getUploadFolderDest()));
     }
 
     @Override
     public void onSimpleDownloadClick() {
-        EventBus.getInstance().fireEvent(
-                new RequestSimpleDownloadEvent(Lists.newArrayList(idlwc.getResourcesToDownload()),
-                        idlwc.getCurrentFolder()));
+        eventBus.fireEvent(new RequestSimpleDownloadEvent(Lists.newArrayList(idlwc.getResourcesToDownload()),
+                                                             idlwc.getCurrentFolder()));
     }
 
     @Override

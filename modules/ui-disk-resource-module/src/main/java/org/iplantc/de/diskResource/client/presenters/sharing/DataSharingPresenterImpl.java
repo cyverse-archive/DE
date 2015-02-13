@@ -1,6 +1,3 @@
-/**
- *
- */
 package org.iplantc.de.diskResource.client.presenters.sharing;
 
 import org.iplantc.de.client.models.collaborators.Collaborator;
@@ -30,6 +27,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * FIXME Refactor to use injection
+ * FIXME Tighten contract with data sharing service. Should not have to manually construct the json here.
  * @author sriram, jstroot
  */
 public class DataSharingPresenterImpl implements DataSharingView.Presenter {

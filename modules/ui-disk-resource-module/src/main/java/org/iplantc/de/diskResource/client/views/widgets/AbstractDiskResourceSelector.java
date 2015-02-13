@@ -1,6 +1,5 @@
 package org.iplantc.de.diskResource.client.views.widgets;
 
-import org.iplantc.de.client.gin.ServicesInjector;
 import org.iplantc.de.client.models.HasPaths;
 import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.client.models.diskResources.TYPE;
@@ -138,9 +137,10 @@ public abstract class AbstractDiskResourceSelector<R extends DiskResource> exten
     private final DiskResourceUtil diskResourceUtil;
 
 
-    protected AbstractDiskResourceSelector(final SelectorAppearance appearance) {
+    protected AbstractDiskResourceSelector(final DiskResourceServiceFacade diskResourceService,
+                                           final SelectorAppearance appearance) {
         this.appearance = appearance;
-        drServiceFacade = ServicesInjector.INSTANCE.getDiskResourceServiceFacade();
+        drServiceFacade = diskResourceService;
         diskResourceUtil = DiskResourceUtil.getInstance();
 
         SimplePanel panel = new SimplePanel();

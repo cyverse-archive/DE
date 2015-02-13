@@ -1,4 +1,4 @@
-package org.iplantc.de.diskResource.client.views.sharing;
+package org.iplantc.de.diskResource.client.views.sharing.dialogs;
 
 import org.iplantc.de.client.models.diskResources.PermissionValue;
 import org.iplantc.de.client.models.sharing.DataSharing;

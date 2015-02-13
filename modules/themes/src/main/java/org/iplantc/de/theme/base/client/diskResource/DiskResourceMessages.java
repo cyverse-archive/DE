@@ -121,6 +121,12 @@ public interface DiskResourceMessages extends Messages {
     @Key("size")
     String size();
 
+    String tabFileConfigDialogCommaRadioLabel();
+
+    String tabFileConfigDialogHeading();
+
+    String tabFileConfigDialogTabRadioLabel();
+
     @Key("unsupportedCogeInfoType")
     String unsupportedCogeInfoType();
 

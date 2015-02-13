@@ -101,7 +101,7 @@ import java.util.logging.Logger;
  * </ol>
  * </li>
  * </ol>
- *
+ * FIXME Re-implement with UI-binder
  * @author jstroot
  */
 public class DiskResourceQueryForm extends Composite implements

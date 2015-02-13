@@ -427,6 +427,11 @@ public class DiskResourceViewToolbarImpl extends Composite implements ToolbarVie
     void onRenameClicked(SelectionEvent<Item> event) {
         Preconditions.checkNotNull(selectedDiskResources);
         Preconditions.checkArgument(selectedDiskResources.size() == 1);
+        /*
+          * FIXME Open RenameFileDialog or RenameFolderDialog from here
+          * Handle 'ok' event from dialog, gather information from dialog and fire event to request
+          * rename. See DiskResourcePresenter and the Dialogs mentioned above for more information.
+          */
         fireEvent(new RenameDiskResourceSelected(selectedDiskResources.iterator().next()));
     }
 

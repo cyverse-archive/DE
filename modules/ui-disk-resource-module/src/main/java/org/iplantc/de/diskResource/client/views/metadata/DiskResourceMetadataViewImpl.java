@@ -204,13 +204,14 @@ public class DiskResourceMetadataViewImpl extends Composite implements MetadataV
     private boolean valid;
     private MetadataView.Presenter presenter;
 
-    public DiskResourceMetadataViewImpl(final DiskResource dr) {
+    public DiskResourceMetadataViewImpl(final DiskResource dr,
+                                        final DiskResourceUtil diskResourceUtil) {
 
         alc = new AccordionLayoutContainer();
         centerPanel = new VerticalLayoutContainer();
         timestampFormat = DateTimeFormat.getFormat(DateTimeFormat.PredefinedFormat.DATE_TIME_SHORT);
 
-        writable = DiskResourceUtil.getInstance().isWritable(dr);
+        writable = diskResourceUtil.isWritable(dr);
         valid = true;
         templateStore = new ListStore<>(new TemplateInfoModelKeyProvider());
 

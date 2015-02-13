@@ -52,11 +52,6 @@ public class DataSearchPresenterImpl implements SearchView.Presenter {
         this.announcer = announcer;
     }
 
-//    @Override
-//    public HandlerRegistration addFolderSelectedEventHandler(FolderSelectionEvent.FolderSelectionEventHandler handler) {
-//        return ensureHandlers().addHandler(FolderSelectionEvent.TYPE, handler);
-//    }
-
     @Override
     public HandlerRegistration addSavedSearchDeletedEventHandler(SavedSearchDeletedEvent.SavedSearchDeletedEventHandler handler) {
         return ensureHandlers().addHandler(SavedSearchDeletedEvent.TYPE, handler);
@@ -66,11 +61,6 @@ public class DataSearchPresenterImpl implements SearchView.Presenter {
     public HandlerRegistration addUpdateSavedSearchesEventHandler(UpdateSavedSearchesEvent.UpdateSavedSearchesHandler handler) {
         return ensureHandlers().addHandler(UpdateSavedSearchesEvent.TYPE, handler);
     }
-
-//    @Override
-//    public void doSubmitDiskResourceQuery(final SubmitDiskResourceQueryEvent event) {
-//        fireEvent(new FolderSelectionEvent(event.getQueryTemplate()));
-//    }
 
     @Override
     public void onDeleteSavedSearchClicked(DeleteSavedSearchClickedEvent event) {

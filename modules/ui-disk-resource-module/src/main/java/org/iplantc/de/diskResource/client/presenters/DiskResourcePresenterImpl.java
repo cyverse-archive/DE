@@ -77,9 +77,7 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
                                                   RefreshFolderSelected.RefreshFolderSelectedHandler,
                                                   RenameDiskResourceSelected.RenameDiskResourceSelectedHandler,
                                                   RestoreDiskResourcesSelected.RestoreDiskResourcesSelectedHandler,
-                                                  SimpleUploadSelected.SimpleUploadSelectedHandler,
                                                   BulkUploadSelected.BulkUploadSelectedEventHandler,
-                                                  SimpleDownloadSelected.SimpleDownloadSelectedHandler,
                                                   SendToTreeViewerSelected.SendToTreeViewerSelectedHandler,
                                                   SendToEnsemblSelected.SendToEnsemblSelectedHandler,
                                                   SendToCogeSelected.SendToCogeSelectedHandler {
@@ -283,8 +281,6 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
         toolbarPresenter.getView().addRenameDiskResourceSelectedHandler(this);
         toolbarPresenter.getView().addRestoreDiskResourcesSelectedHandler(this);
         toolbarPresenter.getView().addShareByDataLinkSelectedEventHandler(this.gridViewPresenter);
-        toolbarPresenter.getView().addSimpleUploadSelectedHandler(this);
-        toolbarPresenter.getView().addSimpleDownloadSelectedHandler(this);
         toolbarPresenter.getView().addSendToCogeSelectedHandler(this);
         toolbarPresenter.getView().addSendToEnsemblSelectedHandler(this);
         toolbarPresenter.getView().addSendToTreeViewerSelectedHandler(this);
@@ -392,6 +388,8 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
 
     @Override
     public void onRenameDiskResourceSelected(RenameDiskResourceSelected event) {
+
+        // FIXME Do not open dialogs here. See RenameFile/FolderDialog and DR toolbar view for more details.
         if (!getSelectedDiskResources().isEmpty() && (getSelectedDiskResources().size() == 1)) {
             DiskResource dr = getSelectedDiskResources().iterator().next();
             if (dr instanceof File) {
@@ -484,16 +482,6 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
         }
     }
 
-    @Override
-    public void onSimpleDownloadSelected(SimpleDownloadSelected event) {
-        eventBus.fireEvent(new RequestSimpleDownloadEvent(event.getSelectedDiskResources(),
-                                                          event.getSelectedFolder()));
-    }
-
-    @Override
-    public void onSimpleUploadSelected(SimpleUploadSelected event) {
-        eventBus.fireEvent(new RequestSimpleUploadEvent(this, navigationPresenter.getSelectedUploadFolder()));
-    }
     //</editor-fold>
 
     @Override

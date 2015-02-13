@@ -1,6 +1,5 @@
 package org.iplantc.de.diskResource.client.presenters.metadata;
 
-import org.iplantc.de.client.gin.ServicesInjector;
 import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.client.models.diskResources.DiskResourceMetadata;
 import org.iplantc.de.client.models.diskResources.DiskResourceMetadataTemplate;
@@ -16,15 +15,21 @@ import com.google.gwt.user.client.ui.HasOneWidget;
 
 import java.util.List;
 
+/**
+ * @author jstroot
+ */
 public class MetadataPresenterImpl implements MetadataView.Presenter {
 
     private final DiskResource resource;
     private final MetadataView view;
-    private final DiskResourceServiceFacade drService = ServicesInjector.INSTANCE.getDiskResourceServiceFacade();
+    private final DiskResourceServiceFacade drService;
 
-    public MetadataPresenterImpl(DiskResource selected, final MetadataView view) {
+    public MetadataPresenterImpl(final DiskResource selected,
+                                 final MetadataView view,
+                                 final DiskResourceServiceFacade drService) {
         this.resource = selected;
         this.view = view;
+        this.drService = drService;
         view.setPresenter(this);
         drService.getDiskResourceMetaData(resource, new AsyncCallback<List<DiskResourceMetadata>>() {
             @Override

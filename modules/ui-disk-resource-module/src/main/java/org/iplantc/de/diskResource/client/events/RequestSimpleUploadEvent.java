@@ -6,18 +6,18 @@ import org.iplantc.de.diskResource.client.events.RequestSimpleUploadEvent.Reques
 import com.google.gwt.event.shared.EventHandler;
 import com.google.gwt.event.shared.GwtEvent;
 
+/**
+ * @author jstroot
+ */
 public class RequestSimpleUploadEvent extends GwtEvent<RequestSimpleUploadEventHandler> {
     public interface RequestSimpleUploadEventHandler extends EventHandler {
-
         void onRequestSimpleUpload(RequestSimpleUploadEvent event);
-
     }
 
     public static final GwtEvent.Type<RequestSimpleUploadEventHandler> TYPE = new GwtEvent.Type<>();
     private final Folder destinationFolder;
 
-    public RequestSimpleUploadEvent(Object source, final Folder destinationFolder) {
-        setSource(source);
+    public RequestSimpleUploadEvent(final Folder destinationFolder) {
         this.destinationFolder = destinationFolder;
     }
 

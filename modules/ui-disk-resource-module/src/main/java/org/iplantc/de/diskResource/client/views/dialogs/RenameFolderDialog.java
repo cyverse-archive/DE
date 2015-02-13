@@ -12,6 +12,7 @@ import com.sencha.gxt.widget.core.client.event.SelectEvent;
 import com.sencha.gxt.widget.core.client.event.SelectEvent.SelectHandler;
 
 /**
+ * FIXME Do not pass presenter in. Places utilizing this dlg should handle ok select.
  * @author jstroot
  */
 public class RenameFolderDialog extends IPlantPromptDialog {

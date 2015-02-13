@@ -17,11 +17,15 @@ import org.iplantc.de.diskResource.client.DiskResourceView;
 import org.iplantc.de.diskResource.client.ToolbarView;
 import org.iplantc.de.diskResource.client.events.CreateNewFileEvent;
 import org.iplantc.de.diskResource.client.events.RequestImportFromUrlEvent;
+import org.iplantc.de.diskResource.client.events.RequestSimpleDownloadEvent;
+import org.iplantc.de.diskResource.client.events.RequestSimpleUploadEvent;
 import org.iplantc.de.diskResource.client.events.ShowFilePreviewEvent;
+import org.iplantc.de.diskResource.client.events.selection.SimpleDownloadSelected;
+import org.iplantc.de.diskResource.client.events.selection.SimpleUploadSelected;
 import org.iplantc.de.diskResource.client.gin.factory.DataLinkPresenterFactory;
 import org.iplantc.de.diskResource.client.gin.factory.ToolbarViewFactory;
 import org.iplantc.de.diskResource.client.views.dialogs.CreateFolderDialog;
-import org.iplantc.de.diskResource.client.views.widgets.TabFileConfigDialog;
+import org.iplantc.de.diskResource.client.views.toolbar.dialogs.TabFileConfigDialog;
 
 import com.google.common.base.Preconditions;
 import com.google.gwt.user.client.ui.HTML;
@@ -37,7 +41,7 @@ import java.util.List;
 /**
  * @author jstroot
  */
-public class ToolbarViewPresenterImpl implements ToolbarView.Presenter {
+public class ToolbarViewPresenterImpl implements ToolbarView.Presenter, SimpleDownloadSelected.SimpleDownloadSelectedHandler, SimpleUploadSelected.SimpleUploadSelectedHandler {
 
     @Inject ToolbarView.Presenter.Appearance appearance;
     @Inject DataLinkPresenterFactory dataLinkPresenterFactory;
@@ -50,6 +54,9 @@ public class ToolbarViewPresenterImpl implements ToolbarView.Presenter {
                              @Assisted DiskResourceView.Presenter parentPresenter) {
         this.parentPresenter = parentPresenter;
         this.view = viewFactory.create(this);
+
+        view.addSimpleDownloadSelectedHandler(this);
+        view.addSimpleUploadSelectedHandler(this);
     }
 
     @Override
@@ -59,6 +66,7 @@ public class ToolbarViewPresenterImpl implements ToolbarView.Presenter {
 
     @Override
     public void onCreateNewDelimitedFileSelected() {
+        // FIXME Do not fire dialog from presenter. Do so from the view.
         final TabFileConfigDialog d = new TabFileConfigDialog();
         d.setPredefinedButtons(OK, CANCEL);
         d.setModal(true);
@@ -91,7 +99,7 @@ public class ToolbarViewPresenterImpl implements ToolbarView.Presenter {
 
     @Override
     public void onCreateNewFolderSelected(final Folder selectedFolder) {
-        // FIXME Analyze consistency between using selection events and calling parent presenter
+        // FIXME Do not fire dialog from presenter. Do so from the view.
         final CreateFolderDialog dlg = new CreateFolderDialog(selectedFolder);
         dlg.addOkButtonSelectHandler(new SelectEvent.SelectHandler() {
             @Override
@@ -111,6 +119,7 @@ public class ToolbarViewPresenterImpl implements ToolbarView.Presenter {
 
     @Override
     public void onCreatePublicLinkSelected(final List<DiskResource> selectedDiskResources) {
+        // FIXME Do not fire dialog from presenter. Do so from the view.
         IPlantDialog dlg = new IPlantDialog(true);
         dlg.setPredefinedButtons(OK);
         dlg.setHeadingText(appearance.manageDataLinks());
@@ -161,4 +170,14 @@ public class ToolbarViewPresenterImpl implements ToolbarView.Presenter {
         parentPresenter.selectTrashFolder();
     }
 
+    @Override
+    public void onSimpleDownloadSelected(SimpleDownloadSelected event) {
+        eventBus.fireEvent(new RequestSimpleDownloadEvent(event.getSelectedDiskResources(),
+                                                          event.getSelectedFolder()));
+    }
+
+    @Override
+    public void onSimpleUploadSelected(SimpleUploadSelected event) {
+        eventBus.fireEvent(new RequestSimpleUploadEvent(event.getSelectedFolder()));
+    }
 }

@@ -86,7 +86,7 @@ public class FolderSelectorField extends AbstractDiskResourceSelector<Folder> {
     FolderSelectorField(final DiskResourceServiceFacade diskResourceService,
                         final FolderSelectorFieldAppearance appearance,
                         @Assisted List<InfoType> infoTypeFilters) {
-        super(appearance);
+        super(diskResourceService, appearance);
         this.diskResourceService = diskResourceService;
         this.appearance = appearance;
         this.infoTypeFilters = infoTypeFilters;

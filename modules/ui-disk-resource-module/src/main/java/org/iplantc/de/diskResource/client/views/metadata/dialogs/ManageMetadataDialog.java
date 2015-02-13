@@ -1,6 +1,7 @@
 package org.iplantc.de.diskResource.client.views.metadata.dialogs;
 
 import org.iplantc.de.client.models.diskResources.DiskResource;
+import org.iplantc.de.client.services.DiskResourceServiceFacade;
 import org.iplantc.de.client.util.DiskResourceUtil;
 import org.iplantc.de.commons.client.info.ErrorAnnouncementConfig;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
@@ -52,18 +53,23 @@ public class ManageMetadataDialog extends IPlantDialog {
     }
 
     private final IplantAnnouncer announcer;
+    private final DiskResourceServiceFacade diskResourceService;
     private final GridView.Presenter.Appearance appearance;
     private MetadataView.Presenter mdPresenter;
     private MetadataView mdView;
 
-    @Inject DiskResourceUtil diskResourceUtil;
+    final DiskResourceUtil diskResourceUtil;
     private boolean writable;
 
     @Inject
     ManageMetadataDialog(final IplantAnnouncer announcer,
+                         final DiskResourceServiceFacade diskResourceService,
+                         final DiskResourceUtil diskResourceUtil,
                          final GridView.Presenter.Appearance appearance){
         super(true);
         this.announcer = announcer;
+        this.diskResourceService = diskResourceService;
+        this.diskResourceUtil = diskResourceUtil;
         this.appearance = appearance;
         setSize(appearance.metadataDialogWidth(), appearance.metadataDialogHeight());
         setResizable(true);
@@ -73,8 +79,8 @@ public class ManageMetadataDialog extends IPlantDialog {
     }
 
     public void show(final DiskResource resource){
-        mdView = new DiskResourceMetadataViewImpl(resource);
-        mdPresenter = new MetadataPresenterImpl(resource, mdView);
+        mdView = new DiskResourceMetadataViewImpl(resource, diskResourceUtil);
+        mdPresenter = new MetadataPresenterImpl(resource, mdView, diskResourceService);
         mdPresenter.go(this);
         writable = diskResourceUtil.isWritable(resource);
         if(writable){

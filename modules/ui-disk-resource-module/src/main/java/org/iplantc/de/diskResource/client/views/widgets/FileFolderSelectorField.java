@@ -6,6 +6,7 @@ import org.iplantc.de.client.models.UserSettings;
 import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.client.models.viewer.InfoType;
+import org.iplantc.de.client.services.DiskResourceServiceFacade;
 import org.iplantc.de.client.util.CommonModelUtils;
 import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.commons.client.events.LastSelectedPathChangedEvent;
@@ -80,8 +81,9 @@ public class FileFolderSelectorField extends AbstractDiskResourceSelector<DiskRe
 
     @Inject
     FileFolderSelectorField(final FileFolderSelectorFieldAppearance appearance,
+                            final DiskResourceServiceFacade diskResourceService,
                             @Assisted final List<InfoType> infoTypeFilters){
-        super(appearance);
+        super(diskResourceService, appearance);
         this.appearance = appearance;
         this.infoTypeFilters = infoTypeFilters;
         setEmptyText(appearance.emptyText());

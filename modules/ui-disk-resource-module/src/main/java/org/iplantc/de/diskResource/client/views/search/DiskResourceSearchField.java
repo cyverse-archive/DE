@@ -140,13 +140,6 @@ public class DiskResourceSearchField extends TriggerField<String> implements Has
     @Override
     protected void onCellParseError(ParseErrorEvent event) {
         super.onCellParseError(event);
-        /*
-         * String value = event.getException().getMessage();
-         * String f = getPropertyEditor().getFormat().getPattern();
-         * String msg = DefaultMessages.getMessages().dateField_invalidText(value, f);
-         * parseError = msg;
-         */
-        // TODO Update parse error message
         String msg = "Default message";
         forceInvalid(msg);
     }

@@ -6,6 +6,7 @@ import org.iplantc.de.client.models.UserSettings;
 import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.client.models.diskResources.File;
 import org.iplantc.de.client.models.viewer.InfoType;
+import org.iplantc.de.client.services.DiskResourceServiceFacade;
 import org.iplantc.de.client.util.CommonModelUtils;
 import org.iplantc.de.client.util.DiskResourceUtil;
 import org.iplantc.de.commons.client.ErrorHandler;
@@ -75,17 +76,20 @@ public class FileSelectorField extends AbstractDiskResourceSelector<File> {
     private final CommonModelUtils commonModelUtils;
 
     @AssistedInject
-    FileSelectorField(final FileSelectorFieldAppearance appearance,
+    FileSelectorField(final DiskResourceServiceFacade diskResourceService,
+                      final FileSelectorFieldAppearance appearance,
                       @Assisted final List<InfoType> infoTypeFilters){
-        super(appearance);
+        super(diskResourceService, appearance);
         this.appearance = appearance;
         this.infoTypeFilters = infoTypeFilters;
         commonModelUtils = CommonModelUtils.getInstance();
     }
 
     @AssistedInject
-    FileSelectorField(final FileSelectorFieldAppearance appearance){
-        this(appearance,
+    FileSelectorField(final DiskResourceServiceFacade diskResourceService,
+                      final FileSelectorFieldAppearance appearance){
+        this(diskResourceService,
+             appearance,
              Collections.<InfoType>emptyList());
         setEmptyText(appearance.selectAFile());
     }

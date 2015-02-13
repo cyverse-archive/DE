@@ -1,0 +1,47 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
+             xmlns:g="urn:import:com.google.gwt.user.client.ui"
+             xmlns:container="urn:import:com.sencha.gxt.widget.core.client.container"
+             xmlns:form="urn:import:com.sencha.gxt.widget.core.client.form">
+    <ui:with field="appearance"
+             type="org.iplantc.de.diskResource.client.views.toolbar.dialogs.TabFileConfigDialog.TabFileConfigDialogAppearance"/>
+    <ui:with field="verticalLayoutData"
+             type="com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer.VerticalLayoutData">
+        <ui:attributes width="1" height="-1"/>
+    </ui:with>
+
+    <ui:with field="descriptionLayoutData"
+             type="com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer.VerticalLayoutData">
+        <ui:attributes width="1" height="100"/>
+    </ui:with>
+
+    <g:VerticalPanel spacing="10">
+        <container:VerticalLayoutContainer>
+            <container:child layoutData="{verticalLayoutData}">
+                <form:FieldLabel text="Enter number of columns">
+                    <form:widget>
+                        <form:SpinnerField ui:field="columnsSpinner"
+                                           allowBlank="false"
+                                           allowNegative="false"
+                                           allowDecimals="false"/>
+                    </form:widget>
+                </form:FieldLabel>
+            </container:child>
+
+            <container:child layoutData="{verticalLayoutData}">
+                <form:FieldLabel text="Separator">
+                    <form:widget>
+                        <g:HorizontalPanel>
+                            <form:Radio ui:field="commaRadio"
+                                        boxLabel="{appearance.commaRadioLabel}"
+                                        value="true"/>
+                            <form:Radio ui:field="tabRadio"
+                                        boxLabel="{appearance.tabRadioLabel}"
+                                    />
+                        </g:HorizontalPanel>
+                    </form:widget>
+                </form:FieldLabel>
+            </container:child>
+        </container:VerticalLayoutContainer>
+    </g:VerticalPanel>
+</ui:UiBinder> 
