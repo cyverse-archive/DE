@@ -39,12 +39,12 @@ public class DesktopWindowManagerTest {
     @Test public void windowBroughtToFrontWhenShown_show_config() {
         final Window mockWindow = mock(Window.class);
         when(mockWindow.isVisible()).thenReturn(true);
-        uut = new DesktopWindowManager(windowManagerMock, windowFactoryMock) {
-            @Override
-            Window getOrCreateWindow(WindowConfig config) {
-                return mockWindow;
-            }
-        };
+//        uut = new DesktopWindowManager(windowManagerMock, windowFactoryMock) {
+//            @Override
+//            Window getOrCreateWindow(WindowConfig config) {
+//                return mockWindow;
+//            }
+//        };
         WindowConfig wc = mock(WindowConfig.class);
         uut.show(wc, false);
         verify(mockWindow).show();
@@ -64,7 +64,7 @@ public class DesktopWindowManagerTest {
         when(newConfigMock.getWindowType()).thenReturn(WindowType.ABOUT);
         when(newConfigMock.getTag()).thenReturn("testTag");
         when(windowManagerMock.getWindows()).thenReturn(existingWindowList);
-        when(windowFactoryMock.build(newConfigMock)).thenReturn(newWindowMock);
+//        when(windowFactoryMock.build(newConfigMock)).thenReturn(newWindowMock);
 
         uut.show(newConfigMock, false);
         verify(newWindowMock).show();

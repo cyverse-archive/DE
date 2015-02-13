@@ -8,12 +8,11 @@ import org.iplantc.de.commons.client.views.window.configs.WindowConfig;
 import org.iplantc.de.desktop.client.views.windows.IPlantWindowInterface;
 import org.iplantc.de.desktop.client.views.windows.util.WindowFactory;
 
-import static com.google.common.base.Preconditions.checkNotNull;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.core.client.RunAsyncCallback;
 import com.google.gwt.dom.client.Element;
+import com.google.gwt.inject.client.AsyncProvider;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 
@@ -38,8 +37,8 @@ public class DesktopWindowManager {
     private Element desktopContainer;
 
     @Inject
-    public DesktopWindowManager(final WindowManager windowManager,
-                                final WindowFactory windowFactory) {
+    DesktopWindowManager(final WindowManager windowManager,
+                         final WindowFactory windowFactory) {
         this.windowManager = windowManager;
         this.windowFactory = windowFactory;
     }
@@ -55,22 +54,32 @@ public class DesktopWindowManager {
     }
 
     public void show(final WindowState windowState) {
-        GWT.runAsync(new RunAsyncCallback() {
+        final WindowConfig config = getConfig(windowState);
+        String windowId = constructWindowId(config);
+        for (Widget w : windowManager.getWindows()) {
+            String currentId = ((Window) w).getStateId();
+            if (windowId.equals(currentId)) {
+                ((IPlantWindowInterface) w).asWindow().show();
+                return;
+            }
+        }
+        getOrCreateWindow(config).get(new AsyncCallback<IPlantWindowInterface>() {
             @Override
-            public void onFailure(Throwable reason) {
-                ErrorHandler.post(reason);
+            public void onFailure(Throwable caught) {
+                ErrorHandler.post(caught);
             }
 
             @Override
-            public void onSuccess() {
-                final Window window = getOrCreateWindow(getConfig(windowState));
-                checkNotNull(window);
+            public void onSuccess(IPlantWindowInterface window) {
+
                 window.setPixelSize(windowState.getWidth(), windowState.getHeight());
                 window.setPagePosition(windowState.getWinLeft(), windowState.getWinTop());
-                window.show();
+                if (desktopContainer != null) {
+                    window.setContainer(desktopContainer);
+                }
+                window.show(config, constructWindowId(config), true);
             }
         });
-
     }
 
     /**
@@ -83,60 +92,55 @@ public class DesktopWindowManager {
      *
      * @param windowType the window type to be shown
      */
-    public void show(final WindowType windowType) {
-        GWT.runAsync(new RunAsyncCallback() {
-            @Override
-            public void onFailure(Throwable reason) {
-                ErrorHandler.post(reason);
+    public void show(WindowType windowType) {
+        Stack<Window> multiWindowStack = new Stack<>();
+        // Look for existing window type, then show it
+        boolean wasLast = false;
+        for (Widget w : windowManager.getStack()) {
+            Window window = (Window) w;
+            if (Strings.nullToEmpty(window.getStateId()).startsWith(windowType.toString())) {
+                multiWindowStack.push(window);
+                wasLast = true;
+            } else {
+                wasLast = false;
             }
-
-            @Override
-            public void onSuccess() {
-                Stack<Window> multiWindowStack = new Stack<>();
-                // Look for existing window type, then show it
-                boolean wasLast = false;
-                for (Widget w : windowManager.getStack()) {
-                    Window window = (Window) w;
-                    if (Strings.nullToEmpty(window.getStateId()).startsWith(windowType.toString())) {
-                        multiWindowStack.push(window);
-                        wasLast = true;
-                    } else {
-                        wasLast = false;
-                    }
-                }
-                if(!multiWindowStack.isEmpty()){
-                    Window toFront;
-                    if((multiWindowStack.size() == 1) || !wasLast){
-                        toFront = multiWindowStack.pop();
-                    } else {
-                        toFront = multiWindowStack.get(0);
-                    }
-                    toFront.show();
-                    windowManager.bringToFront(toFront);
-                } else {
-                    // If window type could not be found, create and show one
-                    show(getDefaultConfig(windowType), false);
-                }
-
+        }
+        if(!multiWindowStack.isEmpty()){
+            Window toFront;
+            if((multiWindowStack.size() == 1) || !wasLast){
+                toFront = multiWindowStack.pop();
+            } else {
+                toFront = multiWindowStack.get(0);
             }
-        });
+            toFront.show();
+            windowManager.bringToFront(toFront);
+        } else {
+            // If window type could not be found, create and show one
+            show(getDefaultConfig(windowType), false);
+        }
 
     }
 
     public void show(final WindowConfig config, final boolean updateExistingWindow) {
-        GWT.runAsync(new RunAsyncCallback() {
+        // Creates window if a window matching the given config isn't found.
+        String windowId = constructWindowId(config);
+        for (Widget w : windowManager.getWindows()) {
+            String currentId = ((Window) w).getStateId();
+            if (windowId.equals(currentId)) {
+                ((IPlantWindowInterface) w).asWindow().show();
+                return;
+            }
+        }
+        getOrCreateWindow(config).get(new AsyncCallback<IPlantWindowInterface>() {
             @Override
-            public void onFailure(Throwable reason) {
-                ErrorHandler.post(reason);
+            public void onFailure(Throwable caught) {
+                ErrorHandler.post(caught);
             }
 
             @Override
-            public void onSuccess() {
-                // Creates window if a window matching the given config isn't found.
-                Window window = getOrCreateWindow(config);
-                checkNotNull(window);
-                if (updateExistingWindow && (window instanceof IPlantWindowInterface)) {
-                    ((IPlantWindowInterface) window).update(config);
+            public void onSuccess(IPlantWindowInterface window) {
+                if (updateExistingWindow && (window != null)) {
+                    window.update(config);
                 }
 
                 if (!window.isVisible() && (windowManager.getActive() != null)) {
@@ -144,15 +148,16 @@ public class DesktopWindowManager {
                     position.setX(position.getX() + 10);
                     position.setY(position.getY() + 20);
 
-                    final Point adjustedPosition = getAdjustedPosition(position, window);
+                    final Point adjustedPosition = getAdjustedPosition(position);
                     window.setPagePosition(adjustedPosition.getX(), adjustedPosition.getY());
                 }
-
-                window.show();
-                windowManager.bringToFront(window);
+                if (desktopContainer != null) {
+                    window.setContainer(desktopContainer);
+                }
+                window.show(config, constructWindowId(config), true);
+                windowManager.bringToFront(window.asWindow());
             }
         });
-
     }
 
     String constructWindowId(WindowConfig config) {
@@ -163,11 +168,10 @@ public class DesktopWindowManager {
 
     /**
      * Adjusts the given position to account for the given window's size.
+     *  @param position the desired position, which will be adjusted if necessary.
      *
-     * @param position the desired position, which will be adjusted if necessary.
-     * @param window   adjusted position is based off of this window's size.
      */
-    Point getAdjustedPosition(Point position, Window window) {
+    Point getAdjustedPosition(Point position) {
         return position;
     }
 
@@ -188,20 +192,8 @@ public class DesktopWindowManager {
      * @param config an object used to uniquely identify a window.
      * @return the window corresponding to the given config, null is the window could not be found.
      */
-    Window getOrCreateWindow(final WindowConfig config) {
-        String windowId = constructWindowId(config);
-        for (Widget w : windowManager.getWindows()) {
-            String currentId = ((Window) w).getStateId();
-            if (windowId.equals(currentId)) {
-                return (Window) w;
-            }
-        }
-        final Window window = (Window) windowFactory.build(config);
-        window.setStateId(constructWindowId(config));
-        if (desktopContainer != null) {
-            window.setContainer(desktopContainer);
-        }
-        return window;
+    AsyncProvider<? extends IPlantWindowInterface> getOrCreateWindow(final WindowConfig config) {
+        return windowFactory.build(config);
     }
 
     void setDesktopContainer(Element desktopContainer) {

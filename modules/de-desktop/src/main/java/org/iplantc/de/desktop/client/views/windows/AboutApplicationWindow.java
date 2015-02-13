@@ -4,10 +4,8 @@ import org.iplantc.de.client.models.AboutApplicationData;
 import org.iplantc.de.client.models.CommonModelAutoBeanFactory;
 import org.iplantc.de.client.models.WindowState;
 import org.iplantc.de.commons.client.ErrorHandler;
-import org.iplantc.de.commons.client.views.window.configs.AboutWindowConfig;
 import org.iplantc.de.commons.client.views.window.configs.ConfigFactory;
 import org.iplantc.de.desktop.shared.DeModule;
-import org.iplantc.de.shared.services.AboutApplicationService;
 import org.iplantc.de.shared.services.AboutApplicationServiceAsync;
 
 import com.google.gwt.core.client.GWT;
@@ -16,6 +14,7 @@ import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Image;
+import com.google.inject.Inject;
 import com.google.web.bindery.autobean.shared.AutoBeanCodex;
 
 import com.sencha.gxt.widget.core.client.ContentPanel;
@@ -24,7 +23,7 @@ import com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer;
 /**
  * Models a user interface for "about" application information.
  *
- * @author lenards
+ * @author lenards, jstroot
  */
 public class AboutApplicationWindow extends IplantWindowBase {
 
@@ -43,15 +42,15 @@ public class AboutApplicationWindow extends IplantWindowBase {
 
         String iplantcAboutPadText();
     }
-
-    private final AboutApplicationAppearance appearance;
     private final AboutApplicationServiceAsync aboutApplicationService;
+    private final AboutApplicationAppearance appearance;
     private AboutApplicationData model;
 
-    public AboutApplicationWindow(AboutWindowConfig config) {
-        super("");
-        appearance = GWT.create(AboutApplicationAppearance.class);
-        aboutApplicationService = GWT.create(AboutApplicationService.class);
+    @Inject
+    AboutApplicationWindow(final AboutApplicationServiceAsync aboutApplicationService,
+                           final AboutApplicationAppearance appearance) {
+        this.aboutApplicationService = aboutApplicationService;
+        this.appearance = appearance;
         setSize("320", "260");
         setHeadingText(appearance.headingText());
         ensureDebugId(DeModule.WindowIds.ABOUT_WINDOW);

@@ -108,33 +108,12 @@ public abstract class IplantWindowBase extends Window implements IPlantWindowInt
     private ToolButton btnMinimize;
     private IplantWindowAppearance windowAppearance;
 
-    /**
-     * Constructs an instance of the window.
-     *
-     * @param tag a unique identifier for the window.
-     */
-    protected IplantWindowBase(String tag) {
-        this(tag, false);
+    public IplantWindowBase() {
+        this(GWT.<IplantWindowAppearance> create(IplantWindowAppearance.class));
     }
-
-    protected IplantWindowBase(final String tag,
-                               final WindowConfig config) {
-        this(tag, true, config);
-    }
-
-    protected IplantWindowBase(String tag,
-                               boolean isMaximizable,
-                               WindowConfig config) {
-        this(tag, isMaximizable);
-        this.config = config;
-    }
-
-    public IplantWindowBase(String tag,
-                            boolean isMaximizable) {
+    public IplantWindowBase(final IplantWindowAppearance appearance) {
         // Let normal window appearance go through
-        this.isMaximizable = isMaximizable;
-        windowAppearance = GWT.create(IplantWindowAppearance.class);
-        setStateId(tag);
+        windowAppearance = appearance;
         // Turn off default window buttons.
         setMaximizable(false);
         setMinimizable(false);
@@ -153,14 +132,6 @@ public abstract class IplantWindowBase extends Window implements IPlantWindowInt
         getHeader().addTool(btnLayout);
         getHeader().addTool(btnMinimize);
 
-        if (isMaximizable) {
-            btnMaximize = createMaximizeButton();
-            // SRI: if a window is maximizable, then it is restorable.
-            btnRestore = createRestoreButton();
-            getHeader().addTool(btnMaximize);
-
-            getHeader().addDomHandler(new HeaderDoubleClickHandler(), DoubleClickEvent.getType());
-        }
         getHeader().addTool(btnClose);
 
         final MaximizeRestoreHandler maximizeRestoreHandler = new MaximizeRestoreHandler();
@@ -196,6 +167,29 @@ public abstract class IplantWindowBase extends Window implements IPlantWindowInt
         super.minimize();
         minimized = true;
         hide();
+    }
+
+    @Override
+    public Window asWindow() {
+        return this;
+    }
+
+    @Override
+    public <C extends WindowConfig> void show(final C windowConfig,
+                                              final String tag,
+                                              final boolean isMaximizable) {
+        this.config = windowConfig;
+        this.isMaximizable = isMaximizable;
+        setStateId(tag);
+        if (isMaximizable) {
+            btnMaximize = createMaximizeButton();
+            // SRI: if a window is maximizable, then it is restorable.
+            btnRestore = createRestoreButton();
+            getHeader().addTool(btnMaximize);
+
+            getHeader().addDomHandler(new HeaderDoubleClickHandler(), DoubleClickEvent.getType());
+        }
+        super.show();
     }
 
     @Override

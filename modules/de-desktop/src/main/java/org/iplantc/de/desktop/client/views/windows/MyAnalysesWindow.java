@@ -11,6 +11,7 @@ import org.iplantc.de.desktop.shared.DeModule;
 import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 
 import com.google.common.collect.Lists;
+import com.google.inject.Inject;
 
 import java.util.List;
 
@@ -21,10 +22,9 @@ public class MyAnalysesWindow extends IplantWindowBase {
 
     private final AnalysesView.Presenter presenter;
 
-    public MyAnalysesWindow(AnalysisWindowConfig config,
-                            final AnalysesView.Presenter presenter,
-                            final IplantDisplayStrings displayStrings) {
-        super(null, config);
+    @Inject
+    MyAnalysesWindow(final AnalysesView.Presenter presenter,
+                     final IplantDisplayStrings displayStrings) {
         this.presenter = presenter;
 
         ensureDebugId(DeModule.WindowIds.ANALYSES_WINDOW);
@@ -32,7 +32,13 @@ public class MyAnalysesWindow extends IplantWindowBase {
         setSize("670", "375");
         setMinWidth(400);
 
-        presenter.go(this, config.getSelectedAnalyses());
+    }
+
+    @Override
+    public <C extends WindowConfig> void show(C windowConfig, String tag,
+                                              boolean isMaximizable) {
+        presenter.go(this, ((AnalysisWindowConfig)windowConfig).getSelectedAnalyses());
+        super.show(windowConfig, tag, isMaximizable);
     }
 
     @Override

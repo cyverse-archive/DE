@@ -6,17 +6,18 @@ import org.iplantc.de.client.models.WindowState;
 import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.commons.client.views.dialogs.IplantInfoBox;
 import org.iplantc.de.commons.client.views.window.configs.IDropLiteWindowConfig;
+import org.iplantc.de.commons.client.views.window.configs.WindowConfig;
 import org.iplantc.de.desktop.client.idroplite.presenter.IDropLitePresenter;
 import org.iplantc.de.desktop.client.idroplite.views.IDropLiteView;
 import org.iplantc.de.desktop.client.idroplite.views.IDropLiteViewImpl;
 import org.iplantc.de.desktop.client.util.IDropLiteUtil;
 import org.iplantc.de.desktop.shared.DeModule;
-import org.iplantc.de.resources.client.messages.I18N;
 import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.user.client.Command;
+import com.google.inject.Inject;
 
 import com.sencha.gxt.core.client.GXT;
 import com.sencha.gxt.core.client.Style.HideMode;
@@ -28,18 +29,17 @@ import com.sencha.gxt.widget.core.client.event.DeactivateEvent.DeactivateHandler
 import com.sencha.gxt.widget.core.client.event.DialogHideEvent;
 
 /**
- * @author sriram
+ * @author sriram, jstroot
  * 
  */
 public class IDropLiteAppletWindow extends IplantWindowBase {
 
     private final IplantDisplayStrings displayStrings;
-    private final IDropLiteWindowConfig idlwc;
+    private IDropLiteWindowConfig idlwc;
 
-    public IDropLiteAppletWindow(IDropLiteWindowConfig config) {
-        super("");
-        this.idlwc = config;
-        displayStrings = I18N.DISPLAY;
+    @Inject
+    IDropLiteAppletWindow(final IplantDisplayStrings displayStrings) {
+        this.displayStrings = displayStrings;
         String debugId = DeModule.WindowIds.IDROP_LITE + ".";
         // Set the heading and add the correct simple mode button based on the applet display mode.
         int displayMode = idlwc.getDisplayMode();
@@ -55,7 +55,14 @@ public class IDropLiteAppletWindow extends IplantWindowBase {
         ensureDebugId(debugId);
         setSize("850", "430");
         setResizable(false);
+    }
+
+    @Override
+    public <C extends WindowConfig> void show(C windowConfig, String tag,
+                                              boolean isMaximizable) {
+        this.idlwc = (IDropLiteWindowConfig) windowConfig;
         init();
+        super.show(windowConfig, tag, isMaximizable);
     }
 
     private void init() {

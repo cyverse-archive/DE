@@ -7,20 +7,7 @@ import org.iplantc.de.client.gin.ServicesInjector;
 import org.iplantc.de.client.models.DEProperties;
 import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.client.models.UserSettings;
-import org.iplantc.de.client.services.AnalysisServiceFacade;
-import org.iplantc.de.client.services.AppBuilderMetadataServiceFacade;
-import org.iplantc.de.client.services.AppMetadataServiceFacade;
-import org.iplantc.de.client.services.AppServiceFacade;
-import org.iplantc.de.client.services.AppTemplateServices;
-import org.iplantc.de.client.services.AppUserServiceFacade;
-import org.iplantc.de.client.services.DEFeedbackServiceFacade;
-import org.iplantc.de.client.services.DiskResourceServiceFacade;
-import org.iplantc.de.client.services.FileEditorServiceFacade;
-import org.iplantc.de.client.services.FileSystemMetadataServiceFacade;
-import org.iplantc.de.client.services.MessageServiceFacade;
-import org.iplantc.de.client.services.SearchServiceFacade;
-import org.iplantc.de.client.services.TagsServiceFacade;
-import org.iplantc.de.client.services.UserSessionServiceFacade;
+import org.iplantc.de.client.services.*;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
 import org.iplantc.de.commons.client.requests.KeepaliveTimer;
 import org.iplantc.de.desktop.client.DesktopView;
@@ -32,6 +19,7 @@ import org.iplantc.de.desktop.client.presenter.util.MessagePoller;
 import org.iplantc.de.desktop.client.views.DesktopViewImpl;
 import org.iplantc.de.desktop.client.views.widgets.DEFeedbackDialog;
 import org.iplantc.de.desktop.client.views.widgets.PreferencesDialog;
+import org.iplantc.de.desktop.client.views.windows.*;
 import org.iplantc.de.desktop.client.views.windows.util.WindowFactory;
 import org.iplantc.de.notifications.client.utils.NotifyInfo;
 import org.iplantc.de.resources.client.IplantResources;
@@ -105,10 +93,10 @@ public class DEGinModule extends AbstractGinModule {
         return ServicesInjector.INSTANCE.getFileSysteMetadataServiceFacade();
     }
 
-    // @Provides
-    // public AppMetadataServiceFacade createAppMetadataServiceFacade() {
-    // return ServicesInjector.INSTANCE.getAppMetadataServiceFacade();
-    // }
+    @Provides
+    public ToolServices createToolsServices() {
+        return ServicesInjector.INSTANCE.getDeployedComponentServices();
+    }
 
     //</editor-fold>
 
@@ -171,5 +159,18 @@ public class DEGinModule extends AbstractGinModule {
         // KLUDGE Bind AppsView here to get around Gin double-binding with Belphegor
         bind(AppsView.class).to(AppsViewImpl.class);
 
+        // Bind Windows
+        bind(AboutApplicationWindow.class);
+        bind(AppEditorWindow.class);
+        bind(AppLaunchWindow.class);
+        bind(DEAppsWindow.class);
+        bind(DeDiskResourceWindow.class);
+        bind(FileViewerWindow.class);
+        bind(IDropLiteAppletWindow.class);
+        bind(MyAnalysesWindow.class);
+        bind(NotificationWindow.class);
+        bind(PipelineEditorWindow.class);
+        bind(SimpleDownloadWindow.class);
+        bind(SystemMessagesWindow.class);
     }
 }

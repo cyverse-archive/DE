@@ -485,6 +485,7 @@ public abstract class AbstractDiskResourceSelector<R extends DiskResource> exten
             return;
         }
 
+        // FIXME No service calls in widgets!!
         drServiceFacade.getStat(asStringPathTypeMap,
                                 new AsyncCallback<FastMap<DiskResource>>() {
 

@@ -15,6 +15,7 @@ import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
+import com.google.inject.Inject;
 
 import com.sencha.gxt.widget.core.client.event.MaximizeEvent;
 import com.sencha.gxt.widget.core.client.event.MaximizeEvent.MaximizeHandler;
@@ -25,39 +26,49 @@ import com.sencha.gxt.widget.core.client.event.ShowEvent.ShowHandler;
 
 import java.util.List;
 
+/**
+ * @author jstroot
+ */
 public class DeDiskResourceWindow extends IplantWindowBase implements FolderSelectionEvent.FolderSelectionEventHandler {
 
+    private final DiskResourcePresenterFactory presenterFactory;
     private final IplantDisplayStrings displayStrings;
-    private final DiskResourceView.Presenter presenter;
+    private DiskResourceView.Presenter presenter;
 
-    public DeDiskResourceWindow(final DiskResourceWindowConfig config,
-                                final DiskResourcePresenterFactory presenterFactory,
-                                final IplantDisplayStrings displayStrings) {
-        super(config.getTag(), config);
+    @Inject
+    DeDiskResourceWindow(final DiskResourcePresenterFactory presenterFactory,
+                         final IplantDisplayStrings displayStrings) {
+        this.presenterFactory = presenterFactory;
         this.displayStrings = displayStrings;
 
-        final String uniqueWindowTag = (config.getTag() == null) ? "" : "." + config.getTag();
         setHeadingText(displayStrings.data());
         setSize("900", "480");
         setMinWidth(900);
         setMinHeight(480);
+    }
 
+    @Override
+    public <C extends WindowConfig> void show(C windowConfig, String tag,
+                                              boolean isMaximizable) {
         // Create an empty
         List<HasId> resourcesToSelect = Lists.newArrayList();
-        if (config.getSelectedDiskResources() != null) {
-            resourcesToSelect.addAll(config.getSelectedDiskResources());
+        final DiskResourceWindowConfig diskResourceWindowConfig = (DiskResourceWindowConfig) windowConfig;
+        if (diskResourceWindowConfig.getSelectedDiskResources() != null) {
+            resourcesToSelect.addAll(diskResourceWindowConfig.getSelectedDiskResources());
         }
 
         this.presenter = presenterFactory.withSelectedResources(false,
                                                                 false,
                                                                 false,
                                                                 false,
-                                                                config.getSelectedFolder(),
+                                                                diskResourceWindowConfig.getSelectedFolder(),
                                                                 resourcesToSelect);
+        final String uniqueWindowTag = (diskResourceWindowConfig.getTag() == null) ? "" : "." + diskResourceWindowConfig.getTag();
         ensureDebugId(DeModule.WindowIds.DISK_RESOURCE_WINDOW + uniqueWindowTag);
         presenter.go(this);
 
         initHandlers();
+        super.show(windowConfig, uniqueWindowTag, isMaximizable);
     }
 
     @Override

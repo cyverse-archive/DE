@@ -6,7 +6,6 @@ import org.iplantc.de.apps.integration.client.view.AppsEditorView;
 import org.iplantc.de.apps.integration.shared.AppIntegrationModule;
 import org.iplantc.de.apps.widgets.client.view.AppLaunchView.RenameWindowHeaderCommand;
 import org.iplantc.de.client.events.EventBus;
-import org.iplantc.de.client.gin.ServicesInjector;
 import org.iplantc.de.client.models.WindowState;
 import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.models.apps.integration.AppTemplate;
@@ -28,14 +27,17 @@ import org.iplantc.de.commons.client.views.window.configs.WindowConfig;
 import org.iplantc.de.commons.client.widgets.ContextualHelpToolButton;
 import org.iplantc.de.desktop.client.events.WindowHeadingUpdatedEvent;
 import org.iplantc.de.desktop.shared.DeModule;
+import org.iplantc.de.resources.client.uiapps.widgets.AppsWidgetsContextualHelpMessages;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.RunAsyncCallback;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HTML;
+import com.google.inject.Inject;
 import com.google.web.bindery.autobean.shared.AutoBeanCodex;
 import com.google.web.bindery.autobean.shared.AutoBeanUtils;
 
@@ -105,27 +107,36 @@ public class AppEditorWindow extends IplantWindowBase implements AppPublishedEve
     }
 
     final AppEditorAppearance appearance;
-    final ContextualHelpToolButton editPublicAppContextHlpTool = new ContextualHelpToolButton(new HTML(org.iplantc.de.resources.client.messages.I18N.APPS_HELP.editPublicAppHelp()));
     private final IplantAnnouncer announcer;
+    private final AppTemplateUtils appTemplateUtils;
     private final ToolServices dcServices;
     private final AppTemplateAutoBeanFactory factory;
+    private final EventBus eventBus;
     private final AppsEditorView.Presenter presenter;
     private final RenameWindowHeaderCmdImpl renameCmd;
     private final AppTemplateServices templateService;
-    private final AppTemplateUtils appTemplateUtils;
+    private final ContextualHelpToolButton editPublicAppContextHlpTool;
 
-    public AppEditorWindow(AppsIntegrationWindowConfig config,
-                           final AppsEditorView.Presenter presenter,
-                           final EventBus eventBus) {
-        super(null, config);
-        this.appTemplateUtils = AppTemplateUtils.getInstance();
+    @Inject
+    AppEditorWindow(final AppEditorAppearance appearance,
+                    final AppsEditorView.Presenter presenter,
+                    final AppTemplateUtils appTemplateUtils,
+                    final IplantAnnouncer announcer,
+                    final AppTemplateServices templateService,
+                    final ToolServices dcServices,
+                    final AppTemplateAutoBeanFactory factory,
+                    final AppsWidgetsContextualHelpMessages helpMessages,
+                    final EventBus eventBus) {
+        this.appearance = appearance;
+        this.appTemplateUtils = appTemplateUtils;
         this.presenter = presenter;
-        appearance = GWT.create(AppEditorAppearance.class);
+        this.announcer = announcer;
+        this.templateService = templateService;
+        this.dcServices = dcServices;
+        this.factory = factory;
+        this.eventBus = eventBus;
 
-        announcer = IplantAnnouncer.getInstance();
-        templateService = ServicesInjector.INSTANCE.getAppTemplateServices();
-        dcServices = ServicesInjector.INSTANCE.getDeployedComponentServices();
-        factory = GWT.create(AppTemplateAutoBeanFactory.class);
+        editPublicAppContextHlpTool = new ContextualHelpToolButton(new HTML(helpMessages.editPublicAppHelp()));
         renameCmd = new RenameWindowHeaderCmdImpl(this);
 
         ensureDebugId(DeModule.WindowIds.APP_EDITOR_WINDOW);
@@ -133,13 +144,6 @@ public class AppEditorWindow extends IplantWindowBase implements AppPublishedEve
         setSize("800", "480");
         setMinWidth(appearance.minWidth());
         setMinHeight(appearance.minHeight());
-
-
-        // JDS Add presenter as a before hide handler to determine if user has changes before closing.
-        presenter.setBeforeHideHandlerRegistration(this.addBeforeHideHandler(presenter));
-        eventBus.addHandler(AppPublishedEvent.TYPE, this);
-
-        init(presenter, config);
     }
 
     @Override
@@ -165,9 +169,31 @@ public class AppEditorWindow extends IplantWindowBase implements AppPublishedEve
     }
 
     @Override
-    public <C extends WindowConfig> void update(C config) {
-        AppsIntegrationWindowConfig appIntConfig = (AppsIntegrationWindowConfig) config;
-        init(presenter, appIntConfig);
+    public <C extends WindowConfig> void show(C windowConfig, String tag,
+                                              boolean isMaximizable) {
+
+        // JDS Add presenter as a before hide handler to determine if user has changes before closing.
+        presenter.setBeforeHideHandlerRegistration(this.addBeforeHideHandler(presenter));
+        eventBus.addHandler(AppPublishedEvent.TYPE, this);
+        init(presenter, (AppsIntegrationWindowConfig) windowConfig);
+        super.show(windowConfig, tag, isMaximizable);
+    }
+
+    @Override
+    public <C extends WindowConfig> void update(final C config) {
+        GWT.runAsync(new RunAsyncCallback() {
+            @Override
+            public void onFailure(Throwable reason) {
+
+            }
+
+            @Override
+            public void onSuccess() {
+
+                AppsIntegrationWindowConfig appIntConfig = (AppsIntegrationWindowConfig) config;
+                init(presenter, appIntConfig);
+            }
+        });
     }
 
     @Override
@@ -196,6 +222,14 @@ public class AppEditorWindow extends IplantWindowBase implements AppPublishedEve
                                                                                new AsyncCallback<AppTemplate>() {
 
                                                                                    @Override
+                                                                                   public void onFailure(Throwable caught) {
+                                    /*
+                                     * JDS Do nothing since this this callback converter is called manually below
+                                     * (i.e. no over-the-wire integration)
+                                     */
+                                                                                   }
+
+                                                                                   @Override
                                                                                    public void onSuccess(AppTemplate result) {
                                                                                        // KLUDGE until service returns this value in JSON response.
                                                                                        result.setPublic(result.isPublic() || config.isOnlyLabelEditMode());
@@ -203,14 +237,6 @@ public class AppEditorWindow extends IplantWindowBase implements AppPublishedEve
                                                                                        presenter.go(AppEditorWindow.this, result, renameCmd);
                                                                                        AppEditorWindow.this.forceLayout();
                                                                                        AppEditorWindow.this.center();
-                                                                                   }
-
-                                                                                   @Override
-                                                                                   public void onFailure(Throwable caught) {
-                                    /*
-                                     * JDS Do nothing since this this callback converter is called manually below
-                                     * (i.e. no over-the-wire integration)
-                                     */
                                                                                    }
                                                                                });
             at.onSuccess(config.getAppTemplate().getPayload());

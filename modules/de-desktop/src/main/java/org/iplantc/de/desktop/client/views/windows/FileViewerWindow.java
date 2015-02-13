@@ -4,6 +4,7 @@ import org.iplantc.de.client.models.IsMaskable;
 import org.iplantc.de.client.models.WindowState;
 import org.iplantc.de.client.models.diskResources.File;
 import org.iplantc.de.commons.client.views.window.configs.PathListWindowConfig;
+import org.iplantc.de.commons.client.views.window.configs.WindowConfig;
 import org.iplantc.de.fileViewers.client.events.DirtyStateChangedEvent;
 import org.iplantc.de.fileViewers.client.FileViewer;
 import org.iplantc.de.commons.client.views.window.configs.FileViewerWindowConfig;
@@ -12,6 +13,7 @@ import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.inject.Inject;
 
 import com.sencha.gxt.widget.core.client.Dialog.PredefinedButton;
 import com.sencha.gxt.widget.core.client.box.MessageBox;
@@ -38,50 +40,57 @@ public class FileViewerWindow extends IplantWindowBase implements IsMaskable,
     protected File file;
     protected JSONObject manifest;
     Logger LOG = Logger.getLogger(FileViewerWindow.class.getName());
-    private final FileViewerWindowConfig configAB;
+    private FileViewerWindowConfig configAB;
     private final IplantDisplayStrings displayStrings;
     private FileViewer.Presenter presenter;
 
-    public FileViewerWindow(final FileViewerWindowConfig config,
-                            final IplantDisplayStrings displayStrings,
-                            final FileViewer.Presenter presenter) {
-        super(null, config);
-        this.configAB = config;
+    @Inject
+    FileViewerWindow(final IplantDisplayStrings displayStrings,
+                     final FileViewer.Presenter presenter) {
         this.displayStrings = displayStrings;
-
-        this.file = configAB.getFile();
 
         this.presenter = presenter;
         this.presenter.addDirtyStateChangedEventHandler(this);
 
         setSize("800", "480");
 
+    }
+
+    @Override
+    public <C extends WindowConfig> void show(C windowConfig, String tag,
+                                              boolean isMaximizable) {
+
+        final FileViewerWindowConfig fileViewerWindowConfig = (FileViewerWindowConfig) windowConfig;
+        this.configAB = fileViewerWindowConfig;
+        this.file = configAB.getFile();
         if (file != null) {
             setHeadingText(file.getName());
             presenter.go(this,
                          file,
                          configAB.getParentFolder(),
-                         config.isEditing(),
-                         config.isVizTabFirst(),
+                         fileViewerWindowConfig.isEditing(),
+                         fileViewerWindowConfig.isVizTabFirst(),
                          new CriticalPathCallback());
         } else {
             String title = "Untitled-" + Math.random();
             setHeadingText(title);
-            boolean isTabularFile = config instanceof TabularFileViewerWindowConfig;
-            boolean isPathListFile = config instanceof PathListWindowConfig;
-            String delimiter = isTabularFile ? ((TabularFileViewerWindowConfig) config).getSeparator() : "";
-            Integer columns = isTabularFile ? ((TabularFileViewerWindowConfig) config).getColumns() : null;
+            boolean isTabularFile = windowConfig instanceof TabularFileViewerWindowConfig;
+            boolean isPathListFile = windowConfig instanceof PathListWindowConfig;
+            String delimiter = isTabularFile ? ((TabularFileViewerWindowConfig) windowConfig).getSeparator() : "";
+            Integer columns = isTabularFile ? ((TabularFileViewerWindowConfig) windowConfig).getColumns() : null;
             presenter.newFileGo(this,
                                 title,
-                                config.getContentType(),
-                                config.getParentFolder(),
-                                config.isEditing(),
-                                config.isVizTabFirst(),
+                                fileViewerWindowConfig.getContentType(),
+                                fileViewerWindowConfig.getParentFolder(),
+                                fileViewerWindowConfig.isEditing(),
+                                fileViewerWindowConfig.isVizTabFirst(),
                                 isTabularFile,
                                 isPathListFile,
                                 columns,
                                 delimiter);
         }
+
+        super.show(windowConfig, tag, isMaximizable);
     }
 
     @Override

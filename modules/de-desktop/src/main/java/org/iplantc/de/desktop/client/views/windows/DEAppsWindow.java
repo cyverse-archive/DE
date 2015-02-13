@@ -5,26 +5,36 @@ import org.iplantc.de.apps.shared.AppsModule;
 import org.iplantc.de.client.models.WindowState;
 import org.iplantc.de.commons.client.views.window.configs.AppsWindowConfig;
 import org.iplantc.de.commons.client.views.window.configs.ConfigFactory;
+import org.iplantc.de.commons.client.views.window.configs.WindowConfig;
 import org.iplantc.de.desktop.shared.DeModule;
 import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 
+import com.google.inject.Inject;
+
+/**
+ * @author jstroot
+ */
 public class DEAppsWindow extends IplantWindowBase {
 
-    private final IplantDisplayStrings displayStrings;
     private final AppsView.Presenter presenter;
 
-    public DEAppsWindow(AppsWindowConfig config,
-                        AppsView.Presenter presenter) {
-        super(null, config);
+    @Inject
+    DEAppsWindow(final AppsView.Presenter presenter,
+                 final IplantDisplayStrings displayStrings) {
         this.presenter = presenter;
-        displayStrings = org.iplantc.de.resources.client.messages.I18N.DISPLAY;
 
         // This must be set before we render view
         ensureDebugId(DeModule.WindowIds.APPS_WINDOW);
         setSize("600", "375");
         setHeadingText(displayStrings.applications());
+    }
 
-        presenter.go(this, config.getSelectedAppCategory(), config.getSelectedApp());
+    @Override
+    public <C extends WindowConfig> void show(C windowConfig, String tag,
+                                              boolean isMaximizable) {
+        final AppsWindowConfig appsWindowConfig = (AppsWindowConfig) windowConfig;
+        presenter.go(this, appsWindowConfig.getSelectedAppCategory(), appsWindowConfig.getSelectedApp());
+        super.show(windowConfig, tag, isMaximizable);
     }
 
     @Override

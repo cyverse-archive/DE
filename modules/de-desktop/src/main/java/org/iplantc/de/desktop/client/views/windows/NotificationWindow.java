@@ -1,6 +1,3 @@
-/**
- *
- */
 package org.iplantc.de.desktop.client.views.windows;
 
 import org.iplantc.de.client.models.WindowState;
@@ -8,18 +5,19 @@ import org.iplantc.de.client.models.notifications.NotificationCategory;
 import org.iplantc.de.client.models.notifications.NotificationMessage;
 import org.iplantc.de.commons.client.views.window.configs.ConfigFactory;
 import org.iplantc.de.commons.client.views.window.configs.NotifyWindowConfig;
+import org.iplantc.de.commons.client.views.window.configs.WindowConfig;
 import org.iplantc.de.desktop.shared.DeModule;
 import org.iplantc.de.notifications.client.presenter.NotificationPresenterImpl;
 import org.iplantc.de.notifications.client.views.NotificationMessageProperties;
 import org.iplantc.de.notifications.client.views.NotificationView;
 import org.iplantc.de.notifications.client.views.NotificationViewImpl;
 import org.iplantc.de.notifications.client.views.cells.NotificationMessageCell;
-import org.iplantc.de.resources.client.messages.I18N;
 import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 
 import com.google.gwt.cell.client.DateCell;
 import com.google.gwt.core.shared.GWT;
 import com.google.gwt.i18n.client.DateTimeFormat;
+import com.google.inject.Inject;
 
 import com.sencha.gxt.core.client.IdentityValueProvider;
 import com.sencha.gxt.core.client.ValueProvider;
@@ -34,7 +32,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * @author sriram
+ * @author sriram, jstroot
  */
 public class NotificationWindow extends IplantWindowBase {
 
@@ -49,23 +47,30 @@ public class NotificationWindow extends IplantWindowBase {
 
     private static CheckBoxSelectionModel<NotificationMessage> checkBoxModel;
     private final IplantDisplayStrings displayStrings;
-    private final NotificationView.Presenter presenter;
+    private NotificationView.Presenter presenter;
 
-    public NotificationWindow(NotifyWindowConfig config) {
-        super(null, config);
-        displayStrings = I18N.DISPLAY;
+    @Inject
+    NotificationWindow(final IplantDisplayStrings displayStrings) {
+        this.displayStrings = displayStrings;
         setHeadingText(displayStrings.notifications());
+        ensureDebugId(DeModule.WindowIds.NOTIFICATION);
+        setSize("600", "375");
+    }
+
+    @Override
+    public <C extends WindowConfig> void show(C windowConfig, String tag,
+                                              boolean isMaximizable) {
+        NotifyWindowConfig notifyWindowConfig = (NotifyWindowConfig) windowConfig;
         NotificationKeyProvider keyProvider = new NotificationKeyProvider();
         ListStore<NotificationMessage> store = new ListStore<>(keyProvider);
         ColumnModel<NotificationMessage> cm = buildNotificationColumnModel();
         NotificationView view = new NotificationViewImpl(store, cm, checkBoxModel);
         presenter = new NotificationPresenterImpl(view);
-        ensureDebugId(DeModule.WindowIds.NOTIFICATION);
-        setSize("600", "375");
         presenter.go(this);
-        if (config != null) {
-            presenter.filterBy(config.getSortCategory());
+        if (notifyWindowConfig != null) {
+            presenter.filterBy(notifyWindowConfig.getSortCategory());
         }
+        super.show(windowConfig, tag, isMaximizable);
     }
 
     @Override

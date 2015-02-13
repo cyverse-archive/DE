@@ -15,17 +15,21 @@ import org.iplantc.de.pipelines.client.views.PipelineViewImpl;
 import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 
 import com.google.gwt.user.client.Command;
+import com.google.inject.Inject;
 import com.google.web.bindery.autobean.shared.Splittable;
 
 import com.sencha.gxt.widget.core.client.Dialog.PredefinedButton;
 import com.sencha.gxt.widget.core.client.box.MessageBox;
 import com.sencha.gxt.widget.core.client.event.DialogHideEvent;
 
+/**
+ * @author jstroot
+ */
 public class PipelineEditorWindow extends IplantWindowBase {
     class PublishCallbackCommand implements Command {
         @Override
         public void execute() {
-            IplantAnnouncer.getInstance().schedule(new SuccessAnnouncementConfig(displayStrings.publishWorkflowSuccess()));
+            announcer.schedule(new SuccessAnnouncementConfig(displayStrings.publishWorkflowSuccess()));
             if (close_after_save) {
                 close_after_save = false;
                 PipelineEditorWindow.super.hide();
@@ -35,27 +39,35 @@ public class PipelineEditorWindow extends IplantWindowBase {
         }
     }
 
+    @Inject IplantAnnouncer announcer;
+
     private final IplantDisplayStrings displayStrings;
-    private final PipelineView.Presenter presenter;
+    @Inject AppsView.Presenter appsViewPresenter;
+    private PipelineView.Presenter presenter;
     private boolean close_after_save;
     private String initPipelineJson;
 
-    public PipelineEditorWindow(WindowConfig config,
-                                final AppsView.Presenter appsViewPresenter) {
-        super(null, config);
+    @Inject
+    PipelineEditorWindow(final IplantDisplayStrings displayStrings) {
+        this.displayStrings = displayStrings;
 
-        displayStrings = org.iplantc.de.resources.client.messages.I18N.DISPLAY;
         setHeadingText(displayStrings.pipeline());
-        setSize("900", "500"); //$NON-NLS-1$ //$NON-NLS-2$
+        setSize("900", "500");
         setMinWidth(640);
         setMinHeight(440);
 
+        ensureDebugId(DeModule.WindowIds.WORKFLOW_EDITOR);
+    }
+
+    @Override
+    public <C extends WindowConfig> void show(C windowConfig, String tag,
+                                              boolean isMaximizable) {
+
         PipelineView view = new PipelineViewImpl();
         presenter = new PipelineViewPresenter(view, new PublishCallbackCommand(), appsViewPresenter);
-        ensureDebugId(DeModule.WindowIds.WORKFLOW_EDITOR);
 
-        if (config instanceof PipelineEditorWindowConfig) {
-            PipelineEditorWindowConfig pipelineConfig = (PipelineEditorWindowConfig) config;
+        if (windowConfig instanceof PipelineEditorWindowConfig) {
+            PipelineEditorWindowConfig pipelineConfig = (PipelineEditorWindowConfig) windowConfig;
             Pipeline pipeline = pipelineConfig.getPipeline();
 
             if (pipeline != null) {
@@ -73,6 +85,7 @@ public class PipelineEditorWindow extends IplantWindowBase {
 
         presenter.go(this);
         close_after_save = false;
+        super.show(windowConfig, tag, isMaximizable);
     }
 
     @Override
