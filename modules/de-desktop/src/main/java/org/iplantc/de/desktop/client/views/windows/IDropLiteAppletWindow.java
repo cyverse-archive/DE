@@ -40,6 +40,15 @@ public class IDropLiteAppletWindow extends IplantWindowBase {
     @Inject
     IDropLiteAppletWindow(final IplantDisplayStrings displayStrings) {
         this.displayStrings = displayStrings;
+
+        setSize("850", "430");
+        setResizable(false);
+    }
+
+    @Override
+    public <C extends WindowConfig> void show(C windowConfig, String tag,
+                                              boolean isMaximizable) {
+        this.idlwc = (IDropLiteWindowConfig) windowConfig;
         String debugId = DeModule.WindowIds.IDROP_LITE + ".";
         // Set the heading and add the correct simple mode button based on the applet display mode.
         int displayMode = idlwc.getDisplayMode();
@@ -51,16 +60,8 @@ public class IDropLiteAppletWindow extends IplantWindowBase {
             setHeadingText(displayStrings.download());
             debugId += displayStrings.download();
         }
-
         ensureDebugId(debugId);
-        setSize("850", "430");
-        setResizable(false);
-    }
 
-    @Override
-    public <C extends WindowConfig> void show(C windowConfig, String tag,
-                                              boolean isMaximizable) {
-        this.idlwc = (IDropLiteWindowConfig) windowConfig;
         init();
         super.show(windowConfig, tag, isMaximizable);
     }
