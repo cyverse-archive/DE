@@ -12,9 +12,11 @@ import org.iplantc.de.diskResource.client.events.DiskResourceNameSelectedEvent;
 import org.iplantc.de.diskResource.client.events.DiskResourcePathSelectedEvent;
 import org.iplantc.de.diskResource.client.events.DiskResourceSelectionChangedEvent;
 import org.iplantc.de.diskResource.client.events.FolderSelectionEvent;
+import org.iplantc.de.diskResource.client.events.search.SubmitDiskResourceQueryEvent;
 import org.iplantc.de.diskResource.client.presenters.grid.proxy.FolderContentsLoadConfig;
 import org.iplantc.de.diskResource.share.DiskResourceModule;
 
+import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
@@ -161,6 +163,8 @@ public class GridViewImpl extends ContentPanel implements GridView,
     public HandlerRegistration addDiskResourceSelectionChangedEventHandler(DiskResourceSelectionChangedEvent.DiskResourceSelectionChangedEventHandler handler) {
         return addHandler(handler, DiskResourceSelectionChangedEvent.TYPE);
     }
+
+
     //</editor-fold>
 
     //<editor-fold desc="Selection Event Handlers">
@@ -201,6 +205,12 @@ public class GridViewImpl extends ContentPanel implements GridView,
         updateSelectionCount(sm.getSelectedCount());
 
         fireEvent(new DiskResourceSelectionChangedEvent(event.getSelection()));
+    }
+
+    @Override
+    public void doSubmitDiskResourceQuery(SubmitDiskResourceQueryEvent event) {
+        Preconditions.checkNotNull(event.getQueryTemplate());
+        reconfigureToSearchView();
     }
     //</editor-fold>
 

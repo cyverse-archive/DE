@@ -234,6 +234,7 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
         this.detailsViewPresenter.getView().addManageSharingSelectedEventHandler(this.gridViewPresenter);
         this.detailsViewPresenter.getView().addEditInfoTypeSelectedEventHandler(this.gridViewPresenter);
         this.detailsViewPresenter.getView().addResetInfoTypeSelectedHandler(this.gridViewPresenter);
+        this.detailsViewPresenter.getView().addSubmitDiskResourceQueryEventHandler(this.gridViewPresenter.getView());
         this.detailsViewPresenter.getView().addSubmitDiskResourceQueryEventHandler(this.gridViewPresenter);
         this.detailsViewPresenter.getView().addSendToCogeSelectedHandler(this);
         this.detailsViewPresenter.getView().addSendToEnsemblSelectedHandler(this);
@@ -243,6 +244,7 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
         // Toolbar Search Field
         DiskResourceSearchField searchField = toolbarPresenter.getView().getSearchField();
         searchField.addSaveDiskResourceQueryClickedEventHandler(this.dataSearchPresenter);
+        searchField.addSubmitDiskResourceQueryEventHandler(this.gridViewPresenter.getView());
         searchField.addSubmitDiskResourceQueryEventHandler(this.gridViewPresenter);
 
         // Grid Presenter
@@ -255,6 +257,7 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
 
         // Navigation Presenter
         this.navigationPresenter.addSavedSearchedRetrievedEventHandler(this.dataSearchPresenter);
+        this.navigationPresenter.addSubmitDiskResourceQueryEventHandler(this.gridViewPresenter.getView());
         this.navigationPresenter.addSubmitDiskResourceQueryEventHandler(this.gridViewPresenter);
         this.navigationPresenter.addRootFoldersRetrievedEventHandler(this);
         this.navigationPresenter.getView().addFolderSelectedEventHandler(this.gridViewPresenter);

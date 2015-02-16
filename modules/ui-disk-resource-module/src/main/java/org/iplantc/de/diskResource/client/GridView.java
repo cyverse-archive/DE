@@ -40,7 +40,8 @@ public interface GridView extends IsWidget,
                                   DiskResourcePathSelectedEvent.HasDiskResourcePathSelectedEventHandlers,
                                   FolderSelectionEvent.FolderSelectionEventHandler,
                                   DiskResourceNameSelectedEvent.HasDiskResourceNameSelectedEventHandlers,
-                                  DiskResourceSelectionChangedEvent.HasDiskResourceSelectionChangedEventHandlers {
+                                  DiskResourceSelectionChangedEvent.HasDiskResourceSelectionChangedEventHandlers,
+                                  SubmitDiskResourceQueryEvent.SubmitDiskResourceQueryEventHandler {
     interface Appearance {
 
         String actionsColumnLabel();
