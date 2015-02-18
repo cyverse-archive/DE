@@ -124,6 +124,8 @@ public class FileFolderSelectorField extends AbstractDiskResourceSelector<DiskRe
         }else if(value instanceof Folder){
             folderToSelect = value;
         }else {
+            String path = diskResourceUtil.parseParent(value.getPath());
+            folderToSelect = commonModelUtils.createHasPathFromString(path);
             diskResourcesToSelect.add(value);
         }
         final HasPath finalFolderToSelect = folderToSelect;
