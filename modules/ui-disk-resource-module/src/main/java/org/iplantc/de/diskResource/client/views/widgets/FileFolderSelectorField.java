@@ -65,7 +65,11 @@ public class FileFolderSelectorField extends AbstractDiskResourceSelector<DiskRe
 
             setSelectedResource(value);
             if(userSettings.isRememberLastPath()){
-                userSettings.setLastPath(diskResourceUtil.parseParent(value.getPath()));
+
+                String path = (value instanceof Folder)
+                                  ? value.getPath()
+                                  : diskResourceUtil.parseParent(value.getPath());
+                userSettings.setLastPath(path);
                 eventBus.fireEvent(new LastSelectedPathChangedEvent(true));
             }
             ValueChangeEvent.fire(hasValueChangeHandlers, value);
