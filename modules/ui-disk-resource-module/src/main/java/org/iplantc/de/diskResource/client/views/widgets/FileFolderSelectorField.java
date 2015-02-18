@@ -8,6 +8,7 @@ import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.client.models.viewer.InfoType;
 import org.iplantc.de.client.services.DiskResourceServiceFacade;
 import org.iplantc.de.client.util.CommonModelUtils;
+import org.iplantc.de.client.util.DiskResourceUtil;
 import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.commons.client.events.LastSelectedPathChangedEvent;
 import org.iplantc.de.diskResource.client.views.dialogs.FileFolderSelectDialog;
@@ -63,9 +64,8 @@ public class FileFolderSelectorField extends AbstractDiskResourceSelector<DiskRe
             }
 
             setSelectedResource(value);
-            if((value instanceof Folder)
-                   && userSettings.isRememberLastPath()){
-                userSettings.setLastPath(value.getPath());
+            if(userSettings.isRememberLastPath()){
+                userSettings.setLastPath(diskResourceUtil.parseParent(value.getPath()));
                 eventBus.fireEvent(new LastSelectedPathChangedEvent(true));
             }
             ValueChangeEvent.fire(hasValueChangeHandlers, value);
@@ -76,6 +76,9 @@ public class FileFolderSelectorField extends AbstractDiskResourceSelector<DiskRe
     @Inject AsyncProvider<FileFolderSelectDialog> fileFolderSelectDialogProvider;
     @Inject UserSettings userSettings;
     @Inject EventBus eventBus;
+    @Inject DiskResourceUtil diskResourceUtil;
+    @Inject CommonModelUtils commonModelUtils;
+
     private final FileFolderSelectorFieldAppearance appearance;
     private final List<InfoType> infoTypeFilters;
 
@@ -111,7 +114,7 @@ public class FileFolderSelectorField extends AbstractDiskResourceSelector<DiskRe
                 && userSettings.isRememberLastPath()) {
             String path = userSettings.getLastPath();
             if(path != null) {
-                folderToSelect = CommonModelUtils.getInstance().createHasPathFromString(path);
+                folderToSelect = commonModelUtils.createHasPathFromString(path);
                 // get dialog from factory
             }
         }else if(value instanceof Folder){

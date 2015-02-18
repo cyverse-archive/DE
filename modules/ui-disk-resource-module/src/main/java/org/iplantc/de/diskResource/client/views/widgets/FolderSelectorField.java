@@ -66,9 +66,8 @@ public class FolderSelectorField extends AbstractDiskResourceSelector<Folder> {
     @Inject UserSettings userSettings;
     @Inject EventBus eventBus;
     @Inject AsyncProvider<FolderSelectDialog> folderSelectDialogProvider;
-
     @Inject DiskResourceUtil diskResourceUtil;
-    private final CommonModelUtils commonModelUtils;
+    @Inject CommonModelUtils commonModelUtils;
 
     private final DiskResourceServiceFacade diskResourceService;
     private final FolderSelectorFieldAppearance appearance;
@@ -91,7 +90,6 @@ public class FolderSelectorField extends AbstractDiskResourceSelector<Folder> {
         this.appearance = appearance;
         this.infoTypeFilters = infoTypeFilters;
         setEmptyText(appearance.selectAFolder());
-        commonModelUtils = CommonModelUtils.getInstance();
     }
 
     @Override

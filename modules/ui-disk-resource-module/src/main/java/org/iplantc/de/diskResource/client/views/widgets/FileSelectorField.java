@@ -70,10 +70,10 @@ public class FileSelectorField extends AbstractDiskResourceSelector<File> {
     @Inject EventBus eventBus;
     @Inject AsyncProvider<FileSelectDialog> fileSelectDialogProvider;
     @Inject DiskResourceUtil diskResourceUtil;
+    @Inject CommonModelUtils commonModelUtils;
 
     private final FileSelectorFieldAppearance appearance;
     final List<InfoType> infoTypeFilters;
-    private final CommonModelUtils commonModelUtils;
 
     @AssistedInject
     FileSelectorField(final DiskResourceServiceFacade diskResourceService,
@@ -82,7 +82,6 @@ public class FileSelectorField extends AbstractDiskResourceSelector<File> {
         super(diskResourceService, appearance);
         this.appearance = appearance;
         this.infoTypeFilters = infoTypeFilters;
-        commonModelUtils = CommonModelUtils.getInstance();
     }
 
     @AssistedInject
