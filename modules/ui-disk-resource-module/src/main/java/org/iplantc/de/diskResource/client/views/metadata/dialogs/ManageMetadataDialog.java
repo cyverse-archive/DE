@@ -79,6 +79,7 @@ public class ManageMetadataDialog extends IPlantDialog {
     }
 
     public void show(final DiskResource resource){
+        setHeadingText(appearance.metadata() + ":" + resource.getName());
         mdView = new DiskResourceMetadataViewImpl(resource, diskResourceUtil);
         mdPresenter = new MetadataPresenterImpl(resource, mdView, diskResourceService);
         mdPresenter.go(this);
