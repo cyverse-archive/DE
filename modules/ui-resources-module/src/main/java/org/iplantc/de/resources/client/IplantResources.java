@@ -134,14 +134,6 @@ public interface IplantResources extends ClientBundle,
      * 
      * @return image.
      */
-    @Source("arrow_undo.png")
-    ImageResource arrow_undo();
-
-    /**
-     * Image resource.
-     * 
-     * @return image.
-     */
     @Source("delete_icon.png")
     ImageResource deleteIcon();
 
@@ -364,15 +356,6 @@ public interface IplantResources extends ClientBundle,
      */
     @Source("folder.gif")
     ImageResource folder();
-
-    /**
-     * Image resource.
-     *
-     * @return image.
-     */
-    @Override
-    @Source("file_view.gif")
-    ImageResource fileView();
 
     /**
      * Image resource.

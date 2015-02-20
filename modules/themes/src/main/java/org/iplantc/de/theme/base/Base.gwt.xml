@@ -5,4 +5,5 @@
     <inherits name="org.iplantc.de.theme.base.client.admin.Belphegor"/>
     <inherits name="org.iplantc.de.theme.base.client.commons.Commons" />
     <inherits name="org.iplantc.de.theme.base.client.tags.Tags" />
+    <inherits name="org.iplantc.de.theme.base.client.analyses.Analyses" />
 </module>

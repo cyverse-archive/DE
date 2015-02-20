@@ -1,9 +1,9 @@
-package org.iplantc.de.analysis.client.theme;
+package org.iplantc.de.theme.base.client.analyses.cells;
 
 import org.iplantc.de.analysis.client.views.cells.AnalysisNameCell;
 import org.iplantc.de.client.models.analysis.Analysis;
 import org.iplantc.de.client.models.analysis.BatchStatus;
-import org.iplantc.de.resources.client.messages.I18N;
+import org.iplantc.de.theme.base.client.analyses.AnalysesMessages;
 
 import com.google.common.base.Strings;
 import com.google.gwt.cell.client.Cell;
@@ -18,56 +18,58 @@ import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 
+/**
+ * @author jstroot
+ */
 public class AnalysisNameCellDefaultAppearance implements AnalysisNameCell.AnalysisNameCellAppearance {
 
     public interface AnalysisNameCellStyle extends CssResource {
-
         String htList();
 
         String hasResultFolder();
 
         String noResultFolder();
-
     }
 
     public interface AnalysisNameCellResources extends ClientBundle {
-
         @Source("AnalysisNameCell.css")
         AnalysisNameCellStyle getAnalysisNameStyleCss();
 
         @Source("htlist.png")
         ImageResource htList();
-
     }
 
     interface Templates extends SafeHtmlTemplates {
-
         @SafeHtmlTemplates.Template("<span name=\"{0}\" title=\" {3}\" class=\"{1}\">{2}</span>")
         SafeHtml analysis(String elementName, String className, SafeHtml analysisName, String tooltip);
 
         @SafeHtmlTemplates.Template("<span name='{5}' title='{6}' class=\"{4}\"></span>&nbsp;<span name=\"{0}\" title=\" {3}\" class=\"{1}\">{2}</span> ")
-                SafeHtml
-                htAnalysis(String elementName,
-                               String className,
-                               SafeHtml analysisName,
-                           String tooltip,
-                           String hticon,
-                           String htElementName,
-                           String batch_Status);
-
+        SafeHtml htAnalysis(String elementName,
+                            String className,
+                            SafeHtml analysisName,
+                            String tooltip,
+                            String hticon,
+                            String htElementName,
+                            String batch_Status);
     }
 
     private final AnalysisNameCellResources resources;
     private final Templates template;
+    private final AnalysesMessages analysesMessages;
 
     public AnalysisNameCellDefaultAppearance() {
-        this(GWT. <AnalysisNameCellResources> create(AnalysisNameCellResources.class));
+        this(GWT.<AnalysisNameCellResources> create(AnalysisNameCellResources.class),
+             GWT.<Templates> create(Templates.class),
+             GWT.<AnalysesMessages> create(AnalysesMessages.class));
     }
 
-    public AnalysisNameCellDefaultAppearance(AnalysisNameCellResources resources){
+    public AnalysisNameCellDefaultAppearance(final AnalysisNameCellResources resources,
+                                             final Templates template,
+                                             final AnalysesMessages analysesMessages){
         this.resources = resources;
+        this.template = template;
+        this.analysesMessages = analysesMessages;
         resources.getAnalysisNameStyleCss().ensureInjected();
-        this.template = GWT.create(Templates.class);
     }
 
     @Override
@@ -94,7 +96,7 @@ public class AnalysisNameCellDefaultAppearance implements AnalysisNameCell.Analy
         final AnalysisNameCellStyle nameStyles = resources.getAnalysisNameStyleCss();
         String style = Strings.isNullOrEmpty(model.getResultFolderId()) ? nameStyles.noResultFolder()
                                : nameStyles.hasResultFolder();
-        String tooltip = I18N.DISPLAY.goToOutputFolder() + " of " + model.getName();
+        String tooltip = analysesMessages.goToOutputFolder() + " of " + model.getName();
         if(model.isBatch()) {
             BatchStatus bs = model.getBatchStatus();
             StringBuilder httooltipSB = new StringBuilder("Click to see individual analysis status.");

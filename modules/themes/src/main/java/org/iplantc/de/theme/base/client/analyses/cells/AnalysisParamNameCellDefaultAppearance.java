@@ -1,4 +1,4 @@
-package org.iplantc.de.analysis.client.theme;
+package org.iplantc.de.theme.base.client.analyses.cells;
 
 import org.iplantc.de.analysis.client.views.widget.cells.AnalysisParamNameCell;
 
@@ -9,6 +9,9 @@ import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 
+/**
+ * @author jstroot
+ */
 public class AnalysisParamNameCellDefaultAppearance implements AnalysisParamNameCell.AnalysisParamNameCellAppearance {
 
     interface Templates extends SafeHtmlTemplates {

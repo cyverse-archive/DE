@@ -1,12 +1,12 @@
 package org.iplantc.de.analysis.client.views.widget;
 
+import org.iplantc.de.analysis.client.AnalysesView;
 import org.iplantc.de.analysis.client.events.SaveAnalysisParametersEvent;
 import org.iplantc.de.client.models.IsHideable;
 import org.iplantc.de.client.models.IsMaskable;
 import org.iplantc.de.client.models.analysis.AnalysisParameter;
 import org.iplantc.de.commons.client.views.dialogs.IPlantDialog;
 import org.iplantc.de.diskResource.client.views.dialogs.SaveAsDialog;
-import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.HandlerRegistration;
@@ -34,22 +34,24 @@ import java.util.List;
 
 /**
  * FIXME JDS Fix debug ids.
+ * @author jstroot
  */
-public class AnalysisParamView implements IsWidget, SaveAnalysisParametersEvent.HasSaveAnalysisParametersEventHandlers {
+public class AnalysisParamView implements IsWidget,
+                                          SaveAnalysisParametersEvent.HasSaveAnalysisParametersEventHandlers {
 
     private static AnalysisParamViewUiBinder uiBinder = GWT.create(AnalysisParamViewUiBinder.class);
 
     interface AnalysisParamViewUiBinder extends UiBinder<Widget, AnalysisParamView> {
     }
 
-    private final IplantDisplayStrings displayStrings;
-
     @UiField(provided = true) final ListStore<AnalysisParameter> listStore;
+    @UiField(provided = true) final AnalysesView.Appearance appearance;
     @UiField(provided = true) final ColumnModel<AnalysisParameter> cm;
     @UiField Grid<AnalysisParameter> grid;
     @UiField BorderLayoutContainer con;
     @UiField ToolBar menuToolBar;
     @UiField BorderLayoutData northData;
+    // FIXME Turn this class into dialog
     @UiField IPlantDialog dialog;
     @UiField TextButton btnSave;
 
@@ -58,14 +60,14 @@ public class AnalysisParamView implements IsWidget, SaveAnalysisParametersEvent.
     @Inject AsyncProvider<SaveAsDialog> saveAsDialogProvider;
 
     @Inject
-    AnalysisParamView(final IplantDisplayStrings displayStrings,
+    AnalysisParamView(final AnalysesView.Appearance appearance,
                       @Assisted final AnalysisParamViewColumnModel cm,
                       @Assisted final ListStore<AnalysisParameter> listStore) {
+        this.appearance = appearance;
         this.cm = cm;
         this.listStore = listStore;
-        this.displayStrings = displayStrings;
         this.widget = uiBinder.createAndBindUi(this);
-        grid.getView().setEmptyText(displayStrings.noParameters());
+        grid.getView().setEmptyText(appearance.noParameters());
     }
 
     @Override
@@ -126,7 +128,7 @@ public class AnalysisParamView implements IsWidget, SaveAnalysisParametersEvent.
     }
 
     public void mask() {
-        con.mask(displayStrings.loadingMask());
+        con.mask(appearance.retrieveParametersLoadingMask());
     }
 
     public void unmask() {
@@ -139,7 +141,7 @@ public class AnalysisParamView implements IsWidget, SaveAnalysisParametersEvent.
 
     private String writeTabFile() {
         StringBuilder sw = new StringBuilder();
-        sw.append(displayStrings.paramName()).append("\t").append(displayStrings.paramType()).append("\t").append(displayStrings.paramValue()).append("\n");
+        sw.append(appearance.paramName()).append("\t").append(appearance.paramType()).append("\t").append(appearance.paramValue()).append("\n");
         List<AnalysisParameter> params = grid.getStore().getAll();
         for (AnalysisParameter ap : params) {
             sw.append(ap.getName()).append("\t").append(ap.getType()).append("\t").append(ap.getDisplayValue()).append("\n");

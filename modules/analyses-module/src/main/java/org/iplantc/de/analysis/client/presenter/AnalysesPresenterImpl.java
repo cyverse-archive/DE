@@ -1,6 +1,7 @@
 package org.iplantc.de.analysis.client.presenter;
 
 import static org.iplantc.de.client.models.apps.integration.ArgumentType.*;
+import org.iplantc.de.analysis.client.AnalysesView;
 import org.iplantc.de.analysis.client.events.AnalysisAppSelectedEvent;
 import org.iplantc.de.analysis.client.events.AnalysisCommentSelectedEvent;
 import org.iplantc.de.analysis.client.events.AnalysisNameSelectedEvent;
@@ -8,7 +9,7 @@ import org.iplantc.de.analysis.client.events.AnalysisParamValueSelectedEvent;
 import org.iplantc.de.analysis.client.events.HTAnalysisExpandEvent;
 import org.iplantc.de.analysis.client.events.OpenAppForRelaunchEvent;
 import org.iplantc.de.analysis.client.events.SaveAnalysisParametersEvent;
-import org.iplantc.de.analysis.client.views.AnalysesView;
+import org.iplantc.de.analysis.client.gin.factory.AnalysesViewFactory;
 import org.iplantc.de.analysis.client.views.widget.AnalysisParamView;
 import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.events.FileSavedEvent;
@@ -35,11 +36,8 @@ import org.iplantc.de.commons.client.validators.DiskResourceNameValidator;
 import org.iplantc.de.commons.client.views.dialogs.IPlantDialog;
 import org.iplantc.de.commons.client.views.dialogs.IPlantPromptDialog;
 import org.iplantc.de.diskResource.client.events.ShowFilePreviewEvent;
-import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
-import org.iplantc.de.resources.client.messages.IplantErrorStrings;
 
 import static com.google.common.base.Preconditions.checkState;
-
 import com.google.common.collect.Lists;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.event.shared.HasHandlers;
@@ -65,7 +63,6 @@ import com.sencha.gxt.widget.core.client.event.SelectEvent;
 import com.sencha.gxt.widget.core.client.form.TextArea;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -85,11 +82,12 @@ public class AnalysesPresenterImpl implements AnalysesView.Presenter,
         private final Analysis analysis;
         private final TextArea ta;
 
-        public AnalysisCommentsDialog(final Analysis analysis, final IplantDisplayStrings displayStrings) {
+        public AnalysisCommentsDialog(final Analysis analysis,
+                                      final AnalysesView.Presenter.Appearance appearance) {
             this.analysis = analysis;
 
             String comments = analysis.getComments();
-            setHeadingText(displayStrings.comments());
+            setHeadingText(appearance.comments());
             setSize("350px", "300px");
             ta = new TextArea();
             ta.setValue(comments);
@@ -135,7 +133,7 @@ public class AnalysesPresenterImpl implements AnalysesView.Presenter,
 
         @Override
         public void onFailure(Throwable caught) {
-            final SafeHtml message = SafeHtmlUtils.fromTrustedString(errorStrings.diskResourceDoesNotExist(value.getDisplayValue()));
+            final SafeHtml message = SafeHtmlUtils.fromTrustedString(appearance.diskResourceDoesNotExist(value.getDisplayValue()));
             announcer.schedule(new ErrorAnnouncementConfig(message, true, 3000));
         }
 
@@ -159,13 +157,13 @@ public class AnalysesPresenterImpl implements AnalysesView.Presenter,
              * JDS Send generic error message. In the future, the "error_code" string should be parsed
              * from the JSON to provide more detailed user feedback.
              */
-            SafeHtml msg = SafeHtmlUtils.fromString(errorStrings.stopAnalysisError(ae.getName()));
+            SafeHtml msg = SafeHtmlUtils.fromString(appearance.stopAnalysisError(ae.getName()));
             announcer.schedule(new ErrorAnnouncementConfig(msg, true, 3000));
         }
 
         @Override
         public void onSuccess(String result) {
-            SafeHtml msg = SafeHtmlUtils.fromString(displayStrings.analysisStopSuccess(ae.getName()));
+            SafeHtml msg = SafeHtmlUtils.fromString(appearance.analysisStopSuccess(ae.getName()));
             announcer.schedule(new SuccessAnnouncementConfig(msg, true, 3000));
             loadAnalyses(false);
         }
@@ -186,7 +184,7 @@ public class AnalysesPresenterImpl implements AnalysesView.Presenter,
 
                     @Override
                     public void onFailure(Throwable caught) {
-                        ErrorHandler.post(errorStrings.deleteAnalysisError(), caught);
+                        ErrorHandler.post(appearance.deleteAnalysisError(), caught);
                     }
 
                     @Override
@@ -242,7 +240,7 @@ public class AnalysesPresenterImpl implements AnalysesView.Presenter,
 
         @Override
         public void onFailure(Throwable caught) {
-            final SafeHtml message = errorStrings.analysisRenameFailed();
+            final SafeHtml message = appearance.analysisRenameFailed();
             announcer.schedule(new ErrorAnnouncementConfig(message, true, 5000));
         }
 
@@ -250,7 +248,7 @@ public class AnalysesPresenterImpl implements AnalysesView.Presenter,
         public void onSuccess(Void result) {
             selectedAnalysis.setName(newName);
             listStore.update(selectedAnalysis);
-            SafeHtml message = displayStrings.analysisRenameSuccess();
+            SafeHtml message = appearance.analysisRenameSuccess();
             announcer.schedule(new SuccessAnnouncementConfig(message, true, 5000));
         }
     }
@@ -270,7 +268,7 @@ public class AnalysesPresenterImpl implements AnalysesView.Presenter,
 
         @Override
         public void onFailure(Throwable caught) {
-            SafeHtml message = errorStrings.analysisCommentUpdateFailed();
+            SafeHtml message = appearance.analysisCommentUpdateFailed();
             announcer.schedule(new ErrorAnnouncementConfig(message, true, 5000));
         }
 
@@ -278,7 +276,7 @@ public class AnalysesPresenterImpl implements AnalysesView.Presenter,
         public void onSuccess(Void result) {
             selectedAnalysis.setComments(newComment);
             listStore.update(selectedAnalysis);
-            SafeHtml message = displayStrings.analysisCommentUpdateSuccess();
+            SafeHtml message = appearance.analysisCommentUpdateSuccess();
             announcer.schedule(new SuccessAnnouncementConfig(message, true, 5000));
         }
     }
@@ -287,29 +285,28 @@ public class AnalysesPresenterImpl implements AnalysesView.Presenter,
     @Inject IplantAnnouncer announcer;
     @Inject DiskResourceServiceFacade diskResourceService;
     @Inject FileEditorServiceFacade fileEditorService;
-    @Inject IplantDisplayStrings displayStrings;
-    @Inject IplantErrorStrings errorStrings;
     @Inject DiskResourceAutoBeanFactory drFactory;
     @Inject UserSessionServiceFacade userSessionService;
     @Inject UserInfo userInfo;
     @Inject DiskResourceUtil diskResourceUtil;
     @Inject JsonUtil jsonUtil;
+    @Inject AnalysesView.Presenter.Appearance appearance;
 
     private final AnalysesView view;
     private final HasHandlers eventBus;
     private HandlerRegistration handlerFirstLoad;
 
     @Inject
-    public AnalysesPresenterImpl(final AnalysesView view,
-                                 final EventBus eventBus) {
-        this.view = view;
+    AnalysesPresenterImpl(final AnalysesViewFactory viewFactory,
+                          final EventBus eventBus) {
+        this.view = viewFactory.create(this);
         this.eventBus = eventBus;
+
         this.view.addAnalysisNameSelectedEventHandler(this);
         this.view.addAnalysisParamValueSelectedEventHandler(this);
         this.view.addAnalysisCommentSelectedEventHandler(this);
         this.view.addAnalysisAppSelectedEventHandler(this);
         this.view.addHTAnalysisExpandEventHandler(this);
-        this.view.setPresenter(this);
     }
 
     @Override
@@ -328,8 +325,8 @@ public class AnalysesPresenterImpl implements AnalysesView.Presenter,
 
         final List<Analysis> analysesToBeDeleted = view.getSelectedAnalyses();
 
-        ConfirmMessageBox cmb = new ConfirmMessageBox(displayStrings.warning(),
-                                                      displayStrings.analysesExecDeleteWarning());
+        ConfirmMessageBox cmb = new ConfirmMessageBox(appearance.warning(),
+                                                      appearance.analysesExecDeleteWarning());
         cmb.setPredefinedButtons(PredefinedButton.OK, PredefinedButton.CANCEL);
         cmb.addDialogHideHandler(new DeleteMessageBoxHandler(analysesToBeDeleted));
         cmb.show();
@@ -344,7 +341,7 @@ public class AnalysesPresenterImpl implements AnalysesView.Presenter,
     public void onRequestSaveAnalysisParameters(final SaveAnalysisParametersEvent event) {
 
         final IsMaskable maskable = event.getMaskable();
-        maskable.mask(displayStrings.savingFileMask());
+        maskable.mask(appearance.savingFileMask());
         fileEditorService.uploadTextAsFile(event.getPath(),
                                            event.getFileContents(),
                                            true,
@@ -377,8 +374,8 @@ public class AnalysesPresenterImpl implements AnalysesView.Presenter,
                                                    final Splittable notificationMsg = StringQuoter.createSplittable();
                                                    StringQuoter.create("data").assign(notificationMsg,
                                                                                       "type");
-                                                   String subject = file.getName().isEmpty() ? errorStrings.importFailed(event.getPath())
-                                                                                            : displayStrings.fileUploadSuccess(file.getName());
+                                                   String subject = file.getName().isEmpty() ? appearance.importFailed(event.getPath())
+                                                                                            : appearance.fileUploadSuccess(file.getName());
                                                    StringQuoter.create(subject).assign(notificationMsg,
                                                                                        "subject");
                                                    payload.assign(notificationMsg, "payload");
@@ -401,7 +398,7 @@ public class AnalysesPresenterImpl implements AnalysesView.Presenter,
                                                                                                          onSuccess(String result) {
                                                                                                      event.getHideable()
                                                                                                           .hide();
-                                                                                                     announcer.schedule(new SuccessAnnouncementConfig(displayStrings.importRequestSubmit(file.getName())));
+                                                                                                     announcer.schedule(new SuccessAnnouncementConfig(appearance.importRequestSubmit(file.getName())));
                                                                                                  }
                                                                                              });
                                                }
@@ -463,7 +460,7 @@ public class AnalysesPresenterImpl implements AnalysesView.Presenter,
     @Override
     public void onAnalysisCommentSelected(final AnalysisCommentSelectedEvent event) {
         // Show comments
-        final AnalysisCommentsDialog d = new AnalysisCommentsDialog(event.getValue(), displayStrings);
+        final AnalysisCommentsDialog d = new AnalysisCommentsDialog(event.getValue(), appearance);
         d.addDialogHideHandler(new DialogHideEvent.DialogHideHandler() {
             @Override
             public void onDialogHide(DialogHideEvent hideEvent) {
@@ -507,7 +504,7 @@ public class AnalysesPresenterImpl implements AnalysesView.Presenter,
         final File hasPath = drFactory.file().as();
         String path = value.getDisplayValue();
         hasPath.setPath(path);
-        diskResourceService.getStat(diskResourceUtil.asStringPathTypeMap(Arrays.asList(hasPath),
+        diskResourceService.getStat(diskResourceUtil.asStringPathTypeMap(Lists.newArrayList(hasPath),
                                                                          TYPE.FILE),
                                     new AnalysisParamSelectedStatCallback(value));
     }
@@ -527,11 +524,11 @@ public class AnalysesPresenterImpl implements AnalysesView.Presenter,
         assert view.getSelectedAnalyses().size() == 1 : "There should be 1 and only 1 selected analysis.";
         final Analysis selectedAnalysis = view.getSelectedAnalyses().get(0);
 
-        final IPlantPromptDialog dlg = new IPlantPromptDialog(displayStrings.rename(),
+        final IPlantPromptDialog dlg = new IPlantPromptDialog(appearance.rename(),
                                                               -1,
                                                               selectedAnalysis.getName(),
                                                               new DiskResourceNameValidator());
-        dlg.setHeadingText(displayStrings.renameAnalysis());
+        dlg.setHeadingText(appearance.renameAnalysis());
         dlg.addOkButtonSelectHandler(new SelectEvent.SelectHandler() {
             @Override
             public void onSelect(SelectEvent event) {
@@ -566,7 +563,7 @@ public class AnalysesPresenterImpl implements AnalysesView.Presenter,
                    selectedAnalyses.size());
 
         final AnalysisCommentsDialog d = new AnalysisCommentsDialog(selectedAnalyses.get(0),
-                                                                    displayStrings);
+                                                                    appearance);
         d.addDialogHideHandler(new DialogHideEvent.DialogHideHandler() {
             @Override
             public void onDialogHide(DialogHideEvent event) {

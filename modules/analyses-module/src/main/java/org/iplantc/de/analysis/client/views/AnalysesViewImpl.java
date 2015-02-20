@@ -1,14 +1,14 @@
-/**
- * 
- */
 package org.iplantc.de.analysis.client.views;
 
+import org.iplantc.de.analysis.client.AnalysesView;
+import org.iplantc.de.analysis.client.AnalysisToolBarView;
 import org.iplantc.de.analysis.client.events.AnalysisAppSelectedEvent;
 import org.iplantc.de.analysis.client.events.AnalysisCommentSelectedEvent;
 import org.iplantc.de.analysis.client.events.AnalysisNameSelectedEvent;
 import org.iplantc.de.analysis.client.events.AnalysisParamValueSelectedEvent;
 import org.iplantc.de.analysis.client.events.HTAnalysisExpandEvent.HTAnalysisExpandEventHandler;
 import org.iplantc.de.analysis.client.gin.factory.AnalysisParamViewFactory;
+import org.iplantc.de.analysis.client.gin.factory.AnalysisToolBarFactory;
 import org.iplantc.de.analysis.client.presenter.proxy.AnalysisRpcProxy;
 import org.iplantc.de.analysis.client.views.widget.AnalysisParamView;
 import org.iplantc.de.analysis.client.views.widget.AnalysisParamViewColumnModel;
@@ -16,22 +16,19 @@ import org.iplantc.de.analysis.client.views.widget.AnalysisSearchField;
 import org.iplantc.de.analysis.shared.AnalysisModule;
 import org.iplantc.de.client.models.analysis.Analysis;
 import org.iplantc.de.client.models.analysis.AnalysisParameter;
-import org.iplantc.de.resources.client.messages.I18N;
-import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiTemplate;
-import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
 
+import com.sencha.gxt.core.client.IdentityValueProvider;
 import com.sencha.gxt.core.client.Style.SelectionMode;
-import com.sencha.gxt.core.client.resources.ThemeStyles;
 import com.sencha.gxt.data.shared.ListStore;
 import com.sencha.gxt.data.shared.ModelKeyProvider;
 import com.sencha.gxt.data.shared.loader.FilterConfigBean;
@@ -43,7 +40,6 @@ import com.sencha.gxt.data.shared.loader.PagingLoader;
 import com.sencha.gxt.widget.core.client.Composite;
 import com.sencha.gxt.widget.core.client.Status;
 import com.sencha.gxt.widget.core.client.container.BorderLayoutContainer;
-import com.sencha.gxt.widget.core.client.container.BorderLayoutContainer.BorderLayoutData;
 import com.sencha.gxt.widget.core.client.grid.CheckBoxSelectionModel;
 import com.sencha.gxt.widget.core.client.grid.ColumnModel;
 import com.sencha.gxt.widget.core.client.grid.Grid;
@@ -51,7 +47,6 @@ import com.sencha.gxt.widget.core.client.grid.LiveGridView;
 import com.sencha.gxt.widget.core.client.grid.LiveToolItem;
 import com.sencha.gxt.widget.core.client.selection.SelectionChangedEvent;
 import com.sencha.gxt.widget.core.client.selection.SelectionChangedEvent.SelectionChangedHandler;
-import com.sencha.gxt.widget.core.client.toolbar.FillToolItem;
 import com.sencha.gxt.widget.core.client.toolbar.ToolBar;
 
 import java.util.List;
@@ -78,98 +73,76 @@ public class AnalysesViewImpl extends Composite implements AnalysesView {
     }
 
     @UiTemplate("AnalysesViewImpl.ui.xml")
-    interface MyUiBinder extends UiBinder<Widget, AnalysesViewImpl> { }
+    interface MyUiBinder extends UiBinder<BorderLayoutContainer, AnalysesViewImpl> { }
 
     @UiField(provided = true) final ColumnModel<Analysis> cm;
     @UiField(provided = true) final ListStore<Analysis> listStore;
-    @UiField BorderLayoutContainer con;
+    @Inject AnalysisParamViewFactory analysisParamViewFactory;
+    @UiField Appearance appearance;
     @UiField Grid<Analysis> grid;
     @UiField LiveGridView<Analysis> gridView;
-    @UiField BorderLayoutData northData;
-    @UiField ToolBar toolBar;
+    @UiField ToolBar pagingToolBar;
+    @UiField Status selectionStatus;
+    @UiField(provided = true) AnalysisToolBarView toolBar;
 
-    AnalysesView.ViewMenu viewMenu;
     private static MyUiBinder uiBinder = GWT.create(MyUiBinder.class);
-    private final IplantDisplayStrings displayStrings;
-    private final AnalysisParamViewColumnModel paramViewColumnModel;
     private final PagingLoader<FilterPagingLoadConfig, PagingLoadResult<Analysis>> loader;
-
-    private Presenter presenter;
-    private final Status selectionStatus;
-
-    @Inject AnalysisParamViewFactory analysisParamViewFactory;
+    private final AnalysisParamViewColumnModel paramViewColumnModel;
+    private final AnalysesView.Presenter presenter;
 
     @Inject
-    public AnalysesViewImpl(final ListStore<Analysis> listStore,
-                            final AnalysisColumnModel cm,
-                            final AnalysisParamViewColumnModel paramViewColumnModel,
-                            final CheckBoxSelectionModel<Analysis> checkBoxModel,
-                            final AnalysesView.ViewMenu menuBar,
-                            final AnalysisRpcProxy proxy,
-                            final IplantDisplayStrings displayStrings) {
+    AnalysesViewImpl(final ListStore<Analysis> listStore,
+                     final AnalysisColumnModel cm,
+                     final AnalysisParamViewColumnModel paramViewColumnModel,
+                     final AnalysisToolBarFactory toolBarFactory,
+                     final AnalysisRpcProxy proxy,
+                     @Assisted AnalysesView.Presenter presenter) {
         this.listStore = listStore;
         this.cm = cm;
         this.paramViewColumnModel = paramViewColumnModel;
-        this.viewMenu = menuBar;
-        this.displayStrings = displayStrings;
-        initWidget(uiBinder.createAndBindUi(this));
-        con.setNorthWidget(menuBar, northData);
-        selectionStatus = new Status();
+        this.presenter = presenter;
 
+        // Init Loader
         loader = new PagingLoader<>(proxy);
-        initLoader();
-
-        toolBar.addStyleName(ThemeStyles.get().style().borderTop());
-        toolBar.getElement().getStyle().setProperty("borderBottom", "none");
-
-        initGrid(checkBoxModel);
-        initGridView();
-
-        initToolbar();
-
-        addSelectionChangedHandler(viewMenu);
-    }
-
-    private void initToolbar() {
-        toolBar.add(new LiveToolItem(grid));
-        selectionStatus.setWidth(100);
-        setSelectionCount(0);
-        toolBar.add(new FillToolItem());
-        toolBar.add(selectionStatus);
-    }
-
-    private void initGridView() {
-        gridView.setEmptyText(I18N.DISPLAY.noAnalyses());
-        gridView.setForceFit(true);
-    }
-
-    private void initGrid(final CheckBoxSelectionModel<Analysis> checkBoxModel) {
-        grid.setLoader(loader);
-        grid.setSelectionModel(checkBoxModel);
-        grid.getSelectionModel().addSelectionChangedHandler(new SelectionChangeHandlerImpl());
-        grid.getSelectionModel().setSelectionMode(SelectionMode.MULTI);
-        grid.setLoadMask(true);
-    }
-
-    private void initLoader() {
         loader.useLoadConfig(new FilterPagingLoadConfigBean());
         loader.setRemoteSort(true);
         loader.setReuseLoadConfig(true);
+
+        this.toolBar = toolBarFactory.create(presenter, this, loader);
+
+        initWidget(uiBinder.createAndBindUi(this));
+
+        pagingToolBar.addStyleName(appearance.pagingToolbarStyle());
+        pagingToolBar.setBorders(false);
+
+        // Init Grid
+        grid.setLoader(loader);
+        grid.setSelectionModel(new CheckBoxSelectionModel<>(new IdentityValueProvider<Analysis>()));
+        grid.getSelectionModel().addSelectionChangedHandler(new SelectionChangeHandlerImpl());
+        grid.getSelectionModel().setSelectionMode(SelectionMode.MULTI);
+        grid.setLoadMask(true);
+
+        // Init Toolbar
+        pagingToolBar.insert(new LiveToolItem(grid), 0);
+        setSelectionCount(0);
+
+        grid.getSelectionModel().addSelectionChangedHandler(toolBar);
     }
 
+    //<editor-fold desc="Handler Registrations">
     @Override
     public HandlerRegistration addAnalysisAppSelectedEventHandler(AnalysisAppSelectedEvent.AnalysisAppSelectedEventHandler handler) {
-        return ((AnalysisColumnModel)cm).addAnalysisAppSelectedEventHandler(handler);
+        return ((AnalysisColumnModel) cm).addAnalysisAppSelectedEventHandler(handler);
     }
 
     @Override
     public HandlerRegistration addAnalysisCommentSelectedEventHandler(AnalysisCommentSelectedEvent.AnalysisCommentSelectedEventHandler handler) {
-        return ((AnalysisColumnModel)cm).addAnalysisCommentSelectedEventHandler(handler);
+        return ((AnalysisColumnModel) cm).addAnalysisCommentSelectedEventHandler(handler);
     }
 
     @Override
     public HandlerRegistration addAnalysisNameSelectedEventHandler(AnalysisNameSelectedEvent.AnalysisNameSelectedEventHandler handler) {
-        return ((AnalysisColumnModel)cm).addAnalysisNameSelectedEventHandler(handler);
+        return ((AnalysisColumnModel) cm).addAnalysisNameSelectedEventHandler(handler);
     }
 
     @Override
@@ -178,8 +151,13 @@ public class AnalysesViewImpl extends Composite implements AnalysesView {
     }
 
     @Override
+    public HandlerRegistration addHTAnalysisExpandEventHandler(HTAnalysisExpandEventHandler handler) {
+        return ((AnalysisColumnModel) cm).addHTAnalysisExpandEventHandler(handler);
+    }
+
+    @Override
     public HandlerRegistration addLoadHandler(
-            LoadHandler<FilterPagingLoadConfig, PagingLoadResult<Analysis>> handler) {
+                                                 LoadHandler<FilterPagingLoadConfig, PagingLoadResult<Analysis>> handler) {
         return loader.addLoadHandler(handler);
     }
 
@@ -187,6 +165,17 @@ public class AnalysesViewImpl extends Composite implements AnalysesView {
     @Override
     public HandlerRegistration addSelectionChangedHandler(@SuppressWarnings("rawtypes") SelectionChangedHandler handler) {
         return grid.getSelectionModel().addSelectionChangedHandler(handler);
+    }
+    //</editor-fold>
+
+    @Override
+    public void filterByAnalysisId(String analysisId, String name) {
+        toolBar.filterByAnalysisId(analysisId, name);
+    }
+
+    @Override
+    public void filterByParentAnalysisId(String id) {
+        toolBar.filterByParentAnalysisId(id);
     }
 
     @Override
@@ -197,22 +186,6 @@ public class AnalysesViewImpl extends Composite implements AnalysesView {
     @Override
     public List<Analysis> getSelectedAnalyses() {
         return grid.getSelectionModel().getSelectedItems();
-    }
-
-    @Override
-    public void setSelectedAnalyses(List<Analysis> selectedAnalyses) {
-        if (selectedAnalyses != null) {
-            grid.getSelectionModel().setSelection(selectedAnalyses);
-
-            if (!selectedAnalyses.isEmpty()) {
-                grid.getView().ensureVisible(listStore.indexOf(selectedAnalyses.get(0)), 0, false);
-            }
-        }
-    }
-
-    @Override
-    public void filterByAnalysisId(String analysisId, String name) {
-        viewMenu.filterByAnalysisId(analysisId, name);
     }
 
     @Override
@@ -241,19 +214,25 @@ public class AnalysesViewImpl extends Composite implements AnalysesView {
         }
     }
 
-    @SuppressWarnings("unchecked")
     @Override
-    public void setPresenter(Presenter presenter) {
-        this.presenter = presenter;
-        viewMenu.init(presenter, this, (PagingLoader<FilterPagingLoadConfig, PagingLoadResult<Analysis>>) grid.getLoader());
+    public void setSelectedAnalyses(List<Analysis> selectedAnalyses) {
+        if (selectedAnalyses != null) {
+            grid.getSelectionModel().setSelection(selectedAnalyses);
+
+            if (!selectedAnalyses.isEmpty()) {
+                grid.getView().ensureVisible(listStore.indexOf(selectedAnalyses.get(0)), 0, false);
+            }
+        }
     }
 
     @Override
     public void viewParams() {
+        // FIXME Move dlg to toolbar, and service call from presenter method into Dlg
         for (Analysis ana : getSelectedAnalyses()) {
-            ListStore<AnalysisParameter> listStore = new ListStore<>( new AnalysisParameterKeyProvider());
+            // FIXME Toolbar only allows one analysis
+            ListStore<AnalysisParameter> listStore = new ListStore<>(new AnalysisParameterKeyProvider());
             final AnalysisParamView apv = analysisParamViewFactory.createParamView(paramViewColumnModel, listStore);
-            apv.setHeading(displayStrings.viewParameters(ana.getName()));
+            apv.setHeading(appearance.viewParameters(ana.getName()));
             apv.addSaveAnalysisParametersEventHandler(presenter);
             apv.show();
 
@@ -264,21 +243,10 @@ public class AnalysesViewImpl extends Composite implements AnalysesView {
     @Override
     protected void onEnsureDebugId(String baseID) {
         super.onEnsureDebugId(baseID);
-        viewMenu.asWidget().ensureDebugId(baseID + AnalysisModule.Ids.MENUBAR);
+        toolBar.asWidget().ensureDebugId(baseID + AnalysisModule.Ids.MENUBAR);
     }
 
     private void setSelectionCount(int count) {
-        selectionStatus.setText(count + " item(s)");
-    }
-
-    @Override
-    public void filterByParentAnalysisId(String id) {
-        viewMenu.filterByParentAnalysisId(id);
-
-    }
-
-    @Override
-    public HandlerRegistration addHTAnalysisExpandEventHandler(HTAnalysisExpandEventHandler handler) {
-        return ((AnalysisColumnModel)cm).addHTAnalysisExpandEventHandler(handler);
+        selectionStatus.setText(appearance.selectionCount(count));
     }
 }

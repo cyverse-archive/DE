@@ -1,25 +1,15 @@
-/**
- * 
- */
 package org.iplantc.de.analysis.client.views;
 
-import static org.iplantc.de.client.models.analysis.AnalysisExecutionStatus.CANCELED;
-import static org.iplantc.de.client.models.analysis.AnalysisExecutionStatus.COMPLETED;
-import static org.iplantc.de.client.models.analysis.AnalysisExecutionStatus.FAILED;
-import static org.iplantc.de.client.models.analysis.AnalysisExecutionStatus.IDLE;
-import static org.iplantc.de.client.models.analysis.AnalysisExecutionStatus.RUNNING;
-import static org.iplantc.de.client.models.analysis.AnalysisExecutionStatus.SUBMITTED;
-
+import static org.iplantc.de.client.models.analysis.AnalysisExecutionStatus.*;
+import org.iplantc.de.analysis.client.AnalysesView;
+import org.iplantc.de.analysis.client.AnalysisToolBarView;
 import org.iplantc.de.analysis.client.views.widget.AnalysisSearchField;
 import org.iplantc.de.analysis.shared.AnalysisModule;
 import org.iplantc.de.client.models.analysis.Analysis;
-import org.iplantc.de.resources.client.IplantResources;
-import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 
 import com.google.common.base.Strings;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.KeyUpEvent;
-import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -27,6 +17,7 @@ import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.uibinder.client.UiTemplate;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
 
 import com.sencha.gxt.data.shared.loader.FilterPagingLoadConfig;
 import com.sencha.gxt.data.shared.loader.PagingLoadResult;
@@ -42,57 +33,42 @@ import com.sencha.gxt.widget.core.client.toolbar.ToolBar;
 import java.util.List;
 
 /**
- * @author sriram
- * 
+ * @author sriram, jstroot
  */
-public class AnalysesViewMenuImpl extends Composite implements AnalysesView.ViewMenu {
+public class AnalysesToolBarImpl extends Composite implements AnalysisToolBarView {
 
-    @UiTemplate("AnalysesViewMenuImpl.ui.xml")
-    interface AnalysesToolbarUiBinder extends UiBinder<Widget, AnalysesViewMenuImpl> {
-    }
+    @UiTemplate("AnalysesToolBarImpl.ui.xml")
+    interface AnalysesToolbarUiBinder extends UiBinder<Widget, AnalysesToolBarImpl> { }
 
-    @UiField(provided = true)
-    IplantResources icons;
-    @UiField(provided = true)
-    IplantDisplayStrings strings;
-
-    @UiField
-    ToolBar menuBar;
-    @UiField
-    MenuItem goToFolderMI;
-    @UiField
-    MenuItem viewParamsMI;
-    @UiField
-    MenuItem relaunchMI;
-    @UiField
-    MenuItem cancelMI;
-    @UiField
-    MenuItem deleteMI;
-    @UiField
-    TextButton analysesTb;
-    @UiField
-    MenuItem updateCommentsMI;
-    @UiField
-    MenuItem renameMI;
-    @UiField
-    TextButton editTb;
-    @UiField
-    TextButton refreshTb;
-    @UiField
-    TextButton showAllTb;
+    @UiField ToolBar menuBar;
+    @UiField MenuItem goToFolderMI;
+    @UiField MenuItem viewParamsMI;
+    @UiField MenuItem relaunchMI;
+    @UiField MenuItem cancelMI;
+    @UiField MenuItem deleteMI;
+    @UiField TextButton analysesTb;
+    @UiField MenuItem updateCommentsMI;
+    @UiField MenuItem renameMI;
+    @UiField TextButton editTb;
+    @UiField TextButton refreshTb;
+    @UiField TextButton showAllTb;
+    @UiField(provided = true) AnalysisSearchField searchField;
+    @UiField(provided = true) AnalysesView.Appearance appearance;
 
     private static AnalysesToolbarUiBinder uiBinder = GWT.create(AnalysesToolbarUiBinder.class);
     private AnalysesView parent;
-    @SuppressWarnings("unused")
-    private PagingLoader<FilterPagingLoadConfig, PagingLoadResult<Analysis>> loader;
     private AnalysesView.Presenter presenter;
-    private AnalysisSearchField searchField;
 
     @Inject
-    public AnalysesViewMenuImpl(final IplantDisplayStrings displayStrings,
-                                final IplantResources resources) {
-        this.strings = displayStrings;
-        this.icons = resources;
+    AnalysesToolBarImpl(final AnalysesView.Appearance appearance,
+                        @Assisted final AnalysesView.Presenter presenter,
+                        @Assisted final AnalysesView parent,
+                        @Assisted PagingLoader<FilterPagingLoadConfig, PagingLoadResult<Analysis>> loader) {
+        this.appearance = appearance;
+        this.presenter = presenter;
+        this.parent = parent;
+         searchField = new AnalysisSearchField(loader);
+        searchField.setEmptyText(appearance.searchFieldEmptyText());
         initWidget(uiBinder.createAndBindUi(this));
     }
 
@@ -106,31 +82,6 @@ public class AnalysesViewMenuImpl extends Composite implements AnalysesView.View
     public void filterByParentAnalysisId(String analysisId) {
         searchField.filterByParentId(analysisId);
         showAllTb.enable();
-    }
-
-    @Override
-    public void init(AnalysesView.Presenter presenter,
-                     AnalysesView parent,
-                     PagingLoader<FilterPagingLoadConfig, PagingLoadResult<Analysis>> loader) {
-        this.presenter = presenter;
-        this.parent = parent;
-        this.loader = loader;
-        searchField = new AnalysisSearchField(loader);
-        searchField.setEmptyText(strings.filterAnalysesList());
-        menuBar.add(searchField);
-        searchField.addKeyUpHandler(new KeyUpHandler() {
-
-            @Override
-            public void onKeyUp(KeyUpEvent event) {
-                if (Strings.isNullOrEmpty(searchField.getCurrentValue())) {
-                    // disable show all since an empty search field would fire load all.
-                    showAllTb.disable();
-                } else {
-                    showAllTb.enable();
-                }
-
-            }
-        });
     }
 
     @Override
@@ -191,7 +142,7 @@ public class AnalysesViewMenuImpl extends Composite implements AnalysesView.View
     @Override
     protected void onEnsureDebugId(String baseID) {
         super.onEnsureDebugId(baseID);
-        // Analsis menu
+        // Analysis menu
         analysesTb.ensureDebugId(baseID + AnalysisModule.Ids.MENUITEM_ANALYSES);
         goToFolderMI.ensureDebugId(baseID + AnalysisModule.Ids.MENUITEM_ANALYSES
                 + AnalysisModule.Ids.MENUITEM_GO_TO_FOLDER);
@@ -213,14 +164,11 @@ public class AnalysesViewMenuImpl extends Composite implements AnalysesView.View
 
         refreshTb.ensureDebugId(baseID + AnalysisModule.Ids.BUTTON_REFRESH);
         searchField.ensureDebugId(baseID + AnalysisModule.Ids.FIELD_SEARCH);
-
     }
 
     /**
      * Determines if the cancel button should be enable for the given selection.
-     * 
-     * 
-     * @param selection
+     *
      * @return true if the selection contains ANY status which is SUBMITTED, IDLE, or RUNNING; false
      *         otherwise.
      */
@@ -242,7 +190,6 @@ public class AnalysesViewMenuImpl extends Composite implements AnalysesView.View
     /**
      * Determines if the delete button should be enabled for the given selection.
      * 
-     * @param selection
      * @return true if the selection ONLY contains FAILED or COMPLETED status, false otherwise.
      */
     boolean canDeleteSelection(List<Analysis> selection) {
@@ -252,13 +199,24 @@ public class AnalysesViewMenuImpl extends Composite implements AnalysesView.View
 
             final String status = ae.getStatus();
             if (!(FAILED.toString().equalsIgnoreCase(status)
-                    || COMPLETED.toString().equalsIgnoreCase(status) || CANCELED.toString()
-                                                                                .equalsIgnoreCase(status))) {
+                    || COMPLETED.toString().equalsIgnoreCase(status)
+                      || CANCELED.toString().equalsIgnoreCase(status))) {
                 return false;
             }
 
         }
         return true;
+    }
+
+    //<editor-fold desc="Ui Handlers">
+    @UiHandler("searchField")
+    void searchFieldKeyUp(KeyUpEvent event){
+        if (Strings.isNullOrEmpty(searchField.getCurrentValue())) {
+            // disable show all since an empty search field would fire load all.
+            showAllTb.disable();
+        } else {
+            showAllTb.enable();
+        }
     }
 
     @UiHandler("cancelMI")
@@ -293,6 +251,8 @@ public class AnalysesViewMenuImpl extends Composite implements AnalysesView.View
 
     @UiHandler("viewParamsMI")
     void onViewParamsSelected(SelectionEvent<Item> event) {
+        // FIXME Move method to presenter
+        // FIXME move the async param dlg provider here.
         parent.viewParams();
     }
 
@@ -307,5 +267,6 @@ public class AnalysesViewMenuImpl extends Composite implements AnalysesView.View
         showAllTb.setEnabled(false);
         presenter.loadAnalyses(true);
     }
+    //</editor-fold>
 
 }
