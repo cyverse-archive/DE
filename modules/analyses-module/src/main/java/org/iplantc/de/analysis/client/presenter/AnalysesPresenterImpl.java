@@ -2,14 +2,15 @@ package org.iplantc.de.analysis.client.presenter;
 
 import static org.iplantc.de.client.models.apps.integration.ArgumentType.*;
 import org.iplantc.de.analysis.client.AnalysesView;
-import org.iplantc.de.analysis.client.events.AnalysisAppSelectedEvent;
-import org.iplantc.de.analysis.client.events.AnalysisCommentSelectedEvent;
-import org.iplantc.de.analysis.client.events.AnalysisNameSelectedEvent;
-import org.iplantc.de.analysis.client.events.AnalysisParamValueSelectedEvent;
+import org.iplantc.de.analysis.client.events.selection.AnalysisAppSelectedEvent;
+import org.iplantc.de.analysis.client.events.selection.AnalysisCommentSelectedEvent;
+import org.iplantc.de.analysis.client.events.selection.AnalysisNameSelectedEvent;
+import org.iplantc.de.analysis.client.events.selection.AnalysisParamValueSelectedEvent;
 import org.iplantc.de.analysis.client.events.HTAnalysisExpandEvent;
 import org.iplantc.de.analysis.client.events.OpenAppForRelaunchEvent;
 import org.iplantc.de.analysis.client.events.SaveAnalysisParametersEvent;
 import org.iplantc.de.analysis.client.gin.factory.AnalysesViewFactory;
+import org.iplantc.de.analysis.client.views.dialogs.AnalysisCommentsDialog;
 import org.iplantc.de.analysis.client.views.widget.AnalysisParamView;
 import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.events.FileSavedEvent;
@@ -33,7 +34,6 @@ import org.iplantc.de.commons.client.info.ErrorAnnouncementConfig;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
 import org.iplantc.de.commons.client.info.SuccessAnnouncementConfig;
 import org.iplantc.de.commons.client.validators.DiskResourceNameValidator;
-import org.iplantc.de.commons.client.views.dialogs.IPlantDialog;
 import org.iplantc.de.commons.client.views.dialogs.IPlantPromptDialog;
 import org.iplantc.de.diskResource.client.events.ShowFilePreviewEvent;
 
@@ -60,7 +60,6 @@ import com.sencha.gxt.widget.core.client.Dialog.PredefinedButton;
 import com.sencha.gxt.widget.core.client.box.ConfirmMessageBox;
 import com.sencha.gxt.widget.core.client.event.DialogHideEvent;
 import com.sencha.gxt.widget.core.client.event.SelectEvent;
-import com.sencha.gxt.widget.core.client.form.TextArea;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -73,35 +72,8 @@ import java.util.List;
 public class AnalysesPresenterImpl implements AnalysesView.Presenter,
                                               AnalysisNameSelectedEvent.AnalysisNameSelectedEventHandler,
                                               AnalysisParamValueSelectedEvent.AnalysisParamValueSelectedEventHandler,
-                                              AnalysisCommentSelectedEvent.AnalysisCommentSelectedEventHandler,
                                               AnalysisAppSelectedEvent.AnalysisAppSelectedEventHandler,
                                               HTAnalysisExpandEvent.HTAnalysisExpandEventHandler {
-
-    private static class AnalysisCommentsDialog extends IPlantDialog {
-
-        private final Analysis analysis;
-        private final TextArea ta;
-
-        public AnalysisCommentsDialog(final Analysis analysis,
-                                      final AnalysesView.Presenter.Appearance appearance) {
-            this.analysis = analysis;
-
-            String comments = analysis.getComments();
-            setHeadingText(appearance.comments());
-            setSize("350px", "300px");
-            ta = new TextArea();
-            ta.setValue(comments);
-            add(ta);
-        }
-
-        public String getComment() {
-            return ta.getValue();
-        }
-
-        public boolean isCommentChanged() {
-            return !getComment().equals(analysis.getComments());
-        }
-    }
 
     private static class GetAnalysisParametersCallback implements AsyncCallback<List<AnalysisParameter>> {
         private final AnalysisParamView apv;
@@ -304,7 +276,6 @@ public class AnalysesPresenterImpl implements AnalysesView.Presenter,
 
         this.view.addAnalysisNameSelectedEventHandler(this);
         this.view.addAnalysisParamValueSelectedEventHandler(this);
-        this.view.addAnalysisCommentSelectedEventHandler(this);
         this.view.addAnalysisAppSelectedEventHandler(this);
         this.view.addHTAnalysisExpandEventHandler(this);
     }
@@ -553,6 +524,15 @@ public class AnalysesPresenterImpl implements AnalysesView.Presenter,
     @Override
     public void setViewDebugId(String baseId) {
         view.asWidget().ensureDebugId(baseId);
+    }
+
+    @Override
+    public void updateAnalysisComment(Analysis value, String comment) {
+        analysisService.updateAnalysisComments(value,
+                                               comment,
+                                               new UpdateCommentsCallback(value,
+                                                                          comment,
+                                                                          view.getListStore()));
     }
 
     @Override

@@ -1,4 +1,4 @@
-package org.iplantc.de.analysis.client.events;
+package org.iplantc.de.analysis.client.events.selection;
 
 import org.iplantc.de.client.models.analysis.AnalysisParameter;
 

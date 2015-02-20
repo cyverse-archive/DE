@@ -1,11 +1,10 @@
 package org.iplantc.de.analysis.client;
 
-import org.iplantc.de.analysis.client.events.AnalysisAppSelectedEvent;
-import org.iplantc.de.analysis.client.events.AnalysisCommentSelectedEvent;
-import org.iplantc.de.analysis.client.events.AnalysisNameSelectedEvent;
-import org.iplantc.de.analysis.client.events.AnalysisParamValueSelectedEvent;
 import org.iplantc.de.analysis.client.events.HTAnalysisExpandEvent;
 import org.iplantc.de.analysis.client.events.SaveAnalysisParametersEvent;
+import org.iplantc.de.analysis.client.events.selection.AnalysisAppSelectedEvent;
+import org.iplantc.de.analysis.client.events.selection.AnalysisNameSelectedEvent;
+import org.iplantc.de.analysis.client.events.selection.AnalysisParamValueSelectedEvent;
 import org.iplantc.de.analysis.client.views.widget.AnalysisParamView;
 import org.iplantc.de.client.models.analysis.Analysis;
 
@@ -34,7 +33,6 @@ public interface AnalysesView extends
                              SelectionChangedEvent.HasSelectionChangedHandlers,
                              AnalysisParamValueSelectedEvent.HasAnalysisParamValueSelectedEventHandlers,
                              AnalysisAppSelectedEvent.HasAnalysisAppSelectedEventHandlers,
-                             AnalysisCommentSelectedEvent.HasAnalysisCommentSelectedEventHandlers,
                              AnalysisNameSelectedEvent.HasAnalysisNameSelectedEventHandlers,
                              HTAnalysisExpandEvent.HasHTAnalysisExpandEventHandlers {
 
@@ -175,6 +173,8 @@ public interface AnalysesView extends
         void setSelectedAnalyses(List<Analysis> selectedAnalyses);
 
         void setViewDebugId(String baseId);
+
+        void updateAnalysisComment(Analysis value, String comment);
 
         void updateComments();
 

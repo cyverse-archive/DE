@@ -3,7 +3,7 @@
  */
 package org.iplantc.de.analysis.client.views.widget.cells;
 
-import org.iplantc.de.analysis.client.events.AnalysisParamValueSelectedEvent;
+import org.iplantc.de.analysis.client.events.selection.AnalysisParamValueSelectedEvent;
 import org.iplantc.de.client.models.analysis.AnalysisParameter;
 
 import static com.google.gwt.dom.client.BrowserEvents.CLICK;

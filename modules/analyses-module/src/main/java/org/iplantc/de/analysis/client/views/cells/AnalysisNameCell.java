@@ -1,6 +1,6 @@
 package org.iplantc.de.analysis.client.views.cells;
 
-import org.iplantc.de.analysis.client.events.AnalysisNameSelectedEvent;
+import org.iplantc.de.analysis.client.events.selection.AnalysisNameSelectedEvent;
 import org.iplantc.de.analysis.client.events.HTAnalysisExpandEvent;
 import org.iplantc.de.client.models.analysis.Analysis;
 

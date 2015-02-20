@@ -2,14 +2,15 @@ package org.iplantc.de.analysis.client.views;
 
 import org.iplantc.de.analysis.client.AnalysesView;
 import org.iplantc.de.analysis.client.AnalysisToolBarView;
-import org.iplantc.de.analysis.client.events.AnalysisAppSelectedEvent;
-import org.iplantc.de.analysis.client.events.AnalysisCommentSelectedEvent;
-import org.iplantc.de.analysis.client.events.AnalysisNameSelectedEvent;
-import org.iplantc.de.analysis.client.events.AnalysisParamValueSelectedEvent;
+import org.iplantc.de.analysis.client.events.selection.AnalysisAppSelectedEvent;
+import org.iplantc.de.analysis.client.events.selection.AnalysisCommentSelectedEvent;
+import org.iplantc.de.analysis.client.events.selection.AnalysisNameSelectedEvent;
+import org.iplantc.de.analysis.client.events.selection.AnalysisParamValueSelectedEvent;
 import org.iplantc.de.analysis.client.events.HTAnalysisExpandEvent.HTAnalysisExpandEventHandler;
 import org.iplantc.de.analysis.client.gin.factory.AnalysisParamViewFactory;
 import org.iplantc.de.analysis.client.gin.factory.AnalysisToolBarFactory;
 import org.iplantc.de.analysis.client.presenter.proxy.AnalysisRpcProxy;
+import org.iplantc.de.analysis.client.views.dialogs.AnalysisCommentsDialog;
 import org.iplantc.de.analysis.client.views.widget.AnalysisParamView;
 import org.iplantc.de.analysis.client.views.widget.AnalysisParamViewColumnModel;
 import org.iplantc.de.analysis.client.views.widget.AnalysisSearchField;
@@ -38,8 +39,10 @@ import com.sencha.gxt.data.shared.loader.LoadHandler;
 import com.sencha.gxt.data.shared.loader.PagingLoadResult;
 import com.sencha.gxt.data.shared.loader.PagingLoader;
 import com.sencha.gxt.widget.core.client.Composite;
+import com.sencha.gxt.widget.core.client.Dialog;
 import com.sencha.gxt.widget.core.client.Status;
 import com.sencha.gxt.widget.core.client.container.BorderLayoutContainer;
+import com.sencha.gxt.widget.core.client.event.DialogHideEvent;
 import com.sencha.gxt.widget.core.client.grid.CheckBoxSelectionModel;
 import com.sencha.gxt.widget.core.client.grid.ColumnModel;
 import com.sencha.gxt.widget.core.client.grid.Grid;
@@ -54,7 +57,8 @@ import java.util.List;
 /**
  * @author sriram, jstroot
  */
-public class AnalysesViewImpl extends Composite implements AnalysesView {
+public class AnalysesViewImpl extends Composite implements AnalysesView,
+                                                           AnalysisCommentSelectedEvent.AnalysisCommentSelectedEventHandler {
 
     private class AnalysisParameterKeyProvider implements ModelKeyProvider<AnalysisParameter> {
 
@@ -127,17 +131,14 @@ public class AnalysesViewImpl extends Composite implements AnalysesView {
         setSelectionCount(0);
 
         grid.getSelectionModel().addSelectionChangedHandler(toolBar);
+
+        cm.addAnalysisCommentSelectedEventHandler(this);
     }
 
     //<editor-fold desc="Handler Registrations">
     @Override
     public HandlerRegistration addAnalysisAppSelectedEventHandler(AnalysisAppSelectedEvent.AnalysisAppSelectedEventHandler handler) {
         return ((AnalysisColumnModel) cm).addAnalysisAppSelectedEventHandler(handler);
-    }
-
-    @Override
-    public HandlerRegistration addAnalysisCommentSelectedEventHandler(AnalysisCommentSelectedEvent.AnalysisCommentSelectedEventHandler handler) {
-        return ((AnalysisColumnModel) cm).addAnalysisCommentSelectedEventHandler(handler);
     }
 
     @Override
@@ -202,6 +203,24 @@ public class AnalysesViewImpl extends Composite implements AnalysesView {
         config.setLimit(200);
         config.setOffset(0);
         loader.load(config);
+    }
+
+    @Override
+    public void onAnalysisCommentSelected(final AnalysisCommentSelectedEvent event) {
+        // Show comments
+        final AnalysisCommentsDialog d = new AnalysisCommentsDialog(event.getValue());
+        d.addDialogHideHandler(new DialogHideEvent.DialogHideHandler() {
+            @Override
+            public void onDialogHide(DialogHideEvent hideEvent) {
+                if (Dialog.PredefinedButton.OK.equals(hideEvent.getHideButton())
+                        && d.isCommentChanged()) {
+                    presenter.updateAnalysisComment(event.getValue(),
+                                                    d.getComment());
+
+                }
+            }
+        });
+        d.show();
     }
 
     @Override

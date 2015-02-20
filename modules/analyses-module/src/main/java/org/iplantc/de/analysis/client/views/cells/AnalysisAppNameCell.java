@@ -1,6 +1,6 @@
 package org.iplantc.de.analysis.client.views.cells;
 
-import org.iplantc.de.analysis.client.events.AnalysisAppSelectedEvent;
+import org.iplantc.de.analysis.client.events.selection.AnalysisAppSelectedEvent;
 import org.iplantc.de.client.models.analysis.Analysis;
 
 import static com.google.gwt.dom.client.BrowserEvents.*;

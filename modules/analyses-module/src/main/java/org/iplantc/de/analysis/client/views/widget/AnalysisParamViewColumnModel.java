@@ -1,7 +1,7 @@
 package org.iplantc.de.analysis.client.views.widget;
 
 import org.iplantc.de.analysis.client.AnalysesView;
-import org.iplantc.de.analysis.client.events.AnalysisParamValueSelectedEvent;
+import org.iplantc.de.analysis.client.events.selection.AnalysisParamValueSelectedEvent;
 import org.iplantc.de.analysis.client.models.AnalysisParameterProperties;
 import org.iplantc.de.analysis.client.views.widget.cells.AnalysisParamNameCell;
 import org.iplantc.de.analysis.client.views.widget.cells.AnalysisParamValueCell;

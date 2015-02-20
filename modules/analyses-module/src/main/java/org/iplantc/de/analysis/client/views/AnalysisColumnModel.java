@@ -1,9 +1,9 @@
 package org.iplantc.de.analysis.client.views;
 
 import org.iplantc.de.analysis.client.AnalysesView;
-import org.iplantc.de.analysis.client.events.AnalysisAppSelectedEvent;
-import org.iplantc.de.analysis.client.events.AnalysisCommentSelectedEvent;
-import org.iplantc.de.analysis.client.events.AnalysisNameSelectedEvent;
+import org.iplantc.de.analysis.client.events.selection.AnalysisAppSelectedEvent;
+import org.iplantc.de.analysis.client.events.selection.AnalysisCommentSelectedEvent;
+import org.iplantc.de.analysis.client.events.selection.AnalysisNameSelectedEvent;
 import org.iplantc.de.analysis.client.events.HTAnalysisExpandEvent;
 import org.iplantc.de.analysis.client.views.cells.AnalysisAppNameCell;
 import org.iplantc.de.analysis.client.views.cells.AnalysisCommentCell;
