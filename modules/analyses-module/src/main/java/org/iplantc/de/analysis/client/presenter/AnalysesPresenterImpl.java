@@ -9,8 +9,9 @@ import org.iplantc.de.analysis.client.events.selection.AnalysisAppSelectedEvent;
 import org.iplantc.de.analysis.client.events.selection.AnalysisNameSelectedEvent;
 import org.iplantc.de.analysis.client.events.selection.AnalysisParamValueSelectedEvent;
 import org.iplantc.de.analysis.client.gin.factory.AnalysesViewFactory;
-import org.iplantc.de.analysis.client.views.dialogs.AnalysisCommentsDialog;
+import org.iplantc.de.analysis.client.presenter.proxy.AnalysisRpcProxy;
 import org.iplantc.de.analysis.client.views.widget.AnalysisParamView;
+import org.iplantc.de.analysis.client.views.widget.AnalysisSearchField;
 import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.events.FileSavedEvent;
 import org.iplantc.de.client.events.diskResources.OpenFolderEvent;
@@ -34,7 +35,6 @@ import org.iplantc.de.commons.client.info.IplantAnnouncer;
 import org.iplantc.de.commons.client.info.SuccessAnnouncementConfig;
 import org.iplantc.de.diskResource.client.events.ShowFilePreviewEvent;
 
-import static com.google.common.base.Preconditions.checkState;
 import com.google.common.collect.Lists;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.event.shared.HasHandlers;
@@ -49,12 +49,13 @@ import com.google.web.bindery.autobean.shared.impl.StringQuoter;
 
 import com.sencha.gxt.core.shared.FastMap;
 import com.sencha.gxt.data.shared.ListStore;
+import com.sencha.gxt.data.shared.loader.FilterConfigBean;
 import com.sencha.gxt.data.shared.loader.FilterPagingLoadConfig;
+import com.sencha.gxt.data.shared.loader.FilterPagingLoadConfigBean;
 import com.sencha.gxt.data.shared.loader.LoadEvent;
 import com.sencha.gxt.data.shared.loader.LoadHandler;
 import com.sencha.gxt.data.shared.loader.PagingLoadResult;
-import com.sencha.gxt.widget.core.client.Dialog.PredefinedButton;
-import com.sencha.gxt.widget.core.client.event.DialogHideEvent;
+import com.sencha.gxt.data.shared.loader.PagingLoader;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -233,16 +234,26 @@ public class AnalysesPresenterImpl implements AnalysesView.Presenter,
     @Inject DiskResourceUtil diskResourceUtil;
     @Inject JsonUtil jsonUtil;
     @Inject AnalysesView.Presenter.Appearance appearance;
+    private final ListStore<Analysis> listStore;
 
     private final AnalysesView view;
     private final HasHandlers eventBus;
     private HandlerRegistration handlerFirstLoad;
+    private final PagingLoader<FilterPagingLoadConfig, PagingLoadResult<Analysis>> loader;
 
     @Inject
     AnalysesPresenterImpl(final AnalysesViewFactory viewFactory,
+                          final AnalysisRpcProxy proxy,
+                          final ListStore<Analysis> listStore,
                           final EventBus eventBus) {
-        this.view = viewFactory.create(this);
+        this.listStore = listStore;
         this.eventBus = eventBus;
+        loader = new PagingLoader<>(proxy);
+        loader.useLoadConfig(new FilterPagingLoadConfigBean());
+        loader.setRemoteSort(true);
+        loader.setReuseLoadConfig(true);
+
+        this.view = viewFactory.create(listStore, loader, this);
 
         this.view.addAnalysisNameSelectedEventHandler(this);
         this.view.addAnalysisParamValueSelectedEventHandler(this);
@@ -251,20 +262,16 @@ public class AnalysesPresenterImpl implements AnalysesView.Presenter,
     }
 
     @Override
-    public void cancelSelectedAnalyses() {
-        assert view.getSelectedAnalyses().size() > 0 : "Selection should be greater than 0";
-
-        final List<Analysis> execs = view.getSelectedAnalyses();
-        for (Analysis ae : execs) {
-            analysisService.stopAnalysis(ae, new CancelAnalysisServiceCallback(ae));
+    public void cancelSelectedAnalyses(final List<Analysis> analysesToCancel) {
+        for (Analysis analysis : analysesToCancel) {
+            analysisService.stopAnalysis(analysis,
+                                         new CancelAnalysisServiceCallback(analysis));
         }
     }
 
     @Override
-    public void deleteSelectedAnalyses(final List<Analysis> currentSelection) {
-        assert view.getSelectedAnalyses().size() > 0 : "Selection should be greater than 0";
-
-        analysisService.deleteAnalyses(currentSelection, new AsyncCallback<String>() {
+    public void deleteSelectedAnalyses(final List<Analysis> analysesToDelete) {
+        analysisService.deleteAnalyses(analysesToDelete, new AsyncCallback<String>() {
 
             @Override
             public void onFailure(Throwable caught) {
@@ -353,16 +360,16 @@ public class AnalysesPresenterImpl implements AnalysesView.Presenter,
     }
 
     @Override
-    public void setSelectedAnalyses(List<Analysis> selectedAnalyses) {
-        if (selectedAnalyses == null || selectedAnalyses.isEmpty()) {
+    public void setSelectedAnalyses(final List<Analysis> selectedAnalyses) {
+        if (selectedAnalyses == null
+                || selectedAnalyses.isEmpty()) {
             return;
         }
 
-        ListStore<Analysis> store = view.getListStore();
         ArrayList<Analysis> selectNow = Lists.newArrayList();
 
         for (Analysis select : selectedAnalyses) {
-            Analysis storeModel = store.findModel(select);
+            Analysis storeModel = listStore.findModel(select);
             if (storeModel != null) {
                 selectNow.add(storeModel);
             }
@@ -377,25 +384,45 @@ public class AnalysesPresenterImpl implements AnalysesView.Presenter,
     }
 
     @Override
-    public void go(final HasOneWidget container, final List<Analysis> selectedAnalyses) {
-        container.setWidget(view.asWidget());
-        loadAnalyses(true);
-
+    public void go(final HasOneWidget container,
+                   final List<Analysis> selectedAnalyses) {
         if (selectedAnalyses != null && !selectedAnalyses.isEmpty()) {
-            handlerFirstLoad = view.addLoadHandler(new FirstLoadHandler(selectedAnalyses));
+            handlerFirstLoad = loader.addLoadHandler(new FirstLoadHandler(selectedAnalyses));
         }
+        loadAnalyses(true);
+        container.setWidget(view);
+    }
+
+    void loadAnalyses(boolean resetFilters) {
+        FilterPagingLoadConfig config = loader.getLastLoadConfig();
+        if (resetFilters) {
+            // add only default filter
+            FilterConfigBean idParentFilter = new FilterConfigBean();
+            idParentFilter.setField(AnalysisSearchField.PARENT_ID);
+            idParentFilter.setValue("");
+            config.getFilters().clear();
+            config.getFilters().add(idParentFilter);
+        }
+        config.setLimit(200);
+        config.setOffset(0);
+        loader.load(config);
     }
 
     @Override
-    public void loadAnalyses(boolean resetFilters) {
-        view.loadAnalyses(resetFilters);
-    }
-
-    @Override
-    public void goToSelectedAnalysisFolder() {
-        assert view.getSelectedAnalyses().size() == 1 : "There should be 1 and only 1 selected analysis.";
+    public void goToSelectedAnalysisFolder(final Analysis selectedAnalysis) {
         // Request disk resource window
-        eventBus.fireEvent(new OpenFolderEvent(view.getSelectedAnalyses().get(0).getResultFolderId(), true));
+        eventBus.fireEvent(new OpenFolderEvent(selectedAnalysis.getResultFolderId(),
+                                               true));
+    }
+
+    @Override
+    public void onRefreshSelected() {
+        loadAnalyses(false);
+    }
+
+    @Override
+    public void onShowAllSelected() {
+        loadAnalyses(true);
     }
 
     @Override
@@ -437,9 +464,7 @@ public class AnalysesPresenterImpl implements AnalysesView.Presenter,
     }
 
     @Override
-    public void relaunchSelectedAnalysis() {
-        assert view.getSelectedAnalyses().size() == 1 : "There should be 1 and only 1 selected analysis.";
-        Analysis selectedAnalysis = view.getSelectedAnalyses().get(0);
+    public void relaunchSelectedAnalysis(final Analysis selectedAnalysis) {
         if (selectedAnalysis.isAppDisabled()) {
             return;
         }
@@ -453,11 +478,12 @@ public class AnalysesPresenterImpl implements AnalysesView.Presenter,
                                        newName,
                                        new RenameAnalysisCallback(selectedAnalysis,
                                                                   newName,
-                                                                  view.getListStore()));
+                                                                  listStore));
     }
 
     @Override
-    public void retrieveParameterData(final Analysis analysis, final AnalysisParamView apv) {
+    public void retrieveParameterData(final Analysis analysis,
+                                      final AnalysisParamView apv) {
         apv.mask();
         analysisService.getAnalysisParams(analysis, new GetAnalysisParametersCallback(apv));
     }
@@ -468,36 +494,13 @@ public class AnalysesPresenterImpl implements AnalysesView.Presenter,
     }
 
     @Override
-    public void updateAnalysisComment(Analysis value, String comment) {
+    public void updateAnalysisComment(final Analysis value,
+                                      final String comment) {
         analysisService.updateAnalysisComments(value,
                                                comment,
                                                new UpdateCommentsCallback(value,
                                                                           comment,
-                                                                          view.getListStore()));
-    }
-
-    @Override
-    public void updateComments() {
-        final List<Analysis> selectedAnalyses = view.getSelectedAnalyses();
-        checkState(selectedAnalyses.size() == 1,
-                   "There should only be 1 analysis selected, but there were %i",
-                   selectedAnalyses.size());
-
-        final AnalysisCommentsDialog d = new AnalysisCommentsDialog(selectedAnalyses.get(0),
-                                                                    appearance);
-        d.addDialogHideHandler(new DialogHideEvent.DialogHideHandler() {
-            @Override
-            public void onDialogHide(DialogHideEvent event) {
-                if (PredefinedButton.OK.equals(event.getHideButton()) && d.isCommentChanged()) {
-                    analysisService.updateAnalysisComments(selectedAnalyses.get(0),
-                                                           d.getComment(),
-                                                           new UpdateCommentsCallback(selectedAnalyses.get(0),
-                                                                                      d.getComment(),
-                                                                                      view.getListStore()));
-                }
-            }
-        });
-        d.show();
+                                                                          listStore));
     }
 
     @Override

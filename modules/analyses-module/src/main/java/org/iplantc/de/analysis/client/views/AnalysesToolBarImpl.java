@@ -3,6 +3,7 @@ package org.iplantc.de.analysis.client.views;
 import static org.iplantc.de.client.models.analysis.AnalysisExecutionStatus.*;
 import org.iplantc.de.analysis.client.AnalysesView;
 import org.iplantc.de.analysis.client.AnalysisToolBarView;
+import org.iplantc.de.analysis.client.views.dialogs.AnalysisCommentsDialog;
 import org.iplantc.de.analysis.client.views.widget.AnalysisSearchField;
 import org.iplantc.de.analysis.shared.AnalysisModule;
 import org.iplantc.de.client.models.analysis.Analysis;
@@ -228,11 +229,16 @@ public class AnalysesToolBarImpl extends Composite implements AnalysisToolBarVie
 
     @UiHandler("cancelMI")
     void onCancelSelected(SelectionEvent<Item> event) {
-        presenter.cancelSelectedAnalyses();
+        Preconditions.checkNotNull(currentSelection);
+        Preconditions.checkState(!currentSelection.isEmpty());
+
+        presenter.cancelSelectedAnalyses(currentSelection);
     }
 
     @UiHandler("deleteMI")
     void onDeleteSelected(SelectionEvent<Item> event) {
+        Preconditions.checkNotNull(currentSelection);
+        Preconditions.checkState(!currentSelection.isEmpty());
 
         ConfirmMessageBox cmb = new ConfirmMessageBox(appearance.warning(),
                                                       appearance.analysesExecDeleteWarning());
@@ -250,12 +256,18 @@ public class AnalysesToolBarImpl extends Composite implements AnalysisToolBarVie
 
     @UiHandler("goToFolderMI")
     void onGoToFolderSelected(SelectionEvent<Item> event) {
-        presenter.goToSelectedAnalysisFolder();
+        Preconditions.checkNotNull(currentSelection);
+        Preconditions.checkState(currentSelection.size() == 1);
+
+        presenter.goToSelectedAnalysisFolder(currentSelection.iterator().next());
     }
 
     @UiHandler("relaunchMI")
     void onRelaunchSelected(SelectionEvent<Item> event) {
-        presenter.relaunchSelectedAnalysis();
+        Preconditions.checkNotNull(currentSelection);
+        Preconditions.checkState(currentSelection.size() == 1);
+
+        presenter.relaunchSelectedAnalysis(currentSelection.iterator().next());
     }
 
     @UiHandler("renameMI")
@@ -279,17 +291,35 @@ public class AnalysesToolBarImpl extends Composite implements AnalysisToolBarVie
             }
         });
         dlg.show();
-
-        presenter.renameSelectedAnalysis(selectedAnalysis, dlg.getFieldText());
     }
 
     @UiHandler("updateCommentsMI")
     void onUpdateCommentsSelected(SelectionEvent<Item> event) {
-        presenter.updateComments();
+        Preconditions.checkNotNull(currentSelection);
+        Preconditions.checkState(currentSelection.size() == 1,
+                                 "There should only be 1 analysis selected, but there were %i",
+                                 currentSelection.size());
+
+
+        final Analysis selectedAnalysis = currentSelection.iterator().next();
+        final AnalysisCommentsDialog d = new AnalysisCommentsDialog(selectedAnalysis);
+        d.addDialogHideHandler(new DialogHideEvent.DialogHideHandler() {
+            @Override
+            public void onDialogHide(DialogHideEvent event) {
+                if (Dialog.PredefinedButton.OK.equals(event.getHideButton())
+                        && d.isCommentChanged()) {
+
+                    presenter.updateAnalysisComment(selectedAnalysis, d.getComment());
+                }
+            }
+        });
+        d.show();
     }
 
     @UiHandler("viewParamsMI")
     void onViewParamsSelected(SelectionEvent<Item> event) {
+        Preconditions.checkNotNull(currentSelection);
+        Preconditions.checkState(currentSelection.size() == 1);
         // FIXME Move method to presenter
         // FIXME move the async param dlg provider here.
         parent.viewParams();
@@ -297,14 +327,14 @@ public class AnalysesToolBarImpl extends Composite implements AnalysisToolBarVie
 
     @UiHandler("refreshTb")
     void onRefreshSelected(SelectEvent event) {
-        presenter.loadAnalyses(false);
+        presenter.onRefreshSelected();
     }
 
     @UiHandler("showAllTb")
     void onShowAllSelected(SelectEvent event) {
         searchField.clear();
         showAllTb.setEnabled(false);
-        presenter.loadAnalyses(true);
+        presenter.onShowAllSelected();
     }
     //</editor-fold>
 

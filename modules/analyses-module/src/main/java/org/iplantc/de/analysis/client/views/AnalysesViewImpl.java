@@ -2,24 +2,20 @@ package org.iplantc.de.analysis.client.views;
 
 import org.iplantc.de.analysis.client.AnalysesView;
 import org.iplantc.de.analysis.client.AnalysisToolBarView;
+import org.iplantc.de.analysis.client.events.HTAnalysisExpandEvent.HTAnalysisExpandEventHandler;
 import org.iplantc.de.analysis.client.events.selection.AnalysisAppSelectedEvent;
 import org.iplantc.de.analysis.client.events.selection.AnalysisCommentSelectedEvent;
 import org.iplantc.de.analysis.client.events.selection.AnalysisNameSelectedEvent;
 import org.iplantc.de.analysis.client.events.selection.AnalysisParamValueSelectedEvent;
-import org.iplantc.de.analysis.client.events.HTAnalysisExpandEvent.HTAnalysisExpandEventHandler;
 import org.iplantc.de.analysis.client.gin.factory.AnalysisParamViewFactory;
 import org.iplantc.de.analysis.client.gin.factory.AnalysisToolBarFactory;
-import org.iplantc.de.analysis.client.presenter.proxy.AnalysisRpcProxy;
 import org.iplantc.de.analysis.client.views.dialogs.AnalysisCommentsDialog;
 import org.iplantc.de.analysis.client.views.widget.AnalysisParamView;
 import org.iplantc.de.analysis.client.views.widget.AnalysisParamViewColumnModel;
-import org.iplantc.de.analysis.client.views.widget.AnalysisSearchField;
 import org.iplantc.de.analysis.shared.AnalysisModule;
 import org.iplantc.de.client.models.analysis.Analysis;
 import org.iplantc.de.client.models.analysis.AnalysisParameter;
 
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -32,10 +28,7 @@ import com.sencha.gxt.core.client.IdentityValueProvider;
 import com.sencha.gxt.core.client.Style.SelectionMode;
 import com.sencha.gxt.data.shared.ListStore;
 import com.sencha.gxt.data.shared.ModelKeyProvider;
-import com.sencha.gxt.data.shared.loader.FilterConfigBean;
 import com.sencha.gxt.data.shared.loader.FilterPagingLoadConfig;
-import com.sencha.gxt.data.shared.loader.FilterPagingLoadConfigBean;
-import com.sencha.gxt.data.shared.loader.LoadHandler;
 import com.sencha.gxt.data.shared.loader.PagingLoadResult;
 import com.sencha.gxt.data.shared.loader.PagingLoader;
 import com.sencha.gxt.widget.core.client.Composite;
@@ -90,27 +83,20 @@ public class AnalysesViewImpl extends Composite implements AnalysesView,
     @UiField(provided = true) AnalysisToolBarView toolBar;
 
     private static MyUiBinder uiBinder = GWT.create(MyUiBinder.class);
-    private final PagingLoader<FilterPagingLoadConfig, PagingLoadResult<Analysis>> loader;
     private final AnalysisParamViewColumnModel paramViewColumnModel;
     private final AnalysesView.Presenter presenter;
 
     @Inject
-    AnalysesViewImpl(final ListStore<Analysis> listStore,
-                     final AnalysisColumnModel cm,
+    AnalysesViewImpl(final AnalysisColumnModel cm,
                      final AnalysisParamViewColumnModel paramViewColumnModel,
                      final AnalysisToolBarFactory toolBarFactory,
-                     final AnalysisRpcProxy proxy,
+                     @Assisted final ListStore<Analysis> listStore,
+                     @Assisted final PagingLoader<FilterPagingLoadConfig, PagingLoadResult<Analysis>> loader,
                      @Assisted AnalysesView.Presenter presenter) {
         this.listStore = listStore;
         this.cm = cm;
         this.paramViewColumnModel = paramViewColumnModel;
         this.presenter = presenter;
-
-        // Init Loader
-        loader = new PagingLoader<>(proxy);
-        loader.useLoadConfig(new FilterPagingLoadConfigBean());
-        loader.setRemoteSort(true);
-        loader.setReuseLoadConfig(true);
 
         this.toolBar = toolBarFactory.create(presenter, this, loader);
 
@@ -156,11 +142,6 @@ public class AnalysesViewImpl extends Composite implements AnalysesView,
         return ((AnalysisColumnModel) cm).addHTAnalysisExpandEventHandler(handler);
     }
 
-    @Override
-    public HandlerRegistration addLoadHandler(
-                                                 LoadHandler<FilterPagingLoadConfig, PagingLoadResult<Analysis>> handler) {
-        return loader.addLoadHandler(handler);
-    }
 
     @SuppressWarnings("unchecked")
     @Override
@@ -180,29 +161,8 @@ public class AnalysesViewImpl extends Composite implements AnalysesView,
     }
 
     @Override
-    public ListStore<Analysis> getListStore() {
-        return listStore;
-    }
-
-    @Override
     public List<Analysis> getSelectedAnalyses() {
         return grid.getSelectionModel().getSelectedItems();
-    }
-
-    @Override
-    public void loadAnalyses(boolean resetFilters) {
-        FilterPagingLoadConfig config = loader.getLastLoadConfig();
-        if (resetFilters) {
-            // add only default filter
-            FilterConfigBean idParentFilter = new FilterConfigBean();
-            idParentFilter.setField(AnalysisSearchField.PARENT_ID);
-            idParentFilter.setValue("");
-            config.getFilters().clear();
-            config.getFilters().add(idParentFilter);
-        }
-        config.setLimit(200);
-        config.setOffset(0);
-        loader.load(config);
     }
 
     @Override
@@ -224,16 +184,6 @@ public class AnalysesViewImpl extends Composite implements AnalysesView,
     }
 
     @Override
-    public void removeFromStore(List<Analysis> items) {
-        checkNotNull(items);
-        checkArgument(!items.isEmpty(), "Collection should not be empty");
-
-        for (Analysis a : items) {
-            grid.getStore().remove(a);
-        }
-    }
-
-    @Override
     public void setSelectedAnalyses(List<Analysis> selectedAnalyses) {
         if (selectedAnalyses != null) {
             grid.getSelectionModel().setSelection(selectedAnalyses);
@@ -247,7 +197,7 @@ public class AnalysesViewImpl extends Composite implements AnalysesView,
     @Override
     public void viewParams() {
         // FIXME Move dlg to toolbar, and service call from presenter method into Dlg
-        for (Analysis ana : getSelectedAnalyses()) {
+        for (Analysis ana : grid.getSelectionModel().getSelectedItems()) {
             // FIXME Toolbar only allows one analysis
             ListStore<AnalysisParameter> listStore = new ListStore<>(new AnalysisParameterKeyProvider());
             final AnalysisParamView apv = analysisParamViewFactory.createParamView(paramViewColumnModel, listStore);

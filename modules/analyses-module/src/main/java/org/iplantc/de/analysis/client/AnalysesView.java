@@ -8,26 +8,18 @@ import org.iplantc.de.analysis.client.events.selection.AnalysisParamValueSelecte
 import org.iplantc.de.analysis.client.views.widget.AnalysisParamView;
 import org.iplantc.de.client.models.analysis.Analysis;
 
-import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.user.client.ui.HasOneWidget;
 import com.google.gwt.user.client.ui.IsWidget;
 
-import com.sencha.gxt.data.shared.ListStore;
-import com.sencha.gxt.data.shared.loader.FilterPagingLoadConfig;
-import com.sencha.gxt.data.shared.loader.LoadHandler;
-import com.sencha.gxt.data.shared.loader.PagingLoadResult;
 import com.sencha.gxt.widget.core.client.selection.SelectionChangedEvent;
 
 import java.util.List;
 
 /**
- *
- * @author sriram
- * 
+ * @author sriram, jstroot
  */
-@SuppressWarnings("rawtypes")
 public interface AnalysesView extends
                              IsWidget,
                              SelectionChangedEvent.HasSelectionChangedHandlers,
@@ -121,7 +113,7 @@ public interface AnalysesView extends
         String warning();
     }
 
-    public interface Presenter extends SaveAnalysisParametersEvent.SaveAnalysisParametersEventHandler {
+    interface Presenter extends SaveAnalysisParametersEvent.SaveAnalysisParametersEventHandler {
 
         interface Appearance {
 
@@ -162,7 +154,7 @@ public interface AnalysesView extends
             String warning();
         }
 
-        void cancelSelectedAnalyses();
+        void cancelSelectedAnalyses(List<Analysis> analysesToDelete);
 
         void deleteSelectedAnalyses(List<Analysis> currentSelection);
 
@@ -170,9 +162,13 @@ public interface AnalysesView extends
 
         void go(final HasOneWidget container, List<Analysis> selectedAnalyses);
 
-        void goToSelectedAnalysisFolder();
+        void goToSelectedAnalysisFolder(Analysis selectedAnalysis);
 
-        void relaunchSelectedAnalysis();
+        void onRefreshSelected();
+
+        void onShowAllSelected();
+
+        void relaunchSelectedAnalysis(Analysis selectedAnalysis);
 
         void renameSelectedAnalysis(Analysis selectedAnalysis, String newName);
 
@@ -184,28 +180,15 @@ public interface AnalysesView extends
 
         void updateAnalysisComment(Analysis value, String comment);
 
-        void updateComments();
-
-        void loadAnalyses(boolean resetFilters);
-
     }
 
     void filterByAnalysisId(String id, String name);
 
     void filterByParentAnalysisId(String id);
 
-    public void loadAnalyses(boolean resetFilters);
+    List<Analysis> getSelectedAnalyses();
 
-    public List<Analysis> getSelectedAnalyses();
-
-    public void setSelectedAnalyses(List<Analysis> selectedAnalyses);
-
-    public void removeFromStore(List<Analysis> items);
-
-    public ListStore<Analysis> getListStore();
-
-    public HandlerRegistration addLoadHandler(
-            LoadHandler<FilterPagingLoadConfig, PagingLoadResult<Analysis>> handler);
+    void setSelectedAnalyses(List<Analysis> selectedAnalyses);
 
     void viewParams();
 }
