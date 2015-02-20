@@ -6,7 +6,10 @@ import org.iplantc.de.analysis.client.AnalysisToolBarView;
 import org.iplantc.de.analysis.client.views.widget.AnalysisSearchField;
 import org.iplantc.de.analysis.shared.AnalysisModule;
 import org.iplantc.de.client.models.analysis.Analysis;
+import org.iplantc.de.commons.client.validators.DiskResourceNameValidator;
+import org.iplantc.de.commons.client.views.dialogs.IPlantPromptDialog;
 
+import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.KeyUpEvent;
@@ -23,7 +26,10 @@ import com.sencha.gxt.data.shared.loader.FilterPagingLoadConfig;
 import com.sencha.gxt.data.shared.loader.PagingLoadResult;
 import com.sencha.gxt.data.shared.loader.PagingLoader;
 import com.sencha.gxt.widget.core.client.Composite;
+import com.sencha.gxt.widget.core.client.Dialog;
+import com.sencha.gxt.widget.core.client.box.ConfirmMessageBox;
 import com.sencha.gxt.widget.core.client.button.TextButton;
+import com.sencha.gxt.widget.core.client.event.DialogHideEvent;
 import com.sencha.gxt.widget.core.client.event.SelectEvent;
 import com.sencha.gxt.widget.core.client.menu.Item;
 import com.sencha.gxt.widget.core.client.menu.MenuItem;
@@ -56,6 +62,7 @@ public class AnalysesToolBarImpl extends Composite implements AnalysisToolBarVie
     @UiField(provided = true) AnalysesView.Appearance appearance;
 
     private static AnalysesToolbarUiBinder uiBinder = GWT.create(AnalysesToolbarUiBinder.class);
+    private List<Analysis> currentSelection;
     private AnalysesView parent;
     private AnalysesView.Presenter presenter;
 
@@ -86,11 +93,11 @@ public class AnalysesToolBarImpl extends Composite implements AnalysisToolBarVie
 
     @Override
     public void onSelectionChanged(SelectionChangedEvent<Analysis> event) {
-        final List<Analysis> selection = event.getSelection();
+        currentSelection = event.getSelection();
 
-        int size = selection.size();
-        final boolean canCancelSelection = canCancelSelection(selection);
-        final boolean canDeleteSelection = canDeleteSelection(selection);
+        int size = currentSelection.size();
+        final boolean canCancelSelection = canCancelSelection(currentSelection);
+        final boolean canDeleteSelection = canDeleteSelection(currentSelection);
 
         boolean goToFolderEnabled, viewParamsEnabled, relaunchEnabled, cancelEnabled, deleteEnabled;
         boolean renameEnabled, updateCommentsEnabled;
@@ -109,7 +116,7 @@ public class AnalysesToolBarImpl extends Composite implements AnalysisToolBarVie
             case 1:
                 goToFolderEnabled = true;
                 viewParamsEnabled = true;
-                relaunchEnabled = !selection.get(0).isAppDisabled();
+                relaunchEnabled = !currentSelection.get(0).isAppDisabled();
                 cancelEnabled = canCancelSelection;
                 deleteEnabled = canDeleteSelection;
 
@@ -226,7 +233,19 @@ public class AnalysesToolBarImpl extends Composite implements AnalysisToolBarVie
 
     @UiHandler("deleteMI")
     void onDeleteSelected(SelectionEvent<Item> event) {
-        presenter.deleteSelectedAnalyses();
+
+        ConfirmMessageBox cmb = new ConfirmMessageBox(appearance.warning(),
+                                                      appearance.analysesExecDeleteWarning());
+        cmb.setPredefinedButtons(Dialog.PredefinedButton.OK, Dialog.PredefinedButton.CANCEL);
+        cmb.addDialogHideHandler(new DialogHideEvent.DialogHideHandler() {
+            @Override
+            public void onDialogHide(DialogHideEvent event) {
+                if (Dialog.PredefinedButton.OK.equals(event.getHideButton())){
+                    presenter.deleteSelectedAnalyses(currentSelection);
+                }
+            }
+        });
+        cmb.show();
     }
 
     @UiHandler("goToFolderMI")
@@ -241,7 +260,27 @@ public class AnalysesToolBarImpl extends Composite implements AnalysisToolBarVie
 
     @UiHandler("renameMI")
     void onRenameSelected(SelectionEvent<Item> event) {
-        presenter.renameSelectedAnalysis();
+        Preconditions.checkNotNull(currentSelection);
+        Preconditions.checkState(currentSelection.size() == 1);
+
+        final Analysis selectedAnalysis = currentSelection.iterator().next();
+        final String name = selectedAnalysis.getName();
+        final IPlantPromptDialog dlg = new IPlantPromptDialog(appearance.rename(),
+                                                              -1,
+                                                              name,
+                                                              new DiskResourceNameValidator());
+        dlg.setHeadingText(appearance.renameAnalysis());
+        dlg.addOkButtonSelectHandler(new SelectEvent.SelectHandler() {
+            @Override
+            public void onSelect(SelectEvent event) {
+                if (!selectedAnalysis.getName().equals(dlg.getFieldText())) {
+                    presenter.renameSelectedAnalysis(selectedAnalysis, dlg.getFieldText());
+                }
+            }
+        });
+        dlg.show();
+
+        presenter.renameSelectedAnalysis(selectedAnalysis, dlg.getFieldText());
     }
 
     @UiHandler("updateCommentsMI")

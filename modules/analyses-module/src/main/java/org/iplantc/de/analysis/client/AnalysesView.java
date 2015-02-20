@@ -38,6 +38,8 @@ public interface AnalysesView extends
 
     interface Appearance {
 
+        String analysesExecDeleteWarning();
+
         String appName();
 
         String endDate();
@@ -55,6 +57,10 @@ public interface AnalysesView extends
         String paramType();
 
         String paramValue();
+
+        String rename();
+
+        String renameAnalysis();
 
         String retrieveParametersLoadingMask();
 
@@ -111,6 +117,8 @@ public interface AnalysesView extends
         ImageResource saveIcon();
 
         String saveAs();
+
+        String warning();
     }
 
     public interface Presenter extends SaveAnalysisParametersEvent.SaveAnalysisParametersEventHandler {
@@ -156,7 +164,7 @@ public interface AnalysesView extends
 
         void cancelSelectedAnalyses();
 
-        void deleteSelectedAnalyses();
+        void deleteSelectedAnalyses(List<Analysis> currentSelection);
 
         List<Analysis> getSelectedAnalyses();
 
@@ -166,7 +174,7 @@ public interface AnalysesView extends
 
         void relaunchSelectedAnalysis();
 
-        void renameSelectedAnalysis();
+        void renameSelectedAnalysis(Analysis selectedAnalysis, String newName);
 
         void retrieveParameterData(Analysis analysis, AnalysisParamView apv);
 

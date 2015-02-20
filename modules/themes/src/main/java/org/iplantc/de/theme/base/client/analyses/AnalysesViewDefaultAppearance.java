@@ -45,6 +45,11 @@ public class AnalysesViewDefaultAppearance implements AnalysesView.Appearance {
     }
 
     @Override
+    public String analysesExecDeleteWarning() {
+        return analysesMessages.analysesExecDeleteWarning();
+    }
+
+    @Override
     public String appName() {
         return analysesMessages.appName();
     }
@@ -87,6 +92,16 @@ public class AnalysesViewDefaultAppearance implements AnalysesView.Appearance {
     @Override
     public String paramValue() {
         return iplantDisplayStrings.paramValue();
+    }
+
+    @Override
+    public String rename() {
+        return iplantDisplayStrings.rename();
+    }
+
+    @Override
+    public String renameAnalysis() {
+        return analysesMessages.renameAnalysis();
     }
 
     @Override
@@ -227,5 +242,10 @@ public class AnalysesViewDefaultAppearance implements AnalysesView.Appearance {
     @Override
     public String saveAs() {
         return iplantDisplayStrings.saveAs();
+    }
+
+    @Override
+    public String warning() {
+        return iplantDisplayStrings.warning();
     }
 }

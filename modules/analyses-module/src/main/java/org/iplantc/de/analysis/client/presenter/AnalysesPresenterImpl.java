@@ -2,13 +2,12 @@ package org.iplantc.de.analysis.client.presenter;
 
 import static org.iplantc.de.client.models.apps.integration.ArgumentType.*;
 import org.iplantc.de.analysis.client.AnalysesView;
-import org.iplantc.de.analysis.client.events.selection.AnalysisAppSelectedEvent;
-import org.iplantc.de.analysis.client.events.selection.AnalysisCommentSelectedEvent;
-import org.iplantc.de.analysis.client.events.selection.AnalysisNameSelectedEvent;
-import org.iplantc.de.analysis.client.events.selection.AnalysisParamValueSelectedEvent;
 import org.iplantc.de.analysis.client.events.HTAnalysisExpandEvent;
 import org.iplantc.de.analysis.client.events.OpenAppForRelaunchEvent;
 import org.iplantc.de.analysis.client.events.SaveAnalysisParametersEvent;
+import org.iplantc.de.analysis.client.events.selection.AnalysisAppSelectedEvent;
+import org.iplantc.de.analysis.client.events.selection.AnalysisNameSelectedEvent;
+import org.iplantc.de.analysis.client.events.selection.AnalysisParamValueSelectedEvent;
 import org.iplantc.de.analysis.client.gin.factory.AnalysesViewFactory;
 import org.iplantc.de.analysis.client.views.dialogs.AnalysisCommentsDialog;
 import org.iplantc.de.analysis.client.views.widget.AnalysisParamView;
@@ -33,8 +32,6 @@ import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.commons.client.info.ErrorAnnouncementConfig;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
 import org.iplantc.de.commons.client.info.SuccessAnnouncementConfig;
-import org.iplantc.de.commons.client.validators.DiskResourceNameValidator;
-import org.iplantc.de.commons.client.views.dialogs.IPlantPromptDialog;
 import org.iplantc.de.diskResource.client.events.ShowFilePreviewEvent;
 
 import static com.google.common.base.Preconditions.checkState;
@@ -57,9 +54,7 @@ import com.sencha.gxt.data.shared.loader.LoadEvent;
 import com.sencha.gxt.data.shared.loader.LoadHandler;
 import com.sencha.gxt.data.shared.loader.PagingLoadResult;
 import com.sencha.gxt.widget.core.client.Dialog.PredefinedButton;
-import com.sencha.gxt.widget.core.client.box.ConfirmMessageBox;
 import com.sencha.gxt.widget.core.client.event.DialogHideEvent;
-import com.sencha.gxt.widget.core.client.event.SelectEvent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -140,32 +135,6 @@ public class AnalysesPresenterImpl implements AnalysesView.Presenter,
             loadAnalyses(false);
         }
 
-    }
-
-    private final class DeleteMessageBoxHandler implements DialogHideEvent.DialogHideHandler {
-        private final List<Analysis> analysesToBeDeleted;
-
-        private DeleteMessageBoxHandler(List<Analysis> analysesToBeDeleted) {
-            this.analysesToBeDeleted = analysesToBeDeleted;
-        }
-
-        @Override
-        public void onDialogHide(DialogHideEvent event) {
-            if (PredefinedButton.OK.equals(event.getHideButton())) {
-                analysisService.deleteAnalyses(analysesToBeDeleted, new AsyncCallback<String>() {
-
-                    @Override
-                    public void onFailure(Throwable caught) {
-                        ErrorHandler.post(appearance.deleteAnalysisError(), caught);
-                    }
-
-                    @Override
-                    public void onSuccess(String arg0) {
-                        loadAnalyses(false);
-                    }
-                });
-            }
-        }
     }
 
     /**
@@ -253,6 +222,7 @@ public class AnalysesPresenterImpl implements AnalysesView.Presenter,
         }
     }
 
+    // FIXME Use async provider
     @Inject AnalysisServiceFacade analysisService;
     @Inject IplantAnnouncer announcer;
     @Inject DiskResourceServiceFacade diskResourceService;
@@ -291,16 +261,21 @@ public class AnalysesPresenterImpl implements AnalysesView.Presenter,
     }
 
     @Override
-    public void deleteSelectedAnalyses() {
+    public void deleteSelectedAnalyses(final List<Analysis> currentSelection) {
         assert view.getSelectedAnalyses().size() > 0 : "Selection should be greater than 0";
 
-        final List<Analysis> analysesToBeDeleted = view.getSelectedAnalyses();
+        analysisService.deleteAnalyses(currentSelection, new AsyncCallback<String>() {
 
-        ConfirmMessageBox cmb = new ConfirmMessageBox(appearance.warning(),
-                                                      appearance.analysesExecDeleteWarning());
-        cmb.setPredefinedButtons(PredefinedButton.OK, PredefinedButton.CANCEL);
-        cmb.addDialogHideHandler(new DeleteMessageBoxHandler(analysesToBeDeleted));
-        cmb.show();
+            @Override
+            public void onFailure(Throwable caught) {
+                ErrorHandler.post(appearance.deleteAnalysisError(), caught);
+            }
+
+            @Override
+            public void onSuccess(String arg0) {
+                loadAnalyses(false);
+            }
+        });
     }
 
     @Override
@@ -429,25 +404,6 @@ public class AnalysesPresenterImpl implements AnalysesView.Presenter,
     }
 
     @Override
-    public void onAnalysisCommentSelected(final AnalysisCommentSelectedEvent event) {
-        // Show comments
-        final AnalysisCommentsDialog d = new AnalysisCommentsDialog(event.getValue(), appearance);
-        d.addDialogHideHandler(new DialogHideEvent.DialogHideHandler() {
-            @Override
-            public void onDialogHide(DialogHideEvent hideEvent) {
-                if (PredefinedButton.OK.equals(hideEvent.getHideButton()) && d.isCommentChanged()) {
-                    analysisService.updateAnalysisComments(event.getValue(),
-                                                           d.getComment(),
-                                                           new UpdateCommentsCallback(event.getValue(),
-                                                                                      d.getComment(),
-                                                                                      view.getListStore()));
-                }
-            }
-        });
-        d.show();
-    }
-
-    @Override
     public void onAnalysisNameSelected(AnalysisNameSelectedEvent event) {
         // Request disk resource window
         eventBus.fireEvent(new OpenFolderEvent(event.getValue().getResultFolderId(), true));
@@ -491,28 +447,13 @@ public class AnalysesPresenterImpl implements AnalysesView.Presenter,
     }
 
     @Override
-    public void renameSelectedAnalysis() {
-        assert view.getSelectedAnalyses().size() == 1 : "There should be 1 and only 1 selected analysis.";
-        final Analysis selectedAnalysis = view.getSelectedAnalyses().get(0);
-
-        final IPlantPromptDialog dlg = new IPlantPromptDialog(appearance.rename(),
-                                                              -1,
-                                                              selectedAnalysis.getName(),
-                                                              new DiskResourceNameValidator());
-        dlg.setHeadingText(appearance.renameAnalysis());
-        dlg.addOkButtonSelectHandler(new SelectEvent.SelectHandler() {
-            @Override
-            public void onSelect(SelectEvent event) {
-                if (!selectedAnalysis.getName().equals(dlg.getFieldText())) {
-                    analysisService.renameAnalysis(selectedAnalysis,
-                                                   dlg.getFieldText(),
-                                                   new RenameAnalysisCallback(selectedAnalysis,
-                                                                              dlg.getFieldText(),
-                                                                              view.getListStore()));
-                }
-            }
-        });
-        dlg.show();
+    public void renameSelectedAnalysis(final Analysis selectedAnalysis,
+                                       final String newName) {
+        analysisService.renameAnalysis(selectedAnalysis,
+                                       newName,
+                                       new RenameAnalysisCallback(selectedAnalysis,
+                                                                  newName,
+                                                                  view.getListStore()));
     }
 
     @Override
