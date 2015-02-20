@@ -5,8 +5,6 @@ import org.iplantc.de.client.models.search.DiskResourceQueryTemplate;
 import org.iplantc.de.client.models.search.FileSizeRange.FileSizeUnit;
 import org.iplantc.de.client.models.tags.Tag;
 import org.iplantc.de.commons.client.widgets.IPlantAnchor;
-import org.iplantc.de.diskResource.client.views.search.cells.DiskResourceQueryForm;
-import org.iplantc.de.diskResource.client.views.search.cells.DiskResourceQueryFormNamePrompt;
 import org.iplantc.de.tags.client.TagsView;
 import org.iplantc.de.tags.client.views.TagSearchFieldImpl;
 
@@ -55,13 +53,14 @@ import java.util.List;
 public class DiskResourceQueryFormTest_WithEditorErrors {
 
     @Mock DiskResourceQueryFormNamePrompt namePrompt;
-
     @Mock DiskResourceQueryTemplate mockedTemplate;
-
     @Mock TagsView.Presenter tagsViewPresenterMock;
+    @Mock TagsView tagsViewMock;
+
     private DiskResourceQueryForm form;
 
     @Before public void setUp() {
+        when(tagsViewPresenterMock.getView()).thenReturn(tagsViewMock);
         GwtMockito.useProviderForType(SimpleBeanEditorDriver.class, new FakeSimpleBeanEditorDriverProvider(true));
         form = new DiskResourceQueryForm(tagsViewPresenterMock, mockedTemplate) {
 
