@@ -14,6 +14,8 @@ import org.iplantc.de.diskResource.client.events.search.SubmitDiskResourceQueryE
 import org.iplantc.de.diskResource.client.events.search.SubmitDiskResourceQueryEvent.HasSubmitDiskResourceQueryEventHandlers;
 import org.iplantc.de.diskResource.client.events.search.SubmitDiskResourceQueryEvent.SubmitDiskResourceQueryEventHandler;
 import org.iplantc.de.tags.client.TagsView;
+import org.iplantc.de.tags.client.events.TagAddedEvent;
+import org.iplantc.de.tags.client.events.selection.RemoveTagSelected;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
@@ -108,7 +110,9 @@ public class DiskResourceQueryForm extends Composite implements
                                                      Editor<DiskResourceQueryTemplate>,
                                                      SaveDiskResourceQueryClickedEvent.HasSaveDiskResourceQueryClickedEventHandlers,
                                                      HasSubmitDiskResourceQueryEventHandlers,
-                                                     SaveDiskResourceQueryClickedEvent.SaveDiskResourceQueryClickedEventHandler {
+                                                     SaveDiskResourceQueryClickedEvent.SaveDiskResourceQueryClickedEventHandler,
+                                                     TagAddedEvent.TagAddedEventHandler,
+                                                     RemoveTagSelected.RemoveTagSelectedHandler {
 
     public interface HtmlLayoutContainerTemplate extends XTemplates {
         @XTemplate(source = "DiskResourceQueryFormTemplate.html")
@@ -167,6 +171,8 @@ public class DiskResourceQueryForm extends Composite implements
     DiskResourceQueryForm(final TagsView.Presenter tagsViewPresenter,
                           final DiskResourceQueryTemplate filter) {
         this.tagsViewPresenter = tagsViewPresenter;
+        this.tagsViewPresenter.setRemovable(true);
+        this.tagsViewPresenter.setEditable(true);
         VerticalPanel vp = new VerticalPanel();
         HtmlLayoutContainerTemplate templates = GWT.create(HtmlLayoutContainerTemplate.class);
         con = new HtmlLayoutContainer(templates.getTemplate());
@@ -174,6 +180,8 @@ public class DiskResourceQueryForm extends Composite implements
         vp.getElement().getStyle().setBackgroundColor("#fff");
         initWidget(vp);
 
+        this.tagsViewPresenter.getView().addTagAddedEventHandler(this);
+        this.tagsViewPresenter.getView().addRemoveTagSelectedHandler(this);
         tagQuery = SimpleEditor.of();
         init(new DiskResourceQueryFormNamePrompt());
         editorDriver.initialize(this);
@@ -276,9 +284,21 @@ public class DiskResourceQueryForm extends Composite implements
     }
 
     @Override
+    public void onRemoveTagSelected(RemoveTagSelected event) {
+        final Tag tag = event.getTag();
+        tagQuery.getValue().remove(tag);
+    }
+
+    @Override
     public void onSaveDiskResourceQueryClicked(SaveDiskResourceQueryClickedEvent event) {
         // Re-fire event
         fireEvent(event);
+    }
+
+    @Override
+    public void onTagAdded(TagAddedEvent event) {
+        final Tag tag = event.getTag();
+        tagQuery.getValue().add(tag);
     }
 
     public void show(Element parent, AnchorAlignment anchorAlignment) {
