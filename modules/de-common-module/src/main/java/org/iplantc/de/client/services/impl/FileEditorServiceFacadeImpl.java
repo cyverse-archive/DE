@@ -6,6 +6,7 @@ import org.iplantc.de.client.models.DEProperties;
 import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.client.models.diskResources.File;
 import org.iplantc.de.client.services.FileEditorServiceFacade;
+import org.iplantc.de.client.services.converters.AsyncCallbackConverter;
 import org.iplantc.de.shared.services.DiscEnvApiService;
 import org.iplantc.de.shared.services.ServiceCallWrapper;
 
@@ -16,6 +17,9 @@ import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONString;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.inject.Inject;
+import com.google.web.bindery.autobean.shared.AutoBean;
+import com.google.web.bindery.autobean.shared.AutoBeanCodex;
+import com.google.web.bindery.autobean.shared.AutoBeanFactory;
 import com.google.web.bindery.autobean.shared.Splittable;
 import com.google.web.bindery.autobean.shared.impl.StringQuoter;
 
@@ -29,6 +33,11 @@ public class FileEditorServiceFacadeImpl implements FileEditorServiceFacade {
     private final DEProperties deProperties;
     private final DiscEnvApiService deServiceFacade;
     private final UserInfo userInfo;
+    @Inject FileEditorServiceAutoBeanFactory factory;
+
+    interface FileEditorServiceAutoBeanFactory extends AutoBeanFactory {
+        AutoBean<File> file();
+    }
 
     @Inject
     public FileEditorServiceFacadeImpl(final DiscEnvApiService deServiceFacade,
@@ -112,7 +121,7 @@ public class FileEditorServiceFacadeImpl implements FileEditorServiceFacade {
 
     @Override
     public void uploadTextAsFile(String destination, String fileContents, boolean newFile,
-            AsyncCallback<String> callback) {
+            AsyncCallback<File> callback) {
 
         String fullAddress = deProperties.getFileIoBaseUrl()
                 + (newFile ? "saveas" : "save"); //$NON-NLS-1$
@@ -121,7 +130,14 @@ public class FileEditorServiceFacadeImpl implements FileEditorServiceFacade {
         obj.put("content", new JSONString(fileContents));
         ServiceCallWrapper wrapper = new ServiceCallWrapper(POST, fullAddress,
                 obj.toString());
-        callService(wrapper, callback);
+        callService(wrapper, new AsyncCallbackConverter<String, File>(callback) {
+            @Override
+            protected File convertFrom(String object) {
+                Splittable split = StringQuoter.split(object);
+                final AutoBean<File> fileAutoBean = AutoBeanCodex.decode(factory, File.class, split.get("file"));
+                return fileAutoBean.as();
+            }
+        });
     }
 
     /**

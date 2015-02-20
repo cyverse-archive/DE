@@ -44,6 +44,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HasOneWidget;
 import com.google.inject.Inject;
 import com.google.web.bindery.autobean.shared.AutoBeanCodex;
+import com.google.web.bindery.autobean.shared.AutoBeanUtils;
 import com.google.web.bindery.autobean.shared.Splittable;
 import com.google.web.bindery.autobean.shared.impl.StringQuoter;
 
@@ -298,22 +299,18 @@ public class AnalysesPresenterImpl implements AnalysesView.Presenter,
         fileEditorService.uploadTextAsFile(event.getPath(),
                                            event.getFileContents(),
                                            true,
-                                           new AsyncCallback<String>() {
+                                           new AsyncCallback<File>() {
+
                                                @Override
                                                public void onFailure(Throwable caught) {
 
                                                }
 
                                                @Override
-                                               public void onSuccess(String result) {
-                                                   final Splittable split = StringQuoter.split(result);
-                                                   final File file = AutoBeanCodex.decode(drFactory,
-                                                                                          File.class,
-                                                                                          split.get("file"))
-                                                                                  .as();
+                                               public void onSuccess(final File file) {
                                                    eventBus.fireEvent(new FileSavedEvent(file));
 
-                                                   final Splittable annotatedFile = split.get("file");
+                                                   final Splittable annotatedFile = AutoBeanCodex.encode(AutoBeanUtils.getAutoBean(file));
                                                    StringQuoter.create(diskResourceUtil.parseParent(file.getPath()))
                                                                .assign(annotatedFile, "parentFolderId");
                                                    StringQuoter.create(event.getPath())

@@ -69,6 +69,6 @@ public interface FileEditorServiceFacade {
      */
     void viewGenomes(JSONObject pathArray,AsyncCallback<String> callback);
 
-    void uploadTextAsFile(String destination, String fileContents, boolean newFile, AsyncCallback<String> callback);
+    void uploadTextAsFile(String destination, String fileContents, boolean newFile, AsyncCallback<File> callback);
 
 }
