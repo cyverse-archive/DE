@@ -135,6 +135,7 @@ public class AppsViewToolbarImpl extends Composite implements AppsView.ViewMenu,
 
     @UiHandler({"copyApp", "copyWf"})
     public void copyClicked(SelectionEvent<Item> event) {
+        // FIXME Split this up into separate calls.
         presenter.copySelectedApp();
     }
 
