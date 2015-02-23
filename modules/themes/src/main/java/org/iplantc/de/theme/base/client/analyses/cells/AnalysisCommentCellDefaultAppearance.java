@@ -1,9 +1,8 @@
-package org.iplantc.de.analysis.client.theme;
+package org.iplantc.de.theme.base.client.analyses.cells;
 
 import org.iplantc.de.analysis.client.views.cells.AnalysisCommentCell;
 import org.iplantc.de.client.models.analysis.Analysis;
 import org.iplantc.de.resources.client.IplantResources;
-import org.iplantc.de.resources.client.messages.I18N;
 import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 
 import com.google.gwt.cell.client.Cell;
@@ -15,6 +14,9 @@ import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.safehtml.shared.SafeUri;
 
+/**
+ * @author jstroot
+ */
 public class AnalysisCommentCellDefaultAppearance implements AnalysisCommentCell.AnalysisCommentCellAppearance{
 
     public interface AnalysisCommentCellStyles extends CssResource {
@@ -27,27 +29,31 @@ public class AnalysisCommentCellDefaultAppearance implements AnalysisCommentCell
         AnalysisCommentCellStyles css();
     }
 
-    /**
-     * The HTML templates used to render the cell.
-     */
     interface Templates extends SafeHtmlTemplates {
         @SafeHtmlTemplates.Template("<img name=\"{0}\" title=\"{1}\" class=\"{2}\" src=\"{3}\"></img>")
         SafeHtml imgCell(String name, String toolTip, String className, SafeUri imgSrc);
     }
 
-    private final IplantDisplayStrings displayStrings = I18N.DISPLAY;
-    private final IplantResources iplantResources = IplantResources.RESOURCES;
-
+    private final IplantDisplayStrings displayStrings;
+    private final IplantResources iplantResources;
     private final AnalysisCommentCellResources resources;
     private final Templates template;
 
     public AnalysisCommentCellDefaultAppearance() {
-        this(GWT.<AnalysisCommentCellResources> create(AnalysisCommentCellResources.class));
+        this(GWT.<AnalysisCommentCellResources> create(AnalysisCommentCellResources.class),
+             GWT.<Templates> create(Templates.class),
+             GWT.<IplantDisplayStrings> create(IplantDisplayStrings.class),
+             GWT.<IplantResources> create(IplantResources.class));
     }
 
-    public AnalysisCommentCellDefaultAppearance (AnalysisCommentCellResources resources){
+    AnalysisCommentCellDefaultAppearance (final AnalysisCommentCellResources resources,
+                                          final Templates template,
+                                          final IplantDisplayStrings displayStrings,
+                                          final IplantResources iplantResources){
         this.resources = resources;
-        this.template = GWT.create(Templates.class);
+        this.template = template;
+        this.displayStrings = displayStrings;
+        this.iplantResources = iplantResources;
     }
 
     @Override

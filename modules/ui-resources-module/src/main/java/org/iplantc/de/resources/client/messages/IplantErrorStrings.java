@@ -2,8 +2,6 @@ package org.iplantc.de.resources.client.messages;
 
 import org.iplantc.de.resources.client.uiapps.integration.AppIntegrationErrorMessages;
 
-import com.google.gwt.safehtml.shared.SafeHtml;
-
 import java.util.List;
 
 /**
@@ -160,15 +158,6 @@ public interface IplantErrorStrings extends com.google.gwt.i18n.client.Messages,
     @DefaultMessage("Unable to restore default preferences. Please try again.")
     @Key("defaultPrefError")
     String defaultPrefError();
-
-    /**
-     * Translated "Error deleting analysis.".
-     * 
-     * @return translated "Error deleting analysis."
-     */
-    @DefaultMessage("Error deleting analysis.")
-    @Key("deleteAnalysisError")
-    String deleteAnalysisError();
 
     /**
      * Translated "Unable to retrieve list of integrated tools.".
@@ -740,15 +729,6 @@ public interface IplantErrorStrings extends com.google.gwt.i18n.client.Messages,
     String shareFailed();
 
     /**
-     * Translated "Unable to stop execution of analysis \"{0}\".".
-     * 
-     * @return translated "Unable to stop execution of analysis \"{0}\"."
-     */
-    @DefaultMessage("Unable to stop execution of analysis \"{0}\".")
-    @Key("stopAnalysisError")
-    String stopAnalysisError(String arg0);
-
-    /**
      * Translated "Tree retrieval failed.".
      * 
      * @return translated "Tree retrieval failed."
@@ -820,10 +800,6 @@ public interface IplantErrorStrings extends com.google.gwt.i18n.client.Messages,
     @DefaultMessage("Selected App does not have a tool assigned, and cannot be opened for launch.")
     @Key("appLaunchWithoutToolError")
     String appLaunchWithoutToolError();
-
-    SafeHtml analysisRenameFailed();
-
-    SafeHtml analysisCommentUpdateFailed();
 
     // tags
     String tagCreateError();

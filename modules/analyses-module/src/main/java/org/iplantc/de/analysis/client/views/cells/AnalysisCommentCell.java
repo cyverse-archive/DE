@@ -1,6 +1,6 @@
 package org.iplantc.de.analysis.client.views.cells;
 
-import org.iplantc.de.analysis.client.events.AnalysisCommentSelectedEvent;
+import org.iplantc.de.analysis.client.events.selection.AnalysisCommentSelectedEvent;
 import org.iplantc.de.client.models.analysis.Analysis;
 
 import static com.google.gwt.dom.client.BrowserEvents.*;
@@ -14,6 +14,9 @@ import com.google.gwt.event.shared.HasHandlers;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.client.Event;
 
+/**
+ * @author jstroot
+ */
 public class AnalysisCommentCell extends AbstractCell<Analysis> {
 
     public interface AnalysisCommentCellAppearance {
@@ -48,7 +51,7 @@ public class AnalysisCommentCell extends AbstractCell<Analysis> {
 
             switch (Event.as(event).getTypeInt()) {
                 case Event.ONCLICK:
-                    doOnClick(eventTarget, value, valueUpdater);
+                    doOnClick(value);
                     break;
                 default:
                     break;
@@ -60,7 +63,7 @@ public class AnalysisCommentCell extends AbstractCell<Analysis> {
         hasHandlers = handlerManager;
     }
 
-    private void doOnClick(Element eventTarget, Analysis value, ValueUpdater<Analysis> valueUpdater) {
+    private void doOnClick(Analysis value) {
 
         if(hasHandlers != null){
             hasHandlers.fireEvent(new AnalysisCommentSelectedEvent(value));

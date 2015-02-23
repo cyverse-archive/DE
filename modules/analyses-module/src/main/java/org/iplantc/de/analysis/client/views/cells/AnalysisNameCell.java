@@ -1,6 +1,6 @@
 package org.iplantc.de.analysis.client.views.cells;
 
-import org.iplantc.de.analysis.client.events.AnalysisNameSelectedEvent;
+import org.iplantc.de.analysis.client.events.selection.AnalysisNameSelectedEvent;
 import org.iplantc.de.analysis.client.events.HTAnalysisExpandEvent;
 import org.iplantc.de.client.models.analysis.Analysis;
 
@@ -71,7 +71,7 @@ public class AnalysisNameCell extends AbstractCell<Analysis> {
 
             switch (Event.as(event).getTypeInt()) {
                 case Event.ONCLICK:
-                    doOnClick(eventTarget, value, valueUpdater);
+                    doOnClick(eventTarget, value);
                     break;
                 case Event.ONMOUSEOVER:
                     appearance.doOnMouseOver(eventTarget, value);
@@ -86,7 +86,7 @@ public class AnalysisNameCell extends AbstractCell<Analysis> {
 
     }
 
-    private void doOnClick(Element eventTarget, Analysis value, ValueUpdater<Analysis> valueUpdater) {
+    private void doOnClick(Element eventTarget, Analysis value) {
         if (eventTarget.getAttribute("name").equalsIgnoreCase(AnalysisNameCellAppearance.ELEMENT_NAME)
                 && !Strings.isNullOrEmpty(value.getResultFolderId())) {
             if(hasHandlers != null){

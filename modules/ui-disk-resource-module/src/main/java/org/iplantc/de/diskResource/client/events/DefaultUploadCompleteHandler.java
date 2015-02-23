@@ -1,7 +1,6 @@
 package org.iplantc.de.diskResource.client.events;
 
 import org.iplantc.de.client.models.UserInfo;
-import org.iplantc.de.client.models.diskResources.DiskResourceAutoBeanFactory;
 import org.iplantc.de.client.models.diskResources.File;
 import org.iplantc.de.client.services.UserSessionServiceFacade;
 import org.iplantc.de.client.util.JsonUtil;
@@ -18,6 +17,7 @@ import com.google.gwt.xml.client.Document;
 import com.google.gwt.xml.client.XMLParser;
 import com.google.web.bindery.autobean.shared.AutoBean;
 import com.google.web.bindery.autobean.shared.AutoBeanCodex;
+import com.google.web.bindery.autobean.shared.AutoBeanFactory;
 
 /**
  * General handler for file upload. Expects to be called after form submission is complete.
@@ -26,10 +26,15 @@ import com.google.web.bindery.autobean.shared.AutoBeanCodex;
  */
 public class DefaultUploadCompleteHandler extends UploadCompleteHandler {
 
+    interface DefaultUploadAutoBeanFactory extends AutoBeanFactory {
+        AutoBean<File> file();
+    }
+
     private final UserInfo userInfo;
     private final UserSessionServiceFacade userSessionService;
-    private final DiskResourceAutoBeanFactory drFactory;
+    private final DefaultUploadAutoBeanFactory factory = GWT.create(DefaultUploadAutoBeanFactory.class);
     private final JsonUtil jsonUtil;
+
 
     /**
      * Construct a new instance of the default handler.
@@ -37,12 +42,10 @@ public class DefaultUploadCompleteHandler extends UploadCompleteHandler {
      * @param idParent the parent identifier to upload the file
      */
     public DefaultUploadCompleteHandler(final UserSessionServiceFacade userSessionService,
-                                        final DiskResourceAutoBeanFactory drFactory,
                                         String idParent) {
         super(idParent,
               GWT.<DiskResourceView.Presenter.Appearance> create(DiskResourceView.Presenter.Appearance.class));
         this.userSessionService = userSessionService;
-        this.drFactory = drFactory;
         this.jsonUtil = JsonUtil.getInstance();
         userInfo = UserInfo.getInstance();
     }
@@ -130,7 +133,7 @@ public class DefaultUploadCompleteHandler extends UploadCompleteHandler {
     }
 
     private String buildMessageText(final JSONObject jsonObj) {
-        AutoBean<File> file = AutoBeanCodex.decode(drFactory, File.class, jsonObj.toString());
+        AutoBean<File> file = AutoBeanCodex.decode(factory, File.class, jsonObj.toString());
         String filename = file.as().getName();
 
         if (!filename.isEmpty()) {

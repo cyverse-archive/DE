@@ -1,33 +1,21 @@
 package org.iplantc.de.analysis.client.views;
 
-import static org.iplantc.de.client.models.analysis.AnalysisExecutionStatus.CANCELED;
-import static org.iplantc.de.client.models.analysis.AnalysisExecutionStatus.COMPLETED;
-import static org.iplantc.de.client.models.analysis.AnalysisExecutionStatus.FAILED;
-import static org.iplantc.de.client.models.analysis.AnalysisExecutionStatus.HELD;
-import static org.iplantc.de.client.models.analysis.AnalysisExecutionStatus.IDLE;
-import static org.iplantc.de.client.models.analysis.AnalysisExecutionStatus.REMOVED;
-import static org.iplantc.de.client.models.analysis.AnalysisExecutionStatus.RUNNING;
-import static org.iplantc.de.client.models.analysis.AnalysisExecutionStatus.SUBMISSION_ERR;
-import static org.iplantc.de.client.models.analysis.AnalysisExecutionStatus.SUBMITTED;
-import static org.iplantc.de.client.models.analysis.AnalysisExecutionStatus.UNKNOWN;
-
+import static org.iplantc.de.client.models.analysis.AnalysisExecutionStatus.*;
+import org.iplantc.de.analysis.client.AnalysesView;
 import org.iplantc.de.client.models.analysis.Analysis;
-import org.iplantc.de.resources.client.IplantResources;
-import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 
 import com.google.common.collect.Lists;
 import com.google.gwtmockito.GxtMockitoTestRunner;
 
+import com.sencha.gxt.data.shared.loader.FilterPagingLoadConfig;
+import com.sencha.gxt.data.shared.loader.PagingLoadResult;
+import com.sencha.gxt.data.shared.loader.PagingLoader;
 import com.sencha.gxt.widget.core.client.menu.MenuItem;
 import com.sencha.gxt.widget.core.client.selection.SelectionChangedEvent;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
+import static org.mockito.Mockito.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -37,12 +25,7 @@ import java.util.Collections;
 import java.util.List;
 
 @RunWith(GxtMockitoTestRunner.class)
-public class AnalysesViewMenuImplTest {
-
-
-    @Mock IplantDisplayStrings mockDisplayStrings;
-    @Mock IplantResources mockResources;
-
+public class AnalysesToolBarImplTest {
     @Mock SelectionChangedEvent<Analysis> mockSelectionEvent;
 
     @Mock MenuItem goToFolderMiMock;
@@ -52,14 +35,19 @@ public class AnalysesViewMenuImplTest {
     @Mock MenuItem deleteMiMock;
     @Mock MenuItem renameMiMock;
     @Mock MenuItem updateCommentsMiMock;
+    @Mock AnalysesView.Appearance appearanceMock;
+    @Mock PagingLoader<FilterPagingLoadConfig, PagingLoadResult<Analysis>> loaderMock;
+    @Mock AnalysesView.Presenter presenterMock;
 
-    private AnalysesViewMenuImpl uut;
+    private AnalysesToolBarImpl uut;
 
     @Before public void setUp() {
-        uut = new AnalysesViewMenuImpl(mockDisplayStrings, mockResources);
+        uut = new AnalysesToolBarImpl(appearanceMock,
+                                      presenterMock,
+                                      loaderMock);
         mockMenuItems(uut);
     }
-    void mockMenuItems(AnalysesViewMenuImpl uut){
+    void mockMenuItems(AnalysesToolBarImpl uut){
         uut.goToFolderMI = goToFolderMiMock;
         uut.viewParamsMI = viewParamsMiMock;
         uut.relaunchMI = relaunchMock;
@@ -85,7 +73,7 @@ public class AnalysesViewMenuImplTest {
 
 
     @Test public void testOnSelectionChanged_OneSelected_appEnabled() {
-        uut = new AnalysesViewMenuImpl(mockDisplayStrings, mockResources){
+        uut = new AnalysesToolBarImpl(appearanceMock, presenterMock, loaderMock){
             @Override
             boolean canCancelSelection(final List<Analysis> selection){
                 return true;
@@ -113,7 +101,7 @@ public class AnalysesViewMenuImplTest {
     }
 
     @Test public void testOnSelectionChanged_OneSelected_appDisabled() {
-        uut = new AnalysesViewMenuImpl(mockDisplayStrings, mockResources){
+        uut = new AnalysesToolBarImpl(appearanceMock, presenterMock, loaderMock){
             @Override
             boolean canCancelSelection(final List<Analysis> selection){
                 return true;
@@ -141,7 +129,7 @@ public class AnalysesViewMenuImplTest {
     }
 
     @Test public void testOnSelectionChanged_ManySelected() {
-        uut = new AnalysesViewMenuImpl(mockDisplayStrings, mockResources){
+        uut = new AnalysesToolBarImpl(appearanceMock, presenterMock, loaderMock){
             @Override
             boolean canCancelSelection(final List<Analysis> selection){
                 return true;

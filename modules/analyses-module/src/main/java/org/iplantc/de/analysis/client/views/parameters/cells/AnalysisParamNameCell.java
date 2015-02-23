@@ -1,15 +1,11 @@
-/**
- * 
- */
-package org.iplantc.de.analysis.client.views.widget.cells;
+package org.iplantc.de.analysis.client.views.parameters.cells;
 
 import com.google.gwt.cell.client.AbstractCell;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 
 /**
- * @author sriram
- * 
+ * @author sriram, jstroot
  */
 public class AnalysisParamNameCell extends AbstractCell<String> {
     public interface AnalysisParamNameCellAppearance {

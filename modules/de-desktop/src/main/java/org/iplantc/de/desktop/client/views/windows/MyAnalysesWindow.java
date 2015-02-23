@@ -1,6 +1,6 @@
 package org.iplantc.de.desktop.client.views.windows;
 
-import org.iplantc.de.analysis.client.views.AnalysesView;
+import org.iplantc.de.analysis.client.AnalysesView;
 import org.iplantc.de.analysis.shared.AnalysisModule;
 import org.iplantc.de.client.models.WindowState;
 import org.iplantc.de.client.models.analysis.Analysis;

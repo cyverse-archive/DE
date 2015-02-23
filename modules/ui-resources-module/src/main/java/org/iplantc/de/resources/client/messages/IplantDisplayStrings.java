@@ -99,18 +99,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     String analyses();
 
     /**
-     * Translated
-     * "This will remove selected analyses. Outputs and parameters can still be viewed in the folder in Manage Data that was created by these analyses."
-     * .
-     *
-     * @return translated
-     *         "This will remove selected analyses. Outputs and parameters can still be viewed in the folder in Manage Data that was created by these analyses."
-     */
-    @DefaultMessage("This will remove selected analyses. Outputs and parameters can still be viewed in the folder in Manage Data that was created by these analyses.")
-    @Key("analysesExecDeleteWarning")
-    String analysesExecDeleteWarning();
-
-    /**
      * Translated "Analyses that are not in completed or failed status were not deleted.".
      *
      * @return translated "Analyses that are not in completed or failed status were not deleted."
@@ -118,15 +106,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     @DefaultMessage("Analyses that are not in completed or failed status were not deleted.")
     @Key("analysesNotDeleted")
     String analysesNotDeleted();
-
-    /**
-     * Translated "Unable to retrieve the list of analyses.".
-     *
-     * @return translated "Unable to retrieve the list of analyses."
-     */
-    @DefaultMessage("Unable to retrieve the list of analyses.")
-    @Key("analysesRetrievalFailure")
-    String analysesRetrievalFailure();
 
     /**
      * Waring that analysis may fail if input with spl chars is used
@@ -144,15 +123,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     @DefaultMessage("Overview")
     @Key("analysisOverview")
     String analysisOverview();
-
-    /**
-     * Translated "Analysis {0} stopped successfully.".
-     *
-     * @return translated "Analysis {0} stopped successfully."
-     */
-    @DefaultMessage("Analysis {0} stopped successfully.")
-    @Key("analysisStopSuccess")
-    String analysisStopSuccess(String arg0);
 
     /**
      * Translated "Analysis Submitted".
@@ -247,15 +217,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     @DefaultMessage("Apps Integration Module")
     @Key("appIntegrationModule")
     String appIntegrationModule();
-
-    /**
-     * Translated "App".
-     *
-     * @return translated "App"
-     */
-    @DefaultMessage("App")
-    @Key("appName")
-    String appName();
 
     /**
      * Translated "This app is temporarily unavailable".
@@ -400,15 +361,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     @DefaultMessage("Cancel")
     @Key("cancel")
     String cancel();
-
-    /**
-     * Translated "Cancel".
-     *
-     * @return translated "Cancel"
-     */
-    @DefaultMessage("Cancel")
-    @Key("cancelAnalysis")
-    String cancelAnalysis();
 
     /**
      * Translated "Category".
@@ -585,15 +537,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     @DefaultMessage("Comments")
     @Key("comments")
     String comments();
-
-    /**
-     * Translated "Update Comments...".
-     *
-     * @return translated "Update Comments..."
-     */
-    @DefaultMessage("Update Comments...")
-    @Key("updateComments")
-    String updateComments();
 
     /**
      * Translated "Confirm".
@@ -780,15 +723,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     @DefaultMessage("Retain Inputs? Enabling this flag will copy all the input files into the analysis result folder.")
     @Key("debug")
     String debug();
-
-    /**
-     * Translated "Go to output folder".
-     *
-     * @return translated "Go to output folder"
-     */
-    @DefaultMessage("Go to output folder")
-    @Key("goToOutputFolder")
-    String goToOutputFolder();
 
     /**
      * Translated "
@@ -1005,15 +939,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     String enabled();
 
     /**
-     * Translated "End Date".
-     *
-     * @return translated "End Date"
-     */
-    @DefaultMessage("End Date")
-    @Key("endDate")
-    String endDate();
-
-    /**
      * Translated "Enter any additional comments".
      *
      * @return translated "Enter any additional comments"
@@ -1121,15 +1046,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     String fileUploadSuccess(String arg0);
 
     /**
-     * Translated "Filter by Name or App".
-     *
-     * @return translated "Filter by Name or App"
-     */
-    @DefaultMessage("Filter by Name or App")
-    @Key("filterAnalysesList")
-    String filterAnalysesList();
-
-    /**
      * Translated "Not useful".
      *
      * @return translated "Not useful"
@@ -1216,15 +1132,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     @DefaultMessage("Select 3'' Adapter File")
     @Key("importClipper")
     String importClipper();
-
-    /**
-     * Translated "{0} is uploading and will be available shortly.".
-     *
-     * @return translated "{0} is uploading and will be available shortly."
-     */
-    @DefaultMessage("{0} is uploading and will be available shortly.")
-    @Key("importRequestSubmit")
-    String importRequestSubmit(String arg0);
 
     String indexFileMissing();
 
@@ -1824,15 +1731,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     String newToolRequestError();
 
     /**
-     * Translated "No items to display".
-     *
-     * @return translated "No items to display"
-     */
-    @DefaultMessage("No items to display")
-    @Key("noAnalyses")
-    String noAnalyses();
-
-    /**
      * Translated "Select Apps for workflow construction".
      *
      * @return translated "Select Apps for workflow construction"
@@ -1876,15 +1774,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     @DefaultMessage("No notifications to display.")
     @Key("noNotifications")
     String noNotifications();
-
-    /**
-     * Translated "No parameters to display.".
-     *
-     * @return translated "No parameters to display."
-     */
-    @DefaultMessage("No parameters to display.")
-    @Key("noParameters")
-    String noParameters();
 
     /**
      * msg to show when there are no results to display
@@ -2029,24 +1918,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     @DefaultMessage("Owner")
     @Key("owner")
     String owner();
-
-    /**
-     * Translated "Name".
-     *
-     * @return translated "Name"
-     */
-    @DefaultMessage("Name")
-    @Key("paramName")
-    String paramName();
-
-    /**
-     * Translated "Type".
-     *
-     * @return translated "Type"
-     */
-    @DefaultMessage("Type")
-    @Key("paramType")
-    String paramType();
 
     /**
      * Translated "Value".
@@ -2471,15 +2342,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     String refresh();
 
     /**
-     * Translated "Relaunch...".
-     * 
-     * @return translated "Relaunch..."
-     */
-    @DefaultMessage("Relaunch...")
-    @Key("relaunchAnalysis")
-    String relaunchAnalysis();
-
-    /**
      * Translated "Remove from favorite apps.".
      *
      * @return translated "Remove from favorite apps."
@@ -2520,15 +2382,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     @DefaultMessage("Rename")
     @Key("rename")
     String rename();
-
-    /**
-     * Translated "Rename...".
-     *
-     * @return translated "Rename..."
-     */
-    @DefaultMessage("Rename...")
-    @Key("renameMenuItem")
-    String renameMenuItem();
 
     /**
      * Translated
@@ -2623,15 +2476,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     @DefaultMessage("<p>Enabling the Save session option will restore your Discovery Environment desktop to exactly how you left it when you last logged out.</p>")
     @Key("saveSessionHelp")
     String saveSessionHelp();
-
-    /**
-     * Translated "Saving file...".
-     *
-     * @return translated "Saving file..."
-     */
-    @DefaultMessage("Saving file...")
-    @Key("savingFileMask")
-    String savingFileMask();
 
     /**
      * Translated "Search".
@@ -2904,15 +2748,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     @DefaultMessage("Start")
     @Key("start")
     String start();
-
-    /**
-     * Translated "Start Date".
-     *
-     * @return translated "Start Date"
-     */
-    @DefaultMessage("Start Date")
-    @Key("startDate")
-    String startDate();
 
     /**
      * Translated "Status".
@@ -3297,24 +3132,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     String viewDeployedComponents();
 
     /**
-     * Translated "View Parameters".
-     *
-     * @return translated "View Parameters"
-     */
-    @DefaultMessage("View Parameters")
-    @Key("viewParamLbl")
-    String viewParamLbl();
-
-    /**
-     * Translated "Viewing parameters for {0}".
-     *
-     * @return translated "Viewing parameters for {0}"
-     */
-    @DefaultMessage("Viewing parameters for {0}")
-    @Key("viewParameters")
-    String viewParameters(String arg0);
-
-    /**
      * Translated "View Raw".
      *
      * @return translated "View Raw"
@@ -3442,32 +3259,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     @DefaultMessage("Send to Tree Viewer")
     @Key("sendToTreeViewerMenuItem")
     String sendToTreeViewerMenuItem();
-
-    /**
-     * Translated "Successfully renamed analysis"
-     * @return translated "Successfully renamed analysis"
-     */
-    @DefaultMessage("Successfully renamed analysis")
-    @Key("analysisRenameSuccess")
-    SafeHtml analysisRenameSuccess();
-
-    /**
-     * Translated "Successfully updated analysis comments"
-     *
-     * @return translated "Successfully updated analysis comments"
-     */
-    @DefaultMessage("Successfully updated analysis comments")
-    @Key("analysisCommentUpdateSuccess")
-    SafeHtml analysisCommentUpdateSuccess();
-
-    /**
-     * Translated "Rename Analysis"
-     *
-     * @return translated "Rename Analysis"
-     */
-    @DefaultMessage("Rename Analysis")
-    @Key("renameAnalysis")
-    String renameAnalysis();
 
     /**
      * Translated "Learn more."

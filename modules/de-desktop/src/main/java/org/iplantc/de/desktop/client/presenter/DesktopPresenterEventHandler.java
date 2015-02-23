@@ -1,15 +1,14 @@
 package org.iplantc.de.desktop.client.presenter;
 
-import org.iplantc.de.client.models.diskResources.DiskResourceAutoBeanFactory;
-import org.iplantc.de.client.services.UserSessionServiceFacade;
-import org.iplantc.de.diskResource.client.events.DefaultUploadCompleteHandler;
 import org.iplantc.de.client.events.EventBus;
-import org.iplantc.de.notifications.client.events.NotificationCountUpdateEvent;
 import org.iplantc.de.client.models.UserSettings;
-import org.iplantc.de.desktop.client.DesktopView;
+import org.iplantc.de.client.services.UserSessionServiceFacade;
 import org.iplantc.de.client.util.JsonUtil;
 import org.iplantc.de.commons.client.events.LastSelectedPathChangedEvent;
+import org.iplantc.de.desktop.client.DesktopView;
+import org.iplantc.de.diskResource.client.events.DefaultUploadCompleteHandler;
 import org.iplantc.de.diskResource.client.events.FileUploadedEvent;
+import org.iplantc.de.notifications.client.events.NotificationCountUpdateEvent;
 
 import com.google.common.collect.Lists;
 import com.google.gwt.event.shared.HandlerRegistration;
@@ -30,7 +29,6 @@ public class DesktopPresenterEventHandler implements LastSelectedPathChangedEven
 
     @Inject EventBus eventBus;
     @Inject UserSessionServiceFacade userSessionService;
-    @Inject DiskResourceAutoBeanFactory drFactory;
     @Inject JsonUtil jsonUtil;
     private final UserSettings userSettings;
 
@@ -51,7 +49,6 @@ public class DesktopPresenterEventHandler implements LastSelectedPathChangedEven
     public void onFileUploaded(FileUploadedEvent event) {
 
         DefaultUploadCompleteHandler duc = new DefaultUploadCompleteHandler(userSessionService,
-                                                                            drFactory,
                                                                             event.getUploadDestFolderFolder().toString());
         JSONObject obj = jsonUtil.getObject(event.getResponse());
         String fileJson = jsonUtil.getObject(obj, "file").toString();

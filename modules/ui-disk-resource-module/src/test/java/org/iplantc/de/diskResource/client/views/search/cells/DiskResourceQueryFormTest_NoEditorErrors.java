@@ -31,7 +31,6 @@ import com.sencha.gxt.widget.core.client.container.HtmlLayoutContainer;
 import com.sencha.gxt.widget.core.client.event.SelectEvent;
 import com.sencha.gxt.widget.core.client.event.SelectEvent.SelectHandler;
 import com.sencha.gxt.widget.core.client.form.CheckBox;
-import com.sencha.gxt.widget.core.client.form.FieldLabel;
 import com.sencha.gxt.widget.core.client.form.SimpleComboBox;
 import com.sencha.gxt.widget.core.client.form.TextField;
 
@@ -201,8 +200,8 @@ public class DiskResourceQueryFormTest_NoEditorErrors {
                         return item.getLabel();
                     }
                 };
-                createdWithinCombo = new SimpleComboBox<DateInterval>(dateIntervalLabelProvider);
-                modifiedWithinCombo = new SimpleComboBox<DateInterval>(dateIntervalLabelProvider);
+                createdWithinCombo = new SimpleComboBox<>(dateIntervalLabelProvider);
+                modifiedWithinCombo = new SimpleComboBox<>(dateIntervalLabelProvider);
                 createdWithinCombo.add(timeIntervals);
                 modifiedWithinCombo.add(timeIntervals);
 
@@ -217,8 +216,6 @@ public class DiskResourceQueryFormTest_NoEditorErrors {
             @Override
             void initTagField() {
                 final TagSearchFieldImpl tagSearchField = mock(TagSearchFieldImpl.class);
-
-                FieldLabel fl = mock(FieldLabel.class);
 
                 tagSearchField.addValueChangeHandler(new ValueChangeHandler<Tag>() {
 

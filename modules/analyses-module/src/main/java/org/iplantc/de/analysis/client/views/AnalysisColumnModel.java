@@ -1,8 +1,9 @@
 package org.iplantc.de.analysis.client.views;
 
-import org.iplantc.de.analysis.client.events.AnalysisAppSelectedEvent;
-import org.iplantc.de.analysis.client.events.AnalysisCommentSelectedEvent;
-import org.iplantc.de.analysis.client.events.AnalysisNameSelectedEvent;
+import org.iplantc.de.analysis.client.AnalysesView;
+import org.iplantc.de.analysis.client.events.selection.AnalysisAppSelectedEvent;
+import org.iplantc.de.analysis.client.events.selection.AnalysisCommentSelectedEvent;
+import org.iplantc.de.analysis.client.events.selection.AnalysisNameSelectedEvent;
 import org.iplantc.de.analysis.client.events.HTAnalysisExpandEvent;
 import org.iplantc.de.analysis.client.views.cells.AnalysisAppNameCell;
 import org.iplantc.de.analysis.client.views.cells.AnalysisCommentCell;
@@ -10,7 +11,6 @@ import org.iplantc.de.analysis.client.views.cells.AnalysisNameCell;
 import org.iplantc.de.analysis.client.views.cells.EndDateTimeCell;
 import org.iplantc.de.analysis.client.views.cells.StartDateTimeCell;
 import org.iplantc.de.client.models.analysis.Analysis;
-import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 
 import com.google.common.collect.Lists;
 import com.google.gwt.event.shared.HandlerRegistration;
@@ -24,13 +24,18 @@ import com.sencha.gxt.widget.core.client.grid.ColumnModel;
 
 import java.util.List;
 
-public class AnalysisColumnModel extends ColumnModel<Analysis> implements AnalysisNameSelectedEvent.HasAnalysisNameSelectedEventHandlers, AnalysisAppSelectedEvent.HasAnalysisAppSelectedEventHandlers,
-                                                              AnalysisCommentSelectedEvent.HasAnalysisCommentSelectedEventHandlers,
-                                                              HTAnalysisExpandEvent.HasHTAnalysisExpandEventHandlers {
+/**
+ * @author jstroot
+ */
+public class AnalysisColumnModel extends ColumnModel<Analysis> implements AnalysisNameSelectedEvent.HasAnalysisNameSelectedEventHandlers,
+                                                                          AnalysisAppSelectedEvent.HasAnalysisAppSelectedEventHandlers,
+                                                                          AnalysisCommentSelectedEvent.HasAnalysisCommentSelectedEventHandlers,
+                                                                          HTAnalysisExpandEvent.HasHTAnalysisExpandEventHandlers {
 
     @Inject
-    public AnalysisColumnModel(final CheckBoxSelectionModel<Analysis> checkBoxSelectionModel, final IplantDisplayStrings displayStrings) {
-        super(createColumnConfigList(checkBoxSelectionModel, displayStrings));
+    AnalysisColumnModel(final CheckBoxSelectionModel<Analysis> checkBoxSelectionModel,
+                        final AnalysesView.Appearance appearance) {
+        super(createColumnConfigList(checkBoxSelectionModel, appearance));
 
         // Set handler managers on appropriate cells so they can fire events.
         for (ColumnConfig<Analysis, ?> cc : configs) {
@@ -44,15 +49,16 @@ public class AnalysisColumnModel extends ColumnModel<Analysis> implements Analys
         }
     }
 
-    public static List<ColumnConfig<Analysis, ?>> createColumnConfigList(CheckBoxSelectionModel<Analysis> checkBoxSelectionModel, IplantDisplayStrings displayStrings) {
+    public static List<ColumnConfig<Analysis, ?>> createColumnConfigList(final CheckBoxSelectionModel<Analysis> checkBoxSelectionModel,
+                                                                         final AnalysesView.Appearance appearance) {
         ColumnConfig<Analysis, Analysis> colCheckBox = checkBoxSelectionModel.getColumn();
-        ColumnConfig<Analysis, Analysis> name = new ColumnConfig<Analysis, Analysis>(new IdentityValueProvider<Analysis>("name"),
+        ColumnConfig<Analysis, Analysis> name = new ColumnConfig<>(new IdentityValueProvider<Analysis>("name"),
                                                                                      150);
-        ColumnConfig<Analysis, Analysis> comment = new ColumnConfig<Analysis, Analysis>(new IdentityValueProvider<Analysis>("description"), 30);
-        ColumnConfig<Analysis, Analysis> app = new ColumnConfig<Analysis, Analysis>(new IdentityValueProvider<Analysis>("analysis_name"), 100);
-        ColumnConfig<Analysis, Analysis> startDate = new ColumnConfig<Analysis, Analysis>(new IdentityValueProvider<Analysis>("startdate"), 125);
-        ColumnConfig<Analysis, Analysis> endDate = new ColumnConfig<Analysis, Analysis>(new IdentityValueProvider<Analysis>("enddate"), 125);
-        ColumnConfig<Analysis, String> status = new ColumnConfig<Analysis, String>(new ValueProvider<Analysis, String>() {
+        ColumnConfig<Analysis, Analysis> comment = new ColumnConfig<>(new IdentityValueProvider<Analysis>("description"), 30);
+        ColumnConfig<Analysis, Analysis> app = new ColumnConfig<>(new IdentityValueProvider<Analysis>("analysis_name"), 100);
+        ColumnConfig<Analysis, Analysis> startDate = new ColumnConfig<>(new IdentityValueProvider<Analysis>("startdate"), 125);
+        ColumnConfig<Analysis, Analysis> endDate = new ColumnConfig<>(new IdentityValueProvider<Analysis>("enddate"), 125);
+        ColumnConfig<Analysis, String> status = new ColumnConfig<>(new ValueProvider<Analysis, String>() {
 
             @Override
             public String getValue(Analysis object) {
@@ -62,7 +68,6 @@ public class AnalysisColumnModel extends ColumnModel<Analysis> implements Analys
             @Override
             public void setValue(Analysis object, String value) {
                 object.setStatus(value);
-
             }
 
             @Override
@@ -71,8 +76,7 @@ public class AnalysisColumnModel extends ColumnModel<Analysis> implements Analys
             }
         }, 75);
 
-        name.setHeader(displayStrings.name());
-        name.setMenuDisabled(true);
+        name.setHeader(appearance.name());
         name.setCell(new AnalysisNameCell());
 
         comment.setMenuDisabled(true);
@@ -81,16 +85,16 @@ public class AnalysisColumnModel extends ColumnModel<Analysis> implements Analys
         comment.setHeader("");
         comment.setHideable(false);
 
-        app.setHeader(displayStrings.appName());
+        app.setHeader(appearance.appName());
         app.setCell(new AnalysisAppNameCell());
 
         startDate.setCell(new StartDateTimeCell());
-        startDate.setHeader(displayStrings.startDate());
+        startDate.setHeader(appearance.startDate());
 
         endDate.setCell(new EndDateTimeCell());
-        endDate.setHeader(displayStrings.endDate());
+        endDate.setHeader(appearance.endDate());
 
-        status.setHeader(displayStrings.status());
+        status.setHeader(appearance.status());
 
         List<ColumnConfig<Analysis, ?>> ret = Lists.newArrayList();
         ret.add(colCheckBox);
@@ -119,8 +123,7 @@ public class AnalysisColumnModel extends ColumnModel<Analysis> implements Analys
     }
 
     @Override
-    public HandlerRegistration
-            addHTAnalysisExpandEventHandler(HTAnalysisExpandEvent.HTAnalysisExpandEventHandler handler) {
+    public HandlerRegistration addHTAnalysisExpandEventHandler(HTAnalysisExpandEvent.HTAnalysisExpandEventHandler handler) {
         return ensureHandlers().addHandler(HTAnalysisExpandEvent.TYPE, handler);
     }
 }

@@ -46,9 +46,6 @@ public class AnalysisSearchField extends SearchField<Analysis> {
      * Loads the loader with a FilterConfig with the given analysisId, setting the field's text to the
      * given analysisName. This filter will be cleared once this field is cleared or another query is
      * triggered.
-     * 
-     * @param analysisId
-     * @param analysisName
      */
     public void filterByAnalysisId(String analysisId, String analysisName) {
         setValue(analysisName);
@@ -65,9 +62,6 @@ public class AnalysisSearchField extends SearchField<Analysis> {
     /**
      * Loads the loader with a FilterConfig with the given parent analysisId of the HT Analysis, This
      * filter will be cleared once this field is cleared or another query is triggered.
-     * 
-     * @param analysisId
-     * 
      */
     public void filterByParentId(String analysisId) {
         FilterPagingLoadConfig loadConfig = getLoaderConfig();

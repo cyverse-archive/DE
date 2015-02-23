@@ -7,14 +7,6 @@ import com.google.gwt.resources.client.ImageResource;
  */
 public interface DiskResourceResources {
 
-
-    /**
-     * Image resource.
-     *
-     * @return image.
-     */
-    ImageResource fileView();
-
     /**
      * Image resource.
      *

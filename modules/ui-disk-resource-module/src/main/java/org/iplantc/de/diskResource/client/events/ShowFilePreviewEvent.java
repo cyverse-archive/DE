@@ -7,27 +7,23 @@ import org.iplantc.de.diskResource.client.events.ShowFilePreviewEvent.ShowFilePr
 import com.google.gwt.event.shared.EventHandler;
 import com.google.gwt.event.shared.GwtEvent;
 
+/**
+ * @author jstroot
+ */
 public class ShowFilePreviewEvent extends GwtEvent<ShowFilePreviewEventHandler> {
 
     public interface ShowFilePreviewEventHandler extends EventHandler {
-
         void showFilePreview(ShowFilePreviewEvent event);
-
     }
 
     public static final GwtEvent.Type<ShowFilePreviewEventHandler> TYPE = new GwtEvent.Type<>();
     private final File file;
     private final FileViewerWindowConfig config;
 
-    public ShowFilePreviewEvent(final File file, final FileViewerWindowConfig config, final Object source) {
-        setSource(source);
+    public ShowFilePreviewEvent(final File file,
+                                final FileViewerWindowConfig config) {
         this.file = file;
         this.config = config;
-    }
-
-    public ShowFilePreviewEvent(final File file, final Object source) {
-        this(file, null, source);
-
     }
 
     public File getFile() {

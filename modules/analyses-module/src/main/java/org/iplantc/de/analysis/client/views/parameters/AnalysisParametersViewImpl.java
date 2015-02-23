@@ -1,12 +1,13 @@
-package org.iplantc.de.analysis.client.views.widget;
+package org.iplantc.de.analysis.client.views.parameters;
 
+import org.iplantc.de.analysis.client.AnalysesView;
+import org.iplantc.de.analysis.client.AnalysisParametersView;
 import org.iplantc.de.analysis.client.events.SaveAnalysisParametersEvent;
+import org.iplantc.de.analysis.client.events.selection.AnalysisParamValueSelectedEvent;
 import org.iplantc.de.client.models.IsHideable;
-import org.iplantc.de.client.models.IsMaskable;
 import org.iplantc.de.client.models.analysis.AnalysisParameter;
-import org.iplantc.de.commons.client.views.dialogs.IPlantDialog;
+import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.diskResource.client.views.dialogs.SaveAsDialog;
-import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.HandlerRegistration;
@@ -15,12 +16,11 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.IsWidget;
-import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 
 import com.sencha.gxt.data.shared.ListStore;
+import com.sencha.gxt.widget.core.client.Composite;
 import com.sencha.gxt.widget.core.client.button.TextButton;
 import com.sencha.gxt.widget.core.client.container.BorderLayoutContainer;
 import com.sencha.gxt.widget.core.client.container.BorderLayoutContainer.BorderLayoutData;
@@ -34,60 +34,46 @@ import java.util.List;
 
 /**
  * FIXME JDS Fix debug ids.
+ * @author jstroot
  */
-public class AnalysisParamView implements IsWidget, SaveAnalysisParametersEvent.HasSaveAnalysisParametersEventHandlers {
+public class AnalysisParametersViewImpl extends Composite implements AnalysisParametersView {
 
-    private static AnalysisParamViewUiBinder uiBinder = GWT.create(AnalysisParamViewUiBinder.class);
-
-    interface AnalysisParamViewUiBinder extends UiBinder<Widget, AnalysisParamView> {
+    interface AnalysisParamViewUiBinder extends UiBinder<BorderLayoutContainer, AnalysisParametersViewImpl> {
     }
 
-    private final IplantDisplayStrings displayStrings;
-
     @UiField(provided = true) final ListStore<AnalysisParameter> listStore;
+    @UiField(provided = true) final AnalysesView.Appearance appearance;
     @UiField(provided = true) final ColumnModel<AnalysisParameter> cm;
+    private final AnalysisParamViewColumnModel apcm; // Convenience reference
     @UiField Grid<AnalysisParameter> grid;
     @UiField BorderLayoutContainer con;
     @UiField ToolBar menuToolBar;
     @UiField BorderLayoutData northData;
-    @UiField IPlantDialog dialog;
     @UiField TextButton btnSave;
-
-    private final Widget widget;
 
     @Inject AsyncProvider<SaveAsDialog> saveAsDialogProvider;
 
     @Inject
-    AnalysisParamView(final IplantDisplayStrings displayStrings,
-                      @Assisted final AnalysisParamViewColumnModel cm,
-                      @Assisted final ListStore<AnalysisParameter> listStore) {
+    AnalysisParametersViewImpl(final AnalysesView.Appearance appearance,
+                               final AnalysisParamViewColumnModel cm,
+                               @Assisted final ListStore<AnalysisParameter> listStore) {
+        this.appearance = appearance;
         this.cm = cm;
+        this.apcm = cm;
         this.listStore = listStore;
-        this.displayStrings = displayStrings;
-        this.widget = uiBinder.createAndBindUi(this);
-        grid.getView().setEmptyText(displayStrings.noParameters());
+        AnalysisParamViewUiBinder uiBinder = GWT.create(AnalysisParamViewUiBinder.class);
+        initWidget(uiBinder.createAndBindUi(this));
+        grid.getView().setEmptyText(appearance.noParameters());
+    }
+
+    @Override
+    public HandlerRegistration addAnalysisParamValueSelectedEventHandler(AnalysisParamValueSelectedEvent.AnalysisParamValueSelectedEventHandler handler) {
+        return apcm.addAnalysisParamValueSelectedEventHandler(handler);
     }
 
     @Override
     public HandlerRegistration addSaveAnalysisParametersEventHandler(SaveAnalysisParametersEvent.SaveAnalysisParametersEventHandler handler) {
-        return widget.addHandler(handler, SaveAnalysisParametersEvent.TYPE);
-    }
-
-    @Override
-    public Widget asWidget() {
-        return widget;
-    }
-
-    public void loadParameters(List<AnalysisParameter> items) {
-        listStore.addAll(items);
-    }
-
-    public void show() {
-        dialog.show();
-    }
-
-    public void setHeading(String heading) {
-        dialog.setHeadingText(heading);
+        return addHandler(handler, SaveAnalysisParametersEvent.TYPE);
     }
 
     @UiHandler("btnSave")
@@ -95,7 +81,7 @@ public class AnalysisParamView implements IsWidget, SaveAnalysisParametersEvent.
         saveAsDialogProvider.get(new AsyncCallback<SaveAsDialog>() {
             @Override
             public void onFailure(Throwable caught) {
-
+                ErrorHandler.post(caught);
             }
 
             @Override
@@ -107,7 +93,7 @@ public class AnalysisParamView implements IsWidget, SaveAnalysisParametersEvent.
                         if (result.isValid()) {
                             String fileContents = writeTabFile();
                             saveFile(result.getSelectedFolder().getPath() + "/" + result.getFileName(),
-                                     fileContents, result, result);
+                                     fileContents, result);
                         }
                     }
                 });
@@ -125,21 +111,20 @@ public class AnalysisParamView implements IsWidget, SaveAnalysisParametersEvent.
         });
     }
 
+    @Override
     public void mask() {
-        con.mask(displayStrings.loadingMask());
+        mask(appearance.retrieveParametersLoadingMask());
     }
 
-    public void unmask() {
-        con.unmask();
-    }
-
-    private void saveFile(final String path, String fileContents, IsHideable hideable, IsMaskable maskable) {
-        widget.fireEvent(new SaveAnalysisParametersEvent(path, fileContents, hideable, maskable));
+    private void saveFile(final String path,
+                          final String fileContents,
+                          final IsHideable hideable) {
+        fireEvent(new SaveAnalysisParametersEvent(path, fileContents, hideable));
     }
 
     private String writeTabFile() {
         StringBuilder sw = new StringBuilder();
-        sw.append(displayStrings.paramName()).append("\t").append(displayStrings.paramType()).append("\t").append(displayStrings.paramValue()).append("\n");
+        sw.append(appearance.paramName()).append("\t").append(appearance.paramType()).append("\t").append(appearance.paramValue()).append("\n");
         List<AnalysisParameter> params = grid.getStore().getAll();
         for (AnalysisParameter ap : params) {
             sw.append(ap.getName()).append("\t").append(ap.getType()).append("\t").append(ap.getDisplayValue()).append("\n");

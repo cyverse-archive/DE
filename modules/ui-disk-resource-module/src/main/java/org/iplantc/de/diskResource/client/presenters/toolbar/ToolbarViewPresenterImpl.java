@@ -41,7 +41,9 @@ import java.util.List;
 /**
  * @author jstroot
  */
-public class ToolbarViewPresenterImpl implements ToolbarView.Presenter, SimpleDownloadSelected.SimpleDownloadSelectedHandler, SimpleUploadSelected.SimpleUploadSelectedHandler {
+public class ToolbarViewPresenterImpl implements ToolbarView.Presenter,
+                                                 SimpleDownloadSelected.SimpleDownloadSelectedHandler,
+                                                 SimpleUploadSelected.SimpleUploadSelectedHandler {
 
     @Inject ToolbarView.Presenter.Appearance appearance;
     @Inject DataLinkPresenterFactory dataLinkPresenterFactory;
@@ -142,7 +144,7 @@ public class ToolbarViewPresenterImpl implements ToolbarView.Presenter, SimpleDo
         Preconditions.checkState(PermissionValue.own.equals(next.getPermission())
                                      || PermissionValue.write.equals(next.getPermission()), "User should have either own or write permissions for the selected item");
 
-        eventBus.fireEvent(new ShowFilePreviewEvent((File) next, this));
+        eventBus.fireEvent(new ShowFilePreviewEvent((File) next, null));
     }
 
     @Override

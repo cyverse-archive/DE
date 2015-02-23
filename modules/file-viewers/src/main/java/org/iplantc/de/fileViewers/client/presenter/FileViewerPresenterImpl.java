@@ -5,7 +5,6 @@ import static org.iplantc.de.client.services.FileEditorServiceFacade.TAB_DELIMIT
 import org.iplantc.de.client.events.FileSavedEvent;
 import org.iplantc.de.client.models.CommonModelAutoBeanFactory;
 import org.iplantc.de.client.models.IsMaskable;
-import org.iplantc.de.client.models.diskResources.DiskResourceAutoBeanFactory;
 import org.iplantc.de.client.models.diskResources.File;
 import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.client.models.errors.diskResources.DiskResourceErrorAutoBeanFactory;
@@ -131,7 +130,6 @@ public class FileViewerPresenterImpl implements FileViewer.Presenter, FileSavedE
     Logger LOG = Logger.getLogger(FileViewerPresenterImpl.class.getName());
     @Inject MimeTypeViewerResolverFactory mimeFactory;
     @Inject CommonModelAutoBeanFactory factory;
-    @Inject DiskResourceAutoBeanFactory drFactory;
     @Inject FileEditorServiceFacade fileEditorService;
     @Inject FileViewer.FileViewerPresenterAppearance appearance;
     @Inject AsyncProvider<SaveAsDialog> saveAsDialogProvider;
@@ -367,7 +365,6 @@ public class FileViewerPresenterImpl implements FileViewer.Presenter, FileSavedE
                 @Override
                 public void onSuccess(SaveAsDialog result) {
                     SaveAsDialogOkSelectHandler okSelectHandler = new SaveAsDialogOkSelectHandler(userSessionService,
-                                                                                                  drFactory,
                                                                                                   asMaskable(simpleContainer),
                                                                                                   fileViewer,
                                                                                                   result,
@@ -389,7 +386,6 @@ public class FileViewerPresenterImpl implements FileViewer.Presenter, FileSavedE
                                                fileViewer.getEditorContent(),
                                                false,
                                                new FileSaveCallback(userSessionService,
-                                                                    drFactory,
                                                                     file.getPath(),
                                                                     false,
                                                                     asMaskable(simpleContainer),
@@ -422,7 +418,6 @@ public class FileViewerPresenterImpl implements FileViewer.Presenter, FileSavedE
                                            viewerContent,
                                            true,
                                            new FileSaveCallback(userSessionService,
-                                                                drFactory,
                                                                 destination,
                                                                 true,
                                                                 fileViewer,

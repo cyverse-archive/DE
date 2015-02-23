@@ -6,6 +6,9 @@ import com.google.gwt.event.shared.EventHandler;
 import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.event.shared.HandlerRegistration;
 
+/**
+ * @author jstroot
+ */
 public class HTAnalysisExpandEvent extends GwtEvent<HTAnalysisExpandEvent.HTAnalysisExpandEventHandler> {
 
     public interface HTAnalysisExpandEventHandler extends EventHandler {
@@ -22,7 +25,7 @@ public class HTAnalysisExpandEvent extends GwtEvent<HTAnalysisExpandEvent.HTAnal
         this.value = value;
     }
 
-    public static final GwtEvent.Type<HTAnalysisExpandEventHandler> TYPE = new GwtEvent.Type<HTAnalysisExpandEventHandler>();
+    public static final GwtEvent.Type<HTAnalysisExpandEventHandler> TYPE = new GwtEvent.Type<>();
 
     @Override
     public Type<HTAnalysisExpandEventHandler> getAssociatedType() {

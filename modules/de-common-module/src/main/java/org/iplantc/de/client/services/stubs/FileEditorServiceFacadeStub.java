@@ -45,7 +45,7 @@ public class FileEditorServiceFacadeStub implements FileEditorServiceFacade {
     }
 
     @Override
-    public void uploadTextAsFile(String destination, String fileContents, boolean newFile, AsyncCallback<String> callback) {
+    public void uploadTextAsFile(String destination, String fileContents, boolean newFile, AsyncCallback<File> callback) {
 
     }
 }

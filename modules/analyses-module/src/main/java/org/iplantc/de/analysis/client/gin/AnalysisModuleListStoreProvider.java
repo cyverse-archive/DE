@@ -7,7 +7,9 @@ import com.google.inject.Provider;
 import com.sencha.gxt.data.shared.ListStore;
 import com.sencha.gxt.data.shared.ModelKeyProvider;
 
-
+/**
+ * @author jstroot
+ */
 public class AnalysisModuleListStoreProvider implements Provider<ListStore<Analysis>> {
     private static class AnalysisModelKeyProvider implements ModelKeyProvider<Analysis> {
         @Override
@@ -18,6 +20,6 @@ public class AnalysisModuleListStoreProvider implements Provider<ListStore<Analy
 
     @Override
     public ListStore<Analysis> get() {
-        return new ListStore<Analysis>(new AnalysisModelKeyProvider());
+        return new ListStore<>(new AnalysisModelKeyProvider());
     }
 }
