@@ -77,7 +77,6 @@ public class AnalysisColumnModel extends ColumnModel<Analysis> implements Analys
         }, 75);
 
         name.setHeader(appearance.name());
-        name.setMenuDisabled(true);
         name.setCell(new AnalysisNameCell());
 
         comment.setMenuDisabled(true);
