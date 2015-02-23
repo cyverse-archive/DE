@@ -1,11 +1,8 @@
 package org.iplantc.de.analysis.client;
 
 import org.iplantc.de.analysis.client.events.HTAnalysisExpandEvent;
-import org.iplantc.de.analysis.client.events.SaveAnalysisParametersEvent;
 import org.iplantc.de.analysis.client.events.selection.AnalysisAppSelectedEvent;
 import org.iplantc.de.analysis.client.events.selection.AnalysisNameSelectedEvent;
-import org.iplantc.de.analysis.client.events.selection.AnalysisParamValueSelectedEvent;
-import org.iplantc.de.analysis.client.views.widget.AnalysisParamView;
 import org.iplantc.de.client.models.analysis.Analysis;
 
 import com.google.gwt.resources.client.ImageResource;
@@ -13,20 +10,15 @@ import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.user.client.ui.HasOneWidget;
 import com.google.gwt.user.client.ui.IsWidget;
 
-import com.sencha.gxt.widget.core.client.selection.SelectionChangedEvent;
-
 import java.util.List;
 
 /**
  * @author sriram, jstroot
  */
-public interface AnalysesView extends
-                             IsWidget,
-                             SelectionChangedEvent.HasSelectionChangedHandlers,
-                             AnalysisParamValueSelectedEvent.HasAnalysisParamValueSelectedEventHandlers,
-                             AnalysisAppSelectedEvent.HasAnalysisAppSelectedEventHandlers,
-                             AnalysisNameSelectedEvent.HasAnalysisNameSelectedEventHandlers,
-                             HTAnalysisExpandEvent.HasHTAnalysisExpandEventHandlers {
+public interface AnalysesView extends IsWidget,
+                                      AnalysisAppSelectedEvent.HasAnalysisAppSelectedEventHandlers,
+                                      AnalysisNameSelectedEvent.HasAnalysisNameSelectedEventHandlers,
+                                      HTAnalysisExpandEvent.HasHTAnalysisExpandEventHandlers {
 
     interface Appearance {
 
@@ -63,8 +55,6 @@ public interface AnalysesView extends
         String startDate();
 
         String status();
-
-        String viewParameters(String name);
 
         String goToOutputFolder();
 
@@ -113,11 +103,9 @@ public interface AnalysesView extends
         String warning();
     }
 
-    interface Presenter extends SaveAnalysisParametersEvent.SaveAnalysisParametersEventHandler {
+    interface Presenter {
 
         interface Appearance {
-
-            String analysesExecDeleteWarning();
 
             String analysesRetrievalFailure();
 
@@ -135,23 +123,7 @@ public interface AnalysesView extends
 
             String deleteAnalysisError();
 
-            String diskResourceDoesNotExist(String displayValue);
-
-            String fileUploadSuccess(String name);
-
-            String importFailed(String path);
-
-            String importRequestSubmit(String name);
-
-            String rename();
-
-            String renameAnalysis();
-
-            String savingFileMask();
-
             String stopAnalysisError(String name);
-
-            String warning();
         }
 
         void cancelSelectedAnalyses(List<Analysis> analysesToDelete);
@@ -172,14 +144,11 @@ public interface AnalysesView extends
 
         void renameSelectedAnalysis(Analysis selectedAnalysis, String newName);
 
-        void retrieveParameterData(Analysis analysis, AnalysisParamView apv);
-
         void setSelectedAnalyses(List<Analysis> selectedAnalyses);
 
         void setViewDebugId(String baseId);
 
         void updateAnalysisComment(Analysis value, String comment);
-
     }
 
     void filterByAnalysisId(String id, String name);
@@ -190,5 +159,4 @@ public interface AnalysesView extends
 
     void setSelectedAnalyses(List<Analysis> selectedAnalyses);
 
-    void viewParams();
 }

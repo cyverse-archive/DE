@@ -6,6 +6,9 @@ import com.google.gwt.event.shared.EventHandler;
 import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.event.shared.HandlerRegistration;
 
+/**
+ * @author jstroot
+ */
 public class AnalysisParamValueSelectedEvent extends GwtEvent<AnalysisParamValueSelectedEvent.AnalysisParamValueSelectedEventHandler> {
     public interface AnalysisParamValueSelectedEventHandler extends EventHandler {
         void onAnalysisParamValueSelected(AnalysisParamValueSelectedEvent event);
@@ -15,7 +18,7 @@ public class AnalysisParamValueSelectedEvent extends GwtEvent<AnalysisParamValue
         HandlerRegistration addAnalysisParamValueSelectedEventHandler(AnalysisParamValueSelectedEventHandler handler);
     }
 
-    public static final Type<AnalysisParamValueSelectedEventHandler> TYPE = new Type<AnalysisParamValueSelectedEventHandler>();
+    public static final Type<AnalysisParamValueSelectedEventHandler> TYPE = new Type<>();
     private final AnalysisParameter value;
 
     public AnalysisParamValueSelectedEvent(AnalysisParameter value){

@@ -4,9 +4,11 @@ import static org.iplantc.de.client.models.analysis.AnalysisExecutionStatus.*;
 import org.iplantc.de.analysis.client.AnalysesView;
 import org.iplantc.de.analysis.client.AnalysisToolBarView;
 import org.iplantc.de.analysis.client.views.dialogs.AnalysisCommentsDialog;
+import org.iplantc.de.analysis.client.views.dialogs.AnalysisParametersDialog;
 import org.iplantc.de.analysis.client.views.widget.AnalysisSearchField;
 import org.iplantc.de.analysis.shared.AnalysisModule;
 import org.iplantc.de.client.models.analysis.Analysis;
+import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.commons.client.validators.DiskResourceNameValidator;
 import org.iplantc.de.commons.client.views.dialogs.IPlantPromptDialog;
 
@@ -15,10 +17,13 @@ import com.google.common.base.Strings;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.logical.shared.SelectionEvent;
+import com.google.gwt.inject.client.AsyncProvider;
 import com.google.gwt.uibinder.client.UiBinder;
+import com.google.gwt.uibinder.client.UiFactory;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.uibinder.client.UiTemplate;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
@@ -59,25 +64,28 @@ public class AnalysesToolBarImpl extends Composite implements AnalysisToolBarVie
     @UiField TextButton editTb;
     @UiField TextButton refreshTb;
     @UiField TextButton showAllTb;
-    @UiField(provided = true) AnalysisSearchField searchField;
-    @UiField(provided = true) AnalysesView.Appearance appearance;
+    @UiField AnalysisSearchField searchField;
+    @UiField(provided = true) final AnalysesView.Appearance appearance;
+    @Inject AsyncProvider<AnalysisParametersDialog> analysisParametersDialogAsyncProvider;
 
-    private static AnalysesToolbarUiBinder uiBinder = GWT.create(AnalysesToolbarUiBinder.class);
     private List<Analysis> currentSelection;
-    private AnalysesView parent;
-    private AnalysesView.Presenter presenter;
+    private final AnalysesView.Presenter presenter;
+    private final PagingLoader<FilterPagingLoadConfig, PagingLoadResult<Analysis>> loader;
 
     @Inject
     AnalysesToolBarImpl(final AnalysesView.Appearance appearance,
                         @Assisted final AnalysesView.Presenter presenter,
-                        @Assisted final AnalysesView parent,
                         @Assisted PagingLoader<FilterPagingLoadConfig, PagingLoadResult<Analysis>> loader) {
         this.appearance = appearance;
         this.presenter = presenter;
-        this.parent = parent;
-         searchField = new AnalysisSearchField(loader);
-        searchField.setEmptyText(appearance.searchFieldEmptyText());
+        this.loader = loader;
+        AnalysesToolbarUiBinder uiBinder = GWT.create(AnalysesToolbarUiBinder.class);
         initWidget(uiBinder.createAndBindUi(this));
+    }
+
+    @UiFactory
+    AnalysisSearchField createSearchField() {
+        return new AnalysisSearchField(loader);
     }
 
     @Override
@@ -320,9 +328,18 @@ public class AnalysesToolBarImpl extends Composite implements AnalysisToolBarVie
     void onViewParamsSelected(SelectionEvent<Item> event) {
         Preconditions.checkNotNull(currentSelection);
         Preconditions.checkState(currentSelection.size() == 1);
-        // FIXME Move method to presenter
-        // FIXME move the async param dlg provider here.
-        parent.viewParams();
+
+        analysisParametersDialogAsyncProvider.get(new AsyncCallback<AnalysisParametersDialog>() {
+            @Override
+            public void onFailure(Throwable caught) {
+                ErrorHandler.post(caught);
+            }
+
+            @Override
+            public void onSuccess(AnalysisParametersDialog result) {
+                result.show(currentSelection.iterator().next());
+            }
+        });
     }
 
     @UiHandler("refreshTb")

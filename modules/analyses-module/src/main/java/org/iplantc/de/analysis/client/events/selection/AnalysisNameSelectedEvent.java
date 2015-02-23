@@ -28,7 +28,7 @@ public class AnalysisNameSelectedEvent extends GwtEvent<AnalysisNameSelectedEven
         this.value = value;
     }
 
-    public static final GwtEvent.Type<AnalysisNameSelectedEventHandler> TYPE = new GwtEvent.Type<AnalysisNameSelectedEventHandler>();
+    public static final GwtEvent.Type<AnalysisNameSelectedEventHandler> TYPE = new GwtEvent.Type<>();
 
     @Override
     public Type<AnalysisNameSelectedEventHandler> getAssociatedType() {

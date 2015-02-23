@@ -62,7 +62,7 @@ public class AnalysisAppNameCell extends AbstractCell<Analysis> {
 
             switch (Event.as(event).getTypeInt()) {
                 case Event.ONCLICK:
-                    doOnClick(eventTarget, value, valueUpdater);
+                    doOnClick(eventTarget, value);
                     break;
                 case Event.ONMOUSEOVER:
                     appearance.doOnMouseOver(eventTarget, value);
@@ -81,7 +81,7 @@ public class AnalysisAppNameCell extends AbstractCell<Analysis> {
         this.hasHandlers = hasHandlers;
     }
 
-    private void doOnClick(Element eventTarget, Analysis value, ValueUpdater<Analysis> valueUpdater) {
+    private void doOnClick(Element eventTarget, Analysis value) {
         if (eventTarget.getAttribute("name").equalsIgnoreCase(AnalysisAppNameCellAppearance.ELEMENT_NAME)
                 && !Strings.isNullOrEmpty(value.getResultFolderId()) && !value.isAppDisabled()) {
             if(hasHandlers != null){

@@ -89,7 +89,7 @@ public class GridViewPresenterImpl implements GridView.Presenter,
             shareLinkDialogProvider.get(new AsyncCallback<ShareResourceLinkDialog>() {
                 @Override
                 public void onFailure(Throwable caught) {
-
+                    ErrorHandler.post(caught);
                 }
 
                 @Override
@@ -162,11 +162,10 @@ public class GridViewPresenterImpl implements GridView.Presenter,
 
     @Override
     public void onDiskResourceNameSelected(DiskResourceNameSelectedEvent event) {
-
         if (!(event.getSelectedItem() instanceof File) || !filePreviewEnabled) {
             return;
         }
-        eventBus.fireEvent(new ShowFilePreviewEvent((File) event.getSelectedItem(), this));
+        eventBus.fireEvent(new ShowFilePreviewEvent((File) event.getSelectedItem(), null));
     }
 
     @Override
@@ -177,8 +176,6 @@ public class GridViewPresenterImpl implements GridView.Presenter,
 
     @Override
     public void onDiskResourceSelectionChanged(DiskResourceSelectionChangedEvent event) {
-        // Fetch details
-
         final List<DiskResource> selection = event.getSelection();
         if (selection.size() != 1) {
             // Only call get stat for single selections
@@ -195,7 +192,6 @@ public class GridViewPresenterImpl implements GridView.Presenter,
         infoTypeDialogProvider.get(new AsyncCallback<InfoTypeEditorDialog>() {
             @Override
             public void onFailure(Throwable caught) {
-
                 announcer.schedule(new ErrorAnnouncementConfig("AsyncProvider failed"));
             }
 
@@ -224,7 +220,6 @@ public class GridViewPresenterImpl implements GridView.Presenter,
                 @Override
                 public void onFailure(Throwable caught) {
                     ErrorHandler.post(appearance.markFavoriteError(), caught);
-
                 }
 
                 @Override
@@ -422,16 +417,15 @@ public class GridViewPresenterImpl implements GridView.Presenter,
         gridLoader.load();
     }
 
-    DiskResource updateDiskResource(DiskResource diskResource) {
+    void updateDiskResource(DiskResource diskResource) {
         Preconditions.checkNotNull(diskResource);
         final DiskResource modelWithKey = listStore.findModelWithKey(diskResource.getId());
         if (modelWithKey == null) {
-            return null;
+            return;
         }
 
         final DiskResource updated = diskResourceService.combineDiskResources(diskResource, modelWithKey);
         listStore.update(updated);
-        return updated;
     }
 
     private void fetchDetails(final DiskResource resource) {
@@ -448,10 +442,10 @@ public class GridViewPresenterImpl implements GridView.Presenter,
 
                                         @Override
                                         public void onSuccess(FastMap<DiskResource> drMap) {
-                                            /* FIXME Fire global event to update diskresource
-                                             * The toolbarview will need to listen
-                                             * The gridviewpresenter will need to listen
-                                             *    -- Fire another event from gridview
+                                            /* FIXME Fire global event to update diskResource
+                                             * The toolbarView will need to listen
+                                             * The gridViewPresenter will need to listen
+                                             *    -- Fire another event from gridView
                                              */
                                             final DiskResource diskResource = drMap.get(resource.getPath());
                                             Preconditions.checkNotNull(diskResource, "This object cannot be null at this point.");

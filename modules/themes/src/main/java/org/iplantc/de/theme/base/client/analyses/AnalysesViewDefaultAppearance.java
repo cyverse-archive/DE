@@ -130,11 +130,6 @@ public class AnalysesViewDefaultAppearance implements AnalysesView.Appearance {
     }
 
     @Override
-    public String viewParameters(String name) {
-        return analysesMessages.viewParameters(name);
-    }
-
-    @Override
     public String goToOutputFolder() {
         return analysesMessages.goToOutputFolder();
     }

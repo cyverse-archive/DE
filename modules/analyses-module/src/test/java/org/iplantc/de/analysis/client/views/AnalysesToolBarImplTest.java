@@ -15,7 +15,6 @@ import com.sencha.gxt.widget.core.client.selection.SelectionChangedEvent;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.*;
 import org.junit.Before;
 import org.junit.Test;
@@ -38,7 +37,6 @@ public class AnalysesToolBarImplTest {
     @Mock MenuItem updateCommentsMiMock;
     @Mock AnalysesView.Appearance appearanceMock;
     @Mock PagingLoader<FilterPagingLoadConfig, PagingLoadResult<Analysis>> loaderMock;
-    @Mock AnalysesView parentMock;
     @Mock AnalysesView.Presenter presenterMock;
 
     private AnalysesToolBarImpl uut;
@@ -46,7 +44,6 @@ public class AnalysesToolBarImplTest {
     @Before public void setUp() {
         uut = new AnalysesToolBarImpl(appearanceMock,
                                       presenterMock,
-                                      parentMock,
                                       loaderMock);
         mockMenuItems(uut);
     }
@@ -76,7 +73,7 @@ public class AnalysesToolBarImplTest {
 
 
     @Test public void testOnSelectionChanged_OneSelected_appEnabled() {
-        uut = new AnalysesToolBarImpl(appearanceMock, presenterMock, parentMock, loaderMock){
+        uut = new AnalysesToolBarImpl(appearanceMock, presenterMock, loaderMock){
             @Override
             boolean canCancelSelection(final List<Analysis> selection){
                 return true;
@@ -104,7 +101,7 @@ public class AnalysesToolBarImplTest {
     }
 
     @Test public void testOnSelectionChanged_OneSelected_appDisabled() {
-        uut = new AnalysesToolBarImpl(appearanceMock, presenterMock, parentMock, loaderMock){
+        uut = new AnalysesToolBarImpl(appearanceMock, presenterMock, loaderMock){
             @Override
             boolean canCancelSelection(final List<Analysis> selection){
                 return true;
@@ -132,7 +129,7 @@ public class AnalysesToolBarImplTest {
     }
 
     @Test public void testOnSelectionChanged_ManySelected() {
-        uut = new AnalysesToolBarImpl(appearanceMock, presenterMock, parentMock, loaderMock){
+        uut = new AnalysesToolBarImpl(appearanceMock, presenterMock, loaderMock){
             @Override
             boolean canCancelSelection(final List<Analysis> selection){
                 return true;

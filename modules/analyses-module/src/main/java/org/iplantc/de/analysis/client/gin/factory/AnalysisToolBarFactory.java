@@ -14,6 +14,5 @@ import com.sencha.gxt.data.shared.loader.PagingLoader;
  */
 public interface AnalysisToolBarFactory {
     AnalysisToolBarView create(AnalysesView.Presenter presenter,
-                                AnalysesView parent,
-                                PagingLoader<FilterPagingLoadConfig, PagingLoadResult<Analysis>> loader);
+                               PagingLoader<FilterPagingLoadConfig, PagingLoadResult<Analysis>> loader);
 }

@@ -1,39 +1,21 @@
 package org.iplantc.de.analysis.client.presenter;
 
-import static org.iplantc.de.client.models.apps.integration.ArgumentType.*;
 import org.iplantc.de.analysis.client.AnalysesView;
 import org.iplantc.de.analysis.client.events.HTAnalysisExpandEvent;
 import org.iplantc.de.analysis.client.events.OpenAppForRelaunchEvent;
-import org.iplantc.de.analysis.client.events.SaveAnalysisParametersEvent;
 import org.iplantc.de.analysis.client.events.selection.AnalysisAppSelectedEvent;
 import org.iplantc.de.analysis.client.events.selection.AnalysisNameSelectedEvent;
-import org.iplantc.de.analysis.client.events.selection.AnalysisParamValueSelectedEvent;
 import org.iplantc.de.analysis.client.gin.factory.AnalysesViewFactory;
 import org.iplantc.de.analysis.client.presenter.proxy.AnalysisRpcProxy;
-import org.iplantc.de.analysis.client.views.widget.AnalysisParamView;
 import org.iplantc.de.analysis.client.views.widget.AnalysisSearchField;
 import org.iplantc.de.client.events.EventBus;
-import org.iplantc.de.client.events.FileSavedEvent;
 import org.iplantc.de.client.events.diskResources.OpenFolderEvent;
-import org.iplantc.de.client.models.IsMaskable;
-import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.client.models.analysis.Analysis;
-import org.iplantc.de.client.models.analysis.AnalysisParameter;
-import org.iplantc.de.client.models.diskResources.DiskResource;
-import org.iplantc.de.client.models.diskResources.DiskResourceAutoBeanFactory;
-import org.iplantc.de.client.models.diskResources.File;
-import org.iplantc.de.client.models.diskResources.TYPE;
 import org.iplantc.de.client.services.AnalysisServiceFacade;
-import org.iplantc.de.client.services.DiskResourceServiceFacade;
-import org.iplantc.de.client.services.FileEditorServiceFacade;
-import org.iplantc.de.client.services.UserSessionServiceFacade;
-import org.iplantc.de.client.util.DiskResourceUtil;
-import org.iplantc.de.client.util.JsonUtil;
 import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.commons.client.info.ErrorAnnouncementConfig;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
 import org.iplantc.de.commons.client.info.SuccessAnnouncementConfig;
-import org.iplantc.de.diskResource.client.events.ShowFilePreviewEvent;
 
 import com.google.common.collect.Lists;
 import com.google.gwt.event.shared.HandlerRegistration;
@@ -43,12 +25,7 @@ import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HasOneWidget;
 import com.google.inject.Inject;
-import com.google.web.bindery.autobean.shared.AutoBeanCodex;
-import com.google.web.bindery.autobean.shared.AutoBeanUtils;
-import com.google.web.bindery.autobean.shared.Splittable;
-import com.google.web.bindery.autobean.shared.impl.StringQuoter;
 
-import com.sencha.gxt.core.shared.FastMap;
 import com.sencha.gxt.data.shared.ListStore;
 import com.sencha.gxt.data.shared.loader.FilterConfigBean;
 import com.sencha.gxt.data.shared.loader.FilterPagingLoadConfig;
@@ -68,50 +45,8 @@ import java.util.List;
  */
 public class AnalysesPresenterImpl implements AnalysesView.Presenter,
                                               AnalysisNameSelectedEvent.AnalysisNameSelectedEventHandler,
-                                              AnalysisParamValueSelectedEvent.AnalysisParamValueSelectedEventHandler,
                                               AnalysisAppSelectedEvent.AnalysisAppSelectedEventHandler,
                                               HTAnalysisExpandEvent.HTAnalysisExpandEventHandler {
-
-    private static class GetAnalysisParametersCallback implements AsyncCallback<List<AnalysisParameter>> {
-        private final AnalysisParamView apv;
-
-        public GetAnalysisParametersCallback(AnalysisParamView apv) {
-            this.apv = apv;
-        }
-
-        @Override
-        public void onFailure(Throwable caught) {
-            ErrorHandler.post(caught);
-            apv.unmask();
-        }
-
-        @Override
-        public void onSuccess(List<AnalysisParameter> result) {
-            apv.loadParameters(result);
-            apv.unmask();
-        }
-    }
-
-    private class AnalysisParamSelectedStatCallback implements AsyncCallback<FastMap<DiskResource>> {
-
-        private final AnalysisParameter value;
-
-        public AnalysisParamSelectedStatCallback(AnalysisParameter value) {
-            this.value = value;
-        }
-
-        @Override
-        public void onFailure(Throwable caught) {
-            final SafeHtml message = SafeHtmlUtils.fromTrustedString(appearance.diskResourceDoesNotExist(value.getDisplayValue()));
-            announcer.schedule(new ErrorAnnouncementConfig(message, true, 3000));
-        }
-
-        @Override
-        public void onSuccess(FastMap<DiskResource> result) {
-            eventBus.fireEvent(new ShowFilePreviewEvent((File)result.get(value.getDisplayValue()),
-                                                        AnalysesPresenterImpl.this));
-        }
-    }
 
     private final class CancelAnalysisServiceCallback implements AsyncCallback<String> {
         private final Analysis ae;
@@ -224,16 +159,8 @@ public class AnalysesPresenterImpl implements AnalysesView.Presenter,
         }
     }
 
-    // FIXME Use async provider
     @Inject AnalysisServiceFacade analysisService;
     @Inject IplantAnnouncer announcer;
-    @Inject DiskResourceServiceFacade diskResourceService;
-    @Inject FileEditorServiceFacade fileEditorService;
-    @Inject DiskResourceAutoBeanFactory drFactory;
-    @Inject UserSessionServiceFacade userSessionService;
-    @Inject UserInfo userInfo;
-    @Inject DiskResourceUtil diskResourceUtil;
-    @Inject JsonUtil jsonUtil;
     @Inject AnalysesView.Presenter.Appearance appearance;
     private final ListStore<Analysis> listStore;
 
@@ -257,7 +184,6 @@ public class AnalysesPresenterImpl implements AnalysesView.Presenter,
         this.view = viewFactory.create(listStore, loader, this);
 
         this.view.addAnalysisNameSelectedEventHandler(this);
-        this.view.addAnalysisParamValueSelectedEventHandler(this);
         this.view.addAnalysisAppSelectedEventHandler(this);
         this.view.addHTAnalysisExpandEventHandler(this);
     }
@@ -289,71 +215,6 @@ public class AnalysesPresenterImpl implements AnalysesView.Presenter,
     @Override
     public List<Analysis> getSelectedAnalyses() {
         return view.getSelectedAnalyses();
-    }
-
-    @Override
-    public void onRequestSaveAnalysisParameters(final SaveAnalysisParametersEvent event) {
-
-        final IsMaskable maskable = event.getMaskable();
-        maskable.mask(appearance.savingFileMask());
-        fileEditorService.uploadTextAsFile(event.getPath(),
-                                           event.getFileContents(),
-                                           true,
-                                           new AsyncCallback<File>() {
-
-                                               @Override
-                                               public void onFailure(Throwable caught) {
-
-                                               }
-
-                                               @Override
-                                               public void onSuccess(final File file) {
-                                                   eventBus.fireEvent(new FileSavedEvent(file));
-
-                                                   final Splittable annotatedFile = AutoBeanCodex.encode(AutoBeanUtils.getAutoBean(file));
-                                                   StringQuoter.create(diskResourceUtil.parseParent(file.getPath()))
-                                                               .assign(annotatedFile, "parentFolderId");
-                                                   StringQuoter.create(event.getPath())
-                                                               .assign(annotatedFile, "sourceUrl");
-
-                                                   final Splittable payload = StringQuoter.createSplittable();
-                                                   StringQuoter.create("file_uploaded").assign(payload,
-                                                                                               "action");
-                                                   annotatedFile.assign(payload, "data");
-
-                                                   final Splittable notificationMsg = StringQuoter.createSplittable();
-                                                   StringQuoter.create("data").assign(notificationMsg,
-                                                                                      "type");
-                                                   String subject = file.getName().isEmpty() ? appearance.importFailed(event.getPath())
-                                                                                            : appearance.fileUploadSuccess(file.getName());
-                                                   StringQuoter.create(subject).assign(notificationMsg,
-                                                                                       "subject");
-                                                   payload.assign(notificationMsg, "payload");
-                                                   StringQuoter.create(userInfo.getUsername())
-                                                               .assign(notificationMsg, "user");
-
-                                                   final String notificationMsgPayload = notificationMsg.getPayload();
-                                                   userSessionService.postClientNotification(jsonUtil.getObject(notificationMsgPayload),
-                                                                                             new AsyncCallback<String>() {
-                                                                                                 @Override
-                                                                                                 public void
-                                                                                                         onFailure(Throwable caught) {
-                                                                                                     event.getHideable()
-                                                                                                          .hide();
-                                                                                                     announcer.schedule(new ErrorAnnouncementConfig(caught.getMessage()));
-                                                                                                 }
-
-                                                                                                 @Override
-                                                                                                 public void
-                                                                                                         onSuccess(String result) {
-                                                                                                     event.getHideable()
-                                                                                                          .hide();
-                                                                                                     announcer.schedule(new SuccessAnnouncementConfig(appearance.importRequestSubmit(file.getName())));
-                                                                                                 }
-                                                                                             });
-                                               }
-                                           });
-
     }
 
     @Override
@@ -434,33 +295,6 @@ public class AnalysesPresenterImpl implements AnalysesView.Presenter,
     }
 
     @Override
-    public void onAnalysisParamValueSelected(AnalysisParamValueSelectedEvent event) {
-
-        final AnalysisParameter value = event.getValue();
-
-        if (!((Input.equals(value.getType())
-                   || FileInput.equals(value.getType())
-                   || FolderInput.equals(value.getType())
-                   || FileFolderInput.equals(value.getType())
-                   || MultiFileSelector.equals(value.getType())))) {
-            return;
-        }
-        String infoType = value.getInfoType();
-        if (infoType.equalsIgnoreCase("ReferenceGenome")
-                || infoType.equalsIgnoreCase("ReferenceSequence")
-                || infoType.equalsIgnoreCase("ReferenceAnnotation")) {
-            return;
-        }
-
-        final File hasPath = drFactory.file().as();
-        String path = value.getDisplayValue();
-        hasPath.setPath(path);
-        diskResourceService.getStat(diskResourceUtil.asStringPathTypeMap(Lists.newArrayList(hasPath),
-                                                                         TYPE.FILE),
-                                    new AnalysisParamSelectedStatCallback(value));
-    }
-
-    @Override
     public void relaunchSelectedAnalysis(final Analysis selectedAnalysis) {
         if (selectedAnalysis.isAppDisabled()) {
             return;
@@ -476,13 +310,6 @@ public class AnalysesPresenterImpl implements AnalysesView.Presenter,
                                        new RenameAnalysisCallback(selectedAnalysis,
                                                                   newName,
                                                                   listStore));
-    }
-
-    @Override
-    public void retrieveParameterData(final Analysis analysis,
-                                      final AnalysisParamView apv) {
-        apv.mask();
-        analysisService.getAnalysisParams(analysis, new GetAnalysisParametersCallback(apv));
     }
 
     @Override

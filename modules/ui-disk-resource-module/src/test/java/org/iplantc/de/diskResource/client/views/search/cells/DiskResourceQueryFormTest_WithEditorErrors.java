@@ -194,8 +194,8 @@ public class DiskResourceQueryFormTest_WithEditorErrors {
                         return item.getLabel();
                     }
                 };
-                createdWithinCombo = new SimpleComboBox<DateInterval>(dateIntervalLabelProvider);
-                modifiedWithinCombo = new SimpleComboBox<DateInterval>(dateIntervalLabelProvider);
+                createdWithinCombo = new SimpleComboBox<>(dateIntervalLabelProvider);
+                modifiedWithinCombo = new SimpleComboBox<>(dateIntervalLabelProvider);
                 createdWithinCombo.add(timeIntervals);
                 modifiedWithinCombo.add(timeIntervals);
 

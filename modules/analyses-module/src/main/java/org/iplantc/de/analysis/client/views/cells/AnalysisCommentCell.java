@@ -51,7 +51,7 @@ public class AnalysisCommentCell extends AbstractCell<Analysis> {
 
             switch (Event.as(event).getTypeInt()) {
                 case Event.ONCLICK:
-                    doOnClick(eventTarget, value, valueUpdater);
+                    doOnClick(value);
                     break;
                 default:
                     break;
@@ -63,7 +63,7 @@ public class AnalysisCommentCell extends AbstractCell<Analysis> {
         hasHandlers = handlerManager;
     }
 
-    private void doOnClick(Element eventTarget, Analysis value, ValueUpdater<Analysis> valueUpdater) {
+    private void doOnClick(Analysis value) {
 
         if(hasHandlers != null){
             hasHandlers.fireEvent(new AnalysisCommentSelectedEvent(value));

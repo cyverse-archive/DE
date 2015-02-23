@@ -5,6 +5,11 @@
         <when-type-is class="org.iplantc.de.analysis.client.AnalysesView.Appearance"/>
     </replace-with>
 
+    <!-- Parameters View-->
+    <replace-with class="org.iplantc.de.theme.base.client.analyses.AnalysisParametersViewDefaultAppearance">
+        <when-type-is class="org.iplantc.de.analysis.client.AnalysisParametersView.Appearance"/>
+    </replace-with>
+
     <!-- Cells -->
     <replace-with class="org.iplantc.de.theme.base.client.analyses.cells.AnalysisCommentCellDefaultAppearance">
         <when-type-is class="org.iplantc.de.analysis.client.views.cells.AnalysisCommentCell.AnalysisCommentCellAppearance"/>
@@ -19,11 +24,11 @@
     </replace-with>
 
     <replace-with class="org.iplantc.de.theme.base.client.analyses.cells.AnalysisParamNameCellDefaultAppearance">
-        <when-type-is class="org.iplantc.de.analysis.client.views.widget.cells.AnalysisParamNameCell.AnalysisParamNameCellAppearance"/>
+        <when-type-is class="org.iplantc.de.analysis.client.views.parameters.cells.AnalysisParamNameCell.AnalysisParamNameCellAppearance"/>
     </replace-with>
 
     <replace-with class="org.iplantc.de.theme.base.client.analyses.cells.AnalysisParamValueCellDefaultAppearance">
-        <when-type-is class="org.iplantc.de.analysis.client.views.widget.cells.AnalysisParamValueCell.AnalysisParamValueCellAppearance"/>
+        <when-type-is class="org.iplantc.de.analysis.client.views.parameters.cells.AnalysisParamValueCell.AnalysisParamValueCellAppearance"/>
     </replace-with>
 
     <replace-with class="org.iplantc.de.theme.base.client.analyses.presenter.AnalysesPresenterDefaultAppearance">

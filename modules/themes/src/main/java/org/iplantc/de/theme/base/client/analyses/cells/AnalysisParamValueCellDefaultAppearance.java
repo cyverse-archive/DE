@@ -1,6 +1,6 @@
 package org.iplantc.de.theme.base.client.analyses.cells;
 
-import org.iplantc.de.analysis.client.views.widget.cells.AnalysisParamValueCell;
+import org.iplantc.de.analysis.client.views.parameters.cells.AnalysisParamValueCell;
 import org.iplantc.de.client.models.analysis.AnalysisParameter;
 import org.iplantc.de.client.models.apps.integration.ArgumentType;
 
@@ -75,11 +75,10 @@ public class AnalysisParamValueCellDefaultAppearance implements AnalysisParamVal
 
     /**
      * FIXME The AnalysisParameter bean needs to use the enum instead of a string.
-     * 
-     * @param info_type
-     * @return
      */
     public boolean isValidInputType(String info_type) {
-        return !info_type.equalsIgnoreCase("ReferenceGenome") && !info_type.equalsIgnoreCase("ReferenceSequence") && !info_type.equalsIgnoreCase("ReferenceAnnotation");
+        return !info_type.equalsIgnoreCase("ReferenceGenome")
+                   && !info_type.equalsIgnoreCase("ReferenceSequence")
+                   && !info_type.equalsIgnoreCase("ReferenceAnnotation");
     }
 }

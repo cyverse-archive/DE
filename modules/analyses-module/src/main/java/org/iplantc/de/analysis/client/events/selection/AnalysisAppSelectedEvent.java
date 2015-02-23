@@ -21,7 +21,7 @@ public class AnalysisAppSelectedEvent extends GwtEvent<AnalysisAppSelectedEvent.
     }
 
     private final Analysis analysis;
-    public static final GwtEvent.Type<AnalysisAppSelectedEventHandler> TYPE = new GwtEvent.Type<AnalysisAppSelectedEventHandler>();
+    public static final GwtEvent.Type<AnalysisAppSelectedEventHandler> TYPE = new GwtEvent.Type<>();
     public AnalysisAppSelectedEvent(final Analysis analysis){
         this.analysis = analysis;
     }

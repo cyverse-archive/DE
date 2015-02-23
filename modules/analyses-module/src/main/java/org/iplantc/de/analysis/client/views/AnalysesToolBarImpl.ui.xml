@@ -77,7 +77,8 @@
                                enabled="false"/>
         </toolbar:child>
         <toolbar:child layoutData="{flexBoxData}">
-            <search:AnalysisSearchField ui:field="searchField" />
+            <search:AnalysisSearchField ui:field="searchField"
+                                        emptyText="{appearance.searchFieldEmptyText}"/>
         </toolbar:child>
     </toolbar:ToolBar>
 </ui:UiBinder>

@@ -1,10 +1,10 @@
-package org.iplantc.de.analysis.client.views.widget;
+package org.iplantc.de.analysis.client.views.parameters;
 
 import org.iplantc.de.analysis.client.AnalysesView;
 import org.iplantc.de.analysis.client.events.selection.AnalysisParamValueSelectedEvent;
 import org.iplantc.de.analysis.client.models.AnalysisParameterProperties;
-import org.iplantc.de.analysis.client.views.widget.cells.AnalysisParamNameCell;
-import org.iplantc.de.analysis.client.views.widget.cells.AnalysisParamValueCell;
+import org.iplantc.de.analysis.client.views.parameters.cells.AnalysisParamNameCell;
+import org.iplantc.de.analysis.client.views.parameters.cells.AnalysisParamValueCell;
 import org.iplantc.de.client.models.analysis.AnalysisParameter;
 import org.iplantc.de.client.models.apps.integration.ArgumentType;
 
