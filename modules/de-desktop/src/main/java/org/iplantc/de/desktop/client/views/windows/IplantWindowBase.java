@@ -4,7 +4,9 @@ import org.iplantc.de.client.models.WindowState;
 import org.iplantc.de.commons.client.views.window.configs.WindowConfig;
 import org.iplantc.de.desktop.shared.DeModule;
 
+import com.google.common.base.Strings;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.debug.client.DebugInfo;
 import com.google.gwt.event.dom.client.DoubleClickEvent;
 import com.google.gwt.event.dom.client.DoubleClickHandler;
 import com.google.gwt.event.logical.shared.SelectionEvent;
@@ -102,6 +104,7 @@ public abstract class IplantWindowBase extends Window implements IPlantWindowInt
     protected boolean minimized;
     ToolButton btnRestore;
     private final WindowStateFactory wsf = GWT.create(WindowStateFactory.class);
+    private String baseDebugID;
     private ToolButton btnClose;
     private ToolButton btnLayout;
     private ToolButton btnMaximize;
@@ -217,6 +220,7 @@ public abstract class IplantWindowBase extends Window implements IPlantWindowInt
     @Override
     protected void onEnsureDebugId(String baseID) {
         super.onEnsureDebugId(baseID);
+        this.baseDebugID = baseID;
 
         if(btnMaximize != null){
             btnMaximize.ensureDebugId(baseID + DeModule.Ids.WIN_MAX_BTN);
@@ -295,6 +299,7 @@ public abstract class IplantWindowBase extends Window implements IPlantWindowInt
     }
 
     private ToolButton createMaximizeButton() {
+
         final ToolButton maxBtn = new ToolButton(windowAppearance.maximizeBtnConfig());
         maxBtn.setToolTip(windowAppearance.maximizeBtnToolTip());
 
@@ -305,6 +310,10 @@ public abstract class IplantWindowBase extends Window implements IPlantWindowInt
             }
         });
 
+        if(DebugInfo.isDebugIdEnabled()
+            && !Strings.isNullOrEmpty(baseDebugID)){
+            maxBtn.ensureDebugId(baseDebugID + DeModule.Ids.WIN_MAX_BTN);
+        }
         return maxBtn;
     }
 
@@ -333,6 +342,10 @@ public abstract class IplantWindowBase extends Window implements IPlantWindowInt
             }
         });
 
+        if(DebugInfo.isDebugIdEnabled()
+            && !Strings.isNullOrEmpty(baseDebugID)){
+            btnRestore.ensureDebugId(baseDebugID + DeModule.Ids.WIN_RESTORE_BTN);
+        }
         return btnRestore;
     }
 
