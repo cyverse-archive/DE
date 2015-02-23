@@ -1453,12 +1453,9 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     String makePublicFail();
 
     /**
-     * Translated
-     * "Your app is now public. Please complete the <a href=\"{0}\" target=\"_blank\">documentation page</a>."
-     * .
-     *
-     * @return translated
-     *         "Your app is now public. Please complete the <a href=\"{0}\" target=\"_blank\">documentation page</a>."
+     * Translated "Your app is now public." .
+     * 
+     * @return translated "Your app is now public."
      */
     @DefaultMessage("Your app is now public.")
     @Key("makePublicSuccessMessage")

@@ -92,7 +92,11 @@ public class AppInfoView implements
             String renderHtml = render(docString);
             final String ref_link_html = buildRefLinkHtml(refLinks);
             docWidget = new HtmlLayoutContainer("");
-            setDocHtml(renderHtml + ref_link_html);
+            if (!Strings.isNullOrEmpty(ref_link_html)) {
+                setDocHtml(renderHtml + ref_link_html);
+            } else {
+                setDocHtml(renderHtml);
+            }
 
             if (UserInfo.getInstance().getEmail().equals(email)) {
                 editView = new AppDocEditView(app.getId(), docString, appUserService, new Command() {
@@ -100,7 +104,11 @@ public class AppInfoView implements
                     @Override
                     public void execute() {
                         docWidget.clear();
-                        docWidget.setHTML(render(editView.getDoc() + ref_link_html));
+                        if (!Strings.isNullOrEmpty(ref_link_html)) {
+                            setDocHtml(editView.getDoc() + ref_link_html);
+                        } else {
+                            setDocHtml(editView.getDoc());
+                        }
                     }
                 });
             }
