@@ -1,6 +1,6 @@
 package org.iplantc.de.desktop.client.views.windows;
 
-import org.iplantc.de.apps.client.views.AppsView;
+import org.iplantc.de.apps.client.AppsView;
 import org.iplantc.de.client.models.WindowState;
 import org.iplantc.de.client.models.pipelines.Pipeline;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;

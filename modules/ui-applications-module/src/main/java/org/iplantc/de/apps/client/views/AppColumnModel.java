@@ -1,9 +1,13 @@
 package org.iplantc.de.apps.client.views;
 
-import org.iplantc.de.apps.client.events.AppCommentSelectedEvent;
-import org.iplantc.de.apps.client.events.AppCommentSelectedEvent.AppCommentSelectedEventHandler;
-import org.iplantc.de.apps.client.events.AppCommentSelectedEvent.HasAppCommentSelectedEventHandlers;
-import org.iplantc.de.apps.client.events.AppNameSelectedEvent;
+import org.iplantc.de.apps.client.AppsView;
+import org.iplantc.de.apps.client.events.selection.AppCommentSelectedEvent;
+import org.iplantc.de.apps.client.events.selection.AppCommentSelectedEvent.AppCommentSelectedEventHandler;
+import org.iplantc.de.apps.client.events.selection.AppCommentSelectedEvent.HasAppCommentSelectedEventHandlers;
+import org.iplantc.de.apps.client.events.selection.AppFavoriteSelectedEvent;
+import org.iplantc.de.apps.client.events.selection.AppInfoSelectedEvent;
+import org.iplantc.de.apps.client.events.selection.AppNameSelectedEvent;
+import org.iplantc.de.apps.client.models.AppProperties;
 import org.iplantc.de.apps.client.views.cells.AppCommentCell;
 import org.iplantc.de.apps.client.views.cells.AppFavoriteCell;
 import org.iplantc.de.apps.client.views.cells.AppHyperlinkCell;
@@ -31,9 +35,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AppColumnModel extends ColumnModel<App> implements
-                                                    AppInfoCell.HasAppInfoClickedEventHandlers,
+                                                     AppInfoSelectedEvent.HasAppInfoSelectedEventHandlers,
                                                     AppNameSelectedEvent.HasAppNameSelectedEventHandlers,
-                                                    AppFavoriteCell.HasRequestAppFavoriteEventHandlers,
+                                                    AppFavoriteSelectedEvent.HasAppFavoriteSelectedEventHandlers,
                                                     HasAppCommentSelectedEventHandlers {
 
     public AppColumnModel(AppsView view, final IplantDisplayStrings displayStrings) {
@@ -119,20 +123,20 @@ public class AppColumnModel extends ColumnModel<App> implements
 
     @Override
     public HandlerRegistration
-            addAppInfoClickedEventHandler(AppInfoCell.AppInfoClickedEventHandler handler) {
-        return ensureHandlers().addHandler(AppInfoCell.APP_INFO_CLICKED_EVENT_HANDLER_TYPE, handler);
+    addAppInfoSelectedEventHandler(AppInfoSelectedEvent.AppInfoSelectedEventHandler handler) {
+        return ensureHandlers().addHandler(AppInfoSelectedEvent.TYPE, handler);
     }
 
     @Override
     public HandlerRegistration
             addAppNameSelectedEventHandler(AppNameSelectedEvent.AppNameSelectedEventHandler handler) {
-        return ensureHandlers().addHandler(AppHyperlinkCell.EVENT_TYPE, handler);
+        return ensureHandlers().addHandler(AppNameSelectedEvent.TYPE, handler);
     }
 
     @Override
     public HandlerRegistration
-            addRequestAppFavoriteEventHandlers(AppFavoriteCell.RequestAppFavoriteEventHandler handler) {
-        return ensureHandlers().addHandler(AppFavoriteCell.REQUEST_APP_FAV_EVNT_TYPE, handler);
+    addAppFavoriteSelectedEventHandlers(AppFavoriteSelectedEvent.AppFavoriteSelectedEventHandler handler) {
+        return ensureHandlers().addHandler(AppFavoriteSelectedEvent.TYPE, handler);
     }
 
     @Override

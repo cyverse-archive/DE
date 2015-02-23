@@ -2,7 +2,7 @@ package org.iplantc.de.apps.client.presenter;
 
 import org.iplantc.de.apps.client.events.AppPublishedEvent;
 import org.iplantc.de.apps.client.presenter.proxy.PublicAppCategoryProxy;
-import org.iplantc.de.apps.client.views.SubmitAppForPublicUseView;
+import org.iplantc.de.apps.client.SubmitAppForPublicUseView;
 import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.models.DEProperties;
 import org.iplantc.de.client.models.apps.App;

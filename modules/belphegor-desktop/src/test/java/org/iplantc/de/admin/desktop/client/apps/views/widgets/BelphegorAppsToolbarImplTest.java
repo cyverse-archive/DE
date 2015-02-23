@@ -1,7 +1,7 @@
 package org.iplantc.de.admin.desktop.client.apps.views.widgets;
 
-import org.iplantc.de.apps.client.events.AppCategorySelectionChangedEvent;
-import org.iplantc.de.apps.client.events.AppSelectionChangedEvent;
+import org.iplantc.de.apps.client.events.selection.AppCategorySelectionChangedEvent;
+import org.iplantc.de.apps.client.events.selection.AppSelectionChangedEvent;
 import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.models.apps.AppAutoBeanFactory;
 import org.iplantc.de.client.models.apps.AppCategory;

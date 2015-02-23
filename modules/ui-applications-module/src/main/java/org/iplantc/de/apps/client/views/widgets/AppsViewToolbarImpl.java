@@ -1,13 +1,13 @@
 package org.iplantc.de.apps.client.views.widgets;
 
 
-import static org.iplantc.de.apps.client.views.widgets.events.AppSearchResultLoadEvent.TYPE;
+import static org.iplantc.de.apps.client.events.AppSearchResultLoadEvent.TYPE;
 
-import org.iplantc.de.apps.client.events.AppCategorySelectionChangedEvent;
-import org.iplantc.de.apps.client.events.AppSelectionChangedEvent;
-import org.iplantc.de.apps.client.views.AppsView;
-import org.iplantc.de.apps.client.views.widgets.events.AppSearchResultLoadEvent.AppSearchResultLoadEventHandler;
-import org.iplantc.de.apps.client.views.widgets.events.AppSearchResultLoadEvent.HasAppSearchResultLoadEventHandlers;
+import org.iplantc.de.apps.client.events.selection.AppCategorySelectionChangedEvent;
+import org.iplantc.de.apps.client.events.selection.AppSelectionChangedEvent;
+import org.iplantc.de.apps.client.AppsView;
+import org.iplantc.de.apps.client.events.AppSearchResultLoadEvent.AppSearchResultLoadEventHandler;
+import org.iplantc.de.apps.client.events.AppSearchResultLoadEvent.HasAppSearchResultLoadEventHandlers;
 import org.iplantc.de.apps.client.views.widgets.proxy.AppSearchRpcProxy;
 import org.iplantc.de.apps.shared.AppsModule.Ids;
 import org.iplantc.de.client.models.IsMaskable;

@@ -1,5 +1,6 @@
 package org.iplantc.de.apps.client.views.cells;
 
+import org.iplantc.de.apps.client.events.selection.AppInfoSelectedEvent;
 import org.iplantc.de.apps.shared.AppsModule;
 import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.resources.client.IplantResources;
@@ -14,9 +15,6 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.debug.client.DebugInfo;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NativeEvent;
-import com.google.gwt.event.shared.EventHandler;
-import com.google.gwt.event.shared.GwtEvent;
-import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.event.shared.HasHandlers;
 import com.google.gwt.resources.client.ClientBundle;
 import com.google.gwt.resources.client.CssResource;
@@ -30,37 +28,6 @@ import com.google.gwt.user.client.Event;
  * FIXME Create appearance
  */
 public class AppInfoCell extends AbstractCell<App> {
-
-    public static final GwtEvent.Type<AppInfoClickedEventHandler> APP_INFO_CLICKED_EVENT_HANDLER_TYPE = new GwtEvent.Type<AppInfoClickedEventHandler>();
-    public class AppInfoClickedEvent extends GwtEvent<AppInfoClickedEventHandler> {
-
-        private final App app;
-
-        public AppInfoClickedEvent(App app) {
-            this.app = app;
-        }
-
-        public App getApp() {
-            return app;
-        }
-
-        @Override
-        public Type<AppInfoClickedEventHandler> getAssociatedType() {
-            return APP_INFO_CLICKED_EVENT_HANDLER_TYPE;
-        }
-
-        @Override
-        protected void dispatch(AppInfoClickedEventHandler handler) {
-            handler.onAppInfoClicked(this);
-        }
-    }
-
-    public interface AppInfoClickedEventHandler extends EventHandler {
-        void onAppInfoClicked(AppInfoClickedEvent event);
-    }
-    public interface HasAppInfoClickedEventHandlers {
-        HandlerRegistration addAppInfoClickedEventHandler(AppInfoClickedEventHandler handler);
-    }
 
     interface MyCss extends CssResource {
         @ClassName("app_info")
@@ -134,7 +101,7 @@ public class AppInfoCell extends AbstractCell<App> {
 
     private void doOnClick(Element eventTarget, App value) {
         if(hasHandlers != null){
-            hasHandlers.fireEvent(new AppInfoClickedEvent(value));
+            hasHandlers.fireEvent(new AppInfoSelectedEvent(value));
         }
     }
 

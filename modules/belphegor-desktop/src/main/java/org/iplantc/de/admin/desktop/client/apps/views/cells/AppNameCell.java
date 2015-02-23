@@ -1,6 +1,6 @@
 package org.iplantc.de.admin.desktop.client.apps.views.cells;
 
-import org.iplantc.de.apps.client.views.AppsView;
+import org.iplantc.de.apps.client.AppsView;
 import org.iplantc.de.apps.client.views.cells.AppHyperlinkCell;
 import org.iplantc.de.client.models.apps.App;
 

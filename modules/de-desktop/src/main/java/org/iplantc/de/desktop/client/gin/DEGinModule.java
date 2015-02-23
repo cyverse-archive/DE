@@ -1,6 +1,6 @@
 package org.iplantc.de.desktop.client.gin;
 
-import org.iplantc.de.apps.client.views.AppsView;
+import org.iplantc.de.apps.client.AppsView;
 import org.iplantc.de.apps.client.views.AppsViewImpl;
 import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.gin.ServicesInjector;

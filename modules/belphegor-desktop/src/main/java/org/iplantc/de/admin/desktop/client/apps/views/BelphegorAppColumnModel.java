@@ -2,10 +2,9 @@ package org.iplantc.de.admin.desktop.client.apps.views;
 
 import org.iplantc.de.admin.desktop.client.apps.views.cells.AppNameCell;
 import org.iplantc.de.admin.desktop.client.apps.views.cells.AvgAppRatingCell;
-import org.iplantc.de.apps.client.events.AppNameSelectedEvent;
-import org.iplantc.de.apps.client.views.AppProperties;
-import org.iplantc.de.apps.client.views.AppsView;
-import org.iplantc.de.apps.client.views.cells.AppHyperlinkCell;
+import org.iplantc.de.apps.client.events.selection.AppNameSelectedEvent;
+import org.iplantc.de.apps.client.models.AppProperties;
+import org.iplantc.de.apps.client.AppsView;
 import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.models.apps.AppFeedback;
 import org.iplantc.de.client.models.apps.AppNameComparator;
@@ -86,6 +85,6 @@ public class BelphegorAppColumnModel extends ColumnModel<App> implements AppName
 
     @Override
     public HandlerRegistration addAppNameSelectedEventHandler(AppNameSelectedEvent.AppNameSelectedEventHandler handler) {
-        return ensureHandlers().addHandler(AppHyperlinkCell.EVENT_TYPE, handler);
+        return ensureHandlers().addHandler(AppNameSelectedEvent.TYPE, handler);
     }
 }

@@ -1,6 +1,6 @@
 package org.iplantc.de.apps.client.views.widgets.proxy;
 
-import org.iplantc.de.apps.client.views.widgets.events.AppSearchResultLoadEvent;
+import org.iplantc.de.apps.client.events.AppSearchResultLoadEvent;
 import org.iplantc.de.client.models.IsMaskable;
 import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.models.apps.AppAutoBeanFactory;

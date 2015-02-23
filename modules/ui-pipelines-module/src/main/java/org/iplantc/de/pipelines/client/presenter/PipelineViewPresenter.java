@@ -2,7 +2,7 @@ package org.iplantc.de.pipelines.client.presenter;
 
 import org.iplantc.de.apps.client.events.AppCategoryCountUpdateEvent;
 import org.iplantc.de.apps.client.events.AppUpdatedEvent;
-import org.iplantc.de.apps.client.views.AppsView;
+import org.iplantc.de.apps.client.AppsView;
 import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.gin.ServicesInjector;
 import org.iplantc.de.client.models.apps.App;

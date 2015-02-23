@@ -64,13 +64,4 @@ public class AppCommentCellDefaultAppearance implements AppCommentCellAppearance
         return displayStrings.comments();
     }
 
-    @Override
-    public String commentsDialogHeight() {
-        return "450px";
-    }
-
-    @Override
-    public String commentsDialogWidth() {
-        return "600px";
-    }
 }

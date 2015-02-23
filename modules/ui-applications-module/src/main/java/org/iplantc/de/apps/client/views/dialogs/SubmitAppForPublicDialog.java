@@ -4,7 +4,7 @@
 package org.iplantc.de.apps.client.views.dialogs;
 
 import org.iplantc.de.apps.client.events.AppCategoryCountUpdateEvent;
-import org.iplantc.de.apps.client.views.SubmitAppForPublicUseView;
+import org.iplantc.de.apps.client.SubmitAppForPublicUseView;
 import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.util.JsonUtil;

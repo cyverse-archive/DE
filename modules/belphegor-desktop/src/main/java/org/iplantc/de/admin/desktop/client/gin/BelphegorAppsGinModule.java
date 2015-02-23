@@ -25,7 +25,7 @@ import org.iplantc.de.admin.desktop.client.toolRequest.service.impl.ToolRequestS
 import org.iplantc.de.admin.desktop.client.toolRequest.view.ToolRequestViewImpl;
 import org.iplantc.de.admin.desktop.client.views.BelphegorView;
 import org.iplantc.de.admin.desktop.client.views.BelphegorViewImpl;
-import org.iplantc.de.apps.client.views.AppsView;
+import org.iplantc.de.apps.client.AppsView;
 import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.gin.ServicesInjector;
 import org.iplantc.de.client.models.DEProperties;
@@ -35,7 +35,6 @@ import org.iplantc.de.client.services.AppServiceFacade;
 import org.iplantc.de.client.services.AppUserServiceFacade;
 import org.iplantc.de.client.services.DiskResourceServiceFacade;
 import org.iplantc.de.client.services.FileSystemMetadataServiceFacade;
-import org.iplantc.de.client.services.MetadataServiceFacade;
 import org.iplantc.de.client.services.SearchServiceFacade;
 import org.iplantc.de.client.services.TagsServiceFacade;
 import org.iplantc.de.shared.services.DiscEnvApiService;

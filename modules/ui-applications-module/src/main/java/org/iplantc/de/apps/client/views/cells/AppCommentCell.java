@@ -1,6 +1,6 @@
 package org.iplantc.de.apps.client.views.cells;
 
-import org.iplantc.de.apps.client.events.AppCommentSelectedEvent;
+import org.iplantc.de.apps.client.events.selection.AppCommentSelectedEvent;
 import org.iplantc.de.client.models.apps.App;
 
 import static com.google.gwt.dom.client.BrowserEvents.CLICK;
@@ -17,16 +17,15 @@ import com.google.gwt.event.shared.HasHandlers;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.client.Event;
 
+/**
+ * @author jstroot
+ */
 public class AppCommentCell extends AbstractCell<App> {
 
     public interface AppCommentCellAppearance {
         void render(Context context, App value, SafeHtmlBuilder sb);
 
         String comments();
-
-        String commentsDialogHeight();
-
-        String commentsDialogWidth();
     }
 
     private final AppCommentCellAppearance appearance;

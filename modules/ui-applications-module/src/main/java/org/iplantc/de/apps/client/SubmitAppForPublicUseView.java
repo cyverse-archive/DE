@@ -1,4 +1,4 @@
-package org.iplantc.de.apps.client.views;
+package org.iplantc.de.apps.client;
 
 import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.models.apps.AppCategory;

@@ -1,8 +1,8 @@
 package org.iplantc.de.admin.desktop.client.apps.views;
 
-import org.iplantc.de.apps.client.events.AppCategorySelectionChangedEvent;
-import org.iplantc.de.apps.client.events.AppSelectionChangedEvent.HasAppSelectionChangedEventHandlers;
-import org.iplantc.de.apps.client.views.AppsView;
+import org.iplantc.de.apps.client.events.selection.AppCategorySelectionChangedEvent;
+import org.iplantc.de.apps.client.events.selection.AppSelectionChangedEvent.HasAppSelectionChangedEventHandlers;
+import org.iplantc.de.apps.client.AppsView;
 import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.models.apps.AppCategory;
 

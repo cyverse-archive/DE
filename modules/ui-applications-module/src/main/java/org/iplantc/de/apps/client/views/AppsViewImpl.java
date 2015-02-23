@@ -1,11 +1,12 @@
 package org.iplantc.de.apps.client.views;
 
-import org.iplantc.de.apps.client.events.AppCategorySelectionChangedEvent;
+import org.iplantc.de.apps.client.AppsView;
+import org.iplantc.de.apps.client.events.selection.AppCategorySelectionChangedEvent;
 import org.iplantc.de.apps.client.events.AppFavoritedEvent;
-import org.iplantc.de.apps.client.events.AppSelectionChangedEvent;
-import org.iplantc.de.apps.client.views.cells.AppFavoriteCell;
-import org.iplantc.de.apps.client.views.cells.AppInfoCell;
-import org.iplantc.de.apps.client.views.widgets.events.AppSearchResultLoadEvent;
+import org.iplantc.de.apps.client.events.selection.AppFavoriteSelectedEvent;
+import org.iplantc.de.apps.client.events.selection.AppInfoSelectedEvent;
+import org.iplantc.de.apps.client.events.selection.AppSelectionChangedEvent;
+import org.iplantc.de.apps.client.events.AppSearchResultLoadEvent;
 import org.iplantc.de.apps.shared.AppsModule.Ids;
 import org.iplantc.de.client.models.DEProperties;
 import org.iplantc.de.client.models.IsMaskable;
@@ -72,9 +73,9 @@ public class AppsViewImpl extends Composite implements AppsView,
                                                        IsMaskable,
                                                        AppCategorySelectionChangedEvent.HasAppCategorySelectionChangedEventHandlers,
                                                        AppSelectionChangedEvent.HasAppSelectionChangedEventHandlers,
-                                                       AppInfoCell.AppInfoClickedEventHandler,
+                                                       AppInfoSelectedEvent.AppInfoSelectedEventHandler,
                                                        AppFavoritedEvent.HasAppFavoritedEventHandlers,
-                                                       AppFavoriteCell.RequestAppFavoriteEventHandler {
+                                                       AppFavoriteSelectedEvent.AppFavoriteSelectedEventHandler {
     private static String WEST_COLLAPSE_BTN_ID = "idCategoryCollapseBtn"; //$NON-NLS-1$
     private static MyUiBinder uiBinder = GWT.create(MyUiBinder.class);
 
@@ -170,8 +171,8 @@ public class AppsViewImpl extends Composite implements AppsView,
     }
 
     @Override
-    public void onAppFavoriteRequest(AppFavoriteCell.RequestAppFavoriteEvent event) {
-        presenter.onAppFavoriteRequest(event);
+    public void onAppFavoriteSelected(AppFavoriteSelectedEvent event) {
+        presenter.onAppFavoriteSelected(event);
     }
 
     @UiFactory
@@ -217,7 +218,7 @@ public class AppsViewImpl extends Composite implements AppsView,
     }
 
     @Override
-    public void onAppInfoClicked(AppInfoCell.AppInfoClickedEvent event) {
+    public void onAppInfoSelected(AppInfoSelectedEvent event) {
         final App selectedApp = grid.getSelectionModel().getSelectedItem();
         Dialog appInfoWin = new Dialog();
         appInfoWin.setModal(true);
@@ -226,7 +227,7 @@ public class AppsViewImpl extends Composite implements AppsView,
         appInfoWin.setPixelSize(450, 300);
         // Get app favorite requests
         final AppInfoView appInfoView = new AppInfoView(selectedApp, this, appUserService);
-        appInfoView.addRequestAppFavoriteEventHandlers(this);
+        appInfoView.addAppFavoriteSelectedEventHandlers(this);
         addAppFavoritedEventHandler(appInfoView);
         appInfoWin.add(appInfoView);
         appInfoWin.getButtonBar().clear();
@@ -324,9 +325,9 @@ public class AppsViewImpl extends Composite implements AppsView,
     public void setPresenter(Presenter presenter) {
         this.presenter = presenter;
         AppColumnModel appColModel = (AppColumnModel)cm;
-        appColModel.addAppInfoClickedEventHandler(this);
+        appColModel.addAppInfoSelectedEventHandler(this);
         appColModel.addAppNameSelectedEventHandler(presenter);
-        appColModel.addRequestAppFavoriteEventHandlers(this);
+        appColModel.addAppFavoriteSelectedEventHandlers(this);
         appColModel.addAppCommentSelectedEventHandlers(presenter);
         addAppCategorySelectedEventHandler(presenter);
         this.toolbar.init(presenter, this, this, this);

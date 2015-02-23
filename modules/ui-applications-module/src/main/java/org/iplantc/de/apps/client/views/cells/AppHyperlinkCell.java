@@ -1,7 +1,7 @@
 package org.iplantc.de.apps.client.views.cells;
 
-import org.iplantc.de.apps.client.events.AppNameSelectedEvent;
-import org.iplantc.de.apps.client.views.AppsView;
+import org.iplantc.de.apps.client.AppsView;
+import org.iplantc.de.apps.client.events.selection.AppNameSelectedEvent;
 import org.iplantc.de.apps.shared.AppsModule;
 import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.resources.client.messages.I18N;
@@ -17,7 +17,6 @@ import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.dom.client.Node;
 import com.google.gwt.dom.client.Style.TextDecoration;
-import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.event.shared.HasHandlers;
 import com.google.gwt.resources.client.ClientBundle;
 import com.google.gwt.resources.client.CssResource;
@@ -36,8 +35,6 @@ import com.google.gwt.user.client.Event;
  * 
  */
 public class AppHyperlinkCell extends AbstractCell<App> {
-
-    public static GwtEvent.Type<AppNameSelectedEvent.AppNameSelectedEventHandler> EVENT_TYPE = new GwtEvent.Type<AppNameSelectedEvent.AppNameSelectedEventHandler>();
 
     public interface MyCss extends CssResource {
         String appName();

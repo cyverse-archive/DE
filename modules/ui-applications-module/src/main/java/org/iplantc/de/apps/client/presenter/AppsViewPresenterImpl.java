@@ -1,12 +1,15 @@
 package org.iplantc.de.apps.client.presenter;
 
 import org.iplantc.de.apps.client.events.*;
+import org.iplantc.de.apps.client.events.selection.AppCategorySelectionChangedEvent;
+import org.iplantc.de.apps.client.events.selection.AppCommentSelectedEvent;
+import org.iplantc.de.apps.client.events.selection.AppFavoriteSelectedEvent;
+import org.iplantc.de.apps.client.events.selection.AppNameSelectedEvent;
 import org.iplantc.de.apps.client.presenter.proxy.AppCategoryProxy;
-import org.iplantc.de.apps.client.views.AppsView;
-import org.iplantc.de.apps.client.views.SubmitAppForPublicUseView;
-import org.iplantc.de.apps.client.views.cells.AppFavoriteCell;
+import org.iplantc.de.apps.client.AppsView;
+import org.iplantc.de.apps.client.SubmitAppForPublicUseView;
 import org.iplantc.de.apps.client.views.dialogs.SubmitAppForPublicDialog;
-import org.iplantc.de.apps.client.views.widgets.events.AppSearchResultLoadEvent;
+import org.iplantc.de.apps.client.events.AppSearchResultLoadEvent;
 import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.models.DEProperties;
 import org.iplantc.de.client.models.HasId;
@@ -144,7 +147,7 @@ public class AppsViewPresenterImpl implements AppsView.Presenter {
     }
 
     @Override
-    public void onAppFavoriteRequest(final AppFavoriteCell.RequestAppFavoriteEvent event) {
+    public void onAppFavoriteSelected(final AppFavoriteSelectedEvent event) {
         final App app = event.getApp();
         appUserService.favoriteApp(userInfo.getWorkspaceId(), app.getId(), !app.isFavorite(), new AsyncCallback<String>() {
             @Override

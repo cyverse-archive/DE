@@ -1,7 +1,7 @@
 package org.iplantc.de.admin.desktop.client.apps.views;
 
 import org.iplantc.de.admin.desktop.client.services.impl.AppAdminUserServiceFacade;
-import org.iplantc.de.apps.client.events.AppSelectionChangedEvent;
+import org.iplantc.de.apps.client.events.selection.AppSelectionChangedEvent;
 import org.iplantc.de.apps.client.views.AppsViewImpl;
 import org.iplantc.de.client.models.DEProperties;
 import org.iplantc.de.client.models.UserInfo;

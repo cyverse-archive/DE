@@ -12,10 +12,10 @@ import org.iplantc.de.admin.desktop.client.services.callbacks.AdminServiceCallba
 import org.iplantc.de.admin.desktop.client.services.model.AppAdminServiceRequestAutoBeanFactory;
 import org.iplantc.de.admin.desktop.client.services.model.AppCategorizeRequest;
 import org.iplantc.de.admin.desktop.client.services.model.AppCategorizeRequest.CategoryRequest;
-import org.iplantc.de.apps.client.events.AppNameSelectedEvent;
+import org.iplantc.de.apps.client.events.selection.AppNameSelectedEvent;
 import org.iplantc.de.apps.client.presenter.AppsViewPresenterImpl;
 import org.iplantc.de.apps.client.presenter.proxy.AppCategoryProxy;
-import org.iplantc.de.apps.client.views.AppsView;
+import org.iplantc.de.apps.client.AppsView;
 import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.models.DEProperties;
 import org.iplantc.de.client.models.HasId;

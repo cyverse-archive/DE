@@ -1,13 +1,13 @@
-package org.iplantc.de.apps.client.views;
+package org.iplantc.de.apps.client;
 
-import org.iplantc.de.apps.client.events.AppCategorySelectionChangedEvent;
-import org.iplantc.de.apps.client.events.AppCommentSelectedEvent.AppCommentSelectedEventHandler;
+import org.iplantc.de.apps.client.events.selection.AppCategorySelectionChangedEvent;
+import org.iplantc.de.apps.client.events.selection.AppCommentSelectedEvent.AppCommentSelectedEventHandler;
 import org.iplantc.de.apps.client.events.AppFavoritedEvent;
-import org.iplantc.de.apps.client.events.AppNameSelectedEvent;
-import org.iplantc.de.apps.client.events.AppSelectionChangedEvent.AppSelectionChangedEventHandler;
-import org.iplantc.de.apps.client.events.AppSelectionChangedEvent.HasAppSelectionChangedEventHandlers;
-import org.iplantc.de.apps.client.views.cells.AppFavoriteCell;
-import org.iplantc.de.apps.client.views.widgets.events.AppSearchResultLoadEvent.AppSearchResultLoadEventHandler;
+import org.iplantc.de.apps.client.events.selection.AppFavoriteSelectedEvent;
+import org.iplantc.de.apps.client.events.selection.AppNameSelectedEvent;
+import org.iplantc.de.apps.client.events.selection.AppSelectionChangedEvent.AppSelectionChangedEventHandler;
+import org.iplantc.de.apps.client.events.selection.AppSelectionChangedEvent.HasAppSelectionChangedEventHandlers;
+import org.iplantc.de.apps.client.events.AppSearchResultLoadEvent.AppSearchResultLoadEventHandler;
 import org.iplantc.de.client.models.HasId;
 import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.models.apps.AppCategory;
@@ -28,7 +28,7 @@ public interface AppsView extends IsWidget,
                                        AppNameSelectedEvent.AppNameSelectedEventHandler,
                                        AppSearchResultLoadEventHandler,
                                        AppCategorySelectionChangedEvent.AppCategorySelectionChangedEventHandler,
-                                       AppFavoriteCell.RequestAppFavoriteEventHandler,
+                                       AppFavoriteSelectedEvent.AppFavoriteSelectedEventHandler,
                                        AppCommentSelectedEventHandler {
 
         void copySelectedApp();

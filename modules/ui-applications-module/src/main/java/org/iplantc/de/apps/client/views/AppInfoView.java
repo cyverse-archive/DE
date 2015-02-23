@@ -1,7 +1,8 @@
 package org.iplantc.de.apps.client.views;
 
+import org.iplantc.de.apps.client.AppsView;
 import org.iplantc.de.apps.client.events.AppFavoritedEvent;
-import org.iplantc.de.apps.client.views.cells.AppFavoriteCell;
+import org.iplantc.de.apps.client.events.selection.AppFavoriteSelectedEvent;
 import org.iplantc.de.apps.client.views.widgets.AppFavoriteCellWidget;
 import org.iplantc.de.apps.client.views.widgets.AppRatingCellWidget;
 import org.iplantc.de.client.models.UserInfo;
@@ -54,8 +55,8 @@ import java.util.List;
 
 public class AppInfoView implements
                         IsWidget,
-                        AppFavoriteCell.RequestAppFavoriteEventHandler,
-                        AppFavoriteCell.HasRequestAppFavoriteEventHandlers,
+                        AppFavoriteSelectedEvent.AppFavoriteSelectedEventHandler,
+                        AppFavoriteSelectedEvent.HasAppFavoriteSelectedEventHandlers,
                         AppFavoritedEvent.AppFavoritedEventHandler {
 
     private static final String DIV_CLOSE = "</div>";
@@ -190,7 +191,7 @@ public class AppInfoView implements
 
         BINDER.createAndBindUi(this);
         favIcon.setValue(this.app);
-        favIcon.addRequestAppFavoriteEventHandlers(this);
+        favIcon.addAppFavoriteSelectedEventHandlers(this);
         initDetailsPnl();
         initDCPanel();
         loadDCinfo();
@@ -200,12 +201,12 @@ public class AppInfoView implements
 
     @Override
     public HandlerRegistration
-            addRequestAppFavoriteEventHandlers(AppFavoriteCell.RequestAppFavoriteEventHandler handler) {
-        return asWidget().addHandler(handler, AppFavoriteCell.REQUEST_APP_FAV_EVNT_TYPE);
+    addAppFavoriteSelectedEventHandlers(AppFavoriteSelectedEvent.AppFavoriteSelectedEventHandler handler) {
+        return asWidget().addHandler(handler, AppFavoriteSelectedEvent.TYPE);
     }
 
     @Override
-    public void onAppFavoriteRequest(AppFavoriteCell.RequestAppFavoriteEvent event) {
+    public void onAppFavoriteSelected(AppFavoriteSelectedEvent event) {
         // Forward event
         asWidget().fireEvent(event);
     }

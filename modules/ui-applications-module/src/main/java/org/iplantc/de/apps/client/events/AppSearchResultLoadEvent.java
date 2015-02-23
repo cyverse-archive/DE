@@ -1,4 +1,4 @@
-package org.iplantc.de.apps.client.views.widgets.events;
+package org.iplantc.de.apps.client.events;
 
 import org.iplantc.de.client.models.apps.App;
 

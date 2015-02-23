@@ -1,5 +1,6 @@
 package org.iplantc.de.apps.client.views.cells;
 
+import org.iplantc.de.apps.client.events.selection.AppFavoriteSelectedEvent;
 import org.iplantc.de.apps.shared.AppsModule;
 import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.resources.client.FavoriteCellStyle;
@@ -16,9 +17,6 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.debug.client.DebugInfo;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NativeEvent;
-import com.google.gwt.event.shared.EventHandler;
-import com.google.gwt.event.shared.GwtEvent;
-import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.event.shared.HasHandlers;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.client.Event;
@@ -29,37 +27,6 @@ import com.google.gwt.user.client.Event;
  * 
  */
 public class AppFavoriteCell extends AbstractCell<App> {
-
-    public static final GwtEvent.Type<RequestAppFavoriteEventHandler> REQUEST_APP_FAV_EVNT_TYPE = new GwtEvent.Type<>();
-    public class RequestAppFavoriteEvent extends GwtEvent<RequestAppFavoriteEventHandler> {
-
-        private final App app;
-
-        public RequestAppFavoriteEvent(App app) {
-            this.app = app;
-        }
-
-        public App getApp() {
-            return app;
-        }
-
-        @Override
-        public Type<RequestAppFavoriteEventHandler> getAssociatedType() {
-            return REQUEST_APP_FAV_EVNT_TYPE;
-        }
-
-        @Override
-        protected void dispatch(RequestAppFavoriteEventHandler handler) {
-            handler.onAppFavoriteRequest(this);
-        }
-    }
-
-    public interface RequestAppFavoriteEventHandler extends EventHandler {
-        void onAppFavoriteRequest(RequestAppFavoriteEvent event);
-    }
-    public static interface HasRequestAppFavoriteEventHandlers {
-        HandlerRegistration addRequestAppFavoriteEventHandlers(RequestAppFavoriteEventHandler handler);
-    }
 
     final FavoriteTemplates templates = GWT.create(FavoriteTemplates.class);
     final FavoriteCellStyle css = IplantResources.RESOURCES.favoriteCss();
@@ -115,7 +82,7 @@ public class AppFavoriteCell extends AbstractCell<App> {
             switch (Event.as(event).getTypeInt()) {
                 case Event.ONCLICK:
                     if (hasHandlers != null) {
-                        hasHandlers.fireEvent(new RequestAppFavoriteEvent(value));
+                        hasHandlers.fireEvent(new AppFavoriteSelectedEvent(value));
                     }
                     break;
                 default:

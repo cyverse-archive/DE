@@ -1,12 +1,14 @@
-package org.iplantc.de.apps.client.events;
+package org.iplantc.de.apps.client.events.selection;
 
-import org.iplantc.de.apps.client.views.cells.AppHyperlinkCell;
 import org.iplantc.de.client.models.apps.App;
 
 import com.google.gwt.event.shared.EventHandler;
 import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.event.shared.HandlerRegistration;
 
+/**
+ * @author jstroot
+ */
 public class AppNameSelectedEvent extends GwtEvent<AppNameSelectedEvent.AppNameSelectedEventHandler> {
 
     public interface AppNameSelectedEventHandler extends EventHandler {
@@ -17,6 +19,8 @@ public class AppNameSelectedEvent extends GwtEvent<AppNameSelectedEvent.AppNameS
         HandlerRegistration addAppNameSelectedEventHandler(AppNameSelectedEventHandler handler);
     }
 
+    public static Type<AppNameSelectedEventHandler> TYPE = new Type<>();
+
     private final App selectedApp;
 
     public AppNameSelectedEvent(App selectedApp) {
@@ -25,7 +29,7 @@ public class AppNameSelectedEvent extends GwtEvent<AppNameSelectedEvent.AppNameS
 
     @Override
     public Type<AppNameSelectedEventHandler> getAssociatedType() {
-        return AppHyperlinkCell.EVENT_TYPE;
+        return TYPE;
     }
 
     public App getSelectedApp() {

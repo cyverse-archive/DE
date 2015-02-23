@@ -1,5 +1,6 @@
 package org.iplantc.de.apps.client.views;
 
+import org.iplantc.de.apps.client.SubmitAppForPublicUseView;
 import org.iplantc.de.client.models.DEProperties;
 import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.models.apps.AppAutoBeanFactory;

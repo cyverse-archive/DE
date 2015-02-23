@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.iplantc.de.apps.client.events;
+package org.iplantc.de.apps.client.events.selection;
 
 import org.iplantc.de.client.models.apps.AppCategory;
 

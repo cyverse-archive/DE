@@ -2,8 +2,8 @@ package org.iplantc.de.apps.client.gin;
 
 import org.iplantc.de.apps.client.presenter.AppsViewPresenterImpl;
 import org.iplantc.de.apps.client.presenter.SubmitAppForPublicPresenter;
-import org.iplantc.de.apps.client.views.AppsView;
-import org.iplantc.de.apps.client.views.SubmitAppForPublicUseView;
+import org.iplantc.de.apps.client.AppsView;
+import org.iplantc.de.apps.client.SubmitAppForPublicUseView;
 import org.iplantc.de.apps.client.views.SubmitAppForPublicUseViewImpl;
 import org.iplantc.de.apps.client.views.widgets.AppsViewToolbarImpl;
 import org.iplantc.de.client.models.apps.AppCategory;
