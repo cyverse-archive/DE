@@ -1,17 +1,15 @@
 package org.iplantc.de.client.services.impl;
 
-import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.DELETE;
-import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.GET;
-import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.PATCH;
-import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.POST;
-
+import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.*;
+import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.models.apps.AppCategory;
+import org.iplantc.de.client.models.apps.AppFeedback;
 import org.iplantc.de.client.services.AppUserServiceFacade;
 import org.iplantc.de.client.services.converters.AppCategoryListCallbackConverter;
+import org.iplantc.de.client.services.converters.AsyncCallbackConverter;
 import org.iplantc.de.client.util.DiskResourceUtil;
 import org.iplantc.de.client.util.JsonUtil;
 import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
-import org.iplantc.de.resources.client.messages.IplantErrorStrings;
 import org.iplantc.de.shared.services.BaseServiceCallWrapper.Type;
 import org.iplantc.de.shared.services.DiscEnvApiService;
 import org.iplantc.de.shared.services.EmailServiceAsync;
@@ -19,7 +17,6 @@ import org.iplantc.de.shared.services.ServiceCallWrapper;
 
 import com.google.common.base.Strings;
 import com.google.gwt.http.client.URL;
-import com.google.gwt.json.client.JSONNumber;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.inject.Inject;
@@ -42,7 +39,6 @@ public class AppUserServiceFacadeImpl implements AppUserServiceFacade {
     private final String PIPELINES = "org.iplantc.services.apps.pipelines";
     private final DiscEnvApiService deServiceFacade;
     private final EmailServiceAsync emailService;
-    @Inject IplantErrorStrings errorStrings;
     @Inject IplantDisplayStrings displayStrings;
     @Inject DiskResourceUtil diskResourceUtil;
     @Inject JsonUtil jsonUtil;
@@ -120,25 +116,22 @@ public class AppUserServiceFacadeImpl implements AppUserServiceFacade {
      * calls /rate-analysis and if that is successful, calls updateDocumentationPage()
      */
     @Override
-    public void rateApp(final String appWikiPageUrl,
-                        String appId,
+    public void rateApp(final App app,
                         int rating,
-                        final long commentId,
-                        final String authorEmail,
                         final AsyncCallback<String> callback) {
-        String address = APPS + "/" + appId + "/rating";
+        String address = APPS + "/" + app.getId() + "/rating";
 
-        JSONObject body = new JSONObject();
-        body.put("rating", new JSONNumber(rating)); //$NON-NLS-1$
-        body.put("comment_id", new JSONNumber(commentId)); //$NON-NLS-1$
+        Splittable payload = StringQuoter.createSplittable();
+        StringQuoter.create(rating).assign(payload, "rating");
+        StringQuoter.create(app.getRating().getCommentId()).assign(payload, "comment_id");
 
-        ServiceCallWrapper wrapper = new ServiceCallWrapper(POST, address, body.toString());
+        ServiceCallWrapper wrapper = new ServiceCallWrapper(POST, address, payload.getPayload());
         deServiceFacade.getServiceData(wrapper, new AsyncCallback<String>() {
             @Override
             public void onSuccess(String result) {
-                final String appName = parsePageName(appWikiPageUrl);
+                final String appName = parsePageName(app.getWikiUrl());
                 if (!Strings.isNullOrEmpty(appName)) {
-                    sendRatingEmail(appName, authorEmail);
+                    sendRatingEmail(appName, app.getIntegratorEmail());
                 }
                 callback.onSuccess(result);
             }
@@ -168,26 +161,27 @@ public class AppUserServiceFacadeImpl implements AppUserServiceFacade {
 
 
     @Override
-    public void deleteRating(final String appId,
-                             final String appWikiPageUrl,
-                             final Long commentId,
-                             final AsyncCallback<String> callback) {
+    public void deleteRating(final App app, final AsyncCallback<AppFeedback> callback) {
         // call rating service, then delete comment from wiki page
-        String address = APPS + "/" + appId + "/rating";
+        String address = APPS + "/" + app.getId() + "/rating";
 
         // KLUDGE Have to send empty JSON body with POST request
         Splittable body = StringQuoter.createSplittable();
         ServiceCallWrapper wrapper = new ServiceCallWrapper(DELETE, address, body.toString());
-        deServiceFacade.getServiceData(wrapper, new AsyncCallback<String>() {
+        deServiceFacade.getServiceData(wrapper, new AsyncCallbackConverter<String, AppFeedback>(callback) {
             @Override
-            public void onSuccess(String result) {
-                callback.onSuccess(result);
-
-            }
-
-            @Override
-            public void onFailure(Throwable caught) {
-                callback.onFailure(caught);
+            protected AppFeedback convertFrom(String object) {
+                final AppFeedback appFeedback = app.getRating();
+                appFeedback.setUserRating(0);
+                appFeedback.setCommentId(0);
+                if(Strings.isNullOrEmpty(object)){
+                    appFeedback.setAverageRating(0);
+                } else {
+                    final Splittable split = StringQuoter.split(object);
+                    appFeedback.setAverageRating(split.get("average").asNumber());
+                    appFeedback.setTotal((int)split.get("total").asNumber());
+                }
+                return appFeedback;
             }
         });
     }

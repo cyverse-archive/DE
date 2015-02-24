@@ -1,18 +1,18 @@
 package org.iplantc.de.client.services;
 
+import org.iplantc.de.client.models.apps.App;
+import org.iplantc.de.client.models.apps.AppFeedback;
+
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import java.util.List;
 
+/**
+ * @author jstroot
+ */
 public interface AppUserServiceFacade extends AppServiceFacade {
 
-    /**
-     * @param workspaceId
-     * @param appId
-     * @param fav
-     * @param callback
-     */
     void favoriteApp(String workspaceId, String appId, boolean fav, AsyncCallback<String> callback);
 
     /**
@@ -51,43 +51,23 @@ public interface AppUserServiceFacade extends AppServiceFacade {
 
     /**
      * Retrieves a new copy of a workflow from the database for editing in the client.
-     * 
-     * @param workflowId
-     * @param callback
      */
     void copyWorkflow(String workflowId, AsyncCallback<String> callback);
 
-    /**
-     * @param appId
-     * @param callback
-     */
     void copyApp(String appId, AsyncCallback<String> callback);
 
-    /**
-     * @param username
-     * @param fullUsername
-     * @param appIds
-     * @param callback
-     */
-    void deleteAppsFromWorkspace(String username,
-                                 String fullUsername,
-                                 List<String> appIds,
-                                 AsyncCallback<String> callback);
+    void deleteAppFromWorkspace(String username,
+                                String fullUsername,
+                                List<String> appIds,
+                                AsyncCallback<String> callback);
 
     /**
      * Adds an app to the given public categories.
-     * 
-     * @param json
-     * @param appId
-     * @param callback
      */
     void publishToWorld(JSONObject json, String appId, AsyncCallback<String> callback);
 
     /**
      * Get app details
-     * 
-     * @param appId
-     * @param callback
      */
     void getAppDetails(String appId, AsyncCallback<String> callback);
 
@@ -97,16 +77,12 @@ public interface AppUserServiceFacade extends AppServiceFacade {
 
     void createWorkflows(String body, AsyncCallback<String> callback);
 
-    void rateApp(String appWikiPageUrl,
-                 String appId,
+    /**
+     * FIXME JDS Should this callback be void?
+     */
+    void rateApp(App app,
                  int rating,
-                 long commentId,
-                 String authorEmail,
                  AsyncCallback<String> callback);
 
-            void
-            deleteRating(String appId,
-                         String appWikiPageUrl,
-                         Long commentId,
-                         AsyncCallback<String> callback);
+    void deleteRating(App app, AsyncCallback<AppFeedback> callback);
 }

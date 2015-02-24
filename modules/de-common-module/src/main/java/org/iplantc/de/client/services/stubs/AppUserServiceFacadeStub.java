@@ -1,6 +1,8 @@
 package org.iplantc.de.client.services.stubs;
 
+import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.models.apps.AppCategory;
+import org.iplantc.de.client.models.apps.AppFeedback;
 import org.iplantc.de.client.services.AppUserServiceFacade;
 
 import com.google.gwt.json.client.JSONObject;
@@ -42,13 +44,7 @@ public class AppUserServiceFacadeStub implements AppUserServiceFacade {
     }
 
     @Override
-    public void rateApp(String appWikiPageName, String appId, int rating, long commentId,
-            String authorEmail, AsyncCallback<String> callback) {
-    }
-
-
-    @Override
-    public void deleteRating(String appId, String toolName, Long commentId, AsyncCallback<String> callback) {
+    public void deleteRating(App app, AsyncCallback<AppFeedback> callback) {
 
     }
 
@@ -95,6 +91,11 @@ public class AppUserServiceFacadeStub implements AppUserServiceFacade {
     @Override
     public void createWorkflows(String body, AsyncCallback<String> callback) {
         // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void rateApp(App app, int rating, AsyncCallback<String> callback) {
 
     }
 

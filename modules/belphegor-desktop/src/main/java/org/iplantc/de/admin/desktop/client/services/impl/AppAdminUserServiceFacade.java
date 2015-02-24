@@ -1,6 +1,8 @@
 package org.iplantc.de.admin.desktop.client.services.impl;
 
+import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.models.apps.AppCategory;
+import org.iplantc.de.client.models.apps.AppFeedback;
 import org.iplantc.de.client.services.AppUserServiceFacade;
 
 import com.google.gwt.json.client.JSONObject;
@@ -26,7 +28,7 @@ public class AppAdminUserServiceFacade implements AppUserServiceFacade {
 
     @Override
     public void getPagedApps(String appCategoryId, int limit, String sortField, int offset,
-            SortDir sortDir, AsyncCallback<String> callback) {
+                             SortDir sortDir, AsyncCallback<String> callback) {
         assert false : "Dummy Class to satisfy deferred-binding, this class not used in this module.";
     }
 
@@ -47,19 +49,12 @@ public class AppAdminUserServiceFacade implements AppUserServiceFacade {
 
     @Override
     public void favoriteApp(String workspaceId, String appId, boolean fav,
-            AsyncCallback<String> callback) {
+                            AsyncCallback<String> callback) {
         assert false : "Dummy Class to satisfy deferred-binding, this class not used in this module.";
     }
 
     @Override
-    public void rateApp(String appWikiPageName, String appId, int rating, long commentId,
-            String authorEmail, AsyncCallback<String> callback) {
-        assert false : "Dummy Class to satisfy deferred-binding, this class not used in this module.";
-    }
-
-    @Override
-    public void deleteRating(String appId, String toolName, Long commentId,
-            AsyncCallback<String> callback) {
+    public void deleteRating(App app, AsyncCallback<AppFeedback> callback) {
         assert false : "Dummy Class to satisfy deferred-binding, this class not used in this module.";
     }
 
@@ -79,8 +74,8 @@ public class AppAdminUserServiceFacade implements AppUserServiceFacade {
     }
 
     @Override
-    public void deleteAppsFromWorkspace(String username, String fullUsername, List<String> id,
-                                        AsyncCallback<String> asyncCallback) {
+    public void deleteAppFromWorkspace(String username, String fullUsername, List<String> id,
+                                       AsyncCallback<String> asyncCallback) {
         assert false : "Dummy Class to satisfy deferred-binding, this class not used in this module.";
     }
 
@@ -101,13 +96,17 @@ public class AppAdminUserServiceFacade implements AppUserServiceFacade {
 
     @Override
     public void getAppDetails(String  id, AsyncCallback<String> callback) {
-    	 assert false : "Dummy Class to satisfy deferred-binding, this class not used in this module.";
+        assert false : "Dummy Class to satisfy deferred-binding, this class not used in this module.";
     }
 
     @Override
     public void createWorkflows(String body, AsyncCallback<String> callback) {
         assert false : "Dummy Class to satisfy deferred-binding, this class not used in this module.";
+    }
 
+    @Override
+    public void rateApp(App app, int rating, AsyncCallback<String> callback) {
+        assert false : "Dummy Class to satisfy deferred-binding, this class not used in this module.";
     }
 
     @Override

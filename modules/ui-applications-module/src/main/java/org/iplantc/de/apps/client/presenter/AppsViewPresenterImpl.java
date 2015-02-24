@@ -50,7 +50,6 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.inject.client.AsyncProvider;
 import com.google.gwt.json.client.JSONArray;
-import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.regexp.shared.RegExp;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
@@ -80,17 +79,14 @@ import java.util.List;
  */
 public class AppsViewPresenterImpl implements AppsView.Presenter {
 
-    private static class DeleteRatingCallback implements AsyncCallback<String> {
+    private static class DeleteRatingCallback implements AsyncCallback<AppFeedback> {
         private final App appToUnrate;
         private final ListStore<App> listStore;
-        private final JsonUtil jsonUtil;
 
         public DeleteRatingCallback(final App appToUnrate,
-                                    final ListStore<App> listStore,
-                                    final JsonUtil jsonUtil) {
+                                    final ListStore<App> listStore) {
             this.appToUnrate = appToUnrate;
             this.listStore = listStore;
-            this.jsonUtil = jsonUtil;
         }
 
         @Override
@@ -99,22 +95,8 @@ public class AppsViewPresenterImpl implements AppsView.Presenter {
         }
 
         @Override
-        public void onSuccess(String result) {
-             appToUnrate.getRating().setUserRating(0);
-             appToUnrate.getRating().setCommentId(0);
-
-             if (result == null
-                     || result.isEmpty()) {
-                 appToUnrate.getRating().setAverageRating(0);
-             } else {
-                 JSONObject jsonObj = jsonUtil.getObject(result);
-                 if (jsonObj != null) {
-                     double newAverage = jsonUtil.getNumber(jsonObj, "average").doubleValue(); //$NON-NLS-1$
-                     appToUnrate.getRating().setAverageRating(newAverage);
-                     int total = jsonUtil.getNumber(jsonObj, "total").intValue();
-                     appToUnrate.getRating().setTotal(total);
-                 }
-             }
+        public void onSuccess(AppFeedback result) {
+            appToUnrate.setRating(result);
 
             // Update app in list store, this should update stars
             listStore.update(appToUnrate);
@@ -257,7 +239,7 @@ public class AppsViewPresenterImpl implements AppsView.Presenter {
             @Override
             public void onSuccess(CommentsDialog result) {
                 result.show(app,
-                            app.getIntegratorEmail() == userInfo.getEmail(),
+                            app.getIntegratorEmail().equals(userInfo.getEmail()),
                             metadataFacade);            }
         });
     }
@@ -277,22 +259,9 @@ public class AppsViewPresenterImpl implements AppsView.Presenter {
         Preconditions.checkNotNull(event.getApp());
 
         final App appToUnrate = event.getApp();
-        Long commentId = null;
-        try {
-            AppFeedback feedback = appToUnrate.getRating();
-            if (feedback != null) {
-                commentId = feedback.getCommentId();
-            }
-        } catch (NumberFormatException e) {
-            // comment id empty or not a number, leave it null and proceed
-        }
-
-        appUserService.deleteRating(appToUnrate.getId(),
-                                    appToUnrate.getWikiUrl(),
-                                    commentId,
+        appUserService.deleteRating(appToUnrate,
                                     new DeleteRatingCallback(appToUnrate,
-                                                             view.getListStore(),
-                                                             jsonUtil));
+                                                             view.getListStore()));
     }
 
     @Override
@@ -301,11 +270,8 @@ public class AppsViewPresenterImpl implements AppsView.Presenter {
 
         final App selectedApp = event.getSelectedApp();
         final int score = event.getScore();
-        appUserService.rateApp(selectedApp.getWikiUrl(),
-                               selectedApp.getId(),
+        appUserService.rateApp(selectedApp,
                                event.getScore(),
-                               selectedApp.getRating().getCommentId(),
-                               selectedApp.getIntegratorEmail(),
                                new RateAppCallback(selectedApp,
                                                    score,
                                                    view.getListStore()));
