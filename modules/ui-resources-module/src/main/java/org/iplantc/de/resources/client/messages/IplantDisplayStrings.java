@@ -399,15 +399,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     String changePermissions();
 
     /**
-     * Translated "Click to view app info.".
-     *
-     * @return translated "Click to view app info."
-     */
-    @DefaultMessage("Click to view app info.")
-    @Key("clickAppInfo")
-    String clickAppInfo();
-
-    /**
      * Translated "filename".
      *
      * @return translated "filename"

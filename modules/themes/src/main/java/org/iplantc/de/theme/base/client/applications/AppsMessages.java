@@ -7,6 +7,8 @@ import com.google.gwt.i18n.client.Messages;
  * @author jstroot
  */
 public interface AppsMessages extends Messages {
+    String clickAppInfo();
+
     String didNotLike();
 
     String hateIt();

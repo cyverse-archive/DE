@@ -1,0 +1,21 @@
+.appName {
+    cursor: pointer;
+    text-decoration: none;
+    color: black;
+    font-size: 12px;
+    height: 15px;
+    padding-top: 2px;
+    padding-bottom: 2px;
+}
+
+.appName:hover {
+    text-decoration: underline;
+}
+
+.appDisabled {
+    color: red;
+    font-size: 12px;
+    height: 15px;
+    padding-top: 2px;
+    padding-bottom: 2px;
+}
