@@ -804,15 +804,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     String details();
 
     /**
-     * Translated "Poor".
-     *
-     * @return translated "Poor"
-     */
-    @DefaultMessage("Poor")
-    @Key("didNotLike")
-    String didNotLike();
-
-    /**
      * Translated "Disabled".
      *
      * @return translated "Disabled"
@@ -1044,15 +1035,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     @DefaultMessage("{0} uploaded successfully.")
     @Key("fileUploadSuccess")
     String fileUploadSuccess(String arg0);
-
-    /**
-     * Translated "Not useful".
-     *
-     * @return translated "Not useful"
-     */
-    @DefaultMessage("Not useful")
-    @Key("hateIt")
-    String hateIt();
 
     /**
      * Translated "Help".
@@ -1415,15 +1397,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     @DefaultMessage("You will be logged out from all the active sessions of Discovery Environment and Tool Integration.")
     @Key("logoutToolTipText")
     String logoutToolTipText();
-
-    /**
-     * Translated "Exceptional".
-     *
-     * @return translated "Exceptional"
-     */
-    @DefaultMessage("Exceptional")
-    @Key("lovedIt")
-    String lovedIt();
 
     /**
      * Translated "Major:".
@@ -2292,15 +2265,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     @DefaultMessage("read-write")
     @Key("readWrite")
     String readWrite();
-
-    /**
-     * Translated "Very useful".
-     *
-     * @return translated "Very useful"
-     */
-    @DefaultMessage("Very useful")
-    @Key("reallyLikedIt")
-    String reallyLikedIt();
 
     /**
      * Translated "Name".

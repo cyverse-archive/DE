@@ -3,12 +3,12 @@ package org.iplantc.de.apps.widgets.client.view.editors.style;
 import org.iplantc.de.resources.client.IplantResources;
 import org.iplantc.de.resources.client.uiapps.widgets.AppsWidgetsContextualHelpMessages;
 import org.iplantc.de.resources.client.uiapps.widgets.AppsWidgetsPropertyPanelLabels;
-import org.iplantc.de.resources.client.uiapps.widgets.ArgumentListEditorCss;
 
 import com.google.gwt.core.shared.GWT;
 import com.google.gwt.dom.client.ImageElement;
 import com.google.gwt.editor.client.EditorError;
 import com.google.gwt.resources.client.CssResource;
+import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.safehtml.client.SafeHtmlTemplates;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeUri;
@@ -18,8 +18,6 @@ import com.sencha.gxt.widget.core.client.button.IconButton;
 import java.util.List;
 
 /**
- * TODO JDS Move {@link ArgumentListEditorCss} up here.
- * 
  * @author jstroot
  * 
  */
@@ -45,6 +43,14 @@ public interface AppTemplateWizardAppearance {
     interface Resources extends IplantResources {
         @Source("AppTemplateWizard.css")
         Style css();
+
+        // KLUDGE Duplicated resource in apps theme as well.
+        @Source("delete_rating.png")
+        ImageResource deleteRating();
+
+        // KLUDGE Duplicated resource in apps theme as well.
+        @Source("delete_rating_hover.png")
+        ImageResource deleteRatingHover();
     }
 
     interface Style extends CssResource {
@@ -83,7 +89,7 @@ public interface AppTemplateWizardAppearance {
 
     /**
      * @return the character limit which is applied to the <code>AppTemplate</code> <i>name</i> field in
-     *         the {@link AppTemplatePropertyEditor}.
+     *         the  AppTemplatePropertyEditor.
      */
     int getAppNameCharLimit();
 

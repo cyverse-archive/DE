@@ -7,6 +7,8 @@ import org.iplantc.de.apps.client.events.selection.AppCommentSelectedEvent.HasAp
 import org.iplantc.de.apps.client.events.selection.AppFavoriteSelectedEvent;
 import org.iplantc.de.apps.client.events.selection.AppInfoSelectedEvent;
 import org.iplantc.de.apps.client.events.selection.AppNameSelectedEvent;
+import org.iplantc.de.apps.client.events.selection.AppRatingDeselected;
+import org.iplantc.de.apps.client.events.selection.AppRatingSelected;
 import org.iplantc.de.apps.client.models.AppProperties;
 import org.iplantc.de.apps.client.views.cells.AppCommentCell;
 import org.iplantc.de.apps.client.views.cells.AppFavoriteCell;
@@ -34,11 +36,15 @@ import com.sencha.gxt.widget.core.client.grid.ColumnModel;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AppColumnModel extends ColumnModel<App> implements
-                                                     AppInfoSelectedEvent.HasAppInfoSelectedEventHandlers,
-                                                    AppNameSelectedEvent.HasAppNameSelectedEventHandlers,
-                                                    AppFavoriteSelectedEvent.HasAppFavoriteSelectedEventHandlers,
-                                                    HasAppCommentSelectedEventHandlers {
+/**
+ * @author jstroot
+ */
+public class AppColumnModel extends ColumnModel<App> implements AppInfoSelectedEvent.HasAppInfoSelectedEventHandlers,
+                                                                AppNameSelectedEvent.HasAppNameSelectedEventHandlers,
+                                                                AppFavoriteSelectedEvent.HasAppFavoriteSelectedEventHandlers,
+                                                                HasAppCommentSelectedEventHandlers,
+                                                                AppRatingSelected.HasAppRatingSelectedEventHandlers,
+                                                                AppRatingDeselected.HasAppRatingDeselectedHandlers {
 
     public AppColumnModel(AppsView view, final IplantDisplayStrings displayStrings) {
         super(createColumnConfigList(view, displayStrings));
@@ -54,6 +60,8 @@ public class AppColumnModel extends ColumnModel<App> implements
                 ((AppFavoriteCell)cell).setHasHandlers(ensureHandlers());
             } else if (cell instanceof AppCommentCell) {
                 ((AppCommentCell)cell).setHasHandlers(ensureHandlers());
+            } else if(cell instanceof AppRatingCell) {
+                ((AppRatingCell)cell).setHasHandlers(ensureHandlers());
             }
         }
     }
@@ -67,12 +75,12 @@ public class AppColumnModel extends ColumnModel<App> implements
         info.setHeader("");
 
         ColumnConfig<App, App> name = new ColumnConfig<>(new IdentityValueProvider<App>("name"), //$NON-NLS-1$
-                                                                 180,
-                                                                 displayStrings.name());
+                                                         180,
+                                                         displayStrings.name());
 
         ColumnConfig<App, String> integrator = new ColumnConfig<>(props.integratorName(),
                                                                   115,
-                                                                             displayStrings.integratedby());
+                                                                  displayStrings.integratedby());
 
         ColumnConfig<App, App> rating = new ColumnConfig<>(new IdentityValueProvider<App>("rating"), 125, displayStrings.rating()); //$NON-NLS-1$
 
@@ -121,29 +129,37 @@ public class AppColumnModel extends ColumnModel<App> implements
         return list;
     }
 
+    //<editor-fold desc="Handler Registrations">
     @Override
-    public HandlerRegistration
-    addAppInfoSelectedEventHandler(AppInfoSelectedEvent.AppInfoSelectedEventHandler handler) {
+    public HandlerRegistration addAppInfoSelectedEventHandler(AppInfoSelectedEvent.AppInfoSelectedEventHandler handler) {
         return ensureHandlers().addHandler(AppInfoSelectedEvent.TYPE, handler);
     }
 
     @Override
-    public HandlerRegistration
-            addAppNameSelectedEventHandler(AppNameSelectedEvent.AppNameSelectedEventHandler handler) {
+    public HandlerRegistration addAppNameSelectedEventHandler(AppNameSelectedEvent.AppNameSelectedEventHandler handler) {
         return ensureHandlers().addHandler(AppNameSelectedEvent.TYPE, handler);
     }
 
     @Override
-    public HandlerRegistration
-    addAppFavoriteSelectedEventHandlers(AppFavoriteSelectedEvent.AppFavoriteSelectedEventHandler handler) {
+    public HandlerRegistration addAppFavoriteSelectedEventHandlers(AppFavoriteSelectedEvent.AppFavoriteSelectedEventHandler handler) {
         return ensureHandlers().addHandler(AppFavoriteSelectedEvent.TYPE, handler);
     }
 
     @Override
-    public HandlerRegistration
-            addAppCommentSelectedEventHandlers(AppCommentSelectedEventHandler handler) {
+    public HandlerRegistration addAppCommentSelectedEventHandlers(AppCommentSelectedEventHandler handler) {
         return ensureHandlers().addHandler(AppCommentSelectedEvent.TYPE, handler);
     }
+
+    @Override
+    public HandlerRegistration addAppRatingDeselectedHandler(AppRatingDeselected.AppRatingDeselectedHandler handler) {
+        return ensureHandlers().addHandler(AppRatingDeselected.TYPE, handler);
+    }
+
+    @Override
+    public HandlerRegistration addAppRatingSelectedHandler(AppRatingSelected.AppRatingSelectedHandler handler) {
+        return ensureHandlers().addHandler(AppRatingSelected.TYPE, handler);
+    }
+    //</editor-fold>
 
     public void ensureDebugId(String baseID) {
         for (ColumnConfig<App, ?> cc : configs) {

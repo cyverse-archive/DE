@@ -8,4 +8,7 @@
         <when-type-is class="org.iplantc.de.apps.client.views.cells.AppCommentCell.AppCommentCellAppearance"/>
     </replace-with>
 
+    <replace-with class="org.iplantc.de.theme.base.client.applications.cells.AppRatingCellDefaultAppearance">
+        <when-type-is class="org.iplantc.de.apps.client.views.cells.AppRatingCell.AppRatingCellAppearance"/>
+    </replace-with>
 </module>

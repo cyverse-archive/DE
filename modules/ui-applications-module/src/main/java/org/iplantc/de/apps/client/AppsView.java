@@ -1,13 +1,15 @@
 package org.iplantc.de.apps.client;
 
+import org.iplantc.de.apps.client.events.AppFavoritedEvent;
+import org.iplantc.de.apps.client.events.AppSearchResultLoadEvent.AppSearchResultLoadEventHandler;
 import org.iplantc.de.apps.client.events.selection.AppCategorySelectionChangedEvent;
 import org.iplantc.de.apps.client.events.selection.AppCommentSelectedEvent.AppCommentSelectedEventHandler;
-import org.iplantc.de.apps.client.events.AppFavoritedEvent;
 import org.iplantc.de.apps.client.events.selection.AppFavoriteSelectedEvent;
 import org.iplantc.de.apps.client.events.selection.AppNameSelectedEvent;
+import org.iplantc.de.apps.client.events.selection.AppRatingDeselected;
+import org.iplantc.de.apps.client.events.selection.AppRatingSelected;
 import org.iplantc.de.apps.client.events.selection.AppSelectionChangedEvent.AppSelectionChangedEventHandler;
 import org.iplantc.de.apps.client.events.selection.AppSelectionChangedEvent.HasAppSelectionChangedEventHandlers;
-import org.iplantc.de.apps.client.events.AppSearchResultLoadEvent.AppSearchResultLoadEventHandler;
 import org.iplantc.de.client.models.HasId;
 import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.models.apps.AppCategory;
@@ -16,10 +18,14 @@ import com.google.gwt.dom.client.Element;
 import com.google.gwt.user.client.ui.HasOneWidget;
 import com.google.gwt.user.client.ui.IsWidget;
 
+import com.sencha.gxt.data.shared.ListStore;
 import com.sencha.gxt.widget.core.client.grid.Grid;
 
 import java.util.List;
 
+/**
+ * @author jstroot
+ */
 public interface AppsView extends IsWidget,
                                   AppSearchResultLoadEventHandler,
                                   AppFavoritedEvent.AppFavoritedEventHandler {
@@ -29,7 +35,9 @@ public interface AppsView extends IsWidget,
                                        AppSearchResultLoadEventHandler,
                                        AppCategorySelectionChangedEvent.AppCategorySelectionChangedEventHandler,
                                        AppFavoriteSelectedEvent.AppFavoriteSelectedEventHandler,
-                                       AppCommentSelectedEventHandler {
+                                       AppCommentSelectedEventHandler,
+                                       AppRatingSelected.AppRatingSelectedHandler,
+                                       AppRatingDeselected.AppRatingDeselectedHandler {
 
         void copySelectedApp();
 
@@ -138,5 +146,7 @@ public interface AppsView extends IsWidget,
     List<AppCategory> getAppCategoryRoots();
 
     AppCategory getParent(AppCategory child);
+
+    ListStore<App> getListStore();
 
 }

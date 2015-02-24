@@ -7,6 +7,7 @@
     <inherits name="org.iplantc.de.commons.ui-commons" />
     <inherits name="org.iplantc.de.diskResource.diskresource"/>
     <inherits name="org.iplantc.de.tools.requests.ToolRequests"/>
+    <inherits name="com.sencha.gxt.theme.gray.Gray"/>
 
     <source path="client" />
     <source path="shared" />

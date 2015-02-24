@@ -1,15 +1,24 @@
 package org.iplantc.de.apps.client.presenter;
 
-import org.iplantc.de.apps.client.events.*;
+import org.iplantc.de.apps.client.AppsView;
+import org.iplantc.de.apps.client.SubmitAppForPublicUseView;
+import org.iplantc.de.apps.client.events.AppDeleteEvent;
+import org.iplantc.de.apps.client.events.AppFavoritedEvent;
+import org.iplantc.de.apps.client.events.AppSearchResultLoadEvent;
+import org.iplantc.de.apps.client.events.AppUpdatedEvent;
+import org.iplantc.de.apps.client.events.CreateNewAppEvent;
+import org.iplantc.de.apps.client.events.CreateNewWorkflowEvent;
+import org.iplantc.de.apps.client.events.EditAppEvent;
+import org.iplantc.de.apps.client.events.EditWorkflowEvent;
+import org.iplantc.de.apps.client.events.RunAppEvent;
 import org.iplantc.de.apps.client.events.selection.AppCategorySelectionChangedEvent;
 import org.iplantc.de.apps.client.events.selection.AppCommentSelectedEvent;
 import org.iplantc.de.apps.client.events.selection.AppFavoriteSelectedEvent;
 import org.iplantc.de.apps.client.events.selection.AppNameSelectedEvent;
+import org.iplantc.de.apps.client.events.selection.AppRatingDeselected;
+import org.iplantc.de.apps.client.events.selection.AppRatingSelected;
 import org.iplantc.de.apps.client.presenter.proxy.AppCategoryProxy;
-import org.iplantc.de.apps.client.AppsView;
-import org.iplantc.de.apps.client.SubmitAppForPublicUseView;
 import org.iplantc.de.apps.client.views.dialogs.SubmitAppForPublicDialog;
-import org.iplantc.de.apps.client.events.AppSearchResultLoadEvent;
 import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.models.DEProperties;
 import org.iplantc.de.client.models.HasId;
@@ -17,6 +26,7 @@ import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.models.apps.AppAutoBeanFactory;
 import org.iplantc.de.client.models.apps.AppCategory;
+import org.iplantc.de.client.models.apps.AppFeedback;
 import org.iplantc.de.client.models.apps.AppList;
 import org.iplantc.de.client.services.AppMetadataServiceFacade;
 import org.iplantc.de.client.services.AppServiceFacade;
@@ -33,12 +43,14 @@ import org.iplantc.de.shared.exceptions.HttpRedirectException;
 import org.iplantc.de.tools.requests.client.views.dialogs.NewToolRequestDialog;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.inject.client.AsyncProvider;
 import com.google.gwt.json.client.JSONArray;
+import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.regexp.shared.RegExp;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
@@ -51,6 +63,7 @@ import com.google.web.bindery.autobean.shared.AutoBeanCodex;
 import com.google.web.bindery.autobean.shared.Splittable;
 import com.google.web.bindery.autobean.shared.impl.StringQuoter;
 
+import com.sencha.gxt.data.shared.ListStore;
 import com.sencha.gxt.widget.core.client.Dialog.PredefinedButton;
 import com.sencha.gxt.widget.core.client.box.ConfirmMessageBox;
 import com.sencha.gxt.widget.core.client.event.DialogHideEvent;
@@ -66,6 +79,75 @@ import java.util.List;
  * 
  */
 public class AppsViewPresenterImpl implements AppsView.Presenter {
+
+    private static class DeleteRatingCallback implements AsyncCallback<String> {
+        private final App appToUnrate;
+        private final ListStore<App> listStore;
+        private final JsonUtil jsonUtil;
+
+        public DeleteRatingCallback(final App appToUnrate,
+                                    final ListStore<App> listStore,
+                                    final JsonUtil jsonUtil) {
+            this.appToUnrate = appToUnrate;
+            this.listStore = listStore;
+            this.jsonUtil = jsonUtil;
+        }
+
+        @Override
+        public void onFailure(Throwable caught) {
+            ErrorHandler.post(caught.getMessage(), caught);
+        }
+
+        @Override
+        public void onSuccess(String result) {
+             appToUnrate.getRating().setUserRating(0);
+             appToUnrate.getRating().setCommentId(0);
+
+             if (result == null
+                     || result.isEmpty()) {
+                 appToUnrate.getRating().setAverageRating(0);
+             } else {
+                 JSONObject jsonObj = jsonUtil.getObject(result);
+                 if (jsonObj != null) {
+                     double newAverage = jsonUtil.getNumber(jsonObj, "average").doubleValue(); //$NON-NLS-1$
+                     appToUnrate.getRating().setAverageRating(newAverage);
+                     int total = jsonUtil.getNumber(jsonObj, "total").intValue();
+                     appToUnrate.getRating().setTotal(total);
+                 }
+             }
+
+            // Update app in list store, this should update stars
+            listStore.update(appToUnrate);
+        }
+
+    }
+
+    private static class RateAppCallback implements AsyncCallback<String> {
+        private final App selectedApp;
+        private final int score;
+        private final ListStore<App> listStore;
+
+        public RateAppCallback(final App selectedApp,
+                               final int score,
+                               final ListStore<App> listStore) {
+            this.selectedApp = selectedApp;
+            this.score = score;
+            this.listStore = listStore;
+        }
+
+        @Override
+        public void onFailure(Throwable caught) {
+            ErrorHandler.post(caught);
+        }
+
+        @Override
+        public void onSuccess(String result) {
+            selectedApp.getRating().setUserRating(score);
+
+            // Update app in list store, this should update stars
+            listStore.update(selectedApp);
+        }
+    }
 
     private class AppsViewAppUpdatedEventHandler implements AppUpdatedEvent.AppUpdatedEventHandler {
         private final AppsView view;
@@ -181,13 +263,53 @@ public class AppsViewPresenterImpl implements AppsView.Presenter {
     }
 
     @Override
-    public void onAppNameSelected(AppNameSelectedEvent event) {
+    public void onAppNameSelected(final AppNameSelectedEvent event) {
         App app = event.getSelectedApp();
         if (app.isRunnable()) {
             fireRunAppEvent(app);
         } else {
             announcer.schedule(new ErrorAnnouncementConfig(errorStrings.appLaunchWithoutToolError()));
         }
+    }
+
+    @Override
+    public void onAppRatingDeselected(final AppRatingDeselected event) {
+        Preconditions.checkNotNull(event.getApp());
+
+        final App appToUnrate = event.getApp();
+        Long commentId = null;
+        try {
+            AppFeedback feedback = appToUnrate.getRating();
+            if (feedback != null) {
+                commentId = feedback.getCommentId();
+            }
+        } catch (NumberFormatException e) {
+            // comment id empty or not a number, leave it null and proceed
+        }
+
+        appUserService.deleteRating(appToUnrate.getId(),
+                                    appToUnrate.getWikiUrl(),
+                                    commentId,
+                                    new DeleteRatingCallback(appToUnrate,
+                                                             view.getListStore(),
+                                                             jsonUtil));
+    }
+
+    @Override
+    public void onAppRatingSelected(final AppRatingSelected event) {
+        Preconditions.checkNotNull(event.getSelectedApp());
+
+        final App selectedApp = event.getSelectedApp();
+        final int score = event.getScore();
+        appUserService.rateApp(selectedApp.getWikiUrl(),
+                               selectedApp.getId(),
+                               event.getScore(),
+                               selectedApp.getRating().getCommentId(),
+                               selectedApp.getIntegratorEmail(),
+                               new RateAppCallback(selectedApp,
+                                                   score,
+                                                   view.getListStore()));
+
     }
 
     @Override

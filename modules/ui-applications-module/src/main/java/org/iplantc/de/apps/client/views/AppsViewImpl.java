@@ -269,6 +269,7 @@ public class AppsViewImpl extends Composite implements AppsView,
     @UiFactory
     ContentPanel createContentPanel() {
         // FIXME JDS This violates goal of theming. Implement proper theming/appearance.
+        // FIXME JDS This is probably redundant.
         return new ContentPanel(new GrayContentPanelAppearance());
     }
 
@@ -329,6 +330,8 @@ public class AppsViewImpl extends Composite implements AppsView,
         appColModel.addAppNameSelectedEventHandler(presenter);
         appColModel.addAppFavoriteSelectedEventHandlers(this);
         appColModel.addAppCommentSelectedEventHandlers(presenter);
+        appColModel.addAppRatingDeselectedHandler(presenter);
+        appColModel.addAppRatingSelectedHandler(presenter);
         addAppCategorySelectedEventHandler(presenter);
         this.toolbar.init(presenter, this, this, this);
     }
@@ -567,6 +570,11 @@ public class AppsViewImpl extends Composite implements AppsView,
     @Override
     public AppCategory getParent(AppCategory child) {
         return treeStore.getParent(child);
+    }
+
+    @Override
+    public ListStore<App> getListStore() {
+        return listStore;
     }
 
     List<AppCategory> getGroupHierarchy(AppCategory grp, List<AppCategory> groups) {
