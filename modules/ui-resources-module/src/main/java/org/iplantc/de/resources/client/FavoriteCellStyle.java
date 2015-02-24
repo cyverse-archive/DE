@@ -2,12 +2,11 @@ package org.iplantc.de.resources.client;
 
 import com.google.gwt.resources.client.CssResource;
 
+/**
+ * @author jstroot
+ */
 public interface FavoriteCellStyle extends CssResource {
-	 String favorite();
-     
-//    String favoriteAdd();
-     
-//    String favoriteDelete();
+    String favorite();
      
     String favoriteDisabled();
      

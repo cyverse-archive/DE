@@ -233,7 +233,6 @@ public interface IplantResources extends ClientBundle,
      * 
      * @return image.
      */
-    @Override
     @Source("fav.png")
     ImageResource favIcon();
 
@@ -242,7 +241,6 @@ public interface IplantResources extends ClientBundle,
      * 
      * @return image.
      */
-    @Override
     @Source("fav_add.png")
     ImageResource favIconAdd();
 
@@ -251,7 +249,6 @@ public interface IplantResources extends ClientBundle,
      * 
      * @return image.
      */
-    @Override
     @Source("fav_remove.png")
     ImageResource favIconDelete();
 
@@ -296,7 +293,6 @@ public interface IplantResources extends ClientBundle,
      * 
      * @return image.
      */
-    @Override
     @Source("not_fav.png")
     ImageResource disabledFavIcon();
 

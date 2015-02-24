@@ -57,7 +57,9 @@ public class AppCommentCell extends AbstractCell<App> {
 
             switch (Event.as(event).getTypeInt()) {
                 case Event.ONCLICK:
-                    doOnClick(eventTarget, value, valueUpdater);
+                    if(hasHandlers != null){
+                        hasHandlers.fireEvent(new AppCommentSelectedEvent(value));
+                    }
                     break;
                 default:
                     break;
@@ -69,9 +71,4 @@ public class AppCommentCell extends AbstractCell<App> {
         hasHandlers = handlerManager;
     }
 
-    private void doOnClick(Element eventTarget, App value, ValueUpdater<App> valueUpdater) {
-        if(hasHandlers != null){
-            hasHandlers.fireEvent(new AppCommentSelectedEvent(value));
-        }
-    }
 }

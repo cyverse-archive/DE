@@ -15,6 +15,9 @@ import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.safehtml.shared.SafeUri;
 
+/**
+ * @author jstroot
+ */
 public class AppCommentCellDefaultAppearance implements AppCommentCellAppearance {
 
     public interface AppCommentCellStyles extends CssResource {
@@ -31,7 +34,7 @@ public class AppCommentCellDefaultAppearance implements AppCommentCellAppearance
      * The HTML templates used to render the cell.
      */
     interface Templates extends SafeHtmlTemplates {
-        @SafeHtmlTemplates.Template("<img name=\"{0}\" title=\"{1}\" class=\"{2}\" src=\"{3}\" />")
+        @SafeHtmlTemplates.Template("<img name='{0}' title='{1}' class='{2}' src='{3}' />")
         SafeHtml imgCell(String name, String toolTip, String className, SafeUri imgSrc);
     }
 

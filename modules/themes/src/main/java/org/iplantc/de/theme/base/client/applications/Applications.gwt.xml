@@ -11,4 +11,8 @@
     <replace-with class="org.iplantc.de.theme.base.client.applications.cells.AppRatingCellDefaultAppearance">
         <when-type-is class="org.iplantc.de.apps.client.views.cells.AppRatingCell.AppRatingCellAppearance"/>
     </replace-with>
+
+    <replace-with class="org.iplantc.de.theme.base.client.applications.cells.AppFavoriteCellDefaultAppearance">
+        <when-type-is class="org.iplantc.de.apps.client.views.cells.AppFavoriteCell.AppFavoriteCellAppearance"/>
+    </replace-with>
 </module>

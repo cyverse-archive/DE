@@ -2,9 +2,10 @@ package org.iplantc.de.resources.client;
 
 import com.google.gwt.resources.client.ImageResource;
 
+/**
+ * @author jstroot
+ */
 public interface AppResources {
-
-
     /**
      * Image resource.
      *
@@ -18,34 +19,6 @@ public interface AppResources {
      * @return image.
      */
     ImageResource category_open();
-
-    /**
-     * Image resource.
-     *
-     * @return image.
-     */
-    ImageResource disabledFavIcon();
-
-    /**
-     * Image resource.
-     *
-     * @return image.
-     */
-    ImageResource favIcon();
-
-    /**
-     * Image resource.
-     *
-     * @return image.
-     */
-    ImageResource favIconAdd();
-
-    /**
-     * Image resource.
-     *
-     * @return image.
-     */
-    ImageResource favIconDelete();
 
     /**
      * Image resource.
