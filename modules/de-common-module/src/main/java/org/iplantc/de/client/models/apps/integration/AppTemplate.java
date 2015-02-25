@@ -33,16 +33,16 @@ public interface AppTemplate extends HasId, HasLabel, HasName, HasDescription {
     void setTools(List<Tool> tools);
 
     @PropertyName("edited_date")
-    String getEditedDate();
+    Date getEditedDate();
 
     @PropertyName("edited_date")
-    void setEditedDate(String edited_date);
+    void setEditedDate(Date edited_date);
 
     @PropertyName("integration_date")
-    String getPublishedDate();
+    Date getPublishedDate();
 
     @PropertyName("integration_date")
-    void setPublishedDate(String published_date);
+    void setPublishedDate(Date published_date);
 
     void setId(String id);
     

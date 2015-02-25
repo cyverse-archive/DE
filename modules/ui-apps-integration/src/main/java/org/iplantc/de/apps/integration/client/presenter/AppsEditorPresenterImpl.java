@@ -723,6 +723,10 @@ public class AppsEditorPresenterImpl implements AppsEditorView.Presenter,
         if (Strings.isNullOrEmpty(cleaned.getId())) {
             cleaned.setId(null);
         }
+
+        // do not send integration dates
+        cleaned.setPublishedDate(null);
+
         atService.cmdLinePreview(cleaned, new AsyncCallback<String>() {
 
             @Override
