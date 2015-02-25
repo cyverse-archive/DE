@@ -24,7 +24,7 @@ import com.sencha.gxt.widget.core.client.tree.Tree;
  * @author jstroot
  */
 public class AdminAppViewImpl extends AppsViewImpl implements AdminAppsView,
-                                                                      AppSelectionChangedEvent.AppSelectionChangedEventHandler {
+                                                              AppSelectionChangedEvent.AppSelectionChangedEventHandler {
 
     private final AdminAppsView.Toolbar toolbar;
 
@@ -41,7 +41,8 @@ public class AdminAppViewImpl extends AppsViewImpl implements AdminAppsView,
 
         // Restrict Admin view to single select, since admin services only support one item at a time.
         grid.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
-        setNorthWidget(toolbar);
+        // FIXME Toolbar will be provided via gin-jection. Rebinds through specialized gin module
+//        setNorthWidget(toolbar);
     }
 
     @Override
@@ -52,7 +53,7 @@ public class AdminAppViewImpl extends AppsViewImpl implements AdminAppsView,
 
     @Override
     public void onAppSelectionChanged(AppSelectionChangedEvent event) {
-        deSelectAllAppCategories();
+        tree.getSelectionModel().deselectAll();
     }
 
     @Override

@@ -199,7 +199,7 @@ public class BelphegorAppsViewPresenterImpl extends AppsViewPresenterImpl implem
                                                                                                        AppCategory.class,
                                                                                                        jsonResult.toString());
 
-                                                    view.addAppCategory(selectedAppCategory, group.as());
+                                                    addAppCategory(selectedAppCategory, group.as());
                                                     view.unMaskCenterPanel();
                                                 }
 
@@ -213,6 +213,18 @@ public class BelphegorAppsViewPresenterImpl extends AppsViewPresenterImpl implem
             }
         });
         dlg.show();
+    }
+
+    void addAppCategory(AppCategory parent, AppCategory child) {
+        if (child == null) {
+            return;
+        }
+
+        if (parent == null) {
+            treeStore.add(child);
+        } else {
+            treeStore.add(parent, child);
+        }
     }
 
     @Override
@@ -244,7 +256,9 @@ public class BelphegorAppsViewPresenterImpl extends AppsViewPresenterImpl implem
                                                                                                                  result);
                                                               selectedAppCategory.setName(group.as()
                                                                                                .getName());
+                                                              // FIXME Replace with reference to treeStore
                                                               view.updateAppCategory(selectedAppCategory);
+
                                                               view.unMaskWestPanel();
                                                           }
 

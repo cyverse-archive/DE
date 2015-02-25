@@ -3,6 +3,11 @@
         "http://gwtproject.org/doctype/2.6.1/gwt-module.dtd">
 <module>
 
+    <!-- Views -->
+    <replace-with class="org.iplantc.de.theme.base.client.applications.AppsViewDefaultAppearance">
+        <when-type-is class="org.iplantc.de.apps.client.AppsView.AppsViewAppearance"/>
+    </replace-with>
+
     <!-- Cells -->
     <replace-with class="org.iplantc.de.theme.base.client.applications.cells.AppCommentCellDefaultAppearance">
         <when-type-is class="org.iplantc.de.apps.client.views.cells.AppCommentCell.AppCommentCellAppearance"/>

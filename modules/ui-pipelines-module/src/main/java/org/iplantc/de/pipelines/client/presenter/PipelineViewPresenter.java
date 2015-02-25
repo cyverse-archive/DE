@@ -131,6 +131,7 @@ public class PipelineViewPresenter implements Presenter, PipelineView.Presenter,
         initAppsGridDragHandler(appsPresenter.getAppsGrid());
         initPipelineBuilderDropHandler(view.getBuilderDropContainer());
 
+        // TODO Possibly inject with annotation to replace with a different toolbar impl
         appsPresenter.hideAppMenu().hideWorkflowMenu().go(appSelectView);
     }
 
@@ -138,7 +139,7 @@ public class PipelineViewPresenter implements Presenter, PipelineView.Presenter,
         AppsGridDragHandler handler = new AppsGridDragHandler();
         handler.setPresenter(this);
 
-        GridDragSource<App> source = new GridDragSource<App>(grid);
+        GridDragSource<App> source = new GridDragSource<>(grid);
         source.addDragStartHandler(handler);
         source.addDragCancelHandler(handler);
     }
@@ -197,7 +198,7 @@ public class PipelineViewPresenter implements Presenter, PipelineView.Presenter,
     }
 
     private boolean isValidJson(Pipeline pipeline) {
-        List<EditorError> errorList = new ArrayList<EditorError>();
+        List<EditorError> errorList = new ArrayList<>();
         if (Strings.isNullOrEmpty(pipeline.getName()) || pipeline.getName().equalsIgnoreCase("Click to edit name")) {
             errorList.add(new DefaultEditorError(null, "Name is required.", null));
         }

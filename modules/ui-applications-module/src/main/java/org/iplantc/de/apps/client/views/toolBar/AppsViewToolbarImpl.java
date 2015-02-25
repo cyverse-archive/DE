@@ -1,16 +1,14 @@
-package org.iplantc.de.apps.client.views.widgets;
-
+package org.iplantc.de.apps.client.views.toolBar;
 
 import static org.iplantc.de.apps.client.events.AppSearchResultLoadEvent.TYPE;
-
-import org.iplantc.de.apps.client.events.selection.AppCategorySelectionChangedEvent;
-import org.iplantc.de.apps.client.events.selection.AppSelectionChangedEvent;
+import org.iplantc.de.apps.client.AppsToolbarView;
 import org.iplantc.de.apps.client.AppsView;
 import org.iplantc.de.apps.client.events.AppSearchResultLoadEvent.AppSearchResultLoadEventHandler;
-import org.iplantc.de.apps.client.events.AppSearchResultLoadEvent.HasAppSearchResultLoadEventHandlers;
+import org.iplantc.de.apps.client.events.selection.AppCategorySelectionChangedEvent;
+import org.iplantc.de.apps.client.events.selection.AppSelectionChangedEvent;
+import org.iplantc.de.apps.client.views.widgets.AppSearchField;
 import org.iplantc.de.apps.client.views.widgets.proxy.AppSearchRpcProxy;
 import org.iplantc.de.apps.shared.AppsModule.Ids;
-import org.iplantc.de.client.models.IsMaskable;
 import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.models.apps.AppAutoBeanFactory;
@@ -45,44 +43,30 @@ import com.sencha.gxt.widget.core.client.menu.MenuItem;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AppsViewToolbarImpl extends Composite implements AppsView.ViewMenu, HasAppSearchResultLoadEventHandlers {
+/**
+ * @author jstroot
+ */
+public class AppsViewToolbarImpl extends Composite implements AppsToolbarView {
 
-    @UiTemplate("AppsViewToolbar.ui.xml")
+    @UiTemplate("../toolBar/AppsViewToolbar.ui.xml")
     interface AppsViewToolbarUiBinder extends UiBinder<Widget, AppsViewToolbarImpl> { }
-    @UiField
-    MenuItem appRun;
-    @UiField
-    AppSearchField appSearch;
-    @UiField
-    TextButton app_menu;
-    @UiField
-    MenuItem copyApp;
-    @UiField
-    MenuItem copyWf;
-    @UiField
-    MenuItem createNewApp;
-    @UiField
-    MenuItem createWorkflow;
-    @UiField
-    MenuItem deleteApp;
-    @UiField
-    MenuItem deleteWf;
-    @UiField
-    MenuItem editApp;
-    @UiField
-    MenuItem editWf;
-    @UiField
-    MenuItem requestTool;
-    @UiField
-    MenuItem submitApp;
-    @UiField
-    MenuItem submitWf;
-    @UiField
-    MenuItem wfRun;
-    @UiField
-    TextButton wf_menu;
-    @UiField
-    BoxLayoutData boxData;
+    @UiField MenuItem appRun;
+    @UiField AppSearchField appSearch;
+    @UiField TextButton app_menu;
+    @UiField MenuItem copyApp;
+    @UiField MenuItem copyWf;
+    @UiField MenuItem createNewApp;
+    @UiField MenuItem createWorkflow;
+    @UiField MenuItem deleteApp;
+    @UiField MenuItem deleteWf;
+    @UiField MenuItem editApp;
+    @UiField MenuItem editWf;
+    @UiField MenuItem requestTool;
+    @UiField MenuItem submitApp;
+    @UiField MenuItem submitWf;
+    @UiField MenuItem wfRun;
+    @UiField TextButton wf_menu;
+    @UiField BoxLayoutData boxData;
 
     private static AppsViewToolbarUiBinder uiBinder = GWT.create(AppsViewToolbarUiBinder.class);
     private final PagingLoader<FilterPagingLoadConfig, PagingLoadResult<App>> loader;
@@ -141,6 +125,7 @@ public class AppsViewToolbarImpl extends Composite implements AppsView.ViewMenu,
 
     @UiHandler("createNewApp")
     public void createNewAppClicked(SelectionEvent<Item> event) {
+        // Create Events
         presenter.createNewAppClicked();
     }
 
@@ -175,26 +160,10 @@ public class AppsViewToolbarImpl extends Composite implements AppsView.ViewMenu,
 
     @Override
     public void init(final AppsView.Presenter presenter,
-                     final AppsView appsView,
-                     final AppSelectionChangedEvent.HasAppSelectionChangedEventHandlers hasAppSelectionChangedEventHandlers,
-                     final AppCategorySelectionChangedEvent.HasAppCategorySelectionChangedEventHandlers hasAppCategorySelectionChangedEventHandlers) {
+                     final AppsView appsView) {
         this.presenter = presenter;
-        addAppSearchResultLoadEventHandler(appsView);
-        hasAppSelectionChangedEventHandlers.addAppSelectionChangedEventHandler(this);
-        hasAppCategorySelectionChangedEventHandlers.addAppCategorySelectedEventHandler(this);
         proxy.setHasHandlers(this);
-        proxy.setMaskable(new IsMaskable() {
-            @Override
-            public void mask(String loadingMask) {
-                appsView.maskCenterPanel(loadingMask);
-            }
-
-            @Override
-            public void unmask() {
-                appsView.unMaskCenterPanel();
-            }
-        });
-
+        proxy.setMaskable(appsView);
     }
 
     @Override
