@@ -33,16 +33,16 @@ public interface AppTemplate extends HasId, HasLabel, HasName, HasDescription {
     void setTools(List<Tool> tools);
 
     @PropertyName("edited_date")
-    Date getEditedDate();
+    String getEditedDate();
 
     @PropertyName("edited_date")
-    void setEditedDate(Date edited_date);
+    void setEditedDate(String edited_date);
 
-    @PropertyName("published_date")
-    Date getPublishedDate();
+    @PropertyName("integration_date")
+    String getPublishedDate();
 
-    @PropertyName("published_date")
-    void setPublishedDate(Date published_date);
+    @PropertyName("integration_date")
+    void setPublishedDate(String published_date);
 
     void setId(String id);
     
@@ -53,8 +53,8 @@ public interface AppTemplate extends HasId, HasLabel, HasName, HasDescription {
     public void setAppDisabled(boolean disabled);
     
     @PropertyName("is_public")
-    public boolean isPublic();
+    public Boolean isPublic();
 
     @PropertyName("is_public")
-    public void setPublic(boolean is_public);
+    public void setPublic(Boolean is_public);
 }

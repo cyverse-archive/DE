@@ -98,7 +98,8 @@ public class AppsEditorPresenterImpl implements AppsEditorView.Presenter,
                        final RenameWindowHeaderCommand renameCmd,
                        final AppsEditorPresenterImpl presenterImpl,
                        final String successfulSaveMsg,
-                       final String failedSaveMsg) {
+                       final String failedSaveMsg,
+                       final boolean ispublic) {
             this.onSaveCallback = onSaveCallback;
             this.at = appTemplate;
             this.announcer1 = announcer;
@@ -107,6 +108,7 @@ public class AppsEditorPresenterImpl implements AppsEditorView.Presenter,
             this.presenterImpl = presenterImpl;
             this.successfulSaveMsg = successfulSaveMsg;
             this.failedSaveMsg = failedSaveMsg;
+            at.setPublic(ispublic);
         }
 
         @Override
@@ -127,8 +129,10 @@ public class AppsEditorPresenterImpl implements AppsEditorView.Presenter,
                 LOG.warning("Attempt to change app ID from \"" + atId + "\" to \"" + savedTemplate.getId() + "\"");
             }
             // Update editor with new template from server
+            savedTemplate.setPublic(at.isPublic());
             presenterImpl.view.getEditorDriver().edit(savedTemplate);
             presenterImpl.lastSave = copyAppTemplate(presenterImpl.flushViewAndClean());
+
 
             if (renameCommand != null) {
                 renameCommand.setAppTemplate(presenterImpl.lastSave);
@@ -314,7 +318,7 @@ public class AppsEditorPresenterImpl implements AppsEditorView.Presenter,
 
     private final IplantErrorStrings errorStrings;
     private final AppTemplateUtils appTemplateUtils;
-    private List<HandlerRegistration> handlerRegistrations = Lists.newArrayList();
+    private final List<HandlerRegistration> handlerRegistrations = Lists.newArrayList();
 
     public static native void doJsonFormattting(XElement textArea,String val,int width, int height) /*-{
 		var myCodeMirror = $wnd.CodeMirror(textArea, {
@@ -420,7 +424,11 @@ public class AppsEditorPresenterImpl implements AppsEditorView.Presenter,
     public void go(HasOneWidget container) {
         clearRegisteredHandlers();
 
-        setLabelOnlyEditMode(appTemplate.isPublic());
+        if(appTemplate.isPublic()!=null) {
+            setLabelOnlyEditMode(appTemplate.isPublic());
+        } else {
+            setLabelOnlyEditMode(false);
+        }
 
         view.getEditorDriver().edit(appTemplate);
         view.onArgumentSelected(new ArgumentSelectedEvent(null));
@@ -671,8 +679,11 @@ public class AppsEditorPresenterImpl implements AppsEditorView.Presenter,
                                                          renameCmd,
                                                          this,
                                                          appIntMessages.saveSuccessful(),
-                                                         errorMessages.unableToSave());
+                                                         errorMessages.unableToSave(),
+                                                         appTemplate.isPublic());
 
+        // service requires that this key is NOT present in json
+        lastSave.setPublic(null);
         if (isLabelOnlyEditMode()) {
             atService.updateAppLabels(lastSave, saveCallback);
         } else {

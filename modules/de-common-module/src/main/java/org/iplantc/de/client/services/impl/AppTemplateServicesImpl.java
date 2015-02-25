@@ -165,7 +165,6 @@ public class AppTemplateServicesImpl implements AppTemplateServices, AppBuilderM
         Splittable split = appTemplateToSplittable(at);
         ServiceCallWrapper wrapper = new ServiceCallWrapper(POST, address, split.getPayload());
         deServiceFacade.getServiceData(wrapper, new AppTemplateCallbackConverter(factory, callback));
-
     }
 
     @Override
@@ -174,7 +173,6 @@ public class AppTemplateServicesImpl implements AppTemplateServices, AppBuilderM
         Splittable split = appTemplateToSplittable(at);
         ServiceCallWrapper wrapper = new ServiceCallWrapper(PATCH, address, split.getPayload());
         deServiceFacade.getServiceData(wrapper, new AppTemplateCallbackConverter(factory, callback));
-
     }
 
     Splittable appTemplateToSplittable(AppTemplate at) {
@@ -194,7 +192,6 @@ public class AppTemplateServicesImpl implements AppTemplateServices, AppBuilderM
         }
         // JDS Convert Argument.getValue() which contain any selected/checked *Selection types to only
         // contain their value.
-        // SS clear temp id for the validators if any
         for (ArgumentGroup ag : at.getArgumentGroups()) {
             for (Argument arg : ag.getArguments()) {
                 if (arg.getType().equals(ArgumentType.TreeSelection)) {
