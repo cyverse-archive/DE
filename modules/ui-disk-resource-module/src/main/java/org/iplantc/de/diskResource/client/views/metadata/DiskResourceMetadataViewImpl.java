@@ -199,7 +199,7 @@ public class DiskResourceMetadataViewImpl extends Composite implements MetadataV
     private final boolean writable;
     private DiskResourceMetadataTemplate currentMetadataTemplate;
     private ListStore<DiskResourceMetadata> listStore;
-    private ListStore<MetadataTemplateInfo> templateStore;
+    private final ListStore<MetadataTemplateInfo> templateStore;
     private int unique_avu_id;
     private boolean valid;
     private MetadataView.Presenter presenter;

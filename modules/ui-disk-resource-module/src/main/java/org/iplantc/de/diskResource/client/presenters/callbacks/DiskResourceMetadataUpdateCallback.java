@@ -27,6 +27,7 @@ public class DiskResourceMetadataUpdateCallback extends DiskResourceServiceCallb
 
     @Override
     public void onSuccess(String result) {
+
         super.onSuccess(result);
 
         if (dialog != null) {

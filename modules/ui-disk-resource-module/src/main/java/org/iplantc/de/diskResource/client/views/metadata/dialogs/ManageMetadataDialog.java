@@ -11,6 +11,7 @@ import org.iplantc.de.diskResource.client.MetadataView;
 import org.iplantc.de.diskResource.client.presenters.callbacks.DiskResourceMetadataUpdateCallback;
 import org.iplantc.de.diskResource.client.presenters.metadata.MetadataPresenterImpl;
 import org.iplantc.de.diskResource.client.views.metadata.DiskResourceMetadataViewImpl;
+import org.iplantc.de.resources.client.messages.I18N;
 
 import com.google.common.base.Preconditions;
 import com.google.gwt.user.client.ui.HTML;
@@ -47,6 +48,7 @@ public class ManageMetadataDialog extends IPlantDialog {
                 ErrorAnnouncementConfig errNotice = new ErrorAnnouncementConfig(appearance.metadataFormInvalid());
                 announcer.schedule(errNotice);
             } else {
+                ManageMetadataDialog.this.mask(I18N.DISPLAY.loadingMask());
                 mdPresenter.setDiskResourceMetadata(new DiskResourceMetadataUpdateCallback(ManageMetadataDialog.this));
             }
         }
