@@ -1,5 +1,7 @@
 package org.iplantc.de.commons.client.info;
 
+import org.iplantc.de.commons.share.CommonsModule;
+
 import com.google.gwt.dom.client.Style.Float;
 import com.google.gwt.dom.client.Style.Unit;
 
@@ -47,6 +49,8 @@ public class IplantAnnouncement extends Popup {
 
         if (config.isClosable()) {
             closeButton = new ToolButton(config.getCloseIconConfig());
+            // Set debug ID.
+            closeButton.ensureDebugId(CommonsModule.IDs.ANNOUNCER_CLOSE);
             layout.add(closeButton, new CssFloatData(-1));
             closeButton.getElement().getStyle().setFloat(Float.RIGHT);
         }

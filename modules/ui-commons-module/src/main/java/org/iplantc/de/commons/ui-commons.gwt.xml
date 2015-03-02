@@ -16,5 +16,6 @@
     <inherits name='org.iplantc.de.DiscoveryEnvironmentCommon' />
 
     <source path="client"/>
+    <source path="share"/>
 
 </module>
