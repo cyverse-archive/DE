@@ -63,6 +63,9 @@ public interface DiskResourceModule {
         String ACTION_CELL_COMMENTS = ".comments";
         String NAME_CELL = ".nameCell";
         String PATH_CELL = ".pathCell";
+        String DETAILS = ".details";
+        String NAV_TREE = ".tree";
+        String TREE_COLLAPSE = ".collapse";
     }
 
     interface MetadataIds {

@@ -14,7 +14,6 @@ import org.iplantc.de.diskResource.client.events.DiskResourceSelectionChangedEve
 import org.iplantc.de.diskResource.client.events.FolderSelectionEvent;
 import org.iplantc.de.diskResource.client.events.search.SubmitDiskResourceQueryEvent;
 import org.iplantc.de.diskResource.client.presenters.grid.proxy.FolderContentsLoadConfig;
-import org.iplantc.de.diskResource.share.DiskResourceModule;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
@@ -248,7 +247,7 @@ public class GridViewImpl extends ContentPanel implements GridView,
     @Override
     protected void onEnsureDebugId(String baseID) {
         super.onEnsureDebugId(baseID);
-        grid.ensureDebugId(baseID + DiskResourceModule.Ids.GRID);
+        grid.ensureDebugId(baseID);
         drCm.ensureDebugId(baseID);
     }
 

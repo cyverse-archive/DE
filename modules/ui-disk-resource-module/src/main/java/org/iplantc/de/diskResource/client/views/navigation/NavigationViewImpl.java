@@ -148,8 +148,8 @@ public class NavigationViewImpl extends ContentPanel implements NavigationView {
     @Override
     protected void onEnsureDebugId(String baseID) {
         super.onEnsureDebugId(baseID);
-        treeCollapseButton.setId("idTreeCollapse");
-        tree.ensureDebugId(baseID + DiskResourceModule.Ids.NAVIGATION);
+        treeCollapseButton.setId(baseID + DiskResourceModule.Ids.TREE_COLLAPSE);
+        tree.ensureDebugId(baseID + DiskResourceModule.Ids.NAV_TREE);
     }
 
     @UiFactory

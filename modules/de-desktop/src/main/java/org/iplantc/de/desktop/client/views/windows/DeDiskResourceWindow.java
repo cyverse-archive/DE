@@ -7,10 +7,9 @@ import org.iplantc.de.commons.client.views.window.configs.DiskResourceWindowConf
 import org.iplantc.de.commons.client.views.window.configs.WindowConfig;
 import org.iplantc.de.desktop.client.events.WindowHeadingUpdatedEvent;
 import org.iplantc.de.desktop.shared.DeModule;
+import org.iplantc.de.diskResource.client.DiskResourceView;
 import org.iplantc.de.diskResource.client.events.FolderSelectionEvent;
 import org.iplantc.de.diskResource.client.gin.factory.DiskResourcePresenterFactory;
-import org.iplantc.de.diskResource.client.DiskResourceView;
-import org.iplantc.de.diskResource.share.DiskResourceModule;
 import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 
 import com.google.common.base.Strings;
@@ -119,7 +118,7 @@ public class DeDiskResourceWindow extends IplantWindowBase implements FolderSele
     @Override
     protected void onEnsureDebugId(String baseID) {
         super.onEnsureDebugId(baseID);
-        presenter.setViewDebugId(baseID + DiskResourceModule.Ids.DISK_RESOURCE_VIEW);
+        presenter.setViewDebugId(baseID);
     }
 
     private void initHandlers() {
