@@ -18,7 +18,6 @@ import org.iplantc.de.apps.client.events.selection.AppNameSelectedEvent;
 import org.iplantc.de.apps.client.events.selection.AppRatingDeselected;
 import org.iplantc.de.apps.client.events.selection.AppRatingSelected;
 import org.iplantc.de.apps.client.presenter.proxy.AppCategoryProxy;
-import org.iplantc.de.apps.client.views.dialogs.SubmitAppForPublicDialog;
 import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.models.DEProperties;
 import org.iplantc.de.client.models.HasId;
@@ -42,7 +41,6 @@ import org.iplantc.de.resources.client.messages.IplantErrorStrings;
 import org.iplantc.de.shared.exceptions.HttpRedirectException;
 import org.iplantc.de.tools.requests.client.views.dialogs.NewToolRequestDialog;
 
-import static com.google.common.base.Preconditions.checkNotNull;
 import com.google.common.base.Joiner;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
@@ -68,9 +66,6 @@ import com.sencha.gxt.data.shared.ModelKeyProvider;
 import com.sencha.gxt.data.shared.SortDir;
 import com.sencha.gxt.data.shared.Store;
 import com.sencha.gxt.data.shared.TreeStore;
-import com.sencha.gxt.widget.core.client.Dialog.PredefinedButton;
-import com.sencha.gxt.widget.core.client.box.ConfirmMessageBox;
-import com.sencha.gxt.widget.core.client.event.DialogHideEvent;
 import com.sencha.gxt.widget.core.client.grid.Grid;
 
 import java.util.ArrayList;
@@ -81,9 +76,8 @@ import java.util.logging.Logger;
 
 /**
  * The presenter for the AppsView.
- * 
+ *
  * @author jstroot
- * 
  */
 public class AppsViewPresenterImpl implements AppsView.Presenter {
 
@@ -113,9 +107,9 @@ public class AppsViewPresenterImpl implements AppsView.Presenter {
     }
 
     private static class RateAppCallback implements AsyncCallback<String> {
-        private final App selectedApp;
-        private final int score;
         private final ListStore<App> listStore;
+        private final int score;
+        private final App selectedApp;
 
         public RateAppCallback(final App selectedApp,
                                final int score,
@@ -157,36 +151,30 @@ public class AppsViewPresenterImpl implements AppsView.Presenter {
 
         }
     }
-
-    private final EventBus eventBus;
-    private static String WORKSPACE;
-    private static String USER_APPS_GROUP;
-    private static String FAVORITES;
-
     protected final AppsView view;
-
-    private final AppCategoryProxy appCategoryProxy;
-
-    private final List<HandlerRegistration> eventHandlers = new ArrayList<>();
-    private final ListStore<App> listStore;
-    private final Logger LOG = Logger.getLogger(AppsViewPresenterImpl.class.getName());
-
-    private HasId desiredSelectedAppId;
-    private final TreeStore<AppCategory> treeStore;
-    private final AppServiceFacade appService;
-    private final AppUserServiceFacade appUserService;
-    private final UserInfo userInfo;
-    private final DEProperties props;
-    private final IplantAnnouncer announcer;
-    private final IplantDisplayStrings displayStrings;
-    private final IplantErrorStrings errorStrings;
-    private RegExp searchRegex;
-    private final AppMetadataServiceFacade metadataFacade;
-
     @Inject AsyncProvider<CommentsDialog> commentsDialogProvider;
+    @Inject JsonUtil jsonUtil;
     @Inject Provider<NewToolRequestDialog> newToolRequestDialogProvider;
     @Inject Provider<SubmitAppForPublicUseView.Presenter> submitAppForPublicPresenterProvider;
-    @Inject JsonUtil jsonUtil;
+    private static String FAVORITES;
+    private static String USER_APPS_GROUP;
+    private static String WORKSPACE;
+    private final Logger LOG = Logger.getLogger(AppsViewPresenterImpl.class.getName());
+    private final IplantAnnouncer announcer;
+    private final AppCategoryProxy appCategoryProxy;
+    private final AppServiceFacade appService;
+    private final AppUserServiceFacade appUserService;
+    private final IplantDisplayStrings displayStrings;
+    private final IplantErrorStrings errorStrings;
+    private final EventBus eventBus;
+    private final List<HandlerRegistration> eventHandlers = new ArrayList<>();
+    private final ListStore<App> listStore;
+    private final AppMetadataServiceFacade metadataFacade;
+    private final DEProperties props;
+    private final TreeStore<AppCategory> treeStore;
+    private final UserInfo userInfo;
+    private HasId desiredSelectedAppId;
+    private RegExp searchRegex;
 
     @Inject
     public AppsViewPresenterImpl(final AppsView view,
@@ -254,12 +242,165 @@ public class AppsViewPresenterImpl implements AppsView.Presenter {
     }
 
     @Override
+    public void cleanUp() {
+        for (HandlerRegistration hr : eventHandlers) {
+            eventBus.removeHandler(hr);
+        }
+    }
+
+    @Override
+    public void onCreateNewAppSelected() {
+        eventBus.fireEvent(new CreateNewAppEvent());
+    }
+
+    @Override
+    public void onCreateNewWorkflowClicked() {
+        eventBus.fireEvent(new CreateNewWorkflowEvent());
+    }
+
+    @Override
+    public void onDeleteAppsSelected(final List<App> apps) {
+        if (apps == null || apps.isEmpty()) {
+            return;
+        }
+        List<String> appIds = Lists.newArrayList();
+        for (App app : apps) {
+            appIds.add(app.getId());
+        }
+
+        appUserService.deleteAppFromWorkspace(userInfo.getUsername(), userInfo.getFullUsername(), appIds, new AsyncCallback<String>() {
+
+            @Override
+            public void onFailure(Throwable caught) {
+                ErrorHandler.post(errorStrings.appRemoveFailure(), caught);
+            }
+
+            @Override
+            public void onSuccess(String result) {
+                for (App app : apps) {
+                    // Remove from visible list and update AppCategory app counts
+                    listStore.remove(app);
+
+                    // PSAR Always assume that the app is in the
+                    // "Apps Under Development" group
+                    AppCategory userAppGrp = findAppCategoryByName(USER_APPS_GROUP);
+                    if (userAppGrp != null) {
+                        updateAppCategoryAppCount(userAppGrp, userAppGrp.getAppCount() - 1);
+                    }
+
+                    eventBus.fireEvent(new AppDeleteEvent(app.getId()));
+                }
+            }
+        });
+
+    }
+
+    @Override
+    public void onEditAppSelected(App app) {
+        if (app.getStepCount() > 1) {
+            fetchWorkflowAndFireEditEvent(app);
+        } else {
+            boolean isAppPublished = app.isPublic();
+            boolean isCurrentUserAppIntegrator = userInfo.getEmail().equals(app.getIntegratorEmail());
+
+            eventBus.fireEvent(new EditAppEvent(app, isAppPublished && isCurrentUserAppIntegrator));
+        }
+    }
+
+    @Override
+    public Grid<App> getAppsGrid() {
+        return view.getAppsGrid();
+    }
+
+    @Override
+    public App getSelectedApp() {
+        return view.getSelectedApp();
+    }
+
+    @Override
+    public AppCategory getSelectedAppCategory() {
+        return view.getSelectedAppCategory();
+    }
+
+    @Override
+    public void go(HasOneWidget container, final HasId selectedAppCategory,
+                   final HasId selectedApp) {
+        container.setWidget(view);
+
+        if (!treeStore.getAll().isEmpty()) {
+            doInitialAppSelection(selectedAppCategory, selectedApp);
+        } else {
+            // Fetch AppCategories
+            reloadAppCategories(selectedAppCategory, selectedApp);
+        }
+    }
+
+    @Override
+    public void go(final HasOneWidget container) {
+        go(container, null, null);
+    }
+
+    @Override
+    public AppsView.Presenter hideAppMenu() {
+        view.hideAppMenu();
+        return this;
+    }
+
+    @Override
+    public AppsView.Presenter hideWorkflowMenu() {
+        view.hideWorkflowMenu();
+        return this;
+    }
+
+    @Override
+    public String highlightSearchText(String text) {
+        if (!Strings.isNullOrEmpty(text)) {
+            text = SafeHtmlUtils.fromString(text).asString();
+
+            if (searchRegex != null) {
+                return searchRegex.replace(text, "<font style='background: #FF0'>$1</font>"); //$NON-NLS-1$
+            }
+        }
+
+        return text;
+    }
+
+    @Override
+    public void onAppCategorySelectionChanged(AppCategorySelectionChangedEvent event) {
+        searchRegex = null;
+        if (event.getAppCategorySelection().isEmpty()) {
+            return;
+        }
+        AppCategory ag = event.getAppCategorySelection().get(0);
+        fetchApps(ag);
+        view.updateAppListHeading(Joiner.on(" >> ").join(computeGroupHierarchy(ag)));
+    }
+
+    @Override
+    public void onAppCommentSelectedEvent(AppCommentSelectedEvent event) {
+        final App app = event.getApp();
+        commentsDialogProvider.get(new AsyncCallback<CommentsDialog>() {
+            @Override
+            public void onFailure(Throwable caught) {
+                announcer.schedule(new ErrorAnnouncementConfig("Something happened while trying to manage comments. Please try again or contact support for help."));
+            }
+
+            @Override
+            public void onSuccess(CommentsDialog result) {
+                result.show(app,
+                            app.getIntegratorEmail().equals(userInfo.getEmail()),
+                            metadataFacade);
+            }
+        });
+    }
+
+    @Override
     public void onAppFavoriteSelected(final AppFavoriteSelectedEvent event) {
         final App app = event.getApp();
         appUserService.favoriteApp(userInfo.getWorkspaceId(), app.getId(), !app.isFavorite(), new AsyncCallback<String>() {
             @Override
             public void onFailure(Throwable caught) {
-                 announcer.schedule(new ErrorAnnouncementConfig(errorStrings.favServiceFailure()));
+                announcer.schedule(new ErrorAnnouncementConfig(errorStrings.favServiceFailure()));
             }
 
             @Override
@@ -290,51 +431,10 @@ public class AppsViewPresenterImpl implements AppsView.Presenter {
         });
     }
 
-    AppCategory findAppCategoryByName(String name) {
-        for (AppCategory appCategory : treeStore.getAll()) {
-            if (appCategory.getName().equalsIgnoreCase(name)) {
-                return appCategory;
-            }
-        }
-
-        return null;
-    }
-
-    void updateAppCategoryAppCount(AppCategory appGroup, int newCount) {
-        int difference = appGroup.getAppCount() - newCount;
-
-        while (appGroup != null) {
-            appGroup.setAppCount(appGroup.getAppCount() - difference);
-            treeStore.update(appGroup);
-            appGroup = treeStore.getParent(appGroup);
-        }
-    }
-
-    @Override
-    public void onAppCommentSelectedEvent(AppCommentSelectedEvent event) {
-        final App app = event.getApp();
-        commentsDialogProvider.get(new AsyncCallback<CommentsDialog>() {
-            @Override
-            public void onFailure(Throwable caught) {
-                announcer.schedule(new ErrorAnnouncementConfig("Something happened while trying to manage comments. Please try again or contact support for help."));
-            }
-
-            @Override
-            public void onSuccess(CommentsDialog result) {
-                result.show(app,
-                            app.getIntegratorEmail().equals(userInfo.getEmail()),
-                            metadataFacade);            }
-        });
-    }
-
     @Override
     public void onAppNameSelected(final AppNameSelectedEvent event) {
         App app = event.getSelectedApp();
-        if (app.isRunnable()) {
-            fireRunAppEvent(app);
-        } else {
-            announcer.schedule(new ErrorAnnouncementConfig(errorStrings.appLaunchWithoutToolError()));
-        }
+        onRunAppSelected(app);
     }
 
     @Override
@@ -373,210 +473,45 @@ public class AppsViewPresenterImpl implements AppsView.Presenter {
     }
 
     @Override
-    public void cleanUp() {
-        for (HandlerRegistration hr : eventHandlers) {
-            eventBus.removeHandler(hr);
-        }
-    }
-
-    private void initConstants() {
-        WORKSPACE = props.getPrivateWorkspace();
-
-        if (props.getPrivateWorkspaceItems() != null) {
-            JSONArray items = JSONParser.parseStrict(props.getPrivateWorkspaceItems()).isArray();
-            USER_APPS_GROUP = jsonUtil.getRawValueAsString(items.get(0));
-            FAVORITES = jsonUtil.getRawValueAsString(items.get(1));
-        }
-    }
-
-    /**
-     * Sets a string which is a place holder for selection after a call to {@link #fetchApps(org.iplantc.de.client.models.apps.AppCategory)}
-     */
-    private void setDesiredSelectedApp(HasId selectedApp) {
-        this.desiredSelectedAppId = selectedApp;
-    }
-
-    private HasId getDesiredSelectedApp() {
-        return desiredSelectedAppId;
-    }
-
-    @Override
-    public void onAppCategorySelectionChanged(AppCategorySelectionChangedEvent event) {
-        searchRegex = null;
-        if (event.getAppCategorySelection().isEmpty()){
-            return;
-        }
-        AppCategory ag = event.getAppCategorySelection().get(0);
-        fetchApps(ag);
-        view.updateAppListHeading(Joiner.on(" >> ").join(computeGroupHierarchy(ag)));
-    }
-
-    /**
-     * Retrieves the apps for the given group by updating and executing the list loader
-     */
-    protected void fetchApps(final AppCategory ag) {
-        view.maskCenterPanel(displayStrings.loadingMask());
-        appService.getApps(ag.getId(), new AsyncCallback<String>() {
-
+    public void onCopyAppSelected(List<App> currentSelection) {
+        Preconditions.checkState(currentSelection.size() == 1);
+        appUserService.copyApp(currentSelection.iterator().next().getId(), new AsyncCallback<String>() {
             @Override
-            public void onSuccess(String result) {
-                AppAutoBeanFactory factory = GWT.create(AppAutoBeanFactory.class);
-                AutoBean<AppList> bean = AutoBeanCodex.decode(factory, AppList.class, result);
-                List<App> apps = bean.as().getApps();
-                setApps(apps);
-                if (getDesiredSelectedApp() != null) {
-                    view.selectApp(getDesiredSelectedApp().getId());
-                } else {
-                    selectFirstApp();
-                }
-                setDesiredSelectedApp(null);
-                view.unMaskCenterPanel();
-                updateAppCategoryAppCount(ag, apps.size());
+            public void onFailure(Throwable caught) {
+                // TODO Add error message for the user.
+                ErrorHandler.post(caught);
             }
 
             @Override
-            public void onFailure(Throwable caught) {
-                if(caught instanceof HttpRedirectException){
-                    com.google.gwt.user.client.Window.alert(displayStrings.agaveAuthRequiredMsg());
-                } else {
-                    ErrorHandler.post(errorStrings.retrieveAppListingFailed(), caught);
+            public void onSuccess(String result) {
+                // Update the user's private apps group count.
+                AppCategory usersAppsGrp = findAppCategoryByName(USER_APPS_GROUP);
+                if (usersAppsGrp != null) {
+                    updateAppCategoryAppCount(usersAppsGrp, usersAppsGrp.getAppCount() + 1);
                 }
-                view.unMaskCenterPanel();
+                HasId hasId = CommonModelUtils.getInstance().createHasIdFromString(StringQuoter.split(result).get("id").asString());
+                if (!hasId.getId().isEmpty()) {
+                    AppCategory selectedAppCategory = getSelectedAppCategory();
+                    if (selectedAppCategory != null) {
+                        fetchApps(selectedAppCategory);
+                    }
+                    eventBus.fireEvent(new EditAppEvent(hasId, false));
+                }
             }
         });
     }
 
-    List<AppCategory> getGroupHierarchy(AppCategory grp, List<AppCategory> groups) {
-        if (groups == null) {
-            groups = new ArrayList<>();
-        }
-        groups.add(grp);
-        for (AppCategory ap : treeStore.getRootItems()) {
-            LOG.fine(ap.getName());
-            if (ap.getId().equals(grp.getId())) {
-                return groups;
-            }
-        }
-        return getGroupHierarchy(treeStore.getParent(grp), groups);
-    }
-
-    List<String> computeGroupHierarchy(final AppCategory ag) {
-        List<String> groupNames = Lists.newArrayList();
-
-        for (AppCategory group : getGroupHierarchy(ag, null)) {
-            groupNames.add(group.getName());
-        }
-        Collections.reverse(groupNames);
-        return groupNames;
-    }
-
-    void setApps(final List<App> apps) {
-        listStore.clear();
-
-        for (App app : apps) {
-            if (listStore.findModel(app) == null) {
-                listStore.add(app);
-            }
-        }
-    }
-
-    protected void selectFirstApp() {
-        view.selectFirstApp();
-    }
-
     @Override
-    public void go(HasOneWidget container, final HasId selectedAppCategory, final HasId selectedApp) {
-        container.setWidget(view);
-
-        if (!treeStore.getAll().isEmpty()) {
-            doInitialAppSelection(selectedAppCategory, selectedApp);
-        } else {
-            // Fetch AppCategories
-            reloadAppCategories(selectedAppCategory, selectedApp);
-        }
-    }
-
-    protected void reloadAppCategories(final HasId selectedAppCategory, final HasId selectedApp) {
-        view.maskWestPanel(displayStrings.loadingMask());
-        treeStore.clear();
-        appCategoryProxy.load(null, new AsyncCallback<List<AppCategory>>() {
-            @Override
-            public void onSuccess(List<AppCategory> result) {
-                addAppCategories(null, result);
-                view.expandAppCategories();
-                doInitialAppSelection(selectedAppCategory, selectedApp);
-                view.unMaskWestPanel();
-            }
+    public void onCopyWorkFlowSelected(List<App> currentSelection) {
+        Preconditions.checkState(currentSelection.size() == 1);
+        final App app = currentSelection.iterator().next();
+        appUserService.copyWorkflow(app.getId(), new AsyncCallback<String>() {
 
             @Override
             public void onFailure(Throwable caught) {
                 // TODO Add error message for the user.
                 ErrorHandler.post(caught);
-                view.unMaskWestPanel();
             }
-        });
-    }
-
-    void addAppCategories(AppCategory parent, List<AppCategory> children) {
-        if ((children == null) || children.isEmpty()) {
-            return;
-        }
-        if (parent == null) {
-            treeStore.add(children);
-        } else {
-            treeStore.add(parent, children);
-        }
-
-        for (AppCategory ag : children) {
-            addAppCategories(ag, ag.getCategories());
-        }
-    }
-
-    private void doInitialAppSelection(HasId selectedAppCategory, HasId selectedApp) {
-        // Select previous user selections
-        if (selectedAppCategory != null) {
-            view.selectAppCategory(selectedAppCategory);
-            setDesiredSelectedApp(selectedApp);
-        } else {
-            view.selectFirstAppCategory();
-        }
-
-    }
-
-    @Override
-    public void go(final HasOneWidget container) {
-        go(container, null, null);
-    }
-
-    @Override
-    public App getSelectedApp() {
-        return view.getSelectedApp();
-    }
-
-    @Override
-    public AppCategory getSelectedAppCategory() {
-        return view.getSelectedAppCategory();
-    }
-
-    @Override
-    public void onRequestToolClicked() {
-        newToolRequestDialogProvider.get().show();
-    }
-
-    @Override
-    public void copySelectedApp() {
-        final App selectedApp = getSelectedApp();
-
-        if (selectedApp.getStepCount() > 1) {
-            copyWorkflow(selectedApp);
-        } else {
-            copyApp(selectedApp);
-        }
-
-    }
-
-    private void copyWorkflow(final App app) {
-        appUserService.copyWorkflow(app.getId(), new AsyncCallback<String>() {
 
             @Override
             public void onSuccess(String result) {
@@ -600,115 +535,23 @@ public class AppsViewPresenterImpl implements AppsView.Presenter {
                 Splittable serviceWorkflowJson = StringQuoter.split(result);
                 eventBus.fireEvent(new EditWorkflowEvent(app, serviceWorkflowJson));
             }
-
-            @Override
-            public void onFailure(Throwable caught) {
-                // TODO Add error message for the user.
-                ErrorHandler.post(caught);
-            }
-        });
-    }
-
-    private void copyApp(final App app) {
-        appUserService.copyApp(app.getId(), new AsyncCallback<String>() {
-            @Override
-            public void onSuccess(String result) {
-                // Update the user's private apps group count.
-                AppCategory usersAppsGrp = findAppCategoryByName(USER_APPS_GROUP);
-                if (usersAppsGrp != null) {
-                    updateAppCategoryAppCount(usersAppsGrp, usersAppsGrp.getAppCount() + 1);
-                }
-                HasId hasId = CommonModelUtils.getInstance().createHasIdFromString(StringQuoter.split(result).get("id").asString());
-                if (!hasId.getId().isEmpty()) {
-                    AppCategory selectedAppCategory = getSelectedAppCategory();
-                    if (selectedAppCategory != null) {
-                        fetchApps(selectedAppCategory);
-                    }
-                    eventBus.fireEvent(new EditAppEvent(hasId, false));
-                }
-            }
-
-            @Override
-            public void onFailure(Throwable caught) {
-                // TODO Add error message for the user.
-                ErrorHandler.post(caught);
-            }
-        });
-    }
-
-    private void fetchWorkflowAndFireEditEvent(final App app) {
-        appUserService.editWorkflow(app.getId(), new AsyncCallback<String>() {
-
-            @Override
-            public void onSuccess(String result) {
-                Splittable serviceWorkflowJson = StringQuoter.split(result);
-                eventBus.fireEvent(new EditWorkflowEvent(app, serviceWorkflowJson));
-            }
-
-            @Override
-            public void onFailure(Throwable caught) {
-                ErrorHandler.post(errorStrings.failToRetrieveApp(), caught);
-                announcer.schedule(new ErrorAnnouncementConfig(errorStrings.failToRetrieveApp()));
-            }
         });
     }
 
     @Override
-    public void deleteSelectedApps() {
-        final List<App> apps = view.getAllSelectedApps();
-        if (apps == null || apps.isEmpty()) {
-            return;
+    public void onRequestToolClicked() {
+        newToolRequestDialogProvider.get().show();
+    }
+
+    @Override
+    public void onRunAppSelected(App app) {
+        if (app.isRunnable()) {
+            if (!app.isDisabled()) {
+                eventBus.fireEvent(new RunAppEvent(app));
+            }
+        } else {
+            announcer.schedule(new ErrorAnnouncementConfig(errorStrings.appLaunchWithoutToolError()));
         }
-
-        ConfirmMessageBox msgBox = new ConfirmMessageBox(displayStrings.warning(), displayStrings.appDeleteWarning());
-
-        msgBox.addDialogHideHandler(new DialogHideEvent.DialogHideHandler() {
-            @Override
-            public void onDialogHide(DialogHideEvent event) {
-                if(PredefinedButton.YES.equals(event.getHideButton())) {
-                    List<String> appIds = Lists.newArrayList();
-                    for (App app : apps) {
-                        appIds.add(app.getId());
-                    }
-
-                    appUserService.deleteAppsFromWorkspace(userInfo.getUsername(), userInfo.getFullUsername(), appIds, new AsyncCallback<String>() {
-
-                        @Override
-                        public void onFailure(Throwable caught) {
-                            ErrorHandler.post(errorStrings.appRemoveFailure(), caught);
-                        }
-
-                        @Override
-                        public void onSuccess(String result) {
-                            for (App app : apps) {
-                                // Remove from visible list and update AppCategory app counts
-                                listStore.remove(app);
-
-                                // PSAR Always assume that the app is in the
-                                // "Apps Under Development" group
-                                AppCategory userAppGrp = findAppCategoryByName(USER_APPS_GROUP);
-                                if (userAppGrp != null) {
-                                    updateAppCategoryAppCount(userAppGrp, userAppGrp.getAppCount() - 1);
-                                }
-
-                                eventBus.fireEvent(new AppDeleteEvent(app.getId()));
-                            }
-                        }
-                    });
-                }
-
-            }
-        });
-        msgBox.show();
-
-    }
-
-    @Override
-    public void submitClicked() {
-        App selectedApp = getSelectedApp();
-        SubmitAppForPublicDialog dialog = new SubmitAppForPublicDialog(selectedApp, submitAppForPublicPresenterProvider.get());
-        dialog.show();
-
     }
 
     @Override
@@ -716,70 +559,182 @@ public class AppsViewPresenterImpl implements AppsView.Presenter {
         view.asWidget().ensureDebugId(baseId);
     }
 
-    @Override
-    public void createNewAppClicked() {
-        eventBus.fireEvent(new CreateNewAppEvent());
+    /**
+     * Retrieves the apps for the given group by updating and executing the list loader
+     */
+    protected void fetchApps(final AppCategory ag) {
+        view.maskCenterPanel(displayStrings.loadingMask());
+        appService.getApps(ag.getId(), new AsyncCallback<String>() {
+
+            @Override
+            public void onFailure(Throwable caught) {
+                if (caught instanceof HttpRedirectException) {
+                    com.google.gwt.user.client.Window.alert(displayStrings.agaveAuthRequiredMsg());
+                } else {
+                    ErrorHandler.post(errorStrings.retrieveAppListingFailed(), caught);
+                }
+                view.unMaskCenterPanel();
+            }
+
+            @Override
+            public void onSuccess(String result) {
+                AppAutoBeanFactory factory = GWT.create(AppAutoBeanFactory.class);
+                AutoBean<AppList> bean = AutoBeanCodex.decode(factory, AppList.class, result);
+                List<App> apps = bean.as().getApps();
+                setApps(apps);
+                if (getDesiredSelectedApp() != null) {
+                    view.selectApp(getDesiredSelectedApp().getId());
+                } else {
+                    selectFirstApp();
+                }
+                setDesiredSelectedApp(null);
+                view.unMaskCenterPanel();
+                updateAppCategoryAppCount(ag, apps.size());
+            }
+        });
     }
 
-    @Override
-    public void createWorkflowClicked() {
-        eventBus.fireEvent(new CreateNewWorkflowEvent());
+    protected void reloadAppCategories(final HasId selectedAppCategory, final HasId selectedApp) {
+        view.maskWestPanel(displayStrings.loadingMask());
+        treeStore.clear();
+        appCategoryProxy.load(null, new AsyncCallback<List<AppCategory>>() {
+            @Override
+            public void onFailure(Throwable caught) {
+                // TODO Add error message for the user.
+                ErrorHandler.post(caught);
+                view.unMaskWestPanel();
+            }
+
+            @Override
+            public void onSuccess(List<AppCategory> result) {
+                addAppCategories(null, result);
+                view.expandAppCategories();
+                doInitialAppSelection(selectedAppCategory, selectedApp);
+                view.unMaskWestPanel();
+            }
+        });
     }
 
-    @Override
-    public void editSelectedApp() {
-        App selectedApp = getSelectedApp();
+    protected void selectFirstApp() {
+        view.selectFirstApp();
+    }
 
-        if (selectedApp.getStepCount() > 1) {
-            fetchWorkflowAndFireEditEvent(selectedApp);
+    void addAppCategories(AppCategory parent, List<AppCategory> children) {
+        if ((children == null) || children.isEmpty()) {
+            return;
+        }
+        if (parent == null) {
+            treeStore.add(children);
         } else {
-            boolean isAppPublished = selectedApp.isPublic();
-            boolean isCurrentUserAppIntegrator = userInfo.getEmail().equals(selectedApp.getIntegratorEmail());
+            treeStore.add(parent, children);
+        }
 
-            eventBus.fireEvent(new EditAppEvent(selectedApp, isAppPublished && isCurrentUserAppIntegrator));
+        for (AppCategory ag : children) {
+            addAppCategories(ag, ag.getCategories());
         }
     }
 
-    @Override
-    public AppsView.Presenter hideAppMenu(){
-        view.hideAppMenu();
-        return this;
-    }
+    List<String> computeGroupHierarchy(final AppCategory ag) {
+        List<String> groupNames = Lists.newArrayList();
 
-    @Override
-    public AppsView.Presenter hideWorkflowMenu(){
-        view.hideWorkflowMenu();
-        return this;
-    }
-
-    @Override
-    public Grid<App> getAppsGrid() {
-        return view.getAppsGrid();
-    }
-
-    @Override
-    public void runSelectedApp() {
-        onAppNameSelected(new AppNameSelectedEvent(getSelectedApp()));
-    }
-
-    private void fireRunAppEvent(final App app) {
-        checkNotNull(app);
-        if (!app.isDisabled()) {
-            eventBus.fireEvent(new RunAppEvent(app));
+        for (AppCategory group : getGroupHierarchy(ag, null)) {
+            groupNames.add(group.getName());
         }
+        Collections.reverse(groupNames);
+        return groupNames;
     }
 
-    @Override
-    public String highlightSearchText(String text) {
-        if (!Strings.isNullOrEmpty(text)) {
-            text = SafeHtmlUtils.fromString(text).asString();
-
-            if (searchRegex != null) {
-                return searchRegex.replace(text, "<font style='background: #FF0'>$1</font>"); //$NON-NLS-1$
+    AppCategory findAppCategoryByName(String name) {
+        for (AppCategory appCategory : treeStore.getAll()) {
+            if (appCategory.getName().equalsIgnoreCase(name)) {
+                return appCategory;
             }
         }
 
-        return text;
+        return null;
+    }
+
+    List<AppCategory> getGroupHierarchy(AppCategory grp, List<AppCategory> groups) {
+        if (groups == null) {
+            groups = new ArrayList<>();
+        }
+        groups.add(grp);
+        for (AppCategory ap : treeStore.getRootItems()) {
+            LOG.fine(ap.getName());
+            if (ap.getId().equals(grp.getId())) {
+                return groups;
+            }
+        }
+        return getGroupHierarchy(treeStore.getParent(grp), groups);
+    }
+
+    void setApps(final List<App> apps) {
+        listStore.clear();
+
+        for (App app : apps) {
+            if (listStore.findModel(app) == null) {
+                listStore.add(app);
+            }
+        }
+    }
+
+    void updateAppCategoryAppCount(AppCategory appGroup, int newCount) {
+        int difference = appGroup.getAppCount() - newCount;
+
+        while (appGroup != null) {
+            appGroup.setAppCount(appGroup.getAppCount() - difference);
+            treeStore.update(appGroup);
+            appGroup = treeStore.getParent(appGroup);
+        }
+    }
+
+    private void doInitialAppSelection(HasId selectedAppCategory, HasId selectedApp) {
+        // Select previous user selections
+        if (selectedAppCategory != null) {
+            view.selectAppCategory(selectedAppCategory);
+            setDesiredSelectedApp(selectedApp);
+        } else {
+            view.selectFirstAppCategory();
+        }
+
+    }
+
+    private void fetchWorkflowAndFireEditEvent(final App app) {
+        appUserService.editWorkflow(app.getId(), new AsyncCallback<String>() {
+
+            @Override
+            public void onFailure(Throwable caught) {
+                ErrorHandler.post(errorStrings.failToRetrieveApp(), caught);
+                announcer.schedule(new ErrorAnnouncementConfig(errorStrings.failToRetrieveApp()));
+            }
+
+            @Override
+            public void onSuccess(String result) {
+                Splittable serviceWorkflowJson = StringQuoter.split(result);
+                eventBus.fireEvent(new EditWorkflowEvent(app, serviceWorkflowJson));
+            }
+        });
+    }
+
+    private HasId getDesiredSelectedApp() {
+        return desiredSelectedAppId;
+    }
+
+    private void initConstants() {
+        WORKSPACE = props.getPrivateWorkspace();
+
+        if (props.getPrivateWorkspaceItems() != null) {
+            JSONArray items = JSONParser.parseStrict(props.getPrivateWorkspaceItems()).isArray();
+            USER_APPS_GROUP = jsonUtil.getRawValueAsString(items.get(0));
+            FAVORITES = jsonUtil.getRawValueAsString(items.get(1));
+        }
+    }
+
+    /**
+     * Sets a string which is a place holder for selection after a call to {@link #fetchApps(org.iplantc.de.client.models.apps.AppCategory)}
+     */
+    private void setDesiredSelectedApp(HasId selectedApp) {
+        this.desiredSelectedAppId = selectedApp;
     }
 
     private void updateSearchRegex(final String searchText) {

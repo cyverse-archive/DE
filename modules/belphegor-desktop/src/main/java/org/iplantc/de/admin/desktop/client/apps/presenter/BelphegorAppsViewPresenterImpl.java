@@ -362,7 +362,7 @@ public class BelphegorAppsViewPresenterImpl extends AppsViewPresenterImpl implem
     }
 
     @Override
-    public void deleteSelectedApps() {
+    public void onDeleteAppsSelected(List<App> currentSelection) {
         // Do nothing, this is for the non-admin toolbar
     }
 

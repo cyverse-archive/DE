@@ -1,8 +1,8 @@
-package org.iplantc.de.apps.client.presenter;
+package org.iplantc.de.apps.client.presenter.submit;
 
+import org.iplantc.de.apps.client.SubmitAppForPublicUseView;
 import org.iplantc.de.apps.client.events.AppPublishedEvent;
 import org.iplantc.de.apps.client.presenter.proxy.PublicAppCategoryProxy;
-import org.iplantc.de.apps.client.SubmitAppForPublicUseView;
 import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.models.DEProperties;
 import org.iplantc.de.client.models.apps.App;
@@ -12,8 +12,6 @@ import org.iplantc.de.client.models.apps.AppRefLink;
 import org.iplantc.de.client.services.AppUserServiceFacade;
 import org.iplantc.de.client.util.JsonUtil;
 import org.iplantc.de.commons.client.ErrorHandler;
-import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
-import org.iplantc.de.resources.client.messages.IplantErrorStrings;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.json.client.JSONArray;
@@ -30,32 +28,22 @@ import com.sencha.gxt.widget.core.client.box.AutoProgressMessageBox;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * @author jstroot
+ */
 public class SubmitAppForPublicPresenter implements SubmitAppForPublicUseView.Presenter {
 
-    private final SubmitAppForPublicUseView view;
+    @Inject SubmitAppForPublicUseView view;
+    @Inject AppUserServiceFacade appService;
+    @Inject PublicAppCategoryProxy appGroupProxy;
+    @Inject EventBus eventBus;
+    @Inject SubmitAppForPublicUseView.SubmitAppAppearance appearance;
+    @Inject JsonUtil jsonUtil;
+
     private AsyncCallback<String> callback;
-    private final AppUserServiceFacade appService;
-    private final PublicAppCategoryProxy appGroupProxy;
-    private final EventBus eventBus;
-    private final IplantDisplayStrings displayStrings;
-    private final IplantErrorStrings errorStrings;
 
     @Inject
-    JsonUtil jsonUtil;
-
-    @Inject
-    public SubmitAppForPublicPresenter(final SubmitAppForPublicUseView view,
-                                       final AppUserServiceFacade appService,
-                                       final PublicAppCategoryProxy appGroupProxy,
-                                       final EventBus eventBus,
-                                       final IplantDisplayStrings displayStrings,
-                                       final IplantErrorStrings errorStrings) {
-        this.view = view;
-        this.appService = appService;
-        this.appGroupProxy = appGroupProxy;
-        this.eventBus = eventBus;
-        this.displayStrings = displayStrings;
-        this.errorStrings = errorStrings;
+    SubmitAppForPublicPresenter() {
     }
 
     @Override
@@ -91,7 +79,7 @@ public class SubmitAppForPublicPresenter implements SubmitAppForPublicUseView.Pr
 
             @Override
             public void onFailure(Throwable caught) {
-                ErrorHandler.post(errorStrings.publishFailureDefaultMessage(), caught);
+                ErrorHandler.post(appearance.publishFailureDefaultMessage(), caught);
             }
         });
     }
@@ -101,8 +89,8 @@ public class SubmitAppForPublicPresenter implements SubmitAppForPublicUseView.Pr
         if (view.validate()) {
             publishApp(view.toJson());
         } else {
-            AlertMessageBox amb = new AlertMessageBox(displayStrings.warning(),
-                                                      displayStrings.publicSubmitTip());
+            AlertMessageBox amb = new AlertMessageBox(appearance.warning(),
+                                                      appearance.publicSubmitTip());
             amb.show();
         }
     }
@@ -112,7 +100,7 @@ public class SubmitAppForPublicPresenter implements SubmitAppForPublicUseView.Pr
 
             @Override
             public void onFailure(Throwable caught) {
-                ErrorHandler.post(errorStrings.publishFailureDefaultMessage(), caught);
+                ErrorHandler.post(appearance.publishFailureDefaultMessage(), caught);
             }
 
             @Override
@@ -127,9 +115,9 @@ public class SubmitAppForPublicPresenter implements SubmitAppForPublicUseView.Pr
     }
 
     private void publishApp(final JSONObject obj) {
-        final AutoProgressMessageBox pmb = new AutoProgressMessageBox(displayStrings.submitForPublicUse(),
-                                                                      displayStrings.submitRequest());
-        pmb.setProgressText(displayStrings.submitting());
+        final AutoProgressMessageBox pmb = new AutoProgressMessageBox(appearance.submitForPublicUse(),
+                                                                      appearance.submitRequest());
+        pmb.setProgressText(appearance.submitting());
         pmb.setClosable(false);
         pmb.getProgressBar().setInterval(100);
         pmb.auto();

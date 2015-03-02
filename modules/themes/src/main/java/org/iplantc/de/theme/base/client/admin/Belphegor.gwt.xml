@@ -14,7 +14,7 @@
       <when-type-is class="org.iplantc.de.admin.desktop.client.apps.views.AppCategorizeView.AppCategorizeViewAppearance" />
    </replace-with>
 
-   <replace-with class="org.iplantc.de.theme.base.client.admin.apps.ToolbarDefaultAppearance">
+   <replace-with class="org.iplantc.de.theme.base.client.admin.apps.AdminAppsToolbarDefaultAppearance">
       <when-type-is class="org.iplantc.de.admin.desktop.client.apps.views.AdminAppsView.Toolbar.ToolbarAppearance" />
    </replace-with>
 

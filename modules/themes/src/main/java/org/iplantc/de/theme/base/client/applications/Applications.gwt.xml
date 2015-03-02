@@ -28,4 +28,14 @@
     <replace-with class="org.iplantc.de.theme.base.client.applications.cells.AppInfoCellDefaultAppearance">
         <when-type-is class="org.iplantc.de.apps.client.views.cells.AppInfoCell.AppInfoCellAppearance"/>
     </replace-with>
+
+    <!-- Submit -->
+    <replace-with class="org.iplantc.de.theme.base.client.applications.submit.SubmitAppViewDefaultAppearance">
+        <when-type-is class="org.iplantc.de.apps.client.SubmitAppForPublicUseView.SubmitAppAppearance"/>
+    </replace-with>
+
+    <!-- Toolbar -->
+    <replace-with class="org.iplantc.de.theme.base.client.applications.toolbar.AppsToolbarViewDefaultAppearance">
+        <when-type-is class="org.iplantc.de.apps.client.AppsToolbarView.AppsToolbarAppearance"/>
+    </replace-with>
 </module>

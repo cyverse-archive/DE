@@ -1,5 +1,6 @@
 package org.iplantc.de.apps.client.views.widgets.proxy;
 
+import org.iplantc.de.apps.client.AppsToolbarView;
 import org.iplantc.de.apps.client.events.AppSearchResultLoadEvent;
 import org.iplantc.de.client.models.IsMaskable;
 import org.iplantc.de.client.models.apps.App;
@@ -9,7 +10,6 @@ import org.iplantc.de.client.models.apps.proxy.AppListLoadResult;
 import org.iplantc.de.client.models.apps.proxy.AppSearchAutoBeanFactory;
 import org.iplantc.de.client.services.AppServiceFacade;
 import org.iplantc.de.commons.client.ErrorHandler;
-import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 
 import com.google.common.base.Strings;
 import com.google.gwt.event.shared.HasHandlers;
@@ -38,17 +38,17 @@ public class AppSearchRpcProxy extends RpcProxy<FilterPagingLoadConfig, PagingLo
     private final AppServiceFacade appService;
     private final AppSearchAutoBeanFactory appSearchFactory;
     private final AppAutoBeanFactory appFactory;
-    private final IplantDisplayStrings displayStrings;
+    private final AppsToolbarView.AppsToolbarAppearance appearance;
     private IsMaskable maskable;
 
     public AppSearchRpcProxy(final AppServiceFacade appService,
                              final AppSearchAutoBeanFactory appSearchFactory,
                              final AppAutoBeanFactory appFactory,
-                             final IplantDisplayStrings displayStrings) {
+                             final AppsToolbarView.AppsToolbarAppearance appearance) {
         this.appService = appService;
         this.appSearchFactory = appSearchFactory;
         this.appFactory = appFactory;
-        this.displayStrings = displayStrings;
+        this.appearance = appearance;
     }
 
     public String getLastQueryText() {
@@ -67,7 +67,7 @@ public class AppSearchRpcProxy extends RpcProxy<FilterPagingLoadConfig, PagingLo
     public void load(FilterPagingLoadConfig loadConfig,
             final AsyncCallback<PagingLoadResult<App>> callback) {
         if(maskable != null){
-           maskable.mask(displayStrings.loadingMask());
+           maskable.mask(appearance.appSearchLoadingMask());
         }
         // Cache the query text.
         lastQueryText = ""; //$NON-NLS-1$

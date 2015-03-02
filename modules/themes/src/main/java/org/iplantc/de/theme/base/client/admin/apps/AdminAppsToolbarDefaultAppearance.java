@@ -11,20 +11,20 @@ import com.google.gwt.resources.client.ImageResource;
 /**
  * @author jstroot
  */
-public class ToolbarDefaultAppearance implements AdminAppsView.Toolbar.ToolbarAppearance {
+public class AdminAppsToolbarDefaultAppearance implements AdminAppsView.Toolbar.ToolbarAppearance {
     private final IplantDisplayStrings iplantDisplayStrings;
     private final IplantResources iplantResources;
     private final BelphegorDisplayStrings displayStrings;
 
-    public ToolbarDefaultAppearance() {
+    public AdminAppsToolbarDefaultAppearance() {
         this(GWT.<IplantDisplayStrings> create(IplantDisplayStrings.class),
              GWT.<IplantResources> create(IplantResources.class),
              GWT.<BelphegorDisplayStrings> create(BelphegorDisplayStrings.class));
     }
 
-    ToolbarDefaultAppearance(final IplantDisplayStrings iplantDisplayStrings,
-                             final IplantResources iplantResources,
-                             final BelphegorDisplayStrings displayStrings) {
+    AdminAppsToolbarDefaultAppearance(final IplantDisplayStrings iplantDisplayStrings,
+                                      final IplantResources iplantResources,
+                                      final BelphegorDisplayStrings displayStrings) {
         this.iplantDisplayStrings = iplantDisplayStrings;
         this.iplantResources = iplantResources;
         this.displayStrings = displayStrings;

@@ -6,6 +6,7 @@ import org.iplantc.de.apps.client.AppsView;
 import org.iplantc.de.apps.client.events.AppSearchResultLoadEvent.AppSearchResultLoadEventHandler;
 import org.iplantc.de.apps.client.events.selection.AppCategorySelectionChangedEvent;
 import org.iplantc.de.apps.client.events.selection.AppSelectionChangedEvent;
+import org.iplantc.de.apps.client.views.dialogs.SubmitAppForPublicDialog;
 import org.iplantc.de.apps.client.views.widgets.AppSearchField;
 import org.iplantc.de.apps.client.views.widgets.proxy.AppSearchRpcProxy;
 import org.iplantc.de.apps.shared.AppsModule.Ids;
@@ -15,19 +16,22 @@ import org.iplantc.de.client.models.apps.AppAutoBeanFactory;
 import org.iplantc.de.client.models.apps.proxy.AppLoadConfig;
 import org.iplantc.de.client.models.apps.proxy.AppSearchAutoBeanFactory;
 import org.iplantc.de.client.services.AppServiceFacade;
-import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
+import org.iplantc.de.commons.client.ErrorHandler;
 
+import com.google.common.base.Preconditions;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.inject.client.AsyncProvider;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiFactory;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.uibinder.client.UiTemplate;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 
@@ -35,12 +39,14 @@ import com.sencha.gxt.data.shared.loader.FilterPagingLoadConfig;
 import com.sencha.gxt.data.shared.loader.PagingLoadResult;
 import com.sencha.gxt.data.shared.loader.PagingLoader;
 import com.sencha.gxt.widget.core.client.Composite;
+import com.sencha.gxt.widget.core.client.Dialog;
+import com.sencha.gxt.widget.core.client.box.ConfirmMessageBox;
 import com.sencha.gxt.widget.core.client.button.TextButton;
 import com.sencha.gxt.widget.core.client.container.BoxLayoutContainer.BoxLayoutData;
+import com.sencha.gxt.widget.core.client.event.DialogHideEvent;
 import com.sencha.gxt.widget.core.client.menu.Item;
 import com.sencha.gxt.widget.core.client.menu.MenuItem;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -48,11 +54,14 @@ import java.util.List;
  */
 public class AppsViewToolbarImpl extends Composite implements AppsToolbarView {
 
-    @UiTemplate("../toolBar/AppsViewToolbar.ui.xml")
-    interface AppsViewToolbarUiBinder extends UiBinder<Widget, AppsViewToolbarImpl> { }
+    @UiTemplate("AppsViewToolbar.ui.xml")
+    interface AppsViewToolbarUiBinder extends UiBinder<Widget, AppsViewToolbarImpl> {
+    }
+
     @UiField MenuItem appRun;
     @UiField AppSearchField appSearch;
     @UiField TextButton app_menu;
+    @UiField BoxLayoutData boxData;
     @UiField MenuItem copyApp;
     @UiField MenuItem copyWf;
     @UiField MenuItem createNewApp;
@@ -63,85 +72,34 @@ public class AppsViewToolbarImpl extends Composite implements AppsToolbarView {
     @UiField MenuItem editWf;
     @UiField MenuItem requestTool;
     @UiField MenuItem submitApp;
+    @Inject AsyncProvider<SubmitAppForPublicDialog> submitAppDialogAsyncProvider;
     @UiField MenuItem submitWf;
     @UiField MenuItem wfRun;
     @UiField TextButton wf_menu;
-    @UiField BoxLayoutData boxData;
-
+    @UiField(provided = true) AppsToolbarAppearance appearance;
     private static AppsViewToolbarUiBinder uiBinder = GWT.create(AppsViewToolbarUiBinder.class);
     private final PagingLoader<FilterPagingLoadConfig, PagingLoadResult<App>> loader;
     private final AppSearchRpcProxy proxy;
+    private final UserInfo userInfo;
+    private List<App> currentSelection;
     private AppsView.Presenter presenter;
 
     @Inject
-    public AppsViewToolbarImpl(final AppServiceFacade appService,
-                               final IplantDisplayStrings displayStrings,
-                               final AppSearchAutoBeanFactory appSearchFactory,
-                               final AppAutoBeanFactory appFactory) {
-        proxy = new AppSearchRpcProxy(appService, appSearchFactory, appFactory, displayStrings);
+    AppsViewToolbarImpl(final AppServiceFacade appService,
+                        final AppSearchAutoBeanFactory appSearchFactory,
+                        final UserInfo userInfo,
+                        final AppsToolbarAppearance appearance,
+                        final AppAutoBeanFactory appFactory) {
+        this.userInfo = userInfo;
+        this.appearance = appearance;
+        proxy = new AppSearchRpcProxy(appService, appSearchFactory, appFactory, appearance);
         loader = createPagingLoader(proxy, appSearchFactory);
         initWidget(uiBinder.createAndBindUi(this));
     }
 
     @Override
-    protected void onEnsureDebugId(String baseID) {
-        super.onEnsureDebugId(baseID);
-        app_menu.ensureDebugId(baseID + Ids.MENU_ITEM_APPS);
-        appRun.ensureDebugId(baseID + Ids.MENU_ITEM_APPS + Ids.MENU_ITEM_USE_APP);
-        createNewApp.ensureDebugId(baseID + Ids.MENU_ITEM_APPS + Ids.MENU_ITEM_CREATE_APP);
-        requestTool.ensureDebugId(baseID + Ids.MENU_ITEM_APPS + Ids.MENU_ITEM_REQUEST_TOOL);
-        copyApp.ensureDebugId(baseID + Ids.MENU_ITEM_APPS + Ids.MENU_ITEM_COPY_APP);
-        editApp.ensureDebugId(baseID + Ids.MENU_ITEM_APPS + Ids.MENU_ITEM_EDIT_APP);
-        deleteApp.ensureDebugId(baseID + Ids.MENU_ITEM_APPS + Ids.MENU_ITEM_DELETE_APP);
-        submitApp.ensureDebugId(baseID + Ids.MENU_ITEM_APPS + Ids.MENU_ITEM_SHARE_APP);
-
-        wf_menu.ensureDebugId(baseID + Ids.MENU_ITEM_WF);
-        wfRun.ensureDebugId(baseID + Ids.MENU_ITEM_WF + Ids.MENU_ITEM_USE_WF);
-        createWorkflow.ensureDebugId(baseID + Ids.MENU_ITEM_WF + Ids.MENU_ITEM_CREATE_WF);
-        copyWf.ensureDebugId(baseID + Ids.MENU_ITEM_WF + Ids.MENU_ITEM_COPY_WF);
-        editWf.ensureDebugId(baseID + Ids.MENU_ITEM_WF + Ids.MENU_ITEM_EDIT_WF);
-        deleteWf.ensureDebugId(baseID + Ids.MENU_ITEM_WF + Ids.MENU_ITEM_DELETE_WF);
-        submitWf.ensureDebugId(baseID + Ids.MENU_ITEM_WF + Ids.MENU_ITEM_SHARE_WF);
-
-        appSearch.ensureDebugId(baseID + Ids.MENU_ITEM_SEARCH);
-
-    }
-
-    @Override
     public HandlerRegistration addAppSearchResultLoadEventHandler(AppSearchResultLoadEventHandler handler) {
         return addHandler(handler, TYPE);
-    }
-
-    @UiHandler({"appRun", "wfRun"})
-    public void appRunClicked(SelectionEvent<Item> event) {
-        presenter.runSelectedApp();
-    }
-
-    @UiHandler({"copyApp", "copyWf"})
-    public void copyClicked(SelectionEvent<Item> event) {
-        // FIXME Split this up into separate calls.
-        presenter.copySelectedApp();
-    }
-
-    @UiHandler("createNewApp")
-    public void createNewAppClicked(SelectionEvent<Item> event) {
-        // Create Events
-        presenter.createNewAppClicked();
-    }
-
-    @UiHandler("createWorkflow")
-    public void createWorkflowClicked(SelectionEvent<Item> event) {
-        presenter.createWorkflowClicked();
-    }
-
-    @UiHandler({"deleteApp", "deleteWf"})
-    public void deleteClicked(SelectionEvent<Item> event) {
-        presenter.deleteSelectedApps();
-    }
-
-    @UiHandler({"editApp", "editWf"})
-    public void editClicked(SelectionEvent<Item> event) {
-        presenter.editSelectedApp();
     }
 
     @Override
@@ -166,6 +124,7 @@ public class AppsViewToolbarImpl extends Composite implements AppsToolbarView {
         proxy.setMaskable(appsView);
     }
 
+    //<editor-fold desc="Selection Handlers">
     @Override
     public void onAppCategorySelectionChanged(AppCategorySelectionChangedEvent event) {
         app_menu.setEnabled(false);
@@ -178,12 +137,12 @@ public class AppsViewToolbarImpl extends Composite implements AppsToolbarView {
         wf_menu.setEnabled(true);
 
         // Filter out any null items
-        final ArrayList<App> appSelection = Lists.newArrayList(Iterables.filter(event.getAppSelection(), Predicates.notNull()));
+        currentSelection = Lists.newArrayList(Iterables.filter(event.getAppSelection(), Predicates.notNull()));
 
         boolean deleteAppEnabled, editAppEnabled, submitAppEnabled, copyAppEnabled, appRunEnabled;
         boolean deleteWfEnabled, editWfEnabled, submitWfEnabled, copyWfEnabled, wfRunEnabled;
 
-        switch (appSelection.size()){
+        switch (currentSelection.size()) {
             case 0:
                 deleteAppEnabled = false;
                 editAppEnabled = false;
@@ -199,14 +158,13 @@ public class AppsViewToolbarImpl extends Composite implements AppsToolbarView {
 
                 break;
             case 1:
-                final App selectedApp = appSelection.get(0);
+                final App selectedApp = currentSelection.get(0);
                 final boolean isSingleStep = selectedApp.getStepCount() == 1;
                 final boolean isMultiStep = selectedApp.getStepCount() > 1;
                 final boolean isAppPublic = selectedApp.isPublic();
                 final boolean isAppDisabled = selectedApp.isDisabled();
                 final boolean isRunnable = selectedApp.isRunnable();
-                final boolean isOwner = selectedApp.getIntegratorEmail() == UserInfo.getInstance()
-                                                                                    .getEmail();
+                final boolean isOwner = selectedApp.getIntegratorEmail().equals(userInfo.getEmail());
 
                 deleteAppEnabled = isSingleStep && !isAppPublic;
                 // allow owners to edit their app
@@ -222,9 +180,9 @@ public class AppsViewToolbarImpl extends Composite implements AppsToolbarView {
                 wfRunEnabled = isMultiStep && !isAppDisabled;
                 break;
             default:
-                final boolean containsSingleStepApp = containsSingleStepApp(appSelection);
-                final boolean containsMultiStepApp = containsMultiStepApp(appSelection);
-                final boolean allSelectedAppsPrivate = allAppsPrivate(appSelection);
+                final boolean containsSingleStepApp = containsSingleStepApp(currentSelection);
+                final boolean containsMultiStepApp = containsMultiStepApp(currentSelection);
+                final boolean allSelectedAppsPrivate = allAppsPrivate(currentSelection);
 
                 deleteAppEnabled = containsSingleStepApp && allSelectedAppsPrivate;
                 editAppEnabled = false;
@@ -238,6 +196,7 @@ public class AppsViewToolbarImpl extends Composite implements AppsToolbarView {
                 copyWfEnabled = false;
                 wfRunEnabled = false;
         }
+
         deleteApp.setEnabled(deleteAppEnabled);
         editApp.setEnabled(editAppEnabled);
         submitApp.setEnabled(submitAppEnabled);
@@ -249,6 +208,30 @@ public class AppsViewToolbarImpl extends Composite implements AppsToolbarView {
         submitWf.setEnabled(submitWfEnabled);
         copyWf.setEnabled(copyWfEnabled);
         wfRun.setEnabled(wfRunEnabled);
+    }
+    //</editor-fold>
+
+    @Override
+    protected void onEnsureDebugId(String baseID) {
+        super.onEnsureDebugId(baseID);
+        app_menu.ensureDebugId(baseID + Ids.MENU_ITEM_APPS);
+        appRun.ensureDebugId(baseID + Ids.MENU_ITEM_APPS + Ids.MENU_ITEM_USE_APP);
+        createNewApp.ensureDebugId(baseID + Ids.MENU_ITEM_APPS + Ids.MENU_ITEM_CREATE_APP);
+        requestTool.ensureDebugId(baseID + Ids.MENU_ITEM_APPS + Ids.MENU_ITEM_REQUEST_TOOL);
+        copyApp.ensureDebugId(baseID + Ids.MENU_ITEM_APPS + Ids.MENU_ITEM_COPY_APP);
+        editApp.ensureDebugId(baseID + Ids.MENU_ITEM_APPS + Ids.MENU_ITEM_EDIT_APP);
+        deleteApp.ensureDebugId(baseID + Ids.MENU_ITEM_APPS + Ids.MENU_ITEM_DELETE_APP);
+        submitApp.ensureDebugId(baseID + Ids.MENU_ITEM_APPS + Ids.MENU_ITEM_SHARE_APP);
+
+        wf_menu.ensureDebugId(baseID + Ids.MENU_ITEM_WF);
+        wfRun.ensureDebugId(baseID + Ids.MENU_ITEM_WF + Ids.MENU_ITEM_USE_WF);
+        createWorkflow.ensureDebugId(baseID + Ids.MENU_ITEM_WF + Ids.MENU_ITEM_CREATE_WF);
+        copyWf.ensureDebugId(baseID + Ids.MENU_ITEM_WF + Ids.MENU_ITEM_COPY_WF);
+        editWf.ensureDebugId(baseID + Ids.MENU_ITEM_WF + Ids.MENU_ITEM_EDIT_WF);
+        deleteWf.ensureDebugId(baseID + Ids.MENU_ITEM_WF + Ids.MENU_ITEM_DELETE_WF);
+        submitWf.ensureDebugId(baseID + Ids.MENU_ITEM_WF + Ids.MENU_ITEM_SHARE_WF);
+
+        appSearch.ensureDebugId(baseID + Ids.MENU_ITEM_SEARCH);
     }
 
     private boolean containsSingleStepApp(List<App> apps) {
@@ -278,21 +261,81 @@ public class AppsViewToolbarImpl extends Composite implements AppsToolbarView {
         return true;
     }
 
-    @UiHandler("requestTool")
-    public void requestToolClicked(SelectionEvent<Item> event) {
-        presenter.onRequestToolClicked();
+    //<editor-fold desc="UI Handlers">
+    @UiHandler({"appRun", "wfRun"})
+    void appRunClicked(SelectionEvent<Item> event) {
+        presenter.onRunAppSelected(currentSelection.iterator().next());
     }
 
-    @UiHandler({"submitApp", "submitWf"})
-    public void submitClicked(SelectionEvent<Item> event) {
-        presenter.submitClicked();
+    @UiHandler("copyApp")
+    void copyAppClicked(SelectionEvent<Item> event) {
+        presenter.onCopyAppSelected(currentSelection);
+    }
+
+    @UiHandler("copyWf")
+    void copyWorkFlowClicked(SelectionEvent<Item> event) {
+        presenter.onCopyWorkFlowSelected(currentSelection);
     }
 
     @UiFactory
     AppSearchField createAppSearchField() {
         return new AppSearchField(loader);
     }
-    
+
+    @UiHandler("createNewApp")
+    void createNewAppClicked(SelectionEvent<Item> event) {
+        presenter.onCreateNewAppSelected();
+    }
+
+    @UiHandler("createWorkflow")
+    void createWorkflowClicked(SelectionEvent<Item> event) {
+        presenter.onCreateNewWorkflowClicked();
+    }
+
+    @UiHandler({"deleteApp", "deleteWf"})
+    void deleteClicked(SelectionEvent<Item> event) {
+        ConfirmMessageBox msgBox = new ConfirmMessageBox(appearance.warning(), appearance.appDeleteWarning());
+        msgBox.addDialogHideHandler(new DialogHideEvent.DialogHideHandler() {
+            @Override
+            public void onDialogHide(DialogHideEvent event) {
+                if (!Dialog.PredefinedButton.YES.equals(event.getHideButton())) {
+                    return;
+                }
+                presenter.onDeleteAppsSelected(currentSelection);
+            }
+        });
+        msgBox.show();
+    }
+
+    @UiHandler({"editApp", "editWf"})
+    void editClicked(SelectionEvent<Item> event) {
+        Preconditions.checkState(currentSelection.size() == 1);
+        presenter.onEditAppSelected(currentSelection.iterator().next());
+    }
+
+    @UiHandler("requestTool")
+    void requestToolClicked(SelectionEvent<Item> event) {
+        presenter.onRequestToolClicked();
+    }
+
+    @UiHandler({"submitApp", "submitWf"})
+    void submitClicked(SelectionEvent<Item> event) {
+        Preconditions.checkState(currentSelection.size() == 1);
+
+        submitAppDialogAsyncProvider.get(new AsyncCallback<SubmitAppForPublicDialog>() {
+            @Override
+            public void onFailure(Throwable caught) {
+                ErrorHandler.post(caught);
+            }
+
+            @Override
+            public void onSuccess(SubmitAppForPublicDialog result) {
+                result.show(currentSelection.iterator().next());
+            }
+        });
+    }
+    //</editor-fold>
+
     private PagingLoader<FilterPagingLoadConfig, PagingLoadResult<App>> createPagingLoader(final AppSearchRpcProxy proxy,
                                                                                            final AppSearchAutoBeanFactory appSearchFactory) {
         PagingLoader<FilterPagingLoadConfig, PagingLoadResult<App>> loader = new PagingLoader<>(proxy);

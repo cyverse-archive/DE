@@ -1,4 +1,4 @@
-package org.iplantc.de.apps.client.views;
+package org.iplantc.de.apps.client.views.submit;
 
 import org.iplantc.de.apps.client.SubmitAppForPublicUseView;
 import org.iplantc.de.client.models.DEProperties;
@@ -11,8 +11,6 @@ import org.iplantc.de.commons.client.validators.UrlValidator;
 import org.iplantc.de.commons.client.widgets.ContextualHelpPopup;
 import org.iplantc.de.diskResource.client.gin.factory.DiskResourceSelectorFieldFactory;
 import org.iplantc.de.diskResource.client.views.widgets.FolderSelectorField;
-import org.iplantc.de.resources.client.IplantResources;
-import org.iplantc.de.resources.client.messages.I18N;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
@@ -33,7 +31,6 @@ import com.google.web.bindery.autobean.shared.AutoBean;
 import com.google.web.bindery.autobean.shared.AutoBeanCodex;
 
 import com.sencha.gxt.core.client.ValueProvider;
-import com.sencha.gxt.core.client.dom.ScrollSupport.ScrollMode;
 import com.sencha.gxt.data.shared.ListStore;
 import com.sencha.gxt.data.shared.ModelKeyProvider;
 import com.sencha.gxt.data.shared.SortDir;
@@ -74,106 +71,59 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * 
  * A form that enables the user to make an app public
  * 
- * @author sriram
- * 
+ * @author sriram, jstroot
  */
 public class SubmitAppForPublicUseViewImpl implements SubmitAppForPublicUseView {
+
+    @UiTemplate("SubmitAppForPublicUseView.ui.xml")
+    interface SubmitAppForPublicUseViewUiBinder extends UiBinder<Widget, SubmitAppForPublicUseViewImpl> { }
 
     private static SubmitAppForPublicUseViewUiBinder uiBinder = GWT.create(SubmitAppForPublicUseViewUiBinder.class);
 
     final private Widget widget;
 
-    @UiField
-    TextField appName;
-
-    @UiField
-    TextArea appDesc;
-
-    @UiField
-    VerticalLayoutContainer container;
-
-    @UiField(provided = true)
-    TreeStore<AppCategory> treeStore;
-
-    @UiField(provided = true)
-    Tree<AppCategory, String> tree;
-
-    @UiField
-    Grid<AppRefLink> grid;
-
-    @UiField
-    ListStore<AppRefLink> listStore;
-
-    @UiField
-    TextButton addBtn;
-
-    @UiField
-    TextButton delBtn;
-
-    @UiField
-    ContentPanel catPanel;
-
-    @UiField
-    ContentPanel refPanel;
-
-    @UiField
-    FieldLabel appfield;
-
-    @UiField
-    FieldLabel descfield;
-
-    @UiField
-    HtmlLayoutContainer intro;
-
-    @UiField
-    FieldLabel descInputfield;
-
-    @UiField
-    FieldLabel descParamfield;
-
-    @UiField
-    FieldLabel descOutputfield;
-
-    @UiField
-    TextArea inputDesc;
-
-    @UiField
-    TextArea paramDesc;
-
-    @UiField
-    TextArea outputDesc;
-
-    @UiField
-    HTML testDataLbl;
+    @UiField TextField appName;
+    @UiField TextArea appDesc;
+    @UiField VerticalLayoutContainer container;
+    @UiField(provided = true) TreeStore<AppCategory> treeStore;
+    @UiField(provided = true) Tree<AppCategory, String> tree;
+    @UiField Grid<AppRefLink> grid;
+    @UiField ListStore<AppRefLink> listStore;
+    @UiField TextButton addBtn;
+    @UiField TextButton delBtn;
+    @UiField ContentPanel catPanel;
+    @UiField ContentPanel refPanel;
+    @UiField FieldLabel appField;
+    @UiField FieldLabel descField;
+    @UiField HtmlLayoutContainer intro;
+    @UiField FieldLabel descInputField;
+    @UiField FieldLabel descParamField;
+    @UiField FieldLabel descOutputField;
+    @UiField TextArea inputDesc;
+    @UiField TextArea paramDesc;
+    @UiField TextArea outputDesc;
+    @UiField HTML testDataLbl;
+    @UiField(provided = true) final FolderSelectorField dataFolderSelector;
+    @UiField(provided = true) SubmitAppAppearance appearance;
 
     private GridEditing<AppRefLink> editing;
-
     private App selectedApp;
-
-    private final DEProperties deprops;
-
-    @UiField(provided = true)
-    final FolderSelectorField dataFolderSelector;
+    private final DEProperties deProps;
 
     Logger LOG = Logger.getLogger("Submit Application for Public Use");
 
-    @UiTemplate("SubmitAppForPublicUseView.ui.xml")
-    interface SubmitAppForPublicUseViewUiBinder extends UiBinder<Widget, SubmitAppForPublicUseViewImpl> {
-    }
-
     @Inject
-    public SubmitAppForPublicUseViewImpl(final DiskResourceSelectorFieldFactory folderSelectorFieldFactory,
-                                         final DEProperties props) {
+    SubmitAppForPublicUseViewImpl(final DiskResourceSelectorFieldFactory folderSelectorFieldFactory,
+                                  final SubmitAppAppearance appearance,
+                                  final DEProperties props) {
+        this.appearance = appearance;
         this.dataFolderSelector = folderSelectorFieldFactory.defaultFolderSelector();
-        this.deprops = props;
+        this.deProps = props;
         initCategoryTree();
         widget = uiBinder.createAndBindUi(this);
         initGrid();
-        container.setScrollMode(ScrollMode.AUTOY);
-        initFieldLabels();
         dataFolderSelector.addValueChangeHandler(new ValueChangeHandler<Folder>() {
 
             @Override
@@ -187,7 +137,7 @@ public class SubmitAppForPublicUseViewImpl implements SubmitAppForPublicUseView 
 
     @UiFactory
     HtmlLayoutContainer buildIntroContainer() {
-        return new HtmlLayoutContainer(I18N.DISPLAY.submitForPublicUseIntro());
+        return new HtmlLayoutContainer(appearance.submitForPublicUseIntro());
     }
 
     @Override
@@ -197,7 +147,7 @@ public class SubmitAppForPublicUseViewImpl implements SubmitAppForPublicUseView 
     }
 
     private void initGrid() {
-        CellSelectionModel<AppRefLink> csm = buildRefCellSelecitonModel();
+        CellSelectionModel<AppRefLink> csm = buildRefCellSelectionModel();
         grid.setSelectionModel(csm);
         editing = createGridEditing();
         ColumnConfig<AppRefLink, String> cc = grid.getColumnModel().getColumn(0);
@@ -232,7 +182,7 @@ public class SubmitAppForPublicUseViewImpl implements SubmitAppForPublicUseView 
             @Override
             public void onSelect(SelectEvent event) {
                 ContextualHelpPopup popup = new ContextualHelpPopup();
-                popup.add(new HTML(I18N.HELP.publicSubmissionFormAttach()));
+                popup.add(new HTML(appearance.publicSubmissionFormAttach()));
                 popup.showAt(tool_help_ref.getAbsoluteLeft(), tool_help_ref.getAbsoluteTop() + 15);
 
             }
@@ -244,26 +194,14 @@ public class SubmitAppForPublicUseViewImpl implements SubmitAppForPublicUseView 
             @Override
             public void onSelect(SelectEvent event) {
                 ContextualHelpPopup popup = new ContextualHelpPopup();
-                popup.add(new HTML(I18N.HELP.publicSubmissionFormCategories()));
+                popup.add(new HTML(appearance.publicSubmissionFormCategories()));
                 popup.showAt(tool_help_cat.getAbsoluteLeft(), tool_help_cat.getAbsoluteTop() + 15);
 
             }
         });
     }
 
-    private void initFieldLabels() {
-        appfield.setHTML(buildRequiredFieldLabel(I18N.DISPLAY.publicName()));
-        descfield.setHTML(buildRequiredFieldLabel(I18N.DISPLAY.publicDescription()));
-        refPanel.setHeadingHtml(I18N.DISPLAY.publicAttach());
-
-        catPanel.setHeadingHtml(buildRequiredFieldLabel(I18N.DISPLAY.publicCategories()));
-        descInputfield.setHTML(buildRequiredFieldLabel(I18N.DISPLAY.describeInputLbl()));
-        descOutputfield.setHTML(buildRequiredFieldLabel(I18N.DISPLAY.describeOutputLbl()));
-        descParamfield.setHTML(buildRequiredFieldLabel(I18N.DISPLAY.describeParamLbl()));
-        testDataLbl.setHTML(buildRequiredFieldLabel(testDataLbl.getHTML()));
-    }
-
-    private CellSelectionModel<AppRefLink> buildRefCellSelecitonModel() {
+    private CellSelectionModel<AppRefLink> buildRefCellSelectionModel() {
         CellSelectionModel<AppRefLink> csm = new CellSelectionModel<>();
         csm.addCellSelectionChangedHandler(new CellSelectionChangedHandler<AppRefLink>() {
             @Override
@@ -376,7 +314,7 @@ public class SubmitAppForPublicUseViewImpl implements SubmitAppForPublicUseView 
                                                                        }
                                                                    },
                                                                    250,
-                                                                   I18N.DISPLAY.links());
+                                                                   appearance.links());
 
         link.setHideable(false);
         link.setMenuDisabled(true);
@@ -396,9 +334,9 @@ public class SubmitAppForPublicUseViewImpl implements SubmitAppForPublicUseView 
      */
     private void setTreeIcons() {
         com.sencha.gxt.widget.core.client.tree.TreeStyle style = tree.getStyle();
-        style.setNodeCloseIcon(IplantResources.RESOURCES.category());
-        style.setNodeOpenIcon(IplantResources.RESOURCES.category_open());
-        style.setLeafIcon(IplantResources.RESOURCES.subCategory());
+        style.setNodeCloseIcon(appearance.categoryIcon());
+        style.setNodeOpenIcon(appearance.categoryOpenIcon());
+        style.setLeafIcon(appearance.subCategoryIcon());
     }
 
     @Override
@@ -447,8 +385,8 @@ public class SubmitAppForPublicUseViewImpl implements SubmitAppForPublicUseView 
             return false;
         }
         
-        if (!tdFolder.getPath().startsWith(deprops.getCommunityDataPath())) {
-            dataFolderSelector.setInfoErrorText(I18N.DISPLAY.testdataWarn());
+        if (!tdFolder.getPath().startsWith(deProps.getCommunityDataPath())) {
+            dataFolderSelector.setInfoErrorText(appearance.testDataWarn());
             return false;
         } else {
             dataFolderSelector.setInfoErrorText(null);

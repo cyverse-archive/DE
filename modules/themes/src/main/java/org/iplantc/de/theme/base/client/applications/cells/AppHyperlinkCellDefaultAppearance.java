@@ -3,6 +3,7 @@ package org.iplantc.de.theme.base.client.applications.cells;
 import org.iplantc.de.apps.client.views.cells.AppHyperlinkCell;
 import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
+import org.iplantc.de.theme.base.client.applications.AppsMessages;
 
 import com.google.common.base.Strings;
 import com.google.gwt.core.client.GWT;
@@ -41,19 +42,23 @@ public class AppHyperlinkCellDefaultAppearance implements AppHyperlinkCell.AppHy
     private final Templates templates;
     protected final Resources resources;
     private final IplantDisplayStrings iplantDisplayStrings;
+    private final AppsMessages appsMessages;
 
     public AppHyperlinkCellDefaultAppearance() {
         this(GWT.<Templates> create(Templates.class),
              GWT.<Resources> create(Resources.class),
-             GWT.<IplantDisplayStrings> create(IplantDisplayStrings.class));
+             GWT.<IplantDisplayStrings> create(IplantDisplayStrings.class),
+             GWT.<AppsMessages> create(AppsMessages.class));
     }
 
     AppHyperlinkCellDefaultAppearance(final Templates templates,
                                       final Resources resources,
-                                      final IplantDisplayStrings iplantDisplayStrings) {
+                                      final IplantDisplayStrings iplantDisplayStrings,
+                                      final AppsMessages appsMessages) {
         this.templates = templates;
         this.resources = resources;
         this.iplantDisplayStrings = iplantDisplayStrings;
+        this.appsMessages = appsMessages;
         this.resources.css().ensureInjected();
     }
 
@@ -89,6 +94,6 @@ public class AppHyperlinkCellDefaultAppearance implements AppHyperlinkCell.AppHy
 
     @Override
     public String run() {
-        return iplantDisplayStrings.run();
+        return appsMessages.run();
     }
 }

@@ -1,10 +1,7 @@
-/**
- * 
- */
 package org.iplantc.de.apps.client.views.dialogs;
 
-import org.iplantc.de.apps.client.events.AppCategoryCountUpdateEvent;
 import org.iplantc.de.apps.client.SubmitAppForPublicUseView;
+import org.iplantc.de.apps.client.events.AppCategoryCountUpdateEvent;
 import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.util.JsonUtil;
@@ -12,88 +9,95 @@ import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
 import org.iplantc.de.commons.client.info.SuccessAnnouncementConfig;
 import org.iplantc.de.commons.client.views.dialogs.IPlantDialog;
-import org.iplantc.de.resources.client.messages.I18N;
+import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.inject.Inject;
 
 import com.sencha.gxt.widget.core.client.event.SelectEvent;
 import com.sencha.gxt.widget.core.client.event.SelectEvent.SelectHandler;
 
 /**
- * @author sriram
- * 
+ * FIXME Apply appearance
+ * @author sriram, jstroot
  */
-public class SubmitAppForPublicDialog extends IPlantDialog {
-
+public class SubmitAppForPublicDialog extends IPlantDialog implements SelectHandler {
 
     private final class SubmitAppForPublicCallbackImpl implements AsyncCallback<String> {
-        @Override
-        public void onSuccess(String appName) {
-            hide();
-
-            IplantAnnouncer.getInstance().schedule(
-new SuccessAnnouncementConfig(SafeHtmlUtils.fromTrustedString(I18N.DISPLAY.makePublicSuccessMessage(appName))));
-
-            // Create and fire event
-            AppCategoryCountUpdateEvent event = new AppCategoryCountUpdateEvent(false,
-                    AppCategoryCountUpdateEvent.AppCategoryType.BETA);
-            EventBus.getInstance().fireEvent(event);
-        }
-
         @Override
         public void onFailure(Throwable caught) {
             hide();
             if (caught != null) {
                 String errorMessage = getErrorMessage(caught);
-                if(errorMessage.equals("")) {
-                    ErrorHandler.post(I18N.DISPLAY.makePublicFail(), caught);
+                if (errorMessage.equals("")) {
+                    ErrorHandler.post(displayStrings.makePublicFail(), caught);
                 } else {
-                    ErrorHandler.post(I18N.DISPLAY.makePublicFail() + "Reason: " + errorMessage  , caught);
+                    ErrorHandler.post(displayStrings.makePublicFail() + "Reason: " + errorMessage, caught);
                 }
             }
         }
+
+        @Override
+        public void onSuccess(String appName) {
+            hide();
+
+            announcer.schedule(new SuccessAnnouncementConfig(SafeHtmlUtils.fromTrustedString(displayStrings.makePublicSuccessMessage(appName))));
+
+            // Create and fire event
+            AppCategoryCountUpdateEvent event = new AppCategoryCountUpdateEvent(false,
+                                                                                AppCategoryCountUpdateEvent.AppCategoryType.BETA);
+            eventBus.fireEvent(event);
+        }
+    }
+    @Inject JsonUtil jsonUtil;
+    @Inject EventBus eventBus;
+    @Inject IplantAnnouncer announcer;
+    @Inject SubmitAppForPublicUseView.Presenter presenter;
+    private final IplantDisplayStrings displayStrings;
+
+    @Inject
+    SubmitAppForPublicDialog(final IplantDisplayStrings displayStrings) {
+        this.displayStrings = displayStrings;
+
+        setPredefinedButtons(PredefinedButton.OK, PredefinedButton.CANCEL);
+        setHeadingText(displayStrings.publicSubmissionForm());
+        setOkButtonText(displayStrings.submit());
+        setPixelSize(615, 480);
+        setHideOnButtonClick(false);
+        addCancelButtonSelectHandler(this);
+    }
+
+    /**
+     * Handles Cancel button selections. Wired up in constructor.
+     */
+    @Override
+    public void onSelect(SelectEvent event) {
+        hide();
+    }
+
+    public void show(final App appToSubmit) {
+        presenter.go(this, appToSubmit, new SubmitAppForPublicCallbackImpl());
+        super.show();
+    }
+
+    @Override
+    public void show() throws UnsupportedOperationException {
+        throw new UnsupportedOperationException("This method is not supported. Use 'show(App)' instead.");
+    }
+
+    @Override
+    protected void onOkButtonClicked() {
+        presenter.onSubmit();
     }
 
     private String getErrorMessage(Throwable caught) {
         JSONObject obj = jsonUtil.getObject(caught.getMessage());
-        if(obj != null) {
+        if (obj != null) {
             return jsonUtil.getString(obj, "reason");
         }
-        return  "";
-    }
-
-    private final JsonUtil jsonUtil;
-    
-    public SubmitAppForPublicDialog(final App selectedApp,
-                                    final SubmitAppForPublicUseView.Presenter presenter) {
-        jsonUtil = JsonUtil.getInstance();
-        initDialog();
-        presenter.go(this, selectedApp, new SubmitAppForPublicCallbackImpl());
-        setOkButtonText(I18N.DISPLAY.submit());
-        addOkButtonSelectHandler(new SelectHandler() {
-
-            @Override
-            public void onSelect(SelectEvent event) {
-                presenter.onSubmit();
-            }
-        });
-        addCancelButtonSelectHandler(new SelectHandler() {
-            
-            @Override
-            public void onSelect(SelectEvent event) {
-                hide();
-                
-            }
-        });
-    }
-
-    private void initDialog() {
-        setHeadingText(I18N.DISPLAY.publicSubmissionForm()); //$NON-NLS-1$
-        setPixelSize(615, 480);
-        setPredefinedButtons(PredefinedButton.OK, PredefinedButton.CANCEL);
-        setHideOnButtonClick(false);
+        return "";
     }
 
 }

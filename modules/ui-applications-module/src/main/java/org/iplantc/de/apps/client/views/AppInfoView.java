@@ -18,6 +18,7 @@ import org.iplantc.de.resources.client.messages.I18N;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -53,11 +54,13 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-public class AppInfoView implements
-                        IsWidget,
-                        AppFavoriteSelectedEvent.AppFavoriteSelectedEventHandler,
-                        AppFavoriteSelectedEvent.HasAppFavoriteSelectedEventHandlers,
-                        AppFavoritedEvent.AppFavoritedEventHandler {
+/**
+ * @author jstroot
+ */
+public class AppInfoView implements IsWidget,
+                                    AppFavoriteSelectedEvent.AppFavoriteSelectedEventHandler,
+                                    AppFavoriteSelectedEvent.HasAppFavoriteSelectedEventHandlers,
+                                    AppFavoritedEvent.AppFavoritedEventHandler {
 
     private static final String DIV_CLOSE = "</div>";
 
@@ -147,8 +150,7 @@ public class AppInfoView implements
         }
     }
 
-    interface AppInfoViewUiBinder extends UiBinder<Widget, AppInfoView> {
-    }
+    interface AppInfoViewUiBinder extends UiBinder<Widget, AppInfoView> { }
 
     public interface AppDetailsRenderer extends XTemplates {
         @XTemplate(source = "appDetails.html")
@@ -157,17 +159,10 @@ public class AppInfoView implements
 
     private static AppInfoViewUiBinder BINDER = GWT.create(AppInfoViewUiBinder.class);
 
-    @UiField
-    AppFavoriteCellWidget favIcon;
-
-    @UiField
-    HTML appDesc;
-
-    @UiField
-    HorizontalPanel appDetailsPnl;
-
-    @UiField
-    VerticalLayoutContainer info_container;
+    @UiField AppFavoriteCellWidget favIcon;
+    @UiField HTML appDesc;
+    @UiField HorizontalPanel appDetailsPnl;
+    @UiField VerticalLayoutContainer info_container;
 
     private final TabPanel tabs;
 
@@ -343,7 +338,7 @@ public class AppInfoView implements
         }
 
         appDetailsHtmlContainer.add(new Label(I18N.DISPLAY.category() + ": "), new HtmlData(".cell11"));
-        List<String> builder = new ArrayList<String>();
+        List<String> builder = Lists.newArrayList();
         for (AppCategory ag : groups) {
             builder.add(Joiner.on(" >> ").join(appsView.computeGroupHierarchy(ag)));
         }

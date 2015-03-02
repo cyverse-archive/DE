@@ -182,16 +182,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     String appCountSingular();
 
     /**
-     * Translated "This will remove the selected app from your workspace. Do you wish to continue?".
-     *
-     * @return translated
-     *         "This will remove the selected app from your workspace. Do you wish to continue?"
-     */
-    @DefaultMessage("This will remove the selected app from your workspace. Do you wish to continue?")
-    @Key("appDeleteWarning")
-    String appDeleteWarning();
-
-    /**
      * Translated "Disabled".
      *
      * @return translated "Disabled"
@@ -894,15 +884,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     String edit();
 
     /**
-     * Translated "Edit...".
-     *
-     * @return translated "Edit..."
-     */
-    @DefaultMessage("Edit...")
-    @Key("editMenuItem")
-    String editMenuItem();
-
-    /**
      * Translated "Email".
      *
      * @return translated "Email"
@@ -1331,15 +1312,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     String link();
 
     /**
-     * Translated "Links".
-     *
-     * @return translated "Links"
-     */
-    @DefaultMessage("Links")
-    @Key("links")
-    String links();
-    
-    /**
      * Translated "linkToFolder"
      * 
      * @return
@@ -1642,15 +1614,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     @DefaultMessage("No")
     @Key("negativeResponse")
     String negativeResponse();
-
-    /**
-     * Translated "New App".
-     *
-     * @return translated "New App"
-     */
-    @DefaultMessage("New App")
-    @Key("newApp")
-    String newApp();
 
     /**
      * Translated "Create Barcode File".
@@ -2074,15 +2037,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     String publishedOn();
 
     /**
-     * Translated "Please attach any helpful links or references for this app:".
-     *
-     * @return translated "Please attach any helpful links or references for this app:"
-     */
-    @DefaultMessage("Please attach any helpful links or references for this app:")
-    @Key("publicAttach")
-    String publicAttach();
-
-    /**
      * Translated "Click Add to attach an item.".
      *
      * @return translated "Click Add to attach an item."
@@ -2100,15 +2054,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     @DefaultMessage("For example, you may want to include a link to a paper which referenced your app.")
     @Key("publicAttachTip")
     String publicAttachTip();
-
-    /**
-     * Translated "Suggest categories for your app:".
-     *
-     * @return translated "Suggest categories for your app:"
-     */
-    @DefaultMessage("Suggest categories for your app:")
-    @Key("publicCategories")
-    String publicCategories();
 
     /**
      * Translated "Click Browse to explore categories.".
@@ -2130,42 +2075,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     @DefaultMessage("Select the possible categories under which your app may be displayed in the apps list within the Apps window.")
     @Key("publicCategoriesTip")
     String publicCategoriesTip();
-
-    /**
-     * Translated "Briefly describe your app:".
-     *
-     * @return translated "Briefly describe your app:"
-     */
-    @DefaultMessage("Briefly describe your app:")
-    @Key("publicDescription")
-    String publicDescription();
-
-    /**
-     * Translated "Click app description below to edit.".
-     *
-     * @return translated "Click app description below to edit."
-     */
-    @DefaultMessage("Click app description below to edit.")
-    @Key("publicDescriptionNote")
-    String publicDescriptionNote();
-
-    /**
-     * Translated "What is the name of your app?".
-     *
-     * @return translated "What is the name of your app?"
-     */
-    @DefaultMessage("What is the name of your app?")
-    @Key("publicName")
-    String publicName();
-
-    /**
-     * Translated "Click app name below to edit.".
-     *
-     * @return translated "Click app name below to edit."
-     */
-    @DefaultMessage("Click app name below to edit.")
-    @Key("publicNameNote")
-    String publicNameNote();
 
     /**
      * Translated "Please complete required fields to submit.".
@@ -2357,15 +2266,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     String requestNewTool();
 
     /**
-     * Translated "Request Tool".
-     *
-     * @return translated "Request Tool"
-     */
-    @DefaultMessage("Request Tool")
-    @Key("requestTool")
-    String requestTool();
-
-    /**
      * Translated "Discovery Environment".
      *
      * @return translated "Discovery Environment"
@@ -2373,15 +2273,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     @DefaultMessage("Discovery Environment")
     @Key("rootApplicationTitle")
     String rootApplicationTitle();
-
-    /**
-     * Translated "Click to use this app.".
-     *
-     * @return translated "Click to use this app."
-     */
-    @DefaultMessage("Click to use this app.")
-    @Key("run")
-    String run();
 
     /**
      * Translated "Save".
@@ -2447,15 +2338,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     @Key("searchAppResultsHeader")
     String searchAppResultsHeader(String searchText, int total);
 
-    /**
-     * Translated "Search Apps by Name or Description".
-     *
-     * @return translated "Search Apps by Name or Description"
-     */
-    @DefaultMessage("Search Apps by Name or Description")
-    @Key("searchApps")
-    String searchApps();
-    
     @DefaultMessage("Search by Name")
     @Key("searchData")
     String searchData();
@@ -2621,15 +2503,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     String settings();
 
     /**
-     * Translated "Share...".
-     *
-     * @return translated "Share..."
-     */
-    @DefaultMessage("Share...")
-    @Key("shareMenuItem")
-    String shareMenuItem();
-
-    /**
      * Translated "Share promt".
      *
      * @return translated "Share promt"
@@ -2745,23 +2618,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     @DefaultMessage("Submit")
     @Key("submit")
     String submit();
-
-    /**
-     * Translated "Submit your app for public use.".
-     *
-     * @return translated "Submit your app for public use."
-     */
-    @DefaultMessage("Submit your app for public use.")
-    @Key("submitForPublicUse")
-    String submitForPublicUse();
-    
-    /**
-     * Translated "Intro text for Submit your app for public use form.".
-     *
-     * @return translated "Intro text for Submit your app for public use form."
-     */
-    @Key("submitForPublicUseIntro")
-    String submitForPublicUseIntro();
 
     /**
      * Translated "Submitting your request, please wait...".
@@ -2989,9 +2845,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     @Key("upload")
     String upload();
 
-    @DefaultMessage("Use Workflow...")
-    String useWf();
-
     /**
      * Translated "New upload".
      *
@@ -3141,15 +2994,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     String wikiUrlLabel(String arg0);
 
     /**
-     * Translated "Workflow".
-     *
-     * @return translated "Workflow"
-     */
-    @DefaultMessage("Workflow")
-    @Key("workflow")
-    String workflow();
-
-    /**
      * Translated "Workflow Information".
      *
      * @return translated "Workflow Information"
@@ -3226,14 +3070,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     String addToFavorites(String resource_name);
 
     String removeFromFavorites(String resource_name);
-
-    String describeInputLbl();
-
-    String describeOutputLbl();
-
-    String describeParamLbl();
-
-    String testdataWarn();
 
     String refLbl();
 

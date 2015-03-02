@@ -54,15 +54,13 @@ public interface AppsView extends IsWidget,
                                        AppRatingSelected.AppRatingSelectedHandler,
                                        AppRatingDeselected.AppRatingDeselectedHandler {
 
-        void copySelectedApp();
+        void onCreateNewAppSelected();
 
-        void createNewAppClicked();
+        void onCreateNewWorkflowClicked();
 
-        void createWorkflowClicked();
+        void onDeleteAppsSelected(List<App> currentSelection);
 
-        void deleteSelectedApps();
-
-        void editSelectedApp();
+        void onEditAppSelected(App app);
 
         App getSelectedApp();
 
@@ -80,11 +78,13 @@ public interface AppsView extends IsWidget,
 
         Presenter hideWorkflowMenu();
 
+        void onCopyAppSelected(List<App> currentSelection);
+
+        void onCopyWorkFlowSelected(List<App> currentSelection);
+
         void onRequestToolClicked();
 
-        void runSelectedApp();
-
-        void submitClicked();
+        void onRunAppSelected(App next);
 
         void setViewDebugId(String baseId);
     }
