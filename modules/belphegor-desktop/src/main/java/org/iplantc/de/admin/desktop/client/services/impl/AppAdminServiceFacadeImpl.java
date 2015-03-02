@@ -1,6 +1,7 @@
 package org.iplantc.de.admin.desktop.client.services.impl;
 
 import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.*;
+
 import org.iplantc.de.admin.desktop.client.services.AppAdminServiceFacade;
 import org.iplantc.de.admin.desktop.client.services.model.AppCategorizeRequest;
 import org.iplantc.de.client.models.apps.AppCategory;
@@ -146,6 +147,29 @@ public class AppAdminServiceFacadeImpl implements AppAdminServiceFacade {
         ServiceCallWrapper wrapper = new ServiceCallWrapper(PATCH, address,
                                                             application.toString());
         deService.getServiceData(wrapper, callback);
+    }
+
+    @Override
+    public void getAppDoc(String appId, AsyncCallback<String> callback) {
+        String address = APPS + "/" + appId + "/documentation";
+        ServiceCallWrapper wrapper = new ServiceCallWrapper(GET, address);
+        deService.getServiceData(wrapper, callback);
+    }
+
+    @Override
+    public void saveAppDoc(String appId, String doc, AsyncCallback<String> callback) {
+        String address = APPS_ADMIN + "/" + appId + "/documentation";
+        ServiceCallWrapper wrapper = new ServiceCallWrapper(POST, address, doc);
+        deService.getServiceData(wrapper, callback);
+
+    }
+
+    @Override
+    public void updateAppDoc(String appId, String doc, AsyncCallback<String> callback) {
+        String address = APPS_ADMIN + "/" + appId + "/documentation";
+        ServiceCallWrapper wrapper = new ServiceCallWrapper(PATCH, address, doc);
+        deService.getServiceData(wrapper, callback);
+
     }
 
 }

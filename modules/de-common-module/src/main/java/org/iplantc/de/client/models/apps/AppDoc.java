@@ -12,6 +12,9 @@ public interface AppDoc {
     @PropertyName("documentation")
     String getDocumentaion();
 
+    @PropertyName("documentation")
+    void setDocumentation(String doc);
+
     @PropertyName("created_on")
     String getCreatedOn();
 

@@ -23,6 +23,7 @@ import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.models.apps.AppAutoBeanFactory;
 import org.iplantc.de.client.models.apps.AppCategory;
+import org.iplantc.de.client.models.apps.AppDoc;
 import org.iplantc.de.client.services.AppMetadataServiceFacade;
 import org.iplantc.de.client.services.AppServiceFacade;
 import org.iplantc.de.client.services.AppUserServiceFacade;
@@ -37,10 +38,12 @@ import org.iplantc.de.commons.client.views.dialogs.IPlantPromptDialog;
 import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 import org.iplantc.de.resources.client.messages.IplantErrorStrings;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONParser;
+import com.google.gwt.json.client.JSONString;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.inject.Inject;
 import com.google.web.bindery.autobean.shared.AutoBean;
@@ -93,6 +96,9 @@ public class BelphegorAppsViewPresenterImpl extends AppsViewPresenterImpl implem
     @Inject BelphegorAdminProperties properties;
     @Inject JsonUtil jsonUtil;
 
+    // a flag to determine if doc
+    private boolean isDocUpdate;
+
     @Inject
     public BelphegorAppsViewPresenterImpl(final AppsView view,
                                           final AppCategoryProxy proxy,
@@ -131,8 +137,27 @@ public class BelphegorAppsViewPresenterImpl extends AppsViewPresenterImpl implem
     }
 
     @Override
-    public void onAppNameSelected(AppNameSelectedEvent event) {
-        new AppEditor(event.getSelectedApp(), this).show();
+    public void onAppNameSelected(final AppNameSelectedEvent event) {
+        adminAppService.getAppDoc(event.getSelectedApp().getId(), new AsyncCallback<String>() {
+
+            @Override
+            public void onFailure(Throwable caught) {
+                IplantAnnouncer.getInstance()
+                               .schedule(new ErrorAnnouncementConfig("Documentation not found!"));
+                AutoBean<AppDoc> doc = AutoBeanCodex.decode(factory, AppDoc.class, "{}");
+                new AppEditor(event.getSelectedApp(), doc.as(), BelphegorAppsViewPresenterImpl.this).show();
+                isDocUpdate = false;
+            }
+
+            @Override
+            public void onSuccess(String result) {
+                // Get result
+                AutoBean<AppDoc> doc = AutoBeanCodex.decode(factory, AppDoc.class, result);
+                new AppEditor(event.getSelectedApp(), doc.as(), BelphegorAppsViewPresenterImpl.this).show();
+                isDocUpdate = true;
+            }
+        });
+
     }
 
     @Override
@@ -485,7 +510,7 @@ public class BelphegorAppsViewPresenterImpl extends AppsViewPresenterImpl implem
     }
 
     @Override
-    public void onAppEditorSave(final App app) {
+    public void onAppEditorSave(final App app, AppDoc doc) {
         final AsyncCallback<String> editCompleteCallback = new AppEditCompleteCallback(app);
 
         final App appClone = AutoBeanCodex.decode(factory, App.class, "{}").as();
@@ -516,7 +541,38 @@ public class BelphegorAppsViewPresenterImpl extends AppsViewPresenterImpl implem
         if (app.getName() != null) {
             adminAppService.updateApplication(appClone.getId(), jsonObj, editCompleteCallback);
         }
+        if(!Strings.isNullOrEmpty(doc.getDocumentaion())) {
+            if (isDocUpdate) {
+                adminAppService.updateAppDoc(appClone.getId(),
+                                       getJsonFormat(doc.getDocumentaion()),
+                                       new DocSaveCallbackImpl());
+            } else {
+                adminAppService.saveAppDoc(appClone.getId(),
+                                           getJsonFormat(doc.getDocumentaion()),
+                                           new DocSaveCallbackImpl());
+            }
+        }
 
+    }
+
+    private String getJsonFormat(String doc) {
+        JSONObject json = new JSONObject();
+        json.put("documentation", new JSONString(doc));
+        return json.toString();
+    }
+
+    private final class DocSaveCallbackImpl implements AsyncCallback<String> {
+        @Override
+        public void onFailure(Throwable caught) {
+            ErrorHandler.post("Unable to update DE app documentation!", caught);
+            
+        }
+
+        @Override
+        public void onSuccess(String result) {
+                                       IplantAnnouncer.getInstance()
+                                                      .schedule(new SuccessAnnouncementConfig("App documentation updated!"));
+        }
     }
 
     private class AppEditCompleteCallback implements AsyncCallback<String> {

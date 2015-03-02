@@ -4,7 +4,8 @@
              xmlns:container="urn:import:com.sencha.gxt.widget.core.client.container"
              xmlns:form="urn:import:com.sencha.gxt.widget.core.client.form"
              xmlns:gxt="urn:import:com.sencha.gxt.widget.core.client"
-             xmlns:gxtButton="urn:import:com.sencha.gxt.widget.core.client.button">
+             xmlns:gxtButton="urn:import:com.sencha.gxt.widget.core.client.button"
+             xmlns:link="urn:import:org.iplantc.de.commons.client.widgets">
 
     <ui:with field="appearance"
              type="org.iplantc.de.admin.desktop.client.apps.views.editors.AppEditor.AppEditorAppearance"/>
@@ -21,6 +22,7 @@
              type="com.sencha.gxt.widget.core.client.container.BoxLayoutContainer.BoxLayoutData">
         <ui:attributes margins="{margins0}" flex="1"/>
     </ui:with>
+
     <gxt:Window ui:field="window"
                 width="{appearance.appEditorWidth}">
         <g:VerticalPanel spacing="2">
@@ -84,7 +86,23 @@
                                      labelAlign="TOP">
                         <form:widget>
                             <form:TextField ui:field="wikiUrl"
-                                            allowBlank="false"/>
+                                            allowBlank="true"/>
+                        </form:widget>
+                    </form:FieldLabel>
+                </container:child>
+                
+                <container:child layoutData="{verticalLayoutData}">
+                    <g:HTML ui:field="docHelp"></g:HTML>
+                </container:child>
+                <container:child layoutData="{verticalLayoutData}">
+                    <link:IPlantAnchor ui:field="templateLink"></link:IPlantAnchor>
+                </container:child>
+                 <container:child layoutData="{verticalLayoutData}">
+                    <form:FieldLabel ui:field="appDocLbl"
+                                     labelAlign="TOP">
+                        <form:widget>
+                            <form:TextArea ui:field="appDoc"
+                                            allowBlank="true" height="200px"/>
                         </form:widget>
                     </form:FieldLabel>
                 </container:child>

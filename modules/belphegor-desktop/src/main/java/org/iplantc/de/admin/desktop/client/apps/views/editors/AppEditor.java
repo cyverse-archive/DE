@@ -1,16 +1,23 @@
 package org.iplantc.de.admin.desktop.client.apps.views.editors;
 
 import org.iplantc.de.client.models.apps.App;
+import org.iplantc.de.client.models.apps.AppDoc;
 import org.iplantc.de.commons.client.util.RegExp;
 import org.iplantc.de.commons.client.validators.BasicEmailValidator3;
+import org.iplantc.de.commons.client.views.dialogs.IPlantDialog;
+import org.iplantc.de.commons.client.widgets.IPlantAnchor;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.Editor;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.ui.Anchor;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -55,7 +62,7 @@ public class AppEditor implements Editor<App>, IsWidget {
     }
 
     public interface Presenter extends org.iplantc.de.commons.client.presenter.Presenter {
-        void onAppEditorSave(App app);
+        void onAppEditorSave(App app, AppDoc doc);
     }
 
     private static BINDER uiBinder = GWT.create(BINDER.class);
@@ -85,14 +92,30 @@ public class AppEditor implements Editor<App>, IsWidget {
     @UiField FieldLabel wikiUrlFieldLabel;
     @UiField @Ignore TextButton saveButton;
     @UiField @Ignore TextButton cancelButton;
+    @UiField
+    FieldLabel appDocLbl;
+    @UiField
+    @Ignore
+    TextArea appDoc;
+    @UiField
+    @Ignore
+    HTML docHelp;
+    @UiField(provided = true)
+    @Ignore
+    IPlantAnchor templateLink;
     @UiField(provided = true) AppEditorAppearance appearance = GWT.create(AppEditorAppearance.class);
 
     private final Widget widget;
 
-    public AppEditor(final App app,
+    private final AppDoc doc;
+
+    public AppEditor(final App app, final AppDoc doc,
                      final Presenter presenter) {
+        templateLink = new IPlantAnchor("View Documentaion Template");
         widget = uiBinder.createAndBindUi(this);
         this.presenter = presenter;
+        this.doc = doc;
+        initTemplateLink();
 
         // Add validators
         final RegExValidator regExValidator = new RegExValidator(Format.substitute("[^{0}{1}][^{1}]*",
@@ -102,13 +125,31 @@ public class AppEditor implements Editor<App>, IsWidget {
                                                                                          appearance.appNameRestrictedChars()));
         name.addValidator(regExValidator);
         integratorEmail.addValidator(new BasicEmailValidator3());
-
         wikiUrlFieldLabel.setHTML(appearance.wikiUrlFieldLabel());
-
+        appDocLbl.setHTML("DE App Documentation");
         window.setHeadingText(app.getName());
-
+        docHelp.setHTML("<p><i>Note:</i> Please complete the following section for documentation to be displayed with in DE itself. The documentation must be in Markdown format. Please clear wiki URL field once you fill this field. Replace everything inside '{{}}'.<br/>");
+        if (this.doc != null) {
+            appDoc.setValue(this.doc.getDocumentaion());
+        }
         driver.initialize(this);
         driver.edit(app);
+    }
+
+    private void initTemplateLink() {
+        templateLink.addClickHandler(new ClickHandler() {
+            
+            @Override
+            public void onClick(ClickEvent event) {
+                IPlantDialog popup = new IPlantDialog();
+                popup.setHeadingText("Copy Markdown template");
+                TextArea area = new TextArea();
+                area.setValue("### {{appName}} \n> #### Description and Quick Start \n>> {{quickStart}} \n> #### Test Data \n>> {{testData}} \n> #### Input File(s) \n>> {{Input Files Description & types}} \n> #### Parameters Used in App \n>> {{params used in app}} \n> #### Output File(s) \n>> {{Output Files description & types}}");
+                area.setSize("350px", "250px");
+                popup.add(area);
+                popup.show();
+            }
+        });
     }
 
     @Override
@@ -125,7 +166,8 @@ public class AppEditor implements Editor<App>, IsWidget {
         App app = driver.flush();
         if (!driver.hasErrors()) {
             window.hide();
-            presenter.onAppEditorSave(app);
+            doc.setDocumentation(appDoc.getCurrentValue());
+            presenter.onAppEditorSave(app, doc);
         }
     }
 
