@@ -47,56 +47,47 @@ public class AppTemplateCallbackConverter extends AsyncCallbackConverter<String,
     }
 
     public AppTemplate convertFrom(String object, boolean forwardDefaults) {
-        if (object != null) {
-            Splittable split = StringQuoter.split(object);
-            if (split != null) {
-                AutoBean<AppTemplate> atAb = AutoBeanCodex.decode(factory, AppTemplate.class, split);
+        Splittable split = StringQuoter.split(object);
+        AutoBean<AppTemplate> atAb = AutoBeanCodex.decode(factory, AppTemplate.class, split);
 
-                /*
-                 * JDS Grab TreeSelection argument type's original selectionItems, decode them as
-                 * SelectionItemGroup, and place them back in the Argument's selection items.
-                 */
-                Splittable atGroups = split.get(AppTemplate.GROUPS_KEY);
-                for (int i = 0; i < atGroups.size(); i++) {
-                    Splittable grp = atGroups.get(i);
-                    Splittable properties = grp.get(ArgumentGroup.ARGUMENTS_KEY);
-                    if (properties == null) {
-                        continue;
-                    }
-                    for (int j = 0; j < properties.size(); j++) {
-                        Splittable arg = properties.get(j);
-                        Splittable type = arg.get(Argument.TYPE_KEY);
-                        if (type.asString().equals(ArgumentType.TreeSelection.name())) {
-                            Splittable arguments = arg.get(Argument.SELECTION_ITEMS_KEY);
-                            if ((arguments != null) && (arguments.isIndexed()) && (arguments.size() > 0)) {
-                                SelectionItemGroup sig = AutoBeanCodex.decode(factory,
-                                                                              SelectionItemGroup.class,
-                                                                              arguments.get(0)).as();
-                                atAb.as()
-                                    .getArgumentGroups()
-                                    .get(i)
-                                    .getArguments()
-                                    .get(j)
-                                    .setSelectionItems(Lists.<SelectionItem> newArrayList(sig));
-                            }
-                        }
-                    }
-                }
-
-                if (forwardDefaults) {
-                    forwardDefaults(atAb);
-                }
-                setSelectionItemAutoBeanId(atAb.as());
-                setArgumentValidatorUniqueAutoBeanId(atAb.as());
-
-                return atAb.as();
-            } else {
-                return null;
+        /*
+         * JDS Grab TreeSelection argument type's original selectionItems, decode them as
+         * SelectionItemGroup, and place them back in the Argument's selection items.
+         */
+        Splittable atGroups = split.get(AppTemplate.GROUPS_KEY);
+        for (int i = 0; i < atGroups.size(); i++) {
+            Splittable grp = atGroups.get(i);
+            Splittable properties = grp.get(ArgumentGroup.ARGUMENTS_KEY);
+            if (properties == null) {
+                continue;
             }
-        } else {
-            return null;
+            for (int j = 0; j < properties.size(); j++) {
+                Splittable arg = properties.get(j);
+                Splittable type = arg.get(Argument.TYPE_KEY);
+                if (type.asString().equals(ArgumentType.TreeSelection.name())) {
+                    Splittable arguments = arg.get(Argument.SELECTION_ITEMS_KEY);
+                    if ((arguments != null) && (arguments.isIndexed()) && (arguments.size() > 0)) {
+                        SelectionItemGroup sig = AutoBeanCodex.decode(factory,
+                                                                      SelectionItemGroup.class,
+                                                                      arguments.get(0)).as();
+                        atAb.as()
+                            .getArgumentGroups()
+                            .get(i)
+                            .getArguments()
+                            .get(j)
+                            .setSelectionItems(Lists.<SelectionItem> newArrayList(sig));
+                    }
+                }
+            }
         }
 
+        if (forwardDefaults) {
+            forwardDefaults(atAb);
+        }
+        setSelectionItemAutoBeanId(atAb.as());
+        setArgumentValidatorUniqueAutoBeanId(atAb.as());
+
+        return atAb.as();
     }
 
     /**
