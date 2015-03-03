@@ -1,7 +1,9 @@
 package org.iplantc.de.admin.desktop.client.services.impl;
 
+import org.iplantc.de.client.models.HasId;
 import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.models.apps.AppCategory;
+import org.iplantc.de.client.models.apps.AppDoc;
 import org.iplantc.de.client.models.apps.AppFeedback;
 import org.iplantc.de.client.services.AppUserServiceFacade;
 
@@ -95,7 +97,7 @@ public class AppAdminUserServiceFacade implements AppUserServiceFacade {
     }
 
     @Override
-    public void getAppDetails(String  id, AsyncCallback<String> callback) {
+    public void getAppDetails(HasId app, AsyncCallback<App> callback) {
         assert false : "Dummy Class to satisfy deferred-binding, this class not used in this module.";
     }
 
@@ -110,7 +112,7 @@ public class AppAdminUserServiceFacade implements AppUserServiceFacade {
     }
 
     @Override
-    public void getAppDoc(String appId, AsyncCallback<String> callback) {
+    public void getAppDoc(HasId app, AsyncCallback<AppDoc> callback) {
         assert false : "Dummy Class to satisfy deferred-binding, this class not used in this module.";
 
     }

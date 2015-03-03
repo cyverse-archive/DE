@@ -1,6 +1,5 @@
 package org.iplantc.de.apps.client.views.cells;
 
-import org.iplantc.de.apps.client.AppsView;
 import org.iplantc.de.apps.client.events.selection.AppNameSelectedEvent;
 import org.iplantc.de.apps.shared.AppsModule;
 import org.iplantc.de.client.models.apps.App;
@@ -14,9 +13,7 @@ import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.dom.client.Node;
 import com.google.gwt.event.shared.HasHandlers;
-import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
-import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.user.client.Event;
 
 /**
@@ -37,27 +34,24 @@ public class AppHyperlinkCell extends AbstractCell<App> {
 
         String appUnavailable();
 
-        void render(SafeHtmlBuilder sb, App value, String textClassName, SafeHtml safeHtmlName,
+        void render(SafeHtmlBuilder sb, App value, String textClassName, String searchPattern,
                     String textToolTip, String debugId);
 
         String run();
     }
 
     protected final AppFavoriteCell favoriteCell = new AppFavoriteCell();
-    private final AppsView appsView;
     private final AppHyperlinkCellAppearance appearance;
     private String baseID;
     private HasHandlers hasHandlers;
+    private String pattern;
 
-    public AppHyperlinkCell(final AppsView appsView) {
-        this(appsView,
-             GWT.<AppHyperlinkCellAppearance> create(AppHyperlinkCellAppearance.class));
+    public AppHyperlinkCell() {
+        this(GWT.<AppHyperlinkCellAppearance> create(AppHyperlinkCellAppearance.class));
     }
 
-    public AppHyperlinkCell(final AppsView appsView,
-                            final AppHyperlinkCellAppearance appearance) {
+    public AppHyperlinkCell(final AppHyperlinkCellAppearance appearance) {
         super(CLICK);
-        this.appsView = appsView;
         this.appearance = appearance;
     }
 
@@ -68,8 +62,6 @@ public class AppHyperlinkCell extends AbstractCell<App> {
         }
         favoriteCell.render(context, value, sb);
         String textClassName, textToolTip;
-        SafeHtml safeHtmlName = SafeHtmlUtils
-                .fromTrustedString(appsView.highlightSearchText(value.getName()));
         if (!value.isDisabled()) {
             textClassName = appearance.appNameClass();
             textToolTip = appearance.run();
@@ -79,7 +71,7 @@ public class AppHyperlinkCell extends AbstractCell<App> {
         }
 
         String debugId = baseID + "." + value.getId() + AppsModule.Ids.APP_NAME_CELL;
-        appearance.render(sb, value, textClassName, safeHtmlName, textToolTip, debugId);
+        appearance.render(sb, value, textClassName, pattern, textToolTip, debugId);
     }
 
     @Override
@@ -114,6 +106,10 @@ public class AppHyperlinkCell extends AbstractCell<App> {
     public void setHasHandlers(HasHandlers hasHandlers) {
         this.hasHandlers = hasHandlers;
         favoriteCell.setHasHandlers(hasHandlers);
+    }
+
+    public void setSearchRegexPattern(String pattern) {
+        this.pattern = pattern;
     }
 
     private Element findAppNameElement(Element parent) {

@@ -93,6 +93,7 @@ public class AppSearchRpcProxy extends RpcProxy<FilterPagingLoadConfig, PagingLo
             public void onSuccess(String result) {
                 List<App> apps = AutoBeanCodex.decode(appFactory, AppList.class, result).as().getApps();
 
+                // FIXME Sorting should not be done here.
                 Collections.sort(apps, new AppComparator(searchText));
 
                 // Pass the App list to this proxy's load callback.
@@ -105,7 +106,10 @@ public class AppSearchRpcProxy extends RpcProxy<FilterPagingLoadConfig, PagingLo
 
                 // Fire the search results load event.
                 if(hasHandlers != null){
-                    hasHandlers.fireEvent(new AppSearchResultLoadEvent(searchText, apps));
+                    // FIXME Create search regex pattern here
+                    // The search service accepts * and ? wildcards, so convert them for the pattern group.
+                    String pattern = "(" + searchText.replace("*", ".*").replace('?', '.') + ")";
+                    hasHandlers.fireEvent(new AppSearchResultLoadEvent(searchText, pattern, apps));
                 }
             }
 

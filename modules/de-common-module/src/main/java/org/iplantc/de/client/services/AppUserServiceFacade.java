@@ -1,6 +1,8 @@
 package org.iplantc.de.client.services;
 
+import org.iplantc.de.client.models.HasId;
 import org.iplantc.de.client.models.apps.App;
+import org.iplantc.de.client.models.apps.AppDoc;
 import org.iplantc.de.client.models.apps.AppFeedback;
 
 import com.google.gwt.json.client.JSONObject;
@@ -69,9 +71,9 @@ public interface AppUserServiceFacade extends AppServiceFacade {
     /**
      * Get app details
      */
-    void getAppDetails(String appId, AsyncCallback<String> callback);
+    void getAppDetails(HasId app, AsyncCallback<App> callback);
 
-    void getAppDoc(String appId, AsyncCallback<String> callback);
+    void getAppDoc(HasId app, AsyncCallback<AppDoc> callback);
 
     void saveAppDoc(String appId, String doc, AsyncCallback<String> callback);
 

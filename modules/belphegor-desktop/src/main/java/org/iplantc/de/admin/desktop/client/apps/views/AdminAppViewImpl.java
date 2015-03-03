@@ -48,7 +48,7 @@ public class AdminAppViewImpl extends AppsViewImpl implements AdminAppsView,
     @Override
     @UiFactory
     protected ColumnModel<App> createColumnModel(){
-        return new BelphegorAppColumnModel(this);
+        return new BelphegorAppColumnModel();
     }
 
     @Override

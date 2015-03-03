@@ -1,10 +1,10 @@
 package org.iplantc.de.apps.client.presenter;
 
+import org.iplantc.de.apps.client.AppDetailsView;
 import org.iplantc.de.apps.client.AppsView;
 import org.iplantc.de.apps.client.SubmitAppForPublicUseView;
 import org.iplantc.de.apps.client.events.AppDeleteEvent;
 import org.iplantc.de.apps.client.events.AppFavoritedEvent;
-import org.iplantc.de.apps.client.events.AppSearchResultLoadEvent;
 import org.iplantc.de.apps.client.events.AppUpdatedEvent;
 import org.iplantc.de.apps.client.events.CreateNewAppEvent;
 import org.iplantc.de.apps.client.events.CreateNewWorkflowEvent;
@@ -43,7 +43,6 @@ import org.iplantc.de.tools.requests.client.views.dialogs.NewToolRequestDialog;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Preconditions;
-import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.HandlerRegistration;
@@ -51,7 +50,6 @@ import com.google.gwt.inject.client.AsyncProvider;
 import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.regexp.shared.RegExp;
-import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HasOneWidget;
 import com.google.inject.Inject;
@@ -156,6 +154,7 @@ public class AppsViewPresenterImpl implements AppsView.Presenter {
     @Inject JsonUtil jsonUtil;
     @Inject Provider<NewToolRequestDialog> newToolRequestDialogProvider;
     @Inject Provider<SubmitAppForPublicUseView.Presenter> submitAppForPublicPresenterProvider;
+    @Inject Provider<AppDetailsView.Presenter> appDetailsPresenterProvider;
     private static String FAVORITES;
     private static String USER_APPS_GROUP;
     private static String WORKSPACE;
@@ -234,8 +233,6 @@ public class AppsViewPresenterImpl implements AppsView.Presenter {
         this.view.addAppCategorySelectedEventHandler(this.view.getToolBar());
         this.view.addAppSelectionChangedEventHandler(this.view.getToolBar());
 
-        this.view.getToolBar().addAppSearchResultLoadEventHandler(this);
-
         eventHandlers.add(eventBus.addHandler(AppUpdatedEvent.TYPE, new AppsViewAppUpdatedEventHandler(view)));
 
         initConstants();
@@ -246,6 +243,19 @@ public class AppsViewPresenterImpl implements AppsView.Presenter {
         for (HandlerRegistration hr : eventHandlers) {
             eventBus.removeHandler(hr);
         }
+    }
+
+    @Override
+    public void goInfo(HasOneWidget widget, App app, String searchRegexPattern) {
+
+        // Create list of group hierarchies
+        List<List<String>> appGroupHierarchies = Lists.newArrayList();
+        for(AppCategory appCategory : app.getGroups()) {
+            appGroupHierarchies.add(computeGroupHierarchy(appCategory));
+        }
+
+        appDetailsPresenterProvider.get().go(widget, app, searchRegexPattern, appGroupHierarchies);
+
     }
 
     @Override
@@ -323,7 +333,8 @@ public class AppsViewPresenterImpl implements AppsView.Presenter {
     }
 
     @Override
-    public void go(HasOneWidget container, final HasId selectedAppCategory,
+    public void go(final HasOneWidget container,
+                   final HasId selectedAppCategory,
                    final HasId selectedApp) {
         container.setWidget(view);
 
@@ -353,26 +364,13 @@ public class AppsViewPresenterImpl implements AppsView.Presenter {
     }
 
     @Override
-    public String highlightSearchText(String text) {
-        if (!Strings.isNullOrEmpty(text)) {
-            text = SafeHtmlUtils.fromString(text).asString();
-
-            if (searchRegex != null) {
-                return searchRegex.replace(text, "<font style='background: #FF0'>$1</font>"); //$NON-NLS-1$
-            }
-        }
-
-        return text;
-    }
-
-    @Override
     public void onAppCategorySelectionChanged(AppCategorySelectionChangedEvent event) {
-        searchRegex = null;
         if (event.getAppCategorySelection().isEmpty()) {
             return;
         }
         AppCategory ag = event.getAppCategorySelection().get(0);
         fetchApps(ag);
+        // FIXME move joiner stuff to appearance
         view.updateAppListHeading(Joiner.on(" >> ").join(computeGroupHierarchy(ag)));
     }
 
@@ -458,17 +456,6 @@ public class AppsViewPresenterImpl implements AppsView.Presenter {
                                new RateAppCallback(selectedApp,
                                                    score,
                                                    listStore));
-
-    }
-
-    @Override
-    public void onAppSearchResultLoad(AppSearchResultLoadEvent event) {
-        updateSearchRegex(event.getSearchText());
-        List<App> results = event.getResults();
-        int total = results == null ? 0 : results.size();
-        view.selectAppCategory(null);
-        view.updateAppListHeading(displayStrings.searchAppResultsHeader(event.getSearchText(), total));
-        view.unMaskCenterPanel();
 
     }
 
@@ -578,14 +565,18 @@ public class AppsViewPresenterImpl implements AppsView.Presenter {
 
             @Override
             public void onSuccess(String result) {
+                // FIXME Update the service signature
                 AppAutoBeanFactory factory = GWT.create(AppAutoBeanFactory.class);
                 AutoBean<AppList> bean = AutoBeanCodex.decode(factory, AppList.class, result);
                 List<App> apps = bean.as().getApps();
-                setApps(apps);
+
+                listStore.clear();
+                listStore.addAll(apps);
+
                 if (getDesiredSelectedApp() != null) {
                     view.selectApp(getDesiredSelectedApp().getId());
                 } else {
-                    selectFirstApp();
+                    view.selectFirstApp();
                 }
                 setDesiredSelectedApp(null);
                 view.unMaskCenterPanel();
@@ -613,10 +604,6 @@ public class AppsViewPresenterImpl implements AppsView.Presenter {
                 view.unMaskWestPanel();
             }
         });
-    }
-
-    protected void selectFirstApp() {
-        view.selectFirstApp();
     }
 
     void addAppCategories(AppCategory parent, List<AppCategory> children) {
@@ -666,16 +653,6 @@ public class AppsViewPresenterImpl implements AppsView.Presenter {
             }
         }
         return getGroupHierarchy(treeStore.getParent(grp), groups);
-    }
-
-    void setApps(final List<App> apps) {
-        listStore.clear();
-
-        for (App app : apps) {
-            if (listStore.findModel(app) == null) {
-                listStore.add(app);
-            }
-        }
     }
 
     void updateAppCategoryAppCount(AppCategory appGroup, int newCount) {
@@ -735,15 +712,5 @@ public class AppsViewPresenterImpl implements AppsView.Presenter {
      */
     private void setDesiredSelectedApp(HasId selectedApp) {
         this.desiredSelectedAppId = selectedApp;
-    }
-
-    private void updateSearchRegex(final String searchText) {
-        if (Strings.isNullOrEmpty(searchText)) {
-            searchRegex = null;
-        } else {
-            // The search service accepts * and ? wildcards, so convert them for the pattern group.
-            String pattern = "(" + searchText.replace("*", ".*").replace('?', '.') + ")"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-            searchRegex = RegExp.compile(pattern, "ig"); //$NON-NLS-1$
-        }
     }
 }

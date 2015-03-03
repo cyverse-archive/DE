@@ -3,6 +3,11 @@
         "http://gwtproject.org/doctype/2.6.1/gwt-module.dtd">
 <module>
 
+    <!-- Highlight Appearance -->
+    <replace-with class="org.iplantc.de.theme.base.client.applications.AppSearchHighlightAppearance">
+        <when-type-is class="org.iplantc.de.theme.base.client.applications.AppSearchHighlightDefaultAppearance"/>
+    </replace-with>
+
     <!-- Views -->
     <replace-with class="org.iplantc.de.theme.base.client.applications.AppsViewDefaultAppearance">
         <when-type-is class="org.iplantc.de.apps.client.AppsView.AppsViewAppearance"/>

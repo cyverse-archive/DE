@@ -3,6 +3,7 @@ package org.iplantc.de.apps.client.views;
 import org.iplantc.de.apps.client.AppsToolbarView;
 import org.iplantc.de.apps.client.AppsView;
 import org.iplantc.de.apps.client.events.AppFavoritedEvent;
+import org.iplantc.de.apps.client.events.AppSearchResultLoadEvent;
 import org.iplantc.de.apps.client.events.selection.AppCategorySelectionChangedEvent;
 import org.iplantc.de.apps.client.events.selection.AppCommentSelectedEvent;
 import org.iplantc.de.apps.client.events.selection.AppFavoriteSelectedEvent;
@@ -12,13 +13,11 @@ import org.iplantc.de.apps.client.events.selection.AppRatingDeselected;
 import org.iplantc.de.apps.client.events.selection.AppRatingSelected;
 import org.iplantc.de.apps.client.events.selection.AppSelectionChangedEvent;
 import org.iplantc.de.apps.client.models.AppCategoryStringValueProvider;
+import org.iplantc.de.apps.client.views.details.dialogs.AppInfoDialog;
 import org.iplantc.de.apps.shared.AppsModule.Ids;
-import org.iplantc.de.client.models.DEProperties;
 import org.iplantc.de.client.models.HasId;
-import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.models.apps.AppCategory;
-import org.iplantc.de.client.services.AppUserServiceFacade;
 import org.iplantc.de.client.util.JsonUtil;
 import org.iplantc.de.resources.client.IplantResources;
 import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
@@ -26,11 +25,10 @@ import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.shared.HandlerRegistration;
-import com.google.gwt.json.client.JSONArray;
-import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiFactory;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.uibinder.client.UiTemplate;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
@@ -42,7 +40,6 @@ import com.sencha.gxt.data.shared.TreeStore;
 import com.sencha.gxt.data.shared.event.StoreRemoveEvent;
 import com.sencha.gxt.widget.core.client.Composite;
 import com.sencha.gxt.widget.core.client.ContentPanel;
-import com.sencha.gxt.widget.core.client.Dialog;
 import com.sencha.gxt.widget.core.client.container.BorderLayoutContainer;
 import com.sencha.gxt.widget.core.client.container.BorderLayoutContainer.BorderLayoutData;
 import com.sencha.gxt.widget.core.client.grid.ColumnModel;
@@ -70,46 +67,36 @@ public class AppsViewImpl extends Composite implements AppsView,
     }
     @UiField protected ColumnModel<App> cm;
     @UiField protected Grid<App> grid;
-    protected Presenter presenter;
     @UiField(provided = true) protected Tree<AppCategory, String> tree;
-    final DEProperties properties;
     @UiField(provided = true) final AppsToolbarView toolBar;
     @UiField ContentPanel centerPanel;
     @UiField BorderLayoutContainer con;
     @UiField BorderLayoutData eastData;
     @UiField ContentPanel eastPanel;
     @UiField GridView<App> gridView;
-    @Inject JsonUtil jsonUtil;
     @UiField(provided = true) ListStore<App> listStore;
-    Logger logger = Logger.getLogger("App View");
     @UiField BorderLayoutData northData;
     @UiField(provided = true) TreeStore<AppCategory> treeStore;
     @UiField ContentPanel westPanel;
+
+    @Inject JsonUtil jsonUtil;
+    protected Presenter presenter;
+    Logger logger = Logger.getLogger("App View");
     private static String WEST_COLLAPSE_BTN_ID = "idCategoryCollapseBtn"; //$NON-NLS-1$
     private static MyUiBinder uiBinder = GWT.create(MyUiBinder.class);
-    private final AppUserServiceFacade appUserService;
     private final IplantDisplayStrings displayStrings;
     private final IplantResources resources;
-    private final UserInfo userInfo;
-    private String FAVORITES;
-    private String USER_APPS_GROUP;
-    private String WORKSPACE;
+    private String searchRegexPattern;
 
     @Inject
-    AppsViewImpl(final DEProperties properties,
-                 final AppsToolbarView toolBar,
+    AppsViewImpl(final AppsToolbarView toolBar,
                  final IplantResources resources,
-                 final UserInfo userInfo,
                  final IplantDisplayStrings displayStrings,
-                 final AppUserServiceFacade appUserService,
                  @Assisted final ListStore<App> listStore,
                  @Assisted final TreeStore<AppCategory> treeStore) {
-        this.properties = properties;
         this.toolBar = toolBar;
         this.resources = resources;
-        this.userInfo = userInfo;
         this.displayStrings = displayStrings;
-        this.appUserService = appUserService;
         this.listStore = listStore;
         this.treeStore = treeStore;
         initWidget(uiBinder.createAndBindUi(this));
@@ -117,14 +104,6 @@ public class AppsViewImpl extends Composite implements AppsView,
         final AppColumnModel acm = (AppColumnModel) cm;
         acm.addAppInfoSelectedEventHandler(this);
         this.listStore.addStoreRemoveHandler(this);
-
-        WORKSPACE = this.properties.getPrivateWorkspace();
-
-        if (this.properties.getPrivateWorkspaceItems() != null) {
-            JSONArray items = JSONParser.parseStrict(this.properties.getPrivateWorkspaceItems()).isArray();
-            USER_APPS_GROUP = jsonUtil.getRawValueAsString(items.get(0));
-            FAVORITES = jsonUtil.getRawValueAsString(items.get(1));
-        }
 
         this.tree.getSelectionModel().setSelectionMode(SINGLE);
 
@@ -138,6 +117,10 @@ public class AppsViewImpl extends Composite implements AppsView,
         tree.getSelectionModel().addSelectionChangedHandler(new SelectionChangedHandler<AppCategory>() {
             @Override
             public void onSelectionChanged(SelectionChangedEvent<AppCategory> event) {
+                // Clear regex in column model before firing event
+                searchRegexPattern = null;
+                ((AppColumnModel) cm).setSearchRegexPattern(searchRegexPattern);
+
                 fireEvent(new AppCategorySelectionChangedEvent(event.getSelection()));
             }
         });
@@ -256,11 +239,6 @@ public class AppsViewImpl extends Composite implements AppsView,
     }
 
     @Override
-    public String highlightSearchText(String text) {
-        return presenter.highlightSearchText(text);
-    }
-
-    @Override
     public void maskCenterPanel(final String loadingMask) {
         centerPanel.mask(loadingMask);
     }
@@ -279,19 +257,26 @@ public class AppsViewImpl extends Composite implements AppsView,
 
     @Override
     public void onAppInfoSelected(AppInfoSelectedEvent event) {
-        final App selectedApp = grid.getSelectionModel().getSelectedItem();
-        Dialog appInfoWin = new Dialog();
-        appInfoWin.setModal(true);
-        appInfoWin.setResizable(false);
-        appInfoWin.setHeadingText(selectedApp.getName());
-        appInfoWin.setPixelSize(450, 300);
+//        final App selectedApp = grid.getSelectionModel().getSelectedItem();
+//        Dialog appInfoWin = new Dialog();
+//        appInfoWin.setModal(true);
+//        appInfoWin.setResizable(false);
+//        appInfoWin.setHeadingText(selectedApp.getName());
+//        appInfoWin.setPixelSize(450, 300);
         // Get app favorite requests
-        final AppInfoView appInfoView = new AppInfoView(selectedApp, this, appUserService);
-        appInfoView.addAppFavoriteSelectedEventHandlers(presenter);
-        addAppFavoritedEventHandler(appInfoView);
-        appInfoWin.add(appInfoView);
-        appInfoWin.getButtonBar().clear();
-        appInfoWin.show();
+//        final AppDetailsViewImpl appInfoView = new AppDetailsViewImpl(selectedApp, this, appUserService);
+//        appInfoView.addAppFavoriteSelectedEventHandlers(presenter);
+//        addAppFavoritedEventHandler(appInfoView);
+//        appInfoWin.add(appInfoView);
+//        appInfoWin.getButtonBar().clear();
+
+//        appInfoWin.show();
+
+        //==============================
+        //FIXME Roll presenter role into dialog
+        AppInfoDialog dlg = null;
+
+        presenter.goInfo(dlg, event.getApp(), searchRegexPattern);
     }
 
     @Override
@@ -386,7 +371,7 @@ public class AppsViewImpl extends Composite implements AppsView,
     //<editor-fold desc="UI Factories">
     @UiFactory
     protected ColumnModel<App> createColumnModel() {
-        return new AppColumnModel(this, displayStrings);
+        return new AppColumnModel(displayStrings);
     }
 
     @UiFactory
@@ -394,6 +379,17 @@ public class AppsViewImpl extends Composite implements AppsView,
         return new Tree<>(treeStore, new AppCategoryStringValueProvider());
     }
     //</editor-fold>
+
+    @UiHandler("toolBar")
+    void onSearchResultLoad(AppSearchResultLoadEvent event) {
+        searchRegexPattern = event.getSearchPattern();
+        ((AppColumnModel) cm).setSearchRegexPattern(searchRegexPattern);
+
+        int total = event.getResults() == null ? 0 : event.getResults().size();
+        selectAppCategory(null);
+        updateAppListHeading(displayStrings.searchAppResultsHeader(event.getSearchText(), total));
+        unMaskCenterPanel();
+    }
 
     @Override
     protected void onEnsureDebugId(String baseID) {

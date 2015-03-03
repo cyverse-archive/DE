@@ -4,13 +4,16 @@ import com.google.web.bindery.autobean.shared.AutoBean.PropertyName;
 
 import java.util.List;
 
+/**
+ * @author jstroot
+ */
 public interface AppDoc {
 
     @PropertyName("app_id")
     String getAppId();
 
     @PropertyName("documentation")
-    String getDocumentaion();
+    String getDocumentation();
 
     @PropertyName("documentation")
     void setDocumentation(String doc);

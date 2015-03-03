@@ -1,10 +1,12 @@
 package org.iplantc.de.apps.client.gin;
 
+import org.iplantc.de.apps.client.AppDetailsView;
 import org.iplantc.de.apps.client.AppsToolbarView;
 import org.iplantc.de.apps.client.AppsView;
 import org.iplantc.de.apps.client.SubmitAppForPublicUseView;
 import org.iplantc.de.apps.client.gin.factory.AppsViewFactory;
 import org.iplantc.de.apps.client.presenter.AppsViewPresenterImpl;
+import org.iplantc.de.apps.client.presenter.details.AppDetailsViewPresenterImpl;
 import org.iplantc.de.apps.client.presenter.submit.SubmitAppForPublicPresenter;
 import org.iplantc.de.apps.client.views.AppsViewImpl;
 import org.iplantc.de.apps.client.views.submit.SubmitAppForPublicUseViewImpl;
@@ -40,6 +42,8 @@ public class AppsGinModule extends AbstractGinModule {
         install(new GinFactoryModuleBuilder()
                     .implement(AppsView.class, AppsViewImpl.class)
                     .build(AppsViewFactory.class));
+
+        bind(AppDetailsView.Presenter.class).to(AppDetailsViewPresenterImpl.class);
     }
 
 }

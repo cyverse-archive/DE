@@ -4,7 +4,6 @@ import org.iplantc.de.admin.desktop.client.apps.views.cells.AppNameCell;
 import org.iplantc.de.admin.desktop.client.apps.views.cells.AvgAppRatingCell;
 import org.iplantc.de.apps.client.events.selection.AppNameSelectedEvent;
 import org.iplantc.de.apps.client.models.AppProperties;
-import org.iplantc.de.apps.client.AppsView;
 import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.models.apps.AppFeedback;
 import org.iplantc.de.client.models.apps.AppNameComparator;
@@ -27,8 +26,8 @@ import java.util.List;
  */
 public class BelphegorAppColumnModel extends ColumnModel<App> implements AppNameSelectedEvent.HasAppNameSelectedEventHandlers {
 
-    public BelphegorAppColumnModel(AppsView view) {
-        super(createColumnConfigList(view, GWT.<AdminAppsView.AdminAppsViewAppearance> create(AdminAppsView.AdminAppsViewAppearance.class)));
+    public BelphegorAppColumnModel() {
+        super(createColumnConfigList(GWT.<AdminAppsView.AdminAppsViewAppearance> create(AdminAppsView.AdminAppsViewAppearance.class)));
 
         for(ColumnConfig<App, ?> colConfig : configs){
             final Cell<?> cell = colConfig.getCell();
@@ -38,8 +37,7 @@ public class BelphegorAppColumnModel extends ColumnModel<App> implements AppName
         }
     }
 
-    public static List<ColumnConfig<App, ?>> createColumnConfigList(final AppsView view,
-                                                                    final AdminAppsView.AdminAppsViewAppearance appearance) {
+    public static List<ColumnConfig<App, ?>> createColumnConfigList(final AdminAppsView.AdminAppsViewAppearance appearance) {
         AppProperties props = GWT.create(AppProperties.class);
         List<ColumnConfig<App, ?>> list = new ArrayList<>();
 
@@ -61,7 +59,7 @@ public class BelphegorAppColumnModel extends ColumnModel<App> implements AppName
         name.setResizable(true);
         rating.setResizable(false);
 
-        name.setCell(new AppNameCell(view));
+        name.setCell(new AppNameCell());
         rating.setCell(new AvgAppRatingCell());
         rating.setComparator(new Comparator<AppFeedback>() {
             @Override

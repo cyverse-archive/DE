@@ -6,26 +6,23 @@ import org.iplantc.de.apps.client.presenter.proxy.PublicAppCategoryProxy;
 import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.models.DEProperties;
 import org.iplantc.de.client.models.apps.App;
-import org.iplantc.de.client.models.apps.AppAutoBeanFactory;
 import org.iplantc.de.client.models.apps.AppCategory;
 import org.iplantc.de.client.models.apps.AppRefLink;
 import org.iplantc.de.client.services.AppUserServiceFacade;
 import org.iplantc.de.client.util.JsonUtil;
 import org.iplantc.de.commons.client.ErrorHandler;
 
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.json.client.JSONArray;
+import com.google.common.collect.Lists;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HasOneWidget;
 import com.google.inject.Inject;
 import com.google.web.bindery.autobean.shared.AutoBean;
-import com.google.web.bindery.autobean.shared.AutoBeanCodex;
+import com.google.web.bindery.autobean.shared.AutoBeanFactory;
 
 import com.sencha.gxt.widget.core.client.box.AlertMessageBox;
 import com.sencha.gxt.widget.core.client.box.AutoProgressMessageBox;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -33,12 +30,17 @@ import java.util.List;
  */
 public class SubmitAppForPublicPresenter implements SubmitAppForPublicUseView.Presenter {
 
+    interface SubmitAppPresenterBeanFactory extends AutoBeanFactory {
+        AutoBean<AppRefLink> appRefLink();
+    }
+
     @Inject SubmitAppForPublicUseView view;
     @Inject AppUserServiceFacade appService;
     @Inject PublicAppCategoryProxy appGroupProxy;
     @Inject EventBus eventBus;
     @Inject SubmitAppForPublicUseView.SubmitAppAppearance appearance;
     @Inject JsonUtil jsonUtil;
+    @Inject SubmitAppPresenterBeanFactory factory;
 
     private AsyncCallback<String> callback;
 
@@ -96,7 +98,7 @@ public class SubmitAppForPublicPresenter implements SubmitAppForPublicUseView.Pr
     }
 
     private void getAppDetails() {
-        appService.getAppDetails(view.getSelectedApp().getId(), new AsyncCallback<String>() {
+        appService.getAppDetails(view.getSelectedApp(), new AsyncCallback<App>() {
 
             @Override
             public void onFailure(Throwable caught) {
@@ -104,12 +106,8 @@ public class SubmitAppForPublicPresenter implements SubmitAppForPublicUseView.Pr
             }
 
             @Override
-            public void onSuccess(String result) {
-                JSONObject obj = jsonUtil.getObject(result);
-                JSONArray arr = jsonUtil.getArray(obj, "references");
-                if (arr != null && arr.size() > 0) {
-                    view.loadReferences(parseRefLinks(arr));
-                }
+            public void onSuccess(App result) {
+                view.loadReferences(parseRefLinks(result.getReferences()));
             }
         });
     }
@@ -141,16 +139,13 @@ public class SubmitAppForPublicPresenter implements SubmitAppForPublicUseView.Pr
         });
     }
 
-    private List<AppRefLink> parseRefLinks(JSONArray arr) {
-        AppAutoBeanFactory factory = GWT.create(AppAutoBeanFactory.class);
-        List<AppRefLink> linksList = new ArrayList<>();
-        for (int i = 0; i < arr.size(); i++) {
-            AutoBean<AppRefLink> bean = AutoBeanCodex.decode(factory, AppRefLink.class, "{}");
-            AppRefLink link = bean.as();
-            String stringValue = arr.get(i).isString().stringValue();
-            link.setId(stringValue);
-            link.setRefLink(stringValue);
-            linksList.add(link);
+    private List<AppRefLink> parseRefLinks(List<String> arr) {
+        List<AppRefLink> linksList = Lists.newArrayList();
+        for(String ref : arr){
+            AppRefLink refLink = factory.appRefLink().as();
+            refLink.setId(ref);
+            refLink.setRefLink(ref);
+            linksList.add(refLink);
         }
 
         return linksList;

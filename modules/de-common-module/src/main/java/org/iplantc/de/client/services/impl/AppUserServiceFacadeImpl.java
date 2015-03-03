@@ -1,8 +1,10 @@
 package org.iplantc.de.client.services.impl;
 
 import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.*;
+import org.iplantc.de.client.models.HasId;
 import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.models.apps.AppCategory;
+import org.iplantc.de.client.models.apps.AppDoc;
 import org.iplantc.de.client.models.apps.AppFeedback;
 import org.iplantc.de.client.services.AppUserServiceFacade;
 import org.iplantc.de.client.services.converters.AppCategoryListCallbackConverter;
@@ -20,6 +22,9 @@ import com.google.gwt.http.client.URL;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.inject.Inject;
+import com.google.web.bindery.autobean.shared.AutoBean;
+import com.google.web.bindery.autobean.shared.AutoBeanCodex;
+import com.google.web.bindery.autobean.shared.AutoBeanFactory;
 import com.google.web.bindery.autobean.shared.Splittable;
 import com.google.web.bindery.autobean.shared.impl.StringQuoter;
 
@@ -34,6 +39,11 @@ import java.util.List;
  */
 public class AppUserServiceFacadeImpl implements AppUserServiceFacade {
 
+    interface AppUserServiceBeanFactory extends AutoBeanFactory {
+        AutoBean<App> app();
+        AutoBean<AppDoc> appDoc();
+    }
+
     private final String APPS = "org.iplantc.services.apps";
     private final String CATEGORIES = "org.iplantc.services.apps.categories";
     private final String PIPELINES = "org.iplantc.services.apps.pipelines";
@@ -42,6 +52,7 @@ public class AppUserServiceFacadeImpl implements AppUserServiceFacade {
     @Inject IplantDisplayStrings displayStrings;
     @Inject DiskResourceUtil diskResourceUtil;
     @Inject JsonUtil jsonUtil;
+    @Inject AppUserServiceBeanFactory factory;
 
     @Inject
     public AppUserServiceFacadeImpl(final DiscEnvApiService deServiceFacade,
@@ -102,12 +113,18 @@ public class AppUserServiceFacadeImpl implements AppUserServiceFacade {
     }
 
     @Override
-    public void getAppDetails(String appId, AsyncCallback<String> callback) {
-        String address = APPS + "/" + appId + "/details";
+    public void getAppDetails(HasId hasId, AsyncCallback<App> callback) {
+        String address = APPS + "/" + hasId.getId() + "/details";
 
         ServiceCallWrapper wrapper = new ServiceCallWrapper(GET, address);
 
-        deServiceFacade.getServiceData(wrapper, callback);
+        deServiceFacade.getServiceData(wrapper, new AsyncCallbackConverter<String, App>(callback) {
+            @Override
+            protected App convertFrom(String object) {
+                AutoBean<App> appAutoBean = AutoBeanCodex.decode(factory, App.class, object);
+                return appAutoBean.as();
+            }
+        });
     }
 
 
@@ -270,10 +287,16 @@ public class AppUserServiceFacadeImpl implements AppUserServiceFacade {
     }
 
     @Override
-    public void getAppDoc(String appId, AsyncCallback<String> callback) {
-        String address = APPS + "/" + appId + "/documentation";
+    public void getAppDoc(HasId app, AsyncCallback<AppDoc> callback) {
+        String address = APPS + "/" + app.getId() + "/documentation";
         ServiceCallWrapper wrapper = new ServiceCallWrapper(GET, address);
-        deServiceFacade.getServiceData(wrapper, callback);
+        deServiceFacade.getServiceData(wrapper, new AsyncCallbackConverter<String, AppDoc>(callback) {
+            @Override
+            protected AppDoc convertFrom(String object) {
+                AutoBean<AppDoc> appDocAutoBean = AutoBeanCodex.decode(factory, AppDoc.class, object);
+                return appDocAutoBean.as();
+            }
+        });
     }
 
     @Override

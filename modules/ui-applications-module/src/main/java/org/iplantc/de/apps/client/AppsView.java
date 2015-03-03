@@ -1,7 +1,6 @@
 package org.iplantc.de.apps.client;
 
 import org.iplantc.de.apps.client.events.AppFavoritedEvent;
-import org.iplantc.de.apps.client.events.AppSearchResultLoadEvent.AppSearchResultLoadEventHandler;
 import org.iplantc.de.apps.client.events.selection.AppCategorySelectionChangedEvent;
 import org.iplantc.de.apps.client.events.selection.AppCommentSelectedEvent;
 import org.iplantc.de.apps.client.events.selection.AppCommentSelectedEvent.AppCommentSelectedEventHandler;
@@ -38,8 +37,7 @@ public interface AppsView extends IsWidget,
                                   AppNameSelectedEvent.HasAppNameSelectedEventHandlers,
                                   AppCommentSelectedEvent.HasAppCommentSelectedEventHandlers,
                                   AppRatingDeselected.HasAppRatingDeselectedHandlers,
-                                  AppRatingSelected.HasAppRatingSelectedEventHandlers
-{
+                                  AppRatingSelected.HasAppRatingSelectedEventHandlers {
 
     interface AppsViewAppearance {
 
@@ -47,12 +45,13 @@ public interface AppsView extends IsWidget,
 
     public interface Presenter extends org.iplantc.de.commons.client.presenter.Presenter,
                                        AppNameSelectedEvent.AppNameSelectedEventHandler,
-                                       AppSearchResultLoadEventHandler,
                                        AppCategorySelectionChangedEvent.AppCategorySelectionChangedEventHandler,
                                        AppFavoriteSelectedEvent.AppFavoriteSelectedEventHandler,
                                        AppCommentSelectedEventHandler,
                                        AppRatingSelected.AppRatingSelectedHandler,
                                        AppRatingDeselected.AppRatingDeselectedHandler {
+
+        void goInfo(HasOneWidget widget, App app, String searchRegexPattern);
 
         void onCreateNewAppSelected();
 
@@ -70,8 +69,6 @@ public interface AppsView extends IsWidget,
 
         Grid<App> getAppsGrid();
 
-        String highlightSearchText(final String text);
-        
         void cleanUp();
 
         Presenter hideAppMenu();
@@ -126,8 +123,6 @@ public interface AppsView extends IsWidget,
     AppCategory getAppCategoryFromElement(Element el);
 
     App getAppFromElement(Element el);
-
-    String highlightSearchText(String text);
 
     void updateAppListHeading(String join);
 }

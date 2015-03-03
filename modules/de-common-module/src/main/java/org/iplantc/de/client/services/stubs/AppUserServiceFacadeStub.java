@@ -1,5 +1,6 @@
 package org.iplantc.de.client.services.stubs;
 
+import org.iplantc.de.client.models.HasId;
 import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.models.apps.AppCategory;
 import org.iplantc.de.client.models.apps.AppFeedback;
@@ -84,7 +85,7 @@ public class AppUserServiceFacadeStub implements AppUserServiceFacade {
     }
 
     @Override
-    public void getAppDetails(String appId, AsyncCallback<String> callback) {
+    public void getAppDetails(HasId app, AsyncCallback<String> callback) {
 
     }
 

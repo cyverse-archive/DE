@@ -1,13 +1,14 @@
-package org.iplantc.de.apps.client.views;
+package org.iplantc.de.apps.client.views.details;
 
+import org.iplantc.de.apps.client.AppDetailsView;
 import org.iplantc.de.apps.client.AppsView;
 import org.iplantc.de.apps.client.events.AppFavoritedEvent;
 import org.iplantc.de.apps.client.events.selection.AppFavoriteSelectedEvent;
+import org.iplantc.de.apps.client.views.AppDocEditView;
 import org.iplantc.de.apps.client.views.widgets.AppFavoriteCellWidget;
 import org.iplantc.de.apps.client.views.widgets.AppRatingCellWidget;
 import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.client.models.apps.App;
-import org.iplantc.de.client.models.apps.AppAutoBeanFactory;
 import org.iplantc.de.client.models.apps.AppCategory;
 import org.iplantc.de.client.models.apps.AppDoc;
 import org.iplantc.de.client.models.tool.Tool;
@@ -32,10 +33,8 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
-import com.google.web.bindery.autobean.shared.AutoBeanCodex;
 
 import com.sencha.gxt.core.client.XTemplates;
 import com.sencha.gxt.core.client.dom.ScrollSupport.ScrollMode;
@@ -49,7 +48,6 @@ import com.sencha.gxt.widget.core.client.container.AccordionLayoutContainer.Expa
 import com.sencha.gxt.widget.core.client.container.HtmlLayoutContainer;
 import com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -57,16 +55,13 @@ import java.util.List;
 /**
  * @author jstroot
  */
-public class AppInfoView implements IsWidget,
-                                    AppFavoriteSelectedEvent.AppFavoriteSelectedEventHandler,
-                                    AppFavoriteSelectedEvent.HasAppFavoriteSelectedEventHandlers,
-                                    AppFavoritedEvent.AppFavoritedEventHandler {
+public class AppDetailsViewImpl implements AppDetailsView {
 
     private static final String DIV_CLOSE = "</div>";
 
     private static final String MARKDOWN_DIV_OPEN = "<link href=\"./markdown.css\" rel=\"stylesheet\"></link><div style='background-color:white;overflow:scroll;height:450px;' class=\"markdown\">";
 
-    private final class DisplayAppDocCallback implements AsyncCallback<String> {
+    private final class DisplayAppDocCallback implements AsyncCallback<AppDoc> {
         private final App app;
         private HtmlLayoutContainer docWidget;
         private AppDocEditView editView;
@@ -81,11 +76,9 @@ public class AppInfoView implements IsWidget,
         }
 
         @Override
-        public void onSuccess(String result) {
-            AppAutoBeanFactory factory = GWT.create(AppAutoBeanFactory.class);
-            AppDoc doc = AutoBeanCodex.decode(factory, AppDoc.class, result).as();
-            String docString = doc.getDocumentaion();
-            List<String> refLinks = doc.getReferences();
+        public void onSuccess(final AppDoc result) {
+            String docString = result.getDocumentation();
+            List<String> refLinks = result.getReferences();
             showDoc(docString, refLinks);
         }
 
@@ -150,7 +143,7 @@ public class AppInfoView implements IsWidget,
         }
     }
 
-    interface AppInfoViewUiBinder extends UiBinder<Widget, AppInfoView> { }
+    interface AppInfoViewUiBinder extends UiBinder<Widget, AppDetailsViewImpl> { }
 
     public interface AppDetailsRenderer extends XTemplates {
         @XTemplate(source = "appDetails.html")
@@ -179,14 +172,15 @@ public class AppInfoView implements IsWidget,
     private final AppsView appsView;
     private final AppUserServiceFacade appUserService;
 
-    public AppInfoView(final App app, final AppsView appsView, final AppUserServiceFacade appUserService) {
+    public AppDetailsViewImpl(final App app,
+                              final AppsView appsView,
+                              final AppUserServiceFacade appUserService) {
         this.app = app;
         this.appsView = appsView;
         this.appUserService = appUserService;
 
         BINDER.createAndBindUi(this);
         favIcon.setValue(this.app);
-        favIcon.addAppFavoriteSelectedEventHandlers(this);
         initDetailsPnl();
         initDCPanel();
         loadDCinfo();
@@ -195,15 +189,8 @@ public class AppInfoView implements IsWidget,
     }
 
     @Override
-    public HandlerRegistration
-    addAppFavoriteSelectedEventHandlers(AppFavoriteSelectedEvent.AppFavoriteSelectedEventHandler handler) {
-        return asWidget().addHandler(handler, AppFavoriteSelectedEvent.TYPE);
-    }
-
-    @Override
-    public void onAppFavoriteSelected(AppFavoriteSelectedEvent event) {
-        // Forward event
-        asWidget().fireEvent(event);
+    public HandlerRegistration addAppFavoriteSelectedEventHandlers(AppFavoriteSelectedEvent.AppFavoriteSelectedEventHandler handler) {
+        return favIcon.addAppFavoriteSelectedEventHandlers(handler);
     }
 
     @Override
@@ -267,12 +254,13 @@ public class AppInfoView implements IsWidget,
     }
 
     private void loadDCinfo() {
-        appUserService.getAppDetails(app.getId(), new AsyncCallback<String>() {
+        appUserService.getAppDetails(app, new AsyncCallback<App>() {
 
             @Override
-            public void onSuccess(String result) {
-                AppAutoBeanFactory factory = GWT.create(AppAutoBeanFactory.class);
-                App appDetails = AutoBeanCodex.decode(factory, App.class, result).as();
+            public void onSuccess(final App appDetails) {
+//                AppAutoBeanFactory factory = GWT.create(AppAutoBeanFactory.class);
+//                App appDetails = AutoBeanCodex.decode(factory, App.class, result).as();
+
                 List<Tool> deployedComponents = appDetails.getTools();
                 if (deployedComponents != null) {
                     for (Tool component : deployedComponents) {
@@ -311,7 +299,7 @@ public class AppInfoView implements IsWidget,
                 if (!Strings.isNullOrEmpty(app.getWikiUrl())) {
                     Window.open(app.getWikiUrl(), "_blank", "");
                 } else {
-                    appUserService.getAppDoc(app.getId(), new DisplayAppDocCallback(app));
+                    appUserService.getAppDoc(app, new DisplayAppDocCallback(app));
                 }
 
             }

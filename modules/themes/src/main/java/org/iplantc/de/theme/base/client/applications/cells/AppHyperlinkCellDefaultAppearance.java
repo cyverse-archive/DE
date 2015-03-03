@@ -3,6 +3,7 @@ package org.iplantc.de.theme.base.client.applications.cells;
 import org.iplantc.de.apps.client.views.cells.AppHyperlinkCell;
 import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
+import org.iplantc.de.theme.base.client.applications.AppSearchHighlightAppearance;
 import org.iplantc.de.theme.base.client.applications.AppsMessages;
 
 import com.google.common.base.Strings;
@@ -43,22 +44,26 @@ public class AppHyperlinkCellDefaultAppearance implements AppHyperlinkCell.AppHy
     protected final Resources resources;
     private final IplantDisplayStrings iplantDisplayStrings;
     private final AppsMessages appsMessages;
+    private final AppSearchHighlightAppearance highlightAppearance;
 
     public AppHyperlinkCellDefaultAppearance() {
         this(GWT.<Templates> create(Templates.class),
              GWT.<Resources> create(Resources.class),
              GWT.<IplantDisplayStrings> create(IplantDisplayStrings.class),
-             GWT.<AppsMessages> create(AppsMessages.class));
+             GWT.<AppsMessages> create(AppsMessages.class),
+             GWT.<AppSearchHighlightAppearance> create(AppSearchHighlightAppearance.class));
     }
 
     AppHyperlinkCellDefaultAppearance(final Templates templates,
                                       final Resources resources,
                                       final IplantDisplayStrings iplantDisplayStrings,
-                                      final AppsMessages appsMessages) {
+                                      final AppsMessages appsMessages,
+                                      final AppSearchHighlightAppearance highlightAppearance) {
         this.templates = templates;
         this.resources = resources;
         this.iplantDisplayStrings = iplantDisplayStrings;
         this.appsMessages = appsMessages;
+        this.highlightAppearance = highlightAppearance;
         this.resources.css().ensureInjected();
     }
 
@@ -80,9 +85,11 @@ public class AppHyperlinkCellDefaultAppearance implements AppHyperlinkCell.AppHy
     @Override
     public void render(final SafeHtmlBuilder sb,
                        App value, final String textClassName,
-                       final SafeHtml safeHtmlName,
+                       final String pattern,
                        final String textToolTip,
                        final String debugId) {
+        SafeHtml safeHtmlName = highlightAppearance.highlightText(value.getName(), pattern);
+
         sb.appendHtmlConstant("&nbsp;");
         if(DebugInfo.isDebugIdEnabled()
                && !Strings.isNullOrEmpty(debugId)){

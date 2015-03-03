@@ -1,6 +1,5 @@
 package org.iplantc.de.apps.client.views;
 
-import org.iplantc.de.apps.client.AppsView;
 import org.iplantc.de.apps.client.events.selection.AppCommentSelectedEvent;
 import org.iplantc.de.apps.client.events.selection.AppCommentSelectedEvent.AppCommentSelectedEventHandler;
 import org.iplantc.de.apps.client.events.selection.AppCommentSelectedEvent.HasAppCommentSelectedEventHandlers;
@@ -14,6 +13,7 @@ import org.iplantc.de.apps.client.views.cells.AppCommentCell;
 import org.iplantc.de.apps.client.views.cells.AppFavoriteCell;
 import org.iplantc.de.apps.client.views.cells.AppHyperlinkCell;
 import org.iplantc.de.apps.client.views.cells.AppInfoCell;
+import org.iplantc.de.apps.client.views.cells.AppIntegratorCell;
 import org.iplantc.de.apps.client.views.cells.AppRatingCell;
 import org.iplantc.de.apps.shared.AppsModule;
 import org.iplantc.de.client.models.apps.App;
@@ -21,12 +21,9 @@ import org.iplantc.de.client.models.apps.AppNameComparator;
 import org.iplantc.de.client.models.apps.AppRatingComparator;
 import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 
-import com.google.gwt.cell.client.AbstractCell;
 import com.google.gwt.cell.client.Cell;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.HandlerRegistration;
-import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
-import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 
 import com.sencha.gxt.core.client.IdentityValueProvider;
@@ -46,8 +43,8 @@ public class AppColumnModel extends ColumnModel<App> implements AppInfoSelectedE
                                                                 AppRatingSelected.HasAppRatingSelectedEventHandlers,
                                                                 AppRatingDeselected.HasAppRatingDeselectedHandlers {
 
-    public AppColumnModel(AppsView view, final IplantDisplayStrings displayStrings) {
-        super(createColumnConfigList(view, displayStrings));
+    public AppColumnModel(final IplantDisplayStrings displayStrings) {
+        super(createColumnConfigList(displayStrings));
 
         // Set handler managers on appropriate cells so they can fire events.
         for (ColumnConfig<App, ?> colConfig : configs) {
@@ -66,8 +63,7 @@ public class AppColumnModel extends ColumnModel<App> implements AppInfoSelectedE
         }
     }
 
-    public static List<ColumnConfig<App, ?>>
-            createColumnConfigList(final AppsView view, final IplantDisplayStrings displayStrings) {
+    public static List<ColumnConfig<App, ?>> createColumnConfigList(final IplantDisplayStrings displayStrings) {
         AppProperties props = GWT.create(AppProperties.class);
         List<ColumnConfig<App, ?>> list = new ArrayList<>();
 
@@ -106,15 +102,8 @@ public class AppColumnModel extends ColumnModel<App> implements AppInfoSelectedE
         comment.setHideable(false);
 
         info.setCell(new AppInfoCell());
-        name.setCell(new AppHyperlinkCell(view));
-        integrator.setCell(new AbstractCell<String>() {
-
-            @Override
-            public void render(Context context, String value, SafeHtmlBuilder sb) {
-                sb.append(SafeHtmlUtils.fromTrustedString(view.highlightSearchText(value)));
-            }
-
-        });
+        name.setCell(new AppHyperlinkCell());
+        integrator.setCell(new AppIntegratorCell());
         rating.setCell(new AppRatingCell());
         comment.setCell(new AppCommentCell());
 
@@ -170,5 +159,15 @@ public class AppColumnModel extends ColumnModel<App> implements AppInfoSelectedE
             }
         }
 
+    }
+
+    public void setSearchRegexPattern(String pattern) {
+        for (ColumnConfig<App, ?> cc : configs) {
+            if (cc.getCell() instanceof AppHyperlinkCell) {
+                ((AppHyperlinkCell)cc.getCell()).setSearchRegexPattern(pattern);
+            } else if (cc.getCell() instanceof AppIntegratorCell) {
+                ((AppIntegratorCell)cc.getCell()).setSearchRegexPattern(pattern);
+            }
+        }
     }
 }

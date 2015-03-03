@@ -11,7 +11,7 @@ import java.util.List;
 /**
  * A GwtEvent used to notify listeners that App search results have been loaded from the search service.
  * 
- * @author psarando
+ * @author psarando, jstroot
  * 
  */
 public class AppSearchResultLoadEvent extends GwtEvent<AppSearchResultLoadEvent.AppSearchResultLoadEventHandler> {
@@ -26,12 +26,16 @@ public class AppSearchResultLoadEvent extends GwtEvent<AppSearchResultLoadEvent.
     }
 
 
-    public static final GwtEvent.Type<AppSearchResultLoadEventHandler> TYPE = new GwtEvent.Type<AppSearchResultLoadEventHandler>();
+    public static final GwtEvent.Type<AppSearchResultLoadEventHandler> TYPE = new GwtEvent.Type<>();
+    private final String searchPattern;
     private List<App> results;
     private String searchText;
 
-    public AppSearchResultLoadEvent(String searchText, List<App> results) {
+    public AppSearchResultLoadEvent(final String searchText,
+                                    final String searchPattern,
+                                    final List<App> results) {
         this.searchText = searchText;
+        this.searchPattern = searchPattern;
         this.results = results;
     }
 
@@ -48,6 +52,9 @@ public class AppSearchResultLoadEvent extends GwtEvent<AppSearchResultLoadEvent.
         return searchText;
     }
 
+    public String getSearchPattern() {
+        return searchPattern;
+    }
 
     @Override
     protected void dispatch(AppSearchResultLoadEventHandler handler) {
