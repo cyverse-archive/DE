@@ -269,6 +269,7 @@ public class AppEditorWindow extends IplantWindowBase implements AppPublishedEve
             // Create empty AppTemplate
             AppTemplate newAppTemplate = factory.appTemplate().as();
             newAppTemplate.setName(appearance.appDefaultName());
+            newAppTemplate.setPublic(false);
             ArgumentGroup argGrp = factory.argumentGroup().as();
             argGrp.setName("");
             argGrp.setLabel(appearance.groupDefaultLabel(1));
