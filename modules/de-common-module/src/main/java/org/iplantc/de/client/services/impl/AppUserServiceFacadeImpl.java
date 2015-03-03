@@ -227,10 +227,10 @@ public class AppUserServiceFacadeImpl implements AppUserServiceFacade {
     }
 
     @Override
-    public void deleteAppFromWorkspace(String user,
-                                       String fullUsername,
-                                       List<String> appIds,
-                                       AsyncCallback<String> callback) {
+    public void deleteAppsFromWorkspace(String user,
+                                        String fullUsername,
+                                        List<String> appIds,
+                                        AsyncCallback<String> callback) {
         String address = APPS + "/" + "shredder"; //$NON-NLS-1$
 
         JSONObject body = new JSONObject();

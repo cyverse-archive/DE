@@ -69,10 +69,10 @@ public interface AppUserServiceFacade extends AppServiceFacade {
      * @param appIds
      * @param callback
      */
-    void deleteAppFromWorkspace(String username,
-                                String fullUsername,
-                                List<String> appIds,
-                                AsyncCallback<String> callback);
+    void deleteAppsFromWorkspace(String username,
+                                 String fullUsername,
+                                 List<String> appIds,
+                                 AsyncCallback<String> callback);
 
     /**
      * Adds an app to the given public categories.

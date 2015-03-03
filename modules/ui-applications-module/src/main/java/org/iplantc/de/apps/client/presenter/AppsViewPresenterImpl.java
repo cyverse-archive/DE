@@ -441,7 +441,7 @@ public class AppsViewPresenterImpl implements AppsView.Presenter {
                         appIds.add(app.getId());
                     }
 
-                    appUserService.deleteAppFromWorkspace(userInfo.getUsername(), userInfo.getFullUsername(), appIds, new AsyncCallback<String>() {
+                    appUserService.deleteAppsFromWorkspace(userInfo.getUsername(), userInfo.getFullUsername(), appIds, new AsyncCallback<String>() {
 
                         @Override
                         public void onFailure(Throwable caught) {

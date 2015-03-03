@@ -43,6 +43,7 @@ import com.sencha.gxt.widget.core.client.menu.Item;
 import com.sencha.gxt.widget.core.client.menu.MenuItem;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class AppsViewToolbarImpl extends Composite implements AppsView.ViewMenu, HasAppSearchResultLoadEventHandlers {
 
@@ -251,14 +252,17 @@ public class AppsViewToolbarImpl extends Composite implements AppsView.ViewMenu,
                 wfRunEnabled = isMultiStep && !isAppDisabled;
                 break;
             default:
+                final boolean containsSingleStepApp = containsSingleStepApp(appSelection);
+                final boolean containsMultiStepApp = containsMultiStepApp(appSelection);
+                final boolean allSelectedAppsPrivate = allAppsPrivate(appSelection);
 
-                deleteAppEnabled = false;
+                deleteAppEnabled = containsSingleStepApp && allSelectedAppsPrivate;
                 editAppEnabled = false;
                 submitAppEnabled = false;
                 copyAppEnabled = false;
                 appRunEnabled = false;
 
-                deleteWfEnabled = false;
+                deleteWfEnabled = containsMultiStepApp && allSelectedAppsPrivate;
                 editWfEnabled = false;
                 submitWfEnabled = false;
                 copyWfEnabled = false;
@@ -275,6 +279,33 @@ public class AppsViewToolbarImpl extends Composite implements AppsView.ViewMenu,
         submitWf.setEnabled(submitWfEnabled);
         copyWf.setEnabled(copyWfEnabled);
         wfRun.setEnabled(wfRunEnabled);
+    }
+
+    private boolean containsSingleStepApp(List<App> apps) {
+        for (App app : apps) {
+            if (app.getStepCount() == 1) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean containsMultiStepApp(List<App> apps) {
+        for (App app : apps) {
+            if (app.getStepCount() > 1) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean allAppsPrivate(List<App> apps) {
+        for (App app : apps) {
+            if (app.isPublic()) {
+                return false;
+            }
+        }
+        return true;
     }
 
     @UiHandler("requestTool")

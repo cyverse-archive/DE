@@ -78,7 +78,7 @@ public class AppUserServiceFacadeStub implements AppUserServiceFacade {
     }
 
     @Override
-    public void deleteAppFromWorkspace(String username, String fullUsername, List<String> appIds, AsyncCallback<String> asyncCallback) {
+    public void deleteAppsFromWorkspace(String username, String fullUsername, List<String> appIds, AsyncCallback<String> asyncCallback) {
 
     }
 
