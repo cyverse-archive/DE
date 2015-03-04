@@ -55,7 +55,13 @@ public interface AppsMessages extends Messages {
 
     String publishFailureDefaultMessage();
 
+    String publishedOn();
+
+    String rating();
+
     String reallyLikedIt();
+
+    String refLbl();
 
     String requestTool();
 

@@ -51,7 +51,7 @@ public interface AppsView extends IsWidget,
                                        AppRatingSelected.AppRatingSelectedHandler,
                                        AppRatingDeselected.AppRatingDeselectedHandler {
 
-        void goInfo(HasOneWidget widget, App app, String searchRegexPattern);
+        List<List<String>> getGroupHierarchies(App app);
 
         void onCreateNewAppSelected();
 

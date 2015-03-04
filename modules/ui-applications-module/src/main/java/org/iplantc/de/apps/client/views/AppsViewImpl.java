@@ -13,23 +13,26 @@ import org.iplantc.de.apps.client.events.selection.AppRatingDeselected;
 import org.iplantc.de.apps.client.events.selection.AppRatingSelected;
 import org.iplantc.de.apps.client.events.selection.AppSelectionChangedEvent;
 import org.iplantc.de.apps.client.models.AppCategoryStringValueProvider;
-import org.iplantc.de.apps.client.views.details.dialogs.AppInfoDialog;
+import org.iplantc.de.apps.client.views.details.dialogs.AppDetailsDialog;
 import org.iplantc.de.apps.shared.AppsModule.Ids;
 import org.iplantc.de.client.models.HasId;
 import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.models.apps.AppCategory;
 import org.iplantc.de.client.util.JsonUtil;
+import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.resources.client.IplantResources;
 import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.inject.client.AsyncProvider;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiFactory;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.uibinder.client.UiTemplate;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
@@ -80,6 +83,8 @@ public class AppsViewImpl extends Composite implements AppsView,
     @UiField ContentPanel westPanel;
 
     @Inject JsonUtil jsonUtil;
+    @Inject AsyncProvider<AppDetailsDialog> appDetailsDlgAsyncProvider;
+
     protected Presenter presenter;
     Logger logger = Logger.getLogger("App View");
     private static String WEST_COLLAPSE_BTN_ID = "idCategoryCollapseBtn"; //$NON-NLS-1$
@@ -119,7 +124,7 @@ public class AppsViewImpl extends Composite implements AppsView,
             public void onSelectionChanged(SelectionChangedEvent<AppCategory> event) {
                 // Clear regex in column model before firing event
                 searchRegexPattern = null;
-                ((AppColumnModel) cm).setSearchRegexPattern(searchRegexPattern);
+                ((AppColumnModel) cm).setSearchRegexPattern(null);
 
                 fireEvent(new AppCategorySelectionChangedEvent(event.getSelection()));
             }
@@ -131,7 +136,7 @@ public class AppsViewImpl extends Composite implements AppsView,
     //<editor-fold desc="Handler Registrations">
     @Override
     public HandlerRegistration addAppCategorySelectedEventHandler(AppCategorySelectionChangedEvent.AppCategorySelectionChangedEventHandler handler) {
-        return asWidget().addHandler(handler, AppCategorySelectionChangedEvent.TYPE);
+        return addHandler(handler, AppCategorySelectionChangedEvent.TYPE);
     }
 
     @Override
@@ -148,7 +153,7 @@ public class AppsViewImpl extends Composite implements AppsView,
 
     @Override
     public HandlerRegistration addAppFavoritedEventHandler(AppFavoritedEvent.AppFavoritedEventHandler eventHandler) {
-        return asWidget().addHandler(eventHandler, AppFavoritedEvent.TYPE);
+        return addHandler(eventHandler, AppFavoritedEvent.TYPE);
     }
 
     @Override
@@ -177,7 +182,7 @@ public class AppsViewImpl extends Composite implements AppsView,
 
     @Override
     public HandlerRegistration addAppSelectionChangedEventHandler(AppSelectionChangedEvent.AppSelectionChangedEventHandler handler) {
-        return asWidget().addHandler(handler, AppSelectionChangedEvent.TYPE);
+        return addHandler(handler, AppSelectionChangedEvent.TYPE);
     }
     //</editor-fold>
 
@@ -252,31 +257,25 @@ public class AppsViewImpl extends Composite implements AppsView,
     @Override
     public void onAppFavorited(AppFavoritedEvent event) {
         // Forward event so the App Info window can get it if it is open
-        asWidget().fireEvent(event);
+        fireEvent(event);
     }
 
     @Override
-    public void onAppInfoSelected(AppInfoSelectedEvent event) {
-//        final App selectedApp = grid.getSelectionModel().getSelectedItem();
-//        Dialog appInfoWin = new Dialog();
-//        appInfoWin.setModal(true);
-//        appInfoWin.setResizable(false);
-//        appInfoWin.setHeadingText(selectedApp.getName());
-//        appInfoWin.setPixelSize(450, 300);
-        // Get app favorite requests
-//        final AppDetailsViewImpl appInfoView = new AppDetailsViewImpl(selectedApp, this, appUserService);
-//        appInfoView.addAppFavoriteSelectedEventHandlers(presenter);
-//        addAppFavoritedEventHandler(appInfoView);
-//        appInfoWin.add(appInfoView);
-//        appInfoWin.getButtonBar().clear();
+    public void onAppInfoSelected(final AppInfoSelectedEvent event) {
+        appDetailsDlgAsyncProvider.get(new AsyncCallback<AppDetailsDialog>() {
+            @Override
+            public void onFailure(Throwable caught) {
+                ErrorHandler.post(caught);
+            }
 
-//        appInfoWin.show();
+            @Override
+            public void onSuccess(AppDetailsDialog result) {
 
-        //==============================
-        //FIXME Roll presenter role into dialog
-        AppInfoDialog dlg = null;
-
-        presenter.goInfo(dlg, event.getApp(), searchRegexPattern);
+                result.addAppFavoriteSelectedEventHandlers(presenter);
+                addAppFavoriteSelectedEventHandlers(result);
+                result.show(event.getApp(), searchRegexPattern, presenter);
+            }
+        });
     }
 
     @Override
@@ -342,14 +341,7 @@ public class AppsViewImpl extends Composite implements AppsView,
     @Override
     public void setPresenter(Presenter presenter) {
         this.presenter = presenter;
-//        AppColumnModel appColModel = (AppColumnModel)cm;
-//        appColModel.addAppInfoSelectedEventHandler(this);
-//        appColModel.addAppNameSelectedEventHandler(presenter);
-//        appColModel.addAppFavoriteSelectedEventHandlers(this);
-//        appColModel.addAppCommentSelectedEventHandlers(presenter);
-//        appColModel.addAppRatingDeselectedHandler(presenter);
-//        appColModel.addAppRatingSelectedHandler(presenter);
-//        addAppCategorySelectedEventHandler(presenter);
+        // FIXME undo this "set presenter" business
         this.toolBar.init(presenter, this);
     }
 

@@ -302,7 +302,9 @@ public class AppUserServiceFacadeImpl implements AppUserServiceFacade {
     @Override
     public void saveAppDoc(String appId, String doc, AsyncCallback<String> callback) {
         String address = APPS + "/" + appId + "/documentation";
-        ServiceCallWrapper wrapper = new ServiceCallWrapper(PATCH, address, doc);
+        Splittable payload = StringQuoter.createSplittable();
+        StringQuoter.create(doc).assign(payload, "documentation");
+        ServiceCallWrapper wrapper = new ServiceCallWrapper(PATCH, address, payload.getPayload());
         deServiceFacade.getServiceData(wrapper, callback);
 
     }

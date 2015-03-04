@@ -17,6 +17,7 @@ public class AppSearchHighlightDefaultAppearance implements AppSearchHighlightAp
         // Sanitize incoming string
         SafeHtml text = SafeHtmlUtils.fromString(Strings.nullToEmpty(name));
 
+        // XXX JDS Keep an eye on performance.
         final RegExp regExp = RegExp.compile(pattern, "ig");
         return SafeHtmlUtils.fromTrustedString(regExp.replace(text.asString(), REPLACEMENT_START + "$1" + REPLACEMENT_END));
     }

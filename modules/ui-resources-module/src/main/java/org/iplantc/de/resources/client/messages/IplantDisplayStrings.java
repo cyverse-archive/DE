@@ -2028,15 +2028,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     String publishWorkflowSuccess();
 
     /**
-     * Translated "Published on".
-     *
-     * @return translated "Published on"
-     */
-    @DefaultMessage("Published on")
-    @Key("publishedOn")
-    String publishedOn();
-
-    /**
      * Translated "Click Add to attach an item.".
      *
      * @return translated "Click Add to attach an item."
@@ -3070,7 +3061,5 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     String addToFavorites(String resource_name);
 
     String removeFromFavorites(String resource_name);
-
-    String refLbl();
 
 }

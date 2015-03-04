@@ -1,6 +1,5 @@
 package org.iplantc.de.apps.client.presenter;
 
-import org.iplantc.de.apps.client.AppDetailsView;
 import org.iplantc.de.apps.client.AppsView;
 import org.iplantc.de.apps.client.SubmitAppForPublicUseView;
 import org.iplantc.de.apps.client.events.AppDeleteEvent;
@@ -154,7 +153,6 @@ public class AppsViewPresenterImpl implements AppsView.Presenter {
     @Inject JsonUtil jsonUtil;
     @Inject Provider<NewToolRequestDialog> newToolRequestDialogProvider;
     @Inject Provider<SubmitAppForPublicUseView.Presenter> submitAppForPublicPresenterProvider;
-    @Inject Provider<AppDetailsView.Presenter> appDetailsPresenterProvider;
     private static String FAVORITES;
     private static String USER_APPS_GROUP;
     private static String WORKSPACE;
@@ -246,16 +244,14 @@ public class AppsViewPresenterImpl implements AppsView.Presenter {
     }
 
     @Override
-    public void goInfo(HasOneWidget widget, App app, String searchRegexPattern) {
-
+    public List<List<String>> getGroupHierarchies(App app) {
         // Create list of group hierarchies
         List<List<String>> appGroupHierarchies = Lists.newArrayList();
         for(AppCategory appCategory : app.getGroups()) {
             appGroupHierarchies.add(computeGroupHierarchy(appCategory));
         }
 
-        appDetailsPresenterProvider.get().go(widget, app, searchRegexPattern, appGroupHierarchies);
-
+        return appGroupHierarchies;
     }
 
     @Override

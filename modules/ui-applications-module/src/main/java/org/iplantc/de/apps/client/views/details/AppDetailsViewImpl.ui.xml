@@ -1,61 +1,114 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
-	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:cell="urn:import:com.google.gwt.cell.client"
-	xmlns:container="urn:import:com.sencha.gxt.widget.core.client.container"
-	xmlns:form="urn:import:com.sencha.gxt.widget.core.client.form"
-	xmlns:myCell="urn:import:org.iplantc.de.apps.client.views.widgets"
-	xmlns:u="urn:import:org.iplantc.de.commons.client.widgets">
-	<ui:style>
-		.container {
-			background-color: white;
-		}
+             xmlns:g="urn:import:com.google.gwt.user.client.ui"
+             xmlns:container="urn:import:com.sencha.gxt.widget.core.client.container"
+             xmlns:tabs="urn:import:com.sencha.gxt.widget.core.client"
+             xmlns:appWidgets="urn:import:org.iplantc.de.apps.client.views.widgets">
 
-		.details {
-			border: 2px green;
-		}
+    <ui:style>
+        .container {
+            background-color: white;
+        }
 
-	</ui:style>
+        .details {
+            border: 2px green;
+        }
 
-	<ui:with field="icons"
-		type="org.iplantc.de.resources.client.IplantResources" />
+    </ui:style>
 
-	<ui:with type="com.sencha.gxt.core.client.util.Margins" field="outerMargins">
-		<ui:attributes top="1" right="1" bottom="1" left="1" />
-	</ui:with>
-	<ui:with type="com.sencha.gxt.core.client.util.Margins" field="centerMargins">
-		<ui:attributes top="0" right="1" bottom="0" left="1" />
-	</ui:with>
+    <ui:with field="appearance"
+             type="org.iplantc.de.apps.client.AppDetailsView.AppDetailsAppearance" />
 
-	<ui:with
-		type="com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer.VerticalLayoutData"
-		field="topData">
-		<ui:attributes width="1" height=".1d" margins="{outerMargins}" />
-	</ui:with>
-	<ui:with
-		type="com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer.VerticalLayoutData"
-		field="middleData">
-		<ui:attributes width="1" height="-200" margins="{centerMargins}" />
-	</ui:with>
-	<ui:with
-		type="com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer.VerticalLayoutData"
-		field="bottomData">
-		<ui:attributes width="1" height=".5d" margins="{outerMargins}" />
-	</ui:with>
+    <ui:with field="informationTabConfig"
+             type="com.sencha.gxt.widget.core.client.TabItemConfig">
+        <ui:attributes text="{appearance.informationTabLabel}" />
+    </ui:with>
+    <ui:with field="toolTabConfig"
+             type="com.sencha.gxt.widget.core.client.TabItemConfig">
+        <ui:attributes text="{appearance.toolInformationTabLabel}" />
+    </ui:with>
 
-	<container:VerticalLayoutContainer
-		styleName="{style.container}" ui:field="info_container">
-		<container:child layoutData="{topData}">
-			<myCell:AppFavoriteCellWidget ui:field="favIcon" />
-		</container:child>
-		<container:child layoutData="{middleData}">
-			<g:HorizontalPanel >
-				<g:HTML ui:field="appDesc" />
-			</g:HorizontalPanel>
-		</container:child>
-		<container:child layoutData="{bottomData}">
-			<g:HorizontalPanel ui:field="appDetailsPnl" styleName="{style.details}" >
-			</g:HorizontalPanel>
-		</container:child>
-	</container:VerticalLayoutContainer>
+    <tabs:TabPanel ui:field="tabPanel">
+        <tabs:child config="{informationTabConfig}">
+            <g:HTMLPanel>
+                <!-- Favorite Icon -->
+                <appWidgets:AppFavoriteCellWidget ui:field="favIcon"/>
+                <table>
+                    <!-- Description -->
+                    <tr>
+                        <td class="{appearance.css.label}">
+                            <ui:text from="{appearance.descriptionLabel}"/>
+                        </td>
+                        <td class="{appearance.css.value}">
+                            <g:InlineHTML ui:field="description" />
+                        </td>
+                    </tr>
+                    <!-- Details -->
+                    <tr>
+                        <td>
+                            <ui:text from="{appearance.detailsLabel}" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="{appearance.css.label}">
+                            <ui:text from="{appearance.publishedOnLabel}"/>
+                        </td>
+                        <td class="{appearance.css.value}">
+                            <g:DateLabel ui:field="publishedOn"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="{appearance.css.label}">
+                            <ui:text from="{appearance.integratorNameLabel}"/>
+                        </td>
+                        <td class="{appearance.css.value}">
+                            <g:InlineLabel ui:field="integratorName"/>
+                        </td>
+                    </tr>
+                     <tr>
+                         <td class="{appearance.css.label}">
+                            <ui:text from="{appearance.integratorEmailLabel}"/>
+                        </td>
+                         <td class="{appearance.css.value}">
+                            <g:InlineLabel ui:field="integratorEmail" />
+                        </td>
+                    </tr>
+                     <tr>
+                         <td class="{appearance.css.label}">
+                            <ui:text from="{appearance.helpLabel}" />
+                        </td>
+                         <td class="{appearance.css.value}">
+                             <g:InlineHyperlink ui:field="helpLink"
+                                                styleName="{appearance.css.hyperlink}"/>
+                        </td>
+                    </tr>
+                     <tr>
+                         <td class="{appearance.css.label}">
+                            <ui:text from="{appearance.ratingLabel}" />
+                        </td>
+                        <td class="{appearance.css.value}">
+                            <!-- Rating cell -->
+                            <appWidgets:AppRatingCellWidget ui:field="ratings" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <ui:text from="{appearance.categoriesLabel}" />
+                        </td>
+                        <td>
+                            <g:InlineLabel ui:field="categories" />
+                        </td>
+                    </tr>
+                </table>
+            </g:HTMLPanel>
+        </tabs:child>
+        <tabs:child config="{toolTabConfig}">
 
+            <container:AccordionLayoutContainer ui:field="toolsContainer">
+
+            </container:AccordionLayoutContainer>
+
+        </tabs:child>
+
+    </tabs:TabPanel>
 </ui:UiBinder>

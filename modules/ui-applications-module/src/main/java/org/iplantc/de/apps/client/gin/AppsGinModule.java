@@ -4,11 +4,15 @@ import org.iplantc.de.apps.client.AppDetailsView;
 import org.iplantc.de.apps.client.AppsToolbarView;
 import org.iplantc.de.apps.client.AppsView;
 import org.iplantc.de.apps.client.SubmitAppForPublicUseView;
+import org.iplantc.de.apps.client.gin.factory.AppDetailsViewFactory;
+import org.iplantc.de.apps.client.gin.factory.AppDetailsViewPresenterFactory;
 import org.iplantc.de.apps.client.gin.factory.AppsViewFactory;
 import org.iplantc.de.apps.client.presenter.AppsViewPresenterImpl;
 import org.iplantc.de.apps.client.presenter.details.AppDetailsViewPresenterImpl;
 import org.iplantc.de.apps.client.presenter.submit.SubmitAppForPublicPresenter;
 import org.iplantc.de.apps.client.views.AppsViewImpl;
+import org.iplantc.de.apps.client.views.details.AppDetailsViewImpl;
+import org.iplantc.de.apps.client.views.details.dialogs.AppDetailsDialog;
 import org.iplantc.de.apps.client.views.submit.SubmitAppForPublicUseViewImpl;
 import org.iplantc.de.apps.client.views.toolBar.AppsViewToolbarImpl;
 import org.iplantc.de.client.models.apps.AppCategory;
@@ -43,7 +47,14 @@ public class AppsGinModule extends AbstractGinModule {
                     .implement(AppsView.class, AppsViewImpl.class)
                     .build(AppsViewFactory.class));
 
-        bind(AppDetailsView.Presenter.class).to(AppDetailsViewPresenterImpl.class);
+        // Details
+        install(new GinFactoryModuleBuilder()
+                    .implement(AppDetailsView.Presenter.class, AppDetailsViewPresenterImpl.class)
+                    .build(AppDetailsViewPresenterFactory.class));
+        install(new GinFactoryModuleBuilder()
+                    .implement(AppDetailsView.class, AppDetailsViewImpl.class)
+                    .build(AppDetailsViewFactory.class));
+        bind(AppDetailsDialog.class);
     }
 
 }
