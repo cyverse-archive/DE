@@ -1,4 +1,4 @@
-package org.iplantc.de.apps.client.presenter.proxy;
+package org.iplantc.de.apps.client.presenter.categories.proxy;
 
 import org.iplantc.de.client.models.apps.AppCategory;
 import org.iplantc.de.client.services.AppServiceFacade;

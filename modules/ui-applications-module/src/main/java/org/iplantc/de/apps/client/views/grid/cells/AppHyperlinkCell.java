@@ -1,4 +1,4 @@
-package org.iplantc.de.apps.client.views.cells;
+package org.iplantc.de.apps.client.views.grid.cells;
 
 import org.iplantc.de.apps.client.events.selection.AppNameSelectedEvent;
 import org.iplantc.de.apps.shared.AppsModule;
@@ -44,7 +44,7 @@ public class AppHyperlinkCell extends AbstractCell<App> {
     private final AppHyperlinkCellAppearance appearance;
     private String baseID;
     private HasHandlers hasHandlers;
-    private String pattern;
+    protected String pattern;
 
     public AppHyperlinkCell() {
         this(GWT.<AppHyperlinkCellAppearance> create(AppHyperlinkCellAppearance.class));

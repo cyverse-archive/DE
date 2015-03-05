@@ -58,9 +58,11 @@ public class DiskResourceViewImpl extends Composite implements DiskResourceView 
 
         initWidget(BINDER.createAndBindUi(this));
 
+        // FIXME This shouldn't be necessary
         con.setNorthWidget(toolbar, northData);
     }
 
+    // FIXME This shouldn't be necessary
     @UiFactory
     public ValueProvider<Folder, String> createValueProvider() {
         return new ValueProvider<Folder, String>() {

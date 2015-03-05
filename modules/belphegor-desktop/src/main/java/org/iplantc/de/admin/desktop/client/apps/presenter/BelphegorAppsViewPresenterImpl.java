@@ -12,10 +12,10 @@ import org.iplantc.de.admin.desktop.client.services.callbacks.AdminServiceCallba
 import org.iplantc.de.admin.desktop.client.services.model.AppAdminServiceRequestAutoBeanFactory;
 import org.iplantc.de.admin.desktop.client.services.model.AppCategorizeRequest;
 import org.iplantc.de.admin.desktop.client.services.model.AppCategorizeRequest.CategoryRequest;
+import org.iplantc.de.apps.client.AppsView;
 import org.iplantc.de.apps.client.events.selection.AppNameSelectedEvent;
 import org.iplantc.de.apps.client.presenter.AppsViewPresenterImpl;
-import org.iplantc.de.apps.client.presenter.proxy.AppCategoryProxy;
-import org.iplantc.de.apps.client.AppsView;
+import org.iplantc.de.apps.client.presenter.categories.proxy.AppCategoryProxy;
 import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.models.DEProperties;
 import org.iplantc.de.client.models.HasId;
@@ -50,6 +50,7 @@ import com.google.web.bindery.autobean.shared.AutoBean;
 import com.google.web.bindery.autobean.shared.AutoBeanCodex;
 import com.google.web.bindery.autobean.shared.AutoBeanUtils;
 
+import com.sencha.gxt.data.shared.TreeStore;
 import com.sencha.gxt.widget.core.client.Dialog.PredefinedButton;
 import com.sencha.gxt.widget.core.client.box.AlertMessageBox;
 import com.sencha.gxt.widget.core.client.box.ConfirmMessageBox;
@@ -74,7 +75,7 @@ import java.util.List;
  * <b> There are two places in the {@link org.iplantc.de.apps.client.presenter.AppsViewPresenterImpl}
  * where this deferred binding takes place; in the
  * {@link #go(com.google.gwt.user.client.ui.HasOneWidget)} method, and in the
- * {@link org.iplantc.de.apps.client.presenter.proxy.AppCategoryProxy}.
+ * {@link org.iplantc.de.apps.client.presenter.categories.proxy.AppCategoryProxy}.
  * 
  * 
  * @author jstroot
@@ -100,18 +101,20 @@ public class BelphegorAppsViewPresenterImpl extends AppsViewPresenterImpl implem
     private boolean isDocUpdate;
 
     @Inject
-    public BelphegorAppsViewPresenterImpl(final AppsView view,
-                                          final AppCategoryProxy proxy,
-                                          final AppAdminServiceFacade appService,
-                                          final AppUserServiceFacade appUserService,
-                                          final EventBus eventBus,
-                                          final UserInfo userInfo,
-                                          final DEProperties props,
-                                          final IplantAnnouncer announcer,
-                                          final IplantDisplayStrings displayStrings,
-                                          final IplantErrorStrings errorStrings,
-                                          final AppMetadataServiceFacade metadataFacade) {
+    BelphegorAppsViewPresenterImpl(final AppsView view,
+                                   final TreeStore<AppCategory> treeStore,
+                                   final AppCategoryProxy proxy,
+                                   final AppAdminServiceFacade appService,
+                                   final AppUserServiceFacade appUserService,
+                                   final EventBus eventBus,
+                                   final UserInfo userInfo,
+                                   final DEProperties props,
+                                   final IplantAnnouncer announcer,
+                                   final IplantDisplayStrings displayStrings,
+                                   final IplantErrorStrings errorStrings,
+                                   final AppMetadataServiceFacade metadataFacade) {
         super(view,
+              treeStore,
               proxy,
               appService,
               appUserService,
@@ -256,8 +259,7 @@ public class BelphegorAppsViewPresenterImpl extends AppsViewPresenterImpl implem
                                                                                                                  result);
                                                               selectedAppCategory.setName(group.as()
                                                                                                .getName());
-                                                              // FIXME Replace with reference to treeStore
-                                                              view.updateAppCategory(selectedAppCategory);
+                                                              treeStore.update(selectedAppCategory);
 
                                                               view.unMaskWestPanel();
                                                           }
@@ -273,11 +275,6 @@ public class BelphegorAppsViewPresenterImpl extends AppsViewPresenterImpl implem
             }
         });
         msgBox.show();
-    }
-
-    @Override
-    protected void selectFirstApp() {
-        // Do Nothing
     }
 
     @Override
@@ -343,7 +340,8 @@ public class BelphegorAppsViewPresenterImpl extends AppsViewPresenterImpl implem
                                                               @Override
                                                               public void onSuccess(String result) {
                                                                   eventBus.fireEvent(new CatalogCategoryRefreshEvent());
-                                                                  view.removeApp(selectedApp);
+                                                                  view.deselectAll();
+                                                                  listStore.remove(selectedApp);
                                                                   view.unMaskCenterPanel();
                                                               }
 
@@ -446,7 +444,7 @@ public class BelphegorAppsViewPresenterImpl extends AppsViewPresenterImpl implem
         final AppCategorizePresenter presenter = new AppCategorizePresenter(new AppCategorizeViewImpl(false),
                                                                             selectedApp,
                                                                             properties);
-        presenter.setAppCategories(view.getAppCategoryRoots());
+        presenter.setAppCategories(treeStore.getRootItems());
 
         final IPlantDialog dlg = new IPlantDialog();
         dlg.addOkButtonSelectHandler(new SelectHandler() {
@@ -524,7 +522,8 @@ public class BelphegorAppsViewPresenterImpl extends AppsViewPresenterImpl implem
     }
 
     @Override
-    public void onAppEditorSave(final App app, AppDoc doc) {
+    public void onAppEditorSave(final App app,
+                                final AppDoc doc) {
         final AsyncCallback<String> editCompleteCallback = new AppEditCompleteCallback(app);
 
         final App appClone = AutoBeanCodex.decode(factory, App.class, "{}").as();
@@ -555,14 +554,14 @@ public class BelphegorAppsViewPresenterImpl extends AppsViewPresenterImpl implem
         if (app.getName() != null) {
             adminAppService.updateApplication(appClone.getId(), jsonObj, editCompleteCallback);
         }
-        if(!Strings.isNullOrEmpty(doc.getDocumentaion())) {
+        if(!Strings.isNullOrEmpty(doc.getDocumentation())) {
             if (isDocUpdate) {
                 adminAppService.updateAppDoc(appClone.getId(),
-                                       getJsonFormat(doc.getDocumentaion()),
+                                       getJsonFormat(doc.getDocumentation()),
                                        new DocSaveCallbackImpl());
             } else {
                 adminAppService.saveAppDoc(appClone.getId(),
-                                           getJsonFormat(doc.getDocumentaion()),
+                                           getJsonFormat(doc.getDocumentation()),
                                            new DocSaveCallbackImpl());
             }
         }
@@ -706,7 +705,7 @@ public class BelphegorAppsViewPresenterImpl extends AppsViewPresenterImpl implem
     public void onMoveCategoryClicked() {
         final IPlantDialog dlg = new IPlantDialog();
         final AppCategorizeView cat_view = new AppCategorizeViewImpl(true);
-        cat_view.setAppCategories(view.getAppCategoryRoots());
+        cat_view.setAppCategories(treeStore.getRootItems());
         dlg.addOkButtonSelectHandler(new SelectHandler() {
 
             @Override

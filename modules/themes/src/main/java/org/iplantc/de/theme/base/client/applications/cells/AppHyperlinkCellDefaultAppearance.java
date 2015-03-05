@@ -1,6 +1,6 @@
 package org.iplantc.de.theme.base.client.applications.cells;
 
-import org.iplantc.de.apps.client.views.cells.AppHyperlinkCell;
+import org.iplantc.de.apps.client.views.grid.cells.AppHyperlinkCell;
 import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 import org.iplantc.de.theme.base.client.applications.AppSearchHighlightAppearance;
@@ -84,7 +84,8 @@ public class AppHyperlinkCellDefaultAppearance implements AppHyperlinkCell.AppHy
 
     @Override
     public void render(final SafeHtmlBuilder sb,
-                       App value, final String textClassName,
+                       final App value,
+                       final String textClassName,
                        final String pattern,
                        final String textToolTip,
                        final String debugId) {

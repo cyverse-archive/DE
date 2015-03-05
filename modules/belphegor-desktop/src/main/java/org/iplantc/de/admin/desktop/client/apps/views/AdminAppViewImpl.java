@@ -1,10 +1,8 @@
 package org.iplantc.de.admin.desktop.client.apps.views;
 
-import org.iplantc.de.admin.desktop.client.services.impl.AppAdminUserServiceFacade;
+import org.iplantc.de.apps.client.AppsToolbarView;
 import org.iplantc.de.apps.client.events.selection.AppSelectionChangedEvent;
 import org.iplantc.de.apps.client.views.AppsViewImpl;
-import org.iplantc.de.client.models.DEProperties;
-import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.models.apps.AppCategory;
 import org.iplantc.de.resources.client.IplantResources;
@@ -12,13 +10,15 @@ import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 
 import com.google.gwt.uibinder.client.UiFactory;
 import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
 
 import com.sencha.gxt.core.client.Style.SelectionMode;
+import com.sencha.gxt.data.shared.ListStore;
+import com.sencha.gxt.data.shared.TreeStore;
 import com.sencha.gxt.dnd.core.client.DND.Operation;
 import com.sencha.gxt.dnd.core.client.DragSource;
 import com.sencha.gxt.dnd.core.client.DropTarget;
 import com.sencha.gxt.widget.core.client.grid.ColumnModel;
-import com.sencha.gxt.widget.core.client.tree.Tree;
 
 /**
  * @author jstroot
@@ -28,15 +28,20 @@ public class AdminAppViewImpl extends AppsViewImpl implements AdminAppsView,
 
     private final AdminAppsView.Toolbar toolbar;
 
+    /**
+     * FIXME This will need an assisted inject
+     */
     @Inject
-    public AdminAppViewImpl(final Tree<AppCategory, String> tree,
-                            final AdminAppsView.Toolbar toolbar,
-                            final DEProperties props,
+    public AdminAppViewImpl(final AdminAppsView.Toolbar toolbar,
                             final IplantResources resources,
-                            final UserInfo userInfo,
                             final IplantDisplayStrings displayStrings,
-                            final AppAdminUserServiceFacade appAdminUserService) {
-        super(tree, props, null, resources, userInfo, displayStrings, appAdminUserService);
+                            @Assisted final ListStore<App> listStore,
+                            @Assisted final TreeStore<AppCategory> treeStore) {
+        super((AppsToolbarView) toolbar, // FIXME Need to reconcile belphegor toolbar
+              resources,
+              displayStrings,
+              listStore,
+              treeStore);
         this.toolbar = toolbar;
 
         // Restrict Admin view to single select, since admin services only support one item at a time.

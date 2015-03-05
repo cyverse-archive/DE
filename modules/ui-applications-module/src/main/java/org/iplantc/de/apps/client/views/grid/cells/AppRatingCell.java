@@ -1,4 +1,4 @@
-package org.iplantc.de.apps.client.views.cells;
+package org.iplantc.de.apps.client.views.grid.cells;
 
 import org.iplantc.de.apps.client.events.selection.AppRatingDeselected;
 import org.iplantc.de.apps.client.events.selection.AppRatingSelected;

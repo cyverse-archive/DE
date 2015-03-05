@@ -131,7 +131,7 @@ public class AppEditor implements Editor<App>, IsWidget {
         window.setHeadingText(app.getName());
         docHelp.setHTML("<p><i>Note:</i> Please complete the following section for documentation to be displayed with in DE itself. The documentation must be in Markdown format. Please clear wiki URL field once you fill this field. Replace everything inside '{{}}'.<br/>");
         if (this.doc != null) {
-            appDoc.setValue(this.doc.getDocumentaion());
+            appDoc.setValue(this.doc.getDocumentation());
         }
         driver.initialize(this);
         driver.edit(app);

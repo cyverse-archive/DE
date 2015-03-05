@@ -1,4 +1,4 @@
-package org.iplantc.de.apps.client.views.cells;
+package org.iplantc.de.apps.client.views.grid.cells;
 
 import com.google.gwt.cell.client.AbstractCell;
 import com.google.gwt.core.client.GWT;

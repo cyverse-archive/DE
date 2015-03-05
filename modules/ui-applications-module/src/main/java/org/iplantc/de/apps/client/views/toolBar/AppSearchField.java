@@ -1,4 +1,4 @@
-package org.iplantc.de.apps.client.views.widgets;
+package org.iplantc.de.apps.client.views.toolBar;
 
 import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.commons.client.widgets.SearchField;

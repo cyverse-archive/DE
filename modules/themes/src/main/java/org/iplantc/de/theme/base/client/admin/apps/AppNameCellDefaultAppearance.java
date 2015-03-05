@@ -7,7 +7,6 @@ import org.iplantc.de.theme.base.client.applications.cells.AppHyperlinkCellDefau
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
-import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 
 /**
  * @author jstroot
@@ -16,19 +15,21 @@ public class AppNameCellDefaultAppearance extends AppHyperlinkCellDefaultAppeara
     private final BelphegorDisplayStrings displayStrings;
 
     @Override
-    public void render(SafeHtmlBuilder sb, App value) {
+    public void render(final SafeHtmlBuilder sb,
+                       final App value,
+                       final String searchPattern) {
         if(!value.isDisabled()){
             super.render(sb,
                          value,
                          resources.css().appName(),
-                         SafeHtmlUtils.fromString(value.getName()),
+                         searchPattern,
                          displayStrings.editApp(),
                          null);
         } else {
             super.render(sb,
                          value,
                          resources.css().appDisabled(),
-                         SafeHtmlUtils.fromString(value.getName()),
+                         searchPattern,
                          appUnavailable(),
                          null);
         }

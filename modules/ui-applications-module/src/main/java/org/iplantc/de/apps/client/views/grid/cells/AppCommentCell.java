@@ -1,4 +1,4 @@
-package org.iplantc.de.apps.client.views.cells;
+package org.iplantc.de.apps.client.views.grid.cells;
 
 import org.iplantc.de.apps.client.events.selection.AppCommentSelectedEvent;
 import org.iplantc.de.client.models.apps.App;

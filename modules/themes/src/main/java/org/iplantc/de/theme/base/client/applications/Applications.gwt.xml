@@ -15,23 +15,23 @@
 
     <!-- Cells -->
     <replace-with class="org.iplantc.de.theme.base.client.applications.cells.AppCommentCellDefaultAppearance">
-        <when-type-is class="org.iplantc.de.apps.client.views.cells.AppCommentCell.AppCommentCellAppearance"/>
+        <when-type-is class="org.iplantc.de.apps.client.views.grid.cells.AppCommentCell.AppCommentCellAppearance"/>
     </replace-with>
 
     <replace-with class="org.iplantc.de.theme.base.client.applications.cells.AppRatingCellDefaultAppearance">
-        <when-type-is class="org.iplantc.de.apps.client.views.cells.AppRatingCell.AppRatingCellAppearance"/>
+        <when-type-is class="org.iplantc.de.apps.client.views.grid.cells.AppRatingCell.AppRatingCellAppearance"/>
     </replace-with>
 
     <replace-with class="org.iplantc.de.theme.base.client.applications.cells.AppFavoriteCellDefaultAppearance">
-        <when-type-is class="org.iplantc.de.apps.client.views.cells.AppFavoriteCell.AppFavoriteCellAppearance"/>
+        <when-type-is class="org.iplantc.de.apps.client.views.grid.cells.AppFavoriteCell.AppFavoriteCellAppearance"/>
     </replace-with>
 
     <replace-with class="org.iplantc.de.theme.base.client.applications.cells.AppHyperlinkCellDefaultAppearance">
-        <when-type-is class="org.iplantc.de.apps.client.views.cells.AppHyperlinkCell.AppHyperlinkCellAppearance"/>
+        <when-type-is class="org.iplantc.de.apps.client.views.grid.cells.AppHyperlinkCell.AppHyperlinkCellAppearance"/>
     </replace-with>
 
     <replace-with class="org.iplantc.de.theme.base.client.applications.cells.AppInfoCellDefaultAppearance">
-        <when-type-is class="org.iplantc.de.apps.client.views.cells.AppInfoCell.AppInfoCellAppearance"/>
+        <when-type-is class="org.iplantc.de.apps.client.views.grid.cells.AppInfoCell.AppInfoCellAppearance"/>
     </replace-with>
 
     <!-- Submit -->

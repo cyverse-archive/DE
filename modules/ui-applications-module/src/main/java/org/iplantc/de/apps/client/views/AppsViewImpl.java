@@ -1,5 +1,7 @@
 package org.iplantc.de.apps.client.views;
 
+import org.iplantc.de.apps.client.AppCategoriesView;
+import org.iplantc.de.apps.client.AppsGridView;
 import org.iplantc.de.apps.client.AppsToolbarView;
 import org.iplantc.de.apps.client.AppsView;
 import org.iplantc.de.apps.client.events.AppFavoritedEvent;
@@ -14,6 +16,7 @@ import org.iplantc.de.apps.client.events.selection.AppRatingSelected;
 import org.iplantc.de.apps.client.events.selection.AppSelectionChangedEvent;
 import org.iplantc.de.apps.client.models.AppCategoryStringValueProvider;
 import org.iplantc.de.apps.client.views.details.dialogs.AppDetailsDialog;
+import org.iplantc.de.apps.client.views.grid.AppColumnModel;
 import org.iplantc.de.apps.shared.AppsModule.Ids;
 import org.iplantc.de.client.models.HasId;
 import org.iplantc.de.client.models.apps.App;
@@ -94,11 +97,14 @@ public class AppsViewImpl extends Composite implements AppsView,
     private String searchRegexPattern;
 
     @Inject
-    AppsViewImpl(final AppsToolbarView toolBar,
-                 final IplantResources resources,
-                 final IplantDisplayStrings displayStrings,
-                 @Assisted final ListStore<App> listStore,
-                 @Assisted final TreeStore<AppCategory> treeStore) {
+    protected AppsViewImpl(final AppsToolbarView toolBar,
+                           final IplantResources resources,
+                           final IplantDisplayStrings displayStrings,
+                           @Assisted final AppsToolbarView.Presenter toolbarPresenter,
+                           @Assisted final AppCategoriesView.Presenter categoriesPresenter,
+                           @Assisted final AppsGridView.Presenter gridPresenter,
+                           @Assisted final ListStore<App> listStore,
+                           @Assisted final TreeStore<AppCategory> treeStore) {
         this.toolBar = toolBar;
         this.resources = resources;
         this.displayStrings = displayStrings;
@@ -226,6 +232,11 @@ public class AppsViewImpl extends Composite implements AppsView,
     @Override
     public AppCategory getSelectedAppCategory() {
         return tree.getSelectionModel().getSelectedItem();
+    }
+
+    @Override
+    public void deselectAll() {
+        grid.getSelectionModel().deselectAll();
     }
 
     @Override

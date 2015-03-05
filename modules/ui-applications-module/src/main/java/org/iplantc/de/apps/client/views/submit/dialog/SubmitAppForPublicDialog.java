@@ -1,4 +1,4 @@
-package org.iplantc.de.apps.client.views.dialogs;
+package org.iplantc.de.apps.client.views.submit.dialog;
 
 import org.iplantc.de.apps.client.SubmitAppForPublicUseView;
 import org.iplantc.de.apps.client.events.AppCategoryCountUpdateEvent;

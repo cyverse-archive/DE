@@ -1,6 +1,6 @@
 package org.iplantc.de.admin.desktop.client.apps.views.cells;
 
-import org.iplantc.de.apps.client.views.cells.AppHyperlinkCell;
+import org.iplantc.de.apps.client.views.grid.cells.AppHyperlinkCell;
 import org.iplantc.de.client.models.apps.App;
 
 import com.google.gwt.cell.client.Cell;
@@ -16,7 +16,7 @@ public class AppNameCell extends AppHyperlinkCell {
 
         String editApp();
 
-        void render(SafeHtmlBuilder sb, App value);
+        void render(SafeHtmlBuilder sb, App value, String pattern);
     }
 
     private AppNameCellAppearance appearance = GWT.create(AppNameCellAppearance.class);
@@ -26,6 +26,6 @@ public class AppNameCell extends AppHyperlinkCell {
         if (value == null) {
             return;
         }
-        appearance.render(sb, value);
+        appearance.render(sb, value, pattern);
     }
 }

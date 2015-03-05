@@ -1,5 +1,6 @@
 package org.iplantc.de.apps.client.views.toolBar;
 
+import org.iplantc.de.apps.client.AppsToolbarView;
 import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.client.models.apps.AppAutoBeanFactory;
 import org.iplantc.de.client.models.apps.proxy.AppLoadConfig;
@@ -47,12 +48,13 @@ public class AppsViewToolbarImplTest {
 
     @Mock AutoBean<AppLoadConfig> mockLoadConfigAb;
     @Mock AppLoadConfig mockLoadConfig;
+    @Mock AppsToolbarView.AppsToolbarAppearance mockAppearance;
 
     private AppsViewToolbarImpl uut;
     @Before public void setUp() {
         when(mockAppSearchFactory.loadConfig()).thenReturn(mockLoadConfigAb);
         when(mockLoadConfigAb.as()).thenReturn(mockLoadConfig);
-        uut = new AppsViewToolbarImpl(mockAppService, mockDisplayStrings, mockAppSearchFactory, mockAppFactory);
+        uut = new AppsViewToolbarImpl(mockAppService, mockAppSearchFactory, mockUserInfo, mockAppearance, mockAppFactory);
         mockMenuItems(uut);
     }
 

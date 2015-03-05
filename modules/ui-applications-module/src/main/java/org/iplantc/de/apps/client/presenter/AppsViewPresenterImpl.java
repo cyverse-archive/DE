@@ -4,6 +4,7 @@ import org.iplantc.de.apps.client.AppsView;
 import org.iplantc.de.apps.client.SubmitAppForPublicUseView;
 import org.iplantc.de.apps.client.events.AppDeleteEvent;
 import org.iplantc.de.apps.client.events.AppFavoritedEvent;
+import org.iplantc.de.apps.client.events.AppSearchResultLoadEvent;
 import org.iplantc.de.apps.client.events.AppUpdatedEvent;
 import org.iplantc.de.apps.client.events.CreateNewAppEvent;
 import org.iplantc.de.apps.client.events.CreateNewWorkflowEvent;
@@ -16,7 +17,7 @@ import org.iplantc.de.apps.client.events.selection.AppFavoriteSelectedEvent;
 import org.iplantc.de.apps.client.events.selection.AppNameSelectedEvent;
 import org.iplantc.de.apps.client.events.selection.AppRatingDeselected;
 import org.iplantc.de.apps.client.events.selection.AppRatingSelected;
-import org.iplantc.de.apps.client.presenter.proxy.AppCategoryProxy;
+import org.iplantc.de.apps.client.presenter.categories.proxy.AppCategoryProxy;
 import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.models.DEProperties;
 import org.iplantc.de.client.models.HasId;
@@ -76,7 +77,7 @@ import java.util.logging.Logger;
  *
  * @author jstroot
  */
-public class AppsViewPresenterImpl implements AppsView.Presenter {
+public class AppsViewPresenterImpl implements AppsView.Presenter, AppSearchResultLoadEvent.AppSearchResultLoadEventHandler {
 
     private static class DeleteRatingCallback implements AsyncCallback<AppFeedback> {
         private final App appToUnrate;
@@ -165,27 +166,27 @@ public class AppsViewPresenterImpl implements AppsView.Presenter {
     private final IplantErrorStrings errorStrings;
     private final EventBus eventBus;
     private final List<HandlerRegistration> eventHandlers = new ArrayList<>();
-    private final ListStore<App> listStore;
+    protected final ListStore<App> listStore;
     private final AppMetadataServiceFacade metadataFacade;
     private final DEProperties props;
-    private final TreeStore<AppCategory> treeStore;
+    protected final TreeStore<AppCategory> treeStore;
     private final UserInfo userInfo;
     private HasId desiredSelectedAppId;
     private RegExp searchRegex;
 
     @Inject
-    public AppsViewPresenterImpl(final AppsView view,
-                                 final TreeStore<AppCategory> treeStore,
-                                 final AppCategoryProxy proxy,
-                                 final AppServiceFacade appService,
-                                 final AppUserServiceFacade appUserService,
-                                 final EventBus eventBus,
-                                 final UserInfo userInfo,
-                                 final DEProperties props,
-                                 final IplantAnnouncer announcer,
-                                 final IplantDisplayStrings displayStrings,
-                                 final IplantErrorStrings errorStrings,
-                                 final AppMetadataServiceFacade metadataFacade) {
+    protected AppsViewPresenterImpl(final AppsView view,
+                                    final TreeStore<AppCategory> treeStore,
+                                    final AppCategoryProxy proxy,
+                                    final AppServiceFacade appService,
+                                    final AppUserServiceFacade appUserService,
+                                    final EventBus eventBus,
+                                    final UserInfo userInfo,
+                                    final DEProperties props,
+                                    final IplantAnnouncer announcer,
+                                    final IplantDisplayStrings displayStrings,
+                                    final IplantErrorStrings errorStrings,
+                                    final AppMetadataServiceFacade metadataFacade) {
         this.view = view;
         this.treeStore = treeStore;
         this.appService = appService;
@@ -230,6 +231,7 @@ public class AppsViewPresenterImpl implements AppsView.Presenter {
         this.view.addAppCategorySelectedEventHandler(this);
         this.view.addAppCategorySelectedEventHandler(this.view.getToolBar());
         this.view.addAppSelectionChangedEventHandler(this.view.getToolBar());
+        this.view.getToolBar().addAppSearchResultLoadEventHandler(this);
 
         eventHandlers.add(eventBus.addHandler(AppUpdatedEvent.TYPE, new AppsViewAppUpdatedEventHandler(view)));
 
@@ -252,6 +254,11 @@ public class AppsViewPresenterImpl implements AppsView.Presenter {
         }
 
         return appGroupHierarchies;
+    }
+
+    @Override
+    public void onAppSearchResultLoad(AppSearchResultLoadEvent event) {
+        // FIXME Do things
     }
 
     @Override

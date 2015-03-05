@@ -86,6 +86,8 @@ public interface AppsView extends IsWidget,
         void setViewDebugId(String baseId);
     }
 
+    void deselectAll();
+
     AppsToolbarView getToolBar();
 
     void hideAppMenu();

@@ -1,6 +1,6 @@
 package org.iplantc.de.theme.base.client.applications.cells;
 
-import org.iplantc.de.apps.client.views.cells.AppCommentCell.AppCommentCellAppearance;
+import org.iplantc.de.apps.client.views.grid.cells.AppCommentCell.AppCommentCellAppearance;
 import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.resources.client.IplantResources;
 import org.iplantc.de.resources.client.messages.I18N;

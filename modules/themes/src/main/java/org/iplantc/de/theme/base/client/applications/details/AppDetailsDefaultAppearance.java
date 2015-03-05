@@ -90,4 +90,24 @@ public class AppDetailsDefaultAppearance implements AppDetailsView.AppDetailsApp
     public String toolInformationTabLabel() {
         return iplantDisplayStrings.information();
     }
+
+    @Override
+    public String toolNameLabel() {
+        return iplantDisplayStrings.name() + ": ";
+    }
+
+    @Override
+    public String toolPathLabel() {
+        return iplantDisplayStrings.path() + ": ";
+    }
+
+    @Override
+    public String toolVersionLabel() {
+        return iplantDisplayStrings.version() + ": ";
+    }
+
+    @Override
+    public String toolAttributionLabel() {
+        return iplantDisplayStrings.attribution() + ": ";
+    }
 }

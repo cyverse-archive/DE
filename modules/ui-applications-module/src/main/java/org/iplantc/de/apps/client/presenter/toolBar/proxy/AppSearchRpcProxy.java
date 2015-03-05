@@ -1,4 +1,4 @@
-package org.iplantc.de.apps.client.views.widgets.proxy;
+package org.iplantc.de.apps.client.presenter.toolBar.proxy;
 
 import org.iplantc.de.apps.client.AppsToolbarView;
 import org.iplantc.de.apps.client.events.AppSearchResultLoadEvent;

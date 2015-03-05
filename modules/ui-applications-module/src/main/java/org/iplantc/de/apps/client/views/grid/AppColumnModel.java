@@ -1,4 +1,4 @@
-package org.iplantc.de.apps.client.views;
+package org.iplantc.de.apps.client.views.grid;
 
 import org.iplantc.de.apps.client.events.selection.AppCommentSelectedEvent;
 import org.iplantc.de.apps.client.events.selection.AppCommentSelectedEvent.AppCommentSelectedEventHandler;
@@ -9,12 +9,12 @@ import org.iplantc.de.apps.client.events.selection.AppNameSelectedEvent;
 import org.iplantc.de.apps.client.events.selection.AppRatingDeselected;
 import org.iplantc.de.apps.client.events.selection.AppRatingSelected;
 import org.iplantc.de.apps.client.models.AppProperties;
-import org.iplantc.de.apps.client.views.cells.AppCommentCell;
-import org.iplantc.de.apps.client.views.cells.AppFavoriteCell;
-import org.iplantc.de.apps.client.views.cells.AppHyperlinkCell;
-import org.iplantc.de.apps.client.views.cells.AppInfoCell;
-import org.iplantc.de.apps.client.views.cells.AppIntegratorCell;
-import org.iplantc.de.apps.client.views.cells.AppRatingCell;
+import org.iplantc.de.apps.client.views.grid.cells.AppCommentCell;
+import org.iplantc.de.apps.client.views.grid.cells.AppFavoriteCell;
+import org.iplantc.de.apps.client.views.grid.cells.AppHyperlinkCell;
+import org.iplantc.de.apps.client.views.grid.cells.AppInfoCell;
+import org.iplantc.de.apps.client.views.grid.cells.AppIntegratorCell;
+import org.iplantc.de.apps.client.views.grid.cells.AppRatingCell;
 import org.iplantc.de.apps.shared.AppsModule;
 import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.models.apps.AppNameComparator;

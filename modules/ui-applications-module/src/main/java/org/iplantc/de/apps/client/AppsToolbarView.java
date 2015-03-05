@@ -60,6 +60,10 @@ public interface AppsToolbarView extends IsWidget,
         String searchApps();
     }
 
+    interface Presenter {
+
+    }
+
     void hideAppMenu();
 
     void hideWorkflowMenu();

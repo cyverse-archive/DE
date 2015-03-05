@@ -1,13 +1,14 @@
 package org.iplantc.de.admin.desktop.client.apps.views.widgets;
 
 import org.iplantc.de.admin.desktop.client.apps.views.AdminAppsView;
+import org.iplantc.de.apps.client.AppsToolbarView;
 import org.iplantc.de.apps.client.events.selection.AppCategorySelectionChangedEvent;
 import org.iplantc.de.apps.client.events.selection.AppSelectionChangedEvent;
 import org.iplantc.de.apps.client.events.selection.AppSelectionChangedEvent.AppSelectionChangedEventHandler;
 import org.iplantc.de.apps.client.events.selection.AppSelectionChangedEvent.HasAppSelectionChangedEventHandlers;
-import org.iplantc.de.apps.client.views.widgets.AppSearchField;
+import org.iplantc.de.apps.client.views.toolBar.AppSearchField;
 import org.iplantc.de.apps.client.events.AppSearchResultLoadEvent;
-import org.iplantc.de.apps.client.views.widgets.proxy.AppSearchRpcProxy;
+import org.iplantc.de.apps.client.presenter.toolBar.proxy.AppSearchRpcProxy;
 import org.iplantc.de.client.models.IsMaskable;
 import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.models.apps.AppAutoBeanFactory;
@@ -119,7 +120,8 @@ public class BelphegorAppsToolbarImpl implements AdminAppsView.Toolbar,
                      final HasAppSelectionChangedEventHandlers hasAppSelectionChangedEventHandlers,
                      final AppCategorySelectionChangedEvent.HasAppCategorySelectionChangedEventHandlers hasAppCategorySelectionChangedEventHandlers) {
         this.presenter = presenter;
-        addAppSearchResultLoadEventHandler(appView);
+        // FIXME wire up search result load handler
+//        addAppSearchResultLoadEventHandler(appView);
         hasAppSelectionChangedEventHandlers.addAppSelectionChangedEventHandler(this);
         hasAppCategorySelectionChangedEventHandlers.addAppCategorySelectedEventHandler(this);
         proxy.setHasHandlers(asWidget());
@@ -203,7 +205,8 @@ public class BelphegorAppsToolbarImpl implements AdminAppsView.Toolbar,
     PagingLoader<FilterPagingLoadConfig, PagingLoadResult<App>> createPagingLoader() {
         IplantDisplayStrings displayStrings = GWT.create(IplantDisplayStrings.class);
         // FIXME Fix this with injection
-        proxy = new AppSearchRpcProxy(appService, appSearchFactory, appFactory, displayStrings);
+        AppsToolbarView.AppsToolbarAppearance appearance = GWT.create(AppsToolbarView.AppsToolbarAppearance.class);
+        proxy = new AppSearchRpcProxy(appService, appSearchFactory, appFactory, appearance);
         PagingLoader<FilterPagingLoadConfig, PagingLoadResult<App>> loader = new PagingLoader<>(
                 proxy);
 
