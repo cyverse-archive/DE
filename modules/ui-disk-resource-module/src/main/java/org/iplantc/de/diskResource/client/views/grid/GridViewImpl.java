@@ -246,7 +246,6 @@ public class GridViewImpl extends ContentPanel implements GridView,
 
     @Override
     protected void onEnsureDebugId(String baseID) {
-        super.onEnsureDebugId(baseID);
         grid.ensureDebugId(baseID);
         drCm.ensureDebugId(baseID);
     }
