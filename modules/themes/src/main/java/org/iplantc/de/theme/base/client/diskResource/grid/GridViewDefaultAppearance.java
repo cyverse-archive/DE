@@ -148,4 +148,5 @@ public class GridViewDefaultAppearance implements GridView.Appearance {
     public String gridViewEmptyText() {
         return displayStrings.noItemsToDisplay();
     }
+
 }

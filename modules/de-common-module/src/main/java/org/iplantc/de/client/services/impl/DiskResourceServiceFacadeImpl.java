@@ -1,6 +1,7 @@
 package org.iplantc.de.client.services.impl;
 
 import static org.iplantc.de.shared.services.BaseServiceCallWrapper.Type.*;
+
 import org.iplantc.de.client.DEClientConstants;
 import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.events.diskResources.FolderRefreshEvent;
@@ -922,6 +923,22 @@ public class DiskResourceServiceFacadeImpl extends TreeStore<Folder> implements
         String address = deProperties.getDataMgmtBaseUrl() + resource.getId() + "/template-avus/" //$NON-NLS-1$
                 + templateAvus.getId();
         ServiceCallWrapper wrapper = new ServiceCallWrapper(DELETE, address);
+        callService(wrapper, callback);
+    }
+
+    @Override
+    public void copyMeatadata(String srcUUID,
+                              JSONObject paths,
+                              boolean override,
+                              AsyncCallback<String> callback) {
+        String address = null;
+        if(override) {
+            address = deProperties.getDataMgmtBaseUrl() + srcUUID + "/template-avus/copy?force="
+                + override;
+        } else {
+            address = deProperties.getDataMgmtBaseUrl() + srcUUID + "/template-avus/copy";
+        }
+        ServiceCallWrapper wrapper = new ServiceCallWrapper(POST, address, paths.toString());
         callService(wrapper, callback);
     }
 }

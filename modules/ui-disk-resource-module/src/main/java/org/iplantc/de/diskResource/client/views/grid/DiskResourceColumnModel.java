@@ -7,6 +7,8 @@ import org.iplantc.de.diskResource.client.GridView;
 import org.iplantc.de.diskResource.client.events.DiskResourceNameSelectedEvent;
 import org.iplantc.de.diskResource.client.events.DiskResourcePathSelectedEvent;
 import org.iplantc.de.diskResource.client.events.RequestDiskResourceFavoriteEvent;
+import org.iplantc.de.diskResource.client.events.selection.CopyMetadataSelected;
+import org.iplantc.de.diskResource.client.events.selection.CopyMetadataSelected.CopyMetadataSelectedEventHandler;
 import org.iplantc.de.diskResource.client.events.selection.ManageCommentsSelected;
 import org.iplantc.de.diskResource.client.events.selection.ManageMetadataSelected;
 import org.iplantc.de.diskResource.client.events.selection.ManageSharingSelected;
@@ -43,6 +45,7 @@ public class DiskResourceColumnModel extends ColumnModel<DiskResource> implement
                                                                                   ShareByDataLinkSelected.HasShareByDataLinkSelectedEventHandlers,
                                                                                   ManageSharingSelected.HasManageSharingSelectedEventHandlers,
                                                                                   ManageMetadataSelected.HasManageMetadataSelectedEventHandlers,
+                                                                      CopyMetadataSelected.HasCopyMetadataSelectedEventHandlers,
                                                                                   RequestDiskResourceFavoriteEvent.HasManageFavoritesEventHandlers,
                                                                                   ManageCommentsSelected.HasManageCommentsSelectedEventHandlers,
                                                                                   DiskResourcePathSelectedEvent.HasDiskResourcePathSelectedEventHandlers {
@@ -140,6 +143,13 @@ public class DiskResourceColumnModel extends ColumnModel<DiskResource> implement
     @Override
     public HandlerRegistration addManageMetadataSelectedEventHandler(ManageMetadataSelected.ManageMetadataSelectedEventHandler handler) {
         return ensureHandlers().addHandler(ManageMetadataSelected.TYPE, handler);
+    }
+    
+    @Override
+    public HandlerRegistration
+            addCopyMetadataSelectedEventHandler(CopyMetadataSelected.CopyMetadataSelectedEventHandler handler) {
+
+        return ensureHandlers().addHandler(CopyMetadataSelected.TYPE, handler);
     }
 
     @Override

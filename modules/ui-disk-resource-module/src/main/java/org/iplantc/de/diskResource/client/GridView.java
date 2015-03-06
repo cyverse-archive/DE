@@ -4,6 +4,7 @@ import org.iplantc.de.client.models.HasId;
 import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.diskResource.client.events.*;
+import org.iplantc.de.diskResource.client.events.selection.CopyMetadataSelected;
 import org.iplantc.de.diskResource.client.events.selection.EditInfoTypeSelected;
 import org.iplantc.de.diskResource.client.events.selection.ManageCommentsSelected;
 import org.iplantc.de.diskResource.client.events.selection.ManageMetadataSelected;
@@ -87,6 +88,7 @@ public interface GridView extends IsWidget,
         int sizeColumnWidth();
 
         String gridViewEmptyText();
+
     }
 
     interface FolderContentsRpcProxy extends DataProxy<FolderContentsLoadConfig, PagingLoadResult<DiskResource>> {
@@ -96,6 +98,7 @@ public interface GridView extends IsWidget,
     interface Presenter extends DiskResourceNameSelectedEvent.DiskResourceNameSelectedEventHandler,
                                 ManageSharingSelected.ManageSharingSelectedEventHandler,
                                 ManageMetadataSelected.ManageMetadataSelectedEventHandler,
+                       CopyMetadataSelected.CopyMetadataSelectedEventHandler,
                                 ShareByDataLinkSelected.ShareByDataLinkSelectedEventHandler,
                                 RequestDiskResourceFavoriteEvent.RequestDiskResourceFavoriteEventHandler,
                                 ManageCommentsSelected.ManageCommentsSelectedEventHandler,
@@ -146,6 +149,23 @@ public interface GridView extends IsWidget,
             int shareLinkDialogTextBoxWidth();
 
             String shareLinkDialogWidth();
+
+            String shareFailure();
+
+            String shareByLinkFailure();
+
+            String metadataOverwriteWarning(String drName);
+
+            String metadataManageFailure();
+
+            String commentsManageFailure();
+
+            String copyMetadata();
+
+            String copyMetadataSuccess();
+
+            String copyMetadataFailure();
+
         }
 
         void deSelectDiskResources();

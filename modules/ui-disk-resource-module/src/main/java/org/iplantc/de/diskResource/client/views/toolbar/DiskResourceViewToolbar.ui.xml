@@ -135,6 +135,11 @@
                                        text="{appearance.metadataMenuItem}"
                                        icon="{appearance.metadataIcon}"
                                        enabled="false"/>
+                          <menu:MenuItem ui:field="copymetadataMi"
+                                       text="{appearance.copyMetadataMenuItem}"
+                                       icon="{appearance.metadataIcon}"
+                                       enabled="false"/>              
+                                       
                         <menu:MenuItem ui:field="moveMi"
                                        text="{appearance.moveMenuItem}"
                                        icon="{appearance.editIcon}"

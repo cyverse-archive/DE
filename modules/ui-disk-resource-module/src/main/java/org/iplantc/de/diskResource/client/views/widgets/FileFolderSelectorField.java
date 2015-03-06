@@ -41,12 +41,12 @@ public class FileFolderSelectorField extends AbstractDiskResourceSelector<DiskRe
     }
 
     private class HideHandler implements HideEvent.HideHandler {
-        private final TakesValue<DiskResource> dlg;
+        private final TakesValue<List<DiskResource>> dlg;
         private final HasValueChangeHandlers<DiskResource> hasValueChangeHandlers;
         private final UserSettings userSettings;
         private final EventBus eventBus;
 
-        public HideHandler(final TakesValue<DiskResource> dlg,
+        public HideHandler(final TakesValue<List<DiskResource>> dlg,
                            final HasValueChangeHandlers<DiskResource> hasValueChangeHandlers,
                            final UserSettings userSettings,
                            final EventBus eventBus) {
@@ -58,30 +58,35 @@ public class FileFolderSelectorField extends AbstractDiskResourceSelector<DiskRe
 
         @Override
         public void onHide(HideEvent event) {
-            final DiskResource value = dlg.getValue();
-            if(value == null){
+            final List<DiskResource> value = dlg.getValue();
+            if (value == null) {
                 return;
             }
 
-            setSelectedResource(value);
-            if(userSettings.isRememberLastPath()){
+            DiskResource selectedResource = value.get(0);
+            setSelectedResource(selectedResource);
+            if (userSettings.isRememberLastPath()) {
 
-                String path = (value instanceof Folder)
-                                  ? value.getPath()
-                                  : diskResourceUtil.parseParent(value.getPath());
+                String path = (value instanceof Folder) ? selectedResource.getPath()
+                                                       : diskResourceUtil.parseParent(selectedResource.getPath());
                 userSettings.setLastPath(path);
                 eventBus.fireEvent(new LastSelectedPathChangedEvent(true));
             }
-            ValueChangeEvent.fire(hasValueChangeHandlers, value);
+            ValueChangeEvent.fire(hasValueChangeHandlers, selectedResource);
 
         }
     }
 
-    @Inject AsyncProvider<FileFolderSelectDialog> fileFolderSelectDialogProvider;
-    @Inject UserSettings userSettings;
-    @Inject EventBus eventBus;
-    @Inject DiskResourceUtil diskResourceUtil;
-    @Inject CommonModelUtils commonModelUtils;
+    @Inject
+    AsyncProvider<FileFolderSelectDialog> fileFolderSelectDialogProvider;
+    @Inject
+    UserSettings userSettings;
+    @Inject
+    EventBus eventBus;
+    @Inject
+    DiskResourceUtil diskResourceUtil;
+    @Inject
+    CommonModelUtils commonModelUtils;
 
     private final FileFolderSelectorFieldAppearance appearance;
     private final List<InfoType> infoTypeFilters;
@@ -89,7 +94,7 @@ public class FileFolderSelectorField extends AbstractDiskResourceSelector<DiskRe
     @Inject
     FileFolderSelectorField(final FileFolderSelectorFieldAppearance appearance,
                             final DiskResourceServiceFacade diskResourceService,
-                            @Assisted final List<InfoType> infoTypeFilters){
+                            @Assisted final List<InfoType> infoTypeFilters) {
         super(diskResourceService, appearance);
         this.appearance = appearance;
         this.infoTypeFilters = infoTypeFilters;
@@ -117,13 +122,13 @@ public class FileFolderSelectorField extends AbstractDiskResourceSelector<DiskRe
         if ((value == null || Strings.isNullOrEmpty(value.getPath()))
                 && userSettings.isRememberLastPath()) {
             String path = userSettings.getLastPath();
-            if(path != null) {
+            if (path != null) {
                 folderToSelect = commonModelUtils.createHasPathFromString(path);
                 // get dialog from factory
             }
-        }else if(value instanceof Folder){
+        } else if (value instanceof Folder) {
             folderToSelect = value;
-        }else {
+        } else {
             String path = diskResourceUtil.parseParent(value.getPath());
             folderToSelect = commonModelUtils.createHasPathFromString(path);
             diskResourcesToSelect.add(value);
@@ -137,11 +142,11 @@ public class FileFolderSelectorField extends AbstractDiskResourceSelector<DiskRe
 
             @Override
             public void onSuccess(FileFolderSelectDialog result) {
-
-                result.addHideHandler(new HideHandler(result, FileFolderSelectorField.this, userSettings, eventBus));
-                result.show(finalFolderToSelect,
-                            diskResourcesToSelect,
-                            infoTypeFilters);
+                result.addHideHandler(new HideHandler(result,
+                                                      FileFolderSelectorField.this,
+                                                      userSettings,
+                                                      eventBus));
+                result.show(finalFolderToSelect, diskResourcesToSelect, infoTypeFilters, true);
             }
         });
     }
@@ -150,10 +155,9 @@ public class FileFolderSelectorField extends AbstractDiskResourceSelector<DiskRe
     protected boolean validateDropStatus(Set<DiskResource> dropData, StatusProxy status) {
         boolean isValid = false;
         // Only allow 1 folder to be dropped in this field.
-        if ((dropData == null)
-                || dropData.size() != 1) {
+        if ((dropData == null) || dropData.size() != 1) {
             isValid = false;
-        } else if(!infoTypeFilters.isEmpty()) {
+        } else if (!infoTypeFilters.isEmpty()) {
             DiskResource droppedResource = dropData.iterator().next();
             InfoType infoType = InfoType.fromTypeString(droppedResource.getInfoType());
             for (InfoType it : infoTypeFilters) {
@@ -171,7 +175,7 @@ public class FileFolderSelectorField extends AbstractDiskResourceSelector<DiskRe
 
         // Reset status message
         status.setStatus(isValid);
-        if(isValid){
+        if (isValid) {
             status.update(appearance.dataDragDropStatusText(dropData.size()));
         }
 

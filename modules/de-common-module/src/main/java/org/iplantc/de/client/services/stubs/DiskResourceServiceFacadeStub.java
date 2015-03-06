@@ -228,4 +228,13 @@ public class DiskResourceServiceFacadeStub implements DiskResourceServiceFacade 
                                            AsyncCallback<String> callback) {
         // TODO Auto-generated method stub
     }
+
+    @Override
+    public void copyMeatadata(String srcUUID,
+                              JSONObject paths,
+                              boolean override,
+                              AsyncCallback<String> callback) {
+        // TODO Auto-generated method stub
+
+    }
 }

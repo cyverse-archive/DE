@@ -4,6 +4,7 @@ import org.iplantc.de.client.models.viewer.InfoType;
 import org.iplantc.de.diskResource.client.views.widgets.FileFolderSelectorField;
 import org.iplantc.de.diskResource.client.views.widgets.FileSelectorField;
 import org.iplantc.de.diskResource.client.views.widgets.FolderSelectorField;
+import org.iplantc.de.diskResource.client.views.widgets.MultiFileSelectorField;
 
 import java.util.List;
 
@@ -20,6 +21,8 @@ public interface DiskResourceSelectorFieldFactory {
     FileSelectorField defaultFileSelector();
 
     FileFolderSelectorField createFilteredFileFolderSelector(List<InfoType> infotypes);
+
+    MultiFileSelectorField creaeteMultiFileSelector(boolean allowFolderSelect);
 
 
 }

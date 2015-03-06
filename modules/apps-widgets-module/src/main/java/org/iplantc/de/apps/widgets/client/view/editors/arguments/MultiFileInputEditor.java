@@ -4,6 +4,7 @@ import org.iplantc.de.apps.widgets.client.view.editors.arguments.converters.Argu
 import org.iplantc.de.apps.widgets.client.view.editors.arguments.converters.SplittableToHasPathListConverter;
 import org.iplantc.de.apps.widgets.client.view.editors.style.AppTemplateWizardAppearance;
 import org.iplantc.de.client.models.HasPath;
+import org.iplantc.de.diskResource.client.gin.factory.DiskResourceSelectorFieldFactory;
 import org.iplantc.de.diskResource.client.views.widgets.DiskResourceSelector.HasDisableBrowseButtons;
 import org.iplantc.de.diskResource.client.views.widgets.MultiFileSelectorField;
 
@@ -17,10 +18,10 @@ public class MultiFileInputEditor extends AbstractArgumentEditor implements HasD
     private final MultiFileSelectorField multiFileSelector;
 
     @Inject
-    MultiFileInputEditor(final MultiFileSelectorField multiFileSelector,
+    MultiFileInputEditor(final DiskResourceSelectorFieldFactory selectorFactory,
                          @Assisted AppTemplateWizardAppearance appearance) {
         super(appearance);
-        this.multiFileSelector = multiFileSelector;
+        this.multiFileSelector = selectorFactory.creaeteMultiFileSelector(false);
         editorAdapter = new ArgumentEditorConverter<>(multiFileSelector,
                                                       new SplittableToHasPathListConverter());
 

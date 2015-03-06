@@ -133,4 +133,44 @@ public class GridViewPresenterDefaultAppearance implements GridView.Presenter.Ap
     public String shareLinkDialogWidth() {
         return "535";
     }
+
+    @Override
+    public String shareFailure() {
+        return displayStrings.shareFailure();
+    }
+
+    @Override
+    public String shareByLinkFailure() {
+        return displayStrings.shareByLinkFailure();
+    }
+
+    @Override
+    public String metadataOverwriteWarning(String drName) {
+        return displayStrings.metadataOverwriteWarning(drName);
+    }
+
+    @Override
+    public String metadataManageFailure() {
+        return displayStrings.metadataManageFailure();
+    }
+
+    @Override
+    public String commentsManageFailure() {
+        return displayStrings.commentsManageFailure();
+    }
+
+    @Override
+    public String copyMetadata() {
+        return displayStrings.copyMetadata();
+    }
+
+    @Override
+    public String copyMetadataSuccess() {
+        return displayStrings.copyMetadataSuccess();
+    }
+
+    @Override
+    public String copyMetadataFailure() {
+        return displayStrings.copyMetadataFailure();
+    }
 }

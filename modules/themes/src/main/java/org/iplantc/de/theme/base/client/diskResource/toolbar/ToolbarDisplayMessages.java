@@ -104,4 +104,6 @@ public interface ToolbarDisplayMessages extends Messages {
     String upload();
 
     String newMdFileMenuItem();
+
+    String copyMetadataMenuItem();
 }

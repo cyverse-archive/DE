@@ -5,9 +5,10 @@ import com.google.gwt.safehtml.shared.SafeHtml;
 
 /**
  * Created by jstroot on 1/26/15.
+ * 
  * @author jstroot
  */
-public interface GridViewDisplayStrings extends Messages{
+public interface GridViewDisplayStrings extends Messages {
 
     @Key("diskResourceNotAvailable")
     String diskResourceNotAvailable();
@@ -53,4 +54,20 @@ public interface GridViewDisplayStrings extends Messages{
 
     @Key("viaPublicLink")
     String viaPublicLink();
+
+    String shareFailure();
+
+    String shareByLinkFailure();
+
+    String metadataOverwriteWarning(String drName);
+
+    String metadataManageFailure();
+
+    String commentsManageFailure();
+
+    String copyMetadata();
+
+    String copyMetadataSuccess();
+
+    String copyMetadataFailure();
 }

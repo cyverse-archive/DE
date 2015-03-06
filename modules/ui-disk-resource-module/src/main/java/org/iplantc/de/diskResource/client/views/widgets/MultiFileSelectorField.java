@@ -18,6 +18,7 @@ import org.iplantc.de.commons.client.events.LastSelectedPathChangedEvent;
 import org.iplantc.de.commons.client.widgets.IPlantSideErrorHandler;
 import org.iplantc.de.diskResource.client.model.DiskResourceModelKeyProvider;
 import org.iplantc.de.diskResource.client.model.DiskResourceProperties;
+import org.iplantc.de.diskResource.client.views.dialogs.FileFolderSelectDialog;
 import org.iplantc.de.diskResource.client.views.dialogs.FileSelectDialog;
 import org.iplantc.de.resources.client.constants.IplantValidationConstants;
 
@@ -42,6 +43,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
 import com.google.web.bindery.autobean.shared.AutoBeanCodex;
 
 import com.sencha.gxt.core.shared.FastMap;
@@ -142,6 +144,34 @@ public class MultiFileSelectorField extends Composite implements IsField<List<Ha
             setValue(Lists.<HasPath>newArrayList(store.getAll()));
         }
     }
+    
+    private final class FileFolderSelectDailogHideHandler implements HideHandler {
+
+        private final FileFolderSelectDialog dlg;
+        private final ListStore<DiskResource> store;
+
+        public FileFolderSelectDailogHideHandler(final FileFolderSelectDialog dlg,
+                                           final ListStore<DiskResource> store) {
+            this.dlg = dlg;
+            this.store = store;
+        }
+
+        @Override
+        public void onHide(HideEvent event) {
+            store.addAll(dlg.getValue());
+            if (userSettings.isRememberLastPath() && store.size() > 0) {
+                userSettings.setLastPath(diskResourceUtil.parseParent(store.get(0).getPath()));
+                eventBus.fireEvent(new LastSelectedPathChangedEvent(true));
+            }
+            ValueChangeEvent.fire(MultiFileSelectorField.this,
+                                  Lists.<HasPath> newArrayList(store.getAll()));
+            setValue(Lists.<HasPath> newArrayList(store.getAll()));
+
+        }
+        
+    }
+
+
 
     interface MultiFileSelectorFieldUiBinder extends UiBinder<Widget, MultiFileSelectorField> { }
 
@@ -171,13 +201,18 @@ public class MultiFileSelectorField extends Composite implements IsField<List<Ha
     @Inject IplantValidationConstants validationConstants;
     @Inject EventBus eventBus;
     @Inject AsyncProvider<FileSelectDialog> fileSelectDialogProvider;
+    @Inject
+    AsyncProvider<FileFolderSelectDialog> fileFolderSelectDialogProvider;
     @Inject DiskResourceUtil diskResourceUtil;
+    private final boolean allowFolderSelect;
+
 
     @Inject
-    MultiFileSelectorField(final MultiFileSelectorFieldAppearance appearance) {
+    MultiFileSelectorField(final MultiFileSelectorFieldAppearance appearance,
+                           @Assisted boolean allowFolderSelect) {
         this.appearance = appearance;
         this.errorSupport = new IPlantSideErrorHandler(this);
-
+        this.allowFolderSelect = allowFolderSelect;
         initWidget(BINDER.createAndBindUi(this));
         grid.getSelectionModel().addSelectionChangedHandler(this);
         grid.setBorders(true);
@@ -376,6 +411,7 @@ public class MultiFileSelectorField extends Composite implements IsField<List<Ha
         }
         // Open a multi-select file selector
         final String path = userSettings.isRememberLastPath() ? userSettings.getLastPath() : null;
+        if (!allowFolderSelect) {
         fileSelectDialogProvider.get(new AsyncCallback<FileSelectDialog>() {
             @Override
             public void onFailure(Throwable caught) {
@@ -392,6 +428,24 @@ public class MultiFileSelectorField extends Composite implements IsField<List<Ha
                             Collections.<InfoType> emptyList());
             }
         });
+        } else {
+            fileFolderSelectDialogProvider.get(new AsyncCallback<FileFolderSelectDialog>() {
+
+                @Override
+                public void onFailure(Throwable caught) {
+                    ErrorHandler.post(caught);
+                    
+                }
+
+                @Override
+                public void onSuccess(FileFolderSelectDialog result) {
+                    HasPath hasPath = CommonModelUtils.getInstance().createHasPathFromString(path);
+                    result.addHideHandler(new FileFolderSelectDailogHideHandler(result, listStore));
+                    result.show(hasPath, null, null, false);
+                }
+                
+            });
+        }
 
     }
 

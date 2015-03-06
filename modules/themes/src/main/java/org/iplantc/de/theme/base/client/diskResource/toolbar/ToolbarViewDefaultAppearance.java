@@ -412,4 +412,9 @@ public class ToolbarViewDefaultAppearance implements ToolbarView.Appearance {
     public String newMdFileMenuItem() {
         return displayMessages.newMdFileMenuItem();
     }
+
+    @Override
+    public String copyMetadataMenuItem() {
+        return displayMessages.copyMetadataMenuItem();
+    }
 }

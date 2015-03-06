@@ -278,6 +278,7 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
         toolbarPresenter.getView().addEmptyTrashSelectedHandler(this);
         toolbarPresenter.getView().addManageSharingSelectedEventHandler(this.gridViewPresenter);
         toolbarPresenter.getView().addManageMetadataSelectedEventHandler(this.gridViewPresenter);
+        toolbarPresenter.getView().addCopyMetadataSelectedEventHandler(this.gridViewPresenter);
         toolbarPresenter.getView().addManageCommentsSelectedEventHandler(this.gridViewPresenter);
         toolbarPresenter.getView().addMoveDiskResourcesSelectedHandler(this);
         toolbarPresenter.getView().addRefreshFolderSelectedHandler(this);

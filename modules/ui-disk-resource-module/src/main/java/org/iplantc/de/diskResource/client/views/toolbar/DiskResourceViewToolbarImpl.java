@@ -60,7 +60,8 @@ public class DiskResourceViewToolbarImpl extends Composite implements ToolbarVie
     @UiField MenuItem openTrashMi, restoreMi, emptyTrashMi;
     @UiField TextButton refreshButton;
     @UiField MenuItem renameMi, moveMi, deleteMi,
-        editFileMi, editCommentsMi, editInfoTypeMi, metadataMi;
+ editFileMi, editCommentsMi, editInfoTypeMi, metadataMi,
+            copymetadataMi;
     @UiField MenuItem shareFolderLocationMi;
     @UiField TextButton shareMenu;
     @UiField MenuItem shareWithCollaboratorsMi, createPublicLinkMi, sendToCogeMi,
@@ -121,6 +122,12 @@ public class DiskResourceViewToolbarImpl extends Composite implements ToolbarVie
     @Override
     public HandlerRegistration addManageMetadataSelectedEventHandler(ManageMetadataSelected.ManageMetadataSelectedEventHandler handler) {
         return addHandler(handler, ManageMetadataSelected.TYPE);
+    }
+
+    @Override
+    public HandlerRegistration
+            addCopyMetadataSelectedEventHandler(CopyMetadataSelected.CopyMetadataSelectedEventHandler handler) {
+        return addHandler(handler, CopyMetadataSelected.TYPE);
     }
 
     @Override
@@ -237,6 +244,7 @@ public class DiskResourceViewToolbarImpl extends Composite implements ToolbarVie
         editCommentsMi.setEnabled(editCommentsMiEnabled);
         editInfoTypeMi.setEnabled(editInfoTypeMiEnabled);
         metadataMi.setEnabled(metadataMiEnabled);
+        copymetadataMi.setEnabled(metadataMiEnabled);
 
         simpleDownloadMi.setEnabled(simpleDownloadMiEnabled);
         bulkDownloadMi.setEnabled(bulkDownloadMiEnabled);
@@ -332,6 +340,12 @@ public class DiskResourceViewToolbarImpl extends Composite implements ToolbarVie
         Preconditions.checkState(selectedDiskResources != null
                                      && selectedDiskResources.size() == 1);
         fireEvent(new ManageMetadataSelected(selectedDiskResources.iterator().next()));
+    }
+
+    @UiHandler("copymetadataMi")
+    void onCopyMetadataClicked(SelectionEvent<Item> event) {
+        Preconditions.checkState(selectedDiskResources != null && selectedDiskResources.size() == 1);
+        fireEvent(new CopyMetadataSelected(selectedDiskResources.iterator().next()));
     }
 
     @UiHandler("emptyTrashMi")

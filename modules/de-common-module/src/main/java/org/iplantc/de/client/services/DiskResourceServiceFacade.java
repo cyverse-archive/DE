@@ -26,19 +26,20 @@ public interface DiskResourceServiceFacade {
 
     /**
      * Call service to retrieve the root folder info for the current user
-     *
+     * 
      * @param callback executed when RPC call completes.
      */
     void getRootFolders(AsyncCallback<RootFolders> callback);
 
-
     /**
      * Called to retrieve the entire contents of a folder.
+     * 
      * @param folder the folder whose contents are to be retrieved
      * @param infoTypeFilterList a list of <code>InfoType</code>s to filter the results by.
-     * @param entityType used to specify if the results should contain only file, folders, or all. Defaults to all.
-     * @param loadConfig the paged load config which contains all parameters necessary to construct a well-formed
-     *                   paged directory listing request
+     * @param entityType used to specify if the results should contain only file, folders, or all.
+     *            Defaults to all.
+     * @param loadConfig the paged load config which contains all parameters necessary to construct a
+     *            well-formed paged directory listing request
      * @param callback executed when RPC call completes.
      */
     void getFolderContents(Folder folder,
@@ -49,7 +50,7 @@ public interface DiskResourceServiceFacade {
 
     /**
      * Called to retrieve the contents of a folder without its file contents.
-     *
+     * 
      * @param parent requested folder.
      * @param callback executed when RPC call completes.
      */
@@ -57,7 +58,7 @@ public interface DiskResourceServiceFacade {
 
     /**
      * Call service to create a new folder
-     *
+     * 
      * @param parentFolder parent folder where the new folder will be created
      * @param callback executed when RPC call completes.
      */
@@ -65,33 +66,36 @@ public interface DiskResourceServiceFacade {
 
     /**
      * Check if a list of files or folders exist.
-     *
+     * 
      * @param diskResourcePaths paths to desired resources.
-     * @param callback callback executed when RPC call completes. On success, a map that maps
-     *            resource paths to whether or not they exist.
+     * @param callback callback executed when RPC call completes. On success, a map that maps resource
+     *            paths to whether or not they exist.
      */
     void diskResourcesExist(HasPaths diskResourcePaths, AsyncCallback<DiskResourceExistMap> callback);
 
-
     /**
      * Calls the move folder and move file services for the list of given disk resource ids.
-     *  @param diskResources list of file and folder ids to move.
+     * 
+     * @param diskResources list of file and folder ids to move.
      * @param destFolder the destination folder where the disk resources will be moved.
      */
-    void moveDiskResources(final List<DiskResource> diskResources, final Folder destFolder,
-            AsyncCallback<DiskResourceMove> callback);
+    void moveDiskResources(final List<DiskResource> diskResources,
+                           final Folder destFolder,
+                           AsyncCallback<DiskResourceMove> callback);
 
     /**
      * Calls the move folder and move file services for moving contents of a given folder.
-     *
+     * 
      * @param sourceFolderId id of the source folder
      * @param destFolder the destination folder where the disk resources will be moved.
      */
-    void moveContents(final String sourceFolderId, final Folder destFolder,  AsyncCallback<DiskResourceMove> callback);
+    void moveContents(final String sourceFolderId,
+                      final Folder destFolder,
+                      AsyncCallback<DiskResourceMove> callback);
 
     /**
      * Call service rename a file or folder.
-     *
+     * 
      * @param src the disk resource to be renamed.
      * @param destName the new name.
      * @param callback service success/failure callback
@@ -100,7 +104,7 @@ public interface DiskResourceServiceFacade {
 
     /**
      * Call service to upload a file from a given URL.
-     *
+     * 
      * @param url the URL to import from.
      * @param dest id of the destination folder.
      * @param callback service success/failure callback
@@ -109,14 +113,14 @@ public interface DiskResourceServiceFacade {
 
     /**
      * Call service to retrieve upload configuration values for idrop-lite.
-     *
+     * 
      * @param callback executed when RPC call completes.
      */
     void upload(AsyncCallback<String> callback);
 
     /**
      * Call service to retrieve upload configuration values for idrop-lite.
-     *
+     * 
      * @param callback executed when RPC call completes.
      */
     void download(HasPaths paths, AsyncCallback<String> callback);
@@ -129,21 +133,23 @@ public interface DiskResourceServiceFacade {
 
     /**
      * Call service to delete disk resources (i.e. {@link File}s and {@link Folder}s)
-     *  @param diskResources a set of <code>DiskResource</code>s to be deleted
+     * 
+     * @param diskResources a set of <code>DiskResource</code>s to be deleted
      * @param callback callback executed when service call completes.
      */
-    <T extends DiskResource> void deleteDiskResources(List<T> diskResources, AsyncCallback<HasPaths> callback);
+    <T extends DiskResource> void deleteDiskResources(List<T> diskResources,
+                                                      AsyncCallback<HasPaths> callback);
 
     /**
      * Call service to delete disk resources in case user selects all items
-     *
+     * 
      * @param selectedFolderId the folder whose contents will be deleted.
      */
     void deleteContents(String selectedFolderId, AsyncCallback<HasPaths> callback);
 
     /**
      * Call service to delete disk resources (i.e. {@link File}s and {@link Folder}s)
-     *
+     * 
      * @param diskResources a set of <code>DiskResource</code>s to be deleted
      * @param callback callback executed when service call completes.
      */
@@ -153,24 +159,27 @@ public interface DiskResourceServiceFacade {
      * @param resource the <code>DiskResource</code> for which metadata will be retrieved.
      * @param callback callback executed when service call completes.
      */
-    void getDiskResourceMetaData(DiskResource resource, AsyncCallback<List<DiskResourceMetadata>> callback);
+    void getDiskResourceMetaData(DiskResource resource,
+                                 AsyncCallback<List<DiskResourceMetadata>> callback);
 
     /**
      * Calls service to set disk resource metadata.
-     *
+     * 
      * @param resource the <code>DiskResource</code> whose metadata will be updated
      * @param mdToUpdate a list of <code>DiskResourceMetadata</code> objects which will be updated
      * @param mdToDelete a list of <code>DiskResourceMetadata</code> objects which will be deleted
      * @param callback executed when the service call completes.
      */
-    void setDiskResourceMetaData(DiskResource resource, Set<DiskResourceMetadata> mdToUpdate, Set<DiskResourceMetadata> mdToDelete,
-            AsyncCallback<String> callback);
+    void setDiskResourceMetaData(DiskResource resource,
+                                 Set<DiskResourceMetadata> mdToUpdate,
+                                 Set<DiskResourceMetadata> mdToDelete,
+                                 AsyncCallback<String> callback);
 
     /**
-     *
+     * 
      * Share a resource with give user with permission
-     *
-     *
+     * 
+     * 
      * @param body - Post body in JSONObject format
      * @param callback callback object
      */
@@ -178,7 +187,7 @@ public interface DiskResourceServiceFacade {
 
     /**
      * UnShare a resource with give user with permission
-     *
+     * 
      * @param body - Post body in JSONObject format
      * @param callback callback object
      */
@@ -186,7 +195,7 @@ public interface DiskResourceServiceFacade {
 
     /**
      * get user permission info on selected disk resources
-     *
+     * 
      * @param body - Post body in JSONObject format
      * @param callback callback object
      */
@@ -194,7 +203,7 @@ public interface DiskResourceServiceFacade {
 
     /**
      * search users irods directory structure
-     *
+     * 
      * @param term search term
      * @param size limit for results to return
      * @param type file or folder
@@ -204,7 +213,7 @@ public interface DiskResourceServiceFacade {
 
     /**
      * Get info about a selected file or folder
-     *
+     * 
      * @param paths the paths to query
      * @param callback callback which returns a map of {@code DiskResource}s keyed by their paths
      */
@@ -212,35 +221,35 @@ public interface DiskResourceServiceFacade {
 
     /**
      * empty user's trash
-     *
+     * 
      * @param user the user whose trash will be emptied.
      */
     public void emptyTrash(String user, AsyncCallback<String> callback);
 
     /**
      * Restore deleted disk resources.
-     *
+     * 
      * @param request the disk resources to be restored.
      */
     public void restoreDiskResource(HasPaths request, AsyncCallback<String> callback);
 
     /**
      * Creates a set of public data links for the given disk resources.
-     *
+     * 
      * @param ticketIdList the id of the disk resource for which the ticket will be created.
      */
-    public void createDataLinks(List <String> ticketIdList, AsyncCallback<List<DataLink>> callback);
+    public void createDataLinks(List<String> ticketIdList, AsyncCallback<List<DataLink>> callback);
 
     /**
      * Requests a listing of all the tickets for the given disk resources.
-     *
+     * 
      * @param diskResourceIds the disk resources whose tickets will be listed.
      */
     public void listDataLinks(List<String> diskResourceIds, AsyncCallback<String> callback);
 
     /**
      * Requests that the given Kif Share tickets will be deleted.
-     *
+     * 
      * @param dataLinkIds the tickets which will be deleted.
      */
     public void deleteDataLinks(List<String> dataLinkIds, AsyncCallback<String> callback);
@@ -252,7 +261,7 @@ public interface DiskResourceServiceFacade {
 
     /**
      * Set type to a file
-     *
+     * 
      * @param filePath the path of the file whose type will be set
      * @param type the type the file will be set to.
      */
@@ -260,33 +269,32 @@ public interface DiskResourceServiceFacade {
 
     /**
      * Convenience method which returns a valid {@link DiskResourceAutoBeanFactory} instance.
-     *
+     * 
      * @return a ready to use <code>DiskResourceAutoBeanFactory</code>
      */
     DiskResourceAutoBeanFactory getDiskResourceFactory();
 
     /**
      * Restore all items in trash to its original location.
-     *
+     * 
      */
     void restoreAll(AsyncCallback<String> callback);
 
     /**
      * Method to use when user selects all items in a folder.
-     *
+     * 
      * @param parentFolderId the id of the folder whose contents will be downloaded.
      */
     void downloadContents(String parentFolderId, AsyncCallback<String> callback);
 
     /**
-     * Method  used to retrieve list of metadata templates
+     * Method used to retrieve list of metadata templates
      */
     void getMetadataTemplateListing(AsyncCallback<List<MetadataTemplateInfo>> callback);
 
-
     /**
      * Method used to retrieve a metadata template
-     *
+     * 
      * @param templateId id of the template
      */
     void getMetadataTemplate(String templateId, AsyncCallback<MetadataTemplate> callback);
@@ -309,5 +317,18 @@ public interface DiskResourceServiceFacade {
     void deleteMetadataTemplateAvus(final DiskResource resource,
                                     final DiskResourceMetadataTemplate templateAvus,
                                     final AsyncCallback<String> callback);
-}
 
+    /**
+     * Copy metadata to list of files / folders
+     * 
+     * @param srcUUID source DR's UUID
+     * @param paths destination DR's path to which metadata will be copied.
+     * @param override
+     * @param callback callback object
+     */
+            void
+            copyMeatadata(final String srcUUID,
+                          final JSONObject paths,
+                       boolean override,
+                       final AsyncCallback<String> callback);
+}
