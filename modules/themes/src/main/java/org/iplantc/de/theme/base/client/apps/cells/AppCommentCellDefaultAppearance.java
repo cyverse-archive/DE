@@ -1,4 +1,4 @@
-package org.iplantc.de.theme.base.client.applications.cells;
+package org.iplantc.de.theme.base.client.apps.cells;
 
 import org.iplantc.de.apps.client.views.grid.cells.AppCommentCell.AppCommentCellAppearance;
 import org.iplantc.de.client.models.apps.App;

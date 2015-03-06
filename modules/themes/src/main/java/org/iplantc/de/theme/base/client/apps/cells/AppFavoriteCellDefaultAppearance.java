@@ -1,4 +1,4 @@
-package org.iplantc.de.theme.base.client.applications.cells;
+package org.iplantc.de.theme.base.client.apps.cells;
 
 import org.iplantc.de.apps.client.views.grid.cells.AppFavoriteCell;
 import org.iplantc.de.resources.client.messages.IplantDisplayStrings;

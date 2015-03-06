@@ -1,19 +1,31 @@
 package org.iplantc.de.apps.client;
 
 import org.iplantc.de.apps.client.events.AppSearchResultLoadEvent;
-import org.iplantc.de.apps.client.events.selection.AppCategorySelectionChangedEvent;
-import org.iplantc.de.apps.client.events.selection.AppSelectionChangedEvent;
+import org.iplantc.de.apps.client.events.selection.*;
 
+import com.google.gwt.event.shared.HasHandlers;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.user.client.ui.IsWidget;
+
+import com.sencha.gxt.data.shared.loader.BeforeLoadEvent;
+import com.sencha.gxt.data.shared.loader.FilterPagingLoadConfig;
 
 /**
  * @author jstroot
  */
 public interface AppsToolbarView extends IsWidget,
+                                         HasHandlers,
                                          AppSelectionChangedEvent.AppSelectionChangedEventHandler,
                                          AppCategorySelectionChangedEvent.AppCategorySelectionChangedEventHandler,
-                                         AppSearchResultLoadEvent.HasAppSearchResultLoadEventHandlers {
+                                         AppSearchResultLoadEvent.HasAppSearchResultLoadEventHandlers,
+                                         RunAppSelected.HasRunAppSelectedHandlers,
+                                         CopyAppSelected.HasCopyAppSelectedHandlers,
+                                         CopyWorkflowSelected.HasCopyWorkflowSelectedHandlers,
+                                         CreateNewAppSelected.HasCreateNewAppSelectedHandlers,
+                                         CreateNewWorkflowSelected.HasCreateNewWorkflowSelectedHandlers,
+                                         DeleteAppsSelected.HasDeleteAppsSelectedHandlers,
+                                         EditAppSelected.HasEditAppSelectedHandlers,
+                                         RequestToolSelected.HasRequestToolSelectedHandlers {
 
     interface AppsToolbarAppearance {
 
@@ -60,13 +72,13 @@ public interface AppsToolbarView extends IsWidget,
         String searchApps();
     }
 
-    interface Presenter {
+    interface Presenter extends BeforeLoadEvent.HasBeforeLoadHandlers<FilterPagingLoadConfig>,
+                                AppSearchResultLoadEvent.HasAppSearchResultLoadEventHandlers {
 
+        AppsToolbarView getView();
     }
 
     void hideAppMenu();
 
     void hideWorkflowMenu();
-
-    void init(AppsView.Presenter presenter, AppsView view);
 }

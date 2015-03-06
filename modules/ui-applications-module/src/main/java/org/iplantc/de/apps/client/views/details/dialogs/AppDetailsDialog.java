@@ -1,8 +1,7 @@
 package org.iplantc.de.apps.client.views.details.dialogs;
 
-import org.iplantc.de.apps.client.AppsView;
+import org.iplantc.de.apps.client.AppDetailsView;
 import org.iplantc.de.apps.client.events.selection.AppFavoriteSelectedEvent;
-import org.iplantc.de.apps.client.gin.factory.AppDetailsViewPresenterFactory;
 import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.commons.client.views.dialogs.IPlantDialog;
@@ -12,6 +11,8 @@ import com.google.gwt.inject.client.AsyncProvider;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.inject.Inject;
 
+import java.util.List;
+
 /**
  * FIXME Fix favorite select wiring
  * @author jstroot
@@ -19,7 +20,7 @@ import com.google.inject.Inject;
 public class AppDetailsDialog extends IPlantDialog implements AppFavoriteSelectedEvent.AppFavoriteSelectedEventHandler,
                                                               AppFavoriteSelectedEvent.HasAppFavoriteSelectedEventHandlers {
 
-    @Inject AsyncProvider<AppDetailsViewPresenterFactory> presenterFactoryProvider;
+    @Inject AsyncProvider<AppDetailsView.Presenter> presenterProvider;
 
     @Inject
     AppDetailsDialog() {
@@ -37,17 +38,17 @@ public class AppDetailsDialog extends IPlantDialog implements AppFavoriteSelecte
 
     public void show(final App app,
                      final String searchRegexPattern,
-                     final AppsView.Presenter appsViewPresenter) {
+                     final List<List<String>> appGroupHierarchies) {
         setHeadingText(app.getName());
-        presenterFactoryProvider.get(new AsyncCallback<AppDetailsViewPresenterFactory>() {
+        presenterProvider.get(new AsyncCallback<AppDetailsView.Presenter>() {
             @Override
             public void onFailure(Throwable caught) {
                 ErrorHandler.post(caught);
             }
 
             @Override
-            public void onSuccess(AppDetailsViewPresenterFactory result) {
-                result.create(appsViewPresenter).go(AppDetailsDialog.this, app, searchRegexPattern);
+            public void onSuccess(AppDetailsView.Presenter result) {
+                result.go(AppDetailsDialog.this, app, searchRegexPattern, appGroupHierarchies);
             }
         });
         /*

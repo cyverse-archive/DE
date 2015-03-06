@@ -31,7 +31,7 @@ public class CasLogoutServlet extends HttpServlet implements HttpRequestHandler 
     private static final String TEMPLATE_FILENAME = "logout-alert-template.html";
 
     /**
-     * The URL to redirect the user to when the user chooses to log out of all applications.
+     * The URL to redirect the user to when the user chooses to log out of all apps.
      */
     private String logoutUrl;
 
@@ -46,13 +46,13 @@ public class CasLogoutServlet extends HttpServlet implements HttpRequestHandler 
     private String loginUrl;
 
     /**
-     * The URL to redirect the user to when the user chooses not to log out of all applications.
+     * The URL to redirect the user to when the user chooses not to log out of all apps.
      */
     private String noLogoutUrl;
 
     /**
-     * Text that describes all of the applications whose sessions will be closed if the user chooses to log out of all
-     * applications. This could be a simple phrase such as "all applications" or it could be an actual list of
+     * Text that describes all of the apps whose sessions will be closed if the user chooses to log out of all
+     * apps. This could be a simple phrase such as "all apps" or it could be an actual list of
      * application names.
      */
     private String appList;

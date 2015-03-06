@@ -12,6 +12,8 @@ import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.user.client.ui.HasOneWidget;
 import com.google.gwt.user.client.ui.IsWidget;
 
+import java.util.List;
+
 /**
  * Created by jstroot on 3/2/15.
  * @author jstroot
@@ -66,7 +68,10 @@ public interface AppDetailsView extends IsWidget,
 
     interface Presenter {
 
-        void go(HasOneWidget widget, App app, String searchRegexPattern);
+        void go(HasOneWidget widget,
+                App app,
+                String searchRegexPattern,
+                List<List<String>> appGroupHierarchies);
     }
 
     /**

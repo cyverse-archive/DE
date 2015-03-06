@@ -64,7 +64,7 @@ project(':ui-apps-integration') {
         gwt "com.google.gwt.inject:gin:$gwtGinVer"
         gwt "com.sencha.gxt:gxt:$gxtVersion"
         gwt "com.google.guava:guava-gwt:$guavaGwtVer"
-        gwt project(':ui-applications-module')
+        gwt project(':ui-apps-module')
         gwt project(':ui-disk-resource-module')
         gwt project(':ui-apps-widgets-module')
         gwt project(':ui-commons-module')
@@ -74,7 +74,7 @@ project(':ui-apps-integration') {
         compile "com.google.gwt.inject:gin:$gwtGinVer"
         compile "com.sencha.gxt:gxt:$gxtVersion"
         compile "com.google.guava:guava-gwt:$guavaGwtVer"
-        compile project(':ui-applications-module')
+        compile project(':ui-apps-module')
         compile project(':ui-disk-resource-module')
         compile project(':ui-apps-widgets-module')
         compile project(':ui-commons-module')
@@ -99,7 +99,7 @@ project(':ui-apps-widgets-module') {
         gwt "com.google.guava:guava-gwt:$guavaGwtVer"
         gwt project(':ui-disk-resource-module')
         gwt project(':ui-commons-module')
-        gwt project(':ui-applications-module')
+        gwt project(':ui-apps-module')
         gwt project(':ui-resources-module')
         gwt project(':de-common-module')
 
@@ -108,7 +108,7 @@ project(':ui-apps-widgets-module') {
         compile "com.google.guava:guava-gwt:$guavaGwtVer"
         compile project(':ui-disk-resource-module')
         compile project(':ui-commons-module')
-        compile project(':ui-applications-module')
+        compile project(':ui-apps-module')
         compile project(':ui-resources-module')
         compile project(':de-common-module')
 
@@ -159,7 +159,7 @@ project(':ui-pipelines-module') {
         gwt "com.sencha.gxt:gxt:$gxtVersion"
         gwt "com.google.guava:guava-gwt:$guavaGwtVer"
         compile "com.sencha.gxt:gxt:$gxtVersion"
-        gwt project(':ui-applications-module')
+        gwt project(':ui-apps-module')
         gwt project(':ui-commons-module')
         gwt project(':ui-pipeline-builder-module')
         gwt project(':de-common-module')
@@ -168,7 +168,7 @@ project(':ui-pipelines-module') {
         compile "com.google.gwt.inject:gin:$gwtGinVer"
         compile "com.sencha.gxt:gxt:$gxtVersion"
         compile "com.google.guava:guava-gwt:$guavaGwtVer"
-        compile project(':ui-applications-module')
+        compile project(':ui-apps-module')
         compile project(':ui-commons-module')
         compile project(':ui-pipeline-builder-module')
         compile project(':de-common-module')
@@ -184,16 +184,16 @@ project(':ui-pipeline-builder-module') {
     }
 
     dependencies {
-        gwt project(':ui-applications-module')
+        gwt project(':ui-apps-module')
         gwt project(':ui-resources-module')
         gwt project(':de-common-module')
 
-        compile project(':ui-applications-module')
+        compile project(':ui-apps-module')
         compile project(':ui-resources-module')
         compile project(':de-common-module')
     }
 }
-project(':ui-applications-module') {
+project(':ui-apps-module') {
     apply plugin: 'gwt-base'
 
     gwt {
@@ -332,7 +332,7 @@ project(':de-desktop') {
         gwt "com.google.guava:guava-gwt:$guavaGwtVer"
 
         gwt project(':ui-commons-module')
-        gwt project(':ui-applications-module')
+        gwt project(':ui-apps-module')
         gwt project(':ui-resources-module')
         gwt project(':ui-disk-resource-module')
         gwt project(':ui-apps-widgets-module')
@@ -356,7 +356,7 @@ project(':de-desktop') {
         compile "org.slf4j:log4j-over-slf4j:$slf4jVersion"
 
         compile project(':ui-commons-module')
-        compile project(':ui-applications-module')
+        compile project(':ui-apps-module')
         compile project(':ui-resources-module')
         compile project(':ui-disk-resource-module')
         compile project(':ui-apps-widgets-module')
@@ -386,7 +386,7 @@ project(':belphegor-desktop') {
         gwt "com.google.guava:guava-gwt:$guavaGwtVer"
 
         gwt project(':ui-commons-module')
-        gwt project(':ui-applications-module')
+        gwt project(':ui-apps-module')
         gwt project(':ui-resources-module')
         gwt project(':ui-disk-resource-module')
         gwt project(':de-common-module')
@@ -403,7 +403,7 @@ project(':belphegor-desktop') {
         compile "org.slf4j:log4j-over-slf4j:$slf4jVersion"
 
         compile project(':ui-commons-module')
-        compile project(':ui-applications-module')
+        compile project(':ui-apps-module')
         compile project(':ui-resources-module')
         compile project(':ui-disk-resource-module')
         compile project(':de-common-module')
@@ -422,7 +422,7 @@ project(':themes'){
 
     dependencies {
         gwt project(':ui-commons-module')
-        gwt project(':ui-applications-module')
+        gwt project(':ui-apps-module')
         gwt project(':ui-resources-module')
         gwt project(':ui-disk-resource-module')
         gwt project(':ui-apps-widgets-module')
@@ -436,7 +436,7 @@ project(':themes'){
         gwt project(':belphegor-desktop')
 
         compile project(':ui-commons-module')
-        compile project(':ui-applications-module')
+        compile project(':ui-apps-module')
         compile project(':ui-resources-module')
         compile project(':ui-disk-resource-module')
         compile project(':ui-apps-widgets-module')

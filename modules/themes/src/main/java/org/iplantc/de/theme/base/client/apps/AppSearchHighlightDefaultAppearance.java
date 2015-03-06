@@ -1,4 +1,4 @@
-package org.iplantc.de.theme.base.client.applications;
+package org.iplantc.de.theme.base.client.apps;
 
 import com.google.common.base.Strings;
 import com.google.gwt.regexp.shared.RegExp;

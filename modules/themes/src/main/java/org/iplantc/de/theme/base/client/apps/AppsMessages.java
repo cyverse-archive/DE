@@ -1,4 +1,4 @@
-package org.iplantc.de.theme.base.client.applications;
+package org.iplantc.de.theme.base.client.apps;
 
 import com.google.gwt.i18n.client.Messages;
 

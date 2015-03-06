@@ -1,18 +1,24 @@
 package org.iplantc.de.apps.client.gin;
 
+import org.iplantc.de.apps.client.AppCategoriesView;
 import org.iplantc.de.apps.client.AppDetailsView;
+import org.iplantc.de.apps.client.AppsGridView;
 import org.iplantc.de.apps.client.AppsToolbarView;
 import org.iplantc.de.apps.client.AppsView;
 import org.iplantc.de.apps.client.SubmitAppForPublicUseView;
+import org.iplantc.de.apps.client.gin.factory.AppCategoriesViewFactory;
 import org.iplantc.de.apps.client.gin.factory.AppDetailsViewFactory;
-import org.iplantc.de.apps.client.gin.factory.AppDetailsViewPresenterFactory;
+import org.iplantc.de.apps.client.gin.factory.AppsGridViewFactory;
+import org.iplantc.de.apps.client.gin.factory.AppsToolbarViewFactory;
 import org.iplantc.de.apps.client.gin.factory.AppsViewFactory;
 import org.iplantc.de.apps.client.presenter.AppsViewPresenterImpl;
 import org.iplantc.de.apps.client.presenter.details.AppDetailsViewPresenterImpl;
 import org.iplantc.de.apps.client.presenter.submit.SubmitAppForPublicPresenter;
 import org.iplantc.de.apps.client.views.AppsViewImpl;
+import org.iplantc.de.apps.client.views.categories.AppCategoriesViewImpl;
 import org.iplantc.de.apps.client.views.details.AppDetailsViewImpl;
 import org.iplantc.de.apps.client.views.details.dialogs.AppDetailsDialog;
+import org.iplantc.de.apps.client.views.grid.AppsGridViewImpl;
 import org.iplantc.de.apps.client.views.submit.SubmitAppForPublicUseViewImpl;
 import org.iplantc.de.apps.client.views.toolBar.AppsViewToolbarImpl;
 import org.iplantc.de.client.models.apps.AppCategory;
@@ -43,14 +49,26 @@ public class AppsGinModule extends AbstractGinModule {
         bind(SubmitAppForPublicUseView.Presenter.class).to(SubmitAppForPublicPresenter.class);
         bind(AppMetadataServiceFacade.class).to(AppMetadataServiceFacadeImpl.class);
 
+        // Main View
         install(new GinFactoryModuleBuilder()
                     .implement(AppsView.class, AppsViewImpl.class)
                     .build(AppsViewFactory.class));
+        // Categories View
+        install(new GinFactoryModuleBuilder()
+                    .implement(AppCategoriesView.class, AppCategoriesViewImpl.class)
+                    .build(AppCategoriesViewFactory.class));
+        // Grid View
+        install(new GinFactoryModuleBuilder()
+                    .implement(AppsGridView.class, AppsGridViewImpl.class)
+                    .build(AppsGridViewFactory.class));
+
+        // Toolbar View
+        install(new GinFactoryModuleBuilder()
+                    .implement(AppsToolbarView.class, AppsViewToolbarImpl.class)
+                    .build(AppsToolbarViewFactory.class));
 
         // Details
-        install(new GinFactoryModuleBuilder()
-                    .implement(AppDetailsView.Presenter.class, AppDetailsViewPresenterImpl.class)
-                    .build(AppDetailsViewPresenterFactory.class));
+        bind(AppDetailsView.Presenter.class).to(AppDetailsViewPresenterImpl.class);
         install(new GinFactoryModuleBuilder()
                     .implement(AppDetailsView.class, AppDetailsViewImpl.class)
                     .build(AppDetailsViewFactory.class));

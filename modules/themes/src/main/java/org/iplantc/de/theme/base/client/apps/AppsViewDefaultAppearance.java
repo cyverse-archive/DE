@@ -1,4 +1,4 @@
-package org.iplantc.de.theme.base.client.applications;
+package org.iplantc.de.theme.base.client.apps;
 
 import org.iplantc.de.apps.client.AppsView;
 

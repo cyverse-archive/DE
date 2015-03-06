@@ -1,10 +1,10 @@
-package org.iplantc.de.theme.base.client.applications.cells;
+package org.iplantc.de.theme.base.client.apps.cells;
 
 import org.iplantc.de.apps.client.views.grid.cells.AppHyperlinkCell;
 import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
-import org.iplantc.de.theme.base.client.applications.AppSearchHighlightAppearance;
-import org.iplantc.de.theme.base.client.applications.AppsMessages;
+import org.iplantc.de.theme.base.client.apps.AppSearchHighlightAppearance;
+import org.iplantc.de.theme.base.client.apps.AppsMessages;
 
 import com.google.common.base.Strings;
 import com.google.gwt.core.client.GWT;

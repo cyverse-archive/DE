@@ -1,9 +1,9 @@
-package org.iplantc.de.theme.base.client.applications.toolbar;
+package org.iplantc.de.theme.base.client.apps.toolbar;
 
 import org.iplantc.de.apps.client.AppsToolbarView;
 import org.iplantc.de.resources.client.IplantResources;
 import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
-import org.iplantc.de.theme.base.client.applications.AppsMessages;
+import org.iplantc.de.theme.base.client.apps.AppsMessages;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.resources.client.ImageResource;

@@ -1,8 +1,8 @@
-package org.iplantc.de.theme.base.client.applications.details;
+package org.iplantc.de.theme.base.client.apps.details;
 
 import org.iplantc.de.apps.client.AppDetailsView;
 import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
-import org.iplantc.de.theme.base.client.applications.AppsMessages;
+import org.iplantc.de.theme.base.client.apps.AppsMessages;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.resources.client.ClientBundle;

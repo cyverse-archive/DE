@@ -19,6 +19,7 @@ import com.sencha.gxt.dnd.core.client.DndDropEvent.DndDropHandler;
  * A Drag and Drop handler for the AdminAppViewImpl to support moving Apps and AppCategories.
  * 
  * @author psarando
+ * FIXME Split this into two separate DND handlers. Refer to disk resource module for guidance
  * 
  */
 public class AppCategoryDnDHandler implements DndDragStartHandler, DndDragEnterHandler, DndDragMoveHandler,

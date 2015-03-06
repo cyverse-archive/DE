@@ -1,7 +1,6 @@
 package org.iplantc.de.apps.client.presenter.details;
 
 import org.iplantc.de.apps.client.AppDetailsView;
-import org.iplantc.de.apps.client.AppsView;
 import org.iplantc.de.apps.client.events.selection.AppDetailsDocSelected;
 import org.iplantc.de.apps.client.events.selection.SaveMarkdownSelected;
 import org.iplantc.de.apps.client.gin.factory.AppDetailsViewFactory;
@@ -18,14 +17,15 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HasOneWidget;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
-import com.google.inject.assistedinject.Assisted;
 
 import java.util.List;
 
 /**
  * @author jstroot
  */
-public class AppDetailsViewPresenterImpl implements AppDetailsView.Presenter, AppDetailsDocSelected.AppDetailsDocSelectedHandler, SaveMarkdownSelected.SaveMarkdownSelectedHandler {
+public class AppDetailsViewPresenterImpl implements AppDetailsView.Presenter,
+                                                    AppDetailsDocSelected.AppDetailsDocSelectedHandler,
+                                                    SaveMarkdownSelected.SaveMarkdownSelectedHandler {
 
     private class AppDetailsCallback implements AsyncCallback<App> {
         private final HasOneWidget widget;
@@ -66,22 +66,20 @@ public class AppDetailsViewPresenterImpl implements AppDetailsView.Presenter, Ap
     @Inject AppUserServiceFacade appUserService;
     @Inject Provider<AppDetailsDialog> appInfoDialogProvider;
     @Inject Provider<AppDetailsViewFactory> viewFactoryProvider;
-    private final AppsView.Presenter appsViewPresenter;
     private AppDetailsView view;
     private AppDoc appDoc;
 
     @Inject
-    AppDetailsViewPresenterImpl(@Assisted AppsView.Presenter appsViewPresenter) {
-        this.appsViewPresenter = appsViewPresenter;
+    AppDetailsViewPresenterImpl() {
     }
 
     @Override
     public void go(final HasOneWidget widget,
                    final App app,
-                   final String searchRegexPattern) {
+                   final String searchRegexPattern,
+                   final List<List<String>> appGroupHierarchies) {
         Preconditions.checkState(view == null, "Cannot call go(..) more than once");
 
-        List<List<String>> appGroupHierarchies = appsViewPresenter.getGroupHierarchies(app);
         view = viewFactoryProvider.get().create(app, searchRegexPattern, appGroupHierarchies);
         view.addAppDetailsDocSelectedHandler(this);
         view.addSaveMarkdownSelectedHandler(this);

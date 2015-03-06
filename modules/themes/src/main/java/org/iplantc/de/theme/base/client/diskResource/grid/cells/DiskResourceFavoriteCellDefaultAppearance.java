@@ -4,7 +4,7 @@ import org.iplantc.de.diskResource.client.views.grid.cells.DiskResourceFavoriteC
 import org.iplantc.de.resources.client.FavoriteCellStyle;
 import org.iplantc.de.resources.client.IplantResources;
 import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
-import org.iplantc.de.theme.base.client.applications.cells.AppFavoriteCellDefaultAppearance;
+import org.iplantc.de.theme.base.client.apps.cells.AppFavoriteCellDefaultAppearance;
 
 import com.google.common.base.Strings;
 import com.google.gwt.core.client.GWT;

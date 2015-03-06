@@ -1,8 +1,8 @@
-package org.iplantc.de.theme.base.client.applications.cells;
+package org.iplantc.de.theme.base.client.apps.cells;
 
 import org.iplantc.de.apps.client.views.grid.cells.AppRatingCell;
 import org.iplantc.de.client.models.apps.App;
-import org.iplantc.de.theme.base.client.applications.AppsMessages;
+import org.iplantc.de.theme.base.client.apps.AppsMessages;
 
 import com.google.common.collect.Lists;
 import com.google.gwt.core.client.GWT;

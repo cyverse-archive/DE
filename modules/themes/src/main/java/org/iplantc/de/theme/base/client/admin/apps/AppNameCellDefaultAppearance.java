@@ -3,7 +3,7 @@ package org.iplantc.de.theme.base.client.admin.apps;
 import org.iplantc.de.admin.desktop.client.apps.views.cells.AppNameCell;
 import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.theme.base.client.admin.BelphegorDisplayStrings;
-import org.iplantc.de.theme.base.client.applications.cells.AppHyperlinkCellDefaultAppearance;
+import org.iplantc.de.theme.base.client.apps.cells.AppHyperlinkCellDefaultAppearance;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;

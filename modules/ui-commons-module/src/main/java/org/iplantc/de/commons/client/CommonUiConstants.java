@@ -2,7 +2,7 @@ package org.iplantc.de.commons.client;
 
 import com.google.gwt.i18n.client.Constants;
 
-/** Configurable constants shared by applications */
+/** Configurable constants shared by apps */
 public interface CommonUiConstants extends Constants {
 
     /**

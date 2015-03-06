@@ -2,17 +2,13 @@ package org.iplantc.de.apps.client.views.toolBar;
 
 import static org.iplantc.de.apps.client.events.AppSearchResultLoadEvent.TYPE;
 import org.iplantc.de.apps.client.AppsToolbarView;
-import org.iplantc.de.apps.client.AppsView;
 import org.iplantc.de.apps.client.events.AppSearchResultLoadEvent.AppSearchResultLoadEventHandler;
-import org.iplantc.de.apps.client.events.selection.AppCategorySelectionChangedEvent;
-import org.iplantc.de.apps.client.events.selection.AppSelectionChangedEvent;
+import org.iplantc.de.apps.client.events.selection.*;
 import org.iplantc.de.apps.client.views.submit.dialog.SubmitAppForPublicDialog;
-import org.iplantc.de.apps.client.presenter.toolBar.proxy.AppSearchRpcProxy;
 import org.iplantc.de.apps.shared.AppsModule.Ids;
 import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.models.apps.AppAutoBeanFactory;
-import org.iplantc.de.client.models.apps.proxy.AppLoadConfig;
 import org.iplantc.de.client.models.apps.proxy.AppSearchAutoBeanFactory;
 import org.iplantc.de.client.services.AppServiceFacade;
 import org.iplantc.de.commons.client.ErrorHandler;
@@ -33,6 +29,7 @@ import com.google.gwt.uibinder.client.UiTemplate;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
 
 import com.sencha.gxt.data.shared.loader.FilterPagingLoadConfig;
 import com.sencha.gxt.data.shared.loader.PagingLoadResult;
@@ -78,27 +75,65 @@ public class AppsViewToolbarImpl extends Composite implements AppsToolbarView {
     @UiField(provided = true) AppsToolbarAppearance appearance;
     private static AppsViewToolbarUiBinder uiBinder = GWT.create(AppsViewToolbarUiBinder.class);
     private final PagingLoader<FilterPagingLoadConfig, PagingLoadResult<App>> loader;
-    private final AppSearchRpcProxy proxy;
     private final UserInfo userInfo;
     private List<App> currentSelection;
-    private AppsView.Presenter presenter;
 
     @Inject
     AppsViewToolbarImpl(final AppServiceFacade appService,
                         final AppSearchAutoBeanFactory appSearchFactory,
                         final UserInfo userInfo,
                         final AppsToolbarAppearance appearance,
-                        final AppAutoBeanFactory appFactory) {
+                        final AppAutoBeanFactory appFactory,
+                        @Assisted final PagingLoader<FilterPagingLoadConfig, PagingLoadResult<App>> loader) {
         this.userInfo = userInfo;
         this.appearance = appearance;
-        proxy = new AppSearchRpcProxy(appService, appSearchFactory, appFactory, appearance);
-        loader = createPagingLoader(proxy, appSearchFactory);
+        this.loader = loader;
         initWidget(uiBinder.createAndBindUi(this));
     }
 
     @Override
     public HandlerRegistration addAppSearchResultLoadEventHandler(AppSearchResultLoadEventHandler handler) {
         return addHandler(handler, TYPE);
+    }
+
+    @Override
+    public HandlerRegistration addCopyAppSelectedHandler(CopyAppSelected.CopyAppSelectedHandler handler) {
+        return addHandler(handler, CopyAppSelected.TYPE);
+    }
+
+    @Override
+    public HandlerRegistration addCopyWorkflowSelectedHandler(CopyWorkflowSelected.CopyWorkflowSelectedHandler handler) {
+        return addHandler(handler, CopyWorkflowSelected.TYPE);
+    }
+
+    @Override
+    public HandlerRegistration addCreateNewAppSelectedHandler(CreateNewAppSelected.CreateNewAppSelectedHandler handler) {
+        return addHandler(handler, CreateNewAppSelected.TYPE);
+    }
+
+    @Override
+    public HandlerRegistration addCreateNewWorkflowSelectedHandler(CreateNewWorkflowSelected.CreateNewWorkflowSelectedHandler handler) {
+        return addHandler(handler, CreateNewWorkflowSelected.TYPE);
+    }
+
+    @Override
+    public HandlerRegistration addDeleteAppsSelectedHandler(DeleteAppsSelected.DeleteAppsSelectedHandler handler) {
+        return addHandler(handler, DeleteAppsSelected.TYPE);
+    }
+
+    @Override
+    public HandlerRegistration addEditAppSelectedHandler(EditAppSelected.EditAppSelectedHandler handler) {
+        return addHandler(handler, EditAppSelected.TYPE);
+    }
+
+    @Override
+    public HandlerRegistration addRequestToolSelectedHandler(RequestToolSelected.RequestToolSelectedHandler handler) {
+        return addHandler(handler, RequestToolSelected.TYPE);
+    }
+
+    @Override
+    public HandlerRegistration addRunAppSelectedHandler(RunAppSelected.RunAppSelectedHandler handler) {
+        return addHandler(handler, RunAppSelected.TYPE);
     }
 
     @Override
@@ -113,14 +148,6 @@ public class AppsViewToolbarImpl extends Composite implements AppsToolbarView {
         wf_menu.setVisible(false);
         // KLUDGE:for CORE-5761 set flex to 0 so that search box shows up
         boxData.setFlex(0);
-    }
-
-    @Override
-    public void init(final AppsView.Presenter presenter,
-                     final AppsView appsView) {
-        this.presenter = presenter;
-        proxy.setHasHandlers(this);
-        proxy.setMaskable(appsView);
     }
 
     //<editor-fold desc="Selection Handlers">
@@ -260,35 +287,35 @@ public class AppsViewToolbarImpl extends Composite implements AppsToolbarView {
         return true;
     }
 
-    //<editor-fold desc="UI Handlers">
-    @UiHandler({"appRun", "wfRun"})
-    void appRunClicked(SelectionEvent<Item> event) {
-        presenter.onRunAppSelected(currentSelection.iterator().next());
-    }
-
-    @UiHandler("copyApp")
-    void copyAppClicked(SelectionEvent<Item> event) {
-        presenter.onCopyAppSelected(currentSelection);
-    }
-
-    @UiHandler("copyWf")
-    void copyWorkFlowClicked(SelectionEvent<Item> event) {
-        presenter.onCopyWorkFlowSelected(currentSelection);
-    }
-
     @UiFactory
     AppSearchField createAppSearchField() {
         return new AppSearchField(loader);
     }
 
+    //<editor-fold desc="UI Handlers">
+    @UiHandler({"appRun", "wfRun"})
+    void appRunClicked(SelectionEvent<Item> event) {
+        fireEvent(new RunAppSelected(currentSelection.iterator().next()));
+    }
+
+    @UiHandler("copyApp")
+    void copyAppClicked(SelectionEvent<Item> event) {
+        fireEvent(new CopyAppSelected(currentSelection));
+    }
+
+    @UiHandler("copyWf")
+    void copyWorkFlowClicked(SelectionEvent<Item> event) {
+        fireEvent(new CopyWorkflowSelected(currentSelection));
+    }
+
     @UiHandler("createNewApp")
     void createNewAppClicked(SelectionEvent<Item> event) {
-        presenter.onCreateNewAppSelected();
+        fireEvent(new CreateNewAppSelected());
     }
 
     @UiHandler("createWorkflow")
     void createWorkflowClicked(SelectionEvent<Item> event) {
-        presenter.onCreateNewWorkflowClicked();
+        fireEvent(new CreateNewWorkflowSelected());
     }
 
     @UiHandler({"deleteApp", "deleteWf"})
@@ -300,7 +327,8 @@ public class AppsViewToolbarImpl extends Composite implements AppsToolbarView {
                 if (!Dialog.PredefinedButton.YES.equals(event.getHideButton())) {
                     return;
                 }
-                presenter.onDeleteAppsSelected(currentSelection);
+                fireEvent(new DeleteAppsSelected(currentSelection));
+
             }
         });
         msgBox.show();
@@ -309,12 +337,12 @@ public class AppsViewToolbarImpl extends Composite implements AppsToolbarView {
     @UiHandler({"editApp", "editWf"})
     void editClicked(SelectionEvent<Item> event) {
         Preconditions.checkState(currentSelection.size() == 1);
-        presenter.onEditAppSelected(currentSelection.iterator().next());
+        fireEvent(new EditAppSelected(currentSelection.iterator().next()));
     }
 
     @UiHandler("requestTool")
     void requestToolClicked(SelectionEvent<Item> event) {
-        presenter.onRequestToolClicked();
+        fireEvent(new RequestToolSelected());
     }
 
     @UiHandler({"submitApp", "submitWf"})
@@ -335,14 +363,5 @@ public class AppsViewToolbarImpl extends Composite implements AppsToolbarView {
     }
     //</editor-fold>
 
-    private PagingLoader<FilterPagingLoadConfig, PagingLoadResult<App>> createPagingLoader(final AppSearchRpcProxy proxy,
-                                                                                           final AppSearchAutoBeanFactory appSearchFactory) {
-        PagingLoader<FilterPagingLoadConfig, PagingLoadResult<App>> loader = new PagingLoader<>(proxy);
-
-        AppLoadConfig appLoadConfig = appSearchFactory.loadConfig().as();
-        loader.useLoadConfig(appLoadConfig);
-
-        return loader;
-    }
 
 }

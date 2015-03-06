@@ -2,6 +2,7 @@ package org.iplantc.de.apps.client.events.selection;
 
 import org.iplantc.de.client.models.apps.App;
 
+import com.google.common.base.Preconditions;
 import com.google.gwt.event.shared.EventHandler;
 import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.event.shared.HandlerRegistration;
@@ -22,11 +23,13 @@ public class AppRatingSelected extends GwtEvent<AppRatingSelected.AppRatingSelec
     }
 
     public static Type<AppRatingSelectedHandler> TYPE = new Type<>();
-    private final App selectedApp;
+    private final App app;
     private final int score;
 
-    public AppRatingSelected(App selectedApp, int score) {
-        this.selectedApp = selectedApp;
+    public AppRatingSelected(final App app,
+                             final int score) {
+        Preconditions.checkNotNull(app);
+        this.app = app;
         this.score = score;
     }
 
@@ -38,8 +41,8 @@ public class AppRatingSelected extends GwtEvent<AppRatingSelected.AppRatingSelec
         return score;
     }
 
-    public App getSelectedApp() {
-        return selectedApp;
+    public App getApp() {
+        return app;
     }
 
     protected void dispatch(AppRatingSelectedHandler handler) {

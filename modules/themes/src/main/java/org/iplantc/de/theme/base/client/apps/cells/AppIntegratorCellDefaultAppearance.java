@@ -1,7 +1,7 @@
-package org.iplantc.de.theme.base.client.applications.cells;
+package org.iplantc.de.theme.base.client.apps.cells;
 
 import org.iplantc.de.apps.client.views.grid.cells.AppIntegratorCell;
-import org.iplantc.de.theme.base.client.applications.AppSearchHighlightAppearance;
+import org.iplantc.de.theme.base.client.apps.AppSearchHighlightAppearance;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.safehtml.shared.SafeHtml;

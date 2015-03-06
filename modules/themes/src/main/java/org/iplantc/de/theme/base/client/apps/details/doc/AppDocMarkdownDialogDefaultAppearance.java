@@ -1,7 +1,7 @@
-package org.iplantc.de.theme.base.client.applications.details.doc;
+package org.iplantc.de.theme.base.client.apps.details.doc;
 
 import org.iplantc.de.apps.client.views.details.doc.AppDocMarkdownDialog;
-import org.iplantc.de.theme.base.client.applications.AppsMessages;
+import org.iplantc.de.theme.base.client.apps.AppsMessages;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.safehtml.client.SafeHtmlTemplates;

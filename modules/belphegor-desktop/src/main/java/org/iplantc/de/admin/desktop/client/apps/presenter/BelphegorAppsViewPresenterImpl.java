@@ -304,7 +304,7 @@ public class BelphegorAppsViewPresenterImpl extends AppsViewPresenterImpl implem
                                                                   // proper category counts
                                                                   // display.
                                                                   // FIXME JDS These events need to be
-                                                                  // common to ui-applications.
+                                                                  // common to ui-apps.
                                                                   eventBus.fireEvent(new CatalogCategoryRefreshEvent());
                                                                   view.unMaskWestPanel();
                                                               }
@@ -357,11 +357,6 @@ public class BelphegorAppsViewPresenterImpl extends AppsViewPresenterImpl implem
             });
             msgBox.show();
         }
-    }
-
-    @Override
-    public void onDeleteAppsSelected(List<App> currentSelection) {
-        // Do nothing, this is for the non-admin toolbar
     }
 
     @Override
@@ -620,7 +615,7 @@ public class BelphegorAppsViewPresenterImpl extends AppsViewPresenterImpl implem
                                              // Refresh the catalog, so that the proper category counts
                                              // display.
                                              // FIXME JDS These events need to be common to
-                                             // ui-applications.
+                                             // ui-apps.
                                              eventBus.fireEvent(new CatalogCategoryRefreshEvent());
                                          }
 
@@ -643,7 +638,7 @@ public class BelphegorAppsViewPresenterImpl extends AppsViewPresenterImpl implem
         // // counts
         // // display.
         // // FIXME JDS These events need to be common to
-        // // ui-applications.
+        // // ui-apps.
         // eventBus.fireEvent(new CatalogCategoryRefreshEvent());
         // }
         //

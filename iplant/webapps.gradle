@@ -41,7 +41,7 @@ project(':de') {
         devModules 'org.iplantc.de.discoveryenvironmentDev'
 
         src += files(project(':ui-commons-module').sourceSets.main.allJava.srcDirs) + files(project(':ui-commons-module').sourceSets.main.output.resourcesDir)
-        src += files(project(':ui-applications-module').sourceSets.main.allJava.srcDirs) + files(project(':ui-applications-module').sourceSets.main.output.resourcesDir)
+        src += files(project(':ui-apps-module').sourceSets.main.allJava.srcDirs) + files(project(':ui-apps-module').sourceSets.main.output.resourcesDir)
         src += files(project(':ui-resources-module').sourceSets.main.allJava.srcDirs) + files(project(':ui-resources-module').sourceSets.main.output.resourcesDir) + files(project(':ui-resources-module').sourceSets.main.resources.srcDirs)
         src += files(project(':ui-disk-resource-module').sourceSets.main.allJava.srcDirs) + files(project(':ui-disk-resource-module').sourceSets.main.output.resourcesDir)
         src += files(project(':ui-apps-widgets-module').sourceSets.main.allJava.srcDirs) + files(project(':ui-apps-widgets-module').sourceSets.main.output.resourcesDir)
@@ -127,7 +127,7 @@ project(':belphegor') {
         src += files(project(':belphegor-desktop').sourceSets.main.allJava.srcDirs) + files(project(':belphegor-desktop').sourceSets.main.output.resourcesDir)
 
         src += files(project(':ui-commons-module').sourceSets.main.allJava.srcDirs) + files(project(':ui-commons-module').sourceSets.main.output.resourcesDir)
-        src += files(project(':ui-applications-module').sourceSets.main.allJava.srcDirs) + files(project(':ui-applications-module').sourceSets.main.output.resourcesDir)
+        src += files(project(':ui-apps-module').sourceSets.main.allJava.srcDirs) + files(project(':ui-apps-module').sourceSets.main.output.resourcesDir)
         src += files(project(':ui-resources-module').sourceSets.main.allJava.srcDirs) + files(project(':ui-resources-module').sourceSets.main.output.resourcesDir) + files(project(':ui-resources-module').sourceSets.main.resources.srcDirs)
         src += files(project(':ui-disk-resource-module').sourceSets.main.allJava.srcDirs) + files(project(':ui-disk-resource-module').sourceSets.main.output.resourcesDir)
         src += files(project(':ui-apps-widgets-module').sourceSets.main.allJava.srcDirs) + files(project(':ui-apps-widgets-module').sourceSets.main.output.resourcesDir)

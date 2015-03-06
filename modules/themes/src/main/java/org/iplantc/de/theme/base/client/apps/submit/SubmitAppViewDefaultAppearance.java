@@ -1,9 +1,9 @@
-package org.iplantc.de.theme.base.client.applications.submit;
+package org.iplantc.de.theme.base.client.apps.submit;
 
 import org.iplantc.de.apps.client.SubmitAppForPublicUseView;
 import org.iplantc.de.resources.client.IplantResources;
 import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
-import org.iplantc.de.theme.base.client.applications.AppsMessages;
+import org.iplantc.de.theme.base.client.apps.AppsMessages;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.resources.client.ImageResource;

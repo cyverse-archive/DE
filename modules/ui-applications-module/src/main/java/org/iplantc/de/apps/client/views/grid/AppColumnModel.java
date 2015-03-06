@@ -1,8 +1,8 @@
 package org.iplantc.de.apps.client.views.grid;
 
+import org.iplantc.de.apps.client.AppsGridView;
 import org.iplantc.de.apps.client.events.selection.AppCommentSelectedEvent;
 import org.iplantc.de.apps.client.events.selection.AppCommentSelectedEvent.AppCommentSelectedEventHandler;
-import org.iplantc.de.apps.client.events.selection.AppCommentSelectedEvent.HasAppCommentSelectedEventHandlers;
 import org.iplantc.de.apps.client.events.selection.AppFavoriteSelectedEvent;
 import org.iplantc.de.apps.client.events.selection.AppInfoSelectedEvent;
 import org.iplantc.de.apps.client.events.selection.AppNameSelectedEvent;
@@ -19,7 +19,6 @@ import org.iplantc.de.apps.shared.AppsModule;
 import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.models.apps.AppNameComparator;
 import org.iplantc.de.client.models.apps.AppRatingComparator;
-import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 
 import com.google.gwt.cell.client.Cell;
 import com.google.gwt.core.client.GWT;
@@ -39,12 +38,12 @@ import java.util.List;
 public class AppColumnModel extends ColumnModel<App> implements AppInfoSelectedEvent.HasAppInfoSelectedEventHandlers,
                                                                 AppNameSelectedEvent.HasAppNameSelectedEventHandlers,
                                                                 AppFavoriteSelectedEvent.HasAppFavoriteSelectedEventHandlers,
-                                                                HasAppCommentSelectedEventHandlers,
+                                                                AppCommentSelectedEvent.HasAppCommentSelectedEventHandlers,
                                                                 AppRatingSelected.HasAppRatingSelectedEventHandlers,
                                                                 AppRatingDeselected.HasAppRatingDeselectedHandlers {
 
-    public AppColumnModel(final IplantDisplayStrings displayStrings) {
-        super(createColumnConfigList(displayStrings));
+    public AppColumnModel(final AppsGridView.AppsGridAppearance appearance) {
+        super(createColumnConfigList(appearance));
 
         // Set handler managers on appropriate cells so they can fire events.
         for (ColumnConfig<App, ?> colConfig : configs) {
@@ -63,7 +62,7 @@ public class AppColumnModel extends ColumnModel<App> implements AppInfoSelectedE
         }
     }
 
-    public static List<ColumnConfig<App, ?>> createColumnConfigList(final IplantDisplayStrings displayStrings) {
+    public static List<ColumnConfig<App, ?>> createColumnConfigList(final AppsGridView.AppsGridAppearance appearance) {
         AppProperties props = GWT.create(AppProperties.class);
         List<ColumnConfig<App, ?>> list = new ArrayList<>();
 
@@ -72,13 +71,13 @@ public class AppColumnModel extends ColumnModel<App> implements AppInfoSelectedE
 
         ColumnConfig<App, App> name = new ColumnConfig<>(new IdentityValueProvider<App>("name"), //$NON-NLS-1$
                                                          180,
-                                                         displayStrings.name());
+                                                         appearance.nameColumnLabel());
 
         ColumnConfig<App, String> integrator = new ColumnConfig<>(props.integratorName(),
                                                                   115,
-                                                                  displayStrings.integratedby());
+                                                                  appearance.integratedByColumnLabel());
 
-        ColumnConfig<App, App> rating = new ColumnConfig<>(new IdentityValueProvider<App>("rating"), 125, displayStrings.rating()); //$NON-NLS-1$
+        ColumnConfig<App, App> rating = new ColumnConfig<>(new IdentityValueProvider<App>("rating"), 125, appearance.ratingColumnLabel()); //$NON-NLS-1$
 
         ColumnConfig<App, App> comment = new ColumnConfig<>(new IdentityValueProvider<App>("comment"), 30); //$NON-NLS-1$
 

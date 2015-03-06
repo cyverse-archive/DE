@@ -3,7 +3,7 @@
              xmlns:toolbar="urn:import:com.sencha.gxt.widget.core.client.toolbar"
              xmlns:button="urn:import:com.sencha.gxt.widget.core.client.button"
              xmlns:menu="urn:import:com.sencha.gxt.widget.core.client.menu"
-             xmlns:MyWidgets="urn:import:org.iplantc.de.apps.client.views.widgets">
+             xmlns:MyWidgets="urn:import:org.iplantc.de.apps.client.views.toolBar">
 
     <ui:with field="appearance"
              type="org.iplantc.de.apps.client.AppsToolbarView.AppsToolbarAppearance"/>

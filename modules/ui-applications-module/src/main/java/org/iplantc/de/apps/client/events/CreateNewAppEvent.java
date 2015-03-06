@@ -5,6 +5,10 @@ import org.iplantc.de.apps.client.events.CreateNewAppEvent.CreateNewAppEventHand
 import com.google.gwt.event.shared.EventHandler;
 import com.google.gwt.event.shared.GwtEvent;
 
+/**
+ * FIXME This is more of a message than an event
+ * @author jstroot
+ */
 public class CreateNewAppEvent extends GwtEvent<CreateNewAppEventHandler> {
 
     public interface CreateNewAppEventHandler extends EventHandler {
