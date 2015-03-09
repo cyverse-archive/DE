@@ -933,10 +933,10 @@ public class DiskResourceServiceFacadeImpl extends TreeStore<Folder> implements
                               AsyncCallback<String> callback) {
         String address = null;
         if(override) {
-            address = deProperties.getDataMgmtBaseUrl() + srcUUID + "/template-avus/copy?force="
+            address = deProperties.getDataMgmtBaseUrl() + srcUUID + "/metadata/copy?force="
                 + override;
         } else {
-            address = deProperties.getDataMgmtBaseUrl() + srcUUID + "/template-avus/copy";
+            address = deProperties.getDataMgmtBaseUrl() + srcUUID + "/metadata/copy";
         }
         ServiceCallWrapper wrapper = new ServiceCallWrapper(POST, address, paths.toString());
         callService(wrapper, callback);
