@@ -4,21 +4,15 @@ import org.iplantc.de.apps.client.AppCategoriesView;
 import org.iplantc.de.apps.client.AppsGridView;
 import org.iplantc.de.apps.client.AppsToolbarView;
 import org.iplantc.de.apps.client.AppsView;
-import org.iplantc.de.apps.client.SubmitAppForPublicUseView;
 import org.iplantc.de.apps.client.gin.factory.AppsViewFactory;
 import org.iplantc.de.client.models.HasId;
 import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.models.apps.AppCategory;
-import org.iplantc.de.client.util.JsonUtil;
 
-import com.google.gwt.regexp.shared.RegExp;
 import com.google.gwt.user.client.ui.HasOneWidget;
 import com.google.inject.Inject;
-import com.google.inject.Provider;
 
 import com.sencha.gxt.widget.core.client.grid.Grid;
-
-import java.util.logging.Logger;
 
 /**
  * The presenter for the AppsView.
@@ -28,16 +22,8 @@ import java.util.logging.Logger;
 public class AppsViewPresenterImpl implements AppsView.Presenter {
 
     protected final AppsView view;
-    @Inject JsonUtil jsonUtil;
-    @Inject Provider<SubmitAppForPublicUseView.Presenter> submitAppForPublicPresenterProvider;
-    private static String FAVORITES;
-    private static String USER_APPS_GROUP;
-    private static String WORKSPACE;
-    private final Logger LOG = Logger.getLogger(AppsViewPresenterImpl.class.getName());
     private final AppCategoriesView.Presenter categoriesPresenter;
     private final AppsGridView.Presenter appsGridPresenter;
-    private HasId desiredSelectedAppId;
-    private RegExp searchRegex;
 
     @Inject
     protected AppsViewPresenterImpl(final AppsViewFactory viewFactory,
@@ -85,11 +71,6 @@ public class AppsViewPresenterImpl implements AppsView.Presenter {
                    final HasId selectedApp) {
         categoriesPresenter.go(selectedAppCategory);
         container.setWidget(view);
-    }
-
-    @Override
-    public void go(final HasOneWidget container) {
-        go(container, null, null);
     }
 
     @Override

@@ -39,7 +39,6 @@ public class DEAppsWindow extends IplantWindowBase {
 
     @Override
     public void doHide() {
-        presenter.cleanUp();
         super.doHide();
     }
 

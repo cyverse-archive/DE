@@ -12,6 +12,10 @@ import com.google.gwt.user.client.ui.IsWidget;
 import com.sencha.gxt.widget.core.client.grid.Grid;
 
 /**
+ * This is the primary view for the Apps module. It is a composite of all other views within the
+ * module.
+ *
+ *
  * @author jstroot
  */
 public interface AppsView extends IsWidget,
@@ -21,8 +25,11 @@ public interface AppsView extends IsWidget,
 
     }
 
-    public interface Presenter extends org.iplantc.de.commons.client.presenter.Presenter {
-
+    /**
+     * This presenter is responsible for wiring all of the events from the other MVP modules
+     * together.
+     */
+    interface Presenter {
 
         App getSelectedApp();
 

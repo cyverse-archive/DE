@@ -69,16 +69,14 @@ public class AppCategoriesPresenterImpl implements AppCategoriesView.Presenter,
     }
 
     @Inject AsyncProvider<AppDetailsDialog> appDetailsDlgAsyncProvider;
-
-    private final AppUserServiceFacade appService;
-    private final EventBus eventBus;
-
-    private final TreeStore<AppCategory> treeStore;
-    private final AppCategoriesView view;
-    private String searchRegexPattern;
     private static String FAVORITES;
     private static String USER_APPS_GROUP;
     private static String WORKSPACE;
+    private final AppUserServiceFacade appService;
+    private final EventBus eventBus;
+    private final TreeStore<AppCategory> treeStore;
+    private final AppCategoriesView view;
+    private String searchRegexPattern;
 
     @Inject
     AppCategoriesPresenterImpl(final TreeStore<AppCategory> treeStore,
@@ -99,90 +97,6 @@ public class AppCategoriesPresenterImpl implements AppCategoriesView.Presenter,
 
         eventBus.addHandler(AppUpdatedEvent.TYPE, this);
 
-    }
-
-    @Override
-    public void onAppFavorited(AppFavoritedEvent appFavoritedEvent) {
-        final App app = appFavoritedEvent.getApp();
-        AppCategory currentCategory = getSelectedAppCategory();
-
-        if(FAVORITES.equals(currentCategory.getName())){
-            // If our current category is Favorites, initiate refetch by reselecting category
-            view.getTree().getSelectionModel().deselectAll();
-            view.getTree().getSelectionModel().select(currentCategory, false);
-        } else {
-            // Adjust favorite category count.
-            final AppCategory favoriteCategory = findAppCategoryByName(FAVORITES);
-            int favCountAdjustment = app.isFavorite() ? 1 : -1;
-            updateAppCategoryAppCount(favoriteCategory, favoriteCategory.getAppCount() + favCountAdjustment);
-        }
-    }
-
-    @Override
-    public void onUpdate(StoreUpdateEvent<App> event) {
-        // FIXME Do appropriate things (update counts) when apps are favorited/unfavorited
-    }
-
-    void addAppCategories(AppCategory parent, List<AppCategory> children) {
-        if ((children == null)
-                || children.isEmpty()) {
-            return;
-        }
-        if (parent == null) {
-            treeStore.add(children);
-        } else {
-            treeStore.add(parent, children);
-        }
-
-        for (AppCategory ag : children) {
-            addAppCategories(ag, ag.getCategories());
-        }
-    }
-
-    @Override
-    public void onAppUpdated(AppUpdatedEvent event) {
-        // JDS Always assume that the app is in the "Apps Under Development" group
-        view.getTree().getSelectionModel().deselectAll();
-        AppCategory userAppCategory = findAppCategoryByName(USER_APPS_GROUP);
-        view.getTree().getSelectionModel().select(userAppCategory, false);
-    }
-
-    @Override
-    public void onCopyWorkflowSelected(final CopyWorkflowSelected event) {
-        // JDS For now, assume only one app
-        final App appToBeCopied = event.getWfsToBeCopied().iterator().next();
-          appService.copyWorkflow(appToBeCopied.getId(), new AsyncCallback<String>() {
-
-            @Override
-            public void onFailure(Throwable caught) {
-                // TODO Add error message for the user.
-                ErrorHandler.post(caught);
-            }
-
-            @Override
-            public void onSuccess(String result) {
-                // Update the user's private apps group count.
-                view.getTree().getSelectionModel().deselectAll();
-                AppCategory userAppsGrp = findAppCategoryByName(USER_APPS_GROUP);
-                // Select "Apps Under Dev" to cause fetch of center
-                view.getTree().getSelectionModel().select(userAppsGrp, false);
-
-                // Fire an EditWorkflowEvent for the new workflow copy.
-                Splittable serviceWorkflowJson = StringQuoter.split(result);
-                eventBus.fireEvent(new EditWorkflowEvent(appToBeCopied, serviceWorkflowJson));
-            }
-        });
-    }
-
-    private void initConstants(final DEProperties props,
-                               final JsonUtil jsonUtil) {
-        WORKSPACE = props.getPrivateWorkspace();
-
-        if (props.getPrivateWorkspaceItems() != null) {
-            JSONArray items = JSONParser.parseStrict(props.getPrivateWorkspaceItems()).isArray();
-            USER_APPS_GROUP = jsonUtil.getRawValueAsString(items.get(0));
-            FAVORITES = jsonUtil.getRawValueAsString(items.get(1));
-        }
     }
 
     @Override
@@ -208,8 +122,8 @@ public class AppCategoriesPresenterImpl implements AppCategoriesView.Presenter,
 
     @Override
     public void go(final HasId selectedAppCategory) {
-        if(!treeStore.getAll().isEmpty()
-            && selectedAppCategory != null){
+        if (!treeStore.getAll().isEmpty()
+                && selectedAppCategory != null) {
             AppCategory desiredCategory = treeStore.findModelWithKey(selectedAppCategory.getId());
             view.getTree().getSelectionModel().select(desiredCategory, false);
         } else {
@@ -239,10 +153,27 @@ public class AppCategoriesPresenterImpl implements AppCategoriesView.Presenter,
     public void onAdd(StoreAddEvent<App> event) {
         // When the list store adds
         AppCategory appCategory = getSelectedAppCategory();
-        if(appCategory == null){
+        if (appCategory == null) {
             return;
         }
         updateAppCategoryAppCount(appCategory, event.getSource().getAll().size());
+    }
+
+    @Override
+    public void onAppFavorited(AppFavoritedEvent appFavoritedEvent) {
+        final App app = appFavoritedEvent.getApp();
+        AppCategory currentCategory = getSelectedAppCategory();
+
+        if (FAVORITES.equals(currentCategory.getName())) {
+            // If our current category is Favorites, initiate refetch by reselecting category
+            view.getTree().getSelectionModel().deselectAll();
+            view.getTree().getSelectionModel().select(currentCategory, false);
+        } else {
+            // Adjust favorite category count.
+            final AppCategory favoriteCategory = findAppCategoryByName(FAVORITES);
+            int favCountAdjustment = app.isFavorite() ? 1 : -1;
+            updateAppCategoryAppCount(favoriteCategory, favoriteCategory.getAppCount() + favCountAdjustment);
+        }
     }
 
     @Override
@@ -270,6 +201,14 @@ public class AppCategoriesPresenterImpl implements AppCategoriesView.Presenter,
     public void onAppSearchResultLoad(AppSearchResultLoadEvent event) {
         searchRegexPattern = event.getSearchPattern();
         view.getTree().getSelectionModel().deselectAll();
+    }
+
+    @Override
+    public void onAppUpdated(AppUpdatedEvent event) {
+        // JDS Always assume that the app is in the "Apps Under Development" group
+        view.getTree().getSelectionModel().deselectAll();
+        AppCategory userAppCategory = findAppCategoryByName(USER_APPS_GROUP);
+        view.getTree().getSelectionModel().select(userAppCategory, false);
     }
 
     @Override
@@ -301,6 +240,64 @@ public class AppCategoriesPresenterImpl implements AppCategoriesView.Presenter,
 
     }
 
+    @Override
+    public void onCopyWorkflowSelected(final CopyWorkflowSelected event) {
+        // JDS For now, assume only one app
+        final App appToBeCopied = event.getWfsToBeCopied().iterator().next();
+        appService.copyWorkflow(appToBeCopied.getId(), new AsyncCallback<String>() {
+
+            @Override
+            public void onFailure(Throwable caught) {
+                // TODO Add error message for the user.
+                ErrorHandler.post(caught);
+            }
+
+            @Override
+            public void onSuccess(String result) {
+                // Update the user's private apps group count.
+                view.getTree().getSelectionModel().deselectAll();
+                AppCategory userAppsGrp = findAppCategoryByName(USER_APPS_GROUP);
+                // Select "Apps Under Dev" to cause fetch of center
+                view.getTree().getSelectionModel().select(userAppsGrp, false);
+
+                // Fire an EditWorkflowEvent for the new workflow copy.
+                Splittable serviceWorkflowJson = StringQuoter.split(result);
+                eventBus.fireEvent(new EditWorkflowEvent(appToBeCopied, serviceWorkflowJson));
+            }
+        });
+    }
+
+    @Override
+    public void onRemove(StoreRemoveEvent<App> event) {
+        // When the list store removes something
+        AppCategory appCategory = getSelectedAppCategory();
+        if (appCategory == null) {
+            return;
+        }
+        updateAppCategoryAppCount(appCategory, event.getSource().getAll().size());
+    }
+
+    @Override
+    public void onUpdate(StoreUpdateEvent<App> event) {
+        // FIXME Do appropriate things (update counts) when apps are favorited/unfavorited
+    }
+
+    void addAppCategories(AppCategory parent, List<AppCategory> children) {
+        if ((children == null)
+                || children.isEmpty()) {
+            return;
+        }
+        if (parent == null) {
+            treeStore.add(children);
+        } else {
+            treeStore.add(parent, children);
+        }
+
+        for (AppCategory ag : children) {
+            addAppCategories(ag, ag.getCategories());
+        }
+    }
+
     AppCategory findAppCategoryByName(String name) {
         for (AppCategory appCategory : treeStore.getAll()) {
             if (appCategory.getName().equalsIgnoreCase(name)) {
@@ -309,16 +306,6 @@ public class AppCategoriesPresenterImpl implements AppCategoriesView.Presenter,
         }
 
         return null;
-    }
-
-    @Override
-    public void onRemove(StoreRemoveEvent<App> event) {
-        // When the list store removes something
-        AppCategory appCategory = getSelectedAppCategory();
-        if(appCategory == null){
-            return;
-        }
-        updateAppCategoryAppCount(appCategory, event.getSource().getAll().size());
     }
 
     List<AppCategory> getGroupHierarchy(AppCategory grp, List<AppCategory> groups) {
@@ -341,6 +328,17 @@ public class AppCategoriesPresenterImpl implements AppCategoriesView.Presenter,
             appGroup.setAppCount(appGroup.getAppCount() - difference);
             treeStore.update(appGroup);
             appGroup = treeStore.getParent(appGroup);
+        }
+    }
+
+    private void initConstants(final DEProperties props,
+                               final JsonUtil jsonUtil) {
+        WORKSPACE = props.getPrivateWorkspace();
+
+        if (props.getPrivateWorkspaceItems() != null) {
+            JSONArray items = JSONParser.parseStrict(props.getPrivateWorkspaceItems()).isArray();
+            USER_APPS_GROUP = jsonUtil.getRawValueAsString(items.get(0));
+            FAVORITES = jsonUtil.getRawValueAsString(items.get(1));
         }
     }
 
