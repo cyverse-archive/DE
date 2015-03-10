@@ -47,11 +47,11 @@ import org.iplantc.de.diskResource.client.model.DiskResourceModelKeyProvider;
 import org.iplantc.de.diskResource.client.presenters.grid.proxy.FolderContentsLoadConfig;
 import org.iplantc.de.diskResource.client.presenters.grid.proxy.SelectDiskResourceByIdStoreAddHandler;
 import org.iplantc.de.diskResource.client.views.dialogs.InfoTypeEditorDialog;
+import org.iplantc.de.diskResource.client.views.dialogs.MetadataCopyDialog;
 import org.iplantc.de.diskResource.client.views.grid.DiskResourceColumnModel;
 import org.iplantc.de.diskResource.client.views.metadata.dialogs.ManageMetadataDialog;
 import org.iplantc.de.diskResource.client.views.sharing.dialogs.DataSharingDialog;
 import org.iplantc.de.diskResource.client.views.sharing.dialogs.ShareResourceLinkDialog;
-import org.iplantc.de.diskResource.client.views.widgets.MultiFileSelectorField;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
@@ -61,14 +61,13 @@ import com.google.gwt.event.shared.EventHandler;
 import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.inject.client.AsyncProvider;
-import com.google.gwt.json.client.JSONArray;
-import com.google.gwt.json.client.JSONObject;
-import com.google.gwt.json.client.JSONString;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import com.google.web.bindery.autobean.shared.AutoBean;
 import com.google.web.bindery.autobean.shared.AutoBeanCodex;
+import com.google.web.bindery.autobean.shared.Splittable;
+import com.google.web.bindery.autobean.shared.impl.StringQuoter;
 
 import com.sencha.gxt.core.shared.FastMap;
 import com.sencha.gxt.data.shared.ListStore;
@@ -122,7 +121,7 @@ public class GridViewPresenterImpl implements
                     public void onDialogHide(DialogHideEvent event) {
                         if (event.getHideButton().equals(PredefinedButton.YES)) {
                             win.mask("Loading...");
-                            doCopyMetadata(selected, win, paths, true);
+                            doCopyMetadata(selected, paths, true);
                         }
                     }
 
@@ -191,6 +190,8 @@ public class GridViewPresenterImpl implements
     DiskResourceSelectorFieldFactory selectionFieldFactory;
     @Inject
     DiskResourceErrorAutoBeanFactory drFactory;
+    @Inject
+    MetadataCopyDialog mCopyDialog;
 
     private final Appearance appearance;
     private final ListStore<DiskResource> listStore;
@@ -228,7 +229,6 @@ public class GridViewPresenterImpl implements
 
         // Fetch Details
         this.view.addDiskResourceSelectionChangedEventHandler(this);
-
     }
 
     // <editor-fold desc="Handler Registrations">
@@ -373,49 +373,44 @@ public class GridViewPresenterImpl implements
 
     @Override
     public void onRequestCopyMetadataSelected(CopyMetadataSelected event) {
-
         final DiskResource selected = event.getDiskResource();
         copyMetadata(selected);
-
     }
 
     private void copyMetadata(final DiskResource selected) {
-        final MultiFileSelectorField multiFileSelector = selectionFieldFactory.creaeteMultiFileSelector(true);
-        final IPlantDialog win = new IPlantDialog();
-        win.setHideOnButtonClick(false);
-        win.setHeadingText(appearance.copyMetadata());
-        win.setSize("400px", "350px");
-        win.add(multiFileSelector);
-        win.show();
-        win.addOkButtonSelectHandler(new SelectHandler() {
+        mCopyDialog.clearHandlers();
+        mCopyDialog.addOkButtonSelectHandler(new SelectHandler() {
 
             @Override
             public void onSelect(SelectEvent event) {
-                List<HasPath> paths = multiFileSelector.getValue();
+                List<HasPath> paths = mCopyDialog.getValue();
                 if (paths == null || paths.size() == 0) {
                     AlertMessageBox amb = new AlertMessageBox(appearance.copyMetadata(),
                                                               "You must select at least one file or a folder!");
                     amb.show();
                     return;
                 }
-                win.mask("Loading...");
-                doCopyMetadata(selected, win, paths, false);
+                mCopyDialog.mask("Loading...");
+                doCopyMetadata(mCopyDialog.getSource(), paths, false);
 
             }
         });
+        mCopyDialog.clear();
+        mCopyDialog.setSource(selected);
+        mCopyDialog.unmask();
+        mCopyDialog.show();
     }
 
-    private JSONObject buildTargetPaths(List<HasPath> paths) {
-        JSONObject pathsObj = new JSONObject();
-        JSONArray pathsArr = new JSONArray();
-        int i = 0;
+    private Splittable buildTargetPaths(List<HasPath> paths) {
+        Splittable pathspl = StringQuoter.createSplittable();
+        Splittable path_arr = StringQuoter.createIndexed();
         for (HasPath obj : paths) {
             DiskResource dr = (DiskResource)obj;
-            pathsArr.set(i++, new JSONString(dr.getId()));
+            StringQuoter.create(String.valueOf(dr.getId())).assign(path_arr, path_arr.size());
         }
 
-        pathsObj.put("destination_ids", pathsArr);
-        return pathsObj;
+        path_arr.assign(pathspl, "destination_ids");
+        return pathspl;
     }
 
     @Override
@@ -631,13 +626,12 @@ public class GridViewPresenterImpl implements
     }
 
     private void doCopyMetadata(final DiskResource selected,
-                                final IPlantDialog win,
                                 List<HasPath> paths,
                                 boolean override) {
-        diskResourceService.copyMeatadata(selected.getId(),
+        diskResourceService.copyMetadata(selected.getId(),
                                           buildTargetPaths(paths),
                                           override,
-                                          new CopyMetadataCallback(selected, win, paths));
+                                         new CopyMetadataCallback(selected, mCopyDialog, paths));
     }
 
 }

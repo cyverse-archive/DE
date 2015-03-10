@@ -9,6 +9,7 @@ import org.iplantc.de.client.services.DiskResourceServiceFacade;
 
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.web.bindery.autobean.shared.Splittable;
 
 import com.sencha.gxt.core.shared.FastMap;
 import com.sencha.gxt.data.shared.loader.FilterPagingLoadConfigBean;
@@ -230,11 +231,12 @@ public class DiskResourceServiceFacadeStub implements DiskResourceServiceFacade 
     }
 
     @Override
-    public void copyMeatadata(String srcUUID,
-                              JSONObject paths,
+    public void copyMetadata(String srcUUID,
+                              Splittable paths,
                               boolean override,
                               AsyncCallback<String> callback) {
         // TODO Auto-generated method stub
 
     }
+
 }

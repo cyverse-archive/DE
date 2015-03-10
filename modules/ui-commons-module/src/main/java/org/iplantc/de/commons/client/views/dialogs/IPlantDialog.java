@@ -106,4 +106,12 @@ public class IPlantDialog extends Dialog implements IsHideable, IsMaskable {
         getOkButton().setText(text);
     }
 
+    /**
+     * Remove all button handlers.
+     */
+    public void clearHandlers() {
+        okButtonSelectHandlers.clear();
+        cancelButtonSelectHandlers.clear();
+    }
+
 }

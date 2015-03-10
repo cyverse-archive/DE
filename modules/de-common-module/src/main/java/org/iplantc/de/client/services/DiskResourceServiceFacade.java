@@ -2,12 +2,23 @@ package org.iplantc.de.client.services;
 
 import org.iplantc.de.client.models.HasPaths;
 import org.iplantc.de.client.models.dataLink.DataLink;
-import org.iplantc.de.client.models.diskResources.*;
+import org.iplantc.de.client.models.diskResources.DiskResource;
+import org.iplantc.de.client.models.diskResources.DiskResourceAutoBeanFactory;
+import org.iplantc.de.client.models.diskResources.DiskResourceExistMap;
+import org.iplantc.de.client.models.diskResources.DiskResourceMetadata;
+import org.iplantc.de.client.models.diskResources.DiskResourceMetadataTemplate;
+import org.iplantc.de.client.models.diskResources.File;
+import org.iplantc.de.client.models.diskResources.Folder;
+import org.iplantc.de.client.models.diskResources.MetadataTemplate;
+import org.iplantc.de.client.models.diskResources.MetadataTemplateInfo;
+import org.iplantc.de.client.models.diskResources.RootFolders;
+import org.iplantc.de.client.models.diskResources.TYPE;
 import org.iplantc.de.client.models.services.DiskResourceMove;
 import org.iplantc.de.client.models.viewer.InfoType;
 
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.web.bindery.autobean.shared.Splittable;
 
 import com.sencha.gxt.core.shared.FastMap;
 import com.sencha.gxt.data.shared.loader.FilterPagingLoadConfigBean;
@@ -327,8 +338,8 @@ public interface DiskResourceServiceFacade {
      * @param callback callback object
      */
             void
-            copyMeatadata(final String srcUUID,
-                          final JSONObject paths,
+            copyMetadata(final String srcUUID,
+                          final Splittable paths,
                        boolean override,
                        final AsyncCallback<String> callback);
 }

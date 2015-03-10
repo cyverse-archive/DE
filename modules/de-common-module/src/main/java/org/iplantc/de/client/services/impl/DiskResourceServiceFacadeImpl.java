@@ -49,6 +49,7 @@ import com.sencha.gxt.data.shared.loader.FilterPagingLoadConfigBean;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -927,18 +928,19 @@ public class DiskResourceServiceFacadeImpl extends TreeStore<Folder> implements
     }
 
     @Override
-    public void copyMeatadata(String srcUUID,
-                              JSONObject paths,
+    public void copyMetadata(String srcUUID,
+                              Splittable paths,
                               boolean override,
                               AsyncCallback<String> callback) {
         String address = null;
+        LOG.log(Level.SEVERE, paths.getPayload() + "<=");
         if(override) {
             address = deProperties.getDataMgmtBaseUrl() + srcUUID + "/metadata/copy?force="
                 + override;
         } else {
             address = deProperties.getDataMgmtBaseUrl() + srcUUID + "/metadata/copy";
         }
-        ServiceCallWrapper wrapper = new ServiceCallWrapper(POST, address, paths.toString());
+        ServiceCallWrapper wrapper = new ServiceCallWrapper(POST, address, paths.getPayload());
         callService(wrapper, callback);
     }
 }

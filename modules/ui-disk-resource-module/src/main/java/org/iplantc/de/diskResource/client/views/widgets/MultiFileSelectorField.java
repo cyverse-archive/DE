@@ -227,7 +227,7 @@ public class MultiFileSelectorField extends Composite implements IsField<List<Ha
 
     @Override
     public void clear() {
-        setValue(Collections.<HasPath>emptyList());
+        grid.getStore().clear();
         clearInvalid();
     }
 
