@@ -27,7 +27,7 @@
             type="com.sencha.gxt.widget.core.client.container.BorderLayoutContainer.BorderLayoutData">
       <ui:attributes size="30"
                      maxSize="30"
-                     hidden="true"/>
+                     hidden="false"/>
    </ui:with>
    <ui:with field="westData"
             type="com.sencha.gxt.widget.core.client.container.BorderLayoutContainer.BorderLayoutData">

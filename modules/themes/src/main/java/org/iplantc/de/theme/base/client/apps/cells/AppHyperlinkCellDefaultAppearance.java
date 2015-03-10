@@ -34,10 +34,10 @@ public class AppHyperlinkCellDefaultAppearance implements AppHyperlinkCell.AppHy
     public interface Templates extends SafeHtmlTemplates {
 
         @SafeHtmlTemplates.Template("<span name='{3}' class='{0}' qtip='{2}'>{1}</span>")
-        SafeHtml cell(String textClassName, SafeHtml name, String textToolTip, String elementName);
+        SafeHtml cell(String textClassName, String name, String textToolTip, String elementName);
 
         @SafeHtmlTemplates.Template("<span id='{4}' name='{3}' class='{0}' qtip='{2}'>{1}</span>")
-        SafeHtml debugCell(String textClassName, SafeHtml name, String textToolTip, String elementName, String debugId);
+        SafeHtml debugCell(String textClassName, String name, String textToolTip, String elementName, String debugId);
     }
 
     private final Templates templates;
@@ -89,14 +89,14 @@ public class AppHyperlinkCellDefaultAppearance implements AppHyperlinkCell.AppHy
         if(highlightAppearance == null) {
             highlightAppearance = GWT.create(AppSearchHighlightAppearance.class);
         }
-        SafeHtml safeHtmlName = highlightAppearance.highlightText(value.getName(), pattern);
+        String highlightText = highlightAppearance.highlightText(value.getName(), pattern);
 
         sb.appendHtmlConstant("&nbsp;");
         if(DebugInfo.isDebugIdEnabled()
                && !Strings.isNullOrEmpty(debugId)){
-            sb.append(templates.debugCell(textClassName, safeHtmlName, textToolTip, ELEMENT_NAME, debugId));
+            sb.append(templates.debugCell(textClassName, highlightText, textToolTip, ELEMENT_NAME, debugId));
         }else {
-            sb.append(templates.cell(textClassName, safeHtmlName, textToolTip, ELEMENT_NAME));
+            sb.append(templates.cell(textClassName, highlightText, textToolTip, ELEMENT_NAME));
         }
     }
 

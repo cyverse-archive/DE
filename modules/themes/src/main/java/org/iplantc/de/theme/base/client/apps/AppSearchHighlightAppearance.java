@@ -1,7 +1,5 @@
 package org.iplantc.de.theme.base.client.apps;
 
-import com.google.gwt.safehtml.shared.SafeHtml;
-
 /**
  * An appearance for highlighting portions of a given text which match
  * a given regex pattern.
@@ -10,5 +8,5 @@ import com.google.gwt.safehtml.shared.SafeHtml;
  * @author jstroot
  */
 public interface AppSearchHighlightAppearance {
-    SafeHtml highlightText(String name, String pattern);
+    String highlightText(String name, String pattern);
 }

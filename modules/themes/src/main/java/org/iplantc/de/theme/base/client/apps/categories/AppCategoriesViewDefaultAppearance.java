@@ -42,6 +42,11 @@ public class AppCategoriesViewDefaultAppearance implements AppCategoriesView.App
 
 
     @Override
+    public String getAppCategoriesLoadingMask() {
+        return iplantDisplayStrings.loadingMask();
+    }
+
+    @Override
     public String headingText() {
         return iplantDisplayStrings.category();
     }

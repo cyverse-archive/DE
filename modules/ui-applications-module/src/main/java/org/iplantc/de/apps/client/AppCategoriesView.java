@@ -32,6 +32,8 @@ public interface AppCategoriesView extends IsWidget,
                                            AppCategorySelectionChangedEvent.HasAppCategorySelectionChangedEventHandlers {
     interface AppCategoriesAppearance {
 
+        String getAppCategoriesLoadingMask();
+
         String headingText();
 
         void setTreeIcons(TreeStyle style);

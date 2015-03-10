@@ -72,7 +72,8 @@ public class AppCategoriesPresenterImpl implements AppCategoriesView.Presenter,
     private static String FAVORITES;
     private static String USER_APPS_GROUP;
     private static String WORKSPACE;
-    private final AppUserServiceFacade appService;
+    @Inject AppUserServiceFacade appService;
+    @Inject AppCategoriesView.AppCategoriesAppearance appearance;
     private final EventBus eventBus;
     private final TreeStore<AppCategory> treeStore;
     private final AppCategoriesView view;
@@ -83,11 +84,9 @@ public class AppCategoriesPresenterImpl implements AppCategoriesView.Presenter,
                                final DEProperties props,
                                final JsonUtil jsonUtil,
                                final EventBus eventBus,
-                               final AppUserServiceFacade appService,
                                final AppCategoriesViewFactory viewFactory) {
         this.treeStore = treeStore;
         this.eventBus = eventBus;
-        this.appService = appService;
         this.view = viewFactory.create(treeStore, this);
 
         final Store.StoreSortInfo<AppCategory> info = new Store.StoreSortInfo<>(new AppCategoryComparator(treeStore),
@@ -127,6 +126,7 @@ public class AppCategoriesPresenterImpl implements AppCategoriesView.Presenter,
             AppCategory desiredCategory = treeStore.findModelWithKey(selectedAppCategory.getId());
             view.getTree().getSelectionModel().select(desiredCategory, false);
         } else {
+            view.mask(appearance.getAppCategoriesLoadingMask());
             appService.getAppCategories(new AsyncCallback<List<AppCategory>>() {
                 @Override
                 public void onFailure(Throwable caught) {
@@ -142,8 +142,10 @@ public class AppCategoriesPresenterImpl implements AppCategoriesView.Presenter,
                         AppCategory desiredCategory = treeStore.findModelWithKey(selectedAppCategory.getId());
                         view.getTree().getSelectionModel().select(desiredCategory, false);
                     } else {
-                        view.getTree().getSelectionModel().select(0, false);
+                        view.getTree().getSelectionModel().selectNext();
+                        view.getTree().getSelectionModel().select(treeStore.getRootItems().get(0), false);
                     }
+                    view.unmask();
                 }
             });
         }
