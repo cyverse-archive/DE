@@ -40,7 +40,11 @@ import com.sencha.gxt.data.shared.loader.PagingLoader;
  * TODO Search will stay here until it is necessary to fold it out
  * @author jstroot
  */
-public class AppsToolbarPresenterImpl implements AppsToolbarView.Presenter, CreateNewAppSelected.CreateNewAppSelectedHandler, CreateNewWorkflowSelected.CreateNewWorkflowSelectedHandler, EditAppSelected.EditAppSelectedHandler, RequestToolSelected.RequestToolSelectedHandler {
+public class AppsToolbarPresenterImpl implements AppsToolbarView.Presenter,
+                                                 CreateNewAppSelected.CreateNewAppSelectedHandler,
+                                                 CreateNewWorkflowSelected.CreateNewWorkflowSelectedHandler,
+                                                 EditAppSelected.EditAppSelectedHandler,
+                                                 RequestToolSelected.RequestToolSelectedHandler {
 
     @Inject IplantAnnouncer announcer;
     @Inject EventBus eventBus;
@@ -50,7 +54,7 @@ public class AppsToolbarPresenterImpl implements AppsToolbarView.Presenter, Crea
     private final AppUserServiceFacade appService;
     private final AppsToolbarView view;
     private final AppSearchRpcProxy proxy;
-    private final PagingLoader<FilterPagingLoadConfig, PagingLoadResult<App>> loader;
+    final PagingLoader<FilterPagingLoadConfig, PagingLoadResult<App>> loader;
 
     @Inject
     AppsToolbarPresenterImpl(final AppUserServiceFacade appService,

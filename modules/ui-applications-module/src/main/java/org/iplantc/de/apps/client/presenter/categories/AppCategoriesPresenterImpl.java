@@ -331,7 +331,7 @@ public class AppCategoriesPresenterImpl implements AppCategoriesView.Presenter,
         }
     }
 
-    private void initConstants(final DEProperties props,
+    void initConstants(final DEProperties props,
                                final JsonUtil jsonUtil) {
         WORKSPACE = props.getPrivateWorkspace();
 

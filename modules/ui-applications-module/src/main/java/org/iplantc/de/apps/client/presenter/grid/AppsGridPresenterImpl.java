@@ -116,7 +116,7 @@ public class AppsGridPresenterImpl implements AppsGridView.Presenter,
     @Inject AsyncProvider<CommentsDialog> commentsDialogProvider;
     @Inject AppMetadataServiceFacade metadataFacade;
 
-    private final ListStore<App> listStore;
+    final ListStore<App> listStore;
     private final AppsGridView view;
     private App desiredSelectedApp;
 
