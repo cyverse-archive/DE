@@ -48,6 +48,7 @@ public class AppDetailsDialog extends IPlantDialog implements AppFavoriteSelecte
 
             @Override
             public void onSuccess(AppDetailsView.Presenter result) {
+                // FIXME If service call fails in presenter, dialog should not show.
                 result.go(AppDetailsDialog.this, app, searchRegexPattern, appGroupHierarchies);
             }
         });

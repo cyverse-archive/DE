@@ -54,6 +54,7 @@ public class AppsViewPresenterImplTest {
         verify(gridPresenterMock).addStoreRemoveHandler(categoriesPresenterMock);
         verify(gridPresenterMock).addAppFavoritedEventHandler(categoriesPresenterMock);
         verify(gridViewMock).addAppSelectionChangedEventHandler(toolbarViewMock);
+        verify(gridViewMock).addAppInfoSelectedEventHandler(categoriesPresenterMock);
 
         // Verify toolbar wiring
         verify(toolbarViewMock).addDeleteAppsSelectedHandler(gridPresenterMock);
@@ -61,7 +62,7 @@ public class AppsViewPresenterImplTest {
         verify(toolbarViewMock).addCopyWorkflowSelectedHandler(categoriesPresenterMock);
 
         verify(categoriesPresenterMock, times(3)).getView();
-        verify(gridPresenterMock, times(2)).getView();
+        verify(gridPresenterMock, times(3)).getView();
         verify(toolbarPresenterMock, times(5)).getView();
 
 

@@ -24,20 +24,20 @@ public class CopyWorkflowSelected extends GwtEvent<CopyWorkflowSelected.CopyWork
     }
 
     public static Type<CopyWorkflowSelectedHandler> TYPE = new Type<>();
-    private final List<App> wfsToBeCopied;
+    private final List<App> apps;
 
-    public CopyWorkflowSelected(final List<App> wfsToBeCopied) {
-        Preconditions.checkNotNull(wfsToBeCopied);
-        Preconditions.checkArgument(!wfsToBeCopied.isEmpty());
-        this.wfsToBeCopied = wfsToBeCopied;
+    public CopyWorkflowSelected(final List<App> apps) {
+        Preconditions.checkNotNull(apps);
+        Preconditions.checkArgument(!apps.isEmpty());
+        this.apps = apps;
     }
 
     public Type<CopyWorkflowSelectedHandler> getAssociatedType() {
         return TYPE;
     }
 
-    public List<App> getWfsToBeCopied() {
-        return wfsToBeCopied;
+    public List<App> getApps() {
+        return apps;
     }
 
     protected void dispatch(CopyWorkflowSelectedHandler handler) {

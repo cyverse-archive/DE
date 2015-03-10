@@ -6,6 +6,7 @@ import org.iplantc.de.apps.client.models.AppCategoryStringValueProvider;
 import org.iplantc.de.apps.shared.AppsModule;
 import org.iplantc.de.client.models.apps.AppCategory;
 
+import com.google.common.collect.Lists;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -19,6 +20,8 @@ import com.sencha.gxt.data.shared.TreeStore;
 import com.sencha.gxt.widget.core.client.ContentPanel;
 import com.sencha.gxt.widget.core.client.selection.SelectionChangedEvent;
 import com.sencha.gxt.widget.core.client.tree.Tree;
+
+import java.util.List;
 
 /**
  * Created by jstroot on 3/5/15.
@@ -63,8 +66,12 @@ public class AppCategoriesViewImpl extends ContentPanel implements AppCategories
 
     @Override
     public void onSelectionChanged(SelectionChangedEvent<AppCategory> event) {
+        final List<String> groupHierarchy = Lists.newArrayList();
+        if(!event.getSelection().isEmpty()){
+            groupHierarchy.addAll(hierarchyProvider.getGroupHierarchy(event.getSelection().iterator().next()));
+        }
         fireEvent(new AppCategorySelectionChangedEvent(event.getSelection(),
-                                                       hierarchyProvider.getGroupHierarchy(event.getSelection().iterator().next())));
+                                                       groupHierarchy));
     }
 
     @Override

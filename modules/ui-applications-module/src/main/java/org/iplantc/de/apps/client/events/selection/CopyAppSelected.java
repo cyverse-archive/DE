@@ -24,16 +24,16 @@ public class CopyAppSelected extends GwtEvent<CopyAppSelected.CopyAppSelectedHan
     }
 
     public static Type<CopyAppSelectedHandler> TYPE = new Type<>();
-    private final List<App> appsToBeCopied;
+    private final List<App> apps;
 
-    public CopyAppSelected(final List<App> appsToBeCopied) {
-        Preconditions.checkNotNull(appsToBeCopied);
-        Preconditions.checkArgument(!appsToBeCopied.isEmpty());
-        this.appsToBeCopied = appsToBeCopied;
+    public CopyAppSelected(final List<App> apps) {
+        Preconditions.checkNotNull(apps);
+        Preconditions.checkArgument(!apps.isEmpty());
+        this.apps = apps;
     }
 
-    public List<App> getAppsToBeCopied() {
-        return appsToBeCopied;
+    public List<App> getApps() {
+        return apps;
     }
 
     public Type<CopyAppSelectedHandler> getAssociatedType() {

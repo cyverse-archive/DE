@@ -21,6 +21,7 @@ import org.iplantc.de.client.util.CommonModelUtils;
 import org.iplantc.de.client.util.JsonUtil;
 import org.iplantc.de.commons.client.ErrorHandler;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.gwt.inject.client.AsyncProvider;
 import com.google.gwt.json.client.JSONArray;
@@ -69,15 +70,15 @@ public class AppCategoriesPresenterImpl implements AppCategoriesView.Presenter,
     }
 
     @Inject AsyncProvider<AppDetailsDialog> appDetailsDlgAsyncProvider;
-    private static String FAVORITES;
-    private static String USER_APPS_GROUP;
-    private static String WORKSPACE;
+    protected static String FAVORITES;
+    protected static String USER_APPS_GROUP;
+    protected static String WORKSPACE;
     @Inject AppUserServiceFacade appService;
     @Inject AppCategoriesView.AppCategoriesAppearance appearance;
     private final EventBus eventBus;
     private final TreeStore<AppCategory> treeStore;
     private final AppCategoriesView view;
-    private String searchRegexPattern;
+    protected String searchRegexPattern;
 
     @Inject
     AppCategoriesPresenterImpl(final TreeStore<AppCategory> treeStore,
@@ -168,6 +169,7 @@ public class AppCategoriesPresenterImpl implements AppCategoriesView.Presenter,
 
         if (FAVORITES.equals(currentCategory.getName())) {
             // If our current category is Favorites, initiate refetch by reselecting category
+            // This will cause the favorite count to be updated
             view.getTree().getSelectionModel().deselectAll();
             view.getTree().getSelectionModel().select(currentCategory, false);
         } else {
@@ -190,8 +192,10 @@ public class AppCategoriesPresenterImpl implements AppCategoriesView.Presenter,
             public void onSuccess(AppDetailsDialog result) {
                 // Create list of group hierarchies
                 List<List<String>> appGroupHierarchies = Lists.newArrayList();
-                for (AppCategory appCategory : event.getApp().getGroups()) {
-                    appGroupHierarchies.add(getGroupHierarchy(appCategory));
+                if(event.getApp().getGroups() != null) {
+                    for (AppCategory appCategory : event.getApp().getGroups()) {
+                        appGroupHierarchies.add(getGroupHierarchy(appCategory));
+                    }
                 }
 
                 result.show(event.getApp(), searchRegexPattern, appGroupHierarchies);
@@ -215,8 +219,9 @@ public class AppCategoriesPresenterImpl implements AppCategoriesView.Presenter,
 
     @Override
     public void onCopyAppSelected(CopyAppSelected event) {
+        Preconditions.checkArgument(event.getApps().size() == 1);
         // JDS For now, assume only one app
-        final App appToBeCopied = event.getAppsToBeCopied().iterator().next();
+        final App appToBeCopied = event.getApps().iterator().next();
         // FIXME Update service signature
         appService.copyApp(appToBeCopied.getId(), new AsyncCallback<String>() {
             @Override
@@ -244,8 +249,9 @@ public class AppCategoriesPresenterImpl implements AppCategoriesView.Presenter,
 
     @Override
     public void onCopyWorkflowSelected(final CopyWorkflowSelected event) {
+        Preconditions.checkArgument(event.getApps().size() == 1);
         // JDS For now, assume only one app
-        final App appToBeCopied = event.getWfsToBeCopied().iterator().next();
+        final App appToBeCopied = event.getApps().iterator().next();
         appService.copyWorkflow(appToBeCopied.getId(), new AsyncCallback<String>() {
 
             @Override
