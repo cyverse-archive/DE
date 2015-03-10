@@ -12,7 +12,6 @@ import org.iplantc.de.apps.client.events.selection.AppRatingDeselected;
 import org.iplantc.de.apps.client.events.selection.AppRatingSelected;
 import org.iplantc.de.apps.client.events.selection.DeleteAppsSelected;
 import org.iplantc.de.apps.client.gin.factory.AppsGridViewFactory;
-import org.iplantc.de.apps.client.models.AppModelKeyProvider;
 import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.client.models.apps.App;
@@ -115,14 +114,16 @@ public class AppsGridPresenterImpl implements AppsGridView.Presenter,
     @Inject UserInfo userInfo;
     @Inject AsyncProvider<CommentsDialog> commentsDialogProvider;
     @Inject AppMetadataServiceFacade metadataFacade;
+    @Inject AppsGridView.AppsGridAppearance appearance;
 
     final ListStore<App> listStore;
     private final AppsGridView view;
     private App desiredSelectedApp;
 
     @Inject
-    AppsGridPresenterImpl(final AppsGridViewFactory viewFactory) {
-        this.listStore = new ListStore<>(new AppModelKeyProvider());
+    AppsGridPresenterImpl(final AppsGridViewFactory viewFactory,
+                          final ListStore<App> listStore) {
+        this.listStore = listStore;
         this.view = viewFactory.create(listStore);
 
         this.view.addAppNameSelectedEventHandler(this);
@@ -177,7 +178,7 @@ public class AppsGridPresenterImpl implements AppsGridView.Presenter,
             return;
         }
         Preconditions.checkArgument(event.getAppCategorySelection().size() == 1);
-        view.mask(I18N.DISPLAY.loadingMask());
+        view.mask(appearance.getAppsLoadingMask());
 
         final AppCategory appCategory = event.getAppCategorySelection().iterator().next();
         // FIXME Update service signature
@@ -250,7 +251,7 @@ public class AppsGridPresenterImpl implements AppsGridView.Presenter,
     @Override
     public void onAppNameSelected(AppNameSelectedEvent event) {
         final App app = event.getSelectedApp();
-                if (app.isRunnable()) {
+        if (app.isRunnable()) {
             if (!app.isDisabled()) {
                 eventBus.fireEvent(new RunAppEvent(app));
             }

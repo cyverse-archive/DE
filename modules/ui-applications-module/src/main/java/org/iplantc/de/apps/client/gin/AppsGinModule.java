@@ -24,6 +24,7 @@ import org.iplantc.de.apps.client.views.details.dialogs.AppDetailsDialog;
 import org.iplantc.de.apps.client.views.grid.AppsGridViewImpl;
 import org.iplantc.de.apps.client.views.submit.SubmitAppForPublicUseViewImpl;
 import org.iplantc.de.apps.client.views.toolBar.AppsViewToolbarImpl;
+import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.models.apps.AppCategory;
 import org.iplantc.de.client.services.AppMetadataServiceFacade;
 import org.iplantc.de.client.services.impl.AppMetadataServiceFacadeImpl;
@@ -32,6 +33,7 @@ import com.google.gwt.inject.client.AbstractGinModule;
 import com.google.gwt.inject.client.assistedinject.GinFactoryModuleBuilder;
 import com.google.inject.TypeLiteral;
 
+import com.sencha.gxt.data.shared.ListStore;
 import com.sencha.gxt.data.shared.TreeStore;
 
 /**
@@ -43,6 +45,8 @@ public class AppsGinModule extends AbstractGinModule {
     protected void configure() {
         bind(new TypeLiteral<TreeStore<AppCategory>>() {})
             .toProvider(AppCategoryTreeStoreProvider.class);
+        bind(new TypeLiteral<ListStore<App>>() {})
+            .toProvider(AppListStoreProvider.class);
 
         // KLUDGE Bind AppsView in DEGinModule to get around Gin double-binding with Belphegor
 //        bind(AppsView.class).to(AppsViewImpl.class);

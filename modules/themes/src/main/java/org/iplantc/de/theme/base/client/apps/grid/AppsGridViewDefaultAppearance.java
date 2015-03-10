@@ -25,6 +25,11 @@ public class AppsGridViewDefaultAppearance implements AppsGridView.AppsGridAppea
     }
 
     @Override
+    public String getAppsLoadingMask() {
+        return iplantDisplayStrings.loadingMask();
+    }
+
+    @Override
     public String integratedByColumnLabel() {
         return appsMessages.integratedBy();
     }

@@ -38,6 +38,8 @@ public interface AppsGridView extends IsWidget,
                                       AppFavoritedEvent.HasAppFavoritedEventHandlers {
     interface AppsGridAppearance {
 
+        String getAppsLoadingMask();
+
         String integratedByColumnLabel();
 
         String nameColumnLabel();
