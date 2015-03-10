@@ -1,8 +1,5 @@
 package org.iplantc.de.admin.desktop.client.gin;
 
-import org.iplantc.de.admin.desktop.client.apps.views.AdminAppViewImpl;
-import org.iplantc.de.admin.desktop.client.apps.views.AdminAppsView;
-import org.iplantc.de.admin.desktop.client.apps.views.widgets.BelphegorAppsToolbarImpl;
 import org.iplantc.de.admin.desktop.client.models.BelphegorAdminProperties;
 import org.iplantc.de.admin.desktop.client.presenter.BelphegorPresenterImpl;
 import org.iplantc.de.admin.desktop.client.refGenome.RefGenomeView;
@@ -25,7 +22,6 @@ import org.iplantc.de.admin.desktop.client.toolRequest.service.impl.ToolRequestS
 import org.iplantc.de.admin.desktop.client.toolRequest.view.ToolRequestViewImpl;
 import org.iplantc.de.admin.desktop.client.views.BelphegorView;
 import org.iplantc.de.admin.desktop.client.views.BelphegorViewImpl;
-import org.iplantc.de.apps.client.AppsView;
 import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.gin.ServicesInjector;
 import org.iplantc.de.client.models.DEProperties;
@@ -52,9 +48,6 @@ public class BelphegorAppsGinModule extends AbstractGinModule {
         bind(BelphegorView.class).to(BelphegorViewImpl.class);
         bind(BelphegorView.Presenter.class).to(BelphegorPresenterImpl.class).in(Singleton.class);
 
-        bind(AppsView.class).to(AdminAppViewImpl.class);
-        bind(AdminAppsView.Toolbar.class).to(BelphegorAppsToolbarImpl.class);
-
         bind(RefGenomeView.class).to(RefGenomeViewImpl.class);
         bind(RefGenomeView.Presenter.class).to(RefGenomePresenterImpl.class);
         bind(ReferenceGenomeServiceFacade.class).to(ReferenceGenomeServiceFacadeImpl.class);
@@ -72,6 +65,7 @@ public class BelphegorAppsGinModule extends AbstractGinModule {
         bind(AppServiceFacade.class).to(AppAdminServiceFacadeImpl.class);
 
         bind(DiscEnvApiService.class).in(Singleton.class);
+
     }
 
     @Provides @Singleton public DiskResourceServiceFacade createDiskResourceService() {

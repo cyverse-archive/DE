@@ -158,8 +158,8 @@ public class SubmitAppViewDefaultAppearance implements SubmitAppForPublicUseView
     }
 
     @Override
-    public SafeHtml publicDescription() {
-        return templates.requiredLabel(appsMessages.publicDescription());
+    public String publicDescription() {
+        return templates.requiredLabel(appsMessages.publicDescription()).asString();
     }
 
     @Override
@@ -168,23 +168,23 @@ public class SubmitAppViewDefaultAppearance implements SubmitAppForPublicUseView
     }
 
     @Override
-    public SafeHtml describeInputLbl() {
-        return templates.requiredLabel(appsMessages.describeInputLbl());
+    public String describeInputLbl() {
+        return templates.requiredLabel(appsMessages.describeInputLbl()).asString();
     }
 
     @Override
-    public SafeHtml describeParamLbl() {
-        return templates.requiredLabel(appsMessages.describeParamLbl());
+    public String describeParamLbl() {
+        return templates.requiredLabel(appsMessages.describeParamLbl()).asString();
     }
 
     @Override
-    public SafeHtml describeOutputLbl() {
-        return templates.requiredLabel(appsMessages.describeOutputLbl());
+    public String describeOutputLbl() {
+        return templates.requiredLabel(appsMessages.describeOutputLbl()).asString();
     }
 
     @Override
-    public SafeHtml publicCategories() {
-        return templates.requiredLabel(appsMessages.publicCategories());
+    public String publicCategories() {
+        return templates.requiredLabel(appsMessages.publicCategories()).asString();
     }
 
     @Override

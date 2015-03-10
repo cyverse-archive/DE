@@ -1,6 +1,6 @@
 package org.iplantc.de.theme.base.client.admin.apps;
 
-import org.iplantc.de.admin.desktop.client.apps.views.AdminAppsView;
+import org.iplantc.de.admin.apps.client.AdminAppsView;
 import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 import org.iplantc.de.theme.base.client.admin.BelphegorDisplayStrings;
 import org.iplantc.de.theme.base.client.admin.BelphegorErrorStrings;

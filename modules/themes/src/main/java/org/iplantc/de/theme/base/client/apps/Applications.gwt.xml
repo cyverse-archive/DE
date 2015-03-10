@@ -2,11 +2,16 @@
 <!DOCTYPE module PUBLIC "-//Google Inc.//DTD Google Web Toolkit 2.6.1//EN"
         "http://gwtproject.org/doctype/2.6.1/gwt-module.dtd">
 <module>
-
     <!-- Highlight Appearance -->
-    <replace-with class="org.iplantc.de.theme.base.client.apps.AppSearchHighlightAppearance">
-        <when-type-is class="org.iplantc.de.theme.base.client.apps.AppSearchHighlightDefaultAppearance"/>
+    <replace-with class="org.iplantc.de.theme.base.client.apps.AppSearchHighlightDefaultAppearance">
+        <when-type-is class="org.iplantc.de.theme.base.client.apps.AppSearchHighlightAppearance"/>
     </replace-with>
+
+    <!-- Grid -->
+    <replace-with class="org.iplantc.de.theme.base.client.apps.grid.AppsGridViewDefaultAppearance">
+        <when-type-is class="org.iplantc.de.apps.client.AppsGridView.AppsGridAppearance"/>
+    </replace-with>
+
 
     <!-- Views -->
     <replace-with class="org.iplantc.de.theme.base.client.apps.AppsViewDefaultAppearance">
@@ -37,6 +42,10 @@
 
     <replace-with class="org.iplantc.de.theme.base.client.apps.cells.AppInfoCellDefaultAppearance">
         <when-type-is class="org.iplantc.de.apps.client.views.grid.cells.AppInfoCell.AppInfoCellAppearance"/>
+    </replace-with>
+
+    <replace-with class="org.iplantc.de.theme.base.client.apps.cells.AppIntegratorCellDefaultAppearance">
+        <when-type-is class="org.iplantc.de.apps.client.views.grid.cells.AppIntegratorCell.AppIntegratorCellAppearance"/>
     </replace-with>
 
     <!-- Submit -->

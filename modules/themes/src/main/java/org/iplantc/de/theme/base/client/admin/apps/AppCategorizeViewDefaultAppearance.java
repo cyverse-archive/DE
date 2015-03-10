@@ -1,6 +1,6 @@
 package org.iplantc.de.theme.base.client.admin.apps;
 
-import org.iplantc.de.admin.desktop.client.apps.views.AppCategorizeView;
+import org.iplantc.de.admin.apps.client.AppCategorizeView;
 import org.iplantc.de.resources.client.IplantResources;
 import org.iplantc.de.theme.base.client.admin.BelphegorDisplayStrings;
 

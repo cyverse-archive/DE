@@ -8,9 +8,6 @@ import org.iplantc.de.apps.client.views.submit.dialog.SubmitAppForPublicDialog;
 import org.iplantc.de.apps.shared.AppsModule.Ids;
 import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.client.models.apps.App;
-import org.iplantc.de.client.models.apps.AppAutoBeanFactory;
-import org.iplantc.de.client.models.apps.proxy.AppSearchAutoBeanFactory;
-import org.iplantc.de.client.services.AppServiceFacade;
 import org.iplantc.de.commons.client.ErrorHandler;
 
 import com.google.common.base.Preconditions;
@@ -79,11 +76,8 @@ public class AppsViewToolbarImpl extends Composite implements AppsToolbarView {
     private List<App> currentSelection;
 
     @Inject
-    AppsViewToolbarImpl(final AppServiceFacade appService,
-                        final AppSearchAutoBeanFactory appSearchFactory,
-                        final UserInfo userInfo,
+    AppsViewToolbarImpl(final UserInfo userInfo,
                         final AppsToolbarAppearance appearance,
-                        final AppAutoBeanFactory appFactory,
                         @Assisted final PagingLoader<FilterPagingLoadConfig, PagingLoadResult<App>> loader) {
         this.userInfo = userInfo;
         this.appearance = appearance;

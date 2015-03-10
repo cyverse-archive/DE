@@ -1,7 +1,5 @@
 package org.iplantc.de.desktop.client.gin;
 
-import org.iplantc.de.apps.client.AppsView;
-import org.iplantc.de.apps.client.views.AppsViewImpl;
 import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.gin.ServicesInjector;
 import org.iplantc.de.client.models.DEProperties;
@@ -157,7 +155,7 @@ public class DEGinModule extends AbstractGinModule {
 
 
         // KLUDGE Bind AppsView here to get around Gin double-binding with Belphegor
-        bind(AppsView.class).to(AppsViewImpl.class);
+//        bind(AppsView.class).to(AppsViewImpl.class);
 
         // Bind Windows
         bind(AboutApplicationWindow.class);

@@ -25,6 +25,8 @@ public interface AppsMessages extends Messages {
 
     String inputDescriptionEmptyText();
 
+    String integratedBy();
+
     String likedIt();
 
     String links();
@@ -66,6 +68,8 @@ public interface AppsMessages extends Messages {
     String requestTool();
 
     String run();
+
+    String searchAppResultsHeader(String searchText, int total);
 
     String searchApps();
 

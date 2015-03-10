@@ -1,5 +1,6 @@
 package org.iplantc.de.admin.desktop.client.apps.views;
 
+import org.iplantc.de.admin.apps.client.AdminAppsView;
 import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.models.apps.AppCategory;
 
@@ -40,9 +41,13 @@ public class AppCategoryDnDHandler implements DndDragStartHandler, DndDragEnterH
 
     private boolean validateMove(AppCategory targetGroup, Object source) {
         if (source instanceof AppCategory) {
-            return presenter.canMoveAppCategory(targetGroup, (AppCategory) source);
+            // FIXME
+            return false;
+//            return presenter.canMoveAppCategory(targetGroup, (AppCategory) source);
         } else {
-            return presenter.canMoveApp(targetGroup, (App)source);
+            // FIXME
+            return false;
+//            return presenter.canMoveApp(targetGroup, (App)source);
         }
     }
 
@@ -52,11 +57,12 @@ public class AppCategoryDnDHandler implements DndDragStartHandler, DndDragEnterH
 
         Element dragStartEl = event.getDragStartEvent().getStartElement();
 
-        Object dragData = adminAppView.getAppCategoryFromElement(dragStartEl);
+//        Object dragData = adminAppView.getAppCategoryFromElement(dragStartEl);
+        Object dragData = null;
 
         if (dragData == null) {
             // If we don't have an AppCategory, check for an App.
-            dragData = adminAppView.getAppFromElement(dragStartEl);
+//            dragData = adminAppView.getAppFromElement(dragStartEl);
         }
 
         if (dragData != null) {
@@ -87,7 +93,8 @@ public class AppCategoryDnDHandler implements DndDragStartHandler, DndDragEnterH
 
         // Get our destination category.
         EventTarget eventTarget = event.getDragMoveEvent().getNativeEvent().getEventTarget();
-        AppCategory targetGroup = adminAppView.getAppCategoryFromElement(Element.as(eventTarget));
+//        AppCategory targetGroup = adminAppView.getAppCategoryFromElement(Element.as(eventTarget));
+        AppCategory targetGroup = null;
 
         // Check if the source may be dropped into the target.
         boolean isValid = validateMove(targetGroup, event.getData());
@@ -104,15 +111,16 @@ public class AppCategoryDnDHandler implements DndDragStartHandler, DndDragEnterH
 
         // Get our destination category.
         EventTarget eventTarget = event.getDragEndEvent().getNativeEvent().getEventTarget();
-        AppCategory targetGroup = adminAppView.getAppCategoryFromElement(Element.as(eventTarget));
+//        AppCategory targetGroup = adminAppView.getAppCategoryFromElement(Element.as(eventTarget));
+        AppCategory targetGroup = null;
 
         if (validateMove(targetGroup, event.getData())) {
             if (event.getData() instanceof AppCategory) {
                 AppCategory source = (AppCategory)event.getData();
-                presenter.moveAppCategory(targetGroup, source);
+//                presenter.moveAppCategory(targetGroup, source);
             } else {
                 App source = (App)event.getData();
-                presenter.moveApp(targetGroup, source);
+//                presenter.moveApp(targetGroup, source);
             }
         }
     }

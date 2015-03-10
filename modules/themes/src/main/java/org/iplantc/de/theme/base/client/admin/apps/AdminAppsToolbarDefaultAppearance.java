@@ -1,6 +1,6 @@
 package org.iplantc.de.theme.base.client.admin.apps;
 
-import org.iplantc.de.admin.desktop.client.apps.views.AdminAppsView;
+import org.iplantc.de.admin.apps.client.AdminAppsToolbarView;
 import org.iplantc.de.resources.client.IplantResources;
 import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 import org.iplantc.de.theme.base.client.admin.BelphegorDisplayStrings;
@@ -11,7 +11,7 @@ import com.google.gwt.resources.client.ImageResource;
 /**
  * @author jstroot
  */
-public class AdminAppsToolbarDefaultAppearance implements AdminAppsView.Toolbar.ToolbarAppearance {
+public class AdminAppsToolbarDefaultAppearance implements AdminAppsToolbarView.ToolbarAppearance {
     private final IplantDisplayStrings iplantDisplayStrings;
     private final IplantResources iplantResources;
     private final BelphegorDisplayStrings displayStrings;

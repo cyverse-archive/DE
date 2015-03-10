@@ -28,7 +28,6 @@ import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
-import com.google.inject.assistedinject.Assisted;
 import com.google.web.bindery.autobean.shared.Splittable;
 import com.google.web.bindery.autobean.shared.impl.StringQuoter;
 
@@ -43,21 +42,23 @@ import com.sencha.gxt.data.shared.loader.PagingLoader;
  */
 public class AppsToolbarPresenterImpl implements AppsToolbarView.Presenter, CreateNewAppSelected.CreateNewAppSelectedHandler, CreateNewWorkflowSelected.CreateNewWorkflowSelectedHandler, EditAppSelected.EditAppSelectedHandler, RequestToolSelected.RequestToolSelectedHandler {
 
-    @Inject AppUserServiceFacade appService;
     @Inject IplantAnnouncer announcer;
     @Inject EventBus eventBus;
     @Inject UserInfo userInfo;
     @Inject Provider<NewToolRequestDialog> newToolRequestDialogProvider;
 
+    private final AppUserServiceFacade appService;
     private final AppsToolbarView view;
     private final AppSearchRpcProxy proxy;
     private final PagingLoader<FilterPagingLoadConfig, PagingLoadResult<App>> loader;
 
     @Inject
-    AppsToolbarPresenterImpl(final AppSearchAutoBeanFactory factory,// FIXME Get rid of this
+    AppsToolbarPresenterImpl(final AppUserServiceFacade appService,
+                             final AppSearchAutoBeanFactory factory,// FIXME Get rid of this
                              final AppAutoBeanFactory appFactory,// FIXME Get rid of this
                              final AppsToolbarView.AppsToolbarAppearance appearance,
-                             @Assisted final AppsToolbarViewFactory viewFactory) {
+                             final AppsToolbarViewFactory viewFactory) {
+        this.appService = appService;
         proxy = new AppSearchRpcProxy(appService, factory, appFactory, appearance);
         loader = new PagingLoader<>(proxy);
         view = viewFactory.create(loader);

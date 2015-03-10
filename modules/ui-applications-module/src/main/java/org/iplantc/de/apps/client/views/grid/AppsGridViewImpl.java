@@ -22,7 +22,7 @@ import com.google.gwt.inject.client.AsyncProvider;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiFactory;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.ui.HTMLPanel;
+import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 
@@ -40,7 +40,7 @@ import com.sencha.gxt.widget.core.client.tips.QuickTip;
  */
 public class AppsGridViewImpl extends ContentPanel implements AppsGridView,
                                                               SelectionChangedEvent.SelectionChangedHandler<App> {
-    interface AppsGridViewImplUiBinder extends UiBinder<HTMLPanel, AppsGridViewImpl> { }
+    interface AppsGridViewImplUiBinder extends UiBinder<Widget, AppsGridViewImpl> { }
 
     private static AppsGridViewImplUiBinder ourUiBinder = GWT.create(AppsGridViewImplUiBinder.class);
 

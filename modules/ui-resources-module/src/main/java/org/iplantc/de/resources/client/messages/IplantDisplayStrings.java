@@ -1156,15 +1156,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     String integratedTools();
 
     /**
-     * Translated "Integrated by".
-     *
-     * @return translated "Integrated by"
-     */
-    @DefaultMessage("Integrated by")
-    @Key("integratedby")
-    String integratedby();
-
-    /**
      * Translated "Integrator".
      *
      * @return translated "Integrator"
@@ -2319,15 +2310,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     @DefaultMessage("Search")
     @Key("search")
     String search();
-
-    /**
-     * Translated "Search results: {1} found for {0}".
-     * 
-     * @return translated "Search results: {1} found for {0}"
-     */
-    @DefaultMessage("Search results: {1} found for {0}")
-    @Key("searchAppResultsHeader")
-    String searchAppResultsHeader(String searchText, int total);
 
     @DefaultMessage("Search by Name")
     @Key("searchData")

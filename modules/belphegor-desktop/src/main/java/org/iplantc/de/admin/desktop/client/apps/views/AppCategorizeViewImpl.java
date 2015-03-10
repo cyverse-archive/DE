@@ -1,5 +1,6 @@
 package org.iplantc.de.admin.desktop.client.apps.views;
 
+import org.iplantc.de.admin.apps.client.AppCategorizeView;
 import org.iplantc.de.client.models.apps.AppCategory;
 
 import com.google.common.collect.Lists;

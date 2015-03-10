@@ -1,6 +1,6 @@
 package org.iplantc.de.admin.desktop.client.apps.presenter;
 
-import org.iplantc.de.admin.desktop.client.apps.views.AppCategorizeView;
+import org.iplantc.de.admin.apps.client.AppCategorizeView;
 import org.iplantc.de.admin.desktop.client.models.BelphegorAdminProperties;
 import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.models.apps.AppCategory;
@@ -18,7 +18,7 @@ public class AppCategorizePresenter implements AppCategorizeView.Presenter {
     private final AppCategorizeView view;
     private final App app;
 
-    AppCategorizePresenter(final AppCategorizeView view,
+    public AppCategorizePresenter(final AppCategorizeView view,
                            final App app,
                            final BelphegorAdminProperties properties) {
         this.view = view;

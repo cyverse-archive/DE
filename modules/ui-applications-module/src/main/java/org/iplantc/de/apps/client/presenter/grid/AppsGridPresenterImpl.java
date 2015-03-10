@@ -288,23 +288,23 @@ public class AppsGridPresenterImpl implements AppsGridView.Presenter,
             appIds.add(app.getId());
         }
         // FIXME Update service signature
-        appUserService.deleteAppFromWorkspace(userInfo.getUsername(),
-                                              userInfo.getFullUsername(),
-                                              appIds,
-                                              new AsyncCallback<String>() {
-                                                  @Override
-                                                  public void onFailure(Throwable caught) {
-                                                      ErrorHandler.post(I18N.ERROR.appRemoveFailure(), caught);
+        appUserService.deleteAppsFromWorkspace(userInfo.getUsername(),
+                                               userInfo.getFullUsername(),
+                                               appIds,
+                                               new AsyncCallback<String>() {
+                                                   @Override
+                                                   public void onFailure(Throwable caught) {
+                                                       ErrorHandler.post(I18N.ERROR.appRemoveFailure(), caught);
 
-                                                  }
+                                                   }
 
-                                                  @Override
-                                                  public void onSuccess(String result) {
-                                                      for(App app : event.getAppsToBeDeleted()){
-                                                          listStore.remove(app);
-                                                      }
-                                                  }
-                                              });
+                                                   @Override
+                                                   public void onSuccess(String result) {
+                                                       for(App app : event.getAppsToBeDeleted()){
+                                                           listStore.remove(app);
+                                                       }
+                                                   }
+                                               });
     }
 
     public void setDesiredSelectedApp(final App desiredSelectedApp) {

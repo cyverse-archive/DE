@@ -7,7 +7,7 @@ import com.google.gwt.editor.client.Editor;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiFactory;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.ui.HTMLPanel;
+import com.google.gwt.uibinder.client.UiTemplate;
 import com.google.gwt.user.client.ui.InlineLabel;
 
 import com.sencha.gxt.widget.core.client.Composite;
@@ -20,7 +20,8 @@ import com.sencha.gxt.widget.core.client.container.AccordionLayoutContainer.Acco
  */
 public class ToolDetailsView extends Composite implements Editor<Tool> {
 
-    interface ToolsDetailsViewUiBinder extends UiBinder<HTMLPanel, ToolDetailsView> { }
+    @UiTemplate("ToolDetailsView.ui.xml")
+    interface ToolsDetailsViewUiBinder extends UiBinder<ContentPanel, ToolDetailsView> { }
 
     private final ToolsDetailsViewUiBinder BINDER = GWT.create(ToolsDetailsViewUiBinder.class);
 

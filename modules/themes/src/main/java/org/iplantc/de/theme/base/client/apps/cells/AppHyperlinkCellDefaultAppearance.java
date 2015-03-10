@@ -44,26 +44,23 @@ public class AppHyperlinkCellDefaultAppearance implements AppHyperlinkCell.AppHy
     protected final Resources resources;
     private final IplantDisplayStrings iplantDisplayStrings;
     private final AppsMessages appsMessages;
-    private final AppSearchHighlightAppearance highlightAppearance;
+    private AppSearchHighlightAppearance highlightAppearance;
 
     public AppHyperlinkCellDefaultAppearance() {
         this(GWT.<Templates> create(Templates.class),
              GWT.<Resources> create(Resources.class),
              GWT.<IplantDisplayStrings> create(IplantDisplayStrings.class),
-             GWT.<AppsMessages> create(AppsMessages.class),
-             GWT.<AppSearchHighlightAppearance> create(AppSearchHighlightAppearance.class));
+             GWT.<AppsMessages> create(AppsMessages.class));
     }
 
     AppHyperlinkCellDefaultAppearance(final Templates templates,
                                       final Resources resources,
                                       final IplantDisplayStrings iplantDisplayStrings,
-                                      final AppsMessages appsMessages,
-                                      final AppSearchHighlightAppearance highlightAppearance) {
+                                      final AppsMessages appsMessages) {
         this.templates = templates;
         this.resources = resources;
         this.iplantDisplayStrings = iplantDisplayStrings;
         this.appsMessages = appsMessages;
-        this.highlightAppearance = highlightAppearance;
         this.resources.css().ensureInjected();
     }
 
@@ -89,6 +86,9 @@ public class AppHyperlinkCellDefaultAppearance implements AppHyperlinkCell.AppHy
                        final String pattern,
                        final String textToolTip,
                        final String debugId) {
+        if(highlightAppearance == null) {
+            highlightAppearance = GWT.create(AppSearchHighlightAppearance.class);
+        }
         SafeHtml safeHtmlName = highlightAppearance.highlightText(value.getName(), pattern);
 
         sb.appendHtmlConstant("&nbsp;");

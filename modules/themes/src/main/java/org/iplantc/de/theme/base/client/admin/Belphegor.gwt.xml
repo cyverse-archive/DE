@@ -7,27 +7,35 @@
    </replace-with>
 
    <replace-with class="org.iplantc.de.theme.base.client.admin.apps.AdminAppsViewDefaultAppearance">
-      <when-type-is class="org.iplantc.de.admin.desktop.client.apps.views.AdminAppsView.AdminAppsViewAppearance" />
+      <when-type-is class="org.iplantc.de.admin.apps.client.AdminAppsView.AdminAppsViewAppearance" />
    </replace-with>
 
+    <replace-with class="org.iplantc.de.theme.base.client.admin.apps.categories.AdminCategoriesPresenterDefaultAppearance">
+        <when-type-is class="org.iplantc.de.admin.apps.client.AdminCategoriesView.Presenter.Appearance" />
+    </replace-with>
+
+    <replace-with class="org.iplantc.de.theme.base.client.admin.apps.grid.AdminAppsGridPresenterDefaultAppearance">
+        <when-type-is class="org.iplantc.de.admin.apps.client.AdminAppsGridView.Presenter.Appearance" />
+    </replace-with>
+
    <replace-with class="org.iplantc.de.theme.base.client.admin.apps.AppCategorizeViewDefaultAppearance">
-      <when-type-is class="org.iplantc.de.admin.desktop.client.apps.views.AppCategorizeView.AppCategorizeViewAppearance" />
+      <when-type-is class="org.iplantc.de.admin.apps.client.AppCategorizeView.AppCategorizeViewAppearance" />
    </replace-with>
 
    <replace-with class="org.iplantc.de.theme.base.client.admin.apps.AdminAppsToolbarDefaultAppearance">
-      <when-type-is class="org.iplantc.de.admin.desktop.client.apps.views.AdminAppsView.Toolbar.ToolbarAppearance" />
+      <when-type-is class="org.iplantc.de.admin.apps.client.AdminAppsToolbarView.ToolbarAppearance" />
    </replace-with>
 
    <replace-with class="org.iplantc.de.theme.base.client.admin.apps.AppEditorDefaultAppearance">
-      <when-type-is class="org.iplantc.de.admin.desktop.client.apps.views.editors.AppEditor.AppEditorAppearance" />
+      <when-type-is class="org.iplantc.de.admin.apps.client.views.editor.AppEditor.AppEditorAppearance" />
    </replace-with>
 
    <replace-with class="org.iplantc.de.theme.base.client.admin.apps.AppNameCellDefaultAppearance">
-      <when-type-is class="org.iplantc.de.admin.desktop.client.apps.views.cells.AppNameCell.AppNameCellAppearance" />
+      <when-type-is class="org.iplantc.de.admin.apps.client.views.grid.cells.AppNameCell.AppNameCellAppearance" />
    </replace-with>
 
    <replace-with class="org.iplantc.de.theme.base.client.admin.apps.AdminPresenterDefaultAppearance">
-      <when-type-is class="org.iplantc.de.admin.desktop.client.apps.views.AdminAppsView.AdminPresenter.AdminPresenterAppearance" />
+      <when-type-is class="org.iplantc.de.admin.apps.client.AdminAppsView.AdminPresenter.AdminPresenterAppearance" />
    </replace-with>
 
    <!-- RefGenome -->

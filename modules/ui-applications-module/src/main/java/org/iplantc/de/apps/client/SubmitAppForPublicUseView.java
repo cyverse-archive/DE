@@ -6,7 +6,6 @@ import org.iplantc.de.client.models.apps.AppRefLink;
 
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.resources.client.ImageResource;
-import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HasOneWidget;
 import com.google.gwt.user.client.ui.IsWidget;
@@ -68,17 +67,17 @@ public interface SubmitAppForPublicUseView extends IsWidget {
 
         ImageResource deleteIcon();
 
-        SafeHtml publicDescription();
+        String publicDescription();
 
         String publicAttach();
 
-        SafeHtml describeInputLbl();
+        String describeInputLbl();
 
-        SafeHtml describeParamLbl();
+        String describeParamLbl();
 
-        SafeHtml describeOutputLbl();
+        String describeOutputLbl();
 
-        SafeHtml publicCategories();
+        String publicCategories();
 
         String testDataWarn();
 

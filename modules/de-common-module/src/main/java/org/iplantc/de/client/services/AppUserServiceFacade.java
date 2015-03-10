@@ -58,7 +58,7 @@ public interface AppUserServiceFacade extends AppServiceFacade {
 
     void copyApp(String appId, AsyncCallback<String> callback);
 
-    void deleteAppFromWorkspace(String username,
+    void deleteAppsFromWorkspace(String username,
                                 String fullUsername,
                                 List<String> appIds,
                                 AsyncCallback<String> callback);

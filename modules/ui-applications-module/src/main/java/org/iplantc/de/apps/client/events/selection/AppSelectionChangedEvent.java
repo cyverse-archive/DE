@@ -5,6 +5,7 @@ package org.iplantc.de.apps.client.events.selection;
 
 import org.iplantc.de.client.models.apps.App;
 
+import com.google.common.base.Preconditions;
 import com.google.gwt.event.shared.EventHandler;
 import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.event.shared.HandlerRegistration;
@@ -30,6 +31,7 @@ public class AppSelectionChangedEvent extends GwtEvent<AppSelectionChangedEvent.
     private final List<App> appSelection;
 
     public AppSelectionChangedEvent(final List<App> appSelection) {
+        Preconditions.checkNotNull(appSelection);
         this.appSelection = appSelection;
     }
 

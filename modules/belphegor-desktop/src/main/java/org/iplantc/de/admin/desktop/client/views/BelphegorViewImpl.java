@@ -1,6 +1,6 @@
 package org.iplantc.de.admin.desktop.client.views;
 
-import org.iplantc.de.admin.desktop.client.apps.presenter.BelphegorAppsViewPresenterImpl;
+import org.iplantc.de.admin.apps.client.AdminAppsView;
 import org.iplantc.de.admin.desktop.client.models.BelphegorAdminProperties;
 import org.iplantc.de.admin.desktop.client.refGenome.RefGenomeView;
 import org.iplantc.de.admin.desktop.client.systemMessage.SystemMessageView;
@@ -46,7 +46,7 @@ public class BelphegorViewImpl extends Composite implements BelphegorView {
     @UiField(provided = true) BelphegorViewAppearance appearance;
 
     @Inject
-    public BelphegorViewImpl(final BelphegorAppsViewPresenterImpl presenter,
+    public BelphegorViewImpl(final AdminAppsView.AdminPresenter presenter,
                              final RefGenomeView.Presenter refGenPresenter,
                              final ToolRequestView.Presenter toolReqPresenter,
                              final SystemMessageView.Presenter sysMsgPresenter,
@@ -62,14 +62,14 @@ public class BelphegorViewImpl extends Composite implements BelphegorView {
         return new HtmlLayoutContainer(appearance.renderNorthContainer());
     }
 
-    private void init(final BelphegorAppsViewPresenterImpl presenter,
+    private void init(final AdminAppsView.AdminPresenter presenter,
                       final RefGenomeView.Presenter refGenPresenter,
                       final ToolRequestView.Presenter toolReqPresenter,
                       final SystemMessageView.Presenter sysMsgPresenter,
                       final BelphegorAdminProperties toolIntProps) {
         buildUserMenu();
         HasId betaGroup = CommonModelUtils.getInstance().createHasIdFromString(toolIntProps.getDefaultBetaAppCategoryId());
-        presenter.go(appsPanel, betaGroup, null);
+        presenter.go(appsPanel, betaGroup);
         refGenPresenter.go(refGenomePanel);
         toolReqPresenter.go(toolRequestPanel);
         sysMsgPresenter.go(systemMessagesPanel);

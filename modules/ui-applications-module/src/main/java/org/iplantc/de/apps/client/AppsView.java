@@ -5,7 +5,6 @@ import org.iplantc.de.client.models.IsMaskable;
 import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.models.apps.AppCategory;
 
-import com.google.gwt.dom.client.Element;
 import com.google.gwt.user.client.ui.HasOneWidget;
 import com.google.gwt.user.client.ui.IsWidget;
 
@@ -49,9 +48,5 @@ public interface AppsView extends IsWidget,
     void hideAppMenu();
 
     void hideWorkflowMenu();
-
-    AppCategory getAppCategoryFromElement(Element el);
-
-    App getAppFromElement(Element el);
 
 }

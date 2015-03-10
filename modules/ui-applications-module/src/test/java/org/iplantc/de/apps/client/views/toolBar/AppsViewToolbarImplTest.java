@@ -2,6 +2,7 @@ package org.iplantc.de.apps.client.views.toolBar;
 
 import org.iplantc.de.apps.client.AppsToolbarView;
 import org.iplantc.de.client.models.UserInfo;
+import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.models.apps.AppAutoBeanFactory;
 import org.iplantc.de.client.models.apps.proxy.AppLoadConfig;
 import org.iplantc.de.client.models.apps.proxy.AppSearchAutoBeanFactory;
@@ -11,6 +12,9 @@ import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 import com.google.gwtmockito.GxtMockitoTestRunner;
 import com.google.web.bindery.autobean.shared.AutoBean;
 
+import com.sencha.gxt.data.shared.loader.FilterPagingLoadConfig;
+import com.sencha.gxt.data.shared.loader.PagingLoadResult;
+import com.sencha.gxt.data.shared.loader.PagingLoader;
 import com.sencha.gxt.widget.core.client.button.TextButton;
 import com.sencha.gxt.widget.core.client.menu.MenuItem;
 
@@ -49,12 +53,13 @@ public class AppsViewToolbarImplTest {
     @Mock AutoBean<AppLoadConfig> mockLoadConfigAb;
     @Mock AppLoadConfig mockLoadConfig;
     @Mock AppsToolbarView.AppsToolbarAppearance mockAppearance;
+    @Mock PagingLoader<FilterPagingLoadConfig, PagingLoadResult<App>> mockLoader;
 
     private AppsViewToolbarImpl uut;
     @Before public void setUp() {
         when(mockAppSearchFactory.loadConfig()).thenReturn(mockLoadConfigAb);
         when(mockLoadConfigAb.as()).thenReturn(mockLoadConfig);
-        uut = new AppsViewToolbarImpl(mockAppService, mockAppSearchFactory, mockUserInfo, mockAppearance, mockAppFactory);
+        uut = new AppsViewToolbarImpl(mockUserInfo, mockAppearance, mockLoader);
         mockMenuItems(uut);
     }
 
