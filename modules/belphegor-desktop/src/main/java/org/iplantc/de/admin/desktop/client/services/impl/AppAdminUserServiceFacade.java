@@ -5,6 +5,8 @@ import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.models.apps.AppCategory;
 import org.iplantc.de.client.models.apps.AppDoc;
 import org.iplantc.de.client.models.apps.AppFeedback;
+import org.iplantc.de.client.models.apps.integration.AppTemplate;
+import org.iplantc.de.client.models.apps.proxy.AppListLoadResult;
 import org.iplantc.de.client.services.AppUserServiceFacade;
 
 import com.google.gwt.json.client.JSONObject;
@@ -24,7 +26,7 @@ import java.util.List;
 public class AppAdminUserServiceFacade implements AppUserServiceFacade {
 
     @Override
-    public void getApps(String appCategoryId, AsyncCallback<String> callback) {
+    public void getApps(HasId appCategory, AsyncCallback<List<App>> callback) {
         assert false : "Dummy Class to satisfy deferred-binding, this class not used in this module.";
     }
 
@@ -45,7 +47,7 @@ public class AppAdminUserServiceFacade implements AppUserServiceFacade {
     }
 
     @Override
-    public void searchApp(String search, AsyncCallback<String> callback) {
+    public void searchApp(String search, AsyncCallback<AppListLoadResult> callback) {
         assert false : "Dummy Class to satisfy deferred-binding, this class not used in this module.";
     }
 
@@ -71,7 +73,7 @@ public class AppAdminUserServiceFacade implements AppUserServiceFacade {
     }
 
     @Override
-    public void copyApp(String id, AsyncCallback<String> asyncCallback) {
+    public void copyApp(HasId id, AsyncCallback<AppTemplate> asyncCallback) {
         assert false : "Dummy Class to satisfy deferred-binding, this class not used in this module.";
     }
 

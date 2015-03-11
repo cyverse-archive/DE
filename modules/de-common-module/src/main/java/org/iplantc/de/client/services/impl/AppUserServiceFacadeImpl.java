@@ -6,8 +6,13 @@ import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.models.apps.AppCategory;
 import org.iplantc.de.client.models.apps.AppDoc;
 import org.iplantc.de.client.models.apps.AppFeedback;
+import org.iplantc.de.client.models.apps.AppList;
+import org.iplantc.de.client.models.apps.integration.AppTemplate;
+import org.iplantc.de.client.models.apps.integration.AppTemplateAutoBeanFactory;
+import org.iplantc.de.client.models.apps.proxy.AppListLoadResult;
 import org.iplantc.de.client.services.AppUserServiceFacade;
 import org.iplantc.de.client.services.converters.AppCategoryListCallbackConverter;
+import org.iplantc.de.client.services.converters.AppTemplateCallbackConverter;
 import org.iplantc.de.client.services.converters.AsyncCallbackConverter;
 import org.iplantc.de.client.util.DiskResourceUtil;
 import org.iplantc.de.client.util.JsonUtil;
@@ -53,6 +58,8 @@ public class AppUserServiceFacadeImpl implements AppUserServiceFacade {
     @Inject DiskResourceUtil diskResourceUtil;
     @Inject JsonUtil jsonUtil;
     @Inject AppUserServiceBeanFactory factory;
+    @Inject AppServiceAutoBeanFactory svcFactory;
+    @Inject AppTemplateAutoBeanFactory templateAutoBeanFactory;
 
     @Inject
     public AppUserServiceFacadeImpl(final DiscEnvApiService deServiceFacade,
@@ -76,10 +83,16 @@ public class AppUserServiceFacadeImpl implements AppUserServiceFacade {
     }
 
     @Override
-    public void getApps(String appCategoryId, AsyncCallback<String> callback) {
-        String address = CATEGORIES + "/" + appCategoryId;
+    public void getApps(HasId appCategory, AsyncCallback<List<App>> callback) {
+        String address = CATEGORIES + "/" + appCategory.getId();
         ServiceCallWrapper wrapper = new ServiceCallWrapper(address);
-        deServiceFacade.getServiceData(wrapper, callback);
+        deServiceFacade.getServiceData(wrapper, new AsyncCallbackConverter<String, List<App>>(callback) {
+            @Override
+            protected List<App> convertFrom(String object) {
+                List<App> apps = AutoBeanCodex.decode(svcFactory, AppList.class, object).as().getApps();
+                return apps;
+            }
+        });
     }
 
     @Override
@@ -228,13 +241,13 @@ public class AppUserServiceFacadeImpl implements AppUserServiceFacade {
     }
 
     @Override
-    public void copyApp(String appId, AsyncCallback<String> callback) {
-        String address = APPS + "/" + appId + "/copy";
+    public void copyApp(HasId app, AsyncCallback<AppTemplate> callback) {
+        String address = APPS + "/" + app.getId() + "/copy";
 
         // KLUDGE Have to send empty JSON body with POST request
         Splittable split = StringQuoter.createSplittable();
         ServiceCallWrapper wrapper = new ServiceCallWrapper(POST, address, split.getPayload());
-        deServiceFacade.getServiceData(wrapper, callback);
+        deServiceFacade.getServiceData(wrapper, new AppTemplateCallbackConverter(templateAutoBeanFactory, callback));
     }
 
     @Override
@@ -251,11 +264,21 @@ public class AppUserServiceFacadeImpl implements AppUserServiceFacade {
     }
 
     @Override
-    public void searchApp(String search, AsyncCallback<String> callback) {
+    public void searchApp(String search, AsyncCallback<AppListLoadResult> callback) {
         String address = APPS + "?search=" + URL.encodeQueryString(search);
 
         ServiceCallWrapper wrapper = new ServiceCallWrapper(GET, address);
-        deServiceFacade.getServiceData(wrapper, callback);
+        deServiceFacade.getServiceData(wrapper,  new AsyncCallbackConverter<String, AppListLoadResult>(callback) {
+            @Override
+            protected AppListLoadResult convertFrom(String object) {
+                List<App> apps = AutoBeanCodex.decode(svcFactory, AppList.class, object).as().getApps();
+                AutoBean<AppListLoadResult> loadResultAutoBean = svcFactory.loadResult();
+
+                final AppListLoadResult loadResult = loadResultAutoBean.as();
+                loadResult.setData(apps);
+                return loadResult;
+            }
+        });
     }
 
     @Override

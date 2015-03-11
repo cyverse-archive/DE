@@ -4,6 +4,7 @@ import org.iplantc.de.client.models.HasId;
 import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.models.apps.AppDoc;
 import org.iplantc.de.client.models.apps.AppFeedback;
+import org.iplantc.de.client.models.apps.integration.AppTemplate;
 
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -56,7 +57,7 @@ public interface AppUserServiceFacade extends AppServiceFacade {
      */
     void copyWorkflow(String workflowId, AsyncCallback<String> callback);
 
-    void copyApp(String appId, AsyncCallback<String> callback);
+    void copyApp(HasId app, AsyncCallback<AppTemplate> callback);
 
     void deleteAppsFromWorkspace(String username,
                                 String fullUsername,

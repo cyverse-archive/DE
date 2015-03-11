@@ -70,6 +70,7 @@ public class AppsGridPresenterImplTest {
     @Captor ArgumentCaptor<AsyncCallback<CommentsDialog>> commentsDlgCaptor;
 
     @Captor ArgumentCaptor<AsyncCallback<String>> stringCallbackCaptor;
+    @Captor ArgumentCaptor<AsyncCallback<List<App>>> appListCallbackCaptor;
     @Mock EventBus eventBusMock;
 
 
@@ -154,8 +155,17 @@ public class AppsGridPresenterImplTest {
 
         verify(viewMock).mask(anyString());
         verify(appearanceMock).getAppsLoadingMask();
-        verify(appServiceMock).getApps(eq(appCategoryMock.getId()), Matchers.<AsyncCallback<String>>any());
-        // FIXME Expand test when service sig changes, and there are no more autobean factories in the presenter.
+        verify(appServiceMock).getApps(eq(appCategoryMock), appListCallbackCaptor.capture());
+
+        List<App> resultList = Lists.newArrayList(mock(App.class));
+
+        /*** CALL METHOD UNDER TEST ***/
+        appListCallbackCaptor.getValue().onSuccess(resultList);
+
+        verify(listStoreMock).clear();
+        verify(listStoreMock).addAll(eq(resultList));
+        verify(viewMock).unmask();
+
         verifyNoMoreInteractions(appServiceMock,
                                  appearanceMock);
     }

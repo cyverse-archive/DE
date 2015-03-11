@@ -15,8 +15,6 @@ import org.iplantc.de.apps.client.gin.factory.AppsToolbarViewFactory;
 import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.client.models.apps.App;
-import org.iplantc.de.client.models.apps.AppAutoBeanFactory;
-import org.iplantc.de.client.models.apps.proxy.AppSearchAutoBeanFactory;
 import org.iplantc.de.client.services.AppUserServiceFacade;
 import org.iplantc.de.tools.requests.client.views.dialogs.NewToolRequestDialog;
 
@@ -46,10 +44,7 @@ import org.mockito.Mock;
 @RunWith(GwtMockitoTestRunner.class)
 public class AppsToolbarPresenterImplTest {
 
-    @Mock AppAutoBeanFactory appFactory;
-    @Mock AppSearchAutoBeanFactory appSearchFactory;
     @Mock AppUserServiceFacade appServiceMock;
-    @Mock AppsToolbarView.AppsToolbarAppearance appearanceMock;
     @Mock AppsToolbarViewFactory viewFactoryMock;
     @Mock AppsToolbarView viewMock;
     @Mock UserInfo userInfoMock;
@@ -66,9 +61,6 @@ public class AppsToolbarPresenterImplTest {
     @Before public void setUp() {
         when(viewFactoryMock.create(Matchers.<PagingLoader<FilterPagingLoadConfig, PagingLoadResult<App>>>any())).thenReturn(viewMock);
         uut = new AppsToolbarPresenterImpl(appServiceMock,
-                                           appSearchFactory,
-                                           appFactory,
-                                           appearanceMock,
                                            viewFactoryMock);
         uut.eventBus = eventBusMock;
         uut.userInfo = userInfoMock;

@@ -30,7 +30,7 @@ public class AdminAppsToolbarPresenterImpl implements AdminAppsToolbarView.Prese
                                   final AppAutoBeanFactory appFactory,// FIXME Get rid of this
                                   final AppsToolbarView.AppsToolbarAppearance appearance,
                                   final AdminAppsToolbarFactory viewFactory) {
-        proxy = new AppSearchRpcProxy(appService, factory, appFactory);
+        proxy = new AppSearchRpcProxy(appService);
         loader = new PagingLoader<>(proxy);
         this.view = viewFactory.create(loader);
         proxy.setHasHandlers(view);

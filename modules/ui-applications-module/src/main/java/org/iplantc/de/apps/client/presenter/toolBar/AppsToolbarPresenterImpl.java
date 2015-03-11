@@ -16,8 +16,6 @@ import org.iplantc.de.apps.client.presenter.toolBar.proxy.AppSearchRpcProxy;
 import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.client.models.apps.App;
-import org.iplantc.de.client.models.apps.AppAutoBeanFactory;
-import org.iplantc.de.client.models.apps.proxy.AppSearchAutoBeanFactory;
 import org.iplantc.de.client.services.AppUserServiceFacade;
 import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.commons.client.info.ErrorAnnouncementConfig;
@@ -59,12 +57,9 @@ public class AppsToolbarPresenterImpl implements AppsToolbarView.Presenter,
 
     @Inject
     AppsToolbarPresenterImpl(final AppUserServiceFacade appService,
-                             final AppSearchAutoBeanFactory factory,// FIXME Get rid of this
-                             final AppAutoBeanFactory appFactory,// FIXME Get rid of this
-                             final AppsToolbarView.AppsToolbarAppearance appearance,
                              final AppsToolbarViewFactory viewFactory) {
         this.appService = appService;
-        proxy = new AppSearchRpcProxy(appService, factory, appFactory);
+        proxy = new AppSearchRpcProxy(appService);
         loader = new PagingLoader<>(proxy);
         view = viewFactory.create(loader);
         proxy.setHasHandlers(view);

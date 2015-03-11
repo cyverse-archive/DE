@@ -16,10 +16,8 @@ import org.iplantc.de.apps.client.gin.factory.AppsGridViewFactory;
 import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.client.models.apps.App;
-import org.iplantc.de.client.models.apps.AppAutoBeanFactory;
 import org.iplantc.de.client.models.apps.AppCategory;
 import org.iplantc.de.client.models.apps.AppFeedback;
-import org.iplantc.de.client.models.apps.AppList;
 import org.iplantc.de.client.services.AppMetadataServiceFacade;
 import org.iplantc.de.client.services.AppUserServiceFacade;
 import org.iplantc.de.commons.client.ErrorHandler;
@@ -30,14 +28,11 @@ import org.iplantc.de.resources.client.messages.I18N;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.inject.client.AsyncProvider;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.inject.Inject;
-import com.google.web.bindery.autobean.shared.AutoBean;
-import com.google.web.bindery.autobean.shared.AutoBeanCodex;
 
 import com.sencha.gxt.data.shared.ListStore;
 import com.sencha.gxt.data.shared.event.StoreAddEvent;
@@ -180,20 +175,15 @@ public class AppsGridPresenterImpl implements AppsGridView.Presenter,
         view.mask(appearance.getAppsLoadingMask());
 
         final AppCategory appCategory = event.getAppCategorySelection().iterator().next();
-        // FIXME Update service signature
-        appUserService.getApps(appCategory.getId(), new AsyncCallback<String>() {
+        appUserService.getApps(appCategory, new AsyncCallback<List<App>>() {
             @Override
             public void onFailure(Throwable caught) {
-
+                ErrorHandler.post(caught);
+                view.unmask();
             }
 
             @Override
-            public void onSuccess(String result) {
-                // FIXME Update the service signature
-                AppAutoBeanFactory factory = GWT.create(AppAutoBeanFactory.class);
-                AutoBean<AppList> bean = AutoBeanCodex.decode(factory, AppList.class, result);
-                List<App> apps = bean.as().getApps();
-
+            public void onSuccess(final List<App> apps) {
                 listStore.clear();
                 listStore.addAll(apps);
 

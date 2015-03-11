@@ -1,9 +1,15 @@
 package org.iplantc.de.client.services;
 
 
+import org.iplantc.de.client.models.HasId;
+import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.models.apps.AppCategory;
+import org.iplantc.de.client.models.apps.AppList;
+import org.iplantc.de.client.models.apps.proxy.AppListLoadResult;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.web.bindery.autobean.shared.AutoBean;
+import com.google.web.bindery.autobean.shared.AutoBeanFactory;
 
 import com.sencha.gxt.data.shared.SortDir;
 
@@ -14,13 +20,19 @@ import java.util.List;
  */
 public interface AppServiceFacade {
 
+    interface AppServiceAutoBeanFactory extends AutoBeanFactory {
+        AutoBean<AppList> appList();
+
+        AutoBean<AppListLoadResult> loadResult();
+
+        AutoBean<HasId> hasId();
+    }
+
     /**
      * Retrieves list of templates in the given group.
-     *
-     * @param appCategoryId unique identifier for the group to search in for apps.
-     * @param callback called when the RPC call is complete.
-     */
-    void getApps(String appCategoryId, AsyncCallback<String> callback);
+     *  @param appCategory unique identifier for the group to search in for apps.
+     * @param callback called when the RPC call is complete.*/
+    void getApps(HasId appCategory, AsyncCallback<List<App>> callback);
 
     /**
      * Retrieves a paged listing of templates in the given group.
@@ -53,9 +65,9 @@ public interface AppServiceFacade {
     /**
      * Searches for all active Apps with a name or description that contains the given search term.
      *
-     * @param search
+     * @param search the search query
      * @param callback called when the RPC call is complete.
      */
-    void searchApp(String search, AsyncCallback<String> callback);
+    void searchApp(String search, AsyncCallback<AppListLoadResult> callback);
 
 }

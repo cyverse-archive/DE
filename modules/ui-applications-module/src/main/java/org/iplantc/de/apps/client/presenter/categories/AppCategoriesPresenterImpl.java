@@ -16,8 +16,8 @@ import org.iplantc.de.client.models.DEProperties;
 import org.iplantc.de.client.models.HasId;
 import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.models.apps.AppCategory;
+import org.iplantc.de.client.models.apps.integration.AppTemplate;
 import org.iplantc.de.client.services.AppUserServiceFacade;
-import org.iplantc.de.client.util.CommonModelUtils;
 import org.iplantc.de.client.util.JsonUtil;
 import org.iplantc.de.commons.client.ErrorHandler;
 
@@ -222,25 +222,22 @@ public class AppCategoriesPresenterImpl implements AppCategoriesView.Presenter,
         Preconditions.checkArgument(event.getApps().size() == 1);
         // JDS For now, assume only one app
         final App appToBeCopied = event.getApps().iterator().next();
-        // FIXME Update service signature
-        appService.copyApp(appToBeCopied.getId(), new AsyncCallback<String>() {
+        appService.copyApp(appToBeCopied, new AsyncCallback<AppTemplate>() {
             @Override
             public void onFailure(Throwable caught) {
                 ErrorHandler.post(caught);
             }
 
             @Override
-            public void onSuccess(String result) {
-                // FIXME Service should return an app template
+            public void onSuccess(final AppTemplate app) {
                 // Update the user's private apps group count.
-                HasId hasId = CommonModelUtils.getInstance().createHasIdFromString(StringQuoter.split(result).get("id").asString());
-                if (!hasId.getId().isEmpty()) {
+                if (!app.getId().isEmpty()) {
                     view.getTree().getSelectionModel().deselectAll();
                     AppCategory userCategory = findAppCategoryByName(USER_APPS_GROUP);
 
                     // Select "Apps Under Dev" to cause fetch of center
                     view.getTree().getSelectionModel().select(userCategory, false);
-                    eventBus.fireEvent(new EditAppEvent(hasId, false));
+                    eventBus.fireEvent(new EditAppEvent(app, false));
                 }
             }
         });

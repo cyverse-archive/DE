@@ -3,17 +3,13 @@ package org.iplantc.de.apps.client.presenter.toolBar.proxy;
 import org.iplantc.de.apps.client.events.AppSearchResultLoadEvent;
 import org.iplantc.de.apps.client.events.BeforeAppSearchEvent;
 import org.iplantc.de.client.models.apps.App;
-import org.iplantc.de.client.models.apps.AppAutoBeanFactory;
-import org.iplantc.de.client.models.apps.AppList;
 import org.iplantc.de.client.models.apps.proxy.AppListLoadResult;
-import org.iplantc.de.client.models.apps.proxy.AppSearchAutoBeanFactory;
 import org.iplantc.de.client.services.AppServiceFacade;
 import org.iplantc.de.commons.client.ErrorHandler;
 
 import com.google.common.base.Strings;
 import com.google.gwt.event.shared.HasHandlers;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.web.bindery.autobean.shared.AutoBeanCodex;
 
 import com.sencha.gxt.data.client.loader.RpcProxy;
 import com.sencha.gxt.data.shared.loader.FilterConfig;
@@ -35,15 +31,9 @@ public class AppSearchRpcProxy extends RpcProxy<FilterPagingLoadConfig, PagingLo
     private HasHandlers hasHandlers;
     private String lastQueryText = ""; //$NON-NLS-1$
     private final AppServiceFacade appService;
-    private final AppSearchAutoBeanFactory appSearchFactory;
-    private final AppAutoBeanFactory appFactory;
 
-    public AppSearchRpcProxy(final AppServiceFacade appService,
-                             final AppSearchAutoBeanFactory appSearchFactory,
-                             final AppAutoBeanFactory appFactory) {
+    public AppSearchRpcProxy(final AppServiceFacade appService) {
         this.appService = appService;
-        this.appSearchFactory = appSearchFactory;
-        this.appFactory = appFactory;
     }
 
     public String getLastQueryText() {
@@ -78,19 +68,15 @@ public class AppSearchRpcProxy extends RpcProxy<FilterPagingLoadConfig, PagingLo
         }
 
         // Call the searchApp service with this proxy's query.
-        // FIXME Update service call
-        appService.searchApp(lastQueryText, new AsyncCallback<String>() {
+        appService.searchApp(lastQueryText, new AsyncCallback<AppListLoadResult>() {
             @Override
-            public void onSuccess(String result) {
-                List<App> apps = AutoBeanCodex.decode(appFactory, AppList.class, result).as().getApps();
-
+            public void onSuccess(final AppListLoadResult loadResult) {
+                List<App> apps = loadResult.getData();
                 // FIXME Sorting should not be done here.
                 Collections.sort(apps, new AppComparator(searchText));
 
                 // Pass the App list to this proxy's load callback.
-                AppListLoadResult searchResult = appSearchFactory.dataLoadResult().as();
-                searchResult.setData(apps);
-                callback.onSuccess(searchResult);
+                callback.onSuccess(loadResult);
 
                 // Fire the search results load event.
                 if(hasHandlers != null){

@@ -13,6 +13,7 @@ import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.models.DEProperties;
 import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.models.apps.AppCategory;
+import org.iplantc.de.client.models.apps.integration.AppTemplate;
 import org.iplantc.de.client.services.AppUserServiceFacade;
 import org.iplantc.de.client.util.JsonUtil;
 
@@ -40,7 +41,6 @@ import org.mockito.Captor;
 import org.mockito.Matchers;
 import org.mockito.Mock;
 
-import java.lang.String;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -351,7 +351,7 @@ public class AppCategoriesPresenterImplTest {
         when(eventMock.getApps()).thenReturn(Lists.newArrayList(mockApp));
         uut.onCopyAppSelected(eventMock);
 
-        verify(appUserServiceMock).copyApp(eq(mockApp.getId()), Matchers.<AsyncCallback<String>>any());
+        verify(appUserServiceMock).copyApp(eq(mockApp), Matchers.<AsyncCallback<AppTemplate>>any());
     }
 
     @Test public void testOnCopyWorkflowSelected() {
