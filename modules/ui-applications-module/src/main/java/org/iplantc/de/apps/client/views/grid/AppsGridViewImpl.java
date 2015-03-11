@@ -3,6 +3,7 @@ package org.iplantc.de.apps.client.views.grid;
 import org.iplantc.de.apps.client.AppsGridView;
 import org.iplantc.de.apps.client.events.AppFavoritedEvent;
 import org.iplantc.de.apps.client.events.AppSearchResultLoadEvent;
+import org.iplantc.de.apps.client.events.BeforeAppSearchEvent;
 import org.iplantc.de.apps.client.events.selection.AppCategorySelectionChangedEvent;
 import org.iplantc.de.apps.client.events.selection.AppCommentSelectedEvent;
 import org.iplantc.de.apps.client.events.selection.AppFavoriteSelectedEvent;
@@ -11,14 +12,12 @@ import org.iplantc.de.apps.client.events.selection.AppNameSelectedEvent;
 import org.iplantc.de.apps.client.events.selection.AppRatingDeselected;
 import org.iplantc.de.apps.client.events.selection.AppRatingSelected;
 import org.iplantc.de.apps.client.events.selection.AppSelectionChangedEvent;
-import org.iplantc.de.apps.client.views.details.dialogs.AppDetailsDialog;
 import org.iplantc.de.apps.shared.AppsModule;
 import org.iplantc.de.client.models.apps.App;
 
 import com.google.common.base.Joiner;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.HandlerRegistration;
-import com.google.gwt.inject.client.AsyncProvider;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiFactory;
 import com.google.gwt.uibinder.client.UiField;
@@ -50,7 +49,6 @@ public class AppsGridViewImpl extends ContentPanel implements AppsGridView,
     @UiField(provided = true) ListStore<App> listStore;
 
     private final AppColumnModel acm; // Convenience class
-    @Inject AsyncProvider<AppDetailsDialog> appDetailsDlgAsyncProvider;
 
     private final AppsGridAppearance appearance;
     private String searchRegexPattern;
@@ -125,11 +123,17 @@ public class AppsGridViewImpl extends ContentPanel implements AppsGridView,
 
     @Override
     public void onAppSearchResultLoad(AppSearchResultLoadEvent event) {
+        unmask();
         searchRegexPattern = event.getSearchPattern();
         acm.setSearchRegexPattern(searchRegexPattern);
 
         int total = event.getResults() == null ? 0 : event.getResults().size();
         setHeadingText(appearance.searchAppResultsHeader(event.getSearchText(), total));
+    }
+
+    @Override
+    public void onBeforeAppSearch(BeforeAppSearchEvent event) {
+        mask(appearance.beforeAppSearchLoadingMask());
     }
 
     @Override

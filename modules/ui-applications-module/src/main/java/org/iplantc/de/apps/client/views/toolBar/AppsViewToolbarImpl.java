@@ -3,6 +3,7 @@ package org.iplantc.de.apps.client.views.toolBar;
 import static org.iplantc.de.apps.client.events.AppSearchResultLoadEvent.TYPE;
 import org.iplantc.de.apps.client.AppsToolbarView;
 import org.iplantc.de.apps.client.events.AppSearchResultLoadEvent.AppSearchResultLoadEventHandler;
+import org.iplantc.de.apps.client.events.BeforeAppSearchEvent;
 import org.iplantc.de.apps.client.events.selection.*;
 import org.iplantc.de.apps.client.views.submit.dialog.SubmitAppForPublicDialog;
 import org.iplantc.de.apps.shared.AppsModule.Ids;
@@ -11,8 +12,6 @@ import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.commons.client.ErrorHandler;
 
 import com.google.common.base.Preconditions;
-import com.google.common.base.Predicates;
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.logical.shared.SelectionEvent;
@@ -72,22 +71,26 @@ public class AppsViewToolbarImpl extends Composite implements AppsToolbarView {
     @UiField(provided = true) AppsToolbarAppearance appearance;
     private static AppsViewToolbarUiBinder uiBinder = GWT.create(AppsViewToolbarUiBinder.class);
     private final PagingLoader<FilterPagingLoadConfig, PagingLoadResult<App>> loader;
-    private final UserInfo userInfo;
-    private List<App> currentSelection;
+    @Inject UserInfo userInfo;
+    protected List<App> currentSelection = Lists.newArrayList();
 
     @Inject
-    AppsViewToolbarImpl(final UserInfo userInfo,
-                        final AppsToolbarAppearance appearance,
+    AppsViewToolbarImpl(final AppsToolbarAppearance appearance,
                         @Assisted final PagingLoader<FilterPagingLoadConfig, PagingLoadResult<App>> loader) {
-        this.userInfo = userInfo;
         this.appearance = appearance;
         this.loader = loader;
         initWidget(uiBinder.createAndBindUi(this));
     }
 
+    //<editor-fold desc="Handler Registrations">
     @Override
     public HandlerRegistration addAppSearchResultLoadEventHandler(AppSearchResultLoadEventHandler handler) {
         return addHandler(handler, TYPE);
+    }
+
+    @Override
+    public HandlerRegistration addBeforeAppSearchEventHandler(BeforeAppSearchEvent.BeforeAppSearchEventHandler handler) {
+        return addHandler(handler, BeforeAppSearchEvent.TYPE);
     }
 
     @Override
@@ -134,6 +137,7 @@ public class AppsViewToolbarImpl extends Composite implements AppsToolbarView {
     public HandlerRegistration addRunAppSelectedHandler(RunAppSelected.RunAppSelectedHandler handler) {
         return addHandler(handler, RunAppSelected.TYPE);
     }
+    //</editor-fold>
 
     @Override
     public void hideAppMenu() {
@@ -152,17 +156,18 @@ public class AppsViewToolbarImpl extends Composite implements AppsToolbarView {
     //<editor-fold desc="Selection Handlers">
     @Override
     public void onAppCategorySelectionChanged(AppCategorySelectionChangedEvent event) {
-        app_menu.setEnabled(false);
-        wf_menu.setEnabled(false);
+        if(!event.getAppCategorySelection().isEmpty()) {
+            appSearch.clear();
+        }
     }
 
     @Override
-    public void onAppSelectionChanged(AppSelectionChangedEvent event) {
+    public void onAppSelectionChanged(final AppSelectionChangedEvent event) {
         app_menu.setEnabled(true);
         wf_menu.setEnabled(true);
 
-        // Filter out any null items
-        currentSelection = Lists.newArrayList(Iterables.filter(event.getAppSelection(), Predicates.notNull()));
+        currentSelection.clear();
+        currentSelection.addAll(event.getAppSelection());
 
         boolean deleteAppEnabled, editAppEnabled, submitAppEnabled, copyAppEnabled, appRunEnabled;
         boolean deleteWfEnabled, editWfEnabled, submitWfEnabled, copyWfEnabled, wfRunEnabled;
@@ -196,12 +201,14 @@ public class AppsViewToolbarImpl extends Composite implements AppsToolbarView {
                 editAppEnabled = isSingleStep && isOwner;
                 submitAppEnabled = isSingleStep && isRunnable && !isAppPublic;
                 copyAppEnabled = isSingleStep;
+                // App run menu item is left enabled so user can get error anouncement
                 appRunEnabled = isSingleStep && !isAppDisabled;
 
                 deleteWfEnabled = isMultiStep && !isAppPublic;
-                editWfEnabled = isMultiStep && !isAppPublic;
-                submitWfEnabled = isMultiStep && !isAppPublic;
+                editWfEnabled = isMultiStep && !isAppPublic && isOwner;
+                submitWfEnabled = isMultiStep && isRunnable &&!isAppPublic;
                 copyWfEnabled = isMultiStep;
+                // Wf run menu item is left enabled so user can get error anouncement
                 wfRunEnabled = isMultiStep && !isAppDisabled;
                 break;
             default:
@@ -259,7 +266,7 @@ public class AppsViewToolbarImpl extends Composite implements AppsToolbarView {
         appSearch.ensureDebugId(baseID + Ids.MENU_ITEM_SEARCH);
     }
 
-    private boolean containsSingleStepApp(List<App> apps) {
+    boolean containsSingleStepApp(List<App> apps) {
         for (App app : apps) {
             if (app.getStepCount() == 1) {
                 return true;
@@ -268,7 +275,7 @@ public class AppsViewToolbarImpl extends Composite implements AppsToolbarView {
         return false;
     }
 
-    private boolean containsMultiStepApp(List<App> apps) {
+    boolean containsMultiStepApp(List<App> apps) {
         for (App app : apps) {
             if (app.getStepCount() > 1) {
                 return true;
@@ -277,7 +284,7 @@ public class AppsViewToolbarImpl extends Composite implements AppsToolbarView {
         return false;
     }
 
-    private boolean allAppsPrivate(List<App> apps) {
+    boolean allAppsPrivate(List<App> apps) {
         for (App app : apps) {
             if (app.isPublic()) {
                 return false;

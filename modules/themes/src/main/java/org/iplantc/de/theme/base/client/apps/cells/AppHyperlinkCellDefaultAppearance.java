@@ -14,6 +14,7 @@ import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.safehtml.client.SafeHtmlTemplates;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 
 /**
  * @author jstroot
@@ -34,33 +35,36 @@ public class AppHyperlinkCellDefaultAppearance implements AppHyperlinkCell.AppHy
     public interface Templates extends SafeHtmlTemplates {
 
         @SafeHtmlTemplates.Template("<span name='{3}' class='{0}' qtip='{2}'>{1}</span>")
-        SafeHtml cell(String textClassName, String name, String textToolTip, String elementName);
+        SafeHtml cell(String textClassName, SafeHtml name, String textToolTip, String elementName);
 
         @SafeHtmlTemplates.Template("<span id='{4}' name='{3}' class='{0}' qtip='{2}'>{1}</span>")
-        SafeHtml debugCell(String textClassName, String name, String textToolTip, String elementName, String debugId);
+        SafeHtml debugCell(String textClassName, SafeHtml name, String textToolTip, String elementName, String debugId);
     }
 
     private final Templates templates;
     protected final Resources resources;
     private final IplantDisplayStrings iplantDisplayStrings;
     private final AppsMessages appsMessages;
-    private AppSearchHighlightAppearance highlightAppearance;
+    private final AppSearchHighlightAppearance highlightAppearance;
 
     public AppHyperlinkCellDefaultAppearance() {
         this(GWT.<Templates> create(Templates.class),
              GWT.<Resources> create(Resources.class),
              GWT.<IplantDisplayStrings> create(IplantDisplayStrings.class),
-             GWT.<AppsMessages> create(AppsMessages.class));
+             GWT.<AppsMessages> create(AppsMessages.class),
+             GWT.<AppSearchHighlightAppearance> create(AppSearchHighlightAppearance.class));
     }
 
     AppHyperlinkCellDefaultAppearance(final Templates templates,
                                       final Resources resources,
                                       final IplantDisplayStrings iplantDisplayStrings,
-                                      final AppsMessages appsMessages) {
+                                      final AppsMessages appsMessages,
+                                      final AppSearchHighlightAppearance highlightAppearance) {
         this.templates = templates;
         this.resources = resources;
         this.iplantDisplayStrings = iplantDisplayStrings;
         this.appsMessages = appsMessages;
+        this.highlightAppearance = highlightAppearance;
         this.resources.css().ensureInjected();
     }
 
@@ -86,10 +90,7 @@ public class AppHyperlinkCellDefaultAppearance implements AppHyperlinkCell.AppHy
                        final String pattern,
                        final String textToolTip,
                        final String debugId) {
-        if(highlightAppearance == null) {
-            highlightAppearance = GWT.create(AppSearchHighlightAppearance.class);
-        }
-        String highlightText = highlightAppearance.highlightText(value.getName(), pattern);
+        SafeHtml highlightText = SafeHtmlUtils.fromTrustedString(highlightAppearance.highlightText(value.getName(), pattern));
 
         sb.appendHtmlConstant("&nbsp;");
         if(DebugInfo.isDebugIdEnabled()

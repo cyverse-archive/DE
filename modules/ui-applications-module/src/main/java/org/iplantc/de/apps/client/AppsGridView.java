@@ -2,6 +2,7 @@ package org.iplantc.de.apps.client;
 
 import org.iplantc.de.apps.client.events.AppFavoritedEvent;
 import org.iplantc.de.apps.client.events.AppSearchResultLoadEvent;
+import org.iplantc.de.apps.client.events.BeforeAppSearchEvent;
 import org.iplantc.de.apps.client.events.selection.*;
 import org.iplantc.de.client.models.IsMaskable;
 import org.iplantc.de.client.models.apps.App;
@@ -35,8 +36,11 @@ public interface AppsGridView extends IsWidget,
                                       AppRatingDeselected.HasAppRatingDeselectedHandlers,
                                       AppSearchResultLoadEvent.AppSearchResultLoadEventHandler,
                                       AppCategorySelectionChangedEvent.AppCategorySelectionChangedEventHandler,
-                                      AppFavoritedEvent.HasAppFavoritedEventHandlers {
+                                      AppFavoritedEvent.HasAppFavoritedEventHandlers,
+                                      BeforeAppSearchEvent.BeforeAppSearchEventHandler {
     interface AppsGridAppearance {
+
+        String beforeAppSearchLoadingMask();
 
         String getAppsLoadingMask();
 
@@ -62,7 +66,8 @@ public interface AppsGridView extends IsWidget,
                                 StoreRemoveEvent.HasStoreRemoveHandler<App>,
                                 StoreUpdateEvent.HasStoreUpdateHandlers<App>,
                                 AppFavoritedEvent.HasAppFavoritedEventHandlers,
-                                DeleteAppsSelected.DeleteAppsSelectedHandler {
+                                DeleteAppsSelected.DeleteAppsSelectedHandler,
+                                RunAppSelected.RunAppSelectedHandler {
 
         App getSelectedApp();
 

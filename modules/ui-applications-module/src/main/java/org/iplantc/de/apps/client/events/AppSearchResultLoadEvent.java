@@ -2,6 +2,7 @@ package org.iplantc.de.apps.client.events;
 
 import org.iplantc.de.client.models.apps.App;
 
+import com.google.common.base.Preconditions;
 import com.google.gwt.event.shared.EventHandler;
 import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.event.shared.HandlerRegistration;
@@ -34,6 +35,7 @@ public class AppSearchResultLoadEvent extends GwtEvent<AppSearchResultLoadEvent.
     public AppSearchResultLoadEvent(final String searchText,
                                     final String searchPattern,
                                     final List<App> results) {
+        Preconditions.checkNotNull(results);
         this.searchText = searchText;
         this.searchPattern = searchPattern;
         this.results = results;

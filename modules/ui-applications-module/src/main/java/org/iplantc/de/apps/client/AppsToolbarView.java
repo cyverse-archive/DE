@@ -1,6 +1,7 @@
 package org.iplantc.de.apps.client;
 
 import org.iplantc.de.apps.client.events.AppSearchResultLoadEvent;
+import org.iplantc.de.apps.client.events.BeforeAppSearchEvent;
 import org.iplantc.de.apps.client.events.selection.*;
 
 import com.google.gwt.event.shared.HasHandlers;
@@ -17,6 +18,7 @@ public interface AppsToolbarView extends IsWidget,
                                          HasHandlers,
                                          AppSelectionChangedEvent.AppSelectionChangedEventHandler,
                                          AppCategorySelectionChangedEvent.AppCategorySelectionChangedEventHandler,
+                                         BeforeAppSearchEvent.HasBeforeAppSearchEventHandlers,
                                          AppSearchResultLoadEvent.HasAppSearchResultLoadEventHandlers,
                                          RunAppSelected.HasRunAppSelectedHandlers,
                                          CopyAppSelected.HasCopyAppSelectedHandlers,

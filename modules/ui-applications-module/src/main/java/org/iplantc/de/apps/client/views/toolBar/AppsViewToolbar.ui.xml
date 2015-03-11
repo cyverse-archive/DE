@@ -34,6 +34,7 @@
                 <button:menu>
                     <menu:Menu>
                         <menu:MenuItem ui:field="appRun"
+                                       enabled="false"
                                        text="{appearance.run}"
                                        icon="{appearance.runIcon}"/>
                         <menu:MenuItem ui:field="createNewApp"
@@ -43,15 +44,19 @@
                                        text="{appearance.requestTool}"
                                        icon="{appearance.addIcon}"/>
                         <menu:MenuItem ui:field="copyApp"
+                                       enabled="false"
                                        text="{appearance.copy}"
                                        icon="{appearance.copyIcon}"/>
                         <menu:MenuItem ui:field="editApp"
+                                       enabled="false"
                                        text="{appearance.editMenuItem}"
                                        icon="{appearance.editIcon}"/>
                         <menu:MenuItem ui:field="deleteApp"
+                                       enabled="false"
                                        text="{appearance.delete}"
                                        icon="{appearance.deleteIcon}"/>
                         <menu:MenuItem ui:field="submitApp"
+                                       enabled="false"
                                        text="{appearance.shareMenuItem}"
                                        icon="{appearance.submitForPublicIcon}"
                                        toolTipConfig="{submitToolTip}"/>
@@ -65,21 +70,26 @@
                 <button:menu>
                     <menu:Menu>
                         <menu:MenuItem ui:field="wfRun"
+                                       enabled="false"
                                        text="{appearance.useWf}"
                                        icon="{appearance.runIcon}"/>
                         <menu:MenuItem ui:field="createWorkflow"
                                        text="{appearance.newApp}"
                                        icon="{appearance.addIcon}"/>
                         <menu:MenuItem ui:field="copyWf"
+                                       enabled="false"
                                        text="{appearance.copy}"
                                        icon="{appearance.copyIcon}"/>
                         <menu:MenuItem ui:field="editWf"
+                                       enabled="false"
                                        text="{appearance.editMenuItem}"
                                        icon="{appearance.editIcon}"/>
                         <menu:MenuItem ui:field="deleteWf"
+                                       enabled="false"
                                        text="{appearance.delete}"
                                        icon="{appearance.deleteIcon}"/>
                         <menu:MenuItem ui:field="submitWf"
+                                       enabled="false"
                                        text="{appearance.shareMenuItem}"
                                        icon="{appearance.submitForPublicIcon}"
                                        toolTipConfig="{submitToolTip}"/>

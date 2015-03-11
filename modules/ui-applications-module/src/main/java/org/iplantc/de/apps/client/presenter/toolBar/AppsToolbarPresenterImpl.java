@@ -64,7 +64,7 @@ public class AppsToolbarPresenterImpl implements AppsToolbarView.Presenter,
                              final AppsToolbarView.AppsToolbarAppearance appearance,
                              final AppsToolbarViewFactory viewFactory) {
         this.appService = appService;
-        proxy = new AppSearchRpcProxy(appService, factory, appFactory, appearance);
+        proxy = new AppSearchRpcProxy(appService, factory, appFactory);
         loader = new PagingLoader<>(proxy);
         view = viewFactory.create(loader);
         proxy.setHasHandlers(view);

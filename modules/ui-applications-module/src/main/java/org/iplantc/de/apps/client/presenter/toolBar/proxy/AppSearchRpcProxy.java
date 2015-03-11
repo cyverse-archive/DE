@@ -1,8 +1,7 @@
 package org.iplantc.de.apps.client.presenter.toolBar.proxy;
 
-import org.iplantc.de.apps.client.AppsToolbarView;
 import org.iplantc.de.apps.client.events.AppSearchResultLoadEvent;
-import org.iplantc.de.client.models.IsMaskable;
+import org.iplantc.de.apps.client.events.BeforeAppSearchEvent;
 import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.models.apps.AppAutoBeanFactory;
 import org.iplantc.de.client.models.apps.AppList;
@@ -29,7 +28,7 @@ import java.util.List;
  * An RpcProxy for an AppLoadConfig that will call the searchApp service, then process the JSON results
  * into an AppListLoadResult.
  * 
- * @author psarando
+ * @author psarando, jstroot
  * 
  */
 public class AppSearchRpcProxy extends RpcProxy<FilterPagingLoadConfig, PagingLoadResult<App>> {
@@ -38,17 +37,13 @@ public class AppSearchRpcProxy extends RpcProxy<FilterPagingLoadConfig, PagingLo
     private final AppServiceFacade appService;
     private final AppSearchAutoBeanFactory appSearchFactory;
     private final AppAutoBeanFactory appFactory;
-    private final AppsToolbarView.AppsToolbarAppearance appearance;
-    private IsMaskable maskable;
 
     public AppSearchRpcProxy(final AppServiceFacade appService,
                              final AppSearchAutoBeanFactory appSearchFactory,
-                             final AppAutoBeanFactory appFactory,
-                             final AppsToolbarView.AppsToolbarAppearance appearance) {
+                             final AppAutoBeanFactory appFactory) {
         this.appService = appService;
         this.appSearchFactory = appSearchFactory;
         this.appFactory = appFactory;
-        this.appearance = appearance;
     }
 
     public String getLastQueryText() {
@@ -59,16 +54,9 @@ public class AppSearchRpcProxy extends RpcProxy<FilterPagingLoadConfig, PagingLo
         this.hasHandlers = hasHandlers;
     }
 
-    public void setMaskable(IsMaskable maskable){
-        this.maskable = maskable;
-    }
-
     @Override
     public void load(FilterPagingLoadConfig loadConfig,
             final AsyncCallback<PagingLoadResult<App>> callback) {
-        if(maskable != null){
-           maskable.mask(appearance.appSearchLoadingMask());
-        }
         // Cache the query text.
         lastQueryText = ""; //$NON-NLS-1$
 
@@ -85,9 +73,12 @@ public class AppSearchRpcProxy extends RpcProxy<FilterPagingLoadConfig, PagingLo
 
         // Cache the search text for this callback; used to sort the results.
         final String searchText = lastQueryText;
-        final AppSearchRpcProxy source = this;
+        if(hasHandlers != null){
+            hasHandlers.fireEvent(new BeforeAppSearchEvent());
+        }
 
         // Call the searchApp service with this proxy's query.
+        // FIXME Update service call
         appService.searchApp(lastQueryText, new AsyncCallback<String>() {
             @Override
             public void onSuccess(String result) {
@@ -100,13 +91,9 @@ public class AppSearchRpcProxy extends RpcProxy<FilterPagingLoadConfig, PagingLo
                 AppListLoadResult searchResult = appSearchFactory.dataLoadResult().as();
                 searchResult.setData(apps);
                 callback.onSuccess(searchResult);
-                if(maskable != null){
-                    maskable.unmask();
-                }
 
                 // Fire the search results load event.
                 if(hasHandlers != null){
-                    // FIXME Create search regex pattern here
                     // The search service accepts * and ? wildcards, so convert them for the pattern group.
                     String pattern = "(" + searchText.replace("*", ".*").replace('?', '.') + ")";
                     hasHandlers.fireEvent(new AppSearchResultLoadEvent(searchText, pattern, apps));
@@ -118,9 +105,10 @@ public class AppSearchRpcProxy extends RpcProxy<FilterPagingLoadConfig, PagingLo
                 // TODO Add user error message or remove post here?
                 ErrorHandler.post(caught);
                 callback.onFailure(caught);
-
-                if(maskable != null){
-                    maskable.unmask();
+                if(hasHandlers != null){
+                    // The search service accepts * and ? wildcards, so convert them for the pattern group.
+                    String pattern = "(" + searchText.replace("*", ".*").replace('?', '.') + ")";
+                    hasHandlers.fireEvent(new AppSearchResultLoadEvent(searchText, pattern, Collections.<App>emptyList()));
                 }
             }
         });

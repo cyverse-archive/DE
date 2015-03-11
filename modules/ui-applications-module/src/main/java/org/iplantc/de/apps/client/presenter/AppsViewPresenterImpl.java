@@ -51,6 +51,12 @@ public class AppsViewPresenterImpl implements AppsView.Presenter {
         toolbarPresenter.getView().addDeleteAppsSelectedHandler(appsGridPresenter);
         toolbarPresenter.getView().addCopyAppSelectedHandler(categoriesPresenter);
         toolbarPresenter.getView().addCopyWorkflowSelectedHandler(categoriesPresenter);
+        toolbarPresenter.getView().addRunAppSelectedHandler(appsGridPresenter);
+        toolbarPresenter.getView().addAppSearchResultLoadEventHandler(categoriesPresenter);
+        toolbarPresenter.getView().addAppSearchResultLoadEventHandler(appsGridPresenter);
+        toolbarPresenter.getView().addBeforeAppSearchEventHandler(appsGridPresenter.getView());
+        toolbarPresenter.getView().addAppSearchResultLoadEventHandler(appsGridPresenter.getView());
+
     }
 
     @Override

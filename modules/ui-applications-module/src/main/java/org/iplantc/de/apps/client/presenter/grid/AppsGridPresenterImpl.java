@@ -11,6 +11,7 @@ import org.iplantc.de.apps.client.events.selection.AppNameSelectedEvent;
 import org.iplantc.de.apps.client.events.selection.AppRatingDeselected;
 import org.iplantc.de.apps.client.events.selection.AppRatingSelected;
 import org.iplantc.de.apps.client.events.selection.DeleteAppsSelected;
+import org.iplantc.de.apps.client.events.selection.RunAppSelected;
 import org.iplantc.de.apps.client.gin.factory.AppsGridViewFactory;
 import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.models.UserInfo;
@@ -107,16 +108,14 @@ public class AppsGridPresenterImpl implements AppsGridView.Presenter,
         }
     }
     //</editor-fold>
-
-    @Inject IplantAnnouncer announcer;
-    @Inject EventBus eventBus;
-    @Inject AppUserServiceFacade appUserService;
-    @Inject UserInfo userInfo;
-    @Inject AsyncProvider<CommentsDialog> commentsDialogProvider;
-    @Inject AppMetadataServiceFacade metadataFacade;
-    @Inject AppsGridView.AppsGridAppearance appearance;
-
     final ListStore<App> listStore;
+    @Inject IplantAnnouncer announcer;
+    @Inject AppUserServiceFacade appUserService;
+    @Inject AppsGridView.AppsGridAppearance appearance;
+    @Inject AsyncProvider<CommentsDialog> commentsDialogProvider;
+    @Inject EventBus eventBus;
+    @Inject AppMetadataServiceFacade metadataFacade;
+    @Inject UserInfo userInfo;
     private final AppsGridView view;
     private App desiredSelectedApp;
 
@@ -158,6 +157,10 @@ public class AppsGridPresenterImpl implements AppsGridView.Presenter,
         throw new UnsupportedOperationException("Firing events on this presenter is not allowed.");
     }
 
+    public App getDesiredSelectedApp() {
+        return desiredSelectedApp;
+    }
+
     @Override
     public App getSelectedApp() {
         return view.getGrid().getSelectionModel().getSelectedItem();
@@ -168,13 +171,9 @@ public class AppsGridPresenterImpl implements AppsGridView.Presenter,
         return view;
     }
 
-    public App getDesiredSelectedApp() {
-        return desiredSelectedApp;
-    }
-
     @Override
     public void onAppCategorySelectionChanged(AppCategorySelectionChangedEvent event) {
-        if(event.getAppCategorySelection().isEmpty()){
+        if (event.getAppCategorySelection().isEmpty()) {
             return;
         }
         Preconditions.checkArgument(event.getAppCategorySelection().size() == 1);
@@ -202,7 +201,7 @@ public class AppsGridPresenterImpl implements AppsGridView.Presenter,
 
                     view.getGrid().getSelectionModel().select(getDesiredSelectedApp(), false);
 
-                } else {
+                } else if(listStore.size() > 0) {
                     // Select first app
                     view.getGrid().getSelectionModel().select(listStore.get(0), false);
                 }
@@ -250,14 +249,7 @@ public class AppsGridPresenterImpl implements AppsGridView.Presenter,
 
     @Override
     public void onAppNameSelected(AppNameSelectedEvent event) {
-        final App app = event.getSelectedApp();
-        if (app.isRunnable()) {
-            if (!app.isDisabled()) {
-                eventBus.fireEvent(new RunAppEvent(app));
-            }
-        } else {
-            announcer.schedule(new ErrorAnnouncementConfig(I18N.ERROR.appLaunchWithoutToolError()));
-        }
+        doRunApp(event.getSelectedApp());
     }
 
     @Override
@@ -277,8 +269,8 @@ public class AppsGridPresenterImpl implements AppsGridView.Presenter,
 
     @Override
     public void onAppSearchResultLoad(AppSearchResultLoadEvent event) {
-
-        // Tell view to update header
+        listStore.clear();
+        listStore.addAll(event.getResults());
     }
 
     @Override
@@ -301,14 +293,29 @@ public class AppsGridPresenterImpl implements AppsGridView.Presenter,
 
                                                    @Override
                                                    public void onSuccess(String result) {
-                                                       for(App app : event.getAppsToBeDeleted()){
+                                                       for (App app : event.getAppsToBeDeleted()) {
                                                            listStore.remove(app);
                                                        }
                                                    }
                                                });
     }
 
+    @Override
+    public void onRunAppSelected(RunAppSelected event) {
+        doRunApp(event.getApp());
+    }
+
     public void setDesiredSelectedApp(final App desiredSelectedApp) {
         this.desiredSelectedApp = desiredSelectedApp;
+    }
+
+    void doRunApp(final App app) {
+        if (app.isRunnable()) {
+            if (!app.isDisabled()) {
+                eventBus.fireEvent(new RunAppEvent(app));
+            }
+        } else {
+            announcer.schedule(new ErrorAnnouncementConfig(I18N.ERROR.appLaunchWithoutToolError()));
+        }
     }
 }

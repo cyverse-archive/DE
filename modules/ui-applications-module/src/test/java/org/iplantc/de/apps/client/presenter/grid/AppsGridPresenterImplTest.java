@@ -2,6 +2,7 @@ package org.iplantc.de.apps.client.presenter.grid;
 
 import org.iplantc.de.apps.client.AppsGridView;
 import org.iplantc.de.apps.client.events.AppFavoritedEvent;
+import org.iplantc.de.apps.client.events.AppSearchResultLoadEvent;
 import org.iplantc.de.apps.client.events.RunAppEvent;
 import org.iplantc.de.apps.client.events.selection.AppCategorySelectionChangedEvent;
 import org.iplantc.de.apps.client.events.selection.AppCommentSelectedEvent;
@@ -10,6 +11,7 @@ import org.iplantc.de.apps.client.events.selection.AppNameSelectedEvent;
 import org.iplantc.de.apps.client.events.selection.AppRatingDeselected;
 import org.iplantc.de.apps.client.events.selection.AppRatingSelected;
 import org.iplantc.de.apps.client.events.selection.DeleteAppsSelected;
+import org.iplantc.de.apps.client.events.selection.RunAppSelected;
 import org.iplantc.de.apps.client.gin.factory.AppsGridViewFactory;
 import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.models.UserInfo;
@@ -253,6 +255,24 @@ public class AppsGridPresenterImplTest {
         verifyZeroInteractions(appServiceMock);
     }
 
+    @Test public void runAppEventFired_onRunAppSelected() {
+        RunAppSelected eventMock = mock(RunAppSelected.class);
+        App appMock = mock(App.class);
+        when(eventMock.getApp()).thenReturn(appMock);
+        when(appMock.isRunnable()).thenReturn(true);
+        when(appMock.isDisabled()).thenReturn(false);
+
+        /*** CALL METHOD UNDER TEST ***/
+        uut.onRunAppSelected(eventMock);
+
+        verify(eventMock).getApp();
+
+        verify(eventBusMock).fireEvent(any(RunAppEvent.class));
+
+        verifyNoMoreInteractions(eventBusMock);
+        verifyZeroInteractions(appServiceMock);
+    }
+
     @Test public void verifyAppServiceCalled_onAppRatingDeselected() {
         AppRatingDeselected eventMock = mock(AppRatingDeselected.class);
         App appMock = mock(App.class);
@@ -286,6 +306,17 @@ public class AppsGridPresenterImplTest {
         verifyZeroInteractions(eventBusMock);
     }
 
+    @Test public void verifyStoreClearedAndResultsAdded_onAppSearchResultLoad() {
+        AppSearchResultLoadEvent eventMock = mock(AppSearchResultLoadEvent.class);
+        List<App> results = Lists.newArrayList(mock(App.class), mock(App.class));
+        when(eventMock.getResults()).thenReturn(results);
+
+        /*** CALL METHOD UNDER TEST ***/
+        uut.onAppSearchResultLoad(eventMock);
+
+        verify(listStoreMock).clear();
+        verify(listStoreMock).addAll(eq(results));
+    }
 
     @Test public void verifyAppServiceCalled_onDeleteAppsSelected() {
         DeleteAppsSelected eventMock = mock(DeleteAppsSelected.class);
@@ -322,6 +353,8 @@ public class AppsGridPresenterImplTest {
                                  mock1,
                                  mock2);
     }
+
+
 
 
 

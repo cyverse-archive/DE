@@ -60,10 +60,15 @@ public class AppsViewPresenterImplTest {
         verify(toolbarViewMock).addDeleteAppsSelectedHandler(gridPresenterMock);
         verify(toolbarViewMock).addCopyAppSelectedHandler(categoriesPresenterMock);
         verify(toolbarViewMock).addCopyWorkflowSelectedHandler(categoriesPresenterMock);
+        verify(toolbarViewMock).addRunAppSelectedHandler(gridPresenterMock);
+        verify(toolbarViewMock).addAppSearchResultLoadEventHandler(categoriesPresenterMock);
+        verify(toolbarViewMock).addAppSearchResultLoadEventHandler(gridPresenterMock);
+        verify(toolbarViewMock).addBeforeAppSearchEventHandler(gridViewMock);
+        verify(toolbarViewMock).addAppSearchResultLoadEventHandler(gridViewMock);
 
         verify(categoriesPresenterMock, times(3)).getView();
-        verify(gridPresenterMock, times(3)).getView();
-        verify(toolbarPresenterMock, times(5)).getView();
+        verify(gridPresenterMock, times(5)).getView();
+        verify(toolbarPresenterMock, times(10)).getView();
 
 
         verifyNoMoreInteractions(viewFactoryMock,
