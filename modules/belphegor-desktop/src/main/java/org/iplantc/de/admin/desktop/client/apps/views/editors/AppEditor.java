@@ -2,11 +2,13 @@ package org.iplantc.de.admin.desktop.client.apps.views.editors;
 
 import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.models.apps.AppDoc;
+import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.commons.client.util.RegExp;
 import org.iplantc.de.commons.client.validators.BasicEmailValidator3;
 import org.iplantc.de.commons.client.views.dialogs.IPlantDialog;
 import org.iplantc.de.commons.client.widgets.IPlantAnchor;
 
+import com.google.common.base.Strings;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.Editor;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
@@ -164,10 +166,19 @@ public class AppEditor implements Editor<App>, IsWidget {
     @UiHandler("saveButton")
     void onSaveClick(SelectEvent event) {
         App app = driver.flush();
-        if (!driver.hasErrors()) {
+        if (!driver.hasErrors() && validDoc()) {
             window.hide();
             doc.setDocumentation(appDoc.getCurrentValue());
             presenter.onAppEditorSave(app, doc);
+        }
+    }
+
+    private boolean validDoc() {
+        if (Strings.isNullOrEmpty(appDoc.getValue()) && Strings.isNullOrEmpty(wikiUrl.getValue())) {
+            ErrorHandler.post("You must enter a either a valid URL for App documentation or supply the documentation in Markdown using the templates.");
+            return false;
+        } else {
+            return true;
         }
     }
 

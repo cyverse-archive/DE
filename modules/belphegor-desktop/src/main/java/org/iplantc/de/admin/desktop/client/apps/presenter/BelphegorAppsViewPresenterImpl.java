@@ -587,6 +587,7 @@ public class BelphegorAppsViewPresenterImpl extends AppsViewPresenterImpl implem
         public void onSuccess(String result) {
             // update app in the grid
             view.getAppsGrid().getStore().update(app);
+            IplantAnnouncer.getInstance().schedule(new SuccessAnnouncementConfig("App updated!"));
         }
 
         @Override
