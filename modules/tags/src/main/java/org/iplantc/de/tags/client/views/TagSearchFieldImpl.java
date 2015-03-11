@@ -152,7 +152,7 @@ public class TagSearchFieldImpl extends Composite implements TagsView.TagSearchF
             public void onBeforeLoad(BeforeLoadEvent<TagSuggestionLoadConfig> event) {
                 String query = tagSearchCbo.getText();
                 if (query != null) {
-                    event.getLoadConfig().setQuery(query);
+                    event.getLoadConfig().setQuery(query.trim());
                 }
             }
         });
