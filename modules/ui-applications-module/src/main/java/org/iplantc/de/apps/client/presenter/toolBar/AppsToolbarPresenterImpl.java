@@ -9,6 +9,7 @@ import org.iplantc.de.apps.client.events.EditWorkflowEvent;
 import org.iplantc.de.apps.client.events.selection.CreateNewAppSelected;
 import org.iplantc.de.apps.client.events.selection.CreateNewWorkflowSelected;
 import org.iplantc.de.apps.client.events.selection.EditAppSelected;
+import org.iplantc.de.apps.client.events.selection.EditWorkflowSelected;
 import org.iplantc.de.apps.client.events.selection.RequestToolSelected;
 import org.iplantc.de.apps.client.gin.factory.AppsToolbarViewFactory;
 import org.iplantc.de.apps.client.presenter.toolBar.proxy.AppSearchRpcProxy;
@@ -44,7 +45,7 @@ public class AppsToolbarPresenterImpl implements AppsToolbarView.Presenter,
                                                  CreateNewAppSelected.CreateNewAppSelectedHandler,
                                                  CreateNewWorkflowSelected.CreateNewWorkflowSelectedHandler,
                                                  EditAppSelected.EditAppSelectedHandler,
-                                                 RequestToolSelected.RequestToolSelectedHandler {
+                                                 RequestToolSelected.RequestToolSelectedHandler, EditWorkflowSelected.EditWorkflowSelectedHandler {
 
     @Inject IplantAnnouncer announcer;
     @Inject EventBus eventBus;
@@ -54,7 +55,7 @@ public class AppsToolbarPresenterImpl implements AppsToolbarView.Presenter,
     private final AppUserServiceFacade appService;
     private final AppsToolbarView view;
     private final AppSearchRpcProxy proxy;
-    final PagingLoader<FilterPagingLoadConfig, PagingLoadResult<App>> loader;
+    protected PagingLoader<FilterPagingLoadConfig, PagingLoadResult<App>> loader;
 
     @Inject
     AppsToolbarPresenterImpl(final AppUserServiceFacade appService,
@@ -72,6 +73,7 @@ public class AppsToolbarPresenterImpl implements AppsToolbarView.Presenter,
         view.addCreateNewWorkflowSelectedHandler(this);
         view.addEditAppSelectedHandler(this);
         view.addRequestToolSelectedHandler(this);
+        view.addEditWorkflowSelectedHandler(this);
     }
 
     @Override
@@ -102,27 +104,30 @@ public class AppsToolbarPresenterImpl implements AppsToolbarView.Presenter,
     @Override
     public void onEditAppSelected(EditAppSelected event) {
         final App app = event.getApp();
-        if (app.getStepCount() > 1) {
-            appService.editWorkflow(app.getId(), new AsyncCallback<String>() {
 
-                @Override
-                public void onFailure(Throwable caught) {
-                    ErrorHandler.post(I18N.ERROR.failToRetrieveApp(), caught);
-                    announcer.schedule(new ErrorAnnouncementConfig(I18N.ERROR.failToRetrieveApp()));
-                }
+        boolean isAppPublished = app.isPublic();
+        boolean isCurrentUserAppIntegrator = userInfo.getEmail().equals(app.getIntegratorEmail());
 
-                @Override
-                public void onSuccess(String result) {
-                    Splittable serviceWorkflowJson = StringQuoter.split(result);
-                    eventBus.fireEvent(new EditWorkflowEvent(app, serviceWorkflowJson));
-                }
-            });
-        } else {
-            boolean isAppPublished = app.isPublic();
-            boolean isCurrentUserAppIntegrator = userInfo.getEmail().equals(app.getIntegratorEmail());
+        eventBus.fireEvent(new EditAppEvent(app, isAppPublished && isCurrentUserAppIntegrator));
+    }
 
-            eventBus.fireEvent(new EditAppEvent(app, isAppPublished && isCurrentUserAppIntegrator));
-        }
+    @Override
+    public void onEditWorkflowSelected(final EditWorkflowSelected event) {
+        final App workFlow = event.getWorkFlow();
+        appService.editWorkflow(workFlow.getId(), new AsyncCallback<String>() {
+
+            @Override
+            public void onFailure(Throwable caught) {
+                ErrorHandler.post(I18N.ERROR.failToRetrieveApp(), caught);
+                announcer.schedule(new ErrorAnnouncementConfig(I18N.ERROR.failToRetrieveApp()));
+            }
+
+            @Override
+            public void onSuccess(String result) {
+                Splittable serviceWorkflowJson = StringQuoter.split(result);
+                eventBus.fireEvent(new EditWorkflowEvent(workFlow, serviceWorkflowJson));
+            }
+        });
     }
 
     @Override

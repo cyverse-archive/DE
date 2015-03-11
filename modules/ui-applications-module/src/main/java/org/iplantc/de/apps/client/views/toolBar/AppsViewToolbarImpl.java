@@ -121,6 +121,11 @@ public class AppsViewToolbarImpl extends Composite implements AppsToolbarView {
     }
 
     @Override
+    public HandlerRegistration addEditWorkflowSelectedHandler(EditWorkflowSelected.EditWorkflowSelectedHandler handler) {
+        return addHandler(handler, EditWorkflowSelected.TYPE);
+    }
+
+    @Override
     public HandlerRegistration addRequestToolSelectedHandler(RequestToolSelected.RequestToolSelectedHandler handler) {
         return addHandler(handler, RequestToolSelected.TYPE);
     }
@@ -328,10 +333,16 @@ public class AppsViewToolbarImpl extends Composite implements AppsToolbarView {
         msgBox.show();
     }
 
-    @UiHandler({"editApp", "editWf"})
-    void editClicked(SelectionEvent<Item> event) {
+    @UiHandler("editApp")
+    void editAppClicked(SelectionEvent<Item> event) {
         Preconditions.checkState(currentSelection.size() == 1);
         fireEvent(new EditAppSelected(currentSelection.iterator().next()));
+    }
+
+    @UiHandler("editWf")
+    void editWfClicked(SelectionEvent<Item> event) {
+        Preconditions.checkState(currentSelection.size() == 1);
+        fireEvent(new EditWorkflowSelected(currentSelection.iterator().next()));
     }
 
     @UiHandler("requestTool")
