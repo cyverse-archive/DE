@@ -72,7 +72,7 @@ public interface AppUserServiceFacade extends AppServiceFacade {
     /**
      * Get app details
      */
-    void getAppDetails(HasId app, AsyncCallback<App> callback);
+    void getAppDetails(App app, AsyncCallback<App> callback);
 
     void getAppDoc(HasId app, AsyncCallback<AppDoc> callback);
 

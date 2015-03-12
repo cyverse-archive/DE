@@ -99,7 +99,7 @@ public class AppAdminUserServiceFacade implements AppUserServiceFacade {
     }
 
     @Override
-    public void getAppDetails(HasId app, AsyncCallback<App> callback) {
+    public void getAppDetails(App app, AsyncCallback<App> callback) {
         assert false : "Dummy Class to satisfy deferred-binding, this class not used in this module.";
     }
 

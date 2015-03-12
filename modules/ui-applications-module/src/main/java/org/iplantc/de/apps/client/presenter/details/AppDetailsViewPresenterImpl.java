@@ -4,7 +4,6 @@ import org.iplantc.de.apps.client.AppDetailsView;
 import org.iplantc.de.apps.client.events.selection.AppDetailsDocSelected;
 import org.iplantc.de.apps.client.events.selection.SaveMarkdownSelected;
 import org.iplantc.de.apps.client.gin.factory.AppDetailsViewFactory;
-import org.iplantc.de.apps.client.views.details.dialogs.AppDetailsDialog;
 import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.models.apps.AppDoc;
 import org.iplantc.de.client.services.AppUserServiceFacade;
@@ -30,21 +29,35 @@ public class AppDetailsViewPresenterImpl implements AppDetailsView.Presenter,
     private class AppDetailsCallback implements AsyncCallback<App> {
         private final HasOneWidget widget;
         private final AppUserServiceFacade appUserService;
+        private final Provider<AppDetailsViewFactory> viewFactoryProvider;
+        private final String searchRegexPattern;
+        private final List<List<String>> appGroupHierarchies;
 
         public AppDetailsCallback(final HasOneWidget widget,
-                                  final AppUserServiceFacade appUserService) {
+                                  final AppUserServiceFacade appUserService,
+                                  final Provider<AppDetailsViewFactory> viewFactoryProvider,
+                                  final String searchRegexPattern,
+                                  final List<List<String>> appGroupHierarchies) {
             this.widget = widget;
             this.appUserService = appUserService;
+            this.viewFactoryProvider = viewFactoryProvider;
+            this.searchRegexPattern = searchRegexPattern;
+            this.appGroupHierarchies = appGroupHierarchies;
         }
 
         @Override
         public void onFailure(Throwable caught) {
+            // FIXME This will leave the details parent widget open (typically a dlg).
             ErrorHandler.post(caught);
         }
 
         @Override
         public void onSuccess(final App result) {
 
+            view = viewFactoryProvider.get().create(result, searchRegexPattern, appGroupHierarchies);
+            view.addAppDetailsDocSelectedHandler(AppDetailsViewPresenterImpl.this);
+            view.addSaveMarkdownSelectedHandler(AppDetailsViewPresenterImpl.this);
+            widget.setWidget(view);
             if(!Strings.isNullOrEmpty(result.getWikiUrl())){
                 return;
             }
@@ -64,7 +77,6 @@ public class AppDetailsViewPresenterImpl implements AppDetailsView.Presenter,
     }
 
     @Inject AppUserServiceFacade appUserService;
-    @Inject Provider<AppDetailsDialog> appInfoDialogProvider;
     @Inject Provider<AppDetailsViewFactory> viewFactoryProvider;
     private AppDetailsView view;
     private AppDoc appDoc;
@@ -80,12 +92,12 @@ public class AppDetailsViewPresenterImpl implements AppDetailsView.Presenter,
                    final List<List<String>> appGroupHierarchies) {
         Preconditions.checkState(view == null, "Cannot call go(..) more than once");
 
-        view = viewFactoryProvider.get().create(app, searchRegexPattern, appGroupHierarchies);
-        view.addAppDetailsDocSelectedHandler(this);
-        view.addSaveMarkdownSelectedHandler(this);
-        // Fetch app details, Callback chains with grabbing app doc
-        appUserService.getAppDetails(app, new AppDetailsCallback(widget, appUserService));
-        widget.setWidget(view);
+        // View is instantiated after service call success.
+        appUserService.getAppDetails(app, new AppDetailsCallback(widget,
+                                                                 appUserService,
+                                                                 viewFactoryProvider,
+                                                                 searchRegexPattern,
+                                                                 appGroupHierarchies));
     }
 
     @Override

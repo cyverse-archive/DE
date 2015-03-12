@@ -88,7 +88,7 @@ public class AppUserServiceFacadeStub implements AppUserServiceFacade {
     }
 
     @Override
-    public void getAppDetails(HasId app, AsyncCallback<App> callback) {
+    public void getAppDetails(App app, AsyncCallback<App> callback) {
 
     }
 

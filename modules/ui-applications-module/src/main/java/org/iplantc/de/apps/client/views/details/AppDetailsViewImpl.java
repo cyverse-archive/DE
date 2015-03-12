@@ -58,13 +58,16 @@ public class AppDetailsViewImpl extends Composite implements AppDetailsView,
         @Override
         public ToolDetailsView create(int index) {
             final ToolDetailsView toolDetailsView = new ToolDetailsView();
-            toolsContainer.insert(toolDetailsView, index);
+            toolsContainer.insert(toolDetailsView.asWidget(), index);
+            if(index == 0){
+                toolsContainer.setActiveWidget(toolDetailsView.asWidget());
+            }
             return toolDetailsView;
         }
 
         @Override
         public void dispose(ToolDetailsView subEditor) {
-            subEditor.removeFromParent();
+            subEditor.asWidget().removeFromParent();
         }
     }
 
@@ -108,14 +111,16 @@ public class AppDetailsViewImpl extends Composite implements AppDetailsView,
                        @Assisted final List<List<String>> appGroupHierarchies) {
         this.appearance = appearance;
         this.app = app;
-        this.tools = ListEditor.of(new ToolEditorSource(toolsContainer));
 
         // TODO Use appearance to write group hierarchies
         /* TODO Create a LeafValueEditor which highlights text as it is bound
          *        This will apply to name, email, description
          */
         initWidget(BINDER.createAndBindUi(this));
+        this.tools = ListEditor.of(new ToolEditorSource(toolsContainer));
+
         editorDriver.initialize(this);
+        editorDriver.edit(app);
     }
 
     @Override

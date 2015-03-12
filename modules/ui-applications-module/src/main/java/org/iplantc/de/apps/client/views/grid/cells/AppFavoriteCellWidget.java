@@ -1,7 +1,6 @@
 package org.iplantc.de.apps.client.views.grid.cells;
 
 import org.iplantc.de.apps.client.events.selection.AppFavoriteSelectedEvent;
-import org.iplantc.de.apps.client.views.grid.cells.AppFavoriteCell;
 import org.iplantc.de.client.models.apps.App;
 
 import com.google.gwt.cell.client.Cell;
@@ -34,6 +33,7 @@ public class AppFavoriteCellWidget extends CellWidget<App> implements AppFavorit
         super(cell, app, keyProvider);
         this.cell = cell;
         this.cell.setHasHandlers(this);
+        setSize("16px", "16px");
     }
 
     @Override

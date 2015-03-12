@@ -4,21 +4,43 @@ import org.iplantc.de.client.models.tool.Tool;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.Editor;
+import com.google.gwt.editor.client.LeafValueEditor;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiFactory;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiTemplate;
 import com.google.gwt.user.client.ui.InlineLabel;
+import com.google.gwt.user.client.ui.IsWidget;
 
-import com.sencha.gxt.widget.core.client.Composite;
 import com.sencha.gxt.widget.core.client.ContentPanel;
+import com.sencha.gxt.widget.core.client.Header;
 import com.sencha.gxt.widget.core.client.container.AccordionLayoutContainer.AccordionLayoutAppearance;
 
 /**
  * FIXME Ensure search highlighting
  * @author jstroot
  */
-public class ToolDetailsView extends Composite implements Editor<Tool> {
+public class ToolDetailsView implements IsWidget,
+                                        Editor<Tool> {
+
+    static class HeaderEditor implements LeafValueEditor<String> {
+
+        private final Header header;
+
+        public HeaderEditor(final Header header) {
+            this.header = header;
+        }
+
+        @Override
+        public void setValue(String value) {
+            header.setText(value);
+        }
+
+        @Override
+        public String getValue() {
+            return header.getText();
+        }
+    }
 
     @UiTemplate("ToolDetailsView.ui.xml")
     interface ToolsDetailsViewUiBinder extends UiBinder<ContentPanel, ToolDetailsView> { }
@@ -30,14 +52,15 @@ public class ToolDetailsView extends Composite implements Editor<Tool> {
     @UiField InlineLabel description;
     @UiField InlineLabel location;
     @UiField InlineLabel version;
-    /**
-     * FIXME Simple editor to bind to cp header
-     */
     @UiField ContentPanel cp;
+
+    @Path("name")
+    HeaderEditor headerEditor;
 
 
     public ToolDetailsView() {
-        initWidget(BINDER.createAndBindUi(this));
+        BINDER.createAndBindUi(this);
+        headerEditor = new HeaderEditor(cp.getHeader());
     }
 
     @UiFactory
@@ -45,5 +68,10 @@ public class ToolDetailsView extends Composite implements Editor<Tool> {
         final ContentPanel contentPanel = new ContentPanel(GWT.<AccordionLayoutAppearance>create(AccordionLayoutAppearance.class));
         contentPanel.setAnimCollapse(false);
         return contentPanel;
+    }
+
+    @Override
+    public ContentPanel asWidget() {
+        return cp;
     }
 }

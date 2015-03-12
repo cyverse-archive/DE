@@ -30,6 +30,7 @@ import com.google.inject.Inject;
 import com.google.web.bindery.autobean.shared.AutoBean;
 import com.google.web.bindery.autobean.shared.AutoBeanCodex;
 import com.google.web.bindery.autobean.shared.AutoBeanFactory;
+import com.google.web.bindery.autobean.shared.AutoBeanUtils;
 import com.google.web.bindery.autobean.shared.Splittable;
 import com.google.web.bindery.autobean.shared.impl.StringQuoter;
 
@@ -126,15 +127,17 @@ public class AppUserServiceFacadeImpl implements AppUserServiceFacade {
     }
 
     @Override
-    public void getAppDetails(HasId hasId, AsyncCallback<App> callback) {
-        String address = APPS + "/" + hasId.getId() + "/details";
+    public void getAppDetails(final App app, AsyncCallback<App> callback) {
+        String address = APPS + "/" + app.getId() + "/details";
 
         ServiceCallWrapper wrapper = new ServiceCallWrapper(GET, address);
 
         deServiceFacade.getServiceData(wrapper, new AsyncCallbackConverter<String, App>(callback) {
             @Override
             protected App convertFrom(String object) {
-                AutoBean<App> appAutoBean = AutoBeanCodex.decode(factory, App.class, object);
+                Splittable split = StringQuoter.split(object);
+                AutoBean<App> appAutoBean = AutoBeanUtils.getAutoBean(app);
+                AutoBeanCodex.decodeInto(split, appAutoBean);
                 return appAutoBean.as();
             }
         });
