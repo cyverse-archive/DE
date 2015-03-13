@@ -10,6 +10,10 @@ import com.google.gwt.safehtml.shared.SafeHtml;
 public interface AppsMessages extends Messages {
     String appDeleteWarning();
 
+    String appLaunchWithoutToolError();
+
+    String appRemoveFailure();
+
     String clickAppInfo();
 
     String describeInputLbl();
@@ -21,6 +25,8 @@ public interface AppsMessages extends Messages {
     String didNotLike();
 
     String editMenuItem();
+
+    String failToRetrieveApp();
 
     String favServiceFailure();
 
@@ -40,6 +46,10 @@ public interface AppsMessages extends Messages {
 
     String lovedIt();
 
+    String makePublicFail();
+
+    String makePublicSuccessMessage(String appName);
+
     String newApp();
 
     String optionalParametersEmptyText();
@@ -57,6 +67,8 @@ public interface AppsMessages extends Messages {
     String publicName();
 
     String publicNameNote();
+
+    String publicSubmissionForm();
 
     String publicSubmissionFormAttach();
 

@@ -1371,24 +1371,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     String makePublic();
 
     /**
-     * Translated "Your app could not be made public.".
-     *
-     * @return translated "Your app could not be made public."
-     */
-    @DefaultMessage("Your app could not be made public.")
-    @Key("makePublicFail")
-    String makePublicFail();
-
-    /**
-     * Translated "Your app is now public." .
-     * 
-     * @return translated "Your app is now public."
-     */
-    @DefaultMessage("Your app is now public.")
-    @Key("makePublicSuccessMessage")
-    String makePublicSuccessMessage(String appName);
-
-    /**
      * Translated "App has been made public.".
      *
      * @return translated "App has been made public."
@@ -1999,15 +1981,6 @@ public interface IplantDisplayStrings extends com.google.gwt.i18n.client.Message
     @DefaultMessage("String")
     @Key("propertyCategoryString")
     String propertyCategoryString();
-
-    /**
-     * Translated "Public Submission Form".
-     *
-     * @return translated "Public Submission Form"
-     */
-    @DefaultMessage("Public Submission Form")
-    @Key("publicSubmissionForm")
-    String publicSubmissionForm();
 
     /**
      * Translated "Your workflow has been successfully published into your workspace.".

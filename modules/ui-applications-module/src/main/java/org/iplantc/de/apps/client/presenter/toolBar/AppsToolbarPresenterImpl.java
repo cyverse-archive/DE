@@ -20,7 +20,6 @@ import org.iplantc.de.client.services.AppUserServiceFacade;
 import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.commons.client.info.ErrorAnnouncementConfig;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
-import org.iplantc.de.resources.client.messages.I18N;
 import org.iplantc.de.tools.requests.client.views.dialogs.NewToolRequestDialog;
 
 import com.google.gwt.event.shared.HandlerRegistration;
@@ -37,23 +36,25 @@ import com.sencha.gxt.data.shared.loader.PagingLoader;
 
 /**
  * TODO Search will stay here until it is necessary to fold it out
+ *
  * @author jstroot
  */
 public class AppsToolbarPresenterImpl implements AppsToolbarView.Presenter,
                                                  CreateNewAppSelected.CreateNewAppSelectedHandler,
                                                  CreateNewWorkflowSelected.CreateNewWorkflowSelectedHandler,
                                                  EditAppSelected.EditAppSelectedHandler,
-                                                 RequestToolSelected.RequestToolSelectedHandler, EditWorkflowSelected.EditWorkflowSelectedHandler {
+                                                 RequestToolSelected.RequestToolSelectedHandler,
+                                                 EditWorkflowSelected.EditWorkflowSelectedHandler {
 
-    @Inject IplantAnnouncer announcer;
-    @Inject EventBus eventBus;
-    @Inject UserInfo userInfo;
-    @Inject Provider<NewToolRequestDialog> newToolRequestDialogProvider;
-
-    private final AppUserServiceFacade appService;
-    private final AppsToolbarView view;
-    private final AppSearchRpcProxy proxy;
     protected PagingLoader<FilterPagingLoadConfig, PagingLoadResult<App>> loader;
+    @Inject IplantAnnouncer announcer;
+    @Inject AppsToolbarView.AppsToolbarAppearance appearance;
+    @Inject EventBus eventBus;
+    @Inject Provider<NewToolRequestDialog> newToolRequestDialogProvider;
+    @Inject UserInfo userInfo;
+    private final AppUserServiceFacade appService;
+    private final AppSearchRpcProxy proxy;
+    private final AppsToolbarView view;
 
     @Inject
     AppsToolbarPresenterImpl(final AppUserServiceFacade appService,
@@ -109,12 +110,12 @@ public class AppsToolbarPresenterImpl implements AppsToolbarView.Presenter,
     @Override
     public void onEditWorkflowSelected(final EditWorkflowSelected event) {
         final App workFlow = event.getWorkFlow();
-        appService.editWorkflow(workFlow.getId(), new AsyncCallback<String>() {
+        appService.editWorkflow(workFlow, new AsyncCallback<String>() {
 
             @Override
             public void onFailure(Throwable caught) {
-                ErrorHandler.post(I18N.ERROR.failToRetrieveApp(), caught);
-                announcer.schedule(new ErrorAnnouncementConfig(I18N.ERROR.failToRetrieveApp()));
+                ErrorHandler.post(appearance.failToRetrieveApp(), caught);
+                announcer.schedule(new ErrorAnnouncementConfig(appearance.failToRetrieveApp()));
             }
 
             @Override

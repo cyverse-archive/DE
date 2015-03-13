@@ -68,6 +68,7 @@ public class AppCategoriesPresenterImplTest {
     @Mock Store<App> mockStore;
 
     @Captor ArgumentCaptor<AsyncCallback<List<AppCategory>>> appCategoriesCaptor;
+    @Captor ArgumentCaptor<AsyncCallback<App>> appCallbackCaptor;
 
 
     @Mock AsyncProvider<AppDetailsDialog> mockDetailsProvider;
@@ -96,7 +97,8 @@ public class AppCategoriesPresenterImplTest {
         verify(viewFactoryMock).create(eq(treeStoreMock), eq(uut));
         verify(treeStoreMock).addSortInfo(Matchers.<Store.StoreSortInfo<AppCategory>>any());
 
-        verify(eventBusMock).addHandler(Matchers.<GwtEvent.Type<AppCategoriesPresenterImpl>>any(), eq(uut));
+        verify(eventBusMock, times(2)).addHandler(Matchers.<GwtEvent.Type<AppCategoriesPresenterImpl>>any(), eq(uut));
+
 
         verifyNoMoreInteractions(treeStoreMock,
                                  viewMock,
@@ -190,28 +192,43 @@ public class AppCategoriesPresenterImplTest {
     }
 
     /**
-     * Verify that the Favorites category is refetched (i.e. re-selected) when
-     * the current category is the Favorites category.
+     * Verify that the Favorites category count is updated when
+     * the current category is NOT the Favorites category.
      */
     @Test public void favoritesCategoryReselected_onAppFavorited() {
-
+        final AppCategory mockFavoriteCategory = mock(AppCategory.class);
+        when(mockFavoriteCategory.getAppCount()).thenReturn(2);
+        final AppCategoriesPresenterImpl spy = spy(new AppCategoriesPresenterImpl(treeStoreMock,
+                                                                                  propsMock,
+                                                                                  jsonUtilMock,
+                                                                                  eventBusMock,
+                                                                                  viewFactoryMock){
+            @Override
+            AppCategory findAppCategoryByName(String name) {
+                return mockFavoriteCategory;
+            }
+        });
+        // For book-keeping, for construction of non-spy and spy uut's
+        verify(eventBusMock, times(4)).addHandler(Matchers.<GwtEvent.Type<AppCategoriesPresenterImpl>>any(), Matchers.<AppCategoriesPresenterImpl>any());
         // Set Favorites category as current category
-        uut.FAVORITES = "Favorites";
+        spy.FAVORITES = "Favorites";
         AppCategory appCategoryMock = mock(AppCategory.class);
-        when(appCategoryMock.getName()).thenReturn(uut.FAVORITES);
+        when(appCategoryMock.getName()).thenReturn("not favorite");
         when(selectionModelMock.getSelectedItem()).thenReturn(appCategoryMock);
 
         AppFavoritedEvent mockEvent = mock(AppFavoritedEvent.class);
-        when(mockEvent.getApp()).thenReturn(mock(App.class));
+        final App appMock = mock(App.class);
+        when(mockEvent.getApp()).thenReturn(appMock);
+
 
         /*** CALL METHOD UNDER TEST ***/
-        uut.onAppFavorited(mockEvent);
+        spy.onAppFavorited(mockEvent);
 
-        verify(selectionModelMock).getSelectedItem();
-        verify(selectionModelMock).deselectAll();
-        verify(selectionModelMock).select(eq(appCategoryMock), eq(false));
+        verify(spy).findAppCategoryByName(eq(spy.FAVORITES));
+        verify(appMock).isFavorite();
 
-        verifyNoMoreInteractions(selectionModelMock);
+        verifyNoMoreInteractions(eventBusMock);
+        verifyZeroInteractions(appUserServiceMock);
     }
 
     /**
@@ -270,12 +287,13 @@ public class AppCategoriesPresenterImplTest {
      * on App info selection.
      */
     @Test public void detailsDlgShown_onAppInfoSelected() {
-     final AppCategoriesPresenterImpl spy = spy(new AppCategoriesPresenterImpl(treeStoreMock,
+        final AppCategoriesPresenterImpl spy = spy(new AppCategoriesPresenterImpl(treeStoreMock,
                                                                                   propsMock,
                                                                                   jsonUtilMock,
                                                                                   eventBusMock,
                                                                                   viewFactoryMock));
         spy.appDetailsDlgAsyncProvider = mockDetailsProvider;
+        spy.appService = appUserServiceMock;
 
         // Set up mock event
         AppInfoSelectedEvent eventMock = mock(AppInfoSelectedEvent.class);
@@ -300,14 +318,22 @@ public class AppCategoriesPresenterImplTest {
         AppDetailsDialog mockDlg = mock(AppDetailsDialog.class);
         detailsCallbackCaptor.getValue().onSuccess(mockDlg);
 
+        verify(appUserServiceMock).getAppDetails(eq(appMock), appCallbackCaptor.capture());
+
+        /*** CALL METHOD UNDER TEST ***/
+        appCallbackCaptor.getValue().onSuccess(appMock);
+
         verify(spy).getGroupHierarchy(catMock1);
         verify(spy).getGroupHierarchy(catMock2);
 
-        verify(eventMock, times(3)).getApp();
-        verify(appMock, times(2)).getGroups();
+        verify(eventMock, times(1)).getApp();
+        verify(appMock, times(1)).getGroups();
         verify(mockDlg).show(eq(appMock),
                              eq(spy.searchRegexPattern),
-                             Matchers.<List<List<String>>>any());
+                             Matchers.<List<List<String>>>any(),
+                             eq(spy),
+                             eq(spy),
+                             eq(spy));
 
         verifyNoMoreInteractions(appMock);
     }

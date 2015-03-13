@@ -27,11 +27,17 @@ public interface SubmitAppForPublicUseView extends IsWidget {
 
         String links();
 
+        String makePublicFail();
+
+        String makePublicSuccessMessage(String appName);
+
         String publicNameNote();
 
         String publicName();
 
         String publicDescriptionNote();
+
+        String publicSubmissionForm();
 
         String publicSubmissionFormAttach();
 
@@ -42,6 +48,8 @@ public interface SubmitAppForPublicUseView extends IsWidget {
         String publishFailureDefaultMessage();
 
         ImageResource subCategoryIcon();
+
+        String submit();
 
         String submitForPublicUse();
 

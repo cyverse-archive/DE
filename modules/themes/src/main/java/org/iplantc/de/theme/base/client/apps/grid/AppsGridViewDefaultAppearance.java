@@ -25,6 +25,16 @@ public class AppsGridViewDefaultAppearance implements AppsGridView.AppsGridAppea
     }
 
     @Override
+    public String appLaunchWithoutToolError() {
+        return appsMessages.appLaunchWithoutToolError();
+    }
+
+    @Override
+    public String appRemoveFailure() {
+        return appsMessages.appRemoveFailure();
+    }
+
+    @Override
     public String beforeAppSearchLoadingMask() {
         return iplantDisplayStrings.loadingMask();
     }

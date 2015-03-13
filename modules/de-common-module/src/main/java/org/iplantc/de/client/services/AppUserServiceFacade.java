@@ -46,11 +46,10 @@ public interface AppUserServiceFacade extends AppServiceFacade {
 
     /**
      * Retrieves a workflow from the database for editing in the client.
-     * 
-     * @param workflowId unique identifier for the workflow.
+     *  @param workflowId unique identifier for the workflow.
      * @param callback called when the RPC call is complete.
      */
-    void editWorkflow(String workflowId, AsyncCallback<String> callback);
+    void editWorkflow(HasId workflowId, AsyncCallback<String> callback);
 
     /**
      * Retrieves a new copy of a workflow from the database for editing in the client.
@@ -65,7 +64,7 @@ public interface AppUserServiceFacade extends AppServiceFacade {
     /**
      * Adds an app to the given public categories.
      */
-    void publishToWorld(JSONObject json, String appId, AsyncCallback<String> callback);
+    void publishToWorld(JSONObject json, String appId, AsyncCallback<Void> callback);
 
     /**
      * Get app details

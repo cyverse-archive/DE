@@ -36,8 +36,8 @@ public class AppsToolbarViewDefaultAppearance implements AppsToolbarView.AppsToo
     }
 
     @Override
-    public String appSearchLoadingMask() {
-        return iplantDisplayStrings.loadingMask();
+    public String failToRetrieveApp() {
+        return appsMessages.failToRetrieveApp();
     }
 
     @Override

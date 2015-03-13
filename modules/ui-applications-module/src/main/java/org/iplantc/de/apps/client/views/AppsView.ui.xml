@@ -5,9 +5,6 @@
              xmlns:appsWidgets="urn:import:org.iplantc.de.apps.client"
              xmlns:toolBar="urn:import:org.iplantc.de.apps.client">
 
-   <ui:with field="strings"
-            type="org.iplantc.de.resources.client.messages.IplantDisplayStrings"/>
-
     <!-- Border Layout Data -->
    <ui:with field="westMargins"
             type="com.sencha.gxt.core.client.util.Margins">

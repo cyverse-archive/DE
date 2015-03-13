@@ -49,15 +49,6 @@ public interface IplantErrorStrings extends com.google.gwt.i18n.client.Messages,
     @Key("appNotFound")
     String appNotFound();
 
-    /**
-     * Translated "Error deleting the selected app.".
-     * 
-     * @return translated "Error deleting the selected app."
-     */
-    @DefaultMessage("Error deleting the selected app.")
-    @Key("appRemoveFailure")
-    String appRemoveFailure();
-
     @DefaultMessage("Authorization Error: {0}")
     @Key("authError")
     String authError(String service);
@@ -327,15 +318,6 @@ public interface IplantErrorStrings extends com.google.gwt.i18n.client.Messages,
      * @return
      */
     String emptyTrashError();
-
-    /**
-     * Translated "Unable to retrieve App display information.".
-     * 
-     * @return translated "Unable to retrieve App display information."
-     */
-    @DefaultMessage("Unable to retrieve App display information.")
-    @Key("failToRetrieveApp")
-    String failToRetrieveApp();
 
     /**
      * Translated "The following file(s) do not exist:<br />
@@ -784,13 +766,6 @@ public interface IplantErrorStrings extends com.google.gwt.i18n.client.Messages,
     @DefaultMessage("A workflow must have a name and description, 2 or more apps, and at least one input of each app must come from an output of a previous app.")
     @Key("workflowValidationError")
     String workflowValidationError();
-
-    /**
-     * @return translated "Selected App does not have a tool assigned, and cannot be opened for launch."
-     */
-    @DefaultMessage("Selected App does not have a tool assigned, and cannot be opened for launch.")
-    @Key("appLaunchWithoutToolError")
-    String appLaunchWithoutToolError();
 
     // tags
     String tagCreateError();

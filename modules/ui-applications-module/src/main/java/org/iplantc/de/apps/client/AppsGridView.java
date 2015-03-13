@@ -40,6 +40,10 @@ public interface AppsGridView extends IsWidget,
                                       BeforeAppSearchEvent.BeforeAppSearchEventHandler {
     interface AppsGridAppearance {
 
+        String appLaunchWithoutToolError();
+
+        String appRemoveFailure();
+
         String beforeAppSearchLoadingMask();
 
         String favServiceFailure();

@@ -132,12 +132,12 @@ public class AppUserServiceFacadeImpl implements AppUserServiceFacade {
     }
 
     @Override
-    public void publishToWorld(JSONObject application, String appId, AsyncCallback<String> callback) {
+    public void publishToWorld(JSONObject application, String appId, AsyncCallback<Void> callback) {
         String address = APPS + "/" + appId + "/publish"; //$NON-NLS-1$
 
         ServiceCallWrapper wrapper = new ServiceCallWrapper(POST, address, application.toString());
 
-        deServiceFacade.getServiceData(wrapper, callback);
+        deServiceFacade.getServiceData(wrapper, new StringToVoidCallbackConverter(callback));
     }
 
     @Override
@@ -316,8 +316,8 @@ public class AppUserServiceFacadeImpl implements AppUserServiceFacade {
     }
 
     @Override
-    public void editWorkflow(String workflowId, AsyncCallback<String> callback) {
-        String address = PIPELINES + "/" + workflowId + "/ui";
+    public void editWorkflow(HasId workflowId, AsyncCallback<String> callback) {
+        String address = PIPELINES + "/" + workflowId.getId() + "/ui";
         ServiceCallWrapper wrapper = new ServiceCallWrapper(address);
         deServiceFacade.getServiceData(wrapper, callback);
     }

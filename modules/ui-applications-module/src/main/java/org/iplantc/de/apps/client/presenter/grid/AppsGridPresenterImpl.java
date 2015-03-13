@@ -26,7 +26,6 @@ import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.commons.client.comments.view.dialogs.CommentsDialog;
 import org.iplantc.de.commons.client.info.ErrorAnnouncementConfig;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
-import org.iplantc.de.resources.client.messages.I18N;
 
 import com.google.common.base.Preconditions;
 import com.google.gwt.event.shared.GwtEvent;
@@ -144,7 +143,7 @@ public class AppsGridPresenterImpl implements AppsGridView.Presenter,
 
                     view.getGrid().getSelectionModel().select(getDesiredSelectedApp(), false);
 
-                } else if(listStore.size() > 0) {
+                } else if (listStore.size() > 0) {
                     // Select first app
                     view.getGrid().getSelectionModel().select(listStore.get(0), false);
                 }
@@ -229,8 +228,7 @@ public class AppsGridPresenterImpl implements AppsGridView.Presenter,
                                                new AsyncCallback<Void>() {
                                                    @Override
                                                    public void onFailure(Throwable caught) {
-                                                       ErrorHandler.post(I18N.ERROR.appRemoveFailure(), caught);
-
+                                                       ErrorHandler.post(appearance.appRemoveFailure(), caught);
                                                    }
 
                                                    @Override
@@ -257,7 +255,7 @@ public class AppsGridPresenterImpl implements AppsGridView.Presenter,
                 eventBus.fireEvent(new RunAppEvent(app));
             }
         } else {
-            announcer.schedule(new ErrorAnnouncementConfig(I18N.ERROR.appLaunchWithoutToolError()));
+            announcer.schedule(new ErrorAnnouncementConfig(appearance.appLaunchWithoutToolError()));
         }
     }
 }

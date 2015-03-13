@@ -34,7 +34,7 @@ public interface AppsToolbarView extends IsWidget,
 
         String appDeleteWarning();
 
-        String appSearchLoadingMask();
+        String failToRetrieveApp();
 
         String submitForPublicUse();
 

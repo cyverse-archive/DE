@@ -44,7 +44,6 @@ import com.sencha.gxt.data.shared.Store;
 import com.sencha.gxt.data.shared.TreeStore;
 import com.sencha.gxt.data.shared.event.StoreAddEvent;
 import com.sencha.gxt.data.shared.event.StoreRemoveEvent;
-import com.sencha.gxt.data.shared.event.StoreUpdateEvent;
 
 import java.util.Collections;
 import java.util.Comparator;
@@ -56,7 +55,10 @@ import java.util.List;
 public class AppCategoriesPresenterImpl implements AppCategoriesView.Presenter,
                                                    AppCategoriesView.AppCategoryHierarchyProvider,
                                                    AppUpdatedEvent.AppUpdatedEventHandler,
-                                                   AppFavoriteSelectedEvent.AppFavoriteSelectedEventHandler, AppSavedEvent.AppSavedEventHandler, AppRatingSelected.AppRatingSelectedHandler, AppRatingDeselected.AppRatingDeselectedHandler {
+                                                   AppFavoriteSelectedEvent.AppFavoriteSelectedEventHandler,
+                                                   AppSavedEvent.AppSavedEventHandler,
+                                                   AppRatingSelected.AppRatingSelectedHandler,
+                                                   AppRatingDeselected.AppRatingDeselectedHandler {
 
     private static class AppCategoryComparator implements Comparator<AppCategory> {
 
@@ -81,15 +83,14 @@ public class AppCategoriesPresenterImpl implements AppCategoriesView.Presenter,
     protected static String FAVORITES;
     protected static String USER_APPS_GROUP;
     protected static String WORKSPACE;
-
+    protected String searchRegexPattern;
+    @Inject IplantAnnouncer announcer;
     @Inject AsyncProvider<AppDetailsDialog> appDetailsDlgAsyncProvider;
     @Inject AppUserServiceFacade appService;
     @Inject AppCategoriesView.AppCategoriesAppearance appearance;
-    @Inject IplantAnnouncer announcer;
     private final EventBus eventBus;
     private final TreeStore<AppCategory> treeStore;
     private final AppCategoriesView view;
-    protected String searchRegexPattern;
 
     @Inject
     AppCategoriesPresenterImpl(final TreeStore<AppCategory> treeStore,
@@ -353,11 +354,6 @@ public class AppCategoriesPresenterImpl implements AppCategoriesView.Presenter,
         updateAppCategoryAppCount(appCategory, event.getSource().getAll().size());
     }
 
-    @Override
-    public void onUpdate(StoreUpdateEvent<App> event) {
-        // FIXME Do appropriate things (update counts) when apps are favorited/unfavorited
-    }
-
     void addAppCategories(AppCategory parent, List<AppCategory> children) {
         if ((children == null)
                 || children.isEmpty()) {
@@ -397,6 +393,17 @@ public class AppCategoriesPresenterImpl implements AppCategoriesView.Presenter,
         return getGroupHierarchy(treeStore.getParent(grp), groups);
     }
 
+    void initConstants(final DEProperties props,
+                       final JsonUtil jsonUtil) {
+        WORKSPACE = props.getPrivateWorkspace();
+
+        if (props.getPrivateWorkspaceItems() != null) {
+            JSONArray items = JSONParser.parseStrict(props.getPrivateWorkspaceItems()).isArray();
+            USER_APPS_GROUP = jsonUtil.getRawValueAsString(items.get(0));
+            FAVORITES = jsonUtil.getRawValueAsString(items.get(1));
+        }
+    }
+
     void updateAppCategoryAppCount(AppCategory appGroup, int newCount) {
         int difference = appGroup.getAppCount() - newCount;
 
@@ -404,17 +411,6 @@ public class AppCategoriesPresenterImpl implements AppCategoriesView.Presenter,
             appGroup.setAppCount(appGroup.getAppCount() - difference);
             treeStore.update(appGroup);
             appGroup = treeStore.getParent(appGroup);
-        }
-    }
-
-    void initConstants(final DEProperties props,
-                               final JsonUtil jsonUtil) {
-        WORKSPACE = props.getPrivateWorkspace();
-
-        if (props.getPrivateWorkspaceItems() != null) {
-            JSONArray items = JSONParser.parseStrict(props.getPrivateWorkspaceItems()).isArray();
-            USER_APPS_GROUP = jsonUtil.getRawValueAsString(items.get(0));
-            FAVORITES = jsonUtil.getRawValueAsString(items.get(1));
         }
     }
 

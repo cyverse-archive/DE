@@ -3,6 +3,7 @@ package org.iplantc.de.apps.client.presenter.grid;
 import org.iplantc.de.apps.client.AppsGridView;
 import org.iplantc.de.apps.client.events.AppFavoritedEvent;
 import org.iplantc.de.apps.client.events.AppSearchResultLoadEvent;
+import org.iplantc.de.apps.client.events.AppUpdatedEvent;
 import org.iplantc.de.apps.client.events.RunAppEvent;
 import org.iplantc.de.apps.client.events.selection.AppCategorySelectionChangedEvent;
 import org.iplantc.de.apps.client.events.selection.AppCommentSelectedEvent;
@@ -13,16 +14,18 @@ import org.iplantc.de.apps.client.events.selection.AppRatingSelected;
 import org.iplantc.de.apps.client.events.selection.DeleteAppsSelected;
 import org.iplantc.de.apps.client.events.selection.RunAppSelected;
 import org.iplantc.de.apps.client.gin.factory.AppsGridViewFactory;
+import org.iplantc.de.apps.client.presenter.callbacks.DeleteRatingCallback;
+import org.iplantc.de.apps.client.presenter.callbacks.RateAppCallback;
 import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.models.apps.AppCategory;
-import org.iplantc.de.client.models.apps.AppFeedback;
 import org.iplantc.de.client.services.AppMetadataServiceFacade;
 import org.iplantc.de.client.services.AppUserServiceFacade;
 import org.iplantc.de.commons.client.comments.view.dialogs.CommentsDialog;
 
 import com.google.common.collect.Lists;
+import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.inject.client.AsyncProvider;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
@@ -70,6 +73,7 @@ public class AppsGridPresenterImplTest {
     @Captor ArgumentCaptor<AsyncCallback<CommentsDialog>> commentsDlgCaptor;
 
     @Captor ArgumentCaptor<AsyncCallback<String>> stringCallbackCaptor;
+    @Captor ArgumentCaptor<AsyncCallback<Void>> voidCallbackCaptor;
     @Captor ArgumentCaptor<AsyncCallback<List<App>>> appListCallbackCaptor;
     @Mock EventBus eventBusMock;
 
@@ -81,12 +85,12 @@ public class AppsGridPresenterImplTest {
         when(viewMock.getGrid()).thenReturn(gridMock);
         when(gridMock.getSelectionModel()).thenReturn(selectionModelMock);
         uut = new AppsGridPresenterImpl(viewFactoryMock,
-                                        listStoreMock);
+                                        listStoreMock,
+                                        eventBusMock);
         uut.appUserService = appServiceMock;
         uut.appearance = appearanceMock;
         uut.commentsDialogProvider = commentsProviderMock;
         uut.userInfo = userInfoMock;
-        uut.eventBus = eventBusMock;
     }
 
     @Test public void testConstructorEventHandlerWiring() {
@@ -215,6 +219,8 @@ public class AppsGridPresenterImplTest {
      * on success.
      */
     @Test public void verifyAppServiceCalled_onAppFavoriteSelected(){
+        // Book-keeping for constructor
+        verify(eventBusMock).addHandler(Matchers.<GwtEvent.Type<AppsGridPresenterImpl>>any(), eq(uut));
         AppFavoriteSelectedEvent eventMock = mock(AppFavoriteSelectedEvent.class);
         App appMock = mock(App.class);
         final String mockId = "mock id";
@@ -229,25 +235,26 @@ public class AppsGridPresenterImplTest {
         /*** CALL METHOD UNDER TEST ***/
         uut.onAppFavoriteSelected(eventMock);
 
-        verify(appServiceMock).favoriteApp(
-                                              eq(mockId),
+        verify(appServiceMock).favoriteApp(eq(appMock),
                                            eq(false),
-                                           stringCallbackCaptor.capture());
+                                           voidCallbackCaptor.capture());
 
         verify(eventMock).getApp();
 
 
         /*** CALL METHOD UNDER TEST ***/
-        stringCallbackCaptor.getValue().onSuccess("");
+        voidCallbackCaptor.getValue().onSuccess(null);
         verify(appMock).setFavorite(false);
-        verify(listStoreMock).update(eq(appMock));
-        verify(widgetMock).fireEvent(any(AppFavoritedEvent.class));
+        verify(eventBusMock, times(2)).fireEvent(any(AppFavoritedEvent.class));
+        verify(eventBusMock, times(2)).fireEvent(any(AppUpdatedEvent.class));
 
         verifyNoMoreInteractions(appServiceMock,
                                  listStoreMock);
     }
 
     @Test public void runAppEventFired_onAppNameSelected() {
+        // Book-keeping for constructor
+        verify(eventBusMock).addHandler(Matchers.<GwtEvent.Type<AppsGridPresenterImpl>>any(), eq(uut));
         AppNameSelectedEvent eventMock = mock(AppNameSelectedEvent.class);
         App appMock = mock(App.class);
         when(eventMock.getSelectedApp()).thenReturn(appMock);
@@ -266,6 +273,8 @@ public class AppsGridPresenterImplTest {
     }
 
     @Test public void runAppEventFired_onRunAppSelected() {
+        // Book-keeping for constructor
+        verify(eventBusMock).addHandler(Matchers.<GwtEvent.Type<AppsGridPresenterImpl>>any(), eq(uut));
         RunAppSelected eventMock = mock(RunAppSelected.class);
         App appMock = mock(App.class);
         when(eventMock.getApp()).thenReturn(appMock);
@@ -292,10 +301,9 @@ public class AppsGridPresenterImplTest {
         uut.onAppRatingDeselected(eventMock);
 
         verify(appServiceMock).deleteRating(eq(appMock),
-                                            Matchers.<AsyncCallback<AppFeedback>>any());
+                                            any(DeleteRatingCallback.class));
         verifyNoMoreInteractions(appServiceMock,
                                  appMock);
-        verifyZeroInteractions(eventBusMock);
     }
 
     @Test public void verifyAppServiceCalled_onAppRatingSelected() {
@@ -310,10 +318,9 @@ public class AppsGridPresenterImplTest {
 
         verify(appServiceMock).rateApp(eq(appMock),
                                        eq(mockScore),
-                                       Matchers.<AsyncCallback<String>>any());
+                                       any(RateAppCallback.class));
         verifyNoMoreInteractions(appServiceMock,
                                  appMock);
-        verifyZeroInteractions(eventBusMock);
     }
 
     @Test public void verifyStoreClearedAndResultsAdded_onAppSearchResultLoad() {
@@ -329,6 +336,8 @@ public class AppsGridPresenterImplTest {
     }
 
     @Test public void verifyAppServiceCalled_onDeleteAppsSelected() {
+        // Book-keeping for constructor
+        verify(eventBusMock).addHandler(Matchers.<GwtEvent.Type<AppsGridPresenterImpl>>any(), eq(uut));
         DeleteAppsSelected eventMock = mock(DeleteAppsSelected.class);
         App mock1 = mock(App.class);
         App mock2 = mock(App.class);
@@ -347,17 +356,12 @@ public class AppsGridPresenterImplTest {
         uut.onDeleteAppsSelected(eventMock);
 
         verify(eventMock).getAppsToBeDeleted();
-        verify(mock1).getId();
-        verify(mock2).getId();
-        verify(userInfoMock).getUsername();
-        verify(userInfoMock).getFullUsername();
 
-        verify(appServiceMock).deleteAppsFromWorkspace(
-                                                          Matchers.<List<String>>any(),
-                                                       Matchers.<AsyncCallback<String>>any());
-        verifyZeroInteractions(eventBusMock);
+        verify(appServiceMock).deleteAppsFromWorkspace(eq(appsToBeDeleted),
+                                                       Matchers.<AsyncCallback<Void>>any());
         verifyNoMoreInteractions(appServiceMock,
                                  eventMock,
+                                 eventBusMock,
                                  userInfoMock,
                                  mock1,
                                  mock2);

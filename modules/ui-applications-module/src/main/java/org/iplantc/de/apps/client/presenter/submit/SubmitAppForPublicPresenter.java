@@ -33,15 +33,14 @@ public class SubmitAppForPublicPresenter implements SubmitAppForPublicUseView.Pr
     interface SubmitAppPresenterBeanFactory extends AutoBeanFactory {
         AutoBean<AppRefLink> appRefLink();
     }
-
-    @Inject SubmitAppForPublicUseView view;
-    @Inject AppUserServiceFacade appService;
     @Inject PublicAppCategoryProxy appGroupProxy;
-    @Inject EventBus eventBus;
+    @Inject AppUserServiceFacade appService;
     @Inject SubmitAppForPublicUseView.SubmitAppAppearance appearance;
-    @Inject JsonUtil jsonUtil;
+    @Inject EventBus eventBus;
     @Inject SubmitAppPresenterBeanFactory factory;
-
+    @Inject JsonUtil jsonUtil;
+    @Inject DEProperties props;
+    @Inject SubmitAppForPublicUseView view;
     private AsyncCallback<String> callback;
 
     @Inject
@@ -55,13 +54,18 @@ public class SubmitAppForPublicPresenter implements SubmitAppForPublicUseView.Pr
         appGroupProxy.setLoadHpc(false);
         appGroupProxy.load(null, new AsyncCallback<List<AppCategory>>() {
             @Override
+            public void onFailure(Throwable caught) {
+                ErrorHandler.post(appearance.publishFailureDefaultMessage(), caught);
+            }
+
+            @Override
             public void onSuccess(List<AppCategory> result) {
                 addAppCategory(null, result);
                 view.expandAppCategories();
                 // remove workspace node from store
                 view.getTreeStore()
                     .remove(view.getTreeStore()
-                                .findModelWithKey(DEProperties.getInstance().getDefaultBetaCategoryId()));
+                                .findModelWithKey(props.getDefaultBetaCategoryId()));
             }
 
             private void addAppCategory(AppCategory parent, List<AppCategory> children) {
@@ -78,12 +82,15 @@ public class SubmitAppForPublicPresenter implements SubmitAppForPublicUseView.Pr
                     addAppCategory(ag, ag.getCategories());
                 }
             }
-
-            @Override
-            public void onFailure(Throwable caught) {
-                ErrorHandler.post(appearance.publishFailureDefaultMessage(), caught);
-            }
         });
+    }
+
+    @Override
+    public void go(HasOneWidget container, App selectedApp, AsyncCallback<String> callback) {
+        view.setSelectedApp(selectedApp);
+        this.callback = callback;
+        getAppDetails();
+        go(container);
     }
 
     @Override
@@ -112,36 +119,9 @@ public class SubmitAppForPublicPresenter implements SubmitAppForPublicUseView.Pr
         });
     }
 
-    private void publishApp(final JSONObject obj) {
-        final AutoProgressMessageBox pmb = new AutoProgressMessageBox(appearance.submitForPublicUse(),
-                                                                      appearance.submitRequest());
-        pmb.setProgressText(appearance.submitting());
-        pmb.setClosable(false);
-        pmb.getProgressBar().setInterval(100);
-        pmb.auto();
-        pmb.show();
-
-        appService.publishToWorld(obj, jsonUtil.getString(obj, "id"), new AsyncCallback<String>() {
-            @Override
-            public void onSuccess(String result) {
-                pmb.hide();
-                eventBus.fireEvent(new AppPublishedEvent(view.getSelectedApp()));
-                if (callback != null) {
-                    callback.onSuccess(jsonUtil.getString(obj, "name"));
-                }
-            }
-
-            @Override
-            public void onFailure(Throwable caught) {
-                pmb.hide();
-                callback.onFailure(caught);
-            }
-        });
-    }
-
     private List<AppRefLink> parseRefLinks(List<String> arr) {
         List<AppRefLink> linksList = Lists.newArrayList();
-        for(String ref : arr){
+        for (String ref : arr) {
             AppRefLink refLink = factory.appRefLink().as();
             refLink.setId(ref);
             refLink.setRefLink(ref);
@@ -151,12 +131,31 @@ public class SubmitAppForPublicPresenter implements SubmitAppForPublicUseView.Pr
         return linksList;
     }
 
-    @Override
-    public void go(HasOneWidget container, App selectedApp, AsyncCallback<String> callback) {
-        view.setSelectedApp(selectedApp);
-        this.callback = callback;
-        getAppDetails();
-        go(container);
+    private void publishApp(final JSONObject obj) {
+        final AutoProgressMessageBox pmb = new AutoProgressMessageBox(appearance.submitForPublicUse(),
+                                                                      appearance.submitRequest());
+        pmb.setProgressText(appearance.submitting());
+        pmb.setClosable(false);
+        pmb.getProgressBar().setInterval(100);
+        pmb.auto();
+        pmb.show();
+
+        appService.publishToWorld(obj, jsonUtil.getString(obj, "id"), new AsyncCallback<Void>() {
+            @Override
+            public void onFailure(Throwable caught) {
+                pmb.hide();
+                callback.onFailure(caught);
+            }
+
+            @Override
+            public void onSuccess(Void result) {
+                pmb.hide();
+                eventBus.fireEvent(new AppPublishedEvent(view.getSelectedApp()));
+                if (callback != null) {
+                    callback.onSuccess(jsonUtil.getString(obj, "name"));
+                }
+            }
+        });
     }
 
 }

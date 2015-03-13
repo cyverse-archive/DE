@@ -64,7 +64,7 @@ public class AppUserServiceFacadeStub implements AppUserServiceFacade {
     }
 
     @Override
-    public void editWorkflow(String workflowId, AsyncCallback<String> callback) {
+    public void editWorkflow(HasId workflowId, AsyncCallback<String> callback) {
 
     }
 
@@ -85,7 +85,7 @@ public class AppUserServiceFacadeStub implements AppUserServiceFacade {
     }
 
     @Override
-    public void publishToWorld(JSONObject json, String appId, AsyncCallback<String> asyncCallback) {
+    public void publishToWorld(JSONObject json, String appId, AsyncCallback<Void> asyncCallback) {
 
     }
 

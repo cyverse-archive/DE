@@ -153,7 +153,7 @@ public class AppsToolbarPresenterImplTest {
         /*** CALL METHOD UNDER TEST ***/
         uut.onEditWorkflowSelected(eventMock);
 
-        verify(appServiceMock).editWorkflow(eq(workflowMock.getId()), stringCallbackCaptor.capture());
+        verify(appServiceMock).editWorkflow(eq(workflowMock), stringCallbackCaptor.capture());
 
         /*** CALL METHOD UNDER TEST ***/
         stringCallbackCaptor.getValue().onSuccess("{}");

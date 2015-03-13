@@ -58,6 +58,16 @@ public class SubmitAppViewDefaultAppearance implements SubmitAppForPublicUseView
     }
 
     @Override
+    public String makePublicFail() {
+        return appsMessages.makePublicFail();
+    }
+
+    @Override
+    public String makePublicSuccessMessage(String appName) {
+        return appsMessages.makePublicSuccessMessage(appName);
+    }
+
+    @Override
     public String publicNameNote() {
         return appsMessages.publicNameNote();
     }
@@ -70,6 +80,11 @@ public class SubmitAppViewDefaultAppearance implements SubmitAppForPublicUseView
     @Override
     public String publicDescriptionNote() {
         return appsMessages.publicDescriptionNote();
+    }
+
+    @Override
+    public String publicSubmissionForm() {
+        return appsMessages.publicSubmissionForm();
     }
 
     @Override
@@ -95,6 +110,11 @@ public class SubmitAppViewDefaultAppearance implements SubmitAppForPublicUseView
     @Override
     public ImageResource subCategoryIcon() {
         return resources.subCategory();
+    }
+
+    @Override
+    public String submit() {
+        return iplantDisplayStrings.submit();
     }
 
     @Override

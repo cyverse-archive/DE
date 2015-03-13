@@ -15,7 +15,6 @@ import com.google.gwt.user.client.ui.IsWidget;
 
 import com.sencha.gxt.data.shared.event.StoreAddEvent;
 import com.sencha.gxt.data.shared.event.StoreRemoveEvent;
-import com.sencha.gxt.data.shared.event.StoreUpdateEvent;
 import com.sencha.gxt.widget.core.client.tree.Tree;
 import com.sencha.gxt.widget.core.client.tree.TreeStyle;
 
@@ -64,7 +63,6 @@ public interface AppCategoriesView extends IsWidget,
                                 StoreRemoveEvent.StoreRemoveHandler<App>,
                                 CopyAppSelected.CopyAppSelectedHandler,
                                 CopyWorkflowSelected.CopyWorkflowSelectedHandler,
-                                StoreUpdateEvent.StoreUpdateHandler<App>,
                                 AppFavoritedEvent.AppFavoritedEventHandler {
 
         AppCategory getSelectedAppCategory();

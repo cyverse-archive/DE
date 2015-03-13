@@ -29,6 +29,7 @@ import com.sencha.gxt.widget.core.client.toolbar.ToolBar;
 
 /**
  * FIXME This class could use it's own presenter
+ * FIXME Extract appearance
  *         That might alleviate the chaining of save selected events back to the details presenter
  * @author jstroot
  */

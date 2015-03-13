@@ -9,7 +9,6 @@ import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
 import org.iplantc.de.commons.client.info.SuccessAnnouncementConfig;
 import org.iplantc.de.commons.client.views.dialogs.IPlantDialog;
-import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
@@ -32,9 +31,9 @@ public class SubmitAppForPublicDialog extends IPlantDialog implements SelectHand
             if (caught != null) {
                 String errorMessage = getErrorMessage(caught);
                 if (errorMessage.equals("")) {
-                    ErrorHandler.post(displayStrings.makePublicFail(), caught);
+                    ErrorHandler.post(appearance.makePublicFail(), caught);
                 } else {
-                    ErrorHandler.post(displayStrings.makePublicFail() + "Reason: " + errorMessage, caught);
+                    ErrorHandler.post(appearance.makePublicFail() + "Reason: " + errorMessage, caught);
                 }
             }
         }
@@ -43,7 +42,7 @@ public class SubmitAppForPublicDialog extends IPlantDialog implements SelectHand
         public void onSuccess(String appName) {
             hide();
 
-            announcer.schedule(new SuccessAnnouncementConfig(SafeHtmlUtils.fromTrustedString(displayStrings.makePublicSuccessMessage(appName))));
+            announcer.schedule(new SuccessAnnouncementConfig(SafeHtmlUtils.fromTrustedString(appearance.makePublicSuccessMessage(appName))));
 
             // Create and fire event
             AppCategoryCountUpdateEvent event = new AppCategoryCountUpdateEvent(false,
@@ -55,15 +54,15 @@ public class SubmitAppForPublicDialog extends IPlantDialog implements SelectHand
     @Inject EventBus eventBus;
     @Inject IplantAnnouncer announcer;
     @Inject SubmitAppForPublicUseView.Presenter presenter;
-    private final IplantDisplayStrings displayStrings;
+    private final SubmitAppForPublicUseView.SubmitAppAppearance appearance;
 
     @Inject
-    SubmitAppForPublicDialog(final IplantDisplayStrings displayStrings) {
-        this.displayStrings = displayStrings;
+    SubmitAppForPublicDialog(final SubmitAppForPublicUseView.SubmitAppAppearance appearance) {
+        this.appearance = appearance;
 
         setPredefinedButtons(PredefinedButton.OK, PredefinedButton.CANCEL);
-        setHeadingText(displayStrings.publicSubmissionForm());
-        setOkButtonText(displayStrings.submit());
+        setHeadingText(appearance.publicSubmissionForm());
+        setOkButtonText(appearance.submit());
         setPixelSize(615, 480);
         setHideOnButtonClick(false);
         addCancelButtonSelectHandler(this);

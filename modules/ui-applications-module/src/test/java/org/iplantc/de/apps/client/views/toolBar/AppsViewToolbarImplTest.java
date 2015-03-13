@@ -10,7 +10,6 @@ import org.iplantc.de.client.models.apps.AppCategory;
 import org.iplantc.de.client.models.apps.proxy.AppLoadConfig;
 import org.iplantc.de.client.models.apps.proxy.AppSearchAutoBeanFactory;
 import org.iplantc.de.client.services.AppServiceFacade;
-import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 
 import com.google.common.collect.Lists;
 import com.google.gwtmockito.GxtMockitoTestRunner;
@@ -41,7 +40,6 @@ public class AppsViewToolbarImplTest {
     @Mock AppAutoBeanFactory mockAppFactory;
     @Mock AppSearchAutoBeanFactory mockAppSearchFactory;
     @Mock AppServiceFacade mockAppService;
-    @Mock IplantDisplayStrings mockDisplayStrings;
     @Mock UserInfo mockUserInfo;
 
     @Mock MenuItem mockAppRun;
