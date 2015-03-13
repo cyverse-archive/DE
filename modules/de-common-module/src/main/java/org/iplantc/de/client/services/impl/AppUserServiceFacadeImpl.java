@@ -14,6 +14,7 @@ import org.iplantc.de.client.services.AppUserServiceFacade;
 import org.iplantc.de.client.services.converters.AppCategoryListCallbackConverter;
 import org.iplantc.de.client.services.converters.AppTemplateCallbackConverter;
 import org.iplantc.de.client.services.converters.AsyncCallbackConverter;
+import org.iplantc.de.client.services.converters.StringToVoidCallbackConverter;
 import org.iplantc.de.client.util.DiskResourceUtil;
 import org.iplantc.de.client.util.JsonUtil;
 import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
@@ -23,6 +24,7 @@ import org.iplantc.de.shared.services.EmailServiceAsync;
 import org.iplantc.de.shared.services.ServiceCallWrapper;
 
 import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -240,9 +242,10 @@ public class AppUserServiceFacadeImpl implements AppUserServiceFacade {
     }
 
     @Override
-    public void
-            favoriteApp(String workspaceId, String appId, boolean fav, AsyncCallback<String> callback) {
-        String address = APPS + "/" + appId + "/favorite";
+    public void favoriteApp(final HasId appId,
+                            final boolean fav,
+                            final AsyncCallback<Void> callback) {
+        String address = APPS + "/" + appId.getId() + "/favorite";
 
         JSONObject body = new JSONObject();
         ServiceCallWrapper wrapper;
@@ -252,11 +255,12 @@ public class AppUserServiceFacadeImpl implements AppUserServiceFacade {
         } else {
             wrapper = new ServiceCallWrapper(DELETE, address, body.toString());
         }
-        deServiceFacade.getServiceData(wrapper, callback);
+        deServiceFacade.getServiceData(wrapper, new StringToVoidCallbackConverter(callback));
     }
 
     @Override
-    public void copyApp(HasId app, AsyncCallback<AppTemplate> callback) {
+    public void copyApp(final HasId app,
+                        final AsyncCallback<AppTemplate> callback) {
         String address = APPS + "/" + app.getId() + "/copy";
 
         // KLUDGE Have to send empty JSON body with POST request
@@ -266,16 +270,17 @@ public class AppUserServiceFacadeImpl implements AppUserServiceFacade {
     }
 
     @Override
-    public void deleteAppsFromWorkspace(String user,
-                                        String fullUsername,
-                                        List<String> appIds,
-                                        AsyncCallback<String> callback) {
+    public void deleteAppsFromWorkspace(final List<App> apps,
+                                        final AsyncCallback<Void> callback) {
         String address = APPS + "/" + "shredder"; //$NON-NLS-1$
-
+        List<String> appIds = Lists.newArrayList();
+        for (App app : apps) {
+            appIds.add(app.getId());
+        }
         JSONObject body = new JSONObject();
-        body.put("app_ids", jsonUtil.buildArrayFromStrings(appIds)); //$NON-NLS-1$
+        body.put("app_ids", jsonUtil.buildArrayFromStrings(apps)); //$NON-NLS-1$
         ServiceCallWrapper wrapper = new ServiceCallWrapper(POST, address, body.toString());
-        deServiceFacade.getServiceData(wrapper, callback);
+        deServiceFacade.getServiceData(wrapper, new StringToVoidCallbackConverter(callback));
     }
 
     @Override

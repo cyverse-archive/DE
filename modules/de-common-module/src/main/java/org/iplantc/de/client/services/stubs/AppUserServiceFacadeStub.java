@@ -18,7 +18,8 @@ import java.util.List;
 
 public class AppUserServiceFacadeStub implements AppUserServiceFacade {
     @Override
-    public void favoriteApp(String workspaceId, String appId, boolean fav, AsyncCallback<String> callback) {
+    public void favoriteApp(HasId appId, boolean fav,
+                            AsyncCallback<Void> callback) {
 
     }
 
@@ -78,7 +79,8 @@ public class AppUserServiceFacadeStub implements AppUserServiceFacade {
     }
 
     @Override
-    public void deleteAppsFromWorkspace(String username, String fullUsername, List<String> appIds, AsyncCallback<String> asyncCallback) {
+    public void deleteAppsFromWorkspace(List<App> apps,
+                                        AsyncCallback<Void> asyncCallback) {
 
     }
 

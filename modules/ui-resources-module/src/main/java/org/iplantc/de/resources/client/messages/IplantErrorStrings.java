@@ -338,15 +338,6 @@ public interface IplantErrorStrings extends com.google.gwt.i18n.client.Messages,
     String failToRetrieveApp();
 
     /**
-     * Translated "Failed to update favorites".
-     * 
-     * @return translated "Failed to update favorites"
-     */
-    @DefaultMessage("Failed to update favorites")
-    @Key("favServiceFailure")
-    String favServiceFailure();
-
-    /**
      * Translated "The following file(s) do not exist:<br />
      * {0}".
      * 

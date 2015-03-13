@@ -32,6 +32,8 @@ public interface AppCategoriesView extends IsWidget,
                                            AppCategorySelectionChangedEvent.HasAppCategorySelectionChangedEventHandlers {
     interface AppCategoriesAppearance {
 
+        String favServiceFailure();
+
         String fetchAppDetailsError(Throwable caught);
 
         String getAppCategoriesLoadingMask();

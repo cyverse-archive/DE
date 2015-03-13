@@ -3,10 +3,10 @@
  */
 package org.iplantc.de.apps.client.views.grid.cells;
 
-import org.iplantc.de.apps.client.views.grid.cells.AppRatingCell;
 import org.iplantc.de.client.models.apps.App;
 
 import com.google.gwt.cell.client.Cell;
+import com.google.gwt.event.shared.HasHandlers;
 import com.google.gwt.user.cellview.client.CellWidget;
 import com.google.gwt.view.client.ProvidesKey;
 
@@ -44,4 +44,7 @@ public class AppRatingCellWidget extends CellWidget<App> {
         return cell;
     }
 
+    public void setHasHandlers(HasHandlers hasHandlers) {
+        cell.setHasHandlers(hasHandlers);
+    }
 }

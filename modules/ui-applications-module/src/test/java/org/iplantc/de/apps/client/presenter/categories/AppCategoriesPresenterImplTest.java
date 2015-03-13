@@ -3,7 +3,7 @@ package org.iplantc.de.apps.client.presenter.categories;
 import org.iplantc.de.apps.client.AppCategoriesView;
 import org.iplantc.de.apps.client.events.AppFavoritedEvent;
 import org.iplantc.de.apps.client.events.AppSearchResultLoadEvent;
-import org.iplantc.de.apps.client.events.AppUpdatedEvent;
+import org.iplantc.de.apps.client.events.AppSavedEvent;
 import org.iplantc.de.apps.client.events.selection.AppInfoSelectedEvent;
 import org.iplantc.de.apps.client.events.selection.CopyAppSelected;
 import org.iplantc.de.apps.client.events.selection.CopyWorkflowSelected;
@@ -334,10 +334,10 @@ public class AppCategoriesPresenterImplTest {
         when(treeStoreMock.getAll()).thenReturn(Lists.newArrayList(userGroupMock));
 
         // Setup event
-        AppUpdatedEvent eventMock = mock(AppUpdatedEvent.class);
+        AppSavedEvent eventMock = mock(AppSavedEvent.class);
 
         /*** CALL METHOD UNDER TEST ***/
-        uut.onAppUpdated(eventMock);
+        uut.onAppSaved(eventMock);
 
         verify(selectionModelMock).deselectAll();
         verify(selectionModelMock).select(eq(userGroupMock), eq(false));

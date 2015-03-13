@@ -1,7 +1,7 @@
 package org.iplantc.de.pipelines.client.presenter;
 
 import org.iplantc.de.apps.client.events.AppCategoryCountUpdateEvent;
-import org.iplantc.de.apps.client.events.AppUpdatedEvent;
+import org.iplantc.de.apps.client.events.AppSavedEvent;
 import org.iplantc.de.apps.client.AppsView;
 import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.gin.ServicesInjector;
@@ -77,7 +77,7 @@ public class PipelineViewPresenter implements Presenter, PipelineView.Presenter,
 
                 AppCategoryCountUpdateEvent event = new AppCategoryCountUpdateEvent(true, null);
                 EventBus.getInstance().fireEvent(event);
-                AppUpdatedEvent aevent = new AppUpdatedEvent(null);
+                AppSavedEvent aevent = new AppSavedEvent(null);
                 EventBus.getInstance().fireEvent(aevent);
             }
 

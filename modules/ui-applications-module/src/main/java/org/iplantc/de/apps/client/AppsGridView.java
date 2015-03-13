@@ -42,6 +42,8 @@ public interface AppsGridView extends IsWidget,
 
         String beforeAppSearchLoadingMask();
 
+        String favServiceFailure();
+
         String getAppsLoadingMask();
 
         String integratedByColumnLabel();

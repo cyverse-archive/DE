@@ -3,6 +3,7 @@ package org.iplantc.de.apps.client.presenter.grid;
 import org.iplantc.de.apps.client.AppsGridView;
 import org.iplantc.de.apps.client.events.AppFavoritedEvent;
 import org.iplantc.de.apps.client.events.AppSearchResultLoadEvent;
+import org.iplantc.de.apps.client.events.AppUpdatedEvent;
 import org.iplantc.de.apps.client.events.RunAppEvent;
 import org.iplantc.de.apps.client.events.selection.AppCategorySelectionChangedEvent;
 import org.iplantc.de.apps.client.events.selection.AppCommentSelectedEvent;
@@ -13,11 +14,12 @@ import org.iplantc.de.apps.client.events.selection.AppRatingSelected;
 import org.iplantc.de.apps.client.events.selection.DeleteAppsSelected;
 import org.iplantc.de.apps.client.events.selection.RunAppSelected;
 import org.iplantc.de.apps.client.gin.factory.AppsGridViewFactory;
+import org.iplantc.de.apps.client.presenter.callbacks.DeleteRatingCallback;
+import org.iplantc.de.apps.client.presenter.callbacks.RateAppCallback;
 import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.models.apps.AppCategory;
-import org.iplantc.de.client.models.apps.AppFeedback;
 import org.iplantc.de.client.services.AppMetadataServiceFacade;
 import org.iplantc.de.client.services.AppUserServiceFacade;
 import org.iplantc.de.commons.client.ErrorHandler;
@@ -27,7 +29,6 @@ import org.iplantc.de.commons.client.info.IplantAnnouncer;
 import org.iplantc.de.resources.client.messages.I18N;
 
 import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
 import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.inject.client.AsyncProvider;
@@ -49,75 +50,25 @@ public class AppsGridPresenterImpl implements AppsGridView.Presenter,
                                               AppRatingSelected.AppRatingSelectedHandler,
                                               AppRatingDeselected.AppRatingDeselectedHandler,
                                               AppCommentSelectedEvent.AppCommentSelectedEventHandler,
-                                              AppFavoriteSelectedEvent.AppFavoriteSelectedEventHandler {
+                                              AppFavoriteSelectedEvent.AppFavoriteSelectedEventHandler, AppUpdatedEvent.AppUpdatedEventHandler {
 
-    //<editor-fold desc="Callbacks">
-    private static class DeleteRatingCallback implements AsyncCallback<AppFeedback> {
-        private final App appToUnRate;
-        private final ListStore<App> listStore;
-
-        public DeleteRatingCallback(final App appToUnRate,
-                                    final ListStore<App> listStore) {
-            this.appToUnRate = appToUnRate;
-            this.listStore = listStore;
-        }
-
-        @Override
-        public void onFailure(Throwable caught) {
-            ErrorHandler.post(caught);
-        }
-
-        @Override
-        public void onSuccess(AppFeedback result) {
-            appToUnRate.setRating(result);
-
-            // Update app in list store, this should update stars
-            listStore.update(appToUnRate);
-        }
-    }
-
-    private static class RateAppCallback implements AsyncCallback<String> {
-        private final App appToRate;
-        private final AppRatingSelected event;
-        private final ListStore<App> listStore;
-
-        public RateAppCallback(final App appToRate,
-                               final AppRatingSelected event,
-                               final ListStore<App> listStore) {
-            this.appToRate = appToRate;
-            this.event = event;
-            this.listStore = listStore;
-        }
-
-        @Override
-        public void onFailure(Throwable caught) {
-            ErrorHandler.post(caught);
-        }
-
-        @Override
-        public void onSuccess(String result) {
-            appToRate.getRating().setUserRating(event.getScore());
-
-            // Update app in list store, this should update stars
-            listStore.update(appToRate);
-        }
-    }
-    //</editor-fold>
     final ListStore<App> listStore;
     @Inject IplantAnnouncer announcer;
     @Inject AppUserServiceFacade appUserService;
     @Inject AppsGridView.AppsGridAppearance appearance;
     @Inject AsyncProvider<CommentsDialog> commentsDialogProvider;
-    @Inject EventBus eventBus;
     @Inject AppMetadataServiceFacade metadataFacade;
     @Inject UserInfo userInfo;
+    private final EventBus eventBus;
     private final AppsGridView view;
     private App desiredSelectedApp;
 
     @Inject
     AppsGridPresenterImpl(final AppsGridViewFactory viewFactory,
-                          final ListStore<App> listStore) {
+                          final ListStore<App> listStore,
+                          final EventBus eventBus) {
         this.listStore = listStore;
+        this.eventBus = eventBus;
         this.view = viewFactory.create(listStore);
 
         this.view.addAppNameSelectedEventHandler(this);
@@ -125,6 +76,8 @@ public class AppsGridPresenterImpl implements AppsGridView.Presenter,
         this.view.addAppRatingSelectedHandler(this);
         this.view.addAppCommentSelectedEventHandlers(this);
         this.view.addAppFavoriteSelectedEventHandlers(this);
+
+        eventBus.addHandler(AppUpdatedEvent.TYPE, this);
     }
 
     @Override
@@ -222,17 +175,17 @@ public class AppsGridPresenterImpl implements AppsGridView.Presenter,
     @Override
     public void onAppFavoriteSelected(AppFavoriteSelectedEvent event) {
         final App app = event.getApp();
-        appUserService.favoriteApp(userInfo.getWorkspaceId(), app.getId(), !app.isFavorite(), new AsyncCallback<String>() {
+        appUserService.favoriteApp(app, !app.isFavorite(), new AsyncCallback<Void>() {
             @Override
             public void onFailure(Throwable caught) {
-                announcer.schedule(new ErrorAnnouncementConfig(I18N.ERROR.favServiceFailure()));
+                announcer.schedule(new ErrorAnnouncementConfig(appearance.favServiceFailure()));
             }
 
             @Override
-            public void onSuccess(String result) {
+            public void onSuccess(Void result) {
                 app.setFavorite(!app.isFavorite());
-                listStore.update(app);
-                view.asWidget().fireEvent(new AppFavoritedEvent(app));
+                eventBus.fireEvent(new AppFavoritedEvent(app));
+                eventBus.fireEvent(new AppUpdatedEvent(app));
             }
         });
     }
@@ -245,16 +198,18 @@ public class AppsGridPresenterImpl implements AppsGridView.Presenter,
     @Override
     public void onAppRatingDeselected(final AppRatingDeselected event) {
         final App appToUnRate = event.getApp();
-        appUserService.deleteRating(appToUnRate, new DeleteRatingCallback(appToUnRate, listStore));
+        appUserService.deleteRating(appToUnRate, new DeleteRatingCallback(appToUnRate,
+                                                                          eventBus));
     }
 
     @Override
     public void onAppRatingSelected(final AppRatingSelected event) {
-
         final App appToRate = event.getApp();
         appUserService.rateApp(appToRate,
                                event.getScore(),
-                               new RateAppCallback(appToRate, event, listStore));
+                               new RateAppCallback(appToRate,
+                                                   event,
+                                                   eventBus));
     }
 
     @Override
@@ -264,17 +219,14 @@ public class AppsGridPresenterImpl implements AppsGridView.Presenter,
     }
 
     @Override
-    public void onDeleteAppsSelected(final DeleteAppsSelected event) {
+    public void onAppUpdated(final AppUpdatedEvent event) {
+        listStore.update(event.getApp());
+    }
 
-        List<String> appIds = Lists.newArrayList();
-        for (App app : event.getAppsToBeDeleted()) {
-            appIds.add(app.getId());
-        }
-        // FIXME Update service signature
-        appUserService.deleteAppsFromWorkspace(userInfo.getUsername(),
-                                               userInfo.getFullUsername(),
-                                               appIds,
-                                               new AsyncCallback<String>() {
+    @Override
+    public void onDeleteAppsSelected(final DeleteAppsSelected event) {
+        appUserService.deleteAppsFromWorkspace(event.getAppsToBeDeleted(),
+                                               new AsyncCallback<Void>() {
                                                    @Override
                                                    public void onFailure(Throwable caught) {
                                                        ErrorHandler.post(I18N.ERROR.appRemoveFailure(), caught);
@@ -282,7 +234,7 @@ public class AppsGridPresenterImpl implements AppsGridView.Presenter,
                                                    }
 
                                                    @Override
-                                                   public void onSuccess(String result) {
+                                                   public void onSuccess(Void result) {
                                                        for (App app : event.getAppsToBeDeleted()) {
                                                            listStore.remove(app);
                                                        }

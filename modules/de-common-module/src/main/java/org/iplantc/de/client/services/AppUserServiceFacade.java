@@ -16,7 +16,7 @@ import java.util.List;
  */
 public interface AppUserServiceFacade extends AppServiceFacade {
 
-    void favoriteApp(String workspaceId, String appId, boolean fav, AsyncCallback<String> callback);
+    void favoriteApp(HasId appId, boolean fav, AsyncCallback<Void> callback);
 
     /**
      * Retrieves the name and a list of inputs and outputs for the given app. The response JSON will be
@@ -59,10 +59,8 @@ public interface AppUserServiceFacade extends AppServiceFacade {
 
     void copyApp(HasId app, AsyncCallback<AppTemplate> callback);
 
-    void deleteAppsFromWorkspace(String username,
-                                String fullUsername,
-                                List<String> appIds,
-                                AsyncCallback<String> callback);
+    void deleteAppsFromWorkspace(List<App> apps,
+                                 AsyncCallback<Void> callback);
 
     /**
      * Adds an app to the given public categories.

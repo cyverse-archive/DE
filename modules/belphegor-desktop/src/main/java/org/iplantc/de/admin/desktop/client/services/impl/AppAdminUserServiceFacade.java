@@ -52,8 +52,8 @@ public class AppAdminUserServiceFacade implements AppUserServiceFacade {
     }
 
     @Override
-    public void favoriteApp(String workspaceId, String appId, boolean fav,
-                            AsyncCallback<String> callback) {
+    public void favoriteApp(HasId appId, boolean fav,
+                            AsyncCallback<Void> callback) {
         assert false : "Dummy Class to satisfy deferred-binding, this class not used in this module.";
     }
 
@@ -78,8 +78,8 @@ public class AppAdminUserServiceFacade implements AppUserServiceFacade {
     }
 
     @Override
-    public void deleteAppsFromWorkspace(String username, String fullUsername, List<String> id,
-                                       AsyncCallback<String> asyncCallback) {
+    public void deleteAppsFromWorkspace(List<App> id,
+                                        AsyncCallback<Void> asyncCallback) {
         assert false : "Dummy Class to satisfy deferred-binding, this class not used in this module.";
     }
 

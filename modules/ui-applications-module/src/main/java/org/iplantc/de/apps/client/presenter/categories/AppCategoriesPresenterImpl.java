@@ -2,14 +2,20 @@ package org.iplantc.de.apps.client.presenter.categories;
 
 import org.iplantc.de.apps.client.AppCategoriesView;
 import org.iplantc.de.apps.client.events.AppFavoritedEvent;
+import org.iplantc.de.apps.client.events.AppSavedEvent;
 import org.iplantc.de.apps.client.events.AppSearchResultLoadEvent;
 import org.iplantc.de.apps.client.events.AppUpdatedEvent;
 import org.iplantc.de.apps.client.events.EditAppEvent;
 import org.iplantc.de.apps.client.events.EditWorkflowEvent;
+import org.iplantc.de.apps.client.events.selection.AppFavoriteSelectedEvent;
 import org.iplantc.de.apps.client.events.selection.AppInfoSelectedEvent;
+import org.iplantc.de.apps.client.events.selection.AppRatingDeselected;
+import org.iplantc.de.apps.client.events.selection.AppRatingSelected;
 import org.iplantc.de.apps.client.events.selection.CopyAppSelected;
 import org.iplantc.de.apps.client.events.selection.CopyWorkflowSelected;
 import org.iplantc.de.apps.client.gin.factory.AppCategoriesViewFactory;
+import org.iplantc.de.apps.client.presenter.callbacks.DeleteRatingCallback;
+import org.iplantc.de.apps.client.presenter.callbacks.RateAppCallback;
 import org.iplantc.de.apps.client.views.details.dialogs.AppDetailsDialog;
 import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.models.DEProperties;
@@ -49,7 +55,8 @@ import java.util.List;
  */
 public class AppCategoriesPresenterImpl implements AppCategoriesView.Presenter,
                                                    AppCategoriesView.AppCategoryHierarchyProvider,
-                                                   AppUpdatedEvent.AppUpdatedEventHandler {
+                                                   AppUpdatedEvent.AppUpdatedEventHandler,
+                                                   AppFavoriteSelectedEvent.AppFavoriteSelectedEventHandler, AppSavedEvent.AppSavedEventHandler, AppRatingSelected.AppRatingSelectedHandler, AppRatingDeselected.AppRatingDeselectedHandler {
 
     private static class AppCategoryComparator implements Comparator<AppCategory> {
 
@@ -100,7 +107,7 @@ public class AppCategoriesPresenterImpl implements AppCategoriesView.Presenter,
         initConstants(props, jsonUtil);
 
         eventBus.addHandler(AppUpdatedEvent.TYPE, this);
-
+        eventBus.addHandler(AppSavedEvent.TYPE, this);
     }
 
     @Override
@@ -167,16 +174,30 @@ public class AppCategoriesPresenterImpl implements AppCategoriesView.Presenter,
     }
 
     @Override
+    public void onAppFavoriteSelected(AppFavoriteSelectedEvent event) {
+        final App app = event.getApp();
+        appService.favoriteApp(app, !app.isFavorite(), new AsyncCallback<Void>() {
+            @Override
+            public void onFailure(Throwable caught) {
+                announcer.schedule(new ErrorAnnouncementConfig(appearance.favServiceFailure()));
+            }
+
+            @Override
+            public void onSuccess(Void result) {
+                app.setFavorite(!app.isFavorite());
+                // Have to fire global events.
+                eventBus.fireEvent(new AppFavoritedEvent(app));
+                eventBus.fireEvent(new AppUpdatedEvent(app));
+            }
+        });
+    }
+
+    @Override
     public void onAppFavorited(AppFavoritedEvent appFavoritedEvent) {
         final App app = appFavoritedEvent.getApp();
-        AppCategory currentCategory = getSelectedAppCategory();
+        final AppCategory currentCategory = getSelectedAppCategory();
 
-        if (FAVORITES.equals(currentCategory.getName())) {
-            // If our current category is Favorites, initiate refetch by reselecting category
-            // This will cause the favorite count to be updated
-            view.getTree().getSelectionModel().deselectAll();
-            view.getTree().getSelectionModel().select(currentCategory, false);
-        } else {
+        if (!FAVORITES.equals(currentCategory.getName())) {
             // Adjust favorite category count.
             final AppCategory favoriteCategory = findAppCategoryByName(FAVORITES);
             int favCountAdjustment = app.isFavorite() ? 1 : -1;
@@ -210,12 +231,43 @@ public class AppCategoriesPresenterImpl implements AppCategoriesView.Presenter,
                             appGroupHierarchies.add(getGroupHierarchy(appCategory));
                         }
 
-                        dlg.show(result, searchRegexPattern, appGroupHierarchies);
-
+                        dlg.show(result,
+                                 searchRegexPattern,
+                                 appGroupHierarchies,
+                                 AppCategoriesPresenterImpl.this,
+                                 AppCategoriesPresenterImpl.this,
+                                 AppCategoriesPresenterImpl.this);
                     }
                 });
             }
         });
+    }
+
+    @Override
+    public void onAppRatingDeselected(AppRatingDeselected event) {
+        final App appToUnRate = event.getApp();
+        appService.deleteRating(appToUnRate, new DeleteRatingCallback(appToUnRate,
+                                                                      eventBus));
+    }
+
+    @Override
+    public void onAppRatingSelected(AppRatingSelected event) {
+        final App appToRate = event.getApp();
+        appService.rateApp(appToRate,
+                           event.getScore(),
+                           new RateAppCallback(appToRate,
+                                               event,
+                                               eventBus));
+    }
+
+    @Override
+    public void onAppSaved(AppSavedEvent event) {
+        /* JDS When an app is saved, always assume that the app is in the
+         * "Apps Under Development" group
+         */
+        view.getTree().getSelectionModel().deselectAll();
+        AppCategory userAppCategory = findAppCategoryByName(USER_APPS_GROUP);
+        view.getTree().getSelectionModel().select(userAppCategory, false);
     }
 
     @Override
@@ -225,11 +277,15 @@ public class AppCategoriesPresenterImpl implements AppCategoriesView.Presenter,
     }
 
     @Override
-    public void onAppUpdated(AppUpdatedEvent event) {
-        // JDS Always assume that the app is in the "Apps Under Development" group
-        view.getTree().getSelectionModel().deselectAll();
-        AppCategory userAppCategory = findAppCategoryByName(USER_APPS_GROUP);
-        view.getTree().getSelectionModel().select(userAppCategory, false);
+    public void onAppUpdated(final AppUpdatedEvent event) {
+        final AppCategory currentCategory = getSelectedAppCategory();
+        if (FAVORITES.equals(currentCategory.getName())) {
+            // If our current category is Favorites, initiate refetch by reselecting category
+            // This will cause the favorite count to be updated
+            view.getTree().getSelectionModel().deselectAll();
+            view.getTree().getSelectionModel().select(currentCategory, false);
+        }
+
     }
 
     @Override

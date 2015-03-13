@@ -48,8 +48,6 @@ public class AppsGinModule extends AbstractGinModule {
         bind(new TypeLiteral<ListStore<App>>() {})
             .toProvider(AppListStoreProvider.class);
 
-        // KLUDGE Bind AppsView in DEGinModule to get around Gin double-binding with Belphegor
-//        bind(AppsView.class).to(AppsViewImpl.class);
         bind(SubmitAppForPublicUseView.class).to(SubmitAppForPublicUseViewImpl.class);
         bind(SubmitAppForPublicUseView.Presenter.class).to(SubmitAppForPublicPresenter.class);
         bind(AppMetadataServiceFacade.class).to(AppMetadataServiceFacadeImpl.class);

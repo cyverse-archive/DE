@@ -30,6 +30,11 @@ public class AppsGridViewDefaultAppearance implements AppsGridView.AppsGridAppea
     }
 
     @Override
+    public String favServiceFailure() {
+        return appsMessages.favServiceFailure();
+    }
+
+    @Override
     public String getAppsLoadingMask() {
         return iplantDisplayStrings.loadingMask();
     }

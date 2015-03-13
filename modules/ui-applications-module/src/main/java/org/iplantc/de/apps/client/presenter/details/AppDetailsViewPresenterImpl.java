@@ -1,9 +1,14 @@
 package org.iplantc.de.apps.client.presenter.details;
 
 import org.iplantc.de.apps.client.AppDetailsView;
+import org.iplantc.de.apps.client.events.AppUpdatedEvent;
 import org.iplantc.de.apps.client.events.selection.AppDetailsDocSelected;
+import org.iplantc.de.apps.client.events.selection.AppFavoriteSelectedEvent;
+import org.iplantc.de.apps.client.events.selection.AppRatingDeselected;
+import org.iplantc.de.apps.client.events.selection.AppRatingSelected;
 import org.iplantc.de.apps.client.events.selection.SaveMarkdownSelected;
 import org.iplantc.de.apps.client.gin.factory.AppDetailsViewFactory;
+import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.models.apps.AppDoc;
 import org.iplantc.de.client.services.AppUserServiceFacade;
@@ -13,6 +18,7 @@ import org.iplantc.de.commons.client.info.IplantAnnouncer;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HasOneWidget;
@@ -32,12 +38,37 @@ public class AppDetailsViewPresenterImpl implements AppDetailsView.Presenter,
     @Inject Provider<AppDetailsViewFactory> viewFactoryProvider;
     @Inject IplantAnnouncer announcer;
     @Inject AppDetailsView.AppDetailsAppearance appearance;
+    @Inject EventBus eventBus;
 
     private AppDetailsView view;
     private AppDoc appDoc;
 
     @Inject
     AppDetailsViewPresenterImpl() {
+    }
+
+    @Override
+    public HandlerRegistration addAppFavoriteSelectedEventHandlers(final AppFavoriteSelectedEvent.AppFavoriteSelectedEventHandler handler) {
+        if(view == null){
+            throw new IllegalStateException("You must call 'go(..)' before calling this method");
+        }
+        return view.addAppFavoriteSelectedEventHandlers(handler);
+    }
+
+    @Override
+    public HandlerRegistration addAppRatingDeselectedHandler(AppRatingDeselected.AppRatingDeselectedHandler handler) {
+        if(view == null){
+            throw new IllegalStateException("You must call 'go(..)' before calling this method");
+        }
+        return view.addAppRatingDeselectedHandler(handler);
+    }
+
+    @Override
+    public HandlerRegistration addAppRatingSelectedHandler(AppRatingSelected.AppRatingSelectedHandler handler) {
+        if(view == null){
+            throw new IllegalStateException("You must call 'go(..)' before calling this method");
+        }
+        return view.addAppRatingSelectedHandler(handler);
     }
 
     @Override
@@ -51,6 +82,8 @@ public class AppDetailsViewPresenterImpl implements AppDetailsView.Presenter,
         view.addAppDetailsDocSelectedHandler(AppDetailsViewPresenterImpl.this);
         view.addSaveMarkdownSelectedHandler(AppDetailsViewPresenterImpl.this);
         widget.setWidget(view);
+
+        eventBus.addHandler(AppUpdatedEvent.TYPE, view);
 
         // If the App has a wiki url, return before fetching app doc.
         if (!Strings.isNullOrEmpty(app.getWikiUrl())){

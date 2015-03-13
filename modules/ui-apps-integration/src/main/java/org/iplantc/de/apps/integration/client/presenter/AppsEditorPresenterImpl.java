@@ -1,6 +1,6 @@
 package org.iplantc.de.apps.integration.client.presenter;
 
-import org.iplantc.de.apps.client.events.AppUpdatedEvent;
+import org.iplantc.de.apps.client.events.AppSavedEvent;
 import org.iplantc.de.apps.integration.client.dialogs.CommandLineOrderingPanel;
 import org.iplantc.de.apps.integration.client.events.DeleteArgumentEvent;
 import org.iplantc.de.apps.integration.client.events.DeleteArgumentEvent.DeleteArgumentEventHandler;
@@ -138,7 +138,7 @@ public class AppsEditorPresenterImpl implements AppsEditorView.Presenter,
                 renameCommand.setAppTemplate(presenterImpl.lastSave);
                 renameCommand.execute();
             }
-            eventBus1.fireEvent(new AppUpdatedEvent(presenterImpl.lastSave));
+            eventBus1.fireEvent(new AppSavedEvent(presenterImpl.lastSave));
 
             announcer1.schedule(new SuccessAnnouncementConfig(successfulSaveMsg));
             if (onSaveCallback != null) {

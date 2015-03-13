@@ -1,8 +1,10 @@
 package org.iplantc.de.apps.client;
 
-import org.iplantc.de.apps.client.events.AppFavoritedEvent;
+import org.iplantc.de.apps.client.events.AppUpdatedEvent;
 import org.iplantc.de.apps.client.events.selection.AppDetailsDocSelected;
 import org.iplantc.de.apps.client.events.selection.AppFavoriteSelectedEvent;
+import org.iplantc.de.apps.client.events.selection.AppRatingDeselected;
+import org.iplantc.de.apps.client.events.selection.AppRatingSelected;
 import org.iplantc.de.apps.client.events.selection.SaveMarkdownSelected;
 import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.models.apps.AppDoc;
@@ -21,10 +23,12 @@ import java.util.List;
  */
 public interface AppDetailsView extends IsWidget,
                                         Editor<App>,
-                                        AppFavoritedEvent.AppFavoritedEventHandler,
+                                        AppUpdatedEvent.AppUpdatedEventHandler,
                                         AppFavoriteSelectedEvent.HasAppFavoriteSelectedEventHandlers,
                                         AppDetailsDocSelected.HasAppDetailsDocSelectedHandlers,
-                                        SaveMarkdownSelected.HasSaveMarkdownSelectedHandlers {
+                                        SaveMarkdownSelected.HasSaveMarkdownSelectedHandlers,
+                                        AppRatingDeselected.HasAppRatingDeselectedHandlers,
+                                        AppRatingSelected.HasAppRatingSelectedEventHandlers {
 
     interface AppDetailsAppearance {
         interface AppDetailsStyle extends CssResource {
@@ -83,7 +87,9 @@ public interface AppDetailsView extends IsWidget,
         String userManual();
     }
 
-    interface Presenter {
+    interface Presenter extends AppFavoriteSelectedEvent.HasAppFavoriteSelectedEventHandlers,
+                                AppRatingDeselected.HasAppRatingDeselectedHandlers,
+                                AppRatingSelected.HasAppRatingSelectedEventHandlers {
 
         void go(HasOneWidget widget,
                 App app,

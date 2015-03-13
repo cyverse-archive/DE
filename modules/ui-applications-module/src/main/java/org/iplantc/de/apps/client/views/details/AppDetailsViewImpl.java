@@ -1,9 +1,11 @@
 package org.iplantc.de.apps.client.views.details;
 
 import org.iplantc.de.apps.client.AppDetailsView;
-import org.iplantc.de.apps.client.events.AppFavoritedEvent;
+import org.iplantc.de.apps.client.events.AppUpdatedEvent;
 import org.iplantc.de.apps.client.events.selection.AppDetailsDocSelected;
 import org.iplantc.de.apps.client.events.selection.AppFavoriteSelectedEvent;
+import org.iplantc.de.apps.client.events.selection.AppRatingDeselected;
+import org.iplantc.de.apps.client.events.selection.AppRatingSelected;
 import org.iplantc.de.apps.client.events.selection.SaveMarkdownSelected;
 import org.iplantc.de.apps.client.views.details.doc.AppDocMarkdownDialog;
 import org.iplantc.de.apps.client.views.grid.cells.AppFavoriteCellWidget;
@@ -149,6 +151,8 @@ public class AppDetailsViewImpl extends Composite implements AppDetailsView,
         categories.setInnerSafeHtml(appearance.getCategoriesHtml(appGroupHierarchies));
         this.tools = ListEditor.of(new ToolEditorSource(toolsContainer));
 
+        // Add self so that rating cell events will fire
+        ratings.setHasHandlers(this);
         editorDriver.initialize(this);
         editorDriver.edit(app);
     }
@@ -164,13 +168,23 @@ public class AppDetailsViewImpl extends Composite implements AppDetailsView,
     }
 
     @Override
+    public HandlerRegistration addAppRatingDeselectedHandler(AppRatingDeselected.AppRatingDeselectedHandler handler) {
+        return addHandler(handler, AppRatingDeselected.TYPE);
+    }
+
+    @Override
+    public HandlerRegistration addAppRatingSelectedHandler(AppRatingSelected.AppRatingSelectedHandler handler) {
+        return addHandler(handler, AppRatingSelected.TYPE);
+    }
+
+    @Override
     public HandlerRegistration addSaveMarkdownSelectedHandler(SaveMarkdownSelected.SaveMarkdownSelectedHandler handler) {
         return addHandler(handler, SaveMarkdownSelected.TYPE);
     }
 
     @Override
-    public void onAppFavorited(AppFavoritedEvent appFavoritedEvent) {
-        favIcon.setValue(appFavoritedEvent.getApp());
+    public void onAppUpdated(final AppUpdatedEvent event) {
+        editorDriver.edit(event.getApp());
     }
 
     @Override

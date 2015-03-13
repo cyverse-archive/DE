@@ -47,6 +47,11 @@ public class AppCategoriesViewDefaultAppearance implements AppCategoriesView.App
 
 
     @Override
+    public String favServiceFailure() {
+        return appsMessages.favServiceFailure();
+    }
+
+    @Override
     public String fetchAppDetailsError(Throwable caught) {
         return appsMessages.fetchAppDetailsError(caught.getMessage());
     }

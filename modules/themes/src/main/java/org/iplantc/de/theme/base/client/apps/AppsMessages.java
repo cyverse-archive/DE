@@ -22,6 +22,8 @@ public interface AppsMessages extends Messages {
 
     String editMenuItem();
 
+    String favServiceFailure();
+
     String fetchAppDetailsError(String errorMessage);
 
     SafeHtml getAppDocError(String errorMessage);

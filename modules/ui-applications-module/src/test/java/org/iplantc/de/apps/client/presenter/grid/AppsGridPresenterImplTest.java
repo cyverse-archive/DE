@@ -229,8 +229,8 @@ public class AppsGridPresenterImplTest {
         /*** CALL METHOD UNDER TEST ***/
         uut.onAppFavoriteSelected(eventMock);
 
-        verify(appServiceMock).favoriteApp(eq(userInfoMock.getWorkspaceId()),
-                                           eq(mockId),
+        verify(appServiceMock).favoriteApp(
+                                              eq(mockId),
                                            eq(false),
                                            stringCallbackCaptor.capture());
 
@@ -352,9 +352,8 @@ public class AppsGridPresenterImplTest {
         verify(userInfoMock).getUsername();
         verify(userInfoMock).getFullUsername();
 
-        verify(appServiceMock).deleteAppsFromWorkspace(eq(mockUserName),
-                                                       eq(mockFullUserName),
-                                                       Matchers.<List<String>>any(),
+        verify(appServiceMock).deleteAppsFromWorkspace(
+                                                          Matchers.<List<String>>any(),
                                                        Matchers.<AsyncCallback<String>>any());
         verifyZeroInteractions(eventBusMock);
         verifyNoMoreInteractions(appServiceMock,
