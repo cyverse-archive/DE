@@ -1,19 +1,22 @@
-/**
- * 
- */
 package org.iplantc.de.collaborators.client.views;
 
 import org.iplantc.de.client.models.collaborators.Collaborator;
 
+import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.user.client.ui.IsWidget;
 
 import java.util.List;
 
 /**
- * @author sriram
+ * @author sriram, jstroot
  * 
  */
 public interface ManageCollaboratorsView extends IsWidget {
+
+    interface Appearance {
+
+        SafeHtml renderCheckBoxColumnHeader(String debugId);
+    }
 
     public interface Presenter extends org.iplantc.de.commons.client.presenter.Presenter {
 

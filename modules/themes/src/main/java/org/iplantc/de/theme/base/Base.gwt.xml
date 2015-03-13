@@ -6,4 +6,5 @@
     <inherits name="org.iplantc.de.theme.base.client.commons.Commons" />
     <inherits name="org.iplantc.de.theme.base.client.tags.Tags" />
     <inherits name="org.iplantc.de.theme.base.client.analyses.Analyses" />
+    <inherits name="org.iplantc.de.theme.base.client.collaborators.Collaborators" />
 </module>
