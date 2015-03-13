@@ -45,6 +45,18 @@ import java.util.List;
  */
 public class AppUserServiceFacadeImpl implements AppUserServiceFacade {
 
+    private class AppDocCallbackConverter extends AsyncCallbackConverter<String, AppDoc> {
+        public AppDocCallbackConverter(AsyncCallback<AppDoc> callback) {
+            super(callback);
+        }
+
+        @Override
+        protected AppDoc convertFrom(String object) {
+            AutoBean<AppDoc> appDocAutoBean = AutoBeanCodex.decode(factory, AppDoc.class, object);
+            return appDocAutoBean.as();
+        }
+    }
+
     interface AppUserServiceBeanFactory extends AutoBeanFactory {
         AutoBean<App> app();
         AutoBean<AppDoc> appDoc();
@@ -316,22 +328,18 @@ public class AppUserServiceFacadeImpl implements AppUserServiceFacade {
     public void getAppDoc(HasId app, AsyncCallback<AppDoc> callback) {
         String address = APPS + "/" + app.getId() + "/documentation";
         ServiceCallWrapper wrapper = new ServiceCallWrapper(GET, address);
-        deServiceFacade.getServiceData(wrapper, new AsyncCallbackConverter<String, AppDoc>(callback) {
-            @Override
-            protected AppDoc convertFrom(String object) {
-                AutoBean<AppDoc> appDocAutoBean = AutoBeanCodex.decode(factory, AppDoc.class, object);
-                return appDocAutoBean.as();
-            }
-        });
+        deServiceFacade.getServiceData(wrapper, new AppDocCallbackConverter(callback));
     }
 
     @Override
-    public void saveAppDoc(String appId, String doc, AsyncCallback<String> callback) {
-        String address = APPS + "/" + appId + "/documentation";
+    public void saveAppDoc(final HasId app,
+                           final String doc,
+                           final AsyncCallback<AppDoc> callback) {
+        String address = APPS + "/" + app.getId() + "/documentation";
         Splittable payload = StringQuoter.createSplittable();
         StringQuoter.create(doc).assign(payload, "documentation");
         ServiceCallWrapper wrapper = new ServiceCallWrapper(PATCH, address, payload.getPayload());
-        deServiceFacade.getServiceData(wrapper, callback);
+        deServiceFacade.getServiceData(wrapper, new AppDocCallbackConverter(callback));
 
     }
 }

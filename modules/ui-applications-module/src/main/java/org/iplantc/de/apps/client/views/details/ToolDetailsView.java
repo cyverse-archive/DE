@@ -14,7 +14,6 @@ import com.google.gwt.user.client.ui.IsWidget;
 
 import com.sencha.gxt.widget.core.client.ContentPanel;
 import com.sencha.gxt.widget.core.client.Header;
-import com.sencha.gxt.widget.core.client.container.AccordionLayoutContainer.AccordionLayoutAppearance;
 
 /**
  * FIXME Ensure search highlighting
@@ -65,8 +64,9 @@ public class ToolDetailsView implements IsWidget,
 
     @UiFactory
     ContentPanel createContentPanel() {
-        final ContentPanel contentPanel = new ContentPanel(GWT.<AccordionLayoutAppearance>create(AccordionLayoutAppearance.class));
+        final ContentPanel contentPanel = new ContentPanel();
         contentPanel.setAnimCollapse(false);
+        contentPanel.setBorders(false);
         return contentPanel;
     }
 

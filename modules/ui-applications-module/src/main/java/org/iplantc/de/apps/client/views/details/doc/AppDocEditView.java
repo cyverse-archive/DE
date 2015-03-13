@@ -1,6 +1,7 @@
 package org.iplantc.de.apps.client.views.details.doc;
 
 import org.iplantc.de.apps.client.events.selection.SaveMarkdownSelected;
+import org.iplantc.de.client.models.IsMaskable;
 import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.models.apps.AppDoc;
 
@@ -24,13 +25,15 @@ import com.sencha.gxt.widget.core.client.button.TextButton;
 import com.sencha.gxt.widget.core.client.container.SimpleContainer;
 import com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer;
 import com.sencha.gxt.widget.core.client.event.SelectEvent;
+import com.sencha.gxt.widget.core.client.toolbar.ToolBar;
 
 /**
  * FIXME This class could use it's own presenter
  *         That might alleviate the chaining of save selected events back to the details presenter
  * @author jstroot
  */
-public class AppDocEditView extends Composite implements SaveMarkdownSelected.HasSaveMarkdownSelectedHandlers {
+public class AppDocEditView extends Composite implements IsMaskable,
+                                                         SaveMarkdownSelected.HasSaveMarkdownSelectedHandlers {
 
     @UiTemplate("AppDocEditView.ui.xml")
     interface AppDocEditViewUiBinder extends UiBinder<Widget, AppDocEditView> { }
@@ -40,7 +43,8 @@ public class AppDocEditView extends Composite implements SaveMarkdownSelected.Ha
     @UiField TextButton saveBtn;
     @UiField SimpleContainer panel;
     @UiField VerticalLayoutContainer con;
-    
+    @UiField ToolBar toolbar;
+
     protected JavaScriptObject jso;
     private final App app;
 
@@ -51,7 +55,21 @@ public class AppDocEditView extends Composite implements SaveMarkdownSelected.Ha
         this.app = app;
         initWidget(uiBinder.createAndBindUi(this));
         String safeDoc = SafeHtmlUtils.fromString(appDoc.getDocumentation()).asString();
+
+        // Disable toolbar if app is public
+        toolbar.setEnabled(!app.isPublic());
+        saveBtn.setEnabled(!app.isPublic());
         setData(safeDoc);
+    }
+
+    @Override
+    public void mask(String message) {
+        panel.mask(message);
+    }
+
+    @Override
+    public void unmask() {
+        panel.unmask();
     }
 
     @Override
@@ -72,7 +90,8 @@ public class AppDocEditView extends Composite implements SaveMarkdownSelected.Ha
     @UiHandler("saveBtn")
     void onSaveSelected(SelectEvent event) {
         String editorContent = getEditorContent(jso);
-        fireEvent(new SaveMarkdownSelected(app, editorContent));
+        fireEvent(new SaveMarkdownSelected(app, editorContent, this));
+        mask();
     }
 
     private String getJsonFormat(String doc) {

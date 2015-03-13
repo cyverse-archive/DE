@@ -41,6 +41,7 @@ public class AppDocMarkdownDialog extends IPlantDialog implements SaveMarkdownSe
     @UiField InlineHTML documentation;
     @UiField TabItemConfig editTabConfig;
     @UiField TabPanel tabPanel;
+    private AppDocEditView appDocEditView;
 
     public AppDocMarkdownDialog(final App app,
                                 final AppDoc appDoc,
@@ -60,10 +61,10 @@ public class AppDocMarkdownDialog extends IPlantDialog implements SaveMarkdownSe
 
         if(userInfo.getEmail().equals(app.getIntegratorEmail())){
             // If current user is the app integrator, add edit tab
-            AppDocEditView editView = new AppDocEditView(app, appDoc);
+            appDocEditView = new AppDocEditView(app, appDoc);
             // Add handler to forward event
-            editView.addSaveMarkdownSelectedHandler(this);
-            tabPanel.add(editView, editTabConfig);
+            appDocEditView.addSaveMarkdownSelectedHandler(this);
+            tabPanel.add(appDocEditView, editTabConfig);
         }
 
 
@@ -79,18 +80,19 @@ public class AppDocMarkdownDialog extends IPlantDialog implements SaveMarkdownSe
 
     @Override
     public HandlerRegistration addSaveMarkdownSelectedHandler(SaveMarkdownSelected.SaveMarkdownSelectedHandler handler) {
-        return addHandler(handler, SaveMarkdownSelected.TYPE);
+        try {
+            return appDocEditView.addHandler(handler, SaveMarkdownSelected.TYPE);
+        } catch (NullPointerException ex) {
+            GWT.log("Handler added for non markdown documentation", ex);
+            return null;
+        }
     }
 
     @Override
-    public void onSaveMarkdownSelected(SaveMarkdownSelected event) {
-        // Forward event
-        fireEvent(event);
-
+    public void onSaveMarkdownSelected(final SaveMarkdownSelected event) {
         // Refresh the other
         final String editorContent = event.getEditorContent();
         documentation.setHTML(editorContent);
-        mask();
     }
 
 }

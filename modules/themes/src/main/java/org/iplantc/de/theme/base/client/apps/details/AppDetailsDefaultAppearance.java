@@ -2,10 +2,17 @@ package org.iplantc.de.theme.base.client.apps.details;
 
 import org.iplantc.de.apps.client.AppDetailsView;
 import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
+import org.iplantc.de.theme.base.client.apps.AppSearchHighlightAppearance;
 import org.iplantc.de.theme.base.client.apps.AppsMessages;
 
+import com.google.common.base.Joiner;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.resources.client.ClientBundle;
+import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
+
+import java.util.List;
 
 /**
  * @author jstroot
@@ -20,19 +27,23 @@ public class AppDetailsDefaultAppearance implements AppDetailsView.AppDetailsApp
     private final AppsMessages appsMessages;
     private final IplantDisplayStrings iplantDisplayStrings;
     private final AppDetailsAppearanceResources resources;
+    private final AppSearchHighlightAppearance highlightAppearance;
 
     public AppDetailsDefaultAppearance() {
         this(GWT.<AppsMessages> create(AppsMessages.class),
              GWT.<IplantDisplayStrings> create(IplantDisplayStrings.class),
-             GWT.<AppDetailsAppearanceResources> create(AppDetailsAppearanceResources.class));
+             GWT.<AppDetailsAppearanceResources> create(AppDetailsAppearanceResources.class),
+             GWT.<AppSearchHighlightAppearance> create(AppSearchHighlightAppearance.class));
     }
 
     AppDetailsDefaultAppearance(final AppsMessages appsMessages,
                                 final IplantDisplayStrings iplantDisplayStrings,
-                                final AppDetailsAppearanceResources resources) {
+                                final AppDetailsAppearanceResources resources,
+                                final AppSearchHighlightAppearance highlightAppearance) {
         this.appsMessages = appsMessages;
         this.iplantDisplayStrings = iplantDisplayStrings;
         this.resources = resources;
+        this.highlightAppearance = highlightAppearance;
         this.resources.css().ensureInjected();
     }
 
@@ -49,6 +60,28 @@ public class AppDetailsDefaultAppearance implements AppDetailsView.AppDetailsApp
     @Override
     public String detailsLabel() {
         return iplantDisplayStrings.details() + ": ";
+    }
+
+    @Override
+    public SafeHtml getAppDocError(Throwable caught) {
+        return appsMessages.getAppDocError(caught.getMessage());
+    }
+
+    @Override
+    public SafeHtml getCategoriesHtml(List<List<String>> appGroupHierarchies) {
+        SafeHtmlBuilder sb = new SafeHtmlBuilder();
+        for(List<String> appGroups : appGroupHierarchies){
+            final String join = Joiner.on(" >> ").join(appGroups);
+            sb.appendEscaped(join);
+            sb.appendHtmlConstant("<br/>");
+        }
+        return sb.toSafeHtml();
+    }
+
+    @Override
+    public SafeHtml highlightText(String value, String searchRegexPattern) {
+        SafeHtml highlightText = SafeHtmlUtils.fromTrustedString(highlightAppearance.highlightText(value, searchRegexPattern));
+        return highlightText;
     }
 
     @Override
@@ -83,12 +116,17 @@ public class AppDetailsDefaultAppearance implements AppDetailsView.AppDetailsApp
 
     @Override
     public String informationTabLabel() {
-        return iplantDisplayStrings.toolTab();
+        return iplantDisplayStrings.information();
+    }
+
+    @Override
+    public SafeHtml saveAppDocError(Throwable caught) {
+        return appsMessages.saveAppDocError(caught.getMessage());
     }
 
     @Override
     public String toolInformationTabLabel() {
-        return iplantDisplayStrings.information();
+        return iplantDisplayStrings.toolTab();
     }
 
     @Override
@@ -103,11 +141,16 @@ public class AppDetailsDefaultAppearance implements AppDetailsView.AppDetailsApp
 
     @Override
     public String toolVersionLabel() {
-        return iplantDisplayStrings.version() + ": ";
+        return appsMessages.version() + ": ";
     }
 
     @Override
     public String toolAttributionLabel() {
         return iplantDisplayStrings.attribution() + ": ";
+    }
+
+    @Override
+    public String userManual() {
+        return iplantDisplayStrings.documentation();
     }
 }

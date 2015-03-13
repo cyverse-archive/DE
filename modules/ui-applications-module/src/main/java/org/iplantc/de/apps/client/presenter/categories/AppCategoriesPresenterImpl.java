@@ -20,6 +20,8 @@ import org.iplantc.de.client.models.apps.integration.AppTemplate;
 import org.iplantc.de.client.services.AppUserServiceFacade;
 import org.iplantc.de.client.util.JsonUtil;
 import org.iplantc.de.commons.client.ErrorHandler;
+import org.iplantc.de.commons.client.info.ErrorAnnouncementConfig;
+import org.iplantc.de.commons.client.info.IplantAnnouncer;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
@@ -69,12 +71,14 @@ public class AppCategoriesPresenterImpl implements AppCategoriesView.Presenter,
         }
     }
 
-    @Inject AsyncProvider<AppDetailsDialog> appDetailsDlgAsyncProvider;
     protected static String FAVORITES;
     protected static String USER_APPS_GROUP;
     protected static String WORKSPACE;
+
+    @Inject AsyncProvider<AppDetailsDialog> appDetailsDlgAsyncProvider;
     @Inject AppUserServiceFacade appService;
     @Inject AppCategoriesView.AppCategoriesAppearance appearance;
+    @Inject IplantAnnouncer announcer;
     private final EventBus eventBus;
     private final TreeStore<AppCategory> treeStore;
     private final AppCategoriesView view;
@@ -189,16 +193,27 @@ public class AppCategoriesPresenterImpl implements AppCategoriesView.Presenter,
             }
 
             @Override
-            public void onSuccess(AppDetailsDialog result) {
-                // Create list of group hierarchies
-                List<List<String>> appGroupHierarchies = Lists.newArrayList();
-                if(event.getApp().getGroups() != null) {
-                    for (AppCategory appCategory : event.getApp().getGroups()) {
-                        appGroupHierarchies.add(getGroupHierarchy(appCategory));
-                    }
-                }
+            public void onSuccess(final AppDetailsDialog dlg) {
 
-                result.show(event.getApp(), searchRegexPattern, appGroupHierarchies);
+                // Fetch details, otherwise App.getGroups may be null
+                appService.getAppDetails(event.getApp(), new AsyncCallback<App>() {
+                    @Override
+                    public void onFailure(final Throwable caught) {
+                        announcer.schedule(new ErrorAnnouncementConfig(appearance.fetchAppDetailsError(caught)));
+                    }
+
+                    @Override
+                    public void onSuccess(final App result) {
+                        // Create list of group hierarchies
+                        List<List<String>> appGroupHierarchies = Lists.newArrayList();
+                        for (AppCategory appCategory : result.getGroups()) {
+                            appGroupHierarchies.add(getGroupHierarchy(appCategory));
+                        }
+
+                        dlg.show(result, searchRegexPattern, appGroupHierarchies);
+
+                    }
+                });
             }
         });
     }

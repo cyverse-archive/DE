@@ -5,20 +5,6 @@
              xmlns:tabs="urn:import:com.sencha.gxt.widget.core.client"
              xmlns:appWidgets="urn:import:org.iplantc.de.apps.client.views.grid.cells">
 
-    <ui:style>
-        .container {
-            background-color: white;
-            position: absolute;
-            top: 0;
-            bottom: 0;
-        }
-
-        .details {
-            border: 2px green;
-        }
-
-    </ui:style>
-
     <ui:with field="appearance"
              type="org.iplantc.de.apps.client.AppDetailsView.AppDetailsAppearance" />
 
@@ -31,23 +17,26 @@
         <ui:attributes text="{appearance.toolInformationTabLabel}" />
     </ui:with>
 
-    <tabs:TabPanel ui:field="tabPanel">
+    <tabs:TabPanel ui:field="tabPanel"
+                   bodyBorder="false"
+                   borders="false"
+                   styleName="{appearance.css.tabPanel}">
         <tabs:child config="{informationTabConfig}">
             <g:HTMLPanel>
                 <!-- Favorite Icon -->
                 <appWidgets:AppFavoriteCellWidget ui:field="favIcon"/>
-                <table>
+                <table class="{appearance.css.detailsTable}">
                     <!-- Description -->
                     <tr>
                         <td class="{appearance.css.label}">
                             <ui:text from="{appearance.descriptionLabel}"/>
                         </td>
                         <td class="{appearance.css.value}">
-                            <g:InlineHTML ui:field="description" />
+                            <div ui:field="descriptionElement" />
                         </td>
                     </tr>
                     <!-- Details -->
-                    <tr>
+                    <tr class="{appearance.css.detailsRow}">
                         <td>
                             <ui:text from="{appearance.detailsLabel}" />
                         </td>
@@ -65,7 +54,7 @@
                             <ui:text from="{appearance.integratorNameLabel}"/>
                         </td>
                         <td class="{appearance.css.value}">
-                            <g:InlineLabel ui:field="integratorName"/>
+                            <div ui:field="integratorNameDiv"/>
                         </td>
                     </tr>
                      <tr>
@@ -82,7 +71,8 @@
                         </td>
                          <td class="{appearance.css.value}">
                              <g:InlineHyperlink ui:field="helpLink"
-                                                styleName="{appearance.css.hyperlink}"/>
+                                                styleName="{appearance.css.hyperlink}"
+                                                text="{appearance.userManual}"/>
                         </td>
                     </tr>
                      <tr>
@@ -95,20 +85,19 @@
                         </td>
                     </tr>
                     <tr>
-                        <td>
+                        <td class="{appearance.css.label}">
                             <ui:text from="{appearance.categoriesLabel}" />
                         </td>
                         <td>
-                            <g:InlineLabel ui:field="categories" />
+                            <div ui:field="categories" />
                         </td>
                     </tr>
                 </table>
             </g:HTMLPanel>
         </tabs:child>
         <tabs:child config="{toolTabConfig}">
-
             <container:AccordionLayoutContainer ui:field="toolsContainer"
-                    styleName="{style.container}"/>
+                                                borders="false"/>
         </tabs:child>
 
     </tabs:TabPanel>

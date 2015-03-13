@@ -14,16 +14,20 @@ import org.iplantc.de.client.models.apps.AppDoc;
 import org.iplantc.de.client.models.tool.Tool;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.DivElement;
+import com.google.gwt.editor.client.LeafValueEditor;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.editor.client.adapters.EditorSource;
 import com.google.gwt.editor.client.adapters.ListEditor;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.uibinder.client.UiBinder;
+import com.google.gwt.uibinder.client.UiFactory;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.uibinder.client.UiTemplate;
-import com.google.gwt.user.client.ui.InlineHTML;
+import com.google.gwt.user.client.ui.DateLabel;
 import com.google.gwt.user.client.ui.InlineHyperlink;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.inject.Inject;
@@ -44,6 +48,31 @@ public class AppDetailsViewImpl extends Composite implements AppDetailsView,
 
     @UiTemplate("AppDetailsViewImpl.ui.xml")
     interface AppInfoViewUiBinder extends UiBinder<TabPanel, AppDetailsViewImpl> { }
+
+    static class HighlightEditor implements LeafValueEditor<String> {
+
+        private final AppDetailsAppearance appearance;
+        private final DivElement integratorNameDiv;
+        private final String searchRegexPattern;
+
+        public HighlightEditor(final AppDetailsAppearance appearance,
+                               final DivElement integratorNameDiv,
+                               final String searchRegexPattern) {
+            this.appearance = appearance;
+            this.integratorNameDiv = integratorNameDiv;
+            this.searchRegexPattern = searchRegexPattern;
+        }
+
+        @Override
+        public void setValue(String value) {
+            integratorNameDiv.setInnerSafeHtml(appearance.highlightText(value, searchRegexPattern));
+        }
+
+        @Override
+        public String getValue() {
+            return null;
+        }
+    }
 
     /**
      * Editor source class for binding to App.getTools()
@@ -82,22 +111,22 @@ public class AppDetailsViewImpl extends Composite implements AppDetailsView,
     /**
      * FIXME Ensure highlighting
      */
-    @UiField InlineLabel integratorName;
-    /**
-     * FIXME Ensure highlighting
-     */
+    @UiField @Ignore DivElement integratorNameDiv;
+    final HighlightEditor integratorName;
     @UiField InlineLabel integratorEmail;
     /**
      * FIXME Not bound directly. Value given at init/construction time
      */
-    @UiField @Ignore InlineLabel categories;
+    @UiField @Ignore DivElement categories;
     @UiField @Path("") AppRatingCellWidget ratings; // Bind to app
     @UiField @Ignore InlineHyperlink helpLink;
     @UiField AccordionLayoutContainer toolsContainer;
     /**
      * FIXME Ensure highlighting
      */
-    @UiField InlineHTML description;
+    @UiField @Ignore DivElement descriptionElement;
+    final HighlightEditor description;
+    @UiField @Path("integrationDate") DateLabel publishedOn;
 
     final ListEditor<Tool, ToolDetailsView> tools;
     private final App app;
@@ -112,11 +141,12 @@ public class AppDetailsViewImpl extends Composite implements AppDetailsView,
         this.appearance = appearance;
         this.app = app;
 
-        // TODO Use appearance to write group hierarchies
-        /* TODO Create a LeafValueEditor which highlights text as it is bound
-         *        This will apply to name, email, description
-         */
         initWidget(BINDER.createAndBindUi(this));
+
+        // Set up highlighting editors
+        integratorName = new HighlightEditor(appearance, integratorNameDiv, searchRegexPattern);
+        description = new HighlightEditor(appearance, descriptionElement, searchRegexPattern);
+        categories.setInnerSafeHtml(appearance.getCategoriesHtml(appGroupHierarchies));
         this.tools = ListEditor.of(new ToolEditorSource(toolsContainer));
 
         editorDriver.initialize(this);
@@ -159,6 +189,11 @@ public class AppDetailsViewImpl extends Composite implements AppDetailsView,
     @UiHandler("helpLink")
     void onHelpSelected(ClickEvent event) {
         fireEvent(new AppDetailsDocSelected(app));
+    }
+
+    @UiFactory @Ignore
+    DateLabel createDateLabel() {
+        return new DateLabel(DateTimeFormat.getFormat(DateTimeFormat.PredefinedFormat.DATE_MEDIUM));
     }
 
     public static native String render(String val) /*-{

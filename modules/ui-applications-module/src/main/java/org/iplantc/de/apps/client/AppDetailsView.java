@@ -9,6 +9,7 @@ import org.iplantc.de.client.models.apps.AppDoc;
 
 import com.google.gwt.editor.client.Editor;
 import com.google.gwt.resources.client.CssResource;
+import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.user.client.ui.HasOneWidget;
 import com.google.gwt.user.client.ui.IsWidget;
 
@@ -33,6 +34,12 @@ public interface AppDetailsView extends IsWidget,
             String value();
 
             String hyperlink();
+
+            String detailsTable();
+
+            String detailsRow();
+
+            String tabPanel();
         }
 
         String descriptionLabel();
@@ -40,6 +47,12 @@ public interface AppDetailsView extends IsWidget,
         AppDetailsStyle css();
 
         String detailsLabel();
+
+        SafeHtml getAppDocError(Throwable caught);
+
+        SafeHtml getCategoriesHtml(List<List<String>> appGroupHierarchies);
+
+        SafeHtml highlightText(String value, String searchRegexPattern);
 
         String publishedOnLabel();
 
@@ -55,6 +68,8 @@ public interface AppDetailsView extends IsWidget,
 
         String informationTabLabel();
 
+        SafeHtml saveAppDocError(Throwable caught);
+
         String toolInformationTabLabel();
 
         String toolNameLabel();
@@ -64,6 +79,8 @@ public interface AppDetailsView extends IsWidget,
         String toolVersionLabel();
 
         String toolAttributionLabel();
+
+        String userManual();
     }
 
     interface Presenter {

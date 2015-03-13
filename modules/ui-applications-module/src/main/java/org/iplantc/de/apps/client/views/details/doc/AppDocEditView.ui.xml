@@ -20,7 +20,8 @@
 
     <container:VerticalLayoutContainer ui:field="con">
         <container:child layoutData="{toolBarLayoutData}">
-            <toolbar:ToolBar ui:field="toolbar" height="30">
+            <toolbar:ToolBar ui:field="toolbar"
+                             height="30">
                 <button:TextButton ui:field="saveBtn"
                                    text="{strings.save}"
                                    icon="{icons.save}"/>

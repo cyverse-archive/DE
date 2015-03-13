@@ -1,6 +1,7 @@
 package org.iplantc.de.theme.base.client.apps;
 
 import com.google.gwt.i18n.client.Messages;
+import com.google.gwt.safehtml.shared.SafeHtml;
 
 /**
  * Created by jstroot on 2/23/15.
@@ -20,6 +21,10 @@ public interface AppsMessages extends Messages {
     String didNotLike();
 
     String editMenuItem();
+
+    String fetchAppDetailsError(String errorMessage);
+
+    SafeHtml getAppDocError(String errorMessage);
 
     String hateIt();
 
@@ -69,6 +74,8 @@ public interface AppsMessages extends Messages {
 
     String run();
 
+    SafeHtml saveAppDocError(String errorMessage);
+
     String searchAppResultsHeader(String searchText, int total);
 
     String searchApps();
@@ -84,6 +91,8 @@ public interface AppsMessages extends Messages {
     String testDataWarn();
 
     String useWf();
+
+    String version();
 
     String workflow();
 }
