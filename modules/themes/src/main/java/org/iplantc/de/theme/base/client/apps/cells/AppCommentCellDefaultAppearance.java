@@ -62,9 +62,4 @@ public class AppCommentCellDefaultAppearance implements AppCommentCellAppearance
         sb.append(template.imgCell(comments, comments, className, imgSrc));
     }
 
-    @Override
-    public String comments() {
-        return displayStrings.comments();
-    }
-
 }

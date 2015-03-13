@@ -18,7 +18,7 @@ public class BeforeAppSearchEvent extends GwtEvent<BeforeAppSearchEvent.BeforeAp
         HandlerRegistration addBeforeAppSearchEventHandler(BeforeAppSearchEventHandler handler);
     }
 
-    public static Type<BeforeAppSearchEventHandler> TYPE = new Type<>();
+    public static final Type<BeforeAppSearchEventHandler> TYPE = new Type<>();
 
     public Type<BeforeAppSearchEventHandler> getAssociatedType() {
         return TYPE;

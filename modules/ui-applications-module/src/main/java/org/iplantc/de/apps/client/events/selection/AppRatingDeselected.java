@@ -21,7 +21,7 @@ public class AppRatingDeselected extends GwtEvent<AppRatingDeselected.AppRatingD
         HandlerRegistration addAppRatingDeselectedHandler(AppRatingDeselectedHandler handler);
     }
 
-    public static Type<AppRatingDeselectedHandler> TYPE = new Type<>();
+    public static final Type<AppRatingDeselectedHandler> TYPE = new Type<>();
     private final App app;
 
     public AppRatingDeselected(final App app) {

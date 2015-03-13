@@ -68,8 +68,8 @@ public class AppsViewToolbarImpl extends Composite implements AppsToolbarView {
     @UiField MenuItem submitWf;
     @UiField MenuItem wfRun;
     @UiField TextButton wf_menu;
-    @UiField(provided = true) AppsToolbarAppearance appearance;
-    private static AppsViewToolbarUiBinder uiBinder = GWT.create(AppsViewToolbarUiBinder.class);
+    @UiField(provided = true) final AppsToolbarAppearance appearance;
+    private static final AppsViewToolbarUiBinder uiBinder = GWT.create(AppsViewToolbarUiBinder.class);
     private final PagingLoader<FilterPagingLoadConfig, PagingLoadResult<App>> loader;
     @Inject UserInfo userInfo;
     protected List<App> currentSelection = Lists.newArrayList();
@@ -201,14 +201,14 @@ public class AppsViewToolbarImpl extends Composite implements AppsToolbarView {
                 editAppEnabled = isSingleStep && isOwner;
                 submitAppEnabled = isSingleStep && isRunnable && !isAppPublic;
                 copyAppEnabled = isSingleStep;
-                // App run menu item is left enabled so user can get error anouncement
+                // App run menu item is left enabled so user can get error announcement
                 appRunEnabled = isSingleStep && !isAppDisabled;
 
                 deleteWfEnabled = isMultiStep && !isAppPublic;
                 editWfEnabled = isMultiStep && !isAppPublic && isOwner;
                 submitWfEnabled = isMultiStep && isRunnable &&!isAppPublic;
                 copyWfEnabled = isMultiStep;
-                // Wf run menu item is left enabled so user can get error anouncement
+                // Wf run menu item is left enabled so user can get error announcement
                 wfRunEnabled = isMultiStep && !isAppDisabled;
                 break;
             default:

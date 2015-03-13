@@ -21,7 +21,7 @@ public class EditAppSelected extends GwtEvent<EditAppSelected.EditAppSelectedHan
         HandlerRegistration addEditAppSelectedHandler(EditAppSelectedHandler handler);
     }
 
-    public static Type<EditAppSelectedHandler> TYPE = new Type<>();
+    public static final Type<EditAppSelectedHandler> TYPE = new Type<>();
     private final App app;
 
     public EditAppSelected(final App app) {

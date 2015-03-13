@@ -22,7 +22,7 @@ public class AppRatingSelected extends GwtEvent<AppRatingSelected.AppRatingSelec
         HandlerRegistration addAppRatingSelectedHandler(AppRatingSelectedHandler handler);
     }
 
-    public static Type<AppRatingSelectedHandler> TYPE = new Type<>();
+    public static final Type<AppRatingSelectedHandler> TYPE = new Type<>();
     private final App app;
     private final int score;
 

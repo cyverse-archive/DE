@@ -26,7 +26,7 @@ public class AppSelectionChangedEvent extends GwtEvent<AppSelectionChangedEvent.
         HandlerRegistration addAppSelectionChangedEventHandler(AppSelectionChangedEventHandler handler);
     }
 
-    public static final GwtEvent.Type<AppSelectionChangedEventHandler> TYPE = new GwtEvent.Type<AppSelectionChangedEventHandler>();
+    public static final GwtEvent.Type<AppSelectionChangedEventHandler> TYPE = new GwtEvent.Type<>();
 
     private final List<App> appSelection;
 

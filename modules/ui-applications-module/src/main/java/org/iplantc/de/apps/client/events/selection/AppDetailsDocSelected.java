@@ -20,7 +20,7 @@ public class AppDetailsDocSelected extends GwtEvent<AppDetailsDocSelected.AppDet
         HandlerRegistration addAppDetailsDocSelectedHandler(AppDetailsDocSelectedHandler handler);
     }
 
-    public static Type<AppDetailsDocSelectedHandler> TYPE = new Type<>();
+    public static final Type<AppDetailsDocSelectedHandler> TYPE = new Type<>();
     private final App app;
 
     public AppDetailsDocSelected(final App app) {

@@ -17,7 +17,7 @@ public class CreateNewWorkflowSelected extends GwtEvent<CreateNewWorkflowSelecte
     public static interface HasCreateNewWorkflowSelectedHandlers {
         HandlerRegistration addCreateNewWorkflowSelectedHandler(CreateNewWorkflowSelectedHandler handler);
     }
-    public static Type<CreateNewWorkflowSelectedHandler> TYPE = new Type<>();
+    public static final Type<CreateNewWorkflowSelectedHandler> TYPE = new Type<>();
 
     public Type<CreateNewWorkflowSelectedHandler> getAssociatedType() {
         return TYPE;

@@ -41,12 +41,12 @@ public class AppsGridViewImpl extends ContentPanel implements AppsGridView,
                                                               SelectionChangedEvent.SelectionChangedHandler<App> {
     interface AppsGridViewImplUiBinder extends UiBinder<Widget, AppsGridViewImpl> { }
 
-    private static AppsGridViewImplUiBinder ourUiBinder = GWT.create(AppsGridViewImplUiBinder.class);
+    private static final AppsGridViewImplUiBinder ourUiBinder = GWT.create(AppsGridViewImplUiBinder.class);
 
     @UiField Grid<App> grid;
     @UiField GridView<App> gridView;
     @UiField ColumnModel cm;
-    @UiField(provided = true) ListStore<App> listStore;
+    @UiField(provided = true) final ListStore<App> listStore;
 
     private final AppColumnModel acm; // Convenience class
 

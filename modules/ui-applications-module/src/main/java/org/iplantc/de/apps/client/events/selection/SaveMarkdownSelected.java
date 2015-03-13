@@ -24,7 +24,7 @@ public class SaveMarkdownSelected extends GwtEvent<SaveMarkdownSelected.SaveMark
         void onSaveMarkdownSelected(SaveMarkdownSelected event);
     }
 
-    public static Type<SaveMarkdownSelectedHandler> TYPE = new Type<>();
+    public static final Type<SaveMarkdownSelectedHandler> TYPE = new Type<>();
     private final App app;
     private final String editorContent;
     private final IsMaskable maskable;

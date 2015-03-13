@@ -16,8 +16,9 @@
 
             <g:HTMLPanel>
                 <link href="./markdown.css"
-                      rel="stylesheet"></link>
-                <div style='background-color:white;overflow:scroll;height:450px;' class="markdown">
+                      rel="stylesheet"/>
+                <div style='background-color:white;overflow:scroll;height:450px;'
+                     class="markdown">
                     <g:InlineHTML ui:field="documentation"/>
                 </div>
             </g:HTMLPanel>

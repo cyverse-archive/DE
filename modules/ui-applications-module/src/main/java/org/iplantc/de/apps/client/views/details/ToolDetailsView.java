@@ -53,7 +53,7 @@ public class ToolDetailsView implements IsWidget,
     @UiField InlineLabel version;
     @UiField ContentPanel cp;
 
-    @Path("name")
+    @Path("name") final
     HeaderEditor headerEditor;
 
 

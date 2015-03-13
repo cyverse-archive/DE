@@ -21,7 +21,7 @@ public class AppCommentSelectedEvent extends
         HandlerRegistration addAppCommentSelectedEventHandlers(AppCommentSelectedEventHandler handler);
     }
 
-    public static Type<AppCommentSelectedEventHandler> TYPE = new Type<>();
+    public static final Type<AppCommentSelectedEventHandler> TYPE = new Type<>();
 
     private final App app;
 

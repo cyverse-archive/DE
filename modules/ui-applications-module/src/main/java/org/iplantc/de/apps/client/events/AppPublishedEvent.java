@@ -19,7 +19,7 @@ public class AppPublishedEvent extends GwtEvent<AppPublishedEventHandler> {
         void onAppPublished(AppPublishedEvent appPublishedEvent);
     }
 
-    public static final GwtEvent.Type<AppPublishedEventHandler> TYPE = new GwtEvent.Type<AppPublishedEvent.AppPublishedEventHandler>();
+    public static final GwtEvent.Type<AppPublishedEventHandler> TYPE = new GwtEvent.Type<>();
     private final App publishedApp;
 
     public AppPublishedEvent(App publishedApp) {

@@ -36,7 +36,7 @@ public class AppDocMarkdownDialog extends IPlantDialog implements SaveMarkdownSe
     interface AppDocMarkdownWindowUiBinder extends UiBinder<TabPanel, AppDocMarkdownDialog> {
     }
 
-    private static AppDocMarkdownWindowUiBinder ourUiBinder = GWT.create(AppDocMarkdownWindowUiBinder.class);
+    private static final AppDocMarkdownWindowUiBinder ourUiBinder = GWT.create(AppDocMarkdownWindowUiBinder.class);
     private final AppDocMarkdownDialogAppearance appearance = GWT.create(AppDocMarkdownDialogAppearance.class);
     @UiField InlineHTML documentation;
     @UiField TabItemConfig editTabConfig;
@@ -51,7 +51,7 @@ public class AppDocMarkdownDialog extends IPlantDialog implements SaveMarkdownSe
         setSize("700px", "500px");
         setHeadingText(app.getName());
         getButtonBar().clear();
-        final TabPanel widget = ourUiBinder.createAndBindUi(this);
+        ourUiBinder.createAndBindUi(this);
 
         // Build refLink html
         String safeDoc = SafeHtmlUtils.fromString(appDoc.getDocumentation()).asString();

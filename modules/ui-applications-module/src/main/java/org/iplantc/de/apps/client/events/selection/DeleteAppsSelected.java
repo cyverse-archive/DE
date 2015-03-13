@@ -23,7 +23,7 @@ public class DeleteAppsSelected extends GwtEvent<DeleteAppsSelected.DeleteAppsSe
         HandlerRegistration addDeleteAppsSelectedHandler(DeleteAppsSelectedHandler handler);
     }
 
-    public static Type<DeleteAppsSelectedHandler> TYPE = new Type<>();
+    public static final Type<DeleteAppsSelectedHandler> TYPE = new Type<>();
     private final List<App> appsToBeDeleted;
 
     public DeleteAppsSelected(final List<App> appsToBeDeleted) {

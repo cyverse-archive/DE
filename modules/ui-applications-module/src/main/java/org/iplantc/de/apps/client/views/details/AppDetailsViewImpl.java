@@ -109,7 +109,7 @@ public class AppDetailsViewImpl extends Composite implements AppDetailsView,
 
     @UiField @Path("") AppFavoriteCellWidget favIcon; // Bind to app
 
-    @UiField(provided = true) AppDetailsAppearance appearance;
+    @UiField(provided = true) final AppDetailsAppearance appearance;
     /**
      * FIXME Ensure highlighting
      */

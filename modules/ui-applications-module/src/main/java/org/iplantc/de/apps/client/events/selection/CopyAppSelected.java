@@ -23,7 +23,7 @@ public class CopyAppSelected extends GwtEvent<CopyAppSelected.CopyAppSelectedHan
         HandlerRegistration addCopyAppSelectedHandler(CopyAppSelectedHandler handler);
     }
 
-    public static Type<CopyAppSelectedHandler> TYPE = new Type<>();
+    public static final Type<CopyAppSelectedHandler> TYPE = new Type<>();
     private final List<App> apps;
 
     public CopyAppSelected(final List<App> apps) {

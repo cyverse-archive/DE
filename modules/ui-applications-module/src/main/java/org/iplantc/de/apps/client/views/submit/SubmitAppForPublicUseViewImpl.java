@@ -80,7 +80,7 @@ public class SubmitAppForPublicUseViewImpl implements SubmitAppForPublicUseView 
     @UiTemplate("SubmitAppForPublicUseView.ui.xml")
     interface SubmitAppForPublicUseViewUiBinder extends UiBinder<Widget, SubmitAppForPublicUseViewImpl> { }
 
-    private static SubmitAppForPublicUseViewUiBinder uiBinder = GWT.create(SubmitAppForPublicUseViewUiBinder.class);
+    private static final SubmitAppForPublicUseViewUiBinder uiBinder = GWT.create(SubmitAppForPublicUseViewUiBinder.class);
 
     final private Widget widget;
 
@@ -106,13 +106,13 @@ public class SubmitAppForPublicUseViewImpl implements SubmitAppForPublicUseView 
     @UiField TextArea outputDesc;
     @UiField HTML testDataLbl;
     @UiField(provided = true) final FolderSelectorField dataFolderSelector;
-    @UiField(provided = true) SubmitAppAppearance appearance;
+    @UiField(provided = true) final SubmitAppAppearance appearance;
 
     private GridEditing<AppRefLink> editing;
     private App selectedApp;
     private final DEProperties deProps;
 
-    Logger LOG = Logger.getLogger("Submit Application for Public Use");
+    final Logger LOG = Logger.getLogger("Submit Application for Public Use");
 
     @Inject
     SubmitAppForPublicUseViewImpl(final DiskResourceSelectorFieldFactory folderSelectorFieldFactory,
@@ -132,7 +132,7 @@ public class SubmitAppForPublicUseViewImpl implements SubmitAppForPublicUseView 
 
             }
         });
-        addhelp();
+        addHelp();
     }
 
     @UiFactory
@@ -166,15 +166,7 @@ public class SubmitAppForPublicUseViewImpl implements SubmitAppForPublicUseView 
         grid.getView().setAutoExpandColumn(cc);
     }
 
-    private String buildRequiredFieldLabel(String label) {
-        if (label == null) {
-            return null;
-        }
-
-        return "<span style='color:red; top:-5px;' >*</span> " + label; //$NON-NLS-1$
-    }
-
-    private void addhelp() {
+    private void addHelp() {
         final ToolButton tool_help_ref = new ToolButton(ToolButton.QUESTION);
         refPanel.getHeader().addTool(tool_help_ref);
         tool_help_ref.addSelectHandler(new SelectHandler() {
@@ -416,8 +408,7 @@ public class SubmitAppForPublicUseViewImpl implements SubmitAppForPublicUseView 
 		};
 		var template = $wnd.Handlebars
 				.compile('### {{appName}} \n> #### Description and Quick Start \n>> {{quickStart}} \n> #### Test Data \n>> {{testData}} \n> #### Input File(s) \n>> {{inputFiles}} \n> #### Parameters Used in App \n>> {{params}} \n> #### Output File(s) \n>> {{outputFiles}}');
-		var html = template(context);
-		return html;
+        return template(context);
     }-*/
     ;
 
@@ -460,11 +451,7 @@ public class SubmitAppForPublicUseViewImpl implements SubmitAppForPublicUseView 
     }
 
     private boolean checkAppCategories() {
-        if (tree.getCheckedSelection().size() > 0) {
-            return true;
-        } else {
-            return false;
-        }
+        return tree.getCheckedSelection().size() > 0;
     }
 
     private JSONValue buildRefLinksAsJson() {

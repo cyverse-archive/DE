@@ -106,7 +106,7 @@ public class AppDetailsViewPresenterImpl implements AppDetailsView.Presenter,
     @Override
     public void onAppDetailsDocSelected(AppDetailsDocSelected event) {
         if (Strings.isNullOrEmpty(event.getApp().getWikiUrl())) {
-            Preconditions.checkNotNull(appDoc, "AppDoc should have been prefetched in go(..) method!");
+            Preconditions.checkNotNull(appDoc, "AppDoc should have been pre-fetched in go(..) method!");
             view.showDoc(appDoc);
         } else {
             Window.open(event.getApp().getWikiUrl(), "_blank", "");

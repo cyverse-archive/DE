@@ -30,8 +30,6 @@ import com.sencha.gxt.data.shared.event.StoreRemoveEvent;
 import com.sencha.gxt.widget.core.client.tree.Tree;
 import com.sencha.gxt.widget.core.client.tree.TreeSelectionModel;
 
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.*;
 import org.junit.Before;
 import org.junit.Test;
@@ -255,7 +253,7 @@ public class AppCategoriesPresenterImplTest {
         when(appCategoryMock.getName()).thenReturn(currentCategoryName);
         when(selectionModelMock.getSelectedItem()).thenReturn(appCategoryMock);
 
-        // Set treestore items
+        // Set treeStore items
         when(treeStoreMock.getAll()).thenReturn(Lists.newArrayList(favoritesCat, appCategoryMock));
 
 

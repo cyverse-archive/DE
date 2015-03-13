@@ -39,7 +39,7 @@ public class AppDocEditView extends Composite implements IsMaskable,
     @UiTemplate("AppDocEditView.ui.xml")
     interface AppDocEditViewUiBinder extends UiBinder<Widget, AppDocEditView> { }
 
-    private static AppDocEditViewUiBinder uiBinder = GWT.create(AppDocEditViewUiBinder.class);
+    private static final AppDocEditViewUiBinder uiBinder = GWT.create(AppDocEditViewUiBinder.class);
 
     @UiField TextButton saveBtn;
     @UiField SimpleContainer panel;

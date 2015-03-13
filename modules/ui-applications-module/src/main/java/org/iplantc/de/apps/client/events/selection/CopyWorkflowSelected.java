@@ -23,7 +23,7 @@ public class CopyWorkflowSelected extends GwtEvent<CopyWorkflowSelected.CopyWork
         HandlerRegistration addCopyWorkflowSelectedHandler(CopyWorkflowSelectedHandler handler);
     }
 
-    public static Type<CopyWorkflowSelectedHandler> TYPE = new Type<>();
+    public static final Type<CopyWorkflowSelectedHandler> TYPE = new Type<>();
     private final List<App> apps;
 
     public CopyWorkflowSelected(final List<App> apps) {

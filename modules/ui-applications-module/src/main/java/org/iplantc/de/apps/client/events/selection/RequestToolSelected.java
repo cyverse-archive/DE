@@ -17,7 +17,7 @@ public class RequestToolSelected extends GwtEvent<RequestToolSelected.RequestToo
     public static interface RequestToolSelectedHandler extends EventHandler {
         void onRequestToolSelected(RequestToolSelected event);
     }
-    public static Type<RequestToolSelectedHandler> TYPE = new Type<>();
+    public static final Type<RequestToolSelectedHandler> TYPE = new Type<>();
 
     public Type<RequestToolSelectedHandler> getAssociatedType() {
         return TYPE;

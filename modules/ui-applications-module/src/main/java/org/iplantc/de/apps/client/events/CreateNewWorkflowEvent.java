@@ -9,7 +9,7 @@ import com.google.gwt.event.shared.GwtEvent;
  */
 public class CreateNewWorkflowEvent extends GwtEvent<CreateNewWorkflowEvent.CreateNewWorkflowEventHandler> {
 
-    public static final GwtEvent.Type<CreateNewWorkflowEventHandler> TYPE = new GwtEvent.Type<CreateNewWorkflowEventHandler>();
+    public static final GwtEvent.Type<CreateNewWorkflowEventHandler> TYPE = new GwtEvent.Type<>();
 
     @Override
     public GwtEvent.Type<CreateNewWorkflowEventHandler> getAssociatedType() {

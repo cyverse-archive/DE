@@ -28,7 +28,7 @@ public class AppsViewImpl extends Composite implements AppsView {
     @UiField(provided = true) final AppCategoriesView appCategoriesView;
     @UiField(provided = true) final AppsGridView appsGridView;
 
-    private static MyUiBinder uiBinder = GWT.create(MyUiBinder.class);
+    private static final MyUiBinder uiBinder = GWT.create(MyUiBinder.class);
 
     @Inject
     protected AppsViewImpl(@Assisted final AppCategoriesView.Presenter categoriesPresenter,

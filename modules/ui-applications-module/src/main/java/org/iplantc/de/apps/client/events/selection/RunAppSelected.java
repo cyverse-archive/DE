@@ -20,7 +20,7 @@ public class RunAppSelected extends GwtEvent<RunAppSelected.RunAppSelectedHandle
     public static interface RunAppSelectedHandler extends EventHandler {
         void onRunAppSelected(RunAppSelected event);
     }
-    public static Type<RunAppSelectedHandler> TYPE = new Type<>();
+    public static final Type<RunAppSelectedHandler> TYPE = new Type<>();
     private final App app;
 
     public RunAppSelected(final App app) {

@@ -29,8 +29,8 @@ public class AppSearchResultLoadEvent extends GwtEvent<AppSearchResultLoadEvent.
 
     public static final GwtEvent.Type<AppSearchResultLoadEventHandler> TYPE = new GwtEvent.Type<>();
     private final String searchPattern;
-    private List<App> results;
-    private String searchText;
+    private final List<App> results;
+    private final String searchText;
 
     public AppSearchResultLoadEvent(final String searchText,
                                     final String searchPattern,

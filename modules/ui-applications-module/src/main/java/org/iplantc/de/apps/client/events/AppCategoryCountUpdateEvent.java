@@ -5,7 +5,7 @@ import com.google.gwt.event.shared.GwtEvent;
 
 public class AppCategoryCountUpdateEvent extends GwtEvent<AppCategoryCountUpdateEvent.AppCategoryCountUpdateEventHandler> {
 
-    public static final GwtEvent.Type<AppCategoryCountUpdateEventHandler> TYPE = new GwtEvent.Type<AppCategoryCountUpdateEventHandler>();
+    public static final GwtEvent.Type<AppCategoryCountUpdateEventHandler> TYPE = new GwtEvent.Type<>();
 
     /**
      * Describes the count update type
@@ -56,13 +56,6 @@ public class AppCategoryCountUpdateEvent extends GwtEvent<AppCategoryCountUpdate
      */
     public void setIncrement(boolean inc) {
         this.increment = inc;
-    }
-
-    /**
-     * @return the boolean suggesting if its an increment
-     */
-    public boolean isIncrement() {
-        return increment;
     }
 
     /**

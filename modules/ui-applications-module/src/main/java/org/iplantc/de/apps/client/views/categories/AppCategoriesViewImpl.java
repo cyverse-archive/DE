@@ -35,8 +35,8 @@ public class AppCategoriesViewImpl extends ContentPanel implements AppCategories
     }
     @UiField Tree<AppCategory, String> tree;
 
-    private static String WEST_COLLAPSE_BTN_ID = "idCategoryCollapseBtn";
-    private static AppCategoriesViewImplUiBinder ourUiBinder = GWT.create(AppCategoriesViewImplUiBinder.class);
+    private static final String WEST_COLLAPSE_BTN_ID = "idCategoryCollapseBtn";
+    private static final AppCategoriesViewImplUiBinder ourUiBinder = GWT.create(AppCategoriesViewImplUiBinder.class);
     private final AppCategoriesAppearance appearance;
     private final AppCategoryHierarchyProvider hierarchyProvider;
     private final TreeStore<AppCategory> treeStore;

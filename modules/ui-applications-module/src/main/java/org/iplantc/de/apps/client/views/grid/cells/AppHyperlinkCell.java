@@ -17,7 +17,7 @@ import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.client.Event;
 
 /**
- * This is a custom cell which combines the functionality of the {@link AppFavoriteCell} with a clickable
+ * This is a custom cell which combines the functionality of the {@link AppFavoriteCell} with a selectable
  * hyper-link of an app name.
  *
  * @author jstroot

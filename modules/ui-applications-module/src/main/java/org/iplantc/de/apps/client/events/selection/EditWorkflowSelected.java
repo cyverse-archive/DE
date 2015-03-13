@@ -21,7 +21,7 @@ public class EditWorkflowSelected extends GwtEvent<EditWorkflowSelected.EditWork
         HandlerRegistration addEditWorkflowSelectedHandler(EditWorkflowSelectedHandler handler);
     }
 
-    public static Type<EditWorkflowSelectedHandler> TYPE = new Type<>();
+    public static final Type<EditWorkflowSelectedHandler> TYPE = new Type<>();
     private final App workFlow;
 
     public EditWorkflowSelected(final App workFlow) {

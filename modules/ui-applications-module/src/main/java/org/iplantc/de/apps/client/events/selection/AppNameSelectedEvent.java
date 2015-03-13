@@ -20,7 +20,7 @@ public class AppNameSelectedEvent extends GwtEvent<AppNameSelectedEvent.AppNameS
         HandlerRegistration addAppNameSelectedEventHandler(AppNameSelectedEventHandler handler);
     }
 
-    public static Type<AppNameSelectedEventHandler> TYPE = new Type<>();
+    public static final Type<AppNameSelectedEventHandler> TYPE = new Type<>();
 
     private final App selectedApp;
 

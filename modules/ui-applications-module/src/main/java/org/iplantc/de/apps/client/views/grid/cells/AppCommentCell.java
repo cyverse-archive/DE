@@ -25,7 +25,6 @@ public class AppCommentCell extends AbstractCell<App> {
     public interface AppCommentCellAppearance {
         void render(Context context, App value, SafeHtmlBuilder sb);
 
-        String comments();
     }
 
     private final AppCommentCellAppearance appearance;

@@ -17,7 +17,7 @@ public class CreateNewAppSelected extends GwtEvent<CreateNewAppSelected.CreateNe
     public static interface HasCreateNewAppSelectedHandlers {
         HandlerRegistration addCreateNewAppSelectedHandler(CreateNewAppSelectedHandler handler);
     }
-    public static Type<CreateNewAppSelectedHandler> TYPE = new Type<>();
+    public static final Type<CreateNewAppSelectedHandler> TYPE = new Type<>();
 
     public Type<CreateNewAppSelectedHandler> getAssociatedType() {
         return TYPE;

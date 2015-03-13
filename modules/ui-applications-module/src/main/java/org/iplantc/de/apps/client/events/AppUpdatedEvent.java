@@ -15,7 +15,7 @@ public class AppUpdatedEvent extends GwtEvent<AppUpdatedEvent.AppUpdatedEventHan
     public static interface AppUpdatedEventHandler extends EventHandler {
         void onAppUpdated(AppUpdatedEvent event);
     }
-    public static Type<AppUpdatedEventHandler> TYPE = new Type<>();
+    public static final Type<AppUpdatedEventHandler> TYPE = new Type<>();
     private final App app;
 
     public AppUpdatedEvent(final App app) {

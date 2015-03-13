@@ -29,15 +29,10 @@ import java.util.List;
  */
 public class AppSearchRpcProxy extends RpcProxy<FilterPagingLoadConfig, PagingLoadResult<App>> {
     private HasHandlers hasHandlers;
-    private String lastQueryText = ""; //$NON-NLS-1$
     private final AppServiceFacade appService;
 
     public AppSearchRpcProxy(final AppServiceFacade appService) {
         this.appService = appService;
-    }
-
-    public String getLastQueryText() {
-        return lastQueryText;
     }
 
     public void setHasHandlers(HasHandlers hasHandlers){
@@ -48,7 +43,7 @@ public class AppSearchRpcProxy extends RpcProxy<FilterPagingLoadConfig, PagingLo
     public void load(FilterPagingLoadConfig loadConfig,
             final AsyncCallback<PagingLoadResult<App>> callback) {
         // Cache the query text.
-        lastQueryText = ""; //$NON-NLS-1$
+        String lastQueryText = "";
 
         // Get the proxy's search params.
         List<FilterConfig> filterConfigs = loadConfig.getFilters();

@@ -19,7 +19,7 @@ public class EditWorkflowEvent extends GwtEvent<EditWorkflowEventHandler> {
         void onEditWorkflow(EditWorkflowEvent event);
     }
 
-    public static final GwtEvent.Type<EditWorkflowEventHandler> TYPE = new GwtEvent.Type<EditWorkflowEventHandler>();
+    public static final GwtEvent.Type<EditWorkflowEventHandler> TYPE = new GwtEvent.Type<>();
     private final HasId workflowToEdit;
     private Splittable serviceWorkflowJson;
 
