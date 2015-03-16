@@ -366,9 +366,11 @@ public abstract class AbstractDiskResourceSelector<R extends DiskResource> exten
             return;
         }
         model = value;
-        input.setValue(value == null ? null : value.getPath());
-        validate(false);
-        doGetStat(value);
+        if (value != null) {
+            input.setValue(value.getPath());
+            validate(false);
+            doGetStat(value);
+        }
     }
 
     @Override

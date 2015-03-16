@@ -386,7 +386,7 @@ public class GridViewPresenterImpl implements
                 List<HasPath> paths = mCopyDialog.getValue();
                 if (paths == null || paths.size() == 0) {
                     AlertMessageBox amb = new AlertMessageBox(appearance.copyMetadata(),
-                                                              "You must select at least one file or a folder!");
+                                                              "You must select at least a file or a folder!");
                     amb.show();
                     return;
                 }
