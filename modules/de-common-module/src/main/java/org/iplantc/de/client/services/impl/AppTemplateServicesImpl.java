@@ -319,6 +319,11 @@ public class AppTemplateServicesImpl implements AppTemplateServices, AppBuilderM
                         arg.setValue(null);
                         arg.setName("");
                     }
+                } else if (appTemplateUtils.isDiskResourceArgumentType(arg.getType())) {
+                    Splittable valSplit = StringQuoter.createSplittable();
+                    StringQuoter.create("fakeId").assign(valSplit, "id");
+                    StringQuoter.create("/iplant/fake/file").assign(valSplit, "path");
+                    arg.setValue(valSplit);
                 }
             }
         }
