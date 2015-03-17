@@ -6,6 +6,7 @@ import org.iplantc.de.admin.apps.client.events.selection.DeleteCategorySelected;
 import org.iplantc.de.admin.apps.client.events.selection.MoveCategorySelected;
 import org.iplantc.de.admin.apps.client.events.selection.RenameCategorySelected;
 import org.iplantc.de.apps.client.AppCategoriesView;
+import org.iplantc.de.apps.client.events.AppSearchResultLoadEvent;
 import org.iplantc.de.client.models.HasId;
 import org.iplantc.de.client.models.apps.App;
 
@@ -24,7 +25,8 @@ public interface AdminCategoriesView extends AppCategoriesView {
                                 DeleteCategorySelected.DeleteCategorySelectedHandler,
                                 StoreRemoveEvent.StoreRemoveHandler<App>,
                                 CategorizeAppSelected.CategorizeAppSelectedHandler,
-                                MoveCategorySelected.MoveCategorySelectedHandler {
+                                MoveCategorySelected.MoveCategorySelectedHandler,
+                                AppSearchResultLoadEvent.AppSearchResultLoadEventHandler {
 
         interface Appearance {
 
@@ -39,6 +41,8 @@ public interface AdminCategoriesView extends AppCategoriesView {
             String addCategoryPrompt();
 
             String appCategorizeSuccess(String name, List<String> groupNames);
+
+            String categorizeAppLoadingMask();
 
             String confirmDeleteAppCategory(String name);
 

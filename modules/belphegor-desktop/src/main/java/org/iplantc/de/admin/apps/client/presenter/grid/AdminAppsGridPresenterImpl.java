@@ -2,9 +2,11 @@ package org.iplantc.de.admin.apps.client.presenter.grid;
 
 import org.iplantc.de.admin.apps.client.AdminAppsGridView;
 import org.iplantc.de.admin.apps.client.events.selection.RestoreAppSelected;
+import org.iplantc.de.admin.apps.client.events.selection.SaveAppSelected;
 import org.iplantc.de.admin.apps.client.gin.factory.AdminAppsGridViewFactory;
 import org.iplantc.de.admin.apps.client.views.editor.AppEditor;
 import org.iplantc.de.admin.desktop.client.services.AppAdminServiceFacade;
+import org.iplantc.de.apps.client.events.AppSearchResultLoadEvent;
 import org.iplantc.de.apps.client.events.selection.AppCategorySelectionChangedEvent;
 import org.iplantc.de.apps.client.events.selection.AppNameSelectedEvent;
 import org.iplantc.de.apps.client.events.selection.DeleteAppsSelected;
@@ -21,6 +23,7 @@ import org.iplantc.de.commons.client.info.SuccessAnnouncementConfig;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Preconditions;
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.event.shared.HandlerRegistration;
@@ -40,8 +43,30 @@ import java.util.List;
  * @author jstroot
  */
 public class AdminAppsGridPresenterImpl implements AdminAppsGridView.Presenter,
-                                                   AppNameSelectedEvent.AppNameSelectedEventHandler {
+                                                   AppNameSelectedEvent.AppNameSelectedEventHandler, SaveAppSelected.SaveAppSelectedHandler {
 
+
+    private static class DocSaveCallback implements AsyncCallback<AppDoc> {
+        private final IplantAnnouncer announcer;
+        private final Appearance appearance;
+
+        public DocSaveCallback(final IplantAnnouncer announcer,
+                               final Appearance appearance) {
+            this.announcer = announcer;
+            this.appearance = appearance;
+        }
+
+        @Override
+        public void onFailure(Throwable caught) {
+            announcer.schedule(new ErrorAnnouncementConfig(appearance.updateApplicationError()));
+        }
+
+        @Override
+        public void onSuccess(AppDoc result) {
+            announcer.schedule(new SuccessAnnouncementConfig(appearance.updateDocumentationSuccess()));
+
+        }
+    }
 
     @Inject AppAdminServiceFacade adminAppService;
     @Inject AppServiceFacade appService;
@@ -52,10 +77,7 @@ public class AdminAppsGridPresenterImpl implements AdminAppsGridView.Presenter,
 
     private final ListStore<App> listStore;
     private final AdminAppsGridView view;
-    protected App desiredSelectedApp;
-
-    // a flag to determine if doc
-    private boolean isDocUpdate;
+    boolean isDocUpdate;
 
     @Inject
     AdminAppsGridPresenterImpl(final AdminAppsGridViewFactory viewFactory,
@@ -102,14 +124,6 @@ public class AdminAppsGridPresenterImpl implements AdminAppsGridView.Presenter,
             public void onSuccess(final List<App> apps) {
                 listStore.clear();
                 listStore.addAll(apps);
-
-                if (getDesiredSelectedApp() != null) {
-                    view.getGrid().getSelectionModel().select(getDesiredSelectedApp(), false);
-                } else if (listStore.size() > 0) {
-                    // Select first app
-                    view.getGrid().getSelectionModel().select(listStore.get(0), false);
-                }
-                setDesiredSelectedApp(null);
                 view.unmask();
             }
         });
@@ -124,20 +138,27 @@ public class AdminAppsGridPresenterImpl implements AdminAppsGridView.Presenter,
                 IplantAnnouncer.getInstance()
                                .schedule(new ErrorAnnouncementConfig("Documentation not found!"));
                 AutoBean<AppDoc> doc = AutoBeanCodex.decode(factory, AppDoc.class, "{}");
-                AppEditor.Presenter appEditorPresenter = null;
-                new AppEditor(event.getSelectedApp(), doc.as(), appEditorPresenter).show();
+                final AppEditor appEditor = new AppEditor(event.getSelectedApp(), doc.as());
+                appEditor.addSaveAppSelectedHandler(AdminAppsGridPresenterImpl.this);
+                appEditor.show();
                 isDocUpdate = false;
             }
 
             @Override
             public void onSuccess(final AppDoc result) {
                 // Get result
-                AppEditor.Presenter appEditorPresenter = null;
-                new AppEditor(event.getSelectedApp(), result, appEditorPresenter).show();
+                final AppEditor appEditor = new AppEditor(event.getSelectedApp(), result);
+                appEditor.addSaveAppSelectedHandler(AdminAppsGridPresenterImpl.this);
+                appEditor.show();
                 isDocUpdate = true;
             }
         });
+    }
 
+    @Override
+    public void onAppSearchResultLoad(AppSearchResultLoadEvent event) {
+        listStore.clear();
+        listStore.addAll(event.getResults());
     }
 
     @Override
@@ -203,11 +224,40 @@ public class AdminAppsGridPresenterImpl implements AdminAppsGridView.Presenter,
             });
     }
 
-    App getDesiredSelectedApp() {
-        return desiredSelectedApp;
-    }
+    @Override
+    public void onSaveAppSelected(SaveAppSelected event) {
 
-    void setDesiredSelectedApp(App desiredSelectedApp) {
-        this.desiredSelectedApp = desiredSelectedApp;
+        final App app = event.getApp();
+        final AppDoc doc = event.getDoc();
+
+        if (app.getName() != null) {
+            view.mask(appearance.saveAppLoadingMask());
+            adminAppService.updateApp(app, new AsyncCallback<App>() {
+                @Override
+                public void onFailure(Throwable caught) {
+                    view.unmask();
+                    announcer.schedule(new ErrorAnnouncementConfig(appearance.updateApplicationError()));
+                }
+
+                @Override
+                public void onSuccess(App result) {
+                    view.unmask();
+                    listStore.update(result);
+                }
+            });
+        }
+        if(!Strings.isNullOrEmpty(doc.getDocumentation())) {
+            if (isDocUpdate) {
+                adminAppService.updateAppDoc(app,
+                                             doc,
+                                             new DocSaveCallback(announcer,
+                                                                 appearance));
+            } else {
+                adminAppService.saveAppDoc(app,
+                                           doc,
+                                           new DocSaveCallback(announcer,
+                                                               appearance));
+            }
+        }
     }
 }

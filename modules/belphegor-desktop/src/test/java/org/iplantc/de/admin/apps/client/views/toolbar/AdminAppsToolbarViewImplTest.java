@@ -1,5 +1,6 @@
 package org.iplantc.de.admin.apps.client.views.toolbar;
 
+import org.iplantc.de.admin.apps.client.AdminAppsToolbarView;
 import org.iplantc.de.apps.client.events.selection.AppCategorySelectionChangedEvent;
 import org.iplantc.de.apps.client.events.selection.AppSelectionChangedEvent;
 import org.iplantc.de.client.models.apps.App;
@@ -45,11 +46,13 @@ public class AdminAppsToolbarViewImplTest {
     @Mock AppSelectionChangedEvent mockAppSelectionChangedEvent;
     @Mock AppCategorySelectionChangedEvent mockAppGrpSelectionChangedEvent;
     @Mock PagingLoader<FilterPagingLoadConfig, PagingLoadResult<App>> mockLoader;
+    @Mock AdminAppsToolbarView.ToolbarAppearance appearanceMock;
 
     private AdminAppsToolbarViewImpl uut;
 
     @Before public void setUp(){
-        uut = new AdminAppsToolbarViewImpl(mockLoader);
+        uut = new AdminAppsToolbarViewImpl(appearanceMock,
+                                           mockLoader);
         mockMenuItems(uut);
     }
 

@@ -62,6 +62,11 @@ public class AdminCategoriesPresenterDefaultAppearance implements AdminCategorie
     }
 
     @Override
+    public String categorizeAppLoadingMask() {
+        return iplantDisplayStrings.loadingMask();
+    }
+
+    @Override
     public String confirmDeleteAppCategory(String name) {
         return displayStrings.confirmDeleteAppCategory(name);
     }

@@ -25,9 +25,9 @@ import java.util.List;
 /**
  * @author jstroot
  */
-public class BelphegorAppColumnModel extends ColumnModel<App> implements AppNameSelectedEvent.HasAppNameSelectedEventHandlers {
+public class AdminAppsColumnModel extends ColumnModel<App> implements AppNameSelectedEvent.HasAppNameSelectedEventHandlers {
 
-    public BelphegorAppColumnModel() {
+    public AdminAppsColumnModel() {
         super(createColumnConfigList(GWT.<AdminAppsView.AdminAppsViewAppearance> create(AdminAppsView.AdminAppsViewAppearance.class)));
 
         for(ColumnConfig<App, ?> colConfig : configs){

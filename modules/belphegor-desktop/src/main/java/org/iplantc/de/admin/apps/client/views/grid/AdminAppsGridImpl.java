@@ -1,6 +1,8 @@
 package org.iplantc.de.admin.apps.client.views.grid;
 
 import org.iplantc.de.admin.apps.client.AdminAppsGridView;
+import org.iplantc.de.apps.client.events.AppSearchResultLoadEvent;
+import org.iplantc.de.apps.client.events.BeforeAppSearchEvent;
 import org.iplantc.de.apps.client.events.selection.AppCategorySelectionChangedEvent;
 import org.iplantc.de.apps.client.events.selection.AppNameSelectedEvent;
 import org.iplantc.de.apps.client.events.selection.AppSelectionChangedEvent;
@@ -38,17 +40,22 @@ public class AdminAppsGridImpl extends ContentPanel implements AdminAppsGridView
     @UiField GridView<App> gridView;
     @UiField Grid<App> grid;
 
+    private final AdminAppsColumnModel acm; // Convenience class
+
+    @Inject AdminAppsGridView.Appearance appearance;
+
     @Inject
     AdminAppsGridImpl(@Assisted final ListStore<App> listStore) {
         this.listStore = listStore;
 
         setWidget(ourUiBinder.createAndBindUi(this));
+        this.acm = (AdminAppsColumnModel) cm;
         grid.getSelectionModel().addSelectionChangedHandler(this);
     }
 
     @Override
     public HandlerRegistration addAppNameSelectedEventHandler(AppNameSelectedEvent.AppNameSelectedEventHandler handler) {
-        return ((BelphegorAppColumnModel)cm).addAppNameSelectedEventHandler(handler);
+        return acm.addAppNameSelectedEventHandler(handler);
     }
 
     @Override
@@ -68,12 +75,27 @@ public class AdminAppsGridImpl extends ContentPanel implements AdminAppsGridView
     }
 
     @Override
+    public void onAppSearchResultLoad(AppSearchResultLoadEvent event) {
+        unmask();
+//        searchRegexPattern = event.getSearchPattern();
+//        acm.setSearchRegexPattern(searchRegexPattern);
+
+        int total = event.getResults() == null ? 0 : event.getResults().size();
+        setHeadingText(appearance.searchAppResultsHeader(event.getSearchText(), total));
+    }
+
+    @Override
+    public void onBeforeAppSearch(BeforeAppSearchEvent event) {
+        mask(appearance.beforeAppSearchLoadingMask());
+    }
+
+    @Override
     public void onSelectionChanged(SelectionChangedEvent<App> event) {
         fireEvent(new AppSelectionChangedEvent(event.getSelection()));
     }
 
     @UiFactory
     ColumnModel<App> createColumnModel() {
-        return new BelphegorAppColumnModel();
+        return new AdminAppsColumnModel();
     }
 }

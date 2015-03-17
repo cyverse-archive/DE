@@ -1,5 +1,6 @@
 package org.iplantc.de.admin.apps.client.views.editor;
 
+import org.iplantc.de.admin.apps.client.events.selection.SaveAppSelected;
 import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.models.apps.AppDoc;
 import org.iplantc.de.commons.client.ErrorHandler;
@@ -14,6 +15,7 @@ import com.google.gwt.editor.client.Editor;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -35,7 +37,9 @@ import com.sencha.gxt.widget.core.client.form.validator.RegExValidator;
 /**
  * @author jstroot
  */
-public class AppEditor implements Editor<App>, IsWidget {
+public class AppEditor implements Editor<App>,
+                                  IsWidget,
+                                  SaveAppSelected.HasSaveAppSelectedHandlers {
 
     public interface AppEditorAppearance {
 
@@ -76,7 +80,6 @@ public class AppEditor implements Editor<App>, IsWidget {
 
     Driver driver = GWT.create(Driver.class);
 
-    private final Presenter presenter;
 
     @UiField @Ignore Window window;
     @UiField TextField name;
@@ -93,17 +96,10 @@ public class AppEditor implements Editor<App>, IsWidget {
     @UiField FieldLabel wikiUrlFieldLabel;
     @UiField @Ignore TextButton saveButton;
     @UiField @Ignore TextButton cancelButton;
-    @UiField
-    FieldLabel appDocLbl;
-    @UiField
-    @Ignore
-    TextArea appDoc;
-    @UiField
-    @Ignore
-    HTML docHelp;
-    @UiField(provided = true)
-    @Ignore
-    IPlantAnchor templateLink;
+    @UiField FieldLabel appDocLbl;
+    @UiField @Ignore TextArea appDoc;
+    @UiField @Ignore HTML docHelp;
+    @UiField(provided = true) @Ignore IPlantAnchor templateLink;
     @UiField(provided = true) AppEditorAppearance appearance = GWT.create(AppEditorAppearance.class);
 
     private final Widget widget;
@@ -111,11 +107,9 @@ public class AppEditor implements Editor<App>, IsWidget {
     private final AppDoc doc;
 
     public AppEditor(final App app,
-                     final AppDoc doc,
-                     final Presenter presenter) {
+                     final AppDoc doc) {
         templateLink = new IPlantAnchor("View Documentaion Template");
         widget = uiBinder.createAndBindUi(this);
-        this.presenter = presenter;
         this.doc = doc;
         initTemplateLink();
 
@@ -136,6 +130,11 @@ public class AppEditor implements Editor<App>, IsWidget {
         }
         driver.initialize(this);
         driver.edit(app);
+    }
+
+    @Override
+    public HandlerRegistration addSaveAppSelectedHandler(SaveAppSelected.SaveAppSelectedHandler handler) {
+        return asWidget().addHandler(handler, SaveAppSelected.TYPE);
     }
 
     private void initTemplateLink() {
@@ -169,7 +168,7 @@ public class AppEditor implements Editor<App>, IsWidget {
         if (!driver.hasErrors() && validDoc()) {
             window.hide();
             doc.setDocumentation(appDoc.getCurrentValue());
-            presenter.onAppEditorSave(app, doc);
+            asWidget().fireEvent(new SaveAppSelected(app, doc));
         }
     }
 

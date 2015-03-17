@@ -73,4 +73,6 @@ public interface BelphegorDisplayStrings extends Messages {
 
     @Key("toolRequests")
     String toolRequests();
+
+    String updateDocumentationSuccess();
 }

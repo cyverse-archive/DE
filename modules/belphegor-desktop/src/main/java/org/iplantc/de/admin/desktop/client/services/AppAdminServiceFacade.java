@@ -67,6 +67,8 @@ public interface AppAdminServiceFacade {
     void restoreApp(HasId app,
                     AsyncCallback<App> callback);
 
+    void updateApp(App app, AsyncCallback<App> callback);
+
     /**
      * Deletes an App with the given applicationId.
      *  @param app
@@ -80,7 +82,7 @@ public interface AppAdminServiceFacade {
 
     void getAppDoc(HasId app, AsyncCallback<AppDoc> callback);
 
-    void saveAppDoc(String appId, String doc, AsyncCallback<String> callback);
+    void saveAppDoc(HasId app, AppDoc doc, AsyncCallback<AppDoc> callback);
 
-    void updateAppDoc(String appId, String doc, AsyncCallback<String> callback);
+    void updateAppDoc(HasId app, AppDoc doc, AsyncCallback<AppDoc> callback);
 }

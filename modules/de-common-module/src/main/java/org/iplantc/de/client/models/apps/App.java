@@ -119,7 +119,7 @@ public interface App extends HasId,
     void setPipelineEligibility(PipelineEligibility pipelineEligibility);
 
     @PropertyName(IS_PUBLIC_KEY)
-    void setPublic(boolean isPublic);
+    void setPublic(Boolean isPublic);
 
     void setRating(AppFeedback fb);
 

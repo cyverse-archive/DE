@@ -8,6 +8,7 @@ import org.iplantc.de.admin.apps.client.events.selection.RenameCategorySelected;
 import org.iplantc.de.admin.desktop.client.models.BelphegorAdminProperties;
 import org.iplantc.de.admin.desktop.client.services.AppAdminServiceFacade;
 import org.iplantc.de.apps.client.AppCategoriesView;
+import org.iplantc.de.apps.client.events.AppSearchResultLoadEvent;
 import org.iplantc.de.apps.client.gin.factory.AppCategoriesViewFactory;
 import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.models.apps.AppCategory;
@@ -135,6 +136,25 @@ public class AdminAppsCategoriesPresenterImplTest {
                                appServiceMock,
                                treeStoreMock,
                                viewMock);
+    }
+
+    @Test public void verifyCategoriesDeselected_onAppSearchResultLoad() {
+        AppSearchResultLoadEvent eventMock = mock(AppSearchResultLoadEvent.class);
+
+        /*** CALL METHOD UNDER TEST ***/
+        uut.onAppSearchResultLoad(eventMock);
+
+        verify(viewMock).getTree();
+        verify(treeMock).getSelectionModel();
+        verify(selectionModelMock).deselectAll();
+
+        verifyNoMoreInteractions(viewMock,
+                                 treeMock,
+                                 selectionModelMock);
+        verifyZeroInteractions(adminAppServiceMock,
+                               appServiceMock,
+                               treeStoreMock);
+
     }
 
     @Test public void verifyNothingHappensBetaSelected_onAddCategorySelected() {

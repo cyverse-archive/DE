@@ -74,4 +74,19 @@ public class AdminAppsGridPresenterDefaultAppearance extends AppsGridViewDefault
     public String restoreAppSuccessMsgTitle() {
         return displayStrings.restoreAppSuccessMsgTitle();
     }
+
+    @Override
+    public String saveAppLoadingMask() {
+        return iplantDisplayStrings.loadingMask();
+    }
+
+    @Override
+    public String updateApplicationError() {
+        return errorStrings.updateApplicationError();
+    }
+
+    @Override
+    public String updateDocumentationSuccess() {
+        return displayStrings.updateDocumentationSuccess();
+    }
 }

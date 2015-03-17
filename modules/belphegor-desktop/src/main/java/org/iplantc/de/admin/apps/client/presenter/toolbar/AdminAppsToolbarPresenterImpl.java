@@ -28,7 +28,6 @@ public class AdminAppsToolbarPresenterImpl implements AdminAppsToolbarView.Prese
         loader = new PagingLoader<>(proxy);
         this.view = viewFactory.create(loader);
         proxy.setHasHandlers(view);
-
     }
 
     @Override

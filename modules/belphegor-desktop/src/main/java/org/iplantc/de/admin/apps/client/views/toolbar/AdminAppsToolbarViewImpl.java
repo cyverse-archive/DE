@@ -8,11 +8,10 @@ import org.iplantc.de.admin.apps.client.events.selection.MoveCategorySelected;
 import org.iplantc.de.admin.apps.client.events.selection.RenameCategorySelected;
 import org.iplantc.de.admin.apps.client.events.selection.RestoreAppSelected;
 import org.iplantc.de.apps.client.events.AppSearchResultLoadEvent;
+import org.iplantc.de.apps.client.events.BeforeAppSearchEvent;
 import org.iplantc.de.apps.client.events.selection.AppCategorySelectionChangedEvent;
 import org.iplantc.de.apps.client.events.selection.AppSelectionChangedEvent;
-import org.iplantc.de.apps.client.events.selection.AppSelectionChangedEvent.AppSelectionChangedEventHandler;
 import org.iplantc.de.apps.client.events.selection.DeleteAppsSelected;
-import org.iplantc.de.apps.client.presenter.toolBar.proxy.AppSearchRpcProxy;
 import org.iplantc.de.apps.client.views.toolBar.AppSearchField;
 import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.models.apps.AppCategory;
@@ -48,10 +47,7 @@ import java.util.List;
 /**
  * @author jstroot
  */
-public class AdminAppsToolbarViewImpl extends Composite implements AdminAppsToolbarView,
-                                                                   AppCategorySelectionChangedEvent.AppCategorySelectionChangedEventHandler,
-                                                                   AppSelectionChangedEventHandler,
-                                                                   AppSearchResultLoadEvent.HasAppSearchResultLoadEventHandlers {
+public class AdminAppsToolbarViewImpl extends Composite implements AdminAppsToolbarView {
 
     @UiTemplate("AdminAppsViewToolbar.ui.xml")
     interface BelphegorAppsViewToolbarUiBinder extends UiBinder<Widget, AdminAppsToolbarViewImpl> {
@@ -66,17 +62,17 @@ public class AdminAppsToolbarViewImpl extends Composite implements AdminAppsTool
     @UiField TextButton renameCategory;
     @UiField TextButton restoreApp;
     @UiField ToolBar toolBar;
+    @UiField(provided = true) AdminAppsToolbarView.ToolbarAppearance appearance;
 
     private static BelphegorAppsViewToolbarUiBinder uiBinder = GWT.create(BelphegorAppsViewToolbarUiBinder.class);
     private final PagingLoader<FilterPagingLoadConfig, PagingLoadResult<App>> loader;
     private List<AppCategory> appCategorySelection;
     private List<App> appSelection;
-    private AppSearchRpcProxy proxy;
-
-    @Inject AdminAppsToolbarView.ToolbarAppearance appearance;
 
     @Inject
-    AdminAppsToolbarViewImpl(@Assisted final PagingLoader<FilterPagingLoadConfig, PagingLoadResult<App>> loader) {
+    AdminAppsToolbarViewImpl(final ToolbarAppearance appearance,
+                             @Assisted final PagingLoader<FilterPagingLoadConfig, PagingLoadResult<App>> loader) {
+        this.appearance = appearance;
         this.loader = loader;
         initWidget(uiBinder.createAndBindUi(this));
     }
@@ -89,7 +85,12 @@ public class AdminAppsToolbarViewImpl extends Composite implements AdminAppsTool
 
     @Override
     public HandlerRegistration addAppSearchResultLoadEventHandler(AppSearchResultLoadEvent.AppSearchResultLoadEventHandler handler) {
-        return asWidget().addHandler(handler, AppSearchResultLoadEvent.TYPE);
+        return addHandler(handler, AppSearchResultLoadEvent.TYPE);
+    }
+
+    @Override
+    public HandlerRegistration addBeforeAppSearchEventHandler(BeforeAppSearchEvent.BeforeAppSearchEventHandler handler) {
+        return addHandler(handler, BeforeAppSearchEvent.TYPE);
     }
 
     @Override
@@ -127,6 +128,9 @@ public class AdminAppsToolbarViewImpl extends Composite implements AdminAppsTool
     @Override
     public void onAppCategorySelectionChanged(AppCategorySelectionChangedEvent event) {
         appCategorySelection = event.getAppCategorySelection();
+        if(!appCategorySelection.isEmpty()){
+            appSearch.clear();
+        }
 
         boolean renameCategoryEnabled,
             deleteEnabled,
@@ -222,8 +226,6 @@ public class AdminAppsToolbarViewImpl extends Composite implements AdminAppsTool
 
     @UiHandler("moveCategory")
     void moveCategory(SelectEvent event) {
-//        presenter.onMoveCategoryClicked();
-        // FIXME Move dialog here
         fireEvent(new MoveCategorySelected(appCategorySelection.iterator().next()));
     }
 
@@ -268,7 +270,6 @@ public class AdminAppsToolbarViewImpl extends Composite implements AdminAppsTool
 
     @UiHandler("restoreApp")
     void restoreAppClicked(SelectEvent event) {
-//        presenter.onRestoreAppClicked();
         fireEvent(new RestoreAppSelected(appSelection));
     }
 

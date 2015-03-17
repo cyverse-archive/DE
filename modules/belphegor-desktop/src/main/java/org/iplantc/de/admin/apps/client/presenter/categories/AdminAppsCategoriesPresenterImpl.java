@@ -14,6 +14,7 @@ import org.iplantc.de.admin.desktop.client.services.AppAdminServiceFacade;
 import org.iplantc.de.admin.desktop.client.services.model.AppAdminServiceRequestAutoBeanFactory;
 import org.iplantc.de.admin.desktop.client.services.model.AppCategorizeRequest;
 import org.iplantc.de.apps.client.AppCategoriesView;
+import org.iplantc.de.apps.client.events.AppSearchResultLoadEvent;
 import org.iplantc.de.apps.client.gin.factory.AppCategoriesViewFactory;
 import org.iplantc.de.client.models.HasId;
 import org.iplantc.de.client.models.apps.App;
@@ -158,6 +159,11 @@ public class AdminAppsCategoriesPresenterImpl implements AdminCategoriesView.Pre
     }
 
     @Override
+    public void onAppSearchResultLoad(AppSearchResultLoadEvent event) {
+        view.getTree().getSelectionModel().deselectAll();
+    }
+
+    @Override
     public void onCategorizeAppSelected(final CategorizeAppSelected event) {
         Preconditions.checkArgument(event.getApps().size() == 1);
         final App selectedApp = event.getApps().iterator().next();
@@ -219,11 +225,12 @@ public class AdminAppsCategoriesPresenterImpl implements AdminCategoriesView.Pre
         final AppCategorizeView cat_view = new AppCategorizeViewImpl(true);
         cat_view.setAppCategories(treeStore.getRootItems());
         dlg.addOkButtonSelectHandler(new SelectEvent.SelectHandler() {
-
             @Override
             public void onSelect(SelectEvent event) {
-                if (appCategory != null && null != cat_view.getSelectedCategories()
+                if (appCategory != null
+                        && null != cat_view.getSelectedCategories()
                         && cat_view.getSelectedCategories().size() > 0) {
+
                     AppCategory destinationCategory = cat_view.getSelectedCategories().get(0);
                     if (canMoveAppCategory(destinationCategory, appCategory)) {
                         moveAppCategory(destinationCategory, appCategory);
@@ -383,21 +390,21 @@ public class AdminAppsCategoriesPresenterImpl implements AdminCategoriesView.Pre
 
     private void doCategorizeSelectedApp(final App selectedApp,
                                          final List<AppCategory> groupAppCategories) {
-//        view.maskCenterPanel(appearance.categorizeAppLoadingMask());
         AppCategorizeRequest request = buildAppCategorizeRequest(selectedApp, groupAppCategories);
 
+        view.mask(appearance.categorizeAppLoadingMask());
         adminAppService.categorizeApp(request, new AsyncCallback<String>() {
 
             @Override
             public void onFailure(Throwable caught) {
+                view.unmask();
                 // TODO Add error message for user
                 ErrorHandler.post(caught);
-//                view.unMaskCenterPanel();
             }
 
             @Override
             public void onSuccess(String result) {
-//                view.unMaskCenterPanel();
+                view.unmask();
 
                 List<String> groupNames = Lists.newArrayList();
                 for (AppCategory group : groupAppCategories) {
@@ -408,7 +415,7 @@ public class AdminAppsCategoriesPresenterImpl implements AdminCategoriesView.Pre
                 String successMsg = appearance.appCategorizeSuccess(selectedApp.getName(), groupNames);
                 announcer.schedule(new SuccessAnnouncementConfig(successMsg));
 
-//                eventBus.fireEvent(new CatalogCategoryRefreshEvent());
+                // eventBus.fireEvent(new CatalogCategoryRefreshEvent());
             }
         });
     }

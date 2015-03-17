@@ -2,8 +2,10 @@ package org.iplantc.de.admin.apps.client.presenter.grid;
 
 import org.iplantc.de.admin.apps.client.AdminAppsGridView;
 import org.iplantc.de.admin.apps.client.events.selection.RestoreAppSelected;
+import org.iplantc.de.admin.apps.client.events.selection.SaveAppSelected;
 import org.iplantc.de.admin.apps.client.gin.factory.AdminAppsGridViewFactory;
 import org.iplantc.de.admin.desktop.client.services.AppAdminServiceFacade;
+import org.iplantc.de.apps.client.events.AppSearchResultLoadEvent;
 import org.iplantc.de.apps.client.events.selection.AppCategorySelectionChangedEvent;
 import org.iplantc.de.apps.client.events.selection.AppNameSelectedEvent;
 import org.iplantc.de.apps.client.events.selection.DeleteAppsSelected;
@@ -111,7 +113,6 @@ public class AdminAppsGridPresenterImplTest {
 
         verify(listStoreMock).clear();
         verify(listStoreMock).addAll(eq(resultList));
-        verify(listStoreMock).size();
         verify(viewMock).unmask();
 
         verifyNoMoreInteractions(appServiceMock,
@@ -135,6 +136,23 @@ public class AdminAppsGridPresenterImplTest {
         verifyZeroInteractions(viewMock,
                                appServiceMock,
                                listStoreMock);
+    }
+
+    @Test public void verifyListStoreUpdated_onAppSearchResultLoad() {
+        AppSearchResultLoadEvent eventMock = mock(AppSearchResultLoadEvent.class);
+        final ArrayList<App> resultsMock = Lists.newArrayList(mock(App.class),
+                                                    mock(App.class));
+        when(eventMock.getResults()).thenReturn(resultsMock);
+
+        /*** CALL METHOD UNDER TEST ***/
+        uut.onAppSearchResultLoad(eventMock);
+
+        verify(listStoreMock).clear();
+        verify(listStoreMock).addAll(eq(resultsMock));
+
+        verifyNoMoreInteractions(listStoreMock);
+        verifyZeroInteractions(adminAppServiceMock,
+                               appServiceMock);
     }
 
     @Test public void verifyAppServiceCalled_onDeleteAppsSelected() {
@@ -194,6 +212,71 @@ public class AdminAppsGridPresenterImplTest {
         verify(viewMock).unmask();
 
         verifyNoMoreInteractions(viewMock);
+    }
+
+    @Test public void verifyDocSaved_onSaveAppSelected() {
+        // Record keeping
+        verify(viewMock).addAppNameSelectedEventHandler(Matchers.<AppNameSelectedEvent.AppNameSelectedEventHandler>any());
+
+        uut.isDocUpdate = false;
+        SaveAppSelected eventMock = mock(SaveAppSelected.class);
+        App appMock = mock(App.class);
+        AppDoc docMock = mock(AppDoc.class);
+        when(appMock.getName()).thenReturn("mock name");
+        when(docMock.getDocumentation()).thenReturn("mock documentation");
+        when(eventMock.getApp()).thenReturn(appMock);
+        when(eventMock.getDoc()).thenReturn(docMock);
+
+        /*** CALL METHOD UNDER TEST ***/
+        uut.onSaveAppSelected(eventMock);
+
+        verify(appMock).getName();
+        verify(viewMock).mask(anyString());
+        verify(adminAppServiceMock).updateApp(eq(appMock), Matchers.<AsyncCallback<App>>any());
+
+        verify(docMock).getDocumentation();
+        verify(adminAppServiceMock).saveAppDoc(eq(appMock),
+                                               eq(docMock),
+                                               Matchers.<AsyncCallback<AppDoc>>any());
+
+        verifyNoMoreInteractions(viewMock,
+                                 adminAppServiceMock,
+                                 appMock,
+                                 docMock);
+        verifyZeroInteractions(appServiceMock);
+    }
+
+
+    @Test public void verifyDocUpdated_onSaveAppSelected() {
+        // Record keeping
+        verify(viewMock).addAppNameSelectedEventHandler(Matchers.<AppNameSelectedEvent.AppNameSelectedEventHandler>any());
+
+        uut.isDocUpdate = true;
+        SaveAppSelected eventMock = mock(SaveAppSelected.class);
+        App appMock = mock(App.class);
+        AppDoc docMock = mock(AppDoc.class);
+        when(appMock.getName()).thenReturn("mock name");
+        when(docMock.getDocumentation()).thenReturn("mock documentation");
+        when(eventMock.getApp()).thenReturn(appMock);
+        when(eventMock.getDoc()).thenReturn(docMock);
+
+        /*** CALL METHOD UNDER TEST ***/
+        uut.onSaveAppSelected(eventMock);
+
+        verify(appMock).getName();
+        verify(viewMock).mask(anyString());
+        verify(adminAppServiceMock).updateApp(eq(appMock), Matchers.<AsyncCallback<App>>any());
+
+        verify(docMock).getDocumentation();
+        verify(adminAppServiceMock).updateAppDoc(eq(appMock),
+                                                 eq(docMock),
+                                                 Matchers.<AsyncCallback<AppDoc>>any());
+
+        verifyNoMoreInteractions(viewMock,
+                                 adminAppServiceMock,
+                                 appMock,
+                                 docMock);
+        verifyZeroInteractions(appServiceMock);
     }
 
 }

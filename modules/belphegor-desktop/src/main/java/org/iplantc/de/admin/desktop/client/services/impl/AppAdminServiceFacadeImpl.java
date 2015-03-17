@@ -162,6 +162,44 @@ public class AppAdminServiceFacadeImpl implements AppAdminServiceFacade {
     }
 
     @Override
+    public void updateApp(final App app, AsyncCallback<App> callback) {
+
+        String address = APPS_ADMIN + "/" + app.getId();
+
+        final App appClone = AutoBeanCodex.decode(factory, App.class, "{}").as();
+
+        // do not send these field to service
+        appClone.setEditedDate(null);
+        appClone.setIntegrationDate(null);
+        appClone.setPipelineEligibility(null);
+        appClone.setStepCount(null);
+        appClone.setIntegratorName(null);
+        appClone.setIntegratorEmail(null);
+        appClone.setAppType(null);
+        appClone.setRating(null);
+
+        // copy rest of the fields
+        appClone.setId(app.getId());
+        appClone.setName(app.getName());
+        appClone.setDescription(app.getDescription());
+        appClone.setDeleted(app.isDeleted());
+        appClone.setDisabled(app.isDisabled());
+        appClone.setWikiUrl(app.getWikiUrl());
+
+        Splittable payload = AutoBeanCodex.encode(AutoBeanUtils.getAutoBean(appClone));
+        ServiceCallWrapper wrapper = new ServiceCallWrapper(PATCH,
+                                                            address,
+                                                            payload.getPayload());
+         deService.getServiceData(wrapper, new AsyncCallbackConverter<String, App>(callback) {
+            @Override
+            protected App convertFrom(String object) {
+                AutoBean<App> appAutoBean = AutoBeanCodex.decode(factory, App.class, object);
+                return appAutoBean.as();
+            }
+        });
+    }
+
+    @Override
     public void getAppDoc(final HasId app,
                           final AsyncCallback<AppDoc> callback) {
         String address = APPS + "/" + app.getId() + "/documentation";
@@ -176,18 +214,39 @@ public class AppAdminServiceFacadeImpl implements AppAdminServiceFacade {
     }
 
     @Override
-    public void saveAppDoc(String appId, String doc, AsyncCallback<String> callback) {
-        String address = APPS_ADMIN + "/" + appId + "/documentation";
-        ServiceCallWrapper wrapper = new ServiceCallWrapper(POST, address, doc);
-        deService.getServiceData(wrapper, callback);
+    public void saveAppDoc(final HasId app,
+                           final AppDoc doc,
+                           final AsyncCallback<AppDoc> callback) {
+        String address = APPS_ADMIN + "/" + app.getId() + "/documentation";
 
+        Splittable payload = StringQuoter.createSplittable();
+        StringQuoter.create(doc.getDocumentation()).assign(payload, "documentation");
+        ServiceCallWrapper wrapper = new ServiceCallWrapper(POST, address, payload.getPayload());
+        deService.getServiceData(wrapper, new AsyncCallbackConverter<String, AppDoc>(callback) {
+            @Override
+            protected AppDoc convertFrom(String object) {
+                AutoBean<AppDoc> appDocAutoBean = AutoBeanCodex.decode(factory, AppDoc.class, object);
+                return appDocAutoBean.as();
+            }
+        });
     }
 
     @Override
-    public void updateAppDoc(String appId, String doc, AsyncCallback<String> callback) {
-        String address = APPS_ADMIN + "/" + appId + "/documentation";
-        ServiceCallWrapper wrapper = new ServiceCallWrapper(PATCH, address, doc);
-        deService.getServiceData(wrapper, callback);
+    public void updateAppDoc(final HasId app,
+                             final AppDoc doc,
+                             final AsyncCallback<AppDoc> callback) {
+        String address = APPS_ADMIN + "/" + app.getId() + "/documentation";
+
+        Splittable payload = StringQuoter.createSplittable();
+        StringQuoter.create(doc.getDocumentation()).assign(payload, "documentation");
+        ServiceCallWrapper wrapper = new ServiceCallWrapper(PATCH, address, payload.getPayload());
+        deService.getServiceData(wrapper, new AsyncCallbackConverter<String, AppDoc>(callback) {
+            @Override
+            protected AppDoc convertFrom(String object) {
+                AutoBean<AppDoc> appDocAutoBean = AutoBeanCodex.decode(factory, AppDoc.class, object);
+                return appDocAutoBean.as();
+            }
+        });
     }
 
 }

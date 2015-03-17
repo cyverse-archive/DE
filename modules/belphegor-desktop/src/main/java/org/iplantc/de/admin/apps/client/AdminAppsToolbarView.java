@@ -6,6 +6,9 @@ import org.iplantc.de.admin.apps.client.events.selection.DeleteCategorySelected;
 import org.iplantc.de.admin.apps.client.events.selection.MoveCategorySelected;
 import org.iplantc.de.admin.apps.client.events.selection.RenameCategorySelected;
 import org.iplantc.de.admin.apps.client.events.selection.RestoreAppSelected;
+import org.iplantc.de.apps.client.AppsToolbarView;
+import org.iplantc.de.apps.client.events.AppSearchResultLoadEvent;
+import org.iplantc.de.apps.client.events.BeforeAppSearchEvent;
 import org.iplantc.de.apps.client.events.selection.AppCategorySelectionChangedEvent;
 import org.iplantc.de.apps.client.events.selection.AppSelectionChangedEvent;
 import org.iplantc.de.apps.client.events.selection.DeleteAppsSelected;
@@ -26,9 +29,11 @@ public interface AdminAppsToolbarView extends IsWidget,
                                               MoveCategorySelected.HasMoveCategorySelectedHandlers,
                                               RenameCategorySelected.HasRenameCategorySelectedHandlers,
                                               RestoreAppSelected.HasRestoreAppSelectedHandlers,
-                                              AppCategorySelectionChangedEvent.AppCategorySelectionChangedEventHandler,
-                                              AppSelectionChangedEvent.AppSelectionChangedEventHandler {
-    interface ToolbarAppearance {
+                                              BeforeAppSearchEvent.HasBeforeAppSearchEventHandlers,
+                                              AppSearchResultLoadEvent.HasAppSearchResultLoadEventHandlers,
+                                              AppSelectionChangedEvent.AppSelectionChangedEventHandler,
+                                              AppCategorySelectionChangedEvent.AppCategorySelectionChangedEventHandler {
+    interface ToolbarAppearance extends AppsToolbarView.AppsToolbarAppearance {
 
         String addCategoryPrompt();
 

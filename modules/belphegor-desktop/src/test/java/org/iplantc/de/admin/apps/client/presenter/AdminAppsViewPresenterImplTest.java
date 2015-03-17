@@ -62,10 +62,14 @@ public class AdminAppsViewPresenterImplTest {
         verify(toolbarViewMock).addRestoreAppSelectedHandler(eq(gridPresenterMock));
         verify(toolbarViewMock).addCategorizeAppSelectedHandler(eq(categoriesPresenterMock));
         verify(toolbarViewMock).addMoveCategorySelectedHandler(eq(categoriesPresenterMock));
+        verify(toolbarViewMock).addAppSearchResultLoadEventHandler(categoriesPresenterMock);
+        verify(toolbarViewMock).addAppSearchResultLoadEventHandler(gridPresenterMock);
+        verify(toolbarViewMock).addAppSearchResultLoadEventHandler(gridViewMock);
+        verify(toolbarViewMock).addBeforeAppSearchEventHandler(gridViewMock);
 
         verify(categoriesPresenterMock, times(3)).getView();
-        verify(toolbarPresenterMock, times(9)).getView();
-        verify(gridPresenterMock, times(2)).getView();
+        verify(toolbarPresenterMock, times(13)).getView();
+        verify(gridPresenterMock, times(4)).getView();
 
         verifyNoMoreInteractions(categoriesPresenterMock,
                                  toolbarPresenterMock,

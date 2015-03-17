@@ -4,6 +4,7 @@ import org.iplantc.de.admin.apps.client.AdminAppsToolbarView;
 import org.iplantc.de.resources.client.IplantResources;
 import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 import org.iplantc.de.theme.base.client.admin.BelphegorDisplayStrings;
+import org.iplantc.de.theme.base.client.apps.toolbar.AppsToolbarViewDefaultAppearance;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.resources.client.ImageResource;
@@ -11,7 +12,7 @@ import com.google.gwt.resources.client.ImageResource;
 /**
  * @author jstroot
  */
-public class AdminAppsToolbarDefaultAppearance implements AdminAppsToolbarView.ToolbarAppearance {
+public class AdminAppsToolbarDefaultAppearance extends AppsToolbarViewDefaultAppearance implements AdminAppsToolbarView.ToolbarAppearance {
     private final IplantDisplayStrings iplantDisplayStrings;
     private final IplantResources iplantResources;
     private final BelphegorDisplayStrings displayStrings;
@@ -33,11 +34,6 @@ public class AdminAppsToolbarDefaultAppearance implements AdminAppsToolbarView.T
     @Override
     public String addCategoryPrompt() {
         return displayStrings.addCategoryPrompt();
-    }
-
-    @Override
-    public ImageResource addIcon() {
-        return iplantResources.add();
     }
 
     @Override
@@ -93,11 +89,6 @@ public class AdminAppsToolbarDefaultAppearance implements AdminAppsToolbarView.T
     @Override
     public String deleteCategory() {
         return displayStrings.deleteCategory();
-    }
-
-    @Override
-    public ImageResource deleteIcon() {
-        return iplantResources.delete();
     }
 
     @Override

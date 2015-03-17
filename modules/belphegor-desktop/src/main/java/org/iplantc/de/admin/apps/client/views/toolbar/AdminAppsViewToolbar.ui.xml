@@ -74,6 +74,7 @@
         </toolbar:child>
         <toolbar:child layoutData="{boxData}">
             <MyWidgets:AppSearchField ui:field="appSearch"
+                                      emptyText="{appearance.searchApps}"
                                       debugId="idSearchFld"/>
         </toolbar:child>
     </toolbar:ToolBar>
