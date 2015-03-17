@@ -43,6 +43,8 @@ public class AppEditor implements Editor<App>,
 
     public interface AppEditorAppearance {
 
+        String appDocumentationLabel();
+
         String appEditorWidth();
 
         String appName();
@@ -50,6 +52,10 @@ public class AppEditor implements Editor<App>,
         String appNameRestrictedChars();
 
         String appNameRestrictedStartingChars();
+
+        String defaultAppDocTemplate();
+
+        String docHelpHtml();
 
         String integratorName();
 
@@ -62,6 +68,12 @@ public class AppEditor implements Editor<App>,
         String appDisabled();
 
         String appDescription();
+
+        String templateLinkPopupHeading();
+
+        String templateLinkTitle();
+
+        String validDocError();
 
         SafeHtml wikiUrlFieldLabel();
     }
@@ -108,7 +120,7 @@ public class AppEditor implements Editor<App>,
 
     public AppEditor(final App app,
                      final AppDoc doc) {
-        templateLink = new IPlantAnchor("View Documentaion Template");
+        templateLink = new IPlantAnchor(appearance.templateLinkTitle());
         widget = uiBinder.createAndBindUi(this);
         this.doc = doc;
         initTemplateLink();
@@ -122,9 +134,9 @@ public class AppEditor implements Editor<App>,
         name.addValidator(regExValidator);
         integratorEmail.addValidator(new BasicEmailValidator3());
         wikiUrlFieldLabel.setHTML(appearance.wikiUrlFieldLabel());
-        appDocLbl.setHTML("DE App Documentation");
+        appDocLbl.setHTML(appearance.appDocumentationLabel());
         window.setHeadingText(app.getName());
-        docHelp.setHTML("<p><i>Note:</i> Please complete the following section for documentation to be displayed with in DE itself. The documentation must be in Markdown format. Please clear wiki URL field once you fill this field. Replace everything inside '{{}}'.<br/>");
+        docHelp.setHTML(appearance.docHelpHtml());
         if (this.doc != null) {
             appDoc.setValue(this.doc.getDocumentation());
         }
@@ -143,9 +155,9 @@ public class AppEditor implements Editor<App>,
             @Override
             public void onClick(ClickEvent event) {
                 IPlantDialog popup = new IPlantDialog();
-                popup.setHeadingText("Copy Markdown template");
+                popup.setHeadingText(appearance.templateLinkPopupHeading());
                 TextArea area = new TextArea();
-                area.setValue("### {{appName}} \n> #### Description and Quick Start \n>> {{quickStart}} \n> #### Test Data \n>> {{testData}} \n> #### Input File(s) \n>> {{Input Files Description & types}} \n> #### Parameters Used in App \n>> {{params used in app}} \n> #### Output File(s) \n>> {{Output Files description & types}}");
+                area.setValue(appearance.defaultAppDocTemplate());
                 area.setSize("350px", "250px");
                 popup.add(area);
                 popup.show();
@@ -175,6 +187,7 @@ public class AppEditor implements Editor<App>,
     private boolean validDoc() {
         if (Strings.isNullOrEmpty(appDoc.getValue()) && Strings.isNullOrEmpty(wikiUrl.getValue())) {
             ErrorHandler.post("You must enter a either a valid URL for App documentation or supply the documentation in Markdown using the templates.");
+            ErrorHandler.post(appearance.validDocError());
             return false;
         } else {
             return true;

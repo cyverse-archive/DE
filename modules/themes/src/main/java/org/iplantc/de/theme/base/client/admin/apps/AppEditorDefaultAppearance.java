@@ -42,6 +42,11 @@ public class AppEditorDefaultAppearance implements AppEditor.AppEditorAppearance
     }
 
     @Override
+    public String appDocumentationLabel() {
+        return displayStrings.appDocumentationLabel();
+    }
+
+    @Override
     public String appEditorWidth() {
         return "595";
     }
@@ -59,6 +64,16 @@ public class AppEditorDefaultAppearance implements AppEditor.AppEditorAppearance
     @Override
     public String appNameRestrictedStartingChars() {
         return uiConstants.appNameRestrictedStartingChars();
+    }
+
+    @Override
+    public String defaultAppDocTemplate() {
+        return displayStrings.defaultAppDocTemplate();
+    }
+
+    @Override
+    public String docHelpHtml() {
+        return displayStrings.docHelpHtml();
     }
 
     @Override
@@ -89,6 +104,21 @@ public class AppEditorDefaultAppearance implements AppEditor.AppEditorAppearance
     @Override
     public String appDescription() {
         return displayStrings.appDescription();
+    }
+
+    @Override
+    public String templateLinkPopupHeading() {
+        return displayStrings.templateLinkPopupHeading();
+    }
+
+    @Override
+    public String templateLinkTitle() {
+        return displayStrings.templateLinkTitle();
+    }
+
+    @Override
+    public String validDocError() {
+        return errorStrings.validDocError();
     }
 
     @Override

@@ -211,7 +211,7 @@ public class AdminAppsCategoriesPresenterImpl implements AdminCategoriesView.Pre
                       // Refresh the catalog, so that the
                       // proper category counts
                       // display.
-                      // FIXME All cat counts need to be updated. Refetch all categories
+                      // FIXME All cat counts need to be updated. Re-fetch all categories
                       treeStore.remove(selectedAppCategory);
                       // eventBus.fireEvent(new CatalogCategoryRefreshEvent());
                   }

@@ -45,4 +45,6 @@ public interface BelphegorErrorStrings extends Messages{
 
     @Key("updateApplicationError")
     String updateApplicationError();
+
+    String validDocError();
 }

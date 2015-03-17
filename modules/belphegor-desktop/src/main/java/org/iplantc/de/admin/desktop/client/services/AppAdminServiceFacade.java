@@ -6,7 +6,6 @@ import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.models.apps.AppCategory;
 import org.iplantc.de.client.models.apps.AppDoc;
 
-import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.web.bindery.autobean.shared.AutoBean;
 import com.google.web.bindery.autobean.shared.AutoBeanFactory;
@@ -26,10 +25,6 @@ public interface AppAdminServiceFacade {
 
     /**
      * Adds a new Category with the given category name.
-     *  @param name
-     * @param newCategoryName
-     * @param parentCategory
-     * @param callback
      */
     void addCategory(String newCategoryName, HasId parentCategory, AsyncCallback<AppCategory> callback);
 
@@ -37,33 +32,24 @@ public interface AppAdminServiceFacade {
 
     /**
      * Renames a Category with the given category ID to the given name.
-     *  @param categoryId
-     * @param newCategoryName
-     * @param callback
      */
     void renameAppCategory(HasId categoryId, String newCategoryName,
                                            AsyncCallback<AppCategory> callback);
 
     /**
      * Moves a Category with the given category ID to a parent Category with the given parentCategoryId.
-     *
-     * @param categoryId
-     * @param parentCategoryId
-     * @param callback
      */
     void moveCategory(String categoryId, String parentCategoryId, AsyncCallback<String> callback);
 
     /**
      * Deletes the Category with the given category ID.
-     *  @param category
-     * @param callback
      */
     void deleteAppCategory(HasId category, AsyncCallback<Void> callback);
 
     /**
      * Updates an app with the given values in application.
-     *  @param app
-     * @param callback*/
+     *
+     */
     void restoreApp(HasId app,
                     AsyncCallback<App> callback);
 
@@ -71,8 +57,6 @@ public interface AppAdminServiceFacade {
 
     /**
      * Deletes an App with the given applicationId.
-     *  @param app
-     * @param callback
      */
     void deleteApp(HasId app, AsyncCallback<Void> callback);
 

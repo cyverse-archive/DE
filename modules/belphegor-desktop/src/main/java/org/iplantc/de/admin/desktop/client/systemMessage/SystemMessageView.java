@@ -85,8 +85,6 @@ public interface SystemMessageView extends IsWidget, IsMaskable {
          * endpoint.
          * 
          * Upon success, the view will be updated with the resulting System message.
-         * 
-         * @param msg
          */
         void addSystemMessage(SystemMessage msg);
 
@@ -95,8 +93,6 @@ public interface SystemMessageView extends IsWidget, IsMaskable {
          * {@link org.iplantc.de.admin.desktop.client.systemMessage.service.SystemMessageServiceFacade#updateSystemMessage} endpoint.
          * 
          * Upon success, the view will be updated appropriately.
-         * 
-         * @param msg
          */
         void editSystemMessage(SystemMessage msg);
 
@@ -105,8 +101,6 @@ public interface SystemMessageView extends IsWidget, IsMaskable {
          * {@link org.iplantc.de.admin.desktop.client.systemMessage.service.SystemMessageServiceFacade#deleteSystemMessage} endpoint.
          * 
          * Upon success, the message will be removed from the view.
-         * 
-         * @param msg
          */
         void deleteSystemMessage(SystemMessage msg);
 

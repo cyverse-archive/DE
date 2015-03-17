@@ -92,10 +92,10 @@
                 </container:child>
                 
                 <container:child layoutData="{verticalLayoutData}">
-                    <g:HTML ui:field="docHelp"></g:HTML>
+                    <g:HTML ui:field="docHelp"/>
                 </container:child>
                 <container:child layoutData="{verticalLayoutData}">
-                    <link:IPlantAnchor ui:field="templateLink"></link:IPlantAnchor>
+                    <link:IPlantAnchor ui:field="templateLink"/>
                 </container:child>
                  <container:child layoutData="{verticalLayoutData}">
                     <form:FieldLabel ui:field="appDocLbl"

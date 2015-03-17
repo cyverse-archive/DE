@@ -44,7 +44,7 @@ public class AdminAppsViewDefaultAppearance implements AdminAppsView.AdminAppsVi
     }
 
     @Override
-    public String integratedby() {
+    public String integratedBy() {
         return appsMessages.integratedBy();
     }
 

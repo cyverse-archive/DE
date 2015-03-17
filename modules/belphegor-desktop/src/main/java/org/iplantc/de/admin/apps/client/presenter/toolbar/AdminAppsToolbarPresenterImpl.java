@@ -17,15 +17,13 @@ import com.sencha.gxt.data.shared.loader.PagingLoader;
  */
 public class AdminAppsToolbarPresenterImpl implements AdminAppsToolbarView.Presenter {
 
-    private final PagingLoader<FilterPagingLoadConfig, PagingLoadResult<App>> loader;
-    private final AppSearchRpcProxy proxy;
     private final AdminAppsToolbarView view;
 
     @Inject
     AdminAppsToolbarPresenterImpl(final AppServiceFacade appService,
                                   final AdminAppsToolbarFactory viewFactory) {
-        proxy = new AppSearchRpcProxy(appService);
-        loader = new PagingLoader<>(proxy);
+        AppSearchRpcProxy proxy = new AppSearchRpcProxy(appService);
+        PagingLoader<FilterPagingLoadConfig, PagingLoadResult<App>> loader = new PagingLoader<>(proxy);
         this.view = viewFactory.create(loader);
         proxy.setHasHandlers(view);
     }

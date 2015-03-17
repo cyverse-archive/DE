@@ -7,7 +7,6 @@ import org.iplantc.de.admin.apps.client.gin.factory.AdminAppsViewFactory;
 
 import com.google.gwtmockito.GwtMockitoTestRunner;
 
-import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.*;
 import org.junit.Before;
 import org.junit.Test;

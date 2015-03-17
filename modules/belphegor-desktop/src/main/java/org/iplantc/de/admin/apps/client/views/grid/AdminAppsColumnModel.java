@@ -47,7 +47,7 @@ public class AdminAppsColumnModel extends ColumnModel<App> implements AppNameSel
                                                          appearance.nameColumnLabel());
         ColumnConfig<App, String> integrator = new ColumnConfig<>(props.integratorName(),
                                                                   appearance.integratedByColumnWidth(),
-                                                                  appearance.integratedby());
+                                                                  appearance.integratedBy());
         ColumnConfig<App, AppFeedback> rating = new ColumnConfig<>(props.rating(),
                                                                    appearance.avgUserRatingColumnWidth(),
                                                                    appearance.avgUserRatingColumnLabel());

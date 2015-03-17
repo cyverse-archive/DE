@@ -1,4 +1,4 @@
-package org.iplantc.de.admin.desktop.client.apps.views;
+package org.iplantc.de.admin.apps.client.presenter.categories;
 
 import org.iplantc.de.admin.apps.client.AdminAppsView;
 import org.iplantc.de.client.models.apps.App;
@@ -23,8 +23,10 @@ import com.sencha.gxt.dnd.core.client.DndDropEvent.DndDropHandler;
  * FIXME Split this into two separate DND handlers. Refer to disk resource module for guidance
  * 
  */
-public class AppCategoryDnDHandler implements DndDragStartHandler, DndDragEnterHandler, DndDragMoveHandler,
-        DndDropHandler {
+public class AppCategoryDnDHandler implements DndDragStartHandler,
+                                              DndDragEnterHandler,
+                                              DndDragMoveHandler,
+                                              DndDropHandler {
 
     private final AdminAppsView adminAppView;
     private final AdminAppsView.AdminPresenter presenter;

@@ -17,7 +17,6 @@ import com.sencha.gxt.data.shared.loader.PagingLoadResult;
 import com.sencha.gxt.data.shared.loader.PagingLoader;
 import com.sencha.gxt.widget.core.client.button.TextButton;
 
-import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.*;
 import org.junit.Before;
 import org.junit.Test;

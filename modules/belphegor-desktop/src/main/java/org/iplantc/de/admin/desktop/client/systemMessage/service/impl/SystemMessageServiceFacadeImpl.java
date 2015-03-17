@@ -21,7 +21,7 @@ import java.util.List;
  */
 public class SystemMessageServiceFacadeImpl implements SystemMessageServiceFacade {
 
-    private final String SYSTEM_NOTFICATION_TYPES = "org.iplantc.services.admin.notifications.system.types";
+    private final String SYSTEM_NOTIFICATION_TYPES = "org.iplantc.services.admin.notifications.system.types";
     private final String SYSTEM_NOTIFICATIONS = "org.iplantc.services.admin.notifications.system";
     @Inject private SystemMessageFactory factory;
     @Inject private DiscEnvApiService deService;
@@ -65,7 +65,7 @@ public class SystemMessageServiceFacadeImpl implements SystemMessageServiceFacad
 
     @Override
     public void getSystemMessageTypes(AsyncCallback<List<String>> callback) {
-        String address = SYSTEM_NOTFICATION_TYPES;
+        String address = SYSTEM_NOTIFICATION_TYPES;
 
         ServiceCallWrapper wrapper = new ServiceCallWrapper(GET, address);
         deService.getServiceData(wrapper, new SystemMessageTypeListCallbackConverter(callback, factory));

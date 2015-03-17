@@ -20,7 +20,7 @@ public interface AdminAppsView extends IsWidget {
 
         int integratedByColumnWidth();
 
-        String integratedby();
+        String integratedBy();
 
         String nameColumnLabel();
 

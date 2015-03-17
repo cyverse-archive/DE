@@ -24,7 +24,6 @@ import com.sencha.gxt.widget.core.client.tree.Tree;
 import com.sencha.gxt.widget.core.client.tree.TreeSelectionModel;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.*;
 import org.junit.Before;
 import org.junit.Test;
