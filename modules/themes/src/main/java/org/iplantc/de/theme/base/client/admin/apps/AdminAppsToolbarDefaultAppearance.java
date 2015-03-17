@@ -31,6 +31,11 @@ public class AdminAppsToolbarDefaultAppearance implements AdminAppsToolbarView.T
     }
 
     @Override
+    public String addCategoryPrompt() {
+        return displayStrings.addCategoryPrompt();
+    }
+
+    @Override
     public ImageResource addIcon() {
         return iplantResources.add();
     }
@@ -41,6 +46,26 @@ public class AdminAppsToolbarDefaultAppearance implements AdminAppsToolbarView.T
     }
 
     @Override
+    public String confirmDeleteAppCategory(String name) {
+        return displayStrings.confirmDeleteAppCategory(name);
+    }
+
+    @Override
+    public String confirmDeleteAppCategoryWarning() {
+        return iplantDisplayStrings.warning();
+    }
+
+    @Override
+    public String confirmDeleteAppTitle() {
+        return displayStrings.confirmDeleteAppTitle();
+    }
+
+    @Override
+    public String confirmDeleteAppWarning() {
+        return iplantDisplayStrings.warning();
+    }
+
+    @Override
     public String renameCategory() {
         return iplantDisplayStrings.rename();
     }
@@ -48,6 +73,11 @@ public class AdminAppsToolbarDefaultAppearance implements AdminAppsToolbarView.T
     @Override
     public ImageResource renameCategoryIcon() {
         return iplantResources.fileRename();
+    }
+
+    @Override
+    public String renamePrompt() {
+        return displayStrings.renamePrompt();
     }
 
     @Override

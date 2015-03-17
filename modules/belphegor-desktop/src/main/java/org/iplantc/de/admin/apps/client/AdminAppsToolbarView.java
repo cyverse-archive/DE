@@ -30,13 +30,25 @@ public interface AdminAppsToolbarView extends IsWidget,
                                               AppSelectionChangedEvent.AppSelectionChangedEventHandler {
     interface ToolbarAppearance {
 
+        String addCategoryPrompt();
+
         ImageResource addIcon();
 
         String add();
 
+        String confirmDeleteAppCategory(String name);
+
+        String confirmDeleteAppCategoryWarning();
+
+        String confirmDeleteAppTitle();
+
+        String confirmDeleteAppWarning();
+
         String renameCategory();
 
         ImageResource renameCategoryIcon();
+
+        String renamePrompt();
 
         String restoreApp();
 

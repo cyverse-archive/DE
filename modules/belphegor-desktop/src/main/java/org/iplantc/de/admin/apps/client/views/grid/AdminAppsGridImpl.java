@@ -6,6 +6,7 @@ import org.iplantc.de.apps.client.events.selection.AppNameSelectedEvent;
 import org.iplantc.de.apps.client.events.selection.AppSelectionChangedEvent;
 import org.iplantc.de.client.models.apps.App;
 
+import com.google.common.base.Joiner;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -16,7 +17,7 @@ import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 
 import com.sencha.gxt.data.shared.ListStore;
-import com.sencha.gxt.widget.core.client.Composite;
+import com.sencha.gxt.widget.core.client.ContentPanel;
 import com.sencha.gxt.widget.core.client.grid.ColumnModel;
 import com.sencha.gxt.widget.core.client.grid.Grid;
 import com.sencha.gxt.widget.core.client.grid.GridView;
@@ -26,11 +27,10 @@ import com.sencha.gxt.widget.core.client.selection.SelectionChangedEvent;
  * Created by jstroot on 3/9/15.
  * @author jstroot
  */
-public class AdminAppsGridImpl extends Composite implements AdminAppsGridView,
-                                                            SelectionChangedEvent.SelectionChangedHandler<App> {
+public class AdminAppsGridImpl extends ContentPanel implements AdminAppsGridView,
+                                                               SelectionChangedEvent.SelectionChangedHandler<App> {
 
-    interface AdminAppsGridImplUiBinder extends UiBinder<Widget, AdminAppsGridImpl> {
-    }
+    interface AdminAppsGridImplUiBinder extends UiBinder<Widget, AdminAppsGridImpl> { }
 
     private static AdminAppsGridImplUiBinder ourUiBinder = GWT.create(AdminAppsGridImplUiBinder.class);
     @UiField(provided = true) ListStore<App> listStore;
@@ -42,7 +42,7 @@ public class AdminAppsGridImpl extends Composite implements AdminAppsGridView,
     AdminAppsGridImpl(@Assisted final ListStore<App> listStore) {
         this.listStore = listStore;
 
-        initWidget(ourUiBinder.createAndBindUi(this));
+        setWidget(ourUiBinder.createAndBindUi(this));
         grid.getSelectionModel().addSelectionChangedHandler(this);
     }
 
@@ -63,7 +63,8 @@ public class AdminAppsGridImpl extends Composite implements AdminAppsGridView,
 
     @Override
     public void onAppCategorySelectionChanged(AppCategorySelectionChangedEvent event) {
-        // TODO
+        // FIXME Move to appearance
+        setHeadingText(Joiner.on(" >> ").join(event.getGroupHierarchy()));
     }
 
     @Override

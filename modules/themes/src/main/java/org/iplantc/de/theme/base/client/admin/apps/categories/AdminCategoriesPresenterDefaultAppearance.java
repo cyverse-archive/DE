@@ -77,8 +77,18 @@ public class AdminCategoriesPresenterDefaultAppearance implements AdminCategorie
     }
 
     @Override
+    public String deleteAppCategoryLoadingMask() {
+        return iplantDisplayStrings.loadingMask();
+    }
+
+    @Override
     public String deleteCategoryPermissionError() {
         return errorStrings.deleteCategoryPermissionError();
+    }
+
+    @Override
+    public String getAppCategoriesLoadingMask() {
+        return iplantDisplayStrings.loadingMask();
     }
 
     @Override
@@ -104,6 +114,11 @@ public class AdminCategoriesPresenterDefaultAppearance implements AdminCategorie
     @Override
     public String noCategoriesSelected() {
         return errorStrings.noCategoriesSelected();
+    }
+
+    @Override
+    public String renameAppCategoryLoadingMask() {
+        return iplantDisplayStrings.loadingMask();
     }
 
     @Override

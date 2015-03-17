@@ -26,6 +26,7 @@ public interface AdminAppsView extends IsWidget {
 
         int nameColumnWidth();
     }
+
     public interface AdminPresenter {
         interface AdminPresenterAppearance {
 
@@ -33,47 +34,27 @@ public interface AdminAppsView extends IsWidget {
 
             String addAppCategoryError(String name);
 
-            String addCategoryLoadingMask();
-
             String addCategoryPermissionError();
 
             String addCategoryPrompt();
 
             String appCategorizeSuccess(String name, List<String> groupNames);
 
-            String categorizeAppLoadingMask();
-
             String confirmDeleteAppCategory(String name);
-
-            String confirmDeleteAppCategoryWarning();
 
             String confirmDeleteAppTitle();
 
-            String confirmDeleteAppWarning();
-
             String deleteAppCategoryError(String name);
-
-            String deleteAppCategoryLoadingMask();
-
-            String deleteAppLoadingMask();
 
             String deleteApplicationError(String name);
 
             String deleteCategoryPermissionError();
-
-            String getAppDetailsLoadingMask();
-
-            String invalidMoveMsg();
 
             String moveCategory();
 
             String moveCategoryError(String name);
 
             String noCategoriesSelected();
-
-            String renameCategory();
-
-            String renameAppCategoryLoadingMask();
 
             String renameCategoryError(String name);
 
@@ -94,7 +75,7 @@ public interface AdminAppsView extends IsWidget {
             String updateApplicationError();
         }
 
-        void go(HasOneWidget container, HasId betaGroup);
+        void go(HasOneWidget container, HasId selectedAppCategory);
     }
 
 }

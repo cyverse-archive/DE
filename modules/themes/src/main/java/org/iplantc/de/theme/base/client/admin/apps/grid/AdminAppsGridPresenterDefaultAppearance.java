@@ -4,13 +4,14 @@ import org.iplantc.de.admin.apps.client.AdminAppsGridView;
 import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 import org.iplantc.de.theme.base.client.admin.BelphegorDisplayStrings;
 import org.iplantc.de.theme.base.client.admin.BelphegorErrorStrings;
+import org.iplantc.de.theme.base.client.apps.grid.AppsGridViewDefaultAppearance;
 
 import com.google.gwt.core.client.GWT;
 
 /**
  * @author jstroot
  */
-public class AdminAppsGridPresenterDefaultAppearance implements AdminAppsGridView.Presenter.Appearance {
+public class AdminAppsGridPresenterDefaultAppearance extends AppsGridViewDefaultAppearance implements AdminAppsGridView.Presenter.Appearance {
     private final BelphegorDisplayStrings displayStrings;
     private final BelphegorErrorStrings errorStrings;
     private final IplantDisplayStrings iplantDisplayStrings;
@@ -57,6 +58,11 @@ public class AdminAppsGridPresenterDefaultAppearance implements AdminAppsGridVie
     @Override
     public String restoreAppFailureMsgTitle() {
         return errorStrings.restoreAppFailureMsgTitle();
+    }
+
+    @Override
+    public String restoreAppLoadingMask() {
+        return iplantDisplayStrings.loadingMask();
     }
 
     @Override

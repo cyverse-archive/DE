@@ -6,14 +6,13 @@ import org.iplantc.de.admin.desktop.client.services.model.AppCategorizeRequest;
 import org.iplantc.de.client.models.HasId;
 import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.models.apps.AppCategory;
-import org.iplantc.de.client.models.apps.AppList;
-import org.iplantc.de.client.models.apps.proxy.AppListLoadResult;
+import org.iplantc.de.client.models.apps.AppDoc;
 import org.iplantc.de.client.services.converters.AppCategoryListCallbackConverter;
 import org.iplantc.de.client.services.converters.AsyncCallbackConverter;
+import org.iplantc.de.client.services.converters.StringToVoidCallbackConverter;
 import org.iplantc.de.shared.services.DiscEnvApiService;
 import org.iplantc.de.shared.services.ServiceCallWrapper;
 
-import com.google.gwt.http.client.URL;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONString;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -21,6 +20,8 @@ import com.google.inject.Inject;
 import com.google.web.bindery.autobean.shared.AutoBean;
 import com.google.web.bindery.autobean.shared.AutoBeanCodex;
 import com.google.web.bindery.autobean.shared.AutoBeanUtils;
+import com.google.web.bindery.autobean.shared.Splittable;
+import com.google.web.bindery.autobean.shared.impl.StringQuoter;
 
 import java.util.List;
 
@@ -29,29 +30,42 @@ import java.util.List;
  */
 public class AppAdminServiceFacadeImpl implements AppAdminServiceFacade {
 
-
     private final String APPS = "org.iplantc.services.apps";
     private final String APPS_ADMIN = "org.iplantc.services.admin.apps";
     private final String CATEGORIES_ADMIN = "org.iplantc.services.admin.apps.categories";
 
-    private final String CATEGORIES = "org.iplantc.services.apps.categories";
-
     @Inject private DiscEnvApiService deService;
-    @Inject AppServiceAutoBeanFactory factory;
+    @Inject private AdminServiceAutoBeanFactory factory;
 
     @Inject
     AppAdminServiceFacadeImpl() { }
 
     @Override
-    public void addCategory(String name, String destCategoryId, AsyncCallback<String> callback) {
+    public void addCategory(final String newCategoryName,
+                            final HasId parentCategory,
+                            final AsyncCallback<AppCategory> callback) {
         String address = CATEGORIES_ADMIN;
 
-        JSONObject body = new JSONObject();
-        body.put("parent_id", new JSONString(destCategoryId));
-        body.put("name", new JSONString(name));
+        Splittable payload = StringQuoter.createSplittable();
+        StringQuoter.create(parentCategory.getId()).assign(payload, "parent_id");
+        StringQuoter.create(newCategoryName).assign(payload, "name");
 
-        ServiceCallWrapper wrapper = new ServiceCallWrapper(POST, address, body.toString());
-        deService.getServiceData(wrapper, callback);
+        ServiceCallWrapper wrapper = new ServiceCallWrapper(POST, address, payload.getPayload());
+        deService.getServiceData(wrapper, new AsyncCallbackConverter<String, AppCategory>(callback) {
+            @Override
+            protected AppCategory convertFrom(String object) {
+                AutoBean<AppCategory> appCategoryAutoBean = AutoBeanCodex.decode(factory, AppCategory.class, object);
+                return appCategoryAutoBean.as();
+            }
+        });
+    }
+
+    @Override
+    public void getPublicAppCategories(final AsyncCallback<List<AppCategory>> callback,
+                                       final boolean loadHpc) {
+                String address = CATEGORIES_ADMIN + "?public=true&hpc=" + loadHpc;
+        ServiceCallWrapper wrapper = new ServiceCallWrapper(address);
+        deService.getServiceData(wrapper, new AppCategoryListCallbackConverter(callback));
     }
 
     @Override
@@ -64,60 +78,35 @@ public class AppAdminServiceFacadeImpl implements AppAdminServiceFacade {
     }
 
     @Override
-    public void deleteAppCategory(String categoryId, AsyncCallback<String> callback) {
-        String address = CATEGORIES_ADMIN + "/" + categoryId;
+    public void deleteAppCategory(HasId category, AsyncCallback<Void> callback) {
+        String address = CATEGORIES_ADMIN + "/" + category.getId();
 
         ServiceCallWrapper wrapper = new ServiceCallWrapper(DELETE, address);
-        deService.getServiceData(wrapper, callback);
+        deService.getServiceData(wrapper, new StringToVoidCallbackConverter(callback));
     }
 
     @Override
-    public void deleteApplication(String applicationId, AsyncCallback<String> callback) {
-        String address = APPS_ADMIN + "/" + applicationId;
+    public void deleteApp(final HasId app,
+                          final AsyncCallback<Void> callback) {
+        String address = APPS_ADMIN + "/" + app.getId();
 
         ServiceCallWrapper wrapper = new ServiceCallWrapper(DELETE, address);
-        deService.getServiceData(wrapper, callback);
+        deService.getServiceData(wrapper, new StringToVoidCallbackConverter(callback));
     }
 
     @Override
-    public void getAppDetails(String appId, AsyncCallback<String> callback) {
-        String address = APPS + "/" + appId + "/details";
+    public void getAppDetails(final HasId app,
+                              final AsyncCallback<App> callback) {
+        String address = APPS + "/" + app.getId() + "/details";
 
         ServiceCallWrapper wrapper = new ServiceCallWrapper(GET, address);
-        deService.getServiceData(wrapper, callback);
-    }
-
-    @Override
-    public void getAppCategories(AsyncCallback<List<AppCategory>> callback) {
-        String address = CATEGORIES_ADMIN + "?public=true&hpc=false";
-        ServiceCallWrapper wrapper = new ServiceCallWrapper(GET, address);
-        deService.getServiceData(wrapper, new AppCategoryListCallbackConverter(callback));
-    }
-
-    @Override
-    public void getApps(HasId appCategory, AsyncCallback<List<App>> callback) {
-        String address = CATEGORIES + "/" + appCategory.getId();
-        ServiceCallWrapper wrapper = new ServiceCallWrapper(address);
-        deService.getServiceData(wrapper, new AsyncCallbackConverter<String, List<App>>(callback) {
+        deService.getServiceData(wrapper, new AsyncCallbackConverter<String, App>(callback) {
             @Override
-            protected List<App> convertFrom(String object) {
-                List<App> apps = AutoBeanCodex.decode(factory, AppList.class, object).as().getApps();
-                return apps;
+            protected App convertFrom(String object) {
+                AutoBean<App> appAutoBean = AutoBeanCodex.decode(factory, App.class, object);
+                return appAutoBean.as();
             }
         });
-    }
-
-    @Override
-    public void getPagedApps(String appCategoryId, int limit, String sortField, int offset,
-                             com.sencha.gxt.data.shared.SortDir sortDir,
-                             AsyncCallback<String> callback) {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public void getPublicAppCategories(AsyncCallback<List<AppCategory>> callback, boolean loadHpc) {
-        getAppCategories(callback);
     }
 
     @Override
@@ -134,49 +123,56 @@ public class AppAdminServiceFacadeImpl implements AppAdminServiceFacade {
     }
 
     @Override
-    public void renameAppCategory(String categoryId, String name, AsyncCallback<String> callback) {
-        String address = CATEGORIES_ADMIN + "/" + categoryId;
+    public void renameAppCategory(final HasId categoryId,
+                                  final String newCategoryName,
+                                  final AsyncCallback<AppCategory> callback) {
+        String address = CATEGORIES_ADMIN + "/" + categoryId.getId();
 
-        JSONObject body = new JSONObject();
-        body.put("name", new JSONString(name));
+        Splittable payload = StringQuoter.createSplittable();
+        StringQuoter.create(newCategoryName).assign(payload, "name");
 
         ServiceCallWrapper wrapper = new ServiceCallWrapper(PATCH, address,
-                                                            body.toString());
-        deService.getServiceData(wrapper, callback);
-    }
-
-    @Override
-    public void searchApp(String search, AsyncCallback<AppListLoadResult> callback) {
-        String address = APPS + "?search=" + URL.encodeQueryString(search);
-
-        ServiceCallWrapper wrapper = new ServiceCallWrapper(address);
-        deService.getServiceData(wrapper, new AsyncCallbackConverter<String, AppListLoadResult>(callback) {
+                                                            payload.getPayload());
+        deService.getServiceData(wrapper, new AsyncCallbackConverter<String, AppCategory>(callback) {
             @Override
-            protected AppListLoadResult convertFrom(String object) {
-                List<App> apps = AutoBeanCodex.decode(factory, AppList.class, object).as().getApps();
-                AutoBean<AppListLoadResult> loadResultAutoBean = factory.loadResult();
-
-                final AppListLoadResult loadResult = loadResultAutoBean.as();
-                loadResult.setData(apps);
-                return loadResult;
+            protected AppCategory convertFrom(String object) {
+                AutoBean<AppCategory> appCategoryAutoBean = AutoBeanCodex.decode(factory, AppCategory.class, object);
+                return appCategoryAutoBean.as();
             }
         });
     }
 
     @Override
-    public void updateApplication(String appId, JSONObject application, AsyncCallback<String> callback) {
-        String address = APPS_ADMIN + "/" + appId;
+    public void restoreApp(final HasId app,
+                           final AsyncCallback<App> callback) {
+        String address = APPS_ADMIN + "/" + app.getId();
+
+        Splittable payload = StringQuoter.createSplittable();
+        StringQuoter.create(false).assign(payload, "deleted");
 
         ServiceCallWrapper wrapper = new ServiceCallWrapper(PATCH, address,
-                                                            application.toString());
-        deService.getServiceData(wrapper, callback);
+                                                            payload.getPayload());
+        deService.getServiceData(wrapper, new AsyncCallbackConverter<String, App>(callback) {
+            @Override
+            protected App convertFrom(String object) {
+                AutoBean<App> appAutoBean = AutoBeanCodex.decode(factory, App.class, object);
+                return appAutoBean.as();
+            }
+        });
     }
 
     @Override
-    public void getAppDoc(String appId, AsyncCallback<String> callback) {
-        String address = APPS + "/" + appId + "/documentation";
+    public void getAppDoc(final HasId app,
+                          final AsyncCallback<AppDoc> callback) {
+        String address = APPS + "/" + app.getId() + "/documentation";
         ServiceCallWrapper wrapper = new ServiceCallWrapper(GET, address);
-        deService.getServiceData(wrapper, callback);
+        deService.getServiceData(wrapper, new AsyncCallbackConverter<String, AppDoc>(callback) {
+            @Override
+            protected AppDoc convertFrom(String object) {
+                AutoBean<AppDoc> appDocAutoBean = AutoBeanCodex.decode(factory, AppDoc.class, object);
+                return appDocAutoBean.as();
+            }
+        });
     }
 
     @Override
@@ -192,7 +188,6 @@ public class AppAdminServiceFacadeImpl implements AppAdminServiceFacade {
         String address = APPS_ADMIN + "/" + appId + "/documentation";
         ServiceCallWrapper wrapper = new ServiceCallWrapper(PATCH, address, doc);
         deService.getServiceData(wrapper, callback);
-
     }
 
 }

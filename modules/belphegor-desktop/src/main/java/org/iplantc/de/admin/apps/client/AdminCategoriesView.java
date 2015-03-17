@@ -6,6 +6,7 @@ import org.iplantc.de.admin.apps.client.events.selection.DeleteCategorySelected;
 import org.iplantc.de.admin.apps.client.events.selection.MoveCategorySelected;
 import org.iplantc.de.admin.apps.client.events.selection.RenameCategorySelected;
 import org.iplantc.de.apps.client.AppCategoriesView;
+import org.iplantc.de.client.models.HasId;
 import org.iplantc.de.client.models.apps.App;
 
 import com.sencha.gxt.data.shared.event.StoreRemoveEvent;
@@ -17,6 +18,7 @@ import java.util.List;
  * @author jstroot
  */
 public interface AdminCategoriesView extends AppCategoriesView {
+
     interface Presenter extends AddCategorySelected.AddCategorySelectedHandler,
                                 RenameCategorySelected.RenameCategorySelectedHandler,
                                 DeleteCategorySelected.DeleteCategorySelectedHandler,
@@ -44,7 +46,11 @@ public interface AdminCategoriesView extends AppCategoriesView {
 
             String deleteAppCategoryError(String name);
 
+            String deleteAppCategoryLoadingMask();
+
             String deleteCategoryPermissionError();
+
+            String getAppCategoriesLoadingMask();
 
             String getAppDetailsLoadingMask();
 
@@ -56,6 +62,7 @@ public interface AdminCategoriesView extends AppCategoriesView {
 
             String noCategoriesSelected();
 
+            String renameAppCategoryLoadingMask();
 
             String renameCategory();
 
@@ -68,7 +75,8 @@ public interface AdminCategoriesView extends AppCategoriesView {
             String submit();
         }
 
-        AdminCategoriesView getView();
+        AppCategoriesView getView();
 
+        void go(HasId selectedAppCategory);
     }
 }

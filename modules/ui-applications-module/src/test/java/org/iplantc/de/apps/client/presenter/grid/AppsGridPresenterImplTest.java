@@ -67,6 +67,7 @@ public class AppsGridPresenterImplTest {
     @Mock AppUserServiceFacade appServiceMock;
     @Mock AppsGridView.AppsGridAppearance appearanceMock;
     @Mock UserInfo userInfoMock;
+    @Mock AppUserServiceFacade appUserServiceMock;
 
     @Mock AsyncProvider<CommentsDialog> commentsProviderMock;
     @Captor ArgumentCaptor<AsyncCallback<CommentsDialog>> commentsDlgCaptor;
@@ -86,7 +87,8 @@ public class AppsGridPresenterImplTest {
         uut = new AppsGridPresenterImpl(viewFactoryMock,
                                         listStoreMock,
                                         eventBusMock);
-        uut.appUserService = appServiceMock;
+        uut.appService = appServiceMock;
+        uut.appUserService = appUserServiceMock;
         uut.appearance = appearanceMock;
         uut.commentsDialogProvider = commentsProviderMock;
         uut.userInfo = userInfoMock;
@@ -234,9 +236,9 @@ public class AppsGridPresenterImplTest {
         /*** CALL METHOD UNDER TEST ***/
         uut.onAppFavoriteSelected(eventMock);
 
-        verify(appServiceMock).favoriteApp(eq(appMock),
-                                           eq(false),
-                                           voidCallbackCaptor.capture());
+        verify(appUserServiceMock).favoriteApp(eq(appMock),
+                                               eq(false),
+                                               voidCallbackCaptor.capture());
 
         verify(eventMock).getApp();
 
@@ -299,8 +301,8 @@ public class AppsGridPresenterImplTest {
         /*** CALL METHOD UNDER TEST ***/
         uut.onAppRatingDeselected(eventMock);
 
-        verify(appServiceMock).deleteRating(eq(appMock),
-                                            any(DeleteRatingCallback.class));
+        verify(appUserServiceMock).deleteRating(eq(appMock),
+                                                any(DeleteRatingCallback.class));
         verifyNoMoreInteractions(appServiceMock,
                                  appMock);
     }
@@ -315,9 +317,9 @@ public class AppsGridPresenterImplTest {
         /*** CALL METHOD UNDER TEST ***/
         uut.onAppRatingSelected(eventMock);
 
-        verify(appServiceMock).rateApp(eq(appMock),
-                                       eq(mockScore),
-                                       any(RateAppCallback.class));
+        verify(appUserServiceMock).rateApp(eq(appMock),
+                                           eq(mockScore),
+                                           any(RateAppCallback.class));
         verifyNoMoreInteractions(appServiceMock,
                                  appMock);
     }
@@ -356,8 +358,8 @@ public class AppsGridPresenterImplTest {
 
         verify(eventMock).getAppsToBeDeleted();
 
-        verify(appServiceMock).deleteAppsFromWorkspace(eq(appsToBeDeleted),
-                                                       Matchers.<AsyncCallback<Void>>any());
+        verify(appUserServiceMock).deleteAppsFromWorkspace(eq(appsToBeDeleted),
+                                                           Matchers.<AsyncCallback<Void>>any());
         verifyNoMoreInteractions(appServiceMock,
                                  eventMock,
                                  eventBusMock,

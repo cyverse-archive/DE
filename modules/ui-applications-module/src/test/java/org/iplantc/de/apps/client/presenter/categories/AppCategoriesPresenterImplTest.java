@@ -14,6 +14,7 @@ import org.iplantc.de.client.models.DEProperties;
 import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.models.apps.AppCategory;
 import org.iplantc.de.client.models.apps.integration.AppTemplate;
+import org.iplantc.de.client.services.AppServiceFacade;
 import org.iplantc.de.client.services.AppUserServiceFacade;
 import org.iplantc.de.client.util.JsonUtil;
 
@@ -55,6 +56,7 @@ public class AppCategoriesPresenterImplTest {
     @Mock TreeStore<AppCategory> treeStoreMock;
     @Mock AppCategoriesViewFactory viewFactoryMock;
     @Mock AppCategoriesView viewMock;
+    @Mock AppServiceFacade appServiceMock;
     @Mock AppUserServiceFacade appUserServiceMock;
     @Mock AppCategoriesView.AppCategoriesAppearance appearanceMock;
     @Mock Tree<AppCategory, String> treeMock;
@@ -87,8 +89,9 @@ public class AppCategoriesPresenterImplTest {
                                              jsonUtilMock,
                                              eventBusMock,
                                              viewFactoryMock);
-        uut.appService = appUserServiceMock;
+        uut.appUserService = appUserServiceMock;
         uut.appearance = appearanceMock;
+        uut.appService = appServiceMock;
     }
 
     @Test public void testConstructorEventHandlerWiring() {
@@ -117,7 +120,7 @@ public class AppCategoriesPresenterImplTest {
         uut.go(null);
 
         verify(viewMock).mask(anyString());
-        verify(appUserServiceMock).getAppCategories(appCategoriesCaptor.capture());
+        verify(appServiceMock).getAppCategories(appCategoriesCaptor.capture());
 
         // Call failure with arbitrary exception
         appCategoriesCaptor.getValue().onFailure(null);
@@ -291,7 +294,8 @@ public class AppCategoriesPresenterImplTest {
                                                                                   eventBusMock,
                                                                                   viewFactoryMock));
         spy.appDetailsDlgAsyncProvider = mockDetailsProvider;
-        spy.appService = appUserServiceMock;
+        spy.appService = appServiceMock;
+        spy.appUserService = appUserServiceMock;
 
         // Set up mock event
         AppInfoSelectedEvent eventMock = mock(AppInfoSelectedEvent.class);

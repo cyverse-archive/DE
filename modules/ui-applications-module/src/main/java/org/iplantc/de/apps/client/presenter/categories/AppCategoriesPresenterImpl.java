@@ -23,6 +23,7 @@ import org.iplantc.de.client.models.HasId;
 import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.models.apps.AppCategory;
 import org.iplantc.de.client.models.apps.integration.AppTemplate;
+import org.iplantc.de.client.services.AppServiceFacade;
 import org.iplantc.de.client.services.AppUserServiceFacade;
 import org.iplantc.de.client.util.JsonUtil;
 import org.iplantc.de.commons.client.ErrorHandler;
@@ -86,7 +87,8 @@ public class AppCategoriesPresenterImpl implements AppCategoriesView.Presenter,
     protected String searchRegexPattern;
     @Inject IplantAnnouncer announcer;
     @Inject AsyncProvider<AppDetailsDialog> appDetailsDlgAsyncProvider;
-    @Inject AppUserServiceFacade appService;
+    @Inject AppServiceFacade appService;
+    @Inject AppUserServiceFacade appUserService;
     @Inject AppCategoriesView.AppCategoriesAppearance appearance;
     private final EventBus eventBus;
     private final TreeStore<AppCategory> treeStore;
@@ -177,7 +179,7 @@ public class AppCategoriesPresenterImpl implements AppCategoriesView.Presenter,
     @Override
     public void onAppFavoriteSelected(AppFavoriteSelectedEvent event) {
         final App app = event.getApp();
-        appService.favoriteApp(app, !app.isFavorite(), new AsyncCallback<Void>() {
+        appUserService.favoriteApp(app, !app.isFavorite(), new AsyncCallback<Void>() {
             @Override
             public void onFailure(Throwable caught) {
                 announcer.schedule(new ErrorAnnouncementConfig(appearance.favServiceFailure()));
@@ -218,7 +220,7 @@ public class AppCategoriesPresenterImpl implements AppCategoriesView.Presenter,
             public void onSuccess(final AppDetailsDialog dlg) {
 
                 // Fetch details, otherwise App.getGroups may be null
-                appService.getAppDetails(event.getApp(), new AsyncCallback<App>() {
+                appUserService.getAppDetails(event.getApp(), new AsyncCallback<App>() {
                     @Override
                     public void onFailure(final Throwable caught) {
                         announcer.schedule(new ErrorAnnouncementConfig(appearance.fetchAppDetailsError(caught)));
@@ -247,18 +249,18 @@ public class AppCategoriesPresenterImpl implements AppCategoriesView.Presenter,
     @Override
     public void onAppRatingDeselected(AppRatingDeselected event) {
         final App appToUnRate = event.getApp();
-        appService.deleteRating(appToUnRate, new DeleteRatingCallback(appToUnRate,
+        appUserService.deleteRating(appToUnRate, new DeleteRatingCallback(appToUnRate,
                                                                       eventBus));
     }
 
     @Override
     public void onAppRatingSelected(AppRatingSelected event) {
         final App appToRate = event.getApp();
-        appService.rateApp(appToRate,
-                           event.getScore(),
-                           new RateAppCallback(appToRate,
-                                               event,
-                                               eventBus));
+        appUserService.rateApp(appToRate,
+                               event.getScore(),
+                               new RateAppCallback(appToRate,
+                                                   event,
+                                                   eventBus));
     }
 
     @Override
@@ -294,7 +296,7 @@ public class AppCategoriesPresenterImpl implements AppCategoriesView.Presenter,
         Preconditions.checkArgument(event.getApps().size() == 1);
         // JDS For now, assume only one app
         final App appToBeCopied = event.getApps().iterator().next();
-        appService.copyApp(appToBeCopied, new AsyncCallback<AppTemplate>() {
+        appUserService.copyApp(appToBeCopied, new AsyncCallback<AppTemplate>() {
             @Override
             public void onFailure(Throwable caught) {
                 ErrorHandler.post(caught);
@@ -321,7 +323,7 @@ public class AppCategoriesPresenterImpl implements AppCategoriesView.Presenter,
         Preconditions.checkArgument(event.getApps().size() == 1);
         // JDS For now, assume only one app
         final App appToBeCopied = event.getApps().iterator().next();
-        appService.copyWorkflow(appToBeCopied.getId(), new AsyncCallback<String>() {
+        appUserService.copyWorkflow(appToBeCopied.getId(), new AsyncCallback<String>() {
 
             @Override
             public void onFailure(Throwable caught) {

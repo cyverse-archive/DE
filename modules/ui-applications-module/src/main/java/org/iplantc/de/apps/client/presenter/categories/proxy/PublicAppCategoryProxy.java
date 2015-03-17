@@ -1,7 +1,7 @@
 package org.iplantc.de.apps.client.presenter.categories.proxy;
 
 import org.iplantc.de.client.models.apps.AppCategory;
-import org.iplantc.de.client.services.AppUserServiceFacade;
+import org.iplantc.de.client.services.AppServiceFacade;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.inject.Inject;
@@ -10,14 +10,17 @@ import com.sencha.gxt.data.client.loader.RpcProxy;
 
 import java.util.List;
 
+/**
+ * @author jstroot
+ */
 public class PublicAppCategoryProxy extends RpcProxy<AppCategory, List<AppCategory>> {
 
-    private final AppUserServiceFacade appService;
+    private final AppServiceFacade appService;
 
     private boolean loadHpc;
 
     @Inject
-    public PublicAppCategoryProxy(AppUserServiceFacade appService) {
+    public PublicAppCategoryProxy(AppServiceFacade appService) {
         this.appService = appService;
     }
 

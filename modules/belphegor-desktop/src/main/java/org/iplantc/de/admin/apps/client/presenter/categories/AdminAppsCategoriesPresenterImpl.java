@@ -11,37 +11,30 @@ import org.iplantc.de.admin.desktop.client.apps.presenter.AppCategorizePresenter
 import org.iplantc.de.admin.desktop.client.apps.views.AppCategorizeViewImpl;
 import org.iplantc.de.admin.desktop.client.models.BelphegorAdminProperties;
 import org.iplantc.de.admin.desktop.client.services.AppAdminServiceFacade;
-import org.iplantc.de.admin.desktop.client.services.callbacks.AdminServiceCallback;
 import org.iplantc.de.admin.desktop.client.services.model.AppAdminServiceRequestAutoBeanFactory;
 import org.iplantc.de.admin.desktop.client.services.model.AppCategorizeRequest;
+import org.iplantc.de.apps.client.AppCategoriesView;
+import org.iplantc.de.apps.client.gin.factory.AppCategoriesViewFactory;
 import org.iplantc.de.client.models.HasId;
 import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.models.apps.AppAutoBeanFactory;
 import org.iplantc.de.client.models.apps.AppCategory;
+import org.iplantc.de.client.services.AppServiceFacade;
 import org.iplantc.de.client.util.CommonModelUtils;
 import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.commons.client.info.ErrorAnnouncementConfig;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
 import org.iplantc.de.commons.client.info.SuccessAnnouncementConfig;
 import org.iplantc.de.commons.client.views.dialogs.IPlantDialog;
-import org.iplantc.de.commons.client.views.dialogs.IPlantPromptDialog;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
-import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.inject.Inject;
-import com.google.web.bindery.autobean.shared.AutoBean;
-import com.google.web.bindery.autobean.shared.AutoBeanCodex;
 
 import com.sencha.gxt.data.shared.TreeStore;
 import com.sencha.gxt.data.shared.event.StoreRemoveEvent;
-import com.sencha.gxt.widget.core.client.Dialog;
-import com.sencha.gxt.widget.core.client.box.ConfirmMessageBox;
-import com.sencha.gxt.widget.core.client.box.PromptMessageBox;
-import com.sencha.gxt.widget.core.client.event.DialogHideEvent;
 import com.sencha.gxt.widget.core.client.event.SelectEvent;
-import com.sencha.gxt.widget.core.client.form.TextField;
 
 import java.util.Collections;
 import java.util.List;
@@ -49,157 +42,128 @@ import java.util.List;
 /**
  * @author jstroot
  */
-public class AdminAppsCategoriesPresenterImpl implements AdminCategoriesView.Presenter {
+public class AdminAppsCategoriesPresenterImpl implements AdminCategoriesView.Presenter,
+                                                         AppCategoriesView.AppCategoryHierarchyProvider {
 
     @Inject AppAdminServiceFacade adminAppService;
     @Inject IplantAnnouncer announcer;
+    @Inject AppServiceFacade appService;
     @Inject AdminCategoriesView.Presenter.Appearance appearance;
     @Inject AppAutoBeanFactory factory;
     @Inject BelphegorAdminProperties properties;
     @Inject AppAdminServiceRequestAutoBeanFactory serviceFactory;
+
     private final TreeStore<AppCategory> treeStore;
-    private AdminCategoriesView view;
+    private final AppCategoriesView view;
 
     @Inject
-    AdminAppsCategoriesPresenterImpl(final TreeStore<AppCategory> treeStore) {
-
-
+    AdminAppsCategoriesPresenterImpl(final AppCategoriesViewFactory viewFactory,
+                                     final TreeStore<AppCategory> treeStore) {
         this.treeStore = treeStore;
-    }
-
-    public boolean canMoveApp(AppCategory parentCategory, App app) {
-        if (parentCategory == null || app == null) {
-            return false;
-        }
-
-        // Apps can only be dropped into leaf categories.
-        return isLeaf(parentCategory);
-
-    }
-
-    public boolean canMoveAppCategory(AppCategory parentCategory, AppCategory childCategory) {
-        if (parentCategory == null || childCategory == null) {
-            return false;
-        }
-
-        // Don't allow a category drop onto itself.
-        if (childCategory == parentCategory) {
-            return false;
-        }
-
-        // Don't allow a category drop into a category leaf with apps in it.
-        if (isLeaf(parentCategory) && parentCategory.getAppCount() > 0) {
-            return false;
-        }
-
-        // Don't allow a category drop into one of its children.
-        if (childCategory.getCategories() != null
-                && childCategory.getCategories().contains(parentCategory)) {
-            return false;
-        }
-
-        // Don't allow a category drop into its own parent.
-        if (childCategory.getCategories() != null) {
-            return !parentCategory.getCategories().contains(childCategory);
-        }
-
-        return true;
-
+        this.view = viewFactory.create(treeStore, this);
     }
 
     @Override
-    public AdminCategoriesView getView() {
+    public List<String> getGroupHierarchy(AppCategory appCategory) {
+        List<String> groupNames = Lists.newArrayList();
+
+        for (AppCategory group : getGroupHierarchy(appCategory, null)) {
+            groupNames.add(group.getName());
+        }
+        Collections.reverse(groupNames);
+        return groupNames;
+    }
+
+    @Override
+    public AppCategoriesView getView() {
         return view;
     }
 
-    public void moveAppCategory(final AppCategory parentCategory, final AppCategory childCategory) {
-        adminAppService.moveCategory(childCategory.getId(),
-                                     parentCategory.getId(),
-                                     new AsyncCallback<String>() {
+    @Override
+    public void go(final HasId selectedAppCategory) {
+        if (!treeStore.getAll().isEmpty()
+                && selectedAppCategory != null) {
+            AppCategory desiredCategory = treeStore.findModelWithKey(selectedAppCategory.getId());
+            view.getTree().getSelectionModel().select(desiredCategory, false);
+        } else {
+            view.mask(appearance.getAppCategoriesLoadingMask());
+            adminAppService.getPublicAppCategories(new AsyncCallback<List<AppCategory>>() {
+                @Override
+                public void onFailure(Throwable caught) {
+                    ErrorHandler.post(caught);
+                    view.unmask();
+                }
 
-                                         @Override
-                                         public void onFailure(Throwable caught) {
-                                             ErrorHandler.post(appearance.moveCategoryError(childCategory.getName()));
-                                         }
-
-                                         @Override
-                                         public void onSuccess(String result) {
-                                             // Refresh the catalog, so that the proper category counts
-                                             // display.
-                                             // FIXME JDS These events need to be common to
-                                             // ui-apps.
-//                                             eventBus.fireEvent(new CatalogCategoryRefreshEvent());
-                                         }
-                                     });
+                @Override
+                public void onSuccess(List<AppCategory> result) {
+                    addAppCategories(null, result);
+                    view.getTree().expandAll();
+                    if (selectedAppCategory != null) {
+                        AppCategory desiredCategory = treeStore.findModelWithKey(selectedAppCategory.getId());
+                        view.getTree().getSelectionModel().select(desiredCategory, false);
+                    } else {
+                        view.getTree().getSelectionModel().selectNext();
+                        view.getTree().getSelectionModel().select(treeStore.getRootItems().get(0), false);
+                    }
+                    view.unmask();
+                }
+            }, false);
+        }
     }
 
     @Override
     public void onAddCategorySelected(final AddCategorySelected event) {
-        final AppCategory selectedAppCategory = event.getAppCategories().iterator().next();
+        Preconditions.checkArgument(event.getAppCategories().size() == 1); // Ensure only one selected
+        final AppCategory selectedParentCategory = event.getAppCategories().iterator().next();
 
         // Check if a new AppCategory can be created in the target AppCategory.
-        if ((!selectedAppCategory.getName().contains("Public Apps"))
-                && selectedAppCategory.getAppCount() > 0
-                && (selectedAppCategory.getCategories() != null && selectedAppCategory.getCategories()
-                                                                                      .size() == 0)
-                || ((properties.getDefaultTrashAppCategoryId().equalsIgnoreCase(selectedAppCategory.getId())) || properties.getDefaultBetaAppCategoryId()
-                                                                                                                           .equalsIgnoreCase(selectedAppCategory.getId()))) {
-            ErrorHandler.post(appearance.addCategoryPermissionError());
+        /*
+         * Verify Selected parent category is not "public apps"
+         *
+         */
+        final boolean isTrashCategory = properties.getDefaultTrashAppCategoryId().equalsIgnoreCase(selectedParentCategory.getId());
+        final boolean isBetaCategory = properties.getDefaultBetaAppCategoryId().equalsIgnoreCase(selectedParentCategory.getId());
+        final boolean isPublicApps = selectedParentCategory.getName().contains("Public Apps");
+        final boolean hasNoChildCategories = selectedParentCategory.getCategories() != null
+                              && selectedParentCategory.getCategories().size() == 0;
+        if(isTrashCategory
+            || isBetaCategory) {
+            announcer.schedule(new ErrorAnnouncementConfig(appearance.addCategoryPermissionError()));
+            return;
+        } else if (!isPublicApps
+                      && hasNoChildCategories
+                      && selectedParentCategory.getAppCount() > 0){
+            announcer.schedule(new ErrorAnnouncementConfig(appearance.addCategoryPermissionError()));
             return;
         }
 
-        // FIXME Dlg should be moved to view
-        final IPlantPromptDialog dlg = new IPlantPromptDialog(appearance.add(), 0, "", null);
-        dlg.setHeadingText(appearance.addCategoryPrompt());
-        dlg.addOkButtonSelectHandler(new SelectEvent.SelectHandler() {
+        final String newCategoryName = event.getNewCategoryName();
+        view.mask(appearance.addCategoryLoadingMask());
+        adminAppService.addCategory(newCategoryName,
+                                    selectedParentCategory,
+                                    new AsyncCallback<AppCategory>() {
 
-            @Override
-            public void onSelect(SelectEvent event) {
+                                        @Override
+                                        public void onFailure(Throwable caught) {
+                                            view.unmask();
+                                            announcer.schedule(new ErrorAnnouncementConfig(appearance.addAppCategoryError(newCategoryName)));
+                                        }
 
-                final String name = dlg.getFieldText();
-
-                // FIXME This loading mask should happen as part of RPC proxy
-//                view.maskCenterPanel(appearance.addCategoryLoadingMask());
-                adminAppService.addCategory(name,
-                                            selectedAppCategory.getId(),
-                                            new AdminServiceCallback() {
-                                                @Override
-                                                protected String getErrorMessage() {
-//                                                    view.unMaskCenterPanel();
-                                                    return appearance.addAppCategoryError(name);
-                                                }
-
-                                                @Override
-                                                protected void onSuccess(JSONObject jsonResult) {
-
-                                                    // Get result
-                                                    AutoBean<AppCategory> group = AutoBeanCodex.decode(factory,
-                                                                                                       AppCategory.class,
-                                                                                                       jsonResult.toString());
-
-                                                    AppCategory child = group.as();
-                                                    if (selectedAppCategory == null) {
-                                                        treeStore.add(child);
-                                                    } else {
-                                                        treeStore.add(selectedAppCategory, child);
-                                                    }
-//                                                    view.unMaskCenterPanel();
-                                                }
-                                            });
-
-            }
-        });
-        dlg.show();
+                                        @Override
+                                        public void onSuccess(AppCategory result) {
+                                            view.unmask();
+                                            treeStore.add(selectedParentCategory, result);
+                                        }
+                                    });
     }
 
     @Override
-    public void onCategorizeAppSelected(CategorizeAppSelected event) {
+    public void onCategorizeAppSelected(final CategorizeAppSelected event) {
         Preconditions.checkArgument(event.getApps().size() == 1);
         final App selectedApp = event.getApps().iterator().next();
         view.mask(appearance.getAppDetailsLoadingMask());
 
-        // FIXME Why do we have to call this?
-        adminAppService.getAppDetails(selectedApp.getId(), new AsyncCallback<String>() {
+        adminAppService.getAppDetails(selectedApp, new AsyncCallback<App>() {
 
             @Override
             public void onFailure(Throwable caught) {
@@ -208,55 +172,44 @@ public class AdminAppsCategoriesPresenterImpl implements AdminCategoriesView.Pre
             }
 
             @Override
-            public void onSuccess(String result) {
-                App appDetails = AutoBeanCodex.decode(factory, App.class, result).as();
-                showCategorizeAppDialog(appDetails);
+            public void onSuccess(App result) {
+                showCategorizeAppDialog(result);
                 view.unmask();
             }
         });
     }
 
     @Override
-    public void onDeleteCategorySelected(DeleteCategorySelected event) {
+    public void onDeleteCategorySelected(final DeleteCategorySelected event) {
         final AppCategory selectedAppCategory = event.getAppCategories().iterator().next();
 
         // Determine if the selected AppCategory can be deleted.
         if (selectedAppCategory.getAppCount() > 0) {
-            ErrorHandler.post(appearance.deleteCategoryPermissionError());
+            announcer.schedule(new ErrorAnnouncementConfig(appearance.deleteCategoryPermissionError()));
             return;
         }
 
-        ConfirmMessageBox msgBox = new ConfirmMessageBox(appearance.confirmDeleteAppCategoryWarning(),
-                                                         appearance.confirmDeleteAppCategory(selectedAppCategory.getName()));
-        msgBox.addDialogHideHandler(new DialogHideEvent.DialogHideHandler() {
-            @Override
-            public void onDialogHide(DialogHideEvent event) {
-                if (Dialog.PredefinedButton.YES.equals(event.getHideButton())) {
-//                    view.maskWestPanel(appearance.deleteAppCategoryLoadingMask());
-                    adminAppService.deleteAppCategory(selectedAppCategory.getId(),
-                                                      new AsyncCallback<String>() {
+        view.mask(appearance.deleteAppCategoryLoadingMask());
+        adminAppService.deleteAppCategory(selectedAppCategory,
+              new AsyncCallback<Void>() {
 
-                                                          @Override
-                                                          public void onFailure(Throwable caught) {
-                                                              ErrorHandler.post(appearance.deleteAppCategoryError(selectedAppCategory.getName()));
-//                                                              view.unMaskWestPanel();
-                                                          }
+                  @Override
+                  public void onFailure(Throwable caught) {
+                      view.unmask();
+                      announcer.schedule(new ErrorAnnouncementConfig(appearance.deleteAppCategoryError(selectedAppCategory.getName())));
+                  }
 
-                                                          @Override
-                                                          public void onSuccess(String result) {
-                                                              // Refresh the catalog, so that the
-                                                              // proper category counts
-                                                              // display.
-                                                              // FIXME All cat counts need to be updated. Refetch all categories
-                                                              treeStore.remove(selectedAppCategory);
-//                                                              eventBus.fireEvent(new CatalogCategoryRefreshEvent());
-//                                                              view.unMaskWestPanel();
-                                                          }
-                                                      });
-                }
-            }
-        });
-        msgBox.show();
+                  @Override
+                  public void onSuccess(Void result) {
+                      view.unmask();
+                      // Refresh the catalog, so that the
+                      // proper category counts
+                      // display.
+                      // FIXME All cat counts need to be updated. Refetch all categories
+                      treeStore.remove(selectedAppCategory);
+                      // eventBus.fireEvent(new CatalogCategoryRefreshEvent());
+                  }
+              });
     }
 
     @Override
@@ -286,7 +239,6 @@ public class AdminAppsCategoriesPresenterImpl implements AdminCategoriesView.Pre
         dlg.setOkButtonText(appearance.submit());
         dlg.add(cat_view.asWidget());
         dlg.show();
-
     }
 
     @Override
@@ -295,48 +247,117 @@ public class AdminAppsCategoriesPresenterImpl implements AdminCategoriesView.Pre
     }
 
     @Override
-    public void onRenameCategorySelected(RenameCategorySelected event) {
+    public void onRenameCategorySelected(final RenameCategorySelected event) {
         final AppCategory selectedAppCategory = event.getAppCategory();
 
-        // FIXME Dialog should be moved to view
-        PromptMessageBox msgBox = new PromptMessageBox(appearance.renameCategory(),
-                                                       appearance.renamePrompt());
-        final TextField field = ((TextField) msgBox.getField());
-        field.setAutoValidate(true);
-        field.setAllowBlank(false);
-        field.setText(selectedAppCategory.getName());
-        msgBox.addDialogHideHandler(new DialogHideEvent.DialogHideHandler() {
-            @Override
-            public void onDialogHide(DialogHideEvent event) {
-                if (Dialog.PredefinedButton.OK.equals(event.getHideButton())) {
-//                    view.maskWestPanel(appearance.renameAppCategoryLoadingMask());
-                    adminAppService.renameAppCategory(selectedAppCategory.getId(),
-                                                      field.getText(),
-                                                      new AsyncCallback<String>() {
+        view.mask(appearance.renameAppCategoryLoadingMask());
+        adminAppService.renameAppCategory(selectedAppCategory,
+                                          event.getNewCategoryName(),
+                      new AsyncCallback<AppCategory>() {
 
-                                                          @Override
-                                                          public void onFailure(Throwable caught) {
-                                                              ErrorHandler.post(appearance.renameCategoryError(selectedAppCategory.getName()));
-//                                                              view.unMaskWestPanel();
-                                                          }
+                          @Override
+                          public void onFailure(Throwable caught) {
+                              view.unmask();
+                              announcer.schedule(new ErrorAnnouncementConfig(appearance.renameCategoryError(selectedAppCategory.getName())));
+                          }
 
-                                                          @Override
-                                                          public void onSuccess(String result) {
-                                                              AutoBean<AppCategory> group = AutoBeanCodex.decode(factory,
-                                                                                                                 AppCategory.class,
-                                                                                                                 result);
-                                                              selectedAppCategory.setName(group.as()
-                                                                                               .getName());
-                                                              treeStore.update(selectedAppCategory);
+                          @Override
+                          public void onSuccess(AppCategory result) {
+                              view.unmask();
+                              selectedAppCategory.setName(result.getName());
+                              treeStore.update(selectedAppCategory);
+                          }
+                      });
+    }
 
-//                                                              view.unMaskWestPanel();
-                                                          }
-                                                      });
-                }
+    void addAppCategories(AppCategory parent, List<AppCategory> children) {
+        if ((children == null)
+                || children.isEmpty()) {
+            return;
+        }
+        if (parent == null) {
+            treeStore.add(children);
+        } else {
+            treeStore.add(parent, children);
+        }
 
+        for (AppCategory ag : children) {
+            addAppCategories(ag, ag.getCategories());
+        }
+    }
+
+    boolean canMoveApp(AppCategory parentCategory, App app) {
+        if (parentCategory == null || app == null) {
+            return false;
+        }
+
+        // Apps can only be dropped into leaf categories.
+        return isLeaf(parentCategory);
+
+    }
+
+    boolean canMoveAppCategory(AppCategory parentCategory, AppCategory childCategory) {
+        if (parentCategory == null || childCategory == null) {
+            return false;
+        }
+
+        // Don't allow a category drop onto itself.
+        if (childCategory == parentCategory) {
+            return false;
+        }
+
+        // Don't allow a category drop into a category leaf with apps in it.
+        if (isLeaf(parentCategory) && parentCategory.getAppCount() > 0) {
+            return false;
+        }
+
+        // Don't allow a category drop into one of its children.
+        if (childCategory.getCategories() != null
+                && childCategory.getCategories().contains(parentCategory)) {
+            return false;
+        }
+
+        // Don't allow a category drop into its own parent.
+        if (childCategory.getCategories() != null) {
+            return !parentCategory.getCategories().contains(childCategory);
+        }
+
+        return true;
+
+    }
+
+    List<AppCategory> getGroupHierarchy(AppCategory grp, List<AppCategory> groups) {
+        if (groups == null) {
+            groups = Lists.newArrayList();
+        }
+        groups.add(grp);
+        for (AppCategory ap : treeStore.getRootItems()) {
+            if (ap.getId().equals(grp.getId())) {
+                return groups;
             }
-        });
-        msgBox.show();
+        }
+        return getGroupHierarchy(treeStore.getParent(grp), groups);
+    }
+
+    void moveAppCategory(final AppCategory parentCategory, final AppCategory childCategory) {
+        adminAppService.moveCategory(childCategory.getId(),
+                                     parentCategory.getId(),
+                                     new AsyncCallback<String>() {
+
+                                         @Override
+                                         public void onFailure(Throwable caught) {
+                                             ErrorHandler.post(appearance.moveCategoryError(childCategory.getName()));
+                                         }
+
+                                         @Override
+                                         public void onSuccess(String result) {
+                                             // Refresh the catalog, so that the proper category counts
+                                             // display.
+                                             // FIXME JDS These events need to be common to
+                                             // ui-apps.
+//                                             eventBus.fireEvent(new CatalogCategoryRefreshEvent());
+                                         }
+                                     });
     }
 
     private AppCategorizeRequest buildAppCategorizeRequest(App selectedApp,
@@ -396,7 +417,7 @@ public class AdminAppsCategoriesPresenterImpl implements AdminCategoriesView.Pre
         return parentCategory.getCategories() == null || parentCategory.getCategories().isEmpty();
     }
 
-    private void showCategorizeAppDialog(final App selectedApp) {
+    void showCategorizeAppDialog(final App selectedApp) {
         // FIXME Turn into a separate dialog
         final AppCategorizePresenter presenter = new AppCategorizePresenter(new AppCategorizeViewImpl(false),
                                                                             selectedApp,

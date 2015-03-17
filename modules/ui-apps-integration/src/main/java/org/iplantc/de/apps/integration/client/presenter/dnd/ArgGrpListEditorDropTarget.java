@@ -59,7 +59,7 @@ public final class ArgGrpListEditorDropTarget extends ContainerDropTarget<Accord
     protected void onDragDrop(DndDropEvent event) {
         super.onDragDrop(event);
         List<ArgumentGroup> list = listEditor.getList();
-        boolean isNewArgGrp = AutoBeanUtils.getAutoBean((ArgumentGroup) event.getData()).getTag(ArgumentGroup.IS_NEW) != null;
+        boolean isNewArgGrp = AutoBeanUtils.getAutoBean(event.getData()).getTag(ArgumentGroup.IS_NEW) != null;
         ArgumentGroup newArgGrp = appTemplateUtils.copyArgumentGroup((ArgumentGroup) event.getData());
 
         // Update new group label, if needed

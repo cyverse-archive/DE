@@ -106,6 +106,7 @@ public class AppsGridViewImpl extends ContentPanel implements AppsGridView,
     public HandlerRegistration addAppSelectionChangedEventHandler(AppSelectionChangedEvent.AppSelectionChangedEventHandler handler) {
         return addHandler(handler, AppSelectionChangedEvent.TYPE);
     }
+    //</editor-fold>
 
     @Override
     public Grid<App> getGrid() {
@@ -114,12 +115,9 @@ public class AppsGridViewImpl extends ContentPanel implements AppsGridView,
 
     @Override
     public void onAppCategorySelectionChanged(AppCategorySelectionChangedEvent event) {
-
         // FIXME Move to appearance
         setHeadingText(Joiner.on(" >> ").join(event.getGroupHierarchy()));
     }
-
-    //</editor-fold>
 
     @Override
     public void onAppSearchResultLoad(AppSearchResultLoadEvent event) {

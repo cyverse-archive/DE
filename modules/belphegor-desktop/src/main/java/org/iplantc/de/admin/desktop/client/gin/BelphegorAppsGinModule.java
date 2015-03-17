@@ -7,9 +7,6 @@ import org.iplantc.de.admin.desktop.client.refGenome.presenter.RefGenomePresente
 import org.iplantc.de.admin.desktop.client.refGenome.service.ReferenceGenomeServiceFacade;
 import org.iplantc.de.admin.desktop.client.refGenome.service.impl.ReferenceGenomeServiceFacadeImpl;
 import org.iplantc.de.admin.desktop.client.refGenome.view.RefGenomeViewImpl;
-import org.iplantc.de.admin.desktop.client.services.AppAdminServiceFacade;
-import org.iplantc.de.admin.desktop.client.services.impl.AppAdminServiceFacadeImpl;
-import org.iplantc.de.admin.desktop.client.services.impl.AppAdminUserServiceFacade;
 import org.iplantc.de.admin.desktop.client.systemMessage.SystemMessageView;
 import org.iplantc.de.admin.desktop.client.systemMessage.presenter.SystemMessagePresenterImpl;
 import org.iplantc.de.admin.desktop.client.systemMessage.service.SystemMessageServiceFacade;
@@ -27,8 +24,6 @@ import org.iplantc.de.client.gin.ServicesInjector;
 import org.iplantc.de.client.models.DEProperties;
 import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.client.models.UserSettings;
-import org.iplantc.de.client.services.AppServiceFacade;
-import org.iplantc.de.client.services.AppUserServiceFacade;
 import org.iplantc.de.client.services.DiskResourceServiceFacade;
 import org.iplantc.de.client.services.FileSystemMetadataServiceFacade;
 import org.iplantc.de.client.services.SearchServiceFacade;
@@ -60,10 +55,6 @@ public class BelphegorAppsGinModule extends AbstractGinModule {
         bind(SystemMessageView.Presenter.class).to(SystemMessagePresenterImpl.class);
         bind(SystemMessageServiceFacade.class).to(SystemMessageServiceFacadeImpl.class);
 
-        bind(AppUserServiceFacade.class).to(AppAdminUserServiceFacade.class);
-        bind(AppAdminServiceFacade.class).to(AppAdminServiceFacadeImpl.class);
-        bind(AppServiceFacade.class).to(AppAdminServiceFacadeImpl.class);
-
         bind(DiscEnvApiService.class).in(Singleton.class);
 
     }
@@ -83,7 +74,6 @@ public class BelphegorAppsGinModule extends AbstractGinModule {
     public FileSystemMetadataServiceFacade createFileSystemMetadataServiceFacade() {
         return ServicesInjector.INSTANCE.getFileSysteMetadataServiceFacade();
     }
-
 
     @Provides
     public EventBus createEventBus(){

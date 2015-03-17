@@ -1,6 +1,7 @@
 package org.iplantc.de.admin.apps.client;
 
 import org.iplantc.de.admin.apps.client.events.selection.RestoreAppSelected;
+import org.iplantc.de.apps.client.AppsGridView;
 import org.iplantc.de.apps.client.events.selection.AppCategorySelectionChangedEvent;
 import org.iplantc.de.apps.client.events.selection.AppNameSelectedEvent;
 import org.iplantc.de.apps.client.events.selection.AppSelectionChangedEvent;
@@ -28,7 +29,7 @@ public interface AdminAppsGridView extends IsWidget,
                                 StoreRemoveEvent.HasStoreRemoveHandler<App>,
                                 RestoreAppSelected.RestoreAppSelectedHandler {
 
-        interface Appearance {
+        interface Appearance extends AppsGridView.AppsGridAppearance {
 
             String confirmDeleteAppTitle();
 
@@ -41,6 +42,8 @@ public interface AdminAppsGridView extends IsWidget,
             String restoreAppFailureMsg(String name);
 
             String restoreAppFailureMsgTitle();
+
+            String restoreAppLoadingMask();
 
 
             String restoreAppSuccessMsg(String name, String s);

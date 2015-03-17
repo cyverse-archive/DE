@@ -41,11 +41,6 @@ public class AdminPresenterDefaultAppearance implements AdminAppsView.AdminPrese
     }
 
     @Override
-    public String addCategoryLoadingMask() {
-        return iplantDisplayStrings.loadingMask();
-    }
-
-    @Override
     public String addCategoryPermissionError() {
         return errorStrings.addCategoryPermissionError();
     }
@@ -61,18 +56,8 @@ public class AdminPresenterDefaultAppearance implements AdminAppsView.AdminPrese
     }
 
     @Override
-    public String categorizeAppLoadingMask() {
-        return iplantDisplayStrings.loadingMask();
-    }
-
-    @Override
     public String confirmDeleteAppCategory(String name) {
         return displayStrings.confirmDeleteAppCategory(name);
-    }
-
-    @Override
-    public String confirmDeleteAppCategoryWarning() {
-        return iplantDisplayStrings.warning();
     }
 
     @Override
@@ -81,23 +66,8 @@ public class AdminPresenterDefaultAppearance implements AdminAppsView.AdminPrese
     }
 
     @Override
-    public String confirmDeleteAppWarning() {
-        return iplantDisplayStrings.warning();
-    }
-
-    @Override
     public String deleteAppCategoryError(String name) {
         return errorStrings.deleteAppCategoryError(name);
-    }
-
-    @Override
-    public String deleteAppCategoryLoadingMask() {
-        return iplantDisplayStrings.loadingMask();
-    }
-
-    @Override
-    public String deleteAppLoadingMask() {
-        return iplantDisplayStrings.loadingMask();
     }
 
     @Override
@@ -108,16 +78,6 @@ public class AdminPresenterDefaultAppearance implements AdminAppsView.AdminPrese
     @Override
     public String deleteCategoryPermissionError() {
         return errorStrings.deleteCategoryPermissionError();
-    }
-
-    @Override
-    public String getAppDetailsLoadingMask() {
-        return iplantDisplayStrings.loadingMask();
-    }
-
-    @Override
-    public String invalidMoveMsg() {
-        return errorStrings.invalidMoveCategoryMsg();
     }
 
     @Override
@@ -133,16 +93,6 @@ public class AdminPresenterDefaultAppearance implements AdminAppsView.AdminPrese
     @Override
     public String noCategoriesSelected() {
         return errorStrings.noCategoriesSelected();
-    }
-
-    @Override
-    public String renameCategory() {
-        return iplantDisplayStrings.rename();
-    }
-
-    @Override
-    public String renameAppCategoryLoadingMask() {
-        return iplantDisplayStrings.loadingMask();
     }
 
     @Override

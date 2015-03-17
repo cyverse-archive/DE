@@ -28,6 +28,7 @@ import com.google.inject.Inject;
  */
 public class AdminAppsViewPresenterImpl implements AdminAppsView.AdminPresenter {
 
+    private final AdminCategoriesView.Presenter categoriesPresenter;
     private final AdminAppsView view;
 
 
@@ -36,6 +37,7 @@ public class AdminAppsViewPresenterImpl implements AdminAppsView.AdminPresenter 
                                final AdminCategoriesView.Presenter categoriesPresenter,
                                final AdminAppsToolbarView.Presenter toolbarPresenter,
                                final AdminAppsGridView.Presenter gridPresenter) {
+        this.categoriesPresenter = categoriesPresenter;
         this.view = viewFactory.create(categoriesPresenter,
                                        toolbarPresenter,
                                        gridPresenter);
@@ -58,9 +60,10 @@ public class AdminAppsViewPresenterImpl implements AdminAppsView.AdminPresenter 
     }
 
     @Override
-    public void go(HasOneWidget container, HasId betaGroup) {
+    public void go(final HasOneWidget container,
+                   final HasId selectedAppCategory) {
+        categoriesPresenter.go(selectedAppCategory);
         container.setWidget(view);
-        // FIXME
     }
 
 

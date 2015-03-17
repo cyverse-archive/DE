@@ -4,6 +4,7 @@ import org.iplantc.de.admin.apps.client.AdminAppsGridView;
 import org.iplantc.de.admin.apps.client.AdminAppsToolbarView;
 import org.iplantc.de.admin.apps.client.AdminAppsView;
 import org.iplantc.de.admin.apps.client.AdminCategoriesView;
+import org.iplantc.de.apps.client.AppCategoriesView;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -25,7 +26,7 @@ public class AdminAppViewImpl extends Composite implements AdminAppsView {
 
     private static final AdminAppsViewImplUiBinder BINDER = GWT.create(AdminAppsViewImplUiBinder.class);
     @UiField(provided = true) final AdminAppsToolbarView toolBar;
-    @UiField(provided = true) final AdminCategoriesView appCategoriesView;
+    @UiField(provided = true) final AppCategoriesView appCategoriesView;
     @UiField(provided = true) final AdminAppsGridView appsGridView;
 
     /**

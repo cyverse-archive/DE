@@ -8,34 +8,33 @@ import org.iplantc.de.admin.desktop.client.services.AppAdminServiceFacade;
 import org.iplantc.de.apps.client.events.selection.AppCategorySelectionChangedEvent;
 import org.iplantc.de.apps.client.events.selection.AppNameSelectedEvent;
 import org.iplantc.de.apps.client.events.selection.DeleteAppsSelected;
-import org.iplantc.de.apps.client.models.AppModelKeyProvider;
 import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.models.apps.AppAutoBeanFactory;
+import org.iplantc.de.client.models.apps.AppCategory;
 import org.iplantc.de.client.models.apps.AppDoc;
+import org.iplantc.de.client.services.AppServiceFacade;
 import org.iplantc.de.client.util.JsonUtil;
 import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.commons.client.info.ErrorAnnouncementConfig;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
+import org.iplantc.de.commons.client.info.SuccessAnnouncementConfig;
 
+import com.google.common.base.Joiner;
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Lists;
 import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.event.shared.HandlerRegistration;
-import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.inject.Inject;
 import com.google.web.bindery.autobean.shared.AutoBean;
 import com.google.web.bindery.autobean.shared.AutoBeanCodex;
-import com.google.web.bindery.autobean.shared.AutoBeanUtils;
 
 import com.sencha.gxt.data.shared.ListStore;
 import com.sencha.gxt.data.shared.event.StoreRemoveEvent;
-import com.sencha.gxt.widget.core.client.Dialog;
-import com.sencha.gxt.widget.core.client.box.AlertMessageBox;
-import com.sencha.gxt.widget.core.client.box.ConfirmMessageBox;
-import com.sencha.gxt.widget.core.client.box.MessageBox;
-import com.sencha.gxt.widget.core.client.event.DialogHideEvent;
+
+import java.util.List;
 
 /**
  * @author jstroot
@@ -44,21 +43,24 @@ public class AdminAppsGridPresenterImpl implements AdminAppsGridView.Presenter,
                                                    AppNameSelectedEvent.AppNameSelectedEventHandler {
 
 
-    private final AppAdminServiceFacade adminAppService;
+    @Inject AppAdminServiceFacade adminAppService;
+    @Inject AppServiceFacade appService;
+    @Inject AdminAppsGridView.Presenter.Appearance appearance;
+    @Inject AppAutoBeanFactory factory;
+    @Inject JsonUtil jsonUtil;
+    @Inject IplantAnnouncer announcer;
+
     private final ListStore<App> listStore;
     private final AdminAppsGridView view;
-    @Inject AppAutoBeanFactory factory;
-    @Inject AdminAppsGridView.Presenter.Appearance appearance;
-    @Inject JsonUtil jsonUtil;
+    protected App desiredSelectedApp;
 
     // a flag to determine if doc
     private boolean isDocUpdate;
 
     @Inject
     AdminAppsGridPresenterImpl(final AdminAppsGridViewFactory viewFactory,
-                               final AppAdminServiceFacade adminAppService) {
-        this.adminAppService = adminAppService;
-        listStore = new ListStore<>(new AppModelKeyProvider());
+                               final ListStore<App> listStore) {
+        this.listStore = listStore;
         view = viewFactory.create(listStore);
 
         view.addAppNameSelectedEventHandler(this);
@@ -82,12 +84,40 @@ public class AdminAppsGridPresenterImpl implements AdminAppsGridView.Presenter,
 
     @Override
     public void onAppCategorySelectionChanged(AppCategorySelectionChangedEvent event) {
+        if (event.getAppCategorySelection().isEmpty()) {
+            return;
+        }
+        Preconditions.checkArgument(event.getAppCategorySelection().size() == 1);
+        view.mask(appearance.getAppsLoadingMask());
 
+        final AppCategory appCategory = event.getAppCategorySelection().iterator().next();
+        appService.getApps(appCategory, new AsyncCallback<List<App>>() {
+            @Override
+            public void onFailure(Throwable caught) {
+                ErrorHandler.post(caught);
+                view.unmask();
+            }
+
+            @Override
+            public void onSuccess(final List<App> apps) {
+                listStore.clear();
+                listStore.addAll(apps);
+
+                if (getDesiredSelectedApp() != null) {
+                    view.getGrid().getSelectionModel().select(getDesiredSelectedApp(), false);
+                } else if (listStore.size() > 0) {
+                    // Select first app
+                    view.getGrid().getSelectionModel().select(listStore.get(0), false);
+                }
+                setDesiredSelectedApp(null);
+                view.unmask();
+            }
+        });
     }
 
     @Override
     public void onAppNameSelected(final AppNameSelectedEvent event) {
-        adminAppService.getAppDoc(event.getSelectedApp().getId(), new AsyncCallback<String>() {
+        adminAppService.getAppDoc(event.getSelectedApp(), new AsyncCallback<AppDoc>() {
 
             @Override
             public void onFailure(Throwable caught) {
@@ -100,11 +130,10 @@ public class AdminAppsGridPresenterImpl implements AdminAppsGridView.Presenter,
             }
 
             @Override
-            public void onSuccess(String result) {
+            public void onSuccess(final AppDoc result) {
                 // Get result
-                AutoBean<AppDoc> doc = AutoBeanCodex.decode(factory, AppDoc.class, result);
                 AppEditor.Presenter appEditorPresenter = null;
-                new AppEditor(event.getSelectedApp(), doc.as(), appEditorPresenter).show();
+                new AppEditor(event.getSelectedApp(), result, appEditorPresenter).show();
                 isDocUpdate = true;
             }
         });
@@ -112,95 +141,73 @@ public class AdminAppsGridPresenterImpl implements AdminAppsGridView.Presenter,
     }
 
     @Override
-    public void onDeleteAppsSelected(DeleteAppsSelected event) {
+    public void onDeleteAppsSelected(final DeleteAppsSelected event) {
+        Preconditions.checkArgument(event.getAppsToBeDeleted().size() == 1);
         final App selectedApp = event.getAppsToBeDeleted().iterator().next();
-        // FIXME Move dlg to view
-        ConfirmMessageBox msgBox = new ConfirmMessageBox(appearance.confirmDeleteAppWarning(),
-                                                         appearance.confirmDeleteAppTitle());
-        msgBox.addDialogHideHandler(new DialogHideEvent.DialogHideHandler() {
-            @Override
-            public void onDialogHide(DialogHideEvent event) {
-                if (Dialog.PredefinedButton.YES.equals(event.getHideButton())) {
-                    view.mask(appearance.deleteAppLoadingMask());
-                    adminAppService.deleteApplication(selectedApp.getId(),
-                                                      new AsyncCallback<String>() {
 
-                                                          @Override
-                                                          public void onSuccess(String result) {
-                                                              // FIXME Cat presenter needs to listen to list store remove events.
-//                                                              eventBus.fireEvent(new CatalogCategoryRefreshEvent());
-                                                              view.getGrid().getSelectionModel().deselectAll();
-                                                              view.getGrid();
-                                                              listStore.remove(selectedApp);
-                                                              view.unmask();
-                                                          }
+        view.mask(appearance.deleteAppLoadingMask());
+        adminAppService.deleteApp(selectedApp,
+                                  new AsyncCallback<Void>() {
 
-                                                          @Override
-                                                          public void onFailure(Throwable caught) {
-                                                              ErrorHandler.post(appearance.deleteApplicationError(selectedApp.getName()));
-                                                              view.unmask();
-                                                          }
-                                                      });
-                }
+                                      @Override
+                                      public void onFailure(Throwable caught) {
+                                          view.unmask();
+                                          announcer.schedule(new ErrorAnnouncementConfig(appearance.deleteApplicationError(selectedApp.getName())));
+                                      }
 
-            }
-        });
-        msgBox.show();
+                                      @Override
+                                      public void onSuccess(Void result) {
+                                          view.unmask();
+                                          //  eventBus.fireEvent(new CatalogCategoryRefreshEvent());
+                                          view.getGrid().getSelectionModel().deselectAll();
+                                          listStore.remove(selectedApp);
+                                      }
+                                  });
     }
 
     @Override
-    public void onRestoreAppSelected(RestoreAppSelected event) {
+    public void onRestoreAppSelected(final RestoreAppSelected event) {
         Preconditions.checkArgument(event.getApps().size() == 1);
-
         final App selectedApp = event.getApps().iterator().next();
-        final App appClone = AutoBeanCodex.decode(factory, App.class, "{}").as();
-        appClone.setDeleted(false);
+        Preconditions.checkArgument(selectedApp.isDeleted());
 
-        // Serialize App to JSON object
-        String jsonString = AutoBeanCodex.encode(AutoBeanUtils.getAutoBean(appClone)).getPayload();
-
-        final JSONObject jsonObj = jsonUtil.getObject(jsonString);
-
-        adminAppService.updateApplication(selectedApp.getId(), jsonObj, new AsyncCallback<String>() {
-
-            @Override
-            public void onSuccess(String result) {
-                JSONObject obj = JSONParser.parseStrict(result).isObject();
-                JSONArray arr = obj.get("categories").isArray();
-                if (arr != null && arr.size() > 0) {
-                    StringBuilder names_display = new StringBuilder("");
-                    for (int i = 0; i < arr.size(); i++) {
-                        names_display.append(jsonUtil.trim(arr.get(0).isObject().get("name").toString()));
-                        if (i != arr.size() - 1) {
-                            names_display.append(",");
-                        }
-                    }
-
-                    // FIXME use announcer
-                    MessageBox msgBox = new MessageBox(appearance.restoreAppSuccessMsgTitle(),
-                                                       appearance.restoreAppSuccessMsg(selectedApp.getName(),
-                                                                                       names_display.toString()));
-                    msgBox.setIcon(MessageBox.ICONS.info());
-                    msgBox.setPredefinedButtons(Dialog.PredefinedButton.OK);
-                    msgBox.show();
-                }
-//                eventBus.fireEvent(new CatalogCategoryRefreshEvent());
-            }
+        view.mask(appearance.restoreAppLoadingMask());
+        adminAppService.restoreApp(selectedApp, new AsyncCallback<App>() {
 
             @Override
             public void onFailure(Throwable caught) {
+                view.unmask();
                 JSONObject obj = JSONParser.parseStrict(caught.getMessage()).isObject();
                 String reason = jsonUtil.trim(obj.get("reason").toString());
                 if (reason.contains("orphaned")) {
-                    // FIXME use announcer
-                    AlertMessageBox alertBox = new AlertMessageBox(appearance.restoreAppFailureMsgTitle(),
-                                                                   appearance.restoreAppFailureMsg(selectedApp.getName()));
-                    alertBox.show();
+                    announcer.schedule(new ErrorAnnouncementConfig(appearance.restoreAppFailureMsg(selectedApp.getName())));
                 } else {
-                    ErrorHandler.post(reason);
+                    announcer.schedule(new ErrorAnnouncementConfig(reason));
                 }
             }
 
-        });
+            @Override
+            public void onSuccess(App result) {
+                view.unmask();
+                List<String> categoryNames = Lists.newArrayList();
+                for(AppCategory category : result.getGroups()){
+                    categoryNames.add(category.getName());
+                }
+
+                String joinedCatNames = Joiner.on(",").join(categoryNames);
+                announcer.schedule(new SuccessAnnouncementConfig(appearance.restoreAppSuccessMsgTitle() + "\n"
+                                                                     + appearance.restoreAppSuccessMsg(result.getName(),
+                                                                                                       joinedCatNames)));
+                }
+                // eventBus.fireEvent(new CatalogCategoryRefreshEvent());
+            });
+    }
+
+    App getDesiredSelectedApp() {
+        return desiredSelectedApp;
+    }
+
+    void setDesiredSelectedApp(App desiredSelectedApp) {
+        this.desiredSelectedApp = desiredSelectedApp;
     }
 }

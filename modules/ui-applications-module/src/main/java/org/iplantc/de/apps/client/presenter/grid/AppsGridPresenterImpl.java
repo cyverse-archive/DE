@@ -21,6 +21,7 @@ import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.models.apps.AppCategory;
 import org.iplantc.de.client.services.AppMetadataServiceFacade;
+import org.iplantc.de.client.services.AppServiceFacade;
 import org.iplantc.de.client.services.AppUserServiceFacade;
 import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.commons.client.comments.view.dialogs.CommentsDialog;
@@ -53,6 +54,7 @@ public class AppsGridPresenterImpl implements AppsGridView.Presenter,
 
     final ListStore<App> listStore;
     @Inject IplantAnnouncer announcer;
+    @Inject AppServiceFacade appService;
     @Inject AppUserServiceFacade appUserService;
     @Inject AppsGridView.AppsGridAppearance appearance;
     @Inject AsyncProvider<CommentsDialog> commentsDialogProvider;
@@ -127,7 +129,7 @@ public class AppsGridPresenterImpl implements AppsGridView.Presenter,
         view.mask(appearance.getAppsLoadingMask());
 
         final AppCategory appCategory = event.getAppCategorySelection().iterator().next();
-        appUserService.getApps(appCategory, new AsyncCallback<List<App>>() {
+        appService.getApps(appCategory, new AsyncCallback<List<App>>() {
             @Override
             public void onFailure(Throwable caught) {
                 ErrorHandler.post(caught);

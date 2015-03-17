@@ -1,11 +1,10 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
              xmlns:container="urn:import:com.sencha.gxt.widget.core.client.container"
-             xmlns:gxt="urn:import:com.sencha.gxt.widget.core.client"
              xmlns:appsWidgets="urn:import:org.iplantc.de.admin.apps.client"
-        >
+             xmlns:categories="urn:import:org.iplantc.de.apps.client">
 
-   <ui:with field="strings"
+    <ui:with field="strings"
             type="org.iplantc.de.resources.client.messages.IplantDisplayStrings"/>
 
     <!-- Border Layout Data -->
@@ -27,7 +26,7 @@
             type="com.sencha.gxt.widget.core.client.container.BorderLayoutContainer.BorderLayoutData">
       <ui:attributes size="30"
                      maxSize="30"
-                     hidden="true"/>
+                     hidden="false"/>
    </ui:with>
    <ui:with field="westData"
             type="com.sencha.gxt.widget.core.client.container.BorderLayoutContainer.BorderLayoutData">
@@ -54,7 +53,7 @@
 
         <!-- This is the navigation panel -->
         <container:west layoutData="{westData}">
-           <appsWidgets:AdminCategoriesView ui:field="appCategoriesView" />
+           <categories:AppCategoriesView ui:field="appCategoriesView" />
         </container:west>
 
         <!-- This is the main panel -->

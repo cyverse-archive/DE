@@ -65,53 +65,154 @@ public class AdminAppsToolbarViewImplTest {
 
     @Test public void testOnAppSelectionChanged_zeroSelected() {
         when(mockAppSelectionChangedEvent.getAppSelection()).thenReturn(Collections.<App>emptyList());
+
+        /*** CALL METHOD UNDER TEST ***/
         uut.onAppSelectionChanged(mockAppSelectionChangedEvent);
+
+        verify(mockAppSelectionChangedEvent).getAppSelection();
 
         verify(mockRestoreApp).setEnabled(eq(false));
         verify(mockDeleteApp).setEnabled(eq(false));
         verify(mockCategorizeApp).setEnabled(eq(false));
+
+        verify(mockAddCategory).setEnabled(eq(false));
+        verify(mockRenameCategory).setEnabled(eq(false));
+
+        verifyNoMoreInteractions(mockAppSelectionChangedEvent,
+                                 mockRestoreApp,
+                                 mockDeleteApp,
+                                 mockCategorizeApp,
+                                 mockAddCategory,
+                                 mockRenameCategory);
     }
 
-    @Test public void testOnAppSelectionChanged_oneSelected_notDeleted() {
+    @Test
+    public void testOnAppSelectionChanged_oneSelected_notDeleted() {
         final App mock = mock(App.class);
         when(mock.isDeleted()).thenReturn(false);
         when(mockAppSelectionChangedEvent.getAppSelection()).thenReturn(Lists.newArrayList(mock));
+
+        /*** CALL METHOD UNDER TEST ***/
         uut.onAppSelectionChanged(mockAppSelectionChangedEvent);
+
+        verify(mockAppSelectionChangedEvent).getAppSelection();
+        verify(mock).isDeleted();
 
         verify(mockRestoreApp).setEnabled(eq(false));
         verify(mockDeleteApp).setEnabled(eq(true));
         verify(mockCategorizeApp).setEnabled(eq(true));
+
+        verify(mockAddCategory).setEnabled(eq(false));
+        verify(mockRenameCategory).setEnabled(eq(false));
+
+        verifyNoMoreInteractions(mockAppSelectionChangedEvent,
+                                 mockRestoreApp,
+                                 mockDeleteApp,
+                                 mockCategorizeApp,
+                                 mockAddCategory,
+                                 mockRenameCategory,
+                                 mock);
     }
 
     @Test public void testOnAppSelectionChanged_oneSelected_isDeleted() {
         final App mock = mock(App.class);
         when(mock.isDeleted()).thenReturn(true);
         when(mockAppSelectionChangedEvent.getAppSelection()).thenReturn(Lists.newArrayList(mock));
+
+        /*** CALL METHOD UNDER TEST ***/
         uut.onAppSelectionChanged(mockAppSelectionChangedEvent);
+
+        verify(mockAppSelectionChangedEvent).getAppSelection();
+        verify(mock).isDeleted();
 
         verify(mockRestoreApp).setEnabled(eq(true));
         verify(mockDeleteApp).setEnabled(eq(false));
         verify(mockCategorizeApp).setEnabled(eq(false));
 
+        verify(mockAddCategory).setEnabled(eq(false));
+        verify(mockRenameCategory).setEnabled(eq(false));
+
+        verifyNoMoreInteractions(mockAppSelectionChangedEvent,
+                                 mockRestoreApp,
+                                 mockDeleteApp,
+                                 mockCategorizeApp,
+                                 mockAddCategory,
+                                 mockRenameCategory,
+                                 mock);
+
+        verifyZeroInteractions(mockDeleteCat,
+                               mockRenameCategory,
+                               mockMoveCategory);
     }
 
     @Test public void testOnAppCategorySelectionChanged_zeroSelected() {
         when(mockAppGrpSelectionChangedEvent.getAppCategorySelection()).thenReturn(Collections.<AppCategory>emptyList());
+
+        /*** CALL METHOD UNDER TEST ***/
         uut.onAppCategorySelectionChanged(mockAppGrpSelectionChangedEvent);
+
+        verify(mockAppGrpSelectionChangedEvent).getAppCategorySelection();
 
         verify(mockAddCategory).setEnabled(eq(true));
         verify(mockDeleteCat).setEnabled(eq(false));
         verify(mockRenameCategory).setEnabled(eq(false));
         verify(mockMoveCategory).setEnabled(eq(false));
+
+        verifyNoMoreInteractions(mockAppGrpSelectionChangedEvent,
+                                 mockRestoreApp,
+                                 mockDeleteApp,
+                                 mockCategorizeApp);
+
+        verifyZeroInteractions(mockRestoreApp,
+                               mockDeleteApp,
+                               mockCategorizeApp);
     }
 
     @Test public void testOnAppCategorySelectionChanged_oneSelected() {
         when(mockAppGrpSelectionChangedEvent.getAppCategorySelection()).thenReturn(Lists.newArrayList(mock(AppCategory.class)));
+
+        /*** CALL METHOD UNDER TEST ***/
         uut.onAppCategorySelectionChanged(mockAppGrpSelectionChangedEvent);
+
+        verify(mockAppGrpSelectionChangedEvent).getAppCategorySelection();
 
         verify(mockAddCategory).setEnabled(eq(true));
         verify(mockDeleteCat).setEnabled(eq(true));
         verify(mockRenameCategory).setEnabled(eq(true));
         verify(mockMoveCategory).setEnabled(eq(true));
+
+        verifyNoMoreInteractions(mockAppGrpSelectionChangedEvent,
+                                 mockRestoreApp,
+                                 mockDeleteApp,
+                                 mockCategorizeApp);
+
+        verifyZeroInteractions(mockRestoreApp,
+                               mockDeleteApp,
+                               mockCategorizeApp);
+    }
+
+    @Test public void testOnAppCategorySelectionChanged_oneSelected_hasApps() {
+        final AppCategory appCategoryMock = mock(AppCategory.class);
+        when(appCategoryMock.getAppCount()).thenReturn(1);
+        when(mockAppGrpSelectionChangedEvent.getAppCategorySelection()).thenReturn(Lists.newArrayList(appCategoryMock));
+
+        /*** CALL METHOD UNDER TEST ***/
+        uut.onAppCategorySelectionChanged(mockAppGrpSelectionChangedEvent);
+
+        verify(mockAppGrpSelectionChangedEvent).getAppCategorySelection();
+
+        verify(mockDeleteCat).setEnabled(eq(true));
+        verify(mockRenameCategory).setEnabled(eq(true));
+        verify(mockMoveCategory).setEnabled(eq(true));
+        verify(mockAddCategory).setEnabled(eq(true));
+
+        verifyNoMoreInteractions(mockAppGrpSelectionChangedEvent,
+                                 mockRestoreApp,
+                                 mockDeleteApp,
+                                 mockCategorizeApp);
+
+        verifyZeroInteractions(mockRestoreApp,
+                               mockDeleteApp,
+                               mockCategorizeApp);
     }
 }
