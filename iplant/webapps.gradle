@@ -14,8 +14,7 @@ project(':de') {
         gwt "com.google.gwt.inject:gin:$gwtGinVer"
         gwt "com.google.guava:guava-gwt:$guavaGwtVer"
 
-        gwt project(':de-desktop')
-        gwt project(':themes')
+        gwt project(':de-lib')
 
         compile "com.sencha.gxt:gxt:$gxtVersion"
         compile "com.google.gwt.inject:gin:$gwtGinVer"
@@ -28,11 +27,9 @@ project(':de') {
         compile "org.slf4j:jcl-over-slf4j:$slf4jVersion"
         compile "org.slf4j:log4j-over-slf4j:$slf4jVersion"
 
-        compile project(':de-desktop')
-        compile project(':themes')
+        compile project(':de-lib')
 
         testCompile "com.google.gwt.gwtmockito:gwtmockito:$gwtMockitoVer"
-        testCompile project(':de-common-module').sourceSets.test.output
     }
 
     gwt {
@@ -40,24 +37,7 @@ project(':de') {
         modules 'org.iplantc.de.discoveryenvironment'
         devModules 'org.iplantc.de.discoveryenvironmentDev'
 
-        src += files(project(':ui-commons-module').sourceSets.main.allJava.srcDirs) + files(project(':ui-commons-module').sourceSets.main.output.resourcesDir)
-        src += files(project(':ui-apps-module').sourceSets.main.allJava.srcDirs) + files(project(':ui-apps-module').sourceSets.main.output.resourcesDir)
-        src += files(project(':ui-resources-module').sourceSets.main.allJava.srcDirs) + files(project(':ui-resources-module').sourceSets.main.output.resourcesDir) + files(project(':ui-resources-module').sourceSets.main.resources.srcDirs)
-        src += files(project(':ui-disk-resource-module').sourceSets.main.allJava.srcDirs) + files(project(':ui-disk-resource-module').sourceSets.main.output.resourcesDir)
-        src += files(project(':ui-apps-widgets-module').sourceSets.main.allJava.srcDirs) + files(project(':ui-apps-widgets-module').sourceSets.main.output.resourcesDir)
-        src += files(project(':ui-pipelines-module').sourceSets.main.allJava.srcDirs) + files(project(':ui-pipelines-module').sourceSets.main.output.resourcesDir)
-        src += files(project(':ui-pipeline-builder-module').sourceSets.main.allJava.srcDirs) + files(project(':ui-pipeline-builder-module').sourceSets.main.output.resourcesDir)
-        src += files(project(':ui-apps-integration').sourceSets.main.allJava.srcDirs) + files(project(':ui-apps-integration').sourceSets.main.output.resourcesDir)
-        src += files(project(':analyses-module').sourceSets.main.allJava.srcDirs) + files(project(':analyses-module').sourceSets.main.output.resourcesDir)
-        src += files(project(':file-viewers').sourceSets.main.allJava.srcDirs) + files(project(':file-viewers').sourceSets.main.output.resourcesDir)
-        src += files(project(':de-common-module').sourceSets.main.allJava.srcDirs) + files(project(':de-common-module').sourceSets.main.output.resourcesDir)
-        src += files(project(':notifications').sourceSets.main.allJava.srcDirs) + files(project(':notifications').sourceSets.main.output.resourcesDir)
-        src += files(project(':de-desktop').sourceSets.main.allJava.srcDirs) + files(project(':de-desktop').sourceSets.main.output.resourcesDir)
-        src += files(project(':themes').sourceSets.main.allJava.srcDirs) + files(project(':themes').sourceSets.main.output.resourcesDir)
-        src += files(project(':newToolRequests').sourceSets.main.allJava.srcDirs) + files(project(':newToolRequests').sourceSets.main.output.resourcesDir)
-        src += files(project(':collaborators').sourceSets.main.allJava.srcDirs) + files(project(':collaborators').sourceSets.main.output.resourcesDir)
-        src += files(project(':tags').sourceSets.main.allJava.srcDirs) + files(project(':tags').sourceSets.main.output.resourcesDir)
-        src += files(project(':belphegor-desktop').sourceSets.main.allJava.srcDirs) + files(project(':belphegor-desktop').sourceSets.main.output.resourcesDir)
+        src += files(project(':de-lib').sourceSets.main.allJava.srcDirs) + files(project(':de-lib').sourceSets.main.output.resourcesDir)
 
         superDev { noPrecompile = true }
         maxHeapSize = '1024M'
@@ -98,8 +78,7 @@ project(':belphegor') {
         gwt "com.google.gwt.inject:gin:$gwtGinVer"
         gwt "com.google.guava:guava-gwt:$guavaGwtVer"
 
-        gwt project(':belphegor-desktop')
-        gwt project(':themes')
+        gwt project(':de-lib')
 
         compile "com.sencha.gxt:gxt:$gxtVersion"
         compile "com.google.gwt.inject:gin:$gwtGinVer"
@@ -112,11 +91,9 @@ project(':belphegor') {
         compile "org.slf4j:jcl-over-slf4j:$slf4jVersion"
         compile "org.slf4j:log4j-over-slf4j:$slf4jVersion"
 
-        compile project(':belphegor-desktop')
-        compile project(':themes')
+        compile project(':de-lib')
 
         testCompile "com.google.gwt.gwtmockito:gwtmockito:$gwtMockitoVer"
-        testCompile project(':de-common-module').sourceSets.test.output
     }
 
     gwt {
@@ -124,25 +101,7 @@ project(':belphegor') {
         modules 'org.iplantc.admin.belphegor.belphegor'
         devModules 'org.iplantc.admin.belphegor.belphegorDev'
 
-        src += files(project(':belphegor-desktop').sourceSets.main.allJava.srcDirs) + files(project(':belphegor-desktop').sourceSets.main.output.resourcesDir)
-
-        src += files(project(':ui-commons-module').sourceSets.main.allJava.srcDirs) + files(project(':ui-commons-module').sourceSets.main.output.resourcesDir)
-        src += files(project(':ui-apps-module').sourceSets.main.allJava.srcDirs) + files(project(':ui-apps-module').sourceSets.main.output.resourcesDir)
-        src += files(project(':ui-resources-module').sourceSets.main.allJava.srcDirs) + files(project(':ui-resources-module').sourceSets.main.output.resourcesDir) + files(project(':ui-resources-module').sourceSets.main.resources.srcDirs)
-        src += files(project(':ui-disk-resource-module').sourceSets.main.allJava.srcDirs) + files(project(':ui-disk-resource-module').sourceSets.main.output.resourcesDir)
-        src += files(project(':ui-apps-widgets-module').sourceSets.main.allJava.srcDirs) + files(project(':ui-apps-widgets-module').sourceSets.main.output.resourcesDir)
-        src += files(project(':ui-pipelines-module').sourceSets.main.allJava.srcDirs) + files(project(':ui-pipelines-module').sourceSets.main.output.resourcesDir)
-        src += files(project(':ui-pipeline-builder-module').sourceSets.main.allJava.srcDirs) + files(project(':ui-pipeline-builder-module').sourceSets.main.output.resourcesDir)
-        src += files(project(':ui-apps-integration').sourceSets.main.allJava.srcDirs) + files(project(':ui-apps-integration').sourceSets.main.output.resourcesDir)
-        src += files(project(':analyses-module').sourceSets.main.allJava.srcDirs) + files(project(':analyses-module').sourceSets.main.output.resourcesDir)
-        src += files(project(':file-viewers').sourceSets.main.allJava.srcDirs) + files(project(':file-viewers').sourceSets.main.output.resourcesDir)
-        src += files(project(':de-common-module').sourceSets.main.allJava.srcDirs) + files(project(':de-common-module').sourceSets.main.output.resourcesDir)
-        src += files(project(':notifications').sourceSets.main.allJava.srcDirs) + files(project(':notifications').sourceSets.main.output.resourcesDir)
-        src += files(project(':de-desktop').sourceSets.main.allJava.srcDirs) + files(project(':de-desktop').sourceSets.main.output.resourcesDir)
-        src += files(project(':themes').sourceSets.main.allJava.srcDirs) + files(project(':themes').sourceSets.main.output.resourcesDir)
-        src += files(project(':newToolRequests').sourceSets.main.allJava.srcDirs) + files(project(':newToolRequests').sourceSets.main.output.resourcesDir)
-        src += files(project(':collaborators').sourceSets.main.allJava.srcDirs) + files(project(':collaborators').sourceSets.main.output.resourcesDir)
-        src += files(project(':tags').sourceSets.main.allJava.srcDirs) + files(project(':tags').sourceSets.main.output.resourcesDir)
+        src += files(project(':de-lib').sourceSets.main.allJava.srcDirs) + files(project(':de-lib').sourceSets.main.output.resourcesDir)
 
         superDev { noPrecompile = true }
         maxHeapSize = '1024M'
