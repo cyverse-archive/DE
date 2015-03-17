@@ -1,6 +1,12 @@
 package org.iplantc.de.client.services.stubs;
 
+import org.iplantc.de.client.models.HasId;
+import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.models.apps.AppCategory;
+import org.iplantc.de.client.models.apps.AppDoc;
+import org.iplantc.de.client.models.apps.AppFeedback;
+import org.iplantc.de.client.models.apps.integration.AppTemplate;
+import org.iplantc.de.client.models.apps.proxy.AppListLoadResult;
 import org.iplantc.de.client.services.AppUserServiceFacade;
 
 import com.google.gwt.json.client.JSONObject;
@@ -12,12 +18,13 @@ import java.util.List;
 
 public class AppUserServiceFacadeStub implements AppUserServiceFacade {
     @Override
-    public void favoriteApp(String workspaceId, String appId, boolean fav, AsyncCallback<String> callback) {
+    public void favoriteApp(HasId appId, boolean fav,
+                            AsyncCallback<Void> callback) {
 
     }
 
     @Override
-    public void getApps(String appCategoryId, AsyncCallback<String> callback) {
+    public void getApps(HasId appCategory, AsyncCallback<List<App>> callback) {
 
     }
 
@@ -37,18 +44,12 @@ public class AppUserServiceFacadeStub implements AppUserServiceFacade {
     }
 
     @Override
-    public void searchApp(String search, AsyncCallback<String> callback) {
+    public void searchApp(String search, AsyncCallback<AppListLoadResult> callback) {
 
     }
 
     @Override
-    public void rateApp(String appWikiPageName, String appId, int rating, long commentId,
-            String authorEmail, AsyncCallback<String> callback) {
-    }
-
-
-    @Override
-    public void deleteRating(String appId, String toolName, Long commentId, AsyncCallback<String> callback) {
+    public void deleteRating(App app, AsyncCallback<AppFeedback> callback) {
 
     }
 
@@ -63,7 +64,7 @@ public class AppUserServiceFacadeStub implements AppUserServiceFacade {
     }
 
     @Override
-    public void editWorkflow(String workflowId, AsyncCallback<String> callback) {
+    public void editWorkflow(HasId workflowId, AsyncCallback<String> callback) {
 
     }
 
@@ -73,22 +74,23 @@ public class AppUserServiceFacadeStub implements AppUserServiceFacade {
     }
 
     @Override
-    public void copyApp(String appId, AsyncCallback<String> asyncCallback) {
+    public void copyApp(HasId app, AsyncCallback<AppTemplate> asyncCallback) {
 
     }
 
     @Override
-    public void deleteAppsFromWorkspace(String username, String fullUsername, List<String> appIds, AsyncCallback<String> asyncCallback) {
+    public void deleteAppsFromWorkspace(List<App> apps,
+                                        AsyncCallback<Void> asyncCallback) {
 
     }
 
     @Override
-    public void publishToWorld(JSONObject json, String appId, AsyncCallback<String> asyncCallback) {
+    public void publishToWorld(JSONObject json, String appId, AsyncCallback<Void> asyncCallback) {
 
     }
 
     @Override
-    public void getAppDetails(String appId, AsyncCallback<String> callback) {
+    public void getAppDetails(App app, AsyncCallback<App> callback) {
 
     }
 
@@ -99,13 +101,18 @@ public class AppUserServiceFacadeStub implements AppUserServiceFacade {
     }
 
     @Override
-    public void getAppDoc(String appId, AsyncCallback<String> callback) {
+    public void rateApp(App app, int rating, AsyncCallback<String> callback) {
+
+    }
+
+    @Override
+    public void getAppDoc(HasId app, AsyncCallback<AppDoc> callback) {
         // TODO Auto-generated method stub
 
     }
 
     @Override
-    public void saveAppDoc(String appId, String doc, AsyncCallback<String> callback) {
+    public void saveAppDoc(HasId appId, String doc, AsyncCallback<AppDoc> callback) {
         // TODO Auto-generated method stub
 
     }

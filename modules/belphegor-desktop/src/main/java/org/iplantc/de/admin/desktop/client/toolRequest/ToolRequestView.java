@@ -108,7 +108,6 @@ public interface ToolRequestView extends IsWidget, IsMaskable {
          * Submits the given update to the {@link org.iplantc.de.admin.desktop.client.toolRequest.service.ToolRequestServiceFacade#updateToolRequest} endpoint.
          * Upon success, the presenter will refresh the view.
          * 
-         * @param update
          */
         void updateToolRequest(String id, ToolRequestUpdate update);
 

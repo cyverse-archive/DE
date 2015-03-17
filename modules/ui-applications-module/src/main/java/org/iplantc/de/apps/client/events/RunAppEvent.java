@@ -18,7 +18,7 @@ public class RunAppEvent extends GwtEvent<RunAppEventHandler> {
         void onRunAppActionInitiated(RunAppEvent event);
     }
 
-    public static final GwtEvent.Type<RunAppEventHandler> TYPE = new GwtEvent.Type<RunAppEventHandler>();
+    public static final GwtEvent.Type<RunAppEventHandler> TYPE = new GwtEvent.Type<>();
     private final App app;
 
     public RunAppEvent(App app) {

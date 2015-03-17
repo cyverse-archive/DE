@@ -16,24 +16,6 @@ public interface IplantContextualHelpStrings extends com.google.gwt.i18n.client.
   String collaboratorsHelp();
 
   /**
-   * Translated "For example, you may want to include a link to a paper which referenced your app. ".
-   * 
-   * @return translated "For example, you may want to include a link to a paper which referenced your app. "
-   */
-  @DefaultMessage("For example, you may want to include a link to a paper which referenced your app. ")
-  @Key("publicSubmissionFormAttach")
-  String publicSubmissionFormAttach();
-
-  /**
-   * Translated "Select the possible categories under which your app may be displayed in the apps list within the Apps window.".
-   * 
-   * @return translated "Select the possible categories under which your app may be displayed in the apps list within the Apps window."
-   */
-  @DefaultMessage("Select the possible categories under which your app may be displayed in the apps list within the Apps window.")
-  @Key("publicSubmissionFormCategories")
-  String publicSubmissionFormCategories();
-
-  /**
    * Translated "Your requested tool is now available in the Discovery Environment. Please see the Status Comments for more information.".
    * 
    * @return translated "Your requested tool is now available in the Discovery Environment. Please see the Status Comments for more information."

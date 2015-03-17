@@ -11,6 +11,9 @@ import com.sencha.gxt.data.shared.SortInfo;
 
 import java.util.List;
 
+/**
+ * @author jstroot
+ */
 public interface ToolRequestServiceFacade {
     String TOOL_REQUESTS = "org.iplantc.services.toolRequests";
 
@@ -21,9 +24,6 @@ public interface ToolRequestServiceFacade {
      * <a href=
      * "https://github.com/iPlantCollaborativeOpenSource/metadactyl-clj/blob/master/doc/endpoints/app-metadata/tool-requests.md#obtaining-tool-request-details"
      * >Metadactyl-clj Doc</a>
-     * 
-     * @param toolRequest
-     * @param callback
      */
     void getToolRequestDetails(HasId toolRequest, AsyncCallback<ToolRequestDetails> callback);
 
@@ -34,9 +34,6 @@ public interface ToolRequestServiceFacade {
      * <a href=
      * "https://github.com/iPlantCollaborativeOpenSource/metadactyl-clj/blob/master/doc/endpoints/app-metadata/tool-requests.md#updating-the-status-of-a-tool-request"
      * >Metadactyl-clj Doc</a>
-     * 
-     * @param trUpdate
-     * @param callback
      */
     void updateToolRequest(String id,
                            ToolRequestUpdate trUpdate,
@@ -51,10 +48,6 @@ public interface ToolRequestServiceFacade {
      * "https://github.com/iPlantCollaborativeOpenSource/metadactyl-clj/blob/master/doc/endpoints/app-metadata/tool-requests.md#listing-tool-requests"
      * >Metadactyl-clj
      * Doc</a>
-     * 
-     * @param sortInfo
-     * @param userName
-     * @param callback
      */
     void getToolRequests(SortInfo sortInfo, String userName, AsyncCallback<List<ToolRequest>> callback);
 

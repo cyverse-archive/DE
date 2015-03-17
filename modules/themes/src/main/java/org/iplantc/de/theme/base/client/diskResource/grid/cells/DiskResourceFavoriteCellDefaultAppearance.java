@@ -2,10 +2,9 @@ package org.iplantc.de.theme.base.client.diskResource.grid.cells;
 
 import org.iplantc.de.diskResource.client.views.grid.cells.DiskResourceFavoriteCell;
 import org.iplantc.de.resources.client.FavoriteCellStyle;
-import org.iplantc.de.resources.client.FavoriteTemplates;
 import org.iplantc.de.resources.client.IplantResources;
 import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
-import org.iplantc.de.theme.base.client.diskResource.grid.GridViewDisplayStrings;
+import org.iplantc.de.theme.base.client.apps.cells.AppFavoriteCellDefaultAppearance;
 
 import com.google.common.base.Strings;
 import com.google.gwt.core.client.GWT;
@@ -16,26 +15,23 @@ import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
  * @author jstroot
  */
 public class DiskResourceFavoriteCellDefaultAppearance implements DiskResourceFavoriteCell.Appearance {
-    private final FavoriteTemplates favoriteTemplates;
+    private final AppFavoriteCellDefaultAppearance.FavoriteTemplates favoriteTemplates;
     private final FavoriteCellStyle favoriteCellStyle;
     private final IplantDisplayStrings iplantDisplayStrings;
-    private final GridViewDisplayStrings displayStrings;
 
     public DiskResourceFavoriteCellDefaultAppearance() {
-        this(GWT.<FavoriteTemplates> create(FavoriteTemplates.class),
+        this(GWT.<AppFavoriteCellDefaultAppearance.FavoriteTemplates> create(AppFavoriteCellDefaultAppearance.FavoriteTemplates.class),
              GWT.<IplantResources> create(IplantResources.class),
-             GWT.<IplantDisplayStrings> create(IplantDisplayStrings.class),
-             GWT.<GridViewDisplayStrings> create(GridViewDisplayStrings.class));
+             GWT.<IplantDisplayStrings> create(IplantDisplayStrings.class)
+        );
     }
 
-    DiskResourceFavoriteCellDefaultAppearance(final FavoriteTemplates favoriteTemplates,
+    DiskResourceFavoriteCellDefaultAppearance(final AppFavoriteCellDefaultAppearance.FavoriteTemplates favoriteTemplates,
                                               final IplantResources iplantResources,
-                                              final IplantDisplayStrings iplantDisplayStrings,
-                                              final GridViewDisplayStrings displayStrings) {
+                                              final IplantDisplayStrings iplantDisplayStrings) {
         this.favoriteTemplates = favoriteTemplates;
         this.favoriteCellStyle = iplantResources.favoriteCss();
         this.iplantDisplayStrings = iplantDisplayStrings;
-        this.displayStrings = displayStrings;
 
         this.favoriteCellStyle.ensureInjected();
     }

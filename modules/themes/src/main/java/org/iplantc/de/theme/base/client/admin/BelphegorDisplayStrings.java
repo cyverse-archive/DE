@@ -20,6 +20,8 @@ public interface BelphegorDisplayStrings extends Messages {
     @Key("appDescription")
     String appDescription();
 
+    String appDocumentationLabel();
+
     @Key("avgUserRatingColumnLabel")
     String avgUserRatingColumnLabel();
 
@@ -35,11 +37,15 @@ public interface BelphegorDisplayStrings extends Messages {
     @Key("confirmDeleteAppTitle")
     String confirmDeleteAppTitle();
 
+    String defaultAppDocTemplate();
+
     @Key("deleteApp")
     String deleteApp();
 
     @Key("deleteCategory")
     String deleteCategory();
+
+    String docHelpHtml();
 
     @Key("editApp")
     String editApp();
@@ -71,6 +77,12 @@ public interface BelphegorDisplayStrings extends Messages {
     @Key("tempDisable")
     String tempDisable();
 
+    String templateLinkPopupHeading();
+
+    String templateLinkTitle();
+
     @Key("toolRequests")
     String toolRequests();
+
+    String updateDocumentationSuccess();
 }

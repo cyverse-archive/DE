@@ -1,6 +1,9 @@
 package org.iplantc.de.client.services.stubs;
 
+import org.iplantc.de.client.models.HasId;
+import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.models.apps.AppCategory;
+import org.iplantc.de.client.models.apps.proxy.AppListLoadResult;
 import org.iplantc.de.client.services.AppServiceFacade;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -11,7 +14,7 @@ import java.util.List;
 
 public class AppServiceFacadeStub implements AppServiceFacade {
     @Override
-    public void getApps(String appCategoryId, AsyncCallback<String> callback) {
+    public void getApps(HasId appCategory, AsyncCallback<List<App>> callback) {
 
     }
 
@@ -31,7 +34,7 @@ public class AppServiceFacadeStub implements AppServiceFacade {
     }
 
     @Override
-    public void searchApp(String search, AsyncCallback<String> callback) {
+    public void searchApp(String search, AsyncCallback<AppListLoadResult> callback) {
 
     }
 

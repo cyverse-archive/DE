@@ -4,8 +4,6 @@ import com.google.gwt.safehtml.shared.SafeHtml;
 
 public interface AppIntegrationErrorMessages {
 
-    String publishFailureDefaultMessage();
-
     String unableToSave();
 
     String appContainsErrorsUnableToSave();

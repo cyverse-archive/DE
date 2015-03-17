@@ -14,7 +14,9 @@ import java.util.List;
 /**
  * This object contains all the information required to assemble a representative App UI wizard.
  * Additionally, it will also be used to hold the user data entered via the wizard forms.
- * 
+ *
+ * FIXME This class can probably extend {@link org.iplantc.de.client.models.apps.App}
+ *           Verify against service domain objects
  * @author jstroot
  * 
  */

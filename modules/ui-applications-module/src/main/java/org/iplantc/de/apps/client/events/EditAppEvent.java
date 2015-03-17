@@ -13,7 +13,7 @@ public class EditAppEvent extends GwtEvent<EditAppEventHandler> {
         void onEditApp(EditAppEvent event);
     }
 
-    public static final GwtEvent.Type<EditAppEventHandler> TYPE = new GwtEvent.Type<EditAppEventHandler>();
+    public static final GwtEvent.Type<EditAppEventHandler> TYPE = new GwtEvent.Type<>();
     private final HasId appToEdit;
     private final boolean isUserIntegratorAndAppPublic;
 

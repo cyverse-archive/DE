@@ -17,7 +17,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 /**
- * A servlet used to initialize HTTP sessions for CAS-secured web applications.
+ * A servlet used to initialize HTTP sessions for CAS-secured web apps.
  *
  * @author Dennis Roberts
  */

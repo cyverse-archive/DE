@@ -38,9 +38,7 @@ import java.util.List;
 /**
  * @author jstroot
  */
-public class DiskResourceViewToolbarImpl extends Composite implements ToolbarView,
-                                                                      DiskResourceSelectionChangedEvent.DiskResourceSelectionChangedEventHandler,
-                                                                      FolderSelectionEvent.FolderSelectionEventHandler {
+public class DiskResourceViewToolbarImpl extends Composite implements ToolbarView {
 
     @UiTemplate("DiskResourceViewToolbar.ui.xml")
     interface DiskResourceViewToolbarUiBinder extends UiBinder<Widget, DiskResourceViewToolbarImpl> {

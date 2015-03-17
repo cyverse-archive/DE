@@ -7,6 +7,9 @@ import com.google.inject.Provider;
 import com.sencha.gxt.data.shared.ModelKeyProvider;
 import com.sencha.gxt.data.shared.TreeStore;
 
+/**
+ * @author jstroot
+ */
 public class AppCategoryTreeStoreProvider implements Provider<TreeStore<AppCategory>> {
 
     @Override

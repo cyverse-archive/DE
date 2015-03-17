@@ -4,7 +4,7 @@
              xmlns:tree="urn:import:com.sencha.gxt.widget.core.client.tree">
 
     <ui:with field="appearance"
-             type="org.iplantc.de.admin.desktop.client.apps.views.AppCategorizeView.AppCategorizeViewAppearance" />
+             type="org.iplantc.de.admin.apps.client.AppCategorizeView.AppCategorizeViewAppearance" />
     <ui:with field="treeStore"
              type="com.sencha.gxt.data.shared.TreeStore"/>
     <ui:with type="com.sencha.gxt.core.client.util.Margins"

@@ -3,9 +3,13 @@ package org.iplantc.de.apps.client.events;
 import com.google.gwt.event.shared.EventHandler;
 import com.google.gwt.event.shared.GwtEvent;
 
+/**
+ * FIXME This is more of a message than an event
+ * @author jstroot
+ */
 public class CreateNewWorkflowEvent extends GwtEvent<CreateNewWorkflowEvent.CreateNewWorkflowEventHandler> {
 
-    public static final GwtEvent.Type<CreateNewWorkflowEventHandler> TYPE = new GwtEvent.Type<CreateNewWorkflowEventHandler>();
+    public static final GwtEvent.Type<CreateNewWorkflowEventHandler> TYPE = new GwtEvent.Type<>();
 
     @Override
     public GwtEvent.Type<CreateNewWorkflowEventHandler> getAssociatedType() {

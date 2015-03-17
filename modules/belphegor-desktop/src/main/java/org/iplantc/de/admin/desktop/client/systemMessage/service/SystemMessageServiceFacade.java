@@ -15,8 +15,6 @@ public interface SystemMessageServiceFacade {
      * <a href=
      * "https://github.com/iPlantCollaborativeOpenSource/NotificationAgent#admin---listing-system-notifications"
      * >Notification Agent Doc</a>
-     * 
-     * @param callback
      */
     void getSystemMessages(AsyncCallback<List<SystemMessage>> callback);
 
@@ -24,9 +22,6 @@ public interface SystemMessageServiceFacade {
      * <a href=
      * "https://github.com/iPlantCollaborativeOpenSource/NotificationAgent#admin---adding-a-system-notification"
      * >Notification Agent Doc</a>
-     * 
-     * @param msgToAdd
-     * @param callback
      */
     void addSystemMessage(SystemMessage msgToAdd, AsyncCallback<SystemMessage> callback);
 
@@ -34,9 +29,6 @@ public interface SystemMessageServiceFacade {
      * <a href=
      * "https://github.com/iPlantCollaborativeOpenSource/NotificationAgent#admin---updating-a-system-notification"
      * >Notification Agent Doc</a>
-     * 
-     * @param updatedMsg
-     * @param callback
      */
     void updateSystemMessage(SystemMessage updatedMsg, AsyncCallback<SystemMessage> callback);
 
@@ -44,9 +36,6 @@ public interface SystemMessageServiceFacade {
      * <a href=
      * "https://github.com/iPlantCollaborativeOpenSource/NotificationAgent#admin---deleting-a-system-notification-by-uuid"
      * >Notification Agent Doc</a>
-     * 
-     * @param msgToDelete
-     * @param callback
      */
     void deleteSystemMessage(SystemMessage msgToDelete, AsyncCallback<Void> callback);
 
@@ -54,8 +43,6 @@ public interface SystemMessageServiceFacade {
      * <a href=
      * "https://github.com/iPlantCollaborativeOpenSource/NotificationAgent#admin---getting-all-system-notification-types"
      * >Notification Agent Doc</a>
-     * 
-     * @param callback
      */
     void getSystemMessageTypes(AsyncCallback<List<String>> callback);
 

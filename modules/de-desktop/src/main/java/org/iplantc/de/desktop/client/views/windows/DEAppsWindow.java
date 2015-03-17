@@ -1,6 +1,6 @@
 package org.iplantc.de.desktop.client.views.windows;
 
-import org.iplantc.de.apps.client.views.AppsView;
+import org.iplantc.de.apps.client.AppsView;
 import org.iplantc.de.apps.shared.AppsModule;
 import org.iplantc.de.client.models.WindowState;
 import org.iplantc.de.commons.client.views.window.configs.AppsWindowConfig;
@@ -39,7 +39,6 @@ public class DEAppsWindow extends IplantWindowBase {
 
     @Override
     public void doHide() {
-        presenter.cleanUp();
         super.doHide();
     }
 

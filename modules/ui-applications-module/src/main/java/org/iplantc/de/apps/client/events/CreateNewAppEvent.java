@@ -5,20 +5,17 @@ import org.iplantc.de.apps.client.events.CreateNewAppEvent.CreateNewAppEventHand
 import com.google.gwt.event.shared.EventHandler;
 import com.google.gwt.event.shared.GwtEvent;
 
+/**
+ * FIXME This is more of a message than an event
+ * @author jstroot
+ */
 public class CreateNewAppEvent extends GwtEvent<CreateNewAppEventHandler> {
 
     public interface CreateNewAppEventHandler extends EventHandler {
-
-        /**
-         * Fired when a user wants to create a new app.
-         * 
-         * @param event
-         */
         void createNewApp(CreateNewAppEvent event);
-
     }
 
-    public static final GwtEvent.Type<CreateNewAppEventHandler> TYPE = new GwtEvent.Type<CreateNewAppEventHandler>();
+    public static final GwtEvent.Type<CreateNewAppEventHandler> TYPE = new GwtEvent.Type<>();
 
     @Override
     public GwtEvent.Type<CreateNewAppEventHandler> getAssociatedType() {

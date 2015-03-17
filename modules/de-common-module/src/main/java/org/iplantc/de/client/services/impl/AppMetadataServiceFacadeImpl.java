@@ -25,7 +25,7 @@ public class AppMetadataServiceFacadeImpl implements AppMetadataServiceFacade {
     }
 
     /**
-     * Duplicated in {@link org.iplantc.de.client.services.AppUserServiceFacade#favoriteApp(String, String, boolean, com.google.gwt.user.client.rpc.AsyncCallback)}
+     * Duplicated in {@link org.iplantc.de.client.services.AppUserServiceFacade#favoriteApp(org.iplantc.de.client.models.HasId, boolean, com.google.gwt.user.client.rpc.AsyncCallback)}
      */
     @Override
     public void addToFavorites(String UUID, AsyncCallback<String> callback) {
@@ -34,7 +34,7 @@ public class AppMetadataServiceFacadeImpl implements AppMetadataServiceFacade {
     }
 
     /**
-     * Duplicated in {@link org.iplantc.de.client.services.AppUserServiceFacade#favoriteApp(String, String, boolean, com.google.gwt.user.client.rpc.AsyncCallback)}
+     * Duplicated in {@link org.iplantc.de.client.services.AppUserServiceFacade#favoriteApp(org.iplantc.de.client.models.HasId, boolean, com.google.gwt.user.client.rpc.AsyncCallback)}
      */
     @Override
     public void removeFromFavorites(String UUID, AsyncCallback<String> callback) {

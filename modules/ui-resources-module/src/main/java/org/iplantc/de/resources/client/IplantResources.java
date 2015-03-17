@@ -4,7 +4,6 @@
 package org.iplantc.de.resources.client;
 
 import org.iplantc.de.resources.client.uiapps.integration.AppIntegrationPaletteImages;
-import org.iplantc.de.resources.client.uiapps.widgets.ArgumentListEditorCss;
 
 import com.google.gwt.core.shared.GWT;
 import com.google.gwt.resources.client.ClientBundle;
@@ -229,24 +228,11 @@ public interface IplantResources extends ClientBundle,
     @Source("FavoriteCell.css")
     FavoriteCellStyle favoriteCss();
 
-    @Override
-    @Source("star-gold.gif")
-    ImageResource goldStar();
-
-    @Override
-    @Source("star-red.gif")
-    ImageResource redStar();
-
-    @Override
-    @Source("star-white.gif")
-    ImageResource whiteStar();
-
     /**
      * Image resource.
      * 
      * @return image.
      */
-    @Override
     @Source("fav.png")
     ImageResource favIcon();
 
@@ -255,7 +241,6 @@ public interface IplantResources extends ClientBundle,
      * 
      * @return image.
      */
-    @Override
     @Source("fav_add.png")
     ImageResource favIconAdd();
 
@@ -264,7 +249,6 @@ public interface IplantResources extends ClientBundle,
      * 
      * @return image.
      */
-    @Override
     @Source("fav_remove.png")
     ImageResource favIconDelete();
 
@@ -276,31 +260,6 @@ public interface IplantResources extends ClientBundle,
     @Override
     @Source("script_link.png")
     ImageResource viewDeployedComponents();
-
-    /**
-     * Image resource for app launch
-     * 
-     * @return image.
-     */
-    @Override
-    @Source("application_go.png")
-    ImageResource applicationLaunch();
-
-    /**
-     * 
-     * @return image.
-     */
-    @Override
-    @Source("delete_rating.png")
-    ImageResource deleteRating();
-
-    /**
-     * 
-     * @return image.
-     */
-    @Override
-    @Source("delete_rating_hover.png")
-    ImageResource deleteRatingHover();
 
     /**
      * Image resource.
@@ -334,7 +293,6 @@ public interface IplantResources extends ClientBundle,
      * 
      * @return image.
      */
-    @Override
     @Source("not_fav.png")
     ImageResource disabledFavIcon();
 
@@ -498,9 +456,6 @@ public interface IplantResources extends ClientBundle,
     @Source("ToolRequestStatusHelp.css")
     ToolRequestStatusHelpStyle getToolRequestStatusHelpCss();
 
-    @Source("uiapps/widgets/ArgumentListEditorCss.css")
-    ArgumentListEditorCss argumentListEditorCss();
-    
     @Source("Feedback.css")
     DEFeedbackStyle getFeedbackStyle();
     

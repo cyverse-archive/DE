@@ -1,6 +1,0 @@
-<module>
-    <!-- Theme deferred binding -->
-    <replace-with class="org.iplantc.de.apps.client.theme.AppCommentCellDefaultAppearance">
-        <when-type-is class="org.iplantc.de.apps.client.views.cells.AppCommentCell.AppCommentCellAppearance"/>
-    </replace-with>
-</module>

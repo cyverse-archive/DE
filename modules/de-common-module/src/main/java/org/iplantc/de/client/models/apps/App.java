@@ -10,106 +10,127 @@ import com.google.web.bindery.autobean.shared.AutoBean.PropertyName;
 import java.util.Date;
 import java.util.List;
 
-public interface App extends HasId, HasName, HasDescription {
+/**
+ * @author jstroot
+ */
+public interface App extends HasId,
+                             HasName,
+                             HasDescription {
 
-    @PropertyName("app_type")
+    String APP_TYPE_KEY = "app_type";
+    String CAN_RUN_KEY = "can_run";
+    String CATEGORIES_KEY = "categories";
+    String EDITED_DATE_KEY = "edited_date";
+    String INTEGRATION_DATE_KEY = "integration_date";
+    String INTEGRATOR_EMAIL_KEY = "integrator_email";
+    String INTEGRATOR_NAME_KEY = "integrator_name";
+    String IS_FAVORITE_KEY = "is_favorite";
+    String IS_PUBLIC_KEY = "is_public";
+    String PIPELINE_ELIGIBILITY_KEY = "pipeline_eligibility";
+    String STEP_COUNT_KEY = "step_count";
+    String SUGGESTED_GROUPS_KEY = "suggested_groups";
+    String TOOLS_KEY = "tools";
+    String WIKI_URL_KEY = "wiki_url";
+    String REFERENCES_KEY = "references";
+
+    @PropertyName(APP_TYPE_KEY)
     String getAppType();
 
-    @PropertyName("app_type")
-    void setAppType(String appType);
-
-    @PropertyName("is_favorite")
-    boolean isFavorite();
-
-    @PropertyName("wiki_url")
-    String getWikiUrl();
-    
-    @PropertyName("integrator_name")
-    String getIntegratorName();
-    
-    AppFeedback getRating();
-    
-    void setRating(AppFeedback fb);
-
-    @PropertyName("integration_date")
-    Date getIntegrationDate();
-    
-    @PropertyName("edited_date")
+    @PropertyName(EDITED_DATE_KEY)
     Date getEditedDate();
-    
-    @PropertyName("is_public")
-    Boolean isPublic();
-    
-    @PropertyName("integrator_email")
-    String getIntegratorEmail();
-    
-    Boolean isDisabled();
 
-    Boolean isDeleted();
-
-    @PropertyName("pipeline_eligibility")
-    PipelineEligibility getPipelineEligibility();
-
-    @PropertyName("is_favorite")
-    void setFavorite(boolean favorite);
-
-    @PropertyName("wiki_url")
-    void setWikiUrl(String wikiUrl);
-
-    @PropertyName("integrator_name")
-    void setIntegratorName(String integratorName);
-
-    @PropertyName("integration_date")
-    void setIntegrationDate(Date integrationDate);
-
-    @PropertyName("edited_date")
-    void setEditedDate(Date editedDate);
-
-    @PropertyName("is_public")
-    void setPublic(boolean isPublic);
-
-    @PropertyName("integrator_email")
-    void setIntegratorEmail(String integratorEmail);
-
-    void setId(String id);
-
-    void setDisabled(Boolean disabled);
-
-    void setDeleted(Boolean deleted);
-
-    @PropertyName("pipeline_eligibility")
-    void setPipelineEligibility(PipelineEligibility pipelineEligibility);
-
-    @PropertyName("step_count")
-    Integer getStepCount();
-
-    @PropertyName("step_count")
-    void setStepCount(Integer step_count);
-
-    @PropertyName("can_run")
-    Boolean isRunnable();
-
-    @PropertyName("can_run")
-    void setRunnable(Boolean can_run);
-
-    List<String> getReferences();
-
-    void setReferences(List<String> references);
-
-    @PropertyName("tools")
-    List<Tool> getTools();
+    @PropertyName(CATEGORIES_KEY)
+    List<AppCategory> getGroups();
 
     List<AppFileParameters> getInputs();
 
-    void setInputs(List<AppFileParameters> inputs);
+    @PropertyName(INTEGRATION_DATE_KEY)
+    Date getIntegrationDate();
+
+    @PropertyName(INTEGRATOR_EMAIL_KEY)
+    String getIntegratorEmail();
+
+    @PropertyName(INTEGRATOR_NAME_KEY)
+    String getIntegratorName();
 
     List<AppFileParameters> getOutputs();
 
+    @PropertyName(PIPELINE_ELIGIBILITY_KEY)
+    PipelineEligibility getPipelineEligibility();
+
+    AppFeedback getRating();
+
+    List<String> getReferences();
+
+    @PropertyName(STEP_COUNT_KEY)
+    Integer getStepCount();
+
+    @PropertyName(SUGGESTED_GROUPS_KEY)
+    List<AppCategory> getSuggestedGroups();
+
+    @PropertyName(TOOLS_KEY)
+    List<Tool> getTools();
+
+    @PropertyName(WIKI_URL_KEY)
+    String getWikiUrl();
+
+    Boolean isDeleted();
+
+    Boolean isDisabled();
+
+    @PropertyName(IS_FAVORITE_KEY)
+    boolean isFavorite();
+
+    @PropertyName(IS_PUBLIC_KEY)
+    Boolean isPublic();
+
+    @PropertyName(CAN_RUN_KEY)
+    Boolean isRunnable();
+
+    @PropertyName(APP_TYPE_KEY)
+    void setAppType(String appType);
+
+    void setDeleted(Boolean deleted);
+
+    void setDisabled(Boolean disabled);
+
+    @PropertyName(EDITED_DATE_KEY)
+    void setEditedDate(Date editedDate);
+
+    @PropertyName(IS_FAVORITE_KEY)
+    void setFavorite(boolean favorite);
+
+    void setId(String id);
+
+    void setInputs(List<AppFileParameters> inputs);
+
+    @PropertyName(INTEGRATION_DATE_KEY)
+    void setIntegrationDate(Date integrationDate);
+
+    @PropertyName(INTEGRATOR_EMAIL_KEY)
+    void setIntegratorEmail(String integratorEmail);
+
+    @PropertyName(INTEGRATOR_NAME_KEY)
+    void setIntegratorName(String integratorName);
+
     void setOutputs(List<AppFileParameters> outputs);
 
-    @PropertyName("categories")
-    List<AppCategory> getGroups();
+    @PropertyName(PIPELINE_ELIGIBILITY_KEY)
+    void setPipelineEligibility(PipelineEligibility pipelineEligibility);
 
-    @PropertyName("suggested_groups")
-    List<AppCategory> getSuggestedGroups();
+    @PropertyName(IS_PUBLIC_KEY)
+    void setPublic(Boolean isPublic);
+
+    void setRating(AppFeedback fb);
+
+    void setReferences(List<String> references);
+
+    @PropertyName(CAN_RUN_KEY)
+    void setRunnable(Boolean can_run);
+
+    @PropertyName(STEP_COUNT_KEY)
+    void setStepCount(Integer step_count);
+
+    @PropertyName(WIKI_URL_KEY)
+    void setWikiUrl(String wikiUrl);
 }

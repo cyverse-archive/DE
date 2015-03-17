@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE module PUBLIC "-//Google Inc.//DTD Google Web Toolkit 2.6.1//EN"
+        "http://gwtproject.org/doctype/2.6.1/gwt-module.dtd">
+<module>
+    <!-- Highlight Appearance -->
+    <replace-with class="org.iplantc.de.theme.base.client.apps.AppSearchHighlightDefaultAppearance">
+        <when-type-is class="org.iplantc.de.theme.base.client.apps.AppSearchHighlightAppearance"/>
+    </replace-with>
+
+    <!-- Grid -->
+    <replace-with class="org.iplantc.de.theme.base.client.apps.grid.AppsGridViewDefaultAppearance">
+        <when-type-is class="org.iplantc.de.apps.client.AppsGridView.AppsGridAppearance"/>
+    </replace-with>
+
+
+    <!-- Views -->
+    <replace-with class="org.iplantc.de.theme.base.client.apps.AppsViewDefaultAppearance">
+        <when-type-is class="org.iplantc.de.apps.client.AppsView.AppsViewAppearance"/>
+    </replace-with>
+
+    <!-- Categories -->
+    <replace-with class="org.iplantc.de.theme.base.client.apps.categories.AppCategoriesViewDefaultAppearance">
+        <when-type-is class="org.iplantc.de.apps.client.AppCategoriesView.AppCategoriesAppearance"/>
+    </replace-with>
+
+    <!-- Cells -->
+    <replace-with class="org.iplantc.de.theme.base.client.apps.cells.AppCommentCellDefaultAppearance">
+        <when-type-is class="org.iplantc.de.apps.client.views.grid.cells.AppCommentCell.AppCommentCellAppearance"/>
+    </replace-with>
+
+    <replace-with class="org.iplantc.de.theme.base.client.apps.cells.AppRatingCellDefaultAppearance">
+        <when-type-is class="org.iplantc.de.apps.client.views.grid.cells.AppRatingCell.AppRatingCellAppearance"/>
+    </replace-with>
+
+    <replace-with class="org.iplantc.de.theme.base.client.apps.cells.AppFavoriteCellDefaultAppearance">
+        <when-type-is class="org.iplantc.de.apps.client.views.grid.cells.AppFavoriteCell.AppFavoriteCellAppearance"/>
+    </replace-with>
+
+    <replace-with class="org.iplantc.de.theme.base.client.apps.cells.AppHyperlinkCellDefaultAppearance">
+        <when-type-is class="org.iplantc.de.apps.client.views.grid.cells.AppHyperlinkCell.AppHyperlinkCellAppearance"/>
+    </replace-with>
+
+    <replace-with class="org.iplantc.de.theme.base.client.apps.cells.AppInfoCellDefaultAppearance">
+        <when-type-is class="org.iplantc.de.apps.client.views.grid.cells.AppInfoCell.AppInfoCellAppearance"/>
+    </replace-with>
+
+    <replace-with class="org.iplantc.de.theme.base.client.apps.cells.AppIntegratorCellDefaultAppearance">
+        <when-type-is class="org.iplantc.de.apps.client.views.grid.cells.AppIntegratorCell.AppIntegratorCellAppearance"/>
+    </replace-with>
+
+    <!-- Submit -->
+    <replace-with class="org.iplantc.de.theme.base.client.apps.submit.SubmitAppViewDefaultAppearance">
+        <when-type-is class="org.iplantc.de.apps.client.SubmitAppForPublicUseView.SubmitAppAppearance"/>
+    </replace-with>
+
+    <!-- Toolbar -->
+    <replace-with class="org.iplantc.de.theme.base.client.apps.toolbar.AppsToolbarViewDefaultAppearance">
+        <when-type-is class="org.iplantc.de.apps.client.AppsToolbarView.AppsToolbarAppearance"/>
+    </replace-with>
+
+    <!-- Details -->
+    <replace-with class="org.iplantc.de.theme.base.client.apps.details.AppDetailsDefaultAppearance">
+        <when-type-is class="org.iplantc.de.apps.client.AppDetailsView.AppDetailsAppearance"/>
+    </replace-with>
+    <replace-with class="org.iplantc.de.theme.base.client.apps.details.doc.AppDocMarkdownDialogDefaultAppearance">
+        <when-type-is class="org.iplantc.de.apps.client.views.details.doc.AppDocMarkdownDialog.AppDocMarkdownDialogAppearance"/>
+    </replace-with>
+</module>

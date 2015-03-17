@@ -1,0 +1,81 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+             xmlns:toolbar="urn:import:com.sencha.gxt.widget.core.client.toolbar"
+             xmlns:button="urn:import:com.sencha.gxt.widget.core.client.button"
+             xmlns:MyWidgets="urn:import:org.iplantc.de.apps.client.views.toolBar">
+
+    <ui:with field="appearance"
+             type="org.iplantc.de.admin.apps.client.AdminAppsToolbarView.ToolbarAppearance"/>
+    <ui:with field="margins0"
+             type="com.sencha.gxt.core.client.util.Margins">
+        <ui:attributes top="0"
+                       right="0"
+                       bottom="0"
+                       left="0"/>
+    </ui:with>
+    <ui:with field="boxData"
+             type="com.sencha.gxt.widget.core.client.container.BoxLayoutContainer.BoxLayoutData">
+        <ui:attributes margins="{margins0}"
+                       flex="3"/>
+    </ui:with>
+    <ui:with field="boxDataNoFlex"
+             type="com.sencha.gxt.widget.core.client.container.BoxLayoutContainer.BoxLayoutData">
+        <ui:attributes margins="{margins0}"/>
+    </ui:with>
+
+    <toolbar:ToolBar ui:field="toolBar">
+        <toolbar:child layoutData="{boxDataNoFlex}">
+            <button:TextButton ui:field="addCategory"
+                               text="{appearance.add}"
+                               icon="{appearance.addIcon}"
+                               debugId="idAddBtn"/>
+        </toolbar:child>
+        <toolbar:child layoutData="{boxDataNoFlex}">
+            <button:TextButton ui:field="renameCategory"
+                               text="{appearance.renameCategory}"
+                               icon="{appearance.renameCategoryIcon}"
+                               debugId="idRenameBtn"/>
+        </toolbar:child>
+        <toolbar:child layoutData="{boxDataNoFlex}">
+            <button:TextButton ui:field="moveCategory"
+                               text="{appearance.moveCategory}"
+                               icon="{appearance.moveCategoryIcon}"
+                               debugId="idMoveBtn"/>
+        </toolbar:child>
+
+        <toolbar:child layoutData="{boxDataNoFlex}">
+            <button:TextButton ui:field="deleteCat"
+                               text="{appearance.deleteCategory}"
+                               icon="{appearance.deleteIcon}"
+                               debugId="idDeleteCatBtn"/>
+        </toolbar:child>
+        <toolbar:child>
+            <toolbar:SeparatorToolItem/>
+        </toolbar:child>
+        <toolbar:child layoutData="{boxDataNoFlex}">
+            <button:TextButton ui:field="restoreApp"
+                               text="{appearance.restoreApp}"
+                               icon="{appearance.restoreAppIcon}"
+                               debugId="idRestoreBtn"/>
+        </toolbar:child>
+        <toolbar:child layoutData="{boxDataNoFlex}">
+            <button:TextButton ui:field="categorizeApp"
+                               text="{appearance.categorizeApp}"
+                               icon="{appearance.categoryAppIcon}"
+                               enabled="false"
+                               debugId="idCategorizeBtn"/>
+        </toolbar:child>
+        <toolbar:child layoutData="{boxDataNoFlex}">
+            <button:TextButton ui:field="deleteApp"
+                               text="{appearance.deleteApp}"
+                               icon="{appearance.deleteAppIcon}"
+                               enabled="false"
+                               debugId="idDeleteAppBtn"/>
+        </toolbar:child>
+        <toolbar:child layoutData="{boxData}">
+            <MyWidgets:AppSearchField ui:field="appSearch"
+                                      emptyText="{appearance.searchApps}"
+                                      debugId="idSearchFld"/>
+        </toolbar:child>
+    </toolbar:ToolBar>
+</ui:UiBinder> 

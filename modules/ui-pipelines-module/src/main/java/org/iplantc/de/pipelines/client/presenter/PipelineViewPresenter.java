@@ -1,8 +1,8 @@
 package org.iplantc.de.pipelines.client.presenter;
 
 import org.iplantc.de.apps.client.events.AppCategoryCountUpdateEvent;
-import org.iplantc.de.apps.client.events.AppUpdatedEvent;
-import org.iplantc.de.apps.client.views.AppsView;
+import org.iplantc.de.apps.client.events.AppSavedEvent;
+import org.iplantc.de.apps.client.AppsView;
 import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.gin.ServicesInjector;
 import org.iplantc.de.client.models.apps.App;
@@ -77,7 +77,7 @@ public class PipelineViewPresenter implements Presenter, PipelineView.Presenter,
 
                 AppCategoryCountUpdateEvent event = new AppCategoryCountUpdateEvent(true, null);
                 EventBus.getInstance().fireEvent(event);
-                AppUpdatedEvent aevent = new AppUpdatedEvent(null);
+                AppSavedEvent aevent = new AppSavedEvent(null);
                 EventBus.getInstance().fireEvent(aevent);
             }
 
@@ -131,14 +131,15 @@ public class PipelineViewPresenter implements Presenter, PipelineView.Presenter,
         initAppsGridDragHandler(appsPresenter.getAppsGrid());
         initPipelineBuilderDropHandler(view.getBuilderDropContainer());
 
-        appsPresenter.hideAppMenu().hideWorkflowMenu().go(appSelectView);
+        // TODO Possibly inject with annotation to replace with a different toolbar impl
+        appsPresenter.hideAppMenu().hideWorkflowMenu().go(appSelectView, null, null);
     }
 
     private void initAppsGridDragHandler(Grid<App> grid) {
         AppsGridDragHandler handler = new AppsGridDragHandler();
         handler.setPresenter(this);
 
-        GridDragSource<App> source = new GridDragSource<App>(grid);
+        GridDragSource<App> source = new GridDragSource<>(grid);
         source.addDragStartHandler(handler);
         source.addDragCancelHandler(handler);
     }
@@ -197,7 +198,7 @@ public class PipelineViewPresenter implements Presenter, PipelineView.Presenter,
     }
 
     private boolean isValidJson(Pipeline pipeline) {
-        List<EditorError> errorList = new ArrayList<EditorError>();
+        List<EditorError> errorList = new ArrayList<>();
         if (Strings.isNullOrEmpty(pipeline.getName()) || pipeline.getName().equalsIgnoreCase("Click to edit name")) {
             errorList.add(new DefaultEditorError(null, "Name is required.", null));
         }
@@ -318,10 +319,10 @@ public class PipelineViewPresenter implements Presenter, PipelineView.Presenter,
 
         if (activeView == view.getStepEditorPanel()) {
             activeView = view.getBuilderPanel();
-            appsPresenter.go(view.getAppsContainer());
+            appsPresenter.go(view.getAppsContainer(), null, null);
         } else {
             activeView = view.getStepEditorPanel();
-            appsPresenter.go(appSelectView);
+            appsPresenter.go(appSelectView, null, null);
         }
 
         view.setActiveView(activeView);

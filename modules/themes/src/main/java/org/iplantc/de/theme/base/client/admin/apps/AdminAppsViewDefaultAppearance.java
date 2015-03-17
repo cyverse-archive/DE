@@ -1,8 +1,9 @@
 package org.iplantc.de.theme.base.client.admin.apps;
 
-import org.iplantc.de.admin.desktop.client.apps.views.AdminAppsView;
+import org.iplantc.de.admin.apps.client.AdminAppsView;
 import org.iplantc.de.resources.client.messages.IplantDisplayStrings;
 import org.iplantc.de.theme.base.client.admin.BelphegorDisplayStrings;
+import org.iplantc.de.theme.base.client.apps.AppsMessages;
 
 import com.google.gwt.core.client.GWT;
 
@@ -12,15 +13,19 @@ import com.google.gwt.core.client.GWT;
 public class AdminAppsViewDefaultAppearance implements AdminAppsView.AdminAppsViewAppearance {
     final BelphegorDisplayStrings displayStrings;
     final IplantDisplayStrings iplantDisplayStrings;
+    final AppsMessages appsMessages;
 
     public AdminAppsViewDefaultAppearance() {
         this(GWT.<BelphegorDisplayStrings> create(BelphegorDisplayStrings.class),
-             GWT.<IplantDisplayStrings> create(IplantDisplayStrings.class));
+             GWT.<IplantDisplayStrings> create(IplantDisplayStrings.class),
+             GWT.<AppsMessages> create(AppsMessages.class));
     }
     AdminAppsViewDefaultAppearance(final BelphegorDisplayStrings displayStrings,
-                                   final IplantDisplayStrings iplantDisplayStrings) {
+                                   final IplantDisplayStrings iplantDisplayStrings,
+                                   final AppsMessages appsMessages) {
         this.displayStrings = displayStrings;
         this.iplantDisplayStrings = iplantDisplayStrings;
+        this.appsMessages = appsMessages;
     }
 
     @Override
@@ -39,8 +44,8 @@ public class AdminAppsViewDefaultAppearance implements AdminAppsView.AdminAppsVi
     }
 
     @Override
-    public String integratedby() {
-        return iplantDisplayStrings.integratedby();
+    public String integratedBy() {
+        return appsMessages.integratedBy();
     }
 
     @Override

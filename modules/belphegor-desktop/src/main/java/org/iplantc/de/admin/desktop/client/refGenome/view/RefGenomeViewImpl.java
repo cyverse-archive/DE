@@ -54,8 +54,7 @@ public class RefGenomeViewImpl extends Composite implements RefGenomeView {
             if (Strings.nullToEmpty(query).isEmpty()) {
                 return false;
             }
-            final boolean startsWith = item.getName().toLowerCase().startsWith(query.toLowerCase());
-            return startsWith;
+            return item.getName().toLowerCase().startsWith(query.toLowerCase());
         }
 
         public void setQuery(String query) {

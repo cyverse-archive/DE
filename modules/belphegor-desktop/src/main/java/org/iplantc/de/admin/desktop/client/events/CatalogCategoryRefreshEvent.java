@@ -16,7 +16,7 @@ public class CatalogCategoryRefreshEvent extends GwtEvent<CatalogCategoryRefresh
      * 
      * @see CatalogCategoryRefreshEventHandler
      */
-    public static final GwtEvent.Type<CatalogCategoryRefreshEventHandler> TYPE = new GwtEvent.Type<CatalogCategoryRefreshEventHandler>();
+    public static final GwtEvent.Type<CatalogCategoryRefreshEventHandler> TYPE = new GwtEvent.Type<>();
 
     /**
      * {@inheritDoc}
