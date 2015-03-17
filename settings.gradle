@@ -4,56 +4,5 @@ project( ':de').projectDir = new File( rootProject.projectDir, deWebappSubtreePr
 include ':belphegor'
 project( ':belphegor').projectDir = new File( rootProject.projectDir, belphegorSubtreePrefix)
 
-include ':analyses-module'
-project( ':analyses-module').projectDir = new File( rootProject.projectDir, analysesSubtreePrefix )
-
-include ':de-common-module'
-project( ':de-common-module').projectDir = new File( rootProject.projectDir, deCommonModuleSubtreePrefix)
-
-include ':ui-resources-module'
-project( ':ui-resources-module').projectDir = new File( rootProject.projectDir, uiResourcesModuleSubtreePrefix)
-
-include ':ui-commons-module'
-project( ':ui-commons-module').projectDir = new File( rootProject.projectDir, uiCommonsModuleSubtreePrefix)
-
-include ':ui-apps-module'
-project( ':ui-apps-module').projectDir = new File( rootProject.projectDir, uiApplicationsModuleSubtreePrefix)
-
-include ':ui-apps-widgets-module'
-project( ':ui-apps-widgets-module').projectDir = new File( rootProject.projectDir, uiAppsWidgetsModuleSubtreePrefix)
-
-include ':ui-apps-integration'
-project( ':ui-apps-integration').projectDir = new File( rootProject.projectDir, uiAppsIntegrationSubtreePrefix)
-
-include ':ui-disk-resource-module'
-project( ':ui-disk-resource-module').projectDir = new File( rootProject.projectDir, uiDiskResourceModuleSubtreePrefix)
-
-include ':ui-pipeline-builder-module'
-project( ':ui-pipeline-builder-module').projectDir = new File( rootProject.projectDir, uiPipelineBuilderModuleSubtreePrefix)
-
-include ':ui-pipelines-module'
-project( ':ui-pipelines-module').projectDir = new File( rootProject.projectDir, uiPipelinesModuleSubtreePrefix)
-
-include ':file-viewers'
-project(':file-viewers').projectDir = new File(rootProject.projectDir, fileViewersSubtreePrefix)
-
-include ':notifications'
-project(':notifications').projectDir = new File(rootProject.projectDir, notificationsSubtreePrefix)
-
-include ':de-desktop'
-project(':de-desktop').projectDir = new File(rootProject.projectDir, deDesktopSubtreePrefix)
-
-include ':belphegor-desktop'
-project(':belphegor-desktop').projectDir = new File(rootProject.projectDir, belphegorDesktopSubtreePrefix)
-
-include ':themes'
-project(':themes').projectDir = new File(rootProject.projectDir, themesSubtreePrefix)
-
-include ':newToolRequests'
-project(':newToolRequests').projectDir = new File(rootProject.projectDir, newToolRequestsSubtreePrefix)
-
-include ':collaborators'
-project(':collaborators').projectDir = new File(rootProject.projectDir, collaboratorsSubtreePrefix)
-
-include ':tags'
-project(':tags').projectDir = new File(rootProject.projectDir, tagsSubtreePrefix)
+include ':de-lib'
+project(':de-lib').projectDir = new File( rootProject.projectDir, de_libSubtree )
