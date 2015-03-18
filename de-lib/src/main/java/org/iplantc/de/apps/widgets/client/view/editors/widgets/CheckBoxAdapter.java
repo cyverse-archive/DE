@@ -12,6 +12,18 @@ import com.sencha.gxt.widget.core.client.form.AdapterField;
 
 public class CheckBoxAdapter extends AdapterField<Boolean> implements ValueAwareEditor<Boolean>, HasValueChangeHandlers<Boolean>, HasSafeHtml {
 
+    @Override
+    public void disable() {
+        super.disable();
+        cb.setEnabled(false);
+    }
+
+    @Override
+    public void enable() {
+        super.enable();
+        cb.setEnabled(true);
+    }
+
     private final CheckBox cb;
     private boolean negated = false;
 

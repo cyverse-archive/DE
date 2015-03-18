@@ -10,4 +10,9 @@
 
     <inherits name="org.iplantc.de.theme.base.client.admin.Belphegor"/>
     <inherits name="org.iplantc.de.theme.base.client.admin.apps.AdminApps" />
+
+    <!-- Add binding for Augmented GXT ButtonCellAppearance -->
+    <replace-with class="org.iplantc.de.theme.base.client.gxt.button.ButtonCellDisabledDecoratorDefaultAppearance">
+        <when-type-is class="com.sencha.gxt.cell.core.client.ButtonCell.ButtonCellAppearance" />
+    </replace-with>
 </module>
