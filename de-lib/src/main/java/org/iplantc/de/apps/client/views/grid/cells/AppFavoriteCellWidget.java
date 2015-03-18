@@ -8,6 +8,9 @@ import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.cellview.client.CellWidget;
 import com.google.gwt.view.client.ProvidesKey;
 
+/**
+ * @author jstroot
+ */
 public class AppFavoriteCellWidget extends CellWidget<App> implements AppFavoriteSelectedEvent.HasAppFavoriteSelectedEventHandlers {
 
     private final AppFavoriteCell cell;
@@ -46,4 +49,7 @@ public class AppFavoriteCellWidget extends CellWidget<App> implements AppFavorit
         return cell;
     }
 
+    public void setBaseDebugId(final String baseID){
+        cell.setBaseDebugId(baseID);
+    }
 }

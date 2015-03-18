@@ -11,6 +11,7 @@
     <inherits name="org.iplantc.de.theme.base.client.admin.Belphegor"/>
     <inherits name="org.iplantc.de.theme.base.client.admin.apps.AdminApps" />
 
+    <!-- TODO JDS Move this to another location within the base library. Non-default themes will not get this -->
     <!-- Add binding for Augmented GXT ButtonCellAppearance -->
     <replace-with class="org.iplantc.de.theme.base.client.gxt.button.ButtonCellDisabledDecoratorDefaultAppearance">
         <when-type-is class="com.sencha.gxt.cell.core.client.ButtonCell.ButtonCellAppearance" />

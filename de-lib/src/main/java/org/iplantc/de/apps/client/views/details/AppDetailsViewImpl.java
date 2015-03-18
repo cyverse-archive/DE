@@ -10,11 +10,13 @@ import org.iplantc.de.apps.client.events.selection.SaveMarkdownSelected;
 import org.iplantc.de.apps.client.views.details.doc.AppDocMarkdownDialog;
 import org.iplantc.de.apps.client.views.grid.cells.AppFavoriteCellWidget;
 import org.iplantc.de.apps.client.views.grid.cells.AppRatingCellWidget;
+import org.iplantc.de.apps.shared.AppsModule;
 import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.models.apps.AppDoc;
 import org.iplantc.de.client.models.tool.Tool;
 
+import com.google.common.base.Strings;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.DivElement;
 import com.google.gwt.editor.client.LeafValueEditor;
@@ -81,6 +83,7 @@ public class AppDetailsViewImpl extends Composite implements AppDetailsView,
      */
     private class ToolEditorSource extends EditorSource<ToolDetailsView> {
         private final AccordionLayoutContainer toolsContainer;
+        private String baseId;
 
         public ToolEditorSource(final AccordionLayoutContainer toolsContainer) {
             this.toolsContainer = toolsContainer;
@@ -90,8 +93,13 @@ public class AppDetailsViewImpl extends Composite implements AppDetailsView,
         public ToolDetailsView create(int index) {
             final ToolDetailsView toolDetailsView = new ToolDetailsView();
             toolsContainer.insert(toolDetailsView.asWidget(), index);
+
             if(index == 0){
                 toolsContainer.setActiveWidget(toolDetailsView.asWidget());
+            }
+
+            if(!Strings.isNullOrEmpty(baseId)){
+                toolDetailsView.ensureDebugId(baseId + AppsModule.Ids.APP_TOOLS + "." + index);
             }
             return toolDetailsView;
         }
@@ -99,6 +107,10 @@ public class AppDetailsViewImpl extends Composite implements AppDetailsView,
         @Override
         public void dispose(ToolDetailsView subEditor) {
             subEditor.asWidget().removeFromParent();
+        }
+
+        public void setBaseDebugId(final String baseId){
+            this.baseId = baseId;
         }
     }
 
@@ -110,22 +122,13 @@ public class AppDetailsViewImpl extends Composite implements AppDetailsView,
     @UiField @Path("") AppFavoriteCellWidget favIcon; // Bind to app
 
     @UiField(provided = true) final AppDetailsAppearance appearance;
-    /**
-     * FIXME Ensure highlighting
-     */
     @UiField @Ignore DivElement integratorNameDiv;
     final HighlightEditor integratorName;
     @UiField InlineLabel integratorEmail;
-    /**
-     * FIXME Not bound directly. Value given at init/construction time
-     */
     @UiField @Ignore DivElement categories;
     @UiField @Path("") AppRatingCellWidget ratings; // Bind to app
     @UiField @Ignore InlineHyperlink helpLink;
     @UiField AccordionLayoutContainer toolsContainer;
-    /**
-     * FIXME Ensure highlighting
-     */
     @UiField @Ignore DivElement descriptionElement;
     final HighlightEditor description;
     @UiField @Path("integrationDate") DateLabel publishedOn;
@@ -134,6 +137,7 @@ public class AppDetailsViewImpl extends Composite implements AppDetailsView,
     private final App app;
 
     @Inject UserInfo userInfo;
+    private final ToolEditorSource toolEditorSource;
 
     @Inject
     AppDetailsViewImpl(final AppDetailsView.AppDetailsAppearance appearance,
@@ -149,12 +153,28 @@ public class AppDetailsViewImpl extends Composite implements AppDetailsView,
         integratorName = new HighlightEditor(appearance, integratorNameDiv, searchRegexPattern);
         description = new HighlightEditor(appearance, descriptionElement, searchRegexPattern);
         categories.setInnerSafeHtml(appearance.getCategoriesHtml(appGroupHierarchies));
-        this.tools = ListEditor.of(new ToolEditorSource(toolsContainer));
+        toolEditorSource = new ToolEditorSource(toolsContainer);
+        this.tools = ListEditor.of(toolEditorSource);
+
+        /*
+         * Debug id has to be set before binding the editor to ensure that UI elements get the
+         * debug id before they are rendered/created.
+         */
+        ensureDebugId(AppsModule.Ids.DETAILS_VIEW);
 
         // Add self so that rating cell events will fire
         ratings.setHasHandlers(this);
         editorDriver.initialize(this);
         editorDriver.edit(app);
+    }
+
+    @Override
+    protected void onEnsureDebugId(String baseID) {
+        super.onEnsureDebugId(baseID);
+
+        favIcon.setBaseDebugId(baseID);
+        toolsContainer.ensureDebugId(baseID + AppsModule.Ids.APP_TOOLS);
+        toolEditorSource.setBaseDebugId(baseID);
     }
 
     @Override

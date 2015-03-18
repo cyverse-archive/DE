@@ -34,6 +34,9 @@ public interface AppsModule {
 
         String APP_NAME_CELL = ".appName";
         String APP_INFO_CELL = ".appInfo";
+        String DETAILS_VIEW = "appDetails";
+        String APP_TOOLS = ".tools";
+        String TOOL_COLLAPSE_BTN = ".collapse";
     }
 }
 
