@@ -177,7 +177,11 @@ public class ToolbarViewPresenterImpl implements ToolbarView.Presenter,
     }
 
     @Override
-    public void onSimpleUploadSelected(SimpleUploadSelected event) {
-        eventBus.fireEvent(new RequestSimpleUploadEvent(event.getSelectedFolder()));
+    public void onSimpleUploadSelected(final SimpleUploadSelected event) {
+        Folder destinationFolder = event.getSelectedFolder();
+        if(destinationFolder == null){
+            destinationFolder = parentPresenter.getHomeFolder();
+        }
+        eventBus.fireEvent(new RequestSimpleUploadEvent(destinationFolder));
     }
 }

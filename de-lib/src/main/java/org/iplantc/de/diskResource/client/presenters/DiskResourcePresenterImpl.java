@@ -529,6 +529,11 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
     }
 
     @Override
+    public Folder getHomeFolder() {
+        return navigationPresenter.getSelectedUploadFolder();
+    }
+
+    @Override
     public List<DiskResource> getSelectedDiskResources() {
         return gridViewPresenter.getSelectedDiskResources();
     }

@@ -49,10 +49,10 @@ public class DesktopPresenterEventHandler implements LastSelectedPathChangedEven
     public void onFileUploaded(FileUploadedEvent event) {
 
         DefaultUploadCompleteHandler duc = new DefaultUploadCompleteHandler(userSessionService,
-                                                                            event.getUploadDestFolderFolder().toString());
+                                                                            event.getUploadDestFolder().getPath());
         JSONObject obj = jsonUtil.getObject(event.getResponse());
         String fileJson = jsonUtil.getObject(obj, "file").toString();
-        duc.onCompletion(event.getFilepath(), fileJson);
+        duc.onCompletion(event.getFilePath(), fileJson);
         // FIXME REFACTOR JDS move user notification posting from DefaultUpload...Handler into desktop presenter
         // FIXME REFACTOR JDS Have diskResource presenter listen to this and perform refresh
 

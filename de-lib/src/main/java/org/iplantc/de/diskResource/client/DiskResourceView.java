@@ -117,6 +117,8 @@ public interface DiskResourceView extends IsWidget,
 
         void doRenameDiskResource(DiskResource diskResource, String newName);
 
+        Folder getHomeFolder();
+
         List<DiskResource> getSelectedDiskResources();
 
         Folder getSelectedFolder();

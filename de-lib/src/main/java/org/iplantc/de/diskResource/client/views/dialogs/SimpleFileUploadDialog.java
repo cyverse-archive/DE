@@ -1,9 +1,9 @@
 package org.iplantc.de.diskResource.client.views.dialogs;
 
 import org.iplantc.de.client.events.EventBus;
+import org.iplantc.de.client.models.HasPath;
 import org.iplantc.de.client.models.HasPaths;
 import org.iplantc.de.client.models.diskResources.DiskResourceAutoBeanFactory;
-import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.client.services.DiskResourceServiceFacade;
 import org.iplantc.de.client.util.DiskResourceUtil;
 import org.iplantc.de.commons.client.info.ErrorAnnouncementConfig;
@@ -107,7 +107,7 @@ public class SimpleFileUploadDialog extends IPlantDialog {
     private final List<IPCFileUploadField> fufList;
     private final List<TextButton> tbList;
     private final List<Status> statList;
-    private final Folder uploadDest;
+    private final HasPath uploadDest;
     private final DiskResourceServiceFacade drService;
     private final List<FormPanel> submittedForms = Lists.newArrayList();
     private final SafeUri fileUploadServlet;
@@ -115,7 +115,7 @@ public class SimpleFileUploadDialog extends IPlantDialog {
     private final EventBus eventBus;
     private final DiskResourceUtil diskResourceUtil;
 
-    public SimpleFileUploadDialog(final Folder uploadDest,
+    public SimpleFileUploadDialog(final HasPath uploadDest,
                                   final DiskResourceServiceFacade drService,
                                   final EventBus eventBus,
                                   final DiskResourceUtil diskResourceUtil,
@@ -206,7 +206,8 @@ public class SimpleFileUploadDialog extends IPlantDialog {
 
     private boolean isValidForm() {
         for (IPCFileUploadField f : fufList) {
-            if (!Strings.isNullOrEmpty(f.getValue()) && !f.getValue().equalsIgnoreCase(uploadDest.getId()) && f.isValid()) {
+            if (!Strings.isNullOrEmpty(f.getValue())
+                    && f.isValid()) {
                 return true;
             }
         }
