@@ -214,6 +214,7 @@ public abstract class AbstractDiskResourceSelector<R extends DiskResource> exten
     @Override
     public void clear() {
         input.clear();
+        model = null;
     }
 
     @Override
@@ -299,6 +300,7 @@ public abstract class AbstractDiskResourceSelector<R extends DiskResource> exten
     @Override
     public void reset() {
         input.reset();
+        model = null;
     }
 
     /**
