@@ -3,7 +3,6 @@ package org.iplantc.de.server.services;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.iplantc.de.server.DEServiceInputStream;
-import org.iplantc.de.server.MultipartBodyFactory;
 import org.iplantc.de.server.ServiceCallResolver;
 import org.iplantc.de.server.auth.CasUrlConnector;
 import org.iplantc.de.server.auth.DESecurityConstants;
@@ -13,15 +12,12 @@ import org.iplantc.de.shared.exceptions.HttpException;
 import org.iplantc.de.shared.exceptions.HttpRedirectException;
 import org.iplantc.de.shared.services.BaseServiceCallWrapper;
 import org.iplantc.de.shared.services.DEService;
-import org.iplantc.de.shared.services.HTTPPart;
-import org.iplantc.de.shared.services.MultiPartServiceWrapper;
 import org.iplantc.de.shared.services.ServiceCallWrapper;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
-import com.google.gson.stream.MalformedJsonException;
 import com.google.gwt.user.client.rpc.SerializationException;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
@@ -31,29 +27,26 @@ import org.apache.http.HttpHeaders;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpDelete;
-import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPatch;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
-import org.apache.http.entity.mime.MultipartEntity;
-import org.apache.http.impl.client.DefaultHttpClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 
 import java.io.IOException;
-import java.util.List;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 /**
  * Dispatches HTTP requests to other services.
+ *
+ * @author jstroot
  */
 public class DEServiceImpl extends RemoteServiceServlet implements DEService {
     private static final long serialVersionUID = 1L;
@@ -282,61 +275,6 @@ public class DEServiceImpl extends RemoteServiceServlet implements DEService {
     }
 
     /**
-     * Sends a multipart HTTP PUT request to another services.
-     *
-     * @param client the HTTP client to use.
-     * @param address the address to send the request to.
-     * @param parts the components of the multipart request.
-     * @return the response.
-     * @throws IOException if an I/O error occurs.
-     */
-    private HttpResponse putMultipart(HttpClient client, String address, List<HTTPPart> parts)
-            throws IOException {
-        HttpPut clientRequest = urlConnector.putRequest(getRequest(), address);
-        buildMultipartRequest(clientRequest, parts);
-        HttpResponse response = client.execute(clientRequest);
-        return response;
-    }
-
-    /**
-     * Sends a multipart HTTP POST request to another services.
-     *
-     * @param client the HTTP client to use.
-     * @param address the address to send the request to.
-     * @param parts the components of the multipart request.
-     * @return the response body.
-     * @throws IOException if an I/O error occurs.
-     */
-    private HttpResponse postMultipart(HttpClient client, String address, List<HTTPPart> parts)
-            throws IOException {
-        HttpPost clientRequest = urlConnector.postRequest(getRequest(), address);
-        buildMultipartRequest(clientRequest, parts);
-        HttpResponse response = client.execute(clientRequest);
-        return response;
-    }
-
-    private void buildMultipartRequest(HttpEntityEnclosingRequestBase clientRequest, List<HTTPPart> parts)
-            throws IOException {
-        MultipartEntity entity = new MultipartEntity();
-        for (HTTPPart part : parts) {
-            entity.addPart(part.getName(), MultipartBodyFactory.createBody(part));
-        }
-        addAdditionalParts(entity);
-        clientRequest.setEntity(entity);
-    }
-
-    /**
-     * This method allows concrete subclasses to add additional parts to multipart form requests if
-     * necessary. By default, no additional parts are added.
-     *
-     * @param entity the entity to add the part to.
-     * @throws IOException if an I/O error occurs.
-     */
-    protected void addAdditionalParts(MultipartEntity entity) throws IOException {
-        // The base implementation of this method does nothing.
-    }
-
-    /**
      * Verifies that a string is not null or empty.
      *
      * @param in the string to validate.
@@ -368,35 +306,6 @@ public class DEServiceImpl extends RemoteServiceServlet implements DEService {
                     case POST:
                     case PATCH:
                         if (isValidString(wrapper.getBody())) {
-                            ret = true;
-                        }
-                        break;
-
-                    default:
-                        break;
-                }
-            }
-        }
-
-        return ret;
-    }
-
-    /**
-     * Validates a multi-part services call wrapper. The address must not be null or empty and the message
-     * body must have at least one part.
-     *
-     * @param wrapper the wrapper to validate.
-     * @return true if the services call wrapper is valid.
-     */
-    private boolean isValidServiceCall(MultiPartServiceWrapper wrapper) {
-        boolean ret = false; // assume failure
-
-        if (wrapper != null) {
-            if (isValidString(wrapper.getAddress())) {
-                switch (wrapper.getType()) {
-                    case PUT:
-                    case POST:
-                        if (wrapper.getNumParts() > 0) {
                             ret = true;
                         }
                         break;
@@ -569,56 +478,4 @@ public class DEServiceImpl extends RemoteServiceServlet implements DEService {
         return null;
     }
 
-    public HttpResponse getResponse(HttpClient client, MultiPartServiceWrapper wrapper)
-            throws IOException {
-        String address = retrieveServiceAddress(wrapper);
-        List<HTTPPart> parts = wrapper.getParts();
-        BaseServiceCallWrapper.Type type = wrapper.getType();
-        switch (type) {
-            case PUT:
-                return putMultipart(client, address, parts);
-
-            case POST:
-                return postMultipart(client, address, parts);
-
-            default:
-                throw new UnsupportedOperationException("HTTP method " + type + " not supported");
-        }
-    }
-    /**
-     * Sends a multi-part HTTP PUT or POST request to another services and returns the response.
-     *
-     * @param wrapper the services call wrapper.
-     * @return the response to the HTTP request.
-     * @throws SerializationException if an error occurs.
-     */
-    @Override
-    public String getServiceData(MultiPartServiceWrapper wrapper)
-            throws SerializationException, AuthenticationException, HttpException {
-        String json = null;
-
-        if (isValidServiceCall(wrapper)) {
-            CloseableHttpClient client = HttpClients.createDefault();
-            try {
-                json = getResponseBody(getResponse(client, wrapper));
-            } catch (AuthenticationException | HttpRedirectException ex) {
-                doLogError(ex);
-                throw ex;
-            } catch (HttpException ex) {
-                doLogError(ex);
-                throw new SerializationException(ex.getResponseBody(), ex);
-            } catch (Exception ex) {
-                doLogError(ex);
-                throw new SerializationException(ex);
-            } finally {
-                IOUtils.closeQuietly(client);
-            }
-        }
-
-        if(LOGGER.isTraceEnabled()){
-            Gson prettyGson = new GsonBuilder().setPrettyPrinting().create();
-            LOGGER.trace("\nRESPONSE: {} {}\n{}",wrapper.getType(), wrapper.getAddress(), prettyGson.toJson(new JsonParser().parse(json)));
-        }
-        return json;
-    }
 }
