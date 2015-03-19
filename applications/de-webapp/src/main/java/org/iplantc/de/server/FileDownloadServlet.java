@@ -20,48 +20,31 @@ import javax.servlet.http.HttpServletResponse;
 
 /**
  * A servlet for downloading a file.
+ *
+ * @author jstroot
  */
 public class FileDownloadServlet extends HttpServlet {
     private static final String[] HEADER_FIELDS_TO_COPY = {"Content-Disposition"};
 
     private static final Logger LOG = LoggerFactory.getLogger(FileDownloadServlet.class);
-
+    /**
+     * Used to obtain some configuration settings.
+     */
+    private DiscoveryEnvironmentProperties deProps;
     /**
      * Used to resolve aliased service calls.
      */
     private ServiceCallResolver serviceResolver;
 
     /**
-     * Used to obtain some configuration settings.
-     */
-    private DiscoveryEnvironmentProperties deProps;
-
-    /**
      * The default constructor.
      */
-    public FileDownloadServlet() {}
-
-    /**
-     * Initializes the servlet if it hasn't already been initialized.
-     *
-     * @throws ServletException if the servlet can't be initialized.
-     * @throws IllegalStateException if any required dependency can't be found.
-     */
-    @Override
-    public void init() throws ServletException {
-        super.init();
-        if (serviceResolver == null && deProps == null) {
-            serviceResolver = ServiceCallResolver.getServiceCallResolver(getServletContext());
-            try {
-                deProps = DiscoveryEnvironmentProperties.getDiscoveryEnvironmentProperties();
-            } catch (IOException e) {
-               throw new ServletException(e);
-            }
-        }
+    public FileDownloadServlet() {
     }
 
     @Override
-    public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException {
+    public void doGet(HttpServletRequest request,
+                      HttpServletResponse response) throws ServletException {
         DEServiceInputStream fileContents = null;
         try {
             String address = buildRequestAddress(request);
@@ -85,59 +68,22 @@ public class FileDownloadServlet extends HttpServlet {
     }
 
     /**
-     * Copies the file contents from the given input stream to the output stream controlled by the given
-     * response object.
+     * Initializes the servlet if it hasn't already been initialized.
      *
-     * @param response the HTTP servlet response object.
-     * @param fileContents the input stream used to retrieve the file contents.
-     * @throws IOException if an I/O error occurs.
+     * @throws ServletException      if the servlet can't be initialized.
+     * @throws IllegalStateException if any required dependency can't be found.
      */
-    private void copyFileContents(HttpServletResponse response, InputStream fileContents)
-            throws IOException {
-        OutputStream out = null;
-        try {
-            out = response.getOutputStream();
-            IOUtils.copyLarge(fileContents, out);
-        } finally {
-            fileContents.close();
-            if (out != null) {
-                out.close();
+    @Override
+    public void init() throws ServletException {
+        super.init();
+        if (serviceResolver == null && deProps == null) {
+            serviceResolver = ServiceCallResolver.getServiceCallResolver(getServletContext());
+            try {
+                deProps = DiscoveryEnvironmentProperties.getDiscoveryEnvironmentProperties();
+            } catch (IOException e) {
+                throw new ServletException(e);
             }
         }
-    }
-
-    /**
-     * Copies the content type along with any other HTTP header fields that are supposed to be copied
-     * from the original HTTP response to our HTTP servlet response.
-     *
-     * @param response our HTTP servlet response.
-     * @param fileContents the file contents along with the HTTP headers and content type.
-     */
-    private void copyHeaderFields(HttpServletResponse response, DEServiceInputStream fileContents) {
-        String contentType = fileContents.getContentType();
-        response.setContentType(contentType == null ? "" : contentType);
-
-        for (String fieldName : HEADER_FIELDS_TO_COPY) {
-            response.setHeader(fieldName, fileContents.getHeaderField(fieldName));
-        }
-    }
-
-    /**
-     * Creates the service dispatcher that will be used to fetch the file contents.
-     *
-     * @param request our HTTP servlet request.
-     * @return the service dispatcher.
-     */
-    private DEServiceImpl createServiceDispatcher(HttpServletRequest request) {
-        DEServiceImpl dispatcher = new DEServiceImpl(serviceResolver);
-        try {
-            dispatcher.init(getServletConfig());
-        } catch (ServletException e) {
-            LOG.warn("service dispatcher initialization failed", e);
-        }
-        dispatcher.setContext(getServletContext());
-        dispatcher.setRequest(request);
-        return dispatcher;
     }
 
     /**
@@ -167,5 +113,60 @@ public class FileDownloadServlet extends HttpServlet {
         LOG.debug(address);
 
         return address;
+    }
+
+    /**
+     * Copies the file contents from the given input stream to the output stream controlled by the given
+     * response object.
+     *
+     * @param response     the HTTP servlet response object.
+     * @param fileContents the input stream used to retrieve the file contents.
+     * @throws IOException if an I/O error occurs.
+     */
+    private void copyFileContents(HttpServletResponse response, InputStream fileContents)
+        throws IOException {
+        OutputStream out = null;
+        try {
+            out = response.getOutputStream();
+            IOUtils.copyLarge(fileContents, out);
+        } finally {
+            fileContents.close();
+            if (out != null) {
+                out.close();
+            }
+        }
+    }
+
+    /**
+     * Copies the content type along with any other HTTP header fields that are supposed to be copied
+     * from the original HTTP response to our HTTP servlet response.
+     *
+     * @param response     our HTTP servlet response.
+     * @param fileContents the file contents along with the HTTP headers and content type.
+     */
+    private void copyHeaderFields(HttpServletResponse response, DEServiceInputStream fileContents) {
+        String contentType = fileContents.getContentType();
+        response.setContentType(contentType == null ? "" : contentType);
+
+        for (String fieldName : HEADER_FIELDS_TO_COPY) {
+            response.setHeader(fieldName, fileContents.getHeaderField(fieldName));
+        }
+    }
+
+    /**
+     * Creates the service dispatcher that will be used to fetch the file contents.
+     *
+     * @param request our HTTP servlet request.
+     * @return the service dispatcher.
+     */
+    private DEServiceImpl createServiceDispatcher(HttpServletRequest request) {
+        DEServiceImpl dispatcher = new DEServiceImpl(serviceResolver);
+        try {
+            dispatcher.init(getServletConfig());
+        } catch (ServletException e) {
+            LOG.warn("service dispatcher initialization failed", e);
+        }
+        dispatcher.setRequest(request);
+        return dispatcher;
     }
 }
