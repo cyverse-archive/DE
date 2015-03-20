@@ -9,7 +9,6 @@ import org.iplantc.de.commons.client.views.dialogs.IPlantDialog;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.safehtml.shared.SafeHtml;
-import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiTemplate;
@@ -54,8 +53,7 @@ public class AppDocMarkdownDialog extends IPlantDialog implements SaveMarkdownSe
         ourUiBinder.createAndBindUi(this);
 
         // Build refLink html
-        String safeDoc = SafeHtmlUtils.fromString(appDoc.getDocumentation()).asString();
-        SafeHtml docHtml = appearance.createDocumentMarkdown(render(safeDoc), appDoc.getReferences());
+        SafeHtml docHtml = appearance.createDocumentMarkdown(render(appDoc.getDocumentation()), appDoc.getReferences());
         documentation.setHTML(docHtml);
 
 
