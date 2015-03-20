@@ -164,8 +164,8 @@ public class AppUserServiceFacadeImpl implements AppUserServiceFacade {
      */
     @Override
     public void rateApp(final App app,
-                        int rating,
-                        final AsyncCallback<String> callback) {
+                        final int rating,
+                        final AsyncCallback<AppFeedback> callback) {
         String address = APPS + "/" + app.getId() + "/rating";
 
         Splittable payload = StringQuoter.createSplittable();
@@ -173,19 +173,27 @@ public class AppUserServiceFacadeImpl implements AppUserServiceFacade {
         StringQuoter.create(app.getRating().getCommentId()).assign(payload, "comment_id");
 
         ServiceCallWrapper wrapper = new ServiceCallWrapper(POST, address, payload.getPayload());
-        deServiceFacade.getServiceData(wrapper, new AsyncCallback<String>() {
+        deServiceFacade.getServiceData(wrapper, new AsyncCallbackConverter<String, AppFeedback>(callback) {
             @Override
-            public void onSuccess(String result) {
+            protected AppFeedback convertFrom(String object) {
+                // Send email
                 final String appName = parsePageName(app.getWikiUrl());
                 if (!Strings.isNullOrEmpty(appName)) {
                     sendRatingEmail(appName, app.getIntegratorEmail());
                 }
-                callback.onSuccess(result);
-            }
 
-            @Override
-            public void onFailure(Throwable caught) {
-                callback.onFailure(caught);
+                final AppFeedback appFeedback = app.getRating();
+                appFeedback.setUserRating(0);
+                appFeedback.setCommentId(0);
+                appFeedback.setUserRating(rating);
+                if(Strings.isNullOrEmpty(object)){
+                    appFeedback.setAverageRating(0);
+                } else {
+                    final Splittable split = StringQuoter.split(object);
+                    appFeedback.setAverageRating(split.get("average").asNumber());
+                    appFeedback.setTotal((int)split.get("total").asNumber());
+                }
+                return appFeedback;
             }
         });
     }

@@ -77,12 +77,9 @@ public interface AppUserServiceFacade extends AppServiceFacade {
 
     void createWorkflows(String body, AsyncCallback<String> callback);
 
-    /**
-     * FIXME JDS Should this callback be void?
-     */
     void rateApp(App app,
                  int rating,
-                 AsyncCallback<String> callback);
+                 AsyncCallback<AppFeedback> callback);
 
     void deleteRating(App app, AsyncCallback<AppFeedback> callback);
 }

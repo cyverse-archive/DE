@@ -261,7 +261,6 @@ public class AppCategoriesPresenterImpl implements AppCategoriesView.Presenter,
         appUserService.rateApp(appToRate,
                                event.getScore(),
                                new RateAppCallback(appToRate,
-                                                   event,
                                                    eventBus));
     }
 

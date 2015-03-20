@@ -215,7 +215,6 @@ public class AppsGridPresenterImpl implements AppsGridView.Presenter,
         appUserService.rateApp(appToRate,
                                event.getScore(),
                                new RateAppCallback(appToRate,
-                                                   event,
                                                    eventBus));
     }
 

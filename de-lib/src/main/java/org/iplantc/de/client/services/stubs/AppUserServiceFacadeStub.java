@@ -101,7 +101,7 @@ public class AppUserServiceFacadeStub implements AppUserServiceFacade {
     }
 
     @Override
-    public void rateApp(App app, int rating, AsyncCallback<String> callback) {
+    public void rateApp(App app, int rating, AsyncCallback<AppFeedback> callback) {
 
     }
 

@@ -273,7 +273,7 @@ public class AppCategoriesPresenterImplTest {
 
         verify(appUserServiceMock).rateApp(eq(appMock),
                                            eq(mockScore),
-                                           Matchers.<AsyncCallback<String>>any());
+                                           Matchers.<AsyncCallback<AppFeedback>>any());
 
         verifyNoMoreInteractions(appUserServiceMock);
         verifyZeroInteractions(appServiceMock);
