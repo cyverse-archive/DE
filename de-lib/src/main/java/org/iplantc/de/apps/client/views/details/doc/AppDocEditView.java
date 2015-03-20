@@ -57,9 +57,6 @@ public class AppDocEditView extends Composite implements IsMaskable,
         initWidget(uiBinder.createAndBindUi(this));
         String safeDoc = SafeHtmlUtils.fromString(appDoc.getDocumentation()).asString();
 
-        // Disable toolbar if app is public
-        toolbar.setEnabled(!app.isPublic());
-        saveBtn.setEnabled(!app.isPublic());
         setData(safeDoc);
     }
 
