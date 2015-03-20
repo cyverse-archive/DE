@@ -278,7 +278,7 @@ public class AppUserServiceFacadeImpl implements AppUserServiceFacade {
             appIds.add(app.getId());
         }
         JSONObject body = new JSONObject();
-        body.put("app_ids", jsonUtil.buildArrayFromStrings(apps)); //$NON-NLS-1$
+        body.put("app_ids", jsonUtil.buildArrayFromStrings(appIds)); //$NON-NLS-1$
         ServiceCallWrapper wrapper = new ServiceCallWrapper(POST, address, body.toString());
         deServiceFacade.getServiceData(wrapper, new StringToVoidCallbackConverter(callback));
     }
