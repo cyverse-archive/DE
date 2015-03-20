@@ -35,6 +35,7 @@ import com.sencha.gxt.widget.core.client.tips.QuickTip;
 
 /**
  * Created by jstroot on 3/5/15.
+ *
  * @author jstroot
  */
 public class AppsGridViewImpl extends ContentPanel implements AppsGridView,
@@ -43,11 +44,10 @@ public class AppsGridViewImpl extends ContentPanel implements AppsGridView,
 
     private static final AppsGridViewImplUiBinder ourUiBinder = GWT.create(AppsGridViewImplUiBinder.class);
 
+    @UiField(provided = true) final ListStore<App> listStore;
+    @UiField ColumnModel cm;
     @UiField Grid<App> grid;
     @UiField GridView<App> gridView;
-    @UiField ColumnModel cm;
-    @UiField(provided = true) final ListStore<App> listStore;
-
     private final AppColumnModel acm; // Convenience class
 
     private final AppsGridAppearance appearance;
@@ -60,7 +60,7 @@ public class AppsGridViewImpl extends ContentPanel implements AppsGridView,
         this.listStore = listStore;
 
         setWidget(ourUiBinder.createAndBindUi(this));
-        this.acm = (AppColumnModel)cm;
+        this.acm = (AppColumnModel) cm;
         grid.getSelectionModel().addSelectionChangedHandler(this);
 
         new QuickTip(grid).getToolTipConfig().setTrackMouse(true);
@@ -117,16 +117,18 @@ public class AppsGridViewImpl extends ContentPanel implements AppsGridView,
     public void onAppCategorySelectionChanged(AppCategorySelectionChangedEvent event) {
         // FIXME Move to appearance
         setHeadingText(Joiner.on(" >> ").join(event.getGroupHierarchy()));
+
+        if (!event.getAppCategorySelection().isEmpty()) {
+            // Reset Search
+            acm.setSearchRegexPattern("");
+        }
     }
 
     @Override
     public void onAppSearchResultLoad(AppSearchResultLoadEvent event) {
-        unmask();
-        searchRegexPattern = event.getSearchPattern();
-        acm.setSearchRegexPattern(searchRegexPattern);
-
         int total = event.getResults() == null ? 0 : event.getResults().size();
         setHeadingText(appearance.searchAppResultsHeader(event.getSearchText(), total));
+        unmask();
     }
 
     @Override
@@ -137,6 +139,12 @@ public class AppsGridViewImpl extends ContentPanel implements AppsGridView,
     @Override
     public void onSelectionChanged(SelectionChangedEvent<App> event) {
         fireEvent(new AppSelectionChangedEvent(event.getSelection()));
+    }
+
+    @Override
+    public void setSearchPattern(final String searchPattern) {
+        this.searchRegexPattern = searchPattern;
+        acm.setSearchRegexPattern(searchRegexPattern);
     }
 
     @Override

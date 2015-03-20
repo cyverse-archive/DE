@@ -81,4 +81,6 @@ public interface AppsGridView extends IsWidget,
     }
 
     Grid<App> getGrid();
+
+    void setSearchPattern(String searchPattern);
 }

@@ -95,15 +95,7 @@ public class AppsGridPresenterImplTest {
     }
 
     @Test public void testConstructorEventHandlerWiring() {
-        verify(viewFactoryMock).create(eq(uut.listStore));
-
-        // Verify view wiring
-        verify(viewMock).addAppNameSelectedEventHandler(eq(uut));
-        verify(viewMock).addAppRatingDeselectedHandler(eq(uut));
-        verify(viewMock).addAppRatingSelectedHandler(eq(uut));
-        verify(viewMock).addAppCommentSelectedEventHandlers(eq(uut));
-        verify(viewMock).addAppFavoriteSelectedEventHandlers(eq(uut));
-
+        verifyConstructor();
 
         verifyNoMoreInteractions(viewFactoryMock,
                                  viewMock);
@@ -325,15 +317,27 @@ public class AppsGridPresenterImplTest {
     }
 
     @Test public void verifyStoreClearedAndResultsAdded_onAppSearchResultLoad() {
+        // Record keeping
+        verifyConstructor();
         AppSearchResultLoadEvent eventMock = mock(AppSearchResultLoadEvent.class);
         List<App> results = Lists.newArrayList(mock(App.class), mock(App.class));
+        String searchPatternMock = "mock search pattern";
         when(eventMock.getResults()).thenReturn(results);
+        when(eventMock.getSearchPattern()).thenReturn(searchPatternMock);
 
         /*** CALL METHOD UNDER TEST ***/
         uut.onAppSearchResultLoad(eventMock);
 
+        verify(viewMock).setSearchPattern(eq(searchPatternMock));
+
         verify(listStoreMock).clear();
         verify(listStoreMock).addAll(eq(results));
+
+        verifyNoMoreInteractions(listStoreMock,
+                                 viewMock);
+
+        verifyZeroInteractions(appServiceMock,
+                               appUserServiceMock);
     }
 
     @Test public void verifyAppServiceCalled_onDeleteAppsSelected() {
@@ -368,7 +372,16 @@ public class AppsGridPresenterImplTest {
                                  mock2);
     }
 
+    private void verifyConstructor() {
+        verify(viewFactoryMock).create(eq(uut.listStore));
 
+        // Verify view wiring
+        verify(viewMock).addAppNameSelectedEventHandler(eq(uut));
+        verify(viewMock).addAppRatingDeselectedHandler(eq(uut));
+        verify(viewMock).addAppRatingSelectedHandler(eq(uut));
+        verify(viewMock).addAppCommentSelectedEventHandlers(eq(uut));
+        verify(viewMock).addAppFavoriteSelectedEventHandlers(eq(uut));
+    }
 
 
 

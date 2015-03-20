@@ -70,27 +70,27 @@ public class AppSearchRpcProxy extends RpcProxy<FilterPagingLoadConfig, PagingLo
                 // FIXME Sorting should not be done here.
                 Collections.sort(apps, new AppComparator(searchText));
 
-                // Pass the App list to this proxy's load callback.
-                callback.onSuccess(loadResult);
-
                 // Fire the search results load event.
                 if(hasHandlers != null){
                     // The search service accepts * and ? wildcards, so convert them for the pattern group.
                     String pattern = "(" + searchText.replace("*", ".*").replace('?', '.') + ")";
                     hasHandlers.fireEvent(new AppSearchResultLoadEvent(searchText, pattern, apps));
                 }
+
+                // Pass the App list to this proxy's load callback.
+                callback.onSuccess(loadResult);
             }
 
             @Override
             public void onFailure(Throwable caught) {
                 // TODO Add user error message or remove post here?
                 ErrorHandler.post(caught);
-                callback.onFailure(caught);
                 if(hasHandlers != null){
                     // The search service accepts * and ? wildcards, so convert them for the pattern group.
                     String pattern = "(" + searchText.replace("*", ".*").replace('?', '.') + ")";
                     hasHandlers.fireEvent(new AppSearchResultLoadEvent(searchText, pattern, Collections.<App>emptyList()));
                 }
+                callback.onFailure(caught);
             }
         });
     }

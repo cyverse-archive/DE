@@ -215,6 +215,7 @@ public class AppsGridPresenterImpl implements AppsGridView.Presenter,
 
     @Override
     public void onAppSearchResultLoad(AppSearchResultLoadEvent event) {
+        view.setSearchPattern(event.getSearchPattern());
         listStore.clear();
         listStore.addAll(event.getResults());
     }
