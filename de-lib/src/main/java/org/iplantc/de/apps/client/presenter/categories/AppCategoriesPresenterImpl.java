@@ -44,6 +44,7 @@ import com.sencha.gxt.data.shared.SortDir;
 import com.sencha.gxt.data.shared.Store;
 import com.sencha.gxt.data.shared.TreeStore;
 import com.sencha.gxt.data.shared.event.StoreAddEvent;
+import com.sencha.gxt.data.shared.event.StoreClearEvent;
 import com.sencha.gxt.data.shared.event.StoreRemoveEvent;
 
 import java.util.Collections;
@@ -111,6 +112,7 @@ public class AppCategoriesPresenterImpl implements AppCategoriesView.Presenter,
 
         eventBus.addHandler(AppUpdatedEvent.TYPE, this);
         eventBus.addHandler(AppSavedEvent.TYPE, this);
+        eventBus.addHandler(AppFavoritedEvent.TYPE, this);
     }
 
     @Override
@@ -289,6 +291,17 @@ public class AppCategoriesPresenterImpl implements AppCategoriesView.Presenter,
             view.getTree().getSelectionModel().select(currentCategory, false);
         }
 
+    }
+
+    @Override
+    public void onClear(StoreClearEvent<App> event) {
+        // When the store is cleared, set count to 0.
+        // App count will be updated when items are added to the store
+        AppCategory appCategory = getSelectedAppCategory();
+        if (appCategory == null) {
+            return;
+        }
+        updateAppCategoryAppCount(appCategory, 0);
     }
 
     @Override

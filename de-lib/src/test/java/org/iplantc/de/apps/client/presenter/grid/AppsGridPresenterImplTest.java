@@ -33,6 +33,7 @@ import com.google.gwtmockito.GwtMockitoTestRunner;
 
 import com.sencha.gxt.data.shared.ListStore;
 import com.sencha.gxt.data.shared.event.StoreAddEvent;
+import com.sencha.gxt.data.shared.event.StoreClearEvent;
 import com.sencha.gxt.data.shared.event.StoreRemoveEvent;
 import com.sencha.gxt.data.shared.event.StoreUpdateEvent;
 import com.sencha.gxt.widget.core.client.grid.Grid;
@@ -62,6 +63,7 @@ public class AppsGridPresenterImplTest {
     @Mock StoreAddEvent.StoreAddHandler<App> storeAddHandlerMock;
     @Mock StoreRemoveEvent.StoreRemoveHandler<App> storeRemoveHandlerMock;
     @Mock StoreUpdateEvent.StoreUpdateHandler<App> storeUpdateHandlerMock;
+    @Mock StoreClearEvent.StoreClearHandler<App> storeClearHandlerMock;
     @Mock Grid<App> gridMock;
     @Mock GridSelectionModel<App> selectionModelMock;
     @Mock AppUserServiceFacade appServiceMock;
@@ -122,6 +124,10 @@ public class AppsGridPresenterImplTest {
         /*** CALL METHOD UNDER TEST ***/
         uut.addStoreUpdateHandler(storeUpdateHandlerMock);
         verify(listStoreMock).addStoreUpdateHandler(eq(storeUpdateHandlerMock));
+
+        /*** CALL METHOD UNDER TEST ***/
+        uut.addStoreClearHandler(storeClearHandlerMock);
+        verify(listStoreMock).addStoreClearHandler(eq(storeClearHandlerMock));
     }
 
 

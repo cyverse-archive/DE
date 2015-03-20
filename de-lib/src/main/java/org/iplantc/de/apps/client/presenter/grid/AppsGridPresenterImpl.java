@@ -37,6 +37,7 @@ import com.google.inject.Inject;
 
 import com.sencha.gxt.data.shared.ListStore;
 import com.sencha.gxt.data.shared.event.StoreAddEvent;
+import com.sencha.gxt.data.shared.event.StoreClearEvent;
 import com.sencha.gxt.data.shared.event.StoreRemoveEvent;
 import com.sencha.gxt.data.shared.event.StoreUpdateEvent;
 
@@ -89,6 +90,11 @@ public class AppsGridPresenterImpl implements AppsGridView.Presenter,
     @Override
     public HandlerRegistration addStoreAddHandler(StoreAddEvent.StoreAddHandler<App> handler) {
         return listStore.addStoreAddHandler(handler);
+    }
+
+    @Override
+    public HandlerRegistration addStoreClearHandler(StoreClearEvent.StoreClearHandler<App> handler) {
+        return listStore.addStoreClearHandler(handler);
     }
 
     @Override

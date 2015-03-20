@@ -11,6 +11,7 @@ import org.iplantc.de.client.models.apps.AppCategory;
 import com.google.gwt.user.client.ui.IsWidget;
 
 import com.sencha.gxt.data.shared.event.StoreAddEvent;
+import com.sencha.gxt.data.shared.event.StoreClearEvent;
 import com.sencha.gxt.data.shared.event.StoreRemoveEvent;
 import com.sencha.gxt.data.shared.event.StoreUpdateEvent;
 import com.sencha.gxt.widget.core.client.grid.Grid;
@@ -71,6 +72,7 @@ public interface AppsGridView extends IsWidget,
                                 StoreAddEvent.HasStoreAddHandlers<App>,
                                 StoreRemoveEvent.HasStoreRemoveHandler<App>,
                                 StoreUpdateEvent.HasStoreUpdateHandlers<App>,
+                                StoreClearEvent.HasStoreClearHandler<App>,
                                 AppFavoritedEvent.HasAppFavoritedEventHandlers,
                                 DeleteAppsSelected.DeleteAppsSelectedHandler,
                                 RunAppSelected.RunAppSelectedHandler {

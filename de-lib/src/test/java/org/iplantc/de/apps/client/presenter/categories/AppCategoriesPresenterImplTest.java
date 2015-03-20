@@ -4,7 +4,11 @@ import org.iplantc.de.apps.client.AppCategoriesView;
 import org.iplantc.de.apps.client.events.AppFavoritedEvent;
 import org.iplantc.de.apps.client.events.AppSearchResultLoadEvent;
 import org.iplantc.de.apps.client.events.AppSavedEvent;
+import org.iplantc.de.apps.client.events.AppUpdatedEvent;
+import org.iplantc.de.apps.client.events.selection.AppFavoriteSelectedEvent;
 import org.iplantc.de.apps.client.events.selection.AppInfoSelectedEvent;
+import org.iplantc.de.apps.client.events.selection.AppRatingDeselected;
+import org.iplantc.de.apps.client.events.selection.AppRatingSelected;
 import org.iplantc.de.apps.client.events.selection.CopyAppSelected;
 import org.iplantc.de.apps.client.events.selection.CopyWorkflowSelected;
 import org.iplantc.de.apps.client.gin.factory.AppCategoriesViewFactory;
@@ -13,6 +17,7 @@ import org.iplantc.de.client.events.EventBus;
 import org.iplantc.de.client.models.DEProperties;
 import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.models.apps.AppCategory;
+import org.iplantc.de.client.models.apps.AppFeedback;
 import org.iplantc.de.client.models.apps.integration.AppTemplate;
 import org.iplantc.de.client.services.AppServiceFacade;
 import org.iplantc.de.client.services.AppUserServiceFacade;
@@ -27,6 +32,7 @@ import com.google.gwtmockito.GxtMockitoTestRunner;
 import com.sencha.gxt.data.shared.Store;
 import com.sencha.gxt.data.shared.TreeStore;
 import com.sencha.gxt.data.shared.event.StoreAddEvent;
+import com.sencha.gxt.data.shared.event.StoreClearEvent;
 import com.sencha.gxt.data.shared.event.StoreRemoveEvent;
 import com.sencha.gxt.widget.core.client.tree.Tree;
 import com.sencha.gxt.widget.core.client.tree.TreeSelectionModel;
@@ -65,10 +71,12 @@ public class AppCategoriesPresenterImplTest {
     // Event mocks
     @Mock StoreAddEvent<App> mockAddEvent;
     @Mock StoreRemoveEvent<App> mockRemoveEvent;
+    @Mock StoreClearEvent<App> mockClearEvent;
     @Mock Store<App> mockStore;
 
     @Captor ArgumentCaptor<AsyncCallback<List<AppCategory>>> appCategoriesCaptor;
     @Captor ArgumentCaptor<AsyncCallback<App>> appCallbackCaptor;
+    @Captor ArgumentCaptor<AsyncCallback<Void>> voidCallbackCaptor;
 
 
     @Mock AsyncProvider<AppDetailsDialog> mockDetailsProvider;
@@ -95,17 +103,13 @@ public class AppCategoriesPresenterImplTest {
     }
 
     @Test public void testConstructorEventHandlerWiring() {
-        verify(viewFactoryMock).create(eq(treeStoreMock), eq(uut));
-        verify(treeStoreMock).addSortInfo(Matchers.<Store.StoreSortInfo<AppCategory>>any());
-
-        verify(eventBusMock, times(2)).addHandler(Matchers.<GwtEvent.Type<AppCategoriesPresenterImpl>>any(), eq(uut));
-
-
+        verifyConstructor();
         verifyNoMoreInteractions(treeStoreMock,
                                  viewMock,
                                  viewFactoryMock,
                                  eventBusMock);
     }
+
 
     /**
      * Ensures that the view is appropriately masked and unmasked when "go(..)" is called.
@@ -192,6 +196,89 @@ public class AppCategoriesPresenterImplTest {
         verify(spy).updateAppCategoryAppCount(eq(appCategoryMock), eq(apps.size()));
     }
 
+    @Test public void currentAppCategoryCountsZeroed_onStoreClear() {
+        final AppCategoriesPresenterImpl spy = spy(new AppCategoriesPresenterImpl(treeStoreMock,
+                                                                                  propsMock,
+                                                                                  jsonUtilMock,
+                                                                                  eventBusMock,
+                                                                                  viewFactoryMock));
+        spy.appService = appUserServiceMock;
+
+        // For book-keeping, for construction of non-spy and spy uut's
+        verify(eventBusMock, times(6)).addHandler(Matchers.<GwtEvent.Type<AppCategoriesPresenterImpl>>any(), Matchers.<AppCategoriesPresenterImpl>any());
+
+        AppCategory appCategoryMock = mock(AppCategory.class);
+        when(selectionModelMock.getSelectedItem()).thenReturn(appCategoryMock);
+
+        /*** CALL METHOD UNDER TEST ***/
+        spy.onClear(mockClearEvent);
+        verify(selectionModelMock).getSelectedItem();
+        verify(spy).updateAppCategoryAppCount(eq(appCategoryMock), eq(0));
+
+        verifyNoMoreInteractions(eventBusMock);
+        verifyZeroInteractions(appUserServiceMock,
+                               appServiceMock);
+    }
+
+    @Test public void verifyServiceCalled_onAppFavoriteSelected() {
+        // For book-keeping, for construction of non-spy and spy uut's
+        verify(eventBusMock, times(3)).addHandler(Matchers.<GwtEvent.Type<AppCategoriesPresenterImpl>>any(), Matchers.<AppCategoriesPresenterImpl>any());
+
+        AppFavoriteSelectedEvent eventMock = mock(AppFavoriteSelectedEvent.class);
+        App selectedAppMock = mock(App.class);
+        when(eventMock.getApp()).thenReturn(selectedAppMock);
+
+        /*** CALL METHOD UNDER TEST ***/
+        uut.onAppFavoriteSelected(eventMock);
+
+        verify(eventMock).getApp();
+        verify(appUserServiceMock).favoriteApp(eq(selectedAppMock), eq(true), voidCallbackCaptor.capture());
+
+
+        /*** CALL METHOD UNDER TEST ***/
+        voidCallbackCaptor.getValue().onSuccess(null);
+
+        verify(selectedAppMock).setFavorite(eq(true));
+        verify(eventBusMock, times(2)).fireEvent(any(AppFavoritedEvent.class));
+        verify(eventBusMock, times(2)).fireEvent(any(AppUpdatedEvent.class));
+
+        verifyNoMoreInteractions(eventBusMock,
+                                 appUserServiceMock);
+        verifyZeroInteractions(appServiceMock);
+    }
+
+    @Test public void verifyServiceCalled_onAppRatingDeselected() {
+        AppRatingDeselected eventMock = mock(AppRatingDeselected.class);
+        App appMock = mock(App.class);
+        when(eventMock.getApp()).thenReturn(appMock);
+
+        /*** CALL METHOD UNDER TEST ***/
+        uut.onAppRatingDeselected(eventMock);
+
+        verify(appUserServiceMock).deleteRating(eq(appMock), Matchers.<AsyncCallback<AppFeedback>>any());
+
+        verifyNoMoreInteractions(appUserServiceMock);
+        verifyZeroInteractions(appServiceMock);
+    }
+
+    @Test public void verifyServiceCalled_onAppRatingSelected() {
+        AppRatingSelected eventMock = mock(AppRatingSelected.class);
+        App appMock = mock(App.class);
+        when(eventMock.getApp()).thenReturn(appMock);
+        int mockScore = 3;
+        when(eventMock.getScore()).thenReturn(mockScore);
+
+        /*** CALL METHOD UNDER TEST ***/
+        uut.onAppRatingSelected(eventMock);
+
+        verify(appUserServiceMock).rateApp(eq(appMock),
+                                           eq(mockScore),
+                                           Matchers.<AsyncCallback<String>>any());
+
+        verifyNoMoreInteractions(appUserServiceMock);
+        verifyZeroInteractions(appServiceMock);
+    }
+
     /**
      * Verify that the Favorites category count is updated when
      * the current category is NOT the Favorites category.
@@ -210,7 +297,7 @@ public class AppCategoriesPresenterImplTest {
             }
         });
         // For book-keeping, for construction of non-spy and spy uut's
-        verify(eventBusMock, times(4)).addHandler(Matchers.<GwtEvent.Type<AppCategoriesPresenterImpl>>any(), Matchers.<AppCategoriesPresenterImpl>any());
+        verify(eventBusMock, times(6)).addHandler(Matchers.<GwtEvent.Type<AppCategoriesPresenterImpl>>any(), Matchers.<AppCategoriesPresenterImpl>any());
         // Set Favorites category as current category
         spy.FAVORITES = "Favorites";
         AppCategory appCategoryMock = mock(AppCategory.class);
@@ -394,5 +481,11 @@ public class AppCategoriesPresenterImplTest {
     }
 
 
+    private void verifyConstructor() {
+        verify(viewFactoryMock).create(eq(treeStoreMock), eq(uut));
+        verify(treeStoreMock).addSortInfo(Matchers.<Store.StoreSortInfo<AppCategory>>any());
+
+        verify(eventBusMock, times(3)).addHandler(Matchers.<GwtEvent.Type<AppCategoriesPresenterImpl>>any(), eq(uut));
+    }
 
 }

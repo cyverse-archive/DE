@@ -43,6 +43,7 @@ public class AppsViewPresenterImpl implements AppsView.Presenter {
         // Wire up list store handlers
         appsGridPresenter.addStoreAddHandler(categoriesPresenter);
         appsGridPresenter.addStoreRemoveHandler(categoriesPresenter);
+        appsGridPresenter.addStoreClearHandler(categoriesPresenter);
         appsGridPresenter.addAppFavoritedEventHandler(categoriesPresenter);
         appsGridPresenter.getView().addAppSelectionChangedEventHandler(toolbarPresenter.getView());
 

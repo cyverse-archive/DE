@@ -51,6 +51,7 @@ public class AppsViewPresenterImplTest {
         // Verify grid wiring
         verify(gridPresenterMock).addStoreAddHandler(categoriesPresenterMock);
         verify(gridPresenterMock).addStoreRemoveHandler(categoriesPresenterMock);
+        verify(gridPresenterMock).addStoreClearHandler(categoriesPresenterMock);
         verify(gridPresenterMock).addAppFavoritedEventHandler(categoriesPresenterMock);
         verify(gridViewMock).addAppSelectionChangedEventHandler(toolbarViewMock);
         verify(gridViewMock).addAppInfoSelectedEventHandler(categoriesPresenterMock);

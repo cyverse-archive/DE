@@ -205,6 +205,8 @@ public class AppDetailsViewImpl extends Composite implements AppDetailsView,
     @Override
     public void onAppUpdated(final AppUpdatedEvent event) {
         editorDriver.edit(event.getApp());
+        favIcon.setValue(null);
+        favIcon.setValue(event.getApp());
     }
 
     @Override
