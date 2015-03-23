@@ -176,7 +176,6 @@ public class GridViewImpl extends ContentPanel implements GridView,
         }
 
         sm.clear();
-        sm.setShowSelectAll(!(selectedItem instanceof DiskResourceQueryTemplate));
 
         // Update pathField
         Scheduler.get().scheduleFinally(new Scheduler.ScheduledCommand() {
@@ -283,12 +282,17 @@ public class GridViewImpl extends ContentPanel implements GridView,
     }
 
     private void reconfigureToListingView() {
+        sm.setShowSelectAll(true);
         // hide Path.
         grid.getColumnModel().getColumn(2).setHidden(true);
         grid.getView().refresh(true);
     }
 
     private void reconfigureToSearchView() {
+        /* Search view does not support select all, otherwise, bulk download
+         * logic would have to change.
+         */
+        sm.setShowSelectAll(false);
         // display Path
         grid.getColumnModel().getColumn(2).setHidden(false);
         grid.getView().refresh(true);
