@@ -151,7 +151,7 @@ public class AppsGridViewImpl extends ContentPanel implements AppsGridView,
     protected void onEnsureDebugId(String baseID) {
         super.onEnsureDebugId(baseID);
         grid.ensureDebugId(baseID + AppsModule.Ids.APP_GRID);
-        acm.ensureDebugId(baseID);
+        acm.ensureDebugId(baseID + AppsModule.Ids.APP_GRID);
     }
 
     @UiFactory

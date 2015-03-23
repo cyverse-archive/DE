@@ -12,7 +12,7 @@ import com.sencha.gxt.theme.base.client.button.ButtonCellDefaultAppearance;
  * @author jstroot
  * @param <C>
  *
- * @see https://html.spec.whatwg.org/#embedding-custom-non-visible-data-with-the-data-*-attributes
+ * @see <a href="https://html.spec.whatwg.org/#embedding-custom-non-visible-data-with-the-data-*-attributes">HTML SPEC</a>
  */
 public class ButtonCellDisabledDecoratorDefaultAppearance<C> extends ButtonCellDefaultAppearance<C> {
     protected final String DATA_DISABLED_ATTR = "data-disabled";

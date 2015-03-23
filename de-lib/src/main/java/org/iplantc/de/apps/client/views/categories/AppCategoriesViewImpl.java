@@ -77,7 +77,7 @@ public class AppCategoriesViewImpl extends ContentPanel implements AppCategories
     @Override
     protected void onEnsureDebugId(String baseID) {
         super.onEnsureDebugId(baseID);
-        tree.ensureDebugId(baseID + AppsModule.Ids.CATEGORIES);
+        tree.ensureDebugId(baseID + AppsModule.Ids.CATEGORIES_TREE);
         getHeader().getTool(0).getElement().setId(WEST_COLLAPSE_BTN_ID);
     }
 

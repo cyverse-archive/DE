@@ -15,7 +15,6 @@ import org.iplantc.de.apps.client.views.grid.cells.AppHyperlinkCell;
 import org.iplantc.de.apps.client.views.grid.cells.AppInfoCell;
 import org.iplantc.de.apps.client.views.grid.cells.AppIntegratorCell;
 import org.iplantc.de.apps.client.views.grid.cells.AppRatingCell;
-import org.iplantc.de.apps.shared.AppsModule;
 import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.models.apps.AppNameComparator;
 import org.iplantc.de.client.models.apps.AppRatingComparator;
@@ -152,9 +151,9 @@ public class AppColumnModel extends ColumnModel<App> implements AppInfoSelectedE
     public void ensureDebugId(String baseID) {
         for (ColumnConfig<App, ?> cc : configs) {
             if (cc.getCell() instanceof AppInfoCell) {
-                ((AppInfoCell)cc.getCell()).setBaseDebugId(baseID + AppsModule.Ids.APP_GRID);
+                ((AppInfoCell)cc.getCell()).setBaseDebugId(baseID);
             } else if (cc.getCell() instanceof AppHyperlinkCell) {
-                ((AppHyperlinkCell)cc.getCell()).setBaseDebugId(baseID + AppsModule.Ids.APP_GRID);
+                ((AppHyperlinkCell)cc.getCell()).setBaseDebugId(baseID);
             }
         }
 

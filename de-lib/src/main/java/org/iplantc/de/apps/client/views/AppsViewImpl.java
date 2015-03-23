@@ -127,6 +127,8 @@ public class AppsViewImpl extends Composite implements AppsView {
     protected void onEnsureDebugId(String baseID) {
         super.onEnsureDebugId(baseID);
         toolBar.asWidget().ensureDebugId(baseID + Ids.MENU_BAR);
+        appsGridView.asWidget().ensureDebugId(baseID);
+        appCategoriesView.asWidget().ensureDebugId(baseID);
     }
 
 }

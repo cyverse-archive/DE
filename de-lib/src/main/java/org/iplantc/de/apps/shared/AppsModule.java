@@ -9,6 +9,7 @@ public interface AppsModule {
         String APPS_VIEW = ".appsView";
         String MENU_BAR = ".menuBar";
         String CATEGORIES = ".categories";
+        String CATEGORIES_TREE = ".tree";
         String APP_GRID = ".appsGrid";
 
         String MENU_ITEM_APPS = ".apps";
