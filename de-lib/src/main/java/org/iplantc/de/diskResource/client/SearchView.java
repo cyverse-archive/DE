@@ -1,10 +1,10 @@
 package org.iplantc.de.diskResource.client;
 
-import org.iplantc.de.diskResource.client.events.SavedSearchesRetrievedEvent;
-import org.iplantc.de.diskResource.client.events.search.DeleteSavedSearchClickedEvent;
-import org.iplantc.de.diskResource.client.events.search.SaveDiskResourceQueryClickedEvent;
-import org.iplantc.de.diskResource.client.events.search.SavedSearchDeletedEvent;
-import org.iplantc.de.diskResource.client.events.search.UpdateSavedSearchesEvent;
+import org.iplantc.de.diskResource.client.events.SavedSearchesRetrievedEvent.SavedSearchesRetrievedEventHandler;
+import org.iplantc.de.diskResource.client.events.search.DeleteSavedSearchClickedEvent.DeleteSavedSearchEventHandler;
+import org.iplantc.de.diskResource.client.events.search.SaveDiskResourceQueryClickedEvent.SaveDiskResourceQueryClickedEventHandler;
+import org.iplantc.de.diskResource.client.events.search.SavedSearchDeletedEvent.HasSavedSearchDeletedEventHandlers;
+import org.iplantc.de.diskResource.client.events.search.UpdateSavedSearchesEvent.HasUpdateSavedSearchesEventHandlers;
 
 /**
  * Created by jstroot on 2/10/15.
@@ -50,11 +50,11 @@ public interface SearchView {
      * @author jstroot
      *
      */
-    interface Presenter extends SaveDiskResourceQueryClickedEvent.SaveDiskResourceQueryClickedEventHandler,
-                                DeleteSavedSearchClickedEvent.DeleteSavedSearchEventHandler,
-                                SavedSearchDeletedEvent.HasSavedSearchDeletedEventHandlers,
-                                SavedSearchesRetrievedEvent.SavedSearchesRetrievedEventHandler,
-                                UpdateSavedSearchesEvent.HasUpdateSavedSearchesEventHandlers {
+    interface Presenter extends SaveDiskResourceQueryClickedEventHandler,
+                                DeleteSavedSearchEventHandler,
+                                HasSavedSearchDeletedEventHandlers,
+                                SavedSearchesRetrievedEventHandler,
+                                HasUpdateSavedSearchesEventHandlers {
     }
 }
 

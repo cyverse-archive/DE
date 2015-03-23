@@ -4,14 +4,16 @@ import org.iplantc.de.client.models.HasPath;
 import org.iplantc.de.client.models.IsMaskable;
 import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.client.models.diskResources.Folder;
-import org.iplantc.de.diskResource.client.events.DiskResourceNameSelectedEvent;
-import org.iplantc.de.diskResource.client.events.DiskResourcePathSelectedEvent;
-import org.iplantc.de.diskResource.client.events.FolderSelectionEvent;
-import org.iplantc.de.diskResource.client.events.RootFoldersRetrievedEvent;
-import org.iplantc.de.diskResource.client.events.SavedSearchesRetrievedEvent;
-import org.iplantc.de.diskResource.client.events.search.DeleteSavedSearchClickedEvent;
-import org.iplantc.de.diskResource.client.events.search.SubmitDiskResourceQueryEvent;
-import org.iplantc.de.diskResource.client.events.search.UpdateSavedSearchesEvent;
+import org.iplantc.de.diskResource.client.events.DiskResourceNameSelectedEvent.DiskResourceNameSelectedEventHandler;
+import org.iplantc.de.diskResource.client.events.DiskResourcePathSelectedEvent.DiskResourcePathSelectedEventHandler;
+import org.iplantc.de.diskResource.client.events.FolderSelectionEvent.HasFolderSelectionEventHandlers;
+import org.iplantc.de.diskResource.client.events.RootFoldersRetrievedEvent.HasRootFoldersRetrievedEventHandlers;
+import org.iplantc.de.diskResource.client.events.SavedSearchesRetrievedEvent.HasSavedSearchesRetrievedEventHandlers;
+import org.iplantc.de.diskResource.client.events.search.DeleteSavedSearchClickedEvent.HasDeleteSavedSearchClickedEventHandlers;
+import org.iplantc.de.diskResource.client.events.search.SubmitDiskResourceQueryEvent.HasSubmitDiskResourceQueryEventHandlers;
+import org.iplantc.de.diskResource.client.events.search.UpdateSavedSearchesEvent.UpdateSavedSearchesHandler;
+import org.iplantc.de.diskResource.client.events.selection.ImportFromUrlSelected.ImportFromUrlSelectedHandler;
+import org.iplantc.de.diskResource.client.events.selection.SimpleUploadSelected.SimpleUploadSelectedHandler;
 import org.iplantc.de.diskResource.client.presenters.grid.proxy.FolderContentsLoadConfig;
 
 import com.google.gwt.dom.client.Element;
@@ -32,8 +34,8 @@ import java.util.List;
  * @author jstroot
  */
 public interface NavigationView extends IsWidget,
-                                        FolderSelectionEvent.HasFolderSelectionEventHandlers,
-                                        DeleteSavedSearchClickedEvent.HasDeleteSavedSearchClickedEventHandlers {
+                                        HasFolderSelectionEventHandlers,
+                                        HasDeleteSavedSearchClickedEventHandlers {
     interface Appearance {
 
         String dataDragDropStatusText(int size);
@@ -57,13 +59,15 @@ public interface NavigationView extends IsWidget,
         SafeHtml treeNodeFilterText(String name);
     }
 
-    interface Presenter extends SubmitDiskResourceQueryEvent.HasSubmitDiskResourceQueryEventHandlers,
-                                RootFoldersRetrievedEvent.HasRootFoldersRetrievedEventHandlers,
-                                SavedSearchesRetrievedEvent.HasSavedSearchesRetrievedEventHandlers,
+    interface Presenter extends HasSubmitDiskResourceQueryEventHandlers,
+                                HasRootFoldersRetrievedEventHandlers,
+                                HasSavedSearchesRetrievedEventHandlers,
                                 BeforeLoadEvent.BeforeLoadHandler<FolderContentsLoadConfig>,
-                                DiskResourceNameSelectedEvent.DiskResourceNameSelectedEventHandler,
-                                DiskResourcePathSelectedEvent.DiskResourcePathSelectedEventHandler,
-                                UpdateSavedSearchesEvent.UpdateSavedSearchesHandler {
+                                DiskResourceNameSelectedEventHandler,
+                                DiskResourcePathSelectedEventHandler,
+                                UpdateSavedSearchesHandler,
+                                ImportFromUrlSelectedHandler,
+                                SimpleUploadSelectedHandler {
 
         interface Appearance {
 

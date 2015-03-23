@@ -288,6 +288,8 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
         toolbarPresenter.getView().addSendToCogeSelectedHandler(this);
         toolbarPresenter.getView().addSendToEnsemblSelectedHandler(this);
         toolbarPresenter.getView().addSendToTreeViewerSelectedHandler(this);
+        toolbarPresenter.getView().addSimpleUploadSelectedHandler(this.navigationPresenter);
+        toolbarPresenter.getView().addImportFromUrlSelectedHandler(this.navigationPresenter);
 
     }
 
@@ -526,11 +528,6 @@ public class DiskResourcePresenterImpl implements DiskResourceView.Presenter,
             view.mask(appearance.renameDiskResourcesLoadingMask());
             diskResourceService.renameDiskResource(dr, newName, new RenameDiskResourceCallback(dr, view));
         }
-    }
-
-    @Override
-    public Folder getHomeFolder() {
-        return navigationPresenter.getSelectedUploadFolder();
     }
 
     @Override

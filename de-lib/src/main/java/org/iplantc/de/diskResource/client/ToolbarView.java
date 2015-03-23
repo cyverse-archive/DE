@@ -3,10 +3,28 @@ package org.iplantc.de.diskResource.client;
 import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.client.models.viewer.MimeType;
-import org.iplantc.de.diskResource.client.events.DiskResourceSelectionChangedEvent;
-import org.iplantc.de.diskResource.client.events.FolderSelectionEvent;
-import org.iplantc.de.diskResource.client.events.selection.*;
-import org.iplantc.de.diskResource.client.events.selection.CopyMetadataSelected.CopyMetadataSelectedEventHandler;
+import org.iplantc.de.diskResource.client.events.DiskResourceSelectionChangedEvent.DiskResourceSelectionChangedEventHandler;
+import org.iplantc.de.diskResource.client.events.FolderSelectionEvent.FolderSelectionEventHandler;
+import org.iplantc.de.diskResource.client.events.selection.BulkDownloadSelected.HasBulkDownloadSelectedEventHandlers;
+import org.iplantc.de.diskResource.client.events.selection.BulkUploadSelected.HasBulkUploadSelectedEventHandlers;
+import org.iplantc.de.diskResource.client.events.selection.CopyMetadataSelected.HasCopyMetadataSelectedEventHandlers;
+import org.iplantc.de.diskResource.client.events.selection.DeleteDiskResourcesSelected.HasDeleteDiskResourcesSelectedEventHandlers;
+import org.iplantc.de.diskResource.client.events.selection.EditInfoTypeSelected.HasEditInfoTypeSelectedEventHandlers;
+import org.iplantc.de.diskResource.client.events.selection.EmptyTrashSelected.HasEmptyTrashSelectedHandlers;
+import org.iplantc.de.diskResource.client.events.selection.ImportFromUrlSelected.HasImportFromUrlSelectedHandlers;
+import org.iplantc.de.diskResource.client.events.selection.ManageCommentsSelected.HasManageCommentsSelectedEventHandlers;
+import org.iplantc.de.diskResource.client.events.selection.ManageMetadataSelected.HasManageMetadataSelectedEventHandlers;
+import org.iplantc.de.diskResource.client.events.selection.ManageSharingSelected.HasManageSharingSelectedEventHandlers;
+import org.iplantc.de.diskResource.client.events.selection.MoveDiskResourcesSelected.HasMoveDiskResourcesSelectedHandlers;
+import org.iplantc.de.diskResource.client.events.selection.RefreshFolderSelected.HasRefreshFolderSelectedHandlers;
+import org.iplantc.de.diskResource.client.events.selection.RenameDiskResourceSelected.HasRenameDiskResourceSelectedHandlers;
+import org.iplantc.de.diskResource.client.events.selection.RestoreDiskResourcesSelected.HasRestoreDiskResourceSelectedHandlers;
+import org.iplantc.de.diskResource.client.events.selection.SendToCogeSelected.HasSendToCogeSelectedHandlers;
+import org.iplantc.de.diskResource.client.events.selection.SendToEnsemblSelected.HasSendToEnsemblSelectedHandlers;
+import org.iplantc.de.diskResource.client.events.selection.SendToTreeViewerSelected.HasSendToTreeViewerSelectedHandlers;
+import org.iplantc.de.diskResource.client.events.selection.ShareByDataLinkSelected.HasShareByDataLinkSelectedEventHandlers;
+import org.iplantc.de.diskResource.client.events.selection.SimpleDownloadSelected.HasSimpleDownloadSelectedHandlers;
+import org.iplantc.de.diskResource.client.events.selection.SimpleUploadSelected.HasSimpleUploadSelectedHandlers;
 import org.iplantc.de.diskResource.client.views.search.DiskResourceSearchField;
 
 import com.google.gwt.resources.client.ImageResource;
@@ -18,27 +36,28 @@ import java.util.List;
  * @author jstroot
  */
 public interface ToolbarView extends IsWidget,
-                                     ManageCommentsSelected.HasManageCommentsSelectedEventHandlers,
-                                     ManageMetadataSelected.HasManageMetadataSelectedEventHandlers,
-                            CopyMetadataSelected.HasCopyMetadataSelectedEventHandlers,
-                                     ManageSharingSelected.HasManageSharingSelectedEventHandlers,
-                                     ShareByDataLinkSelected.HasShareByDataLinkSelectedEventHandlers,
-                                     SendToEnsemblSelected.HasSendToEnsemblSelectedHandlers,
-                                     SendToCogeSelected.HasSendToCogeSelectedHandlers,
-                                     SendToTreeViewerSelected.HasSendToTreeViewerSelectedHandlers,
-                                     BulkDownloadSelected.HasBulkDownloadSelectedEventHandlers,
-                                     BulkUploadSelected.HasBulkUploadSelectedEventHandlers,
-                                     DeleteDiskResourcesSelected.HasDeleteDiskResourcesSelectedEventHandlers,
-                                     EditInfoTypeSelected.HasEditInfoTypeSelectedEventHandlers,
-                                     EmptyTrashSelected.HasEmptyTrashSelectedHandlers,
-                                     MoveDiskResourcesSelected.HasMoveDiskResourcesSelectedHandlers,
-                                     RefreshFolderSelected.HasRefreshFolderSelectedHandlers,
-                                     RenameDiskResourceSelected.HasRenameDiskResourceSelectedHandlers,
-                                     RestoreDiskResourcesSelected.HasRestoreDiskResourceSelectedHandlers,
-                                     SimpleUploadSelected.HasSimpleUploadSelectedHandlers,
-                                     SimpleDownloadSelected.HasSimpleDownloadSelectedHandlers,
-                                     FolderSelectionEvent.FolderSelectionEventHandler,
-                                     DiskResourceSelectionChangedEvent.DiskResourceSelectionChangedEventHandler {
+                                     HasManageCommentsSelectedEventHandlers,
+                                     HasManageMetadataSelectedEventHandlers,
+                                     HasCopyMetadataSelectedEventHandlers,
+                                     HasManageSharingSelectedEventHandlers,
+                                     HasShareByDataLinkSelectedEventHandlers,
+                                     HasSendToEnsemblSelectedHandlers,
+                                     HasSendToCogeSelectedHandlers,
+                                     HasSendToTreeViewerSelectedHandlers,
+                                     HasBulkDownloadSelectedEventHandlers,
+                                     HasBulkUploadSelectedEventHandlers,
+                                     HasDeleteDiskResourcesSelectedEventHandlers,
+                                     HasEditInfoTypeSelectedEventHandlers,
+                                     HasEmptyTrashSelectedHandlers,
+                                     HasMoveDiskResourcesSelectedHandlers,
+                                     HasRefreshFolderSelectedHandlers,
+                                     HasRenameDiskResourceSelectedHandlers,
+                                     HasRestoreDiskResourceSelectedHandlers,
+                                     HasSimpleUploadSelectedHandlers,
+                                     HasSimpleDownloadSelectedHandlers,
+                                     HasImportFromUrlSelectedHandlers,
+                                     FolderSelectionEventHandler,
+                                     DiskResourceSelectionChangedEventHandler {
     interface Appearance {
 
         String newPathListMenuText();
@@ -220,8 +239,6 @@ public interface ToolbarView extends IsWidget,
         void onCreatePublicLinkSelected(List<DiskResource> selectedDiskResources);
 
         void onEditFileSelected(List<DiskResource> selectedDiskResources);
-
-        void onImportFromUrlSelected(Folder selectedFolder);
 
         void onOpenNewWindowAtLocationSelected(Folder selectedFolder);
 

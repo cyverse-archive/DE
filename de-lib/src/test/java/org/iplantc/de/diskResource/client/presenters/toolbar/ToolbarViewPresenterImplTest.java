@@ -1,11 +1,12 @@
 package org.iplantc.de.diskResource.client.presenters.toolbar;
 
 import org.iplantc.de.client.events.EventBus;
+import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.diskResource.client.DiskResourceView;
 import org.iplantc.de.diskResource.client.ToolbarView;
-import org.iplantc.de.diskResource.client.events.RequestSimpleUploadEvent;
-import org.iplantc.de.diskResource.client.events.selection.SimpleUploadSelected;
+import org.iplantc.de.diskResource.client.events.RequestSimpleDownloadEvent;
+import org.iplantc.de.diskResource.client.events.selection.SimpleDownloadSelected;
 import org.iplantc.de.diskResource.client.gin.factory.ToolbarViewFactory;
 
 import com.google.gwtmockito.GwtMockitoTestRunner;
@@ -18,6 +19,9 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Matchers;
 import org.mockito.Mock;
+
+import java.util.Collections;
+import java.util.List;
 
 /**
  * @author jstroot
@@ -39,22 +43,24 @@ public class ToolbarViewPresenterImplTest {
         uut.eventBus = eventBusMock;
     }
 
-    @Test public void verifyHomePathSetWhenFolderNull_onSimpleUploadSelected() {
-        SimpleUploadSelected eventMock = mock(SimpleUploadSelected.class);
-        when(eventMock.getSelectedFolder()).thenReturn(null);
-        Folder homeFolderMock = mock(Folder.class);
-        when(homeFolderMock.getPath()).thenReturn("/mock/home/path");
-        when(parentPresenterMock.getHomeFolder()).thenReturn(homeFolderMock);
+    @Test public void onSimpleDownloadSelected_firesEvent() {
+        SimpleDownloadSelected eventMock = mock(SimpleDownloadSelected.class);
+        List<DiskResource> selectedResourcesMock = Collections.emptyList();
+        Folder selectedFolderMock = mock(Folder.class);
+        when(eventMock.getSelectedDiskResources()).thenReturn(selectedResourcesMock);
+        when(eventMock.getSelectedFolder()).thenReturn(selectedFolderMock);
+
 
         /** CALL METHOD UNDER TEST **/
-        uut.onSimpleUploadSelected(eventMock);
+        uut.onSimpleDownloadSelected(eventMock);
 
-        verify(eventMock).getSelectedFolder();
-        verify(parentPresenterMock).getHomeFolder();
-
-        ArgumentCaptor<RequestSimpleUploadEvent> captor = ArgumentCaptor.forClass(RequestSimpleUploadEvent.class);
+        ArgumentCaptor<RequestSimpleDownloadEvent> captor = ArgumentCaptor.forClass(RequestSimpleDownloadEvent.class);
         verify(eventBusMock).fireEvent(captor.capture());
 
-        assertEquals(homeFolderMock, captor.getValue().getDestinationFolder());
+        assertEquals(selectedResourcesMock, captor.getValue().getRequestedResources());
+        assertEquals(selectedFolderMock, captor.getValue().getCurrentFolder());
+
+        verifyNoMoreInteractions(eventBusMock);
     }
+
 }

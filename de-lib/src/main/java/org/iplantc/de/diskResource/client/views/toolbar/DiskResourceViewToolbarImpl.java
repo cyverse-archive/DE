@@ -113,6 +113,11 @@ public class DiskResourceViewToolbarImpl extends Composite implements ToolbarVie
     }
 
     @Override
+    public HandlerRegistration addImportFromUrlSelectedHandler(ImportFromUrlSelected.ImportFromUrlSelectedHandler handler) {
+        return addHandler(handler, ImportFromUrlSelected.TYPE);
+    }
+
+    @Override
     public HandlerRegistration addManageCommentsSelectedEventHandler(ManageCommentsSelected.ManageCommentsSelectedEventHandler handler) {
         return addHandler(handler, ManageCommentsSelected.TYPE);
     }
@@ -353,7 +358,7 @@ public class DiskResourceViewToolbarImpl extends Composite implements ToolbarVie
 
     @UiHandler("importFromUrlMi")
     void onImportFromUrlClicked(SelectionEvent<Item> event) {
-        presenter.onImportFromUrlSelected(selectedFolder);
+        fireEvent(new ImportFromUrlSelected(selectedFolder));
     }
 
     @UiHandler("moveMi")

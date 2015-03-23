@@ -16,12 +16,10 @@ import org.iplantc.de.diskResource.client.DataLinkView;
 import org.iplantc.de.diskResource.client.DiskResourceView;
 import org.iplantc.de.diskResource.client.ToolbarView;
 import org.iplantc.de.diskResource.client.events.CreateNewFileEvent;
-import org.iplantc.de.diskResource.client.events.RequestImportFromUrlEvent;
 import org.iplantc.de.diskResource.client.events.RequestSimpleDownloadEvent;
-import org.iplantc.de.diskResource.client.events.RequestSimpleUploadEvent;
 import org.iplantc.de.diskResource.client.events.ShowFilePreviewEvent;
 import org.iplantc.de.diskResource.client.events.selection.SimpleDownloadSelected;
-import org.iplantc.de.diskResource.client.events.selection.SimpleUploadSelected;
+import org.iplantc.de.diskResource.client.events.selection.SimpleDownloadSelected.SimpleDownloadSelectedHandler;
 import org.iplantc.de.diskResource.client.gin.factory.DataLinkPresenterFactory;
 import org.iplantc.de.diskResource.client.gin.factory.ToolbarViewFactory;
 import org.iplantc.de.diskResource.client.views.dialogs.CreateFolderDialog;
@@ -42,8 +40,7 @@ import java.util.List;
  * @author jstroot
  */
 public class ToolbarViewPresenterImpl implements ToolbarView.Presenter,
-                                                 SimpleDownloadSelected.SimpleDownloadSelectedHandler,
-                                                 SimpleUploadSelected.SimpleUploadSelectedHandler {
+                                                 SimpleDownloadSelectedHandler {
 
     @Inject ToolbarView.Presenter.Appearance appearance;
     @Inject DataLinkPresenterFactory dataLinkPresenterFactory;
@@ -58,7 +55,6 @@ public class ToolbarViewPresenterImpl implements ToolbarView.Presenter,
         this.view = viewFactory.create(this);
 
         view.addSimpleDownloadSelectedHandler(this);
-        view.addSimpleUploadSelectedHandler(this);
     }
 
     @Override
@@ -148,11 +144,6 @@ public class ToolbarViewPresenterImpl implements ToolbarView.Presenter,
     }
 
     @Override
-    public void onImportFromUrlSelected(final Folder selectedFolder) {
-        eventBus.fireEvent(new RequestImportFromUrlEvent(selectedFolder));
-    }
-
-    @Override
     public void onOpenNewWindowAtLocationSelected(final Folder selectedFolder) {
         final String selectedFolderPath = selectedFolder == null ? null : selectedFolder.getPath();
         OpenFolderEvent openFolderEvent = new OpenFolderEvent(selectedFolderPath, true);
@@ -176,12 +167,4 @@ public class ToolbarViewPresenterImpl implements ToolbarView.Presenter,
                                                           event.getSelectedFolder()));
     }
 
-    @Override
-    public void onSimpleUploadSelected(final SimpleUploadSelected event) {
-        Folder destinationFolder = event.getSelectedFolder();
-        if(destinationFolder == null){
-            destinationFolder = parentPresenter.getHomeFolder();
-        }
-        eventBus.fireEvent(new RequestSimpleUploadEvent(destinationFolder));
-    }
 }

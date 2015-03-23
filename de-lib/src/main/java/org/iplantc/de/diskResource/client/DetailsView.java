@@ -2,35 +2,35 @@ package org.iplantc.de.diskResource.client;
 
 import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.client.models.tags.Tag;
-import org.iplantc.de.diskResource.client.events.DiskResourceSelectionChangedEvent;
-import org.iplantc.de.diskResource.client.events.selection.EditInfoTypeSelected;
-import org.iplantc.de.diskResource.client.events.selection.ManageSharingSelected;
-import org.iplantc.de.diskResource.client.events.selection.ResetInfoTypeSelected;
-import org.iplantc.de.diskResource.client.events.search.SubmitDiskResourceQueryEvent;
-import org.iplantc.de.diskResource.client.events.selection.SendToCogeSelected;
-import org.iplantc.de.diskResource.client.events.selection.SendToEnsemblSelected;
-import org.iplantc.de.diskResource.client.events.selection.SendToTreeViewerSelected;
+import org.iplantc.de.diskResource.client.events.DiskResourceSelectionChangedEvent.DiskResourceSelectionChangedEventHandler;
+import org.iplantc.de.diskResource.client.events.search.SubmitDiskResourceQueryEvent.HasSubmitDiskResourceQueryEventHandlers;
+import org.iplantc.de.diskResource.client.events.selection.EditInfoTypeSelected.HasEditInfoTypeSelectedEventHandlers;
+import org.iplantc.de.diskResource.client.events.selection.ManageSharingSelected.HasManageSharingSelectedEventHandlers;
+import org.iplantc.de.diskResource.client.events.selection.ResetInfoTypeSelected.HasResetInfoTypeSelectedHandlers;
+import org.iplantc.de.diskResource.client.events.selection.SendToCogeSelected.HasSendToCogeSelectedHandlers;
+import org.iplantc.de.diskResource.client.events.selection.SendToEnsemblSelected.HasSendToEnsemblSelectedHandlers;
+import org.iplantc.de.diskResource.client.events.selection.SendToTreeViewerSelected.HasSendToTreeViewerSelectedHandlers;
 
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.user.client.ui.IsWidget;
 
-import com.sencha.gxt.data.shared.event.StoreUpdateEvent;
+import com.sencha.gxt.data.shared.event.StoreUpdateEvent.StoreUpdateHandler;
 
 /**
  * Created by jstroot on 2/2/15.
  * @author jstroot
  */
 public interface DetailsView extends IsWidget,
-                                     DiskResourceSelectionChangedEvent.DiskResourceSelectionChangedEventHandler,
-                                     StoreUpdateEvent.StoreUpdateHandler<DiskResource>,
-                                     ManageSharingSelected.HasManageSharingSelectedEventHandlers,
-                                     EditInfoTypeSelected.HasEditInfoTypeSelectedEventHandlers,
-                                     ResetInfoTypeSelected.HasResetInfoTypeSelectedHandlers,
-                                     SubmitDiskResourceQueryEvent.HasSubmitDiskResourceQueryEventHandlers,
-                                     SendToTreeViewerSelected.HasSendToTreeViewerSelectedHandlers,
-                                     SendToCogeSelected.HasSendToCogeSelectedHandlers,
-                                     SendToEnsemblSelected.HasSendToEnsemblSelectedHandlers {
+                                     DiskResourceSelectionChangedEventHandler,
+                                     StoreUpdateHandler<DiskResource>,
+                                     HasManageSharingSelectedEventHandlers,
+                                     HasEditInfoTypeSelectedEventHandlers,
+                                     HasResetInfoTypeSelectedHandlers,
+                                     HasSubmitDiskResourceQueryEventHandlers,
+                                     HasSendToTreeViewerSelectedHandlers,
+                                     HasSendToCogeSelectedHandlers,
+                                     HasSendToEnsemblSelectedHandlers {
     interface Appearance {
         interface DetailsViewStyle extends CssResource {
 

@@ -13,17 +13,11 @@ import org.iplantc.de.client.util.DiskResourceUtil;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
 import org.iplantc.de.diskResource.client.DiskResourceView;
 import org.iplantc.de.diskResource.client.NavigationView;
-import org.iplantc.de.diskResource.client.events.DiskResourceNameSelectedEvent;
-import org.iplantc.de.diskResource.client.events.DiskResourcePathSelectedEvent;
-import org.iplantc.de.diskResource.client.events.DiskResourceRenamedEvent;
-import org.iplantc.de.diskResource.client.events.DiskResourcesDeletedEvent;
-import org.iplantc.de.diskResource.client.events.DiskResourcesMovedEvent;
-import org.iplantc.de.diskResource.client.events.FolderCreatedEvent;
-import org.iplantc.de.diskResource.client.events.FolderSelectionEvent;
-import org.iplantc.de.diskResource.client.events.RootFoldersRetrievedEvent;
-import org.iplantc.de.diskResource.client.events.SavedSearchesRetrievedEvent;
+import org.iplantc.de.diskResource.client.events.*;
 import org.iplantc.de.diskResource.client.events.search.SubmitDiskResourceQueryEvent;
 import org.iplantc.de.diskResource.client.events.search.UpdateSavedSearchesEvent;
+import org.iplantc.de.diskResource.client.events.selection.ImportFromUrlSelected;
+import org.iplantc.de.diskResource.client.events.selection.SimpleUploadSelected;
 import org.iplantc.de.diskResource.client.gin.factory.NavigationViewFactory;
 import org.iplantc.de.diskResource.client.presenters.grid.proxy.FolderContentsLoadConfig;
 import org.iplantc.de.diskResource.client.presenters.navigation.proxy.CachedFolderTreeStoreBinding;
@@ -212,6 +206,15 @@ public class NavigationPresenterImpl implements NavigationView.Presenter,
     }
 
     @Override
+    public void onImportFromUrlSelected(final ImportFromUrlSelected event) {
+        Folder destinationFolder = event.getSelectedFolder();
+        if(destinationFolder == null){
+            destinationFolder = getSelectedUploadFolder();
+        }
+        eventBus.fireEvent(new RequestImportFromUrlEvent(destinationFolder));
+    }
+
+    @Override
     public void onRename(DiskResource originalDr, DiskResource newDr) {
         Folder parent = getFolderByPath(diskResourceUtil.parseParent(newDr.getPath()));
         if (parent != null) {
@@ -222,6 +225,15 @@ public class NavigationPresenterImpl implements NavigationView.Presenter,
     @Override
     public void onRequestFolderRefresh(FolderRefreshEvent event) {
         refreshFolder(event.getFolder());
+    }
+
+    @Override
+    public void onSimpleUploadSelected(SimpleUploadSelected event) {
+         Folder destinationFolder = event.getSelectedFolder();
+        if(destinationFolder == null) {
+            destinationFolder = getSelectedUploadFolder();
+        }
+        eventBus.fireEvent(new RequestSimpleUploadEvent(destinationFolder));
     }
 
     /**

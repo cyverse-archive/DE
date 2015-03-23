@@ -3,16 +3,21 @@ package org.iplantc.de.diskResource.client;
 import org.iplantc.de.client.models.HasId;
 import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.client.models.diskResources.Folder;
-import org.iplantc.de.diskResource.client.events.*;
-import org.iplantc.de.diskResource.client.events.selection.CopyMetadataSelected;
-import org.iplantc.de.diskResource.client.events.selection.EditInfoTypeSelected;
-import org.iplantc.de.diskResource.client.events.selection.ManageCommentsSelected;
-import org.iplantc.de.diskResource.client.events.selection.ManageMetadataSelected;
-import org.iplantc.de.diskResource.client.events.selection.ManageSharingSelected;
-import org.iplantc.de.diskResource.client.events.selection.ResetInfoTypeSelected;
-import org.iplantc.de.diskResource.client.events.selection.ShareByDataLinkSelected;
+import org.iplantc.de.diskResource.client.events.DiskResourceNameSelectedEvent.DiskResourceNameSelectedEventHandler;
+import org.iplantc.de.diskResource.client.events.DiskResourceNameSelectedEvent.HasDiskResourceNameSelectedEventHandlers;
+import org.iplantc.de.diskResource.client.events.DiskResourcePathSelectedEvent.HasDiskResourcePathSelectedEventHandlers;
+import org.iplantc.de.diskResource.client.events.DiskResourceSelectionChangedEvent.HasDiskResourceSelectionChangedEventHandlers;
+import org.iplantc.de.diskResource.client.events.FolderSelectionEvent.FolderSelectionEventHandler;
+import org.iplantc.de.diskResource.client.events.RequestDiskResourceFavoriteEvent.RequestDiskResourceFavoriteEventHandler;
+import org.iplantc.de.diskResource.client.events.search.SubmitDiskResourceQueryEvent.SubmitDiskResourceQueryEventHandler;
+import org.iplantc.de.diskResource.client.events.selection.CopyMetadataSelected.CopyMetadataSelectedEventHandler;
+import org.iplantc.de.diskResource.client.events.selection.EditInfoTypeSelected.EditInfoTypeSelectedEventHandler;
+import org.iplantc.de.diskResource.client.events.selection.ManageCommentsSelected.ManageCommentsSelectedEventHandler;
+import org.iplantc.de.diskResource.client.events.selection.ManageMetadataSelected.ManageMetadataSelectedEventHandler;
+import org.iplantc.de.diskResource.client.events.selection.ManageSharingSelected.ManageSharingSelectedEventHandler;
+import org.iplantc.de.diskResource.client.events.selection.ResetInfoTypeSelected.ResetInfoTypeSelectedHandler;
+import org.iplantc.de.diskResource.client.events.selection.ShareByDataLinkSelected.ShareByDataLinkSelectedEventHandler;
 import org.iplantc.de.diskResource.client.presenters.grid.proxy.FolderContentsLoadConfig;
-import org.iplantc.de.diskResource.client.events.search.SubmitDiskResourceQueryEvent;
 import org.iplantc.de.diskResource.client.views.grid.DiskResourceColumnModel;
 
 import com.google.gwt.dom.client.Element;
@@ -21,7 +26,7 @@ import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.safehtml.client.HasSafeHtml;
 import com.google.gwt.user.client.ui.IsWidget;
 
-import com.sencha.gxt.data.shared.event.StoreUpdateEvent;
+import com.sencha.gxt.data.shared.event.StoreUpdateEvent.HasStoreUpdateHandlers;
 import com.sencha.gxt.data.shared.loader.BeforeLoadEvent;
 import com.sencha.gxt.data.shared.loader.DataProxy;
 import com.sencha.gxt.data.shared.loader.PagingLoadResult;
@@ -38,11 +43,11 @@ import java.util.List;
  */
 public interface GridView extends IsWidget,
                                   HasLayout,
-                                  DiskResourcePathSelectedEvent.HasDiskResourcePathSelectedEventHandlers,
-                                  FolderSelectionEvent.FolderSelectionEventHandler,
-                                  DiskResourceNameSelectedEvent.HasDiskResourceNameSelectedEventHandlers,
-                                  DiskResourceSelectionChangedEvent.HasDiskResourceSelectionChangedEventHandlers,
-                                  SubmitDiskResourceQueryEvent.SubmitDiskResourceQueryEventHandler {
+                                  HasDiskResourcePathSelectedEventHandlers,
+                                  FolderSelectionEventHandler,
+                                  HasDiskResourceNameSelectedEventHandlers,
+                                  HasDiskResourceSelectionChangedEventHandlers,
+                                  SubmitDiskResourceQueryEventHandler {
     interface Appearance {
 
         String actionsColumnLabel();
@@ -95,26 +100,22 @@ public interface GridView extends IsWidget,
         void setHasSafeHtml(HasSafeHtml centerHeader);
     }
 
-    interface Presenter extends DiskResourceNameSelectedEvent.DiskResourceNameSelectedEventHandler,
-                                ManageSharingSelected.ManageSharingSelectedEventHandler,
-                                ManageMetadataSelected.ManageMetadataSelectedEventHandler,
-                       CopyMetadataSelected.CopyMetadataSelectedEventHandler,
-                                ShareByDataLinkSelected.ShareByDataLinkSelectedEventHandler,
-                                RequestDiskResourceFavoriteEvent.RequestDiskResourceFavoriteEventHandler,
-                                ManageCommentsSelected.ManageCommentsSelectedEventHandler,
-                                FolderSelectionEvent.FolderSelectionEventHandler,
-                                SubmitDiskResourceQueryEvent.SubmitDiskResourceQueryEventHandler,
-                                StoreUpdateEvent.HasStoreUpdateHandlers<DiskResource>,
-                                EditInfoTypeSelected.EditInfoTypeSelectedEventHandler,
-                                ResetInfoTypeSelected.ResetInfoTypeSelectedHandler {
+    interface Presenter extends DiskResourceNameSelectedEventHandler,
+                                ManageSharingSelectedEventHandler,
+                                ManageMetadataSelectedEventHandler,
+                                CopyMetadataSelectedEventHandler,
+                                ShareByDataLinkSelectedEventHandler,
+                                RequestDiskResourceFavoriteEventHandler,
+                                ManageCommentsSelectedEventHandler,
+                                FolderSelectionEventHandler,
+                                SubmitDiskResourceQueryEventHandler,
+                                HasStoreUpdateHandlers<DiskResource>,
+                                EditInfoTypeSelectedEventHandler,
+                                ResetInfoTypeSelectedHandler {
 
         interface Appearance {
 
             String comments();
-
-            String commentsDialogHeight();
-
-            String commentsDialogWidth();
 
             String copy();
 

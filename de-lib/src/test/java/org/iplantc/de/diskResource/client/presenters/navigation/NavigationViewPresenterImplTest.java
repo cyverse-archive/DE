@@ -1,30 +1,42 @@
 package org.iplantc.de.diskResource.client.presenters.navigation;
 
 import org.iplantc.de.client.events.EventBus;
+import org.iplantc.de.client.events.diskResources.FolderRefreshEvent;
 import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.client.util.DiskResourceUtil;
 import org.iplantc.de.diskResource.client.DiskResourceView;
 import org.iplantc.de.diskResource.client.NavigationView;
+import org.iplantc.de.diskResource.client.events.FolderSelectionEvent;
+import org.iplantc.de.diskResource.client.events.RequestImportFromUrlEvent;
+import org.iplantc.de.diskResource.client.events.RequestSimpleUploadEvent;
+import org.iplantc.de.diskResource.client.events.selection.ImportFromUrlSelected;
+import org.iplantc.de.diskResource.client.events.selection.SimpleUploadSelected;
 import org.iplantc.de.diskResource.client.gin.factory.NavigationViewFactory;
+import org.iplantc.de.diskResource.client.presenters.grid.proxy.FolderContentsLoadConfig;
 import org.iplantc.de.diskResource.client.views.navigation.NavigationViewDnDHandler;
 
+import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwtmockito.GxtMockitoTestRunner;
 
 import com.sencha.gxt.data.shared.TreeStore;
+import com.sencha.gxt.data.shared.loader.BeforeLoadEvent;
 import com.sencha.gxt.data.shared.loader.TreeLoader;
+import com.sencha.gxt.widget.core.client.tree.Tree;
+import com.sencha.gxt.widget.core.client.tree.TreeSelectionModel;
 
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.when;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Matchers;
 import org.mockito.Mock;
 
 /**
  * @author jstroot
- * FIXME Implement/update/correct this test.
- * This is a clone-and-own of the DR presenter test, since much of the implementation is simply
- * being migrated.
  */
 @RunWith(GxtMockitoTestRunner.class)
 public class NavigationViewPresenterImplTest {
@@ -37,214 +49,226 @@ public class NavigationViewPresenterImplTest {
     @Mock NavigationView viewMock;
     @Mock EventBus eventBusMock;
 
+    @Mock BeforeLoadEvent<FolderContentsLoadConfig> beforeLoadEventMock;
+    @Mock Tree<Folder,Folder> treeMock;
+    @Mock TreeSelectionModel<Folder> selectionModelMock;
+
+    public NavigationViewPresenterImplTest() {
+    }
+
     @Before public void setUp() {
         when(viewFactoryMock.create(any(TreeStore.class), any(TreeLoader.class), any(NavigationViewDnDHandler.class))).thenReturn(viewMock);
+        when(viewMock.getTree()).thenReturn(treeMock);
+        when(treeMock.getSelectionModel()).thenReturn(selectionModelMock);
         uut = new NavigationPresenterImpl(viewFactoryMock, treeStoreMock, folderRpcProxyMock, diskResourceUtilMock, eventBusMock, appearanceMock);
+
+        verifyConstructor(uut);
     }
 
-    @Test public void placeHolderTest() {
-
-    }
-/*
-    @Mock DiskResourceView mockView;
-    @Mock DiskResourceViewFactory mockViewFactory;
-    @Mock DiskResourceView.FolderRpcProxy mockFolderRpc;
-    @Mock FolderContentsRpcProxyFactory mockFolderContentsRpcFactory;
-    @Mock DiskResourceView.FolderRpcProxy mockFolderRpcProxy;
-    @Mock DiskResourceServiceFacade mockDiskResourceService;
-    @Mock IplantDisplayStrings mockDisplayStrings;
-    @Mock IplantErrorStrings errorStringsMock;
-    @Mock IplantContextualHelpStrings helpStringsMock;
-    @Mock DiskResourceAutoBeanFactory mockFactory;
-    @Mock DataLinkFactory mockDlFactory;
-    @Mock DataSearchPresenter mockDataSearchPresenter;
-    @Mock EventBus mockEventBus;
-    @Mock UserInfo mockUserInfo;
-    @Mock MetadataServiceFacade mockFileSystemMetadataService;
-    @Mock UpdateSavedSearchesEvent eventMock;
-
-    @Mock IplantAnnouncer mockAnnouncer;
-    @Mock DiskResourceView.DiskResourceViewToolbar mockToolbar;
-
-    @Mock DiskResourceSearchField mockSearchField;
-    @Mock TreeStore<Folder> mockTreeStore;
-    @Mock NavigationView.Presenter mockNavigationPresenter;
-    @Mock NavigationView mockNavigationView;
-    @Mock GridViewPresenterFactory mockGridViewPresenterFactory;
-    @Mock GridView.Presenter mockGridViewPresenter;
-    @Mock GridView mockGridView;
-
-
-    private DiskResourcePresenterImpl uut;
-
-    // TODO: SS complete tests with new service
-    @Before public void setUp() {
-        setupMocks();
-        uut = new DiskResourcePresenterImpl(mockViewFactory,
-                                            mockFactory,
-                                            mockNavigationPresenter,
-                                            mockGridViewPresenterFactory,
-                                            mockDataSearchPresenter,
-                                            mockDisplayStrings,
-                                            mockAnnouncer,
-                                            mockEventBus,
-                                            null,
-                                            null);
+    private void verifyConstructor(NavigationPresenterImpl uut) {
+        verify(viewMock).addFolderSelectedEventHandler(eq(uut));
+        verify(viewMock).getTree();
+        verify(eventBusMock, times(5)).addHandler(Matchers.<GwtEvent.Type<NavigationPresenterImpl>>any(), eq(uut));
     }
 
-    *//**
-     * <b>Conditions:</b>
-     * 
-     * Root folders have been loaded.
-     * Folder has not yet been loaded.
-     * Folder has no common roots with tree store.
-     *//*
-    @Ignore("Migrate to NavigationView.Presenter test")
-    @Test public void testSetSelectedFolderByPath_Case1() {
-        DiskResourcePresenterImpl spy = spy(uut);
-        HasPath mockHasPath = mock(HasPath.class);
-        final String TEST_PATH = "/no/common/root";
-        when(mockHasPath.getPath()).thenReturn(TEST_PATH);
+    @Test public void onBeforeLoad_folderNotNull_contentsNotInCurrentFolder_loadCancelled() {
+        FolderContentsLoadConfig loadConfigMock = mock(FolderContentsLoadConfig.class);
+        Folder loadConfigFolderMock = mock(Folder.class);
+        Folder currSelectedFolderMock = mock(Folder.class);
+        String loadConfigIdMock = "mock config id";
+        String currFolderIdMock = "mock curr id";
+        when(loadConfigFolderMock.getId()).thenReturn(loadConfigIdMock);
+        when(currSelectedFolderMock.getId()).thenReturn(currFolderIdMock);
 
-        // Roots have been loaded
-        when(mockTreeStore.getRootCount()).thenReturn(4);
+        when(loadConfigMock.getFolder()).thenReturn(loadConfigFolderMock);
+        when(beforeLoadEventMock.getLoadConfig()).thenReturn(loadConfigMock);
+        when(selectionModelMock.getSelectedItem()).thenReturn(currSelectedFolderMock);
 
-        spy.setSelectedFolderByPath(mockHasPath);
+        /** CALL METHOD UNDER TEST **/
+        uut.onBeforeLoad(beforeLoadEventMock);
 
-//        verify(spy, never()).addEventHandlerRegistration(any(SelectFolderByPathLoadHandler.class), any(HandlerRegistration.class));
+        verify(viewMock, times(3)).getTree();
+
+        verify(beforeLoadEventMock).getLoadConfig();
+        verify(loadConfigMock).getFolder();
+
+        verify(beforeLoadEventMock).setCancelled(eq(true));
+
+        verifyNoMoreInteractions(beforeLoadEventMock,
+                                 viewMock,
+                                 eventBusMock);
     }
 
-    *//**
-     * <b>Conditions:<b>
-     * 
-     * Root folders have been loaded.
-     * Folder has not yet been loaded.
-     * Folder has common root with treeStore
-     *//*
-    @Ignore("Migrate to NavigationView.Presenter test")
-    @Test public void testSetSelectedFolderByPath_Case2() {
-        DiskResourcePresenterImpl spy = spy(uut);
-        HasPath mockHasPath = mock(HasPath.class);
-        final String COMMON_ROOT = "/home";
-        final String TEST_PATH = COMMON_ROOT + "/common/root";
-        when(mockHasPath.getPath()).thenReturn(TEST_PATH);
+    @Test public void onBeforeLoad_folderNotNull_contentsInCurrentFolder_loadNotCancelled() {
+        FolderContentsLoadConfig loadConfigMock = mock(FolderContentsLoadConfig.class);
+        Folder loadConfigFolderMock = mock(Folder.class);
+        Folder currSelectedFolderMock = mock(Folder.class);
+        String currFolderIdMock = "mock curr id";
+        when(loadConfigFolderMock.getId()).thenReturn(currFolderIdMock);
+        when(currSelectedFolderMock.getId()).thenReturn(currFolderIdMock);
 
-        // Folder has common root
-        Folder mockFolder = mock(Folder.class);
-        // Set up mock to bypass id load handler init logic, we don't need to test that here.
-        when(mockTreeStore.getRootItems()).thenReturn(Lists.newArrayList(mockFolder));
-        when(mockFolder.getPath()).thenReturn(COMMON_ROOT);
+        when(loadConfigMock.getFolder()).thenReturn(loadConfigFolderMock);
+        when(beforeLoadEventMock.getLoadConfig()).thenReturn(loadConfigMock);
+        when(selectionModelMock.getSelectedItem()).thenReturn(currSelectedFolderMock);
 
-        // Roots have been loaded
-        when(mockTreeStore.getRootCount()).thenReturn(4);
+        /** CALL METHOD UNDER TEST **/
+        uut.onBeforeLoad(beforeLoadEventMock);
 
-        spy.setSelectedFolderByPath(mockHasPath);
+        verify(viewMock, times(3)).getTree();
 
-//        verify(spy).addEventHandlerRegistration(any(SelectFolderByPathLoadHandler.class), any(HandlerRegistration.class));
+        verify(beforeLoadEventMock).getLoadConfig();
+        verify(loadConfigMock).getFolder();
+
+        verify(beforeLoadEventMock, never()).setCancelled(anyBoolean());
+
+        verifyNoMoreInteractions(beforeLoadEventMock,
+                                 viewMock,
+                                 eventBusMock);
     }
 
-    *//**
-     * <b>Conditions:<b>
-     * 
-     * Root folders have not been loaded.
-     * Folder has not yet been loaded.
-     *//*
-    @Ignore("Migrate to NavigationView.Presenter test")
-    @Test public void testSetSelectedFolderByPath_Case3() {
-        DiskResourcePresenterImpl spy = spy(uut);
-        HasPath mockHasPath = mock(HasPath.class);
-        final String COMMON_ROOT = "/home";
-        final String TEST_PATH = COMMON_ROOT + "/common/root";
-        when(mockHasPath.getPath()).thenReturn(TEST_PATH);
+    @Test public void onImportFromUrlSelected_selectedFolderNull_defaultUploadFolderUsed() {
+        final Folder uploadFolderMock = mock(Folder.class);
+        final NavigationPresenterImpl spy = spy(new NavigationPresenterImpl(viewFactoryMock, treeStoreMock, folderRpcProxyMock, diskResourceUtilMock, eventBusMock, appearanceMock) {
+            @Override
+            public Folder getSelectedUploadFolder() {
+                return uploadFolderMock;
+            }
+        });
+        verify(viewMock, times(2)).addFolderSelectedEventHandler(Matchers.<FolderSelectionEvent.FolderSelectionEventHandler>any());
+        verify(viewMock, times(2)).getTree();
+        verify(eventBusMock, times(10)).addHandler(Matchers.<GwtEvent.Type<NavigationPresenterImpl>>any(), Matchers.<NavigationPresenterImpl>any());
+        ImportFromUrlSelected eventMock = mock(ImportFromUrlSelected.class);
 
-        // Roots have been loaded
-        when(mockTreeStore.getRootCount()).thenReturn(0);
+        /** CALL METHOD UNDER TEST **/
+        spy.onImportFromUrlSelected(eventMock);
 
-        spy.setSelectedFolderByPath(mockHasPath);
+        verify(eventMock).getSelectedFolder();
+        verify(spy).getSelectedUploadFolder();
 
-//        verify(spy).addEventHandlerRegistration(any(SelectFolderByPathLoadHandler.class), any(HandlerRegistration.class));
+        ArgumentCaptor<RequestImportFromUrlEvent> captor = ArgumentCaptor.forClass(RequestImportFromUrlEvent.class);
+        verify(eventBusMock).fireEvent(captor.capture());
+
+        assertEquals(uploadFolderMock, captor.getValue().getDestinationFolder());
+
+        verifyNoMoreInteractions(viewMock,
+                                 eventMock,
+                                 eventBusMock);
     }
 
-    private void setupMocks() {
-        when(mockViewFactory.create(any(DiskResourceView.Presenter.class), any(NavigationView.Presenter.class), any(GridView.Presenter.class))).thenReturn(mockView);
-        when(mockGridViewPresenterFactory.create(any(NavigationView.Presenter.class), anyList(), any(TYPE.class))).thenReturn(mockGridViewPresenter);
-        when(mockView.getToolbar()).thenReturn(mockToolbar);
-        when(mockToolbar.getSearchField()).thenReturn(mockSearchField);
-        when(mockNavigationPresenter.getView()).thenReturn(mockNavigationView);
-        when(mockGridViewPresenter.getView()).thenReturn(mockGridView);
+    @Test public void onImportFromUrlSelected_selectedFolderExists_selectedFolderUsed() {
+        final Folder uploadFolderMock = mock(Folder.class);
+        final NavigationPresenterImpl spy = spy(new NavigationPresenterImpl(viewFactoryMock, treeStoreMock, folderRpcProxyMock, diskResourceUtilMock, eventBusMock, appearanceMock) {
+            @Override
+            public Folder getSelectedUploadFolder() {
+                return mock(Folder.class);
+            }
+        });
+        verify(viewMock, times(2)).addFolderSelectedEventHandler(Matchers.<FolderSelectionEvent.FolderSelectionEventHandler>any());
+        verify(viewMock, times(2)).getTree();
+        verify(eventBusMock, times(10)).addHandler(Matchers.<GwtEvent.Type<NavigationPresenterImpl>>any(), Matchers.<NavigationPresenterImpl>any());
+        ImportFromUrlSelected eventMock = mock(ImportFromUrlSelected.class);
+        when(eventMock.getSelectedFolder()).thenReturn(uploadFolderMock);
+
+        /** CALL METHOD UNDER TEST **/
+        spy.onImportFromUrlSelected(eventMock);
+
+        verify(eventMock).getSelectedFolder();
+        verify(spy, never()).getSelectedUploadFolder();
+
+        ArgumentCaptor<RequestImportFromUrlEvent> captor = ArgumentCaptor.forClass(RequestImportFromUrlEvent.class);
+        verify(eventBusMock).fireEvent(captor.capture());
+
+        assertEquals(uploadFolderMock, captor.getValue().getDestinationFolder());
+
+        verifyNoMoreInteractions(viewMock,
+                                 eventMock,
+                                 eventBusMock);
     }
 
-    *//**
-     * Verifies that a template will be added to the tree store if it is not already there.
-     *
-     *//*
-    @Test public void testUpdateSavedSearches_Case1() {
-        DiskResourceQueryTemplate mock1 = mock(DiskResourceQueryTemplate.class);
-        DiskResourceQueryTemplate mock2 = mock(DiskResourceQueryTemplate.class);
-        DiskResourceQueryTemplate mock3 = mock(DiskResourceQueryTemplate.class);
-        when(mock1.getId()).thenReturn("qtMock1Id");
-        when(mock2.getId()).thenReturn("qtMock2Id");
-        when(mock3.getId()).thenReturn("qtMock3Id");
+  @Test public void onSimpleUploadSelected_selectedFolderNull_defaultUploadFolderUsed() {
+      final Folder uploadFolderMock = mock(Folder.class);
+      when(uploadFolderMock.getPath()).thenReturn("mock/path");
+      final NavigationPresenterImpl spy = spy(new NavigationPresenterImpl(viewFactoryMock, treeStoreMock, folderRpcProxyMock, diskResourceUtilMock, eventBusMock, appearanceMock) {
+          @Override
+          public Folder getSelectedUploadFolder() {
+              return uploadFolderMock;
+          }
+      });
+      verify(viewMock, times(2)).addFolderSelectedEventHandler(Matchers.<FolderSelectionEvent.FolderSelectionEventHandler>any());
+      verify(viewMock, times(2)).getTree();
+      verify(eventBusMock, times(10)).addHandler(Matchers.<GwtEvent.Type<NavigationPresenterImpl>>any(), Matchers.<NavigationPresenterImpl>any());
+      SimpleUploadSelected eventMock = mock(SimpleUploadSelected.class);
 
-        // Create list to pass which contains all 3 query template mocks
-        List<DiskResourceQueryTemplate> queryTemplates = Lists.newArrayList(mock1, mock2, mock3);
-        when(eventMock.getSavedSearches()).thenReturn(queryTemplates);
+      /** CALL METHOD UNDER TEST **/
+      spy.onSimpleUploadSelected(eventMock);
 
-        // Call method under test
-        uut.onUpdateSavedSearches(eventMock);
+      verify(eventMock).getSelectedFolder();
+      verify(spy).getSelectedUploadFolder();
 
-        verify(mockNavigationPresenter).updateQueryTemplate(eq(mock1));
-        verify(mockNavigationPresenter).updateQueryTemplate(eq(mock2));
-        verify(mockNavigationPresenter).updateQueryTemplate(eq(mock3));
+      ArgumentCaptor<RequestSimpleUploadEvent> captor = ArgumentCaptor.forClass(RequestSimpleUploadEvent.class);
+      verify(eventBusMock).fireEvent(captor.capture());
 
-        *//* Verify that nothing is removed from the store *//*
-        verify(mockNavigationPresenter, never()).removeFolder(any(Folder.class));
+      assertEquals(uploadFolderMock, captor.getValue().getDestinationFolder());
 
+      verifyNoMoreInteractions(viewMock,
+                               eventMock,
+                               eventBusMock);
     }
 
+    @Test public void onSimpleUploadSelected_selectedFolderExists_selectedFolderUsed() {
+        final Folder uploadFolderMock = mock(Folder.class);
+        when(uploadFolderMock.getPath()).thenReturn("mock/path");
+        final NavigationPresenterImpl spy = spy(new NavigationPresenterImpl(viewFactoryMock, treeStoreMock, folderRpcProxyMock, diskResourceUtilMock, eventBusMock, appearanceMock) {
+            @Override
+            public Folder getSelectedUploadFolder() {
+                return mock(Folder.class);
+            }
+        });
+        verify(viewMock, times(2)).addFolderSelectedEventHandler(Matchers.<FolderSelectionEvent.FolderSelectionEventHandler>any());
+        verify(viewMock, times(2)).getTree();
+        verify(eventBusMock, times(10)).addHandler(Matchers.<GwtEvent.Type<NavigationPresenterImpl>>any(), Matchers.<NavigationPresenterImpl>any());
+        SimpleUploadSelected eventMock = mock(SimpleUploadSelected.class);
+        when(eventMock.getSelectedFolder()).thenReturn(uploadFolderMock);
 
-    *//**
-     * Verifies that an item which is dirty and already in the tree store will be updated.
-     *
-     *//*
-    @Test public void testUpdateSavedSearches_Case2() {
-        DiskResourceQueryTemplate mock1 = mock(DiskResourceQueryTemplate.class);
-        DiskResourceQueryTemplate mock2 = mock(DiskResourceQueryTemplate.class);
-        when(mock1.getId()).thenReturn("qtMock1Id");
-        when(mock1.isDirty()).thenReturn(true);
-        when(mock2.getId()).thenReturn("qtMock2Id");
+        /** CALL METHOD UNDER TEST **/
+        spy.onSimpleUploadSelected(eventMock);
 
-        // Create list to pass which contains all 3 query template mocks
-        List<DiskResourceQueryTemplate> queryTemplates = Lists.newArrayList(mock1, mock2);
-        when(eventMock.getSavedSearches()).thenReturn(queryTemplates);
+        verify(eventMock).getSelectedFolder();
+        verify(spy, never()).getSelectedUploadFolder();
 
-        // Call method under test
-        uut.onUpdateSavedSearches(eventMock);
+        ArgumentCaptor<RequestSimpleUploadEvent> captor = ArgumentCaptor.forClass(RequestSimpleUploadEvent.class);
+        verify(eventBusMock).fireEvent(captor.capture());
 
-        *//* Verify that nothing is removed from the store *//*
-        verify(mockNavigationPresenter, never()).removeFolder(any(Folder.class));
+        assertEquals(uploadFolderMock, captor.getValue().getDestinationFolder());
 
-        *//* Verify that the tree store is updated with the dirty query template *//*
-        verify(mockNavigationPresenter).updateQueryTemplate(eq(mock1));
-
+        verifyNoMoreInteractions(viewMock,
+                                 eventMock,
+                                 eventBusMock);
     }
 
-    *//**
-     * Verifies that templates in the RemovedSearches list of an UpdateSavedSearchesEvent will be removed
-     * from the tree store.
-     *//*
-    @Test public void testUpdateSavedSearches_Case3() {
-        final ArrayList<DiskResourceQueryTemplate> newArrayList = Lists.newArrayList(
-                mock(DiskResourceQueryTemplate.class), mock(DiskResourceQueryTemplate.class));
-        when(eventMock.getRemovedSearches()).thenReturn(newArrayList);
+    @Test public void onRequestFolderRefresh_methodCalled() {
+        final NavigationPresenterImpl spy = spy(new NavigationPresenterImpl(viewFactoryMock, treeStoreMock, folderRpcProxyMock, diskResourceUtilMock, eventBusMock, appearanceMock) {
+            @Override
+            public void refreshFolder(Folder folder) {
+            }
+        });
+        verify(viewMock, times(2)).addFolderSelectedEventHandler(Matchers.<FolderSelectionEvent.FolderSelectionEventHandler>any());
+        verify(viewMock, times(2)).getTree();
+        verify(eventBusMock, times(10)).addHandler(Matchers.<GwtEvent.Type<NavigationPresenterImpl>>any(), Matchers.<NavigationPresenterImpl>any());
+        FolderRefreshEvent eventMock = mock(FolderRefreshEvent.class);
+        Folder folderMock = mock(Folder.class);
+        when(eventMock.getFolder()).thenReturn(folderMock);
 
-        // Call method under test
-        uut.onUpdateSavedSearches(eventMock);
+        /** CALL METHOD UNDER TEST **/
+        spy.onRequestFolderRefresh(eventMock);
 
-        // Verify for record keeping
-        verify(mockNavigationPresenter).removeFolder(eq(newArrayList.get(0)));
-        verify(mockNavigationPresenter).removeFolder(eq(newArrayList.get(1)));
+        verify(eventMock).getFolder();
+        verify(spy).refreshFolder(eq(folderMock));
 
-    }*/
+        verifyNoMoreInteractions(viewMock,
+                                 eventMock,
+                                 eventBusMock);
+    }
+
 
 }

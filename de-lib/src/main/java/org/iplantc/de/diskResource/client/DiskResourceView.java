@@ -6,10 +6,10 @@ import org.iplantc.de.client.models.IsMaskable;
 import org.iplantc.de.client.models.diskResources.DiskResource;
 import org.iplantc.de.client.models.diskResources.Folder;
 import org.iplantc.de.client.services.DiskResourceServiceFacade;
-import org.iplantc.de.diskResource.client.events.DiskResourceSelectionChangedEvent;
-import org.iplantc.de.diskResource.client.events.FolderSelectionEvent;
-import org.iplantc.de.diskResource.client.events.RootFoldersRetrievedEvent;
-import org.iplantc.de.diskResource.client.events.SavedSearchesRetrievedEvent;
+import org.iplantc.de.diskResource.client.events.DiskResourceSelectionChangedEvent.HasDiskResourceSelectionChangedEventHandlers;
+import org.iplantc.de.diskResource.client.events.FolderSelectionEvent.HasFolderSelectionEventHandlers;
+import org.iplantc.de.diskResource.client.events.RootFoldersRetrievedEvent.HasRootFoldersRetrievedEventHandlers;
+import org.iplantc.de.diskResource.client.events.SavedSearchesRetrievedEvent.HasSavedSearchesRetrievedEventHandlers;
 import org.iplantc.de.diskResource.client.events.search.SubmitDiskResourceQueryEvent.HasSubmitDiskResourceQueryEventHandlers;
 import org.iplantc.de.diskResource.client.presenters.navigation.proxy.SelectFolderByPathLoadHandler;
 
@@ -39,16 +39,16 @@ public interface DiskResourceView extends IsWidget,
      */
     public interface FolderRpcProxy extends DataProxy<Folder, List<Folder>>,
                                             HasSubmitDiskResourceQueryEventHandlers,
-                                            RootFoldersRetrievedEvent.HasRootFoldersRetrievedEventHandlers,
-                                            SavedSearchesRetrievedEvent.HasSavedSearchesRetrievedEventHandlers {
+                                            HasRootFoldersRetrievedEventHandlers,
+                                            HasSavedSearchesRetrievedEventHandlers {
         void setMaskable(IsMaskable maskable);
     }
 
 
     interface Presenter extends org.iplantc.de.commons.client.presenter.Presenter,
                                 IsMaskable,
-                                DiskResourceSelectionChangedEvent.HasDiskResourceSelectionChangedEventHandlers,
-                                FolderSelectionEvent.HasFolderSelectionEventHandlers {
+                                HasDiskResourceSelectionChangedEventHandlers,
+                                HasFolderSelectionEventHandlers {
 
         interface Appearance {
 
@@ -116,8 +116,6 @@ public interface DiskResourceView extends IsWidget,
         void doMoveDiskResources(Folder targetFolder, List<DiskResource> resources);
 
         void doRenameDiskResource(DiskResource diskResource, String newName);
-
-        Folder getHomeFolder();
 
         List<DiskResource> getSelectedDiskResources();
 

@@ -40,16 +40,6 @@ public class GridViewPresenterDefaultAppearance implements GridView.Presenter.Ap
     }
 
     @Override
-    public String commentsDialogHeight() {
-        return "450px";
-    }
-
-    @Override
-    public String commentsDialogWidth() {
-        return "600px";
-    }
-
-    @Override
     public String copy() {
         return iplantDisplayStrings.copy();
     }
