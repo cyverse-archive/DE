@@ -395,6 +395,14 @@ public class GridViewPresenterImpl implements
 
             }
         });
+        mCopyDialog.addCancelButtonSelectHandler(new SelectHandler() {
+
+            @Override
+            public void onSelect(SelectEvent event) {
+                mCopyDialog.hide();
+
+            }
+        });
         mCopyDialog.clear();
         mCopyDialog.setSource(selected);
         mCopyDialog.unmask();

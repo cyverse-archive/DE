@@ -10,9 +10,6 @@ import org.iplantc.de.diskResource.client.views.widgets.MultiFileSelectorField;
 import com.google.gwt.user.client.TakesValue;
 import com.google.inject.Inject;
 
-import com.sencha.gxt.widget.core.client.event.SelectEvent;
-import com.sencha.gxt.widget.core.client.event.SelectEvent.SelectHandler;
-
 import java.util.List;
 
 public class MetadataCopyDialog extends IPlantDialog implements TakesValue<List<HasPath>> {
@@ -30,15 +27,6 @@ public class MetadataCopyDialog extends IPlantDialog implements TakesValue<List<
         setHideOnButtonClick(false);
         setHeadingText(this.appearance.copyMetadata());
         setSize("400px", "350px");
-        addCancelButtonSelectHandler(new SelectHandler() {
-
-            @Override
-            public void onSelect(SelectEvent event) {
-                MetadataCopyDialog.this.hide();
-
-            }
-        });
-
         setModal(false);
     }
 
