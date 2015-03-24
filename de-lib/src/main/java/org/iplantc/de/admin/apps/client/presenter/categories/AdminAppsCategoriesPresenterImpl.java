@@ -18,7 +18,6 @@ import org.iplantc.de.apps.client.events.AppSearchResultLoadEvent;
 import org.iplantc.de.apps.client.gin.factory.AppCategoriesViewFactory;
 import org.iplantc.de.client.models.HasId;
 import org.iplantc.de.client.models.apps.App;
-import org.iplantc.de.client.models.apps.AppAutoBeanFactory;
 import org.iplantc.de.client.models.apps.AppCategory;
 import org.iplantc.de.client.services.AppServiceFacade;
 import org.iplantc.de.client.util.CommonModelUtils;
@@ -50,7 +49,6 @@ public class AdminAppsCategoriesPresenterImpl implements AdminCategoriesView.Pre
     @Inject IplantAnnouncer announcer;
     @Inject AppServiceFacade appService;
     @Inject AdminCategoriesView.Presenter.Appearance appearance;
-    @Inject AppAutoBeanFactory factory;
     @Inject BelphegorAdminProperties properties;
     @Inject AppAdminServiceRequestAutoBeanFactory serviceFactory;
 
@@ -87,30 +85,10 @@ public class AdminAppsCategoriesPresenterImpl implements AdminCategoriesView.Pre
             AppCategory desiredCategory = treeStore.findModelWithKey(selectedAppCategory.getId());
             view.getTree().getSelectionModel().select(desiredCategory, false);
         } else {
-            view.mask(appearance.getAppCategoriesLoadingMask());
-            adminAppService.getPublicAppCategories(new AsyncCallback<List<AppCategory>>() {
-                @Override
-                public void onFailure(Throwable caught) {
-                    ErrorHandler.post(caught);
-                    view.unmask();
-                }
-
-                @Override
-                public void onSuccess(List<AppCategory> result) {
-                    addAppCategories(null, result);
-                    view.getTree().expandAll();
-                    if (selectedAppCategory != null) {
-                        AppCategory desiredCategory = treeStore.findModelWithKey(selectedAppCategory.getId());
-                        view.getTree().getSelectionModel().select(desiredCategory, false);
-                    } else {
-                        view.getTree().getSelectionModel().selectNext();
-                        view.getTree().getSelectionModel().select(treeStore.getRootItems().get(0), false);
-                    }
-                    view.unmask();
-                }
-            }, false);
-        }
+            clearAndRetrieveAppCategories(selectedAppCategory);
+       }
     }
+
 
     @Override
     public void onAddCategorySelected(final AddCategorySelected event) {
@@ -197,25 +175,25 @@ public class AdminAppsCategoriesPresenterImpl implements AdminCategoriesView.Pre
 
         view.mask(appearance.deleteAppCategoryLoadingMask());
         adminAppService.deleteAppCategory(selectedAppCategory,
-              new AsyncCallback<Void>() {
+                                          new AsyncCallback<Void>() {
 
-                  @Override
-                  public void onFailure(Throwable caught) {
-                      view.unmask();
-                      announcer.schedule(new ErrorAnnouncementConfig(appearance.deleteAppCategoryError(selectedAppCategory.getName())));
-                  }
+                                              @Override
+                                              public void onFailure(Throwable caught) {
+                                                  view.unmask();
+                                                  announcer.schedule(new ErrorAnnouncementConfig(appearance.deleteAppCategoryError(selectedAppCategory.getName())));
+                                              }
 
-                  @Override
-                  public void onSuccess(Void result) {
-                      view.unmask();
-                      // Refresh the catalog, so that the
-                      // proper category counts
-                      // display.
-                      // FIXME All cat counts need to be updated. Re-fetch all categories
-                      treeStore.remove(selectedAppCategory);
-                      // eventBus.fireEvent(new CatalogCategoryRefreshEvent());
-                  }
-              });
+                                              @Override
+                                              public void onSuccess(Void result) {
+                                                  view.unmask();
+                                                  // Refresh the catalog, so that the
+                                                  // proper category counts
+                                                  // display.
+                                                  // FIXME All cat counts need to be updated. Re-fetch all categories
+                                                  treeStore.remove(selectedAppCategory);
+                                                  // eventBus.fireEvent(new CatalogCategoryRefreshEvent());
+                                              }
+                                          });
     }
 
     @Override
@@ -363,6 +341,7 @@ public class AdminAppsCategoriesPresenterImpl implements AdminCategoriesView.Pre
                                              // FIXME JDS These events need to be common to
                                              // ui-apps.
 //                                             eventBus.fireEvent(new CatalogCategoryRefreshEvent());
+                                             clearAndRetrieveAppCategories(childCategory);
                                          }
                                      });
     }
@@ -422,6 +401,35 @@ public class AdminAppsCategoriesPresenterImpl implements AdminCategoriesView.Pre
 
     private boolean isLeaf(AppCategory parentCategory) {
         return parentCategory.getCategories() == null || parentCategory.getCategories().isEmpty();
+    }
+
+    void clearAndRetrieveAppCategories(final HasId selectedAppCategory) {
+        view.mask(appearance.getAppCategoriesLoadingMask());
+        treeStore.clear();
+        adminAppService.getPublicAppCategories(new AsyncCallback<List<AppCategory>>() {
+            @Override
+            public void onFailure(Throwable caught) {
+                ErrorHandler.post(caught);
+                view.unmask();
+            }
+
+            @Override
+            public void onSuccess(List<AppCategory> result) {
+                addAppCategories(null, result);
+                view.getTree().expandAll();
+                if (selectedAppCategory != null) {
+                    AppCategory desiredCategory = treeStore.findModelWithKey(selectedAppCategory.getId());
+                    view.getTree().getSelectionModel().select(desiredCategory, false);
+                    view.getTree().scrollIntoView(desiredCategory);
+                } else {
+                    view.getTree().getSelectionModel().selectNext();
+                    final AppCategory firstCategory = treeStore.getRootItems().get(0);
+                    view.getTree().getSelectionModel().select(firstCategory, false);
+                    view.getTree().scrollIntoView(firstCategory);
+                }
+                view.unmask();
+            }
+        }, false);
     }
 
     void showCategorizeAppDialog(final App selectedApp) {
