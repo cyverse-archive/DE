@@ -93,7 +93,10 @@ public class AppDetailsViewPresenterImpl implements AppDetailsView.Presenter,
         appUserService.getAppDoc(app, new AsyncCallback<AppDoc>() {
             @Override
             public void onFailure(Throwable caught) {
-                announcer.schedule(new ErrorAnnouncementConfig(appearance.getAppDocError(caught)));
+                // warn only for public app
+                if (app.isPublic()) {
+                    announcer.schedule(new ErrorAnnouncementConfig(appearance.getAppDocError(caught)));
+                }
             }
 
             @Override
