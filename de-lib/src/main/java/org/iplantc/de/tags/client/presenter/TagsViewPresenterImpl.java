@@ -51,8 +51,14 @@ public class TagsViewPresenterImpl implements TagsView.Presenter,
         view.addRequestCreateTagHandler(this);
     }
 
+    @Override
     public void addTag(Tag tag) {
-        listStore.add(tag);
+        if (listStore.findModel(tag) == null) {
+            listStore.add(tag);
+        }
+
+        view.clearSearchField();
+
     }
 
     @Override
@@ -93,11 +99,15 @@ public class TagsViewPresenterImpl implements TagsView.Presenter,
             @Override
             public void onSuccess(Tag result) {
                 view.asWidget().fireEvent(new TagCreated(result));
-                listStore.add(result);
+                // Service won't return error on double tagging. So add only if it doesn't exits.
+                if (listStore.findModel(result) == null) {
+                    listStore.add(result);
+                }
             }
         });
     }
 
+    @Override
     public void removeAll() {
         listStore.clear();
     }
@@ -111,12 +121,14 @@ public class TagsViewPresenterImpl implements TagsView.Presenter,
     /**
      * @param editable the editable to set
      */
+    @Override
     public void setEditable(boolean editable) {
         this.editable = editable;
 
         view.setEditable(editable);
     }
 
+    @Override
     public void setRemovable(boolean removable) {
         this.removable = removable;
 

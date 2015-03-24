@@ -127,7 +127,6 @@ public class TagsViewImpl extends Composite implements TagsView,
             tagsPanel.add(tagItem);
             tagItemMap.put(tag, tagItem);
         }
-        tagSearchField.clear();
     }
 
     @Override
@@ -197,6 +196,7 @@ public class TagsViewImpl extends Composite implements TagsView,
         presenter.addTag(event.getValue());
     }
 
+    @Override
     public void setEditable(boolean editable) {
         this.editable = editable;
         this.tagListPanel.getElement().setPropertyBoolean("disabled", !editable);
@@ -212,6 +212,11 @@ public class TagsViewImpl extends Composite implements TagsView,
     @Override
     public void setRemovable(boolean removable) {
         this.removable = removable;
+    }
+
+    @Override
+    public void clearSearchField() {
+        tagSearchField.clear();
     }
 
 }

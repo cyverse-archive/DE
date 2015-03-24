@@ -83,4 +83,6 @@ public interface TagsView extends IsWidget,
     void setEditable(boolean editable);
 
     void setRemovable(boolean removable);
+
+    void clearSearchField();
 }
