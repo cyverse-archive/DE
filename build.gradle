@@ -63,8 +63,6 @@ task testReport(type: TestReport) {
 apply from: 'iplant/webapps.gradle'
 apply from: 'iplant/modules.gradle'
 
-apply from: 'iplant/webappBootstrap.gradle'
-
 task wrapper(type: Wrapper) {
     gradleVersion = '2.2.1'
 }
