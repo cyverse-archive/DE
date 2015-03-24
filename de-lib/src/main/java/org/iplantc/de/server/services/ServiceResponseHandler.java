@@ -1,5 +1,7 @@
 package org.iplantc.de.server.services;
 
+import org.iplantc.de.shared.exceptions.ServiceCallFailedException;
+
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;

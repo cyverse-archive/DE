@@ -1,4 +1,4 @@
-package org.iplantc.de.server.services;
+package org.iplantc.de.shared.exceptions;
 
 /**
  * Thrown when a services call fails.
@@ -7,13 +7,6 @@ package org.iplantc.de.server.services;
  */
 public class ServiceCallFailedException extends RuntimeException {
     private static final long serialVersionUID = 8933998477241299961L;
-
-    /**
-     * The default constructor.
-     */
-    public ServiceCallFailedException() {
-        super();
-    }
 
     /**
      * @param msg the detail message.
@@ -29,11 +22,4 @@ public class ServiceCallFailedException extends RuntimeException {
         super(cause);
     }
 
-    /**
-     * @param msg the detail message.
-     * @param cause the cause of this exception.
-     */
-    public ServiceCallFailedException(String msg, Throwable cause) {
-        super(msg, cause);
-    }
 }

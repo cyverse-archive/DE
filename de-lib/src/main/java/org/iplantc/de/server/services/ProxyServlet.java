@@ -1,7 +1,8 @@
 package org.iplantc.de.server.services;
 
 import org.iplantc.de.server.ServiceCallResolver;
-import org.iplantc.de.server.UnresolvableServiceNameException;
+import org.iplantc.de.shared.exceptions.NoServiceNameProvidedException;
+import org.iplantc.de.shared.exceptions.UnresolvableServiceNameException;
 
 import net.sf.json.JSONObject;
 

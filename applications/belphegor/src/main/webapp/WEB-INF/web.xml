@@ -34,10 +34,6 @@
         <servlet-class>org.iplantc.de.server.services.DEServiceImpl</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>sessionManagementServlet</servlet-name>
-        <servlet-class>org.iplantc.de.server.services.SessionManagementServiceImpl</servlet-class>
-    </servlet>
-    <servlet>
         <servlet-name>emptyResponseServlet</servlet-name>
         <servlet-class>org.iplantc.de.server.EmptyResponseServlet</servlet-class>
     </servlet>
@@ -66,10 +62,6 @@
     <servlet-mapping>
         <servlet-name>deServiceDispatcher</servlet-name>
         <url-pattern>/belphegor/deservice</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>sessionManagementServlet</servlet-name>
-        <url-pattern>/belphegor/sessionmanagement</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>emptyResponseServlet</servlet-name>

@@ -1,5 +1,6 @@
 package org.iplantc.de.server;
 
+import org.iplantc.de.shared.exceptions.UnresolvableServiceNameException;
 import org.iplantc.de.shared.services.BaseServiceCallWrapper;
 
 import org.apache.commons.lang.StringUtils;

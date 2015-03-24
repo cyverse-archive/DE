@@ -1,12 +1,13 @@
 package org.iplantc.de.server.services;
 
+import org.iplantc.de.shared.exceptions.ServiceCallFailedException;
+
 import net.sf.json.JSONObject;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
