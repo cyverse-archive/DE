@@ -1,6 +1,5 @@
 package org.iplantc.de.server.services;
 
-import org.iplantc.de.server.DiscoveryEnvironmentProperties;
 import org.iplantc.de.shared.services.AboutApplicationService;
 
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
@@ -10,11 +9,13 @@ import net.sf.json.JSONObject;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
-import java.io.IOException;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 
+import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 
 /**
@@ -22,9 +23,8 @@ import javax.servlet.ServletException;
  *
  * This servlet will include information about services once the modeling of software components has been completed.
  *
- * @author lenards
+ * @author lenards, jstroot
  */
-@SuppressWarnings("nls")
 public class AboutApplicationServiceImpl extends RemoteServiceServlet implements AboutApplicationService {
 
     private static final long serialVersionUID          = 6046105023536377635L;
@@ -36,38 +36,38 @@ public class AboutApplicationServiceImpl extends RemoteServiceServlet implements
     private static final String BUILD_BRANCH_ATTR       = "Git-Branch";
     private static final String BUILD_JDK_ATTR          = "Build-Jdk";
 
+    private String releaseVersion;
+
+    private String defaultBuildNumber;
+
     /**
      * The logger for error and informational messages.
      */
     private final Logger LOG = LoggerFactory.getLogger(AboutApplicationServiceImpl.class);
 
-    /**
-     * The DE configuration properties.
-     */
-    private DiscoveryEnvironmentProperties deProps;
     private Attributes manifestAttrs;
 
-    /**
-     * Initializes the servlet.
-     *
-     * @throws ServletException if the servlet can't be initialized.
-     * @throws IllegalStateException if the discovery environment properties can't be loaded.
-     */
     @Override
-    public void init() throws ServletException {
-        super.init();
-        if (deProps == null) {
-            try {
-                deProps = DiscoveryEnvironmentProperties.getDiscoveryEnvironmentProperties();
-            } catch (IOException e) {
-                throw new ServletException(e);
-            }
-        }
+    public void init(ServletConfig config) throws ServletException {
+        super.init(config);
+        SpringBeanAutowiringSupport.processInjectionBasedOnServletContext(this, config.getServletContext());
     }
 
     @Override
     public String getAboutInfo() {
         return produceInfo();
+    }
+
+    @Value("${org.iplantc.discoveryenvironment.about.releaseVersion}")
+    public void setReleaseVersion(String releaseVersion) {
+        this.releaseVersion = releaseVersion;
+        LOG.trace("Set releaseVersion =  {}", releaseVersion);
+    }
+
+    @Value("${org.iplantc.discoveryenvironment.about.defaultBuildNumber}")
+    public void setDefaultBuildNumber(String defaultBuildNumber) {
+        this.defaultBuildNumber = defaultBuildNumber;
+        LOG.trace("Set defaultBuildNumber = {}", defaultBuildNumber);
     }
 
     /**
@@ -93,26 +93,24 @@ public class AboutApplicationServiceImpl extends RemoteServiceServlet implements
 
     /**
      * Get the release version to report in the about application screen. If the release version is
-     * available in the DiscoveryEnvironmentProperties, then that release version will be used.
+     * available in the container properties, then that release version will be used.
      * Otherwise, the default release version will be used.
      * 
      * @return a string representation of the release version.
      */
     private String getReleaseVersion() {
-        String version = deProps.getReleaseVersion();
-        return (StringUtils.isNotEmpty(version)) ? version : DEFAULT_RELEASE_VERSION;
+        return (StringUtils.isNotEmpty(releaseVersion)) ? releaseVersion : DEFAULT_RELEASE_VERSION;
     }
 
     /**
      * Get the build name to report in the about application screen. If the build name is available in
-     * the DiscoveryEnvironmentProperties, then that build name will be used. Otherwise, the build number
+     * the container properties, then that build name will be used. Otherwise, the build number
      * will be used.
      * 
      * @return a string representation of the build name.
      */
     private String getBuildName() {
-        String buildName = deProps.getDefaultBuildNumber();
-        return StringUtils.isNotEmpty(buildName) ? buildName : getBuildNumber();
+        return StringUtils.isNotEmpty(defaultBuildNumber) ? defaultBuildNumber : getBuildNumber();
     }
 
     /**

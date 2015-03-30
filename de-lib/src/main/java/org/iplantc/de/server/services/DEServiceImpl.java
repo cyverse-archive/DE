@@ -2,7 +2,6 @@ package org.iplantc.de.server.services;
 
 import org.iplantc.de.server.DEServiceInputStream;
 import org.iplantc.de.server.ServiceCallResolver;
-import org.iplantc.de.server.auth.CasUrlConnector;
 import org.iplantc.de.server.auth.UrlConnector;
 import org.iplantc.de.shared.exceptions.AuthenticationException;
 import org.iplantc.de.shared.exceptions.HttpException;
@@ -35,9 +34,12 @@ import org.apache.http.impl.client.HttpClients;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
 import java.io.IOException;
 
+import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 
@@ -53,25 +55,32 @@ public class DEServiceImpl extends RemoteServiceServlet implements DEService {
      * The current servlet request.
      */
     private HttpServletRequest request = null;
+
+    @Autowired
+    public void setServiceResolver(ServiceCallResolver serviceResolver) {
+        LOGGER.trace("Set serviceCallResolver = {}", serviceResolver.getClass().getSimpleName());
+        this.serviceResolver = serviceResolver;
+    }
+
     private ServiceCallResolver serviceResolver;
     /**
      * Used to establish URL connections.
      */
     private UrlConnector urlConnector;
 
-    /**
-     * The default constructor.
-     */
     public DEServiceImpl() {
-        setUrlConnector(new CasUrlConnector());
+
     }
 
-    /**
-     * @param serviceResolver resolves aliased URLs.
-     */
     public DEServiceImpl(ServiceCallResolver serviceResolver) {
-        this();
+        LOGGER.trace("CONSTRUCTOR CALLED!!");
         this.serviceResolver = serviceResolver;
+    }
+
+    @Override
+    public void init(ServletConfig config) throws ServletException {
+        super.init(config);
+        SpringBeanAutowiringSupport.processInjectionBasedOnServletContext(this, config.getServletContext());
     }
 
     /**
@@ -146,19 +155,6 @@ public class DEServiceImpl extends RemoteServiceServlet implements DEService {
     }
 
     /**
-     * Initializes the servlet.
-     *
-     * @throws ServletException      if the servlet can't be initialized.
-     * @throws IllegalStateException if the services call resolver can't be found.
-     */
-    @Override
-    public void init() throws ServletException {
-        if (serviceResolver == null) {
-            serviceResolver = ServiceCallResolver.getServiceCallResolver(getServletContext());
-        }
-    }
-
-    /**
      * Sets the current servlet request.
      *
      * @param request the request to use.
@@ -197,8 +193,10 @@ public class DEServiceImpl extends RemoteServiceServlet implements DEService {
      *
      * @param urlConnector the new URL connector.
      */
+    @Autowired
     void setUrlConnector(UrlConnector urlConnector) {
         this.urlConnector = urlConnector;
+        LOGGER.trace("Set urlConnector = {}", urlConnector.getClass().getSimpleName());
     }
 
     /**
