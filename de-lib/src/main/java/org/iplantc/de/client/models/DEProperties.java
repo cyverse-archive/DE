@@ -5,21 +5,16 @@ import java.util.Map;
 @SuppressWarnings("nls")
 public class DEProperties {
     private static final String PATH_LIST_FILE_IDENTIFIER = "org.iplantc.pathList.fileIdentifier";
-    /**
-     * The prefix used in each of the property names.
-     */
-    private static final String PROPERTY_NAME_PREFIX = "org.iplantc.discoveryenvironment.";
 
     /**
      * The base URL used to access the Mule services.
      */
-    private static final String MULE_SERVICE_BASE_URL = PROPERTY_NAME_PREFIX + "muleServiceBaseUrl";
+    private static final String MULE_SERVICE_BASE_URL = "org.iplantc.discoveryenvironment.muleServiceBaseUrl";
 
     /**
      * The base URL used to access the Mule services.
      */
-    private static final String UNPROTECTED_MULE_SERVICE_BASE_URL = PROPERTY_NAME_PREFIX
-            + "unprotectedMuleServiceBaseUrl";
+    private static final String UNPROTECTED_MULE_SERVICE_BASE_URL = "org.iplantc.discoveryenvironment.unprotectedMuleServiceBaseUrl";
 
     /**
      * Properties key of the base URL of the data management services.
@@ -59,19 +54,17 @@ public class DEProperties {
     /**
      * Properties key for the default Beta Category ID
      */
-    private static final String DEFAULT_BETA_CATEGORY_ID = WORKSPACE_PREFIX
-            + "defaultBetaAppCategoryId";
+    private static final String DEFAULT_BETA_CATEGORY_ID = WORKSPACE_PREFIX + "defaultBetaAppCategoryId";
 
     /**
-     * Properties key for the default output folder name
+     * Properties key of the default Beta Category ID.
      */
-    private static final String DEFAULT_OUTPUT_FOLDER_NAME = WORKSPACE_PREFIX
-            + "defaultOutputFolderName";
+    private static final String DEFAULT_TRASH_CATEGORY_ID = WORKSPACE_PREFIX + "defaultTrashAppCategoryId";
 
     /**
      * The prefix used for each of the keepalive configuration parameters.
      */
-    private static final String KEEPALIVE_PREFIX = PROPERTY_NAME_PREFIX + "keepalive.";
+    private static final String KEEPALIVE_PREFIX = "org.iplantc.discoveryenvironment.keepalive.";
 
     /**
      * The URL that we use for keepalive requests.
@@ -130,12 +123,7 @@ public class DEProperties {
      */
     private String defaultBetaCategoryId;
 
-    /**
-     *
-     * Default output folder name
-     *
-     */
-    private String defaultOutputFolderName;
+    private String defaultTrashCategoryId;
 
     private String pathListFileIdentifier;
 
@@ -215,7 +203,7 @@ public class DEProperties {
         privateWorkspace = properties.get(PRIVATE_WORKSPACE);
         privateWorkspaceItems = properties.get(PRIVATE_WORKSPACE_ITEMS);
         defaultBetaCategoryId = properties.get(DEFAULT_BETA_CATEGORY_ID);
-        defaultOutputFolderName = properties.get(DEFAULT_OUTPUT_FOLDER_NAME);
+        defaultTrashCategoryId = properties.get(DEFAULT_TRASH_CATEGORY_ID);
         contextClickEnabled = getBoolean(properties, CONTEXT_CLICK_ENABLED, false);
         notificationPollInterval = getInt(properties, NOTIFICATION_POLL_INTERVAL, 60);
         keepaliveTarget = properties.get(KEEPALIVE_TARGET);
@@ -310,14 +298,15 @@ public class DEProperties {
      * @return the unique ID for the Beta category.
      */
     public String getDefaultBetaCategoryId() {
+
         return defaultBetaCategoryId;
     }
 
     /**
-     * @return the defaultOutputFolderName
+     * @return the defaultTrashAppCategoryId
      */
-    public String getDefaultOutputFolderName() {
-        return defaultOutputFolderName;
+    public String getDefaultTrashAppCategoryId() {
+        return defaultTrashCategoryId;
     }
 
     /**

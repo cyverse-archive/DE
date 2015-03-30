@@ -1,7 +1,7 @@
 package org.iplantc.de.admin.desktop.client.apps.presenter;
 
 import org.iplantc.de.admin.apps.client.AppCategorizeView;
-import org.iplantc.de.admin.desktop.client.models.BelphegorAdminProperties;
+import org.iplantc.de.client.models.DEProperties;
 import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.models.apps.AppCategory;
 
@@ -14,13 +14,13 @@ import java.util.List;
  */
 public class AppCategorizePresenter implements AppCategorizeView.Presenter {
 
-    private final BelphegorAdminProperties properties;
+    private final DEProperties properties;
     private final AppCategorizeView view;
     private final App app;
 
     public AppCategorizePresenter(final AppCategorizeView view,
                            final App app,
-                           final BelphegorAdminProperties properties) {
+                           final DEProperties properties) {
         this.view = view;
         this.app = app;
         this.properties = properties;
@@ -36,7 +36,7 @@ public class AppCategorizePresenter implements AppCategorizeView.Presenter {
         view.setAppCategories(children);
 
         // Remove trash and beta from the store.
-        BelphegorAdminProperties props = properties;
+        DEProperties props = properties;
         view.removeCategoryWithId(props.getDefaultTrashAppCategoryId());
 
         List<AppCategory> selectedGroups = findPreSelectedGroups();
@@ -58,7 +58,7 @@ public class AppCategorizePresenter implements AppCategorizeView.Presenter {
         }
 
         String betaGroupId = properties
-                .getDefaultBetaAppCategoryId();
+                .getDefaultBetaCategoryId();
         if (appCategories.size() == 1 && appCategories.get(0).getId().equals(betaGroupId)) {
             return app.getSuggestedGroups();
         }

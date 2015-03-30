@@ -1,10 +1,10 @@
 package org.iplantc.de.admin.desktop.client.views;
 
 import org.iplantc.de.admin.apps.client.AdminAppsView;
-import org.iplantc.de.admin.desktop.client.models.BelphegorAdminProperties;
 import org.iplantc.de.admin.desktop.client.refGenome.RefGenomeView;
 import org.iplantc.de.admin.desktop.client.systemMessage.SystemMessageView;
 import org.iplantc.de.admin.desktop.client.toolRequest.ToolRequestView;
+import org.iplantc.de.client.models.DEProperties;
 import org.iplantc.de.client.models.HasId;
 import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.client.util.CommonModelUtils;
@@ -50,7 +50,7 @@ public class BelphegorViewImpl extends Composite implements BelphegorView {
                              final RefGenomeView.Presenter refGenPresenter,
                              final ToolRequestView.Presenter toolReqPresenter,
                              final SystemMessageView.Presenter sysMsgPresenter,
-                             final BelphegorAdminProperties toolIntProps,
+                             final DEProperties toolIntProps,
                              final BelphegorViewAppearance appearance) {
         this.appearance = appearance;
         initWidget(uiBinder.createAndBindUi(this));
@@ -66,10 +66,10 @@ public class BelphegorViewImpl extends Composite implements BelphegorView {
                       final RefGenomeView.Presenter refGenPresenter,
                       final ToolRequestView.Presenter toolReqPresenter,
                       final SystemMessageView.Presenter sysMsgPresenter,
-                      final BelphegorAdminProperties toolIntProps) {
+                      final DEProperties toolIntProps) {
         buildUserMenu();
         // Select Beta group by default.
-        HasId betaGroup = CommonModelUtils.getInstance().createHasIdFromString(toolIntProps.getDefaultBetaAppCategoryId());
+        HasId betaGroup = CommonModelUtils.getInstance().createHasIdFromString(toolIntProps.getDefaultBetaCategoryId());
         presenter.go(appsPanel, betaGroup);
         refGenPresenter.go(refGenomePanel);
         toolReqPresenter.go(toolRequestPanel);
