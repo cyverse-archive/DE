@@ -3,6 +3,9 @@ package org.iplantc.de.server;
 import com.google.common.base.Strings;
 import com.google.common.io.Closeables;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -10,8 +13,11 @@ import java.io.IOException;
 
 /**
  * Used to determine whether or not the DE is under maintenance.
+ *
+ * @author jstroot
  */
 public class DiscoveryEnvironmentMaintenance {
+    private static final Logger LOG = LoggerFactory.getLogger(DiscoveryEnvironmentMaintenance.class);
 
     private final String startTime;
 
@@ -36,6 +42,7 @@ public class DiscoveryEnvironmentMaintenance {
     }
 
     public DiscoveryEnvironmentMaintenance(String maintenanceFileName) {
+        LOG.trace("Set maintenanceFileName: " + maintenanceFileName);
         File maintenanceFile = new File(maintenanceFileName);
         if (maintenanceFile.exists()) {
             String[] maintenanceTimes = loadMaintenanceTimes(maintenanceFile);
