@@ -11,19 +11,17 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.web.context.WebApplicationContext;
-import org.springframework.web.context.support.WebApplicationContextUtils;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-
-import javax.servlet.ServletContext;
 
 /**
  * A client for the iPlant e-mail services.
  *
- * @author Dennis Roberts
+ * @author Dennis Roberts, jstroot
  */
-@SuppressWarnings("nls")
+@Component
 public class IplantEmailClient {
 
     /**
@@ -31,31 +29,16 @@ public class IplantEmailClient {
      */
     private static final Logger LOG = LoggerFactory.getLogger(IplantEmailClient.class);
 
+    @Value("${org.iplantc.services.email-base}")
+    public void setBaseUrl(String baseUrl) {
+        this.baseUrl = baseUrl;
+        LOG.trace("Set baseUrl = {}", baseUrl);
+    }
+
     /**
      * The base URL to use when connecting to the e-mail services.
      */
-    private final String baseUrl;
-
-    public IplantEmailClient(final String baseUrl){
-        this.baseUrl = baseUrl;
-        LOG.debug("Constructor; baseUrl = {}", baseUrl);
-    }
-
-    /**
-     * Gets the iPlant e-mail client for the given servlet context.
-     *
-     * @param context the servlet context.
-     * @return the e-mail client.
-     * @throws IllegalStateException if the iPlant e-mail client isn't defined.
-     */
-    public static IplantEmailClient getClient(ServletContext context) {
-        WebApplicationContext appContext = WebApplicationContextUtils.getRequiredWebApplicationContext(context);
-        IplantEmailClient result = appContext.getBean(IplantEmailClient.class);
-        if (result == null) {
-            throw new IllegalStateException("email client bean not defined");
-        }
-        return result;
-    }
+    private String baseUrl;
 
     /**
      * Sends a message.
