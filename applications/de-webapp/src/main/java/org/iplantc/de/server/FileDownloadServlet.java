@@ -6,6 +6,9 @@ import org.iplantc.de.shared.services.ServiceCallWrapper;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -13,6 +16,7 @@ import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
+import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -26,11 +30,18 @@ import javax.servlet.http.HttpServletResponse;
 public class FileDownloadServlet extends HttpServlet {
     private static final String[] HEADER_FIELDS_TO_COPY = {"Content-Disposition"};
 
+    private String fileIoBaseUrl;
+
+    private String dataMgmtServiceBaseUrl;
+
     private static final Logger LOG = LoggerFactory.getLogger(FileDownloadServlet.class);
-    /**
-     * Used to obtain some configuration settings.
-     */
-    private DiscoveryEnvironmentProperties deProps;
+
+    @Autowired
+    public void setServiceResolver(ServiceCallResolver serviceResolver) {
+        this.serviceResolver = serviceResolver;
+        LOG.trace("Set serviceResolver = {}", serviceResolver.getClass().getSimpleName());
+    }
+
     /**
      * Used to resolve aliased service calls.
      */
@@ -58,7 +69,8 @@ public class FileDownloadServlet extends HttpServlet {
         } catch (Exception e) {
             throw new ServletException(e.getMessage(), e);
         } finally {
-            if (fileContents != null) {
+            if (fileContents != null)
+            {
                 try {
                     fileContents.close();
                 } catch (IOException ignore) {
@@ -67,23 +79,22 @@ public class FileDownloadServlet extends HttpServlet {
         }
     }
 
-    /**
-     * Initializes the servlet if it hasn't already been initialized.
-     *
-     * @throws ServletException      if the servlet can't be initialized.
-     * @throws IllegalStateException if any required dependency can't be found.
-     */
     @Override
-    public void init() throws ServletException {
-        super.init();
-        if (serviceResolver == null && deProps == null) {
-            serviceResolver = ServiceCallResolver.getServiceCallResolver(getServletContext());
-            try {
-                deProps = DiscoveryEnvironmentProperties.getDiscoveryEnvironmentProperties();
-            } catch (IOException e) {
-                throw new ServletException(e);
-            }
-        }
+    public void init(ServletConfig config) throws ServletException {
+        super.init(config);
+        SpringBeanAutowiringSupport.processInjectionBasedOnServletContext(this, config.getServletContext());
+    }
+
+    @Value("${org.iplantc.services.file-io.base.secured}")
+    public void setFileIoBaseUrl(String fileIoBaseUrl) {
+        this.fileIoBaseUrl = fileIoBaseUrl;
+        LOG.trace("Set fileIoBaseUrl: " + fileIoBaseUrl);
+    }
+
+    @Value("${org.iplantc.services.de-data-mgmt.base}")
+    public void setDataMgmtServiceBaseUrl(String dataMgmtServiceBaseUrl) {
+        this.dataMgmtServiceBaseUrl = dataMgmtServiceBaseUrl;
+        LOG.trace("Set dataMgmtServiceBaseUrl: " + dataMgmtServiceBaseUrl);
     }
 
     /**
@@ -104,9 +115,9 @@ public class FileDownloadServlet extends HttpServlet {
 
         String downloadUrl = request.getParameter("url");
         if (downloadUrl == null) {
-            downloadUrl = deProps.getFileIoBaseUrl() + "download";
+            downloadUrl = fileIoBaseUrl + "download";
         } else {
-            downloadUrl = deProps.getDataMgmtServiceBaseUrl() + downloadUrl;
+            downloadUrl = dataMgmtServiceBaseUrl + downloadUrl;
         }
 
         String address = String.format("%s?path=%s&attachment=%s", downloadUrl, path, attachment);

@@ -1,7 +1,5 @@
 package org.iplantc.de.server.oauth;
 
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
 import org.iplantc.de.server.auth.UrlConnector;
 
 import com.google.common.base.Strings;
@@ -11,17 +9,21 @@ import net.sf.json.JSONObject;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.utils.URIBuilder;
-import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.HttpRequestHandler;
+import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
 
+import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -51,7 +53,7 @@ public abstract class OAuthCallbackServlet extends HttpServlet implements HttpRe
         private final String errorDescription;
         public String getErrorDescription() { return errorDescription; }
 
-        private ErrorCodes(final String errorCode, final String errorDescription) {
+        ErrorCodes(final String errorCode, final String errorDescription) {
             this.errorCode = errorCode;
             this.errorDescription = errorDescription;
         }
@@ -80,10 +82,17 @@ public abstract class OAuthCallbackServlet extends HttpServlet implements HttpRe
     private static final String API_NAME_PARAM = "api_name";
 
     private final Logger LOG = LoggerFactory.getLogger(OAuthCallbackServlet.class);
-    private final String serviceUrl;
+
+    @Value("${org.iplantc.discoveryenvironment.muleServiceBaseUrl}")
+    public void setServiceUrl(String serviceUrl) {
+        this.serviceUrl = serviceUrl;
+        LOG.trace("Set serviceUrl = {}", serviceUrl);
+    }
+
+    private String serviceUrl;
+
 
     private UrlConnector urlConnector;
-    // Default descriptions for request error codes.
 
     public OAuthCallbackServlet(final String serviceUrl){
         this.serviceUrl = serviceUrl;
@@ -95,6 +104,7 @@ public abstract class OAuthCallbackServlet extends HttpServlet implements HttpRe
         doGet(httpServletRequest, httpServletResponse);
     }
 
+    @Autowired
     protected void setUrlConnector(final UrlConnector urlConnector) { this.urlConnector = urlConnector; }
 
     @Override
@@ -161,6 +171,11 @@ public abstract class OAuthCallbackServlet extends HttpServlet implements HttpRe
         }
     }
 
+    @Override
+    public void init(ServletConfig config) throws ServletException {
+        super.init(config);
+        SpringBeanAutowiringSupport.processInjectionBasedOnServletContext(this, config.getServletContext());
+    }
 
     /**
      * The authorization response is really a GET request initiated by a redirection from the OAuth

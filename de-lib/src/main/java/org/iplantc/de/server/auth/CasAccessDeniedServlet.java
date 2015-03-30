@@ -5,11 +5,14 @@ import static org.iplantc.de.server.util.UrlUtils.convertRelativeUrl;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.HttpRequestHandler;
+import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 import org.stringtemplate.v4.ST;
 
 import java.io.IOException;
 
+import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -28,6 +31,12 @@ public class CasAccessDeniedServlet extends HttpServlet implements HttpRequestHa
     private static final String TEMPLATE_NAME = "access-denied-template.html";
     private final Logger LOG = LoggerFactory.getLogger(CasAccessDeniedServlet.class);
 
+    @Value("${org.iplantc.discoveryenvironment.cas.logout-url}")
+    public void setLogoutUrl(String logoutUrl) {
+        this.logoutUrl = logoutUrl;
+        LOG.trace("Set logoutUrl = {}", logoutUrl);
+    }
+
     /**
      * The URL used to log out of the application,
      */
@@ -38,13 +47,14 @@ public class CasAccessDeniedServlet extends HttpServlet implements HttpRequestHa
      */
     private String templateText;
 
-    public CasAccessDeniedServlet() {}
-
-    public CasAccessDeniedServlet(final String logoutUrl){
-        this.logoutUrl = logoutUrl;
+    public CasAccessDeniedServlet() {
         templateText = loadResource(TEMPLATE_NAME);
-        LOG.info("Constructor args:\n\t" +
-                      "logoutUrl = {}", logoutUrl);
+    }
+
+    @Override
+    public void init(ServletConfig config) throws ServletException {
+        super.init(config);
+        SpringBeanAutowiringSupport.processInjectionBasedOnServletContext(this, config.getServletContext());
     }
 
     @Override

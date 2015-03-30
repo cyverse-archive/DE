@@ -5,11 +5,15 @@ import static org.iplantc.de.server.util.UrlUtils.convertRelativeUrl;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.HttpRequestHandler;
+import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 import org.stringtemplate.v4.ST;
 
 import java.io.IOException;
 
+import javax.inject.Named;
+import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -20,6 +24,7 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author Dennis Roberts, jstroot
  */
+@Named("loggedOutServlet")
 public class CasLoggedOutServlet extends HttpServlet implements HttpRequestHandler {
 
     /**
@@ -43,19 +48,29 @@ public class CasLoggedOutServlet extends HttpServlet implements HttpRequestHandl
      */
     private String templateText;
 
+    @Value("${org.iplantc.discoveryenvironment.cas.app-name}")
+    public void setAppName(String appName) {
+        this.appName = appName;
+        LOG.trace("Set appName = {}", appName);
+    }
+
+    @Value("${org.iplantc.discoveryenvironment.cas.login-url}")
+    public void setLoginUrl(String loginUrl) {
+        this.loginUrl = loginUrl;
+        LOG.trace("Set loginUrl = {}", loginUrl);
+    }
+
     /**
      * The default constructor.
      */
     public CasLoggedOutServlet() {
+        this.templateText = loadResource(TEMPLATE_NAME);
     }
 
-    public CasLoggedOutServlet(final String appName, final String loginUrl){
-        this.appName = appName;
-        this.loginUrl = loginUrl;
-        this.templateText = loadResource(TEMPLATE_NAME);
-        LOG.info("Constructor args: \n\t" +
-                      "appName = {}\n\t" +
-                      "loginUrl {}", appName, loginUrl);
+    @Override
+    public void init(ServletConfig config) throws ServletException {
+        super.init(config);
+        SpringBeanAutowiringSupport.processInjectionBasedOnServletContext(this, config.getServletContext());
     }
 
     @Override

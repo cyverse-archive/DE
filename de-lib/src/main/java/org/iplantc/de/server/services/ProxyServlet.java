@@ -21,6 +21,8 @@ import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.methods.HttpTrace;
 import org.apache.http.entity.InputStreamEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
 import java.io.IOException;
 import java.io.PrintStream;
@@ -29,6 +31,7 @@ import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -37,7 +40,7 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * A secured servlet that forwards requests directly to other services.
  *
- * @author Dennis Roberts
+ * @author Dennis Roberts, jstroot
  */
 public class ProxyServlet extends HttpServlet {
     private static final long serialVersionUID = -8343592394048255113L;
@@ -47,35 +50,20 @@ public class ProxyServlet extends HttpServlet {
      */
     private static final Set<String> HEADERS_TO_SKIP = new HashSet<String>(Arrays.asList("content-length"));
 
+    @Autowired
+    public void setServiceResolver(ServiceCallResolver serviceResolver) {
+        this.serviceResolver = serviceResolver;
+    }
+
     /**
      * Used to resolve aliased services calls.
      */
     private ServiceCallResolver serviceResolver;
 
-    /**
-     * The default constructor.
-     */
-    public ProxyServlet() {
-    }
-
-    /**
-     * @param serviceResolver used to resolve aliased services calls.
-     */
-    public ProxyServlet(ServiceCallResolver serviceResolver) {
-        this.serviceResolver = serviceResolver;
-    }
-
-    /**
-     * Initializes the servlet.
-     *
-     * @throws ServletException if the servlet can't be initialized.
-     * @throws IllegalStateException if the services call resolver can't be found.
-     */
     @Override
-    public void init() throws ServletException {
-        if (serviceResolver == null) {
-            serviceResolver = ServiceCallResolver.getServiceCallResolver(getServletContext());
-        }
+    public void init(ServletConfig config) throws ServletException {
+        super.init(config);
+        SpringBeanAutowiringSupport.processInjectionBasedOnServletContext(this, config.getServletContext());
     }
 
     /**
