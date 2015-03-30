@@ -29,7 +29,7 @@ public class TestDefaultServiceCallResolver {
             "org.iplantc.services.acctmgmt.fetchUserOptDetails=http://emma.iplantcollaborative.org/accountmanagementv2/fetch-user-options-details"};
 
     private Properties testProps;
-    private DEServiceCallResolver resolver;
+    private ServiceCallResolver resolver;
 
     /**
      * This was intended to test the default constructor for DefaultServiceCallResolver. Since the values
@@ -43,7 +43,8 @@ public class TestDefaultServiceCallResolver {
         resolver = null;
         // use the default ctor to grab discoveryenvironment.properties
         // resolver = new DefaultServiceCallResolver();
-        resolver = new DEServiceCallResolver(createFromExpected());
+        resolver = new ServiceCallResolver();
+        resolver.setAppProperties(createFromExpected());
         // ensure it was set
         assertNotNull(resolver);
         verifyExpectedValues(EXPECTED);
@@ -129,13 +130,15 @@ public class TestDefaultServiceCallResolver {
         String tmp = testProps.getProperty("prefix");
         assertNull(tmp);
         // this should fail.
-        resolver = new DEServiceCallResolver(testProps);
+        resolver = new ServiceCallResolver();
+        resolver.setAppProperties(testProps);
     }
 
     @Before
     public void setUp() {
         testProps = createProperties();
-        resolver = new DEServiceCallResolver(testProps);
+        resolver = new ServiceCallResolver();
+        resolver.setAppProperties(testProps);
     }
 
     @After
