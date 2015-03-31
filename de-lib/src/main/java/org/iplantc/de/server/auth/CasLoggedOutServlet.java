@@ -48,6 +48,27 @@ public class CasLoggedOutServlet extends HttpServlet implements HttpRequestHandl
      */
     private String templateText;
 
+    /**
+     * The default constructor.
+     */
+    public CasLoggedOutServlet() {
+        this.templateText = loadResource(TEMPLATE_NAME);
+    }
+
+    @Override
+    public void handleRequest(HttpServletRequest request,
+                              HttpServletResponse response) throws ServletException, IOException {
+        if (request.getMethod().equalsIgnoreCase("GET")) {
+            doGet(request, response);
+        }
+    }
+
+    @Override
+    public void init(ServletConfig config) throws ServletException {
+        super.init(config);
+        SpringBeanAutowiringSupport.processInjectionBasedOnServletContext(this, config.getServletContext());
+    }
+
     @Value("${org.iplantc.discoveryenvironment.cas.app-name}")
     public void setAppName(String appName) {
         this.appName = appName;
@@ -60,25 +81,11 @@ public class CasLoggedOutServlet extends HttpServlet implements HttpRequestHandl
         LOG.trace("Set loginUrl = {}", loginUrl);
     }
 
-    /**
-     * The default constructor.
-     */
-    public CasLoggedOutServlet() {
-        this.templateText = loadResource(TEMPLATE_NAME);
-    }
-
     @Override
-    public void init(ServletConfig config) throws ServletException {
-        super.init(config);
-        SpringBeanAutowiringSupport.processInjectionBasedOnServletContext(this, config.getServletContext());
-    }
-
-    @Override
-    public void handleRequest(HttpServletRequest request,
-                              HttpServletResponse response) throws ServletException, IOException {
-        if(request.getMethod().equalsIgnoreCase("GET")){
-            doGet(request, response);
-        }
+    protected void doGet(HttpServletRequest req,
+                         HttpServletResponse res) throws ServletException, IOException {
+        res.setContentType("text/html");
+        res.getWriter().print(generatePageText(req));
     }
 
     /**
@@ -92,11 +99,5 @@ public class CasLoggedOutServlet extends HttpServlet implements HttpRequestHandl
         st.add("app_name", appName);
         st.add("login_url", convertRelativeUrl(req.getContextPath(), loginUrl));
         return st.render();
-    }
-
-    @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
-        res.setContentType("text/html");
-        res.getWriter().print(generatePageText(req));
     }
 }

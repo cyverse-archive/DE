@@ -28,19 +28,12 @@ import javax.servlet.http.HttpServletResponse;
  * @author jstroot
  */
 public class FileDownloadServlet extends HttpServlet {
+
     private static final String[] HEADER_FIELDS_TO_COPY = {"Content-Disposition"};
-
-    private String fileIoBaseUrl;
-
-    private String dataMgmtServiceBaseUrl;
-
     private static final Logger LOG = LoggerFactory.getLogger(FileDownloadServlet.class);
 
-    @Autowired
-    public void setServiceResolver(ServiceCallResolver serviceResolver) {
-        this.serviceResolver = serviceResolver;
-        LOG.trace("Set serviceResolver = {}", serviceResolver.getClass().getSimpleName());
-    }
+    private String dataMgmtServiceBaseUrl;
+    private String fileIoBaseUrl;
 
     /**
      * Used to resolve aliased service calls.
@@ -69,8 +62,7 @@ public class FileDownloadServlet extends HttpServlet {
         } catch (Exception e) {
             throw new ServletException(e.getMessage(), e);
         } finally {
-            if (fileContents != null)
-            {
+            if (fileContents != null) {
                 try {
                     fileContents.close();
                 } catch (IOException ignore) {
@@ -85,16 +77,22 @@ public class FileDownloadServlet extends HttpServlet {
         SpringBeanAutowiringSupport.processInjectionBasedOnServletContext(this, config.getServletContext());
     }
 
+    @Value("${org.iplantc.services.de-data-mgmt.base}")
+    public void setDataMgmtServiceBaseUrl(String dataMgmtServiceBaseUrl) {
+        this.dataMgmtServiceBaseUrl = dataMgmtServiceBaseUrl;
+        LOG.trace("Set dataMgmtServiceBaseUrl: " + dataMgmtServiceBaseUrl);
+    }
+
     @Value("${org.iplantc.services.file-io.base.secured}")
     public void setFileIoBaseUrl(String fileIoBaseUrl) {
         this.fileIoBaseUrl = fileIoBaseUrl;
         LOG.trace("Set fileIoBaseUrl: " + fileIoBaseUrl);
     }
 
-    @Value("${org.iplantc.services.de-data-mgmt.base}")
-    public void setDataMgmtServiceBaseUrl(String dataMgmtServiceBaseUrl) {
-        this.dataMgmtServiceBaseUrl = dataMgmtServiceBaseUrl;
-        LOG.trace("Set dataMgmtServiceBaseUrl: " + dataMgmtServiceBaseUrl);
+    @Autowired
+    public void setServiceResolver(ServiceCallResolver serviceResolver) {
+        this.serviceResolver = serviceResolver;
+        LOG.trace("Set serviceResolver = {}", serviceResolver.getClass().getSimpleName());
     }
 
     /**

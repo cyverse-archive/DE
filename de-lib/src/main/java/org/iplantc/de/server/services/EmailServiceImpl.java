@@ -20,15 +20,7 @@ import javax.servlet.ServletException;
  */
 public class EmailServiceImpl extends RemoteServiceServlet implements EmailService {
     private static final long serialVersionUID = -3893564670515471591L;
-
     private static final Logger LOG = LoggerFactory.getLogger(EmailServiceImpl.class);
-
-    @Autowired
-    public void setClient(IplantEmailClient client) {
-        this.client = client;
-        LOG.trace("Set client = {}", client.getClass().getSimpleName());
-    }
-
     /**
      * The client used to send message requests to the iPlant email services.
      */
@@ -43,10 +35,16 @@ public class EmailServiceImpl extends RemoteServiceServlet implements EmailServi
     @Override
     public void sendEmail(String subject, String message, String fromAddress, String toAddress) {
         MessageRequest request = new MessageRequest()
-                .setSubject(subject)
-                .setContent(message)
-                .setFromAddress(fromAddress)
-                .setToAddress(toAddress);
+                                     .setSubject(subject)
+                                     .setContent(message)
+                                     .setFromAddress(fromAddress)
+                                     .setToAddress(toAddress);
         client.sendMessage(request);
+    }
+
+    @Autowired
+    public void setClient(IplantEmailClient client) {
+        this.client = client;
+        LOG.trace("Set client = {}", client.getClass().getSimpleName());
     }
 }

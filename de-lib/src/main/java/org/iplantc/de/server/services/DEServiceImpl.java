@@ -51,18 +51,14 @@ import javax.servlet.http.HttpServletRequest;
 public class DEServiceImpl extends RemoteServiceServlet implements DEService {
     private static final long serialVersionUID = 1L;
     private final Logger LOGGER = LoggerFactory.getLogger(DEServiceImpl.class);
+
     /**
      * The current servlet request.
      */
     private HttpServletRequest request = null;
 
-    @Autowired
-    public void setServiceResolver(ServiceCallResolver serviceResolver) {
-        LOGGER.trace("Set serviceCallResolver = {}", serviceResolver.getClass().getSimpleName());
-        this.serviceResolver = serviceResolver;
-    }
-
     private ServiceCallResolver serviceResolver;
+
     /**
      * Used to establish URL connections.
      */
@@ -75,12 +71,6 @@ public class DEServiceImpl extends RemoteServiceServlet implements DEService {
     public DEServiceImpl(ServiceCallResolver serviceResolver) {
         LOGGER.trace("CONSTRUCTOR CALLED!!");
         this.serviceResolver = serviceResolver;
-    }
-
-    @Override
-    public void init(ServletConfig config) throws ServletException {
-        super.init(config);
-        SpringBeanAutowiringSupport.processInjectionBasedOnServletContext(this, config.getServletContext());
     }
 
     /**
@@ -115,7 +105,7 @@ public class DEServiceImpl extends RemoteServiceServlet implements DEService {
         }
 
         if (LOGGER.isTraceEnabled()
-            && json != null) {
+                && json != null) {
             Gson prettyGson = new GsonBuilder().setPrettyPrinting().create();
             LOGGER.trace("\nRESPONSE: {} {}\n{}", wrapper.getType(), wrapper.getAddress(), prettyGson.toJson(new JsonParser().parse(json)));
         }
@@ -154,6 +144,12 @@ public class DEServiceImpl extends RemoteServiceServlet implements DEService {
         return null;
     }
 
+    @Override
+    public void init(ServletConfig config) throws ServletException {
+        super.init(config);
+        SpringBeanAutowiringSupport.processInjectionBasedOnServletContext(this, config.getServletContext());
+    }
+
     /**
      * Sets the current servlet request.
      *
@@ -161,6 +157,12 @@ public class DEServiceImpl extends RemoteServiceServlet implements DEService {
      */
     public void setRequest(HttpServletRequest request) {
         this.request = request;
+    }
+
+    @Autowired
+    public void setServiceResolver(ServiceCallResolver serviceResolver) {
+        LOGGER.trace("Set serviceCallResolver = {}", serviceResolver.getClass().getSimpleName());
+        this.serviceResolver = serviceResolver;
     }
 
     @Override

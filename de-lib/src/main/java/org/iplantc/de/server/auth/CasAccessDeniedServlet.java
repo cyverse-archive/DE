@@ -31,19 +31,12 @@ public class CasAccessDeniedServlet extends HttpServlet implements HttpRequestHa
      * The name of the template used to generate the HTML to return.
      */
     private static final String TEMPLATE_NAME = "access-denied-template.html";
+
     private final Logger LOG = LoggerFactory.getLogger(CasAccessDeniedServlet.class);
-
-    @Value("${org.iplantc.discoveryenvironment.cas.logout-url}")
-    public void setLogoutUrl(String logoutUrl) {
-        this.logoutUrl = logoutUrl;
-        LOG.trace("Set logoutUrl = {}", logoutUrl);
-    }
-
     /**
      * The URL used to log out of the application,
      */
     private String logoutUrl;
-
     /**
      * The text of the template used to generate the HTML to return.
      */
@@ -54,17 +47,30 @@ public class CasAccessDeniedServlet extends HttpServlet implements HttpRequestHa
     }
 
     @Override
+    public void handleRequest(HttpServletRequest request,
+                              HttpServletResponse response) throws ServletException, IOException {
+        if (request.getMethod().equalsIgnoreCase("GET")) {
+            doGet(request, response);
+        }
+    }
+
+    @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
         SpringBeanAutowiringSupport.processInjectionBasedOnServletContext(this, config.getServletContext());
     }
 
+    @Value("${org.iplantc.discoveryenvironment.cas.logout-url}")
+    public void setLogoutUrl(String logoutUrl) {
+        this.logoutUrl = logoutUrl;
+        LOG.trace("Set logoutUrl = {}", logoutUrl);
+    }
+
     @Override
-    public void handleRequest(HttpServletRequest request,
-                              HttpServletResponse response) throws ServletException, IOException {
-        if(request.getMethod().equalsIgnoreCase("GET")){
-            doGet(request, response);
-        }
+    protected void doGet(HttpServletRequest req,
+                         HttpServletResponse res) throws ServletException, IOException {
+        res.setContentType("text/html");
+        res.getWriter().print(generatePageText(req));
     }
 
     /**
@@ -77,11 +83,5 @@ public class CasAccessDeniedServlet extends HttpServlet implements HttpRequestHa
         ST st = new ST(templateText, '$', '$');
         st.add("logout_url", convertRelativeUrl(req.getContextPath(), logoutUrl));
         return st.render();
-    }
-
-    @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
-        res.setContentType("text/html");
-        res.getWriter().print(generatePageText(req));
     }
 }
