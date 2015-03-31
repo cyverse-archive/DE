@@ -23,7 +23,7 @@ import java.util.Map;
  * Entry point classes define <code>onModuleLoad()</code>.
  */
 public class Belphegor implements EntryPoint {
-    private final String BOOTSTRAP = "org.iplantc.services.admin.bootstrap";
+    private final String BOOTSTRAP = "org.iplantc.services.bootstrap";
     private final BelphegorAppInjector injector = GWT.create(BelphegorAppInjector.class);
     private final KeepaliveTimer keepaliveTimer = KeepaliveTimer.getInstance();
     private final PropertyServiceAsync propertyService = GWT.create(PropertyService.class);

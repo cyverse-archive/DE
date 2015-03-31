@@ -12,6 +12,7 @@ import org.stringtemplate.v4.ST;
 
 import java.io.IOException;
 
+import javax.inject.Named;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -23,6 +24,7 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author Dennis Roberts, jstroot
  */
+@Named("accessDeniedServlet")
 public class CasAccessDeniedServlet extends HttpServlet implements HttpRequestHandler {
 
     /**

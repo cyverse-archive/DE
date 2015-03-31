@@ -38,8 +38,8 @@
         <servlet-class>org.iplantc.de.server.EmptyResponseServlet</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>belphegorPropertiesService</servlet-name>
-        <servlet-class>org.iplantc.admin.belphegor.server.services.BelphegorPropertyServiceImpl</servlet-class>
+        <servlet-name>propertyServlet</servlet-name>
+        <servlet-class>org.iplantc.de.server.services.PropertyServiceImpl</servlet-class>
     </servlet>
 
     <!-- Servlet Mappings -->
@@ -68,8 +68,8 @@
         <url-pattern>/belphegor/empty</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>belphegorPropertiesService</servlet-name>
-        <url-pattern>/belphegor/belphegorProperties</url-pattern>
+        <servlet-name>propertyServlet</servlet-name>
+        <url-pattern>/belphegor/properties</url-pattern>
     </servlet-mapping>
 
     <!-- Filters -->
