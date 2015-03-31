@@ -1,7 +1,5 @@
 package org.iplantc.de.server.oauth;
 
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
 import org.iplantc.de.server.auth.UrlConnector;
 
 import com.google.common.base.Strings;
@@ -11,23 +9,137 @@ import net.sf.json.JSONObject;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.utils.URIBuilder;
-import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.HttpRequestHandler;
+import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
 
+import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+/**
+ * @author jstroot
+ */
 public abstract class OAuthCallbackServlet extends HttpServlet implements HttpRequestHandler {
+
+    /**
+     * The authorization response is really a GET request initiated by a redirection from the OAuth
+     * server. This class stores information about and the authorization response and provides some
+     * methods to perform a few tasks using the information from the authorization response.
+     */
+    private class AuthorizationResponse {
+        private final String apiName;
+        private final String authCode;
+        private final String contextPath;
+        private final ErrorCodes errorCode;
+        private final String errorDescription;
+        private final String errorUri;
+        private final String state;
+
+        public AuthorizationResponse(HttpServletRequest request) {
+            apiName = request.getPathInfo().replaceAll(".*/", "");
+            authCode = request.getParameter(AUTH_CODE_PARAM);
+            state = request.getParameter(STATE_PARAM);
+            errorDescription = request.getParameter(ERROR_DESCRIPTION_PARAM);
+            errorUri = request.getParameter(ERROR_URI_PARAM);
+            errorCode = determineErrorCode(request.getParameter(ERROR_PARAM));
+            contextPath = request.getContextPath();
+        }
+
+        public void authorizationErrorRedirect(final HttpServletResponse response) throws IOException {
+            logAuthorizationErrorRedirect();
+            response.sendRedirect(authorizationErrorRedirectUrl());
+        }
+
+        public String getApiName() {
+            return apiName;
+        }
+
+        public String getAuthCode() {
+            return authCode;
+        }
+
+        public boolean isError() {
+            return errorCode != null;
+        }
+
+        public void serviceErrorRedirect(final HttpServletResponse response) throws IOException {
+            response.sendRedirect(serviceErrorRedirectUrl());
+        }
+
+        private void addParameter(final URIBuilder uriBuilder, final String name,
+                                  final String value) {
+            if (!Strings.isNullOrEmpty(value)) {
+                uriBuilder.addParameter(name, value);
+            }
+        }
+
+        private String authorizationErrorRedirectUrl() {
+            try {
+                final URIBuilder uriBuilder = new URIBuilder(contextPath);
+                addParameter(uriBuilder, ERROR_PARAM, errorCode.getErrorCode());
+                addParameter(uriBuilder, ERROR_DESCRIPTION_PARAM, getErrorDescription());
+                addParameter(uriBuilder, ERROR_URI_PARAM, errorUri);
+                addParameter(uriBuilder, API_NAME_PARAM, apiName);
+                return uriBuilder.toString();
+            } catch (URISyntaxException e) {
+                LOG.error("unable to build the authorization error redirect URL", e);
+                throw new RuntimeException(e);
+            }
+        }
+
+        private ErrorCodes determineErrorCode(String providedErrorCode) {
+            return !Strings.isNullOrEmpty(providedErrorCode) ? ErrorCodes.fromString(providedErrorCode)
+                       : Strings.isNullOrEmpty(apiName) ? ErrorCodes.ERR_OAUTH_CONFIG
+                             : Strings.isNullOrEmpty(authCode) ? ErrorCodes.ERR_MISSING_AUTH_CODE
+                                   : Strings.isNullOrEmpty(state) ? ErrorCodes.ERR_MISSING_STATE
+                                         : null;
+        }
+
+        private String getErrorDescription() {
+            return !Strings.isNullOrEmpty(errorDescription) ? errorDescription
+                       : errorCode != null ? errorCode.getErrorDescription()
+                             : null;
+        }
+
+        private String getState() {
+            return state;
+        }
+
+        private void logAuthorizationErrorRedirect() {
+            if (errorCode == ErrorCodes.ERR_ACCESS_DENIED) {
+                LOG.warn("access denied by user or server.");
+            } else {
+                LOG.error("unable to obtain authorization: {}", errorCode);
+            }
+        }
+
+        private String serviceErrorRedirectUrl() {
+            try {
+                final ErrorCodes errorCode = ErrorCodes.ERR_SERVICE;
+                final URIBuilder uriBuilder = new URIBuilder(contextPath);
+                addParameter(uriBuilder, ERROR_PARAM, errorCode.getErrorCode());
+                addParameter(uriBuilder, ERROR_DESCRIPTION_PARAM, errorCode.getErrorDescription());
+                addParameter(uriBuilder, API_NAME_PARAM, apiName);
+                return uriBuilder.toString();
+            } catch (URISyntaxException e) {
+                LOG.error("unable to build the service error redirect URL", e);
+                throw new RuntimeException(e);
+            }
+        }
+    }
 
     /**
      * An enumerated type for error codes that can be sent back to the main page of the DE.
@@ -46,12 +158,9 @@ public abstract class OAuthCallbackServlet extends HttpServlet implements HttpRe
         ERR_SERVICE("general_service_error", "The DE service encountered an error.");
 
         private final String errorCode;
-        public String getErrorCode() { return errorCode; }
-
         private final String errorDescription;
-        public String getErrorDescription() { return errorDescription; }
 
-        private ErrorCodes(final String errorCode, final String errorDescription) {
+        ErrorCodes(final String errorCode, final String errorDescription) {
             this.errorCode = errorCode;
             this.errorDescription = errorDescription;
         }
@@ -65,27 +174,33 @@ public abstract class OAuthCallbackServlet extends HttpServlet implements HttpRe
             return null;
         }
 
+        public String getErrorCode() {
+            return errorCode;
+        }
+
+        public String getErrorDescription() {
+            return errorDescription;
+        }
+
         @Override
         public String toString() {
             return errorCode;
         }
     }
 
-    private static final String CALLBACK_PATH = "oauth/access-code";
-    private static final String ERROR_PARAM = "error";
-    private static final String ERROR_DESCRIPTION_PARAM = "error_description";
-    private static final String ERROR_URI_PARAM = "error_uri";
-    private static final String AUTH_CODE_PARAM = "code";
-    private static final String STATE_PARAM = "state";
     private static final String API_NAME_PARAM = "api_name";
-
+    private static final String AUTH_CODE_PARAM = "code";
+    private static final String CALLBACK_PATH = "oauth/access-code";
+    private static final String ERROR_DESCRIPTION_PARAM = "error_description";
+    private static final String ERROR_PARAM = "error";
+    private static final String ERROR_URI_PARAM = "error_uri";
+    private static final String STATE_PARAM = "state";
     private final Logger LOG = LoggerFactory.getLogger(OAuthCallbackServlet.class);
-    private final String serviceUrl;
+    private String serviceUrl;
 
     private UrlConnector urlConnector;
-    // Default descriptions for request error codes.
 
-    public OAuthCallbackServlet(final String serviceUrl){
+    public OAuthCallbackServlet(final String serviceUrl) {
         this.serviceUrl = serviceUrl;
     }
 
@@ -95,11 +210,21 @@ public abstract class OAuthCallbackServlet extends HttpServlet implements HttpRe
         doGet(httpServletRequest, httpServletResponse);
     }
 
-    protected void setUrlConnector(final UrlConnector urlConnector) { this.urlConnector = urlConnector; }
+    @Override
+    public void init(ServletConfig config) throws ServletException {
+        super.init(config);
+        SpringBeanAutowiringSupport.processInjectionBasedOnServletContext(this, config.getServletContext());
+    }
+
+    @Value("${org.iplantc.discoveryenvironment.muleServiceBaseUrl}")
+    public void setServiceUrl(String serviceUrl) {
+        this.serviceUrl = serviceUrl;
+        LOG.trace("Set serviceUrl = {}", serviceUrl);
+    }
 
     @Override
     protected void doGet(final HttpServletRequest req, final HttpServletResponse resp)
-            throws ServletException, IOException {
+        throws ServletException, IOException {
         final AuthorizationResponse authResponse = new AuthorizationResponse(req);
         if (authResponse.isError()) {
             authResponse.authorizationErrorRedirect(resp);
@@ -108,10 +233,29 @@ public abstract class OAuthCallbackServlet extends HttpServlet implements HttpRe
         }
     }
 
+    @Autowired
+    protected void setUrlConnector(final UrlConnector urlConnector) {
+        this.urlConnector = urlConnector;
+    }
+
+    private String authorizationSuccessRedirectUrl(HttpServletRequest req, String responseBody) {
+        try {
+            JSONObject json = JSONObject.fromObject(responseBody);
+            String queryString = json.getString("state_info");
+            return new URIBuilder(req.getContextPath())
+                       .setQuery(queryString)
+                       .build()
+                       .toString();
+        } catch (URISyntaxException e) {
+            LOG.error("unable to build the authorization success redirect URL", e);
+            throw new RuntimeException(e);
+        }
+    }
+
     private void callAuthCodeService(final AuthorizationResponse authResponse,
                                      final HttpServletRequest req,
                                      final HttpServletResponse resp)
-            throws IOException {
+        throws IOException {
         final CloseableHttpClient client = HttpClients.createDefault();
         try {
             final HttpGet request = urlConnector.getRequest(req, serviceCallbackUrl(authResponse));
@@ -134,131 +278,16 @@ public abstract class OAuthCallbackServlet extends HttpServlet implements HttpRe
         return IOUtils.toString(entity.getContent());
     }
 
-    private String authorizationSuccessRedirectUrl(HttpServletRequest req, String responseBody) {
-        try {
-            JSONObject json = JSONObject.fromObject(responseBody);
-            String queryString = json.getString("state_info");
-            return new URIBuilder(req.getContextPath())
-                    .setQuery(queryString)
-                    .build()
-                    .toString();
-        } catch (URISyntaxException e) {
-            LOG.error("unable to build the authorization success redirect URL", e);
-            throw new RuntimeException(e);
-        }
-    }
-
     private String serviceCallbackUrl(final AuthorizationResponse authResponse) {
         try {
             final String baseUrl = serviceUrl + CALLBACK_PATH;
             return new URIBuilder(baseUrl + "/" + authResponse.getApiName())
-                    .addParameter(AUTH_CODE_PARAM, authResponse.getAuthCode())
-                    .addParameter(STATE_PARAM, authResponse.getState())
-                    .toString();
+                       .addParameter(AUTH_CODE_PARAM, authResponse.getAuthCode())
+                       .addParameter(STATE_PARAM, authResponse.getState())
+                       .toString();
         } catch (URISyntaxException e) {
             LOG.error("unable to build the auth code service callback URI", e);
             throw new RuntimeException(e);
-        }
-    }
-
-
-    /**
-     * The authorization response is really a GET request initiated by a redirection from the OAuth
-     * server. This class stores information about and the authorization response and provides some
-     * methods to perform a few tasks using the information from the authorization response.
-     */
-    private class AuthorizationResponse {
-        private final String apiName;
-        public String getApiName() { return apiName; }
-
-        private final String authCode;
-        public String getAuthCode() { return authCode; }
-
-        private final String state;
-        private String getState() { return state; }
-
-        private final ErrorCodes errorCode;
-        private final String errorDescription;
-        private final String errorUri;
-        private final String contextPath;
-
-        public AuthorizationResponse(HttpServletRequest request) {
-            apiName = request.getPathInfo().replaceAll(".*/", "");
-            authCode = request.getParameter(AUTH_CODE_PARAM);
-            state = request.getParameter(STATE_PARAM);
-            errorDescription = request.getParameter(ERROR_DESCRIPTION_PARAM);
-            errorUri = request.getParameter(ERROR_URI_PARAM);
-            errorCode = determineErrorCode(request.getParameter(ERROR_PARAM));
-            contextPath = request.getContextPath();
-        }
-
-        private ErrorCodes determineErrorCode(String providedErrorCode) {
-            return !Strings.isNullOrEmpty(providedErrorCode) ? ErrorCodes.fromString(providedErrorCode)
-                 : Strings.isNullOrEmpty(apiName)            ? ErrorCodes.ERR_OAUTH_CONFIG
-                 : Strings.isNullOrEmpty(authCode)           ? ErrorCodes.ERR_MISSING_AUTH_CODE
-                 : Strings.isNullOrEmpty(state)              ? ErrorCodes.ERR_MISSING_STATE
-                 :                                             null;
-        }
-
-        private String getErrorDescription() {
-            return !Strings.isNullOrEmpty(errorDescription) ? errorDescription
-                 : errorCode != null                        ? errorCode.getErrorDescription()
-                 :                                            null;
-        }
-
-        public boolean isError() {
-            return errorCode != null;
-        }
-
-        public void authorizationErrorRedirect(final HttpServletResponse response) throws IOException {
-            logAuthorizationErrorRedirect();
-            response.sendRedirect(authorizationErrorRedirectUrl());
-        }
-
-        private String authorizationErrorRedirectUrl() {
-            try {
-                final URIBuilder uriBuilder = new URIBuilder(contextPath);
-                addParameter(uriBuilder, ERROR_PARAM, errorCode.getErrorCode());
-                addParameter(uriBuilder, ERROR_DESCRIPTION_PARAM, getErrorDescription());
-                addParameter(uriBuilder, ERROR_URI_PARAM, errorUri);
-                addParameter(uriBuilder, API_NAME_PARAM, apiName);
-                return uriBuilder.toString();
-            } catch (URISyntaxException e) {
-                LOG.error("unable to build the authorization error redirect URL", e);
-                throw new RuntimeException(e);
-            }
-        }
-
-        public void serviceErrorRedirect(final HttpServletResponse response) throws IOException {
-            response.sendRedirect(serviceErrorRedirectUrl());
-        }
-
-        private String serviceErrorRedirectUrl() {
-            try {
-                final ErrorCodes errorCode = ErrorCodes.ERR_SERVICE;
-                final URIBuilder uriBuilder = new URIBuilder(contextPath);
-                addParameter(uriBuilder, ERROR_PARAM, errorCode.getErrorCode());
-                addParameter(uriBuilder, ERROR_DESCRIPTION_PARAM, errorCode.getErrorDescription());
-                addParameter(uriBuilder, API_NAME_PARAM, apiName);
-                return uriBuilder.toString();
-            } catch (URISyntaxException e) {
-                LOG.error("unable to build the service error redirect URL", e);
-                throw new RuntimeException(e);
-            }
-        }
-
-        private void addParameter(final URIBuilder uriBuilder, final String name, final String value) {
-            if (!Strings.isNullOrEmpty(value)) {
-                uriBuilder.addParameter(name, value);
-            }
-        }
-
-        private void logAuthorizationErrorRedirect() {
-            if (errorCode == ErrorCodes.ERR_ACCESS_DENIED) {
-                LOG.warn("access denied by user or server.");
-            } else {
-                LOG.error("unable to obtain authorization: {}", errorCode);
-            }
         }
     }
 }

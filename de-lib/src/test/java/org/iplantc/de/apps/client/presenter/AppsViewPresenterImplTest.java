@@ -5,6 +5,9 @@ import org.iplantc.de.apps.client.AppsGridView;
 import org.iplantc.de.apps.client.AppsToolbarView;
 import org.iplantc.de.apps.client.gin.factory.AppsViewFactory;
 
+import com.google.common.base.Joiner;
+import com.google.common.base.Splitter;
+import com.google.common.collect.Lists;
 import com.google.gwtmockito.GwtMockitoTestRunner;
 
 import static org.mockito.Mockito.*;
@@ -12,6 +15,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+
+import java.util.List;
 
 @RunWith(GwtMockitoTestRunner.class)
 public class AppsViewPresenterImplTest {
@@ -78,6 +83,14 @@ public class AppsViewPresenterImplTest {
                                  categoriesViewMock,
                                  gridViewMock,
                                  toolbarViewMock);
+
+        final List<String> dirStack = Lists.newArrayList();
+        final List<String> output = Lists.newArrayList();
+        for(String s : Splitter.on("/").split("/foo/bar/baz")){
+            dirStack.add(s);
+            output.add(Joiner.on("/").join(dirStack));
+        }
+        System.out.println(output);
     }
 
 

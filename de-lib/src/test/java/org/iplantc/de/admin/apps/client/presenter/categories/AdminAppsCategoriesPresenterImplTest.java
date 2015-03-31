@@ -5,11 +5,11 @@ import org.iplantc.de.admin.apps.client.events.selection.AddCategorySelected;
 import org.iplantc.de.admin.apps.client.events.selection.CategorizeAppSelected;
 import org.iplantc.de.admin.apps.client.events.selection.DeleteCategorySelected;
 import org.iplantc.de.admin.apps.client.events.selection.RenameCategorySelected;
-import org.iplantc.de.admin.desktop.client.models.BelphegorAdminProperties;
 import org.iplantc.de.admin.desktop.client.services.AppAdminServiceFacade;
 import org.iplantc.de.apps.client.AppCategoriesView;
 import org.iplantc.de.apps.client.events.AppSearchResultLoadEvent;
 import org.iplantc.de.apps.client.gin.factory.AppCategoriesViewFactory;
+import org.iplantc.de.client.models.DEProperties;
 import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.models.apps.AppCategory;
 import org.iplantc.de.client.services.AppServiceFacade;
@@ -51,7 +51,7 @@ public class AdminAppsCategoriesPresenterImplTest {
     @Mock AppCategoriesView viewMock;
     @Mock Tree<AppCategory, String> treeMock;
     @Mock TreeSelectionModel<AppCategory> selectionModelMock;
-    @Mock BelphegorAdminProperties propertiesMock;
+    @Mock DEProperties propertiesMock;
     @Mock IplantAnnouncer announcerMock;
 
     @Captor ArgumentCaptor<AsyncCallback<List<AppCategory>>> appCatListCallbackCaptor;
@@ -81,7 +81,7 @@ public class AdminAppsCategoriesPresenterImplTest {
         uut.properties = propertiesMock;
         uut.announcer = announcerMock;
         when(propertiesMock.getDefaultTrashAppCategoryId()).thenReturn(mockTrashCategoryId);
-        when(propertiesMock.getDefaultBetaAppCategoryId()).thenReturn(mockBetaCategoryId);
+        when(propertiesMock.getDefaultBetaCategoryId()).thenReturn(mockBetaCategoryId);
         when(appearanceMock.addCategoryPermissionError()).thenReturn("permission error");
     }
 

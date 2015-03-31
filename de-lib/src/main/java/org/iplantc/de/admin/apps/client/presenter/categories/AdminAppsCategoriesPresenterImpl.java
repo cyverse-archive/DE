@@ -9,13 +9,13 @@ import org.iplantc.de.admin.apps.client.events.selection.MoveCategorySelected;
 import org.iplantc.de.admin.apps.client.events.selection.RenameCategorySelected;
 import org.iplantc.de.admin.desktop.client.apps.presenter.AppCategorizePresenter;
 import org.iplantc.de.admin.desktop.client.apps.views.AppCategorizeViewImpl;
-import org.iplantc.de.admin.desktop.client.models.BelphegorAdminProperties;
 import org.iplantc.de.admin.desktop.client.services.AppAdminServiceFacade;
 import org.iplantc.de.admin.desktop.client.services.model.AppAdminServiceRequestAutoBeanFactory;
 import org.iplantc.de.admin.desktop.client.services.model.AppCategorizeRequest;
 import org.iplantc.de.apps.client.AppCategoriesView;
 import org.iplantc.de.apps.client.events.AppSearchResultLoadEvent;
 import org.iplantc.de.apps.client.gin.factory.AppCategoriesViewFactory;
+import org.iplantc.de.client.models.DEProperties;
 import org.iplantc.de.client.models.HasId;
 import org.iplantc.de.client.models.apps.App;
 import org.iplantc.de.client.models.apps.AppCategory;
@@ -49,7 +49,7 @@ public class AdminAppsCategoriesPresenterImpl implements AdminCategoriesView.Pre
     @Inject IplantAnnouncer announcer;
     @Inject AppServiceFacade appService;
     @Inject AdminCategoriesView.Presenter.Appearance appearance;
-    @Inject BelphegorAdminProperties properties;
+    @Inject DEProperties properties;
     @Inject AppAdminServiceRequestAutoBeanFactory serviceFactory;
 
     private final TreeStore<AppCategory> treeStore;
@@ -101,7 +101,7 @@ public class AdminAppsCategoriesPresenterImpl implements AdminCategoriesView.Pre
          *
          */
         final boolean isTrashCategory = properties.getDefaultTrashAppCategoryId().equalsIgnoreCase(selectedParentCategory.getId());
-        final boolean isBetaCategory = properties.getDefaultBetaAppCategoryId().equalsIgnoreCase(selectedParentCategory.getId());
+        final boolean isBetaCategory = properties.getDefaultBetaCategoryId().equalsIgnoreCase(selectedParentCategory.getId());
         final boolean isPublicApps = selectedParentCategory.getName().contains("Public Apps");
         final boolean hasNoChildCategories = selectedParentCategory.getCategories() != null
                               && selectedParentCategory.getCategories().size() == 0;

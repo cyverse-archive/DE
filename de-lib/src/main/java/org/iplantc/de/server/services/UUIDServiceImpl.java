@@ -8,7 +8,9 @@ import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import java.util.List;
 import java.util.UUID;
 
-@SuppressWarnings("serial")
+/**
+ * @author jstroot
+ */
 public class UUIDServiceImpl extends RemoteServiceServlet implements UUIDService {
 
     @Override

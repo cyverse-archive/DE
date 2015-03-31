@@ -33,10 +33,6 @@
         <servlet-class>org.iplantc.de.server.services.DEServiceImpl</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>sessionManagementServlet</servlet-name>
-        <servlet-class>org.iplantc.de.server.services.SessionManagementServiceImpl</servlet-class>
-    </servlet>
-    <servlet>
         <servlet-name>propertyServlet</servlet-name>
         <servlet-class>org.iplantc.de.server.services.PropertyServiceImpl</servlet-class>
     </servlet>
@@ -89,10 +85,6 @@
     <servlet-mapping>
         <servlet-name>deServiceDispatcher</servlet-name>
         <url-pattern>/discoveryenvironment/deservice</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>sessionManagementServlet</servlet-name>
-        <url-pattern>/discoveryenvironment/sessionmanagement</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>propertyServlet</servlet-name>

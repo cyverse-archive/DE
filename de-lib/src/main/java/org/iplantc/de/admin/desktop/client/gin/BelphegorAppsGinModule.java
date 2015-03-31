@@ -1,6 +1,5 @@
 package org.iplantc.de.admin.desktop.client.gin;
 
-import org.iplantc.de.admin.desktop.client.models.BelphegorAdminProperties;
 import org.iplantc.de.admin.desktop.client.presenter.BelphegorPresenterImpl;
 import org.iplantc.de.admin.desktop.client.refGenome.RefGenomeView;
 import org.iplantc.de.admin.desktop.client.refGenome.presenter.RefGenomePresenterImpl;
@@ -92,9 +91,5 @@ public class BelphegorAppsGinModule extends AbstractGinModule {
     @Provides
     public DEProperties createDeProps() {
         return DEProperties.getInstance();
-    }
-
-    @Provides public BelphegorAdminProperties getAdminProperties() {
-        return BelphegorAdminProperties.getInstance();
     }
 }

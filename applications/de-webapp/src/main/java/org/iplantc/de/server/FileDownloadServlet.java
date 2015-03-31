@@ -6,6 +6,9 @@ import org.iplantc.de.shared.services.ServiceCallWrapper;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -13,6 +16,7 @@ import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
+import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -20,11 +24,16 @@ import javax.servlet.http.HttpServletResponse;
 
 /**
  * A servlet for downloading a file.
+ *
+ * @author jstroot
  */
 public class FileDownloadServlet extends HttpServlet {
-    private static final String[] HEADER_FIELDS_TO_COPY = {"Content-Disposition"};
 
+    private static final String[] HEADER_FIELDS_TO_COPY = {"Content-Disposition"};
     private static final Logger LOG = LoggerFactory.getLogger(FileDownloadServlet.class);
+
+    private String dataMgmtServiceBaseUrl;
+    private String fileIoBaseUrl;
 
     /**
      * Used to resolve aliased service calls.
@@ -32,36 +41,14 @@ public class FileDownloadServlet extends HttpServlet {
     private ServiceCallResolver serviceResolver;
 
     /**
-     * Used to obtain some configuration settings.
-     */
-    private DiscoveryEnvironmentProperties deProps;
-
-    /**
      * The default constructor.
      */
-    public FileDownloadServlet() {}
-
-    /**
-     * Initializes the servlet if it hasn't already been initialized.
-     *
-     * @throws ServletException if the servlet can't be initialized.
-     * @throws IllegalStateException if any required dependency can't be found.
-     */
-    @Override
-    public void init() throws ServletException {
-        super.init();
-        if (serviceResolver == null && deProps == null) {
-            serviceResolver = ServiceCallResolver.getServiceCallResolver(getServletContext());
-            try {
-                deProps = DiscoveryEnvironmentProperties.getDiscoveryEnvironmentProperties();
-            } catch (IOException e) {
-               throw new ServletException(e);
-            }
-        }
+    public FileDownloadServlet() {
     }
 
     @Override
-    public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException {
+    public void doGet(HttpServletRequest request,
+                      HttpServletResponse response) throws ServletException {
         DEServiceInputStream fileContents = null;
         try {
             String address = buildRequestAddress(request);
@@ -84,16 +71,69 @@ public class FileDownloadServlet extends HttpServlet {
         }
     }
 
+    @Override
+    public void init(ServletConfig config) throws ServletException {
+        super.init(config);
+        SpringBeanAutowiringSupport.processInjectionBasedOnServletContext(this, config.getServletContext());
+    }
+
+    @Value("${org.iplantc.services.de-data-mgmt.base}")
+    public void setDataMgmtServiceBaseUrl(String dataMgmtServiceBaseUrl) {
+        this.dataMgmtServiceBaseUrl = dataMgmtServiceBaseUrl;
+        LOG.trace("Set dataMgmtServiceBaseUrl: " + dataMgmtServiceBaseUrl);
+    }
+
+    @Value("${org.iplantc.services.file-io.base.secured}")
+    public void setFileIoBaseUrl(String fileIoBaseUrl) {
+        this.fileIoBaseUrl = fileIoBaseUrl;
+        LOG.trace("Set fileIoBaseUrl: " + fileIoBaseUrl);
+    }
+
+    @Autowired
+    public void setServiceResolver(ServiceCallResolver serviceResolver) {
+        this.serviceResolver = serviceResolver;
+        LOG.trace("Set serviceResolver = {}", serviceResolver.getClass().getSimpleName());
+    }
+
+    /**
+     * Builds the URL used to fetch the file contents.
+     *
+     * @param request out HTTP servlet request.
+     * @return the URL.
+     * @throws UnsupportedEncodingException
+     */
+    private String buildRequestAddress(HttpServletRequest request) throws UnsupportedEncodingException {
+        String path = URLEncoder.encode(request.getParameter("path"), "UTF-8");
+
+        String attachment = request.getParameter("attachment");
+        if (attachment == null) {
+            attachment = "1";
+        }
+        attachment = URLEncoder.encode(attachment, "UTF-8");
+
+        String downloadUrl = request.getParameter("url");
+        if (downloadUrl == null) {
+            downloadUrl = fileIoBaseUrl + "download";
+        } else {
+            downloadUrl = dataMgmtServiceBaseUrl + downloadUrl;
+        }
+
+        String address = String.format("%s?path=%s&attachment=%s", downloadUrl, path, attachment);
+        LOG.debug(address);
+
+        return address;
+    }
+
     /**
      * Copies the file contents from the given input stream to the output stream controlled by the given
      * response object.
      *
-     * @param response the HTTP servlet response object.
+     * @param response     the HTTP servlet response object.
      * @param fileContents the input stream used to retrieve the file contents.
      * @throws IOException if an I/O error occurs.
      */
     private void copyFileContents(HttpServletResponse response, InputStream fileContents)
-            throws IOException {
+        throws IOException {
         OutputStream out = null;
         try {
             out = response.getOutputStream();
@@ -110,7 +150,7 @@ public class FileDownloadServlet extends HttpServlet {
      * Copies the content type along with any other HTTP header fields that are supposed to be copied
      * from the original HTTP response to our HTTP servlet response.
      *
-     * @param response our HTTP servlet response.
+     * @param response     our HTTP servlet response.
      * @param fileContents the file contents along with the HTTP headers and content type.
      */
     private void copyHeaderFields(HttpServletResponse response, DEServiceInputStream fileContents) {
@@ -135,37 +175,7 @@ public class FileDownloadServlet extends HttpServlet {
         } catch (ServletException e) {
             LOG.warn("service dispatcher initialization failed", e);
         }
-        dispatcher.setContext(getServletContext());
         dispatcher.setRequest(request);
         return dispatcher;
-    }
-
-    /**
-     * Builds the URL used to fetch the file contents.
-     *
-     * @param request out HTTP servlet request.
-     * @return the URL.
-     * @throws UnsupportedEncodingException
-     */
-    private String buildRequestAddress(HttpServletRequest request) throws UnsupportedEncodingException {
-        String path = URLEncoder.encode(request.getParameter("path"), "UTF-8");
-
-        String attachment = request.getParameter("attachment");
-        if (attachment == null) {
-            attachment = "1";
-        }
-        attachment = URLEncoder.encode(attachment, "UTF-8");
-
-        String downloadUrl = request.getParameter("url");
-        if (downloadUrl == null) {
-            downloadUrl = deProps.getFileIoBaseUrl() + "download";
-        } else {
-            downloadUrl = deProps.getDataMgmtServiceBaseUrl() + downloadUrl;
-        }
-
-        String address = String.format("%s?path=%s&attachment=%s", downloadUrl, path, attachment);
-        LOG.debug(address);
-
-        return address;
     }
 }

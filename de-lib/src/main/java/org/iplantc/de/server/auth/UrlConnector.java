@@ -1,9 +1,12 @@
 package org.iplantc.de.server.auth;
 
-import org.apache.http.client.methods.*;
+import org.apache.http.client.methods.HttpDelete;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPatch;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpPut;
 
 import java.io.IOException;
-import java.net.HttpURLConnection;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -21,7 +24,7 @@ public interface UrlConnector {
      * @return the request.
      * @throws IOException if the connection can't be established.
      */
-    public HttpGet getRequest(HttpServletRequest request, String address) throws IOException;
+    HttpGet getRequest(HttpServletRequest request, String address) throws IOException;
 
     /**
      * Obtains an HTTP PUT request object.
@@ -31,7 +34,7 @@ public interface UrlConnector {
      * @return the request.
      * @throws IOException if the connection can't be established.
      */
-    public HttpPut putRequest(HttpServletRequest request, String address) throws IOException;
+    HttpPut putRequest(HttpServletRequest request, String address) throws IOException;
 
     /**
      * Obtains an HTTP POST request object.
@@ -41,7 +44,7 @@ public interface UrlConnector {
      * @return the request.
      * @throws IOException if the connection can't be established.
      */
-    public HttpPost postRequest(HttpServletRequest request, String address) throws IOException;
+    HttpPost postRequest(HttpServletRequest request, String address) throws IOException;
 
     /**
      * Obtains an HTTP DELETE request object.
@@ -51,7 +54,7 @@ public interface UrlConnector {
      * @return the request.
      * @throws IOException if the connection can't be established.
      */
-    public HttpDelete deleteRequest(HttpServletRequest request, String address) throws IOException;
+    HttpDelete deleteRequest(HttpServletRequest request, String address) throws IOException;
 
     /**
      * Obtains an HTTP PATCH request object.
@@ -61,5 +64,5 @@ public interface UrlConnector {
      * @return the request.
      * @throws IOException if the connection can't be established.
      */
-    public HttpPatch patchRequest(HttpServletRequest request, String address) throws IOException;
+    HttpPatch patchRequest(HttpServletRequest request, String address) throws IOException;
 }

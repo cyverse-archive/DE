@@ -1,4 +1,4 @@
-package org.iplantc.de.server.services;
+package org.iplantc.de.shared.exceptions;
 
 /**
  * Thrown by the proxy servlet when no services name was provided by the caller.

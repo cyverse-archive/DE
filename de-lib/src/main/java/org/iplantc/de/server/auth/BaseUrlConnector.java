@@ -18,7 +18,7 @@ import javax.servlet.http.HttpServletRequest;
 /**
  * Performs actions common to most URL connectors.
  */
-public abstract class BaseUrlConnector implements UrlConnector {
+abstract class BaseUrlConnector implements UrlConnector {
 
     /**
      * Disables redirects for an HTTP request.

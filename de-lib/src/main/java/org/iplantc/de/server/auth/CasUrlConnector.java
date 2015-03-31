@@ -11,6 +11,7 @@ import org.apache.http.client.methods.HttpPut;
 import org.jasig.cas.client.authentication.AttributePrincipal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.net.URL;
@@ -22,10 +23,15 @@ import javax.servlet.http.HttpServletRequest;
  * proxy tickets from this server.  The proxy tickets will be sent to the service in the query string parameter,
  * <code>proxyTicket</code>.
  *
- * @author Dennis Roberts
+ * @author Dennis Roberts, jstroot
  */
-public class CasUrlConnector extends BaseUrlConnector {
+@Component
+public class CasUrlConnector extends BaseUrlConnector implements UrlConnector {
     private final Logger LOG = LoggerFactory.getLogger(CasUrlConnector.class);
+
+    public CasUrlConnector() {
+        LOG.trace("CONSTRUCTOR CALLED!!!");
+    }
 
     @Override
     public HttpGet getRequest(HttpServletRequest request, String address) throws IOException {

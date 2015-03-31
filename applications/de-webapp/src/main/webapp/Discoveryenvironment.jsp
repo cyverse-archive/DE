@@ -1,16 +1,17 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@page import="org.iplantc.de.server.DiscoveryEnvironmentMaintenance"%>
-<%@page import="org.iplantc.de.server.DiscoveryEnvironmentProperties"%>
+<%@ page import="org.springframework.web.context.WebApplicationContext" %>
+<%@ page import="org.springframework.web.context.support.WebApplicationContextUtils" %>
+<%@ page import="java.util.Properties" %>
 <%
 response.setHeader("Cache-Control", "no-cache");
 response.setHeader("Pragma", "no-cache");
 response.setDateHeader("Expires", 0);
 
-// Fetch the DE configuration settings.
-DiscoveryEnvironmentProperties props = DiscoveryEnvironmentProperties.getDiscoveryEnvironmentProperties();
-
-// Redirect the user to the maintenance page if the DE is under maintenance.
-DiscoveryEnvironmentMaintenance deMaintenance = new DiscoveryEnvironmentMaintenance(props.getMaintenanceFile());
+WebApplicationContext webApplicationContext = WebApplicationContextUtils.getWebApplicationContext(application);
+Properties props = (Properties) webApplicationContext.getBean("deProperties");
+String maintFile = props.getProperty("org.iplantc.discoveryenvironment.maintenance-file");
+DiscoveryEnvironmentMaintenance deMaintenance = new DiscoveryEnvironmentMaintenance(maintFile);
 if (deMaintenance.isUnderMaintenance()) {
     session.invalidate();
     response.sendRedirect("");
@@ -78,7 +79,8 @@ if (deMaintenance.isUnderMaintenance()) {
     src="scripts/handlebars.js"></script>
 <%
 	out.println("<p style='position:absolute;top:45%; left:48%  margin-top: 45%; margin-left: 48%;'>Loading...Please wait!</p><img style='position:absolute;top:50%; left:50%  margin-top: 50%; margin-left: 50%;' src='./images/loading_spinner.gif'/>");
-    if (props.isProduction()) {
+	boolean isProduction = Boolean.parseBoolean(props.getProperty("org.iplantc.discoveryenvironment.environment.prod-deployment"));
+    if (isProduction) {
 %>
     <!-- Google analytics -->
     <script type="text/javascript">

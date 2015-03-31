@@ -1,18 +1,24 @@
 package org.iplantc.de.server.services;
 
-import org.iplantc.de.server.DiscoveryEnvironmentProperties;
 import org.iplantc.de.shared.services.PropertyService;
 
 import com.google.gwt.user.client.rpc.SerializationException;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
-import java.io.IOException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.web.context.support.SpringBeanAutowiringSupport;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
+import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 
+/**
+ * @author jstroot
+ */
 public class PropertyServiceImpl extends RemoteServiceServlet implements PropertyService{
 
     private static final long serialVersionUID = 1L;
@@ -20,29 +26,16 @@ public class PropertyServiceImpl extends RemoteServiceServlet implements Propert
     /**
      * The configuration settings.
      */
+    @Autowired
+    @Qualifier("deProperties")
     private Properties props;
 
-    /**
-     * Initializes the servlet.
-     *
-     * @throws ServletException if the servlet can't be initialized.
-     * @throws IllegalStateException if the configuration properties can't be loaded.
-     */
     @Override
-    public void init() throws ServletException {
-        super.init();
-        if (props == null) {
-            try {
-                DiscoveryEnvironmentProperties deProps = DiscoveryEnvironmentProperties.getDiscoveryEnvironmentProperties();
-                props = deProps.getProperties();
-            } catch (IOException e) {
-                throw new ServletException(e);
-            }
-        }
+    public void init(ServletConfig config) throws ServletException {
+        super.init(config);
+        SpringBeanAutowiringSupport.processInjectionBasedOnServletContext(this, config.getServletContext());
     }
-    /**
-     * {@inheritDoc}
-     */
+
     @Override
     public Map<String, String> getProperties() throws SerializationException {
         HashMap<String, String> propertyMap = new HashMap<>();

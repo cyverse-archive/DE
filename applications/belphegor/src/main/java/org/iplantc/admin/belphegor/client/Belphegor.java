@@ -1,14 +1,14 @@
 package org.iplantc.admin.belphegor.client;
 
-import org.iplantc.admin.belphegor.shared.services.BelphegorPropertyService;
-import org.iplantc.admin.belphegor.shared.services.BelphegorPropertyServiceAsync;
 import org.iplantc.admin.belphegor.client.gin.BelphegorAppInjector;
-import org.iplantc.de.admin.desktop.client.models.BelphegorAdminProperties;
 import org.iplantc.de.admin.desktop.client.views.BelphegorView;
+import org.iplantc.de.client.models.DEProperties;
 import org.iplantc.de.client.models.UserInfo;
 import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.commons.client.requests.KeepaliveTimer;
 import org.iplantc.de.shared.services.DiscEnvApiService;
+import org.iplantc.de.shared.services.PropertyService;
+import org.iplantc.de.shared.services.PropertyServiceAsync;
 import org.iplantc.de.shared.services.ServiceCallWrapper;
 
 import com.google.gwt.core.client.EntryPoint;
@@ -23,12 +23,12 @@ import java.util.Map;
  * Entry point classes define <code>onModuleLoad()</code>.
  */
 public class Belphegor implements EntryPoint {
-    private final String BOOTSTRAP = "org.iplantc.services.admin.bootstrap";
+    private final String BOOTSTRAP = "org.iplantc.services.bootstrap";
     private final BelphegorAppInjector injector = GWT.create(BelphegorAppInjector.class);
     private final KeepaliveTimer keepaliveTimer = KeepaliveTimer.getInstance();
-    private final BelphegorPropertyServiceAsync propertyService = GWT.create(BelphegorPropertyService.class);
+    private final PropertyServiceAsync propertyService = GWT.create(PropertyService.class);
     private final DiscEnvApiService deService = injector.getApiService();
-    private final BelphegorAdminProperties adminProperties = BelphegorAdminProperties.getInstance();
+    private final DEProperties adminProperties = DEProperties.getInstance();
     private final UserInfo userInfo = UserInfo.getInstance();
 
     private final String APP_NAME = "Tool Integration Administration";
