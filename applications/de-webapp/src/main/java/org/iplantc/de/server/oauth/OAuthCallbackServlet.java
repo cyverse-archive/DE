@@ -31,6 +31,7 @@ import javax.servlet.http.HttpServletResponse;
 
 /**
  * @author jstroot
+ * @author Dennis Roberts
  */
 public abstract class OAuthCallbackServlet extends HttpServlet implements HttpRequestHandler {
 
@@ -199,10 +200,6 @@ public abstract class OAuthCallbackServlet extends HttpServlet implements HttpRe
     private String serviceUrl;
 
     private UrlConnector urlConnector;
-
-    public OAuthCallbackServlet(final String serviceUrl) {
-        this.serviceUrl = serviceUrl;
-    }
 
     @Override
     public void handleRequest(HttpServletRequest httpServletRequest,
