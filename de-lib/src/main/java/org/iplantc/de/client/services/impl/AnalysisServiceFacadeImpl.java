@@ -169,7 +169,7 @@ public class AnalysisServiceFacadeImpl implements AnalysisServiceFacade {
 
                 SortDir sortDir = sortInfo.getSortDir();
                 if (sortDir == SortDir.ASC || sortDir == SortDir.DESC) {
-                    address.append("&sort-order="); //$NON-NLS-1$
+                    address.append("&sort-dir="); //$NON-NLS-1$
                     address.append(sortDir.toString());
                 }
             }

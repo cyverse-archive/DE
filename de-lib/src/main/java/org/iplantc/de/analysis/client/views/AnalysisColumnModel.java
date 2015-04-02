@@ -55,7 +55,7 @@ public class AnalysisColumnModel extends ColumnModel<Analysis> implements Analys
         ColumnConfig<Analysis, Analysis> name = new ColumnConfig<>(new IdentityValueProvider<Analysis>("name"),
                                                                                      150);
         ColumnConfig<Analysis, Analysis> comment = new ColumnConfig<>(new IdentityValueProvider<Analysis>("description"), 30);
-        ColumnConfig<Analysis, Analysis> app = new ColumnConfig<>(new IdentityValueProvider<Analysis>("analysis_name"), 100);
+        ColumnConfig<Analysis, Analysis> app = new ColumnConfig<>(new IdentityValueProvider<Analysis>("app_name"), 100);
         ColumnConfig<Analysis, Analysis> startDate = new ColumnConfig<>(new IdentityValueProvider<Analysis>("startdate"), 125);
         ColumnConfig<Analysis, Analysis> endDate = new ColumnConfig<>(new IdentityValueProvider<Analysis>("enddate"), 125);
         ColumnConfig<Analysis, String> status = new ColumnConfig<>(new ValueProvider<Analysis, String>() {
