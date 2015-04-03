@@ -39,6 +39,7 @@ import org.iplantc.de.diskResource.client.events.selection.ManageCommentsSelecte
 import org.iplantc.de.diskResource.client.events.selection.ManageMetadataSelected;
 import org.iplantc.de.diskResource.client.events.selection.ManageSharingSelected;
 import org.iplantc.de.diskResource.client.events.selection.ResetInfoTypeSelected;
+import org.iplantc.de.diskResource.client.events.selection.SaveMetadataSelected;
 import org.iplantc.de.diskResource.client.events.selection.ShareByDataLinkSelected;
 import org.iplantc.de.diskResource.client.gin.factory.DiskResourceSelectorFieldFactory;
 import org.iplantc.de.diskResource.client.gin.factory.FolderContentsRpcProxyFactory;
@@ -46,12 +47,16 @@ import org.iplantc.de.diskResource.client.gin.factory.GridViewFactory;
 import org.iplantc.de.diskResource.client.model.DiskResourceModelKeyProvider;
 import org.iplantc.de.diskResource.client.presenters.grid.proxy.FolderContentsLoadConfig;
 import org.iplantc.de.diskResource.client.presenters.grid.proxy.SelectDiskResourceByIdStoreAddHandler;
+import org.iplantc.de.diskResource.client.views.dialogs.FileSelectDialog;
 import org.iplantc.de.diskResource.client.views.dialogs.InfoTypeEditorDialog;
 import org.iplantc.de.diskResource.client.views.dialogs.MetadataCopyDialog;
+import org.iplantc.de.diskResource.client.views.dialogs.SaveAsDialog;
 import org.iplantc.de.diskResource.client.views.grid.DiskResourceColumnModel;
 import org.iplantc.de.diskResource.client.views.metadata.dialogs.ManageMetadataDialog;
 import org.iplantc.de.diskResource.client.views.sharing.dialogs.DataSharingDialog;
 import org.iplantc.de.diskResource.client.views.sharing.dialogs.ShareResourceLinkDialog;
+import org.iplantc.de.fileViewers.client.views.SaveAsDialogCancelSelectHandler;
+import org.iplantc.de.fileViewers.client.views.SaveAsDialogOkSelectHandler;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
@@ -187,11 +192,12 @@ public class GridViewPresenterImpl implements
     @Inject
     AsyncProvider<ShareResourceLinkDialog> shareLinkDialogProvider;
     @Inject
-    DiskResourceSelectorFieldFactory selectionFieldFactory;
+    AsyncProvider<SaveAsDialog> saveAsDialogProvider;
     @Inject
     DiskResourceErrorAutoBeanFactory drFactory;
     @Inject
     MetadataCopyDialog mCopyDialog;
+
 
     private final Appearance appearance;
     private final ListStore<DiskResource> listStore;
@@ -640,6 +646,26 @@ public class GridViewPresenterImpl implements
                                           buildTargetPaths(paths),
                                           override,
                                          new CopyMetadataCallback(selected, mCopyDialog, paths));
+    }
+
+    @Override
+    public void onRequestSaveMetadataSelected(SaveMetadataSelected event) {
+        IplantAnnouncer.getInstance().schedule("Save metadata call");
+        saveAsDialogProvider.get(new AsyncCallback<SaveAsDialog>() {
+            @Override
+            public void onFailure(Throwable caught) {
+                announcer.schedule(new ErrorAnnouncementConfig("Something happened while we tried to save your file. Please try again or contact support."));
+            }
+
+            @Override
+            public void onSuccess(SaveAsDialog result) {
+
+                // result.addOkButtonSelectHandler(okSelectHandler);
+                // result.addCancelButtonSelectHandler(cancelSelectHandler);
+                result.show(null);
+                result.toFront();
+            }
+        });
     }
 
 }

@@ -16,6 +16,7 @@ import org.iplantc.de.diskResource.client.events.selection.ManageCommentsSelecte
 import org.iplantc.de.diskResource.client.events.selection.ManageMetadataSelected.ManageMetadataSelectedEventHandler;
 import org.iplantc.de.diskResource.client.events.selection.ManageSharingSelected.ManageSharingSelectedEventHandler;
 import org.iplantc.de.diskResource.client.events.selection.ResetInfoTypeSelected.ResetInfoTypeSelectedHandler;
+import org.iplantc.de.diskResource.client.events.selection.SaveMetadataSelected.SaveMetadataSelectedEventHandler;
 import org.iplantc.de.diskResource.client.events.selection.ShareByDataLinkSelected.ShareByDataLinkSelectedEventHandler;
 import org.iplantc.de.diskResource.client.presenters.grid.proxy.FolderContentsLoadConfig;
 import org.iplantc.de.diskResource.client.views.grid.DiskResourceColumnModel;
@@ -104,6 +105,7 @@ public interface GridView extends IsWidget,
                                 ManageSharingSelectedEventHandler,
                                 ManageMetadataSelectedEventHandler,
                                 CopyMetadataSelectedEventHandler,
+                       SaveMetadataSelectedEventHandler,
                                 ShareByDataLinkSelectedEventHandler,
                                 RequestDiskResourceFavoriteEventHandler,
                                 ManageCommentsSelectedEventHandler,

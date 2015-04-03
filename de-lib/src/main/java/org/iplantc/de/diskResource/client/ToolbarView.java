@@ -19,6 +19,7 @@ import org.iplantc.de.diskResource.client.events.selection.MoveDiskResourcesSele
 import org.iplantc.de.diskResource.client.events.selection.RefreshFolderSelected.HasRefreshFolderSelectedHandlers;
 import org.iplantc.de.diskResource.client.events.selection.RenameDiskResourceSelected.HasRenameDiskResourceSelectedHandlers;
 import org.iplantc.de.diskResource.client.events.selection.RestoreDiskResourcesSelected.HasRestoreDiskResourceSelectedHandlers;
+import org.iplantc.de.diskResource.client.events.selection.SaveMetadataSelected.HasSaveMetadataSelectedEventHandlers;
 import org.iplantc.de.diskResource.client.events.selection.SendToCogeSelected.HasSendToCogeSelectedHandlers;
 import org.iplantc.de.diskResource.client.events.selection.SendToEnsemblSelected.HasSendToEnsemblSelectedHandlers;
 import org.iplantc.de.diskResource.client.events.selection.SendToTreeViewerSelected.HasSendToTreeViewerSelectedHandlers;
@@ -39,6 +40,7 @@ public interface ToolbarView extends IsWidget,
                                      HasManageCommentsSelectedEventHandlers,
                                      HasManageMetadataSelectedEventHandlers,
                                      HasCopyMetadataSelectedEventHandlers,
+                            HasSaveMetadataSelectedEventHandlers,
                                      HasManageSharingSelectedEventHandlers,
                                      HasShareByDataLinkSelectedEventHandlers,
                                      HasSendToEnsemblSelectedHandlers,
@@ -201,6 +203,8 @@ public interface ToolbarView extends IsWidget,
         String newShellFileMenuItem();
 
         String newMdFileMenuItem();
+
+        String saveMetadataMenuItem();
     }
 
     interface Presenter {

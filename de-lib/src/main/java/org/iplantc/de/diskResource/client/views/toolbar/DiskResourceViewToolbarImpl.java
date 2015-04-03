@@ -11,6 +11,7 @@ import org.iplantc.de.diskResource.client.ToolbarView;
 import org.iplantc.de.diskResource.client.events.DiskResourceSelectionChangedEvent;
 import org.iplantc.de.diskResource.client.events.FolderSelectionEvent;
 import org.iplantc.de.diskResource.client.events.selection.*;
+import org.iplantc.de.diskResource.client.events.selection.SaveMetadataSelected.SaveMetadataSelectedEventHandler;
 import org.iplantc.de.diskResource.client.views.search.DiskResourceSearchField;
 import org.iplantc.de.diskResource.share.DiskResourceModule.Ids;
 
@@ -68,6 +69,8 @@ public class DiskResourceViewToolbarImpl extends Composite implements ToolbarVie
     @UiField MenuItem simpleUploadMi, bulkUploadMi, importFromUrlMi;
     @UiField TextButton trashMenu;
     @UiField TextButton uploadMenu;
+    @UiField
+    MenuItem savemetadatami;
     private static final DiskResourceViewToolbarUiBinder BINDER = GWT.create(DiskResourceViewToolbarUiBinder.class);
     private final ToolbarView.Presenter presenter;
     private final UserInfo userInfo;
@@ -248,6 +251,7 @@ public class DiskResourceViewToolbarImpl extends Composite implements ToolbarVie
         editInfoTypeMi.setEnabled(editInfoTypeMiEnabled);
         metadataMi.setEnabled(metadataMiEnabled);
         copymetadataMi.setEnabled(metadataMiEnabled);
+        savemetadatami.setEnabled(metadataMiEnabled);
 
         simpleDownloadMi.setEnabled(simpleDownloadMiEnabled);
         bulkDownloadMi.setEnabled(bulkDownloadMiEnabled);
@@ -349,6 +353,12 @@ public class DiskResourceViewToolbarImpl extends Composite implements ToolbarVie
     void onCopyMetadataClicked(SelectionEvent<Item> event) {
         Preconditions.checkState(selectedDiskResources != null && selectedDiskResources.size() == 1);
         fireEvent(new CopyMetadataSelected(selectedDiskResources.iterator().next()));
+    }
+
+    @UiHandler("savemetadatami")
+    void onSaveMetadataClicked(SelectionEvent<Item> event) {
+        Preconditions.checkState(selectedDiskResources != null && selectedDiskResources.size() == 1);
+        fireEvent(new SaveMetadataSelected(selectedDiskResources.iterator().next()));
     }
 
     @UiHandler("emptyTrashMi")
@@ -577,6 +587,8 @@ public class DiskResourceViewToolbarImpl extends Composite implements ToolbarVie
         editFileMi.ensureDebugId(baseID + Ids.EDIT_MENU + Ids.MENU_ITEM_EDIT_FILE);
         editInfoTypeMi.ensureDebugId(baseID + Ids.EDIT_MENU + Ids.MENU_ITEM_EDIT_INFO_TYPE);
         metadataMi.ensureDebugId(baseID + Ids.EDIT_MENU + Ids.MENU_ITEM_METADATA);
+        copymetadataMi.ensureDebugId(baseID + Ids.EDIT_MENU + Ids.MENU_ITEM_METADATA_COPY);
+        savemetadatami.ensureDebugId(baseID + Ids.EDIT_MENU + Ids.MENU_ITEM_METADATA_SAVE);
 
         // Download menu
         simpleDownloadMi.ensureDebugId(baseID + Ids.DOWNLOAD_MENU + Ids.MENU_ITEM_SIMPLE_DOWNLOAD);
@@ -644,5 +656,11 @@ public class DiskResourceViewToolbarImpl extends Composite implements ToolbarVie
     private InfoType getInfoTypeFromSingletonCollection(List<DiskResource> selectedDiskResources) {
         Preconditions.checkArgument(selectedDiskResources.size() == 1);
         return InfoType.fromTypeString(selectedDiskResources.iterator().next().getInfoType());
+    }
+
+    @Override
+    public HandlerRegistration
+            addSaveMetadataSelectedEventHandler(SaveMetadataSelectedEventHandler handler) {
+        return addHandler(handler, SaveMetadataSelected.TYPE);
     }
 }

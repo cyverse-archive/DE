@@ -66,6 +66,10 @@ public interface DiskResourceModule {
         String DETAILS = ".details";
         String NAV_TREE = ".tree";
         String TREE_COLLAPSE = ".collapse";
+
+        String MENU_ITEM_METADATA_COPY = ".mcopy";
+        String MENU_ITEM_METADATA_SAVE = ".msave";
+
     }
 
     interface MetadataIds {

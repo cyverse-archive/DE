@@ -417,4 +417,8 @@ public class ToolbarViewDefaultAppearance implements ToolbarView.Appearance {
     public String copyMetadataMenuItem() {
         return displayMessages.copyMetadataMenuItem();
     }
+
+    public String saveMetadataMenuItem() {
+        return displayMessages.saveMetadataMenuItem();
+    }
 }

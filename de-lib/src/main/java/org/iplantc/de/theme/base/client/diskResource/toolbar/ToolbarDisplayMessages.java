@@ -106,4 +106,6 @@ public interface ToolbarDisplayMessages extends Messages {
     String newMdFileMenuItem();
 
     String copyMetadataMenuItem();
+
+    String saveMetadataMenuItem();
 }

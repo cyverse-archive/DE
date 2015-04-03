@@ -6,6 +6,7 @@ import org.iplantc.de.client.models.diskResources.DiskResourceMetadata;
 import org.iplantc.de.client.models.diskResources.DiskResourceMetadataTemplate;
 import org.iplantc.de.client.models.diskResources.MetadataTemplateAttribute;
 import org.iplantc.de.client.models.diskResources.MetadataTemplateInfo;
+import org.iplantc.de.client.models.diskResources.TemplateAttributeSelectionItem;
 import org.iplantc.de.client.util.DiskResourceUtil;
 import org.iplantc.de.commons.client.validators.UrlValidator;
 import org.iplantc.de.commons.client.widgets.IPlantAnchor;
@@ -35,12 +36,14 @@ import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.web.bindery.autobean.shared.AutoBeanCodex;
 
+import com.sencha.gxt.cell.core.client.form.ComboBoxCell.TriggerAction;
 import com.sencha.gxt.core.client.dom.ScrollSupport.ScrollMode;
 import com.sencha.gxt.core.client.resources.ThemeStyles;
 import com.sencha.gxt.core.shared.FastMap;
 import com.sencha.gxt.data.shared.LabelProvider;
 import com.sencha.gxt.data.shared.ListStore;
 import com.sencha.gxt.data.shared.ModelKeyProvider;
+import com.sencha.gxt.data.shared.StringLabelProvider;
 import com.sencha.gxt.widget.core.client.Composite;
 import com.sencha.gxt.widget.core.client.ContentPanel;
 import com.sencha.gxt.widget.core.client.Dialog.PredefinedButton;
@@ -250,6 +253,10 @@ public class DiskResourceMetadataViewImpl extends Composite implements MetadataV
                 String value = field.getValue().toString();
                 if ((field instanceof DateField) && !Strings.isNullOrEmpty(value)) {
                     value = timestampFormat.format(((DateField) field).getValue());
+                } else if(field instanceof ComboBox<?>) {
+                    @SuppressWarnings("unchecked")
+                    ComboBox<TemplateAttributeSelectionItem> temp = (ComboBox<TemplateAttributeSelectionItem>)field;
+                    value = temp.getValue().getValue();
                 }
 
                 avu.setValue(value);
@@ -363,7 +370,7 @@ public class DiskResourceMetadataViewImpl extends Composite implements MetadataV
         }
 
         // validate by default
-        return true;
+        return false;
     }
 
     @Override
@@ -634,9 +641,51 @@ public class DiskResourceMetadataViewImpl extends Composite implements MetadataV
             return buildTextArea(attribute);
         } else if (type.equalsIgnoreCase("URL/URI")) { //$NON-NLS-1$
             return buildURLField(attribute);
+        } else if (type.equalsIgnoreCase("Enum")) {
+            return buildListField(attribute);
         } else {
             return null;
         }
+    }
+
+    private ComboBox<TemplateAttributeSelectionItem> buildListField(MetadataTemplateAttribute attribute) {
+        ListStore<TemplateAttributeSelectionItem> store = new ListStore<>(new ModelKeyProvider<TemplateAttributeSelectionItem>() {
+
+            @Override
+            public String getKey(TemplateAttributeSelectionItem item) {
+                return item.getId();
+            }
+        });
+        store.addAll(attribute.getValues());
+        ComboBox<TemplateAttributeSelectionItem> combo = new ComboBox<>(store,
+                                                                        new StringLabelProvider<TemplateAttributeSelectionItem>() {
+                                                                            @Override
+                                                                            public String
+                                                                                    getLabel(TemplateAttributeSelectionItem item) {
+                                                                                return item.getValue();
+                                                                            }
+                                                                        });
+        DiskResourceMetadata avu = templateAttrAvuMap.get(attribute.getName());
+        if (avu != null) {
+            String val = avu.getValue();
+            for (TemplateAttributeSelectionItem item : attribute.getValues()) {
+                if (item.getValue().equals(val)) {
+                    combo.setValue(item);
+                    break;
+                }
+            }
+
+        } else {
+            for (TemplateAttributeSelectionItem item : attribute.getValues()) {
+                if (item.isDefault()) {
+                    combo.setValue(item);
+                    break;
+                }
+            }
+        }
+        combo.setTriggerAction(TriggerAction.ALL);
+        return combo;
+
     }
 
     private String getUniqueAttrName(String attrName, int i) {
