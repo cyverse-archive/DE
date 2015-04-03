@@ -5,6 +5,8 @@ import org.iplantc.de.client.models.HasId;
 
 import com.google.gwt.user.client.ui.HasName;
 
+import java.util.List;
+
 public interface MetadataTemplateAttribute extends HasId, HasName,
 		HasDescription {
 
@@ -15,5 +17,7 @@ public interface MetadataTemplateAttribute extends HasId, HasName,
 	void setRequired(boolean required);
 
 	boolean isRequired();
+
+    List<TemplateAttributeSelectionItem> getValues();
 
 }
