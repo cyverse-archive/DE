@@ -342,4 +342,17 @@ public interface DiskResourceServiceFacade {
                           final Splittable paths,
                        boolean override,
                        final AsyncCallback<String> callback);
+            
+            /**
+     * save metadata to a file
+     * 
+     * @param srcUUID source DR's UUID
+     * @param paths where the file will be created
+     * @param recursive should recursively store metadata of folder contents
+     * @param callback callback object
+     */
+    void saveMetadata(final String srcUUID,
+                      final String path,
+                      boolean recursive,
+                      final AsyncCallback<String> callback);
 }

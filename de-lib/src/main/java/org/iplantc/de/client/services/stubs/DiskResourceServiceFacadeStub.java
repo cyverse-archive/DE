@@ -239,4 +239,13 @@ public class DiskResourceServiceFacadeStub implements DiskResourceServiceFacade 
 
     }
 
+    @Override
+    public void saveMetadata(String srcUUID,
+                             String path,
+                             boolean recursive,
+                             AsyncCallback<String> callback) {
+        // TODO Auto-generated method stub
+
+    }
+
 }

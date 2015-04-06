@@ -41,13 +41,11 @@ import org.iplantc.de.diskResource.client.events.selection.ManageSharingSelected
 import org.iplantc.de.diskResource.client.events.selection.ResetInfoTypeSelected;
 import org.iplantc.de.diskResource.client.events.selection.SaveMetadataSelected;
 import org.iplantc.de.diskResource.client.events.selection.ShareByDataLinkSelected;
-import org.iplantc.de.diskResource.client.gin.factory.DiskResourceSelectorFieldFactory;
 import org.iplantc.de.diskResource.client.gin.factory.FolderContentsRpcProxyFactory;
 import org.iplantc.de.diskResource.client.gin.factory.GridViewFactory;
 import org.iplantc.de.diskResource.client.model.DiskResourceModelKeyProvider;
 import org.iplantc.de.diskResource.client.presenters.grid.proxy.FolderContentsLoadConfig;
 import org.iplantc.de.diskResource.client.presenters.grid.proxy.SelectDiskResourceByIdStoreAddHandler;
-import org.iplantc.de.diskResource.client.views.dialogs.FileSelectDialog;
 import org.iplantc.de.diskResource.client.views.dialogs.InfoTypeEditorDialog;
 import org.iplantc.de.diskResource.client.views.dialogs.MetadataCopyDialog;
 import org.iplantc.de.diskResource.client.views.dialogs.SaveAsDialog;
@@ -55,8 +53,6 @@ import org.iplantc.de.diskResource.client.views.grid.DiskResourceColumnModel;
 import org.iplantc.de.diskResource.client.views.metadata.dialogs.ManageMetadataDialog;
 import org.iplantc.de.diskResource.client.views.sharing.dialogs.DataSharingDialog;
 import org.iplantc.de.diskResource.client.views.sharing.dialogs.ShareResourceLinkDialog;
-import org.iplantc.de.fileViewers.client.views.SaveAsDialogCancelSelectHandler;
-import org.iplantc.de.fileViewers.client.views.SaveAsDialogOkSelectHandler;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
@@ -99,6 +95,30 @@ public class GridViewPresenterImpl implements
                                   GridView.Presenter,
                                   DiskResourcePathSelectedEvent.DiskResourcePathSelectedEventHandler,
                                   DiskResourceSelectionChangedEvent.DiskResourceSelectionChangedEventHandler {
+
+    private final class SaveMetadataCallback implements AsyncCallback<String> {
+        private final SaveAsDialog save_dialog;
+
+        private SaveMetadataCallback(SaveAsDialog save_dialog) {
+            this.save_dialog = save_dialog;
+        }
+
+        @Override
+         public void onFailure(Throwable caught) {
+             save_dialog.hide();
+             announcer.schedule(new ErrorAnnouncementConfig("Unable to save your file. Please try again or contact support."));
+         }
+
+        @Override
+         public void onSuccess(String result) {
+             save_dialog.hide();
+             IplantAnnouncer.getInstance()
+                            .schedule(new SuccessAnnouncementConfig("Metadata saved!",
+                                                                    true,
+                                                                    3000));
+
+         }
+    }
 
     private final class CopyMetadataCallback implements AsyncCallback<String> {
         private final DiskResource selected;
@@ -649,21 +669,40 @@ public class GridViewPresenterImpl implements
     }
 
     @Override
-    public void onRequestSaveMetadataSelected(SaveMetadataSelected event) {
-        IplantAnnouncer.getInstance().schedule("Save metadata call");
+    public void onRequestSaveMetadataSelected(final SaveMetadataSelected event) {
         saveAsDialogProvider.get(new AsyncCallback<SaveAsDialog>() {
             @Override
             public void onFailure(Throwable caught) {
-                announcer.schedule(new ErrorAnnouncementConfig("Something happened while we tried to save your file. Please try again or contact support."));
+                announcer.schedule(new ErrorAnnouncementConfig("Unable to save your file. Please try again or contact support."));
             }
 
             @Override
-            public void onSuccess(SaveAsDialog result) {
+            public void onSuccess(final SaveAsDialog save_dialog) {
 
-                // result.addOkButtonSelectHandler(okSelectHandler);
-                // result.addCancelButtonSelectHandler(cancelSelectHandler);
-                result.show(null);
-                result.toFront();
+                save_dialog.addOkButtonSelectHandler(new SelectHandler() {
+
+                    @Override
+                    public void onSelect(SelectEvent select_event) {
+                        save_dialog.mask("Saving");
+                        String destination = save_dialog.getSelectedFolder().getPath() + "/"
+                                + save_dialog.getFileName();
+                        diskResourceService.saveMetadata(event.getDiskResource().getId(),
+                                                         destination,
+                                                         true,
+                                                         new SaveMetadataCallback(save_dialog));
+
+                    }
+                });
+                save_dialog.addCancelButtonSelectHandler(new SelectHandler() {
+
+                    @Override
+                    public void onSelect(SelectEvent event) {
+                        save_dialog.hide();
+
+                    }
+                });
+                save_dialog.show(null);
+                save_dialog.toFront();
             }
         });
     }

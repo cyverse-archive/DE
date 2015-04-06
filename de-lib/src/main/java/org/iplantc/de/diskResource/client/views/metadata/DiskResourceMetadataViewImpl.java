@@ -370,7 +370,7 @@ public class DiskResourceMetadataViewImpl extends Composite implements MetadataV
         }
 
         // validate by default
-        return false;
+        return true;
     }
 
     @Override

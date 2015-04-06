@@ -943,4 +943,21 @@ public class DiskResourceServiceFacadeImpl extends TreeStore<Folder> implements
         ServiceCallWrapper wrapper = new ServiceCallWrapper(POST, address, paths.getPayload());
         callService(wrapper, callback);
     }
+
+    @Override
+    public void saveMetadata(String srcUUID,
+                             String path,
+                             boolean recursive,
+                             AsyncCallback<String> callback) {
+        Splittable body = StringQuoter.createSplittable();
+        String address = deProperties.getDataMgmtBaseUrl() + srcUUID + "/metadata/save";
+        Splittable sppath = StringQuoter.create(path);
+        sppath.assign(body, "dest");
+        Splittable sprec = StringQuoter.create(recursive);
+        sprec.assign(body, "recursive");
+
+        ServiceCallWrapper wrapper = new ServiceCallWrapper(POST, address, body.getPayload());
+        callService(wrapper, callback);
+
+    }
 }
