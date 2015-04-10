@@ -1,5 +1,12 @@
 package org.iplantc.de.admin.desktop.client.gin;
 
+import org.iplantc.de.admin.desktop.client.metadata.presenter.MetadataTemplatesPresenterImpl;
+import org.iplantc.de.admin.desktop.client.metadata.service.MetadataTemplateAdminServiceFacade;
+import org.iplantc.de.admin.desktop.client.metadata.service.impl.MetadataTemplateAdminServiceFacadeImpl;
+import org.iplantc.de.admin.desktop.client.metadata.view.EditMetadataTemplateView;
+import org.iplantc.de.admin.desktop.client.metadata.view.EditMetadataTemplateViewImpl;
+import org.iplantc.de.admin.desktop.client.metadata.view.TemplateListingView;
+import org.iplantc.de.admin.desktop.client.metadata.view.TemplatesListingViewImpl;
 import org.iplantc.de.admin.desktop.client.presenter.BelphegorPresenterImpl;
 import org.iplantc.de.admin.desktop.client.refGenome.RefGenomeView;
 import org.iplantc.de.admin.desktop.client.refGenome.presenter.RefGenomePresenterImpl;
@@ -53,6 +60,11 @@ public class BelphegorAppsGinModule extends AbstractGinModule {
         bind(SystemMessageView.class).to(SystemMessageViewImpl.class);
         bind(SystemMessageView.Presenter.class).to(SystemMessagePresenterImpl.class);
         bind(SystemMessageServiceFacade.class).to(SystemMessageServiceFacadeImpl.class);
+
+        bind(TemplateListingView.class).to(TemplatesListingViewImpl.class);
+        bind(TemplateListingView.Presenter.class).to(MetadataTemplatesPresenterImpl.class);
+        bind(MetadataTemplateAdminServiceFacade.class).to(MetadataTemplateAdminServiceFacadeImpl.class);
+        bind(EditMetadataTemplateView.class).to(EditMetadataTemplateViewImpl.class);
 
         bind(DiscEnvApiService.class).in(Singleton.class);
 

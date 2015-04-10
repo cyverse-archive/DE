@@ -2,7 +2,8 @@
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
              xmlns:g='urn:import:com.google.gwt.user.client.ui'
              xmlns:gxt='urn:import:com.sencha.gxt.widget.core.client'
-             xmlns:con='urn:import:com.sencha.gxt.widget.core.client.container'>
+             xmlns:con='urn:import:com.sencha.gxt.widget.core.client.container'
+             >
     <ui:with field="appearance"
              type="org.iplantc.de.admin.desktop.client.views.BelphegorView.BelphegorViewAppearance"/>
 
@@ -43,6 +44,10 @@
              type="com.sencha.gxt.widget.core.client.TabItemConfig">
         <ui:attributes text="{appearance.systemMessages}"/>
     </ui:with>
+     <ui:with field="detemplateConfig"
+             type="com.sencha.gxt.widget.core.client.TabItemConfig">
+        <ui:attributes text="Metadata Templates"/>
+    </ui:with>
     <con:Viewport>
         <con:BorderLayoutContainer>
             <con:north layoutData="{northData}">
@@ -62,6 +67,10 @@
                     </gxt:child>
                     <gxt:child config="{sysMsgTabConfig}">
                         <con:SimpleContainer ui:field="systemMessagesPanel"/>
+                    </gxt:child>
+                     <gxt:child config="{detemplateConfig}">
+                        <con:SimpleContainer ui:field="metadataPanel">
+                        </con:SimpleContainer>
                     </gxt:child>
                 </gxt:TabPanel>
             </con:center>

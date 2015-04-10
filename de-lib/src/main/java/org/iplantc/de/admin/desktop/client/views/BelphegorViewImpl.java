@@ -1,6 +1,7 @@
 package org.iplantc.de.admin.desktop.client.views;
 
 import org.iplantc.de.admin.apps.client.AdminAppsView;
+import org.iplantc.de.admin.desktop.client.metadata.view.TemplateListingView;
 import org.iplantc.de.admin.desktop.client.refGenome.RefGenomeView;
 import org.iplantc.de.admin.desktop.client.systemMessage.SystemMessageView;
 import org.iplantc.de.admin.desktop.client.toolRequest.ToolRequestView;
@@ -42,7 +43,7 @@ public class BelphegorViewImpl extends Composite implements BelphegorView {
     @UiField SimpleContainer appsPanel,
         refGenomePanel,
         toolRequestPanel,
-        systemMessagesPanel;
+ systemMessagesPanel, metadataPanel;
     @UiField(provided = true) BelphegorViewAppearance appearance;
 
     @Inject
@@ -50,11 +51,12 @@ public class BelphegorViewImpl extends Composite implements BelphegorView {
                              final RefGenomeView.Presenter refGenPresenter,
                              final ToolRequestView.Presenter toolReqPresenter,
                              final SystemMessageView.Presenter sysMsgPresenter,
+                             final TemplateListingView.Presenter tempPresenter,
                              final DEProperties toolIntProps,
                              final BelphegorViewAppearance appearance) {
         this.appearance = appearance;
         initWidget(uiBinder.createAndBindUi(this));
-        init(presenter, refGenPresenter, toolReqPresenter, sysMsgPresenter, toolIntProps);
+        init(presenter, refGenPresenter, toolReqPresenter, sysMsgPresenter, tempPresenter, toolIntProps);
     }
 
     @UiFactory
@@ -66,6 +68,7 @@ public class BelphegorViewImpl extends Composite implements BelphegorView {
                       final RefGenomeView.Presenter refGenPresenter,
                       final ToolRequestView.Presenter toolReqPresenter,
                       final SystemMessageView.Presenter sysMsgPresenter,
+                      final TemplateListingView.Presenter tempPresenter,
                       final DEProperties toolIntProps) {
         buildUserMenu();
         // Select Beta group by default.
@@ -74,6 +77,8 @@ public class BelphegorViewImpl extends Composite implements BelphegorView {
         refGenPresenter.go(refGenomePanel);
         toolReqPresenter.go(toolRequestPanel);
         sysMsgPresenter.go(systemMessagesPanel);
+        tempPresenter.go(metadataPanel);
+
     }
 
     private void buildUserMenu() {

@@ -58,4 +58,8 @@ public interface DiskResourceAutoBeanFactory extends AutoBeanFactory {
     AutoBean<DiskResourceFavorite> getFavortieFolder();
 
     AutoBean<DataLinkList> dataLinkList();
+
+    AutoBean<MetadataTemplateAttribute> metadataTemplateAttribute();
+
+    AutoBean<TemplateAttributeSelectionItem> templateAttributeSelectionItem();
 }

@@ -21,6 +21,8 @@ public class DEProperties {
      */
     private static final String DATA_MGMT_BASE_URL = "org.iplantc.services.de-data-mgmt.base";
 
+    private static final String DATA_MGMT_ADMIN_BASE_URL = "org.iplantc.services.admin.de-data-mgmt.base";
+
     /**
      * Properties key of the base URL of the file I/O services.
      */
@@ -172,6 +174,8 @@ public class DEProperties {
      */
     private String communityDataPath;
 
+    private String dataMgmtAdminBaseUrl;
+
     /**
      * Force the constructor to be private.
      */
@@ -197,6 +201,7 @@ public class DEProperties {
      */
     public void initialize(Map<String, String> properties) {
         dataMgmtBaseUrl = properties.get(DATA_MGMT_BASE_URL);
+        dataMgmtAdminBaseUrl = properties.get(DATA_MGMT_ADMIN_BASE_URL);
         fileIoBaseUrl = properties.get(FILE_IO_BASE_URL);
         muleServiceBaseUrl = properties.get(MULE_SERVICE_BASE_URL);
         unproctedMuleServiceBaseUrl = properties.get(UNPROTECTED_MULE_SERVICE_BASE_URL);
@@ -260,6 +265,10 @@ public class DEProperties {
      */
     public String getDataMgmtBaseUrl() {
         return dataMgmtBaseUrl;
+    }
+
+    public String getDataMgmtAdminBaseUrl() {
+        return dataMgmtAdminBaseUrl;
     }
 
     /**
