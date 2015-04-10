@@ -104,7 +104,6 @@ public class TestDefaultServiceCallResolver {
         verifyURLParses(actual);
     }
 
-    @Ignore
     @Test public void testKnownURLPassesThroughCorrectly() {
         String srvUrl = "http://ndy.sixfifty.org/accountmanagementv2/fetch-states";
         String expected = srvUrl;
