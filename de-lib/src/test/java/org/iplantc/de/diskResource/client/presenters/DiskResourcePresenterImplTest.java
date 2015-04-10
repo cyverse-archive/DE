@@ -38,7 +38,6 @@ import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -101,7 +100,6 @@ public class DiskResourcePresenterImplTest {
                                             entityTypeMock);
     }
 
-    @Ignore
     @Test public void verifyConstructorEventWiring() {
         verify(GridViewPresenterFactoryMock).create(eq(navigationPresenterMock),
                                                     eq(infoTypeFiltersMock),
@@ -135,6 +133,7 @@ public class DiskResourcePresenterImplTest {
         verify(toolbarMock).addManageSharingSelectedEventHandler(eq(gridViewPresenterMock));
         verify(toolbarMock).addManageMetadataSelectedEventHandler(eq(gridViewPresenterMock));
         verify(toolbarMock).addCopyMetadataSelectedEventHandler(eq(gridViewPresenterMock));
+        verify(toolbarMock).addSaveMetadataSelectedEventHandler(eq(gridViewPresenterMock));
         verify(toolbarMock).addManageCommentsSelectedEventHandler(eq(gridViewPresenterMock));
         verify(toolbarMock).addMoveDiskResourcesSelectedHandler(eq(uut));
         verify(toolbarMock).addRefreshFolderSelectedHandler(eq(uut));
@@ -174,7 +173,7 @@ public class DiskResourcePresenterImplTest {
         verify(detailsPresenterMock, times(10)).getView();
         verify(gridViewPresenterMock, times(9)).getView();
         verify(navigationPresenterMock, times(5)).getView();
-        verify(toolbarPresenterMock, times(22)).getView();
+        verify(toolbarPresenterMock, times(23)).getView();
 
         verifyNoMoreInteractions(navigationPresenterMock,
                                  gridViewPresenterMock,
