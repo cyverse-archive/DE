@@ -9,6 +9,8 @@ import java.util.Date;
 
 public interface MetadataTemplateInfo  extends HasId, HasName{
 
+    void setId(String id);
+
     @PropertyName("last_modified_on")
     Date getLastModifiedDate();
 

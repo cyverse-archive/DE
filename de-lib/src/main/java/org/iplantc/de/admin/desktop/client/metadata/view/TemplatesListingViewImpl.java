@@ -113,6 +113,7 @@ public class TemplatesListingViewImpl implements IsWidget, TemplateListingView {
 
     @Override
     public void loadTemplates(List<MetadataTemplateInfo> result) {
+        store.clear();
         store.addAll(result);
     }
 

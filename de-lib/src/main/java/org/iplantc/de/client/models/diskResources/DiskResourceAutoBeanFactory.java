@@ -62,4 +62,6 @@ public interface DiskResourceAutoBeanFactory extends AutoBeanFactory {
     AutoBean<MetadataTemplateAttribute> metadataTemplateAttribute();
 
     AutoBean<TemplateAttributeSelectionItem> templateAttributeSelectionItem();
+
+    AutoBean<MetadataTemplate> metadataTemplate();
 }

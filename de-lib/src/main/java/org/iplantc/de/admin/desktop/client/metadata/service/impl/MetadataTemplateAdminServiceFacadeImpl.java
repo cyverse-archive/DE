@@ -2,7 +2,6 @@ package org.iplantc.de.admin.desktop.client.metadata.service.impl;
 
 import org.iplantc.de.admin.desktop.client.metadata.service.MetadataTemplateAdminServiceFacade;
 import org.iplantc.de.client.models.DEProperties;
-import org.iplantc.de.client.models.diskResources.MetadataTemplateInfo;
 import org.iplantc.de.shared.services.BaseServiceCallWrapper.Type;
 import org.iplantc.de.shared.services.DiscEnvApiService;
 import org.iplantc.de.shared.services.ServiceCallWrapper;
@@ -22,8 +21,10 @@ public class MetadataTemplateAdminServiceFacadeImpl implements MetadataTemplateA
     }
 
     @Override
-    public void addTemplate(MetadataTemplateInfo template, AsyncCallback<String> callback) {
-        // TODO Auto-generated method stub
+    public void addTemplate(String template, AsyncCallback<String> callback) {
+        String address = deProperties.getDataMgmtAdminBaseUrl() + "metadata/templates";
+        final ServiceCallWrapper wrapper = new ServiceCallWrapper(Type.POST, address, template);
+        callService(wrapper, callback);
 
     }
 
@@ -35,9 +36,10 @@ public class MetadataTemplateAdminServiceFacadeImpl implements MetadataTemplateA
     }
 
     @Override
-    public void updateTemplate(MetadataTemplateInfo template, AsyncCallback<String> callback) {
-        // TODO Auto-generated method stub
-
+    public void updateTemplate(String id, String template, AsyncCallback<String> callback) {
+        String address = deProperties.getDataMgmtAdminBaseUrl() + "metadata/templates/" + id;
+        final ServiceCallWrapper wrapper = new ServiceCallWrapper(Type.POST, address, template);
+        callService(wrapper, callback);
     }
 
     /**

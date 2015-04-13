@@ -8,4 +8,6 @@ public interface MetadataTemplate extends MetadataTemplateInfo {
 
 	@PropertyName("attributes")
 	List<MetadataTemplateAttribute> getAttributes();
+
+    void setAttributes(List<MetadataTemplateAttribute> attributes);
 }
