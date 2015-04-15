@@ -235,17 +235,17 @@ tC8T1HeKvFu7Tr8vjoehfR0XRHk3c51+b4ioF0QiesdkFMKFXAK4G9A6ct53a9+b
     <h1>Attention</h1>
 
     <p>
-    Would you like to log out of $app_list$?
+    Would you like to log out of ${app_list}?
     </p>
 
     <p style="text-align: center">
-        <button class="darkBlueButton" onclick="window.location.replace('$logout_url$')">Yes</button>
-        <button class="darkBlueButton" onclick="window.location.replace('$no_logout_url$')">No</button>
+        <button class="darkBlueButton" onclick="window.location.replace('${logout_url}')">Yes</button>
+        <button class="darkBlueButton" onclick="window.location.replace('${no_logout_url}')">No</button>
     </p>
 
     <hr />
 
-    <div style="float: left"><a href="$login_url$">Go back to $app_name$</a></div>
+    <div style="float: left"><a href="${login_url}">Go back to ${app_name}</a></div>
     <div style="float: right"><a href="http://www.iplantcollaborative.org">iPlant Home Page</a></div>
 
     </div>

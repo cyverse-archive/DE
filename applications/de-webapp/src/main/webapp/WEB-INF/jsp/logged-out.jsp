@@ -235,11 +235,11 @@ tC8T1HeKvFu7Tr8vjoehfR0XRHk3c51+b4ioF0QiesdkFMKFXAK4G9A6ct53a9+b
     <h1>Logged Out</h1>
 
     <p>
-    You have been logged out of $app_name$.  Would you like to log back in?
+    You have been logged out of ${app_name}.  Would you like to log back in?
     </p>
 
     <p style="text-align: center">
-        <button class="darkBlueButton" onclick="window.location.replace('$login_url$')">Yes</button>
+        <button class="darkBlueButton" onclick="window.location.replace('${login_url}')">Yes</button>
     </p>
 
     <hr />
