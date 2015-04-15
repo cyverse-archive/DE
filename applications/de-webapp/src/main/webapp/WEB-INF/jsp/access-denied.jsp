@@ -239,7 +239,7 @@ tC8T1HeKvFu7Tr8vjoehfR0XRHk3c51+b4ioF0QiesdkFMKFXAK4G9A6ct53a9+b
     </p>
 
     <p style="text-align: center">
-        <button class="darkBlueButton" onclick="window.location.replace('$logout_url$?reason=unauthorized')">Yes</button>
+        <button class="darkBlueButton" onclick="window.location.replace('${logout_url}?reason=unauthorized')">Yes</button>
         <button class="darkBlueButton" onclick="window.location.replace('http://www.iplantcollaborative.org')">No</button>
     </p>
 
