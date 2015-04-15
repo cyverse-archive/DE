@@ -20,6 +20,7 @@ import java.util.regex.Pattern;
 /**
  *
  * @author dennis
+ * @author jstroot
  */
 public class CasGroupUserDetailsService extends AbstractCasAssertionUserDetailsService {
 

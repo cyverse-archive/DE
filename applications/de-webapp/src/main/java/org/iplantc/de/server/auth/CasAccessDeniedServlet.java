@@ -22,7 +22,8 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * A shared servlet for handling CAS authorization failure.
  *
- * @author Dennis Roberts, jstroot
+ * @author Dennis Roberts
+ * @author jstroot
  */
 @Named("accessDeniedServlet")
 public class CasAccessDeniedServlet extends HttpServlet implements HttpRequestHandler {

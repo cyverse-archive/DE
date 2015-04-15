@@ -20,6 +20,7 @@ import javax.servlet.http.HttpSession;
  * A servlet used to initialize HTTP sessions for CAS-secured web apps.
  *
  * @author Dennis Roberts
+ * @author jstroot
  */
 public class CasSessionInitializationServlet extends HttpServlet {
 

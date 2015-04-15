@@ -2,13 +2,21 @@ project(':de') {
     apply plugin: 'war'
     apply plugin: 'gwt'
     apply plugin: 'jetty'
+    apply plugin: 'spring-boot'
 
     configurations {
         applet
+        providedRuntime
     }
 
     dependencies {
         applet "org.irods.idrop:idrop-lite:2.0.1-SNAPSHOT@jar"
+
+        compile("org.springframework.boot:spring-boot-starter-web")
+        providedRuntime("org.springframework.boot:spring-boot-starter-tomcat")
+        providedRuntime("org.apache.tomcat.embed:tomcat-embed-jasper")
+        compile("org.springframework.boot:spring-boot-starter-security")
+        compile("org.springframework.security:spring-security-cas")
 
         gwt "com.sencha.gxt:gxt:$gxtVersion"
         gwt "com.google.gwt.inject:gin:$gwtGinVer"

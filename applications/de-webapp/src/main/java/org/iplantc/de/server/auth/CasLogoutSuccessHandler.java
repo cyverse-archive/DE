@@ -22,6 +22,7 @@ import javax.servlet.http.HttpServletResponse;
  * to another page based on the value of a query-string parameter.
  *
  * @author Dennis Roberts
+ * @author jstroot
  */
 public class CasLogoutSuccessHandler implements LogoutSuccessHandler {
 

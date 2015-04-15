@@ -22,7 +22,8 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * A shared servlet for displaying a logout-successful page.
  *
- * @author Dennis Roberts, jstroot
+ * @author Dennis Roberts
+ * @author jstroot
  */
 @Named("loggedOutServlet")
 public class CasLoggedOutServlet extends HttpServlet implements HttpRequestHandler {

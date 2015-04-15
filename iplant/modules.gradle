@@ -1,5 +1,6 @@
 project(':de-lib') {
     apply plugin: 'gwt-base'
+    apply plugin: 'spring-boot'
 
     gwt {
         gwtVersion = "$gwtVer"
@@ -24,18 +25,12 @@ project(':de-lib') {
         compile "com.sencha.gxt:gxt:$gxtVersion"
         compile 'net.sf.json-lib:json-lib:2.4:jdk15'
         compile 'org.antlr:stringtemplate:4.0.2'
-        compile 'org.apache.httpcomponents:httpclient:4.3.6'
-        compile 'org.apache.httpcomponents:httpmime:4.3.6'
-        compile('org.jasig.cas.client:cas-client-core:3.2.0') {
-            exclude group: 'javax.servlet', module: 'servlet-api'
-        }
         compile "org.slf4j:jcl-over-slf4j:$slf4jVersion"
         compile "org.slf4j:log4j-over-slf4j:$slf4jVersion"
         compile "org.slf4j:slf4j-api:$slf4jVersion"
-        compile 'org.springframework.security:spring-security-cas:3.1.4.RELEASE'
-        compile 'org.springframework.security:spring-security-config:3.1.2.RELEASE'
-        compile 'org.springframework.security:spring-security-core:3.1.2.RELEASE'
-        compile 'org.springframework.security:spring-security-web:3.1.2.RELEASE'
+        compile("org.springframework.boot:spring-boot-starter-web")
+        compile("org.springframework.boot:spring-boot-starter-security")
+        compile("org.springframework.security:spring-security-cas")
 
         testCompile "com.google.gwt.gwtmockito:gwtmockito:$gwtMockitoVer"
    }

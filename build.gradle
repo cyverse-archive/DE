@@ -6,6 +6,7 @@ sourceCompatibility = 1.7
 buildscript {
     repositories {
         mavenCentral()
+        jcenter()
         maven {
             url 'http://dl.bintray.com/steffenschaefer/maven'
         }
@@ -14,6 +15,7 @@ buildscript {
 //        }
     }
     dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:1.2.3.RELEASE")
         classpath 'de.richsource.gradle.plugins:gwt-gradle-plugin:0.6'
     }
 }
@@ -34,7 +36,6 @@ subprojects {
     sourceCompatibility = 1.7
 
     repositories {
-        mavenLocal()
         mavenCentral()
 //        maven {
 //            url 'https://maven.sencha.com/repo/support-commercial-release'

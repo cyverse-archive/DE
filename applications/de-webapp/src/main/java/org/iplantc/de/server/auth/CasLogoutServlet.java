@@ -22,7 +22,8 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * A shared servlet for handling CAS logout.
  *
- * @author Dennis Roberts, jstroot
+ * @author Dennis Roberts
+ * @author jstroot
  */
 @Named("logoutSuccessServlet")
 public class CasLogoutServlet extends HttpServlet implements HttpRequestHandler {
