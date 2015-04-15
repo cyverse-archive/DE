@@ -5,6 +5,8 @@ import org.iplantc.de.client.models.diskResources.DiskResourceAutoBeanFactory;
 import org.iplantc.de.client.models.diskResources.MetadataTemplate;
 import org.iplantc.de.client.models.diskResources.MetadataTemplateAttribute;
 import org.iplantc.de.client.models.diskResources.TemplateAttributeSelectionItem;
+import org.iplantc.de.commons.client.info.ErrorAnnouncementConfig;
+import org.iplantc.de.commons.client.info.IplantAnnouncer;
 import org.iplantc.de.commons.client.views.dialogs.IPlantDialog;
 
 import com.google.common.base.Strings;
@@ -186,18 +188,33 @@ public class EditMetadataTemplateViewImpl implements IsWidget, EditMetadataTempl
 
     private void editEnumValues(final MetadataTemplateAttribute mta) {
         final EnumValuesEditor eve = new EnumValuesEditor(mta);
-        IPlantDialog ipd = new IPlantDialog();
+        final IPlantDialog ipd = new IPlantDialog();
         ipd.setSize("500px", "300px");
         ipd.add(eve.asWidget());
         ipd.setHeadingText("Edit Enum Values");
         ipd.show();
+        ipd.setHideOnButtonClick(false);
         ipd.addOkButtonSelectHandler(new SelectHandler() {
 
             @Override
             public void onSelect(SelectEvent event) {
-                store.update(eve.get());
+                if (eve.validateEnumValues()) {
+                    store.update(eve.get());
+                    ipd.hide();
+                } else {
+                    IplantAnnouncer.getInstance()
+                                   .schedule(new ErrorAnnouncementConfig("Error processing enum values. Note: Only one value is allowed to be default!"));
+                }
             }
         });
+        ipd.addCancelButtonSelectHandler(new SelectHandler() {
+
+            @Override
+            public void onSelect(SelectEvent event) {
+                ipd.hide();
+            }
+        });
+
     }
 
     protected void createGridEditing() {
@@ -351,7 +368,7 @@ public class EditMetadataTemplateViewImpl implements IsWidget, EditMetadataTempl
             }
 
             ColumnConfig<TemplateAttributeSelectionItem, String> valCol = new ColumnConfig<>(tasi_props.value(),
-                                                                                             100,
+                                                                                             250,
                                                                                              "Value");
             ColumnConfig<TemplateAttributeSelectionItem, Boolean> defCol = new ColumnConfig<>(tasi_props.defaultValue(),
                                                                                               100,
@@ -415,8 +432,23 @@ public class EditMetadataTemplateViewImpl implements IsWidget, EditMetadataTempl
             return verticalLayoutContainer;
         }
 
-        public MetadataTemplateAttribute get() {
+        public boolean validateEnumValues() {
             enum_store.commitChanges();
+            boolean found = false;
+            for (TemplateAttributeSelectionItem item : enum_store.getAll()) {
+                if (item.isDefaultValue()) {
+                    if (found) {
+                        return false;
+                    } else {
+                        found = true;
+                    }
+                }
+            }
+
+            return true;
+        }
+
+        public MetadataTemplateAttribute get() {
             mta.setValues(enum_store.getAll());
             return mta;
         }
