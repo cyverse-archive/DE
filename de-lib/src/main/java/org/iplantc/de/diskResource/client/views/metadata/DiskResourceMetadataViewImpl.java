@@ -677,7 +677,7 @@ public class DiskResourceMetadataViewImpl extends Composite implements MetadataV
 
         } else {
             for (TemplateAttributeSelectionItem item : attribute.getValues()) {
-                if (item.isDefault()) {
+                if (item.isDefaultValue()) {
                     combo.setValue(item);
                     break;
                 }
