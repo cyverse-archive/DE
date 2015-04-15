@@ -5,7 +5,10 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
 import java.util.List;
 
-@RemoteServiceRelativePath("uuidService")
+/**
+ * @author jstroot
+ */
+@RemoteServiceRelativePath("uuid.rpc")
 public interface UUIDService extends RemoteService {
 
     List<String> getUUIDs(int num);

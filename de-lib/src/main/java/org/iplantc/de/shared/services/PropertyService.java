@@ -10,8 +10,9 @@ import java.util.Map;
  * Provides a service contract that can be used to obtain discovery environment configuration properties.
  * 
  * @author Dennis Roberts
+ * @author jstroot
  */
-@RemoteServiceRelativePath("properties")
+@RemoteServiceRelativePath("properties.rpc")
 public interface PropertyService extends RemoteService {
     /**
      * Retrieves the entire set of discovery environment properties.

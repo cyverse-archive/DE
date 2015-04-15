@@ -7,9 +7,10 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
  * A service for sending simple emails.
  * 
  * @author hariolf
+ * @author jstroot
  * 
  */
-@RemoteServiceRelativePath("email")
+@RemoteServiceRelativePath("email.rpc")
 public interface EmailService extends RemoteService {
 
     /**

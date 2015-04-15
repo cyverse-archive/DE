@@ -12,7 +12,7 @@ import com.google.gwt.user.client.rpc.SerializationException;
  *
  * @author jstroot
  */
-@RemoteServiceRelativePath("deservice")
+@RemoteServiceRelativePath("api.rpc")
 public interface DEService extends RemoteService {
     String getServiceData(ServiceCallWrapper wrapper) throws SerializationException, AuthenticationException,
                                                              HttpException;

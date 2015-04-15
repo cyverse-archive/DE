@@ -34,6 +34,8 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @see <a href="http://en.wikipedia.org/wiki/Strategy_pattern">Strategy Pattern</a>
  * @see <a href="https://technophiliac.wordpress.com/2008/08/24/giving-gwt-a-spring-in-its-step/">Giving GWT a Spring in its step</a>
+ *
+ * @author jstroot
  */
 public class GwtRpcController extends RemoteServiceServlet implements Controller,
                                                                       ServletContextAware {
@@ -43,6 +45,10 @@ public class GwtRpcController extends RemoteServiceServlet implements Controller
     private RemoteService remoteService;
 
     private Class remoteServiceClass;
+
+    public GwtRpcController(RemoteService remoteService) {
+        setRemoteService(remoteService);
+    }
 
     public ModelAndView handleRequest(HttpServletRequest request,
                                       HttpServletResponse response) throws Exception {

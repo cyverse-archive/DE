@@ -10,9 +10,9 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
  * client software and the build number. Client software versions stated will be for GWT and GXT.
  * 
  * @author lenards
- * 
+ * @author jstroot
  */
-@RemoteServiceRelativePath("about")
+@RemoteServiceRelativePath("about.rpc")
 public interface AboutApplicationService extends RemoteService {
     /**
      * Retrieve information about the application.
