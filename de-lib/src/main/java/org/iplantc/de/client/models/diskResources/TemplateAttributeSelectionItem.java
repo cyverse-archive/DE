@@ -12,8 +12,8 @@ public interface TemplateAttributeSelectionItem extends HasId, TakesValue<String
     void setId(String id);
 
     @PropertyName("is_default")
-    boolean isDefault();
+    boolean isDefaultValue();
 
     @PropertyName("is_default")
-    void setDefault(boolean isDefault);
+    void setDefaultValue(boolean isDefault);
 }

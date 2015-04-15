@@ -18,4 +18,5 @@ public interface MetadataTemplateAttributeProperties extends PropertyAccess<Meta
     ValueProvider<MetadataTemplateAttribute, Boolean> required();
 
     ValueProvider<MetadataTemplateAttribute, String> type();
+
 }

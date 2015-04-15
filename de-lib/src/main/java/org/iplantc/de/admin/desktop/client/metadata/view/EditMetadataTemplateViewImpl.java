@@ -5,9 +5,13 @@ import org.iplantc.de.client.models.diskResources.DiskResourceAutoBeanFactory;
 import org.iplantc.de.client.models.diskResources.MetadataTemplate;
 import org.iplantc.de.client.models.diskResources.MetadataTemplateAttribute;
 import org.iplantc.de.client.models.diskResources.TemplateAttributeSelectionItem;
+import org.iplantc.de.commons.client.views.dialogs.IPlantDialog;
 
 import com.google.common.base.Strings;
+import com.google.gwt.cell.client.Cell.Context;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.safecss.shared.SafeStyles;
+import com.google.gwt.safecss.shared.SafeStylesUtils;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.text.shared.AbstractSafeHtmlRenderer;
@@ -20,15 +24,19 @@ import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 
 import com.sencha.gxt.cell.core.client.SimpleSafeHtmlCell;
+import com.sencha.gxt.cell.core.client.TextButtonCell;
 import com.sencha.gxt.cell.core.client.form.ComboBoxCell.TriggerAction;
 import com.sencha.gxt.core.client.Style.SelectionMode;
 import com.sencha.gxt.core.client.ValueProvider;
+import com.sencha.gxt.core.client.resources.CommonStyles;
 import com.sencha.gxt.data.shared.ListStore;
 import com.sencha.gxt.data.shared.ModelKeyProvider;
 import com.sencha.gxt.data.shared.StringLabelProvider;
 import com.sencha.gxt.widget.core.client.button.TextButton;
 import com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer;
+import com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer.VerticalLayoutData;
 import com.sencha.gxt.widget.core.client.event.SelectEvent;
+import com.sencha.gxt.widget.core.client.event.SelectEvent.SelectHandler;
 import com.sencha.gxt.widget.core.client.form.CheckBox;
 import com.sencha.gxt.widget.core.client.form.PropertyEditor;
 import com.sencha.gxt.widget.core.client.form.SimpleComboBox;
@@ -38,8 +46,11 @@ import com.sencha.gxt.widget.core.client.grid.ColumnConfig;
 import com.sencha.gxt.widget.core.client.grid.ColumnModel;
 import com.sencha.gxt.widget.core.client.grid.Grid;
 import com.sencha.gxt.widget.core.client.grid.Grid.GridCell;
+import com.sencha.gxt.widget.core.client.grid.editing.AbstractGridEditing;
+import com.sencha.gxt.widget.core.client.grid.editing.ClicksToEdit;
 import com.sencha.gxt.widget.core.client.grid.editing.GridEditing;
 import com.sencha.gxt.widget.core.client.grid.editing.GridRowEditing;
+import com.sencha.gxt.widget.core.client.toolbar.ToolBar;
 
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -79,11 +90,14 @@ public class EditMetadataTemplateViewImpl implements IsWidget, EditMetadataTempl
     ColumnConfig<MetadataTemplateAttribute, String> descCol;
     ColumnConfig<MetadataTemplateAttribute, String> typeCol;
     ColumnConfig<MetadataTemplateAttribute, String> valuesCol;
+    private final TemplateAttributeSelectionItemProperties tasi_props;
 
     @Inject
     public EditMetadataTemplateViewImpl(final MetadataTemplateAttributeProperties mta_props,
+                                        final TemplateAttributeSelectionItemProperties tasi_props,
                                         final DiskResourceAutoBeanFactory factory) {
         this.mta_props = mta_props;
+        this.tasi_props = tasi_props;
         this.drFac = factory;
         widget = uiBinder.createAndBindUi(this);
         createGridEditing();
@@ -119,58 +133,25 @@ public class EditMetadataTemplateViewImpl implements IsWidget, EditMetadataTempl
 
             @Override
             public String getValue(MetadataTemplateAttribute object) {
-                if (object != null) {
-                    StringBuilder sb = new StringBuilder();
-                    List<TemplateAttributeSelectionItem> values = object.getValues();
-                    if (values != null) {
-                        for (TemplateAttributeSelectionItem si : values) {
-                            sb.append(si.getValue());
-                            sb.append(",");
-                        }
-                        if (sb.charAt(sb.length() - 1) == (',')) {
-                            sb.deleteCharAt(sb.length() - 1);
-                        }
-
-                        return sb.toString();
-                    } else {
-                        return null;
-                    }
-                } else {
-                    return null;
-                }
-
+                return "Enum value(s)";
             }
 
             @Override
             public void setValue(MetadataTemplateAttribute object, String value) {
-                if (object != null) {
-                    String[] tokens = value.split(",");
-                    List<TemplateAttributeSelectionItem> itemList = new ArrayList<>();
-                    if (itemList != null) {
-                        for (String t : tokens) {
-                            TemplateAttributeSelectionItem si = drFac.templateAttributeSelectionItem()
-                                                                     .as();
-                            si.setId(null);
-                            si.setValue(t);
-                            si.setDefault(false);
-                            itemList.add(si);
-
-                        }
-                        object.setValues(itemList);
-                    }
-                }
-
+                // do nothing intentionally
             }
 
             @Override
             public String getPath() {
-                // TODO
-                // Auto-generated
-                // method
-                // stub
-                return null;
+                return "values";
             }
         }, 100, "Value(s)");
+
+        SafeStyles btnPaddingStyle = SafeStylesUtils.fromTrustedString("padding: 1px 3px 0;");
+        TextButtonCell button = buildValueEditButtonCell();
+        valuesCol.setCell(button);
+        valuesCol.setColumnTextClassName(CommonStyles.get().inlineBlock());
+        valuesCol.setColumnTextStyle(btnPaddingStyle);
 
         reqCol.setCell(new SimpleSafeHtmlCell<Boolean>(new AbstractSafeHtmlRenderer<Boolean>() {
             @Override
@@ -189,13 +170,43 @@ public class EditMetadataTemplateViewImpl implements IsWidget, EditMetadataTempl
         return new ColumnModel<>(columns);
     }
 
+    private TextButtonCell buildValueEditButtonCell() {
+        TextButtonCell button = new TextButtonCell();
+        button.addSelectHandler(new SelectHandler() {
+            @Override
+            public void onSelect(SelectEvent event) {
+                Context c = event.getContext();
+                int row = c.getIndex();
+                MetadataTemplateAttribute mta = store.get(row);
+                editEnumValues(mta);
+            }
+        });
+        return button;
+    }
+
+    private void editEnumValues(final MetadataTemplateAttribute mta) {
+        final EnumValuesEditor eve = new EnumValuesEditor(mta);
+        IPlantDialog ipd = new IPlantDialog();
+        ipd.setSize("500px", "300px");
+        ipd.add(eve.asWidget());
+        ipd.setHeadingText("Edit Enum Values");
+        ipd.show();
+        ipd.addOkButtonSelectHandler(new SelectHandler() {
+
+            @Override
+            public void onSelect(SelectEvent event) {
+                store.update(eve.get());
+            }
+        });
+    }
+
     protected void createGridEditing() {
         editing = new GridRowEditing<MetadataTemplateAttribute>(grid);
+        ((AbstractGridEditing<MetadataTemplateAttribute>)editing).setClicksToEdit(ClicksToEdit.TWO);
         editing.addEditor(nameCol, new TextField());
         editing.addEditor(descCol, new TextArea());
         editing.addEditor(reqCol, new CheckBox());
         editing.addEditor(typeCol, setUpTypeEditing());
-        editing.addEditor(valuesCol, new TextField());
     }
 
     private SimpleComboBox<String> setUpTypeEditing() {
@@ -242,7 +253,7 @@ public class EditMetadataTemplateViewImpl implements IsWidget, EditMetadataTempl
     @UiHandler("addBtn")
     void addButtonClicked(SelectEvent event) {
         MetadataTemplateAttribute mta = drFac.metadataTemplateAttribute().as();
-        mta.setName("Attribute" + store.getAll().size());
+        mta.setName("Attribute" + Math.random());
         mta.setRequired(false);
         mta.setDescription("Test");
         mta.setType("String");
@@ -265,7 +276,6 @@ public class EditMetadataTemplateViewImpl implements IsWidget, EditMetadataTempl
 
     @Override
     public MetadataTemplate getTemplate() {
-        store.commitChanges();
         MetadataTemplate mt = drFac.metadataTemplate().as();
         if (!Strings.isNullOrEmpty(templateId)) {
             mt.setId(templateId);
@@ -273,11 +283,11 @@ public class EditMetadataTemplateViewImpl implements IsWidget, EditMetadataTempl
         mt.setName(tempName.getValue());
         mt.setAttributes(store.getAll());
         return mt;
-
     }
 
     @Override
     public boolean validate() {
+        store.commitChanges();
         boolean valid = tempName.validate();
         for (MetadataTemplateAttribute mta : store.getAll()) {
             if (Strings.isNullOrEmpty(mta.getName()) || Strings.isNullOrEmpty(mta.getType())) {
@@ -311,6 +321,106 @@ public class EditMetadataTemplateViewImpl implements IsWidget, EditMetadataTempl
         tempName.clear();
         store.clear();
         templateId = null;
+    }
+
+    private class EnumValuesEditor implements IsWidget {
+
+        private final MetadataTemplateAttribute mta;
+        private ListStore<TemplateAttributeSelectionItem> enum_store;
+        private ColumnModel<TemplateAttributeSelectionItem> enum_cm;
+        private GridRowEditing<TemplateAttributeSelectionItem> editEnumVal;
+        private Grid<TemplateAttributeSelectionItem> enum_grid;
+        private ToolBar toolBar;
+        private VerticalLayoutContainer verticalLayoutContainer;
+
+        EnumValuesEditor(MetadataTemplateAttribute mta) {
+            this.mta = mta;
+            build();
+        }
+
+        private void init() {
+            enum_store = new ListStore<>(new ModelKeyProvider<TemplateAttributeSelectionItem>() {
+
+                @Override
+                public String getKey(TemplateAttributeSelectionItem item) {
+                    return item.getValue();
+                }
+            });
+            if (mta != null && mta.getValues() != null && mta.getValues().size() > 0) {
+                enum_store.addAll(mta.getValues());
+            }
+
+            ColumnConfig<TemplateAttributeSelectionItem, String> valCol = new ColumnConfig<>(tasi_props.value(),
+                                                                                             100,
+                                                                                             "Value");
+            ColumnConfig<TemplateAttributeSelectionItem, Boolean> defCol = new ColumnConfig<>(tasi_props.defaultValue(),
+                                                                                              100,
+                                                                                              "Default");
+            ArrayList<ColumnConfig<TemplateAttributeSelectionItem, ?>> cmList = new ArrayList<>();
+            cmList.add(valCol);
+            cmList.add(defCol);
+            defCol.setCell(new SimpleSafeHtmlCell<Boolean>(new AbstractSafeHtmlRenderer<Boolean>() {
+                @Override
+                public SafeHtml render(Boolean object) {
+                    return SafeHtmlUtils.fromString(object ? "true" : "false");
+                }
+            }));
+            enum_cm = new ColumnModel<TemplateAttributeSelectionItem>(cmList);
+            enum_grid = new Grid<>(enum_store, enum_cm);
+            editEnumVal = new GridRowEditing<>(enum_grid);
+            editEnumVal.setClicksToEdit(ClicksToEdit.TWO);
+            editEnumVal.addEditor(valCol, new TextField());
+            editEnumVal.addEditor(defCol, new CheckBox());
+        }
+
+        private void buildToolbar() {
+            toolBar = new ToolBar();
+            TextButton addButton = new TextButton("Add");
+            addButton.addSelectHandler(new SelectHandler() {
+
+                @Override
+                public void onSelect(SelectEvent event) {
+                    TemplateAttributeSelectionItem item = drFac.templateAttributeSelectionItem().as();
+                    item.setValue("value" + Math.random());
+                    item.setDefaultValue(false);
+                    editEnumVal.cancelEditing();
+                    enum_store.add(0, item);
+                    int row = enum_store.indexOf(item);
+                    editEnumVal.startEditing(new GridCell(row, 0));
+                }
+            });
+            TextButton delButton = new TextButton("Delete");
+            delButton.addSelectHandler(new SelectHandler() {
+
+                @Override
+                public void onSelect(SelectEvent event) {
+                    enum_store.remove(enum_store.indexOf(enum_grid.getSelectionModel().getSelectedItem()));
+                }
+            });
+            toolBar.add(addButton);
+            toolBar.add(delButton);
+        }
+
+        private void build() {
+            init();
+            buildToolbar();
+            verticalLayoutContainer = new VerticalLayoutContainer();
+            verticalLayoutContainer.setBorders(true);
+            verticalLayoutContainer.add(toolBar, new VerticalLayoutData(1, -1));
+            verticalLayoutContainer.add(enum_grid, new VerticalLayoutData(1, 1));
+        }
+
+        @Override
+        public Widget asWidget() {
+            return verticalLayoutContainer;
+        }
+
+        public MetadataTemplateAttribute get() {
+            enum_store.commitChanges();
+            mta.setValues(enum_store.getAll());
+            return mta;
+        }
+
     }
 
 }
