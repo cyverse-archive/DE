@@ -24,10 +24,9 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter {
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         super.addResourceHandlers(registry);
-        registry.addResourceHandler("/GwtWebApp.html").addResourceLocations("/");
         registry.addResourceHandler("/*.css").addResourceLocations("/");
-        registry.addResourceHandler("/gwtwebapp/**").addResourceLocations("/gwtwebapp/");
-        registry.addResourceHandler("/darkgwtwebapp/**").addResourceLocations("/darkgwtwebapp/");
+        registry.addResourceHandler("/discoveryenvironment/**").addResourceLocations("/discoveryenvironment/");
+        registry.addResourceHandler("/belphegor/**").addResourceLocations("/belphegor/");
     }
 
     @Override

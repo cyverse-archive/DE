@@ -1,4 +1,4 @@
-package org.iplantc.de.server.oauth;
+package org.iplantc.de.server.controllers;
 
 import org.iplantc.de.server.auth.UrlConnector;
 
@@ -17,23 +17,22 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.web.HttpRequestHandler;
-import org.springframework.web.context.support.SpringBeanAutowiringSupport;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
 
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
  * @author jstroot
- * @author Dennis Roberts
  */
-public abstract class OAuthCallbackServlet extends HttpServlet implements HttpRequestHandler {
+@Controller
+public class OAuthCallbackController {
+
+
 
     /**
      * The authorization response is really a GET request initiated by a redirection from the OAuth
@@ -196,43 +195,23 @@ public abstract class OAuthCallbackServlet extends HttpServlet implements HttpRe
     private static final String ERROR_PARAM = "error";
     private static final String ERROR_URI_PARAM = "error_uri";
     private static final String STATE_PARAM = "state";
-    private final Logger LOG = LoggerFactory.getLogger(OAuthCallbackServlet.class);
+    private final Logger LOG = LoggerFactory.getLogger(OAuthCallbackController.class);
+    @Value("${org.iplantc.discoveryenvironment.muleServiceBaseUrl}")
     private String serviceUrl;
 
+    @Autowired
     private UrlConnector urlConnector;
 
-    @Override
-    public void handleRequest(HttpServletRequest httpServletRequest,
-                              HttpServletResponse httpServletResponse) throws ServletException, IOException {
-        doGet(httpServletRequest, httpServletResponse);
-    }
+    @RequestMapping("/oauth/callback/*")
+    public void handleCallback(final HttpServletRequest req,
+                               final HttpServletResponse resp) throws IOException {
 
-    @Override
-    public void init(ServletConfig config) throws ServletException {
-        super.init(config);
-        SpringBeanAutowiringSupport.processInjectionBasedOnServletContext(this, config.getServletContext());
-    }
-
-    @Value("${org.iplantc.discoveryenvironment.muleServiceBaseUrl}")
-    public void setServiceUrl(String serviceUrl) {
-        this.serviceUrl = serviceUrl;
-        LOG.trace("Set serviceUrl = {}", serviceUrl);
-    }
-
-    @Override
-    protected void doGet(final HttpServletRequest req, final HttpServletResponse resp)
-        throws ServletException, IOException {
         final AuthorizationResponse authResponse = new AuthorizationResponse(req);
         if (authResponse.isError()) {
             authResponse.authorizationErrorRedirect(resp);
         } else {
             callAuthCodeService(authResponse, req, resp);
         }
-    }
-
-    @Autowired
-    protected void setUrlConnector(final UrlConnector urlConnector) {
-        this.urlConnector = urlConnector;
     }
 
     private String authorizationSuccessRedirectUrl(HttpServletRequest req, String responseBody) {
@@ -287,4 +266,5 @@ public abstract class OAuthCallbackServlet extends HttpServlet implements HttpRe
             throw new RuntimeException(e);
         }
     }
+
 }
