@@ -141,4 +141,12 @@ public interface DiskResourceMessages extends Messages {
     String urlImport();
 
     String urlPrompt();
+
+    String projectName();
+
+    String numberOfBioSamples();
+
+    String numberOfLib();
+
+    String ncbiSraProject();
 }

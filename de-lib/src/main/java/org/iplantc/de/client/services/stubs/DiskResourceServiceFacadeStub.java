@@ -248,4 +248,12 @@ public class DiskResourceServiceFacadeStub implements DiskResourceServiceFacade 
 
     }
 
+    @Override
+    public void createNcbiSraFolderStructure(Folder parentFolder,
+                                             String[] foldersToCreate,
+                                             AsyncCallback<String> callback) {
+        // TODO Auto-generated method stub
+
+    }
+
 }

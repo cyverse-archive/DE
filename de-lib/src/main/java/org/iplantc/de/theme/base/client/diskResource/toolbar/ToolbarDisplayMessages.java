@@ -108,4 +108,6 @@ public interface ToolbarDisplayMessages extends Messages {
     String copyMetadataMenuItem();
 
     String saveMetadataMenuItem();
+
+    String sendToNcbiSraItem();
 }

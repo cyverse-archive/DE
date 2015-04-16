@@ -48,12 +48,18 @@
 							icon="{appearance.newFileMenuIcon}">
 							<menu:submenu>
 								<menu:Menu ui:field="newFileMenu">
+									<menu:MenuItem ui:field="createNcbiSraMi"
+										text="{appearance.sendToNcbiSraItem}" icon="{appearance.sendNcbiSraIcon}"
+										enabled="false" />
 									<menu:MenuItem ui:field="newPlainTextFileMi"
 										text="{appearance.newPlainTextFileMenuItem}" icon="{appearance.newPlainTexFileIcon}" />
 
 									<menu:MenuItem ui:field="newTabularDataFileMi"
 										text="{appearance.newTabularDataFileMenuItem}" visible="true"
 										icon="{appearance.newDelimitedFileIcon}" />
+
+									<menu:MenuItem ui:field="newPathListMi"
+										text="{appearance.newPathListMenuText}" icon="{appearance.newPathListMenuIcon}" />
 
 									<menu:MenuItem ui:field="newRFileMi"
 										text="{appearance.newRFileMenuItem}" visible="true"
@@ -74,14 +80,9 @@
 									<menu:MenuItem ui:field="newMdFileMi"
 										text="{appearance.newMdFileMenuItem}" visible="true"
 										icon="{appearance.newMdFileIcon}" />
-
-									<menu:MenuItem ui:field="newPathListMi"
-										text="{appearance.newPathListMenuText}" icon="{appearance.newPathListMenuIcon}" />
 								</menu:Menu>
 							</menu:submenu>
 						</menu:MenuItem>
-
-
 						<menu:MenuItem ui:field="moveToTrashMi"
 							text="{appearance.moveToTrashMenuItem}" icon="{appearance.trashIcon}"
 							enabled="false" />

@@ -272,8 +272,9 @@ public class DiskResourceServiceFacadeImpl extends TreeStore<Folder> implements
 
         String fullAddress = deProperties.getDataMgmtBaseUrl() + "directory/create"; //$NON-NLS-1$
         JSONObject obj = new JSONObject();
-        obj.put("path", new JSONString(parentId + "/" + newFolderName)); //$NON-NLS-1$
-
+        JSONArray arr = new JSONArray();
+        arr.set(0, new JSONString(parentId + "/" + newFolderName));
+        obj.put("paths", arr);
         ServiceCallWrapper wrapper = new ServiceCallWrapper(POST, fullAddress, obj.toString());
         callService(wrapper, new AsyncCallbackConverter<String, Folder>(callback) {
 
@@ -294,6 +295,24 @@ public class DiskResourceServiceFacadeImpl extends TreeStore<Folder> implements
                 return folder;
             }
         });
+    }
+
+    @Override
+    public void createNcbiSraFolderStructure(final Folder parentFolder,
+                                             final String[] foldersToCreate,
+                                             AsyncCallback<String> callback) {
+        final String parentId = parentFolder.getPath();
+
+        String fullAddress = deProperties.getDataMgmtBaseUrl() + "directory/create"; //$NON-NLS-1$
+        JSONObject obj = new JSONObject();
+
+        JSONArray arr = new JSONArray();
+        for (int i = 0; i < foldersToCreate.length; i++) {
+            arr.set(i, new JSONString(parentId + "/" + foldersToCreate[i]));
+        }
+        obj.put("paths", arr);
+        ServiceCallWrapper wrapper = new ServiceCallWrapper(POST, fullAddress, obj.toString());
+        callService(wrapper, callback);
     }
 
     private void addFolder(String parentId, Folder child) {

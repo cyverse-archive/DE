@@ -339,6 +339,11 @@ public class ToolbarViewDefaultAppearance implements ToolbarView.Appearance {
     }
 
     @Override
+    public ImageResource sendNcbiSraIcon() {
+        return iplantResources.arrowUp();
+    }
+
+    @Override
     public String refresh() {
         return iplantDisplayStrings.refresh();
     }
@@ -418,7 +423,12 @@ public class ToolbarViewDefaultAppearance implements ToolbarView.Appearance {
         return displayMessages.copyMetadataMenuItem();
     }
 
+    @Override
     public String saveMetadataMenuItem() {
         return displayMessages.saveMetadataMenuItem();
+    }
+
+    public String sendToNcbiSraItem() {
+        return displayMessages.sendToNcbiSraItem();
     }
 }

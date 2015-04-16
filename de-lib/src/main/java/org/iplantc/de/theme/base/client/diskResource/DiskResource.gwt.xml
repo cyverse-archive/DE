@@ -44,6 +44,9 @@
     <replace-with class="org.iplantc.de.theme.base.client.diskResource.dialogs.CreateFolderDialogDefaultAppearance">
         <when-type-is class="org.iplantc.de.diskResource.client.views.dialogs.CreateFolderDialog.Appearance"/>
     </replace-with>
+     <replace-with class="org.iplantc.de.theme.base.client.diskResource.dialogs.CreateNcbiSraFolderStructureDefaultAppearance">
+        <when-type-is class="org.iplantc.de.diskResource.client.views.dialogs.CreateNcbiSraFolderStructureDialog.Appearance"/>
+    </replace-with>
     <replace-with class="org.iplantc.de.theme.base.client.diskResource.dialogs.SaveAsDialogDefaultAppearance">
         <when-type-is class="org.iplantc.de.diskResource.client.views.dialogs.SaveAsDialog.SaveAsDialogAppearance"/>
     </replace-with>

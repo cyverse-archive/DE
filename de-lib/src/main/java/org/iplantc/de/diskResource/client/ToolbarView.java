@@ -174,6 +174,8 @@ public interface ToolbarView extends IsWidget,
 
         ImageResource sendToTreeViewerIcon();
 
+        ImageResource sendNcbiSraIcon();
+
         String refresh();
 
         String trashMenu();
@@ -205,6 +207,8 @@ public interface ToolbarView extends IsWidget,
         String newMdFileMenuItem();
 
         String saveMetadataMenuItem();
+        
+        String sendToNcbiSraItem();
     }
 
     interface Presenter {
@@ -238,6 +242,8 @@ public interface ToolbarView extends IsWidget,
 
         void onCreateNewFolderSelected(Folder selectedFolder);
 
+        void onCreateNcbiSraFolderStructure(Folder selectedFolder);
+
         void onCreateNewPathListSelected();
 
         void onCreatePublicLinkSelected(List<DiskResource> selectedDiskResources);
@@ -249,6 +255,7 @@ public interface ToolbarView extends IsWidget,
         void onOpenNewWindowSelected();
 
         void onOpenTrashFolderSelected();
+
     }
 
     DiskResourceSearchField getSearchField();

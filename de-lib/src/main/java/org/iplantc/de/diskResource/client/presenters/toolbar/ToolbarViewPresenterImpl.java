@@ -23,6 +23,7 @@ import org.iplantc.de.diskResource.client.events.selection.SimpleDownloadSelecte
 import org.iplantc.de.diskResource.client.gin.factory.DataLinkPresenterFactory;
 import org.iplantc.de.diskResource.client.gin.factory.ToolbarViewFactory;
 import org.iplantc.de.diskResource.client.views.dialogs.CreateFolderDialog;
+import org.iplantc.de.diskResource.client.views.dialogs.CreateNcbiSraFolderStructureDialog;
 import org.iplantc.de.diskResource.client.views.toolbar.dialogs.TabFileConfigDialog;
 
 import com.google.common.base.Preconditions;
@@ -32,7 +33,9 @@ import com.google.inject.assistedinject.Assisted;
 
 import static com.sencha.gxt.widget.core.client.Dialog.PredefinedButton.CANCEL;
 import static com.sencha.gxt.widget.core.client.Dialog.PredefinedButton.OK;
+
 import com.sencha.gxt.widget.core.client.event.SelectEvent;
+import com.sencha.gxt.widget.core.client.event.SelectEvent.SelectHandler;
 
 import java.util.List;
 
@@ -106,6 +109,34 @@ public class ToolbarViewPresenterImpl implements ToolbarView.Presenter,
             }
         });
         dlg.show();
+    }
+
+    @Override
+    public void onCreateNcbiSraFolderStructure(final Folder selectedFolder) {
+        // FIXME Do not fire dialog from presenter. Do so from the view.
+        final CreateNcbiSraFolderStructureDialog dialog = new CreateNcbiSraFolderStructureDialog(selectedFolder);
+        dialog.setHideOnButtonClick(false);
+        dialog.addOkButtonSelectHandler(new SelectHandler() {
+
+            @Override
+            public void onSelect(SelectEvent event) {
+                parentPresenter.onCreateNcbiSraFolderStructure(selectedFolder,
+                                                               dialog.getProjectTxt(),
+                                                               dialog.getBiosampNum(),
+                                                               dialog.getLibNum());
+                dialog.hide();
+            }
+        });
+
+        dialog.addCancelButtonSelectHandler(new SelectHandler() {
+
+            @Override
+            public void onSelect(SelectEvent event) {
+                dialog.hide();
+            }
+        });
+
+        dialog.show();
     }
 
     @Override

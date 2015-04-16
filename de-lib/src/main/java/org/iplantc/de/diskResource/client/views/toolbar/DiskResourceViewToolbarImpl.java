@@ -64,7 +64,8 @@ public class DiskResourceViewToolbarImpl extends Composite implements ToolbarVie
     @UiField MenuItem shareFolderLocationMi;
     @UiField TextButton shareMenu;
     @UiField MenuItem shareWithCollaboratorsMi, createPublicLinkMi, sendToCogeMi,
-        sendToEnsemblMi, sendToTreeViewerMi;
+ sendToEnsemblMi,
+            sendToTreeViewerMi, createNcbiSraMi;
     @UiField MenuItem simpleDownloadMi, bulkDownloadMi;
     @UiField MenuItem simpleUploadMi, bulkUploadMi, importFromUrlMi;
     @UiField TextButton trashMenu;
@@ -293,6 +294,7 @@ public class DiskResourceViewToolbarImpl extends Composite implements ToolbarVie
         importFromUrlMi.setEnabled(importFromUrlMiEnabled);
 
         newFolderMi.setEnabled(newFolderMiEnabled);
+        createNcbiSraMi.setEnabled(newFolderMiEnabled);
         newFileMi.setEnabled(newPlainTextFileMiEnabled);
         // newPlainTextFileMi.setEnabled(newPlainTextFileMiEnabled);
         // newTabularDataFileMi.setEnabled(newTabularDataFileMiEnabled);
@@ -384,6 +386,11 @@ public class DiskResourceViewToolbarImpl extends Composite implements ToolbarVie
     @UiHandler("newFolderMi")
     void onNewFolderClicked(SelectionEvent<Item> event) {
         presenter.onCreateNewFolderSelected(selectedFolder);
+    }
+
+    @UiHandler("createNcbiSraMi")
+    void onCreateNcbiSraClicked(SelectionEvent<Item> event) {
+        presenter.onCreateNcbiSraFolderStructure(selectedFolder);
     }
 
     @UiHandler("newMdFileMi")

@@ -355,4 +355,14 @@ public interface DiskResourceServiceFacade {
                       final String path,
                       boolean recursive,
                       final AsyncCallback<String> callback);
+
+    /**
+     * 
+     * @param parentFolder parent folder under which new folders will be created
+     * @param foldersToCreate an array of folder names to be created under parent folder
+     * @param callback callback object
+     */
+    void createNcbiSraFolderStructure(Folder parentFolder,
+                                      String[] foldersToCreate,
+                                      AsyncCallback<String> callback);
 }
