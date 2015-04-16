@@ -7,11 +7,8 @@ import org.springframework.web.servlet.config.annotation.DefaultServletHandlerCo
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
-import org.springframework.web.servlet.handler.SimpleUrlHandlerMapping;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 import org.springframework.web.servlet.view.JstlView;
-
-import java.util.Properties;
 
 /**
  * @author jstroot
@@ -36,28 +33,6 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter {
     @Override
     public void configureDefaultServletHandling(DefaultServletHandlerConfigurer configurer) {
         configurer.enable();
-    }
-
-//    @Bean
-//    public GwtRpcController todoRpcService(){
-        // Wire up rpc classes.
-//        GwtRpcController todoRpcService = new GwtRpcController();
-//        todoRpcService.setRemoteService(new TodoRpcServiceImpl());
-//        return todoRpcService;
-//    }
-
-    @Bean
-    public SimpleUrlHandlerMapping rpcUrlHandlerMapping() {
-        // Set up simple url handler mappings here
-        Properties urlProperties = new Properties();
-//        urlProperties.put("/**/todo.rpc", todoRpcService());
-
-        SimpleUrlHandlerMapping simpleUrlHandlerMapping = new SimpleUrlHandlerMapping();
-        simpleUrlHandlerMapping.setMappings(urlProperties);
-        // Need to set order so these URLs are mapped/handled before any default handlers.
-        simpleUrlHandlerMapping.setOrder(1);
-
-        return simpleUrlHandlerMapping;
     }
 
     @Bean
