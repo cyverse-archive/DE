@@ -7,6 +7,8 @@ import org.iplantc.de.server.services.EmailServiceImpl;
 import org.iplantc.de.server.services.PropertyServiceImpl;
 import org.iplantc.de.server.services.UUIDServiceImpl;
 
+import com.google.gwt.logging.server.RemoteLoggingServiceImpl;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.handler.SimpleUrlHandlerMapping;
@@ -55,6 +57,7 @@ public class GwtRpcConfig {
         urlProperties.put("**/email.rpc", emailRpcService());
         urlProperties.put("**/properties.rpc", propertiesRpcService());
         urlProperties.put("**/api.rpc", apiRpcService());
+        urlProperties.put("**/remote_logging", new RemoteLoggingServiceImpl());
 
         SimpleUrlHandlerMapping simpleUrlHandlerMapping = new SimpleUrlHandlerMapping();
         simpleUrlHandlerMapping.setMappings(urlProperties);
