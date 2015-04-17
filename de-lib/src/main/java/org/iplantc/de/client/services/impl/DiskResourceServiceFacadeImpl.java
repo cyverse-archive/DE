@@ -272,9 +272,7 @@ public class DiskResourceServiceFacadeImpl extends TreeStore<Folder> implements
 
         String fullAddress = deProperties.getDataMgmtBaseUrl() + "directory/create"; //$NON-NLS-1$
         JSONObject obj = new JSONObject();
-        JSONArray arr = new JSONArray();
-        arr.set(0, new JSONString(parentId + "/" + newFolderName));
-        obj.put("paths", arr);
+        obj.put("path", new JSONString(parentId + "/" + newFolderName));
         ServiceCallWrapper wrapper = new ServiceCallWrapper(POST, fullAddress, obj.toString());
         callService(wrapper, new AsyncCallbackConverter<String, Folder>(callback) {
 
@@ -303,7 +301,7 @@ public class DiskResourceServiceFacadeImpl extends TreeStore<Folder> implements
                                              AsyncCallback<String> callback) {
         final String parentId = parentFolder.getPath();
 
-        String fullAddress = deProperties.getDataMgmtBaseUrl() + "directory/create"; //$NON-NLS-1$
+        String fullAddress = deProperties.getDataMgmtBaseUrl() + "directories"; //$NON-NLS-1$
         JSONObject obj = new JSONObject();
 
         JSONArray arr = new JSONArray();
