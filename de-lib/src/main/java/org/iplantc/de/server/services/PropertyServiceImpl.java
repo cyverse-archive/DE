@@ -3,45 +3,48 @@ package org.iplantc.de.server.services;
 import org.iplantc.de.shared.services.PropertyService;
 
 import com.google.gwt.user.client.rpc.SerializationException;
-import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.web.context.support.SpringBeanAutowiringSupport;
+import org.springframework.core.env.AbstractEnvironment;
+import org.springframework.core.env.Environment;
+import org.springframework.core.env.MapPropertySource;
+import org.springframework.core.env.PropertySource;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
-import java.util.Properties;
-
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletException;
 
 /**
  * @author jstroot
  */
-public class PropertyServiceImpl extends RemoteServiceServlet implements PropertyService{
+public class PropertyServiceImpl implements PropertyService{
 
-    private static final long serialVersionUID = 1L;
+//    private static final long serialVersionUID = 1L;
 
     /**
      * The configuration settings.
      */
-    @Autowired
-    @Qualifier("deProperties")
-    private Properties props;
+    private final Environment environment;
 
-    @Override
-    public void init(ServletConfig config) throws ServletException {
-        super.init(config);
-        SpringBeanAutowiringSupport.processInjectionBasedOnServletContext(this, config.getServletContext());
+    public PropertyServiceImpl(Environment environment) {
+        this.environment = environment;
     }
 
     @Override
     public Map<String, String> getProperties() throws SerializationException {
-        HashMap<String, String> propertyMap = new HashMap<>();
-        for (Object key : props.keySet()) {
-            propertyMap.put(key.toString(), props.get(key).toString());
+        HashMap<String, Object> propertyMap = new HashMap<>();
+        for(Iterator it = ((AbstractEnvironment) environment).getPropertySources().iterator(); it.hasNext(); ) {
+            PropertySource propertySource = (PropertySource) it.next();
+            if (propertySource instanceof MapPropertySource) {
+                propertyMap.putAll(((MapPropertySource) propertySource).getSource());
+            }
         }
-        return propertyMap;
+
+        HashMap<String, String> stringProps = new HashMap<>();
+        for (Object key : propertyMap.keySet()) {
+            if(propertyMap.get(key) instanceof String){
+                stringProps.put(key.toString(), propertyMap.get(key).toString());
+            }
+        }
+        return stringProps;
     }
 }

@@ -1,6 +1,6 @@
-package org.iplantc.admin.belphegor.client;
+package org.iplantc.de.admin.client;
 
-import org.iplantc.admin.belphegor.client.gin.BelphegorAppInjector;
+import org.iplantc.de.admin.client.gin.BelphegorAppInjector;
 import org.iplantc.de.admin.desktop.client.views.BelphegorView;
 import org.iplantc.de.client.models.DEProperties;
 import org.iplantc.de.client.models.UserInfo;

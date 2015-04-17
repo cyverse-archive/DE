@@ -1,5 +1,7 @@
 package org.iplantc.de.shared.services;
 
+import com.google.gwt.user.client.rpc.IsSerializable;
+
 import java.io.Serializable;
 
 /**
@@ -9,13 +11,13 @@ public class BaseServiceCallWrapper implements Serializable {
     private static final long serialVersionUID = -7453647589756124397L;
 
     private Type type = Type.GET;
-    private String address = new String();
+    private String address = "";
     private String arguments;
 
     /**
      * Indicate the type of HTTP Method being used for a service call.
      */
-    public enum Type {
+    public enum Type implements IsSerializable {
         GET, PUT, POST, DELETE, PATCH
     }
 

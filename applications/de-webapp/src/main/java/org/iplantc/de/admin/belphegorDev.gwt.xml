@@ -1,5 +1,5 @@
 <module rename-to='belphegor'>
-    <inherits name="org.iplantc.admin.belphegor.belphegor" />
+    <inherits name="org.iplantc.de.admin.belphegor" />
 
     <!-- Super Dev Mode -->
     <add-linker name="xsiframe" />

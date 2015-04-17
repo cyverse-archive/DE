@@ -27,9 +27,8 @@
     </replace-with>
 
     <!-- Specify the app entry point class. -->
-    <entry-point class='org.iplantc.admin.belphegor.client.Belphegor' />
+    <entry-point class='org.iplantc.de.admin.client.Belphegor' />
 
     <!-- Specify the paths for translatable code -->
     <source path='client' />
-    <source path='shared' />
 </module>

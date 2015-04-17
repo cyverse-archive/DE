@@ -1,8 +1,6 @@
 rootProject.name='DE-UI' // TEMPLATE: Change this
 include ':de'
 project( ':de').projectDir = new File( rootProject.projectDir, deWebappSubtreePrefix) 
-include ':belphegor'
-project( ':belphegor').projectDir = new File( rootProject.projectDir, belphegorSubtreePrefix)
 
 include ':de-lib'
 project(':de-lib').projectDir = new File( rootProject.projectDir, de_libSubtree )

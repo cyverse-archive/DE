@@ -2,21 +2,17 @@ package org.iplantc.de.server.services;
 
 import org.iplantc.de.shared.services.AboutApplicationService;
 
-import com.google.gwt.user.server.rpc.RemoteServiceServlet;
-
 import net.sf.json.JSONObject;
 
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.web.context.support.SpringBeanAutowiringSupport;
+import org.springframework.web.context.ServletConfigAware;
 
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 
 import javax.servlet.ServletConfig;
-import javax.servlet.ServletException;
 
 /**
  * Communicates application information to include as "about" data regarding the current build and client UserAgent.
@@ -25,7 +21,7 @@ import javax.servlet.ServletException;
  *
  * @author lenards, jstroot
  */
-public class AboutApplicationServiceImpl extends RemoteServiceServlet implements AboutApplicationService {
+public class AboutApplicationServiceImpl implements AboutApplicationService, ServletConfigAware {
 
     private static final String BUILD_BRANCH_ATTR = "Git-Branch";
     private static final String BUILD_COMMIT_ATTR = "Git-Commit";
@@ -42,6 +38,13 @@ public class AboutApplicationServiceImpl extends RemoteServiceServlet implements
     private String defaultBuildNumber;
     private Attributes manifestAttrs;
     private String releaseVersion;
+    private ServletConfig servletConfig;
+
+    public AboutApplicationServiceImpl(final String defaultBuildNumber,
+                                       final String releaseVersion){
+        this.defaultBuildNumber = defaultBuildNumber;
+        this.releaseVersion = releaseVersion;
+    }
 
     @Override
     public String getAboutInfo() {
@@ -49,21 +52,8 @@ public class AboutApplicationServiceImpl extends RemoteServiceServlet implements
     }
 
     @Override
-    public void init(ServletConfig config) throws ServletException {
-        super.init(config);
-        SpringBeanAutowiringSupport.processInjectionBasedOnServletContext(this, config.getServletContext());
-    }
-
-    @Value("${org.iplantc.discoveryenvironment.about.defaultBuildNumber}")
-    public void setDefaultBuildNumber(String defaultBuildNumber) {
-        this.defaultBuildNumber = defaultBuildNumber;
-        LOG.trace("Set defaultBuildNumber = {}", defaultBuildNumber);
-    }
-
-    @Value("${org.iplantc.discoveryenvironment.about.releaseVersion}")
-    public void setReleaseVersion(String releaseVersion) {
-        this.releaseVersion = releaseVersion;
-        LOG.trace("Set releaseVersion =  {}", releaseVersion);
+    public void setServletConfig(ServletConfig servletConfig) {
+        this.servletConfig = servletConfig;
     }
 
     /**
@@ -109,7 +99,7 @@ public class AboutApplicationServiceImpl extends RemoteServiceServlet implements
      */
     private void getManifestAttributes() {
         try {
-            Manifest manifest = new Manifest(getServletContext().getResourceAsStream(MANIFEST_LOC));
+            Manifest manifest = new Manifest(servletConfig.getServletContext().getResourceAsStream(MANIFEST_LOC));
             manifestAttrs = manifest.getMainAttributes();
         } catch (Exception e) {
             LOG.error("unable to get Manifest Attributes", e);

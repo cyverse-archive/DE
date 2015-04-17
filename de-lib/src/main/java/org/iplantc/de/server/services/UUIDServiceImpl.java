@@ -3,7 +3,6 @@ package org.iplantc.de.server.services;
 import org.iplantc.de.client.services.UUIDService;
 
 import com.google.common.collect.Lists;
-import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 import java.util.List;
 import java.util.UUID;
@@ -11,7 +10,7 @@ import java.util.UUID;
 /**
  * @author jstroot
  */
-public class UUIDServiceImpl extends RemoteServiceServlet implements UUIDService {
+public class UUIDServiceImpl implements UUIDService {
 
     @Override
     public List<String> getUUIDs(int num) {

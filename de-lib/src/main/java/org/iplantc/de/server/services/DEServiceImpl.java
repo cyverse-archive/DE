@@ -15,7 +15,6 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
 import com.google.gwt.user.client.rpc.SerializationException;
-import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpEntity;
@@ -33,14 +32,9 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.slf4j.MDC;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
 import java.io.IOException;
 
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 
 /**
@@ -48,8 +42,8 @@ import javax.servlet.http.HttpServletRequest;
  *
  * @author jstroot
  */
-public class DEServiceImpl extends RemoteServiceServlet implements DEService {
-    private static final long serialVersionUID = 1L;
+public class DEServiceImpl implements DEService,
+                                      HasHttpServletRequest {
     private final Logger LOGGER = LoggerFactory.getLogger(DEServiceImpl.class);
 
     /**
@@ -64,12 +58,10 @@ public class DEServiceImpl extends RemoteServiceServlet implements DEService {
      */
     private UrlConnector urlConnector;
 
-    public DEServiceImpl() {
-
-    }
-
-    public DEServiceImpl(ServiceCallResolver serviceResolver) {
+    public DEServiceImpl(final ServiceCallResolver serviceResolver,
+                         final UrlConnector urlConnector) {
         LOGGER.trace("CONSTRUCTOR CALLED!!");
+        this.urlConnector = urlConnector;
         this.serviceResolver = serviceResolver;
     }
 
@@ -144,12 +136,6 @@ public class DEServiceImpl extends RemoteServiceServlet implements DEService {
         return null;
     }
 
-    @Override
-    public void init(ServletConfig config) throws ServletException {
-        super.init(config);
-        SpringBeanAutowiringSupport.processInjectionBasedOnServletContext(this, config.getServletContext());
-    }
-
     /**
      * Sets the current servlet request.
      *
@@ -159,46 +145,13 @@ public class DEServiceImpl extends RemoteServiceServlet implements DEService {
         this.request = request;
     }
 
-    @Autowired
-    public void setServiceResolver(ServiceCallResolver serviceResolver) {
-        LOGGER.trace("Set serviceCallResolver = {}", serviceResolver.getClass().getSimpleName());
-        this.serviceResolver = serviceResolver;
-    }
-
-    @Override
-    protected void onAfterResponseSerialized(String serializedResponse) {
-        super.onAfterResponseSerialized(serializedResponse);
-        MDC.clear();
-    }
-
-    @Override
-    protected String readContent(HttpServletRequest request) throws ServletException, IOException {
-        final Object usernameAttr = request.getSession().getAttribute("username");
-        if (usernameAttr != null) {
-            MDC.put("username", usernameAttr.toString());
-        }
-        return super.readContent(request);
-    }
-
     /**
      * Gets the current servlet request.
      *
      * @return the request to use.
      */
     HttpServletRequest getRequest() {
-        return request == null ? getThreadLocalRequest() : request;
-    }
-
-    /**
-     * Sets the URL connector for this services dispatcher. This connector should be set once when the
-     * object is created.
-     *
-     * @param urlConnector the new URL connector.
-     */
-    @Autowired
-    void setUrlConnector(UrlConnector urlConnector) {
-        this.urlConnector = urlConnector;
-        LOGGER.trace("Set urlConnector = {}", urlConnector.getClass().getSimpleName());
+        return request;
     }
 
     /**

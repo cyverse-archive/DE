@@ -7,11 +7,9 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
-import java.util.Properties;
-import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -23,16 +21,17 @@ public class ServiceCallResolver {
     private static final Logger LOG = LoggerFactory.getLogger(ServiceCallResolver.class);
     private static final String PREFIX_KEY = "prefix";
 
+    private Environment environment;
+
     @Autowired
-    @Qualifier("deProperties")
-    public void setAppProperties(Properties appProperties) {
+    public void setAppProperties(Environment environment) {
         LOG.trace("Set app properties");
-        this.appProperties = appProperties;
+        this.environment = environment;
         setPrefix();
         validatePrefix();
     }
 
-    private Properties appProperties;
+//    private Properties appProperties;
     private String prefix;
 
     private void validatePrefix() {
@@ -43,7 +42,7 @@ public class ServiceCallResolver {
     }
 
     private void setPrefix() {
-        prefix = appProperties.getProperty(PREFIX_KEY);
+        prefix = environment.getProperty(PREFIX_KEY);
     }
 
     /**
@@ -70,7 +69,7 @@ public class ServiceCallResolver {
      */
     public String resolveAddress(String serviceName) {
         NamedServiceCall serviceCall = NamedServiceCall.parse(prefix, serviceName);
-        final String retVal = serviceCall == null ? serviceName : serviceCall.resolve(appProperties);
+        final String retVal = serviceCall == null ? serviceName : serviceCall.resolve(environment);
         LOG.debug("\"{}\" resolved to: {}", serviceName, retVal);
         return retVal;
     }
@@ -154,7 +153,7 @@ public class ServiceCallResolver {
          * @return the resolved URL.
          * @throws UnresolvableServiceNameException if the service name isn't found in the properties.
          */
-        public String resolve(Properties props) {
+        public String resolve(Environment props) {
             final String retVal = getServiceBaseUrl(props) + getAdditionalPath() + getQuery();
             LOG.trace("RESOLVED\n\t" +
                           "service name: {}\n\t" +
@@ -169,15 +168,15 @@ public class ServiceCallResolver {
          * @return the base URL to use when connecting to the service.
          * @throws UnresolvableServiceNameException if the service name isn't found in the properties.
          */
-        private String getServiceBaseUrl(Properties props) {
+        private String getServiceBaseUrl(Environment props) {
             String result = props.getProperty(serviceName);
             if (result == null) {
                 LOG.error("unknown service name: {}", serviceName);
-                if (LOG.isDebugEnabled()) {
-                    for (String prop : new TreeSet<>(props.stringPropertyNames())) {
-                        LOG.debug("configuration setting: {} = {}", prop, props.getProperty(prop));
-                    }
-                }
+//                if (LOG.isDebugEnabled()) {
+//                    for (String prop : new TreeSet<>(props.stringPropertyNames())) {
+//                        LOG.debug("configuration setting: {} = {}", prop, props.getProperty(prop));
+//                    }
+//                }
                 throw new UnresolvableServiceNameException(serviceName);
             }
             return result;

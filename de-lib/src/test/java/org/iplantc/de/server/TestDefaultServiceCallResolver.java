@@ -8,6 +8,8 @@ import static org.junit.Assert.*;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.core.env.AbstractEnvironment;
+import org.springframework.core.env.Environment;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -28,7 +30,8 @@ public class TestDefaultServiceCallResolver {
             "org.iplantc.services.acctmgmt.updatePassword=http://emma.iplantcollaborative.org/accountmanagementv2/update-password",
             "org.iplantc.services.acctmgmt.fetchUserOptDetails=http://emma.iplantcollaborative.org/accountmanagementv2/fetch-user-options-details"};
 
-    private Properties testProps;
+    private Environment testEnv;
+    private Properties wrappedProperties;
     private ServiceCallResolver resolver;
 
     /**
@@ -39,7 +42,7 @@ public class TestDefaultServiceCallResolver {
      */
     @Test
     public void testActualPropertiesValues() { // wipe everything other
-        testProps = null;
+        testEnv = null;
         resolver = null;
         // use the default ctor to grab discoveryenvironment.properties
         // resolver = new DefaultServiceCallResolver();
@@ -64,7 +67,7 @@ public class TestDefaultServiceCallResolver {
     public void testKnownPropertiesResolveCorrectly() {
         String srvKey = "org.iplantc.services.acctmgmt.fetchStates";
         String expected = "http://ndy.sixfifty.org/accountmanagementv2/fetch-states";
-        assertNotNull(testProps);
+        assertNotNull(testEnv);
         assertNotNull(resolver);
         String valid = resolver.resolveAddress(wrapper(srvKey));
         // expected should equal the returned value
@@ -75,7 +78,7 @@ public class TestDefaultServiceCallResolver {
 
     @Test
     public void testAllKnownPropertiesResolveCorrectly() {
-        assertNotNull(testProps);
+        assertNotNull(testEnv);
         assertNotNull(resolver);
 
         String srvKey = "org.iplantc.services.acctmgmt.fetchPositions";
@@ -106,7 +109,7 @@ public class TestDefaultServiceCallResolver {
     @Test public void testKnownURLPassesThroughCorrectly() {
         String srvUrl = "http://ndy.sixfifty.org/accountmanagementv2/fetch-states";
         String expected = srvUrl;
-        assertNotNull(testProps);
+        assertNotNull(testEnv);
         assertNotNull(resolver);
         String actual = resolver.resolveAddress(wrapper(srvUrl));
         assertEquals(expected, actual);
@@ -117,7 +120,7 @@ public class TestDefaultServiceCallResolver {
     @Test public void testGarbageValuePassesThrough() {
         String garbage = "@$@&(!&@!(*&*&*(**!#!#!#!$!%";
         String expected = garbage;
-        assertNotNull(testProps);
+        assertNotNull(testEnv);
         assertNotNull(resolver);
         String actual = resolver.resolveAddress(wrapper(garbage));
         assertEquals(expected, actual);
@@ -126,24 +129,30 @@ public class TestDefaultServiceCallResolver {
 
     @Test(expected = IllegalArgumentException.class)
     public void testResolverFailsWithoutPrefix() {
-        testProps.remove("prefix");
-        String tmp = testProps.getProperty("prefix");
+        wrappedProperties.remove("prefix");
+        String tmp = testEnv.getProperty("prefix");
         assertNull(tmp);
         // this should fail.
         resolver = new ServiceCallResolver();
-        resolver.setAppProperties(testProps);
+        resolver.setAppProperties(testEnv);
     }
 
     @Before
     public void setUp() {
-        testProps = createProperties();
+        wrappedProperties = createProperties();
+        testEnv = new AbstractEnvironment() {
+            @Override
+            public String getProperty(String key) {
+                return wrappedProperties.getProperty(key);
+            }
+        };
         resolver = new ServiceCallResolver();
-        resolver.setAppProperties(testProps);
+        resolver.setAppProperties(testEnv);
     }
 
     @After
     public void tearDown() {
-        testProps = null;
+        testEnv = null;
         resolver = null;
     }
 
@@ -196,30 +205,37 @@ public class TestDefaultServiceCallResolver {
         return expectedProps;
     }
 
-    private Properties createFromExpected() {
-        Properties props = new Properties();
+    private Environment createFromExpected() {
 
+        final Properties props = new Properties();
         // prefix is a required key/prop.
         props.put("prefix", "org.iplantc.services");
         // the rest of the values that were in the properties values as of the creation of this file
         props.put("org.iplantc.services.acctmgmt.fetchStates",
-                "http://emma.iplantcollaborative.org/accountmanagementv2/fetch-states");
+                  "http://emma.iplantcollaborative.org/accountmanagementv2/fetch-states");
         props.put("org.iplantc.services.acctmgmt.fetchPositions",
-                "http://emma.iplantcollaborative.org/accountmanagementv2/fetch-positions");
+                  "http://emma.iplantcollaborative.org/accountmanagementv2/fetch-positions");
         props.put("org.iplantc.services.acctmgmt.fetchResearchAreas",
-                "http://emma.iplantcollaborative.org/accountmanagementv2/fetch-research-areas");
+                  "http://emma.iplantcollaborative.org/accountmanagementv2/fetch-research-areas");
         props.put("org.iplantc.services.acctmgmt.fetchFundingAgencies",
-                "http://emma.iplantcollaborative.org/accountmanagementv2/fetch-funding-agencies");
+                  "http://emma.iplantcollaborative.org/accountmanagementv2/fetch-funding-agencies");
         props.put("org.iplantc.services.acctmgmt.fetchAcctDetails",
-                "http://emma.iplantcollaborative.org/accountmanagementv2/fetch-account-details");
+                  "http://emma.iplantcollaborative.org/accountmanagementv2/fetch-account-details");
         props.put("org.iplantc.services.acctmgmt.updateAccounts",
-                "http://emma.iplantcollaborative.org/accountmanagementv2/update-accounts");
+                  "http://emma.iplantcollaborative.org/accountmanagementv2/update-accounts");
         props.put("org.iplantc.services.acctmgmt.updatePassword",
-                "http://emma.iplantcollaborative.org/accountmanagementv2/update-password");
+                  "http://emma.iplantcollaborative.org/accountmanagementv2/update-password");
         props.put("org.iplantc.services.acctmgmt.fetchUserOptDetails",
-                "http://emma.iplantcollaborative.org/accountmanagementv2/fetch-user-options-details");
+                  "http://emma.iplantcollaborative.org/accountmanagementv2/fetch-user-options-details");
+        Environment env = new AbstractEnvironment() {
 
-        return props;
+            @Override
+            public String getProperty(String key) {
+                return props.getProperty(key);
+            }
+        };
+
+        return env;
     }
 
     private Properties createProperties() {

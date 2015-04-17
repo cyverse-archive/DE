@@ -1,16 +1,22 @@
 package org.iplantc.de.conf;
 
+import org.iplantc.de.server.ServiceCallResolver;
+import org.iplantc.de.server.auth.UrlConnector;
 import org.iplantc.de.server.rpc.GwtRpcController;
 import org.iplantc.de.server.services.AboutApplicationServiceImpl;
 import org.iplantc.de.server.services.DEServiceImpl;
 import org.iplantc.de.server.services.EmailServiceImpl;
+import org.iplantc.de.server.services.IplantEmailClient;
 import org.iplantc.de.server.services.PropertyServiceImpl;
 import org.iplantc.de.server.services.UUIDServiceImpl;
 
 import com.google.gwt.logging.server.RemoteLoggingServiceImpl;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
 import org.springframework.web.servlet.handler.SimpleUrlHandlerMapping;
 
 import java.util.Properties;
@@ -23,9 +29,30 @@ import java.util.Properties;
 @Configuration
 public class GwtRpcConfig {
 
+    @Autowired
+    private Environment environment;
+
+    @Autowired
+    private ServiceCallResolver serviceCallResolver;
+
+    @Autowired
+    private IplantEmailClient emailClient;
+
+    @Autowired
+    private UrlConnector urlConnector;
+
+
+    @Value("${org.iplantc.discoveryenvironment.about.defaultBuildNumber}")
+    private String defaultBuildNumber;
+
+
+    @Value("${org.iplantc.discoveryenvironment.about.releaseVersion}")
+    private String releaseVersion;
+
     @Bean
     public GwtRpcController aboutRpcService(){
-        return new GwtRpcController(new AboutApplicationServiceImpl());
+        return new GwtRpcController(new AboutApplicationServiceImpl(defaultBuildNumber,
+                                                                    releaseVersion));
     }
 
     @Bean
@@ -35,17 +62,18 @@ public class GwtRpcConfig {
 
     @Bean
     public GwtRpcController emailRpcService(){
-        return new GwtRpcController(new EmailServiceImpl());
+        return new GwtRpcController(new EmailServiceImpl(emailClient));
     }
 
     @Bean
     public GwtRpcController propertiesRpcService(){
-        return new GwtRpcController(new PropertyServiceImpl());
+        return new GwtRpcController(new PropertyServiceImpl(environment));
     }
 
     @Bean
     public GwtRpcController apiRpcService(){
-        return new GwtRpcController(new DEServiceImpl());
+        return new GwtRpcController(new DEServiceImpl(serviceCallResolver,
+                                                      urlConnector));
     }
 
     @Bean

@@ -1,6 +1,7 @@
 package org.iplantc.de.server.rpc;
 
 import org.iplantc.de.conf.WebMvcConfig;
+import org.iplantc.de.server.services.HasHttpServletRequest;
 
 import com.google.gwt.user.client.rpc.IncompatibleRemoteServiceException;
 import com.google.gwt.user.client.rpc.RemoteService;
@@ -52,6 +53,10 @@ public class GwtRpcController extends RemoteServiceServlet implements Controller
 
     public ModelAndView handleRequest(HttpServletRequest request,
                                       HttpServletResponse response) throws Exception {
+        // Set request on service if required.
+        if(this.remoteService instanceof HasHttpServletRequest){
+            ((HasHttpServletRequest)this.remoteService).setRequest(request);
+        }
         super.doPost(request, response);
         return null;
     }

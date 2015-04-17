@@ -1,5 +1,7 @@
 package org.iplantc.de.conf;
 
+import org.iplantc.de.server.CacheControlFilter;
+import org.iplantc.de.server.DeCasAuthenticationEntryPoint;
 import org.iplantc.de.server.DeLandingPage;
 import org.iplantc.de.server.auth.CasLogoutSuccessHandler;
 
@@ -18,13 +20,13 @@ import org.springframework.security.cas.ServiceProperties;
 import org.springframework.security.cas.authentication.CasAssertionAuthenticationToken;
 import org.springframework.security.cas.authentication.CasAuthenticationProvider;
 import org.springframework.security.cas.userdetails.GrantedAuthorityFromAssertionAttributesUserDetailsService;
-import org.springframework.security.cas.web.CasAuthenticationEntryPoint;
 import org.springframework.security.cas.web.CasAuthenticationFilter;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.annotation.web.servlet.configuration.EnableWebMvcSecurity;
 import org.springframework.security.core.userdetails.AuthenticationUserDetailsService;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.logout.LogoutFilter;
@@ -123,23 +125,23 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         return new ProxyGrantingTicketStorageImpl();
     }
 
-    @Bean
-    public CasAuthenticationEntryPoint casAuthenticationEntryPoint() {
-    // TODO This differs between DE and Belphegor
-        CasAuthenticationEntryPoint casAuthenticationEntryPoint = new CasAuthenticationEntryPoint();
-        casAuthenticationEntryPoint.setLoginUrl(loginUrl);
-        casAuthenticationEntryPoint.setServiceProperties(serviceProperties());
-        return casAuthenticationEntryPoint;
-    }
-
 //    @Bean
-//    public AuthenticationEntryPoint deCasAuthenticationEntryPoint() {
-//        DeCasAuthenticationEntryPoint casAuthenticationEntryPoint = new DeCasAuthenticationEntryPoint();
-//        casAuthenticationEntryPoint.setLandingPage(landingPage());
-//        casAuthenticationEntryPoint.setRpcPrefix("discoveryenvironment/deservice");
-//        casAuthenticationEntryPoint.setLogoutSuccessHandler(logoutSuccessHandler());
+//    public CasAuthenticationEntryPoint casAuthenticationEntryPoint() {
+    // TODO This differs between DE and Belphegor
+//        CasAuthenticationEntryPoint casAuthenticationEntryPoint = new CasAuthenticationEntryPoint();
+//        casAuthenticationEntryPoint.setLoginUrl(loginUrl);
+//        casAuthenticationEntryPoint.setServiceProperties(serviceProperties());
 //        return casAuthenticationEntryPoint;
 //    }
+
+    @Bean
+    public AuthenticationEntryPoint deCasAuthenticationEntryPoint() {
+        DeCasAuthenticationEntryPoint casAuthenticationEntryPoint = new DeCasAuthenticationEntryPoint();
+        casAuthenticationEntryPoint.setLandingPage(landingPage());
+        casAuthenticationEntryPoint.setRpcPrefix("*.rpc");
+        casAuthenticationEntryPoint.setLogoutSuccessHandler(logoutSuccessHandler());
+        return casAuthenticationEntryPoint;
+    }
 
     @Bean
     public CasLogoutSuccessHandler logoutSuccessHandler() {
@@ -169,13 +171,16 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http.authorizeRequests()
             .antMatchers("/applets/**", "/logout", "/logged-out", "/*.css", "/*.png").permitAll()
             .anyRequest().authenticated().and()
-        .exceptionHandling().authenticationEntryPoint(casAuthenticationEntryPoint());
+//        .exceptionHandling().authenticationEntryPoint(casAuthenticationEntryPoint());
+        .exceptionHandling().authenticationEntryPoint(deCasAuthenticationEntryPoint());
 
         http.addFilter(casAuthenticationFilter())
             .addFilterBefore(singleSignOutFilter(), CasAuthenticationFilter.class)
-            .addFilterBefore(requestSingleLogoutFilter(), LogoutFilter.class);
-
+            .addFilterBefore(requestSingleLogoutFilter(), LogoutFilter.class)
+            .addFilterAfter(new CacheControlFilter(), CasAuthenticationFilter.class);
         http.headers().cacheControl().addHeaderWriter(new XFrameOptionsHeaderWriter(SAMEORIGIN));
+
+        http.csrf().disable();
     }
 
     @Override

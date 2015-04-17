@@ -1,7 +1,7 @@
 // Contains a list of versions used in dependencies
 
 ext {
-   gwtVer = "2.6.1"
+   gwtVer = "2.6.0"
    gxtVersion = "3.1.1"
    jUnitVersion = "4.11"
    gwtMockitoVer = "1.1.3"

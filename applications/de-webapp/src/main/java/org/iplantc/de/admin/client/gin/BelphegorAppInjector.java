@@ -1,4 +1,4 @@
-package org.iplantc.admin.belphegor.client.gin;
+package org.iplantc.de.admin.client.gin;
 
 import org.iplantc.de.admin.apps.client.gin.AdminAppsGinModule;
 import org.iplantc.de.admin.desktop.client.gin.BelphegorAppsGinModule;

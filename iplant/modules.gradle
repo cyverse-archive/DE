@@ -1,6 +1,5 @@
 project(':de-lib') {
     apply plugin: 'gwt-base'
-    apply plugin: 'spring-boot'
 
     gwt {
         gwtVersion = "$gwtVer"
@@ -25,12 +24,16 @@ project(':de-lib') {
         compile "com.sencha.gxt:gxt:$gxtVersion"
         compile 'net.sf.json-lib:json-lib:2.4:jdk15'
         compile 'org.antlr:stringtemplate:4.0.2'
+        compile 'org.apache.httpcomponents:httpclient:4.4.1'
         compile "org.slf4j:jcl-over-slf4j:$slf4jVersion"
         compile "org.slf4j:log4j-over-slf4j:$slf4jVersion"
         compile "org.slf4j:slf4j-api:$slf4jVersion"
-        compile("org.springframework.boot:spring-boot-starter-web")
-        compile("org.springframework.boot:spring-boot-starter-security")
-        compile("org.springframework.security:spring-security-cas")
+
+        compile("org.springframework:spring-core:4.1.6.RELEASE")
+        compile("org.springframework:spring-web:4.1.6.RELEASE")
+        compile("org.springframework.security:spring-security-core:3.2.7.RELEASE")
+        compile("org.springframework.security:spring-security-cas:3.2.7.RELEASE")
+        gwt("org.hibernate:hibernate-validator:5.0.3.Final")
 
         testCompile "com.google.gwt.gwtmockito:gwtmockito:$gwtMockitoVer"
    }

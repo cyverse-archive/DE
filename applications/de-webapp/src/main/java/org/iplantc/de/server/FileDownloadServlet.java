@@ -1,5 +1,6 @@
 package org.iplantc.de.server;
 
+import org.iplantc.de.server.auth.UrlConnector;
 import org.iplantc.de.server.services.DEServiceImpl;
 import org.iplantc.de.shared.services.ServiceCallWrapper;
 
@@ -39,6 +40,7 @@ public class FileDownloadServlet extends HttpServlet {
      * Used to resolve aliased service calls.
      */
     private ServiceCallResolver serviceResolver;
+    private UrlConnector urlConnector;
 
     /**
      * The default constructor.
@@ -93,6 +95,11 @@ public class FileDownloadServlet extends HttpServlet {
     public void setServiceResolver(ServiceCallResolver serviceResolver) {
         this.serviceResolver = serviceResolver;
         LOG.trace("Set serviceResolver = {}", serviceResolver.getClass().getSimpleName());
+    }
+
+    @Autowired
+    public void setUrlConnector(UrlConnector urlConnector) {
+        this.urlConnector = urlConnector;
     }
 
     /**
@@ -169,12 +176,8 @@ public class FileDownloadServlet extends HttpServlet {
      * @return the service dispatcher.
      */
     private DEServiceImpl createServiceDispatcher(HttpServletRequest request) {
-        DEServiceImpl dispatcher = new DEServiceImpl(serviceResolver);
-        try {
-            dispatcher.init(getServletConfig());
-        } catch (ServletException e) {
-            LOG.warn("service dispatcher initialization failed", e);
-        }
+        DEServiceImpl dispatcher = new DEServiceImpl(serviceResolver,
+                                                     urlConnector);
         dispatcher.setRequest(request);
         return dispatcher;
     }

@@ -25,8 +25,9 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter {
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         super.addResourceHandlers(registry);
         registry.addResourceHandler("/*.css").addResourceLocations("/");
-        registry.addResourceHandler("/discoveryenvironment/**").addResourceLocations("/discoveryenvironment/");
-        registry.addResourceHandler("/belphegor/**").addResourceLocations("/belphegor/");
+
+        registry.addResourceHandler("/de/**").addResourceLocations("/");
+        registry.addResourceHandler("/belphegor/**").addResourceLocations("/");
     }
 
     @Override

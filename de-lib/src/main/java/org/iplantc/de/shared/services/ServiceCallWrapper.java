@@ -1,14 +1,15 @@
 package org.iplantc.de.shared.services;
 
+import com.google.gwt.user.client.rpc.IsSerializable;
+
 /**
  * Provides a wrapper about remote service calls.
  */
-public class ServiceCallWrapper extends BaseServiceCallWrapper {
+public class ServiceCallWrapper extends BaseServiceCallWrapper implements IsSerializable {
     private static final long serialVersionUID = 8930304388034394781L;
-    private String body = new String();
+    private String body = "";
 
     public ServiceCallWrapper() {
-        super();
     }
 
     public ServiceCallWrapper(String address) {

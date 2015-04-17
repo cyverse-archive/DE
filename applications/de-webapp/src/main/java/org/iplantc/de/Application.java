@@ -8,6 +8,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
 import org.springframework.web.WebApplicationInitializer;
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
 
@@ -22,6 +23,7 @@ import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatche
 public class Application extends AbstractAnnotationConfigDispatcherServletInitializer
                          implements WebApplicationInitializer {
 
+    private Environment environment;
     final static Logger LOG = LoggerFactory.getLogger(Application.class);
 
     public static void main(String[] args) {
