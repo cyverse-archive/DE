@@ -12,6 +12,7 @@ import org.iplantc.de.diskResource.client.events.DiskResourceSelectionChangedEve
 import org.iplantc.de.diskResource.client.events.FolderSelectionEvent;
 import org.iplantc.de.diskResource.client.events.selection.*;
 import org.iplantc.de.diskResource.client.events.selection.SaveMetadataSelected.SaveMetadataSelectedEventHandler;
+import org.iplantc.de.diskResource.client.presenters.callbacks.NcbiSraSetupCompleteCallback;
 import org.iplantc.de.diskResource.client.views.search.DiskResourceSearchField;
 import org.iplantc.de.diskResource.share.DiskResourceModule.Ids;
 
@@ -578,6 +579,7 @@ public class DiskResourceViewToolbarImpl extends Composite implements ToolbarVie
         duplicateMi.ensureDebugId(baseID + Ids.FILE_MENU + Ids.MENU_ITEM_DUPLICATE);
         newPlainTextFileMi.ensureDebugId(baseID + Ids.FILE_MENU + Ids.MENU_ITEM_NEW_PLAIN_TEXT);
         newTabularDataFileMi.ensureDebugId(baseID + Ids.FILE_MENU + Ids.MENU_ITEM_NEW_TABULAR_DATA);
+        createNcbiSraMi.ensureDebugId(baseID + Ids.FILE_MENU + Ids.MENU_ITEM_NCBI_SRA);
 
         newPerlFileMi.ensureDebugId(baseID + Ids.FILE_MENU + Ids.MENU_ITEM_NEW_PERL_DATA);
         newPythonFileMi.ensureDebugId(baseID + Ids.FILE_MENU + Ids.MENU_ITEM_NEW_PYTHON_DATA);
