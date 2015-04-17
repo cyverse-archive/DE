@@ -20,6 +20,7 @@ public class NcbiSraSetupCompleteCallback extends DiskResourceServiceCallback<St
     private final DiskResourceCallbackAppearance appearance = GWT.create(DiskResourceCallbackAppearance.class);
     private final Presenter presenter;
 
+
     public NcbiSraSetupCompleteCallback(NavigationView.Presenter navigationPresenter,
                                         Folder parentFolder,
                                         IsMaskable maskedCaller) {
@@ -33,7 +34,7 @@ public class NcbiSraSetupCompleteCallback extends DiskResourceServiceCallback<St
         unmaskCaller();
         presenter.refreshFolder(parentFolder);
         IplantAnnouncer.getInstance()
-                       .schedule(new SuccessAnnouncementConfig("Project set up complete!"));
+                       .schedule(new SuccessAnnouncementConfig(appearance.ncbiCreateFolderStructureSuccess()));
 
     }
 

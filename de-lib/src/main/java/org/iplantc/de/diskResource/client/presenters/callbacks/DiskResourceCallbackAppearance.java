@@ -32,4 +32,6 @@ public interface DiskResourceCallbackAppearance {
     String restoreDefaultMsg();
 
     String restoreMsg();
+
+    String ncbiCreateFolderStructureSuccess();
 }

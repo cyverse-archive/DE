@@ -85,4 +85,9 @@ public class DiskResourceCallbackDefaultAppearance implements DiskResourceCallba
     public String restoreMsg() {
         return displayMessages.restoreMsg();
     }
+
+    @Override
+    public String ncbiCreateFolderStructureSuccess() {
+        return displayMessages.ncbiCreateFolderStructureSuccess();
+    }
 }

@@ -149,4 +149,6 @@ public interface DiskResourceMessages extends Messages {
     String numberOfLib();
 
     String ncbiSraProject();
+
+    String ncbiCreateFolderStructureSuccess();
 }
