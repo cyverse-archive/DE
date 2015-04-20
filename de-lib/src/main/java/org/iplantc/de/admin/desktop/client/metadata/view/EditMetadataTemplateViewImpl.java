@@ -93,14 +93,18 @@ public class EditMetadataTemplateViewImpl implements IsWidget, EditMetadataTempl
     ColumnConfig<MetadataTemplateAttribute, String> typeCol;
     ColumnConfig<MetadataTemplateAttribute, String> valuesCol;
     private final TemplateAttributeSelectionItemProperties tasi_props;
+    @UiField(provided = true)
+    EditMetadataTemplateViewAppearance appearance;
 
     @Inject
     public EditMetadataTemplateViewImpl(final MetadataTemplateAttributeProperties mta_props,
                                         final TemplateAttributeSelectionItemProperties tasi_props,
-                                        final DiskResourceAutoBeanFactory factory) {
+                                        final DiskResourceAutoBeanFactory factory,
+                                        final EditMetadataTemplateViewAppearance appearance) {
         this.mta_props = mta_props;
         this.tasi_props = tasi_props;
         this.drFac = factory;
+        this.appearance = appearance;
         widget = uiBinder.createAndBindUi(this);
         createGridEditing();
         grid.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
@@ -203,7 +207,7 @@ public class EditMetadataTemplateViewImpl implements IsWidget, EditMetadataTempl
                     ipd.hide();
                 } else {
                     IplantAnnouncer.getInstance()
-                                   .schedule(new ErrorAnnouncementConfig("Error processing enum values. Note: Only one value is allowed to be default!"));
+                                   .schedule(new ErrorAnnouncementConfig(appearance.enumError()));
                 }
             }
         });
@@ -369,10 +373,10 @@ public class EditMetadataTemplateViewImpl implements IsWidget, EditMetadataTempl
 
             ColumnConfig<TemplateAttributeSelectionItem, String> valCol = new ColumnConfig<>(tasi_props.value(),
                                                                                              250,
-                                                                                             "Value");
+                                                                                             appearance.valColumn());
             ColumnConfig<TemplateAttributeSelectionItem, Boolean> defCol = new ColumnConfig<>(tasi_props.defaultValue(),
                                                                                               100,
-                                                                                              "Default");
+                                                                                              appearance.defColumn());
             ArrayList<ColumnConfig<TemplateAttributeSelectionItem, ?>> cmList = new ArrayList<>();
             cmList.add(valCol);
             cmList.add(defCol);
@@ -392,7 +396,7 @@ public class EditMetadataTemplateViewImpl implements IsWidget, EditMetadataTempl
 
         private void buildToolbar() {
             toolBar = new ToolBar();
-            TextButton addButton = new TextButton("Add");
+            TextButton addButton = new TextButton(appearance.addBtn());
             addButton.addSelectHandler(new SelectHandler() {
 
                 @Override
@@ -406,7 +410,7 @@ public class EditMetadataTemplateViewImpl implements IsWidget, EditMetadataTempl
                     editEnumVal.startEditing(new GridCell(row, 0));
                 }
             });
-            TextButton delButton = new TextButton("Delete");
+            TextButton delButton = new TextButton(appearance.delBtn());
             delButton.addSelectHandler(new SelectHandler() {
 
                 @Override

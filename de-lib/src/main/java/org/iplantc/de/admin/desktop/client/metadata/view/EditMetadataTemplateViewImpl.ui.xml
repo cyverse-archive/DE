@@ -19,6 +19,9 @@
 		field="gridLayoutData">
 		<ui:attributes width="1" height="1" />
 	</ui:with>
+	
+	 <ui:with field="appearance"
+             type="org.iplantc.de.admin.desktop.client.metadata.view.EditMetadataTemplateView.EditMetadataTemplateViewAppearance"/>
 
 	<ui:with type="com.sencha.gxt.data.shared.ListStore" field="store" />
 
@@ -41,8 +44,8 @@
 		</container:child>
 		<container:child layoutData="{toolBarLayoutData}">
 			<toolbar:ToolBar>
-				<button:TextButton ui:field="addBtn" text="Add" />
-				<button:TextButton ui:field="delBtn" text="Delete" />
+				<button:TextButton ui:field="addBtn" text="Add" icon="{appearance.addIcon}" />
+				<button:TextButton ui:field="delBtn" text="Delete" icon="{appearance.deleteIcon}"/>
 			</toolbar:ToolBar>
 		</container:child>
 		<container:child layoutData="{gridLayoutData}">

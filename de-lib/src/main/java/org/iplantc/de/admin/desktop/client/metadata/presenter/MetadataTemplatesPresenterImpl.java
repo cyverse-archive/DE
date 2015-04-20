@@ -17,9 +17,7 @@ import com.google.common.base.Strings;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HasOneWidget;
 import com.google.inject.Inject;
-import com.google.web.bindery.autobean.shared.AutoBean;
 import com.google.web.bindery.autobean.shared.AutoBeanCodex;
-import com.google.web.bindery.autobean.shared.AutoBeanFactory;
 import com.google.web.bindery.autobean.shared.AutoBeanUtils;
 import com.google.web.bindery.autobean.shared.Splittable;
 
@@ -41,6 +39,7 @@ public class MetadataTemplatesPresenterImpl implements TemplateListingView.Prese
     private final MetadataTemplateAdminServiceFacade mdSvcFac;
     private final EditMetadataTemplateView editView;
     private final DiskResourceAutoBeanFactory drFac;
+    private final TemplateListingView.Presenter.MetadataPresenterAppearance appearance;
 
     Logger LOG = Logger.getLogger("MetadataTemplatesPresenterImpl");
 
@@ -49,12 +48,14 @@ public class MetadataTemplatesPresenterImpl implements TemplateListingView.Prese
                                    final EditMetadataTemplateView editView,
                                    final DiskResourceServiceFacade drSvcFac,
                                    final MetadataTemplateAdminServiceFacade mdSvcFac,
-                                   final DiskResourceAutoBeanFactory drFac) {
+                                   final DiskResourceAutoBeanFactory drFac,
+                                   final TemplateListingView.Presenter.MetadataPresenterAppearance appearance) {
         this.view = view;
         this.editView = editView;
         this.drSvcFac = drSvcFac;
         this.mdSvcFac = mdSvcFac;
         this.drFac = drFac;
+        this.appearance = appearance;
     }
 
     @Override
@@ -77,7 +78,7 @@ public class MetadataTemplatesPresenterImpl implements TemplateListingView.Prese
             @Override
             public void onFailure(Throwable caught) {
                 view.unmask();
-                ErrorHandler.post("Unable to retrieve Templates!", caught);
+                ErrorHandler.post(appearance.templateRetrieveError(), caught);
 
             }
         });
@@ -85,7 +86,7 @@ public class MetadataTemplatesPresenterImpl implements TemplateListingView.Prese
 
     @Override
     public void deleteTemplate(final MetadataTemplateInfo template) {
-        ConfirmMessageBox cmb = new ConfirmMessageBox("Confirm", "Delete this template ?");
+        ConfirmMessageBox cmb = new ConfirmMessageBox("Confirm", appearance.deleteTemplateConfirm());
         cmb.addDialogHideHandler(new DialogHideHandler(){
 
             @Override
@@ -96,14 +97,14 @@ public class MetadataTemplatesPresenterImpl implements TemplateListingView.Prese
 
                         @Override
                         public void onFailure(Throwable caught) {
-                            ErrorHandler.post("Unable to delete template!", caught);
+                            ErrorHandler.post(appearance.deleteTemplateError(), caught);
 
                         }
 
                         @Override
                         public void onSuccess(String result) {
                             IplantAnnouncer.getInstance()
-                                           .schedule(new SuccessAnnouncementConfig("Template deleted!"));
+                                           .schedule(new SuccessAnnouncementConfig(appearance.deleteTemplateSuccess()));
                             view.remove(template);
 
                         }
@@ -135,7 +136,7 @@ public class MetadataTemplatesPresenterImpl implements TemplateListingView.Prese
                             doAddOrUpdate(id, template.getId(), sp.getPayload());
                         } else {
                             IplantAnnouncer.getInstance()
-                                           .schedule(new ErrorAnnouncementConfig("Please complete all fields. Only Enum type field supports value(s)!"));
+                                           .schedule(new ErrorAnnouncementConfig(appearance.enumError()));
                         }
 
                     }
@@ -155,7 +156,7 @@ public class MetadataTemplatesPresenterImpl implements TemplateListingView.Prese
 
             @Override
             public void onFailure(Throwable caught) {
-                ErrorHandler.post("Unable to retrieve template!", caught);
+                ErrorHandler.post(appearance.templateRetrieveError(), caught);
             }
         });
 
@@ -169,13 +170,14 @@ public class MetadataTemplatesPresenterImpl implements TemplateListingView.Prese
             @Override
             public void onFailure(Throwable caught) {
                 d.hide();
-                ErrorHandler.post("Unable to add this template!", caught);
+                    ErrorHandler.post(appearance.addTemplateError(), caught);
 
             }
 
             @Override
             public void onSuccess(String result) {
-                IplantAnnouncer.getInstance().schedule(new SuccessAnnouncementConfig("Template added!"));
+                    IplantAnnouncer.getInstance()
+                                   .schedule(new SuccessAnnouncementConfig(appearance.addTemplateError()));
                 d.hide();
                     loadTemplates();
             }
@@ -186,14 +188,14 @@ public class MetadataTemplatesPresenterImpl implements TemplateListingView.Prese
                 @Override
                 public void onFailure(Throwable caught) {
                     d.hide();
-                    ErrorHandler.post("Unable to update this template!", caught);
+                    ErrorHandler.post(appearance.updateTemplateError(), caught);
 
                 }
 
                 @Override
                 public void onSuccess(String result) {
                     IplantAnnouncer.getInstance()
-                                   .schedule(new SuccessAnnouncementConfig("Template updated!"));
+                                   .schedule(new SuccessAnnouncementConfig(appearance.updateTemplateSuccess()));
                     d.hide();
                     loadTemplates();
                 }
@@ -215,7 +217,7 @@ public class MetadataTemplatesPresenterImpl implements TemplateListingView.Prese
                     doAddOrUpdate(d, null, sp.getPayload());
                 } else {
                     IplantAnnouncer.getInstance()
-                                   .schedule(new ErrorAnnouncementConfig("Please complete all fields. Only Enum type field supports value(s)!"));
+                                   .schedule(new ErrorAnnouncementConfig(appearance.enumError()));
                 }
             }
         });
@@ -233,7 +235,7 @@ public class MetadataTemplatesPresenterImpl implements TemplateListingView.Prese
 
     private IPlantDialog createEditDialog() {
         final IPlantDialog d = new IPlantDialog();
-        d.setHeadingText("Template Attribute Editor");
+        d.setHeadingText(appearance.templateAttributeEditorHeading());
         editView.reset();
         d.add(editView.asWidget());
         d.setSize("800px", "600px");

@@ -41,14 +41,18 @@ public class TemplatesListingViewImpl implements IsWidget, TemplateListingView {
     ColumnModel<MetadataTemplateInfo> cm;
     @UiField
     VerticalLayoutContainer con;
+    @UiField(provided = true)
+    TemplateListingView.TemplateListingAppearance appearance;
 
     private final MetadataTemplateProperties props;
     private final Widget widget;
     private Presenter presenter;
 
     @Inject
-    public TemplatesListingViewImpl(final MetadataTemplateProperties props) {
+    public TemplatesListingViewImpl(final MetadataTemplateProperties props,
+                                    TemplateListingView.TemplateListingAppearance appearance) {
         this.props = props;
+        this.appearance = appearance;
         widget = uiBinder.createAndBindUi(this);
     }
 
@@ -96,13 +100,13 @@ public class TemplatesListingViewImpl implements IsWidget, TemplateListingView {
     ColumnModel<MetadataTemplateInfo> createColumnModel() {
         ColumnConfig<MetadataTemplateInfo, String> nameCol = new ColumnConfig<>(props.name(),
                                                                                 300,
-                                                                                "Name");
+                                                                                appearance.nameColumn());
         ColumnConfig<MetadataTemplateInfo, Date> createdOnCol = new ColumnConfig<>(props.createdDate(),
                                                                                    192,
-                                                                                   "Created On");
+                                                                                   appearance.createdOn());
         ColumnConfig<MetadataTemplateInfo, String> createdByCol = new ColumnConfig<>(props.createdBy(),
                                                                                      160,
-                                                                                     "Created By");
+                                                                                     appearance.createdBy());
         List<ColumnConfig<MetadataTemplateInfo, ?>> columns = new ArrayList<ColumnConfig<MetadataTemplateInfo, ?>>();
         columns.add(nameCol);
         columns.add(createdOnCol);
