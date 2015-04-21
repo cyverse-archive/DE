@@ -16,6 +16,8 @@ import java.util.List;
  */
 public interface ToolRequestServiceFacade {
     String TOOL_REQUESTS = "org.iplantc.services.toolRequests";
+    
+    String ADMIN_TOOL_REQUESTS = "org.iplantc.services.admin.toolRequests";
 
     /**
      * <a href=

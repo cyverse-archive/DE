@@ -35,7 +35,7 @@ public class ToolRequestServiceFacadeImpl implements ToolRequestServiceFacade {
 
     @Override
     public void getToolRequestDetails(HasId toolRequest, AsyncCallback<ToolRequestDetails> callback) {
-        String address = TOOL_REQUESTS + "/" + toolRequest.getId();
+        String address = ADMIN_TOOL_REQUESTS + "/" + toolRequest.getId();
 
         ServiceCallWrapper wrapper = new ServiceCallWrapper(GET, address);
         deService.getServiceData(wrapper, new ToolRequestDetailsCallbackConverter(callback, factory));
@@ -45,7 +45,7 @@ public class ToolRequestServiceFacadeImpl implements ToolRequestServiceFacade {
     public void updateToolRequest(String id,
                                   ToolRequestUpdate trUpdate,
                                   AsyncCallback<ToolRequestDetails> callback) {
-        String address = TOOL_REQUESTS + "/" + id + "/status";
+        String address = ADMIN_TOOL_REQUESTS + "/" + id + "/status";
         final Splittable encode = AutoBeanCodex.encode(AutoBeanUtils.getAutoBean(trUpdate));
         ServiceCallWrapper wrapper = new ServiceCallWrapper(POST, address, encode.getPayload());
         deService.getServiceData(wrapper, new ToolRequestDetailsCallbackConverter(callback, factory));
@@ -53,7 +53,7 @@ public class ToolRequestServiceFacadeImpl implements ToolRequestServiceFacade {
 
     @Override
     public void getToolRequests(SortInfo sortInfo, String userName, AsyncCallback<List<ToolRequest>> callback) {
-        String address = TOOL_REQUESTS;
+        String address = ADMIN_TOOL_REQUESTS;
         // TODO Pending rest of endpoint setup. Waiting for generic get all tool requests endpoint.
 
         ServiceCallWrapper wrapper = new ServiceCallWrapper(GET, address);
