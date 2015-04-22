@@ -6,3 +6,4 @@ application initialization for the Web MVC `DispatcherServlet`.
 All GWT RPC calls are routed through the `DispatcherServlet`. Please refer to the documentation in 
 the [GwtRpcController](server/rpc/GwtRpcController.java) class. The GWT RPC configuration is 
 handled in [GwtRpcConfig.java](conf/GwtRpcConfig.java).
+

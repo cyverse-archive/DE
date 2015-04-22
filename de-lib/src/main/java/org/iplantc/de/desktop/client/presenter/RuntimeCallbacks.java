@@ -26,6 +26,7 @@ import com.sencha.gxt.data.shared.ListStore;
 import com.sencha.gxt.widget.core.client.box.AutoProgressMessageBox;
 
 import java.util.List;
+import java.util.logging.Logger;
 
 /**
  * This class contains all runtime callbacks used by the {@link DesktopPresenterImpl}
@@ -134,6 +135,7 @@ class RuntimeCallbacks {
         private final UserSessionServiceFacade userSessionService;
         private final UserSettings userSettings;
         private final DesktopView.Presenter.DesktopPresenterAppearance appearance;
+        private final Logger LOG = Logger.getLogger(LogoutCallback.class.getName());
 
         public LogoutCallback(final UserSessionServiceFacade userSessionService,
                                final DEClientConstants constants,
@@ -162,6 +164,7 @@ class RuntimeCallbacks {
 
         private void logout() {
             final String redirectUrl = GWT.getHostPageBaseURL() + constants.logoutUrl();
+            LOG.warning("RedirectUrl = " + redirectUrl);
             if (userSettings.isSaveSession()) {
                 final AutoProgressMessageBox progressMessageBox = new AutoProgressMessageBox(appearance.savingSession(),
                                                                                              appearance.savingSessionWaitNotice());

@@ -12,7 +12,6 @@ public class BelphegorController {
 
     @RequestMapping("/belphegor")
     public ModelAndView viewBelphegor() {
-        ModelAndView modelAndView = new ModelAndView("belphegor");
-        return modelAndView;
+        return new ModelAndView("belphegor");
     }
 }

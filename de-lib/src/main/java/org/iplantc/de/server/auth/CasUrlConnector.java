@@ -89,6 +89,8 @@ public class CasUrlConnector extends BaseUrlConnector implements UrlConnector {
      */
     private String getProxyTicket(HttpServletRequest request, URL url) throws IOException {
         AttributePrincipal principal = attributePrincipalFromServletRequest(request);
+        LOG.debug("Principal is {}", principal);
+        LOG.debug("Request = {}", request);
         String ticket = principal.getProxyTicketFor(extractServiceName(url));
         if (ticket == null) {
             request.getSession().invalidate();
@@ -116,6 +118,8 @@ public class CasUrlConnector extends BaseUrlConnector implements UrlConnector {
         if (url.getPort() >= 0) {
             builder.append(":").append(url.getPort());
         }
-        return builder.toString();
+        final String serviceName = builder.toString();
+        LOG.debug("Service name = {}", serviceName);
+        return serviceName;
     }
 }

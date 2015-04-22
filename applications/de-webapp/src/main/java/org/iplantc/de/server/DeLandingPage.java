@@ -1,20 +1,28 @@
 package org.iplantc.de.server;
 
+import static org.iplantc.de.server.util.ServletUtils.loadResource;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.security.cas.ServiceProperties;
 import org.springframework.util.Assert;
 import org.stringtemplate.v4.ST;
 
+import java.io.IOException;
+import java.net.URLEncoder;
+import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import java.io.IOException;
-import java.net.URLEncoder;
-
-import static org.iplantc.de.server.util.ServletUtils.loadResource;
-
 /**
  * Used to present a landing page to an unauthenticated DE user.
+ *
+ * TODO Convert to jsp.
+ * @see org.springframework.web.servlet.View#render(Map, HttpServletRequest, HttpServletResponse)
+ *
+ * @author jstroot
  */
 public class DeLandingPage implements LandingPage, InitializingBean {
 
@@ -38,19 +46,20 @@ public class DeLandingPage implements LandingPage, InitializingBean {
         }
     }
 
+    private final Logger LOG = LoggerFactory.getLogger(DeLandingPage.class);
     private String deMaintenanceFile;
+    private String loginUrl;
+    private ServiceProperties casService;
 
     public void setDeMaintenanceFile(String deMaintenanceFile) {
         this.deMaintenanceFile = deMaintenanceFile;
     }
 
-    private String loginUrl;
-
     public void setLoginUrl(String loginUrl) {
+        LOG.info("LoginUrl = {}", loginUrl);
         this.loginUrl = loginUrl;
     }
 
-    private ServiceProperties casService;
 
     public void setCasService(ServiceProperties casService) {
         this.casService = casService;

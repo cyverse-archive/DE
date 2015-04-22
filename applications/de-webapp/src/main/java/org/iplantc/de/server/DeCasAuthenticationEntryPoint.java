@@ -6,21 +6,23 @@ import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 import org.springframework.util.Assert;
 
+import java.io.IOException;
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.regex.Pattern;
 
 /**
  * An authentication filter that uses CAS to authenticate but displays a landing page instead of
  * immediately redirecting the user to the authentication page.
+ *
+ * @author jstroot
  */
 public class DeCasAuthenticationEntryPoint implements AuthenticationEntryPoint, InitializingBean {
 
     private LandingPage landingPage;
 
-    private String rpcPrefix;
+    private String rpcSuffix;
 
     private LogoutSuccessHandler logoutSuccessHandler;
 
@@ -28,8 +30,8 @@ public class DeCasAuthenticationEntryPoint implements AuthenticationEntryPoint, 
         this.landingPage = landingPage;
     }
 
-    public void setRpcPrefix(String rpcPrefix) {
-        this.rpcPrefix = rpcPrefix;
+    public void setRpcSuffix(String rpcSuffix) {
+        this.rpcSuffix = rpcSuffix;
     }
 
     public void setLogoutSuccessHandler(LogoutSuccessHandler logoutSuccessHandler) {
@@ -38,7 +40,7 @@ public class DeCasAuthenticationEntryPoint implements AuthenticationEntryPoint, 
 
     public void afterPropertiesSet() throws Exception {
         Assert.notNull(landingPage, "a LandingPage implementation must be specified");
-        Assert.notNull(rpcPrefix, "an RPC call prefix must be specified");
+        Assert.notNull(rpcSuffix, "an RPC call prefix must be specified");
         Assert.notNull(logoutSuccessHandler, "a logout success handler must be specified");
     }
 
@@ -56,9 +58,6 @@ public class DeCasAuthenticationEntryPoint implements AuthenticationEntryPoint, 
     }
 
     private boolean isRpcCall(HttpServletRequest req) {
-        String contextPath = req.getContextPath();
-        String prefix = rpcPrefix.replaceAll("\\A/+|/+\\z", "");
-        String pattern = "\\Q" + contextPath + "/" + prefix + "\\E(/|\\z)";
-        return Pattern.compile(pattern).matcher(req.getRequestURI()).find();
+        return req.getRequestURI().endsWith(rpcSuffix);
     }
 }

@@ -28,6 +28,7 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter {
 
         registry.addResourceHandler("/de/**").addResourceLocations("/");
         registry.addResourceHandler("/belphegor/**").addResourceLocations("/");
+        // TODO Setup caching strategy here.
     }
 
     @Override

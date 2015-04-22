@@ -1,9 +1,3 @@
-// Establish version and status ext.githubProjectName = rootProject.name // Change if github project name is not the same as the root project's name
-apply plugin: 'java'
-apply plugin: 'idea'
-sourceCompatibility = 1.7
-targetCompatibility = 1.7
-
 buildscript {
     repositories {
         mavenCentral()
@@ -11,9 +5,6 @@ buildscript {
         maven {
             url 'http://dl.bintray.com/steffenschaefer/maven'
         }
-//        maven {
-//            url 'https://maven.sencha.com/repo/support-commercial-release'
-//        }
     }
     dependencies {
         classpath("org.springframework.boot:spring-boot-gradle-plugin:1.2.3.RELEASE")
@@ -21,14 +12,16 @@ buildscript {
     }
 }
 
+apply plugin: 'java'
+apply plugin: 'idea'
+sourceCompatibility = 1.7
+targetCompatibility = 1.7
+
 // Establish extended properties for all projects
 apply from: 'versions.gradle'
 
-dependencies {
-    compile project(':de')
-}
+group = 'org.iplantc.de'
 
-// Set dependencies for all sub projects
 subprojects {
     apply plugin: 'java'
     apply plugin: 'eclipse'
@@ -38,9 +31,6 @@ subprojects {
 
     repositories {
         mavenCentral()
-//        maven {
-//            url 'https://maven.sencha.com/repo/support-commercial-release'
-//        }
         maven {
             url 'http://katic.iplantcollaborative.org/archiva/repository/internal/' 
         }   
@@ -65,6 +55,11 @@ task testReport(type: TestReport) {
 apply from: 'iplant/webapps.gradle'
 apply from: 'iplant/modules.gradle'
 
+dependencies {
+    compile project(':de')
+}
+
 task wrapper(type: Wrapper) {
     gradleVersion = '2.3'
 }
+

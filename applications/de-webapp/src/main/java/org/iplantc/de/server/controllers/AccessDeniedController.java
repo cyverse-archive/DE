@@ -17,7 +17,7 @@ public class AccessDeniedController {
     @RequestMapping("/access-denied")
     public ModelAndView onAccessDenied() {
         ModelAndView modelAndView = new ModelAndView("access-denied");
-        modelAndView.addObject("logout_url", logoutUrl);
+        modelAndView.addObject("logout_url", "/belphegor" + logoutUrl);
         return modelAndView;
     }
 }

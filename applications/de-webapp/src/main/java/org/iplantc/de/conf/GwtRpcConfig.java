@@ -29,25 +29,13 @@ import java.util.Properties;
 @Configuration
 public class GwtRpcConfig {
 
-    @Autowired
-    private Environment environment;
+    @Autowired private Environment environment;
+    @Autowired private ServiceCallResolver serviceCallResolver;
+    @Autowired private IplantEmailClient emailClient;
+    @Autowired private UrlConnector urlConnector;
 
-    @Autowired
-    private ServiceCallResolver serviceCallResolver;
-
-    @Autowired
-    private IplantEmailClient emailClient;
-
-    @Autowired
-    private UrlConnector urlConnector;
-
-
-    @Value("${org.iplantc.discoveryenvironment.about.defaultBuildNumber}")
-    private String defaultBuildNumber;
-
-
-    @Value("${org.iplantc.discoveryenvironment.about.releaseVersion}")
-    private String releaseVersion;
+    @Value("${org.iplantc.discoveryenvironment.about.defaultBuildNumber}") private String defaultBuildNumber;
+    @Value("${org.iplantc.discoveryenvironment.about.releaseVersion}") private String releaseVersion;
 
     @Bean
     public GwtRpcController aboutRpcService(){

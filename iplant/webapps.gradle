@@ -9,37 +9,27 @@ project(':de') {
     }
 
     dependencies {
-        applet "org.irods.idrop:idrop-lite:2.0.1-SNAPSHOT@jar"
+        compile project(':de-lib')
 
-        compile("org.springframework.boot:spring-boot-starter-web")
+        gwt project(':de-lib')
+        gwt "com.sencha.gxt:gxt:$gxtVersion"
+        gwt "com.google.gwt.inject:gin:$gwtGinVer"
+        gwt "com.google.guava:guava-gwt:$guavaGwtVer"
+
+        compile("org.springframework:spring-webmvc:4.1.6.RELEASE")
+        compile("org.springframework:spring-web:4.1.6.RELEASE")
+        compile("com.fasterxml.jackson.core:jackson-databind:2.4.5")
+
         providedRuntime("org.springframework.boot:spring-boot-starter-tomcat")
         providedRuntime("org.apache.tomcat.embed:tomcat-embed-jasper")
 
         compile("org.springframework.boot:spring-boot-starter-security")
         compile("org.springframework.security:spring-security-cas")
         compile("javax.servlet:jstl:1.2")
-        compile("org.hibernate:hibernate-validator:5.0.3.Final")
-        gwt("org.hibernate:hibernate-validator:5.0.3.Final")
 
+        compile("org.hibernate:hibernate-validator:4.2.0.Final")
 
-        gwt "com.sencha.gxt:gxt:$gxtVersion"
-        gwt "com.google.gwt.inject:gin:$gwtGinVer"
-        gwt "com.google.guava:guava-gwt:$guavaGwtVer"
-
-        gwt project(':de-lib')
-
-//        compile "com.sencha.gxt:gxt:$gxtVersion"
-//        compile "com.google.gwt.inject:gin:$gwtGinVer"
-//        compile "com.google.guava:guava-gwt:$guavaGwtVer"
-
-//        compile "org.slf4j:slf4j-api:$slf4jVersion"
-//        compile "ch.qos.logback:logback-core:$logbackVersion"
-//        compile "ch.qos.logback:logback-classic:$logbackVersion"
-
-//        compile "org.slf4j:jcl-over-slf4j:$slf4jVersion"
-//        compile "org.slf4j:log4j-over-slf4j:$slf4jVersion"
-
-        compile project(':de-lib')
+        applet "org.irods.idrop:idrop-lite:2.0.1-SNAPSHOT@jar"
 
         testCompile "com.google.gwt.gwtmockito:gwtmockito:$gwtMockitoVer"
     }
@@ -47,9 +37,8 @@ project(':de') {
     gwt {
         logLevel = 'INFO'
         gwtVersion = "$gwtVer"
-        modules 'org.iplantc.de.admin.belphegor'
-//        modules = ['org.iplantc.de.discoveryenvironment',
-//                   'org.iplantc.de.admin.belphegor']
+        modules = ['org.iplantc.de.discoveryenvironment',
+                   'org.iplantc.de.admin.belphegor']
         devModules = ['org.iplantc.de.discoveryenvironmentDev',
                       'org.iplantc.de.admin.belphegorDev']
 
@@ -121,6 +110,7 @@ project(':de') {
         delete "./war"
         delete "./bin"
     }
+
 }
 
 

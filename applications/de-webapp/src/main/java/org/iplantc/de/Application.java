@@ -32,7 +32,7 @@ public class Application extends AbstractAnnotationConfigDispatcherServletInitia
 
     @Override
     protected String[] getServletMappings() {
-        String[] servletMappings = {"/", "*.rpc"};
+        String[] servletMappings = {"/", "/de", "/belphegor", "*.rpc"};
         return servletMappings;
     }
 

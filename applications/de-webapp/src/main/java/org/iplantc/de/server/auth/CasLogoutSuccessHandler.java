@@ -18,8 +18,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * A {@link LogoutSuccessHandler} implementation that redirects to the CAS logout endpoint and requests redirection back
- * to another page based on the value of a query-string parameter.
+ * A {@link LogoutSuccessHandler} implementation that redirects to the CAS logout endpoint and
+ * requests redirection back to another page based on the value of a query-string parameter.
  *
  * @author Dennis Roberts
  * @author jstroot

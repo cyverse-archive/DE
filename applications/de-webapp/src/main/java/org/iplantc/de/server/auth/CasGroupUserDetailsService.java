@@ -52,7 +52,7 @@ public class CasGroupUserDetailsService extends AbstractCasAssertionUserDetailsS
     /**
      * @param attribute the name of the attribute containing the groups the user belongs to.
      */
-    private CasGroupUserDetailsService(String attribute) {
+    public CasGroupUserDetailsService(String attribute) {
         Assert.isTrue(!StringUtils.isBlank(attribute), "attribute must have a non-empty value");
         this.attribute = attribute;
     }

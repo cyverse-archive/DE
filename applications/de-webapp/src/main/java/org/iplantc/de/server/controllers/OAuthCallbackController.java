@@ -32,8 +32,6 @@ import javax.servlet.http.HttpServletResponse;
 @Controller
 public class OAuthCallbackController {
 
-
-
     /**
      * The authorization response is really a GET request initiated by a redirection from the OAuth
      * server. This class stores information about and the authorization response and provides some
@@ -195,12 +193,11 @@ public class OAuthCallbackController {
     private static final String ERROR_PARAM = "error";
     private static final String ERROR_URI_PARAM = "error_uri";
     private static final String STATE_PARAM = "state";
-    private final Logger LOG = LoggerFactory.getLogger(OAuthCallbackController.class);
-    @Value("${org.iplantc.discoveryenvironment.muleServiceBaseUrl}")
-    private String serviceUrl;
 
-    @Autowired
-    private UrlConnector urlConnector;
+    private final Logger LOG = LoggerFactory.getLogger(OAuthCallbackController.class);
+
+    @Value("${org.iplantc.discoveryenvironment.muleServiceBaseUrl}") private String serviceUrl;
+    @Autowired private UrlConnector urlConnector;
 
     @RequestMapping("/oauth/callback/*")
     public void handleCallback(final HttpServletRequest req,
