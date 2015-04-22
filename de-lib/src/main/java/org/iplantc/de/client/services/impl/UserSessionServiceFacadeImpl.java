@@ -104,7 +104,7 @@ public class UserSessionServiceFacadeImpl implements UserSessionServiceFacade {
 
     @Override
     public void logout(AsyncCallback<String> callback) {
-        String address = LOGOUT + "?=login-time=" + userInfo.getLoginTime();
+        String address = LOGOUT + "?login-time=" + userInfo.getLoginTime();
         ServiceCallWrapper wrapper = new ServiceCallWrapper(GET, address);
         deServiceFacade.getServiceData(wrapper, callback);
     }
