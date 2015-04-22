@@ -14,6 +14,9 @@
     <logger name="org.apache.http.wire" level="DEBUG" />
     <logger name="org.apache.http.headers" level="DEBUG" />
 -->
+    <logger name="org.iplantc.de.server.controllers" level="TRACE" />
+    <logger name="org.apache.http.headers" level="DEBUG" />
+    <logger name="org.springframework.web.client" level="DEBUG" />
 
     <root level="INFO">
         <appender-ref ref="STDOUT"/>
