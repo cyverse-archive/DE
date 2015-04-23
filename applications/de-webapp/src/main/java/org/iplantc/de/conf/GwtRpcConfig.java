@@ -64,6 +64,10 @@ public class GwtRpcConfig {
                                                       urlConnector));
     }
 
+    @Bean GwtRpcController remoteLogging() {
+        return new GwtRpcController(new RemoteLoggingServiceImpl());
+    }
+
     @Bean
     public SimpleUrlHandlerMapping rpcUrlHandlerMapping() {
         // Set up simple url handler mappings here
@@ -73,7 +77,7 @@ public class GwtRpcConfig {
         urlProperties.put("**/email.rpc", emailRpcService());
         urlProperties.put("**/properties.rpc", propertiesRpcService());
         urlProperties.put("**/api.rpc", apiRpcService());
-        urlProperties.put("**/remote_logging", new RemoteLoggingServiceImpl());
+        urlProperties.put("**/remote_logging", remoteLogging());
 
         SimpleUrlHandlerMapping simpleUrlHandlerMapping = new SimpleUrlHandlerMapping();
         simpleUrlHandlerMapping.setMappings(urlProperties);

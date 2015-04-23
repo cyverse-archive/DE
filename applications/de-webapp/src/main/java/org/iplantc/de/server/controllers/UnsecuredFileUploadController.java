@@ -1,7 +1,5 @@
 package org.iplantc.de.server.controllers;
 
-import org.iplantc.de.server.util.CasUtils;
-
 import com.google.common.collect.Sets;
 
 import net.sf.json.JSONObject;
@@ -13,10 +11,8 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpRequestBase;
-import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.InputStreamEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.jasig.cas.client.authentication.AttributePrincipal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -28,8 +24,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.io.PrintStream;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.Enumeration;
 import java.util.Set;
 
@@ -37,13 +31,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * A secured servlet that forwards requests directly to other services.
+ * Processes unsecured file uploads.
  *
  * @author Dennis Roberts
  * @author jstroot
  */
 @Controller
-public class ProxyController {
+public class UnsecuredFileUploadController {
 
     @Value("${org.iplantc.services.file-io.secured.file-upload}") String securedFileUploadUrl;
     @Value("${org.iplantc.services.file-io.file-upload}") String unsecuredFileUploadUrl;
@@ -51,26 +45,7 @@ public class ProxyController {
      * The set of headers that should be skipped when copying headers.
      */
     private static final Set<String> HEADERS_TO_SKIP = Sets.newHashSet("content-length");
-    private final Logger LOG = LoggerFactory.getLogger(ProxyController.class);
-
-    /**
-     * Forwards an HTTP POST request to the secured file upload service.
-     */
-//    @RequestMapping(value = "/de/secured/fileUpload", method = RequestMethod.POST)
-    public void doSecuredUpload(final HttpServletRequest request,
-                                final HttpServletResponse response,
-                                @RequestParam("dest") String dest,
-                                @RequestParam("user") String user,
-                                @RequestParam("file") MultipartFile file) throws IOException {
-
-        try {
-            final String uploadUrl = buildSecureUploadUrl(securedFileUploadUrl, dest, request);
-            LOG.debug("Secured file upload url = {}", uploadUrl);
-            forwardRequest(new HttpPost(uploadUrl), request, response);
-        } catch (IOException | URISyntaxException e) {
-            sendErrorResponse(response, e.getMessage());
-        }
-    }
+    private final Logger LOG = LoggerFactory.getLogger(UnsecuredFileUploadController.class);
 
     @RequestMapping(value = "/de/fileUpload", method = RequestMethod.POST)
     public void doUnsecuredUpload(final HttpServletRequest request,
@@ -99,7 +74,6 @@ public class ProxyController {
                                   final HttpServletRequest request,
                                   final HttpServletResponse response) throws IOException {
         HttpClient client = new DefaultHttpClient();
-//        HttpClient client1 = HttpClientBuilder.create().build();
         try {
 
             copyHeaders(request, out);
@@ -108,20 +82,6 @@ public class ProxyController {
         } finally {
             out.releaseConnection();
         }
-    }
-
-    private String buildSecureUploadUrl(final String securedFileUploadUrl,
-                                        final String dest,
-                                        final HttpServletRequest request) throws URISyntaxException, IOException {
-        AttributePrincipal principal = CasUtils.attributePrincipalFromServletRequest(request);
-        String proxyToken = principal.getProxyTicketFor(extractServiceName(new URL(securedFileUploadUrl)));
-
-        return new URIBuilder(securedFileUploadUrl)
-                               .addParameter("ip-address", request.getRemoteAddr())
-                               .addParameter("proxyToken", proxyToken)
-                               .addParameter("dest", dest)
-                               .build().toString();
-
     }
 
     /**
@@ -185,16 +145,6 @@ public class ProxyController {
         json.put("error_code", "ERR_BAD_OR_MISSING_FIELD");
         json.put("detail", msg);
         return json.toString(4);
-    }
-
-    private String extractServiceName(URL url) throws IOException {
-        StringBuilder builder = new StringBuilder();
-        builder.append(url.getProtocol()).append("://");
-        builder.append(url.getHost());
-        if (url.getPort() >= 0) {
-            builder.append(":").append(url.getPort());
-        }
-        return builder.toString();
     }
 
     /**
