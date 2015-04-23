@@ -40,19 +40,23 @@ import com.sencha.gxt.widget.core.client.tree.Tree;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * @author jstroot
  */
-public class NavigationPresenterImpl implements NavigationView.Presenter,
-                                                FolderSelectionEvent.FolderSelectionEventHandler,
-                                                FolderRefreshEvent.FolderRefreshEventHandler,
-                                                DiskResourcesDeletedEvent.DiskResourcesDeletedEventHandler,
-                                                DiskResourceRenamedEvent.DiskResourceRenamedEventHandler,
-                                                FolderCreatedEvent.FolderCreatedEventHandler,
-                                                DiskResourcesMovedEvent.DiskResourcesMovedEventHandler {
+public class NavigationPresenterImpl implements
+                                    NavigationView.Presenter,
+                                    FolderSelectionEvent.FolderSelectionEventHandler,
+                                    FolderRefreshEvent.FolderRefreshEventHandler,
+                                    DiskResourcesDeletedEvent.DiskResourcesDeletedEventHandler,
+                                    DiskResourceRenamedEvent.DiskResourceRenamedEventHandler,
+                                    FolderCreatedEvent.FolderCreatedEventHandler,
+                                    DiskResourcesMovedEvent.DiskResourcesMovedEventHandler {
 
-    private static class FolderStoreDataChangeHandler implements StoreDataChangeEvent.StoreDataChangeHandler<Folder> {
+    private static class FolderStoreDataChangeHandler implements
+                                                     StoreDataChangeEvent.StoreDataChangeHandler<Folder> {
         private final NavigationView.Appearance appearance;
         private final Tree<Folder, Folder> tree;
 
@@ -69,18 +73,26 @@ public class NavigationPresenterImpl implements NavigationView.Presenter,
                 for (Folder f : tree.getStore().getAllChildren(folder)) {
                     if (f.isFilter()) {
                         Tree.TreeNode<Folder> tn = tree.findNode(f);
-                        tree.getView().getTextElement(tn).setInnerSafeHtml(appearance.treeNodeFilterText(f.getName()));
+                        tree.getView()
+                            .getTextElement(tn)
+                            .setInnerSafeHtml(appearance.treeNodeFilterText(f.getName()));
                     }
                 }
             }
         }
     }
+
     final TreeStore<Folder> treeStore;
-    @Inject IplantAnnouncer announcer;
-    @Inject NavigationView.Presenter.Appearance appearance;
-    @Inject DiskResourceUtil diskResourceUtil;
-    @Inject DiskResourceAutoBeanFactory factory;
-    @Inject UserInfo userInfo;
+    @Inject
+    IplantAnnouncer announcer;
+    @Inject
+    NavigationView.Presenter.Appearance appearance;
+    @Inject
+    DiskResourceUtil diskResourceUtil;
+    @Inject
+    DiskResourceAutoBeanFactory factory;
+    @Inject
+    UserInfo userInfo;
     private final EventBus eventBus;
     private final DiskResourceView.FolderRpcProxy folderRpcProxy;
     private final List<HandlerRegistration> handlerRegistrations;
@@ -88,6 +100,8 @@ public class NavigationPresenterImpl implements NavigationView.Presenter,
     private final NavigationView view;
     private IsMaskable maskable;
     private DiskResourceView.Presenter parentPresenter;
+
+    Logger LOG = Logger.getLogger("NavigationPresenter");
 
     @Inject
     NavigationPresenterImpl(final NavigationViewFactory viewFactory,
@@ -105,11 +119,14 @@ public class NavigationPresenterImpl implements NavigationView.Presenter,
                 return parent.hasSubDirs();
             }
         };
-        view = viewFactory.create(treeStore, treeLoader, new NavigationViewDnDHandler(diskResourceUtil, this, appearance));
+        view = viewFactory.create(treeStore, treeLoader, new NavigationViewDnDHandler(diskResourceUtil,
+                                                                                      this,
+                                                                                      appearance));
         handlerRegistrations = Lists.newArrayList();
 
         view.addFolderSelectedEventHandler(this);
-        this.treeStore.addStoreDataChangeHandler(new FolderStoreDataChangeHandler(view.getTree(), appearance));
+        this.treeStore.addStoreDataChangeHandler(new FolderStoreDataChangeHandler(view.getTree(),
+                                                                                  appearance));
         this.treeLoader.addLoadHandler(new CachedFolderTreeStoreBinding(treeStore));
 
         // Wire up global event handlers
@@ -120,24 +137,28 @@ public class NavigationPresenterImpl implements NavigationView.Presenter,
         handlerRegistrations.add(eventBus.addHandler(DiskResourcesMovedEvent.TYPE, this));
     }
 
-    //<editor-fold desc="Handler Registrations">
+    // <editor-fold desc="Handler Registrations">
     @Override
-    public HandlerRegistration addRootFoldersRetrievedEventHandler(RootFoldersRetrievedEvent.RootFoldersRetrievedEventHandler handler) {
+    public HandlerRegistration
+            addRootFoldersRetrievedEventHandler(RootFoldersRetrievedEvent.RootFoldersRetrievedEventHandler handler) {
         return folderRpcProxy.addRootFoldersRetrievedEventHandler(handler);
     }
 
     @Override
-    public HandlerRegistration addSavedSearchedRetrievedEventHandler(SavedSearchesRetrievedEvent.SavedSearchesRetrievedEventHandler handler) {
+    public HandlerRegistration
+            addSavedSearchedRetrievedEventHandler(SavedSearchesRetrievedEvent.SavedSearchesRetrievedEventHandler handler) {
         return folderRpcProxy.addSavedSearchedRetrievedEventHandler(handler);
     }
 
     @Override
-    public HandlerRegistration addSubmitDiskResourceQueryEventHandler(SubmitDiskResourceQueryEvent.SubmitDiskResourceQueryEventHandler handler) {
+    public HandlerRegistration
+            addSubmitDiskResourceQueryEventHandler(SubmitDiskResourceQueryEvent.SubmitDiskResourceQueryEventHandler handler) {
         return folderRpcProxy.addSubmitDiskResourceQueryEventHandler(handler);
     }
-    //</editor-fold>
 
-    //<editor-fold desc="Event Handlers">
+    // </editor-fold>
+
+    // <editor-fold desc="Event Handlers">
     @Override
     public void onBeforeLoad(BeforeLoadEvent<FolderContentsLoadConfig> event) {
         if (getSelectedFolder() == null) {
@@ -146,7 +167,9 @@ public class NavigationPresenterImpl implements NavigationView.Presenter,
 
         final Folder folderToBeLoaded = event.getLoadConfig().getFolder();
 
-        /* If the loaded contents are not the contents of the currently selected folder, then cancel the load.
+        /*
+         * If the loaded contents are not the contents of the currently selected folder, then cancel the
+         * load.
          */
         if (!Strings.isNullOrEmpty(folderToBeLoaded.getId())
                 && !folderToBeLoaded.getId().equals(getSelectedFolder().getId())) {
@@ -198,7 +221,7 @@ public class NavigationPresenterImpl implements NavigationView.Presenter,
     public void onFolderSelected(FolderSelectionEvent event) {
         if (event.getSelectedFolder() instanceof DiskResourceQueryTemplate) {
             // If the given query has not been saved, we need to deselect everything
-            DiskResourceQueryTemplate searchQuery = (DiskResourceQueryTemplate) event.getSelectedFolder();
+            DiskResourceQueryTemplate searchQuery = (DiskResourceQueryTemplate)event.getSelectedFolder();
             if (!searchQuery.isSaved()) {
                 deSelectAll();
             }
@@ -208,7 +231,7 @@ public class NavigationPresenterImpl implements NavigationView.Presenter,
     @Override
     public void onImportFromUrlSelected(final ImportFromUrlSelected event) {
         Folder destinationFolder = event.getSelectedFolder();
-        if(destinationFolder == null){
+        if (destinationFolder == null) {
             destinationFolder = getSelectedUploadFolder();
         }
         eventBus.fireEvent(new RequestImportFromUrlEvent(destinationFolder));
@@ -229,8 +252,8 @@ public class NavigationPresenterImpl implements NavigationView.Presenter,
 
     @Override
     public void onSimpleUploadSelected(SimpleUploadSelected event) {
-         Folder destinationFolder = event.getSelectedFolder();
-        if(destinationFolder == null) {
+        Folder destinationFolder = event.getSelectedFolder();
+        if (destinationFolder == null) {
             destinationFolder = getSelectedUploadFolder();
         }
         eventBus.fireEvent(new RequestSimpleUploadEvent(destinationFolder));
@@ -264,7 +287,8 @@ public class NavigationPresenterImpl implements NavigationView.Presenter,
             }
         }
     }
-    //</editor-fold>
+
+    // </editor-fold>
 
     @Override
     public void addFolder(Folder folder) {
@@ -339,20 +363,29 @@ public class NavigationPresenterImpl implements NavigationView.Presenter,
 
     @Override
     public void refreshFolder(Folder folder) {
-        if (folder == null
-                || treeStore.findModel(folder) == null) {
+        if (folder == null || treeStore.findModel(folder) == null) {
             return;
         }
 
-        // De-select and Refresh the given folder
-        view.getTree().getSelectionModel().deselect(folder);
+        // FIX CORE-6732 CORE6736
+        Folder selectedFolder = getSelectedFolder();
+        boolean isCurrentOrDesc = selectedFolder != null
+                && (folder.getId().equals(selectedFolder.getId()) || diskResourceUtil.isDescendantOfFolder(folder,
+                                                                                                           selectedFolder));
+
         removeChildren(folder);
         treeLoader.load(folder);
 
-        if (!(folder instanceof DiskResourceQueryTemplate)) {
-            // Re-select the folder to cause a selection changed event
-            setSelectedFolder(folder);
+        if (isCurrentOrDesc) {
+            // De-select and Refresh the given folder
+            view.getTree().getSelectionModel().deselect(selectedFolder);
+            if (!(selectedFolder instanceof DiskResourceQueryTemplate)) {
+                // Re-select the folder to cause a selection changed event
+                setSelectedFolder((HasPath)selectedFolder);
+            }
         }
+        // end FIX
+
     }
 
     @Override
@@ -372,18 +405,20 @@ public class NavigationPresenterImpl implements NavigationView.Presenter,
     }
 
     @Override
-    public void setSelectedFolder(Folder folder) {
+    public void setSelectedFolder(final Folder folder) {
         if (folder == null) {
             return;
         }
         final Folder findModelWithKey = treeStore.findModelWithKey(folder.getId());
+        LOG.log(Level.FINE, "found folder to select:" + folder.getPath());
         if (findModelWithKey != null) {
             view.getTree().getSelectionModel().deselectAll();
             Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
 
                 @Override
                 public void execute() {
-                    view.getTree().getSelectionModel().setSelection(Lists.newArrayList(findModelWithKey));
+                    LOG.log(Level.FINE, "selecting:" + folder.getPath());
+                    view.getTree().getSelectionModel().select(true, findModelWithKey);
                     view.getTree().scrollIntoView(findModelWithKey);
                 }
             });
@@ -399,17 +434,20 @@ public class NavigationPresenterImpl implements NavigationView.Presenter,
         Folder folder = getFolderByPath(hasPath.getPath());
         if (folder != null) {
             /*
-             * Trigger a selection changed event by deselecting the
-             * current folder and re-selecting it.
+             * Trigger a selection changed event by deselecting the current folder and re-selecting it.
              */
             deSelectAll();
             setSelectedFolder(folder);
         } else {
             // Create and add the SelectFolderByIdLoadHandler to the treeLoader.
-            final SelectFolderByPathLoadHandler handler = new SelectFolderByPathLoadHandler(hasPath, this, appearance, maskable, announcer);
+            final SelectFolderByPathLoadHandler handler = new SelectFolderByPathLoadHandler(hasPath,
+                                                                                            this,
+                                                                                            appearance,
+                                                                                            maskable,
+                                                                                            announcer);
             /*
-             * Only add handler if no root items have been loaded, or the hasPath has a common
-             * root with the treestore.
+             * Only add handler if no root items have been loaded, or the hasPath has a common root with
+             * the treestore.
              */
             if (treeStore.getRootCount() < 1 || handler.isRootFolderDetected()) {
                 HandlerRegistration handlerRegistration = treeLoader.addLoadHandler(handler);
@@ -450,7 +488,8 @@ public class NavigationPresenterImpl implements NavigationView.Presenter,
             if (diskResourceUtil.isDescendantOfFolder(destinationFolder, selectedFolder)) {
                 removeChildren(destinationFolder);
             } else {
-                /* Refresh the selected folder since it has lost a child. This will also reload the
+                /*
+                 * Refresh the selected folder since it has lost a child. This will also reload the
                  * selected folder's contents in the grid.
                  */
                 refreshFolder(selectedFolder);
@@ -461,22 +500,25 @@ public class NavigationPresenterImpl implements NavigationView.Presenter,
         }
 
         // Refresh the selected folder's contents.
-        setSelectedFolder((HasPath) selectedFolder);
+        setSelectedFolder((HasPath)selectedFolder);
     }
 
     private void selectedFolderMovedFromNavTree(Folder selectedFolder, Folder destinationFolder) {
-        /* If the selected folder happens to be one of the moved items, then view the destination by
+        /*
+         * If the selected folder happens to be one of the moved items, then view the destination by
          * setting it as the selected folder.
          */
         Folder parentFolder = treeStore.getParent(selectedFolder);
 
         if (diskResourceUtil.isDescendantOfFolder(parentFolder, destinationFolder)) {
-            /* The destination is under the parent, so if we prune the parent and set the destination
-             * as the selected folder, the parent will lazy-load down to the destination.
+            /*
+             * The destination is under the parent, so if we prune the parent and set the destination as
+             * the selected folder, the parent will lazy-load down to the destination.
              */
             removeChildren(parentFolder);
         } else if (diskResourceUtil.isDescendantOfFolder(destinationFolder, parentFolder)) {
-            /* The parent is under the destination, so we only need to view the destination folder's
+            /*
+             * The parent is under the destination, so we only need to view the destination folder's
              * contents and refresh its children.
              */
             refreshFolder(destinationFolder);
@@ -488,6 +530,6 @@ public class NavigationPresenterImpl implements NavigationView.Presenter,
         }
 
         // View the destination folder's contents.
-        setSelectedFolder((HasPath) destinationFolder);
+        setSelectedFolder((HasPath)destinationFolder);
     }
 }
