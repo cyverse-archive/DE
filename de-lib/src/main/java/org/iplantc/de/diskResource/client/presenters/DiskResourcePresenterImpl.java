@@ -441,8 +441,8 @@ public class DiskResourcePresenterImpl implements
 
     @Override
     public void onRefreshFolderSelected(RefreshFolderSelected event) {
-        checkState(navigationPresenter.getSelectedFolder() != null, "Selected folder should no be null");
-        navigationPresenter.refreshFolder(navigationPresenter.getSelectedFolder());
+        checkState(event.getSelectedFolder() != null, "Selected folder should not be null");
+        navigationPresenter.refreshFolder(event.getSelectedFolder());
     }
 
     @Override

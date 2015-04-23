@@ -40,8 +40,6 @@ import com.sencha.gxt.widget.core.client.tree.Tree;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * @author jstroot
@@ -100,8 +98,6 @@ public class NavigationPresenterImpl implements
     private final NavigationView view;
     private IsMaskable maskable;
     private DiskResourceView.Presenter parentPresenter;
-
-    Logger LOG = Logger.getLogger("NavigationPresenter");
 
     @Inject
     NavigationPresenterImpl(final NavigationViewFactory viewFactory,
@@ -367,25 +363,28 @@ public class NavigationPresenterImpl implements
             return;
         }
 
-        // FIX CORE-6732 CORE6736
         Folder selectedFolder = getSelectedFolder();
-        boolean isCurrentOrDesc = selectedFolder != null
-                && (folder.getId().equals(selectedFolder.getId()) || diskResourceUtil.isDescendantOfFolder(folder,
-                                                                                                           selectedFolder));
+        boolean isCurrent = false;
+        boolean isDescendant = false;
+        if (selectedFolder != null) {
+            isCurrent = folder.getId().equals(selectedFolder.getId());
+            isDescendant = diskResourceUtil.isDescendantOfFolder(folder, selectedFolder);
+        }
 
         removeChildren(folder);
-        treeLoader.load(folder);
+        if (!isDescendant) {
+            // Only trigger a load of the refreshed folder if selectedFolder is not a descendant of
+            // the refreshed folder, otherwise the lazy-loader will handle the reload.
+            treeLoader.load(folder);
+        }
 
-        if (isCurrentOrDesc) {
-            // De-select and Refresh the given folder
-            view.getTree().getSelectionModel().deselect(selectedFolder);
+        if (isCurrent || isDescendant) {
             if (!(selectedFolder instanceof DiskResourceQueryTemplate)) {
-                // Re-select the folder to cause a selection changed event
+                // Re-select selectedFolder to cause a selection changed event
+                // or to trigger lazy-loading
                 setSelectedFolder((HasPath)selectedFolder);
             }
         }
-        // end FIX
-
     }
 
     @Override
@@ -410,14 +409,12 @@ public class NavigationPresenterImpl implements
             return;
         }
         final Folder findModelWithKey = treeStore.findModelWithKey(folder.getId());
-        LOG.log(Level.FINE, "found folder to select:" + folder.getPath());
         if (findModelWithKey != null) {
             view.getTree().getSelectionModel().deselectAll();
             Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
 
                 @Override
                 public void execute() {
-                    LOG.log(Level.FINE, "selecting:" + folder.getPath());
                     view.getTree().getSelectionModel().select(true, findModelWithKey);
                     view.getTree().scrollIntoView(findModelWithKey);
                 }
@@ -467,6 +464,8 @@ public class NavigationPresenterImpl implements
 
         treeStore.removeChildren(folder);
         folder.setFolders(null);
+        // Set folder node as not-loaded, to prevent problems in lazy-loader logic.
+        view.getTree().findNode(folder).setLoaded(false);
     }
 
     void updateQueryTemplate(DiskResourceQueryTemplate queryTemplate) {

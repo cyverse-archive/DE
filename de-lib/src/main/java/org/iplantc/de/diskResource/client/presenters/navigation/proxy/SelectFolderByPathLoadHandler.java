@@ -23,8 +23,6 @@ import com.sencha.gxt.data.shared.loader.LoadHandler;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Stack;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * A <code>LoadHandler</code> which is used to lazily load, expand, and select a desired folder.
@@ -47,8 +45,6 @@ public class SelectFolderByPathLoadHandler implements LoadHandler<Folder, List<F
     private final NavigationView.Presenter navigationPresenter;
     private final IplantAnnouncer announcer;
     private boolean rootFolderDetected;
-
-    Logger LOG = Logger.getLogger("SelectFolderByPathLoadHandler");
 
     SelectFolderByPathLoadHandler(final HasPath folderToSelect,
                                   final NavigationView.Presenter navigationPresenter,
@@ -126,11 +122,9 @@ public class SelectFolderByPathLoadHandler implements LoadHandler<Folder, List<F
         if (folder != null) {
             if (pathsToLoad.isEmpty()) {
                 // Exit condition
-                LOG.log(Level.FINE, "exit:" + folder.getPath());
                 navigationPresenter.setSelectedFolder(folder);
                 unmaskView();
             } else {
-                LOG.log(Level.FINE, "load:" + folder.getPath());
                 // Trigger remote load by expanding folder
                 navigationPresenter.expandFolder(folder);
             }
@@ -186,24 +180,17 @@ public class SelectFolderByPathLoadHandler implements LoadHandler<Folder, List<F
         } else {
             this.rootFolderDetected = true;
             // A folder along the path to load has been found.
-            LOG.log(Level.FINE, "init->" + folder.getPath());
-            LOG.log(Level.FINE, "init--->" + folderToSelect.getPath());
-
             if (folder.getPath().equals(folderToSelect.getPath())) {
                 // Exit condition: The target folder has already been loaded, so just select it.
                 if (!folder.equals(navigationPresenter.getSelectedFolder())) {
                     navigationPresenter.setSelectedFolder(folder);
                 }
                 unmaskView();
-            }
-            // commented out when fixing CORE-6732 CORE6736
-            // else if (navigationPresenter.isLoaded(folder)) {
-            // // One of the target folder's parents already has its children loaded, but the target
-            // // wasn't found, so refresh that parent.
-            // refreshFolder(folder);
-            // }
-
-            else {
+            } else if (navigationPresenter.isLoaded(folder)) {
+                // One of the target folder's parents already has its children loaded, but the target
+                // wasn't found, so refresh that parent.
+                refreshFolder(folder);
+            } else {
                 // Once a valid folder is found in the view, remotely load the folder, which will add the
                 // next folder in the path to the view's treeStore.
                 navigationPresenter.expandFolder(folder);
