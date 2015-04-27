@@ -10,7 +10,7 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class BelphegorController {
 
-    @RequestMapping("/belphegor")
+    @RequestMapping("/belphegor/")
     public ModelAndView viewBelphegor() {
         return new ModelAndView("belphegor");
     }

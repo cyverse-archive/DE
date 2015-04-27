@@ -46,7 +46,7 @@ public class DeController {
         return "redirect:de/";
     }
 
-    @RequestMapping("/de")
+    @RequestMapping("/de/")
     public String showDe(final HttpSession session,
                          final Model model) {
         DiscoveryEnvironmentMaintenance maintenance = new DiscoveryEnvironmentMaintenance(maintenanceFile);
