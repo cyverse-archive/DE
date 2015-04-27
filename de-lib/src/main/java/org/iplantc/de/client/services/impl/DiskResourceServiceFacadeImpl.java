@@ -541,7 +541,7 @@ public class DiskResourceServiceFacadeImpl extends TreeStore<Folder> implements
     public String getEncodedSimpleDownloadURL(String path) {
         // We must proxy the download requests through a servlet, since the actual download service may
         // be on a port behind a firewall that the servlet can access, but the client can not.
-        String address = Format.substitute("{0}{1}?user={2}&path={3}", GWT.getModuleBaseURL(), //$NON-NLS-1$
+        String address = Format.substitute("{0}?user={1}&path={2}",
                                            constants.fileDownloadServlet(),
                                            userInfo.getUsername(),
                                            URL.encodeQueryString(path));

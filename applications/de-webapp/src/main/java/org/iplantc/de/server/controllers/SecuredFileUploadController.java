@@ -49,20 +49,21 @@ public class SecuredFileUploadController {
                                    MultipartHttpServletRequest request) throws IOException {
 
         final RestTemplate restTemplate = new RestTemplate();
-        final FormHttpMessageConverter formHttpMessageConverter = new FormHttpMessageConverter();
-        formHttpMessageConverter.addPartConverter(new MultiPartFileMessageConverter());
+        // Create special part converter and add it to custom form message converter
+        final FormHttpMessageConverter customFormMsgConverter = new FormHttpMessageConverter();
+        customFormMsgConverter.addPartConverter(new MultiPartFileMessageConverter());
 
+        // Add all necessary message converters
         restTemplate.getMessageConverters().clear();
-        restTemplate.getMessageConverters().add(formHttpMessageConverter);
+        restTemplate.getMessageConverters().add(customFormMsgConverter);
         restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
 
+        // Create and add request factory
         SimpleClientHttpRequestFactory requestFactory = new SimpleClientHttpRequestFactory();
         requestFactory.setBufferRequestBody(false);
         restTemplate.setRequestFactory(requestFactory);
-        final String uriTemplate = securedFileUploadUrl + "?proxyToken={token}&dest={dest}";
 
-        AttributePrincipal principal = CasUtils.attributePrincipalFromServletRequest(request);
-        String proxyToken = principal.getProxyTicketFor(extractServiceName(new URL(securedFileUploadUrl)));
+        // Create multi value map for multi-part request
         LinkedMultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
         final ByteArrayResource byteArrayResource = new ByteArrayResource(file.getBytes()){
             @Override
@@ -71,7 +72,16 @@ public class SecuredFileUploadController {
             }
         };
         map.add("file", byteArrayResource);
+
+        // Create request entity with multi-part map
         HttpEntity<LinkedMultiValueMap<String, Object>> requestEntity = new HttpEntity<>(map);
+
+        // Create URI template for REST request
+        final String uriTemplate = securedFileUploadUrl + "?proxyToken={token}&dest={dest}";
+        AttributePrincipal principal = CasUtils.attributePrincipalFromServletRequest(request);
+        String proxyToken = principal.getProxyTicketFor(extractServiceName(new URL(securedFileUploadUrl)));
+
+        //  Make request
         final ResponseEntity<Object> stringResponseEntity = restTemplate.postForEntity(uriTemplate, requestEntity, Object.class, proxyToken, dest);
 
         LOG.debug("result = {}", stringResponseEntity.toString());

@@ -11,7 +11,6 @@ import org.iplantc.de.shared.services.DiscEnvApiService;
 import org.iplantc.de.shared.services.ServiceCallWrapper;
 
 import com.google.common.base.Preconditions;
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONString;
@@ -66,8 +65,8 @@ public class FileEditorServiceFacadeImpl implements FileEditorServiceFacade {
 
     @Override
     public String getServletDownloadUrl(final String path) {
-        String address = Format.substitute("{0}{1}?url=display-download&user={2}&path={3}", //$NON-NLS-1$
-                GWT.getModuleBaseURL(), constants.fileDownloadServlet(), userInfo.getUsername(), path);
+        String address = Format.substitute("{0}?url=display-download&user={1}&path={2}", //$NON-NLS-1$
+                constants.fileDownloadServlet(), userInfo.getUsername(), path);
 
         return URL.encode(address);
     }
