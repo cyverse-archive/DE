@@ -25,6 +25,8 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter {
 
     @Override
     public void addViewControllers(ViewControllerRegistry registry) {
+        // Add redirection to prevent authentication issues when accessing base app urls not ending
+        // in a "/"
         registry.addRedirectViewController("/de", "/de/")
                 .setKeepQueryParams(true)
                 .setStatusCode(HttpStatus.PERMANENT_REDIRECT);
@@ -40,7 +42,6 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter {
 
         registry.addResourceHandler("/de/**").addResourceLocations("/");
         registry.addResourceHandler("/belphegor/**").addResourceLocations("/");
-        // TODO Setup caching strategy here.
     }
 
     @Override

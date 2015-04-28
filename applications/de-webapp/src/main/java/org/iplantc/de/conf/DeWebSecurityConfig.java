@@ -167,7 +167,9 @@ public class DeWebSecurityConfig extends WebSecurityConfigurerAdapter {
             .addFilterAfter(new CacheControlFilter(), CasAuthenticationFilter.class);
 
         http.headers()
-            .cacheControl()
+            .contentTypeOptions()
+            .xssProtection()
+            .httpStrictTransportSecurity()
             .addHeaderWriter(new XFrameOptionsHeaderWriter(SAMEORIGIN));
 
         http.csrf().disable();

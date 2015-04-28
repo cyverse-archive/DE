@@ -174,7 +174,12 @@ public class AdminWebSecurityConfig extends WebSecurityConfigurerAdapter {
             .addFilterBefore(adminSingleSignOutFilter(), CasAuthenticationFilter.class)
             .addFilterBefore(adminRequestSingleLogoutFilter(), LogoutFilter.class)
             .addFilterAfter(new CacheControlFilter(), CasAuthenticationFilter.class);
-        http.headers().cacheControl().addHeaderWriter(new XFrameOptionsHeaderWriter(SAMEORIGIN));
+
+        http.headers()
+            .contentTypeOptions()
+            .xssProtection()
+            .httpStrictTransportSecurity()
+            .addHeaderWriter(new XFrameOptionsHeaderWriter(SAMEORIGIN));
 
         http.csrf().disable();
     }

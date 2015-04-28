@@ -14,9 +14,10 @@ import javax.servlet.http.HttpServletResponse;
 
 /**
  * 
- * A filter set no cache headers to GWT .nocache files
+ * A filter set no cache headers to GWT .nocache files, and turns caching on for .cache. files.
  * 
  * @author sriram
+ * @author jstroot
  * 
  */
 public class CacheControlFilter implements Filter {
@@ -40,6 +41,11 @@ public class CacheControlFilter implements Filter {
             httpResponse.setDateHeader("Expires", now.getTime() - 86400000L);
             httpResponse.setHeader("Pragma", "no-cache");
             httpResponse.setHeader("Cache-control", "no-cache, no-store, must-revalidate");
+        }else if(requestURI.contains(".cache.")){
+            HttpServletResponse httpResponse = (HttpServletResponse)response;
+
+            httpResponse.setHeader("Cache-control", "cache, private, max-age=2592000");
+            httpResponse.setHeader("Pragma", "cache");
         }
 
         filterChain.doFilter(request, response);
