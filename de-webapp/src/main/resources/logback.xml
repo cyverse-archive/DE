@@ -8,7 +8,7 @@
         </encoder>
     </appender>
     <appender name="WIRE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>/var/log/de/wire.log</file>
+        <file>/home/iplant/logs/wire.log</file>
 
         <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
             <FileNamePattern>wire.%i.log.zip</FileNamePattern>
@@ -24,13 +24,13 @@
         </encoder>
     </appender>
     <appender name="SPRING" class="ch.qos.logback.core.FileAppender">
-        <file>/var/log/de/spring.log</file>
+        <file>/home/iplant/logs/spring.log</file>
         <encoder>
             <pattern>%-4relative [%thread] %-5level %logger{35} - %msg%n</pattern>
         </encoder>
     </appender>
     <appender name="JSON" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>/var/log/de/json.log</file>
+        <file>/home/iplant/logs/json.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
             <FileNamePattern>json.%i.log.zip</FileNamePattern>
             <MinIndex>1</MinIndex>
