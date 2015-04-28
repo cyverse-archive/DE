@@ -8,6 +8,11 @@ project(':de-webapp') {
         providedRuntime
     }
 
+    springBoot {
+        mainClass = 'org.iplantc.de.Application'
+        layout = 'WAR'
+    }
+
     dependencies {
         compile project(':de-lib')
 
@@ -74,6 +79,7 @@ project(':de-webapp') {
 
     // Convenience task for launching sdm
     task sdm(dependsOn: 'gwtSuperDev') {
+        group 'GWT'
         description 'Short hand task for launching GWT Super Dev Mode'
     }
 
@@ -97,13 +103,34 @@ project(':de-webapp') {
         }
     }
 
+    task draftBootRepackage(type: BootRepackage, dependsOn: draftWar) {
+        group 'Build'
+        description 'Repackage existing draft WAR archives so that they can be executed from the command line using \'java -jar\''
+        withJarTask = draftWar
+    }
+
     task createProdWar(type: Copy) {
-        dependsOn war
-        into 'build/libs/wars'
+        dependsOn bootRepackage
+        into 'build/wars'
         from('build/libs') {
             exclude '**/*draft*.war'
+            exclude '**/*draft*.war*'
         }
-        rename project.tasks.war.archiveName, project.name + '.war'
+        rename project.tasks.war.archiveName, 'de.war'
+    }
+
+    task runWar(type:JavaExec, dependsOn:bootRepackage) {
+        group 'Application'
+        description 'Builds and executes the self-executing WAR file.'
+        main="-jar"
+        args war.archivePath
+    }
+
+    task runDraftWar(type:JavaExec, dependsOn:draftBootRepackage) {
+        group 'Application'
+        description 'Builds and executes the self-executing draft WAR file.'
+        main="-jar"
+        args draftWar.archivePath
     }
 
     clean {
