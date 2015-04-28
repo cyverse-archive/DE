@@ -14,7 +14,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.client.SimpleClientHttpRequestFactory;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.http.converter.ByteArrayHttpMessageConverter;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StreamUtils;
@@ -61,7 +61,7 @@ public class FileDownloadController {
         restTemplate.getMessageConverters().add(new ByteArrayHttpMessageConverter());
 
         // Create and add request factory
-        restTemplate.setRequestFactory(new SimpleClientHttpRequestFactory());
+        restTemplate.setRequestFactory(new HttpComponentsClientHttpRequestFactory());
 
         // Set appropriate headers
         HttpHeaders headers = new HttpHeaders();

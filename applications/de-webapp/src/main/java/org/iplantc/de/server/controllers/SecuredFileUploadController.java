@@ -11,7 +11,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpInputMessage;
 import org.springframework.http.HttpOutputMessage;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.client.SimpleClientHttpRequestFactory;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.http.converter.AbstractHttpMessageConverter;
 import org.springframework.http.converter.FormHttpMessageConverter;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -59,9 +59,7 @@ public class SecuredFileUploadController {
         restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
 
         // Create and add request factory
-        SimpleClientHttpRequestFactory requestFactory = new SimpleClientHttpRequestFactory();
-        requestFactory.setBufferRequestBody(false);
-        restTemplate.setRequestFactory(requestFactory);
+        restTemplate.setRequestFactory(new HttpComponentsClientHttpRequestFactory());
 
         // Create multi value map for multi-part request
         LinkedMultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
