@@ -40,7 +40,7 @@ public class DeController {
         if(!Strings.isNullOrEmpty(referer)){
                 url = new URL(referer);
             if(!Strings.isNullOrEmpty(url.getPath())){
-                return "redirect:" + url.getPath() + "/";
+                return "redirect:" + url.getPath();
             }
         }
         return "redirect:de/";
