@@ -122,10 +122,12 @@ project(':de-webapp') {
 
     task createProdWar(type: Copy) {
         dependsOn bootRepackage
-        into 'build/wars'
+        into new File( rootProject.projectDir, "target")
         from('build/libs') {
             exclude '**/*draft*.war'
             exclude '**/*draft*.war*'
+            exclude '**/*.jar*'
+            exclude '**/*.original'
         }
         rename project.tasks.war.archiveName, 'de.war'
     }

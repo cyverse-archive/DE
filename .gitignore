@@ -17,6 +17,7 @@ gwt-unitCache
 
 # ignore gradle build directory
 build
+target
 
 .gradle
 .metadata
