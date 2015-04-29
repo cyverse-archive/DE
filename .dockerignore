@@ -1,3 +1,4 @@
 build
 de-lib/build
 de-webapp/build
+de-webapp/war
