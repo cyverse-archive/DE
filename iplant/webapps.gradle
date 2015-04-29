@@ -1,3 +1,9 @@
+    def getDate() {
+        def date = new Date()
+        def formattedDate = date.format('yyyyMMddHHmmss')
+        return formattedDate
+    }
+
 project(':de-webapp') {
     apply plugin: 'war'
     apply plugin: 'gwt'
@@ -7,6 +13,9 @@ project(':de-webapp') {
         applet
         providedRuntime
     }
+
+    ext.timeStampVersion = "$version" + "-" + getDate()
+
 
     springBoot {
         mainClass = 'org.iplantc.de.Application'
@@ -88,8 +97,9 @@ project(':de-webapp') {
             attributes "Jenkins-Build-Version": "${BUILD_TAG}",
                     "Jenkins-Build-ID": "${BUILD_ID}",
                     "Jenkins-Build-Number": "${BUILD_NUMBER}",
-                    "Git-Branch": "${GIT_BRANCH}",
-                    "Git-Commit": "${GIT_COMMIT}"
+                    "Git-Branch": 'git rev-parse --abbrev-ref HEAD'.execute().text.trim(),
+                    "Git-Ref": 'git rev-parse HEAD'.execute().text.trim(),
+                    "Version": "${timeStampVersion}"
         }
     }
 
@@ -98,8 +108,9 @@ project(':de-webapp') {
             attributes "Jenkins-Build-Version": "${BUILD_TAG}",
                     "Jenkins-Build-ID": "${BUILD_ID}",
                     "Jenkins-Build-Number": "${BUILD_NUMBER}",
-                    "Git-Branch": "${GIT_BRANCH}",
-                    "Git-Commit": "${GIT_COMMIT}"
+                    "Git-Branch": 'git rev-parse --abbrev-ref HEAD'.execute().text.trim(),
+                    "Git-Ref": 'git rev-parse HEAD'.execute().text.trim(),
+                    "Version": "${timeStampVersion}"
         }
     }
 

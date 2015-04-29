@@ -24,7 +24,7 @@ import javax.servlet.ServletConfig;
 public class AboutApplicationServiceImpl implements AboutApplicationService, ServletConfigAware {
 
     private static final String BUILD_BRANCH_ATTR = "Git-Branch";
-    private static final String BUILD_COMMIT_ATTR = "Git-Commit";
+    private static final String BUILD_COMMIT_ATTR = "Git-Ref";
     private static final String BUILD_ID_ATTR = "Jenkins-Build-ID";
     private static final String BUILD_JDK_ATTR = "Build-Jdk";
     private static final String BUILD_NUMBER_ATTR = "Jenkins-Build-Number";
