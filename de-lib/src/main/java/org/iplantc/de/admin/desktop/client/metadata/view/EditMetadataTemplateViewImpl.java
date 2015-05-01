@@ -80,6 +80,10 @@ public class EditMetadataTemplateViewImpl implements IsWidget, EditMetadataTempl
     ColumnModel<MetadataTemplateAttribute> cm;
     @UiField
     VerticalLayoutContainer con;
+    @UiField
+    CheckBox chkDeleted;
+    @UiField
+    CheckBox chkPartialSave;
 
     private final MetadataTemplateAttributeProperties mta_props;
     private Presenter presenter;
@@ -303,6 +307,7 @@ public class EditMetadataTemplateViewImpl implements IsWidget, EditMetadataTempl
         }
         mt.setName(tempName.getValue());
         mt.setAttributes(store.getAll());
+        mt.setDeleted(chkDeleted.getValue());
         return mt;
     }
 
@@ -335,6 +340,7 @@ public class EditMetadataTemplateViewImpl implements IsWidget, EditMetadataTempl
         tempName.setValue(result.getName());
         templateId = result.getId();
         store.addAll(result.getAttributes());
+        chkDeleted.setValue(result.isDeleted());
     }
 
     @Override

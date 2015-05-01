@@ -43,6 +43,16 @@
 			</form:FieldLabel>
 		</container:child>
 		<container:child layoutData="{toolBarLayoutData}">
+          <form:FieldLabel text="Options">
+            <form:widget>
+              <g:HorizontalPanel>
+                <form:CheckBox ui:field="chkDeleted" boxLabel="Mark As Deleted" />
+                <form:CheckBox ui:field="chkPartialSave" boxLabel="Allow Partial Save" />
+              </g:HorizontalPanel>
+            </form:widget>
+          </form:FieldLabel>
+        </container:child>
+		<container:child layoutData="{toolBarLayoutData}">
 			<toolbar:ToolBar>
 				<button:TextButton ui:field="addBtn" text="Add" icon="{appearance.addIcon}" />
 				<button:TextButton ui:field="delBtn" text="Delete" icon="{appearance.deleteIcon}"/>
