@@ -14,14 +14,14 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
 /**
- * This filter is responsible for adding/removing the authenticated username to the logging
- * {@link MDC}.
+ * This filter is responsible for removing the authenticated username to the logging
+ * {@link MDC}. Username is also added to the {@code MDC} in
+ * {@link org.iplantc.de.server.auth.AuthenticationSuccessListener}, this is intentional.
  *
  * @author jstroot
  */
 public class MDCFilter implements Filter {
 
-    private final String USERNAME_MDC_KEY = "username";
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException { }
@@ -32,13 +32,14 @@ public class MDCFilter implements Filter {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if(authentication != null){
-            MDC.put(USERNAME_MDC_KEY, authentication.getName());
+            // This put is also performed in the ApplicationAuthenticationListener. This is intentional.
+            MDC.put(AppLoggerConstants.USERNAME_MDC_KEY, authentication.getName());
         }
         try {
             filterChain.doFilter(servletRequest, servletResponse);
         } finally {
             if(authentication != null) {
-                MDC.remove(USERNAME_MDC_KEY);
+                MDC.remove(AppLoggerConstants.USERNAME_MDC_KEY);
             }
         }
     }

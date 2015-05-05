@@ -1,65 +1,48 @@
 <configuration scan="true">
 
+    <!-- APPENDERS -->
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <!-- encoders are assigned the type
                       ch.qos.logback.classic.encoder.PatternLayoutEncoder by default -->
         <encoder>
-            <pattern>%X{username} %d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
-        </encoder>
-    </appender>
-    <appender name="WIRE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>/home/iplant/logs/wire.log</file>
-
-        <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
-            <FileNamePattern>wire.%i.log.zip</FileNamePattern>
-            <MinIndex>1</MinIndex>
-            <MaxIndex>10</MaxIndex>
-        </rollingPolicy>
-
-        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
-            <MaxFileSize>20MB</MaxFileSize>
-        </triggeringPolicy>
-        <encoder>
-            <pattern>%-4relative [%thread] %-5level %logger{35} - %msg%n</pattern>
-        </encoder>
-    </appender>
-    <appender name="SPRING" class="ch.qos.logback.core.FileAppender">
-        <file>/home/iplant/logs/spring.log</file>
-        <encoder>
-            <pattern>%-4relative [%thread] %-5level %logger{35} - %msg%n</pattern>
-        </encoder>
-    </appender>
-    <appender name="JSON" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>/home/iplant/logs/json.log</file>
-        <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
-            <FileNamePattern>json.%i.log.zip</FileNamePattern>
-            <MinIndex>1</MinIndex>
-            <MaxIndex>10</MaxIndex>
-        </rollingPolicy>
-
-        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
-            <MaxFileSize>20MB</MaxFileSize>
-        </triggeringPolicy>
-
-        <encoder>
-            <pattern>%-4relative [%thread] %-5level %logger{35} - %msg%n</pattern>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} username=%X{username} - %msg%n</pattern>
         </encoder>
     </appender>
 
-    <logger name="org.springframework" level="INFO">
-        <appender-ref ref="SPRING" />
-        <appender-ref ref="STDOUT" />
-    </logger>
-    <logger name="org.apache.http.wire" level="DEBUG">
-        <appender-ref ref="WIRE"/>
-    </logger>
-    <logger name="org.iplantc.de.server.services.DEServiceImpl" level="TRACE">
-        <appender-ref ref="JSON"/>
-    </logger>
-    <logger name="org.iplantc.de.Application" level="INFO">
-        <appender-ref ref="SPRING" />
-        <appender-ref ref="STDOUT" />
-    </logger>
+    <appender name="SYSLOG" class="ch.qos.logback.classic.net.SyslogAppender">
+        <syslogHost>localhost</syslogHost>
+        <port>5000</port>
+        <facility>LOCAL0</facility>
+        <suffixPattern>[%thread] %logger %msg</suffixPattern>
+    </appender>
+
+    <!-- The following appender could be used to log specific user log entries to individual files -->
+    <appender name="SIFT" class="ch.qos.logback.classic.sift.SiftingAppender">
+        <!-- in the absence of the class attribute, it is assumed that the
+             desired discriminator type is
+             ch.qos.logback.classic.sift.MDCBasedDiscriminator -->
+        <discriminator>
+            <key>username</key>
+            <defaultValue>unknown</defaultValue>
+        </discriminator>
+        <sift>
+            <appender name="STDOUT-${username}" class="ch.qos.logback.core.ConsoleAppender">
+                <encoder>
+                  <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} username=%X{username} - %msg%n</pattern>
+                </encoder>
+            </appender>
+        </sift>
+    </appender>
+
+    <!-- LOGGERS -->
+    <logger name="org.iplantc.de.login" level="INFO" />
+    <logger name="org.iplantc.de.login.failure" level="INFO" />
+    <logger name="org.iplantc.de.logout" level="INFO" />
+    <logger name="org.iplantc.de.api" level="INFO"/>
+    <logger name="org.iplantc.de.api.json" level="TRACE" additivity="false"/>
+    <logger name="org.springframework" level="INFO"/>
+    <logger name="org.apache.http.wire" level="OFF"/>
+
     <root level="WARN">
         <appender-ref ref="STDOUT"/>
     </root>
