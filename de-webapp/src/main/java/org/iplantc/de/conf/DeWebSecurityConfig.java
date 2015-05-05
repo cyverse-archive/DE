@@ -3,6 +3,7 @@ package org.iplantc.de.conf;
 import org.iplantc.de.server.CacheControlFilter;
 import org.iplantc.de.server.DeCasAuthenticationEntryPoint;
 import org.iplantc.de.server.DeLandingPage;
+import org.iplantc.de.server.MDCFilter;
 import org.iplantc.de.server.auth.CasLogoutSuccessHandler;
 
 import static org.springframework.security.web.header.writers.frameoptions.XFrameOptionsHeaderWriter.XFrameOptionsMode.SAMEORIGIN;
@@ -164,7 +165,8 @@ public class DeWebSecurityConfig extends WebSecurityConfigurerAdapter {
         http.addFilter(deCasAuthenticationFilter())
             .addFilterBefore(deSingleSignOutFilter(), CasAuthenticationFilter.class)
             .addFilterBefore(deRequestSingleLogoutFilter(), LogoutFilter.class)
-            .addFilterAfter(new CacheControlFilter(), CasAuthenticationFilter.class);
+            .addFilterAfter(new CacheControlFilter(), CasAuthenticationFilter.class)
+            .addFilterAfter(new MDCFilter(), CasAuthenticationFilter.class);
 
         http.headers()
             .contentTypeOptions()

@@ -3,6 +3,7 @@ package org.iplantc.de.conf;
 import org.iplantc.de.server.CacheControlFilter;
 import org.iplantc.de.server.DeCasAuthenticationEntryPoint;
 import org.iplantc.de.server.DeLandingPage;
+import org.iplantc.de.server.MDCFilter;
 import org.iplantc.de.server.auth.CasGroupUserDetailsService;
 import org.iplantc.de.server.auth.CasLogoutSuccessHandler;
 
@@ -173,7 +174,8 @@ public class AdminWebSecurityConfig extends WebSecurityConfigurerAdapter {
         http.addFilter(adminCasAuthenticationFilter())
             .addFilterBefore(adminSingleSignOutFilter(), CasAuthenticationFilter.class)
             .addFilterBefore(adminRequestSingleLogoutFilter(), LogoutFilter.class)
-            .addFilterAfter(new CacheControlFilter(), CasAuthenticationFilter.class);
+            .addFilterAfter(new CacheControlFilter(), CasAuthenticationFilter.class)
+            .addFilterAfter(new MDCFilter(), CasAuthenticationFilter.class);
 
         http.headers()
             .contentTypeOptions()
