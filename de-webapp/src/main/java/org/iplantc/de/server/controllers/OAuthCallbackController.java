@@ -48,14 +48,14 @@ public class OAuthCallbackController {
         private final String errorUri;
         private final String state;
 
-        public AuthorizationResponse(HttpServletRequest request, String api_name) {
-            apiName = api_name;
+        public AuthorizationResponse(HttpServletRequest request, String apiName, String contextPath) {
+            this.apiName = apiName;
             authCode = request.getParameter(AUTH_CODE_PARAM);
             state = request.getParameter(STATE_PARAM);
             errorDescription = request.getParameter(ERROR_DESCRIPTION_PARAM);
             errorUri = request.getParameter(ERROR_URI_PARAM);
             errorCode = determineErrorCode(request.getParameter(ERROR_PARAM));
-            contextPath = request.getContextPath();
+            this.contextPath = contextPath;
         }
 
         public void authorizationErrorRedirect(final HttpServletResponse response) throws IOException {
@@ -195,18 +195,19 @@ public class OAuthCallbackController {
     private static final String ERROR_PARAM = "error";
     private static final String ERROR_URI_PARAM = "error_uri";
     private static final String STATE_PARAM = "state";
+    private static final String CONTEXT_PATH = "/de";
 
     private final Logger LOG = LoggerFactory.getLogger(OAuthCallbackController.class);
 
     @Value("${org.iplantc.discoveryenvironment.muleServiceBaseUrl}") private String serviceUrl;
     @Autowired private UrlConnector urlConnector;
 
-    @RequestMapping("/de/oauth/callback/{api_name}")
+    @RequestMapping(CONTEXT_PATH + "/oauth/callback/{api_name}")
     public void handleCallback(final HttpServletRequest req,
                                final HttpServletResponse resp,
                                @PathVariable final String api_name) throws IOException {
 
-        final AuthorizationResponse authResponse = new AuthorizationResponse(req, api_name);
+        final AuthorizationResponse authResponse = new AuthorizationResponse(req, api_name, CONTEXT_PATH);
         if (authResponse.isError()) {
             authResponse.authorizationErrorRedirect(resp);
         } else {
@@ -218,7 +219,7 @@ public class OAuthCallbackController {
         try {
             JSONObject json = JSONObject.fromObject(responseBody);
             String queryString = json.getString("state_info");
-            return new URIBuilder(req.getContextPath())
+            return new URIBuilder(CONTEXT_PATH)
                        .setQuery(queryString)
                        .build()
                        .toString();
