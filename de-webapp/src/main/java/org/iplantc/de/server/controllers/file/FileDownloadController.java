@@ -39,6 +39,7 @@ import javax.servlet.http.HttpServletResponse;
 public class FileDownloadController {
 
     private final Logger LOG = LoggerFactory.getLogger(FileDownloadController.class);
+    private final Logger API_LOG = LoggerFactory.getLogger("org.iplantc.de.server.api");
 
     @Value("${org.iplantc.services.de-data-mgmt.base}") String dataMgmtServiceBaseUrl;
 
@@ -70,6 +71,7 @@ public class FileDownloadController {
 
         // Create URI template for REST request
         String downloadUrl = url.isEmpty() ? fileIoBaseUrl : dataMgmtServiceBaseUrl + url;
+        API_LOG.info("GET {}", downloadUrl);
         final String uriTemplate = "{downloadUrl}?proxyToken={token}&path={path}&attachment={attachment}";
         AttributePrincipal principal = CasUtils.attributePrincipalFromServletRequest(request);
         String proxyToken = principal.getProxyTicketFor(extractServiceName(new URL(downloadUrl)));

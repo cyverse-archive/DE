@@ -39,6 +39,8 @@ import javax.servlet.http.HttpServletResponse;
 @Controller
 public class UnsecuredFileUploadController {
 
+    private final Logger API_LOG = LoggerFactory.getLogger("org.iplantc.de.server.api");
+
     @Value("${org.iplantc.services.file-io.secured.file-upload}") String securedFileUploadUrl;
     @Value("${org.iplantc.services.file-io.file-upload}") String unsecuredFileUploadUrl;
     /**
@@ -53,6 +55,7 @@ public class UnsecuredFileUploadController {
                                   @RequestParam("dest") String dest,
                                   @RequestParam("user") String user,
                                   @RequestParam("file") MultipartFile file) throws IOException {
+        API_LOG.info("POST {}", unsecuredFileUploadUrl);
         final String uploadUrl = unsecuredFileUploadUrl;
         LOG.debug("Unsecured file Upload url = {}", uploadUrl);
         try {

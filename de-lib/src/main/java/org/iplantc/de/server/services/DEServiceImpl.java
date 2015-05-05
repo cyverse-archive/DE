@@ -1,5 +1,6 @@
 package org.iplantc.de.server.services;
 
+import org.iplantc.de.server.AppLoggerConstants;
 import org.iplantc.de.server.DEServiceInputStream;
 import org.iplantc.de.server.ServiceCallResolver;
 import org.iplantc.de.server.auth.UrlConnector;
@@ -10,6 +11,7 @@ import org.iplantc.de.shared.services.BaseServiceCallWrapper;
 import org.iplantc.de.shared.services.DEService;
 import org.iplantc.de.shared.services.ServiceCallWrapper;
 
+import com.google.common.base.Strings;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonParser;
@@ -60,7 +62,6 @@ public class DEServiceImpl implements DEService,
 
     public DEServiceImpl(final ServiceCallResolver serviceResolver,
                          final UrlConnector urlConnector) {
-        LOGGER.trace("CONSTRUCTOR CALLED!!");
         this.urlConnector = urlConnector;
         this.serviceResolver = serviceResolver;
     }
@@ -77,11 +78,14 @@ public class DEServiceImpl implements DEService,
     public String getServiceData(ServiceCallWrapper wrapper) throws SerializationException, AuthenticationException,
                                                                     HttpException {
         String json = null;
-
         if (isValidServiceCall(wrapper)) {
+            String address = retrieveServiceAddress(wrapper);
+            String endpoint = getEndpointLoggerString(address);
+            Logger jsonLogger = LoggerFactory.getLogger(AppLoggerConstants.API_JSON + endpoint);
+
             CloseableHttpClient client = HttpClients.createDefault();
             try {
-                json = getResponseBody(getResponse(client, wrapper));
+                json = getResponseBody(getResponse(client, wrapper, address));
             } catch (AuthenticationException | HttpException ex) {
                 doLogError(ex);
                 throw ex;
@@ -91,13 +95,13 @@ public class DEServiceImpl implements DEService,
             } finally {
                 IOUtils.closeQuietly(client);
             }
+
+            if (jsonLogger.isTraceEnabled()
+                    && !Strings.isNullOrEmpty(json)) {
+                jsonLogger.trace("{} {} response={}", wrapper.getType(), wrapper.getAddress(), json);
+            }
         }
 
-        if (LOGGER.isTraceEnabled()
-                && json != null) {
-            Gson prettyGson = new GsonBuilder().setPrettyPrinting().create();
-            LOGGER.trace("\nRESPONSE: {} {}\n{}", wrapper.getType(), wrapper.getAddress(), prettyGson.toJson(new JsonParser().parse(json)));
-        }
 
         return json;
     }
@@ -114,9 +118,11 @@ public class DEServiceImpl implements DEService,
     public DEServiceInputStream getServiceStream(ServiceCallWrapper wrapper)
         throws SerializationException, IOException {
         if (isValidServiceCall(wrapper)) {
+            String address = retrieveServiceAddress(wrapper);
+
             CloseableHttpClient client = HttpClients.createDefault();
             try {
-                HttpResponse response = getResponse(client, wrapper);
+                HttpResponse response = getResponse(client, wrapper, address);
                 checkResponse(response);
                 return new DEServiceInputStream(client, response);
             } catch (HttpRedirectException | AuthenticationException ex) {
@@ -203,8 +209,8 @@ public class DEServiceImpl implements DEService,
     }
 
     private void doLogError(Exception ex) {
-        if (LOGGER.isDebugEnabled()) {
-            Gson prettyGson = new GsonBuilder().setPrettyPrinting().create();
+        if (LOGGER.isErrorEnabled()) {
+            Gson prettyGson = new GsonBuilder().create();
             String errMsg = ex.getMessage();
             try {
                 errMsg = prettyGson.toJson(new JsonParser().parse(ex.getMessage()));
@@ -227,6 +233,14 @@ public class DEServiceImpl implements DEService,
         return client.execute(getRequest);
     }
 
+    private String getEndpointLoggerString(final String address){
+        int slashSlash = address.indexOf("//") + 2;
+        int singleSlash = address.indexOf("/", slashSlash);
+        int questionMark = address.contains("?") ? address.indexOf("?") : address.length();
+
+        return address.substring(singleSlash, questionMark).replace("/", ".");
+    }
+
     /**
      * Gets the response for an HTTP connection.
      *
@@ -235,31 +249,41 @@ public class DEServiceImpl implements DEService,
      * @return the response.
      * @throws IOException if an I/O error occurs.
      */
-    private HttpResponse getResponse(HttpClient client, ServiceCallWrapper wrapper)
+    private HttpResponse getResponse(final HttpClient client,
+                                     final ServiceCallWrapper wrapper,
+                                     final String resolvedAddress)
         throws IOException {
-        String address = retrieveServiceAddress(wrapper);
+
+        String endpoint = getEndpointLoggerString(resolvedAddress);
+
+        Logger apiLogger = LoggerFactory.getLogger(AppLoggerConstants.API_LOGGER + endpoint);
+        Logger jsonLogger = LoggerFactory.getLogger(AppLoggerConstants.API_JSON + endpoint);
+
+
+        apiLogger.info("{} {}", wrapper.getType(), resolvedAddress);
         String body = updateRequestBody(wrapper.getBody());
-        if (LOGGER.isTraceEnabled()) {
-            Gson prettyGson = new GsonBuilder().setPrettyPrinting().create();
-            LOGGER.trace("\n{} {}\nRequest JSON:\n{}", wrapper.getType(), address, prettyGson.toJson(new JsonParser().parse(body)));
+        if (jsonLogger.isTraceEnabled()
+            && !Strings.isNullOrEmpty(body)) {
+//            Gson prettyGson = new GsonBuilder().create();
+            jsonLogger.trace("{} {} request={}", wrapper.getType(), resolvedAddress, body);
         }
 
         BaseServiceCallWrapper.Type type = wrapper.getType();
         switch (type) {
             case GET:
-                return get(client, address);
+                return get(client, resolvedAddress);
 
             case PUT:
-                return put(client, address, body);
+                return put(client, resolvedAddress, body);
 
             case POST:
-                return post(client, address, body);
+                return post(client, resolvedAddress, body);
 
             case DELETE:
-                return delete(client, address);
+                return delete(client, resolvedAddress);
 
             case PATCH:
-                return patch(client, address, body);
+                return patch(client, resolvedAddress, body);
 
             default:
                 throw new UnsupportedOperationException("HTTP method " + type + " not supported");

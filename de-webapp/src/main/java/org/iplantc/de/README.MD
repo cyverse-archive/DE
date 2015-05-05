@@ -7,3 +7,8 @@ All GWT RPC calls are routed through the `DispatcherServlet`. Please refer to th
 the [GwtRpcController](server/rpc/GwtRpcController.java) class. The GWT RPC configuration is 
 handled in [GwtRpcConfig.java](conf/GwtRpcConfig.java).
 
+
+# Logging Information
+The UI now has a set of loggers which are used for various purposes. Refer to `AppLoggerConstants`
+for definitions and documentation.
+

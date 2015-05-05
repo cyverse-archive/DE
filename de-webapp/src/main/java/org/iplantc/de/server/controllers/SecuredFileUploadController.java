@@ -39,6 +39,7 @@ import java.net.URL;
 public class SecuredFileUploadController {
 
     private final Logger LOG = LoggerFactory.getLogger(SecuredFileUploadController.class);
+    private final Logger API_LOG = LoggerFactory.getLogger("org.iplantc.de.server.api");
 
     @Value("${org.iplantc.services.file-io.secured.file-upload}") String securedFileUploadUrl;
 
@@ -48,6 +49,7 @@ public class SecuredFileUploadController {
                                    @RequestParam("file") final MultipartFile file,
                                    MultipartHttpServletRequest request) throws IOException {
 
+        API_LOG.info("POST {}", securedFileUploadUrl);
         final RestTemplate restTemplate = new RestTemplate();
         // Create special part converter and add it to custom form message converter
         final FormHttpMessageConverter customFormMsgConverter = new FormHttpMessageConverter();
