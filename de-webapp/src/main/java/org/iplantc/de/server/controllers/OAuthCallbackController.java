@@ -18,6 +18,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.io.IOException;
@@ -28,6 +29,7 @@ import javax.servlet.http.HttpServletResponse;
 
 /**
  * @author jstroot
+ * @author Dennis Roberts
  */
 @Controller
 public class OAuthCallbackController {
@@ -46,8 +48,8 @@ public class OAuthCallbackController {
         private final String errorUri;
         private final String state;
 
-        public AuthorizationResponse(HttpServletRequest request) {
-            apiName = request.getPathInfo().replaceAll(".*/", "");
+        public AuthorizationResponse(HttpServletRequest request, String api_name) {
+            apiName = api_name;
             authCode = request.getParameter(AUTH_CODE_PARAM);
             state = request.getParameter(STATE_PARAM);
             errorDescription = request.getParameter(ERROR_DESCRIPTION_PARAM);
@@ -199,11 +201,12 @@ public class OAuthCallbackController {
     @Value("${org.iplantc.discoveryenvironment.muleServiceBaseUrl}") private String serviceUrl;
     @Autowired private UrlConnector urlConnector;
 
-    @RequestMapping("/oauth/callback/*")
+    @RequestMapping("/de/oauth/callback/{api_name}")
     public void handleCallback(final HttpServletRequest req,
-                               final HttpServletResponse resp) throws IOException {
+                               final HttpServletResponse resp,
+                               @PathVariable final String api_name) throws IOException {
 
-        final AuthorizationResponse authResponse = new AuthorizationResponse(req);
+        final AuthorizationResponse authResponse = new AuthorizationResponse(req, api_name);
         if (authResponse.isError()) {
             authResponse.authorizationErrorRedirect(resp);
         } else {
