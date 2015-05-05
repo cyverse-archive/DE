@@ -11,6 +11,7 @@ import org.iplantc.de.commons.client.ErrorHandler;
 import org.iplantc.de.commons.client.info.IplantAnnouncer;
 import org.iplantc.de.commons.client.info.SuccessAnnouncementConfig;
 import org.iplantc.de.diskResource.client.events.DiskResourcesDeletedEvent;
+import org.iplantc.de.shared.exceptions.HttpException;
 
 import com.google.gwt.core.shared.GWT;
 import com.google.web.bindery.autobean.shared.AutoBean;
@@ -45,11 +46,16 @@ public class DiskResourceDeleteCallback extends DiskResourceServiceCallback<HasP
     @Override
     public void onFailure(Throwable caught) {
         unmaskCaller();
-        DiskResourceErrorAutoBeanFactory factory = GWT.create(DiskResourceErrorAutoBeanFactory.class);
-        AutoBean<ErrorDiskResourceDelete> errorBean = AutoBeanCodex.decode(factory,
-                ErrorDiskResourceDelete.class, caught.getMessage());
 
-        ErrorHandler.post(errorBean.as(), caught);
+        if(caught instanceof HttpException) {
+            HttpException ex = (HttpException) caught;
+            DiskResourceErrorAutoBeanFactory factory = GWT.create(DiskResourceErrorAutoBeanFactory.class);
+            AutoBean<ErrorDiskResourceDelete> errorBean = AutoBeanCodex.decode(factory,
+                                                                               ErrorDiskResourceDelete.class, ex.getResponseBody());
+            ErrorHandler.post(errorBean.as(), caught);
+        } else {
+            ErrorHandler.post(caught);
+        }
 
     }
 

@@ -82,12 +82,9 @@ public class DEServiceImpl implements DEService,
             CloseableHttpClient client = HttpClients.createDefault();
             try {
                 json = getResponseBody(getResponse(client, wrapper));
-            } catch (AuthenticationException | HttpRedirectException ex) {
+            } catch (AuthenticationException | HttpException ex) {
                 doLogError(ex);
                 throw ex;
-            } catch (HttpException ex) {
-                doLogError(ex);
-                throw new SerializationException(ex.getResponseBody(), ex);
             } catch (Exception ex) {
                 LOGGER.error("", ex);
                 throw new SerializationException(ex);

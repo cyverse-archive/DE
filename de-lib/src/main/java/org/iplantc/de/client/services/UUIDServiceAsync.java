@@ -2,7 +2,7 @@ package org.iplantc.de.client.services;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-import java.util.List;
+import java.util.ArrayList;
 
 /**
  * Async counterpart of <code>UUIDService</code>
@@ -12,6 +12,5 @@ import java.util.List;
  */
 public interface UUIDServiceAsync {
 
-    void getUUIDs(int num, AsyncCallback<List<String>> callback);
-
+    void getUUIDs(int num, AsyncCallback<ArrayList<String>> callback);
 }

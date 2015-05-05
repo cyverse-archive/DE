@@ -8,7 +8,6 @@
     <inherits name="com.google.gwt.uibinder.UiBinder"/>
     <inherits name="com.google.gwt.i18n.I18N"/>
     <inherits name="com.google.gwt.resources.Resources"/>
-    <inherits name="com.google.gwt.rpc.RPC"/><!-- for server push -->
     <inherits name="com.google.gwt.user.Debug"/><!-- Turn on GWT debug IDs -->
 
     <!-- GXT -->

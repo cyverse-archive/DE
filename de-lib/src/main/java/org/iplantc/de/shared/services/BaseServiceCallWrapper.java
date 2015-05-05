@@ -2,12 +2,10 @@ package org.iplantc.de.shared.services;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 
-import java.io.Serializable;
-
 /**
  * Provides a wrapper over service calls.
  */
-public class BaseServiceCallWrapper implements Serializable {
+public class BaseServiceCallWrapper implements IsSerializable {
     private static final long serialVersionUID = -7453647589756124397L;
 
     private Type type = Type.GET;

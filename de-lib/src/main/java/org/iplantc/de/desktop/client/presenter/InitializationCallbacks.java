@@ -21,8 +21,8 @@ import com.sencha.gxt.widget.core.client.box.ConfirmMessageBox;
 import com.sencha.gxt.widget.core.client.event.DialogHideEvent;
 import com.sencha.gxt.widget.core.client.event.DialogHideEvent.DialogHideHandler;
 
+import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.logging.Logger;
 
 /**
@@ -110,7 +110,7 @@ class InitializationCallbacks {
         }
     }
 
-    static class PropertyServiceCallback implements AsyncCallback<Map<String, String>> {
+    static class PropertyServiceCallback implements AsyncCallback<HashMap<String, String>> {
         private final DEProperties deProps;
         private final Provider<ErrorHandler> errorHandlerProvider;
         private final DesktopView.Presenter.DesktopPresenterAppearance appearance;
@@ -144,7 +144,7 @@ class InitializationCallbacks {
         }
 
         @Override
-        public void onSuccess(Map<String, String> result) {
+        public void onSuccess(HashMap<String, String> result) {
             deProps.initialize(result);
             final UserPreferencesCallback userPreferencesCallback = new UserPreferencesCallback(presenter,
                                                                                                 panel,

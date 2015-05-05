@@ -4,7 +4,7 @@ import org.iplantc.de.client.services.UUIDService;
 
 import com.google.common.collect.Lists;
 
-import java.util.List;
+import java.util.ArrayList;
 import java.util.UUID;
 
 /**
@@ -13,8 +13,8 @@ import java.util.UUID;
 public class UUIDServiceImpl implements UUIDService {
 
     @Override
-    public List<String> getUUIDs(int num) {
-       List<String> uuids = Lists.newArrayList();
+    public ArrayList<String> getUUIDs(int num) {
+       ArrayList<String> uuids = Lists.newArrayList();
         for(int i = 0; i < num; i++){
             uuids.add(UUID.randomUUID().toString());
         }

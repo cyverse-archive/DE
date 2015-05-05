@@ -17,7 +17,7 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.RootPanel;
 
-import java.util.Map;
+import java.util.HashMap;
 
 /**
  * Entry point classes define <code>onModuleLoad()</code>.
@@ -52,14 +52,14 @@ public class Belphegor implements EntryPoint {
     }
 
     private void initProperties() {
-        propertyService.getProperties(new AsyncCallback<Map<String, String>>() {
+        propertyService.getProperties(new AsyncCallback<HashMap<String, String>>() {
             @Override
             public void onFailure(Throwable caught) {
                 ErrorHandler.post(CANT_LOAD_USER_INFO_ERROR, caught);
             }
 
             @Override
-            public void onSuccess(Map<String, String> result) {
+            public void onSuccess(HashMap<String, String> result) {
                 adminProperties.initialize(result);
                 initUserInfo();
             }

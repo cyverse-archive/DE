@@ -1,8 +1,10 @@
 package org.iplantc.de.shared.exceptions;
 
+import com.google.gwt.user.client.rpc.IsSerializable;
+
 import java.io.IOException;
 
-public class HttpException extends IOException {
+public class HttpException extends IOException implements IsSerializable{
 
     private int statusCode;
     public int getStatusCode() { return statusCode; }

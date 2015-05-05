@@ -68,6 +68,7 @@ import com.sencha.gxt.widget.core.client.box.MessageBox;
 import com.sencha.gxt.widget.core.client.button.TextButton;
 import com.sencha.gxt.widget.core.client.event.BeforeHideEvent;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.logging.Logger;
@@ -553,7 +554,7 @@ public class AppsEditorPresenterImpl implements AppsEditorView.Presenter,
     
         AppTemplate flushRawApp = view.getEditorDriver().flush();
         final List<Argument> allTemplateArguments = getAllTemplateArguments(flushRawApp);
-        uuidService.getUUIDs(allTemplateArguments.size(), new AsyncCallback<List<String>>() {
+        uuidService.getUUIDs(allTemplateArguments.size(), new AsyncCallback<ArrayList<String>>() {
 
             @Override
             public void onFailure(Throwable caught) {
@@ -561,8 +562,7 @@ public class AppsEditorPresenterImpl implements AppsEditorView.Presenter,
             }
 
             @Override
-            public void onSuccess(List<String> result) {
-
+            public void onSuccess(ArrayList<String> result) {
                 final IPlantDialog dlg = new IPlantDialog();
                 dlg.setPredefinedButtons(PredefinedButton.OK);
                 dlg.setHeadingText(appIntMessages.commandLineOrder());

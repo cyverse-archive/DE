@@ -11,7 +11,6 @@ import org.springframework.core.env.PropertySource;
 
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map;
 
 /**
  * @author jstroot
@@ -30,7 +29,7 @@ public class PropertyServiceImpl implements PropertyService{
     }
 
     @Override
-    public Map<String, String> getProperties() throws SerializationException {
+    public HashMap<String, String> getProperties() throws SerializationException {
         HashMap<String, Object> propertyMap = new HashMap<>();
         for(Iterator it = ((AbstractEnvironment) environment).getPropertySources().iterator(); it.hasNext(); ) {
             PropertySource propertySource = (PropertySource) it.next();
