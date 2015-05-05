@@ -547,9 +547,10 @@ public class DiskResourcePresenterImpl implements
         view.mask(appearance.createFolderLoadingMask());
         String[] paths = new String[numSample * numlibs];
         List<String> list = new ArrayList<>();
-        for (int i = 0; i < numSample; i++) {
-            for (int j = 0; j < numlibs; j++) {
-                list.add(projectName + "/" + projectName + "_sample" + i + "/library" + j);
+        for (int i = 1; i <= numSample; i++) {
+            for (int j = 1; j <= numlibs; j++) {
+                list.add("BioProject_" + projectName + "/" + "BioSample" + i + "/" + "BioSample" + i
+                        + "Library" + j);
             }
         }
 
