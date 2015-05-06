@@ -1,7 +1,6 @@
 package org.iplantc.de.server.services;
 
 import org.iplantc.de.server.AppLoggerConstants;
-import org.iplantc.de.server.DEServiceInputStream;
 import org.iplantc.de.server.ServiceCallResolver;
 import org.iplantc.de.server.auth.UrlConnector;
 import org.iplantc.de.shared.exceptions.AuthenticationException;
@@ -82,14 +81,17 @@ public class DEServiceImpl implements DEService,
             String address = retrieveServiceAddress(wrapper);
             String endpoint = getEndpointLoggerString(address);
             Logger jsonLogger = LoggerFactory.getLogger(AppLoggerConstants.API_JSON + endpoint);
+            Logger apiLogger = LoggerFactory.getLogger(AppLoggerConstants.API_LOGGER + endpoint);
 
             CloseableHttpClient client = HttpClients.createDefault();
             try {
                 json = getResponseBody(getResponse(client, wrapper, address));
             } catch (AuthenticationException | HttpException ex) {
+                apiLogger.error(ex.getMessage(), ex);
                 doLogError(ex);
                 throw ex;
             } catch (Exception ex) {
+                apiLogger.error(ex.getMessage(), ex);
                 LOGGER.error("", ex);
                 throw new SerializationException(ex);
             } finally {
@@ -104,39 +106,6 @@ public class DEServiceImpl implements DEService,
 
 
         return json;
-    }
-
-    /**
-     * Implements entry point for services dispatcher for streaming data back to client.
-     *
-     * @param wrapper the services call wrapper.
-     * @return an input stream that can be used to retrieve the response from the services call.
-     * @throws AuthenticationException if the user isn't authenticated.
-     * @throws IOException             if an I/O error occurs.
-     * @throws SerializationException  if any other error occurs.
-     */
-    public DEServiceInputStream getServiceStream(ServiceCallWrapper wrapper)
-        throws SerializationException, IOException {
-        if (isValidServiceCall(wrapper)) {
-            String address = retrieveServiceAddress(wrapper);
-
-            CloseableHttpClient client = HttpClients.createDefault();
-            try {
-                HttpResponse response = getResponse(client, wrapper, address);
-                checkResponse(response);
-                return new DEServiceInputStream(client, response);
-            } catch (HttpRedirectException | AuthenticationException ex) {
-                client.close();
-                doLogError(ex);
-                throw ex;
-            } catch (Exception ex) {
-                client.close();
-                doLogError(ex);
-                throw new SerializationException(ex);
-            }
-        }
-
-        return null;
     }
 
     /**
